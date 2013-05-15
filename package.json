@@ -1,0 +1,34 @@
+{
+	"name": "askabt",
+	"version": "0.1.0",
+	"author": "Askabt (info@askabt.in)",
+	"description": "A host for embeddable real-time discussion groups.",
+	"contributors": [
+		{
+			"name": "Aravind R S",
+			"email": "aravind@askabt.in"
+		}
+	],
+	"main": "./app.js",
+	"repository": {
+		"type": "git",
+		"path": "git://aravind@askabt.com/askabt.git"
+	},
+	"homepage": "http://askabt.com",
+	"dependencies": {
+		"express": "3.0.x",
+		"node-stringprep": "0.1.x",
+		"node-xmpp": "0.3.x",
+		"socket.io": "0.9.x",
+		"mysql": "2.x",
+		"jade": "0.x",
+		"request": "x.x",
+		"nodemailer": "0.4.x"
+	},
+	"devDependencies": {},
+	"optionalDependencies": {},
+	"license": "none",
+	"engines": {
+		"node": ">=0.8"
+	}
+}
