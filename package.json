@@ -23,7 +23,8 @@
 		"mysql": "2.x",
 		"jade": "0.x",
 		"request": "x.x",
-		"nodemailer": "0.4.x"
+		"nodemailer": "0.4.x",
+		"sync" : ""
 	},
 	"devDependencies": {},
 	"optionalDependencies": {},

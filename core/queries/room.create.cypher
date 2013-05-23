@@ -5,7 +5,10 @@ create (
 		type:{type},
 		picture:{picture},
 		description:{description},
-		allowedUrls:{allowedUrls}
+		ownerId:{ownerId},
+		createdAt:{createdAt},
+		present:{present}
+
 	}
 )
 return r;
