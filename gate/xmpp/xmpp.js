@@ -3,8 +3,8 @@
 	
 	Uses node-sync or node-fibers instead of and-then.
 */
-var core = require("./core/core.js"),
-	config = require("./config.js"),
+var core = require("../../core/core.js"),
+	config = require("../../config.js"),
 	r = require("./router.js");
 	
 require('./invite.js').start();

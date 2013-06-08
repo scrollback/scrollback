@@ -1,5 +1,5 @@
 {
-	"name": "askabt",
+	"name": "scrollback",
 	"version": "0.1.0",
 	"author": "Askabt (info@askabt.in)",
 	"description": "A host for embeddable real-time discussion groups.",
@@ -12,10 +12,11 @@
 	"main": "./app.js",
 	"repository": {
 		"type": "git",
-		"path": "git://aravind@askabt.com/askabt.git"
+		"path": "git://aravind@dev.askabt.com/scrollback.git"
 	},
 	"homepage": "http://askabt.com",
 	"dependencies": {
+		"irc": "x",
 		"express": "3.0.x",
 		"node-stringprep": "0.1.x",
 		"node-xmpp": "0.3.x",
@@ -23,7 +24,8 @@
 		"mysql": "2.x",
 		"jade": "0.x",
 		"request": "x.x",
-		"nodemailer": "0.4.x"
+		"nodemailer": "0.4.x",
+		"cookie": "x"
 	},
 	"devDependencies": {},
 	"optionalDependencies": {},
