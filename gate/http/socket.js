@@ -33,6 +33,8 @@ exports.init = function (server) {
 			message.time = new Date().getTime();
 			if(message.type == 'join') {
 				socket.join(message.to);
+			} else if(message.type == 'part'){
+				socket.leave(message.to);
 			} else {
 				if(isEcho("http", message)) return;
 			}
@@ -49,17 +51,19 @@ exports.init = function (server) {
 		});
 		
 		socket.on('disconnect', function() {
-			var i, rooms = io.sockets.manager.roomClients[socket.id];
+			var i, rooms = [], room;
 			console.log("Beginning 1 minute wait:", rooms);
 			
+			for(room in io.sockets.manager.roomClients[socket.id]) {
+				rooms.push(room.substr(1));
+			}
+			
 			user.discoWait = setTimeout(function() {
-				var room;
-				console.log("1 minute elapsed. Disconnecting.");
-				for(room in rooms) if(rooms.hasOwnProperty(room)) {
-					room = room.substr(1); // Socket.io adds a leading `/`
+				console.log("1 minute elapsed. Disconnecting.", rooms);
+				rooms.map(function(room) {
 					core.send({ type: 'part', from: user.id, to: room,
-						time: new Date().getTime() });
-				}
+						time: new Date().getTime(), text: "" });
+				});
 			}, 60000);
 		});
 		

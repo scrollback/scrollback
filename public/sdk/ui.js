@@ -104,7 +104,7 @@ function Stream(id) {
 
 Stream.prototype.close = function (){
 	delete streams[this.id];
-	socket.emit('part', this.id);
+	socket.emit('message', {type: 'part', to: this.id});
 	document.body.removeChild(this.stream);
 	Stream.position();
 };

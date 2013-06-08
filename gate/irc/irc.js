@@ -43,7 +43,7 @@ function send(message, accounts) {
 				if(!client) {
 					clients[message.from][u.host] = client = connect(u.host, message.from);
 					client.addListener('part', function() {
-						if(from === client.nick) process.nextTick(function (){
+						if(message.from === client.nick) process.nextTick(function (){
 							if(Object.keys(client.chans).length === 0) {
 								client.disconnect();
 								delete clients[message.from][u.host]
@@ -79,6 +79,7 @@ function send(message, accounts) {
 				}
 				break;
 			case 'part':
+				console.log(client.nick + " parts " + channel);
 				if(client && client.chans[channel]) {
 					client.part(channel);
 					delete client.rooms[channel];
@@ -120,14 +121,14 @@ function connect(server, nick, callback) {
 	});
 	
 	client.addListener('join', function(channel, from) {
-		console.log("Join from " + from + " to " + channel);
+		console.log(client.nick + " hears " + from + " joined " + channel);
 		if(from !== client.nick) {
 			message('join', from, uh(channel), '');
 		}
 	});
 	
 	client.addListener('part', function(channel, from, reason) {
-		console.log("Part from " + nick + " to " + channel);
+		console.log(client.nick + " hears " + from + " left " + channel);
 		if(from !== client.nick) {
 			message('part', from, uh(channel), reason);
 		}
