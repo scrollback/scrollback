@@ -14,7 +14,6 @@
 var socket = io.connect(scrollback.host);
 var timeAdjustment = 0;
 
-
 socket.on('connect', function(message) {
 	console.log("connected");
 	if(scrollback.streams && scrollback.streams.length) {
@@ -26,6 +25,15 @@ socket.on('connect', function(message) {
 			});
 		}
 	}
+});
+
+function requestTime() {
+	socket.emit('time', new Date().getTime());
+}
+requestTime(); setTimeout(requestTime, 300000);
+socket.on('time', function(data) {
+	timeAdjustment = data.server - (new Date().getTime() + data.request)/2;
+	console.log("Time adjustment is ", timeAdjustment);
 });
 
 socket.on('message', function(message) {

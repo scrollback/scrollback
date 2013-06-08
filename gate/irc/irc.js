@@ -55,14 +55,14 @@ function send(message, accounts) {
 				if(client.connected) {
 					console.log(client.nick + " trying to join " + channel);
 					client.join(channel);
-					client.rooms[channel] = message.to;
+					client.rooms[channel.toLowerCase()] = message.to;
 					console.log("ROOM INDEX", client.rooms);
 				} else {
 					console.log("Waiting for registration before joining.");
 					client.addListener('registered', function() {
 						console.log(client.nick + " trying to join " + channel);
 						client.join(channel);
-						client.rooms[channel] = message.to;
+						client.rooms[channel.toLowerCase()] = message.to;
 						console.log("ROOM INDEX", client.rooms);
 					});
 				}
@@ -82,7 +82,7 @@ function send(message, accounts) {
 				console.log(client.nick + " parts " + channel);
 				if(client && client.chans[channel]) {
 					client.part(channel);
-					delete client.rooms[channel];
+					delete client.rooms[channel.toLowerCase()];
 					console.log("ROOM INDEX", client.rooms);
 				}
 				break;
@@ -95,12 +95,12 @@ function connect(server, nick, callback) {
 	client =  new irc.Client(server, nick, {
 		userName: 'scrollback',
 		realName: 'via scrollback.io'
-		//, debug: true
+		, debug: true
 	});
 	
 	function uh(s) {
 		//console.log("Trying to find ", client.rooms, s);
-		return client.rooms[s];
+		return client.rooms[s.toLowerCase()] || "guest-" + s.substr(1);
 	}
 	
 	function message(type, from, to, text) {
@@ -116,29 +116,31 @@ function connect(server, nick, callback) {
 		console.log("Error from " + message.server, message.args);
 	});
 	
-	client.addListener('message', function(nick, channel, text) {
-		message('text', nick, uh(channel), text);
-	});
-	
-	client.addListener('join', function(channel, from) {
-		console.log(client.nick + " hears " + from + " joined " + channel);
-		if(from !== client.nick) {
-			message('join', from, uh(channel), '');
-		}
-	});
-	
-	client.addListener('part', function(channel, from, reason) {
-		console.log(client.nick + " hears " + from + " left " + channel);
-		if(from !== client.nick) {
-			message('part', from, uh(channel), reason);
-		}
-	});
-	
-	client.addListener('quit', function(from, reason, channels) {
-		for(i=0, l=channels.length; i<l; i++) {
-			message('part', from, uh(channels[i]), reason);
-		}
-	});
+	if(callback) {
+		client.addListener('message', function(nick, channel, text) {
+			message('text', nick, uh(channel), text);
+		});
+		
+		client.addListener('join', function(channel, from) {
+			console.log(client.nick + " hears " + from + " joined " + channel);
+			if(from !== client.nick) {
+				message('join', from, uh(channel), '');
+			}
+		});
+		
+		client.addListener('part', function(channel, from, reason) {
+			console.log(client.nick + " hears " + from + " left " + channel);
+			if(from !== client.nick) {
+				message('part', from, uh(channel), reason);
+			}
+		});
+		
+		client.addListener('quit', function(from, reason, channels) {
+			for(i=0, l=channels.length; i<l; i++) {
+				message('part', from, uh(channels[i]), reason);
+			}
+		});		
+	}
 	
 	client.addListener('registered', function() {
 		console.log(client.nick + " is connected to " + server);

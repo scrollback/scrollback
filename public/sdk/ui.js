@@ -3,6 +3,8 @@ var streams = {}, nick = null,
 		return document.getElementById(id);
 	}, $$ = getByClass;
 
+var unconfirmed = [];
+
 window.requestAnimationFrame = window.requestAnimationFrame ||
 		window.mozRequestAnimationFrame ||
 		window.webkitRequestAnimationFrame ||
@@ -130,11 +132,12 @@ Stream.prototype.send = function (){
 		to: this.id,
 		text: this.text.value,
 		type: 'text',
-		time: new Date().getTime()
+		time: new Date().getTime() + timeAdjustment
 	};
 	socket.emit('message', message);
 	this.text.value = '';
 	Stream.message(message);
+	unconfirmed.push(message);
 };
 
 Stream.prototype.rename = function() {
@@ -165,6 +168,7 @@ Stream.message = function(message) {
 	var estimatedTime = Math.min(3000 * (message.text||'').length / 5, 5000),
 		name, color='#666', start = new Date();
 	
+	if(isEcho(message)) return;
 
 	//console.log(message.type+" : "+ message.text);
 	function format(text) {
@@ -289,8 +293,8 @@ Stream.get = function(id) {
 	} else {
 		streams[id] = new Stream(id);
 		Stream.position();
-		streams[id].lastRequestedUntil = new Date().getTime();
-		socket.emit('get', { to: id, until: new Date().getTime(), type: 'text' });
+		streams[id].lastRequestedUntil = new Date().getTime() + timeAdjustment;
+		socket.emit('get', { to: id, until: new Date().getTime() + timeAdjustment, type: 'text' });
 		return streams[id];
 	}
 };
@@ -365,3 +369,26 @@ function hashColor(name) {
 	return color(hash(name));
 }
 
+function isEcho (next) {
+	var i, prev, t = new Date().getTime() + timeAdjustment;
+	
+	for(i=unconfirmed.length-1; i>=0; i--) {
+		prev = unconfirmed[i];
+		if(prev.time < t-15000) {
+			console.log("Removing " + (i+1) + " messages older than 1 minute.");
+			unconfirmed = unconfirmed.splice(0, i+1);
+			break;
+		}
+		if(
+			prev.type == next.type &&
+			prev.text == next.text &&
+			prev.from == next.from &&
+			prev.to == next.to
+		) {
+			console.log(next.type + ': ' + next.from + '->' + next.to + " is an echo");
+			unconfirmed = unconfirmed.splice(i,1);
+			return true;
+		}
+	}
+	return false;
+}

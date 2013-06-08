@@ -5,8 +5,7 @@
 */
 var io = require("socket.io"),
 	core = require("../../core/core.js"),
-	cookie = require("cookie"),
-	isEcho = require("../../lib/isecho.js");
+	cookie = require("cookie");
 	
 var users = {};
 
@@ -35,8 +34,6 @@ exports.init = function (server) {
 				socket.join(message.to);
 			} else if(message.type == 'part'){
 				socket.leave(message.to);
-			} else {
-				if(isEcho("http", message)) return;
 			}
 			core.send(message);
 		});
@@ -67,6 +64,12 @@ exports.init = function (server) {
 			}, 60000);
 		});
 		
+		socket.on('time', function(requestTime) {
+			socket.emit('time', {
+				server: new Date().getTime(), request: requestTime
+			});
+		});
+		
 		if(user.discoWait) clearTimeout(user.discoWait);
 	});
 };
@@ -74,7 +77,6 @@ exports.init = function (server) {
 exports.send = function (message, rooms) {
 	message.text = sanitize(message.text || "");
 	message.time = new Date().getTime();
-	if(isEcho('http', message)) return;
 	rooms.map(function(room) {
 		io.sockets.in(room).emit('message', message);
 	});

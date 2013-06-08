@@ -4696,6 +4696,8 @@ var streams = {}, nick = null,
 		return document.getElementById(id);
 	}, $$ = getByClass;
 
+var unconfirmed = [];
+
 window.requestAnimationFrame = window.requestAnimationFrame ||
 		window.mozRequestAnimationFrame ||
 		window.webkitRequestAnimationFrame ||
@@ -4781,7 +4783,7 @@ function Stream(id) {
 	], function(el) {
 		if(el.className == 'scrollback-log') self.log = el;
 		else if(el.className == 'scrollback-nick') self.nick = el;
-		else if(el.className == 'scrollback-hide') self.hidebtn = el;
+		else if(el.className.indexOf('scrollback-hide') != -1) self.hidebtn = el;
 		else if(el.className == 'scrollback-text') self.text = el;
 		else if(el.className == 'scrollback-send') self.sendfrm = el;
 		else if(el.className == 'scrollback-tread') self.tread = el;
@@ -4797,7 +4799,7 @@ function Stream(id) {
 
 Stream.prototype.close = function (){
 	delete streams[this.id];
-	socket.emit('part', this.id);
+	socket.emit('message', {type: 'part', to: this.id});
 	document.body.removeChild(this.stream);
 	Stream.position();
 };
@@ -4823,11 +4825,12 @@ Stream.prototype.send = function (){
 		to: this.id,
 		text: this.text.value,
 		type: 'text',
-		time: new Date().getTime()
+		time: new Date().getTime() + timeAdjustment
 	};
 	socket.emit('message', message);
 	this.text.value = '';
 	Stream.message(message);
+	unconfirmed.push(message);
 };
 
 Stream.prototype.rename = function() {
@@ -4858,6 +4861,7 @@ Stream.message = function(message) {
 	var estimatedTime = Math.min(3000 * (message.text||'').length / 5, 5000),
 		name, color='#666', start = new Date();
 	
+	if(isEcho(message)) return;
 
 	//console.log(message.type+" : "+ message.text);
 	function format(text) {
@@ -4982,8 +4986,8 @@ Stream.get = function(id) {
 	} else {
 		streams[id] = new Stream(id);
 		Stream.position();
-		streams[id].lastRequestedUntil = new Date().getTime();
-		socket.emit('get', { to: id, until: new Date().getTime(), type: 'text' });
+		streams[id].lastRequestedUntil = new Date().getTime() + timeAdjustment;
+		socket.emit('get', { to: id, until: new Date().getTime() + timeAdjustment, type: 'text' });
 		return streams[id];
 	}
 };
@@ -5058,7 +5062,29 @@ function hashColor(name) {
 	return color(hash(name));
 }
 
-Stream.prototype.scroll = function() {
+function isEcho (next) {
+	var i, prev, t = new Date().getTime() + timeAdjustment;
+	
+	for(i=unconfirmed.length-1; i>=0; i--) {
+		prev = unconfirmed[i];
+		if(prev.time < t-15000) {
+			console.log("Removing " + (i+1) + " messages older than 1 minute.");
+			unconfirmed = unconfirmed.splice(0, i+1);
+			break;
+		}
+		if(
+			prev.type == next.type &&
+			prev.text == next.text &&
+			prev.from == next.from &&
+			prev.to == next.to
+		) {
+			console.log(next.type + ': ' + next.from + '->' + next.to + " is an echo");
+			unconfirmed = unconfirmed.splice(i,1);
+			return true;
+		}
+	}
+	return false;
+}Stream.prototype.scroll = function() {
 	var log = this.log, up, until = this.firstMessageAt;
 	
 	if(typeof this.lastScrollTop !== 'undefined' && until > 0 &&
@@ -5174,10 +5200,11 @@ var css = {
 			lineHeight: "48px", paddingLeft: "10px",
 			left: "0px", right: "0px", position: "absolute",
 			fontWeight: "bold",
-			zIndex: 9997, top: "0", cursor: "default"
+			zIndex: 9997, top: "0", cursor: "default",
+			"padding": "0 48px"
 		},
 			".scrollback-title-text":{
-				fontWeight: "normal", "padding": "0 48px"
+				fontWeight: "normal"
 			},
 		".scrollback-log": {
 			"boxSizing": "border-box", "webkitBoxSizing": "border-box",
@@ -5259,7 +5286,7 @@ themes.light = {
 		".scrollback-icon:hover": {
 			background: "#fff"
 		},
-		".scrollback-title, .scrollback-toolbar": {
+		".scrollback-title": {
 			background: "#eee", color: "#000"
 		},
 			".scrollback-title-text":{
@@ -5302,7 +5329,7 @@ themes.dark = {
 		".scrollback-icon:hover": {
 			background: "#000"
 		},
-		".scrollback-title, .scrollback-toolbar": {
+		".scrollback-title": {
 			background: "#333", color: "#fff"
 		},
 			".scrollback-title-text":{
@@ -5346,7 +5373,6 @@ themes.dark = {
 var socket = io.connect(scrollback.host);
 var timeAdjustment = 0;
 
-
 socket.on('connect', function(message) {
 	console.log("connected");
 	if(scrollback.streams && scrollback.streams.length) {
@@ -5360,8 +5386,18 @@ socket.on('connect', function(message) {
 	}
 });
 
+function requestTime() {
+	socket.emit('time', new Date().getTime());
+}
+requestTime(); setTimeout(requestTime, 300000);
+socket.on('time', function(data) {
+	timeAdjustment = data.server - (new Date().getTime() + data.request)/2;
+	console.log("Time adjustment is ", timeAdjustment);
+});
+
 socket.on('message', function(message) {
 	var stream;
+	console.log(message);
 	if(message.type == 'join' && message.from == nick) {
 		console.log(message.to);
 		stream = streams[message.to];

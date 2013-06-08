@@ -35,10 +35,11 @@ var css = {
 			lineHeight: "48px", paddingLeft: "10px",
 			left: "0px", right: "0px", position: "absolute",
 			fontWeight: "bold",
-			zIndex: 9997, top: "0", cursor: "default"
+			zIndex: 9997, top: "0", cursor: "default",
+			"padding": "0 48px"
 		},
 			".scrollback-title-text":{
-				fontWeight: "normal", "padding": "0 48px"
+				fontWeight: "normal"
 			},
 		".scrollback-log": {
 			"boxSizing": "border-box", "webkitBoxSizing": "border-box",
@@ -120,7 +121,7 @@ themes.light = {
 		".scrollback-icon:hover": {
 			background: "#fff"
 		},
-		".scrollback-title, .scrollback-toolbar": {
+		".scrollback-title": {
 			background: "#eee", color: "#000"
 		},
 			".scrollback-title-text":{
@@ -163,7 +164,7 @@ themes.dark = {
 		".scrollback-icon:hover": {
 			background: "#000"
 		},
-		".scrollback-title, .scrollback-toolbar": {
+		".scrollback-title": {
 			background: "#333", color: "#fff"
 		},
 			".scrollback-title-text":{
