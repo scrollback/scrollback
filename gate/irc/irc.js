@@ -92,7 +92,7 @@ function send(message, accounts) {
 
 function connect(server, nick, callback) {
 	console.log("Connecting " + nick + " to " + server);
-	client =  new irc.Client(server, nick, {
+	var client =  new irc.Client(server, nick, {
 		userName: 'scrollback',
 		realName: 'via scrollback.io'
 		, debug: true
