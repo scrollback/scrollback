@@ -30,6 +30,7 @@ socket.on('connect', function(message) {
 
 socket.on('message', function(message) {
 	var stream;
+	console.log(message);
 	if(message.type == 'join' && message.from == nick) {
 		console.log(message.to);
 		stream = streams[message.to];

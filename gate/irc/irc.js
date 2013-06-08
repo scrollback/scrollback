@@ -23,6 +23,8 @@ function init() {
 			client.addListener('registered', function() {
 				console.log("bot trying to join " + u.hash);
 				client.join(u.hash);
+				client.rooms[u.hash] = account.room;
+				console.log("ROOM INDEX", client.rooms);
 			});
 		});
 	});
@@ -30,7 +32,7 @@ function init() {
 
 function send(message, accounts) {
 	clients[message.from] = clients[message.from] || {};
-	if(isEcho("out", message)) return;
+	if(isEcho("irc", message)) return;
 	accounts.map(function(account) {
 		var u = url.parse(account),
 			client = clients[message.from][u.host],
@@ -54,12 +56,14 @@ function send(message, accounts) {
 					console.log(client.nick + " trying to join " + channel);
 					client.join(channel);
 					client.rooms[channel] = message.to;
+					console.log("ROOM INDEX", client.rooms);
 				} else {
 					console.log("Waiting for registration before joining.");
 					client.addListener('registered', function() {
 						console.log(client.nick + " trying to join " + channel);
 						client.join(channel);
 						client.rooms[channel] = message.to;
+						console.log("ROOM INDEX", client.rooms);
 					});
 				}
 				
@@ -78,6 +82,7 @@ function send(message, accounts) {
 				if(client && client.chans[channel]) {
 					client.part(channel);
 					delete client.rooms[channel];
+					console.log("ROOM INDEX", client.rooms);
 				}
 				break;
 		}
@@ -89,17 +94,20 @@ function connect(server, nick, callback) {
 	client =  new irc.Client(server, nick, {
 		userName: 'scrollback',
 		realName: 'via scrollback.io'
-		, debug: true
+		//, debug: true
 	});
 	
-	function uh(s) { return client.rooms[s]; }
+	function uh(s) {
+		//console.log("Trying to find ", client.rooms, s);
+		return client.rooms[s];
+	}
 	
 	function message(type, from, to, text) {
 		var message = {
 			type: type, from: from, to: to, text: text,
 			time: new Date().getTime()
 		};
-		if(isEcho("in", message)) return;
+		if(isEcho("irc", message)) return;
 		if(callback) callback(message);
 	}
 	

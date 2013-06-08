@@ -9,7 +9,7 @@ var rooms = {}, gateways;
 db.query("SELECT * FROM rooms", function(err, data) {
 	var i, l;
 	if(err) {
-		console.log("Cannot load rooms.");
+		console.log(err);
 		process.exit(-1);
 	}
 	for(i=0, l=data.length; i<l; i++) {

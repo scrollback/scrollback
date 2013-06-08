@@ -88,7 +88,7 @@ function Stream(id) {
 	], function(el) {
 		if(el.className == 'scrollback-log') self.log = el;
 		else if(el.className == 'scrollback-nick') self.nick = el;
-		else if(el.className == 'scrollback-hide') self.hidebtn = el;
+		else if(el.className.indexOf('scrollback-hide') != -1) self.hidebtn = el;
 		else if(el.className == 'scrollback-text') self.text = el;
 		else if(el.className == 'scrollback-send') self.sendfrm = el;
 		else if(el.className == 'scrollback-tread') self.tread = el;

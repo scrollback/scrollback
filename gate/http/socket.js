@@ -31,9 +31,10 @@ exports.init = function (server) {
 			console.log("Received message via socket: ", message);
 			message.from = user.id;
 			message.time = new Date().getTime();
-			if(isEcho("in", message)) return;
 			if(message.type == 'join') {
 				socket.join(message.to);
+			} else {
+				if(isEcho("http", message)) return;
 			}
 			core.send(message);
 		});
@@ -41,8 +42,9 @@ exports.init = function (server) {
 		socket.on('get', function(query) {
 			console.log("Received GET via socket: ", query);
 			core.read(query, function(data) {
+				var i, l=data.length;
 				console.log("Response: ", data);
-				socket.emit(data);
+				for(i=0; i<l; i++) socket.emit('message', data[i]);
 			});
 		});
 		
@@ -51,12 +53,13 @@ exports.init = function (server) {
 			console.log("Beginning 1 minute wait:", rooms);
 			
 			user.discoWait = setTimeout(function() {
+				var room;
 				console.log("1 minute elapsed. Disconnecting.");
-				rooms.map(function(room) {
+				for(room in rooms) if(rooms.hasOwnProperty(room)) {
 					room = room.substr(1); // Socket.io adds a leading `/`
 					core.send({ type: 'part', from: user.id, to: room,
 						time: new Date().getTime() });
-				});
+				}
 			}, 60000);
 		});
 		
@@ -67,7 +70,7 @@ exports.init = function (server) {
 exports.send = function (message, rooms) {
 	message.text = sanitize(message.text || "");
 	message.time = new Date().getTime();
-	if(isEcho('out', message)) return;
+	if(isEcho('http', message)) return;
 	rooms.map(function(room) {
 		io.sockets.in(room).emit('message', message);
 	});
