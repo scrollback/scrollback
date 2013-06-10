@@ -4,8 +4,6 @@ var themes = {};
 var css = {
 	".scrollback-hidden": { position: "absolute", visibility: "hidden" },
 
-	".scrollback-timestamp-hidden": { display: "none"},
-
 	".scrollback-stream": {
 		"position": "fixed",
 		"width": "480px", "height": "480px", "bottom": "0px",
@@ -65,9 +63,17 @@ var css = {
 			".scrollback-message-hidden": {
 				"opacity": 0,
 				"transition": "all 2s ease-out",
-				"webkitTransition": "all 2s ease-out", "mozTransition": "all 2s ease-out",
-				"oTransition": "all 2s ease-out", "msTransition": "all 2s ease-out",
+				"webkitTransition": "all 2s ease-out",
+				"mozTransition": "all 2s ease-out",
+				"oTransition": "all 2s ease-out",
+				"msTransition": "all 2s ease-out",
 			},
+				".scrollback-timestamp-hidden .scrollback-timestamp": {
+					display: "none"
+				},
+				".scrollback-timestamp": {
+					display: "block", "textAlign": "right"
+				},
 	".scrollback-timeline": {
 		position: "absolute", top: "48px", right: "0", width: "18px",
 		bottom: "80px", zIndex: 9996

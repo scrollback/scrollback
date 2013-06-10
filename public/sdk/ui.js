@@ -221,7 +221,7 @@ Stream.message = function(message) {
 				'class': 'scrollback-message-separator', 'style': 'color:'+color
 			}, ' • '],
 			[ "span", { 'class': 'scrollback-message-text'}, message.text ],
-			[ "span", { 'class': 'scrollback-timestamp-hidden'}, new Date(message.time).toString()]];
+			[ "span", { 'class': 'scrollback-timestamp'}, new Date(message.time).toString()]];
 			break;
 		case 'join':
 			el = [["span", message.from + ' joined.']];
@@ -261,6 +261,24 @@ Stream.message = function(message) {
 	}
 	str.lastInsertPos = pos;
 	str.log.insertBefore(el, pos);
+	
+	if(
+		el.previousSibling &&
+		message.time - el.previousSibling.getAttribute('data-time') < 60000
+	) {
+		addClass(el.previousSibling, 'scrollback-timestamp-hidden');
+	} else {
+		removeClass(el.previousSibling, 'scrollback-timestamp-hidden');
+	}
+	
+	if(
+		el.nextSibling &&
+		el.nextSibling.getAttribute('data-time') - message.time < 60000
+	) {
+		addClass(el, 'scrollback-timestamp-hidden');
+	} else {
+		removeClass(el, 'scrollback-timestamp-hidden');
+	}
 
 	str.pendingScroll = (str.pendingScroll || 0) + el.clientHeight;
 
