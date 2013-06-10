@@ -17,6 +17,9 @@ var css = {
 		"oTransition": "all 0.2s ease-out", "msTransition": "all 0.2s ease-out",
 		"overflow": "hidden"
 	},
+	".scrollback-stream-right .scrollback-title": {
+		"text-align": "right"
+	},
 	".scrollback-stream-hidden": {
 		"height": "50px !important"
 	},
@@ -27,8 +30,8 @@ var css = {
 			cursor: "pointer", zIndex: 1,
 			fontWeight: "bold", lineHeight: "48px", textAlign: "center"
 		},
-		".scrollback-close": {right: 0},
-		".scrollback-hide": {right: "48px"},
+		".scrollback-close": {right: 0 },
+		".scrollback-hide": {right: "48px" },
 		".scrollback-menu": {left: 0},
 		".scrollback-title": {
 			"height": "48px",

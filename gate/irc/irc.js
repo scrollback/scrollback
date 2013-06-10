@@ -79,7 +79,7 @@ function send(message, accounts) {
 				}
 				break;
 			case 'part':
-				console.log(client.nick + " parts " + channel);
+				console.log(client && client.nick + " parts " + channel);
 				if(client && client.chans[channel]) {
 					client.part(channel);
 					delete client.rooms[channel.toLowerCase()];
@@ -87,7 +87,7 @@ function send(message, accounts) {
 				}
 				break;
 		}
-	})
+	});
 }
 
 function connect(server, nick, callback) {

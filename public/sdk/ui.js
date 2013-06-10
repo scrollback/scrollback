@@ -1,3 +1,5 @@
+"use strict";
+
 var streams = {}, nick = null,
 	$ = function(id) {
 		return document.getElementById(id);
@@ -16,11 +18,14 @@ DomReady.ready(function() {
 	var i, stream;
 	
 	addStyles(css);
-	addStyles(scrollback.theme && themes[scrollback.theme]? themes[scrollback.theme]: theme.light);
+	addStyles(
+		scrollback.theme && themes[scrollback.theme]?
+		themes[scrollback.theme]: theme.light
+	);
 	addEvent(window, 'resize', Stream.position);
 	
 	if(scrollback.streams && scrollback.streams.length) {
-		for(i=0; i<scrollback.streams.length; i++) {
+		for(i=0; i<scrollback.streams.length; i+=1) {
 			stream = Stream.get(scrollback.streams[i]);
 			stream.hide();
 		}
@@ -112,14 +117,14 @@ Stream.prototype.close = function (){
 };
 
 Stream.prototype.hide = function() {
-	this.stream.className = this.stream.className.replace(
-		/\sscrollback-stream-selected/g, '') + " scrollback-stream-hidden";
+	removeClass(this.stream, 'scrollback-stream-selected');
+	addClass(this.stream, 'scrollback-stream-hidden');
 	this.hidebtn.innerHTML = '‾';
 };
 
 Stream.prototype.show = function() {
 	var self = this;
-	this.stream.className = this.stream.className.replace(/\sscrollback-stream-hidden/g, '');
+	removeClass(this.stream, 'scrollback-stream-hidden');
 	this.titleText.innerHTML='';
 	this.hidebtn.innerHTML = '_';
 	setTimeout(function() { self.renderTimeline(); }, 250 );
@@ -148,10 +153,10 @@ Stream.prototype.rename = function() {
 
 Stream.prototype.select = function() {
 	var ss = $$(document, "scrollback-stream"), i, l = ss.length;
-	for(i=0; i<l; i++) {
-		ss[i].className = ss[i].className.replace(/\sscrollback-stream-selected/g, '');
+	for(i=0; i<l; i+=1) {
+		removeClass(ss[i], 'scrollback-stream-selected');
 	}
-	this.stream.className = this.stream.className + ' scrollback-stream-selected';
+	addClass(this.stream, 'scrollback-stream-selected');
 	Stream.position();
 };
 
@@ -178,16 +183,17 @@ Stream.message = function(message) {
 
 	str = Stream.get(message.to);
 	
-	if(message.type == 'text') {
-		if(typeof str.firstMessageAt == 'undefined' ||
-			message.time < str.firstMessageAt) str.firstMessageAt = message.time;
+	if(message.type === 'text') {
+		if(typeof str.firstMessageAt === 'undefined' ||
+			message.time < str.firstMessageAt
+		) str.firstMessageAt = message.time;
 		
-		if(typeof str.lastMessageAt == 'undefined' ||
+		if(typeof str.lastMessageAt === 'undefined' ||
 			message.time > str.lastMessageAt) str.lastMessageAt = message.time;
 	}
 	
-	if(str.stream.className.indexOf('scrollback-stream-hidden') != -1
-	   && scrollback.ticker && message.type == 'text'
+	if(hasClass(str.stream, 'scrollback-stream-hidden') &&
+		scrollback.ticker && message.type === 'text'
 	) {
 		str.titleText.innerHTML = ' ▸ ' + message.from + ' • ' + message.text;
 	}
@@ -325,6 +331,11 @@ Stream.position = function() {
 		col.style.width = colw + 'px';
 		col.style.zIndex = z + l;
 		if(col.className.indexOf('scrollback-stream-selected') != -1) step = -1;
+		if(step < 0 || pitch >= 400) {
+			removeClass(col, 'scrollback-stream-right');
+		} else {
+			addClass(col, 'scrollback-stream-right');
+		}
 		z = z + step;
 	}
 };

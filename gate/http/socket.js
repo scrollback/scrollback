@@ -24,7 +24,10 @@ exports.init = function (server) {
 		}
 		
 		socket.emit('nick', user.id);
-		socket.on('nick', function(n) { user.id = n; });
+		socket.on('nick', function(n) {
+			user.id = n;
+			core.send({type: "identify", })
+		});
 		
 		socket.on('message', function (message) {
 			console.log("Received message via socket: ", message);

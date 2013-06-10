@@ -6,6 +6,14 @@ var config = require('../config.js');
 var db = require('mysql').createConnection(config.mysql);
 var rooms = {}, gateways;
 
+db.on('close', function(err) {
+	if(err) {
+		db.on('error', function() {}); // Don't crash.
+		console.log("DB Connection Error:", err);
+	}
+	db = require('mysql').createConnection(config.mysql);
+});
+
 db.query("SELECT * FROM rooms", function(err, data) {
 	var i, l;
 	if(err) {
