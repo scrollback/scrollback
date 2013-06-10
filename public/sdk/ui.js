@@ -220,7 +220,8 @@ Stream.message = function(message) {
 			[ "span", {
 				'class': 'scrollback-message-separator', 'style': 'color:'+color
 			}, ' • '],
-			[ "span", { 'class': 'scrollback-message-text'}, message.text ]];
+			[ "span", { 'class': 'scrollback-message-text'}, message.text ],
+			[ "span", { 'class': 'scrollback-timestamp-hidden'}, new Date(message.time).toString()]];
 			break;
 		case 'join':
 			el = [["span", message.from + ' joined.']];

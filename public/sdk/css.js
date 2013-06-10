@@ -4,6 +4,8 @@ var themes = {};
 var css = {
 	".scrollback-hidden": { position: "absolute", visibility: "hidden" },
 
+	".scrollback-timestamp-hidden": { display: "none"},
+
 	".scrollback-stream": {
 		"position": "fixed",
 		"width": "480px", "height": "480px", "bottom": "0px",
