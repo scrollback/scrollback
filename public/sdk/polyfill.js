@@ -16,9 +16,9 @@ function offset(obj) {
 
 function regex(s) {
 	try {
-		return new RegExp('\\s?\\b'+
+		return new RegExp('(\\s|^)'+
 				s.replace(/\W/g, function(m) {return '\\'+m;})+
-			'\\b', 'g');
+			'(\\s|$)', 'g');
 	} catch(e) {
 		return null;
 	}
@@ -29,7 +29,7 @@ function hasClass(obj, cl) {
 }
 
 function removeClass(obj, cl) {
-	obj.className = obj.className.replace(regex(cl),'');
+	obj.className = obj.className.replace(regex(cl), ' ');
 }
 
 function addClass(obj, cl) {

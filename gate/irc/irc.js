@@ -95,7 +95,7 @@ function connect(server, nick, callback) {
 	var client =  new irc.Client(server, nick, {
 		userName: 'scrollback',
 		realName: 'via scrollback.io'
-		, debug: true
+//		, debug: true
 	});
 	
 	function uh(s) {

@@ -46,7 +46,10 @@ socket.on('message', function(message) {
 			console.log("stream either missing or not ready",message.to);
 			return;	
 		} 
-		socket.emit('get', {to: stream.id, until: message.time, since: stream.lastMessageAt, type: 'text'});
+		socket.emit('get', {
+			to: stream.id, until: message.time,
+			since: stream.lastMessageAt, type: 'text'
+		});
 		console.log("calling stream ready");
 		stream.ready();
 		stream.isReady = true;

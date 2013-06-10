@@ -14,19 +14,6 @@ db.on('close', function(err) {
 	db = require('mysql').createConnection(config.mysql);
 });
 
-db.query("SELECT * FROM rooms", function(err, data) {
-	var i, l;
-	if(err) {
-		console.log(err);
-		process.exit(-1);
-	}
-	for(i=0, l=data.length; i<l; i++) {
-		data[i].accounts = {};
-		rooms[data[i].id] = data[i];
-	}
-	db.query("SELECT * FROM accounts")
-});
-
 exports.init = function (gw){
 	gateways = gw;
 }
