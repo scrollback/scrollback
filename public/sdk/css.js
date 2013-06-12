@@ -42,7 +42,8 @@ var css = {
 			left: "0px", right: "0px", position: "absolute",
 			fontWeight: "bold",
 			zIndex: 9997, top: "0", cursor: "default",
-			"padding": "0 48px"
+			"padding": "0 48px", whiteSpace: "nowrap",
+			textOverflow: "ellipsis", overflow: "hidden"
 		},
 			".scrollback-title-text":{
 				fontWeight: "normal"
@@ -75,7 +76,7 @@ var css = {
 					display: "none"
 				},
 				".scrollback-message-timestamp": {
-					display: "block", "textAlign": "right"
+					display: "block", "textAlign": "right", marginRight: "-16px"
 				},
 	".scrollback-timeline": {
 		position: "absolute", top: "48px", right: "0", width: "18px",

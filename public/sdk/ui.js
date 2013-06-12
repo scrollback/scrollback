@@ -175,8 +175,18 @@ Stream.message = function(message) {
 
 	//console.log(message.type+" : "+ message.text);
 	function format(text) {
+		var u = /\b(https?\:\/\/)?([a-z0-9\-]+\.)+[a-z]{2,4}((\/|\?)\S*)?/g,
+			m = ["span"], r, s=0;
+		while((r = u.exec(text)) !== null) {
+			// console.log(text, r.index, u.lastIndex);
+			m.push(text.substring(s, r.index));
+			s = u.lastIndex;
+			m.push(["a", {href: r[1]?r[0]:'http://'+r[0]}, r[0]]);
+		}
+		m.push(text.substring(s));
 		// do something more interesting next time.
-		return text;
+		// console.log(m);
+		return m;
 	}
 	
 	if(!message.to) return;
@@ -204,10 +214,10 @@ Stream.message = function(message) {
 	
 	switch(message.type) {
 		case 'text':
-			message.text = format(message.text);
 			name=message.text.match(
 				/^(\@?)([a-zA-Z_\\\[\]\{\}\^\`\|][a-zA-Z0-9_\-\\\[\]\{\}\^\`\|]+)( |\:|\,)/
 			);
+			message.text = format(message.text);
 			
 			if(name && (name[2].length !== 0) && (name[1] == '@' || name[3] != ' ')) {
 				color=hashColor(name[2]);
@@ -231,7 +241,10 @@ Stream.message = function(message) {
 				'class': 'scrollback-message-separator', 'style': 'color:'+color
 			}, ' • '],
 			[ "span", { 'class': 'scrollback-message-text'}, message.text ],
-			[ "span", { 'class': 'scrollback-message-timestamp'}, new Date(message.time).toString()]];
+			[ "span", { 'class': 'scrollback-message-timestamp'},
+				"Sent at " + prettyDate(
+					message.time, new Date().getTime() + timeAdjustment)
+			]];
 			break;
 		case 'join':
 			el = [["span", message.from + ' joined.']];
@@ -325,7 +338,6 @@ Stream.updateNicks = function(n) {
 	for(i in streams) {
 		stream = streams[i];
 		stream.nick.value = n;
-//		console.log(n);
 	}
 	nick = n;
 };

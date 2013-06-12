@@ -37,3 +37,23 @@ function addClass(obj, cl) {
 	obj.className = obj.className + ' ' + cl;
 }
 
+function prettyDate(time, currTime){
+	var d = new Date(time), n = new Date(currTime),
+		day_diff = n.getDate() - d.getDate(),
+		weekDays=["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+			"Friday", "Saturday"],
+		months=["January", "February", "March", "April", "May", "June", "July",
+			"August", "September", "October", "November", "December"],
+		str = "";
+	
+	str += d.getYear() !== n.getYear()? d.getYear() + ' ': '';
+	str += (str || d.getMonth()!==n.getMonth() || day_diff > 6)?
+		months[d.getMonth()] + ' ' + d.getDate() + ', ': '';
+	
+	str = str || day_diff > 1? weekDays[d.getDay()]: day_diff > 0?
+		'Yesterday ': '';
+	
+	return str + d.getHours() + ':' +
+		(d.getMinutes()<10? '0': '') + d.getMinutes();
+}
+
