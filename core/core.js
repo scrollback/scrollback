@@ -24,8 +24,8 @@ exports.init = function (gw){
 
 exports.send = function(message) {
 	db.query("INSERT INTO `messages` SET `from`=?, `to`=?, `type`=?, `text`=?, "+
-		"`time`=FROM_UNIXTIME(?)", [message.from, message.to, message.type,
-		message.text, message.time/1000]);
+		"`time`=?", [message.from, message.to, message.type,
+		message.text, message.time]);
 	
 	gateways['http'].send(message, [message.to]);
 	
@@ -46,18 +46,17 @@ exports.send = function(message) {
 };
 
 exports.messages = function(options, callback) {
-	var query = "SELECT `from`, `to`, `type`, `text`, "+
-		"(UNIX_TIMESTAMP(`time`)*1000 + MICROSECOND(`time`)/1000) as `time` "+
+	var query = "SELECT `from`, `to`, `type`, `text`, `time` "+
 		"FROM `messages` ", where = [], params=[], desc=false, limit=256;
 	
 	if(options.until) {
-		where.push("`time` < FROM_UNIXTIME(?)");
-		params.push(options.until/1000);
+		where.push("`time` < ?");
+		params.push(options.until);
 	}
 	
 	if(options.since) {
-		where.push("`time` > FROM_UNIXTIME(?)");
-		params.push(options.since/1000);
+		where.push("`time` > ?");
+		params.push(options.since);
 	}
 	
 	if(options.to) {
