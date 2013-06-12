@@ -125,6 +125,7 @@ Stream.prototype.toggle = function() {
 		removeClass(this.stream, 'scrollback-stream-selected');
 		addClass(this.stream, 'scrollback-stream-hidden');
 	}
+	Stream.position();
 };
 
 Stream.prototype.send = function (){
@@ -175,7 +176,7 @@ Stream.message = function(message) {
 
 	//console.log(message.type+" : "+ message.text);
 	function format(text) {
-		var u = /\b(https?\:\/\/)?([a-z0-9\-]+\.)+[a-z]{2,4}((\/|\?)\S*)?/g,
+		var u = /\b(https?\:\/\/)?([a-z0-9\-]+\.)+[a-z]{2,4}\b((\/|\?)\S*)?/g,
 			m = ["span"], r, s=0;
 		while((r = u.exec(text)) !== null) {
 			// console.log(text, r.index, u.lastIndex);
@@ -343,26 +344,63 @@ Stream.updateNicks = function(n) {
 };
 
 Stream.position = function() {
+	var maxWidth = scrollback.maxWidth || 400,
+		maxHeight= scrollback.maxHeight|| 400,
+		minWidth = scrollback.minWidth || 250,
+		minHeight= scrollback.minHeight|| 48,
+		maxGap   = scrollback.maxGap   || 20,
+		minPitch = scrollback.minPitch || 120,
+		margin   = scrollback.margin   || 40;
 	var ss = $$(document, "scrollback-stream"), i, l=ss.length,
-		step = 1, z=0,
-		scrw = window.innerWidth || document.documentElement.clientWidth ||
+		step = 1, z=0, colw, colh, col, y=0, h, stacked, pitch,
+		scrw = document.documentElement.clientWidth ||
 			document.getElementsByTagName('body')[0].clientWidth,
-		colw = Math.min(scrw, maxWidth),
-		pitch = Math.min((scrw - colw - 2*margin)/l, 420), col;
+		scrh = document.documentElement.clientHeight ||
+			document.getElementsByTagName('body')[0].clientHeight;
+			
+	if(scrw < minWidth + 2*margin + minPitch*(l-1)) {
+		stacked = true;
+		pitch = 0; colw=scrw; margin=0;
+		colh = Math.min(maxHeight, scrh - minHeight*(l-1));
+	} else if(scrw < maxWidth + 2*margin + minPitch*(l-1)) {
+		stacked = false;
+		pitch = minPitch;
+		colw = scrw - 2*margin - (l-1)*minPitch;
+		colh = Math.min(maxHeight, scrh);
+	} else {
+		stacked = false;
+		colw = maxWidth;
+		pitch = Math.min((scrw - colw - 2*margin)/(l-1), maxWidth + maxGap);
+		colh = Math.min(maxHeight, scrh);
+	}
 	
 	for(i=0; i<l; i+=1) {
 		col = ss[i];
 		col.style.right = (margin + i*pitch) + 'px';
 		col.style.width = colw + 'px';
-		col.style.zIndex = z + l;
-		if(col.className.indexOf('scrollback-stream-selected') !== -1) {
+		
+		if(hasClass(col, 'scrollback-stream-selected') !== -1) {
 			step = -1;
 		}
-		if(step < 0 || pitch >= 400 || i===(l-1)) {
-			removeClass(col, 'scrollback-stream-right');
+		if(stacked) {
+			h = hasClass(col, 'scrollback-stream-selected')? colh: minHeight;
+			col.style.height = h + 'px';
+			col.style.bottom = y + 'px';
+			col.style.zIndex = z + l;
+			y += h;
 		} else {
-			addClass(col, 'scrollback-stream-right');
+			h = hasClass(col, 'scrollback-stream-hidden')? minHeight: colh;
+			col.style.height = h + 'px';
+			col.style.bottom = '0px';
+			col.style.zIndex = z + l;
+			if(step < 0 || pitch >= colw || i===(l-1)) {
+				removeClass(col, 'scrollback-stream-right');
+			} else {
+				addClass(col, 'scrollback-stream-right');
+			}
 		}
+		
+		
 		z = z + step;
 	}
 };

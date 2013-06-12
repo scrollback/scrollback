@@ -48,12 +48,12 @@ function prettyDate(time, currTime){
 	
 	str += d.getYear() !== n.getYear()? d.getYear() + ' ': '';
 	str += (str || d.getMonth()!==n.getMonth() || day_diff > 6)?
-		months[d.getMonth()] + ' ' + d.getDate() + ', ': '';
+		months[d.getMonth()] + ' ' + d.getDate(): '';
 	
 	str = str || day_diff > 1? weekDays[d.getDay()]: day_diff > 0?
-		'Yesterday ': '';
+		'yesterday': '';
 	
-	return str + d.getHours() + ':' +
+	return str + ' at '+ d.getHours() + ':' +
 		(d.getMinutes()<10? '0': '') + d.getMinutes();
 }
 

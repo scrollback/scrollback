@@ -1,4 +1,3 @@
-var maxWidth = 400, maxHeight = 400, maxGap = 20, margin = 40;
 var themes = {};
 
 var css = {
@@ -13,7 +12,8 @@ var css = {
 		"oBoxSizing": "border-box",
 		"fontSize": "13px", lineHeight: "14px",
 		"transition": "all 0.2s ease-out",
-		"webkitTransition": "all 0.2s ease-out", "mozTransition": "all 0.2s ease-out",
+		"webkitTransition": "all 0.2s ease-out",
+		"mozTransition": "all 0.2s ease-out",
 		"oTransition": "all 0.2s ease-out", "msTransition": "all 0.2s ease-out",
 		"overflow": "hidden"
 	},
@@ -24,7 +24,7 @@ var css = {
 		display: "none"
 	},
 	".scrollback-stream-hidden": {
-		"height": "50px !important"
+		"height": "48px !important"
 	},
 		".scrollback-stream-hidden .scrollback-hide": { display: "none" },
 		".scrollback-icon": {
@@ -33,16 +33,16 @@ var css = {
 			cursor: "pointer", zIndex: 1,
 			fontWeight: "bold", lineHeight: "48px", textAlign: "center"
 		},
-		".scrollback-close": {right: 0 },
+		".scrollback-close": {right: "-1px" },
 		".scrollback-hide": {right: "48px" },
-		".scrollback-menu": {left: 0},
+		".scrollback-menu": {left: "-1px" },
 		".scrollback-title": {
 			"height": "48px",
 			lineHeight: "48px", paddingLeft: "10px",
-			left: "0px", right: "0px", position: "absolute",
+			left: "1px", right: "1px", position: "absolute",
 			fontWeight: "bold",
 			zIndex: 9997, top: "0", cursor: "default",
-			"padding": "0 48px", whiteSpace: "nowrap",
+			"padding": "0 51px", whiteSpace: "nowrap",
 			textOverflow: "ellipsis", overflow: "hidden"
 		},
 			".scrollback-title-text":{

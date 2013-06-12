@@ -15,10 +15,9 @@ var socket = io.connect(scrollback.host);
 var timeAdjustment = 0;
 
 socket.on('connect', function(message) {
-	console.log("connected");
+	var i;
 	if(scrollback.streams && scrollback.streams.length) {
-		console.log("Peeking: ", scrollback.streams)
-		for(i=0; i<scrollback.streams.length; i++) {
+		for(i=0; i<scrollback.streams.length; i+=1) {
 			if(scrollback.streams[i])
 				socket.emit('peek', scrollback.streams[i]);
 		}
@@ -31,27 +30,15 @@ function requestTime() {
 requestTime(); setTimeout(requestTime, 300000);
 socket.on('time', function(data) {
 	timeAdjustment = data.server - (new Date().getTime() + data.request)/2;
-	console.log("Time adjustment is ", timeAdjustment);
 });
 
 socket.on('message', function(message) {
-	var stream;
-//	console.log(message);
-	if(message.type == 'join' && message.from == nick) {
-		console.log(message.to);
-		stream = streams[message.to];
-		if(!stream){
-			console.log("stream missing", message.to);
-			return;
-		}
-		socket.emit('get', {
-			to: stream.id, until: message.time,
-			since: stream.lastMessageAt, type: 'text'
-		});
-		console.log("calling stream ready");
-		stream.ready();
+	var stream = streams[message.to];
+	if(!streams[message])
+	if(message.type === 'join' && message.from === nick) {
+		streams[message.to].ready();
 	}
-	else if(message.type == 'part' && message.from == nick) {
+	else if(message.type === 'part' && message.from === nick) {
 		// do nothing.
 	}
 	else {

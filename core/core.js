@@ -6,13 +6,17 @@ var config = require('../config.js');
 var db = require('mysql').createConnection(config.mysql);
 var rooms = {}, gateways;
 
-db.on('close', function(err) {
+function restartDb(err) {
 	if(err) {
 		db.on('error', function() {}); // Don't crash.
 		console.log("DB Connection Error:", err);
 	}
+	console.log("Restarting Mysql connection");
 	db = require('mysql').createConnection(config.mysql);
-});
+	db.on('close', restartDb);
+}
+
+db.on('close', restartDb);
 
 exports.init = function (gw){
 	gateways = gw;

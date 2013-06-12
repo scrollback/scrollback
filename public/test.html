@@ -9,7 +9,6 @@
         <link rel="stylesheet" href="style.css">
 		<style>
 			body { background: url('img/logo.png') no-repeat center center; }
-			.scrollback-stream { height: 100% !important; width: 600px !important; }
 		</style>
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	</head>
@@ -23,7 +22,8 @@
 				streams: location.hash.substr(1).split(','),
 				theme: 'light',
 				ticker: true,
-				minimized: true
+				minimized: true,
+				maxWidth: 600
 			};
 			
 			// Don't change below this line ------------------------------------------------
