@@ -38,7 +38,7 @@ function addClass(obj, cl) {
 }
 
 function prettyDate(time, currTime){
-	var d = new Date(time), n = new Date(currTime),
+	var d = new Date(parseInt(time)), n = new Date(currTime),
 		day_diff = n.getDate() - d.getDate(),
 		weekDays=["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
 			"Friday", "Saturday"],
