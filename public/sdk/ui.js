@@ -231,7 +231,7 @@ Stream.message = function(message) {
 				'class': 'scrollback-message-separator', 'style': 'color:'+color
 			}, ' • '],
 			[ "span", { 'class': 'scrollback-message-text'}, message.text ],
-			[ "span", { 'class': 'scrollback-timestamp'}, new Date(message.time).toString()]];
+			[ "span", { 'class': 'scrollback-message-timestamp'}, new Date(message.time).toString()]];
 			break;
 		case 'join':
 			el = [["span", message.from + ' joined.']];
@@ -335,18 +335,18 @@ Stream.position = function() {
 		step = 1, z=0,
 		scrw = window.innerWidth || document.documentElement.clientWidth ||
 			document.getElementsByTagName('body')[0].clientWidth,
-		scrh = window.innerHeight || document.documentElement.clientHeight ||
-			document.getElementsByTagName('body')[0].clientHeight,		
 		colw = Math.min(scrw, maxWidth),
 		pitch = Math.min((scrw - colw - 2*margin)/l, 420), col;
 	
-	for(i=0; i<l; i++) {
+	for(i=0; i<l; i+=1) {
 		col = ss[i];
 		col.style.right = (margin + i*pitch) + 'px';
 		col.style.width = colw + 'px';
 		col.style.zIndex = z + l;
-		if(col.className.indexOf('scrollback-stream-selected') != -1) step = -1;
-		if(step < 0 || pitch >= 400) {
+		if(col.className.indexOf('scrollback-stream-selected') !== -1) {
+			step = -1;
+		}
+		if(step < 0 || pitch >= 400 || i===(l-1)) {
 			removeClass(col, 'scrollback-stream-right');
 		} else {
 			addClass(col, 'scrollback-stream-right');

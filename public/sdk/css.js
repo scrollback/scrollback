@@ -20,6 +20,9 @@ var css = {
 	".scrollback-stream-right .scrollback-title": {
 		"text-align": "right"
 	},
+	".scrollback-stream-right .scrollback-title-text": {
+		display: "none"
+	},
 	".scrollback-stream-hidden": {
 		"height": "50px !important"
 	},
