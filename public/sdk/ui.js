@@ -243,7 +243,7 @@ Stream.message = function(message) {
 			}, ' • '],
 			[ "span", { 'class': 'scrollback-message-text'}, message.text ],
 			[ "span", { 'class': 'scrollback-message-timestamp'},
-				"Sent at " + prettyDate(
+				"Sent " + prettyDate(
 					message.time, new Date().getTime() + timeAdjustment)
 			]];
 			break;
