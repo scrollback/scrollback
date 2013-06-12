@@ -17,12 +17,10 @@ var timeAdjustment = 0;
 socket.on('connect', function(message) {
 	console.log("connected");
 	if(scrollback.streams && scrollback.streams.length) {
+		console.log("Peeking: ", scrollback.streams)
 		for(i=0; i<scrollback.streams.length; i++) {
-			console.log("trying to join things");
-			socket.emit('message', {
-				type: 'join',
-				to: scrollback.streams[i]
-			});
+			if(scrollback.streams[i])
+				socket.emit('peek', scrollback.streams[i]);
 		}
 	}
 });
@@ -42,17 +40,16 @@ socket.on('message', function(message) {
 	if(message.type == 'join' && message.from == nick) {
 		console.log(message.to);
 		stream = streams[message.to];
-		if(!stream || stream.isReady){
-			console.log("stream either missing or not ready",message.to);
-			return;	
-		} 
+		if(!stream){
+			console.log("stream missing", message.to);
+			return;
+		}
 		socket.emit('get', {
 			to: stream.id, until: message.time,
 			since: stream.lastMessageAt, type: 'text'
 		});
 		console.log("calling stream ready");
 		stream.ready();
-		stream.isReady = true;
 	}
 	else if(message.type == 'part' && message.from == nick) {
 		// do nothing.

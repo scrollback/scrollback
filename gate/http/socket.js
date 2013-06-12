@@ -26,27 +26,30 @@ exports.init = function (server) {
 		socket.emit('nick', user.id);
 		socket.on('nick', function(n) {
 			user.id = n;
-			core.send({type: "identify", })
+			core.send({type: "nick", ref: 'nick'});
+		});
+		
+		socket.on('peek', function(room) {
+			console.log("Received PEEK via socket: ", room);
+			socket.join(room);
 		});
 		
 		socket.on('message', function (message) {
-			console.log("Received message via socket: ", message);
 			message.from = user.id;
 			message.time = new Date().getTime();
-			if(message.type == 'join') {
-				socket.join(message.to);
-			} else if(message.type == 'part'){
+			console.log("Received message via socket: ", message);
+			if(message.type === 'part'){
 				socket.leave(message.to);
 			}
 			core.send(message);
 		});
 		
 		socket.on('get', function(query) {
-			console.log("Received GET via socket: ", query);
-			core.read(query, function(data) {
+			console.log("Received GET via socket: ", query.to);
+			core.messages(query, function(data) {
 				var i, l=data.length;
-				console.log("Response: ", data);
-				for(i=0; i<l; i++) socket.emit('message', data[i]);
+				console.log("Response length ", data.length);
+				for(i=0; i<l; i+=1) socket.emit('message', data[i]);
 			});
 		});
 		
@@ -79,7 +82,7 @@ exports.init = function (server) {
 
 exports.send = function (message, rooms) {
 	message.text = sanitize(message.text || "");
-	message.time = new Date().getTime();
+	console.log("Socket sending", message, "to", rooms);
 	rooms.map(function(room) {
 		io.sockets.in(room).emit('message', message);
 	});

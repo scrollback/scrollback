@@ -15,18 +15,28 @@ function init() {
 	
 	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
 		if(err) throw "Cannot retrieve IRC accounts";
-		data.map(function(account) {
-			var u = url.parse(account.id), client = clients.bot[u.host];
-			if(!client) {
-				clients.bot[u.host] = client = connect(u.host, botNick, core.send);
-			}
-			client.addListener('registered', function() {
-				console.log("bot trying to join " + u.hash);
-				client.join(u.hash);
-				client.rooms[u.hash] = account.room;
-				console.log("ROOM INDEX", client.rooms);
+		
+		function joinStuff() {
+			data.map(function(account) {
+				var u, client;
+				if(account.joined) return;
+				u = url.parse(account.id);
+				client = clients.bot[u.host];
+				
+				if(!client) {
+					clients.bot[u.host] = client =
+						connect(u.host, botNick, core.send);
+					client.addListener('registered', joinStuff);
+				} else if(client.connected){
+					console.log("Bot joining " + u.hash);
+					client.join(u.hash);
+					client.rooms[u.hash] = account.room;
+					account.joined = true;
+				}
 			});
-		});
+		}
+		
+		joinStuff();
 	});
 }
 
@@ -93,8 +103,8 @@ function send(message, accounts) {
 function connect(server, nick, callback) {
 	console.log("Connecting " + nick + " to " + server);
 	var client =  new irc.Client(server, nick, {
-		userName: 'scrollback',
-		realName: 'via scrollback.io'
+		userName: 'sbtester',
+		realName: 'sb.tester.io'
 //		, debug: true
 	});
 	
@@ -118,6 +128,8 @@ function connect(server, nick, callback) {
 	
 	if(callback) {
 		client.addListener('message', function(nick, channel, text) {
+			console.log(client.nick + " hears " + nick + " say " +
+				text.substr(0,32) + " in " + channel);
 			message('text', nick, uh(channel), text);
 		});
 		

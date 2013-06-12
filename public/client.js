@@ -4745,8 +4745,9 @@ DomReady.ready(function() {
 	
 	if(scrollback.streams && scrollback.streams.length) {
 		for(i=0; i<scrollback.streams.length; i+=1) {
+			if(!scrollback.streams[i]) break;
 			stream = Stream.get(scrollback.streams[i]);
-			if(!!scrollback.minimize) stream.toggle();
+			if(scrollback.minimize !== false) stream.toggle();
 		}
 	}
 });
@@ -4771,10 +4772,10 @@ function Stream(id) {
 			["span", {
 				'class': 'scrollback-title-text'
 			}],
-			["div", {
+			scrollback.close? ["div", {
 				'class': 'scrollback-icon scrollback-close',
 				onclick: function() { self.close(); }
-			}, '×']
+			}, '×']: ""
 		],
 		["div", {'class': 'scrollback-timeline'},
 			["div", {'class': 'scrollback-tread'}],
@@ -4814,7 +4815,7 @@ function Stream(id) {
 		return el;
 	});
 	
-	self.connected = false;
+	self.joined = false;
 	document.body.appendChild(self.stream);
 };
 
@@ -4831,6 +4832,14 @@ Stream.prototype.toggle = function() {
 		removeClass(this.stream, 'scrollback-stream-hidden');
 		this.titleText.innerHTML='';
 		setTimeout(function() { self.renderTimeline(); }, 250 );
+		
+		if(!this.joined) {
+			socket.emit('message', {
+				type: 'join',
+				to: self.id
+			});
+		}
+		
 	} else {
 		removeClass(this.stream, 'scrollback-stream-selected');
 		addClass(this.stream, 'scrollback-stream-hidden');
@@ -4868,9 +4877,9 @@ Stream.prototype.select = function() {
 };
 
 Stream.prototype.ready = function() {
-	console.log(this);
 	this.nick.disabled = false;
 	this.text.disabled = false;
+	this.joined = true;
 	this.text.value = '';
 };
 
@@ -4888,7 +4897,8 @@ Stream.message = function(message) {
 		// do something more interesting next time.
 		return text;
 	}
-
+	
+	if(!message.to) return;
 	str = Stream.get(message.to);
 	
 	if(message.type === 'text') {
@@ -4939,7 +4949,8 @@ Stream.message = function(message) {
 			[ "span", {
 				'class': 'scrollback-message-separator', 'style': 'color:'+color
 			}, ' • '],
-			[ "span", { 'class': 'scrollback-message-text'}, message.text ]];
+			[ "span", { 'class': 'scrollback-message-text'}, message.text ],
+			[ "span", { 'class': 'scrollback-timestamp'}, new Date(message.time).toString()]];
 			break;
 		case 'join':
 			el = [["span", message.from + ' joined.']];
@@ -4979,13 +4990,27 @@ Stream.message = function(message) {
 	}
 	str.lastInsertPos = pos;
 	str.log.insertBefore(el, pos);
+	
+	if(el.previousSibling) {
+		if(message.time - el.previousSibling.getAttribute('data-time') < 60000)
+			addClass(el.previousSibling, 'scrollback-timestamp-hidden');
+		else
+			removeClass(el.previousSibling, 'scrollback-timestamp-hidden');
+	}
+	
+	if(el.nextSibling) {
+		if(el.nextSibling.getAttribute('data-time') - message.time < 60000)
+			addClass(el, 'scrollback-timestamp-hidden');
+		else
+			removeClass(el, 'scrollback-timestamp-hidden');
+	}
 
 	str.pendingScroll = (str.pendingScroll || 0) + el.clientHeight;
 
 	if(str.scrollTimer) clearTimeout(str.scrollTimer);
 	str.scrollTimer = setTimeout(function() {
 		var i, l, hidden = $$(str.log, "scrollback-message-hidden");
-		for(i=0, l=hidden.length; i<l; i++) {
+		for(i=0, l=hidden.length; i<l; i+=1) {
 			str.log.removeChild(hidden[i]);
 		}
 		
@@ -5001,6 +5026,7 @@ Stream.message = function(message) {
 
 Stream.get = function(id) {
 	var holder;
+	if(!id) throw "Can't get a stream with no ID!";
 	id = id.toLowerCase();
 	if(streams[id]) {
 		return streams[id];
@@ -5254,9 +5280,17 @@ var css = {
 			".scrollback-message-hidden": {
 				"opacity": 0,
 				"transition": "all 2s ease-out",
-				"webkitTransition": "all 2s ease-out", "mozTransition": "all 2s ease-out",
-				"oTransition": "all 2s ease-out", "msTransition": "all 2s ease-out",
+				"webkitTransition": "all 2s ease-out",
+				"mozTransition": "all 2s ease-out",
+				"oTransition": "all 2s ease-out",
+				"msTransition": "all 2s ease-out",
 			},
+				".scrollback-timestamp-hidden .scrollback-message-timestamp": {
+					display: "none"
+				},
+				".scrollback-message-timestamp": {
+					display: "block", "textAlign": "right"
+				},
 	".scrollback-timeline": {
 		position: "absolute", top: "48px", right: "0", width: "18px",
 		bottom: "80px", zIndex: 9996
@@ -5325,8 +5359,9 @@ themes.light = {
 			color: "#000"
 		},
 			".scrollback-message-nick": { "color": "#666" },
-			".scrollback-message-separator": { "color": "#999", },
-			".scrollback-message-join, .scrollback-message-part": { "color": "#666", },
+			".scrollback-message-separator": { "color": "#999" },
+			".scrollback-message-join, .scrollback-message-part": { "color": "#666" },
+			".scrollback-message-timestamp": {color: "#666"},
 	".scrollback-timeline": {
 		background: "#eee",
 	},
@@ -5337,7 +5372,7 @@ themes.light = {
 			background: "#000"
 		},
 		".scrollback-nick, .scrollback-text": {
-			"border": "1px solid #ccc",
+			"border": "1px solid #ccc"
 		},
 		".scrollback-nick": {
 			color: "#666", "background": "#ccc"
@@ -5370,6 +5405,7 @@ themes.dark = {
 			".scrollback-message-nick": { "color": "#999" },
 			".scrollback-message-separator": { "color": "#666", },
 			".scrollback-message-join, .scrollback-message-part": { "color": "#999", },
+			".scrollback-message-timestamp": {color: "#999"},
 	".scrollback-timeline": {
 		background: "#333",
 	},
@@ -5405,12 +5441,10 @@ var timeAdjustment = 0;
 socket.on('connect', function(message) {
 	console.log("connected");
 	if(scrollback.streams && scrollback.streams.length) {
+		console.log("Peeking: ", scrollback.streams)
 		for(i=0; i<scrollback.streams.length; i++) {
-			console.log("trying to join things");
-			socket.emit('message', {
-				type: 'join',
-				to: scrollback.streams[i]
-			});
+			if(scrollback.streams[i])
+				socket.emit('peek', scrollback.streams[i]);
 		}
 	}
 });
@@ -5430,17 +5464,16 @@ socket.on('message', function(message) {
 	if(message.type == 'join' && message.from == nick) {
 		console.log(message.to);
 		stream = streams[message.to];
-		if(!stream || stream.isReady){
-			console.log("stream either missing or not ready",message.to);
-			return;	
-		} 
+		if(!stream){
+			console.log("stream missing", message.to);
+			return;
+		}
 		socket.emit('get', {
 			to: stream.id, until: message.time,
 			since: stream.lastMessageAt, type: 'text'
 		});
 		console.log("calling stream ready");
 		stream.ready();
-		stream.isReady = true;
 	}
 	else if(message.type == 'part' && message.from == nick) {
 		// do nothing.

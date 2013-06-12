@@ -26,8 +26,9 @@ DomReady.ready(function() {
 	
 	if(scrollback.streams && scrollback.streams.length) {
 		for(i=0; i<scrollback.streams.length; i+=1) {
+			if(!scrollback.streams[i]) break;
 			stream = Stream.get(scrollback.streams[i]);
-			if(!!scrollback.minimize) stream.toggle();
+			if(scrollback.minimize !== false) stream.toggle();
 		}
 	}
 });
@@ -52,10 +53,10 @@ function Stream(id) {
 			["span", {
 				'class': 'scrollback-title-text'
 			}],
-			["div", {
+			scrollback.close? ["div", {
 				'class': 'scrollback-icon scrollback-close',
 				onclick: function() { self.close(); }
-			}, '×']
+			}, '×']: ""
 		],
 		["div", {'class': 'scrollback-timeline'},
 			["div", {'class': 'scrollback-tread'}],
@@ -95,7 +96,7 @@ function Stream(id) {
 		return el;
 	});
 	
-	self.connected = false;
+	self.joined = false;
 	document.body.appendChild(self.stream);
 };
 
@@ -112,6 +113,14 @@ Stream.prototype.toggle = function() {
 		removeClass(this.stream, 'scrollback-stream-hidden');
 		this.titleText.innerHTML='';
 		setTimeout(function() { self.renderTimeline(); }, 250 );
+		
+		if(!this.joined) {
+			socket.emit('message', {
+				type: 'join',
+				to: self.id
+			});
+		}
+		
 	} else {
 		removeClass(this.stream, 'scrollback-stream-selected');
 		addClass(this.stream, 'scrollback-stream-hidden');
@@ -149,9 +158,9 @@ Stream.prototype.select = function() {
 };
 
 Stream.prototype.ready = function() {
-	console.log(this);
 	this.nick.disabled = false;
 	this.text.disabled = false;
+	this.joined = true;
 	this.text.value = '';
 };
 
@@ -169,7 +178,8 @@ Stream.message = function(message) {
 		// do something more interesting next time.
 		return text;
 	}
-
+	
+	if(!message.to) return;
 	str = Stream.get(message.to);
 	
 	if(message.type === 'text') {
@@ -262,22 +272,18 @@ Stream.message = function(message) {
 	str.lastInsertPos = pos;
 	str.log.insertBefore(el, pos);
 	
-	if(
-		el.previousSibling &&
-		message.time - el.previousSibling.getAttribute('data-time') < 60000
-	) {
-		addClass(el.previousSibling, 'scrollback-timestamp-hidden');
-	} else {
-		removeClass(el.previousSibling, 'scrollback-timestamp-hidden');
+	if(el.previousSibling) {
+		if(message.time - el.previousSibling.getAttribute('data-time') < 60000)
+			addClass(el.previousSibling, 'scrollback-timestamp-hidden');
+		else
+			removeClass(el.previousSibling, 'scrollback-timestamp-hidden');
 	}
 	
-	if(
-		el.nextSibling &&
-		el.nextSibling.getAttribute('data-time') - message.time < 60000
-	) {
-		addClass(el, 'scrollback-timestamp-hidden');
-	} else {
-		removeClass(el, 'scrollback-timestamp-hidden');
+	if(el.nextSibling) {
+		if(el.nextSibling.getAttribute('data-time') - message.time < 60000)
+			addClass(el, 'scrollback-timestamp-hidden');
+		else
+			removeClass(el, 'scrollback-timestamp-hidden');
 	}
 
 	str.pendingScroll = (str.pendingScroll || 0) + el.clientHeight;
@@ -285,7 +291,7 @@ Stream.message = function(message) {
 	if(str.scrollTimer) clearTimeout(str.scrollTimer);
 	str.scrollTimer = setTimeout(function() {
 		var i, l, hidden = $$(str.log, "scrollback-message-hidden");
-		for(i=0, l=hidden.length; i<l; i++) {
+		for(i=0, l=hidden.length; i<l; i+=1) {
 			str.log.removeChild(hidden[i]);
 		}
 		
@@ -301,6 +307,7 @@ Stream.message = function(message) {
 
 Stream.get = function(id) {
 	var holder;
+	if(!id) throw "Can't get a stream with no ID!";
 	id = id.toLowerCase();
 	if(streams[id]) {
 		return streams[id];

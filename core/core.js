@@ -16,7 +16,7 @@ db.on('close', function(err) {
 
 exports.init = function (gw){
 	gateways = gw;
-}
+};
 
 exports.send = function(message) {
 	db.query("INSERT INTO `messages` SET `from`=?, `to`=?, `type`=?, `text`=?, "+
@@ -29,7 +29,7 @@ exports.send = function(message) {
 		function(err, data) {
 			var i, l, name, list = {};
 			if(err) console.log("Can't get list of rooms");
-			for(i=0, l=data.length; i<l; i++) {
+			for(i=0, l=data.length; i<l; i+=1) {
 				name = data[i].id.split(':')[0];
 				if(!list[name]) list[name] = [];
 				list[name].push(data[i].id);
@@ -41,7 +41,7 @@ exports.send = function(message) {
 		});
 };
 
-exports.read = function(options, callback) {
+exports.messages = function(options, callback) {
 	var query = "SELECT `from`, `to`, `type`, `text`, "+
 		"(UNIX_TIMESTAMP(`time`)*1000 + MICROSECOND(`time`)/1000) as `time` "+
 		"FROM `messages` ", where = [], params=[], desc=false, limit=256;
