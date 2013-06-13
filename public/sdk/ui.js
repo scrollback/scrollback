@@ -139,8 +139,8 @@ Stream.prototype.send = function (){
 	};
 	socket.emit('message', message);
 	this.text.value = '';
-	Stream.message(message);
-	unconfirmed.push(message);
+//	Stream.message(message);
+//	unconfirmed.push(message);
 };
 
 Stream.prototype.rename = function() {
