@@ -25,7 +25,8 @@
 		"jade": "0.x",
 		"request": "x.x",
 		"nodemailer": "0.4.x",
-		"cookie": "x"
+		"cookie": "x",
+		"sync" : ""
 	},
 	"devDependencies": {},
 	"optionalDependencies": {},
