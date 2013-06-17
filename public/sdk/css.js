@@ -26,26 +26,27 @@ var css = {
 	".scrollback-stream-hidden": {
 		"height": "48px !important"
 	},
-		".scrollback-stream-hidden .scrollback-hide": { display: "none" },
 		".scrollback-icon": {
-			position: "absolute", top: "0",
+			top: "0", margin: "0 -2px",
 			width: "48px", height: "48px",
-			cursor: "pointer", zIndex: 1,
+			cursor: "pointer", zIndex: 2,
 			fontWeight: "bold", lineHeight: "48px", textAlign: "center"
 		},
-		".scrollback-close": {right: "-1px" },
-		".scrollback-hide": {right: "48px" },
-		".scrollback-menu": {left: "-1px" },
+		".scrollback-close, .scrollback-embed": { float: "right" },
+		".scrollback-menu": { float: "left" },
 		".scrollback-title": {
 			"height": "48px",
-			lineHeight: "48px", paddingLeft: "10px",
+			lineHeight: "48px",
 			left: "1px", right: "1px", position: "absolute",
 			fontWeight: "bold",
-			zIndex: 9997, top: "0", cursor: "default",
-			"padding": "0 51px", whiteSpace: "nowrap",
-			textOverflow: "ellipsis", overflow: "hidden"
+			zIndex: 9997, top: "0", cursor: "default"
 		},
-			".scrollback-title-text":{
+			".scrollback-title-content": {
+				padding: "0 2px",
+				whiteSpace: "nowrap",
+				textOverflow: "ellipsis", overflow: "hidden"
+			},
+			".scrollback-title-text": {
 				fontWeight: "normal"
 			},
 		".scrollback-log": {
@@ -54,14 +55,17 @@ var css = {
 			"oBoxSizing": "border-box",
 			"position": "absolute", "top": "48px",
 			"bottom": "80px", "left": "0", "right": "0",
-			"overflowY": "auto", "overflowX": "hidden",
+			"overflowY": "auto", "overflowX": "hidden"
 		},
 			".scrollback-message": {
 				"overflow": "hidden", padding: "2px 24px 2px 48px",
 				"transition": "all 0.2s ease-out", textIndent: "-32px",
-				"webkitTransition": "all 0.2s ease-out", "mozTransition": "all 0.2s ease-out",
-				"oTransition": "all 0.2s ease-out", "msTransition": "all 0.2s ease-out",
-				"borderLeft": "4px solid transparent", opacity: 1, height: "auto",
+				"webkitTransition": "all 0.2s ease-out",
+				"mozTransition": "all 0.2s ease-out",
+				"oTransition": "all 0.2s ease-out",
+				"msTransition": "all 0.2s ease-out",
+				"borderLeft": "4px solid transparent",
+				opacity: 1, height: "auto",
 				cursor: "default"
 			},
 			".scrollback-message-hidden": {
@@ -89,8 +93,10 @@ var css = {
 			".scrollback-tread-row": {
 				position: "absolute", height: "1px", right: "0",
 				"transition": "all .2s linear",
-				"webkitTransition": "all 0.2s linear", "mozTransition": "all 0.2s linear",
-				"oTransition": "all 0.2s linear", "msTransition": "all 0.2s linear"
+				"webkitTransition": "all 0.2s linear",
+				"mozTransition": "all 0.2s linear",
+				"oTransition": "all 0.2s linear",
+				"msTransition": "all 0.2s linear"
 			},
 		".scrollback-thumb": {
 			position: "absolute", left: "0px",
@@ -123,6 +129,9 @@ var css = {
 	".scrollback-poweredby": {
 		position: "absolute", bottom: "4px", right: "16px", height: "16px",
 		width: "121px"
+	},
+	".scrollback-popup": {
+		position: "fixed", background: "#f70"
 	}
 };
 

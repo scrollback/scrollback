@@ -49,14 +49,18 @@ function Stream(id) {
 			["span", {
 				'class': 'scrollback-icon scrollback-menu'
 			}, '☰'],
-			id,
-			["span", {
-				'class': 'scrollback-title-text'
-			}],
 			scrollback.close? ["div", {
 				'class': 'scrollback-icon scrollback-close',
 				onclick: function() { self.close(); }
-			}, '×']: ""
+			}, '×']: "",
+			["div", {
+				'class': 'scrollback-icon scrollback-embed',
+				onclick: function() { self.embed(); }
+			}, '➚'],
+			["div", {'class': 'scrollback-title-content'}, id,
+				["span", {
+					'class': 'scrollback-title-text'
+			}]],
 		],
 		["div", {'class': 'scrollback-timeline'},
 			["div", {'class': 'scrollback-tread'}],
@@ -93,6 +97,7 @@ function Stream(id) {
 		else if(hasClass(el, 'scrollback-thumb')) self.thumb = el;
 		else if(hasClass(el, 'scrollback-title')) self.title = el;
 		else if(hasClass(el, 'scrollback-title-text')) self.titleText = el;
+		else if(hasClass(el, 'scrollback-embed')) self.embedBtn = el;
 		return el;
 	});
 	
@@ -105,6 +110,16 @@ Stream.prototype.close = function (){
 	socket.emit('message', {type: 'part', to: this.id});
 	document.body.removeChild(this.stream);
 	Stream.position();
+};
+
+Stream.prototype.embed = function () {
+//	console.log(scrollback);
+	window.open(scrollback.host + '/' + this.id, '_blank');
+	
+	//showPopup(this.embedBtn, JsonML.parse(
+	//	["div", {style: {width: "200px", height: "100px"}},
+	//		"http://" + scrollback.host + '/' + this.id
+	//	]));
 };
 
 Stream.prototype.toggle = function() {
@@ -139,8 +154,8 @@ Stream.prototype.send = function (){
 	};
 	socket.emit('message', message);
 	this.text.value = '';
-	Stream.message(message);
-	unconfirmed.push(message);
+//	Stream.message(message);
+//	unconfirmed.push(message);
 };
 
 Stream.prototype.rename = function() {
@@ -468,3 +483,25 @@ function isEcho (next) {
 	}
 	return false;
 }
+
+function showPopup(btn, el) {
+	var scrw = window.innerWidth,
+		scrh = window.innerHeight,
+		popw, poph, pop, btno, btnx, btny, btnh, btnw;
+	
+	btno = offset(btn);
+	btnx = btno.left, btny = btno.top;
+	btnh = btn.offsetHeight; btnw = btn.offsetWidth;
+	
+	
+	pop = $$(document, 'scrolback-popup')[0];
+	if(pop) pop.parentNode.removeChild(pop);
+	
+	pop = JsonML.parse(["div", { 'class': 'scrollback-popup' }]);
+	pop.appendChild(el);
+	document.body.appendChild(pop);
+	
+	popw = pop.offsetWidth; poph = pop.offsetHeight;
+	
+	console.log(btno, btnh, btnw, scrw, scrh, popw, poph);
+};

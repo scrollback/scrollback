@@ -135,7 +135,8 @@ scrollback.host=h;d.body.appendChild(e);}(document,'http://scrollback.io'));
 		window.scrollback = {
 			streams: ["scrollback", "ubuntu"],      // Change this: Array of rooms.
 			theme: 'light',   // Optional: light or dark
-			ticker: true      // Show updates when minimized?
+			ticker: true,      // Show updates when minimized?
+			host: 'http://' + location.host
 		};
 		
 		// Don't change below this line ------------------------------------------------
