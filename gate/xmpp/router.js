@@ -1,5 +1,5 @@
 var xmpp = require("node-xmpp"),
-	config = require("./config.js"),
+	config = require("../../config.js"),
 	r = new xmpp.Router(),
 	handlers = {};
 

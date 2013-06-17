@@ -20,4 +20,8 @@ exports.parser = function (req, res, next) {
 		}
 		next();
 	});
+};
+
+exports.get = function(sid, cb) {
+	sessionStore.get(sid, cb);
 }

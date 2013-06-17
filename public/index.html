@@ -1,0 +1,162 @@
+<html>
+	<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Scrollback: beautiful micro-forums for open communities.</title>
+        <meta name="description" content="Scrollback: beautiful micro-forums for open communities, embeddable on any website.">
+        <meta name="viewport" content="width=device-width">
+		<!-- link href='http://fonts.googleapis.com/css?family=Open+Sans:300,700' rel='stylesheet' type='text/css' / -->
+        <link rel="stylesheet" href="style.css">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	</head>
+	
+	<body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+		
+		<nav>
+			<div class="container clearfix">
+				<div class="box logo-box span1">
+					Scrollback
+				</div>
+				<div class="box span11">
+					<ul>
+						<li><a href="#features">Features</a></li>
+						<li><a href="#whybuilt">Why we built it</a></li>
+						<li><a href="#getembed">Get Scrollback</a></li>
+						<li><a href="http://github.com/askabt/scrollback">Fork us</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		
+		<div class='container clearfix'>
+			<div id="hero">
+				<h1>Beautiful text chat for your community website.</h1>
+				<img src='img/hero.png' style='max-width:60%'/>
+			</div>
+			<a name="features"><div class='box span4 break'>
+				<h2>Infinite scroll</h2>
+				<p>Scroll up to see what people were talking about in the last
+				hour &ndash; or last week.</p>
+			</div>
+			<div class='box span4'>
+				<h2>Minimize ticker</h2>
+				<p>Gently introduce casual visitors to your community with
+				conversation that is never out of sight.</p>
+			</div>
+			<div class='box span4'>
+				<h2>Subtle notifications</h2>
+				<p>Notifications and timestamps appear when needed, then
+				fade away to keep the focus on the conversation.</p>
+			</div>
+			<div class='box span4 break'>
+				<h2>User colors</h2>
+				<p>Quickly identify who's talking to whom, with colors
+				that represent people consistently.</p>
+			</div>
+			<div class='box span4'>
+				<h2>Timeline</h2>
+				<p>See the peaks and troughs of conversation in a colorful
+				visualization you can scroll through.</p>
+			</div>
+			<div class='box span4'>
+				<h2>User history</h2>
+				<p>Hover over a nickname to see that person's activity
+				highlighted on the timeline.</p>
+			</div>
+			<div class='box span4 break'>
+				<h2>IRC compatible</h2>
+				<p>If an active IRC community exists, we gateway to it
+				instead of competing with it.</p>
+			</div>
+			<div class='box span4'>				
+				<h2>Seamless integration</h2>
+				<p>Let Scrollback match the fonts and styles of your
+				website automatically, or customize it extensively with CSS.</p>
+			</div>
+				
+			
+			<div class='box span12 break'>
+				<h1><a name="whybuilt">Why we built Scrollback</h1>
+				
+				<p>We're a team of developers who got tired of <a href='http://en.wikipedia.org/wiki/Internet_Relay_Chat' target='wikipedia-irc'>IRC</a>.</p>
+				
+				<p>New chat systems have been appearing for the past 20 years, but they are all built for one-to-one or <strong>private</strong> conversations in small groups.</p>
+				
+				<p>Open communities, on the other hand, are larger and <strong>public</strong> by default. These communities form around open source projects, consumer brands, sports teams, entertainment franchises and many more. They need different tools.</p>
+				
+				<p>IRC is one &ndash; it is the great grand-daddy of social text chat &ndash; but it predates the web and mobile, and most users find it hopelessly complex and archaic.</p>
+				
+				<p>Scrollback is a modern, beautifully designed platform for open communities to converse. It combines the lessons learned from IRC with the ease-of-use of an embeddable web app and the power of a cloud service.</p>
+				
+				<p>Paul Graham <a href="http://ycombinator.com/rfs3.html" target='ycombinator-rfs3'>once said of Twitter</a>: &ldquo;It’s really more of a discovery than an invention; that square was always there in the periodic table of protocols, but no one had quite hit it squarely.&rdquo;</p>
+				
+				<p>IRC occupies a square in that table. Scrollback is in the same column, a few rows down.</p>
+				
+				<h1><a name="getembed">Get scrollback</a></h1>
+			</div>
+			<div class='box span6'>
+				<p>Scrollback hosts <em>rooms</em> which you can embed into any webpage.</p>
+				
+				<p>A room brings together a long-lived, interactive <em>community</em> that's stickier and more engaging than any forum system.</p>
+				<p>To embed scrollback rooms, paste this code into your page. You
+				can click to change the parts highlighted in yellow. If your room
+				doesn't exist, it will be created automatically.</p>
+				<p>If you have an IRC channel, <a href='#error'>link it to your
+					Scrollback room</a> to bring everyone in your community
+					into the same conversation.</p>
+			</div>
+			<div class='box span6'><pre><code>&lt;script&gt;
+window.scrollback = {
+  streams: [<span contenteditable class='highlight'>'trekkies'</span>],
+  theme:   '<span contenteditable data-toggle='darl' contenteditable class='highlight'>light</span>',
+  ticker:  <span contenteditable data-toggle='false' class='highlight'>true</span>
+};
+
+// Don't change below this line ------------------------------------------------
+(function(d,h,e){e=d.createElement('script');e.async=1;e.src=h+'/client.min.js';
+scrollback.host=h;d.body.appendChild(e);}(document,'http://scrollback.io'));
+&lt;/script&gt;</code></pre></div>
+			
+		</div><!-- container -->
+		
+		<footer>
+			<div class='container clearfix'>
+				<p>We care about <a href='#'>privacy</a>. Copyright Askabt Pte.
+				Ltd. Scrollback is a trademark of Askabt Pte. Ltd.</p>
+			</div>
+		</footer>
+		
+		<script src="main.js"></script>
+	
+		<script>
+		window.scrollback = {
+			streams: ["scrollback", "ubuntu"],      // Change this: Array of rooms.
+			theme: 'light',   // Optional: light or dark
+			ticker: true,      // Show updates when minimized?
+			host: 'http://' + location.host
+		};
+		
+		// Don't change below this line ------------------------------------------------
+//		(function(d,h,e){e=d.createElement('script');e.async=1;e.src=h+'/client.min.js';
+//		scrollback.host=h;d.body.appendChild(e);}(document,'http://'+location.host));
+		</script>
+
+		<script src="/socket.io/socket.io.js"></script>
+		
+		<script src="sdk/addEvent.js"></script>
+		<script src="sdk/addStyle.js"></script>
+		<script src="sdk/domReady.js"></script>
+		<script src="sdk/getByClass.js"></script>
+		<script src="sdk/jsonml2.js"></script>
+		<script src="sdk/polyfill.js"></script>
+
+		<script src="sdk/ui.js"></script>
+		<script src="sdk/timeline.js"></script>
+		<script src="sdk/css.js"></script>
+		<script src="sdk/net.js"></script>
+
+	</body>
+</html>
