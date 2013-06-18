@@ -394,7 +394,7 @@ Stream.position = function() {
 		col.style.right = (margin + i*pitch) + 'px';
 		col.style.width = colw + 'px';
 		
-		if(hasClass(col, 'scrollback-stream-selected') !== -1) {
+		if(hasClass(col, 'scrollback-stream-selected')) {
 			step = -1;
 		}
 		if(stacked) {

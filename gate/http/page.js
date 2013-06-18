@@ -9,8 +9,8 @@ exports.init = function(app) {
             var obj = {};
             var sections = subURLs[i].split("/");
             obj.room = sections[0];
-            obj.timestamp = sections[2];
-            obj.tags = sections[1].split("+");
+//            obj.timestamp = sections[2];
+//            obj.tags = sections[1].split("+");
             rooms.push(obj);
         }
         var str = JSON.stringify(rooms);
