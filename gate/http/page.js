@@ -17,15 +17,6 @@ exports.init = function(app) {
         }
         var str = JSON.stringify(rooms);
         console.log(str);
-        if(rooms[0].room=="client.min.js") {
-            res.writeHead(200, {
-                "Content-Type": "application/javascript; charset=utf-8",
-                "Content-Length": Buffer.byteLength(code, "utf8")
-            });
-            res.end(code);
-        }
-        else {
-           res.render("channel",{streams:JSON.stringify(streams)});
-        }
+        res.render("channel",{streams:JSON.stringify(streams)});
     });
 }
