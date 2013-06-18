@@ -1,6 +1,6 @@
 var config = require('../../config.js');
 var fs = require("fs");
-var code = fs.readFileSync(__dirname + "/../../client.min.js",'utf8');
+var code = fs.readFileSync(__dirname + "/../../public/client.min.js",'utf8');
 exports.init = function(app) {
     app.get('*', function(req, res, next) {
         var rooms = [];
@@ -25,7 +25,7 @@ exports.init = function(app) {
             res.end(code);
         }
         else {
-           res.render("channel",{streams:json.stringify(streams)});
+           res.render("channel",{streams:JSON.stringify(streams)});
         }
     });
 }
