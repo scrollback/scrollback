@@ -113,9 +113,10 @@ Stream.prototype.close = function (){
 };
 
 Stream.prototype.embed = function () {
-//	console.log(scrollback);
-	window.open(scrollback.host + '/' + this.id, '_blank');
+	var popupWindow=window.open(scrollback.host + '/' + this.id,"_blank");
+
 	
+
 	//showPopup(this.embedBtn, JsonML.parse(
 	//	["div", {style: {width: "200px", height: "100px"}},
 	//		"http://" + scrollback.host + '/' + this.id
