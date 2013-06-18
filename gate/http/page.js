@@ -4,11 +4,13 @@ var code = fs.readFileSync(__dirname + "/../../client.min.js",'utf8');
 exports.init = function(app) {
     app.get('*', function(req, res, next) {
         var rooms = [];
+        var streams=[];
         var i, subURLs = req.path.substring(1).split("/+/");
         for (i = 0; i < subURLs.length; i++) {
             var obj = {};
             var sections = subURLs[i].split("/");
             obj.room = sections[0];
+            streams.push(obj.room);
             obj.timestamp = sections[2];
             obj.tags = sections[1] != undefined ? sections[1].split("+") : [];
             rooms.push(obj);
@@ -23,7 +25,7 @@ exports.init = function(app) {
             res.end(code);
         }
         else {
-           res.render("channel",rooms[0]);
+           res.render("channel",{streams:json.stringify(streams)});
         }
     });
 }

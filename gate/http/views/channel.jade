@@ -6,17 +6,15 @@ html
 		meta(name="description",content="Scrollback: beautiful text chat for open communities, embeddable on any website.")
 		meta(name="viewport",content="width=device-width")
 		link(href='http://fonts.googleapis.com/css?family=Open+Sans:300', rel='stylesheet',type='text/css')
-		link(rel="stylesheet",href="style.css")
+		link(rel="stylesheet",href="/style.css")
 		style
-			body { background: url('img/logo.png') no-repeat center center; }
+			body { background: url('/img/logo.png') no-repeat center center; }
 		meta(http-equiv="X-UA-Compatible",content="IE=Edge")
 	body
-		center
-			h2 Channel for the topic #{room}
 		div#background
 		script
 			window.scrollback = {
-				streams: location.hash.substr(1).split(','),
+				streams:[#{streams}],
 				theme: 'light',
 				ticker: true,
 				minimized: true,
