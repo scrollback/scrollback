@@ -28,7 +28,7 @@ DomReady.ready(function() {
 		for(i=0; i<scrollback.streams.length; i+=1) {
 			if(!scrollback.streams[i]) break;
 			stream = Stream.get(scrollback.streams[i]);
-			if(scrollback.minimize !== false) stream.toggle();
+			if(scrollback.minimized !== false) stream.toggle();
 		}
 	}
 });
@@ -113,14 +113,7 @@ Stream.prototype.close = function (){
 };
 
 Stream.prototype.embed = function () {
-	var popupWindow=window.open(scrollback.host + '/' + this.id,"_blank");
-
-	
-
-	//showPopup(this.embedBtn, JsonML.parse(
-	//	["div", {style: {width: "200px", height: "100px"}},
-	//		"http://" + scrollback.host + '/' + this.id
-	//	]));
+	window.open(scrollback.host + '/' + this.id,"_blank");
 };
 
 Stream.prototype.toggle = function() {

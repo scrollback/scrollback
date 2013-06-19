@@ -17,6 +17,12 @@ exports.init = function(app) {
         }
         var str = JSON.stringify(rooms);
         console.log(str);
+        
+        /*
+         * This is an ugly hack. Static files should 
+         */
+        
+        
         if(rooms[0].room=="client.min.js") {
             res.writeHead(200, {
                 "Content-Type": "application/javascript; charset=utf-8",
