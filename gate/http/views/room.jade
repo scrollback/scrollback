@@ -1,5 +1,18 @@
 extends layout
 
+block styles
+	style.
+		#navbar {background-color: #000; height: 80px;}
+		.logo {padding-left:10px; padding-top:5px;}
+		.link {color: #fff; text-decoration:none; float:right; padding-top:30px; padding-right:10px;}
+		.link:hover {color: #ccc;}
+
+
+block content
+	div#navbar
+		img(src="/img/logo_inv.png", class="logo")
+		<a href="#" class="link">Help</a>
+
 block scripts
 	script.
 		window.scrollback = {

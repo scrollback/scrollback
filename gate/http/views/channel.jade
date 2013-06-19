@@ -8,10 +8,15 @@ html
 		link(href='http://fonts.googleapis.com/css?family=Open+Sans:300', rel='stylesheet',type='text/css')
 		link(rel="stylesheet",href="/style.css")
 		style.
-			body { background: url('/img/logo.png') no-repeat center center; }
+			#navbar {background-color: #000; height: 80px;}
+			.logo {padding-left:10px; padding-top:5px;}
+			.link {color: #fff; text-decoration:none; float:right; padding-top:30px; padding-right:10px;}
+			.link:hover {color: #ccc;}
 		meta(http-equiv="X-UA-Compatible",content="IE=Edge")
 	body
-		div#background
+		div#navbar
+			img(src="/img/logo_inv.png", class="logo")
+			<a href="#" class="link">Help</a>
 		script.
 			window.scrollback = {
 				streams:!{streams},
