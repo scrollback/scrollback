@@ -359,6 +359,30 @@ Stream.updateNicks = function(n) {
 	nick = n;
 };
 
+
+
+Stream.stack=function(){
+	var ss = $$(document, "scrollback-stream"), i, l=ss.length;
+	for(i=0;i<l;i++) {
+		col=ss[i];
+		if(hasClass(col, 'scrollback-stream-selected')) {
+			col.style.zIndex=l;
+		}
+		else {
+			if(col.style.zIndex==="") {
+				col.style.zIndex=1;
+			}
+			else if(col.style.zIndex===l.toString()) {
+				col.style.zIndex=l-1;
+			}
+			else{
+				col.style.zIndex=1;
+			}
+		}
+	}
+};
+
+
 Stream.position = function() {
 	var maxWidth = scrollback.maxWidth || 400,
 		maxHeight= scrollback.maxHeight|| 400,
@@ -368,7 +392,7 @@ Stream.position = function() {
 		minPitch = scrollback.minPitch || 120,
 		margin   = scrollback.margin   || 40;
 	var ss = $$(document, "scrollback-stream"), i, l=ss.length,
-		step = 1, z=0, colw, colh, col, y=0, h, stacked, pitch,
+		step = 1, z=0, colw, colh, col, y=0, h, stacked=false, pitch,
 		scrw = document.documentElement.clientWidth ||
 			document.getElementsByTagName('body')[0].clientWidth,
 		scrh = document.documentElement.clientHeight ||
@@ -394,7 +418,6 @@ Stream.position = function() {
 		col = ss[i];
 		col.style.right = (margin + i*pitch) + 'px';
 		col.style.width = colw + 'px';
-		
 		if(hasClass(col, 'scrollback-stream-selected')) {
 			step = -1;
 		}
@@ -402,23 +425,19 @@ Stream.position = function() {
 			h = hasClass(col, 'scrollback-stream-selected')? colh: minHeight;
 			col.style.height = h + 'px';
 			col.style.bottom = y + 'px';
-			col.style.zIndex = z + l;
 			y += h;
 		} else {
 			h = hasClass(col, 'scrollback-stream-hidden')? minHeight: colh;
 			col.style.height = h + 'px';
 			col.style.bottom = '0px';
-			col.style.zIndex = z + l;
 			if(step < 0 || pitch >= colw || i===(l-1)) {
 				removeClass(col, 'scrollback-stream-right');
 			} else {
 				addClass(col, 'scrollback-stream-right');
 			}
 		}
-		
-		
-		z = z + step;
 	}
+	Stream.stack();
 };
 
 // --- color for names ---
