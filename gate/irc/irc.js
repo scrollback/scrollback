@@ -151,7 +151,7 @@ function connect(server, nick, callback) {
 			for(i=0, l=channels.length; i<l; i++) {
 				message('part', from, uh(channels[i]), reason);
 			}
-		});		
+		});
 	}
 	
 	client.addListener('registered', function() {
