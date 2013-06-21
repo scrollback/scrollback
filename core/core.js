@@ -16,7 +16,7 @@ function restartDb(err) {
 	db.on('close', restartDb);
 }
 
-db.on('close', restartDb);
+db.on('end', restartDb);
 
 exports.init = function (gw){
 	gateways = gw;

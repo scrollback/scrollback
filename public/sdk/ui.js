@@ -28,6 +28,7 @@ DomReady.ready(function() {
 		for(i=0; i<scrollback.streams.length; i+=1) {
 			if(!scrollback.streams[i]) break;
 			stream = Stream.get(scrollback.streams[i]);
+			console.log("MINIMIZED is ", scrollback.minimized);
 			if(scrollback.minimized !== false) stream.toggle();
 		}
 	}
@@ -355,7 +356,7 @@ Stream.updateNicks = function(n) {
 
 
 Stream.stack=function(){
-	var ss = $$(document, "scrollback-stream"), i, l=ss.length;
+	var ss = $$(document, "scrollback-stream"), i, l=ss.length, col;
 	for(i=0;i<l;i++) {
 		col=ss[i];
 		if(hasClass(col, 'scrollback-stream-selected')) {
@@ -388,9 +389,8 @@ Stream.position = function() {
 		step = 1, z=0, colw, colh, col, y=0, h, stacked=false, pitch,
 		scrw = document.documentElement.clientWidth ||
 			document.getElementsByTagName('body')[0].clientWidth,
-		scrh = document.documentElement.clientHeight ||
-			document.getElementsByTagName('body')[0].clientHeight;
-			
+		scrh = window.innerHeight;
+		
 	if(scrw < minWidth + 2*margin + minPitch*(l-1)) {
 		stacked = true;
 		pitch = 0; colw=scrw; margin=0;
