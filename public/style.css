@@ -23,16 +23,16 @@ pre { background: #333; color: #fff; font-size: 13px; max-width: 80em;
 margin: 0 auto; padding: 20px; }
 
 nav {
-    background: #333; line-height: 48px; color: #fff;
-    overflow: visible;
+    background: #555; line-height: 40px; color: #fff;
+    overflow: visible; border-bottom: 4px solid #3ca;
 }
-    .logo-box { height: 48px; overflow: visible; }
+    .logo-box { height: 40px; overflow: visible; }
 
     nav ul {
         display: block; list-style: none; text-align: right; margin: 0; padding: 0;
     }
         nav li { display: inline; padding: 0 16px; }
-            nav li a { display: inline-block; text-decoration: none; color: #fff; z-index: 2; line-height: 48px; }
+            nav li a { display: inline-block; text-decoration: none; color: #fff; z-index: 2; line-height: 40px; }
     nav .logo {
         position: absolute; top:0; left: 48px;
         z-index: 1;

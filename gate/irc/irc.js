@@ -73,7 +73,6 @@ function send(message, accounts) {
 						console.log(client.nick + " trying to join " + channel);
 						client.join(channel);
 						client.rooms[channel.toLowerCase()] = message.to;
-						console.log("ROOM INDEX", client.rooms);
 					});
 				}
 				
@@ -93,7 +92,6 @@ function send(message, accounts) {
 				if(client && client.chans[channel]) {
 					client.part(channel);
 					delete client.rooms[channel.toLowerCase()];
-					console.log("ROOM INDEX", client.rooms);
 				}
 				break;
 		}
@@ -105,7 +103,7 @@ function connect(server, nick, callback) {
 	var client =  new irc.Client(server, nick, {
 		userName: 'sbtester',
 		realName: 'sb.tester.io'
-//		, debug: true
+		, debug: true
 	});
 	
 	function uh(s) {

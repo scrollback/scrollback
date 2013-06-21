@@ -1,6 +1,7 @@
 Stream.prototype.scroll = function() {
 	var log = this.log, up, until = this.firstMessageAt;
 	
+	
 	if(typeof this.lastScrollTop !== 'undefined' && until > 0 &&
 		until != this.lastRequestedUntil
 	) {
@@ -27,6 +28,8 @@ Stream.prototype.renderThumb = function() {
 		thumbBottom = 0,
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
+		
+	console.log("Timeline rendering");
 	
 	while(msg) {
 		pos = offset(msg)[1];

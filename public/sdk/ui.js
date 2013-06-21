@@ -130,7 +130,6 @@ Stream.prototype.toggle = function() {
 				to: self.id
 			});
 		}
-		
 	} else {
 		removeClass(this.stream, 'scrollback-stream-selected');
 		addClass(this.stream, 'scrollback-stream-hidden');
