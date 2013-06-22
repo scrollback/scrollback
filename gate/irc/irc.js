@@ -30,7 +30,7 @@ function init() {
 				} else if(client.connected){
 					console.log("Bot joining " + u.hash);
 					client.join(u.hash);
-					client.rooms[u.hash] = account.room;
+					client.rooms[u.hash.toLowerCase()] = account.room;
 					account.joined = true;
 				}
 			});
