@@ -1,15 +1,23 @@
 extends layout
 
 block styles
-
+	style.
+		.scrollback-embed { display:none; }
+		#intro { width: 400px; position: absolute; left: 0px; }
 block content
-
+		#intro
+			p Watch all the stream you care about.
+			label Add another stream
+				form#submit
+					input
+	
 block scripts
 	script.
 		window.scrollback = {
 		streams:!{streams},
 			theme: 'light',
 			ticker: true,
+			close: true,
 			minimized: false,
 			maxWidth: 600,
 			maxHeight: 9999

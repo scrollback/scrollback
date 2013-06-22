@@ -18,8 +18,12 @@ socket.on('connect', function(message) {
 	var i;
 	if(scrollback.streams && scrollback.streams.length) {
 		for(i=0; i<scrollback.streams.length; i+=1) {
-			if(scrollback.streams[i])
+			if(scrollback.streams[i]) {
 				socket.emit('peek', scrollback.streams[i]);
+				if(scrollback.minimized === false) {
+					Stream.get(scrollback.streams[i]).join();
+				}
+			}
 		}
 	}
 });

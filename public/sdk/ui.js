@@ -29,9 +29,13 @@ DomReady.ready(function() {
 			if(!scrollback.streams[i]) break;
 			stream = Stream.get(scrollback.streams[i]);
 			console.log("MINIMIZED is ", scrollback.minimized);
-			if(scrollback.minimized !== false) stream.toggle();
+			if(scrollback.minimized !== false) {
+				stream.toggle();
+			}
 		}
 	}
+	
+	scrollback.create = Stream.get;
 });
 
 // ---- The Stream constructor ----
@@ -123,18 +127,22 @@ Stream.prototype.toggle = function() {
 		removeClass(this.stream, 'scrollback-stream-hidden');
 		this.titleText.innerHTML='';
 		setTimeout(function() { self.renderTimeline(); }, 250 );
-		
-		if(!this.joined) {
-			socket.emit('message', {
-				type: 'join',
-				to: self.id
-			});
-		}
+		self.join();
 	} else {
 		removeClass(this.stream, 'scrollback-stream-selected');
 		addClass(this.stream, 'scrollback-stream-hidden');
 	}
 	Stream.position();
+};
+
+Stream.prototype.join = function() {
+	console.log("Join called ", this.joined);
+	if(!this.joined) {
+		socket.emit('message', {
+			type: 'join',
+			to: this.id
+		});
+	}
 };
 
 Stream.prototype.send = function (){
