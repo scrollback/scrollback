@@ -35,7 +35,7 @@ DomReady.ready(function() {
 		}
 	}
 	
-	scrollback.create = Stream.get;
+	scrollback.addStream = Stream.get;
 });
 
 // ---- The Stream constructor ----
@@ -92,7 +92,8 @@ function Stream(id) {
 			}]],
 			["button", {type: 'submit', 'class': 'scrollback-hidden'}, "Send"]
 		],
-		["a", {href: "http://scrollback.io", "class": "scrollback-poweredby", target: "_blank"}]
+		["a", {href: "http://scrollback.io", "class": "scrollback-poweredby",
+			target: "_blank"}]
 	], function(el) {
 		if(hasClass(el, 'scrollback-log')) self.log = el;
 		else if(hasClass(el, 'scrollback-nick')) self.nick = el;
@@ -112,13 +113,14 @@ function Stream(id) {
 
 Stream.prototype.close = function (){
 	delete streams[this.id];
+	updateStreams();
 	socket.emit('message', {type: 'part', to: this.id});
 	document.body.removeChild(this.stream);
 	Stream.position();
 };
 
 Stream.prototype.embed = function () {
-	window.open(scrollback.host + '/' + this.id,"_blank");
+	window.open(scrollback.host + '/' + this.id + '/',"_blank");
 };
 
 Stream.prototype.toggle = function() {
@@ -347,6 +349,7 @@ Stream.get = function(id) {
 		Stream.position();
 		streams[id].lastRequestedUntil = new Date().getTime() + timeAdjustment;
 		socket.emit('get', { to: id, until: new Date().getTime() + timeAdjustment, type: 'text' });
+		updateStreams();
 		return streams[id];
 	}
 };
@@ -363,23 +366,15 @@ Stream.updateNicks = function(n) {
 
 
 Stream.stack=function(){
-	var ss = $$(document, "scrollback-stream"), i, l=ss.length, col;
-	for(i=0;i<l;i++) {
+	var ss = $$(document, "scrollback-stream"), i, l=ss.length, col,
+		z=0, step=1;
+	for(i=0; i<l; i+=1) {
 		col=ss[i];
 		if(hasClass(col, 'scrollback-stream-selected')) {
-			col.style.zIndex=l;
+			step = -1;
 		}
-		else {
-			if(col.style.zIndex==="") {
-				col.style.zIndex=1;
-			}
-			else if(col.style.zIndex===l.toString()) {
-				col.style.zIndex=l-1;
-			}
-			else{
-				col.style.zIndex=1;
-			}
-		}
+		col.style.zIndex=l+z;
+		z += step;
 	}
 };
 
@@ -388,7 +383,7 @@ Stream.position = function() {
 	var maxWidth = scrollback.maxWidth || 400,
 		maxHeight= scrollback.maxHeight|| 400,
 		minWidth = scrollback.minWidth || 250,
-		minHeight= scrollback.minHeight|| 48,
+		minHeight= scrollback.minHeight|| 44,
 		maxGap   = scrollback.maxGap   || 20,
 		minPitch = scrollback.minPitch || 120,
 		margin   = scrollback.margin   || 40;
@@ -426,6 +421,7 @@ Stream.position = function() {
 			col.style.height = h + 'px';
 			col.style.bottom = y + 'px';
 			y += h;
+			removeClass(col, 'scrollback-stream-right');
 		} else {
 			h = hasClass(col, 'scrollback-stream-hidden')? minHeight: colh;
 			col.style.height = h + 'px';
@@ -478,6 +474,16 @@ function hashColor(name) {
 	}
 	
 	return color(hash(name));
+}
+
+var streamsUpdateTimer = null;
+function updateStreams() {
+	if(streamsUpdateTimer) clearTimeout(streamsUpdateTimer);
+	streamsUpdateTimer = setTimeout(function() {
+		scrollback.streams = Object.keys(streams);
+		if(scrollback.onchange) scrollback.onchange();
+		streamsUpdateTimer = null;
+	}, 0);
 }
 
 function isEcho (next) {

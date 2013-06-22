@@ -3,20 +3,14 @@ var fs = require("fs");
 var code = fs.readFileSync(__dirname + "/../../public/client.min.js",'utf8');
 exports.init = function(app) {
     app.get('*', function(req, res, next) {
-        var rooms = [];
-        var streams=[];
-        var i, subURLs = req.path.substring(1).split("/+/");
-        for (i = 0; i < subURLs.length; i+=1) {
-            var obj = {};
-            var sections = subURLs[i].split("/");
-            obj.room = sections[0];
-            streams.push(obj.room);
-            obj.timestamp = sections[2];
-            obj.tags = sections[1] !== undefined ? sections[1].split("+") : [];
-            rooms.push(obj);
-        }
-        var str = JSON.stringify(rooms);
-        console.log(str);
-        res.render("room",{streams:JSON.stringify(streams)});
+        var streams = req.path.substring(1).split("/+/").map(function(p) {
+            return p.split('/')[0];
+        });
+        res.render("room", {
+            streams: JSON.stringify(streams),
+            title: streams.join(', ').replace(/\b[a-z]/g, function(m) {
+                return m.toUpperCase();
+            })
+        });
     });
 };

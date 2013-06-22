@@ -140,16 +140,16 @@ themes.light = {
 		"background": "#eee", color: "#000",
 	},
 		".scrollback-icon": {
-			color: "#fff", background: "#000"
+			color: "#fff", background: "#555"
 		},
 		".scrollback-icon:hover": {
-			background: "#555"
+			background: "#000"
 		},
 		".scrollback-title": {
-			background: "#000", color: "#fff", borderBottomColor: "#3ca"
+			background: "#555", color: "#fff", borderBottomColor: "#3ca"
 		},
 			".scrollback-title-text": {
-				color: "#555"
+				color: "#ccc"
 			},
 		".scrollback-log": {
 			color: "#000"
@@ -184,16 +184,16 @@ themes.dark = {
 		"background": "#000", color: "#fff",
 	},
 		".scrollback-icon": {
-			color: "#fff", background: "#000"
+			color: "#fff", background: "#555"
 		},
 		".scrollback-icon:hover": {
 			background: "#000"
 		},
 		".scrollback-title": {
-			background: "#000", color: "#fff", borderBottomColor: "#3ca"
+			background: "#555", color: "#fff", borderBottomColor: "#3ca"
 		},
 			".scrollback-title-text":{
-				color: "#999"
+				color: "#ccc"
 			},
 		".scrollback-log": {
 			color: "#fff"

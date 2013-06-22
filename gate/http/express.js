@@ -10,7 +10,8 @@ exports.init = function() {
 	app.set('view engine', 'jade');
 	app.set('view options', { debug: true });
 	
-//	app.use(express.logger("AA/HTTP - [:date] :method :url :referrer :user-agent :status"));
+	app.use(express.logger(
+		"AA/HTTP - [:date] :method :url :referrer :user-agent :status"));
 	app.use(express.cookieParser());
 	app.use(session.parser);
 	
