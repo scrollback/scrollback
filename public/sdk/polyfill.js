@@ -56,9 +56,3 @@ function prettyDate(time, currTime){
 	return str + ' at '+ d.getHours() + ':' +
 		(d.getMinutes()<10? '0': '') + d.getMinutes();
 }
-
-Object.keys = Object.keys || function (o) {
-	var i, k = [];
-	for(i in o) if(o.hasOwnProperty(i)) { k.push(i); }
-	return k;
-};
