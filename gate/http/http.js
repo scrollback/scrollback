@@ -8,3 +8,4 @@ exports.init = function() {
 	socket.init(app.server);
 	page.init(app);
 };
+
