@@ -56,7 +56,7 @@ function send(message, accounts) {
 						if(message.from === client.nick) process.nextTick(function (){
 							if(Object.keys(client.chans).length === 0) {
 								client.disconnect();
-								delete clients[message.from][u.host]
+								delete clients[message.from][u.host];
 							}
 						});
 					});
@@ -69,7 +69,7 @@ function send(message, accounts) {
 					console.log("ROOM INDEX", client.rooms);
 				} else {
 					console.log("Waiting for registration before joining.");
-					client.addListener('registered', function() {
+					client.once('registered', function() {
 						console.log(client.nick + " trying to join " + channel);
 						client.join(channel);
 						client.rooms[channel.toLowerCase()] = message.to;
@@ -82,9 +82,9 @@ function send(message, accounts) {
 					client.say(channel, message.text);
 				} else if(client) {
 					// Queue messages if join has not happened yet.
-					client.addListener('join'+channel, function() {
-						client.say(channel, message.text);
-					});
+					//client.once('join'+channel, function() {
+					//	client.say(channel, message.text);
+					//});
 				}
 				break;
 			case 'part':
@@ -112,12 +112,12 @@ function connect(server, nick, callback) {
 	}
 	
 	function message(type, from, to, text) {
-		var message = {
+		var msg = {
 			type: type, from: from, to: to, text: text,
 			time: new Date().getTime()
 		};
-		if(isEcho("irc", message)) return;
-		if(callback) callback(message);
+		if(isEcho("irc", msg)) return;
+		if(callback) callback(msg);
 	}
 	
 	client.addListener('error', function(message) {
