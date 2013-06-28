@@ -201,7 +201,8 @@ Stream.message = function(message) {
 			// console.log(text, r.index, u.lastIndex);
 			m.push(text.substring(s, r.index));
 			s = u.lastIndex;
-			m.push(["a", {href: r[1]?r[0]:'http://'+r[0]}, r[0]]);
+			m.push(["a", {href: r[1]?r[0]:'http://'+r[0],
+		                  target: '_blank'}, r[0]]);
 		}
 		m.push(text.substring(s));
 		// do something more interesting next time.
