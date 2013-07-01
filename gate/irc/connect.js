@@ -72,6 +72,7 @@ function connect(server, nick, callback) {
 			client.sayQueues[channel].forEach(function(message) {
 				client.say(channel, message);
 			});
+			client.sayQueues[channel] = [];
 		}
 	});
 	
@@ -84,6 +85,8 @@ function connect(server, nick, callback) {
 			log("Joining " + channel + " (queued).");
 			client.join(channel);
 		});
+		
+		client.joinQueue = [];
 	});
 	
 	// When parted all channels, disconnect.
