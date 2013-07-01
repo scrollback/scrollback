@@ -19,7 +19,7 @@ exports.init = function (server) {
 			
 		if(!user) {
 			users[sid] = user = {
-				id: 'guest-' + Math.floor(Math.random() * 10000)
+				id: 'sb' + Math.floor(Math.random() * 10000)
 			}
 		}
 		
@@ -54,7 +54,7 @@ exports.init = function (server) {
 		});
 		
 		socket.on('disconnect', function() {
-			var i, rooms = [], room;
+			var rooms = [], room;
 			console.log("Beginning 1 minute wait:", rooms);
 			
 			for(room in io.sockets.manager.roomClients[socket.id]) {

@@ -3,7 +3,9 @@ var irc = require("irc"),
 	config = require("../../config.js"),
 	db = require("mysql").createConnection(config.mysql),
 	url = require("url"),
-	isEcho = require("../../lib/isecho.js");
+	connect = require("./connect.js"),
+	isEcho = require("../../lib/isecho.js"),
+	log = require("../../lib/logger.js");
 
 var botNick=config.irc.nick, clients = {bot: {}};
 
@@ -28,7 +30,7 @@ function init() {
 						connect(u.host, botNick, core.send);
 					client.addListener('registered', joinStuff);
 				} else if(client.connected){
-					console.log("Bot joining " + u.hash);
+					log("Bot joining " + u.hash);
 					client.join(u.hash);
 					client.rooms[u.hash.toLowerCase()] = account.room;
 					account.joined = true;
@@ -52,43 +54,19 @@ function send(message, accounts) {
 			case 'join':
 				if(!client) {
 					clients[message.from][u.host] = client = connect(u.host, message.from);
-					client.addListener('part', function() {
-						if(message.from === client.nick) process.nextTick(function (){
-							if(Object.keys(client.chans).length === 0) {
-								client.disconnect();
-								delete clients[message.from][u.host]
-							}
-						});
-					});
+					var disconnect = function() { delete clients[message.from][u.host]; };
+					client.on('quit', disconnect);
+					client.on('kill', disconnect);
 				}
 				
-				if(client.connected) {
-					console.log(client.nick + " trying to join " + channel);
-					client.join(channel);
-					client.rooms[channel.toLowerCase()] = message.to;
-					console.log("ROOM INDEX", client.rooms);
-				} else {
-					console.log("Waiting for registration before joining.");
-					client.addListener('registered', function() {
-						console.log(client.nick + " trying to join " + channel);
-						client.join(channel);
-						client.rooms[channel.toLowerCase()] = message.to;
-					});
-				}
-				
+				client.join(channel);
+				client.rooms[channel.toLowerCase()] = message.to;
 				break;
 			case 'text':
-				if(client && client.chans[channel]) {
-					client.say(channel, message.text);
-				} else if(client) {
-					// Queue messages if join has not happened yet.
-					client.addListener('join'+channel, function() {
-						client.say(channel, message.text);
-					});
-				}
+				client.say(channel, message.text);
 				break;
 			case 'part':
-				console.log(client && client.nick + " parts " + channel);
+				log(client && client.nick + " parts " + channel);
 				if(client && client.chans[channel]) {
 					client.part(channel);
 					delete client.rooms[channel.toLowerCase()];
@@ -96,70 +74,5 @@ function send(message, accounts) {
 				break;
 		}
 	});
-}
-
-function connect(server, nick, callback) {
-	console.log("Connecting " + nick + " to " + server);
-	var client =  new irc.Client(server, nick, {
-		userName: 'sbtester',
-		realName: 'sb.tester.io'
-		, debug: true
-	});
-	
-	function uh(s) {
-		//console.log("Trying to find ", client.rooms, s);
-		return client.rooms[s.toLowerCase()] || "guest-" + s.substr(1);
-	}
-	
-	function message(type, from, to, text) {
-		var message = {
-			type: type, from: from, to: to, text: text,
-			time: new Date().getTime()
-		};
-		if(isEcho("irc", message)) return;
-		if(callback) callback(message);
-	}
-	
-	client.addListener('error', function(message) {
-		console.log("Error from " + message.server, message.args);
-	});
-	
-	if(callback) {
-		client.addListener('message', function(nick, channel, text) {
-			console.log(client.nick + " hears " + nick + " say " +
-				text.substr(0,32) + " in " + channel);
-			message('text', nick, uh(channel), text);
-		});
-		
-		client.addListener('join', function(channel, from) {
-			console.log(client.nick + " hears " + from + " joined " + channel);
-			if(from !== client.nick) {
-				message('join', from, uh(channel), '');
-			}
-		});
-		
-		client.addListener('part', function(channel, from, reason) {
-			console.log(client.nick + " hears " + from + " left " + channel);
-			if(from !== client.nick) {
-				message('part', from, uh(channel), reason);
-			}
-		});
-		
-		client.addListener('quit', function(from, reason, channels) {
-			for(i=0, l=channels.length; i<l; i++) {
-				message('part', from, uh(channels[i]), reason);
-			}
-		});
-	}
-	
-	client.addListener('registered', function() {
-		console.log(client.nick + " is connected to " + server);
-		client.connected = true;
-	});
-	
-	client.connected = false;
-	client.rooms = {};
-
-	return client;
 }
 
