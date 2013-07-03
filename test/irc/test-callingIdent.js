@@ -1,8 +1,8 @@
 var dgram = require("dgram");
 (function (){
 	var client = dgram.createSocket("udp4");
-	var msg=new Buffer("32,6129");
-	client.send( msg, 0, msg.length,8888, "localhost", function(err,bytes){
+	var msg=new Buffer("32, 6129\r\n");
+	client.send( msg, 0, msg.length,113, "localhost", function(err,bytes){
 		if(typeof err==="undefined"){
 			console.log();
 		}

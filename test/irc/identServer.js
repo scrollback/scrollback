@@ -13,36 +13,35 @@ exports.init=function(){
 	server.bind(113);
 	
 	server.on("message",function(data, rinfo) {
-		var msgParts, portPair,i,msg, user;
-		console.log("Server REV:"+data+": from->"+rinfo.address+":"+rinfo.port);
+		var portPair,i,msg, user;
+		console.log("Request from:"+rinfo.address+": "+rinfo.port+":"+data);
+		
 		if (typeof data === "undefined") {
 			return;
 		}
 		
+		portPair=data.toString().replace(/\s/g, '');
+		user = users[portPair];
 		
-		user = users[data.toString().replace(/\s/g, '')];
+		portPair=portPair.split(",")[0]+", "+portPair.split(",")[1];
 		
-		//
 		//msgParts=data.toString().split(",");
 		//portPair=msgParts[0].trim();
 		//portPair=portPair+","+msgParts[1].trim();
 				
 		if (user) {
-			msg=new Buffer(data+" : USERID : "+user.origin+" : "+
-						user.uid);
+			msg=new Buffer(portPair+" : USERID : "+user.origin+" : "+
+						user.uid+"\r\n");
 		} else {
-			msg=new Buffer(data+" : ERROR : NO-USER");
+			msg=new Buffer(portPair+" : ERROR : NO-USER"+"\r\n");
 		}
+		
 		
 		server.send( msg, 0, msg.length, rinfo.port, rinfo.address,
 			function(err,bytes) {
 				console.log("message sent: "+msg);
 			}
 		);
-	});
-	
-	server.on("listening",function(lis){
-		console.log("listening..");
 	});
 };
 

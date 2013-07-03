@@ -42,7 +42,7 @@ DomReady.ready(function() {
 
 function Stream(id) {
 	var self = this;
-	self = Object.create(EventEmitter);
+	//self = Object.create(EventEmitter);
 	self.id = id;
 	self.stream = JsonML.parse(["div", {
 		'class': 'scrollback-stream',
