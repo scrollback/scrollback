@@ -25,6 +25,7 @@
 		"jade": "0.x",
 		"request": "x.x",
 		"nodemailer": "0.4.x",
+		"limiter": "x",
 		"cookie": "x"
 	},
 	"devDependencies": {},
