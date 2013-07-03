@@ -5,15 +5,20 @@
 */
 var io = require("socket.io"),
 	core = require("../../core/core.js"),
-	cookie = require("cookie");
-	
+	cookie = require("cookie"),
+	config = require("../../config.js"),
+	RateLimiter = require('limiter').RateLimiter;
+
 var users = {};
 
 exports.init = function (server) {
 	io = io.listen(server);
 	io.set('log level', 1);
-	
+
 	io.sockets.on('connection', function (socket) {
+
+		var limiter = new RateLimiter(config.http.limit, config.http.time, true);
+		
 		var sid = cookie.parse(socket.handshake.headers.cookie || '')['connect.sid'],
 			user = users[sid];
 			
@@ -35,13 +40,21 @@ exports.init = function (server) {
 		});
 		
 		socket.on('message', function (message) {
-			message.from = user.id;
-			message.time = new Date().getTime();
-			console.log("Received message via socket: ", message);
-			if(message.type === 'part'){
-				socket.leave(message.to);
-			}
-			core.send(message);
+			limiter.removeTokens(1, function(err, remaining) {
+				if (remaining < 0) {
+					console.log("Error: API Limit exceeded.");
+					socket.emit('error', 'API Limit exceeded.');
+				} else {
+					console.log("API Limit remaining:", remaining);
+					message.from = user.id;
+					message.time = new Date().getTime();
+					console.log("Received message via socket: ", message);
+					if(message.type === 'part'){
+						socket.leave(message.to);
+					}
+					core.send(message);
+				}
+			});
 		});
 		
 		socket.on('get', function(query) {
