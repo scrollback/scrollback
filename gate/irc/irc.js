@@ -1,3 +1,5 @@
+"use strict";
+
 var irc = require("irc"),
 	core = require("../../core/core.js"),
 	config = require("../../config.js"),
@@ -13,13 +15,11 @@ exports.init = init;
 exports.send = send;
 
 function init() {
-	var i, l, serv, chan;
-	
 	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
 		if(err) throw "Cannot retrieve IRC accounts";
 		
 		function joinStuff() {
-			data.map(function(account) {
+			data.forEach(function(account) {
 				var u, client;
 				if(account.joined) return;
 				u = url.parse(account.id);

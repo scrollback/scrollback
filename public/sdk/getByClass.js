@@ -9,14 +9,15 @@
  */
 
 function getByClass (d, search) {
+	"use strict";
 	var elements, pattern, i, results = [];
 	
 	if(d.getElementsByClassName) {
-		d.getElementsByClassName(search);
+		return [].slice.apply(d.getElementsByClassName(search));
 	}
 	
 	if (d.querySelectorAll) { // IE8
-		return d.querySelectorAll("." + search);
+		return [].slice.apply(d.querySelectorAll("." + search));
 	}
 	
 	if (d.evaluate) { // IE6, IE7

@@ -1,10 +1,21 @@
 "use strict";
 
 if(!Object.keys) Object.keys = function(o) {
+	if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null) {
+		throw new TypeError('Object.keys called on non-object');
+	}
 	var k=[], i;
 	for(i in o) if(o.hasOwnProperty(i)) k.push(i);
 	return k;
 };
+
+if(!Array.prototype.forEach) Array.prototype.forEach = function(fn, scope) {
+	for(var i = 0, len = this.length; i < len; ++i) {
+		fn.call(scope, this[i], i, this);
+	}
+};
+
+var log = function() { if(scrollback.debug) console.log.apply(console, arguments); };
 
 function offset(obj) {
 	var l=0, t=0;
@@ -36,6 +47,12 @@ function addClass(obj, cl) {
 	removeClass(obj, cl);
 	obj.className = obj.className + ' ' + cl;
 }
+
+window.requestAnimationFrame = window.requestAnimationFrame ||
+		window.mozRequestAnimationFrame ||
+		window.webkitRequestAnimationFrame ||
+		function(cb) { setTimeout(cb, 25); };
+
 
 function prettyDate(time, currTime){
 	var d = new Date(parseInt(time)), n = new Date(currTime),

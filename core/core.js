@@ -1,22 +1,33 @@
 //exports.room = require("./room/room.js");
 //exports.user = require("./user/user.js");
 //exports.post = require("./post/post.js");
+"use strict";
 
 var config = require('../config.js');
 var db = require('mysql').createConnection(config.mysql);
 var rooms = {}, gateways;
+var log = require("../lib/logger.js");
 
-function restartDb(err) {
-	if(err) {
-		db.on('error', function() {}); // Don't crash.
-		console.log("DB Connection Error:", err);
-	}
-	console.log("Restarting Mysql connection");
-	db = require('mysql').createConnection(config.mysql);
-	db.on('close', restartDb);
+function handleDisconnect(connection) {
+  connection.on('error', function(err) {
+    if (!err.fatal) {
+      return;
+    }
+
+    if (err.code !== 'PROTOCOL_CONNECTION_LOST') {
+      throw err;
+    }
+
+    console.log('Re-connecting lost connection: ' + err.stack);
+
+    connection = require("mysql").createConnection(connection.config);
+    handleDisconnect(connection);
+    connection.connect();
+  });
 }
 
-db.on('end', restartDb);
+handleDisconnect(db);
+
 
 exports.init = function (gw){
 	gateways = gw;
@@ -47,7 +58,12 @@ exports.send = function(message) {
 
 exports.messages = function(options, callback) {
 	var query = "SELECT `from`, `to`, `type`, `text`, `time` "+
-		"FROM `messages` ", where = [], params=[], desc=false, limit=256;
+		"FROM `messages` ", where = [], params=[], desc=false,
+		limit=256;
+	
+	if (!options.until && !options.since) {
+		options.until = new Date().getTime();
+	}
 	
 	if(options.until) {
 		where.push("`time` < ?");
@@ -74,30 +90,41 @@ exports.messages = function(options, callback) {
 		params.push(options.type);
 	}
 	
-	if(options.until && options.since) {
-		limit = null;
-	} else if(options.until) {
+	if(options.until) {
 		desc = true;
 	}
 	
 	if(where.length) query += " WHERE " + where.join(" AND ");
 	query += " ORDER BY `time` " + (desc? "DESC": "ASC");
-	if(limit) query += " LIMIT " + limit;
+	if(limit) query += " LIMIT " + (limit + 1);
 	
 	if(desc) query = "SELECT * FROM (" + query + ") r ORDER BY time ASC";
 	
 	//console.log(query, params);
 	db.query(query, params, function(err, data) {
+		var start, end;
+		if (limit && data.length > limit) {
+			if (desc) {
+				data = data.slice(1);
+				start = data[0].time;
+				end = options.until || data[limit-1].time;
+			} else {
+				data = data.slice(0,limit);
+				start = options.since || data[0].time;
+				end = data[limit-1].time;
+			}
+		} else {
+			start = options.since || data[0].time;
+			end = options.until || data[limit-1].time;
+		}
+		
 		if(err) {
 			console.log(err); return;
 		}
-		//console.log("RESULTS:", data.length);
-		if(limit && data.length < limit) {
-			(desc? data.unshift: data.push)({
-				type: "notice", from: '', to: options.to || '',
-				text: 'There are no more messages', time: 0
-			});
-		}
+		log("Query results: " + data.length);
+		data.push({type: 'result-end', to: options.to, time: end });
+		data.unshift({type: 'result-start', to: options.to, time: start });
+		
 		callback(data);
 	});
 }

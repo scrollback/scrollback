@@ -7,21 +7,24 @@
  * Use emit('event') to trigger the event handlers
  */
 
-var EventEmitter = {
+var emitter = {
 
     handlers: {},
 
     emit: function (event, data) {
         if (this.handlers.hasOwnProperty(event)) {
-            for (var i = 0; i < this.handlers[event].length; i++)
-                this.handlers[event][i](data);
+            this.handlers[event].forEach(function(handler) {
+				setTimeout(function() { handler(data); }, 0);
+			});
         }
     },
 
     on: function (event, callback) {
-        if (this.handlers.hasOwnProperty(event))
+        if (this.handlers.hasOwnProperty(event)) {
             this.handlers[event].push(callback);
-        else
+        }
+        else {
             this.handlers[event] = [callback];
+        }
     }
 }

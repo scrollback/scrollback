@@ -3,9 +3,12 @@
 	
 	Use node-fibers to syncify async things.
 */
+"use strict";
+
 var io = require("socket.io"),
 	core = require("../../core/core.js"),
-	cookie = require("cookie");
+	cookie = require("cookie"),
+	log = require("../../lib/logger.js");
 	
 var users = {};
 
@@ -20,7 +23,7 @@ exports.init = function (server) {
 		if(!user) {
 			users[sid] = user = {
 				id: 'sb' + Math.floor(Math.random() * 10000)
-			}
+			};
 		}
 		
 		socket.emit('nick', user.id);
@@ -44,12 +47,11 @@ exports.init = function (server) {
 			core.send(message);
 		});
 		
-		socket.on('get', function(query) {
+		socket.on('messages', function(query) {
 			console.log("Received GET via socket: ", query.to);
-			core.messages(query, function(data) {
-				var i, l=data.length;
-				console.log("Response length ", data.length);
-				for(i=0; i<l; i+=1) socket.emit('message', data[i]);
+			core.messages(query, function(m) {
+				console.log("Response length ", m.length);
+				socket.emit('messages', { query: query, messages: m} );
 			});
 		});
 		
@@ -84,7 +86,7 @@ exports.send = function (message, rooms) {
 	message.text = sanitize(message.text || "");
 	console.log("Socket sending", message, "to", rooms);
 	rooms.map(function(room) {
-		io.sockets.in(room).emit('message', message);
+		io.sockets['in'](room).emit('message', message);
 	});
 }
 
