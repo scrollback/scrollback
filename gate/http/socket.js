@@ -31,7 +31,7 @@ exports.init = function (server) {
 		socket.emit('nick', user.id);
 		socket.on('nick', function(n) {
 			user.id = n;
-			core.send({type: "nick", ref: 'nick'});
+			core.message({type: "nick", ref: 'nick'});
 		});
 		
 		socket.on('peek', function(room) {
@@ -52,7 +52,7 @@ exports.init = function (server) {
 					if(message.type === 'part'){
 						socket.leave(message.to);
 					}
-					core.send(message);
+					core.message(message);
 				}
 			});
 		});
@@ -77,7 +77,7 @@ exports.init = function (server) {
 			user.discoWait = setTimeout(function() {
 				console.log("1 minute elapsed. Disconnecting.", rooms);
 				rooms.map(function(room) {
-					core.send({ type: 'part', from: user.id, to: room,
+					core.message({ type: 'part', from: user.id, to: room,
 						time: new Date().getTime(), text: "" });
 				});
 			}, 60000);
