@@ -27,7 +27,7 @@ function init() {
 				
 				if(!client) {
 					clients.bot[u.host] = client =
-						connect(u.host, botNick, core.send);
+						connect(u.host, botNick, core.message);
 					client.addListener('registered', joinStuff);
 				} else if(client.connected){
 					log("Bot joining " + u.hash);
