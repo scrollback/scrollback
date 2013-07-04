@@ -1,70 +1,58 @@
 "use strict";
 
-var dgram = require("dgram"), users = {}, server= dgram.createSocket('udp4');
 
-users["23,6191"] = {
-	origin:"OTHER",
-	uid:"aksdbkljasdlfkjnasdflhk"
+var net= require('net');
+
+var users = {},server;
+
+users["37282,6667"] = {
+	uid:"blahblahblah"
 };
 
-
-
-exports.init=function(){		
-	server.bind(113);
+exports.init=function(){
 	
-	server.on("message",function(data, rinfo) {
-		var portPair,i,msg, user;
-		console.log("Request from:"+rinfo.address+": "+rinfo.port+":"+data);
-		
-		if (typeof data === "undefined") {
-			return;
-		}
-		
-		portPair=data.toString().replace(/\s/g, '');
-		user = users[portPair];
-		
-		portPair=portPair.split(",")[0]+", "+portPair.split(",")[1];
-		
-		//msgParts=data.toString().split(",");
-		//portPair=msgParts[0].trim();
-		//portPair=portPair+","+msgParts[1].trim();
-				
-		if (user) {
-			msg=new Buffer(portPair+" : USERID : "+user.origin+" : "+
-						user.uid+"\r\n");
-		} else {
-			msg=new Buffer(portPair+" : ERROR : NO-USER"+"\r\n");
-		}
-		
-		
-		server.send( msg, 0, msg.length, rinfo.port, rinfo.address,
-			function(err,bytes) {
-				console.log("message sent: "+msg);
+	var portPair, msg, user;
+	server= net.createServer(function(connection){
+		console.log("Connection from: "+connection.remoteAddress+":"+
+					connection.remotePort);
+		connection.on("data",function(data) {
+			
+			console.log("Got request: "+data);
+			data = data.toString();
+			if ( typeof data === "undefined" ||
+						data.length===0 ||
+						data.toString().indexOf(",")<=0
+				) {
+				connection.end();
+				return;
 			}
-		);
+			portPair=data.toString().replace(/\s/g, '');
+			user = users[portPair];
+			if (user) {
+				msg=portPair+" : USERID : OTHER : "+
+							user.uid+"\r\n";
+			} else {
+				msg=portPair+" : ERROR : NO-USER"+"\r\n";
+			}
+			connection.end(msg+"\r\n");
+		});
 	});
+
+	server.listen(113,function(){});
+
 };
 
 
 exports.register=function(incomingPort,outgoingPort,origin,uid){
-		
 	var id=incomingPort+","+outgoingPort;
-	users[id]={
-		origin: origin,
-		uid: uid
-	};
-	
+	users[id] = {uid:uid};
 };
 
-
-
-
-exports.remove=function(ports){
-	var i;
-	for (i in users) {
-		if (i === ports) {
-			delete users[i];
-			return;
-		}
+exports.remove=function(incomingPort,outgoingPort){
+	if (users[incomingPort+","+outgoingPort]) {
+			delete users[incomingPort+","+outgoingPort];
 	}
 };
+
+
+this.init();
