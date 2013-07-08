@@ -2,5 +2,5 @@
 
 stop scrollback
 npm install
-./build.sh
+tools/build.sh
 start scrollback
