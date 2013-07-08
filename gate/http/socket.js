@@ -8,43 +8,75 @@
 var io = require("socket.io"),
 	core = require("../../core/core.js"),
 	cookie = require("cookie"),
-	log = require("../../lib/logger.js");
-	
-var users = {};
+	log = require("../../lib/logger.js"),
+	config = require("../../config.js"),
+	RateLimiter = require('limiter').RateLimiter;
+
+var users = {}, uIndex = {};
 
 exports.init = function (server) {
 	io = io.listen(server);
 	io.set('log level', 1);
-	
+
 	io.sockets.on('connection', function (socket) {
+
+		var limiter = new RateLimiter(config.http.limit, config.http.time, true);
+		
 		var sid = cookie.parse(socket.handshake.headers.cookie || '')['connect.sid'],
 			user = users[sid];
 			
 		if(!user) {
 			users[sid] = user = {
-				id: 'sb' + Math.floor(Math.random() * 10000)
+				id: 'sb' + Math.floor(Math.random() * 10000),
+				rooms: {}
 			};
+			uIndex[user.id] = sid;
 		}
 		
-		socket.emit('nick', user.id);
-		socket.on('nick', function(n) {
-			user.id = n;
-			core.send({type: "nick", ref: 'nick'});
-		});
-		
-		socket.on('peek', function(room) {
-			console.log("Received PEEK via socket: ", room);
-			socket.join(room);
-		});
+		socket.emit('message', {type: 'nick', from: '', to: '', ref: user.id});
 		
 		socket.on('message', function (message) {
-			message.from = user.id;
-			message.time = new Date().getTime();
-			console.log("Received message via socket: ", message);
-			if(message.type === 'part'){
-				socket.leave(message.to);
-			}
-			core.send(message);
+			limiter.removeTokens(1, function(err, remaining) {
+				var room;
+				if (remaining < 0) {
+					log("Error: API Limit exceeded.");
+					socket.emit('error', 'API Limit exceeded.');
+					return;
+				}
+				log("API Limit remaining:", remaining);
+				
+				message.from = user.id;
+				message.time = new Date().getTime();
+				message.origin = "web://" + message.to;
+				
+				if (message.type == 'back') {
+					if(user.rooms[message.to]) {
+						user.rooms[message.to]++;
+						return;
+					} else {
+						user.rooms[message.to] = 1;
+					}
+				} else if (message.type == 'away') {
+					if(user.rooms[message.to]) user.rooms[message.to]--;
+					if(!user.rooms[message.to]) return;
+				} else if (message.type == 'nick') {
+					log("nick "+user.id + " to " + message.ref + ", forwarding");
+					for (room in user.rooms) {
+						if (user.rooms[room]) {
+							message.to = room;
+							core.message(message);
+						}
+					}
+					user.id = message.ref;
+					return;
+				}
+				
+				console.log("Received message via socket: ", message);
+				if(message.type === 'part') {
+					socket.leave(message.to);
+				}
+				core.message(message);
+			});
 		});
 		
 		socket.on('messages', function(query) {
@@ -60,16 +92,19 @@ exports.init = function (server) {
 			console.log("Beginning 1 minute wait:", rooms);
 			
 			for(room in io.sockets.manager.roomClients[socket.id]) {
-				rooms.push(room.substr(1));
-			}
-			
-			user.discoWait = setTimeout(function() {
-				console.log("1 minute elapsed. Disconnecting.", rooms);
-				rooms.map(function(room) {
-					core.send({ type: 'part', from: user.id, to: room,
+				// User.rooms is the count of how many tabs, in the
+				// same browser, the room is open in.
+				if(user.rooms[room]) user.rooms[room]--;
+				if (!user.rooms[room]) {
+					delete user.rooms[room];
+					core.message({ type: 'away', from: user.id, to: room,
 						time: new Date().getTime(), text: "" });
-				});
-			}, 60000);
+				}
+				if (Object.keys(user.rooms).length === 0) {
+					delete users[sid];
+					delete uIndex[user.id];
+				}
+			}
 		});
 		
 		socket.on('time', function(requestTime) {
@@ -77,8 +112,6 @@ exports.init = function (server) {
 				server: new Date().getTime(), request: requestTime
 			});
 		});
-		
-		if(user.discoWait) clearTimeout(user.discoWait);
 	});
 };
 
@@ -88,7 +121,13 @@ exports.send = function (message, rooms) {
 	rooms.map(function(room) {
 		io.sockets['in'](room).emit('message', message);
 	});
-}
+	
+	if (message.type == 'nick') {
+		if(uIndex[message.from]) {
+			users[uIndex[message.from]].id = message.ref;
+		}
+	}
+};
 
 function sanitize(text) {
 	return text.replace(/\</g, '&lt;');

@@ -1,6 +1,6 @@
 "use strict";
 
-var streams = {}, nick = null,
+var streams = {},
 	$ = function(id) {
 		return document.getElementById(id);
 	}, $$ = getByClass;
@@ -58,7 +58,6 @@ core.on('nick', function(n) {
 		stream = streams[i];
 		stream.nick.value = n;
 	}
-	nick = n;
 });
 
 // ---- The Stream constructor ----
@@ -125,7 +124,6 @@ Stream.prototype.toggle = function() {
 		removeClass(this.stream, 'scrollback-stream-hidden');
 		this.titleText.innerHTML='';
 		setTimeout(function() { self.renderTimeline(); }, 250 );
-		self.join();
 	} else {
 		removeClass(this.stream, 'scrollback-stream-selected');
 		addClass(this.stream, 'scrollback-stream-hidden');

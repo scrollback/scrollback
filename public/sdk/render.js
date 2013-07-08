@@ -1,15 +1,26 @@
 "use strict";
 
 Stream.prototype.scroll = function() {
-	var log = this.log, up,
-		msg = log.lastChild, pos;
+	var log = this.log, msg = log.firstChild, i=0, pos,
+		start = 32, end = 0, up,
+		viewTop = offset(log)[1] + log.scrollTop,
+		viewBottom = viewTop + log.clientHeight;
 		
-	// TODO: Watch if scrolled out of view.
+	while(msg) {
+		pos = offset(msg)[1];
+		if(pos >= viewTop && pos <= viewBottom){
+			if(i < start) start = pos;
+			if(i > end) end = pos;
+		}
+		msg = msg.previousSibling;
+		i++;
+	}
+
 	
 	if (typeof this.lastScrollTop === 'undefined') return;
 	up = log.scrollTop < this.lastScrollTop;
 	
-	this.renderThumb();
+	this.renderThumb(start, end);
 	
 	if(log.scrollHeight - (log.scrollTop + log.clientHeight) < 16)
 		this.bottom = true;
@@ -43,28 +54,22 @@ Stream.prototype.renderLog = function() {
 	if(lastMsg) self.log.appendChild(self.renderMessage(lastMsg, true));
 };
 
-Stream.prototype.renderThumb = function() {
+Stream.prototype.renderThumb = function(start, end) {
 	var log = this.log, msg = log.lastChild, pos,
 		thumbTop = this.tread.clientHeight,
 		thumbBottom = 0,
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
 		
-	console.log("Timeline rendering");
-	
-	while(msg) {
-		pos = offset(msg)[1];
-		if(pos >= viewTop && pos <= viewBottom){
-			pos = msg.getAttribute('data-time');
-			pos = (pos - this.firstMessageAt) * this.tread.clientHeight /
-				(this.lastMessageAt - this.firstMessageAt);
-			if(pos < thumbTop) thumbTop = pos;
-			if(pos > thumbBottom) thumbBottom = pos;
-		}
-		msg = msg.previousSibling;
+	function t2px(pos) {
+		pos = (pos - this.firstMessageAt) * this.tread.clientHeight /
+		(this.lastMessageAt - this.firstMessageAt);
 	}
 	
-	thumbBottom = Math.min(thumbBottom, log.clientHeight);
+	start = t2px(start); end = t2px(end);
+
+	
+	end = Math.min(thumbBottom, log.clientHeight);
 	
 	this.thumb.style.top = thumbTop + 'px';
 	this.thumb.style.height = (thumbBottom - thumbTop +1) + 'px';

@@ -6,10 +6,9 @@ var irc = require("irc"),
 	db = require("mysql").createConnection(config.mysql),
 	url = require("url"),
 	connect = require("./connect.js"),
-	isEcho = require("../../lib/isecho.js"),
 	log = require("../../lib/logger.js");
 
-var botNick=config.irc.nick, clients = {bot: {}};
+var botNick=config.irc.nick, clients = {bot: {}}, users = {};
 
 exports.init = init;
 exports.send = send;
@@ -27,14 +26,25 @@ function init() {
 				
 				if(!client) {
 					clients.bot[u.host] = client =
-						connect(u.host, botNick, core.send);
-					client.addListener('registered', joinStuff);
-				} else if(client.connected){
-					log("Bot joining " + u.hash);
-					client.join(u.hash);
-					client.rooms[u.hash.toLowerCase()] = account.room;
-					account.joined = true;
+						connect(u.host, botNick, function(m) {
+							if (users[u.host][m.from]) {
+								log("Incoming Echo", m);
+								return;
+							}
+							core.message(m);
+						});
+						
+					client.on('nick', function(oldn, newn) {
+						if (users[u.host][oldn]) {
+							users[u.host][newn] = true;
+							delete users[u.host][oldn];
+						}
+					});
 				}
+				log("Bot joining " + u.hash);
+				client.join(u.hash);
+				client.rooms[u.hash.toLowerCase()] = account.room;
+				account.joined = true;
 			});
 		}
 		
@@ -44,33 +54,56 @@ function init() {
 
 function send(message, accounts) {
 	clients[message.from] = clients[message.from] || {};
-	if(isEcho("irc", message)) return;
 	accounts.map(function(account) {
 		var u = url.parse(account),
 			client = clients[message.from][u.host],
 			channel = u.hash;
-			
+		
+		if (message.origin == account) {
+			log("Outgoing echo", message);
+			return;
+		}
+		
 		switch(message.type) {
-			case 'join':
+			case 'text':
 				if(!client) {
 					clients[message.from][u.host] = client = connect(u.host, message.from);
-					var disconnect = function() { delete clients[message.from][u.host]; };
+					var disconnect = function(nick) {
+						if (nick !== client.nick || Object.keys(client.chans).length) return;
+						delete clients[message.from][u.host];
+						delete users[u.host][client.nick];
+					};
 					client.on('quit', disconnect);
 					client.on('kill', disconnect);
+					client.on('registered', function() {
+						if (!users[u.host]) users[u.host] = {};
+						users[u.host][client.nick] = true;
+					});
 				}
-				
-				client.join(channel);
-				client.rooms[channel.toLowerCase()] = message.to;
-				break;
-			case 'text':
+				if (!client.chans[channel]) {
+					client.join(channel);
+					client.rooms[channel.toLowerCase()] = message.to;
+				}
 				client.say(channel, message.text);
 				break;
-			case 'part':
-				log(client && client.nick + " parts " + channel);
-				if(client && client.chans[channel]) {
-					client.part(channel);
-					delete client.rooms[channel.toLowerCase()];
+			case 'away':
+				log("Sending" + client && client.nick + " parts " + channel);
+				if (!client) return;
+				client.timers['part-' + channel] = setTimeout(function() {
+					if (client && client.chans[channel]) {
+						client.part(channel);
+						delete client.rooms[channel.toLowerCase()];
+					}
+				}, config.irc.hangTime);
+				break;
+			case 'back':
+				if (client && client.timers['part-' + channel]) {
+					clearTimeout(client.timers['part-' + channel]);
 				}
+				break;
+			case 'nick':
+				log("Got nick change", message, account, clients);
+				if(client) client.rename(message.ref);
 				break;
 		}
 	});

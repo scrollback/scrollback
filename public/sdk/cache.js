@@ -28,13 +28,13 @@ function messageArray() {
 			end = find(endTime);
 		
 		while (
-			messages[start] && messages[start].time == startTime &&
-			messages[start].type != 'result-end'
+			messages[start] && messages[start].time == startTime //&&
+//			messages[start].type != 'result-end'
 		) start++;
 		
 		while (
-			messages[end-1] && messages[end-1].time == endTime &&
-			messages[end-1].type != 'result-start'
+			messages[end-1] && messages[end-1].time == endTime //&&
+//			messages[end-1].type != 'result-start'
 		) end--;
 		
 		if (messages[start-1] && messages[start-1].type != 'result-end') {
@@ -55,8 +55,6 @@ function messageArray() {
 			data.pop();
 		}
 		
-		console.log("splicing", start, end);
-		
 		[].splice.apply(messages, [start, end - start].concat(data));
 	}
 	
@@ -66,7 +64,6 @@ function messageArray() {
 			i, m, gap = true, gapStart;
 		
 		start = find(time);
-		console.log("Extracting ", start, before, after, messages.length);
 		
 		if (messages.length) {
 			for (i=start-1; i>=0 && i>=start - before; i--) {

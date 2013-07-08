@@ -1,7 +1,6 @@
 "use strict";
 
 var irc = require("irc"),
-	isEcho = require("../../lib/isecho.js"),
 	log = require("../../lib/logger.js"),
 	config = require("../../config.js");
 
@@ -10,8 +9,8 @@ module.exports = connect;
 function connect(server, nick, callback) {
 	log("Connecting " + nick + " to " + server);
 	var client =  new irc.Client(server, nick, {
-		userName: 'scrollbot',
-		realName: 'scrollback.io',
+		userName: nick,
+		realName: nick+'@scrollback.io',
 		debug: false
 	});
 	
@@ -19,12 +18,13 @@ function connect(server, nick, callback) {
 		return client.rooms[s.toLowerCase()] || "guest-" + s.substr(1);
 	}
 	
-	function message(type, from, to, text) {
+	function message(type, from, to, text, channel, ref) {
 		var msg = {
 			type: type, from: from, to: to, text: text,
-			time: new Date().getTime()
+			time: new Date().getTime(), origin: 'irc://' + server + '/' + channel,
+			ref: ref
 		};
-		if(isEcho("irc", msg)) return;
+		
 		if(callback) callback(msg);
 	}
 	
@@ -40,27 +40,45 @@ function connect(server, nick, callback) {
 		client.addListener('message', function(nick, channel, text) {
 			log(client.nick + " hears " + nick + " say \'" +
 				text.substr(0,32) + "\' in " + channel);
-			message('text', nick, room(channel), text);
+			message('text', nick, room(channel), text, channel);
 		});
 		
 		client.addListener('join', function(channel, from) {
 			log(client.nick + " hears " + from + " joined " + channel);
 			if(from !== client.nick) {
-				message('join', from, room(channel), '');
+				message('join', from, room(channel), '', channel);
 			}
+		});
+		
+		client.addListener('nick', function(oldn, newn) {
+			message('nick', oldn, '', '', '', newn);
 		});
 		
 		client.addListener('part', function(channel, from, reason) {
 			log(client.nick + " hears " + from + " left " + channel);
 			if(from !== client.nick) {
-				message('part', from, room(channel), reason);
+				message('part', from, room(channel), reason, channel);
+			}
+		});
+		
+		client.addListener('kick', function(channel, from, reason) {
+			log(client.nick + " hears " + from + " left " + channel);
+			if(from !== client.nick) {
+				message('part', from, room(channel), reason, channel);
 			}
 		});
 		
 		client.addListener('quit', function(from, reason, channels) {
 			var i, l;
 			for(i=0, l=channels.length; i<l; i++) {
-				message('part', from, room(channels[i]), reason);
+				message('part', from, room(channels[i]), reason, channels[i]);
+			}
+		});
+		
+		client.addListener('kill', function(from, reason, channels) {
+			var i, l;
+			for(i=0, l=channels.length; i<l; i++) {
+				message('part', from, room(channels[i]), reason, channels[i]);
 			}
 		});
 	}
@@ -80,13 +98,13 @@ function connect(server, nick, callback) {
 		log(client.nick + " is connected to " + server);
 		client.connected = true;
 		
-		// Send any queued join's.
-		client.joinQueue.forEach(function(channel) {
-			log("Joining " + channel + " (queued).");
-			client.join(channel);
+		// Perform queued actions.
+		client.connQueue.forEach(function(action) {
+			log("Dequeueing", action.args);
+			action.oper.apply(client, action.args);
 		});
 		
-		client.joinQueue = [];
+		client.connQueue = [];
 	});
 	
 	// When parted all channels, disconnect.
@@ -95,48 +113,55 @@ function connect(server, nick, callback) {
 			if(Object.keys(client.chans).length === 0) {
 				log("Last channel parted. Disconnecting from " + client.opt.server);
 				client.disconnect();
-				delete clients[message.from][u.host];
 			}
 		});
 	});
 
-	
-	client.joinQueue = [];
+	client.connQueue = [];
 	client.sayQueues = {};
 	
 	// Wrap the client's say function in a queuing wrapper
 	client.say = (function(say) {
 		return function(channel, message) {
 			if (!client.connected || !client.chans[channel]) {
-				log("Queuing " + message.substr(1,32) + " for " + channel + ".");
+				log("Queueing " + message.substr(0,32) + " for " + channel + ".");
 				
 				if (!client.sayQueues[channel]) {
 					client.sayQueues[channel] = [];
 				}
 				client.sayQueues[channel].push(message);
 			} else {
-				log("Sending " + message.substr(1,32) + " to " + channel + " directly.");
+				log("Sending " + message.substr(0,32) + " to " + channel + " directly.");
 				say.apply(this, arguments);
 			}
-			
 		};
 	}(client.say));
 	
-	// Wrap the client's join function in a queuing wrapper
-	client.join = (function(join) {
-		return function(channel) {
+	// Generic wrapper that wraps operations to do when the server connects.
+	
+	function queueConn(oper, callback) {
+		return function() {
+			log("Q", arguments);
 			if (!client.connected) {
-				log("Queuing join " + channel);
-				client.joinQueue.push(channel);
+				log("Queueing ", arguments);
+				client.connQueue.push({oper: oper, args: arguments});
 			} else {
-				log("Joining " + channel);
-				join.apply(this, arguments);
+				if (callback) callback.apply(this, arguments);
+				oper.apply(this, arguments);
 			}
 		};
-	}(client.join));
+	}
+	
+	client.join = queueConn(client.join);
+	client.part = queueConn(client.part);
+	client.rename = queueConn(function(nick) {
+		log("Sending nick change to irc");
+		client.send("NICK", nick);
+	});
 	
 	client.connected = false;
 	client.rooms = {};
+	client.timers = {};
 
 	return client;
 }
