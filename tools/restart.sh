@@ -1,6 +1,6 @@
 #!/bin/sh
 
+stop scrollback
 npm install
 ./build.sh
-stop scrollback
 start scrollback
