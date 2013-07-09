@@ -13,3 +13,6 @@ Connecting, disconnecting, entering and leaving:
 Nick changes:
 - When nick is changed, it should change in all chatstreams and in all IRC channels
 - When there is a nick collision, it should append '1' and change on all chatstreams (and other connected servers).
+
+IRC:
+- Multiple IRC channels per room

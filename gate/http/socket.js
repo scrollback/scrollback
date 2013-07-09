@@ -47,9 +47,10 @@ exports.init = function (server) {
 				
 				message.from = user.id;
 				message.time = new Date().getTime();
-				message.origin = "web://" + message.to;
+				message.origin = "web://" + socket.handshake.address.address;
 				
 				if (message.type == 'back') {
+					socket.join(message.to);
 					if(user.rooms[message.to]) {
 						user.rooms[message.to]++;
 						return;
@@ -71,7 +72,7 @@ exports.init = function (server) {
 					return;
 				}
 				
-				console.log("Received message via socket: ", message);
+				log("Received message via socket: ", message);
 				if(message.type === 'part') {
 					socket.leave(message.to);
 				}
@@ -80,20 +81,23 @@ exports.init = function (server) {
 		});
 		
 		socket.on('messages', function(query) {
-			console.log("Received GET via socket: ", query.to);
+			log("Received GET via socket: ", query.to);
 			core.messages(query, function(m) {
-				console.log("Response length ", m.length);
+				log("Response length ", m.length);
 				socket.emit('messages', { query: query, messages: m} );
 			});
 		});
 		
 		socket.on('disconnect', function() {
 			var rooms = [], room;
-			console.log("Beginning 1 minute wait:", rooms);
+			log("Socket disconnected; Sending away:", rooms);
 			
 			for(room in io.sockets.manager.roomClients[socket.id]) {
 				// User.rooms is the count of how many tabs, in the
 				// same browser, the room is open in.
+				if (!room) return;
+				room = room.replace('/', ''); // There is a leading '/'.
+					
 				if(user.rooms[room]) user.rooms[room]--;
 				if (!user.rooms[room]) {
 					delete user.rooms[room];
@@ -117,8 +121,8 @@ exports.init = function (server) {
 
 exports.send = function (message, rooms) {
 	message.text = sanitize(message.text || "");
-	console.log("Socket sending", message, "to", rooms);
 	rooms.map(function(room) {
+		log("Socket sending", message, "to", room);
 		io.sockets['in'](room).emit('message', message);
 	});
 	

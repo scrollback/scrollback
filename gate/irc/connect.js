@@ -6,7 +6,7 @@ var irc = require("irc"),
 
 module.exports = connect;
 
-function connect(server, nick, callback) {
+function connect(server, nick, uid, callback) {
 	log("Connecting " + nick + " to " + server);
 	var client =  new irc.Client(server, nick, {
 		userName: nick,
@@ -166,3 +166,6 @@ function connect(server, nick, callback) {
 	return client;
 }
 
+connect.init = function() {
+	// ident.init();
+};

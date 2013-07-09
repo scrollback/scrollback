@@ -26,8 +26,8 @@ function init() {
 				
 				if(!client) {
 					clients.bot[u.host] = client =
-						connect(u.host, botNick, function(m) {
-							if (users[u.host][m.from]) {
+						connect(u.host, botNick, botNick, function(m) {
+							if (users[u.host] && users[u.host][m.from]) {
 								log("Incoming Echo", m);
 								return;
 							}
@@ -41,6 +41,8 @@ function init() {
 						}
 					});
 				}
+				if (!users[u.host]) users[u.host] = {};
+				
 				log("Bot joining " + u.hash);
 				client.join(u.hash);
 				client.rooms[u.hash.toLowerCase()] = account.room;
@@ -50,6 +52,7 @@ function init() {
 		
 		joinStuff();
 	});
+	// connect.init();
 }
 
 function send(message, accounts) {
@@ -67,7 +70,9 @@ function send(message, accounts) {
 		switch(message.type) {
 			case 'text':
 				if(!client) {
-					clients[message.from][u.host] = client = connect(u.host, message.from);
+					clients[message.from][u.host] = client = connect(
+						u.host, message.from, message.origin.replace('web://', '')
+					);
 					var disconnect = function(nick) {
 						if (nick !== client.nick || Object.keys(client.chans).length) return;
 						delete clients[message.from][u.host];
@@ -87,9 +92,10 @@ function send(message, accounts) {
 				client.say(channel, message.text);
 				break;
 			case 'away':
-				log("Sending" + client && client.nick + " parts " + channel);
 				if (!client) return;
+				log("Start countdown " + (client && client.nick) + " leaving " + channel);
 				client.timers['part-' + channel] = setTimeout(function() {
+					log("Sending " + client && client.nick + " parts " + channel);
 					if (client && client.chans[channel]) {
 						client.part(channel);
 						delete client.rooms[channel.toLowerCase()];
@@ -98,6 +104,7 @@ function send(message, accounts) {
 				break;
 			case 'back':
 				if (client && client.timers['part-' + channel]) {
+					log("Abort countdown " + (client && client.nick) + " leaving " + channel);
 					clearTimeout(client.timers['part-' + channel]);
 				}
 				break;

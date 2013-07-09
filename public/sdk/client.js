@@ -46,7 +46,7 @@ core.leave = function (id) {
 	message('away', id);
 	message('result-end', id);
 	core.emit('leave', id);
-	delete rooms[id];
+//	delete rooms[id];
 };
 
 function guid() {
@@ -107,6 +107,7 @@ core.get = function(room, start, end, callback) {
 
 socket.on('message', function(message) {
 	var i, messages, updated = false;
+	console.log("Message ", message);
 	if (message.type == 'nick' && message.from == nick) {
 		nick = message.ref;
 		core.emit('nick', message.ref);
@@ -115,19 +116,20 @@ socket.on('message', function(message) {
 	messages = rooms[message.to] && rooms[message.to].messages;
 	if (!messages) return;
 	for (i = messages.length - 1; i >= 0 && message.time - messages[i].time < 5000; i-- ) {
-		if (messages[messages.length-1].id == message.id) {
-			messages[messages.length-1] = message;
+		if (messages[i].id == message.id) {
+			messages[i] = message;
 			updated = true; break;
 		}
 	}
 	if (!updated) {
 		messages.push(message);
 	}
+	log("Notifying ", requests[message.to + '//']);
 	if(requests[message.to + '//']) requests[message.to + '//'](true);
 });
 
 core.say = function (to, text) {
-	rooms[to].messages.push(message('text', to, text));
+	message('text', to, text);
 };
 
 core.nick = function(n) {
@@ -145,6 +147,10 @@ core.watch = function(room, time, before, after, callback) {
 	}
 	
 	send(false);
+};
+
+core.unwatch = function(room) {
+	delete requests[room + '//'];
 };
 
 /* TODO: implement them someday

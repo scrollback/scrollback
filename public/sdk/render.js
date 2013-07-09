@@ -2,52 +2,79 @@
 
 Stream.prototype.scroll = function() {
 	var log = this.log, msg = log.firstChild, i=0, pos,
-		start = 32, end = 0, up,
+		start = 32, end = 0, up, self = this, cb,
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
-		
+	
+	if (this.updating) return;
+	
 	while(msg) {
 		pos = offset(msg)[1];
 		if(pos >= viewTop && pos <= viewBottom){
-			if(i < start) start = pos;
-			if(i > end) end = pos;
+			if(i < start) start = i;
+			if(i > end) end = i;
 		}
-		msg = msg.previousSibling;
+		msg = msg.nextSibling;
 		i++;
 	}
 
-	
-	if (typeof this.lastScrollTop === 'undefined') return;
+	if (typeof this.lastScrollTop === 'undefined') {
+		this.lastScrollTop = log.scrollTop;
+		return;
+	}
 	up = log.scrollTop < this.lastScrollTop;
+	this.lastScrollTop = log.scrollTop;
+	this.scrollTime = this.messages[start].time;
 	
 	this.renderThumb(start, end);
 	
-	if(log.scrollHeight - (log.scrollTop + log.clientHeight) < 16)
+	if(log.scrollHeight - (log.scrollTop + log.clientHeight) < 16) {
 		this.bottom = true;
-	else
+	} else {
 		this.bottom = false;
-
-	this.lastScrollTop = log.scrollTop;
+	}
+	
+	console.log("Scroll status", this.bottom, start, end);
+	
+	cb = function(m) { self.update(m); };
+	
+	if (this.bottom) {
+		core.watch(self.id, null, 32, 0, cb);
+	} else {
+		core.unwatch(self.id);
+		if (up && start < 10 || !up && self.messages.length - end < 10) {
+			core.watch(self.id, self.messages[start].time, 32, 48, cb);
+		}
+	}
+	
 };
 
 Stream.prototype.update = function (data) {
+	var self = this, top;
+	this.updating = true;
 	this.messages = data;
 	this.renderLog();
 	this.renderTimeline();
 	
 	if (this.bottom) {
-		this.log.scrollTop = this.log.scrollHeight();
+		this.log.scrollTop = this.log.scrollHeight;
+	} else {
+		this.messages.forEach(function() {
+			
+		});
 	}
+	setTimeout(function() { self.updating = false; }, 100);
 };
 
 Stream.prototype.renderLog = function() {
-	var lastMsg, self = this;
+	var lastMsg, self = this, el;
 	this.log.innerHTML = '';
 	
 	log("Rendering messages:", this.messages);
 	this.messages.forEach(function(message) {
 		if (lastMsg) {
-			self.log.appendChild(self.renderMessage(lastMsg, message.time - lastMsg.time > 60000));
+			el = self.renderMessage(lastMsg, message.time - lastMsg.time > 60000);
+			if(el) self.log.appendChild(el);
 		}
 		lastMsg = message;
 	});
@@ -57,13 +84,13 @@ Stream.prototype.renderLog = function() {
 Stream.prototype.renderThumb = function(start, end) {
 	var log = this.log, msg = log.lastChild, pos,
 		thumbTop = this.tread.clientHeight,
-		thumbBottom = 0,
+		thumbBottom = 0, self = this,
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
 		
 	function t2px(pos) {
-		pos = (pos - this.firstMessageAt) * this.tread.clientHeight /
-		(this.lastMessageAt - this.firstMessageAt);
+		pos = (pos - self.firstMessageAt) * self.tread.clientHeight /
+		(self.lastMessageAt - self.firstMessageAt);
 	}
 	
 	start = t2px(start); end = t2px(end);

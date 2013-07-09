@@ -160,6 +160,7 @@ Stream.get = function(id) {
 	} else {
 		streams[id] = new Stream(id);
 		Stream.position();
+		streams[id].bottom = true;
 		core.watch(id, null, 32, 0, function(m) { streams[id].update(m); });
 		return streams[id];
 	}
