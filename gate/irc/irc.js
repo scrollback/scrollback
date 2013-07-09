@@ -40,6 +40,8 @@ function init() {
 		
 		joinStuff();
 	});
+	
+	
 }
 
 function send(message, accounts) {

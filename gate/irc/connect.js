@@ -3,10 +3,13 @@
 var irc = require("irc"),
 	isEcho = require("../../lib/isecho.js"),
 	log = require("../../lib/logger.js"),
-	config = require("../../config.js");
+	config = require("../../config.js"),
+	ident=require("./ident.js");
 
 module.exports = connect;
 
+
+ident.init();
 function connect(server, nick, callback) {
 	log("Connecting " + nick + " to " + server);
 	var client =  new irc.Client(server, nick, {
@@ -27,6 +30,12 @@ function connect(server, nick, callback) {
 		if(isEcho("irc", msg)) return;
 		if(callback) callback(msg);
 	}
+	
+	
+	client.conn.on("connect",function(soc){
+		ident.register(this.address().port,this.remotePort,client.nick);
+	});
+	
 	
 	client.addListener('raw', function(message) {
 		// log("Incoming from " + message.server, message.args);
