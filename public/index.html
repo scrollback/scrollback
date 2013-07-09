@@ -136,7 +136,8 @@ scrollback.host=h;d.body.appendChild(e);}(document,'http://scrollback.io'));
 			streams: ["scrollback"],      // Change this: Array of rooms.
 			theme: 'light',   // Optional: light or dark
 			ticker: true,      // Show updates when minimized?
-			host: 'http://' + location.host
+			host: 'http://' + location.host,
+			debug: true
 		};
 		
 		// Don't change below this line ------------------------------------------------
@@ -148,15 +149,18 @@ scrollback.host=h;d.body.appendChild(e);}(document,'http://scrollback.io'));
 		
 		<script src="sdk/addEvent.js"></script>
 		<script src="sdk/addStyle.js"></script>
+		<script src="sdk/emitter.js"></script>
 		<script src="sdk/domReady.js"></script>
 		<script src="sdk/getByClass.js"></script>
 		<script src="sdk/jsonml2.js"></script>
 		<script src="sdk/polyfill.js"></script>
 
-		<script src="sdk/ui.js"></script>
-		<script src="sdk/timeline.js"></script>
+		<script src="sdk/cache.js"></script>
+		<script src="sdk/client.js"></script>
 		<script src="sdk/css.js"></script>
-		<script src="sdk/net.js"></script>
+		<script src="sdk/dom.js"></script>
+		<script src="sdk/embed.js"></script>
+		<script src="sdk/render.js"></script>
 
 	</body>
 </html>

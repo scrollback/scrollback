@@ -1,26 +1,26 @@
-/*
- *  This is pure data.
- */
+"use strict";
 
-module.exports = {
-	"node.js": {
-		name: "Node.js",
-		picture: "",
-		description: "",
-		irc: {
-			server: "chat.freenode.net",
-			channel: "Node.js",
-			users: 0
-		}
-	},
-	"ubuntu": {
-		name: "Ubuntu",
-		picture: "",
-		description: "",
-		irc: {
-			server: "chat.freenode.net",
-			channel: "Ubuntu",
-			users: 0
-		}
-	}
+var config = require('../config.js');
+var db = require('mysql').createConnection(config.mysql);
+
+function handleDisconnect(connection) {
+  connection.on('error', function(err) {
+    if (!err.fatal) {
+      return;
+    }
+
+    if (err.code !== 'PROTOCOL_CONNECTION_LOST') {
+      throw err;
+    }
+
+    console.log('Re-connecting lost connection: ' + err.stack);
+
+    connection = require("mysql").createConnection(connection.config);
+    handleDisconnect(connection);
+    connection.connect();
+  });
 }
+
+handleDisconnect(db);
+
+module.exports = db;
