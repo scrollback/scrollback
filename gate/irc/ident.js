@@ -5,9 +5,7 @@ var net= require('net');
 
 var users = {},server;
 
-users["37282,6667"] = {
-	uid:"blahblahblah"
-};
+users["37282,6667"] ="blahblahblah";
 
 exports.init=function(){
 	
@@ -30,7 +28,7 @@ exports.init=function(){
 			user = users[portPair];
 			if (user) {
 				msg=portPair+" : USERID : OTHER : "+
-							user.uid+"\r\n";
+							user+"\r\n";
 			} else {
 				msg=portPair+" : ERROR : NO-USER"+"\r\n";
 			}
@@ -43,16 +41,15 @@ exports.init=function(){
 };
 
 
-exports.register=function(incomingPort,outgoingPort,origin,uid){
-	var id=incomingPort+","+outgoingPort;
-	users[id] = {uid:uid};
+exports.register=function(localPort, remotePort,uid){
+	var id=localPort+","+remotePort;
+	console.log(uid);
+	console.log("registering: "+id);
+	users[id] = uid;
 };
 
-exports.remove=function(incomingPort,outgoingPort){
-	if (users[incomingPort+","+outgoingPort]) {
-			delete users[incomingPort+","+outgoingPort];
+exports.remove=function(localPort,remotePort){
+	if (users[localPort+","+remotePort]) {
+			delete users[localPort+","+remotePort];
 	}
 };
-
-
-this.init();

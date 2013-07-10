@@ -52,7 +52,7 @@ function init() {
 		
 		joinStuff();
 	});
-	// connect.init();
+
 }
 
 function send(message, accounts) {
