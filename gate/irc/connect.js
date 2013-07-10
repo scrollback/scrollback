@@ -174,5 +174,5 @@ function connect(server, nick, uid, callback) {
 }
 
 connect.init = function() {
-	// ident.init();
+	ident.init();
 };
