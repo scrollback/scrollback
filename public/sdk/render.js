@@ -103,21 +103,34 @@ Stream.prototype.renderThumb = function(start, end) {
 };
 
 Stream.prototype.renderTimeline = function() {
-	var buckets = [], h=1, n=this.tread.clientHeight, i,
-		first = this.firstMessageAt, duration=this.lastMessageAt-first,
-		msg = this.log.firstChild, r, ml = ["div"], max=0;
 	
+	
+	var buckets = [], h=1, n = this.tread.clientHeight, i, k = 0, length,
+		msg, first, duration, r, ml = ["div"], max=0;
+
+	msg=this.messages[0];
+	length=this.messages.length;
+	first = msg.time==null?0:msg.time;
+
+	duration = this.messages[length-1].time - first;
 	this.tread.innerHTML = '';
+	console.log(first,duration,length);
 	
-	while(msg) {
-		i = Math.floor((msg.getAttribute('data-time') - first)*n / duration);
+	for (k = 0; k<length; k++) {
+		
+		msg=this.messages[k];
+		if (msg.type!=="text") {
+			continue;
+		}
+		i = Math.floor((msg.time- first)*n / duration);
 		if(!buckets[i]) buckets[i] = {nicks: {}, n: 0};
-		buckets[i].nicks[msg.getAttribute('data-from')] = true;
+		buckets[i].nicks[msg.from] = true;
 		buckets[i].n += 1;
+		
 		if(buckets[i].n > max) max = buckets[i].n;
-		msg = msg.nextSibling;
+		
 	}
-	
+
 	for(i=0; i<n; i++) {
 		if(buckets[i]) {
 			r = ["div", {
@@ -223,10 +236,10 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 				]
 			];
 			break;
-		case 'join':
-			el = [["span", message.from + ' joined.']];
+		case 'back':
+			el = [["span", message.from + ' entered.']];
 			// intentional fall through.
-		case 'part':
+		case 'away':
 			el = el || [["span", message.from + ' left' + (
 				message.text? ' (' + message.text + ')': '.'
 			)]];
