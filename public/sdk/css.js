@@ -209,4 +209,4 @@ themes.dark = {
 	".scrollback-poweredby": {
 		background: "url(http://scrollback.io/poweredby-lt.png)"
 	}
-}
+};

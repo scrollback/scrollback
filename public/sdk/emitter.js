@@ -27,4 +27,5 @@ var emitter = {
             this.handlers[event] = [callback];
         }
     }
-}
+};
+
