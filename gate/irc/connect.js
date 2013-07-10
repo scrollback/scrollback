@@ -29,7 +29,6 @@ function connect(server, nick, uid, callback) {
 		if(callback) callback(msg);
 	}
 	
-	
 	client.conn.on("connect",function(soc){
 		ident.register(this.address().port,this.remotePort,client.nick);
 	});
@@ -174,5 +173,5 @@ function connect(server, nick, uid, callback) {
 }
 
 connect.init = function() {
-	// ident.init();
+	ident.init();
 };
