@@ -32,6 +32,7 @@ exports.init=function(){
 			} else {
 				msg=portPair+" : ERROR : NO-USER"+"\r\n";
 			}
+			console.log("sending Ident: "+msg);
 			connection.end(msg+"\r\n");
 		});
 	});
