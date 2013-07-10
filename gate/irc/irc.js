@@ -73,7 +73,9 @@ function send(message, accounts) {
 					clients[message.from][u.host] = client = connect(
 						u.host, message.from,
 						message.origin.replace('web://', '').split('.').map(function(d) {
-							return parseInt(d, 10).toString(16);
+							var h = parseInt(d, 10).toString(16);
+							if (h.length < 2) h = '0'+h;
+							return h;
 						}).join('')
 					);
 					var disconnect = function(nick) {
