@@ -65,11 +65,11 @@ function messageArray() {
 				case 'result-end':
 					start = m.time;
 					break;
-				default:
+				case 'text':
 					res.push(m);
 			}
 		}
-		if (m.type == 'result-end' && missing) {
+		if (m && m.type == 'result-end' && missing) {
 			res.push(missing(m.time, null));
 		}
 		

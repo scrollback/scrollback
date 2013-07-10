@@ -65,7 +65,11 @@ var css = {
 				cursor: "default"
 			},
 			".scrollback-message-hidden": {
-				"opacity": 0
+				"opacity": 0,
+				"transition": "height 0.2s ease-out",
+				"webkitTransition": "height 0.2s ease-out",
+				"mozTransition": "height 0.2s ease-out",
+				"oTransition": "height 0.2s ease-out", "msTransition": "all 0.2s ease-out",
 			},
 				".scrollback-timestamp-hidden .scrollback-message-timestamp": {
 					display: "none"

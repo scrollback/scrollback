@@ -33,6 +33,7 @@ socket.on('connect', function() {
 socket.on('disconnect', function() {
 	var id;
 	for(id in rooms) if(rooms.hasOwnProperty(id)) core.leave(id);
+	core.emit("disconnect");
 });
 
 core.enter = function (id) {
@@ -57,10 +58,11 @@ function guid() {
 
 function message(type, to, text, ref) {
 	var m = { id: guid(), type: type, from: nick, to: to, text: text || '', time: core.time(), ref: ref || '' };
-	if (message.type != 'result-start' && message.type != 'result-end' && socket.socket.connected) {
+	if (m.type != 'result-start' && m.type != 'result-end' && socket.socket.connected) {
 		socket.emit('message', m);
 	}
 	if(rooms[to]) {
+		console.log(m.type);
 		rooms[to].messages.push(m);
 		if(requests[to + '//']) requests[to + '//'](true);
 	}

@@ -102,8 +102,8 @@ function Stream(id) {
 		return el;
 	});
 	
+	self.requested = {};
 	addEvent(self.stream, 'click', function() { self.select(); });
-	self.joined = false;
 	document.body.appendChild(self.stream);
 }
 
