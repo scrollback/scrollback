@@ -71,7 +71,10 @@ function send(message, accounts) {
 			case 'text':
 				if(!client) {
 					clients[message.from][u.host] = client = connect(
-						u.host, message.from, message.origin.replace('web://', '')
+						u.host, message.from,
+						message.origin.replace('web://', '').split('.').map(function(d) {
+							return parseInt(d, 10).toString(16);
+						}).join('')
 					);
 					var disconnect = function(nick) {
 						if (nick !== client.nick || Object.keys(client.chans).length) return;
