@@ -3,7 +3,7 @@
 var irc = require("irc"),
 	log = require("../../lib/logger.js"),
 	config = require("../../config.js"),
-	ident=require("./identServer.js");
+	ident=require("./ident.js");
 
 module.exports = connect;
 
@@ -31,7 +31,7 @@ function connect(server, nick, uid, callback) {
 	
 	
 	client.conn.on("connect",function(soc){
-		ident.register(this.address().port,this.remotePort,client.nick);
+		ident.register(this.address().port,this.remotePort,uid);
 	});
 	
 	
