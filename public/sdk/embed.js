@@ -133,6 +133,7 @@ Stream.prototype.toggle = function() {
 
 Stream.prototype.send = function () {
 	if(!this.text.value) return;
+	this.log.scrollTop = this.log.scrollHeight;
 	core.say(this.id, this.text.value);
 	this.text.value = '';
 };

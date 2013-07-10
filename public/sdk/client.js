@@ -27,6 +27,7 @@ socket.on('connect', function() {
 			core.enter(id);
 		});
 	}
+	console.log("Connected");
 	core.emit('connected');
 });
 
@@ -56,11 +57,10 @@ function guid() {
 }
 
 function message(type, to, text, ref) {
-	var m = { id: guid(), type: type, from: nick, to: to, text: text || '', time: core.time(), ref: ref };
-	if (message.type == 'result-start' || message.type == 'result-end') {
-		return m;
+	var m = { id: guid(), type: type, from: nick, to: to, text: text || '', time: core.time(), ref: ref || '' };
+	if (message.type != 'result-start' && message.type != 'result-end' && socket.socket.connected) {
+		socket.emit('message', m);
 	}
-    if(socket.socket.connected) socket.emit('message', m);
 	if(rooms[to]) {
 		rooms[to].messages.push(m);
 		if(requests[to + '//']) requests[to + '//'](true);
@@ -77,30 +77,33 @@ socket.on('time', function(data) {
 core.time = function() { return new Date().getTime() + timeAdjustment; };
 
 socket.on('error', function(message) {
-	log(message);
+	console.log(message);
 });
 
 socket.on('messages', function(data) {
 	var roomId = data.query.to, reqId = data.query.to + '/' + (data.query.since || '') +
 			'/' + (data.query.until || '');
-	
-	console.log("Response", reqId);
+			
+	console.log("Received", reqId, snapshot(data.messages));
 	rooms[roomId].messages.merge(data.messages);
+	console.log("Merged", snapshot(rooms[roomId].messages));
+	
 	if (requests[reqId]) {
 		requests[reqId](true);
 		if(reqId != data.query.to + '//') delete requests[reqId];
 	}
+	
 });
 
 core.get = function(room, start, end, callback) {
 	var query = { to: room, type: 'text' },
 		reqId;
 	if (start) { query.since = start; }
-	if (end && core.time()-end>1000) { query.until = end; }
+	if (end) { query.until = end; }
 	
 	reqId = room + '/' + (query.since || '') + '/' + (query.until || '');
 	
-	log("Requesting from server: ", reqId);
+	console.log("Requesting from server: ", reqId);
 	requests[reqId] = callback;
 	socket.emit('messages', query);
 };
@@ -124,7 +127,6 @@ socket.on('message', function(message) {
 	if (!updated) {
 		messages.push(message);
 	}
-	log("Notifying ", requests[message.to + '//']);
 	if(requests[message.to + '//']) requests[message.to + '//'](true);
 });
 
@@ -142,16 +144,35 @@ core.watch = function(room, time, before, after, callback) {
 		return { type: 'missing', text: 'Loading messages...', time: start };
 	}
 	function send(isResponse) {
-		var r = rooms[room].messages.extract(time || core.time(), before, after, isResponse? null: missing );
+		var r = rooms[room].messages.extract(
+			time || core.time(), before || 32,
+			after || 0, isResponse? null: missing
+		);
 		callback(r);
 	}
 	
+	if (!time) {
+		requests[room + '//'] = send;
+	}
 	send(false);
 };
 
 core.unwatch = function(room) {
 	delete requests[room + '//'];
 };
+
+function snapshot (messages) {
+	return messages.map(function(message) {
+		switch (message.type) {
+			case 'result-start': return '(';
+			case 'result-end': return ')';
+			case 'back': return '<';
+			case 'away': return '>';
+			case 'text': return '+';
+			default: return '-';
+		}
+	}).join('');
+}
 
 /* TODO: implement them someday
 

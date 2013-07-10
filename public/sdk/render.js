@@ -6,8 +6,6 @@ Stream.prototype.scroll = function() {
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
 	
-	if (this.updating) return;
-	
 	while(msg) {
 		pos = offset(msg)[1];
 		if(pos >= viewTop && pos <= viewBottom){
@@ -24,9 +22,13 @@ Stream.prototype.scroll = function() {
 	}
 	up = log.scrollTop < this.lastScrollTop;
 	this.lastScrollTop = log.scrollTop;
-	this.scrollTime = this.messages[start].time;
+	this.scrollId = this.messages[start].id;
+	this.scrollPx = offset(this.log.children[start])[1] - offset(this.log)[1] -  this.log.scrollTop;
 	
 	this.renderThumb(start, end);
+	
+	
+	console.log(log.scrollHeight, log.scrollTop, log.clientHeight);
 	
 	if(log.scrollHeight - (log.scrollTop + log.clientHeight) < 16) {
 		this.bottom = true;
@@ -34,7 +36,7 @@ Stream.prototype.scroll = function() {
 		this.bottom = false;
 	}
 	
-	console.log("Scroll status", this.bottom, start, end);
+	console.log("Bottom", this.bottom);
 	
 	cb = function(m) { self.update(m); };
 	
@@ -50,8 +52,7 @@ Stream.prototype.scroll = function() {
 };
 
 Stream.prototype.update = function (data) {
-	var self = this, top;
-	this.updating = true;
+	var self = this, top, i, l;
 	this.messages = data;
 	this.renderLog();
 	this.renderTimeline();
@@ -59,9 +60,10 @@ Stream.prototype.update = function (data) {
 	if (this.bottom) {
 		this.log.scrollTop = this.log.scrollHeight;
 	} else {
-		this.messages.forEach(function() {
-			
-		});
+		for(i=0, l=this.messages.length; i<l; i++) {
+			if (this.messages[i].id ==  self.scrollId) break;
+		}
+		this.log.scrollTop = offset(this.log.children[i])[1] - offset(this.log)[1] - this.scrollPx;
 	}
 	setTimeout(function() { self.updating = false; }, 100);
 };
@@ -70,7 +72,8 @@ Stream.prototype.renderLog = function() {
 	var lastMsg, self = this, el;
 	this.log.innerHTML = '';
 	
-	log("Rendering messages:", this.messages);
+	console.log("Rendering", snapshot(this.messages));
+	
 	this.messages.forEach(function(message) {
 		if (lastMsg) {
 			el = self.renderMessage(lastMsg, message.time - lastMsg.time > 60000);
@@ -82,14 +85,14 @@ Stream.prototype.renderLog = function() {
 };
 
 Stream.prototype.renderThumb = function(start, end) {
-	var log = this.log, msg = log.lastChild, pos,
+	var log = this.log,
 		thumbTop = this.tread.clientHeight,
 		thumbBottom = 0, self = this,
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
 		
 	function t2px(pos) {
-		pos = (pos - self.firstMessageAt) * self.tread.clientHeight /
+		return (pos - self.firstMessageAt) * self.tread.clientHeight /
 		(self.lastMessageAt - self.firstMessageAt);
 	}
 	

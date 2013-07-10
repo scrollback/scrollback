@@ -29,10 +29,13 @@ function connect(server, nick, uid, callback) {
 		if(callback) callback(msg);
 	}
 	
-	client.conn.on("connect",function(soc){
+	client.conn.on("connect",function(){
 		ident.register(this.address().port,this.remotePort,uid);
 	});
 	
+	client.conn.on("disconnect", function() {
+		ident.remove(this.address().port,this.remotePort);		
+	});
 	
 	client.addListener('raw', function(message) {
 		// log("Incoming from " + message.server, message.args);
@@ -137,7 +140,7 @@ function connect(server, nick, uid, callback) {
 				}
 				client.sayQueues[channel].push(message);
 			} else {
-				log("Sending " + message.substr(0,32) + " to " + channel + " directly.");
+				log("Sending " + message.substr(0,32) + " to " + channel + ".");
 				say.apply(this, arguments);
 			}
 		};

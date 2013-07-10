@@ -15,7 +15,7 @@ if(!Array.prototype.forEach) Array.prototype.forEach = function(fn, scope) {
 	}
 };
 
-var log = function() { if(scrollback.debug) console.log.apply(console, arguments); };
+var log = scrollback.debug? console.log: function() { };
 
 function offset(obj) {
 	var l=0, t=0;

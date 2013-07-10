@@ -6,11 +6,15 @@ var log = require("../../lib/logger.js");
 
 module.exports = function(options, callback) {
 	var query = "SELECT * FROM `messages` ",
-		where = [], params=[], desc=false, limit=256;
-		
-	if(options.until || !options.since) {
+		where = [], params=[], desc=false, limit=32;
+	
+	if (!options.until && !options.since) {
+		options.until = new Date().getTime();
+	}
+	
+	if(options.until) {
 		where.push("`time` < ?");
-		params.push(options.until || new Date().getTime());
+		params.push(options.until);
 	}
 	
 	if(options.since) {
@@ -46,27 +50,31 @@ module.exports = function(options, callback) {
 	//console.log(query, params);
 	db.query(query, params, function(err, data) {
 		var start, end;
-		if (limit && data.length > limit) {
-			if (desc) {
-				data = data.slice(1);
-				start = data[0].time;
-				end = options.until || data[limit-1].time;
-			} else {
-				data = data.slice(0,limit);
-				start = options.since || data[0].time;
-				end = data[limit-1].time;
-			}
-		} else {
-			start = options.since || data.length && data[0].time;
-			end = options.until || data.length && data[data.length-1].time;
-		}
-		
 		if(err) {
 			console.log(err); return;
 		}
+		start  = options.since || data.length && data[0].time || 0;
+		end = options.until || data.length && data[data.length-1].time || 0;
+
+		if (desc) {
+			data.push({type: 'result-end', to: options.to, time: end });
+		} else {
+			data.unshift({type: 'result-start', to: options.to, time: start });
+		}
+		
+		if (limit && data.length > limit) {
+			if (desc) {
+				data = data.slice(1);
+				data.unshift({type: 'result-start', to: options.to, time: start });
+			} else {
+				data = data.slice(0,limit);
+				data.push({type: 'result-end', to: options.to, time: end });
+			}
+		}
+		
 		log("Query results: " + data.length);
-		data.push({type: 'result-end', to: options.to, time: end });
-		data.unshift({type: 'result-start', to: options.to, time: start });
+		
+		
 		
 		callback(data);
 	});

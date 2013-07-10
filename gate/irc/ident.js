@@ -1,20 +1,15 @@
 "use strict";
 
-
 var net= require('net');
-
 var users = {},server;
 
-users["37282,6667"] ="blahblahblah";
-
 exports.init=function(){
-	
 	var portPair, msg, user;
+	
 	server= net.createServer(function(connection){
-		console.log("Connection from: "+connection.remoteAddress+":"+
+		console.log("Query from: "+connection.remoteAddress+":"+
 					connection.remotePort);
 		connection.on("data",function(data) {
-			
 			console.log("Got request: "+data);
 			data = data.toString();
 			if ( typeof data === "undefined" ||

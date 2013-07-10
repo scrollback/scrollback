@@ -76,7 +76,7 @@ function send(message, accounts) {
 							var h = parseInt(d, 10).toString(16);
 							if (h.length < 2) h = '0'+h;
 							return h;
-						}).join('')
+						}).join('').toUpperCase()
 					);
 					var disconnect = function(nick) {
 						if (nick !== client.nick || Object.keys(client.chans).length) return;
