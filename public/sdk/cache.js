@@ -37,12 +37,10 @@ function messageArray() {
 		}
 		
 		if (messages[start-1] && messages[start-1].type != 'result-end' && data[0].type == 'result-start') {
-			console.log("Shifting: messages[start-1] is ", messages[start-1]);
 			data.shift();
 		}
 		
 		if (messages[end] && messages[end].type != 'result-start' && data[data.length-1].type == 'result-end') {
-			console.log("Popping: messages[end] is ", messages[end]);
 			data.pop();
 		}
 		
@@ -52,8 +50,6 @@ function messageArray() {
 	function extract(time, before, after, missing) {
 		var res = [], mid, i, l, m, start = null;
 		
-		console.log("Extract", time, before, after);
-		
 		mid = find(time);
 		i = Math.max(0, mid-before);
 		l = Math.min(messages.length, mid+after+1);
@@ -62,7 +58,6 @@ function messageArray() {
 			m = messages[i];
 			switch (m.type) {
 				case 'result-start':
-					console.log("Gap found", start, m.time);
 					if (missing) {
 						res.push(missing(start, m.time));
 					}
@@ -75,7 +70,6 @@ function messageArray() {
 			}
 		}
 		if (m.type == 'result-end' && missing) {
-			console.log("Closing gap", m.time);
 			res.push(missing(m.time, null));
 		}
 		

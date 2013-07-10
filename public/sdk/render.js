@@ -27,21 +27,16 @@ Stream.prototype.scroll = function() {
 	
 	this.renderThumb(start, end);
 	
-	
-	console.log(log.scrollHeight, log.scrollTop, log.clientHeight);
-	
 	if(log.scrollHeight - (log.scrollTop + log.clientHeight) < 16) {
 		this.bottom = true;
 	} else {
 		this.bottom = false;
 	}
 	
-	console.log("Bottom", this.bottom);
-	
 	cb = function(m) { self.update(m); };
 	
 	if (this.bottom) {
-		core.watch(self.id, null, 32, 0, cb);
+		core.watch(self.id, null, 80, 0, cb);
 	} else {
 		core.unwatch(self.id);
 		if (up && start < 10 || !up && self.messages.length - end < 10) {
@@ -72,7 +67,7 @@ Stream.prototype.renderLog = function() {
 	var lastMsg, self = this, el;
 	this.log.innerHTML = '';
 	
-	console.log("Rendering", snapshot(this.messages));
+	console.log("Render:", snapshot(this.messages));
 	
 	this.messages.forEach(function(message) {
 		if (lastMsg) {
@@ -106,8 +101,6 @@ Stream.prototype.renderThumb = function(start, end) {
 };
 
 Stream.prototype.renderTimeline = function() {
-	
-	
 	var buckets = [], h=1, n = this.tread.clientHeight, i, k = 0, length,
 		msg, first, duration, r, ml = ["div"], max=0;
 
@@ -117,7 +110,6 @@ Stream.prototype.renderTimeline = function() {
 
 	duration = this.messages[length-1].time - first;
 	this.tread.innerHTML = '';
-	console.log(first,duration,length);
 	
 	for (k = 0; k<length; k++) {
 		

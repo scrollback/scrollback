@@ -27,7 +27,6 @@ socket.on('connect', function() {
 			core.enter(id);
 		});
 	}
-	console.log("Connected");
 	core.emit('connected');
 });
 
@@ -84,9 +83,9 @@ socket.on('messages', function(data) {
 	var roomId = data.query.to, reqId = data.query.to + '/' + (data.query.since || '') +
 			'/' + (data.query.until || '');
 			
-	console.log("Received", reqId, snapshot(data.messages));
+	console.log("Response:", reqId, snapshot(data.messages));
 	rooms[roomId].messages.merge(data.messages);
-	console.log("Merged", snapshot(rooms[roomId].messages));
+	console.log("Cached:", snapshot(rooms[roomId].messages));
 	
 	if (requests[reqId]) {
 		requests[reqId](true);
@@ -103,14 +102,14 @@ core.get = function(room, start, end, callback) {
 	
 	reqId = room + '/' + (query.since || '') + '/' + (query.until || '');
 	
-	console.log("Requesting from server: ", reqId);
+	console.log("Request:", reqId);
 	requests[reqId] = callback;
 	socket.emit('messages', query);
 };
 
 socket.on('message', function(message) {
 	var i, messages, updated = false;
-	console.log("Message ", message);
+	console.log("Received:", message);
 	if (message.type == 'nick' && message.from == nick) {
 		nick = message.ref;
 		core.emit('nick', message.ref);

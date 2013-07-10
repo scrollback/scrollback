@@ -16,3 +16,4 @@ Nick changes:
 
 IRC:
 - Multiple IRC channels per room
+- Change nick multiple times

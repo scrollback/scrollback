@@ -114,7 +114,7 @@ function send(message, accounts) {
 				}
 				break;
 			case 'nick':
-				log("Got nick change", message, account, clients);
+				log("Got nick change", message, account);
 				if(client) client.rename(message.ref);
 				break;
 		}
