@@ -3,7 +3,7 @@
 var irc = require("irc"),
 	log = require("../../lib/logger.js"),
 	config = require("../../config.js"),
-	ident=require("./identServer.js");
+	ident=require("./ident.js");
 
 module.exports = connect;
 
