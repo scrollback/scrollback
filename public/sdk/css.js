@@ -86,7 +86,7 @@ var css = {
 			zIndex: 1
 		},
 			".scrollback-tread-row": {
-				position: "absolute", height: "1px", right: "0",
+				position: "absolute", height: "2px", right: "0",
 				"transition": "all .2s linear",
 				"webkitTransition": "all 0.2s linear",
 				"mozTransition": "all 0.2s linear",
@@ -154,13 +154,10 @@ themes.light = {
 			".scrollback-message-join, .scrollback-message-part": { "color": "#555" },
 			".scrollback-message-timestamp": {color: "#555"},
 	".scrollback-timeline": {
-		background: "#eee",
+		background: "#eee"
 	},
 		".scrollback-thumb": {
 			background: "#999"
-		},
-		".scrollback-tread-row": {
-			background: "#000"
 		},
 		".scrollback-nick, .scrollback-text": {
 			borderTop: "1px solid #ccc"

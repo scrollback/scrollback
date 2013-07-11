@@ -47,7 +47,7 @@ module.exports = function(options, callback) {
 	
 	if(desc) query = "SELECT * FROM (" + query + ") r ORDER BY time ASC";
 	
-	//console.log(query, params);
+	log(query, params);
 	db.query(query, params, function(err, data) {
 		var start, end;
 		if(err) {

@@ -41,12 +41,12 @@ Stream.prototype.scroll = function() {
 	cb = function(m) { self.update(m); };
 	
 	if (this.bottom) {
-		core.watch(self.id, null, 80, 0, cb);
+		core.watch(self.id, null, 40, 0, cb);
 	} else {
 		core.unwatch(self.id);
 		if (!this.requested[up?"up":"dn"] && (up && start < 10 || !up && self.messages.length - end < 10)) {
 			this.requested[up?"up":"dn"] = true;
-			core.watch(self.id, self.messages[start].time, 32, 48, cb);
+			core.watch(self.id, self.messages[start].time, 15, 25, cb);
 		}
 	}
 	
@@ -86,28 +86,22 @@ Stream.prototype.renderLog = function() {
 };
 
 Stream.prototype.renderThumb = function(start, end) {
-	var log = this.log,
-		thumbTop = this.tread.clientHeight,
-		thumbBottom = 0, self = this,
-		viewTop = offset(log)[1] + log.scrollTop,
-		viewBottom = viewTop + log.clientHeight;
-		
-	function t2px(pos) {
-		return (pos - self.firstMessageAt) * self.tread.clientHeight /
-		(self.lastMessageAt - self.firstMessageAt);
-	}
-	
-	start = t2px(start); end = t2px(end);
+	var log = this.log, x,y,
+		thumbStart=this.messages[start].time,
+		thumbEnd=this.messages[end].time,
+		cStart = this.messages[0].time,
+		duration = this.messages[this.messages.length-1].time - cStart;
 
-	
-	end = Math.min(thumbBottom, log.clientHeight);
-	
-	this.thumb.style.top = thumbTop + 'px';
-	this.thumb.style.height = (thumbBottom - thumbTop +1) + 'px';
+	x = (thumbStart-cStart)*this.tread.clientHeight/duration;
+	y = (thumbEnd-thumbStart)*this.tread.clientHeight/duration;
+
+	this.thumb.style.top = x;
+	this.thumb.style.height = y;
 };
 
 Stream.prototype.renderTimeline = function() {
-	var buckets = [], h=1, n = this.tread.clientHeight, i, k = 0, length,
+	var buckets = [], h=4, n = Math.floor(this.tread.clientHeight/h),
+		i, k = 0, length,
 		msg, first, duration, r, ml = ["div"], max=0;
 
 	this.tread.innerHTML = '';
@@ -122,28 +116,42 @@ Stream.prototype.renderTimeline = function() {
 
 	duration = this.messages[length-1].time - first;
 	
+	
 	for (k = 0; k<length; k++) {
 		
 		msg=this.messages[k];
 		if (msg.type!=="text") {
 			continue;
 		}
-		i = Math.floor((msg.time- first)*n / duration);
-		if(!buckets[i]) buckets[i] = {nicks: {}, n: 0};
-		buckets[i].nicks[msg.from] = true;
-		buckets[i].n += 1;
 		
+		i = Math.floor((msg.time-first)*n / duration);
+		if(!buckets[i]) buckets[i] = {
+			nicks: {},
+			n: 0,
+			dominant:{
+				nick:msg.from,count:1
+			}
+		};
+		
+		buckets[i].nicks[msg.from] = (buckets[i].nicks[msg.from] || 0) + msg.text.length;
+		
+		if (buckets[i].dominant.count<=buckets[i].nicks[msg.from]) {
+			buckets[i].dominant={nick:msg.from,count:buckets[i].nicks[msg.from]};
+		}
+		
+		buckets[i].n += msg.text.length;
 		if(buckets[i].n > max) max = buckets[i].n;
-		
+
 	}
 
-	for(i=0; i<n; i++) {
+	for(i=0; i<n; i+=1) {
 		if(buckets[i]) {
 			r = ["div", {
 				'class': 'scrollback-tread-row scrollback-user-' +
 					Object.keys(buckets[i].nicks).join(' scrollback-user-'),
 				style: {
-					top: (i*h) + 'px', width: (buckets[i].n*18/max) + 'px'
+					top: (i*h) + 'px', width: (buckets[i].n*18/max) + 'px',
+					background:hashColor(buckets[i].dominant.nick)
 				}
 			}];
 			ml.push(r);
@@ -151,7 +159,6 @@ Stream.prototype.renderTimeline = function() {
 	}
 	
 	this.tread.appendChild(JsonML.parse(ml));
-	this.renderThumb();
 };
 
 // --- color for names ---
