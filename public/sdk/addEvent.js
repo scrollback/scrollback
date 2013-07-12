@@ -19,8 +19,9 @@ function addEvent( obj, type, fn ) {
 }
 
 function removeEvent( obj, type, fn ) {
-	if (obj.removeEventListener)
+	if (obj.removeEventListener) {
 		obj.removeEventListener( type, fn, false );
+	}
 	else if (obj.detachEvent) {
 		obj.detachEvent( "on"+type, obj[type+fn] );
 		obj[type+fn] = null;

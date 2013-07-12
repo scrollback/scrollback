@@ -92,16 +92,16 @@ Stream.prototype.renderThumb = function(start, end) {
 		cStart = this.messages[0].time,
 		duration = this.messages[this.messages.length-1].time - cStart;
 
-	x = (thumbStart-cStart)*this.tread.clientHeight/duration;
-	y = (thumbEnd-thumbStart)*this.tread.clientHeight/duration;
+	x = Math.round((thumbStart-cStart)*this.tread.clientHeight/duration);
+	y = Math.round((thumbEnd-thumbStart)*this.tread.clientHeight/duration);
 
-	this.thumb.style.top = x;
-	this.thumb.style.height = y;
+	this.thumb.style.top = x + 'px';
+	this.thumb.style.height = y + 'px';
 };
 
 Stream.prototype.renderTimeline = function() {
 	var buckets = [], h=4, n = Math.floor(this.tread.clientHeight/h),
-		i, k = 0, length,
+		i, k = 0, length, w = 18,
 		msg, first, duration, r, ml = ["div"], max=0;
 
 	this.tread.innerHTML = '';
@@ -112,7 +112,7 @@ Stream.prototype.renderTimeline = function() {
 	
 	msg = this.messages[0];
 	length=this.messages.length;
-	first = msg.time==null?0:msg.time;
+	first = msg.time || 0;
 
 	duration = this.messages[length-1].time - first;
 	
@@ -150,7 +150,8 @@ Stream.prototype.renderTimeline = function() {
 				'class': 'scrollback-tread-row scrollback-user-' +
 					Object.keys(buckets[i].nicks).join(' scrollback-user-'),
 				style: {
-					top: (i*h) + 'px', width: (buckets[i].n*18/max) + 'px',
+					top: Math.round(i*h) + 'px',
+					width: Math.round(h+buckets[i].n*(w-h)/max) + 'px',
 					background:hashColor(buckets[i].dominant.nick)
 				}
 			}];

@@ -1,12 +1,18 @@
 "use strict";
 
 if(!Object.keys) Object.keys = function(o) {
-	if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null) {
+	if (typeof o !== 'object' && typeof o !== 'function' || o === null) {
 		throw new TypeError('Object.keys called on non-object');
 	}
 	var k=[], i;
 	for(i in o) if(o.hasOwnProperty(i)) k.push(i);
 	return k;
+};
+
+if (typeof Object.create !== "function") Object.create = function (o) {
+	function F() {}
+	F.prototype = o;
+	return new F();
 };
 
 if(!Array.prototype.forEach) Array.prototype.forEach = function(fn, scope) {
@@ -15,7 +21,17 @@ if(!Array.prototype.forEach) Array.prototype.forEach = function(fn, scope) {
 	}
 };
 
-var log = scrollback.debug? console.log: function() { };
+if(!Array.prototype.map) Array.prototype.map = function(fn, scope) {
+	var r = [];
+	for(var i = 0, len = this.length; i < len; ++i) {
+		r.push(fn.call(scope, this[i], i, this));
+	}
+	return r;
+};
+
+if (!window.console) {
+	window.console = { log: function() {} };
+}
 
 function offset(obj) {
 	var l=0, t=0;
@@ -55,7 +71,7 @@ window.requestAnimationFrame = window.requestAnimationFrame ||
 
 
 function prettyDate(time, currTime){
-	var d = new Date(parseInt(time)), n = new Date(currTime),
+	var d = new Date(parseInt(time, 10)), n = new Date(currTime),
 		day_diff = n.getDate() - d.getDate(),
 		weekDays=["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
 			"Friday", "Saturday"],
