@@ -33,7 +33,7 @@ socket.on('connect', function() {
 socket.on('disconnect', function() {
 	var id;
 	for(id in rooms) if(rooms.hasOwnProperty(id)) core.leave(id);
-	core.emit("disconnect");
+	core.emit("disconnected");
 });
 
 core.enter = function (id) {
