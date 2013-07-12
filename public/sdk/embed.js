@@ -33,8 +33,6 @@ core.on('disconnected', function() {
 // ---- Initialize ----
 
 function init() {
-	var i;
-	
 	addStyles(css);
 	addStyles(
 		scrollback.theme && themes[scrollback.theme]?
@@ -73,10 +71,19 @@ function Stream(id) {
 		else if(hasClass(el, 'scrollback-nick')) {
 			self.nick = el;
 			addEvent(el, 'change', function() { self.rename(); });
-			addEvent(el, 'focus', function() { this.select(); });
-			el.value = nick
+			addEvent(el, 'focus', function() { self.select(); });
+			el.value = core.nick();
 		}
-		else if(hasClass(el, 'scrollback-text')) self.text = el;
+		else if(hasClass(el, 'scrollback-text')) {
+			self.text = el;
+			addEvent(el, 'keydown', function(e) {
+				if(e.keyCode == 13) {
+					self.send();
+					return false;
+				}
+				return true;
+			});
+		}
 		else if(hasClass(el, 'scrollback-send')) {
 			self.sendfrm = el;
 			addEvent(el, 'submit', function(event) {
@@ -193,7 +200,8 @@ Stream.position = function() {
 		step = 1, colw, colh, col, y=0, h, stacked=false, pitch,
 		scrw = document.documentElement.clientWidth ||
 			document.getElementsByTagName('body')[0].clientWidth,
-		scrh = window.innerHeight;
+		scrh = window.innerHeight || document.documentElement.clientHeight ||
+			document.getElementsByTagName('body')[0].clientHeight;
 		
 	if(scrw < minWidth + 2*margin + minPitch*(l-1)) {
 		stacked = true;
@@ -226,7 +234,7 @@ Stream.position = function() {
 			removeClass(col, 'scrollback-stream-right');
 		} else {
 			h = hasClass(col, 'scrollback-stream-hidden')? minHeight: colh;
-			col.style.height = h + 'px';
+			col.style.height = Math.round(h) + 'px';
 			col.style.bottom = '0px';
 			if(step < 0 || pitch >= colw || i===(l-1)) {
 				removeClass(col, 'scrollback-stream-right');

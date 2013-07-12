@@ -149,7 +149,9 @@ core.say = function (to, text) {
 };
 
 core.nick = function(n) {
+	if (!n) return nick;
 	message('nick', '', '', n);
+	return n;
 };
 
 core.watch = function(room, time, before, after, callback) {
