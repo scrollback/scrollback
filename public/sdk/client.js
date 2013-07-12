@@ -112,11 +112,24 @@ core.get = function(room, start, end, callback) {
 socket.on('message', function(message) {
 	var i, messages, updated = false;
 	console.log("Received:", message);
-	if (message.type == 'nick' && message.from == nick) {
-		nick = message.ref;
-		core.emit('nick', message.ref);
-		return;
+	
+	switch (message.type) {
+		case 'nick':
+			if (message.from == nick) {
+				nick = message.ref;
+				core.emit('nick', message.ref);
+				return;
+			}
+			break;
+		case 'text':
+		case 'result-start':
+		case 'result-end':
+			break;
+		default:
+			core.emit('notify', message);
+			return;
 	}
+	
 	messages = rooms[message.to] && rooms[message.to].messages;
 	if (!messages) return;
 	for (i = messages.length - 1; i >= 0 && message.time - messages[i].time < 5000; i-- ) {
