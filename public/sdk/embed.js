@@ -43,7 +43,7 @@ function init() {
 
 core.on('enter', function(id) {
 	var stream = Stream.get(id);
-	if(scrollback.minimized === false) stream.toggle();
+	if(scrollback.minimized !== false) stream.toggle();
 });
 
 core.on('leave', function(id) {
