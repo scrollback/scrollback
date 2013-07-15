@@ -1,6 +1,7 @@
 var express = require("express"),
 	http = require("http"),
-	config = require("../../config.js");
+	config = require("../../config.js"),
+	session = require("./session.js");
 
 exports.init = function() {
 	var app = express(), srv;
