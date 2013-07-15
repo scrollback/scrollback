@@ -14,10 +14,7 @@ exports.store = sessionStore;
 
 exports.parser = function (req, res, next) {
 	parse(req, res, function() {
-		if (!req.session) {
-			next();
-		}
-		if(!req.session.user) {
+		if(req.session && !req.session.user) {
 			req.session.user = {
 				id: "guest", name: "Guest", picture: "",
 				accounts: []

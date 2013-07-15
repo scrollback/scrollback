@@ -16,7 +16,7 @@ exports.init = function(app) {
     app.get('*', function(req, res, next) {
         var streams = req.path.substring(1);
 		if (streams.indexOf('.') !== -1 || streams.split('/')[0].length < 4) {
-			next();
+			return next();
 		}
 		streams = streams.split("/+/").map(function(p) {
             return p.split('/')[0];
