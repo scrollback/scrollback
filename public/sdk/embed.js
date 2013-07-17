@@ -186,7 +186,8 @@ Stream.prototype.notify = function(message) {
 	
 	if (!this.hidden && this.bottom) {
 		this.log.appendChild(el);
-		setTimeout(function() { el.style.opacity = 0; }, 1000);
+		this.log.scrollTop = this.log.scrollHeight;
+		setTimeout(function() { addClass(el, 'scrollback-message-hidden'); }, 1000);
 	}
 };
 

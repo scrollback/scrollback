@@ -14,7 +14,8 @@ var css = {
 		"transition": "height 0.2s ease-out",
 		"webkitTransition": "height 0.2s ease-out",
 		"mozTransition": "height 0.2s ease-out",
-		"oTransition": "height 0.2s ease-out", "msTransition": "all 0.2s ease-out",
+		"oTransition": "height 0.2s ease-out",
+		"msTransition": "height 0.2s ease-out",
 		"overflow": "hidden"
 	},
 	".scrollback-stream-hidden": {
@@ -71,10 +72,11 @@ var css = {
 			},
 			".scrollback-message-hidden": {
 				"opacity": 0,
-				"transition": "height 0.2s ease-out",
-				"webkitTransition": "height 0.2s ease-out",
-				"mozTransition": "height 0.2s ease-out",
-				"oTransition": "height 0.2s ease-out", "msTransition": "all 0.2s ease-out",
+				"transition": "all 2s ease-out",
+				"webkitTransition": "all 2s ease-out",
+				"mozTransition": "all 2s ease-out",
+				"oTransition": "all 2s ease-out",
+				"msTransition": "all 2s ease-out"
 			},
 				".scrollback-timestamp-hidden .scrollback-message-timestamp": {
 					display: "none"
