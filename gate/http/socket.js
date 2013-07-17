@@ -19,19 +19,22 @@ exports.init = function (server) {
 	io.set('log level', 1);
 
 	io.sockets.on('connection', function (socket) {
-
 		var limiter = new RateLimiter(config.http.limit, config.http.time, true);
-		
 		var sid = cookie.parse(socket.handshake.headers.cookie || '')['connect.sid'],
-			user = users[sid];
-			
+			user = sid && users[sid];
+		
 		if(!user) {
-			users[sid] = user = {
+			user = {
 				id: 'sb' + Math.floor(Math.random() * 10000),
 				rooms: {}
 			};
-			uIndex[user.id] = sid;
+			if (sid) {
+				users[sid] = user;
+				uIndex[user.id] = sid;
+			}
 		}
+		
+		log("New connection", sid, user.id);
 		
 		socket.emit('message', {type: 'nick', from: '', to: '', ref: user.id});
 		

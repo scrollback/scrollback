@@ -163,7 +163,7 @@ themes.light = {
 			borderTop: "1px solid #ccc"
 		},
 		".scrollback-nick": {
-			color: "#555", "background": "#fff"
+			color: "#555", "background": "#eee"
 		},
 		".scrollback-text": { background: "#fff", color: "#000" },
 	".scrollback-poweredby": {
@@ -173,7 +173,7 @@ themes.light = {
 
 themes.dark = {
 	".scrollback-stream": {
-		"background": "#555", color: "#fff",
+		"background": "#555", color: "#fff"
 	},
 		".scrollback-icon": {
 			color: "#fff", background: "#555"
@@ -191,11 +191,11 @@ themes.dark = {
 			color: "#fff"
 		},
 			".scrollback-message-nick": { "color": "#999" },
-			".scrollback-message-separator": { "color": "#999", },
-			".scrollback-message-join, .scrollback-message-part": { "color": "#999", },
+			".scrollback-message-separator": { "color": "#999" },
+			".scrollback-message-join, .scrollback-message-part": { "color": "#999" },
 			".scrollback-message-timestamp": {color: "#999"},
 	".scrollback-timeline": {
-		background: "#000",
+		background: "#000"
 	},
 		".scrollback-tread-row": {
 			background: "#fff"
@@ -204,7 +204,7 @@ themes.dark = {
 			background: "#000"
 		},
 		".scrollback-nick": {
-			color: "#555", "background": "#fff"
+			color: "#555", "background": "#eee"
 		},
 		".scrollback-text": { background: "#fff", color: "#000" },
 	".scrollback-poweredby": {
