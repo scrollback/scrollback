@@ -28,6 +28,9 @@ socket.on('connect', function() {
 		});
 	}
 	core.emit('connected');
+	if (nick != '') {
+		message()
+	}
 });
 
 socket.on('disconnect', function() {
