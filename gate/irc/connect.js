@@ -150,7 +150,6 @@ function connect(server, nick, uid, callback) {
 	
 	function queueConn(oper, callback) {
 		return function() {
-			log("Q", arguments);
 			if (!client.connected) {
 				log("Queueing ", arguments);
 				client.connQueue.push({oper: oper, args: arguments});
