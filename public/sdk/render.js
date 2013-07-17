@@ -241,7 +241,7 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 							width: "100% !important"
 						};
 						self.userStyle = addStyles(ucss);
-					}
+					},
 				}, message.from ],
 				[ "span", { 'class': 'scrollback-message-separator'}, '] '],
 				[ "span", { 'class': 'scrollback-message-text'}, format(message.text) ],
