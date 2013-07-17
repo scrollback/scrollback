@@ -71,6 +71,9 @@ Stream.prototype.update = function (data) {
 
 Stream.prototype.renderLog = function() {
 	var lastMsg, self = this, el;
+	
+	if (this.hidden) return;
+	
 	this.log.innerHTML = '';
 	
 	console.log("Render:", snapshot(this.messages));
@@ -86,6 +89,7 @@ Stream.prototype.renderLog = function() {
 };
 
 Stream.prototype.renderThumb = function(start, end) {
+	if (this.hidden) return;
 	var log = this.log, x,y,
 		thumbStart=this.messages[start].time,
 		thumbEnd=this.messages[end].time,
@@ -100,6 +104,7 @@ Stream.prototype.renderThumb = function(start, end) {
 };
 
 Stream.prototype.renderTimeline = function() {
+	if (this.hidden) return;
 	var buckets = [], h=4, n = Math.floor(this.tread.clientHeight/h),
 		i, k = 0, length, w = 18,
 		msg, first, duration, r, ml = ["div"], max=0;
@@ -203,8 +208,6 @@ function hashColor(name) {
 	return color(hash(name));
 }
 
-
-
 Stream.prototype.renderMessage = function (message, showTimestamp) {
 	var el, self = this;
 	
@@ -222,54 +225,61 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	
 	function formatName(name) {
 		// TODO
-		return name;
+		return [ "span", {
+			'class': 'scrollback-message-nick',
+			onmouseout: function() {
+				if(self.userStyle) self.userStyle.parentNode.removeChild(self.userStyle);
+			},
+			onmouseover: function() {
+				var ucss = {".scrollback-tread-row": {width: "0 !important"}};
+				ucss[ ".scrollback-user-" + name] = {
+					"background": hashColor(message.from) + " !important",
+					width: "100% !important"
+				};
+				self.userStyle = addStyles(ucss);
+			}
+		}, name ];
 	}
 	
 	switch(message.type) {
 		case 'text':
 			el = [
 				[ "span", { 'class': 'scrollback-message-separator'}, '['],
-				[ "span", {
-					'class': 'scrollback-message-nick',
-					onmouseout: function() {
-						if(self.userStyle) self.userStyle.parentNode.removeChild(self.userStyle);
-					},
-					onmouseover: function() {
-						var ucss = {".scrollback-tread-row": {width: "0 !important"}};
-						ucss[ ".scrollback-user-" + formatName(message.from)] = {
-							"background": hashColor(message.from) + " !important",
-							width: "100% !important"
-						};
-						self.userStyle = addStyles(ucss);
-					},
-				}, message.from ],
-				[ "span", { 'class': 'scrollback-message-separator'}, '] '],
-				[ "span", { 'class': 'scrollback-message-text'}, format(message.text) ],
-				[ "span", { 'class': 'scrollback-message-timestamp'},
-					"Sent " + prettyDate(message.time, core.time())
-				]
-			];
+				formatName(message.from)];
+			if(message.text.indexOf('/me ') === 0) {
+				el.push([ "span", format(message.text.substr(3)) ]);
+				el.push([ "span", { 'class': 'scrollback-message-separator'}, '] ']);
+			} else {
+				el.push([ "span", { 'class': 'scrollback-message-separator'}, '] ']);
+				el.push([ "span", { 'class': 'scrollback-message-content'}, format(message.text) ]);
+			}
 			break;
 		case 'back':
-			el = [["span", message.from + ' entered.']];
-			// intentional fall through.
+			el = [["span", formatName(message.from), ' entered.']];
+			break;
 		case 'away':
-			el = el || [["span", message.from + ' left' + (
-				message.text? ' (' + message.text + ')': '.'
-			)]];
-			setTimeout(function(){
-				el.className += ' scrollback-message-hidden';
-			}, 1000);
+			el = ["span", formatName(message.from), ' left'];
+			if (message.text) el.push(' (', format(message.text), ')');
+			else el.push('.');
+			el = [el];
+			break;
+		case 'nick':
+			el = [["span", formatName(message.from), ' is now known as ', formatName(message.ref)]];
 			break;
 		default:
 			el = [["span", message.text]];
 	}
 	
+	if (showTimestamp) {
+		el.push([ "span", { 'class': 'scrollback-message-timestamp'},
+			"Sent " + prettyDate(message.time, core.time())
+		]);
+	}
+	
 	if(!el) return null;
 
 	el = JsonML.parse(["div", {
-		'class': 'scrollback-message scrollback-message-' + message.type +
-			(showTimestamp? '': ' scrollback-timestamp-hidden'),
+		'class': 'scrollback-message scrollback-message-' + message.type,
 		'style': { 'borderLeftColor': hashColor(message.from) },
 		'data-time': message.time, 'data-from': formatName(message.from)
 	}].concat(el));

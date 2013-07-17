@@ -28,9 +28,7 @@ socket.on('connect', function() {
 		});
 	}
 	core.emit('connected');
-	if (nick != '') {
-		message()
-	}
+	if (nick !== '') core.nick(nick);
 });
 
 socket.on('disconnect', function() {
@@ -65,7 +63,6 @@ function message(type, to, text, ref) {
 		socket.emit('message', m);
 	}
 	if(rooms[to]) {
-		console.log(m.type);
 		rooms[to].messages.push(m);
 		if(requests[to + '//']) requests[to + '//'](true);
 	}
@@ -115,7 +112,7 @@ core.get = function(room, start, end, callback) {
 socket.on('message', function(message) {
 	var i, messages, updated = false;
 	console.log("Received:", message);
-	
+	core.emit('notify', message);
 	switch (message.type) {
 		case 'nick':
 			if (message.from == nick) {
@@ -129,7 +126,6 @@ socket.on('message', function(message) {
 		case 'result-end':
 			break;
 		default:
-			core.emit('notify', message);
 			return;
 	}
 	

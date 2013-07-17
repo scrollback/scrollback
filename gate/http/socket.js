@@ -12,7 +12,7 @@ var io = require("socket.io"),
 	config = require("../../config.js"),
 	RateLimiter = require('limiter').RateLimiter;
 
-var users = {}, uIndex = {};
+var users = {}, uIndex = {}, uWait = {};
 
 exports.init = function (server) {
 	io = io.listen(server);
@@ -29,6 +29,10 @@ exports.init = function (server) {
 				rooms: {}
 			};
 			if (sid) {
+				if (uWait[sid]) {
+					clearTimeout(uWait[sid]);
+					delete uWait[sid];
+				}
 				users[sid] = user;
 				uIndex[user.id] = sid;
 			}
@@ -61,8 +65,9 @@ exports.init = function (server) {
 						user.rooms[message.to] = 1;
 					}
 				} else if (message.type == 'away') {
+					socket.leave(message.to);
 					if(user.rooms[message.to]) user.rooms[message.to]--;
-					if(!user.rooms[message.to]) return;
+					if(user.rooms[message.to]) return;
 				} else if (message.type == 'nick') {
 					log("nick "+user.id + " to " + message.ref + ", forwarding");
 					for (room in user.rooms) {
@@ -76,9 +81,6 @@ exports.init = function (server) {
 				}
 				
 				log("Received message via socket: ", message);
-				if(message.type === 'part') {
-					socket.leave(message.to);
-				}
 				core.message(message);
 			});
 		});
@@ -107,10 +109,14 @@ exports.init = function (server) {
 					core.message({ type: 'away', from: user.id, to: room,
 						time: new Date().getTime(), text: "" });
 				}
-				if (Object.keys(user.rooms).length === 0) {
-					delete users[sid];
+			}
+			if (!Object.keys(user.rooms).length && sid) {
+				uWait[sid] = setTimeout(function () {
+					log("1 hour elapsed. Deleting session:", sid, user.id);
+					delete uWait[sid];
 					delete uIndex[user.id];
-				}
+					delete users[sid];
+				}, 3600000);
 			}
 		});
 		
