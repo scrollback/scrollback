@@ -184,11 +184,11 @@ Stream.prototype.notify = function(message) {
 	var el = this.renderMessage(message);
 	this.titleText.innerHTML = (el.innerText || el.textContent);
 	
-	if (!this.hidden && this.bottom && message.type !== 'text') {
-		this.log.appendChild(el);
-		this.log.scrollTop = this.log.scrollHeight;
-		setTimeout(function() { addClass(el, 'scrollback-message-hidden'); }, 1000);
-	}
+	//if (!this.hidden && this.bottom && message.type !== 'text') {
+	//	this.log.appendChild(el);
+	//	this.log.scrollTop = this.log.scrollHeight;
+	//	setTimeout(function() { addClass(el, 'scrollback-message-hidden'); }, 1000);
+	//}
 };
 
 Stream.prototype.rename = function() {
@@ -205,7 +205,7 @@ Stream.prototype.select = function() {
 	Stream.position();
 };
 
-// ---- Static methods ----
+// ---- Static methods ----------------------------------
 
 Stream.get = function(id) {
 	if(!id) throw "Can't get a stream with no ID!";
