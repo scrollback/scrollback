@@ -71,12 +71,12 @@ var css = {
 				cursor: "default"
 			},
 			".scrollback-message-hidden": {
-				"opacity": 0,
-				"transition": "all 2s ease-out",
-				"webkitTransition": "all 2s ease-out",
-				"mozTransition": "all 2s ease-out",
-				"oTransition": "all 2s ease-out",
-				"msTransition": "all 2s ease-out"
+				"opacity": 0, height: 0,
+				"transition": "all 1s ease-out",
+				"webkitTransition": "all 1s ease-out",
+				"mozTransition": "all 1s ease-out",
+				"oTransition": "all 1s ease-out",
+				"msTransition": "all 1s ease-out"
 			},
 				".scrollback-timestamp-hidden .scrollback-message-timestamp": {
 					display: "none"
