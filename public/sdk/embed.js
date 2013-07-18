@@ -184,7 +184,7 @@ Stream.prototype.notify = function(message) {
 	var el = this.renderMessage(message);
 	this.titleText.innerHTML = (el.innerText || el.textContent);
 	
-	if (!this.hidden && this.bottom) {
+	if (!this.hidden && this.bottom && message.type !== 'text') {
 		this.log.appendChild(el);
 		this.log.scrollTop = this.log.scrollHeight;
 		setTimeout(function() { addClass(el, 'scrollback-message-hidden'); }, 1000);
