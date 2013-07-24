@@ -108,7 +108,6 @@ var css = {
 			"oBoxSizing": "border-box", padding: "0 4px",
 			height: "40px", fontSize: "1em", "borderRadius": "0"
 		},
-
 		".scrollback-nick, .scrollback-text-wrap": {
 			"position": "absolute", "top": "0",
 			"margin": "0"
@@ -117,7 +116,16 @@ var css = {
 			outline: "none"
 		},
 		".scrollback-nick": {
-			"left": "0px", "width": "80px"
+			//the 20px is for the key icon.
+			left:"20px","width": "80px"
+		},
+		".scrollback-login-key":{
+			//margin-top is for vertical center align.
+			"margin-top":"10px","width":"20px"
+		},
+		".scrollback-loginBtn":{
+			"position": "absolute","background":"#fff",
+			"left": "0px", "width": "100px",height:"40px;"
 		},
 		'.scrollback-text-wrap': { "right": "0px", "left": "80px" },
 		".scrollback-text": { width: "100%" },
@@ -159,7 +167,7 @@ themes.light = {
 		".scrollback-thumb": {
 			background: "#999"
 		},
-		".scrollback-nick, .scrollback-text": {
+		".scrollback-loginBtn, .scrollback-text": {
 			borderTop: "1px solid #ccc"
 		},
 		".scrollback-nick": {
