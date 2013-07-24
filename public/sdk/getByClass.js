@@ -10,17 +10,16 @@
 
 function getByClass (d, search) {
 	"use strict";
-	var elements, pattern, i, results = [];
+	var elements, pattern, i, l, results = [];
 	
 	if(d.getElementsByClassName) {
 		return [].slice.apply(d.getElementsByClassName(search));
-	}
-	
-	if (d.querySelectorAll) { // IE8
-		return [].slice.apply(d.querySelectorAll("." + search));
-	}
-	
-	if (d.evaluate) { // IE6, IE7
+	} else if (d.querySelectorAll) { // IE8
+		elements=d.querySelectorAll("." + search);
+		for (i=0, l=elements.length; i<l; i++) {
+			results.push(elements[i]);
+		}
+	} else if (d.evaluate) { // IE6, IE7
 		pattern = ".//*[contains(concat(' ', @class, ' '), ' " + search + " ')]";
 		elements = d.evaluate(pattern, d, null, 0, null);
 		while ((i = elements.iterateNext())) {

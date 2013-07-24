@@ -33,8 +33,6 @@ core.on('disconnected', function() {
 // ---- Initialize ----
 
 function init() {
-	var i;
-	
 	addStyles(css);
 	addStyles(
 		scrollback.theme && themes[scrollback.theme]?
@@ -45,7 +43,10 @@ function init() {
 
 core.on('enter', function(id) {
 	var stream = Stream.get(id);
-	if(scrollback.minimized === false) stream.toggle();
+	if (!stream.initialized) {
+		if(scrollback.minimized === false) stream.show();
+		else stream.hide();
+	}
 });
 
 core.on('leave', function(id) {
@@ -65,6 +66,12 @@ core.on('nick', function(n) {
 	}
 });
 
+core.on('notify', function(m) {
+	if (m.to && streams[m.to]) {
+		streams[m.to].notify(m);
+	}
+});
+
 // ---- The Stream constructor ----
 
 function Stream(id) {
@@ -79,9 +86,19 @@ function Stream(id) {
 			self.nick = el;
 			addEvent(el, 'change', function() { self.rename(); });
 			addEvent(el, 'focus', function() { this.select(); });
-			el.value = nick;
+			el.value = core.nick();
 		}
-		else if(hasClass(el, 'scrollback-text')) self.text = el;
+		else if(hasClass(el, 'scrollback-text')) {
+			self.text = el;
+			addEvent(el, 'focus', function() { this.select(); });
+			addEvent(el, 'keydown', function(e) {
+				if(e.keyCode == 13) {
+					self.send();
+					return false;
+				}
+				return true;
+			});
+		}
 		else if(hasClass(el, 'scrollback-send')) {
 			self.sendfrm = el;
 			addEvent(el, 'submit', function(event) {
@@ -133,23 +150,59 @@ Stream.prototype.embed = function () {
 };
 
 Stream.prototype.toggle = function() {
-	var self = this;
-	if(hasClass(this.stream, 'scrollback-stream-hidden')) {
-		removeClass(this.stream, 'scrollback-stream-hidden');
-		this.titleText.innerHTML='';
-		setTimeout(function() { self.renderTimeline(); }, 250 );
-	} else {
-		removeClass(this.stream, 'scrollback-stream-selected');
-		addClass(this.stream, 'scrollback-stream-hidden');
-	}
+	if(this.hidden) this.show();
+	else this.hide();
 	Stream.position();
 };
 
+Stream.prototype.hide = function() {
+	removeClass(this.stream, 'scrollback-stream-selected');
+	addClass(this.stream, 'scrollback-stream-hidden');
+	this.hidden = true;
+}
+
+Stream.prototype.show = function() {
+	var self = this;
+	removeClass(this.stream, 'scrollback-stream-hidden');
+	setTimeout(function() { self.renderTimeline(); }, 250 );
+	if (!self.initialized) {
+		self.bottom = true;
+		core.watch(self.id, null, 32, 0, function(m) { self.update(m); });
+		self.initialized = true;
+	}
+	this.hidden = false;
+}
+
 Stream.prototype.send = function () {
-	if(!this.text.value) return;
-	this.log.scrollTop = this.log.scrollHeight;
-	core.say(this.id, this.text.value);
+	var text = this.text.value, parts;
+	if(!text) return;
 	this.text.value = '';
+	
+	if (text[0] == '/') {
+		parts = text.substr(1).split(' ');
+		switch (parts[0]) {
+			case 'nick':
+				this.nick.value = parts[1];
+				this.rename();
+				return;
+			case 'leave':
+				if(scrollback.close) this.close();
+				return;
+		}
+	}
+	this.log.scrollTop = this.log.scrollHeight;
+	core.say(this.id, text);
+};
+
+Stream.prototype.notify = function(message) {
+	var el = this.renderMessage(message);
+	this.titleText.innerHTML = (el.innerText || el.textContent);
+	
+	//if (!this.hidden && this.bottom && message.type !== 'text') {
+	//	this.log.appendChild(el);
+	//	this.log.scrollTop = this.log.scrollHeight;
+	//	setTimeout(function() { addClass(el, 'scrollback-message-hidden'); }, 1000);
+	//}
 };
 
 Stream.prototype.rename = function() {
@@ -166,7 +219,7 @@ Stream.prototype.select = function() {
 	Stream.position();
 };
 
-// ---- Static methods ----
+// ---- Static methods ----------------------------------
 
 Stream.get = function(id) {
 	if(!id) throw "Can't get a stream with no ID!";
@@ -175,8 +228,6 @@ Stream.get = function(id) {
 	} else {
 		streams[id] = new Stream(id);
 		Stream.position();
-		streams[id].bottom = true;
-		core.watch(id, null, 32, 0, function(m) { streams[id].update(m); });
 		return streams[id];
 	}
 };
@@ -207,7 +258,8 @@ Stream.position = function() {
 		step = 1, colw, colh, col, y=0, h, stacked=false, pitch,
 		scrw = document.documentElement.clientWidth ||
 			document.getElementsByTagName('body')[0].clientWidth,
-		scrh = window.innerHeight;
+		scrh = window.innerHeight || document.documentElement.clientHeight ||
+			document.getElementsByTagName('body')[0].clientHeight;
 		
 	if(scrw < minWidth + 2*margin + minPitch*(l-1)) {
 		stacked = true;
@@ -240,7 +292,7 @@ Stream.position = function() {
 			removeClass(col, 'scrollback-stream-right');
 		} else {
 			h = hasClass(col, 'scrollback-stream-hidden')? minHeight: colh;
-			col.style.height = h + 'px';
+			col.style.height = Math.round(h) + 'px';
 			col.style.bottom = '0px';
 			if(step < 0 || pitch >= colw || i===(l-1)) {
 				removeClass(col, 'scrollback-stream-right');

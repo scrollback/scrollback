@@ -2,8 +2,11 @@
 echo "Installing mysql"
 sudo npm install mysql
 
-echo "Installing uglifyjs as administrator."
+echo "Installing uglifyjs."
 sudo npm install -g uglifyjs
+
+echo "Copying Upstart config file"
+sudo cp scrollback.conf /etc/init/scrollback.conf
 
 echo "Your MySQL root password is required to create the scrollback user and database."
 echo "It will be discarded when installation is complete."

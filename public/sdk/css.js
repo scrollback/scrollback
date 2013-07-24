@@ -14,17 +14,21 @@ var css = {
 		"transition": "height 0.2s ease-out",
 		"webkitTransition": "height 0.2s ease-out",
 		"mozTransition": "height 0.2s ease-out",
-		"oTransition": "height 0.2s ease-out", "msTransition": "all 0.2s ease-out",
+		"oTransition": "height 0.2s ease-out",
+		"msTransition": "height 0.2s ease-out",
 		"overflow": "hidden"
+	},
+	".scrollback-stream-hidden": {
+		"height": "44px !important"
+	},
+	".scrollback-stream-hidden .scrollback-title-text": {
+		display: "inline"
 	},
 	".scrollback-stream-right .scrollback-title": {
 		"text-align": "right"
 	},
-	".scrollback-stream-right .scrollback-title-text": {
+	".scrollback-stream-right.scrollback-stream-hidden .scrollback-title-text": {
 		display: "none"
-	},
-	".scrollback-stream-hidden": {
-		"height": "44px !important"
 	},
 		".scrollback-icon": {
 			top: "0", margin: "0 -2px",
@@ -47,7 +51,9 @@ var css = {
 				textOverflow: "ellipsis", overflow: "hidden"
 			},
 			".scrollback-title-text": {
-				fontWeight: "normal"
+				paddingLeft: "8px",
+				fontWeight: "normal",
+				display: "none"
 			},
 		".scrollback-log": {
 			"boxSizing": "border-box", "webkitBoxSizing": "border-box",
@@ -65,11 +71,12 @@ var css = {
 				cursor: "default"
 			},
 			".scrollback-message-hidden": {
-				"opacity": 0,
-				"transition": "height 0.2s ease-out",
-				"webkitTransition": "height 0.2s ease-out",
-				"mozTransition": "height 0.2s ease-out",
-				"oTransition": "height 0.2s ease-out", "msTransition": "all 0.2s ease-out",
+				"opacity": 0, height: 0,
+				"transition": "all 1s ease-out",
+				"webkitTransition": "all 1s ease-out",
+				"mozTransition": "all 1s ease-out",
+				"oTransition": "all 1s ease-out",
+				"msTransition": "all 1s ease-out"
 			},
 				".scrollback-timestamp-hidden .scrollback-message-timestamp": {
 					display: "none"
@@ -157,10 +164,11 @@ themes.light = {
 		".scrollback-log": {
 			color: "#000"
 		},
+			".scrollback-message": { color: "#999" },
 			".scrollback-message-nick": { "color": "#999" },
 			".scrollback-message-separator": { "color": "#ccc" },
-			".scrollback-message-join, .scrollback-message-part": { "color": "#555" },
-			".scrollback-message-timestamp": {color: "#555"},
+			".scrollback-message-timestamp": {color: "#999"},
+			".scrollback-message-content": {color: "#000"},
 	".scrollback-timeline": {
 		background: "#eee"
 	},
@@ -171,7 +179,7 @@ themes.light = {
 			borderTop: "1px solid #ccc"
 		},
 		".scrollback-nick": {
-			color: "#555", "background": "#fff"
+			color: "#555", "background": "#eee"
 		},
 		".scrollback-text": { background: "#fff", color: "#000" },
 	".scrollback-poweredby": {
@@ -181,7 +189,7 @@ themes.light = {
 
 themes.dark = {
 	".scrollback-stream": {
-		"background": "#555", color: "#fff",
+		"background": "#555", color: "#fff"
 	},
 		".scrollback-icon": {
 			color: "#fff", background: "#555"
@@ -199,11 +207,11 @@ themes.dark = {
 			color: "#fff"
 		},
 			".scrollback-message-nick": { "color": "#999" },
-			".scrollback-message-separator": { "color": "#999", },
-			".scrollback-message-join, .scrollback-message-part": { "color": "#999", },
+			".scrollback-message-separator": { "color": "#999" },
+			".scrollback-message-join, .scrollback-message-part": { "color": "#999" },
 			".scrollback-message-timestamp": {color: "#999"},
 	".scrollback-timeline": {
-		background: "#000",
+		background: "#000"
 	},
 		".scrollback-tread-row": {
 			background: "#fff"
@@ -212,7 +220,7 @@ themes.dark = {
 			background: "#000"
 		},
 		".scrollback-nick": {
-			color: "#555", "background": "#fff"
+			color: "#555", "background": "#eee"
 		},
 		".scrollback-text": { background: "#fff", color: "#000" },
 	".scrollback-poweredby": {

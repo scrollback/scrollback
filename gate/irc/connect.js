@@ -38,7 +38,7 @@ function connect(server, nick, uid, callback) {
 	});
 	
 	client.addListener('raw', function(message) {
-		// log("Incoming from " + message.server, message.args);
+		log("Incoming from " + message.server, message.args);
 	});
 	
 	client.addListener('error', function(message) {
@@ -55,7 +55,7 @@ function connect(server, nick, uid, callback) {
 		client.addListener('join', function(channel, from) {
 			log(client.nick + " hears " + from + " joined " + channel);
 			if(from !== client.nick) {
-				message('join', from, room(channel), '', channel);
+				message('back', from, room(channel), '', channel);
 			}
 		});
 		
@@ -66,28 +66,28 @@ function connect(server, nick, uid, callback) {
 		client.addListener('part', function(channel, from, reason) {
 			log(client.nick + " hears " + from + " left " + channel);
 			if(from !== client.nick) {
-				message('part', from, room(channel), reason, channel);
+				message('away', from, room(channel), reason, channel);
 			}
 		});
 		
 		client.addListener('kick', function(channel, from, reason) {
 			log(client.nick + " hears " + from + " left " + channel);
 			if(from !== client.nick) {
-				message('part', from, room(channel), reason, channel);
+				message('away', from, room(channel), reason, channel);
 			}
 		});
 		
 		client.addListener('quit', function(from, reason, channels) {
 			var i, l;
 			for(i=0, l=channels.length; i<l; i++) {
-				message('part', from, room(channels[i]), reason, channels[i]);
+				message('away', from, room(channels[i]), reason, channels[i]);
 			}
 		});
 		
 		client.addListener('kill', function(from, reason, channels) {
 			var i, l;
 			for(i=0, l=channels.length; i<l; i++) {
-				message('part', from, room(channels[i]), reason, channels[i]);
+				message('away', from, room(channels[i]), reason, channels[i]);
 			}
 		});
 	}
@@ -150,7 +150,6 @@ function connect(server, nick, uid, callback) {
 	
 	function queueConn(oper, callback) {
 		return function() {
-			log("Q", arguments);
 			if (!client.connected) {
 				log("Queueing ", arguments);
 				client.connQueue.push({oper: oper, args: arguments});

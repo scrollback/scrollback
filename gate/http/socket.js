@@ -13,26 +13,32 @@ var io = require("socket.io"),
 	RateLimiter = require('limiter').RateLimiter,
 	gateways=core.gateways;
 
-var users = {}, uIndex = {};
+var users = {}, uIndex = {}, uWait = {};
 
 exports.init = function (server) {
 	io = io.listen(server);
 	io.set('log level', 1);
 
 	io.sockets.on('connection', function (socket) {
-
 		var limiter = new RateLimiter(config.http.limit, config.http.time, true);
-		
 		var sid = cookie.parse(socket.handshake.headers.cookie || '')['connect.sid'],
-			user = users[sid];
-		console.log("---------------------------sid:"+sid);	
+		user = sid && users[sid];
 		if(!user) {
 			users[sid] = user = {
 				id: 'guest-sb' + Math.floor(Math.random() * 10000),
 				rooms: {}
 			};
-			uIndex[user.id] = sid;
+			if (sid) {
+				if (uWait[sid]) {
+					clearTimeout(uWait[sid]);
+					delete uWait[sid];
+				}
+				users[sid] = user;
+				uIndex[user.id] = sid;
+			}
 		}
+		
+		log("New connection", sid, user.id);
 		
 		socket.emit('message', {type: 'nick', from: '', to: '', ref: user.id});
 		
@@ -61,8 +67,9 @@ exports.init = function (server) {
 						user.rooms[message.to] = 1;
 					}
 				} else if (message.type == 'away') {
+					socket.leave(message.to);
 					if(user.rooms[message.to]) user.rooms[message.to]--;
-					if(!user.rooms[message.to]) return;
+					if(user.rooms[message.to]) return;
 				} else if (message.type == 'nick') {
 					log("nick "+user.id + " to " + message.ref + ", forwarding");
 					
@@ -99,9 +106,8 @@ exports.init = function (server) {
 				if(message.type === 'part') {
 					socket.leave(message.to);
 				}
-				core.message(message,function(status,response){
-					
-				});
+				
+				core.message(message);
 			});
 		});
 		
@@ -129,10 +135,14 @@ exports.init = function (server) {
 					core.message({ type: 'away', from: user.id, to: room,
 						time: new Date().getTime(), text: "" });
 				}
-				if (Object.keys(user.rooms).length === 0) {
-					delete users[sid];
+			}
+			if (!Object.keys(user.rooms).length && sid) {
+				uWait[sid] = setTimeout(function () {
+					log("1 hour elapsed. Deleting session:", sid, user.id);
+					delete uWait[sid];
 					delete uIndex[user.id];
-				}
+					delete users[sid];
+				}, 3600000);
 			}
 		});
 		

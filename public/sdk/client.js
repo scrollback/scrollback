@@ -28,12 +28,13 @@ socket.on('connect', function() {
 		});
 	}
 	core.emit('connected');
+	if (nick !== '') core.nick(nick);
 });
 
 socket.on('disconnect', function() {
 	var id;
 	for(id in rooms) if(rooms.hasOwnProperty(id)) core.leave(id);
-	core.emit("disconnect");
+	core.emit("disconnected");
 });
 
 core.enter = function (id) {
@@ -65,7 +66,7 @@ function message(type, to, text, ref,options) {
 	if (m.type != 'result-start' && m.type != 'result-end' && socket.socket.connected) {
 		socket.emit('message', m);
 	}
-	
+
 	if(typeof messageArray !=="undefined" && rooms[to]) {
 		console.log(m.type);
 		rooms[to].messages.push(m);
@@ -120,11 +121,23 @@ core.get = function(room, start, end, callback) {
 socket.on('message', function(message) {
 	var i, messages, updated = false;
 	console.log("Received:", message);
-	if (message.type == 'nick' && message.from == nick) {
-		nick = message.ref;
-		core.emit('nick', message.ref);
-		return;
+	core.emit('notify', message);
+	switch (message.type) {
+		case 'nick':
+			if (message.from == nick) {
+				nick = message.ref;
+				core.emit('nick', message.ref);
+				return;
+			}
+			break;
+		case 'text':
+		case 'result-start':
+		case 'result-end':
+			break;
+		default:
+			return;
 	}
+	
 	messages = rooms[message.to] && rooms[message.to].messages;
 	if (!messages) return;
 	for (i = messages.length - 1; i >= 0 && message.time - messages[i].time < 5000; i-- ) {
@@ -145,8 +158,9 @@ core.say = function (to, text) {
 };
 
 core.nick = function(n,auth) {
-	console.log("changing nick to: "+n);
+	if (!n) return nick;
 	message('nick', '', '', n,auth);
+	return n;
 };
 
 core.watch = function(room, time, before, after, callback) {
