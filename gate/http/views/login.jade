@@ -1,0 +1,24 @@
+extends layout
+block append styles
+	link(rel="stylesheet", href="/css/login.css")
+
+block content
+	div#fb-root
+	div.loading
+		h1 Logging in...
+		br
+	div.loginBtn
+		h1 Login
+		p.
+			You're seeing this because it's your first time on scrollback,
+			or you're signed out of facebook.
+		p: button.major.fbLogin(onclick="login()") Login with Facebook
+	
+block append scripts
+	script(type='text/javascript')
+		window.scrollback = {host: 'http://' + location.host};
+	script(src="/socket.io/socket.io.js")
+	script(src="/sdk/emitter.js")
+	script(src="/sdk/client.js")
+	script(src="/sdk/login.js")
+	

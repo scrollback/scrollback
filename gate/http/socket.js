@@ -10,7 +10,8 @@ var io = require("socket.io"),
 	cookie = require("cookie"),
 	log = require("../../lib/logger.js"),
 	config = require("../../config.js"),
-	RateLimiter = require('limiter').RateLimiter;
+	RateLimiter = require('limiter').RateLimiter,
+	gateways=core.gateways;
 
 var users = {}, uIndex = {}, uWait = {};
 
@@ -22,10 +23,10 @@ exports.init = function (server) {
 		var limiter = new RateLimiter(config.http.limit, config.http.time, true);
 		var sid = cookie.parse(socket.handshake.headers.cookie || '')['connect.sid'],
 			user = sid && users[sid];
-		
+		console.log("---------------------------sid:"+sid);	
 		if(!user) {
-			user = {
-				id: 'sb' + Math.floor(Math.random() * 10000),
+			users[sid] = user = {
+				id: 'guest-sb' + Math.floor(Math.random() * 10000),
 				rooms: {}
 			};
 			if (sid) {
@@ -42,6 +43,7 @@ exports.init = function (server) {
 		
 		socket.emit('message', {type: 'nick', from: '', to: '', ref: user.id});
 		
+		console.log(user);
 		socket.on('message', function (message) {
 			limiter.removeTokens(1, function(err, remaining) {
 				var room;
@@ -53,6 +55,7 @@ exports.init = function (server) {
 				log("API Limit remaining:", remaining);
 				
 				message.from = user.id;
+				
 				message.time = new Date().getTime();
 				message.origin = "web://" + socket.handshake.address.address;
 				
@@ -70,10 +73,30 @@ exports.init = function (server) {
 					if(user.rooms[message.to]) return;
 				} else if (message.type == 'nick') {
 					log("nick "+user.id + " to " + message.ref + ", forwarding");
+					
+					if(message.auth) {
+						core.message(message,function(status,response) {
+							if (status==false) {
+								console.log(response.err);
+								socket.emit(response.err);
+							}
+							else {
+								console.log("old user");
+								core.room.room(response[0].room,function(err,room) {
+									var i;
+									console.log(message);
+									socket.emit('message', {type: 'nick', from: message.from, to: '', ref: room[0].name});
+								});
+							}
+						});
+						return;
+					}
+					
 					for (room in user.rooms) {
 						if (user.rooms[room]) {
 							message.to = room;
-							core.message(message);
+							core.message(message,function(status,response) {
+							});
 						}
 					}
 					user.id = message.ref;
@@ -81,7 +104,12 @@ exports.init = function (server) {
 				}
 				
 				log("Received message via socket: ", message);
-				core.message(message);
+				if(message.type === 'part') {
+					socket.leave(message.to);
+				}
+				core.message(message,function(status,response){
+					
+				});
 			});
 		});
 		
@@ -125,6 +153,29 @@ exports.init = function (server) {
 				server: new Date().getTime(), request: requestTime
 			});
 		});
+		
+		socket.on("update",function(request){
+
+			console.log("receiving update");
+			if (request.type==="account") {
+				core.account.account(request.params);
+			}
+			else if (request.type==="room") {
+				
+				
+				var sid = cookie.parse(socket.handshake.headers.cookie || '')['connect.sid'],
+				user = users[sid];
+				core.room.room(request.params);
+				var message={
+					type: 'nick',
+					from: user.id,
+					to: '',
+					ref: request.params.name
+				};
+
+				//socket.emit('message', );
+			}
+		});
 	});
 };
 
@@ -132,6 +183,8 @@ exports.send = function (message, rooms) {
 	message.text = sanitize(message.text || "");
 	rooms.map(function(room) {
 		log("Socket sending", message, "to", room);
+		console.log("----harry------");
+		console.log(message);
 		io.sockets['in'](room).emit('message', message);
 	});
 	

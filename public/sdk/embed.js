@@ -1,5 +1,5 @@
 "use strict";
-
+var waitingLogin=false;
 var streams = {},
 	$ = function(id) {
 		return document.getElementById(id);
@@ -58,6 +58,11 @@ core.on('nick', function(n) {
 	for(i in streams) if(streams.hasOwnProperty(i)) {
 		stream = streams[i];
 		stream.nick.value = n;
+		
+		
+		//this is a little buggy.. should think of some other way.. 
+		if(waitingLogin)
+			stream.key=[];
 	}
 });
 
@@ -109,6 +114,15 @@ function Stream(id) {
 			addEvent(el, 'click', function() { self.toggle(); });
 		}
 		else if(hasClass(el, 'scrollback-title-id')) el.innerHTML = id;
+		else if(hasClass(el, 'scrollback-login-key')) {
+			self.key=el;
+			addEvent(el,'click',function(){
+				var loginWindow=window.open("/dlg/login","login","width=800,height=600");
+				loginWindow.onunload=function(){
+					waitingLogin=true;
+				}
+			});
+		}
 		else if(hasClass(el, 'scrollback-title-text')) self.titleText = el;
 		else if (hasClass(el, 'scrollback-title-close')) {
 			addEvent(el, 'click', function() { self.close(); });
@@ -313,4 +327,3 @@ function showPopup(btn, el) {
 	
 	console.log(btno, btnh, btnw, scrw, scrh, popw, poph);
 };
-
