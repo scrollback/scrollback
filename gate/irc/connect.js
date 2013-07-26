@@ -94,6 +94,7 @@ function connect(server, nick, uid, callback) {
 	
 	// Send queued messages when join happens.
 	client.addListener('join', function(channel, from) {
+		channel = channel.toLowerCase();
 		if (from === client.nick && client.sayQueues[channel]) {
 			log("Sending queued messages for " + channel);
 			client.sayQueues[channel].forEach(function(message) {
@@ -132,9 +133,9 @@ function connect(server, nick, uid, callback) {
 	// Wrap the client's say function in a queuing wrapper
 	client.say = (function(say) {
 		return function(channel, message) {
+			channel = channel.toLowerCase();
 			if (!client.connected || !client.chans[channel]) {
 				log("Queueing " + message.substr(0,32) + " for " + channel + ".");
-				
 				if (!client.sayQueues[channel]) {
 					client.sayQueues[channel] = [];
 				}
