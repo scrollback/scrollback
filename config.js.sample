@@ -1,0 +1,32 @@
+module.exports = {
+	core: {
+//		uid: "linux-user-to-run-as"
+	},
+	mysql: {
+		host     : 'localhost',
+		user     : 'scrollback',
+		password : 'scrollback',
+		database : 'scrollback'
+	},
+	http: {
+		host: "scrollback.example.com",
+		port: 80,
+		home: "public" // the directory containing static files
+	},
+	xmpp: {
+		host: "scrollback.example.com" // unused
+	},
+	irc: {
+		nick: 'scrollback', // nickname of the bot
+		hangTime: 60000     // timeout before disconnecting (ms)
+	},
+	facebook: {
+		
+	},
+	github: {
+		
+	},
+	google: {
+		
+	}
+}
