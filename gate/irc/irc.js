@@ -23,7 +23,7 @@ function init() {
 				if(account.joined) return;
 				u = url.parse(account.id);
 				client = clients.bot[u.host];
-				
+					
 				if(!client) {
 					clients.bot[u.host] = client =
 						connect(u.host, botNick, botNick, function(m) {
@@ -52,7 +52,7 @@ function init() {
 		
 		joinStuff();
 	});
-	connect.init();
+	connect.init(users);
 }
 
 function send(message, accounts) {
