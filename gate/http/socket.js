@@ -81,15 +81,23 @@ exports.init = function (server) {
 								socket.emit(response.err);
 							}
 							else {
-								console.log("old user");
 								core.room.room(response[0].room,function(err,room) {
 									var i;
-									console.log(message);
-									socket.emit('message', {type: 'nick', from: message.from, to: '', ref: room[0].name});
+									socket.emit('message', {type: 'nick', from: user.id, to: '', ref: room[0].id});
 								});
 							}
 						});
 						return;
+					}
+					else{
+						if (message.ref==="") {
+							users[sid] = user = {
+								id: 'guest-sb' + Math.floor(Math.random() * 10000),
+								rooms: users[sid].rooms
+							};
+							message.ref=user.id							
+						}
+						socket.emit('message', {type: 'nick', from: message.from, to: '', ref: message.ref});
 					}
 					
 					for (room in user.rooms) {
@@ -198,3 +206,4 @@ exports.send = function (message, rooms) {
 function sanitize(text) {
 	return text.replace(/\</g, '&lt;');
 }
+

@@ -106,7 +106,8 @@ var css = {
 		},
 	".scrollback-send": {
 		"position": "absolute", "padding": "0", "margin": "0",
-		"bottom": "0px", "left": "0px", "right": "0px", "height": "40px"
+		"bottom": "0px", "left": "0px", "right": "0px", "height": "40px",
+		"background":"#fff",
 	},
 		".scrollback-nick, .scrollback-text": {
 			"display": "block", "border": "none",
@@ -123,16 +124,15 @@ var css = {
 			outline: "none"
 		},
 		".scrollback-nick": {
-			//the 20px is for the key icon.
-			left:"20px","width": "80px"
+			"width": "80px",height:"40px","padding-top":"10px"
 		},
-		".scrollback-login-key":{
-			//margin-top is for vertical center align.
-			"margin-top":"10px","width":"20px"
-		},
-		".scrollback-loginBtn":{
-			"position": "absolute","background":"#fff",
-			"left": "0px", "width": "100px",height:"40px;"
+		".scrollback-nick-guest":{
+			"background-image": "url(\"/img/key.jpg\")",
+			"background-repeat":"no-repeat","background-position":"left center",
+			"height":"40px", "padding-top":"10px",
+			"background-size": "auto 20px",
+			"padding-left":"25px",
+			"width": "80px",
 		},
 		'.scrollback-text-wrap': { "right": "0px", "left": "80px" },
 		".scrollback-text": { width: "100%" },
@@ -175,11 +175,12 @@ themes.light = {
 		".scrollback-thumb": {
 			background: "#999"
 		},
-		".scrollback-loginBtn, .scrollback-text": {
+		".scrollback-nick-guest, .scrollback-text": {
 			borderTop: "1px solid #ccc"
 		},
 		".scrollback-nick": {
-			color: "#555", "background": "#eee"
+			borderTop: "1px solid #ccc"
+			//color: "#555", "background": "#eee"
 		},
 		".scrollback-text": { background: "#fff", color: "#000" },
 	".scrollback-poweredby": {
@@ -220,7 +221,8 @@ themes.dark = {
 			background: "#000"
 		},
 		".scrollback-nick": {
-			color: "#555", "background": "#eee"
+			borderTop: "1px solid #ccc",
+			color: "#555"
 		},
 		".scrollback-text": { background: "#fff", color: "#000" },
 	".scrollback-poweredby": {

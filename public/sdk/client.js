@@ -132,6 +132,7 @@ socket.on('message', function(message) {
 		case 'nick':
 			if (message.from == nick) {
 				nick = message.ref;
+				
 				core.emit('nick', message.ref);
 				return;
 			}

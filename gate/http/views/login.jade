@@ -12,7 +12,11 @@ block content
 		p.
 			You're seeing this because it's your first time on scrollback,
 			or you're signed out of facebook.
-		p: button.major.fbLogin(onclick="login()") Login with Facebook
+		p: button.major#fbLogin(disabled="true",onclick="login()") Login with Facebook
+		div
+			h1 Or continue with nick as <br> guest-
+				input#continueAs(type="text")
+			button.major#continueBtn(onclick="continueAs()") continue
 	
 block append scripts
 	script(type='text/javascript')
@@ -20,5 +24,6 @@ block append scripts
 	script(src="/socket.io/socket.io.js")
 	script(src="/sdk/emitter.js")
 	script(src="/sdk/client.js")
+	script(src="/sdk/addEvent.js")
 	script(src="/sdk/login.js")
 	
