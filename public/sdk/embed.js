@@ -1,5 +1,4 @@
 "use strict";
-
 var streams = {},
 	$ = function(id) {
 		return document.getElementById(id);
@@ -16,17 +15,11 @@ core.on('connected', function() {
 	getByClass(document, 'scrollback-text').forEach(function(input) {
 		input.disabled = false; input.value = '';
 	});
-	getByClass(document, 'scrollback-nick').forEach(function(input) {
-		input.disabled = false; 
-	});
 });
 
 core.on('disconnected', function() {
 	getByClass(document, 'scrollback-text').forEach(function(input) {
 		input.disabled = true; input.value = 'Disconnected';
-	});
-	getByClass(document, 'scrollback-nick').forEach(function(input) {
-		input.disabled = true; 
 	});
 });
 
@@ -54,10 +47,22 @@ core.on('leave', function(id) {
 });
 
 core.on('nick', function(n) {
+	
+	console.log("got nick");
 	var i, stream;
+
 	for(i in streams) if(streams.hasOwnProperty(i)) {
+
 		stream = streams[i];
-		stream.nick.value = n;
+		stream.nick.innerHTML= n;
+		
+		if (n.indexOf("guest-")!==0) {
+			removeClass(stream.nick, 'scrollback-nick-guest');
+			addClass(stream.nick, 'scrollback-nick');
+		}
+		
+		
+		console.log(n,stream.nick.innerHTML);
 	}
 });
 
@@ -79,9 +84,28 @@ function Stream(id) {
 		}
 		else if(hasClass(el, 'scrollback-nick')) {
 			self.nick = el;
-			addEvent(el, 'change', function() { self.rename(); });
-			addEvent(el, 'focus', function() { this.select(); });
-			el.value = core.nick();
+			console.log()
+			var loginWindow=window.open("/dlg/login","login","width=800,height=600");
+			el.innerText = core.nick();
+		}
+		else if(hasClass(el, 'scrollback-nick-guest')) {
+			self.nick = el;
+			console.log()
+			if (core.nick().indexOf("guest-")!==0) {
+				removeClass(el, 'scrollback-nick-guest');
+				addClass(el, 'scrollback-nick');
+			}
+			
+			addEvent(el, 'click', function() {
+				if (core.nick().indexOf("guest-")===0) {
+					window.open("/dlg/login","login","width=800,height=600");
+				}
+				else {
+					window.open("/dlg/profile","profile","width=800,height=600");	
+				}
+			});
+			
+			el.innerHTML= core.nick();
 		}
 		else if(hasClass(el, 'scrollback-text')) {
 			self.text = el;
@@ -168,7 +192,7 @@ Stream.prototype.send = function () {
 		parts = text.substr(1).split(' ');
 		switch (parts[0]) {
 			case 'nick':
-				this.nick.value = parts[1];
+				this.nick.innerHTML= parts[1];
 				this.rename();
 				return;
 			case 'leave':
@@ -192,7 +216,7 @@ Stream.prototype.notify = function(message) {
 };
 
 Stream.prototype.rename = function() {
-	var n = this.nick.value;
+	var n = this.nick.innerText || this.nick.textContent;
 	core.nick(n);
 };
 
@@ -313,4 +337,3 @@ function showPopup(btn, el) {
 	
 	console.log(btno, btnh, btnw, scrw, scrh, popw, poph);
 };
-

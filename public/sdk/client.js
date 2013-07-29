@@ -10,6 +10,8 @@
  *   - domReady.js
  *   - getByClass.js
  *   - jsonml2.js
+ *
+ *   test changes...
  */
 
 "use strict";
@@ -57,12 +59,18 @@ function guid() {
 	return str;
 }
 
-function message(type, to, text, ref) {
+function message(type, to, text, ref,options) {
 	var m = { id: guid(), type: type, from: nick, to: to, text: text || '', time: core.time(), ref: ref || '' };
+	
+	if (type==="nick") {
+		m.auth=options;
+	}
 	if (m.type != 'result-start' && m.type != 'result-end' && socket.socket.connected) {
 		socket.emit('message', m);
 	}
-	if(rooms[to]) {
+
+	if(typeof messageArray !=="undefined" && rooms[to]) {
+		console.log(m.type);
 		rooms[to].messages.push(m);
 		if(requests[to + '//']) requests[to + '//'](true);
 	}
@@ -93,8 +101,9 @@ socket.on('messages', function(data) {
 		requests[reqId](true);
 		if(reqId != data.query.to + '//') delete requests[reqId];
 	}
-	
 });
+
+
 
 core.get = function(room, start, end, callback) {
 	var query = { to: room, type: 'text' },
@@ -109,6 +118,8 @@ core.get = function(room, start, end, callback) {
 	socket.emit('messages', query);
 };
 
+
+
 socket.on('message', function(message) {
 	var i, messages, updated = false;
 	console.log("Received:", message);
@@ -117,6 +128,7 @@ socket.on('message', function(message) {
 		case 'nick':
 			if (message.from == nick) {
 				nick = message.ref;
+				
 				core.emit('nick', message.ref);
 				return;
 			}
@@ -143,13 +155,14 @@ socket.on('message', function(message) {
 	if(requests[message.to + '//']) requests[message.to + '//'](true);
 });
 
+
 core.say = function (to, text) {
 	message('text', to, text);
 };
 
-core.nick = function(n) {
+core.nick = function(n,auth) {
 	if (!n) return nick;
-	message('nick', '', '', n);
+	message('nick', '', '', n,auth);
 	return n;
 };
 
@@ -176,6 +189,15 @@ core.unwatch = function(room) {
 	delete requests[room + '//'];
 };
 
+core.update=function(type,params){
+	console.log("sending update");
+	socket.emit("update",{
+		type:type,
+		params:params
+	});
+};
+
+
 function snapshot (messages) {
 	return messages.map(function(message) {
 		switch (message.type) {
@@ -196,3 +218,12 @@ core.followers = function(query, callback) {}
 core.labels = function(query, callback) {}
 
 */
+
+socket.on("ERR_AUTH_FAIL",function(){
+	console.log("Login failed");
+});
+
+socket.on("ERR_AUTH_NEW",function(){
+	core.emit("ERR_AUTH_NEW");
+});
+

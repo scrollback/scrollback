@@ -5,16 +5,19 @@
 
 var config = require('../config.js');
 var message = require('./api/message.js');
-var db = require('mysql').createConnection(config.mysql);
-var rooms = {}, gateways;
+
+
+var rooms = {};
 var log = require("../lib/logger.js");
 
-exports.init = function (gw){
-	gateways = gw;
+exports.gateways = require("./gateways.js");
+
+exports.message = function(m,cb) {
+	message(m,cb);
 };
 
-exports.message = function(m) {
-	message(m, gateways);
-};
 
+
+exports.room = require('./api/room.js');
+exports.account = require('./api/account.js');
 exports.messages = require("./api/messages.js");
