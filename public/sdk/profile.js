@@ -1,5 +1,6 @@
 var fbUser,fbStatus;
 
+
 function handleError() {
 	var errorDiv,loadDiv=document.getElementById("loading");
 	loadDiv.className="hidden";
@@ -20,7 +21,7 @@ window.fbAsyncInit = function() {
 		fbStatus=response;
 		if (response.status==='connected') {
 			FB.api("/me",function(user){
-				var picUrl,loggedDiv,loadDiv,picture,errorDiv,nick,username;
+				var picUrl,loggedDiv,loadDiv,picture,errorDiv,nick,username,logout,createBtn,parent;
 				fbUser=user;
 				if (user.error) {
 					handleError();
@@ -36,13 +37,19 @@ window.fbAsyncInit = function() {
 				picture=document.getElementById("picture");
 				picture.src=picUrl;
 				
-				
 				username=document.getElementById("username");
-				username.value=user.email.split("@")[0];
-				
-				nick=document.getElementById("nickname");
-				nick.value=user.name;
-				
+				nick=core.nick()
+				if (nick.indexOf("guest-")===0) {
+					username.value=user.email.split("@")[0];
+					logoutBtn=document.getElementById("logoutBtn");
+					logoutBtn.parentNode.removeChild(logoutBtn);
+				}
+				else {
+					username.value=nick;
+					createBtn=document.getElementById("submit");
+					createBtn.parentNode.removeChild(createBtn);
+					username.disabled=true;
+				}
 			});		
 		}
 		else{
@@ -59,17 +66,12 @@ window.fbAsyncInit = function() {
 	fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
-
-
-
 function update() {
-	
 	console.log("blah");
-	var username=document.getElementById("username").value,
-	nick=document.getElementById("nickname").value;
+	var username=document.getElementById("username").value;
 	core.update("room",{
 		id: username,
-		name: nick,
+		name: fbUser.name,
 		type: "user",
 		description: fbUser.bio,
 		picture: "https://graph.facebook.com/"+fbUser.id+"/picture?width=128&height=128",
@@ -83,6 +85,13 @@ function update() {
 		token: fbStatus.authResponse.accessToken,
 		params: fbStatus.authResponse
 	});
-	core.nick(nick);
+	core.nick(username);
+	window.close();
+}
+
+
+
+function logout(){
+	message("nick","","","");
 	window.close();
 }

@@ -1,4 +1,5 @@
 var nickExpected=false;
+
 window.fbAsyncInit = function() {
 	FB.init({
 		appId      : '1389363534614084', // App ID
@@ -7,7 +8,15 @@ window.fbAsyncInit = function() {
 		cookie     : true, // enable cookies to allow the server to access the session
 		oauth      : true, // enable OAuth 2.0
 		xfbml      : false  // parse XFBML
-	});
+	});	
+	var button=document.getElementById("fbLogin");
+	console.log(button);
+	button.disabled =false;
+	
+	
+	if (location.href.search("redirect")>0) {
+		login();
+	}
 };
 
 (function(d, s, id){
@@ -19,19 +28,26 @@ window.fbAsyncInit = function() {
 }(document, 'script', 'facebook-jssdk'));
 
 
-
-core.on("connected",function(){
-	console.log("connected socket");
-});
-
 core.on("ERR_AUTH_NEW",function(boom) {
-	console.log("new user");
 	window.location="/dlg/profile";
 });
 	
-	
 
-
+function continueAs() {
+	var nick=document.getElementById("continueAs");
+	if (nick.length<=3) {
+		alert("nick should be longer than 3characters.");
+		return;
+	}
+	nickExpected=true;
+	message("nick","","","guest-"+nick.value);
+	core.on("nick",function(n) {
+		console.log("nick----"+n+":"+nickExpected);
+		if(nickExpected) {
+			window.close();	
+		}
+	});
+}
 
 function login() {
 	console.log("calling login");
@@ -39,18 +55,21 @@ function login() {
 		if(response.status!=='connected') {
 			window.location="https://www.facebook.com/dialog/oauth?"+
 			"client_id=1389363534614084"+
-			"&redirect_uri=http://harry.scrollback.io:7528/dlg/login"+
+			"&redirect_uri=http://harry.scrollback.io:7528/dlg/login?redirect=true"+
 			"&scope=email";
 		}
 		else{
+			console.log("api");
 			FB.api("/me",function(user){
 				message("nick","","","",{
 					gateway:"facebook",
 					id:user.id,
 					token: response.authResponse.accessToken
 				});
+				console.log(user);
 				nickExpected=true;
-				core.on("nick",function(){
+				core.on("nick",function(n){
+					console.log("nick----"+n+":"+nickExpected);
 					if(nickExpected){
 						window.close();	
 					}

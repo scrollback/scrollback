@@ -43,9 +43,9 @@ module.exports = function(message, cb) {
 					console.log(response.err);
 					return;
 				}
-				db.query("select name from rooms where id=?",[response[0].room],function(err,room){
+				db.query("select id from rooms where id=?",[response[0].room],function(err,room){
 					delete message.auth;
-					message.ref=room[0].name;
+					message.ref=room[0].id;
 					send();
 				});
 			});

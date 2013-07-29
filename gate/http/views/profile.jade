@@ -22,16 +22,11 @@ block append scripts
 					img#picture
 				br
 				label
-						span.label Username:
-						input#username
+					span.label Username:
+					input#username
 				br
-				label
-					span.label Nick:
-					input#nickname
 				br
-				p.
-					Your Email ID will never be shared with anyone. The
-					username, Nick and picture will be public.
 				button#submit(type="button",onclick="update()") Create account
+				button#logoutBtn(type="button",onclick="logout()") Logout
 	div#error(class="hidden")
 		h1	error
