@@ -14,7 +14,7 @@ function connect(server, nick, uid, callback) {
 
 	
 	// Code for stripping out the guest from the username
-	nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
+	// nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
 	
 	var client =  new irc.Client(server, nick, {
 		userName : nick,
@@ -56,8 +56,8 @@ function connect(server, nick, uid, callback) {
 		client.addListener('message', function(nick, channel, text) {
 			
 			// if a user name not registered with askabt, connects via IRC, he is made a  guest.
-			if(!(users[client.opt.server] && users[client.opt.server][nick]))
-				nick = "guest-" + nick; 
+			// if(!(users[client.opt.server] && users[client.opt.server][nick]))
+			//	nick = "guest-" + nick; 
 			
 
 			log(client.nick + " hears " + nick + " say \'" +
