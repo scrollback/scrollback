@@ -3,14 +3,21 @@
 var irc = require("irc"),
 	log = require("../../lib/logger.js"),
 	config = require("../../config.js"),
-	ident=require("./ident.js");
+	ident=require("./ident.js"),
+	users;
 
 module.exports = connect;
 
+
 function connect(server, nick, uid, callback) {
 	log("Connecting " + nick + " to " + server);
+
+	
+	// Code for stripping out the guest from the username
+	nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
+	
 	var client =  new irc.Client(server, nick, {
-		userName: nick,
+		userName : nick,
 		realName: nick+'@scrollback.io',
 		debug: false
 	});
@@ -43,10 +50,16 @@ function connect(server, nick, uid, callback) {
 	
 	client.addListener('error', function(message) {
 		log("Error from " + message.server, message.args);
-	});
+	});				
 	
 	if(callback) {
 		client.addListener('message', function(nick, channel, text) {
+			
+			// if a user name not registered with askabt, connects via IRC, he is made a  guest.
+			if(!(users[client.opt.server] && users[client.opt.server][nick]))
+				nick = "guest-" + nick; 
+			
+
 			log(client.nick + " hears " + nick + " say \'" +
 				text.substr(0,32) + "\' in " + channel);
 			message('text', nick, room(channel), text, channel);
@@ -175,6 +188,7 @@ function connect(server, nick, uid, callback) {
 	return client;
 }
 
-connect.init = function() {
+connect.init = function(urs) {
+	users=urs;
 	ident.init();
 };
