@@ -56,11 +56,8 @@ function messageArray() {
 			if (messages[i] && messages[i].type == 'text') c++;
 		}
 		
-		console.log("mid, i, l", mid, i, l);
-		
 		for (c=0; i<l && c<before+after+1; i++) {
 			m = messages[i];
-			console.log("Checking ", m);
 			switch (m.type) {
 				case 'result-start':
 					if (missing) {
