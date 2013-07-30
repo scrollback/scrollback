@@ -32,7 +32,8 @@ Stream.prototype.scroll = function() {
 	
 	this.renderThumb(start, end);
 	
-	if(log.scrollHeight == log.scrollTop + log.clientHeight) {
+//	if(log.scrollHeight == log.scrollTop + log.clientHeight) {
+	if (end >= self.messages.length - 1 && !up) {
 		this.bottom = true;
 	} else {
 		this.bottom = false;
@@ -66,7 +67,6 @@ Stream.prototype.update = function (data) {
 		}
 		this.log.scrollTop = offset(this.log.children[i])[1] - offset(this.log)[1] - this.scrollPx;
 	}
-	setTimeout(function() { self.updating = false; }, 100);
 };
 
 Stream.prototype.renderLog = function() {
