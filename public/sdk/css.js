@@ -106,8 +106,7 @@ var css = {
 		},
 	".scrollback-send": {
 		"position": "absolute", "padding": "0", "margin": "0",
-		"bottom": "0px", "left": "0px", "right": "0px", "height": "40px",
-		"background":"#fff",
+		"bottom": "0px", "left": "0px", "right": "0px", "height": "40px"
 	},
 		".scrollback-nick, .scrollback-text": {
 			"display": "block", "border": "none",
@@ -116,6 +115,7 @@ var css = {
 			"oBoxSizing": "border-box", padding: "0 4px",
 			height: "40px", fontSize: "1em", "borderRadius": "0"
 		},
+
 		".scrollback-nick, .scrollback-text-wrap": {
 			"position": "absolute", "top": "0",
 			"margin": "0"
@@ -124,15 +124,7 @@ var css = {
 			outline: "none"
 		},
 		".scrollback-nick": {
-			"width": "80px",height:"40px","padding-top":"10px"
-		},
-		".scrollback-nick-guest":{
-			"background-image": "url(\"/img/key.jpg\")",
-			"background-repeat":"no-repeat","background-position":"left center",
-			"height":"40px", "padding-top":"10px",
-			"background-size": "auto 20px",
-			"padding-left":"25px",
-			"width": "80px",
+			"left": "0px", "width": "80px"
 		},
 		'.scrollback-text-wrap': { "right": "0px", "left": "80px" },
 		".scrollback-text": { width: "100%" },
@@ -175,12 +167,11 @@ themes.light = {
 		".scrollback-thumb": {
 			background: "#999"
 		},
-		".scrollback-nick-guest, .scrollback-text": {
+		".scrollback-nick, .scrollback-text": {
 			borderTop: "1px solid #ccc"
 		},
 		".scrollback-nick": {
-			borderTop: "1px solid #ccc"
-			//color: "#555", "background": "#eee"
+			color: "#555", "background": "#eee"
 		},
 		".scrollback-text": { background: "#fff", color: "#000" },
 	".scrollback-poweredby": {
@@ -212,7 +203,7 @@ themes.dark = {
 			".scrollback-message-join, .scrollback-message-part": { "color": "#999" },
 			".scrollback-message-timestamp": {color: "#999"},
 	".scrollback-timeline": {
-		background: "#000"
+		background: "#555"
 	},
 		".scrollback-tread-row": {
 			background: "#fff"
@@ -221,8 +212,7 @@ themes.dark = {
 			background: "#000"
 		},
 		".scrollback-nick": {
-			borderTop: "1px solid #ccc",
-			color: "#555"
+			color: "#555", "background": "#eee"
 		},
 		".scrollback-text": { background: "#fff", color: "#000" },
 	".scrollback-poweredby": {

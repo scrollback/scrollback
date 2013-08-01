@@ -1,9 +1,7 @@
 var core = require("./core/core.js"),
 	gateways = require("./core/gateways.js"),
 	config = require("./config.js");
+	
+core.init(gateways);
 
-
-
-process.nextTick(function(){
-	if(config.core.uid) process.setuid(config.core.uid);
-});
+if(config.core.uid) process.setuid(config.core.uid);

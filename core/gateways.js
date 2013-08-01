@@ -4,8 +4,6 @@ function start(name) {
 	return gateway;
 }
 
-process.nextTick(function() {
-	exports.irc = start("irc");
-	exports.http = start("http");
-	exports.facebook=start("facebook");
-});
+exports.irc = start("irc");
+exports.http = start("http");
+

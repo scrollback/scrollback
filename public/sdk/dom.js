@@ -19,7 +19,7 @@ var dom = {
 		],
 		["div", {'class': 'scrollback-log' }],
 		["form", { 'class': 'scrollback-send' },
-			["div", { 'class': 'scrollback-nick-guest' }],
+			["input", { 'class': 'scrollback-nick' }],
 			["div", {'class': 'scrollback-text-wrap'},
 				["input", { 'class': 'scrollback-text' }]
 			],
