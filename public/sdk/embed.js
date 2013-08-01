@@ -23,6 +23,10 @@ core.on('disconnected', function() {
 	});
 });
 
+
+core.on("abuse_report",function(messageId){
+	
+});
 // ---- Initialize ----
 
 function init() {

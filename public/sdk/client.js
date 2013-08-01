@@ -125,6 +125,10 @@ socket.on('message', function(message) {
 	console.log("Received:", message);
 	core.emit('notify', message);
 	switch (message.type) {
+		case 'abuse_report':
+			core.emit("abuse_report",message.id);
+			return;
+			break;
 		case 'nick':
 			if (message.from == nick) {
 				nick = message.ref;

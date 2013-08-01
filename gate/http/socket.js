@@ -88,7 +88,7 @@ exports.init = function (server) {
 						});
 						return;
 					}
-					else{
+					else {
 						if (message.ref==="") {
 							users[sid] = user = {
 								id: 'guest-sb' + Math.floor(Math.random() * 10000),
@@ -103,6 +103,7 @@ exports.init = function (server) {
 						if (user.rooms[room]) {
 							message.to = room;
 							core.message(message,function(status,response) {
+								
 							});
 						}
 					}
@@ -115,7 +116,23 @@ exports.init = function (server) {
 					socket.leave(message.to);
 				}
 				
-				core.message(message);
+				core.message(message,function(status,response){
+					if (status==false) {
+						
+						console.log(response);
+						if(response.err==="ERR_ABUSE") {
+							console.log("abusive");
+							socket.emit('message', {
+								type: 'abuse_report',
+								from: message.from,
+								to: '',
+								ref: message.ref,
+								id:message.id
+							});
+							return;
+						}
+					}
+				});
 			});
 		});
 		
