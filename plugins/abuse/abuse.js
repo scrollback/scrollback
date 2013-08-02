@@ -1,30 +1,45 @@
 
 var fs=require("fs");
 var blockWords={};
+var longest = 0;
 
 
 exports.init=function(){
 	fs.readFile("./plugins/abuse/blockedWords.txt","utf-8", function (err, data) {
-		var wordArray,i,l;
 		if (err) throw err;
 		
-		wordArray=data.split("\n");
+		data.split("\n").forEach(function(word) {
+			if (word) {
+				word = word.replace(/\W+/, ' ').toLowerCase().trim();
+				if (word.length > longest) {
+					longest = word.length;
+				}
+				blockWords[word] = true;
+			}
+		});
 		
-		for(i=0,l=wordArray.length;i<l;i++) {
-			blockWords[wordArray[i].toLowerCase()]=true;
-		}
-		
-		console.log(blockWords);
 	});
 }
 
 
 exports.rejectable = function(m) {
-  var i,l,words=m.text.toLowerCase().split(/\W+/);
-  
-  //console.log("checking if:"+m.text+" is abusive",words);
+	var i, l, j, words, phrase;
+	
+	if(!m.text) return false;
+	words = m.text.toLowerCase().split(/\W+/);
+	
+	for(i=0,l=words.length-1;i<l;i++) {
+		phrase = words[i];
+		for (j=i+1; j<=l; j++) {
+			phrase = phrase + ' ' + words[j];
+			if (phrase.length <= longest) {
+				words.push(phrase);
+			}
+		}
+	}
+	
 	for(i=0,l=words.length;i<l;i++) {
-		if (typeof blockWords[words[i]]!=="undefined") {
+		if (blockWords[words[i]]) {
 			console.log("found the word"+blockWords[i]);
 			return true;
 		}
