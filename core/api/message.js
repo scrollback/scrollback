@@ -13,7 +13,7 @@ module.exports = function(message, gateways, cb) {
 	if (!message.id) message.id = guid();
 	if (!message.time) message.time = new Date().getTime();
 	if(abuse.rejectable(message)) {
-		cb(false,{err:"ERR_ABUSE"});
+		if(cb) cb(false,{err:"ERR_ABUSE"});
 		return;
 	}
 

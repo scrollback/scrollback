@@ -40,7 +40,7 @@ exports.rejectable = function(m) {
 	
 	for(i=0,l=words.length;i<l;i++) {
 		if (blockWords[words[i]]) {
-			console.log("found the word"+blockWords[i]);
+			console.log("found the word " + words[i]);
 			return true;
 		}
 	}
