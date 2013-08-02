@@ -281,7 +281,7 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 			el = [["span", message.text]];
 	}
 	
-	if (showTimestamp) {
+	if (showTimestamp && message.time) {
 		el.push([ "span", { 'class': 'scrollback-message-timestamp'},
 			"Sent " + prettyDate(message.time, core.time())
 		]);
