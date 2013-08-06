@@ -41,6 +41,9 @@ var css = {
 		".scrollback-title": {
 			"height": "40px",
 			lineHeight: "40px",
+			"boxSizing": "content-box", "webkitBoxSizing": "content-box",
+			"mozBoxSizing": "content-box", "msBoxSizing": "content-box",
+			"oBoxSizing": "content-box", 
 			left: "0px", right: "0px", position: "absolute",
 			fontWeight: "bold", borderBottom: "4px solid transparent",
 			zIndex: 9997, top: "0", cursor: "default"
