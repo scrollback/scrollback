@@ -50,18 +50,17 @@ core.on('nick', function(n) {
 	
 	console.log("got nick");
 	var i, stream;
-
+	var nick=(n.indexOf("guest-")===0)?(n.replace("guest-","")):n;
+	
 	for(i in streams) if(streams.hasOwnProperty(i)) {
 
 		stream = streams[i];
-		stream.nick.innerHTML= n;
+		stream.nick.innerHTML= nick;
 		
 		if (n.indexOf("guest-")!==0) {
 			removeClass(stream.nick, 'scrollback-nick-guest');
 			addClass(stream.nick, 'scrollback-nick');
 		}
-		
-		
 		console.log(n,stream.nick.innerHTML);
 	}
 });
@@ -137,7 +136,7 @@ function Stream(id) {
 		else if (hasClass(el, 'scrollback-title-close')) {
 			addEvent(el, 'click', function() { self.close(); });
 		}
-		else if(hasClass(el, 'scrollback-embed')) {
+		else if(hasClass(el, 'scrollback-icon-pop')) {
 			addEvent(el, 'click', function() { self.embed(); });
 		}
 		return el;

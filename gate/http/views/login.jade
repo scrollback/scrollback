@@ -4,17 +4,16 @@ block append styles
 
 block content
 	div#fb-root
-	div.loginBtn
-		h1 Login
-		p.
-			You're seeing this because it's your first time on scrollback,
-			or you're signed out of facebook.
-		p: button#fbLogin(disabled="true",onclick="login()") Login with Facebook
-		div
-			h1 Or continue with nick as <br> guest-
-				input#continueAs(type="text")
-			button#continueBtn(onclick="continueAs()") continue
-	
+	div.login.center
+		p.center
+			h1 Register / Sign in with
+		p.center: button.major#fbLogin(disabled="true",onclick="login()") Facebook
+		div.center
+			h1 OR continue as
+				br
+				input#continueAs(type="text",placeholder="Nick")
+			button.major#continueBtn(onclick="continueAs()") Continue
+			button.major(onclick="window.close()") Cancel
 block append scripts
 	script(type='text/javascript')
 		window.scrollback = {host: 'http://' + location.host};

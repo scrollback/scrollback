@@ -3,20 +3,38 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 
 html, button, input, select, textarea {
 	font-family: "Open Sans", sans-serif;
-	font-weight: 300;
+	font-size: 16px;
+	line-height:24px;
 	color: #222;
+	padding: 8px;
 }
 
 input, select, textarea {
 	border: 1px solid #ccc; background: #fff;
 	border-radius: 0;
+	padding: 8px;
 }
+
+
+
+
 
 button {
 	background: #000; color: #fff;
-	border: none; border-radius: 3px;
+	border: none; 
 	box-shadow: 0 2px 4px 0 #000;
 }
+
+button.major{
+	background: black;
+	color: white;
+	width: 160px;
+	border-bottom: 2px solid #3ca;
+	padding-bottom: 6px;
+	margin-left: 16px;
+	margin-right: 16px;
+}
+
 
 h1, h2, h3, h4, h5, h6 { font-weight: 300; }
 pre { background: #333; color: #fff; font-size: 13px; max-width: 80em;
@@ -63,9 +81,8 @@ footer {
 
 a.btn { display: inline-block; }
 
-button { border: none; }
 
-a.btn, button {
+a.btn{
     background: #f30; color: #fff; border-radius: 2px;
     font-weight: 900; text-decoration: none;
     box-shadow: 0 2px 8px 0 rgba(0,0,0,0.5);

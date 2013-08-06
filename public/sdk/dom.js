@@ -2,12 +2,12 @@ var dom = {
 	stream: ["div", { 'class': 'scrollback-stream' },
 		["div", { 'class': 'scrollback-title' },
 			["span", {
-				'class': 'scrollback-icon scrollback-menu'
+				'class': 'scrollback-icon scrollback-icon-menu'
 			}, '☰'],
 			scrollback.close? ["div", {
-				'class': 'scrollback-icon scrollback-close'
+				'class': 'scrollback-icon scrollback-icon-close'
 			}, '×']: "",
-			["div", { 'class': 'scrollback-icon scrollback-embed' }, '➚'],
+			["div", { 'class': 'scrollback-icon scrollback-icon-pop' }, '➚'],
 			["div", {'class': 'scrollback-title-content'},
 				["span", {'class': 'scrollback-title-id'}],
 				["span", { 'class': 'scrollback-title-text' }]

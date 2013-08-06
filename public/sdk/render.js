@@ -225,6 +225,8 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	
 	function formatName(name) {
 		// TODO
+		
+		//console.log(name);
 		return [ "span", {
 			'class': 'scrollback-message-nick',
 			onmouseout: function() {
@@ -238,7 +240,9 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 				};
 				self.userStyle = addStyles(ucss);
 			}
-		}, name ];
+		},  (name.indexOf("guest-")===0)?(name.replace("guest-","")):name];
+	
+//(name.indexOf("guest-")===0)?(name.replace("guest-","")):name
 	}
 	
 	switch(message.type) {
