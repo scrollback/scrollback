@@ -52,10 +52,14 @@ function init() {
 		
 		joinStuff();
 	});
-	connect.init();
+	connect.init(users);
 }
 
 function send(message, accounts) {
+	
+	
+	
+	//console.log("trying to send in irc:",message);
 	clients[message.from] = clients[message.from] || {};
 	accounts.map(function(account) {
 		var u = url.parse(account),
@@ -67,6 +71,7 @@ function send(message, accounts) {
 			return;
 		}
 		
+		console.log(clients[message.from]);
 		switch(message.type) {
 			case 'text':
 				if(!client) {
@@ -114,8 +119,17 @@ function send(message, accounts) {
 				}
 				break;
 			case 'nick':
-				log("Got nick change", message, account);
-				if(client) client.rename(message.ref);
+				var nick=message.ref;
+				
+				nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
+				clients[message.from][u.host] = client
+				clients[message.ref]=clients[message.from];
+				users[u.host][message.ref] = true;
+				
+				if(client) client.rename(nick);
+				clients[message.ref]=clients[message.from];
+				
+				delete clients[message.from];
 				break;
 		}
 	});

@@ -47,6 +47,7 @@ exports.init = function (server) {
 		socket.on('message', function (message) {
 			limiter.removeTokens(1, function(err, remaining) {
 				var room;
+				
 				if (remaining < 0) {
 					log("Error: API Limit exceeded.");
 					socket.emit('error', 'API Limit exceeded.');
@@ -54,8 +55,7 @@ exports.init = function (server) {
 				}
 				log("API Limit remaining:", remaining);
 				
-				message.from = user.id;
-				
+				message.from = user.id;				
 				message.time = new Date().getTime();
 				message.origin = "web://" + socket.handshake.address.address;
 				
@@ -83,31 +83,46 @@ exports.init = function (server) {
 							else {
 								core.room.room(response[0].room,function(err,room) {
 									var i;
+									delete message.auth;
+									message.ref=room[0].id;
 									socket.emit('message', {type: 'nick', from: user.id, to: '', ref: room[0].id});
+									
+									user.id=room[0].id;
+									for (room in user.rooms) {
+										if (user.rooms[room]) {
+											message.to = room;
+											//sending the messages to all the rooms that the user is active.
+											core.message(message,function(status,response) {
+												//nothing for now....
+											});
+										}
+									}
 								});
 							}
 						});
 						return;
 					}
-					else{
+					else {
+						var temp=message.from;
 						if (message.ref==="") {
-							users[sid] = user = {
-								id: 'guest-sb' + Math.floor(Math.random() * 10000),
-								rooms: users[sid].rooms
-							};
-							message.ref=user.id							
+							var temp=user.id;
+							
+							//setting the new user name using the random number on logout.
+							user.id= 'guest-sb' + Math.floor(Math.random() * 10000);
+							message.ref=user.id;
 						}
-						socket.emit('message', {type: 'nick', from: message.from, to: '', ref: message.ref});
+						socket.emit('message', {type: 'nick', from: temp, to: '', ref: message.ref});
 					}
 					
+					user.id = message.ref;
 					for (room in user.rooms) {
 						if (user.rooms[room]) {
-							message.to = room;
+							message.to = room;							
 							core.message(message,function(status,response) {
+								//nothing do for now.
 							});
 						}
 					}
-					user.id = message.ref;
 					return;
 				}
 				
@@ -115,8 +130,9 @@ exports.init = function (server) {
 				if(message.type === 'part') {
 					socket.leave(message.to);
 				}
+				
 				core.message(message,function(status,response){
-					
+					console.log("message response",status);
 				});
 			});
 		});
@@ -191,8 +207,6 @@ exports.send = function (message, rooms) {
 	message.text = sanitize(message.text || "");
 	rooms.map(function(room) {
 		log("Socket sending", message, "to", room);
-		console.log("----harry------");
-		console.log(message);
 		io.sockets['in'](room).emit('message', message);
 	});
 	

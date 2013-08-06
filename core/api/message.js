@@ -15,9 +15,9 @@ module.exports = function(message, cb) {
 			"`origin`=?, `time`=?, `ref`=?", [message.id, message.from, message.to, message.type, 
 			message.text, message.origin, message.time, message.ref]);
 	
-		
-		
 		function send(){
+			//console.log("trying to send in api/message:",message);
+			
 			db.query("SELECT * FROM `accounts` WHERE `room`=?", [message.to],
 				function(err, data) {
 					var i, l, name, list = {};
@@ -28,11 +28,13 @@ module.exports = function(message, cb) {
 						list[name].push(data[i].id);
 					}
 					for(name in list) {
+						console.log("---bazinga2"+name,message);
 						if(gateways[name] && gateways[name].send)
 							gateways[name].send(message, list[name]);
 					}
 				}
 			);
+			console.log(message);
 			gateways.http.send(message, [message.to]);
 		}
 
@@ -43,11 +45,15 @@ module.exports = function(message, cb) {
 					console.log(response.err);
 					return;
 				}
+				/*
+				 *
+				 *done in the socket.js with the the core.message function. Temp solution.
 				db.query("select id from rooms where id=?",[response[0].room],function(err,room){
 					delete message.auth;
 					message.ref=room[0].id;
 					send();
 				});
+				*/
 			});
 		}
 		else {

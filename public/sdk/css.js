@@ -126,10 +126,12 @@ var css = {
 			outline: "none"
 		},
 		".scrollback-nick": {
-			"width": "80px", height:"40px", "padding-top":"10px"
+			"height":"40px", "padding-top":"10px",
+			"background-size": "auto 20px",
+			"padding-left":"25px",
+			"width": "80px"
 		},
 		".scrollback-nick-guest":{
-			"background-repeat":"no-repeat","background-position":"left center",
 			"height":"40px", "padding-top":"10px",
 			"background-size": "auto 20px",
 			"padding-left":"25px",
@@ -168,12 +170,6 @@ themes.light = {
 			".scrollback-icon-pop": {
 				backgroundImage: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFESURBVFiF7ZfNTcNAEIW/ITRALTkhIXHkRAU+RBGN0EMKAPPTRw6caYUGgh8H24qxHOGdsYkP+6SVLK935tObsUc2SSxZF+cG+EsZMKoMGFUGjCoDRrV4wEvvQTNbA/eOo3tJ+9FPS3ItavdfASWux5Q87hJLqoAN8OKNMUahHmwgt8DzJDQDcvdgK0mVmT0An8AVdRkrjiW9Be7OBthCAruhPTODAOCknxkzK8ys6N+OxJzEQajhgLK5RtJ7uxWJO4mDHbhVs8qOk6EcYcAe3OAjkfghwBNw38CmU+KvSI7IJCmAA7+nxAEoBibOE85JMitcD7L0ACa/xSPL2q9SZWZbPC2V6NwNCc6dcHI9W4kb1948cO5ed/RfCzk7nCSsSZokM1sB15I+kg+n5vIA/qcW/0+SAaPKgFFlwKgyYFSLB/wB74yQ87ptO3oAAAAASUVORK5CYII=')"
 			},
-			".scrollback-nick.scrollback-nick-guest": {
-				backgroundImage: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAITSURBVFiF7ZfLahRBFIa/f6Y1eINx6yIoImThUogbF4KLPMCAYBZZuvUR8g5ZezcgvoKP4Au4MKAguBBlshHHmcxxUTWx7XRX9dU0OD8cmO4+9c83XeccamRm9FmD0waIaQXYVCvApvr/ACWNJc0kWU7MJI0rGZpZawGMgRlggZgB49Ke/xiuMuRpwFWCbANuKwduDmxn8rb9/SzkVsi/jSa5DSSp6yNgx8z200n+esc/Xyrx6wvVxZjZy8It5e/vVTHrAvCw4fO/1PtBncRT8iVpBCwjrZGkq4GlRfkTM5ucyG7QvbtUGyux2O2qiztV7wGjNShJwBlgARyZHf+J+dgh17GCb1DSEHgJTHFTfyHpjaTEzJ7h6nAK/PLP57hBvMDVVXMFmmAIvCK/oF8Dw5LNdA34VOATbZKQ8aOI4T5wDlgDzuLKIPE/bAAo5XUd+FoHMLTF2XmV1QPgB/CTgm2WNJG0bmYHwEHEL1e1B7XX1APNgUucrOmFj9oKvcHvkbVPgfNmdtHMRsB9HOhb4C7wELhnZp8lbQA3ahEGanAAPCG/Xp4DA593AUj85yvAWsZnA/hS4LOMCXCr8oHVQz7GbdMct6UvUnDr3vwdcDlzwr4J3CkJt9nliXrTf8k34APwnj9zMBZBuFYAM5BVDgdRuNYAa0CWgmsVsAJkaTgzc9O+z+r9cWsF2FQrwKbqPeBvyQSEjgP2pIcAAAAASUVORK5CYII=')"
-			},
-			".scrollback-nick": {
-				backgroundImage: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAD0SURBVFiF7ddLDoMwDATQmdIlEj1CD09PwqbH6BHaE0w3LBCFJrb5CWUkbyITPykIBUrCkXPZG5BKAUZTgNGcG0iyJtmR1Ex1JOuQUJKrANQAOgBKVAegds9ZGRdGboELIT3AKdwTQDPoafq1H+QWwL+4FNI6j/1m2SE5fuAm6TPT2wB4D9ck0TQvCkwNtPaPc/gP9TW3keTdsp7aR9Irqz/3iCfevVByj/rwR1yA0RRgNAUYTQFGYwE+Fpybv5fhHlgBaGG/SY+rBVCtcmFdAGnCeW/UXqQZ5wI6kS6cG2hEunHy/JNsnVN9B3dJAUZTgNF8AVJqnIJzfTawAAAAAElFTkSuQmCC')"
-			},
 		".scrollback-title": {
 			background: "#555", color: "#fff", borderBottomColor: "#3ca"
 		},
@@ -195,11 +191,20 @@ themes.light = {
 			background: "#999"
 		},
 		".scrollback-nick-guest, .scrollback-text": {
-			borderTop: "1px solid #ccc"
+			borderTop: "1px solid #ccc", "background": "#ccc",
+			backgroundImage: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAITSURBVFiF7ZfLahRBFIa/f6Y1eINx6yIoImThUogbF4KLPMCAYBZZuvUR8g5ZezcgvoKP4Au4MKAguBBlshHHmcxxUTWx7XRX9dU0OD8cmO4+9c83XeccamRm9FmD0waIaQXYVCvApvr/ACWNJc0kWU7MJI0rGZpZawGMgRlggZgB49Ke/xiuMuRpwFWCbANuKwduDmxn8rb9/SzkVsi/jSa5DSSp6yNgx8z200n+esc/Xyrx6wvVxZjZy8It5e/vVTHrAvCw4fO/1PtBncRT8iVpBCwjrZGkq4GlRfkTM5ucyG7QvbtUGyux2O2qiztV7wGjNShJwBlgARyZHf+J+dgh17GCb1DSEHgJTHFTfyHpjaTEzJ7h6nAK/PLP57hBvMDVVXMFmmAIvCK/oF8Dw5LNdA34VOATbZKQ8aOI4T5wDlgDzuLKIPE/bAAo5XUd+FoHMLTF2XmV1QPgB/CTgm2WNJG0bmYHwEHEL1e1B7XX1APNgUucrOmFj9oKvcHvkbVPgfNmdtHMRsB9HOhb4C7wELhnZp8lbQA3ahEGanAAPCG/Xp4DA593AUj85yvAWsZnA/hS4LOMCXCr8oHVQz7GbdMct6UvUnDr3vwdcDlzwr4J3CkJt9nliXrTf8k34APwnj9zMBZBuFYAM5BVDgdRuNYAa0CWgmsVsAJkaTgzc9O+z+r9cWsF2FQrwKbqPeBvyQSEjgP2pIcAAAAASUVORK5CYII=')",
+			"background-repeat":"no-repeat",
+			"background-size":"20px",
+			"background-position": "0% 25%"
 		},
 		".scrollback-nick": {
-			borderTop: "1px solid #ccc"
-			//color: "#555", "background": "#eee"
+			borderTop: "1px solid #ccc","background": "#ccc",
+			color: "#555",
+			backgroundImage: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAD0SURBVFiF7ddLDoMwDATQmdIlEj1CD09PwqbH6BHaE0w3LBCFJrb5CWUkbyITPykIBUrCkXPZG5BKAUZTgNGcG0iyJtmR1Ex1JOuQUJKrANQAOgBKVAegds9ZGRdGboELIT3AKdwTQDPoafq1H+QWwL+4FNI6j/1m2SE5fuAm6TPT2wB4D9ck0TQvCkwNtPaPc/gP9TW3keTdsp7aR9Irqz/3iCfevVByj/rwR1yA0RRgNAUYTQFGYwE+Fpybv5fhHlgBaGG/SY+rBVCtcmFdAGnCeW/UXqQZ5wI6kS6cG2hEunHy/JNsnVN9B3dJAUZTgNF8AVJqnIJzfTawAAAAAElFTkSuQmCC')",
+			"background-repeat":"no-repeat",
+			"background-size":"20px",
+			"background-position": "0% 25%"
+
 		},
 		".scrollback-text": { background: "#fff", color: "#000" },
 	".scrollback-poweredby": {
@@ -261,7 +266,7 @@ themes.dark = {
 			borderTop: "1px solid #ccc",
 			color: "#555"
 		},
-		".scrollback-text": { background: "#fff", color: "#000" },
+		".scrollback-text": { background: "#ccc", color: "#000" },
 	".scrollback-poweredby": {
 		background: "url(http://scrollback.io/poweredby-lt.png)"
 	}

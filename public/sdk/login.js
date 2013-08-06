@@ -12,8 +12,6 @@ window.fbAsyncInit = function() {
 	var button=document.getElementById("fbLogin");
 	console.log(button);
 	button.disabled =false;
-	
-	
 	if (location.href.search("redirect")>0) {
 		login();
 	}

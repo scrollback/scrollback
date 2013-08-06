@@ -3,12 +3,16 @@
 var irc = require("irc"),
 	log = require("../../lib/logger.js"),
 	config = require("../../config.js"),
-	ident=require("./ident.js");
+	ident=require("./ident.js"),users;
 
 module.exports = connect;
 
 function connect(server, nick, uid, callback) {
 	log("Connecting " + nick + " to " + server);
+	
+	 nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
+	 
+	 
 	var client =  new irc.Client(server, nick, {
 		userName: nick,
 		realName: nick+'@scrollback.io',
@@ -47,6 +51,11 @@ function connect(server, nick, uid, callback) {
 	
 	if(callback) {
 		client.addListener('message', function(nick, channel, text) {
+
+		// if a user name not registered with askabt, connects via IRC, he is made a  guest.
+		if(!(users[client.opt.server] && users[client.opt.server][nick]))
+		nick = "guest-" + nick;
+
 			log(client.nick + " hears " + nick + " say \'" +
 				text.substr(0,32) + "\' in " + channel);
 			message('text', nick, room(channel), text, channel);
@@ -97,6 +106,7 @@ function connect(server, nick, uid, callback) {
 		if (from === client.nick && client.sayQueues[channel]) {
 			log("Sending queued messages for " + channel);
 			client.sayQueues[channel].forEach(function(message) {
+			//	console.log("saying:",message);
 				client.say(channel, message);
 			});
 			client.sayQueues[channel] = [];
@@ -163,7 +173,7 @@ function connect(server, nick, uid, callback) {
 	client.join = queueConn(client.join);
 	client.part = queueConn(client.part);
 	client.rename = queueConn(function(nick) {
-		log("Sending nick change to irc");
+		log("Sending nick change to irc:"+nick);
 		client.send("NICK", nick);
 	});
 	
@@ -174,6 +184,7 @@ function connect(server, nick, uid, callback) {
 	return client;
 }
 
-connect.init = function() {
+connect.init = function(urs) {
 	ident.init();
+	users=urs;
 };
