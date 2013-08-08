@@ -49,12 +49,12 @@ Stream.prototype.scroll = function() {
 	cb = function(m) { self.update(m); };
 	
 	if (this.bottom) {
-		core.watch(self.id, null, 40, 0, cb);
+		core.watch(self.id, null, 3*(end-start), 0, cb);
 	} else {
 		core.unwatch(self.id);
 		if (!this.requested[up?"up":"dn"] && (up && start < 10 || !up && self.messages.length - end < 10)) {
 			this.requested[up?"up":"dn"] = true;
-			core.watch(self.id, self.messages[start].time, 15, 25, cb);
+			core.watch(self.id, self.messages[start].time, (end-start), 2*(end-start), cb);
 		}
 	}
 	
@@ -77,7 +77,9 @@ Stream.prototype.update = function (data) {
 	}
 	this.lastScrollTop = this.log.scrollTop;
 	console.log("Set lastScrollTop to ", this.log.scrollTop);
-	this.updating = false;
+	setTimeout(function() {
+		self.updating = false;
+	}, 100);
 };
 
 Stream.prototype.renderLog = function() {
