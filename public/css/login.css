@@ -1,11 +1,46 @@
-.login{
-	width:  80%;
-	text-align: center
+
+input, button{
+	padding: 8px;
+	width: 140px;
 }
-#continueAs{
-	margin-top: 24px;
+
+div.inactive{
+	opacity: .30;
+	cursor: auto;
 }
-.center{
-	margin-left: auto;
-	margin-right: auto;
+div.login{
+	margin: 10px;
+	width: 300px;
+}
+button.major{
+	background: black;
+	color: white;
+	border-bottom: 2px solid #3CA;
+	margin-right: 16px;
+	padding-bottom: 6px;
+}
+
+
+.loginWithImg{
+	height: 50px;
+	width: 50px;
+}
+
+.loginWiteItem{
+	height: 50px;
+	width: 50px;
+	border-radius: 5px;
+	display: inline;
+	cursor: pointer;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+#continueBtn{
+	display: inline;
+}
+
+
+.border{
+	border: 1px solid black;
 }

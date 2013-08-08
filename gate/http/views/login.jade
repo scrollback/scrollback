@@ -4,16 +4,19 @@ block append styles
 
 block content
 	div#fb-root
-	div.login.center
-		p.center
-			h1 Register / Sign in with
-		p.center: button.major#fbLogin(disabled="true",onclick="login()") Facebook
-		div.center
-			h1 OR continue as
-				br
-				input#continueAs(type="text",placeholder="Nick")
-			button.major#continueBtn(onclick="continueAs()") Continue
-			button.major(onclick="window.close()") Cancel
+	div.login
+		div
+			div.loginWith
+				div.loginWiteItem.inactive#fbLogin
+					img.loginWithImg(src="/img/facebook.png")
+				div.loginWiteItem.inactive
+					img.loginWithImg(src="/img/google.png")
+			div
+				p Or continue without logging in:
+					div
+						input#continueAs(type="text",placeholder="Nick")
+						button.major#continueBtn(onclick="continueAs()") Continue
+					p If you don't log in, someone else might steal your nick when you're not around.
 block append scripts
 	script(type='text/javascript')
 		window.scrollback = {host: 'http://' + location.host};
@@ -21,5 +24,6 @@ block append scripts
 	script(src="/sdk/emitter.js")
 	script(src="/sdk/client.js")
 	script(src="/sdk/addEvent.js")
+	script(src="/sdk/polyfill.js")
 	script(src="/sdk/login.js")
 	

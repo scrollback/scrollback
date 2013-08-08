@@ -82,9 +82,10 @@ function Stream(id) {
 			addEvent(el, 'scroll', function() { self.scroll(); });
 		}
 		else if(hasClass(el, 'scrollback-nick')) {
+			var left = (screen.width/2)-(w/2);
+		var top = (screen.height/2)-(h/2);
 			self.nick = el;
-			console.log()
-			var loginWindow=window.open("/dlg/login","login","width=800,height=600");
+			var loginWindow=window.open("/dlg/login","login","scrollbars=no, height=350,width=350");
 			el.innerText = core.nick();
 		}
 		else if(hasClass(el, 'scrollback-nick-guest')) {

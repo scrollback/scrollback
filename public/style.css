@@ -6,33 +6,17 @@ html, button, input, select, textarea {
 	font-size: 16px;
 	line-height:24px;
 	color: #222;
-	padding: 8px;
 }
 
 input, select, textarea {
 	border: 1px solid #ccc; background: #fff;
 	border-radius: 0;
-	padding: 8px;
 }
-
-
-
-
 
 button {
 	background: #000; color: #fff;
 	border: none; 
 	box-shadow: 0 2px 4px 0 #000;
-}
-
-button.major{
-	background: black;
-	color: white;
-	width: 160px;
-	border-bottom: 2px solid #3ca;
-	padding-bottom: 6px;
-	margin-left: 16px;
-	margin-right: 16px;
 }
 
 

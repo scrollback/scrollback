@@ -1,5 +1,8 @@
 var nickExpected=false;
 
+window.resizeBy(350-window.innerWidth, 350-window.innerHeight);
+
+
 window.fbAsyncInit = function() {
 	FB.init({
 		appId      : '1389363534614084', // App ID
@@ -9,11 +12,13 @@ window.fbAsyncInit = function() {
 		oauth      : true, // enable OAuth 2.0
 		xfbml      : false  // parse XFBML
 	});	
-	var button=document.getElementById("fbLogin");
-	console.log(button);
-	button.disabled =false;
 	if (location.href.search("redirect")>0) {
 		login();
+	}
+	else{
+		var facebookLogin=document.getElementById("fbLogin");
+		removeClass(facebookLogin, 'inactive');
+		addEvent(facebookLogin, 'click',login);
 	}
 };
 
@@ -29,7 +34,9 @@ window.fbAsyncInit = function() {
 core.on("ERR_AUTH_NEW",function(boom) {
 	window.location="/dlg/profile";
 });
-	
+
+
+
 
 function continueAs() {
 	var nick=document.getElementById("continueAs");
