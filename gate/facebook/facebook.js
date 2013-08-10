@@ -8,10 +8,12 @@ exports.init=function(){
 
 exports.auth=function(data,callback) {
 	var str="https://graph.facebook.com/me?access_token=" + data.token;
+	
+	console.log("contacting facebook.........");
 	request(str,
 		function(err,res,body) {
 			if(err) {
-				
+				console.log(str);
 				//callback(false,{err:"ERR_AUTH_NETFAIL"});
 				//network failure.?? should deal with it later.
 				return;
@@ -22,6 +24,7 @@ exports.auth=function(data,callback) {
 				callback(false,{err:"ERR_AUTH_FAIL"});
 				return;
 			}
+			
 			core.account.accounts({id:data.id,gateway:"facebook"},function(err,account) {
 				console.log("account",account)
 				if (err) {

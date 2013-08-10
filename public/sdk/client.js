@@ -91,6 +91,7 @@ core.time = function() { return new Date().getTime() + timeAdjustment; };
 
 socket.on('error', function(message) {
 	console.log(message);
+	core.emit('error',message);
 });
 
 socket.on('messages', function(data) {

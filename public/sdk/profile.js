@@ -1,4 +1,4 @@
-var fbUser,fbStatus;
+var fbUser,fbStatus,nickExpected=false;
 
 
 function handleError() {
@@ -69,6 +69,8 @@ window.fbAsyncInit = function() {
 function update() {
 	console.log("blah");
 	var username=document.getElementById("username").value;
+	
+	nickExpected=true;
 	core.update("room",{
 		id: username,
 		name: fbUser.name,
@@ -78,18 +80,28 @@ function update() {
 		profile: "",
 		params: ""
 	});
-	core.update("account",{
-		id:fbUser.id,
-		room:username,
-		gateway:"facebook",
-		token: fbStatus.authResponse.accessToken,
-		params: fbStatus.authResponse
+	
+	core.on("nick",function(n) {
+		if(nickExpected && n==username) {
+			core.update("account",{
+				id:fbUser.id,
+				room:username,
+				gateway:"facebook",
+				token: fbStatus.authResponse.accessToken,
+				params: fbStatus.authResponse
+			});	
+			window.close();	
+		}
 	});
-	core.nick(username);
-	window.close();
+	
+	core.on("error",function(obj){
+		if (obj.code==="ER_DUP_ENTRY") {
+			var notification=document.getElementById("notification");
+			removeClass(notification,"inVisible");
+			//alert("Nick not available");
+		}
+	});
 }
-
-
 
 function logout(){
 	message("nick","","","");

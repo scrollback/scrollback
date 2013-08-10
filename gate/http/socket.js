@@ -73,8 +73,7 @@ exports.init = function (server) {
 					if(user.rooms[message.to]) return;
 				} else if (message.type == 'nick') {
 					log("nick "+user.id + " to " + message.ref + ", forwarding");
-					
-					if(message.auth) {
+					if(message.auth) { 	
 						core.message(message,function(status,response) {
 							if (status==false) {
 								console.log(response.err);
@@ -182,22 +181,38 @@ exports.init = function (server) {
 
 			console.log("receiving update");
 			if (request.type==="account") {
-				core.account.account(request.params);
+				
+				core.account.account(request.params,function(){
+					//console.log(request.params);	
+				});
 			}
 			else if (request.type==="room") {
-				
-				
 				var sid = cookie.parse(socket.handshake.headers.cookie || '')['connect.sid'],
 				user = users[sid];
-				core.room.room(request.params);
-				var message={
-					type: 'nick',
-					from: user.id,
-					to: '',
-					ref: request.params.name
-				};
+				core.room.room(request.params,function(err,data){
+				//	console.log(request.params);
+					if (err) {
+						console.log("bazinga-",err);
+						socket.emit("error",err);
+						return;
+					}
+					
+					var message={
+						type: 'nick',
+						from: user.id,
+						to: '',
+						ref: request.params.id
+					};
+					console.log(message);
+					socket.emit('message', message);
+					
+					core.message(message,function(status,response) {
+						//nothing for now....
+					});
+				});
+				
 
-				//socket.emit('message', );
+				
 			}
 		});
 	});

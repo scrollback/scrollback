@@ -1,6 +1,6 @@
 extends layout
 block append styles
-	link(rel="stylesheet", href="/css/login.css")
+	link(rel="stylesheet", href="/css/profile.css")
 
 block append scripts
 
@@ -8,6 +8,7 @@ block append scripts
 		window.scrollback = {host: 'http://' + location.host};
 	script(src="/socket.io/socket.io.js")
 	script(src="/sdk/emitter.js")
+	script(src="/sdk/polyfill.js")
 	script(src="/sdk/client.js")
 	script(src="/sdk/profile.js")
 	
@@ -24,6 +25,8 @@ block append scripts
 				label
 					span.label Username:
 					input#username
+					div.center.inVisible#notification
+						p Nick not available
 				br
 				br
 				button.major#submit(type="button",onclick="update()") Create account
