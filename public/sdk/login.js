@@ -1,7 +1,12 @@
 var nickExpected=false;
 
-window.resizeBy(350-window.innerWidth, 350-window.innerHeight);
+core.on("connected",function(){
+	var currentNick=core.nick();
+	console.log(currentNick,core.nick());
+	currentNick=(currentNick.indexOf("guest-")===0)?(currentNick.replace("guest-","")):currentNick;
+	document.getElementById("continueAs").value=currentNick;
 
+});
 
 window.fbAsyncInit = function() {
 	FB.init({

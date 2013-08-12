@@ -192,7 +192,6 @@ exports.init = function (server) {
 				core.room.room(request.params,function(err,data){
 				//	console.log(request.params);
 					if (err) {
-						console.log("bazinga-",err);
 						socket.emit("error",err);
 						return;
 					}
