@@ -10,6 +10,8 @@ var dom = {
 			["div", { 'class': 'scrollback-icon scrollback-icon-pop' }, '➚'],
 			["div", {'class': 'scrollback-title-content'},
 				["span", {'class': 'scrollback-title-id'}],
+				["a", {href: "http://scrollback.io", "class": "scrollback-poweredby",
+			target: "_blank"}],
 				["span", { 'class': 'scrollback-title-text' }]
 			]
 		],
@@ -24,8 +26,6 @@ var dom = {
 				["input", { 'class': 'scrollback-text' }]
 			],
 			["button", {type: 'submit', 'class': 'scrollback-hidden'}, "Send"]
-		],
-		["a", {href: "http://scrollback.io", "class": "scrollback-poweredby",
-			target: "_blank"}]
+		]
 	]
 };
