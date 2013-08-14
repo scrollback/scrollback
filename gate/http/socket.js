@@ -232,6 +232,9 @@ exports.send = function (message, rooms) {
 };
 
 function sanitize(text) {
-	return text.replace(/\</g, '&lt;');
+	// this was supposed to escape lt, gt etc. to prevent xss but on the client side
+	// we're creating text nodes now so it's ok.
+	
+	return text;
 }
 

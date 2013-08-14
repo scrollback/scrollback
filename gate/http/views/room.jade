@@ -6,13 +6,12 @@ block title
 
 block styles
 	style.
-		.scrollback-embed { display:none; }
+		.scrollback-icon-pop { display:none !important; }
 		#intro {
-			width: 200px; position: absolute; left: 0px; top: 120px;
-			background: #555; border-right: 4px solid #3ca;
-			color: #fff; padding: 40px; z-index: 9999;
+			background: #eee; width: 480px; float: left;
+			color: #000; padding: 40px;
 			transition: all 0.200m; -webkit-transition: all 0.2s;
-			font-size: 13px;
+			font-size: 15px; margin: 40px;
 		}
 		#intro p {
 			margin: 16px 0 0 0;
@@ -28,28 +27,32 @@ block styles
 		#intro input { height: 40px; width: 100%; }
 		.em { font-weight: 700; }
 		
-		#popular p { background: #ccc; padding: 0 8px;
-			margin: 0 4px 4px 0; float: left; border-bottom: 4px solid #999;
-		}
-		#popular p a { color: #000; line-height: 40px; display: block; }
+		.small { font-size: 10px; line-height: 10px; font-weight: 400; }
+		
 		#add { clear: both; }
 block content
 		#intro
-			#hide &larr;
-			p.em Scrollback Home
-			p Pin this tab to stay in the loop.
+			p.em Embed this room on your website.
+			p.
+				Paste this code above the <code>&lt;/body&gt;</code> closing tag in your site's HTML.
+			pre: code.small.
+				window.scrollback = {
+					streams:!{streams},
+					theme: 'light',
+					ticker: true,
+					minimized: true
+				};
+				/***** don't edit below *****/
+				(function(d,s,h,e){e=d.createElement(s);e.async=1;
+				e.src=h+'/client.min.js';scrollback.host=h;
+				d.getElementsByTagName(s)[0].parent.appendChild(e);}
+				(document,'script','http://'+location.host));
 			
-			p.em Popular rooms:
-			
-			#popular
-				p: a(href='+/ubuntu/') Ubuntu 
-				p: a(href='+/nodejs/') Node.js 
-				p: a(href='+/bitcoin/') Bitcoin 
+			p.em Create your own room
 			
 			form#add
-				p.em: label Create or join a room:
-					input#streamId
-					button.hidden(type="submit")
+				input#streamId
+				button.hidden(type="submit")
 	
 block scripts
 	script(src='http://code.jquery.com/jquery.min.js')
@@ -60,9 +63,8 @@ block scripts
 			ticker: true,
 			close: true,
 			minimized: false,
-			maxWidth: 600,
+			maxWidth: 480,
 			maxHeight: 9999,
-			onchange: updateUrl
 		};
 		// Don't change below this line ------------------------------------------------
 		(function(d,h,e){e=d.createElement('script');e.async=1;e.src=h+'/client.min.js';
@@ -70,25 +72,8 @@ block scripts
 		
 		$(document).ready(function() {
 			$("form#add").submit(function (event) {
-				scrollback.addStream($('#streamId').val());
-				$("#hide").click();
-				$('#streamId').val("")
+				location.href = '/' + $('#streamId').val() + '/';
 				return false;
 			});
-			
-			$("#intro").click(function(event) {
-				$(this).removeClass('collapsed');
-			});
-			
-			$("#hide").click(function(event) {
-				console.log("Hide clicked");
-				$("#intro").addClass('collapsed');
-				event.stopPropagation();
-			});
 		});
-		
-		function updateUrl() {
-			console.log('updateUrl called');
-			history.pushState(null, '', '/' + scrollback.streams.join('/+/') +'/');
-		}
 		

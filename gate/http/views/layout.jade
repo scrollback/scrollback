@@ -12,14 +12,10 @@ html
 		meta(http-equiv="X-UA-Compatible",content="IE=Edge")
 	body
 		block header
-			nav.
-				<div class="container clearfix">
-					<div class="box logo-box span1">
-						Scrollback
-					</div>
-				</div>
-		
-		block content
+			nav
+				.container.clearfix: .box.logo-box.span1: .logo: Scrollback
+		.container.clearfix
+			block content
 		block scripts
 		block footer
 			#footer
