@@ -14,7 +14,7 @@ exports.room=function(data,callback) {
 			data.name || "", data.description || "", data.picture || "", data.profile || "",
 			data.owner|| data.id, data.params|| ""],function(err,data) {
 				
-				
+				db.end();
 				console.log(err,data);
 				if (callback) callback(err,data);
 			});
@@ -24,6 +24,7 @@ exports.room=function(data,callback) {
 		pool.get(function(err, db) {
 			console.log(data);
 			db.query("select * from rooms where id=? ", [data],function(err,data){
+				db.end();
 				if (callback) callback(err,data);
 			});
 		});

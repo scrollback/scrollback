@@ -59,6 +59,8 @@ exports.init = function (server) {
 				message.time = new Date().getTime();
 				message.origin = "web://" + socket.handshake.address.address;
 				
+				message.to = message.to || Object.keys(user.rooms);
+				
 				if (message.type == 'back') {
 					socket.join(message.to);
 					if(user.rooms[message.to]) {
@@ -73,7 +75,7 @@ exports.init = function (server) {
 					if(user.rooms[message.to]) return;
 				} else if (message.type == 'nick') {
 					log("nick "+user.id + " to " + message.ref + ", forwarding");
-					if(message.auth) { 	
+					if(message.auth) {
 						core.message(message,function(status,response) {
 							if (status==false) {
 								console.log(response.err);
@@ -114,14 +116,14 @@ exports.init = function (server) {
 					}
 					
 					user.id = message.ref;
-					for (room in user.rooms) {
-						if (user.rooms[room]) {
-							message.to = room;							
-							core.message(message,function(status,response) {
-								//nothing do for now.
-							});
-						}
-					}
+					//for (room in user.rooms) {
+					//	if (user.rooms[room]) {
+					//		message.to = room;							
+					//		core.message(message,function(status,response) {
+					//			//nothing do for now.
+					//		});
+					//	}
+					//}
 					return;
 				}
 				

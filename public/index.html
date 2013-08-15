@@ -8,6 +8,10 @@
 		<!-- link href='http://fonts.googleapis.com/css?family=Open+Sans:300,700' rel='stylesheet' type='text/css' / -->
         <link rel="stylesheet" href="style.css">
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+		<style>
+			#streamId { font-size: inherit; font-weight: inherit; background: transparent; border: none;
+			border-bottom: 2px solid #999; width: 200px; }
+		</style>
 	</head>
 	
 	<body>
@@ -34,7 +38,10 @@
 		<div class='container clearfix'>
 			<div id="hero">
 				<h1>Beautiful text chat for your community website.</h1>
-				<img src='img/hero.png' style='max-width:60%'/>
+				<form id="add">
+				<h2>Claim your community’s name:</h2>
+				<h1>scrollback.io/<input id="streamId"><button type="submit" class="hidden"></button></h1>
+				</form>
 			</div>
 			<a name="features"><div class='box span4 break'>
 				<h2>Infinite scroll</h2>
@@ -162,5 +169,16 @@ scrollback.host=h;d.body.appendChild(e);}(document,'http://scrollback.io'));
 		<script src="sdk/embed.js"></script>
 		<script src="sdk/render.js"></script>
 
+		
+		<script src="http://code.jquery.com/jquery.min.js"></script>
+		<script>
+			$(document).ready(function() {
+				$("form#add").submit(function (event) {
+					location.href = '/' + $('#streamId').val() + '/';
+					return false;
+				});
+			});
+		</script>
+		
 	</body>
 </html>

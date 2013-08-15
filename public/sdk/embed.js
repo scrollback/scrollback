@@ -81,27 +81,19 @@ function Stream(id) {
 			self.log = el;
 			addEvent(el, 'scroll', function() { self.scroll(); });
 		}
-		else if(hasClass(el, 'scrollback-nick')) {
-			var left = (screen.width/2)-(w/2);
-		var top = (screen.height/2)-(h/2);
-			self.nick = el;
-			var loginWindow=window.open("/dlg/login","login","scrollbars=no, height=350,width=350");
-			el.innerText = core.nick();
-		}
 		else if(hasClass(el, 'scrollback-nick-guest')) {
 			self.nick = el;
-			console.log()
-			if (core.nick().indexOf("guest-")!==0) {
+			if (core.nick().indexOf("guest-") !== 0) {
 				removeClass(el, 'scrollback-nick-guest');
 				addClass(el, 'scrollback-nick');
 			}
 			
 			addEvent(el, 'click', function() {
-				if (core.nick().indexOf("guest-")===0) {
-					window.open("/dlg/login","login","width=800,height=600");
+				if (core.nick().indexOf("guest-") === 0) {
+					window.open("/dlg/login","login","width=350,height=350");
 				}
 				else {
-					window.open("/dlg/profile","profile","width=800,height=600");	
+					window.open("/dlg/profile","profile","width=350,height=350");	
 				}
 			});
 			

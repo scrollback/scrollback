@@ -12,6 +12,7 @@ exports.account=function(data,callback) {
 			db.query("INSERT INTO `accounts` SET `id`=?, `room`=?, `gateway`=?, `params`=?",
 				[data.id, data.room || "", data.gateway,JSON.stringify(data.params)|| ""],function(err,data) {
 				console.log(err,data);
+				db.end();
 				if (callback) callback(err,data);
 			});
 		});
@@ -20,6 +21,7 @@ exports.account=function(data,callback) {
 		pool.get(function(err, db) {
 			console.log(data);
 			db.query("select * from accounts where id=? ", [data],function(err,data) {
+				db.end();
 				if (callback) callback(err,data);
 			});
 		});
@@ -35,6 +37,7 @@ exports.accounts=function(query,callback){
 		
 		db.query("select * from accounts where id=?", [id],function(err,data) {
 			if (callback) callback(err,data);
+			db.end();
 		});
 		 
 	});

@@ -74,6 +74,7 @@ module.exports = function(options, callback) {
 			
 			log("Query results: " + data.length);
 			callback(data);
+			db.end(); // I'm done with this db connection. This is important!
 		});
 
 	});
