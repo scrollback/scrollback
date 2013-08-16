@@ -6,6 +6,10 @@ Stream.prototype.scroll = function() {
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
 	
+	if (this.updating) {
+		return;
+	}
+	
 	while(msg) {
 		pos = offset(msg)[1];
 		if(pos >= viewTop && pos <= viewBottom){
@@ -22,6 +26,7 @@ Stream.prototype.scroll = function() {
 	}
 	
 	up = log.scrollTop < this.lastScrollTop;
+	console.log("1 up", up, this.lastScrollTop, log.scrollTop);
 	this.lastScrollTop = log.scrollTop;
 	this.scrollId = this.messages[start].id;
 	this.scrollPx = offset(this.log.children[start])[1] - offset(this.log)[1] -  this.log.scrollTop;
@@ -32,21 +37,24 @@ Stream.prototype.scroll = function() {
 	
 	this.renderThumb(start, end);
 	
-	if(log.scrollHeight == log.scrollTop + log.clientHeight) {
+//	if(log.scrollHeight == log.scrollTop + log.clientHeight) { 
+	if (end >= self.messages.length - 1 && !up) {
+		console.log("bottomed out");
 		this.bottom = true;
 	} else {
+		console.log("not bottom", end, self.messages.length, up, self.lastScrollTop, log.scrollTop);
 		this.bottom = false;
 	}
 	
 	cb = function(m) { self.update(m); };
 	
 	if (this.bottom) {
-		core.watch(self.id, null, 40, 0, cb);
+		core.watch(self.id, null, 3*(end-start), 0, cb);
 	} else {
 		core.unwatch(self.id);
 		if (!this.requested[up?"up":"dn"] && (up && start < 10 || !up && self.messages.length - end < 10)) {
 			this.requested[up?"up":"dn"] = true;
-			core.watch(self.id, self.messages[start].time, 15, 25, cb);
+			core.watch(self.id, self.messages[start].time, (end-start), 2*(end-start), cb);
 		}
 	}
 	
@@ -55,6 +63,7 @@ Stream.prototype.scroll = function() {
 Stream.prototype.update = function (data) {
 	var self = this, top, i, l;
 	this.messages = data;
+	this.updating = true;
 	this.renderLog();
 	this.renderTimeline();
 	
@@ -66,7 +75,11 @@ Stream.prototype.update = function (data) {
 		}
 		this.log.scrollTop = offset(this.log.children[i])[1] - offset(this.log)[1] - this.scrollPx;
 	}
-	setTimeout(function() { self.updating = false; }, 100);
+	this.lastScrollTop = this.log.scrollTop;
+	console.log("Set lastScrollTop to ", this.log.scrollTop);
+	setTimeout(function() {
+		self.updating = false;
+	}, 100);
 };
 
 Stream.prototype.renderLog = function() {
@@ -225,8 +238,6 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	
 	function formatName(name) {
 		// TODO
-		
-		//console.log(name);
 		return [ "span", {
 			'class': 'scrollback-message-nick',
 			onmouseout: function() {
@@ -241,8 +252,6 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 				self.userStyle = addStyles(ucss);
 			}
 		},  (name.indexOf("guest-")===0)?(name.replace("guest-","")):name];
-	
-//(name.indexOf("guest-")===0)?(name.replace("guest-","")):name
 	}
 	
 	switch(message.type) {
@@ -274,7 +283,7 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 			el = [["span", message.text]];
 	}
 	
-	if (showTimestamp) {
+	if (showTimestamp && message.time) {
 		el.push([ "span", { 'class': 'scrollback-message-timestamp'},
 			"Sent " + prettyDate(message.time, core.time())
 		]);

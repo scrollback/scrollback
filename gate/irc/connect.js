@@ -3,18 +3,19 @@
 var irc = require("irc"),
 	log = require("../../lib/logger.js"),
 	config = require("../../config.js"),
-	ident=require("./ident.js"),users;
+	ident=require("./ident.js"),
+	users;
 
 module.exports = connect;
+
 
 function connect(server, nick, uid, callback) {
 	log("Connecting " + nick + " to " + server);
 	
 	 nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
 	 
-	 
 	var client =  new irc.Client(server, nick, {
-		userName: nick,
+		userName : nick,
 		realName: nick+'@scrollback.io',
 		debug: false
 	});
@@ -47,7 +48,7 @@ function connect(server, nick, uid, callback) {
 	
 	client.addListener('error', function(message) {
 		log("Error from " + message.server, message.args);
-	});
+	});				
 	
 	if(callback) {
 		client.addListener('message', function(nick, channel, text) {
@@ -103,6 +104,7 @@ function connect(server, nick, uid, callback) {
 	
 	// Send queued messages when join happens.
 	client.addListener('join', function(channel, from) {
+		channel = channel.toLowerCase();
 		if (from === client.nick && client.sayQueues[channel]) {
 			log("Sending queued messages for " + channel);
 			client.sayQueues[channel].forEach(function(message) {
@@ -142,9 +144,9 @@ function connect(server, nick, uid, callback) {
 	// Wrap the client's say function in a queuing wrapper
 	client.say = (function(say) {
 		return function(channel, message) {
+			channel = channel.toLowerCase();
 			if (!client.connected || !client.chans[channel]) {
 				log("Queueing " + message.substr(0,32) + " for " + channel + ".");
-				
 				if (!client.sayQueues[channel]) {
 					client.sayQueues[channel] = [];
 				}
@@ -185,6 +187,7 @@ function connect(server, nick, uid, callback) {
 }
 
 connect.init = function(urs) {
+	users=urs;
 	ident.init();
 	users=urs;
 };

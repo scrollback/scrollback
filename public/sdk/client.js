@@ -68,13 +68,8 @@ function message(type, to, text, ref,options) {
 	if (m.type != 'result-start' && m.type != 'result-end' && socket.socket.connected) {
 		socket.emit('message', m);
 	}
-<<<<<<< HEAD
-	if(rooms[to]) {
-=======
-	
 	if(typeof messageArray !=="undefined" && rooms[to]) {
 		console.log(m.type);
->>>>>>> facebook login is done.. Need some testing..
 		rooms[to].messages.push(m);
 		if(requests[to + '//']) requests[to + '//'](true);
 	}
@@ -130,10 +125,13 @@ socket.on('message', function(message) {
 	console.log("Received:", message);
 	core.emit('notify', message);
 	switch (message.type) {
+		case 'abuse_report':
+			core.emit("abuse_report",message.id);
+			return;
+			break;
 		case 'nick':
 			if (message.from == nick) {
 				nick = message.ref;
-				
 				core.emit('nick', message.ref);
 				return;
 			}
@@ -204,16 +202,13 @@ core.update=function(type,params){
 
 
 function snapshot (messages) {
-	return messages.map(function(message) {
+	return '{' + prettyDate(messages[0].time) + ' ' + messages.map(function(message) {
 		switch (message.type) {
-			case 'result-start': return '(';
-			case 'result-end': return ')';
-			case 'back': return '<';
-			case 'away': return '>';
-			case 'text': return '+';
-			default: return '-';
+			case 'result-start': return '(' + prettyDate(message.time) + ' ';
+			case 'result-end': return ' ' + prettyDate(message.time) + ')';
+			default: return '';
 		}
-	}).join('');
+	}).join('') + ' ' + prettyDate(messages[messages.length-1].time) + '}';
 }
 
 /* TODO: implement them someday

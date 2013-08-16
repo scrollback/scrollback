@@ -23,7 +23,7 @@ function init() {
 				if(account.joined) return;
 				u = url.parse(account.id);
 				client = clients.bot[u.host];
-				
+					
 				if(!client) {
 					clients.bot[u.host] = client =
 						connect(u.host, botNick, botNick, function(m) {
@@ -44,7 +44,7 @@ function init() {
 				if (!users[u.host]) users[u.host] = {};
 				
 				log("Bot joining " + u.hash);
-				client.join(u.hash);
+				client.join(u.hash.toLowerCase());
 				client.rooms[u.hash.toLowerCase()] = account.room;
 				account.joined = true;
 			});
@@ -64,7 +64,7 @@ function send(message, accounts) {
 	accounts.map(function(account) {
 		var u = url.parse(account),
 			client = clients[message.from][u.host],
-			channel = u.hash;
+			channel = u.hash.toLowerCase();
 		
 		if (message.origin == account) {
 			log("Outgoing echo", message);

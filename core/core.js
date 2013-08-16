@@ -12,8 +12,8 @@ var log = require("../lib/logger.js");
 
 exports.gateways = require("./gateways.js");
 
-exports.message = function(m,cb) {
-	message(m,cb);
+exports.message = function(m, cb) {
+	message(m, gateways, cb);
 };
 
 

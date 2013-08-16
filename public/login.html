@@ -17,59 +17,12 @@
 	</head>
 	
 	<body>
-		<h1 class='wait'>Logging in...</h1>
-		<div class='start'>
-			<h1>Login with</h1>
-			<a class='icon-facebook'>Facebook</a>
-			<a class='icon-github'>Github</a>
-		</div>
 		
 		<script src='http://code.jquery.com/jquery.js'></script>
+		<script src="http://login.persona.org/include.js"></script>
 		<script>
-			$.ajaxSetup({
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
-				processData: "false"
-			});
-			
-			var fbClient, ghClient, webhost;
-			if(location.href.indexOf('dev') >= 0) {
-				ghClient = "b829f248c0c0e723c400"
-				webhost = "dev.askabt.com:7528";
-			} else if(location.href.indexOf('mehul') >= 0) {
-				ghClient = "3fceb7bb11139f7f77a6"
-				webhost = "mehul.askabt.com:7528";
-			} else {
-				ghClient = "057ced38809e68ce955d"
-				webhost = "askabt.com";
-			}
-			fbClient = "134436580048926";
-			
-			var query = [];
-			location.search.substr(1).replace(/([^\=]*)\=([^\&]*)(\&|$)/g, function(m, k, v) {
-				query[k] = decodeURIComponent(v);
-				return "";	
-			});
-		
-			$(document).ready(function() {
-				$('.icon-github').click(function(e){
-					e.preventDefault();
-					location.href = "https://github.com/login/oauth/authorize?client_id=" +
-						ghClient + "&redirect_uri=" + encodeURIComponent(
-							'http://' + webhost + "/login.html?from=github"
-						) + "&scope=user:email,public_repo";
-				});
-				$('.icon-facebook').click(function(e){
-					e.preventDefault();
-					location.href = "https://www.facebook.com/dialog/oauth?client_id=" +
-						fbClient + "&redirect_uri=" + encodeURIComponent(
-							'http://' + webhost + "/login.html?from=facebook"
-						) + "&scope=email";
-				});
-	
-				if(query.code) {
-					$.post();
-				}
+			navigator.id.get(function(assertion) {
+				console.log("Got assertion", assertion);
 			});
 		</script>
 	</body>

@@ -23,7 +23,7 @@ exports.init = function (server) {
 		var limiter = new RateLimiter(config.http.limit, config.http.time, true);
 		var sid = cookie.parse(socket.handshake.headers.cookie || '')['connect.sid'],
 			user = sid && users[sid];
-		console.log("---------------------------sid:"+sid);	
+
 		if(!user) {
 			users[sid] = user = {
 				id: 'guest-sb' + Math.floor(Math.random() * 10000),
@@ -132,8 +132,21 @@ exports.init = function (server) {
 					socket.leave(message.to);
 				}
 				
-				core.message(message,function(status,response){
-					console.log("message response",status);
+				core.message(message, function(status,response){
+					if (!status) {
+						console.log(response);
+						if(response.err==="ERR_ABUSE") {
+							console.log("abusive");
+							socket.emit('message', {
+								type: 'abuse_report',
+								from: message.from,
+								to: '',
+								ref: message.ref,
+								id:message.id
+							});
+							return;
+						}
+					}
 				});
 			});
 		});

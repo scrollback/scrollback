@@ -48,13 +48,15 @@ function messageArray() {
 	}
 	
 	function extract(time, before, after, missing) {
-		var res = [], mid, i, l, m, start = null;
+		var res = [], mid, i, l = messages.length, c, m, start = null;
 		
 		mid = find(time);
-		i = Math.max(0, mid-before);
-		l = Math.min(messages.length, mid+after+1);
 		
-		for (; i<l; i++) {
+		for (i=mid, c=0; i>0 && c<before; i--) {
+			if (messages[i] && messages[i].type == 'text') c++;
+		}
+		
+		for (c=0; i<l && c<before+after+1; i++) {
 			m = messages[i];
 			switch (m.type) {
 				case 'result-start':
@@ -67,6 +69,8 @@ function messageArray() {
 					break;
 				case 'text':
 					res.push(m);
+					c++;
+					break;
 			}
 		}
 		if (m && m.type == 'result-end' && missing) {

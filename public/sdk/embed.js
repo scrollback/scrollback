@@ -23,6 +23,10 @@ core.on('disconnected', function() {
 	});
 });
 
+
+core.on("abuse_report",function(messageId){
+	
+});
 // ---- Initialize ----
 
 function init() {
@@ -62,6 +66,12 @@ core.on('nick', function(n) {
 			addClass(stream.nick, 'scrollback-nick');
 		}
 		console.log(n,stream.nick.innerHTML);
+	}
+});
+
+core.on('notify', function(m) {
+	if (m.to && streams[m.to]) {
+		streams[m.to].notify(m);
 	}
 });
 
@@ -161,19 +171,20 @@ Stream.prototype.hide = function() {
 	removeClass(this.stream, 'scrollback-stream-selected');
 	addClass(this.stream, 'scrollback-stream-hidden');
 	this.hidden = true;
-}
+};
 
 Stream.prototype.show = function() {
 	var self = this;
 	removeClass(this.stream, 'scrollback-stream-hidden');
-	setTimeout(function() { self.renderTimeline(); }, 250 );
-	if (!self.initialized) {
-		self.bottom = true;
-		core.watch(self.id, null, 32, 0, function(m) { self.update(m); });
-		self.initialized = true;
-	}
+	setTimeout(function() {
+		if (!self.initialized) {
+			self.bottom = true;
+			core.watch(self.id, null, 32, 0, function(m) { self.update(m); });
+			self.initialized = true;
+		}
+	}, 250 );
 	this.hidden = false;
-}
+};
 
 Stream.prototype.send = function () {
 	var text = this.text.value, parts;
