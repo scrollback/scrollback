@@ -5,14 +5,14 @@ var db = require('../data.js'),
 	guid = require('../../lib/guid.js');
 var log = require("../../lib/logger.js");
 var gateways = require("../gateways.js");
-var abuse = require("../../plugins/abuse/abuse.js");
+var plugin= require("../../plugins/plugin.js");
 
-abuse.init();
+plugin.init();
 
 module.exports = function(message, gateways, cb) {
 	if (!message.id) message.id = guid();
 	if (!message.time) message.time = new Date().getTime();
-	if(abuse.rejectable(message)) {
+	if(plugin.invoke(message)) {
 		if(cb) cb(false,{err:"ERR_ABUSE"});
 		return;
 	}
