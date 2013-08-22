@@ -10,14 +10,19 @@ exports.init=function(){
 		
 		data.split("\n").forEach(function(word) {
 			if (word) {
+				word.replace(/\@/g,'a');
+				word.replace(/\$/g,'s');
+				
 				word = word.replace(/\W+/, ' ').toLowerCase().trim();
+				if (word.length==0) {
+					return;
+				}
 				if (word.length > longest) {
 					longest = word.length;
 				}
 				blockWords[word] = true;
 			}
 		});
-		
 	});
 }
 
@@ -26,7 +31,9 @@ exports.rejectable = function(m) {
 	var i, l, j, words, phrase;
 	
 	if(!m.text) return false;
-	words = m.text.toLowerCase().split(/\W+/);
+	words=m.text.replace(/\@/g,'a').replace(/\$/g,'s');
+	console.log("Boom: "+words);
+	words = words.toLowerCase().split(/\W+/);
 	
 	for(i=0,l=words.length-1;i<l;i++) {
 		phrase = words[i];
@@ -40,7 +47,8 @@ exports.rejectable = function(m) {
 	
 	for(i=0,l=words.length;i<l;i++) {
 		if (blockWords[words[i]]) {
-			console.log("found the word " + words[i]);
+			console.log("Boom: "+words[i]+":"+blockWords[words[i]]);
+			console.log("found the word " + words[i]+"---");
 			return true;
 		}
 	}
