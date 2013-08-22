@@ -26,7 +26,6 @@ Stream.prototype.scroll = function() {
 	}
 	
 	up = log.scrollTop < this.lastScrollTop;
-	console.log("1 up", up, this.lastScrollTop, log.scrollTop);
 	this.lastScrollTop = log.scrollTop;
 	this.scrollId = this.messages[start].id;
 	this.scrollPx = offset(this.log.children[start])[1] - offset(this.log)[1] -  this.log.scrollTop;
@@ -39,25 +38,22 @@ Stream.prototype.scroll = function() {
 	
 //	if(log.scrollHeight == log.scrollTop + log.clientHeight) { 
 	if (end >= self.messages.length - 1 && !up) {
-		console.log("bottomed out");
 		this.bottom = true;
 	} else {
-		console.log("not bottom", end, self.messages.length, up, self.lastScrollTop, log.scrollTop);
 		this.bottom = false;
 	}
 	
 	cb = function(m) { self.update(m); };
 	
 	if (this.bottom) {
-		core.watch(self.id, null, 3*(end-start), 0, cb);
+		core.watch(self.id, null, 3*(end-start) + 10, 0, cb);
 	} else {
 		core.unwatch(self.id);
 		if (!this.requested[up?"up":"dn"] && (up && start < 10 || !up && self.messages.length - end < 10)) {
 			this.requested[up?"up":"dn"] = true;
-			core.watch(self.id, self.messages[start].time, (end-start), 2*(end-start), cb);
+			core.watch(self.id, self.messages[start].time, (end-start) + 10, 2*(end-start) + 10, cb);
 		}
 	}
-	
 };
 
 Stream.prototype.update = function (data) {
@@ -76,7 +72,6 @@ Stream.prototype.update = function (data) {
 		this.log.scrollTop = offset(this.log.children[i])[1] - offset(this.log)[1] - this.scrollPx;
 	}
 	this.lastScrollTop = this.log.scrollTop;
-	console.log("Set lastScrollTop to ", this.log.scrollTop);
 	setTimeout(function() {
 		self.updating = false;
 	}, 100);

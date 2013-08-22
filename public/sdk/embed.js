@@ -109,11 +109,11 @@ function Stream(id) {
 		else if(hasClass(el, 'scrollback-tread')) self.tread = el;
 		else if(hasClass(el, 'scrollback-thumb')) self.thumb = el;
 		else if(hasClass(el, 'scrollback-title')) {
-			self.title = el;
+				self.title = el;
 			addEvent(el, 'click', function() { self.toggle(); });
 		}
-		else if(hasClass(el, 'scrollback-title-id')) el.innerHTML = id;
-		else if(hasClass(el, 'scrollback-title-text')) self.titleText = el;
+		else if(hasClass(el, 'scrollback-title-id')) if(scrollback.streams.length>1) el.innerHTML = id;
+		else if(hasClass(el, 'scrollback-title-text'))self.titleText = el;
 		else if (hasClass(el, 'scrollback-title-close')) {
 			addEvent(el, 'click', function() { self.close(); });
 		}
