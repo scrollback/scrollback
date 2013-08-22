@@ -436,7 +436,6 @@ gand
 gandu
 gaand
 chod
-
 chudwa
 chudwalo
 madar
