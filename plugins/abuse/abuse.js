@@ -1,4 +1,4 @@
-var log = require("../../lib/logger.js");
+
 var fs=require("fs");
 var blockWords={};
 var longest = 0;
@@ -32,6 +32,7 @@ exports.rejectable = function(m) {
 	
 	if(!m.text) return false;
 	words=m.text.replace(/\@/g,'a').replace(/\$/g,'s');
+	console.log("Boom: "+words);
 	words = words.toLowerCase().split(/\W+/);
 	
 	for(i=0,l=words.length-1;i<l;i++) {
@@ -46,7 +47,8 @@ exports.rejectable = function(m) {
 	
 	for(i=0,l=words.length;i<l;i++) {
 		if (blockWords[words[i]]) {
-			log("found the word " + words[i]+"---");
+			console.log("Boom: "+words[i]+":"+blockWords[words[i]]);
+			console.log("found the word " + words[i]+"---");
 			return true;
 		}
 	}

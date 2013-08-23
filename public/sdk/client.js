@@ -164,7 +164,7 @@ core.watch = function(room, time, before, after, callback) {
 	}
 	function send(isResponse) {
 		var r = rooms[room].messages.extract(
-			time || core.time(), before || 32,
+			time, before || 32,
 			after || 0, isResponse? null: missing
 		);
 		callback(r);

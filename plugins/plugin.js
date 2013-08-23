@@ -7,10 +7,13 @@ var repetition=require("./repetition/repetition.js");
 
 exports.init=function(){
 
+	console.log("Initializing abuse plugin.");
 	abuse.init();
 
+	console.log("Initializing blocked origin plugin");
 	originBlock.init();
 	
+	console.log("Initializing repetition handling plugin");
 	//does nothing as of now...
 	repetition.init();
 

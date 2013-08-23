@@ -28,7 +28,7 @@ module.exports = function(message, gateways, cb) {
             var i, l, name, list = {};
             if(err) console.log("Can't get list of rooms");
             for(i=0, l=data.length; i<l; i+=1) {
-                name = data[i].id.split(':')[0];
+                name = data[i].gateway;
                 if(!list[name]) list[name] = [];
                 list[name].push(data[i].id);
             }

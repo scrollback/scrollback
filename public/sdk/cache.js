@@ -50,6 +50,11 @@ function messageArray() {
 	function extract(time, before, after, missing) {
 		var res = [], mid, i, l = messages.length, c, m, start = null;
 		
+		if (!time) {
+			res.push(missing(null, null));
+			return res;
+		}
+		
 		mid = find(time);
 		
 		for (i=mid, c=0; i>0 && c<before; i--) {

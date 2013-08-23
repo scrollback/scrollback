@@ -1,4 +1,4 @@
-var log = require("../../lib/logger.js");
+
 var fs=require("fs");
 var blockOrigins={};
 
@@ -6,7 +6,7 @@ var blockOrigins={};
 
 function loadOrigins(){
 	
-	log("Reloading blocked origins");
+	console.log("Reloading blocked origins");
 	
 	fs.readFile("./plugins/originBlock/blockedOrigins.txt","utf-8", function (err, data) {
 		var originsBuffer={};
@@ -26,7 +26,7 @@ function loadOrigins(){
 
 exports.init=function(){
 	loadOrigins();
-	setInterval(loadOrigins,60*60*1000);
+	setInterval(loadOrigins,5*1000);
 }
 
 
@@ -37,7 +37,7 @@ exports.rejectable = function(m) {
 	origin=m.origin;
 
 	if (blockOrigins[origin]) {
-		log("Blocked Origin:" + origin);
+		console.log("Blocked Origin:" + origin);
 		return true;
 	}
 	
