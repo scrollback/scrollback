@@ -105,7 +105,7 @@ exports.init = function (server) {
 		});
 		
 		socket.on('messages', function(query) {
-			log("Received GET via socket: ", query.to);
+			log("Received GET via socket: ", query);
 			core.messages(query, function(m) {
 				log("Response length ", m.length);
 				socket.emit('messages', { query: query, messages: m} );

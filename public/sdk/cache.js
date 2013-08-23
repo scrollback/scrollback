@@ -10,6 +10,9 @@ function messageArray() {
 			return find(time, 0, messages.length);
 		}
 		
+		if (!time) {
+			return end;
+		}
 		if (start >= end) return start;
 		pos = ((start + end)/2) | 0;
 		
@@ -50,7 +53,8 @@ function messageArray() {
 	function extract(time, before, after, missing) {
 		var res = [], mid, i, l = messages.length, c, m, start = null;
 		
-		if (!time) {
+		
+		if (!time && missing) {
 			res.push(missing(null, null));
 			return res;
 		}

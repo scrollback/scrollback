@@ -85,11 +85,12 @@ socket.on('messages', function(data) {
 	var roomId = data.query.to, reqId = data.query.to + '/' + (data.query.since || '') +
 			'/' + (data.query.until || '');
 			
-	console.log("Response:", reqId, snapshot(data.messages));
+	console.log("Response:", reqId, data,snapshot(data.messages));
 	rooms[roomId].messages.merge(data.messages);
 	console.log("Cached:", snapshot(rooms[roomId].messages));
 	
 	if (requests[reqId]) {
+		console.log("calling()->",reqId,data.messages.length,requests[reqId]);
 		requests[reqId](true);
 		if(reqId != data.query.to + '//') delete requests[reqId];
 	}
@@ -101,7 +102,7 @@ core.get = function(room, start, end, callback) {
 		reqId;
 	if (start) { query.since = start; }
 	if (end) { query.until = end; }
-	
+	console.log("core.get. callback",callback);
 	reqId = room + '/' + (query.since || '') + '/' + (query.until || '');
 	
 	console.log("Request:", reqId);
@@ -158,6 +159,7 @@ core.nick = function(n) {
 };
 
 core.watch = function(room, time, before, after, callback) {
+
 	function missing(start, end) {
 		core.get(room, start, end, send);
 		return { type: 'missing', text: 'Loading messages...', time: start };
@@ -167,6 +169,8 @@ core.watch = function(room, time, before, after, callback) {
 			time, before || 32,
 			after || 0, isResponse? null: missing
 		);
+		
+		console.log("callback-> ",r);
 		callback(r);
 	}
 	
