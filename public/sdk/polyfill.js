@@ -79,12 +79,14 @@ function prettyDate(time, currTime){
 			"August", "September", "October", "November", "December"],
 		str = "";
 	
-	str += d.getYear() !== n.getYear()? d.getYear() + ' ': '';
-	str += (str || d.getMonth()!==n.getMonth() || day_diff > 6)?
-		months[d.getMonth()] + ' ' + d.getDate(): '';
-	
-	str = str || day_diff > 1? weekDays[d.getDay()]: day_diff > 0?
+	if (d.getMonth()!==n.getMonth() || day_diff > 6) {
+		str+=months[d.getMonth()] + ' ' + d.getDate();
+		str = (d.getFullYear() !== n.getFullYear()? d.getFullYear() + ' ': '')+str;
+	}
+	else{
+		str = str || day_diff > 1? weekDays[d.getDay()]: day_diff > 0?
 		'yesterday': '';
+	}
 	
 	return str + ' at '+ d.getHours() + ':' +
 		(d.getMinutes()<10? '0': '') + d.getMinutes();
