@@ -36,10 +36,10 @@ var css = {
 			cursor: "pointer", zIndex: 2,
 			fontWeight: "bold", lineHeight: "40px",
 			textIndent: "-9999px", backgroundRepeat: "no-repeat",
-			backgroundPosition: "center center"
+			backgroundPosition: "center center",
+			float: "right"
 		},
-		".scrollback-icon-close, .scrollback-icon-pop": { float: "right" },
-		".scrollback-icon-menu": { float: "left" },
+		".scrollback-icon.scrollback-icon-menu": { float: "left" },
 		".scrollback-title": {
 			"height": "40px",
 			lineHeight: "40px",
@@ -170,6 +170,9 @@ themes.light = {
 			},
 			".scrollback-icon-pop": {
 				backgroundImage: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAL3SURBVFiF7ZdJiJVHEMd/z12ZcZ2LIiFzC4JeNIeIiiCiuAQhBwMSoxEMuajkYsBtPAjiAt4CEQQXUFDMopKIIBjBIHjSywRyCC6D6EVcRhmXn4cuzcc39jPznssnzB+arq7qevxf11dV3TWVKmPA+ybwOvQTbBb9BIHJwC3A/zHeC8ErwBzgdiPO7yrEDZOsVaAOFgnUysbKJ8mgjL4GzAMmAf8Ap4CnwCLgHjALeAAcBa69VYbqq8Y36rSQp6hrQ+5Q14Q8WN2U8e/LKKKXPRfij4BLIV8G2gq2YzE/Bga+gTOqmzg5gmPq7Otqik5v1M3uHMFBQEvIg0nf29tC3RKUS5KNwB7gKtAD7A/9/dK+8rpRvCDZC1Wog3VR+Tr4rgkWLwXZC0IRH+wJtgGHgOvA38D60M8A9gE3gDPAJ0AnsBPoAG6Ssn8hcDz8jwDjGmaYqe5bo7IfVrerX6starf6SD2qnleHxb6nMd9Wx8f6lnoy9OdKXaMsZ0fOsDqce9T96kT1q9D9mGlVc2P9faw3qTX1fhAe2QjBXIh/ApYB/wLLSXWwNWzPCvuKre5MOTiFuZvUGvuMHMFtwKfAH7F+CPwc5FaGfI10nS/jcOz7lvQdtwAn4jf6jszRblXvRHhO+9/N5kv19/jWjsf3djNG0X+xekq9qu5SPw59ce+r/HqN/k7SLHIEO5v83Wb9XyJHsDJxzxF8AkwndY3lwJDQLyPdqPcCn4VuCLAU+C30RYwCdgMjGmaYyZ5u09ujVd2ibgj9VLVNbVcvhG6zukMdFQUdtVMdHhk//XWZWm/kDHdNbYwg9GfIQ9UZ6ndqV+guqqNL/lfUX9TPmyFXr5P0RJghFdhWYCxwAWgH/iI9Qwlb+WbdTupCSxoObSBHsAWYHfIC4DQwP+aDpD8wMexnY08R14F1pGRb0QzBXKH+lXRyE0jXrQ7SKR0gPaK6SC+/L0hP1B9Ij/x7wGLgPDCTlBwngFWkE31jBCuDD7aTVAaVJ/gcMT2OKU9m99IAAAAASUVORK5CYII=')"
+			},
+			".scrollback-icon-login": {
+				backgroundImage: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEDSURBVFiF7ZY9bsJAEEbfoCjiGByAQ+QYlIiWS7jkCCl9hXQ5Rgq63CQFXwp+hEws2/sFsKx50jSenZ0neT3ekMSYmT1boIsUdElBlxR0SUGXF3eDiJgD78CikfoGtpJ+rAaSigOYA5+AWuIDeLV63FHuXyQdwabcDng7xa4p+QzBa4Hqj3x1vaa0T5RetyLiUigpStd0Mb0xExFLYNl4tupRtwL2kvaDGhacvYruL7ctbs5qV4z+FaegSwq6TFLwi+PIGIpOtQOryv7DG+BA//l3ADaPviz0lSyWswR7Slpy1m3mTESsgXVLupZUW/u7gvdmkmPmoaSgSwq6pKDL6AV/AZ98G/eM8FYqAAAAAElFTkSuQmCC')"
 			},
 		".scrollback-title": {
 			background: "#555", color: "#fff", borderBottomColor: "#3ca"

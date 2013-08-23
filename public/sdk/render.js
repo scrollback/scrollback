@@ -49,12 +49,12 @@ Stream.prototype.scroll = function() {
 	cb = function(m) { self.update(m); };
 	
 	if (this.bottom) {
-		core.watch(self.id, null, 3*(end-start), 0, cb);
+		core.watch(self.id, null, 3*(end-start) + 10, 0, cb);
 	} else {
 		core.unwatch(self.id);
 		if (!this.requested[up?"up":"dn"] && (up && start < 10 || !up && self.messages.length - end < 10)) {
 			this.requested[up?"up":"dn"] = true;
-			core.watch(self.id, self.messages[start].time, (end-start), 2*(end-start), cb);
+			core.watch(self.id, self.messages[start].time, (end-start)+10, 2*(end-start)+10, cb);
 		}
 	}
 	
@@ -88,8 +88,6 @@ Stream.prototype.renderLog = function() {
 	if (this.hidden) return;
 	
 	this.log.innerHTML = '';
-	
-	console.log("Render:", snapshot(this.messages));
 	
 	this.messages.forEach(function(message) {
 		if (lastMsg) {
@@ -225,6 +223,7 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	var el, self = this;
 	
 	function format(text) {
+		if(!text) return "";
 		var u = /\b(https?\:\/\/)?([a-z0-9\-]+\.)+[a-z]{2,4}\b((\/|\?)\S*)?/g,
 			m = ["span"], r, s=0;
 		while((r = u.exec(text)) !== null) {
@@ -237,7 +236,7 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	}
 	
 	function formatName(name) {
-		// TODO
+		if(!name) return "";
 		return [ "span", {
 			'class': 'scrollback-message-nick',
 			onmouseout: function() {

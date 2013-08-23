@@ -5,251 +5,142 @@
 */
 "use strict";
 
-var io = require("socket.io"),
+var sockjs = require("sockjs"),
 	core = require("../../core/core.js"),
 	cookie = require("cookie"),
 	log = require("../../lib/logger.js"),
 	config = require("../../config.js"),
-	RateLimiter = require('limiter').RateLimiter,
-	gateways=core.gateways;
+	EventEmitter = require("events").EventEmitter,
+	session = require("./session.js"),
+	guid = require("../../lib/guid.js");
 
-var users = {}, uIndex = {}, uWait = {};
+var rConns = {}, sConns = {};
 
 exports.init = function (server) {
-	io = io.listen(server);
-	io.set('log level', 1);
+	var sock = sockjs.createServer();
 
-	io.sockets.on('connection', function (socket) {
-		var limiter = new RateLimiter(config.http.limit, config.http.time, true);
-		var sid = cookie.parse(socket.handshake.headers.cookie || '')['connect.sid'],
-			user = sid && users[sid];
-
-		if(!user) {
-			users[sid] = user = {
-				id: 'guest-sb' + Math.floor(Math.random() * 10000),
-				rooms: {}
-			};
-			if (sid) {
-				if (uWait[sid]) {
-					clearTimeout(uWait[sid]);
-					delete uWait[sid];
-				}
-				users[sid] = user;
-				uIndex[user.id] = sid;
-			}
-		}
+	sock.on('connection', function (socket) {
+		var conn = { socket: socket };
+		console.log("new connection", conn);
 		
-		log("New connection", sid, user.id);
-		
-		socket.emit('message', {type: 'nick', from: '', to: '', ref: user.id});
-		
-		console.log(user);
-		socket.on('message', function (message) {
-			limiter.removeTokens(1, function(err, remaining) {
-				var room;
-				
-				if (remaining < 0) {
-					log("Error: API Limit exceeded.");
-					socket.emit('error', 'API Limit exceeded.');
-					return;
-				}
-				log("API Limit remaining:", remaining);
-				
-				message.from = user.id;				
-				message.time = new Date().getTime();
-				message.origin = "web://" + socket.handshake.address.address;
-				
-				message.to = message.to || Object.keys(user.rooms);
-				
-				if (message.type == 'back') {
-					socket.join(message.to);
-					if(user.rooms[message.to]) {
-						user.rooms[message.to]++;
-						return;
-					} else {
-						user.rooms[message.to] = 1;
-					}
-				} else if (message.type == 'away') {
-					socket.leave(message.to);
-					if(user.rooms[message.to]) user.rooms[message.to]--;
-					if(user.rooms[message.to]) return;
-				} else if (message.type == 'nick') {
-					log("nick "+user.id + " to " + message.ref + ", forwarding");
-					if(message.auth) {
-						core.message(message,function(status,response) {
-							if (status==false) {
-								console.log(response.err);
-								socket.emit(response.err);
-							}
-							else {
-								core.room.room(response[0].room,function(err,room) {
-									var i;
-									delete message.auth;
-									message.ref=room[0].id;
-									socket.emit('message', {type: 'nick', from: user.id, to: '', ref: room[0].id});
-									
-									user.id=room[0].id;
-									for (room in user.rooms) {
-										if (user.rooms[room]) {
-											message.to = room;
-											//sending the messages to all the rooms that the user is active.
-											core.message(message,function(status,response) {
-												//nothing for now....
-											});
-										}
-									}
-								});
-							}
-						});
-						return;
-					}
-					else {
-						var temp=message.from;
-						if (message.ref==="") {
-							var temp=user.id;
-							
-							//setting the new user name using the random number on logout.
-							user.id= 'guest-sb' + Math.floor(Math.random() * 10000);
-							message.ref=user.id;
-						}
-						socket.emit('message', {type: 'nick', from: temp, to: '', ref: message.ref});
-					}
-					
-					user.id = message.ref;
-					//for (room in user.rooms) {
-					//	if (user.rooms[room]) {
-					//		message.to = room;							
-					//		core.message(message,function(status,response) {
-					//			//nothing do for now.
-					//		});
-					//	}
-					//}
-					return;
-				}
-				
-				log("Received message via socket: ", message);
-				if(message.type === 'part') {
-					socket.leave(message.to);
-				}
-				
-				core.message(message, function(status,response){
-					if (!status) {
-						console.log(response);
-						if(response.err==="ERR_ABUSE") {
-							console.log("abusive");
-							socket.emit('message', {
-								type: 'abuse_report',
-								from: message.from,
-								to: '',
-								ref: message.ref,
-								id:message.id
-							});
-							return;
-						}
-					}
-				});
-			});
-		});
-		
-		socket.on('messages', function(query) {
-			log("Received GET via socket: ", query.to);
-			core.messages(query, function(m) {
-				log("Response length ", m.length);
-				socket.emit('messages', { query: query, messages: m} );
-			});
-		});
-		
-		socket.on('disconnect', function() {
-			var rooms = [], room;
-			log("Socket disconnected; Sending away:", rooms);
+		socket.on('data', function(d) {
+			log ("Socket received ", d);
+			try { d = JSON.parse(d); }
+			catch(e) { log("ERROR: Non-JSON data", d); return; }
 			
-			for(room in io.sockets.manager.roomClients[socket.id]) {
-				// User.rooms is the count of how many tabs, in the
-				// same browser, the room is open in.
-				if (!room) return;
-				room = room.replace('/', ''); // There is a leading '/'.
-					
-				if(user.rooms[room]) user.rooms[room]--;
-				if (!user.rooms[room]) {
-					delete user.rooms[room];
-					core.message({ type: 'away', from: user.id, to: room,
-						time: new Date().getTime(), text: "" });
-				}
-			}
-			if (!Object.keys(user.rooms).length && sid) {
-				uWait[sid] = setTimeout(function () {
-					log("1 hour elapsed. Deleting session:", sid, user.id);
-					delete uWait[sid];
-					delete uIndex[user.id];
-					delete users[sid];
-				}, 3600000);
+			switch(d.type) {
+				case 'init': init(d.data, conn); break;
+				case 'message': message(d.data, conn); break;
+				case 'messages': messages(d.data, conn); break;
+				case 'room': room(d.data, conn); break;
 			}
 		});
 		
-		socket.on('time', function(requestTime) {
-			socket.emit('time', {
-				server: new Date().getTime(), request: requestTime
-			});
-		});
+		conn.send = function(type, data) {
+			socket.write(JSON.stringify({type: type, data: data}));
+		};
 		
-		socket.on("update",function(request){
+		socket.on('close', function() { close(conn); });
+	});
+	
+	sock.installHandlers(server, {prefix: '/socket'});
+};
 
-			console.log("receiving update");
-			if (request.type==="account") {
-				
-				core.account.account(request.params,function(){
-					//console.log(request.params);	
-				});
-			}
-			else if (request.type==="room") {
-				var sid = cookie.parse(socket.handshake.headers.cookie || '')['connect.sid'],
-				user = users[sid];
-				core.room.room(request.params,function(err,data){
-				//	console.log(request.params);
-					if (err) {
-						socket.emit("error",err);
-						return;
-					}
-					
-					var message={
-						type: 'nick',
-						from: user.id,
-						to: '',
-						ref: request.params.id
-					};
-					console.log(message);
-					socket.emit('message', message);
-					
-					core.message(message,function(status,response) {
-						//nothing for now....
-					});
-				});
-				
-
-				
-			}
+function init(data, conn) {
+	var user, sid = data.sid;
+	if(!sid) sid = guid();
+	conn.sid = sid; conn.rooms = [];
+	session.get(sid, function(err, sess) {
+		conn.session = sess;
+		conn.save = function() { session.set(conn.sid, conn.session); };
+		conn.send('init', {
+			sid: sid, user: sess.user,
+			serverTime: new Date().getTime()
 		});
 	});
-};
+}
+
+function close(conn) {
+	if(!conn.sid) return;
+	var user = conn.session.user;
+	
+	conn.rooms.forEach(function(room) {
+		if(user.rooms[room]) user.rooms[room]--;
+		if (!user.rooms[room]) {
+			delete user.rooms[room];
+			core.message({ type: 'away', from: user.id, to: room,
+				time: new Date().getTime(), text: "" });
+		}
+	});
+	
+	conn.save();
+}
+
+function messages (query, conn) {
+	log("Received GET via socket: ", query.to);
+	core.messages(query, function(m) {
+		log("Response length ", m.length);
+		conn.send('messages', { query: query, messages: m} );
+	});
+}
+
+function message (m, conn) {
+	if(!conn.sid) return;
+	var user = conn.session.user;
+	
+	m.from = user.id;
+	m.time = new Date().getTime();
+	m.origin = "web://" + conn.socket.remoteAddress;
+	m.to = m.to || Object.keys(user.rooms);
+	
+	if (m.type == 'back') {
+		if(rConns[m.to]) rConns[m.to].push(conn);
+		else rConns[m.to] = [conn];
+		
+		conn.rooms.push(m.to);
+		
+		if(user.rooms[m.to]) {
+			user.rooms[m.to]++;
+			return; // already back'd this guy.
+		} else {
+			user.rooms[m.to] = 1;
+		}
+		
+		conn.save();
+	} else if (m.type == 'away') {
+		if(rConns[m.to]) {
+			rConns[m.to].splice(rConns[m.to].indexOf(conn), 1);
+		}
+		
+		conn.rooms.splice(conn.rooms.indexOf(m.to), 1);
+		
+		if(user.rooms[m.to]) user.rooms[m.to]--;
+		if(user.rooms[m.to]) return; // already away'd.
+		
+		conn.save();
+	}
+	
+	log("Received message via socket: ", m);
+	
+	core.message(m, function (err) {
+		if (err) conn.send('error', err);
+	});
+}
+
+function room (r, conn) {
+	if(!conn.sid) return;
+	var user = conn.session.user;
+	if(typeof r === 'object') r.owner = user.id;
+	core.room(r);
+}
 
 exports.send = function (message, rooms) {
-	message.text = sanitize(message.text || "");
+	message.text = message.text || "";
 	rooms.map(function(room) {
 		log("Socket sending", message, "to", room);
-		io.sockets['in'](room).emit('message', message);
+		if(rConns[room]) rConns[room].map(function(conn) {
+			conn.send('message', message);
+		});
 	});
-	
-	if (message.type == 'nick') {
-		if(uIndex[message.from]) {
-			users[uIndex[message.from]].id = message.ref;
-		}
-	}
 };
-
-function sanitize(text) {
-	// this was supposed to escape lt, gt etc. to prevent xss but on the client side
-	// we're creating text nodes now so it's ok.
-	
-	return text;
-}
 

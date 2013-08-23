@@ -9,7 +9,6 @@ var abuse = require("../../plugins/abuse/abuse.js");
 
 abuse.init();
 
-
 module.exports = function(message, cb) {
 	function send(){
 		//console.log("trying to send in api/message:",message);
@@ -29,7 +28,7 @@ module.exports = function(message, cb) {
 			function () {
 				db.query("SELECT * FROM `accounts` WHERE `room`=?", [message.to], function(err, data) {
 					var i, l, name, list = {};
-					if(err) console.log("Can't get list of rooms");
+					if(err) { console.log("Can't get list of accounts"); return; }
 					for(i=0, l=data.length; i<l; i+=1) {
 						name = data[i].id.split(':')[0];
 						if(!list[name]) list[name] = [];

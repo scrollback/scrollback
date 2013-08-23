@@ -3,11 +3,12 @@ var dom = {
 		["div", { 'class': 'scrollback-title' },
 			["span", {
 				'class': 'scrollback-icon scrollback-icon-menu'
-			}, '☰'],
+			}, 'menu'],
 			scrollback.close? ["div", {
 				'class': 'scrollback-icon scrollback-icon-close'
-			}, '×']: "",
-			["div", { 'class': 'scrollback-icon scrollback-icon-pop' }, '➚'],
+			}, 'close']: "",
+			["div", { 'class': 'scrollback-icon scrollback-icon-pop' }, 'on scrollback'],
+			["div", { 'class': 'scrollback-icon scrollback-icon-login' }, 'login'],
 			["div", {'class': 'scrollback-title-content'},
 				["span", {'class': 'scrollback-title-id'}],
 				["a", {href: "http://scrollback.io", "class": "scrollback-poweredby",

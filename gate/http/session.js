@@ -1,29 +1,41 @@
 "use strict";
 
 var express = require("express"),
-	MemoryStore = express.session.MemoryStore,
-	sessionStore = new MemoryStore();
+	store = new express.session.MemoryStore(),
+	guid = require("../../lib/guid.js"),
+	_get = store.get;
+	
+	store.get = function(sid, cb) {
+		_get.call(store, sid, function(err, session) {
+			if(session && !session.user) initUser(session);
+			return cb(err, session);
+		});
+	};
+	
 
-var parse = express.session({
+function initUser(session) {
+	session.user = {
+		id: 'guest-sb' + guid(4),
+		picture: '/img/guest.png',
+		rooms: {}
+	};
+	return session;
+}
+
+exports.store = store;
+exports.get = function(sid, cb) {
+	store.get(sid, function(err, session) {
+		console.log("Session get complete: ", arguments);
+		if(!session) session = initUser({});
+		console.log("Returning session:", session);
+		cb(err, session);
+	});
+};
+exports.set = store.set;
+
+exports.parser = express.session({
 	secret: "ertyuidfghjcrtyujwsvokmdf",
-	store: sessionStore,
+	store: store,
 	cookie: { maxAge: 3600000 }
 });
 
-exports.store = sessionStore;
-
-exports.parser = function (req, res, next) {
-	parse(req, res, function() {
-		if(req.session && !req.session.user) {
-			req.session.user = {
-				id: "guest", name: "Guest", picture: "",
-				accounts: []
-			};
-		}
-		next();
-	});
-};
-
-exports.get = function(sid, cb) {
-	sessionStore.get(sid, cb);
-}

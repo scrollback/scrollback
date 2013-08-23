@@ -69,13 +69,7 @@ core.on('nick', function(n) {
 	}
 });
 
-core.on('notify', function(m) {
-	if (m.to && streams[m.to]) {
-		streams[m.to].notify(m);
-	}
-});
-
-core.on('notify', function(m) {
+core.on('message', function(m) {
 	if (m.to && streams[m.to]) {
 		streams[m.to].notify(m);
 	}
@@ -87,60 +81,74 @@ function Stream(id) {
 	var self = this;
 	self.id = id;
 	self.stream = JsonML.parse(dom.stream, function(el) {
-		if(hasClass(el, 'scrollback-log')) {
-			self.log = el;
-			addEvent(el, 'scroll', function() { self.scroll(); });
-		}
-		else if(hasClass(el, 'scrollback-nick-guest')) {
-			self.nick = el;
-			if (core.nick().indexOf("guest-") !== 0) {
-				removeClass(el, 'scrollback-nick-guest');
-				addClass(el, 'scrollback-nick');
-			}
-			
-			addEvent(el, 'click', function() {
-				if (core.nick().indexOf("guest-") === 0) {
-					window.open("/dlg/login","login","width=350,height=350");
+		switch(true) {
+			case hasClass(el, 'scrollback-log'):
+				self.log = el;
+				addEvent(el, 'scroll', function() { self.scroll(); });
+				break;
+			case hasClass(el, 'scrollback-nick-guest'):
+				self.nick = el;
+				if (core.nick().indexOf("guest-") !== 0) {
+					removeClass(el, 'scrollback-nick-guest');
+					addClass(el, 'scrollback-nick');
 				}
-				else {
-					window.open("/dlg/profile","profile","width=350,height=350");	
-				}
-			});
-			
-			el.innerHTML= core.nick();
-		}
-		else if(hasClass(el, 'scrollback-text')) {
-			self.text = el;
-			addEvent(el, 'focus', function() { this.select(); });
-			addEvent(el, 'keydown', function(e) {
-				if(e.keyCode == 13) {
+				
+				addEvent(el, 'click', function() {
+					if (core.nick().indexOf("guest-") === 0) {
+						window.open("/dlg/login","login","width=350,height=350");
+					}
+					else {
+						window.open("/dlg/profile","profile","width=350,height=350");	
+					}
+				});
+				
+				el.innerHTML= core.nick();
+				break;
+			case hasClass(el, 'scrollback-text'):
+				self.text = el;
+				addEvent(el, 'focus', function() { this.select(); });
+				addEvent(el, 'keydown', function(e) {
+					if(e.keyCode == 13) {
+						self.send();
+						return false;
+					}
+					return true;
+				});
+				break;
+			case hasClass(el, 'scrollback-send'):
+				self.sendfrm = el;
+				addEvent(el, 'submit', function(event) {
+					if(event.preventDefault) event.preventDefault();
 					self.send();
 					return false;
-				}
-				return true;
-			});
-		}
-		else if(hasClass(el, 'scrollback-send')) {
-			self.sendfrm = el;
-			addEvent(el, 'submit', function(event) {
-				if(event.preventDefault) event.preventDefault();
-				self.send();
-				return false;
-			});
-		}
-		else if(hasClass(el, 'scrollback-tread')) self.tread = el;
-		else if(hasClass(el, 'scrollback-thumb')) self.thumb = el;
-		else if(hasClass(el, 'scrollback-title')) {
-			self.title = el;
-			addEvent(el, 'click', function() { self.toggle(); });
-		}
-		else if(hasClass(el, 'scrollback-title-id')) el.innerHTML = id;
-		else if(hasClass(el, 'scrollback-title-text')) self.titleText = el;
-		else if (hasClass(el, 'scrollback-title-close')) {
-			addEvent(el, 'click', function() { self.close(); });
-		}
-		else if(hasClass(el, 'scrollback-icon-pop')) {
-			addEvent(el, 'click', function() { self.embed(); });
+				});
+				break;
+			case hasClass(el, 'scrollback-tread'):
+				self.tread = el;
+				break;
+			case hasClass(el, 'scrollback-thumb'):
+				self.thumb = el;
+				break;
+			case hasClass(el, 'scrollback-title'):
+				self.title = el;
+				addEvent(el, 'click', function() { self.toggle(); });
+				break;
+			case hasClass(el, 'scrollback-title-id'):
+				el.innerHTML = id;
+				break;
+			case hasClass(el, 'scrollback-title-text'):
+				self.titleText = el;
+				break;
+			case hasClass(el, 'scrollback-title-close'):
+				addEvent(el, 'click', function() { self.close(); });
+				break;
+			case hasClass(el, 'scrollback-icon-pop'):
+				addEvent(el, 'click', function() { self.pop(); });
+				break;
+			case hasClass(el, 'scrollback-icon-login'):
+				addEvent(el, 'click', function() { self.login(); });
+				break;
+
 		}
 		return el;
 	});
@@ -157,7 +165,7 @@ Stream.prototype.close = function (){
 	Stream.position();
 };
 
-Stream.prototype.embed = function () {
+Stream.prototype.pop = function () {
 	window.open(scrollback.host + '/' + this.id + '/', "_blank");
 };
 

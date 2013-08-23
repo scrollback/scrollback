@@ -33,6 +33,13 @@ if (!window.console) {
 	window.console = { log: function() {} };
 }
 
+function guid(n) {
+    var str="", i;
+	n = n || 32;
+	for(i=0; i<n; i++) str += (Math.random()*36|0).toString(36);
+	return str;
+}
+
 function offset(obj) {
 	var l=0, t=0;
 	while(obj) {
