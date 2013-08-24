@@ -21,6 +21,29 @@ var css = {
 	".scrollback-stream-hidden": {
 		"height": "44px !important"
 	},
+	".scrollback-alert": {
+		"backgroundColor": "#3CA",
+		color: "#fff",
+		"width":"100%",
+		"position":"absolute",
+		"top":"44px",
+		"zIndex":"9998",
+		"transition":"all 0.2s",
+		"webkitTransition":"all 0.2s",
+		"mozTransition": "all 0.2s",
+		"oTransition": "all 0.2s",
+		"msTransition": "all 0.2s",
+		"fontSize": "13px",
+		"lineHeight": "24px",
+		"padding": "0px 16px",
+		"height": "24px"
+		
+	},
+	".scrollback-alert-hidden":{
+		"height": "0px",
+		"top":"0px",
+		"zIndex":9996
+	},
 	".scrollback-stream-hidden .scrollback-title-text": {
 		display: "inline"
 	},
@@ -137,7 +160,7 @@ var css = {
 	},
 	".scrollback-popup": {
 		position: "fixed", background: "#f70"
-	}
+	},
 };
 
 themes.light = {
