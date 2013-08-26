@@ -116,6 +116,9 @@ function Stream(id) {
 			});
 		}
 		else if(hasClass(el, 'scrollback-tread')) self.tread = el;
+		else if (hasClass(el, 'scrollback-close')) {
+			addEvent(el, 'click', function() { console.log("close called.");self.close(); });
+		}
 		else if(hasClass(el, 'scrollback-thumb')) self.thumb = el;
 		else if(hasClass(el, 'scrollback-title')) {
 			self.title = el;
@@ -123,9 +126,6 @@ function Stream(id) {
 		}
 		else if(hasClass(el, 'scrollback-title-id')) el.innerHTML = id;
 		else if(hasClass(el, 'scrollback-title-text')) self.titleText = el;
-		else if (hasClass(el, 'scrollback-title-close')) {
-			addEvent(el, 'click', function() { self.close(); });
-		}
 		else if(hasClass(el, 'scrollback-embed')) {
 			addEvent(el, 'click', function() { self.embed(); });
 		}

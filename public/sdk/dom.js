@@ -4,11 +4,11 @@ var dom = {
 		["div", { 'class': 'scrollback-title' },
 			["span", {
 				'class': 'scrollback-icon scrollback-menu'
-			}, '☰'],
+			}],
 			scrollback.close? ["div", {
 				'class': 'scrollback-icon scrollback-close'
-			}, '×']: "",
-			["div", { 'class': 'scrollback-icon scrollback-embed' }, '➚'],
+			}]: "",
+			["div", { 'class': 'scrollback-icon scrollback-embed' }],
 			["div", {'class': 'scrollback-title-content'},
 				["span", {'class': 'scrollback-title-id'}],
 				["span", { 'class': 'scrollback-title-text' }]

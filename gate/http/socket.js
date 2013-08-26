@@ -68,6 +68,7 @@ exports.init = function (server) {
 					socket.leave(message.to);
 					if(user.rooms[message.to]) user.rooms[message.to]--;
 					if(user.rooms[message.to]) return;
+					else core.message(message);
 				} else if (message.type == 'nick') {
 					log("nick "+user.id + " to " + message.ref + ", forwarding");
 					for (room in user.rooms) {
