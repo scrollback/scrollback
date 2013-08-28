@@ -71,6 +71,14 @@ exports.init = function (server) {
 					else core.message(message);
 				} else if (message.type == 'nick') {
 					log("nick "+user.id + " to " + message.ref + ", forwarding");
+					console.log("-harry",uIndex,message);
+					if (uIndex[message.ref]) {
+						console.log("-harry- nick failed.");
+						message.ref=message.from;
+						socket.emit("message",message);
+					}
+					delete uIndex[message.from];
+					uIndex[message.ref]=sid;
 					for (room in user.rooms) {
 						if (user.rooms[room]) {
 							message.to = room;

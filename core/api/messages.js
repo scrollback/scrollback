@@ -22,7 +22,7 @@ module.exports = function(options, callback) {
 	}
 	
 	if(since) {
-		where.push("`time` > ?");
+		where.push("`time` >= ?");
 		params.push(since);
 	}
 	
@@ -39,6 +39,10 @@ module.exports = function(options, callback) {
 	if(options.type) {
 		where.push("`type` = ?");
 		params.push(options.type);
+	}
+	
+	if (options.limit) {
+		limit=options.limit;
 	}
 	
 	if(until) {
@@ -61,12 +65,6 @@ module.exports = function(options, callback) {
 		start  = since || data.length && data[0].time || 0;
 		end = until || data.length && data[data.length-1].time || 0;
 
-		if (desc) {
-			data.push({type: 'result-end', to: options.to, time: end });
-		} else {
-			data.unshift({type: 'result-start', to: options.to, time: start });
-		}
-		
 		if (limit && data.length > limit) {
 			if (desc) {
 				data = data.slice(1);
@@ -76,7 +74,13 @@ module.exports = function(options, callback) {
 				data.push({type: 'result-end', to: options.to, time: end });
 			}
 		}
+		if (desc) {
+			data.push({type: 'result-end', to: options.to, time: end });
+		} else {
+			data.unshift({type: 'result-start', to: options.to, time: start });
+		}
 		
+
 		log("Query results: " + data.length);
 		
 		console.log(data.query);

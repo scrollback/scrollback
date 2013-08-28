@@ -1,0 +1,37 @@
+extends layout
+
+block styles
+	link(rel="stylesheet", href="/archive.css")
+
+block content
+	.container.paddingSides16
+		h1 #{query.title} - Archive View 
+			a.navLink(href="/t/#{query.to}",target="_blank") (Switch to interative View)
+		.navigation
+			if(scrollBack)
+				div(style="float: left")
+					a.navLink(href="/#{query.to}/since/#{scrollBack}") Back
+				
+			if(scrollNext)
+				div(style="float: right")
+					a.navLink(href="/#{query.to}/#{scrollNext}") Next
+
+		.messageList
+			each message in data
+				if message && message.type && message.type=="text"
+					.item
+						-var date = new Date(message.time).toISOString().replace("T"," ");
+						-date=date.substring(0,date.length-5)
+						div.nick [#{message.from}]
+						div.time #{date}
+						div.message #{message.text}
+						
+		br
+		.navigation(style='padding-bottom:100px')
+			if(scrollBack)
+				div(style="float: left")
+					a.navLink(href="/#{query.to}/since/#{scrollBack}") Back
+				
+			if(scrollNext)
+				div(style="float: right")
+					a.navLink(href="/#{query.to}/#{scrollNext}") Next

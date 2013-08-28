@@ -215,7 +215,7 @@ Stream.prototype.onmessage = function(message) {
 	if (message.type=="text") {
 		this.titleText.innerHTML = (el.innerText || el.textContent);
 	} else {
-		if (core.nick()!==message.ref) {
+		if (core.nick()!==message.ref && message.ref!=message.from) {
 			this.notify(el.innerText || el.textContent);
 		}
 	}
