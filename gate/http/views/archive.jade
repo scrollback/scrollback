@@ -10,9 +10,9 @@ block styles
 block content
 	.container
 		.box.span8.container
-			h1.box.span12 #{query.title} archives
+			h1.box.span12 #{query.title} archives (#{relDate(data[0].time)} ago)
 			div.timeRange.box.span12
-				span #{relDate(data[0].time, data[data.length-1].time)} of archives starting #{relDate(data[0].time)} ago
+				span Showing #{relDate(data[0].time, data[data.length-1].time)} of conversation 
 				if(scrollPrev)
 					div(style="float: left")
 						a.navLink(href="/#{query.to}/until/#{scrollPrev}") Prev

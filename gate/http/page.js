@@ -70,8 +70,8 @@ exports.init = function(app) {
                     responseObj.scrollNext = new Date(m[m.length-1].time).toISOString();
                 }
                 
-                query.title=query.to.replace(/\W+(\w)(\w*)/g, function(m, f, r) {
-                    return f.toUpperCase() + r.toLowerCase();
+                query.title=query.to.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {
+                    return f.toUpperCase() + r.toLowerCase() + ' ';
                 });
                 
                 if (m.length==1 && m[0].type!="text") {
@@ -100,7 +100,7 @@ exports.init = function(app) {
                         [ 60 * MINUTE, 'minutes', MINUTE ],
                         [ 1.5 * HOUR, 'an hour' ],
                         [ DAY, 'hours', HOUR ],
-                        [ 2 * DAY, 'yesterday' ],
+                        [ 1.5 * DAY, 'a day' ],
                         [ 7 * DAY, 'days', DAY ],
                         [ 1.5 * WEEK, 'a week'],
                         [ MONTH, 'weeks', WEEK ],
