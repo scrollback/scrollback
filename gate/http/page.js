@@ -94,7 +94,8 @@ exports.init = function(app) {
                         MONTH = YEAR / 12;
                     
                     var formats = [
-                        [ 0.7 * MINUTE, 'a short while' ],
+                        [ SECOND, 'a second' ],
+                        [ 0.7 * MINUTE, 'seconds', SECOND ],
                         [ 1.5 * MINUTE, 'a minute' ],
                         [ 60 * MINUTE, 'minutes', MINUTE ],
                         [ 1.5 * HOUR, 'an hour' ],

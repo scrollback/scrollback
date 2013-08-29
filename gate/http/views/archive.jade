@@ -12,7 +12,7 @@ block content
 		.box.span8.container
 			h1.box.span12 #{query.title} archives
 			div.timeRange.box.span12
-				span #{relDate(data[0].time, data[data.length-1].time)} of logs starting #{relDate(data[0].time)} ago
+				span #{relDate(data[0].time, data[data.length-1].time)} of archives starting #{relDate(data[0].time)} ago
 				if(scrollPrev)
 					div(style="float: left")
 						a.navLink(href="/#{query.to}/until/#{scrollPrev}") Prev
@@ -21,12 +21,17 @@ block content
 						a.navLink(href="/#{query.to}/since/#{scrollNext}") Next
 
 			.messageList.box.span12
+				- prevtime = 0
 				each message in data
 					if message && message.type && message.type=="text"
 						.item.container
 							div.box.span3 [#{message.from}]
 							div.box.span5.message #{message.text}
-							div.box.span4.time #{relDate(message.time)} ago
+							if(prevtime)
+								div.box.span4.time #{relDate(prevtime, message.time)} later
+							else
+								div.box.span4.time #{relDate(message.time)} ago
+						- prevtime = message.time
 							
 	
 			if(scrollPrev)
