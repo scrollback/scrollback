@@ -71,9 +71,7 @@ exports.init = function (server) {
 					else core.message(message);
 				} else if (message.type == 'nick') {
 					log("nick "+user.id + " to " + message.ref + ", forwarding");
-					console.log("-harry",uIndex,message);
 					if (uIndex[message.ref]) {
-						console.log("-harry- nick failed.");
 						message.ref=message.from;
 						socket.emit("message",message);
 					}
@@ -96,7 +94,6 @@ exports.init = function (server) {
 				
 				core.message(message, function(status,response){
 					if (!status) {
-						console.log(response);
 						if(response.err==="ERR_ABUSE") {
 							console.log("abusive");
 							socket.emit('message', {
@@ -123,12 +120,12 @@ exports.init = function (server) {
 		
 		socket.on('disconnect', function() {
 			var rooms = [], room;
-			log("Socket disconnected; Sending away:", rooms);
+			log("Socket disconnected; Sending away:", user.rooms);
 			
 			for(room in io.sockets.manager.roomClients[socket.id]) {
 				// User.rooms is the count of how many tabs, in the
 				// same browser, the room is open in.
-				if (!room) return;
+				if (!room) continue;
 				room = room.replace('/', ''); // There is a leading '/'.
 					
 				if(user.rooms[room]) user.rooms[room]--;

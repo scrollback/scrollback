@@ -72,8 +72,8 @@ function connect(server, nick, uid, callback) {
 			}
 		});
 		
-		client.addListener('nick', function(oldn, newn) {
-			message('nick', oldn, '', '', '', newn);
+		client.addListener('nick', function(oldn, newn,channel) {
+			message('nick', oldn, channel[0].substring(1), '', '', newn);
 		});
 		
 		client.addListener('part', function(channel, from, reason) {

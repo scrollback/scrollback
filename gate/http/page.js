@@ -15,8 +15,7 @@ exports.init = function(app) {
             url:url
         });
     });
-    
-    
+
     app.get('/t/*', function(req, res, next) {
         var streams = req.path.substring(3);
 		
@@ -49,8 +48,8 @@ exports.init = function(app) {
         sqlQuery="select time from messages where `to`=? and `type`='text' order by `time` limit 1";
         db.query(sqlQuery,[query.to],function(err,data){
             
-            if (data || data.length>0) {
-                query.originTime=data[0].time || new Date().getTime();;
+            if (data && data.length>0) {
+                query.originTime=data[0].time ;
                 if (!(query.until || query.since)) {
                     query.since=data[0].time;
                 }
@@ -65,20 +64,22 @@ exports.init = function(app) {
                         return string.charAt(0).toUpperCase() + string.slice(1);
                     }
                 ).join(" ");
-    
                 
                 if (query.originTime!==m[0].time) {
-                    responseObj.scrollBack=new Date(m[0].time).toISOString();
+                    responseObj.scrollPrev=new Date(m[0].time).toISOString();
                 }
                 
                 if (m[m.length-1].type==="result-end") {
                     responseObj.scrollNext=new Date(m[m.length-1].time).toISOString();
                 }
-                
+
+                if (m.length==1 && m[0].type!="text") {
+                    delete responseObj.scrollNext;
+                    delete responseObj.scrollPrev;
+                }
+
                 res.render("archive",responseObj);		
             });
         });
     });
-    
-    
 };
