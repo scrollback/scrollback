@@ -48,11 +48,12 @@ exports.init = function(app) {
         
         sqlQuery="select time from messages where `to`=? and `type`='text' order by `time` limit 1";
         db.query(sqlQuery,[query.to],function(err,data){
-
-            query.originTime=data[0].time;
             
-            if (!(query.until || query.since)) {
-                query.since=data[0].time;
+            if (data || data.length>0) {
+                query.originTime=data[0].time || new Date().getTime();;
+                if (!(query.until || query.since)) {
+                    query.since=data[0].time;
+                }
             }
 
             core.messages(query,function(m){
