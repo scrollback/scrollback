@@ -12,42 +12,35 @@ block content
 		.box.span8.container
 			h1.box.span12 #{query.title} archives
 			div.timeRange.box.span12
-				-var date1 = new Date(data[0].time).toISOString().replace("T"," ");
-				-date1=date1.substring(0,date1.length-5)
-				-var date2 = new Date(data[data.length-1].time).toISOString().replace("T"," ");
-				-date2=date2.substring(0,date2.length-5)
-				span #{date1} to #{date2}
+				span #{relDate(data[0].time, data[data.length-1].time)} of logs starting #{relDate(data[0].time)} ago
 				if(scrollPrev)
 					div(style="float: left")
-						a.navLink(href="/#{query.to}/since/#{scrollPrev}") Prev
+						a.navLink(href="/#{query.to}/until/#{scrollPrev}") Prev
 				if(scrollNext)
 					div(style="float: right")
-						a.navLink(href="/#{query.to}/#{scrollNext}") Next
+						a.navLink(href="/#{query.to}/since/#{scrollNext}") Next
 
 			.messageList.box.span12
 				each message in data
 					if message && message.type && message.type=="text"
 						.item.container
-							-var date = new Date(message.time).toISOString().replace("T"," ");
-							-date=date.substring(0,date.length-5)
 							div.box.span3 [#{message.from}]
 							div.box.span5.message #{message.text}
-							div.box.span4.time #{date}
+							div.box.span4.time #{relDate(message.time)} ago
 							
 	
 			if(scrollPrev)
 				div(style="float: left")
-					a.navLink(href="/#{query.to}/since/#{scrollPrev}") Prev
+					a.navLink(href="/#{query.to}/until/#{scrollPrev}") Prev
 				
 			if(scrollNext)
 				div(style="float: right")
-					a.navLink(href="/#{query.to}/#{scrollNext}") Next
+					a.navLink(href="/#{query.to}/since/#{scrollNext}") Next
 			
 			
 			.embed.box.span12.paddingBottom100px
-				h2.embed Add this script to embed this room on your web page.
-				pre
-					code.
+				p.embed Embed #{query.to} on your web page.
+				pre.
 						window.scrollback = {
 							streams:["#{query.to}"],
 							theme: 'light',

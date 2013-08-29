@@ -38,48 +38,97 @@ exports.init = function(app) {
         query.type="text";
         query.limit=20;
         
-        if (params[1] && params[1]!="since") {
-            query.since=new Date(params[1]).getTime();
-        }
-        if( params[2] && params[2].length>1) {
-            query.until=new Date(params[2]).getTime();
-        }
         
-        sqlQuery="select time from messages where `to`=? and `type`='text' order by `time` limit 1";
-        db.query(sqlQuery,[query.to],function(err,data){
-            
-            if (data && data.length>0) {
-                query.originTime=data[0].time ;
-                if (!(query.until || query.since)) {
-                    query.since=data[0].time;
-                }
+        
+        //sqlQuery="select min(m.time) min,max(m.time) max from messages m where `to`=? and `type`='text' order by `time` ";
+        //db.query(sqlQuery,[query.to],function(err,data){
+        //    
+        //    
+        //    
+            if (params[1]) switch(params[1]) {
+                case 'since':
+                    query.since=new Date(params[2]).getTime();
+                    break;
+                case 'until':
+                    query.until=new Date(params[2]).getTime();
+                    break;
             }
-
-            core.messages(query,function(m){
+            
+            console.log(query);
+            
+            core.messages(query, function(m){
                 responseObj.query=query;
                 responseObj.data=m;
                 
-                query.title=query.to.replace(/[-]/g," ").split(" ").map(
-                    function(string){
-                        return string.charAt(0).toUpperCase() + string.slice(1);
-                    }
-                ).join(" ");
+                console.log("MESSAGES GAVE ME ", m.length);
                 
-                if (query.originTime!==m[0].time) {
-                    responseObj.scrollPrev=new Date(m[0].time).toISOString();
+                if (m[0].type == 'result-start') {
+                    responseObj.scrollPrev = new Date(m[1].time).toISOString();
                 }
                 
-                if (m[m.length-1].type==="result-end") {
-                    responseObj.scrollNext=new Date(m[m.length-1].time).toISOString();
+                if (m[m.length-1].type == 'result-end') {
+                    responseObj.scrollNext = new Date(m[m.length-1].time).toISOString();
                 }
-
+                
+                query.title=query.to.replace(/\W+(\w)(\w*)/g, function(m, f, r) {
+                    return f.toUpperCase() + r.toLowerCase();
+                });
+                
                 if (m.length==1 && m[0].type!="text") {
                     delete responseObj.scrollNext;
                     delete responseObj.scrollPrev;
                 }
-
+                
+                if (!query.since && !query.until) {
+                    delete responseObj.scrollNext;
+                }
+                
+                responseObj.relDate = function (input, reference){
+                    
+                    var SECOND = 1000,
+                        MINUTE = 60 * SECOND,
+                        HOUR = 60 * MINUTE,
+                        DAY = 24 * HOUR,
+                        WEEK = 7 * DAY,
+                        YEAR = DAY * 365,
+                        MONTH = YEAR / 12;
+                    
+                    var formats = [
+                        [ 0.7 * MINUTE, 'a short while' ],
+                        [ 1.5 * MINUTE, 'a minute' ],
+                        [ 60 * MINUTE, 'minutes', MINUTE ],
+                        [ 1.5 * HOUR, 'an hour' ],
+                        [ DAY, 'hours', HOUR ],
+                        [ 2 * DAY, 'yesterday' ],
+                        [ 7 * DAY, 'days', DAY ],
+                        [ 1.5 * WEEK, 'a week'],
+                        [ MONTH, 'weeks', WEEK ],
+                        [ 1.5 * MONTH, 'a month' ],
+                        [ YEAR, 'months', MONTH ],
+                        [ 1.5 * YEAR, 'a year' ],
+                        [ Number.MAX_VALUE, 'years', YEAR ]
+                    ];
+                    
+                    !reference && ( reference = (new Date).getTime() );
+                    reference instanceof Date && ( reference = reference.getTime() );
+                    
+                    input instanceof String && ( input = new Date(input) );
+                    input instanceof Date && ( input = input.getTime() );
+                    
+                    var delta = reference - input,
+                    format, i, len;
+                    
+                    for(i = -1, len=formats.length; ++i < len; ){
+                        format = formats[i];
+                        if(delta < format[0]){
+                            return format[2] == undefined ? format[1] : Math.round(delta/format[2]) + ' ' + format[1];
+                        }
+                    };
+                    return "Long, long";
+                }
+                
                 res.render("archive",responseObj);		
             });
-        });
+        //});
     });
 };
