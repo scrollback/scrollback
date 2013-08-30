@@ -21,7 +21,6 @@ exports.init = function (server) {
 
 	sock.on('connection', function (socket) {
 		var conn = { socket: socket };
-		console.log("new connection", conn);
 		
 		socket.on('data', function(d) {
 			log ("Socket received ", d);
@@ -51,10 +50,12 @@ function init(data, conn) {
 	if(!sid) sid = guid();
 	conn.sid = sid; conn.rooms = [];
 	session.get(sid, function(err, sess) {
+		console.log("RECEIVED SESSION", sess);
 		conn.session = sess;
 		conn.save = function() { session.set(conn.sid, conn.session); };
 		conn.send('init', {
 			sid: sid, user: sess.user,
+			clientTime: data.clientTime,
 			serverTime: new Date().getTime()
 		});
 	});

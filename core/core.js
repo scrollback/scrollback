@@ -10,14 +10,17 @@ var message = require('./api/message.js');
 var rooms = {};
 var log = require("../lib/logger.js");
 
-exports.gateways = require("./gateways.js");
+var core = new (require("events").EventEmitter)();
 
-exports.message = function(m, cb) {
+core.gateways = require("./gateways.js");
+
+core.message = function(m, cb) {
+	core.emit("message", m);
 	message(m, cb);
 };
 
+core.room = require('./api/room.js');
+core.account = require('./api/account.js');
+core.messages = require("./api/messages.js");
 
-
-exports.room = require('./api/room.js');
-exports.account = require('./api/account.js');
-exports.messages = require("./api/messages.js");
+module.exports = core;

@@ -1,29 +1,52 @@
 extends layout
 block append styles
-	link(rel="stylesheet", href="/css/login.css")
+	style.
+		login
 
 block content
-	div#fb-root
-	div.login
-		div
-			div.loginWith
-				div.loginWiteItem.inactive#fbLogin
-					img.loginWithImg(src="/img/facebook.png")
-				div.loginWiteItem.inactive
-					img.loginWithImg(src="/img/google.png")
+	div.container
+		div.box.span12
+			button#loginbtn Login with your email address
 			div
 				p Or continue without logging in:
-					div
-						input#continueAs(type="text",placeholder="Nick")
-						button.major#continueBtn(onclick="continueAs()") Continue
+					form#guestfrm
+						input#guestnick(type="text", placeholder="Nickname to use")
+						button(type=submit)
 					p If you don't log in, someone else might steal your nick when you're not around.
+					
 block append scripts
-	script(type='text/javascript')
+	script(src="http://code.jquery.com/jquery.min.js")
+	script(src="http://cdn.sockjs.org/sockjs-0.3.min.js")
+	script(src="https://login.persona.org/include.js")
+	
+	script.
 		window.scrollback = {host: 'http://' + location.host};
-	script(src="/socket.io/socket.io.js")
 	script(src="/sdk/emitter.js")
+	script(src="/sdk/request.js")
 	script(src="/sdk/client.js")
 	script(src="/sdk/addEvent.js")
 	script(src="/sdk/polyfill.js")
 	script(src="/sdk/login.js")
 	
+	script.
+		$(document).ready(function() {
+			navigator.id.watch({
+				onlogin: function(assertion) {
+					window.parent.postMessage({type: "CLOSE_DIALOG", data: {assertion: assertion} }, "*");
+				},
+				onlogout: function() {
+					scrollback.send('nick', '', '', { ref: 'guest-' + scrollback.nick() });
+				}
+			});
+			
+			$("#guestnick").val(location.hash.substr(1));
+			
+			$("#loginbtn").click(function () {
+				navigator.id.request();
+			});
+			
+			$("#guestfrm").submit(function() {
+				var nick = $("#guestname").val();
+				window.parent.postMessage({type: "CLOSE_DIALOG", data: { guestname: nick }}, "*");
+			})
+		});

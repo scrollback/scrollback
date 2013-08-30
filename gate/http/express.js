@@ -14,6 +14,7 @@ exports.init = function() {
 		"AA/HTTP - [:date] :method :url :referrer :user-agent :status"));
 	app.use(express.cookieParser());
 	app.use(session.parser);
+	app.use(express.query());
 	
 	app.use(express["static"](__dirname + "/../../" + config.http.home));
 	

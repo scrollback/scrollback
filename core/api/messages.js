@@ -7,20 +7,23 @@ var log = require("../../lib/logger.js");
 module.exports = function(options, callback) {
 	pool.get(function(err, db) {
 		var query = "SELECT * FROM `messages` ",
-			where = [], params=[], desc=false, limit=256;
+			where = [], params=[], desc=false, limit=256,until,since;
 		
-		if (!options.until && !options.since) {
-			options.until = new Date().getTime();
+		until=options.until;
+		since=options.since;
+		
+		if (!until && !since) {
+			until = new Date().getTime();
 		}
 		
-		if(options.until) {
+		if(until) {
 			where.push("`time` < ?");
-			params.push(options.until);
+			params.push(until);
 		}
 		
-		if(options.since) {
+		if(since) {
 			where.push("`time` > ?");
-			params.push(options.since);
+			params.push(since);
 		}
 		
 		if(options.to) {
@@ -38,23 +41,25 @@ module.exports = function(options, callback) {
 			params.push(options.type);
 		}
 		
-		if(options.until) {
+		if(until) {
 			desc = true;
 		}
 		
+		console.log("options",options,until,since);
 		if(where.length) query += " WHERE " + where.join(" AND ");
 		query += " ORDER BY `time` " + (desc? "DESC": "ASC");
 		if(limit) query += " LIMIT " + (limit + 1);
 		
 		if(desc) query = "SELECT * FROM (" + query + ") r ORDER BY time ASC";
-	
+		
+		log(query, params);
 		db.query(query, params, function(err, data) {
 			var start, end;
 			if(err) {
 				console.log(err); return;
 			}
-			start  = options.since || data.length && data[0].time || 0;
-			end = options.until || data.length && data[data.length-1].time || 0;
+			start  = since || data.length && data[0].time || 0;
+			end = until || data.length && data[data.length-1].time || 0;
 	
 			if (desc) {
 				data.push({type: 'result-end', to: options.to, time: end });
@@ -76,7 +81,6 @@ module.exports = function(options, callback) {
 			callback(data);
 			db.end(); // I'm done with this db connection. This is important!
 		});
-
 	});
 };
 

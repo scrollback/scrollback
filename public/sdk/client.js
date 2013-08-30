@@ -21,26 +21,29 @@ var socket = new SockJS(scrollback.host + '/socket'),
 	core = Object.create(emitter),
 	nick = "", user;
 
-console.log(socket);
-
 socket.emit = function(type, data) {
 	console.log("Socket sending ", type, data);
 	socket.send(JSON.stringify({type: type, data: data}));
 };
 
 socket.onopen = function() {
-	var sid = document.cookie.match(/scrollback_sessid=(\w*)\;/);
+	console.log("Cookie", document.cookie);
+	var sid = document.cookie.match(/scrollback_sessid=(\w*)(\;|$)/);
 	sid = sid? sid[1]: null;
-	console.log(sid);
-	/* global scrollback, io, EventEmitter */
 	if(scrollback.streams &&  scrollback.streams.length) {
 		scrollback.streams.forEach(function(id) {
 			if(!id) return;
 			core.enter(id);
 		});
 	}
-	core.emit('connected');
-	socket.emit('init', { sid: sid, clientTime: new Date().getTime() });
+	function init(sid) {
+		socket.emit('init', { sid: sid, clientTime: new Date().getTime() });
+	}
+	if(sid) init(sid);
+	else getx(scrollback.host + '/dlg/cookie', function(err, data) {
+		if(err) return;
+		init(data);
+	});
 };
 
 socket.onerror = function(message) {
@@ -60,22 +63,28 @@ socket.onmessage = function(evt) {
 	try { d = JSON.parse(evt.data); }
 	catch(e) { console.log("ERROR: Non-JSON data", evt.data); return; }
 	
-	console.log("Socket received", d.type == init, init);
+	console.log("Socket received", d);
 	
 	switch(d.type) {
-		case 'init': initSocket(d.data); break;
-		case 'message': message(d.data); break;
-		case 'messages': messages(d.data); break;
+		case 'init': onInit(d.data); break;
+		case 'message': onMessage(d.data); break;
+		case 'messages': onMessages(d.data); break;
 	}
 };
 
-function initSocket (data) {
+function onInit (data) {
 	document.cookie = "scrollback_sessid="+data.sid;
-	core.nick(data.user.id);
+	nick = data.user.id; core.emit('nick', nick);
 	timeAdjustment = data.serverTime - data.clientTime;
+	console.log(data);
+	console.log("Time adjustment is now " + timeAdjustment);
+	core.emit('connected');
 }
 
-core.time = function() { return new Date().getTime() + timeAdjustment; };
+core.time = function() {
+	console.log("Time adjustment is now " + timeAdjustment);
+	return (new Date()).getTime() + timeAdjustment;
+};
 
 core.enter = function (id) {
 	if(!rooms[id]) rooms[id] = { messages: messageArray() };
@@ -107,7 +116,7 @@ function send(type, to, text, options) {
 	return m;
 }
 
-function messages (data) {
+function onMessages (data) {
 	var roomId = data.query.to, reqId = data.query.to + '/' + (data.query.since || '') +
 			'/' + (data.query.until || '');
 			
@@ -123,7 +132,6 @@ core.get = function(room, start, end, callback) {
 		reqId;
 	if (start) { query.since = start; }
 	if (end) { query.until = end; }
-	
 	reqId = room + '/' + (query.since || '') + '/' + (query.until || '');
 	
 	console.log("Request:", reqId);
@@ -131,7 +139,7 @@ core.get = function(room, start, end, callback) {
 	socket.emit('messages', query);
 };
 
-function message (m) {
+function onMessage (m) {
 	var i, messages, updated = false;
 	console.log("Received:", m);
 	core.emit('message', m);
@@ -159,6 +167,7 @@ function message (m) {
 	for (i = messages.length - 1; i >= 0 && m.time - messages[i].time < 10000; i-- ) {
 		if (messages[i].id == m.id) {
 			timeAdjustment = m.time - messages[i].time;
+			console.log("Time adjustment is now " + timeAdjustment);
 			messages[i] = m;
 			updated = true; break;
 		}
@@ -173,22 +182,25 @@ core.say = function (to, text) {
 	send('text', to, text);
 };
 
-core.nick = function(n, auth) {
+core.nick = function(n) {
 	if (!n) return nick;
-	send('nick', '', '', { nick: n, auth: auth });
+	if(typeof n === 'string') n = {ref: n};
+	send('nick', '', '', n);
 	return n;
 };
 
 core.watch = function(room, time, before, after, callback) {
+
 	function missing(start, end) {
 		core.get(room, start, end, send);
 		return { type: 'missing', text: 'Loading messages...', time: start };
 	}
 	function send(isResponse) {
 		var r = rooms[room].messages.extract(
-			time || core.time(), before || 32,
+			time, before || 32,
 			after || 0, isResponse? null: missing
 		);
+		
 		callback(r);
 	}
 	

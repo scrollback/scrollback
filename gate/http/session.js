@@ -2,40 +2,54 @@
 
 var express = require("express"),
 	store = new express.session.MemoryStore(),
+	cookie = require("cookie"),
 	guid = require("../../lib/guid.js"),
-	_get = store.get;
+	names = require("../../lib/names.js"),
+	_get = store.get,
+	key = "scrollback_sessid";
 	
-	store.get = function(sid, cb) {
-		_get.call(store, sid, function(err, session) {
-			if(session && !session.user) initUser(session);
-			return cb(err, session);
-		});
-	};
-	
-
-function initUser(session) {
-	session.user = {
-		id: 'guest-sb' + guid(4),
+function initUser() {
+	return {
+		id: 'guest-sb-' + names(6),
 		picture: '/img/guest.png',
 		rooms: {}
 	};
-	return session;
 }
 
-exports.store = store;
 exports.get = function(sid, cb) {
-	store.get(sid, function(err, session) {
-		console.log("Session get complete: ", arguments);
-		if(!session) session = initUser({});
-		console.log("Returning session:", session);
-		cb(err, session);
+	sid = unsign(sid, function(id, session) {
+		cb(null, session);
 	});
 };
-exports.set = store.set;
+exports.set = function(sid, sess, cb) {
+	sid = unsign(sid, function(id) {
+		store.set(id, sess);
+	});
+};
 
-exports.parser = express.session({
+var exparse = express.session({
 	secret: "ertyuidfghjcrtyujwsvokmdf",
-	store: store,
-	cookie: { maxAge: 3600000 }
+	key: key,
+	store: store
 });
+
+exports.store = store;
+
+var parse = exports.parser = function(req, res, next) {
+	exparse(req, res, function() {
+		if(!req.session.user) req.session.user = initUser();
+		next();
+	});
+};
+
+function unsign(sid, cb) {
+	var noop = function(){},
+		fakeReq = {cookies: {}, signedCookies: {}, originalUrl: '/', on: noop, removeListener: noop},
+		fakeRes = {on: noop};
+	fakeReq.cookies[key] = sid;
+	
+	parse(fakeReq, fakeRes, function() {
+		cb(fakeReq.sessionID, fakeReq.session);
+	});
+}
 

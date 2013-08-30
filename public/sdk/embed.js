@@ -51,8 +51,6 @@ core.on('leave', function(id) {
 });
 
 core.on('nick', function(n) {
-	
-	console.log("got nick");
 	var i, stream;
 	var nick=(n.indexOf("guest-")===0)?(n.replace("guest-","")):n;
 	
@@ -65,7 +63,6 @@ core.on('nick', function(n) {
 			removeClass(stream.nick, 'scrollback-nick-guest');
 			addClass(stream.nick, 'scrollback-nick');
 		}
-		console.log(n,stream.nick.innerHTML);
 	}
 });
 
@@ -95,10 +92,10 @@ function Stream(id) {
 				
 				addEvent(el, 'click', function() {
 					if (core.nick().indexOf("guest-") === 0) {
-						window.open("/dlg/login","login","width=350,height=350");
+						self.login();
 					}
 					else {
-						window.open("/dlg/profile","profile","width=350,height=350");	
+						self.profile();	
 					}
 				});
 				
@@ -146,7 +143,12 @@ function Stream(id) {
 				addEvent(el, 'click', function() { self.pop(); });
 				break;
 			case hasClass(el, 'scrollback-icon-login'):
-				addEvent(el, 'click', function() { self.login(); });
+				addEvent(el, 'click', function(e) {
+					self.login();
+					if(e.preventDefault) e.preventDefault();
+					if(e.stopPropagation) e.stopPropagation();
+					return false;
+				});
 				break;
 
 		}
@@ -179,6 +181,15 @@ Stream.prototype.hide = function() {
 	removeClass(this.stream, 'scrollback-stream-selected');
 	addClass(this.stream, 'scrollback-stream-hidden');
 	this.hidden = true;
+};
+
+Stream.prototype.login = function () {
+	dialog.show("/dlg/login#" + core.nick(), function(data) {
+		console.log("Got assertion", data);
+		if(!data) return;
+		if(data.assertion) core.nick({ browserid: data.assertion });
+		else if(data.guestname) core.nick('guest-' + data.guestname);
+	});
 };
 
 Stream.prototype.show = function() {
@@ -325,26 +336,3 @@ Stream.position = function() {
 	Stream.stack();
 };
 
-// ------- Incomplete: Show a popup for previews -----
-
-function showPopup(btn, el) {
-	var scrw = window.innerWidth,
-		scrh = window.innerHeight,
-		popw, poph, pop, btno, btnx, btny, btnh, btnw;
-	
-	btno = offset(btn);
-	btnx = btno.left, btny = btno.top;
-	btnh = btn.offsetHeight; btnw = btn.offsetWidth;
-	
-	
-	pop = $$(document, 'scrolback-popup')[0];
-	if(pop) pop.parentNode.removeChild(pop);
-	
-	pop = JsonML.parse(["div", { 'class': 'scrollback-popup' }]);
-	pop.appendChild(el);
-	document.body.appendChild(pop);
-	
-	popw = pop.offsetWidth; poph = pop.offsetHeight;
-	
-	console.log(btno, btnh, btnw, scrw, scrh, popw, poph);
-};

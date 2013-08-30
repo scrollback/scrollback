@@ -2,7 +2,7 @@
 
 Stream.prototype.scroll = function() {
 	var log = this.log, msg = log.firstChild, i=0, pos,
-		start = 32, end = 0, up, self = this, cb,
+		start = 99999, end = 0, up, self = this, cb,
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
 	
@@ -26,7 +26,6 @@ Stream.prototype.scroll = function() {
 	}
 	
 	up = log.scrollTop < this.lastScrollTop;
-	console.log("1 up", up, this.lastScrollTop, log.scrollTop);
 	this.lastScrollTop = log.scrollTop;
 	this.scrollId = this.messages[start].id;
 	this.scrollPx = offset(this.log.children[start])[1] - offset(this.log)[1] -  this.log.scrollTop;
@@ -42,7 +41,6 @@ Stream.prototype.scroll = function() {
 		console.log("bottomed out");
 		this.bottom = true;
 	} else {
-		console.log("not bottom", end, self.messages.length, up, self.lastScrollTop, log.scrollTop);
 		this.bottom = false;
 	}
 	
@@ -76,7 +74,6 @@ Stream.prototype.update = function (data) {
 		this.log.scrollTop = offset(this.log.children[i])[1] - offset(this.log)[1] - this.scrollPx;
 	}
 	this.lastScrollTop = this.log.scrollTop;
-	console.log("Set lastScrollTop to ", this.log.scrollTop);
 	setTimeout(function() {
 		self.updating = false;
 	}, 100);
@@ -111,7 +108,7 @@ Stream.prototype.renderThumb = function(start, end) {
 	y = Math.round((thumbEnd-thumbStart)*this.tread.clientHeight/duration);
 
 	this.thumb.style.top = x + 'px';
-	this.thumb.style.height = y + 'px';
+	this.thumb.style.height = Math.max(2, y) + 'px';
 };
 
 Stream.prototype.renderTimeline = function() {

@@ -4,12 +4,18 @@ var code = fs.readFileSync(__dirname + "/../../public/client.min.js",'utf8');
 exports.init = function(app) {
     
     var dialogs = {
-        "login" : function(req,res){
+        "login" : function(req, res){
             res.render("login");
         },
-        "profile" : function(req,res){
+        "profile" : function(req, res){
             res.render("profile");
-        }
+        },
+		"cookie": function(req, res) {
+			res.end(req.query.callback+"('"+req.cookies["scrollback_sessid"]+"')");
+		},
+		"debug": function(req, res) {
+			res.end(req.cookies["scrollback_sessid"] + '\r\n' + JSON.stringify(require("./session.js").store));
+		}
     };
     
     app.get("/dlg/*",function(req,res){

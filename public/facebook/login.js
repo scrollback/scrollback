@@ -36,28 +36,6 @@ window.fbAsyncInit = function() {
 }(document, 'script', 'facebook-jssdk'));
 
 
-core.on("ERR_AUTH_NEW",function(boom) {
-	window.location="/dlg/profile";
-});
-
-
-
-
-function continueAs() {
-	var nick=document.getElementById("continueAs");
-	if (nick.length<=3) {
-		alert("nick should be longer than 3characters.");
-		return;
-	}
-	nickExpected=true;
-	message("nick","","","guest-"+nick.value);
-	core.on("nick",function(n) {
-		console.log("nick----"+n+":"+nickExpected);
-		if(nickExpected) {
-			window.close();	
-		}
-	});
-}
 
 function login() {
 	console.log("calling login");
