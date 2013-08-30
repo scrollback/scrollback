@@ -49,6 +49,18 @@ function init() {
 		themes[scrollback.theme]: themes.light
 	);
 	addEvent(window, 'resize', Stream.position);
+	
+	scrollback.oldTitle=document.title;
+	scrollback.activeStart=true;
+	
+	window.onblur=function(){
+		scrollback.activeStart=false;
+	};
+
+	window.onfocus=function(){
+		document.title=scrollback.oldTitle;
+		scrollback.activeStart=true;
+	};
 }
 
 core.on('enter', function(id) {
@@ -210,9 +222,13 @@ Stream.prototype.notify=function(str, persist) {
 	}
 }
 
+
 Stream.prototype.onmessage = function(message) {
-	var el = this.renderMessage(message),str="";
+	var el = this.renderMessage(message),str="", oldTitle="",title="";
+	
 	if (message.type=="text") {
+		if (!scrollback.activeStart)
+			document.title = el.innerText || el.textContent;
 		this.titleText.innerHTML = (el.innerText || el.textContent);
 	} else {
 		if (core.nick()!==message.ref && message.ref!=message.from) {
