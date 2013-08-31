@@ -4,11 +4,18 @@ article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,su
 html, button, input, select, textarea {
 	font-family: "Open Sans", sans-serif;
 	font-size: 16px;
-	line-height:40px;
+	line-height:24px;
 	color: #222;
 }
 
-textarea { line-height: 24px; }
+button, input, select {
+	line-height: 40px; height: 40px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+}
 
 pre, code { font-family: "Source Code Pro", monospace; font-size: 16px; line-height: 16px; font-weight: 100; }
 
@@ -28,7 +35,7 @@ pre { background: #333; color: #fff; font-size: 13px; max-width: 80em;
 margin: 0 auto; padding: 20px; }
 
 nav {
-    background: #555; line-height: 40px; color: #fff;
+    background: #000; line-height: 40px; color: #fff;
     overflow: visible; border-bottom: 4px solid #3ca;
 }
     .logo-box { height: 40px; overflow: visible; }

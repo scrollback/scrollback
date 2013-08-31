@@ -16,32 +16,32 @@ var sockjs = require("sockjs"),
 
 var rConns = {}, sConns = {};
 
-exports.init = function (server) {
-	var sock = sockjs.createServer();
+var sock = sockjs.createServer();
 
-	sock.on('connection', function (socket) {
-		var conn = { socket: socket };
+sock.on('connection', function (socket) {
+	var conn = { socket: socket };
+	
+	socket.on('data', function(d) {
+		log ("Socket received ", d);
+		try { d = JSON.parse(d); }
+		catch(e) { log("ERROR: Non-JSON data", d); return; }
 		
-		socket.on('data', function(d) {
-			log ("Socket received ", d);
-			try { d = JSON.parse(d); }
-			catch(e) { log("ERROR: Non-JSON data", d); return; }
-			
-			switch(d.type) {
-				case 'init': init(d.data, conn); break;
-				case 'message': message(d.data, conn); break;
-				case 'messages': messages(d.data, conn); break;
-				case 'room': room(d.data, conn); break;
-			}
-		});
-		
-		conn.send = function(type, data) {
-			socket.write(JSON.stringify({type: type, data: data}));
-		};
-		
-		socket.on('close', function() { close(conn); });
+		switch(d.type) {
+			case 'init': init(d.data, conn); break;
+			case 'message': message(d.data, conn); break;
+			case 'messages': messages(d.data, conn); break;
+			case 'room': room(d.data, conn); break;
+		}
 	});
 	
+	conn.send = function(type, data) {
+		socket.write(JSON.stringify({type: type, data: data}));
+	};
+	
+	socket.on('close', function() { close(conn); });
+});
+
+exports.init = function (server) {
 	sock.installHandlers(server, {prefix: '/socket'});
 };
 

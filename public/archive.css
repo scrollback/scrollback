@@ -1,0 +1,64 @@
+.embed{
+	padding: 30px 0px;
+}
+
+h2.embed{
+	text-align: center;
+}
+
+.border{
+	border: 1px solid black;
+}
+
+.timeRange{
+	text-height: 24px;
+	font-size: 16px;
+	font-weight: bold;
+	color: #000;
+	padding: 0px;
+	overflow: hidden;
+	text-align: center;
+}
+
+.item{
+	min-height: 24px;
+	margin-top: 24px;
+	position: relative;
+	overflow: hidden;
+}
+
+
+.messageList{
+	padding: 0px;
+	padding-top: 12px;
+	padding-bottom: 36px;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	overflow: hidden;
+}
+
+.message{
+	padding: 0px 16px;
+}
+
+.time{
+	text-align: right;
+}
+
+.navLink{
+	text-decoration: none;
+	text-height: 24px;
+	font-size: 16px;
+	font-weight: bold;
+	color: #000;
+	padding: 0px;
+}
+
+.navLink:hover{
+	text-decoration: underline;
+}
+
+.navigation{
+	min-height: 24px;
+	width: 100%;
+}

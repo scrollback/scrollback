@@ -12,21 +12,35 @@ core.on('connected', function() {
 		init();
 		initialized = true;
 	}
+	
 	getByClass(document, 'scrollback-text').forEach(function(input) {
 		input.disabled = false; input.value = '';
 	});
+	
+	getByClass(document, 'scrollback-nick').forEach(function(input) {
+		input.disabled = false; 
+	});
+	
+	scrollback.streams.forEach(function(room) {
+		streams[room].notify("And... we're back.");
+	});
+	
 });
+
 
 core.on('disconnected', function() {
 	getByClass(document, 'scrollback-text').forEach(function(input) {
 		input.disabled = true; input.value = 'Disconnected';
 	});
+	getByClass(document, 'scrollback-nick').forEach(function(input) {
+		input.disabled = true; 
+	});
+	scrollback.streams.forEach(function(room) {
+		streams[room].notify("Disconnected. Trying to reconnect...", true);
+	});
 });
 
 
-core.on("abuse_report",function(messageId){
-	
-});
 // ---- Initialize ----
 
 function init() {
@@ -68,7 +82,7 @@ core.on('nick', function(n) {
 
 core.on('message', function(m) {
 	if (m.to && streams[m.to]) {
-		streams[m.to].notify(m);
+		streams[m.to].onmessage(m);
 	}
 });
 
@@ -150,7 +164,6 @@ function Stream(id) {
 					return false;
 				});
 				break;
-
 		}
 		return el;
 	});
@@ -226,15 +239,32 @@ Stream.prototype.send = function () {
 	core.say(this.id, text);
 };
 
-Stream.prototype.notify = function(message) {
-	var el = this.renderMessage(message);
-	this.titleText.innerHTML = (el.innerText || el.textContent);
-	
-	//if (!this.hidden && this.bottom && message.type !== 'text') {
-	//	this.log.appendChild(el);
-	//	this.log.scrollTop = this.log.scrollHeight;
-	//	setTimeout(function() { addClass(el, 'scrollback-message-hidden'); }, 1000);
-	//}
+Stream.prototype.notify=function(str, persist) {
+	var thisStream=this;
+	if (!this.hidden) {
+		this.alert.innerHTML="<span>"+str+"</span>";
+		//this.alert.appendChild(JsonML.parse(["span", str]));
+		removeClass(this.alert,"scrollback-alert-hidden");
+		clearTimeout(this.alertTimer);
+		
+		if (!persist){
+			this.alertTimer=setTimeout(function() {
+				addClass(thisStream.alert,"scrollback-alert-hidden");
+			},2000);	
+		}
+	}
+}
+
+Stream.prototype.onmessage = function(message) {
+	var el = this.renderMessage(message),str="";
+	if (message.type=="text") {
+		this.titleText.innerHTML = (el.innerText || el.textContent);
+	} else {
+		if (core.nick()!==message.ref && message.ref!=message.from) {
+			this.notify(el.innerText || el.textContent);
+		}
+	}
+
 };
 
 Stream.prototype.rename = function() {

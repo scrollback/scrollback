@@ -1,6 +1,3 @@
-//exports.room = require("./room/room.js");
-//exports.user = require("./user/user.js");
-//exports.post = require("./post/post.js");
 "use strict";
 
 var config = require('../config.js');

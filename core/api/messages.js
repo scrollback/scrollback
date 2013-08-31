@@ -35,7 +35,7 @@ module.exports = function(options, callback) {
 			where.push("`from` = ?");
 			params.push(options.to);
 		}
-		
+
 		if(options.type) {
 			where.push("`type` = ?");
 			params.push(options.type);
@@ -45,7 +45,6 @@ module.exports = function(options, callback) {
 			desc = true;
 		}
 		
-		console.log("options",options,until,since);
 		if(where.length) query += " WHERE " + where.join(" AND ");
 		query += " ORDER BY `time` " + (desc? "DESC": "ASC");
 		if(limit) query += " LIMIT " + (limit + 1);

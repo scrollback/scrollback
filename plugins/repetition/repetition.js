@@ -12,7 +12,7 @@ exports.rejectable=function(message){
 	var from, room;
 	
 	
-	if (!message.from || !message.to) {
+	if (!message.from || !message.to || message.type!='text') {
 		return false;
 	}
 	

@@ -1,10 +1,12 @@
 var express = require("express"),
 	http = require("http"),
+	https = require("https"),
+	fs = require("fs"),
 	config = require("../../config.js"),
 	session = require("./session.js");
 
 exports.init = function() {
-	var app = express(), srv;
+	var app = express(), srv, srvs;
 
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
@@ -21,7 +23,14 @@ exports.init = function() {
 	srv = http.createServer(app);
 	srv.listen(config.http.port);
 	
-	app.server = srv;
+	srvs = https.createServer({
+		key: fs.readFileSync(__dirname + "/../../" + config.http.https.key),
+		cert: fs.readFileSync(__dirname + "/../../" + config.http.https.cert)
+	}, app);
+	srvs.listen(config.http.https.port);
+	
+	app.http = srv;
+	app.https = srvs;
 	return app;
 }
 

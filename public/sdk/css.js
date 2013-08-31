@@ -21,6 +21,29 @@ var css = {
 	".scrollback-stream-hidden": {
 		"height": "44px !important"
 	},
+	".scrollback-alert": {
+		"backgroundColor": "#3CA",
+		color: "#fff",
+		"width":"100%",
+		"position":"absolute",
+		"top":"44px",
+		"zIndex":"9998",
+		"transition":"all 0.2s",
+		"webkitTransition":"all 0.2s",
+		"mozTransition": "all 0.2s",
+		"oTransition": "all 0.2s",
+		"msTransition": "all 0.2s",
+		"fontSize": "13px",
+		"lineHeight": "24px",
+		"padding": "0px 16px",
+		"height": "24px"
+		
+	},
+	".scrollback-alert-hidden":{
+		"height": "0px",
+		"top":"0px",
+		"zIndex":9996
+	},
 	".scrollback-stream-hidden .scrollback-title-text": {
 		display: "inline"
 	},
@@ -143,7 +166,6 @@ var css = {
 		position: "fixed", background: "#f70"
 	},
 	
-	
 	".scrollback-dialog-layer": {
 		position: "fixed", display: "none", top: 0, left: 0,
 		width: "100%", height: "100%", background: "rgba(255,255,255,0.9)",
@@ -196,7 +218,7 @@ themes.light = {
 				backgroundImage: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADzSURBVFiF7ZaxDcIwFEQvCCVz0DMEY6REtCyRkhEoWQGEmIOCjk0ocjRGCpYJji+EKPpPuib2t5+UL9sZSYyZ2b8FvmGCKiaoYoIqJqgy72GNAsAewML7fgewBfCQVieppCB54WeOJHNlD0UuJ3luketFUhE8eSI7kiuXXUBycMEmVWC88uYk7ZMx/bnVLMyEOa1M8phZujQpI+pKADeXeBL6wu+tLoR6tTWj/8UmqGKCKpMUvOL9hoiFrrZjVdoduSFZdzj/alcz6GMhVjJZThWMkZTkKL5mXqxdQhxckulD8KdM8pgZFBNUMUEVE1QZveATwcwl121kDn4AAAAASUVORK5CYII=')"
 			},
 		".scrollback-title": {
-			background: "#555", color: "#fff", borderBottomColor: "#3ca"
+			backgroundColor: "#555", color: "#fff", borderBottomColor: "#3ca"
 		},
 			".scrollback-title-text": {
 				color: "#ccc"
@@ -229,10 +251,10 @@ themes.dark = {
 		"background": "#555", color: "#fff"
 	},
 		".scrollback-icon": {
-			color: "#fff", background: "#555"
+			color: "#fff", backgroundColor: "#555"
 		},
 		".scrollback-icon:hover": {
-			background: "#555"
+			backgroundColor: "#555"
 		},
 			".scrollback-icon-menu": {
 				backgroundImage: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFVSURBVFiF7dZBToNAFAbgf4oLb9E5gkQPQGLKsmxYeBuvw8KNW5MmHEArR6CHELqhvwsfaWMmUWaelej8yQsJMw++QGbAkMScs/htwFeJwNBEYGgiMDT/C5g2lU2bympeUw2YNpVNhqROhqTWRKoARxyAJYClJjIY+Ak3Rg0ZBHTgOilACekNdOD6w8KsDwuzBtBrIb2ADtzeEMU2LTfbtNwYogCw10Caqf+DLhxgiufr8ul03s3LQw7wEcClnNoNyZC9Xt21Pwo8dy48ejIpn9RS344v8N6jb0w9ZfLsv8U+T7AOuN/k3tkvEp9XbAG0ACjVA8gd83IZG+e10jstJH3Kkmx5TE9ydTK+knNjWumZfC9foAvZkbyV6jRwoUAX8k1KBacBdCHVcFpAF1IFR1J1m7E47nMZPlZtcLT3QSvHVuuCf3KjPmsiMDQRGJoIDM3sge8GnOys45umtwAAAABJRU5ErkJggg==')"
@@ -247,7 +269,7 @@ themes.dark = {
 				backgroundImage: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAERSURBVFiF7ZgxTsNAEEWfDcpBwg2ouQE9DQVE4lhRoHGFKLkBx6DgBBwAkXwKbyTjIDnsH4SLedJordV65ml2V7LcSGLOtP8tMEUKuqSgSwq6pKBLCrrMXvDUfH8BXB2Z5wV4/W0BV/ADELAGTibWrqgQjNjiDrgBtgG5DnA7uKej7+blaP4COHMSRwkCPAJP5XlXxgdMwchb3NKfxXVk3qgO7uVWg7m7qMQROcZyYbiCP8nd03dvBzzj3m5JtdFK2ug7mzI/XHct6VPSbU2d2jM41bkhXRmbqkqV3VtKep/o3DgWNbWcLT4vksfIVUcj78/CEnjjcFvDcAX/nNl/D6agSwq6pKBLCrqkoMvsBb8A4W6WiJ7YEGsAAAAASUVORK5CYII=')"
 			},
 		".scrollback-title": {
-			background: "#555", color: "#fff", borderBottomColor: "#3ca"
+			backgroundColor: "#555", color: "#fff", borderBottomColor: "#3ca"
 		},
 			".scrollback-title-text":{
 				color: "#ccc"

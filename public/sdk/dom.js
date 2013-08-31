@@ -1,5 +1,6 @@
 var dom = {
 	stream: ["div", { 'class': 'scrollback-stream' },
+			 ["div",{'class':'scrollback-alert scrollback-alert-hidden'}],
 		["div", { 'class': 'scrollback-title' },
 			["span", {
 				'class': 'scrollback-icon scrollback-icon-menu'

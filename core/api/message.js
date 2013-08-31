@@ -5,9 +5,6 @@ var pool = require('../data.js'),
 	guid = require('../../lib/guid.js');
 var log = require("../../lib/logger.js");
 var gateways = require("../gateways.js");
-var plugin= require("../../plugins/plugin.js");
-
-plugin.init();
 
 module.exports = function(message, cb) {
 	function send(){
@@ -16,11 +13,6 @@ module.exports = function(message, cb) {
 			if (err) throw err;
 			if (!message.id) message.id = guid();
 			if (!message.time) message.time = new Date().getTime();
-			
-			if(plugin.invoke(message)) {
-				if(cb) cb(false,{err:"ERR_ABUSE"});
-				return;
-			}
 			
 			db.query("INSERT INTO `messages` SET `id`=?, `from`=?, `to`=?, `type`=?, `text`=?, "+
 				"`origin`=?, `time`=?, `ref`=?", [message.id, message.from, message.to, message.type, 
