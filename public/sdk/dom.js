@@ -27,6 +27,8 @@ var dom = {
 			["button", {type: 'submit', 'class': 'scrollback-hidden'}, "Send"]
 		],
 		["a", {href: "http://scrollback.io", "class": "scrollback-poweredby",
-			target: "_blank"}]
+			target: "_blank"}],
+		["audio",{id:"audiotag1",src:"http://www.soundjay.com/button/beep-4.wav",preload:"auto"
+		}],
 	]
 };

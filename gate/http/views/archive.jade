@@ -48,6 +48,7 @@ block content
 			.embed.box.span12.paddingBottom100px
 				p.embed Embed #{query.to} on your web page.
 				pre.
+					&lt;script&gt;
 						window.scrollback = {
 							streams:["#{query.to}"],
 							theme: 'light',
@@ -59,7 +60,7 @@ block content
 						e.src=h+'/client.min.js';scrollback.host=h;
 						d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 						(document,'script','http://'+location.host));
-
+					&lt;/script&gt;
 	script.
 		window.scrollback = {
 			streams:["#{query.to}"],
