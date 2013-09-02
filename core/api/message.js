@@ -26,7 +26,7 @@ module.exports = function(message, gateways, cb) {
     db.query("SELECT * FROM `accounts` WHERE `room`=?", [message.to],
         function(err, data) {
             var i, l, name, list = {};
-            if(err) console.log("Can't get list of rooms");
+            if(err) { console.log("Can't get list of rooms", err); return; }
             for(i=0, l=data.length; i<l; i+=1) {
                 name = data[i].gateway;
                 if(!list[name]) list[name] = [];
