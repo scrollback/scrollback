@@ -5,7 +5,8 @@
 */
 "use strict";
 
-var io = require("socket.io"),
+var sio = require("socket.io"),
+	ios = [],
 	core = require("../../core/core.js"),
 	cookie = require("cookie"),
 	log = require("../../lib/logger.js"),
@@ -14,8 +15,9 @@ var io = require("socket.io"),
 
 var users = {}, uIndex = {}, uWait = {};
 
-exports.init = function (server) {
-	io = io.listen(server);
+exports.init = function (http) {
+	var io = sio.listen(http);
+	ios.push(io);
 	io.set('log level', 1);
 
 	io.sockets.on('connection', function (socket) {
@@ -157,7 +159,9 @@ exports.send = function (message, rooms) {
 	message.text = sanitize(message.text || "");
 	rooms.map(function(room) {
 		log("Socket sending", message, "to", room);
-		io.sockets['in'](room).emit('message', message);
+		ios.forEach(function(io){
+			io.sockets['in'](room).emit('message', message);
+		});
 	});
 	
 	if (message.type == 'nick') {

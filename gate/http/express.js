@@ -1,5 +1,6 @@
 var express = require("express"),
-	http = require("http"),
+	http = require("http"), https = require("https"),
+	fs = require("fs"),
 	config = require("../../config.js"),
 	session = require("./session.js");
 
@@ -19,8 +20,18 @@ exports.init = function() {
 	
 	srv = http.createServer(app);
 	srv.listen(config.http.port);
+	app.http = srv;
 	
-	app.server = srv;
+	if (config.http.https) {
+		srvs = https.createServer({
+			key: fs.readFileSync(__dirname + "/../../" + config.http.https.key),
+			cert: fs.readFileSync(__dirname + "/../../" + config.http.https.cert)
+		}, app);
+		srvs.listen(config.http.https.port);
+		
+		app.https = srvs;
+	}
+
 	return app;
-}
+};
 

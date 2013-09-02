@@ -25,7 +25,7 @@
 						<li><a href="#features">Features</a></li>
 						<li><a href="#whybuilt">Why we built it</a></li>
 						<li><a href="#getembed">Get Scrollback</a></li>
-						<li><a href="http://github.com/askabt/scrollback">Fork us</a></li>
+						<li><a href="http://github.com/scrollback/scrollback">Fork us</a></li>
 					</ul>
 				</div>
 			</div>
@@ -136,7 +136,7 @@ scrollback.host=h;d.body.appendChild(e);}(document,'http://scrollback.io'));
 			streams: ["scrollback"],      // Change this: Array of rooms.
 			theme: 'light',   // Optional: light or dark
 			ticker: true,      // Show updates when minimized?
-			host: 'http://' + location.host,
+			host: location.protocol + '//' + location.host,
 			debug: true
 		};
 		
