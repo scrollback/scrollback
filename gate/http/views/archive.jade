@@ -26,27 +26,29 @@ block content
 	.container
 		.box.span12.container
 			h1.box.span12 #{query.title} archives (#{relDate(data[0].time)} ago)
-			div.timeRange.box.span12
-				if(scrollPrev)
-					div.prevButton.span3
-						a.navLink.prevButton(href="/#{query.to}/until/#{scrollPrev}") Prev
-				if(scrollNext)
-					div.nextButton.span3
-						a.navLink.nextButton(href="/#{query.to}/since/#{scrollNext}") Next
-				div.span5.timeContent
-					span Showing #{relDate(data[0].time, data[data.length-1].time)} of conversation 
+			div.container
+				div.timeRange.box.span12
+					if(scrollPrev)
+						div.prevButton.span3
+							a.navLink.prevButton(href="/#{query.to}/until/#{scrollPrev}") Prev
+					if(scrollNext)
+						div.nextButton.span4
+							a.navLink.nextButton(href="/#{query.to}/since/#{scrollNext}") Next
+					div.span5.message.timecontent
+						span.rangeText Showing #{relDate(data[0].time, data[data.length-1].time)} of conversation 
 				
 			#messageList.box.span12
 				- prevtime = 0
 				each message in data
 					if message && message.type && message.type=="text"
 						.item.container
-							div.box.span3 [#{message.from}]
-							div.box.span5.message #{message.text}
-							if(prevtime)
-								div.box.span4.time #{relDate(prevtime, message.time)} later
-							else
-								div.box.span4.time #{relDate(message.time)} ago
+							div.box.span12
+								div.box.span3 [#{message.from}]
+								div.box.span5.message #{message.text}
+								if(prevtime)
+									div.box.span4.time #{relDate(prevtime, message.time)} later
+								else
+									div.box.span4.time #{relDate(message.time)} ago
 						- prevtime = message.time
 							
 			if(!scrollNext)
