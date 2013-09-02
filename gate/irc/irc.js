@@ -62,7 +62,7 @@ function send(message, accounts) {
 			client = clients[message.from][u.host],
 			channel = u.hash.toLowerCase();
 		
-		if (message.origin.toLowerCase() == account.toLowerCase()) {
+		if ((message.origin || "").toLowerCase() == (account || "").toLowerCase()) {
 			log("Outgoing echo", message);
 			return;
 		}
