@@ -5,3 +5,4 @@ var core = require("./core/core.js"),
 core.init(gateways);
 
 if(config.core.uid) process.setuid(config.core.uid);
+process.title = config.core.name;
