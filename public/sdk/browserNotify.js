@@ -17,18 +17,18 @@ var browserNotify = (function() {
 	
 	DomReady.ready(function() {
 		addEvent(window, 'focus', function() {
-			window.title = originalTitle;
+			document.title = originalTitle;
 			hasFocus = true;
 		});
 		addEvent(window, 'blur', function() {
-			originalTitle = window.title;
+			originalTitle = document.title;
 			hasFocus = false;
 		});
 	});
 	
 	return function(text) {
 		if(hasFocus) return;
-		window.title = text;
+		document.title = text;
 		play(); played = true;
 		setTimeout(function() { played = false; }, 60000);
 	}
