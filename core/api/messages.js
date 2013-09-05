@@ -1,13 +1,14 @@
 "use strict";
 
-var config = require('../../config.js');
 var pool = require("../data.js");
 var log = require("../../lib/logger.js");
 
 module.exports = function(options, callback) {
 	pool.get(function(err, db) {
 		var query = "SELECT * FROM `messages` ",
-			where = [], params=[], desc=false, limit=256,until,since;
+			where = [], params=[], desc=false, limit=256, until, since;
+		
+		if(err) throw err;
 		
 		until=options.until;
 		since=options.since;

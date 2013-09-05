@@ -7,57 +7,33 @@ var log = require("../../lib/logger.js");
 var gateways = require("../gateways.js");
 
 module.exports = function(message, cb) {
-	function send(){
-		//console.log("trying to send in api/message:",message);
-		pool.get(function(err, db) {
-			if (err) throw err;
-			if (!message.id) message.id = guid();
-			if (!message.time) message.time = new Date().getTime();
-			
+	pool.get(function(err, db) {
+		if (err) throw err;
+		if (!message.id) message.id = guid();
+		if (!message.time) message.time = new Date().getTime();
+		
+		if(typeof message.to === 'string') message.to = [message.to];
+		
+		message.to.forEach(function(to) {
 			db.query("INSERT INTO `messages` SET `id`=?, `from`=?, `to`=?, `type`=?, `text`=?, "+
 				"`origin`=?, `time`=?, `ref`=?", [message.id, message.from, message.to, message.type, 
-				message.text, message.origin, message.time, message.ref],
-			function () {
-				db.query("SELECT * FROM `accounts` WHERE `room`=?", [message.to], function(err, data) {
-					var i, l, name, list = {};
-					if(err) { console.log("Can't get list of accounts"); return; }
-					for(i=0, l=data.length; i<l; i+=1) {
-						name = data[i].id.split(':')[0];
-						if(!list[name]) list[name] = [];
-						list[name].push(data[i].id);
-					}
-					for(name in list) {
-						if(gateways[name] && gateways[name].send)
-							gateways[name].send(message, list[name]);
-					}
-					db.end();
-				});
-			});
-			console.log(message);
-			gateways.http.send(message, [message.to]);
+				message.text, message.origin, message.time, message.ref]);
 		});
-	}
-
-	if (message.auth) {
-		gateways[message.auth.gateway].auth(message.auth, function(status,response) {
-			
-			cb(status,response);
-			if (status==false) {
-				console.log(response.err);
-				return;
+		db.query("SELECT * FROM `accounts` WHERE `room` IN ?", [message.to], function(err, data) {
+			var i, l, name, list = {};
+			if(err) { console.log("Can't get list of accounts", err); return; }
+			for(i=0, l=data.length; i<l; i+=1) {
+				name = data[i].id.split(':')[0];
+				if(!list[name]) list[name] = [];
+				list[name].push(data[i].id);
 			}
-			/*
-			 *
-			 *done in the socket.js with the the core.message function. Temp solution.
-			db.query("select id from rooms where id=?",[response[0].room],function(err,room){
-				delete message.auth;
-				message.ref=room[0].id;
-				send();
-			});
-			*/
+			for(name in list) {
+				if(gateways[name] && gateways[name].send)
+					gateways[name].send(message, list[name]);
+			}
+			db.end();
 		});
-	}
-	else {
-		send();
-	}
+		console.log(message);
+		gateways.http.send(message, [message.to]);
+	});
 };

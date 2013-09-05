@@ -7,13 +7,18 @@ var message = require('./api/message.js');
 var rooms = {};
 var log = require("../lib/logger.js");
 
-var core = new (require("events").EventEmitter)();
+var core = Object.create(require("events").EventEmitter);
 
 core.gateways = require("./gateways.js");
 
 core.message = function(m, cb) {
-	core.emit("message", m);
-	message(m, cb);
+	core.emit("message", m, function(err) {
+		if(err) {
+			console.log("Message rejected", err);
+			return cb(err);
+		}
+		message(m, cb);
+	});
 };
 
 core.room = require('./api/room.js');

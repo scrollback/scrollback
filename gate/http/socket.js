@@ -94,6 +94,8 @@ function message (m, conn) {
 	m.origin = "web://" + conn.socket.remoteAddress;
 	m.to = m.to || Object.keys(user.rooms);
 	
+	console.log("Rooms I'm in: ", Object.keys(user.rooms));
+	
 	if (m.type == 'back') {
 		if(rConns[m.to]) rConns[m.to].push(conn);
 		else rConns[m.to] = [conn];

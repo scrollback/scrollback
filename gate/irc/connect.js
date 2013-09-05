@@ -43,11 +43,11 @@ function connect(server, nick, uid, callback) {
 	});
 	
 	client.addListener('raw', function(message) {
-		log("Incoming from " + message.server, message.args);
+		log("Incoming from " + server, message.args);
 	});
 	
 	client.addListener('error', function(message) {
-		log("Error from " + message.server, message.args);
+		log("Error from " + server, message.args);
 	});				
 	
 	if(callback) {

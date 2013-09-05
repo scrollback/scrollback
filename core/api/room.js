@@ -1,18 +1,15 @@
-
 var pool = require("../data.js");
 
-
-exports.room=function(data,callback) {
-	
-	if (typeof data==="object") {
-		
-		//console.log("inserting obj",pool);
+module.exports = function(data, callback) {
+	if (typeof data === "object") {
 		pool.get(function(err, db) {
+			if(err) throw err;
 			
 			db.query("INSERT INTO `rooms` SET `id`=?, `type`=?, `name`=?, `description`=?, `picture`=?, "+
 			"`profile`=?, `createdOn`=NOW(), `owner`=?, `params`=?", [data.id, data.type || "topic",
 			data.name || "", data.description || "", data.picture || "", data.profile || "",
-			data.owner|| data.id, data.params|| ""],function(err,data) {
+			data.owner|| data.id, data.params|| ""], function(err, data) {
+				if(err) throw err;
 				
 				db.end();
 				console.log(err,data);
@@ -29,41 +26,5 @@ exports.room=function(data,callback) {
 			});
 		});
 	}
-	
-};
-
-/*
-this.room({
-	id:"scrollback",
-	type:"topic",
-	name:"scroll-back",
-	description:"blah blah blah",
-	picture:"",
-	profile:"",
-	owner:"harry.softer",
-	params:"{key:value}"},
-	function(err,data){
-		if (err) {
-			console.log("ERROR:",err);
-		}
-		else{
-			console.log(data);
-		}
-	}
-);
-
-this.room("scrollback",
-	function(err,data){
-		if (err) {
-			console.log("ERROR:",err);
-		}
-		else{
-			console.log(data);
-		}
-	}
-);
-*/
-
-exports.rooms=function(query,callback){
 	
 };
