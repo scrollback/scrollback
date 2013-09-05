@@ -16,7 +16,7 @@
     };
 
 	var readyBound = false;	
-	var isReady = false;
+	var isReady = (document.readyState=='interactive' || document.readyState=='loaded' || document.readyState == 'complete');
 	var readyList = [];
 
 	// Handle when the DOM is ready

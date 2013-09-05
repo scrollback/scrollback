@@ -16,19 +16,23 @@
 	<body>
 		
 		<div id='background'></div>
-		
+		<button id="btn" onclick="addscrollback()">abishdbcaiej</button>
 		<script>
-			window.scrollback = {
-				streams: location.hash.substr(1).split(','),
-				theme: 'light',
-				ticker: true,
-				minimized: true,
-				maxWidth: 600
-			};
+			function addscrollback(){
+				window.scrollback = {
+					streams: ["testing"],
+					theme: 'light',
+					ticker: true,
+					minimized: true,
+					maxWidth: 600
+				};
+				
+				// Don't change below this line ------------------------------------------------
+				(function(d,h,e){e=d.createElement('script');e.async=1;e.src=h+'/client.min.js';
+				scrollback.host=h;d.body.appendChild(e);}(document,'http://'+location.host));
+			}
 			
-			// Don't change below this line ------------------------------------------------
-			(function(d,h,e){e=d.createElement('script');e.async=1;e.src=h+'/client.min.js';
-			scrollback.host=h;d.body.appendChild(e);}(document,'http://'+location.host));
+			
 		</script>
 	</body>
 </html>

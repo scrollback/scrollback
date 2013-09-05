@@ -16,6 +16,7 @@ var browserNotify = (function() {
             }());
 	
 	DomReady.ready(function() {
+		console.log("Dom ready is called.");
 		addEvent(window, 'focus', function() {
 			if(originalTitle) document.title = originalTitle;
 			hasFocus = true;
@@ -29,13 +30,15 @@ var browserNotify = (function() {
 	
 	return function(text) {
 		if(hasFocus) return;
+		if (!originalTitle) originalTitle = document.title;
+		
 		document.title = text;
 		if (!played) {
 			play(); played = true;
 			setTimeout(function() { played = false; }, 60000);
 		}
 	}
-}())
+}());
 
 
 
