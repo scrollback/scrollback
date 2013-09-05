@@ -76,7 +76,9 @@ var io = ('undefined' === typeof module ? {} : module.exports);
       uri.protocol = uri.protocol || global.location.protocol.slice(0, -1);
       uri.host = uri.host || (global.document
         ? global.document.domain : global.location.hostname);
-      uri.port = uri.port || global.location.port;
+      uri.port = uri.port || uri.host == (global.document
+        ? global.document.domain : global.location.hostname)? global.location.port:
+	    ('https' == uri.protocol ? 443 : 80);
     }
 
     uuri = io.util.uniqueUri(uri);

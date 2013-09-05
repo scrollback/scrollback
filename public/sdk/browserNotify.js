@@ -16,7 +16,6 @@ var browserNotify = (function() {
             }());
 	
 	DomReady.ready(function() {
-		console.log("Dom ready is called.");
 		addEvent(window, 'focus', function() {
 			if(originalTitle) document.title = originalTitle;
 			hasFocus = true;
