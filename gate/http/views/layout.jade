@@ -11,9 +11,11 @@ html
 		block styles
 		meta(http-equiv="X-UA-Compatible",content="IE=Edge")
 	body
-		block header
-			nav
-				.container.clearfix: .box.logo-box.span1: .logo Scrollback
+		nav
+			.container.clearfix
+				.box.logo-box.span1: .logo Scrollback
+				.box.span5
+					block userinfo
 		.container.clearfix
 			block content
 		block scripts

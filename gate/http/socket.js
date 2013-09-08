@@ -22,8 +22,7 @@ sock.on('connection', function (socket) {
 	var conn = { socket: socket };
 	
 	socket.on('data', function(d) {
-		log ("Socket received ", d);
-		try { d = JSON.parse(d); }
+		try { d = JSON.parse(d); log ("Socket received ", d); }
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 		
 		switch(d.type) {
@@ -31,6 +30,7 @@ sock.on('connection', function (socket) {
 			case 'message': message(d.data, conn); break;
 			case 'messages': messages(d.data, conn); break;
 			case 'room': room(d.data, conn); break;
+			case 'rooms': rooms(d.data, conn); break;
 		}
 	});
 	
@@ -47,14 +47,14 @@ exports.init = function (server) {
 
 function init(data, conn) {
 	var user, sid = data.sid;
-	if(!sid) sid = guid();
-	conn.sid = sid; conn.rooms = [];
 	session.get(sid, function(err, sess) {
-		console.log("RECEIVED SESSION", sess);
+		console.log("RETRIEVED SESSION", sess);
+		conn.sid = sid;
+		conn.rooms = [];
 		conn.session = sess;
 		conn.save = function() { session.set(conn.sid, conn.session); };
 		conn.send('init', {
-			sid: sid, user: sess.user,
+			sid: sess.cookie.value, user: sess.user,
 			clientTime: data.clientTime,
 			serverTime: new Date().getTime()
 		});
@@ -62,6 +62,7 @@ function init(data, conn) {
 }
 
 function close(conn) {
+	console.log("Closed a connection of ", conn.sid);
 	if(!conn.sid) return;
 	var user = conn.session.user;
 	
@@ -78,9 +79,12 @@ function close(conn) {
 }
 
 function messages (query, conn) {
-	log("Received GET via socket: ", query.to);
-	core.messages(query, function(m) {
-		log("Response length ", m.length);
+	core.messages(query, function(err, m) {
+		if(err) {
+			log("MESSAGES error", query, err);
+			conn.send('error', err.message);
+			return;
+		}
 		conn.send('messages', { query: query, messages: m} );
 	});
 }
@@ -93,8 +97,6 @@ function message (m, conn) {
 	m.time = new Date().getTime();
 	m.origin = "web://" + conn.socket.remoteAddress;
 	m.to = m.to || Object.keys(user.rooms);
-	
-	console.log("Rooms I'm in: ", Object.keys(user.rooms));
 	
 	if (m.type == 'back') {
 		if(rConns[m.to]) rConns[m.to].push(conn);
@@ -123,24 +125,49 @@ function message (m, conn) {
 		conn.save();
 	}
 	
-	log("Received message via socket: ", m);
-	
-	core.message(m, function (err) {
-		if (err) conn.send('error', err);
+	core.message(m, function (err, m) {
+		var i;
+		if (err) return conn.send('error', err.message);
+		if(m.type == 'nick') {
+			if(m.user) {
+				for(i in m.user) if(m.user.hasOwnProperty(i)) {
+					conn.user[i] = m.user[i];
+				}
+			} else {
+				conn.user.id = m.ref;
+			}
+			conn.save();
+		}
 	});
 }
 
 function room (r, conn) {
+	var user;
+	
 	if(!conn.sid) return;
-	var user = conn.session.user;
-	if(typeof r === 'object') r.owner = user.id;
-	core.room(r);
+	if(typeof r === 'object') {
+		user = conn.session.user;
+		r.owner = user.id;
+	}
+	core.room(r, function(err, data) {
+	});
+}
+
+function rooms(query, conn) {
+	core.rooms(query, function(err, data) {
+		if(err) {
+			log("ROOMS ERROR", query, err);
+			conn.send('error', err.message);
+			return;
+		}
+		conn.send('rooms', data);
+	});
 }
 
 exports.send = function (message, rooms) {
 	message.text = message.text || "";
+	log("Socket sending", message, "to", rooms);
 	rooms.map(function(room) {
-		log("Socket sending", message, "to", room);
 		if(rConns[room]) rConns[room].map(function(conn) {
 			conn.send('message', message);
 		});

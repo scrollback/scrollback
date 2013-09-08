@@ -2,11 +2,13 @@
 
 var express = require("express"),
 	store = new express.session.MemoryStore(),
+	signature = require("express/node_modules/cookie-signature"),
 	cookie = require("cookie"),
 	guid = require("../../lib/guid.js"),
 	names = require("../../lib/names.js"),
 	_get = store.get,
-	key = "scrollback_sessid";
+	key = "scrollback_sessid",
+	secret = "ertyuidfghjcrtyujwsvokmdf";
 	
 function initUser() {
 	return {
@@ -28,7 +30,7 @@ exports.set = function(sid, sess, cb) {
 };
 
 var exparse = express.session({
-	secret: "ertyuidfghjcrtyujwsvokmdf",
+	secret: secret,
 	key: key,
 	store: store
 });
@@ -37,7 +39,10 @@ exports.store = store;
 
 var parse = exports.parser = function(req, res, next) {
 	exparse(req, res, function() {
-		if(!req.session.user) req.session.user = initUser();
+		if(!req.session.user) {
+			req.session.user = initUser();
+			req.session.cookie.value = 's:' + signature.sign(req.sessionID, secret);
+			store.set(req.sessionID, req.session);		}
 		next();
 	});
 };
@@ -45,7 +50,7 @@ var parse = exports.parser = function(req, res, next) {
 function unsign(sid, cb) {
 	var noop = function(){},
 		fakeReq = {cookies: {}, signedCookies: {}, originalUrl: '/', on: noop, removeListener: noop},
-		fakeRes = {on: noop};
+		fakeRes = { on: noop };
 	fakeReq.cookies[key] = sid;
 	
 	parse(fakeReq, fakeRes, function() {

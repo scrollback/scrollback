@@ -8,7 +8,7 @@ module.exports = function(options, callback) {
 		var query = "SELECT * FROM `messages` ",
 			where = [], params=[], desc=false, limit=256, until, since;
 		
-		if(err) throw err;
+		if(err) return callback(err);
 		
 		until=options.until;
 		since=options.since;
@@ -55,9 +55,8 @@ module.exports = function(options, callback) {
 		log(query, params);
 		db.query(query, params, function(err, data) {
 			var start, end;
-			if(err) {
-				console.log(err); return;
-			}
+			if(err) return callback(err);
+			
 			start  = since || data.length && data[0].time || 0;
 			end = until || data.length && data[data.length-1].time || 0;
 	
@@ -78,8 +77,8 @@ module.exports = function(options, callback) {
 			}
 			
 			log("Query results: " + data.length);
-			callback(data);
 			db.end(); // I'm done with this db connection. This is important!
+			return callback(null, data);
 		});
 	});
 };

@@ -6,12 +6,11 @@ block append styles
 block content
 	div.box.span12
 		button#loginbtn.box.span3 Sign in
-		.box.span12
-			p.captionBefore Don’t log in, but change my nick to:
-			form#guestfrm.container
-				input#guestnick.box.span3 (type="text", placeholder="Nickname to use")
-				button.box.span3(type=submit) Change nick
-			p.captionAfter If you don’t log in, someone else might steal your nick when you’re not around.
+		p.captionBefore Don’t log in, but change my nick to:
+		form#guestfrm.container
+			input#guestnick.box.span3 (type="text", placeholder="Nickname to use")
+			button.box.span3(type=submit) Change nick
+		p.captionAfter If you don’t log in, someone else might steal your nick when you’re not around.
 					
 block append scripts
 	script(src="http://code.jquery.com/jquery.min.js")

@@ -6,24 +6,26 @@ var pool = require('../data.js'),
 var log = require("../../lib/logger.js");
 var gateways = require("../gateways.js");
 
-module.exports = function(message, cb) {
+module.exports = function(message, callback) {
 	pool.get(function(err, db) {
-		if (err) throw err;
+		if (err) return callback(err);
 		if (!message.id) message.id = guid();
 		if (!message.time) message.time = new Date().getTime();
 		
 		if(typeof message.to === 'string') message.to = [message.to];
 		
+		
+		// TODO: Rewrite this to use a single INSERT query.
 		message.to.forEach(function(to) {
 			db.query("INSERT INTO `messages` SET `id`=?, `from`=?, `to`=?, `type`=?, `text`=?, "+
 				"`origin`=?, `time`=?, `ref`=?", [message.id, message.from, message.to, message.type, 
 				message.text, message.origin, message.time, message.ref]);
 		});
-		db.query("SELECT * FROM `accounts` WHERE `room` IN ?", [message.to], function(err, data) {
+		db.query("SELECT * FROM `accounts` WHERE `room` IN (?)", [message.to], function(err, data) {
 			var i, l, name, list = {};
-			if(err) { console.log("Can't get list of accounts", err); return; }
+			if(err) return callback(err);
 			for(i=0, l=data.length; i<l; i+=1) {
-				name = data[i].id.split(':')[0];
+				name = data[i].gateway;
 				if(!list[name]) list[name] = [];
 				list[name].push(data[i].id);
 			}
@@ -32,8 +34,8 @@ module.exports = function(message, cb) {
 					gateways[name].send(message, list[name]);
 			}
 			db.end();
+			return callback? callback(null, message): null;
 		});
-		console.log(message);
 		gateways.http.send(message, [message.to]);
 	});
 };

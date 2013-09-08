@@ -2,8 +2,27 @@ extends layout
 block append styles
 	link(rel="stylesheet", href="/css/profile.css")
 
-block append scripts
+block userinfo
+	| #{user.id}
 
+block content
+	div.box.span12
+		form#profile
+			div#pictureFrame(title="Click to change")
+				img#picture
+			br
+			label
+				span.label Username:
+				input#username
+				div.center.inVisible#notification
+					p Nick not available
+			br
+			br
+			button.major#submit(type="button",onclick="update()") Create account
+			button.major#logoutBtn(type="button",onclick="logout()") Logout
+
+
+block append scripts
 	script(type='text/javascript')
 		window.scrollback = {host: 'http://' + location.host};
 	script(src="/socket.io/socket.io.js")
@@ -12,24 +31,3 @@ block append scripts
 	script(src="/sdk/client.js")
 	script(src="/sdk/profile.js")
 	
-
-	div#loading
-		h1 Please Wait
-		
-	div#logged(class="hidden")
-		form#profile
-			center
-				div#pictureFrame(title="Click to change")
-					img#picture
-				br
-				label
-					span.label Username:
-					input#username
-					div.center.inVisible#notification
-						p Nick not available
-				br
-				br
-				button.major#submit(type="button",onclick="update()") Create account
-				button.major#logoutBtn(type="button",onclick="logout()") Logout
-	div#error(class="hidden")
-		h1	error

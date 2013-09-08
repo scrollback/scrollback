@@ -22,9 +22,8 @@ core.on('connected', function() {
 	});
 	
 	scrollback.streams.forEach(function(room) {
-		streams[room].notify("And... we're back.");
+		if(streams[room]) streams[room].notify("And... we're back.");
 	});
-	
 });
 
 
@@ -50,14 +49,17 @@ function init() {
 		themes[scrollback.theme]: themes.light
 	);
 	addEvent(window, 'resize', Stream.position);
+	scrollback.streams.forEach(function(id) {
+		var stream = Stream.get(id);
+		if (!stream.initialized) {
+			if(scrollback.minimized === false) stream.show();
+			else stream.hide();
+		}
+	});
 }
 
 core.on('enter', function(id) {
-	var stream = Stream.get(id);
-	if (!stream.initialized) {
-		if(scrollback.minimized === false) stream.show();
-		else stream.hide();
-	}
+	// nothing any more.
 });
 
 core.on('leave', function(id) {
@@ -69,7 +71,6 @@ core.on('nick', function(n) {
 	var nick=(n.indexOf("guest-")===0)?(n.replace("guest-","")):n;
 	
 	for(i in streams) if(streams.hasOwnProperty(i)) {
-
 		stream = streams[i];
 		stream.nick.innerHTML= nick;
 		
@@ -97,23 +98,25 @@ function Stream(id) {
 				self.log = el;
 				addEvent(el, 'scroll', function() { self.scroll(); });
 				break;
-			case hasClass(el, 'scrollback-nick-guest'):
+			case hasClass(el, 'scrollback-nick-guest') || hasClass(el, 'scrollback-nick'):
 				self.nick = el;
 				if (core.nick().indexOf("guest-") !== 0) {
 					removeClass(el, 'scrollback-nick-guest');
 					addClass(el, 'scrollback-nick');
+					el.innerHTML = core.nick();
+				} else {
+					el.innerHTML = core.nick().substr(6);
 				}
 				
 				addEvent(el, 'click', function() {
 					if (core.nick().indexOf("guest-") === 0) {
-						self.login();
+						login();
 					}
 					else {
-						self.profile();	
+						profile();	
 					}
 				});
 				
-				el.innerHTML= core.nick();
 				break;
 			case hasClass(el, 'scrollback-text'):
 				self.text = el;
@@ -158,7 +161,7 @@ function Stream(id) {
 				break;
 			case hasClass(el, 'scrollback-icon-login'):
 				addEvent(el, 'click', function(e) {
-					self.login();
+					login();
 					if(e.preventDefault) e.preventDefault();
 					if(e.stopPropagation) e.stopPropagation();
 					return false;
@@ -196,14 +199,25 @@ Stream.prototype.hide = function() {
 	this.hidden = true;
 };
 
-Stream.prototype.login = function () {
+function login () {
 	dialog.show("/dlg/login#" + core.nick(), function(data) {
 		console.log("Got assertion", data);
 		if(!data) return;
 		if(data.assertion) core.nick({ browserid: data.assertion });
 		else if(data.guestname) core.nick('guest-' + data.guestname);
 	});
-};
+}
+
+core.on('error', function(err) {
+	if(err === 'ERR_UNREGISTERED') profile();
+});
+
+function profile() {
+	dialog.show("/dlg/profile", function(data) {
+		console.log("Got profile", data);
+		core.room(data);
+	});
+}
 
 Stream.prototype.show = function() {
 	var self = this;

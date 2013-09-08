@@ -29,13 +29,8 @@ socket.emit = function(type, data) {
 socket.onopen = function() {
 	console.log("Cookie", document.cookie);
 	var sid = document.cookie.match(/scrollback_sessid=(\w*)(\;|$)/);
-	sid = sid? sid[1]: null;
-	if(scrollback.streams &&  scrollback.streams.length) {
-		scrollback.streams.forEach(function(id) {
-			if(!id) return;
-			core.enter(id);
-		});
-	}
+	sid = sid? decodeURIComponent(sid[1]): null;
+	
 	function init(sid) {
 		socket.emit('init', { sid: sid, clientTime: new Date().getTime() });
 	}
@@ -47,8 +42,8 @@ socket.onopen = function() {
 };
 
 socket.onerror = function(message) {
+	// These are socket-level errors
 	console.log(message);
-	core.emit('error', message);
 };
 
 socket.onclose = function() {
@@ -69,20 +64,28 @@ socket.onmessage = function(evt) {
 		case 'init': onInit(d.data); break;
 		case 'message': onMessage(d.data); break;
 		case 'messages': onMessages(d.data); break;
+		case 'error': onError(d.data); break;
 	}
 };
 
 function onInit (data) {
-	document.cookie = "scrollback_sessid="+data.sid;
-	nick = data.user.id; core.emit('nick', nick);
+	document.cookie = "scrollback_sessid="+encodeURIComponent(data.sid);
+	nick = data.user.id;
+	core.emit('connected');
+	core.emit('nick', nick);
 	timeAdjustment = data.serverTime - data.clientTime;
 	console.log(data);
-	console.log("Time adjustment is now " + timeAdjustment);
-	core.emit('connected');
+	
+	if(scrollback.streams &&  scrollback.streams.length) {
+		scrollback.streams.forEach(function(id) {
+			if(!id) return;
+			core.enter(id);
+		});
+	}
+
 }
 
 core.time = function() {
-	console.log("Time adjustment is now " + timeAdjustment);
 	return (new Date()).getTime() + timeAdjustment;
 };
 
@@ -221,6 +224,10 @@ core.update=function(type,params){
 		params:params
 	});
 };
+
+function onError(err) {
+	core.emit('error', err);
+}
 
 /* TODO: implement them someday
 

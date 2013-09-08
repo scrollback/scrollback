@@ -10,7 +10,7 @@ exports.init = function(app) {
             res.render("login");
         },
         "profile" : function(req, res){
-            res.render("profile");
+            res.render("profile", {user: req.session.user});
         },
 		"cookie": function(req, res) {
 			res.end(req.query.callback+"('"+req.cookies["scrollback_sessid"]+"')");
@@ -56,14 +56,14 @@ exports.init = function(app) {
         });
     });
     
-    app.get("*",function(req,res){
-        var params=req.path.substring(1).split("/"),responseObj={},query={},sqlQuery;
+    app.get("*", function(req, res){
+        var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery;
         
         query.to=params[0];
         query.type="text";
         query.limit=20;
         
-        
+        if(req.path.indexOf('.') !== -1) return;
         
         //sqlQuery="select min(m.time) min,max(m.time) max from messages m where `to`=? and `type`='text' order by `time` ";
         //db.query(sqlQuery,[query.to],function(err,data){
@@ -81,7 +81,10 @@ exports.init = function(app) {
             
             console.log(query);
             
-            core.messages(query, function(m){
+            core.messages(query, function(err, m){
+				
+				if(err)
+				
                 responseObj.query=query;
                 responseObj.data=m;
                 
