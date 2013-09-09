@@ -97,6 +97,10 @@ function connect(server, nick, uid, callback) {
 			}
 		});
 		
+		client.addListener('action',function(from, channel, text){
+			message('text', from, room(channel), "/me "+text, channel);
+		});
+		
 		client.addListener('kill', function(from, reason, channels) {
 			var i, l;
 			for(i=0, l=channels.length; i<l; i++) {
