@@ -19,7 +19,7 @@
 		"irc": "x",
 		"express": "3.0.x",
 		"node-stringprep": "0.1.x",
-		"node-xmpp": "0.3.x",
+//		"node-xmpp": "0.3.x",
 		"socket.io": "0.9.x",
 		"mysql": "2.x",
 		"jade": "0.x",
