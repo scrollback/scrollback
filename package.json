@@ -22,7 +22,6 @@
 	"dependencies": {
 		"irc": "x",
 		"express": "3.0.x",
-		"node-stringprep": "0.1.x",
 		"sockjs": "0.3.x",
 		"mysql": "2.x",
 		"jade": "0.x",

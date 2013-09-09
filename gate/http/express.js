@@ -22,15 +22,17 @@ exports.init = function() {
 	
 	srv = http.createServer(app);
 	srv.listen(config.http.port);
-	
-	srvs = https.createServer({
-		key: fs.readFileSync(__dirname + "/../../" + config.http.https.key),
-		cert: fs.readFileSync(__dirname + "/../../" + config.http.https.cert)
-	}, app);
-	srvs.listen(config.http.https.port);
-	
 	app.http = srv;
-	app.https = srvs;
+	
+	if (config.http.https) {
+		srvs = https.createServer({
+			key: fs.readFileSync(__dirname + "/../../" + config.http.https.key),
+			cert: fs.readFileSync(__dirname + "/../../" + config.http.https.cert)
+		}, app);
+		srvs.listen(config.http.https.port);
+		app.https = srvs;
+	}
+	
 	return app;
 }
 
