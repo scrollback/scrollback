@@ -4,4 +4,4 @@ Beautiful text chat for your community and website.
 
 Run this command in terminal:
 
-    wget -O - https://bit.ly/15Luvjy | /bin/sh
+    wget -O scrollback-ubuntu.sh https://bit.ly/15Luvjy; /bin/sh scrollback-ubuntu.sh
