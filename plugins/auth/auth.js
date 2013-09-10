@@ -15,7 +15,7 @@ module.exports = function(core) {
 				}else{
 					return core.room(message.user,function(err,room) {
 						if (callback) {
-							callback(err,room);	
+							callback(err,message);	
 						}
 						return;
 					});	

@@ -91,6 +91,7 @@ function messages (query, conn) {
 
 function message (m, conn) {
 	if(!conn.sid) return;
+	console.log("user",conn.user);
 	var user = conn.session.user;
 	
 	m.from = user.id;
@@ -125,22 +126,28 @@ function message (m, conn) {
 		conn.save();
 	} else if(m.type == 'nick' && m.user) {
 		m.user.originalId = user.id;
+		console.log("accounts",m.user.accounts,conn);
 		m.user.accounts[0] = user.accounts[0];
 	}
 	
 	core.message(m, function (err, m) {
 		var i;
-		if (err) return conn.send('error', err.message);
+		console.log(err,m);
 		if(m.type == 'nick') {
 			if(m.user) {
+				console.log(m.user);
+				if (!conn.session.user) {
+					conn.session.user={};
+				}
 				for(i in m.user) if(m.user.hasOwnProperty(i)) {
-					conn.user[i] = m.user[i];
+					conn.session.user[i] = m.user[i];
 				}
 			} else {
-				conn.user.id = m.ref;
+				conn.session.user.id = m.ref;
 			}
 			conn.save();
 		}
+		if (err) return conn.send('error', err.message,conn);
 	});
 }
 

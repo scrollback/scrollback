@@ -30,10 +30,10 @@ block append scripts
 	
 	script.
 		$(document).ready(function() {
-			$("#profilefrm").submit(e) {
+			$("#profilefrm").submit(function(e) {
 				var user = { id: $("#nickname").val(), accounts: [] };
 				window.parent.postMessage({type: "CLOSE_DIALOG", data: user }, "*");
 				e.preventDefault();
 				return false;
-			};
+			});
 		});

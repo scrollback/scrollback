@@ -14,10 +14,13 @@ module.exports = function(data, callback) {
 			function(err, room) {
 
 				if(err)  {
+					console.log(err);
 					return callback(err,data);
 				}
-				if(data.originalId!= data.id)
+				if(data.originalId!= data.id){
+					console.log("deleteing old accounts of "+data.originalId);
 					db.query("delete from `rooms` where `id`=?",[data.originalId]);
+				}
 				
 				if (data.accounts.length>0) {
 					insertAccounts(data,function(err,data){
@@ -25,6 +28,7 @@ module.exports = function(data, callback) {
 					});	
 				}
 				else{
+					console.log("no accounts;");
 					callback(null,data);
 				}
 				db.end();
@@ -54,9 +58,12 @@ function insertAccounts(data,callback){
 	var account, accountsQuery=" INSERT INTO `accounts` VALUES ",
 		accountValues=" (?,?,?,?) ",params=[];
 	pool.get(function(err, db) {
+		
+		console.log("accounts we have",data.accounts);
 		if (data.accounts.length>0) {
 			data.accounts.forEach(function(element) {
 				var id = element, room = data.id, gateway;
+				console.log("elements");
 				gateway = element.split(":")[0];
 				
 				accountsQuery += accountValues;
@@ -66,8 +73,8 @@ function insertAccounts(data,callback){
 				params.push("");
 			});
 			
-			db.query("delete from accounts where `room`=?",data.originalId,function(err,data){
-				if (err) callback(err,data);
+			db.query("delete from accounts where `room`=?",data.originalId,function(err,res){
+				if (err) callback(err,res);
 
 				db.query(accountsQuery,params,function(err,account){
 					db.end();
