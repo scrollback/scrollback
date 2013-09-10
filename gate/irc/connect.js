@@ -52,10 +52,10 @@ function connect(server, nick, uid, callback) {
 	
 	if(callback) {
 		client.addListener('message', function(nick, channel, text) {
-
-		// if a user name not registered with askabt, connects via IRC, he is made a  guest.
-		if(!(users[client.opt.server] && users[client.opt.server][nick]))
-		nick = "guest-" + nick;
+	
+			// if a user name not registered with askabt, connects via IRC, he is made a  guest.
+			if(!(users[client.opt.server] && users[client.opt.server][nick]))
+			nick = "guest-" + nick;
 
 			log(client.nick + " hears " + nick + " say \'" +
 				text.substr(0,32) + "\' in " + channel);

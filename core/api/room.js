@@ -20,9 +20,15 @@ module.exports = function(data, callback) {
 	else {
 		pool.get(function(err, db) {
 			console.log(data);
-			db.query("select * from rooms where id=? ", [data],function(err,data){
-				db.end();
-				if (callback) callback(err,data);
+			db.query("SELECT * FROM `rooms` WHERE `id`=? ", [data], function(err, room){
+				if(err) return callback(err);
+				db.query("SELECT * FROM `accounts` WHERE `room`=?", [data], function(err, accounts) {
+					if(err) return callback(err);
+					if(!room.accounts) room.accounts = [];
+					
+					db.end();
+					if (callback) callback(err, room);
+				});
 			});
 		});
 	}

@@ -43,8 +43,10 @@ block append scripts
 				navigator.id.request();
 			});
 			
-			$("#guestfrm").submit(function() {
+			$("#guestfrm").submit(function(e) {
 				var nick = $("#guestname").val();
 				window.parent.postMessage({type: "CLOSE_DIALOG", data: { guestname: nick }}, "*");
+				e.preventDefault();
+				return false;
 			})
 		});

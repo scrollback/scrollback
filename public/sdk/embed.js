@@ -209,7 +209,7 @@ function login () {
 }
 
 core.on('error', function(err) {
-	if(err === 'ERR_UNREGISTERED') profile();
+	if(err === 'AUTH_UNREGISTERED') profile();
 });
 
 function profile() {

@@ -56,9 +56,6 @@ function init() {
 }
 
 function send(message, accounts) {
-	
-	
-	
 	//console.log("trying to send in irc:",message);
 	clients[message.from] = clients[message.from] || {};
 	accounts.map(function(account) {
