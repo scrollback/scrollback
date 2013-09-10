@@ -1,33 +1,39 @@
 extends layout
 block append styles
-	link(rel="stylesheet", href="/css/profile.css")
+	style.
+		#picture { position: relative; }
+		#picture img { position: absolute; left: 0; top: 0; max-width: 40px; max-height: 40px; }
 
 block userinfo
-	| #{user.id}
+	a(href='#') #{user.id.replace(/^guest-/, '')}
 
 block content
 	div.box.span12
-		form#profile
-			div#pictureFrame(title="Click to change")
-				img#picture
-			br
-			label
-				span.label Username:
-				input#username
-				div.center.inVisible#notification
-					p Nick not available
-			br
-			br
-			button.major#submit(type="button",onclick="update()") Create account
-			button.major#logoutBtn(type="button",onclick="logout()") Logout
-
+		form#profilefrm.clearfix.container
+			// .field.box.span3.gapr
+				label.before(for='picture') Avatar
+				button#picture
+					img(src='/img/icon/user.png')
+					| Change
+			.field.box.span3
+				label.before(for='nickname') Nickname
+				input#nickname
+				
+			p.break.before Connected accounts
+			each account in user.accounts
+				input.break.box.span6(disabled=true, value='#{account}')
+			p.box.break.right.span6
+				button.primary.span3(type='submit') Save changes
 
 block append scripts
-	script(type='text/javascript')
-		window.scrollback = {host: 'http://' + location.host};
-	script(src="/socket.io/socket.io.js")
-	script(src="/sdk/emitter.js")
-	script(src="/sdk/polyfill.js")
-	script(src="/sdk/client.js")
-	script(src="/sdk/profile.js")
+	script(src="http://code.jquery.com/jquery.min.js")
 	
+	script.
+		$(document).ready(function() {
+			$("#profilefrm").submit(e) {
+				var user = { id: $("#nickname").val(), accounts: [] };
+				window.parent.postMessage({type: "CLOSE_DIALOG", data: user }, "*");
+				e.preventDefault();
+				return false;
+			};
+		});

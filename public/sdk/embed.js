@@ -213,9 +213,10 @@ core.on('error', function(err) {
 });
 
 function profile() {
-	dialog.show("/dlg/profile", function(data) {
-		console.log("Got profile", data);
-		core.room(data);
+	dialog.show("/dlg/profile", function(user) {
+		if(!user) return;
+		console.log("Got profile", user);
+		core.nick({ user: user });
 	});
 }
 

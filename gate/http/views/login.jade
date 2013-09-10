@@ -1,42 +1,40 @@
 extends layout
 block append styles
 	style.
-		login
+		#loginbtn { border-bottom: none; border-left: 32px solid #3ca; position: relative; }
+		#loginbtn:before {
+			content: ' '; border-style: solid; color: white;
+			border-color: transparent transparent transparent #3ca;
+			border-width: 20px 0 20px 20px;
+			display: block; height: 0px;
+			position: absolute; left: 0; top: 0;
+		}
 
 block content
 	div.box.span12
-		button#loginbtn.box.span3 Sign in
-		p.captionBefore Don’t log in, but change my nick to:
-		form#guestfrm.container
-			input#guestnick.box.span3 (type="text", placeholder="Nickname to use")
+		p.before Scrollback uses Mozilla Persona sign-in.
+		button#loginbtn.primary.box.span6 Sign in
+		p.break.before Don’t log in, but change my nick to:
+		form#guestfrm.clearfix
+			input#guestnick.box.span3
 			button.box.span3(type=submit) Change nick
-		p.captionAfter If you don’t log in, someone else might steal your nick when you’re not around.
-					
+		p.break.after If you don’t log in, someone else might steal your nick when you’re not around.
+		
 block append scripts
 	script(src="http://code.jquery.com/jquery.min.js")
-	script(src="http://cdn.sockjs.org/sockjs-0.3.min.js")
 	script(src="https://login.persona.org/include.js")
 	
 	script.
-		window.scrollback = {host: 'http://' + location.host};
-	script(src="/sdk/emitter.js")
-	script(src="/sdk/request.js")
-	script(src="/sdk/client.js")
-	script(src="/sdk/addEvent.js")
-	script(src="/sdk/polyfill.js")
-	script(src="/sdk/login.js")
-	
-	script.
+		navigator.id.watch({
+			onlogin: function(assertion) {
+				window.parent.postMessage({type: "CLOSE_DIALOG", data: {assertion: assertion} }, "*");
+			},
+			onlogout: function() {
+				console.log("onLogout called");
+			}
+		});
+		
 		$(document).ready(function() {
-			navigator.id.watch({
-				onlogin: function(assertion) {
-					window.parent.postMessage({type: "CLOSE_DIALOG", data: {assertion: assertion} }, "*");
-				},
-				onlogout: function() {
-					scrollback.send('nick', '', '', { ref: 'guest-' + scrollback.nick() });
-				}
-			});
-			
 			$("#guestnick").val(location.hash.substr(1));
 			
 			$("#loginbtn").click(function () {

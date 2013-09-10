@@ -6,7 +6,6 @@ html
 			block title
 		meta(name="description",content="Scrollback: beautiful text chat for open communities, embeddable on any website.")
 		meta(name="viewport",content="width=device-width")
-		link(href='http://fonts.googleapis.com/css?family=Open+Sans:300,700', rel='stylesheet',type='text/css')
 		link(rel="stylesheet",href="/style.css")
 		block styles
 		meta(http-equiv="X-UA-Compatible",content="IE=Edge")
@@ -14,10 +13,13 @@ html
 		nav
 			.container.clearfix
 				.box.logo-box.span1: .logo Scrollback
-				.box.span5
+				.box.span4.right
 					block userinfo
 		.container.clearfix
 			block content
+				This page is empty.
+		footer
+			.container.clearfix
+				block footer
+					span Scrollback
 		block scripts
-		block footer
-			#footer
