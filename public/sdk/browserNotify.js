@@ -25,16 +25,19 @@ var browserNotify = (function() {
 			hasFocus = false;
 		});
 		hasFocus = document.hasFocus();
-		console.log("hasFocus",hasFocus);
 	});
 	
 	return function(text) {
 		if(hasFocus) return;
+		if (!originalTitle) originalTitle = document.title;
+		
 		document.title = text;
-		play(); played = true;
-		setTimeout(function() { played = false; }, 60000);
+		if (!played) {
+			play(); played = true;
+			setTimeout(function() { played = false; }, 60000);
+		}
 	}
-}())
+}());
 
 
 

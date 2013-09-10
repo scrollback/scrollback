@@ -89,12 +89,19 @@ function send(message, accounts) {
 						if (!users[u.host]) users[u.host] = {};
 						users[u.host][client.nick] = true;
 					});
+					
 				}
 				if (!client.chans[channel]) {
 					client.join(channel);
 					client.rooms[channel.toLowerCase()] = message.to;
 				}
-				client.say(channel, message.text);
+				//check for "/me "
+				if (message.text.indexOf("/me ")==0) {
+					client.action(channel,message.text.substring(4));
+				}
+				else{
+					client.say(channel, message.text);
+				}
 				break;
 			case 'away':
 				if (!client) return;
