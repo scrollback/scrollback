@@ -10,6 +10,7 @@ exports.init = function(app) {
             res.render("login");
         },
         "profile" : function(req, res){
+			req.session.user.accounts = ["hello", "there"];
             res.render("profile", {user: req.session.user});
         },
 		"cookie": function(req, res) {

@@ -123,6 +123,9 @@ function message (m, conn) {
 		if(user.rooms[m.to]) return; // already away'd.
 		
 		conn.save();
+	} else if(m.type == 'nick' && m.user) {
+		m.user.originalId = user.id;
+		m.user.accounts[0] = user.accounts[0];
 	}
 	
 	core.message(m, function (err, m) {
@@ -163,6 +166,8 @@ function rooms(query, conn) {
 		conn.send('rooms', data);
 	});
 }
+
+// ----- Outgoing send ----
 
 exports.send = function (message, rooms) {
 	message.text = message.text || "";

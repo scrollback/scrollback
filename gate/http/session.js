@@ -14,6 +14,7 @@ function initUser() {
 	return {
 		id: 'guest-sb-' + names(6),
 		picture: '/img/guest.png',
+		accounts: [],
 		rooms: {}
 	};
 }
