@@ -203,39 +203,19 @@ function login () {
 	dialog.show("/dlg/login#" + core.nick(), function(data) {
 		console.log("Got assertion", data);
 		if(!data) return;
-		if(data.assertion) core.nick({ browserid: data.assertion });
-		else if(data.guestname) core.nick('guest-' + data.guestname);
+		if(data.assertion) core.nick({ browserid: data.assertion }, resp);
+		else if(data.guestname) core.nick('guest-' + data.guestname, resp);
 		
-		/*
-		 *
-		 *	function handleErrorResponse(err) {
-		 *		if(err === 'AUTH_UNREGISTERED')
-		 *			profile();
-		 *			removeHandlers();
-		 *	}
-		 *
-		 *	oldnick = core.nickl
-		 *
-		 *	function handleNickResponse(message) {
-		 *		if(m.type == 'nick' && m.from == oldnick) {
-		 *			dialog.hide();
-		 *			removeHandlers();
-		 *		}
-		 *	}
-		 *
-		 *	function removeHandlers () {
-			*	core.off('message', handleNickResponse);
-			*	core.off('error', handleErrorResponse)
-		 *	}
-		 *
-		 *	setTimeout(removeHandlers, 10000);
-		 *	
-			core.on('error', handleErrorResponse);
-			core.on('message', handleNickResponse);
-			
-			
-		 }
-		*/
+		function resp(thing) {
+			if(thing.message) {
+				// this is an error;
+				if(thing.message == "AUTH_UNREGISTERED")
+					profile();
+			} else {
+				// this is a message;
+				dialog.close();
+			}
+		}
 	});
 }
 
@@ -244,13 +224,6 @@ function profile() {
 		if(!user) return;
 		console.log("Got profile", user);
 		core.nick({ user: user });
-		
-		/*
-		 *  
-		 *
-		 *
-		 */
-		
 		
 		dialog.hide();
 	});

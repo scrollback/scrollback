@@ -19,7 +19,8 @@ var socket = new SockJS(scrollback.host + '/socket'),
 	timeAdjustment = 0,
 	rooms = {}, requests = {}, lastPos,
 	core = Object.create(emitter),
-	nick = "", user;
+	nick = "", user,
+	pendingCallbacks = {};
 
 socket.emit = function(type, data) {
 	console.log("Socket sending ", type, data);
@@ -42,7 +43,7 @@ socket.onopen = function() {
 };
 
 socket.onerror = function(message) {
-	// These are socket-level errors
+	// These are socket-level errors, not to be confused with onError with capital E.
 	console.log(message);
 };
 
@@ -102,7 +103,7 @@ core.leave = function (id) {
 	core.emit('leave', id);
 };
 
-function send(type, to, text, options) {
+function send(type, to, text, options, callback) {
 	var m = { id: guid(), type: type, from: nick, to: to, text: text || '', time: core.time() }, i;
 	
 	if(options) for(i in options) if(options.hasOwnProperty(i)) {
@@ -112,10 +113,19 @@ function send(type, to, text, options) {
 	if (m.type != 'result-start' && m.type != 'result-end' && socket.readyState == 1) {
 		socket.emit('message', m);
 	}
+	
 	if(typeof messageArray !=="undefined" && rooms[to]) {
 		rooms[to].messages.push(m);
 		if(requests[to + '//']) requests[to + '//'](true);
 	}
+	
+	if(callback) {
+		pendingCallbacks[m.id] = callback;
+		setTimeout(function() {
+			if(pendingCallbacks[m.id]) delete pendingCallbacks[m.id];
+		}, 10000);
+	}
+	
 	return m;
 }
 
@@ -165,6 +175,11 @@ function onMessage (m) {
 			return;
 	}
 	
+	if(pendingCallbacks[m.id]) {
+		pendingCallbacks[m.id](m);
+		delete pendingCallbacks[m.id];
+	}
+	
 	messages = rooms[m.to] && rooms[m.to].messages;
 	if (!messages) return;
 	for (i = messages.length - 1; i >= 0 && m.time - messages[i].time < 10000; i-- ) {
@@ -181,24 +196,24 @@ function onMessage (m) {
 	if(requests[m.to + '//']) requests[m.to + '//'](true);
 }
 
-core.say = function (to, text) {
-	send('text', to, text);
+core.say = function (to, text, callback) {
+	send('text', to, text, callback);
 };
 
-core.nick = function(n) {
+core.nick = function(n, callback) {
 	if (!n) return nick;
 	if(typeof n === 'string') n = {ref: n};
-	send('nick', '', '', n);
+	send('nick', '', '', n, callback);
 	return n;
 };
 
 core.watch = function(room, time, before, after, callback) {
 
 	function missing(start, end) {
-		core.get(room, start, end, send);
+		core.get(room, start, end, deliverMessages);
 		return { type: 'missing', text: 'Loading messages...', time: start };
 	}
-	function send(isResponse) {
+	function deliverMessages(isResponse) {
 		var r = rooms[room].messages.extract(
 			time, before || 32,
 			after || 0, isResponse? null: missing
@@ -208,9 +223,9 @@ core.watch = function(room, time, before, after, callback) {
 	}
 	
 	if (!time) {
-		requests[room + '//'] = send;
+		requests[room + '//'] = deliverMessages;
 	}
-	send(false);
+	deliverMessages(false);
 };
 
 core.unwatch = function(room) {
@@ -226,7 +241,14 @@ core.update=function(type,params){
 };
 
 function onError(err) {
-	core.emit('error', err);
+	// these are exceptions returned from the server; not to be confused with onerror with small 'e'.
+	
+	if(err.id && pendingCallbacks[err.id]) {
+		pendingCallbacks[err.id](err);
+		delete pendingCallbacks[err.id];
+	}
+	
+	core.emit('error', err.message);
 }
 
 /* TODO: implement them someday
