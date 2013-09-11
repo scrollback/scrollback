@@ -9,9 +9,15 @@ block append styles
 			display: block; height: 0px;
 			position: absolute; left: 0; top: 0;
 		}
+		#loginForm{
+			display: none;
+			overflow: hidden;
+		}
 
 block content
-	div.box.span12
+	div#loading.box.span12
+		p Please wait, loading persona.
+	div#loginForm.box.span12
 		p.before Scrollback uses Mozilla Persona sign-in.
 		button#loginbtn.primary.box.span6 Sign in
 		p.break.before Don’t log in, but change my nick to:
@@ -31,6 +37,8 @@ block append scripts
 			},
 			onlogout: function() {
 				console.log("onLogout called");
+				$("#loading").hide();
+				$("#loginForm").show();
 			}
 		});
 		

@@ -52,6 +52,7 @@ module.exports = function(core) {
 					return callback(new Error("AUTH_UNREGISTERED"));
 				}
 				message.user = data[0];
+				message.user.accounts=[accountId];
 				message.ref = data[0].id;
 				return callback();
 			});
