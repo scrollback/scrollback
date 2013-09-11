@@ -26,6 +26,12 @@ var emitter = {
         else {
             this.handlers[event] = [callback];
         }
-    }
+    },
+	
+	off: function (event, fn) {
+		if (this.handlers.hasOwnProperty(event)) {
+            this.handlers.remove(fn);
+		}
+	}
 };
 

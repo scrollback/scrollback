@@ -205,20 +205,60 @@ function login () {
 		if(!data) return;
 		if(data.assertion) core.nick({ browserid: data.assertion });
 		else if(data.guestname) core.nick('guest-' + data.guestname);
+		
+		/*
+		 *
+		 *	function handleErrorResponse(err) {
+		 *		if(err === 'AUTH_UNREGISTERED')
+		 *			profile();
+		 *			removeHandlers();
+		 *	}
+		 *
+		 *	oldnick = core.nickl
+		 *
+		 *	function handleNickResponse(message) {
+		 *		if(m.type == 'nick' && m.from == oldnick) {
+		 *			dialog.hide();
+		 *			removeHandlers();
+		 *		}
+		 *	}
+		 *
+		 *	function removeHandlers () {
+			*	core.off('message', handleNickResponse);
+			*	core.off('error', handleErrorResponse)
+		 *	}
+		 *
+		 *	setTimeout(removeHandlers, 10000);
+		 *	
+			core.on('error', handleErrorResponse);
+			core.on('message', handleNickResponse);
+			
+			
+		 }
+		*/
 	});
 }
-
-core.on('error', function(err) {
-	if(err === 'AUTH_UNREGISTERED') profile();
-});
 
 function profile() {
 	dialog.show("/dlg/profile", function(user) {
 		if(!user) return;
 		console.log("Got profile", user);
 		core.nick({ user: user });
+		
+		/*
+		 *  
+		 *
+		 *
+		 */
+		
+		
+		dialog.hide();
 	});
 }
+
+core.on('error', function(err) {
+	if(err === 'AUTH_UNREGISTERED') profile();
+});
 
 Stream.prototype.show = function() {
 	var self = this;

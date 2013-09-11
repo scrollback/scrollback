@@ -33,7 +33,7 @@ block append scripts
 		$(document).ready(function() {
 			$("#profilefrm").submit(function(e) {
 				var user = { id: $("#nickname").val(), accounts: [] };
-				window.parent.postMessage({type: "CLOSE_DIALOG", data: user }, "*");
+				window.parent.postMessage(user, "*");
 				e.preventDefault();
 				return false;
 			});
