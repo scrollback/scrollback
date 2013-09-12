@@ -58,12 +58,10 @@ function insertAccounts(data,callback){
 	var account, accountsQuery=" INSERT INTO `accounts` VALUES ",
 		accountValues=" (?,?,?,?) ",params=[];
 	pool.get(function(err, db) {
-		
 		console.log("accounts we have",data.accounts);
 		if (data.accounts.length>0) {
 			data.accounts.forEach(function(element) {
 				var id = element, room = data.id, gateway;
-				console.log("elements");
 				gateway = element.split(":")[0];
 				
 				accountsQuery += accountValues;

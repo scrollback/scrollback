@@ -207,13 +207,19 @@ function login () {
 		else if(data.guestname) core.nick('guest-' + data.guestname, resp);
 		
 		function resp(thing) {
+			console.log(thing.message);
 			if(thing.message) {
 				// this is an error;
 				if(thing.message == "AUTH_UNREGISTERED")
+				{
+					console.log("calling profile....");
 					profile();
+				}
+				
+				dialog.send("error",thing.message);
 			} else {
 				// this is a message;
-				dialog.close();
+				dialog.hide();
 			}
 		}
 	});
@@ -221,11 +227,17 @@ function login () {
 
 function profile() {
 	dialog.show("/dlg/profile", function(user) {
-		if(!user) return;
-		console.log("Got profile", user);
-		core.nick({ user: user });
-		
-		dialog.hide();
+		if(!user) {
+			dialog.hide();
+			return;
+		}
+		core.nick({ user: user },function(nickResponse){
+			if (nickResponse.message) {
+				dialog.send("error",nickResponse.message);
+			}else{
+				dialog.hide();	
+			}
+		});
 	});
 }
 

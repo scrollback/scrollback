@@ -1,0 +1,33 @@
+extends layout
+
+block append styles
+	style.
+		#notification {
+			position: absolute; top: 40px; left: 0; right: 0; height: 40px;
+			line-height: 40px; color: #fff; background: #3ca;
+			-moz-transition: all 0.2s ease-out;
+			-webkit-transition: all 0.2s ease-out;
+			-o-transition: all 0.2s ease-out;
+			-ms-transition: all 0.2s ease-out;
+			transition: all 0.2s ease-out;
+		}
+
+block append scripts
+	script(src="/sdk/addEvent.js")
+	script(src='//code.jquery.com/jquery.min.js')
+	script.
+		function notify(message) {
+			var nd = $("#notification");
+			if(!nd.size()) {
+				$("<div id='notification'>").text(message).appendTo(document.body);
+			}
+		}
+		
+		function show() {
+			$("#notification").hide();
+			$("#content").show();
+		}
+		
+		function hide() {
+			$("#content").hide();
+		}

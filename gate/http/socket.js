@@ -3,6 +3,7 @@
 	
 	Use node-fibers to syncify async things.
 */
+
 "use strict";
 
 var sockjs = require("sockjs"),
@@ -135,7 +136,6 @@ function message (m, conn) {
 	
 	core.message(m, function (err, m) {
 		var i;
-		console.log(err,m);
 		if(m.type == 'nick') {
 			if(m.user) {
 				console.log(m.user);
@@ -143,15 +143,23 @@ function message (m, conn) {
 					conn.session.user={};
 				}
 				for(i in m.user) if(m.user.hasOwnProperty(i)) {
-					conn.session.user[i] = m.user[i];
+					if (i!="id" && err) {
+						conn.session.user[i] = m.user[i];
+					}
+					
 				}
 			} else {
 				conn.session.user.id = m.ref;
 			}
 			conn.save();
 		}
-		err.id = m.id;
-		if (err) return conn.send('error', err);
+		
+		
+		
+		if (err){
+			return conn.send('error', {id: m.id, message: err.message});
+		}
+		
 	});
 }
 

@@ -156,6 +156,12 @@ function onMessage (m) {
 	var i, messages, updated = false;
 	console.log("Received:", m);
 	core.emit('message', m);
+	
+	if(pendingCallbacks[m.id]) {
+		pendingCallbacks[m.id](m);
+		delete pendingCallbacks[m.id];
+	}
+	
 	switch (m.type) {
 		case 'abuse_report':
 			core.emit("abuse_report",m.id);
@@ -173,11 +179,6 @@ function onMessage (m) {
 			break;
 		default:
 			return;
-	}
-	
-	if(pendingCallbacks[m.id]) {
-		pendingCallbacks[m.id](m);
-		delete pendingCallbacks[m.id];
 	}
 	
 	messages = rooms[m.to] && rooms[m.to].messages;

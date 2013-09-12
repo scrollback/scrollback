@@ -9,10 +9,13 @@ module.exports = function(core) {
 		if(message.type !== 'nick') return callback();
 		
 		if (!assertion && message.user) {
-			core.room(message.user.id,function(err,room) {
+			return core.room(message.user.id,function(err,room) {
 				if (room.length!=0 && message.user.originalId!=message.user.id) {
-					return callback(new Error("DUP_NICK/ Nick already exist."));
+					return callback(new Error("DUP_NICK"));
 				}else{
+					if (!validateNick(message.user.id)) {
+						return callback(new Error("INVALID_NICK"));
+					}
 					return core.room(message.user,function(err,room) {
 						if (callback) {
 							callback(err,message);	
@@ -59,3 +62,7 @@ module.exports = function(core) {
 		});
 	});
 };
+
+function validateNick(nick){
+	return nick.match(/^[a-z][a-z0-9\_\-\(\)]*$/i)?true:false;
+}

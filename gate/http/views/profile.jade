@@ -1,8 +1,16 @@
-extends layout
+extends dialog
 block append styles
 	style.
 		#picture { position: relative; }
 		#picture img { position: absolute; left: 0; top: 0; max-width: 40px; max-height: 40px; }
+		#nickname.error{
+			border-color: #E82206;
+			border-width: 2px;
+		}
+		#nickname:focus{
+			outline:none;
+			border-width: 2px;
+		}
 
 block userinfo
 	a(href='#') #{user.id.replace(/^guest-/, '')}
@@ -30,24 +38,51 @@ block content
 			if(user.id.match("^guest"))
 				p.box.break.right.span6
 					button.primary.span3(type='submit') Save changes
-			else
-				p.box.break.right.span6
-					button#close.primary.span3(type='button') Close
 			
 
 block append scripts
 	script(src="http://code.jquery.com/jquery.min.js")
-	
 	script.
 		$(document).ready(function() {
 			$("#profilefrm").submit(function(e) {
 				var user = { id: $("#nickname").val(), accounts: [] };
-				window.parent.postMessage(user, "*");
+				if(validateNick(user.id)) {
+					window.parent.postMessage(user, "*");
+				} else {
+					console.log("user name invalid....");
+					notify("User name is not valid");
+					$("#nickname").addClass("error");
+				}
 				e.preventDefault();
 				return false;
 			});
-			
-			$("#close").click(function(){
-				window.parent.postMessage({type: "CLOSE_DIALOG"}, "*");
-			});
 		});
+		
+		
+		addEvent(window, "message", function(event) {
+			var message;
+			console.log(event);
+			if(typeof event.data === 'string') {
+				try { message = JSON.parse(event.data); }
+				catch(e) {
+					console.log("Error parsing incoming message: ", event.data, e);
+					return;
+				}
+			} else { message = event.data; }
+			
+			if(message.type=="error") {
+				if(message.data=="DUP_NICK") {
+					notify("User name already taken");
+					$("#nickname").addClass("error");
+					$("#nickname").focus();
+				}else if(message.data=="INVALID_NAME") {
+					notify("User name is not valid");
+					$("#nickname").addClass("error");
+				}
+			}
+		});
+		
+		function validateNick(nick){
+			var x=(nick.match(/^[a-z][a-z0-9\_\-\(\)]*$/i)?true:false);
+			return x;
+		}

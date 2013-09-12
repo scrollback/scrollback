@@ -16,7 +16,7 @@ var dialog = (function () {
 				return;
 			}
 		} else { message = event.data; }
-		
+		console.log("giving the message",message);
 		callback(message);
 	});	
 	
@@ -45,7 +45,10 @@ var dialog = (function () {
 		},
 		hide: close,
 		send: function(type, data) {
-			frame.postMessage(data, scrollback.host);
+			frame.contentWindow.postMessage({
+				type:type,
+				data:data
+			}, scrollback.host);
 		}
 	};
 }());
