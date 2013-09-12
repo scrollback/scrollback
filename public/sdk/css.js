@@ -173,7 +173,7 @@ var css = {
 	},
 	".scrollback-dialog": {
 		position: "absolute", top: 0, left: 0, bottom: 0, right: 0,
-		width: "360px", height: "540px", margin: "auto", background: "#fff", 
+		width: "360px", height: "400px", margin: "auto", background: "#fff", 
 		boxShadow: "0 4px 8px 0 rgba(0,0,0,0.25)"
 	},
 	".scrollback-dialog-close": {

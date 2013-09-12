@@ -230,10 +230,19 @@ function login () {
 
 function profile() {
 	dialog.show("/dlg/profile", function(user) {
+		var nickObj;
 		if(!user) {
 			dialog.hide();
 			return;
 		}
+		
+		if (user.guestname) {
+			core.nick(user.guestname,function(err){
+				dialog.hide();	
+			});
+			return;
+		}
+		
 		core.nick({ user: user }, function(nickResponse){
 			if (nickResponse.message) {
 				dialog.send("error",nickResponse.message);

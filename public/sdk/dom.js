@@ -9,7 +9,6 @@ var dom = {
 				'class': 'scrollback-icon scrollback-icon-close'
 			}, 'close']: "",
 			["div", { 'class': 'scrollback-icon scrollback-icon-pop' }, 'on scrollback'],
-			["div", { 'class': 'scrollback-icon scrollback-icon-login' }, 'login'],
 			["div", {'class': 'scrollback-title-content'},
 				["span", {'class': 'scrollback-title-id'}],
 				["a", {href: "http://scrollback.io", "class": "scrollback-poweredby",

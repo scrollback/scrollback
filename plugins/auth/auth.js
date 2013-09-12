@@ -1,4 +1,5 @@
 var config = require("../../config.js"),
+	name = require("../../lib/names.js"),
 	request = require("request");
 
 module.exports = function(core) {
@@ -8,8 +9,13 @@ module.exports = function(core) {
 		
 		if(message.type !== 'nick') return callback();
 		
+		
+		if (message.ref == 'guest-') {
+			message.ref += "sb-"+name(6);
+			return callback();
+		}
+		
 		if (!assertion && message.user) {
-			
 			if (!validateNick(message.user.id)) {
 				message.user.id = message.user.originalId;
 				return callback(new Error("INVALID_NICK"));
@@ -29,8 +35,9 @@ module.exports = function(core) {
 					});	
 				}
 			});
-			
 		}
+		
+		
 		
 		if(!assertion) {
 			// If there is no authentication info, make sure the new nick is a guest.

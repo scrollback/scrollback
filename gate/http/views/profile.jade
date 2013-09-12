@@ -52,9 +52,13 @@ block content
 			if(user.id.match("^guest"))
 				p.box.break.right.span6
 					button.primary.span3(type='submit') Save changes
+			else
+				p.box.break.right.span6
+					button#logout.primary.span3(type='submit') logout
 			
 
 block append scripts
+	script(src="https://login.persona.org/include.js")
 	script.
 		$(document).ready(function() {
 			$("#profilefrm").submit(function(e) {
@@ -68,6 +72,10 @@ block append scripts
 				}
 				e.preventDefault();
 				return false;
+			});
+			$("#logout") && $("#logout").on("click",function(event){
+				window.parent.postMessage({ guestname: "guest-"}, "*");
+				navigator.id.logout();
 			});
 		});
 		
