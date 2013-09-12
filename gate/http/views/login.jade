@@ -9,7 +9,7 @@ block append styles
 			display: block; height: 0px;
 			position: absolute; left: 0; top: 0;
 		}
-		#content { display: none; }
+		#content { visibility: hidden; }
 
 block content
 	div#loginForm.box.span12
@@ -22,7 +22,6 @@ block content
 		p.break.after If you don’t sign in, someone else might steal your nick when you’re not around.
 		
 block append scripts
-	script(src="http://code.jquery.com/jquery.min.js")
 	script(src="https://login.persona.org/include.js")
 	script.
 		navigator.id.watch({
@@ -45,8 +44,42 @@ block append scripts
 			
 			$("#guestfrm").submit(function(e) {
 				var nick = $("#guestnick").val();
-				window.parent.postMessage({ guestname: nick }, "*");
+				if(!validateNick(nick))
+					window.parent.postMessage({ guestname: nick }, "*");
+				else
+					notify("User name is not valid");
 				e.preventDefault();
 				return false;
 			});
 		});
+		
+		
+		$(window).on("message", function(event) {
+			var message;
+			event = event.originalEvent;
+			if(typeof event.data === 'string') {
+				try { message = JSON.parse(event.data); }
+				catch(e) {
+					console.log("Error parsing incoming message: ", event.data, e);
+					return;
+				}
+			} else { message = event.data; }
+			
+			if(message.type=="error") {
+				if(message.data=="DUP_NICK") {
+					notify("User name already taken");
+					$("#nickname").addClass("error");
+					$("#nickname").focus();
+				}else if(message.data=="INVALID_NAME") {
+					notify("User name is not valid");
+					$("#nickname").addClass("error");
+				}else {
+					notify(message.data);
+				}
+			}
+		});
+		
+		function validateNick(nick){
+			var x=(nick.match(/^[a-z][a-z0-9\_\-\(\)]*$/i)?true:false);
+			return x;
+		}

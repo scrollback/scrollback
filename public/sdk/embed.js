@@ -159,6 +159,9 @@ function Stream(id) {
 			case hasClass(el, 'scrollback-icon-pop'):
 				addEvent(el, 'click', function() { self.pop(); });
 				break;
+			case hasClass(el, 'scrollback-alert'):
+					self.alert=el;
+				break;
 			case hasClass(el, 'scrollback-icon-login'):
 				addEvent(el, 'click', function(e) {
 					login();

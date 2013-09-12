@@ -9,13 +9,18 @@ module.exports = function(core) {
 		if(message.type !== 'nick') return callback();
 		
 		if (!assertion && message.user) {
+			
+			if (!validateNick(message.user.id)) {
+				message.user.id = message.user.originalId;
+				return callback(new Error("INVALID_NICK"));
+			}
 			return core.room(message.user.id,function(err,room) {
-				if (room.length!=0 && message.user.originalId!=message.user.id) {
+				if (err) return callback(err);
+				if (room.length && message.user.originalId != message.user.id) {
+					message.user.id = message.user.originalId;
 					return callback(new Error("DUP_NICK"));
-				}else{
-					if (!validateNick(message.user.id)) {
-						return callback(new Error("INVALID_NICK"));
-					}
+				} else {
+					
 					return core.room(message.user,function(err,room) {
 						if (callback) {
 							callback(err,message);	

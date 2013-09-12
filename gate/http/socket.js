@@ -103,7 +103,6 @@ function message (m, conn) {
 	if (m.type == 'back') {
 		if(rConns[m.to]) rConns[m.to].push(conn);
 		else rConns[m.to] = [conn];
-		
 		conn.rooms.push(m.to);
 		
 		if(user.rooms[m.to]) {
@@ -143,10 +142,7 @@ function message (m, conn) {
 					conn.session.user={};
 				}
 				for(i in m.user) if(m.user.hasOwnProperty(i)) {
-					if (i!="id" && err) {
-						conn.session.user[i] = m.user[i];
-					}
-					
+					conn.session.user[i] = m.user[i];
 				}
 			} else {
 				conn.session.user.id = m.ref;

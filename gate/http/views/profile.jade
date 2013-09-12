@@ -3,6 +3,9 @@ block append styles
 	style.
 		#picture { position: relative; }
 		#picture img { position: absolute; left: 0; top: 0; max-width: 40px; max-height: 40px; }
+		#nickname{
+			padding: 0px 16px;
+		}
 		#nickname.error{
 			border-color: #E82206;
 			border-width: 2px;
@@ -10,6 +13,9 @@ block append styles
 		#nickname:focus{
 			outline:none;
 			border-width: 2px;
+		}
+		.account{
+			padding: 0px 16px;
 		}
 
 block userinfo
@@ -23,25 +29,26 @@ block content
 				button#picture
 					img(src='/img/icon/user.png')
 					| Change
-			.field.box.span3
+			.field.box.span6
 				label.before(for='nickname') User Name
 				if(user.id.match("^guest"))
 					-username=user.id.replace(/^guest-/,"")
 					input#nickname(value="#{user.id.replace(/^guest-/,"")}")
+					p (username should have spaces, first letter should be a alphabet and hyphens('-'), underscores('_') and paranthesis('(', ')') are allowed.)
 				else
 					input#nickname(value="#{user.id}",readonly="readonly")
+					
 			
 			if(user.accounts &&  user.accounts.length>0)
 				p.break.before Connected accounts
 				each account in user.accounts
-					input.break.box.span6(disabled=true, value='#{account}')
+					input.break.box.span6.account(disabled=true, value='#{account.split(":")[1]}')
 			if(user.id.match("^guest"))
 				p.box.break.right.span6
 					button.primary.span3(type='submit') Save changes
 			
 
 block append scripts
-	script(src="http://code.jquery.com/jquery.min.js")
 	script.
 		$(document).ready(function() {
 			$("#profilefrm").submit(function(e) {
@@ -59,9 +66,9 @@ block append scripts
 		});
 		
 		
-		addEvent(window, "message", function(event) {
+		$(window).on("message", function(event) {
 			var message;
-			console.log(event);
+			event = event.originalEvent;
 			if(typeof event.data === 'string') {
 				try { message = JSON.parse(event.data); }
 				catch(e) {
@@ -78,6 +85,9 @@ block append scripts
 				}else if(message.data=="INVALID_NAME") {
 					notify("User name is not valid");
 					$("#nickname").addClass("error");
+				}
+				else{
+					notify(message.data);
 				}
 			}
 		});
