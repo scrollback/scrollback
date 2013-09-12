@@ -9,6 +9,10 @@ block append styles
 			display: block; height: 0px;
 			position: absolute; left: 0; top: 0;
 		}
+		#guestnick.error{
+			border-color: #E82206;
+			border-width: 2px;
+		}
 		#content { visibility: hidden; }
 
 block content
@@ -26,10 +30,13 @@ block append scripts
 	script.
 		navigator.id.watch({
 			onlogin: function(assertion) {
+				console.log("onlogin");
 				notify("Signing you in…");
 				window.parent.postMessage({assertion: assertion}, "*");
 			},
 			onlogout: function() {
+				console.log("onloggout");
+				$("#content").css("visibility","visible");
 				show();
 			}
 		});
@@ -44,10 +51,12 @@ block append scripts
 			
 			$("#guestfrm").submit(function(e) {
 				var nick = $("#guestnick").val();
-				if(!validateNick(nick))
+				if(validateNick(nick))
 					window.parent.postMessage({ guestname: nick }, "*");
-				else
+				else{
+					$("#guestnick").addClass("error");
 					notify("User name is not valid");
+				}
 				e.preventDefault();
 				return false;
 			});
@@ -68,11 +77,11 @@ block append scripts
 			if(message.type=="error") {
 				if(message.data=="DUP_NICK") {
 					notify("User name already taken");
-					$("#nickname").addClass("error");
-					$("#nickname").focus();
+					$("#guestnick").addClass("error");
+					$("#guestnick").focus();
 				}else if(message.data=="INVALID_NAME") {
 					notify("User name is not valid");
-					$("#nickname").addClass("error");
+					$("#guestnick").addClass("error");
 				}else {
 					notify(message.data);
 				}
