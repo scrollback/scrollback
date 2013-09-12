@@ -68,11 +68,11 @@ core.on('leave', function(id) {
 
 core.on('nick', function(n) {
 	var i, stream;
-	var nick=(n.indexOf("guest-")===0)?(n.replace("guest-","")):n;
+	var nick = n.replace(/^guest-/,'');
 	
 	for(i in streams) if(streams.hasOwnProperty(i)) {
 		stream = streams[i];
-		stream.nick.innerHTML= nick;
+		stream.nick.innerHTML = nick; // Fix XSS possibility!
 		
 		if (n.indexOf("guest-")!==0) {
 			removeClass(stream.nick, 'scrollback-nick-guest');
@@ -204,27 +204,27 @@ Stream.prototype.hide = function() {
 
 function login () {
 	dialog.show("/dlg/login#" + core.nick(), function(data) {
-		console.log("Got assertion", data);
+		var nickObj;
 		if(!data) return;
-		if(data.assertion) core.nick({ browserid: data.assertion }, resp);
-		else if(data.guestname) core.nick('guest-' + data.guestname, resp);
+		if(data.assertion) nickObj = { browserid: data.assertion };
+		else if(data.guestname) nickObj = 'guest-' + data.guestname;
 		
-		function resp(thing) {
-			console.log(thing.message);
-			if(thing.message) {
+		if(nickObj) core.nick(nickObj, function (reply) {
+			console.log(reply.message);
+			if(reply.message) {
 				// this is an error;
-				if(thing.message == "AUTH_UNREGISTERED")
+				if(reply.message == "AUTH_UNREGISTERED")
 				{
 					console.log("calling profile....");
 					profile();
 				}
 				
-				dialog.send("error",thing.message);
+				dialog.send("error", reply.message);
 			} else {
 				// this is a message;
 				dialog.hide();
 			}
-		}
+		});
 	});
 }
 
@@ -234,7 +234,7 @@ function profile() {
 			dialog.hide();
 			return;
 		}
-		core.nick({ user: user },function(nickResponse){
+		core.nick({ user: user }, function(nickResponse){
 			if (nickResponse.message) {
 				dialog.send("error",nickResponse.message);
 			}else{

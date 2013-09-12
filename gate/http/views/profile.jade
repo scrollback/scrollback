@@ -40,7 +40,7 @@ block content
 				if(user.id.match("^guest"))
 					-username=user.id.replace(/^guest-/,"")
 					input#nickname(value="#{user.id.replace(/^guest-/,"")}")
-					p.note username should have spaces, first letter should be a alphabet and hyphens, underscores and paranthesis are allowed.
+					p.note User Name should have spaces, first letter should be a alphabet and hyphens, underscores and paranthesis are allowed.
 				else
 					input#nickname(value="#{user.id}",readonly="readonly")
 					

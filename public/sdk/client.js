@@ -162,25 +162,6 @@ function onMessage (m) {
 		delete pendingCallbacks[m.id];
 	}
 	
-	switch (m.type) {
-		case 'abuse_report':
-			core.emit("abuse_report",m.id);
-			return;
-		case 'nick':
-			if (m.from == nick) {
-				nick = m.ref;
-				core.emit('nick', m.ref);
-				return;
-			}
-			break;
-		case 'text':
-		case 'result-start':
-		case 'result-end':
-			break;
-		default:
-			return;
-	}
-	
 	messages = rooms[m.to] && rooms[m.to].messages;
 	if (!messages) return;
 	for (i = messages.length - 1; i >= 0 && m.time - messages[i].time < 10000; i-- ) {
@@ -204,7 +185,13 @@ core.say = function (to, text, callback) {
 core.nick = function(n, callback) {
 	if (!n) return nick;
 	if(typeof n === 'string') n = {ref: n};
-	send('nick', '', '', n, callback);
+	send('nick', '', '', n, function(reply) {
+		if(reply.ref) {
+			nick = reply.ref;
+			core.emit('nick', nick);
+		}
+		return callback(reply);
+	});
 	return n;
 };
 
