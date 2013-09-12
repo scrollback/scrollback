@@ -33,7 +33,7 @@ block append scripts
 	script.
 		navigator.id.watch({
 			onlogin: function(assertion) {
-				window.parent.postMessage({type: "CLOSE_DIALOG", data: {assertion: assertion} }, "*");
+				window.parent.postMessage({assertion: assertion}, "*");
 			},
 			onlogout: function() {
 				$("#loading").hide();
@@ -50,8 +50,8 @@ block append scripts
 			});
 			
 			$("#guestfrm").submit(function(e) {
-				var nick = $("#guestnick").val();
-				window.parent.postMessage({type: "CLOSE_DIALOG", data: { guestname: nick }}, "*");
+				var nick = $("#guestname").val();
+				window.parent.postMessage({ guestname: nick }, "*");
 				e.preventDefault();
 				return false;
 			})

@@ -82,7 +82,7 @@ function messages (query, conn) {
 	core.messages(query, function(err, m) {
 		if(err) {
 			log("MESSAGES error", query, err);
-			conn.send('error', err.message);
+			conn.send('error', err);
 			return;
 		}
 		conn.send('messages', { query: query, messages: m} );
@@ -150,7 +150,8 @@ function message (m, conn) {
 			}
 			conn.save();
 		}
-		if (err) return conn.send('error', err.message,conn);
+		err.id = m.id;
+		if (err) return conn.send('error', err);
 	});
 }
 
@@ -170,7 +171,7 @@ function rooms(query, conn) {
 	core.rooms(query, function(err, data) {
 		if(err) {
 			log("ROOMS ERROR", query, err);
-			conn.send('error', err.message);
+			conn.send('error', err);
 			return;
 		}
 		conn.send('rooms', data);

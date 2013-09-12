@@ -15,6 +15,27 @@ if (typeof Object.create !== "function") Object.create = function (o) {
 	return new F();
 };
 
+if (!Array.prototype.remove) {
+	Array.prototype.remove = function (elt) {
+		var i = this.indexOf(elt);
+		if(i !== -1) return this.splice(i, 1);
+	};
+}
+ 
+if (!Array.prototype.indexOf) {
+	Array.prototype.indexOf = function (elt /*, from*/) {
+		var len = this.length;
+		var from = Number(arguments[1]) || 0; from = (from < 0) ? Math.ceil(from) : Math.floor(from);
+		if (from < 0) { from += len; }
+		for (; from < len; from++) {
+			if (from in this && this[from] === elt) {
+				return from;
+			}
+		}
+		return -1;
+	};
+}
+
 if(!Array.prototype.forEach) Array.prototype.forEach = function(fn, scope) {
 	for(var i = 0, len = this.length; i < len; ++i) {
 		fn.call(scope, this[i], i, this);

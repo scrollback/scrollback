@@ -1,8 +1,25 @@
 var dialog = (function () {
-	var dialog, frame, callback, close = function(event, data) {
+	var dialog, frame, callback;
+	
+	function close () {
 		dialog.style.display = "none";
-		if("function" === typeof callback) callback(data);
 	};
+	
+	addEvent(window, "message", function(event) {
+		var message;
+		
+		if(event.origin != scrollback.host) return;
+		if(typeof event.data === 'string') {
+			try { message = JSON.parse(event.data); }
+			catch(e) {
+				console.log("Error parsing incoming message: ", event.data, e);
+				return;
+			}
+		} else { message = event.data; }
+		
+		callback(message);
+	});	
+	
 	return {
 		show: function (url, cb) {
 			callback = cb;
@@ -26,25 +43,10 @@ var dialog = (function () {
 			frame.src = scrollback.host + url;
 			dialog.style.display = "block";
 		},
-		hide: close
+		hide: close,
+		send: function(type, data) {
+			frame.postMessage(data, scrollback.host);
+		}
 	};
 }());
 
-addEvent(window, "message", function(event) {
-	var message;
-	
-	if(event.origin != scrollback.host) return;
-	if(typeof event.data === 'string') {
-		try { message = JSON.parse(event.data); }
-		catch(e) {
-			console.log("Error parsing incoming message: ", event.data, e);
-			return;
-		}
-	} else { message = event.data; }
-	
-	switch(message.type) {
-		case "CLOSE_DIALOG":
-			dialog.hide(event, message.data);
-			break;
-	}
-});
