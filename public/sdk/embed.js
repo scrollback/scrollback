@@ -203,22 +203,35 @@ function login () {
 	dialog.show("/dlg/login#" + core.nick(), function(data) {
 		console.log("Got assertion", data);
 		if(!data) return;
-		if(data.assertion) core.nick({ browserid: data.assertion });
-		else if(data.guestname) core.nick('guest-' + data.guestname);
+		if(data.assertion) core.nick({ browserid: data.assertion }, resp);
+		else if(data.guestname) core.nick('guest-' + data.guestname, resp);
+		
+		function resp(thing) {
+			if(thing.message) {
+				// this is an error;
+				if(thing.message == "AUTH_UNREGISTERED")
+					profile();
+			} else {
+				// this is a message;
+				dialog.close();
+			}
+		}
 	});
 }
-
-core.on('error', function(err) {
-	if(err === 'AUTH_UNREGISTERED') profile();
-});
 
 function profile() {
 	dialog.show("/dlg/profile", function(user) {
 		if(!user) return;
 		console.log("Got profile", user);
 		core.nick({ user: user });
+		
+		dialog.hide();
 	});
 }
+
+core.on('error', function(err) {
+	if(err === 'AUTH_UNREGISTERED') profile();
+});
 
 Stream.prototype.show = function() {
 	var self = this;

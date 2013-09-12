@@ -17,11 +17,12 @@ block content
 					| Change
 			.field.box.span3
 				label.before(for='nickname') Nickname
-				input#nickname
-				
-			p.break.before Connected accounts
-			each account in user.accounts
-				input.break.box.span6(disabled=true, value='#{account}')
+				input#nickname(value="#{user.id}")
+			
+			if(user.accounts &&  user.accounts.length>0)
+				p.break.before Connected accounts
+				each account in user.accounts
+					input.break.box.span6(disabled=true, value='#{account}')
 			p.box.break.right.span6
 				button.primary.span3(type='submit') Save changes
 
@@ -32,7 +33,7 @@ block append scripts
 		$(document).ready(function() {
 			$("#profilefrm").submit(function(e) {
 				var user = { id: $("#nickname").val(), accounts: [] };
-				window.parent.postMessage({type: "CLOSE_DIALOG", data: user }, "*");
+				window.parent.postMessage(user, "*");
 				e.preventDefault();
 				return false;
 			});
