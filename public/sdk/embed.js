@@ -307,9 +307,12 @@ Stream.prototype.notify=function(str, persist) {
 	}
 }
 
+
 Stream.prototype.onmessage = function(message) {
-	var el = this.renderMessage(message),str="";
+	var el = this.renderMessage(message),str="", oldTitle="",title="";
+	
 	if (message.type=="text") {
+		browserNotify(message.from+" : "+message.text);
 		this.titleText.innerHTML = (el.innerText || el.textContent);
 	} else {
 		if (core.nick()!==message.ref && message.ref!=message.from) {

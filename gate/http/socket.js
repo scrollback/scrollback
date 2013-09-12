@@ -92,7 +92,7 @@ function messages (query, conn) {
 
 function message (m, conn) {
 	if(!conn.sid) return;
-	console.log("user",conn.user);
+	
 	var user = conn.session.user;
 	
 	m.from = user.id;
@@ -137,9 +137,10 @@ function message (m, conn) {
 		var i;
 		if(m.type == 'nick') {
 			if(m.user) {
-				console.log(m.user);
+				console.log("m.user is", m.user);
 				if (!conn.session.user) {
-					conn.session.user={};
+					console.log("No session user?");
+					// conn.session.user={};
 				}
 				for(i in m.user) if(m.user.hasOwnProperty(i)) {
 					conn.session.user[i] = m.user[i];
@@ -148,9 +149,8 @@ function message (m, conn) {
 				conn.session.user.id = m.ref;
 			}
 			conn.save();
+			console.log("Saved session", conn.session);
 		}
-		
-		
 		
 		if (err){
 			return conn.send('error', {id: m.id, message: err.message});

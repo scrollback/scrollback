@@ -79,10 +79,12 @@ block append scripts
 					notify("User name already taken");
 					$("#guestnick").addClass("error");
 					$("#guestnick").focus();
-				}else if(message.data=="INVALID_NAME") {
+				} else if(message.data=="INVALID_NAME") {
 					notify("User name is not valid");
 					$("#guestnick").addClass("error");
-				}else {
+				} else if(message.data=="AUTH_UNREGISTERED") {
+					// do nothing
+				} else {
 					notify(message.data);
 				}
 			}

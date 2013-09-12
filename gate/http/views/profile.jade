@@ -3,25 +3,8 @@ block append styles
 	style.
 		#picture { position: relative; }
 		#picture img { position: absolute; left: 0; top: 0; max-width: 40px; max-height: 40px; }
-		#nickname{
-			padding: 0px 16px;
-			line-height: 24px;
-			font-size: 18px;
-		}
-		#nickname.error{
-			border-color: #E82206;
-			border-width: 2px;
-		}
-		#nickname:focus{
-			outline:none;
-			border-width: 2px;
-		}
-		.account{
-			padding: 0px 16px;
-		}
-		.note{
-			line-height: 16px;
-			font-size: 12px;
+		#nickname.error {
+			border-color: #f00;
 		}
 
 block userinfo
@@ -36,13 +19,12 @@ block content
 					img(src='/img/icon/user.png')
 					| Change
 			.field.box.span6
-				label.before(for='nickname') User Name
+				label.before(for='nickname') Scrollback username
 				if(user.id.match("^guest"))
-					-username=user.id.replace(/^guest-/,"")
 					input#nickname(value="#{user.id.replace(/^guest-/,"")}")
-					p.note User Name should have spaces, first letter should be a alphabet and hyphens, underscores and paranthesis are allowed.
+					p.after Usernames should begin with a letter and be at least 5 letters long.
 				else
-					input#nickname(value="#{user.id}",readonly="readonly")
+					input#nickname(value="#{user.id}",disabled=true)
 					
 			
 			if(user.accounts &&  user.accounts.length>0)

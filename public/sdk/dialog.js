@@ -16,7 +16,6 @@ var dialog = (function () {
 				return;
 			}
 		} else { message = event.data; }
-		console.log("giving the message",message);
 		callback(message);
 	});	
 	

@@ -179,8 +179,9 @@ var css = {
 	".scrollback-dialog-close": {
 		display: "block", position: "absolute", top: "0", right: "0",
 		textDecoration: "none", color: "#000", lineHeight: "40px", width: "40px",
-		textAlign: "center", cursor: "pointer", padding: "0px"
+		textAlign: "center", cursor: "pointer", padding: "0px", backgroundColor: "#000 !important"
 	},
+	".scrollback-dialog-close:hover": { backgroundColor: "#555 !important" },
 	".scrollback-dialog-frame": {
 		display: "block", width: "100%", height: "100%",
 		background: "transparent"

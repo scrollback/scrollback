@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.29, for debian-linux-gnu (i686)
+-- MySQL dump 10.13  Distrib 5.5.32, for debian-linux-gnu (i686)
 --
--- Host: 127.0.0.1    Database: scrollback
+-- Host: localhost    Database: scrollback
 -- ------------------------------------------------------
--- Server version	5.5.29-0ubuntu0.12.04.1
+-- Server version	5.5.32-0ubuntu0.13.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -26,10 +26,7 @@ CREATE TABLE `accounts` (
   `id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `room` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `gateway` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `params` text COLLATE utf8_unicode_ci,
-  PRIMARY KEY (`id`),
-  KEY `room` (`room`),
-  KEY `gateway` (`gateway`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -68,17 +65,15 @@ DROP TABLE IF EXISTS `rooms`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rooms` (
   `id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `type` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
   `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `description` text COLLATE utf8_unicode_ci,
   `picture` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL,
   `profile` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL,
   `createdOn` datetime DEFAULT NULL,
   `owner` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `type` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
   `params` text COLLATE utf8_unicode_ci,
-  PRIMARY KEY (`id`),
-  KEY `type` (`type`),
-  KEY `owner` (`owner`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -91,4 +86,4 @@ CREATE TABLE `rooms` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-07-12 14:10:40
+-- Dump completed on 2013-09-12 21:33:58

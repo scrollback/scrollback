@@ -6,8 +6,9 @@ module.exports = function(data, callback) {
 		pool.get(function(err, db) {
 			if(err) return callback(err);
 			
-			db.query("INSERT INTO `rooms` values(?,?,?,?,?,?,NOW(),?,?) ON DUPLICATE KEY UPDATE "+
-				"`id`=values(`id`),`type`=values(`type`),`type`=values(`type`),`description`=values(`description`)"+
+			db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
+				"`owner`, `params`) values(?,?,?,?,?,?,NOW(),?,?) ON DUPLICATE KEY UPDATE "+
+				"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
 				",`picture`=values(`picture`), `profile`=values(`profile`), `createdOn`=NOW(), `owner`=values(`owner`),"+
 				"`params`=values(`params`)", [data.id, data.type || "user", data.name || "", data.description || "",
 				data.picture || "", data.profile || "", data.owner|| data.id,data.params|| ""],
@@ -18,7 +19,6 @@ module.exports = function(data, callback) {
 					return callback(err,data);
 				}
 				if(data.originalId!= data.id){
-					console.log("deleteing old accounts of "+data.originalId);
 					db.query("delete from `rooms` where `id`=?",[data.originalId]);
 				}
 				

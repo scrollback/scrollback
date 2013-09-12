@@ -1,6 +1,5 @@
 var express = require("express"),
-	http = require("http"),
-	https = require("https"),
+	http = require("http"), https = require("https"),
 	fs = require("fs"),
 	config = require("../../config.js"),
 	session = require("./session.js");
@@ -34,5 +33,5 @@ exports.init = function() {
 	}
 	
 	return app;
-}
+};
 
