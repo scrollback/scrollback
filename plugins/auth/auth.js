@@ -76,5 +76,5 @@ module.exports = function(core) {
 };
 
 function validateNick(nick){
-	return nick.match(/^[a-z][a-z0-9\_\-\(\)]*$/i)?true:false;
+	return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
 }

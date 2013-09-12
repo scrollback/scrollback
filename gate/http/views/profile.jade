@@ -107,6 +107,5 @@ block append scripts
 		});
 		
 		function validateNick(nick){
-			var x=(nick.match(/^[a-z][a-z0-9\_\-\(\)]*$/i)?true:false);
-			return x;
+			return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
 		}
