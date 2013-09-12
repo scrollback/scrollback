@@ -84,8 +84,6 @@ exports.init = function(app) {
             
             core.messages(query, function(err, m){
 				
-				if(err)
-				
                 responseObj.query=query;
                 responseObj.data=m;
                 

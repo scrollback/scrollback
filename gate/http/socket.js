@@ -126,7 +126,10 @@ function message (m, conn) {
 		conn.save();
 	} else if(m.type == 'nick' && m.user) {
 		m.user.originalId = user.id;
-		console.log("accounts",m.user.accounts,conn);
+		if (!m.user.originalId.match(/^guest/)) {
+			console.log("user cannot change the nick.");
+			return;
+		}
 		m.user.accounts[0] = user.accounts[0];
 	}
 	

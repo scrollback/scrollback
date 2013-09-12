@@ -36,21 +36,21 @@ block append scripts
 				window.parent.postMessage({type: "CLOSE_DIALOG", data: {assertion: assertion} }, "*");
 			},
 			onlogout: function() {
-				console.log("onLogout called");
 				$("#loading").hide();
 				$("#loginForm").show();
 			}
 		});
 		
 		$(document).ready(function() {
-			$("#guestnick").val(location.hash.substr(1));
+
+			$("#guestnick").val(location.hash.substr(1).replace(/^guest-/,""));
 			
 			$("#loginbtn").click(function () {
 				navigator.id.request();
 			});
 			
 			$("#guestfrm").submit(function(e) {
-				var nick = $("#guestname").val();
+				var nick = $("#guestnick").val();
 				window.parent.postMessage({type: "CLOSE_DIALOG", data: { guestname: nick }}, "*");
 				e.preventDefault();
 				return false;

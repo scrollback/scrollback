@@ -16,15 +16,24 @@ block content
 					img(src='/img/icon/user.png')
 					| Change
 			.field.box.span3
-				label.before(for='nickname') Nickname
-				input#nickname(value="#{user.id}")
+				label.before(for='nickname') User Name
+				if(user.id.match("^guest"))
+					-username=user.id.replace(/^guest-/,"")
+					input#nickname(value="#{user.id.replace(/^guest-/,"")}")
+				else
+					input#nickname(value="#{user.id}",readonly="readonly")
 			
 			if(user.accounts &&  user.accounts.length>0)
 				p.break.before Connected accounts
 				each account in user.accounts
 					input.break.box.span6(disabled=true, value='#{account}')
-			p.box.break.right.span6
-				button.primary.span3(type='submit') Save changes
+			if(user.id.match("^guest"))
+				p.box.break.right.span6
+					button.primary.span3(type='submit') Save changes
+			else
+				p.box.break.right.span6
+					button#close.primary.span3(type='button') Close
+			
 
 block append scripts
 	script(src="http://code.jquery.com/jquery.min.js")
@@ -36,5 +45,9 @@ block append scripts
 				window.parent.postMessage({type: "CLOSE_DIALOG", data: user }, "*");
 				e.preventDefault();
 				return false;
+			});
+			
+			$("#close").click(function(){
+				window.parent.postMessage({type: "CLOSE_DIALOG"}, "*");
 			});
 		});
