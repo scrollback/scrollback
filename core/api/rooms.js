@@ -6,7 +6,7 @@ module.exports = function(options, callback) {
 		var query = "SELECT * FROM `rooms` ",
 			where = [], params=[], desc=false, limit=256;
 		
-		if(err) return callback(err);
+		if(err && callback) return callback(err);
 		
 		if(options.type) {
 			where.push("`type` = ?");
@@ -29,9 +29,8 @@ module.exports = function(options, callback) {
 		
 		log(query, params);
 		db.query(query, params, function(err, data) {
-			if(err) return callback(err);
 			db.end();
-			return callback(null, data);
+			if(callback) callback(err, data);
 		});
 	});
 };

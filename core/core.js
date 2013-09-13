@@ -15,7 +15,7 @@ core.message = function(m, cb) {
 	core.emit("message", m, function(err) {
 		if(err) {
 			console.log("Message rejected", err);
-			return cb(err,m);
+			return cb? cb(err,m): null;
 		}
 		if (m.user && m.type=="nick") {
 			m.ref=m.user.id;

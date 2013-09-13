@@ -165,7 +165,6 @@ function onMessage (m) {
 	messages = rooms[m.to] && rooms[m.to].messages;
 	if (!messages) return;
 	for (i = messages.length - 1; i >= 0 && m.time - messages[i].time < 120000; i-- ) {
-		conso
 		if (messages[i].id == m.id) {
 			timeAdjustment = m.time - messages[i].time;
 			scrollback.debug && console.log("Time adjustment is now " + timeAdjustment);
