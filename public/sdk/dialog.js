@@ -12,7 +12,7 @@ var dialog = (function () {
 		if(typeof event.data === 'string') {
 			try { message = JSON.parse(event.data); }
 			catch(e) {
-				console.log("Error parsing incoming message: ", event.data, e);
+				scrollback.debug && console.log("Error parsing incoming message: ", event.data, e);
 				return;
 			}
 		} else { message = event.data; }

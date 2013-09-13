@@ -26,7 +26,7 @@ window.fbAsyncInit = function() {
 				if (user.error) {
 					handleError();
 				}
-				console.log(user);
+				scrollback.debug && console.log(user);
 				loggedDiv=document.getElementById("logged");
 				loadDiv=document.getElementById("loading");
 				loadDiv.className="hidden";
@@ -67,7 +67,7 @@ window.fbAsyncInit = function() {
 }(document, 'script', 'facebook-jssdk'));
 
 function update() {
-	console.log("blah");
+	scrollback.debug && console.log("blah");
 	var username=document.getElementById("username").value;
 	
 	nickExpected=true;

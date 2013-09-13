@@ -92,11 +92,6 @@ function addClass(obj, cl) {
 	obj.className = obj.className + ' ' + cl;
 }
 
-window.requestAnimationFrame = window.requestAnimationFrame ||
-		window.mozRequestAnimationFrame ||
-		window.webkitRequestAnimationFrame ||
-		function(cb) { setTimeout(cb, 25); };
-
 
 function prettyDate(time, currTime){
 	var d = new Date(parseInt(time, 10)), n = new Date(currTime),

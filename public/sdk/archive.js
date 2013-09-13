@@ -19,7 +19,7 @@ DomReady.ready(function(){
 	core.on("notify", function(message){
 		var messageItem ,element;
 		if (message.type == "text" && message.to==stream) {
-			console.log("notify-",isLastPage);
+			scrollback.debug && console.log("notify-",isLastPage);
 			if (isLastPage) {
 				
 				messageItem = document.createElement("div");
@@ -88,7 +88,7 @@ DomReady.ready(function(){
 		}
 	}
 	addEvent(nickBox, "blur", function(e) {
-		console.log("Lost focus, sending nick");
+		scrollback.debug && console.log("Lost focus, sending nick");
 		nickChange(nickBox.value);
 	});
 	addEvent(nickBox, "keydown", function(e) {

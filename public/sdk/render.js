@@ -38,7 +38,7 @@ Stream.prototype.scroll = function() {
 	
 //	if(log.scrollHeight == log.scrollTop + log.clientHeight) { 
 	if (end >= self.messages.length - 1 && !up) {
-		console.log("bottomed out");
+		scrollback.debug && console.log("bottomed out");
 		this.bottom = true;
 	} else {
 		this.bottom = false;

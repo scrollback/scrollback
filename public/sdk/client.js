@@ -23,12 +23,12 @@ var socket = new SockJS(scrollback.host + '/socket'),
 	pendingCallbacks = {};
 
 socket.emit = function(type, data) {
-	console.log("Socket sending ", type, data);
+	scrollback.debug && console.log("Socket sending ", type, data);
 	socket.send(JSON.stringify({type: type, data: data}));
 };
 
 socket.onopen = function() {
-	console.log("Cookie", document.cookie);
+	scrollback.debug && console.log("Cookie", document.cookie);
 	var sid = document.cookie.match(/scrollback_sessid=(\w*)(\;|$)/);
 	sid = sid? decodeURIComponent(sid[1]): null;
 	
@@ -44,7 +44,7 @@ socket.onopen = function() {
 
 socket.onerror = function(message) {
 	// These are socket-level errors, not to be confused with onError with capital E.
-	console.log(message);
+	scrollback.debug && console.log(message);
 };
 
 socket.onclose = function() {
@@ -57,9 +57,9 @@ socket.onmessage = function(evt) {
 	var d;
 	
 	try { d = JSON.parse(evt.data); }
-	catch(e) { console.log("ERROR: Non-JSON data", evt.data); return; }
+	catch(e) { scrollback.debug && console.log("ERROR: Non-JSON data", evt.data); return; }
 	
-	console.log("Socket received", d);
+	scrollback.debug && console.log("Socket received", d);
 	
 	switch(d.type) {
 		case 'init': onInit(d.data); break;
@@ -75,7 +75,7 @@ function onInit (data) {
 	core.emit('connected');
 	core.emit('nick', nick);
 	timeAdjustment = data.serverTime - data.clientTime;
-	console.log(data);
+	scrollback.debug && console.log(data);
 	
 	if(scrollback.streams &&  scrollback.streams.length) {
 		scrollback.streams.forEach(function(id) {
@@ -147,14 +147,14 @@ core.get = function(room, start, end, callback) {
 	if (end) { query.until = end; }
 	reqId = room + '/' + (query.since || '') + '/' + (query.until || '');
 	
-	console.log("Request:", reqId);
+	scrollback.debug && console.log("Request:", reqId);
 	requests[reqId] = callback;
 	socket.emit('messages', query);
 };
 
 function onMessage (m) {
 	var i, messages, updated = false;
-	console.log("Received:", m);
+	scrollback.debug && console.log("Received:", m);
 	core.emit('message', m);
 	
 	if(pendingCallbacks[m.id]) {
@@ -167,7 +167,7 @@ function onMessage (m) {
 	for (i = messages.length - 1; i >= 0 && m.time - messages[i].time < 10000; i-- ) {
 		if (messages[i].id == m.id) {
 			timeAdjustment = m.time - messages[i].time;
-			console.log("Time adjustment is now " + timeAdjustment);
+			scrollback.debug && console.log("Time adjustment is now " + timeAdjustment);
 			messages[i] = m;
 			updated = true; break;
 		}
@@ -221,7 +221,7 @@ core.unwatch = function(room) {
 };
 
 core.update=function(type,params){
-	console.log("sending update");
+	scrollback.debug && console.log("sending update");
 	socket.emit("update",{
 		type:type,
 		params:params

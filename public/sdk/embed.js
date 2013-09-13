@@ -210,12 +210,12 @@ function login () {
 		else if(data.guestname) nickObj = 'guest-' + data.guestname;
 		
 		if(nickObj) core.nick(nickObj, function (reply) {
-			console.log(reply.message);
+			scrollback.debug && console.log(reply.message);
 			if(reply.message) {
 				// this is an error;
 				if(reply.message == "AUTH_UNREGISTERED")
 				{
-					console.log("calling profile....");
+					scrollback.debug && console.log("calling profile....");
 					profile();
 				}
 				
