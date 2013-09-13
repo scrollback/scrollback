@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 		embed: {
 			src: ['public/sdk/addStyle.js','public/sdk/css.js','public/sdk/dom.js',
 				'public/sdk/domReady.js','public/sdk/getByClass.js','public/sdk/jsonml2.js',
-				'public/sdk/cache.js','public/sdk/embed.js','public/sdk/render.js'],
+				'public/sdk/cache.js','public/sdk/embed.js','public/sdk/render.js','public/sdk/dialog.js'],
 			dest: 'public/embed.uw.min.js'
 		}
     },
