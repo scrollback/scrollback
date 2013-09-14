@@ -76,5 +76,6 @@ module.exports = function(core) {
 };
 
 function validateNick(nick){
+	if (nick.indexOf("guest-")==0) return false;
 	return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
 }
