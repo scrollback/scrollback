@@ -21,7 +21,7 @@ block content
 			.field.box.span6
 				label.before(for='nickname') Scrollback username
 				if(user.id.match("^guest"))
-					input#nickname(value="#{user.id.replace(/^guest-/,"")}")
+					input#nickname(value="#{user.id.replace(/^guest-/,'')}")
 					p.after Usernames should begin with a letter and be at least 5 letters long.
 				else
 					input#nickname(value="#{user.id}",disabled=true)
