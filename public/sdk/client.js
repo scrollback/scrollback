@@ -28,15 +28,16 @@ socket.emit = function(type, data) {
 };
 
 socket.onopen = function() {
-	scrollback.debug && console.log("Cookie", document.cookie);
-	var sid = document.cookie.match(/scrollback_sessid=(\w*)(\;|$)/);
-	sid = sid? decodeURIComponent(sid[1]): null;
-	
+	//scrollback.debug && console.log("Cookie", document.cookie);
+	//var sid = document.cookie.match(/scrollback_sessid=(\w*)(\;|$)/);
+	//sid = sid? decodeURIComponent(sid[1]): null;
+	//
 	function init(sid) {
 		socket.emit('init', { sid: sid, clientTime: new Date().getTime() });
 	}
-	if(sid) init(sid);
-	else getx(scrollback.host + '/dlg/cookie', function(err, data) {
+	//if(sid) init(sid);
+	//else
+	getx(scrollback.host + '/dlg/cookie', function(err, data) {
 		if(err) return;
 		init(data);
 	});
