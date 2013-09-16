@@ -71,7 +71,7 @@ socket.onmessage = function(evt) {
 };
 
 function onInit (data) {
-	document.cookie = "scrollback_sessid="+encodeURIComponent(data.sid);
+	//document.cookie = "scrollback_sessid="+encodeURIComponent(data.sid);
 	nick = data.user.id;
 	core.emit('connected');
 	core.emit('nick', nick);
