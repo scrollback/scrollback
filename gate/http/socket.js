@@ -47,9 +47,15 @@ exports.init = function (server) {
 };
 
 function init(data, conn) {
-	var user, sid = data.sid;
+	var user, sid = data.sid, nick=data.nick;
+	
 	session.get(sid, function(err, sess) {
 		console.log("RETRIEVED SESSION", sess);
+		if (data.nick && sess.user.newUser) {
+			delete sess.user.newUser;
+			sess.user.id="guest-"+data.nick;
+		}
+		
 		conn.sid = sid;
 		conn.rooms = [];
 		conn.session = sess;
@@ -59,6 +65,7 @@ function init(data, conn) {
 			clientTime: data.clientTime,
 			serverTime: new Date().getTime()
 		});
+		conn.save();
 	});
 }
 

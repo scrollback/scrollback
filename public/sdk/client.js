@@ -33,7 +33,12 @@ socket.onopen = function() {
 	//sid = sid? decodeURIComponent(sid[1]): null;
 	//
 	function init(sid) {
-		socket.emit('init', { sid: sid, clientTime: new Date().getTime() });
+		var initData={ sid: sid, clientTime: new Date().getTime() };
+		
+		if (scrollback.nick) {
+			initData.nick=scrollback.nick;
+		}
+		socket.emit('init', initData);
 	}
 	//if(sid) init(sid);
 	//else
