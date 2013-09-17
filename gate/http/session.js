@@ -11,6 +11,7 @@ var express = require("express"),
 	secret = "ertyuidfghjcrtyujwsvokmdf";
 	
 function initUser() {
+	console.log("called the init user function");
 	return {
 		id: 'guest-sb-' + names(6),
 		picture: '/img/guest.png',
@@ -20,12 +21,15 @@ function initUser() {
 	};
 }
 
-exports.get = function(sid, cb) {
-	sid = unsign(sid, function(id, session) {
+exports.get = function(user, cb) {
+	unsign(user.sid, function(id, session) {
+		if (session.user.newUser && user.suggestedNick) session.user.id="guest-"+user.suggestedNick;
+		if (session.user.newUser ) delete session.user.newUser;
+		store.set(id,session);
 		cb(null, session);
 	});
 };
-exports.set = function(sid, sess, cb) {
+var set = exports.set = function(sid, sess, cb) {
 	sid = unsign(sid, function(id) {
 		store.set(id, sess);
 	});

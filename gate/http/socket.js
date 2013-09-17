@@ -49,13 +49,8 @@ exports.init = function (server) {
 function init(data, conn) {
 	var user, sid = data.sid, nick=data.nick;
 	
-	session.get(sid, function(err, sess) {
+	session.get({sid:sid,suggestedNick:data.nick}, function(err, sess) {
 		console.log("RETRIEVED SESSION", sess);
-		if (data.nick && sess.user.newUser) {
-			delete sess.user.newUser;
-			sess.user.id="guest-"+data.nick;
-		}
-		
 		conn.sid = sid;
 		conn.rooms = [];
 		conn.session = sess;
