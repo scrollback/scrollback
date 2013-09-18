@@ -3,14 +3,15 @@ function post(url, data, callback) { request("POST", url, callback, data); }
 
 function getx(url, callback) {
 	var el = document.createElement("script"),
-		cbn = "", i;
+		cbn = "c", i;
+		
 	for(i=0; i<6; i++) cbn += Math.floor(Math.random()*256).toString(16);
 	
 	window[cbn] = function(data) {
 		try { delete window[cbn]; }
 		catch(e) { window[cbn] = null; }
 		try { data = JSON.parse(data); callback(null, data); }
-		catch(e) { callback(e); }
+		catch(e) { callback(null, data); }
 	};
 	
 	url = url + (url.indexOf('?') == -1? "?" : "&") + "callback=" + cbn;
@@ -42,7 +43,7 @@ function request (method, url, callback, postData) {
 		try {
 			res = JSON.parse(req.responseText);
 		} catch(e) {
-			callback("invalid-response");
+			res = req.responseText;
 			return;
 		}
 		callback(null, res);

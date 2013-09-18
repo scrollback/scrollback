@@ -10,188 +10,239 @@
  *   - domReady.js
  *   - getByClass.js
  *   - jsonml2.js
+ *
+ *   test changes...
  */
 
 "use strict";
-var socket = io.connect(scrollback.host);
-var timeAdjustment = 0;
-var rooms = {}, requests = {}, lastPos;
-var core = Object.create(emitter);
-var nick = "";
+var socket = new SockJS(scrollback.host + '/socket'),
+	timeAdjustment = 0,
+	rooms = {}, requests = {}, lastPos,
+	core = Object.create(emitter),
+	nick = "", user,
+	pendingCallbacks = {};
 
-socket.on('connect', function() {
-	/* global scrollback, io, EventEmitter */
-	if(scrollback.streams && scrollback.streams.length) {
+socket.emit = function(type, data) {
+	scrollback.debug && console.log("Socket sending ", type, data);
+	socket.send(JSON.stringify({type: type, data: data}));
+};
+
+socket.onopen = function() {
+	//scrollback.debug && console.log("Cookie", document.cookie);
+	//var sid = document.cookie.match(/scrollback_sessid=(\w*)(\;|$)/);
+	//sid = sid? decodeURIComponent(sid[1]): null;
+	//
+	function init(sid) {
+		var initData={ sid: sid, clientTime: new Date().getTime() };
+		
+		if (scrollback.nick) {
+			initData.nick=scrollback.nick;
+		}
+		socket.emit('init', initData);
+	}
+	//if(sid) init(sid);
+	//else
+	getx(scrollback.host + '/dlg/cookie', function(err, data) {
+		if(err) return;
+		init(data);
+	});
+};
+
+socket.onerror = function(message) {
+	// These are socket-level errors, not to be confused with onError with capital E.
+	scrollback.debug && console.log(message);
+};
+
+socket.onclose = function() {
+	var id;
+	for(id in rooms) if(rooms.hasOwnProperty(id)) core.leave(id);
+	core.emit("disconnected");
+};
+
+socket.onmessage = function(evt) {
+	var d;
+	
+	try { d = JSON.parse(evt.data); }
+	catch(e) { scrollback.debug && console.log("ERROR: Non-JSON data", evt.data); return; }
+	
+	scrollback.debug && console.log("Socket received", d);
+	
+	switch(d.type) {
+		case 'init': onInit(d.data); break;
+		case 'message': onMessage(d.data); break;
+		case 'messages': onMessages(d.data); break;
+		case 'error': onError(d.data); break;
+	}
+};
+
+function onInit (data) {
+	//document.cookie = "scrollback_sessid="+encodeURIComponent(data.sid);
+	nick = data.user.id;
+	core.emit('connected');
+	core.emit('nick', nick);
+	timeAdjustment = data.serverTime - data.clientTime;
+	scrollback.debug && console.log(data);
+	
+	if(scrollback.streams &&  scrollback.streams.length) {
 		scrollback.streams.forEach(function(id) {
 			if(!id) return;
 			core.enter(id);
 		});
 	}
-	core.emit('connected');
-	if (nick !== '') core.nick(nick);
-});
 
-socket.on('disconnect', function() {
-	var id;
-	for(id in rooms) if(rooms.hasOwnProperty(id)) core.leave(id);
-	core.emit("disconnected");
-});
+}
+
+core.time = function() {
+	return (new Date()).getTime() + timeAdjustment;
+};
 
 core.enter = function (id) {
 	if(!rooms[id]) rooms[id] = { messages: messageArray() };
-	message('result-start', id);
-	message('back', id);
+	send('result-start', id);
+	send('back', id);
 	core.emit('enter', id);
 };
 
 core.leave = function (id) {
-	message('away', id);
-	message('result-end', id);
+	send('away', id);
+	send('result-end', id);
 	core.emit('leave', id);
-//	delete rooms[id];
 };
 
-function guid() {
-    var str="", i;
-	for(i=0; i<32; i++) str += (Math.random()*16|0).toString(16);
-	return str;
-}
-
-function message(type, to, text, ref) {
-	var m = { id: guid(), type: type, from: nick, to: to, text: text || '', time: core.time(), ref: ref || '' };
-	if (m.type != 'result-start' && m.type != 'result-end' && socket.socket.connected) {
+function send(type, to, text, options, callback) {
+	var m = { id: guid(), type: type, from: nick, to: to, text: text || '', time: core.time() }, i;
+	
+	if(options) for(i in options) if(options.hasOwnProperty(i)) {
+		m[i] = options[i];
+	}
+	
+	if (m.type != 'result-start' && m.type != 'result-end' && socket.readyState == 1) {
 		socket.emit('message', m);
 	}
-	if(rooms[to]) {
+	
+	if(typeof messageArray !=="undefined" && rooms[to]) {
 		rooms[to].messages.push(m);
 		if(requests[to + '//']) requests[to + '//'](true);
 	}
+	
+	if(callback) {
+		pendingCallbacks[m.id] = callback;
+		setTimeout(function() {
+			if(pendingCallbacks[m.id]) delete pendingCallbacks[m.id];
+		}, 10000);
+	}
+	
 	return m;
 }
 
-function requestTime() { socket.emit('time', new Date().getTime()); }
-requestTime(); setTimeout(requestTime, 300000);
-socket.on('time', function(data) {
-	// time adjustment is the time taken for outbound datagram to reach.
-	timeAdjustment = data.server - data.request;
-});
-core.time = function() { return new Date().getTime() + timeAdjustment; };
-
-socket.on('error', function(message) {
-	console.log(message);
-});
-
-socket.on('messages', function(data) {
+function onMessages (data) {
 	var roomId = data.query.to, reqId = data.query.to + '/' + (data.query.since || '') +
 			'/' + (data.query.until || '');
 			
-	console.log("Response:", reqId, data,snapshot(data.messages));
 	rooms[roomId].messages.merge(data.messages);
-	console.log("Cached:", snapshot(rooms[roomId].messages));
 	
 	if (requests[reqId]) {
-		console.log("calling()->",reqId,data.messages.length,requests[reqId]);
 		requests[reqId](true);
 		if(reqId != data.query.to + '//') delete requests[reqId];
 	}
-	
-});
-
+}
 core.get = function(room, start, end, callback) {
 	var query = { to: room, type: 'text' },
 		reqId;
 	if (start) { query.since = start; }
 	if (end) { query.until = end; }
-	console.log("core.get. callback",callback);
 	reqId = room + '/' + (query.since || '') + '/' + (query.until || '');
 	
-	console.log("Request:", reqId);
+	scrollback.debug && console.log("Request:", reqId);
 	requests[reqId] = callback;
 	socket.emit('messages', query);
 };
 
-socket.on('message', function(message) {
+function onMessage (m) {
 	var i, messages, updated = false;
-	console.log("Received:", message);
-	core.emit('notify', message);
-	switch (message.type) {
-		case 'abuse_report':
-			core.emit("abuse_report",message.id);
-			return;
-			break;
-		case 'nick':
-			if (message.from == nick) {
-				nick = message.ref;
-				core.emit('nick', message.ref);
-				return;
-			}
-			break;
-		case 'text':
-		case 'result-start':
-		case 'result-end':
-			break;
-		default:
-			return;
+	scrollback.debug && console.log("Received:", m);
+	core.emit('message', m);
+	
+	if(pendingCallbacks[m.id]) {
+		pendingCallbacks[m.id](m);
+		delete pendingCallbacks[m.id];
 	}
 	
-	messages = rooms[message.to] && rooms[message.to].messages;
+	messages = rooms[m.to] && rooms[m.to].messages;
 	if (!messages) return;
-	for (i = messages.length - 1; i >= 0 && message.time - messages[i].time < 5000; i-- ) {
-		if (messages[i].id == message.id) {
-			messages[i] = message;
+	for (i = messages.length - 1; i >= 0 && m.time - messages[i].time < 120000; i-- ) {
+		if (messages[i].id == m.id) {
+			timeAdjustment = m.time - messages[i].time;
+			scrollback.debug && console.log("Time adjustment is now " + timeAdjustment);
+			messages[i] = m;
 			updated = true; break;
 		}
 	}
 	if (!updated) {
-		messages.push(message);
+		messages.push(m);
 	}
-	if(requests[message.to + '//']) requests[message.to + '//'](true);
-});
+	if(requests[m.to + '//']) requests[m.to + '//'](true);
+}
 
-core.say = function (to, text) {
-	message('text', to, text);
+core.say = function (to, text, callback) {
+	send('text', to, text, callback);
 };
 
-core.nick = function(n) {
+core.nick = function(n, callback) {
 	if (!n) return nick;
-	message('nick', '', '', n);
+	if(typeof n === 'string') n = {ref: n};
+	send('nick', '', '', n, function(reply) {
+		if(reply.ref) {
+			nick = reply.ref;
+			core.emit('nick', nick);
+		}
+		return callback(reply);
+	});
 	return n;
 };
 
 core.watch = function(room, time, before, after, callback) {
 
 	function missing(start, end) {
-		core.get(room, start, end, send);
+		core.get(room, start, end, deliverMessages);
 		return { type: 'missing', text: 'Loading messages...', time: start };
 	}
-	function send(isResponse) {
+	function deliverMessages(isResponse) {
 		var r = rooms[room].messages.extract(
 			time, before || 32,
 			after || 0, isResponse? null: missing
 		);
 		
-		console.log("callback-> ",r);
 		callback(r);
 	}
 	
 	if (!time) {
-		requests[room + '//'] = send;
+		requests[room + '//'] = deliverMessages;
 	}
-	send(false);
+	deliverMessages(false);
 };
 
 core.unwatch = function(room) {
 	delete requests[room + '//'];
 };
 
-function snapshot (messages) {
-	return '{' + prettyDate(messages[0].time) + ' ' + messages.map(function(message) {
-		switch (message.type) {
-			case 'result-start': return '(' + prettyDate(message.time) + ' ';
-			case 'result-end': return ' ' + prettyDate(message.time) + ')';
-			default: return '';
-		}
-	}).join('') + ' ' + prettyDate(messages[messages.length-1].time) + '}';
+core.update=function(type,params){
+	scrollback.debug && console.log("sending update");
+	socket.emit("update",{
+		type:type,
+		params:params
+	});
+};
+
+function onError(err) {
+	// these are exceptions returned from the server; not to be confused with onerror with small 'e'.
+	
+	if(err.id && pendingCallbacks[err.id]) {
+		pendingCallbacks[err.id](err);
+		delete pendingCallbacks[err.id];
+	}
+	
+	core.emit('error', err.message);
 }
 
 /* TODO: implement them someday
@@ -201,3 +252,4 @@ core.followers = function(query, callback) {}
 core.labels = function(query, callback) {}
 
 */
+

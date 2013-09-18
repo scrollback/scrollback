@@ -11,11 +11,9 @@ module.exports = connect;
 
 function connect(server, nick, uid, callback) {
 	log("Connecting " + nick + " to " + server);
-
 	
-	// Code for stripping out the guest from the username
-	// nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
-	
+	 nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
+	 
 	var client =  new irc.Client(server, nick, {
 		userName : nick,
 		realName: nick+'@scrollback.io',
@@ -45,20 +43,19 @@ function connect(server, nick, uid, callback) {
 	});
 	
 	client.addListener('raw', function(message) {
-		log("Incoming from " + message.server, message.args);
+		log("Incoming from " + server, message.args);
 	});
 	
 	client.addListener('error', function(message) {
-		log("Error from " + message.server, message.args);
+		log("Error from " + server, message.args);
 	});				
 	
 	if(callback) {
 		client.addListener('message', function(nick, channel, text) {
-			
+	
 			// if a user name not registered with askabt, connects via IRC, he is made a  guest.
-			// if(!(users[client.opt.server] && users[client.opt.server][nick]))
-			//	nick = "guest-" + nick; 
-			
+			if(!(users[client.opt.server] && users[client.opt.server][nick]))
+			nick = "guest-" + nick;
 
 			log(client.nick + " hears " + nick + " say \'" +
 				text.substr(0,32) + "\' in " + channel);
@@ -72,8 +69,8 @@ function connect(server, nick, uid, callback) {
 			}
 		});
 		
-		client.addListener('nick', function(oldn, newn) {
-			message('nick', oldn, '', '', '', newn);
+		client.addListener('nick', function(oldn, newn,channel) {
+			message('nick', oldn, channel[0].substring(1), '', '', newn);
 		});
 		
 		client.addListener('part', function(channel, from, reason) {
@@ -97,6 +94,10 @@ function connect(server, nick, uid, callback) {
 			}
 		});
 		
+		client.addListener('action',function(from, channel, text){
+			message('text', from, room(channel), "/me "+text, channel);
+		});
+		
 		client.addListener('kill', function(from, reason, channels) {
 			var i, l;
 			for(i=0, l=channels.length; i<l; i++) {
@@ -111,6 +112,7 @@ function connect(server, nick, uid, callback) {
 		if (from === client.nick && client.sayQueues[channel]) {
 			log("Sending queued messages for " + channel);
 			client.sayQueues[channel].forEach(function(message) {
+			//	console.log("saying:",message);
 				client.say(channel, message);
 			});
 			client.sayQueues[channel] = [];
@@ -177,7 +179,7 @@ function connect(server, nick, uid, callback) {
 	client.join = queueConn(client.join);
 	client.part = queueConn(client.part);
 	client.rename = queueConn(function(nick) {
-		log("Sending nick change to irc");
+		log("Sending nick change to irc:"+nick);
 		client.send("NICK", nick);
 	});
 	
@@ -191,4 +193,5 @@ function connect(server, nick, uid, callback) {
 connect.init = function(urs) {
 	users=urs;
 	ident.init();
+	users=urs;
 };

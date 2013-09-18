@@ -1,6 +1,7 @@
 module.exports = {
 	core: {
-//		uid: "linux-user-to-run-as"
+//		uid: "linux-user-to-run-as",
+		name: "scrollback" // process name to use
 	},
 	mysql: {
 		host     : 'localhost',

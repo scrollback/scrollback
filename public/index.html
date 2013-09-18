@@ -5,9 +5,13 @@
         <title>Scrollback: beautiful micro-forums for open communities.</title>
         <meta name="description" content="Scrollback: beautiful micro-forums for open communities, embeddable on any website.">
         <meta name="viewport" content="width=device-width">
-		<!-- link href='http://fonts.googleapis.com/css?family=Open+Sans:300,700' rel='stylesheet' type='text/css' / -->
+		<link href='//fonts.googleapis.com/css?family=Open+Sans:300,800|Source+Code+Pro:300' rel='stylesheet' type='text/css' / -->
         <link rel="stylesheet" href="style.css">
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+		<style>
+			#streamId { font-size: inherit; font-weight: inherit; background: transparent; border: none;
+			border-bottom: 2px solid #999; width: 200px; }
+		</style>
 	</head>
 	
 	<body>
@@ -18,14 +22,14 @@
 		<nav>
 			<div class="container clearfix">
 				<div class="box logo-box span1">
-					Scrollback
+					<div class='logo'>Scrollback</div>
 				</div>
 				<div class="box span11">
 					<ul>
 						<li><a href="#features">Features</a></li>
 						<li><a href="#whybuilt">Why we built it</a></li>
 						<li><a href="#getembed">Get Scrollback</a></li>
-						<li><a href="http://github.com/askabt/scrollback">Fork us</a></li>
+						<li><a href="http://github.com/scrollback/scrollback">Fork us</a></li>
 					</ul>
 				</div>
 			</div>
@@ -34,7 +38,10 @@
 		<div class='container clearfix'>
 			<div id="hero">
 				<h1>Beautiful text chat for your community website.</h1>
-				<img src='img/hero.png' style='max-width:60%'/>
+				<form id="add">
+				<h2>Claim your community’s name:</h2>
+				<h1>scrollback.io/<input id="streamId"><button type="submit" class="hidden"></button></h1>
+				</form>
 			</div>
 			<a name="features"><div class='box span4 break'>
 				<h2>Infinite scroll</h2>
@@ -117,7 +124,7 @@ window.scrollback = {
 
 // Don't change below this line ------------------------------------------------
 (function(d,h,e){e=d.createElement('script');e.async=1;e.src=h+'/client.min.js';
-scrollback.host=h;d.body.appendChild(e);}(document,'http://scrollback.io'));
+scrollback.host=h;d.body.appendChild(e);}(document,location.protocol+'//scrollback.io'));
 &lt;/script&gt;</code></pre></div>
 			
 		</div><!-- container -->
@@ -136,7 +143,7 @@ scrollback.host=h;d.body.appendChild(e);}(document,'http://scrollback.io'));
 			streams: ["scrollback"],      // Change this: Array of rooms.
 			theme: 'light',   // Optional: light or dark
 			ticker: true,      // Show updates when minimized?
-			host: 'http://' + location.host,
+			host: location.protocol + '//' + location.host,
 			debug: true
 		};
 		
@@ -145,22 +152,36 @@ scrollback.host=h;d.body.appendChild(e);}(document,'http://scrollback.io'));
 //		scrollback.host=h;d.body.appendChild(e);}(document,'http://'+location.host));
 		</script>
 
-		<script src="/socket.io/socket.io.js"></script>
+		<script src="sdk/sockjs.js"></script>
 		
 		<script src="sdk/addEvent.js"></script>
 		<script src="sdk/addStyle.js"></script>
 		<script src="sdk/emitter.js"></script>
+		<script src="sdk/request.js"></script>
 		<script src="sdk/domReady.js"></script>
 		<script src="sdk/getByClass.js"></script>
 		<script src="sdk/jsonml2.js"></script>
 		<script src="sdk/polyfill.js"></script>
+		<script src="sdk/browserNotify.js"></script>
 
 		<script src="sdk/cache.js"></script>
 		<script src="sdk/client.js"></script>
 		<script src="sdk/css.js"></script>
 		<script src="sdk/dom.js"></script>
 		<script src="sdk/embed.js"></script>
+		<script src="sdk/dialog.js"></script>
 		<script src="sdk/render.js"></script>
 
+		
+		<script src="//code.jquery.com/jquery.min.js"></script>
+		<script>
+			$(document).ready(function() {
+				$("form#add").submit(function (event) {
+					location.href = '/' + $('#streamId').val() + '/';
+					return false;
+				});
+			});
+		</script>
+		
 	</body>
 </html>

@@ -2,7 +2,7 @@
 
 Stream.prototype.scroll = function() {
 	var log = this.log, msg = log.firstChild, i=0, pos,
-		start = 32, end = 0, up, self = this, cb,
+		start = 99999, end = 0, up, self = this, cb,
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
 	
@@ -38,10 +38,9 @@ Stream.prototype.scroll = function() {
 	
 //	if(log.scrollHeight == log.scrollTop + log.clientHeight) { 
 	if (end >= self.messages.length - 1 && !up) {
-		console.log("bottomed out");
+		scrollback.debug && console.log("bottomed out");
 		this.bottom = true;
 	} else {
-		console.log("not bottom", end, self.messages.length, up, self.lastScrollTop, log.scrollTop);
 		this.bottom = false;
 	}
 	
@@ -75,7 +74,6 @@ Stream.prototype.update = function (data) {
 		this.log.scrollTop = offset(this.log.children[i])[1] - offset(this.log)[1] - this.scrollPx;
 	}
 	this.lastScrollTop = this.log.scrollTop;
-	console.log("Set lastScrollTop to ", this.log.scrollTop);
 	setTimeout(function() {
 		self.updating = false;
 	}, 100);
@@ -87,8 +85,6 @@ Stream.prototype.renderLog = function() {
 	if (this.hidden) return;
 	
 	this.log.innerHTML = '';
-	
-	console.log("Render:", snapshot(this.messages));
 	
 	this.messages.forEach(function(message) {
 		if (lastMsg) {
@@ -112,7 +108,7 @@ Stream.prototype.renderThumb = function(start, end) {
 	y = Math.round((thumbEnd-thumbStart)*this.tread.clientHeight/duration);
 
 	this.thumb.style.top = x + 'px';
-	this.thumb.style.height = y + 'px';
+	this.thumb.style.height = Math.max(2, y) + 'px';
 };
 
 Stream.prototype.renderTimeline = function() {
@@ -224,6 +220,7 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	var el, self = this;
 	
 	function format(text) {
+		if(!text) return "";
 		var u = /\b(https?\:\/\/)?([a-z0-9\-]+\.)+[a-z]{2,4}\b((\/|\?)\S*)?/g,
 			m = ["span"], r, s=0;
 		while((r = u.exec(text)) !== null) {
@@ -236,7 +233,7 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	}
 	
 	function formatName(name) {
-		// TODO
+		if(!name) return "";
 		return [ "span", {
 			'class': 'scrollback-message-nick',
 			onmouseout: function() {
@@ -250,7 +247,7 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 				};
 				self.userStyle = addStyles(ucss);
 			}
-		}, name ];
+		},  (name.indexOf("guest-")===0)?(name.replace("guest-","")):name];
 	}
 	
 	switch(message.type) {

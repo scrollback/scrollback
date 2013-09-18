@@ -3,14 +3,16 @@ var dom = {
 			 ["div",{'class':'scrollback-alert scrollback-alert-hidden'}],
 		["div", { 'class': 'scrollback-title' },
 			["span", {
-				'class': 'scrollback-icon scrollback-menu'
-			}],
+				'class': 'scrollback-icon scrollback-icon-menu'
+			}, 'menu'],
 			scrollback.close? ["div", {
-				'class': 'scrollback-icon scrollback-close'
+				'class': 'scrollback-icon scrollback-icon-close'
 			}]: "",
-			["div", { 'class': 'scrollback-icon scrollback-embed' }],
+			["div", { 'class': 'scrollback-icon scrollback-icon-pop' }, 'on scrollback'],
 			["div", {'class': 'scrollback-title-content'},
 				["span", {'class': 'scrollback-title-id'}],
+				["a", {href: "http://scrollback.io", "class": "scrollback-poweredby",
+			target: "_blank"}],
 				["span", { 'class': 'scrollback-title-text' }]
 			]
 		],
@@ -20,13 +22,11 @@ var dom = {
 		],
 		["div", {'class': 'scrollback-log' }],
 		["form", { 'class': 'scrollback-send' },
-			["input", { 'class': 'scrollback-nick' }],
+			["div", { 'class': 'scrollback-nick-guest' }],
 			["div", {'class': 'scrollback-text-wrap'},
 				["input", { 'class': 'scrollback-text' }]
 			],
 			["button", {type: 'submit', 'class': 'scrollback-hidden'}, "Send"]
-		],
-		["a", {href: "http://scrollback.io", "class": "scrollback-poweredby",
-			target: "_blank"}]
+		]
 	]
 };

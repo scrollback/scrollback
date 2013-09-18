@@ -1,5 +1,4 @@
 "use strict";
-
 var streams = {},
 	$ = function(id) {
 		return document.getElementById(id);
@@ -13,17 +12,18 @@ core.on('connected', function() {
 		init();
 		initialized = true;
 	}
+	
 	getByClass(document, 'scrollback-text').forEach(function(input) {
 		input.disabled = false; input.value = '';
 	});
+	
 	getByClass(document, 'scrollback-nick').forEach(function(input) {
 		input.disabled = false; 
 	});
 	
 	scrollback.streams.forEach(function(room) {
-		streams[room].notify("And... we're back.");
+		if(streams[room]) streams[room].notify("And... we're back.");
 	});
-	
 });
 
 
@@ -49,14 +49,17 @@ function init() {
 		themes[scrollback.theme]: themes.light
 	);
 	addEvent(window, 'resize', Stream.position);
+	scrollback.streams.forEach(function(id) {
+		var stream = Stream.get(id);
+		if (!stream.initialized) {
+			if(scrollback.minimized === false) stream.show();
+			else stream.hide();
+		}
+	});
 }
 
 core.on('enter', function(id) {
-	var stream = Stream.get(id);
-	if (!stream.initialized) {
-		if(scrollback.minimized === false) stream.show();
-		else stream.hide();
-	}
+	// nothing any more.
 });
 
 core.on('leave', function(id) {
@@ -65,13 +68,20 @@ core.on('leave', function(id) {
 
 core.on('nick', function(n) {
 	var i, stream;
+	var nick = n.replace(/^guest-/,'');
+	
 	for(i in streams) if(streams.hasOwnProperty(i)) {
 		stream = streams[i];
-		stream.nick.value = n;
+		stream.nick.innerHTML = nick; // Fix XSS possibility!
+		
+		if (n.indexOf("guest-")!==0) {
+			removeClass(stream.nick, 'scrollback-nick-guest');
+			addClass(stream.nick, 'scrollback-nick');
+		}
 	}
 });
 
-core.on('notify', function(m) {
+core.on('message', function(m) {
 	if (m.to && streams[m.to]) {
 		streams[m.to].onmessage(m);
 	}
@@ -83,51 +93,83 @@ function Stream(id) {
 	var self = this;
 	self.id = id;
 	self.stream = JsonML.parse(dom.stream, function(el) {
-		if(hasClass(el, 'scrollback-log')) {
-			self.log = el;
-			addEvent(el, 'scroll', function() { self.scroll(); });
-		}
-		else if (hasClass(el,"scrollback-alert-hidden")) {
-			self.alert=el;
-		}
-		else if(hasClass(el, 'scrollback-nick')) {
-			self.nick = el;
-			addEvent(el, 'change', function() { self.rename(); });
-			addEvent(el, 'focus', function() { this.select(); });
-			el.value = core.nick();
-		}
-		else if(hasClass(el, 'scrollback-text')) {
-			self.text = el;
-			addEvent(el, 'focus', function() { this.select(); });
-			addEvent(el, 'keydown', function(e) {
-				if(e.keyCode == 13) {
+		switch(true) {
+			case hasClass(el, 'scrollback-log'):
+				self.log = el;
+				addEvent(el, 'scroll', function() { self.scroll(); });
+				break;
+			case hasClass(el, 'scrollback-nick-guest') || hasClass(el, 'scrollback-nick'):
+				self.nick = el;
+				if (core.nick().indexOf("guest-") !== 0) {
+					removeClass(el, 'scrollback-nick-guest');
+					addClass(el, 'scrollback-nick');
+					el.innerHTML = core.nick();
+				} else {
+					el.innerHTML = core.nick().substr(6);
+				}
+				
+				addEvent(el, 'click', function() {
+					if (core.nick().indexOf("guest-") === 0) {
+						login();
+					}
+					else {
+						profile();	
+					}
+				});
+				
+				break;
+			case hasClass(el, 'scrollback-text'):
+				self.text = el;
+				addEvent(el, 'focus', function() { this.select(); });
+				addEvent(el, 'keydown', function(e) {
+					if(e.keyCode == 13) {
+						self.send();
+						return false;
+					}
+					return true;
+				});
+				break;
+			case hasClass(el, 'scrollback-send'):
+				self.sendfrm = el;
+				addEvent(el, 'submit', function(event) {
+					if(event.preventDefault) event.preventDefault();
 					self.send();
 					return false;
-				}
-				return true;
-			});
-		}
-		else if(hasClass(el, 'scrollback-send')) {
-			self.sendfrm = el;
-			addEvent(el, 'submit', function(event) {
-				if(event.preventDefault) event.preventDefault();
-				self.send();
-				return false;
-			});
-		}
-		else if(hasClass(el, 'scrollback-tread')) self.tread = el;
-		else if (hasClass(el, 'scrollback-close')) {
-			addEvent(el, 'click', function() { console.log("close called.");self.close(); });
-		}
-		else if(hasClass(el, 'scrollback-thumb')) self.thumb = el;
-		else if(hasClass(el, 'scrollback-title')) {
-			self.title = el;
-			addEvent(el, 'click', function() { self.toggle(); });
-		}
-		else if(hasClass(el, 'scrollback-title-id')) el.innerHTML = id;
-		else if(hasClass(el, 'scrollback-title-text')) self.titleText = el;
-		else if(hasClass(el, 'scrollback-embed')) {
-			addEvent(el, 'click', function() { self.embed(); });
+				});
+				break;
+			case hasClass(el, 'scrollback-tread'):
+				self.tread = el;
+				break;
+			case hasClass(el, 'scrollback-thumb'):
+				self.thumb = el;
+				break;
+			case hasClass(el, 'scrollback-title'):
+				self.title = el;
+				addEvent(el, 'click', function() { self.toggle(); });
+				break;
+			case hasClass(el, 'scrollback-title-id'):
+				el.innerHTML = id;
+				break;
+			case hasClass(el, 'scrollback-title-text'):
+				self.titleText = el;
+				break;
+			case hasClass(el, 'scrollback-title-close'):
+				addEvent(el, 'click', function() { self.close(); });
+				break;
+			case hasClass(el, 'scrollback-icon-pop'):
+				addEvent(el, 'click', function() { self.pop(); });
+				break;
+			case hasClass(el, 'scrollback-alert'):
+					self.alert=el;
+				break;
+			case hasClass(el, 'scrollback-icon-login'):
+				addEvent(el, 'click', function(e) {
+					login();
+					if(e.preventDefault) e.preventDefault();
+					if(e.stopPropagation) e.stopPropagation();
+					return false;
+				});
+				break;
 		}
 		return el;
 	});
@@ -144,7 +186,7 @@ Stream.prototype.close = function (){
 	Stream.position();
 };
 
-Stream.prototype.embed = function () {
+Stream.prototype.pop = function () {
 	window.open(scrollback.host + '/' + this.id + '/', "_blank");
 };
 
@@ -159,6 +201,61 @@ Stream.prototype.hide = function() {
 	addClass(this.stream, 'scrollback-stream-hidden');
 	this.hidden = true;
 };
+
+function login () {
+	dialog.show("/dlg/login#" + core.nick(), function(data) {
+		var nickObj;
+		if(!data) return;
+		if(data.assertion) nickObj = { browserid: data.assertion };
+		else if(data.guestname) nickObj = 'guest-' + data.guestname;
+		
+		if(nickObj) core.nick(nickObj, function (reply) {
+			scrollback.debug && console.log(reply.message);
+			if(reply.message) {
+				// this is an error;
+				if(reply.message == "AUTH_UNREGISTERED")
+				{
+					scrollback.debug && console.log("calling profile....");
+					profile();
+				}
+				
+				dialog.send("error", reply.message);
+			} else {
+				// this is a message;
+				dialog.hide();
+			}
+		});
+	});
+}
+
+function profile() {
+	dialog.show("/dlg/profile", function(user) {
+		var nickObj;
+		if(!user) {
+			dialog.hide();
+			return;
+		}
+		
+		if (user.guestname) {
+			core.nick(user.guestname,function(err){
+				dialog.hide();	
+			});
+			return;
+		}
+		
+		core.nick({ user: user }, function(nickResponse){
+			if (nickResponse.message) {
+				dialog.send("error",nickResponse.message);
+			}else{
+				dialog.hide();	
+			}
+		});
+	});
+}
+
+core.on('error', function(err) {
+	if(err === 'AUTH_UNREGISTERED') profile();
+});
 
 Stream.prototype.show = function() {
 	var self = this;
@@ -182,7 +279,7 @@ Stream.prototype.send = function () {
 		parts = text.substr(1).split(' ');
 		switch (parts[0]) {
 			case 'nick':
-				this.nick.value = parts[1];
+				this.nick.innerHTML= parts[1];
 				this.rename();
 				return;
 			case 'leave':
@@ -210,9 +307,12 @@ Stream.prototype.notify=function(str, persist) {
 	}
 }
 
+
 Stream.prototype.onmessage = function(message) {
-	var el = this.renderMessage(message),str="";
+	var el = this.renderMessage(message),str="", oldTitle="",title="";
+	
 	if (message.type=="text") {
+		browserNotify(message.from+" : "+message.text);
 		this.titleText.innerHTML = (el.innerText || el.textContent);
 	} else {
 		if (core.nick()!==message.ref && message.ref!=message.from) {
@@ -223,7 +323,7 @@ Stream.prototype.onmessage = function(message) {
 };
 
 Stream.prototype.rename = function() {
-	var n = this.nick.value;
+	var n = this.nick.innerText || this.nick.textContent;
 	core.nick(n);
 };
 
@@ -319,29 +419,5 @@ Stream.position = function() {
 		}
 	}
 	Stream.stack();
-};
-
-// ------- Incomplete: Show a popup for previews -----
-
-function showPopup(btn, el) {
-	var scrw = window.innerWidth,
-		scrh = window.innerHeight,
-		popw, poph, pop, btno, btnx, btny, btnh, btnw;
-	
-	btno = offset(btn);
-	btnx = btno.left, btny = btno.top;
-	btnh = btn.offsetHeight; btnw = btn.offsetWidth;
-	
-	
-	pop = $$(document, 'scrolback-popup')[0];
-	if(pop) pop.parentNode.removeChild(pop);
-	
-	pop = JsonML.parse(["div", { 'class': 'scrollback-popup' }]);
-	pop.appendChild(el);
-	document.body.appendChild(pop);
-	
-	popw = pop.offsetWidth; poph = pop.offsetHeight;
-	
-	console.log(btno, btnh, btnw, scrw, scrh, popw, poph);
 };
 

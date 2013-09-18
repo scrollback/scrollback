@@ -56,7 +56,7 @@ function messageArray() {
 		
 		if (!time && missing) {
 			res.push(missing(null, null));
-			return res;
+			time = 1E13;
 		}
 		
 		mid = find(time);

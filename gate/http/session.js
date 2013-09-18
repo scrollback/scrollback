@@ -1,29 +1,66 @@
 "use strict";
 
 var express = require("express"),
-	MemoryStore = express.session.MemoryStore,
-	sessionStore = new MemoryStore();
+	store = new express.session.MemoryStore(),
+	signature = require("express/node_modules/cookie-signature"),
+	cookie = require("cookie"),
+	guid = require("../../lib/guid.js"),
+	names = require("../../lib/names.js"),
+	_get = store.get,
+	key = "scrollback_sessid",
+	secret = "ertyuidfghjcrtyujwsvokmdf";
+	
+function initUser() {
+	console.log("called the init user function");
+	return {
+		id: 'guest-sb-' + names(6),
+		picture: '/img/guest.png',
+		accounts: [],
+		rooms: {},
+		newUser: true
+	};
+}
 
-var parse = express.session({
-	secret: "ertyuidfghjcrtyujwsvokmdf",
-	store: sessionStore,
-	cookie: { maxAge: 3600000 }
+exports.get = function(user, cb) {
+	unsign(user.sid, function(id, session) {
+		if (session.user.newUser && user.suggestedNick) session.user.id="guest-"+user.suggestedNick;
+		if (session.user.newUser ) delete session.user.newUser;
+		store.set(id,session);
+		cb(null, session);
+	});
+};
+var set = exports.set = function(sid, sess, cb) {
+	sid = unsign(sid, function(id) {
+		store.set(id, sess);
+	});
+};
+
+var exparse = express.session({
+	secret: secret,
+	key: key,
+	store: store
 });
 
-exports.store = sessionStore;
+exports.store = store;
 
-exports.parser = function (req, res, next) {
-	parse(req, res, function() {
-		if(req.session && !req.session.user) {
-			req.session.user = {
-				id: "guest", name: "Guest", picture: "",
-				accounts: []
-			};
-		}
+var parse = exports.parser = function(req, res, next) {
+	exparse(req, res, function() {
+		if(!req.session.user) {
+			req.session.user = initUser();
+			req.session.cookie.value = 's:' + signature.sign(req.sessionID, secret);
+			store.set(req.sessionID, req.session);		}
 		next();
 	});
 };
 
-exports.get = function(sid, cb) {
-	sessionStore.get(sid, cb);
+function unsign(sid, cb) {
+	var noop = function(){},
+		fakeReq = {cookies: {}, signedCookies: {}, originalUrl: '/', on: noop, removeListener: noop},
+		fakeRes = { on: noop };
+	fakeReq.cookies[key] = sid;
+	
+	parse(fakeReq, fakeRes, function() {
+		cb(fakeReq.sessionID, fakeReq.session);
+	});
 }
+

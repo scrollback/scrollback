@@ -1,0 +1,22 @@
+button.major{
+	background: black;
+	color: white;
+	border-bottom: 2px solid #3CA;
+	margin-right: 16px;
+	padding-bottom: 6px;
+}
+
+
+.inVisible{
+	display: none;	
+}
+
+
+#notification{
+	margin: 3px;
+	border: 1px solid black;
+	border-radius: 5px;
+	width: 300px;
+	height: 30px;
+	text-align: center;
+}
