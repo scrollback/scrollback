@@ -20,7 +20,7 @@ var init= function(){
 
 function loadBannedUsers(){
 	var usersArray=[];
-	fs.readFile(__dirname + "/bannedUsername.txt","utf-8", function (err, data) {
+	fs.readFile(__dirname + "/bannedusername.txt","utf-8", function (err, data) {
 		if (err) throw err;
 		
 		data.split("\r\n").forEach(function(line) {// "/r/n" in windows
