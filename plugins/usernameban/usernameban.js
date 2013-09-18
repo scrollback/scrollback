@@ -23,7 +23,7 @@ function loadBannedUsers(){
 	fs.readFile(__dirname + "/bannedusername.txt","utf-8", function (err, data) {
 		if (err) throw err;
 		
-		data.split("\r\n").forEach(function(line) {// "/r/n" in windows
+		data.split("\n").forEach(function(line) {// "/r/n" in windows
 			if (line) {
 				var value=line.split(":");//":" based
 				if (!usersArray[value[0]]) usersArray[value[0]]=[];
