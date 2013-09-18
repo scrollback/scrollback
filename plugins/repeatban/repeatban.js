@@ -4,7 +4,7 @@ var users={};
 module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
-		if(rejectable(message)) callback(new Error("BANNED_WORD"));
+		if(rejectable(message)) callback(new Error("REPEATATIVE"));
 		else callback();
 	});
 };
