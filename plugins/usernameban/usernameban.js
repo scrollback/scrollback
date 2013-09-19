@@ -12,18 +12,26 @@ module.exports = function(core) {
 };
 
 
-var init=function(){
-	fs.readFile(__dirname + "/bannedUsername.txt","utf-8", function (err, data) {
+var init= function(){
+	loadBannedUsers();
+	setInterval(loadBannedUsers,60*60*1000);
+};
+
+
+function loadBannedUsers(){
+	var usersArray=[];
+	fs.readFile(__dirname + "/bannedusername.txt","utf-8", function (err, data) {
 		if (err) throw err;
 		
-		data.split("\r\n").forEach(function(line) {// "/r/n" in windows
+		data.split("\n").forEach(function(line) {// "/r/n" in windows
 			if (line) {
 				var value=line.split(":");//":" based
-				if (!blockedUsernames[value[0]]) blockedUsernames[value[0]]=[];
-				blockedUsernames[value[0]][value[1]]=true;//0-room 1-username	
+				if (!usersArray[value[0]]) usersArray[value[0]]=[];
+				usersArray[value[0]][value[1]]=true;//0-room 1-username	
 				log("added into banned username list="+value[0]+","+[value[1]]);
 			}
 		});
+		blockedUsernames=usersArray;
 	});
 }
 
