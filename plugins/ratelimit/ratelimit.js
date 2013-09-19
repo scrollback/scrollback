@@ -8,7 +8,7 @@ module.exports = function(core) {
 			users[message.from]=new RateLimiter(config.http.limit, config.http.time);
 		limiter = users[message.from];
 		
-		if (message.origin.indexOf("irc")==0) return callback();
+		if (message.origin && message.origin.indexOf("irc")==0) return callback();
 		
 		if (message.type=="back" || message.type=="away" ) {
 			return callback();
