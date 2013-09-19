@@ -1,14 +1,16 @@
 var users={};
-
+var config = require('../../config.js');
 
 module.exports = function(core) {
-	init();
 	core.on('message', function(message, callback) {
 		var limiter;
 		if (!users[message.from])
 			users[message.from]=new RateLimiter(config.http.limit, config.http.time);
 		limiter = users[message.from];
 		
+		if (message.type=="back" || message.type=="away" ) {
+			return callback();
+		}
 		if (message.type=="nick") {
 			if (users[message.from]) {
 				users[message.ref] = users[message.from];
@@ -16,15 +18,15 @@ module.exports = function(core) {
 				// make be even ignore this when the its a auth request.
 				delete users[message.from];
 			}
+			return callback();
 		}
 		
 		limiter.removeTokens(1, function(err, remaining) {
 			var room;
 			if (remaining < 0) {
-				log("Error: API Limit exceeded.");
-				callback(new Error("API Limit exceeded"));
+				return callback(new Error("API Limit exceeded"));
 			}
-			callback();
+			return callback();
 		});
 	});
 };
@@ -34,7 +36,7 @@ RateLimiter =function(a,b,c){
 		limit:a,
 		time:b,
 		removeTokens: function(count,callback){
-			if(this.limit>0){
+			if(this.limit>=0){
 				this.limit-=count;
 				setTimeout(function(object,count){
 					object.limit+=count;
