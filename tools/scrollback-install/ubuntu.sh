@@ -38,6 +38,6 @@ fi
 echo $GHUSER;
 
 cd ~
-git clone git@github.com:scrollback/$GHUSER
+git clone https://github.com/$GHUSER/scrollback.git
 cd scrollback/tools
 ./install.sh
