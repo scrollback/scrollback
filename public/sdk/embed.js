@@ -202,8 +202,9 @@ Stream.prototype.hide = function() {
 	this.hidden = true;
 };
 
-function login () {
-	dialog.show("/dlg/login#" + core.nick(), function(data) {
+function login (options) {
+	options = options || {};
+	dialog.show("/dlg/login"+ (options.requireAuth? "?requireAuth=1": "") +"#" + core.nick(), function(data) {
 		var nickObj;
 		if(!data) return;
 		if(data.assertion) nickObj = { browserid: data.assertion };
@@ -255,10 +256,10 @@ function profile() {
 
 core.on('error', function(err) {
 	if(err === 'AUTH_UNREGISTERED') profile();
+    if(err === 'AUTH_REQ_TO_POST') login( {requireAuth:1});
 });
 
-Stream.prototype.show = function() {
-	var self = this;
+Stream.prototype.show = function() { var self = this;
 	removeClass(this.stream, 'scrollback-stream-hidden');
 	setTimeout(function() {
 		if (!self.initialized) {
