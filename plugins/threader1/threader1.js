@@ -10,12 +10,11 @@ module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
 		try{
-			//log("-----writting on process----"+process.toString());
 			var msg='{"id":"'+message.id+'","time":'+message.time+',"author":"'+message.from+
 				'","text":"'+message.text+'","room":"'+message.to+'"}';
 			log("Sending msg to scrollback.jar="+msg);
 			pro.stdin.write(msg+'\n');
-			pendingCallbacks[message.id] = { message: message, fn: callback ,time: new Date()};
+			pendingCallbacks[message.id] = { message: message, fn: callback};
 			setTimeout(function() { 
 				if(pendingCallbacks[message.id] ){
 					pendingCallbacks[message.id].fn();
@@ -39,10 +38,10 @@ function init(){
 	
 	pro.stdout.on("data", function(data){
 		var message;
-		log("data=-------:"+data+":-------");
+		log("data=:"+data+":-");
 		try {
 			data=data.substring(data.indexOf('{'),data.indexOf('}')+1);
-			log("data=----:"+data+":----------");
+			log("data=-:"+data+":-");
 			data = JSON.parse(data);
 			console.log("Data returned by scrollback.jar="+data.threadId, pendingCallbacks[data.id].message.text);
 			message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
@@ -62,7 +61,7 @@ function init(){
 	pro.stdout.on('error', function(err) {
 		log("Error", err);
 	});
-	log("--------------Scrollback.jar prcess Execution successful-------------");
+	log("-Scrollback.jar prcess Execution successful-");
 	
 }
 
