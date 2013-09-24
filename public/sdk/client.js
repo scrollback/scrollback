@@ -122,15 +122,24 @@ function send(type, to, text, options, callback) {
 	
 	if(typeof messageArray !=="undefined" && rooms[to]) {
 		rooms[to].messages.push(m);
+		i = rooms[to].messages.length - 1;
 		if(requests[to + '//']) requests[to + '//'](true);
 	}
+
+
 	
-	if(callback) {
-		pendingCallbacks[m.id] = callback;
-		setTimeout(function() {
-			if(pendingCallbacks[m.id]) delete pendingCallbacks[m.id];
-		}, 10000);
+	pendingCallbacks[m.id] = function(obj) {
+		if(obj.message && typeof messageArray !=="undefined" && rooms[to]) {
+			// obj is an error. remove the message from the cache.
+			rooms[to].messages.splice(i, 1);
+			if(requests[to + '//']) requests[to + '//'](true);
+		}
+		if(callback) callback(obj);
 	}
+
+	setTimeout(function() {
+		if(pendingCallbacks[m.id]) delete pendingCallbacks[m.id];
+	}, 10000);
 	
 	return m;
 }
