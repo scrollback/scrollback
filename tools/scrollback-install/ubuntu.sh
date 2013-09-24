@@ -2,7 +2,7 @@
 sudo add-apt-repository ppa:chris-lea/node.js
 sudo apt-get update
 while true; do
-    read -p "Do you wish to install MySQL? " yn
+    read -p "Do you wish to install MySQL(yes or no)? " yn
     case $yn in
         [Yy]* ) sudo apt-get install mysql-server mysql-client; break;;
         [Nn]* ) break;;
@@ -10,7 +10,7 @@ while true; do
     esac
 done
 while true; do
-    read -p "Do you wish to install git? " yn
+    read -p "Do you wish to install git(yes or no)? " yn
     case $yn in
         [Yy]* ) sudo apt-get install git; break;;
         [Nn]* ) break;;
@@ -19,7 +19,7 @@ while true; do
 done
 
 while true; do
-    read -p "Do you wish to install Nodejs? " yn
+    read -p "Do you wish to install Nodejs(yes or no)? " yn
     case $yn in
         [Yy]* ) sudo apt-get install nodejs; break;;
         [Nn]* ) break;;
@@ -38,6 +38,6 @@ fi
 echo $GHUSER;
 
 cd ~
-git clone git@github.com:scrollback/$GHUSER
+git clone https://github.com/$GHUSER/scrollback.git
 cd scrollback/tools
 ./install.sh
