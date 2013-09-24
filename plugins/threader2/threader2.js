@@ -2,6 +2,9 @@ var log = require("../../lib/logger.js");
 var fs=require("fs");
 var pro;//for process
 var pendingCallbacks = {};
+/**
+Communicate with cloimpl-0.1.0-SNAPSHOT-standalone.jar and set message.labels.
+*/
 
 module.exports = function(core) {
 	init();
@@ -33,9 +36,8 @@ function init(){
 	}
 	pro.stdout.on("data", function(data){
 		var message;
-		log("data=---2ed jar-:"+data+":-------");
+		log("data=-:"+data+":-------");
 		var d=data.split(" ");
-		log("d0-"+d[0]+", d1-"+d[1]);
 		message=pendingCallbacks[d[0]]&&pendingCallbacks[d[0]].message;
 		if (message) {
 			message.labels=[d[1]];
