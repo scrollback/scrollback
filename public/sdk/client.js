@@ -111,7 +111,6 @@ core.leave = function (id) {
 
 function send(type, to, text, options, callback) {
 	var m = { id: guid(), type: type, from: nick, to: to, text: text || '', time: core.time() }, i;
-	
 	if(options) for(i in options) if(options.hasOwnProperty(i)) {
 		m[i] = options[i];
 	}
@@ -163,6 +162,10 @@ function onMessage (m) {
 	scrollback.debug && console.log("Received:", m);
 	core.emit('message', m);
 	
+	if(m.type=="nick" && m.from==core.nick()) {
+		core.nick(m.ref);
+	}
+
 	if(pendingCallbacks[m.id]) {
 		pendingCallbacks[m.id](m);
 		delete pendingCallbacks[m.id];
@@ -191,14 +194,21 @@ core.say = function (to, text, callback) {
 core.nick = function(n, callback) {
 	if (!n) return nick;
 	if(typeof n === 'string') n = {ref: n};
-	send('nick', '', '', n, function(reply) {
-		if(reply.ref) {
-			nick = reply.ref;
-			core.emit('nick', nick);
-		}
-		return callback(reply);
-	});
-	return n;
+	if(callback) {
+		send('nick', '', '', n, function(reply) {
+			if(reply.ref) {
+				nick = reply.ref;
+				core.emit('nick', nick);
+			}
+			if(callback)
+			return callback(reply);
+		});
+	}else {
+		nick = n.ref;
+		core.emit('nick', nick);
+		return n;
+	}
+
 };
 
 core.watch = function(room, time, before, after, callback) {
