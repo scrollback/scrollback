@@ -65,13 +65,12 @@ function init(data, conn) {
 	});
 
 	session.watch({sid: sid, cid: conn.socket.id}, function(sess) {
-		log("The session has changed", sid, conn.socket.id);
+		log("The session has changed", sid, conn.socket.id,sess);
 		conn.session = sess;
 	});
 }
 
 function close(conn) {
-	console.log("Closed a connection of ", conn.sid);
 	if(!conn.sid) return;
 	var user = conn.session.user;
 	
@@ -80,8 +79,7 @@ function close(conn) {
 		userAway(user, room, conn);
 	});
 
-	session.unwatch({sid: conn.sid, cid: conn.socket.id});
-		conn.save();
+	conn.save();
 }
 
 function userAway(user, room, conn) {
@@ -91,19 +89,21 @@ function userAway(user, room, conn) {
 	if(user.rooms[room]) user.rooms[room]--;
 	conn.save();
 	setTimeout(function() {
-		if (!user.rooms[room]) {	
+		var user = conn.session.user;
+		if (!user.rooms[room]) {
 			delete user.rooms[room];
 			core.message({ type: 'away', from: user.id, to: room,
 				time: new Date().getTime(), text: "" });
-
 			if(!Object.keys(user.rooms).length) {
 				delete users[user.id];
 			}
+			console.log("saving the session ",user);
 			conn.save();
 		}
 		else{
 			log("User still has some active windows.",user);
 		}
+		session.unwatch({sid: conn.sid, cid: conn.socket.id});
 	}, 60*1000);
 
 	return false; // never send an away message immediately. Wait.
@@ -121,7 +121,6 @@ function userBack(user, room, conn) {
 		conn.save();
 		return false; // we've already sent a back message for this user for this room.
 	}
-
 	user.rooms[room] = 1;
 	conn.save();
 	return true;
@@ -147,6 +146,9 @@ function message (m, conn) {
 	m.origin = "web://" + conn.socket.remoteAddress;
 	m.to = m.to || Object.keys(user.rooms);
 	
+	if(typeof m.to != "string" && m.to.length==0)
+		return;
+
 
 	if (m.type == 'back') {
 		if(!userBack(user, m.to, conn)) return; 
@@ -169,7 +171,7 @@ function message (m, conn) {
 	}
 	
 
-	function sendMessage(){
+	function sendMessage() {
 		console.log("core.message",m);
 		core.message(m, function (err, m) {
 			var i;
@@ -190,13 +192,13 @@ function message (m, conn) {
 				console.log("Saved session", conn.session);
 			}
 			
-			if (err){
+			if (err) {
 				return conn.send('error', {id: m.id, message: err.message});
 			}
-			if(m.ref){
+			if(m.ref) {
 				users[m.ref] = users[user.from] || {};
 				users[m.from] && delete users[m.from];
-				if(m.ref.indexOf("guest-")!=0){
+				if(m.ref.indexOf("guest-") != 0) {
 					users["guest-"+m.from]=users[user.from];
 				}
 			}
@@ -243,7 +245,6 @@ exports.send = function (message, rooms) {
 	log("Socket sending", message, "to", rooms);
 	rooms.map(function(room) {
 		if(rConns[room]) rConns[room].map(function(conn) {
-			console.log(conn.session.user);
 			conn.send('message', message);
 		});
 	});
