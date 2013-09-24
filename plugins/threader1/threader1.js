@@ -10,8 +10,11 @@ module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
 		try{
+			var m=message.text;//remove " 
+			m=m.replace(/\"/g,"");
+			
 			var msg='{"id":"'+message.id+'","time":'+message.time+',"author":"'+message.from+
-				'","text":"'+message.text+'","room":"'+message.to+'"}';
+				'","text":"'+m+'","room":"'+message.to+'"}';
 			log("Sending msg to scrollback.jar="+msg);
 			pro.stdin.write(msg+'\n');
 			pendingCallbacks[message.id] = { message: message, fn: callback};

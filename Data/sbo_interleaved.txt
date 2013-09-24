@@ -1,0 +1,1506 @@
+6c80ec6e-e744-4d96-a3bf-770e3fe1036c 7127 linux-dev jermaine Meta, but $(date) is in large format
+be917b50-c773-4713-ac28-00803aac7a52 15381 linux-test alanna what should I choose between slackware 11.0 and redhat 5? I'm looking for a great desktop envoiernment, etc
+ec6da569-65de-4377-96e1-dc2ce37e7e3f 7142 linux-dev meta Jermaine, RTM
+72cbd491-ac69-4c9e-b086-be218dbbe9db 15406 linux-test chauncey if you're not a big business like IBM, you can instead focus on offering your customers ...
+77641dbd-6c19-4a8f-95bc-2cc524318968 7148 linux-dev meta it tells you
+97f309cb-046f-4fcc-bdfc-ce16377458e2 15412 linux-test chauncey personal sales ?
+632095c7-e34b-47ee-9cc2-fa272aef3932 7157 linux-dev jetta Santo: that requires running OS X
+a11227fa-a96f-4431-ae2d-bbe953d4ab99 15418 linux-test chauncey person-to-person sales ?
+363375bf-44d1-436a-a930-a3c91149a7e0 7169 linux-dev malcolm Rachel: If running as root, I need to set up a global config rather than ~/.fetchmailrc ?
+d3503886-51f2-4510-a547-32b9670c05b7 15422 linux-test gale sounds like a job for a loop
+7e7035dc-b730-4292-be06-830e50eadea2 7173 linux-dev kathie Jermaine:  date '+%m%d%Y'
+dfedf92e-b362-4cba-a116-865a1493252b 15423 linux-test chauncey the human touch ?
+45c48784-2502-494a-910c-854aa068d33b 7183 linux-dev rachel Malcolm: yup
+823e8a3f-7df4-4000-a73f-0e10b0c2c58e 15455 linux-test paulita Chauncey what do you mean?
+a0a09784-28e9-40a7-9e03-47e50d4d164a 7190 linux-dev malcolm Rachel: I run it in daemon mode under my uid and it works very nicely
+49555595-6f56-46ed-8774-c987b7d4f9ca 15471 linux-test nestor ok
+8d245681-5060-4365-8a01-8067bf6953b0 7192 linux-dev jermaine I got it.. thanks
+d983bd26-749d-4b7f-b83b-185af01e5a2c 15474 linux-test nestor i got it solved
+fc5a3eda-e484-4513-998a-9cf8eb8006aa 7200 linux-dev rachel pretty much put same info in global location.
+1d31403e-cfdd-4130-8a71-1468bb41f603 15479 linux-test nestor thanks for the help guys
+1737c67f-57a8-46eb-947b-3fbeabe9ed66 7215 linux-dev shanon epic5 is pretty cool...
+ba03f209-4b55-44c1-a39e-facef70835e5 15503 linux-test nestor (if you ask how, i made a mini bash script)
+4ef06f53-be1d-4f11-954a-7ae4e87806f0 7236 linux-dev malcolm Rachel: OK thanks.. I'll try to find the docs on that.
+799aa1cb-2477-4f63-9f2b-0457cf39745b 15508 linux-test nestor goodbye.
+5eb61d50-edd4-4845-b95b-f34182d87817 7238 linux-dev elma hi folks
+dd7413b4-c11f-4e82-b077-4ce83e7ae62d 15542 linux-test chauncey Paulita: I'm looking for the end to that sentence ...
+9bbcc193-a0c5-4cf5-a495-bc3d2b95c641 7260 linux-dev elma 'm sure i missed something but fonts rendering in my gimp works isn't at its best
+23c7ef8e-3877-4efa-9029-29fb6e5ab299 15552 linux-test paulita :)
+98487fa2-7a0d-4632-b8df-010757d2d229 7287 linux-dev elma is it because f the gimp or have i missed some tuning or such?
+f520ac93-81ca-4ab0-89c1-ec8489318411 15579 linux-test paulita you mentioned that if your a big musiness like IBM you cant focus on offering your customers what?
+80595b32-8afe-4ea8-9e73-20d61d81b64a 7288 linux-dev sena is there anyway to see what the CPU temperature is ?
+6cb93e4b-1aff-4c18-86d0-e6f1ae4853bd 15601 linux-test chauncey Paulita: no you CAN focus ...
+402bf638-7215-4af2-a93b-7b16b099e21c 7296 linux-dev rachel Malcolm: use "/etc/fetchmailrc"        -f <pathname> | --fetchmailrc <pathname>
+a678ca01-7f7a-4626-8242-b8ef9c87b5ef 15678 linux-test paulita we do focus at IBM Chauncey
+a80df85e-a099-480e-ae65-26ad9de723e5 7297 linux-dev rachel Specify  a non-default name for the ~/.fetchmailrc run control file.
+2e744002-e8e1-4577-971c-1553f5f2f159 15713 linux-test chauncey :-)
+74015c8d-dc47-413e-984a-af1488d60513 7312 linux-dev malcolm Rachel: in the man page http://fetchmail.berlios.de/fetchmail-man.html it doesn't mention any global fetchmailrc file... that is what was confusing me...
+86fa03ca-3cd9-4af5-b31f-3f3d0d08afad 15724 linux-test paulita amerika has changed is what the problem is.
+b0becb8d-9496-49b2-84cc-0affdf5bd5e6 7322 linux-dev thurman hi, do you have any recommendations for saving videos from a webcam in GNU/Linux?
+4c6e60b4-c601-4d6e-97e3-0858b1d399cb 15734 linux-test paulita i blame it on republican nazis :)
+d43ff790-63da-4680-a18f-9ab080b2bf2d 7335 linux-dev rachel Malcolm: give yourself a promotion - You decide! ;-)
+2bb4de27-90f1-42ad-a1ed-b07aacdd54ab 15740 linux-test paulita mostly texans
+c3413d40-0897-4a6a-870a-af90decebef9 7341 linux-dev malcolm Rachel: there are a couple of oblique refs to running as root and that's it.  And if I try to run it as root, it says "running as root is discouraged" and then exits :)
+945b3052-908b-4c60-98f0-df20fe1710e4 15743 linux-test paulita anyway
+aa7e35be-2338-4d0f-a56c-9546a0aa9feb 7373 linux-dev meta Thurman, try motion
+9b28e246-aad4-4b92-a6c2-7cedd04319e5 15882 linux-test january News from kernel.org: 2.6.21.2: stable <http://www.kernel.org/kdist/fragments/stable.html>
+a6ed7e01-1ed5-485a-81ae-4b1ef332b7c6 7379 linux-dev rachel Malcolm: hmm
+654ff976-61f1-453a-be11-07d26bdd0973 15888 linux-test laura How do I check which ports are bindable?
+315e18a0-d5ac-404f-a42c-8a4c98ce2ea8 7503 linux-dev thurman Meta: isn't it strange that it writes to /var/lib/motion/snapshots
+a1d1ebde-c1b6-4acd-bdba-ece401f8db06 15912 linux-test margene what's new in the kernel?
+486007f9-ae8a-4cfd-b793-cd24f46c1d91 7511 linux-dev malcolm Rachel: ok my bad.. the /etc/init.d script exits automatically (and silently.. bitches) if no /etc/fetchmailrc exists
+375251c9-1085-4708-97cb-86292a536ef7 15946 linux-test azzie Is that like the new whats up saying for nerds?
+369afa62-ac18-4873-b3f5-e6ff6eee3401 7528 linux-dev malcolm have these people never heard of error messages?
+3b98a02d-75f7-4917-8174-e4756e9281a5 15951 linux-test azzie That would be awesome.
+d93b8dad-eade-4a33-8623-4e3d746c3197 7533 linux-dev jesse Malcolm: it runs as user fetchmail here, and uses /etc/fetchmailrc
+ef487993-7d18-444c-b260-20f6c3376ec8 15964 linux-test margene sure run with it
+9e0ec7f2-e05c-4d59-8017-a0cf8374fbb4 7548 linux-dev malcolm Jesse: thanks
+05d73219-aa17-4f44-a64c-3477aa763fe4 15981 linux-test margene though I prefer the term geeks
+791a41f5-0798-4b8c-becf-ebb461861ce0 7561 linux-dev malcolm Jesse: set up to do the same here, looks like
+60daabe1-b304-4b9f-9ec9-eae7a9d57d6a 16009 linux-test azzie Well, then.
+81c8f401-6b4a-4098-852d-3d501309f943 7565 linux-dev rachel well there ya go.
+c536919c-a131-4b37-8e6f-c2949fe85be9 16022 linux-test sara is there an easy way to extract files from a patch, without having the thing it patches against, (there are there entirely) ?
+142f6dd6-5bab-482b-b054-b195cc4eac5b 7573 linux-dev rachel Jesse++
+fd93192f-7d0c-410f-af93-26d2c4560747 16161 linux-test carly Sara: no
+096ddc8c-125f-4e9e-aad9-b948e8192a7d 7638 linux-dev denny so how does one enforce a permission set and ownership set on a folder and all its children?
+5ba0c8c9-b486-4fcf-ad4d-86364888ed91 16177 linux-test carly Sara: patches are diff deltas
+78f7b12b-9284-4860-8319-33eef6b59c41 7655 linux-dev elma poningru:  -R
+58864446-1c96-4946-a720-1006aa5d8992 16200 linux-test carly in the usual form atleast
+5f1c163e-c077-4a60-ae87-1766b0d06ea2 7660 linux-dev jetta im starting to think it might actually not be possible to just put linux on an intel mac mini
+5bfde332-636b-41bd-b84c-49464904a863 16238 linux-test sara Carly, duh, but this one is basically just adding entire files
+ce71c654-223b-4fbc-b249-6a258c104bad 7687 linux-dev elma poningru: -R for recursive...
+bbf3cf74-2bbc-4b39-bd2c-36a5cbdaccfe 16262 linux-test sara don't feel like scripting all the + away, and then splitting it into files manually
+b976a757-4f6f-4b5a-bc34-db0dcf630346 7756 linux-dev elma well... have a nice day folks
+fb7f7b1b-b704-4bd2-90f9-8ac4273bff17 16264 linux-test carly hmm then just apply it, and you have the files
+7bb8ee3a-c69b-4ade-a5c9-fda25a855e30 7783 linux-dev shenna hi, are sata drives accessed as sda or hda?
+f9a6c9a3-a6c2-463e-bc23-71661b215043 16286 linux-test rea how can i check if is blocked? i mean it has a service running
+39ebc16e-c48f-469c-9dd3-bd487069f1a6 7796 linux-dev elma sda
+db13cb5e-412e-4a1b-b33d-eee038a04770 16287 linux-test rea ?
+73ee61ac-2e04-4ab5-af9a-58787b51e96d 7860 linux-dev johnathon hey wat's up ?
+cb8dbee7-d105-4638-9e5b-7bb16e7b776f 16311 linux-test alice has anyone in here set up tor w/ gpg ?
+acb8da32-b194-4275-8420-7b91b26f74c0 7885 linux-dev shenna Elma: , then why is it that my 2.4 kernel recognises it as hda?
+aa0e28ea-2516-4b71-977d-7e8ef6f3e905 16312 linux-test alice for irc?
+e60ebba5-82b2-439e-a8d6-94aa085664a4 7898 linux-dev denny Elma, no I mean like always
+43e6d5ca-188c-46c4-9ffb-aa48cef1758b 16314 linux-test carly he Lai you old preacherman
+c0d04fa1-c12b-424b-b67d-3fadf289e976 7904 linux-dev denny so if anything is added to that folder
+73bbe17b-6f93-48f1-95e0-276779ca82ed 16324 linux-test rea *** i mean ports
+08da0e12-ffac-45de-8bf5-8d3b931d5217 7919 linux-dev denny the permission and ownership stays the same
+866a5af6-71a6-40d0-a5ce-73414d8613df 16326 linux-test lai 00!!!
+7c5bd6aa-fd0a-45ff-af6a-05846722ad79 7954 linux-dev denny throughout
+1433a963-cbe3-44c3-9fbb-5400dd5daa21 16341 linux-test lai b00!
+36063401-ba42-4a48-a203-734be6d4bce6 7972 linux-dev latricia is there a way to tail -f a file and have that output piped to sed to have certain lines colorized?
+a16aefe8-0203-41a0-874e-e978f731751c 16346 linux-test lai oopsie forgoe the B
+d8ee594e-9199-43aa-b402-ad6f017970f8 8001 linux-dev malcolm Rachel / Jesse: should i put the "set daemon" option in /etc/fetchmailrc ? I'm guessing not
+ce04717f-1746-4f46-a62c-c759be593071 16351 linux-test lai Carly: hihi
+e26b46b8-0286-4994-b7b8-f0dfa108ee4b 8020 linux-dev shenna even dmesg says "hda:...."
+1e8b47c9-395c-4da6-9631-c8b58f90013d 16365 linux-test arlie damn ... people really do come back from the dead
+901f7c18-beb0-401e-b02b-3af306f7947f 8025 linux-dev shenna why is it so?
+aaf627ec-4cfa-417e-bc07-74654aab492f 16373 linux-test lai headshit!!! :)
+b108164b-1a4b-419f-b78f-be539f0dd7bb 8029 linux-dev elma bye folks
+e48158a0-d8f5-4dc5-a6e5-974fea8a4f70 16377 linux-test lai where ya bin?
+cc88c30e-0212-4f31-bc67-016403de1cc7 8029 linux-dev elma Shenna: heu... not a damn clue, sorry... but why are using a 2.4 kernel?
+9d0f3e8c-3759-4fa7-a4a6-cae242f05ea8 16380 linux-test lai lol
+bd3c01da-e279-4e1a-9cbc-c947e5e87ef1 8055 linux-dev denny Shenna, what are you trying to do?
+2c108f08-f5b9-40f3-a369-8321a68608c6 16387 linux-test arlie right here
+2d3abf7e-cad5-40ea-8506-e5da6d9903d7 8060 linux-dev shenna i am trying toswitch over ti 2.6
+5d467534-f79e-48cd-8cd5-dacc57620892 16391 linux-test lai i'm usin shack's box
+2597cdb8-a966-4b9e-a2d8-5bb11561ab1e 8063 linux-dev melda Elma: maybe because 2.6 still is getting root exploits as development goes on whereas 2.4 hasn't had any in a long time?
+40e39b6a-211c-4c23-a763-11f4d457c083 16394 linux-test lai cool
+ab14fa7a-a554-4d28-ab10-4110219954b0 8075 linux-dev tammi hi, i am trying to dump a file system to a dat SCSI tapedrive. if i dump /var partition the speed is 1555KB/S, but if i dump the /home partition i barley get half that speed. Why would this be?
+a48dc43e-971a-44f0-980d-d7b7fd59764e 16416 linux-test arlie do you have to keep pretending your gonna buy a pc from the salesman while you talk to us ?
+fa0a5475-177e-4d47-97cc-4106125f5ee0 8082 linux-dev denny Melda, if you stick with around 2.6.12 its all cool
+f1c28bdb-19ff-4d2b-8575-e6b788a7c84a 16423 linux-test lai i might be in fla. to hunt you the like tthe primate you are
+9df50a9b-68b5-464f-bcf0-896d94638468 8082 linux-dev shenna but 2.6 gives errors on my laptop
+b3eae8ab-0dbd-488b-84ae-3550375c01a5 16441 linux-test lai Arlie: Laura lol nah, he's a cool teengeek :)
+4800bb3f-db48-43ff-8716-2d01dae4b1ba 8102 linux-dev denny Shenna, what errors?
+af6d0419-b7f1-4bb4-98a3-8878bc081a78 16445 linux-test azzie Lai: ! long time no see!
+14925a51-fc43-4c27-881c-5c327c34ecc6 8119 linux-dev shenna something like : kernel panic .. specify correct root=...
+7e21cdad-b4c7-4e39-82c5-54362f255f5f 16450 linux-test lai greg!!!
+67801996-1995-49e6-800c-2147fc94b27b 8122 linux-dev lizeth lol
+88b876d5-9386-4d09-b0fd-b8781d3a4380 16460 linux-test lai isp cut me off with a vengence
+fd72a018-048a-45ba-9eb1-dfc7604af077 8124 linux-dev shenna i am using lilo
+cb1e0325-bee6-40af-95d9-61a1438476ab 16461 linux-test gale hey Lai
+7ad242a1-8390-4d86-99cb-e7b444967be3 8127 linux-dev shenna slackware
+bc3735ca-bc03-4a72-a85a-6e3de7b5c2b5 16468 linux-test azzie Lai: How are you doing there?
+82eca7f8-d136-4116-b884-b02aef2f4514 8142 linux-dev shenna on my pc it works fine
+9e5f13a0-d7c5-4466-9764-f649d6ee523f 16474 linux-test carly primate!? is that a submission to evolution i hear there?
+67fbd9e8-6bd3-46e7-93ec-bddc93959301 8144 linux-dev denny Shenna, right go to lilo and change root to sd whatever
+b407e110-14f3-4069-9abd-4712050fdc97 16484 linux-test arlie Lai, well, not that im one of the people that misses you or anything, but at least once a day someone is in here typing !seen Lai
+b1d21ce8-a2c9-404d-b629-048bb853a972 8153 linux-dev shenna i tried that
+389815c8-e7a8-4d5a-94b7-cc174eeb3717 16498 linux-test felicia Lai++
+db029426-354e-4fbe-bf06-74a880fb6431 8154 linux-dev denny while you are running
+b3574c04-e37c-46c2-a740-d314ba5cafe6 16500 linux-test lai oops; dont hit that key
+84bdc96f-840d-4862-82bf-5ecdf864e10d 8156 linux-dev denny and?
+2afaad6b-b96f-460c-94ca-10b1688b7e40 16505 linux-test felicia Yo Yo MA!!!
+81a6724d-482a-47e4-9511-005857ec5875 8157 linux-dev shenna didn't work
+0d7b2b63-6108-4616-a0cf-a96c403cce8a 16507 linux-test gale hey Lai, long time no see
+6a31585f-a601-4aff-8983-fab56832aa17 8167 linux-dev denny same error?
+21849a42-81e9-4fce-83d9-b04f59c564de 16519 linux-test arlie Lai, so call the McDonalds manager up, get them to fast track your application, and get busy flipping burgets so you can get an isp again
+5cfd6046-3a43-4b69-b5dc-7d3b0b6f5d96 8170 linux-dev shenna yes
+ce68109e-fe7e-41a1-bbb2-399f29ce0d83 16521 linux-test lai Azzie: how ya bin?
+24caf01b-7b6c-4e82-a1d9-7b98a198ee5a 8187 linux-dev denny waah...
+f0741691-d8b7-4888-8dda-e5c9d6444166 16523 linux-test azzie Lai: How are you doing there?
+f2834daa-61df-4be6-9819-552aa13f612f 8192 linux-dev shenna hey, how do i check if my drive is really sata?
+ba9952f0-cf00-4ae0-8c8d-052d8d065244 16544 linux-test azzie Very well, I seem to be trying to show Arlie how its done and am coding a webserver.
+3a83eadd-d368-47f5-81d4-cb9f4a4208d9 8202 linux-dev denny open up your box?
+1b151156-338f-4e68-b318-d6c32163b0bd 16548 linux-test lai Arlie: good to know, thanks much
+96ef1fbc-7643-4777-ad22-cb1b96526fa5 8202 linux-dev shenna i am in windows right now
+e6adec40-7e3a-4dc7-b234-246715be342b 16548 linux-test lai Felicia: !!!
+b8b20362-348d-4569-b778-6a7d945c91f5 8206 linux-dev denny oh
+82e046a1-0eb3-4546-bcc9-1e9388faed2a 16555 linux-test arlie Azzie, keep trying ;)
+013338e3-7e2a-46d4-afeb-02a048ac9c05 8211 linux-dev lizeth does it have ide or sata cables
+58ac66a9-f10e-4b70-9c1b-3ab668df92b2 16564 linux-test azzie epoll ftw!
+1f07ba22-c6d0-47fa-860b-d77c325f4715 8216 linux-dev shenna linux not booting
+b7e01ce4-d10d-4544-b952-d6f1e007b14d 16567 linux-test lai Azzie: not well at all, many probs
+7f33fe3e-eba0-4b1c-9b18-bcca9bb2ff88 8224 linux-dev denny open up your box dude
+4b138fd5-d8e9-4ec7-be1d-023a7c0364c0 16575 linux-test lai no to McD :)
+ff09db92-14e9-47c4-9373-9ca915253ed6 8224 linux-dev shenna it is a laptop
+b018ae65-4f2f-458c-b883-4efc8cbacb40 16576 linux-test arlie you found epoll ... congrats
+93f14dcb-424a-4dbf-bd22-258a9cbc9582 8227 linux-dev denny oh
+402d7f20-e10b-4ec0-9800-943486de1bd0 16580 linux-test felicia Lai: got a main hookup going yet?
+94adae5b-8be6-4965-b18e-19c831983b94 8228 linux-dev shenna can't check
+bf0e60e6-5396-4bc0-a428-98c829060410 16585 linux-test tammi hi, i am trying to fo an fsck on a file system that i just unmounted but keep getting "Device or resource busy while trying to open /dev/md5"
+871f051b-cc7a-47c0-bfdb-47d46298a3b4 8231 linux-dev shenna just got it
+510a6b41-0c8c-47f9-812c-606992d3780b 16585 linux-test lai nop
+5d5ec7b9-480e-4c5b-bca8-022b9ddb59e4 8234 linux-dev denny Shenna, download a live cd
+479c7e37-d6d4-49f8-ae87-b6c03ec666e0 16594 linux-test felicia bah .. when?
+4e75b207-9d49-4377-8eb8-53b0e59b70c5 8247 linux-dev lang hm
+f25c6e17-e059-4421-b274-8a08eb76b37c 16598 linux-test lai Gale: !!!
+c1ca8aff-fff1-4270-b18b-97e69b1b9543 8248 linux-dev denny not ubunut though
+6737b68f-4d41-4d52-8d6e-c950a8a7a004 16599 linux-test arlie Azzie, i wont ruin your day by telling you thats not the fastest method
+e9e5dbcf-3ebe-48b7-b3ce-e17014b693b3 8251 linux-dev lang linux is cool
+b6715564-891a-46c3-a5b0-51003d72c875 16608 linux-test lai Felicia: i need to escape the state
+bae6b5f0-c542-49aa-9a92-19dc151f670e 8257 linux-dev lang openmosix seems dope
+8e713f98-c550-4d9f-ac3c-6a218d408a73 16614 linux-test lai first
+7f0db517-3ffa-4e43-9504-c35fd8dd8878 8260 linux-dev denny Shenna, use knoppix
+4a192062-fa7d-4eb7-beaf-2bfeaa05a135 16618 linux-test gale Lai!!!
+fb5bba8a-5285-447f-8955-337de3867b20 8265 linux-dev shenna i tried dmesg from slacware
+b7120c42-967f-466d-90e0-620b18377e23 16621 linux-test arlie Azzie, because its good enough ;)
+41da0803-e884-48e8-9364-8c48b9b0b3da 8273 linux-dev shenna it says :  hda....
+8b0f15e8-d791-4f73-b6f6-930968b6b171 16626 linux-test felicia Flee patrick henry .. run ..lol
+feff24ff-342c-4209-815a-ae2c4d883338 8276 linux-dev shenna etc
+e8ae7d62-095b-42cc-b9ca-47d0c328ae19 16635 linux-test lai i do miss you folks, even the primate
+aec972ee-c043-46e9-a325-0a48fa338e95 8277 linux-dev denny right
+218e34aa-b2df-4aab-a785-f2d3603213de 16648 linux-test felicia heh
+35e2131a-82f1-46cc-934b-527be8063ed8 8285 linux-dev denny 2.4 you are not going to get it right
+2e1e60e9-7054-4ee7-bb1f-865b3e4539c4 16662 linux-test felicia we're all primates ..
+2ef5cdbc-c8bd-48fb-9c9d-487a7cb35cd7 8291 linux-dev shenna k
+1d6bd94e-9a2b-47fb-a33d-9a322dd9607d 16665 linux-test gale Lai: primate keeps it interesting, especially when suse fanboys show up
+0bb86d81-5eec-4da7-a105-770db74a6feb 8302 linux-dev melda Shenna: check the dev entries?  + some things change it... my laptop is definitely hda, my openbsd and 9/10 distributions recognize it that way - but for some reason my slackware sees it as being sda... just weird stuffs
+6d97a06f-5b3b-4db7-ac6c-dc2a22e06cc5 16676 linux-test felicia some just have more headcheese in them .. lol
+901f2923-08f4-449f-8a42-0c9a077c6820 8303 linux-dev lizeth 2.4 limited sata support?
+a46bc145-4c1f-4b29-be01-f50f0c9863e5 16677 linux-test arlie Lai, you've inspired me to have a bowel movement ... bbiam
+9ff7078c-b217-43fd-9464-57850c4ba5a9 8324 linux-dev melda Shenna: laptops are sort of odd in that way of sata/scsi/etc
+fb7aa3ac-ea20-411d-87ec-6c5ba6b881a4 16682 linux-test azzie Arlie: Good enough doesnt cut it!  Is the 'faster' method a big change in design? Could I implement later without wanting to kill myself?
+58dc5785-4074-42ed-aecd-90b836413acf 8325 linux-dev shenna hey, any way to check it in windows
+55701807-f01d-458b-9f85-15b15967e35b 16682 linux-test lai not me
+1fb11ff1-04d0-4a49-a4d2-53901e36a47f 8335 linux-dev lizeth #windows
+28766504-b72d-4b3b-b9f4-af98f7c39491 16682 linux-test lai heh yea :)
+d1991489-417f-4f9e-b2f4-0de42dd963ac 8339 linux-dev shenna Melda: : hmm..
+f3d0a959-5f2c-45b1-9686-a14362bcda18 16687 linux-test azzie lol
+2680e3e0-9f4f-4b91-802f-3ab6b08d7670 8343 linux-dev celestina vommits at the code quality he is currently witnessing
+1a6d0896-7ab8-4485-aecd-d2b911e652b3 16688 linux-test lai lol
+83688e59-7dc4-468c-a713-ef03a1a9b6db 8363 linux-dev santo Rasterizing........... @ 600 DPI ^_^
+86f57dff-368f-4cd7-ac45-f643ed64c975 16696 linux-test lai TMI TMI TMI
+792ef4db-6472-47ad-9bf3-1269524388a5 8366 linux-dev shenna Lizeth: what is that?
+7ca8adbe-02c3-4aab-b9fc-0b595cdb332c 16706 linux-test arlie Azzie, yeah, you could add it later
+91a7e542-5807-45a8-b3f4-e30a6873e5fe 8385 linux-dev melda Shenna: Administrative Tools -> Computer Management -> Device Manager -> Disk Drives right-click/properties/details
+9442c44e-a5b5-4fa5-b069-821c94fba124 16709 linux-test lai dont use ridged leaves
+72bca3c3-aa1b-4230-b25d-31c5dc1dfef0 8390 linux-dev santo due the fiiirst thing i do once i get my website up
+6137ce3c-d96e-4f78-ace7-f1e84e6fcac5 16711 linux-test gale I thought monkeys just crapped on the spot
+538ad713-dbf9-4f6b-a56d-9a31a72362bb 8392 linux-dev santo SHOWERR
+ffa48b54-e847-4b01-bd3b-df75cdabbaf3 16718 linux-test felicia are you at Sahque Du Radio Lai ?>
+a849889e-48ca-4500-b0ab-7b4b5e6b3310 8393 linux-dev santo ^_^
+71af09e1-3c3d-4d8a-8f5c-acd260c31339 16720 linux-test azzie Although he does seem to get away with a whole lot more without someone here to keep him in check.
+9527e397-7858-4d67-b177-aea4025dcc64 8410 linux-dev denny gaah
+8c75e300-cd3f-4bc4-b78c-9af3af66a08d 16722 linux-test gale and then fling it around
+d2b87d03-db99-467d-9c98-9333d81e0197 8424 linux-dev lizeth i have forgotten how to use windows
+ab4c6d5c-d7e9-4d70-987e-09289defa1ef 16723 linux-test rea for sending/receiving mail what should i use? postfix/courier?
+5838810b-18a0-476c-b748-dfd9247905b4 8424 linux-dev melda Shenna: what precisely are you trying to do though that it's having trouble finding out if its sda v hda?
+66965e32-4b6a-4b39-9c78-e6c13304399c 16723 linux-test felicia er shaque
+1d377d6e-77c8-48a7-a0b7-6457c15530f0 8434 linux-dev melda Lizeth: isn't it such a pleasure?
+d64df5f8-43ec-4180-ba45-9420f2b6f638 16725 linux-test lai crap and flow
+a14426d7-57f4-4ffd-9dc8-115e835ba27c 8449 linux-dev shenna Melda: wait for a sec
+3bdadcf0-88bc-4bb1-931e-87f8d2dc1c8d 16737 linux-test lang email is cra
+1ea2e039-0ac6-4dc8-925f-3bf4010ce16e 8463 linux-dev lizeth i guess except when people ask windows question
+f5015b0f-eecd-4a81-96b5-150b6a2afb3b 16739 linux-test lai Felicia: buh... who?
+b78ba2c0-c932-4e63-8327-030f3a754cf7 8464 linux-dev melda wait for wha?
+75761ac4-0340-43d4-9479-8ce84737fb62 16739 linux-test lang crap
+5a6576c9-39ee-4bd2-a003-2054c98429be 8489 linux-dev margene still a pleasure to me, to hell with dumb questions ;)
+e7bb9b89-d09c-423f-a2a0-4faf8882964f 16743 linux-test lang use irc chat
+8c096f56-06a3-4a1c-96c8-380726d0932a 8500 linux-dev lizeth i have no idea why hes tarding around with 2.4
+2ec9882f-0e3d-4700-94a3-8c4a8ed90970 16745 linux-test lang :)
+174f91fd-98e8-4665-b736-8edaa46a910e 8513 linux-dev margene because it has no root exploits!
+016f4928-7e24-4c2f-9ea9-afcc1e141852 16748 linux-test lang create your own room
+11a338a0-c97f-4b9a-80b0-7518798f4e29 8524 linux-dev margene 2.6 is just waiting to get exploited!
+12e7ebaf-1180-4f1b-9d92-6afc48fae9d0 16759 linux-test felicia Radio Shack you dumb cuban ..lol :-P
+6e9bf9f3-ca97-46cd-bcff-1cf5db0a0db8 8526 linux-dev jeanice he's on slackware, which i think is still on 2.4
+944e3e64-aef3-461e-99c9-d3c2821c5baf 16767 linux-test lai lolol
+37a7429c-a325-4e25-b25f-4ce26c21b691 8534 linux-dev lizeth so hes setting up a large scale secure network?
+5e688a6a-f661-4e36-b5eb-f6e0c0f35d65 16779 linux-test lai i am Cuban too :)
+91d8409d-e41c-4213-9dba-a4a8033165ca 8562 linux-dev lizeth slack uses 2.4??
+74065920-eeed-4cb7-b8e7-187c68a5d81a 16781 linux-test ronald is there a way with tcpdump to specify a range of ports, something like "tcpdump src host 1.2.3.4 tcp port 1234:4321" to capture anything on ports 1234 thru 4321 ??
+060d0539-f1d5-4459-b83b-c4dc83b496b6 8568 linux-dev shenna yes
+6a80143e-c4c9-40a3-ab7c-f3b16fe90ce8 16783 linux-test felicia it's ggod to hear form you though man
+f66d66cb-44b5-481c-8241-766c3fa11de2 8571 linux-dev margene slack is crazy
+83bdb35b-c544-4df0-83c8-819231403321 16784 linux-test lai half
+f1a89a4d-1952-4eec-afeb-2a47d419d1f7 8579 linux-dev lizeth glad i never messed with it
+6c9cc8f5-f52a-4593-b914-7f47e35642ef 16785 linux-test angla Lai !!
+b4c95ef8-120c-4a21-952f-515e0e4eefc7 8596 linux-dev shenna hey it is a hitachi hts541612j9sa00
+bc00d386-e138-412b-b1c2-03c457022297 16794 linux-test lai Felicia: thanks much :)
+86e40440-359a-4edf-8d08-152e0bb0204d 8607 linux-dev lizeth puppy debian ubuntu and elive is what i boot
+746d85cd-9e51-47b3-a759-89c27bc1b8b0 16797 linux-test lai Angla: !!!
+d23fce92-fef9-4415-ac48-5fa4955d8240 8688 linux-dev jeanice just debian, here. i have about 130 gb of distro-less space but my connection is too slow to be downloading others
+dd24e9ae-1606-4bcc-958c-8b7d61166284 16854 linux-test renate w00t, Jesus Camp!
+16153424-1b62-4e91-b6df-9664b42bbdb7 8695 linux-dev melda slackware has 2.6 available, just not default
+7f018fef-9787-4b6b-8113-d8fec5e4edbe 16855 linux-test felicia i'm picturing you alongside a parking meter, popping in quarters for you IRC time Lai ..lol
+a9d567a8-832d-43ff-a59e-fb92f692cae5 8711 linux-dev marion What's the best way to create a Kiosk term using Linux?
+78372f43-e317-4541-9af6-2be36a06908b 16876 linux-test angla i'm watching a film and the cop actually said "captain, i just need 48 hours to crack this case wide open" and the hard-nosed captain says "i'll give you 24 hours. not a minute over. screw this up and it's your ass, detective" classic
+e9d323ed-86f2-409c-bcd5-deaab7840d24 8712 linux-dev shenna the internet says it is sata
+c3649091-555e-4a39-a086-3b2df025ab48 16882 linux-test gale Lai: time to go wardriving :)
+c2df4282-fe2b-4335-bdb9-7dc111a0f532 8819 linux-dev shenna i have a acer aspire 5583
+edd91197-dde8-458e-aa56-d1cc0c4ceb1d 16892 linux-test lai heh, N000000000000000000
+5bdb9423-33c0-42e6-b19b-d354d85ff4f9 8863 linux-dev rivka pounces around
+223e8cff-6c41-41c5-ab85-e6b6fe6139b2 16900 linux-test rachel QUIZZER!
+59295b8a-0c62-416d-a2c2-39281ff39678 8876 linux-dev velma anyone here uses LilyPond?
+5526f44c-4e12-4103-9aa7-a82a616c1d7a 16912 linux-test felicia bronze: ^^^^^^ Lai
+fae45e95-835e-49a6-aa92-fbc2e22bcfd3 8879 linux-dev melda any newer aspire is definitely sata
+570ab807-0161-4a60-92eb-51a00bd08a3d 16917 linux-test lai hihi
+da44f327-a68a-40ce-b2f8-ae579a8c26df 8884 linux-dev ashlee dissected a few recently
+9e993c98-9770-4aa0-9f7b-70860afc469e 16919 linux-test rachel hi
+dc19a8f2-566f-4d6e-833e-9ebc31fd4f41 8917 linux-dev jordon whats the command to apply a patch? patch -p0 -0 filename ?
+daf628f3-6790-4256-aa11-714c284955e0 16925 linux-test rachel wow - more than 2 weeks
+21fddcb9-59e6-41bf-acf9-ac36fc918ba7 8929 linux-dev shenna http://www.hitachigst.com/portal/site/en/menuitem.dac393208bfae6f199558fe7eac4f0a0/
+e57a4d2e-3d8f-4445-89c3-4cc58a4b0fd1 16925 linux-test gale wireless has brought about the free internet movement
+bcbb48ce-9e5e-4f07-8a98-38cb3cd39e58 8940 linux-dev shenna check this
+61adcea6-7c45-4a21-b749-65a3ba689f1f 16934 linux-test rachel u mus tbe in wthdrawal.
+b411a226-9469-403f-8fe6-aca93a5c65f0 8950 linux-dev shenna these are the specs
+0327b065-0065-44bc-92e6-cab03f12f512 16936 linux-test margene wi-fi causes cancer
+457b1b08-d163-47ce-9415-d989c30e2bcf 8967 linux-dev margene I question that site!
+9ce957b0-e861-455d-a830-2c928de81dfc 16944 linux-test felicia Lai: still in sunny PA ?
+a7b0c1dc-15c9-4df9-aaa8-f3d07f0bc1fa 8976 linux-dev shenna why?
+2c322106-040c-46b1-bbda-f58adf7bbad0 16948 linux-test lai yep
+73be14ac-1eab-4dce-994f-168defe764b3 8983 linux-dev shenna it is the hitachi site
+7c10b4da-9fe4-42fc-936e-fac0741287ad 16952 linux-test azzie We just got outfitted with city-wide-fi here.
+250d2321-3753-4fbe-9e06-05b57a13698f 9033 linux-dev gale <Lizeth> i have forgotten how to use windows <-- life is good
+1d173708-2179-49eb-b358-bc6ebeccab4c 16955 linux-test jeanna i have wi-fi and don't have cancer
+f6961680-fe24-4e08-bf8b-5cc86f5c7be9 9076 linux-dev shenna hey, i will be compiling the kernel today, so any suggestions so that it will work
+ac849e09-8d82-400d-bff3-6fde322fe022 16959 linux-test jeanna or maybe i do
+d70f7b53-f011-45ac-890c-cce032145e8d 9088 linux-dev gale also, like they say -- time heals all wounds
+b61828cc-d9d6-4850-8e05-a789a93385e8 16960 linux-test angla Lai, you missed the fun yesterday. the 3 stooges from novell came here and tried to create trouble. i smote them with my sabre of truth
+daf068af-3122-4ed3-921c-474d42169125 9092 linux-dev margene yes, do it right
+5e60c8f1-c576-4aa9-80d7-fd247fd666b8 16975 linux-test margene denial causes cancer
+67e8a5f0-e0fd-431b-8f67-680092f9ac45 9093 linux-dev shenna i have 2.6.21 to compie
+7be502d3-507f-4170-926e-1c3ac0a0bbab 16975 linux-test felicia how's the situation with your old/current landlord? oki? iffy?
+006a604a-772b-4ac4-8188-c6fdadce52a5 9105 linux-dev shenna *compile
+d3b68653-5c92-4677-90ec-decd1ee6c08a 16982 linux-test gale I was laughing so hard yesterday during that
+f1707160-5f49-4e59-9eb0-07c0f0b6e976 9115 linux-dev shenna http://research.indocisc.com/~andika/acer/acer-aspire-5580.html
+34369fd3-ea73-4d8f-843d-d5dd6dda6168 16982 linux-test lai Angla: lolol
+05a5e8e6-d8db-4f29-be44-2d2aa89f8322 9138 linux-dev shenna i searched this thorough linux-laptop
+1ad6d795-329e-4514-8a3c-94baad38b343 16996 linux-test lai Felicia: terminally sucki
+d047d922-da9f-4e68-ba69-20d696bec75e 9150 linux-dev arlie gah !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+84b14af4-e393-478b-96d0-b434a9dca086 16998 linux-test felicia lol @ Angla
+71f8ffc1-0e33-4a6e-adf4-34ad8edc9216 9186 linux-dev shenna Arlie: what happened?
+d1cf9da4-9fc3-4453-9b84-f62c807d1445 17004 linux-test gale it was classic ##linux
+477d7106-f582-4fba-9538-a4671ecf4243 9200 linux-dev jetta I would like to make linux bootable on my intel mac mini.  Can anyone help me out with some info on getting around all the EFI nonsense?
+a45b2a50-4b7b-4797-bae2-c107650876ad 17006 linux-test felicia Lai: sorry to hear ..
+f46a409e-041e-4819-bea1-efa488c91aee 9214 linux-dev gale Shenna: yeah, I would go with 2.6.21 unless your distro is good about backporting security
+00eb9fcd-fb54-416e-96a5-bf8ad2276d46 17032 linux-test azzie Around when was the Novell business? Sounds log check worthy.
+b6871777-f60d-4639-8ea2-5f363712ccfe 9215 linux-dev arlie Shenna, another jerk wrote horrible code and unleashed it on the planet
+e4e8b050-bc49-4674-b56e-2244303956c0 17032 linux-test lai thanks
+0d9b6295-7a72-47a7-a710-a22966d84db8 9245 linux-dev margene that was me sorry
+90ab9bac-bdf9-4c28-ae6f-067deec403bd 17038 linux-test felicia Lai: should we take up a collection? maybe have monkeyboy make the largest donation?
+2208ccd2-f40a-4757-848c-52535919aa8f 9266 linux-dev shenna Gale: what do ou mean?
+f54f2c5c-cc40-4b49-8a35-cc4de8f45e5b 17047 linux-test angla anyways, back to the movie. later dudes. nice to see you again quiz
+09ace1b0-8d3e-4d07-9d2f-833a494a0e25 9347 linux-dev gale Shenna: there's some security advisory up to version 2.6.20.8 afaik.  Guess what, if you use say 2.6.20.1, for instance, and your distro didn't address those vulnerabilities in their older version of the kernel, you're vulnerable.
+35500ad8-b4f3-479d-863f-42aad1f0988b 17056 linux-test lai Felicia: i need $2200
+4a12f576-9e79-42c9-9dd1-47c454e4f251 9377 linux-dev shenna i downloaded the source today
+24945ac6-3f15-44c2-b818-29ea7c89cbf1 17060 linux-test lang novell lol
+282aed1e-773f-42d9-bc07-4ddb93ccb9db 9383 linux-dev margene the top distros usually do
+a06c02a8-6e4f-4425-89f6-cf7d48c64acd 17067 linux-test felicia wow@! .. erm ..
+efd7aad6-9e75-4cc5-9821-1c3250abaa52 9390 linux-dev shenna so i guess it is the correct one
+484e61f6-0577-4bc5-8f40-eb04e8b31319 17069 linux-test lang wat a pack of desperate jokers they are
+635e4f2f-553e-46fe-a7e4-9880d2560bd3 9394 linux-dev gale Margene: indeed
+30850856-c33b-4120-b7b7-e35a4956ab36 17069 linux-test margene more like Olld
+505b9e82-cfc3-446c-9bce-800e28132f37 9403 linux-dev gale but it's something to check out
+33ec0967-7316-4869-8b99-89df00582736 17075 linux-test felicia we can start maybe ;-)
+b5c2882f-5b30-42bf-8e5a-5063f9ab7e21 9414 linux-dev shenna slackware is a top distro
+1e3fea2c-0c60-4d3e-b8ff-8bb9172f8fb3 17079 linux-test lai sure
+920ab946-aff2-40e7-b05e-13ed4e938ff9 9418 linux-dev johnathon linuxSUCKS
+ddb651a0-f999-4b1a-958f-8000e825e486 17117 linux-test lai hey, radio shacker here wants to hear about the "mutiny"
+ca7e802c-0b21-478a-9a7d-8ef51abc2ca7 9418 linux-dev shenna k
+b1c6196e-1228-4fdf-888d-2c8637ebb31f 17124 linux-test lai lol
+26ff9651-60d0-422c-a234-4caad535fd91 9423 linux-dev johnathon F
+89571f1e-14e1-4ccb-b734-7032d9a5c7cd 17131 linux-test gale lol
+422505db-98cc-455c-bb16-a33a75dd09c1 9423 linux-dev johnathon GDF
+f3e58a2c-34eb-4998-bd7a-e9650b0b3c68 17131 linux-test margene well nave a great day... well just a nice one, you don't deserve great!
+f135441c-d882-408d-97fb-d2f499230595 9424 linux-dev johnathon GDH
+8f2dfca6-e4b8-4b33-b654-d793b9602ed9 17137 linux-test lai we havent dissed that in a long time
+59049956-0257-4aa8-9833-263ede66d2f4 9424 linux-dev johnathon FG
+3e0329ed-aab4-49f2-aae8-bd0a36e8540a 17140 linux-test lai disc'd
+6a50698b-a776-46c1-ba92-dd56cbef2416 9424 linux-dev johnathon H
+be0508ec-1e50-4a79-a313-05c23e90aaa4 17149 linux-test lai 'cussed
+49983b2b-7949-4823-9fcd-47e1a755e18d 9424 linux-dev johnathon FH
+42a9ca54-966d-4b2c-b356-ae60d670c9b8 17153 linux-test lai <howto build a word>
+151c0eb4-24ac-4dde-a3fb-8a0ed0276472 9426 linux-dev johnathon FG
+9ef3ff19-1e4d-4b24-9577-12f56c7ee3cb 17174 linux-test felicia i haben't seen a 'kk' in soooo long .. wait .. i DON'T miss it .. lol
+3abb57cd-629b-4572-b137-d187d1cb3ac2 9428 linux-dev johnathon H
+b90d7054-dc13-4a35-ac28-3fd78b452896 17188 linux-test lai kk
+a424460c-93e5-4710-a83c-a4eb2c65cea3 9429 linux-dev lizeth retard
+e76cd0ae-9def-4961-88f6-a206851e6200 17199 linux-test felicia hah
+f245391c-4663-4d40-8f11-b526b6dc43b5 9430 linux-dev johnathon GFGHFGHFGDHDGF
+8553e90a-2d34-443d-b8c2-486706e81f1c 17229 linux-test james Is there a way to encrypt the home partition without deleting the data first?
+5cfec5ab-2a95-464a-a5fc-abcc4424e5e1 9432 linux-dev johnathon H
+8c0eb8a8-d5da-44f9-ac87-9f8576c1af33 17229 linux-test felicia Lai: we still get our  one word<enter> aolers here
+7ae09fd2-fb97-4f76-84ad-47a162f6f105 9434 linux-dev johnathon FH
+ae21339c-a4fd-4c7b-8fb8-aac17633fb2a 17239 linux-test lai lol
+648bfaa8-abf7-4a71-99af-5bf6abeb139a 9436 linux-dev johnathon FDH
+f27bc976-6f20-4de0-8611-fc0cc064f927 17268 linux-test azzie There was one of those a few days ago who had the balls to tell me to stop telling him how to type.
+5d5d5043-d45d-45cb-b07e-6d0df12349d7 9444 linux-dev renate lol
+b5e2064c-905e-4e48-a780-f245af7425e5 17274 linux-test gale they believe in LFs and not whitespace
+5c1e66ba-a8c0-4e6b-9f9b-4de7034fd727 9454 linux-dev lizeth that was worth it
+9656bb3d-5390-44e3-93f9-2642655e2b88 17274 linux-test felicia Lai: i can make a small donation if necessary .. not much, but something
+e0c5a9ec-2a29-4c91-bf20-de009d067cf2 9454 linux-dev gale doot doot doot... another one bites the dust
+03a09c98-a4dd-4d14-963e-5f0d44463085 17310 linux-test lai Felicia: that would be sexy
+bc9ff0a4-f4f0-41a1-ae66-f86b49cd308e 9483 linux-dev lizeth what kind of laptop are you using?
+390d84a9-1ab3-459c-b4e8-375dd26bff4b 17314 linux-test rachel anyone know of a good netcat tutorial?
+665c8b52-22ae-4985-843e-350b2c7280db 9488 linux-dev nicki a norwegian windows user, :)
+e5af5ecf-a840-4d62-83ab-2376b7042c97 17331 linux-test felicia and believe it or not .. there's no sexual innuendo in that statement ..lol
+53791ed3-95ea-43e5-9d8a-e5fc02241d8f 9509 linux-dev arlie this shitty code came from, of all people, one of the founders of AutoDesk
+60dfdc1c-5af1-4378-8846-84dfecfa395d 17338 linux-test lai goggle.com
+5b3599d6-468d-4b83-81b7-8c34007927df 9533 linux-dev gale Arlie: is it a surprise?
+9eeb47e2-6154-4608-a03e-f58cb84dd9e9 17349 linux-test lorina goggle?
+0779f765-d580-447a-9929-5d38e38f89aa 9556 linux-dev lizeth dont they make autocad?
+3c26d07a-6e67-4a26-878d-e059673a2f13 17351 linux-test felicia which is more than rare, from my output
+a8ed81aa-b828-4d36-91f0-8419a34ac2f9 9561 linux-dev arlie Gale, its sad and disheartening
+d2a4b240-2013-41e2-833d-079a654c2542 17414 linux-test lai no0dles: i'm tryin to figer out how to get yours to mine
+0742dc22-55f4-4bca-b140-02375b3646b9 9567 linux-dev gale Lizeth: yeah
+b74c256a-274a-438a-944e-94721213abed 17443 linux-test lai who the hell is no0dles ?
+87327902-2ca1-49b2-b44c-650fa897d976 9569 linux-dev arlie Gale, i expect my government to lie to me
+ded1401f-640f-4ea3-93e3-dfb62296353c 17449 linux-test lai Felicia: i'm tryin to figer out how to get yours to mine
+91967663-c91a-402d-b3f7-4aff523f082f 9587 linux-dev lizeth autocad is retarded
+34563705-74d9-4ea6-836f-e98319ff156b 17463 linux-test lai mail wise
+45a3b9e6-354b-4eba-bb5b-e62752f5cb6c 9589 linux-dev arlie Gale, but the OSS community rants endlessly about code quality that doesnt seem to exist
+3c2b2b5c-e07e-4053-b8e7-99489fdf39c8 17495 linux-test edwin who knows how to install a hybrid tv card
+eed3f0ae-6ad3-4d89-a5c0-5b43013cb87e 9605 linux-dev lizeth runs like its broken
+05ba56ff-9a8f-4cbe-a7df-dd4749191d1f 17500 linux-test lakenya Lai: Radio Shack let you on their computers again?
+e72af622-ccd3-4f13-856c-dee1a62dda6d 9607 linux-dev gale Arlie: it's a mixed bag
+c5ecc2a1-64d7-46a1-a813-bebef1796b83 17514 linux-test lai Lakenya: !!! yea
+29fffd82-c245-465f-a754-bb28a618aaee 9629 linux-dev gale Arlie: but the main thing is we can switch apps at the drop of a hat
+8be27499-50ae-4e80-9c92-3d583d0a8400 17514 linux-test felicia Rachel: maybe someting here http://www.rajeevnet.com/hacks_hints/os_clone/os_cloning.html
+4c4db845-05d3-4c96-8e5b-a5f07b7d8fff 9630 linux-dev lizeth havent used it in 8 years though lol
+08374e99-6fad-4a70-9898-6bf6328d047d 17528 linux-test rachel gracias
+16e97d9b-c284-4324-a24d-47e1d2fa2d64 9641 linux-dev gale Arlie: so if something sucks... next
+1025ed73-155c-41c6-b3c2-bfe24c62e1a1 17533 linux-test felicia Lai: money? CC maybe
+f6d274fa-c686-40bb-a718-cb027a65f7cc 9644 linux-dev arlie Gale, sure ... find me another apcupsd package
+447b2050-982d-472c-af47-6636f27ce550 17535 linux-test lai grassy ass
+2ada7fc2-8061-472b-8d85-4ec921940ce5 9649 linux-dev arlie that runs on linux
+3e13e0e4-babc-470f-bc07-97705a962465 17551 linux-test lai Felicia: !!! oo! yea; a debit card
+d1baf68a-56b1-4a77-a29a-98a1541b238e 9673 linux-dev arlie its not like there are 1,000's of them ... theres 1
+619639e6-5e26-4681-8705-b1f5b7572c35 17553 linux-test lakenya damn i need to move out, but apartments are so damn expensive without a roommate
+99ee565b-e2fc-4292-b624-0b3ccb6d9c1d 9708 linux-dev gale maybe it's time for more then
+ec5abc40-0b1b-46d1-91d5-55090a006ce0 17554 linux-test hellen checks his pants.......
+68f2bd29-894a-4e7a-bb81-37d313d79824 9755 linux-dev alisa load ~/.darkstar/darkstar.irc
+cbf58938-b4d2-40bd-b9f0-c78e90f0e1d5 17564 linux-test lai Lakenya: yep
+64ea99a1-1098-4877-a5bb-4ff2a1ce8036 9758 linux-dev alisa whoops.
+564ab26c-e646-4ba1-aa3f-7c06b3d7e0e8 17571 linux-test gale Lakenya: everything is so damn expensive these days
+c1687050-2a67-43bf-ba95-64bbce228a13 9766 linux-dev alisa At least it wasn't a war script :D
+7e0d741b-ae5a-4405-9c00-aa65e6bce92a 17572 linux-test azzie I need to find a roomate badly.
+f4c44464-f810-4315-9847-d9c839d710aa 9767 linux-dev melda you know what they say about people who complain about a free product
+c0692361-f837-4c53-a1a3-509ab44551dd 17577 linux-test felicia Lakenya: just pimp here out
+291de8c8-ae35-4ccc-889a-31886504e7d8 9773 linux-dev arlie Gale, which is like saying, the current one sucks and is useless ;)
+9be3ae01-10a5-4550-ad2a-8fcc5a1a6526 17582 linux-test azzie lol
+fbfce9ad-a05a-4df7-8288-964706ec39af 9790 linux-dev arlie Melda, im not complaining about a free product
+cee4dd60-8de3-47f3-91b9-51702ae38a3e 17586 linux-test felicia her*
+81271285-d73d-4d8d-9c2e-0cd95d2ae6c8 9794 linux-dev gale I haven't used that particular one
+e7e89639-7b64-4e6e-92b8-71afc04bd354 17588 linux-test lakenya i can't think of anyone that wouldn't just piss me off as roommate
+3342803a-dffd-4a36-97ef-0762930c77b6 9805 linux-dev melda Arlie: what? huh? i never said anything about you
+e4e9dec3-ff98-4045-a230-ab3baa44a681 17589 linux-test lai Azzie: what's your loc?
+e8dadee8-7fab-43ed-9386-a628937e6113 9822 linux-dev margene backpeddalers
+3b4ec3ba-b86d-45a3-936b-8144ce5d95d4 17597 linux-test azzie Lai: Portland.
+81237a24-5fca-4e09-9e5c-3c109f684ea8 9824 linux-dev arlie Melda, im complaining about 1,000 assholes screaming "OSS HAS THE BEST CODE QUALITY" when it simply isnt true ... if you give something away, and it sucks, fine, say so, tell me it sucks ahead of time
+c03e2eb4-1daa-4f58-ba0b-06b903c31d72 17602 linux-test lai i need to be in Tulsa
+46067af9-d7c2-4edd-b232-afa8f06eff25 9840 linux-dev melda i've yet to hear that ever... but ok
+c1e2fedd-5788-4494-a6ae-f16c74284708 17609 linux-test rachel Tulsa?
+224cd1d1-6459-4a86-bc90-36d1e9ec5f88 9848 linux-dev gale it's like anything else.  Has it's ups and downs
+83647caa-909f-49b9-92a5-513d4651766d 17616 linux-test gale Portland is a nice place
+56328ebb-a5cf-46a3-ba04-fb13f6b90675 9857 linux-dev margene I say that all the time, maybe I should stop
+f9f18b94-c495-4b42-bd03-7bf33b94a559 17616 linux-test lai Azzie: too far north :)
+bfad6b40-cc94-4092-9924-a7c734944099 9890 linux-dev arlie i just posted a message to the mailing list
+6671a6d5-fc78-46bf-81fc-234c35f7d821 17618 linux-test felicia Okie?
+560d86b2-3754-449a-a84d-8f0e07f8959a 9904 linux-dev arlie anyone wanna bet money on the fact that i get a "sorry, doesnt exist, use the souce" response ?
+c6af448a-7264-4f8f-9798-599bbe74c0d2 17620 linux-test lai oklahoma
+84d989f6-f9c0-4bcb-88d5-9f14c1f47079 9910 linux-dev arlie i'll pay 2:1 if im wrong
+b04caa57-9364-4ee3-a0fa-efa90ee42158 17625 linux-test rachel why Tulsa?
+116c6115-6f10-44c9-8474-48032d404e68 9917 linux-dev gale Arlie: I think it's the zealous fanatics that make that bold of statements
+20c75e74-4626-4928-9625-39abf00483bd 17627 linux-test azzie I know several a people in Tulsa, mosly at the Univ. there though.
+c18912a0-9f2c-404d-aae5-ac53a7ee71d0 9922 linux-dev margene I hope you used foul language
+fe2a752f-c2dd-4618-ba9c-a5a842d078ec 17628 linux-test lakenya anyone in Akron,Ohio that isn't a douchbag and needs a roommate priv msg me :P
+8cf6867c-412b-44d7-9c84-065055cac9fb 9936 linux-dev arlie Margene, nah, but i did have 2 or 3 typos
+bd7a7916-db8e-41ed-9e9f-76497198ebca 17630 linux-test lai Felicia: the debit card is the idear
+5428650e-5c7b-493b-96a1-05da4f29c63d 10008 linux-dev margene too many goofy acronyms
+4042c48a-fa29-4682-829e-1cbf5c78fcbc 17640 linux-test lai Rachel: thefirstdto attend ORU.edu
+a3bf9cde-b973-4c91-82af-d57b6297b2b5 10012 linux-dev jana is there an easy way on linux to see the current size of the TCP half-open connections queue, and the TCP accept queue?  (redhat specifically, but I'd be happier with something that works on most linuxes, rather than something redhat-specific)
+f11028b7-57bb-48bc-b214-f48ab02d8c36 17641 linux-test felicia not a debit, but CC
+94723003-65d1-4bf0-bb6e-17bdeda581f3 10058 linux-dev maegan I know it's not the leetest question in the word, but how do I remove those little bars that appear next to applets on the kde taskbar?
+d0d69a83-9649-4704-825d-9fb2d844ba99 17650 linux-test lai Felicia: nop, gotta be a debC
+af64ba82-89b4-4a65-8a6e-f3efc3ffc587 10059 linux-dev nicki have you poked around in /proc ?
+c5d61166-2d67-4684-b4d5-9caf29a9a4af 17674 linux-test felicia Lai: hrmm .. oh yeah right .. the WesternUnion folks need debit or Cash?
+231524fc-a41b-4d2a-a6ff-2f4002ad5340 10077 linux-dev jana Nicki: I've been looking in /proc for a while but havne't found it
+756af804-a582-4f36-8c4e-88a43599398d 17676 linux-test lakenya with my luck on roommates.com i get pair with some BDSM killer
+6219f873-9ad7-436d-a69c-85d20764ad27 10093 linux-dev jana also tried sysctl -a | grep net.ipv4.tcp
+5b63bc4c-87d2-4439-8630-911003f9523a 17691 linux-test lai Lakenya: LOL douche
+ce327836-d90d-4f68-aefe-177adb8787d0 10094 linux-dev margene Maegan, lock taskbar
+ea12d25b-809d-40e3-abcd-f87c6cfcc3ec 17703 linux-test lai Lakenya: lol
+d95f1ed8-b932-4604-a089-04399c10f8cd 10095 linux-dev jana and netstat -s
+65ccd770-46ac-486f-9696-1717112251b0 17714 linux-test gale Lakenya: you'll get stuck with a myspacer
+d137eade-cbd9-49d5-be6f-d9f7a6e1f041 10100 linux-dev yuki does anyone run an ipv4 tunnel through ipv6 ?
+0dc6c194-b07c-4a9e-8cd0-9c78909a0f40 17718 linux-test lai Lakenya: BSDoom killer
+7f074620-e4e4-4bf0-b9fd-e973e12895f2 10111 linux-dev jana they might be hiding in one of those, but I haven't found either one yet
+3f1bca61-19e8-4da9-8fd7-143ce16cc0b0 17721 linux-test felicia Lai: i really would like to make it a "pot" gift intended for you though or something .. not a lil' something form me
+378e4051-887e-4e61-b6b5-bb18148ca6ff 10115 linux-dev yuki i'm trying to create my own hostname for irc
+95eead07-b7f4-4335-9008-90681ec8c4c4 17728 linux-test lakenya Gale: oh fuck even worst
+0a7eadea-dcd5-48a9-91f3-5f8440ecec1c 10130 linux-dev margarette how can i do this: i want to protect some information, namely a PDF, i create pdfs with htmldoc, ive a webserver with php and mysql... i want a user to get the pdf and only be able to use it from the computer he got it in, how can i do that? i know its a very broad question but im not sure where else to ask... oh... and it has to run on linux, but the PDF will most likely be seen on windows but i dont know
+7a5482b7-1863-4671-add6-677aa391391d 17731 linux-test hildegard I could use a roommate, actually.
+15512a14-45bd-4029-a983-2195feb80d0f 10190 linux-dev jana Margarette: your question is vague, I can't quite tell what you're asking, but at first pass it looks like the answer is "you can't".
+ef9fb450-f3c2-4d2f-81af-c5a6b420ddba 17733 linux-test gale exactly
+a6923b51-4953-4736-b113-e755f1c39a68 10198 linux-dev margene nothing should ever be seen on windows
+0c890685-4936-4587-9277-c9af0f8b5437 17734 linux-test lai roflmao
+b94573f0-19d9-4287-86e0-727fe17d53c2 10215 linux-dev margene except maybe a little devil gif flipping the bird
+d3592c43-0391-4937-95e2-0220b2dc73e3 17736 linux-test hildegard but I don't trust anyone.
+bf4b1181-71da-4e8b-91dd-48d1cfdaec61 10233 linux-dev margene with ballmer's face pasted on it
+d32826ae-8e32-4a71-9b41-c12ae7b4148d 17743 linux-test rachel Lai: ah
+575df77e-7a8f-4765-ae5b-cb9b07bdd0e5 10273 linux-dev german Margene, don't wanna be a troll, but windows does have it's advantages
+acbaeec4-7582-4361-b0a5-410976f8f18a 17745 linux-test felicia paranoid!
+12dd710c-e646-4dad-bc98-5bd1f4776b59 10275 linux-dev paulita youtube rocks :D
+01418089-495c-4c46-a2db-7dc8e62526bc 17749 linux-test lai Felicia: "pot"? expand
+1dfa263a-0c13-4bc5-9cd8-19bb004658a2 10290 linux-dev margene troll!!!!! ;)
+61f4af2e-5c8c-4b3b-994a-fbc1eec47cf3 17750 linux-test gale see!! now the bdsm killer doesn't sound so bad now, does it.
+04c5581f-4cd7-404b-8136-323c235c74bb 10291 linux-dev paulita death to the people who want to prevent free speech :D
+47edce20-4f69-4ed8-85ca-5d70be6f0935 17759 linux-test lai lol
+b3826dbc-337b-4965-a68d-30c377cdfd16 10304 linux-dev renate youtube sucks, lol
+0cc3823c-1034-4dd1-8ba3-e37afb4bdad9 17762 linux-test regine passes the roll of luminum foil to Hildegard
+baec6d71-7085-4940-b98a-6fde76163ff6 10320 linux-dev paulita arwen your a fool
+f0f241ab-f4ee-494e-9f86-04da69d09a26 17771 linux-test felicia er aluminum
+13fea476-a760-4605-9446-c1b0a9fe020c 10329 linux-dev paulita you want to pay for this?
+cb9704e7-be46-41e0-a002-680b7eaa6639 17775 linux-test hildegard Felicia: I have 2 kids.
+9d691681-3e00-466c-a495-689c46f1542f 10337 linux-dev paulita you suck wipe
+d24c5df0-4ebc-4e66-9b25-a34e773e9b1e 17775 linux-test hellen sniffs suspicoulst at the roll..
+de7c9989-95fe-4c92-8369-8e1ca8e865f8 10337 linux-dev gale German: and what's that?  Windows Genuine Advantage?
+1ec17cf8-e426-4b4a-93ef-ad152435a099 17780 linux-test lai is anyone here in pennsylvania?
+fc771304-960f-4992-9301-78986866278c 10360 linux-dev nicki death to all extremists! ... oops
+c2d447e5-2fcb-4b24-bda0-992c945db98c 17783 linux-test lakenya i take that back there is only one person that wouldn't piss me off
+bf31239f-4498-4b7d-951c-130ceaddfaad 10362 linux-dev margene well you have to admit, having an advantage is advantageous
+735b54da-6e4f-42e9-b6f9-1c35ac10d771 17785 linux-test hildegard Lai: I am.
+9465610c-c7f1-42b0-8622-63c1114e07f6 10364 linux-dev jeanice Gale: i feel so advantaged by that, actually
+3dc269ea-2ee9-42d1-ae71-f912dc768e65 17785 linux-test felicia Lai: you know . like a poker pot
+3465f549-d4c7-4cbd-b3db-96d9a36b9209 10372 linux-dev angla youtube does suck. who wants 15 minute max hosting ?
+5396bba6-b177-4a57-9ea7-a3f6ae1be281 17791 linux-test felicia ante up
+01041171-aba8-4e78-8952-aa04132f3fee 10382 linux-dev paulita hosting?
+380b0b64-bebd-47df-a023-b0c56214ffcd 17793 linux-test gale Lakenya: btw, is that like a gimp?
+a5d42e07-4697-4fd9-bfd8-c3364cc9a1c9 10384 linux-dev josef they give more if you sign up as a director
+160105d3-3b1f-4442-89c8-f14d5d376325 17801 linux-test lai Hildegard: oh yea, thats right
+e24aafe0-b8af-490d-9a4a-3592a3a97a81 10387 linux-dev german Gale, for example ease of installing additional programs. Unless the program you're looking for is in the repository you have to go through the dependency hell manually
+3c113139-1404-4c49-ba3b-e9b2036e68be 17803 linux-test felicia Hildegard: congratulations
+15a7a39c-bae0-4b97-9598-903ce3a09079 10390 linux-dev paulita i am talking about watching you idiot
+c172513a-d72c-45e2-bac5-dd3a224bd6ac 17808 linux-test lai Felicia: ah ok
+5a56f0b7-8c16-46e0-b379-eaa5fa6f7dac 10390 linux-dev josef I prefer Google Video tho
+7de89af4-5cd6-4416-bc0d-cc988af69ef5 17816 linux-test hildegard Felicia: ehh, thats why I wouldn't trust :P
+82dd63be-24d4-4b73-94c5-1219bb4b4da9 10392 linux-dev gale yeah, the advantage is not having it
+98dd6f0f-dcec-4d1b-b516-4e60575f1f80 17819 linux-test lakenya Gale: Pulp Fiction anyone?
+224c2e84-0104-45f0-8744-59dc5bfd1872 10417 linux-dev paulita !seen Quiznos
+dec271d7-1eb9-485c-a8ee-e2939560d6e5 17823 linux-test felicia i see ..
+018c71d4-3e63-4785-9815-46c4b25227ab 10424 linux-dev margene I call it dependency heaven
+73165463-92bf-48f9-bcdb-feb087f8cb24 17826 linux-test gale Lakenya: yep
+6bf77516-be9d-49e7-8131-03239eceacb4 10429 linux-dev josef German, Windows has Crysis, end of argument :P
+21c9218d-7a41-4e69-a373-1d57963db6be 17828 linux-test rea can anyone help me ? i'm triing to install Crypt-OpenSSL-RSA-0.24.tar.gz but my script is failing
+e093de19-6ea7-4505-accb-3a82a25bba13 10433 linux-dev paulita hi pingfloyd
+bc367524-1c24-4f2a-83a3-a982754f3788 17835 linux-test hildegard Lai: why you ask?
+4e3c7597-50af-4e72-9b11-ffe78c04b6b7 10437 linux-dev jeanice plus, the advantage of laughing at all those who get sucked into its vortex of evil
+0c98f87d-3b5f-446d-8be3-8bec46bde1bb 17845 linux-test lai Hildegard: i forgot
+ab74e507-9160-4d44-9fb9-7a578033e1a8 10437 linux-dev hildegard Josef: yo.
+6e565c63-c0f9-4d8c-b8b1-58ad695aab56 17850 linux-test alisa Lai!
+60a0a10a-8a7b-407f-97b6-a2dfe7f6d7c7 10442 linux-dev angla Paulita, youtube is a video HOSTING outfit. and you can just stop calling people idiots. especially those of a higher intellectual calibre than yourself
+7edc9a65-518e-4ab2-9b40-7489cf8b43fe 17864 linux-test hildegard Lai: you forgot why you asked? :P
+3f40ac08-4a33-4b5f-9cc8-e14e3a3ed629 10443 linux-dev josef Hildegard, hi
+f44af65d-fe04-4b0b-b13f-24fb0275b6a2 17865 linux-test lai Alisa: cartman!!!!
+c935bd56-251e-4d26-8766-81368fa82956 10450 linux-dev margene haha, Crysis will bomb
+93137b90-f954-45e9-b952-718e19b06875 17870 linux-test lai Hildegard: yep
+7ea263ac-dbe4-4f00-876d-de433e5272f2 10454 linux-dev margene bunch of hype
+20603794-6507-4aa0-91db-64cb73bd7232 17877 linux-test alisa Lai: what happened? Did they tie your tubes?
+e182d300-9d0b-40ef-93c6-48d846ef5942 10462 linux-dev josef I bet otherwise
+24eb3795-14da-4e56-b262-1ce46b5e2990 17881 linux-test flora is ext4 available yet?
+86224dcd-8a38-433d-8d52-bf0ad2efbcd4 10469 linux-dev josef I'd put money on it but I don't think that's very freenode :P
+cedab58a-8ab3-465e-8bf0-118a883789af 17887 linux-test lai i've been offline for 4 months now
+a6d9d49e-5779-4b96-863f-7f15a76530dd 10469 linux-dev gale German: ok, but each installation is like one more foot in the grave for it due to the dumbest thing every created -- the registry
+628d5140-3dd2-4db2-9981-f408c3e117c8 17889 linux-test gale yeah, I meant the pulp fiction kind, not the image editing kind
+5e68e72d-1670-4c00-970d-d9970cae171c 10485 linux-dev paulita well if your defending idiots Angla, then your one too.
+23b88eef-7dc0-49e6-8c8e-11176bdd3f0a 17890 linux-test hildegard Lai: less beer, perhaps?
+fe82fda6-712f-4ce4-917a-b08b4f54321f 10490 linux-dev paulita now leave me be
+957ae6ba-3413-4947-bf2d-428478a17926 17897 linux-test lai Alisa: hah! LOL basically
+b4b4d295-2bb3-4abf-ad8c-81732c4a8c68 10492 linux-dev margene well ok, gamer nerds always trend up on everything, but it's hype, so is directx10
+589dc00a-0531-42ce-96ec-54f6e22cb773 17903 linux-test lai nop
+e9eaa4a0-6218-4992-a2a4-aef68e76c0e2 10494 linux-dev josef Hildegard, it was you who brought the OpenOffice issue to my attention wasn't it?
+f3c5406d-62d7-426f-bb29-3889aedfe1f0 17908 linux-test felicia lol @ Alisa
+36e9eb39-b370-4f7b-91ca-1b1fd4081e1b 10508 linux-dev hildegard which issue would that be?
+46456f9d-3246-4b3f-b24e-89951d0d32bb 17913 linux-test lakenya oh yeah roommates.com has photos, can't be stuck with a ugly/fat/male roommate can we? :)
+6b8e3a4d-0a10-4725-9011-f8bbc0ac8d01 10514 linux-dev josef Margene, tbh DX10 is a big improvement, I'm not the trending type
+b5681e7a-0ac5-4bd5-b09b-3f41324fa056 17918 linux-test felicia Sen Ted ahs had his way with the Q man
+1a8652ec-7335-4e39-950b-35da099eb4d9 10516 linux-dev hildegard licensing and sale of?
+61a0301f-3964-41a3-b235-2cf8a8507981 17918 linux-test alisa Flora: I think it's been merged as of 2.6.22.
+c4c38843-e6cc-4bba-b9a1-c025d7c6ebe7 10517 linux-dev josef Hildegard, the ebay thing?
+39b64fa7-d29a-4593-acf8-2223014e6e54 17924 linux-test lai lol
+ead0d3b4-6679-4be1-9757-ef009f4582d7 10520 linux-dev josef yup
+9eb43cc1-fcae-4acd-bc19-5987b963a963 17945 linux-test inez Lai! :D
+5957aa1e-2ed7-43f7-ba76-9f2c06c5a5cd 10531 linux-dev german Gale, excuse my ignorance, but doesn't gnome have something similar?(never went into the details of it, but gconf looks like the registery)
+180ca345-5e2c-4a50-8922-f1f6a265c56a 17945 linux-test gale Lakenya: that's like 90% of the internet pool
+ba444d89-1295-4559-94ee-42994cf01088 10532 linux-dev margene yes, it's a bigger hype than usual
+aa3243cf-4752-4aa5-b897-8dc0d5fa0327 17948 linux-test lai well, i need to get down to flaroida and all my stuff and i need a truck
+bf8bf7f5-2554-4ff6-ad91-fb48e2582f11 10535 linux-dev paulita all i did was make a brief statement and now i am suffering with all this grief :D
+ed4e6824-4d4a-4ff9-acd9-fc6302cb6df8 17952 linux-test lai Inez: !!!
+3dc4edee-f233-47c6-a65c-3ea051ba6403 10540 linux-dev josef someone else I know put together an email to send them which I helped him with, not sure if he's sent it
+bc518ab7-6d8b-443d-a37e-c3e99a194608 17954 linux-test felicia pretty soon, you'll start hearing the dump truck rumble
+18209b7b-a91d-4e3e-9c29-33fea86b3450 10549 linux-dev josef gonna go over the legal side with a fine tooth comb tomorrow probably
+d26d3c2c-3c5c-4987-be21-cfea2b98363b 17967 linux-test inez how are you man ?
+d363a453-128e-43b2-a28e-8c64a0fdd1c2 10551 linux-dev hildegard Josef: what did you come up with?
+4b01b618-802c-4997-adce-9a282335ea3b 17968 linux-test angelika hi there people...
+4e47fef3-7b8b-41f7-8c6f-9b7bace7a11a 10554 linux-dev arlie Paulita, happens to me all the time ;)
+420c9f40-6c1d-4f6e-82b2-3b477b885840 17970 linux-test angelika What ways I have to have a file be readable and writeable by all the world?????
+f367e31c-a15d-495a-85cf-dff6e24238bb 10565 linux-dev paulita hi Arlie
+2c949843-9e11-4f64-9f35-70e1c6c232b2 17970 linux-test lai s/and/with
+21d19a9a-7066-42cc-b331-9e4ebef37ac5 10569 linux-dev arlie Paulita, they love killing the messenger
+4ace4542-c940-4f08-afab-13f32bf875e1 17979 linux-test lai Inez: heap-o-big trouble
+deeecfd3-84be-44a5-a1e2-2ddde5c176a8 10571 linux-dev gale German: I don't know all the details of gnome, but those are just text files that gconf uses
+fd167b25-b0cc-465e-858e-fd88c599e98e 17987 linux-test felicia Lai: where's your stuff? there in PA or Fla?
+3f3b51fb-2811-420b-81d2-5a9d499156ae 10577 linux-dev paulita haha
+c868e390-8ad6-4653-81cd-ed9b9169ef37 17987 linux-test inez Lai, what's wrong ?
+2a606b97-172d-48d7-a5a5-a85506c7307a 10592 linux-dev josef Hildegard, they're violating the terms of the license and are therefore illegally selling copyrighted material on ebay. should get the account closed, would be nice to see some refunds but I doubt ebay does that.
+463fea28-3537-488d-ac11-184dbb26efd8 17991 linux-test lai pennsy
+ec8bdc64-22b3-4b5c-9453-d38e4444521c 10612 linux-dev german Gale, my own preference is each program having it's own .(name) directory in $home
+33b9c37c-48d7-491d-8900-e7610d0a6210 17999 linux-test felicia ahhh
+83408db1-4d5e-4666-afa7-d825975a9ca2 10615 linux-dev gale German: more or less the whole gconf gui registry looking thing in gnome is really just a fancy front end for editing them
+0accec74-8494-4bfd-ae7a-27a52458f324 18007 linux-test felicia gotta move .. haul ass eh?
+4b1ad1f4-52e1-498b-95e9-4051ae4fd4a7 10619 linux-dev gale afaik
+1bf09790-5c36-4201-9123-2ad16f7dff90 18019 linux-test lai Inez: evicted by greedy conspiring property manager and district justice
+861dcdb2-41ff-42fb-9bf5-5556adbab7cc 10619 linux-dev angla http://www.grc.com/stm/shootthemessenger.htm
+281d4a57-e1e4-426e-bdb2-7a1d8dc9c3ec 18028 linux-test inez eee
+1443a3e0-55cb-4630-b3c5-566274b4279d 10634 linux-dev arlie Paulita, but having just read the scrollback, you are being somewhat of a snot nosed punk
+49c5b631-a5cf-4940-afc3-6671517429d5 18034 linux-test felicia no bueno
+e8696cf4-220a-4cc8-bacf-4d10c164077b 10641 linux-dev paulita Arlie you want to see my home town? it is on youtube :)
+3f854bf1-d343-4c9b-942a-5716c6b2bb28 18034 linux-test inez so what are you gonna do Lai ?
+ea5355b6-1ab5-4b40-a947-284c99f43921 10650 linux-dev hildegard Josef: :D
+8c244c16-cff2-422f-a8ed-d9453370bd30 18044 linux-test lai need money
+b9c3832d-0308-4c43-80ee-d0d3f2f74182 10651 linux-dev paulita well fine then
+b4fa5125-9f93-4673-8e45-c20e09899666 18046 linux-test lai $2200
+c5214fc3-27b1-40d8-9cdc-62c586c30b8d 10651 linux-dev arlie nope ... dont care at all
+addf22eb-3123-4981-8f68-fd009fd611da 18049 linux-test felicia Lai: that guy in Mass can't help?
+525aae9a-b4cc-4457-8774-5ee0a02be6a0 10655 linux-dev paulita good
+3eb83d5b-1e0c-4ac5-8caa-958fa974389f 18052 linux-test inez Lai, I know I'm all the way in ca, but if you find yourself near here and need a place to crash, you're welcome.
+825f00e3-4a36-4829-a1ce-828faeb02bc0 10659 linux-dev paulita cause now i know you too
+4a140c71-ce6b-4473-971e-1eff84954976 18056 linux-test lai who guy?
+9a39b616-49a7-4daf-880c-c96e252a1041 10659 linux-dev hildegard shutting down a powerseller, awesomeness.
+115bb87e-1167-41cd-9d8d-1447bfa83cdd 18081 linux-test lai Inez: yea thanks very much; btw you changed your fon number you bistardo :)~
+88abccce-912f-4eb5-b3bb-37d2926c64cf 10660 linux-dev german Gale, okay but i do have a question here: don't windows ever update their libc? I heard that's what breaks most of the binary compatibility in linux
+afa36827-e12f-4055-a51c-64e675d41f24 18088 linux-test felicia you know the Tax guy .. who claims he owes no property taxes .. Ron? or somebidy?
+fad7f3cd-cbac-4cda-81c2-e49d3e1831c5 10677 linux-dev arlie Paulita, im sure it looks exactly like my home town
+92bb4439-0b17-4f85-8745-36e89f872209 18092 linux-test astrid suggest a paypal fund or similar
+c7640b34-2237-4249-83bf-19c025a7c5ba 10692 linux-dev christiana Anybody know a good OS for laptop? Has to support wifi - Office programs and firefox, i thought puppy linux or something.
+ebb8c886-20e4-4887-ba33-36efd5f3d786 18103 linux-test inez Lai, my old one died.
+a8cc5d11-d3d9-472a-8681-8e8da9ccefc1 10714 linux-dev paulita there is a major difference between a monkey hole and a bahia brazil ;)
+342a66b3-910f-4953-a7f8-a2bfd4efc0e1 18104 linux-test felicia or was it VT or ME?
+a8638e2e-92c2-42a7-9521-e9fc898dc0d6 10722 linux-dev priscila Christiana: why bother asking here?
+ceba7e5e-be4b-4073-8a1b-968aa6bfb864 18122 linux-test inez Lai, I messaged it to you
+1b6f4791-3e54-44be-ba8b-2e2b546b240e 10729 linux-dev gale German: windows has all sorts of problems with it's system libraries all the time
+be9ae7ed-8813-4374-b957-80326b3bba80 18125 linux-test lai Azzie: my shack guy here said paypal too but i have no local bank acct
+c310b2e8-8ceb-4d6a-95e2-6da400b3619c 10729 linux-dev priscila Or do you mean distro?
+27996735-2148-4d2a-9281-faa41eb95581 18125 linux-test azzie Us ##linux kids can be pursuasive to get people to do things.
+cd1e1395-0835-4bcc-b928-633ed8db33d3 10734 linux-dev christiana yeah a distro
+a3e58792-75be-4426-ac99-7615903d9b36 18129 linux-test lai Inez: ah ok
+b9c68917-8013-427f-bebc-fe1f8e901303 10741 linux-dev christiana for laptop
+b8b5bfe9-bfaf-4f52-bf07-844a50931c59 18136 linux-test felicia second's Azzie 's suggestion
+3c66e95b-28b7-4d96-a1a3-9262e6948eb4 10745 linux-dev arlie yeah ... not too many glue sniffing street kids around here ... they all smoke weed
+29be4a81-4743-4022-9a62-d1e20ca9eb86 18138 linux-test flora <Alisa> great thanks
+7eede06d-e721-494a-a3b5-0db289c609ae 10752 linux-dev kit Christiana: Check "linuxonlaptops"
+f8b7ae26-ac10-41e3-8bf6-0527342896a4 18145 linux-test lai Inez: ok
+ace962f1-189a-47f1-a190-ada33c60447d 10764 linux-dev christiana ok tnx
+45f8d70f-c7c2-46fa-b763-0e30709f7455 18170 linux-test lai Inez: ok; got it, i'll try to call this weekend if i'm alive
+fcf9183a-d9ed-4d37-86df-c6d8890989b2 10764 linux-dev margene they drink beer here
+3f4533fb-45db-49db-af20-10141b181c77 18177 linux-test inez okay Lai
+0ad93242-7161-482f-b6d9-69e380dceb64 10769 linux-dev priscila Christiana: is it a low spec laptop?
+d26bc0c8-e160-46b0-a709-a60bea831900 18196 linux-test inez call later in the afternoon, since I sleep in late~
+90adf1e3-012b-4a17-bf3c-8a6a4e09c33d 10773 linux-dev margene and I shoot em for sport
+43f53454-687f-4007-b137-9ac8040c16e4 18201 linux-test gigi My work needs windows, Any one here would give me some suggestions on using gnu softwares in windows?
+73fc72f4-e3b1-4881-86ea-a538d94ea2b4 10777 linux-dev german Gale, I know, I am not here to argue that windows is better, just that there are some nice aspects to it(with horrible consequences, but still)
+af1c2d47-d3c4-47de-8b33-f93af7ceb9ca 18201 linux-test gale we should charge the noobs $1 per question to the quiznos paypal
+2b2628e8-c328-4a2a-bdf1-3dca277d2e31 10818 linux-dev christiana 128 mb ram so low spec yeah
+27e22d92-6918-46dc-9ab1-5bf4cf06920a 18211 linux-test josephina XIN01OZ: mingw
+c291bffa-2c75-4dde-b36b-59f2d5b9b296 10837 linux-dev melda 128mb is hardly low spec :-p
+a664dd32-fcd6-4f93-b0b4-f80c071af823 18215 linux-test felicia bingo!
+3c2f0314-aafa-4dea-94d3-220ac877a039 10849 linux-dev priscila it is if you want to use firefox and Office apps
+73c77c79-1498-4946-b02b-5f05179ec212 18217 linux-test josephina Gigi sorry
+32e7e1f0-29c1-4688-9866-cbc7cbba33cd 10870 linux-dev melda goldfish: hardly
+b35be5a6-8029-40e9-96a2-61fb717dc103 18217 linux-test gale we'd have the money in 2 days max
+38432d9c-0cac-473a-b981-4b92af815a0d 10879 linux-dev christiana for me it is low spec, im used to powerfull desktops :P
+18d632ee-3016-43fb-b9b9-be427081badd 18226 linux-test azzie Lai: hrm, Have you tried to set one up?
+088aded2-ab2f-41f3-bf63-79d0c0319bdf 10905 linux-dev melda Christiana: most "low spec" distributions are garnered for 8MB-32MB w/ 200Mhz or less processors
+2351546b-d53d-44ef-a414-3b7783247e15 18230 linux-test arlie the federal reserve system conspiracy is keeping you down man
+bebeb10c-ef2d-4a96-9b06-d79f15d43d0d 10910 linux-dev angla 128 millibits is quite low
+1a103b06-289c-4e62-906c-55aaa8833d3f 18235 linux-test josephina Gigi: and msys
+f09fbb35-41c4-48a2-99f9-8403ef306aa1 10920 linux-dev margene tell it to my octo core with 16gb ram
+6f31ba50-41a5-46fe-ac4a-f28213176327 18247 linux-test felicia Gale: all ubuntu users  .. pay up!
+8ed82043-8506-43ca-9a59-d7754f7fa89c 10925 linux-dev lynda test
+e305016f-e457-4987-bb7d-a6bcf7ce0611 18260 linux-test gale and susers pay double
+3cedbafc-ed76-45be-a764-39dd90b16f49 10927 linux-dev christiana 32 mb ram? they used to make those?
+a0fd154d-c757-4077-be8f-75234cb6d9b8 18267 linux-test azzie I certainly would make suse users pay.
+41a28350-15b0-4448-82b3-74ab8be31b47 10930 linux-dev kit Melda: No.. Your confusing low with ancient..
+83ec0f13-1e41-44da-ae66-2eb4d9d678e5 18270 linux-test hildegard triple.
+6c096995-7b59-4823-8307-d9e399eae057 10940 linux-dev melda Kit: not at all
+5ab1adfd-2bc4-4e84-ba2d-1ab5c5453e18 18275 linux-test lai Azzie: not since being offline
+1f1d502d-60b9-4b77-9f22-580fc31c21bc 10947 linux-dev german Christiana, I used to have one with 2MB
+92fad8a2-704f-4406-a300-8344fb431962 18276 linux-test felicia it doesn't need to be "in state" either
+2c50d485-d405-4867-b079-3e8cc845245d 10953 linux-dev christiana omg :o
+1a8ac8be-c917-4f67-9298-00e025b1f693 18282 linux-test lai Arlie: lol; actually, they arent
+ae6bb345-0344-401e-8182-3c59d058f23d 10957 linux-dev melda Christiana: umm... your "standard" windows 95 computer came with 32-48MB RAM
+1f8203e3-101f-4632-a43d-84a3d1622a1d 18287 linux-test felicia Azzie++
+e2f0168b-72e0-484c-b1cc-3739c1d50cd9 10976 linux-dev lynda hey people why doesnt PHP channel work? it sayz overfloww when i try to type.....
+591a6a10-1dc2-443e-8500-78970ccf81a3 18300 linux-test lai i wonder if mom has a paypal
+fbcdfc9f-6d7a-4204-84ef-8c696aad613a 10979 linux-dev christiana i use a 64 bit windows vista with 3 gb ram :P
+10829c9a-d227-47a2-9042-dc02059e2343 18323 linux-test ricardo Is there a way to emulate input for a program listening on a COM port? like send the input in such a way that the program thinks it's getting it from the COM?
+433e4577-dbb5-4052-a852-76960a956839 10982 linux-dev kit Melda: Yeah.. And that's VERY old..
+9cd55280-63b2-4011-8a8e-6fdd6f2424d5 18330 linux-test arlie its a federal reserve european banker tax man judge landlord conspiracy !
+4eb647cd-50a5-4892-8dc5-be67b26db590 10992 linux-dev nicki my first computer had 4kB of ram, a trs-80. :)
+c642c6d5-4b80-4fb4-b55f-998329ad0043 18337 linux-test azzie Lai: I am certainly willing to help and send you what little money I can, but I'm sure A paypal would help a lot more.
+dc72ab38-cec0-4663-8cf6-f1f198e66c5c 10995 linux-dev arlie Lynda, php is buggy like that
+911b8a3b-5b97-4f2d-91ae-1757b289c769 18338 linux-test lai lol
+f7a50357-789f-4108-9440-57c430f489da 11000 linux-dev christiana 4kb?
+0095eaf4-34b3-4f22-908a-9555a5624a7a 18353 linux-test felicia yep
+6bb52cda-eaa4-455b-836d-3122bddab064 11002 linux-dev priscila Arlie: heh.
+f2142cdb-2032-4c57-91d8-ffc2a002a3dc 18354 linux-test hildegard Arlie: but it's actually masterminded by the street hotdog salesman
+d308c7c5-6698-4f6b-8113-f4ce32ca48b8 11006 linux-dev christiana What OS runs on 4 KB ?
+fc1c2455-3fd5-4d23-affa-b622ef6e5285 18361 linux-test azzie lol
+cf240844-765d-47eb-8ca0-bcdb9700321d 11011 linux-dev nicki basic
+3ab2b481-7115-49f3-8596-a4ed03c2d89a 18371 linux-test felicia vendor! not salesman ..;lol
+365aab9f-1504-412d-84e8-d0f139416368 11014 linux-dev nicki ;)
+7360ccca-11a0-4d1c-a5b8-307ee12cc475 18380 linux-test lai Azzie:  i am truly grateful for the effort; but i cant see how i'd get the money out of paypal?
+e268b874-1193-4dfb-b360-f0c6d7f69ae9 11018 linux-dev german Lynda, you must register on freenode
+9ce70c6f-5d18-4081-8d3c-cda6c7b2bf70 18386 linux-test arlie Lai, if you ever get a computer and an isp again, by all means, setup a website and start selling vitamins or something ... you have the skills to do it, you just keep thinking you dont need money
+5703071d-bba2-40be-989f-ab7af220e9ed 11019 linux-dev lynda Arlie: thanks... darn i got to fix a stupid problem... :(((
+030b6c85-e741-414f-9a65-d20e2d594c4b 18399 linux-test lai lol remind me of that one
+d1bed206-bff4-4134-a34e-7abe4f8b68f9 11028 linux-dev jeanice win 95 was 8-16 mb ram wasn't it?
+ad3d610f-7a09-4da9-9264-a0cf410542a0 18408 linux-test azzie Lai: You do need a bank account, but there shouldnt be any reason you couldnt have one?
+8d597df3-8a43-47be-b887-eed4a93953dd 11033 linux-dev priscila Lynda: probably means the channel is full.
+70c6001c-3220-434c-a728-7633ece872fb 18419 linux-test arlie selling vitamins is a worthy profession ... people need vitamins
+f42b4cc5-6301-4090-bef9-823c4928933d 11042 linux-dev christiana I never used windows 95, it seems to run like crap
+5a3128cd-19c4-4a74-b9b9-52de57508a69 18421 linux-test lai Azzie: lol; ask HM why :)
+7f96e25a-44d4-451d-b789-41ced48ada9e 11043 linux-dev margene lose 95 was 32mb
+1e17f0c4-6730-4317-8e80-c6a760ae1e9c 18426 linux-test lai lol
+255e71b2-cccf-428d-9ad6-0e5682bc31d3 11046 linux-dev arlie 4k was the norm for awhile
+0e31d5bc-5daf-4a6e-a3f7-a7b8fe2c8078 18438 linux-test angla Arlie, you are one cold mother
+37453d5d-389b-45ef-aaf0-3a26a23e6675 11048 linux-dev german Jeanice, it sure ran on my 16mb, dunno about 8 though
+0b44da0e-d301-46f4-aae3-f85ce1a8ae96 18445 linux-test lai or search the logs of months past
+a89fc618-9964-4b57-9bcf-4301e287e0cf 11054 linux-dev lynda goldfish: so i need to wait until some people leave?
+ef8d71fd-742e-41d8-bb1a-b37f06cb2b33 18449 linux-test arlie Angla, im not cold, im desensitized
+5ec5d510-9a9f-4bfd-8624-24e07882a596 11056 linux-dev arlie my atari 400 only had 16k
+2faa3e2c-6ded-4b1d-87e6-6c8ab08f9b78 18451 linux-test gigi Josephina: What's the relationship with cygwin please?
+caa79479-7558-48a8-b844-4efcf28d8954 11059 linux-dev christiana 4Kilobite, what can you do with that??
+8d66a869-15cd-41f3-ab54-96132274a3fe 18465 linux-test arlie if Q has bad credit, it will be hard to get a bank account
+9ce90e57-f5e2-41f4-a3fe-c7224ab0511d 11070 linux-dev arlie Christiana, microsoft basic on cassette ran in 4k
+57bc251c-5ef6-4c6f-9d32-886daa220ced 18472 linux-test arlie however, it can be done
+c3c2a22a-3911-4c01-99c3-2ff944d72228 11070 linux-dev jeanice Christiana: it should be enough for anyone
+3c5af427-63da-46ef-ad00-08f7dd4c5594 18485 linux-test angla anyways, i've used up all my fast-forward on this mythtv. back later
+9cf6c2ab-2cb2-414f-bbfe-20946e64e689 11078 linux-dev christiana Play with the BIOS or something?
+df86ca52-17d8-4338-b9ec-162a4c33f4d4 18494 linux-test azzie Not a simple checking account, you may have to offer them to keep your debit card though.
+15344495-3b34-445d-ba75-173f5b2f322a 11080 linux-dev german Lynda, you need to register your nick at freenode, then try to join
+09469e0e-76ec-4870-9589-ee516f8aaa34 18498 linux-test lai i still think a $15 or $20 debit cards would be a better idear
+5da5ea24-1902-498d-982b-fc656c4e7405 11081 linux-dev margene I remember lose 98 was pretty fast on 64mb
+37878074-85f6-4c31-9743-4ddeb4e9b373 18504 linux-test delmar has anyone used pcb ?
+04f55d2d-3317-4cbb-b904-99d8253c1179 11090 linux-dev arlie Christiana, what bios ?
+67279c91-aa1f-4a88-b4d6-b3d7ce0f3097 18509 linux-test lai Angla: be well
+546c550d-a4d6-4dab-a41e-6d544030ca7b 11091 linux-dev lynda German: thanks !
+3f764d75-7e99-4a1d-9c0f-8ca13e97cde4 18523 linux-test arlie Azzie, yes, even a simple checking account requires that you didnt screw up your last checking account, which is easy to do if you have no money
+8137e613-8c1d-48e7-910a-40735650cf92 11102 linux-dev lynda German: hey how do i recover a lost passworD? :)))
+48e0ea7b-ee7a-4b62-a14b-dc2fdb82622d 18529 linux-test lai or plain money orders
+3d3cd53f-8fa2-4171-8d6d-402e646f651d 11102 linux-dev hildegard 98 was pretty fast even with 32, come to think of it.
+086ccb29-0e30-49ea-aec4-455d175abfd5 18540 linux-test lai or postal orders
+5d4a1ba3-30d1-4f67-b43b-6d9cf11286f7 11109 linux-dev hildegard at least until you started adding lots of stuff.
+b49de68a-4856-45cd-b756-9e6219d0592d 18553 linux-test arlie Delmar, ##electronics
+965f0095-1f57-4a6d-8c97-621101ca5489 11115 linux-dev german Margene, until you actually add some programs like antivirus and firewall...
+a3690960-dbd7-4a80-b108-52fc5f261af8 18556 linux-test lai what about this:
+37989e28-f2f2-44eb-bbac-9f97db4027ae 11122 linux-dev jeanice i never had 98
+c0317708-fd1f-49c4-ad9e-988c21e3a821 18571 linux-test angelika hey people, how to say that user:group
+d0a5e163-48c2-4480-92d4-a08130a9af45 11124 linux-dev christiana Bios is a blue screen with buttons when i pres F1 when pc boots, it says PASSWORD and BIOS
+b46f1a55-0f86-4974-9fe4-6a17aca614d3 18571 linux-test alisa Kacy: could you change the topic to suggest that all able peoples donate to the Lai Relief Fund?
+5aae4030-0158-4626-80a3-a0fda1d9e2d7 11125 linux-dev german Lynda, no idea
+545326de-7436-480e-8503-d6d667d14726 18574 linux-test lai i give you the mailing address of where to send them- to the manager of property
+f578f484-1652-43b6-bb59-872217715fe7 11131 linux-dev jeanice went straight from 95 to *shudder* Me
+677ae7cf-a1f6-442a-8a68-f39e820424b4 18574 linux-test josephina Gigi: no relationship, they do the same sort of thing, but are different in several ways. I recommend mingw+msys but have used cygwin and got no problem with it
+cd0a8e10-67f2-4b52-8358-a8931ae8b433 11136 linux-dev margene German, never had that, not even a firewall
+997975c8-b0bd-40cc-a15b-efecba1e5a74 18577 linux-test angelika that user is anybody???
+e7a9ee0d-ffca-4383-af90-ae5a62243d5a 11154 linux-dev hildegard Jeanice: ME was a disaster
+6b6a35e2-a11c-4b35-84aa-63af45d3698f 18583 linux-test ricardo #offtopic :D
+fe7a122b-2611-4ae9-a5a7-429d017e588b 11160 linux-dev german Margene, oh right:D windows 98 wasn't geared towards the internet
+3ed0ab98-a52b-4fec-ad56-7f96e5516184 18586 linux-test angelika or that it dosent have ownership???
+39a95513-67fa-4de3-83ec-cb926474da5d 11171 linux-dev christiana Windows ME sucks, ERROR this ERROR that
+27d588e7-c1b5-43dd-abb3-9f29eef3036b 18588 linux-test lai Alisa: roflmao
+41bb8c10-8aa4-452b-b8ba-f07f971b6f90 11172 linux-dev margene I didn't even bother with firewalls until I got an error at startup once
+556d03fe-7356-4078-a6f2-d19a73f610bb 18600 linux-test gigi Josephina: thanks
+a33a887d-3020-4e53-84ae-cb8e24df1df2 11190 linux-dev arlie screw microsoft ... they suck !
+0ed92e39-236b-4b1c-acab-d48b3307a5cc 18603 linux-test lai that's very excellent
+5b67eb72-857b-4f1d-acbd-85013eccea26 11191 linux-dev renate Christiana, no shit?
+815e1947-3c8d-4833-bbc9-a760826f28f0 18603 linux-test lai lol
+28dead00-2660-40d5-bd0d-c45870b41da1 11210 linux-dev celestina loves hating ms
+bc3ffc15-9787-4016-a7a8-0b70219fccdf 18608 linux-test ricardo Alisa: hey dude! It's that guy you talk to on AIM sometimes :D
+e8cc530f-14c6-42d6-9099-e5cd663721a2 11219 linux-dev christiana Ya rlly
+7f29c272-0536-42a1-ab15-2b945065c544 18611 linux-test mirta QUIZNOS!!!!!!!!!!!!!!!!
+381b1692-56b1-4c75-acbb-2322081c4b5c 11223 linux-dev margene I went from 98 crooked.. I mean straight to XP
+62eb523b-98b5-402f-bfbe-56ebf154d6df 18612 linux-test ricardo JMParkerII
+b13ca884-e621-4de3-8173-67e9484fa91c 11233 linux-dev rosia loves pointing out that saying "screw microsoft ... they suck !" only makes F/OSS look like communism
+2a5ecca6-bcb1-47eb-b978-fa8dfe67c969 18614 linux-test alisa Lai: I have $5 in change to my name. So I guess I've got to campaign :)
+4e361db0-f4f3-4e86-9255-ea9ebc6405fd 11237 linux-dev gricelda W MILAN
+f79ca15d-1650-4845-a171-19e6d86b6a2f 18624 linux-test alisa Ricardo: JmParker2.0 :D
+d21aefd0-347f-45d4-845c-d497fc399155 11240 linux-dev christiana I went from XP to Ubunto to Vista
+86618c4a-c117-4f75-b41b-520b0d14865d 18631 linux-test lai Mirta: !!!
+63720da8-7ac3-42ee-98be-7255f7abdb98 11248 linux-dev renate Margene, lol... real people used Win NT
+b37cf7ec-9df7-41ef-bda8-2fd08c720c4d 18632 linux-test hallie What's a good way to keep a svn repository that depends on another upstream svn repository?
+e1fe04e6-cb23-4a39-9760-5603c9828707 11252 linux-dev arlie Margene, hating MS has nothing to do with F/OSS
+38f89269-68e4-4c22-8101-84adbcbc9325 18641 linux-test lashawna what are the chances a 16 year old sophomore who's been programming since 10 can a job with google?
+050ed9fc-e039-404d-b655-a413403d5a61 11262 linux-dev german xp->Fedora->Debian should be enough for everybody
+7ca0f653-0ebb-4798-8965-503061d8bda7 18644 linux-test mirta what's up sir?
+6eed443a-abe0-406c-83d5-a440aa84c38c 11264 linux-dev nicki Renate: and I like pointing out that you don't seem to know the definition of "communism" :)
+0782db12-0c7a-446d-9eaa-f88cdc9212fc 18646 linux-test lai Alisa: heh
+522516e9-0356-4024-8085-9128214905a3 11270 linux-dev arnoldo agrees with Renate
+5a84b3c9-7b58-4dab-b161-876a110163ce 18660 linux-test arlie Lai, get busy designing a website to accept hurricane relief donations and pay yourself a percentage as a salary ... hurricane season is starting again
+10db3a8f-5d83-4c96-9c56-91fe0489de77 11275 linux-dev margene Renate, yeah, those imaginary people were weird
+5d898d5a-bcfd-4fef-aed5-5e01c6eb4e97 18664 linux-test lai Mirta: evicted; need money to escape pennsylvania with all my stuff
+5f62496b-7a41-4e36-a043-5708c0653b0b 11277 linux-dev renate Nicki, doesn't matter.... I said "look like"
+c3fbe37e-083a-4b61-b45d-3416f765118b 18669 linux-test ricardo Alisa: hehe, what's up? I'm just here trying to figure out how the hell I can try to send commands into a program listening on the parallel com port
+1367136f-cd57-4ed0-86d9-6b364d3888ac 11280 linux-dev arlie Margene, my bad
+656bfce3-aa05-444c-8c48-37c55eb2c59c 18675 linux-test alisa Lashawna: as a 16 year old Junior also lusting for a job at google, I think you've got better chances than I, at very least.
+15157e80-ae11-463a-8843-f78ce53e3053 11285 linux-dev arlie Renate, see above
+e29a33df-39ee-4e49-a050-19e1fa49e32c 18681 linux-test mirta Hey - dude - I like got a job interview tomorrow finally.
+8f15672a-022b-4b10-b769-13ae19525e15 11285 linux-dev renate Margene, hehe
+f8f9b93f-7ae5-417e-99af-3dcf61a30d7d 18691 linux-test lai cool
+9d84a67d-7aaf-4e63-b5a7-a938e9b183ba 11287 linux-dev lynda THANKS GUYS!! :))
+5426a516-1d12-412a-9044-b98ecfe95d6e 18701 linux-test josephina Ricardo: I thought com port was serial
+e55e5357-2cff-489e-9853-a3985d0c4a04 11301 linux-dev hildegard Renate: real people still use NT
+aab4f644-a8a3-4dd0-b8bc-a71f9c255701 18707 linux-test alisa Ricardo: nothing too important...just celebrating the return of Lai :`)
+8ae75728-572d-4538-afba-fd0cfd636f2f 11302 linux-dev christiana Anal Butt Monkeys, now playing on the video streamer!
+84b63e0a-e949-4034-a484-513c87618128 18708 linux-test lashawna Mirta, but how old r u
+29995a0d-90ba-4d37-988c-bcf19344e466 11306 linux-dev margene FOSS is communism comrades!
+51b2faed-818d-4198-af90-7147fb20deca 18717 linux-test mirta 34
+e02e314c-18bb-477a-bf86-5057a14cb641 11318 linux-dev margene bring down this MS capitalist pig!
+d406f341-e470-43b0-8027-9daaf58b29d3 18719 linux-test lashawna Mirta, and do you have a degree?
+0444a582-5221-48ed-ac77-032bfe3f9700 11319 linux-dev renate Hildegard, eh? you're here?.... and wow, the red letters on my xchat screen look painful
+6ed49b9e-f5df-4289-a96b-c3013130364d 18721 linux-test arlie sure, work at google, just dont take stock options in leiu of salary
+518b5c08-a944-4f0d-be61-0dcbea8b2f45 11324 linux-dev gale no NT is for the noobs that think they're not
+31b5ab20-ad5b-4522-9f4b-840b1c128d1e 18724 linux-test lai heh
+988dced9-0c82-4a18-aec9-4654a3a8c960 11326 linux-dev arlie for real
+4dfe4758-1f18-4780-962c-5393941fa72a 18726 linux-test mirta 2 years.
+3a737992-566d-443d-8d2b-70656fb40636 11328 linux-dev angla jackson browne had a hit with running on NT
+3fd0948d-1746-452f-a0a3-8e121c3b753d 18741 linux-test azzie Lashawna: Im a 19 year old coder who has been coding sine at least 10 and am in the same position.
+a3826d06-3cc1-4050-9dba-17123d85de7d 11329 linux-dev jeanice that's GNU/communism
+56ec4957-4fab-4a6d-b835-cab2f72fb708 18746 linux-test arlie at $460 a share for a company that has yet to make $1 in profit ... its not a good deal
+cf303497-578d-41a0-835f-d1e8500b3186 11330 linux-dev arlie microsoft is another enron
+381d7fae-c3dc-4893-87ec-69c460a3b212 18755 linux-test lai heh
+7cf85746-13f2-465a-b191-aaaf77a9db79 11345 linux-dev arlie they didnt make a real profit the entire time bill gates was getting rich
+ec86f455-e786-450b-b782-69570aa6846e 18758 linux-test ricardo Josephina: you know, I think you're right, but it doesn't matter for what I'm trying to do, but it is serial, I'm just retarded lol
+cd0c6c5b-c632-4eed-98d5-7cb8c789b66e 11350 linux-dev christiana Microsoft is loaded with cash, Respect.
+b4b53615-0e99-4877-82e2-767c0091f063 18768 linux-test lai ok, so where are we on the relif?
+0dff1c1b-a821-496b-a07f-6a2a0f727c3e 11353 linux-dev rosia just started a flamewar! lol
+ba1294c8-3bb2-453a-8b91-9151dee1e26b 18774 linux-test azzie Lashawna: The key with that company is to do get a good degree and do something big in school.
+641f93c7-3048-4f2c-8a15-2adba5a79481 11358 linux-dev hildegard Renate: I'm here for a moment. Going in for an xray in a moment
+685d3c53-8cd1-44b3-b6ae-00c5b4a1301e 18776 linux-test josephina Ricardo: hehe ok
+0e0dd438-d002-462b-95ab-0ab49fb5c7cc 11369 linux-dev renate Hildegard broke a leg!
+aa0df67b-57d4-43c2-93f5-a0172f3cdb24 18778 linux-test azzie from what i hear..
+656261c2-77f0-479f-9628-3b9f3c98034b 11372 linux-dev angla they were going to call it MT until someone noticed the phonetic implications
+f43e8946-fe61-4fe5-9def-0b84f7956e3b 18779 linux-test lai should i post a mialing address to send it to?
+f2cacc55-d2d1-4c19-97a2-c4282eeb9479 11377 linux-dev arlie Christiana, thats because the stock they give to employees isnt on the balance sheet
+e903cbe1-d4f6-4a51-8e2b-2bb6ec40e4fa 18786 linux-test alisa !seen Kacy
+d149014d-e853-4f7e-b6d5-1392bb423ce4 11379 linux-dev hildegard Renate: it's my shoulder, actually.
+af5c7564-a64b-4836-b536-0af5428c7827 18795 linux-test lai this would be a one shot thing tho cuz i cant rejoin later to remind
+07fcd8c7-02fb-400d-a7f8-12b52f284316 11380 linux-dev renate those servers are pretty dangerous, eh?
+cd5eb208-6d87-464a-8364-52b75e7b1ef8 18796 linux-test nicki Lashawna: Here's a hint.  Don't go around telling people you've been programming since 10.  (yes, I know it's likely literally true.  But it shows immaturity to claim it the same way professional programmers cite their years of experience.))
+fb7f6696-41e1-467d-ba42-2ed0cfddd7c7 11389 linux-dev renate Hildegard, lemme guess, a blade rack fell on it?
+fec89036-d7ef-4d48-8088-1cec2edf3cc8 18801 linux-test josephina Ricardo: and linux doesn't call it a com port, it's called a serial tty or something
+4c57b844-89bc-42cc-8814-b6e481e5baec 11390 linux-dev christiana Arlie: what stock?
+67e4f1e0-e9a1-42b5-b00a-5c7a05741c7c 18806 linux-test mirta Lashawna - who are you and why does it matter so much? People who know me know that this is a step forward.
+39f6a14a-0319-4997-bb77-73d5c0a9f4fa 11394 linux-dev hildegard Renate: no.
+d3b93a9a-9852-4231-a620-2dab78d24b41 18837 linux-test lashawna I'm just tired of working for myself
+c894e823-16fd-42ae-a3c0-ac0e9ac059bc 11401 linux-dev arlie Christiana, right ;)
+803543ab-3e10-4d8e-9b29-77b52fe85893 18842 linux-test alisa Lai: yeah. Post it. I'll see if we can get Kacy to put it in the /topic :)))
+082be1e0-13f4-4232-8da7-9282b5891503 11405 linux-dev hildegard Renate: I have no clue yet, but it's probably arthritis :/
+e5c77370-16e4-4978-a03b-8d19ba3f727b 18843 linux-test arlie Lashawna, no, screw that, if your good, let everyone know it, except your co-workers
+b310eb82-f4a9-408f-9ed7-2075f348f4e5 11406 linux-dev margene NT still sounds close enough to empty, and damn fine description
+e17fcd3d-8aa7-49b0-b57f-9839520698a4 18845 linux-test josephina Ricardo: and how to make a program think it's receiving data from it, would depend on how the program is receiving data from it
+42ed9570-5710-4146-9a20-a753f67311d5 11417 linux-dev christiana Headmonkey: Stock means Stick So what the pell?!
+8f14a003-e4bc-49ab-806d-d9b46c615ed2 18846 linux-test ricardo Josephina: ah thanks for the heads up
+0a5df5ee-d150-4328-82e2-c78dfd7f72e2 11420 linux-dev renate Hildegard, hehe, well, see ya then
+078bfd36-0f44-408a-b482-624112e91ed1 18847 linux-test felicia Lai: sure . can't hurt .. or open a temp new channel and let everyone interested join .. then take it from there
+71355064-450b-4aa3-9d8c-bcba8bbd68c9 11420 linux-dev hildegard and NT is still, not widely used, but in use.
+e5b741df-b923-4eea-bd7b-ef5ea56c7d74 18865 linux-test ricardo Josephina: yeah, it's using some library to do it, guess I need to figure out how that library works
+4732ffa4-3e1f-4241-9002-cf74f7171aea 11426 linux-dev hildegard see ya
+4b153a90-8768-4f69-b10c-c228dfd720f1 18866 linux-test felicia Lai: open a channel called #Lai ;-)
+17c0f736-74ac-4e9e-ab0b-517ea38675ef 11436 linux-dev german Hildegard, let me guess, you caught a biological virus because your ports were open again?!
+eb55b061-910b-4a38-9725-38aacc484962 18866 linux-test lashawna Arlie, my brother told me that one?
+cb34d2df-2672-4283-a150-c34c3126c8e6 11436 linux-dev margene NT is XP and Vista
+4025c7e0-825a-49eb-9a3f-1bd5335d443c 18872 linux-test josephina Ricardo: ah ok
+50527a26-f8a9-4ed6-9b21-2ee1ec6284fc 11437 linux-dev arlie Christiana, i can tell you spent some time working for arthur anderson
+0e096d09-8257-4d37-85e4-2a4266a54e7c 18874 linux-test lai ok; but someone else is gonna have to remind others
+386f56aa-a1ed-4d33-9051-23be7090f25d 11440 linux-dev margene it's the NT kernel
+c1de6bd6-818f-4aff-8772-549687500fca 18889 linux-test felicia Lai: oh .. whatever then
+3cbe26fd-89ee-48e4-880a-793d78015e59 11444 linux-dev ruthe question: what could cause linux not to find a dhcp server?
+afdc96c5-6036-41aa-9f55-1c281cd7f554 18889 linux-test azzie Someone make a quizrelief bot
+9ddcfe88-9c04-4ee8-8fd8-8f82115faebd 11451 linux-dev christiana Headmonkey: I dont eat bananas.
+3250f24c-a9ab-4d52-b10c-06650da50c1b 18895 linux-test arlie Lashawna, co-workers are evil ... they'll screw you up if your good enough to make them look bad .... they operate based on fear
+64e4cf13-decc-494e-9237-0d810c5d2c0f 11456 linux-dev renate Ruthe, the fact that there isn't one?
+f15ec82e-3d47-4a31-be0f-f4d17c2004a1 18899 linux-test mirta hello Azzie
+b01822da-0e12-46c4-b9db-caf3d53b251e 11467 linux-dev arlie Christiana, you should, they have lots of potassium goodness
+fe0f1093-8603-4490-9f9c-30588546add4 18900 linux-test ricardo I am half way done with a 4 year degree and working with a company designing software for night vision cameras, co-op programs rock
+3dbf2c66-9243-4d22-8354-65d14ae22833 11468 linux-dev ruthe Renate, xp computer finds it
+7f5df4ef-96d4-4dc3-9b6f-bc30e4d18924 18908 linux-test lai what whatever?
+03e030b2-ecb7-4308-860b-7d293efe8e5b 11478 linux-dev renate eh? dunno then
+b4ae6402-cb53-4f64-8b8c-550cadeed34d 18908 linux-test lai huh?
+25b22dcf-9294-4ef5-8f0c-8199c224d7f1 11485 linux-dev ruthe it was working this morning, suddenly cant find dhcp
+66bd885e-44f0-4e3c-8f72-7f5d0aa1b942 18909 linux-test nicki Arlie: only at crappy places. :)
+8806ce1e-3d18-4008-b928-28c5ae0a4632 11486 linux-dev nicki Ruthe: not plugged into same network? :)
+0959046b-aa7d-49eb-830a-551f87e348ec 18911 linux-test azzie Ricardo: Hello there, how is it going?
+03f03564-fece-45f2-80e6-ea8aefccfe8b 11486 linux-dev christiana Headmonkey: I eat cardboard boxes because of the fibers.
+7b4f6908-246e-4edd-9e9c-f02def1371c1 18919 linux-test arlie Nicki, it happens everywhere
+ab05b839-535c-4501-87ee-e431ca3799c4 11498 linux-dev ruthe dkkr, plugged directly to cable modem
+8cf587f8-c67f-4739-8101-5232d380fbcc 18922 linux-test felicia Lai: i figured to keep it a bit erm private
+b29c2a7f-2cd4-4636-91c0-7516dd78affc 11502 linux-dev arlie Christiana, while watching mythbusters ?
+8aac1167-922f-4a31-8ccc-8d2fcbb31f7e 18927 linux-test lashawna Arlie, that's interesting
+bcb5d567-af2c-4946-b190-31db1c9d12ad 11507 linux-dev angla Ruthe, lack of networking. or maybe unplugged cable. or maybe a host of other reasons
+ff10c53c-81ea-40db-badd-2223864b5bd8 18928 linux-test nicki Arlie: cynic. :)
+f8cd209b-0a97-4a80-9270-9018d1f36e0f 11508 linux-dev nicki in the lan part of it?
+69de8092-0ae5-4d1e-801f-8fee1b252484 18931 linux-test arlie Nicki, at least, anywhere were there is a gap in skill levels
+5ca026cf-225f-4f03-8b92-20bdf273baf2 11515 linux-dev christiana Headmonkey: No whil watching JENSEN
+5158d156-1172-4326-8ad7-811fee85e43c 18938 linux-test arlie its human nature
+e32e42d9-3bce-4bb9-8557-ce80b33102f6 11519 linux-dev ruthe Nicki, yes
+d0275d57-0d90-4129-b7d7-87b8f05fab97 18939 linux-test ricardo Azzie: pretty good, just at the office, about to leave
+e88c3e46-5ea7-4048-8dc4-0256928a7af3 11529 linux-dev gale Ruthe: try resetting your cable modem
+5badaaf3-67e7-4698-9bd7-baa09bca2c1c 18943 linux-test ricardo how are you?
+e2619ff4-75de-4dc8-81cf-a4d06ef224ca 11538 linux-dev angla or turning it on ...
+893423cc-bd84-4615-917e-6bfe78830bc4 18954 linux-test lai Felicia: ok i'm bumming here; fizzle
+7fb130ad-e40e-4ba3-a7ad-840f76aa27b8 11542 linux-dev arlie you stare at your speakers ?
+1509499e-3467-49c6-bc9e-1fa172424aee 18966 linux-test felicia Lai: if everyone needs to mail to that address on their own then maybe it';s beetter you spm it and it get's spammed ;-P
+39ebb543-2552-4bf6-b49e-ec84f94ba61a 11549 linux-dev nicki check the log, should give you a message if serevr not found, versus server found but rejected lease request for some reason
+06df1f2d-a515-48e8-92ef-35c2bbd4cd52 18970 linux-test azzie Ricardo: Well, end of semester work, what could be better?
+7f80e9d0-9355-44c2-b376-463f616b7533 11563 linux-dev christiana Rock On!: http://www.myspace.com/thezimmersband  Talking bout my ge-neration!
+b2543a2e-e2be-4329-856f-91b346171ce1 18978 linux-test nicki Arlie: well, I've never been "screwed up" by a junior programmer.  they come to me for help.
+acd4cd20-b1ce-4995-aee5-19b2c92077fe 11581 linux-dev ruthe Gale, unplugging the cable from the linux box and plugging it to an xp box works
+f12bb820-105e-4f8f-92c1-c1c54d05f3c1 18980 linux-test josephina Ricardo: if it's just reading from /dev/ttyS0 or something you could somehow get it to just read from a named pipe instead
+5823f18f-c302-47dc-961f-d9b1c4e76ce0 11588 linux-dev margene generations suck
+82684cb8-72de-4a24-bde7-a0bd18a24ba4 18999 linux-test arlie Nicki, no no no ... someone below you is not a co-worker, they are an underling
+cef9efcf-8bf9-4583-8310-944eef70bcc2 11588 linux-dev ruthe xp cn get online
+3cbe7f71-3b62-4b1c-9d82-010a3197973d 19003 linux-test lai Felicia:  ok then what?
+609b32b5-83a7-4325-93be-32d037c75355 11646 linux-dev angla Ruthe, so you must have changed something. of course, you'll never know what, if you didn't keep a log of all changes to system config
+85f0e309-adb7-4a1a-adc0-ec0e4b691fd8 19006 linux-test ricardo Azzie: I hate that crap... you in college?
+a166517a-3122-4306-b263-e5eb2add2a5f 11655 linux-dev margene some people keep insisting I make a myshittyspace, why?
+6809f9a8-035a-4ecc-9acd-cd77c94d8f5a 19007 linux-test lashawna ok, so my chances with google are probably slim, does anyone know of a company in need of experienced html, css, jscript, perl, python, etc. programmers?
+e7d89d15-50c8-4960-9279-63c41f9283ce 11667 linux-dev christiana Becuz its cewl
+4b913c61-b30f-4b6d-aca7-c58ca0586d42 19016 linux-test nicki Arlie: the sr programmers come to me for help, also. :)
+bb9f7271-a820-4a68-bf89-6bfb6a65ba71 11674 linux-dev priscila Margene: because they are retards.
+7390b5ff-2be6-4b11-aa84-9ff6db2971db 19032 linux-test lashawna Nicki, then you should get promoted
+03913b88-b227-4c48-b26e-15810d89b7cd 11685 linux-dev margene well I wouldn't be cool to them, since my pic would be flipping the bird to the cam
+514b4c4b-7381-4989-b52a-cd68729fa783 19034 linux-test ricardo Josephina: hmm yeah maybe you're right... I might just have to end up modifying the entire program
+4bdfcb72-dacf-48d5-8f81-3535da99bfd4 11693 linux-dev german Margene, because they want to pull you down to their level
+266e4433-0b8b-48c1-b6e7-b84635a5a359 19035 linux-test arlie Nicki, yes, but them comming to you, and you making them look bad, are 2 different issues
+d8da2517-a799-4e18-923d-1cf354a31e3d 11693 linux-dev tyra vncviewer mac: "CConnection: No matching security types" and dies, what can I do to make a vnc connection to a mac? this is from linux or may be from windows
+447f2dd8-2ba0-4826-aea4-a961e83bf44e 19043 linux-test felicia Lai: post the info .. atleast it'll be logged soemwhere then .. i didn't know what/who's address you were going to throw out
+4cd9d6b7-7095-43d4-9b80-a27d731acd14 11698 linux-dev priscila They prolly tlk lik dis on d intrnet nd use x-marx 1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! alot lik dat
+3861ec2f-f662-41fd-8690-5e918bfabe5d 19045 linux-test ricardo just to read from a different input stream
+3ec10e4d-781a-4218-829a-23b1d2ce7c1d 11706 linux-dev christiana If even osama bin laden has a myspace, and u dont ,u rgettin old or unliked.
+48a37724-1498-4c45-9a19-13015721f1fe 19055 linux-test azzie Ricardo: Indeed, trying to decide if im going to keep putting up with this or just start coding for myself.
+b663a5ac-367b-487c-8568-54381836f24d 11711 linux-dev ruthe Angla, pretty sure i havent changed anything, box is in argentina, im the only one who knows any password to it
+af2beabd-43ff-42cf-8cf8-58c7a48ee3ea 19056 linux-test tena hey, anyone know if theres any way i can play songs i bought on itunes in linux?
+2366d2ac-9a57-482e-9b53-c845cd60d016 11724 linux-dev ruthe has just been there serving iax2 till this morning
+a6814b9d-0864-4ae4-827e-8ef9870ea09b 19074 linux-test azzie Tena: No, and thats what you get for buying from ITunes.
+f906b22b-0ec1-4ece-8d82-14c4ec3044d6 11739 linux-dev margene I'm not getting old or unliked, well getting old, already unliked
+b71e3b45-33a6-4533-b22f-ee5242c38ee9 19078 linux-test ricardo finish college at least, how many more years you have?
+52899fa4-494a-4a1d-bd1f-b2b764210581 11769 linux-dev gale myspace is something that managed to top AOL in lameness
+4617eabe-2078-4cf9-9388-1a6f4f50efe3 19087 linux-test lai Felicia: the address to -- you know what, i think it's not such a good idear
+e49e5557-6b86-47f6-871a-b64b90c53a32 11779 linux-dev angla Ruthe, sorry ? argentina ? and where are you ? how do you know the router works with xp on the same cable ?
+0807dadf-10c1-4408-a435-159a97308a14 19094 linux-test azzie Ricardo: 3 at least.
+3fececfb-72e7-49d9-8b75-2fdd097d8d30 11786 linux-dev margene oh cripes, AOheLL
+c9ac48c8-c4ae-4119-b00b-db6fa9b2e050 19097 linux-test ricardo Tena: you just need to get the m4a/mp4 plugin
+9060a0ff-0a57-4fe8-aa78-ce1c190242cc 11798 linux-dev priscila I wish all those elite "hackers" would stop going for multinational corporations, and take down myspace.
+abdd12c4-4cc2-4e7d-b3d4-429b8a0ba2bb 19108 linux-test felicia Lai: see.. ok .. think about it ..
+26548aba-a347-4585-9b55-26a5a10ea0d2 11808 linux-dev ruthe Angla, im in florida, i know because im talking to someone who is sitting in front of it
+e20c38b1-ff4e-49a7-85c6-c87f8005dc70 19111 linux-test ricardo Azzie: you are a freshman this year and already tired of it?
+916e4df8-9993-4b3f-8196-addda7fe5344 11809 linux-dev gia heh
+2903ebeb-4a0d-41f3-9cea-38dd2146b906 19114 linux-test lai yea i am
+e3dd62b5-7edd-409b-8c98-ff06f63b9c48 11821 linux-dev margene and isn't myspace just a big pedophile ring
+2c9da24a-724e-4955-ac2c-a51c3d6f7a69 19117 linux-test nicki Lashawna: I'm paid well.  I don't care about job titles.  and I enjoy troubleshooting for others. :)
+1460bb63-9f93-450c-b7c5-ff0794d412d8 11824 linux-dev lajuana Priscila: why would they want to attack their breeding grounds?~
+6ffe28ba-2b8d-40b9-9670-5b219d4c773d 19124 linux-test azzie Ricardo: I would rather be coding!
+ef7cd90a-3928-4ccc-9ed7-7e28d4101b2b 11839 linux-dev priscila Lajuana: hackers maybe, not "hackers" !
+6f22ecf5-a824-4542-bef8-8a38a4eb91f5 19134 linux-test felicia Lai: or PM one of us .. or whatever ..
+4218e4db-bd3c-483f-a152-28b5ad543a08 11843 linux-dev paulita i figured this was the perfect song to accompany the Mexodus to Amerika :D http://youtube.com/watch?v=8_B1BcDFdQY
+8b183996-d8c8-4ddc-b757-d83a0179341c 19135 linux-test ricardo Azzie: there is a lot of coding to be done in college lol
+81daaabd-34e6-4f45-ad89-816e83e661c7 11877 linux-dev angla Ruthe, we're running out of options here. is the person you are talking to, trustworthy and intelligent ?
+67292447-3b06-4e61-8736-320576bd5189 19137 linux-test lai crap
+a34cb6de-878e-42b2-bbf8-8a53b06b489b 11896 linux-dev ruthe Angla, trustworthy, not intelligent
+c1f289c9-06ad-435d-ba15-d4939a31daba 19139 linux-test arlie Lai, i feel for you, but im not sending you any money
+c07d3ab5-3b8f-4063-9317-22100fc2affa 11901 linux-dev angla bingo
+370ec562-9271-4ed7-b2b5-279faf2789cd 19144 linux-test lai k
+a4fc1884-4615-433e-a629-e77f8787f56e 11910 linux-dev margene well at least he's not a weasely dumbass
+89343175-75c3-40f0-8cdd-7277b93b8452 19161 linux-test alisa Lashawna: look on jobs.com, also jobs.perl.com.
+9c73e5de-9819-466b-b8dd-0043114a3b91 11926 linux-dev gale yeah
+6dab8118-a4a2-46f5-8101-a3522556cd9e 19163 linux-test ricardo Azzie: get on some open source projects like KDE or gaim or gcc or something
+eda62687-e777-4b3a-a490-886f93306e4d 11953 linux-dev mindy o.o
+a17bca35-2fe8-4c0d-8096-6d932eb29e21 19164 linux-test felicia so what .. that's just one monkey Q
+722973e7-9b7e-4007-9fc5-da79f3d82738 11953 linux-dev gale weasely dumbasses are a waste of air
+6f49094b-e118-4f18-9151-a00c48d999bb 19165 linux-test azzie Ricardo: Either that, or transfer to a school where I can find a teacher who is as interested in independent coding projects as I am.
+6404b3a5-f8bc-4b19-86f8-01c6f489e8b9 11974 linux-dev leota Hi all, anyone know how to mount a usb disk?
+7eae1f2b-bdfe-4bdc-9552-7d6c77d2e3e1 19184 linux-test felicia there's many more of us apes about
+6d5e3717-e573-4e8b-a01a-460af3e5550c 11980 linux-dev ruthe yeah, its a pain, but it doesnt change the fact that plugging the network cable to the box, ifdown ifup the interface
+f021eec7-de28-4f41-9879-bd8395446e69 19189 linux-test dorthy the interesting CS classes don't start until your junior/senior year, especially if you're already familiar with the languages being taught and basic data structure concepts
+89bf4d99-48d1-4687-a2f9-177914bf858e 11984 linux-dev leota my new kernel doesn't have /dev/sh*
+782f8858-35dd-4398-9881-63f804a49785 19194 linux-test arlie Felicia, hey man, i was homeless and noone sent me any money
+0e0beefc-bf09-45a5-9272-2b3f00939929 11987 linux-dev ruthe and the box wont get an ip address
+d7943776-4dcd-4d29-a451-76809553a2a5 19208 linux-test ricardo Dorthy: true.. I am going into my third year, finally get to do AI and OS and compilers, etc
+29eb2d18-b6dc-4abf-9bda-67657b2229dd 11998 linux-dev leota lsusb shows:  Bus 003 Device 003: ID 08ec:0016 M-Systems Flash Disk Pioneers
+47622a21-2aef-44a5-8fab-9f85ddc6ed1b 19209 linux-test azzie Ricardo: I'm trying, but the problem is that I have to spend far too much time on schoolwork, even though im paying 30k/year for it.
+1464fce4-5e56-494b-83ea-98294cfd67ed 12005 linux-dev lajuana Priscila: well, I figure that real hackers are above such things, crackers are going to go after things that won't cause permanent mental scarring, and script kiddies feel comfortable and at home there.
+07b2008e-ef1c-4200-a9fd-7c7c24333f46 19211 linux-test lai Arlie: did you ask?
+efef508c-c0d4-4e83-a510-4bfd76b39f55 12027 linux-dev gale Ruthe: did you try /etc/init.d/networking restart?
+bdc1e993-afa0-489c-b26e-cd9a33cada6e 19215 linux-test arlie Lai, no
+068f6664-948b-466c-93ba-b2c93a8e1c93 12041 linux-dev ruthe Gale, yes
+f8f14a1f-19b0-46ec-ba27-92e68b3c5c28 19223 linux-test lai ok then
+d0667c07-c139-4375-a27f-f58bc9e6ef22 12052 linux-dev margene script kiddies mostly play with weak botnets ddosing forums
+2b276ab2-d916-4100-b073-e93d7e5286e0 19232 linux-test dagny How can I discover which library file(s) contain an exported function name? I'm having a problem with linking against libpci.a and gzopen, and thinking another library may have declared the names
+9b5db4ff-0db2-4a9d-bd43-ccd5ad301137 12053 linux-dev ruthe also reboot
+fb282766-2f74-4730-8326-bdbd84985e7b 19232 linux-test azzie classic
+96c27df7-32af-4d36-b77d-0d95e2457dfa 12057 linux-dev angla is the *other* end of the cable plugged into the computer ?
+19cb16fa-fc48-4882-ba97-9fd96dc7dd53 19234 linux-test arlie Lai, if you have a truck load of stuff, why dont you sell it
+d85f7865-3800-40eb-9c60-8544d29fb4ca 12058 linux-dev ruthe just to be on the safe side
+0e2e6ba3-9a5a-4e85-bd7d-dde7af8ac308 19250 linux-test ricardo Azzie: hehe but it's only 3 more years... that's really short when you think abou tit.. I'd say just bear through it and get your degree, it's going to make it a lot easier to find a job and you'll get paid more
+f94bbba0-d8f3-45ff-a870-b173ee33de38 12060 linux-dev gale how about try that with stop and then start instead
+aacc4e21-b665-4d78-9152-77c2656e2da0 19251 linux-test lai i dont have access to my stuff atm
+cc419ee5-4871-4b2c-8933-208165bcafc6 12083 linux-dev tiffaney stab's th pirate
+f32b7431-b200-4023-aa37-144c2d962c31 19254 linux-test arlie Lai, then when your out of stuff, find a south bound train and jump on it
+6c20a479-5064-43f6-a553-adb3a1e97c19 12102 linux-dev gertrud :P
+ae52edd1-0905-4f40-b437-b03d8d0b68c5 19260 linux-test alisa Azzie: hah, the CS professors at the local university are A.) A man with a degree in parsing, not teaching CS, and B.)A woman who is a MAJOR microserf.
+052d84ce-a876-4b0e-97e1-4447af15e510 12110 linux-dev ruthe Angla, yes, the person im talking to has plugged the cable to the computer before
+73a5793d-dfdd-48cf-a656-cf013dccbac5 19260 linux-test nicki Dagny: strings and grep? ;)
+6019932f-a74c-4b29-8b65-3c4bae8f31bb 12127 linux-dev ruthe so at least Im sure he knows how to do that much
+46139ef6-84d3-44b9-b115-2da54831a017 19269 linux-test lai Arlie: yea or bus
+eaa03dff-7580-471f-b0cb-e7917a75503f 12130 linux-dev angla is there another cable to try ?
+4459ac30-3887-40ce-babe-cc17ecb8ca13 19270 linux-test arlie Lai, wheres all your stuff ?
+221ff5c3-97e1-426e-8608-77bb5d5d6cf5 12141 linux-dev gale has he plugged in a power cable before though?
+42109a1e-8c91-4029-9a72-8b9d57a4b6a1 19282 linux-test lai Arlie: in the apt i was evicted from
+b7a0bf52-4083-43b1-aacf-5d622f0ae43c 12152 linux-dev ruthe there is, but why would that same cable work on a different box?
+7ca2c126-ca01-4c7f-b532-9801154b2f07 19290 linux-test arlie Lai, go get it
+c3c8bcf4-c190-4c7c-a92e-52ffb6b2d507 12156 linux-dev albertine is starting to hate his custom kernel
+2d73188e-742f-4001-9a17-5ee155c450c2 19290 linux-test dagny Is that it? With having ldconfig I thought there must be a location for the list of exported functions
+fa467814-9e0f-4f24-bbf5-92bd9bfc2fb9 12169 linux-dev leota but i do love kde 3.5.7 :D
+1239e4e0-5343-4d6d-bd17-c8a4f2586f46 19307 linux-test ricardo Lai: why'd you get evicted? I missed the first half of this conversation
+451da8d2-1fa4-4562-947f-8c864f76bc09 12189 linux-dev ruthe Gale, he is reading to me what he sees on the screen, system is on
+02b65b48-27c5-43cf-a912-365d543cde42 19323 linux-test azzie Alisa: Luckilly at my school there are no microserfs :-).  We all have to do our coding with gcc.  The problem is most the profs just teach as a side job so they have their hands more than full.
+c710e1f9-d872-4e41-ba72-04865a8a07ff 12193 linux-dev angla Ruthe, trying as many possibilities as possible. it's *bound* to be something simple
+58b1a260-1e64-4c86-a56e-6b698de361fa 19329 linux-test ricardo Josephina: lol I think it'd be much easier if I just modified the program....
+dc5f7023-054f-43bd-9a7e-c3d9a98e06a7 12240 linux-dev renate Leota, what's new in it compared to 3.5.6? lol
+cf07eab4-27a8-42df-81ce-1060cdd975c0 19334 linux-test lai Ricardo: alledged non-payment of rent
+53dd9105-d411-46e2-89ef-bf147ccb8769 12276 linux-dev gale Ruthe: did you make sure the network module is loaded?
+0ae51bb9-dd88-4617-b360-af5a8cf18501 19336 linux-test ricardo so I'm going to do taht
+cb4227c4-3bd7-4866-9526-c493088defdb 12281 linux-dev leota Renate: you get custom text colour for kicker, so you can have a black background in kicker with nice white text or whatever colour you want
+3d049b5d-35de-4caf-a7bd-98f9a4a9e704 19341 linux-test nicki Dagny: or grepping the source code or the documentation of the apis
+bca96c30-d28c-40f7-8ee3-972266cc7a0d 12295 linux-dev renate oh... meh, guess it's nothing new then
+55b541b7-7206-40b9-8dda-85c9b03fb069 19347 linux-test arlie Lai, you mean, payment of rent with junk bonds ?
+569ac8d9-f41f-4eb8-8a34-a65ed006da0c 12299 linux-dev leota and lots more... but kicker is the awesome bit
+60a66beb-84c7-4077-8353-3f4f35e85de5 19350 linux-test lai Arlie: i wont trespass
+f07fb9ff-270c-442f-8d40-4c0ca7c4b9a0 12338 linux-dev margene the kicker is the kicker
+309f4462-9e35-4c66-88c1-c36c18151a1a 19373 linux-test velva hmm, I have to linuxes sharing the same /home ... with the same usernames ... but I dont want to share the same content ie. gtk themes ....
+8b6de846-edf2-45ca-ba76-34b7f0551504 12348 linux-dev angla Ruthe, if i were you, i'd make a list of possible reasons why. and then systematically try them out. i wouldn't go assuming anything
+56169f56-de44-43c9-bc60-fbbb34cffb74 19377 linux-test velva *two
+54698f16-6d9d-48ac-9470-cd0f18d2304d 12377 linux-dev jeanice you need a custom kernel for kde?
+e7a6f3ef-ace4-450d-a1e3-f074596ccfb5 19383 linux-test arlie Lai, dude ... i wish you all the best ... but i cant say i didnt see this comming for months
+dcb9d46e-c26d-455d-b95a-88f8be44b13c 12377 linux-dev gale yeah, it's the assumptions that lead to nowhere
+cc261e29-6089-4541-973b-e7c93735eb9f 19399 linux-test arlie Lai, the only thing anyone cares about is money ... its a sad, cold, harsh, reality
+0a967fed-d1d7-454e-a2b9-2b1c054a6594 12397 linux-dev gale best thing to do is start with the simple and easy to overlook stuff and work your way up
+b420a9aa-b781-40ab-addb-e00e02d05023 19400 linux-test lai thanks
+da56cb22-b0d8-4f59-b073-55df854aefc8 12397 linux-dev leota Jeanice: no the stock kernel is fine
+db50fb3a-a4eb-447b-8b25-5f9611875bc7 19417 linux-test lai i know
+9abcd303-c1de-461e-a453-6f34e479607e 12418 linux-dev leota Jeanice: i just wanted to add stuff like bootsplash, ubuntu's usplash sucks
+4bcc9398-bc6b-49f1-91be-a674a8999dbd 19423 linux-test alisa Lai: how much time do you have?
+056c194b-b040-4e22-b61f-32638c3f998c 12425 linux-dev margene I'll just wait for kde 4
+d073a9d6-ab57-4b17-ab1f-538f5b31c4fa 19431 linux-test ricardo alright guys time for me to drive home, bbl
+d5fe23a6-882e-4d3c-be9a-702caf5a8c91 12427 linux-dev leota and i wanted initng
+8919c143-bc3f-46d7-b4f1-08083ddbb4a6 19438 linux-test dagny Nicki hmmm, i'll see if grep helps, source-code isn't an option for this
+aaf3f8fb-ecf8-4efc-8e4e-ca8ac6d40c43 12432 linux-dev leota Margene: long wait then...
+6ac79525-2629-4df4-966a-31dd0c675489 19446 linux-test arlie Lai, and i commend you on the fact that your not like that, but because you live in a world constructed by people who are, you have to play by their rules at least enough to survive
+a59ee67d-2de4-4c72-a4e0-8bc64d4484ab 12434 linux-dev margene till then I'll stick w/ xfce
+de670cd1-5579-4692-a961-2f1027e1e656 19452 linux-test lai Felicia:
+7999ea4e-0156-4ab6-a04c-715d069632e6 12435 linux-dev angla the assumption that linux just decided to not work, is the least likely, by far
+38e87d1a-10bb-4acc-bb7a-0dd3f32b098f 19458 linux-test felicia yo yo
+fd1336c9-cea1-4b92-a2bd-ca72bb759b66 12439 linux-dev renate KDE4 is vaporware...
+eebfb219-9dbf-4202-bc5c-82b21f004c0e 19472 linux-test lai Alisa: seconds really, and i need to do one other thing too
+558fe6eb-2eed-48b2-b394-8e189643d1b5 12445 linux-dev jeanice Leota: ah i see, sorry, i thought you made a custom kernel for kde. may i recommend gensplash btw
+c26b03aa-7c90-4f0e-a05b-c808d0f45da8 19494 linux-test lai Felicia:  so what's the plan?
+7a74f775-e7ea-4725-8525-4749a849400c 12463 linux-dev margene indeed it is, but 3.5 just doesn't cut it for me
+241fb34f-7616-4ce9-991d-7a39b9dd2882 19500 linux-test felicia Lai: can you access the apt? or they want payment for entry?
+882146bd-754f-4364-aa7a-4ab27c938dc6 12463 linux-dev santo Margene: why would you go from XFCE to KDE bloatware?  Unless KDE4 will not be bloatware any longer...
+bceae427-e023-462d-88a2-137172bf1a19 19515 linux-test lai latter
+0ae013b7-9241-43fc-82f5-110938b3ccf0 12476 linux-dev margene Santo, not go, but try it out
+91c4acb7-c727-4bec-b4be-10166d4cf4e1 19526 linux-test nicki why do you say "alleged" non-payment? did you pay or didn't you? :)
+99baa293-9226-4384-9004-899d6d2471ad 12481 linux-dev santo ah
+2d6c5920-656d-4070-a639-830c5676306f 19528 linux-test felicia Lai: PM me the address .. atleast one of us will have it
+695f17fd-0da1-4f47-ab9e-6ef1a9f1896b 12499 linux-dev gale Angla: or like I always say, "
+299f94b1-75a2-46d1-8358-94e072cdb5bd 19535 linux-test azzie Thats aweful, bust the door down.
+5b0f41e1-b84f-44d5-ac68-55edae22d63c 12511 linux-dev angla ?
+67486121-101b-4756-aa32-7f6ed4ce1147 19544 linux-test velva If i link the two homes folders ie. ff & gg to xx, then I can log in as xx, but how can I choose which link to follow?
+05f8d334-8d7b-4ac1-b2f0-ef079438f9a4 12512 linux-dev margene the only thing is there's a lot of qt apps that are really great
+34020115-d96b-4031-8374-5cdbee9a5106 19545 linux-test lai Nicki: i discharged the debt and sent a bond
+a3363071-da16-4fe5-ac8a-765231debddb 12513 linux-dev gale When it comes to troubleshooting, educated guesses are good, assumptions aren't
+764d0455-eb2d-4681-af50-ade49878267d 19561 linux-test felicia Lai: i mean the address that you can trust us to mail money to
+8916f9cd-d738-44ec-b172-4d320658752d 12523 linux-dev christina I have a question.  I need to know the kernel parameter to use to tell an ubuntu install where the CD media is located at over a PXE server.
+72592de9-6b81-433d-b31f-a336ba8a47ea 19583 linux-test arlie Felicia, western union
+7e24561b-810a-4df4-90f3-7b799f035400 12537 linux-dev delmar has anyone used  Xcircuit ?  is that an app to draw and to test circiuts if theu work ?
+c7c9132e-fd16-4212-a32a-efeffe6a19e7 19591 linux-test arlie Felicia, he can get it anywhere with a password
+65f9a6b5-b584-4c14-9f72-5a8dde05427f 12571 linux-dev angla Gale, a calm methodical approach to narrowing the search space, then you shoot the dog that chewed the cable ...
+d9930076-a6e3-4747-8690-99f50b86645c 19595 linux-test felicia in C/o ?
+bb6d82a1-b0ad-4143-b46b-244b905d6210 12588 linux-dev margene for example, kget is pretty much the only download manager I've tried that forces resuming on anything, while others fail
+c8fd9fb4-b99d-486c-8ca3-8536dc7d4a8b 19601 linux-test lai Felicia: ok ignore that last
+04bc4ded-8901-4596-b468-3f2da71d054b 12588 linux-dev leota Jeanice: i tried gensplash so many times and i just gave up
+339393e1-c1bd-4397-af91-7b3f563768d2 19616 linux-test felicia what? i didn;t get anything ..lol
+f3791f5a-e9a4-4ceb-b6b0-c48653703935 12598 linux-dev jeanice Leota: what went wrong?
+a2e85bcf-fd59-415b-a012-dec692a4a48e 19632 linux-test azzie How does this western union deal work?
+10998dd7-a7fe-46da-95e9-20896a4ed2a4 12614 linux-dev leota Jeanice: compiling it was the easy bit, messing with the startup scripts was where i got stuck
+e7995cc3-21e7-4d1e-9089-04c98f949a1b 19650 linux-test azzie From people with a DC's end?
+bb121dd5-a3d6-49de-a271-098eebbef36c 12614 linux-dev gale yeah, being methodical is a big part
+52de6778-2bcd-4bc3-a7bb-9a6d1b091478 19657 linux-test arlie Azzie, you give them money, they record it for pickup by another party in their computer
+c295acf0-39eb-4f23-9fbd-755957611a1c 12650 linux-dev jeanice Leota: ah, personally i don't use the progress bars
+a2349124-432f-4d6e-9d56-72afea17c68e 19668 linux-test arlie Azzie, they pay it out to the other party
+4d233550-9a5a-4e9a-84ee-79aa6a10116c 12711 linux-dev renate I'm not a big fan of kget :-\
+fcfcc590-0a43-4bdc-981b-ab89fc08d7b5 19672 linux-test azzie Aha.
+80c12f50-9446-4b73-b68e-09a8155560e5 12719 linux-dev renate then again, d4x is kinda broken too
+16781196-65bd-4d64-aab3-ebb3ba9cf1ff 19677 linux-test arlie Azzie, and charge like $20 or something for the service
+6297a9a6-9861-40a8-af71-b2d7f0083b0a 12735 linux-dev margene I've tried them all, kget is the only one that gets it done
+73085753-ed26-44cb-aafd-d13c525585d0 19685 linux-test lai join #Felicia
+f17d2794-98e9-4d90-afd9-fb4ecefce149 12742 linux-dev leota Jeanice: well i couldn't get gensplash to compile, i just got errors, and had to install from some deb which completely failed, the error was related to the kernel
+6fce7b74-ccff-4abd-9293-38e009bdfcfd 19693 linux-test felicia hehe .. figures
+59e54e67-4354-415c-b118-5148d9c13dbd 12743 linux-dev margene nothing in gtk2 that's for sure
+a0c99a11-a452-4fc2-93e8-22266b3c660f 19695 linux-test arlie same way the nights templar did it ;)
+e2e3a9ba-df7c-48cc-bc1d-998e86f432a6 12766 linux-dev gertrud ok i have an ext3 image
+0b594570-3de9-48c5-b23a-5f1f99894435 19702 linux-test azzie lol
+65e14b30-72f4-4ae3-ae71-91a244f174a9 12776 linux-dev renate Margene, eh? yea, I haven't found a thing that can compare to flashget/fdm on Windows..
+209f11c3-cff0-4ba6-a140-4cd68e70a5da 19718 linux-test lai anyway, join #Felicia for my address to send stuff to
+de00fb62-b312-481d-9099-f7dc983b2430 12776 linux-dev gertrud i did not unmount it cleanly
+9fc4ec65-62cb-43f1-8c67-81f8fa0ead1c 19783 linux-test madison Yo0000000000000
+2295f274-7a07-48a5-8f92-a12b50124c72 12782 linux-dev renate Gertrud, fsck
+2d626a0d-c4b8-49dd-a405-bb0974385b4b 19826 linux-test chauncey what's the native gimp picture saving format again ? .tcf ?
+e95193f2-9590-4f55-b90c-9d7f0f92b7f0 12784 linux-dev gertrud is there a way to fsck an image?
+bba19b1e-05af-464c-b198-5b1c44bcb5bf 19826 linux-test arlie Madison, you need to hire Lai to help you with your hosting/forex
+f581b633-8d23-4d89-be4c-998ae6549be1 12795 linux-dev gertrud it throws an error when i try to fsck the image
+8c8a9668-160e-42f9-81d8-bb6b440df6ec 19840 linux-test chauncey hi Lai :-)
+5f875350-3e72-49c3-a781-36fddd18c5a6 12797 linux-dev margene archangle25, flashgot/kget works for me every time
+79bb2453-4201-4d9f-bc28-ebd785b7ccf6 19843 linux-test alisa Lai: come on, join before you have to go :)
+d628cc90-ff22-40bf-bf04-5be488dad651 12805 linux-dev jeanice Leota: what distro?
+9a798175-28fa-4663-8bd1-795a37032a31 19850 linux-test madison almost got the hosting done
+934a8567-2277-4d80-8473-a667f43635b9 12813 linux-dev gertrud its not a disk turned into an image, its 30gb of /dev/zero turned into an ext3
+a76ece79-b6d5-4446-8738-8049872821e3 19851 linux-test chauncey long time no see ... where have you been ?
+902f5984-c38b-4a4b-bbf4-669235f6573c 12818 linux-dev angla downthemall works for me
+91d44e0b-7b30-47b5-b313-7e25ebb47f7e 19859 linux-test madison got about 10 customers
+7f2a2ef1-9168-4fa5-85af-3e35f8e25859 12831 linux-dev renate Margene, well, I never said it didn't work, I just find it lacking in features
+cbdb0dd3-753e-47a4-a71b-3d869481323e 19864 linux-test madison but i keep adding more stufff
+1a14bf3e-f581-4518-a594-b1bf68f6d6af 12841 linux-dev renate (scripting)
+4042d496-80aa-4bff-bc81-ba7e692fb700 19869 linux-test arlie Madison, like a business work is ever done ;)
+2ad5afd0-1072-4fcb-8dae-86802a0e214d 12884 linux-dev margene well I mean in linux at least, that's the only one that works for me when servers have anti-leech mechanisms
+c1f23dac-37d9-40a2-80ff-92200acb248e 19883 linux-test madison i got this really cool web interface really cool
+d4e9019c-04b0-46e6-81c1-cff77f90750f 12907 linux-dev renate Margene, hint, if they don't want you to leech, don't leech
+5c21a33f-9966-4642-8278-d0b5239b8df1 19901 linux-test lai Alisa: where?
+579c2423-a43c-4015-8739-fca1006009eb 12923 linux-dev margene no, the problem is they don't just stop leeching, they stop resuming
+5d85a698-dbcc-4aad-b31c-6b0e92e283b4 19935 linux-test felicia Lai: can't you join that channel? or are you dense? or non-registered?
+7ce11baf-109d-457c-b08a-c989e5af7c47 12934 linux-dev leota Jeanice: kubuntu
+cd6fa282-fc6a-41df-b975-a592f484f8b0 19935 linux-test santo Chauncey: xcf
+5786a8a0-bcdc-4607-879d-9991576264a1 12949 linux-dev arlie posting stuff for download, then placing restrictions on downloading it, is against the communist manifesto of the OSS bowel movement
+12b8c6ff-b36e-4a69-9ffc-eb494aa6353d 19940 linux-test alisa Lai: #Felicia.
+3ac6acf2-02b3-48ec-9547-dab0cb09969a 12956 linux-dev margene I'm sure it's a lot worse to restart a download and suck up even more bandwidth than to resume some multi GB file at 90%
+1a098d50-450f-4201-97e1-6b8a14cfae94 19968 linux-test chauncey Santo: :-)
+4426717a-dd56-4c1a-bb03-9d31ebb624c1 12980 linux-dev julietta can pcap inject packets into a open tcp connection ?
+cfbfe247-48dd-4755-904b-35889366eae3 19976 linux-test felicia Come ON!!! .. i need to sleep already ;-)
+eb06b80b-d0fa-40ff-8e5e-dc9e14beb13d 13001 linux-dev arlie pcap injects ethernet packets
+e0a14354-7ca3-4760-9a6f-ca5d3b942ce6 19977 linux-test santo Chauncey: :)
+8b8db47f-4396-47fa-b904-553dea558c86 13004 linux-dev arlie so yes
+aecd3f06-2f87-43f1-a994-05bc98d2e62b 20003 linux-test madison Arlie: i got a new girl friend :P
+05885a15-a127-4056-bdc9-11e6bbec1217 13010 linux-dev arlie they can be tcp,udp,ip, whatever
+2fc62c27-b599-47aa-8429-bcaf2003521a 20016 linux-test arlie congratulations
+7ecc866d-7fb7-48cd-bf57-7c4f636ccf73 13011 linux-dev renate Margene, wait, if the file is non-resumable how do you resume it? o.O
+8d6a595e-f4f1-4bcc-b48e-20df398d2e4e 20017 linux-test santo i haven't eaten anything today
+df4bd53e-b37f-4c8f-b5dc-8abdb3e9987a 13022 linux-dev jeanice Leota: http://jeandamiendurand.free.fr/debian/splashutils/ worked fine for me
+059e6152-9cf7-4af3-85d1-7dea8a7bd2cb 20020 linux-test santo i hate being poor :(
+4343852d-bc8a-47cc-bc6d-e0aba4a21516 13026 linux-dev margene Renate, I dunno, it just happens
+af2e9d2f-2467-4989-aeec-0976107b7973 20030 linux-test madison Santo: step ya game up
+07769291-9d28-44e4-ba00-99e39f518101 13041 linux-dev renate magic, zomg! :o.O
+c489bedb-1e9a-4546-b184-4d56cc63cc07 20035 linux-test na help espa?ol
+031327c0-21f0-4849-823a-a5f3dcb57856 13047 linux-dev margene you send it through flashgot to the downloader again, and it automagically resumes
+3e2eb1b3-b5a0-490f-9bc4-c559d7d26b9e 20045 linux-test priscila Santo: go eat some babies like mike tyson.
+d1eb5b23-4569-4602-9f4a-6ea40a57054f 13083 linux-dev julietta Arlie, yeah, but don't tcp connections have state information that prevent direct injection like that ?
+b2390182-6cd7-46f3-9d3a-707b058af50c 20048 linux-test madison Na: ?
+808caa47-715e-4a8e-878b-e8921f0fbf2d 13110 linux-dev leota Jeanice: those are the debs i tried, it messed with the entire apt-get install process, it couldn't run the post install process because the ubuntu startup scripts are so different and because the pre-uninstall scripts couldn't also be run the hole thing fell apart
+413e6ea8-f2cc-440c-82b6-b3408a291e79 20051 linux-test alisa Everyone, join #Felicia if you want to help Lai.
+6b892b8b-2438-4878-a2bf-df12643ddc0c 13114 linux-dev arlie Julietta, you can inject garbage if you want
+1bf83e5b-1fa6-4ab6-8a35-727d3ae8f1f9 20052 linux-test santo Madison: werd, doing my portfolio site so i can freelance little $10 thingies here and there until I move to Pittsburgh and get a job
+e70b41b7-e0c2-4e8c-a78b-dc2f396b1f03 13123 linux-dev arlie Julietta, or you can steal someones connection
+b103f1cf-d152-4e07-92a9-c53297840502 20069 linux-test madison Santo: no no
+473d1e9f-5a63-42f6-b3e7-6cb552197641 13150 linux-dev arlie Julietta, how any 1 particular tcp stack decides to respond to your garabge depends on its implementation
+c73401e7-b652-421f-8896-a14a08e028ad 20073 linux-test santo no?
+c3c91294-71df-494a-a62a-12a801eb1471 13230 linux-dev julietta i actually neither want to steal the connection nor i want to inject garbage (data that is not getting accepted by a valid implementation)
+6b307ed8-cf97-46f6-8637-b805b37e84aa 20076 linux-test madison where you located ?
+c3d5263e-d419-4915-ae09-a80b55c42a6d 13231 linux-dev elli Hmm
+efa10418-61e3-498b-8ad4-777efb3186d1 20080 linux-test santo columbus
+3f59fc2b-d64c-459f-a1cb-2ca9230bc0ae 13233 linux-dev celsa good morning
+6d9e3977-8620-4fd1-9913-64f028374a9a 20087 linux-test madison Georgia ?
+484768dc-fcf9-4393-baad-30a966e24868 13236 linux-dev gertrud hey Renate is there some special option to pass fsck to get it to fsck my ext3 image?
+48c5f164-5baf-48c5-af4f-1a59b02dc93d 20090 linux-test santo ohio
+c9f28e27-5cd7-409f-8bc4-6a53f27fabce 13244 linux-dev elli Any idea why 'passwd' would ask for a new password four times?
+079fe6bd-c7eb-41b5-aee4-cb58c6a8ff69 20124 linux-test madison Santo: no jobs ?
+d70fb1aa-a81a-4548-ac31-862eff99aabb 13255 linux-dev priscila Elli: A hacked version.
+d6c7d2f2-f954-4c82-b6fc-7517c6a063a0 20143 linux-test santo Madison: nope.  it's all college-student jobs that pay $7hr.  good ol OSU!
+e1839700-216f-41e1-b214-7319f5fd6560 13261 linux-dev melda is there a way to get ls -l to print full path in each response?
+d44e2215-b570-4def-956c-dde286981399 20144 linux-test na ayuda en espa?ol
+b79f7f54-840b-4ad6-ab5f-15495b932de7 13265 linux-dev arlie Julietta, do whatever you want ... its an ethernet packet
+8295f3b0-c08b-4e78-9649-801b7ffb3272 20146 linux-test madison Arlie: im about to take her for a trip down to brazil
+589a38da-9c90-4927-a57a-327d35c7079c 13266 linux-dev leota Jeanice: i had to replace most of the the startup scripts with just echo boo, the problem seemed to be with the kernel not being detected or something
+ea3fbb3e-3e84-4f8b-8b1e-c2d7f722cb16 20165 linux-test arlie Madison, you do that ;)
+61d543dc-330a-4ef0-877c-c413050eca34 13273 linux-dev melda so it'll show /home/user/filename.jpg at the end of every single line?
+d1115930-b9b0-41a0-ba14-90770f4a979f 20172 linux-test madison you hate trips dont you ? lol
+7c7ee425-1762-426f-b110-9fa1a38e6491 13278 linux-dev elli Priscila, yeah that could be a possbility except I just recompiled it from sources, thinking just that
+0e52b492-c38e-4be0-ac7a-96bb23960cce 20189 linux-test dagny ok, got it. Use the "nm" command. To search for a function in a bunch of libraries e.g: nm -o /lib/* /usr/lib/* /usr/local/lib/* 2>/dev/null | grep 'gzopen'
+064714b3-88fc-4794-8382-803cee468f83 13282 linux-dev melda vs just showing filename.jpg?
+15c8949c-a500-4c63-b83c-d888b59d2e4a 20202 linux-test arlie for the last few weeks you've been crying about money ... your solution ...  a girlfriend and trips to brazil
+9958b09d-3989-4b2b-971f-f2f658eeb20d 13284 linux-dev elli And still the same behavious
+b929b8a8-dbf7-4f23-968b-b392c606daae 20202 linux-test madison Santo: well i would only do freelance for jobs 300+
+28095c6f-cca5-4931-8bf6-7685c2eed828 13295 linux-dev priscila Elli: Hmmm. Weird indeed ..
+b1e7841d-6e1e-4cee-8964-74e934dda161 20211 linux-test madison well
+2fa67880-9c20-48c7-84c6-0f49c6c75ea4 13297 linux-dev julietta Arlie, well, i can't, to actually inject valid packets i would need to modify the sockets state
+9690f44e-33bd-4e93-ac3d-f2b0bc2c764c 20216 linux-test madison jus not the money i want
+a5d40f9e-ac90-4177-bd25-3c30d8a167f1 13297 linux-dev jeanice Leota: strange... and what errors did you get when you tried to compile?
+fcfe5bc9-43d9-41cf-9179-703600c04451 20223 linux-test lai ok; i'm done folks
+e513f329-4811-4803-a4fd-57a4a15a0248 13307 linux-dev priscila Melda: ls -l /home/user/*
+cabbb982-d4ad-4137-909a-a25a7fb45732 20225 linux-test lai good to see y'all
+4c0fc3a0-11ce-435e-987f-02fda2cf3c07 13308 linux-dev elli Ya
+c2eb348d-6591-4b9c-894a-6f3a52535d0b 20235 linux-test angla later dude
+eb377746-6c75-476a-9769-debc31b63640 13360 linux-dev priscila Elli: I assume you can trust where you gott he sources from?
+446bb31f-6dc9-4122-8151-622be6adbf77 20238 linux-test madison Arlie: it'll come though
+2064c82e-4d19-47ad-80a5-5778bd450ee9 13371 linux-dev arlie Julietta, use libpcap to do whatever you want ... your sending ethernet packets ... send valid tcp or dont ... its up to you
+faf83dff-9fc3-4a02-b896-ace02eed1017 20239 linux-test arlie Lai, good luck and hang in there
+1ef66015-9624-449e-ac22-63beefddea9a 13382 linux-dev leota Jeanice: don't have that info at the moment, this kernel only has the bootsplash patch
+5b33780a-8acc-4994-8844-d2112a330745 20245 linux-test azzie Felicia: lol
+eee4fc5c-2029-4309-842d-2fb95fd1659b 13391 linux-dev melda godlfish: anyway to do that recursively? like with ls -alR to show full paths/permissions on every file in a tree?
+9b50947b-3af9-4356-a17f-77f71db40ac3 20246 linux-test angla how's that for timing ? !!!
+24024f07-ca2e-4e97-ada3-ab289b16bedf 13427 linux-dev jeanice Leota: fair enough
+2fea2946-a66d-47e8-82c1-8d8b3953aba9 20250 linux-test lashawna do you have to be out of highschool to do internship? http://www.google.com/support/jobs/bin/static.py?page=students.html&sid=intern
+60fd8f2f-150a-4dfd-a2ba-fc0d6a911c45 13428 linux-dev priscila Melda: use find, find /home/user/ -exec ls -l {} +
+af334454-1996-4f7b-bdcf-0e2a1bfdb92b 20262 linux-test lashawna sry I'm naive on this subject
+a4f716b2-7cfd-4ed6-b2b8-ee42bcbd2707 13433 linux-dev elli Priscila, yeah
+08579f83-2c73-4a4f-b6f9-41127bedeefe 20263 linux-test felicia wtf is QSL?
+ed6492ab-592e-4716-aa3d-2822745955a9 13447 linux-dev felicia Melda: alias it in your ~/.bashrc
+249c0162-5a01-4d4d-91fd-67734f1e1f99 20264 linux-test madison i got an extra 800.00 today and will have 400.00 sunday for this hosting thing fron last month
+df0c1ee3-a27f-4ce5-b269-52eccd4f9750 13455 linux-dev elli Priscila, it might be a PAM module problem actually, hmm
+db31140c-e993-4cd9-8ded-8dce3eda1389 20279 linux-test madison Santo: why would you goto PA ?
+61701c93-621d-4a6d-b707-be9c4928c69c 13455 linux-dev priscila Melda: actually. that will just do the same thing.
+d56a4233-f745-4561-bd81-22cbf0e3c17f 20283 linux-test arlie Madison, and you've spent it all already
+abd92dae-0d4b-449d-b612-230225f378bf 13461 linux-dev melda goldfish: my actual application is a cleint chmod'd "/" to this user... so I want to change EVERYTHING owned by this user on the system to "root:root" and then just fix his homedir
+2aa76f83-de75-4ea5-96e2-db8adb6bd7f0 20284 linux-test azzie Lashawna: I suggest partaking in some SOC next year.
+635737a3-efe7-4725-b33b-e74480d1274d 13462 linux-dev leota Jeanice: bootsplash seemed to be easier to install, i added the bootsplash patch, then used splas bla bla > bootsplash, then extracted my initrd file using cpio and added bootsplash to its top level dir, and then recreated the initrd, that was it, the progress bar didn't matter and it doesn't work, also i made a nice ubuntu theme
+8bdb47b2-95c5-4480-80f9-40e84c76c6bf 20291 linux-test madison Arlie: no not a dime
+ad492924-45cc-4713-b906-2346923ad523 13466 linux-dev melda rather than reinstalling another system
+a8239c54-dbf9-47dd-a193-46e1c2392556 20305 linux-test santo Madison: because if i have to live in another flat, boring, windy city (columbus) i'll go crazy.  plus i have friends, gf that live there.
+98ac69ee-ec06-4182-a5cc-d35245ee0c99 13471 linux-dev priscila Elli: Ahhh, I've never used that PAM stuff.
+f6b264cd-155a-4b3c-be2d-e9785ceb8345 20308 linux-test arlie Madison, trips to brazil and gf's are free i suppose ;)
+4b489ca4-4081-4b3e-b399-bbcad4b8f99f 13498 linux-dev anya How do you keep someone confined to their home directory? I'm having someone ssh'ing in for irssi, but I don't want them to access the rest of my system
+d8f3f40e-2460-422f-aef7-cdf90dffc966 20309 linux-test lashawna Azzie, I'm naive on that too, what exactly is summer of code?
+6a5e4321-4861-4ec8-86dc-9cfa877e1ba5 13498 linux-dev melda so i was going to do an ls and grep out his username and then pull the file-paths from like awk '{ print $9 }' from the ls -l and do a | xargs chown root:root, etc
+3299d7e9-a00b-4dc8-a231-85a6546c2172 20316 linux-test gale Lai: take care, and good luck
+c011eee6-b17f-4c88-ba9c-632584f47aba 13500 linux-dev priscila Melda: sounds like you want find...
+504b045c-dcdd-47a2-9b17-08182eed3c45 20320 linux-test azzie Lashawna: code.google.com/soc
+2f31ef06-094e-40c2-a54b-a8fea1830a49 13501 linux-dev felicia Elli: and Pam? .. hrm .. sounds nice ;-)
+fe928b53-979b-4657-a67c-3486c80533c8 20328 linux-test santo plus, hilly PGH = AWESOME roads for sportbikes
+e28e6f69-a80e-4385-8635-7d79e419f9bf 13510 linux-dev arlie Julietta, ethernet packets dont care what data you put in them ... so long as you have a valid ethernet header with src and dest MAC addresses
+b9db0558-68f5-4271-a3a7-42b2ee62d638 20329 linux-test madison Santo: PA in my opinion is bad
+b8efc6b5-f7bc-4cf9-afe1-2898a168b504 13511 linux-dev julietta Arlie, the point is if you inject data into a open tcp connection, the original application maintaining that connection will recieve a ack for packet it didn't send which will likely result in a broken connection, which means i can't actually inject into a connection, it is NOT up to me
+76c2314d-f037-4f00-87eb-204e3d407408 20337 linux-test madison Santo: go south
+b7fd101f-0e0a-4d65-a70a-72fb35a7c700 13527 linux-dev priscila Melda: find has -user , to find files owned by user, and then has -exec , for executing command on said files.
+6e2d015e-7dfe-4982-b36f-e894496608bb 20338 linux-test santo Madison: what do you mean?
+69e0d286-47a2-4090-bde7-34e89a96d072 13532 linux-dev julietta Arlie, ethernet packets don't but VALID implementations of tcp DO
+c8036758-f14f-4ec2-8c7d-d36792c579de 20345 linux-test madison follow the palm trees
+3db39826-2607-4f98-9294-c37f854d427b 13561 linux-dev arlie Julietta, of course ... you cant just start pretending to be another application or host, unless you have control over it
+7b2de027-f599-45f6-a2c3-b40b699d6e79 20349 linux-test santo Madison: I don't have the funds to relocate south.
+a08adc03-64cf-4929-b803-a4d869700a65 13568 linux-dev arlie Julietta, as in, man-in-the-middle
+ae453489-634a-4453-af6e-1ed451cea685 20355 linux-test lai Gale: you too bro
+f6d986ad-60b1-49cb-b08b-9e182c3ab504 13574 linux-dev julietta yeah
+e3cfe140-dd0f-4138-a753-2eac764aee84 20356 linux-test arlie Madison, nah, PA is great, they have an entire town thats on fire ... where else can you see that ?
+d37d815b-0ba4-437a-9a81-be32d4d3464e 13585 linux-dev julietta well, how would i do that
+ecb158d9-aab2-4209-94e0-a4327adcef89 20361 linux-test madison lol
+1d25827d-8afc-44af-a581-f8107e49e999 13589 linux-dev julietta on application level ?
+02b60bbe-7eeb-497f-8347-814d2ced4557 20363 linux-test azzie PA is beautiful if youer in the right places.
+ef26b7c3-8c5c-45c8-9ea2-dc6f13f718d5 13597 linux-dev priscila Melda: so you could do, find / -user user -exec chown root:root {} + , then just fix his home directory.
+21c1c331-7c40-48cf-85d4-d4dbf97baa8d 20375 linux-test madison anyways south is much more beautiful
+e5152d0c-5b16-4c8b-ad57-ce4bea6168b8 13599 linux-dev julietta like grab a handle to another apps socket
+434a8f32-6f86-44da-b306-c8cdb258ad20 20377 linux-test santo You guys knocking PA... it is SO far above Columbus and Cleveland (where I've lived)....
+4984a860-cca0-473a-a13e-135e7dae41c8 13602 linux-dev elli Felicia, heh =P
+ea7b2ba5-02e6-4a6c-ab30-038c6e884aa7 20378 linux-test azzie Arlie: My mom is from about 5 mins north of that town.
+a5bebc5e-50a8-4cae-a41e-075372701ccf 13609 linux-dev priscila Melda: although, do NOT do that actually.
+d8752df8-4a48-41d5-a733-0e383a93b371 20383 linux-test madison charleston south carolina
+55de5a18-5b2a-4e4d-ad98-2dd1161ee033 13618 linux-dev priscila Melda: that will fsck up other things....
+01c3e12d-15a1-4327-974a-5361d0fb33df 20388 linux-test madison tampa
+ab853d71-bc79-4289-b652-694bf5a4d5c1 13632 linux-dev abigail does anyone know what they are doing with poppassd?
+ed00bffa-70f5-47bc-bfad-1bfafeac5515 20392 linux-test arlie Azzie, she's gonna get lung cancer
+854211f1-47f0-4231-95c4-4bbb0384bfd3 13634 linux-dev arlie Julietta, you can send open file descriptors from 1 app to another using message queues and IPC
+2d0571b9-f12c-4b30-8e1b-5d99ee523770 20399 linux-test madison new orleans even is good
+1c315293-c308-4d22-ac05-22f1d58fe402 13653 linux-dev felicia i smiled or sure ;-)
+863e4da7-ddb3-455f-8e1e-17b56a42e55a 20407 linux-test alisa Arlie: there are some nice coal fires in China too....maybe there.
+9d55f070-8834-40ec-a042-deebbaf7cfa7 13659 linux-dev felicia er for*
+c3cb6205-3286-47f8-892b-bfb134648609 20411 linux-test azzie Arlie: lol, I beleive they put out the fire a few years ago though.
+c53d75bb-af26-462a-a3fe-8da47142fd2c 13676 linux-dev paulita http://youtube.com/watch?v=UEOUWQ1Qm5I
+90dbdfe2-ad22-4918-a2af-e3ff87c6bd04 20411 linux-test arlie Azzie, theres only like 8 people that live in the town anymore, 1500 people moved
+f499e800-32c2-4fe1-b548-6a0438469dda 13683 linux-dev elli Felicia, you've got a lively imagination for sure >.<
+8ca0fa9d-4ee7-4687-999d-fbcbb9d811aa 20416 linux-test arlie Azzie, nope
+2be83676-0a18-4ad5-9692-f662ffa04533 13684 linux-dev arlie Julietta, you can also have an app connect to a proxy, and have the proxy connect to wherever the app is supposed to, but it doesnt require libpcap
+93cf82be-9733-4f30-b085-ec9bdb131474 20421 linux-test azzie Arlie: The mine payed to relocate them.
+6b5a7806-c81a-4d70-a4e4-53ab580dab08 13693 linux-dev arlie pcap is for capturing packets on the wire
+5311380e-f64f-4e6c-b6a7-3aa09543218a 20424 linux-test lai i'm gone
+434b8fe2-1499-4c5d-9d77-b255a19b2764 13706 linux-dev julietta Arlie, is there any way to have that work without doing any modification to the app i want to grab the socket from ?
+ac7ff06a-5645-4556-81d8-e597a1e805eb 20428 linux-test santo bye Lai
+35004d5f-824e-48c5-ba62-99826be3442b 13717 linux-dev arlie Julietta, use a proxy
+04976329-8005-4797-9fd0-ec6b727a95df 20430 linux-test lai be well and ttyl
+cf8f2e06-c80f-42e7-b32b-24ea1190fb74 13719 linux-dev julietta well, except the proxy which i am actually coding right now
+96e78894-ef21-4a85-a9b4-66c725983d50 20434 linux-test felicia bye Lai
+b4375bfd-ef7e-47f3-b0c5-24274b1bd4f8 13738 linux-dev felicia these darned red blood cells and hormones keep acting up on me :-)
+4e071a5b-fc30-46e4-b96d-c03504e6b298 20436 linux-test arlie Azzie, its supposed to burn for 400 years or something crazy
+adc29ec2-ad8f-4b7c-9b08-3fbe923e321f 13743 linux-dev elli haha
+898f0978-4fd4-49c0-90ef-7591b5984961 20442 linux-test santo be well and terminal?
+9986814d-6b43-4b32-9fe7-7ab37aab3855 13762 linux-dev arlie Julietta, you can also rewrite packets, i think its a feature of iptables
+8b2dd072-c4d6-41cc-8104-a438b0fd1edb 20444 linux-test madison Santo: i jus hate cold weather thats all and PA is cold
+2d05f6ea-7a4d-4fc4-9e3b-c3e903c77f96 13796 linux-dev arlie Julietta, you could, in theory, rewrite every outgoing tcp packet to connect to your local proxy instead of where it was going
+acc96b48-9cd8-4494-8e63-66e7653d9ae2 20445 linux-test lai ttyl
+b0ab9357-59a2-4865-b9a2-59d9f65ab72d 13803 linux-dev arlie Julietta, using a userspace iptables filter
+1762042b-8cb7-4267-a499-1e6856d4702f 20445 linux-test lai byebye
+289f2d3b-e8a6-4636-b6f7-4ea976a68819 13842 linux-dev julietta hmm, yeah
+cbf19f49-8cd3-4451-8360-46603debdc5d 20446 linux-test felicia Lai: peace be with ouu
+812261ee-38e8-40e9-8761-8575d0a25cd5 13899 linux-dev arlie no thanks required, just send money
+2faceae0-1b04-4564-83cd-365e98eb9ba9 20447 linux-test marcel I'm having a hell of a time trying to apply a couple diff patches to a file. I tried 'patch origfile patchfile' as well as 'patch < patchfile' and entering the name of the original file ... gah
+b76f9eca-37e3-4c92-9b86-7844ff32582d 13924 linux-dev laura Hello, when I open a file I see a bunch of ^M
+420624a2-b38d-45eb-95be-c999083a65fe 20448 linux-test azzie Arlie: Wow, maybe we just missed it when we were driving around
+3be66125-49cc-4e22-a217-a6237756237e 13930 linux-dev laura Is that bad in vi ?
+65393b50-f658-4188-b5b9-fc813a9b0b18 20457 linux-test alisa Azzie: yeah, I think it's still going. The Centralia fire, right?
+4563611d-7ae7-4bbe-ab30-41520ffe0160 13973 linux-dev paulita wow dig this http://youtube.com/watch?v=nayarBrD6mk
+583575a5-c327-4bae-bfc0-055c3d2206ab 20459 linux-test azzie Arlie: I went looking for it, you used to see smoke coming out of the ground.
+f1b3692c-8428-47bf-8ea3-13e2cfd9d650 13979 linux-dev antonietta Laura: it means it uses dos eol
+afcd8b40-61f4-4093-ba74-4aff5ad57d56 20461 linux-test alisa Lai: \\//
+c4e60238-830e-4c7e-a6c2-d6923190d350 13985 linux-dev laura how do I remove those?
+23dd3d21-b763-42d2-a04f-c68ceea6277f 20462 linux-test lai Felicia: ty
+3331ede5-bf0a-4da6-8f80-b7dc5e68a2c3 14008 linux-dev laura i don't think it matters thou, cause It works
+7fe809d3-2aa2-4074-8d4c-f00ae35bfd6a 20466 linux-test alisa ASCII peace sign :)
+d6cc889b-deea-4748-8bd0-1c2f45f64b26 14033 linux-dev antonietta Laura: tr -d '\r' < file > newfile
+0bdd26fe-7db3-44d9-8114-28c308988395 20467 linux-test azzie Alisa: indeed.
+2eb11295-2a8c-4c35-a8f4-e3b8b0434af0 14040 linux-dev elli Hmm, reinstalled PAM, no change..
+42764f75-a067-4ba5-8711-78e9f4af10fd 20472 linux-test alisa ASCII peace be with you.
+8d018cb6-f343-433e-ab96-80e9d766ee1f 14075 linux-dev gale Laura: :%s/<ctrl-v then ctrl-m>//g in vim
+3da4631b-fe55-455d-bc94-65849f3c0c32 20472 linux-test arlie Azzie, it got started supposedly when people through their trash into the abandoned mine shafts
+123ff1dd-63bb-468e-821e-6e14196ec7de 14084 linux-dev madison Arlie: ey ey ey ey
+5ddf5349-95a9-4920-a157-12e1744da7db 20472 linux-test felicia heh
+45c0ef74-29c2-44f5-bc1a-e5a418fb6295 14134 linux-dev laura Gale: what is %s/
+fb091173-4105-4c88-b55e-70915b4c6049 20474 linux-test lai Alisa: ty
+32998357-5362-42c0-a5dc-fcf96c0e9652 14142 linux-dev gale search and replace
+2c063748-d9bd-44e1-8781-d2ef42881bc8 20477 linux-test arlie er..threw
+a3fad84d-c726-487b-9c90-c3e1eee79bc3 14147 linux-dev laura I am don't use vi usually :/
+164f01ce-6874-4a70-af96-b3295d40abc6 20477 linux-test santo Madison: Cleveland is MUCH colder.  Do you know what Lake-Effect snow is?  :(.  During snow storms (which are very often in the winter) you get POUNDED with FEET of snow because of Lake Erie.
+e3ac6a8d-8963-4d5c-ac34-e3fedcc6a6fa 14148 linux-dev gale but actually
+29ea28b0-8e64-4d13-a087-ce57369bde93 20488 linux-test lai tell AfterDeath i said hey
+6f4ef3de-9c15-48b4-b3d6-be700d45ee40 14181 linux-dev gale you probably want the second set of // to be a linefeed instead
+8b373837-c947-4621-96cb-a1ec140ba0da 20489 linux-test lai AfterDeath: hey
+c445a3be-ff67-49bb-9537-aab4d0fa2fea 14282 linux-dev lonnie hi
+ef2b1822-fa58-40f8-be2f-e77f7e7187fe 20494 linux-test madison Santo: move south as i said ;)
+f799a584-758c-4dcf-8898-57c8798f8ed6 14285 linux-dev gale Laura: you could use sed instead of course
+4ec54af8-01f3-411f-88bf-d01fa36ef5e8 20499 linux-test felicia Alisa: \\nn// ;-)
+b4341a9e-f12a-4895-b623-34681dc51550 14296 linux-dev lonnie how do i determine the graphics card from command prompt
+df9a2e28-d511-4fb4-bdb4-e133e53db344 20510 linux-test alisa Santo: I'm in buffalo, I'm used to it :)
+529a8cfe-6f04-44ea-9faf-f3898bf06bd9 14306 linux-dev lonnie graphics card / ram / cpu speed etc
+1d92c760-7d90-43bc-90e5-c450afba3d94 20521 linux-test arlie cgi irc ... thats low rent ;)
+30dae95b-4970-4ba9-9480-2df8fb539a47 14328 linux-dev laura Gale: yea, but would like to learn VI though :)
+87862e0e-94c1-47e7-9b22-5eb47c652534 20521 linux-test elenora Where can I get a free SIP account? I have been strugling with ekiga.net for an hour or so.
+c0faec71-62fa-402d-acef-3282b09e225c 14340 linux-dev granville hello
+645591e6-9d3e-4bf3-904f-226be1c7ecd1 20535 linux-test felicia Arlie: so he's moving in with you down there?
+6f22c2ad-75b4-4799-9553-c750e4dcaef9 14372 linux-dev gale Laura: you might also consider vim-gtk until you get proficient with vim
+6c9d3854-b63d-44b0-9540-747064a15977 20536 linux-test santo Madison: I have a GF in PGH that I can stay with for a few days while I get some shitty $12 tech support job, then I can get my own place, in a month I'll have my CCNA (took 2 year tech program in high school), and then I can be a router jockey.  YAY!
+1d1bade2-cfbe-4e3f-8827-4110524af51d 14380 linux-dev gale Laura: it's like the best of both worlds
+4fc12890-7ce8-406f-b56d-bddaf0311a78 20540 linux-test madison south carolina down is hot
+ee2a0eb1-f7d2-4887-924e-719fa1dd91d3 14396 linux-dev angla ... unless you like emacs in kde
+325f5291-86ca-44c7-8b42-39ca4d203f71 20543 linux-test felicia lol
+b37077f1-c62d-476d-8c91-df02f4061c52 14409 linux-dev laura There is a problem
+c1407af8-868d-4a80-9101-f212c9d8a1cf 20543 linux-test santo Alisa: haha!  OUCH.
+311d7fb4-246b-4e91-8520-8abce906dd83 14415 linux-dev laura I opened a file in VI
+8b0f1679-bfa8-430d-9e3d-0834d43dd05d 20543 linux-test arlie Felicia, pfff ... no way ;)
+03987a19-7129-40c0-bcd4-318d198c7181 14423 linux-dev laura Then I closed the terminal screen... now it says recover
+112bead7-f144-4b77-b891-42c5b44a3c89 20548 linux-test felicia :-p
+0a3743ff-106f-46a8-932b-125c54d02871 14429 linux-dev laura So I open VI and type :recover
+befc5b69-2a92-4892-b26f-9f6242d919d2 20583 linux-test arlie Felicia, ive had enough drama for 6 lifetimes ... i dont want his
+38e51e4a-13ad-43ae-9d4f-f8daec3f8b3a 14433 linux-dev laura Then :wq
+4da124a5-5879-4081-948c-c6f5e5f6cbe6 20586 linux-test madison Arlie: brazil is cheap
+39d96c59-85a7-4278-908e-7e3488113f50 14442 linux-dev laura Then when I reopen that file it still asks me to recover :s
+90a562a5-4a50-45ce-9b42-5bd704c57272 20594 linux-test azzie lol
+161c73a1-299f-4878-b7e7-94b8c8e9f69d 14459 linux-dev laura so should I just delete the swap?
+aced3202-020d-47e6-9d88-63130a2b87df 20602 linux-test santo I hate living on the OSU campus so much.  A ghetto-crack-level-apartment costs $400.  :(
+abfec540-b13d-4a6a-9d30-d95ba92f2f43 14472 linux-dev felicia Lonnie: lspci, and install and use hwinfo for more as well as cat /proc/cpuinfo
+77294a69-4421-4ff3-9099-ae530a8702a3 20606 linux-test azzie Its rediculous ezpensive here.
+9b6f9dc3-b754-4bc2-872b-e366c38afbba 14473 linux-dev gale Laura: that can happen if say you openned it up again somewhere and edited it but the original occurance was still open
+38f515d9-47d0-44fe-aede-145e8b520b59 20615 linux-test azzie Santo: Okla?
+987f4a83-b934-4192-a78f-ae9a660d02f5 14492 linux-dev gale Laura: I would check it out first
+3759d8d4-e645-42a3-aba2-77c4c52510d3 20615 linux-test arlie Madison, im sure ... $200 an acre for rain forest with timber
+697c1451-f2b5-491b-841e-3de40650756f 14502 linux-dev felicia Lonnie: lspci | grep VGA  for your video card
+05b95713-6f1c-48aa-9e4b-cfd475f8bf6e 20618 linux-test rachel null, that sounds cheap.
+738dc639-7283-4fd1-926d-ea25d0d8d55a 14503 linux-dev laura how would I check it out? i closed the terminal screen withought closing vi
+c645bf94-c0b8-4071-b9fa-f3404ee8289b 20619 linux-test felicia Arlie: heh .. not even from a distance .. eh? ;-)
+14cd8ed1-2bf9-47dd-8dae-b12aa0445b36 14529 linux-dev gale open again with vim
+52d8305f-2337-4eee-aa37-eeb46e5266c0 20622 linux-test santo Azzie: Ohio State
+c38b75c8-1b13-471d-982b-dbd301ccfea2 14533 linux-dev arlie Madison, someone was in here earlier asking how to run mac osx on vmware ... i assued them of being you
+b9341b53-b8b3-465c-a841-92bafbfb14b7 20626 linux-test madison Santo: brazil -> 400.00 usd == ocean front apartment in rio de janeiro
+1cb90723-f2be-4291-ac2c-1cd8e20ae6cb 14548 linux-dev madison wtf?
+40553237-c070-4d45-806f-2a82911140b7 20627 linux-test mellisa awww
+6c0fb812-d15c-4a78-ab5c-deacefee7005 14549 linux-dev madison no
+6913be25-e2b4-4359-a813-0d46cf7c12f1 20628 linux-test arlie Felicia, not even from the moon
+22db7941-6726-44cc-8065-90f34fefe540 14551 linux-dev laura E325: ATTENTION
+1c02a295-291d-4006-8401-962416be6376 20630 linux-test mellisa i missed quiznos :(
+407abb95-6db4-4a28-a34e-67981e5b9292 14552 linux-dev laura Found a swap file by the name ".UnrealTournament.ini.swp"
+6099f816-dae2-4726-be51-c8448173e3f9 20634 linux-test felicia ouch
+8b09e562-5026-4005-987a-3d603c961c7e 14552 linux-dev laura owned by: Laura   dated: Wed May 23 17:42:09 2007
+d800f8fe-ff01-4220-90f0-5026f2e2bb77 20637 linux-test santo Madison: I grew up in Romania until I was 10.
+40e1c451-12e9-4a94-a494-0f40ceca1c62 14552 linux-dev laura file name: /usr/local/games/ut/System/UnrealTournament.ini
+28fa5a32-d4b2-4c05-bd10-6b5de3e2d649 20642 linux-test felicia Mellisa: wanna donate?
+8c1fc60e-98ff-46a9-b39b-8a064be7d3fa 14563 linux-dev felicia Lonnie: hwinfo --help list short options for quick info .. also use dmidecode for mobo info and dmesg | less
+4809e649-43e7-4104-bce4-aa70b21bca24 20643 linux-test madison LMAO
+d6e5cdb5-8621-4000-8e74-17dc93294fff 14566 linux-dev gale it's going to say that until you rm it iirc
+8a106dbf-1fee-45cc-9ca3-8d1811278e67 20660 linux-test madison eastern europe the fall of the cuacasian empire
+158efe23-11c6-417a-a4f5-71fb8cb5bcc3 14571 linux-dev arlie Madison, i thought you were trying to offer an osx virtual host ;)
+bdffed5a-8ece-448f-a368-e4984d2dc3d6 20665 linux-test madison cau
+ebeae18f-e079-4210-825d-5da753d1ebdf 14571 linux-dev gale rm the swap file
+7354325e-dda1-42b7-a135-599ba57334da 20669 linux-test azzie HOLY HELL
+ed93e2e2-fbcd-4b25-8875-5addbc05e1d4 14578 linux-dev madison lol
+cb4ebcb3-c73f-4071-a846-ff9025784caf 20671 linux-test santo haha yes
+bc772dc8-b544-4ee8-a162-6955e1112397 14579 linux-dev laura okay
+eeb2001a-6ac1-4fef-9ad2-eb9bb7c34d9d 20672 linux-test madison i was in romania
+2e45efc8-440b-444d-80f9-241a52c12395 14581 linux-dev madison Arlie: naw
+281a8988-b9ad-49ab-8136-b06e317b3ccd 20674 linux-test santo Corruption everywhere.
+5f9446c7-2d00-4d85-8f9c-568c6b397c70 14586 linux-dev gale but make sure your main one is good first
+27f71da3-de57-40d5-bb98-6ab525aa689b 20684 linux-test arlie Felicia, see, i like quiznos too, but i have issues with sending money to an adult who thought he could pay rent with self issued junk bonds, and is upset that the judge didnt allow it to happen
+1d8c6c98-96fe-4c8c-896a-0a49456a8ec9 14588 linux-dev gale I would
+b11e70a8-71f6-48fd-a520-42f3a9f9089a 20684 linux-test madison holy shit that was a bad place
+3f3d682b-3673-4378-885c-c56a57330c42 14591 linux-dev madison Arlie: i been working real hard on it the last 2 days
+2801d79e-78b4-4d96-8263-a5e2883a795e 20704 linux-test madison my father used to go there for business
+4ad7f796-54c6-4a56-b84f-83e32fb370fc 14593 linux-dev madison real hard
+3f0f01ba-011a-4493-95dc-a2546ab3e9c8 20704 linux-test kandra Arlie: is Sandwichman asking you for cash?
+c2cbbc23-0e73-4664-acdd-152228e6409d 14597 linux-dev madison almost done
+9cd1062f-94ec-4953-9192-9a46b6003098 20713 linux-test azzie Yea, but you learn a lesson i guess.
+10366865-2dfc-4b7e-9101-2c4dfddb2c01 14632 linux-dev felicia Madison: we take Visa , Mastercard and Cash
+71a39d96-8162-4e96-b7a6-5a65c601a21c 20716 linux-test madison croatia aint much better
+cb221012-9d97-47fc-8a24-5f46b7d534b8 14656 linux-dev arlie software is never done ... its only in various states of development, lacking features or having bugs
+a10725e4-5365-4cd1-9264-a63be88b3efb 20717 linux-test santo And my parents are fucking crazy.  Totally fucked with my head... couldn't stand life so I dropped out of school even though I had a full ride.  :(
+f62ad0b3-0695-4caa-a2e1-c1f2e745717e 14656 linux-dev laura Gale: Aha so I opened it and then itopens, now I did %s/ctrlv ctrm
+dc29c8f7-ed99-470f-a676-790676b6d039 20738 linux-test arlie Felicia, his financial situation was deteriorating for months and months, and he sat here on irc pretending it wasnt happening, or he could jew the system, or whatever
+856cb610-f949-4685-acbf-366c5773b8fa 14659 linux-dev laura and saved it
+587c76e3-9d8e-4494-b2fd-d8862fc91177 20738 linux-test kandra Santo: you're at OSU?
+0e2e0ba0-5b91-4258-966a-b93abd0b3732 14670 linux-dev laura and all the ^M removed
+ee85e9c7-82f0-4b8b-9504-89c5035fb11d 20741 linux-test madison Santo: white  or indian ?
+e1b3247a-7e6e-4bb9-b222-4ebdd51d8c47 14672 linux-dev laura :)
+1a159bb8-678c-4cdd-9f30-5dd413088460 20746 linux-test santo Kandra: white
+b751a62d-4aeb-47e3-8407-4f27d0b1a272 14678 linux-dev gale yep
+72b9bc0a-267f-4eb6-b0b8-a091be7e6c66 20753 linux-test madison or gipsy lol
+a7064baf-03e7-4c76-a7b3-b6d3ea3b90c5 14690 linux-dev gale but I forget the sequence for LFs
+f5eec9c6-f004-412c-bc86-8725f7b16c94 20756 linux-test santo haha
+1f782166-c0f3-4c37-8e69-e81707a32180 20760 linux-test santo close
+552fc5c3-165a-4910-881c-8fbb295493b0 20761 linux-test madison man that was an experince
+9880e5d8-3257-4435-9962-ebd92c17f455 20804 linux-test kandra Santo: maybe you meant to say that to Madison?
+03b01ca5-7274-4de6-b9d2-6575100509bd 20814 linux-test arlie Felicia, i dont know what he thought ... but he's learning a lesson right now ... that much is for certain ... and he's gonna have to get a job and work like all the rest of us
+2f7cd1b4-7251-4721-9d9a-b1663dc88811 20814 linux-test madison he did
+f314359c-7ec0-4a9d-813d-89ac65396759 20814 linux-test santo Taking 22 credit-hours of Pre-Med classes and working 20 hours a week washing dishes for minimal wage only to go home on the weekends and have my parents tear my head off for 52-hours non-stop... that really sucked.
+982946f9-1ed0-4240-9542-5e4c84d5bedf 20837 linux-test madison Santo: you still speak romanian?
+6aa8200c-d633-48eb-9fb9-1d6771ce700c 20839 linux-test santo yes
+a41a0557-8dff-4c5d-896f-fc70969512d2 20844 linux-test madison fluent ?
+89f42a42-d6df-4800-b084-5344fe1b7475 20846 linux-test santo yes
+d67e23c6-e750-4277-b969-a163bbb47502 20852 linux-test madison ahh
+7d29188b-2b8b-4f5d-aa6e-8e0d16bc5af9 20873 linux-test madison i need to learn another language
+33e8f5da-85dc-4e2a-a8c6-858905e945a4 20879 linux-test arlie Felicia, he doesnt need money, he needs a "financial stability plan" that he's willing to follow
+6e14f768-51ef-421b-be8c-7b7ec5cf4fc9 20896 linux-test madison i speak english spanish and portuguese but spanish and portuguese are kinda close so yea
+3d76a184-70c5-4b5d-8867-b90f708090e9 20905 linux-test santo yay for romance languages
+082cf509-2d52-4e61-862b-b52458f94283 20909 linux-test madison lol
+fdaf8037-3a2b-4a58-922c-43aab4ff9483 20911 linux-test priscila Who needs financial stability, just buy drink and drugs and women.
+412c0377-ad09-41f6-9f89-26534729dcc3 20912 linux-test madison you like ?
+e920687c-eaf7-4ac9-9e60-b66e987c9348 20913 linux-test felicia i can't disagree with what you're saying .. that's all io will say about that right now .. especially since i'm tired
+19cd1bb2-1647-4e73-acba-553523871dea 20928 linux-test santo they're easy for me to pick up
+4982df57-17eb-47d1-972f-50acde7e372e 20931 linux-test madison romance languages are fine ..........english kills it for flexibility though
+8d53804d-497b-4ae1-a667-ad12ad554959 20943 linux-test santo i think when i was 7 i spoke half-assed-fluent italian because i watched italian-dubbed anime all day long
+f8464a08-295a-4b2b-be9b-fe6fe2a27ca1 20950 linux-test madison english is still a latin language just not a romance language
+4dc6b453-c4b6-40e7-882c-b4a1bef68f1d 20956 linux-test arlie Felicia, if would be extremely generous of you to help him tho ... but having been homeless, and broke, and without property myself, i worked my way out of it, without asking people for money
+48f8976c-8568-401a-af76-cdfaa4ed3357 20963 linux-test arlie Felicia, er ... if
+4981d2ed-bef1-4734-add0-f1160d441050 20965 linux-test arlie it
+3d292442-0cec-4448-8dd7-a082a37477f3 20978 linux-test nicki too bad the bible doesn't have a financial stability plan. :)
+b301b61d-3a50-4c66-a8f2-7623d1cb6037 20980 linux-test santo I'm getting pretty close to being homeless myself.
+4d0b5d7d-41eb-4a74-97ca-43560ede8751 20985 linux-test felicia Arlie: i've been very close to that situation myself
+23605c45-85c5-4e25-92a0-43e5db7926c4 20985 linux-test arlie Nicki, it does
+8972f1e2-c139-46f9-8c2d-b2c8ce9b45c7 20985 linux-test madison lol
+3bdbb34f-b50a-45f3-a68c-4fe33eb3600c 20993 linux-test santo I have $360 in the bank, rent is $360 (due in a few days), credit payment is about $50... :o
+491fecc6-50eb-4b09-ae93-7ad6c48d48bb 20995 linux-test madison Santo: atleast your not in romania
+8d8a70f3-b9fc-4551-bc0f-fe9da6b4613c 20998 linux-test arlie Nicki, thats why jewish people have all the money ;)
+da8ebccb-c484-4baf-9b5a-7c42a7204592 21009 linux-test doretta I thought it was because they were cheap
+8927d09c-1336-43ab-969a-8ef68a20d940 21015 linux-test arlie Doretta, same thing ;)
+6a391f19-2f45-4b08-82b5-21b60c7e27b6 21018 linux-test nicki old testament > new testament? :)
+543a027e-aa39-453e-9e66-9b1dda4a27e0 21019 linux-test doretta That's what seinfield tells me, atleast
+2c17b163-ab8f-42ca-a5a3-16310dacf212 21033 linux-test arlie im pretty cheap myself
+aa6d5ebb-3fda-438b-a8e7-b9dc070bd697 21041 linux-test tatiana should i boot from a licecd if i want  use rsync to backup my linux partition onto an external hard drive?  is it bad to backup a partition that is currently booted?
+fe72295c-ad16-4360-945f-961b3d2ba063 21043 linux-test madison Santo: do some freelance
+1585c17f-a08a-4757-a5a7-412ab513e176 21045 linux-test kandra too bad not everyone accepts the God card as payment.
+397192d0-bdcb-4c48-8b07-c616bf4c99f7 21050 linux-test tatiana *want to use
+7e8b8488-2aef-4a18-80d9-11cb055bf6ba 21052 linux-test santo Madison: that's why i'm getting my portfolio site up :)
+2a06a06b-f608-4f57-829f-112de351efb7 21058 linux-test madison you dont need that
+519bb6bc-6431-47f7-82d0-c07b5b52d3ca 21065 linux-test santo i do joomla freelance mostly
+9cf73b7e-519e-45f6-8d6e-e2c6c684a3aa 21068 linux-test santo most people want to see some examples
+4af24853-9025-4408-ab29-e315fc01cec5 21072 linux-test madison i never did any of that portfoilio resume none of that
+10f10aa0-74e8-485f-ad54-399dbae6e0e7 21073 linux-test santo of previous work
+c3f0a99e-84ff-496f-99e2-2b3cf548a5dc 21078 linux-test arlie skate or die ... thats the deal ... skate or die
+25fd3efe-d5f0-4f6e-bffa-312502b35cb2 21085 linux-test madison yor just not talking to them right
+a857076b-28d6-4dba-a65a-f1bd5ce0c26d 21113 linux-test jesse Tatiana: doing it from a livecd is good IMHO, because the partition won't be written to while you back it up
+ab1ff6ec-03f3-4aa1-b2ad-71c4ef114e32 21115 linux-test nicki I learned my money handling skills from playing MUDs, I save it up, then I spend it after I have it. :)
+c7dc1bc2-775e-4045-a477-e6841d811a86 21122 linux-test madison Santo: i could get 5/10 jobs with no port or resume
+9b785e91-d8e2-4286-a105-0394517881f3 21122 linux-test santo well i've been trying those rentacoder sites and pretty much every posting says "show me 3 examples blah blah blah"
+98b1b728-f384-4bcf-86bb-7741ac2622d2 21123 linux-test tatiana ok thanks Horacio
+e92bedd6-22a3-4ad7-a454-072c37cd648c 21132 linux-test madison Santo: RAC is bad
+e4a8bf50-168f-4c23-ba29-f98a17ddf1b5 21143 linux-test santo Madison: i think it was getafreelancer
+3ace1d70-a950-4acb-9ca8-ea74798c0b71 21159 linux-test arlie Santo, the most important thing in getting work is that people like you ... tell some jokes, and charge them $50,000 for it
+8913c32b-308e-4a14-ac3c-37e8fc8cc50c 21174 linux-test madison exactly
+d1036892-7af1-4a89-ba0c-fba990b8b095 21176 linux-test madison no jokee
+bc90fa4c-b533-4d5d-b256-e3f15a6b3c65 21180 linux-test santo :)
+09b5c93f-0010-46ce-a05f-55c58e71c685 21183 linux-test santo it helps that im hot
+4940e7e7-3144-4074-ab00-7f7dfeea9970 21185 linux-test santo ^_^
+21b66994-8966-48a7-ae62-1f1d917dcd29 21192 linux-test madison you girl or guy ?
+86821afc-a45d-4c6b-b1fb-3c428e6a942e 21199 linux-test santo guy
+af4f14dc-277f-4a72-ad8a-ffd913cec19e 21201 linux-test priscila LOL
+62a7aad3-413c-4e1b-8bfe-d7295f585ffd 21206 linux-test priscila A girl, on the internet. haha.
+399cec75-7f44-48c9-ad45-b0bdf2fb7a9f 21220 linux-test santo my gf is me, but with a vagina.  and she's hot too.
+594bcd99-c06c-40f1-b880-42abf83c724e 21229 linux-test santo except i haven't switched her over to linux yet.
+ab7ae78b-e7a7-4591-8dd4-9f4abcc9db0a 21247 linux-test melda mehgirl: erinstalent.com
+6e218e01-ef3d-48c2-9a52-8f920ef69f2a 21260 linux-test arlie Santo, The Narcisists ?
+dac75d1e-2166-4263-88b1-546fc455b52e 21263 linux-test bruno .oO(apt-get install vagina)
+ff793cda-bc5e-4ba9-a268-64d95f6ca103 21266 linux-test madison Santo: how long you been in usa ?
+0dc0ae1c-80f3-4c0c-94c4-8c11078ee834 21269 linux-test arlie Santo, is that what the mailbox says ?
+6d3ca85e-077e-481c-8369-c808f02866ae 21277 linux-test felicia Santo: no breasts?
+7a4db775-7f70-4b13-bed7-2e550f18674f 21280 linux-test jesse Arlie: heh
+d2072445-314c-4d68-b15d-aa8fb298fd74 21284 linux-test melda _Arlen: can't compile: not enough free space
+116f58c1-a24d-45e0-84b6-a7b54df8c786 21285 linux-test jesse Felicia: moobs
+3c7382ca-7280-4e4e-b05f-597cf3eb9ab8 21287 linux-test ruthe and facial hair
+482e5a10-2d46-42c7-bff7-f0d5dc2e8658 21288 linux-test santo Madison: 10 years
+9ecbc011-84b3-4da4-91f3-cde78c1687cc 21293 linux-test madison Santo: oooooo
+a54acd69-2225-45f5-8c93-6e6cf08e3a96 21295 linux-test santo Felicia: she has big boobies!
+b0f50318-a012-40a0-9014-83be108ada02 21298 linux-test madison i thought you just came over
+4ff3dd79-c1aa-4dc9-85e8-c134ecb4157b 21307 linux-test santo Arlie: bwahaha
+56ded5aa-185c-4b7b-bf62-1b124390f315 21307 linux-test felicia lol @ "my gf is me with a vagina"
+4945389d-b61b-463b-a516-1d39649df4b8 21316 linux-test santo Madison: i speak perfect irc english
+b65e8366-cec0-4978-a0f7-0759fa152523 21323 linux-test madison Santo: speaking ?
+f5657a1d-27e6-4ce9-bf74-b5a316e51925 21324 linux-test felicia she shaves daily too ? lol
+fb939278-5016-493c-9b60-b503b9f75b02 21335 linux-test santo i haven't shaved in like 2 days
+1650beaa-f120-4f82-8d84-1da9940f90b2 21338 linux-test santo i'm getting scruffy
+e5258474-5880-4e12-b7e3-841cfda18b83 21344 linux-test santo fuck why am i not being productive?
+26187354-4f14-4ea0-963a-5aec75e2f794 21352 linux-test felicia is her name RMS by any chance?
+aaf514ae-caf1-4501-9f2a-839ebc5617c5 21358 linux-test santo no

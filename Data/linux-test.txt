@@ -1,0 +1,1000 @@
+15381 Alanna :  what should I choose between slackware 11.0 and redhat 5? I'm looking for a great desktop envoiernment, etc
+15385 Alana *  entered the room.
+15406 Chauncey :  if you're not a big business like IBM, you can instead focus on offering your customers ...
+15412 Chauncey :  personal sales ?
+15418 Chauncey :  person-to-person sales ?
+15422 Gale :  sounds like a job for a loop
+15423 Chauncey :  the human touch ?
+15439 Christina *  left the room (quit: "Leaving").
+15441 Bennie *  entered the room.
+15455 Paulita :  Chauncey what do you mean?
+15471 Nestor :  ok
+15474 Nestor :  i got it solved
+15476 Demetrius *  entered the room.
+15479 Nestor :  thanks for the help guys
+15503 Nestor :  (if you ask how, i made a mini bash script)
+15508 Nestor :  goodbye.
+15513 Nestor *  left the room (quit: Client Quit).
+15542 Chauncey :  Paulita: I'm looking for the end to that sentence ...
+15552 Paulita :  :)
+15578 Latrina *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+15579 Paulita :  you mentioned that if your a big musiness like IBM you cant focus on offering your customers what?
+15601 Chauncey :  Paulita: no you CAN focus ...
+15625 Dolores *  left the room (quit: "KVIrc 3.2.5 Anomalies http://www.kvirc.net/").
+15678 Hassan *  entered the room.
+15678 Paulita :  we do focus at IBM Chauncey
+15694 Claudie *  left the room (quit: Remote closed the connection).
+15713 Chauncey :  :-)
+15724 Paulita :  amerika has changed is what the problem is.
+15734 Paulita :  i blame it on republican nazis :)
+15740 Paulita :  mostly texans
+15743 Paulita :  anyway
+15770 Marcel *  entered the room.
+15786 Kary *  entered the room.
+15816 Celine *  entered the room.
+15879 Mark *  left the room (quit: Remote closed the connection).
+15882 January :  News from kernel.org: 2.6.21.2: stable <http://www.kernel.org/kdist/fragments/stable.html>
+15887 Soraya *  left the room (quit: "Have you mooed today?").
+15888 Laura :  How do I check which ports are bindable?
+15909 Adele *  left the room (quit: Read error: 110 (Connection timed out)).
+15912 Margene :  what's new in the kernel?
+15935 Adele *  entered the room.
+15946 Azzie :  Is that like the new whats up saying for nerds?
+15951 Azzie :  That would be awesome.
+15964 Margene :  sure run with it
+15981 Margene :  though I prefer the term geeks
+15986 Elli *  left the room (quit: "Sleeep").
+15997 Sara *  entered the room.
+16009 Azzie :  Well, then.
+16022 Sara :  is there an easy way to extract files from a patch, without having the thing it patches against, (there are there entirely) ?
+16069 Na *  entered the room.
+16088 Na *  left the room.
+16101 Lan *  entered the room.
+16126 Alma *  left the room (quit: Remote closed the connection).
+16127 Ramona *  left the room (quit: Read error: 110 (Connection timed out)).
+16158 Alma *  entered the room.
+16161 Carly :  Sara: no
+16177 Carly :  Sara: patches are diff deltas
+16180 Priscila *  entered the room.
+16195 Danilo *  entered the room.
+16200 Carly :  in the usual form atleast
+16205 Contessa *  entered the room.
+16211 Glennis *  entered the room.
+16238 Sara :  Carly, duh, but this one is basically just adding entire files
+16254 Simonne *  entered the room.
+16261 Lan *  left the room (quit: Client Quit).
+16262 Sara :  don't feel like scripting all the + away, and then splitting it into files manually
+16264 Carly :  hmm then just apply it, and you have the files
+16265 Lai *  entered the room.
+16273 Lan *  entered the room.
+16286 Rea :  how can i check if is blocked? i mean it has a service running
+16287 Rea :  ?
+16296 Alice *  entered the room.
+16311 Alice :  has anyone in here set up tor w/ gpg ?
+16312 Alice :  for irc?
+16314 Carly :  he Lai you old preacherman
+16324 Rea :  *** i mean ports
+16326 Lai :  00!!!
+16341 Lai :  b00!
+16346 Lai :  oopsie forgoe the B
+16351 Lai :  Carly: hihi
+16365 Arlie :  damn ... people really do come back from the dead
+16373 Lai :  headshit!!! :)
+16377 Lai :  where ya bin?
+16380 Lai :  lol
+16387 Arlie :  right here
+16391 Lai :  i'm usin shack's box
+16394 Lai :  cool
+16395 Demetrius *  left the room (quit: "Leaving").
+16397 Celine *  left the room (quit: ).
+16416 Arlie :  do you have to keep pretending your gonna buy a pc from the salesman while you talk to us ?
+16423 Lai :  i might be in fla. to hunt you the like tthe primate you are
+16441 Lai :  Arlie: Laura lol nah, he's a cool teengeek :)
+16445 Azzie :  Lai: ! long time no see!
+16450 Lai :  greg!!!
+16460 Lai :  isp cut me off with a vengence
+16461 Gale :  hey Lai
+16464 Lai *  left the room (quit: Client Quit).
+16468 Azzie :  Lai: How are you doing there?
+16474 Carly :  primate!? is that a submission to evolution i hear there?
+16484 Lai *  entered the room.
+16484 Arlie :  Lai, well, not that im one of the people that misses you or anything, but at least once a day someone is in here typing !seen Lai
+16494 Ahmad *  left the room (quit: Read error: 110 (Connection timed out)).
+16498 Felicia :  Lai++
+16499 Willene *  left the room (quit: "YAY, my computer Just overheated and rebooted").
+16500 Lai :  oops; dont hit that key
+16505 Felicia :  Yo Yo MA!!!
+16507 Gale :  hey Lai, long time no see
+16519 Arlie :  Lai, so call the McDonalds manager up, get them to fast track your application, and get busy flipping burgets so you can get an isp again
+16521 Lai :  Azzie: how ya bin?
+16523 Azzie :  Lai: How are you doing there?
+16544 Azzie :  Very well, I seem to be trying to show Arlie how its done and am coding a webserver.
+16548 Lai :  Arlie: good to know, thanks much
+16548 Lai :  Felicia: !!!
+16550 Jolyn *  left the room (quit: Remote closed the connection).
+16555 Arlie :  Azzie, keep trying ;)
+16564 Azzie :  epoll ftw!
+16567 Lai :  Azzie: not well at all, many probs
+16575 Lai :  no to McD :)
+16576 Arlie :  you found epoll ... congrats
+16580 Felicia :  Lai: got a main hookup going yet?
+16585 Tammi :  hi, i am trying to fo an fsck on a file system that i just unmounted but keep getting "Device or resource busy while trying to open /dev/md5"
+16585 Lai :  nop
+16594 Felicia :  bah .. when?
+16598 Lai :  Gale: !!!
+16599 Arlie :  Azzie, i wont ruin your day by telling you thats not the fastest method
+16608 Lai :  Felicia: i need to escape the state
+16614 Lai :  first
+16618 Gale :  Lai!!!
+16621 Arlie :  Azzie, because its good enough ;)
+16626 Felicia :  Flee patrick henry .. run ..lol
+16627 Moses *  left the room (quit: Read error: 110 (Connection timed out)).
+16635 Lai :  i do miss you folks, even the primate
+16645 Moses *  entered the room.
+16648 Felicia :  heh
+16662 Felicia :  we're all primates ..
+16665 Gale :  Lai: primate keeps it interesting, especially when suse fanboys show up
+16666 Donnette *  left the room (quit: Operation timed out).
+16669 Jamey *  entered the room.
+16676 Felicia :  some just have more headcheese in them .. lol
+16677 Arlie :  Lai, you've inspired me to have a bowel movement ... bbiam
+16682 Azzie :  Arlie: Good enough doesnt cut it!  Is the 'faster' method a big change in design? Could I implement later without wanting to kill myself?
+16682 Lai :  not me
+16682 Lai :  heh yea :)
+16687 Azzie :  lol
+16688 Lai :  lol
+16696 Lai :  TMI TMI TMI
+16706 Arlie :  Azzie, yeah, you could add it later
+16709 Lai :  dont use ridged leaves
+16711 Gale :  I thought monkeys just crapped on the spot
+16716 Ronald *  entered the room.
+16718 Felicia :  are you at Sahque Du Radio Lai ?>
+16720 Azzie :  Although he does seem to get away with a whole lot more without someone here to keep him in check.
+16722 Gale :  and then fling it around
+16723 Rea :  for sending/receiving mail what should i use? postfix/courier?
+16723 Felicia :  er shaque
+16725 Lai :  crap and flow
+16737 Lang :  email is cra
+16739 Lai :  Felicia: buh... who?
+16739 Lang :  crap
+16743 Lang :  use irc chat
+16745 Lang :  :)
+16748 Lang :  create your own room
+16754 Delaine *  entered the room.
+16759 Felicia :  Radio Shack you dumb cuban ..lol :-P
+16767 Lai :  lolol
+16768 Rocco *  left the room (quit: "Leaving").
+16779 Lai :  i am Cuban too :)
+16781 Ronald :  is there a way with tcpdump to specify a range of ports, something like "tcpdump src host 1.2.3.4 tcp port 1234:4321" to capture anything on ports 1234 thru 4321 ??
+16783 Felicia :  it's ggod to hear form you though man
+16784 Lai :  half
+16785 Angla :  Lai !!
+16794 Lai :  Felicia: thanks much :)
+16797 Lai :  Angla: !!!
+16809 Lizeth *  left the room.
+16854 Renate :  w00t, Jesus Camp!
+16855 Felicia :  i'm picturing you alongside a parking meter, popping in quarters for you IRC time Lai ..lol
+16876 Angla :  i'm watching a film and the cop actually said "captain, i just need 48 hours to crack this case wide open" and the hard-nosed captain says "i'll give you 24 hours. not a minute over. screw this up and it's your ass, detective" classic
+16882 Gale :  Lai: time to go wardriving :)
+16892 Lai :  heh, N000000000000000000
+16900 Rachel :  QUIZZER!
+16912 Felicia :  bronze: ^^^^^^ Lai
+16917 Lai :  hihi
+16919 Rachel :  hi
+16925 Rachel :  wow - more than 2 weeks
+16925 Gale :  wireless has brought about the free internet movement
+16934 Rachel :  u mus tbe in wthdrawal.
+16936 Margene :  wi-fi causes cancer
+16944 Felicia :  Lai: still in sunny PA ?
+16948 Lai :  yep
+16951 Kraig *  entered the room.
+16952 Azzie :  We just got outfitted with city-wide-fi here.
+16955 Jeanna :  i have wi-fi and don't have cancer
+16959 Jeanna :  or maybe i do
+16960 Angla :  Lai, you missed the fun yesterday. the 3 stooges from novell came here and tried to create trouble. i smote them with my sabre of truth
+16964 Hassan *  left the room (quit: Connection timed out).
+16969 Dallas *  entered the room.
+16975 Margene :  denial causes cancer
+16975 Felicia :  how's the situation with your old/current landlord? oki? iffy?
+16982 Gale :  I was laughing so hard yesterday during that
+16982 Lai :  Angla: lolol
+16996 Lai :  Felicia: terminally sucki
+16998 Felicia :  lol @ Angla
+17004 Arlinda *  left the room ("Coming Back").
+17004 Arlinda *  entered the room.
+17004 Gale :  it was classic ##linux
+17006 Felicia :  Lai: sorry to hear ..
+17032 Azzie :  Around when was the Novell business? Sounds log check worthy.
+17032 Lai :  thanks
+17038 Felicia :  Lai: should we take up a collection? maybe have monkeyboy make the largest donation?
+17047 Angla :  anyways, back to the movie. later dudes. nice to see you again quiz
+17056 Lai :  Felicia: i need $2200
+17060 Lang :  novell lol
+17067 Felicia :  wow@! .. erm ..
+17069 Lang :  wat a pack of desperate jokers they are
+17069 Margene :  more like Olld
+17075 Felicia :  we can start maybe ;-)
+17079 Lai :  sure
+17117 Lai :  hey, radio shacker here wants to hear about the "mutiny"
+17124 Lai :  lol
+17131 Gale :  lol
+17131 Margene :  well nave a great day... well just a nice one, you don't deserve great!
+17137 Lai :  we havent dissed that in a long time
+17140 Lai :  disc'd
+17141 Margene *  left the room (quit: "Smell ya later").
+17149 Lai :  'cussed
+17153 Lai :  <howto build a word>
+17174 Felicia :  i haben't seen a 'kk' in soooo long .. wait .. i DON'T miss it .. lol
+17188 Lai :  kk
+17190 Tanika *  left the room (quit: "Ex-Chat").
+17199 Felicia :  hah
+17217 James *  entered the room.
+17224 Alisa *  entered the room.
+17229 James :  Is there a way to encrypt the home partition without deleting the data first?
+17229 Felicia :  Lai: we still get our  one word<enter> aolers here
+17239 Lai :  lol
+17266 Victorina *  left the room (quit: "Bomb, James Bomb, 009!").
+17268 Azzie :  There was one of those a few days ago who had the balls to tell me to stop telling him how to type.
+17274 Gale :  they believe in LFs and not whitespace
+17274 Felicia :  Lai: i can make a small donation if necessary .. not much, but something
+17292 Annabelle *  left the room (quit: "Insert KVirc advocacy message here.").
+17299 Sharron *  left the room (quit: Remote closed the connection).
+17310 Lai :  Felicia: that would be sexy
+17314 Rachel :  anyone know of a good netcat tutorial?
+17327 Renate *  left the room (quit: "Leaving").
+17331 Felicia :  and believe it or not .. there's no sexual innuendo in that statement ..lol
+17338 Lai :  goggle.com
+17349 Lorina :  goggle?
+17351 Felicia :  which is more than rare, from my output
+17385 Rosana *  entered the room.
+17387 James *  left the room.
+17414 Lai :  no0dles: i'm tryin to figer out how to get yours to mine
+17417 Madalene *  left the room (quit: Connection timed out).
+17422 Bettie *  left the room (quit: Success).
+17424 Simonne *  is now known as Simonne
+17443 Lai :  who the hell is no0dles ?
+17449 Lai :  Felicia: i'm tryin to figer out how to get yours to mine
+17463 Lai :  mail wise
+17468 Edwin *  entered the room.
+17480 Charlyn *  entered the room.
+17487 Justa *  left the room (quit: "i'm either late for work or its early in the morning").
+17495 Edwin :  who knows how to install a hybrid tv card
+17500 Lakenya :  Lai: Radio Shack let you on their computers again?
+17504 Candra *  entered the room.
+17514 Lai :  Lakenya: !!! yea
+17514 Felicia :  Rachel: maybe someting here http://www.rajeevnet.com/hacks_hints/os_clone/os_cloning.html
+17528 Rachel :  gracias
+17533 Felicia :  Lai: money? CC maybe
+17535 Lai :  grassy ass
+17551 Lai :  Felicia: !!! oo! yea; a debit card
+17553 Lakenya :  damn i need to move out, but apartments are so damn expensive without a roommate
+17554 Hellen *  checks his pants....... 
+17555 Virgina *  entered the room.
+17564 Lai :  Lakenya: yep
+17571 Gale :  Lakenya: everything is so damn expensive these days
+17572 Azzie :  I need to find a roomate badly.
+17577 Felicia :  Lakenya: just pimp here out
+17580 Isobel *  left the room (quit: Connection timed out).
+17582 Azzie :  lol
+17586 Felicia :  her*
+17588 Lakenya :  i can't think of anyone that wouldn't just piss me off as roommate
+17589 Lai :  Azzie: what's your loc?
+17597 Azzie :  Lai: Portland.
+17602 Lai :  i need to be in Tulsa
+17608 Kary *  left the room (quit: Connection timed out).
+17609 Rachel :  Tulsa?
+17616 Gale :  Portland is a nice place
+17616 Lai :  Azzie: too far north :)
+17618 Felicia :  Okie?
+17620 Lai :  oklahoma
+17625 Rachel :  why Tulsa?
+17627 Azzie :  I know several a people in Tulsa, mosly at the Univ. there though.
+17628 Lakenya :  anyone in Akron,Ohio that isn't a douchbag and needs a roommate priv msg me :P
+17630 Lai :  Felicia: the debit card is the idear
+17640 Lai :  Rachel: thefirstdto attend ORU.edu
+17641 Felicia :  not a debit, but CC
+17650 Lai :  Felicia: nop, gotta be a debC
+17653 Maya *  entered the room.
+17665 Malcolm *  left the room ("Konversation terminated!").
+17674 Felicia :  Lai: hrmm .. oh yeah right .. the WesternUnion folks need debit or Cash?
+17676 Lakenya :  with my luck on roommates.com i get pair with some BDSM killer
+17681 Brooks *  entered the room.
+17691 Lai :  Lakenya: LOL douche
+17703 Lai :  Lakenya: lol
+17714 Gale :  Lakenya: you'll get stuck with a myspacer
+17718 Edwin *  left the room ("Time makes no sense").
+17718 Lai :  Lakenya: BSDoom killer
+17721 Felicia :  Lai: i really would like to make it a "pot" gift intended for you though or something .. not a lil' something form me
+17728 Lakenya :  Gale: oh fuck even worst
+17731 Hildegard :  I could use a roommate, actually.
+17733 Gale :  exactly
+17734 Lai :  roflmao
+17736 Hildegard :  but I don't trust anyone.
+17743 Rachel :  Lai: ah
+17745 Felicia :  paranoid!
+17749 Lai :  Felicia: "pot"? expand
+17750 Gale :  see!! now the bdsm killer doesn't sound so bad now, does it.
+17751 Bruno *  entered the room.
+17759 Lai :  lol
+17762 Regine *  passes the roll of luminum foil to Hildegard 
+17771 Felicia :  er aluminum
+17772 Mark *  entered the room.
+17775 Hildegard :  Felicia: I have 2 kids.
+17775 Hellen *  sniffs suspicoulst at the roll.. 
+17780 Lai :  is anyone here in pennsylvania?
+17783 Lakenya :  i take that back there is only one person that wouldn't piss me off
+17785 Hildegard :  Lai: I am.
+17785 Felicia :  Lai: you know . like a poker pot
+17791 Felicia :  ante up
+17793 Gale :  Lakenya: btw, is that like a gimp?
+17801 Lai :  Hildegard: oh yea, thats right
+17803 Felicia :  Hildegard: congratulations
+17808 Lai :  Felicia: ah ok
+17816 Hildegard :  Felicia: ehh, thats why I wouldn't trust :P
+17819 Lakenya :  Gale: Pulp Fiction anyone?
+17822 Delmer *  left the room (quit: Remote closed the connection).
+17823 Felicia :  i see ..
+17824 Daphne *  entered the room.
+17826 Gale :  Lakenya: yep
+17828 Rea :  can anyone help me ? i'm triing to install Crypt-OpenSSL-RSA-0.24.tar.gz but my script is failing
+17835 Hildegard :  Lai: why you ask?
+17845 Lai :  Hildegard: i forgot
+17850 Alisa :  Lai!
+17856 Alice *  left the room (quit: Remote closed the connection).
+17864 Hildegard :  Lai: you forgot why you asked? :P
+17865 Lai :  Alisa: cartman!!!!
+17870 Lai :  Hildegard: yep
+17871 Flora *  entered the room.
+17877 Alisa :  Lai: what happened? Did they tie your tubes?
+17878 Gail *  left the room (quit: ).
+17879 Leota *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+17881 Flora :  is ext4 available yet?
+17887 Lai :  i've been offline for 4 months now
+17889 Gale :  yeah, I meant the pulp fiction kind, not the image editing kind
+17890 Hildegard :  Lai: less beer, perhaps?
+17897 Lai :  Alisa: hah! LOL basically
+17903 Lai :  nop
+17908 Felicia :  lol @ Alisa
+17913 Lakenya :  oh yeah roommates.com has photos, can't be stuck with a ugly/fat/male roommate can we? :)
+17918 Felicia :  Sen Ted ahs had his way with the Q man
+17918 Alisa :  Flora: I think it's been merged as of 2.6.22.
+17924 Lai :  lol
+17928 Angelika *  entered the room.
+17945 Inez :  Lai! :D
+17945 Gale :  Lakenya: that's like 90% of the internet pool
+17948 Lai :  well, i need to get down to flaroida and all my stuff and i need a truck
+17952 Lai :  Inez: !!!
+17954 Felicia :  pretty soon, you'll start hearing the dump truck rumble
+17967 Inez :  how are you man ?
+17968 Angelika :  hi there people...
+17970 Angelika :  What ways I have to have a file be readable and writeable by all the world?????
+17970 Lai :  s/and/with
+17979 Lai :  Inez: heap-o-big trouble
+17987 Felicia :  Lai: where's your stuff? there in PA or Fla?
+17987 Inez :  Lai, what's wrong ?
+17991 Lai :  pennsy
+17999 Felicia :  ahhh
+18000 Jeanna *  is now known as Jeanna
+18007 Felicia :  gotta move .. haul ass eh?
+18019 Lai :  Inez: evicted by greedy conspiring property manager and district justice
+18028 Inez :  eee
+18034 Felicia :  no bueno
+18034 Inez :  so what are you gonna do Lai ?
+18044 Lai :  need money
+18046 Lai :  $2200
+18049 Felicia :  Lai: that guy in Mass can't help?
+18052 Inez :  Lai, I know I'm all the way in ca, but if you find yourself near here and need a place to crash, you're welcome.
+18056 Lai :  who guy?
+18081 Lai :  Inez: yea thanks very much; btw you changed your fon number you bistardo :)~
+18088 Felicia :  you know the Tax guy .. who claims he owes no property taxes .. Ron? or somebidy?
+18092 Astrid *  suggest a paypal fund or similar
+18098 Melissia *  entered the room.
+18103 Inez :  Lai, my old one died.
+18104 Felicia :  or was it VT or ME?
+18116 Nadene *  entered the room.
+18122 Inez :  Lai, I messaged it to you
+18125 Lai :  Azzie: my shack guy here said paypal too but i have no local bank acct
+18125 Azzie :  Us ##linux kids can be pursuasive to get people to do things.
+18129 Lai :  Inez: ah ok
+18136 Felicia :  second's Azzie 's suggestion
+18136 Nadene *  left the room (quit: SendQ exceeded).
+18138 Flora :  <Alisa> great thanks
+18145 Lai :  Inez: ok
+18162 Arlen *  left the room (quit: Read error: 145 (Connection timed out)).
+18168 Jinny *  left the room (quit: "Linux on fire").
+18170 Lai :  Inez: ok; got it, i'll try to call this weekend if i'm alive
+18173 Nadene *  entered the room.
+18176 Flora *  left the room (quit: "Leaving").
+18177 Inez :  okay Lai
+18195 Gigi *  entered the room.
+18196 Inez :  call later in the afternoon, since I sleep in late~
+18201 Gigi :  My work needs windows, Any one here would give me some suggestions on using gnu softwares in windows?
+18201 Gale :  we should charge the noobs $1 per question to the quiznos paypal
+18205 Granville *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+18211 Josephina :  XIN01OZ: mingw
+18215 Felicia :  bingo!
+18217 Josephina :  Gigi sorry
+18217 Gale :  we'd have the money in 2 days max
+18226 Azzie :  Lai: hrm, Have you tried to set one up?
+18227 Nadene *  left the room (quit: SendQ exceeded).
+18230 Arlie :  the federal reserve system conspiracy is keeping you down man
+18235 Josephina :  Gigi: and msys
+18235 Mirta *  is now known as Mirta
+18247 Felicia :  Gale: all ubuntu users  .. pay up!
+18260 Gale :  and susers pay double
+18263 Nadene *  entered the room.
+18267 Azzie :  I certainly would make suse users pay.
+18270 Hildegard :  triple.
+18275 Lai :  Azzie: not since being offline
+18276 Felicia :  it doesn't need to be "in state" either
+18282 Lai :  Arlie: lol; actually, they arent
+18287 Felicia :  Azzie++
+18300 Lai :  i wonder if mom has a paypal
+18304 Ricardo *  entered the room.
+18317 Julietta *  left the room (quit: "Leaving").
+18323 Ricardo :  Is there a way to emulate input for a program listening on a COM port? like send the input in such a way that the program thinks it's getting it from the COM?
+18330 Arlie :  its a federal reserve european banker tax man judge landlord conspiracy !
+18337 Azzie :  Lai: I am certainly willing to help and send you what little money I can, but I'm sure A paypal would help a lot more.
+18338 Lai :  lol
+18347 Lora *  left the room (quit: "IceChat - Keeping PC's cool since 2000").
+18353 Felicia :  yep
+18354 Hildegard :  Arlie: but it's actually masterminded by the street hotdog salesman
+18361 Azzie :  lol
+18363 Mable *  left the room (quit: Read error: 60 (Operation timed out)).
+18371 Felicia :  vendor! not salesman ..;lol
+18380 Lai :  Azzie:  i am truly grateful for the effort; but i cant see how i'd get the money out of paypal?
+18386 Arlie :  Lai, if you ever get a computer and an isp again, by all means, setup a website and start selling vitamins or something ... you have the skills to do it, you just keep thinking you dont need money
+18399 Lai :  lol remind me of that one
+18408 Azzie :  Lai: You do need a bank account, but there shouldnt be any reason you couldnt have one?
+18419 Arlie :  selling vitamins is a worthy profession ... people need vitamins
+18421 Lai :  Azzie: lol; ask HM why :)
+18426 Lai :  lol
+18438 Angla :  Arlie, you are one cold mother
+18445 Lai :  or search the logs of months past
+18449 Arlie :  Angla, im not cold, im desensitized
+18451 Gigi :  Josephina: What's the relationship with cygwin please?
+18465 Arlie :  if Q has bad credit, it will be hard to get a bank account
+18472 Arlie :  however, it can be done
+18485 Angla :  anyways, i've used up all my fast-forward on this mythtv. back later
+18489 Ronald *  left the room (quit: ).
+18494 Adele *  left the room (quit: Remote closed the connection).
+18494 Azzie :  Not a simple checking account, you may have to offer them to keep your debit card though.
+18498 Lai :  i still think a $15 or $20 debit cards would be a better idear
+18504 Delmar :  has anyone used pcb ?
+18509 Lai :  Angla: be well
+18523 Arlie :  Azzie, yes, even a simple checking account requires that you didnt screw up your last checking account, which is easy to do if you have no money
+18529 Lai :  or plain money orders
+18540 Alana *  left the room.
+18540 Lai :  or postal orders
+18548 Les *  entered the room.
+18551 Bethann *  entered the room.
+18553 Arlie :  Delmar, ##electronics
+18556 Lai :  what about this:
+18571 Angelika :  hey people, how to say that user:group
+18571 Alisa :  Kacy: could you change the topic to suggest that all able peoples donate to the Lai Relief Fund?
+18574 Lai :  i give you the mailing address of where to send them- to the manager of property
+18574 Josephina :  Gigi: no relationship, they do the same sort of thing, but are different in several ways. I recommend mingw+msys but have used cygwin and got no problem with it
+18577 Angelika :  that user is anybody???
+18583 Ricardo :  #offtopic :D
+18586 Angelika :  or that it dosent have ownership???
+18588 Lai :  Alisa: roflmao
+18595 Ima *  left the room (quit: Nick collision from services.).
+18600 Gigi :  Josephina: thanks
+18603 Lai :  that's very excellent
+18603 Lai :  lol
+18608 Ricardo :  Alisa: hey dude! It's that guy you talk to on AIM sometimes :D
+18611 Mirta :  QUIZNOS!!!!!!!!!!!!!!!!
+18612 Ricardo :  JMParkerII
+18614 Alisa :  Lai: I have $5 in change to my name. So I guess I've got to campaign :)
+18620 Lynda *  left the room (quit: Connection timed out).
+18624 Alisa :  Ricardo: JmParker2.0 :D
+18631 Lai :  Mirta: !!!
+18632 Hallie :  What's a good way to keep a svn repository that depends on another upstream svn repository?
+18634 Vashti *  left the room (quit: Read error: 145 (Connection timed out)).
+18641 Lashawna :  what are the chances a 16 year old sophomore who's been programming since 10 can a job with google?
+18644 Mirta :  what's up sir?
+18646 Lai :  Alisa: heh
+18660 Arlie :  Lai, get busy designing a website to accept hurricane relief donations and pay yourself a percentage as a salary ... hurricane season is starting again
+18664 Lai :  Mirta: evicted; need money to escape pennsylvania with all my stuff
+18665 Virgina *  left the room (quit: Connection timed out).
+18669 Ricardo :  Alisa: hehe, what's up? I'm just here trying to figure out how the hell I can try to send commands into a program listening on the parallel com port
+18675 Alisa :  Lashawna: as a 16 year old Junior also lusting for a job at google, I think you've got better chances than I, at very least.
+18681 Mirta :  Hey - dude - I like got a job interview tomorrow finally.
+18691 Lai :  cool
+18701 Josephina :  Ricardo: I thought com port was serial
+18707 Alisa :  Ricardo: nothing too important...just celebrating the return of Lai :`)
+18708 Lashawna :  Mirta, but how old r u
+18717 Mirta :  34
+18719 Lashawna :  Mirta, and do you have a degree?
+18721 Arlie :  sure, work at google, just dont take stock options in leiu of salary
+18724 Lai :  heh
+18726 Mirta :  2 years.
+18741 Azzie :  Lashawna: Im a 19 year old coder who has been coding sine at least 10 and am in the same position.
+18746 Arlie :  at $460 a share for a company that has yet to make $1 in profit ... its not a good deal
+18755 Lai :  heh
+18758 Ricardo :  Josephina: you know, I think you're right, but it doesn't matter for what I'm trying to do, but it is serial, I'm just retarded lol
+18768 Lai :  ok, so where are we on the relif?
+18771 Sara *  left the room (quit: Read error: 110 (Connection timed out)).
+18774 Azzie :  Lashawna: The key with that company is to do get a good degree and do something big in school.
+18776 Josephina :  Ricardo: hehe ok
+18778 Azzie :  from what i hear..
+18779 Lai :  should i post a mialing address to send it to?
+18786 Alisa :  !seen Kacy
+18795 Lai :  this would be a one shot thing tho cuz i cant rejoin later to remind
+18796 Nicki :  Lashawna: Here's a hint.  Don't go around telling people you've been programming since 10.  (yes, I know it's likely literally true.  But it shows immaturity to claim it the same way professional programmers cite their years of experience.))
+18799 Malcom *  left the room (quit: Remote closed the connection).
+18801 Josephina :  Ricardo: and linux doesn't call it a com port, it's called a serial tty or something
+18806 Mirta :  Lashawna - who are you and why does it matter so much? People who know me know that this is a step forward.
+18837 Lashawna :  I'm just tired of working for myself
+18839 Shayna *  entered the room.
+18842 Alisa :  Lai: yeah. Post it. I'll see if we can get Kacy to put it in the /topic :)))
+18843 Arlie :  Lashawna, no, screw that, if your good, let everyone know it, except your co-workers
+18845 Josephina :  Ricardo: and how to make a program think it's receiving data from it, would depend on how the program is receiving data from it
+18846 Ricardo :  Josephina: ah thanks for the heads up
+18847 Felicia :  Lai: sure . can't hurt .. or open a temp new channel and let everyone interested join .. then take it from there
+18861 Laraine *  entered the room.
+18865 Ricardo :  Josephina: yeah, it's using some library to do it, guess I need to figure out how that library works
+18866 Felicia :  Lai: open a channel called #Lai ;-)
+18866 Lashawna :  Arlie, my brother told me that one?
+18872 Josephina :  Ricardo: ah ok
+18874 Lai :  ok; but someone else is gonna have to remind others
+18889 Felicia :  Lai: oh .. whatever then
+18889 Azzie :  Someone make a quizrelief bot
+18894 Alice *  entered the room.
+18895 Arlie :  Lashawna, co-workers are evil ... they'll screw you up if your good enough to make them look bad .... they operate based on fear
+18899 Mirta :  hello Azzie
+18900 Ricardo :  I am half way done with a 4 year degree and working with a company designing software for night vision cameras, co-op programs rock
+18901 Mable *  entered the room.
+18908 Lai :  what whatever?
+18908 Lai :  huh?
+18909 Nicki :  Arlie: only at crappy places. :)
+18911 Azzie :  Ricardo: Hello there, how is it going?
+18919 Arlie :  Nicki, it happens everywhere
+18922 Felicia :  Lai: i figured to keep it a bit erm private
+18927 Lashawna :  Arlie, that's interesting
+18928 Nicki :  Arlie: cynic. :)
+18931 Arlie :  Nicki, at least, anywhere were there is a gap in skill levels
+18938 Arlie :  its human nature
+18939 Ricardo :  Azzie: pretty good, just at the office, about to leave
+18943 Ricardo :  how are you?
+18954 Lai :  Felicia: ok i'm bumming here; fizzle
+18966 Felicia :  Lai: if everyone needs to mail to that address on their own then maybe it';s beetter you spm it and it get's spammed ;-P
+18970 Azzie :  Ricardo: Well, end of semester work, what could be better?
+18973 Angelika *  left the room ("Konversation terminated!").
+18978 Nicki :  Arlie: well, I've never been "screwed up" by a junior programmer.  they come to me for help.
+18980 Josephina :  Ricardo: if it's just reading from /dev/ttyS0 or something you could somehow get it to just read from a named pipe instead
+18999 Arlie :  Nicki, no no no ... someone below you is not a co-worker, they are an underling
+19003 Lai :  Felicia:  ok then what?
+19006 Ricardo :  Azzie: I hate that crap... you in college?
+19007 Lashawna :  ok, so my chances with google are probably slim, does anyone know of a company in need of experienced html, css, jscript, perl, python, etc. programmers?
+19016 Nicki :  Arlie: the sr programmers come to me for help, also. :)
+19032 Lashawna :  Nicki, then you should get promoted
+19034 Ricardo :  Josephina: hmm yeah maybe you're right... I might just have to end up modifying the entire program
+19035 Arlie :  Nicki, yes, but them comming to you, and you making them look bad, are 2 different issues
+19041 Katherin *  entered the room.
+19043 Felicia :  Lai: post the info .. atleast it'll be logged soemwhere then .. i didn't know what/who's address you were going to throw out
+19044 Izetta *  left the room (quit: Nick collision from services.).
+19044 Tena *  entered the room.
+19045 Katherin *  left the room (quit: Excess Flood).
+19045 Ricardo :  just to read from a different input stream
+19055 Azzie :  Ricardo: Indeed, trying to decide if im going to keep putting up with this or just start coding for myself.
+19056 Tena :  hey, anyone know if theres any way i can play songs i bought on itunes in linux?
+19061 Izetta *  entered the room.
+19074 Azzie :  Tena: No, and thats what you get for buying from ITunes.
+19078 Ricardo :  finish college at least, how many more years you have?
+19087 Lai :  Felicia: the address to -- you know what, i think it's not such a good idear
+19094 Azzie :  Ricardo: 3 at least.
+19097 Ricardo :  Tena: you just need to get the m4a/mp4 plugin
+19098 Maegan *  left the room (quit: "I'm leaving.").
+19108 Felicia :  Lai: see.. ok .. think about it ..
+19111 Ricardo :  Azzie: you are a freshman this year and already tired of it?
+19114 Lai :  yea i am
+19117 Nicki :  Lashawna: I'm paid well.  I don't care about job titles.  and I enjoy troubleshooting for others. :)
+19124 Azzie :  Ricardo: I would rather be coding!
+19129 Dagny *  entered the room.
+19134 Felicia :  Lai: or PM one of us .. or whatever ..
+19135 Ricardo :  Azzie: there is a lot of coding to be done in college lol
+19137 Lai :  crap
+19139 Arlie :  Lai, i feel for you, but im not sending you any money
+19144 Lai :  k
+19161 Alisa :  Lashawna: look on jobs.com, also jobs.perl.com.
+19163 Ricardo :  Azzie: get on some open source projects like KDE or gaim or gcc or something
+19164 Felicia :  so what .. that's just one monkey Q
+19165 Azzie :  Ricardo: Either that, or transfer to a school where I can find a teacher who is as interested in independent coding projects as I am.
+19184 Felicia :  there's many more of us apes about
+19189 Dorthy :  the interesting CS classes don't start until your junior/senior year, especially if you're already familiar with the languages being taught and basic data structure concepts
+19194 Arlie :  Felicia, hey man, i was homeless and noone sent me any money
+19201 Horacio *  entered the room.
+19208 Ricardo :  Dorthy: true.. I am going into my third year, finally get to do AI and OS and compilers, etc
+19209 Azzie :  Ricardo: I'm trying, but the problem is that I have to spend far too much time on schoolwork, even though im paying 30k/year for it.
+19211 Lai :  Arlie: did you ask?
+19212 Cornelius *  left the room (quit: Remote closed the connection).
+19215 Arlie :  Lai, no
+19223 Lai :  ok then
+19232 Dagny :  How can I discover which library file(s) contain an exported function name? I'm having a problem with linking against libpci.a and gzopen, and thinking another library may have declared the names
+19232 Azzie :  classic
+19234 Arlie :  Lai, if you have a truck load of stuff, why dont you sell it
+19250 Ricardo :  Azzie: hehe but it's only 3 more years... that's really short when you think abou tit.. I'd say just bear through it and get your degree, it's going to make it a lot easier to find a job and you'll get paid more
+19251 Lai :  i dont have access to my stuff atm
+19254 Arlie :  Lai, then when your out of stuff, find a south bound train and jump on it
+19260 Alisa :  Azzie: hah, the CS professors at the local university are A.) A man with a degree in parsing, not teaching CS, and B.)A woman who is a MAJOR microserf.
+19260 Nicki :  Dagny: strings and grep? ;)
+19269 Lai :  Arlie: yea or bus
+19270 Arlie :  Lai, wheres all your stuff ?
+19282 Lai :  Arlie: in the apt i was evicted from
+19286 Velva *  entered the room.
+19289 Na *  entered the room.
+19290 Arlie :  Lai, go get it
+19290 Daphne *  left the room (quit: Connection timed out).
+19290 Dagny :  Is that it? With having ldconfig I thought there must be a location for the list of exported functions
+19307 Ricardo :  Lai: why'd you get evicted? I missed the first half of this conversation
+19316 Daphne *  entered the room.
+19323 Azzie :  Alisa: Luckilly at my school there are no microserfs :-).  We all have to do our coding with gcc.  The problem is most the profs just teach as a side job so they have their hands more than full.
+19329 Ricardo :  Josephina: lol I think it'd be much easier if I just modified the program....
+19334 Lai :  Ricardo: alledged non-payment of rent
+19336 Ricardo :  so I'm going to do taht
+19337 Cedrick *  left the room (quit: Read error: 110 (Connection timed out)).
+19341 Nicki :  Dagny: or grepping the source code or the documentation of the apis
+19347 Arlie :  Lai, you mean, payment of rent with junk bonds ?
+19350 Lai :  Arlie: i wont trespass
+19359 Virgina *  entered the room.
+19373 Velva :  hmm, I have to linuxes sharing the same /home ... with the same usernames ... but I dont want to share the same content ie. gtk themes ....
+19374 Laura *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+19377 Velva :  *two
+19383 Arlie :  Lai, dude ... i wish you all the best ... but i cant say i didnt see this comming for months
+19399 Harold *  entered the room.
+19399 Arlie :  Lai, the only thing anyone cares about is money ... its a sad, cold, harsh, reality
+19400 Lai :  thanks
+19402 Danyel *  left the room (quit: Remote closed the connection).
+19403 Alice *  left the room (quit: "Leaving").
+19409 Tena *  left the room ("Leaving").
+19417 Lai :  i know
+19418 Merna *  left the room (quit: "i love my live... it's a passion").
+19423 Alisa :  Lai: how much time do you have?
+19431 Ricardo :  alright guys time for me to drive home, bbl
+19438 Dagny :  Nicki hmmm, i'll see if grep helps, source-code isn't an option for this
+19445 Ricardo *  left the room.
+19446 Arlie :  Lai, and i commend you on the fact that your not like that, but because you live in a world constructed by people who are, you have to play by their rules at least enough to survive
+19452 Lai :  Felicia:
+19458 Felicia :  yo yo
+19472 Lai :  Alisa: seconds really, and i need to do one other thing too
+19477 Gene *  left the room (quit: Remote closed the connection).
+19494 Lai :  Felicia:  so what's the plan?
+19500 Felicia :  Lai: can you access the apt? or they want payment for entry?
+19506 Donella *  entered the room.
+19515 Lai :  latter
+19526 Nicki :  why do you say "alleged" non-payment? did you pay or didn't you? :)
+19528 Felicia :  Lai: PM me the address .. atleast one of us will have it
+19531 Margery *  left the room (quit: "Konversation terminated!").
+19535 Azzie :  Thats aweful, bust the door down.
+19544 Velva :  If i link the two homes folders ie. ff & gg to xx, then I can log in as xx, but how can I choose which link to follow?
+19545 Lai :  Nicki: i discharged the debt and sent a bond
+19561 Felicia :  Lai: i mean the address that you can trust us to mail money to
+19583 Arlie :  Felicia, western union
+19591 Arlie :  Felicia, he can get it anywhere with a password
+19595 Felicia :  in C/o ?
+19601 Lai :  Felicia: ok ignore that last
+19616 Felicia :  what? i didn;t get anything ..lol
+19632 Azzie :  How does this western union deal work?
+19650 Azzie :  From people with a DC's end?
+19654 Ricardo *  entered the room.
+19657 Ricardo *  left the room.
+19657 Arlie :  Azzie, you give them money, they record it for pickup by another party in their computer
+19668 Arlie :  Azzie, they pay it out to the other party
+19672 Azzie :  Aha.
+19676 Gail *  entered the room.
+19677 Arlie :  Azzie, and charge like $20 or something for the service
+19685 Lai :  join #Felicia
+19693 Felicia :  hehe .. figures
+19695 Arlie :  same way the nights templar did it ;)
+19702 Azzie :  lol
+19718 Lai :  anyway, join #Felicia for my address to send stuff to
+19755 Jamey *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+19756 Na *  left the room (quit: ).
+19767 Melissia *  left the room.
+19783 Madison :  Yo0000000000000
+19817 Flor *  entered the room.
+19826 Chauncey :  what's the native gimp picture saving format again ? .tcf ?
+19826 Arlie :  Madison, you need to hire Lai to help you with your hosting/forex
+19836 Flor *  left the room.
+19840 Chauncey :  hi Lai :-)
+19843 Alisa :  Lai: come on, join before you have to go :)
+19850 Madison :  almost got the hosting done
+19851 Chauncey :  long time no see ... where have you been ?
+19859 Madison :  got about 10 customers
+19859 Alanna *  left the room (quit: ).
+19864 Madison :  but i keep adding more stufff
+19869 Arlie :  Madison, like a business work is ever done ;)
+19883 Madison :  i got this really cool web interface really cool
+19901 Lai :  Alisa: where?
+19901 Veta *  left the room (quit: Broken pipe).
+19935 Felicia :  Lai: can't you join that channel? or are you dense? or non-registered?
+19935 Santo :  Chauncey: xcf
+19940 Alisa :  Lai: #Felicia.
+19942 Meaghan *  entered the room.
+19968 Chauncey :  Santo: :-)
+19976 Felicia :  Come ON!!! .. i need to sleep already ;-)
+19977 Santo :  Chauncey: :)
+19981 Nilsa *  left the room (quit: "A cow. A trampoline. Together, they fight crime.").
+20003 Madison :  Arlie: i got a new girl friend :P
+20008 Jonnie *  entered the room.
+20016 Veta *  entered the room.
+20016 Arlie :  congratulations
+20017 Santo :  i haven't eaten anything today
+20020 Santo :  i hate being poor :(
+20021 Na *  entered the room.
+20030 Madison :  Santo: step ya game up
+20035 Na :  help espa?ol
+20045 Priscila :  Santo: go eat some babies like mike tyson.
+20048 Madison :  Na: ?
+20051 Alisa :  Everyone, join #Felicia if you want to help Lai.
+20052 Santo :  Madison: werd, doing my portfolio site so i can freelance little $10 thingies here and there until I move to Pittsburgh and get a job
+20069 Madison :  Santo: no no
+20073 Santo :  no?
+20076 Madison :  where you located ?
+20080 Santo :  columbus
+20087 Madison :  Georgia ?
+20090 Santo :  ohio
+20092 Vern *  entered the room.
+20101 Jesse *  left the room (quit: Read error: 110 (Connection timed out)).
+20104 Meaghan *  left the room (quit: Client Quit).
+20107 Margarette *  left the room (quit: ).
+20124 Madison :  Santo: no jobs ?
+20125 Hector *  entered the room.
+20143 Santo :  Madison: nope.  it's all college-student jobs that pay $7hr.  good ol OSU!
+20144 Na :  ayuda en espa?ol
+20146 Madison :  Arlie: im about to take her for a trip down to brazil
+20150 Na *  left the room (quit: ).
+20165 Arlie :  Madison, you do that ;)
+20172 Madison :  you hate trips dont you ? lol
+20189 Dagny :  ok, got it. Use the "nm" command. To search for a function in a bunch of libraries e.g: nm -o /lib/* /usr/lib/* /usr/local/lib/* 2>/dev/null | grep 'gzopen'
+20202 Arlie :  for the last few weeks you've been crying about money ... your solution ...  a girlfriend and trips to brazil
+20202 Madison :  Santo: well i would only do freelance for jobs 300+
+20211 Madison :  well
+20216 Madison :  jus not the money i want
+20223 Lai :  ok; i'm done folks
+20225 Lai :  good to see y'all
+20235 Angla :  later dude
+20238 Madison :  Arlie: it'll come though
+20239 Arlie :  Lai, good luck and hang in there
+20245 Azzie :  Felicia: lol
+20246 Angla :  how's that for timing ? !!!
+20250 Lashawna :  do you have to be out of highschool to do internship? http://www.google.com/support/jobs/bin/static.py?page=students.html&sid=intern
+20262 Lashawna :  sry I'm naive on this subject
+20263 Felicia :  wtf is QSL?
+20264 Madison :  i got an extra 800.00 today and will have 400.00 sunday for this hosting thing fron last month
+20279 Madison :  Santo: why would you goto PA ?
+20283 Arlie :  Madison, and you've spent it all already
+20284 Azzie :  Lashawna: I suggest partaking in some SOC next year.
+20291 Madison :  Arlie: no not a dime
+20305 Santo :  Madison: because if i have to live in another flat, boring, windy city (columbus) i'll go crazy.  plus i have friends, gf that live there.
+20308 Arlie :  Madison, trips to brazil and gf's are free i suppose ;)
+20309 Lashawna :  Azzie, I'm naive on that too, what exactly is summer of code?
+20314 Mack *  entered the room.
+20316 Gale :  Lai: take care, and good luck
+20320 Azzie :  Lashawna: code.google.com/soc
+20328 Santo :  plus, hilly PGH = AWESOME roads for sportbikes
+20329 Madison :  Santo: PA in my opinion is bad
+20337 Madison :  Santo: go south
+20338 Santo :  Madison: what do you mean?
+20345 Madison :  follow the palm trees
+20349 Santo :  Madison: I don't have the funds to relocate south.
+20355 Lai :  Gale: you too bro
+20356 Arlie :  Madison, nah, PA is great, they have an entire town thats on fire ... where else can you see that ?
+20361 Madison :  lol
+20363 Azzie :  PA is beautiful if youer in the right places.
+20375 Maya *  left the room (quit: Connection timed out).
+20375 Madison :  anyways south is much more beautiful
+20377 Santo :  You guys knocking PA... it is SO far above Columbus and Cleveland (where I've lived)....
+20378 Azzie :  Arlie: My mom is from about 5 mins north of that town.
+20383 Madison :  charleston south carolina
+20384 Billi *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+20388 Madison :  tampa
+20392 Arlie :  Azzie, she's gonna get lung cancer
+20398 Gia *  left the room.
+20399 Madison :  new orleans even is good
+20407 Alisa :  Arlie: there are some nice coal fires in China too....maybe there.
+20411 Azzie :  Arlie: lol, I beleive they put out the fire a few years ago though.
+20411 Arlie :  Azzie, theres only like 8 people that live in the town anymore, 1500 people moved
+20416 Arlie :  Azzie, nope
+20421 Azzie :  Arlie: The mine payed to relocate them.
+20424 Lai :  i'm gone
+20428 Santo :  bye Lai
+20430 Lai :  be well and ttyl
+20434 Felicia :  bye Lai
+20436 Margarette *  entered the room.
+20436 Arlie :  Azzie, its supposed to burn for 400 years or something crazy
+20442 Santo :  be well and terminal?
+20444 Madison :  Santo: i jus hate cold weather thats all and PA is cold
+20445 Lai :  ttyl
+20445 Lai :  byebye
+20446 Felicia :  Lai: peace be with ouu
+20447 Marcel :  I'm having a hell of a time trying to apply a couple diff patches to a file. I tried 'patch origfile patchfile' as well as 'patch < patchfile' and entering the name of the original file ... gah
+20448 Azzie :  Arlie: Wow, maybe we just missed it when we were driving around
+20457 Alisa :  Azzie: yeah, I think it's still going. The Centralia fire, right?
+20459 Azzie :  Arlie: I went looking for it, you used to see smoke coming out of the ground.
+20461 Alisa :  Lai: \\//
+20462 Lai :  Felicia: ty
+20463 Elenora *  entered the room.
+20466 Alisa :  ASCII peace sign :)
+20467 Azzie :  Alisa: indeed.
+20472 Alisa :  ASCII peace be with you.
+20472 Arlie :  Azzie, it got started supposedly when people through their trash into the abandoned mine shafts
+20472 Felicia :  heh
+20473 Sunni *  left the room (quit: "Ex-Chat").
+20474 Lai :  Alisa: ty
+20477 Arlie :  er..threw
+20477 Santo :  Madison: Cleveland is MUCH colder.  Do you know what Lake-Effect snow is?  :(.  During snow storms (which are very often in the winter) you get POUNDED with FEET of snow because of Lake Erie.
+20488 Lai :  tell AfterDeath i said hey
+20489 Lai :  AfterDeath: hey
+20494 Madison :  Santo: move south as i said ;)
+20498 Lai *  left the room.
+20499 Felicia :  Alisa: \\nn// ;-)
+20502 Darline *  entered the room.
+20506 Bennie *  left the room.
+20510 Alisa :  Santo: I'm in buffalo, I'm used to it :)
+20521 Arlie :  cgi irc ... thats low rent ;)
+20521 Elenora :  Where can I get a free SIP account? I have been strugling with ekiga.net for an hour or so.
+20535 Felicia :  Arlie: so he's moving in with you down there?
+20536 Santo :  Madison: I have a GF in PGH that I can stay with for a few days while I get some shitty $12 tech support job, then I can get my own place, in a month I'll have my CCNA (took 2 year tech program in high school), and then I can be a router jockey.  YAY!
+20540 Madison :  south carolina down is hot
+20543 Felicia :  lol
+20543 Santo :  Alisa: haha!  OUCH.
+20543 Arlie :  Felicia, pfff ... no way ;)
+20548 Felicia :  :-p
+20583 Arlie :  Felicia, ive had enough drama for 6 lifetimes ... i dont want his
+20586 Madison :  Arlie: brazil is cheap
+20594 Azzie :  lol
+20602 Santo :  I hate living on the OSU campus so much.  A ghetto-crack-level-apartment costs $400.  :(
+20604 Arlinda *  left the room ("Coming Back").
+20604 Arlinda *  entered the room.
+20606 Azzie :  Its rediculous ezpensive here.
+20615 Azzie :  Santo: Okla?
+20615 Arlie :  Madison, im sure ... $200 an acre for rain forest with timber
+20618 Rachel :  null, that sounds cheap.
+20619 Felicia :  Arlie: heh .. not even from a distance .. eh? ;-)
+20622 Santo :  Azzie: Ohio State
+20626 Madison :  Santo: brazil -> 400.00 usd == ocean front apartment in rio de janeiro
+20627 Mellisa :  awww
+20628 Arlie :  Felicia, not even from the moon
+20630 Mellisa :  i missed quiznos :(
+20634 Felicia :  ouch
+20637 Santo :  Madison: I grew up in Romania until I was 10.
+20642 Felicia :  Mellisa: wanna donate?
+20643 Madison :  LMAO
+20653 Jonnie *  left the room (quit: Remote closed the connection).
+20660 Madison :  eastern europe the fall of the cuacasian empire
+20665 Madison :  cau
+20669 Azzie :  HOLY HELL
+20671 Santo :  haha yes
+20672 Madison :  i was in romania
+20674 Santo :  Corruption everywhere.
+20684 Arlie :  Felicia, see, i like quiznos too, but i have issues with sending money to an adult who thought he could pay rent with self issued junk bonds, and is upset that the judge didnt allow it to happen
+20684 Madison :  holy shit that was a bad place
+20691 Nichole *  entered the room.
+20704 Madison :  my father used to go there for business
+20704 Kandra :  Arlie: is Sandwichman asking you for cash?
+20713 Azzie :  Yea, but you learn a lesson i guess.
+20716 Madison :  croatia aint much better
+20717 Santo :  And my parents are fucking crazy.  Totally fucked with my head... couldn't stand life so I dropped out of school even though I had a full ride.  :(
+20720 Tonia *  entered the room.
+20735 Tonia *  left the room.
+20738 Arlie :  Felicia, his financial situation was deteriorating for months and months, and he sat here on irc pretending it wasnt happening, or he could jew the system, or whatever
+20738 Kandra :  Santo: you're at OSU?
+20741 Madison :  Santo: white  or indian ?
+20744 Malvina *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+20746 Santo :  Kandra: white
+20753 Madison :  or gipsy lol
+20756 Santo :  haha
+20760 Santo :  close
+20761 Madison :  man that was an experince
+20779 Gail *  left the room (quit: ).
+20804 Kandra :  Santo: maybe you meant to say that to Madison?
+20814 Arlie :  Felicia, i dont know what he thought ... but he's learning a lesson right now ... that much is for certain ... and he's gonna have to get a job and work like all the rest of us
+20814 Madison :  he did
+20814 Santo :  Taking 22 credit-hours of Pre-Med classes and working 20 hours a week washing dishes for minimal wage only to go home on the weekends and have my parents tear my head off for 52-hours non-stop... that really sucked.
+20817 Darline *  left the room (quit: "Leaving").
+20837 Madison :  Santo: you still speak romanian?
+20839 Monty *  left the room (quit: "Leaving").
+20839 Santo :  yes
+20840 Britta *  left the room (quit: ).
+20844 Madison :  fluent ?
+20846 Santo :  yes
+20852 Madison :  ahh
+20873 Madison :  i need to learn another language
+20878 Darline *  entered the room.
+20879 Arlie :  Felicia, he doesnt need money, he needs a "financial stability plan" that he's willing to follow
+20886 Horacio *  is now known as Horacio
+20896 Madison :  i speak english spanish and portuguese but spanish and portuguese are kinda close so yea
+20905 Santo :  yay for romance languages
+20909 Madison :  lol
+20911 Priscila :  Who needs financial stability, just buy drink and drugs and women.
+20912 Madison :  you like ?
+20913 Felicia :  i can't disagree with what you're saying .. that's all io will say about that right now .. especially since i'm tired
+20928 Santo :  they're easy for me to pick up
+20931 Madison :  romance languages are fine ..........english kills it for flexibility though
+20943 Santo :  i think when i was 7 i spoke half-assed-fluent italian because i watched italian-dubbed anime all day long
+20950 Madison :  english is still a latin language just not a romance language
+20956 Arlie :  Felicia, if would be extremely generous of you to help him tho ... but having been homeless, and broke, and without property myself, i worked my way out of it, without asking people for money
+20963 Arlie :  Felicia, er ... if
+20964 Tatiana *  entered the room.
+20965 Arlie :  it
+20969 Tyra *  left the room (quit: Read error: 110 (Connection timed out)).
+20978 Nicki :  too bad the bible doesn't have a financial stability plan. :)
+20980 Santo :  I'm getting pretty close to being homeless myself.
+20985 Felicia :  Arlie: i've been very close to that situation myself
+20985 Arlie :  Nicki, it does
+20985 Madison :  lol
+20993 Danyel *  entered the room.
+20993 Santo :  I have $360 in the bank, rent is $360 (due in a few days), credit payment is about $50... :o
+20995 Madison :  Santo: atleast your not in romania
+20998 Arlie :  Nicki, thats why jewish people have all the money ;)
+21009 Doretta :  I thought it was because they were cheap
+21015 Arlie :  Doretta, same thing ;)
+21018 Nicki :  old testament > new testament? :)
+21019 Doretta :  That's what seinfield tells me, atleast
+21033 Arlie :  im pretty cheap myself
+21041 Tatiana :  should i boot from a licecd if i want  use rsync to backup my linux partition onto an external hard drive?  is it bad to backup a partition that is currently booted?
+21043 Madison :  Santo: do some freelance
+21045 Kandra :  too bad not everyone accepts the God card as payment.
+21050 Tatiana :  *want to use
+21052 Santo :  Madison: that's why i'm getting my portfolio site up :)
+21058 Madison :  you dont need that
+21065 Santo :  i do joomla freelance mostly
+21068 Santo :  most people want to see some examples
+21072 Madison :  i never did any of that portfoilio resume none of that
+21073 Santo :  of previous work
+21078 Arlie :  skate or die ... thats the deal ... skate or die
+21085 Madison :  yor just not talking to them right
+21113 Jesse :  Tatiana: doing it from a livecd is good IMHO, because the partition won't be written to while you back it up
+21115 Nicki :  I learned my money handling skills from playing MUDs, I save it up, then I spend it after I have it. :)
+21122 Madison :  Santo: i could get 5/10 jobs with no port or resume
+21122 Santo :  well i've been trying those rentacoder sites and pretty much every posting says "show me 3 examples blah blah blah"
+21123 Tatiana :  ok thanks Horacio
+21132 Madison :  Santo: RAC is bad
+21143 Santo :  Madison: i think it was getafreelancer
+21148 Lashawna *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+21158 Charles *  left the room (quit: "( www.nnscript.de :: NoNameScript 4.02 :: www.XLhost.de )").
+21159 Arlie :  Santo, the most important thing in getting work is that people like you ... tell some jokes, and charge them $50,000 for it
+21174 Madison :  exactly
+21176 Madison :  no jokee
+21180 Santo :  :)
+21183 Santo :  it helps that im hot
+21185 Santo :  ^_^
+21192 Madison :  you girl or guy ?
+21199 Santo :  guy
+21201 Priscila :  LOL
+21206 Priscila :  A girl, on the internet. haha.
+21208 Sonya *  entered the room.
+21220 Santo :  my gf is me, but with a vagina.  and she's hot too.
+21229 Santo :  except i haven't switched her over to linux yet.
+21246 Bennie *  entered the room.
+21247 Melda :  mehgirl: erinstalent.com
+21260 Arlie :  Santo, The Narcisists ?
+21263 Bruno :  .oO(apt-get install vagina)
+21266 Madison :  Santo: how long you been in usa ?
+21269 Arlie :  Santo, is that what the mailbox says ?
+21273 Winter *  entered the room.
+21277 Felicia :  Santo: no breasts?
+21280 Jesse :  Arlie: heh
+21284 Melda :  _Arlen: can't compile: not enough free space
+21285 Jesse :  Felicia: moobs
+21287 Ruthe :  and facial hair
+21288 Santo :  Madison: 10 years
+21293 Madison :  Santo: oooooo
+21295 Santo :  Felicia: she has big boobies!
+21298 Madison :  i thought you just came over
+21307 Santo :  Arlie: bwahaha
+21307 Felicia :  lol @ "my gf is me with a vagina"
+21309 Glennis *  left the room (quit: "Ex-Chat").
+21316 Santo :  Madison: i speak perfect irc english
+21316 Dorothea *  left the room (quit: Connection timed out).
+21320 Sonya *  left the room.
+21323 Madison :  Santo: speaking ?
+21324 Felicia :  she shaves daily too ? lol
+21335 Santo :  i haven't shaved in like 2 days
+21338 Santo :  i'm getting scruffy
+21344 Santo :  fuck why am i not being productive?
+21352 Felicia :  is her name RMS by any chance?
+21355 Florrie *  entered the room.
+21358 Santo :  no

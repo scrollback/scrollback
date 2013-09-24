@@ -1,0 +1,800 @@
+be917b50-c773-4713-ac28-00803aac7a52 15381 linux-test alanna what should I choose between slackware 11.0 and redhat 5? I'm looking for a great desktop envoiernment, etc
+72cbd491-ac69-4c9e-b086-be218dbbe9db 15406 linux-test chauncey if you're not a big business like IBM, you can instead focus on offering your customers ...
+97f309cb-046f-4fcc-bdfc-ce16377458e2 15412 linux-test chauncey personal sales ?
+a11227fa-a96f-4431-ae2d-bbe953d4ab99 15418 linux-test chauncey person-to-person sales ?
+d3503886-51f2-4510-a547-32b9670c05b7 15422 linux-test gale sounds like a job for a loop
+dfedf92e-b362-4cba-a116-865a1493252b 15423 linux-test chauncey the human touch ?
+823e8a3f-7df4-4000-a73f-0e10b0c2c58e 15455 linux-test paulita Chauncey what do you mean?
+49555595-6f56-46ed-8774-c987b7d4f9ca 15471 linux-test nestor ok
+d983bd26-749d-4b7f-b83b-185af01e5a2c 15474 linux-test nestor i got it solved
+1d31403e-cfdd-4130-8a71-1468bb41f603 15479 linux-test nestor thanks for the help guys
+ba03f209-4b55-44c1-a39e-facef70835e5 15503 linux-test nestor (if you ask how, i made a mini bash script)
+799aa1cb-2477-4f63-9f2b-0457cf39745b 15508 linux-test nestor goodbye.
+dd7413b4-c11f-4e82-b077-4ce83e7ae62d 15542 linux-test chauncey Paulita: I'm looking for the end to that sentence ...
+23c7ef8e-3877-4efa-9029-29fb6e5ab299 15552 linux-test paulita :)
+f520ac93-81ca-4ab0-89c1-ec8489318411 15579 linux-test paulita you mentioned that if your a big musiness like IBM you cant focus on offering your customers what?
+6cb93e4b-1aff-4c18-86d0-e6f1ae4853bd 15601 linux-test chauncey Paulita: no you CAN focus ...
+a678ca01-7f7a-4626-8242-b8ef9c87b5ef 15678 linux-test paulita we do focus at IBM Chauncey
+2e744002-e8e1-4577-971c-1553f5f2f159 15713 linux-test chauncey :-)
+86fa03ca-3cd9-4af5-b31f-3f3d0d08afad 15724 linux-test paulita amerika has changed is what the problem is.
+4c6e60b4-c601-4d6e-97e3-0858b1d399cb 15734 linux-test paulita i blame it on republican nazis :)
+2bb4de27-90f1-42ad-a1ed-b07aacdd54ab 15740 linux-test paulita mostly texans
+945b3052-908b-4c60-98f0-df20fe1710e4 15743 linux-test paulita anyway
+9b28e246-aad4-4b92-a6c2-7cedd04319e5 15882 linux-test january News from kernel.org: 2.6.21.2: stable <http://www.kernel.org/kdist/fragments/stable.html>
+654ff976-61f1-453a-be11-07d26bdd0973 15888 linux-test laura How do I check which ports are bindable?
+a1d1ebde-c1b6-4acd-bdba-ece401f8db06 15912 linux-test margene what's new in the kernel?
+375251c9-1085-4708-97cb-86292a536ef7 15946 linux-test azzie Is that like the new whats up saying for nerds?
+3b98a02d-75f7-4917-8174-e4756e9281a5 15951 linux-test azzie That would be awesome.
+ef487993-7d18-444c-b260-20f6c3376ec8 15964 linux-test margene sure run with it
+05d73219-aa17-4f44-a64c-3477aa763fe4 15981 linux-test margene though I prefer the term geeks
+60daabe1-b304-4b9f-9ec9-eae7a9d57d6a 16009 linux-test azzie Well, then.
+c536919c-a131-4b37-8e6f-c2949fe85be9 16022 linux-test sara is there an easy way to extract files from a patch, without having the thing it patches against, (there are there entirely) ?
+fd93192f-7d0c-410f-af93-26d2c4560747 16161 linux-test carly Sara: no
+5ba0c8c9-b486-4fcf-ad4d-86364888ed91 16177 linux-test carly Sara: patches are diff deltas
+58864446-1c96-4946-a720-1006aa5d8992 16200 linux-test carly in the usual form atleast
+5bfde332-636b-41bd-b84c-49464904a863 16238 linux-test sara Carly, duh, but this one is basically just adding entire files
+bbf3cf74-2bbc-4b39-bd2c-36a5cbdaccfe 16262 linux-test sara don't feel like scripting all the + away, and then splitting it into files manually
+fb7f7b1b-b704-4bd2-90f9-8ac4273bff17 16264 linux-test carly hmm then just apply it, and you have the files
+f9a6c9a3-a6c2-463e-bc23-71661b215043 16286 linux-test rea how can i check if is blocked? i mean it has a service running
+db13cb5e-412e-4a1b-b33d-eee038a04770 16287 linux-test rea ?
+cb8dbee7-d105-4638-9e5b-7bb16e7b776f 16311 linux-test alice has anyone in here set up tor w/ gpg ?
+aa0e28ea-2516-4b71-977d-7e8ef6f3e905 16312 linux-test alice for irc?
+43e6d5ca-188c-46c4-9ffb-aa48cef1758b 16314 linux-test carly he Lai you old preacherman
+73bbe17b-6f93-48f1-95e0-276779ca82ed 16324 linux-test rea *** i mean ports
+866a5af6-71a6-40d0-a5ce-73414d8613df 16326 linux-test lai 00!!!
+1433a963-cbe3-44c3-9fbb-5400dd5daa21 16341 linux-test lai b00!
+a16aefe8-0203-41a0-874e-e978f731751c 16346 linux-test lai oopsie forgoe the B
+ce04717f-1746-4f46-a62c-c759be593071 16351 linux-test lai Carly: hihi
+1e8b47c9-395c-4da6-9631-c8b58f90013d 16365 linux-test arlie damn ... people really do come back from the dead
+aaf627ec-4cfa-417e-bc07-74654aab492f 16373 linux-test lai headshit!!! :)
+e48158a0-d8f5-4dc5-a6e5-974fea8a4f70 16377 linux-test lai where ya bin?
+9d0f3e8c-3759-4fa7-a4a6-cae242f05ea8 16380 linux-test lai lol
+2c108f08-f5b9-40f3-a369-8321a68608c6 16387 linux-test arlie right here
+5d467534-f79e-48cd-8cd5-dacc57620892 16391 linux-test lai i'm usin shack's box
+40e39b6a-211c-4c23-a763-11f4d457c083 16394 linux-test lai cool
+a48dc43e-971a-44f0-980d-d7b7fd59764e 16416 linux-test arlie do you have to keep pretending your gonna buy a pc from the salesman while you talk to us ?
+f1c28bdb-19ff-4d2b-8575-e6b788a7c84a 16423 linux-test lai i might be in fla. to hunt you the like tthe primate you are
+b3eae8ab-0dbd-488b-84ae-3550375c01a5 16441 linux-test lai Arlie: Laura lol nah, he's a cool teengeek :)
+af6d0419-b7f1-4bb4-98a3-8878bc081a78 16445 linux-test azzie Lai: ! long time no see!
+7e21cdad-b4c7-4e39-82c5-54362f255f5f 16450 linux-test lai greg!!!
+88b876d5-9386-4d09-b0fd-b8781d3a4380 16460 linux-test lai isp cut me off with a vengence
+cb1e0325-bee6-40af-95d9-61a1438476ab 16461 linux-test gale hey Lai
+bc3735ca-bc03-4a72-a85a-6e3de7b5c2b5 16468 linux-test azzie Lai: How are you doing there?
+9e5f13a0-d7c5-4466-9764-f649d6ee523f 16474 linux-test carly primate!? is that a submission to evolution i hear there?
+b407e110-14f3-4069-9abd-4712050fdc97 16484 linux-test arlie Lai, well, not that im one of the people that misses you or anything, but at least once a day someone is in here typing !seen Lai
+389815c8-e7a8-4d5a-94b7-cc174eeb3717 16498 linux-test felicia Lai++
+b3574c04-e37c-46c2-a740-d314ba5cafe6 16500 linux-test lai oops; dont hit that key
+2afaad6b-b96f-460c-94ca-10b1688b7e40 16505 linux-test felicia Yo Yo MA!!!
+0d7b2b63-6108-4616-a0cf-a96c403cce8a 16507 linux-test gale hey Lai, long time no see
+21849a42-81e9-4fce-83d9-b04f59c564de 16519 linux-test arlie Lai, so call the McDonalds manager up, get them to fast track your application, and get busy flipping burgets so you can get an isp again
+ce68109e-fe7e-41a1-bbb2-399f29ce0d83 16521 linux-test lai Azzie: how ya bin?
+f0741691-d8b7-4888-8dda-e5c9d6444166 16523 linux-test azzie Lai: How are you doing there?
+ba9952f0-cf00-4ae0-8c8d-052d8d065244 16544 linux-test azzie Very well, I seem to be trying to show Arlie how its done and am coding a webserver.
+1b151156-338f-4e68-b318-d6c32163b0bd 16548 linux-test lai Arlie: good to know, thanks much
+e6adec40-7e3a-4dc7-b234-246715be342b 16548 linux-test lai Felicia: !!!
+82e046a1-0eb3-4546-bcc9-1e9388faed2a 16555 linux-test arlie Azzie, keep trying ;)
+58ac66a9-f10e-4b70-9c1b-3ab668df92b2 16564 linux-test azzie epoll ftw!
+b7e01ce4-d10d-4544-b952-d6f1e007b14d 16567 linux-test lai Azzie: not well at all, many probs
+4b138fd5-d8e9-4ec7-be1d-023a7c0364c0 16575 linux-test lai no to McD :)
+b018ae65-4f2f-458c-b883-4efc8cbacb40 16576 linux-test arlie you found epoll ... congrats
+402d7f20-e10b-4ec0-9800-943486de1bd0 16580 linux-test felicia Lai: got a main hookup going yet?
+bf0e60e6-5396-4bc0-a428-98c829060410 16585 linux-test tammi hi, i am trying to fo an fsck on a file system that i just unmounted but keep getting "Device or resource busy while trying to open /dev/md5"
+510a6b41-0c8c-47f9-812c-606992d3780b 16585 linux-test lai nop
+479c7e37-d6d4-49f8-ae87-b6c03ec666e0 16594 linux-test felicia bah .. when?
+f25c6e17-e059-4421-b274-8a08eb76b37c 16598 linux-test lai Gale: !!!
+6737b68f-4d41-4d52-8d6e-c950a8a7a004 16599 linux-test arlie Azzie, i wont ruin your day by telling you thats not the fastest method
+b6715564-891a-46c3-a5b0-51003d72c875 16608 linux-test lai Felicia: i need to escape the state
+8e713f98-c550-4d9f-ac3c-6a218d408a73 16614 linux-test lai first
+4a192062-fa7d-4eb7-beaf-2bfeaa05a135 16618 linux-test gale Lai!!!
+b7120c42-967f-466d-90e0-620b18377e23 16621 linux-test arlie Azzie, because its good enough ;)
+8b0f15e8-d791-4f73-b6f6-930968b6b171 16626 linux-test felicia Flee patrick henry .. run ..lol
+e8ae7d62-095b-42cc-b9ca-47d0c328ae19 16635 linux-test lai i do miss you folks, even the primate
+218e34aa-b2df-4aab-a785-f2d3603213de 16648 linux-test felicia heh
+2e1e60e9-7054-4ee7-bb1f-865b3e4539c4 16662 linux-test felicia we're all primates ..
+1d6bd94e-9a2b-47fb-a33d-9a322dd9607d 16665 linux-test gale Lai: primate keeps it interesting, especially when suse fanboys show up
+6d97a06f-5b3b-4db7-ac6c-dc2a22e06cc5 16676 linux-test felicia some just have more headcheese in them .. lol
+a46bc145-4c1f-4b29-be01-f50f0c9863e5 16677 linux-test arlie Lai, you've inspired me to have a bowel movement ... bbiam
+fb7aa3ac-ea20-411d-87ec-6c5ba6b881a4 16682 linux-test azzie Arlie: Good enough doesnt cut it!  Is the 'faster' method a big change in design? Could I implement later without wanting to kill myself?
+55701807-f01d-458b-9f85-15b15967e35b 16682 linux-test lai not me
+28766504-b72d-4b3b-b9f4-af98f7c39491 16682 linux-test lai heh yea :)
+f3d0a959-5f2c-45b1-9686-a14362bcda18 16687 linux-test azzie lol
+1a6d0896-7ab8-4485-aecd-d2b911e652b3 16688 linux-test lai lol
+86f57dff-368f-4cd7-ac45-f643ed64c975 16696 linux-test lai TMI TMI TMI
+7ca8adbe-02c3-4aab-b9fc-0b595cdb332c 16706 linux-test arlie Azzie, yeah, you could add it later
+9442c44e-a5b5-4fa5-b069-821c94fba124 16709 linux-test lai dont use ridged leaves
+6137ce3c-d96e-4f78-ace7-f1e84e6fcac5 16711 linux-test gale I thought monkeys just crapped on the spot
+ffa48b54-e847-4b01-bd3b-df75cdabbaf3 16718 linux-test felicia are you at Sahque Du Radio Lai ?>
+71af09e1-3c3d-4d8a-8f5c-acd260c31339 16720 linux-test azzie Although he does seem to get away with a whole lot more without someone here to keep him in check.
+8c75e300-cd3f-4bc4-b78c-9af3af66a08d 16722 linux-test gale and then fling it around
+ab4c6d5c-d7e9-4d70-987e-09289defa1ef 16723 linux-test rea for sending/receiving mail what should i use? postfix/courier?
+66965e32-4b6a-4b39-9c78-e6c13304399c 16723 linux-test felicia er shaque
+d64df5f8-43ec-4180-ba45-9420f2b6f638 16725 linux-test lai crap and flow
+3bdadcf0-88bc-4bb1-931e-87f8d2dc1c8d 16737 linux-test lang email is cra
+f5015b0f-eecd-4a81-96b5-150b6a2afb3b 16739 linux-test lai Felicia: buh... who?
+75761ac4-0340-43d4-9479-8ce84737fb62 16739 linux-test lang crap
+e7bb9b89-d09c-423f-a2a0-4faf8882964f 16743 linux-test lang use irc chat
+2ec9882f-0e3d-4700-94a3-8c4a8ed90970 16745 linux-test lang :)
+016f4928-7e24-4c2f-9ea9-afcc1e141852 16748 linux-test lang create your own room
+12e7ebaf-1180-4f1b-9d92-6afc48fae9d0 16759 linux-test felicia Radio Shack you dumb cuban ..lol :-P
+944e3e64-aef3-461e-99c9-d3c2821c5baf 16767 linux-test lai lolol
+5e688a6a-f661-4e36-b5eb-f6e0c0f35d65 16779 linux-test lai i am Cuban too :)
+74065920-eeed-4cb7-b8e7-187c68a5d81a 16781 linux-test ronald is there a way with tcpdump to specify a range of ports, something like "tcpdump src host 1.2.3.4 tcp port 1234:4321" to capture anything on ports 1234 thru 4321 ??
+6a80143e-c4c9-40a3-ab7c-f3b16fe90ce8 16783 linux-test felicia it's ggod to hear form you though man
+83bdb35b-c544-4df0-83c8-819231403321 16784 linux-test lai half
+6c9cc8f5-f52a-4593-b914-7f47e35642ef 16785 linux-test angla Lai !!
+bc00d386-e138-412b-b1c2-03c457022297 16794 linux-test lai Felicia: thanks much :)
+746d85cd-9e51-47b3-a759-89c27bc1b8b0 16797 linux-test lai Angla: !!!
+dd24e9ae-1606-4bcc-958c-8b7d61166284 16854 linux-test renate w00t, Jesus Camp!
+7f018fef-9787-4b6b-8113-d8fec5e4edbe 16855 linux-test felicia i'm picturing you alongside a parking meter, popping in quarters for you IRC time Lai ..lol
+78372f43-e317-4541-9af6-2be36a06908b 16876 linux-test angla i'm watching a film and the cop actually said "captain, i just need 48 hours to crack this case wide open" and the hard-nosed captain says "i'll give you 24 hours. not a minute over. screw this up and it's your ass, detective" classic
+c3649091-555e-4a39-a086-3b2df025ab48 16882 linux-test gale Lai: time to go wardriving :)
+edd91197-dde8-458e-aa56-d1cc0c4ceb1d 16892 linux-test lai heh, N000000000000000000
+223e8cff-6c41-41c5-ab85-e6b6fe6139b2 16900 linux-test rachel QUIZZER!
+5526f44c-4e12-4103-9aa7-a82a616c1d7a 16912 linux-test felicia bronze: ^^^^^^ Lai
+570ab807-0161-4a60-92eb-51a00bd08a3d 16917 linux-test lai hihi
+9e993c98-9770-4aa0-9f7b-70860afc469e 16919 linux-test rachel hi
+daf628f3-6790-4256-aa11-714c284955e0 16925 linux-test rachel wow - more than 2 weeks
+e57a4d2e-3d8f-4445-89c3-4cc58a4b0fd1 16925 linux-test gale wireless has brought about the free internet movement
+61adcea6-7c45-4a21-b749-65a3ba689f1f 16934 linux-test rachel u mus tbe in wthdrawal.
+0327b065-0065-44bc-92e6-cab03f12f512 16936 linux-test margene wi-fi causes cancer
+9ce957b0-e861-455d-a830-2c928de81dfc 16944 linux-test felicia Lai: still in sunny PA ?
+2c322106-040c-46b1-bbda-f58adf7bbad0 16948 linux-test lai yep
+7c10b4da-9fe4-42fc-936e-fac0741287ad 16952 linux-test azzie We just got outfitted with city-wide-fi here.
+1d173708-2179-49eb-b358-bc6ebeccab4c 16955 linux-test jeanna i have wi-fi and don't have cancer
+ac849e09-8d82-400d-bff3-6fde322fe022 16959 linux-test jeanna or maybe i do
+b61828cc-d9d6-4850-8e05-a789a93385e8 16960 linux-test angla Lai, you missed the fun yesterday. the 3 stooges from novell came here and tried to create trouble. i smote them with my sabre of truth
+5e60c8f1-c576-4aa9-80d7-fd247fd666b8 16975 linux-test margene denial causes cancer
+7be502d3-507f-4170-926e-1c3ac0a0bbab 16975 linux-test felicia how's the situation with your old/current landlord? oki? iffy?
+d3b68653-5c92-4677-90ec-decd1ee6c08a 16982 linux-test gale I was laughing so hard yesterday during that
+34369fd3-ea73-4d8f-843d-d5dd6dda6168 16982 linux-test lai Angla: lolol
+1ad6d795-329e-4514-8a3c-94baad38b343 16996 linux-test lai Felicia: terminally sucki
+84b14af4-e393-478b-96d0-b434a9dca086 16998 linux-test felicia lol @ Angla
+d1cf9da4-9fc3-4453-9b84-f62c807d1445 17004 linux-test gale it was classic ##linux
+a45b2a50-4b7b-4797-bae2-c107650876ad 17006 linux-test felicia Lai: sorry to hear ..
+00eb9fcd-fb54-416e-96a5-bf8ad2276d46 17032 linux-test azzie Around when was the Novell business? Sounds log check worthy.
+e4e8b050-bc49-4674-b56e-2244303956c0 17032 linux-test lai thanks
+90ab9bac-bdf9-4c28-ae6f-067deec403bd 17038 linux-test felicia Lai: should we take up a collection? maybe have monkeyboy make the largest donation?
+f54f2c5c-cc40-4b49-8a35-cc4de8f45e5b 17047 linux-test angla anyways, back to the movie. later dudes. nice to see you again quiz
+35500ad8-b4f3-479d-863f-42aad1f0988b 17056 linux-test lai Felicia: i need $2200
+24945ac6-3f15-44c2-b818-29ea7c89cbf1 17060 linux-test lang novell lol
+a06c02a8-6e4f-4425-89f6-cf7d48c64acd 17067 linux-test felicia wow@! .. erm ..
+484e61f6-0577-4bc5-8f40-eb04e8b31319 17069 linux-test lang wat a pack of desperate jokers they are
+30850856-c33b-4120-b7b7-e35a4956ab36 17069 linux-test margene more like Olld
+33ec0967-7316-4869-8b99-89df00582736 17075 linux-test felicia we can start maybe ;-)
+1e3fea2c-0c60-4d3e-b8ff-8bb9172f8fb3 17079 linux-test lai sure
+ddb651a0-f999-4b1a-958f-8000e825e486 17117 linux-test lai hey, radio shacker here wants to hear about the "mutiny"
+b1c6196e-1228-4fdf-888d-2c8637ebb31f 17124 linux-test lai lol
+89571f1e-14e1-4ccb-b734-7032d9a5c7cd 17131 linux-test gale lol
+f3e58a2c-34eb-4998-bd7a-e9650b0b3c68 17131 linux-test margene well nave a great day... well just a nice one, you don't deserve great!
+8f2dfca6-e4b8-4b33-b654-d793b9602ed9 17137 linux-test lai we havent dissed that in a long time
+3e0329ed-aab4-49f2-aae8-bd0a36e8540a 17140 linux-test lai disc'd
+be0508ec-1e50-4a79-a313-05c23e90aaa4 17149 linux-test lai 'cussed
+42a9ca54-966d-4b2c-b356-ae60d670c9b8 17153 linux-test lai <howto build a word>
+9ef3ff19-1e4d-4b24-9577-12f56c7ee3cb 17174 linux-test felicia i haben't seen a 'kk' in soooo long .. wait .. i DON'T miss it .. lol
+b90d7054-dc13-4a35-ac28-3fd78b452896 17188 linux-test lai kk
+e76cd0ae-9def-4961-88f6-a206851e6200 17199 linux-test felicia hah
+8553e90a-2d34-443d-b8c2-486706e81f1c 17229 linux-test james Is there a way to encrypt the home partition without deleting the data first?
+8c0eb8a8-d5da-44f9-ac87-9f8576c1af33 17229 linux-test felicia Lai: we still get our  one word<enter> aolers here
+ae21339c-a4fd-4c7b-8fb8-aac17633fb2a 17239 linux-test lai lol
+f27bc976-6f20-4de0-8611-fc0cc064f927 17268 linux-test azzie There was one of those a few days ago who had the balls to tell me to stop telling him how to type.
+b5e2064c-905e-4e48-a780-f245af7425e5 17274 linux-test gale they believe in LFs and not whitespace
+9656bb3d-5390-44e3-93f9-2642655e2b88 17274 linux-test felicia Lai: i can make a small donation if necessary .. not much, but something
+03a09c98-a4dd-4d14-963e-5f0d44463085 17310 linux-test lai Felicia: that would be sexy
+390d84a9-1ab3-459c-b4e8-375dd26bff4b 17314 linux-test rachel anyone know of a good netcat tutorial?
+e5af5ecf-a840-4d62-83ab-2376b7042c97 17331 linux-test felicia and believe it or not .. there's no sexual innuendo in that statement ..lol
+60dfdc1c-5af1-4378-8846-84dfecfa395d 17338 linux-test lai goggle.com
+9eeb47e2-6154-4608-a03e-f58cb84dd9e9 17349 linux-test lorina goggle?
+3c26d07a-6e67-4a26-878d-e059673a2f13 17351 linux-test felicia which is more than rare, from my output
+d2a4b240-2013-41e2-833d-079a654c2542 17414 linux-test lai no0dles: i'm tryin to figer out how to get yours to mine
+b74c256a-274a-438a-944e-94721213abed 17443 linux-test lai who the hell is no0dles ?
+ded1401f-640f-4ea3-93e3-dfb62296353c 17449 linux-test lai Felicia: i'm tryin to figer out how to get yours to mine
+34563705-74d9-4ea6-836f-e98319ff156b 17463 linux-test lai mail wise
+3c2b2b5c-e07e-4053-b8e7-99489fdf39c8 17495 linux-test edwin who knows how to install a hybrid tv card
+05ba56ff-9a8f-4cbe-a7df-dd4749191d1f 17500 linux-test lakenya Lai: Radio Shack let you on their computers again?
+c5ecc2a1-64d7-46a1-a813-bebef1796b83 17514 linux-test lai Lakenya: !!! yea
+8be27499-50ae-4e80-9c92-3d583d0a8400 17514 linux-test felicia Rachel: maybe someting here http://www.rajeevnet.com/hacks_hints/os_clone/os_cloning.html
+08374e99-6fad-4a70-9898-6bf6328d047d 17528 linux-test rachel gracias
+1025ed73-155c-41c6-b3c2-bfe24c62e1a1 17533 linux-test felicia Lai: money? CC maybe
+447b2050-982d-472c-af47-6636f27ce550 17535 linux-test lai grassy ass
+3e13e0e4-babc-470f-bc07-97705a962465 17551 linux-test lai Felicia: !!! oo! yea; a debit card
+619639e6-5e26-4681-8705-b1f5b7572c35 17553 linux-test lakenya damn i need to move out, but apartments are so damn expensive without a roommate
+ec5abc40-0b1b-46d1-91d5-55090a006ce0 17554 linux-test hellen checks his pants.......
+cbf58938-b4d2-40bd-b9f0-c78e90f0e1d5 17564 linux-test lai Lakenya: yep
+564ab26c-e646-4ba1-aa3f-7c06b3d7e0e8 17571 linux-test gale Lakenya: everything is so damn expensive these days
+7e0d741b-ae5a-4405-9c00-aa65e6bce92a 17572 linux-test azzie I need to find a roomate badly.
+c0692361-f837-4c53-a1a3-509ab44551dd 17577 linux-test felicia Lakenya: just pimp here out
+9be3ae01-10a5-4550-ad2a-8fcc5a1a6526 17582 linux-test azzie lol
+cee4dd60-8de3-47f3-91b9-51702ae38a3e 17586 linux-test felicia her*
+e7e89639-7b64-4e6e-92b8-71afc04bd354 17588 linux-test lakenya i can't think of anyone that wouldn't just piss me off as roommate
+e4e9dec3-ff98-4045-a230-ab3baa44a681 17589 linux-test lai Azzie: what's your loc?
+3b4ec3ba-b86d-45a3-936b-8144ce5d95d4 17597 linux-test azzie Lai: Portland.
+c03e2eb4-1daa-4f58-ba0b-06b903c31d72 17602 linux-test lai i need to be in Tulsa
+c1e2fedd-5788-4494-a6ae-f16c74284708 17609 linux-test rachel Tulsa?
+83647caa-909f-49b9-92a5-513d4651766d 17616 linux-test gale Portland is a nice place
+f9f18b94-c495-4b42-bd03-7bf33b94a559 17616 linux-test lai Azzie: too far north :)
+6671a6d5-fc78-46bf-81fc-234c35f7d821 17618 linux-test felicia Okie?
+c6af448a-7264-4f8f-9798-599bbe74c0d2 17620 linux-test lai oklahoma
+b04caa57-9364-4ee3-a0fa-efa90ee42158 17625 linux-test rachel why Tulsa?
+20c75e74-4626-4928-9625-39abf00483bd 17627 linux-test azzie I know several a people in Tulsa, mosly at the Univ. there though.
+fe2a752f-c2dd-4618-ba9c-a5a842d078ec 17628 linux-test lakenya anyone in Akron,Ohio that isn't a douchbag and needs a roommate priv msg me :P
+bd7a7916-db8e-41ed-9e9f-76497198ebca 17630 linux-test lai Felicia: the debit card is the idear
+4042c48a-fa29-4682-829e-1cbf5c78fcbc 17640 linux-test lai Rachel: thefirstdto attend ORU.edu
+f11028b7-57bb-48bc-b214-f48ab02d8c36 17641 linux-test felicia not a debit, but CC
+d0d69a83-9649-4704-825d-9fb2d844ba99 17650 linux-test lai Felicia: nop, gotta be a debC
+c5d61166-2d67-4684-b4d5-9caf29a9a4af 17674 linux-test felicia Lai: hrmm .. oh yeah right .. the WesternUnion folks need debit or Cash?
+756af804-a582-4f36-8c4e-88a43599398d 17676 linux-test lakenya with my luck on roommates.com i get pair with some BDSM killer
+5b63bc4c-87d2-4439-8630-911003f9523a 17691 linux-test lai Lakenya: LOL douche
+ea12d25b-809d-40e3-abcd-f87c6cfcc3ec 17703 linux-test lai Lakenya: lol
+65ccd770-46ac-486f-9696-1717112251b0 17714 linux-test gale Lakenya: you'll get stuck with a myspacer
+0dc6c194-b07c-4a9e-8cd0-9c78909a0f40 17718 linux-test lai Lakenya: BSDoom killer
+3f1bca61-19e8-4da9-8fd7-143ce16cc0b0 17721 linux-test felicia Lai: i really would like to make it a "pot" gift intended for you though or something .. not a lil' something form me
+95eead07-b7f4-4335-9008-90681ec8c4c4 17728 linux-test lakenya Gale: oh fuck even worst
+7a5482b7-1863-4671-add6-677aa391391d 17731 linux-test hildegard I could use a roommate, actually.
+ef9fb450-f3c2-4d2f-81af-c5a6b420ddba 17733 linux-test gale exactly
+0c890685-4936-4587-9277-c9af0f8b5437 17734 linux-test lai roflmao
+d3592c43-0391-4937-95e2-0220b2dc73e3 17736 linux-test hildegard but I don't trust anyone.
+d32826ae-8e32-4a71-9b41-c12ae7b4148d 17743 linux-test rachel Lai: ah
+acbaeec4-7582-4361-b0a5-410976f8f18a 17745 linux-test felicia paranoid!
+01418089-495c-4c46-a2db-7dc8e62526bc 17749 linux-test lai Felicia: "pot"? expand
+61f4af2e-5c8c-4b3b-994a-fbc1eec47cf3 17750 linux-test gale see!! now the bdsm killer doesn't sound so bad now, does it.
+47edce20-4f69-4ed8-85ca-5d70be6f0935 17759 linux-test lai lol
+0cc3823c-1034-4dd1-8ba3-e37afb4bdad9 17762 linux-test regine passes the roll of luminum foil to Hildegard
+f0f241ab-f4ee-494e-9f86-04da69d09a26 17771 linux-test felicia er aluminum
+cb9704e7-be46-41e0-a002-680b7eaa6639 17775 linux-test hildegard Felicia: I have 2 kids.
+d24c5df0-4ebc-4e66-9b25-a34e773e9b1e 17775 linux-test hellen sniffs suspicoulst at the roll..
+1ec17cf8-e426-4b4a-93ef-ad152435a099 17780 linux-test lai is anyone here in pennsylvania?
+c2d447e5-2fcb-4b24-bda0-992c945db98c 17783 linux-test lakenya i take that back there is only one person that wouldn't piss me off
+735b54da-6e4f-42e9-b6f9-1c35ac10d771 17785 linux-test hildegard Lai: I am.
+3dc269ea-2ee9-42d1-ae71-f912dc768e65 17785 linux-test felicia Lai: you know . like a poker pot
+5396bba6-b177-4a57-9ea7-a3f6ae1be281 17791 linux-test felicia ante up
+380b0b64-bebd-47df-a023-b0c56214ffcd 17793 linux-test gale Lakenya: btw, is that like a gimp?
+160105d3-3b1f-4442-89c8-f14d5d376325 17801 linux-test lai Hildegard: oh yea, thats right
+3c113139-1404-4c49-ba3b-e9b2036e68be 17803 linux-test felicia Hildegard: congratulations
+c172513a-d72c-45e2-bac5-dd3a224bd6ac 17808 linux-test lai Felicia: ah ok
+7de89af4-5cd6-4416-bc0d-cc988af69ef5 17816 linux-test hildegard Felicia: ehh, thats why I wouldn't trust :P
+98dd6f0f-dcec-4d1b-b516-4e60575f1f80 17819 linux-test lakenya Gale: Pulp Fiction anyone?
+dec271d7-1eb9-485c-a8ee-e2939560d6e5 17823 linux-test felicia i see ..
+73165463-92bf-48f9-bcdb-feb087f8cb24 17826 linux-test gale Lakenya: yep
+21c9218d-7a41-4e69-a373-1d57963db6be 17828 linux-test rea can anyone help me ? i'm triing to install Crypt-OpenSSL-RSA-0.24.tar.gz but my script is failing
+bc367524-1c24-4f2a-83a3-a982754f3788 17835 linux-test hildegard Lai: why you ask?
+0c98f87d-3b5f-446d-8be3-8bec46bde1bb 17845 linux-test lai Hildegard: i forgot
+6e565c63-c0f9-4d8c-b8b1-58ad695aab56 17850 linux-test alisa Lai!
+7edc9a65-518e-4ab2-9b40-7489cf8b43fe 17864 linux-test hildegard Lai: you forgot why you asked? :P
+f44af65d-fe04-4b0b-b13f-24fb0275b6a2 17865 linux-test lai Alisa: cartman!!!!
+93137b90-f954-45e9-b952-718e19b06875 17870 linux-test lai Hildegard: yep
+20603794-6507-4aa0-91db-64cb73bd7232 17877 linux-test alisa Lai: what happened? Did they tie your tubes?
+24eb3795-14da-4e56-b262-1ce46b5e2990 17881 linux-test flora is ext4 available yet?
+cedab58a-8ab3-465e-8bf0-118a883789af 17887 linux-test lai i've been offline for 4 months now
+628d5140-3dd2-4db2-9981-f408c3e117c8 17889 linux-test gale yeah, I meant the pulp fiction kind, not the image editing kind
+23b88eef-7dc0-49e6-8c8e-11176bdd3f0a 17890 linux-test hildegard Lai: less beer, perhaps?
+957ae6ba-3413-4947-bf2d-428478a17926 17897 linux-test lai Alisa: hah! LOL basically
+589dc00a-0531-42ce-96ec-54f6e22cb773 17903 linux-test lai nop
+f3c5406d-62d7-426f-bb29-3889aedfe1f0 17908 linux-test felicia lol @ Alisa
+46456f9d-3246-4b3f-b24e-89951d0d32bb 17913 linux-test lakenya oh yeah roommates.com has photos, can't be stuck with a ugly/fat/male roommate can we? :)
+b5681e7a-0ac5-4bd5-b09b-3f41324fa056 17918 linux-test felicia Sen Ted ahs had his way with the Q man
+61a0301f-3964-41a3-b235-2cf8a8507981 17918 linux-test alisa Flora: I think it's been merged as of 2.6.22.
+39b64fa7-d29a-4593-acf8-2223014e6e54 17924 linux-test lai lol
+9eb43cc1-fcae-4acd-bc19-5987b963a963 17945 linux-test inez Lai! :D
+180ca345-5e2c-4a50-8922-f1f6a265c56a 17945 linux-test gale Lakenya: that's like 90% of the internet pool
+aa3243cf-4752-4aa5-b897-8dc0d5fa0327 17948 linux-test lai well, i need to get down to flaroida and all my stuff and i need a truck
+ed4e6824-4d4a-4ff9-acd9-fc6302cb6df8 17952 linux-test lai Inez: !!!
+bc518ab7-6d8b-443d-a37e-c3e99a194608 17954 linux-test felicia pretty soon, you'll start hearing the dump truck rumble
+d26d3c2c-3c5c-4987-be21-cfea2b98363b 17967 linux-test inez how are you man ?
+4b01b618-802c-4997-adce-9a282335ea3b 17968 linux-test angelika hi there people...
+420c9f40-6c1d-4f6e-82b2-3b477b885840 17970 linux-test angelika What ways I have to have a file be readable and writeable by all the world?????
+2c949843-9e11-4f64-9f35-70e1c6c232b2 17970 linux-test lai s/and/with
+4ace4542-c940-4f08-afab-13f32bf875e1 17979 linux-test lai Inez: heap-o-big trouble
+fd167b25-b0cc-465e-858e-fd88c599e98e 17987 linux-test felicia Lai: where's your stuff? there in PA or Fla?
+c868e390-8ad6-4653-81cd-ed9b9169ef37 17987 linux-test inez Lai, what's wrong ?
+463fea28-3537-488d-ac11-184dbb26efd8 17991 linux-test lai pennsy
+33b9c37c-48d7-491d-8900-e7610d0a6210 17999 linux-test felicia ahhh
+0accec74-8494-4bfd-ae7a-27a52458f324 18007 linux-test felicia gotta move .. haul ass eh?
+1bf09790-5c36-4201-9123-2ad16f7dff90 18019 linux-test lai Inez: evicted by greedy conspiring property manager and district justice
+281d4a57-e1e4-426e-bdb2-7a1d8dc9c3ec 18028 linux-test inez eee
+49c5b631-a5cf-4940-afc3-6671517429d5 18034 linux-test felicia no bueno
+3f854bf1-d343-4c9b-942a-5716c6b2bb28 18034 linux-test inez so what are you gonna do Lai ?
+8c244c16-cff2-422f-a8ed-d9453370bd30 18044 linux-test lai need money
+b4fa5125-9f93-4673-8e45-c20e09899666 18046 linux-test lai $2200
+addf22eb-3123-4981-8f68-fd009fd611da 18049 linux-test felicia Lai: that guy in Mass can't help?
+3eb83d5b-1e0c-4ac5-8caa-958fa974389f 18052 linux-test inez Lai, I know I'm all the way in ca, but if you find yourself near here and need a place to crash, you're welcome.
+4a140c71-ce6b-4473-971e-1eff84954976 18056 linux-test lai who guy?
+115bb87e-1167-41cd-9d8d-1447bfa83cdd 18081 linux-test lai Inez: yea thanks very much; btw you changed your fon number you bistardo :)~
+afa36827-e12f-4055-a51c-64e675d41f24 18088 linux-test felicia you know the Tax guy .. who claims he owes no property taxes .. Ron? or somebidy?
+92bb4439-0b17-4f85-8745-36e89f872209 18092 linux-test astrid suggest a paypal fund or similar
+ebb8c886-20e4-4887-ba33-36efd5f3d786 18103 linux-test inez Lai, my old one died.
+342a66b3-910f-4953-a7f8-a2bfd4efc0e1 18104 linux-test felicia or was it VT or ME?
+ceba7e5e-be4b-4073-8a1b-968aa6bfb864 18122 linux-test inez Lai, I messaged it to you
+be9ae7ed-8813-4374-b957-80326b3bba80 18125 linux-test lai Azzie: my shack guy here said paypal too but i have no local bank acct
+27996735-2148-4d2a-9281-faa41eb95581 18125 linux-test azzie Us ##linux kids can be pursuasive to get people to do things.
+a3e58792-75be-4426-ac99-7615903d9b36 18129 linux-test lai Inez: ah ok
+b8b5bfe9-bfaf-4f52-bf07-844a50931c59 18136 linux-test felicia second's Azzie 's suggestion
+29be4a81-4743-4022-9a62-d1e20ca9eb86 18138 linux-test flora <Alisa> great thanks
+f8b7ae26-ac10-41e3-8bf6-0527342896a4 18145 linux-test lai Inez: ok
+45f8d70f-c7c2-46fa-b763-0e30709f7455 18170 linux-test lai Inez: ok; got it, i'll try to call this weekend if i'm alive
+3f4533fb-45db-49db-af20-10141b181c77 18177 linux-test inez okay Lai
+d26bc0c8-e160-46b0-a709-a60bea831900 18196 linux-test inez call later in the afternoon, since I sleep in late~
+43f53454-687f-4007-b137-9ac8040c16e4 18201 linux-test gigi My work needs windows, Any one here would give me some suggestions on using gnu softwares in windows?
+af1c2d47-d3c4-47de-8b33-f93af7ceb9ca 18201 linux-test gale we should charge the noobs $1 per question to the quiznos paypal
+27e22d92-6918-46dc-9ab1-5bf4cf06920a 18211 linux-test josephina XIN01OZ: mingw
+a664dd32-fcd6-4f93-b0b4-f80c071af823 18215 linux-test felicia bingo!
+73c77c79-1498-4946-b02b-5f05179ec212 18217 linux-test josephina Gigi sorry
+b35be5a6-8029-40e9-96a2-61fb717dc103 18217 linux-test gale we'd have the money in 2 days max
+18d632ee-3016-43fb-b9b9-be427081badd 18226 linux-test azzie Lai: hrm, Have you tried to set one up?
+2351546b-d53d-44ef-a414-3b7783247e15 18230 linux-test arlie the federal reserve system conspiracy is keeping you down man
+1a103b06-289c-4e62-906c-55aaa8833d3f 18235 linux-test josephina Gigi: and msys
+6f31ba50-41a5-46fe-ac4a-f28213176327 18247 linux-test felicia Gale: all ubuntu users  .. pay up!
+e305016f-e457-4987-bb7d-a6bcf7ce0611 18260 linux-test gale and susers pay double
+a0fd154d-c757-4077-be8f-75234cb6d9b8 18267 linux-test azzie I certainly would make suse users pay.
+83ec0f13-1e41-44da-ae66-2eb4d9d678e5 18270 linux-test hildegard triple.
+5ab1adfd-2bc4-4e84-ba2d-1ab5c5453e18 18275 linux-test lai Azzie: not since being offline
+92fad8a2-704f-4406-a300-8344fb431962 18276 linux-test felicia it doesn't need to be "in state" either
+1a8ac8be-c917-4f67-9298-00e025b1f693 18282 linux-test lai Arlie: lol; actually, they arent
+1f8203e3-101f-4632-a43d-84a3d1622a1d 18287 linux-test felicia Azzie++
+591a6a10-1dc2-443e-8500-78970ccf81a3 18300 linux-test lai i wonder if mom has a paypal
+10829c9a-d227-47a2-9042-dc02059e2343 18323 linux-test ricardo Is there a way to emulate input for a program listening on a COM port? like send the input in such a way that the program thinks it's getting it from the COM?
+9cd55280-63b2-4011-8a8e-6fdd6f2424d5 18330 linux-test arlie its a federal reserve european banker tax man judge landlord conspiracy !
+c642c6d5-4b80-4fb4-b55f-998329ad0043 18337 linux-test azzie Lai: I am certainly willing to help and send you what little money I can, but I'm sure A paypal would help a lot more.
+911b8a3b-5b97-4f2d-91ae-1757b289c769 18338 linux-test lai lol
+0095eaf4-34b3-4f22-908a-9555a5624a7a 18353 linux-test felicia yep
+f2142cdb-2032-4c57-91d8-ffc2a002a3dc 18354 linux-test hildegard Arlie: but it's actually masterminded by the street hotdog salesman
+fc1c2455-3fd5-4d23-affa-b622ef6e5285 18361 linux-test azzie lol
+3ab2b481-7115-49f3-8596-a4ed03c2d89a 18371 linux-test felicia vendor! not salesman ..;lol
+7360ccca-11a0-4d1c-a5b8-307ee12cc475 18380 linux-test lai Azzie:  i am truly grateful for the effort; but i cant see how i'd get the money out of paypal?
+9ce70c6f-5d18-4081-8d3c-cda6c7b2bf70 18386 linux-test arlie Lai, if you ever get a computer and an isp again, by all means, setup a website and start selling vitamins or something ... you have the skills to do it, you just keep thinking you dont need money
+030b6c85-e741-414f-9a65-d20e2d594c4b 18399 linux-test lai lol remind me of that one
+ad3d610f-7a09-4da9-9264-a0cf410542a0 18408 linux-test azzie Lai: You do need a bank account, but there shouldnt be any reason you couldnt have one?
+70c6001c-3220-434c-a728-7633ece872fb 18419 linux-test arlie selling vitamins is a worthy profession ... people need vitamins
+5a3128cd-19c4-4a74-b9b9-52de57508a69 18421 linux-test lai Azzie: lol; ask HM why :)
+1e17f0c4-6730-4317-8e80-c6a760ae1e9c 18426 linux-test lai lol
+0e31d5bc-5daf-4a6e-a3f7-a7b8fe2c8078 18438 linux-test angla Arlie, you are one cold mother
+0b44da0e-d301-46f4-aae3-f85ce1a8ae96 18445 linux-test lai or search the logs of months past
+ef8d71fd-742e-41d8-bb1a-b37f06cb2b33 18449 linux-test arlie Angla, im not cold, im desensitized
+2faa3e2c-6ded-4b1d-87e6-6c8ab08f9b78 18451 linux-test gigi Josephina: What's the relationship with cygwin please?
+8d66a869-15cd-41f3-ab54-96132274a3fe 18465 linux-test arlie if Q has bad credit, it will be hard to get a bank account
+57bc251c-5ef6-4c6f-9d32-886daa220ced 18472 linux-test arlie however, it can be done
+3c5af427-63da-46ef-ad00-08f7dd4c5594 18485 linux-test angla anyways, i've used up all my fast-forward on this mythtv. back later
+df86ca52-17d8-4338-b9ec-162a4c33f4d4 18494 linux-test azzie Not a simple checking account, you may have to offer them to keep your debit card though.
+09469e0e-76ec-4870-9589-ee516f8aaa34 18498 linux-test lai i still think a $15 or $20 debit cards would be a better idear
+37878074-85f6-4c31-9743-4ddeb4e9b373 18504 linux-test delmar has anyone used pcb ?
+67279c91-aa1f-4a88-b4d6-b3d7ce0f3097 18509 linux-test lai Angla: be well
+3f764d75-7e99-4a1d-9c0f-8ca13e97cde4 18523 linux-test arlie Azzie, yes, even a simple checking account requires that you didnt screw up your last checking account, which is easy to do if you have no money
+48e0ea7b-ee7a-4b62-a14b-dc2fdb82622d 18529 linux-test lai or plain money orders
+086ccb29-0e30-49ea-aec4-455d175abfd5 18540 linux-test lai or postal orders
+b49de68a-4856-45cd-b756-9e6219d0592d 18553 linux-test arlie Delmar, ##electronics
+a3690960-dbd7-4a80-b108-52fc5f261af8 18556 linux-test lai what about this:
+c0317708-fd1f-49c4-ad9e-988c21e3a821 18571 linux-test angelika hey people, how to say that user:group
+b46f1a55-0f86-4974-9fe4-6a17aca614d3 18571 linux-test alisa Kacy: could you change the topic to suggest that all able peoples donate to the Lai Relief Fund?
+545326de-7436-480e-8503-d6d667d14726 18574 linux-test lai i give you the mailing address of where to send them- to the manager of property
+677ae7cf-a1f6-442a-8a68-f39e820424b4 18574 linux-test josephina Gigi: no relationship, they do the same sort of thing, but are different in several ways. I recommend mingw+msys but have used cygwin and got no problem with it
+997975c8-b0bd-40cc-a15b-efecba1e5a74 18577 linux-test angelika that user is anybody???
+6b6a35e2-a11c-4b35-84aa-63af45d3698f 18583 linux-test ricardo #offtopic :D
+3ed0ab98-a52b-4fec-ad56-7f96e5516184 18586 linux-test angelika or that it dosent have ownership???
+27d588e7-c1b5-43dd-abb3-9f29eef3036b 18588 linux-test lai Alisa: roflmao
+556d03fe-7356-4078-a6f2-d19a73f610bb 18600 linux-test gigi Josephina: thanks
+0ed92e39-236b-4b1c-acab-d48b3307a5cc 18603 linux-test lai that's very excellent
+815e1947-3c8d-4833-bbc9-a760826f28f0 18603 linux-test lai lol
+bc3ffc15-9787-4016-a7a8-0b70219fccdf 18608 linux-test ricardo Alisa: hey dude! It's that guy you talk to on AIM sometimes :D
+7f29c272-0536-42a1-ab15-2b945065c544 18611 linux-test mirta QUIZNOS!!!!!!!!!!!!!!!!
+62eb523b-98b5-402f-bfbe-56ebf154d6df 18612 linux-test ricardo JMParkerII
+2a5ecca6-bcb1-47eb-b978-fa8dfe67c969 18614 linux-test alisa Lai: I have $5 in change to my name. So I guess I've got to campaign :)
+f79ca15d-1650-4845-a171-19e6d86b6a2f 18624 linux-test alisa Ricardo: JmParker2.0 :D
+86618c4a-c117-4f75-b41b-520b0d14865d 18631 linux-test lai Mirta: !!!
+b37cf7ec-9df7-41ef-bda8-2fd08c720c4d 18632 linux-test hallie What's a good way to keep a svn repository that depends on another upstream svn repository?
+38f89269-68e4-4c22-8101-84adbcbc9325 18641 linux-test lashawna what are the chances a 16 year old sophomore who's been programming since 10 can a job with google?
+7ca0f653-0ebb-4798-8965-503061d8bda7 18644 linux-test mirta what's up sir?
+0782db12-0c7a-446d-9eaa-f88cdc9212fc 18646 linux-test lai Alisa: heh
+5a84b3c9-7b58-4dab-b161-876a110163ce 18660 linux-test arlie Lai, get busy designing a website to accept hurricane relief donations and pay yourself a percentage as a salary ... hurricane season is starting again
+5d898d5a-bcfd-4fef-aed5-5e01c6eb4e97 18664 linux-test lai Mirta: evicted; need money to escape pennsylvania with all my stuff
+c3fbe37e-083a-4b61-b45d-3416f765118b 18669 linux-test ricardo Alisa: hehe, what's up? I'm just here trying to figure out how the hell I can try to send commands into a program listening on the parallel com port
+656bfce3-aa05-444c-8c48-37c55eb2c59c 18675 linux-test alisa Lashawna: as a 16 year old Junior also lusting for a job at google, I think you've got better chances than I, at very least.
+e29a33df-39ee-4e49-a050-19e1fa49e32c 18681 linux-test mirta Hey - dude - I like got a job interview tomorrow finally.
+f8f9b93f-7ae5-417e-99af-3dcf61a30d7d 18691 linux-test lai cool
+5426a516-1d12-412a-9044-b98ecfe95d6e 18701 linux-test josephina Ricardo: I thought com port was serial
+aab4f644-a8a3-4dd0-b8bc-a71f9c255701 18707 linux-test alisa Ricardo: nothing too important...just celebrating the return of Lai :`)
+84b63e0a-e949-4034-a484-513c87618128 18708 linux-test lashawna Mirta, but how old r u
+51b2faed-818d-4198-af90-7147fb20deca 18717 linux-test mirta 34
+d406f341-e470-43b0-8027-9daaf58b29d3 18719 linux-test lashawna Mirta, and do you have a degree?
+6ed49b9e-f5df-4289-a96b-c3013130364d 18721 linux-test arlie sure, work at google, just dont take stock options in leiu of salary
+31b5ab20-ad5b-4522-9f4b-840b1c128d1e 18724 linux-test lai heh
+4dfe4758-1f18-4780-962c-5393941fa72a 18726 linux-test mirta 2 years.
+3fd0948d-1746-452f-a0a3-8e121c3b753d 18741 linux-test azzie Lashawna: Im a 19 year old coder who has been coding sine at least 10 and am in the same position.
+56ec4957-4fab-4a6d-b835-cab2f72fb708 18746 linux-test arlie at $460 a share for a company that has yet to make $1 in profit ... its not a good deal
+381d7fae-c3dc-4893-87ec-69c460a3b212 18755 linux-test lai heh
+ec86f455-e786-450b-b782-69570aa6846e 18758 linux-test ricardo Josephina: you know, I think you're right, but it doesn't matter for what I'm trying to do, but it is serial, I'm just retarded lol
+b4b53615-0e99-4877-82e2-767c0091f063 18768 linux-test lai ok, so where are we on the relif?
+ba1294c8-3bb2-453a-8b91-9151dee1e26b 18774 linux-test azzie Lashawna: The key with that company is to do get a good degree and do something big in school.
+685d3c53-8cd1-44b3-b6ae-00c5b4a1301e 18776 linux-test josephina Ricardo: hehe ok
+aa0df67b-57d4-43c2-93f5-a0172f3cdb24 18778 linux-test azzie from what i hear..
+f43e8946-fe61-4fe5-9def-0b84f7956e3b 18779 linux-test lai should i post a mialing address to send it to?
+e903cbe1-d4f6-4a51-8e2b-2bb6ec40e4fa 18786 linux-test alisa !seen Kacy
+af5c7564-a64b-4836-b536-0af5428c7827 18795 linux-test lai this would be a one shot thing tho cuz i cant rejoin later to remind
+cd5eb208-6d87-464a-8364-52b75e7b1ef8 18796 linux-test nicki Lashawna: Here's a hint.  Don't go around telling people you've been programming since 10.  (yes, I know it's likely literally true.  But it shows immaturity to claim it the same way professional programmers cite their years of experience.))
+fec89036-d7ef-4d48-8088-1cec2edf3cc8 18801 linux-test josephina Ricardo: and linux doesn't call it a com port, it's called a serial tty or something
+67e4f1e0-e9a1-42b5-b00a-5c7a05741c7c 18806 linux-test mirta Lashawna - who are you and why does it matter so much? People who know me know that this is a step forward.
+d3b93a9a-9852-4231-a620-2dab78d24b41 18837 linux-test lashawna I'm just tired of working for myself
+803543ab-3e10-4d8e-9b29-77b52fe85893 18842 linux-test alisa Lai: yeah. Post it. I'll see if we can get Kacy to put it in the /topic :)))
+e5c77370-16e4-4978-a03b-8d19ba3f727b 18843 linux-test arlie Lashawna, no, screw that, if your good, let everyone know it, except your co-workers
+e17fcd3d-8aa7-49b0-b57f-9839520698a4 18845 linux-test josephina Ricardo: and how to make a program think it's receiving data from it, would depend on how the program is receiving data from it
+8f14a003-e4bc-49ab-806d-d9b46c615ed2 18846 linux-test ricardo Josephina: ah thanks for the heads up
+078bfd36-0f44-408a-b482-624112e91ed1 18847 linux-test felicia Lai: sure . can't hurt .. or open a temp new channel and let everyone interested join .. then take it from there
+e5b741df-b923-4eea-bd7b-ef5ea56c7d74 18865 linux-test ricardo Josephina: yeah, it's using some library to do it, guess I need to figure out how that library works
+4b153a90-8768-4f69-b10c-c228dfd720f1 18866 linux-test felicia Lai: open a channel called #Lai ;-)
+eb55b061-910b-4a38-9725-38aacc484962 18866 linux-test lashawna Arlie, my brother told me that one?
+4025c7e0-825a-49eb-9a3f-1bd5335d443c 18872 linux-test josephina Ricardo: ah ok
+0e096d09-8257-4d37-85e4-2a4266a54e7c 18874 linux-test lai ok; but someone else is gonna have to remind others
+c1de6bd6-818f-4aff-8772-549687500fca 18889 linux-test felicia Lai: oh .. whatever then
+afdc96c5-6036-41aa-9f55-1c281cd7f554 18889 linux-test azzie Someone make a quizrelief bot
+3250f24c-a9ab-4d52-b10c-06650da50c1b 18895 linux-test arlie Lashawna, co-workers are evil ... they'll screw you up if your good enough to make them look bad .... they operate based on fear
+f15ec82e-3d47-4a31-be0f-f4d17c2004a1 18899 linux-test mirta hello Azzie
+fe0f1093-8603-4490-9f9c-30588546add4 18900 linux-test ricardo I am half way done with a 4 year degree and working with a company designing software for night vision cameras, co-op programs rock
+7f5df4ef-96d4-4dc3-9b6f-bc30e4d18924 18908 linux-test lai what whatever?
+b4ae6402-cb53-4f64-8b8c-550cadeed34d 18908 linux-test lai huh?
+66bd885e-44f0-4e3c-8f72-7f5d0aa1b942 18909 linux-test nicki Arlie: only at crappy places. :)
+0959046b-aa7d-49eb-830a-551f87e348ec 18911 linux-test azzie Ricardo: Hello there, how is it going?
+7b4f6908-246e-4edd-9e9c-f02def1371c1 18919 linux-test arlie Nicki, it happens everywhere
+8cf587f8-c67f-4739-8101-5232d380fbcc 18922 linux-test felicia Lai: i figured to keep it a bit erm private
+8aac1167-922f-4a31-8ccc-8d2fcbb31f7e 18927 linux-test lashawna Arlie, that's interesting
+ff10c53c-81ea-40db-badd-2223864b5bd8 18928 linux-test nicki Arlie: cynic. :)
+69de8092-0ae5-4d1e-801f-8fee1b252484 18931 linux-test arlie Nicki, at least, anywhere were there is a gap in skill levels
+5158d156-1172-4326-8ad7-811fee85e43c 18938 linux-test arlie its human nature
+d0275d57-0d90-4129-b7d7-87b8f05fab97 18939 linux-test ricardo Azzie: pretty good, just at the office, about to leave
+5badaaf3-67e7-4698-9bd7-baa09bca2c1c 18943 linux-test ricardo how are you?
+893423cc-bd84-4615-917e-6bfe78830bc4 18954 linux-test lai Felicia: ok i'm bumming here; fizzle
+1509499e-3467-49c6-bc9e-1fa172424aee 18966 linux-test felicia Lai: if everyone needs to mail to that address on their own then maybe it';s beetter you spm it and it get's spammed ;-P
+06df1f2d-a515-48e8-92ef-35c2bbd4cd52 18970 linux-test azzie Ricardo: Well, end of semester work, what could be better?
+b2543a2e-e2be-4329-856f-91b346171ce1 18978 linux-test nicki Arlie: well, I've never been "screwed up" by a junior programmer.  they come to me for help.
+f12bb820-105e-4f8f-92c1-c1c54d05f3c1 18980 linux-test josephina Ricardo: if it's just reading from /dev/ttyS0 or something you could somehow get it to just read from a named pipe instead
+82684cb8-72de-4a24-bde7-a0bd18a24ba4 18999 linux-test arlie Nicki, no no no ... someone below you is not a co-worker, they are an underling
+3cbe7f71-3b62-4b1c-9d82-010a3197973d 19003 linux-test lai Felicia:  ok then what?
+85f0e309-adb7-4a1a-adc0-ec0e4b691fd8 19006 linux-test ricardo Azzie: I hate that crap... you in college?
+6809f9a8-035a-4ecc-9acd-cd77c94d8f5a 19007 linux-test lashawna ok, so my chances with google are probably slim, does anyone know of a company in need of experienced html, css, jscript, perl, python, etc. programmers?
+4b913c61-b30f-4b6d-aca7-c58ca0586d42 19016 linux-test nicki Arlie: the sr programmers come to me for help, also. :)
+7390b5ff-2be6-4b11-aa84-9ff6db2971db 19032 linux-test lashawna Nicki, then you should get promoted
+514b4c4b-7381-4989-b52a-cd68729fa783 19034 linux-test ricardo Josephina: hmm yeah maybe you're right... I might just have to end up modifying the entire program
+266e4433-0b8b-48c1-b6e7-b84635a5a359 19035 linux-test arlie Nicki, yes, but them comming to you, and you making them look bad, are 2 different issues
+447f2dd8-2ba0-4826-aea4-a961e83bf44e 19043 linux-test felicia Lai: post the info .. atleast it'll be logged soemwhere then .. i didn't know what/who's address you were going to throw out
+3861ec2f-f662-41fd-8690-5e918bfabe5d 19045 linux-test ricardo just to read from a different input stream
+48a37724-1498-4c45-9a19-13015721f1fe 19055 linux-test azzie Ricardo: Indeed, trying to decide if im going to keep putting up with this or just start coding for myself.
+af2beabd-43ff-42cf-8cf8-58c7a48ee3ea 19056 linux-test tena hey, anyone know if theres any way i can play songs i bought on itunes in linux?
+a6814b9d-0864-4ae4-827e-8ef9870ea09b 19074 linux-test azzie Tena: No, and thats what you get for buying from ITunes.
+b71e3b45-33a6-4533-b22f-ee5242c38ee9 19078 linux-test ricardo finish college at least, how many more years you have?
+4617eabe-2078-4cf9-9388-1a6f4f50efe3 19087 linux-test lai Felicia: the address to -- you know what, i think it's not such a good idear
+0807dadf-10c1-4408-a435-159a97308a14 19094 linux-test azzie Ricardo: 3 at least.
+c9ac48c8-c4ae-4119-b00b-db6fa9b2e050 19097 linux-test ricardo Tena: you just need to get the m4a/mp4 plugin
+abdd12c4-4cc2-4e7d-b3d4-429b8a0ba2bb 19108 linux-test felicia Lai: see.. ok .. think about it ..
+e20c38b1-ff4e-49a7-85c6-c87f8005dc70 19111 linux-test ricardo Azzie: you are a freshman this year and already tired of it?
+2903ebeb-4a0d-41f3-9cea-38dd2146b906 19114 linux-test lai yea i am
+2c9da24a-724e-4955-ac2c-a51c3d6f7a69 19117 linux-test nicki Lashawna: I'm paid well.  I don't care about job titles.  and I enjoy troubleshooting for others. :)
+6ffe28ba-2b8d-40b9-9670-5b219d4c773d 19124 linux-test azzie Ricardo: I would rather be coding!
+6f22ecf5-a824-4542-bef8-8a38a4eb91f5 19134 linux-test felicia Lai: or PM one of us .. or whatever ..
+8b183996-d8c8-4ddc-b757-d83a0179341c 19135 linux-test ricardo Azzie: there is a lot of coding to be done in college lol
+67292447-3b06-4e61-8736-320576bd5189 19137 linux-test lai crap
+c1f289c9-06ad-435d-ba15-d4939a31daba 19139 linux-test arlie Lai, i feel for you, but im not sending you any money
+370ec562-9271-4ed7-b2b5-279faf2789cd 19144 linux-test lai k
+89343175-75c3-40f0-8cdd-7277b93b8452 19161 linux-test alisa Lashawna: look on jobs.com, also jobs.perl.com.
+6dab8118-a4a2-46f5-8101-a3522556cd9e 19163 linux-test ricardo Azzie: get on some open source projects like KDE or gaim or gcc or something
+a17bca35-2fe8-4c0d-8096-6d932eb29e21 19164 linux-test felicia so what .. that's just one monkey Q
+6f49094b-e118-4f18-9151-a00c48d999bb 19165 linux-test azzie Ricardo: Either that, or transfer to a school where I can find a teacher who is as interested in independent coding projects as I am.
+7eae1f2b-bdfe-4bdc-9552-7d6c77d2e3e1 19184 linux-test felicia there's many more of us apes about
+f021eec7-de28-4f41-9879-bd8395446e69 19189 linux-test dorthy the interesting CS classes don't start until your junior/senior year, especially if you're already familiar with the languages being taught and basic data structure concepts
+782f8858-35dd-4398-9881-63f804a49785 19194 linux-test arlie Felicia, hey man, i was homeless and noone sent me any money
+d7943776-4dcd-4d29-a451-76809553a2a5 19208 linux-test ricardo Dorthy: true.. I am going into my third year, finally get to do AI and OS and compilers, etc
+47622a21-2aef-44a5-8fab-9f85ddc6ed1b 19209 linux-test azzie Ricardo: I'm trying, but the problem is that I have to spend far too much time on schoolwork, even though im paying 30k/year for it.
+07b2008e-ef1c-4200-a9fd-7c7c24333f46 19211 linux-test lai Arlie: did you ask?
+bdc1e993-afa0-489c-b26e-cd9a33cada6e 19215 linux-test arlie Lai, no
+f8f14a1f-19b0-46ec-ba27-92e68b3c5c28 19223 linux-test lai ok then
+2b276ab2-d916-4100-b073-e93d7e5286e0 19232 linux-test dagny How can I discover which library file(s) contain an exported function name? I'm having a problem with linking against libpci.a and gzopen, and thinking another library may have declared the names
+fb282766-2f74-4730-8326-bdbd84985e7b 19232 linux-test azzie classic
+19cb16fa-fc48-4882-ba97-9fd96dc7dd53 19234 linux-test arlie Lai, if you have a truck load of stuff, why dont you sell it
+0e2e6ba3-9a5a-4e85-bd7d-dde7af8ac308 19250 linux-test ricardo Azzie: hehe but it's only 3 more years... that's really short when you think abou tit.. I'd say just bear through it and get your degree, it's going to make it a lot easier to find a job and you'll get paid more
+aacc4e21-b665-4d78-9152-77c2656e2da0 19251 linux-test lai i dont have access to my stuff atm
+f32b7431-b200-4023-aa37-144c2d962c31 19254 linux-test arlie Lai, then when your out of stuff, find a south bound train and jump on it
+ae52edd1-0905-4f40-b437-b03d8d0b68c5 19260 linux-test alisa Azzie: hah, the CS professors at the local university are A.) A man with a degree in parsing, not teaching CS, and B.)A woman who is a MAJOR microserf.
+73a5793d-dfdd-48cf-a656-cf013dccbac5 19260 linux-test nicki Dagny: strings and grep? ;)
+46139ef6-84d3-44b9-b115-2da54831a017 19269 linux-test lai Arlie: yea or bus
+4459ac30-3887-40ce-babe-cc17ecb8ca13 19270 linux-test arlie Lai, wheres all your stuff ?
+42109a1e-8c91-4029-9a72-8b9d57a4b6a1 19282 linux-test lai Arlie: in the apt i was evicted from
+7ca2c126-ca01-4c7f-b532-9801154b2f07 19290 linux-test arlie Lai, go get it
+2d73188e-742f-4001-9a17-5ee155c450c2 19290 linux-test dagny Is that it? With having ldconfig I thought there must be a location for the list of exported functions
+1239e4e0-5343-4d6d-bd17-c8a4f2586f46 19307 linux-test ricardo Lai: why'd you get evicted? I missed the first half of this conversation
+02b65b48-27c5-43cf-a912-365d543cde42 19323 linux-test azzie Alisa: Luckilly at my school there are no microserfs :-).  We all have to do our coding with gcc.  The problem is most the profs just teach as a side job so they have their hands more than full.
+58b1a260-1e64-4c86-a56e-6b698de361fa 19329 linux-test ricardo Josephina: lol I think it'd be much easier if I just modified the program....
+cf07eab4-27a8-42df-81ce-1060cdd975c0 19334 linux-test lai Ricardo: alledged non-payment of rent
+0ae51bb9-dd88-4617-b360-af5a8cf18501 19336 linux-test ricardo so I'm going to do taht
+3d049b5d-35de-4caf-a7bd-98f9a4a9e704 19341 linux-test nicki Dagny: or grepping the source code or the documentation of the apis
+55b541b7-7206-40b9-8dda-85c9b03fb069 19347 linux-test arlie Lai, you mean, payment of rent with junk bonds ?
+60a66beb-84c7-4077-8353-3f4f35e85de5 19350 linux-test lai Arlie: i wont trespass
+309f4462-9e35-4c66-88c1-c36c18151a1a 19373 linux-test velva hmm, I have to linuxes sharing the same /home ... with the same usernames ... but I dont want to share the same content ie. gtk themes ....
+56169f56-de44-43c9-bc60-fbbb34cffb74 19377 linux-test velva *two
+e7a6f3ef-ace4-450d-a1e3-f074596ccfb5 19383 linux-test arlie Lai, dude ... i wish you all the best ... but i cant say i didnt see this comming for months
+cc261e29-6089-4541-973b-e7c93735eb9f 19399 linux-test arlie Lai, the only thing anyone cares about is money ... its a sad, cold, harsh, reality
+b420a9aa-b781-40ab-addb-e00e02d05023 19400 linux-test lai thanks
+db50fb3a-a4eb-447b-8b25-5f9611875bc7 19417 linux-test lai i know
+4bcc9398-bc6b-49f1-91be-a674a8999dbd 19423 linux-test alisa Lai: how much time do you have?
+d073a9d6-ab57-4b17-ab1f-538f5b31c4fa 19431 linux-test ricardo alright guys time for me to drive home, bbl
+8919c143-bc3f-46d7-b4f1-08083ddbb4a6 19438 linux-test dagny Nicki hmmm, i'll see if grep helps, source-code isn't an option for this
+6ac79525-2629-4df4-966a-31dd0c675489 19446 linux-test arlie Lai, and i commend you on the fact that your not like that, but because you live in a world constructed by people who are, you have to play by their rules at least enough to survive
+de670cd1-5579-4692-a961-2f1027e1e656 19452 linux-test lai Felicia:
+38e87d1a-10bb-4acc-bb7a-0dd3f32b098f 19458 linux-test felicia yo yo
+eebfb219-9dbf-4202-bc5c-82b21f004c0e 19472 linux-test lai Alisa: seconds really, and i need to do one other thing too
+c26b03aa-7c90-4f0e-a05b-c808d0f45da8 19494 linux-test lai Felicia:  so what's the plan?
+241fb34f-7616-4ce9-991d-7a39b9dd2882 19500 linux-test felicia Lai: can you access the apt? or they want payment for entry?
+bceae427-e023-462d-88a2-137172bf1a19 19515 linux-test lai latter
+91c4acb7-c727-4bec-b4be-10166d4cf4e1 19526 linux-test nicki why do you say "alleged" non-payment? did you pay or didn't you? :)
+2d6c5920-656d-4070-a639-830c5676306f 19528 linux-test felicia Lai: PM me the address .. atleast one of us will have it
+299f94b1-75a2-46d1-8358-94e072cdb5bd 19535 linux-test azzie Thats aweful, bust the door down.
+67486121-101b-4756-aa32-7f6ed4ce1147 19544 linux-test velva If i link the two homes folders ie. ff & gg to xx, then I can log in as xx, but how can I choose which link to follow?
+34020115-d96b-4031-8374-5cdbee9a5106 19545 linux-test lai Nicki: i discharged the debt and sent a bond
+764d0455-eb2d-4681-af50-ade49878267d 19561 linux-test felicia Lai: i mean the address that you can trust us to mail money to
+72592de9-6b81-433d-b31f-a336ba8a47ea 19583 linux-test arlie Felicia, western union
+c7c9132e-fd16-4212-a32a-efeffe6a19e7 19591 linux-test arlie Felicia, he can get it anywhere with a password
+d9930076-a6e3-4747-8690-99f50b86645c 19595 linux-test felicia in C/o ?
+c8fd9fb4-b99d-486c-8ca3-8536dc7d4a8b 19601 linux-test lai Felicia: ok ignore that last
+339393e1-c1bd-4397-af91-7b3f563768d2 19616 linux-test felicia what? i didn;t get anything ..lol
+a2e85bcf-fd59-415b-a012-dec692a4a48e 19632 linux-test azzie How does this western union deal work?
+e7995cc3-21e7-4d1e-9089-04c98f949a1b 19650 linux-test azzie From people with a DC's end?
+52de6778-2bcd-4bc3-a7bb-9a6d1b091478 19657 linux-test arlie Azzie, you give them money, they record it for pickup by another party in their computer
+a2349124-432f-4d6e-9d56-72afea17c68e 19668 linux-test arlie Azzie, they pay it out to the other party
+fcfcc590-0a43-4bdc-981b-ab89fc08d7b5 19672 linux-test azzie Aha.
+16781196-65bd-4d64-aab3-ebb3ba9cf1ff 19677 linux-test arlie Azzie, and charge like $20 or something for the service
+73085753-ed26-44cb-aafd-d13c525585d0 19685 linux-test lai join #Felicia
+6fce7b74-ccff-4abd-9293-38e009bdfcfd 19693 linux-test felicia hehe .. figures
+a0c99a11-a452-4fc2-93e8-22266b3c660f 19695 linux-test arlie same way the nights templar did it ;)
+0b594570-3de9-48c5-b23a-5f1f99894435 19702 linux-test azzie lol
+209f11c3-cff0-4ba6-a140-4cd68e70a5da 19718 linux-test lai anyway, join #Felicia for my address to send stuff to
+9fc4ec65-62cb-43f1-8c67-81f8fa0ead1c 19783 linux-test madison Yo0000000000000
+2d626a0d-c4b8-49dd-a405-bb0974385b4b 19826 linux-test chauncey what's the native gimp picture saving format again ? .tcf ?
+bba19b1e-05af-464c-b198-5b1c44bcb5bf 19826 linux-test arlie Madison, you need to hire Lai to help you with your hosting/forex
+8c8a9668-160e-42f9-81d8-bb6b440df6ec 19840 linux-test chauncey hi Lai :-)
+79bb2453-4201-4d9f-bc28-ebd785b7ccf6 19843 linux-test alisa Lai: come on, join before you have to go :)
+9a798175-28fa-4663-8bd1-795a37032a31 19850 linux-test madison almost got the hosting done
+a76ece79-b6d5-4446-8738-8049872821e3 19851 linux-test chauncey long time no see ... where have you been ?
+91d44e0b-7b30-47b5-b313-7e25ebb47f7e 19859 linux-test madison got about 10 customers
+cbdb0dd3-753e-47a4-a71b-3d869481323e 19864 linux-test madison but i keep adding more stufff
+4042d496-80aa-4bff-bc81-ba7e692fb700 19869 linux-test arlie Madison, like a business work is ever done ;)
+c1f23dac-37d9-40a2-80ff-92200acb248e 19883 linux-test madison i got this really cool web interface really cool
+5c21a33f-9966-4642-8278-d0b5239b8df1 19901 linux-test lai Alisa: where?
+5d85a698-dbcc-4aad-b31c-6b0e92e283b4 19935 linux-test felicia Lai: can't you join that channel? or are you dense? or non-registered?
+cd6fa282-fc6a-41df-b975-a592f484f8b0 19935 linux-test santo Chauncey: xcf
+12b8c6ff-b36e-4a69-9ffc-eb494aa6353d 19940 linux-test alisa Lai: #Felicia.
+1a098d50-450f-4201-97e1-6b8a14cfae94 19968 linux-test chauncey Santo: :-)
+cfbfe247-48dd-4755-904b-35889366eae3 19976 linux-test felicia Come ON!!! .. i need to sleep already ;-)
+e0a14354-7ca3-4760-9a6f-ca5d3b942ce6 19977 linux-test santo Chauncey: :)
+aecd3f06-2f87-43f1-a994-05bc98d2e62b 20003 linux-test madison Arlie: i got a new girl friend :P
+2fc62c27-b599-47aa-8429-bcaf2003521a 20016 linux-test arlie congratulations
+8d6a595e-f4f1-4bcc-b48e-20df398d2e4e 20017 linux-test santo i haven't eaten anything today
+059e6152-9cf7-4af3-85d1-7dea8a7bd2cb 20020 linux-test santo i hate being poor :(
+af2e9d2f-2467-4989-aeec-0976107b7973 20030 linux-test madison Santo: step ya game up
+c489bedb-1e9a-4546-b184-4d56cc63cc07 20035 linux-test na help espa?ol
+3e2eb1b3-b5a0-490f-9bc4-c559d7d26b9e 20045 linux-test priscila Santo: go eat some babies like mike tyson.
+b2390182-6cd7-46f3-9d3a-707b058af50c 20048 linux-test madison Na: ?
+413e6ea8-f2cc-440c-82b6-b3408a291e79 20051 linux-test alisa Everyone, join #Felicia if you want to help Lai.
+1bf83e5b-1fa6-4ab6-8a35-727d3ae8f1f9 20052 linux-test santo Madison: werd, doing my portfolio site so i can freelance little $10 thingies here and there until I move to Pittsburgh and get a job
+b103f1cf-d152-4e07-92a9-c53297840502 20069 linux-test madison Santo: no no
+c73401e7-b652-421f-8896-a14a08e028ad 20073 linux-test santo no?
+6b307ed8-cf97-46f6-8637-b805b37e84aa 20076 linux-test madison where you located ?
+efa10418-61e3-498b-8ad4-777efb3186d1 20080 linux-test santo columbus
+6d9e3977-8620-4fd1-9913-64f028374a9a 20087 linux-test madison Georgia ?
+48c5f164-5baf-48c5-af4f-1a59b02dc93d 20090 linux-test santo ohio
+079fe6bd-c7eb-41b5-aee4-cb58c6a8ff69 20124 linux-test madison Santo: no jobs ?
+d6c7d2f2-f954-4c82-b6fc-7517c6a063a0 20143 linux-test santo Madison: nope.  it's all college-student jobs that pay $7hr.  good ol OSU!
+d44e2215-b570-4def-956c-dde286981399 20144 linux-test na ayuda en espa?ol
+8295f3b0-c08b-4e78-9649-801b7ffb3272 20146 linux-test madison Arlie: im about to take her for a trip down to brazil
+ea3fbb3e-3e84-4f8b-8b1e-c2d7f722cb16 20165 linux-test arlie Madison, you do that ;)
+d1115930-b9b0-41a0-ba14-90770f4a979f 20172 linux-test madison you hate trips dont you ? lol
+0e52b492-c38e-4be0-ac7a-96bb23960cce 20189 linux-test dagny ok, got it. Use the "nm" command. To search for a function in a bunch of libraries e.g: nm -o /lib/* /usr/lib/* /usr/local/lib/* 2>/dev/null | grep 'gzopen'
+15c8949c-a500-4c63-b83c-d888b59d2e4a 20202 linux-test arlie for the last few weeks you've been crying about money ... your solution ...  a girlfriend and trips to brazil
+b929b8a8-dbf7-4f23-968b-b392c606daae 20202 linux-test madison Santo: well i would only do freelance for jobs 300+
+b1e7841d-6e1e-4cee-8964-74e934dda161 20211 linux-test madison well
+9690f44e-33bd-4e93-ac3d-f2b0bc2c764c 20216 linux-test madison jus not the money i want
+fcfe5bc9-43d9-41cf-9179-703600c04451 20223 linux-test lai ok; i'm done folks
+cabbb982-d4ad-4137-909a-a25a7fb45732 20225 linux-test lai good to see y'all
+c2eb348d-6591-4b9c-894a-6f3a52535d0b 20235 linux-test angla later dude
+446bb31f-6dc9-4122-8151-622be6adbf77 20238 linux-test madison Arlie: it'll come though
+faf83dff-9fc3-4a02-b896-ace02eed1017 20239 linux-test arlie Lai, good luck and hang in there
+5b33780a-8acc-4994-8844-d2112a330745 20245 linux-test azzie Felicia: lol
+9b50947b-3af9-4356-a17f-77f71db40ac3 20246 linux-test angla how's that for timing ? !!!
+2fea2946-a66d-47e8-82c1-8d8b3953aba9 20250 linux-test lashawna do you have to be out of highschool to do internship? http://www.google.com/support/jobs/bin/static.py?page=students.html&sid=intern
+af334454-1996-4f7b-bdcf-0e2a1bfdb92b 20262 linux-test lashawna sry I'm naive on this subject
+08579f83-2c73-4a4f-b6f9-41127bedeefe 20263 linux-test felicia wtf is QSL?
+249c0162-5a01-4d4d-91fd-67734f1e1f99 20264 linux-test madison i got an extra 800.00 today and will have 400.00 sunday for this hosting thing fron last month
+db31140c-e993-4cd9-8ded-8dce3eda1389 20279 linux-test madison Santo: why would you goto PA ?
+d56a4233-f745-4561-bd81-22cbf0e3c17f 20283 linux-test arlie Madison, and you've spent it all already
+2aa76f83-de75-4ea5-96e2-db8adb6bd7f0 20284 linux-test azzie Lashawna: I suggest partaking in some SOC next year.
+8bdb47b2-95c5-4480-80f9-40e84c76c6bf 20291 linux-test madison Arlie: no not a dime
+a8239c54-dbf9-47dd-a193-46e1c2392556 20305 linux-test santo Madison: because if i have to live in another flat, boring, windy city (columbus) i'll go crazy.  plus i have friends, gf that live there.
+f6b264cd-155a-4b3c-be2d-e9785ceb8345 20308 linux-test arlie Madison, trips to brazil and gf's are free i suppose ;)
+d8f3f40e-2460-422f-aef7-cdf90dffc966 20309 linux-test lashawna Azzie, I'm naive on that too, what exactly is summer of code?
+3299d7e9-a00b-4dc8-a231-85a6546c2172 20316 linux-test gale Lai: take care, and good luck
+504b045c-dcdd-47a2-9b17-08182eed3c45 20320 linux-test azzie Lashawna: code.google.com/soc
+fe928b53-979b-4657-a67c-3486c80533c8 20328 linux-test santo plus, hilly PGH = AWESOME roads for sportbikes
+b9db0558-68f5-4271-a3a7-42b2ee62d638 20329 linux-test madison Santo: PA in my opinion is bad
+76c2314d-f037-4f00-87eb-204e3d407408 20337 linux-test madison Santo: go south
+6e2d015e-7dfe-4982-b36f-e894496608bb 20338 linux-test santo Madison: what do you mean?
+c8036758-f14f-4ec2-8c7d-d36792c579de 20345 linux-test madison follow the palm trees
+7b2de027-f599-45f6-a2c3-b40b699d6e79 20349 linux-test santo Madison: I don't have the funds to relocate south.
+ae453489-634a-4453-af6e-1ed451cea685 20355 linux-test lai Gale: you too bro
+e3cfe140-dd0f-4138-a753-2eac764aee84 20356 linux-test arlie Madison, nah, PA is great, they have an entire town thats on fire ... where else can you see that ?
+ecb158d9-aab2-4209-94e0-a4327adcef89 20361 linux-test madison lol
+02b60bbe-7eeb-497f-8347-814d2ced4557 20363 linux-test azzie PA is beautiful if youer in the right places.
+21c1c331-7c40-48cf-85d4-d4dbf97baa8d 20375 linux-test madison anyways south is much more beautiful
+434a8f32-6f86-44da-b306-c8cdb258ad20 20377 linux-test santo You guys knocking PA... it is SO far above Columbus and Cleveland (where I've lived)....
+ea7b2ba5-02e6-4a6c-ab30-038c6e884aa7 20378 linux-test azzie Arlie: My mom is from about 5 mins north of that town.
+d8752df8-4a48-41d5-a733-0e383a93b371 20383 linux-test madison charleston south carolina
+01c3e12d-15a1-4327-974a-5361d0fb33df 20388 linux-test madison tampa
+ed00bffa-70f5-47bc-bfad-1bfafeac5515 20392 linux-test arlie Azzie, she's gonna get lung cancer
+2d0571b9-f12c-4b30-8e1b-5d99ee523770 20399 linux-test madison new orleans even is good
+863e4da7-ddb3-455f-8e1e-17b56a42e55a 20407 linux-test alisa Arlie: there are some nice coal fires in China too....maybe there.
+c3cb6205-3286-47f8-892b-bfb134648609 20411 linux-test azzie Arlie: lol, I beleive they put out the fire a few years ago though.
+90dbdfe2-ad22-4918-a2af-e3ff87c6bd04 20411 linux-test arlie Azzie, theres only like 8 people that live in the town anymore, 1500 people moved
+8ca0fa9d-4ee7-4687-999d-fbcbb9d811aa 20416 linux-test arlie Azzie, nope
+93cf82be-9733-4f30-b085-ec9bdb131474 20421 linux-test azzie Arlie: The mine payed to relocate them.
+5311380e-f64f-4e6c-b6a7-3aa09543218a 20424 linux-test lai i'm gone
+ac7ff06a-5645-4556-81d8-e597a1e805eb 20428 linux-test santo bye Lai
+04976329-8005-4797-9fd0-ec6b727a95df 20430 linux-test lai be well and ttyl
+96e78894-ef21-4a85-a9b4-66c725983d50 20434 linux-test felicia bye Lai
+4e071a5b-fc30-46e4-b96d-c03504e6b298 20436 linux-test arlie Azzie, its supposed to burn for 400 years or something crazy
+898f0978-4fd4-49c0-90ef-7591b5984961 20442 linux-test santo be well and terminal?
+8b2dd072-c4d6-41cc-8104-a438b0fd1edb 20444 linux-test madison Santo: i jus hate cold weather thats all and PA is cold
+acc96b48-9cd8-4494-8e63-66e7653d9ae2 20445 linux-test lai ttyl
+1762042b-8cb7-4267-a499-1e6856d4702f 20445 linux-test lai byebye
+cbf19f49-8cd3-4451-8360-46603debdc5d 20446 linux-test felicia Lai: peace be with ouu
+2faceae0-1b04-4564-83cd-365e98eb9ba9 20447 linux-test marcel I'm having a hell of a time trying to apply a couple diff patches to a file. I tried 'patch origfile patchfile' as well as 'patch < patchfile' and entering the name of the original file ... gah
+420624a2-b38d-45eb-95be-c999083a65fe 20448 linux-test azzie Arlie: Wow, maybe we just missed it when we were driving around
+65393b50-f658-4188-b5b9-fc813a9b0b18 20457 linux-test alisa Azzie: yeah, I think it's still going. The Centralia fire, right?
+583575a5-c327-4bae-bfc0-055c3d2206ab 20459 linux-test azzie Arlie: I went looking for it, you used to see smoke coming out of the ground.
+afcd8b40-61f4-4093-ba74-4aff5ad57d56 20461 linux-test alisa Lai: \\//
+23dd3d21-b763-42d2-a04f-c68ceea6277f 20462 linux-test lai Felicia: ty
+7fe809d3-2aa2-4074-8d4c-f00ae35bfd6a 20466 linux-test alisa ASCII peace sign :)
+0bdd26fe-7db3-44d9-8114-28c308988395 20467 linux-test azzie Alisa: indeed.
+42764f75-a067-4ba5-8711-78e9f4af10fd 20472 linux-test alisa ASCII peace be with you.
+3da4631b-fe55-455d-bc94-65849f3c0c32 20472 linux-test arlie Azzie, it got started supposedly when people through their trash into the abandoned mine shafts
+5ddf5349-95a9-4920-a157-12e1744da7db 20472 linux-test felicia heh
+fb091173-4105-4c88-b55e-70915b4c6049 20474 linux-test lai Alisa: ty
+2c063748-d9bd-44e1-8781-d2ef42881bc8 20477 linux-test arlie er..threw
+164f01ce-6874-4a70-af96-b3295d40abc6 20477 linux-test santo Madison: Cleveland is MUCH colder.  Do you know what Lake-Effect snow is?  :(.  During snow storms (which are very often in the winter) you get POUNDED with FEET of snow because of Lake Erie.
+29ea28b0-8e64-4d13-a087-ce57369bde93 20488 linux-test lai tell AfterDeath i said hey
+8b373837-c947-4621-96cb-a1ec140ba0da 20489 linux-test lai AfterDeath: hey
+ef2b1822-fa58-40f8-be2f-e77f7e7187fe 20494 linux-test madison Santo: move south as i said ;)
+4ec54af8-01f3-411f-88bf-d01fa36ef5e8 20499 linux-test felicia Alisa: \\nn// ;-)
+df9a2e28-d511-4fb4-bdb4-e133e53db344 20510 linux-test alisa Santo: I'm in buffalo, I'm used to it :)
+1d92c760-7d90-43bc-90e5-c450afba3d94 20521 linux-test arlie cgi irc ... thats low rent ;)
+87862e0e-94c1-47e7-9b22-5eb47c652534 20521 linux-test elenora Where can I get a free SIP account? I have been strugling with ekiga.net for an hour or so.
+645591e6-9d3e-4bf3-904f-226be1c7ecd1 20535 linux-test felicia Arlie: so he's moving in with you down there?
+6c9d3854-b63d-44b0-9540-747064a15977 20536 linux-test santo Madison: I have a GF in PGH that I can stay with for a few days while I get some shitty $12 tech support job, then I can get my own place, in a month I'll have my CCNA (took 2 year tech program in high school), and then I can be a router jockey.  YAY!
+4fc12890-7ce8-406f-b56d-bddaf0311a78 20540 linux-test madison south carolina down is hot
+325f5291-86ca-44c7-8b42-39ca4d203f71 20543 linux-test felicia lol
+c1407af8-868d-4a80-9101-f212c9d8a1cf 20543 linux-test santo Alisa: haha!  OUCH.
+8b0f1679-bfa8-430d-9e3d-0834d43dd05d 20543 linux-test arlie Felicia, pfff ... no way ;)
+112bead7-f144-4b77-b891-42c5b44a3c89 20548 linux-test felicia :-p
+befc5b69-2a92-4892-b26f-9f6242d919d2 20583 linux-test arlie Felicia, ive had enough drama for 6 lifetimes ... i dont want his
+4da124a5-5879-4081-948c-c6f5e5f6cbe6 20586 linux-test madison Arlie: brazil is cheap
+90a562a5-4a50-45ce-9b42-5bd704c57272 20594 linux-test azzie lol
+aced3202-020d-47e6-9d88-63130a2b87df 20602 linux-test santo I hate living on the OSU campus so much.  A ghetto-crack-level-apartment costs $400.  :(
+77294a69-4421-4ff3-9099-ae530a8702a3 20606 linux-test azzie Its rediculous ezpensive here.
+38f515d9-47d0-44fe-aede-145e8b520b59 20615 linux-test azzie Santo: Okla?
+3759d8d4-e645-42a3-aba2-77c4c52510d3 20615 linux-test arlie Madison, im sure ... $200 an acre for rain forest with timber
+05b95713-6f1c-48aa-9e4b-cfd475f8bf6e 20618 linux-test rachel null, that sounds cheap.
+c645bf94-c0b8-4071-b9fa-f3404ee8289b 20619 linux-test felicia Arlie: heh .. not even from a distance .. eh? ;-)
+52d8305f-2337-4eee-aa37-eeb46e5266c0 20622 linux-test santo Azzie: Ohio State
+b9341b53-b8b3-465c-a841-92bafbfb14b7 20626 linux-test madison Santo: brazil -> 400.00 usd == ocean front apartment in rio de janeiro
+40553237-c070-4d45-806f-2a82911140b7 20627 linux-test mellisa awww
+6913be25-e2b4-4359-a813-0d46cf7c12f1 20628 linux-test arlie Felicia, not even from the moon
+1c02a295-291d-4006-8401-962416be6376 20630 linux-test mellisa i missed quiznos :(
+6099f816-dae2-4726-be51-c8448173e3f9 20634 linux-test felicia ouch
+d800f8fe-ff01-4220-90f0-5026f2e2bb77 20637 linux-test santo Madison: I grew up in Romania until I was 10.
+28fa5a32-d4b2-4c05-bd10-6b5de3e2d649 20642 linux-test felicia Mellisa: wanna donate?
+4809e649-43e7-4104-bce4-aa70b21bca24 20643 linux-test madison LMAO
+8a106dbf-1fee-45cc-9ca3-8d1811278e67 20660 linux-test madison eastern europe the fall of the cuacasian empire
+bdffed5a-8ece-448f-a368-e4984d2dc3d6 20665 linux-test madison cau
+7354325e-dda1-42b7-a135-599ba57334da 20669 linux-test azzie HOLY HELL
+cb4ebcb3-c73f-4071-a846-ff9025784caf 20671 linux-test santo haha yes
+eeb2001a-6ac1-4fef-9ad2-eb9bb7c34d9d 20672 linux-test madison i was in romania
+281a8988-b9ad-49ab-8136-b06e317b3ccd 20674 linux-test santo Corruption everywhere.
+27f71da3-de57-40d5-bb98-6ab525aa689b 20684 linux-test arlie Felicia, see, i like quiznos too, but i have issues with sending money to an adult who thought he could pay rent with self issued junk bonds, and is upset that the judge didnt allow it to happen
+b11e70a8-71f6-48fd-a520-42f3a9f9089a 20684 linux-test madison holy shit that was a bad place
+2801d79e-78b4-4d96-8263-a5e2883a795e 20704 linux-test madison my father used to go there for business
+3f0f01ba-011a-4493-95dc-a2546ab3e9c8 20704 linux-test kandra Arlie: is Sandwichman asking you for cash?
+9cd1062f-94ec-4953-9192-9a46b6003098 20713 linux-test azzie Yea, but you learn a lesson i guess.
+71a39d96-8162-4e96-b7a6-5a65c601a21c 20716 linux-test madison croatia aint much better
+a10725e4-5365-4cd1-9264-a63be88b3efb 20717 linux-test santo And my parents are fucking crazy.  Totally fucked with my head... couldn't stand life so I dropped out of school even though I had a full ride.  :(
+dc29c8f7-ed99-470f-a676-790676b6d039 20738 linux-test arlie Felicia, his financial situation was deteriorating for months and months, and he sat here on irc pretending it wasnt happening, or he could jew the system, or whatever
+587c76e3-9d8e-4494-b2fd-d8862fc91177 20738 linux-test kandra Santo: you're at OSU?
+ee85e9c7-82f0-4b8b-9504-89c5035fb11d 20741 linux-test madison Santo: white  or indian ?
+1a159bb8-678c-4cdd-9f30-5dd413088460 20746 linux-test santo Kandra: white
+72b9bc0a-267f-4eb6-b0b8-a091be7e6c66 20753 linux-test madison or gipsy lol
+f5eec9c6-f004-412c-bc86-8725f7b16c94 20756 linux-test santo haha
+1f782166-c0f3-4c37-8e69-e81707a32180 20760 linux-test santo close
+552fc5c3-165a-4910-881c-8fbb295493b0 20761 linux-test madison man that was an experince
+9880e5d8-3257-4435-9962-ebd92c17f455 20804 linux-test kandra Santo: maybe you meant to say that to Madison?
+03b01ca5-7274-4de6-b9d2-6575100509bd 20814 linux-test arlie Felicia, i dont know what he thought ... but he's learning a lesson right now ... that much is for certain ... and he's gonna have to get a job and work like all the rest of us
+2f7cd1b4-7251-4721-9d9a-b1663dc88811 20814 linux-test madison he did
+f314359c-7ec0-4a9d-813d-89ac65396759 20814 linux-test santo Taking 22 credit-hours of Pre-Med classes and working 20 hours a week washing dishes for minimal wage only to go home on the weekends and have my parents tear my head off for 52-hours non-stop... that really sucked.
+982946f9-1ed0-4240-9542-5e4c84d5bedf 20837 linux-test madison Santo: you still speak romanian?
+6aa8200c-d633-48eb-9fb9-1d6771ce700c 20839 linux-test santo yes
+a41a0557-8dff-4c5d-896f-fc70969512d2 20844 linux-test madison fluent ?
+89f42a42-d6df-4800-b084-5344fe1b7475 20846 linux-test santo yes
+d67e23c6-e750-4277-b969-a163bbb47502 20852 linux-test madison ahh
+7d29188b-2b8b-4f5d-aa6e-8e0d16bc5af9 20873 linux-test madison i need to learn another language
+33e8f5da-85dc-4e2a-a8c6-858905e945a4 20879 linux-test arlie Felicia, he doesnt need money, he needs a "financial stability plan" that he's willing to follow
+6e14f768-51ef-421b-be8c-7b7ec5cf4fc9 20896 linux-test madison i speak english spanish and portuguese but spanish and portuguese are kinda close so yea
+3d76a184-70c5-4b5d-8867-b90f708090e9 20905 linux-test santo yay for romance languages
+082cf509-2d52-4e61-862b-b52458f94283 20909 linux-test madison lol
+fdaf8037-3a2b-4a58-922c-43aab4ff9483 20911 linux-test priscila Who needs financial stability, just buy drink and drugs and women.
+412c0377-ad09-41f6-9f89-26534729dcc3 20912 linux-test madison you like ?
+e920687c-eaf7-4ac9-9e60-b66e987c9348 20913 linux-test felicia i can't disagree with what you're saying .. that's all io will say about that right now .. especially since i'm tired
+19cd1bb2-1647-4e73-acba-553523871dea 20928 linux-test santo they're easy for me to pick up
+4982df57-17eb-47d1-972f-50acde7e372e 20931 linux-test madison romance languages are fine ..........english kills it for flexibility though
+8d53804d-497b-4ae1-a667-ad12ad554959 20943 linux-test santo i think when i was 7 i spoke half-assed-fluent italian because i watched italian-dubbed anime all day long
+f8464a08-295a-4b2b-be9b-fe6fe2a27ca1 20950 linux-test madison english is still a latin language just not a romance language
+4dc6b453-c4b6-40e7-882c-b4a1bef68f1d 20956 linux-test arlie Felicia, if would be extremely generous of you to help him tho ... but having been homeless, and broke, and without property myself, i worked my way out of it, without asking people for money
+48f8976c-8568-401a-af76-cdfaa4ed3357 20963 linux-test arlie Felicia, er ... if
+4981d2ed-bef1-4734-add0-f1160d441050 20965 linux-test arlie it
+3d292442-0cec-4448-8dd7-a082a37477f3 20978 linux-test nicki too bad the bible doesn't have a financial stability plan. :)
+b301b61d-3a50-4c66-a8f2-7623d1cb6037 20980 linux-test santo I'm getting pretty close to being homeless myself.
+4d0b5d7d-41eb-4a74-97ca-43560ede8751 20985 linux-test felicia Arlie: i've been very close to that situation myself
+23605c45-85c5-4e25-92a0-43e5db7926c4 20985 linux-test arlie Nicki, it does
+8972f1e2-c139-46f9-8c2d-b2c8ce9b45c7 20985 linux-test madison lol
+3bdbb34f-b50a-45f3-a68c-4fe33eb3600c 20993 linux-test santo I have $360 in the bank, rent is $360 (due in a few days), credit payment is about $50... :o
+491fecc6-50eb-4b09-ae93-7ad6c48d48bb 20995 linux-test madison Santo: atleast your not in romania
+8d8a70f3-b9fc-4551-bc0f-fe9da6b4613c 20998 linux-test arlie Nicki, thats why jewish people have all the money ;)
+da8ebccb-c484-4baf-9b5a-7c42a7204592 21009 linux-test doretta I thought it was because they were cheap
+8927d09c-1336-43ab-969a-8ef68a20d940 21015 linux-test arlie Doretta, same thing ;)
+6a391f19-2f45-4b08-82b5-21b60c7e27b6 21018 linux-test nicki old testament > new testament? :)
+543a027e-aa39-453e-9e66-9b1dda4a27e0 21019 linux-test doretta That's what seinfield tells me, atleast
+2c17b163-ab8f-42ca-a5a3-16310dacf212 21033 linux-test arlie im pretty cheap myself
+aa6d5ebb-3fda-438b-a8e7-b9dc070bd697 21041 linux-test tatiana should i boot from a licecd if i want  use rsync to backup my linux partition onto an external hard drive?  is it bad to backup a partition that is currently booted?
+fe72295c-ad16-4360-945f-961b3d2ba063 21043 linux-test madison Santo: do some freelance
+1585c17f-a08a-4757-a5a7-412ab513e176 21045 linux-test kandra too bad not everyone accepts the God card as payment.
+397192d0-bdcb-4c48-8b07-c616bf4c99f7 21050 linux-test tatiana *want to use
+7e8b8488-2aef-4a18-80d9-11cb055bf6ba 21052 linux-test santo Madison: that's why i'm getting my portfolio site up :)
+2a06a06b-f608-4f57-829f-112de351efb7 21058 linux-test madison you dont need that
+519bb6bc-6431-47f7-82d0-c07b5b52d3ca 21065 linux-test santo i do joomla freelance mostly
+9cf73b7e-519e-45f6-8d6e-e2c6c684a3aa 21068 linux-test santo most people want to see some examples
+4af24853-9025-4408-ab29-e315fc01cec5 21072 linux-test madison i never did any of that portfoilio resume none of that
+10f10aa0-74e8-485f-ad54-399dbae6e0e7 21073 linux-test santo of previous work
+c3f0a99e-84ff-496f-99e2-2b3cf548a5dc 21078 linux-test arlie skate or die ... thats the deal ... skate or die
+25fd3efe-d5f0-4f6e-bffa-312502b35cb2 21085 linux-test madison yor just not talking to them right
+a857076b-28d6-4dba-a65a-f1bd5ce0c26d 21113 linux-test jesse Tatiana: doing it from a livecd is good IMHO, because the partition won't be written to while you back it up
+ab1ff6ec-03f3-4aa1-b2ad-71c4ef114e32 21115 linux-test nicki I learned my money handling skills from playing MUDs, I save it up, then I spend it after I have it. :)
+c7dc1bc2-775e-4045-a477-e6841d811a86 21122 linux-test madison Santo: i could get 5/10 jobs with no port or resume
+9b785e91-d8e2-4286-a105-0394517881f3 21122 linux-test santo well i've been trying those rentacoder sites and pretty much every posting says "show me 3 examples blah blah blah"
+98b1b728-f384-4bcf-86bb-7741ac2622d2 21123 linux-test tatiana ok thanks Horacio
+e92bedd6-22a3-4ad7-a454-072c37cd648c 21132 linux-test madison Santo: RAC is bad
+e4a8bf50-168f-4c23-ba29-f98a17ddf1b5 21143 linux-test santo Madison: i think it was getafreelancer
+3ace1d70-a950-4acb-9ca8-ea74798c0b71 21159 linux-test arlie Santo, the most important thing in getting work is that people like you ... tell some jokes, and charge them $50,000 for it
+8913c32b-308e-4a14-ac3c-37e8fc8cc50c 21174 linux-test madison exactly
+d1036892-7af1-4a89-ba0c-fba990b8b095 21176 linux-test madison no jokee
+bc90fa4c-b533-4d5d-b256-e3f15a6b3c65 21180 linux-test santo :)
+09b5c93f-0010-46ce-a05f-55c58e71c685 21183 linux-test santo it helps that im hot
+4940e7e7-3144-4074-ab00-7f7dfeea9970 21185 linux-test santo ^_^
+21b66994-8966-48a7-ae62-1f1d917dcd29 21192 linux-test madison you girl or guy ?
+86821afc-a45d-4c6b-b1fb-3c428e6a942e 21199 linux-test santo guy
+af4f14dc-277f-4a72-ad8a-ffd913cec19e 21201 linux-test priscila LOL
+62a7aad3-413c-4e1b-8bfe-d7295f585ffd 21206 linux-test priscila A girl, on the internet. haha.
+399cec75-7f44-48c9-ad45-b0bdf2fb7a9f 21220 linux-test santo my gf is me, but with a vagina.  and she's hot too.
+594bcd99-c06c-40f1-b880-42abf83c724e 21229 linux-test santo except i haven't switched her over to linux yet.
+ab7ae78b-e7a7-4591-8dd4-9f4abcc9db0a 21247 linux-test melda mehgirl: erinstalent.com
+6e218e01-ef3d-48c2-9a52-8f920ef69f2a 21260 linux-test arlie Santo, The Narcisists ?
+dac75d1e-2166-4263-88b1-546fc455b52e 21263 linux-test bruno .oO(apt-get install vagina)
+ff793cda-bc5e-4ba9-a268-64d95f6ca103 21266 linux-test madison Santo: how long you been in usa ?
+0dc0ae1c-80f3-4c0c-94c4-8c11078ee834 21269 linux-test arlie Santo, is that what the mailbox says ?
+6d3ca85e-077e-481c-8369-c808f02866ae 21277 linux-test felicia Santo: no breasts?
+7a4db775-7f70-4b13-bed7-2e550f18674f 21280 linux-test jesse Arlie: heh
+d2072445-314c-4d68-b15d-aa8fb298fd74 21284 linux-test melda _Arlen: can't compile: not enough free space
+116f58c1-a24d-45e0-84b6-a7b54df8c786 21285 linux-test jesse Felicia: moobs
+3c7382ca-7280-4e4e-b05f-597cf3eb9ab8 21287 linux-test ruthe and facial hair
+482e5a10-2d46-42c7-bff7-f0d5dc2e8658 21288 linux-test santo Madison: 10 years
+9ecbc011-84b3-4da4-91f3-cde78c1687cc 21293 linux-test madison Santo: oooooo
+a54acd69-2225-45f5-8c93-6e6cf08e3a96 21295 linux-test santo Felicia: she has big boobies!
+b0f50318-a012-40a0-9014-83be108ada02 21298 linux-test madison i thought you just came over
+4ff3dd79-c1aa-4dc9-85e8-c134ecb4157b 21307 linux-test santo Arlie: bwahaha
+56ded5aa-185c-4b7b-bf62-1b124390f315 21307 linux-test felicia lol @ "my gf is me with a vagina"
+4945389d-b61b-463b-a516-1d39649df4b8 21316 linux-test santo Madison: i speak perfect irc english
+b65e8366-cec0-4978-a0f7-0759fa152523 21323 linux-test madison Santo: speaking ?
+f5657a1d-27e6-4ce9-bf74-b5a316e51925 21324 linux-test felicia she shaves daily too ? lol
+fb939278-5016-493c-9b60-b503b9f75b02 21335 linux-test santo i haven't shaved in like 2 days
+1650beaa-f120-4f82-8d84-1da9940f90b2 21338 linux-test santo i'm getting scruffy
+e5258474-5880-4e12-b7e3-841cfda18b83 21344 linux-test santo fuck why am i not being productive?
+26187354-4f14-4ea0-963a-5aec75e2f794 21352 linux-test felicia is her name RMS by any chance?
+aaf514ae-caf1-4501-9f2a-839ebc5617c5 21358 linux-test santo no
