@@ -89,25 +89,22 @@ function userAway(user, room, conn) {
 	conn.rooms.splice(conn.rooms.indexOf(room), 1);
 	
 	if(user.rooms[room]) user.rooms[room]--;
-	log("Removing user from room", user);
 	conn.save();
 	setTimeout(function() {
 		if (!user.rooms[room]) {	
-			log("Removing user from room", user);
 			delete user.rooms[room];
 			core.message({ type: 'away', from: user.id, to: room,
 				time: new Date().getTime(), text: "" });
 
 			if(!Object.keys(user.rooms).length) {
-				log("Deleting the user object completely.", user.id);
 				delete users[user.id];
 			}
 			conn.save();
 		}
 		else{
-			console.log("User still has some active windows.",user);
+			log("User still has some active windows.",user);
 		}
-	}, 15*1000);
+	}, 60*1000);
 
 	return false; // never send an away message immediately. Wait.
 }
@@ -122,13 +119,11 @@ function userBack(user, room, conn) {
 	if(user.rooms[room]) {
 		user.rooms[room]++;
 		conn.save();
-		console.log("User OBject without back message",user);
 		return false; // we've already sent a back message for this user for this room.
 	}
 
 	user.rooms[room] = 1;
 	conn.save();
-	console.log("User OBject with back message",user);
 	return true;
 }
 

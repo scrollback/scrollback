@@ -9,12 +9,13 @@ function loadRoomNames(){
             var roomBuffer = {};
             if(err) throw err;
             
-            data.split("/n").forEach(function(roomName){
+            data.split("\n").forEach(function(roomName){
                 if(roomName){
                     roomName = roomName.toLowerCase().trim();
                     roomBuffer[roomName]=true;
                 }
             });
+            console.log("LOGIN ",roomBuffer);
             roomNames = roomBuffer;
     });
 
@@ -26,6 +27,7 @@ var init = function (){
 }
 
 loginRequired = function(r){
+    console.log("LOGIN asking for ",r);
     if(roomNames[r]){
          log("Login is required for this room:" + r);
          return true;

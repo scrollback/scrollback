@@ -68,7 +68,6 @@ function send(message, accounts) {
 			return;
 		}
 		
-		console.log(clients[message.from]);
 		switch(message.type) {
 			case 'text':
 				if(!client) {

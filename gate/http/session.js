@@ -12,7 +12,6 @@ var express = require("express"),
 	watchers = {};
 	
 function initUser() {
-	console.log("called the init user function");
 	return {
 		id: 'guest-sb-' + names(6),
 		picture: '/img/guest.png',
@@ -34,7 +33,6 @@ var set = exports.set = function(sid, sess, cb) {
 	var i;
 	unsign(sid, function(id) {
 		store.set(id, sess);
-		console.log("WATCH calling watchers of ", sid);
 		if(watchers[sid]) for(i in watchers[sid]) {
 			watchers[sid][i](sess);
 		}
@@ -42,7 +40,6 @@ var set = exports.set = function(sid, sess, cb) {
 };
 
 exports.watch = function(obj, cb) {
-	console.log("WATCH adding watch for ",obj.sid);
 	if(!watchers[obj.sid]) watchers[obj.sid] = {};
 	watchers[obj.sid][obj.cid] = cb;
 }
