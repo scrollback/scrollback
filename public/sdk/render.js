@@ -156,14 +156,17 @@ Stream.prototype.renderTimeline = function() {
 			nicks: {},
 			n: 0,
 			dominant:{
-				nick:msg.from,count:1
+				nick:msg.labels[1], count:1
 			}
 		};
+
 		
-		buckets[i].nicks[msg.from] = (buckets[i].nicks[msg.from] || 0) + msg.text.length;
+		buckets[i].nicks[msg.labels[1]] = (buckets[i].nicks[msg.labels[1]] || 0) + msg.text.length;
 		
-		if (buckets[i].dominant.count<=buckets[i].nicks[msg.from]) {
-			buckets[i].dominant={nick:msg.from,count:buckets[i].nicks[msg.from]};
+		console.log("nicks values ... " , buckets[i].nicks[msg.labels[1]]);
+
+		if (buckets[i].dominant.count<=buckets[i].nicks[msg.labels[1]]) {
+			buckets[i].dominant={nick:msg.labels[1],count:buckets[i].nicks[msg.labels[1]]};
 		}
 		
 		buckets[i].n += msg.text.length;
@@ -175,7 +178,7 @@ Stream.prototype.renderTimeline = function() {
 		if(buckets[i]) {
 			r = ["div", {
 				'class': 'scrollback-tread-row scrollback-user-' +
-					Object.keys(buckets[i].nicks).join(' scrollback-user-'),
+					Object.keys(buckets[i].nicks).join(' scrollback-user-'),				
 				style: {
 					top: Math.round(i*h) + 'px',
 					width: Math.round(h+buckets[i].n*(w-h)/max) + 'px',
