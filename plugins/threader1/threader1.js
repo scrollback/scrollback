@@ -10,17 +10,11 @@ module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
 		try{
-			var m=message.text;//remove " 
-			
 			var msg = JSON.stringify({
 				id: message.id, time: message.time, author: message.from,
 				text: message.text.replace(/['"]/g, ''),
 				room: message.to
 			});
-			m=m.replace(/\"/g,"");
-			
-			var msg='{"id":"'+message.id+'","time":'+message.time+',"author":"'+message.from+
-				'","text":"'+m+'","room":"'+message.to+'"}';
 			log("Sending msg to scrollback.jar="+msg);
 			pro.stdin.write(msg+'\n');
 			pendingCallbacks[message.id] = { message: message, fn: callback};
