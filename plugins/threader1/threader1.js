@@ -49,7 +49,7 @@ function init(){
 			console.log("Data returned by scrollback.jar="+data.threadId, pendingCallbacks[data.id].message.text);
 			message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 			if(message) {
-				message.labels = [data.threadId];
+				message.labels = data.threadId;//[data.threadId];
 				pendingCallbacks[data.id].fn();
 				delete pendingCallbacks[data.id];
 				log("called back");

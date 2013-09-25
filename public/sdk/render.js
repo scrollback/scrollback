@@ -183,13 +183,14 @@ function hashColor(name) {
 	// nicks that differ only by case or punctuation should get the same color.
 	
 	function hash(s) {
-		var h=1, i, l;
+		
+		var h=7, i, l;
 		s = s.toLowerCase().replace(/[^a-z0-9]+/g,' ').replace(/^\s+/g,'').replace(/\s+$/g,''); 
 		// nicks that differ only by case or punctuation should get the same color.
 		for (i=0, l=s.length; i<l; i++) {
-			h = (Math.abs(h<<(7+i))+s.charCodeAt(i))%1530;
+			h = (h*31+s.charCodeAt(i)*479)%1531;
 		}
-		return h;
+		return h%1530;
 	}
 	
 	function color(h) {
@@ -286,10 +287,14 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	}
 	
 	if(!el) return null;
-
+	
+	if (!message.labels) {
+		message.labels="scrollback";	
+	}
+	//console.log("msg========================="+message.labels);
 	el = JsonML.parse(["div", {
 		'class': 'scrollback-message scrollback-message-' + message.type,
-		'style': { 'borderLeftColor': hashColor(message.from) },
+		'style': { 'borderLeftColor': hashColor(message.labels/*message.from*/) },
 		'data-time': message.time, 'data-from': formatName(message.from)
 	}].concat(el));
 	

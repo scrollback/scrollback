@@ -40,7 +40,7 @@ function init(){
 		var d=data.split(" ");
 		message=pendingCallbacks[d[0]]&&pendingCallbacks[d[0]].message;
 		if (message) {
-			message.labels=[d[1]];
+			message.labels="Thread-"+d[1];//[d[1]];
 			pendingCallbacks[d[0]].fn();
 			delete pendingCallbacks[d[0]];
 			log("called back");
