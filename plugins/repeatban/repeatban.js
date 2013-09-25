@@ -57,7 +57,8 @@ var rejectable=function(message){
 	if (message.text!=undefined) {
 		var capsLength=message.text.replace(/[^A-Z]/g, "").length;
 		var totalLength=message.text.length;
-		if (capsLength>(totalLength*0.6)) {
+
+		if (capsLength>(totalLength*0.6) && totalLength > 6) {
 			return true;
 		}
 	}

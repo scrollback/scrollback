@@ -56,11 +56,11 @@ function init() {
 }
 
 function send(message, accounts) {
-	//console.log("trying to send in irc:",message);
 	clients[message.from] = clients[message.from] || {};
 	accounts.map(function(account) {
-		var u = url.parse(account),
-			client = clients[message.from][u.host],
+		console.log("Account:",account);
+		var u = url.parse(account);
+			var client = clients[message.from][u.host],
 			channel = u.hash.toLowerCase();
 		
 		if ((message.origin || "").toLowerCase() == (account || "").toLowerCase()) {
@@ -126,15 +126,15 @@ function send(message, accounts) {
 				
 				nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
 				clients[message.from][u.host] = client
-				clients[message.ref]=clients[message.from];
 				users[u.host][message.ref] = true;
 				
 				if(client) client.rename(nick);
-				clients[message.ref]=clients[message.from];
-				
-				delete clients[message.from];
 				break;
 		}
 	});
+	if(message.type == "nick") {
+		clients[message.ref]=clients[message.from];
+		delete clients[message.from];
+	}
 }
 
