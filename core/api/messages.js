@@ -45,6 +45,12 @@ module.exports = function(options, callback) {
 		if(until) {
 			desc = true;
 		}
+
+		if(options.labels) {
+			where.push("`labels` in (?)");
+			params.push(options.labels);
+		}
+
 		
 		if(where.length) query += " WHERE " + where.join(" AND ");
 		query += " ORDER BY `time` " + (desc? "DESC": "ASC");
