@@ -7,7 +7,7 @@ var dom = {
 			}, 'menu'],
 			scrollback.close? ["div", {
 				'class': 'scrollback-icon scrollback-icon-close'
-			}, 'close']: "",
+			}]: "",
 			["div", { 'class': 'scrollback-icon scrollback-icon-pop' }, 'on scrollback'],
 			["div", {'class': 'scrollback-title-content'},
 				["span", {'class': 'scrollback-title-id'}],

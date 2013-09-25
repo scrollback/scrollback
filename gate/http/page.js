@@ -7,7 +7,10 @@ exports.init = function(app) {
     
     var dialogs = {
         "login" : function(req, res){
-            res.render("login");
+            res.render("login", {
+                user: req.session.user, 
+                requireAuth: req.query.requireAuth
+            });
         },
         "profile" : function(req, res){
 			console.log("Retrieving session", req.session);

@@ -4,7 +4,7 @@ var log = require("../../lib/logger.js");
 module.exports = function(data, callback) {
 	if (typeof data === "object") {
 		pool.get(function(err, db) {
-			if(err) return callback(err);
+			if(err && callback) return callback(err);
 			
 			db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
 				"`owner`, `params`) values(?,?,?,?,?,?,NOW(),?,?) ON DUPLICATE KEY UPDATE "+
@@ -13,14 +13,8 @@ module.exports = function(data, callback) {
 				"`params`=values(`params`)", [data.id, data.type || "user", data.name || "", data.description || "",
 				data.picture || "", data.profile || "", data.owner|| data.id,data.params|| ""],
 			function(err, room) {
-
-				if(err)  {
-					console.log(err);
-					return callback(err,data);
-				}
-				if(data.originalId!= data.id){
-					db.query("delete from `rooms` where `id`=?",[data.originalId]);
-				}
+				db.end();
+				if(err && callback) return callback(err,data);
 				
 				if (data.accounts.length>0) {
 					insertAccounts(data,function(err,data){
@@ -31,7 +25,6 @@ module.exports = function(data, callback) {
 					console.log("no accounts;");
 					callback(null,data);
 				}
-				db.end();
 			});
 			
 		});
@@ -55,10 +48,11 @@ module.exports = function(data, callback) {
 
 // accounts is an array of strings.
 function insertAccounts(data,callback){
-	var account, accountsQuery=" INSERT INTO `accounts` VALUES ",
+	var account, accountsQuery=" INSERT INTO `accounts` VALUES ", //?
 		accountValues=" (?,?,?,?) ",params=[];
 	pool.get(function(err, db) {
-		console.log("accounts we have",data.accounts);
+		if (err && callback) callback(err,res);
+		
 		if (data.accounts.length>0) {
 			data.accounts.forEach(function(element) {
 				var id = element, room = data.id, gateway;
@@ -69,14 +63,16 @@ function insertAccounts(data,callback){
 				params.push(room);
 				params.push(gateway);
 				params.push("");
+				
+				// params.push([id, room, gateway, '']);
 			});
 			
 			db.query("delete from accounts where `room`=?",data.originalId,function(err,res){
-				if (err) callback(err,res);
-
+				if (err && callback) callback(err,res);
+				
 				db.query(accountsQuery,params,function(err,account){
 					db.end();
-					callback(err,data);
+					if(callback) callback(err, data);
 				});
 
 			});

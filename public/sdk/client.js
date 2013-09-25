@@ -28,15 +28,21 @@ socket.emit = function(type, data) {
 };
 
 socket.onopen = function() {
-	scrollback.debug && console.log("Cookie", document.cookie);
-	var sid = document.cookie.match(/scrollback_sessid=(\w*)(\;|$)/);
-	sid = sid? decodeURIComponent(sid[1]): null;
-	
+	//scrollback.debug && console.log("Cookie", document.cookie);
+	//var sid = document.cookie.match(/scrollback_sessid=(\w*)(\;|$)/);
+	//sid = sid? decodeURIComponent(sid[1]): null;
+	//
 	function init(sid) {
-		socket.emit('init', { sid: sid, clientTime: new Date().getTime() });
+		var initData={ sid: sid, clientTime: new Date().getTime() };
+		
+		if (scrollback.nick) {
+			initData.nick=scrollback.nick;
+		}
+		socket.emit('init', initData);
 	}
-	if(sid) init(sid);
-	else getx(scrollback.host + '/dlg/cookie', function(err, data) {
+	//if(sid) init(sid);
+	//else
+	getx(scrollback.host + '/dlg/cookie', function(err, data) {
 		if(err) return;
 		init(data);
 	});
@@ -70,7 +76,7 @@ socket.onmessage = function(evt) {
 };
 
 function onInit (data) {
-	document.cookie = "scrollback_sessid="+encodeURIComponent(data.sid);
+	//document.cookie = "scrollback_sessid="+encodeURIComponent(data.sid);
 	nick = data.user.id;
 	core.emit('connected');
 	core.emit('nick', nick);
@@ -105,7 +111,6 @@ core.leave = function (id) {
 
 function send(type, to, text, options, callback) {
 	var m = { id: guid(), type: type, from: nick, to: to, text: text || '', time: core.time() }, i;
-	
 	if(options) for(i in options) if(options.hasOwnProperty(i)) {
 		m[i] = options[i];
 	}
@@ -116,15 +121,24 @@ function send(type, to, text, options, callback) {
 	
 	if(typeof messageArray !=="undefined" && rooms[to]) {
 		rooms[to].messages.push(m);
+		i = rooms[to].messages.length - 1;
 		if(requests[to + '//']) requests[to + '//'](true);
 	}
+
+
 	
-	if(callback) {
-		pendingCallbacks[m.id] = callback;
-		setTimeout(function() {
-			if(pendingCallbacks[m.id]) delete pendingCallbacks[m.id];
-		}, 10000);
+	pendingCallbacks[m.id] = function(obj) {
+		if(obj.message && typeof messageArray !=="undefined" && rooms[to]) {
+			// obj is an error. remove the message from the cache.
+			rooms[to].messages.splice(i, 1);
+			if(requests[to + '//']) requests[to + '//'](true);
+		}
+		if(callback) callback(obj);
 	}
+
+	setTimeout(function() {
+		if(pendingCallbacks[m.id]) delete pendingCallbacks[m.id];
+	}, 10000);
 	
 	return m;
 }
@@ -157,6 +171,10 @@ function onMessage (m) {
 	scrollback.debug && console.log("Received:", m);
 	core.emit('message', m);
 	
+	if(m.type=="nick" && m.from==core.nick()) {
+		core.nick(m.ref);
+	}
+
 	if(pendingCallbacks[m.id]) {
 		pendingCallbacks[m.id](m);
 		delete pendingCallbacks[m.id];
@@ -164,7 +182,7 @@ function onMessage (m) {
 	
 	messages = rooms[m.to] && rooms[m.to].messages;
 	if (!messages) return;
-	for (i = messages.length - 1; i >= 0 && m.time - messages[i].time < 10000; i-- ) {
+	for (i = messages.length - 1; i >= 0 && m.time - messages[i].time < 120000; i-- ) {
 		if (messages[i].id == m.id) {
 			timeAdjustment = m.time - messages[i].time;
 			scrollback.debug && console.log("Time adjustment is now " + timeAdjustment);
@@ -185,14 +203,21 @@ core.say = function (to, text, callback) {
 core.nick = function(n, callback) {
 	if (!n) return nick;
 	if(typeof n === 'string') n = {ref: n};
-	send('nick', '', '', n, function(reply) {
-		if(reply.ref) {
-			nick = reply.ref;
-			core.emit('nick', nick);
-		}
-		return callback(reply);
-	});
-	return n;
+	if(callback) {
+		send('nick', '', '', n, function(reply) {
+			if(reply.ref) {
+				nick = reply.ref;
+				core.emit('nick', nick);
+			}
+			if(callback)
+			return callback(reply);
+		});
+	}else {
+		nick = n.ref;
+		core.emit('nick', nick);
+		return n;
+	}
+
 };
 
 core.watch = function(room, time, before, after, callback) {

@@ -16,7 +16,7 @@ exports.send = send;
 function init() {
 	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
 		if(err) throw "Cannot retrieve IRC accounts";
-		
+		db.end();
 		function joinStuff() {
 			data.forEach(function(account) {
 				var u, client;
@@ -68,7 +68,6 @@ function send(message, accounts) {
 			return;
 		}
 		
-		console.log(clients[message.from]);
 		switch(message.type) {
 			case 'text':
 				if(!client) {

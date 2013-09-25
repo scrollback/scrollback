@@ -8,7 +8,7 @@ module.exports = function(core) {
 		delete message.browserid;
 		
 		if(message.type !== 'nick') return callback();
-		
+		if (message.origin && message.origin.indexOf("irc")==0) return callback();
 		
 		if (message.ref == 'guest-') {
 			message.ref += "sb-"+name(6);
@@ -76,5 +76,6 @@ module.exports = function(core) {
 };
 
 function validateNick(nick){
+	if (nick.indexOf("guest-")==0) return false;
 	return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
 }

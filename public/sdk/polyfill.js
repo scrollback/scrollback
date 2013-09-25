@@ -58,6 +58,7 @@ function guid(n) {
     var str="", i;
 	n = n || 32;
 	for(i=0; i<n; i++) str += (Math.random()*36|0).toString(36);
+	console.log("uid="+str);
 	return str;
 }
 
@@ -101,13 +102,12 @@ function prettyDate(time, currTime){
 		months=["January", "February", "March", "April", "May", "June", "July",
 			"August", "September", "October", "November", "December"],
 		str = "";
-	
 	if (day_diff > 6) {
 		str+=months[d.getMonth()] + ' ' + d.getDate();
 		str = (d.getFullYear() !== n.getFullYear()? d.getFullYear() + ' ': '')+str;
 	}
 	else{
-		str = str || day_diff > 1? weekDays[d.getDay()]: day_diff > 0?
+		str = str || day_diff > 1? weekDays[d.getDay()]: d.getDay()!=n.getDay()?
 		'yesterday': '';
 	}
 	

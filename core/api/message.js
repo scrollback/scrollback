@@ -36,6 +36,6 @@ module.exports = function(message, callback) {
 			db.end();
 			return callback? callback(null, message): null;
 		});
-		gateways.http.send(message, [message.to]);
+		gateways.http.send(message, message.to);
 	});
 };
