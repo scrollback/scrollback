@@ -15,7 +15,7 @@ module.exports = function(message, callback) {
 		if(typeof message.to === 'string') message.to = [message.to];
 
 		if(typeof message.to === 'string') message.labels = [message.labels];
-		else if(message.labels.length == 0) smessage.labels = [ "" ];
+		else if(!message.labels || message.labels.length == 0) message.labels = [ "" ];
 
 		
 		// TODO: Rewrite this to use a single INSERT query.
