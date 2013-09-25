@@ -6,9 +6,6 @@ Stream.prototype.scroll = function() {
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
 
-		console.log("viewTop is ----------" + viewTop );
-		console.log("viewBottom is --------" + viewBottom);
-	
 	if (this.updating) {
 		return;
 	}
@@ -119,7 +116,6 @@ Stream.prototype.renderThumb = function(start, end) {
 Stream.prototype.renderTimeline = function() {
 	if (this.hidden) return;
         
-        //console.log("Test ID of the stream: ", this.id); 
         console.log("In cache :", core.cache(this.id).length);
 
 
@@ -131,7 +127,6 @@ Stream.prototype.renderTimeline = function() {
 
 	this.tread.innerHTML = '';
         
-        //114 -182 
 
 	if (!cacheMessages.length) {
 		return;
@@ -163,8 +158,6 @@ Stream.prototype.renderTimeline = function() {
 		
 		buckets[i].nicks[msg.labels[0]] = (buckets[i].nicks[msg.labels[0]] || 0) + msg.text.length;
 		
-		console.log("nicks values ... " , buckets[i].nicks[msg.labels[0]]);
-
 		if (buckets[i].dominant.count<=buckets[i].nicks[msg.labels[0]]) {
 			buckets[i].dominant={nick:msg.labels[0],count:buckets[i].nicks[msg.labels[0]]};
 		}
@@ -176,7 +169,6 @@ Stream.prototype.renderTimeline = function() {
 
 	for(i=0; i<n; i+=1) {
 		if(buckets[i]) {
-			console.log("buckets[i] " + buckets[i].dominant.nick);
 			r = ["div", {
 				'class': 'scrollback-tread-row scrollback-user-' +
 					Object.keys(buckets[i].nicks).join(' scrollback-user-'),				
