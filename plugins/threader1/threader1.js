@@ -10,11 +10,11 @@ module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
 		try{
-			var m=message.text;//remove " 
-			m=m.replace(/\"/g,"");
-			
-			var msg='{"id":"'+message.id+'","time":'+message.time+',"author":"'+message.from+
-				'","text":"'+m+'","room":"'+message.to+'"}';
+			var msg = JSON.stringify({
+				id: message.id, time: message.time, author: message.from,
+				text: message.text.replace(/['"]/g, ''),
+				room: message.to
+			});
 			log("Sending msg to scrollback.jar="+msg);
 			pro.stdin.write(msg+'\n');
 			pendingCallbacks[message.id] = { message: message, fn: callback};
@@ -49,7 +49,7 @@ function init(){
 			console.log("Data returned by scrollback.jar="+data.threadId, pendingCallbacks[data.id].message.text);
 			message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 			if(message) {
-				message.labels = data.threadId;//[data.threadId];
+				message.labels = [data.threadId];
 				pendingCallbacks[data.id].fn();
 				delete pendingCallbacks[data.id];
 				log("called back");

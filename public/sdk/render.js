@@ -302,13 +302,13 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	
 	if(!el) return null;
 	
-	if (!message.labels) {
-		message.labels="scrollback";	
+	if (!message.labels||!message.labels[0]) {
+		message.labels=["scrollback"];	
 	}
-	//console.log("msg========================="+message.labels);
+	//console.log("msg========================="+message.labels[0]+":");
 	el = JsonML.parse(["div", {
 		'class': 'scrollback-message scrollback-message-' + message.type,
-		'style': { 'borderLeftColor': hashColor(message.labels/*message.from*/) },
+		'style': { 'borderLeftColor': hashColor(message.labels[0]/*message.from*/) },
 		'data-time': message.time, 'data-from': formatName(message.from)
 	}].concat(el));
 	
