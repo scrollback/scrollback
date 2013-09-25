@@ -92,6 +92,10 @@ function onInit (data) {
 
 }
 
+core.cache = function (id){
+    return rooms[id].messages;
+}
+
 core.time = function() {
 	return (new Date()).getTime() + timeAdjustment;
 };

@@ -5,6 +5,9 @@ Stream.prototype.scroll = function() {
 		start = 99999, end = 0, up, self = this, cb,
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
+
+		console.log("viewTop is ----------" + viewTop );
+		console.log("viewBottom is --------" + viewBottom);
 	
 	if (this.updating) {
 		return;
@@ -97,12 +100,14 @@ Stream.prototype.renderLog = function() {
 };
 
 Stream.prototype.renderThumb = function(start, end) {
-	if (this.hidden) return;
+	var cacheMessages = core.cache(this.id);
 	var log = this.log, x,y,
 		thumbStart=this.messages[start].time,
 		thumbEnd=this.messages[end].time,
-		cStart = this.messages[0].time,
-		duration = this.messages[this.messages.length-1].time - cStart;
+		cStart = cacheMessages[0].time,
+		duration = cacheMessages[cacheMessages.length-1].time - cStart;
+
+	if (this.hidden) return;
 
 	x = Math.round((thumbStart-cStart)*this.tread.clientHeight/duration);
 	y = Math.round((thumbEnd-thumbStart)*this.tread.clientHeight/duration);
@@ -113,26 +118,35 @@ Stream.prototype.renderThumb = function(start, end) {
 
 Stream.prototype.renderTimeline = function() {
 	if (this.hidden) return;
+        
+        //console.log("Test ID of the stream: ", this.id); 
+        console.log("In cache :", core.cache(this.id).length);
+
+
 	var buckets = [], h=4, n = Math.floor(this.tread.clientHeight/h),
 		i, k = 0, length, w = 18,
 		msg, first, duration, r, ml = ["div"], max=0;
+        
+    var cacheMessages = core.cache(this.id);
 
 	this.tread.innerHTML = '';
-	
-	if (!this.messages.length) {
+        
+        //114 -182 
+
+	if (!cacheMessages.length) {
 		return;
 	}
 	
-	msg = this.messages[0];
-	length=this.messages.length;
+	msg = cacheMessages[0];
+	length=cacheMessages.length;
 	first = msg.time || 0;
 
-	duration = this.messages[length-1].time - first;
+	duration = cacheMessages[length-1].time - first;
 	
 	
 	for (k = 0; k<length; k++) {
 		
-		msg=this.messages[k];
+		msg=cacheMessages[k];
 		if (msg.type!=="text") {
 			continue;
 		}
