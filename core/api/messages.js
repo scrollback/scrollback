@@ -47,7 +47,7 @@ module.exports = function(options, callback) {
 		}
 
 		if(options.labels) {
-			where.push("`labels` in (?)");
+			where.push("`label` in (?)");
 			params.push(options.labels);
 		}
 
@@ -62,6 +62,10 @@ module.exports = function(options, callback) {
 		db.query(query, params, function(err, data) {
 			var start, end;
 			db.end(); // I'm done with this db connection. This is important!
+
+			data.forEach(function(msg) {
+				msg.labels = [msg.label];
+			});
 
 			if(err && callback) return callback(err);
 			

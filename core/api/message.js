@@ -18,8 +18,8 @@ module.exports = function(message, callback) {
 		// TODO: Rewrite this to use a single INSERT query.
 		message.to.forEach(function(to) {
 			db.query("INSERT INTO `messages` SET `id`=?, `from`=?, `to`=?, `type`=?, `text`=?, "+
-				"`origin`=?, `time`=?, `ref`=?, `labels`= ?", [message.id, message.from, message.to, message.type, 
-				message.text, message.origin, message.time, message.ref, message.labels || ""]);
+				"`origin`=?, `time`=?, `ref`=?, `label`= ?", [message.id, message.from, message.to, message.type, 
+				message.text, message.origin, message.time, message.ref, message.labels[0] || ""]);
 		});
 		db.query("SELECT * FROM `accounts` WHERE `room` IN (?)", [message.to], function(err, data) {
 			var i, l, name, list = {};
