@@ -63,17 +63,17 @@ function send(message, accounts) {
 			var client = clients[message.from][u.host],
 			channel = u.hash.toLowerCase();
 		
-		if ((message.origin || "").toLowerCase() == (account || "").toLowerCase()) {
+		console.log(message);
+		if (message.origin.gateway == "irc" && ("irc://"+message.origin.server+"/"+message.origin.channel).toLowerCase() == (account || "").toLowerCase()) {
 			log("Outgoing echo", message);
 			return;
 		}
-		
 		switch(message.type) {
 			case 'text':
 				if(!client) {
 					clients[message.from][u.host] = client = connect(
 						u.host, message.from,
-						message.origin.replace('web://', '').split('.').map(function(d) {
+						message.origin.ip.split('.').map(function(d) {
 							var h = parseInt(d, 10).toString(16);
 							if (h.length < 2) h = '0'+h;
 							return h;

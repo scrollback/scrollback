@@ -27,7 +27,12 @@ function connect(server, nick, uid, callback) {
 	function message(type, from, to, text, channel, ref) {
 		var msg = {
 			type: type, from: from, to: to, text: text,
-			time: new Date().getTime(), origin: 'irc://' + server + '/' + channel,
+			time: new Date().getTime(), 
+			origin: {
+				gateway : "irc",
+				server : server,
+				channel : channel,
+			},
 			ref: ref
 		};
 		

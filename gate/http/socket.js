@@ -93,7 +93,7 @@ function userAway(user, room, conn) {
 		if (!user.rooms[room]) {
 			delete user.rooms[room];
 			core.message({ type: 'away', from: user.id, to: room,
-				time: new Date().getTime(), text: "" });
+				time: new Date().getTime(), text: "" , origin : {gateway : "web", location : "", ip :  conn.socket.remoteAddress}});
 			if(!Object.keys(user.rooms).length) {
 				delete users[user.id];
 			}
@@ -104,7 +104,7 @@ function userAway(user, room, conn) {
 			log("User still has some active windows.",user);
 		}
 		session.unwatch({sid: conn.sid, cid: conn.socket.id});
-	}, 60*1000);
+	}, 2*1000);
 
 	return false; // never send an away message immediately. Wait.
 }
@@ -143,7 +143,8 @@ function message (m, conn) {
 	
 	m.from = user.id;
 	m.time = new Date().getTime();
-	m.origin = "web://" + conn.socket.remoteAddress;
+
+	m.origin.ip = conn.socket.remoteAddress;
 	m.to = m.to || Object.keys(user.rooms);
 	
 	if(typeof m.to != "string" && m.to.length==0)

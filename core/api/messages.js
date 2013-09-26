@@ -6,7 +6,7 @@ var log = require("../../lib/logger.js");
 module.exports = function(options, callback) {
 	pool.get(function(err, db) {
 		var query = "SELECT * FROM `messages` ",
-			where = [], params=[], desc=false, limit=256, until, since;
+			where = [], params=[], desc=false, limit=256, until, since, originObject = {};
 		
 		if(err && callback) return callback(err);
 		
@@ -58,6 +58,23 @@ module.exports = function(options, callback) {
 			db.end(); // I'm done with this db connection. This is important!
 
 			if(err && callback) return callback(err);
+
+
+
+			data.forEach(function(element){
+				try{
+					element.origin = JSON.parse(element.origin);	
+				}
+				catch(Exception){
+					originObject = {};
+					originObject.gateway = element.origin.split(":")[0];
+					if (originObject.gateway == "irc")
+						originObject.channel = element.to;
+					if (originObject.gateway == "web")
+						originObject.ip = element.origin.split("//")[1];
+					element.origin = originObject;
+				}	
+			});
 			
 			start  = since || data.length && data[0].time || 0;
 			end = until || data.length && data[data.length-1].time || 0;

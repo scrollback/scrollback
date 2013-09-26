@@ -38,7 +38,7 @@ loginRequired = function(r){
 module.exports = function(core){
     init();
     core.on("message", function(message, callback){
-        if(message.origin && message.origin.indexOf("irc")==0) return callback();
+        if (message.origin && message.origin.gateway == "irc") return callback();
         if(message.type == "text" && message.from.indexOf("guest-")==0 && loginRequired(message.to)){
               callback(new Error("AUTH_REQ_TO_POST")); 
         }

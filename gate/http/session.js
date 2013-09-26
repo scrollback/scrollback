@@ -42,6 +42,7 @@ var set = exports.set = function(sid, sess, cb) {
 exports.watch = function(obj, cb) {
 	if(!watchers[obj.sid]) watchers[obj.sid] = {};
 	watchers[obj.sid][obj.cid] = cb;
+	console.log(watchers);
 }
 
 exports.unwatch = function(obj) {

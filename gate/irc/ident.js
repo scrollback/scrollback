@@ -39,7 +39,6 @@ exports.init=function(){
 
 exports.register=function(localPort, remotePort,uid){
 	var id=localPort+","+remotePort;
-	console.log(uid);
 	console.log("registering: "+id);
 	users[id] = uid;
 };

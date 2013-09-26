@@ -19,7 +19,7 @@ module.exports = function(message, callback) {
 		message.to.forEach(function(to) {
 			db.query("INSERT INTO `messages` SET `id`=?, `from`=?, `to`=?, `type`=?, `text`=?, "+
 				"`origin`=?, `time`=?, `ref`=?", [message.id, message.from, message.to, message.type, 
-				message.text, message.origin, message.time, message.ref]);
+				message.text, JSON.stringify(message.origin), message.time, message.ref]);
 		});
 		db.query("SELECT * FROM `accounts` WHERE `room` IN (?)", [message.to], function(err, data) {
 			var i, l, name, list = {};

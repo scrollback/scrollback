@@ -111,6 +111,12 @@ core.leave = function (id) {
 
 function send(type, to, text, options, callback) {
 	var m = { id: guid(), type: type, from: nick, to: to, text: text || '', time: core.time() }, i;
+
+
+	m.origin = {
+		gateway : "web",
+		location : window.location.toString(),
+	};
 	if(options) for(i in options) if(options.hasOwnProperty(i)) {
 		m[i] = options[i];
 	}
