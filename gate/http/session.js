@@ -41,6 +41,8 @@ var set = exports.set = function(sid, sess, cb) {
 
 exports.watch = function(obj, cb) {
 	if(!watchers[obj.sid]) watchers[obj.sid] = {};
+	if(Object.keys(watchers[obj.sid]).length > 4)
+		return;
 	watchers[obj.sid][obj.cid] = cb;
 }
 
