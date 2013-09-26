@@ -11,7 +11,7 @@ module.exports = function(core) {
 	core.on('message', function(message, callback) {
 		try{
 			var msg = JSON.stringify({
-				id: message.id, time: message.time, author: message.from,
+				id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
 				text: message.text.replace(/['"]/g, ''),
 				room: message.to
 			});

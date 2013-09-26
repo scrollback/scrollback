@@ -10,8 +10,9 @@ module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
 		try{
-			str = message.id + ' ' + message.time + ' ' + message.to + ' ' + message.from + ' ' +
+			str = message.id + ' ' + message.time + ' ' + message.to + ' ' + message.from.replace(/guest-/g,"") + ' ' +
 				message.text.replace(/\n/g, ' ') + '\n';
+			log("sending data:"+str);
 			pro.stdin.write(str);
 			pendingCallbacks[message.id] = { message: message, fn: callback };
 			setTimeout(function() { 
