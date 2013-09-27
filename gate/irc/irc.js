@@ -33,13 +33,14 @@ function init() {
 							}
 							core.message(m);
 						});
-						
+					/*	
 					client.on('nick', function(oldn, newn) {
 						if (users[u.host][oldn]) {
 							users[u.host][newn] = true;
 							delete users[u.host][oldn];
 						}
 					});
+					*/
 				}
 				if (!users[u.host]) users[u.host] = {};
 				
@@ -63,7 +64,6 @@ function send(message, accounts) {
 			var client = clients[message.from][u.host],
 			channel = u.hash.toLowerCase();
 		
-		console.log(message);
 		if (message.origin.gateway == "irc" && ("irc://"+message.origin.server+"/"+message.origin.channel).toLowerCase() == (account || "").toLowerCase()) {
 			log("Outgoing echo", message);
 			return;
@@ -123,7 +123,7 @@ function send(message, accounts) {
 				break;
 			case 'nick':
 				var nick=message.ref;
-				
+
 				nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
 				clients[message.from][u.host] = client
 				users[u.host][message.ref] = true;

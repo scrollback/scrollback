@@ -84,13 +84,11 @@ function close(conn) {
 
 function userAway(user, room, conn) {
 	if(rConns[room]) rConns[room].splice(rConns[room].indexOf(conn), 1);
-	conn.rooms.splice(conn.rooms.indexOf(room), 1);
-	
-	if(user.rooms[room]) user.rooms[room]--;
+	conn.rooms.splice(conn.rooms.indexOf(room), 1);	
 	conn.save();
 	setTimeout(function() {
 		var user = conn.session.user;
-		if (!user.rooms[room]) {
+		if (!(user.rooms[room]-1)) {
 			delete user.rooms[room];
 			core.message({ type: 'away', from: user.id, to: room,
 				time: new Date().getTime(), text: "" , origin : {gateway : "web", location : "", ip :  conn.socket.remoteAddress}});
@@ -101,6 +99,8 @@ function userAway(user, room, conn) {
 			conn.save();
 		}
 		else{
+			user.rooms[room]--;
+			conn.save();
 			log("User still has some active windows.",user);
 		}
 		session.unwatch({sid: conn.sid, cid: conn.socket.id});
