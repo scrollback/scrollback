@@ -116,9 +116,6 @@ Stream.prototype.renderThumb = function(start, end) {
 Stream.prototype.renderTimeline = function() {
 	if (this.hidden) return;
         
-        console.log("In cache :", core.cache(this.id).length);
-
-
 	var buckets = [], h=4, n = Math.floor(this.tread.clientHeight/h),
 		i, k = 0, length, w = 18,
 		msg, first, duration, r, ml = ["div"], max=0;
@@ -151,17 +148,16 @@ Stream.prototype.renderTimeline = function() {
 			nicks: {},
 			n: 0,
 			dominant:{
-				nick:msg.labels[0], count:1
+				nick:msg.from, count:1
 			}
 		};
 
-		
-		buckets[i].nicks[msg.labels[0]] = (buckets[i].nicks[msg.labels[0]] || 0) + msg.text.length;
-		
-		if (buckets[i].dominant.count<=buckets[i].nicks[msg.labels[0]]) {
-			buckets[i].dominant={nick:msg.labels[0],count:buckets[i].nicks[msg.labels[0]]};
+		buckets[i].nicks[msg.from] = (buckets[i].nicks[msg.from] || 0) + msg.text.length;
+
+		if (buckets[i].dominant.count<=buckets[i].nicks[msg.from]) {
+			buckets[i].dominant={nick:msg.from,count:buckets[i].nicks[msg.from]};
 		}
-		
+
 		buckets[i].n += msg.text.length;
 		if(buckets[i].n > max) max = buckets[i].n;
 
@@ -171,7 +167,7 @@ Stream.prototype.renderTimeline = function() {
 		if(buckets[i]) {
 			r = ["div", {
 				'class': 'scrollback-tread-row scrollback-user-' +
-					Object.keys(buckets[i].nicks).join(' scrollback-user-'),				
+					Object.keys(buckets[i].nicks).join(' scrollback-user-'),
 				style: {
 					top: Math.round(i*h) + 'px',
 					width: Math.round(h+buckets[i].n*(w-h)/max) + 'px',
@@ -298,13 +294,9 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	
 	if(!el) return null;
 	
-	if (!message.labels||!message.labels[0]) {
-		message.labels=["scrollback"];	
-	}
-	//console.log("msg========================="+message.labels[0]+":");
 	el = JsonML.parse(["div", {
 		'class': 'scrollback-message scrollback-message-' + message.type,
-		'style': { 'borderLeftColor': hashColor(message.labels[0]/*message.from*/) },
+		'style': { 'borderLeftColor': hashColor(message.from/*message.from*/) },
 		'data-time': message.time, 'data-from': formatName(message.from)
 	}].concat(el));
 	
