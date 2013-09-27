@@ -8,7 +8,7 @@ module.exports = function(core) {
 		delete message.browserid;
 		
 		if(message.type !== 'nick') return callback();
-		
+		if (message.origin && message.origin.gateway=="irc") return callback();
 		
 		if (message.ref == 'guest-') {
 			message.ref += "sb-"+name(6);

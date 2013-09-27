@@ -12,7 +12,7 @@ module.exports = connect;
 function connect(server, nick, uid, callback) {
 	log("Connecting " + nick + " to " + server);
 	
-	 nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
+	nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
 	 
 	var client =  new irc.Client(server, nick, {
 		userName : nick,
@@ -27,7 +27,12 @@ function connect(server, nick, uid, callback) {
 	function message(type, from, to, text, channel, ref) {
 		var msg = {
 			type: type, from: from, to: to, text: text,
-			time: new Date().getTime(), origin: 'irc://' + server + '/' + channel,
+			time: new Date().getTime(), 
+			origin: {
+				gateway : "irc",
+				server : server,
+				channel : channel,
+			},
 			ref: ref
 		};
 		
@@ -54,8 +59,7 @@ function connect(server, nick, uid, callback) {
 		client.addListener('message', function(nick, channel, text) {
 	
 			// if a user name not registered with askabt, connects via IRC, he is made a  guest.
-			if(!(users[client.opt.server] && users[client.opt.server][nick]))
-			nick = "guest-" + nick;
+			if(!(users[client.opt.server] && users[client.opt.server][nick])) nick = "guest-" + nick;
 
 			log(client.nick + " hears " + nick + " say \'" +
 				text.substr(0,32) + "\' in " + channel);

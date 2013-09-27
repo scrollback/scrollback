@@ -1,1 +1,1 @@
-alter table messages add label varchar(255);
+alter table messages add labels varchar(255);

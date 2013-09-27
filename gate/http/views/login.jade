@@ -19,12 +19,17 @@ block content
 	div#loginForm.box.span12
 		p.before You aren’t signed in.
 		button#loginbtn.primary.box.span6 Sign into Scrollback
-		p.break.before Don’t sign in, but change my nick to:
-		form#guestfrm.clearfix
-			input#guestnick.box.span3
-			button.box.span3(type=submit) Change nick
-		p.break.after If you don’t sign in, someone else might steal your nick when you’re not around.
-		
+		if !requireAuth	
+			p.break.before Don’t sign in, but change my nick to:
+			form#guestfrm.clearfix
+					input#guestnick.box.span3
+					button.box.span3(type=submit) Change nick
+			p.break.after If you don’t sign in, someone else might steal your nick when you’re not around. 
+		else	
+			p.break.before This room requires you to sign in to post messages.
+								
+				
+					
 block append scripts
 	script(src="https://login.persona.org/include.js")
 	script.

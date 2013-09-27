@@ -29,5 +29,6 @@ module.exports = {
 	},
 	google: {
 		
-	}
+	},
+	plugins:["auth"]
 }

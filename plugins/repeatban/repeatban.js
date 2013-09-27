@@ -4,6 +4,7 @@ var users={};
 module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
+		if (message.origin && message.origin.gateway == "irc") return callback();
 		if(rejectable(message)) callback(new Error("REPEATATIVE"));
 		else callback();
 	});
@@ -56,7 +57,8 @@ var rejectable=function(message){
 	if (message.text!=undefined) {
 		var capsLength=message.text.replace(/[^A-Z]/g, "").length;
 		var totalLength=message.text.length;
-		if (capsLength>(totalLength*0.6)) {
+
+		if (capsLength>(totalLength*0.6) && totalLength > 6) {
 			return true;
 		}
 	}
