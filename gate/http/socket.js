@@ -104,8 +104,7 @@ function userAway(user, room, conn) {
 			log("User still has some active windows.",user);
 		}
 		session.unwatch({sid: conn.sid, cid: conn.socket.id});
-	}, 2*1000);
-
+	}, 30*1000);
 	return false; // never send an away message immediately. Wait.
 }
 
