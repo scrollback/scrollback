@@ -26,7 +26,7 @@ function connect(server, nick, uid, callback) {
 	
 	function message(type, from, to, text, channel, ref) {
 		var msg = {
-			type: type, from: from, to: to, text: text,
+			type: type, from: from, to: [to], text: text,
 			time: new Date().getTime(), 
 			origin: {
 				gateway : "irc",
@@ -74,7 +74,7 @@ function connect(server, nick, uid, callback) {
 		});
 		
 		client.addListener('nick', function(oldn, newn,channel) {
-			message('nick', oldn, channel[0].substring(1), '', '', newn);
+			message('nick', oldn, room(channel[0]), '', channel[0], newn);
 		});
 		
 		client.addListener('part', function(channel, from, reason) {
