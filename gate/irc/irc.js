@@ -33,14 +33,14 @@ function init() {
 							}
 							core.message(m);
 						});
-					/*	
+
 					client.on('nick', function(oldn, newn) {
 						if (users[u.host][oldn]) {
 							users[u.host][newn] = true;
 							delete users[u.host][oldn];
 						}
 					});
-					*/
+
 				}
 				if (!users[u.host]) users[u.host] = {};
 				
