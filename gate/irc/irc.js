@@ -40,7 +40,7 @@ function init() {
 							delete users[u.host][oldn];
 						}
 					});
-
+					
 				}
 				if (!users[u.host]) users[u.host] = {};
 				

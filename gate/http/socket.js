@@ -142,7 +142,13 @@ function message (m, conn) {
 	
 	m.from = user.id;
 	m.time = new Date().getTime();
-
+	if(!m.origin) {
+		m.origin = {
+			gateway : "web",
+			domain: "unknown"
+		};
+	}
+ 
 	m.origin.ip = conn.socket.remoteAddress;
 	m.to = m.to || Object.keys(user.rooms);
 	
