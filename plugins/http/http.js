@@ -3,10 +3,18 @@ var express = require("./express.js"),
 	page=require("./page.js");
 	app = express.init();
 
-exports.send = socket.send;
-exports.init = function() {
+
+var init = function() {
 	socket.init(app.http);
 	if(app.https) socket.init(app.https);
 	page.init(app);
 };
 
+module.exports = function(core){
+	init();
+	core.on("message" , function(message, callback){
+		callback();
+		send(message, [message.to]);
+	});
+	var send = socket.send;
+}

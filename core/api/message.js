@@ -5,6 +5,7 @@ var pool = require('../data.js'),
 	guid = require('../../lib/guid.js');
 var log = require("../../lib/logger.js");
 var gateways = require("../gateways.js");
+//var plugins = require("../plugins.js");
 
 module.exports = function(message, callback) {
 	pool.get(function(err, db) {
@@ -32,10 +33,14 @@ module.exports = function(message, callback) {
 			for(name in list) {
 				if(gateways[name] && gateways[name].send)
 					gateways[name].send(message, list[name]);
+				//if(plugins[name] && plugins[name].send)
+				//	plugins[name].send(message, list[name]);
+				
 			}
 			db.end();
 			return callback? callback(null, message): null;
 		});
-		gateways.http.send(message, message.to);
+		//gateways.http.send(message, message.to);
+		//plugins.http.send(message, message.to);
 	});
 };
