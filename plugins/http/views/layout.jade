@@ -1,0 +1,26 @@
+html
+	head
+		meta(charset="utf-8")
+		meta(http-equiv="X-UA-Compatible",content="IE=edge,chrome=1")
+		title
+			block title
+		meta(name="description",content="Scrollback: beautiful text chat for open communities, embeddable on any website.")
+		meta(name="viewport",content="width=device-width")
+		link(rel="stylesheet",href="/style.css")
+		link(rel="stylesheet",href="//fonts.googleapis.com/css?family=Open+Sans:300,800|Source+Code+Pro:300")
+		block styles
+		meta(http-equiv="X-UA-Compatible",content="IE=Edge")
+	body
+		nav
+			.container.clearfix
+				.box.logo-box.span1: .logo Scrollback
+				.box.span5.right
+					block userinfo
+		#content.container.clearfix
+			block content
+				This page is empty.
+		footer
+			.container.clearfix
+				block footer
+					span Scrollback
+		block scripts
