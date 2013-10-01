@@ -12,7 +12,8 @@ block styles
 block append scripts
 	script(type='text/javascript')
 		window.scrollback = {host: 'http://' + location.host};
-	script(src="/socket.io/socket.io.js")
+	script(src="/sdk/sockjs.js")
+	script(src="/sdk/request.js")
 	script(src="/sdk/emitter.js")
 	script(src="/sdk/client.js")
 	script(src="/sdk/cache.js")
@@ -43,7 +44,7 @@ block content
 					if message && message.type && message.type=="text"
 						.item.container
 							div.box.span12
-								div.box.span3 [#{message.from}]
+								div.box.span3 [#{message.from.replace('guest-','')}]
 								div.box.span5.message #{message.text}
 								if(prevtime)
 									div.box.span4.time #{relDate(prevtime, message.time)} later
