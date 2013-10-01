@@ -33,6 +33,7 @@ exports.init = function(app) {
             res.render("error");
         }
     });
+	
     app.get("/pwn/*",function(req,res){
         var room = req.path.substring(1).split("/")[1];
         var url=req.path.replace("/pwn/"+room+"/","");
