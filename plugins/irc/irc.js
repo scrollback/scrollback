@@ -10,10 +10,24 @@ var irc = require("irc"),
 
 var botNick=config.irc.nick, clients = {bot: {}}, users = {};
 
-exports.init = init;
-exports.send = send;
+//exports.init = init;
+//exports.send = send;
 
-function init() {
+module.exports = function(core){
+	init();
+	core.on("message" , function(message , callback){
+		//db.query("SELECT * from `accounts` WHERE `gateway` = 'irc' AND `room` IN (?)" , [message.to], function(err, data){
+		//		if(err) return callback(err);
+				//console.log("Data inside IRC: " + data);
+				send(message, ['irc://localhost/##scrollback']);
+				callback();
+		//});
+		
+	});
+	
+};
+
+var init = function(){
 	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
 		if(err) throw "Cannot retrieve IRC accounts";
 		db.end();
@@ -41,7 +55,7 @@ function init() {
 						}
 					});
 				}
-				if (!users[u.host]) users[u.host] = {};
+				if (!users[u.host]) users[u.host] = {};	
 				
 				log("Bot joining " + u.hash);
 				client.join(u.hash.toLowerCase());

@@ -31,8 +31,8 @@ module.exports = function(message, callback) {
 				list[name].push(data[i].id);
 			}
 			for(name in list) {
-				if(gateways[name] && gateways[name].send)
-					gateways[name].send(message, list[name]);
+				//if(gateways[name] && gateways[name].send)
+				//	gateways[name].send(message, list[name]);
 				//if(plugins[name] && plugins[name].send)
 				//	plugins[name].send(message, list[name]);
 				

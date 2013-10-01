@@ -13,8 +13,8 @@ var init = function() {
 module.exports = function(core){
 	init();
 	core.on("message" , function(message, callback){
-		callback();
 		send(message, [message.to]);
+		callback();
 	});
 	var send = socket.send;
 }
