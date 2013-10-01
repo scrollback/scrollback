@@ -14,13 +14,16 @@ module.exports = function(message, callback) {
 		if (!message.time) message.time = new Date().getTime();
 		
 		if(typeof message.to === 'string') message.to = [message.to];
-		
+
+		if(typeof message.to === 'string') message.labels = [message.labels];
+		else if(!message.labels || message.labels.length == 0) message.labels = [ "" ];
+
 		
 		// TODO: Rewrite this to use a single INSERT query.
 		message.to.forEach(function(to) {
 			db.query("INSERT INTO `messages` SET `id`=?, `from`=?, `to`=?, `type`=?, `text`=?, "+
-				"`origin`=?, `time`=?, `ref`=?", [message.id, message.from, message.to, message.type, 
-				message.text, JSON.stringify(message.origin), message.time, message.ref]);
+				"`origin`=?, `time`=?, `ref`=?, `labels`= ?", [message.id, message.from, message.to, message.type, 
+				message.text,  JSON.stringify(message.origin), message.time, message.ref,message.labels[0]]);
 		});
 		db.query("SELECT * FROM `accounts` WHERE `room` IN (?)", [message.to], function(err, data) {
 			var i, l, name, list = {};

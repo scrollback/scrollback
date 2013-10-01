@@ -5,7 +5,7 @@ Stream.prototype.scroll = function() {
 		start = 99999, end = 0, up, self = this, cb,
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
-	
+
 	if (this.updating) {
 		return;
 	}
@@ -97,12 +97,14 @@ Stream.prototype.renderLog = function() {
 };
 
 Stream.prototype.renderThumb = function(start, end) {
-	if (this.hidden) return;
+	var cacheMessages = core.cache(this.id);
 	var log = this.log, x,y,
 		thumbStart=this.messages[start].time,
 		thumbEnd=this.messages[end].time,
-		cStart = this.messages[0].time,
-		duration = this.messages[this.messages.length-1].time - cStart;
+		cStart = cacheMessages[0].time,
+		duration = cacheMessages[cacheMessages.length-1].time - cStart;
+
+	if (this.hidden) return;
 
 	x = Math.round((thumbStart-cStart)*this.tread.clientHeight/duration);
 	y = Math.round((thumbEnd-thumbStart)*this.tread.clientHeight/duration);
@@ -113,26 +115,30 @@ Stream.prototype.renderThumb = function(start, end) {
 
 Stream.prototype.renderTimeline = function() {
 	if (this.hidden) return;
+        
 	var buckets = [], h=4, n = Math.floor(this.tread.clientHeight/h),
 		i, k = 0, length, w = 18,
 		msg, first, duration, r, ml = ["div"], max=0;
+        
+    var cacheMessages = core.cache(this.id);
 
 	this.tread.innerHTML = '';
-	
-	if (!this.messages.length) {
+        
+
+	if (!cacheMessages.length) {
 		return;
 	}
 	
-	msg = this.messages[0];
-	length=this.messages.length;
+	msg = cacheMessages[0];
+	length=cacheMessages.length;
 	first = msg.time || 0;
 
-	duration = this.messages[length-1].time - first;
+	duration = cacheMessages[length-1].time - first;
 	
 	
 	for (k = 0; k<length; k++) {
 		
-		msg=this.messages[k];
+		msg=cacheMessages[k];
 		if (msg.type!=="text") {
 			continue;
 		}
@@ -142,16 +148,16 @@ Stream.prototype.renderTimeline = function() {
 			nicks: {},
 			n: 0,
 			dominant:{
-				nick:msg.from,count:1
+				nick:msg.from, count:1
 			}
 		};
-		
+
 		buckets[i].nicks[msg.from] = (buckets[i].nicks[msg.from] || 0) + msg.text.length;
-		
+
 		if (buckets[i].dominant.count<=buckets[i].nicks[msg.from]) {
 			buckets[i].dominant={nick:msg.from,count:buckets[i].nicks[msg.from]};
 		}
-		
+
 		buckets[i].n += msg.text.length;
 		if(buckets[i].n > max) max = buckets[i].n;
 
@@ -183,13 +189,14 @@ function hashColor(name) {
 	// nicks that differ only by case or punctuation should get the same color.
 	
 	function hash(s) {
-		var h=1, i, l;
+		
+		var h=7, i, l;
 		s = s.toLowerCase().replace(/[^a-z0-9]+/g,' ').replace(/^\s+/g,'').replace(/\s+$/g,''); 
 		// nicks that differ only by case or punctuation should get the same color.
 		for (i=0, l=s.length; i<l; i++) {
-			h = (Math.abs(h<<(7+i))+s.charCodeAt(i))%1530;
+			h = (h*31+s.charCodeAt(i)*479)%1531;
 		}
-		return h;
+		return h%1530;
 	}
 	
 	function color(h) {
@@ -286,10 +293,10 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	}
 	
 	if(!el) return null;
-
+	
 	el = JsonML.parse(["div", {
 		'class': 'scrollback-message scrollback-message-' + message.type,
-		'style': { 'borderLeftColor': hashColor(message.from) },
+		'style': { 'borderLeftColor': hashColor(message.from/*message.from*/) },
 		'data-time': message.time, 'data-from': formatName(message.from)
 	}].concat(el));
 	

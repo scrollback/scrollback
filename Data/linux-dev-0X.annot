@@ -1,0 +1,1000 @@
+T-1 7118 Felice *  is now known as Felice
+T35 7127 Jermaine :  Meta, but $(date) is in large format
+T-1 7135 Roselia *  entered the room.
+T-1 7138 Avery *  entered the room.
+T35 7142 Meta :  Jermaine, RTM
+T35 7148 Meta :  it tells you
+T36 7157 Jetta :  Santo: that requires running OS X
+T-1 7168 Jody *  left the room (quit: ).
+T31 7169 Malcolm :  Rachel: If running as root, I need to set up a global config rather than ~/.fetchmailrc ?
+T35 7173 Kathie :  Jermaine:  date '+%m%d%Y'
+T31 7183 Rachel :  Malcolm: yup
+T31 7190 Malcolm :  Rachel: I run it in daemon mode under my uid and it works very nicely
+T35 7192 Jermaine :  I got it.. thanks
+T31 7200 Rachel :  pretty much put same info in global location.
+T-1 7213 Kacy *  entered the room.
+T37 7215 Shanon :  epic5 is pretty cool...
+T-1 7227 Elma *  entered the room.
+T-1 7228 Willette *  left the room (quit: Client Quit).
+T31 7236 Malcolm :  Rachel: OK thanks.. I'll try to find the docs on that.
+T38 7238 Elma :  hi folks
+T-1 7259 Trina *  left the room (quit: Read error: 110 (Connection timed out)).
+T38 7260 Elma :  'm sure i missed something but fonts rendering in my gimp works isn't at its best
+T-1 7269 Roselia *  left the room ("Leaving").
+T38 7287 Elma :  is it because f the gimp or have i missed some tuning or such?
+T39 7288 Sena :  is there anyway to see what the CPU temperature is ?
+T31 7296 Rachel :  Malcolm: use "/etc/fetchmailrc"        -f <pathname> | --fetchmailrc <pathname>
+T31 7297 Rachel :                Specify  a non-default name for the ~/.fetchmailrc run control file.
+T-1 7302 Thurman *  entered the room.
+T-1 7303 Anja *  left the room (quit: "burp").
+T31 7312 Malcolm :  Rachel: in the man page http://fetchmail.berlios.de/fetchmail-man.html it doesn't mention any global fetchmailrc file... that is what was confusing me...
+T40 7322 Thurman :  hi, do you have any recommendations for saving videos from a webcam in GNU/Linux?
+T31 7335 Rachel :  Malcolm: give yourself a promotion - You decide! ;-)
+T31 7341 Malcolm :  Rachel: there are a couple of oblique refs to running as root and that's it.  And if I try to run it as root, it says "running as root is discouraged" and then exits :)
+T40 7373 Meta :  Thurman, try motion
+T31 7379 Rachel :  Malcolm: hmm
+T-1 7427 Edna *  left the room (quit: Connection timed out).
+T-1 7445 Alina *  entered the room.
+T-1 7450 Tommy *  left the room (quit: "g2g").
+T-1 7477 Merlyn *  left the room (quit: ).
+T-1 7477 Shanon *  left the room (quit: "leaving").
+T-1 7502 Anja *  entered the room.
+T40 7503 Thurman :  Meta: isn't it strange that it writes to /var/lib/motion/snapshots
+T-1 7503 Evon *  entered the room.
+T-1 7508 Alisa *  entered the room.
+T31 7511 Malcolm :  Rachel: ok my bad.. the /etc/init.d script exits automatically (and silently.. bitches) if no /etc/fetchmailrc exists
+T31 7528 Malcolm :  have these people never heard of error messages?
+T31 7533 Jesse :  Malcolm: it runs as user fetchmail here, and uses /etc/fetchmailrc
+T31 7548 Malcolm :  Jesse: thanks
+T31 7561 Malcolm :  Jesse: set up to do the same here, looks like
+T31 7565 Rachel :  well there ya go.
+T31 7573 Rachel :  Jesse++
+T-1 7596 Shalanda *  left the room.
+T-1 7610 Denny *  entered the room.
+T-1 7628 Dovie *  left the room (quit: "Ex-Chat").
+T41 7638 Denny :  so how does one enforce a permission set and ownership set on a folder and all its children?
+T41 7655 Elma :  poningru:  -R
+T36 7660 Jetta :  im starting to think it might actually not be possible to just put linux on an intel mac mini
+T-1 7671 Shenna *  entered the room.
+T41 7687 Elma :  poningru: -R for recursive...
+T-1 7695 Jermaine *  left the room (quit: Read error: 104 (Connection reset by peer)).
+T-1 7711 Ela *  entered the room.
+T41 7756 Elma :  well... have a nice day folks
+T42 7783 Shenna :  hi, are sata drives accessed as sda or hda?
+T42 7796 Elma :  sda
+T-1 7802 Johnathon *  entered the room.
+T-1 7823 Stefani *  entered the room.
+T43 7860 Johnathon :  hey wat's up ?
+T42 7885 Shenna :  Elma: , then why is it that my 2.4 kernel recognises it as hda?
+T41 7898 Denny :  Elma, no I mean like always
+T41 7904 Denny :  so if anything is added to that folder
+T-1 7905 Sang *  left the room (quit: Connection reset by peer).
+T-1 7915 Sierra *  left the room (quit: Remote closed the connection).
+T41 7919 Denny :  the permission and ownership stays the same
+T41 7954 Denny :  throughout
+T44 7972 Latricia :  is there a way to tail -f a file and have that output piped to sed to have certain lines colorized?
+T31 8001 Malcolm :  Rachel / Jesse: should i put the "set daemon" option in /etc/fetchmailrc ? I'm guessing not
+T-1 8011 Val *  entered the room.
+T42 8020 Shenna :  even dmesg says "hda:...."
+T42 8025 Shenna :  why is it so?
+T42 8029 Elma :  bye folks
+T42 8029 Elma :  Shenna: heu... not a damn clue, sorry... but why are using a 2.4 kernel?
+T-1 8034 Elma *  left the room.
+T42 8055 Denny :  Shenna, what are you trying to do?
+T42 8060 Shenna :  i am trying toswitch over ti 2.6
+T42 8063 Melda :  Elma: maybe because 2.6 still is getting root exploits as development goes on whereas 2.4 hasn't had any in a long time?
+T45 8075 Tammi :  hi, i am trying to dump a file system to a dat SCSI tapedrive. if i dump /var partition the speed is 1555KB/S, but if i dump the /home partition i barley get half that speed. Why would this be?
+T42 8082 Denny :  Melda, if you stick with around 2.6.12 its all cool
+T42 8082 Shenna :  but 2.6 gives errors on my laptop
+T-1 8091 Sierra *  entered the room.
+T-1 8100 Ahmad *  entered the room.
+T42 8102 Denny :  Shenna, what errors?
+T-1 8116 Vashti *  entered the room.
+T42 8119 Shenna :  something like : kernel panic .. specify correct root=...
+T42 8122 Lizeth :  lol
+T42 8124 Shenna :  i am using lilo
+T42 8127 Shenna :  slackware
+T42 8142 Shenna :  on my pc it works fine
+T42 8144 Denny :  Shenna, right go to lilo and change root to sd whatever
+T42 8153 Shenna :  i tried that
+T42 8154 Denny :  while you are running
+T42 8156 Denny :  and?
+T42 8157 Shenna :  didn't work
+T42 8167 Denny :  same error?
+T-1 8169 Chau *  entered the room.
+T42 8170 Shenna :  yes
+T42 8187 Denny :  waah...
+T42 8192 Shenna :  hey, how do i check if my drive is really sata?
+T42 8202 Denny :  open up your box?
+T42 8202 Shenna :  i am in windows right now
+T42 8206 Denny :  oh
+T42 8211 Lizeth :  does it have ide or sata cables
+T42 8216 Shenna :  linux not booting
+T42 8224 Denny :  open up your box dude
+T42 8224 Shenna :  it is a laptop
+T42 8227 Denny :  oh
+T42 8228 Shenna :  can't check
+T42 8231 Shenna :  just got it
+T42 8234 Denny :  Shenna, download a live cd
+T46 8247 Lang :  hm
+T42 8248 Denny :  not ubunut though
+T46 8251 Lang :  linux is cool
+T46 8257 Lang :  openmosix seems dope
+T42 8260 Denny :  Shenna, use knoppix
+T42 8265 Shenna :  i tried dmesg from slacware
+T42 8273 Shenna :  it says :  hda....
+T42 8276 Shenna :  etc
+T42 8277 Denny :  right
+T42 8285 Denny :  2.4 you are not going to get it right
+T-1 8286 Evon *  left the room (quit: "Ex-Chat").
+T42 8291 Shenna :  k
+T42 8302 Melda :  Shenna: check the dev entries?  + some things change it... my laptop is definitely hda, my openbsd and 9/10 distributions recognize it that way - but for some reason my slackware sees it as being sda... just weird stuffs
+T42 8303 Lizeth :  2.4 limited sata support?
+T-1 8304 Aldo *  entered the room.
+T42 8324 Melda :  Shenna: laptops are sort of odd in that way of sata/scsi/etc
+T42 8325 Shenna :  hey, any way to check it in windows
+T42 8335 Lizeth :  #windows
+T42 8339 Shenna :  Melda: : hmm..
+T47 8343 Celestina *  vommits at the code quality he is currently witnessing
+T-1 8362 Jacques *  left the room (quit: "Ex-Chat").
+T48 8363 Santo :  Rasterizing........... @ 600 DPI ^_^
+T42 8366 Shenna :  Lizeth: what is that?
+T-1 8384 Shantay *  left the room.
+T42 8385 Melda :  Shenna: Administrative Tools -> Computer Management -> Device Manager -> Disk Drives right-click/properties/details
+T48 8390 Santo :  due the fiiirst thing i do once i get my website up
+T48 8392 Santo :  SHOWERR
+T48 8393 Santo :  ^_^
+T42 8410 Denny :  gaah
+T-1 8418 Fernando *  left the room (quit: Read error: 104 (Connection reset by peer)).
+T42 8424 Lizeth :  i have forgotten how to use windows
+T42 8424 Melda :  Shenna: what precisely are you trying to do though that it's having trouble finding out if its sda v hda?
+T-1 8433 Fernando *  entered the room.
+T42 8434 Melda :  Lizeth: isn't it such a pleasure?
+T-1 8443 Violeta *  entered the room.
+T-1 8447 Fernando *  left the room (quit: Read error: 104 (Connection reset by peer)).
+T42 8449 Shenna :  Melda: wait for a sec
+T-1 8457 Fernando *  entered the room.
+T42 8463 Lizeth :  i guess except when people ask windows question
+T42 8464 Melda :  wait for wha?
+T42 8489 Margene :  still a pleasure to me, to hell with dumb questions ;)
+T42 8500 Lizeth :  i have no idea why hes tarding around with 2.4
+T-1 8502 Sammie *  entered the room.
+T42 8513 Margene :  because it has no root exploits!
+T-1 8523 Sammie *  left the room.
+T42 8524 Margene :  2.6 is just waiting to get exploited!
+T-1 8526 Tonja *  left the room (quit: Remote closed the connection).
+T42 8526 Jeanice :  he's on slackware, which i think is still on 2.4
+T42 8534 Lizeth :  so hes setting up a large scale secure network?
+T-1 8559 Fernando *  left the room (quit: Read error: 104 (Connection reset by peer)).
+T42 8562 Lizeth :  slack uses 2.4??
+T42 8568 Shenna :  yes
+T-1 8568 Amber *  entered the room.
+T42 8571 Margene :  slack is crazy
+T-1 8577 Fernando *  entered the room.
+T42 8579 Lizeth :  glad i never messed with it
+T-1 8585 Fernando *  left the room (quit: Read error: 104 (Connection reset by peer)).
+T42 8596 Shenna :  hey it is a hitachi hts541612j9sa00
+T-1 8601 Fernando *  entered the room.
+T42 8607 Lizeth :  puppy debian ubuntu and elive is what i boot
+T-1 8641 Fernando *  left the room (quit: Read error: 104 (Connection reset by peer)).
+T-1 8649 Fernando *  entered the room.
+T-1 8668 Star *  left the room (quit: Connection timed out).
+T-1 8680 Fernando *  left the room (quit: Read error: 104 (Connection reset by peer)).
+T42 8688 Jeanice :  just debian, here. i have about 130 gb of distro-less space but my connection is too slow to be downloading others
+T42 8695 Melda :  slackware has 2.6 available, just not default
+T-1 8696 Fernando *  entered the room.
+T-1 8701 Marion *  entered the room.
+T49 8711 Marion :  What's the best way to create a Kiosk term using Linux?
+T42 8712 Shenna :  the internet says it is sata
+T-1 8719 Winter *  left the room (quit: Connection timed out).
+T-1 8745 Pauline *  left the room (quit: ).
+T-1 8791 Tilda *  left the room (quit: "Leaving").
+T42 8819 Shenna :  i have a acer aspire 5583
+T-1 8822 Art *  entered the room.
+T50 8863 Rivka *  pounces around
+T-1 8865 Jeanna *  entered the room.
+T-1 8866 Velma *  entered the room.
+T51 8876 Velma :  anyone here uses LilyPond?
+T-1 8878 Brandie *  left the room (quit: "Bin weg").
+T42 8879 Melda :  any newer aspire is definitely sata
+T51 8884 Ashlee *  dissected a few recently
+T-1 8889 Jordon *  entered the room.
+T-1 8902 Fernando *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T-1 8913 Fernando *  entered the room.
+T52 8917 Jordon :  whats the command to apply a patch? patch -p0 -0 filename ?
+T42 8929 Shenna :  http://www.hitachigst.com/portal/site/en/menuitem.dac393208bfae6f199558fe7eac4f0a0/
+T42 8940 Shenna :  check this
+T42 8950 Shenna :  these are the specs
+T42 8967 Margene :  I question that site!
+T42 8976 Shenna :  why?
+T42 8983 Shenna :  it is the hitachi site
+T-1 8994 Darline *  left the room (quit: "Leaving").
+T-1 8998 Fernando *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T-1 9009 Fernando *  entered the room.
+T-1 9026 Chanel *  left the room.
+T42 9033 Gale :  <Lizeth> i have forgotten how to use windows <-- life is good
+T-1 9053 Jesusita *  left the room (quit: "leaving").
+T-1 9065 Violeta *  left the room (quit: ).
+T-1 9071 Jesusita *  entered the room.
+T42 9076 Shenna :  hey, i will be compiling the kernel today, so any suggestions so that it will work
+T42 9088 Gale :  also, like they say -- time heals all wounds
+T42 9092 Margene :  yes, do it right
+T42 9093 Shenna :  i have 2.6.21 to compie
+T42 9105 Shenna :  *compile
+T-1 9110 Fernando *  left the room (quit: Connection reset by Brandie).
+T42 9115 Shenna :  http://research.indocisc.com/~andika/acer/acer-aspire-5580.html
+T-1 9129 Fernando *  entered the room.
+T42 9138 Shenna :  i searched this thorough linux-laptop
+T53 9150 Arlie :  gah !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+T-1 9154 Maegan *  entered the room.
+T53 9186 Shenna :  Arlie: what happened?
+T-1 9186 Fernando *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T-1 9194 Sierra *  left the room (quit: Remote closed the connection).
+T36 9200 Jetta :  I would like to make linux bootable on my intel mac mini.  Can anyone help me out with some info on getting around all the EFI nonsense?
+T-1 9201 Fernando *  entered the room.
+T42 9214 Gale :  Shenna: yeah, I would go with 2.6.21 unless your distro is good about backporting security
+T53 9215 Arlie :  Shenna, another jerk wrote horrible code and unleashed it on the planet
+T-1 9244 Maegan *  left the room (quit: Client Quit).
+T53 9245 Margene :  that was me sorry
+T-1 9264 Maegan *  entered the room.
+T42 9266 Shenna :  Gale: what do ou mean?
+T-1 9308 Renate *  entered the room.
+T42 9347 Gale :  Shenna: there's some security advisory up to version 2.6.20.8 afaik.  Guess what, if you use say 2.6.20.1, for instance, and your distro didn't address those vulnerabilities in their older version of the kernel, you're vulnerable.
+T-1 9354 Iris *  left the room (quit: "Ex-Chat").
+T-1 9359 Temika *  left the room (quit: Remote closed the connection).
+T42 9377 Shenna :  i downloaded the source today
+T42 9383 Margene :  the top distros usually do
+T42 9390 Shenna :  so i guess it is the correct one
+T42 9394 Gale :  Margene: indeed
+T42 9403 Gale :  but it's something to check out
+T42 9414 Shenna :  slackware is a top distro
+T54 9418 Johnathon :  linuxSUCKS
+T42 9418 Shenna :  k
+T54 9423 Johnathon :  F
+T54 9423 Johnathon :  GDF
+T54 9424 Johnathon :  GDH
+T54 9424 Johnathon :  FG
+T54 9424 Johnathon :  H
+T54 9424 Johnathon :  FH
+T54 9426 Johnathon :  FG
+T54 9428 Johnathon :  H
+T54 9429 Lizeth :  retard
+T54 9430 Johnathon :  GFGHFGHFGDHDGF
+T54 9432 Johnathon :  H
+T-1 9432 ##linux :  mode (+o Kacy ) by ChanServ
+T54 9434 Johnathon :  FH
+T54 9436 Johnathon :  FDH
+T-1 9436 Luella *  left the room ("Leaving").
+T-1 9436 Cecile *  left the room (quit: Remote closed the connection).
+T-1 9438 ##linux :  mode (+b *!n=Cipher-B@*unaffiliated/cipher-blaze ) by Kacy
+T-1 9438 Johnathon *  left the room (Kicked by Kacy (WildPikachu)).
+T54 9444 Renate :  lol
+T54 9454 Lizeth :  that was worth it
+T54 9454 Gale :  doot doot doot... another one bites the dust
+T42 9483 Lizeth :  what kind of laptop are you using?
+T54 9488 Nicki :  a norwegian windows user, :)
+T-1 9491 Fernando *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T-1 9501 Fernando *  entered the room.
+T53 9509 Arlie :  this shitty code came from, of all people, one of the founders of AutoDesk
+T53 9533 Gale :  Arlie: is it a surprise?
+T-1 9549 Kathie *  left the room (quit: Remote closed the connection).
+T-1 9549 Laraine *  left the room (quit: "See ya on the flip side!").
+T-1 9551 Niki *  entered the room.
+T53 9556 Lizeth :  dont they make autocad?
+T53 9561 Arlie :  Gale, its sad and disheartening
+T53 9567 Gale :  Lizeth: yeah
+T53 9569 Arlie :  Gale, i expect my government to lie to me
+T-1 9569 Josef *  entered the room.
+T53 9587 Lizeth :  autocad is retarded
+T53 9589 Arlie :  Gale, but the OSS community rants endlessly about code quality that doesnt seem to exist
+T53 9605 Lizeth :  runs like its broken
+T53 9607 Gale :  Arlie: it's a mixed bag
+T53 9629 Gale :  Arlie: but the main thing is we can switch apps at the drop of a hat
+T53 9630 Lizeth :  havent used it in 8 years though lol
+T-1 9636 Claudie *  entered the room.
+T53 9641 Gale :  Arlie: so if something sucks... next
+T-1 9642 Felicitas *  entered the room.
+T53 9644 Arlie :  Gale, sure ... find me another apcupsd package
+T53 9649 Arlie :  that runs on linux
+T-1 9659 Niki *  left the room.
+T53 9673 Arlie :  its not like there are 1,000's of them ... theres 1
+T-1 9685 Thurman *  left the room (quit: "Ex-Chat").
+T-1 9706 Shenna *  left the room.
+T53 9708 Gale :  maybe it's time for more then
+T55 9755 Alisa :  load ~/.darkstar/darkstar.irc
+T55 9758 Alisa :  whoops.
+T55 9766 Alisa :  At least it wasn't a war script :D
+T53 9767 Melda :  you know what they say about people who complain about a free product
+T53 9773 Arlie :  Gale, which is like saying, the current one sucks and is useless ;)
+T-1 9776 Brooke *  left the room (quit: Remote closed the connection).
+T-1 9789 Rena *  left the room (quit: Read error: 110 (Connection timed out)).
+T53 9790 Arlie :  Melda, im not complaining about a free product
+T53 9794 Gale :  I haven't used that particular one
+T-1 9804 Arlinda *  left the room ("Coming Back").
+T-1 9804 Arlinda *  entered the room.
+T53 9805 Melda :  Arlie: what? huh? i never said anything about you
+T53 9822 Margene :  backpeddalers
+T53 9824 Arlie :  Melda, im complaining about 1,000 assholes screaming "OSS HAS THE BEST CODE QUALITY" when it simply isnt true ... if you give something away, and it sucks, fine, say so, tell me it sucks ahead of time
+T53 9840 Melda :  i've yet to hear that ever... but ok
+T53 9848 Gale :  it's like anything else.  Has it's ups and downs
+T53 9857 Margene :  I say that all the time, maybe I should stop
+T-1 9886 Jordon *  left the room (quit: Remote closed the connection).
+T53 9890 Arlie :  i just posted a message to the mailing list
+T53 9904 Arlie :  anyone wanna bet money on the fact that i get a "sorry, doesnt exist, use the souce" response ?
+T53 9910 Arlie :  i'll pay 2:1 if im wrong
+T53 9917 Gale :  Arlie: I think it's the zealous fanatics that make that bold of statements
+T53 9922 Margene :  I hope you used foul language
+T-1 9930 Jana *  entered the room.
+T53 9936 Arlie :  Margene, nah, but i did have 2 or 3 typos
+T-1 9939 Fernando *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T-1 9950 Marivel *  left the room (quit: "leaving").
+T-1 9957 Fernando *  entered the room.
+T-1 9975 Marion *  left the room.
+T-1 9995 Cherlyn *  entered the room.
+T53 10008 Margene :  too many goofy acronyms
+T56 10012 Jana :  is there an easy way on linux to see the current size of the TCP half-open connections queue, and the TCP accept queue?  (redhat specifically, but I'd be happier with something that works on most linuxes, rather than something redhat-specific)
+T-1 10055 Crista *  left the room (quit: Remote closed the connection).
+T57 10058 Maegan :  I know it's not the leetest question in the word, but how do I remove those little bars that appear next to applets on the kde taskbar?
+T-1 10058 Alisa *  left the room (quit: "ircII EPIC5-0.3.3 -- Are we there yet?").
+T56 10059 Nicki :  have you poked around in /proc ?
+T-1 10070 Stacee *  left the room (quit: "Leaving.").
+T56 10077 Jana :  Nicki: I've been looking in /proc for a while but havne't found it
+T56 10093 Jana :  also tried sysctl -a | grep net.ipv4.tcp
+T57 10094 Margene :  Maegan, lock taskbar
+T56 10095 Jana :  and netstat -s
+T58 10100 Yuki :  does anyone run an ipv4 tunnel through ipv6 ?
+T56 10111 Jana :  they might be hiding in one of those, but I haven't found either one yet
+T58 10115 Yuki :  i'm trying to create my own hostname for irc
+T59 10130 Margarette :  how can i do this: i want to protect some information, namely a PDF, i create pdfs with htmldoc, ive a webserver with php and mysql... i want a user to get the pdf and only be able to use it from the computer he got it in, how can i do that? i know its a very broad question but im not sure where else to ask... oh... and it has to run on linux, but the PDF will most likely be seen on windows but i dont know
+T-1 10131 Paulita *  entered the room.
+T-1 10143 Meta *  left the room (quit: Remote closed the connection).
+T-1 10185 German *  entered the room.
+T59 10190 Jana :  Margarette: your question is vague, I can't quite tell what you're asking, but at first pass it looks like the answer is "you can't".
+T59 10198 Margene :  nothing should ever be seen on windows
+T59 10215 Margene :  except maybe a little devil gif flipping the bird
+T-1 10217 Candice *  entered the room.
+T-1 10224 Alisa *  entered the room.
+T59 10233 Margene :  with ballmer's face pasted on it
+T-1 10233 Alisa *  left the room.
+T-1 10245 Beatriz *  entered the room.
+T-1 10272 Demetrius *  entered the room.
+T59 10273 German :  Margene, don't wanna be a troll, but windows does have it's advantages
+T60 10275 Paulita :  youtube rocks :D
+T59 10290 Margene :  troll!!!!! ;)
+T60 10291 Paulita :  death to the people who want to prevent free speech :D
+T60 10304 Renate :  youtube sucks, lol
+T-1 10310 Jonathon *  entered the room.
+T-1 10316 Gerald *  entered the room.
+T-1 10317 Jonathon *  left the room ("Eep").
+T60 10320 Paulita :  arwen your a fool
+T-1 10328 Chang *  entered the room.
+T60 10329 Paulita :  you want to pay for this?
+T60 10337 Paulita :  you suck wipe
+T59 10337 Gale :  German: and what's that?  Windows Genuine Advantage?
+T-1 10359 Cory *  entered the room.
+T59 10360 Nicki :  death to all extremists! ... oops
+T59 10362 Margene :  well you have to admit, having an advantage is advantageous
+T59 10364 Jeanice :  Gale: i feel so advantaged by that, actually
+T60 10372 Angla :  youtube does suck. who wants 15 minute max hosting ?
+T60 10382 Paulita :  hosting?
+T60 10384 Josef :  they give more if you sign up as a director
+T59 10387 German :  Gale, for example ease of installing additional programs. Unless the program you're looking for is in the repository you have to go through the dependency hell manually
+T-1 10389 Demetrius *  left the room (quit: Client Quit).
+T60 10390 Paulita :  i am talking about watching you idiot
+T60 10390 Josef :  I prefer Google Video tho
+T59 10392 Gale :  yeah, the advantage is not having it
+T60 10417 Paulita :  !seen Quiznos
+T59 10424 Margene :  I call it dependency heaven
+T59 10429 Josef :  German, Windows has Crysis, end of argument :P
+T60 10433 Paulita :  hi pingfloyd
+T59 10437 Jeanice :  plus, the advantage of laughing at all those who get sucked into its vortex of evil
+T61 10437 Hildegard :  Josef: yo.
+T-1 10440 Demetrius *  entered the room.
+T60 10442 Angla :  Paulita, youtube is a video HOSTING outfit. and you can just stop calling people idiots. especially those of a higher intellectual calibre than yourself
+T61 10443 Josef :  Hildegard, hi
+T-1 10449 Latrina *  entered the room.
+T59 10450 Margene :  haha, Crysis will bomb
+T59 10454 Margene :  bunch of hype
+T-1 10461 Christiana *  entered the room.
+T59 10462 Josef :  I bet otherwise
+T59 10469 Josef :  I'd put money on it but I don't think that's very freenode :P
+T59 10469 Gale :  German: ok, but each installation is like one more foot in the grave for it due to the dumbest thing every created -- the registry
+T60 10485 Paulita :  well if your defending idiots Angla, then your one too.
+T60 10490 Paulita :  now leave me be
+T59 10492 Margene :  well ok, gamer nerds always trend up on everything, but it's hype, so is directx10
+T61 10494 Josef :  Hildegard, it was you who brought the OpenOffice issue to my attention wasn't it?
+T-1 10504 Winter *  entered the room.
+T61 10508 Hildegard :  which issue would that be?
+T-1 10512 Katelynn *  left the room ("Saindo").
+T59 10514 Josef :  Margene, tbh DX10 is a big improvement, I'm not the trending type
+T61 10516 Hildegard :  licensing and sale of?
+T61 10517 Josef :  Hildegard, the ebay thing?
+T61 10520 Josef :  yup
+T-1 10527 Demetrius *  left the room (quit: Client Quit).
+T59 10531 German :  Gale, excuse my ignorance, but doesn't gnome have something similar?(never went into the details of it, but gconf looks like the registery)
+T59 10532 Margene :  yes, it's a bigger hype than usual
+T60 10535 Paulita :  all i did was make a brief statement and now i am suffering with all this grief :D
+T61 10540 Josef :  someone else I know put together an email to send them which I helped him with, not sure if he's sent it
+T61 10549 Josef :  gonna go over the legal side with a fine tooth comb tomorrow probably
+T61 10551 Hildegard :  Josef: what did you come up with?
+T60 10554 Arlie :  Paulita, happens to me all the time ;)
+T60 10565 Paulita :  hi Arlie
+T60 10569 Arlie :  Paulita, they love killing the messenger
+T-1 10571 Demetrius *  entered the room.
+T59 10571 Gale :  German: I don't know all the details of gnome, but those are just text files that gconf uses
+T60 10577 Paulita :  haha
+T-1 10584 Ashlie *  left the room (quit: Remote closed the connection).
+T-1 10592 Alana *  left the room (quit: "Leaving").
+T61 10592 Josef :  Hildegard, they're violating the terms of the license and are therefore illegally selling copyrighted material on ebay. should get the account closed, would be nice to see some refunds but I doubt ebay does that.
+T59 10612 German :  Gale, my own preference is each program having it's own .(name) directory in $home
+T59 10615 Gale :  German: more or less the whole gconf gui registry looking thing in gnome is really just a fancy front end for editing them
+T59 10619 Gale :  afaik
+T60 10619 Angla :  http://www.grc.com/stm/shootthemessenger.htm
+T60 10634 Arlie :  Paulita, but having just read the scrollback, you are being somewhat of a snot nosed punk
+T60 10641 Paulita :  Arlie you want to see my home town? it is on youtube :)
+T61 10650 Hildegard :  Josef: :D
+T60 10651 Paulita :  well fine then
+T60 10651 Arlie :  nope ... dont care at all
+T60 10655 Paulita :  good
+T60 10659 Paulita :  cause now i know you too
+T61 10659 Hildegard :  shutting down a powerseller, awesomeness.
+T59 10660 German :  Gale, okay but i do have a question here: don't windows ever update their libc? I heard that's what breaks most of the binary compatibility in linux
+T-1 10677 Emeline *  entered the room.
+T60 10677 Arlie :  Paulita, im sure it looks exactly like my home town
+T-1 10682 Kathryn *  left the room (quit: Read error: 113 (No route to host)).
+T62 10692 Christiana :  Anybody know a good OS for laptop? Has to support wifi - Office programs and firefox, i thought puppy linux or something.
+T60 10714 Paulita :  there is a major difference between a monkey hole and a bahia brazil ;)
+T62 10722 Priscila :  Christiana: why bother asking here?
+T59 10729 Gale :  German: windows has all sorts of problems with it's system libraries all the time
+T62 10729 Priscila :  Or do you mean distro?
+T62 10734 Christiana :  yeah a distro
+T62 10741 Christiana :  for laptop
+T60 10745 Arlie :  yeah ... not too many glue sniffing street kids around here ... they all smoke weed
+T-1 10749 Nevada *  left the room (quit: Read error: 60 (Operation timed out)).
+T62 10752 Kit :  Christiana: Check "linuxonlaptops"
+T62 10764 Christiana :  ok tnx
+T60 10764 Margene :  they drink beer here
+T62 10769 Priscila :  Christiana: is it a low spec laptop?
+T60 10773 Margene :  and I shoot em for sport
+T59 10777 German :  Gale, I know, I am not here to argue that windows is better, just that there are some nice aspects to it(with horrible consequences, but still)
+T-1 10788 Chau *  left the room (quit: Success).
+T-1 10816 Noel *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T62 10818 Christiana :  128 mb ram so low spec yeah
+T62 10837 Melda :  128mb is hardly low spec :-p
+T-1 10845 Fernando *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T62 10849 Priscila :  it is if you want to use firefox and Office apps
+T-1 10857 Fernando *  entered the room.
+T-1 10859 Fernando *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T-1 10869 Fernando *  entered the room.
+T-1 10870 Fernando *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T62 10870 Melda :  goldfish: hardly
+T62 10879 Christiana :  for me it is low spec, im used to powerfull desktops :P
+T-1 10880 Fernando *  entered the room.
+T62 10905 Melda :  Christiana: most "low spec" distributions are garnered for 8MB-32MB w/ 200Mhz or less processors
+T62 10910 Angla :  128 millibits is quite low
+T-1 10913 Noel *  entered the room.
+T-1 10916 Lynda *  entered the room.
+T62 10920 Margene :  tell it to my octo core with 16gb ram
+T63 10925 Lynda :  test
+T62 10927 Christiana :  32 mb ram? they used to make those?
+T62 10930 Kit :  Melda: No.. Your confusing low with ancient..
+T-1 10935 Claudie *  left the room (quit: Remote closed the connection).
+T62 10940 Melda :  Kit: not at all
+T-1 10940 Stevie *  left the room (quit: ).
+T-1 10946 Ashlie *  entered the room.
+T62 10947 German :  Christiana, I used to have one with 2MB
+T62 10953 Christiana :  omg :o
+T62 10957 Melda :  Christiana: umm... your "standard" windows 95 computer came with 32-48MB RAM
+T-1 10962 Claudie *  entered the room.
+T63 10976 Lynda :  hey people why doesnt PHP channel work? it sayz overfloww when i try to type.....
+T62 10979 Christiana :  i use a 64 bit windows vista with 3 gb ram :P
+T62 10982 Kit :  Melda: Yeah.. And that's VERY old..
+T-1 10992 Elli *  entered the room.
+T62 10992 Nicki :  my first computer had 4kB of ram, a trs-80. :)
+T63 10995 Arlie :  Lynda, php is buggy like that
+T62 11000 Christiana :  4kb?
+T63 11002 Priscila :  Arlie: heh.
+T62 11006 Christiana :  What OS runs on 4 KB ?
+T62 11011 Nicki :  basic
+T62 11014 Nicki :  ;)
+T-1 11018 Josef *  left the room.
+T63 11018 German :  Lynda, you must register on freenode
+T63 11019 Lynda :  Arlie: thanks... darn i got to fix a stupid problem... :(((
+T62 11028 Jeanice :  win 95 was 8-16 mb ram wasn't it?
+T63 11033 Priscila :  Lynda: probably means the channel is full.
+T62 11042 Christiana :  I never used windows 95, it seems to run like crap
+T62 11043 Margene :  lose 95 was 32mb
+T62 11046 Arlie :  4k was the norm for awhile
+T62 11048 German :  Jeanice, it sure ran on my 16mb, dunno about 8 though
+T63 11054 Lynda :  goldfish: so i need to wait until some people leave?
+T62 11056 Arlie :  my atari 400 only had 16k
+T62 11059 Christiana :  4Kilobite, what can you do with that??
+T62 11070 Arlie :  Christiana, microsoft basic on cassette ran in 4k
+T62 11070 Jeanice :  Christiana: it should be enough for anyone
+T-1 11074 Anneliese *  entered the room.
+T62 11078 Christiana :  Play with the BIOS or something?
+T63 11080 German :  Lynda, you need to register your nick at freenode, then try to join
+T62 11081 Margene :  I remember lose 98 was pretty fast on 64mb
+T62 11090 Arlie :  Christiana, what bios ?
+T63 11091 Lynda :  German: thanks !
+T63 11102 Lynda :  German: hey how do i recover a lost passworD? :)))
+T62 11102 Hildegard :  98 was pretty fast even with 32, come to think of it.
+T62 11109 Hildegard :  at least until you started adding lots of stuff.
+T62 11115 German :  Margene, until you actually add some programs like antivirus and firewall...
+T62 11122 Jeanice :  i never had 98
+T62 11124 Christiana :  Bios is a blue screen with buttons when i pres F1 when pc boots, it says PASSWORD and BIOS
+T63 11125 German :  Lynda, no idea
+T62 11131 Jeanice :  went straight from 95 to *shudder* Me
+T-1 11131 Gilberte *  entered the room.
+T62 11136 Margene :  German, never had that, not even a firewall
+T-1 11148 Val *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T62 11154 Hildegard :  Jeanice: ME was a disaster
+T62 11160 German :  Margene, oh right:D windows 98 wasn't geared towards the internet
+T62 11171 Christiana :  Windows ME sucks, ERROR this ERROR that
+T62 11172 Margene :  I didn't even bother with firewalls until I got an error at startup once
+T-1 11180 Maple *  left the room (quit: Connection timed out).
+T62 11190 Arlie :  screw microsoft ... they suck !
+T62 11191 Renate :  Christiana, no shit?
+T62 11210 Celestina *  loves hating ms
+T62 11219 Christiana :  Ya rlly
+T62 11223 Margene :  I went from 98 crooked.. I mean straight to XP
+T62 11233 Rosia *  loves pointing out that saying "screw microsoft ... they suck !" only makes F/OSS look like communism
+T64 11237 Gricelda :  W MILAN
+T62 11240 Christiana :  I went from XP to Ubunto to Vista
+T62 11248 Renate :  Margene, lol... real people used Win NT
+T-1 11251 Anneliese *  left the room (quit: Client Quit).
+T62 11252 Arlie :  Margene, hating MS has nothing to do with F/OSS
+T-1 11260 Sammie *  entered the room.
+T62 11262 German :  xp->Fedora->Debian should be enough for everybody
+T62 11264 Nicki :  Renate: and I like pointing out that you don't seem to know the definition of "communism" :)
+T62 11270 Arnoldo *  agrees with Renate
+T62 11275 Margene :  Renate, yeah, those imaginary people were weird
+T62 11277 Renate :  Nicki, doesn't matter.... I said "look like"
+T62 11280 Arlie :  Margene, my bad
+T62 11285 Arlie :  Renate, see above
+T62 11285 Renate :  Margene, hehe
+T63 11287 Lynda :  THANKS GUYS!! :))
+T-1 11288 Sammie *  left the room.
+T-1 11299 Lacy *  left the room (quit: "Fui embora").
+T62 11301 Hildegard :  Renate: real people still use NT
+T62 11302 Christiana :  Anal Butt Monkeys, now playing on the video streamer!
+T62 11306 Margene :  FOSS is communism comrades!
+T-1 11310 Anneliese *  entered the room.
+T-1 11315 Stevie *  entered the room.
+T-1 11316 Chau *  entered the room.
+T62 11318 Margene :  bring down this MS capitalist pig!
+T65 11319 Renate :  Hildegard, eh? you're here?.... and wow, the red letters on my xchat screen look painful
+T62 11324 Gale :  no NT is for the noobs that think they're not
+T62 11326 Arlie :  for real
+T62 11328 Angla :  jackson browne had a hit with running on NT
+T62 11329 Jeanice :  that's GNU/communism
+T62 11330 Arlie :  microsoft is another enron
+T62 11345 Arlie :  they didnt make a real profit the entire time bill gates was getting rich
+T62 11350 Christiana :  Microsoft is loaded with cash, Respect.
+T62 11353 Rosia *  just started a flamewar! lol
+T65 11358 Hildegard :  Renate: I'm here for a moment. Going in for an xray in a moment
+T-1 11359 Maple *  entered the room.
+T-1 11359 Willene *  entered the room.
+T-1 11367 Denny *  left the room (quit: "Leaving").
+T65 11369 Renate :  Hildegard broke a leg!
+T62 11372 Angla :  they were going to call it MT until someone noticed the phonetic implications
+T62 11377 Arlie :  Christiana, thats because the stock they give to employees isnt on the balance sheet
+T65 11379 Hildegard :  Renate: it's my shoulder, actually.
+T65 11380 Renate :  those servers are pretty dangerous, eh?
+T-1 11384 Ruthe *  entered the room.
+T65 11389 Renate :  Hildegard, lemme guess, a blade rack fell on it?
+T62 11390 Christiana :  Arlie: what stock?
+T65 11394 Hildegard :  Renate: no.
+T62 11401 Arlie :  Christiana, right ;)
+T65 11405 Hildegard :  Renate: I have no clue yet, but it's probably arthritis :/
+T62 11406 Margene :  NT still sounds close enough to empty, and damn fine description
+T-1 11408 Gerald *  left the room (quit: "KVIrc 3.2.4 Anomalies http://www.kvirc.net/").
+T62 11417 Christiana :  Headmonkey: Stock means Stick So what the pell?!
+T65 11420 Renate :  Hildegard, hehe, well, see ya then
+T62 11420 Hildegard :  and NT is still, not widely used, but in use.
+T-1 11423 Lizbeth *  entered the room.
+T-1 11424 Sheila *  left the room (quit: "Konversation terminated!").
+T65 11426 Hildegard :  see ya
+T65 11436 German :  Hildegard, let me guess, you caught a biological virus because your ports were open again?!
+T62 11436 Margene :  NT is XP and Vista
+T62 11437 Arlie :  Christiana, i can tell you spent some time working for arthur anderson
+T62 11440 Margene :  it's the NT kernel
+T-1 11440 Genevive *  left the room (quit: Success).
+T66 11444 Ruthe :  question: what could cause linux not to find a dhcp server?
+T62 11451 Christiana :  Headmonkey: I dont eat bananas.
+T66 11456 Renate :  Ruthe, the fact that there isn't one?
+T62 11467 Arlie :  Christiana, you should, they have lots of potassium goodness
+T66 11468 Ruthe :  Renate, xp computer finds it
+T66 11478 Renate :  eh? dunno then
+T66 11485 Ruthe :  it was working this morning, suddenly cant find dhcp
+T66 11486 Nicki :  Ruthe: not plugged into same network? :)
+T62 11486 Christiana :  Headmonkey: I eat cardboard boxes because of the fibers.
+T-1 11490 Kimbra *  left the room (quit: "Leaving").
+T66 11498 Ruthe :  dkkr, plugged directly to cable modem
+T62 11502 Arlie :  Christiana, while watching mythbusters ?
+T66 11507 Angla :  Ruthe, lack of networking. or maybe unplugged cable. or maybe a host of other reasons
+T66 11508 Nicki :  in the lan part of it?
+T62 11515 Christiana :  Headmonkey: No whil watching JENSEN
+T66 11519 Ruthe :  Nicki, yes
+T66 11529 Gale :  Ruthe: try resetting your cable modem
+T66 11538 Angla :  or turning it on ...
+T-1 11541 Dina *  left the room (quit: "this is just some wasted space").
+T62 11542 Arlie :  you stare at your speakers ?
+T66 11549 Nicki :  check the log, should give you a message if serevr not found, versus server found but rejected lease request for some reason
+T62 11563 Christiana :  Rock On!: http://www.myspace.com/thezimmersband  Talking bout my ge-neration!
+T66 11581 Ruthe :  Gale, unplugging the cable from the linux box and plugging it to an xp box works
+T62 11588 Margene :  generations suck
+T66 11588 Ruthe :  xp cn get online
+T-1 11591 Fernando *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T-1 11594 Chang *  left the room (quit: Remote closed the connection).
+T-1 11601 Fernando *  entered the room.
+T66 11646 Angla :  Ruthe, so you must have changed something. of course, you'll never know what, if you didn't keep a log of all changes to system config
+T-1 11649 Zella *  left the room (quit: "Don't let gravity get you down").
+T67 11655 Margene :  some people keep insisting I make a myshittyspace, why?
+T67 11667 Christiana :  Becuz its cewl
+T67 11674 Priscila :  Margene: because they are retards.
+T-1 11677 Charlyn *  left the room (quit: Read error: 110 (Connection timed out)).
+T-1 11685 Ela *  left the room (quit: "L??mnar").
+T67 11685 Margene :  well I wouldn't be cool to them, since my pic would be flipping the bird to the cam
+T-1 11687 Felicitas *  left the room (quit: "Ex-Chat").
+T67 11693 German :  Margene, because they want to pull you down to their level
+T68 11693 Tyra :  vncviewer mac: "CConnection: No matching security types" and dies, what can I do to make a vnc connection to a mac? this is from linux or may be from windows
+T-1 11697 Felicitas *  entered the room.
+T67 11698 Priscila :  They prolly tlk lik dis on d intrnet nd use x-marx 1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! alot lik dat
+T67 11706 Christiana :  If even osama bin laden has a myspace, and u dont ,u rgettin old or unliked.
+T-1 11710 Kimbra *  entered the room.
+T66 11711 Ruthe :  Angla, pretty sure i havent changed anything, box is in argentina, im the only one who knows any password to it
+T-1 11722 Demetrius *  left the room (quit: "This computer has gone to sleep").
+T66 11724 Ruthe :  has just been there serving iax2 till this morning
+T67 11739 Margene :  I'm not getting old or unliked, well getting old, already unliked
+T-1 11742 Christiana *  left the room (quit: ).
+T67 11769 Gale :  myspace is something that managed to top AOL in lameness
+T-1 11771 Kimbra *  left the room (quit: Connection reset by Brandie).
+T-1 11778 Rosetta *  entered the room.
+T66 11779 Angla :  Ruthe, sorry ? argentina ? and where are you ? how do you know the router works with xp on the same cable ?
+T-1 11784 Rosetta *  is now known as Rosetta
+T67 11786 Margene :  oh cripes, AOheLL
+T-1 11787 Christine *  is now known as Christine
+T67 11798 Priscila :  I wish all those elite "hackers" would stop going for multinational corporations, and take down myspace.
+T66 11808 Ruthe :  Angla, im in florida, i know because im talking to someone who is sitting in front of it
+T67 11809 Gia :  heh
+T-1 11816 Cory *  left the room (quit: Connection timed out).
+T67 11821 Margene :  and isn't myspace just a big pedophile ring
+T67 11824 Lajuana :  Priscila: why would they want to attack their breeding grounds?~
+T67 11839 Priscila :  Lajuana: hackers maybe, not "hackers" !
+T69 11843 Paulita :  i figured this was the perfect song to accompany the Mexodus to Amerika :D http://youtube.com/watch?v=8_B1BcDFdQY
+T66 11877 Angla :  Ruthe, we're running out of options here. is the person you are talking to, trustworthy and intelligent ?
+T-1 11882 Melida *  entered the room.
+T-1 11894 Nelle *  left the room (quit: Connection timed out).
+T66 11896 Ruthe :  Angla, trustworthy, not intelligent
+T66 11901 Angla :  bingo
+T66 11910 Margene :  well at least he's not a weasely dumbass
+T66 11926 Gale :  yeah
+T-1 11929 Winter *  left the room (quit: Connection timed out).
+T-1 11934 Jana *  left the room.
+T66 11953 Mindy :  o.o
+T66 11953 Gale :  weasely dumbasses are a waste of air
+T-1 11969 Leota *  entered the room.
+T70 11974 Leota :  Hi all, anyone know how to mount a usb disk?
+T66 11980 Ruthe :  yeah, its a pain, but it doesnt change the fact that plugging the network cable to the box, ifdown ifup the interface
+T70 11984 Leota :  my new kernel doesn't have /dev/sh*
+T-1 11986 Katharina *  entered the room.
+T66 11987 Ruthe :  and the box wont get an ip address
+T70 11998 Leota :  lsusb shows:  Bus 003 Device 003: ID 08ec:0016 M-Systems Flash Disk Pioneers
+T67 12005 Lajuana :  Priscila: well, I figure that real hackers are above such things, crackers are going to go after things that won't cause permanent mental scarring, and script kiddies feel comfortable and at home there.
+T-1 12017 Augustina *  left the room (quit: ).
+T-1 12025 Sandy *  left the room (quit: Read error: 60 (Operation timed out)).
+T66 12027 Gale :  Ruthe: did you try /etc/init.d/networking restart?
+T-1 12038 Alishia *  left the room.
+T66 12041 Ruthe :  Gale, yes
+T67 12052 Margene :  script kiddies mostly play with weak botnets ddosing forums
+T66 12053 Ruthe :  also reboot
+T66 12057 Angla :  is the *other* end of the cable plugged into the computer ?
+T66 12058 Ruthe :  just to be on the safe side
+T66 12060 Gale :  how about try that with stop and then start instead
+T-1 12066 Andy *  entered the room.
+T-1 12078 Gertrud *  is now known as Gertrud
+T67 12083 Tiffaney *  stab's th pirate
+T67 12102 Gertrud :  :P
+T-1 12105 Gertrud *  left the room.
+T-1 12110 Giselle *  entered the room.
+T66 12110 Ruthe :  Angla, yes, the person im talking to has plugged the cable to the computer before
+T66 12127 Ruthe :  so at least Im sure he knows how to do that much
+T66 12130 Angla :  is there another cable to try ?
+T66 12141 Gale :  has he plugged in a power cable before though?
+T66 12152 Ruthe :  there is, but why would that same cable work on a different box?
+T71 12156 Albertine *  is starting to hate his custom kernel
+T71 12169 Leota :  but i do love kde 3.5.7 :D
+T66 12189 Ruthe :  Gale, he is reading to me what he sees on the screen, system is on
+T66 12193 Angla :  Ruthe, trying as many possibilities as possible. it's *bound* to be something simple
+T-1 12209 Andy *  left the room (quit: Excess Flood).
+T-1 12215 Andy *  entered the room.
+T71 12240 Renate :  Leota, what's new in it compared to 3.5.6? lol
+T-1 12265 Voncile *  left the room (quit: "Leaving").
+T66 12276 Gale :  Ruthe: did you make sure the network module is loaded?
+T-1 12281 Andy *  left the room (quit: Remote closed the connection).
+T71 12281 Leota :  Renate: you get custom text colour for kicker, so you can have a black background in kicker with nice white text or whatever colour you want
+T71 12295 Renate :  oh... meh, guess it's nothing new then
+T71 12299 Leota :  and lots more... but kicker is the awesome bit
+T71 12338 Margene :  the kicker is the kicker
+T-1 12342 Justine *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T66 12348 Angla :  Ruthe, if i were you, i'd make a list of possible reasons why. and then systematically try them out. i wouldn't go assuming anything
+T-1 12350 Andrew *  entered the room.
+T71 12377 Jeanice :  you need a custom kernel for kde?
+T66 12377 Gale :  yeah, it's the assumptions that lead to nowhere
+T66 12397 Gale :  best thing to do is start with the simple and easy to overlook stuff and work your way up
+T71 12397 Leota :  Jeanice: no the stock kernel is fine
+T-1 12417 Fernando *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T71 12418 Leota :  Jeanice: i just wanted to add stuff like bootsplash, ubuntu's usplash sucks
+T71 12425 Margene :  I'll just wait for kde 4
+T71 12427 Leota :  and i wanted initng
+T-1 12429 Fernando *  entered the room.
+T71 12432 Leota :  Margene: long wait then...
+T71 12434 Margene :  till then I'll stick w/ xfce
+T66 12435 Angla :  the assumption that linux just decided to not work, is the least likely, by far
+T71 12439 Renate :  KDE4 is vaporware...
+T71 12445 Jeanice :  Leota: ah i see, sorry, i thought you made a custom kernel for kde. may i recommend gensplash btw
+T-1 12458 Blanche *  entered the room.
+T71 12463 Margene :  indeed it is, but 3.5 just doesn't cut it for me
+T71 12463 Santo :  Margene: why would you go from XFCE to KDE bloatware?  Unless KDE4 will not be bloatware any longer...
+T71 12476 Margene :  Santo, not go, but try it out
+T-1 12480 Christina *  entered the room.
+T71 12481 Santo :  ah
+T-1 12495 Sena *  left the room (quit: Remote closed the connection).
+T66 12499 Gale :  Angla: or like I always say, "
+T66 12511 Angla :  ?
+T71 12512 Margene :  the only thing is there's a lot of qt apps that are really great
+T71 12513 Gale :  When it comes to troubleshooting, educated guesses are good, assumptions aren't
+T72 12523 Christina :  I have a question.  I need to know the kernel parameter to use to tell an ubuntu install where the CD media is located at over a PXE server.
+T73 12537 Delmar :  has anyone used  Xcircuit ?  is that an app to draw and to test circiuts if theu work ?
+T-1 12562 Cyndy *  entered the room.
+T-1 12568 Cyndy *  left the room.
+T66 12571 Angla :  Gale, a calm methodical approach to narrowing the search space, then you shoot the dog that chewed the cable ...
+T-1 12573 Cyndy *  entered the room.
+T-1 12577 Lizbeth *  left the room (quit: "Leaving").
+T-1 12578 Cyndy *  left the room.
+T71 12588 Margene :  for example, kget is pretty much the only download manager I've tried that forces resuming on anything, while others fail
+T71 12588 Leota :  Jeanice: i tried gensplash so many times and i just gave up
+T71 12598 Jeanice :  Leota: what went wrong?
+T-1 12608 Amber *  left the room (quit: Remote closed the connection).
+T71 12614 Leota :  Jeanice: compiling it was the easy bit, messing with the startup scripts was where i got stuck
+T66 12614 Gale :  yeah, being methodical is a big part
+T71 12650 Jeanice :  Leota: ah, personally i don't use the progress bars
+T-1 12682 Kenya *  entered the room.
+T71 12711 Renate :  I'm not a big fan of kget :-\
+T71 12719 Renate :  then again, d4x is kinda broken too
+T-1 12720 Alina *  left the room (quit: "Leaving").
+T71 12735 Margene :  I've tried them all, kget is the only one that gets it done
+T-1 12737 Blanche *  left the room (quit: Client Quit).
+T71 12742 Leota :  Jeanice: well i couldn't get gensplash to compile, i just got errors, and had to install from some deb which completely failed, the error was related to the kernel
+T71 12743 Margene :  nothing in gtk2 that's for sure
+T-1 12747 Sena *  entered the room.
+T-1 12755 Gertrud *  entered the room.
+T74 12766 Gertrud :  ok i have an ext3 image
+T71 12776 Renate :  Margene, eh? yea, I haven't found a thing that can compare to flashget/fdm on Windows..
+T74 12776 Gertrud :  i did not unmount it cleanly
+T74 12782 Renate :  Gertrud, fsck
+T74 12784 Gertrud :  is there a way to fsck an image?
+T74 12795 Gertrud :  it throws an error when i try to fsck the image
+T71 12797 Margene :  archangle25, flashgot/kget works for me every time
+T71 12805 Jeanice :  Leota: what distro?
+T74 12813 Gertrud :  its not a disk turned into an image, its 30gb of /dev/zero turned into an ext3
+T71 12818 Angla :  downthemall works for me
+T71 12831 Renate :  Margene, well, I never said it didn't work, I just find it lacking in features
+T-1 12840 Cristi *  left the room (quit: Connection timed out).
+T-1 12840 Rocco *  entered the room.
+T71 12841 Renate :  (scripting)
+T-1 12859 Brande *  left the room (quit: ).
+T71 12884 Margene :  well I mean in linux at least, that's the only one that works for me when servers have anti-leech mechanisms
+T-1 12894 Britta *  entered the room.
+T-1 12902 Inez *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T-1 12903 Katherine *  left the room (quit: "g'night").
+T71 12907 Renate :  Margene, hint, if they don't want you to leech, don't leech
+T71 12923 Margene :  no, the problem is they don't just stop leeching, they stop resuming
+T-1 12933 Hassan *  left the room (quit: Remote closed the connection).
+T-1 12933 Nada *  left the room (quit: Read error: 110 (Connection timed out)).
+T71 12934 Leota :  Jeanice: kubuntu
+T-1 12938 Hermila *  entered the room.
+T71 12949 Arlie :  posting stuff for download, then placing restrictions on downloading it, is against the communist manifesto of the OSS bowel movement
+T71 12956 Margene :  I'm sure it's a lot worse to restart a download and suck up even more bandwidth than to resume some multi GB file at 90%
+T-1 12973 Inez *  entered the room.
+T75 12980 Julietta :  can pcap inject packets into a open tcp connection ?
+T-1 12998 Felicitas *  left the room (quit: Remote closed the connection).
+T75 13001 Arlie :  pcap injects ethernet packets
+T75 13004 Arlie :  so yes
+T75 13010 Arlie :  they can be tcp,udp,ip, whatever
+T71 13011 Renate :  Margene, wait, if the file is non-resumable how do you resume it? o.O
+T71 13022 Jeanice :  Leota: http://jeandamiendurand.free.fr/debian/splashutils/ worked fine for me
+T71 13026 Margene :  Renate, I dunno, it just happens
+T71 13041 Renate :  magic, zomg! :o.O
+T71 13047 Margene :  you send it through flashgot to the downloader again, and it automagically resumes
+T71 13083 Julietta :  Arlie, yeah, but don't tcp connections have state information that prevent direct injection like that ?
+T71 13110 Leota :  Jeanice: those are the debs i tried, it messed with the entire apt-get install process, it couldn't run the post install process because the ubuntu startup scripts are so different and because the pre-uninstall scripts couldn't also be run the hole thing fell apart
+T75 13114 Arlie :  Julietta, you can inject garbage if you want
+T-1 13119 Sandy *  entered the room.
+T75 13123 Arlie :  Julietta, or you can steal someones connection
+T-1 13123 Clara *  left the room (quit: No route to host).
+T-1 13149 Ramona *  entered the room.
+T75 13150 Arlie :  Julietta, how any 1 particular tcp stack decides to respond to your garabge depends on its implementation
+T-1 13229 Celsa *  entered the room.
+T75 13230 Julietta :  i actually neither want to steal the connection nor i want to inject garbage (data that is not getting accepted by a valid implementation)
+T77 13231 Elli :  Hmm
+T76 13233 Celsa :  good morning
+T74 13236 Gertrud :  hey Renate is there some special option to pass fsck to get it to fsck my ext3 image?
+T77 13244 Elli :  Any idea why 'passwd' would ask for a new password four times?
+T-1 13252 Crista *  entered the room.
+T77 13255 Priscila :  Elli: A hacked version.
+T78 13261 Melda :  is there a way to get ls -l to print full path in each response?
+T75 13265 Arlie :  Julietta, do whatever you want ... its an ethernet packet
+T71 13266 Leota :  Jeanice: i had to replace most of the the startup scripts with just echo boo, the problem seemed to be with the kernel not being detected or something
+T78 13273 Melda :  so it'll show /home/user/filename.jpg at the end of every single line?
+T77 13278 Elli :  Priscila, yeah that could be a possbility except I just recompiled it from sources, thinking just that
+T-1 13280 Georgeanna *  entered the room.
+T78 13282 Melda :  vs just showing filename.jpg?
+T77 13284 Elli :  And still the same behavious
+T77 13295 Priscila :  Elli: Hmmm. Weird indeed ..
+T75 13297 Julietta :  Arlie, well, i can't, to actually inject valid packets i would need to modify the sockets state
+T71 13297 Jeanice :  Leota: strange... and what errors did you get when you tried to compile?
+T78 13307 Priscila :  Melda: ls -l /home/user/*
+T-1 13308 Giselle *  left the room.
+T77 13308 Elli :  Ya
+T77 13360 Priscila :  Elli: I assume you can trust where you gott he sources from?
+T75 13371 Arlie :  Julietta, use libpcap to do whatever you want ... your sending ethernet packets ... send valid tcp or dont ... its up to you
+T71 13382 Leota :  Jeanice: don't have that info at the moment, this kernel only has the bootsplash patch
+T78 13391 Melda :  godlfish: anyway to do that recursively? like with ls -alR to show full paths/permissions on every file in a tree?
+T-1 13404 Arlinda *  left the room ("Coming Back").
+T-1 13404 Arlinda *  entered the room.
+T-1 13406 Stefani *  left the room (quit: "Working on heaven's door").
+T-1 13411 Emilio *  left the room (quit: "Leaving").
+T-1 13417 Anneliese *  left the room (quit: "Leaving").
+T71 13427 Jeanice :  Leota: fair enough
+T77 13428 Priscila :  Melda: use find, find /home/user/ -exec ls -l {} +
+T78 13433 Elli :  Priscila, yeah
+T77 13447 Felicia :  Melda: alias it in your ~/.bashrc
+T78 13455 Elli :  Priscila, it might be a PAM module problem actually, hmm
+T77 13455 Priscila :  Melda: actually. that will just do the same thing.
+T77 13461 Melda :  goldfish: my actual application is a cleint chmod'd "/" to this user... so I want to change EVERYTHING owned by this user on the system to "root:root" and then just fix his homedir
+T71 13462 Leota :  Jeanice: bootsplash seemed to be easier to install, i added the bootsplash patch, then used splas bla bla > bootsplash, then extracted my initrd file using cpio and added bootsplash to its top level dir, and then recreated the initrd, that was it, the progress bar didn't matter and it doesn't work, also i made a nice ubuntu theme
+T-1 13462 Shawnee *  entered the room.
+T77 13466 Melda :  rather than reinstalling another system
+T78 13471 Priscila :  Elli: Ahhh, I've never used that PAM stuff.
+T-1 13480 Edith *  left the room (quit: "Leaving").
+T79 13498 Anya :  How do you keep someone confined to their home directory? I'm having someone ssh'ing in for irssi, but I don't want them to access the rest of my system
+T77 13498 Melda :  so i was going to do an ls and grep out his username and then pull the file-paths from like awk '{ print $9 }' from the ls -l and do a | xargs chown root:root, etc
+T77 13500 Priscila :  Melda: sounds like you want find...
+T78 13501 Felicia :  Elli: and Pam? .. hrm .. sounds nice ;-)
+T75 13510 Arlie :  Julietta, ethernet packets dont care what data you put in them ... so long as you have a valid ethernet header with src and dest MAC addresses
+T75 13511 Julietta :  Arlie, the point is if you inject data into a open tcp connection, the original application maintaining that connection will recieve a ack for packet it didn't send which will likely result in a broken connection, which means i can't actually inject into a connection, it is NOT up to me
+T-1 13521 Latrina *  left the room (quit: Remote closed the connection).
+T77 13527 Priscila :  Melda: find has -user , to find files owned by user, and then has -exec , for executing command on said files.
+T75 13532 Julietta :  Arlie, ethernet packets don't but VALID implementations of tcp DO
+T-1 13540 Jeanice *  left the room (quit: "leaving").
+T75 13561 Arlie :  Julietta, of course ... you cant just start pretending to be another application or host, unless you have control over it
+T75 13568 Arlie :  Julietta, as in, man-in-the-middle
+T75 13574 Julietta :  yeah
+T75 13585 Julietta :  well, how would i do that
+T75 13589 Julietta :  on application level ?
+T77 13597 Priscila :  Melda: so you could do, find / -user user -exec chown root:root {} + , then just fix his home directory.
+T75 13599 Julietta :  like grab a handle to another apps socket
+T78 13602 Elli :  Felicia, heh =P
+T77 13609 Priscila :  Melda: although, do NOT do that actually.
+T77 13618 Priscila :  Melda: that will fsck up other things....
+T-1 13621 Abigail *  entered the room.
+T80 13632 Abigail :  does anyone know what they are doing with poppassd?
+T75 13634 Arlie :  Julietta, you can send open file descriptors from 1 app to another using message queues and IPC
+T78 13653 Felicia :  i smiled or sure ;-)
+T78 13659 Felicia :  er for*
+T81 13676 Paulita :  http://youtube.com/watch?v=UEOUWQ1Qm5I
+T78 13683 Elli :  Felicia, you've got a lively imagination for sure >.<
+T75 13684 Arlie :  Julietta, you can also have an app connect to a proxy, and have the proxy connect to wherever the app is supposed to, but it doesnt require libpcap
+T-1 13687 Shawnee *  left the room (quit: Client Quit).
+T75 13693 Arlie :  pcap is for capturing packets on the wire
+T75 13706 Julietta :  Arlie, is there any way to have that work without doing any modification to the app i want to grab the socket from ?
+T75 13717 Arlie :  Julietta, use a proxy
+T75 13719 Julietta :  well, except the proxy which i am actually coding right now
+T78 13738 Felicia :  these darned red blood cells and hormones keep acting up on me :-)
+T78 13743 Elli :  haha
+T-1 13751 Shawnee *  entered the room.
+T75 13762 Arlie :  Julietta, you can also rewrite packets, i think its a feature of iptables
+T75 13796 Arlie :  Julietta, you could, in theory, rewrite every outgoing tcp packet to connect to your local proxy instead of where it was going
+T75 13803 Arlie :  Julietta, using a userspace iptables filter
+T-1 13841 Laura *  entered the room.
+T75 13842 Julietta :  hmm, yeah
+T-1 13889 Cecile *  entered the room.
+T75 13899 Arlie :  no thanks required, just send money
+T-1 13911 Nichole *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T82 13924 Laura :  Hello, when I open a file I see a bunch of ^M
+T82 13930 Laura :  Is that bad in vi ?
+T-1 13963 ##linux :  mode (-o Kacy ) by Kacy
+T83 13973 Paulita :  wow dig this http://youtube.com/watch?v=nayarBrD6mk
+T82 13979 Antonietta :  Laura: it means it uses dos eol
+T82 13985 Laura :  how do I remove those?
+T-1 13989 Devin *  entered the room.
+T-1 14005 Elizabet *  left the room (quit: Read error: 110 (Connection timed out)).
+T82 14008 Laura :  i don't think it matters thou, cause It works
+T82 14033 Antonietta :  Laura: tr -d '\r' < file > newfile
+T78 14040 Elli :  Hmm, reinstalled PAM, no change..
+T-1 14047 Velma *  left the room (quit: "Leaving.").
+T-1 14051 Merna *  entered the room.
+T-1 14062 Madison *  entered the room.
+T82 14075 Gale :  Laura: :%s/<ctrl-v then ctrl-m>//g in vim
+T-1 14079 Edith *  entered the room.
+T86 14084 Madison :  Arlie: ey ey ey ey
+T-1 14095 Alvaro *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T-1 14101 Madie *  entered the room.
+T-1 14114 Latrina *  entered the room.
+T82 14134 Laura :  Gale: what is %s/
+T82 14142 Gale :  search and replace
+T82 14147 Laura :  I am don't use vi usually :/
+T82 14148 Gale :  but actually
+T-1 14160 Juana *  entered the room.
+T82 14181 Gale :  you probably want the second set of // to be a linefeed instead
+T-1 14199 Juana *  left the room ("Leaving").
+T-1 14207 Ernestina *  left the room (quit: Operation timed out).
+T-1 14212 Juana *  entered the room.
+T-1 14220 Juana *  left the room ("Leaving").
+T-1 14236 Priscila *  left the room (quit: K-lined).
+T-1 14259 Gricelda *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T-1 14275 Shawnna *  left the room (quit: "Leaving").
+T-1 14281 Lonnie *  entered the room.
+T84 14282 Lonnie :  hi
+T82 14285 Gale :  Laura: you could use sed instead of course
+T84 14296 Lonnie :  how do i determine the graphics card from command prompt
+T84 14306 Lonnie :  graphics card / ram / cpu speed etc
+T82 14328 Laura :  Gale: yea, but would like to learn VI though :)
+T-1 14333 Granville *  entered the room.
+T85 14340 Granville :  hello
+T82 14372 Gale :  Laura: you might also consider vim-gtk until you get proficient with vim
+T-1 14379 Sammie *  entered the room.
+T82 14380 Gale :  Laura: it's like the best of both worlds
+T82 14396 Angla :  ... unless you like emacs in kde
+T-1 14404 Sammie *  left the room.
+T-1 14406 Alvaro *  entered the room.
+T82 14409 Laura :  There is a problem
+T82 14415 Laura :  I opened a file in VI
+T82 14423 Laura :  Then I closed the terminal screen... now it says recover
+T82 14429 Laura :  So I open VI and type :recover
+T82 14433 Laura :  Then :wq
+T-1 14437 Sunni *  entered the room.
+T82 14442 Laura :  Then when I reopen that file it still asks me to recover :s
+T-1 14448 Gerri *  left the room (quit: Success).
+T-1 14452 Titus *  left the room (quit: Connection timed out).
+T82 14459 Laura :  so should I just delete the swap?
+T84 14472 Felicia :  Lonnie: lspci, and install and use hwinfo for more as well as cat /proc/cpuinfo
+T82 14473 Gale :  Laura: that can happen if say you openned it up again somewhere and edited it but the original occurance was still open
+T82 14492 Gale :  Laura: I would check it out first
+T84 14502 Felicia :  Lonnie: lspci | grep VGA  for your video card
+T82 14503 Laura :  how would I check it out? i closed the terminal screen withought closing vi
+T82 14529 Gale :  open again with vim
+T86 14533 Arlie :  Madison, someone was in here earlier asking how to run mac osx on vmware ... i assued them of being you
+T86 14548 Madison :  wtf?
+T86 14549 Madison :  no
+T82 14551 Laura :  E325: ATTENTION
+T82 14552 Laura :  Found a swap file by the name ".UnrealTournament.ini.swp"
+T82 14552 Laura :            owned by: Laura   dated: Wed May 23 17:42:09 2007
+T82 14552 Laura :           file name: /usr/local/games/ut/System/UnrealTournament.ini
+T84 14563 Felicia :  Lonnie: hwinfo --help list short options for quick info .. also use dmidecode for mobo info and dmesg | less
+T82 14566 Gale :  it's going to say that until you rm it iirc
+T86 14571 Arlie :  Madison, i thought you were trying to offer an osx virtual host ;)
+T82 14571 Gale :  rm the swap file
+T86 14578 Madison :  lol
+T82 14579 Laura :  okay
+T86 14581 Madison :  Arlie: naw
+T82 14586 Gale :  but make sure your main one is good first
+T82 14588 Gale :  I would
+T86 14591 Madison :  Arlie: i been working real hard on it the last 2 days
+T86 14593 Madison :  real hard
+T86 14597 Madison :  almost done
+T86 14632 Felicia :  Madison: we take Visa , Mastercard and Cash
+T-1 14637 Malvina *  entered the room.
+T86 14656 Arlie :  software is never done ... its only in various states of development, lacking features or having bugs
+T82 14656 Laura :  Gale: Aha so I opened it and then itopens, now I did %s/ctrlv ctrm
+T82 14659 Laura :  and saved it
+T82 14670 Laura :  and all the ^M removed
+T82 14672 Laura :  :)
+T82 14678 Gale :  yep
+T-1 14686 Elden *  left the room (quit: "Join us! - Linux Users Everywhere @ BOINC http://planet64bit.com/climate/index.php").
+T82 14690 Gale :  but I forget the sequence for LFs
+T-1 14694 Ross *  entered the room.
+T-1 14701 Ross *  left the room (quit: Read error: 104 (Connection reset by Brandie)).
+T-1 14702 Nichole *  entered the room.

@@ -45,6 +45,12 @@ module.exports = function(options, callback) {
 		if(until) {
 			desc = true;
 		}
+
+		if(options.labels) {
+			where.push("`label` in (?)");
+			params.push(options.labels);
+		}
+
 		
 		if(where.length) query += " WHERE " + where.join(" AND ");
 		query += " ORDER BY `time` " + (desc? "DESC": "ASC");
@@ -56,6 +62,10 @@ module.exports = function(options, callback) {
 		db.query(query, params, function(err, data) {
 			var start, end;
 			db.end(); // I'm done with this db connection. This is important!
+
+			data.forEach(function(msg) {
+				msg.labels = [msg.labels];
+			});
 
 			if(err && callback) return callback(err);
 
