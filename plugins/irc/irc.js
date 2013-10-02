@@ -10,27 +10,33 @@ var irc = require("irc"),
 
 var botNick=config.irc.nick, clients = {bot: {}}, users = {};
 
-//exports.init = init;
-//exports.send = send;
 
 module.exports = function(core){
 	init();
 	core.on("message" , function(message , callback){
-		//db.query("SELECT * from `accounts` WHERE `gateway` = 'irc' AND `room` IN (?)" , [message.to], function(err, data){
-		//		if(err) return callback(err);
-				//console.log("Data inside IRC: " + data);
-				send(message, ['irc://localhost/##scrollback']);
-				callback();
-		//});
+			db.query("SELECT * FROM `accounts` WHERE `room` IN (?)", [message.to], function(err, data) {
+			var i, l, name, list = {};
+			if(err) return callback(err);
+			for(i=0, l=data.length; i<l; i+=1) {
+				name = data[i].gateway;
+				if(!list[name]) list[name] = [];
+				list[name].push(data[i].id);
+			}
+			for(name in list) {
+				send(message, list[name]);
+			}
+		});
+		callback();
 		
 	});
 	
 };
 
-var init = function(){
+
+function init() {
 	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
 		if(err) throw "Cannot retrieve IRC accounts";
-		db.end();
+		//db.end();
 		function joinStuff() {
 			data.forEach(function(account) {
 				var u, client;
@@ -47,15 +53,16 @@ var init = function(){
 							}
 							core.message(m);
 						});
-						
+
 					client.on('nick', function(oldn, newn) {
 						if (users[u.host][oldn]) {
 							users[u.host][newn] = true;
 							delete users[u.host][oldn];
 						}
 					});
+					
 				}
-				if (!users[u.host]) users[u.host] = {};	
+				if (!users[u.host]) users[u.host] = {};
 				
 				log("Bot joining " + u.hash);
 				client.join(u.hash.toLowerCase());
@@ -77,7 +84,6 @@ function send(message, accounts) {
 			var client = clients[message.from][u.host],
 			channel = u.hash.toLowerCase();
 		
-		console.log(message);
 		if (message.origin.gateway == "irc" && ("irc://"+message.origin.server+"/"+message.origin.channel).toLowerCase() == (account || "").toLowerCase()) {
 			log("Outgoing echo", message);
 			return;
@@ -137,7 +143,7 @@ function send(message, accounts) {
 				break;
 			case 'nick':
 				var nick=message.ref;
-				
+
 				nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
 				clients[message.from][u.host] = client
 				users[u.host][message.ref] = true;

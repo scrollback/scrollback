@@ -5,7 +5,6 @@ var pool = require('../data.js'),
 	guid = require('../../lib/guid.js');
 var log = require("../../lib/logger.js");
 var gateways = require("../gateways.js");
-//var plugins = require("../plugins.js");
 
 module.exports = function(message, callback) {
 	pool.get(function(err, db) {
@@ -25,7 +24,8 @@ module.exports = function(message, callback) {
 				"`origin`=?, `time`=?, `ref`=?, `labels`= ?", [message.id, message.from, message.to, message.type, 
 				message.text,  JSON.stringify(message.origin), message.time, message.ref,message.labels[0]]);
 		});
-		db.query("SELECT * FROM `accounts` WHERE `room` IN (?)", [message.to], function(err, data) {
+		//console.log("***** we are here!!! :) *********************");
+		/*db.query("SELECT * FROM `accounts` WHERE `room` IN (?)", [message.to], function(err, data) {
 			var i, l, name, list = {};
 			if(err) return callback(err);
 			for(i=0, l=data.length; i<l; i+=1) {
@@ -41,8 +41,10 @@ module.exports = function(message, callback) {
 				
 			}
 			db.end();
-			return callback? callback(null, message): null;
-		});
+			
+		}); */
+		db.end();
+		return callback? callback(null, message): null;
 		//gateways.http.send(message, message.to);
 		//plugins.http.send(message, message.to);
 	});
