@@ -1,7 +1,20 @@
 var users={};
 var config = require('../../config.js');
+var jade = require("jade"), fs = require("fs");
+
+
 
 module.exports = function(core) {
+	var pluginContent = "";
+	fs.readFile(__dirname + "/ratelimit.jade", "utf8", function(err, data){
+		if(err)	throw err;
+		//this is a function object. 
+		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/gate/http/views/' });
+		core.setConfigUi("ratelimit", function(object){
+			return pluginContent(object);
+		});
+	});
+	
 	core.on('message', function(message, callback) {
 		var limiter;
 		if (!users[message.from])

@@ -1,9 +1,18 @@
 var log = require("../../lib/logger.js");
-var fs=require("fs");
+var jade = require("jade"), fs = require("fs");
 var blockWords={};
 var longest = 0;
 
 module.exports = function(core) {
+	var pluginContent = "";
+	fs.readFile(__dirname + "/wordban.jade", "utf8", function(err, data){
+		if(err)	throw err;
+		//this is a function object. 
+		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/gate/http/views/' });
+		core.setConfigUi("wordban", function(object){
+			return pluginContent(object);
+		});
+	});
 	init();
 	core.on('message', function(message, callback) {
 		if (message.origin && message.origin.gateway == "irc") return callback();

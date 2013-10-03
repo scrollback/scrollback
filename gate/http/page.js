@@ -60,7 +60,7 @@ exports.init = function(app) {
         });
     });
     
-    app.get("*", function(req, res){
+    app.get("*", function(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery;
         
         query.to=params[0];
@@ -80,6 +80,9 @@ exports.init = function(app) {
                     break;
                 case 'until':
                     query.until=new Date(params[2]).getTime();
+                    break;
+                case 'edit':
+                    return next();
                     break;
             }
             
@@ -161,5 +164,41 @@ exports.init = function(app) {
                 res.render("archive",responseObj);		
             });
         //});
+    });
+
+
+    app.get("*/edit/*", function(req, res) {
+        var params = req.path.substring(1).split("/"), roomId, renderObject = {}, responseHTML = "";
+        
+
+        if(params[1] != "edit") {
+            return next();
+        }
+
+        roomId = params[0];
+        core.room(roomId,function(err,room) {
+            if(err) throw err;
+
+            renderObject.id = roomId;
+            console.log(roomId);
+
+            if(room.pluginConfig && room.pluginConfig[params[2]]) {
+                renderObject.config = room.pluginConfig[params[2]];
+            }
+            console.log(renderObject);
+            responseHTML = core.getConfigUi(params[2])(renderObject);
+            res.writeHead(200, {"Content-Type": "text/html"});
+            res.end(responseHTML);
+        });
+    })
+
+    app.post("*/edit/*", function(req, res) {
+        var params = req.path.substring(1).split("/"), roomId, renderObject = {}, responseHTML = "";
+
+        if(params[1] != "edit") {
+            return next();
+        }
+
+        
     });
 };

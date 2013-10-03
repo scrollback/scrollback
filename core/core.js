@@ -2,7 +2,7 @@
 
 var config = require('../config.js');
 var message = require('./api/message.js');
-
+var plugins = {};
 
 var rooms = {};
 var log = require("../lib/logger.js");
@@ -29,8 +29,18 @@ core.rooms = require('./api/rooms.js');
 core.account = require('./api/account.js');
 core.messages = require("./api/messages.js");
 
+core.setConfigUi = function(plugin, pluginConfig) {
+	plugins[plugin] = pluginConfig;
+	console.log("He He He -",plugins);
+	return pluginConfig;
+};
+
+
+core.getConfigUi = function(plugin) {
+	if(plugins[plugin])
+		return plugins[plugin];
+	else
+		throw new Error("Plugin Config not found");
+};
+
 module.exports = core;
-
-
-
-

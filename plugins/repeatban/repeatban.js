@@ -1,18 +1,21 @@
-
+var jade = require("jade"), fs = require("fs");
 var users={};
 
 module.exports = function(core) {
-	init();
+	var pluginContent = "";
+	fs.readFile(__dirname + "/repeatban.jade", "utf8", function(err, data){
+		if(err)	throw err;
+		//this is a function object. 
+		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/gate/http/views/' });
+		core.setConfigUi("repeatban", function(object){
+			return pluginContent(object);
+		});
+	});
 	core.on('message', function(message, callback) {
 		if (message.origin && message.origin.gateway == "irc") return callback();
 		if(rejectable(message)) callback(new Error("REPEATATIVE"));
 		else callback();
 	});
-};
-
-
-var init=function(){
-	//nothing as of now... 
 };
 
 
