@@ -33,6 +33,7 @@ exports.init = function(app) {
             res.render("error");
         }
     });
+	
     app.get("/pwn/*",function(req,res){
         var room = req.path.substring(1).split("/")[1];
         var url=req.path.replace("/pwn/"+room+"/","");
@@ -67,7 +68,14 @@ exports.init = function(app) {
         query.type="text";
         query.limit=20;
         
-        if(req.path.indexOf('.') !== -1) return;
+        
+        
+        console.log("Archive is called.");
+        
+        
+        
+        //not sure why this was added in the first place. :-)
+        //if(req.path.indexOf('.') !== -1) return;
         
         //sqlQuery="select min(m.time) min,max(m.time) max from messages m where `to`=? and `type`='text' order by `time` ";
         //db.query(sqlQuery,[query.to],function(err,data){

@@ -1,5 +1,5 @@
 var dialog = (function () {
-	var dialog, frame, callback;
+	var dialog, frame, callback, host = scrollback.host.replace(/^https?/, 'https');
 	
 	function close () {
 		dialog.style.display = "none";
@@ -8,7 +8,7 @@ var dialog = (function () {
 	addEvent(window, "message", function(event) {
 		var message;
 		
-		if(event.origin != scrollback.host) return;
+		if(event.origin != host) return;
 		if(typeof event.data === 'string') {
 			try { message = JSON.parse(event.data); }
 			catch(e) {
@@ -39,7 +39,7 @@ var dialog = (function () {
 				frame = document.getElementById("scrollback-dialog-frame");
 			}
 			
-			frame.src = scrollback.host + url;
+			frame.src = host + url;
 			dialog.style.display = "block";
 		},
 		hide: close,
@@ -47,7 +47,7 @@ var dialog = (function () {
 			frame.contentWindow.postMessage({
 				type:type,
 				data:data
-			}, scrollback.host);
+			}, host);
 		}
 	};
 }());

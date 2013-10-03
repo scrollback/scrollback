@@ -35,7 +35,7 @@ core.on('disconnected', function() {
 		input.disabled = true; 
 	});
 	scrollback.streams.forEach(function(room) {
-		streams[room].notify("Disconnected. Trying to reconnect...", true);
+		streams[room].notify("Disconnected. Refresh page to reconnect.", true);
 	});
 });
 
@@ -204,6 +204,11 @@ Stream.prototype.hide = function() {
 
 function login (options) {
 	options = options || {};
+	if(Stream.text&&Stream.prevText){
+		Stream.text.value=Stream.prevText;//added prev text value on TextField
+		delete Stream.text;
+		delete Stream.prevText;
+	}
 	dialog.show("/dlg/login"+ (options.requireAuth? "?requireAuth=1": "") +"#" + core.nick(), function(data) {
 		var nickObj;
 		if(!data) return;
@@ -274,6 +279,8 @@ Stream.prototype.show = function() { var self = this;
 Stream.prototype.send = function () {
 	var text = this.text.value, parts;
 	if(!text) return;
+	Stream.text=this.text;//save text variable
+	Stream.prevText=this.text.value;//prev value on TextField 
 	this.text.value = '';
 	
 	if (text[0] == '/') {

@@ -10,7 +10,30 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 		<style>
 			#streamId { font-size: inherit; font-weight: inherit; background: transparent; border: none;
-			border-bottom: 2px solid #999; width: 200px; }
+			border-bottom: 1px solid #fff; width: 300px; color: #fff; }
+			
+			nav {
+				position: absolute; background: transparent; color: white; border: none;
+				width: 100%;
+			}
+			nav a { color: #fff; }
+			#hero {
+				background: #000; color: #fff;
+				padding: 80px;
+				border-bottom: 4px solid #3ca;
+				background: -moz-radial-gradient(bottom center,  #555555 0%, #000000 100%); /* FF3.6+ */
+				background: -webkit-gradient(radial, bottom center, 0px, center center, 100%, color-stop(0%,#555555), color-stop(100%,#000000)); /* Chrome,Safari4+ */
+				background: -webkit-radial-gradient(bottom center, ellipse cover,  #555555 0%,#000000 100%); /* Chrome10+,Safari5.1+ */
+				background: -o-radial-gradient(bottom center, ellipse cover,  #555555 0%,#000000 100%); /* Opera 12+ */
+				background: -ms-radial-gradient(bottom center, ellipse cover,  #555555 0%,#000000 100%); /* IE10+ */
+				background: radial-gradient(bottom center,  #555555 0%,#000000 100%); /* W3C */
+			}
+			
+			form#add { margin-top: 80px; color: #ccc; }
+			
+			
+			pre { margin: 16px; padding: 16px; background: #eee; }
+			code { font-size: 12px; line-height: 12px; }
 		</style>
 	</head>
 	
@@ -21,29 +44,55 @@
 		
 		<nav>
 			<div class="container clearfix">
-				<div class="box logo-box span1">
-					<div class='logo'>Scrollback</div>
-				</div>
-				<div class="box span11">
+				<div class="box span12">
 					<ul>
 						<li><a href="#features">Features</a></li>
-						<li><a href="#whybuilt">Why we built it</a></li>
-						<li><a href="#getembed">Get Scrollback</a></li>
-						<li><a href="http://github.com/scrollback/scrollback">Fork us</a></li>
+						<li><a href="#whybuilt">Why we built Scrollback</a></li>
+						<li><a href="http://github.com/scrollback/scrollback">Fork us on GitHub</a></li>
 					</ul>
 				</div>
 			</div>
 		</nav>
-		
-		<div class='container clearfix'>
-			<div id="hero">
+		<div id="hero">
+			<div class='container clearfix'>
+				<img src="/img/logod-72.png" alt="Scrollback logo" />
 				<h1>Beautiful text chat for your community website.</h1>
 				<form id="add">
-				<h2>Claim your community’s name:</h2>
-				<h1>scrollback.io/<input id="streamId"><button type="submit" class="hidden"></button></h1>
+				<h2>Claim your community:
+				scrollback.io/<input id="streamId"><button type="submit" class="hidden"></button></h2>
 				</form>
 			</div>
-			<a name="features"><div class='box span4 break'>
+		</div>
+		
+		<div class='container clearfix'>
+			
+			<div class='box span6'>
+				<p>Scrollback hosts <em>rooms</em> which you can embed into any webpage.
+					A room brings together a long-lived, interactive <em>community</em>
+					that’s stickier and more engaging than any forum system.</p>
+				<p>To embed scrollback rooms, paste this code into your page. If your room
+					doesn’t exist, it will be created automatically.</p>
+				<p>If you have an IRC channel, <a href='mailto:aravind@scrollback.io'>tell us
+					to link it to your Scrollback room</a> and bring everyone
+					into the same conversation.</p>
+			</div>
+			<div class='box span6'><pre><code>&lt;script&gt;
+window.scrollback = {
+  streams:["your-community-name"],
+  theme: 'light'
+};
+
+/***** don't edit below *****/
+(function(d,s,h,e){e=d.createElement(s);e.async=1;
+e.src=h+'/client.min.js';scrollback.host=h;
+d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
+(document,'script',location.protocol+'//scrollback.io'));
+&lt;/script&gt;</code></pre></div>
+			
+			<div class='box span12 break'>
+				<h1><a name="features">Features</a></h1>
+			</div>
+			<div class='box span4 break'>
 				<h2>Infinite scroll</h2>
 				<p>Scroll up to see what people were talking about in the last
 				hour &ndash; or last week.</p>
@@ -86,7 +135,7 @@
 				
 			
 			<div class='box span12 break'>
-				<h1><a name="whybuilt">Why we built Scrollback</h1>
+				<h1><a name="whybuilt">Why we built Scrollback</a></h1>
 				
 				<p>We're a team of developers who got tired of <a href='http://en.wikipedia.org/wiki/Internet_Relay_Chat' target='wikipedia-irc'>IRC</a>.</p>
 				
@@ -101,31 +150,7 @@
 				<p>Paul Graham <a href="http://ycombinator.com/rfs3.html" target='ycombinator-rfs3'>once said of Twitter</a>: &ldquo;It’s really more of a discovery than an invention; that square was always there in the periodic table of protocols, but no one had quite hit it squarely.&rdquo;</p>
 				
 				<p>IRC occupies a square in that table. Scrollback is in the same column, a few rows down.</p>
-				
-				<h1><a name="getembed">Get scrollback</a></h1>
 			</div>
-			<div class='box span6'>
-				<p>Scrollback hosts <em>rooms</em> which you can embed into any webpage.</p>
-				
-				<p>A room brings together a long-lived, interactive <em>community</em> that's stickier and more engaging than any forum system.</p>
-				<p>To embed scrollback rooms, paste this code into your page. You
-				can click to change the parts highlighted in yellow. If your room
-				doesn't exist, it will be created automatically.</p>
-				<p>If you have an IRC channel, <a href='#error'>link it to your
-					Scrollback room</a> to bring everyone in your community
-					into the same conversation.</p>
-			</div>
-			<div class='box span6'><pre><code>&lt;script&gt;
-window.scrollback = {
-  streams: [<span contenteditable class='highlight'>'trekkies'</span>],
-  theme:   '<span contenteditable data-toggle='darl' contenteditable class='highlight'>light</span>',
-  ticker:  <span contenteditable data-toggle='false' class='highlight'>true</span>
-};
-
-// Don't change below this line ------------------------------------------------
-(function(d,h,e){e=d.createElement('script');e.async=1;e.src=h+'/client.min.js';
-scrollback.host=h;d.body.appendChild(e);}(document,location.protocol+'//scrollback.io'));
-&lt;/script&gt;</code></pre></div>
 			
 		</div><!-- container -->
 		

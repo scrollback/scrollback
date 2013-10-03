@@ -2,7 +2,7 @@ core.on("connected",function(){
 	var currentNick = core.nick(), nickBox;
 	if (isLastPage) {
 		nickBox = document.getElementById("nick");
-		nickBox.value = currentNick;
+		nickBox.value = currentNick.replace(/guest-/,'');
 	}
 	core.enter(stream);
 });
@@ -15,8 +15,7 @@ DomReady.ready(function(){
 	var messageBox = document.getElementById("messageBox");
 	var nickBox = document.getElementById("nick");
 	var messageList = document.getElementById("messageList");
-	
-	core.on("notify", function(message){
+	core.on("message", function(message){
 		var messageItem ,element;
 		if (message.type == "text" && message.to==stream) {
 			scrollback.debug && console.log("notify-",isLastPage);
@@ -26,7 +25,7 @@ DomReady.ready(function(){
 				addClass(messageItem, "item container");
 				
 				addClass(element = document.createElement("div"), "box span3");
-				element.innerHTML = "[" + message.from + "]";
+				element.innerHTML = "[" + message.from.replace(/guest-/g,'') + "]";
 				messageItem.appendChild(element);
 				
 				addClass(element = document.createElement("div"), "box span5");
@@ -84,7 +83,7 @@ DomReady.ready(function(){
 	});
 	function nickChange(nick) {
 		if (nick != core.nick()) {
-			core.nick(nick);
+			core.nick(nick,function(reply){});
 		}
 	}
 	addEvent(nickBox, "blur", function(e) {

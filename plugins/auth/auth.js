@@ -47,7 +47,7 @@ module.exports = function(core) {
 		
 		request.post("https://verifier.login.persona.org/verify", { form: {
 			assertion: assertion,
-			audience: 'http://'+config.http.host+":"+config.http.port
+			audience: 'https://'+config.http.host+":"+config.http.https.port
 		}}, function(err, res, body) {
 			var accountId;
 			if(err) return callback(new Error("AUTH_FAIL_NETWORK/" + err.message));
