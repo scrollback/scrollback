@@ -55,7 +55,57 @@ function init(data, conn) {
 		conn.rooms = [];
 		conn.session = sess;
 		conn.save = function() { session.set(conn.sid, conn.session); };
-		conn.send an away message immediately. Wait.
+		conn.send('init', {
+			sid: sess.cookie.value, user: sess.user,
+			clientTime: data.clientTime,
+			serverTime: new Date().getTime()
+		});
+
+		conn.save();
+	});
+
+	session.watch({sid: sid, cid: conn.socket.id}, function(sess) {
+		log("The session has changed", sid, conn.socket.id,sess);
+		conn.session = sess;
+	});
+}
+
+function close(conn) {
+	if(!conn.sid) return;
+	var user = conn.session.user;
+	
+	conn.rooms.forEach(function(room) {
+		log("Closed connection, removing", user.id, room);
+		userAway(user, room, conn);
+	});
+
+	conn.save();
+}
+
+function userAway(user, room, conn) {
+	if(rConns[room]) rConns[room].splice(rConns[room].indexOf(conn), 1);
+	conn.rooms.splice(conn.rooms.indexOf(room), 1);
+	
+	if(user.rooms[room]) user.rooms[room]--;
+	conn.save();
+	setTimeout(function() {
+		var user = conn.session.user;
+		if (!user.rooms[room]) {
+			delete user.rooms[room];
+			core.message({ type: 'away', from: user.id, to: room,
+				time: new Date().getTime(), text: "" , origin : {gateway : "web", location : "", ip :  conn.socket.remoteAddress}});
+			if(!Object.keys(user.rooms).length) {
+				delete users[user.id];
+			}
+			console.log("saving the session ",user);
+			conn.save();
+		}
+		else{
+			log("User still has some active windows.",user);
+		}
+		session.unwatch({sid: conn.sid, cid: conn.socket.id});
+	}, 30*1000);
+	return false; // never send an away message immediately. Wait.
 }
 
 function userBack(user, room, conn) {
@@ -192,7 +242,7 @@ function rooms(query, conn) {
 
 exports.send = function (message, rooms) {
 	message.text = message.text || "";
-	log("Socket sending", message, "to", rooms);	 
+	log("Socket sending", message, "to", rooms);
 	rooms.map(function(room) {
 		if(rConns[room]) rConns[room].map(function(conn) {
 			conn.send('message', message);
