@@ -101,7 +101,9 @@ DomReady.ready(function(){
 
 
 function relDate (input, reference){
-
+	if(input==0){
+		input=new Date().getTime();//first message in new room.
+	}
 	var SECOND = 1000,
 		MINUTE = 60 * SECOND,
 		HOUR = 60 * MINUTE,
