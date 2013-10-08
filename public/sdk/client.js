@@ -207,7 +207,7 @@ function onMessage (m) {
 }
 
 core.say = function (to, text, callback) {
-	send('text', to, text, callback);
+	send('text', to, text,{}, callback);
 };
 
 core.nick = function(n, callback) {
