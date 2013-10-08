@@ -2,6 +2,7 @@
 
 var irc = require("irc"),
 	log = require("../../lib/logger.js"),
+        guid = require("../../lib/guid.js"),
 	config = require("../../config.js"),
 	ident=require("./ident.js"),
 	users;
@@ -26,7 +27,7 @@ function connect(server, nick, uid, callback) {
 	
 	function message(type, from, to, text, channel, ref) {
 		var msg = {
-			type: type, from: from, to: [to], text: text,
+                    type: type, from: from, to: [to], text: text, id: guid(), 
 			time: new Date().getTime(), 
 			origin: {
 				gateway : "irc",
