@@ -31,7 +31,6 @@ core.messages = require("./api/messages.js");
 
 core.setConfigUi = function(plugin, pluginConfig) {
 	plugins[plugin] = pluginConfig;
-	console.log("He He He -",plugins);
 	return pluginConfig;
 };
 

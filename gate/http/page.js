@@ -168,37 +168,41 @@ exports.init = function(app) {
 
 
     app.get("*/edit/*", function(req, res) {
-        var params = req.path.substring(1).split("/"), roomId, renderObject = {}, responseHTML = "";
-        
-
+        var params = req.path.substring(1).split("/"), responseHTML = "";
         if(params[1] != "edit") {
             return next();
         }
-
-        roomId = params[0];
-        core.room(roomId,function(err,room) {
+        core.room(params[0],function(err,room) {
             if(err) throw err;
-
-            renderObject.id = roomId;
-            console.log(roomId);
 
             if(room.pluginConfig && room.pluginConfig[params[2]]) {
                 renderObject.config = room.pluginConfig[params[2]];
             }
-            console.log(renderObject);
-            responseHTML = core.getConfigUi(params[2])(renderObject);
+
+            responseHTML = core.getConfigUi(params[2])(room);
             res.writeHead(200, {"Content-Type": "text/html"});
             res.end(responseHTML);
         });
     })
 
-    app.post("*/edit/*", function(req, res) {
-        var params = req.path.substring(1).split("/"), roomId, renderObject = {}, responseHTML = "";
-
-        if(params[1] != "edit") {
-            return next();
+    app.post("*/save", function(req, res) {
+        var params = req.path.substring(1).split("/"), roomId,
+            renderObject = {}, responseHTML = "", data = {};
+        data = req.body || {};
+        if(typeof data == "string") {
+            try { data = JSON.parse(data); }
+            catch (e) { res.end(e); }
         }
-
-        
+        console.log("Storing", data);
+        if(data.id && data.params) {
+            core.room(data,function(err,data) {
+                console.log(err,data);
+                if(err) res.end(JSON.stringify(err));
+                else res.end(JSON.stringify(data));
+            });
+        }
+        else{
+            res.end(JSON.stringify({error:"Improper Data"}));
+        }
     });
 };

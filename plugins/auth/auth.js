@@ -37,8 +37,6 @@ module.exports = function(core) {
 			});
 		}
 		
-		
-		
 		if(!assertion) {
 			// If there is no authentication info, make sure the new nick is a guest.
 			if(!/^guest-/.test(message.ref)) message.ref = 'guest-' + message.ref;

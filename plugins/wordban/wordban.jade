@@ -1,6 +1,5 @@
 extends /layout
 
-
 block append styles
 	style.
 		.form{
@@ -9,6 +8,14 @@ block append styles
 			padding-bottom: 10px;
 			border-bottom: 1px solid #404040;
 		}
+		#result{
+			background-color: #404040;
+			color: white;
+			overflow: hidden;
+			height: 2em;
+			line-height:2em;
+			padding-left: 3em;
+		}		
 		.heading{
 			border-bottom: 1px solid #404040;	
 		}
@@ -16,25 +23,101 @@ block append styles
 			margin-top: 15px;
 			margin-bottom: 15px;
 		}
+		input[type=radio] {
+			display:none; 
+		}
+		input[type=radio] + label {
+			display:inline-block;
+			margin:-2px;
+			padding: 4px 12px;
+			margin-bottom: 0;
+			font-size: 14px;
+			line-height: 20px;
+			color: #333;
+			text-align: center;
+			text-shadow: 0 1px 1px rgba(255,255,255,0.75);
+			vertical-align: middle;
+			cursor: pointer;
+			background-color: #f5f5f5;
+			background-image: -moz-linear-gradient(top,#fff,#e6e6e6);
+			background-image: -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#e6e6e6));
+			background-image: -webkit-linear-gradient(top,#fff,#e6e6e6);
+			background-image: -o-linear-gradient(top,#fff,#e6e6e6);
+			background-image: linear-gradient(to bottom,#fff,#e6e6e6);
+			background-repeat: repeat-x;
+			border: 1px solid #ccc;
+			border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+			border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+			border-bottom-color: #b3b3b3;
+			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',endColorstr='#ffe6e6e6',GradientType=0);
+			filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+			-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+			-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+			box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+			width: 3em;
+		}
+ 
+		input[type=radio]:checked + label {
+			background-image: none;
+			outline: 0;
+			-webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);
+			-moz-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);
+			box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);
+			background-color:#e0e0e0;
+		}
+block append scripts
+	script(src='//code.jquery.com/jquery.min.js')
+	script.
+		(function(){
+			var id = "!{id}";
+			$(document).ready(function() {
+				$("#wordBanSave").click(function() {
+					var status = $("input:radio[name=isEnable]:checked").val()=="true"? true:false;
+					$.ajax({
+						type: "POST",
+						url: "/"+id+"/save",
+						beforeSend: function (request){
+							request.setRequestHeader("Accept", "application/json");
+							request.setRequestHeader("Content-Type", "application/json");
+						},
+						data: JSON.stringify({id:id,params: {wordban: status}}),
+						success: function(data) {
+							data = JSON.stringify(data);
+							$("#result").slideUp("fast",function(){
+								if(data.error){
+									$("#result").html("Error during saving");
+								}
+								else{
+									$("#result").html("<span>Saved</span>");
+								}
+								$("#result").slideDown("fast");
+								setTimeout(function(){$("#result").slideUp("fast");},3000);
+							});
+						}
+					});
+				});
+			});
+		})();
+
 block content
 	div(class="container heading")
-		h1	Rate Limiter Plugin Configurations.
+		h1	Word filter setting.
 	div(class="container clearfix form")
+		div(class="box span12 row",id="result",style="display:none")
 		div(class="box span12 row")
-			div(class="container")
-				div(class="box span4")
-					span Rate Limit: 
-				div(class="box span4")
-					input(type="text")
+			span Enable word filters on your community.
 		div(class="box span12 row")
-			div(class="container")
-				div(class="box span4")
-					span Time: 
-				div(class="box span4")
-					input(type="text")
-		div(class="box span8")
-			div(class="container")
-				div(class="box span4",style="float: right")
-					button	Set
+			if params.wordban
+				input(type="radio", id="enable", value="true", name="isEnable", class="radio",checked=true)
+				label(for="enable",class="radioLabel") Yes
+				input(type="radio", id="disable", value="false", name="isEnable", class="radio")
+				label(for="disable",class="radioLabel") No
+			else
+				input(type="radio", id="enable", value="true", name="isEnable", class="radio")
+				label(for="enable",class="radioLabel") Yes
+				input(type="radio", id="disable", value="false", name="isEnable", class="radio",checked=true)
+				label(for="disable",class="radioLabel") No
+		div(class="box span2")
+			button(id="wordBanSave")	Save
 	div(class="container")
-		p.break.after This is to set the Maximun number of messages the user can send in a channel in the given window of time.
+		p.break.after Enabling this will prevent users from send abusive messages in your community.

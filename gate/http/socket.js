@@ -178,7 +178,6 @@ function message (m, conn) {
 	
 
 	function sendMessage() {
-		console.log("core.message",m);
 		core.message(m, function (err, m) {
 			var i;
 			if(m.type == 'nick') {
