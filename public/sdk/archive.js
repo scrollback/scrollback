@@ -13,6 +13,7 @@ DomReady.ready(function(){
 	var nickBox = document.getElementById("nick");
 	var messageList = document.getElementById("messageList");
 	core.on("message", function(message){
+		nickBox.value=core.nick().replace(/guest-/g,'');
 		var messageItem;
 		if (message.type == "text" && message.to==stream) {
 			scrollback.debug && console.log("notify-",isLastPage);
@@ -61,9 +62,12 @@ DomReady.ready(function(){
 		var text = document.getElementById("messageBox");
 		if (e.keyCode == 13) {
 			if (text.value.length != 0) {
+				var tempText=text.value;
 				core.say(stream, text.value,function(obj){
 						if (obj.message=="AUTH_REQ_TO_POST") {
+								text.value=tempText;
 								login({requireAuth: 1});
+								
 						}
 						
 				});
