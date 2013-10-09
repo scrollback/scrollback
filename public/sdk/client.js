@@ -156,9 +156,9 @@ function send(type, to, text, options, callback) {
 function onMessages (data) {
 	var roomId = data.query.to, reqId = data.query.to + '/' + (data.query.since || '') +
 			'/' + (data.query.until || '');
-			
+
 	rooms[roomId].messages.merge(data.messages);
-	
+
 	if (requests[reqId]) {
 		requests[reqId](true);
 		if(reqId != data.query.to + '//') delete requests[reqId];
@@ -191,10 +191,11 @@ function onMessage (m) {
 	}
 	
 	messages = rooms[m.to] && rooms[m.to].messages;
+
 	if (!messages) return;
 	for (i = messages.length - 1; i >= 0 && m.time - messages[i].time < 120000; i-- ) {
 		if (messages[i].id == m.id) {
-			timeAdjustment = m.time - messages[i].time;
+			timeAdjustment = m.time - messages[i].time - timeAdjustment;
 			scrollback.debug && console.log("Time adjustment is now " + timeAdjustment);
 			messages[i] = m;
 			updated = true; break;

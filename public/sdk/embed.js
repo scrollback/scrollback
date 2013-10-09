@@ -35,7 +35,7 @@ core.on('disconnected', function() {
 		input.disabled = true; 
 	});
 	scrollback.streams.forEach(function(room) {
-		streams[room].notify("Disconnected. Trying to reconnect...", true);
+		streams[room].notify("Disconnected. Refresh page to reconnect.", true);
 	});
 });
 
