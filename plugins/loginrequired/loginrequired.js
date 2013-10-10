@@ -33,8 +33,8 @@ module.exports = function(coreObject) {
     fs.readFile(__dirname + "/loginrequired.jade", "utf8", function(err, data){
         if(err) throw err;
         //this is a function object. 
-        pluginContent = jade.compile(data,  {basedir: process.cwd()+'/gate/http/views/' });
-        core.setConfigUi("loginrequired", function(object){
+        pluginContent = jade.compile(data,  {basedir: process.cwd()+'/plugins/http/views/'});
+        core.setConfigUi("loginrequired", function(object) {
             return pluginContent(object);
         });
     });

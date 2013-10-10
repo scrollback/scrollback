@@ -6,13 +6,23 @@ var irc = require("irc"),
 	db = require("mysql").createConnection(config.mysql),
 	url = require("url"),
 	connect = require("./connect.js"),
-	log = require("../../lib/logger.js");
+	log = require("../../lib/logger.js"), fs = require("fs"),
+	jade = require("jade");
+
 
 var botNick=config.irc.nick, clients = {bot: {}}, users = {};
 
 
 module.exports = function(core){
-	init();
+	var pluginContent = "";
+
+	fs.readFile(__dirname + "/irc.jade", "utf8", function(err, data){
+		if(err)	throw err;
+		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/plugins/http/views/' });
+		core.setConfigUi("irc", function(object){
+			return pluginContent(object);
+		});
+	});
 	core.on("message" , function(message , callback){
 			db.query("SELECT * FROM `accounts` WHERE `room` IN (?)", [message.to], function(err, data) {
 			var i, l, name, list = {};
@@ -27,7 +37,6 @@ module.exports = function(core){
 			}
 		});
 		callback();
-		
 	});
 	
 };

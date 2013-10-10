@@ -45,9 +45,9 @@ module.exports = function(core) {
 		
 		request.post("https://verifier.login.persona.org/verify", { form: {
 			assertion: assertion,
-			audience: 'http://'+config.http.host+":"+config.http.port
+			audience: 'http://'+config.http.host+":"+config.http.https.port
 		}}, function(err, res, body) {
-			var accountId;
+			var account;
 			if(err) return callback(new Error("AUTH_FAIL_NETWORK/" + err.message));
 			try {
 				body = JSON.parse(body);
@@ -57,15 +57,19 @@ module.exports = function(core) {
 			if(body.status !== 'okay') {
 				return callback(new Error("AUTH_FAIL/" + body.reason));
 			}
-			accountId = "mailto:" + body.email;
-			core.rooms({accounts: [accountId]}, function(err, data) {
+			account ={
+				id: "mailto:" + body.email,
+				gateway: "mailto",
+				params: ""
+			} 
+			core.rooms({accounts: [account]}, function(err, data) {
 				if(err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
 				if(data.length === 0) {
-					message.user = {accounts: [accountId]};
+					message.user = {accounts: [account]};
 					return callback(new Error("AUTH_UNREGISTERED"));
 				}
 				message.user = data[0];
-				message.user.accounts=[accountId];
+				message.user.accounts=[account];
 				message.ref = data[0].id;
 				return callback();
 			});

@@ -1,0 +1,59 @@
+block append styles
+block append scripts
+	script.
+		$(document).ready(function(){
+			pluginPackager.push(function(room) {
+				var server = $("#accountServer").val();
+				var channel = $("#accountChannel").val();
+				//need better validation for server
+				if(server.length < 5 || channel.length < 5)
+					return;
+				console.log("storing IRC info");
+				room.params = room.params || {};
+				room.params.irc = true;
+				room.accounts = room.accounts || [];
+				channel = channel.indexOf("#")==0?channel:"#"+channel;
+				room.accounts.push({
+					id: "irc://"+server+"/"+channel,
+					gateway: "irc",
+					params: {},
+					room: room.id
+				});
+			});
+		});
+block content
+	div(class="pluginBlock")
+		div(class="container heading")
+			h2	IRC
+		div(class="container clearfix")
+			div(class="box span12 row",id="result",style="display:none")
+			div(class="box span12 row")
+				span Your IRC account configuration
+			div(class="box span12 row")
+				div(class="container")
+					if accounts && accounts.length
+						each account in accounts
+							-irc = account.id.split("://")[1]
+							div(class="box span3")
+								span Server
+							div(class="box span1")
+							div(class="box span8")
+								input#accountServer.break.box.span6.account(value='#{irc.split("/")[0]}')
+							div(class="box span3")
+								span Channel
+							div(class="box span1")
+							div(class="box span8")
+								input#accountChannel.break.box.span6.account(value='#{irc.split("/")[1]}')
+					else
+						div(class="box span3")
+							span Server
+						div(class="box span1")
+						div(class="box span8")
+							input#accountServer.break.box.span6.account
+						div(class="box span3")
+								span Channel
+						div(class="box span1")
+						div(class="box span8")
+							input#accountChannel.break.box.span6.account(value="#")
+		div(class="container")
+			p.break.after Adding or changing the IRC account will need some time to take effect.
