@@ -30,7 +30,7 @@ block content
 			if(user.accounts &&  user.accounts.length>0)
 				p.break.before Connected accounts
 				each account in user.accounts
-					input.break.box.span6.account(disabled=true, value='#{account.split(":")[1]}')
+					input.break.box.span6.account(disabled=true, value='#{account.id.split(":")[1]}')
 			if(user.id.match("^guest"))
 				p.box.break.right.span6
 					button.primary.span3(type='submit') Save changes

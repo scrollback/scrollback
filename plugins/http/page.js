@@ -64,8 +64,10 @@ exports.init = function(app) {
     app.get("*", function(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery;
         
+        console.log(params);
         if(params[1]=="config")
             next();
+        console.log("blah");
         query.to=params[0];
         query.type="text";
         query.limit=20;
@@ -124,7 +126,7 @@ exports.init = function(app) {
         if(params[1] != "edit") {
             return next();
         }
-        core.room(params[0],function(err,room) {
+        core.room({id:params[0]},function(err,room) {
             if(err) throw err;
 
             if(room.pluginConfig && room.pluginConfig[params[2]]) {
@@ -139,7 +141,7 @@ exports.init = function(app) {
     })
     app.get("*/config",function(req, res){
         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
-        core.room(roomId, function(err, room) {
+        core.room({id:roomId}, function(err, room) {
             console.log(err,room);
 
             if(room.owner == "" || room.owner == user.id){

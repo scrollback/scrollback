@@ -109,28 +109,29 @@ block content
 	script(src='//code.jquery.com/jquery.min.js')
 	script.
 		var pluginPackager = [];
+		function save(room, callback){
+			$.ajax({
+				type: "POST",
+				url: "/"+room.id+"/save",
+				beforeSend: function (request){
+					request.setRequestHeader("Accept", "application/json");
+					request.setRequestHeader("Content-Type", "application/json");
+				},
+				data: JSON.stringify(room),
+				success: function(data) {
+					data = JSON.parse(data);
+					callback(data);
+					
+				}
+			});
+
+		}
 		(function(){
 			var room = !{JSON.stringify(room)};
 			$(document).ready(function(){
 
 
-				function save(room, callback){
-					$.ajax({
-						type: "POST",
-						url: "/"+room.id+"/save",
-						beforeSend: function (request){
-							request.setRequestHeader("Accept", "application/json");
-							request.setRequestHeader("Content-Type", "application/json");
-						},
-						data: JSON.stringify(room),
-						success: function(data) {
-							data = JSON.parse(data);
-							callback(data);
-							
-						}
-					});
-
-				}
+				
 				$("#saveAccount").click(function() {
 					pluginPackager.forEach(function(element) {
 						element(room);

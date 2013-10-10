@@ -45,7 +45,7 @@ module.exports = function(core) {
 		
 		request.post("https://verifier.login.persona.org/verify", { form: {
 			assertion: assertion,
-			audience: 'http://'+config.http.host+":"+config.http.https.port
+			audience: 'https://'+config.http.host+":"+config.http.https.port
 		}}, function(err, res, body) {
 			var account;
 			if(err) return callback(new Error("AUTH_FAIL_NETWORK/" + err.message));
@@ -61,7 +61,9 @@ module.exports = function(core) {
 				id: "mailto:" + body.email,
 				gateway: "mailto",
 				params: ""
-			} 
+			};
+			console.log(account);
+
 			core.rooms({accounts: [account]}, function(err, data) {
 				if(err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
 				if(data.length === 0) {

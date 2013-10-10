@@ -12,16 +12,26 @@ block styles
 block append scripts
 	script(type='text/javascript')
 		window.scrollback = {host: 'http://' + location.host};
-	script(src="/socket.io/socket.io.js")
-	script(src="/sdk/emitter.js")
-	script(src="/sdk/client.js")
-	script(src="/sdk/cache.js")
+	script(src="/sdk/sockjs.js")
 	script(src="/sdk/addEvent.js")
+	script(src="/sdk/addStyle.js")
+	script(src="/sdk/emitter.js")
+	script(src="/sdk/request.js")
 	script(src="/sdk/domReady.js")
-	script(src="/sdk/browserNotify.js")
+	script(src="/sdk/getByClass.js")
+	script(src="/sdk/jsonml2.js")
 	script(src="/sdk/polyfill.js")
+	script(src="/sdk/browserNotify.js")
+	script(src="/sdk/cache.js")
+	script(src="/sdk/client.js")
+	script(src="/sdk/css.js")
 	script(src="/sdk/archive.js")
-
+	script(src="/sdk/dom.js")
+	script(src="/sdk/embed.js")
+	script(src="/sdk/dialog.js")
+	script(src="/sdk/render.js")
+	script(src="//code.jquery.com/jquery.min.js")
+	
 block content
 	.container
 		.box.span12.container
@@ -43,7 +53,7 @@ block content
 					if message && message.type && message.type=="text"
 						.item.container
 							div.box.span12
-								div.box.span3 [#{message.from}]
+								div.box.span3 [#{message.from.replace('guest-','')}]
 								div.box.span5.message #{message.text}
 								if(prevtime)
 									div.box.span4.time #{relDate(prevtime, message.time)} later

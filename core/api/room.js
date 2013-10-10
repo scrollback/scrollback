@@ -7,7 +7,7 @@ var rooms = {};
 
 /*This too has to be changes. But felt this is better than a adding 
 	process.nexttick to require core.*/
-roomsApi({query : ""}, function(err, data){
+roomsApi({type: "room"}, function(err, data){
 	if(err)	throw err;
 
 	data.forEach(function(element) {
@@ -48,65 +48,61 @@ module.exports = function(data, callback) {
 			} else {
 				room = {
 					id : data.id,
-					type : data.type || "user",
+					type : data.type || "room",
 					name : data.name || "",
 					description : data.description || "",
 					picture : data.picture,
 					profile : data.profile || "", 
-					owner : data.owner || data.id,
+					
 					params : data.params || ""
 				};
-				rooms[data.id] = room;
+				if(data.originalId) {
+					room.type = "user";
+					room.owner = data.id;
+				}else{
+					room.owner = "";
+					rooms[data.id] = room;
+				}
 			}
+			db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
+					"`owner`, `params`) values(?,?,?,?,?,?,NOW(),?,?) ON DUPLICATE KEY UPDATE "+
+					"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
+					",`picture`=values(`picture`), `profile`=values(`profile`),  `owner`=values(`owner`),"+
+					"`params`=values(`params`)", [room.id, room.type || "user", room.name || "", room.description || "",
+					room.picture || "", room.profile || "", room.owner, JSON.stringify(room.params)|| "{}"],
+			function(err, resp) {
+				db.end();
+				if(err && callback) return callback(err,data);
+				
+				if (data.accounts && data.accounts.length>0) {
+					console.log("inserting accounts");
+					insertAccounts(data,function(err,data) {
+						if(err) return callback(err,data);
+						if(typeof data.originalId == "undefined")
+							rooms[data.id].accounts = data.accounts;
+						if (callback) callback(err,data);
+					});
+				}
+				else {
+					getAccounts(room, function(err, room) {
+						callback(err,room);
+					});
+				}
+			});
 		}
 		else {
 			if(rooms[data]) {
 				room = rooms[data];
+			}else{
+				db.query("SELECT * FROM `rooms` WHERE `id`=? ", [data], function(err, room){
+					db.end();
+					if(err) return callback(err);
+					getAccounts({id:data}, function(err, room) {
+						return callback(err, room);
+					});
+				});
 			}
-			else{
-				console.log("New room");
-				room = {
-					id : data,
-					type : "room",
-					name : data,
-					description : "",
-					picture : "",
-					profile : "", 
-					owner : "",
-					params :  {},
-					createdOn: new Date().getTime()
-				};
-				rooms[data] = room;
-			}
-			getAccounts(rooms[data] || {id:data}, function(err, room) {
-				return callback(err, rooms[data]);
-			});
 		}
-
-		db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
-				"`owner`, `params`) values(?,?,?,?,?,?,NOW(),?,?) ON DUPLICATE KEY UPDATE "+
-				"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
-				",`picture`=values(`picture`), `profile`=values(`profile`),  `owner`=values(`owner`),"+
-				"`params`=values(`params`)", [room.id, room.type || "user", room.name || "", room.description || "",
-				room.picture || "", room.profile || "", room.owner, JSON.stringify(room.params)|| "{}"],
-		function(err, resp) {
-			db.end();
-			if(err && callback) return callback(err,data);
-			
-			if (data.accounts && data.accounts.length>0) {
-				console.log("inserting accounts");
-				insertAccounts(room,function(err,data) {
-					if(err) return callback(err,data);
-					rooms[data.id].accounts = data.accounts;
-					if (callback) callback(err,data);
-				});
-			}
-			else {
-				getAccounts(room, function(err, room) {
-					callback(err,room);
-				});
-			}
-		});
 	});
 };
 

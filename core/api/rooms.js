@@ -4,7 +4,7 @@ var log = require("../../lib/logger.js");
 module.exports = function(options, callback) {
 	pool.get(function(err, db) {
 		var query = "SELECT * FROM `rooms` ",
-			where = [], params=[], desc=false, limit=256;
+			where = [], params=[], desc=false, limit=256, accountIDs = [];
 		
 		if(err && callback) return callback(err);
 		
@@ -21,7 +21,10 @@ module.exports = function(options, callback) {
 		
 		if(options.accounts) {
 			where.push("`id` IN (SELECT `room` FROM `accounts` WHERE `id` IN (?))");
-			params.push(options.accounts);
+			options.accounts.forEach(function(element){
+				accountIDs.push(element.id);
+			});
+			params.push(accountIDs);
 		}
 		
 		if(where.length) query += " WHERE " + where.join(" AND ");
