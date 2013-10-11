@@ -27,8 +27,9 @@ module.exports = function(core) {
 				if (err) return callback(err);
 				if ((room.id) && message.user.originalId != message.user.id) {
 					message.user.id = message.user.originalId;
-					return callback(new Error("auth DUP_NICK"));
+					return callback(new Error("DUP_NICK"));
 				} else {
+					message.user.type = "user";
 					return core.room(message.user,function(err,room) {
 						if (callback) {
 							message.ref = room.id;

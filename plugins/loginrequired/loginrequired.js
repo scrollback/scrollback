@@ -42,8 +42,7 @@ module.exports = function(coreObject) {
         if (message.origin && message.origin.gateway == "irc") return callback();
         if(message.type == "text" && message.from.indexOf("guest-")==0) {
             core.room(message.to,function(err, data) {
-                console.log(err,data);
-                if(data.params.loginrequired)
+                if(data.params && data.params.loginrequired)
                     callback(new Error("AUTH_REQ_TO_POST"));
                 else callback();
             });

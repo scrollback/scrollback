@@ -138,7 +138,7 @@ function messages (query, conn) {
 
 function message (m, conn) {
 	if(!conn.sid) return;
-	var user = conn.session.user;
+	var user = conn.session.user, tryingNick;
 	
 	m.from = user.id;
 	m.time = new Date().getTime();
@@ -170,9 +170,8 @@ function message (m, conn) {
 		}
 	}
 	
-
+	console.log("No dup so far.....");
 	function sendMessage() {
-		console.log("core.message",m);
 		core.message(m, function (err, m) {
 			var i;
 			if(m.type == 'nick') {
@@ -204,10 +203,12 @@ function message (m, conn) {
 			}
 		});
 	}
-	if(m.type=="nick" && m.ref) {
-		core.room(((m.ref.indexOf("guest-")==0)? m.ref.substring(6) : m.ref),function(err,data){
+	if(m.type=="nick" && ( m.ref || m.user)) {
+		tryingNick = m.ref || m.user.id;
+		core.room(((tryingNick.indexOf("guest-")==0)? tryingNick.substring(6) : tryingNick),function(err,data){
 			if(err) return conn.send('error', {id: m.id, message: err.message});
-			if((data.length>0) || data.id) return conn.send('error', {id: m.id, message: "sock DUP_NICK"});
+			console.log("Result of core on dup check",data);
+			if((data.length>0) || data.id) return conn.send('error', {id: m.id, message: "DUP_NICK"});
 			sendMessage();
 		});
 	} else {

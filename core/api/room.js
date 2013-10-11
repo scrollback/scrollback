@@ -70,9 +70,12 @@ module.exports = function(data, callback) {
 						room.owner = "";
 						rooms[data.id] = room;
 					}
-				};
+				}
+				else{
+					callback(new Error("NO_TYPE"),null);
+				}
 			}
-
+			console.log("Room before insertion",room);
 			db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
 					"`owner`, `params`) values(?,?,?,?,?,?,NOW(),?,?) ON DUPLICATE KEY UPDATE "+
 					"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
