@@ -7,7 +7,9 @@ module.exports = function(core) {
 		var assertion = message.browserid;
 		delete message.browserid;
 		
+
 		if(message.type !== 'nick') return callback();
+		
 		if (message.origin && message.origin.gateway=="irc") return callback();
 		
 		if (message.ref == 'guest-') {
@@ -16,19 +18,20 @@ module.exports = function(core) {
 		}
 		
 		if (!assertion && message.user) {
+			//message.ref = message.user.id;
 			if (!validateNick(message.user.id)) {
 				message.user.id = message.user.originalId;
 				return callback(new Error("INVALID_NICK"));
 			}
 			return core.room(message.user.id,function(err,room) {
 				if (err) return callback(err);
-				if (room.length && message.user.originalId != message.user.id) {
+				if ((room.id) && message.user.originalId != message.user.id) {
 					message.user.id = message.user.originalId;
-					return callback(new Error("DUP_NICK"));
+					return callback(new Error("auth DUP_NICK"));
 				} else {
-					
 					return core.room(message.user,function(err,room) {
 						if (callback) {
+							message.ref = room.id;
 							callback(err,message);	
 						}
 					});	
@@ -61,8 +64,6 @@ module.exports = function(core) {
 				gateway: "mailto",
 				params: ""
 			};
-			console.log(account);
-
 			core.rooms({accounts: [account]}, function(err, data) {
 				if(err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
 				if(data.length === 0) {

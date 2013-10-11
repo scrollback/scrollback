@@ -115,7 +115,7 @@ module.exports = function(data, callback) {
 				db.query("SELECT * FROM `rooms` WHERE `id`=? ", [data], function(err, room){
 					db.end();
 					if(err) return callback(err);
-					getAccounts({id:data}, function(err, room) {
+					getAccounts(room, function(err, room) {
 						return callback(err, room);
 					});
 				});
