@@ -7,7 +7,7 @@ var rooms = {};
 
 /*This too has to be changes. But felt this is better than a adding 
 	process.nexttick to require core.*/
-roomsApi({type: "room"}, function(err, data){
+roomsApi({query:""}, function(err, data){
 	if(err)	throw err;
 
 	data.forEach(function(element) {
@@ -24,15 +24,20 @@ module.exports = function(data, callback) {
 	pool.get(function(err, db) {
 		if (typeof data === "object") {
 			var properties = [], currentRoom;
-			if(err && callback) return callback(err);
+			if(err && callback){
+				db.end();
+				return callback(err);
+			}
 			if(rooms[data.id]) {
 				currentRoom = rooms[data.id];
 				properties = Object.keys(data)
 				properties.forEach( function(element) {
 					if(data[element]) {
 						if(element == "owner")
-							if(currentRoom.owner !== "" && currentRoom.owner != data.owner)
+							if(currentRoom.owner !== "" && currentRoom.owner != data.owner) {
+								db.end();
 								return callback(new Error("You are not the admin"));
+							}
 						if(element == "params") {
 							console.log(Object.keys(data.params));
 							Object.keys(data.params).forEach( function(element) {
@@ -48,24 +53,26 @@ module.exports = function(data, callback) {
 				});
 				room = currentRoom;
 			} else {
-				room = {
-					id : data.id,
-					type : data.type || "room",
-					name : data.name || "",
-					description : data.description || "",
-					picture : data.picture,
-					profile : data.profile || "", 
-					createdOn: new Date(),				
-					params : data.params || {}
+				if(data.id && data.type) {
+					room = {
+						id : data.id,
+						type : data.type,
+						name : data.name || data.id,
+						description : data.description || "",
+						picture : data.picture || "",
+						profile : data.profile || "", 
+						createdOn: new Date(),				
+						params : data.params || {}
+					};
+					if(room.type == "user") {
+						room.owner = data.id;
+					}else{
+						room.owner = "";
+						rooms[data.id] = room;
+					}
 				};
-				if(data.originalId) {
-					room.type = "user";
-					room.owner = data.id;
-				}else{
-					room.owner = "";
-					rooms[data.id] = room;
-				}
 			}
+
 			db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
 					"`owner`, `params`) values(?,?,?,?,?,?,NOW(),?,?) ON DUPLICATE KEY UPDATE "+
 					"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
@@ -97,6 +104,13 @@ module.exports = function(data, callback) {
 		else {
 			if(rooms[data]) {
 				room = rooms[data];
+				if(!room.accounts) {
+					return getAccounts(room, function(err, room) {
+						rooms[data].accounts = room.accounts
+						return callback(err, room);
+					});
+				}
+				return callback(err, room);
 			}else{
 				db.query("SELECT * FROM `rooms` WHERE `id`=? ", [data], function(err, room){
 					db.end();

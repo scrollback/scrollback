@@ -117,6 +117,7 @@ block content
 	script.
 		var pluginPackager = [];
 		function save(room, callback){
+			room.type = "room";
 			$.ajax({
 				type: "POST",
 				url: "/"+room.id+"/save",
@@ -131,7 +132,6 @@ block content
 					
 				}
 			});
-
 		}
 		(function(){
 			var room = !{JSON.stringify(room)};

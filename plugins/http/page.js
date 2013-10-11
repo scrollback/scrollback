@@ -63,9 +63,10 @@ exports.init = function(app) {
     
     app.get("*", function(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery;
-        
-        if(params[1]=="config")
-            return next();
+        if(params[1]=="config"){
+            next();
+            return;
+        }
         query.to=params[0];
         query.type="text";
         query.limit=20;
@@ -139,8 +140,13 @@ exports.init = function(app) {
     })
     app.get("*/config",function(req, res){
         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
-        core.room({id:roomId}, function(err, room) {
-             if(user.id.indexOf("guest-")!=0) {
+        console.log("config - handler",params);
+        core.room(roomId, function(err, room) {
+            if(room.type == "user") {
+                return res.end(JSON.stringify({error:"Currently No configuration Available for Users."}));
+            }
+            
+            if(user.id.indexOf("guest-")!=0) {
                 if(room.owner == "" || room.owner == user.id){
                     var responseObject = {
                         room: room,
@@ -161,23 +167,19 @@ exports.init = function(app) {
             
         });
     });
-    app.post("*/save", function(req, res) {
+    app.post("*/config", function(req, res) {
         var params = req.path.substring(1).split("/"), roomId, user = req.session.user,
             renderObject = {}, responseHTML = "", data = {};
         data = req.body || {};
+
         if(typeof data == "string") {
             try { data = JSON.parse(data); }
             catch (e) { res.end(e); }
         }
 
-
-
-        if(data.owner == "me") {
-            data.owner
-            if(user.id.indexOf("guest-")==0)
-                return res.end(JSON.stringify({error:"Guest cannot claim room"}));
-            data.owner = user.id;
-        }
+        data.owner = user.id;
+        if(user.id.indexOf("guest-")==0)
+            return res.end(JSON.stringify({error:"Guest cannot claim room"}));
         console.log("Storing", data);
         if(data.id && (data.params || data.accounts)) {
             core.room(data,function(err,data) {

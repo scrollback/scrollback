@@ -23,6 +23,7 @@ module.exports = function(core){
 			return pluginContent(object);
 		});
 	});
+	init();
 	core.on("message" , function(message , callback){
 			db.query("SELECT * FROM `accounts` WHERE `room` IN (?)", [message.to], function(err, data) {
 			var i, l, name, list = {};
@@ -42,14 +43,17 @@ module.exports = function(core){
 };
 
 function init() {
+	console.log("IRC accounts available");
 	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
 		if(err) throw "Cannot retrieve IRC accounts";
 		//db.end();
+
 		function joinStuff() {
 			data.forEach(function(account) {
 				var u, client;
 				if(account.joined) return;
 				u = url.parse(account.id);
+				console.log("URL:",u);
 				client = clients.bot[u.host];
 					
 				if(!client) {
@@ -154,6 +158,7 @@ function send(message, accounts) {
 
 				nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
 				clients[message.from][u.host] = client
+				console.log("users",users, u.host, message.ref);
 				users[u.host][message.ref] = true;
 				
 				if(client) client.rename(nick);
