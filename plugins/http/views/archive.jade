@@ -8,11 +8,20 @@ block styles
 		.scrollback-embed{
 			display: none !important;
 		}
+		.link{
+			font-size: 0.6em;
+			margin: 2em;
+			text-decoration: none;
+			color: #222;
+		}
+		.link:hover{
+			text-decoration: underline;
+		}
 
 block append scripts
 	script(type='text/javascript')
 		window.scrollback = {host: 'http://' + location.host};
-	script(src="/socket.io/socket.io.js")
+	script(src="/sdk/sockjs.js")
 	script(src="/sdk/emitter.js")
 	script(src="/sdk/client.js")
 	script(src="/sdk/cache.js")
@@ -26,6 +35,7 @@ block content
 	.container
 		.box.span12.container
 			h1.box.span12 #{query.title} archives (#{relDate(data[0].time)} ago)
+				a.link(href="/#{query.to}/config") Configure Room
 			div.container
 				div.timeRange.box.span12
 					if(scrollPrev)

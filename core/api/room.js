@@ -13,7 +13,7 @@ roomsApi({type: "room"}, function(err, data){
 	data.forEach(function(element) {
 		rooms[element.id] = element;
 		console.log(element.params);
-		rooms[element.id].params = JSON.parse(element.params);
+		rooms[element.id].params = JSON.parse(element.params)|| {};
 		console.log("Caching rooms", element.id);
 	});
 });
@@ -31,10 +31,12 @@ module.exports = function(data, callback) {
 				properties.forEach( function(element) {
 					if(data[element]) {
 						if(element == "owner")
-							if(currentRoom.owner !== "")
-								callback(new Error("You are not the admin"));
+							if(currentRoom.owner !== "" && currentRoom.owner != data.owner)
+								return callback(new Error("You are not the admin"));
 						if(element == "params") {
+							console.log(Object.keys(data.params));
 							Object.keys(data.params).forEach( function(element) {
+								console.log(element);
 								if(data.params[element] !== undefined)
 									currentRoom.params[element] = data.params[element];
 							});
@@ -53,8 +55,8 @@ module.exports = function(data, callback) {
 					description : data.description || "",
 					picture : data.picture,
 					profile : data.profile || "", 
-					
-					params : data.params || ""
+					createdOn: new Date(),				
+					params : data.params || {}
 				};
 				if(data.originalId) {
 					room.type = "user";
@@ -72,6 +74,8 @@ module.exports = function(data, callback) {
 					room.picture || "", room.profile || "", room.owner, JSON.stringify(room.params)|| "{}"],
 			function(err, resp) {
 				db.end();
+
+				console.log("inserting room", room);
 				if(err && callback) return callback(err,data);
 				
 				if (data.accounts && data.accounts.length>0) {
@@ -127,13 +131,12 @@ function insertAccounts(data,callback){
 			// params.push([id, room, gateway, '']);
 		});
 
-		db.query("delete from accounts where `room`=?",data.originalId || ids,function(err,res){
+		db.query("delete from accounts where `room`=?",data.originalId || ids,function(err,res) {
 			if (err && callback) {
 				console.log("------------------",err);
 				db.end();
 				callback(err,res);
 			}
-			console.log(accountsQuery,params);
 			db.query(accountsQuery,params,function(err,account){
 				db.end();
 				if(callback) callback(err, data);

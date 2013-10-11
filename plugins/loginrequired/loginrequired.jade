@@ -11,14 +11,14 @@ block append styles
 		});
 
 block content
-	div(class="pluginBlock")
-		div(class="container heading")
+	div.pluginBlock
+		div.container.heading
 			h2	Login Required
-		div(class="container clearfix")
-			div(class="box span12 row",id="result",style="display:none")
-			div(class="box span12 row")
+		div.container.clearfix
+			div#result.box.span12.row(style="display:none")
+			div.box.span12.row
 				span Mandate user login to post
-			div(class="box span12 row")
+			div.box.span12.row
 				if params.loginrequired
 					input(type="radio", id="enableLoginReq", value="true", name="isLoginEnable", class="radio",checked=true)
 					label(for="enableLoginReq",class="radioLabel") Yes
@@ -29,5 +29,5 @@ block content
 					label(for="enableLoginReq",class="radioLabel") Yes
 					input(type="radio", id="disableLoginReq", value="false", name="isLoginEnable", class="radio",checked=true)
 					label(for="disableLoginReq",class="radioLabel") No
-		div(class="container")
+		div.container
 			p.break.after Enabling this will prevent Guest users from posting in your community.

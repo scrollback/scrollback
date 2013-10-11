@@ -11,14 +11,13 @@ block append scripts
 				console.log("storing IRC info");
 				room.params = room.params || {};
 				room.params.irc = true;
-				room.accounts = room.accounts || [];
 				channel = channel.indexOf("#")==0?channel:"#"+channel;
-				room.accounts.push({
+				room.accounts=[{
 					id: "irc://"+server+"/"+channel,
 					gateway: "irc",
 					params: {},
 					room: room.id
-				});
+				}];
 			});
 		});
 block content

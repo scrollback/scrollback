@@ -64,10 +64,8 @@ exports.init = function(app) {
     app.get("*", function(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery;
         
-        console.log(params);
         if(params[1]=="config")
-            next();
-        console.log("blah");
+            return next();
         query.to=params[0];
         query.type="text";
         query.limit=20;
@@ -142,23 +140,25 @@ exports.init = function(app) {
     app.get("*/config",function(req, res){
         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
         core.room({id:roomId}, function(err, room) {
-            console.log(err,room);
-
-            if(room.owner == "" || room.owner == user.id){
-                var responseObject = {
-                    room: room,
-                    relDate: relDate,
-                    pluginsUI: {}
-                };
-                ["irc","loginrequired","wordban"].forEach(function(element) {
-                    element && (responseObject.pluginsUI[element] = core.getConfigUi(element));
-                });
-                console.log(err, responseObject);
-                res.render("config", responseObject);                
-            }
-            else{
+             if(user.id.indexOf("guest-")!=0) {
+                if(room.owner == "" || room.owner == user.id){
+                    var responseObject = {
+                        room: room,
+                        relDate: relDate,
+                        pluginsUI: {}
+                    };
+                    ["irc","loginrequired","wordban"].forEach(function(element) {
+                        element && (responseObject.pluginsUI[element] = core.getConfigUi(element));
+                    });
+                    console.log(err, responseObject);
+                    return res.render("config", responseObject);            
+                }
                 res.render("error", {error:"You are Not the Admin of this room"});
             }
+            else{
+                res.render("error", {error:"Please login..."});   
+            }
+            
         });
     });
     app.post("*/save", function(req, res) {
@@ -169,14 +169,16 @@ exports.init = function(app) {
             try { data = JSON.parse(data); }
             catch (e) { res.end(e); }
         }
-        console.log("Storing", data);
+
 
 
         if(data.owner == "me") {
+            data.owner
             if(user.id.indexOf("guest-")==0)
                 return res.end(JSON.stringify({error:"Guest cannot claim room"}));
             data.owner = user.id;
         }
+        console.log("Storing", data);
         if(data.id && (data.params || data.accounts)) {
             core.room(data,function(err,data) {
                 console.log(err,data);

@@ -3,9 +3,12 @@ extends layout
 block append styles
 	style.
 		.picture{
-			width: 120px;
-			height: 140px;
-			border: 2px solid #3ca;
+			width: 72px;
+			height: 72px;
+			border: 2px solid #ccc;
+		}
+		.save{
+			margin-top: 10px;
 		}
 	style.
 		.form{
@@ -79,33 +82,37 @@ block append styles
 			margin-top: 10px;
 		}
 block content
-	div(class="container clearfix")
-		div(class="box span6")
-			-title=room.name.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {return f.toUpperCase() + r.toLowerCase() + ' ';});
-				h1 Configure Room: #{title}
-		div(class="box span6")
-			h1
-				div(class="box span6",style="float:right")
-					if room.owner == "" || !room.owner
-						button(id="claim") Claim this room
-					else
-						button Owned by #{room.owner}
-	div(class="container clearfix")
-		div(class="box span3")
-			div(class="container clearfix")
-				div(class="span12")
-					img(class="picture",src="#{room.picture}")
-		div(class="box span9 row marginTop10px")
-			div(class="container")
-				div(class="box span6")
-					span Name
-				div(class="box span6")
-					span #{room.name|| room.id}
-			div(class="container")
-				div(class="box span6")
-					span Created On
-				div(class="box span6")
-					span #{relDate(new Date(room.createdOn).getTime(), new Date().getTime())} ago
+	div.pluginBlock
+		div.container.clearfix.heading
+			div.box.span6
+				-room.name || (room.name = room.id);
+				-title=room.name.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {return f.toUpperCase() + r.toLowerCase() + ' ';});
+					h1 Configure Room: #{title}
+			div.box.span6
+				h1
+					div.box.span6(style="float:right")
+						if room.owner == "" || !room.owner
+							button#claim Claim this room
+						else
+							button Owned by #{room.owner}
+		div.container.clearfix
+			div.box.span3
+				div.container.clearfix
+					div.span12
+						img.picture(src="#{room.picture || "/img/room48.png"}")
+			div.box.span9.row.marginTop10px
+				div.container
+					div.box.span6
+						b
+							span Name
+					div.box.span6
+						span #{room.name|| room.id}
+				div.container
+					div.box.span6
+						b
+							span Created
+					div.box.span6
+						span #{relDate(new Date(room.createdOn).getTime(), new Date().getTime())} ago
 	script(src='//code.jquery.com/jquery.min.js')
 	script.
 		var pluginPackager = [];
@@ -129,9 +136,6 @@ block content
 		(function(){
 			var room = !{JSON.stringify(room)};
 			$(document).ready(function(){
-
-
-				
 				$("#saveAccount").click(function() {
 					pluginPackager.forEach(function(element) {
 						element(room);
@@ -162,9 +166,10 @@ block content
 			
 		})();
 	each plugin in ["irc","loginrequired","wordban"]
-		div(class="box span12")
+		div.box.span12
 			!{pluginsUI[plugin](room)}
-	div(class="box span1")
-				button(id="saveAccount")	Save
+	div.container.clearfix
+		div.box.span2.save
+				button#saveAccount	Save
 		
 	

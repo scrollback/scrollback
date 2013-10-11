@@ -31,7 +31,6 @@ module.exports = function(core) {
 						if (callback) {
 							callback(err,message);	
 						}
-						return;
 					});	
 				}
 			});

@@ -41,7 +41,6 @@ module.exports = function(core){
 	
 };
 
-
 function init() {
 	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
 		if(err) throw "Cannot retrieve IRC accounts";
