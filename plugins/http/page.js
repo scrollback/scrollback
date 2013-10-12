@@ -138,25 +138,32 @@ exports.init = function(app) {
             res.end(responseHTML);
         });
     })
-    app.get("*/config",function(req, res){
+    app.get("*/config",function(req, res) {
         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
         console.log("config - handler",params);
         core.room(roomId, function(err, room) {
+            console.log("------------------",room);
+            if(!room.id)
+                room = {
+                    type: "room",
+                    id: params[0]
+                };
             if(room.type == "user") {
                 return res.end(JSON.stringify({error:"Currently No configuration Available for Users."}));
             }
             
             if(user.id.indexOf("guest-")!=0) {
-                if(room.owner == "" || room.owner == user.id){
+                console.log(room.owner);
+                if(!room.owner || room.owner == "" || room.owner == user.id) {
                     var responseObject = {
                         room: room,
                         relDate: relDate,
                         pluginsUI: {}
                     };
                     ["irc","loginrequired","wordban"].forEach(function(element) {
-                        element && (responseObject.pluginsUI[element] = core.getConfigUi(element));
+                        responseObject.pluginsUI[element] = core.getConfigUi(element);
                     });
-                    console.log(err, responseObject);
+                    console.log(responseObject);
                     return res.render("config", responseObject);            
                 }
                 res.render("error", {error:"You are Not the Admin of this room"});

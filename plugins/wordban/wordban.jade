@@ -4,7 +4,6 @@ script.
 		pluginPackager.push(function(room) {
 			var status = $("input:radio[name=isWordbanEnable]:checked").val()=="true"? true:false;
 			room.params = room.params || {};
-			console.log("wordban",room.params.wordban, status);
 			room.params.wordban = status;
 		});
 	});
@@ -17,9 +16,7 @@ block content
 			div(class="box span12 row")
 				span Enable word filters on your community.
 			div(class="box span12 row")
-				script.
-					var x=!{JSON.stringify(params)};
-				if params.wordban
+				if params && params.wordban
 					input(type="radio", id="enableWordban", value="true", name="isWordbanEnable", class="radio",checked=true)
 					label(for="enableWordban",class="radioLabel") Yes
 					input(type="radio", id="disableWordban", value="false", name="isWordbanEnable", class="radio")
