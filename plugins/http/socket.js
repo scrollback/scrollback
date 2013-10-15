@@ -207,7 +207,7 @@ function message (m, conn) {
 	if(m.type=="nick" && m.ref) {
 		core.room(((m.ref.indexOf("guest-")==0)? m.ref.substring(6) : m.ref),function(err,data){
 			if(err) return conn.send('error', {id: m.id, message: err.message});
-			if((data.length>0) || data.id) return conn.send('error', {id: m.id, message: "sock DUP_NICK"});
+			if((data.length>0) || data.id) return conn.send('error', {id: m.id, message: "DUP_NICK"});
 			sendMessage();
 		});
 	} else {
