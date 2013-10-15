@@ -24,7 +24,7 @@ module.exports = function(data, callback) {
 	pool.get(function(err, db) {
 		if (typeof data === "object") {
 			var properties = [], currentRoom;
-			if(err && callback){
+			if(err && callback) {
 				db.end();
 				return callback(err);
 			}
@@ -39,9 +39,7 @@ module.exports = function(data, callback) {
 								return callback(new Error("You are not the admin"));
 							}
 						if(element == "params") {
-							console.log(Object.keys(data.params));
 							Object.keys(data.params).forEach( function(element) {
-								console.log(element);
 								if(data.params[element] !== undefined)
 									currentRoom.params[element] = data.params[element];
 							});
@@ -70,9 +68,12 @@ module.exports = function(data, callback) {
 						room.owner = "";
 						rooms[data.id] = room;
 					}
-				};
+				}
+				else{
+					callback(new Error("NO_TYPE"),null);
+				}
 			}
-
+			console.log("Room before insertion",room);
 			db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
 					"`owner`, `params`) values(?,?,?,?,?,?,NOW(),?,?) ON DUPLICATE KEY UPDATE "+
 					"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
@@ -115,6 +116,9 @@ module.exports = function(data, callback) {
 				db.query("SELECT * FROM `rooms` WHERE `id`=? ", [data], function(err, room){
 					db.end();
 					if(err) return callback(err);
+					if(room.length == 0) {
+						return callback(null,{});
+					}
 					getAccounts(room, function(err, room) {
 						return callback(err, room);
 					});

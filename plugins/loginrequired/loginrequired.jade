@@ -19,7 +19,7 @@ block content
 			div.box.span12.row
 				span Mandate user login to post
 			div.box.span12.row
-				if params.loginrequired
+				if params && params.loginrequired
 					input(type="radio", id="enableLoginReq", value="true", name="isLoginEnable", class="radio",checked=true)
 					label(for="enableLoginReq",class="radioLabel") Yes
 					input(type="radio", id="disableLoginReq", value="false", name="isLoginEnable", class="radio")

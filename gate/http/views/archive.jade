@@ -36,6 +36,7 @@ block content
 	.container
 		.box.span12.container
 			h1.box.span12 #{query.title} archives (#{relDate(data[0].time)} ago)
+				a.link(href="/#{query.to}/config") Configure Room
 			div.container
 				div.timeRange.box.span12
 					if(scrollPrev)

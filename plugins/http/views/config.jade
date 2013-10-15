@@ -84,8 +84,8 @@ block append styles
 block content
 	div.pluginBlock
 		div.container.clearfix.heading
-			div.box.span6
-				-room.name || (room.name = room.id);
+			div.box.span6 
+				-room.name = room.name || room.id
 				-title=room.name.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {return f.toUpperCase() + r.toLowerCase() + ' ';});
 					h1 Configure Room: #{title}
 			div.box.span6
@@ -120,7 +120,7 @@ block content
 			room.type = "room";
 			$.ajax({
 				type: "POST",
-				url: "/"+room.id+"/save",
+				url: "/"+room.id+"/config",
 				beforeSend: function (request){
 					request.setRequestHeader("Accept", "application/json");
 					request.setRequestHeader("Content-Type", "application/json");
@@ -135,6 +135,7 @@ block content
 		}
 		(function(){
 			var room = !{JSON.stringify(room)};
+			window.room = room;
 			$(document).ready(function(){
 				$("#saveAccount").click(function() {
 					pluginPackager.forEach(function(element) {
@@ -165,9 +166,11 @@ block content
 			});
 			
 		})();
-	each plugin in ["irc","loginrequired","wordban"]
+
+	each plugin in Object.keys(pluginsUI)
 		div.box.span12
 			!{pluginsUI[plugin](room)}
+
 	div.container.clearfix
 		div.box.span2.save
 				button#saveAccount	Save

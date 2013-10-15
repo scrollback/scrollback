@@ -29,6 +29,7 @@ module.exports = function(core) {
 					message.user.id = message.user.originalId;
 					return callback(new Error("DUP_NICK"));
 				} else {
+					message.user.type = "user";
 					return core.room(message.user,function(err,room) {
 						if (callback) {
 							message.ref = room.id;
