@@ -77,6 +77,9 @@ DomReady.ready(function(){
 		}
 	});
 	function nickChange(nick) {
+		if (nick&&nick.length<5) {
+			return;	
+		}
 		if (nick != core.nick()) {
 			core.nick(nick,function(reply){});
 		}
