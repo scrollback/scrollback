@@ -8,34 +8,21 @@ core.on("connected",function(){
 });
 
 
-
-
-
 DomReady.ready(function(){
 	var messageBox = document.getElementById("messageBox");
 	var nickBox = document.getElementById("nick");
 	var messageList = document.getElementById("messageList");
 	core.on("message", function(message){
-		var messageItem ,element;
+		nickBox.value=core.nick().replace(/guest-/g,'');
+		var messageItem;
 		if (message.type == "text" && message.to==stream) {
 			scrollback.debug && console.log("notify-",isLastPage);
 			if (isLastPage) {
-				
-				messageItem = document.createElement("div");
-				addClass(messageItem, "item container");
-				
-				addClass(element = document.createElement("div"), "box span3");
-				element.innerHTML = "[" + message.from.replace(/guest-/g,'') + "]";
-				messageItem.appendChild(element);
-				
-				addClass(element = document.createElement("div"), "box span5");
-				element.innerHTML = message.text;
-				messageItem.appendChild(element);
-				
-				addClass(element = document.createElement("div"), "box span4 time");
-				element.innerHTML = relDate(prevtime,message.time);
-				messageItem.appendChild(element);
-				
+				messageItem = JsonML.parse(["div", {"class": "item container"},
+					["div", {"class": "box span3"},"[" + message.from.replace(/guest-/g,'') + "]"],
+					["div", {"class": "box span5"},message.text],
+					["div", {"class": "box span4 time"},relDate(prevtime,message.time) + " later"]
+				]);
 				messageList.appendChild(messageItem);
 				prevtime = message.time;
 	
@@ -75,7 +62,15 @@ DomReady.ready(function(){
 		var text = document.getElementById("messageBox");
 		if (e.keyCode == 13) {
 			if (text.value.length != 0) {
-				core.say(stream, text.value);
+				var tempText=text.value;
+				core.say(stream, text.value,function(obj){
+						if (obj.message=="AUTH_REQ_TO_POST") {
+								text.value=tempText;
+								login({requireAuth: 1});
+								
+						}
+						
+				});
 				text.value = "";
 			}
 			e.preventDefault();
@@ -101,7 +96,9 @@ DomReady.ready(function(){
 
 
 function relDate (input, reference){
-
+	if(input==0){
+		input=new Date().getTime();//first message in new room.
+	}
 	var SECOND = 1000,
 		MINUTE = 60 * SECOND,
 		HOUR = 60 * MINUTE,
