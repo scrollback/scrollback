@@ -195,7 +195,7 @@ function onMessage (m) {
 	if (!messages) return;
 	for (i = messages.length - 1; i >= 0 && m.time - messages[i].time < 120000; i-- ) {
 		if (messages[i].id == m.id) {
-			timeAdjustment = m.time - messages[i].time - timeAdjustment;
+			//timeAdjustment = m.time - messages[i].time - timeAdjustment;
 			scrollback.debug && console.log("Time adjustment is now " + timeAdjustment);
 			messages[i] = m;
 			updated = true; break;
