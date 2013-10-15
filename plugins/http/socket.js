@@ -157,6 +157,10 @@ function message (m, conn) {
 		if(!userAway(user, m.to, conn)) return; 
 		// it returns false if the away message for this user is not to be sent yet
 	} else if(m.type == 'nick') {
+		//validating nick name on server side 
+		console.log("checking for nick validity: " , m.ref);
+		if(m.ref && !validateNick(m.ref.substring(6)))
+			return conn.send('error', {id:m.id , message: "INVALID_NAME"});
 		console.log("checking dup nick",m.from,m.type);
 		if(m.ref && users[m.ref] )
 			return conn.send('error', {id: m.id, message: "DUP_NICK"});
@@ -237,6 +241,11 @@ function rooms(query, conn) {
 		}
 		conn.send('rooms', data);
 	});
+}
+
+function validateNick(nick){
+			if (nick.indexOf("guest-")==0) return false;
+			return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
 }
 
 // ----- Outgoing send ----
