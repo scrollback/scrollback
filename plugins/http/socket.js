@@ -207,10 +207,7 @@ function message (m, conn) {
 		tryingNick = m.ref || m.user.id;
 		core.room(((tryingNick.indexOf("guest-")==0)? tryingNick.substring(6) : tryingNick),function(err,data){
 			if(err) return conn.send('error', {id: m.id, message: err.message});
-<<<<<<< HEAD
-=======
 			console.log("Result of core on dup check",data);
->>>>>>> 31af5f8131f876000c1cc8ace592d4b5dc37de96
 			if((data.length>0) || data.id) return conn.send('error', {id: m.id, message: "DUP_NICK"});
 			sendMessage();
 		});
