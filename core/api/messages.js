@@ -4,6 +4,8 @@ var pool = require("../data.js");
 var log = require("../../lib/logger.js");
 
 module.exports = function(options, callback) {
+	var startTime = new Date().getTime();
+	
 	pool.get(function(err, db) {
 		var query = "SELECT * FROM `messages` ",
 			where = [], params=[], desc=false, limit=256, until, since, originObject = {};
@@ -60,7 +62,7 @@ module.exports = function(options, callback) {
 
 		if(limit) query += " LIMIT " + (limit + 1);
 		
-		if(desc) query = "SELECT * FROM (" + query + ") r ORDER BY time ASC";
+		if(desc) query = "SELECT * FROM (" + query + ") r ORDER BY `time` ASC";
 		
 		log(query, params);
 		db.query(query, params, function(err, data) {
@@ -109,7 +111,7 @@ module.exports = function(options, callback) {
 				}
 			}
 			
-			log("Query results: " + data.length);
+			log(data.length, "results in", new Date().getTime() - startTime, "ms");
 			if(callback) callback(null, data);
 		});
 	});

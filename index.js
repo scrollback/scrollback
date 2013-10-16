@@ -1,5 +1,4 @@
 var core = require("./core/core.js"),
-	gateways = require("./core/gateways.js"),
 	plugins = require("./core/plugins.js"),
 	config = require("./config.js");
 

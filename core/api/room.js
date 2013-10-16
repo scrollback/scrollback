@@ -13,8 +13,11 @@ roomsApi({query:""}, function(err, data){
 	data.forEach(function(element) {
 		rooms[element.id] = element;
 		console.log(element.params);
-		element.params=JSON.stringify(element.params);
-		rooms[element.id].params = JSON.parse(element.params)|| {};
+		try {
+			rooms[element.id].params = JSON.parse(element.params);
+		} catch(e) {
+			rooms[element.id].params = {};
+		}
 		console.log("Caching rooms", element.id);
 	});
 });
