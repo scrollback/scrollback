@@ -152,7 +152,7 @@ Stream.prototype.renderTimeline = function() {
 			}
 		};
 
-		buckets[i].nicks[msg.from] = (buckets[i].nicks[msg.from] || 0) + msg.text.length;
+		buckets[i].nicks[msg.from] = (buckets[i].nicks[msg.from] || 0) + (msg.text || "").length;
 
 		if (buckets[i].dominant.count<=buckets[i].nicks[msg.from]) {
 			buckets[i].dominant={nick:msg.from,count:buckets[i].nicks[msg.from]};
