@@ -20,6 +20,7 @@ block styles
 block append scripts
 	script(type='text/javascript')
 		window.scrollback = {host: 'http://' + location.host};
+	script(src="//code.jquery.com/jquery.min.js")
 	script(src="/sdk/sockjs.js")
 	script(src="/sdk/addEvent.js")
 	script(src="/sdk/addStyle.js")
@@ -33,12 +34,12 @@ block append scripts
 	script(src="/sdk/cache.js")
 	script(src="/sdk/client.js")
 	script(src="/sdk/css.js")
-	script(src="/sdk/archive.js")
 	script(src="/sdk/dom.js")
 	script(src="/sdk/embed.js")
 	script(src="/sdk/dialog.js")
 	script(src="/sdk/render.js")
-	script(src="//code.jquery.com/jquery.min.js")
+	script(src="/sdk/archive.js")
+	
 	
 block content
 	.container
@@ -62,8 +63,11 @@ block content
 					if message && message.type && message.type=="text"
 						.item.container
 							div.box.span12
-								div.box.span3 [#{message.from.replace('guest-','')}]
-								div.box.span5.message #{message.text}
+								if message.text.indexOf("/me ") != 0
+									div.box.span3 [#{message.from.replace('guest-','')}]
+									div.box.span5.message #{message.text}
+								else
+									div.box.span8 [#{message.text.replace("/me",message.from.replace('guest-',''))}]
 								if(prevtime)
 									div.box.span4.time #{relDate(prevtime, message.time)} later
 								else

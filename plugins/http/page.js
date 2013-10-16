@@ -33,7 +33,7 @@ exports.init = function(app) {
             res.render("error",{error: "dialog missing"});
         }
     });
-	
+
     app.get("/pwn/*",function(req,res){
         var room = req.path.substring(1).split("/")[1];
         var url=req.path.replace("/pwn/"+room+"/","");
@@ -48,7 +48,7 @@ exports.init = function(app) {
 
     app.get('/t/*', function(req, res, next) {
         var streams = req.path.substring(3);
-		
+
         streams = streams.split("/+/").map(function(p) {
             return p.split('/')[0];
         });
@@ -70,9 +70,18 @@ exports.init = function(app) {
         query.to=params[0];
         query.type="text";
         query.limit=20;
+        console.log("Archive is called.");
         
-        if(req.path.indexOf('.') !== -1) return;
-       
+        
+        
+        //not sure why this was added in the first place. :-)
+        //if(req.path.indexOf('.') !== -1) return;
+        
+        //sqlQuery="select min(m.time) min,max(m.time) max from messages m where `to`=? and `type`='text' order by `time` ";
+        //db.query(sqlQuery,[query.to],function(err,data){
+        //    
+        //    
+        //  
         if (params[1]) switch(params[1]) {
             case 'since':
                 query.since=new Date(params[2]).getTime();
@@ -86,7 +95,7 @@ exports.init = function(app) {
         }
         
         core.messages(query, function(err, m){
-			
+
             responseObj.query=query;
             responseObj.data=m;
             
