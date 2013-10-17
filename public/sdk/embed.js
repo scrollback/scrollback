@@ -21,7 +21,7 @@ core.on('connected', function() {
 		input.disabled = false; 
 	});
 	
-	scrollback.streams.forEach(function(room) {
+	scrollback && scrollback.streams && scrollback.streams.forEach(function(room) {
 		if(streams[room]) streams[room].notify("And... we're back.");
 	});
 });
@@ -49,7 +49,7 @@ function init() {
 		themes[scrollback.theme]: themes.light
 	);
 	addEvent(window, 'resize', Stream.position);
-	scrollback.streams.forEach(function(id) {
+	scrollback && scrollback.streams && scrollback.streams.forEach(function(id) {
 		var stream = Stream.get(id);
 		if (!stream.initialized) {
 			if(scrollback.minimized === false) stream.show();

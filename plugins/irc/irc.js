@@ -1,5 +1,9 @@
 "use strict";
-
+/*
+	the irc accounts are updated right away.
+	There is a performance issue though.
+	The old client objects of all the individual users are not removed.
+*/
 var irc = require("irc"),
 	core = require("../../core/core.js"),
 	config = require("../../config.js"),
@@ -7,11 +11,11 @@ var irc = require("irc"),
 	url = require("url"),
 	connect = require("./connect.js"),
 	log = require("../../lib/logger.js"), fs = require("fs"),
-	jade = require("jade");
+	jade = require("jade"),
+	crypto = require('crypto');
 
 
 var botNick=config.irc.nick, clients = {bot: {}}, users = {};
-
 
 module.exports = function(core){
 	var pluginContent = "";
@@ -24,23 +28,76 @@ module.exports = function(core){
 		});
 	});
 	init();
-	core.on("message" , function(message , callback){
-			db.query("SELECT * FROM `accounts` WHERE `room` IN (?)", [message.to], function(err, data) {
-			var i, l, name, list = {};
+	console.log("room: irc called");
+	core.on("room", function(room, callback) {
+		var i;
+		console.log("room: irc called");
+		if(room.type == "room") {
+			room.old.accounts && room.old.accounts.forEach(function(element) {
+				var u;
+				for (i in room.accounts) {
+					if(i.id == element.id)
+						return;
+				}
+				u = url.parse(element.id);
+				clients.bot[u.host].part(u.hash);
+			});
+			room.accounts.forEach(function(element) {
+				var u = url.parse(element.id);
+				if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
+					addBot(element);
+				}
+			});
+		}
+		callback();
+	});
+	core.on("message" , function(message , callback) {
+		db.query("SELECT * FROM `accounts` WHERE `room` IN (?) AND `gateway`='irc'", [message.to], function(err, data) {
+			var i, l, name, list = [], u;
 			if(err) return callback(err);
 			for(i=0, l=data.length; i<l; i+=1) {
-				name = data[i].gateway;
-				if(!list[name]) list[name] = [];
-				list[name].push(data[i].id);
+				u = url.parse(data[i].id);
+				if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
+					addBot(data[i]);
+				}
+				list.push(data[i].id);
 			}
-			for(name in list) {
-				send(message, list[name]);
-			}
+			send(message, list);
 		});
 		callback();
 	});
-	
 };
+
+function addBot(account) {
+	var u, client;
+	if(account.joined) return;
+	u = url.parse(account.id);
+	client = clients.bot[u.host];
+	if(!client) {
+		clients.bot[u.host] = client =
+			connect(u.host, botNick, botNick, function(m) {
+				if (users[u.host] && users[u.host][m.from]) {
+					log("Incoming Echo", m);
+					return;
+				}
+				core.message(m);
+			});
+
+		client.on('nick', function(oldn, newn) {
+			if (users[u.host][oldn]) {
+				users[u.host][newn] = true;
+				delete users[u.host][oldn];
+			}
+		});
+		
+	}
+	if (!users[u.host]) users[u.host] = {};
+	
+	log("Bot joining " + u.hash);
+	client.join(u.hash.toLowerCase());
+	client.rooms[u.hash.toLowerCase()] = account.room;
+	account.joined = true;
+}
 
 function init() {
 	console.log("IRC accounts available");
@@ -49,38 +106,7 @@ function init() {
 		//db.end();
 
 		function joinStuff() {
-			data.forEach(function(account) {
-				var u, client;
-				if(account.joined) return;
-				u = url.parse(account.id);
-				console.log("URL:",u);
-				client = clients.bot[u.host];
-					
-				if(!client) {
-					clients.bot[u.host] = client =
-						connect(u.host, botNick, botNick, function(m) {
-							if (users[u.host] && users[u.host][m.from]) {
-								log("Incoming Echo", m);
-								return;
-							}
-							core.message(m);
-						});
-
-					client.on('nick', function(oldn, newn) {
-						if (users[u.host][oldn]) {
-							users[u.host][newn] = true;
-							delete users[u.host][oldn];
-						}
-					});
-					
-				}
-				if (!users[u.host]) users[u.host] = {};
-				
-				log("Bot joining " + u.hash);
-				client.join(u.hash.toLowerCase());
-				client.rooms[u.hash.toLowerCase()] = account.room;
-				account.joined = true;
-			});
+			data.forEach(addBot);
 		}
 		
 		joinStuff();
@@ -89,6 +115,7 @@ function init() {
 }
 
 function send(message, accounts) {
+	var ident = "", md5sum = crypto.createHash('md5');
 	clients[message.from] = clients[message.from] || {};
 	accounts.map(function(account) {
 		console.log("Account:",account);
@@ -103,6 +130,19 @@ function send(message, accounts) {
 		switch(message.type) {
 			case 'text':
 				if(!client) {
+					//when an replaced irc connection's client is still active. msgs must be ignored.
+					if(message.origin.ip) {
+						ident = message.origin.ip.split('.').map(function(d) {
+							var h = parseInt(d, 10).toString(16);
+							if (h.length < 2) h = '0'+h;
+							return h;
+						}).join('').toUpperCase();
+					}
+					else {
+						ident =  md5sum.update(JSON.stringify(message.origin)).digest("hex");
+					}
+					
+
 					clients[message.from][u.host] = client = connect(
 						u.host, message.from,
 						message.origin.ip.split('.').map(function(d) {

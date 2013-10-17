@@ -62,26 +62,16 @@ exports.init = function(app) {
     });
     
     app.get("*", function(req, res, next) {
-        var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery;
-        if(params[1]=="config"){
+        var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery,
+        user = req.session.user;
+        if(params[1]=="config") {
             next();
             return;
         }
         query.to=params[0];
         query.type="text";
         query.limit=20;
-        console.log("Archive is called.");
-        
-        
-        
-        //not sure why this was added in the first place. :-)
-        //if(req.path.indexOf('.') !== -1) return;
-        
-        //sqlQuery="select min(m.time) min,max(m.time) max from messages m where `to`=? and `type`='text' order by `time` ";
-        //db.query(sqlQuery,[query.to],function(err,data){
-        //    
-        //    
-        //  
+
         if (params[1]) switch(params[1]) {
             case 'since':
                 query.since=new Date(params[2]).getTime();
@@ -123,40 +113,45 @@ exports.init = function(app) {
             }
             
             responseObj.relDate = relDate;
+            core.room(params[0],function(err, room){
+                if(err) res.render("error", err);
+                responseObj.roomOwner = room.owner;
+                responseObj.user = user.id;
+                res.render("archive",responseObj);
+            });
             
-            res.render("archive",responseObj);		
         });
     });
 
 
-    app.get("*/edit/*", function(req, res) {
-        var params = req.path.substring(1).split("/"), responseHTML = "";
-        if(params[1] != "edit") {
-            return next();
-        }
-        core.room({id:params[0]},function(err,room) {
-            if(err) throw err;
+    // app.get("*/edit/*", function(req, res) {
+    //     var params = req.path.substring(1).split("/"), responseHTML = "";
+    //     if(params[1] != "edit") {
+    //         return next();
+    //     }
+    //     core.room({id:params[0]},function(err,room) {
+    //         if(err) throw err;
 
-            if(room.pluginConfig && room.pluginConfig[params[2]]) {
-                renderObject.config = room.pluginConfig[params[2]];
-            }
+    //         if(room.pluginConfig && room.pluginConfig[params[2]]) {
+    //             renderObject.config = room.pluginConfig[params[2]];
+    //         }
 
-            console.log(room);
-            responseHTML = core.getConfigUi(params[2])(room);
-            res.writeHead(200, {"Content-Type": "text/html"});
-            res.end(responseHTML);
-        });
-    })
+    //         console.log(room);
+    //         responseHTML = core.getConfigUi(params[2])(room);
+    //         res.writeHead(200, {"Content-Type": "text/html"});
+    //         res.end(responseHTML);
+    //     });
+    // })
     app.get("*/config",function(req, res) {
         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
         console.log("config - handler",params);
         core.room(roomId, function(err, room) {
-            console.log("------------------",room);
-            if(!room.id)
+            if(!room.id){
                 room = {
                     type: "room",
                     id: params[0]
-                };
+                };  
+            }
             if(room.type == "user") {
                 return res.end(JSON.stringify({error:"Currently No configuration Available for Users."}));
             }
@@ -195,9 +190,9 @@ exports.init = function(app) {
 
         data.owner = user.id;
         if(user.id.indexOf("guest-")==0)
-            return res.end(JSON.stringify({error:"Guest cannot claim room"}));
-        console.log("Storing", data);
-        if(data.id && (data.params || data.accounts)) {
+            return res.end(JSON.stringify({error:"You are a guest user."}));
+        if(data.id) {
+            data.owner = user.id;
             core.room(data,function(err,data) {
                 console.log(err,data);
                 if(err) res.end(JSON.stringify(err));

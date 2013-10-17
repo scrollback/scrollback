@@ -17,6 +17,14 @@ block styles
 		.link:hover{
 			text-decoration: underline;
 		}
+		#action{
+			float: right;
+			height: 2em;
+			border: none;
+			line-height: 2em;
+			background-color: black;
+			padding:0px;
+		}
 block append scripts
 	script(type='text/javascript')
 		window.scrollback = {host: 'http://' + location.host};
@@ -43,8 +51,17 @@ block append scripts
 block content
 	.container
 		.box.span12.container
-			h1.box.span12 #{query.title} archives (#{relDate(data[0].time)} ago)
-				a.link(href="/#{query.to}/config") Configure Room
+			div.container
+				div.box.span10
+					h1.box.span10 #{query.title} archives (#{relDate(data[0].time)} ago)
+				div.box.span2
+					h1
+						if user.indexOf("guest-") == 0
+							button#action.login.span12 Login
+						else if roomOwner == user
+							button#action.config.span12 Configure
+						else 
+							button#action.config.span12 Claim
 			div.container
 				div.timeRange.box.span12
 					if(scrollPrev)

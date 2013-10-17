@@ -2,6 +2,7 @@
 
 var config = require('../config.js');
 var message = require('./api/message.js');
+var room = require('./api/room.js');
 var plugins = {};
 
 var rooms = {};
@@ -24,9 +25,27 @@ core.message = function(m, cb) {
 	});
 };
 
-core.room = require('./api/room.js');
+core.room = function(o, cb) {
+	if(typeof o === 'string') {
+		return room(o, cb);
+	} else if (o.id) {
+		room(o.id, function(err, oldRoom) {
+			if(err) oldRoom = null;
+			o.old = oldRoom;
+			core.emit('room', o, function(err) {
+				if(err) {
+					console.log("Room update rejected", err);
+					return cb? cb(err, o): null;
+				}
+				delete o.old;
+				room(o, cb);
+			});
+		});
+	}
+	
+}
 core.rooms = require('./api/rooms.js');
-core.account = require('./api/account.js');
+core.accounts = require('./api/accounts.js');
 core.messages = require("./api/messages.js");
 
 core.setConfigUi = function(plugin, pluginConfig) {

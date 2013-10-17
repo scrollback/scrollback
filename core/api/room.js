@@ -1,21 +1,16 @@
 var pool = require("../data.js");
 var log = require("../../lib/logger.js");
 var roomsApi = require("./rooms"); // This has to be changed.
-var rooms = {};
-
-
+var rooms = {}, core = {};
 
 /*This too has to be changes. But felt this is better than a adding 
 	process.nexttick to require core.*/
 roomsApi({query:""}, function(err, data){
 	if(err)	throw err;
-
 	data.forEach(function(element) {
 		rooms[element.id] = element;
-		console.log(element.params);
-		element.params=JSON.stringify(element.params);
 		rooms[element.id].params = JSON.parse(element.params)|| {};
-		console.log("Caching rooms", element.id);
+		console.log("Caching rooms", element);
 	});
 });
 
@@ -31,15 +26,16 @@ module.exports = function(data, callback) {
 			}
 			if(rooms[data.id]) {
 				currentRoom = rooms[data.id];
+				if(currentRoom.owner !== "" && currentRoom.owner != data.owner) {
+					db.end();
+					return callback(new Error("You are not the admin"));
+				}				
 				properties = Object.keys(data)
 				properties.forEach( function(element) {
 					if(data[element]) {
-						if(element == "owner")
-							if(currentRoom.owner !== "" && currentRoom.owner != data.owner) {
-								db.end();
-								return callback(new Error("You are not the admin"));
-							}
 						if(element == "params") {
+							if(typeof data.params =="string")
+								data.params = JSON.parse(data.params);
 							Object.keys(data.params).forEach( function(element) {
 								if(data.params[element] !== undefined)
 									currentRoom.params[element] = data.params[element];
@@ -61,14 +57,10 @@ module.exports = function(data, callback) {
 						picture : data.picture || "",
 						profile : data.profile || "", 
 						createdOn: new Date(),				
-						params : data.params || {}
+						params : data.params || {},
+						owner: data.owner || data.id
 					};
-					if(room.type == "user") {
-						room.owner = data.id;
-					}else{
-						room.owner = "";
-						rooms[data.id] = room;
-					}
+					rooms[data.id] = room;
 				}
 				else{
 					callback(new Error("NO_TYPE"),null);
@@ -80,11 +72,10 @@ module.exports = function(data, callback) {
 					"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
 					",`picture`=values(`picture`), `profile`=values(`profile`),  `owner`=values(`owner`),"+
 					"`params`=values(`params`)", [room.id, room.type || "user", room.name || "", room.description || "",
-					room.picture || "", room.profile || "", room.owner, JSON.stringify(room.params)|| "{}"],
+					room.picture || "", room.profile || "", room.owner, JSON.stringify(room.params|| {})],
 			function(err, resp) {
 				db.end();
 
-				console.log("inserting room", room);
 				if(err && callback) return callback(err,data);
 				
 				if (data.accounts && data.accounts.length>0) {
@@ -93,7 +84,9 @@ module.exports = function(data, callback) {
 						if(err) return callback(err,data);
 						if(typeof data.originalId == "undefined")
 							rooms[data.id].accounts = data.accounts;
-						if (callback) callback(err,data);
+						if (callback) {
+							callback(err,data);
+						} 
 					});
 				}
 				else {

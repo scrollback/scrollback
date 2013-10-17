@@ -12,9 +12,27 @@ DomReady.ready(function(){
 	var messageBox = document.getElementById("messageBox");
 	var nickBox = document.getElementById("nick");
 	var messageList = document.getElementById("messageList");
+	$("#action").click(function(event){
+		console.log("Click");
+		$(this).hasClass("login") && login();
+		$(this).hasClass("config") && (location.href = location.protocol+"//"+location.host+"/"+stream+"/config");
+	});
 	core.on("message", function(message){
 		nickBox.value=core.nick().replace(/guest-/g,'');
 		var messageItem;
+		if(message.type == "nick"){
+			if(nick.indexOf("guest-")===0) {
+				$("#action").html("Login");
+				$("#action").removeClass("config");
+				$("#action").addClass("login");
+			}
+			else{
+				console.log("Logged in now config");
+				$("#action").html("Configure");
+				$("#action").removeClass("login");
+				$("#action").addClass("config");
+			}
+		}
 		if (message.type == "text" && message.to==stream) {
 			scrollback.debug && console.log("notify-",isLastPage);
 			if (isLastPage) {
