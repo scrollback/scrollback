@@ -1,8 +1,5 @@
 "use strict";
-var streams = {},
-	$ = function(id) {
-		return document.getElementById(id);
-	}, $$ = getByClass;
+var streams = {}, $$ = getByClass;
 
 var unconfirmed = [], initialized = false;
 
@@ -204,7 +201,7 @@ Stream.prototype.hide = function() {
 
 function login (options) {
 	options = options || {};
-	if(Stream.text&&Stream.prevText){
+	if(options.requireAuth && Stream.text && Stream.prevText){
 		Stream.text.value=Stream.prevText;//added prev text value on TextField
 		delete Stream.text;
 		delete Stream.prevText;

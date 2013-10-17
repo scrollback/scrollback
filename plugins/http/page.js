@@ -146,7 +146,7 @@ exports.init = function(app) {
         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
         console.log("config - handler",params);
         core.room(roomId, function(err, room) {
-            if(!room.id){
+            if(!room.id) {
                 room = {
                     type: "room",
                     id: params[0]

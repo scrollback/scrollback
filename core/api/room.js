@@ -9,8 +9,12 @@ roomsApi({query:""}, function(err, data){
 	if(err)	throw err;
 	data.forEach(function(element) {
 		rooms[element.id] = element;
-		rooms[element.id].params = JSON.parse(element.params)|| {};
-		console.log("Caching rooms", element);
+		try {
+			rooms[element.id].params = JSON.parse(element.params);
+		} catch(e) {
+			rooms[element.id].params = {};
+		}
+		console.log("Caching rooms", element.id);
 	});
 });
 
