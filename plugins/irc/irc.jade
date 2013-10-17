@@ -5,10 +5,12 @@ block append scripts
 			pluginPackager.push(function(room) {
 				var server = $("#accountServer").val();
 				var channel = $("#accountChannel").val();
-				//need better validation for server
-				if(server.length < 5 || channel.length < 5)
+				if(!server.length || channel.length < 1) {
+					room.params = room.params || {};
+					room.params.irc = false;
+					room.accounts=[];
 					return;
-				console.log("storing IRC info");
+				}
 				room.params = room.params || {};
 				room.params.irc = true;
 				channel = channel.indexOf("#")==0?channel:"#"+channel;

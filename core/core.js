@@ -32,6 +32,8 @@ core.room = function(o, cb) {
 		room(o.id, function(err, oldRoom) {
 			if(err) oldRoom = null;
 			o.old = oldRoom;
+			//need to delete the IRC ACCOUNTS
+			o.originalId = o.id;
 			core.emit('room', o, function(err) {
 				if(err) {
 					console.log("Room update rejected", err);

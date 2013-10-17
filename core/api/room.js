@@ -29,28 +29,24 @@ module.exports = function(data, callback) {
 				return callback(err);
 			}
 			if(rooms[data.id]) {
-				currentRoom = rooms[data.id];
-				if(currentRoom.owner !== "" && currentRoom.owner != data.owner) {
-					db.end();
-					return callback(new Error("You are not the admin"));
-				}				
-				properties = Object.keys(data)
-				properties.forEach( function(element) {
-					if(data[element]) {
-						if(element == "params") {
-							if(typeof data.params =="string")
-								data.params = JSON.parse(data.params);
-							Object.keys(data.params).forEach( function(element) {
-								if(data.params[element] !== undefined)
-									currentRoom.params[element] = data.params[element];
-							});
-						}
-						else {
-							currentRoom[element] = data[element];
-						}
-					}
-				});
-				room = currentRoom;
+				rooms[data.id] = data;
+				// properties = Object.keys(data)
+				// properties.forEach( function(element) {
+				// 	if(data[element]) {
+				// 		if(element == "params") {
+				// 			if(typeof data.params =="string")
+				// 				data.params = JSON.parse(data.params);
+				// 			Object.keys(data.params).forEach( function(element) {
+				// 				if(data.params[element] !== undefined)
+				// 					currentRoom.params[element] = data.params[element];
+				// 			});
+				// 		}
+				// 		else {
+				// 			currentRoom[element] = data[element];
+				// 		}
+				// 	}
+				// });
+				room = data;
 			} else {
 				if(data.id && data.type) {
 					room = {
@@ -70,7 +66,6 @@ module.exports = function(data, callback) {
 					callback(new Error("NO_TYPE"),null);
 				}
 			}
-			console.log("Room before insertion",room);
 			db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
 					"`owner`, `params`) values(?,?,?,?,?,?,NOW(),?,?) ON DUPLICATE KEY UPDATE "+
 					"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
@@ -82,8 +77,7 @@ module.exports = function(data, callback) {
 
 				if(err && callback) return callback(err,data);
 				
-				if (data.accounts && data.accounts.length>0) {
-					console.log("inserting accounts");
+				if (data.accounts) {
 					insertAccounts(data,function(err,data) {
 						if(err) return callback(err,data);
 						if(typeof data.originalId == "undefined")
@@ -142,28 +136,27 @@ function insertAccounts(data,callback){
 			params.push(id);
 			params.push(room);
 			params.push(gateway);
-			params.push("{}");
-			
-			// params.push([id, room, gateway, '']);
+			params.push("{}");			
 		});
 
 		db.query("delete from accounts where `room`=?",data.originalId || ids,function(err,res) {
 			if (err && callback) {
-				console.log("------------------",err);
 				db.end();
 				callback(err,res);
 			}
-			db.query(accountsQuery,params,function(err,account){
-				db.end();
+			if( data.accounts.length){
+				db.query(accountsQuery,params,function(err,account){
+					db.end();
+					if(callback) callback(err, data);
+				});
+			}
+			else {
 				if(callback) callback(err, data);
-			});
-
+			}
+			
 		});
 	});	
 }
-
-
-
 
 function getAccounts(room,callback) {
 	pool.get(function(err, db) {

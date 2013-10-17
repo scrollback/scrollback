@@ -33,7 +33,6 @@ module.exports = function(core){
 		if(room.type == "room") {
 			room.old.accounts && room.old.accounts.forEach(function(element) {
 				var u;
-				console.log("accounts",room.old.accounts, room.accounts);
 				if(room.accounts) {
 					for (i=0,l=room.accounts.length;i<l;i++ )
 						if(room.accounts[i].id == element.id) return;
@@ -42,7 +41,7 @@ module.exports = function(core){
 				u = url.parse(element.id);
 				clients.bot[u.host].part(u.hash);
 			});
-			room.accounts.forEach(function(element) {
+			room.accounts && room.accounts.forEach(function(element) {
 				var u = url.parse(element.id);
 				if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
 					addBot(element);
@@ -118,7 +117,6 @@ function send(message, accounts) {
 	var ident = "", md5sum = crypto.createHash('md5');
 	clients[message.from] = clients[message.from] || {};
 	accounts.map(function(account) {
-		console.log("Account:",account);
 		var u = url.parse(account);
 			var client = clients[message.from][u.host],
 			channel = u.hash.toLowerCase();
@@ -198,7 +196,6 @@ function send(message, accounts) {
 
 				nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
 				clients[message.from][u.host] = client
-				console.log("users",users, u.host, message.ref);
 				users[u.host][message.ref] = true;
 				
 				if(client) client.rename(nick);

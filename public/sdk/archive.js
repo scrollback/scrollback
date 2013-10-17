@@ -7,14 +7,11 @@ core.on("connected",function(){
 	core.enter(stream);
 });
 
-console.log($);
 $(document).ready(function(){
 	var messageBox = document.getElementById("messageBox");
 	var nickBox = document.getElementById("nick");
 	var messageList = document.getElementById("messageList");
-	console.log($("#action"),$);
 	$("#action").click(function(event){
-		console.log("Click");
 		$(this).hasClass("login") && login();
 		$(this).hasClass("config") && (location.href = location.protocol+"//"+location.host+"/"+stream+"/config");
 	});
@@ -28,7 +25,6 @@ $(document).ready(function(){
 				$("#action").addClass("login");
 			}
 			else{
-				console.log("Logged in now config");
 				$("#action").html("Configure");
 				$("#action").removeClass("login");
 				$("#action").addClass("config");

@@ -144,8 +144,8 @@ exports.init = function(app) {
     // })
     app.get("*/config",function(req, res) {
         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
-        console.log("config - handler",params);
         core.room(roomId, function(err, room) {
+            if(err) res.end(err);
             if(!room.id) {
                 room = {
                     type: "room",
@@ -153,7 +153,7 @@ exports.init = function(app) {
                 };  
             }
             if(room.type == "user") {
-                return res.end(JSON.stringify({error:"Currently No configuration Available for Users."}));
+                return res.render("erro",{error:"Currently No configuration Available for Users."});
             }
             
             if(user.id.indexOf("guest-")!=0) {
@@ -167,7 +167,6 @@ exports.init = function(app) {
                     ["irc","loginrequired","wordban"].forEach(function(element) {
                         responseObject.pluginsUI[element] = core.getConfigUi(element);
                     });
-                    console.log(responseObject);
                     return res.render("config", responseObject);            
                 }
                 res.render("error", {error:"You are Not the Admin of this room"});
