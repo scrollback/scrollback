@@ -59,10 +59,10 @@ block content
 					h1
 						if user.indexOf("guest-") == 0
 							button#action.login.span12 Login
+						else if !roomOwner
+							button#action.config.span12 Claim
 						else if roomOwner == user
 							button#action.config.span12 Configure
-						else 
-							button#action.config.span12 Claim
 			div.container
 				div.timeRange.box.span12
 					if(scrollPrev)
