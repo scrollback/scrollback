@@ -7,13 +7,12 @@
 var irc = require("irc"),
 	core = require("../../core/core.js"),
 	config = require("../../config.js"),
-	db = require("mysql").createConnection(config.mysql),
 	url = require("url"),
 	connect = require("./connect.js"),
 	log = require("../../lib/logger.js"), fs = require("fs"),
 	jade = require("jade"),
 	crypto = require('crypto');
-var pool = require("../../core/data.js");
+var db = require("../../core/data.js");
 
 
 var botNick=config.irc.nick, clients = {bot: {}}, users = {};
@@ -52,22 +51,19 @@ module.exports = function(core){
 		callback();
 	});
 	core.on("message" , function(message , callback) {
-		pool.get(function(err, db) {
-			db.query("SELECT * FROM `accounts` WHERE `room` IN (?) AND `gateway`='irc'", [message.to], function(err, data) {
-				var i, l, name, list = [], u;
-				db.end();
-				if(err) return callback(err);
-				for(i=0, l=data.length; i<l; i+=1) {
-					u = url.parse(data[i].id);
-					if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
-						addBot(data[i]);
-					}
-					list.push(data[i].id);
+		db.query("SELECT * FROM `accounts` WHERE `room` IN (?) AND `gateway`='irc'", [message.to], function(err, data) {
+			var i, l, name, list = [], u;
+			if(err) return callback(err);
+			for(i=0, l=data.length; i<l; i+=1) {
+				u = url.parse(data[i].id);
+				if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
+					addBot(data[i]);
 				}
-				send(message, list);
-			});
-			callback();
+				list.push(data[i].id);
+			}
+			send(message, list);
 		});
+		callback();
 	});
 };
 
@@ -104,19 +100,15 @@ function addBot(account) {
 
 function init() {
 	console.log("IRC accounts available");
-	pool.get(function(err, db) {
-		db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
-			db.end();
+	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
+		if(err) throw "Cannot retrieve IRC accounts";
+		//db.end();
 
-			if(err) throw "Cannot retrieve IRC accounts";
-			//db.end();
-
-			function joinStuff() {
-				data.forEach(addBot);
-			}
-			
-			joinStuff();
-		});
+		function joinStuff() {
+			data.forEach(addBot);
+		}
+		
+		joinStuff();
 	});
 	connect.init(users);
 }
@@ -128,7 +120,6 @@ function send(message, accounts) {
 		var u = url.parse(account);
 			var client = clients[message.from][u.host],
 			channel = u.hash.toLowerCase();
-		
 		if (message.origin.gateway == "irc" && ("irc://"+message.origin.server+"/"+message.origin.channel).toLowerCase() == (account || "").toLowerCase()) {
 			log("Outgoing echo", message);
 			return;

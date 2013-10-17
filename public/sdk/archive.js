@@ -25,9 +25,13 @@ $(document).ready(function(){
 				$("#action").addClass("login");
 			}
 			else{
-				$("#action").html("Configure");
-				$("#action").removeClass("login");
-				$("#action").addClass("config");
+				if(core.nick() == room.owner){
+					$("#action").html("Configure");
+					$("#action").removeClass("login");
+					$("#action").addClass("config");
+				}else{
+					$("#action").hide();
+				}
 			}
 		}
 		if (message.type == "text" && message.to==stream) {

@@ -144,6 +144,9 @@ function message (m, conn) {
 	m.time = new Date().getTime();
 
 	if (m.origin) m.origin.ip = conn.socket.remoteAddress;
+	else{
+		m.origin = {gateway: "web", ip: conn.socket.remoteAddress, domain:"unknown"};
+	}
 	m.to = m.to || Object.keys(user.rooms);
 	
 	if(typeof m.to != "string" && m.to.length==0)
