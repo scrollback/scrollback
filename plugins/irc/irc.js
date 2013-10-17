@@ -28,16 +28,16 @@ module.exports = function(core){
 		});
 	});
 	init();
-	console.log("room: irc called");
 	core.on("room", function(room, callback) {
-		var i;
-		console.log("room: irc called");
+		var i=0,l;
 		if(room.type == "room") {
 			room.old.accounts && room.old.accounts.forEach(function(element) {
 				var u;
-				for (i in room.accounts) {
-					if(i.id == element.id)
-						return;
+				console.log("accounts",room.old.accounts, room.accounts);
+				if(room.accounts) {
+					for (i=0,l=room.accounts.length;i<l;i++ )
+						if(room.accounts[i].id == element.id) return;
+
 				}
 				u = url.parse(element.id);
 				clients.bot[u.host].part(u.hash);
