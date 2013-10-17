@@ -120,12 +120,11 @@ module.exports = function(data, callback) {
 	});
 };
 
-// accounts is an array of strings.
 function insertAccounts(data,callback){
 	var account, accountsQuery=" INSERT INTO `accounts` VALUES ", //?
 		accountValues=" (?,?,?,?) ",params=[], ids = [];
 	pool.get(function(err, db) {
-		if (err && callback) callback(err,res);
+		if (err && callback) {db.end(); callback(err,res);}
 		
 		data.accounts.forEach(function(element) {
 			var id = element.id, room = data.id, gateway;
@@ -151,6 +150,7 @@ function insertAccounts(data,callback){
 				});
 			}
 			else {
+				db.end();
 				if(callback) callback(err, data);
 			}
 			

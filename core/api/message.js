@@ -22,7 +22,9 @@ module.exports = function(message, callback) {
 		message.to.forEach(function(to) {
 			db.query("INSERT INTO `messages` SET `id`=?, `from`=?, `to`=?, `type`=?, `text`=?, "+
 				"`origin`=?, `time`=?, `ref`=?, `labels`= ?", [message.id, message.from, message.to, message.type, 
-				message.text,  JSON.stringify(message.origin), message.time, message.ref,message.labels[0]]);
+				message.text,  JSON.stringify(message.origin), message.time, message.ref,message.labels[0]],function(err, data) {
+					db.end();
+				});
 		});
 		//console.log("***** we are here!!! :) *********************");
 		/*db.query("SELECT * FROM `accounts` WHERE `room` IN (?)", [message.to], function(err, data) {
@@ -43,7 +45,6 @@ module.exports = function(message, callback) {
 			db.end();
 			
 		}); */
-		db.end();
 		return callback? callback(null, message): null;
 		//gateways.http.send(message, message.to);
 		//plugins.http.send(message, message.to);

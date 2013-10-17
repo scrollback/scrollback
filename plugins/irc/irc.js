@@ -13,6 +13,7 @@ var irc = require("irc"),
 	log = require("../../lib/logger.js"), fs = require("fs"),
 	jade = require("jade"),
 	crypto = require('crypto');
+var pool = require("../../core/data.js");
 
 
 var botNick=config.irc.nick, clients = {bot: {}}, users = {};
@@ -51,19 +52,22 @@ module.exports = function(core){
 		callback();
 	});
 	core.on("message" , function(message , callback) {
-		db.query("SELECT * FROM `accounts` WHERE `room` IN (?) AND `gateway`='irc'", [message.to], function(err, data) {
-			var i, l, name, list = [], u;
-			if(err) return callback(err);
-			for(i=0, l=data.length; i<l; i+=1) {
-				u = url.parse(data[i].id);
-				if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
-					addBot(data[i]);
+		pool.get(function(err, db) {
+			db.query("SELECT * FROM `accounts` WHERE `room` IN (?) AND `gateway`='irc'", [message.to], function(err, data) {
+				var i, l, name, list = [], u;
+				db.end();
+				if(err) return callback(err);
+				for(i=0, l=data.length; i<l; i+=1) {
+					u = url.parse(data[i].id);
+					if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
+						addBot(data[i]);
+					}
+					list.push(data[i].id);
 				}
-				list.push(data[i].id);
-			}
-			send(message, list);
+				send(message, list);
+			});
+			callback();
 		});
-		callback();
 	});
 };
 
@@ -100,15 +104,19 @@ function addBot(account) {
 
 function init() {
 	console.log("IRC accounts available");
-	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
-		if(err) throw "Cannot retrieve IRC accounts";
-		//db.end();
+	pool.get(function(err, db) {
+		db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
+			db.end();
 
-		function joinStuff() {
-			data.forEach(addBot);
-		}
-		
-		joinStuff();
+			if(err) throw "Cannot retrieve IRC accounts";
+			//db.end();
+
+			function joinStuff() {
+				data.forEach(addBot);
+			}
+			
+			joinStuff();
+		});
 	});
 	connect.init(users);
 }
