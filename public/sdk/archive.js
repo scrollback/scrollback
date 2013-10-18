@@ -29,7 +29,7 @@ $(document).ready(function(){
 					$("#action").html("Configure");
 					$("#action").removeClass("login");
 					$("#action").addClass("config");
-				}else if(room.owner) {
+				}else if(!room || !room.owner) {
 					$("#action").html("Claim");
 					$("#action").removeClass("login");
 					$("#action").addClass("config");
