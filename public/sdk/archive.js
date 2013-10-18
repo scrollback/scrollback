@@ -30,6 +30,7 @@ $(document).ready(function(){
 					$("#action").removeClass("login");
 					$("#action").addClass("config");
 				}else{
+						
 					$("#action").hide();
 				}
 			}
