@@ -57,11 +57,9 @@ var rejectable=function(message){
 	}
 	
 	if (checkRepetition(message,users[from].messages)) {
-		console.log("REP:message:"+message.text);
 		return true;
 	}
 	if (checkRepetition(message,users[from][room])) {
-		console.log("REP:message:"+message.to+":"+message.text);
 		return true;
 	}
 	

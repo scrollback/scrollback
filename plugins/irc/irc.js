@@ -99,7 +99,6 @@ function addBot(account) {
 }
 
 function init() {
-	console.log("IRC accounts available");
 	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
 		if(err) throw "Cannot retrieve IRC accounts";
 		//db.end();

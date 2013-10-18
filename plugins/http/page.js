@@ -193,8 +193,7 @@ exports.init = function(app) {
         if(data.id) {
             data.owner = user.id;
             core.room(data,function(err,data) {
-                console.log(err,data);
-                if(err) res.end(JSON.stringify(err));
+                if(err) res.end(JSON.stringify({error:err.message}));  
                 else res.end(JSON.stringify(data));
             });
         }

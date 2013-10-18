@@ -14,7 +14,7 @@ roomsApi({query:""}, function(err, data){
 		} catch(e) {
 			rooms[element.id].params = {};
 		}
-		console.log("Caching rooms", element.id);
+		log("Caching rooms", element.id);
 	});
 });
 

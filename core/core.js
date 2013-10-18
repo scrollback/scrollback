@@ -15,7 +15,7 @@ core.gateways = require("./gateways.js");
 core.message = function(m, cb) {
 	core.emit("message", m, function(err) {
 		if(err) {
-			console.log("Message rejected", err);
+			log("Message rejected", err);
 			return cb? cb(err,m): null;
 		}
 		if (m.user && m.type=="nick") {
@@ -36,7 +36,7 @@ core.room = function(o, cb) {
 			o.originalId = o.id;
 			core.emit('room', o, function(err) {
 				if(err) {
-					console.log("Room update rejected", err);
+					log("Room update rejected", err);
 					return cb? cb(err, o): null;
 				}
 				delete o.old;

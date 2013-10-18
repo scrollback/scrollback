@@ -129,7 +129,6 @@ block content
 					success: function(data) {
 						data = JSON.parse(data);
 						callback(data);
-						
 					}
 				});
 			}
@@ -142,10 +141,11 @@ block content
 
 					save(room,function(data) {
 						if(data.error){
-							alert(data.err);
+							alert(data.error || "Error in saving.");
 						}
 						else{
 							alert("Saved");
+							location.href = location.href.replace("/config","");
 						}
 					});
 				});
