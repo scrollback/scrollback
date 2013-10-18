@@ -1,16 +1,17 @@
 "use strict";
 
 var net= require('net');
+var log = require("../../lib/logger.js");
 var users = {},server;
 
 exports.init=function(){
 	var portPair, msg, user;
 	
 	server= net.createServer(function(connection){
-		console.log("Query from: "+connection.remoteAddress+":"+
+		log("Query from: "+connection.remoteAddress+":"+
 					connection.remotePort);
 		connection.on("data",function(data) {
-			console.log("Got request: "+data);
+			log("Got request: "+data);
 			data = data.toString();
 			if ( typeof data === "undefined" ||
 						data.length===0 ||
@@ -27,7 +28,7 @@ exports.init=function(){
 			} else {
 				msg=portPair+" : ERROR : NO-USER"+"\r\n";
 			}
-			console.log("sending Ident: "+msg);
+			log("sending Ident: "+msg);
 			connection.end(msg+"\r\n");
 		});
 	});
@@ -39,7 +40,7 @@ exports.init=function(){
 
 exports.register=function(localPort, remotePort,uid){
 	var id=localPort+","+remotePort;
-	console.log("registering: "+id);
+	log("registering: "+id);
 	users[id] = uid;
 };
 

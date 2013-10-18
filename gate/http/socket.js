@@ -151,6 +151,7 @@ function message (m, conn) {
  
 	m.origin.ip = conn.socket.remoteAddress;
 	m.to = m.to || Object.keys(user.rooms);
+	if(m.type == 'text') m.text = m.text || "";
 	
 	if(typeof m.to != "string" && m.to.length==0)
 		return;

@@ -105,7 +105,10 @@ block content
 						b
 							span Created
 					div.box.span6
-						span #{relDate(new Date(room.createdOn).getTime(), new Date().getTime())} ago
+						if(room.createdOn)
+							span #{relDate(new Date(room.createdOn).getTime(), new Date().getTime())} ago
+						else
+							span Not Yet
 	script(src='//code.jquery.com/jquery.min.js')
 	script.
 		var pluginPackager = [];
@@ -126,7 +129,6 @@ block content
 					success: function(data) {
 						data = JSON.parse(data);
 						callback(data);
-						
 					}
 				});
 			}
@@ -139,10 +141,11 @@ block content
 
 					save(room,function(data) {
 						if(data.error){
-							alert(data.err);
+							alert(data.error || "Error in saving.");
 						}
 						else{
 							alert("Saved");
+							location.href = location.href.replace("/config","");
 						}
 					});
 				});

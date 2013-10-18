@@ -1,5 +1,5 @@
 
-var pool = require("../data.js");
+var db = require("../data.js");
 
 
 module.exports = function(data,callback) {

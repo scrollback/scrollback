@@ -59,10 +59,13 @@ block content
 					h1
 						if user.indexOf("guest-") == 0
 							button#action.login.span12 Login
-						else if !roomOwner
+						else if !room.owner
 							button#action.config.span12 Claim
-						else if roomOwner == user
+						else if room.owner == user
 							button#action.config.span12 Configure
+			if data.length <= 1
+				div.container.intro
+					span.box.span12 This room doesnt have any messages. You can chat from this page using the text box below. Share the link with your friends. You can also embed a widget on your webpage using the script given below. Each room can have configurations to it, like adding the IRC accounts, enabling plugins. You have to login to configure any room.
 			div.container
 				div.timeRange.box.span12
 					if(scrollPrev)
@@ -71,8 +74,9 @@ block content
 					if(scrollNext)
 						div.nextButton.span4
 							a.navLink.nextButton(href="/#{query.to}/since/#{scrollNext}") Next
-					div.span5.message.timecontent
-						span.rangeText Showing #{relDate(data[0].time, data[data.length-1].time)} of conversation 
+					if data.length > 1
+						div.span5.message.timecontent
+							span.rangeText Showing #{relDate(data[0].time, data[data.length-1].time)} of conversation 
 				
 			#messageList.box.span12
 				- prevtime = 0
@@ -129,3 +133,4 @@ block content
 		var stream="#{query.to}";
 		var prevtime=#{prevtime};
 		var isLastPage= #{isLastPage};
+		var room = !{JSON.stringify(room)};

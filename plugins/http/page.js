@@ -91,11 +91,11 @@ exports.init = function(app) {
             
             console.log("MESSAGES GAVE ME ", m.length);
             
-            if (m[0].type == 'result-start') {
+            if (m[0].type == 'result-start' && m[1]) {
                 responseObj.scrollPrev = new Date(m[1].time).toISOString();
             }
             
-            if (m[m.length-1].type == 'result-end') {
+            if (m[m.length-1] && m[m.length-1].type == 'result-end') {
                 responseObj.scrollNext = new Date(m[m.length-1].time).toISOString();
             }
             
@@ -115,7 +115,7 @@ exports.init = function(app) {
             responseObj.relDate = relDate;
             core.room(params[0],function(err, room){
                 if(err) res.render("error", err);
-                responseObj.roomOwner = room.owner;
+                responseObj.room = room;
                 responseObj.user = user.id;
                 res.render("archive",responseObj);
             });
@@ -193,8 +193,7 @@ exports.init = function(app) {
         if(data.id) {
             data.owner = user.id;
             core.room(data,function(err,data) {
-                console.log(err,data);
-                if(err) res.end(JSON.stringify(err));
+                if(err) res.end(JSON.stringify({error:err.message}));  
                 else res.end(JSON.stringify(data));
             });
         }

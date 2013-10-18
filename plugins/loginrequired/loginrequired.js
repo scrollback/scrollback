@@ -16,7 +16,6 @@ function loadRoomNames(){
                 roomBuffer[roomName]=true;
             }
         });
-        console.log("LOGIN ",roomBuffer);
         roomNames = roomBuffer;
     });
 }
@@ -32,7 +31,6 @@ module.exports = function(coreObject) {
     core=coreObject;
     fs.readFile(__dirname + "/loginrequired.jade", "utf8", function(err, data){
         if(err) throw err;
-        //this is a function object. 
         pluginContent = jade.compile(data,  {basedir: process.cwd()+'/plugins/http/views/'});
         core.setConfigUi("loginrequired", function(object) {
             return pluginContent(object);

@@ -44,7 +44,6 @@ exports.watch = function(obj, cb) {
 	if(Object.keys(watchers[obj.sid]).length > 4)
 		return;
 	watchers[obj.sid][obj.cid] = cb;
-	console.log(watchers);
 }
 
 exports.unwatch = function(obj) {

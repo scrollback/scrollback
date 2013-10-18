@@ -66,7 +66,6 @@ function init(data, conn) {
 	});
 
 	session.watch({sid: sid, cid: conn.socket.id}, function(sess) {
-		log("The session has changed", sid, conn.socket.id,sess);
 		conn.session = sess;
 	});
 }
@@ -145,6 +144,9 @@ function message (m, conn) {
 	m.time = new Date().getTime();
 
 	if (m.origin) m.origin.ip = conn.socket.remoteAddress;
+	else{
+		m.origin = {gateway: "web", ip: conn.socket.remoteAddress, domain:"unknown"};
+	}
 	m.to = m.to || Object.keys(user.rooms);
 	
 	if(typeof m.to != "string" && m.to.length==0)
@@ -182,6 +184,7 @@ function message (m, conn) {
 	function sendMessage() {
 		core.message(m, function (err, m) {
 			var i;
+			console.log("Message", m);
 			if(m.type == 'nick') {
 				if(m.user) {
 					console.log("m.user is", m.user);
@@ -214,6 +217,7 @@ function message (m, conn) {
 	if(m.type=="nick" && ( m.ref || m.user)) {
 		tryingNick = m.ref || m.user.id;
 		core.room(((tryingNick.indexOf("guest-")==0)? tryingNick.substring(6) : tryingNick),function(err,data){
+			console.log(err);
 			if(err) return conn.send('error', {id: m.id, message: err.message});
 			console.log("Result of core on dup check",data);
 			if((data.length>0) || data.id) return conn.send('error', {id: m.id, message: "DUP_NICK"});
