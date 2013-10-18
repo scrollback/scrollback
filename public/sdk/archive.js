@@ -29,8 +29,11 @@ $(document).ready(function(){
 					$("#action").html("Configure");
 					$("#action").removeClass("login");
 					$("#action").addClass("config");
+				}else if(room.owner) {
+					$("#action").html("Claim");
+					$("#action").removeClass("login");
+					$("#action").addClass("config");
 				}else{
-						
 					$("#action").hide();
 				}
 			}
