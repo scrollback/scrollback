@@ -1,18 +1,11 @@
-
 var users={};
 
 module.exports = function(core) {
-	init();
 	core.on('message', function(message, callback) {
 		if (message.origin && message.origin.gateway == "irc") return callback();
 		if(rejectable(message)) callback(new Error("REPEATATIVE"));
 		else callback();
 	});
-};
-
-
-var init=function(){
-	//nothing as of now... 
 };
 
 
@@ -64,11 +57,9 @@ var rejectable=function(message){
 	}
 	
 	if (checkRepetition(message,users[from].messages)) {
-		console.log("REP:message:"+message.text);
 		return true;
 	}
 	if (checkRepetition(message,users[from][room])) {
-		console.log("REP:message:"+message.to+":"+message.text);
 		return true;
 	}
 	

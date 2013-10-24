@@ -7,7 +7,9 @@ module.exports = function(core) {
 		var assertion = message.browserid;
 		delete message.browserid;
 		
+
 		if(message.type !== 'nick') return callback();
+		
 		if (message.origin && message.origin.gateway=="irc") return callback();
 		
 		if (message.ref == 'guest-') {
@@ -16,28 +18,27 @@ module.exports = function(core) {
 		}
 		
 		if (!assertion && message.user) {
+			//message.ref = message.user.id;
 			if (!validateNick(message.user.id)) {
 				message.user.id = message.user.originalId;
 				return callback(new Error("INVALID_NICK"));
 			}
 			return core.room(message.user.id,function(err,room) {
 				if (err) return callback(err);
-				if (room.length && message.user.originalId != message.user.id) {
+				if ((room.id) && message.user.originalId != message.user.id) {
 					message.user.id = message.user.originalId;
 					return callback(new Error("DUP_NICK"));
 				} else {
-					
+					message.user.type = "user";
 					return core.room(message.user,function(err,room) {
 						if (callback) {
+							message.ref = room.id;
 							callback(err,message);	
 						}
-						return;
 					});	
 				}
 			});
 		}
-		
-		
 		
 		if(!assertion) {
 			// If there is no authentication info, make sure the new nick is a guest.
@@ -49,7 +50,7 @@ module.exports = function(core) {
 			assertion: assertion,
 			audience: 'https://'+config.http.host+":"+config.http.https.port
 		}}, function(err, res, body) {
-			var accountId;
+			var account;
 			if(err) return callback(new Error("AUTH_FAIL_NETWORK/" + err.message));
 			try {
 				body = JSON.parse(body);
@@ -59,15 +60,19 @@ module.exports = function(core) {
 			if(body.status !== 'okay') {
 				return callback(new Error("AUTH_FAIL/" + body.reason));
 			}
-			accountId = "mailto:" + body.email;
-			core.rooms({accounts: [accountId]}, function(err, data) {
+			account ={
+				id: "mailto:" + body.email,
+				gateway: "mailto",
+				params: ""
+			};
+			core.rooms({accounts: [account]}, function(err, data) {
 				if(err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
 				if(data.length === 0) {
-					message.user = {accounts: [accountId]};
+					message.user = {accounts: [account]};
 					return callback(new Error("AUTH_UNREGISTERED"));
 				}
 				message.user = data[0];
-				message.user.accounts=[accountId];
+				message.user.accounts=[account];
 				message.ref = data[0].id;
 				return callback();
 			});

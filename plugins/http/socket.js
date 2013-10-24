@@ -26,6 +26,7 @@ sock.on('connection', function (socket) {
 		try { d = JSON.parse(d); log ("Socket received ", d); }
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 		
+		
 		switch(d.type) {
 			case 'init': init(d.data, conn); break;
 			case 'message': message(d.data, conn); break;
@@ -65,7 +66,6 @@ function init(data, conn) {
 	});
 
 	session.watch({sid: sid, cid: conn.socket.id}, function(sess) {
-		log("The session has changed", sid, conn.socket.id,sess);
 		conn.session = sess;
 	});
 }
@@ -84,11 +84,13 @@ function close(conn) {
 
 function userAway(user, room, conn) {
 	if(rConns[room]) rConns[room].splice(rConns[room].indexOf(conn), 1);
-	conn.rooms.splice(conn.rooms.indexOf(room), 1);	
+	conn.rooms.splice(conn.rooms.indexOf(room), 1);
+	
+	if(user.rooms[room]) user.rooms[room]--;
 	conn.save();
 	setTimeout(function() {
 		var user = conn.session.user;
-		if (!(user.rooms[room]-1)) {
+		if (!user.rooms[room]) {
 			delete user.rooms[room];
 			core.message({ type: 'away', from: user.id, to: room,
 				time: new Date().getTime(), text: "" , origin : {gateway : "web", location : "", ip :  conn.socket.remoteAddress}});
@@ -99,8 +101,6 @@ function userAway(user, room, conn) {
 			conn.save();
 		}
 		else{
-			user.rooms[room]--;
-			conn.save();
 			log("User still has some active windows.",user);
 		}
 		session.unwatch({sid: conn.sid, cid: conn.socket.id});
@@ -138,20 +138,16 @@ function messages (query, conn) {
 
 function message (m, conn) {
 	if(!conn.sid) return;
-	var user = conn.session.user;
+	var user = conn.session.user, tryingNick;
 	
 	m.from = user.id;
 	m.time = new Date().getTime();
-	if(!m.origin) {
-		m.origin = {
-			gateway : "web",
-			domain: "unknown"
-		};
+
+	if (m.origin) m.origin.ip = conn.socket.remoteAddress;
+	else{
+		m.origin = {gateway: "web", ip: conn.socket.remoteAddress, domain:"unknown"};
 	}
- 
-	m.origin.ip = conn.socket.remoteAddress;
 	m.to = m.to || Object.keys(user.rooms);
-	if(m.type == 'text') m.text = m.text || "";
 	
 	if(typeof m.to != "string" && m.to.length==0)
 		return;
@@ -164,6 +160,13 @@ function message (m, conn) {
 		if(!userAway(user, m.to, conn)) return; 
 		// it returns false if the away message for this user is not to be sent yet
 	} else if(m.type == 'nick') {
+		//validating nick name on server side 
+		console.log("checking for nick validity:" , m.ref);
+		if(m.ref && !validateNick(m.ref.substring(6))){
+			if(m.ref !== "guest-")
+				return conn.send('error', {id:m.id , message: "INVALID_NAME"});
+		}
+
 		console.log("checking dup nick",m.from,m.type);
 		if(m.ref && users[m.ref] )
 			return conn.send('error', {id: m.id, message: "DUP_NICK"});
@@ -177,10 +180,11 @@ function message (m, conn) {
 		}
 	}
 	
-
+	console.log("No dup so far.....");
 	function sendMessage() {
 		core.message(m, function (err, m) {
 			var i;
+			console.log("Message", m);
 			if(m.type == 'nick') {
 				if(m.user) {
 					console.log("m.user is", m.user);
@@ -210,10 +214,13 @@ function message (m, conn) {
 			}
 		});
 	}
-	if(m.type=="nick" && m.ref) {
-		core.room(((m.ref.indexOf("guest-")==0)? m.ref.substring(6) : m.ref),function(err,data){
+	if(m.type=="nick" && ( m.ref || m.user)) {
+		tryingNick = m.ref || m.user.id;
+		core.room(((tryingNick.indexOf("guest-")==0)? tryingNick.substring(6) : tryingNick),function(err,data){
+			console.log(err);
 			if(err) return conn.send('error', {id: m.id, message: err.message});
-			if(data.length>0) return conn.send('error', {id: m.id, message: "DUP_NICK"});
+			console.log("Result of core on dup check",data);
+			if((data.length>0) || data.id) return conn.send('error', {id: m.id, message: "DUP_NICK"});
 			sendMessage();
 		});
 	} else {
@@ -242,6 +249,11 @@ function rooms(query, conn) {
 		}
 		conn.send('rooms', data);
 	});
+}
+
+function validateNick(nick){
+			if (nick.indexOf("guest-")==0) return false;
+			return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
 }
 
 // ----- Outgoing send ----

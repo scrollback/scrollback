@@ -1,6 +1,8 @@
 var users={};
 var config = require('../../config.js');
 
+
+
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
 		var limiter;

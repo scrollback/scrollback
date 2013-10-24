@@ -17,6 +17,7 @@ exports.init = function() {
 	app.use(session.parser);
 	app.use(express.query());
 	app.use(express.bodyParser());
+	
 	app.use(express["static"](__dirname + "/../../" + config.http.home));
 	
 	srv = http.createServer(app);

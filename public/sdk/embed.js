@@ -1,8 +1,5 @@
 "use strict";
-var streams = {},
-	$ = function(id) {
-		return document.getElementById(id);
-	}, $$ = getByClass;
+var streams = {}, $$ = getByClass;
 
 var unconfirmed = [], initialized = false;
 
@@ -21,7 +18,7 @@ core.on('connected', function() {
 		input.disabled = false; 
 	});
 	
-	scrollback.streams.forEach(function(room) {
+	scrollback && scrollback.streams && scrollback.streams.forEach(function(room) {
 		if(streams[room]) streams[room].notify("And... we're back.");
 	});
 });
@@ -49,7 +46,7 @@ function init() {
 		themes[scrollback.theme]: themes.light
 	);
 	addEvent(window, 'resize', Stream.position);
-	scrollback.streams.forEach(function(id) {
+	scrollback && scrollback.streams && scrollback.streams.forEach(function(id) {
 		var stream = Stream.get(id);
 		if (!stream.initialized) {
 			if(scrollback.minimized === false) stream.show();
@@ -204,7 +201,7 @@ Stream.prototype.hide = function() {
 
 function login (options) {
 	options = options || {};
-	if(Stream.text&&Stream.prevText){
+	if(options.requireAuth && Stream.text && Stream.prevText){
 		Stream.text.value=Stream.prevText;//added prev text value on TextField
 		delete Stream.text;
 		delete Stream.prevText;

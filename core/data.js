@@ -8,3 +8,17 @@ exports.get =function(cb){
   pool.getConnection(cb);  
 };
 
+
+exports.query = function(query, params, callback) {
+    pool.getConnection(function(err, conn) {
+        if(err && callback) return callback(err);
+        conn.query(query, params, function(err, data) {
+            if(conn.release)
+            	conn.release();
+            else
+            	conn.end();
+            callback && callback(err, data);
+        });
+    });
+};
+

@@ -7,31 +7,66 @@ core.on("connected",function(){
 	core.enter(stream);
 });
 
-
-DomReady.ready(function(){
+$(document).ready(function(){
 	var messageBox = document.getElementById("messageBox");
 	var nickBox = document.getElementById("nick");
 	var messageList = document.getElementById("messageList");
+	$("#action").click(function(event){
+		$(this).hasClass("login") && login();
+		$(this).hasClass("config") && (location.href = location.protocol+"//"+location.host+"/"+stream+"/config");
+	});
 	core.on("message", function(message){
 		nickBox.value=core.nick().replace(/guest-/g,'');
 		var messageItem;
+		if(message.type == "nick"){
+			if(nick.indexOf("guest-")===0) {
+				$("#action").html("Login");
+				$("#action").removeClass("config");
+				$("#action").addClass("login");
+			}
+			else{
+				if(core.nick() == room.owner){
+					$("#action").html("Configure");
+					$("#action").removeClass("login");
+					$("#action").addClass("config");
+				}else if(!room || !room.owner) {
+					$("#action").html("Claim");
+					$("#action").removeClass("login");
+					$("#action").addClass("config");
+				}else{
+					$("#action").hide();
+				}
+			}
+		}
 		if (message.type == "text" && message.to==stream) {
+			var isMe=false;//if message start with "/me"
+			if(message.text.indexOf("/me ")==0){
+				message.text=message.text.replace("/me",message.from.replace(/guest-/,''));
+				isMe=true;
+			}
 			scrollback.debug && console.log("notify-",isLastPage);
 			if (isLastPage) {
-				messageItem = JsonML.parse(["div", {"class": "item container"},
-					["div", {"class": "box span3"},"[" + message.from.replace(/guest-/g,'') + "]"],
-					["div", {"class": "box span5"},message.text],
-					["div", {"class": "box span4 time"},relDate(prevtime,message.time) + " later"]
-				]);
+				if(isMe){
+					messageItem = JsonML.parse(["div", {"class": "item container"},
+						["div", {"class": "box span8"},"["+message.text+"]"],
+						["div", {"class": "box span4 time"},relDate(prevtime,message.time) + " later"]
+					]);	
+				}
+				else{
+					messageItem = JsonML.parse(["div", {"class": "item container"},
+						["div", {"class": "box span3"},"[" + message.from.replace(/guest-/g,'') + "]"],
+						["div", {"class": "box span5"},message.text],
+						["div", {"class": "box span4 time"},relDate(prevtime,message.time) + " later"]
+					]);
+				}
+				
 				messageList.appendChild(messageItem);
 				prevtime = message.time;
-	
 				messageBox.scrollIntoView(false);
 			}
 			else  {
 				var aelement;
 				messageItem = document.getElementById("notificationBar");
-				
 				if (!messageItem) {
 					messageItem=document.createElement("div");
 					messageItem.setAttribute("id","notificationBar");
@@ -144,3 +179,4 @@ function relDate (input, reference){
 	};
 	return "Long, long";
 }
+

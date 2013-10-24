@@ -1,0 +1,33 @@
+block append styles
+	script.
+		$(document).ready(function(){
+			var id = "!{id}";
+			pluginPackager.push(function(room) {
+				var status = $("input:radio[name=isLoginEnable]:checked").val()=="true"? true:false;
+				room.params = room.params || {};
+				console.log("loginrequired",room.params.loginrequired, status);
+				room.params.loginrequired = status;
+			});
+		});
+
+block content
+	div.pluginBlock
+		div.container.heading
+			h2	Login Required
+		div.container.clearfix
+			div#result.box.span12.row(style="display:none")
+			div.box.span12.row
+				span Mandate user login to post
+			div.box.span12.row
+				if params && params.loginrequired
+					input(type="radio", id="enableLoginReq", value="true", name="isLoginEnable", class="radio",checked=true)
+					label(for="enableLoginReq",class="radioLabel") Yes
+					input(type="radio", id="disableLoginReq", value="false", name="isLoginEnable", class="radio")
+					label(for="disableLoginReq",class="radioLabel") No
+				else
+					input(type="radio", id="enableLoginReq", value="true", name="isLoginEnable", class="radio")
+					label(for="enableLoginReq",class="radioLabel") Yes
+					input(type="radio", id="disableLoginReq", value="false", name="isLoginEnable", class="radio",checked=true)
+					label(for="disableLoginReq",class="radioLabel") No
+		div.container
+			p.break.after Enabling this will prevent Guest users from posting in your community.

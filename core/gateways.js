@@ -5,7 +5,7 @@ function start(name) {
 }
 
 process.nextTick(function() {
-	exports.irc = start("irc");
-	exports.http = start("http");
+	//exports.irc = start("irc");
+	//exports.http = start("http");
 	exports.facebook=start("facebook");
 });

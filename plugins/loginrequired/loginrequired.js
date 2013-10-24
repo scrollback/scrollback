@@ -1,24 +1,23 @@
 var log = require("../../lib/logger.js");
 var fs = require("fs");
-
+var jade = require("jade");
+var core;
 var roomNames = {};
 
 function loadRoomNames(){
-            log("Re-loading room names which require login!");
-            fs.readFile(__dirname + "/roomNames.txt", "utf-8", function(err, data){
-            var roomBuffer = {};
-            if(err) throw err;
-            
-            data.split("\n").forEach(function(roomName){
-                if(roomName){
-                    roomName = roomName.toLowerCase().trim();
-                    roomBuffer[roomName]=true;
-                }
-            });
-            console.log("LOGIN ",roomBuffer);
-            roomNames = roomBuffer;
+    log("Re-loading room names which require login!");
+    fs.readFile(__dirname + "/roomNames.txt", "utf-8", function(err, data){
+        var roomBuffer = {};
+        if(err) throw err;
+        
+        data.split("\n").forEach(function(roomName){
+            if(roomName){
+                roomName = roomName.toLowerCase().trim();
+                roomBuffer[roomName]=true;
+            }
+        });
+        roomNames = roomBuffer;
     });
-
 }
 
 var init = function (){
@@ -26,21 +25,25 @@ var init = function (){
     setInterval(loadRoomNames,60*60*1000);
 }
 
-loginRequired = function(r){
-    console.log("LOGIN asking for ",r);
-    if(roomNames[r]){
-         log("Login is required for this room:" + r);
-         return true;
-    }
-    return false;
-};
-
-module.exports = function(core){
+module.exports = function(coreObject) {
     init();
+    var pluginContent = "";
+    core=coreObject;
+    fs.readFile(__dirname + "/loginrequired.jade", "utf8", function(err, data){
+        if(err) throw err;
+        pluginContent = jade.compile(data,  {basedir: process.cwd()+'/plugins/http/views/'});
+        core.setConfigUi("loginrequired", function(object) {
+            return pluginContent(object);
+        });
+    });
     core.on("message", function(message, callback){
         if (message.origin && message.origin.gateway == "irc") return callback();
-        if(message.type == "text" && message.from.indexOf("guest-")==0 && loginRequired(message.to)){
-              callback(new Error("AUTH_REQ_TO_POST")); 
+        if(message.type == "text" && message.from.indexOf("guest-")==0) {
+            core.room(message.to,function(err, data) {
+                if(data.params && data.params.loginrequired)
+                    callback(new Error("AUTH_REQ_TO_POST"));
+                else callback();
+            });
         }
         else callback();
     });

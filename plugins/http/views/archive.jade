@@ -8,10 +8,27 @@ block styles
 		.scrollback-embed{
 			display: none !important;
 		}
-
+		.link{
+			font-size: 0.6em;
+			margin: 2em;
+			text-decoration: none;
+			color: #222;
+		}
+		.link:hover{
+			text-decoration: underline;
+		}
+		#action{
+			float: right;
+			height: 2em;
+			border: none;
+			line-height: 2em;
+			background-color: black;
+			padding:0px;
+		}
 block append scripts
 	script(type='text/javascript')
 		window.scrollback = {host: 'http://' + location.host};
+	script(src="//code.jquery.com/jquery.min.js")
 	script(src="/sdk/sockjs.js")
 	script(src="/sdk/addEvent.js")
 	script(src="/sdk/addStyle.js")
@@ -25,18 +42,30 @@ block append scripts
 	script(src="/sdk/cache.js")
 	script(src="/sdk/client.js")
 	script(src="/sdk/css.js")
-	script(src="/sdk/archive.js")
 	script(src="/sdk/dom.js")
 	script(src="/sdk/embed.js")
 	script(src="/sdk/dialog.js")
 	script(src="/sdk/render.js")
-	script(src="//code.jquery.com/jquery.min.js")
+	script(src="/sdk/archive.js")
+	
 	
 block content
 	.container
 		.box.span12.container
-			h1.box.span12 #{query.title} archives (#{relDate(data[0].time)} ago)
-				a.link(href="/#{query.to}/config") Configure Room
+			div.container
+				div.box.span10
+					h1.box.span10 #{query.title} archives (#{relDate(data[0].time)} ago)
+				div.box.span2
+					h1
+						if user.indexOf("guest-") == 0
+							button#action.login.span12 Login
+						else if !room.owner
+							button#action.config.span12 Claim
+						else if room.owner == user
+							button#action.config.span12 Configure
+			if data.length <= 1
+				div.container.intro
+					span.box.span12 This room doesnt have any messages. You can chat from this page using the text box below. Share the link with your friends. You can also embed a widget on your webpage using the script given below. Each room can have configurations to it, like adding the IRC accounts, enabling plugins. You have to login to configure any room.
 			div.container
 				div.timeRange.box.span12
 					if(scrollPrev)
@@ -45,8 +74,9 @@ block content
 					if(scrollNext)
 						div.nextButton.span4
 							a.navLink.nextButton(href="/#{query.to}/since/#{scrollNext}") Next
-					div.span5.message.timecontent
-						span.rangeText Showing #{relDate(data[0].time, data[data.length-1].time)} of conversation 
+					if data.length > 1
+						div.span5.message.timecontent
+							span.rangeText Showing #{relDate(data[0].time, data[data.length-1].time)} of conversation 
 				
 			#messageList.box.span12
 				- prevtime = 0
@@ -54,8 +84,11 @@ block content
 					if message && message.type && message.type=="text"
 						.item.container
 							div.box.span12
-								div.box.span3 [#{message.from.replace('guest-','')}]
-								div.box.span5.message #{message.text}
+								if message.text.indexOf("/me ") != 0
+									div.box.span3 [#{message.from.replace('guest-','')}]
+									div.box.span5.message #{message.text}
+								else
+									div.box.span8 [#{message.text.replace("/me",message.from.replace('guest-',''))}]
 								if(prevtime)
 									div.box.span4.time #{relDate(prevtime, message.time)} later
 								else
@@ -67,7 +100,7 @@ block content
 					div.box.span12
 						form#messageForm
 							.span3.floatLeft
-								input#nick.formItem(type="text")
+								input#nick.formItem(type="text",readonly=true)
 							.span9.floatLeft
 								input#messageBox.formItem(type="text")
 			div.timeRange.box.span12
@@ -100,3 +133,4 @@ block content
 		var stream="#{query.to}";
 		var prevtime=#{prevtime};
 		var isLastPage= #{isLastPage};
+		var room = !{JSON.stringify(room)};
