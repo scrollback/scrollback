@@ -9,6 +9,7 @@ module.exports = function(core) {
 		var err;
 		if(!r.id || !r.type)
 			return callback(new Error("ROOM_ARG_FAIL"));
+		if(!validateRoom(r.id)) return callback(new Error("Room name must be at least 5 characters in length and contain no special characters or whitespaces!"));
 		if(r.accounts) {
 			for(i=0,l=r.accounts.length; i<l;i++) {
 				try {
@@ -24,3 +25,7 @@ module.exports = function(core) {
 		callback();
 	});
 };
+
+function validateRoom(room){
+			return (room.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
+}

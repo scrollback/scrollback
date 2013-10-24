@@ -115,6 +115,7 @@ exports.init = function(app) {
             responseObj.relDate = relDate;
             core.room(params[0],function(err, room){
                 if(err) res.render("error", err);
+                if(room.id && !validateRoom(room.id)) return callback(new Error("Room name must be at least 5 characters in length and contain no special characters or whitespaces!"));
                 responseObj.room = room;
                 responseObj.user = user.id;
                 res.render("archive",responseObj);
@@ -146,6 +147,7 @@ exports.init = function(app) {
         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
         core.room(roomId, function(err, room) {
             if(err) res.end(err);
+            if(room.id && !validateRoom(room.id)) return callback(new Error("Room name must be at least 5 characters in length and contain no special characters or whitespaces!"));
             if(!room.id) {
                 room = {
                     type: "room",
@@ -247,4 +249,8 @@ var relDate= function (input, reference){
         }
     };
     return "Long, long";
+}
+
+function validateRoom(room){
+            return (room.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
 }

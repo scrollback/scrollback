@@ -64,6 +64,7 @@ core.setConfigUi = function(plugin, pluginConfig) {
 
 
 core.getConfigUi = function(plugin) {
+	console.log(plugin);
 	if(plugins[plugin])
 		return plugins[plugin];
 	else
