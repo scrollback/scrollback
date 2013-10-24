@@ -1,7 +1,11 @@
 "use strict";
 
 var express = require("express"),
-	store = new express.session.MemoryStore(),
+	store = new RedisStore({
+		host: 'localhost',
+		port: 6379,
+		db: 0,
+	}),
 	signature = require("express/node_modules/cookie-signature"),
 	cookie = require("cookie"),
 	guid = require("../../lib/guid.js"),
@@ -9,6 +13,7 @@ var express = require("express"),
 	_get = store.get,
 	key = "scrollback_sessid",
 	secret = "ertyuidfghjcrtyujwsvokmdf",
+
 	watchers = {};
 	
 function initUser() {

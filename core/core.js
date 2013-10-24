@@ -1,6 +1,7 @@
 "use strict";
 
 var config = require('../config.js');
+var redisProxy = require('./redisProxy.js');
 var message = require('./api/message.js');
 var room = require('./api/room.js');
 var plugins = {};
@@ -50,6 +51,12 @@ core.rooms = require('./api/rooms.js');
 core.accounts = require('./api/accounts.js');
 core.messages = require("./api/messages.js");
 
+
+core.occupants = function(roomId, callback) {
+	redisProxy.smembers(roomId, function(err, data){
+		callback(err, data);
+	});
+};
 core.setConfigUi = function(plugin, pluginConfig) {
 	plugins[plugin] = pluginConfig;
 	return pluginConfig;

@@ -27,7 +27,10 @@
     "jade": "0.x",
     "request": "x.x",
     "limiter": "x",
-    "cookie": "x"
+    "cookie": "x",
+    "redis": "x",
+    "connect-redis":"x",
+    "generic-pool":"X"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

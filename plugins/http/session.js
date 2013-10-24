@@ -1,7 +1,13 @@
 "use strict";
+var config = require("../../config.js");
 
 var express = require("express"),
-	store = new express.session.MemoryStore(),
+	RedisStore = require('connect-redis')(express),
+	store =new RedisStore({
+	    host: config.redis.host,
+	    port: config.redis.port,
+	    db: config.redis.db
+	}),
 	signature = require("express/node_modules/cookie-signature"),
 	cookie = require("cookie"),
 	guid = require("../../lib/guid.js"),
@@ -33,23 +39,8 @@ var set = exports.set = function(sid, sess, cb) {
 	var i;
 	unsign(sid, function(id) {
 		store.set(id, sess);
-		if(watchers[sid]) for(i in watchers[sid]) {
-			watchers[sid][i](sess);
-		}
 	});
 };
-
-exports.watch = function(obj, cb) {
-	if(!watchers[obj.sid]) watchers[obj.sid] = {};
-	if(Object.keys(watchers[obj.sid]).length > 4)
-		return;
-	watchers[obj.sid][obj.cid] = cb;
-}
-
-exports.unwatch = function(obj) {
-	if(watchers[obj.sid] && watchers[obj.sid][obj.cid])
-		delete watchers[obj.sid][obj.cid];
-}
 
 var exparse = express.session({
 	secret: secret,
