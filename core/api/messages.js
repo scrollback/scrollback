@@ -82,7 +82,6 @@ module.exports = function(options, callback) {
 				}
 				element.origin = originObject;
 			}
-			console.log(element);
 			if (element.origin && element.origin.gateway == "web") delete element.origin.location;
 		});
 		
