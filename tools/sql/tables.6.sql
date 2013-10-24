@@ -1,6 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.32, for debian-linux-gnu (i686)
+CREATE DATABASE  IF NOT EXISTS `scrollback` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `scrollback`;
+-- MySQL dump 10.13  Distrib 5.5.32, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: scrollback
+-- Host: 127.0.0.1    Database: scrollback
 -- ------------------------------------------------------
 -- Server version	5.5.32-0ubuntu0.13.04.1
 
@@ -26,8 +28,27 @@ CREATE TABLE `accounts` (
   `id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `room` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `gateway` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `params` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `members`
+--
+
+DROP TABLE IF EXISTS `members`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `members` (
+  `user` varchar(255) NOT NULL DEFAULT '',
+  `room` varchar(255) NOT NULL DEFAULT '',
+  `joinedOn` bigint(20) DEFAULT NULL,
+  `partedOn` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`user`,`room`),
+  KEY `in_userId` (`user`),
+  KEY `in_roomId` (`room`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,6 +67,7 @@ CREATE TABLE `messages` (
   `time` bigint(20) DEFAULT NULL,
   `ref` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `origin` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `labels` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `type` (`type`),
   KEY `from` (`from`),
@@ -53,7 +75,7 @@ CREATE TABLE `messages` (
   KEY `time` (`time`),
   KEY `ref` (`ref`),
   KEY `origin` (`origin`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='	';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -86,16 +108,4 @@ CREATE TABLE `rooms` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-09-12 21:33:58
-/* table 3up4*/
-ALTER TABLE `scrollback`.`accounts` ADD COLUMN `params` TEXT NULL AFTER `gateway`;
-UPDATE `scrollback`.`messages` SET `from`=CONCAT('guest-', `from`);
-/*table 4 up 5*/
-alter table messages add labels varchar(255);
-/*table 5 up 6 */
-CREATE TABLE scrollback.members (`user` varchar(255), room varchar(255),
-	joinedOn bigint(20), partedOn bigint(20),
-	PRIMARY KEY (`user`,`room`)
-);
-CREATE INDEX in_userId on scrollback.members(`user`);
-CREATE INDEX in_roomId on scrollback.members(`room`);
+-- Dump completed on 2013-10-24 14:41:10
