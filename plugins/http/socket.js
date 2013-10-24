@@ -16,7 +16,7 @@ var sockjs = require("sockjs"),
 	guid = require("../../lib/guid.js");
 
 var rConns = {}, users = {};
-
+var pid = guid(8);
 var sock = sockjs.createServer();
 
 sock.on('connection', function (socket) {
@@ -48,63 +48,69 @@ exports.init = function (server) {
 };
 
 function init(data, conn) {
-	var user, sid = data.sid, nick = data.nick;
+	var user, sid = data.sid, nick = data.nick, i;
 	
-	session.get({sid:sid, suggestedNick:data.nick}, function(err, sess) {
+	session.get({ sid:sid, suggestedNick:data.nick }, function(err, sess) {
+		var rooms = sess.user.rooms;
 		console.log("RETRIEVED SESSION", sess);
 		conn.sid = sid;
 		conn.rooms = [];
-		conn.session = sess;
-		conn.save = function() { session.set(conn.sid, conn.session); };
+		if(sess.pid !== pid) {
+			sess.pid = pid;
+			for(i in rooms) {
+				if(rooms.hasOwnProperty(i)) rooms[i] = 0;
+			}
+			console.log("updated SESSION", sess);
+			session.set(conn.sid, sess);
+		}
 		conn.send('init', {
 			sid: sess.cookie.value, user: sess.user,
 			clientTime: data.clientTime,
 			serverTime: new Date().getTime()
 		});
-
-		conn.save();
-	});
-
-	session.watch({sid: sid, cid: conn.socket.id}, function(sess) {
-		conn.session = sess;
 	});
 }
 
 function close(conn) {
 	if(!conn.sid) return;
-	var user = conn.session.user;
-	
-	conn.rooms.forEach(function(room) {
-		log("Closed connection, removing", user.id, room);
-		userAway(user, room, conn);
-	});
 
-	conn.save();
+	session.get({sid: conn.sid}, function(err, sess) {
+		if(err) {
+			log("Couldn't find session to close.");
+			return;
+		}
+		var user = sess.user;
+		
+		conn.rooms.forEach(function(room) {
+			log("Closed connection, removing", user.id, room);
+			userAway(user, room, conn);
+		});
+		session.set(conn.sid, sess);
+	});
 }
 
 function userAway(user, room, conn) {
 	if(rConns[room]) rConns[room].splice(rConns[room].indexOf(conn), 1);
 	conn.rooms.splice(conn.rooms.indexOf(room), 1);
-	
-	if(user.rooms[room]) user.rooms[room]--;
-	conn.save();
 	setTimeout(function() {
-		var user = conn.session.user;
-		if (!user.rooms[room]) {
-			delete user.rooms[room];
-			core.message({ type: 'away', from: user.id, to: room,
-				time: new Date().getTime(), text: "" , origin : {gateway : "web", location : "", ip :  conn.socket.remoteAddress}});
-			if(!Object.keys(user.rooms).length) {
-				delete users[user.id];
+		session.get({sid: conn.sid}, function(err, sess) {
+			var user = sess.user;
+			if (typeof user.rooms[room] !== "undefined" && user.rooms[room]<=1) {
+				delete user.rooms[room];
+				core.message({ type: 'away', from: user.id, to: room,
+					time: new Date().getTime(), text: "" , origin : {gateway : "web", location : "", ip :  conn.socket.remoteAddress}});
+				if(!Object.keys(user.rooms).length) {
+					delete users[user.id];
+				}
+				console.log("saving the session ",user);
 			}
-			console.log("saving the session ",user);
-			conn.save();
-		}
-		else{
-			log("User still has some active windows.",user);
-		}
-		session.unwatch({sid: conn.sid, cid: conn.socket.id});
-	}, 30*1000);
+			else {
+				user.rooms[room]--;
+				log("User still has some active windows or away already sent.",user);
+			}
+			session.set(conn.sid, sess);
+		});
+	}, 3*1000);
 	return false; // never send an away message immediately. Wait.
 }
 
@@ -115,13 +121,12 @@ function userBack(user, room, conn) {
 	
 	users[user.id] = user;
 
-	if(user.rooms[room]) {
+	if(typeof user.rooms[room] !== "undefined" && user.rooms[room]>0) {
 		user.rooms[room]++;
-		conn.save();
 		return false; // we've already sent a back message for this user for this room.
 	}
+	console.log("Should send back msg");
 	user.rooms[room] = 1;
-	conn.save();
 	return true;
 }
 
@@ -138,105 +143,111 @@ function messages (query, conn) {
 
 function message (m, conn) {
 	if(!conn.sid) return;
-	var user = conn.session.user, tryingNick;
-	
-	m.from = user.id;
-	m.time = new Date().getTime();
+	session.get({sid: conn.sid}, function(err, sess) {
+		var user = sess.user, tryingNick;
+		
+		m.from = user.id;
+		m.time = new Date().getTime();
 
-	if (m.origin) m.origin.ip = conn.socket.remoteAddress;
-	else{
-		m.origin = {gateway: "web", ip: conn.socket.remoteAddress, domain:"unknown"};
-	}
-	m.to = m.to || Object.keys(user.rooms);
-	
-	if(typeof m.to != "string" && m.to.length==0)
-		return;
-
-
-	if (m.type == 'back') {
-		if(!userBack(user, m.to, conn)) return; 
-		// it returns false if the back message for this user is already sent
-	} else if (m.type == 'away') {
-		if(!userAway(user, m.to, conn)) return; 
-		// it returns false if the away message for this user is not to be sent yet
-	} else if(m.type == 'nick') {
-		//validating nick name on server side 
-		console.log("checking for nick validity:" , m.ref);
-		if(m.ref && !validateNick(m.ref.substring(6))){
-			if(m.ref !== "guest-")
-				return conn.send('error', {id:m.id , message: "INVALID_NAME"});
+		if (m.origin) m.origin.ip = conn.socket.remoteAddress;
+		else{
+			m.origin = {gateway: "web", ip: conn.socket.remoteAddress, location:"unknown"};
 		}
+		m.to = m.to || Object.keys(user.rooms);
+		
+		if(typeof m.to != "string" && m.to.length==0)
+			return;
 
-		console.log("checking dup nick",m.from,m.type);
-		if(m.ref && users[m.ref] )
-			return conn.send('error', {id: m.id, message: "DUP_NICK"});
-		if(m.user){
-			m.user.originalId = user.id;
-			if (!m.user.originalId.match(/^guest/)) {
-				log("user cannot change the nick.");
-				return;
+		if (m.type == 'back') {
+			if(!userBack(user, m.to, conn)) {
+				session.set(conn.sid, sess);
+				return; 
 			}
-			m.user.accounts[0] = user.accounts[0];	
+			session.set(conn.sid, sess);
+			// it returns false if the back message for this user is already sent
+		} else if (m.type == 'away') {
+			if(!userAway(user, m.to, conn)) {
+				session.set(conn.sid, sess);
+				return; 
+			}
+			// it returns false if the away message for this user is not to be sent yet
+		} else if(m.type == 'nick') {
+			//validating nick name on server side 
+			console.log("checking for nick validity:" , m.ref);
+			if(m.ref && !validateNick(m.ref.substring(6))) {
+				if(m.ref !== "guest-")
+					return conn.send('error', {id:m.id , message: "INVALID_NAME"});
+			}
+
+			if(m.ref && users[m.ref] )
+				return conn.send('error', {id: m.id, message: "DUP_NICK"});
+			if(m.user){
+				m.user.originalId = user.id;
+				if (!m.user.originalId.match(/^guest/)) {
+					log("user cannot change the nick.");
+					return;
+				}
+				m.user.accounts[0] = user.accounts[0];	
+			}
 		}
-	}
-	
-	console.log("No dup so far.....");
-	function sendMessage() {
-		core.message(m, function (err, m) {
-			var i;
-			console.log("Message", m);
-			if(m.type == 'nick') {
-				if(m.user) {
-					console.log("m.user is", m.user);
-					if (!conn.session.user) {
-						console.log("No session user?");
-						// conn.session.user={};
-					}
-					for(i in m.user) if(m.user.hasOwnProperty(i)) {
-						conn.session.user[i] = m.user[i];
-					}
-				} else {
-					conn.session.user.id = m.ref;
+		function sendMessage() {
+			core.message(m, function (err, m) {
+				var i, user = sess.user;
+				if (!user) {
+					console.log("No session user?");
+					return;
 				}
-				conn.save();
-				console.log("Saved session", conn.session);
-			}
-			
-			if (err) {
-				return conn.send('error', {id: m.id, message: err.message});
-			}
-			if(m.ref) {
-				users[m.ref] = users[user.from] || {};
-				users[m.from] && delete users[m.from];
-				if(m.ref.indexOf("guest-") != 0) {
-					users["guest-"+m.from]=users[user.from];
+				if(m.type == 'nick') {
+					if(m.user) {
+						console.log("m.user is", m.user);
+						
+						for(i in m.user) if(m.user.hasOwnProperty(i)) {
+							user[i] = m.user[i];
+						}
+					} else {
+						user.id = m.ref;
+					}
+					console.log("Saved session", sess);
 				}
-			}
-		});
-	}
-	if(m.type=="nick" && ( m.ref || m.user)) {
-		tryingNick = m.ref || m.user.id;
-		core.room(((tryingNick.indexOf("guest-")==0)? tryingNick.substring(6) : tryingNick),function(err,data){
-			console.log(err);
-			if(err) return conn.send('error', {id: m.id, message: err.message});
-			console.log("Result of core on dup check",data);
-			if((data.length>0) || data.id) return conn.send('error', {id: m.id, message: "DUP_NICK"});
+				session.set(conn.sid, sess);
+				if (err) {
+					return conn.send('error', {id: m.id, message: err.message});
+				}
+				if(m.ref) {
+					users[m.ref] = users[user.from] || {};
+					users[m.from] && delete users[m.from];
+					if(m.ref.indexOf("guest-") != 0) {
+						users["guest-"+m.from]=users[user.from];
+					}
+				}
+			});
+		}
+		if(m.type=="nick" && ( m.ref || m.user)) {
+			tryingNick = m.ref || m.user.id;
+			core.room(((tryingNick.indexOf("guest-")==0)? tryingNick.substring(6) : tryingNick),function(err,data){
+				console.log(err);
+				if(err) return conn.send('error', {id: m.id, message: err.message});
+				console.log("Result of core on dup check",data);
+				if((data.length>0) || data.id) return conn.send('error', {id: m.id, message: "DUP_NICK"});
+				sendMessage();
+			});
+		} else {
 			sendMessage();
-		});
-	} else {
-		sendMessage();
-	}
+		}
+	});
 }
 
 function room (r, conn) {
 	var user;
-	
-	if(!conn.sid) return;
-	if(typeof r === 'object') {
-		user = conn.session.user;
-		r.owner = user.id;
-	}
-	core.room(r, function(err, data) {
+	session.get({sid: conn.sid}, function(err, sess) {
+		if(!conn.sid) return;
+		if(typeof r === 'object') {
+			user = sess.user;
+			r.owner = user.id;
+		}
+		core.room(r, function(err, data) {
+		});
+		session.set(conn.sid, sess);
 	});
 }
 
@@ -252,8 +263,8 @@ function rooms(query, conn) {
 }
 
 function validateNick(nick){
-			if (nick.indexOf("guest-")==0) return false;
-			return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
+	if (nick.indexOf("guest-")==0) return false;
+	return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
 }
 
 // ----- Outgoing send ----
@@ -262,8 +273,13 @@ exports.send = function (message, rooms) {
 	message.text = message.text || "";
 	log("Socket sending", message, "to", rooms);
 	rooms.map(function(room) {
+		var location;
+		if(message.origin.location) location= message.origin.location;
+		//if(message.type == "text") core.occupants(message.to, function(err, data){console.log(err, data);});
 		if(rConns[room]) rConns[room].map(function(conn) {
+			if(message.origin.location) delete message.origin.location;
 			conn.send('message', message);
+			if(location) message.origin.location = location;
 		});
 	});
 };

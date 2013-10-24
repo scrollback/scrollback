@@ -64,28 +64,25 @@ module.exports = function(options, callback) {
 	log(query, params);
 	db.query(query, params, function(err, data) {
 		var start, end;
-
-		data.forEach(function(msg) {
-			msg.labels = [msg.labels];
-		});
-
+		
 		if(err && callback) return callback(err);
 
-
-
 		data.forEach(function(element){
+			element.labels = [element.labels];
 			try{
-				element.origin = JSON.parse(element.origin);	
+				element.origin = JSON.parse(element.origin);
 			}
 			catch(Exception){
 				originObject = {};
 				originObject.gateway = element.origin.split(":")[0];
 				if (originObject.gateway == "irc")
 					originObject.channel = element.to;
-				if (originObject.gateway == "web")
+				if (originObject.gateway == "web") {
 					originObject.ip = element.origin.split("//")[1];
+				}
 				element.origin = originObject;
-			}	
+			}
+			if (element.origin && element.origin.gateway == "web") delete element.origin.location;
 		});
 		
 		start  = since || data.length && data[0].time || 0;
