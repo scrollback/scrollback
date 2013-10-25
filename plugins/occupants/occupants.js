@@ -19,6 +19,12 @@ module.exports = function(core) {
 		if(message.type === "away"){
 			if(message.to) redisProxy.srem(message.to,message.from);
 		}
+		if(message.type === "nick"){
+			if(message.to) {
+				redisProxy.srem(message.to,message.from);
+				redisProxy.sadd(message.to, message.ref);
+			}
+		}
 		callback();
 	});
 };
