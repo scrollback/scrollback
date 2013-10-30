@@ -81,9 +81,9 @@ ALTER TABLE `back_messages` ADD INDEX `totime` (`to` ASC, time ASC);
 | params      | text          | YES  |     | NULL    
 */
 
-/* Splitting rooms */
+/* Splitting rooms to make rooms and users  */
 
-CREATE TABLE scrollback.rooms_room(
+CREATE TABLE scrollback.users(
 	`id` varchar(255) NOT NULL,
 	`name` varchar(255),
 	`description` text,
@@ -96,18 +96,5 @@ CREATE TABLE scrollback.rooms_room(
 	PRIMARY KEY (id)
 );
 
-CREATE TABLE scrollback.rooms_user(
-	`id` varchar(255) NOT NULL,
-	`name` varchar(255),
-	`description` text,
-	`picture` varchar(1024),
-	`profile` varchar(1024),
-	`createdOn` datetime,
-	`owner` varchar(255),
-	`type` varchar(15),
-	`params` text,
-	PRIMARY KEY (id)
-);
-
-INSERT INTO scrollback.rooms_room SELECT * FROM scrollback.rooms WHERE rooms.type = "room";
-INSERT INTO scrollback.rooms_user SELECT * FROM scrollback.rooms WHERE rooms.type = "user";
+# INSERT INTO scrollback.rooms_room SELECT * FROM scrollback.rooms WHERE rooms.type = "room";
+INSERT INTO scrollback.users SELECT * FROM scrollback.rooms WHERE rooms.type = "user";

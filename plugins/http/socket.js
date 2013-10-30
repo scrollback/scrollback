@@ -224,7 +224,7 @@ function message (m, conn) {
 		}
 		if(m.type=="nick" && ( m.ref || m.user)) {
 			tryingNick = m.ref || m.user.id;
-			core.room(((tryingNick.indexOf("guest-")==0)? tryingNick.substring(6) : tryingNick),function(err,data){
+			core.user(((tryingNick.indexOf("guest-")==0)? tryingNick.substring(6) : tryingNick),function(err,data){
 				console.log(err);
 				if(err) return conn.send('error', {id: m.id, message: err.message});
 				console.log("Result of core on dup check",data);

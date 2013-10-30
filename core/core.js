@@ -4,9 +4,10 @@ var config = require('../config.js');
 var redisProxy = require('./redisProxy.js');
 var message = require('./api/message.js');
 var room = require('./api/room.js');
+var user = require('./api/user.js');
 var plugins = {};
 
-var rooms = {};
+var rooms = {} , users = {};
 var log = require("../lib/logger.js");
 
 var core = Object.create(require("../lib/emitter.js"));
@@ -47,10 +48,33 @@ core.room = function(o, cb) {
 	}
 	
 }
+
+core.user = function(o ,cb){
+	if(typeof o === 'string'){
+		return user(o,cb);
+	}
+	else if (o.id){
+		user(o.id , function(err , oldUser){
+			if(err) oldUser = null;
+			o.old = oldUser;
+			o.originalId = o.id;
+			core.emit('user' , o , function(err){
+				if (err){
+					log("User update rejected" , err);
+					return cb? cb(err ,o):null;
+				}
+				delete o.old;
+				user(o,cb);
+			});
+
+		});
+	}
+}
+
 core.rooms = require('./api/rooms.js');
+core.users = require('./api/users.js');
 core.accounts = require('./api/accounts.js');
 core.messages = require("./api/messages.js");
-
 
 core.occupants = function(roomId, callback) {
 	redisProxy.smembers(roomId, function(err, data){
