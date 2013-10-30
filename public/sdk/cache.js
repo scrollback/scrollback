@@ -5,7 +5,7 @@ function messageArray() {
 	
 	function find (time, start, end) {
 		var pos;
-		
+
 		if (typeof start === 'undefined') {
 			return find(time, 0, messages.length);
 		}

@@ -13,6 +13,14 @@ var dom = {
 				["span", {'class': 'scrollback-title-id'}],
 				["a", {href: "http://scrollback.io", "class": "scrollback-poweredby",
 			target: "_blank"}],
+				["button", {"class": "scrollback-part scrollback-membership-hidden" ,
+				 "style":"width:50px;height:40px; background-color:#FF0000" },
+				 "Part"
+				 ],
+				["button", {"class": "scrollback-join " ,
+				 "style":"width:50px;height:40px; background-color:#00FF00"},
+				 "Join"
+				 ],
 				["span", { 'class': 'scrollback-title-text' }]
 			]
 		],
