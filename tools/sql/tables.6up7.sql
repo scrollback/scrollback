@@ -97,4 +97,4 @@ CREATE TABLE scrollback.users(
 );
 
 INSERT INTO scrollback.users SELECT * FROM scrollback.rooms WHERE rooms.type = "user";
-DELETE FROM scrollback.users WHERE rooms.type = "user";
+DELETE FROM scrollback.rooms WHERE rooms.type = "user";
