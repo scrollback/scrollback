@@ -96,5 +96,5 @@ CREATE TABLE scrollback.users(
 	PRIMARY KEY (id)
 );
 
-# INSERT INTO scrollback.rooms_room SELECT * FROM scrollback.rooms WHERE rooms.type = "room";
 INSERT INTO scrollback.users SELECT * FROM scrollback.rooms WHERE rooms.type = "user";
+DELETE FROM scrollback.users WHERE rooms.type = "user";
