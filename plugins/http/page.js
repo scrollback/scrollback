@@ -60,8 +60,12 @@ exports.init = function(app) {
             })
         });
     });
+	
+	app.get("/dummy/:page", function (req, res) {
+		res.render("dummy/" + req.params.page, {});
+	});
     
-    app.get("*", function(req, res, next) {
+    app.get("*", function (req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery,
         user = req.session.user;
         if(params[1]=="config") {

@@ -4,7 +4,6 @@ var config = require('../../config.js');
 var db = require('../data.js'),
 	guid = require('../../lib/guid.js');
 var log = require("../../lib/logger.js");
-var gateways = require("../gateways.js");
 
 module.exports = function(message, callback) {
 	if (!message.id) message.id = guid();

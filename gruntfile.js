@@ -53,7 +53,7 @@ module.exports = function(grunt) {
 			tasks: ['uglify', 'concat', 'wrap'],
 		},
 		styles: {
-			files: ['public/style.less'],
+			files: ['public/style.less', 'public/dummy.less'],
 			tasks: ['less']
 		}
 	},
@@ -61,6 +61,7 @@ module.exports = function(grunt) {
 		development: {
 			files: {//dest            //source
 				"public/style.css": "public/style.less",
+				"public/dummy.css": "public/dummy.less"
 			},
 		},
 	},
