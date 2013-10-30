@@ -11,8 +11,6 @@ var log = require("../lib/logger.js");
 
 var core = Object.create(require("../lib/emitter.js"));
 
-core.gateways = require("./gateways.js");
-
 core.message = function(m, cb) {
 	core.emit("message", m, function(err) {
 		if(err) {
