@@ -93,9 +93,10 @@ CREATE TABLE scrollback.users(
 	`owner` varchar(255),
 	`type` varchar(15),
 	`params` text,
-	`timezone` integer
 	PRIMARY KEY (id)
 );
 
 INSERT INTO scrollback.users SELECT * FROM scrollback.rooms WHERE rooms.type = "user";
 DELETE FROM scrollback.rooms WHERE rooms.type = "user";
+
+ALTER TABLE `users` ADD `timezone` integer ;
