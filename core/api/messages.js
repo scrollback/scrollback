@@ -56,7 +56,7 @@ module.exports = function(options, callback) {
 
 	
 	if(where.length) query += " WHERE " + where.join(" AND ");
-	query = "SELECT * FROM (" + query + ") AS `m` ORDER BY `time` " + (desc? "DESC": "ASC");
+	query += " ORDER BY `time` " + (desc? "DESC": "ASC");
 	if(options.limit && options.limit<256){
 		limit = options.limit;
 	}

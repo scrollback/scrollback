@@ -16,8 +16,11 @@ module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
 		if (message.origin && message.origin.gateway == "irc") return callback();
-		if(rejectable(message)) callback(new Error("BANNED_WORD"));
-		else callback();
+		core.room(message.to,function(err, data) {
+            if(data.params && data.params.wordban)
+                if(rejectable(message)) callback(new Error("BANNED_WORD"));
+            else callback();
+        });
 	});
 };
 
