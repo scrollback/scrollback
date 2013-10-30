@@ -89,10 +89,11 @@ CREATE TABLE scrollback.users(
 	`description` text,
 	`picture` varchar(1024),
 	`profile` varchar(1024),
-	`createdOn` datetime,
+	`createdOn` bigint,
 	`owner` varchar(255),
 	`type` varchar(15),
 	`params` text,
+	`timezone` integer
 	PRIMARY KEY (id)
 );
 
