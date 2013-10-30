@@ -6,7 +6,11 @@ var log = require("../../lib/logger.js");
 module.exports = function(options, callback) {
 	var startTime = new Date().getTime();
 	
-	var query = "SELECT * FROM `messages` ",
+	var dbName = "_messages";
+
+	if (options.type) dbName = options.type + dbName;
+
+	var query = "SELECT * FROM `" + dbName + "` ",
 		where = [], params=[], desc=false, limit=256, until, since, originObject = {};
 	
 	until=options.until;

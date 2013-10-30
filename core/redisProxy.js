@@ -15,7 +15,7 @@ var generic_pool = require("generic-pool").Pool({
 module.exports = (function(){
 	var prop;
 	var dc = redis.createClient(), proxy = {};
-	for(prop in dc) {
+	for(prop in dc) {	
 		(function(prop){
 			proxy[prop] = function() {
 				var args = [].splice.call(arguments,0);
