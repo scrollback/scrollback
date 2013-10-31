@@ -16,22 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `accounts`
---
-
-DROP TABLE IF EXISTS `accounts`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `accounts` (
-  `id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `room` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `gateway` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `params` text COLLATE utf8_unicode_ci,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `away_messages`
 --
 
@@ -94,33 +78,6 @@ CREATE TABLE `members` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `messages`
---
-
-DROP TABLE IF EXISTS `messages`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `messages` (
-  `id` varchar(63) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `type` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `from` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `to` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `text` text COLLATE utf8_unicode_ci,
-  `time` bigint(20) DEFAULT NULL,
-  `ref` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `origin` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `labels` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `type` (`type`),
-  KEY `from` (`from`),
-  KEY `to` (`to`),
-  KEY `time` (`time`),
-  KEY `ref` (`ref`),
-  KEY `origin` (`origin`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `nick_messages`
 --
 
@@ -139,6 +96,22 @@ CREATE TABLE `nick_messages` (
   `labels` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `totime` (`to`,`time`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `room_accounts`
+--
+
+DROP TABLE IF EXISTS `room_accounts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `room_accounts` (
+  `id` varchar(255) NOT NULL DEFAULT '',
+  `room` varchar(255) DEFAULT NULL,
+  `gateway` varchar(15) DEFAULT NULL,
+  `params` text,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -186,6 +159,22 @@ CREATE TABLE `text_messages` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `user_accounts`
+--
+
+DROP TABLE IF EXISTS `user_accounts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_accounts` (
+  `id` varchar(255) NOT NULL DEFAULT '',
+  `user` varchar(255) DEFAULT NULL,
+  `gateway` varchar(15) DEFAULT NULL,
+  `params` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `users`
 --
 
@@ -216,4 +205,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-10-31 14:36:14
+-- Dump completed on 2013-10-31 18:26:51
