@@ -26,6 +26,7 @@ core.message = function(m, cb) {
 };
 
 core.room = function(o, cb) {
+	console.log( o , typeof o);
 	if(typeof o === 'string') {
 		return room(o, cb);
 	} else if (o.id) {
