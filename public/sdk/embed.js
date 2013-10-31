@@ -182,7 +182,7 @@ function Stream(id) {
 					core.join("part",self.id);
 				});
 				core.on('message',function(m){
-					if (m.type === "part" && m.to === self.id && el != self.membershipHidden) {//hide part show join
+					if (m.type === "part" && m.to === self.id && el != self.membershipHidden && core.nick() == m.from) {//hide part show join
 						addClass(el, "scrollback-membership-hidden");
 						removeClass(self.membershipHidden , "scrollback-membership-hidden");
 						self.membershipHidden=el;
@@ -213,7 +213,7 @@ function Stream(id) {
 					core.join("join",self.id);
 				})
 				core.on('message',function(m){
-					if (m.type == "join" && m.to == self.id && el != self.membershipHidden) {//show part hide join
+					if (m.type == "join" && m.to == self.id && el != self.membershipHidden && core.nick() == m.from) {//show part hide join
 						addClass(el, "scrollback-membership-hidden");
 						removeClass(self.membershipHidden , "scrollback-membership-hidden");
 						self.membershipHidden=el;
@@ -376,7 +376,9 @@ Stream.prototype.notify=function(str, persist) {
 
 Stream.prototype.onmessage = function(message) {
 	var el = this.renderMessage(message),str="", oldTitle="",title="";
-	
+	if (message.type=="join" || message.type=="part") {
+		return;
+	}
 	if (message.type=="text") {
 		browserNotify(message.from+" : "+message.text);
 		this.titleText.innerHTML = (el.innerText || el.textContent);
