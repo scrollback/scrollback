@@ -1,0 +1,20 @@
+extends layout
+
+style
+
+h1 hi #{id}
+p	You summary for the day.
+each room in rooms
+	div	room.id
+		-len = room.messages[i].length;
+		-for(i=0;(i<3 && i<l);i++)
+			div [#{room.messages[i].from}] [#{room.messages[i].text}]
+
+		span #{room.messages.length} messages today.
+
+		-for(i=len-1; i>len-4; i--)
+			div [#{room.messages[i].from}] [#{room.messages[l-i-1].text}]
+
+p	you are getting these emails because you have joined there rooms, to edit your preferences visit scrollback
+
+- Scrollback
