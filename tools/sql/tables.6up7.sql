@@ -1,15 +1,3 @@
-/*
-| id     | varchar(63)  | NO   | PRI |         |       |
-| type   | varchar(15)  | YES  | MUL | NULL    |       |
-| from   | varchar(255) | YES  | MUL | NULL    |       |
-| to     | varchar(255) | YES  | MUL | NULL    |       |
-| text   | text         | YES  |     | NULL    |       |
-| time   | bigint(20)   | YES  | MUL | NULL    |       |
-| ref    | varchar(255) | YES  | MUL | NULL    |       |
-| origin | varchar(255) | YES  | MUL | NULL    |       |
-| labels | varchar(255)
-*/
-
 CREATE TABLE scrollback.text_messages(
 	`id` varchar(63) NOT NULL,
 	`type` varchar(15),
@@ -22,6 +10,7 @@ CREATE TABLE scrollback.text_messages(
 	`labels` varchar(255),
 	PRIMARY KEY (id)
 );
+
 CREATE TABLE scrollback.nick_messages(
 	`id` varchar(63) NOT NULL,
 	`type` varchar(15),
@@ -34,6 +23,7 @@ CREATE TABLE scrollback.nick_messages(
 	`labels` varchar(255),
 	PRIMARY KEY (id)
 );
+
 CREATE TABLE scrollback.away_messages(
 	`id` varchar(63) NOT NULL,
 	`type` varchar(15),
@@ -46,6 +36,7 @@ CREATE TABLE scrollback.away_messages(
 	`labels` varchar(255),
 	PRIMARY KEY (id)
 );
+
 CREATE TABLE scrollback.back_messages(
 	`id` varchar(63) NOT NULL,
 	`type` varchar(15),
@@ -69,17 +60,6 @@ ALTER TABLE `nick_messages` ADD INDEX `totime` (`to` ASC, time ASC);
 ALTER TABLE `away_messages` ADD INDEX `totime` (`to` ASC, time ASC);
 ALTER TABLE `back_messages` ADD INDEX `totime` (`to` ASC, time ASC);
 
-/*
-| id          | varchar(255)  | NO   | PRI | NULL    |       |
-| name        | varchar(255)  | YES  |     | NULL    |       |
-| description | text          | YES  |     | NULL    |       |
-| picture     | varchar(1024) | YES  |     | NULL    |       |
-| profile     | varchar(1024) | YES  |     | NULL    |       |
-| createdOn   | datetime      | YES  |     | NULL    |       |
-| owner       | varchar(255)  | YES  |     | NULL    |       |
-| type        | varchar(15)   | YES  |     | NULL    |       |
-| params      | text          | YES  |     | NULL    
-*/
 
 /* Splitting rooms to make rooms and users  */
 
@@ -100,3 +80,24 @@ INSERT INTO scrollback.users SELECT * FROM scrollback.rooms WHERE rooms.type = "
 DELETE FROM scrollback.rooms WHERE rooms.type = "user";
 
 ALTER TABLE `users` ADD `timezone` integer ;
+
+CREATE TABLE scrollback.user_accounts(
+	`id` varchar(255),
+	`user` varchar(255),
+	`gateway` varchar(15),
+	`params` text,
+	PRIMARY KEY (id)  
+);
+
+CREATE TABLE scrollback.room_accounts(
+	`id` varchar(255),
+	`room` varchar(255),
+	`gateway` varchar(15),
+	`params` text,
+	PRIMARY KEY (id)	
+);
+
+INSERT INTO scrollback.user_accounts SELECT * from scrollback.accounts WHERE accounts.gateway = "mailto";
+INSERT INTO scrollback.room_accounts SELECT * from scrollback.accounts WHERE accounts.gateway = "irc";
+
+DROP TABLES messages , accounts ;

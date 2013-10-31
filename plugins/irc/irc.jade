@@ -3,8 +3,8 @@ block append scripts
 	script.
 		$(document).ready(function(){
 			pluginPackager.push(function(room) {
-				var server = $("#accountServer").val();
-				var channel = $("#accountChannel").val();
+				var server = $("#accountServer").val().trim();
+				var channel = $("#accountChannel").val().trim();
 				if(!server.length || channel.length < 1) {
 					room.params = room.params || {};
 					room.params.irc = false;
