@@ -38,8 +38,7 @@ module.exports = function(core) {
 function init(){
 	log("core.uid=======",config.core);
 	try{
-		
-		pro=require("child_process").spawn("java", ['-jar','scrollback.jar'],{ uid: config.core.uid });
+		pro=require("child_process").spawn("java", ['-jar',__dirname	+'/scrollback.jar'],{ uid: config.core.uid });
 	} catch(err){
 		log("scrollback.jar Process Starting Failed");
 		return;

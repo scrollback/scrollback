@@ -16,12 +16,17 @@ module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
 		if (message.origin && message.origin.gateway == "irc") return callback();
-		if(rejectable(message)) callback(new Error("BANNED_WORD"));
-		else callback();
+		if(message.type=="text") {
+			core.room(message.to,function(err, data) {
+	            if(data.params && data.params.wordban)
+	            	if(rejectable(message)) return callback(new Error("BANNED_WORD"));	
+	           	callback();
+	        });
+		}else{
+			callback();
+		}
 	});
 };
-
-
 var init=function(){
 	fs.readFile(__dirname + "/blockedWords.txt","utf-8", function (err, data) {
 		if (err) throw err;

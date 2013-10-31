@@ -33,7 +33,7 @@ module.exports = function(core) {
 
 function init(){
 	try{
-		pro=require("child_process").spawn("java",['-jar','cloimpl-0.1.0-SNAPSHOT-standalone.jar'],{ uid: config.core.uid });
+		pro=require("child_process").spawn("java",['-jar',__dirname+'/cloimpl-0.1.0-SNAPSHOT-standalone.jar'],{ uid: config.core.uid });
 	} catch(err){
 		log("jar Process Starting Failed");
 		return;

@@ -6,7 +6,11 @@ var log = require("../../lib/logger.js");
 module.exports = function(options, callback) {
 	var startTime = new Date().getTime();
 	
-	var query = "SELECT * FROM `messages` ",
+	var dbName = "_messages";
+
+	if (options.type) dbName = options.type + dbName;
+
+	var query = "SELECT * FROM `" + dbName + "` ",
 		where = [], params=[], desc=false, limit=256, until, since, originObject = {};
 	
 	until=options.until;
@@ -52,7 +56,7 @@ module.exports = function(options, callback) {
 
 	
 	if(where.length) query += " WHERE " + where.join(" AND ");
-	query = "SELECT * FROM (" + query + ") AS `m` ORDER BY `time` " + (desc? "DESC": "ASC");
+	query += " ORDER BY `time` " + (desc? "DESC": "ASC");
 	if(options.limit && options.limit<256){
 		limit = options.limit;
 	}
