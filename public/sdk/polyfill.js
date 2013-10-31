@@ -72,9 +72,9 @@ function offset(obj) {
 
 function regex(s) {
 	try {
-		return new RegExp('(\\s|^)'+
+		return new RegExp('(\\s+|^)'+
 				s.replace(/\W/g, function(m) {return '\\'+m;})+
-			'(\\s|$)', 'g');
+			'(\\s+|$)', 'g');
 	} catch(e) {
 		return null;
 	}

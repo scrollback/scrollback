@@ -64,7 +64,7 @@ exports.init = function(app) {
     app.get("*", function(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery,
         user = req.session.user;
-        if(params[1]=="config") {
+		if(params[1]=="config") {
             next();
             return;
         }
@@ -118,6 +118,7 @@ exports.init = function(app) {
                 if(room.id && !validateRoom(room.id)) return callback(new Error("Room name must be at least 5 characters in length and contain no special characters or whitespaces!"));
                 responseObj.room = room;
                 responseObj.user = user.id;
+				responseObj.membership=user.membership;
                 res.render("archive",responseObj);
             });
             
