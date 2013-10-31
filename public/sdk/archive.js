@@ -113,12 +113,12 @@ $(document).ready(function(){
 				document.getElementById("nick").value = message.ref;
 			}
 		}
-		else if (message.type == "part") {//show join
+		else if (message.type == "part" && core.nick() == message.from && message.to == stream) {//show join
 			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
 			$(".archive-part").addClass("archive-membership-hidden");
 			delete core.membership[stream];
 		}
-		else if (message.type == "join") {//show part
+		else if (message.type == "join" && core.nick() == message.from && message.to == stream) {//show part
 			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
 			$(".archive-join").addClass("archive-membership-hidden");
 			core.membership[stream]=true;
