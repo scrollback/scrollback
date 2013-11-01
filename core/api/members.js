@@ -9,20 +9,27 @@ module.exports = function(query, callback) {
 	if (!callback) {
 		return false;
 	}
-	
-	if (query.user) {
-		where.push("`user`=?");
-		params.push(query.user);
-	}
-	
-	if (query.room) {
-		where.push("`room`=?");
-		params.push(query.room);
-	}
-	
+
 	if (!query.room && !query.user) {
 		return callback(new Error("You must specify a room or a user."));
 	}
+	
+	if (query.user) {
+		where.push("`user` in (?)");
+		if(typeof query.user=="string")
+			params.push([query.user]);
+		else
+			params.push(query.user);
+	}
+	
+	if (query.room) {
+		where.push("`room` in (?)");
+		if(typeof query.room=="string")
+			params.push([query.room]);
+		else
+			params.push(query.room);
+	}
+	
 	where.push("`partedOn` IS NULL");
 	sql += where.join(" AND ");
 	

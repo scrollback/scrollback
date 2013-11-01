@@ -64,7 +64,7 @@ block content
 						else if room.owner == user
 							button#action.config.span12 Configure
 						br
-						if membership[query.to]
+						if membership && membership[query.to]
 							button#action.archive-part PART
 							button#action.archive-join.archive-membership-hidden JOIN
 						else
