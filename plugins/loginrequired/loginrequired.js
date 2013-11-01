@@ -37,6 +37,7 @@ module.exports = function(coreObject) {
         });
     });
     core.on("message", function(message, callback){
+        console.log("in loginrequired");
         if (message.origin && message.origin.gateway == "irc") return callback();
         if(message.type == "text" && message.from.indexOf("guest-")==0) {
             core.room(message.to,function(err, data) {

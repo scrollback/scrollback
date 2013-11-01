@@ -97,7 +97,7 @@ module.exports = function(data, callback) {
 };
 
 function insertAccounts(data,callback){
-	var account, accountsQuery=" INSERT INTO `accounts` VALUES ", //?
+	var account, accountsQuery=" INSERT INTO `user_accounts` VALUES ", //?
 		accountValues=" (?,?,?,?) ",params=[], ids = [];
 	
 	data.accounts.forEach(function(element) {
@@ -112,7 +112,7 @@ function insertAccounts(data,callback){
 		params.push("{}");			
 	});
 
-	db.query("delete from accounts where `room`=?",data.originalId || ids,function(err,res) {
+	db.query("delete from user_accounts where `user`=?",data.originalId || ids,function(err,res) {
 		if (err && callback) callback(err,res);
 
 		if( data.accounts.length){
@@ -130,7 +130,7 @@ function insertAccounts(data,callback){
 function getAccounts(user,callback) {
 	if(users[user.id] && typeof users[user.id].accounts == "object")
 		return callback(null, users[user.id]);
-	db.query("SELECT * FROM `accounts` WHERE `user`=?", [user.id], function(err, accounts) {
+	db.query("SELECT * FROM `user_accounts` WHERE `user`=?", [user.id], function(err, accounts) {
 		if(err) return callback(err, user);
 		user.accounts = accounts;
 		callback(null, user);

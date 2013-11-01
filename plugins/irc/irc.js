@@ -51,7 +51,7 @@ module.exports = function(core){
 		callback();
 	});
 	core.on("message" , function(message , callback) {
-		db.query("SELECT * FROM `accounts` WHERE `room` IN (?) AND `gateway`='irc'", [message.to], function(err, data) {
+		db.query("SELECT * FROM `room_accounts` WHERE `room` IN (?) AND `gateway`='irc'", [message.to], function(err, data) {
 			var i, l, name, list = [], u;
 			if(err) return callback(err);
 			for(i=0, l=data.length; i<l; i+=1) {
@@ -99,7 +99,7 @@ function addBot(account) {
 }
 
 function init() {
-	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
+	db.query("SELECT * FROM `room_accounts` WHERE `gateway`='irc'", function(err, data) {
 		if(err) throw "Cannot retrieve IRC accounts";
 		//db.end();
 
@@ -137,16 +137,8 @@ function send(message, accounts) {
 					else {
 						ident =  md5sum.update(JSON.stringify(message.origin)).digest("hex");
 					}
-					
+					clients[message.from][u.host] = client = connect(u.host, message.from,ident);
 
-					clients[message.from][u.host] = client = connect(
-						u.host, message.from,
-						message.origin.ip.split('.').map(function(d) {
-							var h = parseInt(d, 10).toString(16);
-							if (h.length < 2) h = '0'+h;
-							return h;
-						}).join('').toUpperCase()
-					);
 					var disconnect = function(nick) {
 						if (nick !== client.nick || Object.keys(client.chans).length) return;
 						delete clients[message.from][u.host];
