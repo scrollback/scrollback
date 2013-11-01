@@ -128,7 +128,7 @@ CREATE TABLE `rooms` (
   `description` text COLLATE utf8_unicode_ci,
   `picture` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL,
   `profile` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `createdOn` datetime DEFAULT NULL,
+  `createdOn` bigint(20) DEFAULT NULL,
   `owner` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `type` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
   `params` text COLLATE utf8_unicode_ci,
