@@ -104,7 +104,7 @@ module.exports = function(data, callback) {
 					if(room.length == 0) {
 						return callback(null,{});
 					}
-					getAccounts(room, function(err, room) {
+					getAccounts(room[0], function(err, room) {
 						return callback(err, room);
 					});
 				});
