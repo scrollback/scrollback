@@ -81,6 +81,16 @@ DELETE FROM scrollback.rooms WHERE rooms.type = "user";
 
 ALTER TABLE `users` ADD `timezone` integer ;
 
+ALTER TABLE `rooms` ADD `temp_time` datetime ;
+
+UPDATE scrollback.rooms SET temp_time = createdOn; 
+
+ALTER TABLE scrollback.rooms MODIFY COLUMN createdOn bigint ; 
+
+UPDATE scrollback.rooms SET createdOn  = UNIX_TIMESTAMP(temp_time)  ;
+
+ALTER TABLE rooms drop COLUMN temp_time ;
+
 CREATE TABLE scrollback.user_accounts(
 	`id` varchar(255),
 	`user` varchar(255),

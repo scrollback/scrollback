@@ -1,21 +1,50 @@
 module.exports = {
+	
 	core: {
-//		uid: "linux-user-to-run-as",
-		name: "scrollback" // process name to use
+		uid: 1000,
+		name: "scrollback"
 	},
 	mysql: {
 		host     : 'localhost',
 		user     : 'scrollback',
 		password : 'scrollback',
+		//debug    :true         ,
 		database : 'scrollback'
 	},
 	http: {
-		host: "scrollback.example.com",
+		https: {
+			key: "ssh-cert/server.key",
+			cert: "ssh-cert/server.crt",
+			ca: "ssh-cert/int.crl",
+			port: 443
+		},
+		host: "example.scrollback.io",
 		port: 80,
-		home: "public" // the directory containing static files
+		home: "public", // the directory containing static files
+		time: 60000,
+		limit: 30,
+		
 	},
+	redis:{
+		host: "kamal.scrollback.io",
+		port: 6379,
+		db:0
+	},
+	plugins: [
+		"usernameban",
+		"auth",
+		"wordban",
+		"originban",
+		"repeatban",
+		"ratelimit",
+		"threader2",
+		"loginrequired",
+		"member",
+		"http",
+		"irc"
+	],
 	xmpp: {
-		host: "scrollback.example.com" // unused
+		host: "example.scrollback.io" // unused
 	},
 	irc: {
 		nick: 'scrollback', // nickname of the bot
@@ -29,6 +58,5 @@ module.exports = {
 	},
 	google: {
 		
-	},
-	plugins:["auth"]
+	}
 }
