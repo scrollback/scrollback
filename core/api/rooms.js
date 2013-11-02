@@ -25,7 +25,7 @@ module.exports = function(options, callback) {
 	}
 	
 	if(where.length) query += " WHERE " + where.join(" AND ");
-	query += " LIMIT 64";
+	//query += " LIMIT 64";
 	
 	log(query, params);
 	db.query(query, params, function(err, data) {
