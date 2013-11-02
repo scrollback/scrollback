@@ -17,7 +17,7 @@ module.exports = function(options, callback) {
 	}
 	
 	if(options.accounts) {
-		where.push("`id` IN (SELECT `room` FROM `room_accounts` WHERE `id` IN (?))");
+		where.push("`id` IN (SELECT `room` FROM `accounts` WHERE `id` IN (?))");
 		options.accounts.forEach(function(element){
 			accountIDs.push(element.id);
 		});

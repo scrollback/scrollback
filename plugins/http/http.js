@@ -13,7 +13,10 @@ var init = function() {
 module.exports = function(core){
 	init();
 	core.on("message" , function(message, callback){
-		send(message, [message.to]);
+		if(typeof message.to == "string")
+			send(message, [message.to]);
+		else if(typeof message.to == "object")
+			send(message, message.to);
 		callback();
 	});
 	var send = socket.send;

@@ -57,7 +57,7 @@ CREATE TABLE scrollback.part_messages(
 INSERT INTO scrollback.text_messages(`id`,`from`,`to`,`text`,`time`,`origin`) 
 	SELECT `id`,`from`,`to`,`text`,`time`,`origin` FROM scrollback.messages WHERE messages.type = "text";
 INSERT INTO scrollback.nick_messages(`id` , `from`, `to` , `time` , `ref` , `origin`)
-  SELECT `id`, `from`, `to`, `text` ,`time` , `origin` FROM scrollback.messages WHERE messages.type = "nick";
+  SELECT `id`, `from`, `to`, `time` ,`ref` , `origin` FROM scrollback.messages WHERE messages.type = "nick";
 INSERT INTO scrollback.away_messages(`id`, `from` , `to` , `time`, `origin`) 
 	SELECT `id`, `from` , `to` , `time` , `origin` FROM scrollback.messages WHERE messages.type = "away";
 INSERT INTO scrollback.back_messages(`id`, `from` , `to` , `time`, `origin`) 

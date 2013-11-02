@@ -12,7 +12,10 @@ block userinfo
 
 block content
 	div.box.span12
-		form#profilefrm.clearfix
+		if(user.id.match("^guest"))
+			form#profilefrm.clearfix
+		else
+			form.clearfix
 			// .field.box.span3.gapr
 				label.before(for='picture') Avatar
 				button#picture
@@ -45,6 +48,7 @@ block append scripts
 		$(document).ready(function() {
 			$("#profilefrm").submit(function(e) {
 				var user = { id: $("#nickname").val(), accounts: [] };
+				console.log("sending nick msg");
 				if(validateNick(user.id)) {
 					window.parent.postMessage(user, "*");
 				} else {
@@ -56,6 +60,7 @@ block append scripts
 				return false;
 			});
 			$("#logout") && $("#logout").on("click",function(event){
+			console.log("posting logout...");
 				window.parent.postMessage({ guestname: "guest-"}, "*");
 				navigator.id.logout();
 			});

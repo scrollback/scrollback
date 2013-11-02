@@ -72,6 +72,7 @@ module.exports = function(options, callback) {
 		if(err && callback) return callback(err);
 
 		data.forEach(function(element){
+			element.type = options.type;
 			element.labels = [element.labels];
 			try{
 				element.origin = JSON.parse(element.origin);
