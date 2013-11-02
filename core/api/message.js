@@ -19,9 +19,21 @@ module.exports = function(message, callback) {
 
 	// TODO: Rewrite this to use a single INSERT query.db.
 	message.to.forEach(function(to) {
-		db.query("INSERT INTO `" + dbName + "` SET `id`=?, `from`=?, `to`=?, `type`=?, `text`=?, "+
-			"`origin`=?, `time`=?, `ref`=?, `labels`= ?", [message.id, message.from, message.to, message.type, 
-			message.text,  JSON.stringify(message.origin), message.time, message.ref,message.labels[0]]);
+		if(message.type == "text"){
+			db.query("INSERT INTO `" + dbName + "` SET `id`=?, `from`=?, `to`=?, `text`=?, "+
+			"`origin`=?, `time`=?, `labels`= ?", [message.id, message.from, message.to, 
+			message.text,  JSON.stringify(message.origin), message.time, message.labels[0]]);
+		}
+		if( message.type == "nick"){
+			db.query("INSERT INTO `" + dbName + "` SET `id`=?, `from`=?, `to`=?, "+
+			"`origin`=?, `time`=?, `ref`=?", [message.id, message.from, message.to, 
+			JSON.stringify(message.origin), message.time, message.ref]);
+		}
+		if ( message.type == "away" || message.type == "back" || message.type == "join" || message.type == "part"){
+			db.query("INSERT INTO `" + dbName + "` SET `id`=?, `from`=?, `to`=?, "+
+			"`origin`=?, `time`=?", [message.id, message.from, message.to, 
+			JSON.stringify(message.origin), message.time]);
+		}
 	});
 	return callback? callback(null, message): null;
 };
