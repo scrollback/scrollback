@@ -46,7 +46,7 @@ module.exports = function(data, callback) {
 				}
 			}
 			db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
-					"`owner`, `params`) values(?,?,?,?,?,?,NOW(),?,?) ON DUPLICATE KEY UPDATE "+
+					"`owner`, `params`) values(?,?,?,?,?,?,unix_timestamp(),?,?) ON DUPLICATE KEY UPDATE "+
 					"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
 					",`picture`=values(`picture`), `profile`=values(`profile`),  `owner`=values(`owner`),"+
 					"`params`=values(`params`)", [room.id, room.type || "user", room.name || "", room.description || "",
