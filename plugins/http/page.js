@@ -62,8 +62,9 @@ exports.init = function(app) {
     });
     
     app.get("*", function(req, res, next) {
-        var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery,
+        var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[0],
         user = req.session.user;
+        if(roomId && !validateRoom(roomId)) return next();
         if(params[1]=="config") {
             next();
             return;
@@ -143,11 +144,11 @@ exports.init = function(app) {
     //         res.end(responseHTML);
     //     });
     // })
-    app.get("*/config",function(req, res) {
+    app.get("*/config",function(req, res, next) {
         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
+        if(roomId && !validateRoom(roomId)) return next();
         core.room(roomId, function(err, room) {
             if(err) res.end(err);
-            if(room.id && !validateRoom(room.id)) return callback(new Error("Room name must be at least 5 characters in length and contain no special characters or whitespaces!"));
             if(!room.id) {
                 room = {
                     type: "room",
@@ -155,7 +156,7 @@ exports.init = function(app) {
                 };  
             }
             if(room.type == "user") {
-                return res.render("erro",{error:"Currently No configuration Available for Users."});
+                return res.render("error",{error:"Currently No configuration Available for Users."});
             }
             
             if(user.id.indexOf("guest-")!=0) {
@@ -179,10 +180,12 @@ exports.init = function(app) {
             
         });
     });
-    app.post("*/config", function(req, res) {
-        var params = req.path.substring(1).split("/"), roomId, user = req.session.user,
+    app.post("*/config", function(req, res, next) {
+        var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user,
             renderObject = {}, responseHTML = "", data = {};
         data = req.body || {};
+
+        if(roomId && !validateRoom(roomId)) return next();
 
         if(typeof data == "string") {
             try { data = JSON.parse(data); }
