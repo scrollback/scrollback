@@ -35,7 +35,6 @@ module.exports = function(data, callback) {
 						description : data.description || "",
 						picture : data.picture || "",
 						profile : data.profile || "", 
-						createdOn: new Date(),				
 						params : data.params || {},
 						owner: data.owner || data.id
 					};
@@ -50,7 +49,7 @@ module.exports = function(data, callback) {
 					"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
 					",`picture`=values(`picture`), `profile`=values(`profile`),  `owner`=values(`owner`),"+
 					"`params`=values(`params`)", [room.id, room.type || "user", room.name || "", room.description || "",
-					room.picture || "", room.profile || "",room.createdOn || new Date().getTime(), room.owner, JSON.stringify(room.params|| {})],
+					room.picture || "", room.profile || "",new Date().getTime(), room.owner, JSON.stringify(room.params|| {})],
 			function(err, resp) {
 
 				if(err && callback) return callback(err,data);
