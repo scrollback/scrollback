@@ -46,11 +46,11 @@ module.exports = function(data, callback) {
 				}
 			}
 			db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
-					"`owner`, `params`) values(?,?,?,?,?,?,unix_timestamp(),?,?) ON DUPLICATE KEY UPDATE "+
+					"`owner`, `params`) values(?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE "+
 					"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
 					",`picture`=values(`picture`), `profile`=values(`profile`),  `owner`=values(`owner`),"+
 					"`params`=values(`params`)", [room.id, room.type || "user", room.name || "", room.description || "",
-					room.picture || "", room.profile || "", room.owner, JSON.stringify(room.params|| {})],
+					room.picture || "", room.profile || "",room.createdOn || new Date().getTime(), room.owner, JSON.stringify(room.params|| {})],
 			function(err, resp) {
 
 				if(err && callback) return callback(err,data);
