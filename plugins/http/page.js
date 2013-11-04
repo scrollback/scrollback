@@ -255,5 +255,5 @@ var relDate= function (input, reference){
 }
 
 function validateRoom(room){
-            return (room.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
+            return (room.match(/^[a-z][a-z0-9\_\-\(\)]{3,32}$/i)?true:false);
 }
