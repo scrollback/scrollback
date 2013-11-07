@@ -55,19 +55,21 @@ function init(data, conn) {
 		console.log("RETRIEVED SESSION", sess);
 		conn.sid = sid;
 		conn.rooms = [];
+
+		if (sess.user.id.indexOf("guest-")==0 && data.nick)	sess.user.id="guest-"+data.nick;
 		if(sess.pid !== pid) {
 			sess.pid = pid;
 			for(i in rooms) {
 				if(rooms.hasOwnProperty(i)) rooms[i] = 0;
 			}
-			console.log("updated SESSION", sess);
-			session.set(conn.sid, sess);
 		}
 		conn.send('init', {
 			sid: sess.cookie.value, user: sess.user,
 			clientTime: data.clientTime,
 			serverTime: new Date().getTime()
 		});
+		console.log("updated SESSION", sess);
+		session.set(conn.sid, sess);
 	});
 }
 

@@ -22,15 +22,12 @@ function initUser() {
 		id: 'guest-sb-' + names(6),
 		picture: '/img/guest.png',
 		accounts: [],
-		rooms: {},
-		newUser: true
+		rooms: {}
 	};
 }
 
 exports.get = function(user, cb) {
 	unsign(user.sid, function(id, session) {
-		if (session.user.newUser && user.suggestedNick) session.user.id="guest-"+user.suggestedNick;
-		if (session.user.newUser ) delete session.user.newUser;
 		store.set(id, session);
 		cb(null, session);
 	});
