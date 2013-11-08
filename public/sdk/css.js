@@ -81,6 +81,15 @@ var css = {
 				whiteSpace: "nowrap",
 				textOverflow: "ellipsis", overflow: "hidden"
 			},
+			".scrollback-membership-hidden": {
+				"display": "none"
+			},
+			".scrollback-join" : {
+				float:"right"
+			},
+			".scrollback-part" : {
+				float:"right"
+			},
 			".scrollback-title-text": {
 				paddingLeft: "8px",
 				fontWeight: "normal",

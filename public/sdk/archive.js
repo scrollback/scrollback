@@ -15,6 +15,32 @@ $(document).ready(function(){
 		$(this).hasClass("login") && login();
 		$(this).hasClass("config") && (location.href = location.protocol+"//"+location.host+"/"+stream+"/config");
 	});
+	$(".archive-join").click(function(){
+		console.log("mouse clicked join");
+		if (core.nick().indexOf("guest-")==0) {
+			login();
+			return;
+		}
+		else{
+			core.join("join",stream);
+		}
+	});
+	$(".archive-part").click(function(){
+		console.log("mouse clicked part");
+		core.join("part",stream);
+	});
+	
+	core.on("membership",function(data) {
+		if (core.membership[stream]) {//show part
+			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
+			$(".archive-join").addClass("archive-membership-hidden");
+		}
+		else{//show join
+			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
+			$(".archive-part").addClass("archive-membership-hidden");	
+		}
+	});
+	
 	core.on("message", function(message){
 		nickBox.value=core.nick().replace(/guest-/g,'');
 		var messageItem;
@@ -86,6 +112,16 @@ $(document).ready(function(){
 			if (isLastPage && message.from == core.nick()) {
 				document.getElementById("nick").value = message.ref;
 			}
+		}
+		else if (message.type == "part" && core.nick() == message.from && message.to == stream) {//show join
+			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
+			$(".archive-part").addClass("archive-membership-hidden");
+			delete core.membership[stream];
+		}
+		else if (message.type == "join" && core.nick() == message.from && message.to == stream) {//show part
+			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
+			$(".archive-join").addClass("archive-membership-hidden");
+			core.membership[stream]=true;
 		}
 	});
 	

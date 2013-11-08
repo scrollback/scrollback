@@ -119,6 +119,7 @@ exports.init = function(app) {
                 if(room.id && !validateRoom(room.id)) return callback(new Error("Room name must be at least 5 characters in length and contain no special characters or whitespaces!"));
                 responseObj.room = room;
                 responseObj.user = user.id;
+				responseObj.membership=user.membership;
                 res.render("archive",responseObj);
             });
             

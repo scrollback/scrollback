@@ -1,23 +1,38 @@
 "use strict";
 var log = require("../../lib/logger.js"),
 	db = require('../data.js');
-/**
- *callback(err,data) with all users joined 
- */
-exports.getUsers = function (room,callback){
-	db.query("SELECT user from members where room = ? ",[room],function(err,data){
-		if (callback) {
-			callback(err,data);
-		}
-	});
-}
-/**
- *callback(err,data) with active users(partedOn is null)
- **/
-exports.getActiveUsers = function (room,callback){
-	db.query("SELECT * from members where room = ? AND partedOn is null",[room],function(err,data){
-		if (callback) {
-			callback(err,data);
-		}
-	});
+
+module.exports = function(query, callback) {
+	var sql = "SELECT `room`, `user`, `joinedOn` FROM `members` WHERE ",
+		where = [], params = [];
+	
+	if (!callback) {
+		return false;
+	}
+
+	if (!query.room && !query.user) {
+		return callback(new Error("You must specify a room or a user."));
+	}
+	
+	if (query.user) {
+		where.push("`user` in (?)");
+		if(typeof query.user=="string")
+			params.push([query.user]);
+		else
+			params.push(query.user);
+	}
+	
+	if (query.room) {
+		where.push("`room` in (?)");
+		if(typeof query.room=="string")
+			params.push([query.room]);
+		else
+			params.push(query.room);
+	}
+	
+	where.push("`partedOn` IS NULL");
+	sql += where.join(" AND ");
+	
+	sql += " ORDER BY `joinedOn` DESC";
+	db.query(sql, params, callback);
 }

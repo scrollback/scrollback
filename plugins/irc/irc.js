@@ -101,8 +101,6 @@ function addBot(account) {
 function init() {
 	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
 		if(err) throw "Cannot retrieve IRC accounts";
-		//db.end();
-
 		function joinStuff() {
 			data.forEach(addBot);
 		}

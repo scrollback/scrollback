@@ -9,6 +9,14 @@ var dom = {
 				'class': 'scrollback-icon scrollback-icon-close'
 			}]: "",
 			["div", { 'class': 'scrollback-icon scrollback-icon-pop' }, 'on scrollback'],
+			["button", {"class": "scrollback-part scrollback-membership-hidden" ,
+				 "style":"width:50px; background-color:#FF0000" },
+				 "Part"
+			],
+			["button", {"class": "scrollback-join " ,
+				 "style":"width:50px; background-color:#00FF00"},
+				 "Join"
+			],
 			["div", {'class': 'scrollback-title-content'},
 				["span", {'class': 'scrollback-title-id'}],
 				["a", {href: "http://scrollback.io", "class": "scrollback-poweredby",

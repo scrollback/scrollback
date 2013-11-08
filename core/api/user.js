@@ -62,7 +62,7 @@ module.exports = function(data, callback) {
 						users[data.id].accounts = data.accounts;
 					if (callback) {
 						callback(err,data);
-					} 
+					}
 				});
 			}
 			else {
@@ -100,7 +100,10 @@ function insertAccounts(data,callback){
 	var account, accountsQuery=" INSERT INTO `user_accounts` VALUES ", //?
 		accountValues=" (?,?,?,?) ",params=[], ids = [];
 	
+
+	console.log(data);
 	data.accounts.forEach(function(element) {
+		console.log(element, data.id);
 		var id = element.id, user = data.id, gateway;
 		gateway = element.id.split(":")[0];
 		

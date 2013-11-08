@@ -30,7 +30,8 @@
     "cookie": "x",
     "redis": "x",
     "connect-redis":"x",
-    "generic-pool":"X"
+    "generic-pool":"X",
+    "nodemailer" : "x"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

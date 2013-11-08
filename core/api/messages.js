@@ -31,13 +31,19 @@ module.exports = function(options, callback) {
 	}
 	
 	if(options.to) {
-		where.push("`to` = ?");
-		params.push(options.to);
+		where.push("`to` in (?)");
+		if(typeof options.to=="string")
+			params.push([options.to]);
+		else
+			params.push(options.to);
 	}
 	
 	if(options.from) {
-		where.push("`from` = ?");
-		params.push(options.to);
+		where.push("`from` in (?)");
+		if(typeof options.from=="string")
+			params.push([options.from]);
+		else
+			params.push(options.from);
 	}
 
 	// if(options.type) {
@@ -57,7 +63,13 @@ module.exports = function(options, callback) {
 	
 	if(where.length) query += " WHERE " + where.join(" AND ");
 	query += " ORDER BY `time` " + (desc? "DESC": "ASC");
-	if(options.limit && options.limit<256){
+
+
+	//this is a hacky fix... should be changed... this need to get all the messages in db for rooms.
+	// limit: 0 will give all the messages. limit : something or limit undefined will give at max 256 msgs.
+	if(typeof options.limit == "undefined")
+		options.limit =255;
+	if(options.limit && options.limit<=256){
 		limit = options.limit;
 	}
 

@@ -167,6 +167,67 @@ function Stream(id) {
 					return false;
 				});
 				break;
+			case hasClass(el, "scrollback-part"):
+				if (!self.membershipHidden) {
+					self.membershipHidden=el;
+				}
+				if(!core.membership[self.id]) {
+					addClass(el, "scrollback-membership-hidden");
+					// come up with a better name..
+					self.membershipHidden = el;
+				}	
+				addEvent(el, "click", function(e) {
+					if(e.preventDefault) e.preventDefault();
+					if(e.stopPropagation) e.stopPropagation();	
+					core.join("part",self.id);
+				});
+				core.on('message',function(m){
+					if (m.type === "part" && m.to === self.id && el != self.membershipHidden && core.nick() == m.from) {//hide part show join
+						addClass(el, "scrollback-membership-hidden");
+						removeClass(self.membershipHidden , "scrollback-membership-hidden");
+						self.membershipHidden=el;
+						delete core.membership[self.id];
+					}	
+				});
+				core.on('membership', function(membership) {
+					if (!core.membership[self.id] && el != self.membershipHidden) {//show join hide part
+						addClass(el, "scrollback-membership-hidden");
+						removeClass(self.membershipHidden , "scrollback-membership-hidden");
+						self.membershipHidden=el;
+					}			
+				});
+				break;
+			case hasClass(el, "scrollback-join"):
+				if(core.membership[self.id]) {
+					addClass(el, "scrollback-membership-hidden");
+					removeClass(self.membershipHidden , "scrollback-membership-hidden");
+					self.membershipHidden = el;
+				}
+				addEvent(el,'click',function(e){
+					if(e.preventDefault) e.preventDefault();
+					if(e.stopPropagation) e.stopPropagation();
+					if (core.nick().indexOf('guest-')==0) {
+						login();
+						return;
+					}
+					core.join("join",self.id);
+				})
+				core.on('message',function(m){
+					if (m.type == "join" && m.to == self.id && el != self.membershipHidden && core.nick() == m.from) {//show part hide join
+						addClass(el, "scrollback-membership-hidden");
+						removeClass(self.membershipHidden , "scrollback-membership-hidden");
+						self.membershipHidden=el;
+						core.membership[self.id]=true;
+					}	
+				});
+				core.on('membership', function(membership) {
+					if (core.membership[self.id] && el != self.membershipHidden) {//hide join show part
+						addClass(el, "scrollback-membership-hidden");
+						removeClass(self.membershipHidden , "scrollback-membership-hidden");
+						self.membershipHidden=el;
+					}			
+				});
+				break;
 		}
 		return el;
 	});
@@ -315,7 +376,9 @@ Stream.prototype.notify=function(str, persist) {
 
 Stream.prototype.onmessage = function(message) {
 	var el = this.renderMessage(message),str="", oldTitle="",title="";
-	
+	if (message.type=="join" || message.type=="part") {
+		return;
+	}
 	if (message.type=="text") {
 		browserNotify(message.from+" : "+message.text);
 		this.titleText.innerHTML = (el.innerText || el.textContent);

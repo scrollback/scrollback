@@ -13,7 +13,8 @@ var sockjs = require("sockjs"),
 	config = require("../../config.js"),
 	EventEmitter = require("events").EventEmitter,
 	session = require("./session.js"),
-	guid = require("../../lib/guid.js");
+	guid = require("../../lib/guid.js"),
+	members=require("../../core/api/members.js");
 
 var rConns = {}, users = {};
 var pid = guid(8);
@@ -63,13 +64,29 @@ function init(data, conn) {
 				if(rooms.hasOwnProperty(i)) rooms[i] = 0;
 			}
 		}
-		conn.send('init', {
-			sid: sess.cookie.value, user: sess.user,
-			clientTime: data.clientTime,
-			serverTime: new Date().getTime()
-		});
-		console.log("updated SESSION", sess);
-		session.set(conn.sid, sess);
+		log("-------nick----------",sess.user);
+		var query=[];
+		if (sess.user.id.indexOf('guest-')!=0) {
+			query.user=sess.user.id;
+		}
+		members(query,function(err,d){
+			var m={};
+			if (d) {
+				for (i=0;i<d.length;i++) {
+					log("adding room-------",d[i].room);
+					m[d[i].room]=true;
+				}
+			}
+			sess.user.membership = m;//Room added to user object
+			conn.send('init', {
+				sid: sess.cookie.value,
+				user: sess.user,
+				clientTime: data.clientTime,
+				serverTime: new Date().getTime(),
+				
+			});
+			session.set(conn.sid, sess);
+		})
 	});
 }
 
@@ -192,17 +209,24 @@ function message (m, conn) {
 				m.user.accounts[0] = user.accounts[0];	
 			}
 		}
+		
 		function sendMessage() {
 			core.message(m, function (err, m) {
 				var i, user = sess.user;
+				// shouldn't this be at the top?
+				if (err) {
+					return conn.send('error', {id: m.id, message: err.message});
+				}
 				if (!user) {
 					console.log("No session user?");
 					return;
 				}
+
 				if(m.type == 'nick') {
 					if(m.user) {
 						console.log("m.user is", m.user);
 						
+						// why shallow copy? why not sess.user = m.user?						
 						for(i in m.user) if(m.user.hasOwnProperty(i)) {
 							user[i] = m.user[i];
 						}
@@ -210,20 +234,38 @@ function message (m, conn) {
 						user.id = m.ref;
 					}
 					console.log("Saved session", sess);
-				}
-				session.set(conn.sid, sess);
-				if (err) {
-					return conn.send('error', {id: m.id, message: err.message});
-				}
-				if(m.ref) {
-					users[m.ref] = users[user.from] || {};
-					users[m.from] && delete users[m.from];
-					if(m.ref.indexOf("guest-") != 0) {
-						users["guest-"+m.from]=users[user.from];
+					// shouldn't this be inside the if m.type==nick block?
+					session.set(conn.sid, sess);
+					var query=[];
+					if (sess.user.id.indexOf('guest-')!=0) {
+						query.user=sess.user.id;
 					}
+					members(query,function(err,d){
+						var m={};
+						if (d) {
+							for (i=0;i<d.length;i++) {
+								m[d[i].room]=true;
+							}
+						}
+						sess.user.membership = m;
+						conn.send('init', {
+							sid: sess.cookie.value,
+							user: sess.user
+						});
+						session.set(conn.sid, sess);
+					});
+					if(m.ref) {
+						users[m.ref] = users[user.from] || {};
+						users[m.from] && delete users[m.from];
+						if(m.ref.indexOf("guest-") != 0) {
+							users["guest-"+m.from]=users[user.from];
+						}
+					}
+
 				}
 			});
 		}
+		
 		if(m.type=="nick" && ( m.ref || m.user)) {
 			tryingNick = m.ref || m.user.id;
 			core.room(((tryingNick.indexOf("guest-")==0)? tryingNick.substring(6) : tryingNick),function(err,data){
@@ -273,7 +315,10 @@ function validateNick(nick){
 
 exports.send = function (message, rooms) {
 	message.text = message.text || "";
+	
+	message.member=['scrollback','test'];
 	log("Socket sending", message, "to", rooms);
+	
 	rooms.map(function(room) {
 		var location;
 		if(message.origin.location) location= message.origin.location;
