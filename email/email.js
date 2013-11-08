@@ -105,13 +105,16 @@ function init() {
 }
 
 function sendDigest() {
-    /**
-     * select accounts.id,members.room from accounts inner join members on
-     * members.user=accounts.room where accounts.gateway='mailto' order by accounts.id;
-     **/
     var x = new Date().getUTCHours(),
     start = x<=12? -x: 24-x,
     end = start + 1;
+    //message summery for rooms.
+    var roomsData = {};
+    for(i = 0;i < rooms.length;i++){
+        roomsData[rooms[i]] = createMessage(rooms[i]);
+    }
+     //clear room data...
+    emailRooms = {};
     var since = new Date().getTime()-(24*60*60*1000);
     var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
                 "members.user=accounts.room where accounts.gateway='mailto' order by accounts.id";    
@@ -131,11 +134,13 @@ function sendDigest() {
             }
             us[d.user].rooms.push(d.room);
         }
-        for (var key in us) {
-            //send (key -user) 
+        
+        for (var key in us) { //send (key -user) 
             var rm = us[key].rooms;//all rooms as array
             log("email  :" + prepareEmail(key,rm));
+            send("info@scrollback.io",us[key].email,"Daily Digest",prepareEmail(key,rm,roomsData));
         }
+       
         
     });
     
@@ -143,13 +148,10 @@ function sendDigest() {
    // setTimeout(sendDigest, (90-new Date().getMinutes())*60000);
 }
 
-function prepareEmail(user, rooms) {
+function prepareEmail(user, rooms,roomsData) {
     log(user,rooms);
-    var roomsData = {};
-    for(i = 0;i < rooms.length;i++){
-        roomsData[rooms[i]] = createMessage(rooms[i]);
-    }
-    var fn = jade.render(digestJade,{user: user/*User name*/, room: rooms/*room array*/,
-                         roomsData: roomsData/*all room info*/});
-    return fn;      
+    
+    var em = jade.render(digestJade,{user: user/*User name*/, room: rooms/*room array*/,
+                         roomsData: roomsData/*all rooms info*/});
+    return em;      
 }   
