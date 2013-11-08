@@ -1,4 +1,4 @@
-var log = require("../../lib/logger.js");
+var log = require("../lib/logger.js");
 var jade = require("jade"), fs = require("fs");
 var blockedUsernames={};
 var longest = 0;

@@ -1,5 +1,5 @@
-var config = require('../../config.js');
-var redisProxy = require('../../core/redisProxy.js');
+var config = require('../config.js');
+var redisProxy = require('../core/redisProxy.js');
 
 
 module.exports = function(core) {

@@ -1,6 +1,6 @@
-var log = require("../../lib/logger.js");
+var log = require("../lib/logger.js");
 var fs=require("fs");
-var config = require('../../config.js');
+var config = require('../config.js');
 var pro;//for process
 var pendingCallbacks = {};
 /**

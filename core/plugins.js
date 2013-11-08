@@ -2,7 +2,7 @@ var core = require("./core.js"),
 	config = require("../config.js");
 
 function start(name) {
-	var plugin = require("../plugins/"+name+"/"+name+".js");
+	var plugin = require("../"+name+"/"+name+".js");
 	plugin(core);
 	return plugin;
 }

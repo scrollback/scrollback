@@ -1,8 +1,8 @@
-var config = require('../../config.js'),
-core = require("../../core/core.js"),
-db = require("../../core/data.js"),
+var config = require('../config.js'),
+core = require("../core/core.js"),
+db = require("../core/data.js"),
 fs = require("fs"),
-code = fs.readFileSync(__dirname + "/../../public/client.min.js",'utf8');
+code = fs.readFileSync(__dirname + "/../public/client.min.js",'utf8');
 exports.init = function(app) {
     
     var dialogs = {

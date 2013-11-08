@@ -1,4 +1,4 @@
-var log = require("../../lib/logger.js");
+var log = require("../lib/logger.js");
 var fs = require("fs");
 var jade = require("jade");
 var core;
@@ -31,7 +31,7 @@ module.exports = function(coreObject) {
     core=coreObject;
     fs.readFile(__dirname + "/loginrequired.jade", "utf8", function(err, data){
         if(err) throw err;
-        pluginContent = jade.compile(data,  {basedir: process.cwd()+'/plugins/http/views/'});
+        pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/'});
         core.setConfigUi("loginrequired", function(object) {
             return pluginContent(object);
         });
