@@ -1,7 +1,7 @@
 var express = require("express"),
 	http = require("http"), https = require("https"),
 	fs = require("fs"),
-	config = require("../../config.js"),
+	config = require("../config.js"),
 	session = require("./session.js");
 
 exports.init = function() {
@@ -18,7 +18,7 @@ exports.init = function() {
 	app.use(express.query());
 	app.use(express.bodyParser());
 	
-	app.use(express["static"](__dirname + "/../../" + config.http.home));
+	app.use(express["static"](__dirname + "/../" + config.http.home));
 	
 	srv = http.createServer(app);
 	srv.listen(config.http.port);
@@ -26,9 +26,9 @@ exports.init = function() {
 	
 	if (config.http.https) {
 		srvs = https.createServer({
-			key: fs.readFileSync(__dirname + "/../../" + config.http.https.key),
-			cert: fs.readFileSync(__dirname + "/../../" + config.http.https.cert),
-			ca : fs.readFileSync(__dirname + "/../../" + config.http.https.ca)
+			key: fs.readFileSync(__dirname + "/../" + config.http.https.key),
+			cert: fs.readFileSync(__dirname + "/../" + config.http.https.cert),
+			ca : !config.http.https.ca || fs.readFileSync(__dirname + "/../" + config.http.https.ca) 
 		}, app);
 		srvs.listen(config.http.https.port);
 		app.https = srvs;

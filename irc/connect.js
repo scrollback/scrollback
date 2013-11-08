@@ -1,9 +1,9 @@
 "use strict";
 
 var irc = require("irc"),
-	log = require("../../lib/logger.js"),
-        guid = require("../../lib/guid.js"),
-	config = require("../../config.js"),
+	log = require("../lib/logger.js"),
+        guid = require("../lib/guid.js"),
+	config = require("../config.js"),
 	ident=require("./ident.js"),
 	users;
 

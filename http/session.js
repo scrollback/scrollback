@@ -1,5 +1,5 @@
 "use strict";
-var config = require("../../config.js");
+var config = require("../config.js");
 
 var express = require("express"),
 	RedisStore = require('connect-redis')(express),
@@ -10,8 +10,8 @@ var express = require("express"),
 	}),
 	signature = require("express/node_modules/cookie-signature"),
 	cookie = require("cookie"),
-	guid = require("../../lib/guid.js"),
-	names = require("../../lib/names.js"),
+	guid = require("../lib/guid.js"),
+	names = require("../lib/names.js"),
 	_get = store.get,
 	key = "scrollback_sessid",
 	secret = "ertyuidfghjcrtyujwsvokmdf",

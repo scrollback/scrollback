@@ -1,4 +1,4 @@
-var log = require("../../lib/logger.js");
+var log = require("../lib/logger.js");
 var fs=require("fs"), jade = require("jade");
 var url = require("url");
 var blockOrigins={};
@@ -13,6 +13,7 @@ module.exports = function(core) {
 		if(r.accounts) {
 			for(i=0,l=r.accounts.length; i<l;i++) {
 				try {
+					console.log(r.accounts[i].id);
 					u = url.parse(r.accounts[i].id);
 				} catch(e) {
 					return callback(new Error("INVALID_ACCOUNT"));

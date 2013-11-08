@@ -1,4 +1,4 @@
-var log = require("../../lib/logger.js");
+var log = require("../lib/logger.js");
 var fs=require("fs"), jade = require("jade");
 var blockOrigins={};
 
@@ -8,7 +8,7 @@ module.exports = function(core) {
 	fs.readFile(__dirname + "/originban.jade", "utf8", function(err, data){
 		if(err)	throw err;
 		//this is a function object. 
-		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/plugins/http/views/' });
+		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/' });
 		core.setConfigUi("originban", function(object){
 			return pluginContent(object);
 		});
