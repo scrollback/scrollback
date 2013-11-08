@@ -1,5 +1,5 @@
 var users={};
-var config = require('../../config.js');
+var config = require('../config.js');
 
 
 

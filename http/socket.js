@@ -7,14 +7,14 @@
 "use strict";
 
 var sockjs = require("sockjs"),
-	core = require("../../core/core.js"),
+	core = require("../core/core.js"),
 	cookie = require("cookie"),
-	log = require("../../lib/logger.js"),
-	config = require("../../config.js"),
+	log = require("../lib/logger.js"),
+	config = require("../config.js"),
 	EventEmitter = require("events").EventEmitter,
 	session = require("./session.js"),
-	guid = require("../../lib/guid.js"),
-	members=require("../../core/api/members.js");
+	guid = require("../lib/guid.js"),
+	members=require("../core/api/members.js");
 
 var rConns = {}, users = {};
 var pid = guid(8);

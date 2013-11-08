@@ -5,14 +5,14 @@
 	The old client objects of all the individual users are not removed.
 */
 var irc = require("irc"),
-	core = require("../../core/core.js"),
-	config = require("../../config.js"),
+	core = require("../core/core.js"),
+	config = require("../config.js"),
 	url = require("url"),
 	connect = require("./connect.js"),
-	log = require("../../lib/logger.js"), fs = require("fs"),
+	log = require("../lib/logger.js"), fs = require("fs"),
 	jade = require("jade"),
 	crypto = require('crypto');
-var db = require("../../core/data.js");
+var db = require("../core/data.js");
 
 
 var botNick=config.irc.nick, clients = {bot: {}}, users = {};
@@ -22,7 +22,7 @@ module.exports = function(core){
 
 	fs.readFile(__dirname + "/irc.jade", "utf8", function(err, data){
 		if(err)	throw err;
-		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/plugins/http/views/' });
+		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/' });
 		core.setConfigUi("irc", function(object){
 			return pluginContent(object);
 		});

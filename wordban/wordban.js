@@ -1,4 +1,4 @@
-var log = require("../../lib/logger.js");
+var log = require("../lib/logger.js");
 var jade = require("jade"), fs = require("fs");
 var blockWords={};
 var longest = 0;
@@ -8,7 +8,7 @@ module.exports = function(core) {
 	fs.readFile(__dirname + "/wordban.jade", "utf8", function(err, data){
 		if(err)	throw err;
 		//this is a function object. 
-		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/plugins/http/views/' });
+		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/' });
 		core.setConfigUi("wordban", function(object){
 			return pluginContent(object);
 		});

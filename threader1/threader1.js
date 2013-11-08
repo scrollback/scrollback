@@ -1,5 +1,5 @@
-var log = require("../../lib/logger.js");
-var config = require('../../config.js');
+var log = require("../lib/logger.js");
+var config = require('../config.js');
 var fs=require("fs");
 var pro;//for process
 var pendingCallbacks = {};

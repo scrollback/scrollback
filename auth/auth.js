@@ -1,5 +1,5 @@
-var config = require("../../config.js"),
-	name = require("../../lib/names.js"),
+var config = require("../config.js"),
+	name = require("../lib/names.js"),
 	request = require("request");
 
 module.exports = function(core) {

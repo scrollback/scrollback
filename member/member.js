@@ -1,6 +1,6 @@
-var log = require("../../lib/logger.js");
-var config = require('../../config.js');
-var db = require('../../core/data.js');
+var log = require("../lib/logger.js");
+var config = require('../config.js');
+var db = require('../core/data.js');
 /**
 Process join and part massages
 */

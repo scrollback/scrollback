@@ -1,7 +1,7 @@
 "use strict";
 
 var net= require('net');
-var log = require("../../lib/logger.js");
+var log = require("../lib/logger.js");
 var users = {},server;
 
 exports.init=function(){
