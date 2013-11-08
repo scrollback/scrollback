@@ -4,7 +4,7 @@ var config = require('../config.js');
 var redisProxy = require('./redisProxy.js');
 var message = require('./api/message.js');
 var room = require('./api/room.js');
-var user = require('./api/user.js');
+//var user = require('./api/user.js');
 var plugins = {};
 
 var rooms = {} , users = {};
@@ -47,7 +47,7 @@ core.room = function(o, cb) {
 	}
 	
 }
-
+/*
 core.user = function(o ,cb){
 	if(typeof o === 'string'){
 		return user(o,cb);
@@ -69,9 +69,9 @@ core.user = function(o ,cb){
 		});
 	}
 }
-
+*/
 core.rooms = require('./api/rooms.js');
-core.users = require('./api/users.js');
+//core.users = require('./api/users.js');
 core.accounts = require('./api/accounts.js');
 core.messages = require("./api/messages.js");
 

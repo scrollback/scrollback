@@ -12,7 +12,20 @@ block userinfo
 
 block content
 	div.box.span12
-		form#profilefrm.clearfix
+		if(user.id.match("^guest"))
+			form#profilefrm.clearfix
+				.field.box.span6
+					label.before(for='nickname') Scrollback username
+						input#nickname(value="#{user.id.replace(/^guest-/,'')}")
+					p.after Usernames should begin with a letter and be at least 5 letters long.
+				if(user.accounts &&  user.accounts.length>0)
+					p.break.before Connected accounts
+					each account in user.accounts
+						input.break.box.span6.account(disabled=true, value='#{account.id.split(":")[1]}')
+				p.box.break.right.span6
+					button.primary.span3(type='submit') Save changes
+		else
+			form.clearfix
 			// .field.box.span3.gapr
 				label.before(for='picture') Avatar
 				button#picture
@@ -20,24 +33,14 @@ block content
 					| Change
 			.field.box.span6
 				label.before(for='nickname') Scrollback username
-				if(user.id.match("^guest"))
-					input#nickname(value="#{user.id.replace(/^guest-/,'')}")
-					p.after Usernames should begin with a letter and be at least 5 letters long.
-				else
 					input#nickname(value="#{user.id}",disabled=true)
-					
-			
 			if(user.accounts &&  user.accounts.length>0)
 				p.break.before Connected accounts
 				each account in user.accounts
 					input.break.box.span6.account(disabled=true, value='#{account.id.split(":")[1]}')
-			if(user.id.match("^guest"))
 				p.box.break.right.span6
-					button.primary.span3(type='submit') Save changes
-			else
-				p.box.break.right.span6
-					button#logout.primary.span3(type='submit') logout
-			
+					button#logout.primary.span3(type='button') logout
+		
 
 block append scripts
 	script(src="https://login.persona.org/include.js")
@@ -45,6 +48,7 @@ block append scripts
 		$(document).ready(function() {
 			$("#profilefrm").submit(function(e) {
 				var user = { id: $("#nickname").val(), accounts: [] };
+				console.log("sending nick msg");
 				if(validateNick(user.id)) {
 					window.parent.postMessage(user, "*");
 				} else {
@@ -56,6 +60,7 @@ block append scripts
 				return false;
 			});
 			$("#logout") && $("#logout").on("click",function(event){
+			console.log("posting logout...");
 				window.parent.postMessage({ guestname: "guest-"}, "*");
 				navigator.id.logout();
 			});

@@ -128,23 +128,19 @@ $(document).ready(function(){
 	if (!isLastPage) {
 		return;
 	}
-
-	addEvent(messageBox, "keydown", function(e) {
+	$('#messageForm').submit(function(e) {//onsubmit event 
+		e.preventDefault(); // to stop the form from submitting
 		var text = document.getElementById("messageBox");
-		if (e.keyCode == 13) {
-			if (text.value.length != 0) {
-				var tempText=text.value;
-				core.say(stream, text.value,function(obj){
-						if (obj.message=="AUTH_REQ_TO_POST") {
-								text.value=tempText;
-								login({requireAuth: 1});
-								
-						}
+		if (text.value.length != 0) {
+			var tempText=text.value;
+			core.say(stream, text.value,function(obj){
+				if (obj.message == "AUTH_REQ_TO_POST") {
+					text.value = tempText;
+					login({requireAuth: 1});
 						
-				});
-				text.value = "";
-			}
-			e.preventDefault();
+				}		
+			});
+			text.value = "";
 		}
 	});
 	function nickChange(nick) {

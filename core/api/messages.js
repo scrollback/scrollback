@@ -46,16 +46,16 @@ module.exports = function(options, callback) {
 			params.push(options.from);
 	}
 
-	if(options.type) {
-		where.push("`type` = ?");
-		params.push(options.type);
-	}
+	// if(options.type) {
+	// 	where.push("`type` = ?");
+	// 	params.push(options.type);
+	// }
 	
 	if(until) {
 		desc = true;
 	}
 
-	if(options.labels) {
+	if(options.type == "text" && options.labels) {
 		where.push("`label` in (?)");
 		params.push(options.labels);
 	}
@@ -84,6 +84,7 @@ module.exports = function(options, callback) {
 		if(err && callback) return callback(err);
 
 		data.forEach(function(element){
+			element.type = options.type;
 			element.labels = [element.labels];
 			try{
 				element.origin = JSON.parse(element.origin);

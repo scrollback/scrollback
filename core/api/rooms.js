@@ -17,7 +17,7 @@ module.exports = function(options, callback) {
 	}
 	
 	if(options.accounts) {
-		where.push("`id` IN (SELECT `room` FROM `room_accounts` WHERE `id` IN (?))");
+		where.push("`id` IN (SELECT `room` FROM `accounts` WHERE `id` IN (?))");
 		options.accounts.forEach(function(element){
 			accountIDs.push(element.id);
 		});
@@ -25,7 +25,7 @@ module.exports = function(options, callback) {
 	}
 	
 	if(where.length) query += " WHERE " + where.join(" AND ");
-	query += " LIMIT 64";
+	//query += " LIMIT 64";
 	
 	log(query, params);
 	db.query(query, params, function(err, data) {

@@ -16,6 +16,22 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `accounts`
+--
+
+DROP TABLE IF EXISTS `accounts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `accounts` (
+  `id` varchar(255) NOT NULL DEFAULT '',
+  `room` varchar(255) DEFAULT NULL,
+  `gateway` varchar(15) DEFAULT NULL,
+  `params` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `away_messages`
 --
 
@@ -100,22 +116,6 @@ CREATE TABLE `nick_messages` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `room_accounts`
---
-
-DROP TABLE IF EXISTS `room_accounts`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `room_accounts` (
-  `id` varchar(255) NOT NULL DEFAULT '',
-  `room` varchar(255) DEFAULT NULL,
-  `gateway` varchar(15) DEFAULT NULL,
-  `params` text,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `rooms`
 --
 
@@ -128,7 +128,7 @@ CREATE TABLE `rooms` (
   `description` text COLLATE utf8_unicode_ci,
   `picture` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL,
   `profile` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `createdOn` datetime DEFAULT NULL,
+  `createdOn` bigint(20) DEFAULT NULL,
   `owner` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `type` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
   `params` text COLLATE utf8_unicode_ci,
@@ -157,44 +157,6 @@ CREATE TABLE `text_messages` (
   KEY `totime` (`to`,`time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `user_accounts`
---
-
-DROP TABLE IF EXISTS `user_accounts`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_accounts` (
-  `id` varchar(255) NOT NULL DEFAULT '',
-  `user` varchar(255) DEFAULT NULL,
-  `gateway` varchar(15) DEFAULT NULL,
-  `params` text,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users` (
-  `id` varchar(255) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `description` text,
-  `picture` varchar(1024) DEFAULT NULL,
-  `profile` varchar(1024) DEFAULT NULL,
-  `createdOn` bigint(20) DEFAULT NULL,
-  `owner` varchar(255) DEFAULT NULL,
-  `type` varchar(15) DEFAULT NULL,
-  `params` text,
-  `timezone` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -205,4 +167,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-10-31 18:26:51
+-- Dump completed on 2013-11-02 15:27:12

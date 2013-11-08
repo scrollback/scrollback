@@ -23,14 +23,14 @@ module.exports = function(core) {
 				message.user.id = message.user.originalId;
 				return callback(new Error("INVALID_NICK"));
 			}
-			return core.user(message.user.id,function(err,room) {
+			return core.room(message.user.id,function(err,room) {
 				if (err) return callback(err);
 				if ((room.id) && message.user.originalId != message.user.id) {
 					message.user.id = message.user.originalId;
 					return callback(new Error("DUP_NICK"));
 				} else {
 					message.user.type = "user";
-					return core.user(message.user,function(err,room) {
+					return core.room(message.user,function(err,room) {
 						if (callback) {
 							message.ref = room.id;
 							callback(err,message);	
@@ -65,7 +65,7 @@ module.exports = function(core) {
 				gateway: "mailto",
 				params: ""
 			};
-			core.users({accounts: [account]}, function(err, data) {
+			core.rooms({accounts: [account]}, function(err, data) {
 				if(err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
 				if(data.length === 0) {
 					message.user = {accounts: [account]};

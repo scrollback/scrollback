@@ -16,7 +16,7 @@ read -s -p "Your MySQL root password: " rootpass
 echo ""
 
 mysql -uroot -p$rootpass < ./sql/database.sql
-mysql -uscrollback -pscrollback scrollback < ./sql/tables.6.sql
+mysql -uscrollback -pscrollback scrollback < ./sql/tables.7.sql
 
 echo "Running Grunt"
 grunt

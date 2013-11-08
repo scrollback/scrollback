@@ -27,7 +27,8 @@ exports.init = function() {
 	if (config.http.https) {
 		srvs = https.createServer({
 			key: fs.readFileSync(__dirname + "/../../" + config.http.https.key),
-			cert: fs.readFileSync(__dirname + "/../../" + config.http.https.cert)
+			cert: fs.readFileSync(__dirname + "/../../" + config.http.https.cert),
+			ca : fs.readFileSync(__dirname + "/../../" + config.http.https.ca)
 		}, app);
 		srvs.listen(config.http.https.port);
 		app.https = srvs;

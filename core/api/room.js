@@ -1,4 +1,4 @@
-var db = require("../data.js");
+	var db = require("../data.js");
 var log = require("../../lib/logger.js");
 var roomsApi = require("./rooms"); // This has to be changed.
 var rooms = {}, core = {};
@@ -14,7 +14,7 @@ roomsApi({query:""}, function(err, data){
 		} catch(e) {
 			rooms[element.id].params = {};
 		}
-		log("Caching rooms", element.id);
+		log("Caching rooms", element );
 	});
 });
 
@@ -25,22 +25,6 @@ module.exports = function(data, callback) {
 			var properties = [], currentRoom;
 			if(rooms[data.id]) {
 				rooms[data.id] = data;
-				// properties = Object.keys(data)
-				// properties.forEach( function(element) {
-				// 	if(data[element]) {
-				// 		if(element == "params") {
-				// 			if(typeof data.params =="string")
-				// 				data.params = JSON.parse(data.params);
-				// 			Object.keys(data.params).forEach( function(element) {
-				// 				if(data.params[element] !== undefined)
-				// 					currentRoom.params[element] = data.params[element];
-				// 			});
-				// 		}
-				// 		else {
-				// 			currentRoom[element] = data[element];
-				// 		}
-				// 	}
-				// });
 				room = data;
 			} else {
 				if(data.id && data.type) {
@@ -51,22 +35,21 @@ module.exports = function(data, callback) {
 						description : data.description || "",
 						picture : data.picture || "",
 						profile : data.profile || "", 
-						createdOn: new Date(),				
 						params : data.params || {},
 						owner: data.owner || data.id
 					};
 					rooms[data.id] = room;
 				}
-				else{
+				else {
 					callback(new Error("NO_TYPE"),null);
 				}
 			}
 			db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
-					"`owner`, `params`) values(?,?,?,?,?,?,NOW(),?,?) ON DUPLICATE KEY UPDATE "+
+					"`owner`, `params`) values(?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE "+
 					"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
 					",`picture`=values(`picture`), `profile`=values(`profile`),  `owner`=values(`owner`),"+
 					"`params`=values(`params`)", [room.id, room.type || "user", room.name || "", room.description || "",
-					room.picture || "", room.profile || "", room.owner, JSON.stringify(room.params|| {})],
+					room.picture || "", room.profile || "",new Date().getTime(), room.owner, JSON.stringify(room.params|| {})],
 			function(err, resp) {
 
 				if(err && callback) return callback(err,data);
@@ -82,7 +65,9 @@ module.exports = function(data, callback) {
 					});
 				}
 				else {
-					getAccounts(room, function(err, room) {
+					getAccounts(room, function(err, accounts) {
+						if(err) return callback(err);
+						room.accounts = accounts;
 						callback(err,room);
 					});
 				}
@@ -92,9 +77,10 @@ module.exports = function(data, callback) {
 			if(rooms[data]) {
 				room = rooms[data];
 				if(!room.accounts) {
-					return getAccounts(room, function(err, room) {
-						rooms[data].accounts = room.accounts
-						return callback(null, room);
+					return getAccounts(room, function(err, accounts) {
+						if(err) return callback(err);
+						rooms[data].accounts = accounts;
+						return callback(null, rooms[data]);
 					});
 				}
 				return callback(null, room);
@@ -104,7 +90,9 @@ module.exports = function(data, callback) {
 					if(room.length == 0) {
 						return callback(null,{});
 					}
-					getAccounts(room, function(err, room) {
+					getAccounts(room[0], function(err, accounts) {
+						if(err) return callback(err);
+						room.accounts = accounts;
 						return callback(err, room);
 					});
 				});
@@ -113,7 +101,7 @@ module.exports = function(data, callback) {
 };
 
 function insertAccounts(data,callback){
-	var account, accountsQuery=" INSERT INTO `room_accounts` VALUES ", //?
+	var account, accountsQuery=" INSERT INTO `accounts` VALUES ", //?
 		accountValues=" (?,?,?,?) ",params=[], ids = [];
 	
 	data.accounts.forEach(function(element) {
@@ -128,7 +116,7 @@ function insertAccounts(data,callback){
 		params.push("{}");			
 	});
 
-	db.query("delete from room_accounts where `room`=?",data.originalId || ids,function(err,res) {
+	db.query("delete from accounts where `room`=?",data.originalId || ids,function(err,res) {
 		if (err && callback) callback(err,res);
 
 		if( data.accounts.length){
@@ -144,11 +132,8 @@ function insertAccounts(data,callback){
 }
 
 function getAccounts(room,callback) {
-	if(rooms[room.id] && typeof rooms[room.id].accounts == "object")
-		return callback(null, rooms[room.id]);
-	db.query("SELECT * FROM `room_accounts` WHERE `room`=?", [room.id], function(err, accounts) {
-		if(err) return callback(err, room);
-		room.accounts = accounts;
-		callback(null, room);
+	db.query("SELECT * FROM accounts WHERE `room`=?", [room.id], function(err, accounts) {
+		if(err) return callback(err);
+		callback(null, accounts);
 	});
 }
