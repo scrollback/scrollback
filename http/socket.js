@@ -213,20 +213,17 @@ function message (m, conn) {
 		function sendMessage() {
 			core.message(m, function (err, m) {
 				var i, user = sess.user;
-				// shouldn't this be at the top?
-				if (err) {
-					return conn.send('error', {id: m.id, message: err.message});
-				}
 				if (!user) {
 					console.log("No session user?");
 					return;
 				}
-
-				if(m.type == 'nick') {
+				
+				if(m && m.type && m.type == 'nick') {
 					if(m.user) {
 						console.log("m.user is", m.user);
-						
-						// why shallow copy? why not sess.user = m.user?						
+						/* 	why shallow copy? why not sess.user = m.user?
+							copying the property like accounts to the session, but the user will not send other properties.
+						*/
 						for(i in m.user) if(m.user.hasOwnProperty(i)) {
 							user[i] = m.user[i];
 						}
@@ -234,7 +231,6 @@ function message (m, conn) {
 						user.id = m.ref;
 					}
 					console.log("Saved session", sess);
-					// shouldn't this be inside the if m.type==nick block?
 					session.set(conn.sid, sess);
 					var query=[];
 					if (sess.user.id.indexOf('guest-')!=0) {
@@ -261,7 +257,14 @@ function message (m, conn) {
 							users["guest-"+m.from]=users[user.from];
 						}
 					}
+				}
 
+				/* 
+					Why this is not at the top?
+					this thing should be at the bottom because we need the error AUTH_UNREGISTERED to be handled properly before sending the response.
+				 */
+				if (err) {
+					return conn.send('error', {id: m.id, message: err.message});
 				}
 			});
 		}

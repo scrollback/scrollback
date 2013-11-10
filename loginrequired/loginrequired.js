@@ -36,8 +36,8 @@ module.exports = function(coreObject) {
             return pluginContent(object);
         });
     });
-    core.on("message", function(message, callback){
-        console.log("in loginrequired");
+    core.on("message", function(message, callback) {
+        log("Listening");
         if (message.origin && message.origin.gateway == "irc") return callback();
         if(message.type == "text" && message.from.indexOf("guest-")==0) {
             core.room(message.to,function(err, data) {
@@ -47,5 +47,5 @@ module.exports = function(coreObject) {
             });
         }
         else callback();
-    });
+    }, "authorization");
 }

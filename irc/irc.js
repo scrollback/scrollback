@@ -51,6 +51,7 @@ module.exports = function(core){
 		callback();
 	});
 	core.on("message" , function(message , callback) {
+		log("Listening");
 		db.query("SELECT * FROM `accounts` WHERE `room` IN (?) AND `gateway`='irc'", [message.to], function(err, data) {
 			var i, l, name, list = [], u;
 			if(err) return callback(err);
@@ -64,7 +65,7 @@ module.exports = function(core){
 			send(message, list);
 		});
 		callback();
-	});
+	}, "gateway");
 };
 
 function addBot(account) {

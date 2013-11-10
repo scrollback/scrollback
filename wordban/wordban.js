@@ -15,6 +15,7 @@ module.exports = function(core) {
 	});
 	init();
 	core.on('message', function(message, callback) {
+		log("Listening");
 		if (message.origin && message.origin.gateway == "irc") return callback();
 		if(message.type=="text") {
 			core.room(message.to,function(err, data) {
@@ -25,7 +26,7 @@ module.exports = function(core) {
 		}else{
 			callback();
 		}
-	});
+	}, "antiabuse");
 };
 var init=function(){
 	fs.readFile(__dirname + "/blockedWords.txt","utf-8", function (err, data) {

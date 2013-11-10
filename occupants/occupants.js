@@ -1,3 +1,4 @@
+var log = require("../lib/logger.js");
 var config = require('../config.js');
 var redisProxy = require('../core/redisProxy.js');
 
@@ -10,6 +11,7 @@ module.exports = function(core) {
 		});
 	});
 	core.on('message', function(message, callback) {
+		log("Listening");
 		if(message.type === "back") {
 			if(message.to) {
 				redisProxy.sadd("rooms", message.to);
@@ -26,6 +28,6 @@ module.exports = function(core) {
 			}
 		}
 		callback();
-	});
+	}, "watcher");
 };
 

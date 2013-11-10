@@ -1,3 +1,4 @@
+var log = require("../lib/logger.js");
 var users={};
 var config = require('../config.js');
 
@@ -6,6 +7,7 @@ var config = require('../config.js');
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
 		var limiter;
+		log("Listening");
 		if (!users[message.from])
 			users[message.from]=new RateLimiter(config.http.limit, config.http.time);
 		limiter = users[message.from];
@@ -32,7 +34,7 @@ module.exports = function(core) {
 			}
 			return callback();
 		});
-	});
+	}, "antiflood");
 };
 
 RateLimiter =function(a,b,c){

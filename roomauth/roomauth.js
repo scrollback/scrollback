@@ -7,6 +7,7 @@ module.exports = function(core) {
 	var pluginContent = "";
 	core.on('room', function(r, callback) {
 		var err;
+		log("Listening-room");
 		if(!r.id || !r.type)
 			return callback(new Error("ROOM_ARG_FAIL"));
 		if(!validateRoom(r.id)) return callback(new Error("Room name must be at least 5 characters in length and contain no special characters or whitespaces!"));
@@ -24,7 +25,7 @@ module.exports = function(core) {
 			return callback(new Error("ROOM_AUTH_FAIL"));
 		}
 		callback();
-	});
+	}, "authentication");
 };
 
 function validateRoom(room){

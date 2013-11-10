@@ -1,11 +1,13 @@
+var log = require("../lib/logger.js");
 var users={};
 
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
+		log("Listening");
 		if (message.origin && message.origin.gateway == "irc") return callback();
 		if(rejectable(message)) callback(new Error("REPEATATIVE"));
 		else callback();
-	});
+	}, "antiabuse");
 };
 
 

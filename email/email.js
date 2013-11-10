@@ -34,11 +34,12 @@ module.exports = function(coreObject) {
     //sendDigest();
     init();
     core.on('message', function(message, callback) {
+        log("Listening");
         if(message.type === "text"){
             addMessage(message);    
         }
         callback();
-    });
+    }, "gateway");
     setInterval(sendDigest,5*1000);
 };
 

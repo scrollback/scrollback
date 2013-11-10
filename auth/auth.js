@@ -1,10 +1,12 @@
 var config = require("../config.js"),
 	name = require("../lib/names.js"),
+	log = require("../lib/logger.js"),
 	request = require("request");
 
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
 		var assertion = message.browserid;
+		log("Listening");
 		delete message.browserid;
 		
 
@@ -77,7 +79,7 @@ module.exports = function(core) {
 				return callback();
 			});
 		});
-	});
+	}, "authentication");
 };
 
 function validateNick(nick){
