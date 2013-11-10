@@ -1,9 +1,29 @@
-h1
-		h1 #{user}		
-p	You summary for the day.
-for r in room
-		p
-				|Room #{r} br
-				|#{roomsData[r]}
+extends /layout
+		
+block append scripts
 
-- Scrollback
+block content
+	h1 hi #{user}
+	
+	p	Your summary for the day.
+	
+	each r in room
+		if roomsData[r]
+			a(href="http://scrollback.io/#{r}") #{r}
+			div.msglist
+				each msg in roomsData[r].head
+					div.msg
+						span [#{msg.from.replace(/^guest-/,"")}] #{msg.text}
+			if(roomsData[r].count > 6)
+				div
+					a(href="http://kamal.scrollback.io/#{r}/since/#{new Date(roomsData[r].head[0].time-1).toISOString()}") #{roomsData[r].count} messages where sent in the room today.
+			if(roomsData[r].tail)
+				div.msglist
+					each msg in roomsData[r].tail
+						div.msg
+							span [#{msg.from.replace(/^guest-/,"")}] #{msg.text}
+		else
+			span
+				a(href="http://scrollback.io/#{r}") #{r}
+				span  is waiting for you.... 
+	p	- Scrollback

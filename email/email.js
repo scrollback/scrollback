@@ -1,12 +1,11 @@
 var nodemailer = require('nodemailer');
-var config = require('../../config.js');
-var log = require("../../lib/logger.js");
-var db = require('../../core/data.js');
+var config = require('../config.js');
+var log = require("../lib/logger.js");
+var db = require('../core/data.js');
+var redis = require('../core/redisProxy.js');
 var fs=require("fs"),jade = require("jade");
 var emailConfig = config.email, digestJade;
 var core;
-var emailRooms = {};
-
 var transport = nodemailer.createTransport("SMTP", {
     host: "email-smtp.us-east-1.amazonaws.com",
     secureConnection: true,
@@ -14,7 +13,7 @@ var transport = nodemailer.createTransport("SMTP", {
     auth: emailConfig.auth
 });
 
-exports.send = function(from,to,subject,html) {
+function send(from,to,subject,html) {
     var email = {
         from: from,
         to: to,
@@ -31,7 +30,6 @@ exports.send = function(from,to,subject,html) {
 
 module.exports = function(coreObject) {
     core = coreObject;
-    //sendDigest();
     init();
     core.on('message', function(message, callback) {
         log("Listening");
@@ -40,88 +38,160 @@ module.exports = function(coreObject) {
         }
         callback();
     }, "gateway");
-    setInterval(sendDigest,5*1000);
+    setInterval(sendDigest, 25*1000);
 };
 
+
+function getNumber(i){
+    var x=[],j;
+    for(j=0;j<i;j++)
+        x.push(j);
+    return x;
+}
 function addMessage(message){
-    var room = message.to;
-    var m = message.from.replace(/guest-/g, '') + " : " + message.text;
-    if (emailRooms[room]) {
-        if (emailRooms[room].head.length < 3) {//if first 3 messages
-            emailRooms[room].head.push(m);
-        }
-        else{
-            if(!emailRooms[room].count){
-                emailRooms[room].count = 3;
-            }
-            if(!emailRooms[room].tail){
-                emailRooms[room].tail = [];
-            }
-            if (emailRooms[room].tail.length == 3) {
-                emailRooms[room].tail.shift();
-            }
-            emailRooms[room].count++;
-            emailRooms[room].tail.push(m);
-        }
-    }
-    else{
-        emailRooms[room] = {};
-        emailRooms[room].head = [];
-        emailRooms[room].head.push(m);
-    }
-    log(emailRooms);
-    log(createMessage(room));
+    var room = message.to, i;
+    getNumber(24).forEach(function(i){
+        redis.sadd("email:room:" + i, room);
+        redis.incr("email:" + room + ":" + i + ":count", function(err, d) {
+            //is there a better way to handle this?
+            if (err)    return log(err);
+            console.log("email:" + room + ":" + i + ":count");
+            redis.get("email:" + room + ":" + i + ":count",function(error,data){
+                var count = parseInt(data);
+                log(error);
+                log(count,data);
+                if (count < 4) {
+                    redis.rpush("email:" + room + ":" + i + ":head",JSON.stringify(message));
+                }
+                else {
+                    redis.rpush("email:" + room +":" + i +":tail",JSON.stringify(message));
+                    if (count > 6) {
+                        redis.ltrim("email:" + room + ":" + i + ":tail", 1, 3);
+                    }
+                }
+            });
+        }); 
+        
+    });
 }
 /**
- *@param {string} room 
- *@returns {string} prepared email text for a room.
+ *@param {string} room (room:no)
+ *@param {function} callback(error,data) callback with room data....
  */
-function createMessage(room) {
-    var ret = "";
-    if(!emailRooms[room])return "";
-    for(i=0;i<emailRooms[room].head.length;i++){
-        ret +=emailRooms[room].head[i]+"\n";
-    }
-    if (!emailRooms[room].tail) {
-        return ret;
-    }
-    else{
-        if (emailRooms[room].count>6) {
-            ret += emailRooms[room].count+" messages"+"\n";
+function createMessage(room,callback) {
+    var roomsData = {};
+    redis.get("email:" + room + ":count", function (error,ct){//get msg count
+        if (error) {
+            return callback(error);
         }
-        for(i = 0; i < emailRooms[room].tail.length; i++){
-            ret += emailRooms[room].tail[i] + "\n";
-        }   
-    }
-    return ret;
+        redis.lrange("email:" + room + ":head", 0, -1,function(error,head){// get head....
+            if (error) {
+                return callback(error);
+            }
+            log("head for room " ,room , head);
+            roomsData.head =[];
+            head.forEach(function(element){
+                roomsData.head.push(JSON.parse(element));
+            });
+            roomsData.count = ct;
+            /*for(i = 0;i < head.length;i++){
+                var mm = JSON.parse(head[i]);
+                roomsData += mm.from.replace(/guest-/, '') + " : " + mm.text + "\n";
+            }*/
+            redis.lrange("email:" + room +":tail", 0, -1,function(error,tail){//get tail...
+                if (error) {
+                    callback(error);
+                }
+                /*
+                for(i = 0;i < tail.length;i++){
+                    var mm = JSON.parse(tail[i]);
+                    roomsData += mm.from.replace(/guest-/, '') + " : " + mm.text + "\n";
+                }
+                */
+                roomsData.tail = [];
+                tail.forEach(function(element){
+                    roomsData.tail.push(JSON.parse(element));
+                });
+                //room data making done for current room....                   
+                 //clear room data....
+                redis.del("email:" + room + ":head");
+                redis.del("email:" + room + ":count");
+                redis.del("email:" + room + ":tail");
+                callback(null,roomsData);
+            }); 
+        });
+    });//end get count   
 }
 
 
 function init() {
     fs.readFile(__dirname + "/views/digest.jade", "utf8", function(err, data) {
         if(err) throw err;
-        digestJade = data;//jade.compile(data,  {basedir: process.cwd()+'/plugins/http/views/'});
+        console.log(process.cwd()+'/http/views/');
+        digestJade = jade.compile(data,  {basedir: process.cwd()+'/http/views/'});
     });
    // setTimeout(sendDigest, (90-new Date().getMinutes())*60000);
 }
 
 function sendDigest() {
-    var x = new Date().getUTCHours(),
-    start = x<=12? -x: 24-x,
-    end = start + 1;
+    var x = new Date().getUTCHours();
+    var start = x*60;//x<=12? -x: 24-x,
+    var end = start + 60;
     //message summery for rooms.
-    var roomsData = {};
-    for(i = 0;i < rooms.length;i++){
-        roomsData[rooms[i]] = createMessage(rooms[i]);
-    }
-     //clear room data...
-    emailRooms = {};
+    redis.smembers("email:room:"+x, function(error,data){//get all rooms
+        if (error) {
+            return;
+        }
+        var roomsData = {};
+        var count=0;
+        var i=0;
+        function next(callback) {
+            createMessage(data[i] + ":" + x,function(error,rd){
+                roomsData[data[i]] = rd;
+                i++;
+                if (i<data.length) {
+                    next(callback);
+                }
+                else{
+                    //delete all rooms...
+                    redis.del("email:room:"+x,function(error,data){
+                        callback();    
+                    });
+                }
+            });
+        }
+        next(function(){
+            sendMails(roomsData);
+            //send email now....
+            log("all rooms info===" ,roomsData);    
+        });
+        
+        //redis.del("email:rooms");
+    });
+    return;
+    
+    //clear redis
     var since = new Date().getTime()-(24*60*60*1000);
+    
+    
+    
+   // setTimeout(sendDigest, (90-new Date().getMinutes())*60000);
+}
+
+
+function sendMails(roomsData){
+    var x = new Date().getUTCHours();
+    var start = x*60;//x<=12? -x: 24-x,
+    var end = start + 60;
+    
+    
+   /* var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
+                "members.user=accounts.room where accounts.gateway='mailto' and timezone between ? to ? order by accounts.id";
+    */
     var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
-                "members.user=accounts.room where accounts.gateway='mailto' order by accounts.id";    
-    log("DB=----------------- query");
-    db.query(query, [], function(error,data){
-        log("DB=----------------- query",data);
+                "members.user=accounts.room where accounts.gateway='mailto' order by accounts.id";
+    
+    db.query(query, [start, end], function(error,data){
         if (error) {
             return;
         }
@@ -138,21 +208,14 @@ function sendDigest() {
         
         for (var key in us) { //send (key -user) 
             var rm = us[key].rooms;//all rooms as array
-            log("email  :" + prepareEmail(key,rm));
-            send("info@scrollback.io",us[key].email,"Daily Digest",prepareEmail(key,rm,roomsData));
+            log("email  :" + prepareEmail(key,rm,roomsData));
+            send("askabt@askabt.in",us[key].email,"Daily Digest",prepareEmail(key,rm,roomsData));
         }
-       
-        
     });
-    
-    
-   // setTimeout(sendDigest, (90-new Date().getMinutes())*60000);
 }
 
 function prepareEmail(user, rooms,roomsData) {
-    log(user,rooms);
-    
-    var em = jade.render(digestJade,{user: user/*User name*/, room: rooms/*room array*/,
-                         roomsData: roomsData/*all rooms info*/});
-    return em;      
+    log(user,rooms,roomsData);
+    var obj={user: user/*User name*/, room: rooms/*room array*/,roomsData: roomsData/*all rooms info*/};
+    return digestJade(obj);
 }   
