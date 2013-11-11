@@ -16,7 +16,7 @@ block content
 						span [#{msg.from.replace(/^guest-/,"")}] #{msg.text}
 			if(roomsData[r].count > 6)
 				div
-					a(href="http://kamal.scrollback.io/#{r}/since/#{new Date(roomsData[r].head[0].time-1).toISOString()}") #{roomsData[r].count} messages where sent in the room today.
+					a(href="http://scrollback.io/#{r}/since/#{new Date(roomsData[r].head[0].time-1).toISOString()}") #{roomsData[r].count} messages where sent in the room today.
 			if(roomsData[r].tail)
 				div.msglist
 					each msg in roomsData[r].tail
