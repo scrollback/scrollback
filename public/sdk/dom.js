@@ -9,13 +9,11 @@ var dom = {
 				'class': 'scrollback-icon scrollback-icon-close'
 			}]: "",
 			["div", { 'class': 'scrollback-icon scrollback-icon-pop' }, 'on scrollback'],
-			["button", {"class": "scrollback-part scrollback-membership-hidden" ,
-				 "style":"width:50px; background-color:#FF0000" },
-				 "Part"
+			["span", {"class": "scrollback-icon scrollback-icon-part scrollback-hidden"},
+				"Leave room"
 			],
-			["button", {"class": "scrollback-join " ,
-				 "style":"width:50px; background-color:#00FF00"},
-				 "Join"
+			["span", {"class": "scrollback-icon scrollback-icon-join" },
+				"Join room"
 			],
 			["div", {'class': 'scrollback-title-content'},
 				["span", {'class': 'scrollback-title-id'}],

@@ -167,12 +167,12 @@ function Stream(id) {
 					return false;
 				});
 				break;
-			case hasClass(el, "scrollback-part"):
+			case hasClass(el, "scrollback-icon-part"):
 				if (!self.membershipHidden) {
 					self.membershipHidden=el;
 				}
 				if(!core.membership[self.id]) {
-					addClass(el, "scrollback-membership-hidden");
+					addClass(el, "scrollback-hidden");
 					// come up with a better name..
 					self.membershipHidden = el;
 				}	
@@ -183,24 +183,24 @@ function Stream(id) {
 				});
 				core.on('message',function(m){
 					if (m.type === "part" && m.to === self.id && el != self.membershipHidden && core.nick() == m.from) {//hide part show join
-						addClass(el, "scrollback-membership-hidden");
-						removeClass(self.membershipHidden , "scrollback-membership-hidden");
-						self.membershipHidden=el;
+						addClass(el, "scrollback-hidden");
+						removeClass(self.membershipHidden , "scrollback-hidden");
+						self.membershipHidden = el;
 						delete core.membership[self.id];
 					}	
 				});
 				core.on('membership', function(membership) {
 					if (!core.membership[self.id] && el != self.membershipHidden) {//show join hide part
-						addClass(el, "scrollback-membership-hidden");
-						removeClass(self.membershipHidden , "scrollback-membership-hidden");
-						self.membershipHidden=el;
+						addClass(el, "scrollback-hidden");
+						removeClass(self.membershipHidden , "scrollback-hidden");
+						self.membershipHidden = el;
 					}			
 				});
 				break;
-			case hasClass(el, "scrollback-join"):
+			case hasClass(el, "scrollback-icon-join"):
 				if(core.membership[self.id]) {
-					addClass(el, "scrollback-membership-hidden");
-					removeClass(self.membershipHidden , "scrollback-membership-hidden");
+					addClass(el, "scrollback-hidden");
+					removeClass(self.membershipHidden , "scrollback-hidden");
 					self.membershipHidden = el;
 				}
 				addEvent(el,'click',function(e){
@@ -214,17 +214,17 @@ function Stream(id) {
 				})
 				core.on('message',function(m){
 					if (m.type == "join" && m.to == self.id && el != self.membershipHidden && core.nick() == m.from) {//show part hide join
-						addClass(el, "scrollback-membership-hidden");
-						removeClass(self.membershipHidden , "scrollback-membership-hidden");
-						self.membershipHidden=el;
+						addClass(el, "scrollback-hidden");
+						removeClass(self.membershipHidden , "scrollback-hidden");
+						self.membershipHidden = el;
 						core.membership[self.id]=true;
 					}	
 				});
 				core.on('membership', function(membership) {
 					if (core.membership[self.id] && el != self.membershipHidden) {//hide join show part
-						addClass(el, "scrollback-membership-hidden");
-						removeClass(self.membershipHidden , "scrollback-membership-hidden");
-						self.membershipHidden=el;
+						addClass(el, "scrollback-hidden");
+						removeClass(self.membershipHidden , "scrollback-hidden");
+						self.membershipHidden = el;
 					}			
 				});
 				break;
@@ -236,6 +236,7 @@ function Stream(id) {
 	addEvent(self.stream, 'click', function() { self.select(); });
 	document.body.appendChild(self.stream);
 }
+
 
 Stream.prototype.close = function (){
 	delete streams[this.id];
