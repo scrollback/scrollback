@@ -38,10 +38,7 @@ module.exports = function(coreObject) {
         }
         callback();
     }, "gateway");
-    setInterval(sendDigest, 20*1000);
-
-   
-    
+    //setInterval(sendDigest, 20*1000);
 };
 
 function init() {
@@ -157,7 +154,7 @@ function sendDigest() {
             });
         }
         next(function(){
-            log("sending mails....." ,roomsData);
+            log("sending mails.....");
              //send emails now....
             sendMails(roomsData);    
         });
@@ -185,7 +182,7 @@ function sendMails(roomsData){
             log("error in geting email member..",error);
             return;
         }
-        log("data  returned:",data);
+        log("data  returned:",data.length);
         var us = {};    
         for (i = 0;i < data.length; i++){
             var d = data[i];
@@ -211,7 +208,7 @@ function sendMails(roomsData){
  *@returns {string} Subject Line for email.
  */
 function getSubject(user,rooms,roomsData){
-    var r = user+": ";
+    var r = "hi " + user+": ";
     r += "Updates from rooms ";
     for (i = 0;i < rooms.length;i++) {
         
