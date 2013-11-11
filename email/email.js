@@ -24,7 +24,7 @@ function send(from,to,subject,html) {
         if(!error)
             console.log('Test message sent successfully!');
         else
-            console.log(error);
+            console.log("error in sending email: ",error);
     });
 }
 
@@ -38,7 +38,7 @@ module.exports = function(coreObject) {
         }
         callback();
     }, "gateway");
-    //setInterval(sendDigest, 50*1000);
+    setInterval(sendDigest, 20*1000);
 
    
     
@@ -172,8 +172,9 @@ function sendMails(roomsData){
     var x = new Date().getUTCHours();
     var start = x*60;
     var end = start + 60;
+    log("current time hour:",x);
     var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
-                "members.user=accounts.room where accounts.gateway='mailto' and timezone between ? to ? "+
+                "members.user=accounts.room where accounts.gateway='mailto' and timezone between ? and ? "+
                 "order by accounts.id";
     
     /*var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
@@ -181,8 +182,10 @@ function sendMails(roomsData){
     */
     db.query(query, [start, end], function(error,data){
         if (error) {
+            log("error in geting email member..",error);
             return;
         }
+        log("data  returned:",data);
         var us = {};    
         for (i = 0;i < data.length; i++){
             var d = data[i];
