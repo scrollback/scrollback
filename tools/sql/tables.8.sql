@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `scrollback`.`accounts` (
   `room` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NULL DEFAULT NULL,
   `gateway` VARCHAR(15) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NULL DEFAULT NULL,
   `params` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NULL DEFAULT NULL,
-  `timezone` INT(11) NULL DEFAULT NULL,
+  `timezone` INT(11) NULL DEFAULT '0',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
