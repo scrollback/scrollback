@@ -21,10 +21,16 @@ function send(from,to,subject,html) {
         html: html
     };
     transport.sendMail(email, function(error) {
-        if(!error)
+        if(!error){
             console.log('Test message sent successfully!');
-        else
+        }
+        else{
             console.log("error in sending email: ",error);
+            log("retrying......");
+            setTimeout(function(){
+                send(email.from, email.to, email.subject, email.html);
+            },1000);
+        }
     });
 }
 
@@ -59,6 +65,9 @@ function getNumber(i){
         x.push(j);
     return x;
 }
+/**
+ *Push message into redis
+ */
 function addMessage(message){
     var room = message.to, i;
     getNumber(24).forEach(function(i){
@@ -197,7 +206,9 @@ function sendMails(roomsData){
         for (var key in us) { //send (key -user) 
             var rm = us[key].rooms;//all rooms as array
             log("email  :" + prepareEmail(key,rm,roomsData));
-            send("askabt@askabt.in",us[key].email,getSubject(key,rm,roomsData),prepareEmail(key,rm,roomsData));
+            send("askabt@askabt.in",us[key].email,
+                 getSubject(key,rm,roomsData),
+                 prepareEmail(key,rm,roomsData));
         }
     });
 }
@@ -229,7 +240,7 @@ function getSubject(user,rooms,roomsData){
  *@param {string} user
  *@param {array} rooms array
  *@param {object} Map of rooms data.
- *@returns {string} emailHTML
+ *@returns {string} email HTML
  **/
 function prepareEmail(user, rooms,roomsData) {
     log(user,rooms,roomsData);
