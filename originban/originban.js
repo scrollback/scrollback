@@ -9,12 +9,14 @@ module.exports = function(core) {
 		if(err)	throw err;
 		//this is a function object. 
 		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/' });
-		core.setConfigUi("originban", function(object){
-			return pluginContent(object);
-		});
+		// core.on("config", function(payload, callback) {
+		// 	log("Heard \"config event\"");
+  //           payload.originban = pluginContent;
+  //           callback(null, payload);
+  //       });
 	});
 	core.on('message', function(message, callback) {
-		log("Listening");
+		log("Heard \"message event\"");
 		if (message.origin && message.origin.gateway == "irc") return callback();
 		if(rejectable(message)) callback(new Error("BANNED_WORD"));
 		else callback();

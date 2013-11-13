@@ -6,15 +6,14 @@
 
 "use strict";
 
-var sockjs = require("sockjs"),
-	core = require("../core/core.js"),
+var sockjs = require("sockjs"),core,
 	cookie = require("cookie"),
 	log = require("../lib/logger.js"),
 	config = require("../config.js"),
 	EventEmitter = require("events").EventEmitter,
 	session = require("./session.js"),
 	guid = require("../lib/guid.js"),
-	members=require("../core/api/members.js");
+	members=require("../member/member.js");
 
 var rConns = {}, users = {};
 var pid = guid(8);
@@ -44,8 +43,9 @@ sock.on('connection', function (socket) {
 	socket.on('close', function() { close(conn); });
 });
 
-exports.init = function (server) {
-	sock.installHandlers(server, {prefix: '/socket'});
+exports.init = function(server, coreObject) {
+    core = coreObject;
+    sock.installHandlers(server, {prefix: '/socket'});
 };
 
 function init(data, conn) {
@@ -69,7 +69,7 @@ function init(data, conn) {
 		if (sess.user.id.indexOf('guest-')!=0) {
 			query.user=sess.user.id;
 		}
-		members(query,function(err,d){
+		core.emit("members", query,function(err,d) {
 			var m={};
 			if (d) {
 				for (i=0;i<d.length;i++) {
@@ -116,8 +116,8 @@ function userAway(user, room, conn) {
 			var user = sess.user;
 			if (typeof user.rooms[room] !== "undefined" && user.rooms[room]<=1) {
 				delete user.rooms[room];
-				core.message({ type: 'away', from: user.id, to: room,
-					time: new Date().getTime(), text: "" , origin : {gateway : "web", location : "", ip :  conn.socket.remoteAddress}});
+				core.emit("message", { type: 'away', from: user.id, to: room,
+					time: new Date().getTime(), origin : {gateway : "web", location : "", ip :  conn.socket.remoteAddress}});
 				if(!Object.keys(user.rooms).length) {
 					delete users[user.id];
 				}
@@ -150,7 +150,7 @@ function userBack(user, room, conn) {
 }
 
 function messages (query, conn) {
-	core.messages(query, function(err, m) {
+	core.emit("messages", query, function(err, m) {
 		if(err) {
 			log("MESSAGES error", query, err);
 			conn.send('error', err);
@@ -211,7 +211,7 @@ function message (m, conn) {
 		}
 		
 		function sendMessage() {
-			core.message(m, function (err, m) {
+			core.emit("message", m, function (err, m) {
 				var i, user = sess.user;
 				if (!user) {
 					console.log("No session user?");
@@ -236,7 +236,7 @@ function message (m, conn) {
 					if (sess.user.id.indexOf('guest-')!=0) {
 						query.user=sess.user.id;
 					}
-					members(query,function(err,d){
+					core.emit("members", query,function(err,d){
 						var m={};
 						if (d) {
 							for (i=0;i<d.length;i++) {
@@ -271,7 +271,7 @@ function message (m, conn) {
 		
 		if(m.type=="nick" && ( m.ref || m.user)) {
 			tryingNick = m.ref || m.user.id;
-			core.room(((tryingNick.indexOf("guest-")==0)? tryingNick.substring(6) : tryingNick),function(err,data){
+			core.emit("rooms",{id:tryingNick.replace(/^guest-/,"")},function(err,data){
 				console.log(err);
 				if(err) return conn.send('error', {id: m.id, message: err.message});
 				console.log("Result of core on dup check",data);
@@ -284,6 +284,8 @@ function message (m, conn) {
 	});
 }
 
+
+//not sure what ths function is used for at the time. -Harish
 function room (r, conn) {
 	var user;
 	session.get({sid: conn.sid}, function(err, sess) {
@@ -292,14 +294,16 @@ function room (r, conn) {
 			user = sess.user;
 			r.owner = user.id;
 		}
-		core.room(r, function(err, data) {
+
+		//not sure what this function does... so just replace the core.room with core.emit().
+		core.emit("room", r, function(err, data) {
 		});
 		session.set(conn.sid, sess);
 	});
 }
 
 function rooms(query, conn) {
-	core.rooms(query, function(err, data) {
+	core.emit("rooms", query, function(err, data) {
 		if(err) {
 			log("ROOMS ERROR", query, err);
 			conn.send('error', err);
@@ -333,4 +337,3 @@ exports.send = function (message, rooms) {
 		});
 	});
 };
-

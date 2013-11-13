@@ -1,8 +1,8 @@
 var nodemailer = require('nodemailer');
 var config = require('../config.js');
 var log = require("../lib/logger.js");
-var db = require('../core/data.js');
-var redis = require('../core/redisProxy.js');
+var db = require('../lib/mysql.js');
+var redis = require('../lib/redisProxy.js');
 var fs=require("fs"),jade = require("jade");
 var emailConfig = config.email, digestJade;
 var core;
@@ -32,7 +32,7 @@ module.exports = function(coreObject) {
     core = coreObject;
     init();
     core.on('message', function(message, callback) {
-        log("Listening");
+        log("Heard \"message\" event");
         if(message.type === "text"){
             addMessage(message);    
         }

@@ -26,8 +26,12 @@ block styles
 			padding:0px;
 		}
 block append scripts
-	script(type='text/javascript')
+	script(type='text/javascript').
 		window.scrollback = {host: 'http://' + location.host};
+		var stream="#{query.to}";
+		var prevtime=#{prevtime};
+		var isLastPage= #{isLastPage};
+		var room = !{JSON.stringify(room || {})};
 	script(src="//code.jquery.com/jquery.min.js")
 	script(src="/sdk/sockjs.js")
 	script(src="/sdk/addEvent.js")
@@ -48,7 +52,6 @@ block append scripts
 	script(src="/sdk/render.js")
 	script(src="/sdk/archive.js")
 	
-	
 block content
 	.container
 		.box.span12.container
@@ -59,7 +62,7 @@ block content
 					h1
 						if user.indexOf("guest-") == 0
 							button#action.login.span12 Login
-						else if !room.owner
+						else if !room || !room.owner
 							button#action.config.span12 Claim
 						else if room.owner == user
 							button#action.config.span12 Configure
@@ -137,8 +140,3 @@ block content
 						(document,'script',location.protocol+'//scrollback.io'));
 					&lt;/script&gt;
 	-isLastPage=scrollNext?false:true;
-	script.
-		var stream="#{query.to}";
-		var prevtime=#{prevtime};
-		var isLastPage= #{isLastPage};
-		var room = !{JSON.stringify(room)};

@@ -12,14 +12,6 @@ module.exports = function(core) {
 		if(rejectable(message)) callback(new Error("BANNED_USERNAME"));
 		else callback();
 	}, "antiabuse");
-	// fs.readFile(__dirname + "/usernameban.jade", "utf8", function(err, data){
-	// 	if(err)	throw err;
-	// 	//this is a function object. 
-	// 	pluginContent = jade.compile(data,  {basedir: process.cwd()+'/plugins/http/views/' });
-	// 	core.setConfigUi("usernameban", function(object){
-	// 		return pluginContent(object);
-	// 	});
-	// });
 };
 
 

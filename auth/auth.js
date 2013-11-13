@@ -6,9 +6,8 @@ var config = require("../config.js"),
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
 		var assertion = message.browserid;
-		log("Listening");
+		log("Heard \"message\ event");
 		delete message.browserid;
-		
 
 		if(message.type !== 'nick') return callback();
 		
@@ -25,19 +24,20 @@ module.exports = function(core) {
 				message.user.id = message.user.originalId;
 				return callback(new Error("INVALID_NICK"));
 			}
-			return core.room(message.user.id,function(err,room) {
+			return core.emit("rooms", {id: message.user.id}, function(err,room) {
 				if (err) return callback(err);
 				if ((room.id) && message.user.originalId != message.user.id) {
 					message.user.id = message.user.originalId;
 					return callback(new Error("DUP_NICK"));
 				} else {
 					message.user.type = "user";
-					return core.room(message.user,function(err,room) {
+
+					return core.emit("room", message.user, function(err,room) {
 						if (callback) {
 							message.ref = room.id;
-							callback(err,message);	
+							callback(null,message);	
 						}
-					});	
+					});
 				}
 			});
 		}
@@ -67,11 +67,11 @@ module.exports = function(core) {
 				gateway: "mailto",
 				params: ""
 			};
-			core.rooms({accounts: [account]}, function(err, data) {
+			core.emit("rooms",{accounts: [account]}, function(err, data) {
 				if(err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
 				if(data.length === 0) {
 					message.user = {accounts: [account]};
-					return callback(new Error("AUTH_UNREGISTERED"));
+					return callback(new Error("AUTH_UNREGISTERED"), message);
 				}
 				message.user = data[0];
 				message.user.accounts=[account];

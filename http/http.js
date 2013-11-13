@@ -5,16 +5,16 @@ var express = require("./express.js"),
 	app = express.init();
 
 
-var init = function() {
+var init = function(core) {
 	socket.init(app.http);
-	if(app.https) socket.init(app.https);
-	page.init(app);
+	if(app.https) socket.init(app.https, core);
+	page.init(app, core);
 };
 
 module.exports = function(core){
-	init();
+	init(core);
 	core.on("message" , function(message, callback) {
-		log("Listening");
+		log("Heard \"message\" Event");
 		if(typeof message.to == "string")
 			send(message, [message.to]);
 		else if(typeof message.to == "object")
