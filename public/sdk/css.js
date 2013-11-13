@@ -81,15 +81,6 @@ var css = {
 				whiteSpace: "nowrap",
 				textOverflow: "ellipsis", overflow: "hidden"
 			},
-			".scrollback-membership-hidden": {
-				"display": "none"
-			},
-			".scrollback-join" : {
-				float:"right"
-			},
-			".scrollback-part" : {
-				float:"right"
-			},
 			".scrollback-title-text": {
 				paddingLeft: "8px",
 				fontWeight: "normal",
@@ -226,6 +217,9 @@ themes.light = {
 			},
 			".scrollback-icon-logout": {
 				backgroundImage: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADzSURBVFiF7ZaxDcIwFEQvCCVz0DMEY6REtCyRkhEoWQGEmIOCjk0ocjRGCpYJji+EKPpPuib2t5+UL9sZSYyZ2b8FvmGCKiaoYoIqJqgy72GNAsAewML7fgewBfCQVieppCB54WeOJHNlD0UuJ3luketFUhE8eSI7kiuXXUBycMEmVWC88uYk7ZMx/bnVLMyEOa1M8phZujQpI+pKADeXeBL6wu+tLoR6tTWj/8UmqGKCKpMUvOL9hoiFrrZjVdoduSFZdzj/alcz6GMhVjJZThWMkZTkKL5mXqxdQhxckulD8KdM8pgZFBNUMUEVE1QZveATwcwl121kDn4AAAAASUVORK5CYII=')"
+			},
+			".scrollback-icon-join, .scrollback-icon-part": {
+				width:"auto", textIndent: "0", padding: "0 8px"
 			},
 		".scrollback-title": {
 			backgroundColor: "#555", color: "#fff", borderBottomColor: "#3ca"

@@ -68,11 +68,11 @@ block content
 							button#action.config.span12 Configure
 						br
 						if membership && membership[query.to]
-							button#action.archive-part PART
+							button#action.archive-part LEAVE
 							button#action.archive-join.archive-membership-hidden JOIN
 						else
 							button#action.archive-join JOIN
-							button#action.archive-part.archive-membership-hidden PART
+							button#action.archive-part.archive-membership-hidden LEAVE
 			if data.length <= 1
 				div.container.intro
 					span.box.span12 This room doesnt have any messages. You can chat from this page using the text box below. Share the link with your friends. You can also embed a widget on your webpage using the script given below. Each room can have configurations to it, like adding the IRC accounts, enabling plugins. You have to login to configure any room.

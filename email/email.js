@@ -21,12 +21,18 @@ function send(from,to,subject,html) {
         html: html
     };
     transport.sendMail(email, function(error) {
-        if(!error)
+        if(!error){
             console.log('Test message sent successfully!');
-        else
-            console.log(error);
+        }
+        else{
+            console.log("error in sending email: ",error);
+            log("retrying......");
+            setTimeout(function(){
+                send(email.from, email.to, email.subject, email.html);
+            },1000);
+        }
     });
-};
+}
 
 module.exports = function(coreObject) {
     core = coreObject;
@@ -41,6 +47,17 @@ module.exports = function(coreObject) {
     setInterval(sendDigest, 25*1000);
 };
 
+function init() {
+    fs.readFile(__dirname + "/views/digest.jade", "utf8", function(err, data) {
+        if(err) throw err;
+        digestJade = jade.compile(data,  {basedir: process.cwd()+'/http/views/'});
+        //send mails in next hour     
+        setTimeout(function(){
+            sendDigest();
+            setInterval(sendDigest, 60*60*1000);
+        },(60 - new Date().getMinutes())*60*1000);
+    });
+}
 
 function getNumber(i){
     var x=[],j;
@@ -48,6 +65,9 @@ function getNumber(i){
         x.push(j);
     return x;
 }
+/**
+ *Push message into redis
+ */
 function addMessage(message){
     var room = message.to, i;
     getNumber(24).forEach(function(i){
@@ -55,11 +75,8 @@ function addMessage(message){
         redis.incr("email:" + room + ":" + i + ":count", function(err, d) {
             //is there a better way to handle this?
             if (err)    return log(err);
-            console.log("email:" + room + ":" + i + ":count");
             redis.get("email:" + room + ":" + i + ":count",function(error,data){
                 var count = parseInt(data);
-                log(error);
-                log(count,data);
                 if (count < 4) {
                     redis.rpush("email:" + room + ":" + i + ":head",JSON.stringify(message));
                 }
@@ -94,20 +111,10 @@ function createMessage(room,callback) {
                 roomsData.head.push(JSON.parse(element));
             });
             roomsData.count = ct;
-            /*for(i = 0;i < head.length;i++){
-                var mm = JSON.parse(head[i]);
-                roomsData += mm.from.replace(/guest-/, '') + " : " + mm.text + "\n";
-            }*/
             redis.lrange("email:" + room +":tail", 0, -1,function(error,tail){//get tail...
                 if (error) {
                     callback(error);
                 }
-                /*
-                for(i = 0;i < tail.length;i++){
-                    var mm = JSON.parse(tail[i]);
-                    roomsData += mm.from.replace(/guest-/, '') + " : " + mm.text + "\n";
-                }
-                */
                 roomsData.tail = [];
                 tail.forEach(function(element){
                     roomsData.tail.push(JSON.parse(element));
@@ -124,15 +131,10 @@ function createMessage(room,callback) {
 }
 
 
-function init() {
-    fs.readFile(__dirname + "/views/digest.jade", "utf8", function(err, data) {
-        if(err) throw err;
-        console.log(process.cwd()+'/http/views/');
-        digestJade = jade.compile(data,  {basedir: process.cwd()+'/http/views/'});
-    });
-   // setTimeout(sendDigest, (90-new Date().getMinutes())*60000);
-}
 
+/**
+ *Read rooms data from redis and send mails.
+ **/
 function sendDigest() {
     var x = new Date().getUTCHours();
     var start = x*60;//x<=12? -x: 24-x,
@@ -161,40 +163,35 @@ function sendDigest() {
             });
         }
         next(function(){
-            sendMails(roomsData);
-            //send email now....
-            log("all rooms info===" ,roomsData);    
+            log("sending mails.....");
+             //send emails now....
+            sendMails(roomsData);    
         });
-        
-        //redis.del("email:rooms");
     });
-    return;
-    
-    //clear redis
-    var since = new Date().getTime()-(24*60*60*1000);
-    
-    
-    
-   // setTimeout(sendDigest, (90-new Date().getMinutes())*60000);
 }
 
-
+/**
+ *Send mails to users based on current time.
+ *@param {object} Map of room data.
+ */
 function sendMails(roomsData){
     var x = new Date().getUTCHours();
-    var start = x*60;//x<=12? -x: 24-x,
+    var start = x*60;
     var end = start + 60;
-    
-    
-   /* var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
-                "members.user=accounts.room where accounts.gateway='mailto' and timezone between ? to ? order by accounts.id";
-    */
+    log("current time hour:",x);
     var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
-                "members.user=accounts.room where accounts.gateway='mailto' order by accounts.id";
+                "members.user=accounts.room where accounts.gateway='mailto' and timezone between ? and ? "+
+                "order by accounts.id";
     
+    /*var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
+                "members.user=accounts.room where accounts.gateway='mailto' order by accounts.id";
+    */
     db.query(query, [start, end], function(error,data){
         if (error) {
+            log("error in geting email member..",error);
             return;
         }
+        log("data  returned:",data.length);
         var us = {};    
         for (i = 0;i < data.length; i++){
             var d = data[i];
@@ -209,13 +206,48 @@ function sendMails(roomsData){
         for (var key in us) { //send (key -user) 
             var rm = us[key].rooms;//all rooms as array
             log("email  :" + prepareEmail(key,rm,roomsData));
-            send("askabt@askabt.in",us[key].email,"Daily Digest",prepareEmail(key,rm,roomsData));
+            send("askabt@askabt.in",us[key].email,
+                 getSubject(key,rm,roomsData),
+                 prepareEmail(key,rm,roomsData));
         }
     });
 }
+/**
+ *@param {string} user
+ *@param {array} rooms array
+ *@param {object} Map of rooms data.
+ *@returns {string} Subject Line for email.
+ */
+function getSubject(user,rooms,roomsData){
+    var r = "hi " + user+": ";
+    r += "Updates from rooms ";
+    for (i = 0;i < rooms.length;i++) {
+        
+        if (i < rooms.length-2) {
+            r += rooms[i]+", ";    
+        }
+        else if (i === rooms.length-2) {
+            r += rooms[i];
+        }
+        else{
+            r += " and "+rooms[i];
+        }   
+    }
+    return r;
+}
 
+/**
+ *@param {string} user
+ *@param {array} rooms array
+ *@param {object} Map of rooms data.
+ *@returns {string} email HTML
+ **/
 function prepareEmail(user, rooms,roomsData) {
     log(user,rooms,roomsData);
-    var obj={user: user/*User name*/, room: rooms/*room array*/,roomsData: roomsData/*all rooms info*/};
+    var obj = {
+                user: user/*User name*/,
+                room: rooms/*room array*/,
+                roomsData: roomsData/*all rooms info*/
+            };
     return digestJade(obj);
 }   
