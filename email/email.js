@@ -52,10 +52,7 @@ function init() {
         if(err) throw err;
         digestJade = jade.compile(data,  {basedir: process.cwd()+'/http/views/'});
         //send mails in next hour     
-        setTimeout(function(){
-            sendDigest();
-            setInterval(sendDigest, 60*60*1000);
-        },(60 - new Date().getMinutes())*60*1000);
+        setTimeout(sendDigest, (90-new Date().getMinutes())*60000);
     });
 }
 
