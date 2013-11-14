@@ -44,7 +44,7 @@ module.exports = function(coreObject) {
         }
         callback();
     }, "gateway");
-    setInterval(sendDigest, 25*1000);
+   // setInterval(sendDigest, 25*1000);
 };
 
 function init() {
