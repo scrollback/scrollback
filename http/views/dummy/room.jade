@@ -1,22 +1,22 @@
 extends layout
 
 block prepend title
-	| The Amazing Room on
+        | The Amazing Room on
 
 block info
-	h1
-		button.left: span.fa-arrow-left
-		span The Amazing Room
-		button.right: span.fa-sign-out
-	p#description.collapse  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam ut pulvinar risus. Integer porta ac libero quis vulputate. Nullam sit amet scelerisque mauris, sed rutrum enim. Quisque sit amet tincidunt quam, eu vestibulum nisi. Vivamus venenatis volutpat consectetur. Aliquam at luctus nunc. In id felis nec quam semper vestibulum. Nam aliquam auctor sodales. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam augue tellus, gravida quis aliquet non, mollis et libero. Praesent et tempus tortor. Ut orci erat, ultricies ac nulla eu, tempor laoreet turpis. Maecenas fringilla massa non dolor malesuada dictum. Mauris tempor placerat lacus sed ornare. Vestibulum placerat vitae nisl ac aliquet.
-	#members 
-		a: img.face.present(src='http://lorempixel.com/48/48/people/2')
-		a: img.face.present(src='http://lorempixel.com/48/48/people/3')
-		a: img.face.present(src='http://lorempixel.com/48/48/people/4')
-		a: img.face.present(src='http://lorempixel.com/48/48/people/5')
-		a: img.face(src='http://lorempixel.com/48/48/people/6')
-		a: img.face(src='http://lorempixel.com/48/48/people/7')
-		a: img.face(src='http://lorempixel.com/48/48/people/8')
-		a: img.face(src='http://lorempixel.com/48/48/people/9')
-		a: img.face(src='http://lorempixel.com/48/48/people/10')
-
+  h1
+    a(href="rooms")
+        button.left: span.fa.fa-arrow-left
+    span #{room.name}
+    button.right: span.fa.fa-sign-out
+  p#description.collapse  #{room.description}
+  #members 
+    a: img.face.present(src='http://lorempixel.com/48/48/people/2')
+    a: img.face.present(src='http://lorempixel.com/48/48/people/3')
+    a: img.face.present(src='http://lorempixel.com/48/48/people/4')
+    a: img.face.present(src='http://lorempixel.com/48/48/people/5')
+    a: img.face(src='http://lorempixel.com/48/48/people/6')
+    a: img.face(src='http://lorempixel.com/48/48/people/7')
+    a: img.face(src='http://lorempixel.com/48/48/people/8')
+    a: img.face(src='http://lorempixel.com/48/48/people/9')
+    a: img.face(src='http://lorempixel.com/48/48/people/10')

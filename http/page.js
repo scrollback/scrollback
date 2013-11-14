@@ -62,10 +62,24 @@ exports.init = function(app) {
     });
 	
 	app.get("/dummy/:page", function (req, res) {
-		res.render("dummy/" + req.params.page, {});
+		res.render("dummy/" + req.params.page, { room: { 
+            id: "roomId", name: "Sample Room", 
+            description: "This is a sample room and this is a description for the sample room, this description should be a little larger I presume. Here is the Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis semper lobortis leo accumsan adipiscing. Curabitur eu leo id elit aliquet sagittis ut eu leo. Nulla facilisi. .", picture: "",
+            profile: "http://sampleroom.blogspot.com" 
+        }});
 	});
     
     app.get("*", function(req, res, next) {
+/*
+        obj.initData = {
+            room : 
+            message :
+
+        }
+
+        res.render('layout.jade', obj);
+*/
+
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[0],
         user = req.session.user;
         if(roomId && !validateRoom(roomId)) return next();
