@@ -32,7 +32,7 @@ module.exports = function(core) {
 			}
 			return callback();
 		});
-	}, "antiflood");
+	}, "antiabuse");
 };
 
 RateLimiter =function(a,b,c){
