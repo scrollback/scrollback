@@ -18,10 +18,10 @@ module.exports = function(core) {
 		callback();
 	}, "watcher");
 
-	core.on("member", function(query, callback) {
+	core.on("members", function(query, callback) {
 		var sql = "SELECT `room`, `user`, `joinedOn` FROM `members` WHERE ",
 			where = [], params = [];
-		
+		log("Heard \"members\" Event");
 		if (!callback) {
 			return false;
 		}

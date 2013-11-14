@@ -13,8 +13,7 @@ var sockjs = require("sockjs"),core,
 	EventEmitter = require("events").EventEmitter,
 	session = require("./session.js"),
 	guid = require("../lib/guid.js"),
-	members=require("../member/member.js");
-
+	names = require("../lib/names.js");
 var rConns = {}, users = {};
 var pid = guid(8);
 var sock = sockjs.createServer();
@@ -193,11 +192,9 @@ function message (m, conn) {
 		} else if(m.type == 'nick') {
 			//validating nick name on server side 
 			console.log("checking for nick validity:" , m.ref);
-			if(m.ref && !validateNick(m.ref.substring(6))) {
-				if(m.ref !== "guest-")
-					return conn.send('error', {id:m.id , message: "INVALID_NAME"});
+			if(m.ref && m.ref !== "guest-" && !validateNick(m.ref.substring(6))) {
+				return conn.send('error', {id:m.id , message: "INVALID_NAME"});
 			}
-
 			if(m.ref && users[m.ref] )
 				return conn.send('error', {id: m.id, message: "DUP_NICK"});
 			if(m.user){
@@ -269,7 +266,7 @@ function message (m, conn) {
 			});
 		}
 		
-		if(m.type=="nick" && ( m.ref || m.user)) {
+		if(m.type=="nick" && m.ref!="guest-" &&( m.ref || m.user)) {
 			tryingNick = m.ref || m.user.id;
 			core.emit("rooms",{id:tryingNick.replace(/^guest-/,"")},function(err,data){
 				console.log(err);
