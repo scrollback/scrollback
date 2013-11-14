@@ -44,7 +44,7 @@ module.exports = function(coreObject) {
         }
         callback();
     }, "gateway");
-    //setInterval(sendDigest, 25*1000);
+    setInterval(sendDigest, 25*1000);
 };
 
 function init() {
@@ -241,20 +241,8 @@ function sendMails(roomsData){
  *@returns {string} Subject Line for email.
  */
 function getSubject(user,rooms,roomsData){
-    var r = "hi " + user+": ";
-    r += "Updates from rooms ";
-    for (i = 0;i < rooms.length;i++) {
-        
-        if (i < rooms.length-2) {
-            r += rooms[i]+", ";    
-        }
-        else if (i === rooms.length-2) {
-            r += rooms[i];
-        }
-        else{
-            r += " and "+rooms[i];
-        }   
-    }
+    var r = "Hi " + user+": ";
+    r += "Updates from rooms followed by you";
     return r;
 }
 
