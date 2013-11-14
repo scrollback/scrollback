@@ -44,15 +44,20 @@ module.exports = function(coreObject) {
         }
         callback();
     }, "gateway");
-    setInterval(sendDigest, 25*1000);
+    //setInterval(sendDigest, 25*1000);
 };
 
 function init() {
     fs.readFile(__dirname + "/views/digest.jade", "utf8", function(err, data) {
         if(err) throw err;
         digestJade = jade.compile(data,  {basedir: process.cwd()+'/http/views/'});
-        //send mails in next hour     
-        setTimeout(sendDigest, (90-new Date().getMinutes())*60000);
+        //send mails in next hour
+        var x = new Date().getMinutes();
+        var sub = 90;
+        if (x < 30) {
+           sub = 30; 
+        }
+        setTimeout(sendDigest, (sub-new Date().getMinutes())*60000);
     });
 }
 
@@ -202,10 +207,21 @@ function sendMails(roomsData){
         
         for (var key in us) { //send (key -user) 
             var rm = us[key].rooms;//all rooms as array
-            log("email  :" + prepareEmail(key,rm,roomsData));
-            send("askabt@askabt.in",us[key].email,
-                 getSubject(key,rm,roomsData),
-                 prepareEmail(key,rm,roomsData));
+            var isData = false;
+            for(i = 0;i < rm.length;i++){
+                if (roomsData[rm[i]]) {
+                    isData = true;
+                    break;
+                }
+            }
+            if (isData) {
+                log("sending mail to user :",key);
+                var pe = prepareEmail(key,rm,roomsData);
+                log("email  :" + pe);
+                send("askabt@askabt.in",us[key].email,
+                     getSubject(key,rm,roomsData),
+                     pe);
+            }
         }
     });
 }

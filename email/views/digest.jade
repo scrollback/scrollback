@@ -27,10 +27,6 @@ html
 							each msg in roomsData[r].tail
 								div.msg
 									span [#{msg.from.replace(/^guest-/,"")}] #{msg.text}
-				else
-					span
-						a(href="http://scrollback.io/#{r}") #{r}
-						span  is waiting for you....
 		p	- Scrollback
 		
 		table(bgcolor="#000000" height="30px" width="100%")
