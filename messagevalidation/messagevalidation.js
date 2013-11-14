@@ -8,7 +8,7 @@ module.exports = function(core) {
 		if(!message.id ) return callback(new Error("ID_NOT_SPECIFIED"));
 		if(message.type == "text"){
 			if(!validateRoom(message.to)) return callback(new Error("INVALID_ROOM_ID"));
-			if(!validateRoom(message.from)) return callback(new Error("INVALID_USER_ID"));
+			if(!validateRoom(message.from.replace(/^guest-/,""))) return callback(new Error("INVALID_USER_ID"));
 		}
 		/*
 			Any other validations needed?

@@ -14,6 +14,7 @@ module.exports = function(core) {
 		if (message.origin && message.origin.gateway=="irc") return callback();
 		
 		if (message.ref == 'guest-') {
+			console.log("Logging out");
 			message.ref += "sb-"+name(6);
 			return callback();
 		}
