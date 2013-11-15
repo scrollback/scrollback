@@ -12,6 +12,7 @@ html
 		p	Your summary for the day :
 		table(style="border-collapse: collapse;")
 			each r in room
+				hr
 				tr
 				if roomsData[r]
 					a(href="http://scrollback.io/#{r}") #{r}
@@ -27,8 +28,9 @@ html
 							each msg in roomsData[r].tail
 								div.msg
 									span [#{msg.from.replace(/^guest-/,"")}] #{msg.text}
+					
+		hr							
 		p	- Scrollback
-		
 		table(bgcolor="#000000" height="30px" width="100%")
 			td
 				img(src="http://scrollback.io/favicon.ico",style="vertical-align: middle;")
