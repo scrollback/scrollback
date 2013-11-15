@@ -3,8 +3,9 @@ html
 		table(bgcolor="#000000" height="30px" width="100%")
 			td
 				img(src="http://scrollback.io/favicon.ico",style="vertical-align: middle;")
-				span(style="color: #fff; font-weight:800;vertical-align: middle;" ) Scroll
-				span(style="color: #fff;vertical-align: middle;") back
+				a(href="http://scrollback.io/" style="text-decoration: none")
+						span(style="color: #fff; font-weight:800;vertical-align: middle;" ) Scroll
+						span(style="color: #fff;vertical-align: middle;") back
 		table(bgcolor="#3CA" height="3px" width="100%")			
 			td
 		h1 Hi #{user}
@@ -15,7 +16,8 @@ html
 				hr
 				tr
 				if roomsData[r]
-					a(href="http://scrollback.io/#{r}") #{r}
+					h3
+						a(href="http://scrollback.io/#{r}") #{r}
 					div.msglist
 						each msg in roomsData[r].head
 							div.msg
@@ -30,12 +32,13 @@ html
 									span [#{msg.from.replace(/^guest-/,"")}] #{msg.text}
 					
 		hr							
-		p	- Scrollback
+		
 		table(bgcolor="#000000" height="30px" width="100%")
 			td
 				img(src="http://scrollback.io/favicon.ico",style="vertical-align: middle;")
-				span(style="color: #fff; font-weight:800;vertical-align: middle;" ) Scroll
-				span(style="color: #fff;vertical-align: middle;") back
+				a(href="http://scrollback.io/" style="text-decoration: none")
+						span(style="color: #fff; font-weight:800;vertical-align: middle;" ) Scroll
+						span(style="color: #fff;vertical-align: middle;") back
 		table(bgcolor="#3CA" height="3px" width="100%")			
-			td			
+			td		
 		
