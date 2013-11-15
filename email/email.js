@@ -44,7 +44,7 @@ module.exports = function(coreObject) {
         }
         callback();
     }, "gateway");
-    //setInterval(sendDigest, 25*1000);
+   // setInterval(sendDigest, 25*1000);
 };
 
 function init() {
@@ -178,17 +178,26 @@ function sendDigest() {
  */
 function sendMails(roomsData){
     var x = new Date().getUTCHours();
-    var start = x*60;
-    var end = start + 60;
-    log("current time hour:",x);
+    var start1 = x >= 12?(24 - x)*60:-x*60;
+    var end1 = start1 + 60;
+    var start2 = -100*60;
+    var end2 = -200*60;
+    if (x >= 9 && x < 12) {
+        start2 = 24*60 + start1;//(+12 +14 +13)
+        end2 = start2 + 60;//+13 
+    }
+    if (x == 12) {
+        start2 = -12*60;
+        end2 = start2 + 60;
+    }
+    log("current time hour:",x+","+start1+","+start2);
     var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
                 "members.user=accounts.room where accounts.gateway='mailto' and timezone between ? and ? "+
-                "order by accounts.id";
-    
+                "or timezone between ? and ?";
     /*var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
                 "members.user=accounts.room where accounts.gateway='mailto' order by accounts.id";
     */
-    db.query(query, [start, end], function(error,data){
+    db.query(query, [start1, end1, start2, end2], function(error,data){
         if (error) {
             log("error in geting email member..",error);
             return;
@@ -232,20 +241,8 @@ function sendMails(roomsData){
  *@returns {string} Subject Line for email.
  */
 function getSubject(user,rooms,roomsData){
-    var r = "hi " + user+": ";
-    r += "Updates from rooms ";
-    for (i = 0;i < rooms.length;i++) {
-        
-        if (i < rooms.length-2) {
-            r += rooms[i]+", ";    
-        }
-        else if (i === rooms.length-2) {
-            r += rooms[i];
-        }
-        else{
-            r += " and "+rooms[i];
-        }   
-    }
+    var r = "Hi " + user+": ";
+    r += "Updates from rooms followed by you";
     return r;
 }
 
