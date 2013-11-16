@@ -10,9 +10,12 @@ Communicate with scrollback.jar and set message.labels.
 module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
+		console.log("threader1");
 		if(message.type== "text") {
 			return core.emit('rooms', {id:message.to}, function(err, rooms) {
-				if(rooms.params && rooms.params.threader1) {
+				console.log("threader1",rooms);
+				if(err) callback(err);
+				if(rooms.length==0 || (rooms[0].params && rooms[0].params.threader1)) {
 					var msg = JSON.stringify({
 						id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
 						text: message.text.replace(/['"]/g, ''),
@@ -33,7 +36,10 @@ module.exports = function(core) {
 							log("pending callback removed after 1 sec for message.id"+message.id);
 						}
 					}, 1000);	
+				}else{
+					callback();	
 				}
+				
 			});
 		}
 		callback();

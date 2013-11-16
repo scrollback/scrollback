@@ -5,6 +5,27 @@ var core;
 
 function rooms(coreObject) {
 	core = coreObject;
+	core.on("rooms",function(options, callback) {
+		log("Heard rooms event cache", options);
+		if(options.id){
+			redis.get("room:"+options.id, function(err, data){
+				//redis returns null if key not found
+				if(!data) {
+					return callback();
+				}
+				try{
+					data = JSON.parse(data);
+					console.log("cache rooms called", data);
+					return callback(true, [data]);
+				}catch(e){
+					return callback();
+				};
+			});
+		}else{
+			callback();	
+		}
+	},"cache");
+
 	core.on("rooms", function(options, callback) {
 		var query = "SELECT * FROM `rooms` ",
 			where = [],	 params=[], desc=false, limit=256, accountIDs = [];
@@ -45,6 +66,13 @@ function rooms(coreObject) {
 			if(!err) err = true;
 			console.log("DATA-SO-FAR", data);
 
+			data.forEach(function(element) {
+				try{
+					element.params = JSON.parse(element.params);
+				}catch(e){
+					element.params = {};
+				}
+			});
 			if(options.fields && data.length > 0) {
 				console.log("fields defined");
 				options.fields.forEach(function(element) {

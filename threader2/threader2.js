@@ -12,7 +12,7 @@ module.exports = function(core) {
 	core.on('message', function(message, callback) {
 		if(message.type== "text") {
 			return core.emit('rooms', {id:message.to}, function(err, rooms) {
-				if(rooms.params && rooms.params.threader1) {
+				if(rooms.length==0 || (rooms[0].params && rooms[0].params.threader2)) {
 					str = message.id + ' ' + Math.floor(message.time/1000) + ' ' + message.to + ' ' + message.from.replace(/guest-/g,"") + ' ' +
 						message.text.replace(/\n/g, ' ') + '\n';
 					log("sending data:"+str);
@@ -30,6 +30,9 @@ module.exports = function(core) {
 							log("pending callback removed after 1 sec for message.id"+message.id);
 						}
 					}, 1000);
+				}
+				else{
+					callback();
 				}
 			});
 		}

@@ -27,7 +27,6 @@ module.exports = function(core) {
 		if(message.to)	text += " "+message.to;
 		if(text) {
 			core.emit("rooms",{id:message.to},function(err, data) {
-				log("Heard \"rooms\" event");
 	            if(data.params && data.params.wordban)
 	            	if(rejectable(text)) return callback(new Error("BANNED_WORD"));	
 	           	callback();

@@ -9,6 +9,7 @@ module.exports =function(core){
 		if(!room.id) return callback(new Error("ID_NOT_SPECIFIED"));
 		if(!validateRoom(room.id)) return callback(new Error("INVALID_ROOM_ID"));
 		if(!room.type) return callback(new Error("TYPE_NOT_SPECIFIED"));
+		if(room.type=="user")	room.owner = room.id;
 
 
 		redis.get("room:"+room.id, function(err, data) {
