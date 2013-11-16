@@ -65,7 +65,7 @@ function rooms(coreObject) {
 			if(!callback) return;
 			if(!err) err = true;
 			console.log("DATA-SO-FAR", data);
-
+			console.log("***", err);
 			data.forEach(function(element) {
 				try{
 					element.params = JSON.parse(element.params);
