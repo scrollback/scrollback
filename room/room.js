@@ -15,7 +15,7 @@ module.exports = function(coreObject) {
 				"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
 				",`picture`=values(`picture`), `profile`=values(`profile`),  `owner`=values(`owner`),"+
 				"`params`=values(`params`)", [room.id, room.type, room.name || "", room.description || "",
-				room.picture || "", room.profile || "",new Date().getTime(), room.owner, JSON.stringify(room.params|| {})],
+				room.picture || "", room.profile || "",room.createdOn || new Date().getTime(), room.owner, JSON.stringify(room.params|| {})],
 			function(err, resp) {
 
 				if(err) {

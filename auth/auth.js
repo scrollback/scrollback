@@ -14,7 +14,6 @@ module.exports = function(core) {
 		if (message.origin && message.origin.gateway=="irc") return callback();
 		
 		if (message.ref == 'guest-') {
-			console.log("Logging out");
 			message.ref += "sb-"+name(6);
 			return callback();
 		}
@@ -27,12 +26,11 @@ module.exports = function(core) {
 			}
 			return core.emit("rooms", {id: message.user.id}, function(err,room) {
 				if (err) return callback(err);
-				if ((room.id) && message.user.originalId != message.user.id) {
+				if (room.length>0 && room[0].id && message.user.originalId != message.user.id) {
 					message.user.id = message.user.originalId;
 					return callback(new Error("DUP_NICK"));
 				} else {
 					message.user.type = "user";
-
 					return core.emit("room", message.user, function(err,room) {
 						if (callback) {
 							message.ref = room.id;

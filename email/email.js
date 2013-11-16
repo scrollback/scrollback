@@ -22,10 +22,10 @@ function send(from,to,subject,html) {
     };
     transport.sendMail(email, function(error) {
         if(!error){
-            console.log('Test message sent successfully!');
+            log('Test message sent successfully!');
         }
         else{
-            console.log("error in sending email: ",error);
+            log("error in sending email: ",error);
             log("retrying......");
             setTimeout(function(){
                 send(email.from, email.to, email.subject, email.html);

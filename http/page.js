@@ -68,65 +68,73 @@ exports.init = function(app, coreObject) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[0],
         user = req.session.user;
         if(roomId && !validateRoom(roomId)) return next();
-        if(params[1]=="config") {
-            next();
-            return;
-        }
-        query.to=params[0];
-        query.type="text";
-        query.limit=20;
 
-        if (params[1]) switch(params[1]) {
-            case 'since':
-                query.since=new Date(params[2]).getTime();
-                break;
-            case 'until':
-                query.until=new Date(params[2]).getTime();
-                break;
-            case 'edit':
-                return next();
-                break;
-        }
-        
-        core.emit("messages", query, function(err, m){
-            log(query);
-            responseObj.query=query;
-            responseObj.data=m;
-            
-            console.log("MESSAGES GAVE ME ", m.length);
-            
-            if (m[0].type == 'result-start' && m[1]) {
-                responseObj.scrollPrev = new Date(m[1].time).toISOString();
+        core.emit("rooms",{id:roomId}, function(err, room){
+            if(room.length>0 && room[0].type =="user"){
+                return res.render("error",{error:"Archive view not available for users."});
             }
-            
-            if (m[m.length-1] && m[m.length-1].type == 'result-end') {
-                responseObj.scrollNext = new Date(m[m.length-1].time).toISOString();
-            }
-            
-            query.title=query.to.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {
-                return f.toUpperCase() + r.toLowerCase() + ' ';
-            });
-            
-            if (m.length==1 && m[0].type!="text") {
-                delete responseObj.scrollNext;
-                delete responseObj.scrollPrev;
-            }
-            
-            if (!query.since && !query.until) {
-                delete responseObj.scrollNext;
-            }
-            
-            responseObj.relDate = relDate;
-            core.emit("rooms", {id:params[0]}, function(err, room) {
-                if(err) res.render("error", err);
-                console.log("---------room",room);
-                if(room.length != 0){
-                    responseObj.room = room[0];
+            if(err) res.render("error", err);
+            if(room.length != 0){
+                responseObj.room = room[0];
+
+                try{
+                    responseObj.room.params = JSON.parse(responseObj.room.params);
                 }
-                responseObj.user = user.id;
-				responseObj.membership=user.membership;
+                catch(e) {
+                    responseObj.room.params = {};
+                }
+            }
+            responseObj.user = user.id;
+            responseObj.membership=user.membership;
 
-                console.log("----------------", responseObj.query)
+            if(params[1]=="config") {
+                next();
+                return;
+            }
+            query.to=params[0];
+            query.type="text";
+            query.limit=20;
+
+            if (params[1]) switch(params[1]) {
+                case 'since':
+                    query.since=new Date(params[2]).getTime();
+                    break;
+                case 'until':
+                    query.until=new Date(params[2]).getTime();
+                    break;
+                case 'edit':
+                    return next();
+                    break;
+            }
+            core.emit("messages", query, function(err, m){
+                log(query);
+                responseObj.query=query;
+                responseObj.data=m;
+                
+                console.log("MESSAGES GAVE ME ", m.length);
+                
+                if (m[0].type == 'result-start' && m[1]) {
+                    responseObj.scrollPrev = new Date(m[1].time).toISOString();
+                }
+                
+                if (m[m.length-1] && m[m.length-1].type == 'result-end') {
+                    responseObj.scrollNext = new Date(m[m.length-1].time).toISOString();
+                }
+                
+                query.title=query.to.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {
+                    return f.toUpperCase() + r.toLowerCase() + ' ';
+                });
+                
+                if (m.length==1 && m[0].type!="text") {
+                    delete responseObj.scrollNext;
+                    delete responseObj.scrollPrev;
+                }
+                
+                if (!query.since && !query.until) {
+                    delete responseObj.scrollNext;
+                }
+                
+                responseObj.relDate = relDate;
                 res.render("archive", responseObj);
             });
         });
@@ -158,7 +166,6 @@ exports.init = function(app, coreObject) {
         core.emit("rooms",{id: roomId, fields:["accounts"]}, function(err, room) {
             if(err) return res.end(err);
 
-            console.log(room.length, room);
             if(room.length==0) {
                 room = {
                     type: "room",

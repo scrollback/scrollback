@@ -27,7 +27,9 @@ module.exports = function(core) {
 		if(message.to)	text += " "+message.to;
 		if(text) {
 			core.emit("rooms",{id:message.to},function(err, data) {
-	            if(data.params && data.params.wordban)
+				if(err) return callback(err);
+				if(data.length == 0) return callback();
+	            if(data[0].params && data[0].params.wordban)
 	            	if(rejectable(text)) return callback(new Error("BANNED_WORD"));	
 	           	callback();
 	        });
@@ -88,4 +90,3 @@ var rejectable = function(text) {
 	}
 	return false;
 };
-

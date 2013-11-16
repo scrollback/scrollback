@@ -10,19 +10,21 @@ module.exports =function(core){
 		if(!validateRoom(room.id)) return callback(new Error("INVALID_ROOM_ID"));
 		if(!room.type) return callback(new Error("TYPE_NOT_SPECIFIED"));
 		if(room.type=="user")	room.owner = room.id;
-
+		if(!room.createdOn) room.createdOn = new Date().getTime();
 
 		redis.get("room:"+room.id, function(err, data) {
-			if(!err) {
+			if(err) callback(err);
+			if(!data){
 				try {
 					room.old = JSON.parse(data);
-					//need to delete the IRC ACCOUNTS
-					room.originalId = room.id;
 				}catch(e) {
 					room.old = {};
-				}
+				}	
+			}{
+				room.createdOn = new Date().getTime();
 			}
-
+			//need to delete the IRC ACCOUNTS
+			room.originalId = room.id;
 			if(room.accounts) {
 				for(i=0,l=room.accounts.length; i<l;i++) {
 					try {
