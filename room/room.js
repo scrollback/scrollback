@@ -39,8 +39,8 @@ module.exports = function(coreObject) {
 };
 
 function insertAccounts(data,callback){
-	var account, accountsQuery=" INSERT INTO `accounts` VALUES ", //?
-		accountValues=" (?,?,?,?) ",params=[], ids = [];
+	var account, accountsQuery=" INSERT INTO `accounts` VALUES(id, room, gateway, params, timezone) ", //?
+		accountValues=" (?,?,?,?,?) ",params=[], ids = [];
 	
 	data.accounts.forEach(function(element) {
 		var id = element.id, room = data.id, gateway;
@@ -51,7 +51,8 @@ function insertAccounts(data,callback){
 		params.push(id);
 		params.push(room);
 		params.push(gateway);
-		params.push("{}");			
+		params.push("{}"); 
+		params.push(element.timezone || 0);
 	});
 
 	console.log("originalId", data);
