@@ -38,7 +38,6 @@ sock.on('connection', function (socket) {
 	conn.send = function(type, data) {
 		socket.write(JSON.stringify({type: type, data: data}));
 	};
-	
 	socket.on('close', function() { close(conn); });
 });
 
