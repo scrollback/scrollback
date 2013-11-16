@@ -287,7 +287,7 @@ exports.init = function(app, coreObject) {
         console.log(roomId);
         core.emit("rooms",{id: roomId, fields:["accounts"]}, function(err, room) {
             if(err) return res.end(err);
-
+            console.log(room);
             if(room.length==0) {
                 room = {
                     type: "room",
@@ -296,12 +296,6 @@ exports.init = function(app, coreObject) {
             }
             else{
                 room = room[0];
-                try{
-                    room.params = JSON.parse(room.params);
-                }
-                catch(e) {
-                    room.params = {};
-                }
             }
             if(room.type == "user") {
                 return res.render("error",{error:"Currently No configuration Available for Users."});
@@ -317,6 +311,7 @@ exports.init = function(app, coreObject) {
                         responseObject.pluginsUI = payload;
                         log(responseObject);
                         if(err) return res.render("error",{error:err.message});
+                        console.log(responseObject);
                         return res.render("config", responseObject);            
                     });
                 }else{
