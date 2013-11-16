@@ -10,25 +10,34 @@ Communicate with cloimpl-0.1.0-SNAPSHOT-standalone.jar and set message.labels.
 module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
-			str = message.id + ' ' + Math.floor(message.time/1000) + ' ' + message.to + ' ' + message.from.replace(/guest-/g,"") + ' ' +
-				message.text.replace(/\n/g, ' ') + '\n';
-			log("sending data:"+str);
-			try{
-				pro.stdin.write(str);
-			}catch(err){
-				log("--error--"+err);
-				return callback();
-			}
-			pendingCallbacks[message.id] = { message: message, fn: callback, time:new Date().getTime() };
-			setTimeout(function() { 
-				if(pendingCallbacks[message.id] ){
-					pendingCallbacks[message.id].fn();
-					delete pendingCallbacks[message.id];
-					log("pending callback removed after 1 sec for message.id"+message.id);
+		if(message.type== "text") {
+			return core.emit('rooms', {id:message.to}, function(err, rooms) {
+				if(rooms.length==0 || (rooms[0].params && rooms[0].params.threader2)) {
+					str = message.id + ' ' + Math.floor(message.time/1000) + ' ' + message.to + ' ' + message.from.replace(/guest-/g,"") + ' ' +
+						message.text.replace(/\n/g, ' ') + '\n';
+					log("sending data:"+str);
+					try{
+						pro.stdin.write(str);
+					}catch(err){
+						log("--error--"+err);
+						return callback();
+					}
+					pendingCallbacks[message.id] = { message: message, fn: callback, time:new Date().getTime() };
+					setTimeout(function() { 
+						if(pendingCallbacks[message.id] ){
+							pendingCallbacks[message.id].fn();
+							delete pendingCallbacks[message.id];
+							log("pending callback removed after 1 sec for message.id"+message.id);
+						}
+					}, 1000);
 				}
-			}, 1000);
-		
-	});
+				else{
+					callback();
+				}
+			});
+		}
+		callback();
+	}, "modifier");
 };
 
 function init(){

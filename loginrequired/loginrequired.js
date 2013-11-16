@@ -4,48 +4,30 @@ var jade = require("jade");
 var core;
 var roomNames = {};
 
-function loadRoomNames(){
-    log("Re-loading room names which require login!");
-    fs.readFile(__dirname + "/roomNames.txt", "utf-8", function(err, data){
-        var roomBuffer = {};
-        if(err) throw err;
-        
-        data.split("\n").forEach(function(roomName){
-            if(roomName){
-                roomName = roomName.toLowerCase().trim();
-                roomBuffer[roomName]=true;
-            }
-        });
-        roomNames = roomBuffer;
-    });
-}
-
-var init = function (){
-    loadRoomNames();
-    setInterval(loadRoomNames,60*60*1000);
-}
 
 module.exports = function(coreObject) {
-    init();
     var pluginContent = "";
     core=coreObject;
     fs.readFile(__dirname + "/loginrequired.jade", "utf8", function(err, data){
         if(err) throw err;
         pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/'});
-        core.setConfigUi("loginrequired", function(object) {
-            return pluginContent(object);
-        });
+        core.on("config", function(payload, callback) {
+            payload.loginrequired = pluginContent;
+            callback(null, payload);
+        }, "setters");
     });
-    core.on("message", function(message, callback){
-        console.log("in loginrequired");
+   core.on("message", function(message, callback) {
+        log("Heard \"message\" Event");
         if (message.origin && message.origin.gateway == "irc") return callback();
         if(message.type == "text" && message.from.indexOf("guest-")==0) {
-            core.room(message.to,function(err, data) {
-                if(data.params && data.params.loginrequired)
+            core.emit("rooms",{id:message.to},function(err, data) {
+                if(err) return callback(err);
+                if(data.length == 0) return callback();
+                if(data[0].params && data[0].params.loginrequired)
                     callback(new Error("AUTH_REQ_TO_POST"));
                 else callback();
             });
         }
         else callback();
-    });
+    }, "authorization");
 }

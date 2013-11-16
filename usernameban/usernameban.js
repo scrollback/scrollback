@@ -7,18 +7,11 @@ module.exports = function(core) {
 	var pluginContent = "";
 	init();
 	core.on('message', function(message, callback) {
+		log("Listening");
 		if (message.origin && message.origin.gateway == "irc") return callback();
 		if(rejectable(message)) callback(new Error("BANNED_USERNAME"));
 		else callback();
-	});
-	// fs.readFile(__dirname + "/usernameban.jade", "utf8", function(err, data){
-	// 	if(err)	throw err;
-	// 	//this is a function object. 
-	// 	pluginContent = jade.compile(data,  {basedir: process.cwd()+'/plugins/http/views/' });
-	// 	core.setConfigUi("usernameban", function(object){
-	// 		return pluginContent(object);
-	// 	});
-	// });
+	}, "antiabuse");
 };
 
 

@@ -10,29 +10,40 @@ Communicate with scrollback.jar and set message.labels.
 module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
-		
-			var msg = JSON.stringify({
-				id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
-				text: message.text.replace(/['"]/g, ''),
-				room: message.to
-			});
-			log("Sending msg to scrollback.jar="+msg);
-			try{
-				pro.stdin.write(msg+'\n');
-			} catch(err){
-				log("--error --"+err);
-				return callback();
-			}
-			pendingCallbacks[message.id] = { message: message, fn: callback ,time:new Date().getTime()};
-			setTimeout(function() { 
-				if(pendingCallbacks[message.id] ){
-					pendingCallbacks[message.id].fn();
-					delete pendingCallbacks[message.id];
-					log("pending callback removed after 1 sec for message.id"+message.id);
+		console.log("threader1");
+		if(message.type== "text") {
+			return core.emit('rooms', {id:message.to}, function(err, rooms) {
+				console.log("threader1",rooms);
+				if(err) callback(err);
+				if(rooms.length==0 || (rooms[0].params && rooms[0].params.threader1)) {
+					var msg = JSON.stringify({
+						id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
+						text: message.text.replace(/['"]/g, ''),
+						room: message.to
+					});
+					log("Sending msg to scrollback.jar="+msg);
+					try {
+						pro.stdin.write(msg+'\n');
+					} catch(err) {
+						log("--error --"+err);
+						return callback();
+					}
+					pendingCallbacks[message.id] = { message: message, fn: callback ,time:new Date().getTime()};
+					setTimeout(function() { 
+						if(pendingCallbacks[message.id] ){
+							pendingCallbacks[message.id].fn();
+							delete pendingCallbacks[message.id];
+							log("pending callback removed after 1 sec for message.id"+message.id);
+						}
+					}, 1000);	
+				}else{
+					callback();	
 				}
-			}, 1000);
-		
-	});
+				
+			});
+		}
+		callback();
+	}, "modifier");
 };
 
 function init(){

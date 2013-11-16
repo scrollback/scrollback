@@ -6,16 +6,14 @@
 
 "use strict";
 
-var sockjs = require("sockjs"),
-	core = require("../core/core.js"),
+var sockjs = require("sockjs"),core,
 	cookie = require("cookie"),
 	log = require("../lib/logger.js"),
 	config = require("../config.js"),
 	EventEmitter = require("events").EventEmitter,
 	session = require("./session.js"),
 	guid = require("../lib/guid.js"),
-	members=require("../core/api/members.js");
-
+	names = require("../lib/names.js");
 var rConns = {}, users = {};
 var pid = guid(8);
 var sock = sockjs.createServer();
@@ -43,8 +41,9 @@ sock.on('connection', function (socket) {
 	socket.on('close', function() { close(conn); });
 });
 
-exports.init = function (server) {
-	sock.installHandlers(server, {prefix: '/socket'});
+exports.init = function(server, coreObject) {
+    core = coreObject;
+    sock.installHandlers(server, {prefix: '/socket'});
 };
 
 function init(data, conn) {
@@ -68,7 +67,7 @@ function init(data, conn) {
 		if (sess.user.id.indexOf('guest-')!=0) {
 			query.user=sess.user.id;
 		}
-		members(query,function(err,d){
+		core.emit("members", query,function(err,d) {
 			var m={};
 			if (d) {
 				for (i=0;i<d.length;i++) {
@@ -115,8 +114,8 @@ function userAway(user, room, conn) {
 			var user = sess.user;
 			if (typeof user.rooms[room] !== "undefined" && user.rooms[room]<=1) {
 				delete user.rooms[room];
-				core.message({ type: 'away', from: user.id, to: room,
-					time: new Date().getTime(), text: "" , origin : {gateway : "web", location : "", ip :  conn.socket.remoteAddress}});
+				core.emit("message", { type: 'away', from: user.id, to: room,
+					time: new Date().getTime(), origin : {gateway : "web", location : "", ip :  conn.socket.remoteAddress}});
 				if(!Object.keys(user.rooms).length) {
 					delete users[user.id];
 				}
@@ -149,7 +148,7 @@ function userBack(user, room, conn) {
 }
 
 function messages (query, conn) {
-	core.messages(query, function(err, m) {
+	core.emit("messages", query, function(err, m) {
 		if(err) {
 			log("MESSAGES error", query, err);
 			conn.send('error', err);
@@ -192,11 +191,9 @@ function message (m, conn) {
 		} else if(m.type == 'nick') {
 			//validating nick name on server side 
 			console.log("checking for nick validity:" , m.ref);
-			if(m.ref && !validateNick(m.ref.substring(6))) {
-				if(m.ref !== "guest-")
-					return conn.send('error', {id:m.id , message: "INVALID_NAME"});
+			if(m.ref && m.ref !== "guest-" && !validateNick(m.ref.substring(6))) {
+				return conn.send('error', {id:m.id , message: "INVALID_NAME"});
 			}
-
 			if(m.ref && users[m.ref] )
 				return conn.send('error', {id: m.id, message: "DUP_NICK"});
 			if(m.user){
@@ -210,22 +207,19 @@ function message (m, conn) {
 		}
 		
 		function sendMessage() {
-			core.message(m, function (err, m) {
+			core.emit("message", m, function (err, m) {
 				var i, user = sess.user;
-				// shouldn't this be at the top?
-				if (err) {
-					return conn.send('error', {id: m.id, message: err.message});
-				}
 				if (!user) {
 					console.log("No session user?");
 					return;
 				}
-
-				if(m.type == 'nick') {
+				
+				if(m && m.type && m.type == 'nick') {
 					if(m.user) {
 						console.log("m.user is", m.user);
-						
-						// why shallow copy? why not sess.user = m.user?						
+						/* 	why shallow copy? why not sess.user = m.user?
+							copying the property like accounts to the session, but the user will not send other properties.
+						*/
 						for(i in m.user) if(m.user.hasOwnProperty(i)) {
 							user[i] = m.user[i];
 						}
@@ -233,13 +227,12 @@ function message (m, conn) {
 						user.id = m.ref;
 					}
 					console.log("Saved session", sess);
-					// shouldn't this be inside the if m.type==nick block?
 					session.set(conn.sid, sess);
 					var query=[];
 					if (sess.user.id.indexOf('guest-')!=0) {
 						query.user=sess.user.id;
 					}
-					members(query,function(err,d){
+					core.emit("members", query,function(err,d){
 						var m={};
 						if (d) {
 							for (i=0;i<d.length;i++) {
@@ -260,14 +253,21 @@ function message (m, conn) {
 							users["guest-"+m.from]=users[user.from];
 						}
 					}
+				}
 
+				/* 
+					Why this is not at the top?
+					this thing should be at the bottom because we need the error AUTH_UNREGISTERED to be handled properly before sending the response.
+				 */
+				if (err) {
+					return conn.send('error', {id: m.id, message: err.message});
 				}
 			});
 		}
 		
-		if(m.type=="nick" && ( m.ref || m.user)) {
+		if(m.type=="nick" && m.ref!="guest-" &&( m.ref || m.user)) {
 			tryingNick = m.ref || m.user.id;
-			core.room(((tryingNick.indexOf("guest-")==0)? tryingNick.substring(6) : tryingNick),function(err,data){
+			core.emit("rooms",{id:tryingNick.replace(/^guest-/,"")},function(err,data){
 				console.log(err);
 				if(err) return conn.send('error', {id: m.id, message: err.message});
 				console.log("Result of core on dup check",data);
@@ -280,6 +280,8 @@ function message (m, conn) {
 	});
 }
 
+
+//not sure what ths function is used for at the time. -Harish
 function room (r, conn) {
 	var user;
 	session.get({sid: conn.sid}, function(err, sess) {
@@ -288,14 +290,16 @@ function room (r, conn) {
 			user = sess.user;
 			r.owner = user.id;
 		}
-		core.room(r, function(err, data) {
+
+		//not sure what this function does... so just replace the core.room with core.emit().
+		core.emit("room", r, function(err, data) {
 		});
 		session.set(conn.sid, sess);
 	});
 }
 
 function rooms(query, conn) {
-	core.rooms(query, function(err, data) {
+	core.emit("rooms", query, function(err, data) {
 		if(err) {
 			log("ROOMS ERROR", query, err);
 			conn.send('error', err);
@@ -329,4 +333,3 @@ exports.send = function (message, rooms) {
 		});
 	});
 };
-

@@ -1,10 +1,9 @@
-var config = require('../config.js'),
-core = require("../core/core.js"),
-db = require("../core/data.js"),
-fs = require("fs"),
+var config = require('../config.js'), core,
+log = require("../lib/logger.js");
+fs = require("fs"),core,
 code = fs.readFileSync(__dirname + "/../public/client.min.js",'utf8');
-exports.init = function(app) {
-    
+exports.init = function(app, coreObject) {
+    core = coreObject;
     var dialogs = {
         "login" : function(req, res){
             res.render("login", {
@@ -83,64 +82,75 @@ exports.init = function(app) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[0],
         user = req.session.user;
         if(roomId && !validateRoom(roomId)) return next();
-        if(params[1]=="config") {
-            next();
-            return;
-        }
-        query.to=params[0];
-        query.type="text";
-        query.limit=20;
 
-        if (params[1]) switch(params[1]) {
-            case 'since':
-                query.since=new Date(params[2]).getTime();
-                break;
-            case 'until':
-                query.until=new Date(params[2]).getTime();
-                break;
-            case 'edit':
-                return next();
-                break;
-        }
-        
-        core.messages(query, function(err, m){
+        core.emit("rooms",{id:roomId}, function(err, room){
+            if(room.length>0 && room[0].type =="user"){
+                return res.render("error",{error:"Archive view not available for users."});
+            }
+            if(err) res.render("error", err);
+            if(room.length != 0){
+                responseObj.room = room[0];
 
-            responseObj.query=query;
-            responseObj.data=m;
-            
-            console.log("MESSAGES GAVE ME ", m.length);
-            
-            if (m[0].type == 'result-start' && m[1]) {
-                responseObj.scrollPrev = new Date(m[1].time).toISOString();
+                try{
+                    responseObj.room.params = JSON.parse(responseObj.room.params);
+                }
+                catch(e) {
+                    responseObj.room.params = {};
+                }
             }
-            
-            if (m[m.length-1] && m[m.length-1].type == 'result-end') {
-                responseObj.scrollNext = new Date(m[m.length-1].time).toISOString();
+            responseObj.user = user.id;
+            responseObj.membership=user.membership;
+
+            if(params[1]=="config") {
+                next();
+                return;
             }
-            
-            query.title=query.to.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {
-                return f.toUpperCase() + r.toLowerCase() + ' ';
+            query.to=params[0];
+            query.type="text";
+            query.limit=20;
+
+            if (params[1]) switch(params[1]) {
+                case 'since':
+                    query.since=new Date(params[2]).getTime();
+                    break;
+                case 'until':
+                    query.until=new Date(params[2]).getTime();
+                    break;
+                case 'edit':
+                    return next();
+                    break;
+            }
+            core.emit("messages", query, function(err, m){
+                log(query);
+                responseObj.query=query;
+                responseObj.data=m;
+                
+                console.log("MESSAGES GAVE ME ", m.length);
+                
+                if (m[0].type == 'result-start' && m[1]) {
+                    responseObj.scrollPrev = new Date(m[1].time).toISOString();
+                }
+                
+                if (m[m.length-1] && m[m.length-1].type == 'result-end') {
+                    responseObj.scrollNext = new Date(m[m.length-1].time).toISOString();
+                }
+                
+                query.title=query.to.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {
+                    return f.toUpperCase() + r.toLowerCase() + ' ';
+                });
+                
+                if (m.length==1 && m[0].type!="text") {
+                    delete responseObj.scrollNext;
+                    delete responseObj.scrollPrev;
+                }
+                
+                if (!query.since && !query.until) {
+                    delete responseObj.scrollNext;
+                }
+                
+                responseObj.relDate = relDate;
+                res.render("archive", responseObj);
             });
-            
-            if (m.length==1 && m[0].type!="text") {
-                delete responseObj.scrollNext;
-                delete responseObj.scrollPrev;
-            }
-            
-            if (!query.since && !query.until) {
-                delete responseObj.scrollNext;
-            }
-            
-            responseObj.relDate = relDate;
-            core.room(params[0],function(err, room){
-                if(err) res.render("error", err);
-                if(room.id && !validateRoom(room.id)) return callback(new Error("Room name must be at least 5 characters in length and contain no special characters or whitespaces!"));
-                responseObj.room = room;
-                responseObj.user = user.id;
-				responseObj.membership=user.membership;
-                res.render("archive",responseObj);
-            });
-            
         });
     });
 
@@ -166,32 +176,44 @@ exports.init = function(app) {
     app.get("*/config",function(req, res, next) {
         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
         if(roomId && !validateRoom(roomId)) return next();
-        core.room(roomId, function(err, room) {
-            if(err) res.end(err);
-            if(!room.id) {
+        console.log(roomId);
+        core.emit("rooms",{id: roomId, fields:["accounts"]}, function(err, room) {
+            if(err) return res.end(err);
+
+            if(room.length==0) {
                 room = {
                     type: "room",
                     id: params[0]
                 };  
             }
+            else{
+                room = room[0];
+                try{
+                    room.params = JSON.parse(room.params);
+                }
+                catch(e) {
+                    room.params = {};
+                }
+            }
             if(room.type == "user") {
                 return res.render("error",{error:"Currently No configuration Available for Users."});
             }
-            
             if(user.id.indexOf("guest-")!=0) {
-                console.log(room.owner);
-                if(!room.owner || room.owner == "" || room.owner == user.id) {
+                if(typeof room.owner == "undefined" || room.owner == "" || room.owner == user.id) {
                     var responseObject = {
                         room: room,
                         relDate: relDate,
                         pluginsUI: {}
                     };
-                    ["irc","loginrequired","wordban"].forEach(function(element) {
-                        responseObject.pluginsUI[element] = core.getConfigUi(element);
+                    core.emit("config", {},function(err, payload) {
+                        responseObject.pluginsUI = payload;
+                        log(responseObject);
+                        if(err) return res.render("error",{error:err.message});
+                        return res.render("config", responseObject);            
                     });
-                    return res.render("config", responseObject);            
+                }else{
+                    res.render("error", {error:"You are Not the Admin of this room"});    
                 }
-                res.render("error", {error:"You are Not the Admin of this room"});
             }
             else{
                 res.render("error", {error:"Please login..."});   
@@ -204,19 +226,18 @@ exports.init = function(app) {
             renderObject = {}, responseHTML = "", data = {};
         data = req.body || {};
 
-        if(roomId && !validateRoom(roomId)) return next();
+        if(!validateRoom(roomId)) return next();
 
         if(typeof data == "string") {
             try { data = JSON.parse(data); }
             catch (e) { res.end(e); }
         }
-
         data.owner = user.id;
         if(user.id.indexOf("guest-")==0)
             return res.end(JSON.stringify({error:"You are a guest user."}));
         if(data.id) {
             data.owner = user.id;
-            core.room(data,function(err,data) {
+            core.emit("room", data, function(err,data) {
                 if(err) res.end(JSON.stringify({error:err.message}));  
                 else res.end(JSON.stringify(data));
             });
@@ -274,5 +295,5 @@ var relDate= function (input, reference){
 }
 
 function validateRoom(room){
-            return (room.match(/^[a-z][a-z0-9\_\-\(\)]{3,32}$/i)?true:false);
+    return (room.match(/^[a-z][a-z0-9\_\-\(\)]{3,32}$/i)?true:false);
 }

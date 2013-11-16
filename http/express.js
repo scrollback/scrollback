@@ -21,6 +21,7 @@ exports.init = function() {
 	app.use(express["static"](__dirname + "/../" + config.http.home));
 	
 	srv = http.createServer(app);
+	console.log("asdfasdfadf",config.http.port);
 	srv.listen(config.http.port);
 	app.http = srv;
 	

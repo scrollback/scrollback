@@ -4,34 +4,37 @@
 	There is a performance issue though.
 	The old client objects of all the individual users are not removed.
 */
-var irc = require("irc"),
-	core = require("../core/core.js"),
+var irc = require("irc"),core,
 	config = require("../config.js"),
 	url = require("url"),
 	connect = require("./connect.js"),
 	log = require("../lib/logger.js"), fs = require("fs"),
 	jade = require("jade"),
 	crypto = require('crypto');
-var db = require("../core/data.js");
+var db = require("../lib/mysql.js");
 
 
 var botNick=config.irc.nick, clients = {bot: {}}, users = {};
 
-module.exports = function(core){
+module.exports = function(object){
 	var pluginContent = "";
-
+	core = object;
 	fs.readFile(__dirname + "/irc.jade", "utf8", function(err, data){
 		if(err)	throw err;
 		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/' });
-		core.setConfigUi("irc", function(object){
-			return pluginContent(object);
-		});
+		core.on("config", function(payload, callback) {
+            payload.irc = pluginContent;
+            callback(null, payload);
+        }, "setters");
 	});
 	init();
 	core.on("room", function(room, callback) {
 		var i=0,l;
+		log("Heard \"room\" Event");
 		if(room.type == "room") {
-			room.old.accounts && room.old.accounts.forEach(function(element) {
+
+			console.log("OLD ACCOUNTs",room.old);
+			room.old && room.old.accounts && room.old.accounts.forEach(function(element) {
 				var u;
 				if(room.accounts) {
 					for (i=0,l=room.accounts.length;i<l;i++ )
@@ -49,8 +52,9 @@ module.exports = function(core){
 			});
 		}
 		callback();
-	});
+	}, "gateway");
 	core.on("message" , function(message , callback) {
+		log("Heard \"message\" Event");
 		db.query("SELECT * FROM `accounts` WHERE `room` IN (?) AND `gateway`='irc'", [message.to], function(err, data) {
 			var i, l, name, list = [], u;
 			if(err) return callback(err);
@@ -64,7 +68,7 @@ module.exports = function(core){
 			send(message, list);
 		});
 		callback();
-	});
+	}, "gateway");
 };
 
 function addBot(account) {
@@ -79,7 +83,8 @@ function addBot(account) {
 					log("Incoming Echo", m);
 					return;
 				}
-				core.message(m);
+
+				core.emit("message", m);
 			});
 
 		client.on('nick', function(oldn, newn) {
@@ -104,7 +109,6 @@ function init() {
 		function joinStuff() {
 			data.forEach(addBot);
 		}
-		
 		joinStuff();
 	});
 	connect.init(users);
