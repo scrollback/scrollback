@@ -11,12 +11,8 @@ block info
     button.right: span.fa.fa-sign-out
   p#description.collapse  #{room.description}
   #members 
-    a: img.face.present(src='http://lorempixel.com/48/48/people/2')
-    a: img.face.present(src='http://lorempixel.com/48/48/people/3')
-    a: img.face.present(src='http://lorempixel.com/48/48/people/4')
-    a: img.face.present(src='http://lorempixel.com/48/48/people/5')
-    a: img.face(src='http://lorempixel.com/48/48/people/6')
-    a: img.face(src='http://lorempixel.com/48/48/people/7')
-    a: img.face(src='http://lorempixel.com/48/48/people/8')
-    a: img.face(src='http://lorempixel.com/48/48/people/9')
-    a: img.face(src='http://lorempixel.com/48/48/people/10')
+    
+    each avatar in #{memberGravatars}
+        a: img.face.present(src='avatar')
+    
+   

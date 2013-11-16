@@ -2,6 +2,8 @@ var config = require('../config.js'), core,
 log = require("../lib/logger.js");
 fs = require("fs"),core,
 code = fs.readFileSync(__dirname + "/../public/client.min.js",'utf8');
+var crypto = require('crypto');
+var db = require("../lib/mysql.js");
 exports.init = function(app, coreObject) {
     core = coreObject;
     var dialogs = {
@@ -62,23 +64,129 @@ exports.init = function(app, coreObject) {
 	
 	app.get("/dummy/:page", function (req, res) {
 		res.render("dummy/" + req.params.page, { room: { 
-            id: "roomId", name: "Sample Room", 
+            id: "roomId", name: "Sample Room 1", 
             description: "This is a sample room and this is a description for the sample room, this description should be a little larger I presume. Here is the Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis semper lobortis leo accumsan adipiscing. Curabitur eu leo id elit aliquet sagittis ut eu leo. Nulla facilisi. .", picture: "",
             profile: "http://sampleroom.blogspot.com" 
         }});
-	});
-    
+	});    
+    app.get("/d/*", function (req, res) {
+        var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[1],
+        user = req.session.user;
+        //if(roomId && !validateRoom(roomId)) return next();
+        core.emit("rooms",{id:roomId}, function(err, room){
+            if(room.length>0 && room[0].type =="user"){
+                return res.render("error",{error:"Archive view not available for users."});
+            }
+            if(err) res.render("error", err);
+            if(room.length != 0){
+                responseObj.room = room[0];
+                try{
+                    responseObj.room.params = JSON.parse(responseObj.room.params);
+                }
+                catch(e) {
+                    responseObj.room.params = {};
+                }
+            }
+            else{
+                responseObj.room = { id : roomId };
+            }
+
+            responseObj.user = user.id;
+            responseObj.membership=user.membership;
+
+            if(params[1]=="config") {
+                next();
+                return;
+            }
+            query.to=params[1];
+            query.type="text";
+            query.limit=20;
+
+            if (params[2]) switch(params[2]) {
+                case 'since':
+                    query.since=new Date(params[3]).getTime();
+                    break;
+                case 'until':
+                    query.until=new Date(params[3]).getTime();
+                    break;
+                case 'edit':
+                    return next();
+                    break;
+            }
+            core.emit("members" , {room:roomId} , function(err , members){
+                var ids=[];
+                responseObj.members = members;
+                var memberAvatars = [];
+
+                members.forEach(function(element) {
+                    ids.push(element.user);
+                });
+                /*
+                    this should be changed to something like core.emit("rooms", {id:"", fields:["accounts"]})
+                    current api can do that only with one id :-p. need better core.rooms api.
+                    -Harish 
+                */
+
+                db.query("select id from accounts where room in (?)",[ids], function(err, gravatars) {
+                    if(gravatars){
+                        gravatars.forEach(function(element) {
+                            element = crypto.createHash("md5").update(element.id.substring(7)).digest("hex");
+                            console.log(element);
+                            memberAvatars.push('https://s.gravatar.com/avatar/'+element);
+                        });
+
+                    }
+                    
+                    responseObj.memberGravatars = memberAvatars;
+
+                    console.log(" ********* " , memberAvatars);
+
+                    core.emit("messages", query, function(err, m){
+                        log(query);
+                        responseObj.query=query;
+                        responseObj.data=m;
+                        
+                        console.log("MESSAGES GAVE ME ", m.length);
+                        
+                        if (m[0].type == 'result-start' && m[1]) {
+                            responseObj.scrollPrev = new Date(m[1].time).toISOString();
+                        }
+                        
+                          if (m[m.length-1] && m[m.length-1].type == 'result-end') {
+                            responseObj.scrollNext = new Date(m[m.length-1].time).toISOString();
+                        }
+                        
+                        query.title=query.to.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {
+                            return f.toUpperCase() + r.toLowerCase() + ' ';
+                        });
+                        
+                        if (m.length==1 && m[0].type!="text") {
+                            delete responseObj.scrollNext;
+                            delete responseObj.scrollPrev;
+                        }
+                        
+                        if (!query.since && !query.until) {
+                            delete responseObj.scrollNext;
+                        }
+                        core.emit("rooms" , { id : user.id  , fields : ["accounts"]} , function(err, account){
+                             user.email =  (account[0]) ? account[0].accounts[0].id.substring(7) : "guest@scrollback";
+                            
+                            user.gravatar = 'https://s.gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex');
+                            console.log(user.gravatar);
+                            responseObj.gravatar = user.gravatar;
+                        
+                            responseObj.relDate = relDate;
+                            //res.render("archive", responseObj);                     
+                            res.render("d/room" , responseObj);
+                        });
+                    });
+                });
+                
+            });
+        });
+    });
+
     app.get("*", function(req, res, next) {
-/*
-        obj.initData = {
-            room : 
-            message :
-
-        }
-
-        res.render('layout.jade', obj);
-*/
-
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[0],
         user = req.session.user;
         if(roomId && !validateRoom(roomId)) return next();
