@@ -27,7 +27,7 @@ block styles
 		}
 block append scripts
 	script(type='text/javascript').
-		window.scrollback = {host: 'http://' + location.host};
+		window.scrollback = {host: '//' + location.host};
 		var stream="#{query.to}";
 		var prevtime=#{prevtime};
 		var isLastPage= #{isLastPage};

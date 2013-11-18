@@ -104,7 +104,7 @@ $(document).ready(function(){
 				
 				aelement=document.createElement("a");
 				addClass(aelement,"notificationLink");
-				aelement.href="http://"+location.host+"/"+stream+"#"+"bottom";
+				aelement.href="//"+location.host+"/"+stream+"#"+"bottom";
 				aelement.innerHTML="New Message from " + message.from+": "+message.text;
 				messageItem.appendChild(aelement);
 			}
