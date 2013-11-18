@@ -39,7 +39,7 @@ module.exports = function(coreObject) {
 };
 
 function insertAccounts(data,callback){
-	var account, accountsQuery=" INSERT INTO `accounts` VALUES(id, room, gateway, params, timezone) ", //?
+	var account, accountsQuery=" INSERT INTO `accounts`(id, room, gateway, params, timezone)  VALUES", //?
 		accountValues=" (?,?,?,?,?) ",params=[], ids = [];
 	
 	data.accounts.forEach(function(element) {

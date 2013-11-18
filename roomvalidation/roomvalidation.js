@@ -11,6 +11,7 @@ module.exports =function(core){
 		if(!room.type) return callback(new Error("TYPE_NOT_SPECIFIED"));
 		if(room.type=="user")	room.owner = room.id;
 		if(!room.createdOn) room.createdOn = new Date().getTime();
+		if(!room.name) room.id=room.name;
 
 		redis.get("room:"+room.id, function(err, data) {
 			if(err) callback(err);
