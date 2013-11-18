@@ -7,7 +7,7 @@ module.exports = function(core) {
 		log("Heard \"message\" event");
 		if(!message.id ) return callback(new Error("ID_NOT_SPECIFIED"));
 		if(message.type == "text"){
-			if(!validateRoom(message.to)) return callback(new Error("INVALID_ROOM_ID"));
+			if(!validateRoom(typeof message.to=="string"?message.to:message.to[0])) return callback(new Error("INVALID_ROOM_ID"));
 			if(!validateRoom(message.from.replace(/^guest-/,""))) return callback(new Error("INVALID_USER_ID"));
 		}
 		/*
