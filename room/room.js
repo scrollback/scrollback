@@ -19,7 +19,7 @@ module.exports = function(coreObject) {
 			function(err, resp) {
 
 				if(err) {
-					callback && callback(err,data);
+					callback && callback(err);
 					return;
 				}
 				redis.set("room:"+room.id, JSON.stringify(room));

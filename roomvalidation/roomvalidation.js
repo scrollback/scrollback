@@ -11,8 +11,11 @@ module.exports =function(core){
 		if(!room.type) return callback(new Error("TYPE_NOT_SPECIFIED"));
 		if(room.type=="user")	room.owner = room.id;
 		if(!room.createdOn) room.createdOn = new Date().getTime();
-		if(!room.name) room.id=room.name;
-
+		if(!room.name) room.name=room.id;
+		
+		//need to delete the IRC ACCOUNTS
+		room.originalId = room.id;
+		log("heard room event", room);
 		redis.get("room:"+room.id, function(err, data) {
 			if(err) callback(err);
 			if(!data){
@@ -21,11 +24,7 @@ module.exports =function(core){
 				}catch(e) {
 					room.old = {};
 				}	
-			}{
-				room.createdOn = new Date().getTime();
 			}
-			//need to delete the IRC ACCOUNTS
-			room.originalId = room.id;
 			if(room.accounts) {
 				for(i=0,l=room.accounts.length; i<l;i++) {
 					try {
