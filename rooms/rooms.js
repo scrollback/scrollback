@@ -33,7 +33,7 @@ function rooms(coreObject) {
 		log("Heard rooms event", options);
 
 		if(options.id) {
-			where.push("`id` = ?");
+			where.push("`id` in (?)");
 			params.push(options.id);
 		}
 		if(options.type) {
@@ -64,6 +64,7 @@ function rooms(coreObject) {
 		db.query(query, params, function(err, data) {
 			if(!callback) return;
 			if(!err) err = true;
+			else return callback(err);
 			console.log("DATA-SO-FAR", data);
 			console.log("***", err);
 			data.forEach(function(element) {
