@@ -76,7 +76,7 @@ function connect(server, nick, uid, callback) {
 		
 		client.addListener('nick', function(oldn, newn,channel) {
 			console.log(arguments);
-			message('nick', oldn, room(channel[0]), '', channel[0], newn);
+			message('nick', oldn, channel.length == 0? ""|| room(channel[0]), '', channel[0], newn);
 		});
 		
 		client.addListener('part', function(channel, from, reason) {
