@@ -57,7 +57,10 @@ function init() {
         if (x < 30) {
            sub = 30; 
         }
-        setTimeout(sendDigest, (sub-new Date().getMinutes())*60000);
+        setTimeout(function(){
+            sendDigest();
+            setInterval(sendDigest, 60*60*1000);
+        }, (sub-x)*60000);
     });
 }
 
