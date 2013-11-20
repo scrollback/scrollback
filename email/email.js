@@ -185,6 +185,10 @@ function sendMails(roomsData){
     var end1 = start1 + 59;
     var start2 = -100*60;//big values
     var end2 = -200*60;
+    /*
+    start1=0;//for testing....
+    end1=10000000;//for testing...
+    */
     if (x >= 9 && x < 12) {
         start2 = 24*60 + start1;//(+12 +14 +13)
         end2 = start2 + 59;//+13 
@@ -230,7 +234,7 @@ function sendMails(roomsData){
                 log("sending mail to user :",key);
                 var pe = prepareEmail(key,rm,roomsData);
                 log("email  :" + pe);
-                send("askabt@askabt.in",us[key].email,
+                send("scrollback@scrollback.io",us[key].email,
                      getSubject(key,rm,roomsData),
                      pe);
             }
