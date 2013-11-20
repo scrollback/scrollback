@@ -15,11 +15,13 @@ module.exports = function(core) {
 			return core.emit('rooms', {id:message.to}, function(err, rooms) {
 				console.log("threader1",rooms);
 				if(err) callback(err);
-				if(rooms.length==0 || (rooms[0].params && rooms[0].params.threader1)) {
+				//enabling threader for all the rooms for now.
+				//if(rooms.length==0 || (rooms[0].params && rooms[0].params.threader1)) {
+				if(true){
 					var msg = JSON.stringify({
 						id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
 						text: message.text.replace(/['"]/g, ''),
-						room: message.to.length ? message.to[0]:message.to
+						room: typeof message.to=="string" ? message.to:message.to[0]
 					});
 					log("Sending msg to scrollback.jar="+msg);
 					try {
