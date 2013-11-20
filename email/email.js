@@ -44,7 +44,7 @@ module.exports = function(coreObject) {
         }
         callback();
     }, "gateway");
-   // setInterval(sendDigest, 25*1000);
+    //setInterval(sendDigest, 25*1000);
 };
 
 function init() {
@@ -182,16 +182,16 @@ function sendDigest() {
 function sendMails(roomsData){
     var x = new Date().getUTCHours();
     var start1 = x >= 12?(24 - x)*60:-x*60;
-    var end1 = start1 + 60;
-    var start2 = -100*60;
+    var end1 = start1 + 59;
+    var start2 = -100*60;//big values
     var end2 = -200*60;
     if (x >= 9 && x < 12) {
         start2 = 24*60 + start1;//(+12 +14 +13)
-        end2 = start2 + 60;//+13 
+        end2 = start2 + 59;//+13 
     }
     if (x == 12) {
         start2 = -12*60;
-        end2 = start2 + 60;
+        end2 = start2 + 59;
     }
     log("current time hour:",x+","+start1+","+start2);
     var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
