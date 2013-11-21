@@ -42,7 +42,9 @@ $(document).ready(function(){
 	});
 	
 	core.on("message", function(message){
-		nickBox.value=core.nick().replace(/guest-/g,'');
+		if (nickBox) {
+			nickBox.value=core.nick().replace(/guest-/g,'');
+		}
 		var messageItem;
 		if(message.type == "nick"){
 			if(nick.indexOf("guest-")===0) {
@@ -91,22 +93,24 @@ $(document).ready(function(){
 				messageBox.scrollIntoView(false);
 			}
 			else  {
-				var aelement;
-				messageItem = document.getElementById("notificationBar");
-				if (!messageItem) {
-					messageItem=document.createElement("div");
-					messageItem.setAttribute("id","notificationBar");
-					addClass(messageItem,"container");
-					document.getElementById("messageList").parentNode.
-						insertBefore(messageItem,document.getElementById("messageList").nextSibling);  
+				if (message.from != core.nick()) {//not show for own msg
+					var aelement;
+					messageItem = document.getElementById("notificationBar");
+					if (!messageItem) {
+						messageItem=document.createElement("div");
+						messageItem.setAttribute("id","notificationBar");
+						addClass(messageItem,"container");
+						document.getElementById("messageList").parentNode.
+							insertBefore(messageItem,document.getElementById("messageList").nextSibling);  
+					}
+					messageItem.innerHTML="";
+					
+					aelement=document.createElement("a");
+					addClass(aelement,"notificationLink");
+					aelement.href="//"+location.host+"/"+stream+"#"+"bottom";
+					aelement.innerHTML="New Message from " + message.from.replace(/^guest-/, "") + ": "+message.text;
+					messageItem.appendChild(aelement);
 				}
-				messageItem.innerHTML="";
-				
-				aelement=document.createElement("a");
-				addClass(aelement,"notificationLink");
-				aelement.href="//"+location.host+"/"+stream+"#"+"bottom";
-				aelement.innerHTML="New Message from " + message.from+": "+message.text;
-				messageItem.appendChild(aelement);
 			}
 		} else if (message.type == "nick") {
 			if (isLastPage && message.from == core.nick()) {
