@@ -4,7 +4,7 @@ dependencies: emitter.js
 
 var scrollbackModule = angular.module('scrollback' , []);
 var factoryObject = Object.create(emitter), requests = {};
-var messageCallback = {}, messagesCallback = {}, nick;
+var pendingCallbacks = {}, nick;
 
 //This is done with the idea to reconnect on disconnect.
 var socket = newSocket();
@@ -20,11 +20,11 @@ var roomFactory=function() {
 
 	factoryObject.message = send;
 
-	factoryObject.messages = function(query, callback) {
-		query.queryId=guid();
-		messagesCallback[query.queryId] = callback;		
-		socket.emit("messages", query);
-	};
+	factoryObject.messages = callbackGenerator("messages");
+	factoryObject.room = callbackGenerator("room");
+	factoryObject.rooms = callbackGenerator("rooms");
+	factoryObject.occupants = callbackGenerator("occupants");
+	factoryObject.membership = callbackGenerator("membership");
 
 	factoryObject.listenTo = function(room){
 		send({type:"result-start", to:room});
@@ -34,6 +34,14 @@ var roomFactory=function() {
 	return factoryObject;
 };
 
+
+function callbackGenerator(event){
+	return function(query, callback){
+		query.queryId=guid();
+		pendingCallbacks[query.queryId] = callback;		
+		socket.emit(event, query);
+	};
+}
 
 
 function send(message, callback){
@@ -45,7 +53,7 @@ function send(message, callback){
 	};
 	message.from = nick;
 
-	if(callback) messageCallback[message.id] = callback;
+	if(callback) pendingCallbacks[message.id] = callback;
 	socket.emit("message", message);
 }
 
@@ -86,17 +94,13 @@ function init(){
 
 
 onMessages = function(data) {
-	if(messagesCallback[data.queryId]) {
-		messagesCallback[data.queryId](data);
-		delete messagesCallback[data.queryId];
-	}
-	factoryObject.emit("messages", data);
+	
 };
 
 onMessage = function(data){
-	if(messageCallback[data.id]) {
-		messageCallback[data.id](data);
-		delete messagesCallback[data.id];
+	if(pendingCallbacks[data.id]) {
+		pendingCallbacks[data.id](data);
+		delete pendingCallbacks[data.id];
 	}
 	factoryObject.emit("message", data);
 };
@@ -111,27 +115,41 @@ function socketMessage(evt) {
 		case 'init': onInit(d.data); break;
 		case 'message': onMessage(d.data); break;
 		case 'messages': onMessages(d.data); break;
-		case 'room': onRoom(d.data) break;
-		case 'rooms': onRooms(d.data) break;
-		case 'members': onmembers(d.data) break;
-		case 'occupants': onOccupants(d.data) break;
+		case 'room':  
+		case 'rooms': 
+		case 'members':  
+		case 'occupants':  
+			handler(d.type, d.data)
+		break;
+
 		case 'error': onError(d.data); break;
 	}
 }
 
 onInit = function(data) {
 	nick = data.user.id;
+	core.emit("nick", nick);
 };
+
+
+handler=function(type, data){
+	if(pendingCallbacks[data.queryId]) {
+		pendingCallbacks[data.queryId](data);
+		delete pendingCallbacks[data.queryId];
+	}
+	factoryObject.emit(type, data);
+}
+
 
 
 function onError(err) {
 	// these are exceptions returned from the server; not to be confused with onerror with small 'e'.
-	if(err.id && messageCallback[err.id]) {
-		messageCallback[err.id](err);
-		delete messageCallback[err.id];
-	}else if(err.queryId && messagesCallback[err.queryId]) {
-		messageCallback[err.queryId](err);
-		delete messageCallback[err.queryId];
+	if(err.id && pendingCallbacks[err.id]) {
+		pendingCallbacks[err.id](err);
+		delete pendingCallbacks[err.id];
+	}else if(err.queryId && pendingCallbacks[err.queryId]) {
+		pendingCallbacks[err.queryId](err);
+		delete pendingCallbacks[err.queryId];
 	}
 	factoryObject.emit('error', err.message);
 }
