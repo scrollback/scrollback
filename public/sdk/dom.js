@@ -17,7 +17,7 @@ var dom = {
 			],
 			["div", {'class': 'scrollback-title-content'},
 				["span", {'class': 'scrollback-title-id'}],
-				["a", {href: "http://scrollback.io", "class": "scrollback-poweredby",
+				["a", {href: "//scrollback.io", "class": "scrollback-poweredby",
 			target: "_blank"}],
 				["span", { 'class': 'scrollback-title-text' }]
 			]
