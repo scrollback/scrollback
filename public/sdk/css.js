@@ -37,7 +37,6 @@ var css = {
 		"lineHeight": "24px",
 		"padding": "0px 16px",
 		"height": "24px"
-		
 	},
 	".scrollback-alert-hidden":{
 		"height": "0px",
