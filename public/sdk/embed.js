@@ -210,7 +210,7 @@ function Stream(id) {
 				addEvent(el, 'click', function() { self.toggle(); });
 				break;
 			case hasClass(el, 'scrollback-title-id'):
-				el.innerHTML = id;
+				el.innerHTML = scrollback.title || id;
 				break;
 			case hasClass(el, 'scrollback-title-text'):
 				self.titleText = el;
