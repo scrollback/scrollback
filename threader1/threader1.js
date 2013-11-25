@@ -1,17 +1,18 @@
 var log = require("../lib/logger.js");
 var config = require('../config.js');
 var fs=require("fs");
-var pro;//for process
+var net = require('net');
+var client;
 var pendingCallbacks = {};
 /**
-Communicate with scrollback.jar and set message.labels.
+Communicate with scrollback java Process through TCP and set message.labels.
 */
 
 module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
 		console.log("threader1");
-		if(message.type== "text") {
+		if(message.type == "text") {
 			return core.emit('rooms', {id:message.to}, function(err, rooms) {
 				console.log("threader1",rooms);
 				if(err) callback(err);
@@ -25,7 +26,7 @@ module.exports = function(core) {
 					});
 					log("Sending msg to scrollback.jar="+msg);
 					try {
-						pro.stdin.write(msg+'\n');
+						client.write(msg+'\n');
 					} catch(err) {
 						log("--error --"+err);
 						return callback();
@@ -35,7 +36,7 @@ module.exports = function(core) {
 						if(pendingCallbacks[message.id] ){
 							pendingCallbacks[message.id].fn();
 							delete pendingCallbacks[message.id];
-							log("pending callback removed after 1 sec for message.id"+message.id);
+							log("pending callback removed after 1 sec for message.id" + message.id);
 						}
 					}, 1000);	
 				}else{
@@ -49,19 +50,15 @@ module.exports = function(core) {
 };
 
 function init(){
-	log("core.uid=======",config.core);
-	try{
-		pro=require("child_process").spawn("java", ['-jar',__dirname	+'/scrollback.jar'],{ uid: config.core.uid });
-	} catch(err){
-		log("scrollback.jar Process Starting Failed");
-		return;
-	}
-	pro.stdout.on("data", function(data){
+	log("Trying to connect.... ");
+	client = net.connect({port: config.threader.port, host: config.threader.host},
+		function() { //'connect' listener
+		console.log('client connected');
+	});
+	client.on("data", function(data){//not sure if read line by line.
 		var message;
-		log("data=:",data,":-",typeof data);
 		data=data.toString('utf8');
 		try {
-			data=data.substring(data.indexOf('{'),data.indexOf('}')+1);
 			log("data=-:"+data+":-");
 			data = JSON.parse(data);
 			console.log("Data returned by scrollback.jar="+data.threadId, pendingCallbacks[data.id].message.text);
@@ -79,10 +76,9 @@ function init(){
 			return;
 		}
 	});
-	pro.stdout.on('error', function(err) {
-		log("Error", err);
-	});
-	log("-Scrollback.jar prcess Execution successful-");
 	
+	client.on('end', function() {
+		log('connection terminated');
+	});
 }
 
