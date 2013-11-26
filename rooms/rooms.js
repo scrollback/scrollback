@@ -69,27 +69,30 @@ function rooms(coreObject) {
 		
 		log(query, params);
 		db.query(query, params, function(err, data) {
+			var ids, rooms=[]; 
 			if(!callback) return;
 			if(!err) err = true;
 			else return callback(err);
-			console.log("DATA-SO-FAR", data);
-			console.log("***", err);
 			data.forEach(function(element) {
+				rooms[element.id] = element;
 				try{
 					element.params = JSON.parse(element.params);
 				}catch(e){
 					element.params = {};
 				}
+				if(!element.accounts) element.accounts = [];
 			});
+
+			ids = Object.keys(rooms);
 			if(options.fields && data.length > 0) {
-				console.log("fields defined");
 				options.fields.forEach(function(element) {
-					if(element == "accounts" && options.id) {
-						console.log("getting accounts", options.id);
-						getAccounts(options.id, function(err, accounts) {
+					if(element == "accounts" && ids.length) {
+						getAccounts(ids, function(err, accounts) {
+							var accountsInfo={};
 							if(err) return callback(err);
-							console.log("got accounts", accounts);
-							data[0].accounts = accounts;
+							accounts.forEach(function(element) {
+								rooms[element.room].accounts.push(element);
+							});
 							return callback(true, data);
 						});
 					}
@@ -100,19 +103,18 @@ function rooms(coreObject) {
 			}
 		});
 	}, "storage");
-
-	/*This too has to be changes. But felt this is better than a adding 
-	process.nexttick to require core.*/
-	core.emit("rooms", {query:"", type:"room"}, function(err, data){
+	
+	core.emit("rooms", {query:"", type:"room", fields:["accounts"]}, function(err, data){
 		if(err)	throw err;
 		data.forEach(function(element) {
+			log("Caching", element);
 			redis.set("room:"+element.id, JSON.stringify(element));
 		});
 	});
 };
 
 function getAccounts(ids,callback) {
-	db.query("SELECT * FROM accounts WHERE `room` = ?", [ids], function(err, accounts) {
+	db.query("SELECT * FROM accounts WHERE `room` in (?)", [ids], function(err, accounts) {
 		if(err) return callback(err);
 		callback(null, accounts);
 	});
