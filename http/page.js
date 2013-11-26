@@ -69,9 +69,8 @@ exports.init = function(app, coreObject) {
             profile: "http://sampleroom.blogspot.com" 
         }});
 	});    
-    app.get("/d/*", function (req, res) {
-        var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[1],
-        user = req.session.user;
+    app.get("/d/:roomname", function (req, res) {
+        var params = req.params.roomname , responseObj={}, query={}, sqlQuery, roomId = params[1],user = req.session.user;
         //if(roomId && !validateRoom(roomId)) return next();
         core.emit("rooms",{id:roomId}, function(err, room){
             if(room.length>0 && room[0].type =="user"){
@@ -94,25 +93,25 @@ exports.init = function(app, coreObject) {
             responseObj.user = user.id;
             responseObj.membership=user.membership;
 
-            if(params[1]=="config") {
-                next();
-                return;
-            }
-            query.to=params[1];
+            // if(params[1]=="config") {
+            //     next();
+            //     return;
+            // }
+            query.to=params;
             query.type="text";
             query.limit=20;
 
-            if (params[2]) switch(params[2]) {
-                case 'since':
-                    query.since=new Date(params[3]).getTime();
-                    break;
-                case 'until':
-                    query.until=new Date(params[3]).getTime();
-                    break;
-                case 'edit':
-                    return next();
-                    break;
-            }
+            // if (params[2]) switch(params[2]) {
+            //     case 'since':
+            //         query.since=new Date(params[3]).getTime();
+            //         break;
+            //     case 'until':
+            //         query.until=new Date(params[3]).getTime();
+            //         break;
+            //     case 'edit':
+            //         return next();
+            //         break;
+            // }
             core.emit("members" , {room:roomId} , function(err , members){
                 var ids=[];
                 responseObj.members = members;
@@ -138,8 +137,6 @@ exports.init = function(app, coreObject) {
                     }
                     
                     responseObj.memberGravatars = memberAvatars;
-
-                    console.log(" ********* " , memberAvatars);
 
                     core.emit("messages", query, function(err, m){
                         log(query);
@@ -177,7 +174,7 @@ exports.init = function(app, coreObject) {
                         
                             responseObj.relDate = relDate;
                             //res.render("archive", responseObj);                     
-                            res.render("d/room" , responseObj);
+                            res.render("d/main" , responseObj);
                         });
                     });
                 });

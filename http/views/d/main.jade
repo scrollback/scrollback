@@ -11,30 +11,32 @@ html(ng-app='scrollbackApp' ng-init="scopeObj = #{JSON.stringify(responseObj)}")
 	link(rel="stylesheet",href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css")
 	block styles
 
-		body
+		body(ng-controller="messageController")
 		#meta
 			a#logo scrollback
 			#user: block user
-				a: img.face(src='#{gravatar}')
-			#info: block info 
+				a: img.face(src='#{gravatar}')	
+			#info 
+				ng-view
 			#foot: block foot
 				| Scrollback is a product of Askabt Pte Ltd.
 				| We respect your privacy.
 		#body
-			block body
-				#fixed
+			block body 
+				#fixed(when-scrolled-up="loadMoreUp()" when-scrolled-down="loadMoreDown()")
 					ul
-						li(ng-repeat="i in items")
-							i.id
+						li(ng-repeat="i in items")  
+							{{i}}
 				form#compose
 					span lorem-user:
 			block scripts
 				script(src='http://code.jquery.com/jquery.min.js')
 				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js')
 				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js')
+				script(src='/sdk/controller.js')
 				script(src='/sdk/viewcontroller.js')
 				script(src='/sdk/app.js')
 				script.
-					$('.collapse,#meta').on('click', function() {
-						$(this).toggleClass('expanded');
-					});
+					//- $('.collapse,#meta').on('click', function() {
+					//- 	$(this).toggleClass('expanded');
+					//- });

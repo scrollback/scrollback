@@ -428,6 +428,22 @@ img.face {
     background-image: url('/img/logod-36.png');
   }
 }
+#fixed {
+    height: 400px;
+    overflow: auto;
+}
+li {
+  width: 400px;
+  min-height:50px;
+  border-bottom: 1px solid gray;
+  white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  white-space: pre-wrap;       /* css-3 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+  word-break: break-all;
+  white-space: normal;
+}
 #meta #user {
   line-height: 48px;
   cursor: pointer;
