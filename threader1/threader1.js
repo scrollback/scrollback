@@ -55,18 +55,18 @@ function init(){
 		function() { //'connect' listener
 		console.log('client connected');
 	});
-	client.on("data", function(data){//not sure if read line by line.
+	client.on("data", function(data){//not sure if reading line by line.
 		var message;
-		data=data.toString('utf8');
+		data = data.toString('utf8');
 		try {
-			log("data=-:"+data+":-");
+			log("data=-:" + data + ":-");
 			data = JSON.parse(data);
 			console.log("Data returned by scrollback.jar="+data.threadId, pendingCallbacks[data.id].message.text);
 			message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 			if(message) {
 				message.labels = [data.threadId];
 				pendingCallbacks[data.id].fn();
-				log("called back in ",new Date().getTime() - pendingCallbacks[data.id].time);
+				log("called back in ", new Date().getTime() - pendingCallbacks[data.id].time);
 				delete pendingCallbacks[data.id];
 			}
 			else
@@ -77,6 +77,11 @@ function init(){
 		}
 	});
 	
+	client.on('error', function(error){
+		log("Can not connect to java Process ", error);
+		log("Terminating start java process first");
+		process.exit(1);
+	});
 	client.on('end', function() {
 		log('connection terminated');
 	});
