@@ -91,8 +91,7 @@ function init(){
 	
 	client.on('error', function(error){
 		log("Can not connect to java Process ", error);
-		log("Terminating start java process first");
-		process.exit(1);
+		log("start java process");
 	});
 	client.on('end', function() {
 		log('connection terminated');
