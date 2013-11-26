@@ -55,9 +55,21 @@ function init(){
 		function() { //'connect' listener
 		console.log('client connected');
 	});
-	client.on("data", function(data){//not sure if reading line by line.
-		var message;
+	var d = "";//wait for new line.
+	client.on("data", function(data){
 		data = data.toString('utf8');
+		data = data.split("\n");
+		data[0] = d + data[0];//append previous data
+		d = data[data.length-1];
+		for (i = 0;i < data.length-1;i++) {
+			processReply(data[i]);
+		}
+	});
+	/**
+	 *Process reply from java process and callback based on message.id
+	 */
+	function processReply(data){
+		var message;
 		try {
 			log("data=-:" + data + ":-");
 			data = JSON.parse(data);
@@ -75,7 +87,7 @@ function init(){
 			log("error on parsing data="+err);
 			return;
 		}
-	});
+	}
 	
 	client.on('error', function(error){
 		log("Can not connect to java Process ", error);
