@@ -1,17 +1,18 @@
 var log = require("../lib/logger.js");
 var config = require('../config.js');
 var fs=require("fs");
-var pro;//for process
+var net = require('net');
+var client;
 var pendingCallbacks = {};
 /**
-Communicate with scrollback.jar and set message.labels.
+Communicate with scrollback java Process through TCP and set message.labels.
 */
 
 module.exports = function(core) {
 	init();
 	core.on('message', function(message, callback) {
 		console.log("threader1");
-		if(message.type== "text") {
+		if(message.type == "text") {
 			return core.emit('rooms', {id:message.to}, function(err, rooms) {
 				console.log("threader1",rooms);
 				if(err) callback(err);
@@ -25,7 +26,7 @@ module.exports = function(core) {
 					});
 					log("Sending msg to scrollback.jar="+msg);
 					try {
-						pro.stdin.write(msg+'\n');
+						client.write(msg+'\n');
 					} catch(err) {
 						log("--error --"+err);
 						return callback();
@@ -35,7 +36,7 @@ module.exports = function(core) {
 						if(pendingCallbacks[message.id] ){
 							pendingCallbacks[message.id].fn();
 							delete pendingCallbacks[message.id];
-							log("pending callback removed after 1 sec for message.id"+message.id);
+							log("pending callback removed after 1 sec for message.id" + message.id);
 						}
 					}, 1000);	
 				}else{
@@ -49,27 +50,35 @@ module.exports = function(core) {
 };
 
 function init(){
-	log("core.uid=======",config.core);
-	try{
-		pro=require("child_process").spawn("java", ['-jar',__dirname	+'/scrollback.jar'],{ uid: config.core.uid });
-	} catch(err){
-		log("scrollback.jar Process Starting Failed");
-		return;
-	}
-	pro.stdout.on("data", function(data){
+	log("Trying to connect.... ");
+	client = net.connect({port: config.threader.port, host: config.threader.host},
+		function() { //'connect' listener
+		console.log('client connected');
+	});
+	var d = "";//wait for new line.
+	client.on("data", function(data){
+		data = data.toString('utf8');
+		data = data.split("\n");
+		data[0] = d + data[0];//append previous data
+		d = data[data.length-1];
+		for (i = 0;i < data.length-1;i++) {
+			processReply(data[i]);
+		}
+	});
+	/**
+	 *Process reply from java process and callback based on message.id
+	 */
+	function processReply(data){
 		var message;
-		log("data=:",data,":-",typeof data);
-		data=data.toString('utf8');
 		try {
-			data=data.substring(data.indexOf('{'),data.indexOf('}')+1);
-			log("data=-:"+data+":-");
+			log("data=-:" + data + ":-");
 			data = JSON.parse(data);
 			console.log("Data returned by scrollback.jar="+data.threadId, pendingCallbacks[data.id].message.text);
 			message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 			if(message) {
 				message.labels = [data.threadId];
 				pendingCallbacks[data.id].fn();
-				log("called back in ",new Date().getTime() - pendingCallbacks[data.id].time);
+				log("called back in ", new Date().getTime() - pendingCallbacks[data.id].time);
 				delete pendingCallbacks[data.id];
 			}
 			else
@@ -78,11 +87,14 @@ function init(){
 			log("error on parsing data="+err);
 			return;
 		}
-	});
-	pro.stdout.on('error', function(err) {
-		log("Error", err);
-	});
-	log("-Scrollback.jar prcess Execution successful-");
+	}
 	
+	client.on('error', function(error){
+		log("Can not connect to java Process ", error);
+		log("start java process");
+	});
+	client.on('end', function() {
+		log('connection terminated');
+	});
 }
 
