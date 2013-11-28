@@ -1,22 +1,22 @@
 module.exports = {
 	
 	core: {
-		uid: 1000,
-		name: "scrollback"
+		uid: 1000, // uid of user 
+		name: "scrollback" //name of process 
 	},
 	mysql: {
 		host     : 'localhost',
 		user     : 'scrollback',
 		password : 'scrollback',
-		//debug    :true         ,
+		//debug    :true         ,// to print more debuging information
 		database : 'scrollback'
 	},
 	http: {
-		https: {
-			key: "ssh-cert/server.key",
-			cert: "ssh-cert/server.crt",
-			ca: "ssh-cert/int.crl",
-			port: 443
+		https: {  //https config 
+			key: "ssh-cert/server.key",//sever key
+			cert: "ssh-cert/server.crt",//cert 
+			ca: "ssh-cert/int.crl",//intermediate cert
+			port: 443 //port for https
 		},
 		host: "example.scrollback.io",
 		port: 80,
@@ -25,10 +25,20 @@ module.exports = {
 		limit: 30,
 		
 	},
-	redis:{
-		host: "kamal.scrollback.io",
+	redis:{ //redis config
+		host: "example.scrollback.io",
 		port: 6379,
 		db:0
+	},
+	email:{
+		"auth" : { 
+			"user" : "userid",
+			"pass" : "pass"
+		}
+	},
+	threader: {
+		host : "example.scrollback.io",
+		port : 12345
 	},
 	plugins: [
 		"usernameban",
@@ -37,11 +47,19 @@ module.exports = {
 		"originban",
 		"repeatban",
 		"ratelimit",
-		"threader2",
+		"threader1",
 		"loginrequired",
-		"member",
+		"members",
 		"http",
-		"irc"
+		"irc",
+		"email",
+		"room",
+		"rooms",
+		"roomauth",
+		"roomvalidation",
+		"message",
+		"messages",
+		"occupants"
 	],
 	xmpp: {
 		host: "example.scrollback.io" // unused
