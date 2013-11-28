@@ -1,5 +1,9 @@
 var core = Object.create(require("./lib/emitter.js")), config = require("./config.js");
 
+var pluginList = ["auth","roomauth","repeatban", "ratelimit", "wordban", "usernameban" , "originban", "loginrequired", 
+	"members","http", "irc" , "occupants" , "room", "rooms" , "message" , "messages" , "roomvalidation" , 
+	"messagevalidation"];
+
 process.nextTick(function(){
 	// The ident server binds to port 113 after a while.
 	if(config.core.uid) process.setuid(config.core.uid);
@@ -11,6 +15,12 @@ function start(name) {
 	plugin(core);
 }
 
-config.plugins.forEach(function(name) {
+pluginList.forEach(function(name) {
 	start(name);
 });
+
+
+
+
+
+
