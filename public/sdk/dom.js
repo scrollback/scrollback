@@ -9,9 +9,15 @@ var dom = {
 				'class': 'scrollback-icon scrollback-icon-close'
 			}]: "",
 			["div", { 'class': 'scrollback-icon scrollback-icon-pop' }, 'on scrollback'],
+			["span", {"class": "scrollback-icon scrollback-icon-part scrollback-hidden"},
+				"Leave room"
+			],
+			["span", {"class": "scrollback-icon scrollback-icon-join" },
+				"Join room"
+			],
 			["div", {'class': 'scrollback-title-content'},
 				["span", {'class': 'scrollback-title-id'}],
-				["a", {href: "http://scrollback.io", "class": "scrollback-poweredby",
+				["a", {href: "//scrollback.io", "class": "scrollback-poweredby",
 			target: "_blank"}],
 				["span", { 'class': 'scrollback-title-text' }]
 			]

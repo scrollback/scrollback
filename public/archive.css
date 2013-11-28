@@ -116,6 +116,9 @@ h2.embed{
 	float: left;
 	text-align: center;
 }
+.archive-membership-hidden {
+	display: none
+}
 .navigation{
 	min-height: 24px;
 	width: 100%;

@@ -1,0 +1,47 @@
+html
+	body			
+		table(bgcolor="#000000" height="30px" width="100%")
+			td
+				img(src="http://scrollback.io/favicon.ico",style="vertical-align: middle;")
+				a(href="http://scrollback.io/" style="text-decoration: none")
+						span(style="color: #fff; font-weight:800;vertical-align: middle;" ) Scroll
+						span(style="color: #fff;vertical-align: middle;") back
+		table(bgcolor="#3CA" height="3px" width="100%")			
+			td
+		h1 Hi #{user}
+		
+		p	Your summary for the day :
+		table(style="border-collapse: collapse;")
+			each r in room
+				hr
+				tr
+				if roomsData[r]
+					h3
+						a(href="http://scrollback.io/#{r}") #{r}
+					div.msglist
+						each msg in roomsData[r].head
+							div.msg
+								if msg.text.indexOf("/me ") == 0
+									span [#{msg.from.replace(/^guest-/,"") } #{msg.text.replace(/\/me /,"")}]
+								else		
+									span [#{msg.from.replace(/^guest-/,"")}] #{msg.text}
+					if(roomsData[r].count > 6)
+						div
+							a(href="http://scrollback.io/#{r}/since/#{new Date(roomsData[r].head[0].time-1).toISOString()}") #{roomsData[r].count} messages were sent in the room today.
+					if(roomsData[r].tail)
+						each msg in roomsData[r].tail
+							div.msglist
+								if msg.text.indexOf("/me ") == 0
+									span [#{msg.from.replace(/^guest-/,"") } #{msg.text.replace(/\/me /,"")}]				
+								else		
+									span [#{msg.from.replace(/^guest-/,"")}] #{msg.text}
+		hr							
+		
+		table(bgcolor="#000000" height="30px" width="100%")
+			td
+				img(src="http://scrollback.io/favicon.ico",style="vertical-align: middle;")
+				a(href="http://scrollback.io/" style="text-decoration: none")
+						span(style="color: #fff; font-weight:800;vertical-align: middle;" ) Scroll
+						span(style="color: #fff;vertical-align: middle;") back
+		table(bgcolor="#3CA" height="3px" width="100%")			
+			td

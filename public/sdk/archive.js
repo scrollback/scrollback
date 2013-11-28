@@ -15,8 +15,36 @@ $(document).ready(function(){
 		$(this).hasClass("login") && login();
 		$(this).hasClass("config") && (location.href = location.protocol+"//"+location.host+"/"+stream+"/config");
 	});
+	$(".archive-join").click(function(){
+		console.log("mouse clicked join");
+		if (core.nick().indexOf("guest-")==0) {
+			login();
+			return;
+		}
+		else{
+			core.join("join",stream);
+		}
+	});
+	$(".archive-part").click(function(){
+		console.log("mouse clicked part");
+		core.join("part",stream);
+	});
+	
+	core.on("membership",function(data) {
+		if (core.membership[stream]) {//show part
+			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
+			$(".archive-join").addClass("archive-membership-hidden");
+		}
+		else{//show join
+			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
+			$(".archive-part").addClass("archive-membership-hidden");	
+		}
+	});
+	
 	core.on("message", function(message){
-		nickBox.value=core.nick().replace(/guest-/g,'');
+		if (nickBox) {
+			nickBox.value=core.nick().replace(/guest-/g,'');
+		}
 		var messageItem;
 		if(message.type == "nick"){
 			if(nick.indexOf("guest-")===0) {
@@ -65,27 +93,39 @@ $(document).ready(function(){
 				messageBox.scrollIntoView(false);
 			}
 			else  {
-				var aelement;
-				messageItem = document.getElementById("notificationBar");
-				if (!messageItem) {
-					messageItem=document.createElement("div");
-					messageItem.setAttribute("id","notificationBar");
-					addClass(messageItem,"container");
-					document.getElementById("messageList").parentNode.
-						insertBefore(messageItem,document.getElementById("messageList").nextSibling);  
+				if (message.from != core.nick()) {//not show for own msg
+					var aelement;
+					messageItem = document.getElementById("notificationBar");
+					if (!messageItem) {
+						messageItem=document.createElement("div");
+						messageItem.setAttribute("id","notificationBar");
+						addClass(messageItem,"container");
+						document.getElementById("messageList").parentNode.
+							insertBefore(messageItem,document.getElementById("messageList").nextSibling);  
+					}
+					messageItem.innerHTML="";
+					
+					aelement=document.createElement("a");
+					addClass(aelement,"notificationLink");
+					aelement.href="//"+location.host+"/"+stream+"#"+"bottom";
+					aelement.innerHTML="New Message from " + message.from.replace(/^guest-/, "") + ": "+message.text;
+					messageItem.appendChild(aelement);
 				}
-				messageItem.innerHTML="";
-				
-				aelement=document.createElement("a");
-				addClass(aelement,"notificationLink");
-				aelement.href="http://"+location.host+"/"+stream+"#"+"bottom";
-				aelement.innerHTML="New Message from " + message.from+": "+message.text;
-				messageItem.appendChild(aelement);
 			}
 		} else if (message.type == "nick") {
 			if (isLastPage && message.from == core.nick()) {
 				document.getElementById("nick").value = message.ref;
 			}
+		}
+		else if (message.type == "part" && core.nick() == message.from && message.to == stream) {//show join
+			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
+			$(".archive-part").addClass("archive-membership-hidden");
+			delete core.membership[stream];
+		}
+		else if (message.type == "join" && core.nick() == message.from && message.to == stream) {//show part
+			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
+			$(".archive-join").addClass("archive-membership-hidden");
+			core.membership[stream]=true;
 		}
 	});
 	
