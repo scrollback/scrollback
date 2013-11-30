@@ -2,7 +2,7 @@ var core = Object.create(require("./lib/emitter.js")), config = require("./confi
 
 var pluginList = ["auth","roomauth","repeatban", "ratelimit", "wordban", "usernameban" , "originban", "loginrequired", 
 	"members","http", "irc" , "occupants" , "room", "rooms" , "message" , "messages" , "roomvalidation" , 
-	"messagevalidation"];
+	"messagevalidation" , "email"];
 
 process.nextTick(function(){
 	// The ident server binds to port 113 after a while.

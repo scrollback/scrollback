@@ -13,9 +13,9 @@ html
 		p	Your summary for the day :
 		table(style="border-collapse: collapse;")
 			each r in room
-				hr
-				tr
 				if roomsData[r]
+					hr
+					tr
 					h3
 						a(href="http://scrollback.io/#{r}") #{r}
 					div.msglist
@@ -35,7 +35,7 @@ html
 									span [#{msg.from.replace(/^guest-/,"") } #{msg.text.replace(/\/me /,"")}]				
 								else		
 									span [#{msg.from.replace(/^guest-/,"")}] #{msg.text}
-		hr							
+					hr							
 		
 		table(bgcolor="#000000" height="30px" width="100%")
 			td
