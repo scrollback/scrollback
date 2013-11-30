@@ -4,9 +4,9 @@ var scrollbackApp = angular.module("scrollbackApp" , ['ngRoute']);
 
 //scrollback.controller('Main' , [$scope , function($scope , factory , $timeout){
   function messageController($scope, $timeout) {
-
     $scope.items = [];
-    messages= ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","1","2","3","4","5","6","7","8","9","0","ai","bi","ci","di","ei","fi","gi","hi","ii","ji","ki","li","mi","ni","oi","pi","qi","ri","si","ti","ui","vi","wi","xi","yi","zi","0i","1i","2i","3i","4i","5i","6i","7i","8i","9i"];
+    var messages = $scope.scopeObj.data;
+    messages.reverse();
     var topCounter = 0, bottomIndex = 0;
     // initialising items with 25 messages initially 
     for (var i = 0; i < 25; i++) {
@@ -88,6 +88,3 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
         });
     };
 }]);
-
-
-console.log(ang);

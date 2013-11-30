@@ -7,6 +7,9 @@ process.nextTick(function(){
 process.title = config.core.name;
 
 function start(name) {
+	var plugins = ["auth","roomauth","repeatban", "ratelimit", "wordban", "usernameban" , "originban", "loginrequired", 
+    	"members","http", "irc" , "occupants" , "room", "rooms" , "message" , "messages" , "roomvalidation" , 
+    	"messagevalidation" , "threader1"];
 	var plugin = require("./"+name+"/"+name+".js");
 	plugin(core);
 }

@@ -1,4 +1,4 @@
-html(ng-app='scrollbackApp' ng-init="scopeObj = #{JSON.stringify(responseObj)}")
+html(ng-app='scrollbackApp' ng-init=" scopeObj = #{JSON.stringify(responseObj)}; ")
 	head
 	meta(charset="utf-8")
 	meta(http-equiv="X-UA-Compatible",content="IE=edge")
@@ -15,18 +15,18 @@ html(ng-app='scrollbackApp' ng-init="scopeObj = #{JSON.stringify(responseObj)}")
 		#meta
 			a#logo scrollback
 			#user: block user
-				a: img.face(src='#{gravatar}')	
+				a: img.face(src='{{scopeObj.gravatar}}')	
 			#info 
 				ng-view
 			#foot: block foot
 				| Scrollback is a product of Askabt Pte Ltd.
-				| We respect your privacy.
+				| We respect your privacy. 
 		#body
 			block body 
 				#fixed(when-scrolled-up="loadMoreUp()" when-scrolled-down="loadMoreDown()")
 					ul
 						li(ng-repeat="i in items")  
-							{{i}}
+							{{i.id.from}}: {{i.id.text}}
 				form#compose
 					span lorem-user:
 			block scripts
