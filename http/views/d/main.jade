@@ -1,4 +1,4 @@
-html(ng-app='scrollbackApp' ng-init=" scopeObj = #{JSON.stringify(responseObj)}; ")
+html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}; ")
 	head
 	meta(charset="utf-8")
 	meta(http-equiv="X-UA-Compatible",content="IE=edge")
@@ -23,7 +23,7 @@ html(ng-app='scrollbackApp' ng-init=" scopeObj = #{JSON.stringify(responseObj)};
 				| We respect your privacy. 
 		#body
 			block body 
-				#fixed(when-scrolled-up="loadMoreUp()" when-scrolled-down="loadMoreDown()")
+				#fixed(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 					ul
 						li(ng-repeat="i in items")  
 							{{i.id.from}}: {{i.id.text}}

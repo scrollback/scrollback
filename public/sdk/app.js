@@ -1,10 +1,10 @@
 scrollbackApp.config(['$routeProvider', function($routeProvider){
 	$routeProvider.when('/room', {
-		templateUrl: '/roomview.html', 
+		templateUrl: '/s/roomview.html', 
 		controller:'roomcontroller' 
 	});
 	$routeProvider.when('/rooms', {
-		templateUrl: '/roomsview.html', 
+		templateUrl: '/s/roomsview.html', 
 		controller:'roomscontroller' 
 	});
 	$routeProvider.when('/config', {
