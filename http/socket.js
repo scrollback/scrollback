@@ -318,8 +318,6 @@ function validateNick(nick){
 
 exports.send = function (message, rooms) {
 	message.text = message.text || "";
-	
-	message.member=['scrollback','test'];
 	log("Socket sending", message, "to", rooms);
 	
 	rooms.map(function(room) {
