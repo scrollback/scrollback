@@ -228,12 +228,17 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	
 	function format(text) {
 		if(!text) return "";
-		var u = /\b(https?\:\/\/)?([a-z0-9\-]+\.)+[a-z]{2,4}\b((\/|\?)\S*)?/g,
-			m = ["span"], r, s=0;
+		var u = /([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)|(\b(https?\:\/\/)?([a-z0-9\-]+\.)+[a-z]{2,4}\b((\/|\?)\S*)?)/g;
+		var m = ["span"], r, s=0;
 		while((r = u.exec(text)) !== null) {
 			m.push(text.substring(s, r.index));
 			s = u.lastIndex;
-			m.push(["a", {href: r[1]?r[0]:'//'+r[0], target: '_blank'}, r[0]]);
+			if (r[0].indexOf('@') != -1) {
+				m.push(["a", {href: 'mailto:'+r[0], target: '_blank'}, r[0]]);
+			}
+			else{
+				m.push(["a", {href: r[1]?r[0]:'//'+r[0], target: '_blank'}, r[0]]);
+			}
 		}
 		m.push(text.substring(s));
 		return m;
