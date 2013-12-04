@@ -72,7 +72,10 @@ exports.init = function(app, coreObject) {
     app.get("/d/*", function (req, res) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[1], user = req.session.user;
         //if(roomId && !validateRoom(roomId)) return next();
-        if(roomId.indexOf('%') == 0) return;
+        if(roomId.indexOf('%') == 0){
+          res.end();
+          return;  
+        } 
         core.emit("rooms",{id:roomId}, function(err, room){
             if(room.length>0 && room[0].type =="user"){
                 return res.render("error",{error:"Archive view not available for users."});
@@ -92,8 +95,10 @@ exports.init = function(app, coreObject) {
             }
 
             responseObj.user = user.id;
-            responseObj.membership=user.membership;
-
+	    if (user && user.membership) {
+		responseObj.membership=Object.keys(user.membership);
+	    }
+        
             if(params[1]=="config") {
                 next();
                 return;
@@ -114,25 +119,28 @@ exports.init = function(app, coreObject) {
                     break;
             }
             core.emit("members" , {room:roomId} , function(err , members){
-                var ids=[];
+                var ids=[], cnt = 0;
                 responseObj.members = members;
                 var memberAvatars = [];
 
                 members.forEach(function(element) {
                     ids.push(element.user);
                 });
+                ids.sort();
+
                 /*
                     this should be changed to something like core.emit("rooms", {id:"", fields:["accounts"]})
                     current api can do that only with one id :-p. need better core.rooms api.
                     -Harish 
                 */
 
-                db.query("select id from accounts where room in (?)",[ids], function(err, gravatars) {
+                db.query("select id from accounts where room in (?) group by room",[ids], function(err, gravatars) {
                     if(gravatars){
                         gravatars.forEach(function(element) {
                             element = crypto.createHash("md5").update(element.id.substring(7)).digest("hex");
                             console.log(element);
-                            memberAvatars.push('https://s.gravatar.com/avatar/'+element);
+                            memberAvatars.push({ name : ids[cnt], avatar : 'https://s.gravatar.com/avatar/'+element});
+                            cnt+=1;
                         });
 
                     }
@@ -149,7 +157,7 @@ exports.init = function(app, coreObject) {
                             responseObj.scrollPrev = new Date(m[1].time).toISOString();
                         }
                         
-                          if (m[m.length-1] && m[m.length-1].type == 'result-end') {
+                        if (m[m.length-1] && m[m.length-1].type == 'result-end') {
                             responseObj.scrollNext = new Date(m[m.length-1].time).toISOString();
                         }
                         
@@ -173,8 +181,6 @@ exports.init = function(app, coreObject) {
                             responseObj.gravatar = user.gravatar;
                         
                             responseObj.relDate = relDate;
-                            //res.render("archive", responseObj);  
-                            // console.log(":::" responseObj);                   
                             res.render("d/main" , {responseObj:responseObj});
                         });
                     });

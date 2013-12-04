@@ -1,6 +1,6 @@
 //var scrollback = angular.module('scrollback',[]);
 
-var scrollbackApp = angular.module("scrollbackApp" , ['ngRoute']);
+var scrollbackApp = angular.module("scrollbackApp", ['ngRoute']);
 
 //scrollback.controller('Main' , [$scope , function($scope , factory , $timeout){
   function messageController($scope, $timeout) {
@@ -10,17 +10,17 @@ var scrollbackApp = angular.module("scrollbackApp" , ['ngRoute']);
     var topCounter = 0, bottomIndex = 0;
     // initialising items with 25 messages initially 
     for (var i = 0; i < 25; i++) {
-              if(topCounter < messages.length){
-                  $scope.items.unshift({id: messages[topCounter]});
-                  topCounter += 1;
-              }
+        if(topCounter < messages.length){
+            $scope.items.unshift(messages[topCounter]);
+            topCounter += 1;
+        }
     }
 
     $scope.loadMoreUp = function() {    
         console.log("DOM size  ",$scope.items.length);
         for (var i = 0; i < 5; i++) {
               if(topCounter < messages.length){
-                  $scope.items.unshift({id: messages[topCounter]});
+                  $scope.items.unshift(messages[topCounter]);
                   topCounter += 1;
               }
 
@@ -48,24 +48,25 @@ var scrollbackApp = angular.module("scrollbackApp" , ['ngRoute']);
         // console.log("Top element ", messages[topCounter]);
         for(i=0; i< 5; i++){
               if(bottomIndex > 0){
-                $scope.items.push({id: messages[bottomIndex]});
+                $scope.items.push(messages[bottomIndex]);
                 bottomIndex -= 1;
               }
-              if(bottomIndex == 0 && $scope.items[$scope.items.length-1].id != messages[0]){
-                $scope.items.push({id: messages[0]});
+              if(bottomIndex == 0 && $scope.items[$scope.items.length-1] != messages[0]){
+                $scope.items.push(messages[0]);
                 bottomIndex = 0;
               }
         }
-        // this is causing troubles :( )
-        // $timeout( function(){
-        //     if($scope.items.length > 30){
-        //         while($scope.items.length > 30){ 
-        //           $scope.items.shift();
-        //           topCounter -= 1;
-        //         }
-        //     }
-        //     console.log("I am called");
-        // } , 1);
+         //this is causing troubles, so the shift is being done only for 2 elements at a time, ideally the while should be uncommented
+         $timeout(function(){
+             if($scope.items.length > 50){
+                 //while($scope.items.length > 50){ 
+                   $scope.items.shift();
+                   $scope.items.shift();
+                   topCounter -= 2;
+                 //}
+             }
+             console.log("I am called");
+         } , 1);
     }
 }
 

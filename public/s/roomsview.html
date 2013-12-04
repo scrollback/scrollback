@@ -1,22 +1,19 @@
-<div class="room selected"> 
+<div class="room" ng-show = "!isExists(scopeObj.membership)">
 	<h1>
-		<span> The Amazing Room</span>
-		<button class="right">
-			<span class="fa fa-info"></span>
-		</button>
+		<a class="noChange">
+			<span> You are not following any rooms yet! Kindly log-in/follow more rooms. </span>
+		</a>
 	</h1>
-	<p id="description">
-		This room is awesome, I mean really really awesome. 	
-	</p>
 </div>
-<div class="room"> 
+<div class="room" ng-show = "isExists(scopeObj.membership)" ng-repeat="m in scopeObj.membership "> 
 	<h1>
-		<span> An Ordinary Room</span>
+		<a class="noChange" href="/d/{{m}}">
+			<span> {{m}} </span>
+		</a>
 		<button class="right">
 			<span class="fa fa-info"></span>
 		</button>
 	</h1>
-	<p id="description">
-		This is an ordinary room, not awesome like the other room! 
+	<p id="description"> 
 	</p>
 </div>

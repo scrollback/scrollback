@@ -1,4 +1,4 @@
-scrollbackApp.config(['$routeProvider', function($routeProvider){
+scrollbackApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
 	$routeProvider.when('/room', {
 		templateUrl: '/s/roomview.html', 
 		controller:'roomcontroller' 
@@ -12,4 +12,6 @@ scrollbackApp.config(['$routeProvider', function($routeProvider){
 		controller:'configcontroller' 
 	});
 	$routeProvider.otherwise({redirectTo : '/room'});
+
+	//$locationProvider.html5Mode(true);
 }]);

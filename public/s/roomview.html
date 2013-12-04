@@ -12,6 +12,6 @@
 	<p id="description" class = "collapse expanded"> {{ scopeObj.room.description || "This room does not have a description yet!"}} </p>
 	<div id="members"> 
 		<span ng-repeat = "i in scopeObj.memberGravatars">
-			<img src="{{i}}" class = "face present">
+			<img src="{{i.avatar}}" class = "face present" title="{{i.name}}">
 		</span>
 	</div>
