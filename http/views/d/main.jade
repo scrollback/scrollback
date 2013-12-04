@@ -15,27 +15,39 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 		#meta
 			a#logo scrollback
 			#user: block user
-				a: img.face(src='{{scopeObj.gravatar}}')	
+				a: img.face(src='{{scopeObj.gravatar}}')
 			#info 
 				ng-view
 			#foot: block foot
 				| Scrollback is a product of Askabt Pte Ltd.
 				| We respect your privacy. 
 		#body
-			block body 
-				#fixed(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
-					ul
-						li(ng-repeat="i in items")  
-							{{i.id.from}}: {{i.id.text}}
-				form#compose
-					span lorem-user:
+			block body
+				.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
+					div(ng-repeat="i in items track by $index")
+						message(from="{{i.from}}",text="{{i.text}}")
+				form.messageWrapper(ng-submit="message();")
+					input.messageBox(type="text",ng-model="text")
+					input(type="submit")
 			block scripts
-				script(src='http://code.jquery.com/jquery.min.js')
+				script.
+					window.scrollback = {
+						host : '//' + location.host,
+						streams : ["#{responseObj.room.id}"],
+						debug: true
+					};
 				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js')
 				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js')
+				script(src="/sdk/polyfill.js")
+				script(src='/sdk/emitter.js')
+				script(src='/sdk/sockjs.js')
+				script(src='/sdk/addEvent.js')
+				script(src='/sdk/request.js')
+				script(src='/sdk/factory.js')
 				script(src='/sdk/controller.js')
-				script(src='/sdk/viewcontroller.js')
 				script(src='/sdk/app.js')
+				script(src='/sdk/viewcontroller.js')
+				script(src='/sdk/init.js')
 				script.
 					//- $('.collapse,#meta').on('click', function() {
 					//- 	$(this).toggleClass('expanded');
