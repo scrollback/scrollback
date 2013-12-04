@@ -1,15 +1,13 @@
 /*
 dependencies: emitter.js
 */
-
-var scrollbackModule = angular.module('scrollback' , []);
+var scrollbackApp = angular.module('scrollbackApp' , ['ngRoute']);
 var factoryObject = Object.create(emitter), requests = {};
 var pendingCallbacks = {}, nick;
 
-//This is done with the idea to reconnect on disconnect.
-var socket = newSocket();
 
-var roomFactory=function() {
+
+var factory=function() {
 	socket.onclose = function() {
 		factoryObject.emit("disconnected");
 		setTimeout(function(oldSocket){
@@ -19,7 +17,6 @@ var roomFactory=function() {
 	};
 
 	factoryObject.message = send;
-
 	factoryObject.messages = callbackGenerator("messages");
 	factoryObject.room = callbackGenerator("room");
 	factoryObject.rooms = callbackGenerator("rooms");
@@ -27,6 +24,7 @@ var roomFactory=function() {
 	factoryObject.membership = callbackGenerator("membership");
 
 	factoryObject.listenTo = function(room){
+		console.log("listening to... ", room);
 		send({type:"result-start", to:room});
 		send({type:"back", to:room});
 	};
@@ -57,7 +55,6 @@ function send(message, callback){
 	socket.emit("message", message);
 }
 
-scrollbackModule.factory('roomFactory', roomFactory);
 
 //This is done with the idea to reconnect on disconnect.
 function newSocket() {
@@ -128,7 +125,8 @@ function socketMessage(evt) {
 
 onInit = function(data) {
 	nick = data.user.id;
-	core.emit("nick", nick);
+	factoryObject.emit("init", data);
+	factoryObject.emit("nick", nick);
 };
 
 
@@ -139,8 +137,6 @@ handler=function(type, data){
 	}
 	factoryObject.emit(type, data);
 }
-
-
 
 function onError(err) {
 	// these are exceptions returned from the server; not to be confused with onerror with small 'e'.
@@ -159,3 +155,7 @@ function socketError(message) {
 	scrollback.debug && console.log(message);
 	factoryObject.emit("SOC_ERROR", message);
 };
+
+
+var socket = newSocket();
+scrollbackApp.factory('$factory', factory);

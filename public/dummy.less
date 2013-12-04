@@ -86,13 +86,13 @@ img.face {
 }
 
 #body {
-	position: absolute;
-	left: 50%; top: 0; right: 0;
+	position: fixed;
+	left: 50%;
+	right: 0;
+	top: 0;
 	height: 100%; min-height: 100%;
-	padding: 48px;
-	.transition(height, 0.2s);
+	/*padding: 48px; commenting this out for now*/
 	.box-sizing(border);
-	.radial-gradient(#fff, #eee, 0%, 50%);
 }
 
 @media screen and (max-width: 640px) {
@@ -116,11 +116,6 @@ img.face {
 }
 
 #body {
-	form#compose {
-		background: white; border-top: 1px solid #eee; padding: 16px;
-		position: fixed; height: 32px; bottom: 0px; left: 50%; right: 0;
-		@media screen and (max-width: 640px) { left: 0; }
-	}
 }
 
 //----- profile page -----
@@ -147,20 +142,67 @@ img.face {
 .room { &.selected { border-right: 32px solid #3ca; } .box-sizing(border); h1 { padding: 0; } margin: 16px -48px; padding: 16px 48px; }
 
 
+.scrollback-stream {
+	height: 100%;
+	position: absolute;
+	width:100%;
+	font-size: 13px;
+	right:-30px;
+	line-height: 14px;
+	.border-box;
+	padding:0px;
+	padding-top: 10px;
+	margin:0px;
+	padding-bottom: 64px;
+	bottom:10px;
+	top:0px;
+	overflow-y: scroll;
+}
 
-#fixed {
-    height: 400px;
-    overflow: auto;
+.messageWrapper{
+	width:100%;
+	position: absolute;
+	font-size: 14px;
+	line-height: 15px;
+	padding:0px;
+	margin:0px;
+	bottom:0px;
+	right:0px;
+	height: 30px;
+	border-top: 1px solid black;
 }
-li {
-  width: 400px;
-  /*min-height:20px;*/
-  border-bottom: 1px solid gray;
-  white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
-  white-space: -pre-wrap;      /* Opera 4-6 */
-  white-space: -o-pre-wrap;    /* Opera 7 */
-  white-space: pre-wrap;       /* css-3 */
-  word-wrap: break-word;       /* Internet Explorer 5.5+ */
-  word-break: break-all;
-  white-space: normal;
+
+.messageBox{
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	border: none;
+	.border-box;
 }
+.messageBox:focus { border : none }
+
+
+.border-box () {
+  	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-o-box-sizing: border-box;
+}
+
+.scrollback-message {
+	overflow: hidden;
+	color: red;
+	padding: 2px 24px 2px 48px;
+	text-indent: -32px;
+	border-left: 4px solid transparent;
+	opacity: 1; height: auto;
+	cursor: default;
+}
+
+.scrollback-message-nick { color: #999; }
+.scrollback-message-separator { color: #999 }
+.scrollback-message-join { color: #999 }
+.scrollback-message-part { color: #999 }
+.scrollback-message-timestamp {color: #999}
+.scrollback-message-content {color: #000}
