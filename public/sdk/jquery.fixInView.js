@@ -10,10 +10,9 @@ jQuery.fn.fixInView = function() {
 		
 		if(lastTop == top) return;
 			
-		columns.each(function (i, column) {
-			column = $(column);
-			
-			var cHeight = column.outerHeight(),
+		columns.each(function () {
+			var column = $(this),
+				cHeight = column.outerHeight(),
 				cTop = column.offset().top,
 				small = cHeight < height;
 			
