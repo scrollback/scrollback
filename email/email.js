@@ -198,9 +198,9 @@ function sendMails(roomsData){
         end2 = start2 + 59;
     }
     log("current time hour:",x+","+start1+","+start2);
-    var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
-                "members.user=accounts.room where accounts.gateway='mailto' and timezone between ? and ? "+
-                "or timezone between ? and ?";
+    var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on" +
+                " members.user=accounts.room where accounts.gateway='mailto' and `partedOn` is null"+
+                " and timezone between ? and ?  or timezone between ? and ?";
     /*var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
                 "members.user=accounts.room where accounts.gateway='mailto' order by accounts.id";
     */
