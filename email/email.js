@@ -10,7 +10,7 @@ var transport = nodemailer.createTransport("SMTP", {
     host: "email-smtp.us-east-1.amazonaws.com",
     secureConnection: true,
     port: 465,
-    auth: emailConfig.auth
+    auth: emailConfig && emailConfig.auth
 });
 
 function send(from,to,subject,html) {
@@ -35,16 +35,21 @@ function send(from,to,subject,html) {
 }
 
 module.exports = function(coreObject) {
-    core = coreObject;
-    init();
-    core.on('message', function(message, callback) {
-        log("Heard \"message\" event");
-        if(message.type === "text"){
-            addMessage(message);    
-        }
-        callback();
-    }, "gateway");
-    //setInterval(sendDigest, 25*1000);
+    if (config.email) {
+        core = coreObject;
+        init();
+        core.on('message', function(message, callback) {
+            log("Heard \"message\" event");
+            if(message.type === "text"){
+                addMessage(message);    
+            }
+            callback();
+        }, "gateway");
+        //setInterval(sendDigest, 25*1000);
+    }
+    else {
+        log("email module is not enabled");
+    }
 };
 
 function init() {
