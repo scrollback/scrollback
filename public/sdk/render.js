@@ -5,11 +5,14 @@ Stream.prototype.scroll = function() {
 		start = 99999, end = 0, up, self = this, cb,
 		viewTop = offset(log)[1] + log.scrollTop,
 		viewBottom = viewTop + log.clientHeight;
-
+	
+	
+	// Ignore "scroll" events caused by DOM mutation (from a previous scroll event.)
 	if (this.updating) {
 		return;
 	}
 	
+	// Find the indexes of the first and last message that are visible.
 	while(msg) {
 		pos = offset(msg)[1];
 		if(pos >= viewTop && pos <= viewBottom){
@@ -24,19 +27,28 @@ Stream.prototype.scroll = function() {
 		this.lastScrollTop = log.scrollTop;
 		return;
 	}
-	
+
 	up = log.scrollTop < this.lastScrollTop;
+	
+	// Remember the current scroll position, ID of the first message shown, etc.
+	// This is because the scrollbar gets reset when messages shown are changed.
+	// We will have to manually scroll to where it was, and remembering these things
+	// will help.
 	this.lastScrollTop = log.scrollTop;
 	this.scrollId = this.messages[start].id;
 	this.scrollPx = offset(this.log.children[start])[1] - offset(this.log)[1] -  this.log.scrollTop;
 	
+	// The requested flags prevents you from making duplicate requests.
+	// These cancel the requested flag put earlier when:
+	// the user starts scrolling in the other direction, etc.
 	this.requested[up?"dn":"up"] = false;
 	if (start >= 10) self.requested.up = false;
 	if (self.messages.length - end >= 10) self.requested.dn = false;
 	
 	this.renderThumb(start, end);
 	
-//	if(log.scrollHeight == log.scrollTop + log.clientHeight) { 
+	// Checks if it is at the bottom or not.
+	// TODO: This sucks, the last message in self.messages might not be the most recent one.
 	if (end >= self.messages.length - 1 && !up) {
 		scrollback.debug && console.log("bottomed out");
 		this.bottom = true;
