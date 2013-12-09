@@ -15,7 +15,14 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 		#meta
 			a#logo scrollback
 			#user: block user
-				a: img.face(src='{{scopeObj.gravatar}}')
+				a: img.face(src='{{scopeObj.gravatar}}' onclick='toggleVisibility()')
+				#userAction
+					#login
+						i(class="fa fa-sign-in fa-2x")
+						|	Log in
+					#signup
+						i(class="fa fa-globe fa-2x")
+						|	Sign Up
 			#info 
 				ng-view
 			#foot: block foot
@@ -25,9 +32,9 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 			block body
 				.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 					div(ng-repeat="i in items track by $index")
-						message(from="{{i.from}}",text="{{i.text}}")
+						message(from="{{i.from}}", text="{{i.text}}")
 				form.messageWrapper(ng-submit="message();")
-					input.messageBox(type="text",ng-model="text")
+					input.messageBox(type="text", ng-model="text")
 					input(type="submit")
 			block scripts
 				script.
@@ -36,8 +43,11 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 						streams : ["#{responseObj.room.id}"],
 						debug: true
 					};
+				script(src="//code.jquery.com/jquery-1.10.1.min.js")
+				script(src="//code.jquery.com/jquery-migrate-1.2.1.min.js")
 				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js')
 				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js')
+				script(src='/sdk/messageArray.js')
 				script(src="/sdk/polyfill.js")
 				script(src='/sdk/emitter.js')
 				script(src='/sdk/sockjs.js')
@@ -48,6 +58,14 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 				script(src='/sdk/app.js')
 				script(src='/sdk/viewcontroller.js')
 				script.
-					//- $('.collapse,#meta').on('click', function() {
-					//- 	$(this).toggleClass('expanded');
-					//- });
+					function toggleVisibility(){
+						//$('#userAction').hide();
+						e = document.getElementById('userAction');
+						if(e.style.display == "")
+							e.style.display = "block";
+						else
+							e.style.display = "";
+					}
+					$('.collapse,#meta').on('click', function() {
+						$(this).toggleClass('expanded');
+					});

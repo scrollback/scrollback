@@ -17,7 +17,8 @@ var factory=function() {
 	};
 
 	factoryObject.message = send;
-	factoryObject.messages = callbackGenerator("messages");
+	factoryObject.messages = getMessages;
+	//factoryObject.messages = callbackGenerator("messages");
 	factoryObject.room = callbackGenerator("room");
 	factoryObject.rooms = callbackGenerator("rooms");
 	factoryObject.occupants = callbackGenerator("occupants");
@@ -30,6 +31,25 @@ var factory=function() {
 	};
 
 	return factoryObject;
+};
+
+getMessages = function (room, start, end, callback) {
+	console.log("get messages recieved", room, start, end);
+	var query = { to: room, type: 'text' },
+		reqId;
+	if (start) { query.since = start; }
+	if (end) { query.until = end; }
+	reqId = room + '/' + (query.since || '') + '/' + (query.until || '');
+	
+	console.log("Request:", reqId);
+	requests[reqId] = callback;
+	socketEmit('messages', query);
+}
+
+function socketEmit(type, data) {
+	console.log("emit is in action");
+	console.log("Socket sending ", type, data);
+	socket.send(JSON.stringify({type: type, data: data}));
 };
 
 
@@ -91,7 +111,8 @@ function init(){
 
 
 onMessages = function(data) {
-	
+	//console.log("on messages was invoked", data.messages);
+	factoryObject.emit("messages", data.messages);
 };
 
 onMessage = function(data){
