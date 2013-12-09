@@ -115,7 +115,9 @@ function userAway(user, room, conn) {
 			if (typeof user.rooms[room] !== "undefined" && user.rooms[room]<=1) {
 				delete user.rooms[room];
 				core.emit("message", { type: 'away', from: user.id, to: room,
-					time: new Date().getTime(), origin : {gateway : "web", location : "", ip :  conn.socket.remoteAddress}});
+					time: new Date().getTime(), origin : {gateway : "web", location : "", ip :  conn.socket.remoteAddress}}, function(err, m) {
+						log(err, m);
+					});
 				if(!Object.keys(user.rooms).length) {
 					delete users[user.id];
 				}
