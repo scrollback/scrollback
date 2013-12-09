@@ -1,5 +1,5 @@
 //scrollback.controller('Main' , [$scope , function($scope , factory , $timeout){
-function messageController($scope, $factory, $timeout) {
+function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
     $scope.items = [];
     var messages = messageArray();
     messages.load($scope.scopeObj.room.name);
@@ -19,7 +19,8 @@ function messageController($scope, $factory, $timeout) {
     }
 
     console.log("Items", $scope.items);
-    
+
+      
     $factory.on("init", function() {
         if(window.scrollback.streams && window.scrollback.streams.length > 0) {
             $factory.listenTo(window.scrollback.streams[0]);
@@ -34,9 +35,13 @@ function messageController($scope, $factory, $timeout) {
     function newMessage(data) {
         // type is text, leave out err msgs, if any.. 
         messages.unshift(data);
-        console.log("msg added to the cache... ");
+        console.log("msg added to the cache... ", data.from, $scope.scopeObj.user);
         //messages.save($scope.scopeObj.room.name);
-
+        if(data.from == $scope.scopeObj.user){
+            $scope.gotoBottom(); 
+            $scope.items.pop();
+        }
+            
         console.log(bottomIndex, topIndex);
         if(!data.message && bottomIndex == 0 && data.type == "text") {
             $scope.$apply(function(){
@@ -57,8 +62,21 @@ function messageController($scope, $factory, $timeout) {
     // $scope.loadMoreAt = function(time, before, after, callback) {
 
     // };
-    $scope.loadMoreUp = function() {    
+    $scope.gotoBottom = function() {
+        $scope.items.length = 0;
+        topIndex = 0, bottomIndex = 0;
+        for (var i = 0; i < 50; i++) {
+            if(topIndex < messages.length){
+                if(messages[topIndex].type == "text")
+                    $scope.items.unshift(messages[topIndex]);
+                topIndex += 1;
+            }
+        }
+        $location.hash('endoflog');
+        $anchorScroll();
+    }
 
+    $scope.loadMoreUp = function() {    
         for (var i = 0; i < 5; i++) {
             if(topIndex < messages.length){
                 if(messages[topIndex].type == "text")
@@ -83,7 +101,7 @@ function messageController($scope, $factory, $timeout) {
             }
         }
         // removing elements from the bottom which are out of view scope 
-        $timeout( function(){
+        $timeout( function() {
             if($scope.items.length > 50){
                 while($scope.items.length > 50){ 
                     if(messages[bottomIndex].type != "text") bottomIndex += 1;
@@ -93,10 +111,10 @@ function messageController($scope, $factory, $timeout) {
             }
         });
     };
-    $scope.loadMoreDown = function(){   
+    $scope.loadMoreDown = function() {   
         // TODO : popping from top :)
         // console.log("Top element ", messages[topIndex]);
-        for(i=0; i< 5; i++){
+        for(i=0; i< 5; i++) {
               if(bottomIndex > 0){
                 if(messages[bottomIndex].type == 'text')
                     $scope.items.push(messages[bottomIndex]);
@@ -109,7 +127,7 @@ function messageController($scope, $factory, $timeout) {
               }
         }
          //this is causing troubles, so the shift is being done only for 2 elements at a time, ideally the while should be uncommented
-        $timeout(function(){
+        $timeout(function() {
             if($scope.items.length > 50){
                 //while($scope.items.length > 50){ 
                 $scope.items.shift();
@@ -182,7 +200,6 @@ scrollbackApp.directive('message',function() {
         }
     };
 });
-
 
 scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
     return function(scope, elm, attr) {
