@@ -6,7 +6,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     messages.merge($scope.scopeObj.data.reverse());
     messages.save($scope.scopeObj.room.name);
 
-    console.log("Messages are loaded up", messages);
+    // console.log("Messages are loaded up", messages);
     //messages.reverse();
     var topIndex = 0, bottomIndex = 0;
     // initialising items with 50 messages initially 
@@ -18,7 +18,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         }
     }
 
-    console.log("Items", $scope.items);
+    // console.log("Items", $scope.items);
 
       
     $factory.on("init", function() {
@@ -212,7 +212,7 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
             if (raw.scrollTop <= 150) { // load more items before you hit the top
                 var sh = raw.scrollHeight;
                 scope.$apply(attr.whenScrolledUp);
-                if(raw.scrollHeight > sh) raw.scrollTop += raw.scrollHeight - sh;
+                if(raw.scrollHeight > sh) raw.scrollTop = raw.scrollHeight - sh;
             }
             if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight - 50) {
               scope.$apply(attr.whenScrolledDown);
