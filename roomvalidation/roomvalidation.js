@@ -1,7 +1,7 @@
 var url = require("url");
 var log = require("../lib/logger.js");
 var redis = require("../lib/redisProxy.js");
-
+var validateRoom = require('../lib/validate.js');
 
 module.exports =function(core){
 	core.on("room", function(room, callback) {
@@ -42,7 +42,3 @@ module.exports =function(core){
 		});
 	}, "validation");
 };
-
-function validateRoom(room) {
-	return (room.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
-}

@@ -22,6 +22,17 @@ var socket = new SockJS(scrollback.host + '/socket'),
 	nick = "", user,
 	pendingCallbacks = {};
 
+function sanitizeRoomName(room) {
+	//this function replaces all spaces in the room name with hyphens in order to create a valid room name
+	room = room.trim();
+	room = room.replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
+	if(room.length<3) room=room+Array(3-room.length+1).join("-");
+	return room;
+}
+window.scrollback.streams = window.scrollback.streams.map(function(room) {
+	return sanitizeRoomName(room);
+});
+
 socket.emit = function(type, data) {
 	scrollback.debug && console.log("Socket sending ", type, data);
 	socket.send(JSON.stringify({type: type, data: data}));
