@@ -88,8 +88,8 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                 // time to request factory for messages from above 
                 $factory.messages($scope.scopeObj.room.name, "", messages[messages.length - 1].time);
                 $factory.on("messages", function(data){
-                    if(data.length > 1){
-                        console.log("concatenating now!", data.length);
+                    if(data.length > 1 && data[data.length-1].type == "result-end"){
+                        console.log("concatenating now!", data[data.length-1]);
                         messages = messages.concat(data.reverse());
                     }
                     //console.log(" in factory.onMessages", data);
