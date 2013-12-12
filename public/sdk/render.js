@@ -237,7 +237,9 @@ function hashColor(name) {
 
 Stream.prototype.renderMessage = function (message, showTimestamp) {
 	var el, self = this;
-	
+
+	var mentionedRegex = new RegExp("\\b"+core.nick().replace(/^guest-/,"")+"\\b");
+	var mentionedClass = mentionedRegex.test(message.text)&& message.from != core.nick()?" scrollback-message-mentioned ":"";
 	function format(text) {
 		if(!text) return "";
 		var u = /([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)|(\b(https?\:\/\/)?([a-z0-9\-]+\.)+[a-z]{2,4}\b((\/|\?)\S*)?)/g;
@@ -310,9 +312,9 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	}
 	
 	if(!el) return null;
-	
+	console.log();
 	el = JsonML.parse(["div", {
-		'class': 'scrollback-message scrollback-message-' + message.type,
+		'class': 'scrollback-message scrollback-message-' + message.type+mentionedClass,
 		'style': { 'borderLeftColor': hashColor(message.from/*message.from*/) },
 		'data-time': message.time, 'data-from': formatName(message.from)
 	}].concat(el));

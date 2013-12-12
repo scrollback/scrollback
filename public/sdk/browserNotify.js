@@ -27,12 +27,12 @@ var browserNotify = (function() {
 		hasFocus = document.hasFocus();
 	});
 	
-	return function(text) {
+	return function(text, force) {
 		if(hasFocus) return;
 		if (!originalTitle) originalTitle = document.title;
 		
 		document.title = text;
-		if (!played) {
+		if (!played || force) {
 			play(); played = true;
 			setTimeout(function() { played = false; }, 60000);
 		}

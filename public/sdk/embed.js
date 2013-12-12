@@ -402,7 +402,7 @@ Stream.prototype.onmessage = function(message) {
 	}
 	if (message.type == "text") {
 		if (message.from != core.nick()) {
-			browserNotify(message.from.replace(/^guest-/g, "")+" : "+message.text);
+			browserNotify(message.from.replace(/^guest-/g, "")+" : "+message.text, hasClass(el, "scrollback-message-mentioned"));
 		}
 		this.titleText.innerHTML = (el.innerText || el.textContent);
 	} else {

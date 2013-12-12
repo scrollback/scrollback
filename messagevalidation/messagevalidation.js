@@ -15,9 +15,9 @@ module.exports = function(core) {
 			console.log(message.to);
 		}
 		if(!message.id )	message.id = guid();
+		if(!validateRoom(message.from.replace(/^guest-/,""))) return callback(new Error("INVALID_USER_ID"));
 		if(message.type == "text"){
 			if(!validateRoom(typeof message.to=="string"?message.to:message.to[0])) return callback(new Error("INVALID_ROOM_ID"));
-			if(!validateRoom(message.from.replace(/^guest-/,""))) return callback(new Error("INVALID_USER_ID"));
 			if( message.text.indexOf('/')==0){
 				if(!message.text.indexOf('/me')==0){
 					return callback(new Error("UNRECOGNIZED_SLASH_COMMNAD"));
@@ -36,6 +36,6 @@ function sanitizeRoomName(room) {
 	//this function replaces all spaces in the room name with hyphens in order to create a valid room name
 	room = room.trim();
 	room = room.replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
-	if(room.length<3) room=room+Array(3-room.length+1).join("-");
+	if(room.length<3) room=room+Array(4-room.length).join("-");
 	return room;
 }

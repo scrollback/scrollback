@@ -34,6 +34,7 @@ if(window.scrollback.streams) {
 		return sanitizeRoomName(room);
 	});	
 }
+if(window.scrollback.nick) window.scrollback.nick = sanitizeRoomName(window.scrollback.nick);
 
 socket.emit = function(type, data) {
 	scrollback.debug && console.log("Socket sending ", type, data);
