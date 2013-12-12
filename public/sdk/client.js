@@ -29,9 +29,11 @@ function sanitizeRoomName(room) {
 	if(room.length<3) room=room+Array(3-room.length+1).join("-");
 	return room;
 }
-window.scrollback.streams = window.scrollback.streams.map(function(room) {
-	return sanitizeRoomName(room);
-});
+if(window.scrollback.streams) {
+	window.scrollback.streams = window.scrollback.streams.map(function(room) {
+		return sanitizeRoomName(room);
+	});	
+}
 
 socket.emit = function(type, data) {
 	scrollback.debug && console.log("Socket sending ", type, data);
