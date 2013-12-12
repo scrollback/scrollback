@@ -100,6 +100,10 @@ var css = {
 				opacity: 1, height: "auto",
 				cursor: "default"
 			},
+			".scrollback-message.scrollback-message-mentioned .scrollback-message-content": {
+				//fontWeight: "bold"
+				color:"#c00"
+			},
 			".scrollback-message-hidden": {
 				"opacity": 0, height: 0,
 				"transition": "all 1s ease-out",
