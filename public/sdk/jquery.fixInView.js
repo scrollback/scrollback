@@ -21,13 +21,16 @@ jQuery.fn.fixInView = function(container) {
 		columns.each(function () {
 			var column = $(this),
 				cHeight = column.outerHeight(),
-				cTop = column.offset().top,
+				cTop = column.position().top + column.offsetParent().scrollTop(),
 				small = cHeight < height,
 				status = column.data('fixedInStatus'),
-				cSilent = !!silent;
+				cSilent = !!silent,
+				dbg = [column.attr('id'), top, height, cTop, cHeight, column.offsetParent()[0]].join(' ');
 			
 			if((!small && up || small && !up) && status == 'bottom') {
+				console.log(dbg, 'unfixing up');
 				column.data('fixedInStatus', 'none');
+				status = 'none';
 				column.css({
 					position: 'absolute',
 					top: lastTop + height - cHeight,
@@ -36,7 +39,9 @@ jQuery.fn.fixInView = function(container) {
 			}
 			
 			else if((!small && !up || small && up) && status == 'top') {
+				console.log(dbg, 'unfixing dn');
 				column.data('fixedInStatus', 'none');
+				status = 'none';
 				column.css({
 					position: 'absolute',
 					top: lastTop,
@@ -44,10 +49,14 @@ jQuery.fn.fixInView = function(container) {
 				});
 			}
 			
-			else if(
-				(!small && up && cTop > top) ||
-				(small && !up && cTop < top)
+			if()
+			
+			if(
+				status != 'top' &&
+				((!small && up && cTop > top) ||
+				(small && !up && cTop < top))
 			) {
+				console.log(dbg, 'fixing up');
 				column.data('fixedInStatus', 'top');
 				column.css({
 					position: 'fixed',
@@ -57,9 +66,11 @@ jQuery.fn.fixInView = function(container) {
 			}
 			
 			else if(
-				(!small && !up && cTop + cHeight < top + height) ||
-				(small && up && cTop + cHeight > top + height)
+				status != 'bottom' &&
+				((!small && !up && cTop + cHeight < top + height) ||
+				(small && up && cTop + cHeight > top + height))
 			) {
+				console.log(dbg, 'fixing dn');
 				column.data('fixedInStatus', 'bottom');
 				column.css({
 					position: 'fixed',
