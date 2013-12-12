@@ -10,10 +10,10 @@ var dom = {
 			}]: "",
 			["div", { 'class': 'scrollback-icon scrollback-icon-pop' }, 'on scrollback'],
 			["span", {"class": "scrollback-icon scrollback-icon-part scrollback-hidden"},
-				"Leave room"
+				"Unfollow"
 			],
 			["span", {"class": "scrollback-icon scrollback-icon-join" },
-				"Join room"
+				"Follow"
 			],
 			["div", {'class': 'scrollback-title-content'},
 				["span", {'class': 'scrollback-title-id'}],

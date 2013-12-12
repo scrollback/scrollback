@@ -2,6 +2,7 @@
 // npm install selenium-webdriver
 var url = "http://hub.browserstack.com/wd/hub";
 var webdriver = require('selenium-webdriver');
+var assert = require("assert");
 
 //Input capabilities
 var caps = {
@@ -19,10 +20,8 @@ var driver = new webdriver.Builder().usingServer(url).withCapabilities(caps).bui
 driver.get('http://www.google.com');
 driver.findElement(webdriver.By.name('q')).sendKeys('browserstack');
 driver.findElement(webdriver.By.name('btnG')).click();
-driver.wait(function() {
-  return driver.getTitle().then(function(title) {
-    return title === 'browserstack - Google Search';
-  });
-}, 1000);
+driver.getTitle().then(function(title) {
+    assert.equal(title, 'browserstack - Google Search');
+});
 
 driver.quit();

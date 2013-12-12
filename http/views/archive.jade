@@ -18,12 +18,16 @@ block styles
 			text-decoration: underline;
 		}
 		#action{
-			float: right;
-			height: 2em;
+			background: #000;
+		}
+		h1 button { 
+			height: 40px;
 			border: none;
 			line-height: 2em;
-			background-color: black;
-			padding:0px;
+			background-color: #555;
+			padding: 0px;
+			border-left: 4px solid #fff;
+			border-right: 4px solid #fff;
 		}
 block append scripts
 	script(type='text/javascript').
@@ -56,23 +60,24 @@ block content
 	.container
 		.box.span12.container
 			div.container
-				div.box.span10
+				div.box.span8
 					h1.box.span10 #{query.title} archives (#{relDate(data[0].time)} ago)
-				div.box.span2
+				div.box.span4
 					h1
 						if user.indexOf("guest-") == 0
 							button#action.login.span12 Login
-						else if !room || !room.owner
-							button#action.config.span12 Claim
-						else if room.owner == user
-							button#action.config.span12 Configure
-						br
-						if membership && membership[query.to]
-							button#action.archive-part LEAVE
-							button#action.archive-join.archive-membership-hidden JOIN
 						else
-							button#action.archive-join JOIN
-							button#action.archive-part.archive-membership-hidden LEAVE
+							if membership && membership[query.to]
+								button#archive-part.span6 Unfollow
+								button#archive-join.archive-membership-hidden.span6 Follow
+							else
+								button#archive-join.span6 Follow
+								button#archive-part.archive-membership-hidden.span6 Unfollow
+							if !room || !room.owner
+								button#action.config.span6 Claim
+							else if room.owner == user
+								button#action.config.span6 Configure
+
 			if data.length <= 1
 				div.container.intro
 					span.box.span12 This room doesnt have any messages. You can chat from this page using the text box below. Share the link with your friends. You can also embed a widget on your webpage using the script given below. Each room can have configurations to it, like adding the IRC accounts, enabling plugins. You have to login to configure any room.
