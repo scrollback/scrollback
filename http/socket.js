@@ -211,8 +211,14 @@ function message (m, conn) {
 		function sendMessage() {
 			core.emit("message", m, function (err, m) {
 				var i, user = sess.user;
-				if (!user) {
+
+				//for audience mismatch error.
+				if(err && err.message && err.message.indexOf("AUTH_FAIL")>0) {
+					return conn.send('error', {id: m.id, message: err.message});
+				}
+				if (!user || !user.id) {
 					console.log("No session user?");
+					
 					return;
 				}
 				
@@ -225,7 +231,7 @@ function message (m, conn) {
 						for(i in m.user) if(m.user.hasOwnProperty(i)) {
 							user[i] = m.user[i];
 						}
-					} else {
+					} else if(!err){
 						user.id = m.ref;
 					}
 					console.log("Saved session", sess);
