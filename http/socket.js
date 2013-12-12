@@ -323,13 +323,17 @@ exports.send = function (message, rooms) {
 	log("Socket sending", message, "to", rooms);
 	
 	rooms.map(function(room) {
-		var location;
-		if(message.origin.location) location= message.origin.location;
+		var location, to = message.to;
+		if(message.origin) {
+			location= message.origin;
+			delete message.origin;
+		}
 		//if(message.type == "text") core.occupants(message.to, function(err, data){console.log(err, data);});
 		if(rConns[room]) rConns[room].map(function(conn) {
-			if(message.origin.location) delete message.origin.location;
+			message.to = room;
 			conn.send('message', message);
-			if(location) message.origin.location = location;
 		});
+		if(location) message.origin = location;
+		message.to = to;
 	});
 };
