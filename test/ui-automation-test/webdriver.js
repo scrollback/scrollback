@@ -24,13 +24,24 @@ Sending a message as a guest user.
 	*/
 	// Load a nonexistent scrollback room
 	driver.get('http://dev.scrollback.io/pwn/testroom/asdf.com');
-	driver.findElement(webdriver.By.name('q')).sendKeys('browserstack');
-	driver.findElement(webdriver.By.name('btnG')).click();
-	driver.getTitle().then(function(title) {
-		assert.equal(title, 'browserstack - Google Search');
+	
+	require("verifyEmbed.js")(driver);
+	require("sendAndVerifyMessage.js")(driver);
+	require("signInEmbed.js")(driver);
+	require("sendAndVerifyMessage.js")(driver);
+	require("signOutEmbed.js")(driver);
+	
+	driver.quit().then(function() {
+		console.log('Woo! All tests passed!');
 	});
 	
-	driver.quit();	
+//	console.log(driver.controlFlow() == driver.flow_);
+	
+	driver.controlFlow().on('uncaughtException', function(e) {
+		console.error(e);
+		console.log('A test failed :(');
+		driver.quit();
+	});
 }
 
 
