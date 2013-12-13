@@ -6,7 +6,7 @@ var log = require("../lib/logger.js");
 module.exports = function(core){
 	core.on("messages", function(options, callback) {
 		var startTime = new Date().getTime();
-		
+		var indexes = [];
 		var dbName = "_messages";
 
 		if (options.type) dbName = options.type + dbName;
@@ -33,6 +33,7 @@ module.exports = function(core){
 		
 		if(options.to) {
 			where.push("`to` in (?)");
+			indexes.push('totime');
 			if(typeof options.to=="string")
 				params.push([options.to]);
 			else
@@ -41,16 +42,15 @@ module.exports = function(core){
 		
 		if(options.from) {
 			where.push("`from` in (?)");
+			indexes.push('fromtime');
 			if(typeof options.from=="string")
 				params.push([options.from]);
 			else
 				params.push(options.from);
 		}
-
-		// if(options.type) {
-		// 	where.push("`type` = ?");
-		// 	params.push(options.type);
-		// }
+		
+		// When you add a query with label, ensure that 'to' is also specified
+		// and add the index tolabeltime to the mix.
 		
 		if(until) {
 			desc = true;
@@ -60,7 +60,11 @@ module.exports = function(core){
 			where.push("`label` in (?)");
 			params.push(options.labels);
 		}
-
+		
+		if (indexes.length) {
+			query += " USE INDEX (`" + indexes.join("`,`") + "`)";
+		}
+		
 		
 		if(where.length) query += " WHERE " + where.join(" AND ");
 		query += " ORDER BY `time` " + (desc? "DESC": "ASC");
