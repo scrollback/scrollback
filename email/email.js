@@ -29,7 +29,7 @@ function send(from,to,subject,html) {
             log("retrying......");
             setTimeout(function(){
                 send(email.from, email.to, email.subject, email.html);
-            },1000);
+            },300000);
         }
     });
 }
