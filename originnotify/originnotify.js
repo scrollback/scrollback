@@ -49,12 +49,12 @@ module.exports = function(core) {
 		if(message && message.origin && message.origin.location) {
 			originURL = url.parse(message.origin.location);
 			message.to.forEach(function(room) {
-                redisProxy.get("DEPLOYMENT:"+message.to+":"+originURL.host, function(err, data) {
+                redisProxy.get("DEPLOYMENT:"+room+":"+originURL.host, function(err, data) {
                     if(data == null || typeof data.length=="undefined") {
                         console.log("sending email notify");
                         send(config.originnotify.from, config.originnotify.to, "New Deployment:"+originURL.host, "room:"+message.to+" deployed at "+message.origin.location);
                     }
-                    redisProxy.set("DEPLOYMENT:"+message.to+":"+originURL.host, message.origin.location);
+                    redisProxy.set("DEPLOYMENT:"+room+":"+originURL.host, message.origin.location);
                 });
             });			
 		}
