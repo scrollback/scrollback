@@ -6,6 +6,8 @@ jQuery.fn.fixInView = function(container) {
 	container = container || $(window);
 	
 	container.data('fixedInColumns', columns);
+
+	//container.scrollTop = container.height();
 	
 	columns.each(function () {
 		$(this).data('fixedInContainer', container);
@@ -24,9 +26,11 @@ jQuery.fn.fixInView = function(container) {
 				cTop = column.offset().top,
 				small = cHeight < height,
 				status = column.data('fixedInStatus'),
-				cSilent = !!silent;
+				cSilent = !!silent,
+				dbg = [column.attr('id'), cTop, top, cHeight, height, top + height - cTop - cHeight, up?'up':'dn'].join(' ') + ' ';
 			
 			if((!small && up || small && !up) && status == 'bottom') {
+				dbg += 'unfix';
 				column.data('fixedInStatus', 'none');
 				column.css({
 					position: 'absolute',
@@ -36,6 +40,7 @@ jQuery.fn.fixInView = function(container) {
 			}
 			
 			else if((!small && !up || small && up) && status == 'top') {
+				dbg += 'unfix';
 				column.data('fixedInStatus', 'none');
 				column.css({
 					position: 'absolute',
@@ -44,10 +49,11 @@ jQuery.fn.fixInView = function(container) {
 				});
 			}
 			
-			else if(
+			if(
 				(!small && up && cTop > top) ||
 				(small && !up && cTop < top)
 			) {
+				dbg += 'fix';
 				column.data('fixedInStatus', 'top');
 				column.css({
 					position: 'fixed',
@@ -60,6 +66,7 @@ jQuery.fn.fixInView = function(container) {
 				(!small && !up && cTop + cHeight < top + height) ||
 				(small && up && cTop + cHeight > top + height)
 			) {
+				dbg += 'fix';
 				column.data('fixedInStatus', 'bottom');
 				column.css({
 					position: 'fixed',
@@ -72,6 +79,8 @@ jQuery.fn.fixInView = function(container) {
 				cSilent = true;
 			}
 			
+			console.log(dbg);
+
 			if(!cSilent) {
 				// cTop = column.offset().top;
 				column.trigger({

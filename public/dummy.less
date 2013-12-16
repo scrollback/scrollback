@@ -58,9 +58,9 @@ img.face {
 }
 
 #meta {
-	position: fixed;
+	position: absolute;
 	background: #000; color: #eee;
-	width: 50%; height: 100%;
+	width: 50%; min-height: 100%;
 	border-right: @sbthick solid @sbgreen;
 	left: -@sbthick/2; top: 0;
 	padding: 48px;
@@ -91,11 +91,10 @@ img.face {
 }
 
 #body {
-	position: fixed;
+	position: absolute;
 	left: 50%;
 	right: 0;
 	top: 0;
-	height: 100%; min-height: 100%;
 	/*padding: 48px; commenting this out for now*/
 	.box-sizing(border);
 }
@@ -144,12 +143,25 @@ img.face {
 
 //----- Rooms page -----
 
+.inlineInput{
+	display : inline;
+	border : none;
+	width : 100%;
+//	float: left;
+}
+
+.inlineTextBox {
+	border : none;
+	min-height: 48px;
+	float: left;
+	width: 50%;
+	padding: 10px;
+}
+
 .room { &.selected { border-right: 32px solid #3ca; } .box-sizing(border); h1 { padding: 0; } margin: 16px -48px; padding: 16px 48px; }
 
 
 .scrollback-stream {
-	height: 100%;
-	position: absolute;
 	width:100%;
 	font-size: 13px;
 	right:-30px;
@@ -161,31 +173,29 @@ img.face {
 	padding-bottom: 64px;
 	bottom:10px;
 	top:0px;
-	overflow-y: scroll;
 }
 
 .messageWrapper{
 	width:100%;
-	position: absolute;
 	font-size: 14px;
 	line-height: 15px;
 	padding:0px;
 	margin:0px;
 	bottom:0px;
 	right:0px;
-	height: 30px;
 	border-top: 1px solid black;
 }
 
 .messageBox{
-	position: absolute;
-	height: 100%;
 	width: 100%;
 	border: none;
 	.border-box;
 }
 .messageBox:focus { border : none }
 
+#submitButton{
+	display:none;
+}
 
 .border-box () {
   	box-sizing: border-box;
@@ -203,6 +213,9 @@ img.face {
 	border-left: 4px solid transparent;
 	opacity: 1; height: auto;
 	cursor: default;
+	font-size: 16px;
+	line-height: 22px;
+	max-height: 66px;
 }
 
 .scrollback-message-nick { color: #999; }

@@ -8,7 +8,7 @@ scrollbackApp.config(['$routeProvider', '$locationProvider', function($routeProv
 		controller:'roomscontroller' 
 	});
 	$routeProvider.when('/config', {
-		templateUrl: 'paritals/config', 
+		templateUrl: '/s/roomconfig.html', 
 		controller:'configcontroller' 
 	});
 	$routeProvider.otherwise({redirectTo : '/room'});
