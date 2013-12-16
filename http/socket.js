@@ -161,7 +161,9 @@ function messages (query, conn) {
 function message (m, conn) {
 	if(!conn.sid) return;
 	session.get({sid: conn.sid}, function(err, sess) {
-		var user = sess.user, tryingNick;
+		var user = sess.user, tryingNick, roomName;
+		
+		roomName = m.to;
 		
 		m.from = user.id;
 		m.time = new Date().getTime();
@@ -174,7 +176,16 @@ function message (m, conn) {
 		
 		if(typeof m.to != "string" && m.to.length==0)
 			return;
-
+		if(m.type == 'join'){
+			//check for user login as well
+			sess.user.membership[roomName] = true;
+			session.set(conn.sid, sess);
+		}
+		if(m.type == 'part'){
+			//check for user login as well
+			delete sess.user.membership[roomName];
+			session.set(conn.sid, sess);
+		}
 		if (m.type == 'back') {
 			if(!userBack(user, m.to, conn)) {
 				session.set(conn.sid, sess);
@@ -209,6 +220,9 @@ function message (m, conn) {
 		function sendMessage() {
 			core.emit("message", m, function (err, m) {
 				var i, user = sess.user;
+				if(err && err.message == "GUEST_CANNOT_HAVE_MEMBERSHIP"){
+					return conn.send('error', {id: m.id, message: err.message});
+				}
 				if (!user) {
 					console.log("No session user?");
 					return;

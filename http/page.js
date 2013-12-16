@@ -75,22 +75,22 @@ exports.init = function(app, coreObject) {
         if(roomId.indexOf('%') == 0){
           res.end();
           return;  
-        } 
-        core.emit("rooms",{id:roomId}, function(err, room){
-            if(room.length>0 && room[0].type =="user"){
+        }
+        core.emit("rooms",{id:roomId}, function(err, room) {
+            if(room.length>0 && room[0].type =="user") {
                 return res.render("error",{error:"Archive view not available for users."});
             }
             if(err) res.render("error", err);
-            if(room.length != 0){
+            if(room.length != 0) {
                 responseObj.room = room[0];
-                try{
+                try {
                     responseObj.room.params = JSON.parse(responseObj.room.params);
                 }
                 catch(e) {
                     responseObj.room.params = {};
                 }
             }
-            else{
+            else {
                 responseObj.room = { id : roomId };
             }
 

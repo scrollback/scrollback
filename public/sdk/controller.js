@@ -216,7 +216,7 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
             $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
             $('#body').bind('reposition', function(e){
                 // console.log("reposition event is fired!", e.above, e.below, e.by);
-                console.log("Reposition ",e);
+//                console.log("Reposition ",e);
                 if(e.above < 150 ) {
                     scope.$apply(attr.whenScrolledUp);
                     $('#body').nudgeInView(-$('#body').outerHeight() + e.height);

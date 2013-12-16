@@ -79,7 +79,7 @@ jQuery.fn.fixInView = function(container) {
 				cSilent = true;
 			}
 			
-			console.log(dbg);
+//			console.log(dbg);
 
 			if(!cSilent) {
 				// cTop = column.offset().top;
