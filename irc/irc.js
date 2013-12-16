@@ -33,21 +33,20 @@ module.exports = function(object){
 		log("Heard \"room\" Event");
 		if(room.type == "room") {
 
-			console.log("OLD ACCOUNTs",room.old);
-			room.old && room.old.accounts && room.old.accounts.forEach(function(element) {
+			log("OLD ACCOUNTs",room.old);
+			room.old && room.old.accounts && room.old.accounts.forEach(function(oldAccount) {
 				var u;
 				if(room.accounts) {
 					for (i=0,l=room.accounts.length;i<l;i++ )
-						if(room.accounts[i].id == element.id) return;
-
+						if(room.accounts[i].id == oldAccount.id) return;
 				}
-				u = url.parse(element.id);
-				clients.bot[u.host].part(u.hash);
+				u = url.parse(oldAccount.id);
+				clients.bot[u.host].part(u.hash.toLowerCase());
 			});
-			room.accounts && room.accounts.forEach(function(element) {
-				var u = url.parse(element.id);
+			room.accounts && room.accounts.forEach(function(oldAccount) {
+				var u = url.parse(oldAccount.id);
 				if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
-					addBot(element);
+					addBot(oldAccount);
 				}
 			});
 		}

@@ -42,7 +42,8 @@ var set = exports.set = function(sid, sess, cb) {
 var exparse = express.session({
 	secret: secret,
 	key: key,
-	store: store
+	store: store,
+	cookie: { domain: "." + config.http.host }
 });
 
 exports.store = store;

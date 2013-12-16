@@ -13,7 +13,9 @@ block append styles
 			border-color: #E82206;
 			border-width: 2px;
 		}
-		#content { visibility: hidden; }
+		/*
+			#content { visibility: hidden; }
+		*/
 
 block content
 	div#loginForm.box.span12
@@ -42,12 +44,10 @@ block append scripts
 			onlogout: function() {
 				console.log("onloggout");
 				$("#content").css("visibility","visible");
-				show();
 			}
 		});
-		
 		$(document).ready(function() {
-			notify("Checking if you’re already signed in…");
+			//notify("Checking if you’re already signed in…");
 			$("#guestnick").val(location.hash.substr(1).replace(/^guest-/,""));
 			
 			$("#loginbtn").click(function () {
@@ -97,5 +97,5 @@ block append scripts
 		
 		function validateNick(nick){
 			if (nick.indexOf("guest-")==0) return false;
-			return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{4,32}$/i)?true:false);
+			return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{2,32}$/i)?nick!='img'&&nick!='css'&&nick!='sdk':false);
 		}

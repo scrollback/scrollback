@@ -7,7 +7,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     messages.save($scope.scopeObj.room.name);
 
     // console.log("Messages are loaded up", messages);
-    //messages.reverse();
     var topIndex = 0, bottomIndex = 0;
     // initialising items with 50 messages initially 
     for (var i = 0; i < 50; i++) {
@@ -38,7 +37,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
             $scope.items.pop();
         }
         console.log(bottomIndex, topIndex);
-        if(!data.message && bottomIndex == 0 && data.type == "text") {
+        if(!data.message && bottomIndex === 0 && data.type == "text") {
             $scope.$apply(function(){
                 $scope.items.shift();
                 $scope.items.push(messages[bottomIndex]);
@@ -69,7 +68,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         }
         $location.hash('endoflog');
         $anchorScroll();
-    }
+    };
 
     $scope.loadMoreUp = function() {    
         for (var i = 0; i < 5; i++) {
@@ -83,11 +82,11 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                 // time to request factory for messages from above 
                 $factory.messages($scope.scopeObj.room.name, "", messages[messages.length - 1].time);
                 $factory.on("messages", function(data){
-                    if(data.length > 1){
-                        console.log("concatenating now!", data.length);
+                    if(data.length > 1 && data[data.length-1].type == "result-end"){
+                        console.log("concatenating now!", data[data.length-1]);
                         messages = messages.concat(data.reverse());
                     }
-                    //console.log(" in factory.onMessages", data);
+                    //console.log(" in factory.onMessages", data);emm
                     //console.log("current messages array" , messages);
                     //messages.merge(data);
                     //console.log("new messages after merge", messages);
@@ -97,8 +96,8 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         }
         // removing elements from the bottom which are out of view scope 
         $timeout( function() {
-            if($scope.items.length > 50){
-                while($scope.items.length > 50){ 
+            if($scope.items.length > 50) {
+                while($scope.items.length > 50) { 
                     if(messages[bottomIndex].type != "text") bottomIndex += 1;
                     $scope.items.pop();
                     bottomIndex += 1;
@@ -106,7 +105,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
             }
         });
     };
-    $scope.loadMoreDown = function() {   
+    $scope.loadMoreDown = function() {
         // TODO : popping from top :)
         // console.log("Top element ", messages[topIndex]);
         for(i=0; i< 5; i++) {
@@ -115,26 +114,28 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                     $scope.items.push(messages[bottomIndex]);
                 bottomIndex -= 1;
               }
-              if(bottomIndex == 0 && $scope.items[$scope.items.length-1] != messages[0]){
+              if(bottomIndex === 0 && $scope.items[$scope.items.length-1] != messages[0]){
                 if(messages[0].type == "text")
                     $scope.items.push(messages[0]);
                 bottomIndex = 0;
               }
         }
-         //this is causing troubles, so the shift is being done only for 2 elements at a time, ideally the while should be uncommented
+         //this is causing troubles, so the shift is being done only for 2 elements at a time, ideally
+         // the while should be uncommented
         $timeout(function() {
             if($scope.items.length > 50){
                 //while($scope.items.length > 50){ 
                 $scope.items.shift();
                 $scope.items.shift();
-                topIndex -= 2;
+				$scope.items.shift();
+                topIndex -= 3;
                  //}
             }
         } , 1);
-    }
+    };
 }
 
-scrollbackApp.controller('messageController',messageController);
+scrollbackApp.controller('messageController', messageController);
 
 scrollbackApp.directive('message',function() {
     return{
@@ -187,31 +188,51 @@ scrollbackApp.directive('message',function() {
 
             attr.$observe('from', function(value) {
                 $scope.bcolor = hashColor(value);
-                $scope.nick = (value.indexOf("guest-")!=0)?value: value.replace("guest-","");
+                $scope.nick = (value.indexOf("guest-")!==0)?value: value.replace("guest-","");
             });
             attr.$observe('text', function(value) {
                 $scope.text = " "+value;
-            })
+            });
         }
     };
 });
 
 scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
     return function(scope, elm, attr) {
-        var raw = elm[0];
-        $timeout(function() {
-            raw.scrollTop = raw.scrollHeight;          
-        });         
         
-        elm.bind('scroll', function() {
-            if (raw.scrollTop <= 150) { // load more items before you hit the top
-                var sh = raw.scrollHeight;
-                scope.$apply(attr.whenScrolledUp);
-                if(raw.scrollHeight > sh) raw.scrollTop = raw.scrollHeight - sh;
-            }
-            if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight - 50) {
-              scope.$apply(attr.whenScrolledDown);
-            }
+        var raw = elm[0];
+        var $ = angular.element;
+
+               
+        
+        $(document).ready(function() {
+
+            $('.column').fixInView();
+            $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
+            $('#body').bind('reposition', function(e){
+                // console.log("reposition event is fired!", e.above, e.below, e.by);
+//                console.log("Reposition ",e);
+                if(e.above < 150 ) {
+                    scope.$apply(attr.whenScrolledUp);
+                    $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
+                 } 
+                 else if(e.below < 150) {
+                    scope.$apply(attr.whenScrolledDown);
+                }
+            });
         });
+
+
+
+        // elm.bind('scroll', function() {
+        //     if (raw.scrollTop <= 150) { // load more items before you hit the top
+        //         var sh = raw.scrollHeight;
+        //         scope.$apply(attr.whenScrolledUp);
+        //         if(raw.scrollHeight > sh) raw.scrollTop = raw.scrollHeight - sh;
+        //     }
+        //     if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight - 50) {
+        //       scope.$apply(attr.whenScrolledDown);
+        //     }
+        // });
     };
 }]);

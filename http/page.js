@@ -1,7 +1,8 @@
 var config = require('../config.js'), core,
-log = require("../lib/logger.js");
+log = require("../lib/logger.js"),
 fs = require("fs"),core,
 code = fs.readFileSync(__dirname + "/../public/client.min.js",'utf8');
+var validateRoom = require('../lib/validate.js');
 var crypto = require('crypto');
 var db = require("../lib/mysql.js");
 exports.init = function(app, coreObject) {
@@ -100,22 +101,22 @@ exports.init = function(app, coreObject) {
         if(roomId.indexOf('%') == 0){
           res.end();
           return;  
-        } 
-        core.emit("rooms",{id:roomId}, function(err, room){
-            if(room.length>0 && room[0].type =="user"){
+        }
+        core.emit("rooms",{id:roomId}, function(err, room) {
+            if(room.length>0 && room[0].type =="user") {
                 return res.render("error",{error:"Archive view not available for users."});
             }
             if(err) res.render("error", err);
-            if(room.length != 0){
+            if(room.length != 0) {
                 responseObj.room = room[0];
-                try{
+                try {
                     responseObj.room.params = JSON.parse(responseObj.room.params);
                 }
                 catch(e) {
                     responseObj.room.params = {};
                 }
             }
-            else{
+            else {
                 responseObj.room = { id : roomId };
             }
 
@@ -424,8 +425,4 @@ var relDate= function (input, reference){
         }
     };
     return "Long, long";
-}
-
-function validateRoom(room){
-    return (room.match(/^[a-z][a-z0-9\_\-\(\)]{3,32}$/i)?true:false);
 }

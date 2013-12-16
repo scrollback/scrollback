@@ -53,7 +53,7 @@ function messageArray(initData) {
 			end--;
 		}
 
-		console.log("Ready to merge", messages, data, start, end);
+//		console.log("Ready to merge", messages, data, start, end);
 		
 		if (messages[start] && messages[start].type != 'result-start' && data[0].type == 'result-end') {
 			data.shift();
@@ -64,7 +64,7 @@ function messageArray(initData) {
 		}
 		
 		[].splice.apply(messages, [end, start-end].concat(data));
-		console.log("After it all, messages has", messages, this);
+//		console.log("After it all, messages has", messages, this);
 	}
 	
 	function extract(time, before, after, missing) {

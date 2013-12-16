@@ -37,7 +37,6 @@ var css = {
 		"lineHeight": "24px",
 		"padding": "0px 16px",
 		"height": "24px"
-		
 	},
 	".scrollback-alert-hidden":{
 		"height": "0px",
@@ -100,6 +99,10 @@ var css = {
 				"borderLeft": "4px solid transparent",
 				opacity: 1, height: "auto",
 				cursor: "default"
+			},
+			".scrollback-message.scrollback-message-mentioned .scrollback-message-content": {
+				//fontWeight: "bold"
+				color:"#c00"
 			},
 			".scrollback-message-hidden": {
 				"opacity": 0, height: 0,

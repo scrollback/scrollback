@@ -9,31 +9,40 @@
         <link rel="stylesheet" href="style.css">
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 		<style>
-			#streamId { font-size: inherit; font-weight: inherit; background: transparent; border: none;
-			border-bottom: 1px solid #fff; width: 300px; color: #fff; }
-			
 			nav {
-				position: absolute; background: transparent; color: white; border: none;
-				width: 100%;
+				position: absolute; background: transparent; color: white; border: none; width: 100%;
 			}
 			nav a { color: #fff; }
+            nav a:hover { background: #3ca; }
 			#hero {
-				background: #000; color: #fff;
-				padding: 80px;
-				border-bottom: 4px solid #3ca;
-				background: -moz-radial-gradient(bottom center,  #555555 0%, #000000 100%); /* FF3.6+ */
-				background: -webkit-gradient(radial, bottom center, 0px, center center, 100%, color-stop(0%,#555555), color-stop(100%,#000000)); /* Chrome,Safari4+ */
-				background: -webkit-radial-gradient(bottom center, ellipse cover,  #555555 0%,#000000 100%); /* Chrome10+,Safari5.1+ */
-				background: -o-radial-gradient(bottom center, ellipse cover,  #555555 0%,#000000 100%); /* Opera 12+ */
-				background: -ms-radial-gradient(bottom center, ellipse cover,  #555555 0%,#000000 100%); /* IE10+ */
-				background: radial-gradient(bottom center,  #555555 0%,#000000 100%); /* W3C */
+				background: #000; color: #fff; padding: 150px 0;
+				background: -moz-radial-gradient(bottom center,  #33ccaa 0%, #000000 100%);
+				background: -webkit-gradient(radial, bottom center, 0px, center center, 100%, color-stop(0%,#33ccaa), color-stop(100%,#000000));
+				background: -webkit-radial-gradient(bottom center, ellipse cover,  #33ccaa 0%,#000000 100%);
+				background: -o-radial-gradient(bottom center, ellipse cover,  #33ccaa 0%,#000000 100%);
+				background: -ms-radial-gradient(bottom center, ellipse cover,  #33ccaa 0%,#000000 100%);
+				background: radial-gradient(bottom center,  #33ccaa 0%,#000000 100%);
 			}
+            #hero h1 { padding 0; margin: 16px 0 0 0; }
+            #hero p { padding 0; margin: 0; }
+            
+            #getscrollback {
+                background: #000; color: #fff;
+				padding: 80px;
+            }
 			
-			form#add { margin-top: 80px; color: #ccc; }
+			form#add { margin-top: 80px; color: #999; background: #fff; padding: 8px; }
+            #streamId { font-size: inherit; font-weight: inherit; background: transparent; border: none;
+                width: 300px; color: #000; }
 			
+            #claimBtn { width: auto; background: #000; color: #fff; border: none; float: right; 
+            }
+		
 			
-			pre { margin: 16px; padding: 16px; background: #eee; }
+			pre { margin: 16px; padding: 16px; background: #555; }
 			code { font-size: 12px; line-height: 12px; }
+			
+			footer a img { margin: 0 32px; }
 		</style>
 		<script>
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -75,30 +84,45 @@
 		<div id="hero">
 			<div class='container clearfix'>
 				<img src="/img/logod-72.png" alt="Scrollback logo" />
-				<h1>Beautiful text chat for your community website.</h1>
-				<form id="add">
-				<h2>Claim your community:
-				scrollback.io/<input id="streamId"><button type="submit" class="hidden"></button></h2>
+				<h1>Beautiful text chat for your community.</h1>
+                <p>Scrollback hosts <em>rooms</em> that can be easily embedded on any website.</p>
+				<form id="add" class="clearfix">
+				    scrollback.io/<input id="streamId"><input type="submit" id="claimBtn" value="Claim your room ID!"/>
 				</form>
 			</div>
 		</div>
 		
 		<div class='container clearfix'>
-			
-			<div class='box span6'>
-				<p>Scrollback hosts <em>rooms</em> which you can embed into any webpage.
-					A room brings together a long-lived, interactive <em>community</em>
-					that’s stickier and more engaging than any forum system.</p>
-				<p>To embed scrollback rooms, paste this code into your page. If your room
-					doesn’t exist, it will be created automatically.</p>
-				<p>If you have an IRC channel, <a href='mailto:support@scrollback.io'>tell us
-					to link it to your Scrollback room</a> and bring everyone
-					into the same conversation.</p>
+			<div class='box span12 break'>
+				<h1><a name="features">Features</a></h1>
 			</div>
-			<div class='box span6'><pre><code>&lt;script&gt;
+			<div class='box span4'>
+				<h2>Persistent community</h2>
+				<p>The conversation is never out of sight, even when the chat room is
+                    minimized.</p>
+			</div>
+			<div class='box span4'>
+				<h2>IRC integration</h2>
+				<p>If you have an active IRC channel already, we connect to it
+				    instead of competing with it.</p>
+			</div>
+			<div class='box span4'>				
+				<h2>Email updates</h2>
+				<p>We keep your community members updated through a daily email
+                    summarizing what they missed.
+                </p>
+			</div>
+        </div>
+        <div id="getscrollback">
+            <div class="container clearfix">
+                <div class='box span6'>
+                    <p>To embed a scrollback room in your page, paste this code 
+                        into the HTML. Don’t forget to change the room ID to your
+                        own.</p>
+                </div>
+                <div class='box span6'><pre><code>&lt;script&gt;
 window.scrollback = {
-  streams:["your-community-name"],
-  theme: 'light'
+  streams: ["your-room-id"]  // Change this!
 };
 
 /* DON'T EDIT: */(function(d,s,h,e){e=d.createElement(s);
@@ -106,52 +130,11 @@ e.src=h+'/client.min.js';e.async=1;scrollback.host=h;
 d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 (document,'script',location.protocol+'//scrollback.io'));
 &lt;/script&gt;</code></pre></div>
-			
-			<div class='box span12 break'>
-				<h1><a name="features">Features</a></h1>
-			</div>
-			<div class='box span4 break'>
-				<h2>Infinite scroll</h2>
-				<p>Scroll up to see what people were talking about in the last
-				hour &ndash; or last week.</p>
-			</div>
-			<div class='box span4'>
-				<h2>Minimize ticker</h2>
-				<p>Gently introduce casual visitors to your community with
-				conversation that is never out of sight.</p>
-			</div>
-			<div class='box span4'>
-				<h2>Subtle notifications</h2>
-				<p>Notifications and timestamps appear when needed, then
-				fade away to keep the focus on the conversation.</p>
-			</div>
-			<div class='box span4 break'>
-				<h2>User colors</h2>
-				<p>Quickly identify who's talking to whom, with colors
-				that represent people consistently.</p>
-			</div>
-			<div class='box span4'>
-				<h2>Timeline</h2>
-				<p>See the peaks and troughs of conversation in a colorful
-				visualization you can scroll through.</p>
-			</div>
-			<div class='box span4'>
-				<h2>User history</h2>
-				<p>Hover over a nickname to see that person's activity
-				highlighted on the timeline.</p>
-			</div>
-			<div class='box span4 break'>
-				<h2>IRC compatible</h2>
-				<p>If an active IRC community exists, we gateway to it
-				instead of competing with it.</p>
-			</div>
-			<div class='box span4'>				
-				<h2>Seamless integration</h2>
-				<p>Let Scrollback match the fonts and styles of your
-				website automatically, or customize it extensively with CSS.</p>
-			</div>
-				
-			
+            
+            </div>
+        </div>
+        
+        <div class="container clearfix">
 			<div class='box span12 break'>
 				<h1><a name="whybuilt">Why we built Scrollback</a></h1>
 				
@@ -161,14 +144,10 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 				
 				<p>Open communities, on the other hand, are larger and <strong>public</strong> by default. These communities form around open source projects, consumer brands, sports teams, entertainment franchises and many more. They need different tools.</p>
 				
-				<p>IRC is one &ndash; it is the great grand-daddy of social text chat &ndash; but it predates the web and mobile, and most users find it hopelessly complex and archaic.</p>
+				<p>IRC is one &ndash; it is the great grand-daddy of social text chat &ndash; but it predates the web and most users find it hopelessly complex and archaic.</p>
 				
-				<p>Scrollback is a modern, beautifully designed platform for open communities to converse. It combines the lessons learned from IRC with the ease-of-use of an embeddable web app and the power of a cloud service.</p>
-				
-				<p>Paul Graham <a href="http://ycombinator.com/rfs3.html" target='ycombinator-rfs3'>once said of Twitter</a>: &ldquo;It’s really more of a discovery than an invention; that square was always there in the periodic table of protocols, but no one had quite hit it squarely.&rdquo;</p>
-				
-				<p>IRC occupies a square in that table. Scrollback is in the same column, a few rows down.</p>
-			</div>
+				<p>Scrollback is a modern, beautifully designed platform for open communities to converse. It combines the lessons learned from IRC with the ease-of-use of an embeddable web app and the power of a cloud hosted service.</p>
+            </div>
 			
 		</div><!-- container -->
 		
@@ -176,6 +155,10 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 			<div class='container clearfix'>
 				<p>We care about <a href='#'>privacy</a>. Copyright Askabt Pte.
 				Ltd. Scrollback is a trademark of Askabt Pte. Ltd.</p>
+				
+				<p><a href="http://www.softlayer.com"><img alt="Softlayer" src="/img/poweredby/softlayer.png"></a>
+					<a href="http://www.browserstack.com"><img alt="Browserstack" src="/img/poweredby/browserstack.png"></a>
+				</p>
 			</div>
 		</footer>
 		
@@ -185,6 +168,7 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
   streams:["scrollback"],
   theme: 'light',
   ticker: true,
+  title : "Scrollback"
  };
  
  /***** don't edit below *****/
@@ -193,9 +177,6 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
  d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
  (document,'script',location.protocol+'//'+location.host));
 </script>
-
-
-		
 		<script src="//code.jquery.com/jquery.min.js"></script>
 		<script>
 			$(document).ready(function() {

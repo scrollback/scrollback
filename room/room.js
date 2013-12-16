@@ -22,20 +22,22 @@ module.exports = function(coreObject) {
 					callback && callback(err);
 					return;
 				}
-				redis.set("room:"+room.id, JSON.stringify(room));
 				if (room.accounts && room.accounts.length>0) {
 					insertAccounts(room, function(err, room) {
 						if(err) return callback(err, room);
-						callback && callback(true, room);
+						callback && callback(null, room);
 					});
 				}else {
-					redis.set("room:"+room.id, JSON.stringify(room));
-					callback && callback(true, room);
+					callback && callback(null, room);
 				}
 			}
 		);
-		
 	}, "storage");
+
+	core.on("room", function(room, callback) {
+		redis.set("room:"+room.id, JSON.stringify(room));
+		callback();
+	}, "cache");
 };
 
 function insertAccounts(data,callback){

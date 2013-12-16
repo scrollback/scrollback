@@ -78,7 +78,7 @@ module.exports = function(grunt) {
   grunt.event.on('watch', function(action, filepath, target) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
-  grunt.registerTask('default', ['uglify', 'concat', 'wrap']);
+  grunt.registerTask('default', ['uglify', 'concat', 'wrap', 'less']);
   
 
 };

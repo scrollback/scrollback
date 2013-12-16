@@ -13,25 +13,29 @@ html
 		p	Your summary for the day :
 		table(style="border-collapse: collapse;")
 			each r in room
-				hr
-				tr
 				if roomsData[r]
+					hr
+					tr
 					h3
 						a(href="http://scrollback.io/#{r}") #{r}
 					div.msglist
 						each msg in roomsData[r].head
 							div.msg
-								span [#{msg.from.replace(/^guest-/,"")}] #{msg.text}
+								if msg.text.indexOf("/me ") == 0
+									span [#{msg.from.replace(/^guest-/,"") } #{msg.text.replace(/\/me /,"")}]
+								else		
+									span [#{msg.from.replace(/^guest-/,"")}] #{msg.text}
 					if(roomsData[r].count > 6)
 						div
-							a(href="http://scrollback.io/#{r}/since/#{new Date(roomsData[r].head[0].time-1).toISOString()}") #{roomsData[r].count} messages where sent in the room today.
+							a(href="http://scrollback.io/#{r}/since/#{new Date(roomsData[r].head[0].time-1).toISOString()}") #{roomsData[r].count} messages were sent in the room today.
 					if(roomsData[r].tail)
-						div.msglist
-							each msg in roomsData[r].tail
-								div.msg
+						each msg in roomsData[r].tail
+							div.msglist
+								if msg.text.indexOf("/me ") == 0
+									span [#{msg.from.replace(/^guest-/,"") } #{msg.text.replace(/\/me /,"")}]				
+								else		
 									span [#{msg.from.replace(/^guest-/,"")}] #{msg.text}
-					
-		hr							
+					hr							
 		
 		table(bgcolor="#000000" height="30px" width="100%")
 			td
@@ -40,5 +44,4 @@ html
 						span(style="color: #fff; font-weight:800;vertical-align: middle;" ) Scroll
 						span(style="color: #fff;vertical-align: middle;") back
 		table(bgcolor="#3CA" height="3px" width="100%")			
-			td		
-		
+			td

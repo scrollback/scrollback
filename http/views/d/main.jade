@@ -10,9 +10,8 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 	link(rel="stylesheet",href="//fonts.googleapis.com/css?family=Open+Sans:300,800|Source+Code+Pro:300")
 	link(rel="stylesheet",href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css")
 	block styles
-
 		body
-		#meta(ng-controller="metaController")
+		#meta(ng-controller="metaController",class = 'column')
 			a#logo scrollback
 			#user: block user
 				a: img.face(src='{{scopeObj.gravatar}}' ng-click='profile()')
@@ -28,7 +27,7 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 			#foot: block foot
 				| Scrollback is a product of Askabt Pte Ltd.
 				| We respect your privacy. 
-		#body(ng-controller="messageController")
+		#body(ng-controller="messageController",class = 'column')
 			block body
 				.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 					div(ng-repeat="i in items track by $index")
@@ -36,7 +35,7 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 					#endoflog
 				form.messageWrapper(ng-submit="message();")
 					input.messageBox(type="text", ng-model="text")
-					input(type="submit")
+					input(id="submitButton" type="submit")
 			block scripts
 				script.
 					window.scrollback = {
@@ -50,6 +49,7 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 				script(src="https://login.persona.org/include.js")
 				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js')
 				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js')
+				script(src='/sdk/jquery-fixInView.js')
 				script(src='/sdk/messageArray.js')
 				script(src="/sdk/polyfill.js")
 				script(src='/sdk/emitter.js')
@@ -61,14 +61,14 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 				script(src='/sdk/app.js')
 				script(src='/sdk/viewcontroller.js')
 				script.
-					function toggleVisibility(){
-						//$('#userAction').hide();
-						e = document.getElementById('userAction');
-						if(e.style.display == "")
-							e.style.display = "block";
-						else
-							e.style.display = "";
-					}
+					//- function toggleVisibility()	{
+					//- 	//$('#userAction').hide();
+					//- 	e = document.getElementById('userAction');
+					//- 	if(e.style.display == "")
+					//- 		e.style.display = "block";
+					//- 	else
+					//- 		e.style.display = "";
+					//- }
 					$('.collapse,#meta').on('click', function() {
 						$(this).toggleClass('expanded');
 					});
