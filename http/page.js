@@ -24,7 +24,23 @@ exports.init = function(app, coreObject) {
 			res.end(req.cookies["scrollback_sessid"] + '\r\n' + JSON.stringify(require("./session.js").store));
 		}
     };
-    
+    app.get("/me/edit", function(req, res){
+        var user = req.session.user;
+        log
+        return res.render("dummy/profile",{email:user.accounts[0].id.split(":")[1]});
+    });
+    app.get("/me", function(req, res) {
+        var user = req.session.user, responseObject={};
+        responseObject.user = req.session.user;
+        console.log("----------me called", req.query);
+        if(/^guest/.test(req.session.user.id)) {
+            console.log(responseObject);
+            return res.render("dummy/login",responseObject);
+        }else {
+            return res.render("dummy/profile", responseObject);
+        }
+    });
+   
     app.get("/dlg/*",function(req,res){
         var dialog=req.path.substring(1).split("/")[1];
         if(dialogs[dialog]) {
@@ -70,8 +86,17 @@ exports.init = function(app, coreObject) {
         }});
 	});    
     app.get("/d/*", function (req, res) {
-        var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[1], user = req.session.user;
+        var params = req.path.substring(1).split("/"), responseObj={}, 
+        query={}, sqlQuery, roomId = params[1], user = req.session.user,
+        queryString;
         //if(roomId && !validateRoom(roomId)) return next();
+
+
+        if(!req.secure) {
+            queryString  = req._parsedUrl.search?req._parsedUrl.search:"";
+            return res.redirect(301, 'https://'+config.http.host+req.path+queryString);
+        }
+
         if(roomId.indexOf('%') == 0){
           res.end();
           return;  

@@ -1,27 +1,11 @@
-extends layout
-
-block prepend title
-	| My account on
-
-block info
-	h1
+div(ng-controller="meController")
+	h1(ng-init="inLogin = true")
 		button.left: span.fa.fa-arrow-left
 		span My account
-	form#profile
+	form#profile(ng-submit="nickChange()")
 		label Username
-			input(disabled,value='lorem-user')
-		label Email
-			input(disabled,value='lorem@ipsum.net')
-		label Picture
-			.combo: button
-				img(src='http://lorempixel.com/48/48/people/1')
-				| Change Gravatar
-		label Email notifications
-			.combo
-				button Yes
-				button.off No
+			input(ng-model="nick")
 		label
+			button.default(type="button",ng-click="personaLogin()") Sign IN/UP
 			.combo
-				button.default Save account
-		
-
+				button.default(type="button",ng-click="nickChange()") Save account

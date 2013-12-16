@@ -11,11 +11,11 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 	link(rel="stylesheet",href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css")
 	block styles
 
-		body(ng-controller="messageController")
-		#meta
+		body
+		#meta(ng-controller="metaController")
 			a#logo scrollback
 			#user: block user
-				a: img.face(src='{{scopeObj.gravatar}}' onclick='toggleVisibility()')
+				a: img.face(src='{{scopeObj.gravatar}}' ng-click='profile()')
 				#userAction
 					#login
 						i(class="fa fa-sign-in fa-2x")
@@ -28,7 +28,7 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 			#foot: block foot
 				| Scrollback is a product of Askabt Pte Ltd.
 				| We respect your privacy. 
-		#body
+		#body(ng-controller="messageController")
 			block body
 				.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 					div(ng-repeat="i in items track by $index")
@@ -42,10 +42,12 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 					window.scrollback = {
 						host : '//' + location.host,
 						streams : ["#{responseObj.room.id}"],
+						room: "#{responseObj.room.id}",
 						debug: true
 					};
 				script(src="//code.jquery.com/jquery-1.10.1.min.js")
 				script(src="//code.jquery.com/jquery-migrate-1.2.1.min.js")
+				script(src="https://login.persona.org/include.js")
 				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js')
 				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js')
 				script(src='/sdk/messageArray.js')

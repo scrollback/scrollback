@@ -17,21 +17,17 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
             topIndex += 1;
         }
     }
-
-    // console.log("Items", $scope.items);
-
-      
-    $factory.on("init", function() {
-        if(window.scrollback.streams && window.scrollback.streams.length > 0) {
-            $factory.listenTo(window.scrollback.streams[0]);
-        }
+    $factory.on("nick", function(nick) {
+        $scope.$apply(function() {
+            $scope.scopeObj.user = nick;
+        });
     });
-
     $factory.on("message", function(msg) {
-        if(msg.from != $scope.scopeObj.user) newMessage(msg);
-    });
-    
-
+        if(msg.from != $scope.scopeObj.user){
+            console.log(msg);
+            newMessage(msg);  
+        } 
+    });    
     function newMessage(data) {
         // type is text, leave out err msgs, if any.. 
         messages.unshift(data);
@@ -41,7 +37,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
             $scope.gotoBottom(); 
             $scope.items.pop();
         }
-            
         console.log(bottomIndex, topIndex);
         if(!data.message && bottomIndex == 0 && data.type == "text") {
             $scope.$apply(function(){

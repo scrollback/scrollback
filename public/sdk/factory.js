@@ -3,19 +3,19 @@ dependencies: emitter.js
 */
 var scrollbackApp = angular.module('scrollbackApp' , ['ngRoute']);
 var factoryObject = Object.create(emitter), requests = {};
-var pendingCallbacks = {}, nick;
+var pendingCallbacks = {}, nick, backed=false;
 
 
 
 var factory=function() {
 	socket.onclose = function() {
 		factoryObject.emit("disconnected");
+		factoryObject.isActive = false;
 		setTimeout(function(oldSocket){
 			socket = newSocket();
 			socket.close = oldSocket.close;
 		}, 10000, socket);
 	};
-
 	factoryObject.message = send;
 	factoryObject.messages = getMessages;
 	//factoryObject.messages = callbackGenerator("messages");
@@ -24,12 +24,7 @@ var factory=function() {
 	factoryObject.occupants = callbackGenerator("occupants");
 	factoryObject.membership = callbackGenerator("membership");
 
-	factoryObject.listenTo = function(room){
-		console.log("listening to... ", room);
-		send({type:"result-start", to:room});
-		send({type:"back", to:room});
-	};
-
+	factoryObject.listenTo = listenTo;
 	return factoryObject;
 };
 
@@ -82,6 +77,7 @@ function newSocket() {
 	
 	socket.onopen = function() {
 		init();
+		listenTo(window.scrollback.room);
 		factoryObject.emit("connected");
 	};
 	socket.onerror = socketError;
@@ -120,6 +116,10 @@ onMessage = function(data){
 		pendingCallbacks[data.id](data);
 		delete pendingCallbacks[data.id];
 	}
+	if(data.type == "nick" && data.ref){
+		factoryObject.emit('nick', data.ref);
+		factoryObject.nick = data.ref;
+	}
 	factoryObject.emit("message", data);
 };
 
@@ -146,10 +146,14 @@ function socketMessage(evt) {
 
 onInit = function(data) {
 	nick = data.user.id;
+	factoryObject.initialized = true;
 	factoryObject.emit("init", data);
 	factoryObject.emit("nick", nick);
+	console.log("sending back msg..");
+	backed || (backed==true || (listenTo(window.scrollback.room)));
+	factoryObject.isActive = true;
+	factoryObject.nick = nick;
 };
-
 
 handler=function(type, data){
 	if(pendingCallbacks[data.queryId]) {
@@ -176,7 +180,11 @@ function socketError(message) {
 	scrollback.debug && console.log(message);
 	factoryObject.emit("SOC_ERROR", message);
 };
-
+ function listenTo(room){
+	console.log("listening to... ", room);
+	send({type:"result-start", to:room});
+	send({type:"back", to:room});
+};
 
 var socket = newSocket();
 scrollbackApp.factory('$factory', factory);

@@ -7,6 +7,15 @@ scrollbackApp.config(['$routeProvider', '$locationProvider', function($routeProv
 		templateUrl: '/s/roomsview.html', 
 		controller:'roomscontroller' 
 	});
+	$routeProvider.when('/me', {
+		templateUrl: '/me'
+	});
+	$routeProvider.when('/login', {
+		templateUrl: '/me'
+	});
+	$routeProvider.when('/signup', {
+		templateUrl: '/me/edit'
+	});
 	$routeProvider.when('/config', {
 		templateUrl: 'paritals/config', 
 		controller:'configcontroller' 

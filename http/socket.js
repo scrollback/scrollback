@@ -170,10 +170,10 @@ function message (m, conn) {
 		else{
 			m.origin = {gateway: "web", ip: conn.socket.remoteAddress, location:"unknown"};
 		}
-		m.to = m.to || Object.keys(user.rooms);
-		
-		if(typeof m.to != "string" && m.to.length==0)
-			return;
+		if(!m.to && Object.keys(user.rooms).length != 0) {
+			m.to = m.to || Object.keys(user.rooms);
+		}
+		if(typeof m.to != "string" && m.to.length==0) return;
 
 		if (m.type == 'back') {
 			if(!userBack(user, m.to, conn)) {
@@ -202,7 +202,8 @@ function message (m, conn) {
 					log("user cannot change the nick.");
 					return;
 				}
-				m.user.accounts[0] = user.accounts[0];	
+				if(!m.user.accounts){m.user.accounts=[];}
+				m.user.accounts[0] = user.accounts[0];
 			}
 		}
 		
