@@ -26,7 +26,7 @@ module.exports = function(core) {
 		if(message.type == "nick")	text = message.ref;
 		if(message.to)	text += " "+message.to;
 		if(text) {
-			core.emit("rooms",{id:message.to},function(err, data) {
+			core.emit("rooms",{id:message.to}, function(err, data) {
 				if(err) return callback(err);
 				if(data.length == 0) return callback();
 	            if(data[0].params && data[0].params.wordban)

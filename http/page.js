@@ -1,7 +1,8 @@
 var config = require('../config.js'), core,
-log = require("../lib/logger.js");
+log = require("../lib/logger.js"),
 fs = require("fs"),core,
 code = fs.readFileSync(__dirname + "/../public/client.min.js",'utf8');
+var validateRoom = require('../lib/validate.js');
 var crypto = require('crypto');
 var db = require("../lib/mysql.js");
 exports.init = function(app, coreObject) {
@@ -399,8 +400,4 @@ var relDate= function (input, reference){
         }
     };
     return "Long, long";
-}
-
-function validateRoom(room){
-    return (room.match(/^[a-z][a-z0-9\_\-\(\)]{3,32}$/i)?true:false);
 }

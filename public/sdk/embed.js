@@ -210,7 +210,7 @@ function Stream(id) {
 				addEvent(el, 'click', function() { self.toggle(); });
 				break;
 			case hasClass(el, 'scrollback-title-id'):
-				el.innerHTML = id;
+				el.innerHTML = scrollback.title || id;
 				break;
 			case hasClass(el, 'scrollback-title-text'):
 				self.titleText = el;
@@ -348,7 +348,7 @@ Stream.prototype.show = function() { var self = this;
 };
 
 Stream.prototype.send = function () {
-	var text = this.text.value, parts;
+	var text = this.text.value, parts, currentNick, tempThis/* sorry abt this.. but need to access this on callback*/;
 	if(!text) return;
 	Stream.text=this.text;//save text variable
 	Stream.prevText=this.text.value;//prev value on TextField 
@@ -358,8 +358,16 @@ Stream.prototype.send = function () {
 		parts = text.substr(1).split(' ');
 		switch (parts[0]) {
 			case 'nick':
-				this.nick.innerHTML= parts[1];
-				this.rename();
+				currentNick = core.nick();
+				if(currentNick.indexOf("guest-")!=0) {
+					this.notify("You can't change your nick while you're signed in.");	
+				}else {
+					tempThis = this;
+					core.nick("guest-"+parts[1], function(){
+						tempThis.nick.innerHTML= parts[1];
+						tempThis.rename();		
+					});
+				}
 				return;
 			case 'leave':
 				if(scrollback.close) this.close();
@@ -389,11 +397,13 @@ Stream.prototype.notify=function(str, persist) {
 
 Stream.prototype.onmessage = function(message) {
 	var el = this.renderMessage(message),str="", oldTitle="",title="";
-	if (message.type=="join" || message.type=="part") {
+	if (message.type === "join" || message.type === "part") {
 		return;
 	}
-	if (message.type=="text") {
-		browserNotify(message.from+" : "+message.text);
+	if (message.type == "text") {
+		if (message.from != core.nick()) {
+			browserNotify(message.from.replace(/^guest-/g, "")+" : "+message.text, hasClass(el, "scrollback-message-mentioned"));
+		}
 		this.titleText.innerHTML = (el.innerText || el.textContent);
 	} else {
 		if (core.nick()!==message.ref && message.ref!=message.from) {
