@@ -4,8 +4,8 @@ div(ng-controller="meController")
 		span My account
 	form#profile(ng-submit="nickChange()")
 		label Username
-			input(ng-model="nick")
+			input(ng-model="displayName")
 		label
 			button.default(type="button",ng-click="personaLogin()") Sign IN/UP
 			.combo
-				button.default(type="button",ng-click="nickChange()") Save account
+				button.default(type="button",ng-click="nickChange()") Change

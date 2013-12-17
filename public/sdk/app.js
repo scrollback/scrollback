@@ -13,7 +13,7 @@ scrollbackApp.config(['$routeProvider', '$locationProvider', function($routeProv
 	$routeProvider.when('/login', {
 		templateUrl: '/me'
 	});
-	$routeProvider.when('/signup', {
+	$routeProvider.when('/me/edit', {
 		templateUrl: '/me/edit'
 	});
 	$routeProvider.when('/config', {

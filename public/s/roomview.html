@@ -4,7 +4,7 @@
 			<span class="fa fa-arrow-left"></span>
 		</button>
 	</a>
-	<span> {{scopeObj.room.name || scopeObj.room.id}} </span>
+	<span> {{room.name || room.id}} </span>
 	<button class="right" title = "Unfollow Room"  ng-click="partRoom()" ng-show = "hasMembership()" >
 			<span class="fa fa-sign-out"></span>
 	</button>
@@ -12,9 +12,9 @@
 			<span class="fa fa-hand-o-right"></span>
 	</button>
 </h1>
-<p id="description" class = "collapse expanded"> {{ scopeObj.room.description || "This room does not have a description yet!"}} </p>
+<p id="description" class = "collapse expanded"> {{ room.description || "This room does not have a description yet!"}} </p>
 <div id="members"> 
-	<span ng-repeat = "i in scopeObj.memberGravatars">
-		<img src="{{i.avatar}}" class = "face present" title="{{i.name}}"/>
+	<span ng-repeat = "i in members">
+		<img src="{{i.picture}}" class = "face present" title="{{i.name}}"/>
 	</span>
 </div>

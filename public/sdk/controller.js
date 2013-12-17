@@ -2,9 +2,9 @@
 function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
     $scope.items = [];
     var messages = messageArray();
-    messages.load($scope.scopeObj.room.name);
-    messages.merge($scope.scopeObj.data.reverse());
-    messages.save($scope.scopeObj.room.name);
+    messages.load($scope.room.id);
+    messages.merge($scope.messages.reverse());
+    messages.save($scope.room.id);
 
     // console.log("Messages are loaded up", messages);
     var topIndex = 0, bottomIndex = 0;
@@ -18,21 +18,20 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     }
     $factory.on("nick", function(nick) {
         $scope.$apply(function() {
-            $scope.scopeObj.user = nick;
+            $scope.user.id = nick;
         });
     });
     $factory.on("message", function(msg) {
-        if(msg.from != $scope.scopeObj.user){
-            console.log(msg);
+        if(msg.from != $scope.user.id){
             newMessage(msg);  
         } 
     });    
     function newMessage(data) {
         // type is text, leave out err msgs, if any.. 
         messages.unshift(data);
-        console.log("msg added to the cache... ", data.from, $scope.scopeObj.user);
+        console.log("msg added to the cache... ", data.from, $scope.user.id);
         //messages.save($scope.scopeObj.room.name);
-        if(data.from == $scope.scopeObj.user){
+        if(data.from == $scope.user.id){
             $scope.gotoBottom(); 
             $scope.items.pop();
         }
@@ -80,7 +79,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
             if(messages.length - topIndex == 20){
                 console.log("top reached", messages[topIndex]);
                 // time to request factory for messages from above 
-                $factory.messages($scope.scopeObj.room.name, "", messages[messages.length - 1].time);
+                $factory.messages($scope.room.id, "", messages[messages.length - 1].time);
                 $factory.on("messages", function(data){
                     if(data.length > 1 && data[data.length-1].type == "result-end"){
                         console.log("concatenating now!", data[data.length-1]);

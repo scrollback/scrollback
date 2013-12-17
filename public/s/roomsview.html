@@ -1,11 +1,11 @@
-<div class="room" ng-show = "!isExists(scopeObj.membership)">
+<div class="room" ng-show = "!isExists(user.membership)">
 	<h1>
 		<a class="noChange">
 			<span> You are not following any rooms yet! Kindly log-in/follow more rooms. </span>
 		</a>
 	</h1>
 </div>
-<div class="room" ng-show = "isExists(scopeObj.membership)" ng-repeat="m in scopeObj.membership "> 
+<div class="room" ng-show = "isExists(user.membership)" ng-repeat="m in user.membership "> 
 	<h1>
 		<a class="noChange" href="/d/{{m}}">
 			<span> {{m}} </span>

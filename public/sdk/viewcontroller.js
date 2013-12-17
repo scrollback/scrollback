@@ -1,6 +1,5 @@
 scrollbackApp.controller('metaController',function($scope, $location, $factory) {
 	$scope.navTo= function(to){
-		//alert("asdkhbf"+$location.path);
 		$location.path(to);
 	}
 	$scope.profile = function(){
@@ -12,13 +11,8 @@ scrollbackApp.controller('metaController',function($scope, $location, $factory) 
 	};
 
 	var statusObject = {};
-	console.log("meta constroller-----------------------", $factory.isActive);
-
-
-	// disabling this for now.
-	
-	// function personaWatch() {
-	// 	console.log("WATCHING...", $factory.me);
+	// disabling this for now.scope.user	id	// function personaWatch() {
+	// 	console.log("WATCHING...", $scope.nick
 	// 	if(/^guest-/.test($factory.me)) {
 	// 		navigator.id.watch({
 	// 			onlogin:function(assertion) {
@@ -47,26 +41,18 @@ scrollbackApp.controller('metaController',function($scope, $location, $factory) 
 scrollbackApp.controller('meController',['$scope','$route','$factory','$location',function($scope, $route, $factory, $location) {
 	console.log("me controller called");
 	$scope.nickChange = function() {
-	    alert("hi");
+	    $factory.message({to:"",type:"nick", ref:"guest-"+$scope.displayNick});
 	};
-	$scope.nick = $factory.nick;
-	$scope.displayNick = ($factory.nick).replace(/^guest-/,"");
-	$scope.save = function(){
-		$factory.message({to:"",type:"nick", user:{id:$scope.displayNick,accounts:[]}}, function(message){
-			if(message.message){
-
+	$scope.displayNick = ($scope.user.id).replace(/^guest-/,"");
+	$scope.save = function() {
+		$factory.message({to:"",type:"nick", user:{id:$scope.displayNick,accounts:[]}}, function(message) {
+			if(message.message) {
+				//err .
 			}else{
 				$location.path("/");
 			}
 		});
 	};
-    $factory.on("nick", function(nick) {
-        $scope.$apply(function() {
-        	$scope.nick = $factory.nick;
-			$scope.displayNick = ($factory.nick).replace(/^guest-/,"");
-        });
-    });
-
 	$scope.personaLogin = function(){
 		//temp solution... 
 		//if(!navigator.id.watching) {
@@ -74,7 +60,7 @@ scrollbackApp.controller('meController',['$scope','$route','$factory','$location
 				onlogin: function(assertion){
 					var message = {browserid:assertion, type: "nick", to:''};
 					$factory.message(message, function(message){
-						if(message.message && message.message == "AUTH_UNREGISTERED") $location.path("/signup");
+						if(message.message && message.message == "AUTH_UNREGISTERED") $location.path("/me/edit");
 						else if(!message.message) $location.path("/");
 					});
 				},
@@ -90,36 +76,39 @@ scrollbackApp.controller('meController',['$scope','$route','$factory','$location
 scrollbackApp.controller('roomcontroller', ['$scope', '$timeout', '$factory', '$location', function($scope, $timeout, $factory, $location) {	
 	$scope.partRoom = function() {
 		var msg = {}, index;
-		msg.to = $scope.scopeObj.room.id;
+		msg.to = $scope.room.id;
 		msg.type = "part";
 		$factory.message(msg);
-		index = $scope.scopeObj.membership.indexOf($scope.scopeObj.room.id);
-		if(index >= 0) $scope.scopeObj.membership.splice(index, 1);
+		if($scope.user.membership){
+			index = $scope.user.membership.indexOf($scope.room.id);
+			if(index >= 0)$scope.user.membership.splice(index, 1);	
+		}
+		
 	}
 	
 	$scope.joinRoom = function() {
 		var msg = {};
-		if(/^guest-/.test($scope.scopeObj.user)){
+		if(/^guest-/.test($scope.user.id)){
 			//guest
 			$location.path('/login');
 			return;
 		}
-		msg.to = $scope.scopeObj.room.id;
+		msg.to = $scope.room.id;
 		msg.type = "join";
 		$factory.message(msg);
-		$scope.scopeObj.membership.push($scope.scopeObj.room.id);
+		$scope.user.membership.push($scope.room.id);
 	}
 	
 	$scope.hasMembership = function() {
-		var index = $scope.scopeObj.membership.indexOf($scope.scopeObj.room.id);
+		if(!$scope.user.membership) return false;
+		var index = $scope.user.membership.indexOf($scope.room.id);
 		if(index > -1) return true;
 		else return false;
 	}
-	
 }]);
 
 scrollbackApp.controller('roomscontroller', ['$scope', '$timeout' , function($scope, $timeout) {	
-	console.log("Rooms view controller is called now, value of membership is", $scope.scopeObj.membership);
+	console.log("Rooms view controller is called now, value of membership is", $scope.user.membership);
 	$scope.isExists = function(m) {
 		if (m && m.length > 0) {
 			return true; 
@@ -129,5 +118,9 @@ scrollbackApp.controller('roomscontroller', ['$scope', '$timeout' , function($sc
 }]); 
 
 scrollbackApp.controller('configcontroller' , ['$scope' , function($scope) {
+	$scope.val = "";
+}]);
+
+scrollbackApp.controller('rootController' , ['$scope' , function($scope) {
 	$scope.val = "";
 }]);

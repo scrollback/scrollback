@@ -3,7 +3,7 @@ dependencies: emitter.js
 */
 var scrollbackApp = angular.module('scrollbackApp' , ['ngRoute']);
 var factoryObject = Object.create(emitter), requests = {};
-var pendingCallbacks = {}, nick, backed=false;
+var pendingCallbacks = {}, backed=false;
 
 
 
@@ -64,8 +64,6 @@ function send(message, callback){
 		gateway : "web",
 		location : window.location.toString(),
 	};
-	message.from = nick;
-
 	if(callback) pendingCallbacks[message.id] = callback;
 	socket.emit("message", message);
 }
@@ -145,14 +143,13 @@ function socketMessage(evt) {
 }
 
 onInit = function(data) {
-	nick = data.user.id;
 	factoryObject.initialized = true;
 	factoryObject.emit("init", data);
-	factoryObject.emit("nick", nick);
+	factoryObject.emit("nick", data.user.id);
 	console.log("sending back msg..");
 	backed || (backed==true || (listenTo(window.scrollback.room)));
 	factoryObject.isActive = true;
-	factoryObject.nick = nick;
+	factoryObject.nick = data.user.id;
 };
 
 handler=function(type, data){
@@ -181,7 +178,6 @@ function socketError(message) {
 	factoryObject.emit("SOC_ERROR", message);
 };
  function listenTo(room){
-	console.log("listening to... ", room);
 	send({type:"result-start", to:room});
 	send({type:"back", to:room});
 };

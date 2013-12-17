@@ -103,7 +103,10 @@ module.exports = function(core){
 					}
 					element.origin = originObject;
 				}
-				if (element.origin && element.origin.gateway == "web") delete element.origin.location;
+				if (element.origin && element.origin.gateway == "web") {
+					element.origin.ip && delete element.origin.ip;
+					element.origin.location && delete element.origin.location;
+				} 
 			});
 			start  = since || data.length && data[0].time || 0;
 			end = until || data.length && data[data.length-1].time || 0;

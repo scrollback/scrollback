@@ -1,4 +1,4 @@
-html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}; ")
+html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{JSON.stringify(user)}; room = #{JSON.stringify(room)};  messages = #{JSON.stringify(messages)};  members = #{JSON.stringify(members)}; ")
 	head
 	meta(charset="utf-8")
 	meta(http-equiv="X-UA-Compatible",content="IE=edge")
@@ -14,7 +14,7 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 		#meta(ng-controller="metaController",class = 'column')
 			a#logo scrollback
 			#user: block user
-				a: img.face(src='{{scopeObj.gravatar}}' ng-click='profile()')
+				a: img.face(src='{{user.picture}}' ng-click='profile()')
 				#userAction
 					#login
 						i(class="fa fa-sign-in fa-2x")
@@ -40,8 +40,8 @@ html(ng-app='scrollbackApp', ng-init=" scopeObj = #{JSON.stringify(responseObj)}
 				script.
 					window.scrollback = {
 						host : '//' + location.host,
-						streams : ["#{responseObj.room.id}"],
-						room: "#{responseObj.room.id}",
+						streams : ["#{room.id}"],
+						room: "#{room.id}",
 						debug: true
 					};
 				script(src="//code.jquery.com/jquery-1.10.1.min.js")
