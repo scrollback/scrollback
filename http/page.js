@@ -85,11 +85,11 @@ exports.init = function(app, coreObject) {
             profile: "http://sampleroom.blogspot.com" 
         }});
 	});    
-    app.get("*", function (req, res) {
+    app.get("*", function (req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, 
         query={}, sqlQuery, roomId = params[0], user = req.session.user,
         queryString, resp={};
-        //if(roomId && !validateRoom(roomId)) return next();
+        if(roomId && !validateRoom(roomId)) return next();
         responseObj.user = req.session.user;
         responseObj.user.picture =  (user.accounts &&user.accounts[0])? user.accounts[0].id.substring(7) : "guest@scrollback";
         responseObj.user.picture = crypto.createHash("md5").update(responseObj.user.picture).digest("hex");
@@ -141,6 +141,7 @@ exports.init = function(app, coreObject) {
                 });
                 ids.sort();
                 core.emit("rooms",{id:ids, fields:["accounts"]}, function(err,members) {
+                    console.log(err,members);
                     responseObj.members = members;
                     members.forEach(function(member) {
                         member.picture = "//s.gravatar.com/avatar/"+ crypto.createHash("md5").update(member.accounts[0].id.substring(7)).digest("hex");
