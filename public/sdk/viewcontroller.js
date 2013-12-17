@@ -75,15 +75,23 @@ scrollbackApp.controller('meController',['$scope','$route','$factory','$location
 
 scrollbackApp.controller('roomcontroller', ['$scope', '$timeout', '$factory', '$location', function($scope, $timeout, $factory, $location) {	
 	$scope.partRoom = function() {
-		var msg = {}, index;
+		var msg = {}, index,i,l;
 		msg.to = $scope.room.id;
 		msg.type = "part";
 		$factory.message(msg);
 		if($scope.user.membership){
 			index = $scope.user.membership.indexOf($scope.room.id);
-			if(index >= 0)$scope.user.membership.splice(index, 1);	
+			if(index >= 0){
+				$scope.user.membership.splice(index, 1);
+				//deleting gravatar 
+				for(i=0,l=$scope.members.length;i<l;i++) {
+					if($scope.members[i].id === $scope.user.id){
+						$scope.members.splice(i,1);
+						break;
+					}
+				}
+			}
 		}
-		
 	}
 	
 	$scope.joinRoom = function() {
@@ -97,6 +105,7 @@ scrollbackApp.controller('roomcontroller', ['$scope', '$timeout', '$factory', '$
 		msg.type = "join";
 		$factory.message(msg);
 		$scope.user.membership.push($scope.room.id);
+		$scope.members.push($scope.user);
 	}
 	
 	$scope.hasMembership = function() {

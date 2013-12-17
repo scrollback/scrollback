@@ -40,7 +40,7 @@ function rooms(coreObject) {
 		log("Heard rooms event", options);
 
 		if(options.id) {
-			if(!options.length || options.length == 0) return callback(true, []);
+			if(options.length == 0) return callback(true, []);
 			where.push("`id` in (?)");
 			params.push(options.id);
 		}
