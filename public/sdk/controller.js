@@ -2,10 +2,11 @@
 function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
     $scope.items = [];
     var messages = messageArray();
+	
     messages.load($scope.room.id);
     messages.merge($scope.messages.reverse());
     messages.save($scope.room.id);
-
+	
     // console.log("Messages are loaded up", messages);
     var topIndex = 0, bottomIndex = 0;
     // initialising items with 50 messages initially 
@@ -186,9 +187,14 @@ scrollbackApp.directive('message',function() {
             }
 
             attr.$observe('from', function(value) {
-                $scope.bcolor = hashColor(value);
+				//$scope.bcolor = hashColor(value);
                 $scope.nick = (value.indexOf("guest-")!==0)?value: value.replace("guest-","");
             });
+			attr.$observe('label', function(value){
+				value = value || "nolabel";
+				console.log("value that will be hashed :", value);
+				$scope.bcolor = hashColor(value);
+			});
             attr.$observe('text', function(value) {
                 $scope.text = " "+value;
             });
