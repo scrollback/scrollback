@@ -25,10 +25,11 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     $factory.on("message", function(msg) {
         if(msg.from != $scope.user.id){
             newMessage(msg);  
-        } 
-    });    
+        }
+    });
     function newMessage(data) {
         // type is text, leave out err msgs, if any.. 
+		angular.element('#nomessagediv').hide(); //Hiding no messages in this room msg on new message to room  	
         messages.unshift(data);
         console.log("msg added to the cache... ", data.from, $scope.user.id);
         //messages.save($scope.scopeObj.room.name);
@@ -36,10 +37,10 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
             $scope.gotoBottom(); 
             $scope.items.pop();
         }
-        console.log(bottomIndex, topIndex);
+        console.log("Bottom Index and top index are : ", bottomIndex, topIndex);
         if(!data.message && bottomIndex === 0 && data.type == "text") {
             $scope.$apply(function(){
-                $scope.items.shift();
+                //$scope.items.shift();
                 $scope.items.push(messages[bottomIndex]);
             });
         }
@@ -70,19 +71,19 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         $anchorScroll();
     };
 
-    $scope.loadMoreUp = function() {    
+    $scope.loadMoreUp = function() {
         for (var i = 0; i < 5; i++) {
-            if(topIndex < messages.length){
+            if(topIndex < messages.length) {
                 if(messages[topIndex].type == "text")
                     $scope.items.unshift(messages[topIndex]);
                 topIndex += 1;
             }
-            if(messages.length - topIndex == 20){
+            if(messages.length - topIndex == 20) {
                 console.log("top reached", messages[topIndex]);
                 // time to request factory for messages from above 
                 $factory.messages($scope.room.id, "", messages[messages.length - 1].time);
                 $factory.on("messages", function(data){
-                    if(data.length > 1 && data[data.length-1].type == "result-end"){
+                    if(data.length > 1 && data[data.length-1].type == "result-end") {
                         console.log("concatenating now!", data[data.length-1]);
                         messages = messages.concat(data.reverse());
                     }
@@ -123,7 +124,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
          //this is causing troubles, so the shift is being done only for 2 elements at a time, ideally
          // the while should be uncommented
         $timeout(function() {
-            if($scope.items.length > 50){
+            if($scope.items.length > 50) {
                 //while($scope.items.length > 50){ 
                 $scope.items.shift();
                 $scope.items.shift();

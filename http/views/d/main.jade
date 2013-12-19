@@ -22,6 +22,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 					#signup
 						i(class="fa fa-globe fa-2x")
 						|	Sign Up
+			#username {{user.id}}	
 			#info 
 				ng-view
 			#foot: block foot
@@ -29,6 +30,8 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 				| We respect your privacy. 
 		#body(ng-controller="messageController",class = 'column')
 			block body
+				div(id="nomessagediv", ng-show = "{{items.length ==0}}")
+					| There are no messages in this room yet!
 				.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 					div(ng-repeat="i in items track by $index")
 						message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}")
