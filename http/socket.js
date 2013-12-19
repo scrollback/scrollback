@@ -161,10 +161,12 @@ function messages (query, conn) {
 }
 
 function message (m, conn) {
+
 	if(!conn.sid) return;
+	console.log(conn.sid);
 	session.get({sid: conn.sid}, function(err, sess) {
 		var user = sess.user, tryingNick, roomName;
-		
+		console.log(sess.sid);
 		roomName = m.to;
 		
 		m.from = user.id;
@@ -312,22 +314,32 @@ function room (r, conn) {
 			user = sess.user;
 			r.owner = user.id;
 		}
-
-		//not sure what this function does... so just replace the core.room with core.emit().
 		core.emit("room", r, function(err, data) {
+			if(err) {
+				log("ROOM ERROR", r, err);
+				conn.send('error', {queryId:r.queryId, error:err.message});
+			}else{
+				data.queryId = r.queryId;
+				conn.send('room', data);
+			}
 		});
 		session.set(conn.sid, sess);
 	});
 }
 
 function rooms(query, conn) {
+	console.log(query);
 	core.emit("rooms", query, function(err, data) {
 		if(err) {
 			log("ROOMS ERROR", query, err);
-			conn.send('error', err);
+			query.err = err;
+			conn.send('error',query);
 			return;
+		}else {
+			log(data);
+			conn.send('rooms', { query: query, data: data} );
+			//conn.send('rooms', data);	
 		}
-		conn.send('rooms', data);
 	});
 }
 

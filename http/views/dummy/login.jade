@@ -2,10 +2,10 @@ div(ng-controller="meController")
 	h1(ng-init="inLogin = true")
 		button.left: span.fa.fa-arrow-left
 		span My account
-	form#profile(ng-submit="nickChange()")
+	form#profile
 		label Username
-			input(ng-model="displayName")
+			input(ng-model="displayNick")
 		label
-			button.default(type="button",ng-click="personaLogin()") Sign IN/UP
-			.combo
-				button.default(type="button",ng-click="nickChange()") Change
+			button.default(type="button",ng-click="personaLogin('hi2')") Sign IN/UP
+		label
+			button.default(type="button",ng-click="nickChange('hi')") Change

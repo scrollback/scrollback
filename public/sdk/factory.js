@@ -4,17 +4,16 @@ dependencies: emitter.js
 var scrollbackApp = angular.module('scrollbackApp' , ['ngRoute']);
 var factoryObject = Object.create(emitter), requests = {};
 var pendingCallbacks = {}, backed=false;
-
-
-
+var backOff = 1;
 var factory=function() {
 	socket.onclose = function() {
 		factoryObject.emit("disconnected");
+		backOff+=backOff;
 		factoryObject.isActive = false;
 		setTimeout(function(oldSocket){
 			socket = newSocket();
-			socket.close = oldSocket.close;
-		}, 10000, socket);
+			socket.onclose = oldSocket.onclose;
+		}, backOff*1000, socket);
 	};
 	factoryObject.message = send;
 	factoryObject.messages = getMessages;
@@ -24,7 +23,8 @@ var factory=function() {
 	factoryObject.occupants = callbackGenerator("occupants");
 	factoryObject.membership = callbackGenerator("membership");
 
-	factoryObject.listenTo = listenTo;
+	factoryObject.enter = enter;
+	factoryObject.leave = leave;
 	return factoryObject;
 };
 
@@ -50,15 +50,15 @@ function socketEmit(type, data) {
 
 function callbackGenerator(event){
 	return function(query, callback){
-		query.queryId=guid();
+		query.queryId = guid();
 		pendingCallbacks[query.queryId] = callback;		
-		socket.emit(event, query);
+		socketEmit(event, query);
 	};
 }
 
 
 function send(message, callback){
-	message.id=guid();
+	message.id = guid();
 	message.time = new Date().getTime();
 	message.origin = {
 		gateway : "web",
@@ -74,8 +74,9 @@ function newSocket() {
 	var socket = new SockJS(scrollback.host + '/socket');
 	
 	socket.onopen = function() {
+		backOff = 1;
 		init();
-		listenTo(window.scrollback.room);
+		enter(window.scrollback.room);
 		factoryObject.emit("connected");
 	};
 	socket.onerror = socketError;
@@ -147,17 +148,18 @@ onInit = function(data) {
 	factoryObject.emit("init", data);
 	factoryObject.emit("nick", data.user.id);
 	console.log("sending back msg..");
-	backed || (backed==true || (listenTo(window.scrollback.room)));
+	backed || (backed==true || (enter(window.scrollback.room)));
 	factoryObject.isActive = true;
 	factoryObject.nick = data.user.id;
 };
 
 handler=function(type, data){
-	if(pendingCallbacks[data.queryId]) {
-		pendingCallbacks[data.queryId](data);
+	if(pendingCallbacks[data.query.queryId]) {
+		console.log(type,data);
+		pendingCallbacks[data.query.queryId](data.data);
 		delete pendingCallbacks[data.queryId];
 	}
-	factoryObject.emit(type, data);
+	factoryObject.emit(type, data.data);
 }
 
 function onError(err) {
@@ -177,9 +179,12 @@ function socketError(message) {
 	scrollback.debug && console.log(message);
 	factoryObject.emit("SOC_ERROR", message);
 };
- function listenTo(room){
+function enter(room) {
 	send({type:"result-start", to:room});
 	send({type:"back", to:room});
+};
+function leave(room) {
+	send({type:"away", to:room});
 };
 
 var socket = newSocket();

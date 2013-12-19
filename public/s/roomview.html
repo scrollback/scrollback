@@ -1,10 +1,21 @@
 <h1>
-	<a href="#rooms">
+	<a href="/me">
 		<button class="left">
 			<span class="fa fa-arrow-left"></span>
 		</button>
 	</a>
 	<span> {{room.name || room.id}} </span>
+	<button class="right" ng-show = "!room.owner" ng-click = "goToConfigure()" title = "claim" >
+			<span class="fa fa-tags"></span>
+	</button>
+	<button class="right" ng-show = "user.owner==user.id" ng-click = "logout()" title = "logout" >
+			<span class="fa fa-power-off"></span>
+	</button>
+
+	<button class="right" ng-show = "isOwner()" ng-click = "goToConfigure()" title = "configure" >
+			<span class="fa fa-gears"></span>
+	</button>
+	
 	<button class="right" title = "Unfollow Room"  ng-click="partRoom()" ng-show = "hasMembership()" >
 			<span class="fa fa-sign-out"></span>
 	</button>

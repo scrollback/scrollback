@@ -27,20 +27,25 @@ exports.init = function(app, coreObject) {
     };
     app.get("/me/edit", function(req, res) {
         var user = req.session.user;
-        if(/"guest-"/.test(user.id) && (!user.accounts || user.accounts.length ==0))
-        return res.render("dummy/profile",{email:user.accounts[0].id.split(":")[1]});
+        if(/"guest-"/.test(user.id)) {
+            if(!user.accounts || user.accounts.length ==0) {
+                return res.render("dummy/profile",{email:user.accounts[0].id.split(":")[1]});        
+            }else {
+                return res.redirect(307, '//'+config.http.host+"/s/login.html"+queryString);
+            }
+        }
     });
     app.get("/me", function(req, res) {
         var user = req.session.user, responseObject={};
         responseObject.user = req.session.user;
         if(/^guest/.test(req.session.user.id)) {
             console.log(responseObject);
-            return res.render("dummy/login");
+            return res.redirect(307, '//'+config.http.host+"/s/login.html"+queryString);
+            //return res.render("dummy/login");
         }else {
             return res.render("dummy/profile", {email: user.accounts[0].id.split(":")[1]});
         }
     });
-   
     app.get("/dlg/*",function(req,res){
         var dialog=req.path.substring(1).split("/")[1];
         if(dialogs[dialog]) {
@@ -102,7 +107,7 @@ exports.init = function(app, coreObject) {
 
         if(!req.secure) {
             queryString  = req._parsedUrl.search?req._parsedUrl.search:"";
-            return res.redirect(301, 'https://'+config.http.host+req.path+queryString);
+            return res.redirect(307, 'https://'+config.http.host+req.path+queryString);
         }
 
         if(roomId.indexOf('%') == 0){
@@ -116,12 +121,8 @@ exports.init = function(app, coreObject) {
             if(err) res.render("error", err);
             if(room.length != 0) {
                 responseObj.room = room[0];
-                try {
-                    responseObj.room.params = JSON.parse(responseObj.room.params);
-                }
-                catch(e) {
-                    responseObj.room.params = {};
-                }
+                console.log("----------",responseObj.room);
+                
             }
             else {
                 responseObj.room = { id : roomId };
