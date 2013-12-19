@@ -150,7 +150,7 @@ exports.init = function(app, coreObject) {
                         delete member.params;
                     });
 
-                    query.to=params[1];
+                    query.to=params[0];
                     query.type="text";
                     query.limit=250;
                     if (params[1]) switch(params[1]) {

@@ -14,7 +14,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 		#meta(ng-controller="metaController",class = 'column')
 			a#logo scrollback
 			#user: block user
-				a: img.face(src='{{user.picture}}' ng-click='profile()')
+				a: img.face(ng-src='{{user.picture}}' ng-click='profile()')
 				#userAction
 					#login
 						i(class="fa fa-sign-in fa-2x")
@@ -31,7 +31,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 			block body
 				.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 					div(ng-repeat="i in items track by $index")
-						message(from="{{i.from}}", text="{{i.text}}")
+						message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}")
 					#endoflog
 				form.messageWrapper(ng-submit="message();")
 					input.messageBox(type="text", ng-model="text")
@@ -46,6 +46,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 					};
 				script(src="//code.jquery.com/jquery-1.10.1.min.js")
 				script(src="//code.jquery.com/jquery-migrate-1.2.1.min.js")
+				script(src="//crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js")
 				script(src="https://login.persona.org/include.js")
 				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js')
 				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js')

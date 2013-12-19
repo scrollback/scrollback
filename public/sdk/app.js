@@ -17,6 +17,6 @@ scrollbackApp.config(['$routeProvider', '$locationProvider', function($routeProv
 		templateUrl: '/s/roomconfig.html', 
 		controller:'configcontroller' 
 	});
-	$routeProvider.otherwise({redirectTo : '/:room'});
+	//$routeProvider.otherwise({redirectTo : '/me'});
 	$locationProvider.html5Mode(true);
 }]);

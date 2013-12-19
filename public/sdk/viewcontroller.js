@@ -39,20 +39,20 @@ scrollbackApp.controller('metaController',function($scope, $location, $factory) 
 	// }
 });
 scrollbackApp.controller('meController',['$scope','$route','$factory','$location',function($scope, $route, $factory, $location) {
-	console.log("me controller.");
 	$scope.nickChange = function() {
 		if($scope.user.id == "guest-"+$scope.displayNick){
-			$location.path("/");
+			$location.path("/"+$scope.room.id);
 			return;
 		}
 	    $factory.message({to:"",type:"nick", ref:"guest-"+$scope.displayNick}, function(message){
 	    	if(message.message){
 	    		//error
 	    	}else{
-	    		$location.path("/");
+	    		$location.path("/"+$scope.room.id);
 	    	}
 	    });
 	};
+
 	$scope.displayNick = ($scope.user.id).replace(/^guest-/,"");
 	$scope.save = function() {
 		$factory.message({to:"",type:"nick", user:{id:$scope.displayNick,accounts:[]}}, function(message) {
@@ -210,16 +210,28 @@ scrollbackApp.controller('configcontroller' , function($scope, $factory, $locati
 	};
 });
 
-scrollbackApp.controller('rootController' , ['$scope' , function($scope) {
-	$scope.val = "";
+scrollbackApp.controller('rootController' , ['$scope', '$factory',  function($scope, $factory) {
+	$factory.on('init', function(data){
+		//assigning the new new init data to the user scope ---
+		$scope.user.id = data.user.id;
+		if(/^guest-/.test(data.user.id)){
+			$scope.user.picture = "//s.gravatar.com/avatar/guestpic";
+		}
+		else{
+			var account = data.user.accounts[0].id.substring(7);
+			var hash = CryptoJS.MD5(account);
+			$scope.user.picture = "//s.gravatar.com/avatar/" + hash;
+			if(data.user.membership) {
+				$scope.user.membership = Object.keys(data.user.membership);
+			}
+		}
+	});
 }]);
-
 
 function parseUrl(url) {
 	var a = document.createElement('a');
 	var protocol = url.split(":")[0];
 	url = url.replace(protocol,"http");
     a.href = url;
-
     return {protocol:protocol, hash:a.hash, hostname:a.hostname, search:a.search};
 }
