@@ -1,4 +1,4 @@
-html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{JSON.stringify(user)}; room = #{JSON.stringify(room)};  messages = #{JSON.stringify(messages)};  members = #{JSON.stringify(members)}; ")
+html(ng-app='scrollbackApp', ng-controller="rootController", ng-init = "user = #{JSON.stringify(user)}; room = #{JSON.stringify(room)};  messages = #{JSON.stringify(messages)};  members = #{JSON.stringify(members)};")
 	head
 	meta(charset="utf-8")
 	meta(http-equiv="X-UA-Compatible",content="IE=edge")
@@ -9,70 +9,57 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 	link(rel="stylesheet",href="/dummy.css")
 	link(rel="stylesheet",href="//fonts.googleapis.com/css?family=Open+Sans:300,800|Source+Code+Pro:300")
 	link(rel="stylesheet",href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css")
-	block styles
-		body
+	
+	body
+		#notifications
 		#meta(ng-controller="metaController",class = 'column')
-			a#logo scrollback
-			#user: block user
-				a: img.face(ng-src='{{user.picture}}' ng-click='profile()')
-				#userAction
-					#login
-						i(class="fa fa-sign-in fa-2x")
-						|	Log in
-					#signup
-						i(class="fa fa-globe fa-2x")
-						|	Sign Up
-			#username {{user.id}}	
+			a#logo scrollback	
+			#user
+				a: img.face(src='{{user.picture}}' ng-click='profile()')
+			#username(ng-click='profile()') {{user.id}}
 			#info 
 				ng-view
-			#foot: block foot
+			#foot
 				| Scrollback is a product of Askabt Pte Ltd.
 				| We respect your privacy. 
 		#body(ng-controller="messageController",class = 'column')
-			block body
-				div(id="nomessagediv", ng-show = "{{items.length ==0}}")
-					| There are no messages in this room yet!
-				.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
-					div(ng-repeat="i in items track by $index")
-						message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}")
-					#endoflog
-				form.messageWrapper(ng-submit="message();")
-					input.messageBox(type="text", ng-model="text")
-					input(id="submitButton" type="submit")
-			block scripts
-				script.
-					window.scrollback = {
-						host : '//' + location.host,
-						streams : ["#{room.id}"],
-						room: "#{room.id}",
-						debug: true
-					};
-				script(src="//code.jquery.com/jquery-1.10.1.min.js")
-				script(src="//code.jquery.com/jquery-migrate-1.2.1.min.js")
-				script(src="//crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js")
-				script(src="https://login.persona.org/include.js")
-				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js')
-				script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js')
-				script(src='/sdk/jquery-fixInView.js')
-				script(src='/sdk/messageArray.js')
-				script(src="/sdk/polyfill.js")
-				script(src='/sdk/emitter.js')
-				script(src='/sdk/sockjs.js')
-				script(src='/sdk/addEvent.js')
-				script(src='/sdk/request.js')
-				script(src='/sdk/factory.js')
-				script(src='/sdk/controller.js')
-				script(src='/sdk/app.js')
-				script(src='/sdk/viewcontroller.js')
-				script.
-					//- function toggleVisibility()	{
-					//- 	//$('#userAction').hide();
-					//- 	e = document.getElementById('userAction');
-					//- 	if(e.style.display == "")
-					//- 		e.style.display = "block";
-					//- 	else
-					//- 		e.style.display = "";
-					//- }
-					$('.collapse,#meta').on('click', function() {
-						$(this).toggleClass('expanded');
-					});
+			div(id="nomessagediv", ng-show = "{{items.length ==0}}")
+				| There are no messages in this room yet!
+			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
+				div(ng-repeat="i in items track by $index")
+					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}")
+				#endoflog
+			form.messageWrapper(ng-submit="message();")
+				input.messageBox(type="text", ng-model="text")
+				input(id="submitButton" type="submit")
+		script.
+			window.scrollback = {
+				host : '//' + location.host,
+				streams : ["#{room.id}"],
+				room: "#{room.id}",
+				debug: true
+			};
+			
+			//var initVar = { user: !{user}, room: !{room}};
+			
+		script(src="//code.jquery.com/jquery-1.10.1.min.js")
+		script(src="//code.jquery.com/jquery-migrate-1.2.1.min.js")
+		script(src="//crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js")
+		script(src="https://login.persona.org/include.js")
+		script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js')
+		script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js')
+		script(src='/sdk/jquery-fixInView.js')
+		script(src='/sdk/messageArray.js')
+		script(src="/sdk/polyfill.js")
+		script(src='/sdk/emitter.js')
+		script(src='/sdk/sockjs.js')
+		script(src='/sdk/addEvent.js')
+		script(src='/sdk/request.js')
+		script(src='/sdk/factory.js')
+		script(src='/sdk/controller.js')
+		script(src='/sdk/app.js')
+		script(src='/sdk/viewcontroller.js')
+		script.
+			$('.collapse,#meta').on('click', function() {
+				$(this).toggleClass('expanded');
+			});

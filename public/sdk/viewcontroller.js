@@ -105,8 +105,8 @@ scrollbackApp.controller('roomcontroller', ['$scope', '$timeout', '$factory', '$
 		msg.to = $scope.room.id;
 		msg.type = "join";
 		$factory.message(msg);
-		$scope.user.membership.push($scope.room.id);
-		$scope.members.push($scope.user);
+		$scope.user.membership.unshift($scope.room.id);
+		$scope.members.unshift($scope.user);
 	}
 	
 	$scope.hasMembership = function() {
@@ -117,8 +117,11 @@ scrollbackApp.controller('roomcontroller', ['$scope', '$timeout', '$factory', '$
 	}
 }]);
 
-scrollbackApp.controller('roomscontroller', ['$scope', '$timeout' , function($scope, $timeout) {	
+scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', function($scope, $timeout, $location) {	
 	console.log("Rooms view controller is called now, value of membership is", $scope.user.membership);
+    if(/^guest-/.test($scope.user.id)){
+        $location.path("/login");
+    }
 	$scope.isExists = function(m) {
 		if (m && m.length > 0) {
 			return true; 
@@ -133,8 +136,16 @@ scrollbackApp.controller('configcontroller' , ['$scope' , function($scope) {
 
 scrollbackApp.controller('rootController' , ['$scope', '$factory',  function($scope, $factory) {
 	$scope.val = "";
+//	$scope.init = function(a,b,c){
+//		console.log(a,b,c);
+//	}
+	
+	//$scope.scopeObj = initVars;
+	
+	
 	$factory.on('init', function(data){
 		//assigning the new new init data to the user scope ---
+		console.log("INIT Recieved, data got via init ", data, "$scope.user is ", $scope.user );
 		$scope.user.id = data.user.id;
 		if(/^guest-/.test(data.user.id)){
 			$scope.user.picture = "//s.gravatar.com/avatar/guestpic";

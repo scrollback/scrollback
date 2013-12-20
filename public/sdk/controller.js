@@ -29,7 +29,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     });
     function newMessage(data) {
         // type is text, leave out err msgs, if any.. 
-		angular.element('#nomessagediv').hide(); //Hiding no messages in this room msg on new message to room  	
+		angular.element('#nomessagediv').hide(); 
         messages.unshift(data);
         console.log("msg added to the cache... ", data.from, $scope.user.id);
         //messages.save($scope.scopeObj.room.name);
@@ -192,9 +192,10 @@ scrollbackApp.directive('message',function() {
                 $scope.nick = (value.indexOf("guest-")!==0)?value: value.replace("guest-","");
             });
 			attr.$observe('label', function(value){
-				value = value || "nolabel";
 				console.log("value that will be hashed :", value);
-				$scope.bcolor = hashColor(value);
+                if(value){
+                    $scope.bcolor = hashColor(value);
+                }
 			});
             attr.$observe('text', function(value) {
                 $scope.text = " "+value;
@@ -208,20 +209,18 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
         
         var raw = elm[0];
         var $ = angular.element;
-
-               
         
         $(document).ready(function() {
 
             $('.column').fixInView();
             $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
-            $('#body').bind('reposition', function(e){
+            $('#body').bind('reposition', function(e) {
                 // console.log("reposition event is fired!", e.above, e.below, e.by);
 //                console.log("Reposition ",e);
                 if(e.above < 150 ) {
                     scope.$apply(attr.whenScrolledUp);
                     $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
-                 } 
+                 }
                  else if(e.below < 150) {
                     scope.$apply(attr.whenScrolledDown);
                 }
