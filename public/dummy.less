@@ -64,7 +64,7 @@ img.face {
 	background: #000; color: #eee;
 	width: 50%; min-height: 100%;
 	border-right: @sbthick solid @sbgreen;
-	left: -@sbthick/2; top: 0;
+	left: 0; top: 0;
 	padding: 48px;
 	.radial-gradient(#555, #000, 100%, 50%);
 	.box-sizing(border);
@@ -100,7 +100,7 @@ img.face {
 	left: 50%;
 	right: 0;
 	top: 0;
-	/*padding: 48px; commenting this out for now*/
+	overflow: hidden;
 	.box-sizing(border);
 }
 
@@ -122,9 +122,6 @@ img.face {
 	#description { margin: 0; }
 	#members { margin-top: 1.414em; overflow: hidden; height: 48px; }
 	#members h2 { display: inline; margin: 0 8px 0 0; line-height: 48px; }		
-}
-
-#body {
 }
 
 //----- profile page -----
@@ -168,17 +165,7 @@ img.face {
 //----- Message stream -----
 
 .scrollback-stream {
-	width:100%;
-	font-size: 13px;
-	right:-30px;
-	line-height: 14px;
-	.border-box;
-	padding:0px;
-	padding-top: 10px;
-	margin:0px;
-	padding-bottom: 64px;
-	bottom:10px;
-	top:0px;
+	z-index: 1;
 }
 
 .messageWrapper{
@@ -189,11 +176,14 @@ img.face {
 	margin:0px;
 	bottom:0px;
 	right:0px;
-	border-top: 1px solid black;
+	border-top: 2px solid #eee;
+	box-shadow: 0 0px 128px 66px #eee;
 }
 
 .messageBox{
-	width: 100%;
+	width: 100%; height: 48px;
+	padding: 0px 8px;
+	display: block;
 	border: none;
 	.border-box;
 }
@@ -214,18 +204,19 @@ img.face {
 .scrollback-message {
 	overflow: hidden;
 	color: red;
-	padding: 2px 24px 2px 48px;
-	text-indent: -32px;
-	border-left: 4px solid transparent;
+	padding: 4px 0 4px 4px;
+	border-left: 2px solid transparent;
+	margin-left: 25%;
 	opacity: 1; height: auto;
 	cursor: default;
-	font-size: 16px;
-	line-height: 22px;
-	max-height: 66px;
+	max-height: 66px; min-height: 22px;
 }
 
-.scrollback-message-nick { color: #999; }
-.scrollback-message-separator { color: #999 }
+.scrollback-message-nick { 
+	position: absolute; width: 25%; left: 0; color: #999; text-align: right; padding-right: 4px;
+	.box-sizing(border);
+}
+.scrollback-message-separator { color: #999; display:none;  }
 .scrollback-message-join { color: #999 }
 .scrollback-message-part { color: #999 }
 .scrollback-message-timestamp {color: #999}

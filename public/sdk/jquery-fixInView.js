@@ -1,7 +1,10 @@
 (function($) {
+	
+	var ignoreScroll = false;
+	var lastTop = 0;
+	
 	$.fn.fixInView = function(container) {
-		var lastTop = 0,
-			columns = this;
+		var columns = this;
 	
 		container = container || $(window);
 		
@@ -17,8 +20,6 @@
 				up = lastTop > top;
 			
 			if(lastTop == top) return;
-			
-			console.log(top, up);
 				
 			columns.each(function () {
 				var column = $(this),
@@ -40,7 +41,7 @@
 					});
 				}
 				
-				else if((!small && !up || small && up) && status == 'top') {
+				if((!small && !up || small && up) && status == 'top') {
 					console.log(dbg, 'unfixing dn');
 					column.data('fixedInStatus', 'none');
 					status = 'none';
@@ -53,7 +54,7 @@
 				
 				// cTop = column.position().top + column.offsetParent().scrollTop();
 				
-				else if(
+				if(
 					status != 'top' &&
 					((!small && up && cTop > top) ||
 					(small && !up && cTop < top))
@@ -101,7 +102,10 @@
 			lastTop = top;
 		}
 		
-		container.scroll(reposition);
+		container.scroll(function(e) {
+			if(ignoreScroll) return;
+			reposition(e, false);
+		});
 		$(window).resize(function(e) {
 			lastTop = container.scrollTop() + 1;
 			reposition(e, true);
@@ -110,9 +114,11 @@
 		});
 	};
 	
-	$.fn.nudgeInView = function (adjustment) {
+	$.fn.nudgeInView = function (adjustment, readjustment) {
 		var container = this.data('fixedInContainer'),
 			column = this;
+		
+		if(!readjustment) { ignoreScroll = true; console.log("set ignore"); }
 		
 		if(!container) {
 			console.log('Cannot nudgeInView: Isnt fixedInView yet', this);
@@ -123,7 +129,9 @@
 			height = container.height(),
 			cHeight = column.outerHeight(),
 			cTop = column.offset().top,
-			small = cHeight < height;
+			small = cHeight < height,
+			up = adjustment < 0;
+			dbg = [column.attr('id'), top, height, cTop, cHeight, column.offsetParent()[0]].join(' ');
 		
 		if(column.data('fixedInStatus') != 'none') {
 			column.data('fixedInStatus', 'none');
@@ -138,9 +146,44 @@
 		if(cTop + adjustment < 0) {
 			adjustment = -cTop - adjustment;
 			container.data('fixedInColumns').each(function() {
-				$(this).nudgeInView(adjustment);
+				$(this).nudgeInView(adjustment, true);
 			});
 			container.scrollTop(container.scrollTop() + adjustment);
 		};
+		
+		
+		
+		cTop = column.offset().top;
+		top = container.scrollTop();
+		
+		if(
+			((!small && cTop > top) ||
+			(small && cTop < top))
+		) {
+			console.log(dbg, 'refixing up');
+			column.data('fixedInStatus', 'top');
+			column.css({
+				position: 'fixed',
+				top: 0,
+				bottom: 'auto'
+			});
+		}
+		
+		else if(
+			((!small && cTop + cHeight < top + height) ||
+			(small && cTop + cHeight > top + height))
+		) {
+			console.log(dbg, 'refixing dn');
+			column.data('fixedInStatus', 'bottom');
+			column.css({
+				position: 'fixed',
+				top: 'auto',
+				bottom: 0
+			});
+		}
+		
+		lastTop = container.scrollTop();
+		
+		if(!readjustment) setTimeout(function() { ignoreScroll = false; console.log("clear ignore"); }, 100);
 	};
 }(jQuery));
