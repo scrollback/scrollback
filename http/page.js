@@ -29,7 +29,7 @@ exports.init = function(app, coreObject) {
         var user = req.session.user;
         if(/"guest-"/.test(user.id)) {
             if(!user.accounts || user.accounts.length ==0) {
-                return res.render("dummy/profile",{email:user.accounts[0].id.split(":")[1]});        
+                return res.render("newProfile",{email:user.accounts[0].id.split(":")[1]});        
             }else {
                 return res.redirect(307, '//'+config.http.host+"/s/login.html"+queryString);
             }
@@ -41,9 +41,8 @@ exports.init = function(app, coreObject) {
         if(/^guest/.test(req.session.user.id)) {
             console.log(responseObject);
             return res.redirect(307, '//'+config.http.host+"/s/login.html"+queryString);
-            //return res.render("dummy/login");
         }else {
-            return res.render("dummy/profile", {email: user.accounts[0].id.split(":")[1]});
+            return res.render("newProfile", {email: user.accounts[0].id.split(":")[1]});
         }
     });
     app.get("/dlg/*",function(req,res){
@@ -114,63 +113,40 @@ exports.init = function(app, coreObject) {
           res.end();
           return;  
         }
-        core.emit("rooms",{id:roomId}, function(err, room) {
+
+        core.emit("rooms", {id:roomId,fields:["accounts","members"]}, function(err, room){
             if(room.length>0 && room[0].type =="user") {
                 return res.render("error",{error:"Archive view not available for users."});
             }
             if(err) res.render("error", err);
-            if(room.length != 0) {
-                responseObj.room = room[0];
-                console.log("----------",responseObj.room);
-                
-            }
-            else {
-                responseObj.room = { id : roomId };
-            }
-
+            if(room.length != 0)    responseObj.room = room[0];
+            else    responseObj.room = { id : roomId, name:  roomId};
             responseObj.room.title = responseObj.room.id.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {
                 return f.toUpperCase() + r.toLowerCase() + ' ';
             });
-            //responseObj.user = user.id;
-    	    if (user && user.membership) {
-                responseObj.user.membership=Object.keys(user.membership);
-    	    }
-            core.emit("members" , {room:roomId} , function(err , members){
-                var ids=[];
-                members.forEach(function(element) {
-                    ids.push(element.user);
-                });
-                ids.sort();
-                core.emit("rooms",{id:ids, fields:["accounts"]}, function(err,members) {
-                    console.log(err,members);
-                    responseObj.members = members;
-                    members.forEach(function(member) {
-                        member.picture = "//s.gravatar.com/avatar/"+ crypto.createHash("md5").update(member.accounts[0].id.substring(7)).digest("hex");
-                        delete member.accounts;
-                        delete member.params;
-                    });
+            if (user && user.membership) responseObj.user.membership=Object.keys(user.membership);
 
-                    query.to=params[0];
-                    query.type="text";
-                    query.limit=250;
-                    if (params[1]) switch(params[1]) {
-                        case 'since':
-                            query.since=new Date(params[2]).getTime();
-                            break;
-                        case 'until':
-                            query.until=new Date(params[2]).getTime();
-                            break;
-                        case 'edit':
-                            return next();
-                            break;
-                    }
-                    core.emit("messages", query, function(err, m) {
-                        responseObj.query=query;
-                        responseObj.messages=m;
-                        responseObj.relDate = relDate;
-                        res.render("d/main" , responseObj);
-                    });
-                });
+            query.to=params[0];
+            query.type="text";
+            query.limit=250;
+
+            if (params[1]) switch(params[1]) {
+                case 'since':
+                    query.since=new Date(params[2]).getTime();
+                    break;
+                case 'until':
+                    query.until=new Date(params[2]).getTime();
+                    break;
+                case 'edit':
+                    return next();
+                    break;
+            }
+            
+            core.emit("messages", query, function(err, m) {
+                responseObj.query=query;
+                responseObj.messages=m;
+                responseObj.relDate = relDate;
+                res.render("d/main" , responseObj);
             });
         });
     });

@@ -2,7 +2,9 @@
 dependencies: emitter.js
 */
 var scrollbackApp = angular.module('scrollbackApp' , ['ngRoute']);
+var rooms = {};
 var factoryObject = Object.create(emitter), requests = {};
+var listening = {};
 var pendingCallbacks = {}, backed=false;
 var backOff = 1;
 var factory=function() {
@@ -19,9 +21,20 @@ var factory=function() {
 	factoryObject.messages = getMessages;
 	//factoryObject.messages = callbackGenerator("messages");
 	factoryObject.room = callbackGenerator("room");
-	factoryObject.rooms = callbackGenerator("rooms");
+	factoryObject.rooms =  function(query, callback) {
+		console.log(rooms);
+		if(query.id && rooms["query.id"]){
+			return callback({query:query, data: rooms["query.id"]});
+		}
+		callbackGenerator("rooms")(query, callback);
+	}
 	factoryObject.occupants = callbackGenerator("occupants");
 	factoryObject.membership = callbackGenerator("membership");
+	factoryObject.leaveRest = function(room) {
+		Object.keys(listening).forEach(function(element) {
+			listening[element] && element!=room && leave(element);
+		});
+	};
 
 	factoryObject.enter = enter;
 	factoryObject.leave = leave;
@@ -29,21 +42,15 @@ var factory=function() {
 };
 
 getMessages = function (room, start, end, callback) {
-	console.log("get messages recieved", room, start, end);
-	var query = { to: room, type: 'text' },
-		reqId;
+	var query = { to: room, type: 'text' };
 	if (start) { query.since = start; }
 	if (end) { query.until = end; }
-	reqId = room + '/' + (query.since || '') + '/' + (query.until || '');
-	
-	console.log("Request:", reqId);
-	requests[reqId] = callback;
+	query.queryId = guid();
+	pendingCallbacks[query.queryId] = callback;			
 	socketEmit('messages', query);
 }
 
 function socketEmit(type, data) {
-	console.log("emit is in action");
-	console.log("Socket sending ", type, data);
 	socket.send(JSON.stringify({type: type, data: data}));
 };
 
@@ -57,7 +64,9 @@ function callbackGenerator(event){
 }
 
 
-function send(message, callback){
+function send(message, callback) {
+	if(message.type == "back")	listening[message.to] = true;
+	if(message.type == "away")	listening[message.to] = false;
 	message.id = guid();
 	message.time = new Date().getTime();
 	message.origin = {
@@ -76,13 +85,12 @@ function newSocket() {
 	socket.onopen = function() {
 		backOff = 1;
 		init();
-		enter(window.scrollback.room);
 		factoryObject.emit("connected");
 	};
 	socket.onerror = socketError;
 	socket.onmessage = socketMessage;
 	socket.emit = function(type, data) {
-		scrollback.debug && console.log("Socket sending ", type, data);
+		//scrollback.debug && console.log("Socket sending ", type, data);
 		socket.send(JSON.stringify({type: type, data: data}));
 	};
 	return socket;
@@ -106,7 +114,11 @@ function init(){
 
 
 onMessages = function(data) {
-	//console.log("on messages was invoked", data.messages);
+	if(pendingCallbacks[data.query.queryId]) {
+		console.log(data);
+		pendingCallbacks[data.query.queryId](data.messages);
+		delete pendingCallbacks[data.queryId];
+	}
 	factoryObject.emit("messages", data.messages);
 };
 
@@ -127,7 +139,7 @@ function socketMessage(evt) {
 	try { d = JSON.parse(evt.data); }
 	catch(e) {  console.log("ERROR: Non-JSON data", evt.data); return; }
 
-	scrollback.debug &&	console.log("Socket received", d);
+	//scrollback.debug &&	console.log("Socket received", d);
 	switch(d.type) {
 		case 'init': onInit(d.data); break;
 		case 'message': onMessage(d.data); break;
@@ -147,7 +159,6 @@ onInit = function(data) {
 	factoryObject.initialized = true;
 	factoryObject.emit("init", data);
 	factoryObject.emit("nick", data.user.id);
-	console.log("sending back msg..");
 	backed || (backed==true || (enter(window.scrollback.room)));
 	factoryObject.isActive = true;
 	factoryObject.nick = data.user.id;
@@ -155,9 +166,16 @@ onInit = function(data) {
 
 handler=function(type, data){
 	if(pendingCallbacks[data.query.queryId]) {
-		console.log(type,data);
 		pendingCallbacks[data.query.queryId](data.data);
 		delete pendingCallbacks[data.queryId];
+	}
+	//temp simple caching of the rooms object.
+	if(type == "room") {
+		rooms[data.id] = data;
+	}else if(type=="rooms") {
+		data.data.forEach(function(element) {
+			rooms[element.id] = element;
+		});
 	}
 	factoryObject.emit(type, data.data);
 }
@@ -180,10 +198,12 @@ function socketError(message) {
 	factoryObject.emit("SOC_ERROR", message);
 };
 function enter(room) {
+	factoryObject.emit("listening", room);
 	send({type:"result-start", to:room});
 	send({type:"back", to:room});
 };
 function leave(room) {
+	console.log("leaving", room);
 	send({type:"away", to:room});
 };
 

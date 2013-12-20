@@ -1,7 +1,6 @@
 scrollbackApp.controller('metaController',function($scope, $location, $factory) {
-	$scope.profile = function(){
+	$scope.profile = function() {
 		if(/^guest-/.test($scope.user.id)) {
-			console.log("sdfsdf");
 			$location.path("/me/login");
 		}else{
 			$location.path("/me/edit");	
@@ -12,13 +11,14 @@ scrollbackApp.controller('metaController',function($scope, $location, $factory) 
 			navigator.id.logout();
 		});
 	};
-	$factory.on("room", function(room){
-		if($scope.room.id == room.id){
-			$scope.$apply(function(){
-				$scope.room = room;
-			});
-		}
-	});
+	// $factory.on("room", function(room){
+	// 	if($scope.room.id == room.id) {
+	// 		$scope.$apply(function() {
+	// 			console.log("room setting....");
+	// 			$scope.room = room;
+	// 		});
+	// 	}
+	// });
 	var statusObject = {};
 	// function personaWatch() {
 	// 	console.log("WATCHING...", $scope.nick
@@ -80,6 +80,25 @@ scrollbackApp.controller('meController',['$scope','$route','$factory','$location
 
 
 scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, $location, $routeParams) {
+
+	$factory.leaveRest($routeParams.room);
+	if($scope.room.id == $routeParams.room){
+		if($factory.isActive ){
+			
+		}else{
+			$factory.on("connected", function(){
+				$factory.enter($scope.room.id);		
+			});
+		}
+		
+	}else{
+		$factory.rooms({id:$routeParams.room,fields:["accounts","members"]},function(room) {
+			$scope.$apply(function(){
+				$scope.room = room[0];
+				$factory.enter($scope.room.id);
+			});
+		});	
+	}
 	$scope.isOwner = function() {
 		if($scope.user.id == $scope.room.owner) return true;
 		else return false;
@@ -126,22 +145,9 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		if(index > -1) return true;
 		else return false;
 	};
-
-	if($routeParams.room == $scope.room.id) {
-		return;	
-	}else {
-		$factory.leave($scope.room.id);
-		$factory.rooms({id:$routeParams.room},function(room) {
-			$scope.$apply(function(){
-				$scope.room = room[0];
-				$factory.enter($scope.room.id);
-			});
-		});
-	}
 });
 
 scrollbackApp.controller('roomscontroller', ['$scope', '$timeout' , function($scope, $timeout) {	
-	console.log("Rooms view controller is called now, value of membership is", $scope.user.membership);
 	$scope.isExists = function(m) {
 		if (m && m.length > 0) {
 			return true; 
@@ -159,7 +165,6 @@ scrollbackApp.controller('configcontroller' , function($scope, $factory, $locati
 	$scope.name = $scope.room.name || $scope.room.id;
 	$scope.description = $scope.room.description || $scope.room.description;
 	if($scope.room.params){
-		console.log($scope.room.params.wordban, $scope.room.params.loginrequired);
 		$scope.wordEnable = $scope.room.params.wordban?1:0;
 		$scope.loginEnable = $scope.room.params.loginrequired?1:0;
 		if($scope.room.accounts && $scope.room.accounts.forEach){
@@ -181,13 +186,11 @@ scrollbackApp.controller('configcontroller' , function($scope, $factory, $locati
 	};
 	$scope.saveRoom = function() {
 		var room={};
-		console.log($scope.name, $scope.description);
 		room.id = $scope.room.id;
 		room.name = $scope.name || $scope.room.id;
 		room.description = $scope.description || "";
 		room.params = {};
 		room.type = "room";
-		console.log($scope.wordEnable,$scope.loginEnable);
 		room.params.wordban = $scope.wordEnable?true:false;
 		room.params.loginrequired = $scope.loginEnable?true:false;
 		if($scope.ircServer && $scope.ircRoom) {
@@ -205,7 +208,13 @@ scrollbackApp.controller('configcontroller' , function($scope, $factory, $locati
 		}
 		$factory.room( room, function(room) {
 			if(room.message)	alert(room.message);
-			else	$location.path("/"+$scope.room.id);
+			else {
+				$scope.$apply(function(){
+					$scope.room = room;
+					$factory.emit("roomchange", room.id);
+				});
+				$location.path("/"+$scope.room.id);
+			}
 		});
 	};
 });
@@ -218,9 +227,6 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory',  function($sc
 			$scope.user.picture = "//s.gravatar.com/avatar/guestpic";
 		}
 		else{
-			var account = data.user.accounts[0].id.substring(7);
-			var hash = CryptoJS.MD5(account);
-			$scope.user.picture = "//s.gravatar.com/avatar/" + hash;
 			if(data.user.membership) {
 				$scope.user.membership = Object.keys(data.user.membership);
 			}

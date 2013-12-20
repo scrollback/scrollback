@@ -32,7 +32,6 @@ function rooms(coreObject) {
 			callback();	
 		}
 	},"cache");
-
 	core.on("rooms", function(options, callback) {
 		var query = "SELECT * FROM `rooms` ",
 			where = [],	 params=[], desc=false, limit=256, accountIDs = [];
@@ -86,17 +85,30 @@ function rooms(coreObject) {
 
 			ids = Object.keys(rooms);
 			if(options.fields && data.length > 0) {
-				options.fields.forEach(function(element) {
-					if(element == "accounts" && ids.length) {
+				function getFields(fields,index, callback) {
+					if(index >= fields.length) return callback();
+					if(fields[index] == "accounts" && ids.length) {
 						getAccounts(ids, function(err, accounts) {
 							var accountsInfo={};
 							if(err) return callback(err);
 							accounts.forEach(function(element) {
 								rooms[element.room].accounts.push(element);
 							});
-							return callback(true, data);
+							return getFields(fields, index+1, callback);
 						});
 					}
+					if(fields[index] == "members" && ids.length) {
+						getMembers(ids,function(err, roomMembers) {
+							if(err) return callback(err);
+							Object.keys(roomMembers).forEach(function(roomId) {
+								rooms[roomId].members = roomMembers[roomId];
+							});
+							return getFields(fields, index+1, callback);
+						});
+					}
+				}
+				getFields(options.fields, 0, function(){
+					return callback(true, data);
 				});
 			}
 			else {
@@ -108,7 +120,7 @@ function rooms(coreObject) {
 	core.emit("rooms", {query:"", type:"room", fields:["accounts"]}, function(err, data){
 		if(err)	throw err;
 		data.forEach(function(element) {
-			log("Caching", element);
+			console.log("Caching", element);
 			redis.set("room:"+element.id, JSON.stringify(element));
 		});
 	});
@@ -120,4 +132,32 @@ function getAccounts(ids,callback) {
 		callback(null, accounts);
 	});
 }
+
+function getMembers(ids, callback) {
+	core.emit("members" ,{room:ids}  , function(err , members) {
+		if(err) return callback(err);
+		var ids=[], user = {}, rooms = {};
+		members.forEach(function(element) {
+		    ids.push(element.user);
+		    if(!rooms[element.room]) rooms[element.room] = [];
+		    rooms[element.room].push(element.user);
+		    user[element.user] = element.user;
+		});
+		db.query("select * from rooms where id in (?)",[ids], function(err, users) {
+			if(err) return callback(err);
+			var returnData = {};
+			users.forEach(function(element) {
+				user[element.id] = element;
+			});
+			Object.keys(rooms).forEach(function(roomId) {
+				rooms[roomId].forEach(function(id) {
+					if(!returnData[roomId]) returnData[roomId] =[];
+					returnData[roomId].push(user[id]);
+				})
+			});
+			callback(null, returnData);
+		});
+	});
+}
+
 module.exports = rooms;

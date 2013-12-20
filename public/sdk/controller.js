@@ -1,28 +1,36 @@
 //scrollback.controller('Main' , [$scope , function($scope , factory , $timeout){
 function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
     $scope.items = [];
-    var messages = messageArray();
-	
-    messages.load($scope.room.id);
-    messages.merge($scope.messages.reverse());
-    messages.save($scope.room.id);
-	
-    // console.log("Messages are loaded up", messages);
-    var topIndex = 0, bottomIndex = 0;
-    // initialising items with 50 messages initially 
-    for (var i = 0; i < 50; i++) {
-        if(topIndex < messages.length){
-            if(messages[topIndex].type == "text")
-                $scope.items.unshift(messages[topIndex]);
-            topIndex += 1;
+    var messages;
+	var topIndex = 0, bottomIndex = 0;
+
+    function loadItems(data, room) {
+        console.log("loadItems, "+room);
+        messages = messageArray();
+        $scope.items =[];
+        messages.load(room);
+        messages.merge(data.reverse());
+        messages.save(room);
+        console.log(messages);
+        // initialising items with 50 messages initially 
+        for (var i = 0; i < 50; i++) {
+            if(topIndex < messages.length){
+                if(messages[topIndex].type == "text")   $scope.items.unshift(messages[topIndex]);
+                topIndex += 1;
+            }
         }
+        console.log($scope.items);
     }
-    $factory.on("nick", function(nick) {
-        $scope.$apply(function() {
-            $scope.user.id = nick;
+    loadItems($scope.messages, $scope.room.id);
+
+    $factory.on("listening", function(room) {
+        $factory.messages(room, 0,null, function(data) {
+            $scope.$apply(function() {
+                loadItems(data, room);    
+            });
         });
     });
-    $factory.on("message", function(msg) {
+   $factory.on("message", function(msg) {
         if(msg.from != $scope.user.id){
             newMessage(msg);  
         } 
@@ -30,13 +38,11 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     function newMessage(data) {
         // type is text, leave out err msgs, if any.. 
         messages.unshift(data);
-        console.log("msg added to the cache... ", data.from, $scope.user.id);
         //messages.save($scope.scopeObj.room.name);
         if(data.from == $scope.user.id){
             $scope.gotoBottom(); 
             $scope.items.pop();
         }
-        console.log(bottomIndex, topIndex);
         if(!data.message && bottomIndex === 0 && data.type == "text") {
             $scope.$apply(function(){
                 $scope.items.shift();
@@ -78,12 +84,10 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                 topIndex += 1;
             }
             if(messages.length - topIndex == 20){
-                console.log("top reached", messages[topIndex]);
                 // time to request factory for messages from above 
                 $factory.messages($scope.room.id, "", messages[messages.length - 1].time);
                 $factory.on("messages", function(data){
                     if(data.length > 1 && data[data.length-1].type == "result-end"){
-                        console.log("concatenating now!", data[data.length-1]);
                         messages = messages.concat(data.reverse());
                     }
                     //console.log(" in factory.onMessages", data);emm
@@ -192,7 +196,6 @@ scrollbackApp.directive('message',function() {
             });
 			attr.$observe('label', function(value){
 				value = value || "nolabel";
-				console.log("value that will be hashed :", value);
 				$scope.bcolor = hashColor(value);
 			});
             attr.$observe('text', function(value) {
