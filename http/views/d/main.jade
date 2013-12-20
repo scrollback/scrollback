@@ -17,12 +17,14 @@ html(ng-app='scrollbackApp', ng-controller="rootController", ng-init = "user = #
 			#user
 				a: img.face(src='{{user.picture}}' ng-click='profile()')
 			#username(ng-click='profile()') {{user.id}}
+            
 			#info 
 				ng-view
 			#foot
 				| Scrollback is a product of Askabt Pte Ltd.
 				| We respect your privacy. 
 		#body(ng-controller="messageController",class = 'column')
+        
 			div(id="nomessagediv", ng-show = "{{items.length ==0}}")
 				| There are no messages in this room yet!
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
