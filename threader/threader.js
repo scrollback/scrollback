@@ -2,25 +2,38 @@ var log = require("../lib/logger.js");
 var config = require('../config.js');
 var fs=require("fs");
 var net = require('net');
+var jade = require("jade")
 var client;
 var pendingCallbacks = {};
 /**
 Communicate with scrollback java Process through TCP and set message.labels.
+Add labels only if threader is enabled for room.
 */
 
 module.exports = function(core) {
 	if (config.threader) {
+		var pluginContent = "";
+		fs.readFile(__dirname + "/threader.jade", "utf8", function(err, data){
+			if(err)	throw err;
+			//this is a function object. 
+			pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/' });
+			
+			core.on("config", function(payload, callback) {
+				payload.threader = pluginContent;
+				callback(null, payload);
+			}, "setters");
+		});
 		init();
 		core.on('message', function(message, callback) {
-			console.log("threader1");
+			console.log("threader");
 			
 			if(message.type == "text" && client.writable) {//if client connected and text message
 				return core.emit('rooms', {id:message.to}, function(err, rooms) {
-					console.log("threader1",rooms);
+					console.log("threader",rooms);
 					if(err) callback(err);
-					//enabling threader for all the rooms for now.
-					//if(rooms.length==0 || (rooms[0].params && rooms[0].params.threader1)) {
-					if(true){
+					
+					if(rooms.length !== 0 && (rooms[0].params && rooms[0].params.threader)) {//if threader is enabled or not for room 
+					//if(true){
 						var msg = JSON.stringify({
 							id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
 							text: message.text.replace(/['"]/g, ''),
