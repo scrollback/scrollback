@@ -14,7 +14,7 @@ module.exports = function(core) {
 		core.on('message', function(message, callback) {
 			console.log("threader1");
 			
-			if(!client.writable) callback();
+			if(!client.writable) return callback();
 			
 			if(message.type == "text") {
 				return core.emit('rooms', {id:message.to}, function(err, rooms) {

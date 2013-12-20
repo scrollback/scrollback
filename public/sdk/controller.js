@@ -192,7 +192,7 @@ scrollbackApp.directive('message',function() {
                 $scope.nick = (value.indexOf("guest-")!==0)?value: value.replace("guest-","");
             });
 			attr.$observe('label', function(value){
-				console.log("value that will be hashed :", value);
+				//console.log("value that will be hashed :", value);
                 if(value){
                     $scope.bcolor = hashColor(value);
                 }
@@ -217,11 +217,11 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
             $('#body').bind('reposition', function(e) {
                 // console.log("reposition event is fired!", e.above, e.below, e.by);
 //                console.log("Reposition ",e);
-                if(e.above < 150 ) {
+                if(e.above < 150 && e.by<0) {
                     scope.$apply(attr.whenScrolledUp);
                     $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
                  }
-                 else if(e.below < 150) {
+                 else if(e.below < 150 && e.by>0) {
                     scope.$apply(attr.whenScrolledDown);
                 }
             });
