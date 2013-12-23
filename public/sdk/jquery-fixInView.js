@@ -20,18 +20,24 @@
 				up = lastTop > top;
 			
 			if(lastTop == top) return;
-				
+			
 			columns.each(function () {
 				var column = $(this),
 					cHeight = column.outerHeight(),
-					cTop = column.position().top + column.offsetParent().scrollTop(),
+					cTop = column.position().top,
 					small = cHeight < height,
 					status = column.data('fixedInStatus'),
 					cSilent = !!silent,
-					dbg = [column.attr('id'), top, height, cTop, cHeight, column.offsetParent()[0]].join(' ');
+					dbg = [column.attr('id'), status, top, height, cTop, cHeight, small].join(' ');
+				
+				if(status == 'top' || status == 'bottom') {
+					cTop += top;
+				}
+				
+				console.log(column.attr('id'), status, top, height, cTop, cHeight, small);
 				
 				if((!small && up || small && !up) && status == 'bottom') {
-					console.log(dbg, 'unfixing up');
+					// console.log(dbg, 'unfixing up');
 					column.data('fixedInStatus', 'none');
 					status = 'none';
 					column.css({
@@ -42,7 +48,7 @@
 				}
 				
 				if((!small && !up || small && up) && status == 'top') {
-					console.log(dbg, 'unfixing dn');
+					// console.log(dbg, 'unfixing dn');
 					column.data('fixedInStatus', 'none');
 					status = 'none';
 					column.css({
@@ -51,15 +57,13 @@
 						bottom: 'auto'
 					});
 				}
-				
-				// cTop = column.position().top + column.offsetParent().scrollTop();
-				
+								
 				if(
 					status != 'top' &&
 					((!small && up && cTop > top) ||
 					(small && !up && cTop < top))
 				) {
-					console.log(dbg, 'fixing up');
+					// console.log(dbg, 'fixing up');
 					column.data('fixedInStatus', 'top');
 					column.css({
 						position: 'fixed',
@@ -73,7 +77,7 @@
 					((!small && !up && cTop + cHeight < top + height) ||
 					(small && up && cTop + cHeight > top + height))
 				) {
-					console.log(dbg, 'fixing dn');
+					// console.log(dbg, 'fixing dn');
 					column.data('fixedInStatus', 'bottom');
 					column.css({
 						position: 'fixed',
@@ -82,24 +86,22 @@
 					});
 				}
 				
-				else if(!cSilent && (status == 'top' || status == 'bottom')) {
-					cSilent = true;
-				}
-				
 				if(!cSilent) {
-					cTop = column.offset().top;
+					status = column.data('fixedInStatus');
+					cTop = column.offset().top + ((status == 'top' || status == 'bottom')? top: 0);
+					
 					column.trigger({
 						type: 'reposition',
 						by: top - lastTop,
 						above: -cTop + top,
-						range: height, 
+						range: height,
 						below: cHeight - height + cTop - top,
 						height: cHeight
 					});
 				}
 			});
 			
-			lastTop = top;
+			lastTop = container.scrollTop();
 		}
 		
 		container.scroll(function(e) {
@@ -118,10 +120,16 @@
 		var container = this.data('fixedInContainer'),
 			column = this;
 		
-		if(!readjustment) { ignoreScroll = true; console.log("set ignore"); }
+		if(adjustment === 0) return;
+		
+		if(!readjustment) {
+			ignoreScroll = true;
+			// console.log('nudge', column.attr('id'), adjustment);
+			// console.log("set ignore"); 
+		}
 		
 		if(!container) {
-			console.log('Cannot nudgeInView: Isnt fixedInView yet', this);
+			// console.log('Cannot nudgeInView: Isnt fixedInView yet', this);
 			return;
 		}
 		
@@ -143,13 +151,14 @@
 		}
 		
 		column.css({top: cTop + adjustment});
-		if(cTop + adjustment < 0) {
+		if(cTop + adjustment < 0 && !readjustment) {
 			adjustment = -cTop - adjustment;
 			container.data('fixedInColumns').each(function() {
 				$(this).nudgeInView(adjustment, true);
 			});
 			container.scrollTop(container.scrollTop() + adjustment);
-		};
+			lastTop = container.scrollTop();
+		}
 		
 		
 		
@@ -160,7 +169,7 @@
 			((!small && cTop > top) ||
 			(small && cTop < top))
 		) {
-			console.log(dbg, 'refixing up');
+			// console.log(dbg, 'refixing up');
 			column.data('fixedInStatus', 'top');
 			column.css({
 				position: 'fixed',
@@ -173,7 +182,7 @@
 			((!small && cTop + cHeight < top + height) ||
 			(small && cTop + cHeight > top + height))
 		) {
-			console.log(dbg, 'refixing dn');
+			// console.log(dbg, 'refixing dn');
 			column.data('fixedInStatus', 'bottom');
 			column.css({
 				position: 'fixed',
@@ -182,8 +191,9 @@
 			});
 		}
 		
-		lastTop = container.scrollTop();
-		
-		if(!readjustment) setTimeout(function() { ignoreScroll = false; console.log("clear ignore"); }, 100);
+		if(!readjustment) setTimeout(function() {
+			ignoreScroll = false; 
+			// console.log("clear ignore");
+		}, 100);
 	};
 }(jQuery));
