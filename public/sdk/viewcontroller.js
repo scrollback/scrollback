@@ -238,7 +238,8 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory',  function($sc
 				$scope.user.picture = "//s.gravatar.com/avatar/guestpic";
 			}else {
 				if(data.user.membership) {
-					$scope.user.membership = Object.keys(data.user.membership);
+					if(data.user.membership instanceof Array) $scope.user.membership = data.user.membership;
+					else $scope.user.membership = Object.keys(data.user.membership);
 				}
 			}	
 		});
