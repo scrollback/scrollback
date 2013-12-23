@@ -242,7 +242,7 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	var mentionedClass = mentionedRegex.test(message.text)&& message.from != core.nick()?" scrollback-message-mentioned ":"";
 	function format(text) {
 		if(!text) return "";
-		var u = /\b(https?\:\/\/)?([\w.:\-]*@)?((?:[a-z0-9\-]+)(?:\.[a-z0-9\-]+)*(?:\.[a-z]{2,4}))((?:\/|\?)\S*)?\b/g;
+		var u = /\b(https?\:\/\/)?([\w.\-]*@)?((?:[a-z0-9\-]+)(?:\.[a-z0-9\-]+)*(?:\.[a-z]{2,4}))((?:\/|\?)\S*)?\b/g;
 		var m = ["span"], r, s=0, protocol, user, domain, path;
 		while((r = u.exec(text)) !== null) {
 			m.push(text.substring(s, r.index));
