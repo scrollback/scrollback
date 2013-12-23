@@ -248,8 +248,6 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 			m.push(text.substring(s, r.index));
 			protocol = r[1], user = r[2], domain = r[3], path = r[4] || '';
 			
-			console.log(r);
-			
 			protocol = protocol || (user? 'mailto:': 'http://');
 			user = user || '';
 			
