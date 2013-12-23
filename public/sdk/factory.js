@@ -1,7 +1,7 @@
 /*
 dependencies: emitter.js
 */
-var scrollbackApp = angular.module('scrollbackApp' , ['ngRoute','ngAnimate']);
+var scrollbackApp = angular.module('scrollbackApp' , ['ngRoute']);
 var rooms = {};
 var factoryObject = Object.create(emitter), requests = {};
 var listening = {};
