@@ -127,8 +127,11 @@ exports.init = function(app, coreObject) {
             responseObj.room.title = responseObj.room.id.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {
                 return f.toUpperCase() + r.toLowerCase() + ' ';
             });
-            if (user && user.membership) responseObj.user.membership=Object.keys(user.membership);
-
+            if (user && user.membership){
+				if(user.membership instanceof Array) responseObj.user.membership = user.membership;
+				else responseObj.user.membership = Object.keys(user.membership); 
+			} 
+			
             query.to=params[0];
             query.type="text";
             query.limit=250;

@@ -84,7 +84,7 @@ function init(data, conn) {
 				
 			});
 			session.set(conn.sid, sess);
-		})
+		});
 	});
 }
 

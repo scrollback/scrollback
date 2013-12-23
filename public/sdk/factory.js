@@ -125,6 +125,7 @@ onMessages = function(data) {
 };
 
 onMessage = function(data){
+	console.log("NEWMSG:", data);
 	if(pendingCallbacks[data.id]) {
 		pendingCallbacks[data.id](data);
 		delete pendingCallbacks[data.id];
@@ -169,7 +170,6 @@ onInit = function(data) {
 };
 
 handler=function(type, data){
-	console.log(data);
 	if(pendingCallbacks[data.query.queryId]) {
 		pendingCallbacks[data.query.queryId](data);
 		delete pendingCallbacks[data.queryId];
