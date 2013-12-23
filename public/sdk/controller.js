@@ -190,12 +190,11 @@ scrollbackApp.directive('message',function() {
                                 //$scope.bcolor = hashColor(value);
                 $scope.nick = (value.indexOf("guest-")!==0)?value: value.replace("guest-","");
             });
-             
 			attr.$observe('label', function(value) {
 				if(value){
-					$scope.bcolor = hashColor(value);
-				}
-			});
+                    $scope.bcolor = hashColor(value);
+                }
+            });
             attr.$observe('text', function(value) {
                 $scope.text = " "+value;
             });

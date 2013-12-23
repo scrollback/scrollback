@@ -75,7 +75,7 @@ function init(data, conn) {
 					m[d[i].room]=true;
 				}
 			}
-			sess.user.membership = m;//Room added to user object
+			sess.user.membership = Object.keys(m);//Room added to user object
 			conn.send('init', {
 				sid: sess.cookie.value,
 				user: sess.user,
@@ -305,7 +305,6 @@ function message (m, conn) {
 }
 
 
-//not sure what ths function is used for at the time. -Harish
 function room (r, conn) {
 	var user;
 	session.get({sid: conn.sid}, function(err, sess) {
@@ -317,9 +316,15 @@ function room (r, conn) {
 		core.emit("room", r, function(err, data) {
 			if(err) {
 				log("ROOM ERROR", r, err);
-				conn.send('error', {queryId:r.queryId, error:err.message});
+				data = {error:err.message}
+				data.query= {
+					queryId : r.queryId
+				}
+				conn.send('error', data);
 			}else{
-				data.queryId = r.queryId;
+				data.query= {
+					queryId : r.queryId
+				}
 				conn.send('room', data);
 			}
 		});

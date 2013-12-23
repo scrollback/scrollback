@@ -167,19 +167,19 @@ onInit = function(data) {
 };
 
 handler=function(type, data){
-	if(data.query && pendingCallbacks[data.query.queryId]) {
-		pendingCallbacks[data.query.queryId](data.data);
+	if(pendingCallbacks[data.query.queryId]) {
+		pendingCallbacks[data.query.queryId](data);
 		delete pendingCallbacks[data.queryId];
 	}
-	//temp simple caching of the rooms object.
-	if(type == "room") {
-		rooms[data.id] = data;
-	}else if(type=="rooms") {
-		data.data.forEach(function(element) {
-			rooms[element.id] = element;
-		});
-	}
-	factoryObject.emit(type, data.data);
+	// //temp simple caching of the rooms object.
+	// if(type == "room") {
+	// 	rooms[data.id] = data;
+	// }else if(type=="rooms") {
+	// 	data.data.forEach(function(element) {
+	// 		rooms[element.id] = element;
+	// 	});
+	// }
+	factoryObject.emit(type, data);
 }
 
 function onError(err) {

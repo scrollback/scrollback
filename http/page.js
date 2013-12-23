@@ -91,7 +91,7 @@ exports.init = function(app, coreObject) {
             profile: "http://sampleroom.blogspot.com" 
         }});
 	});    
-    app.get("*", function (req, res, next) {
+    function roomHandler(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, 
         query={}, sqlQuery, roomId = params[0], user = req.session.user,
         queryString, resp={};
@@ -140,9 +140,6 @@ exports.init = function(app, coreObject) {
                 case 'until':
                     query.until=new Date(params[2]).getTime();
                     break;
-                case 'edit':
-                    return next();
-                    break;
             }
             
             core.emit("messages", query, function(err, m) {
@@ -152,8 +149,9 @@ exports.init = function(app, coreObject) {
                 res.render("d/main" , responseObj);
             });
         });
-    });
-
+    }
+    app.get("*", roomHandler);
+    app.get("*/edit", roomHandler);
     // app.get("*", function(req, res, next) {
     //     var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[0],
     //     user = req.session.user;

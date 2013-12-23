@@ -1,18 +1,21 @@
 <div class="room" ng-show = "!isExists(user.membership)">
 	<h1>
 		<a class="noChange">
+			<a ng-click="goBack()"><span class="fa fa-arrow-left btn left"></span></a>
 			<span> You are not following any rooms yet. If you follow a room, it will show up here! </span>
 		</a>
 	</h1>
 </div>
 <div class="room" ng-show = "isExists(user.membership)" ng-repeat="m in user.membership "> 
 	<h1>
-		<a class="noChange" ng-click = "goTo(m)">
-			<span class="roomname"> {{m}} </span>
-		</a>
-		<button class="right">
-			<span class="fa fa-info"></span>
-		</button>
+		<a ng-click="goBack()" ><span class="fa fa-arrow-left btn left"></span></a>
+		<span>List of rooms that you are following: </span>
+		<div>
+			<a class="roomname noChange" ng-click = "goTo(m)">
+				<span> {{m}} </span>
+			</a>
+			<span class="right fa fa-info"></span>
+		</div>
 	</h1>
 	<p id="description"> 
 	</p>
