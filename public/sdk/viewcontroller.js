@@ -131,6 +131,9 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 });
 
 scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', function($scope, $timeout, $location) {	
+	$scope.goBack = function(){
+		$location.path("/"+$scope.room.id);
+	};
 	if(/^guest-/.test($scope.user.id)) {
         $location.path("/me/login");
     }
@@ -147,8 +150,14 @@ scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', 
 
 scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location', '$rootScope', '$routeParams', function($scope, $factory, $location, $rootScope, $routeParams) {
 	var url;
+	$scope.goBack = function(){
+		$location.path("/"+$scope.room.id);
+	};
+	if(/^guest-/.test()){
+		$location.path("/me/login");
+	}
 	if($scope.user.id != $scope.room.owner && typeof $scope.room.owner!= "undefined") {
-		$location.path("/")
+		$location.path("/"+$scope.room.id);
 		return;
 	}
 	$scope.name = $scope.room.name || $scope.room.id;
@@ -196,12 +205,16 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 			room.params.irc = false;
 		}
 		$factory.room( room, function(room) {
+			console.log(room);
 			if(room.message)	alert(room.message);
 			else {
 				$scope.$apply(function() {
-					$scope.room = room;
+					Object.keys(room).forEach(function(element){
+						$scope.room[element] = room[element];
+					});
+					$location.path("/"+$scope.room.id);
 				});
-				$location.path("/"+$scope.room.id);
+				
 			}
 		});
 	};
@@ -211,8 +224,10 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory',  function($sc
 	$factory.on('init', function(data){
 		//assigning the new new init data to the user scope ---
 		$scope.$apply(function(){
-			$scope.user.id = data.user.id;
-			$scope.user.picture = data.user.picture;
+			Object.keys(data.user).forEach(function(key){
+				$scope.user[key] = data.user[key];
+			});
+			console.log($scope.user);
 			if(/^guest-/.test(data.user.id)) {
 				$scope.user.picture = "//s.gravatar.com/avatar/guestpic";
 			}else {

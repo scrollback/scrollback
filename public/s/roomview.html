@@ -1,24 +1,11 @@
 <h1>
-	<a href="/me" class='btn left'>
-		<span class="fa fa-arrow-left"></span></a>
-	<span> {{room.name || room.id}} </span>
-	<button class="right" ng-show = "!room.owner" ng-click = "goToConfigure()" title = "claim" >
-			<span class="fa fa-tags"></span>
-	</button>
-	<button class="right" ng-show = "user.owner==user.id" ng-click = "logout()" title = "logout" >
-			<span class="fa fa-power-off"></span>
-	</button>
-
-	<button class="right" ng-show = "isOwner()" ng-click = "goToConfigure()" title = "configure" >
-			<span class="fa fa-gears"></span>
-	</button>
-	
-	<button class="right" title = "Unfollow Room"  ng-click="partRoom()" ng-show = "hasMembership()" >
-		<span class="fa fa-repeat"></span>
-	</button>
-	<button class="right" title = "Follow Room"  ng-click="joinRoom()" ng-show = "!hasMembership()" >
-		<span class="fa fa-check-square-o"></span>
-	</button>
+	<a href="/me"><span class="fa fa-arrow-left btn left"></span></a>
+	<span> {{room.name || room.id || "No room selected"}}:</span>
+	<span class="fa fa-tags right" ng-show = "!room.owner" ng-click = "goToConfigure()" title = "claim" ></span>
+	<span class="fa fa-power-off right" ng-show = "user.owner==user.id" ng-click = "logout()" title = "logout"></span>
+	<span class="fa fa-gears right" ng-show = "isOwner()" ng-click = "goToConfigure()" title = "configure"></span>
+	<span class="fa fa-repeat right" title = "Unfollow Room"  ng-click="partRoom()" ng-show = "hasMembership()" ></span>
+	<span class="right fa fa-check-square-o" title = "Follow Room"  ng-click="joinRoom()" ng-show = "!hasMembership()" ></span>
 </h1>
 <p id="description" class = "collapse expanded"> {{ room.description || "This room does not have a description yet!"}} </p>
 <div id="members"> 
