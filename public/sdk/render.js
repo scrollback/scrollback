@@ -242,14 +242,18 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	var mentionedClass = mentionedRegex.test(message.text)&& message.from != core.nick()?" scrollback-message-mentioned ":"";
 	function format(text) {
 		if(!text) return "";
-		var u = /\b(https?\:\/\/)?([\w.:\-]*@)?((?:[a-z0-9\-]+)(?:\.[a-z0-9\-]+)*(?:\.[a-z]{2,4}))((?:\/|\?)\S*)?\b/;
+		var u = /\b(https?\:\/\/)?([\w.:\-]*@)?((?:[a-z0-9\-]+)(?:\.[a-z0-9\-]+)*(?:\.[a-z]{2,4}))((?:\/|\?)\S*)?\b/g;
 		var m = ["span"], r, s=0, protocol, user, domain, path;
 		while((r = u.exec(text)) !== null) {
 			m.push(text.substring(s, r.index));
-			protocol = r[1], user = r[2] || '', domain = r[3] , path = r[4] | '';
+			protocol = r[1], user = r[2], domain = r[3], path = r[4] || '';
 			
-			protocol = protocol || user? 'mailto:': 'http://';
+			console.log(r);
 			
+			protocol = protocol || (user? 'mailto:': 'http://');
+			user = user || '';
+			
+		//	console.log(s);
 			s = u.lastIndex;
 			m.push(["a", {href: protocol + user + domain + path, target: '_blank'}, r[0]]);
 		}
