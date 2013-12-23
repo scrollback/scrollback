@@ -92,7 +92,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	if($factory.isActive ) {
 		$factory.enter($routeParams.room);
 	}else {
-		$factory.on("connected", function() {
+		$factory.on("init", function() {
 			$factory.enter($routeParams.room);
 		});
 	}

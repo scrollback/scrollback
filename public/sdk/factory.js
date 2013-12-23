@@ -164,7 +164,6 @@ onInit = function(data) {
 	factoryObject.initialized = true;
 	factoryObject.emit("init", data);
 	factoryObject.emit("nick", data.user.id);
-	backed || (backed==true || (enter(window.scrollback.room)));
 	factoryObject.isActive = true;
 	factoryObject.nick = data.user.id;
 };
@@ -203,7 +202,6 @@ function socketError(message) {
 	factoryObject.emit("SOC_ERROR", message);
 };
 function enter(room) {
-
 	if(!listening[room]) {
 		console.log("sending away....");
 		send({type:"back", to:room});
