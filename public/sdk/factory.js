@@ -167,7 +167,7 @@ onInit = function(data) {
 };
 
 handler=function(type, data){
-	if(pendingCallbacks[data.query.queryId]) {
+	if(data.query && pendingCallbacks[data.query.queryId]) {
 		pendingCallbacks[data.query.queryId](data.data);
 		delete pendingCallbacks[data.queryId];
 	}

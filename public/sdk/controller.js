@@ -190,17 +190,12 @@ scrollbackApp.directive('message',function() {
                                 //$scope.bcolor = hashColor(value);
                 $scope.nick = (value.indexOf("guest-")!==0)?value: value.replace("guest-","");
             });
-<<<<<<< HEAD
-                        attr.$observe('label', function(value){
-                                //console.log("value that will be hashed :", value);
-                if(value){
-=======
+             
 			attr.$observe('label', function(value) {
 				if(value){
->>>>>>> 18e82a719bf1a5060afb51083c80bc58cc437263
-                    $scope.bcolor = hashColor(value);
-                }
-                        });
+					$scope.bcolor = hashColor(value);
+				}
+			});
             attr.$observe('text', function(value) {
                 $scope.text = " "+value;
             });

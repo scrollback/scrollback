@@ -94,14 +94,14 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		msg.to = $scope.room.id;
 		msg.type = "part";
 		$factory.message(msg);
-		if($scope.user.membership){
+		if($scope.user.membership && $.isArray($scope.user.membership)){
 			index = $scope.user.membership.indexOf($scope.room.id);
 			if(index >= 0){
 				$scope.user.membership.splice(index, 1);
 				//deleting gravatar 
-				for(i=0,l=$scope.members.length;i<l;i++) {
-					if($scope.members[i].id === $scope.user.id){
-						$scope.members.splice(i,1);
+				for(i=0,l=$scope.room.members.length;i<l;i++) {
+					if($scope.room.members[i].id === $scope.user.id){
+						$scope.room.members.splice(i,1);
 						break;
 					}
 				}
@@ -119,12 +119,13 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		msg.type = "join";
 		$factory.message(msg);
 		$scope.user.membership.unshift($scope.room.id);
-		$scope.members.unshift($scope.user);
+		$scope.room.members.unshift($scope.user);
 	}
 	
 	$scope.hasMembership = function() {
+		var index = -1;
 		if(!$scope.user.membership) return false;
-		var index = $scope.user.membership.indexOf($scope.room.id);
+		if($.isArray($scope.user.membership)) index = $scope.user.membership.indexOf($scope.room.id);
 		if(index > -1) return true;
 		else return false;
 	};
@@ -204,6 +205,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 				$location.path("/"+$scope.room.id);
 			}
 		});
+		
 	};
 }]);
 
