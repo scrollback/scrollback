@@ -30,10 +30,10 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 				div(ng-repeat="i in items track by $index")
 					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}")
-				#endoflog
 			form.messageWrapper(ng-submit="message();")
 				input.messageBox(type="text", ng-model="text")
 				input(id="submitButton" type="submit")
+			a(name="git cendoflog")
 		script.
 			window.scrollback = {
 				host : '//' + location.host,

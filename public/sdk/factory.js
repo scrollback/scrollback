@@ -75,6 +75,8 @@ function send(message, callback) {
 	};
 	if(callback) pendingCallbacks[message.id] = callback;
 	socket.emit("message", message);
+	
+	$('html, body').animate({scrollTop:$(document).height()}, 'slow'); //scrolling down to bottom of page.
 }
 
 

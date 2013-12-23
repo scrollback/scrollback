@@ -22,7 +22,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         });
     });
     $factory.on("message", function(msg) {
-        if(msg.from != $scope.user.id){
+        if(msg.from != $scope.user.id) {
             newMessage(msg);  
         }
     });
@@ -65,9 +65,9 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                     $scope.items.unshift(messages[topIndex]);
                 topIndex += 1;
             }
+//        $location.hash('endoflog');
+//        $anchorScroll();
         }
-        $location.hash('endoflog');
-        $anchorScroll();
     };
 
     $scope.loadMoreUp = function() {
@@ -97,7 +97,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         // removing elements from the bottom which are out of view scope 
         $timeout( function() {
             if($scope.items.length > 50) {
-                while($scope.items.length > 50) { 
+                while($scope.items.length > 50) {
                     if(messages[bottomIndex].type != "text") bottomIndex += 1;
                     $scope.items.pop();
                     bottomIndex += 1;
@@ -109,12 +109,12 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         // TODO : popping from top :)
         // console.log("Top element ", messages[topIndex]);
         for(i=0; i< 5; i++) {
-              if(bottomIndex > 0){
+              if(bottomIndex > 0) {
                 if(messages[bottomIndex].type == 'text')
                     $scope.items.push(messages[bottomIndex]);
                 bottomIndex -= 1;
               }
-              if(bottomIndex === 0 && $scope.items[$scope.items.length-1] != messages[0]){
+              if(bottomIndex === 0 && $scope.items[$scope.items.length-1] != messages[0]) {
                 if(messages[0].type == "text")
                     $scope.items.push(messages[0]);
                 bottomIndex = 0;
@@ -190,9 +190,14 @@ scrollbackApp.directive('message',function() {
                                 //$scope.bcolor = hashColor(value);
                 $scope.nick = (value.indexOf("guest-")!==0)?value: value.replace("guest-","");
             });
+<<<<<<< HEAD
                         attr.$observe('label', function(value){
                                 //console.log("value that will be hashed :", value);
                 if(value){
+=======
+			attr.$observe('label', function(value) {
+				if(value){
+>>>>>>> 18e82a719bf1a5060afb51083c80bc58cc437263
                     $scope.bcolor = hashColor(value);
                 }
                         });
@@ -219,8 +224,8 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
                 if(e.above < 150 && e.by<0) {
                     scope.$apply(attr.whenScrolledUp);
                     $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
-                 }
-                 else if(e.below < 150 && e.by>0) {
+                }
+                else if(e.below < 30) {
                     scope.$apply(attr.whenScrolledDown);
                 }
             });
