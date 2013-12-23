@@ -1,10 +1,13 @@
-div(ng-controller="meController")
+div
 	h1
-		button.left: span.fa.fa-arrow-left
+		button.left: span.fa.fa-arrow-left(ng-click = "goBack()")
 		span My account
 	form#profile
 		label Username
-			input(ng-model="displayNick",)
+			div.room(ng-show="isGuest()")
+				input(value="{{user.id}}",ng-model="nick")
+			div.room(ng-show="!isGuest()")
+				input(disabled,value="{{user.id}}",ng-model="nick")
 		label Email
 			input(disabled,ng-init='email="#{email}"',ng-model="email")
 		label

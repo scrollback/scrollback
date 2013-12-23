@@ -1,51 +1,45 @@
-//scrollback.controller('Main' , [$scope , function($scope , factory , $timeout){
 function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
     $scope.items = [];
-    var messages;
-	var topIndex = 0, bottomIndex = 0;
-
-    function loadItems(data, room) {
-        console.log("loadItems, "+room);
-        messages = messageArray();
-        $scope.items =[];
-        messages.load(room);
-        messages.merge(data.reverse());
-        messages.save(room);
-        console.log(messages);
-        // initialising items with 50 messages initially 
-        for (var i = 0; i < 50; i++) {
-            if(topIndex < messages.length){
-                if(messages[topIndex].type == "text")   $scope.items.unshift(messages[topIndex]);
-                topIndex += 1;
-            }
+    var messages = messageArray();
+        
+    messages.load($scope.room.id);
+    messages.merge($scope.messages.reverse());
+    messages.save($scope.room.id);
+        
+    // console.log("Messages are loaded up", messages);
+    var topIndex = 0, bottomIndex = 0;
+    // initialising items with 50 messages initially 
+    for (var i = 0; i < 50; i++) {
+        if(topIndex < messages.length){
+            if(messages[topIndex].type == "text")
+                $scope.items.unshift(messages[topIndex]);
+            topIndex += 1;
         }
-        console.log($scope.items);
     }
-    loadItems($scope.messages, $scope.room.id);
-
-    $factory.on("listening", function(room) {
-        $factory.messages(room, 0,null, function(data) {
-            $scope.$apply(function() {
-                loadItems(data, room);    
-            });
+    $factory.on("nick", function(nick) {
+        $scope.$apply(function() {
+            $scope.user.id = nick;
         });
     });
-   $factory.on("message", function(msg) {
+    $factory.on("message", function(msg) {
         if(msg.from != $scope.user.id){
             newMessage(msg);  
-        } 
-    });    
+        }
+    });
     function newMessage(data) {
         // type is text, leave out err msgs, if any.. 
+                angular.element('#nomessagediv').hide(); 
         messages.unshift(data);
+        console.log("msg added to the cache... ", data.from, $scope.user.id);
         //messages.save($scope.scopeObj.room.name);
         if(data.from == $scope.user.id){
             $scope.gotoBottom(); 
             $scope.items.pop();
         }
+        console.log("Bottom Index and top index are : ", bottomIndex, topIndex);
         if(!data.message && bottomIndex === 0 && data.type == "text") {
             $scope.$apply(function(){
-                $scope.items.shift();
+                //$scope.items.shift();
                 $scope.items.push(messages[bottomIndex]);
             });
         }
@@ -76,18 +70,20 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         $anchorScroll();
     };
 
-    $scope.loadMoreUp = function() {    
+    $scope.loadMoreUp = function() {
         for (var i = 0; i < 5; i++) {
-            if(topIndex < messages.length){
+            if(topIndex < messages.length) {
                 if(messages[topIndex].type == "text")
                     $scope.items.unshift(messages[topIndex]);
                 topIndex += 1;
             }
-            if(messages.length - topIndex == 20){
+            if(messages.length - topIndex == 20) {
+                console.log("top reached", messages[topIndex]);
                 // time to request factory for messages from above 
                 $factory.messages($scope.room.id, "", messages[messages.length - 1].time);
                 $factory.on("messages", function(data){
-                    if(data.length > 1 && data[data.length-1].type == "result-end"){
+                    if(data.length > 1 && data[data.length-1].type == "result-end") {
+                        console.log("concatenating now!", data[data.length-1]);
                         messages = messages.concat(data.reverse());
                     }
                     //console.log(" in factory.onMessages", data);emm
@@ -127,11 +123,11 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
          //this is causing troubles, so the shift is being done only for 2 elements at a time, ideally
          // the while should be uncommented
         $timeout(function() {
-            if($scope.items.length > 50){
+            if($scope.items.length > 50) {
                 //while($scope.items.length > 50){ 
                 $scope.items.shift();
                 $scope.items.shift();
-				$scope.items.shift();
+                                $scope.items.shift();
                 topIndex -= 3;
                  //}
             }
@@ -191,13 +187,15 @@ scrollbackApp.directive('message',function() {
             }
 
             attr.$observe('from', function(value) {
-				//$scope.bcolor = hashColor(value);
+                                //$scope.bcolor = hashColor(value);
                 $scope.nick = (value.indexOf("guest-")!==0)?value: value.replace("guest-","");
             });
-			attr.$observe('label', function(value){
-				value = value || "nolabel";
-				$scope.bcolor = hashColor(value);
-			});
+                        attr.$observe('label', function(value){
+                                //console.log("value that will be hashed :", value);
+                if(value){
+                    $scope.bcolor = hashColor(value);
+                }
+                        });
             attr.$observe('text', function(value) {
                 $scope.text = " "+value;
             });
@@ -210,21 +208,19 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
         
         var raw = elm[0];
         var $ = angular.element;
-
-               
         
         $(document).ready(function() {
 
             $('.column').fixInView();
             $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
-            $('#body').bind('reposition', function(e){
+            $('#body').bind('reposition', function(e) {
                 // console.log("reposition event is fired!", e.above, e.below, e.by);
 //                console.log("Reposition ",e);
-                if(e.above < 150 ) {
+                if(e.above < 150 && e.by<0) {
                     scope.$apply(attr.whenScrolledUp);
                     $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
-                 } 
-                 else if(e.below < 150) {
+                 }
+                 else if(e.below < 150 && e.by>0) {
                     scope.$apply(attr.whenScrolledDown);
                 }
             });

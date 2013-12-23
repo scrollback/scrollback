@@ -8,10 +8,12 @@ scrollbackApp.config(['$routeProvider', '$locationProvider', function($routeProv
 		controller:'roomcontroller'
 	});
 	$routeProvider.when('/me/login', {
-		templateUrl: '/s/login.html'
+		templateUrl: '/s/login.html',
+		controller: 'loginController'
 	});
 	$routeProvider.when('/me/edit', {
-		templateUrl: '/me/edit'
+		templateUrl: '/s/me/edit',
+		controller: 'profileController'
 	});
 	$routeProvider.when('/:room/edit', {
 		templateUrl: '/s/roomconfig.html', 

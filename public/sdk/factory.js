@@ -199,11 +199,9 @@ function socketError(message) {
 };
 function enter(room) {
 	factoryObject.emit("listening", room);
-	send({type:"result-start", to:room});
 	send({type:"back", to:room});
 };
 function leave(room) {
-	console.log("leaving", room);
 	send({type:"away", to:room});
 };
 

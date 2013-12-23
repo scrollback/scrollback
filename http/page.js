@@ -25,7 +25,7 @@ exports.init = function(app, coreObject) {
 			res.end(req.cookies["scrollback_sessid"] + '\r\n' + JSON.stringify(require("./session.js").store));
 		}
     };
-    app.get("/me/edit", function(req, res) {
+    app.get("/s/me/edit", function(req, res) {
         var user = req.session.user;
         if(/"guest-"/.test(user.id)) {
             if(!user.accounts || user.accounts.length ==0) {
@@ -33,6 +33,8 @@ exports.init = function(app, coreObject) {
             }else {
                 return res.redirect(307, '//'+config.http.host+"/s/login.html"+queryString);
             }
+        }else{
+            return res.render("newProfile",{email:user.accounts[0].id.split(":")[1]});
         }
     });
     app.get("/me", function(req, res) {
@@ -115,6 +117,7 @@ exports.init = function(app, coreObject) {
         }
 
         core.emit("rooms", {id:roomId,fields:["accounts","members"]}, function(err, room){
+            log(room);
             if(room.length>0 && room[0].type =="user") {
                 return res.render("error",{error:"Archive view not available for users."});
             }

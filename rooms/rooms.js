@@ -73,6 +73,16 @@ function rooms(coreObject) {
 			if(!callback) return;
 			if(!err) err = true;
 			else return callback(err);
+			if(data.length ==0) {
+				if(options.id) {
+					if(options.id && typeof options.id =="string"){
+						data[0]={
+							id:options.id,
+							name:options.id
+						};	
+					}
+				}
+			}
 			data.forEach(function(element) {
 				rooms[element.id] = element;
 				try{
@@ -82,7 +92,18 @@ function rooms(coreObject) {
 				}
 				if(!element.accounts) element.accounts = [];
 			});
-
+			if(options.id && typeof options.id !=="string"){
+				options.id.forEach(function(id) {
+					if(rooms[id]){
+						data[0]={
+								id:options.id,
+								name:options.id,
+								params : {},
+								accounts : []
+							};	
+						}
+				});
+			}
 			ids = Object.keys(rooms);
 			if(options.fields && data.length > 0) {
 				function getFields(fields,index, callback) {
@@ -108,6 +129,7 @@ function rooms(coreObject) {
 					}
 				}
 				getFields(options.fields, 0, function(){
+					console.log(data);
 					return callback(true, data);
 				});
 			}
