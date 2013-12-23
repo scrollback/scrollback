@@ -36,15 +36,19 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory','$w
 
 scrollbackApp.controller('loginController',['$scope','$route','$factory','$location',function($scope, $route, $factory, $location) {
 	$scope.nickChange = function() {
+		
 		if($scope.user.id == "guest-"+$scope.displayNick){
 			$location.path("/"+$scope.room.id);
 			return;
 		}
+		
 	    $factory.message({to:"",type:"nick", ref:"guest-"+$scope.displayNick}, function(message){
 	    	if(message.message){
 	    		//error
 	    	}else{
-	    		$location.path("/"+$scope.room.id);
+	    		$scope.$apply(function(){
+	    		$location.path("/"+$scope.room.id);	
+	    		});
 	    	}
 	    });
 	};

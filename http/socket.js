@@ -75,7 +75,7 @@ function init(data, conn) {
 					m[d[i].room]=true;
 				}
 			}
-			sess.user.membership = m;//Room added to user object
+			sess.user.membership = Object.keys(m);//Room added to user object
 			conn.send('init', {
 				sid: sess.cookie.value,
 				user: sess.user,

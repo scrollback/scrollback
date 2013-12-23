@@ -73,16 +73,6 @@ function rooms(coreObject) {
 			if(!callback) return;
 			if(!err) err = true;
 			else return callback(err);
-			if(data.length ==0) {
-				if(options.id) {
-					if(options.id && typeof options.id =="string"){
-						data[0]={
-							id:options.id,
-							name:options.id
-						};	
-					}
-				}
-			}
 			data.forEach(function(element) {
 				rooms[element.id] = element;
 				try{
@@ -92,20 +82,28 @@ function rooms(coreObject) {
 				}
 				if(!element.accounts) element.accounts = [];
 			});
-			if(options.id && typeof options.id !=="string"){
-				options.id.forEach(function(id) {
-					if(rooms[id]){
-						data[0]={
+			
+			if(options.fields) {
+				if(options.id && typeof options.id !=="string") {
+					options.id.forEach(function(id) {
+						if(!rooms[id]) {
+							rooms[id] = {
 								id:options.id,
 								name:options.id,
 								params : {},
 								accounts : []
 							};	
 						}
-				});
-			}
-			ids = Object.keys(rooms);
-			if(options.fields && data.length > 0) {
+					});
+				}else if(options.id && data.length ==0) {
+					data[0]=rooms[options.id] = {
+						id:options.id,
+						name:options.id,
+						params : {},
+						accounts : []
+					};	
+				}
+				ids = Object.keys(rooms);
 				function getFields(fields,index, callback) {
 					if(index >= fields.length) return callback();
 					if(fields[index] == "accounts" && ids.length) {
