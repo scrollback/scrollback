@@ -125,6 +125,7 @@ onMessages = function(data) {
 };
 
 onMessage = function(data){
+	console.log("NEWMSG:", data);
 	if(pendingCallbacks[data.id]) {
 		pendingCallbacks[data.id](data);
 		delete pendingCallbacks[data.id];

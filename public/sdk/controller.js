@@ -22,33 +22,26 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         });
     });
     $factory.on("message", function(msg) {
-        if(msg.from != $scope.user.id) {
-            newMessage(msg);  
-        }
+		console.log("inside message ", msg);
+    	newMessage(msg);
     });
     function newMessage(data) {
-        // type is text, leave out err msgs, if any.. 
-                angular.element('#nomessagediv').hide(); 
-        messages.unshift(data);
-        console.log("msg added to the cache... ", data.from, $scope.user.id);
-        //messages.save($scope.scopeObj.room.name);
-        if(data.from == $scope.user.id){
-            $scope.gotoBottom(); 
-            $scope.items.pop();
-        }
-        console.log("Bottom Index and top index are : ", bottomIndex, topIndex);
-        if(!data.message && bottomIndex === 0 && data.type == "text") {
-            $scope.$apply(function(){
-                //$scope.items.shift();
-                $scope.items.push(messages[bottomIndex]);
-            });
-        }
+		if(data.type =="text" && !data.message) {
+			angular.element('#nomessagediv').hide(); 
+			messages.unshift(data);
+//			$scope.gotoBottom(); 
+			if(bottomIndex === 0) {
+				$scope.$apply(function(){
+					$scope.items.push(messages[bottomIndex]);
+				});
+			}
+		}
     }
 
     $scope.message = function() {
         $factory.message({type:"text", text: $scope.text, 
             to: window.scrollback.streams && window.scrollback.streams[0]}, function(data) {
-            newMessage(data);
+            //newMessage(data);
         });
         $scope.text = "";
     };
