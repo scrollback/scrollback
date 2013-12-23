@@ -1,4 +1,14 @@
-scrollbackApp.controller('metaController',['$scope', '$location', '$factory','$window',function($scope, $location, $factory, $window) {
+scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window',function($scope, $location, $factory, $timeout,$window) {
+	$factory.on("error",function(error) {
+		$scope.$apply(function(){
+			if($scope.notifications.indexOf(error)>=0) return;
+			$scope.notifications.push(error);
+			$timeout(function() {
+				var index = $scope.notifications.indexOf(error);
+				if(index>=0) $scope.notifications.splice(index,1);
+			}, 3000);
+		});
+	});
 	$scope.goBack = function() {
 		$window.history.back();
 	};
@@ -209,7 +219,6 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 			room.params.irc = false;
 		}
 		$factory.room( room, function(room) {
-			console.log(room);
 			if(room.message)	alert(room.message);
 			else {
 				$scope.$apply(function() {
@@ -231,12 +240,11 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory',  function($sc
 			Object.keys(data.user).forEach(function(key){
 				$scope.user[key] = data.user[key];
 			});
-			console.log($scope.user);
 			if(/^guest-/.test(data.user.id)) {
 				$scope.user.picture = "//s.gravatar.com/avatar/guestpic";
 			}else {
 				if(data.user.membership) {
-					$scope.user.membership = Object.keys(data.user.membership);
+					$scope.user.membership = data.user.membership;
 				}
 			}	
 		});
@@ -248,7 +256,6 @@ scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location
 		return /^guest-/.test($scope.user.id);
 	};
 	$scope.save = function() {
-		console.log("save called.", $scope.nick);
 		$factory.message({to:"",type:"nick", user:{id:$scope.nick,accounts:[]}}, function(message) {
 			if(message.message) {
 				//err .

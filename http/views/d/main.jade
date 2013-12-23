@@ -1,4 +1,4 @@
-html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{JSON.stringify(user)}; room = #{JSON.stringify(room)};  messages = #{JSON.stringify(messages)};  ")
+html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{JSON.stringify(user)}; room = #{JSON.stringify(room)};  messages = #{JSON.stringify(messages)};  notifications = #{JSON.stringify([])};  ")
 	head
 	meta(charset="utf-8")
 	meta(http-equiv="X-UA-Compatible",content="IE=edge")
@@ -11,7 +11,8 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 	link(rel="stylesheet",href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css")
 	
 	body
-		#notifications
+		div#notifications(ng-show="notifications.length")
+			div.notification.animate-repeat(ng-repeat="i in notifications track by $index") {{i}}
 		#meta(ng-controller="metaController",class = 'column')
 			a#logo scrollback	
 			#user
@@ -24,7 +25,6 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 				| Scrollback is a product of Askabt Pte Ltd.
 				| We respect your privacy. 
 		#body(ng-controller="messageController",class = 'column')
-        
 			div(id="nomessagediv", ng-show = "{{items.length ==0}}")
 				| There are no messages in this room yet!
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
@@ -50,6 +50,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 		script(src="https://login.persona.org/include.js")
 		script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js')
 		script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js')
+		script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-animate.min.js')
 		script(src='/sdk/jquery-fixInView.js')
 		script(src='/sdk/messageArray.js')
 		script(src="/sdk/polyfill.js")

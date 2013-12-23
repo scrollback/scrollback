@@ -239,6 +239,21 @@ function message (m, conn) {
 				}
 				
 				if(m && m.type && m.type == 'nick') {
+
+					//in case of logout.
+					if(/^guest-/.test(m.ref) && !/^guest-/.test(m.from)){
+						sess.user.id = m.ref;
+						sess.user.picture = "//s.gravatar.com/avatar/guestpic";
+						sess.user.accounts = [];
+						sess.user.membership = [];
+						session.set(conn.sid, sess);
+						conn.send('init', {
+							sid: sess.cookie.value,
+							user: sess.user
+						});
+						return;
+					}
+
 					if(m.user) {
 						console.log("m.user is", m.user);
 						/* 	why shallow copy? why not sess.user = m.user?

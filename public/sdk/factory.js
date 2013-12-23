@@ -1,7 +1,7 @@
 /*
 dependencies: emitter.js
 */
-var scrollbackApp = angular.module('scrollbackApp' , ['ngRoute']);
+var scrollbackApp = angular.module('scrollbackApp' , ['ngRoute','ngAnimate']);
 var rooms = {};
 var factoryObject = Object.create(emitter), requests = {};
 var listening = {};
@@ -130,8 +130,10 @@ onMessage = function(data){
 		delete pendingCallbacks[data.id];
 	}
 	if(data.type == "nick" && data.ref){
-		factoryObject.emit('nick', data.ref);
-		factoryObject.nick = data.ref;
+		if(data.from == factoryObject.nick) {
+			factoryObject.emit('nick', data.ref);
+			factoryObject.nick = data.ref;
+		}
 	}
 	factoryObject.emit("message", data);
 };
@@ -201,10 +203,15 @@ function socketError(message) {
 	factoryObject.emit("SOC_ERROR", message);
 };
 function enter(room) {
-	factoryObject.emit("listening", room);
-	send({type:"back", to:room});
+
+	if(!listening[room]) {
+		console.log("sending away....");
+		send({type:"back", to:room});
+		listening[room] = true;
+	}
 };
 function leave(room) {
+	listening[room] = false;
 	send({type:"away", to:room});
 };
 
