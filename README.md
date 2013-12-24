@@ -6,6 +6,8 @@ Run this command in terminal:
 
     wget -O scrollback-ubuntu.sh https://bit.ly/1gOVdHk; /bin/sh scrollback-ubuntu.sh
 
-To run Scrollback, copy the config.js.sample file to config.js, edit it if necessary, and run:
+To run Scrollback run:
 
 	sudo node index.js
+	
+myConfig.js can be used to override default configuration.
