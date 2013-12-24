@@ -2,6 +2,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	$factory.on("error",function(error) {
 		if(error == "AUTH_UNREGISTERED")return;
 		$scope.$apply(function(){
+			$scope.status.waiting = false;
 			if($scope.notifications.indexOf(error)>=0) return;
 			$scope.notifications.push(error);
 			$timeout(function() {
@@ -15,9 +16,9 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	};
 	$scope.profile = function() {
 		if(/^guest-/.test($scope.user.id)) {
-			$location.path("/me/login");
-		}else{
-			$location.path("/me/edit");	
+			$location.path("/beta/me/login");
+		}else {
+			$location.path("/beta/me/edit");	
 		}	
 	};
 	$scope.logout = function() {
@@ -34,7 +35,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	// 			console.log("onLogin");
 	// 			var message = {browserid:assertion, type: "nick", to:''};
 	// 			$factory.message(message, function(resp) {
-	// 				$location.path("/me");
+	// 				$location.path("/beta/me");
 	// 			});
 	// 		},
 	// 		onlogout: function() {}
@@ -47,9 +48,9 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 
 scrollbackApp.controller('loginController',['$scope','$route','$factory','$location',function($scope, $route, $factory, $location) {
 	$scope.nickChange = function() {
-		
+		$scope.status.waiting = true;
 		if($scope.user.id == "guest-"+$scope.displayNick){
-			$location.path("/"+$scope.room.id);
+			$location.path("/beta/"+$scope.room.id);
 			return;
 		}
 		
@@ -57,8 +58,9 @@ scrollbackApp.controller('loginController',['$scope','$route','$factory','$locat
 	    	if(message.message){
 	    		//error
 	    	}else{
-	    		$scope.$apply(function(){
-	    		$location.path("/"+$scope.room.id);	
+	    		$scope.$apply(function() {
+					$scope.status.waiting = false;
+		    		$location.path("/beta/"+$scope.room.id);	
 	    		});
 	    	}
 	    });
@@ -69,20 +71,28 @@ scrollbackApp.controller('loginController',['$scope','$route','$factory','$locat
 		navigator.id.watch({
 			onlogin: function(assertion){
 				var message = {browserid:assertion, type: "nick", to:''};
+				$scope.status.waiting = true;
 				$factory.message(message, function(message){
 					if(message.message && message.message == "AUTH_UNREGISTERED") {
 						$scope.$apply(function() {
-							$location.path("/me/edit");	
+							$scope.status.waiting = false;
+							$location.path("/beta/me/edit");	
 						});
 					}
 					else if(!message.message) {
 						$scope.$apply(function() {
-							$location.path("/"+$scope.room.id);
+							$scope.status.waiting = false;
+							$location.path("/beta/"+$scope.room.id);
 						});
 					}
 				});
 			},
-			onlogout: function() {}
+			onlogout: function() {
+				$scope.$apply(function() {
+					$scope.status.waiting = false;
+					$location.path("/beta/"+$scope.room.id);
+				});
+			}
 		});
 		navigator.id.request();
 	};
@@ -102,7 +112,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		else return false;
 	};
 	$scope.goToConfigure = function() {
-		$location.path("/"+$scope.room.id+"/edit");
+		$location.path("/beta/"+$scope.room.id+"/edit");
 	};
 	$scope.partRoom = function() {
 		var msg = {}, index,i,l;
@@ -148,13 +158,17 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 
 scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', function($scope, $timeout, $location) {	
 	$scope.goBack = function(){
-		$location.path("/"+$scope.room.id);
+		$location.path("/beta/"+$scope.room.id);
 	};
 	if(/^guest-/.test($scope.user.id)) {
-        $location.path("/me/login");
+        $location.path("/beta/me/login");
     }
     $scope.goTo = function(room) {
-    	window.location = "/"+room;
+    	if($scope.room.id == room){
+    		$location.path("/beta/"+room);
+    	}else{
+    		window.location = "/beta/"+room;
+    	}
     };
 	$scope.isExists = function(m) {
 		if (m && m.length > 0) {
@@ -167,13 +181,13 @@ scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', 
 scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location', '$rootScope', '$routeParams', function($scope, $factory, $location, $rootScope, $routeParams) {
 	var url;
 	$scope.goBack = function(){
-		$location.path("/"+$scope.room.id);
+		$location.path("/beta/"+$scope.room.id);
 	};
 	if(/^guest-/.test()){
-		$location.path("/me/login");
+		$location.path("/beta/me/login");
 	}
 	if($scope.user.id != $scope.room.owner && typeof $scope.room.owner!= "undefined") {
-		$location.path("/"+$scope.room.id);
+		$location.path("/beta/"+$scope.room.id);
 		return;
 	}
 	$scope.name = $scope.room.name || $scope.room.id;
@@ -196,7 +210,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		
 	}
 	$scope.cancel = function() {
-		$location.path("/"+$scope.room.id);
+		$location.path("/beta/"+$scope.room.id);
 	};
 	$scope.saveRoom = function() {
 		var room={};
@@ -220,6 +234,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		}else {
 			room.params.irc = false;
 		}
+		$scope.status.waiting = true;
 		$factory.room( room, function(room) {
 			if(room.message)	alert(room.message);
 			else {
@@ -227,9 +242,9 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 					Object.keys(room).forEach(function(element){
 						$scope.room[element] = room[element];
 					});
-					$location.path("/"+$scope.room.id);
+					$location.path("/beta/"+$scope.room.id);
+					$scope.status.waiting = false;
 				});
-				
 			}
 		});
 		
@@ -237,6 +252,11 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 }]);
 
 scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {
+	$scope.status= {
+		waiting : false
+	};
+
+
 	$factory.on('init', function(data){
 		//assigning the new new init data to the user scope ---
 		$scope.$apply(function(){
@@ -274,12 +294,14 @@ scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location
 	};
 	
 	$scope.save = function() {
+		$scope.status.waiting = true;
 		$factory.message({to:"",type:"nick", user:{id:$scope.nick,accounts:[]}}, function(message) {
 			if(message.message) {
 				//err .
 			}else{
 				$scope.$apply(function() {
-					$location.path("/"+$scope.room.id);	
+					$scope.status.waiting = false;
+					$location.path("/beta/"+$scope.room.id);	
 				});
 			}
 		});

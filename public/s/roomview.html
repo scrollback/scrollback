@@ -1,5 +1,5 @@
 <h1>
-	<a class = "scrollbackButton" href="/me"><span class="fa fa-arrow-left btn left"></span></a>
+	<a class = "scrollbackButton" href="/beta/me"><span class="fa fa-arrow-left btn left"></span></a>
 	<span> {{room.name || room.id || "No room selected"}}:</span>
 	<span class="showPointer fa fa-tags right" ng-show = "!room.owner" ng-click = "goToConfigure()" title = "claim" ></span>
 	<span class="showPointer fa fa-gears right" ng-show = "isOwner()" ng-click = "goToConfigure()" title = "configure"></span>

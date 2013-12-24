@@ -12,15 +12,14 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 	link(rel="stylesheet",href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css")
 	
 	body
-		div#notifications(ng-show="notifications.length")
+		div#notifications(ng-show="notifications.length",ng-cloak="")
 			div.notification(ng-repeat="i in notifications track by $index") {{i}}
-		#meta(ng-controller="metaController",class = 'column')
+		#meta(ng-controller="metaController",ng-class="status.waiting?'waiting column':'column'")
 			a#logo scrollback	
 			a.archive(href="/#{room.id}") Switch to Old archieve view
-			#user
+			#user(ng-cloak="")
 				a: img.face(src='{{user.picture}}' ng-click='profile()')
-			#username(ng-click='profile()') {{user.id}}
-            
+			#username(ng-click='profile()',ng-cloak="") {{user.id}}
 			#info 
 				ng-view
 			#foot
