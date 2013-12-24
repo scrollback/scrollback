@@ -1,17 +1,31 @@
-scrollbackApp.controller('metaController',function($scope, $location, $factory) {
-	$scope.navTo= function(to){
-		$location.path(to);
-	}
-	$scope.profile = function(){
-		if(/^guest-/.test($scope.nick)) {
-			$location.path("/login");
-		}else{
-			$location.path("/me");
-		}
+scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window',function($scope, $location, $factory, $timeout,$window) {
+	$factory.on("error",function(error) {
+		$scope.$apply(function(){
+			if($scope.notifications.indexOf(error)>=0) return;
+			$scope.notifications.push(error);
+			$timeout(function() {
+				var index = $scope.notifications.indexOf(error);
+				if(index>=0) $scope.notifications.splice(index,1);
+			}, 3000);
+		});
+	});
+	$scope.goBack = function() {
+		$window.history.back();
 	};
-
+	$scope.profile = function() {
+		if(/^guest-/.test($scope.user.id)) {
+			$location.path("/me/login");
+		}else{
+			$location.path("/me/edit");	
+		}	
+	};
+	$scope.logout = function() {
+		$factory.message({type:"nick", to:"", ref:"guest-"},function(message) {
+			navigator.id.logout();
+		});
+	};
 	var statusObject = {};
-	// disabling this for now.scope.user	id	// function personaWatch() {
+	// function personaWatch() {
 	// 	console.log("WATCHING...", $scope.nick
 	// 	if(/^guest-/.test($factory.me)) {
 	// 		navigator.id.watch({
@@ -28,135 +42,239 @@ scrollbackApp.controller('metaController',function($scope, $location, $factory) 
 	// 		navigator.id.watching = true;
 	// 	}
 	// }
-	// if($factory.isActive) {
-		
-	// 	//personaWatch();
-	// }else {
-	// 	$factory.on("init", function() {
-	// 		console.log("-------",$factory.isActive);
-	// 		$factory.listenTo(window.scrollback.room);
-	// 	});
-	// }
-});
-scrollbackApp.controller('meController',['$scope','$route','$factory','$location',function($scope, $route, $factory, $location) {
-	console.log("me controller called");
+}]);
+
+scrollbackApp.controller('loginController',['$scope','$route','$factory','$location',function($scope, $route, $factory, $location) {
 	$scope.nickChange = function() {
-		console.log($scope.displayNick);
-	    $factory.message({to:"",type:"nick", ref:"guest-"+$scope.displayNick});
+		
+		if($scope.user.id == "guest-"+$scope.displayNick){
+			$location.path("/"+$scope.room.id);
+			return;
+		}
+		
+	    $factory.message({to:"",type:"nick", ref:"guest-"+$scope.displayNick}, function(message){
+	    	if(message.message){
+	    		//error
+	    	}else{
+	    		$scope.$apply(function(){
+	    		$location.path("/"+$scope.room.id);	
+	    		});
+	    	}
+	    });
 	};
+
 	$scope.displayNick = ($scope.user.id).replace(/^guest-/,"");
-	$scope.save = function() {
-		$factory.message({to:"",type:"nick", user:{id:$scope.displayNick,accounts:[]}}, function(message) {
-			if(message.message) {
-				//err .
-			}else{
-				$location.path("/");
-			}
-		});
-	};
 	$scope.personaLogin = function(){
-		//temp solution... 
-		//if(!navigator.id.watching) {
-			navigator.id.watch({
-				onlogin: function(assertion){
-					var message = {browserid:assertion, type: "nick", to:''};
-					$factory.message(message, function(message){
-						if(message.message && message.message == "AUTH_UNREGISTERED") $location.path("/me/edit");
-						else if(!message.message) $location.path("/");
-					});
-				},
-				onlogout: function() {}
-			});
-			navigator.id.watching = true;
-		//}
+		navigator.id.watch({
+			onlogin: function(assertion){
+				var message = {browserid:assertion, type: "nick", to:''};
+				$factory.message(message, function(message){
+					if(message.message && message.message == "AUTH_UNREGISTERED") {
+						$scope.$apply(function() {
+							$location.path("/me/edit");	
+						});
+					}
+					else if(!message.message) {
+						$scope.$apply(function() {
+							$location.path("/"+$scope.room.id);
+						});
+					}
+				});
+			},
+			onlogout: function() {}
+		});
 		navigator.id.request();
 	};
 }]);
 
 
-scrollbackApp.controller('roomcontroller', ['$scope', '$timeout', '$factory', '$location', function($scope, $timeout, $factory, $location) {	
+scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, $location, $routeParams) {
+	if($factory.isActive ) {
+		$factory.enter($routeParams.room);
+	}else {
+		$factory.on("init", function() {
+			$factory.enter($routeParams.room);
+		});
+	}
+	$scope.isOwner = function() {
+		if($scope.user.id == $scope.room.owner) return true;
+		else return false;
+	};
+	$scope.goToConfigure = function() {
+		$location.path("/"+$scope.room.id+"/edit");
+	};
 	$scope.partRoom = function() {
 		var msg = {}, index,i,l;
 		msg.to = $scope.room.id;
 		msg.type = "part";
 		$factory.message(msg);
-		if($scope.user.membership){
+		if($scope.user.membership && $.isArray($scope.user.membership)){
 			index = $scope.user.membership.indexOf($scope.room.id);
 			if(index >= 0){
 				$scope.user.membership.splice(index, 1);
 				//deleting gravatar 
-				for(i=0,l=$scope.members.length;i<l;i++) {
-					if($scope.members[i].id === $scope.user.id){
-						$scope.members.splice(i,1);
+				for(i=0,l=$scope.room.members.length;i<l;i++) {
+					if($scope.room.members[i].id === $scope.user.id){
+						$scope.room.members.splice(i,1);
 						break;
 					}
 				}
 			}
 		}
-	}
-	
+	};
 	$scope.joinRoom = function() {
 		var msg = {};
 		if(/^guest-/.test($scope.user.id)){
 			//guest
-			$location.path('/login');
+			$location.path('/me/login');
 			return;
 		}
 		msg.to = $scope.room.id;
 		msg.type = "join";
 		$factory.message(msg);
 		$scope.user.membership.unshift($scope.room.id);
-		$scope.members.unshift($scope.user);
+		$scope.room.members.unshift($scope.user);
 	}
 	
 	$scope.hasMembership = function() {
+		var index = -1;
 		if(!$scope.user.membership) return false;
-		var index = $scope.user.membership.indexOf($scope.room.id);
+		if($.isArray($scope.user.membership)) index = $scope.user.membership.indexOf($scope.room.id);
 		if(index > -1) return true;
 		else return false;
-	}
-}]);
+	};
+});
 
 scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', function($scope, $timeout, $location) {	
-	console.log("Rooms view controller is called now, value of membership is", $scope.user.membership);
-    if(/^guest-/.test($scope.user.id)){
-        $location.path("/login");
+	$scope.goBack = function(){
+		$location.path("/"+$scope.room.id);
+	};
+	if(/^guest-/.test($scope.user.id)) {
+        $location.path("/me/login");
     }
+    $scope.goTo = function(room) {
+    	window.location = "/"+room;
+    };
 	$scope.isExists = function(m) {
 		if (m && m.length > 0) {
 			return true; 
 		}
 		else return false;
-	}
+	};
 }]); 
 
-scrollbackApp.controller('configcontroller' , ['$scope' , function($scope) {
-	$scope.val = "";
+scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location', '$rootScope', '$routeParams', function($scope, $factory, $location, $rootScope, $routeParams) {
+	var url;
+	$scope.goBack = function(){
+		$location.path("/"+$scope.room.id);
+	};
+	if(/^guest-/.test()){
+		$location.path("/me/login");
+	}
+	if($scope.user.id != $scope.room.owner && typeof $scope.room.owner!= "undefined") {
+		$location.path("/"+$scope.room.id);
+		return;
+	}
+	$scope.name = $scope.room.name || $scope.room.id;
+	$scope.description = $scope.room.description || $scope.room.description;
+	if($scope.room.params){
+		$scope.wordEnable = $scope.room.params.wordban?1:0;
+		$scope.loginEnable = $scope.room.params.loginrequired?1:0;
+		if($scope.room.accounts && $scope.room.accounts.forEach){
+			$scope.room.accounts.forEach(function(account) {
+				url = parseUrl($scope.room.accounts[0].id);
+				if(url.protocol == "irc") {
+					$scope.ircServer = url.hostname;
+					$scope.ircRoom = url.hash;	
+				}
+			});
+		}		
+	}else{
+		$scope.wordEnable = 0;
+		$scope.loginEnable = 0;
+		
+	}
+	$scope.cancel = function() {
+		$location.path("/"+$scope.room.id);
+	};
+	$scope.saveRoom = function() {
+		var room={};
+		room.id = $scope.room.id;
+		room.name = $scope.name || $scope.room.id;
+		room.description = $scope.description || "";
+		room.params = {};
+		room.type = "room";
+		room.params.wordban = $scope.wordEnable?true:false;
+		room.params.loginrequired = $scope.loginEnable?true:false;
+		if($scope.ircServer && $scope.ircRoom) {
+			room.accounts = [
+				{
+					gateway: "irc",
+					id:"irc://"+$scope.ircServer+"/"+$scope.ircRoom,
+					room: $scope.room.id,
+					params:{}
+				}
+			];
+			room.params.irc = true;
+		}else {
+			room.params.irc = false;
+		}
+		$factory.room( room, function(room) {
+			if(room.message)	alert(room.message);
+			else {
+				$scope.$apply(function() {
+					Object.keys(room).forEach(function(element){
+						$scope.room[element] = room[element];
+					});
+					$location.path("/"+$scope.room.id);
+				});
+				
+			}
+		});
+		
+	};
 }]);
 
 scrollbackApp.controller('rootController' , ['$scope', '$factory',  function($scope, $factory) {
-	$scope.val = "";
-//	$scope.init = function(a,b,c){
-//		console.log(a,b,c);
-//	}
-	
-	//$scope.scopeObj = initVars;
-	
-	
 	$factory.on('init', function(data){
 		//assigning the new new init data to the user scope ---
-		console.log("INIT Recieved, data got via init ", data, "$scope.user is ", $scope.user );
-		$scope.user.id = data.user.id;
-		if(/^guest-/.test(data.user.id)){
-			$scope.user.picture = "//s.gravatar.com/avatar/guestpic";
-		}
-		else{
-			var account = data.user.accounts[0].id.substring(7);
-			var hash = CryptoJS.MD5(account);
-			$scope.user.picture = "//s.gravatar.com/avatar/" + hash;
-			if(data.user.membership) {
-				$scope.user.membership = Object.keys(data.user.membership);
-			}
-		}
+		$scope.$apply(function(){
+			Object.keys(data.user).forEach(function(key){
+				$scope.user[key] = data.user[key];
+			});
+			if(/^guest-/.test(data.user.id)) {
+				$scope.user.picture = "//s.gravatar.com/avatar/guestpic";
+			}else {
+				if(data.user.membership) {
+					if(data.user.membership instanceof Array) $scope.user.membership = data.user.membership;
+					else $scope.user.membership = Object.keys(data.user.membership);
+				}
+			}	
+		});
 	});
 }]);
+
+scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {
+	$scope.isGuest = function(){
+		return /^guest-/.test($scope.user.id);
+	};
+	$scope.save = function() {
+		$factory.message({to:"",type:"nick", user:{id:$scope.nick,accounts:[]}}, function(message) {
+			if(message.message) {
+				//err .
+			}else{
+				$scope.$apply(function() {
+					$location.path("/"+$scope.room.id);	
+				});
+			}
+		});
+	};
+}]);
+
+function parseUrl(url) {
+	var a = document.createElement('a');
+	var protocol = url.split(":")[0];
+	url = url.replace(protocol,"http");
+    a.href = url;
+    return {protocol:protocol, hash:a.hash, hostname:a.hostname, search:a.search};
+}

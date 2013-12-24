@@ -1,6 +1,6 @@
-!doctype(html)
+doctype html
 
-html(ng-app='scrollbackApp', ng-controller="rootController", ng-init = "user = #{JSON.stringify(user)}; room = #{JSON.stringify(room)};  messages = #{JSON.stringify(messages)};  members = #{JSON.stringify(members)};")
+html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{JSON.stringify(user)}; room = #{JSON.stringify(room)};  messages = #{JSON.stringify(messages)};  notifications = #{JSON.stringify([])};  ")
 	head
 	meta(charset="utf-8")
 	meta(http-equiv="X-UA-Compatible",content="IE=edge")
@@ -13,7 +13,8 @@ html(ng-app='scrollbackApp', ng-controller="rootController", ng-init = "user = #
 	link(rel="stylesheet",href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css")
 	
 	body
-		#notifications
+		div#notifications(ng-show="notifications.length")
+			div.notification(ng-repeat="i in notifications track by $index") {{i}}
 		#meta(ng-controller="metaController",class = 'column')
 			a#logo scrollback	
 			#user
@@ -26,16 +27,15 @@ html(ng-app='scrollbackApp', ng-controller="rootController", ng-init = "user = #
 				| Scrollback is a product of Askabt Pte Ltd.
 				| We respect your privacy. 
 		#body(ng-controller="messageController",class = 'column')
-        
 			div(id="nomessagediv", ng-show = "{{items.length ==0}}")
 				| There are no messages in this room yet!
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 				div(ng-repeat="i in items track by $index")
 					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}")
-				#endoflog
 			form.messageWrapper(ng-submit="message();")
 				input.messageBox(type="text", ng-model="text")
 				input(id="submitButton" type="submit")
+			a(name="git cendoflog")
 		script.
 			window.scrollback = {
 				host : '//' + location.host,

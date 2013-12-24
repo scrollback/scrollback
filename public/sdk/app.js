@@ -1,26 +1,24 @@
-scrollbackApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
-	$routeProvider.when('/room', {
-		templateUrl: '/s/roomview.html', 
-		controller:'roomcontroller' 
-	});
-	$routeProvider.when('/rooms', {
-		templateUrl: '/s/roomsview.html', 
-		controller:'roomscontroller' 
-	});
+scrollbackApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider.when('/me', {
-		templateUrl: '/me'
+		templateUrl: '/s/roomsview.html', 
+		controller:'roomscontroller'
 	});
-	$routeProvider.when('/login', {
-		templateUrl: '/me'
+	$routeProvider.when('/:room', {
+		templateUrl: '/s/roomview.html', 
+		controller:'roomcontroller'
+	});
+	$routeProvider.when('/me/login', {
+		templateUrl: '/s/login.html',
+		controller: 'loginController'
 	});
 	$routeProvider.when('/me/edit', {
-		templateUrl: '/me/edit'
+		templateUrl: '/s/me/edit',
+		controller: 'profileController'
 	});
-	$routeProvider.when('/config', {
+	$routeProvider.when('/:room/edit', {
 		templateUrl: '/s/roomconfig.html', 
 		controller:'configcontroller' 
 	});
-	$routeProvider.otherwise({redirectTo : '/room'});
-
-	$locationProvider.html5Mode(false);
+	//$routeProvider.otherwise({redirectTo : '/me'});
+	$locationProvider.html5Mode(true);
 }]);

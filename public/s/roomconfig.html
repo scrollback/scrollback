@@ -1,0 +1,47 @@
+<h1>
+	<span class="fa fa-arrow-left left" ng-click="goBack()"></span>
+	<span> Configure Room </span>
+</h1>
+
+<form id="profile" action="">
+	<label>
+		Room name 
+		<input type="text" ng-model="name"/>
+	</label>
+	<label>
+		Description
+		<input type="textarea" ng-model="description"/>
+	</label>
+	<label>
+		IRC Account Configuration
+	</label>
+	
+	<div class="inlineInput">
+		 <input type="text" class ="inlineTextBox" placeholder ="Server (e.g: irc.freenode.net)" ng-model="ircServer"/> 
+		 <input type="text" class ="inlineTextBox" placeholder ="Room (e.g: #ubuntu)" ng-model="ircRoom"/> 
+	</div>	
+	<label/>
+	
+	<label>
+		Word Filtering
+		<div class="combo">
+			<button ng-class = "wordEnable ==0 ? 'off':''" ng-click = "wordEnable = 1; wordDisable = 0;">Yes</button>
+			<button ng-class = "wordEnable ==1 ? 'off':''" ng-click = "wordEnable = 0; wordDisable = 1;">No</button>
+		</div>	
+	</label>
+	<label>
+		Require Users to Log-in to Post
+		<div class="combo">
+			<button ng-class = "loginEnable ==0 ? 'off':''" ng-click = "loginEnable = 1; " >Yes</button>
+			<button ng-class = "loginEnable ==1 ? 'off':''" ng-click = "loginEnable = 0; " >No</button>
+		</div>	
+	</label>
+	<div class="buttonGroup">
+		<label>
+			<button class="default" type="button" ng-click="saveRoom()">Save Account</button>
+		</label>
+		<label>
+			<button class="default" type="button" ng-click="cancel()">Cancel</button>
+		</label>
+	</div>
+</form>

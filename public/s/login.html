@@ -1,0 +1,16 @@
+<div>
+	<h1 ng-init="inLogin = true">
+		<button class="left"><span ng-click="goBack()" class="fa fa-arrow-left"></span></button><span> Login</span>
+	</h1>
+	<form id="profile">
+		<label >Username
+			<input ng-model="displayNick">
+		</label>
+		<label>
+			<button class="default" type="button" ng-click="nickChange()"> Change </button>
+		</label>
+		<label>
+			<button class="default" type="button" ng-click="personaLogin()"> Sign IN/UP</button>
+		</label>
+	</form>
+</div>

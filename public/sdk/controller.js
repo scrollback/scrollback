@@ -1,12 +1,11 @@
-//scrollback.controller('Main' , [$scope , function($scope , factory , $timeout){
 function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
     $scope.items = [];
     var messages = messageArray();
-	
+        
     messages.load($scope.room.id);
     messages.merge($scope.messages.reverse());
     messages.save($scope.room.id);
-	
+        
     // console.log("Messages are loaded up", messages);
     var topIndex = 0, bottomIndex = 0;
     // initialising items with 50 messages initially 
@@ -23,33 +22,26 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         });
     });
     $factory.on("message", function(msg) {
-        if(msg.from != $scope.user.id){
-            newMessage(msg);  
-        }
+		console.log("inside message ", msg);
+    	newMessage(msg);
     });
     function newMessage(data) {
-        // type is text, leave out err msgs, if any.. 
-		angular.element('#nomessagediv').hide(); 
-        messages.unshift(data);
-        console.log("msg added to the cache... ", data.from, $scope.user.id);
-        //messages.save($scope.scopeObj.room.name);
-        if(data.from == $scope.user.id){
-            $scope.gotoBottom(); 
-            $scope.items.pop();
-        }
-        console.log("Bottom Index and top index are : ", bottomIndex, topIndex);
-        if(!data.message && bottomIndex === 0 && data.type == "text") {
-            $scope.$apply(function(){
-                //$scope.items.shift();
-                $scope.items.push(messages[bottomIndex]);
-            });
-        }
+		if(data.type =="text" && !data.message) {
+			angular.element('#nomessagediv').hide(); 
+			messages.unshift(data);
+//			$scope.gotoBottom(); 
+			if(bottomIndex === 0) {
+				$scope.$apply(function(){
+					$scope.items.push(messages[bottomIndex]);
+				});
+			}
+		}
     }
 
     $scope.message = function() {
         $factory.message({type:"text", text: $scope.text, 
             to: window.scrollback.streams && window.scrollback.streams[0]}, function(data) {
-            newMessage(data);
+            //newMessage(data);
         });
         $scope.text = "";
     };
@@ -66,9 +58,9 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                     $scope.items.unshift(messages[topIndex]);
                 topIndex += 1;
             }
+//        $location.hash('endoflog');
+//        $anchorScroll();
         }
-        $location.hash('endoflog');
-        $anchorScroll();
     };
 
     $scope.loadMoreUp = function() {
@@ -98,7 +90,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         // removing elements from the bottom which are out of view scope 
         $timeout( function() {
             if($scope.items.length > 50) {
-                while($scope.items.length > 50) { 
+                while($scope.items.length > 50) {
                     if(messages[bottomIndex].type != "text") bottomIndex += 1;
                     $scope.items.pop();
                     bottomIndex += 1;
@@ -110,12 +102,12 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         // TODO : popping from top :)
         // console.log("Top element ", messages[topIndex]);
         for(i=0; i< 5; i++) {
-              if(bottomIndex > 0){
+              if(bottomIndex > 0) {
                 if(messages[bottomIndex].type == 'text')
                     $scope.items.push(messages[bottomIndex]);
                 bottomIndex -= 1;
               }
-              if(bottomIndex === 0 && $scope.items[$scope.items.length-1] != messages[0]){
+              if(bottomIndex === 0 && $scope.items[$scope.items.length-1] != messages[0]) {
                 if(messages[0].type == "text")
                     $scope.items.push(messages[0]);
                 bottomIndex = 0;
@@ -128,7 +120,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                 //while($scope.items.length > 50){ 
                 $scope.items.shift();
                 $scope.items.shift();
-				$scope.items.shift();
+                                $scope.items.shift();
                 topIndex -= 3;
                  //}
             }
@@ -188,15 +180,14 @@ scrollbackApp.directive('message',function() {
             }
 
             attr.$observe('from', function(value) {
-				//$scope.bcolor = hashColor(value);
+                                //$scope.bcolor = hashColor(value);
                 $scope.nick = (value.indexOf("guest-")!==0)?value: value.replace("guest-","");
             });
-			attr.$observe('label', function(value){
-				//console.log("value that will be hashed :", value);
-                if(value){
+			attr.$observe('label', function(value) {
+				if(value){
                     $scope.bcolor = hashColor(value);
                 }
-			});
+            });
             attr.$observe('text', function(value) {
                 $scope.text = " "+value;
             });
@@ -220,8 +211,8 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
                 if(e.above < 150 && e.by<0) {
                     scope.$apply(attr.whenScrolledUp);
                     $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
-                 }
-                 else if(e.below < 150 && e.by>0) {
+                }
+                else if(e.below < 30) {
                     scope.$apply(attr.whenScrolledDown);
                 }
             });

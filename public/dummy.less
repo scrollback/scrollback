@@ -201,6 +201,16 @@ img.face {
 	-o-box-sizing: border-box;
 }
 
+.showPointer {
+	cursor : pointer ;
+}
+.scrollbackButton {
+	color: inherit;
+}
+
+.buttonGroup{
+	display : inline-block;
+}
 .scrollback-message {
 	overflow: hidden;
 	color: red;
@@ -221,3 +231,26 @@ img.face {
 .scrollback-message-part { color: #999 }
 .scrollback-message-timestamp {color: #999}
 .scrollback-message-content {color: #000}
+
+#notifications {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	margin: 2% 20% 0% 20%;
+	padding: 2px 2px;
+	z-index: 1;
+	background: #3ca;
+}
+
+.notification {
+	position: relative;
+	margin: 8px;
+	line-height: 14px;
+	padding: 8px; 
+	background: #3ca;
+	color: #fff;
+	font-weight: bold;
+	text-align: center
+}
+

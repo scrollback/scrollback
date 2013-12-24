@@ -44,12 +44,12 @@ module.exports = function(core) {
 							}
 						}, 1000);	
 					}else{
-						callback();	
+						return callback();	
 					}
 					
 				});
 			}
-			callback();
+			return callback();
 		}, "modifier");
 	}
 	else{

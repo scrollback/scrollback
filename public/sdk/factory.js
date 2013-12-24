@@ -2,63 +2,72 @@
 dependencies: emitter.js
 */
 var scrollbackApp = angular.module('scrollbackApp' , ['ngRoute']);
+var rooms = {};
 var factoryObject = Object.create(emitter), requests = {};
+var listening = {};
 var pendingCallbacks = {}, backed=false;
-
-
-
+var backOff = 1;
 var factory=function() {
 	socket.onclose = function() {
 		factoryObject.emit("disconnected");
+		backOff+=backOff;
 		factoryObject.isActive = false;
 		setTimeout(function(oldSocket){
 			socket = newSocket();
-			socket.close = oldSocket.close;
-		}, 10000, socket);
+			socket.onclose = oldSocket.onclose;
+		}, backOff*1000, socket);
 	};
 	factoryObject.message = send;
 	factoryObject.messages = getMessages;
 	//factoryObject.messages = callbackGenerator("messages");
 	factoryObject.room = callbackGenerator("room");
-	factoryObject.rooms = callbackGenerator("rooms");
+	factoryObject.rooms =  function(query, callback) {
+		console.log(rooms);
+		if(query.id && rooms["query.id"]){
+			return callback({query:query, data: rooms["query.id"]});
+		}
+		callbackGenerator("rooms")(query, callback);
+	}
 	factoryObject.occupants = callbackGenerator("occupants");
 	factoryObject.membership = callbackGenerator("membership");
+	factoryObject.leaveRest = function(room) {
+		Object.keys(listening).forEach(function(element) {
+			listening[element] && element!=room && leave(element);
+		});
+	};
 
-	factoryObject.listenTo = listenTo;
+	factoryObject.enter = enter;
+	factoryObject.leave = leave;
 	return factoryObject;
 };
 
 getMessages = function (room, start, end, callback) {
-	console.log("get messages recieved", room, start, end);
-	var query = { to: room, type: 'text' },
-		reqId;
+	var query = { to: room, type: 'text' };
 	if (start) { query.since = start; }
 	if (end) { query.until = end; }
-	reqId = room + '/' + (query.since || '') + '/' + (query.until || '');
-	
-	console.log("Request:", reqId);
-	requests[reqId] = callback;
+	query.queryId = guid();
+	pendingCallbacks[query.queryId] = callback;			
 	socketEmit('messages', query);
 }
 
 function socketEmit(type, data) {
-	console.log("emit is in action");
-	console.log("Socket sending ", type, data);
 	socket.send(JSON.stringify({type: type, data: data}));
 };
 
 
 function callbackGenerator(event){
 	return function(query, callback){
-		query.queryId=guid();
+		query.queryId = guid();
 		pendingCallbacks[query.queryId] = callback;		
-		socket.emit(event, query);
+		socketEmit(event, query);
 	};
 }
 
 
-function send(message, callback){
-	message.id=guid();
+function send(message, callback) {
+	if(message.type == "back")	listening[message.to] = true;
+	if(message.type == "away")	listening[message.to] = false;
+	message.id = guid();
 	message.time = new Date().getTime();
 	message.origin = {
 		gateway : "web",
@@ -66,6 +75,8 @@ function send(message, callback){
 	};
 	if(callback) pendingCallbacks[message.id] = callback;
 	socket.emit("message", message);
+	
+	$('html, body').animate({scrollTop:$(document).height()}, 'slow'); //scrolling down to bottom of page.
 }
 
 
@@ -74,14 +85,14 @@ function newSocket() {
 	var socket = new SockJS(scrollback.host + '/socket');
 	
 	socket.onopen = function() {
+		backOff = 1;
 		init();
-		listenTo(window.scrollback.room);
 		factoryObject.emit("connected");
 	};
 	socket.onerror = socketError;
 	socket.onmessage = socketMessage;
 	socket.emit = function(type, data) {
-		scrollback.debug && console.log("Socket sending ", type, data);
+		//scrollback.debug && console.log("Socket sending ", type, data);
 		socket.send(JSON.stringify({type: type, data: data}));
 	};
 	return socket;
@@ -105,18 +116,25 @@ function init(){
 
 
 onMessages = function(data) {
-	//console.log("on messages was invoked", data.messages);
+	if(pendingCallbacks[data.query.queryId]) {
+		console.log(data);
+		pendingCallbacks[data.query.queryId](data.messages);
+		delete pendingCallbacks[data.queryId];
+	}
 	factoryObject.emit("messages", data.messages);
 };
 
 onMessage = function(data){
+	console.log("NEWMSG:", data);
 	if(pendingCallbacks[data.id]) {
 		pendingCallbacks[data.id](data);
 		delete pendingCallbacks[data.id];
 	}
 	if(data.type == "nick" && data.ref){
-		factoryObject.emit('nick', data.ref);
-		factoryObject.nick = data.ref;
+		if(data.from == factoryObject.nick) {
+			factoryObject.emit('nick', data.ref);
+			factoryObject.nick = data.ref;
+		}
 	}
 	factoryObject.emit("message", data);
 };
@@ -126,7 +144,7 @@ function socketMessage(evt) {
 	try { d = JSON.parse(evt.data); }
 	catch(e) {  console.log("ERROR: Non-JSON data", evt.data); return; }
 
-	scrollback.debug &&	console.log("Socket received", d);
+	//scrollback.debug &&	console.log("Socket received", d);
 	switch(d.type) {
 		case 'init': onInit(d.data); break;
 		case 'message': onMessage(d.data); break;
@@ -146,17 +164,23 @@ onInit = function(data) {
 	factoryObject.initialized = true;
 	factoryObject.emit("init", data);
 	factoryObject.emit("nick", data.user.id);
-	console.log("sending back msg..");
-	backed || (backed==true || (listenTo(window.scrollback.room)));
 	factoryObject.isActive = true;
 	factoryObject.nick = data.user.id;
 };
 
 handler=function(type, data){
-	if(pendingCallbacks[data.queryId]) {
-		pendingCallbacks[data.queryId](data);
+	if(pendingCallbacks[data.query.queryId]) {
+		pendingCallbacks[data.query.queryId](data);
 		delete pendingCallbacks[data.queryId];
 	}
+	// //temp simple caching of the rooms object.
+	// if(type == "room") {
+	// 	rooms[data.id] = data;
+	// }else if(type=="rooms") {
+	// 	data.data.forEach(function(element) {
+	// 		rooms[element.id] = element;
+	// 	});
+	// }
 	factoryObject.emit(type, data);
 }
 
@@ -177,9 +201,16 @@ function socketError(message) {
 	scrollback.debug && console.log(message);
 	factoryObject.emit("SOC_ERROR", message);
 };
- function listenTo(room){
-	send({type:"result-start", to:room});
-	send({type:"back", to:room});
+function enter(room) {
+	if(!listening[room]) {
+		console.log("sending away....");
+		send({type:"back", to:room});
+		listening[room] = true;
+	}
+};
+function leave(room) {
+	listening[room] = false;
+	send({type:"away", to:room});
 };
 
 var socket = newSocket();
