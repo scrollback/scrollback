@@ -43,7 +43,7 @@ var exparse = express.session({
 	secret: secret,
 	key: key,
 	store: store,
-	cookie: { domain: "." + config.http.host, httpOnly : false }
+	cookie: { domain: config.http.cookieDomain, httpOnly : false }
 });
 
 exports.store = store;
