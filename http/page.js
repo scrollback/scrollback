@@ -25,6 +25,8 @@ exports.init = function(app, coreObject) {
 			res.end(req.cookies["scrollback_sessid"] + '\r\n' + JSON.stringify(require("./session.js").store));
 		}
     };
+
+    //handling it for now but should probably think a way to make newProfile the static file.
     app.get("/s/me/edit", function(req, res) {
         var user = req.session.user;
         if(/"guest-"/.test(user.id)) {
@@ -93,7 +95,7 @@ exports.init = function(app, coreObject) {
 	});    
     function roomHandler(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, 
-        query={}, sqlQuery, roomId = params[0], user = req.session.user,
+        query={}, sqlQuery, roomId = params[1], user = req.session.user,
         queryString, resp={};
         if(roomId && !validateRoom(roomId)) return next();
         responseObj.user = req.session.user;
@@ -101,7 +103,7 @@ exports.init = function(app, coreObject) {
         responseObj.user.picture = crypto.createHash("md5").update(responseObj.user.picture).digest("hex");
         responseObj.user.picture = '//s.gravatar.com/avatar/'+responseObj.user.picture;
 
-        if(params[1]=="config") {
+        if(params[0]!="beta" && params[1]=="config") {
             next();
             return;
         }
@@ -132,18 +134,18 @@ exports.init = function(app, coreObject) {
 				else responseObj.user.membership = Object.keys(user.membership); 
 			} 
 			
-            query.to=params[0];
+            query.to=params[1];
             query.type="text";
             query.limit=250;
-
-            if (params[1]) switch(params[1]) {
-                case 'since':
-                    query.since=new Date(params[2]).getTime();
-                    break;
-                case 'until':
-                    query.until=new Date(params[2]).getTime();
-                    break;
-            }
+            //disabling this for now.
+            // if (params[1]) switch(params[1]) {
+            //     case 'since':
+            //         query.since=new Date(params[2]).getTime();
+            //         break;
+            //     case 'until':
+            //         query.until=new Date(params[2]).getTime();
+            //         break;
+            // }
             
             core.emit("messages", query, function(err, m) {
                 responseObj.query=query;
@@ -153,83 +155,88 @@ exports.init = function(app, coreObject) {
             });
         });
     }
-    app.get("*", roomHandler);
-    app.get("*/edit", roomHandler);
-    // app.get("*", function(req, res, next) {
-    //     var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[0],
-    //     user = req.session.user;
-    //     if(roomId && !validateRoom(roomId)) return next();
+    app.get("/beta/*", roomHandler);
+    app.get("/beta/*/edit", roomHandler);
 
-    //     core.emit("rooms",{id:roomId}, function(err, room){
-    //         if(room.length>0 && room[0].type =="user"){
-    //             return res.render("error",{error:"Archive view not available for users."});
-    //         }
-    //         if(err) res.render("error", err);
-    //         if(room.length != 0){
-    //             responseObj.room = room[0];
 
-    //             try{
-    //                 responseObj.room.params = JSON.parse(responseObj.room.params);
-    //             }
-    //             catch(e) {
-    //                 responseObj.room.params = {};
-    //             }
-    //         }
-    //         responseObj.user = user.id;
-    //         responseObj.membership=user.membership;
 
-    //         if(params[1]=="config") {
-    //             next();
-    //             return;
-    //         }
-    //         query.to=params[0];
-    //         query.type="text";
-    //         query.limit=20;
+    app.get("*", function(req, res, next) {
+        var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[0],
+        user = req.session.user;
+        if(roomId && !validateRoom(roomId)) return next();
+        if(params[0]=="beta" && !params[1]){
+            return next();
+        }
+        core.emit("rooms",{id:roomId}, function(err, room){
+            if(room.length>0 && room[0].type =="user"){
+                return res.render("error",{error:"Archive view not available for users."});
+            }
+            if(err) res.render("error", err);
+            if(room.length != 0){
+                responseObj.room = room[0];
 
-    //         if (params[1]) switch(params[1]) {
-    //             case 'since':
-    //                 query.since=new Date(params[2]).getTime();
-    //                 break;
-    //             case 'until':
-    //                 query.until=new Date(params[2]).getTime();
-    //                 break;
-    //             case 'edit':
-    //                 return next();
-    //                 break;
-    //         }
-    //         core.emit("messages", query, function(err, m){
-    //             log(query);
-    //             responseObj.query=query;
-    //             responseObj.data=m;
+                try{
+                    responseObj.room.params = JSON.parse(responseObj.room.params);
+                }
+                catch(e) {
+                    responseObj.room.params = {};
+                }
+            }
+            responseObj.user = user.id;
+            responseObj.membership=user.membership;
+
+            if(params[1]=="config") {
+                next();
+                return;
+            }
+            query.to=params[0];
+            query.type="text";
+            query.limit=20;
+
+            if (params[1]) switch(params[1]) {
+                case 'since':
+                    query.since=new Date(params[2]).getTime();
+                    break;
+                case 'until':
+                    query.until=new Date(params[2]).getTime();
+                    break;
+                case 'edit':
+                    return next();
+                    break;
+            }
+            core.emit("messages", query, function(err, m){
+                log(query);
+                responseObj.query=query;
+                responseObj.data=m;
                 
-    //             console.log("MESSAGES GAVE ME ", m.length);
+                console.log("MESSAGES GAVE ME ", m.length);
                 
-    //             if (m[0].type == 'result-start' && m[1]) {
-    //                 responseObj.scrollPrev = new Date(m[1].time).toISOString();
-    //             }
+                if (m[0].type == 'result-start' && m[1]) {
+                    responseObj.scrollPrev = new Date(m[1].time).toISOString();
+                }
                 
-    //             if (m[m.length-1] && m[m.length-1].type == 'result-end') {
-    //                 responseObj.scrollNext = new Date(m[m.length-1].time).toISOString();
-    //             }
+                if (m[m.length-1] && m[m.length-1].type == 'result-end') {
+                    responseObj.scrollNext = new Date(m[m.length-1].time).toISOString();
+                }
                 
-    //             query.title=query.to.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {
-    //                 return f.toUpperCase() + r.toLowerCase() + ' ';
-    //             });
+                query.title=query.to.replace(/(\W+|^)(\w)(\w*)/g, function(m, s, f, r) {
+                    return f.toUpperCase() + r.toLowerCase() + ' ';
+                });
                 
-    //             if (m.length==1 && m[0].type!="text") {
-    //                 delete responseObj.scrollNext;
-    //                 delete responseObj.scrollPrev;
-    //             }
+                if (m.length==1 && m[0].type!="text") {
+                    delete responseObj.scrollNext;
+                    delete responseObj.scrollPrev;
+                }
                 
-    //             if (!query.since && !query.until) {
-    //                 delete responseObj.scrollNext;
-    //             }
+                if (!query.since && !query.until) {
+                    delete responseObj.scrollNext;
+                }
                 
-    //             responseObj.relDate = relDate;
-    //             res.render("archive", responseObj);
-    //         });
-    //     });
-    // });
+                responseObj.relDate = relDate;
+                res.render("archive", responseObj);
+            });
+        });
+    });
 
 
     // app.get("*/edit/*", function(req, res) {

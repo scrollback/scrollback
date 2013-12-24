@@ -14,7 +14,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 	body
 		div#notifications(ng-show="notifications.length",ng-cloak="")
 			div.notification(ng-repeat="i in notifications track by $index") {{i}}
-		#meta(ng-controller="metaController",class = 'column')
+		#meta(ng-controller="metaController",ng-class="status.waiting?'waiting column':'column'")
 			a#logo scrollback	
 			#user(ng-cloak="")
 				a: img.face(src='{{user.picture}}' ng-click='profile()')
