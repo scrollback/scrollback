@@ -3,14 +3,14 @@
 		<button class="left"><span ng-click="goBack()" class="fa fa-arrow-left"></span></button><span> Login</span>
 	</h1>
 	<form id="profile">
-		<label >Username
-			<input ng-model="displayNick">
+		<label><button class="longButton" ng-click="personaLogin()"> SIGN INTO SCROLLBACK </button> </label>
+		<label >
+			<div>or Change My Nick to : </div>
+			<input class = "nickBox" ng-model="displayNick">
+			<button class="default" type="button" ng-click="nickChange()" style = "width: 19%"> Change </button>
 		</label>
-		<label>
-			<button class="default" type="button" ng-click="nickChange()"> Change </button>
-		</label>
-		<label>
-			<button class="default" type="button" ng-click="personaLogin()"> Sign IN/UP</button>
-		</label>
+		<div class="buttonGroup">
+			<button class="cancel" type="button" ng-click="cancelScreen()"> Cancel </button>
+		</div>
 	</form>
 </div>

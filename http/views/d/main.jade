@@ -16,6 +16,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 			div.notification(ng-repeat="i in notifications track by $index") {{i}}
 		#meta(ng-controller="metaController",class = 'column')
 			a#logo scrollback	
+			a.archive(href="/#{room.id}") Switch to Old archieve view
 			#user
 				a: img.face(src='{{user.picture}}' ng-click='profile()')
 			#username(ng-click='profile()') {{user.id}}

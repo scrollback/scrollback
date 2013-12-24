@@ -2,10 +2,11 @@
 	<a class = "scrollbackButton" href="/me"><span class="fa fa-arrow-left btn left"></span></a>
 	<span> {{room.name || room.id || "No room selected"}}:</span>
 	<span class="showPointer fa fa-tags right" ng-show = "!room.owner" ng-click = "goToConfigure()" title = "claim" ></span>
-	<span class="showPointer fa fa-power-off right" ng-show = "user.owner==user.id" ng-click = "logout()" title = "logout"></span>
 	<span class="showPointer fa fa-gears right" ng-show = "isOwner()" ng-click = "goToConfigure()" title = "configure"></span>
 	<span class="showPointer fa fa-repeat right" title = "Unfollow Room"  ng-click="partRoom()" ng-show = "hasMembership()" ></span>
 	<span class="showPointer right fa fa-check-square-o" title = "Follow Room"  ng-click="joinRoom()" ng-show = "!hasMembership()" ></span>
+	
+	<span class="showPointer fa fa-power-off right" ng-show = "user.owner==user.id" ng-click = "logout()" title = "logout"></span>
 </h1>
 <p id="description" class = "collapse expanded"> {{ room.description || "This room does not have a description yet!"}} </p>
 <div id="members"> 

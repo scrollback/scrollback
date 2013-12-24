@@ -1,5 +1,6 @@
 scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window',function($scope, $location, $factory, $timeout,$window) {
 	$factory.on("error",function(error) {
+		if(error == "AUTH_UNREGISTERED")return;
 		$scope.$apply(function(){
 			if($scope.notifications.indexOf(error)>=0) return;
 			$scope.notifications.push(error);
@@ -126,7 +127,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		var msg = {};
 		if(/^guest-/.test($scope.user.id)){
 			//guest
-			$location.path('/me/login');
+			$location.path('/beta/me/login');
 			return;
 		}
 		msg.to = $scope.room.id;
@@ -235,7 +236,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 	};
 }]);
 
-scrollbackApp.controller('rootController' , ['$scope', '$factory',  function($scope, $factory) {
+scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {
 	$factory.on('init', function(data){
 		//assigning the new new init data to the user scope ---
 		$scope.$apply(function(){
@@ -252,12 +253,26 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory',  function($sc
 			}	
 		});
 	});
-}]);
-
-scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {
+	
+	$scope.cancelScreen = function(){
+		$location.path("/"+$scope.room.id);	
+	}
+	
 	$scope.isGuest = function(){
 		return /^guest-/.test($scope.user.id);
 	};
+	
+}]);
+
+scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {
+	
+	$scope.logout = function() {
+		$factory.message({type:"nick", to:"", ref:"guest-"},function(message) {
+			navigator.id.logout();
+			$location.path("/"+$scope.room.id);
+		});
+	};
+	
 	$scope.save = function() {
 		$factory.message({to:"",type:"nick", user:{id:$scope.nick,accounts:[]}}, function(message) {
 			if(message.message) {
