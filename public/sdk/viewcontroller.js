@@ -1,6 +1,12 @@
 scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window',function($scope, $location, $factory, $timeout,$window) {
 	$factory.on("error",function(error) {
 		if(error == "AUTH_UNREGISTERED")return;
+		if(error == "AUTH_REQ_TO_POST"){
+			$scope.$apply(function() {
+				$location.path("/beta/me/login");
+			});
+			error="You have to login to post in this room."
+		}
 		$scope.$apply(function(){
 			$scope.status.waiting = false;
 			if($scope.notifications.indexOf(error)>=0) return;
