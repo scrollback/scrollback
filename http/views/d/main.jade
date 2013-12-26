@@ -16,15 +16,18 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 			div.notification(ng-repeat="i in notifications track by $index") {{i}}
 		#meta(ng-controller="metaController",ng-class="status.waiting?'waiting column':'column'")
 			a#logo scrollback	
-			a.archive(href="/#{room.id}") Switch to Old archieve view
 			#user(ng-cloak="")
 				a: img.face(src='{{user.picture}}' ng-click='profile()')
 			#username(ng-click='profile()',ng-cloak="") {{user.id}}
+			div
+				a.archive(onclick='window.location="/#{room.id}"') (Switch to old view)
 			#info 
 				ng-view
 			#foot
 				| Scrollback is a product of Askabt Pte Ltd.
 				| We respect your privacy. 
+				a.issues(onclick='window.location="https://github.com/scrollback/scrollback/issues"') (help us improve by reporting the bugs you find.)
+			
 		#body(ng-controller="messageController",class = 'column')
 			div(id="nomessagediv", ng-show = "{{items.length ==0}}")
 				| There are no messages in this room yet!
