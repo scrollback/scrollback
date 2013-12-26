@@ -182,12 +182,12 @@ function message (m, conn) {
 		if(typeof m.to != "string" && m.to.length==0) return;
 		if(m.type == 'join'){
 			//check for user login as well
-			sess.user.membership[roomName] = true;
+			sess.user.membership.push(roomName);
 			session.set(conn.sid, sess);
 		}
 		if(m.type == 'part'){
 			//check for user login as well
-			delete sess.user.membership[roomName];
+			sess.user.membership.splice(sess.user.membership.indexOf(roomName),1);
 			session.set(conn.sid, sess);
 		}
 		
@@ -278,7 +278,7 @@ function message (m, conn) {
 								m[d[i].room]=true;
 							}
 						}
-						sess.user.membership = m;
+						sess.user.membership = Object.keys(m);
 						conn.send('init', {
 							sid: sess.cookie.value,
 							user: sess.user

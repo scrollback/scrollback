@@ -92,7 +92,7 @@ function partMembership(el, self) {
 	if (!self.membershipHidden) {
 		self.membershipHidden = el;
 	}
-	if(!core.membership[self.id]) {
+	if(core.membership.indexOf(self.id)==-1) {
 		addClass(el, "scrollback-hidden");
 		// come up with a better name..
 		self.membershipHidden = el;
@@ -105,11 +105,11 @@ function partMembership(el, self) {
 	core.on('message',function(m){
 		if (m.type === "part" && m.to === self.id && el != self.membershipHidden && core.nick() == m.from) {//hide part show join
 			addHiddenClass(el,self);
-			delete core.membership[self.id];
+			core.membership.splice(core.membership.indexOf(self.id),1);
 		}	
 	});
 	core.on('membership', function(membership) {
-		if (!core.membership[self.id] && el != self.membershipHidden) {//show join hide part
+		if (core.membership.indexOf(self.id)==-1 && el != self.membershipHidden) {//show join hide part
 			addHiddenClass(el,self);
 		}			
 	});
@@ -119,7 +119,7 @@ function partMembership(el, self) {
  *add join class
  */
 function joinMembership(el, self){
-	if(core.membership[self.id]) {
+	if(core.membership.indexOf(self.id)!=-1) {
 		addHiddenClass(el,self);
 	}
 	addEvent(el,'click',function(e){
@@ -134,11 +134,11 @@ function joinMembership(el, self){
 	core.on('message',function(m){
 		if (m.type == "join" && m.to == self.id && el != self.membershipHidden && core.nick() == m.from) {//show part hide join
 			addHiddenClass(el,self);
-			core.membership[self.id] = true;
+			core.membership.push(self.id);
 		}	
 	});
 	core.on('membership', function(membership) {
-		if (core.membership[self.id] && el != self.membershipHidden) {//hide join show part
+		if (core.membership.indexOf(self.id)!=-1 && el != self.membershipHidden) {//hide join show part
 			addHiddenClass(el,self);
 		}			
 	});

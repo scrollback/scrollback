@@ -138,7 +138,7 @@ scrollbackApp.directive('message',function() {
         restrict: 'E',
         template: '<div class="scrollback-message" style="border-left-color: {{bcolor}}">'+
                     '<span class="scrollback-message-separator">[</span>'+
-                    '<span class="scrollback-message-nick">{{nick}}</span>'+
+                    '<span class="scrollback-message-nick">{{nick+bcolor}}</span>'+
                     '<span class="scrollback-message-separator">]</span>'+
                     '<span class="scrollback-message-content">{{text}}</span>'+
                     '</div>',
@@ -187,6 +187,7 @@ scrollbackApp.directive('message',function() {
                 $scope.nick = (value.indexOf("guest-")!==0)?value: value.replace("guest-","");
             });
 			attr.$observe('label', function(value) {
+                console.log("LABEL"+value);
 				if(value){
                     $scope.bcolor = hashColor(value);
                 }

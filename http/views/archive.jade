@@ -70,7 +70,7 @@ block content
 						if user.indexOf("guest-") == 0
 							button#action.login.span12 Login
 						else
-							if membership && membership[query.to]
+							if membership && (membership.indexOf(query.to)!=-1)
 								button#archive-part.span6 Unfollow
 								button#archive-join.archive-membership-hidden.span6 Follow
 							else

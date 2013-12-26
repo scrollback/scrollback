@@ -1,12 +1,12 @@
 <h1>
 	<a class = "scrollbackButton" href="/beta/me"><span class="fa fa-arrow-left btn left"></span></a>
 	<span>{{room.name || room.id || "No room selected"}}</span>
-	<span class="showPointer fa fa-tags right" ng-show = "!room.owner" ng-click = "goToConfigure()" title = "claim" >Claim</span>
-	<span class="showPointer fa fa-gears right" ng-show = "isOwner()" ng-click = "goToConfigure()" title = "configure">Configure</span>
-	<span class="showPointer fa fa-repeat right" title = "Unfollow Room"  ng-click="partRoom()" ng-show = "hasMembership()" >Unfollow</span>
-	<span class="showPointer right fa fa-check-square-o" title = "Follow Room"  ng-click="joinRoom()" ng-show = "!hasMembership()" >Follow</span>
+	<span class="button showPointer fa fa-tags right" ng-show = "!room.owner" ng-click = "goToConfigure()" title = "claim" >Claim</span>
+	<span class="button showPointer fa fa-gears right" ng-show = "isOwner()" ng-click = "goToConfigure()" title = "configure">Configure</span>
+	<span class="button showPointer fa fa-repeat right" title = "Unfollow Room"  ng-click="partRoom()" ng-show = "hasMembership()" >Unfollow</span>
+	<span class="button showPointer right fa fa-check-square-o" title = "Follow Room"  ng-click="joinRoom()" ng-show = "!hasMembership()" >Follow</span>
 	
-	<span class="showPointer fa fa-power-off right" ng-show = "user.owner==user.id" ng-click = "logout()" title = "logout">Logout</span>
+	<span class="button showPointer fa fa-power-off right" ng-show = "user.owner==user.id" ng-click = "logout()" title = "logout">Logout</span>
 </h1>
 <p id="description" class = "collapse expanded"> {{ room.description || "This room does not have a description yet!"}} </p>
 <div id="members"> 

@@ -31,7 +31,7 @@ $(document).ready(function(){
 	});
 	
 	core.on("membership",function(data) {
-		if (core.membership[stream]) {//show part
+		if (core.membership.indexOf(stream)!=-1) {//show part
 			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
 			$("#archive-join").addClass("archive-membership-hidden");
 		}
@@ -120,12 +120,12 @@ $(document).ready(function(){
 		else if (message.type == "part" && core.nick() == message.from && message.to == stream) {//show join
 			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
 			$("#archive-part").addClass("archive-membership-hidden");
-			delete core.membership[stream];
+			core.membership.splice(core.membership.indexOf(stream),1);
 		}
 		else if (message.type == "join" && core.nick() == message.from && message.to == stream) {//show part
 			$(".archive-membership-hidden").removeClass("archive-membership-hidden");
 			$("#archive-join").addClass("archive-membership-hidden");
-			core.membership[stream]=true;
+			core.membership.push(stream);
 		}
 	});
 	
