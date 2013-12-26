@@ -1,3 +1,16 @@
+div.newArchive {
+	text-align: center;
+	font-size: 24px;
+}
+
+a.newArchive {
+	text-decoration: none;
+	color: black;
+}
+a.newArchive: visited {
+	text-decoration: none;
+	color: black;
+}
 .notificationLink{
 	text-decoration: none;
 	color: white;

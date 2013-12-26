@@ -1,21 +1,21 @@
 scrollbackApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
-	$routeProvider.when('/me', {
+	$routeProvider.when('/beta/me', {
 		templateUrl: '/s/roomsview.html', 
 		controller:'roomscontroller'
 	});
-	$routeProvider.when('/:room', {
+	$routeProvider.when('/beta/:room', {
 		templateUrl: '/s/roomview.html', 
 		controller:'roomcontroller'
 	});
-	$routeProvider.when('/me/login', {
+	$routeProvider.when('/beta/me/login', {
 		templateUrl: '/s/login.html',
 		controller: 'loginController'
 	});
-	$routeProvider.when('/me/edit', {
+	$routeProvider.when('/beta/me/edit', {
 		templateUrl: '/s/me/edit',
 		controller: 'profileController'
 	});
-	$routeProvider.when('/:room/edit', {
+	$routeProvider.when('/beta/:room/edit', {
 		templateUrl: '/s/roomconfig.html', 
 		controller:'configcontroller' 
 	});

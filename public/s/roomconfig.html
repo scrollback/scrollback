@@ -1,5 +1,5 @@
 <h1>
-	<span class="fa fa-arrow-left left" ng-click="goBack()"></span>
+	<span class="showPointer fa fa-arrow-left left" ng-click="goBack()"></span>
 	<span> Configure Room </span>
 </h1>
 
@@ -25,7 +25,7 @@
 	<label>
 		Word Filtering
 		<div class="combo">
-			<button ng-class = "wordEnable ==0 ? 'off':''" ng-click = "wordEnable = 1; wordDisable = 0;">Yes</button>
+			<button class="ng-clock" ng-class = "wordEnable ==0 ? 'off':''" ng-click = "wordEnable = 1; wordDisable = 0;">Yes</button>
 			<button ng-class = "wordEnable ==1 ? 'off':''" ng-click = "wordEnable = 0; wordDisable = 1;">No</button>
 		</div>	
 	</label>
@@ -37,11 +37,11 @@
 		</div>	
 	</label>
 	<div class="buttonGroup">
-		<label>
+<!--		<label>-->
+			<button class="cancel" type="button" ng-click="cancel()">Cancel</button>
+<!--		</label>-->
+<!--		<label>-->
 			<button class="default" type="button" ng-click="saveRoom()">Save Account</button>
-		</label>
-		<label>
-			<button class="default" type="button" ng-click="cancel()">Cancel</button>
-		</label>
+<!--		</label>-->
 	</div>
 </form>

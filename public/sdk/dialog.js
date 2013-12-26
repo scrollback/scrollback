@@ -1,14 +1,13 @@
 var dialog = (function () {
 	
 	var dialog, frame, callback, host;
-
 	
 	if(scrollback.host.indexOf("//")==0){
 		//chaning protocol relative hosts to https.
 		host = scrollback.host.replace(/^\/\//, 'https://');
 	}else{
 		//changing the http hosts to 	https.
-		host = scrollback.host.replace(/^http:?/, 'https:');
+		host = scrollback.host.replace(/^http:/, 'https:');
 	}
 
 	function close () {

@@ -39,11 +39,14 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     }
 
     $scope.message = function() {
-        $factory.message({type:"text", text: $scope.text, 
-            to: window.scrollback.streams && window.scrollback.streams[0]}, function(data) {
-            //newMessage(data);
-        });
+        var text = $scope.text.trim();
         $scope.text = "";
+        if(text !== "") {
+            $factory.message({type:"text", text: text, 
+                to: window.scrollback.streams && window.scrollback.streams[0]}, function(data) {
+                //newMessage(data);
+            });
+        }
     };
     
     // $scope.loadMoreAt = function(time, before, after, callback) {

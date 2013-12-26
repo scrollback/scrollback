@@ -11,5 +11,6 @@ div
 		label Email
 			input(disabled,ng-init='email="#{email}"',ng-model="email")
 		label
-			.combo
-				button.default(type="button",ng-click="save()") Save account
+			.buttonGroup
+				button.cancel(type="button", ng-click = "logout()", style = "margin-right: 4px") Sign Out
+				button.default(type="button", ng-show="isGuest()", ng-click="save()") Save account
