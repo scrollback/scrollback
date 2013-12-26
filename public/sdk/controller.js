@@ -138,7 +138,7 @@ scrollbackApp.directive('message',function() {
         restrict: 'E',
         template: '<div class="scrollback-message" style="border-left-color: {{bcolor}}">'+
                     '<span class="scrollback-message-separator">[</span>'+
-                    '<span class="scrollback-message-nick">{{nick+bcolor}}</span>'+
+                    '<span class="scrollback-message-nick">{{nick}}</span>'+
                     '<span class="scrollback-message-separator">]</span>'+
                     '<span class="scrollback-message-content">{{text}}</span>'+
                     '</div>',

@@ -5,8 +5,11 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 			$scope.$apply(function() {
 				$location.path("/beta/me/login");
 			});
-			error="You have to login to post in this room."
+			error="You must sign in to post in this room."
 		}
+		if(error=="API Limit exceeded") error = "Your message was not delivered because you sent too many messages in a very short time.";
+		if(error=="REPEATATIVE") error = "Your message was not delivered because it seems repetitive.";
+		if(error=="BANNED_WORD") error = "Your message was not delivered because something you said was flagged as inappropriate.";
 		$scope.$apply(function(){
 			$scope.status.waiting = false;
 			if($scope.notifications.indexOf(error)>=0) return;

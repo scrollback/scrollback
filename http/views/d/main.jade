@@ -34,7 +34,6 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 				| There are no messages in this room yet!
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 				div(ng-repeat="i in items track by $index")
-					p {{i.labels[0]}}
 					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}")
 			form.messageWrapper(ng-submit="message();")
 				input.messageBox(type="text", ng-model="text")
