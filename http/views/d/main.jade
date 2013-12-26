@@ -1,4 +1,5 @@
 doctype html
+
 html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{JSON.stringify(user)}; room = #{JSON.stringify(room)};  messages = #{JSON.stringify(messages)};  notifications = #{JSON.stringify([])};  ")
 	head
 	meta(charset="utf-8")
@@ -37,7 +38,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 			form.messageWrapper(ng-submit="message();")
 				input.messageBox(type="text", ng-model="text")
 				input(id="submitButton" type="submit")
-			a(name="git cendoflog")
+			a(name="endoflog")
 		script.
 			window.scrollback = {
 				host : '//' + location.host,

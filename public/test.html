@@ -154,37 +154,57 @@
 		<!--/div> <!-- container -->
 		
 		<script src="http://code.jquery.com/jquery.js"></script>
-		<script src="sdk/jquery-fixInView.js"></script>
+		<!-- script src="sdk/jquery-fixInView.js"></script -->
 		<script>
-//			var container = $('.container');
-						
-			$(document).ready(function() {
-				$('.column').fixInView();
+			
+			var ignore = false;
+			
+			$(document).scroll(function() {
+				var top = $(window).scrollTop();
+				console.log('scroll called', ignore, top);
+			//	if(ignore) return;
+				ignore = true;
+				setTimeout(function() {
+					console.log('timeout fired', top, $(window).scrollTop());
+					ignore = false;
+				}, 0);
 			});
 			
-
-			$(window).resize(function() {
-				container.width($(window).width() + (container.width() - container[0].clientWidth));
-			});
+//			$(document).click(function() {
+//				console.log('clicked');
+//				$(window).scrollTop(100);
+//				setTimeout(function() {console.log('done');},0);
+//			});
 			
-			/*
-				onscroll=fn => bind(reposition, fn)
-				scrollTop < 150 -> e.above < 150
-				scrollTop = prevH - newH -> $('').nudgeUnView();
-			*/
-			$('#body').bind('reposition', function(e) {
-
-				//console.log(e);
-				if(e.above < 150 && e.by<0) {
-//					$('<p>').text(Array(25).join('Dummy text ')).prependTo($(this));
-//					$(this).nudgeInView(-$(this).outerHeight() + e.height);
-				}
-				else if(e.below < 150 && e.by>0) {
-//					$('<p>').text(Array(25).join('Dummy text ')).appendTo($(this));
-				}
-			});
-			
-			$(window).trigger('resize');
+////			var container = $('.container');
+//						
+//			$(document).ready(function() {
+//				$('.column').fixInView();
+//			});
+//			
+//
+//			$(window).resize(function() {
+//				container.width($(window).width() + (container.width() - container[0].clientWidth));
+//			});
+//			
+//			/*
+//				onscroll=fn => bind(reposition, fn)
+//				scrollTop < 150 -> e.above < 150
+//				scrollTop = prevH - newH -> $('').nudgeUnView();
+//			*/
+//			$('#body').bind('reposition', function(e) {
+//
+//				//console.log(e);
+//				if(e.above < 150 && e.by<0) {
+////					$('<p>').text(Array(25).join('Dummy text ')).prependTo($(this));
+////					$(this).nudgeInView(-$(this).outerHeight() + e.height);
+//				}
+//				else if(e.below < 150 && e.by>0) {
+////					$('<p>').text(Array(25).join('Dummy text ')).appendTo($(this));
+//				}
+//			});
+//			
+//			$(window).trigger('resize');
 		</script>
     </body>
 </html>
