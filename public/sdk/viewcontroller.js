@@ -284,7 +284,7 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 	});
 	
 	$scope.cancelScreen = function(){
-		$location.path("/"+$scope.room.id);	
+		$location.path("/beta/"+$scope.room.id);	
 	}
 	
 	$scope.isGuest = function(){

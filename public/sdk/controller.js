@@ -26,10 +26,15 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     	newMessage(msg);
     });
     function newMessage(data) {
+		
+	   if($(window).scrollTop() + $(window).height() > $(document).height() - 20) {
+		   // If a user is reading a message towards the bottom of the page, or typing something, a new incoming message must not 
+		   //reset the scrollposition.
+		   $('html, body').animate({scrollTop:$(document).height()}, 'slow'); 
+	   }
 		if(data.type =="text" && !data.message) {
 			angular.element('#nomessagediv').hide(); 
 			messages.unshift(data);
-//			$scope.gotoBottom(); 
 			if(bottomIndex === 0) {
 				$scope.$apply(function(){
 					$scope.items.push(messages[bottomIndex]);
@@ -123,10 +128,13 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                 //while($scope.items.length > 50){ 
                 $scope.items.shift();
                 $scope.items.shift();
-                                $scope.items.shift();
+                $scope.items.shift();
                 topIndex -= 3;
                  //}
             }
+			
+			if($(window).scrollTop() + $(window).height() == $(document).height()) $('#body').nudgeInView(0);
+			
         } , 1);
     };
 }
