@@ -57,7 +57,8 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 }]);
 
 scrollbackApp.controller('loginController',['$scope','$route','$factory','$location',function($scope, $route, $factory, $location) {
-	$scope.nickChange = function() {
+	$scope.nickChange = function(event) {
+		console.log(event);
 		$scope.status.waiting = true;
 		if($scope.user.id == "guest-"+$scope.displayNick){
 			$location.path("/beta/"+$scope.room.id);
@@ -75,7 +76,9 @@ scrollbackApp.controller('loginController',['$scope','$route','$factory','$locat
 	    	}
 	    });
 	};
-
+	$scope.goBack = function(){
+		$location.path("/beta/"+$scope.room.id);
+	};
 	$scope.displayNick = ($scope.user.id).replace(/^guest-/,"");
 	$scope.personaLogin = function(){
 		navigator.id.watch({
@@ -262,6 +265,9 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 }]);
 
 scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {
+	$scope.goBack = function() {
+		$location.path("/beta/"+$scope.room.id);	
+	};
 	$scope.status= {
 		waiting : false
 	};
@@ -286,7 +292,7 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 	
 	$scope.cancelScreen = function(){
 		$location.path("/beta/"+$scope.room.id);	
-	}
+	};
 	
 	$scope.isGuest = function(){
 		return /^guest-/.test($scope.user.id);
