@@ -9,6 +9,9 @@ function messageArray(initData) {
 	}
 
 	function load(key) {
+		
+		return; // there seems to be some bug since this module does not work correctly with all browsers.  
+		
 		if(!window.localStorage) return;
 		try {
 			[].splice.apply(messages,[0,messages.length].concat(JSON.parse(window.localStorage[key] || '[]')));
