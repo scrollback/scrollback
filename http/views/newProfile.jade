@@ -2,7 +2,7 @@ div
 	h1
 		button.left: span.fa.fa-arrow-left(ng-click = "goBack()")
 		span My account
-	form#profile
+	form#profile(ng-submit="save()")
 		label Username
 			div.room(ng-show="isGuest()")
 				input(value="{{user.id}}",ng-model="nick")

@@ -5,7 +5,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     messages.load($scope.room.id);
     messages.merge($scope.messages.reverse());
     messages.save($scope.room.id);
-        
     // console.log("Messages are loaded up", messages);
     var topIndex = 0, bottomIndex = 0;
     // initialising items with 50 messages initially 
@@ -23,28 +22,63 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     });
     $factory.on("message", function(msg) {
 		console.log("inside message ", msg);
-    	newMessage(msg);
+    	$scope.$apply(function(){
+            newMessage(msg);    
+        });
     });
     function newMessage(data) {
-		if(data.type =="text" && !data.message) {
-			angular.element('#nomessagediv').hide(); 
-			messages.unshift(data);
+        var i, updated,deleted = false,index;
+        if(data.type && data.type!="text") return;
+		angular.element('#nomessagediv').hide();
+		for (i =0; i <=30 && i<messages.length; i++ ) {
+            if (messages[i].id == data.id) {
+                messages[i] = data;
+                updated = true; 
+                if(data.message) {
+                    messages.splice(i,1);
+                    deleted = true;
+                }
+                break;
+            }
+        }
+
+        if (!updated && !data.message) {
+            messages.unshift(data);
+            index = 0;
+        }else {
+            index = i;
+        }
 //			$scope.gotoBottom(); 
-			if(bottomIndex === 0) {
-				$scope.$apply(function(){
-					$scope.items.push(messages[bottomIndex]);
-				});
-			}
+		if(bottomIndex === 0) {
+            //just to isolate the scope.
+			(function(){
+                var l=$scope.items.length,insertPosition=l-1,i;
+                for(i=insertPosition;i>0;i--) {
+                    if($scope.items[i].id == data.id){
+                        $scope.items[i] = data;
+                        console.log(data);
+                        if(data.message){
+                          $scope.items.splice(i,1);
+                        } 
+                        return;  
+                    } 
+                }
+				(deleted && !data.message) || $scope.items.push(messages[index]);
+			})();
 		}
     }
 
     $scope.message = function() {
-        var text = $scope.text.trim();
+        var text = $scope.text.trim(),message;
         $scope.text = "";
+        message = {type:"text", text: text, to: $scope.room.id,from: $scope.user.id};
+        newMessage(message);
         if(text !== "") {
-            $factory.message({type:"text", text: text, 
-                to: window.scrollback.streams && window.scrollback.streams[0]}, function(data) {
-                //newMessage(data);
+            $factory.message(message, function(data) {
+                $scope.$apply(function(){
+                    console.log("callback",data);
+                    newMessage(data);    
+                });
             });
         }
     };

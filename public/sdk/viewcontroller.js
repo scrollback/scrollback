@@ -1,6 +1,7 @@
 scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window',function($scope, $location, $factory, $timeout,$window) {
 	$factory.on("error",function(error) {
 		if(error == "AUTH_UNREGISTERED")return;
+		if(error == "DUP_NICK") error = "Username already taken.";;
 		if(error == "AUTH_REQ_TO_POST"){
 			$scope.$apply(function() {
 				$location.path("/beta/me/login");
@@ -57,7 +58,6 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 
 scrollbackApp.controller('loginController',['$scope','$route','$factory','$location',function($scope, $route, $factory, $location) {
 	$scope.nickChange = function(event) {
-		console.log(event);
 		$scope.status.waiting = true;
 		if($scope.user.id == "guest-"+$scope.displayNick){
 			$location.path("/beta/"+$scope.room.id);
@@ -202,7 +202,6 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		$location.path("/beta/"+$scope.room.id);
 		return;
 	}
-	$scope.name = $scope.room.name || $scope.room.id;
 	$scope.description = $scope.room.description || $scope.room.description;
 	if($scope.room.params){
 		$scope.wordEnable = $scope.room.params.wordban?1:0;
@@ -227,7 +226,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 	$scope.saveRoom = function() {
 		var room={};
 		room.id = $scope.room.id;
-		room.name = $scope.name || $scope.room.id;
+		room.name = $scope.room.id;
 		room.description = $scope.description || "";
 		room.params = {};
 		room.type = "room";
@@ -313,6 +312,7 @@ scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location
 		$factory.message({to:"",type:"nick", user:{id:$scope.nick,accounts:[]}}, function(message) {
 			if(message.message) {
 				//err .
+				console.log("save nick");
 			}else{
 				$scope.$apply(function() {
 					$scope.status.waiting = false;
