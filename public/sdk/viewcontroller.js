@@ -34,6 +34,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	$scope.logout = function() {
 		$factory.message({type:"nick", to:"", ref:"guest-"},function(message) {
 			navigator.id.logout();
+			$location.path("/beta/me");
 		});
 	};
 	var statusObject = {};

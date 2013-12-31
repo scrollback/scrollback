@@ -28,6 +28,14 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     });
     function newMessage(data) {
         var i, updated,deleted = false,index;
+
+        if($(window).scrollTop() + $(window).height() > $(document).height() - 20) {
+           // If a user is reading a message towards the bottom of the page, or typing something, a new incoming message must not 
+           //reset the scrollposition.
+           $('html, body').animate({scrollTop:$(document).height()}, 'slow'); 
+          if($(window).scrollTop() + $(window).height() == $(document).height()) $('#body').nudgeInView(0);
+       }
+       
         if(data.type && data.type!="text") return;
 		angular.element('#nomessagediv').hide();
 		for (i =0; i <=30 && i<messages.length; i++ ) {
@@ -107,7 +115,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                     $scope.items.unshift(messages[topIndex]);
                 topIndex += 1;
             }
-            if(messages.length - topIndex == 20) {
+            if(messages.length - topIndex == 30) {
                 console.log("top reached", messages[topIndex]);
                 // time to request factory for messages from above 
                 $factory.messages($scope.room.id, "", messages[messages.length - 1].time);
@@ -157,10 +165,13 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                 //while($scope.items.length > 50){ 
                 $scope.items.shift();
                 $scope.items.shift();
-                                $scope.items.shift();
+                $scope.items.shift();
                 topIndex -= 3;
                  //}
             }
+			
+			if($(window).scrollTop() + $(window).height() == $(document).height()) $('#body').nudgeInView(0);
+			
         } , 1);
     };
 }
@@ -219,8 +230,6 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
             $('.column').fixInView();
             $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
             $('#body').bind('reposition', function(e) {
-                // console.log("reposition event is fired!", e.above, e.below, e.by);
-                // console.log("Reposition ",e);
                 if(e.above < 150 && e.by<0) {
                     scope.$apply(attr.whenScrolledUp);
                     $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
