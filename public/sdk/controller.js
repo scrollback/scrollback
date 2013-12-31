@@ -6,7 +6,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     messages.merge($scope.messages.reverse());
     messages.save($scope.room.id);
         
-    // console.log("Messages are loaded up", messages);
     var topIndex = 0, bottomIndex = 0;
     // initialising items with 50 messages initially 
     for (var i = 0; i < 50; i++) {
@@ -67,8 +66,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                     $scope.items.unshift(messages[topIndex]);
                 topIndex += 1;
             }
-//        $location.hash('endoflog');
-//        $anchorScroll();
         }
     };
 
@@ -88,11 +85,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                         console.log("concatenating now!", data[data.length-1]);
                         messages = messages.concat(data.reverse());
                     }
-                    //console.log(" in factory.onMessages", data);emm
-                    //console.log("current messages array" , messages);
-                    //messages.merge(data);
-                    //console.log("new messages after merge", messages);
-                    //messages.save();
                 });
             }
         }
@@ -109,7 +101,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     };
     $scope.loadMoreDown = function() {
         // TODO : popping from top :)
-        // console.log("Top element ", messages[topIndex]);
         for(i=0; i< 5; i++) {
               if(bottomIndex > 0) {
                 if(messages[bottomIndex].type == 'text')

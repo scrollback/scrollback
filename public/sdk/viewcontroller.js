@@ -58,7 +58,6 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 
 scrollbackApp.controller('loginController',['$scope','$route','$factory','$location',function($scope, $route, $factory, $location) {
 	$scope.nickChange = function(event) {
-		console.log(event);
 		$scope.status.waiting = true;
 		if($scope.user.id == "guest-"+$scope.displayNick){
 			$location.path("/beta/"+$scope.room.id);
@@ -305,15 +304,17 @@ scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location
 	$scope.logout = function() {
 		$factory.message({type:"nick", to:"", ref:"guest-"},function(message) {
 			navigator.id.logout();
-			$location.path("/"+$scope.room.id);
+			$location.path("/beta/"+$scope.room.id);
 		});
 	};
-	
 	$scope.save = function() {
 		$scope.status.waiting = true;
 		$factory.message({to:"",type:"nick", user:{id:$scope.nick,accounts:[]}}, function(message) {
 			if(message.message) {
 				//err .
+				$scope.$apply(function() {
+					$scope.status.waiting = false;
+				});
 			}else{
 				$scope.$apply(function() {
 					$scope.status.waiting = false;

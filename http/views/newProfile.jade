@@ -5,12 +5,12 @@ div
 	form#profile
 		label Username
 			div.room(ng-show="isGuest()")
-				input(value="{{user.id}}",ng-model="nick")
+				input(value="{{user.id.substring(6)}}",ng-model="nick")
 			div.room(ng-show="!isGuest()")
 				input(disabled,value="{{user.id}}",ng-model="nick")
 		label Email
 			input(disabled,ng-init='email="#{email}"',ng-model="email")
-		label
-			.buttonGroup
-				button.cancel(type="button", ng-click = "logout()", style = "margin-right: 4px") Sign Out
-				button.default(type="button", ng-show="isGuest()", ng-click="save()") Save account
+		.buttonGroup
+			button.cancel(type="button", ng-click = "cancelScreen()", style = "margin-right: 4px") Cancel
+			button.default(type="button", ng-show="!isGuest()", ng-click="logout()", style = "margin-right: 4px") Sign Out
+			button.default(type="button", ng-show="isGuest()", ng-click="save()") Save account

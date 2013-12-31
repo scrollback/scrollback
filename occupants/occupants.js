@@ -12,20 +12,27 @@ module.exports = function(core) {
 
 	core.on('message', function(message, callback) {
 		log("Heard a \"message\" event");
+		var to=message.to;
+		if(typeof message.to =="undefined") to=[];
+		else if(typeof message.to =="string") to=[message.to];
+		else to = message.to;
+		
 		if(message.type === "back") {
-			if(message.to) {
-				redisProxy.sadd("rooms", message.to);
-				redisProxy.sadd("room:"+"occupants:"+message.to, message.from);
-			}
+			to.forEach(function(element) {
+				redisProxy.sadd("rooms", element);
+				redisProxy.sadd("room:"+"occupants:"+element, message.from);
+			});
 		}
 		if(message.type === "away"){
-			if(message.to) redisProxy.srem("room:"+"occupants:"+message.to,message.from);
+			to.forEach(function(element) {
+				redisProxy.srem("room:"+"occupants:"+element, message.from);
+			});
 		}
 		if(message.type === "nick"){
-			if(message.to) {
-				redisProxy.srem("room:"+"occupants:"+message.to,message.from);
-				redisProxy.sadd("room:"+"occupants:"+message.to, message.ref);
-			}
+			to.forEach(function(element) {
+				redisProxy.srem("room:"+"occupants:"+element,message.from);
+				redisProxy.sadd("room:"+"occupants:"+element, message.ref);
+			});
 		}
 		callback();
 	}, "watcher");
