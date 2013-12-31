@@ -22,9 +22,9 @@ function merge(d, c) {
 		}
 	}
 }
+
 var defaults = {
 	core: {
-		uid: 1000,
 		name: "scrollback"
 	},
 	mysql: {
@@ -35,12 +35,6 @@ var defaults = {
 		database : 'scrollback' 
 	},
 	http: {
-		https: {
-			key: "ssh-cert/server.key",
-			cert: "ssh-cert/server.crt",
-			ca: "ssh-cert/int.crl",
-			port: 443
-		},
 		host: "local.scrollback.io",
 		cookieDomain: ".scrollback.io",
 		port: 80,
@@ -58,7 +52,7 @@ var defaults = {
 		port : 12345
 	},
 	irc: {
-		nick: 'sb-local-scrollback',		// nickname of the bot
+		nick: 'sbtestbot',		// nickname of the bot
 		hangTime: 60000     // timeout before disconnecting (ms)
 	}
 }
