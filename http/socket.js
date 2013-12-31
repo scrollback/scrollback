@@ -179,7 +179,9 @@ function message (m, conn) {
 		if(!m.to && Object.keys(user.rooms).length != 0) {
 			m.to = m.to || Object.keys(user.rooms);
 		}
+
 		if(m.to && typeof m.to != "string" && m.to.length==0) return;
+
 		if(m.type == 'join'){
 			//check for user login as well
 			sess.user.membership.push(roomName);

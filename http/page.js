@@ -15,7 +15,6 @@ exports.init = function(app, coreObject) {
             });
         },
         "profile" : function(req, res){
-			console.log("Retrieving session", req.session);
             res.render("profile", {user: req.session.user});
         },
 		"cookie": function(req, res) {

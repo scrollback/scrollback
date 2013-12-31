@@ -38,7 +38,7 @@ module.exports =function(core){
 			if(room.accounts) {
 				for(i=0,l=room.accounts.length; i<l;i++) {
 					try {
-						console.log(room.accounts[i].id);
+						log(room.accounts[i].id);
 						u = url.parse(room.accounts[i].id);
 					} catch(e) {
 						return callback(new Error("INVALID_ACCOUNT"));

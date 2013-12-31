@@ -8,11 +8,9 @@ module.exports = function(core) {
 		log("Heard \"message\" event");
 		if(message.to) {
 			if(typeof message.to === "string") message.to = [message.to];
-			console.log(message.to);
 			message.to = message.to.map(function(room) {
 				return sanitizeRoomName(room);
 			});
-			console.log(message.to);
 		}
 		if(!message.id )	message.id = guid();
 		if(!validateRoom(message.from.replace(/^guest-/,""))) return callback(new Error("INVALID_USER_ID"));
