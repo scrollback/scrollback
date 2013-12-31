@@ -125,7 +125,8 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		else return false;
 	};
 	$scope.goToConfigure = function() {
-		$location.path("/beta/"+$scope.room.id+"/edit");
+		if(/^guest-/.test($scope.user.id)) $location.path('/beta/me/login');
+		else $location.path("/beta/"+$scope.room.id+"/edit");
 	};
 	$scope.partRoom = function() {
 		var msg = {}, index,i,l;
