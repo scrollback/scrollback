@@ -1,5 +1,5 @@
 <h1>
-	<a class = "scrollbackButton" href="/beta/me"><span class="fa fa-arrow-left btn left"></span></a>
+	<a class = "scrollbackButton showPointer" ng-click="goToRoomsView()"><span class="fa fa-arrow-left btn left"></span></a>
 	<span>{{room.id || "No room selected"}}</span>
 	<span ng-show = "!room.owner" ng-click = "goToConfigure()" title = "claim"><span class="button faButton showPointer fa fa-tags right"  ></span><span class="showPointer buttonText">CLAIM</span>
 	</span>
@@ -14,6 +14,6 @@
 <p id="description" class = "collapse expanded"> {{ room.description || "This room does not have a description yet!"}} </p>
 <div id="members"> 
 	<span ng-repeat = "i in room.members">
-		<img src="{{i.picture}}" class = "face present" title="{{i.name}}"/>
+		<img src="{{i.picture}}" class = "face present" title="{{i.id}}"/>
 	</span>
 </div>

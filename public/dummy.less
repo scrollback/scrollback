@@ -270,6 +270,7 @@ img.face {
 .scrollback-message-timestamp {color: #999}
 .scrollback-message-content {color: #000}
 .scrollback-message-content-me{color: #000; font-style:italic}
+.scrollback-message-time{color: #999; float:right; margin-right: 3%}
 
 #notifications {
 	position: fixed;
@@ -293,6 +294,23 @@ img.face {
 	text-align: center
 }
 
+.scrollback-message:hover .socialButton{
+	visibility: visible;	
+}
+
+.socialButton{
+	visibility: hidden;
+	font-size: 24px;
+	line-height: 24px;
+}
+.fa-twitter-square{
+	float: right;
+	margin-right: 1%;
+	display: none;
+	text-decoration: none;
+	&.default{ color: #4099FF; opacity: 0.5; };
+	&.darken{ opacity: 1; };
+}
 .issues:hover{
 	text-decoration: underline;
 }

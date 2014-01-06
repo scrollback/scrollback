@@ -1,3 +1,5 @@
+var __glo_prevtime = 0;
+
 function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
     $scope.items = [];
     var messages = messageArray();
@@ -178,7 +180,10 @@ scrollbackApp.directive('message',function($compile) {
                         '<span class="scrollback-message-separator">]</span>'+
                         '<span ng-class="slashMe?me:noSlashMe" ng-repeat="i in text track by $index">'+
                             '<span ng-show="isText(i)">{{i.text}}</span>'+
-                            '<span ng-show="!isText(i)"><a href="{{i.link}}">{{i.text}}</a></span></span>'
+                            '<span ng-show="!isText(i)"><a href="{{i.link}}">{{i.text}}</a></span></span>'+
+						'<span class = "socialButton" title="Tweet this message"><a href="{{twitterText}}"  target="_blank" ng-class="{darken : hover}" ng-mouseenter="hover=true" ng-mouseleave="hover=false" class="fa fa-twitter-square default"></a> </span>'+
+						'<span ng-show = "showTime" class="scrollback-message-time"> {{time}}</span>'
+						
                     +'</div>',
         scope: true,
         link: function($scope, element, attr) {
@@ -188,6 +193,11 @@ scrollbackApp.directive('message',function($compile) {
             $scope.isText = function(part) {
                 return ((part.type=="link")?false:true);
             };
+			
+			$scope.darkenIcon = function(){
+				console.log('hello');
+			}
+			
             attr.$observe('from', function(value) {
                 $scope.nick = $scope.from = value.replace(/^guest-/,"");
             });
@@ -205,7 +215,47 @@ scrollbackApp.directive('message',function($compile) {
                     $scope.nick = $scope.from; 
                 }
                 $scope.text = format($scope.text);
+				$scope.twitterText = "http://twitter.com/home/?status=" + $scope.text[0].text + " via @Scrollbackio";
+				console.log($scope.twitterText);
+				
             });
+			attr.$observe('time', function(value){
+				var currtime = new Date().getTime();
+				var time = value;
+				
+				console.log("Diff:", time - __glo_prevtime);
+				console.log("new : ", time - (new Date().getTime()));
+				
+				if(time - __glo_prevtime > 60000 ) $scope.showTime = true; 
+				else $scope.showTime = false;
+				
+				__glo_prevtime = time;
+				
+				var showDate = prettyDate(time, currtime);
+				$scope.time = 'Sent ' + showDate;
+			});
+			
+			$scope.prettyDate = function prettyDate(time, currTime) {
+					var d = new Date(parseInt(time, 10)), n = new Date(currTime),
+					day_diff = (n.getTime()-d.getTime())/86400000,
+					weekDays=["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+						"Friday", "Saturday"],
+					months=["January", "February", "March", "April", "May", "June", "July",
+						"August", "September", "October", "November", "December"],
+					str = "";
+					if (day_diff > 6) {
+						str+=months[d.getMonth()] + ' ' + d.getDate();
+						str = (d.getFullYear() !== n.getFullYear()? d.getFullYear() + ' ': '')+str;
+					}
+					else{
+						str = str || day_diff > 1? weekDays[d.getDay()]: d.getDay()!=n.getDay()?
+						'yesterday': '';
+					}
+					
+					return str + ' at '+ d.getHours() + ':' +
+						(d.getMinutes()<10? '0': '') + d.getMinutes();
+			}
+			
         }
     }
 });

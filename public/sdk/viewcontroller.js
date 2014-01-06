@@ -26,10 +26,40 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	};
 	$scope.profile = function() {
 		if(/^guest-/.test($scope.user.id)) {
-			$location.path("/beta/me/login");
+			$scope.personaLogin();
+			//$location.path("/beta/me/login");
 		}else {
 			$location.path("/beta/me/edit");	
 		}	
+	};
+	$scope.personaLogin = function(){
+		navigator.id.watch({
+			onlogin: function(assertion){
+				var message = {browserid:assertion, type: "nick", to:''};
+				$scope.status.waiting = true;
+				$factory.message(message, function(message){
+					if(message.message && message.message == "AUTH_UNREGISTERED") {
+						$scope.$apply(function() {
+							$scope.status.waiting = false;
+							$location.path("/beta/me/edit");	
+						});
+					}
+					else if(!message.message) {
+						$scope.$apply(function() {
+							$scope.status.waiting = false;
+							$location.path("/beta/"+$scope.room.id);
+						});
+					}
+				});
+			},
+			onlogout: function() {
+				$scope.$apply(function() {
+					$scope.status.waiting = false;
+					$location.path("/beta/"+$scope.room.id);
+				});
+			}
+		});
+		navigator.id.request();
 	};
 	$scope.logout = function() {
 		$factory.message({type:"nick", to:"", ref:"guest-"},function(message) {
@@ -80,35 +110,6 @@ scrollbackApp.controller('loginController',['$scope','$route','$factory','$locat
 		$location.path("/beta/"+$scope.room.id);
 	};
 	$scope.displayNick = ($scope.user.id).replace(/^guest-/,"");
-	$scope.personaLogin = function(){
-		navigator.id.watch({
-			onlogin: function(assertion){
-				var message = {browserid:assertion, type: "nick", to:''};
-				$scope.status.waiting = true;
-				$factory.message(message, function(message){
-					if(message.message && message.message == "AUTH_UNREGISTERED") {
-						$scope.$apply(function() {
-							$scope.status.waiting = false;
-							$location.path("/beta/me/edit");	
-						});
-					}
-					else if(!message.message) {
-						$scope.$apply(function() {
-							$scope.status.waiting = false;
-							$location.path("/beta/"+$scope.room.id);
-						});
-					}
-				});
-			},
-			onlogout: function() {
-				$scope.$apply(function() {
-					$scope.status.waiting = false;
-					$location.path("/beta/"+$scope.room.id);
-				});
-			}
-		});
-		navigator.id.request();
-	};
 }]);
 
 
@@ -120,12 +121,22 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			$factory.enter($routeParams.room);
 		});
 	}
+	$scope.goToRoomsView = function(){
+		if(/^guest-/.test($scope.user.id)){ 
+			$scope.personaLogin();
+			//$location.path('/beta/me/login');
+		} 
+		else $location.path("/beta/me");
+	}
 	$scope.isOwner = function() {
 		if($scope.user.id == $scope.room.owner) return true;
 		else return false;
 	};
 	$scope.goToConfigure = function() {
-		if(/^guest-/.test($scope.user.id)) $location.path('/beta/me/login');
+		if(/^guest-/.test($scope.user.id)){ 
+			$scope.personaLogin();
+			//$location.path('/beta/me/login');
+		} 
 		else $location.path("/beta/"+$scope.room.id+"/edit");
 	};
 	$scope.partRoom = function() {
@@ -151,7 +162,8 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		var msg = {};
 		if(/^guest-/.test($scope.user.id)){
 			//guest
-			$location.path('/beta/me/login');
+			//$location.path('/beta/me/login');
+			$scope.personaLogin();
 			return;
 		}
 		msg.to = $scope.room.id;
@@ -175,6 +187,7 @@ scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', 
 		$location.path("/beta/"+$scope.room.id);
 	};
 	if(/^guest-/.test($scope.user.id)) {
+		//$scope.personaLogin();
         $location.path("/beta/me/login");
     }
     $scope.goTo = function(room) {
@@ -198,7 +211,8 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		$location.path("/beta/"+$scope.room.id);
 	};
 	if(/^guest-/.test()){
-		$location.path("/beta/me/login");
+		$scope.personaLogin();
+		//$location.path("/beta/me/login");
 	}
 	if($scope.user.id != $scope.room.owner && typeof $scope.room.owner!= "undefined") {
 		$location.path("/beta/"+$scope.room.id);
