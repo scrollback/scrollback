@@ -338,8 +338,8 @@ exports.init = function(app, coreObject) {
 //         else{
 //             res.end(JSON.stringify({error:"Improper Data"}));
 //         }
-//     });
-// };
+    // });
+};
 
 
 var relDate= function (input, reference){
