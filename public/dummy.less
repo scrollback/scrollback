@@ -8,7 +8,11 @@
 
 html, button, input, select, textarea {
 	font: 300 16px/24px "Open Sans", sans-serif;
-	color: #222;
+	color: #222; 
+}
+
+#backbutton{
+	cursor : pointer ;
 }
 
 body { padding: 0; margin: 0; width: 100%; height: 100%; }
@@ -22,6 +26,7 @@ h1 button, h1 a.btn {
 	margin: 0; padding: 0; display: inline-block;
 	border: none; background: transparent; font-decoration: none;
 	color: #999; font-size: inherit; line-height: inherit;
+	float: right; 
 	
 	&.left { margin-right: 16px; }
 	&.right { margin-left: 16px; }
@@ -58,6 +63,7 @@ img.face {
 //		border-right: 4px solid #0f0;
 	}
 }
+
 
 #meta {
 	position: absolute;
@@ -227,6 +233,11 @@ img.face {
 }
 .messageBox:focus { border : none }
 
+#embedScript{
+	background: #555;	
+	display: none;
+	padding: 12px;
+}
 #submitButton{
 	display:none;
 }
@@ -270,6 +281,7 @@ img.face {
 .scrollback-message-timestamp {color: #999}
 .scrollback-message-content {color: #000}
 .scrollback-message-content-me{color: #000; font-style:italic}
+.scrollback-message-time{color: #999; float:right; margin-right: 3%}
 
 #notifications {
 	position: fixed;
@@ -280,6 +292,10 @@ img.face {
 	padding: 2px 2px;
 	z-index: 1;
 	background: #3ca;
+}
+
+#logoutButton{
+	font-size: 25px;
 }
 
 .notification {
@@ -293,6 +309,24 @@ img.face {
 	text-align: center
 }
 
+
+.scrollback-message:hover .socialButton{
+	visibility: visible;	
+}
+
+.socialButton{
+	visibility: hidden;
+	font-size: 24px;
+	line-height: 24px;
+}
+.fa-twitter{
+	float: right;
+	margin-right: 1%;
+	display: none;
+	text-decoration: none;
+	&.default{ color: #4099FF; opacity: 0.5; };
+	&.darken{ opacity: 1; };
+}
 .issues:hover{
 	text-decoration: underline;
 }
@@ -322,8 +356,10 @@ img.face {
 	font: 300 "Open Sans", sans-serif;
 	padding-right: 8px;
 	font-size : 16px;
-	font-weight: bold;
+	font-weight: bold !important;
 	margin-left: 2px;
+	cursor : pointer ;
+	text-transform: uppercase;
 }
 .faButton{
 	font-size : 22px; 
