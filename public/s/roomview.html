@@ -12,9 +12,6 @@
 	
 </h1>
 
-
-<p id="description" class = "collapse expanded"> {{ room.description || "This room does not have a description yet!"}} </p>
-
 <div id= "embedScript"> 
 <pre>
 &ltscript>
@@ -32,6 +29,9 @@
 &lt/script&gt
 </pre>
 </div>
+
+<p id="description" class = "collapse expanded"> {{ room.description || "This room does not have a description yet!"}} </p>
+
 <div id="members"> 
 	<span ng-repeat = "i in room.members">
 		<img src="{{i.picture}}" class = "face present" title="{{i.id}}"/>
