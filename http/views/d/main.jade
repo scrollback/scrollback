@@ -19,7 +19,11 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 			a(href="/beta/me")#logo scrollback	
 			#user(ng-cloak="")
 				a: img.face(src='{{user.picture}}' ng-click='profile()')
+				a( id='logoutButton' ng-show='user.owner==user.id' ng-click='logout()' title='logout' class='button buttonText fa fa-power-off right')
 			#username(ng-click='profile()',ng-cloak="") {{user.id}}
+			
+			
+			
 			div
 				a.archive(onclick='window.location ="/#{room.id}";') (Switch to old view)
 			#info 

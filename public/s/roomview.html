@@ -1,17 +1,37 @@
 <h1>
-	<a class = "scrollbackButton showPointer" ng-click="goToRoomsView()"><span class="fa fa-arrow-left btn left"></span></a>
+	<a id='backbutton' class='button fa fa-arrow-left left' ng-click='goToRoomsView()'></a>
 	<span>{{room.id || "No room selected"}}</span>
-	<span ng-show = "!room.owner" ng-click = "goToConfigure()" title = "claim"><span class="button faButton showPointer fa fa-tags right"  ></span><span class="showPointer buttonText">CLAIM</span>
-	</span>
-	<span ng-show = "isOwner()" ng-click = "goToConfigure()" title = "configure"><span class="button faButton showPointer fa fa-gears right" ></span><span class="showPointer buttonText">CONFIGURE</span>
-	</span>
-	<span title = "Unfollow Room"  ng-click="partRoom()" ng-show = "hasMembership()" ><span class="button faButton showPointer fa fa-repeat right" ></span><span class="showPointer buttonText">UNFOLLOW</span>
-	</span>
-	<span title = "Follow Room"  ng-click="joinRoom()" ng-show = "!hasMembership()"><span class="button faButton showPointer right fa fa-check-square-o"></span><span class="showPointer buttonText">FOLLOW</span>
-	</span>
-	<span ng-show = "user.owner==user.id" ng-click = "logout()" title = "logout"><span class="button faButton showPointer fa fa-power-off right" ></span><span class="showPointer buttonText">LOGOUT</span></span>
+	
+	<a id='followbutton' class='button buttonText fa fa-tags right' ng-show='!room.owner' ng-click='goToConfigure()'>Claim</a>
+	<a id='unfollowbutton' class='button buttonText fa fa-gears right' ng-show='isOwner()' ng-click='goToConfigure()'>Configure</a>
+	
+	<a id='followbutton' class='button buttonText fa fa-check-square-o right' ng-show='!hasMembership()' ng-click='joinRoom()'>Follow</a>
+	<a id='unfollowbutton' class='button buttonText fa fa-repeat right' ng-show='hasMembership()' ng-click='partRoom()'>Unfollow</a>
+	<a id='embedButton' class='button buttonText fa fa-code right' ng-click='toggleEmbed()'>Embed</a>
+	
+	
 </h1>
+
+
 <p id="description" class = "collapse expanded"> {{ room.description || "This room does not have a description yet!"}} </p>
+
+<div id= "embedScript"> 
+<pre>
+&ltscript>
+ window.scrollback = {
+  streams:["{{room.id}}"],
+  theme: 'light',
+  ticker: true,
+ };
+ 
+ /***** don't edit below *****/
+ (function(d,s,h,e){e=d.createElement(s);e.async=1;
+ e.src=h+'/client.min.js';scrollback.host=h;
+ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
+ (document,'script',location.protocol+'//scrollback.io'));
+&lt/script&gt
+</pre>
+</div>
 <div id="members"> 
 	<span ng-repeat = "i in room.members">
 		<img src="{{i.picture}}" class = "face present" title="{{i.id}}"/>

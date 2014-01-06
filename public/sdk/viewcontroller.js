@@ -128,6 +128,9 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		} 
 		else $location.path("/beta/me");
 	}
+	$scope.toggleEmbed = function(){
+		$('#embedScript').toggle();
+	}
 	$scope.isOwner = function() {
 		if($scope.user.id == $scope.room.owner) return true;
 		else return false;

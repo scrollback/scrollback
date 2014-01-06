@@ -181,7 +181,7 @@ scrollbackApp.directive('message',function($compile) {
                         '<span ng-class="slashMe?me:noSlashMe" ng-repeat="i in text track by $index">'+
                             '<span ng-show="isText(i)">{{i.text}}</span>'+
                             '<span ng-show="!isText(i)"><a href="{{i.link}}">{{i.text}}</a></span></span>'+
-						'<span class = "socialButton" title="Tweet this message"><a href="{{twitterText}}"  target="_blank" ng-class="{darken : hover}" ng-mouseenter="hover=true" ng-mouseleave="hover=false" class="fa fa-twitter-square default"></a> </span>'+
+						'<span class = "socialButton" title="Tweet this message"><a href="{{twitterText}}"  target="_blank" ng-class="{darken : hover}" ng-mouseenter="hover=true" ng-mouseleave="hover=false" class="fa fa-twitter default"></a> </span>'+
 						'<span ng-show = "showTime" class="scrollback-message-time"> {{time}}</span>'
 						
                     +'</div>',
