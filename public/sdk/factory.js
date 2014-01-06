@@ -65,6 +65,10 @@ function callbackGenerator(event){
 
 
 function send(message, callback) {
+	if(!factoryObject.isActive){
+		factoryObject.emit("error","disconnected");
+		callback({message:"disconnected"});
+	}
 	if(message.type == "back")	listening[message.to] = true;
 	if(message.type == "away")	listening[message.to] = false;
 	message.id = guid();

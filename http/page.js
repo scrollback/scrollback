@@ -256,75 +256,90 @@ exports.init = function(app, coreObject) {
     //         res.end(responseHTML);
     //     });
     // })
-    app.get("*/config",function(req, res, next) {
-        var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
-        if(roomId && !validateRoom(roomId)) return next();
-        console.log(roomId);
-        core.emit("rooms",{id: roomId, fields:["accounts"]}, function(err, room) {
-            if(err) return res.end(err);
-            console.log(room);
-            if(room.length==0) {
-                room = {
-                    type: "room",
-                    id: params[0]
-                };  
-            }
-            else{
-                room = room[0];
-            }
-            if(room.type == "user") {
-                return res.render("error",{error:"Currently No configuration Available for Users."});
-            }
-            if(user.id.indexOf("guest-")!=0) {
-                if(typeof room.owner == "undefined" || room.owner == "" || room.owner == user.id) {
-                    var responseObject = {
-                        room: room,
-                        relDate: relDate,
-                        pluginsUI: {}
-                    };
-                    core.emit("config", {},function(err, payload) {
-                        responseObject.pluginsUI = payload;
-                        log(responseObject);
-                        if(err) return res.render("error",{error:err.message});
-                        console.log(responseObject);
-                        return res.render("config", responseObject);            
-                    });
-                }else{
-                    res.render("error", {error:"You are Not the Admin of this room"});    
-                }
-            }
-            else{
-                res.render("error", {error:"Please login..."});   
-            }
-            
+
+
+
+    app.get("/s/editRoom", function(req,res) {
+        var responseObject={};
+        core.emit("config", {},function(err, payload) {
+            responseObject.pluginsUI = payload;
+            log(responseObject);
+            if(err) return res.render("error",{error:err.message});
+            return res.render("newConfig", responseObject);
         });
     });
-    app.post("*/config", function(req, res, next) {
-        var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user,
-            renderObject = {}, responseHTML = "", data = {};
-        data = req.body || {};
 
-        if(!validateRoom(roomId)) return next();
 
-        if(typeof data == "string") {
-            try { data = JSON.parse(data); }
-            catch (e) { res.end(e); }
-        }
-        data.owner = user.id;
-        if(user.id.indexOf("guest-")==0)
-            return res.end(JSON.stringify({error:"You are a guest user."}));
-        if(data.id) {
-            data.owner = user.id;
-            core.emit("room", data, function(err,data) {
-                if(err) res.end(JSON.stringify({error:err.message}));  
-                else res.end(JSON.stringify(data));
-            });
-        }
-        else{
-            res.end(JSON.stringify({error:"Improper Data"}));
-        }
-    });
-};
+    //commenting out for now. Will not be used.
+//     app.get("*/config",function(req, res, next) {
+//         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
+//         if(roomId && !validateRoom(roomId)) return next();
+//         console.log(roomId);
+//         core.emit("rooms",{id: roomId, fields:["accounts"]}, function(err, room) {
+//             if(err) return res.end(err);
+//             console.log(room);
+//             if(room.length==0) {
+//                 room = {
+//                     type: "room",
+//                     id: params[0]
+//                 };  
+//             }
+//             else{
+//                 room = room[0];
+//             }
+//             if(room.type == "user") {
+//                 return res.render("error",{error:"Currently No configuration Available for Users."});
+//             }
+//             if(user.id.indexOf("guest-")!=0) {
+//                 if(typeof room.owner == "undefined" || room.owner == "" || room.owner == user.id) {
+//                     var responseObject = {
+//                         room: room,
+//                         relDate: relDate,
+//                         pluginsUI: {}
+//                     };
+//                     core.emit("config", {},function(err, payload) {
+//                         responseObject.pluginsUI = payload;
+//                         log(responseObject);
+//                         if(err) return res.render("error",{error:err.message});
+//                         console.log(responseObject);
+//                         return res.render("config", responseObject);            
+//                     });
+//                 }else{
+//                     res.render("error", {error:"You are Not the Admin of this room"});    
+//                 }
+//             }
+//             else{
+//                 res.render("error", {error:"Please login..."});   
+//             }
+            
+//         });
+//     });
+//     app.post("*/config", function(req, res, next) {
+//         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user,
+//             renderObject = {}, responseHTML = "", data = {};
+//         data = req.body || {};
+
+//         if(!validateRoom(roomId)) return next();
+
+//         if(typeof data == "string") {
+//             try { data = JSON.parse(data); }
+//             catch (e) { res.end(e); }
+//         }
+//         data.owner = user.id;
+//         if(user.id.indexOf("guest-")==0)
+//             return res.end(JSON.stringify({error:"You are a guest user."}));
+//         if(data.id) {
+//             data.owner = user.id;
+//             core.emit("room", data, function(err,data) {
+//                 if(err) res.end(JSON.stringify({error:err.message}));  
+//                 else res.end(JSON.stringify(data));
+//             });
+//         }
+//         else{
+//             res.end(JSON.stringify({error:"Improper Data"}));
+//         }
+//     });
+// };
 
 
 var relDate= function (input, reference){

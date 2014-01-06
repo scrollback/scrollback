@@ -8,11 +8,10 @@ var roomNames = {};
 module.exports = function(coreObject) {
     var pluginContent = "";
     core=coreObject;
-    fs.readFile(__dirname + "/loginrequired.jade", "utf8", function(err, data){
+    fs.readFile(__dirname + "/loginrequired.html", "utf8", function(err, data){
         if(err) throw err;
-        pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/'});
         core.on("config", function(payload, callback) {
-            payload.loginrequired = pluginContent;
+            payload.loginrequired = data;
             callback(null, payload);
         }, "setters");
     });

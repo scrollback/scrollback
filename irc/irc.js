@@ -19,11 +19,10 @@ var botNick=config.irc.nick, clients = {bot: {}}, users = {};
 module.exports = function(object){
 	var pluginContent = "";
 	core = object;
-	fs.readFile(__dirname + "/irc.jade", "utf8", function(err, data){
+	fs.readFile(__dirname + "/irc.html", "utf8", function(err, data){
 		if(err)	throw err;
-		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/' });
 		core.on("config", function(payload, callback) {
-            payload.irc = pluginContent;
+            payload.irc = data;
             callback(null, payload);
         }, "setters");
 	});

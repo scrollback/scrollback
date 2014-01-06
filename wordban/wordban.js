@@ -5,13 +5,10 @@ var longest = 0;
 
 module.exports = function(core) {
 	var pluginContent = "";
-	fs.readFile(__dirname + "/wordban.jade", "utf8", function(err, data){
+	fs.readFile(__dirname + "/wordban.html", "utf8", function(err, data){
 		if(err)	throw err;
-		//this is a function object. 
-		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/' });
-		
 		core.on("config", function(payload, callback) {
-            payload.wordban = pluginContent;
+            payload.wordban = data;
             callback(null, payload);
         }, "setters");
 	});

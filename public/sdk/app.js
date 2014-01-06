@@ -16,7 +16,7 @@ scrollbackApp.config(['$routeProvider', '$locationProvider', function($routeProv
 		controller: 'profileController'
 	});
 	$routeProvider.when('/beta/:room/edit', {
-		templateUrl: '/s/roomconfig.html', 
+		templateUrl: '/s/editRoom', 
 		controller:'configcontroller' 
 	});
 	//$routeProvider.otherwise({redirectTo : '/me'});

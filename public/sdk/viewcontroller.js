@@ -1,7 +1,38 @@
 scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window',function($scope, $location, $factory, $timeout,$window) {
+	$scope.editRoom = {};
+	$factory.on("disconnected", function(){
+		setTimeout(function(){
+			$scope.$apply(function(){
+				if($scope.notifications.indexOf("Disconnected trying to reconnect")<0) {
+					$scope.notifications.push("Disconnected trying to reconnect");
+				}
+			});
+		},30000);
+		if($scope.notifications.indexOf("Disconnected trying to reconnect")<0) return;
+		else {
+			$scope.$apply(function(){
+				$scope.notifications.splice($scope.notifications.indexOf("Disconnected trying to reconnect"),1);
+			});
+		}
+	});
+	$factory.on("connected", function(){
+		if($scope.notifications.indexOf("Disconnected trying to reconnect")<0) return;
+		else {
+			$scope.$apply(function(){
+				$scope.notifications.splice($scope.notifications.indexOf("Disconnected trying to reconnect"),1);
+			});
+		}
+	});
 	$factory.on("error",function(error) {
 		if(error == "AUTH_UNREGISTERED")return;
 		if(error == "DUP_NICK") error = "Username already taken.";;
+		if(error == "disconnected") {
+			$scope.$apply(function(){
+				error="Disconnected trying to reconnect";
+				$scope.notifications.push(error);;
+			});
+			return;
+		}
 		if(error == "AUTH_REQ_TO_POST"){
 			$scope.$apply(function() {
 				$location.path("/beta/me/login");
@@ -193,6 +224,12 @@ scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', 
 
 scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location', '$rootScope', '$routeParams', function($scope, $factory, $location, $rootScope, $routeParams) {
 	var url;
+	$scope.editRoom = {
+		id: $scope.room.id,
+		description:$scope.room.description|| "",
+		params:{}
+	};
+
 	$scope.goBack = function(){
 		$location.path("/beta/"+$scope.room.id);
 	};
@@ -203,57 +240,40 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		$location.path("/beta/"+$scope.room.id);
 		return;
 	}
-	$scope.description = $scope.room.description || $scope.room.description;
-	if($scope.room.params){
-		$scope.wordEnable = $scope.room.params.wordban?1:0;
-		$scope.loginEnable = $scope.room.params.loginrequired?1:0;
-		if($scope.room.accounts && $scope.room.accounts.forEach){
-			$scope.room.accounts.forEach(function(account) {
-				url = parseUrl($scope.room.accounts[0].id);
-				if(url.protocol == "irc") {
-					$scope.ircServer = url.hostname;
-					$scope.ircRoom = url.hash;	
-				}
-			});
-		}		
-	}else{
-		$scope.wordEnable = 0;
-		$scope.loginEnable = 0;
-		
-	}
 	$scope.cancel = function() {
 		$location.path("/beta/"+$scope.room.id);
 	};
 	$scope.saveRoom = function() {
 		var room={};
-		room.id = $scope.room.id;
-		room.name = $scope.room.id;
-		room.description = $scope.description || "";
-		room.params = {};
-		room.type = "room";
-		room.params.wordban = $scope.wordEnable?true:false;
-		room.params.loginrequired = $scope.loginEnable?true:false;
-		if($scope.ircServer && $scope.ircRoom) {
-			room.accounts = [
+		$scope.editRoom.id = $scope.room.id;
+		$scope.editRoom.name = $scope.room.id;
+		$scope.editRoom.description = $scope.editRoom.description || "";
+		$scope.editRoom.type = "room";
+		if($scope.editRoom.ircServer && $scope.editRoom.ircRoom) {
+			$scope.editRoom.accounts = [
 				{
 					gateway: "irc",
-					id:"irc://"+$scope.ircServer+"/"+$scope.ircRoom,
+					id:"irc://"+$scope.editRoom.ircServer+"/"+$scope.editRoom.ircRoom,
 					room: $scope.room.id,
 					params:{}
 				}
 			];
-			room.params.irc = true;
+			$scope.editRoom.params.irc = true;
 		}else {
-			room.params.irc = false;
+			$scope.editRoom.params.irc = false;
+			delete $scope.editRoom.accounts;
 		}
+		delete $scope.editRoom.ircServer;
+		delete $scope.editRoom.ircRoom
 		$scope.status.waiting = true;
-		$factory.room( room, function(room) {
+		$factory.room( $scope.editRoom, function(room) {
 			if(room.message)	alert(room.message);
 			else {
 				$scope.$apply(function() {
 					Object.keys(room).forEach(function(element){
 						$scope.room[element] = room[element];
 					});
+					if(!$scope.room.params.irc) delete $scope.room.accounts;
 					$location.path("/beta/"+$scope.room.id);
 					$scope.status.waiting = false;
 				});
@@ -261,6 +281,27 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		});
 		
 	};
+}]);
+scrollbackApp.controller('ircController',['$scope', function($scope) {
+	if($scope.room.accounts && $scope.room.accounts.forEach) {
+		$scope.room.accounts.forEach(function(account) {
+			url = parseUrl($scope.room.accounts[0].id);
+			if(url.protocol == "irc") {
+				$scope.editRoom.ircServer = url.hostname;
+				$scope.editRoom.ircRoom = url.hash;	
+			}
+		});
+	}
+}]);
+scrollbackApp.controller('loginreqController',['$scope', function($scope) {
+	//prefilling the editRoom object when the config Page is loaded.
+	if(!$scope.editRoom.params) $scope.editRoom.params = {};
+	$scope.editRoom.params.loginrequired = $scope.room.params.loginrequired?true:false;
+}]);
+
+scrollbackApp.controller('wordbanController',['$scope', function($scope) {
+	if(!$scope.editRoom.params) $scope.editRoom.params = {};
+	$scope.editRoom.params.wordban = $scope.room.params.wordban?true:false;
 }]);
 
 scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {

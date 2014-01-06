@@ -28,6 +28,7 @@ module.exports = function(coreObject) {
 						callback && callback(null, room);
 					});
 				}else {
+					db.query("delete from accounts where `room`=?",[room.id],function(err,res) {});
 					callback && callback(null, room);
 				}
 			}
