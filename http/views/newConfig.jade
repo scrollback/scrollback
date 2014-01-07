@@ -1,0 +1,15 @@
+h1
+	span(class="showPointer fa fa-arrow-left left",ng-click="goBack()")
+	span Configure Room 
+
+form#profile(action="")
+	label Room Id
+		input(disabled="true",type="text",value="{{editRoom.id}}")
+	label Description
+		input(type="textarea",ng-model="description")
+	each plugin in Object.keys(pluginsUI)
+		div.box.span12
+			!{pluginsUI[plugin]}
+	div(class="buttonGroup")
+		button(class="cancel",type="button",ng-click="cancel()") Cancel
+		button(class="default",type="button",ng-click="saveRoom()") Save Account
