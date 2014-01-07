@@ -193,6 +193,7 @@ scrollbackApp.directive('message',function($compile) {
                 $scope.nick = $scope.from = value.replace(/^guest-/,"");
             });
             attr.$observe('label', function(value) {
+                value = value.substring(0,32);
                 if(value)$scope.bcolor = hashColor(value);
                 else $scope.bcolor = "";
             });

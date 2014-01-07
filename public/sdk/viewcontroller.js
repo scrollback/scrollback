@@ -244,9 +244,9 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 	$scope.goBack = function(){
 		$location.path("/beta/"+$scope.room.id);
 	};
-	if(/^guest-/.test()){
-		$scope.personaLogin();
-		//$location.path("/beta/me/login");
+	if((/^guest-/.test($scope.user.id))){
+		$location.path("/beta/"+$scope.room.id);
+		return;
 	}
 	if($scope.user.id != $scope.room.owner && typeof $scope.room.owner!= "undefined") {
 		$location.path("/beta/"+$scope.room.id);

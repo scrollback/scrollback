@@ -34,11 +34,11 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 				a.issues(onclick='window.open("https://github.com/scrollback/scrollback/issues","_blank")') Help us improve by reporting the bugs you find.
 			
 		#body(ng-controller="messageController",class = 'column')
-			div(id="nomessagediv", ng-show = "{{items.length ==0}}")
-				| There are no messages in this room yet!
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 				div(ng-repeat="i in items track by $index")
 					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}", time="{{i.time}}")
+			div(id="nomessagediv", ng-show = "{{items.length ==0}}")
+				| There are no messages in this room yet!
 			form.messageWrapper(ng-submit="message();")
 				input.messageBox(type="text", ng-model="text")
 				input(id="submitButton" type="submit")
