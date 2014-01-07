@@ -22,7 +22,6 @@ var factory=function() {
 	//factoryObject.messages = callbackGenerator("messages");
 	factoryObject.room = callbackGenerator("room");
 	factoryObject.rooms =  function(query, callback) {
-		console.log(rooms);
 		if(query.id && rooms["query.id"]){
 			return callback({query:query, data: rooms["query.id"]});
 		}
@@ -68,6 +67,7 @@ function send(message, callback) {
 	if(!factoryObject.isActive){
 		factoryObject.emit("error","disconnected");
 		callback({message:"disconnected"});
+		return;
 	}
 	if(message.type == "back")	listening[message.to] = true;
 	if(message.type == "away")	listening[message.to] = false;
@@ -91,6 +91,7 @@ function newSocket() {
 	socket.onopen = function() {
 		backOff = 1;
 		init();
+		factoryObject.isActive = true;
 		factoryObject.emit("connected");
 	};
 	socket.onerror = socketError;
@@ -121,7 +122,6 @@ function init(){
 
 onMessages = function(data) {
 	if(pendingCallbacks[data.query.queryId]) {
-		console.log(data);
 		pendingCallbacks[data.query.queryId](data.messages);
 		delete pendingCallbacks[data.queryId];
 	}
@@ -129,7 +129,6 @@ onMessages = function(data) {
 };
 
 onMessage = function(data){
-	console.log("NEWMSG:", data);
 	if(pendingCallbacks[data.id]) {
 		pendingCallbacks[data.id](data);
 		delete pendingCallbacks[data.id];
@@ -207,7 +206,6 @@ function socketError(message) {
 };
 function enter(room) {
 	if(!listening[room]) {
-		console.log("sending away....");
 		send({type:"back", to:room});
 		listening[room] = true;
 	}

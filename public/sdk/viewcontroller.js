@@ -1,27 +1,21 @@
 scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window',function($scope, $location, $factory, $timeout,$window) {
 	$scope.editRoom = {};
 	$factory.on("disconnected", function(){
-		setTimeout(function(){
-			$scope.$apply(function(){
-				if($scope.notifications.indexOf("Disconnected trying to reconnect")<0) {
-					$scope.notifications.push("Disconnected trying to reconnect");
-				}
-			});
-		},30000);
-		if($scope.notifications.indexOf("Disconnected trying to reconnect")<0) return;
-		else {
-			$scope.$apply(function(){
-				$scope.notifications.splice($scope.notifications.indexOf("Disconnected trying to reconnect"),1);
-			});
-		}
+		$scope.isActive = false;
+		$timeout(function() {
+			if($scope.notifications.indexOf("Disconnected trying to reconnect")<0 && !$scope.isActive) {
+				$scope.notifications.push("Disconnected trying to reconnect");
+			}
+		}, 30000);
 	});
-	$factory.on("connected", function(){
-		if($scope.notifications.indexOf("Disconnected trying to reconnect")<0) return;
-		else {
-			$scope.$apply(function(){
+	$factory.on("init", function(){
+		$scope.$apply(function(){
+			$scope.isActive = true;
+			if($scope.notifications.indexOf("Disconnected trying to reconnect")<0) return;
+			else {
 				$scope.notifications.splice($scope.notifications.indexOf("Disconnected trying to reconnect"),1);
-			});
-		}
+			}	
+		});
 	});
 	$factory.on("error",function(error) {
 		if(error == "AUTH_UNREGISTERED")return;
@@ -29,7 +23,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		if(error == "disconnected") {
 			$scope.$apply(function(){
 				error="Disconnected trying to reconnect";
-				$scope.notifications.push(error);;
+				$scope.notifications.push(error);
 			});
 			return;
 		}
