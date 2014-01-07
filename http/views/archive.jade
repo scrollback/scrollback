@@ -77,11 +77,6 @@ block content
 							else
 								button#archive-join.span6 Follow
 								button#archive-part.archive-membership-hidden.span6 Unfollow
-							if !room || !room.owner
-								button#action.config.span6 Claim
-							else if room.owner == user
-								button#action.config.span6 Configure
-
 			if data.length <= 1
 				div.container.intro
 					span.box.span12 This room doesnt have any messages. You can chat from this page using the text box below. Share the link with your friends. You can also embed a widget on your webpage using the script given below. Each room can have configurations to it, like adding the IRC accounts, enabling plugins. You have to login to configure any room.
