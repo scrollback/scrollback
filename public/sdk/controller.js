@@ -22,7 +22,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         });
     });
     $factory.on("message", function(msg) {
-		console.log("inside message ", msg);
     	$scope.$apply(function(){
             newMessage(msg);    
         });
@@ -65,7 +64,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                 for(i=insertPosition;i>0;i--) {
                     if($scope.items[i].id == data.id){
                         $scope.items[i] = data;
-                        console.log(data);
                         if(data.message){
                           $scope.items.splice(i,1);
                         } 
@@ -85,7 +83,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         if(text !== "") {
             $factory.message(message, function(data) {
                 $scope.$apply(function(){
-                    console.log("callback",data);
                     newMessage(data);    
                 });
             });
@@ -115,12 +112,10 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                 topIndex += 1;
             }
             if(messages.length - topIndex == 30) {
-                console.log("top reached", messages[topIndex]);
                 // time to request factory for messages from above 
                 $factory.messages($scope.room.id, "", messages[messages.length - 1].time);
                 $factory.on("messages", function(data){
                     if(data.length > 1 && data[data.length-1].type == "result-end") {
-                        console.log("concatenating now!", data[data.length-1]);
                         messages = messages.concat(data.reverse());
                     }
                 });
@@ -194,10 +189,6 @@ scrollbackApp.directive('message',function($compile) {
                 return ((part.type=="link")?false:true);
             };
 			
-			$scope.darkenIcon = function(){
-				console.log('hello');
-			}
-			
             attr.$observe('from', function(value) {
                 $scope.nick = $scope.from = value.replace(/^guest-/,"");
             });
@@ -209,14 +200,15 @@ scrollbackApp.directive('message',function($compile) {
                 $scope.slashMe = (/^\/me/.test(value));
                 $scope.text = value;
                 if($scope.slashMe) {
-                    $scope.text = $scope.text.replace(/^\/me/, $scope.from);
+                    value = $scope.text = $scope.text.replace(/^\/me/, $scope.from);
                     $scope.nick = ""; 
                 }else {
                     $scope.nick = $scope.from; 
                 }
                 $scope.text = format($scope.text);
-				$scope.twitterText = "http://twitter.com/home/?status=" + $scope.text[0].text + " via @Scrollbackio";
-				console.log($scope.twitterText);
+				
+				
+				$scope.twitterText = encodeURI("http://twitter.com/home/?status=" + value + " via https://scrollback.io/" + $scope.room.id);
 				
             });
 			attr.$observe('time', function(value){
@@ -352,6 +344,5 @@ function format(text) {
         parts.push({type:"link", link:protocol + user + domain + path, text:r[0]});
     }
     if(text.substring(s))   parts.push({type:"text", text: text.substring(s)});
-    console.log(parts);
     return parts;
 }
