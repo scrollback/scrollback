@@ -258,7 +258,7 @@ Stream.prototype.close = function (){
 };
 
 Stream.prototype.pop = function () {
-	window.open(scrollback.host + '/' + this.id + '/', "_blank");
+	window.open(scrollback.host + '/beta/' + this.id + '/', "_blank");
 };
 
 Stream.prototype.toggle = function() {

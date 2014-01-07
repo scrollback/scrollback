@@ -276,7 +276,7 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
                     $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
                 }
                 else if(e.below < 30) {
-                    scope.$apply(attr.whenScrolledDown);
+					scope.$apply(attr.whenScrolledDown);
                 }
             });
         });
