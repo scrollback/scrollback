@@ -1,4 +1,4 @@
-var url = require("url");
+	var url = require("url");
 var log = require("../lib/logger.js");
 var redis = require("../lib/redisProxy.js");
 var validateRoom = require('../lib/validate.js');
@@ -26,14 +26,14 @@ module.exports =function(core){
 		log("heard room event", room);
 		redis.get("room:"+room.id, function(err, data) {
 			if(err) callback(err);
-			if(!data){
+			if(data){
 				try {
 					room.old = JSON.parse(data);
 				}catch(e) {
+					log(e);
 					room.old = {};
 				}	
 			}
-			console.log(data);
 			if(room.type!="user" && room.old && room.old.owner && room.owner !== room.old.owner) return callback(new Error("NOT_ADMIN"));
 			if(room.accounts) {
 				for(i=0,l=room.accounts.length; i<l;i++) {
