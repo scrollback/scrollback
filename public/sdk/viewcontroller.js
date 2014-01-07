@@ -305,6 +305,12 @@ scrollbackApp.controller('ircController',['$scope', function($scope) {
 		});
 	}
 }]);
+
+scrollbackApp.controller('threaderController',['$scope', function($scope) {
+	if(!$scope.editRoom.params) $scope.editRoom.params = {};
+	$scope.editRoom.params.threader = $scope.room.params.threader?true:false;
+}]);
+
 scrollbackApp.controller('loginreqController',['$scope', function($scope) {
 	//prefilling the editRoom object when the config Page is loaded.
 	if(!$scope.editRoom.params) $scope.editRoom.params = {};
