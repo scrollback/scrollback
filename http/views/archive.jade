@@ -60,7 +60,7 @@ block append scripts
 block content
 	.container
 		div.span12.box.newArchive
-			a.newArchive(href="/beta/#{query.to}") Check out our beta archive view
+			a.newArchive(href="/#{query.to}") Check out our beta archive view
 	.container
 		.box.span12.container
 			div.container
@@ -77,11 +77,6 @@ block content
 							else
 								button#archive-join.span6 Follow
 								button#archive-part.archive-membership-hidden.span6 Unfollow
-							if !room || !room.owner
-								button#action.config.span6 Claim
-							else if room.owner == user
-								button#action.config.span6 Configure
-
 			if data.length <= 1
 				div.container.intro
 					span.box.span12 This room doesnt have any messages. You can chat from this page using the text box below. Share the link with your friends. You can also embed a widget on your webpage using the script given below. Each room can have configurations to it, like adding the IRC accounts, enabling plugins. You have to login to configure any room.
@@ -89,10 +84,10 @@ block content
 				div.timeRange.box.span12
 					if(scrollPrev)
 						div.prevButton.span3
-							a.navLink.prevButton(href="/#{query.to}/until/#{scrollPrev}") Prev
+							a.navLink.prevButton(href="/old/#{query.to}/until/#{scrollPrev}") Prev
 					if(scrollNext)
 						div.nextButton.span4
-							a.navLink.nextButton(href="/#{query.to}/since/#{scrollNext}") Next
+							a.navLink.nextButton(href="/old/#{query.to}/since/#{scrollNext}") Next
 					if data.length > 1
 						div.span5.message.timecontent
 							span.rangeText Showing #{relDate(data[0].time, data[data.length-1].time)} of conversation 
@@ -126,11 +121,11 @@ block content
 			div.timeRange.box.span12
 				if(scrollPrev)
 					div.prevButton.span3
-						a.navLink.prevButton(href="/#{query.to}/until/#{scrollPrev}") Prev
+						a.navLink.prevButton(href="/old/#{query.to}/until/#{scrollPrev}") Prev
 					
 				if(scrollNext)
 					div.nextButton.span3
-						a.navLink.nextButton(href="/#{query.to}/since/#{scrollNext}") Next
+						a.navLink.nextButton(href="/old/#{query.to}/since/#{scrollNext}") Next
 			
 			.embed.box.span12.paddingBottom100px
 				p.embed Embed #{query.to} on your web page.

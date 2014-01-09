@@ -94,18 +94,20 @@ exports.init = function(app, coreObject) {
 	});    
     function roomHandler(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, 
-        query={}, sqlQuery, roomId = params[1], user = req.session.user,
+        query={}, sqlQuery, roomId = params[0], user = req.session.user,
         queryString, resp={};
+        if(roomId=="old") return next();
         if(roomId && !validateRoom(roomId)) return next();
+
         responseObj.user = req.session.user;
         responseObj.user.picture =  (user.accounts &&user.accounts[0])? user.accounts[0].id.substring(7) : "guest@scrollback";
         responseObj.user.picture = crypto.createHash("md5").update(responseObj.user.picture).digest("hex");
         responseObj.user.picture = '//s.gravatar.com/avatar/'+responseObj.user.picture;
 
-        if(params[0]!="beta" && params[1]=="config") {
-            next();
-            return;
-        }
+        // if(params[0]!="beta" && params[1]=="config") {
+        //     next();
+        //     return;
+        // }
 
         if(!req.secure) {
             queryString  = req._parsedUrl.search?req._parsedUrl.search:"";
@@ -133,7 +135,7 @@ exports.init = function(app, coreObject) {
 				else responseObj.user.membership = Object.keys(user.membership); 
 			} 
 			
-            query.to=params[1];
+            query.to=roomId;
             query.type="text";
             query.limit=250;
             //disabling this for now.
@@ -154,16 +156,16 @@ exports.init = function(app, coreObject) {
             });
         });
     }
-    app.get("/beta/*", roomHandler);
-    app.get("/beta/*/edit", roomHandler);
+    app.get("/*", roomHandler);
+    app.get("/*/edit", roomHandler);
 
 
 
-    app.get("*", function(req, res, next) {
-        var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[0],
+    app.get("/old/*", function(req, res, next) {
+        var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[1],
         user = req.session.user;
         if(roomId && !validateRoom(roomId)) return next();
-        if(params[0]=="beta" && !params[1]){
+        if(params[0]!=="old"){
             return next();
         }
         core.emit("rooms",{id:roomId}, function(err, room){
@@ -188,16 +190,16 @@ exports.init = function(app, coreObject) {
                 next();
                 return;
             }
-            query.to=params[0];
+            query.to=params[1];
             query.type="text";
             query.limit=20;
 
-            if (params[1]) switch(params[1]) {
+            if (params[2]) switch(params[2]) {
                 case 'since':
-                    query.since=new Date(params[2]).getTime();
+                    query.since=new Date(params[3]).getTime();
                     break;
                 case 'until':
-                    query.until=new Date(params[2]).getTime();
+                    query.until=new Date(params[3]).getTime();
                     break;
                 case 'edit':
                     return next();

@@ -8,7 +8,7 @@
 
 html, button, input, select, textarea {
 	font: 300 16px/24px "Open Sans", sans-serif;
-	color: #222; 
+	color: #222; .box-sizing(border);
 }
 
 #backbutton{
@@ -103,11 +103,13 @@ img.face {
 
 #body {
 	position: absolute;
+	min-height: 100%;
 	left: 50%;
 	right: 0;
 	top: 0;
 	overflow: hidden;
 	.box-sizing(border);
+
 }
 
 //@media screen and (max-width: 640px) {
@@ -177,7 +179,9 @@ img.face {
 	}
 }
 
-
+.fa{
+	font-family: FontAwesome, "Open Sans", sans-serif !important;
+}
 //.loginButon { ... }
 //
 //.loginButton .cancel { ... }
@@ -209,7 +213,7 @@ img.face {
 //----- Message stream -----
 
 .scrollback-stream {
-	z-index: 1;
+	min-height: 100%;
 }
 
 .messageWrapper{
@@ -268,7 +272,8 @@ img.face {
 	margin-left: 25%;
 	opacity: 1; height: auto;
 	cursor: default;
-	max-height: 66px; min-height: 22px;
+//	max-height: 66px; 
+	min-height: 22px;
 }
 
 .scrollback-message-nick { 
@@ -363,4 +368,11 @@ img.face {
 }
 .faButton{
 	font-size : 22px; 
+}
+
+#nomessagediv{
+	height: 48px;
+	line-height: 48px;
+	padding: 0px 4px;
+
 }

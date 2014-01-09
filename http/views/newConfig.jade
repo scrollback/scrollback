@@ -6,7 +6,7 @@ form#profile(action="")
 	label Room Id
 		input(disabled="true",type="text",value="{{editRoom.id}}")
 	label Description
-		input(type="textarea",ng-model="description")
+		input(type="textarea",ng-model="editRoom.description")
 	each plugin in Object.keys(pluginsUI)
 		div.box.span12
 			!{pluginsUI[plugin]}

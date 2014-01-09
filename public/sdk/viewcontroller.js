@@ -29,7 +29,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		}
 		if(error == "AUTH_REQ_TO_POST"){
 			$scope.$apply(function() {
-				$location.path("/beta/me/login");
+				$location.path("/me/login");
 			});
 			error="You must sign in to post in this room."
 		}
@@ -52,9 +52,9 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	$scope.profile = function() {
 		if(/^guest-/.test($scope.user.id)) {
 			$scope.personaLogin();
-			//$location.path("/beta/me/login");
+			//$location.path("/me/login");
 		}else {
-			$location.path("/beta/me/edit");	
+			$location.path("/me/edit");	
 		}	
 	};
 	$scope.personaLogin = function(){
@@ -66,13 +66,13 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 					if(message.message && message.message == "AUTH_UNREGISTERED") {
 						$scope.$apply(function() {
 							$scope.status.waiting = false;
-							$location.path("/beta/me/edit");	
+							$location.path("/me/edit");	
 						});
 					}
 					else if(!message.message) {
 						$scope.$apply(function() {
 							$scope.status.waiting = false;
-							$location.path("/beta/"+$scope.room.id);
+							$location.path("/"+$scope.room.id);
 						});
 					}
 				});
@@ -80,7 +80,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 			onlogout: function() {
 				$scope.$apply(function() {
 					$scope.status.waiting = false;
-					$location.path("/beta/"+$scope.room.id);
+					$location.path("/"+$scope.room.id);
 				});
 			}
 		});
@@ -89,7 +89,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	$scope.logout = function() {
 		$factory.message({type:"nick", to:"", ref:"guest-"},function(message) {
 			navigator.id.logout();
-			$location.path("/beta/me");
+			$location.path("/me");
 		});
 	};
 	var statusObject = {};
@@ -101,7 +101,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	// 			console.log("onLogin");
 	// 			var message = {browserid:assertion, type: "nick", to:''};
 	// 			$factory.message(message, function(resp) {
-	// 				$location.path("/beta/me");
+	// 				$location.path("/me");
 	// 			});
 	// 		},
 	// 		onlogout: function() {}
@@ -116,7 +116,7 @@ scrollbackApp.controller('loginController',['$scope','$route','$factory','$locat
 	$scope.nickChange = function(event) {
 		$scope.status.waiting = true;
 		if($scope.user.id == "guest-"+$scope.displayNick){
-			$location.path("/beta/"+$scope.room.id);
+			$location.path("/"+$scope.room.id);
 			return;
 		}
 		
@@ -126,13 +126,13 @@ scrollbackApp.controller('loginController',['$scope','$route','$factory','$locat
 	    	}else{
 	    		$scope.$apply(function() {
 					$scope.status.waiting = false;
-		    		$location.path("/beta/"+$scope.room.id);	
+		    		$location.path("/"+$scope.room.id);	
 	    		});
 	    	}
 	    });
 	};
 	$scope.goBack = function(){
-		$location.path("/beta/"+$scope.room.id);
+		$location.path("/"+$scope.room.id);
 	};
 	$scope.displayNick = ($scope.user.id).replace(/^guest-/,"");
 }]);
@@ -149,9 +149,9 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	$scope.goToRoomsView = function(){
 		if(/^guest-/.test($scope.user.id)){ 
 			$scope.personaLogin();
-			//$location.path('/beta/me/login');
+			//$location.path('/me/login');
 		} 
-		else $location.path("/beta/me");
+		else $location.path("/me");
 	}
 	$scope.toggleEmbed = function(){
 		$('#embedScript').toggle();
@@ -163,9 +163,9 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	$scope.goToConfigure = function() {
 		if(/^guest-/.test($scope.user.id)){ 
 			$scope.personaLogin();
-			//$location.path('/beta/me/login');
+			//$location.path('/me/login');
 		} 
-		else $location.path("/beta/"+$scope.room.id+"/edit");
+		else $location.path("/"+$scope.room.id+"/edit");
 	};
 	$scope.partRoom = function() {
 		var msg = {}, index,i,l;
@@ -190,7 +190,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		var msg = {};
 		if(/^guest-/.test($scope.user.id)){
 			//guest
-			//$location.path('/beta/me/login');
+			//$location.path('/me/login');
 			$scope.personaLogin();
 			return;
 		}
@@ -212,17 +212,17 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 
 scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', function($scope, $timeout, $location) {	
 	$scope.goBack = function(){
-		$location.path("/beta/"+$scope.room.id);
+		$location.path("/"+$scope.room.id);
 	};
 	if(/^guest-/.test($scope.user.id)) {
 		//$scope.personaLogin();
-        $location.path("/beta/me/login");
+        $location.path("/me/login");
     }
     $scope.goTo = function(room) {
     	if($scope.room.id == room){
-    		$location.path("/beta/"+room);
+    		$location.path("/"+room);
     	}else{
-    		window.location = "/beta/"+room;
+    		window.location = "/"+room;
     	}
     };
 	$scope.isExists = function(m) {
@@ -242,18 +242,18 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 	};
 
 	$scope.goBack = function(){
-		$location.path("/beta/"+$scope.room.id);
+		$location.path("/"+$scope.room.id);
 	};
-	if(/^guest-/.test()){
-		$scope.personaLogin();
-		//$location.path("/beta/me/login");
+	if((/^guest-/.test($scope.user.id))){
+		$location.path("/"+$scope.room.id);
+		return;
 	}
 	if($scope.user.id != $scope.room.owner && typeof $scope.room.owner!= "undefined") {
-		$location.path("/beta/"+$scope.room.id);
+		$location.path("/"+$scope.room.id);
 		return;
 	}
 	$scope.cancel = function() {
-		$location.path("/beta/"+$scope.room.id);
+		$location.path("/"+$scope.room.id);
 	};
 	$scope.saveRoom = function() {
 		var room={};
@@ -286,7 +286,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 						$scope.room[element] = room[element];
 					});
 					if(!$scope.room.params.irc) delete $scope.room.accounts;
-					$location.path("/beta/"+$scope.room.id);
+					$location.path("/"+$scope.room.id);
 					$scope.status.waiting = false;
 				});
 			}
@@ -305,6 +305,12 @@ scrollbackApp.controller('ircController',['$scope', function($scope) {
 		});
 	}
 }]);
+
+scrollbackApp.controller('threaderController',['$scope', function($scope) {
+	if(!$scope.editRoom.params) $scope.editRoom.params = {};
+	$scope.editRoom.params.threader = $scope.room.params.threader?true:false;
+}]);
+
 scrollbackApp.controller('loginreqController',['$scope', function($scope) {
 	//prefilling the editRoom object when the config Page is loaded.
 	if(!$scope.editRoom.params) $scope.editRoom.params = {};
@@ -318,7 +324,7 @@ scrollbackApp.controller('wordbanController',['$scope', function($scope) {
 
 scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {
 	$scope.goBack = function() {
-		$location.path("/beta/"+$scope.room.id);	
+		$location.path("/"+$scope.room.id);	
 	};
 	$scope.status= {
 		waiting : false
@@ -343,7 +349,7 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 	});
 	
 	$scope.cancelScreen = function(){
-		$location.path("/beta/"+$scope.room.id);	
+		$location.path("/"+$scope.room.id);	
 	};
 	
 	$scope.isGuest = function(){
@@ -357,7 +363,7 @@ scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location
 	$scope.logout = function() {
 		$factory.message({type:"nick", to:"", ref:"guest-"},function(message) {
 			navigator.id.logout();
-			$location.path("/beta/"+$scope.room.id);
+			$location.path("/"+$scope.room.id);
 		});
 	};
 	$scope.save = function() {
@@ -371,7 +377,7 @@ scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location
 			}else{
 				$scope.$apply(function() {
 					$scope.status.waiting = false;
-					$location.path("/beta/"+$scope.room.id);	
+					$location.path("/"+$scope.room.id);	
 				});
 			}
 		});

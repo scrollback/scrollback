@@ -13,13 +13,10 @@ Add labels only if threader is enabled for room.
 module.exports = function(core) {
 	if (config.threader) {
 		var pluginContent = "";
-		fs.readFile(__dirname + "/threader.jade", "utf8", function(err, data){
+		fs.readFile(__dirname + "/threader.html", "utf8", function(err, data){
 			if(err)	throw err;
-			//this is a function object. 
-			pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/' });
-			
 			core.on("config", function(payload, callback) {
-				payload.threader = pluginContent;
+				payload.threader = data;
 				callback(null, payload);
 			}, "setters");
 		});
