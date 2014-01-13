@@ -106,7 +106,6 @@ function init(){
 	
 	client.on('error', function(error){
 		log("Can not connect to java Process ", error);
-		log("start java process");
 		setTimeout(function(){
 			init();	
 		},1000*60);//try to reconnect after 1 min
