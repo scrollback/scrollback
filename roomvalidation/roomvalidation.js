@@ -3,17 +3,20 @@ var log = require("../lib/logger.js");
 var redis = require("../lib/redisProxy.js");
 var validateRoom = require('../lib/validate.js');
 var crypto = require('crypto');
+var getAvatarText = require('../lib/getAvatarText.js');
+
 module.exports =function(core){
 	core.on("room", function(room, callback) {
-		var i,j;
+		var i,j, avatarText;
 		if(!room.id) return callback(new Error("ID_NOT_SPECIFIED"));
 		if(!validateRoom(room.id)) return callback(new Error("INVALID_ROOM_ID"));
 		if(!room.type) return callback(new Error("TYPE_NOT_SPECIFIED"));
 		if(room.type=="user")	{
 			room.owner = room.id;
+			avatarText = getAvatarText(room.id);
 			room.accounts.forEach(function(account){
 		        room.picture = crypto.createHash("md5").update(account.id.substring(7)).digest("hex");
-		        room.picture = '//s.gravatar.com/avatar/'+room.picture;
+		        room.picture = '//s.gravatar.com/avatar/' + room.picture  + '/?d=http://scrollback.io/img/default-avatar/' + avatarText + '.png?s=48' ;
 			});
 		}
 		if(!room.createdOn) room.createdOn = new Date().getTime();
