@@ -14,6 +14,7 @@ var sockjs = require("sockjs"),core,
 	session = require("./session.js"),
 	guid = require("../lib/guid.js"),
 	names = require("../lib/names.js");
+
 var rConns = {}, users = {};
 var pid = guid(8);
 var sock = sockjs.createServer();
@@ -76,6 +77,7 @@ function init(data, conn) {
 				}
 			}
 			sess.user.membership = Object.keys(m);//Room added to user object
+			
 			conn.send('init', {
 				sid: sess.cookie.value,
 				user: sess.user,
