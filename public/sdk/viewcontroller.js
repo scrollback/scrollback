@@ -11,6 +11,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	$factory.on("init", function(){
 		$scope.$apply(function(){
 			$scope.isActive = true;
+			$factory.enter($scope.room.id);
 			if($scope.notifications.indexOf("Disconnected trying to reconnect")<0) return;
 			else {
 				$scope.notifications.splice($scope.notifications.indexOf("Disconnected trying to reconnect"),1);

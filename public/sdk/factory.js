@@ -10,6 +10,7 @@ var backOff = 1;
 var factory=function() {
 	socket.onclose = function() {
 		factoryObject.emit("disconnected");
+		listening = {};
 		backOff+=backOff;
 		factoryObject.isActive = false;
 		setTimeout(function(oldSocket){
