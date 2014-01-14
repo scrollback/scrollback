@@ -62,6 +62,9 @@ var defaults = {
 		time: 60000,
 		limit: 30
 	},
+	auth: {
+		audience: "local.scrollback.io"
+	},
 	redis:{
 		host: "local.scrollback.io",
 		port: 6379,
