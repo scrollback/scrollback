@@ -19,7 +19,8 @@ html
 									td(style="width: 30px; padding: 10px 20px 10px 0; vertical-align: top; text-align: right; border-bottom: 3px solid #3ca;") #{r.totalCount}
 								each l in r.labels
 									tr(style="background: #fff; color: #000;")
-										td(style="padding: 10px 0 5px 20px;") #{l.title}
+										td(style="color: #fff; padding: 10px 0 5px 20px;")
+											a(href="https://scrollback.io/#{r.id}/#{l.label}/#{l.title}", style="color: #000; text-decoration: none") #{l.title.split("-").join(" ")}
 										td(style="padding: 10px 20px 5px 0; vertical-align: top; text-align: right;") #{l.count}
 									each m in l.interesting
 										tr: td(colspan="2" style="padding: 5px 20px 5px 40px;")
