@@ -3,17 +3,18 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	$factory.on("disconnected", function(){
 		$scope.isActive = false;
 		$timeout(function() {
-			if($scope.notifications.indexOf("Disconnected trying to reconnect")<0 && !$scope.isActive) {
-				$scope.notifications.push("Disconnected trying to reconnect");
+			if($scope.notifications.indexOf("Disconnected. trying to reconnect…")<0 && !$scope.isActive) {
+				$scope.notifications.push("Disconnected. trying to reconnect…");
 			}
 		}, 30000);
 	});
 	$factory.on("init", function(){
 		$scope.$apply(function(){
 			$scope.isActive = true;
-			if($scope.notifications.indexOf("Disconnected trying to reconnect")<0) return;
+			$factory.enter($scope.room.id);
+			if($scope.notifications.indexOf("Disconnected. trying to reconnect…")<0) return;
 			else {
-				$scope.notifications.splice($scope.notifications.indexOf("Disconnected trying to reconnect"),1);
+				$scope.notifications.splice($scope.notifications.indexOf("Disconnected. trying to reconnect…"),1);
 			}	
 		});
 	});
@@ -22,8 +23,10 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		if(error == "DUP_NICK") error = "Username already taken.";;
 		if(error == "disconnected") {
 			$scope.$apply(function(){
-				error="Disconnected trying to reconnect";
-				$scope.notifications.push(error);
+				error="Disconnected. trying to reconnect…";
+				if($scope.notifications.indexOf(error)<0 && !$scope.isActive) {
+					$scope.notifications.push(error);
+				}
 			});
 			return;
 		}

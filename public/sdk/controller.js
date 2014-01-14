@@ -77,22 +77,18 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 
     $scope.message = function() {
         var text = $scope.text.trim(),message;
+		var mentionedUsers = [];
 		
 		function isMention(input){
+			//this function checks if any users were mentioned in a message 
 			if( (/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)) mentionedUsers.push(input.replace(/[@:,]/g,""));
 		}
-		
-		mentionedUsers = [];
+
 		text.split(' ').map(isMention);
-		
-		
         $scope.text = "";
-        message = {type:"text", text: text, to: $scope.room.id,from: $scope.user.id, mentions: mentionedUsers};
-		
-		console.log("Sent Message", message);
-		
-        newMessage(message);
+        message = {type:"text", text: text, to: $scope.room.id, from: $scope.user.id, mentions: mentionedUsers};
         if(text !== "") {
+            newMessage(message);
             $factory.message(message, function(data) {
                 $scope.$apply(function(){
                     newMessage(data);    

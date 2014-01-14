@@ -13,7 +13,6 @@ $(document).ready(function(){
 	var messageList = document.getElementById("messageList");
 	$("#action").click(function(event){
 		$(this).hasClass("login") && login();
-		$(this).hasClass("config") && (location.href = location.protocol+"//"+location.host+"/"+stream+"/config");
 	});
 	$("#archive-join").click(function(){
 		console.log("mouse clicked join");
@@ -53,18 +52,9 @@ $(document).ready(function(){
 				$("#action").addClass("login");
 			}
 			else{
-				if(core.nick() == room.owner){
-					$("#action").html("Configure");
-					$("#action").removeClass("login");
-					$("#action").addClass("config");
-				}else if(!room || !room.owner) {
-					$("#action").html("Claim");
-					$("#action").removeClass("login");
-					$("#action").addClass("config");
-				}else{
-					$("#action").hide();
-				}
+				$("#action").hide();
 			}
+			
 		}
 		if (message.type == "text" && message.to==stream) {
 			var isMe=false;//if message start with "/me"

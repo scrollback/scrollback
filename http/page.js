@@ -5,6 +5,7 @@ code = fs.readFileSync(__dirname + "/../public/client.min.js",'utf8');
 var validateRoom = require('../lib/validate.js');
 var crypto = require('crypto');
 var db = require("../lib/mysql.js");
+
 exports.init = function(app, coreObject) {
     core = coreObject;
     var dialogs = {
@@ -98,16 +99,13 @@ exports.init = function(app, coreObject) {
         queryString, resp={};
         if(roomId=="old") return next();
         if(roomId && !validateRoom(roomId)) return next();
+        
+		responseObj.user = req.session.user;
 
-        responseObj.user = req.session.user;
-        responseObj.user.picture =  (user.accounts &&user.accounts[0])? user.accounts[0].id.substring(7) : "guest@scrollback";
-        responseObj.user.picture = crypto.createHash("md5").update(responseObj.user.picture).digest("hex");
-        responseObj.user.picture = '//s.gravatar.com/avatar/'+responseObj.user.picture;
+		// assigning a default gravatar for the guest can go here! 
+		//		if(!/^guest-/.test(responseObj.user.id))
+		// http://www.gravatar.com/avatar/7af99a09a2a182a118b262cf365cd7df/?d=http://scrollback.io/img/default-avatar/am.png?s=48
 
-        // if(params[0]!="beta" && params[1]=="config") {
-        //     next();
-        //     return;
-        // }
 
         if(!req.secure) {
             queryString  = req._parsedUrl.search?req._parsedUrl.search:"";

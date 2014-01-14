@@ -12,9 +12,10 @@ lib-cov
 pids
 logs
 dump
+data
 results
 
 node_modules
 npm-debug.log
 
-config.js
+myConfig.js

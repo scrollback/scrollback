@@ -23,7 +23,7 @@ exports.init = function() {
 	srv = http.createServer(app);
 	
 	srv.listen(config.http.port);
-	app.http = srv;
+	app.httpServer = srv;
 	
 	if (config.http.https) {
 		srvs = https.createServer({
@@ -32,7 +32,7 @@ exports.init = function() {
 			ca : !config.http.https.ca || fs.readFileSync(__dirname + "/../" + config.http.https.ca) 
 		}, app);
 		srvs.listen(config.http.https.port);
-		app.https = srvs;
+		app.httpsServer = srvs;
 	}
 	
 	return app;
