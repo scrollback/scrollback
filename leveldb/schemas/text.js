@@ -13,12 +13,13 @@ module.exports = function (store) {
 				emit(text.to, -text.time);
 			},
 			tolabeltime: function(text, emit) {
-				for(var i in text.labels) {
+				if(text.labels) for(var i in text.labels) {
 					emit(text.to, i, -text.time);
 				}
 			},
 			mentiontotime: function(text, emit) {
-				text.mentions.forEach(function(m) { emit(m, text.to, -text.time); }
+				if(text.mentions) 
+					text.mentions.forEach(function(m) { emit(m, text.to, -text.time); });
 			}
 		}
 	});
