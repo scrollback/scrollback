@@ -20,6 +20,11 @@ Boston, MA 02111-1307 USA.
 
 var core = Object.create(require("./lib/emitter.js")), config = require("./config.js");
 
+core.nodetime = require('nodetime').profile({
+    accountKey: 'd7140b8dea6f067724cc43b0b4a508c447ce73c7', 
+    appName: config.core.nodetime || 'local.scrollback'
+});
+
 var pluginList = ["auth","roomauth","repeatban", "ratelimit", "wordban", "usernameban" , "originban", "loginrequired", 
 	"members","http", "irc" , "occupants" , "leveldb", "room", "rooms" , "message" , "messages" , "roomvalidation" , 
 	"messagevalidation" , "email", "threader", "originnotify"];
