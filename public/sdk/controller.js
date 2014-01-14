@@ -87,9 +87,8 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 		text.split(' ').map(isMention);
         $scope.text = "";
         message = {type:"text", text: text, to: $scope.room.id, from: $scope.user.id, mentions: mentionedUsers};
-        newMessage(message);
-		
         if(text !== "") {
+            newMessage(message);
             $factory.message(message, function(data) {
                 $scope.$apply(function(){
                     newMessage(data);    

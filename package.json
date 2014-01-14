@@ -31,7 +31,8 @@
     "redis": "x",
     "connect-redis":"x",
     "generic-pool":"X",
-    "nodemailer" : "x"
+    "nodemailer" : "x",
+	"objectlevel" : "x"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
