@@ -8,6 +8,7 @@ var emailConfig = config.email, digestJade;
 var welcomeEmailJade;
 var core;
 var debug = true;
+var timeout = 2*60*60*1000;//2 hours
 var transport = nodemailer.createTransport("SMTP", {
     host: "email-smtp.us-east-1.amazonaws.com",
     secureConnection: true,
@@ -61,8 +62,8 @@ module.exports = function(coreObject) {
             
         }, "gateway");
         //TODO Delete this before pushing...
-        if (debug) {//2 min interval
-           setInterval(sendperiodicMails, 60*2*1000);
+        if (debug) {//4 min interval
+           setInterval(sendperiodicMails, timeout);
         }
     }
     else {
@@ -95,7 +96,10 @@ function init() {
 }
 
 function getExpireTime() {
-    return 2*24*60*60*1024;//2 days
+    if (debug) {
+        return timeout*2;
+    }
+    else return 2*24*60*60*1024;//2 days
 }
 
 /**
@@ -147,6 +151,9 @@ function initMailSending(username, rooms) {
         }
         var ct = new Date().getTime();
         var interval = 12*60*60*1000 ;// 12 hours millisec
+        if (debug) {
+            interval = timeout/2;
+        }
         if (!lastSent ) {//last email sent not set
             lastSent = ct - interval;
         }
@@ -434,22 +441,22 @@ function getHeading(email) {
         room.labels.forEach(function(label) {
             if (!r) {
                 r = {};
-                r.title = label.title;
+                r.title = label.title.split("-").join(" ");
                 r.room = room.id;
                 isLabel = true;
             }
             else if (isLabel && r.title.length < label.title.length) {//if not msg(not mentioned)
-                r.title = label.title;
+                r.title = label.title.split("-").join(" ");
                 r.room = room.id;
             }
             label.interesting.forEach(function(m) {
                 //log("mentions " , m.mentions , "from ")
-                if(isLabel && m.mentions.indexOf(email.username) != -1) {
+                if(isLabel && m.mentions && m.mentions.indexOf(email.username) != -1) {
                     r = m;
                     isLabel = false;
                 }
-                else {//r is a msg (mentions)
-                    if (r.text < m.text && m.mentions.indexOf(m.from) != -1) {
+                else if(m.mentions) {//r is a msg (mentions)
+                    if (r.text < m.text &&  m.mentions.indexOf(email.username) != -1) {
                         r = m;
                     }
                 }
@@ -458,7 +465,7 @@ function getHeading(email) {
         });
     });
     if (r.type) {//mention
-        heading += "you have been mentioned in " + r.to + " :[" + r.from + "]" + r.text;         
+        heading += "you have been mentioned in " + r.to + " :[" + r.from + "]: " + r.text;         
     }
     else {
         heading += r.title + " : " + r.room;
