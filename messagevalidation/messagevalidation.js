@@ -4,7 +4,7 @@ var guid = require("../lib/guid.js");
 var validateRoom = require('../lib/validate.js');
 module.exports = function(core) {
 	core.on("message", function(message, callback) {
-		var i,j;
+		var i,j, hashmap = {};
 		log("Heard \"message\" event");
 		if(message.to) {
 			if(typeof message.to === "string") message.to = [message.to];
@@ -23,6 +23,13 @@ module.exports = function(core) {
 				if(!message.text.indexOf('/me')==0){
 					return callback(new Error("UNRECOGNIZED_SLASH_COMMNAD"));
 				} 
+			}
+			if(message.mentions && message.mentions.length > 0 ){
+				//checking for multiple mentions for the same user 
+				message.mentions.forEach(function(i){
+					hashmap[i] = "";
+				});
+				message.mentions = Object.keys(hashmap);
 			}
 		}
 		if(message.type == "join" || message.type == "part"){
