@@ -18,7 +18,7 @@ module.exports = function (store) {
 				}
 			},
 			mentiontotime: function(text, emit) {
-				text.mentions.forEach(function(m) { emit(m, text.to, -text.time); }
+				text.mentions.forEach(function(m) { emit(m, text.to, -text.time); });
 			}
 		}
 	});
