@@ -18,6 +18,8 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
+/* global require, module, exports, process, console */
+
 var core = Object.create(require("./lib/emitter.js")), config = require("./config.js");
 
 core.nodetime = require('nodetime').profile({
