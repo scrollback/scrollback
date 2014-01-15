@@ -20,12 +20,9 @@ Boston, MA 02111-1307 USA.
 
 /* global require, module, exports, process, console */
 
-var core = Object.create(require("./lib/emitter.js")), config = require("./config.js");
+require('./newrelic.js');
 
-core.nodetime = require('nodetime').profile({
-    accountKey: 'd7140b8dea6f067724cc43b0b4a508c447ce73c7', 
-    appName: config.core.nodetime || 'local.scrollback'
-});
+var core = Object.create(require("./lib/emitter.js")), config = require("./config.js");
 
 var pluginList = ["auth","roomauth","repeatban", "ratelimit", "wordban", "usernameban" , "originban", "loginrequired", 
 	"members","http", "irc" , "occupants" , "leveldb", "room", "rooms" , "message" , "messages" , "roomvalidation" , 
