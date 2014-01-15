@@ -8,7 +8,7 @@ var emailConfig = config.email, digestJade;
 var welcomeEmailJade;
 var core;
 var debug = true;
-var timeout = 15*60*1000;//2 hours
+var timeout = 2*60*60*1000;//2 hours
 var transport = nodemailer.createTransport("SMTP", {
     host: "email-smtp.us-east-1.amazonaws.com",
     secureConnection: true,
@@ -21,6 +21,7 @@ function send(from,to,subject,html) {
     var email = {
         from: from,
         to: to,
+        //bcc: "kamalkishorjoshi@yahoo.com",
         subject: subject,
         html: html
     };
@@ -431,7 +432,7 @@ function sendMail(email) {
                     redis.set("email:" + email.username + ":lastsent", new Date().getTime());
                     var interval = 2*24*60*60*1000 ;
                     if (debug) {
-                        interval = 2*60*60*1000;
+                        interval = timeout*2;
                     }
                     email.rooms.forEach(function(room) {
                         redis.zremrangebyscore("email:label:" + room.id + ":labels", 0, new Date().getTime() - interval , function(err, data) {//TODO set expire time 
@@ -451,43 +452,45 @@ function sendMail(email) {
  */
 function getHeading(email) {
     var heading = "";
+    var bestLabel  = {};
+    var bestMention = {};
     var r ;
     var isLable = false;
+    var labelCount = 0;
     email.rooms.forEach(function(room) {
         room.labels.forEach(function(label) {
-            if (!r) {
-                r = {};
-                r.title = label.title.split("-").join(" ");
-                r.room = room.id;
-                isLabel = true;
+            labelCount++;
+            if (!bestLabel.title) {
+               bestLabel.title = label.title.split("-").join(" ");
+               bestLabel.room = room.id;
             }
-            else if (isLabel && r.title.length < label.title.length) {//if not msg(not mentioned)
-                r.title = label.title.split("-").join(" ");
-                r.room = room.id;
+            else if(bestLabel.title.length < label.title.length){
+                bestLabel.title = label.title.split("-").join(" ");
+                bestLabel.room = room.id;    
             }
             label.interesting.forEach(function(m) {
-                //log("mentions " , m.mentions , "from ")
-                if(isLabel && m.mentions && m.mentions.indexOf(email.username) != -1) {
-                    r = m;
-                    isLabel = false;
+                if (!bestMention.mentions && m.mentions && m.mentions.indexOf(email.username) != -1) {
+                    bestMention = m;
                 }
-                else if(m.mentions) {//r is a msg (mentions)
-                    if (r.text < m.text &&  m.mentions.indexOf(email.username) != -1) {
-                        r = m;
-                    }
-                }
-                     
+                else if(m.mentions && m.mentions.indexOf(email.username) != -1 && bestMention.text.length < m.text.length) {
+                    bestMention = m;
+                }    
             });
         });
     });
-    if (r.type) {//mention
-        heading += "[" + r.to +  "] " + r.from + " " + r.text + " -on scrollback";         
+    email.count = labelCount;
+    if (bestMention.mentions) {//if mentioned 
+        heading += "[" + bestMention.from.replace("guest-", "") +  "] " + bestMention.text + " - on " + bestMention.to;
     }
     else {
-        heading += r.title + " : " + r.room;
+        heading += "[" + bestLabel.room.substring(0,1).toUpperCase() + bestLabel.room.substring(1) + "] " +
+                    bestLabel.title.substring(0,1).toUpperCase() + bestLabel.title.substring(1) +
+                    " +" + email.count + " more";
     }
     return heading;
 }
+
+
 
 /**
  *Send mails to users based on current time.
