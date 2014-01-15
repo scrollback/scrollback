@@ -1,10 +1,8 @@
 /*
 	Websockets gateway
-	
-	Use node-fibers to syncify async things.
 */
 
-"use strict";
+/* global require, module, exports, console, setTimeout */
 
 var sockjs = require("sockjs"),core,
 	cookie = require("cookie"),
@@ -52,11 +50,12 @@ function init(data, conn) {
 	
 	session.get({ sid:sid, suggestedNick:data.nick }, function(err, sess) {
 		var rooms = sess.user.rooms;
+		var i;
 		console.log("RETRIEVED SESSION", sess);
 		conn.sid = sid;
 		conn.rooms = [];
 
-		if (sess.user.id.indexOf("guest-")==0 && data.nick)	sess.user.id="guest-"+data.nick;
+		if (sess.user.id.indexOf("guest-")===0 && data.nick)	sess.user.id="guest-"+data.nick;
 		if(sess.pid !== pid) {
 			sess.pid = pid;
 			for(i in rooms) {
@@ -65,7 +64,7 @@ function init(data, conn) {
 		}
 		log("-------nick----------",sess.user);
 		var query=[];
-		if (sess.user.id.indexOf('guest-')!=0) {
+		if (sess.user.id.indexOf('guest-')!==0) {
 			query.user=sess.user.id;
 		}
 		core.emit("members", query,function(err,d) {
@@ -178,11 +177,11 @@ function message (m, conn) {
 		else{
 			m.origin = {gateway: "web", ip: conn.socket.remoteAddress, location:"unknown"};
 		}
-		if(!m.to && Object.keys(user.rooms).length != 0) {
+		if(!m.to && Object.keys(user.rooms).length !== 0) {
 			m.to = m.to || Object.keys(user.rooms);
 		}
 
-		if(m.to && typeof m.to != "string" && m.to.length==0) return;
+		if(m.to && typeof m.to != "string" && m.to.length===0) return;
 
 		if(m.type == 'join'){
 			//check for user login as well
@@ -260,7 +259,7 @@ function message (m, conn) {
 
 					if(m.user) {
 						console.log("m.user is", m.user);
-						/* 	why shallow copy? why not sess.user = m.user?
+						/*	why shallow copy? why not sess.user = m.user?
 							copying the property like accounts to the session, but the user will not send other properties.
 						*/
 						for(i in m.user) if(m.user.hasOwnProperty(i)) {
@@ -272,7 +271,7 @@ function message (m, conn) {
 					console.log("Saved session", sess);
 					session.set(conn.sid, sess);
 					var query=[];
-					if (sess.user.id.indexOf('guest-')!=0) {
+					if (sess.user.id.indexOf('guest-')!==0) {
 						query.user=sess.user.id;
 					}
 					core.emit("members", query,function(err,d){
@@ -291,8 +290,8 @@ function message (m, conn) {
 					});
 					if(m.ref) {
 						users[m.ref] = users[user.from] || {};
-						users[m.from] && delete users[m.from];
-						if(m.ref.indexOf("guest-") != 0) {
+						if(users[m.from]) delete users[m.from];
+						if(m.ref.indexOf("guest-") !== 0) {
 							users["guest-"+m.from]=users[user.from];
 						}
 					}
@@ -335,15 +334,15 @@ function room (r, conn) {
 		core.emit("room", r, function(err, data) {
 			if(err) {
 				log("ROOM ERROR", r, err);
-				data = {error:err.message}
+				data = {error:err.message};
 				data.query= {
 					queryId : r.queryId
-				}
+				};
 				conn.send('error', data);
 			}else{
 				data.query= {
 					queryId : r.queryId
-				}
+				};
 				conn.send('room', data);
 			}
 		});
@@ -368,7 +367,7 @@ function rooms(query, conn) {
 }
 
 function validateNick(nick){
-	if (nick.indexOf("guest-")==0) return false;
+	if (nick.indexOf("guest-")===0) return false;
 	return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{2,32}$/i)?nick!='img'&&nick!='css'&&nick!='sdk':false);
 }
 

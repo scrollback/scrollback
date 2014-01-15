@@ -4,10 +4,9 @@ var express = require("./express.js"),
 	page=require("./page.js");
 	app = express.init();
 
-
 var init = function(core) {
-	socket.init(app.http);
-	if(app.https) socket.init(app.https, core);
+	socket.init(app.httpServer, core);
+	if(app.httpsServer) socket.init(app.httpsServer, core);
 	page.init(app, core);
 };
 
