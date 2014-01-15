@@ -31,6 +31,25 @@ module.exports = function(object){
 		var i=0,l;
 		log("Heard \"room\" Event");
 		if(room.type == "room") {
+			// just validation.
+			room.accounts && room.accounts.forEach(function(account) {
+				var u = url.parse(account.id);
+	            var id = u.protocol+"//"+u.host+"/";
+	            if(!u.hash) {
+	            	console.log("no hash");
+	            	if(u.path.substring(1)) {
+	            		console.log("has path");
+	                	id = id+"#"+u.path.substring(1)
+					}
+					else {
+						console.log("--------------------invalid");
+						return callback(err,{message:"invalid irc account"});
+					}
+				}else {
+					id = id+u.hash;
+				}
+				account.id = id;
+			});
 
 			log("OLD ACCOUNTs",room.old);
 			room.old && room.old.accounts && room.old.accounts.forEach(function(oldAccount) {
@@ -41,11 +60,14 @@ module.exports = function(object){
 				}
 				u = url.parse(oldAccount.id);
 				clients.bot[u.host].part(u.hash.toLowerCase());
+				delete clients.bot[u.host].rooms[u.hash.toLowerCase()];
 			});
-			room.accounts && room.accounts.forEach(function(oldAccount) {
-				var u = url.parse(oldAccount.id);
+
+
+			room.accounts && room.accounts.forEach(function(account) {
+				var u = url.parse(account.id);
 				if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
-					addBot(oldAccount);
+					addBot(account);
 				}
 			});
 		}

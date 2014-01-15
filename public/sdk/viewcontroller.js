@@ -269,6 +269,12 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		$scope.editRoom.name = $scope.room.id;
 		$scope.editRoom.description = $scope.editRoom.description || "";
 		$scope.editRoom.type = "room";
+		if($scope.editRoom.ircServer && !$scope.editRoom.ircRoom) {
+			return $factory.emit("error","Enter irc room name");
+		}
+		if(!$scope.editRoom.ircServer && $scope.editRoom.ircRoom) {
+			return $factory.emit("error","Enter irc server");
+		}
 		if($scope.editRoom.ircServer && $scope.editRoom.ircRoom) {
 			$scope.editRoom.accounts = [
 				{
