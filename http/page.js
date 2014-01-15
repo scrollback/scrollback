@@ -39,16 +39,15 @@ exports.init = function(app, coreObject) {
             return res.render("newProfile",{email:user.accounts[0].id.split(":")[1]});
         }
     });
-    app.get("/me", function(req, res) {
+	function loginHandler(req, res) {
         var user = req.session.user, responseObject={};
         responseObject.user = req.session.user;
-        if(/^guest/.test(req.session.user.id)) {
-            console.log(responseObject);
-            return res.redirect(307, '//'+config.http.host+"/s/login.html"+queryString);
-        }else {
-            return res.render("newProfile", {email: user.accounts[0].id.split(":")[1]});
-        }
-    });
+		responseObject.defaultTitle = "Your rooms";
+		responseObject.room = {title: "", id: ""};
+		res.render("d/main" , responseObject);
+    }
+    app.get("/me", loginHandler);
+	app.get("/me/login", loginHandler);
     app.get("/dlg/*",function(req,res){
         var dialog=req.path.substring(1).split("/")[1];
         if(dialogs[dialog]) {
@@ -92,7 +91,12 @@ exports.init = function(app, coreObject) {
             description: "This is a sample room and this is a description for the sample room, this description should be a little larger I presume. Here is the Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis semper lobortis leo accumsan adipiscing. Curabitur eu leo id elit aliquet sagittis ut eu leo. Nulla facilisi. .", picture: "",
             profile: "http://sampleroom.blogspot.com" 
         }});
-	});    
+	});   
+	
+	app.get("/beta/*", function(req, res){
+		return res.redirect(307, 'https://'+config.http.host+ req.path.substring(5));
+	});
+	
     function roomHandler(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, 
         query={}, sqlQuery, roomId = params[0], user = req.session.user,
@@ -103,13 +107,12 @@ exports.init = function(app, coreObject) {
 		responseObj.user = req.session.user;
 
 		// assigning a default gravatar for the guest can go here! 
-		//		if(!/^guest-/.test(responseObj.user.id))
 		// http://www.gravatar.com/avatar/7af99a09a2a182a118b262cf365cd7df/?d=http://scrollback.io/img/default-avatar/am.png?s=48
 
 
         if(!req.secure) {
             queryString  = req._parsedUrl.search?req._parsedUrl.search:"";
-            return res.redirect(307, 'https://'+config.http.host+req.path+queryString);
+            //return res.redirect(307, 'https://'+config.http.host+req.path+queryString);
         }
 
         if(roomId.indexOf('%') == 0){
@@ -156,6 +159,7 @@ exports.init = function(app, coreObject) {
     }
     app.get("/*", roomHandler);
     app.get("/*/edit", roomHandler);
+
 
 
 

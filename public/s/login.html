@@ -1,6 +1,6 @@
 <div>
 	<h1 ng-init="inLogin = true">
-		<button class="left"><span ng-click="cancelScreen()" class="fa fa-arrow-left"></span></button><span> Login</span>
+		<button ng-show="!isGuest()" class="left"><span ng-click="cancelScreen()" class="fa fa-arrow-left"></span></button><span> Login</span>
 	</h1>
 	<form ng-submit="nickChange()" id="profile">
 		<label><button class="longButton" type="button" ng-click="personaLogin()"> SIGN UP / LOG INTO SCROLLBACK </button> </label>
@@ -11,7 +11,7 @@
 -->
 		</label>
 		<div class="buttonGroup">
-			<button class="cancel" type="button" ng-click="cancelScreen()"> Cancel </button>
+			<button class="cancel" type="button" ng-show="!isGuest()" ng-click="cancelScreen()"> Cancel </button>
 		</div>
 	</form>
 </div>

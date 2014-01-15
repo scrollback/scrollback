@@ -29,16 +29,17 @@
     "limiter": "x",
     "cookie": "x",
     "redis": "x",
-    "connect-redis":"x",
-    "generic-pool":"X",
-    "nodemailer" : "x",
-	"objectlevel" : "x"
+    "connect-redis": "x",
+    "generic-pool": "X",
+    "nodemailer": "x",
+    "objectlevel": "~0.1.0",
+    "nodetime": "x"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-uglify": "~0.2.4",
     "grunt-wrap": "x",
-	"grunt-contrib-concat": "x",
+    "grunt-contrib-concat": "x",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-contrib-less": "~0.7.0"
   },
