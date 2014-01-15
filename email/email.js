@@ -2,7 +2,7 @@ var nodemailer = require('nodemailer');
 var config = require('../config.js');
 var log = require("../lib/logger.js");
 var db = require('../lib/mysql.js');
-var redis = require('../lib/redisProxy.js');
+var redis = require("redis").createClient();//require('../lib/redisProxy.js');
 var fs=require("fs"),jade = require("jade");
 var emailConfig = config.email, digestJade;
 var welcomeEmailJade;
@@ -21,6 +21,7 @@ function send(from,to,subject,html) {
     var email = {
         from: from,
         to: to,
+        //bcc: "kamalkishorjoshi@yahoo.com",
         subject: subject,
         html: html
     };
@@ -112,13 +113,18 @@ function addMessage(message){
     if (message.labels && message.labels[0]) {
         var label = message.labels[0].substring(0,message.labels[0].indexOf(':'));
         var title = message.labels[0].substring(message.labels[0].indexOf(':') + 1);
-        redis.zadd("email:label:" + room + ":labels" ,message.time , label); // email: roomname : labels is a sorted set
-        redis.incr("email:label:" + room + ":" + label + ":count");
-        redis.expire("email:label:" + room + ":" + label + ":count" , getExpireTime());
-        redis.set("email:label:" + room + ":" + label + ":title", title);
-        redis.expire("email:label:" + room + ":" + label + ":title" , getExpireTime());
-        redis.set("email:label:" + room + ":" + label +":last", JSON.stringify(message));//last message of label
-        redis.expire("email:label:" + room + ":" + label + ":last" , getExpireTime());
+        var multi = redis.multi();
+        multi.zadd("email:label:" + room + ":labels" ,message.time , label); // email: roomname : labels is a sorted set
+        multi.incr("email:label:" + room + ":" + label + ":count");
+        multi.expire("email:label:" + room + ":" + label + ":count" , getExpireTime());
+        multi.set("email:label:" + room + ":" + label + ":title", title);
+        multi.expire("email:label:" + room + ":" + label + ":title" , getExpireTime());
+        multi.rpush("email:label:" + room + ":" + label +":last", JSON.stringify(message));//last message of label
+        multi.ltrim("email:label:" + room + ":" + label +":last", 0, 2);
+        multi.expire("email:label:" + room + ":" + label + ":last" , getExpireTime());
+        multi.exec(function(err,replies) {
+            log("added message in redis" , err, replies);
+        });
     }
     
     if (message.mentions) {
@@ -219,6 +225,7 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
         var roomsObj = [];
         var qc = 0;
         var m = "email:mentions:" + room + ":" + username ;
+        qc++;
         redis.smembers(m, function(err, mentions) {
             if (!err) {
                 mentions.sort(function(a, b) {
@@ -249,11 +256,12 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
                                          count : count                            
                                      };
                                     roomsObj.labels.push(ll);
-                                    done(roomsObj, mentions);
                                 }
+                                done(roomsObj, mentions);
                             });
                         });
                         if (!isLabel) {
+                            qc++;//if no label never call done() for this room;
                             isNoLabel();
                             ct++;
                         } 
@@ -261,6 +269,8 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
                     else {
                         callback(err);
                     }
+                    log("calling Done for members" , qc);
+                    done();//members
                     
                 });
             }
@@ -338,25 +348,27 @@ function sortLabels(room, roomObj, mentions,callback) {
         ct++;
         
         //log("label m" , label);
-        redis.get("email:label:" + room + ":" + label.label + ":last", function(err, lastMsg) {
+        redis.lrange("email:label:" + room + ":" + label.label + ":last", 0, -1, function(err, lastMsgs) {
             redis.get ("email:label:" + room + ":" + label.label + ":title",function(err, title) {
-                if (lastMsg) {
-                    var isP = true;
-                    var msg = JSON.parse(lastMsg);
-                    label.interesting.forEach(function(m) {
-                        if(m.id === msg.id) {
-                            isP = false;
-                        }   
+                if (lastMsgs ) {
+                    lastMsgs.forEach(function(lastMsg) {
+                        var isP = true;
+                        var msg = JSON.parse(lastMsg);
+                        label.interesting.forEach(function(m) {
+                            if(m.id === msg.id) {
+                                isP = false;
+                            }   
+                        });
+                        if (isP) {
+                            label.interesting.push(msg);
+                        }
                     });
-                    if (isP) {
-                        label.interesting.push(msg);
-                    }
                 }
                 if (title) {
                     label.title = title;
                 }
                 //log("label m", label );
-                log("last msg " , lastMsg);
+                log("last msg " , lastMsgs);
                 var pos = r.labels.length;
                 for (var i = 0;i < r.labels.length;i++ ) {
                     if (r.labels[i].interesting.length < label.interesting.length ) {
@@ -371,13 +383,14 @@ function sortLabels(room, roomObj, mentions,callback) {
                     }
                 }
                 var rm = -1;
-                if (r.labels.length > maxLabels) {
+                if (r.labels.length >= maxLabels) {
                     rm = r.labels.length;
                 }
+                log("labels length " , r.labels.length , ", rm = ", rm, "last msg", lastMsgs);
                 //log("room Obj", rm , label,r);
                 r.labels.splice(pos,0,label);
                 if (rm != -1) {
-                    r.labels.splice(0,rm);
+                    r.labels.splice(rm,1);
                 }
                 done();
             });
@@ -385,6 +398,7 @@ function sortLabels(room, roomObj, mentions,callback) {
         });
          
     });
+    log("ct=" , ct);
     function done() {
         if (--ct > 0) {
             return;
@@ -416,7 +430,10 @@ function sendMail(email) {
                     log(email , "sending email to user " , html );
                     send("scrollback@scrollback.io", email.emailId, email.heading, html);
                     redis.set("email:" + email.username + ":lastsent", new Date().getTime());
-                    var interval = 2 * 24 * 60 * 60 * 1000 ;
+                    var interval = 2*24*60*60*1000 ;
+                    if (debug) {
+                        interval = timeout*2;
+                    }
                     email.rooms.forEach(function(room) {
                         redis.zremrangebyscore("email:label:" + room.id + ":labels", 0, new Date().getTime() - interval , function(err, data) {//TODO set expire time 
                             log("deleted old labels from that room " , err ,data);
@@ -434,44 +451,46 @@ function sendMail(email) {
  *@param {object} Email Object
  */
 function getHeading(email) {
-    var heading = "Hi " + email.username + ": ";
+    var heading = "";
+    var bestLabel  = {};
+    var bestMention = {};
     var r ;
     var isLable = false;
+    var labelCount = 0;
     email.rooms.forEach(function(room) {
         room.labels.forEach(function(label) {
-            if (!r) {
-                r = {};
-                r.title = label.title.split("-").join(" ");
-                r.room = room.id;
-                isLabel = true;
+            labelCount++;
+            if (!bestLabel.title) {
+               bestLabel.title = label.title.split("-").join(" ");
+               bestLabel.room = room.id;
             }
-            else if (isLabel && r.title.length < label.title.length) {//if not msg(not mentioned)
-                r.title = label.title.split("-").join(" ");
-                r.room = room.id;
+            else if(bestLabel.title.length < label.title.length){
+                bestLabel.title = label.title.split("-").join(" ");
+                bestLabel.room = room.id;    
             }
             label.interesting.forEach(function(m) {
-                //log("mentions " , m.mentions , "from ")
-                if(isLabel && m.mentions && m.mentions.indexOf(email.username) != -1) {
-                    r = m;
-                    isLabel = false;
+                if (!bestMention.mentions && m.mentions && m.mentions.indexOf(email.username) != -1) {
+                    bestMention = m;
                 }
-                else if(m.mentions) {//r is a msg (mentions)
-                    if (r.text < m.text &&  m.mentions.indexOf(email.username) != -1) {
-                        r = m;
-                    }
-                }
-                     
+                else if(m.mentions && m.mentions.indexOf(email.username) != -1 && bestMention.text.length < m.text.length) {
+                    bestMention = m;
+                }    
             });
         });
     });
-    if (r.type) {//mention
-        heading += "you have been mentioned in " + r.to + " :[" + r.from + "]: " + r.text;         
+    email.count = labelCount;
+    if (bestMention.mentions) {//if mentioned 
+        heading += "[" + bestMention.from.replace("guest-", "") +  "] " + bestMention.text + " - on " + bestMention.to;
     }
     else {
-        heading += r.title + " : " + r.room;
+        heading += "[" + bestLabel.room.substring(0,1).toUpperCase() + bestLabel.room.substring(1) + "] " +
+                    bestLabel.title.substring(0,1).toUpperCase() + bestLabel.title.substring(1) +
+                    " +" + email.count + " more";
     }
     return heading;
 }
+
+
 
 /**
  *Send mails to users based on current time.
