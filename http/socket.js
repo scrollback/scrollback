@@ -162,7 +162,7 @@ function messages (query, conn) {
 }
 
 function message (m, conn) {
-
+	
 	if(!conn.sid) return;
 	console.log(conn.sid);
 	session.get({sid: conn.sid}, function(err, sess) {
@@ -216,6 +216,7 @@ function message (m, conn) {
 			if(m.ref && users[m.ref] )
 				return conn.send('error', {id: m.id, message: "DUP_NICK"});
 			if(m.user){
+				if(!m.user.id) return conn.send("error", {id: m.id, message: "INVALID_NAME"} );
 				m.user.originalId = user.id;
 				if (!m.user.originalId.match(/^guest/)) {
 					log("user cannot change the nick.");
@@ -282,10 +283,12 @@ function message (m, conn) {
 							}
 						}
 						sess.user.membership = Object.keys(m);
-						conn.send('init', {
-							sid: sess.cookie.value,
-							user: sess.user
-						});
+						if(!err){
+							conn.send('init', {
+								sid: sess.cookie.value,
+								user: sess.user
+							});
+						}
 						session.set(conn.sid, sess);
 					});
 					if(m.ref) {

@@ -39,6 +39,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		if(error=="API Limit exceeded") error = "Your message was not delivered because you sent too many messages in a very short time.";
 		if(error=="REPEATATIVE") error = "Your message was not delivered because it seems repetitive.";
 		if(error=="BANNED_WORD") error = "Your message was not delivered because something you said was flagged as inappropriate.";
+		if("INVALID_NAME") error= "Invalid user name";
 		$scope.$apply(function(){
 			$scope.status.waiting = false;
 			if($scope.notifications.indexOf(error)>=0) return;
@@ -75,7 +76,8 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 					else if(!message.message) {
 						$scope.$apply(function() {
 							$scope.status.waiting = false;
-							$location.path("/"+$scope.room.id);
+							if($scope.room.id) $location.path("/"+$scope.room.id);
+							else $location.path("/me");
 						});
 					}
 				});
@@ -83,16 +85,18 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 			onlogout: function() {
 				$scope.$apply(function() {
 					$scope.status.waiting = false;
-					$location.path("/"+$scope.room.id);
+					if($scope.room.id) $location.path("/"+$scope.room.id);
+					else $location.path("/me/login");
 				});
 			}
 		});
 		navigator.id.request();
 	};
 	$scope.logout = function() {
+		if($scope.room.id) $location.path("/" + $scope.room.id);
+		else $location.path("/me/login");
 		$factory.message({type:"nick", to:"", ref:"guest-"},function(message) {
 			navigator.id.logout();
-			$location.path("/me");
 		});
 	};
 	var statusObject = {};
@@ -338,6 +342,7 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 	$factory.on('init', function(data){
 		//assigning the new new init data to the user scope ---
 		$scope.$apply(function(){
+			console.log(" Sending init ", data);
 			Object.keys(data.user).forEach(function(key){
 				$scope.user[key] = data.user[key];
 			});
@@ -349,6 +354,8 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 					else $scope.user.membership = Object.keys(data.user.membership);
 				}
 			}	
+			if($scope.room.id) $location.path("/" + $scope.room.id);
+			else $location.path("/me");
 		});
 	});
 	
@@ -368,10 +375,15 @@ scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location
 	$scope.logout = function() {
 		$factory.message({type:"nick", to:"", ref:"guest-"},function(message) {
 			navigator.id.logout();
-			$location.path("/"+$scope.room.id);
+			if($scope.room.id) $location.path("/"+$scope.room.id);
+			else $location.path("/me/login");
 		});
 	};
 	$scope.save = function() {
+		if(!$scope.nick){
+			alert('Please Enter a nick!');
+			return;
+		}
 		$scope.status.waiting = true;
 		$factory.message({to:"",type:"nick", user:{id:$scope.nick,accounts:[]}}, function(message) {
 			if(message.message) {

@@ -38,7 +38,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
        
         if(data.type && data.type!="text") return;
 		angular.element('#nomessagediv').hide();
-		for (i =0; i <=30 && i<messages.length; i++ ) {
+		for (i =0; i <=50 && i<messages.length; i++ ) {
             if (messages[i].id == data.id) {
                 messages[i] = data;
                 updated = true; 
@@ -144,19 +144,24 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         // TODO : popping from top :)
         for(i=0; i< 5; i++) {
               if(bottomIndex > 0) {
-                if(messages[bottomIndex].type == 'text')
+                if(messages[bottomIndex].type == 'text'){
                     $scope.items.push(messages[bottomIndex]);
+				}
                 bottomIndex -= 1;
               }
-              if(bottomIndex === 0 && $scope.items[$scope.items.length-1] != messages[0]) {
-                if(messages[0].type == "text")
-                    $scope.items.push(messages[0]);
-                bottomIndex = 0;
-              }
+//              if(bottomIndex === 0 && $scope.items[$scope.items.length-1] != messages[0]) {
+//                if(messages[0].type == "text"){
+//                    $scope.items.push(messages[0]);
+//					console.log("Pushed in loadMoreDown 2: ", messages[bottomIndex]);
+//				}
+//                bottomIndex = 0;
+//              }
         }
+		
          //this is causing troubles, so the shift is being done only for 2 elements at a time, ideally
          // the while should be uncommented
-        $timeout(function() {
+        
+		$timeout(function() {
             if($scope.items.length > 50) {
                 //while($scope.items.length > 50){ 
                 $scope.items.shift();
