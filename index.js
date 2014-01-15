@@ -20,7 +20,7 @@ Boston, MA 02111-1307 USA.
 
 /* global require, module, exports, process, console */
 
-require('./newrelic.js');
+require('newrelic');
 
 var core = Object.create(require("./lib/emitter.js")), config = require("./config.js");
 
