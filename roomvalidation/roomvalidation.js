@@ -16,7 +16,7 @@ module.exports =function(core){
 			avatarText = getAvatarText(room.id);
 			room.accounts.forEach(function(account){
 		        room.picture = crypto.createHash("md5").update(account.id.substring(7)).digest("hex");
-		        room.picture = '//s.gravatar.com/avatar/' + room.picture  + '/?d=http://scrollback.io/img/default-avatar/' + avatarText + '.png?s=48' ;
+		        room.picture = '//s.gravatar.com/avatar/' + room.picture  + '/?d=' + encodeURIComponent('http://scrollback.io/img/default-avatar/') + avatarText + '.png?s=48' ;
 			});
 		}
 		if(!room.createdOn) room.createdOn = new Date().getTime();

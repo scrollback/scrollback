@@ -135,7 +135,8 @@ scrollbackApp.controller('loginController',['$scope','$route','$factory','$locat
 	    });
 	};
 	$scope.goBack = function(){
-		$location.path("/"+$scope.room.id);
+//		$location.path("/"+$scope.room.id);
+		$location.path("/me");
 	};
 	$scope.displayNick = ($scope.user.id).replace(/^guest-/,"");
 }]);
@@ -278,8 +279,8 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 			$scope.editRoom.params.irc = false;
 			delete $scope.editRoom.accounts;
 		}
-		delete $scope.editRoom.ircServer;
-		delete $scope.editRoom.ircRoom
+		//delete $scope.editRoom.ircServer; //what is the purpose of this?? 
+		//delete $scope.editRoom.ircRoom
 		$scope.status.waiting = true;
 		$factory.room( $scope.editRoom, function(room) {
 			if(room.message)	alert(room.message);
@@ -352,7 +353,8 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 	});
 	
 	$scope.cancelScreen = function(){
-		$location.path("/"+$scope.room.id);	
+		if($scope.room.id) $location.path("/"+$scope.room.id);	
+		else $location.path("/me");
 	};
 	
 	$scope.isGuest = function(){

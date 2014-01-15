@@ -62,9 +62,9 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 			(function(){
                 var l=$scope.items.length,insertPosition=l-1,i;
                 for(i=insertPosition;i>0;i--) {
-                    if($scope.items[i].id == data.id){
+                    if($scope.items[i].id == data.id) {
                         $scope.items[i] = data;
-                        if(data.message){
+                        if(data.message) {
                           $scope.items.splice(i,1);
                         } 
                         return;  

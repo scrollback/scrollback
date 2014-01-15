@@ -6,7 +6,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 	meta(http-equiv="X-UA-Compatible",content="IE=edge")
 	title	
 		block title
-			| #{room.title} on scrollback
+			| #{defaultTitle || room.title} on scrollback
 	meta(name="viewport",content="width=device-width")
 	link(rel="stylesheet",href="/dummy.css")
 	link(rel="stylesheet",href="//fonts.googleapis.com/css?family=Open+Sans:300,800|Source+Code+Pro:300")
@@ -25,20 +25,20 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 			
 			
 			div
-				a.archive(onclick='window.location ="/old/#{room.id}";') (Switch to old view)
+				a.archive(ng-show="room.id !== ''" onclick='window.location ="/old/#{room.id}";') (Switch to old view)
 			#info 
 				ng-view
 			#foot
 				| Scrollback is a product of Askabt Pte Ltd.
 				| We respect your privacy. 
-				a.issues(onclick='window.open("https://github.com/scrollback/scrollback/issues","_blank")') Help us improve by reporting the bugs you find.
+				a.issues(click='window.open("https://github.com/scrollback/scrollback/issues","_blank")') Help us improve by reporting the bugs you find.
 			
 		#body(ng-controller="messageController",class = 'column')
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 				div(ng-repeat="i in items track by $index")
 					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}", time="{{i.time}}")
 			div(id="nomessagediv", ng-show = "{{items.length ==0}}")
-				| There are no messages in this room yet!
+				| No messages here to show!
 			form.messageWrapper(ng-submit="message();")
 				input.messageBox(type="text", ng-model="text")
 				input(id="submitButton" type="submit")
