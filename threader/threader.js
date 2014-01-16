@@ -13,13 +13,13 @@ Add labels only if threader is enabled for room.
 module.exports = function(core) {
 	if (config.threader) {
 		var pluginContent = "";
-		fs.readFile(__dirname + "/threader.html", "utf8", function(err, data){
+		/*fs.readFile(__dirname + "/threader.html", "utf8", function(err, data){
 			if(err)	throw err;
 			core.on("config", function(payload, callback) {
 				payload.threader = data;
 				callback(null, payload);
 			}, "setters");
-		});
+		});*/
 		init();
 		core.on('message', function(message, callback) {
 			console.log("threader");
@@ -27,32 +27,31 @@ module.exports = function(core) {
 				return core.emit('rooms', {id:message.to}, function(err, rooms) {
 					console.log("threader",rooms);
 					if(err) callback(err);
-					
-					if(rooms.length !== 0 && (rooms[0].params && rooms[0].params.threader)) {//if threader is enabled or not for room 
+					//if(rooms.length !== 0 && (rooms[0].params && rooms[0].params.threader)) {//if threader is enabled or not for room 
 					//if(true){
-						var msg = JSON.stringify({
-							id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
-							text: message.text.replace(/['"]/g, ''),
-							room: typeof message.to=="string" ? message.to:message.to[0]
-						});
-						log("Sending msg to scrollback.jar="+msg);
-						try {
-							client.write(msg+'\n');
-						} catch(err) {
-							log("--error --"+err);
-							return callback();
-						}
-						pendingCallbacks[message.id] = { message: message, fn: callback ,time:new Date().getTime()};
-						setTimeout(function() { 
-							if(pendingCallbacks[message.id] ){
-								pendingCallbacks[message.id].fn();
-								delete pendingCallbacks[message.id];
-								log("pending callback removed after 1 sec for message.id" + message.id);
-							}
-						}, 1000);	
-					}else{
-						return callback();	
+					var msg = JSON.stringify({
+						id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
+						text: message.text.replace(/['"]/g, ''),
+						room: typeof message.to=="string" ? message.to:message.to[0]
+					});
+					log("Sending msg to scrollback.jar="+msg);
+					try {
+						client.write(msg+'\n');
+					} catch(err) {
+						log("--error --"+err);
+						return callback();
 					}
+					pendingCallbacks[message.id] = { message: message, fn: callback ,time:new Date().getTime()};
+					setTimeout(function() { 
+						if(pendingCallbacks[message.id] ){
+							pendingCallbacks[message.id].fn();
+							delete pendingCallbacks[message.id];
+							log("pending callback removed after 1 sec for message.id" + message.id);
+						}
+					}, 1000);	
+					/*}else{
+						return callback();	
+					}*/
 					
 				});
 			}
