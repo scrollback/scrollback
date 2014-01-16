@@ -20,10 +20,13 @@ function send(from,to,subject,html) {
     var email = {
         from: from,
         to: to,
-        bcc: "scrollback.io@gmail.com",
         subject: subject,
         html: html
     };
+    if (emailConfig && emailConfig.bcc) {
+        email.bcc = emailConfig.bcc;
+    }
+    
     if (emailConfig.debug) {
         log("sending email :", email);
     }
@@ -101,7 +104,7 @@ function getExpireTime() {
     if (emailConfig.debug) {
         return timeout*2;
     }
-    else return 2*24*60*60*1024;//2 days
+    else return 2*24*60*60*1000;//2 days
 }
 
 /**
@@ -145,7 +148,7 @@ function addMessage(message){
 /**
  *Init of mail sending to username
  *1 - after 24 hours(12 AM in user's timezone)
- *2 - On nick mantion and at least {@link config.emailTimeout}
+ *2 - On nick mantion and at least 
  *@param {string} username username
  *@param {string}(optional) rooms rooms followed by username.
  */
@@ -405,7 +408,9 @@ function sortLabels(room, roomObj, mentions,callback) {
         r.labels.sort(function(l1, l2) {
             return l2.count - l1.count;
         });
+        var nn = 0;
         r.labels.forEach(function(label) {
+            nn++;
             redis.lrange("email:label:" + room + ":" + label.label + ":tail", 0, -1, function(err, lastMsgs) {
                 if (lastMsgs ) {
                     lastMsgs.forEach(function(lastMsg) {
@@ -421,10 +426,16 @@ function sortLabels(room, roomObj, mentions,callback) {
                         }
                     });
                 }
+                complete();
             });
         });
         log("room Obj " , JSON.stringify(r));
-        callback(null, r);
+        function complete() {
+            if (--nn > 0) {
+                return;
+            }
+            callback(null, r);
+        }
     }    
 }
 
@@ -445,7 +456,7 @@ function sendMail(email) {
                     log("email object" + JSON.stringify(email));
                     var html = digestJade(email);
                     log(email , "sending email to user " , html );
-                    send("scrollback@scrollback.io", email.emailId, email.heading, html);
+                    send(emailConfig.from, email.emailId, email.heading, html);
                     redis.set("email:" + email.username + ":lastsent", new Date().getTime());
                     var interval = 2*24*60*60*1000;
                     if (emailConfig.debug) {
@@ -586,8 +597,8 @@ function sendWelcomeEmail(user) {
         }
     });
     if (emailAdd) {
-        log("sending welcome email." , emailAdd)
-        send("scrollback@scrollback.io", emailAdd, "Welcome", emailHtml);
+        log("sending welcome email." , emailAdd);
+        send(emailConfig.from, emailAdd, "Welcome", emailHtml);
     }
     
 }
