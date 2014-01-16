@@ -8,7 +8,7 @@ var emailConfig = config.email, digestJade;
 var welcomeEmailJade;
 var core;
 var debug = true;
-var timeout = 2*60*60*1000;//2 hours
+var timeout = 120*60*1000;//2 hours
 var transport = nodemailer.createTransport("SMTP", {
     host: "email-smtp.us-east-1.amazonaws.com",
     secureConnection: true,
@@ -21,12 +21,13 @@ function send(from,to,subject,html) {
     var email = {
         from: from,
         to: to,
-        //bcc: "kamalkishorjoshi@yahoo.com",
+        //bcc: "scrollback.io@gmail.com",
         subject: subject,
         html: html
     };
-    log("sending email :", email);
-    //return;
+    if (debug) {
+        log("sending email :", email);
+    }
     transport.sendMail(email, function(error) {
         if(!error){
             log('Test message sent successfully!');
@@ -47,13 +48,15 @@ module.exports = function(coreObject) {
     if (config.email) {
         init();
         
-        core.on('room', function(user, callback ){
+       /*
+        *for Welcome email sending..
+        * core.on('room', function(user, callback ){
             callback();
             if(user && user.type == 'user' && user.old === null) {//Signup
                 sendWelcomeEmail(user);     
             }
         });
-        
+        */
         core.on('message', function(message, callback) {
             log("Heard \"message\" event", message);
             callback();
@@ -62,8 +65,7 @@ module.exports = function(coreObject) {
             }
             
         }, "gateway");
-        //TODO Delete this before pushing...
-        if (debug) {//4 min interval
+        if (debug) {
            setInterval(sendperiodicMails, timeout);
         }
     }
@@ -119,9 +121,9 @@ function addMessage(message){
         multi.expire("email:label:" + room + ":" + label + ":count" , getExpireTime());
         multi.set("email:label:" + room + ":" + label + ":title", title);
         multi.expire("email:label:" + room + ":" + label + ":title" , getExpireTime());
-        multi.rpush("email:label:" + room + ":" + label +":last", JSON.stringify(message));//last message of label
-        multi.ltrim("email:label:" + room + ":" + label +":last", 0, 2);
-        multi.expire("email:label:" + room + ":" + label + ":last" , getExpireTime());
+        multi.rpush("email:label:" + room + ":" + label +":tail", JSON.stringify(message));//last message of label
+        multi.ltrim("email:label:" + room + ":" + label +":tail", 0, 2);
+        multi.expire("email:label:" + room + ":" + label + ":tail" , getExpireTime());
         multi.exec(function(err,replies) {
             log("added message in redis" , err, replies);
         });
@@ -179,7 +181,7 @@ function initMailSending(username, rooms) {
                         rooms.push(r.room);
                     });
                     prepareEmailObj(username, rooms, lastSent, function(err, email) {
-                        log(err + " callback of pre email" , email);
+                        
                         if (!err) {
                             sendMail(email);
                         }   
@@ -188,7 +190,9 @@ function initMailSending(username, rooms) {
             }
             else {
                 prepareEmailObj(username, rooms, lastSent, function(err, email) {
-                    log(err + " callback of pre email" , email);
+                    if (debug) {
+                        log(err + " callback of pre email" , email);
+                    }
                     if (!err) {
                         sendMail(email);
                     }
@@ -208,20 +212,40 @@ function initMailSending(username, rooms) {
 
 /**
  *send mail to user read data from redis and create mail object
+ *email: {
+ *  username: {string}, //username 
+    heading : {string},
+    count: {number} ,//total count of labels
+    emailId: {string},
+    rooms: [
+        id: {string}, //room name
+        totalCount: {number},//total count of labels 
+        labels: [
+            {
+                label: {string},
+                count: {number},
+                interesting: [
+                    messages objects
+                ]
+            },
+            ....
+        ],
+        ...
+    ],
+    
+ }
  *@param {string} username
  *@param {string} rooms all rooms that user is following
  *@param {function(err, email) } callback with err, email Object.
  */
 function prepareEmailObj(username ,rooms, lastSent, callback) {
-    log("send mail to user ", username , rooms);
-     
+    if (debug) log("send mail to user ", username , rooms);
     var email = {};
     email.username = username;
     email.rooms = [];
     var ct = 0;
     var vq = 0;
     rooms.forEach(function(room) {
-        log("starting for rooom " , room);
         var roomsObj = [];
         var qc = 0;
         var m = "email:mentions:" + room + ":" + username ;
@@ -237,7 +261,7 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
                 var l = "email:label:" + room + ":labels";
                 
                 redis.zrangebyscore(l, lastSent, "+inf",  function(err,labels) {
-                    log("labels returned from redis" , labels);
+                    if(debug) log("labels returned from redis" , labels);
                     roomsObj.labels = [];
                     roomsObj.totalCount = labels.length;
                     if (!err) {
@@ -269,7 +293,6 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
                     else {
                         callback(err);
                     }
-                    log("calling Done for members" , qc);
                     done();//members
                     
                 });
@@ -296,7 +319,7 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
                     ct++;
                     if (ct >= rooms.length) {
                         deleteMentions(username, rooms);
-                        log("email object creation complete" , email);
+                        log("email object creation complete" , JSON.stringify(email));
                         callback(null, email);
                     }   
                 }
@@ -348,7 +371,7 @@ function sortLabels(room, roomObj, mentions,callback) {
         ct++;
         
         //log("label m" , label);
-        redis.lrange("email:label:" + room + ":" + label.label + ":last", 0, -1, function(err, lastMsgs) {
+        redis.lrange("email:label:" + room + ":" + label.label + ":tail", 0, -1, function(err, lastMsgs) {
             redis.get ("email:label:" + room + ":" + label.label + ":title",function(err, title) {
                 if (lastMsgs ) {
                     lastMsgs.forEach(function(lastMsg) {
@@ -371,12 +394,12 @@ function sortLabels(room, roomObj, mentions,callback) {
                 log("last msg " , lastMsgs);
                 var pos = r.labels.length;
                 for (var i = 0;i < r.labels.length;i++ ) {
-                    if (r.labels[i].interesting.length < label.interesting.length ) {
+                    if (r.labels[i].count < label.count ) {
                         pos = i;
                         break;
                     }
-                    else if(r.labels[i].interesting.length === label.interesting.length) {
-                        if (r.labels[i].count < label.count) {
+                    else if(r.labels[i].count === label.count) {
+                        if (r.labels[i].interesting.length < label.interesting.length) {
                             pos = i;
                             break;
                         }
@@ -430,7 +453,7 @@ function sendMail(email) {
                     log(email , "sending email to user " , html );
                     send("scrollback@scrollback.io", email.emailId, email.heading, html);
                     redis.set("email:" + email.username + ":lastsent", new Date().getTime());
-                    var interval = 2*24*60*60*1000 ;
+                    var interval = 2*24*60*60*1000;
                     if (debug) {
                         interval = timeout*2;
                     }
@@ -447,6 +470,7 @@ function sendMail(email) {
     });
 }
 /**
+ *
  *Generate Heading and Subject line from email Object
  *@param {object} Email Object
  */
@@ -457,14 +481,17 @@ function getHeading(email) {
     var r ;
     var isLable = false;
     var labelCount = 0;
+    var more = 0;
     email.rooms.forEach(function(room) {
+        labelCount += room.totalCount;
+        more += room.labels.length;
         room.labels.forEach(function(label) {
-            labelCount++;
+            
             if (!bestLabel.title) {
                bestLabel.title = label.title.split("-").join(" ");
                bestLabel.room = room.id;
             }
-            else if(bestLabel.title.length < label.title.length){
+            else if(bestLabel.count < label.count){
                 bestLabel.title = label.title.split("-").join(" ");
                 bestLabel.room = room.id;    
             }
@@ -483,9 +510,10 @@ function getHeading(email) {
         heading += "[" + bestMention.from.replace("guest-", "") +  "] " + bestMention.text + " - on " + bestMention.to;
     }
     else {
+        var tail = (more > 1 ? " +" + (more - 1) + " more": "");
         heading += "[" + bestLabel.room.substring(0,1).toUpperCase() + bestLabel.room.substring(1) + "] " +
                     bestLabel.title.substring(0,1).toUpperCase() + bestLabel.title.substring(1) +
-                    " +" + email.count + " more";
+                    tail;
     }
     return heading;
 }
