@@ -20,7 +20,8 @@ function connect(server, nick, uid, channels, callback) {
 		realName: uid+'@scrollback.io',
 		channels: channels,
 		debug: false,
-		stripColors: true
+		stripColors: true,
+		floodProtection: true
 	});
 	
 	function room(s) {
