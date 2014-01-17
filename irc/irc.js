@@ -21,7 +21,7 @@ module.exports = function(object){
 	core = object;
 	fs.readFile(__dirname + "/irc.html", "utf8", function(err, data){
 		if(err)	throw err;
-		core.on("config", function(payload, callback) {
+		core.on("http/config", function(payload, callback) {
             payload.irc = data;
             callback(null, payload);
         }, "setters");

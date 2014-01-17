@@ -266,7 +266,7 @@ exports.init = function(app, coreObject) {
     app.get("/s/editRoom", function(req,res) {
 		if(!httpConfigResponseObject) {
 			httpConfigResponseObject = {};
-			core.emit("config", {},function(err, payload) {
+			core.emit("http/config", {},function(err, payload) {
 				httpConfigResponseObject.pluginsUI = payload;
 				if(err) return res.render("error",{error:err.message});
 				return res.render("newConfig", httpConfigResponseObject);
