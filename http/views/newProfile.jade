@@ -10,7 +10,7 @@ div
 		label Email
 			input(disabled,ng-init='email="#{email}"',ng-model="email")
 		label Picture 
-			.combo: button(onclick="window.open('http://en.gravatar.com/emails/', '_blank')")
+			.combo: button(type="button", title="Change your gravatar at gravatar.com", onclick="window.open('http://en.gravatar.com/emails/', '_blank')")
 				img(src='{{user.picture}}', style = 'width: 48px')
 				| Change Gravatar
 		.buttonGroup
