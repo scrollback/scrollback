@@ -47,7 +47,7 @@ function send(from,to,subject,html) {
 module.exports = function(coreObject) {
     core = coreObject;
    
-    if (config.email) {
+    if (config.email && config.email.auth) {
         init();
         
        /*
