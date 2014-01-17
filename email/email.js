@@ -2,10 +2,12 @@ var nodemailer = require('nodemailer');
 var config = require('../config.js');
 var log = require("../lib/logger.js");
 var db = require('../lib/mysql.js');
-var redis = require('../lib/redisProxy.js');
+var redis = require("redis").createClient();//require('../lib/redisProxy.js');
 var fs=require("fs"),jade = require("jade");
 var emailConfig = config.email, digestJade;
+var welcomeEmailJade;
 var core;
+var timeout = 2*24*60*60*1000;//for debuging only
 var transport = nodemailer.createTransport("SMTP", {
     host: "email-smtp.us-east-1.amazonaws.com",
     secureConnection: true,
@@ -14,12 +16,20 @@ var transport = nodemailer.createTransport("SMTP", {
 });
 
 function send(from,to,subject,html) {
+    
     var email = {
         from: from,
         to: to,
         subject: subject,
         html: html
     };
+    if (emailConfig && emailConfig.bcc) {
+        email.bcc = emailConfig.bcc;
+    }
+    
+    if (emailConfig.debug) {
+        log("sending email :", email);
+    }
     transport.sendMail(email, function(error) {
         if(!error){
             log('Test message sent successfully!');
@@ -35,27 +45,42 @@ function send(from,to,subject,html) {
 }
 
 module.exports = function(coreObject) {
-    if (config.email) {
-        core = coreObject;
+    core = coreObject;
+   
+    if (config.email && config.email.auth) {
         init();
+        
+       /*
+        *for Welcome email sending..
+        * core.on('room', function(user, callback ){
+            callback();
+            if(user && user.type == 'user' && user.old === null) {//Signup
+                sendWelcomeEmail(user);     
+            }
+        });
+        */
         core.on('message', function(message, callback) {
-            log("Heard \"message\" event");
+            log("Heard \"message\" event", message);
+            callback();
             if(message.type === "text"){
                 addMessage(message);    
             }
-            callback();
+            
         }, "gateway");
-        //setInterval(sendDigest, 25*1000);
+        if (emailConfig.debug) {
+           setInterval(sendperiodicMails, timeout);
+        }
     }
     else {
         log("email module is not enabled");
     }
 };
 
+
 function init() {
     fs.readFile(__dirname + "/views/digest.jade", "utf8", function(err, data) {
         if(err) throw err;
-        digestJade = jade.compile(data,  {basedir: process.cwd()+'/http/views/'});
+        digestJade = jade.compile(data,  {basedir: __dirname + "/views/" });
         //send mails in next hour
         var x = new Date().getMinutes();
         var sub = 90;
@@ -63,137 +88,462 @@ function init() {
            sub = 30; 
         }
         setTimeout(function(){
-            sendDigest();
-            setInterval(sendDigest, 60*60*1000);
+            sendperiodicMails();
+            setInterval(sendperiodicMails, 60*60*1000);
         }, (sub-x)*60000);
+    });
+    //read welcome email jade
+    fs.readFile(__dirname + "/views/welcomeEmail.jade", "utf8", function(err, data) {
+        if(err) throw err;
+        welcomeEmailJade = jade.compile(data,  {basedir: __dirname + "/views/"});
+        log("welcome emails " , welcomeEmailJade );
     });
 }
 
-function getNumber(i){
-    var x=[],j;
-    for(j=0;j<i;j++)
-        x.push(j);
-    return x;
+function getExpireTime() {
+    if (emailConfig.debug) {
+        return timeout*2;
+    }
+    else return 2*24*60*60*1000;//2 days
 }
+
 /**
  *Push message into redis
  */
 function addMessage(message){
-    var room = message.to, i;
-    getNumber(24).forEach(function(i){
-        redis.sadd("email:room:" + i, room);
-        redis.incr("email:" + room + ":" + i + ":count", function(err, d) {
-            //is there a better way to handle this?
-            if (err)    return log(err);
-            redis.get("email:" + room + ":" + i + ":count",function(error,data){
-                var count = parseInt(data);
-                if (count < 4) {
-                    redis.rpush("email:" + room + ":" + i + ":head",JSON.stringify(message));
+    var room = message.to;
+    
+    if(emailConfig.debug) log("email -"  , message);
+    
+    if (message.labels && message.labels[0]) {
+        var label = message.labels[0].substring(0,message.labels[0].indexOf(':'));
+        var title = message.labels[0].substring(message.labels[0].indexOf(':') + 1);
+        var multi = redis.multi();
+        multi.zadd("email:label:" + room + ":labels" ,message.time , label); // email: roomname : labels is a sorted set
+        multi.incr("email:label:" + room + ":" + label + ":count");
+        multi.expire("email:label:" + room + ":" + label + ":count" , getExpireTime());
+        multi.set("email:label:" + room + ":" + label + ":title", title);
+        multi.expire("email:label:" + room + ":" + label + ":title" , getExpireTime());
+        multi.rpush("email:label:" + room + ":" + label +":tail", JSON.stringify(message));//last message of label
+        multi.ltrim("email:label:" + room + ":" + label +":tail", 0, 2);
+        multi.expire("email:label:" + room + ":" + label + ":tail" , getExpireTime());
+        multi.exec(function(err,replies) {
+            log("added message in redis" , err, replies);
+        });
+    }
+    
+    if (message.mentions) {
+        message.mentions.forEach(function(username) {
+            redis.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message), function(err,data) {
+                if (!err) {
+                    initMailSending(username);
+                }
+                
+            });//mention is a set
+        });        
+    }
+}
+
+
+/**
+ *Init of mail sending to username
+ *1 - after 24 hours(12 AM in user's timezone)
+ *2 - On nick mantion and at least 
+ *@param {string} username username
+ *@param {string}(optional) rooms rooms followed by username.
+ */
+function initMailSending(username, rooms) {
+    log("init mail sending for user  " + username, " rooms ", rooms);
+    log("gettting last email sent to user" , username);
+    redis.get("email:" + username + ":lastsent",function(err, lastSent) {
+        log("data returned form redis", lastSent);
+        if (err) {
+            return;
+        }
+        var ct = new Date().getTime();
+        var interval = 12*60*60*1000 ;// 12 hours millisec
+        if (emailConfig.debug) {
+            interval = timeout/2;
+        }
+        if (!lastSent ) {//last email sent not set
+            lastSent = ct - interval;
+        }
+        log("time left for user " , (parseInt(lastSent) + interval - ct));
+        if (parseInt(lastSent) + interval <= ct) {
+            //get rooms that user is following...
+            if (!rooms) {
+                log("getting rooms that user is following....");
+                core.emit("members",{user: username},function(err,following) {//TODO get only rooms from DB
+                    if (err) {
+                       log("error in getting members informtion");
+                        return;
+                    }
+                    log("username ", username ," is following rooms ", following);
+                    rooms = [];
+                    following.forEach(function(r) {
+                        rooms.push(r.room);
+                    });
+                    prepareEmailObj(username, rooms, lastSent, function(err, email) {
+                        
+                        if (!err) {
+                            sendMail(email);
+                        }   
+                    });
+                });
+            }
+            else {
+                prepareEmailObj(username, rooms, lastSent, function(err, email) {
+                    if (emailConfig.debug) {
+                        log(err + " callback of pre email" , email);
+                    }
+                    if (!err) {
+                        sendMail(email);
+                    }
+                    
+                });
+            }
+        }
+        else {
+            log("can not send email to user ", username, " now" );
+            return;
+        }
+    });             
+}
+
+
+
+
+/**
+ *send mail to user read data from redis and create mail object
+ *email: {
+ *  username: {string}, //username 
+    heading : {string},
+    count: {number} ,//total count of labels
+    emailId: {string},
+    rooms: [
+        id: {string}, //room name
+        totalCount: {number},//total count of labels 
+        labels: [
+            {
+                label: {string},
+                count: {number},
+                interesting: [
+                    messages objects
+                ]
+            },
+            ....
+        ],
+        ...
+    ],
+    
+ }
+ *@param {string} username
+ *@param {string} rooms all rooms that user is following
+ *@param {function(err, email) } callback with err, email Object.
+ */
+function prepareEmailObj(username ,rooms, lastSent, callback) {
+    if (emailConfig.debug) log("send mail to user ", username , rooms);
+    var email = {};
+    email.username = username;
+    email.rooms = [];
+    var ct = 0;
+    var vq = 0;
+    rooms.forEach(function(room) {
+        var roomsObj = [];
+        var qc = 0;
+        var m = "email:mentions:" + room + ":" + username ;
+        qc++;
+        redis.smembers(m, function(err, mentions) {
+            if (!err) {
+                mentions.sort(function(a, b) {
+                    a = JSON.parse(a);
+                    b = JSON.parse(b);
+                    return a.time - b.time;
+                });
+                log("mentions returned from redis ", room ,mentions);
+                var l = "email:label:" + room + ":labels";
+                
+                redis.zrangebyscore(l, lastSent, "+inf",  function(err,labels) {
+                    if(emailConfig.debug) log("labels returned from redis" , labels);
+                    roomsObj.labels = [];
+                    roomsObj.totalCount = labels.length;
+                    if (!err) {
+                        var isLabel = false;
+                        labels.forEach(function(label) {
+                            isLabel = true;
+                            var lc = "email:label:" + room + ":" + label + ":count"; 
+                            qc++;
+                            redis.get(lc, function(err,count) {
+                               if (err) {
+                                    callback(err);
+                               }
+                               else {
+                                    var ll = {
+                                         label: label ,
+                                         count : count                            
+                                     };
+                                    roomsObj.labels.push(ll);
+                                }
+                                done(roomsObj, mentions);
+                            });
+                        });
+                        if (!isLabel) {
+                            qc++;//if no label never call done() for this room;
+                            isNoLabel();
+                            ct++;
+                        } 
+                    }
+                    else {
+                        callback(err);
+                    }
+                    done();//members
+                    
+                });
+            }
+            else {
+                callback(err);
+            }
+        });
+        function isNoLabel() {
+            if (++vq >= rooms.length) {
+                callback("NO_DATA");
+            }
+        }
+        function done( roomObj, mentions) {
+            log("room done......" , room , qc);
+            if(--qc > 0 ) return;
+            
+            sortLabels(room ,roomObj,mentions,function(err,rr) {
+                if (err) {
+                    callback(err);
                 }
                 else {
-                    redis.rpush("email:" + room +":" + i +":tail",JSON.stringify(message));
-                    if (count > 6) {
-                        redis.ltrim("email:" + room + ":" + i + ":tail", 1, 3);
-                    }
+                    email.rooms.push(rr);
+                    ct++;
+                    if (ct >= rooms.length) {
+                        deleteMentions(username, rooms);
+                        log("email object creation complete" , JSON.stringify(email));
+                        callback(null, email);
+                    }   
                 }
             });
-        }); 
+        }
         
     });
 }
+
 /**
- *@param {string} room (room:no)
- *@param {function} callback(error,data) callback with room data....
+ *delete all mentions of user on room from redis
+ *@param {string} username.
+ *@param {string} room
  */
-function createMessage(room,callback) {
-    var roomsData = {};
-    redis.get("email:" + room + ":count", function (error,ct){//get msg count
-        if (error) {
-            return callback(error);
-        }
-        redis.lrange("email:" + room + ":head", 0, -1,function(error,head){// get head....
-            if (error) {
-                return callback(error);
+function deleteMentions(username , rooms) {   
+    rooms.forEach(function(room) {
+        var m = "email:mentions:" + room + ":" + username ;
+        redis.del(m, function(err, data) {
+            if (err) {
+                log("error while deleting mentions ", err);
             }
-            log("head for room " ,room , head);
-            roomsData.head =[];
-            head.forEach(function(element){
-                roomsData.head.push(JSON.parse(element));
-            });
-            roomsData.count = ct;
-            redis.lrange("email:" + room +":tail", 0, -1,function(error,tail){//get tail...
-                if (error) {
-                    callback(error);
-                }
-                roomsData.tail = [];
-                tail.forEach(function(element){
-                    roomsData.tail.push(JSON.parse(element));
-                });
-                //room data making done for current room....                   
-                 //clear room data....
-                redis.del("email:" + room + ":head");
-                redis.del("email:" + room + ":count");
-                redis.del("email:" + room + ":tail");
-                callback(null,roomsData);
-            }); 
-        });
-    });//end get count   
-}
-
-
-
-/**
- *Read rooms data from redis and send mails.
- **/
-function sendDigest() {
-    var x = new Date().getUTCHours();
-    var start = x*60;//x<=12? -x: 24-x,
-    var end = start + 60;
-    //message summery for rooms.
-    redis.smembers("email:room:"+x, function(error,data){//get all rooms
-        if (error) {
-            return;
-        }
-        var roomsData = {};
-        var count=0;
-        var i=0;
-        function next(callback) {
-            createMessage(data[i] + ":" + x,function(error,rd){
-                roomsData[data[i]] = rd;
-                i++;
-                if (i<data.length) {
-                    next(callback);
-                }
-                else{
-                    //delete all rooms...
-                    redis.del("email:room:"+x,function(error,data){
-                        callback();    
-                    });
-                }
-            });
-        }
-        next(function(){
-            log("sending mails.....");
-             //send emails now....
-            sendMails(roomsData);    
         });
     });
 }
+
+/**
+ *create email.rooms element
+ *filter out labels and generate labels array for current room
+ *Add label.interesting messages.
+ */
+function sortLabels(room, roomObj, mentions,callback) {
+    var maxLabels = 5;   
+    log("sort labels");
+    var r = {};
+    var ct = 0;
+    r.id = room;
+    r.totalCount = roomObj.totalCount;
+    r.labels = [];
+    roomObj.labels.forEach(function(label) {
+        label.interesting = [];
+        mentions.forEach(function(m) {
+            m = JSON.parse(m);
+           if(m.labels[0].split(":")[0] === label.label) {
+                label.interesting.push(m);
+                label.title = m.labels[0].split(":")[1];
+           }
+        });
+        ct++;
+        redis.get ("email:label:" + room + ":" + label.label + ":title",function(err, title) {
+            
+            if (title) {
+                label.title = title;
+            }
+            var pos = r.labels.length;
+            for (var i = 0;i < r.labels.length;i++ ) {
+                if (r.labels[i].interesting.length < label.interesting.length ) {
+                    pos = i;
+                    break;
+                }
+                else if(r.labels[i].interesting.length === label.interesting.length) {
+                    if (r.labels[i].count < label.count) {
+                        pos = i;
+                        break;
+                    }
+                }
+            }
+            
+            var rm = -1;
+            if (r.labels.length >= maxLabels) {
+                rm = r.labels.length;
+            }
+            r.labels.splice(pos,0,label);
+            if (rm != -1) {
+                r.labels.splice(rm,1);
+            }
+            done();
+        });
+    });
+    function done() {
+        if (--ct > 0) {
+            return;
+        }
+        r.labels.sort(function(l1, l2) {
+            return l2.count - l1.count;
+        });
+        var nn = 0;
+        r.labels.forEach(function(label) {
+            nn++;
+            redis.lrange("email:label:" + room + ":" + label.label + ":tail", 0, -1, function(err, lastMsgs) {
+                if (lastMsgs ) {
+                    lastMsgs.forEach(function(lastMsg) {
+                        var isP = true;
+                        var msg = JSON.parse(lastMsg);
+                        label.interesting.forEach(function(m) {
+                            if(m.id === msg.id) {
+                                isP = false;
+                            }   
+                        });
+                        if (isP) {
+                            label.interesting.push(msg);
+                        }
+                    });
+                }
+                complete();
+            });
+        });
+        log("room Obj " , JSON.stringify(r));
+        function complete() {
+            if (--nn > 0) {
+                return;
+            }
+            callback(null, r);
+        }
+    }    
+}
+
+/**
+ *Read data from email Object render HTML from email object using /views/digest.jade
+ *and then send mail to email.emailId
+ *@param {object} Email Object
+ */
+function sendMail(email) {
+    core.emit("rooms", {id: email.username, fields:["accounts"]}, function(err,rooms) {
+        log("accounts " ,rooms);
+        if (rooms && rooms[0].accounts) {
+            rooms[0].accounts.forEach(function(e) {
+                 log("accounts " ,rooms[0].accounts  , e);
+                if (e.id.indexOf("mailto:") === 0) {
+                    email.emailId = e.id.substring(7);
+                    email.heading = getHeading(email);
+                    log("email object" + JSON.stringify(email));
+                    var html = digestJade(email);
+                    log(email , "sending email to user " , html );
+                    send(emailConfig.from, email.emailId, email.heading, html);
+                    redis.set("email:" + email.username + ":lastsent", new Date().getTime());
+                    var interval = 2*24*60*60*1000;
+                    if (emailConfig.debug) {
+                        interval = timeout*2;
+                    }
+                    email.rooms.forEach(function(room) {
+                        redis.zremrangebyscore("email:label:" + room.id + ":labels", 0, new Date().getTime() - interval , function(err, data) {//TODO set expire time 
+                            log("deleted old labels from that room " , err ,data);
+                        });//ZREMRANGEBYSCORE email:scrollback:labels -1 1389265655284
+                    });
+                }
+                
+            });
+            
+        }
+    });
+}
+/**
+ *
+ *Generate Heading and Subject line from email Object
+ *@param {object} Email Object
+ */
+function getHeading(email) {
+    var heading = "";
+    var bestLabel ;
+    var bestMention = {};
+    var r ;
+    var isLable = false;
+    var labelCount = 0;
+    var more = 0;
+    email.rooms.forEach(function(room) {
+        labelCount += room.totalCount;
+        more += room.labels.length;
+        room.labels.forEach(function(label) {
+            
+            if (!bestLabel) {
+                bestLabel = {};
+                bestLabel.title = label.title.split("-").join(" ");
+                bestLabel.room = room.id;
+                bestLabel.count = label.count;
+            }
+            else if(bestLabel.count < label.count){
+                bestLabel.title = label.title.split("-").join(" ");
+                bestLabel.room = room.id;
+                bestLabel.count = label.count;
+            }
+            log("best label", bestLabel);
+            label.interesting.forEach(function(m) {
+                if (!bestMention.mentions && m.mentions && m.mentions.indexOf(email.username) != -1) {
+                    bestMention = m;
+                }
+                else if(m.mentions && m.mentions.indexOf(email.username) != -1 && bestMention.text.length < m.text.length) {
+                    bestMention = m;
+                }    
+            });
+        });
+    });
+    email.count = labelCount;
+    if (bestMention.mentions) {//if mentioned 
+        heading += "[" + bestMention.from.replace("guest-", "") +  "] " + bestMention.text + " - on " + bestMention.to;
+    }
+    else {
+        var tail = (more > 1 ? " +" + (more - 1) + " more": "");
+        heading += "[" + bestLabel.room.substring(0,1).toUpperCase() + bestLabel.room.substring(1) + "] " +
+                    bestLabel.title.substring(0,1).toUpperCase() + bestLabel.title.substring(1) +
+                    tail;
+    }
+    return heading;
+}
+
+
 
 /**
  *Send mails to users based on current time.
  *@param {object} Map of room data.
  */
-function sendMails(roomsData){
+function sendperiodicMails(){
     var x = new Date().getUTCHours();
     var start1 = x >= 12?(24 - x)*60:-x*60;
     var end1 = start1 + 59;
     var start2 = -100*60;//big values
     var end2 = -200*60;
-    /*
-    start1=0;//for testing....
-    end1=10000000;//for testing...
-    */
+    if (emailConfig.debug) {
+        start1=0;//for testing....
+        end1=10000000;//for testing...
+    }
+    
     if (x >= 9 && x < 12) {
         start2 = 24*60 + start1;//(+12 +14 +13)
         end2 = start2 + 59;//+13 
@@ -226,50 +576,29 @@ function sendMails(roomsData){
             us[d.user].rooms.push(d.room);
         }
         
-        for (var key in us) { //send (key -user) 
+        for (var key in us) { //send (key -user)
             var rm = us[key].rooms;//all rooms as array
-            var isData = false;
-            for(i = 0;i < rm.length;i++){
-                if (roomsData[rm[i]]) {
-                    isData = true;
-                    break;
-                }
-            }
-            if (isData) {
-                log("sending mail to user :",key);
-                var pe = prepareEmail(key,rm,roomsData);
-                log("email  :" + pe);
-                send("scrollback@scrollback.io",us[key].email,
-                     getSubject(key,rm,roomsData),
-                     pe);
-            }
+            initMailSending(key, rm);
         }
     });
 }
-/**
- *@param {string} user
- *@param {array} rooms array
- *@param {object} Map of rooms data.
- *@returns {string} Subject Line for email.
- */
-function getSubject(user,rooms,roomsData){
-    var r = "Hi " + user+": ";
-    r += "Updates from rooms followed by you";
-    return r;
-}
+
 
 /**
- *@param {string} user
- *@param {array} rooms array
- *@param {object} Map of rooms data.
- *@returns {string} email HTML
- **/
-function prepareEmail(user, rooms,roomsData) {
-    log(user,rooms,roomsData);
-    var obj = {
-                user: user/*User name*/,
-                room: rooms/*room array*/,
-                roomsData: roomsData/*all rooms info*/
-            };
-    return digestJade(obj);
-}   
+ *send welcome mail to user
+ *@param {Object} user 
+ */
+function sendWelcomeEmail(user) {
+    var emailHtml = welcomeEmailJade(user);
+    var emailAdd = false;
+    user.accounts.forEach(function (u) {
+        if (u.id.indexOf('mailto:') === 0) {
+            emailAdd = u.id.substring(7);
+        }
+    });
+    if (emailAdd) {
+        log("sending welcome email." , emailAdd);
+        send(emailConfig.from, emailAdd, "Welcome", emailHtml);
+    }
+    
+}
