@@ -13,11 +13,8 @@ exports.init=function(){
 	
 	var portPair, msg, user;
 	server= net.createServer(function(connection){
-		console.log("Connection from: "+connection.remoteAddress+":"+
-					connection.remotePort);
 		connection.on("data",function(data) {
-			
-			console.log("Got request: "+data);
+			log("Got ident request: "+data);
 			data = data.toString();
 			if ( typeof data === "undefined" ||
 						data.length===0 ||
