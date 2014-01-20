@@ -7,7 +7,7 @@ module.exports = function(core) {
 	var pluginContent = "";
 	fs.readFile(__dirname + "/wordban.html", "utf8", function(err, data){
 		if(err)	throw err;
-		core.on("config", function(payload, callback) {
+		core.on("http/config", function(payload, callback) {
             payload.wordban = data;
             callback(null, payload);
         }, "setters");

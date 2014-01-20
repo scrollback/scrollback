@@ -246,7 +246,7 @@ scrollbackApp.directive('message',function($compile) {
 				__glo_prevtime = time;
 				
 				var showDate = prettyDate(time, currtime);
-				$scope.time = 'Sent ' + showDate;
+				$scope.time = showDate;
 			});
 			
 			$scope.prettyDate = function prettyDate(time, currTime) {

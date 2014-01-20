@@ -62,6 +62,9 @@ var defaults = {
 		time: 60000,
 		limit: 30
 	},
+	email: {
+		from: "scrollback@scrollback.io"
+	},
 	auth: {
 		audience: "local.scrollback.io"
 	},

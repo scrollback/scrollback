@@ -7,8 +7,7 @@ var fs=require("fs"),jade = require("jade");
 var emailConfig = config.email, digestJade;
 var welcomeEmailJade;
 var core;
-var debug = true;
-var timeout = 120*60*1000;//2 hours
+var timeout = 2*24*60*60*1000;//for debuging only
 var transport = nodemailer.createTransport("SMTP", {
     host: "email-smtp.us-east-1.amazonaws.com",
     secureConnection: true,
@@ -21,11 +20,14 @@ function send(from,to,subject,html) {
     var email = {
         from: from,
         to: to,
-        //bcc: "scrollback.io@gmail.com",
         subject: subject,
         html: html
     };
-    if (debug) {
+    if (emailConfig && emailConfig.bcc) {
+        email.bcc = emailConfig.bcc;
+    }
+    
+    if (emailConfig.debug) {
         log("sending email :", email);
     }
     transport.sendMail(email, function(error) {
@@ -45,7 +47,7 @@ function send(from,to,subject,html) {
 module.exports = function(coreObject) {
     core = coreObject;
    
-    if (config.email) {
+    if (config.email && config.email.auth) {
         init();
         
        /*
@@ -65,7 +67,7 @@ module.exports = function(coreObject) {
             }
             
         }, "gateway");
-        if (debug) {
+        if (emailConfig.debug) {
            setInterval(sendperiodicMails, timeout);
         }
     }
@@ -99,10 +101,10 @@ function init() {
 }
 
 function getExpireTime() {
-    if (debug) {
+    if (emailConfig.debug) {
         return timeout*2;
     }
-    else return 2*24*60*60*1024;//2 days
+    else return 2*24*60*60*1000;//2 days
 }
 
 /**
@@ -110,7 +112,8 @@ function getExpireTime() {
  */
 function addMessage(message){
     var room = message.to;
-    log("email -"  , message);
+    
+    if(emailConfig.debug) log("email -"  , message);
     
     if (message.labels && message.labels[0]) {
         var label = message.labels[0].substring(0,message.labels[0].indexOf(':'));
@@ -145,7 +148,7 @@ function addMessage(message){
 /**
  *Init of mail sending to username
  *1 - after 24 hours(12 AM in user's timezone)
- *2 - On nick mantion and at least {@link config.emailTimeout}
+ *2 - On nick mantion and at least 
  *@param {string} username username
  *@param {string}(optional) rooms rooms followed by username.
  */
@@ -159,7 +162,7 @@ function initMailSending(username, rooms) {
         }
         var ct = new Date().getTime();
         var interval = 12*60*60*1000 ;// 12 hours millisec
-        if (debug) {
+        if (emailConfig.debug) {
             interval = timeout/2;
         }
         if (!lastSent ) {//last email sent not set
@@ -190,7 +193,7 @@ function initMailSending(username, rooms) {
             }
             else {
                 prepareEmailObj(username, rooms, lastSent, function(err, email) {
-                    if (debug) {
+                    if (emailConfig.debug) {
                         log(err + " callback of pre email" , email);
                     }
                     if (!err) {
@@ -239,7 +242,7 @@ function initMailSending(username, rooms) {
  *@param {function(err, email) } callback with err, email Object.
  */
 function prepareEmailObj(username ,rooms, lastSent, callback) {
-    if (debug) log("send mail to user ", username , rooms);
+    if (emailConfig.debug) log("send mail to user ", username , rooms);
     var email = {};
     email.username = username;
     email.rooms = [];
@@ -261,7 +264,7 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
                 var l = "email:label:" + room + ":labels";
                 
                 redis.zrangebyscore(l, lastSent, "+inf",  function(err,labels) {
-                    if(debug) log("labels returned from redis" , labels);
+                    if(emailConfig.debug) log("labels returned from redis" , labels);
                     roomsObj.labels = [];
                     roomsObj.totalCount = labels.length;
                     if (!err) {
@@ -351,7 +354,7 @@ function deleteMentions(username , rooms) {
  *Add label.interesting messages.
  */
 function sortLabels(room, roomObj, mentions,callback) {
-    var maxLabels = 5;//   
+    var maxLabels = 5;   
     log("sort labels");
     var r = {};
     var ct = 0;
@@ -360,7 +363,6 @@ function sortLabels(room, roomObj, mentions,callback) {
     r.labels = [];
     roomObj.labels.forEach(function(label) {
         label.interesting = [];
-        
         mentions.forEach(function(m) {
             m = JSON.parse(m);
            if(m.labels[0].split(":")[0] === label.label) {
@@ -369,10 +371,47 @@ function sortLabels(room, roomObj, mentions,callback) {
            }
         });
         ct++;
-        
-        //log("label m" , label);
-        redis.lrange("email:label:" + room + ":" + label.label + ":tail", 0, -1, function(err, lastMsgs) {
-            redis.get ("email:label:" + room + ":" + label.label + ":title",function(err, title) {
+        redis.get ("email:label:" + room + ":" + label.label + ":title",function(err, title) {
+            
+            if (title) {
+                label.title = title;
+            }
+            var pos = r.labels.length;
+            for (var i = 0;i < r.labels.length;i++ ) {
+                if (r.labels[i].interesting.length < label.interesting.length ) {
+                    pos = i;
+                    break;
+                }
+                else if(r.labels[i].interesting.length === label.interesting.length) {
+                    if (r.labels[i].count < label.count) {
+                        pos = i;
+                        break;
+                    }
+                }
+            }
+            
+            var rm = -1;
+            if (r.labels.length >= maxLabels) {
+                rm = r.labels.length;
+            }
+            r.labels.splice(pos,0,label);
+            if (rm != -1) {
+                r.labels.splice(rm,1);
+            }
+            done();
+        });
+    });
+    function done() {
+        if (--ct > 0) {
+            return;
+        }
+        r.labels.sort(function(l1, l2) {
+            return l2.count - l1.count;
+        });
+        var nn = 0;
+        r.labels.forEach(function(label) {
+            nn++;
+            redis.lrange("email:label:" + room + ":" + label.label + ":tail", 0, -1, function(err, lastMsgs) {
                 if (lastMsgs ) {
                     lastMsgs.forEach(function(lastMsg) {
                         var isP = true;
@@ -387,51 +426,17 @@ function sortLabels(room, roomObj, mentions,callback) {
                         }
                     });
                 }
-                if (title) {
-                    label.title = title;
-                }
-                //log("label m", label );
-                log("last msg " , lastMsgs);
-                var pos = r.labels.length;
-                for (var i = 0;i < r.labels.length;i++ ) {
-                    if (r.labels[i].count < label.count ) {
-                        pos = i;
-                        break;
-                    }
-                    else if(r.labels[i].count === label.count) {
-                        if (r.labels[i].interesting.length < label.interesting.length) {
-                            pos = i;
-                            break;
-                        }
-                    }
-                }
-                var rm = -1;
-                if (r.labels.length >= maxLabels) {
-                    rm = r.labels.length;
-                }
-                log("labels length " , r.labels.length , ", rm = ", rm, "last msg", lastMsgs);
-                //log("room Obj", rm , label,r);
-                r.labels.splice(pos,0,label);
-                if (rm != -1) {
-                    r.labels.splice(rm,1);
-                }
-                done();
+                complete();
             });
-            
         });
-         
-    });
-    log("ct=" , ct);
-    function done() {
-        if (--ct > 0) {
-            return;
-        }
         log("room Obj " , JSON.stringify(r));
-        callback(null, r);
-        //filter out email 
-    }
-   // log("sortLabels " , room, roomObj, mentions);
-    
+        function complete() {
+            if (--nn > 0) {
+                return;
+            }
+            callback(null, r);
+        }
+    }    
 }
 
 /**
@@ -451,10 +456,10 @@ function sendMail(email) {
                     log("email object" + JSON.stringify(email));
                     var html = digestJade(email);
                     log(email , "sending email to user " , html );
-                    send("scrollback@scrollback.io", email.emailId, email.heading, html);
+                    send(emailConfig.from, email.emailId, email.heading, html);
                     redis.set("email:" + email.username + ":lastsent", new Date().getTime());
                     var interval = 2*24*60*60*1000;
-                    if (debug) {
+                    if (emailConfig.debug) {
                         interval = timeout*2;
                     }
                     email.rooms.forEach(function(room) {
@@ -476,7 +481,7 @@ function sendMail(email) {
  */
 function getHeading(email) {
     var heading = "";
-    var bestLabel  = {};
+    var bestLabel ;
     var bestMention = {};
     var r ;
     var isLable = false;
@@ -487,14 +492,18 @@ function getHeading(email) {
         more += room.labels.length;
         room.labels.forEach(function(label) {
             
-            if (!bestLabel.title) {
-               bestLabel.title = label.title.split("-").join(" ");
-               bestLabel.room = room.id;
+            if (!bestLabel) {
+                bestLabel = {};
+                bestLabel.title = label.title.split("-").join(" ");
+                bestLabel.room = room.id;
+                bestLabel.count = label.count;
             }
             else if(bestLabel.count < label.count){
                 bestLabel.title = label.title.split("-").join(" ");
-                bestLabel.room = room.id;    
+                bestLabel.room = room.id;
+                bestLabel.count = label.count;
             }
+            log("best label", bestLabel);
             label.interesting.forEach(function(m) {
                 if (!bestMention.mentions && m.mentions && m.mentions.indexOf(email.username) != -1) {
                     bestMention = m;
@@ -530,7 +539,7 @@ function sendperiodicMails(){
     var end1 = start1 + 59;
     var start2 = -100*60;//big values
     var end2 = -200*60;
-    if (debug) {
+    if (emailConfig.debug) {
         start1=0;//for testing....
         end1=10000000;//for testing...
     }
@@ -588,8 +597,8 @@ function sendWelcomeEmail(user) {
         }
     });
     if (emailAdd) {
-        log("sending welcome email." , emailAdd)
-        send("scrollback@scrollback.io", emailAdd, "Welcome", emailHtml);
+        log("sending welcome email." , emailAdd);
+        send(emailConfig.from, emailAdd, "Welcome", emailHtml);
     }
     
 }

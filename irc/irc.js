@@ -1,9 +1,10 @@
-"use strict";
 /*
 	the irc accounts are updated right away.
 	There is a performance issue though.
 	The old client objects of all the individual users are not removed.
 */
+
+/* global require, module, __dirname, console */
 var irc = require("irc"),core,
 	config = require("../config.js"),
 	url = require("url"),
@@ -21,7 +22,7 @@ module.exports = function(object){
 	core = object;
 	fs.readFile(__dirname + "/irc.html", "utf8", function(err, data){
 		if(err)	throw err;
-		core.on("config", function(payload, callback) {
+		core.on("http/config", function(payload, callback) {
             payload.irc = data;
             callback(null, payload);
         }, "setters");
@@ -32,18 +33,18 @@ module.exports = function(object){
 		log("Heard \"room\" Event");
 		if(room.type == "room") {
 			// just validation.
-			room.accounts && room.accounts.forEach(function(account) {
+			if(room.accounts) room.accounts.forEach(function(account) {
 				var u = url.parse(account.id);
-	            var id = u.protocol+"//"+u.host+"/";
-	            if(!u.hash) {
-	            	console.log("no hash");
-	            	if(u.path.substring(1)) {
-	            		console.log("has path");
-	                	id = id+"#"+u.path.substring(1)
+				var id = u.protocol+"//"+u.host+"/";
+				if(!u.hash) {
+					console.log("no hash");
+					if(u.path.substring(1)) {
+						console.log("has path");
+						id = id+"#"+u.path.substring(1);
 					}
 					else {
 						console.log("--------------------invalid");
-						return callback(err,{message:"invalid irc account"});
+						return callback({message:"invalid irc account"});
 					}
 				}else {
 					id = id+u.hash;
@@ -52,7 +53,7 @@ module.exports = function(object){
 			});
 
 			log("OLD ACCOUNTs",room.old);
-			room.old && room.old.accounts && room.old.accounts.forEach(function(oldAccount) {
+			if(room.old && room.old.accounts) room.old.accounts.forEach(function(oldAccount) {
 				var u;
 				if(room.accounts) {
 					for (i=0,l=room.accounts.length;i<l;i++ )
@@ -64,7 +65,7 @@ module.exports = function(object){
 			});
 
 
-			room.accounts && room.accounts.forEach(function(account) {
+			if(room.accounts) room.accounts.forEach(function(account) {
 				var u = url.parse(account.id);
 				if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
 					addBot(account);
@@ -95,11 +96,19 @@ function addBot(account) {
 	var u, client;
 	if(account.joined) return;
 	u = url.parse(account.id);
-	client = clients.bot[u.host];
+	client = addBotChannels(u.host, [u.hash.toLowerCase()]);
+	client.rooms[u.hash.toLowerCase()] = account.room;
+	account.joined = true;
+}
+
+function addBotChannels(host, channels) {
+	log("ADD_BOT_CHANNELS", host, channels);
+	
+	var client = clients.bot[host];
 	if(!client) {
-		clients.bot[u.host] = client =
-			connect(u.host, botNick, botNick, function(m) {
-				if (users[u.host] && users[u.host][m.from]) {
+		clients.bot[host] = client =
+			connect(host, botNick, botNick, channels, function(m) {
+				if (users[host] && users[host][m.from]) {
 					log("Incoming Echo", m);
 					return;
 				}
@@ -108,29 +117,37 @@ function addBot(account) {
 			});
 
 		client.on('nick', function(oldn, newn) {
-			if (users[u.host][oldn]) {
-				users[u.host][newn] = true;
-				delete users[u.host][oldn];
+			if (users[host][oldn]) {
+				users[host][newn] = true;
+				delete users[host][oldn];
 			}
 		});
 		
 	}
-	if (!users[u.host]) users[u.host] = {};
+	if (!users[host]) users[host] = {};
 	
-	log("Bot joining " + u.hash);
-	client.join(u.hash.toLowerCase());
-	client.rooms[u.hash.toLowerCase()] = account.room;
-	account.joined = true;
+	return client;
 }
 
 function init() {
+	var servchan = {};
+	
 	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
 		if(err) throw "Cannot retrieve IRC accounts";
-		function joinStuff() {
-			data.forEach(addBot);
+		var host, client;
+		
+		data.forEach(function(account) {
+			var u = url.parse(account.id);
+			if(!servchan[u.host]) servchan[u.host] = {};
+			servchan[u.host][u.hash.toLowerCase()] = account.room;
+		});
+		
+		for(host in servchan) {
+			client = addBotChannels(host, Object.keys(servchan[host]));
+			client.rooms = servchan[host];
 		}
-		joinStuff();
 	});
+	
 	connect.init(users);
 }
 
@@ -159,7 +176,7 @@ function send(message, accounts) {
 					else {
 						ident =  md5sum.update(JSON.stringify(message.origin)).digest("hex");
 					}
-					clients[message.from][u.host] = client = connect(u.host, message.from,ident);
+					clients[message.from][u.host] = client = connect(u.host, message.from, [], ident);
 
 					var disconnect = function(nick) {
 						if (nick !== client.nick || Object.keys(client.chans).length) return;
@@ -179,7 +196,7 @@ function send(message, accounts) {
 					client.rooms[channel.toLowerCase()] = message.to;
 				}
 				//check for "/me "
-				if (message.text.indexOf("/me ")==0) {
+				if (message.text.indexOf("/me ") === 0) {
 					client.action(channel,message.text.substring(4));
 				}
 				else{
@@ -187,27 +204,27 @@ function send(message, accounts) {
 				}
 				break;
 			case 'away':
-				if (!client) return;
-				log("Start countdown " + (client && client.nick) + " leaving " + channel);
-				client.timers['part-' + channel] = setTimeout(function() {
-					log("Sending " + client && client.nick + " parts " + channel);
+//				if (!client) return;
+//				log("Start countdown " + (client && client.nick) + " leaving " + channel);
+//				client.timers['part-' + channel] = setTimeout(function() {
 					if (client && client.chans[channel]) {
+						log("Sending " + client && client.nick + " parts " + channel);
 						client.part(channel);
 						delete client.rooms[channel.toLowerCase()];
 					}
-				}, config.irc.hangTime);
+//				}, config.irc.hangTime);
 				break;
 			case 'back':
-				if (client && client.timers['part-' + channel]) {
-					log("Abort countdown " + (client && client.nick) + " leaving " + channel);
-					clearTimeout(client.timers['part-' + channel]);
-				}
+//				if (client && client.timers['part-' + channel]) {
+//					log("Abort countdown " + (client && client.nick) + " leaving " + channel);
+//					clearTimeout(client.timers['part-' + channel]);
+//				}
 				break;
 			case 'nick':
 				var nick=message.ref;
 
 				nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
-				clients[message.from][u.host] = client
+				clients[message.from][u.host] = client;
 				users[u.host][message.ref] = true;
 				
 				if(client) client.rename(nick);
