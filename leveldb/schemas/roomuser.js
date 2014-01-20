@@ -1,9 +1,27 @@
 /* global module, require, exports */
 var log = require("../../lib/logger.js");
 
-module.exports = function (types) {
+module.exports = function (store) {
 
-	var texts = types.texts;
+	var texts = store('texts', {
+		indexes: {
+			totime: function (text, emit) {
+				/*	time is stored in negative order because most searches
+					will be in descending time. LevelDB reversed queries are
+					slow.
+				*/
+				emit(text.to, -text.time);
+			},
+			tolabeltime: function(text, emit) {
+				for(var i in text.labels) {
+					emit(text.to, i, -text.time);
+				}
+			},
+			mentiontotime: function(text, emit) {
+				text.mentions.forEach(function(m) { emit(m, text.to, -text.time); }
+			}
+		}
+	});
 	
 	return {
 		put: function (message, cb) {
