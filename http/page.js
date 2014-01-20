@@ -6,6 +6,7 @@ var validateRoom = require('../lib/validate.js');
 var crypto = require('crypto');
 var db = require("../lib/mysql.js");
 var httpConfigResponseObject;
+var scriptResponseObject;
 
 
 
@@ -274,6 +275,26 @@ exports.init = function(app, coreObject) {
 		}
 		else {
 			res.render("newConfig", httpConfigResponseObject);
+		}
+        
+    });
+	
+	app.get("/s/script.js", function(req,res) {
+		if(!scriptResponseObject) {
+			scriptResponseObject = "";
+			core.emit("http/script", {},function(err, payload) {
+				for(js in payload) {
+					scriptResponseObject += payload[js] + "/n";
+				}
+				if(err) return res.render("error",{error:err.message});
+				res.write(scriptResponseObject);
+				return res.end();
+				
+			});
+		}
+		else {
+			res.write(scriptResponseObject);
+			res.end();
 		}
         
     });
