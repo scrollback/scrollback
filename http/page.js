@@ -104,11 +104,9 @@ exports.init = function(app, coreObject) {
         if(roomId=="old") return next();
         if(roomId && !validateRoom(roomId)) return next();
         
+		if(/^guest-/.test(user)) req.session.user.picture = crypto.createHash('md5').update(user).digest('hex');
+		
 		responseObj.user = req.session.user;
-
-		// assigning a default gravatar for the guest can go here! 
-		// http://www.gravatar.com/avatar/7af99a09a2a182a118b262cf365cd7df/?d=http://scrollback.io/img/default-avatar/am.png?s=48
-
 
         if(!req.secure) {
             queryString  = req._parsedUrl.search?req._parsedUrl.search:"";
