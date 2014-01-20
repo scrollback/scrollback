@@ -36,7 +36,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 		#body(ng-controller="messageController",class = 'column')
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 				div(ng-repeat="i in items track by $index")
-					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}", time="{{i.time}}")
+					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}", time="{{i.time}}", ng-click = "showmenu($index, i)")
 			div(id="nomessagediv", ng-show = "{{items.length ==0}}")
 				| No messages here to show!
 			form.messageWrapper(ng-submit="message();")
@@ -70,6 +70,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 		script(src='/sdk/controller.js')
 		script(src='/sdk/app.js')
 		script(src='/sdk/viewcontroller.js')
+		script(src='/sdk/showMenu.js')
 		script.
 			$('.collapse,#meta').on('click', function() {
 				$(this).toggleClass('expanded');
