@@ -10,15 +10,18 @@ var irc = require("irc"),
 module.exports = connect;
 
 
-function connect(server, nick, uid, callback) {
+function connect(server, nick, uid, channels, callback) {
 	log("Connecting " + nick + " to " + server);
 	
 	nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
 	 
 	var client =  new irc.Client(server, nick, {
 		userName : nick,
-		realName: nick+'@scrollback.io',
-		debug: false
+		realName: uid+'@scrollback.io',
+		channels: channels,
+		debug: false,
+		stripColors: true,
+		floodProtection: true
 	});
 	
 	function room(s) {
