@@ -74,6 +74,15 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 			})();
 		}
     }
+	
+	$scope.showmenu = function(index, item){
+		var el = angular.element('.scrollback-message').eq(index);
+		var twitterLink = encodeURI("http://twitter.com/home/?status=" + item.text  + " via https://scrollback.io/" + $scope.room.id);
+		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id ) + "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id + "&p[summary]=" + item.text;
+		console.log(facebookLink);
+		op = {'Tweet Message' : function(){ window.open(twitterLink,'_blank') }, 'Share Message' : function(){ window.open(facebookLink,'_blank') } };
+		showMenu(el, op);
+	}
 
     $scope.message = function() {
         var text = $scope.text.trim(),message;
@@ -171,7 +180,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                  //}
             }
 			
-			if($(window).scrollTop() + $(window).height() == $(document).height()) $('#body').nudgeInView(0);
+			if($(window).scrollTop() + $(window).height() == $(document).height())	 $('#body').nudgeInView(0);
 			
         } , 1);
     };
@@ -189,7 +198,6 @@ scrollbackApp.directive('message',function($compile) {
                         '<span ng-class="slashMe?me:noSlashMe" ng-repeat="i in text track by $index">'+
                             '<span ng-show="isText(i)">{{i.text}}</span>'+
                             '<span ng-show="!isText(i)"><a href="{{i.link}}">{{i.text}}</a></span></span>'+
-						'<span class = "socialButton" title="Tweet this message"><a href="{{twitterText}}"  target="_blank" ng-class="{darken : hover}" ng-mouseenter="hover=true" ng-mouseleave="hover=false" class="fa fa-twitter default"></a> </span>'+
 						'<span ng-show = "showTime" class="scrollback-message-time"> {{time}}</span>'
 						
                     +'</div>',
