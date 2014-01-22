@@ -352,14 +352,12 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 			Object.keys(data.user).forEach(function(key){
 				$scope.user[key] = data.user[key];
 			});
-			if(/^guest-/.test(data.user.id)) {
-				$scope.user.picture = "//s.gravatar.com/avatar/guestpic";
-			}else {
-				if(data.user.membership) {
-					if(data.user.membership instanceof Array) $scope.user.membership = data.user.membership;
-					else $scope.user.membership = Object.keys(data.user.membership);
-				}
-			}	
+		
+			if(data.user.membership) {
+				if(data.user.membership instanceof Array) $scope.user.membership = data.user.membership;
+				else $scope.user.membership = Object.keys(data.user.membership);
+			}
+			
 			if($scope.room.id) $location.path("/" + $scope.room.id);
 			else $location.path("/me");
 		});
@@ -386,10 +384,6 @@ scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location
 		});
 	};
 	$scope.save = function() {
-		if(!$scope.nick){
-			alert('Please Enter a nick!');
-			return;
-		}
 		$scope.status.waiting = true;
 		$factory.message({to:"",type:"nick", user:{id:$scope.nick,accounts:[]}}, function(message) {
 			if(message.message) {
