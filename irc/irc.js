@@ -123,6 +123,10 @@ function addBotChannels(host, channels) {
 			}
 		});
 		
+	}else{
+		channels.forEach(function(room){
+			client.join(room);	
+		});
 	}
 	if (!users[host]) users[host] = {};
 	
