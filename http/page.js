@@ -101,6 +101,7 @@ exports.init = function(app, coreObject) {
 	});
 	
     function roomHandler(req, res, next) {
+		log("path ", req.path);
         var params = req.path.substring(1).split("/"), responseObj={}, 
         query={}, sqlQuery, roomId = params[0], user = req.session.user,
         queryString, resp={};
@@ -141,19 +142,23 @@ exports.init = function(app, coreObject) {
             query.type="text";
             query.limit=250;
             //disabling this for now.
-            // if (params[1]) switch(params[1]) {
-            //     case 'since':
-            //         query.since=new Date(params[2]).getTime();
-            //         break;
-            //     case 'until':
-            //         query.until=new Date(params[2]).getTime();
-            //         break;
-            // }
-            
+            if (params[1]) switch(params[1]) {
+                 case 'since':
+                     query.since=new Date(params[2]).getTime();
+                     break;
+                 case 'until':
+					log("until--", params[2]);
+                     query.until=new Date(params[2]).getTime();
+                     break;
+            }
+            log("query page", query);
             core.emit("messages", query, function(err, m) {
                 responseObj.query=query;
                 responseObj.messages=m;
+				log("messages page" , m);
                 responseObj.relDate = relDate;
+				responseObj.prevLink = new Date(m[0].time).toISOString();
+				responseObj.nextLink = new Date(m[m.length-1].time).toISOString();
                 res.render("d/main" , responseObj);
             });
         });
