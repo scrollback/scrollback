@@ -109,6 +109,8 @@ function getExpireTime() {
 
 /**
  *Push message into redis
+ *If labels is not defind then it will not send mentions email.
+ *and not add data into redis.
  */
 function addMessage(message){
     var room = message.to;
@@ -130,18 +132,19 @@ function addMessage(message){
         multi.exec(function(err,replies) {
             log("added message in redis" , err, replies);
         });
+        if (message.mentions) {
+            message.mentions.forEach(function(username) {
+                redis.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message), function(err,data) {
+                    if (!err) {
+                        initMailSending(username);
+                    }
+                    
+                });//mention is a set
+            });        
+        }
     }
     
-    if (message.mentions) {
-        message.mentions.forEach(function(username) {
-            redis.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message), function(err,data) {
-                if (!err) {
-                    initMailSending(username);
-                }
-                
-            });//mention is a set
-        });        
-    }
+    
 }
 
 
@@ -150,7 +153,7 @@ function addMessage(message){
  *1 - after 24 hours(12 AM in user's timezone)
  *2 - On nick mantion and at least 
  *@param {string} username username
- *@param {string}(optional) rooms rooms followed by username.
+ *@param {array of string}(optional) rooms rooms followed by username.
  */
 function initMailSending(username, rooms) {
     log("init mail sending for user  " + username, " rooms ", rooms);
