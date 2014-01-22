@@ -56,7 +56,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         }else {
             index = i;
         }
-//			$scope.gotoBottom(); 
 		if(bottomIndex === 0) {
             //just to isolate the scope.
 			(function(){
@@ -80,7 +79,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 		var twitterLink = encodeURI("http://twitter.com/home/?status=" + item.text  + " via https://scrollback.io/" + $scope.room.id);
 		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id ) + "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id + "&p[summary]=" + item.text;
 		console.log(facebookLink);
-		op = {'Tweet Message' : function(){ window.open(twitterLink,'_blank') }, 'Share Message' : function(){ window.open(facebookLink,'_blank') } };
+		op = {'Tweet Message' : function(){ window.open(twitterLink,'_blank') }, 'Share on FB' : function(){ window.open(facebookLink,'_blank') } };
 		showMenu(el, op);
 	}
 
@@ -106,9 +105,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         }
     };
     
-    // $scope.loadMoreAt = function(time, before, after, callback) {
-
-    // };
     $scope.gotoBottom = function() {
         $scope.items.length = 0;
         topIndex = 0, bottomIndex = 0;
@@ -158,13 +154,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 				}
                 bottomIndex -= 1;
               }
-//              if(bottomIndex === 0 && $scope.items[$scope.items.length-1] != messages[0]) {
-//                if(messages[0].type == "text"){
-//                    $scope.items.push(messages[0]);
-//					console.log("Pushed in loadMoreDown 2: ", messages[bottomIndex]);
-//				}
-//                bottomIndex = 0;
-//              }
         }
 		
          //this is causing troubles, so the shift is being done only for 2 elements at a time, ideally

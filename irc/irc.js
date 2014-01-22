@@ -176,7 +176,7 @@ function send(message, accounts) {
 					else {
 						ident =  md5sum.update(JSON.stringify(message.origin)).digest("hex");
 					}
-					clients[message.from][u.host] = client = connect(u.host, message.from, [], ident);
+					clients[message.from][u.host] = client = connect(u.host, message.from, ident, []);
 
 					var disconnect = function(nick) {
 						if (nick !== client.nick || Object.keys(client.chans).length) return;

@@ -20,7 +20,7 @@ function showMenu(el, opt) {
 	scrh = $(window).height();
 	
 	menuw = menu.width();
-	menuh = menu.height() + 16;
+	menuh = menu.height();
 	
 //	spaceAbove = elt - $(document.body).scrollTop;
 	spaceBelow = scrh - elt - elh;

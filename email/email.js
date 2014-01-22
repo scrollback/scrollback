@@ -104,7 +104,7 @@ function getExpireTime() {
     if (emailConfig.debug) {
         return timeout*2;
     }
-    else return 2*24*60*60*1000;//2 days
+    else return 2*24*60*60;//2 days
 }
 
 /**
