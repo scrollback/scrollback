@@ -7,7 +7,7 @@ var fs=require("fs"),jade = require("jade");
 var emailConfig = config.email, digestJade;
 var welcomeEmailJade;
 var core;
-var timeout = 2*24*60*60*1000;//for debuging only
+var timeout = 8*60*1000;//for debuging only
 var transport = nodemailer.createTransport("SMTP", {
     host: "email-smtp.us-east-1.amazonaws.com",
     secureConnection: true,
@@ -69,6 +69,7 @@ module.exports = function(coreObject) {
         }, "gateway");
         if (emailConfig.debug) {
            setInterval(sendperiodicMails, timeout);
+           setInterval(trySendingToUsers,timeout/8);
         }
     }
     else {
@@ -91,6 +92,11 @@ function init() {
             sendperiodicMails();
             setInterval(sendperiodicMails, 60*60*1000);
         }, (sub-x)*60000);
+        setTimeout(function(){
+            trySendingToUsers();
+            setInterval(trySendingToUsers, 60*60*1000);
+        }, (60-x)*60000);
+
     });
     //read welcome email jade
     fs.readFile(__dirname + "/views/welcomeEmail.jade", "utf8", function(err, data) {
@@ -99,6 +105,8 @@ function init() {
         log("welcome emails " , welcomeEmailJade );
     });
 }
+
+
 
 function getExpireTime() {
     if (emailConfig.debug) {
@@ -126,7 +134,7 @@ function addMessage(message){
         multi.expire("email:label:" + room + ":" + label + ":count" , getExpireTime());
         multi.set("email:label:" + room + ":" + label + ":title", title);
         multi.expire("email:label:" + room + ":" + label + ":title" , getExpireTime());
-        multi.rpush("email:label:" + room + ":" + label +":tail", JSON.stringify(message));//last message of label
+        multi.lpush("email:label:" + room + ":" + label +":tail", JSON.stringify(message));//last message of label
         multi.ltrim("email:label:" + room + ":" + label +":tail", 0, 2);
         multi.expire("email:label:" + room + ":" + label + ":tail" , getExpireTime());
         multi.exec(function(err,replies) {
@@ -134,12 +142,15 @@ function addMessage(message){
         });
         if (message.mentions) {
             message.mentions.forEach(function(username) {
-                redis.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message), function(err,data) {
+                var multi = redis.multi();
+                multi.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message));//mentioned msg
+                multi.set("email:" + username + ":isMentioned", true);//mentioned indicator for username
+                multi.exec(function(err,replies) {
+                    log("added mention ", replies);
                     if (!err) {
                         initMailSending(username);
                     }
-                    
-                });//mention is a set
+                });//mention is a set)
             });        
         }
     }
@@ -147,11 +158,30 @@ function addMessage(message){
     
 }
 
+/**
+ *Try sending mail to waiting users.
+ *Reads email:toSend from redis.
+ */
+function trySendingToUsers() {
+    
+    redis.smembers("email:toSend", function(err,usernames) {
+       if(!err && usernames) {
+            if (emailConfig.debug) {
+                log("checking for mentions...", usernames);
+            }
+            usernames.forEach(function(username) {        
+               initMailSending(username); 
+            });
+       }
+    });
+}
 
 /**
  *Init of mail sending to username
+ *conditions that can call the function
  *1 - after 24 hours(12 AM in user's timezone)
- *2 - On nick mantion and at least 
+ *2 - On nick mantion
+ *3 - Priodic check for mention timeout.
  *@param {string} username username
  *@param {array of string}(optional) rooms rooms followed by username.
  */
@@ -163,53 +193,70 @@ function initMailSending(username, rooms) {
         if (err) {
             return;
         }
-        var ct = new Date().getTime();
-        var interval = 12*60*60*1000 ;// 12 hours millisec
-        if (emailConfig.debug) {
-            interval = timeout/2;
-        }
-        if (!lastSent ) {//last email sent not set
-            lastSent = ct - interval;
-        }
-        log("time left for user " , (parseInt(lastSent) + interval - ct));
-        if (parseInt(lastSent) + interval <= ct) {
-            //get rooms that user is following...
-            if (!rooms) {
-                log("getting rooms that user is following....");
-                core.emit("members",{user: username},function(err,following) {//TODO get only rooms from DB
-                    if (err) {
-                       log("error in getting members informtion");
-                        return;
-                    }
-                    log("username ", username ," is following rooms ", following);
-                    rooms = [];
-                    following.forEach(function(r) {
-                        rooms.push(r.room);
+        
+        redis.get("email:" + username + ":isMentioned", function(err, data) {
+            var ct = new Date().getTime();
+            var interval = 12*60*60*1000 ;// 12 hours millisec
+            if (data) {
+                interval = 3*60*60*1000;
+            }
+                //if isMentioned then 3 hours else 12 hours.
+            if (emailConfig.debug) {
+                log("username " + username + " is mentioned"); 
+                interval = timeout/2;
+                if (data) {
+                    interval = timeout/8;
+                }
+                log("interval " , interval);
+            }
+            if (!lastSent ) {//last email sent not set
+                lastSent = ct - interval;
+            }
+            
+            
+            log("time left for user " , (parseInt(lastSent) + interval - ct));
+            if (parseInt(lastSent) + interval <= ct) {
+                //get rooms that user is following...
+                if (!rooms) {
+                    log("getting rooms that user is following....");
+                    core.emit("members",{user: username},function(err,following) {//TODO get only rooms from DB
+                        if (err) {
+                           log("error in getting members informtion");
+                            return;
+                        }
+                        log("username ", username ," is following rooms ", following);
+                        rooms = [];
+                        following.forEach(function(r) {
+                            rooms.push(r.room);
+                        });
+                        prepareEmailObj(username, rooms, lastSent, function(err, email) {
+                            
+                            if (!err) {
+                                sendMail(email);
+                            }   
+                        });
                     });
+                }
+                else {
                     prepareEmailObj(username, rooms, lastSent, function(err, email) {
-                        
+                        if (emailConfig.debug) {
+                            log(err + " callback of pre email" , email);
+                        }
                         if (!err) {
                             sendMail(email);
-                        }   
+                        }
+                        
                     });
-                });
+                }
+                redis.srem("email:toSend", username);
             }
             else {
-                prepareEmailObj(username, rooms, lastSent, function(err, email) {
-                    if (emailConfig.debug) {
-                        log(err + " callback of pre email" , email);
-                    }
-                    if (!err) {
-                        sendMail(email);
-                    }
-                    
-                });
-            }
-        }
-        else {
-            log("can not send email to user ", username, " now" );
-            return;
-        }
+                log("can not send email to user ", username, " now" );
+                redis.sadd("email:toSend", username);
+                return;
+            }    
+        });
+        
     });             
 }
 
@@ -336,17 +383,19 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
 }
 
 /**
- *delete all mentions of user on room from redis
+ *delete all mentions of user on rooms from redis
  *@param {string} username.
  *@param {string} room
  */
 function deleteMentions(username , rooms) {   
     rooms.forEach(function(room) {
         var m = "email:mentions:" + room + ":" + username ;
-        redis.del(m, function(err, data) {
-            if (err) {
-                log("error while deleting mentions ", err);
-            }
+        var multi = redis.multi();
+        multi.del(m);
+        m = "email:" + username + ":isMentioned";
+        multi.del(m);
+        multi.exec(function(replies) {
+           log("mentions deleted" , replies); 
         });
     });
 }
@@ -416,6 +465,7 @@ function sortLabels(room, roomObj, mentions,callback) {
             nn++;
             redis.lrange("email:label:" + room + ":" + label.label + ":tail", 0, -1, function(err, lastMsgs) {
                 if (lastMsgs ) {
+                    lastMsgs.reverse();
                     lastMsgs.forEach(function(lastMsg) {
                         var isP = true;
                         var msg = JSON.parse(lastMsg);
