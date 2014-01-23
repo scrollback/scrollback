@@ -1,6 +1,6 @@
 doctype html
 
-html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{JSON.stringify(user)}; room = #{JSON.stringify(room)};  messages = #{JSON.stringify(messages)};  notifications = #{JSON.stringify([])};  ")
+html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{JSON.stringify(user)}; room = #{JSON.stringify(room)}; notifications = #{JSON.stringify([])}; ")
 	head
 	meta(charset="utf-8")
 	meta(http-equiv="X-UA-Compatible",content="IE=edge")
@@ -20,10 +20,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 			#user(ng-cloak="")
 				a: img.face(src='{{user.picture}}' ng-click='profile()')
 				a( id='logoutButton' ng-show='user.owner==user.id' ng-click='logout()' title='logout' class='button buttonText fa fa-power-off right')
-			#username(ng-click='profile()',ng-cloak="") {{user.id}}
-			
-			
-			
+			#username(ng-click='profile()',ng-cloak="") {{user.id}}			
 			div
 				a.archive(ng-show="room.id !== ''" onclick='window.location ="/old/#{room.id}";') (Switch to old view)
 			#info 
@@ -50,12 +47,10 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 				room: "#{room.id}",
 				debug: true
 			};
-			
-			//var initVar = { user: !{user}, room: !{room}};
-			
+		script.
+			var sbmessages = "#{JSON.stringify(messages)}"; 
 		script(src="//code.jquery.com/jquery-1.10.1.min.js")
 		script(src="//code.jquery.com/jquery-migrate-1.2.1.min.js")
-		script(src="//crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js")
 		script(src="https://login.persona.org/include.js")
 		script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js')
 		script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js')

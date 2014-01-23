@@ -105,7 +105,7 @@ exports.init = function(app, coreObject) {
         query={}, sqlQuery, roomId = params[0], user = req.session.user,
         queryString, resp={};
         if(roomId=="old") return next();
-        if(roomId && !validateRoom(roomId)) return next();
+        if(!roomId || !validateRoom(roomId)) return next();
         
 		if(/^guest-/.test(user)) req.session.user.picture = crypto.createHash('md5').update(user).digest('hex');
 		
