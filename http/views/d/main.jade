@@ -48,7 +48,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 				debug: true
 			};
 		script.
-			var sbmessages = "#{JSON.stringify(messages)}"; 
+			var sbmessages = !{JSON.stringify(messages)}; 
 		script(src="//code.jquery.com/jquery-1.10.1.min.js")
 		script(src="//code.jquery.com/jquery-migrate-1.2.1.min.js")
 		script(src="https://login.persona.org/include.js")

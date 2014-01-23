@@ -2,9 +2,7 @@ var __glo_prevtime = 0;
 
 function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
     
-	var msgtxt = $('<div/>').html(sbmessages).text();
-	console.log(msgtxt);
-	$scope.messages = JSON.parse(msgtxt);
+	$scope.messages = sbmessages;
 	
 	$scope.items = [];
     var messages = messageArray();
