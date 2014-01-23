@@ -7,7 +7,25 @@ var crypto = require('crypto');
 var db = require("../lib/mysql.js");
 var httpConfigResponseObject;
 var scriptResponseObject;
-
+/**
+ *add 'a' tag for links in text
+ */
+var formatText = function format(text) {
+	if(!text) return "";
+	var u = /\b(https?\:\/\/)?([\w.\-]*@)?((?:[a-z0-9\-]+)(?:\.[a-z0-9\-]+)*(?:\.[a-z]{2,4}))((?:\/|\?)\S*)?\b/g;
+	var m = "", r, s=0, protocol, user, domain, path;
+	while((r = u.exec(text)) !== null) {
+		m += "<span>" + text.substring(s, r.index) + "</span>";
+		protocol = r[1], user = r[2], domain = r[3], path = r[4] || '';
+		
+		protocol = protocol || (user? 'mailto:': 'http://');
+		user = user || '';
+		s = u.lastIndex;
+		m += "<a href='" + protocol + user + domain + path + "'>" + r[0] + "</a>";
+	}
+	m += "<span>" + text.substring(s) + "</span>";
+	return m;
+};
 
 
 exports.init = function(app, coreObject) { 
@@ -161,10 +179,12 @@ exports.init = function(app, coreObject) {
                 responseObj.relDate = relDate;
 				responseObj.prevLink = new Date(m[0].time).toISOString();
 				responseObj.nextLink = new Date(m[m.length-1].time).toISOString();
+				responseObj.format = formatText;
                 res.render("d/main" , responseObj);
             });
         });
     }
+	
     app.get("/*", roomHandler);
     app.get("/*/edit", roomHandler);
 
