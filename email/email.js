@@ -488,6 +488,11 @@ function sortLabels(room, roomObj, mentions,callback) {
             if (--nn > 0) {
                 return;
             }
+            r.labels.forEach(function(label) {
+               label.interesting.sort(function(m1,m2){
+                    return m1.time - m2.time;
+               });
+            });
             callback(null, r);
         }
     }    
