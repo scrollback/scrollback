@@ -105,7 +105,7 @@ exports.init = function(app, coreObject) {
         query={}, sqlQuery, roomId = params[0], user = req.session.user,
         queryString, resp={};
         if(roomId=="old") return next();
-        if(roomId && !validateRoom(roomId)) return next();
+        if(!roomId || !validateRoom(roomId)) return next();
         
 		if(/^guest-/.test(user)) req.session.user.picture = crypto.createHash('md5').update(user).digest('hex');
 		
@@ -266,8 +266,8 @@ exports.init = function(app, coreObject) {
 		if(!httpConfigResponseObject) {
 			httpConfigResponseObject = {};
 			core.emit("http/config", {},function(err, payload) {
-				httpConfigResponseObject.pluginsUI = payload;
 				if(err) return res.render("error",{error:err.message});
+				httpConfigResponseObject.pluginsUI = payload;
 				return res.render("newConfig", httpConfigResponseObject);
 			});
 		}
@@ -281,18 +281,13 @@ exports.init = function(app, coreObject) {
 		if(!scriptResponseObject) {
 			scriptResponseObject = "";
 			core.emit("http/script", {},function(err, payload) {
-				for(js in payload) {
-					scriptResponseObject += payload[js] + "/n";
-				}
-				if(err) return res.render("error",{error:err.message});
-				res.write(scriptResponseObject);
-				return res.end();
-				
+				if(err) return res.end("var script = " + JSON.stringify({error:err.message}));
+				scriptResponseObject = "var script = " + JSON.stringify(payload);
+				return res.end(scriptResponseObject);
 			});
 		}
 		else {
-			res.write(scriptResponseObject);
-			res.end();
+			res.end(scriptResponseObject);
 		}
         
     });

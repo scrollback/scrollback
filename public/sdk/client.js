@@ -92,8 +92,8 @@ socket.onmessage = function(evt) {
 function onInit (data) {
 	//document.cookie = "scrollback_sessid="+encodeURIComponent(data.sid);
 	nick = data.user.id;
-	core.membership=data.user.membership;
-	core.emit('membership',data.user.membership);
+	core.membership = data.user.membership;
+	core.emit('membership', data.user.membership);
 	core.emit('nick', nick);
 	if (!data.serverTime||!data.clientTime) {
 		return;
@@ -229,7 +229,7 @@ core.say = function (to, text, callback) {
 	send('text', to, text,{}, callback);
 };
 
-core.join = function(type,to){
+core.join = function(type, to){
 	send(type,to);
 }
 
