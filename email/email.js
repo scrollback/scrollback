@@ -7,7 +7,9 @@ var fs=require("fs"),jade = require("jade");
 var emailConfig = config.email, digestJade;
 var welcomeEmailJade;
 var core;
-var timeout = 8*60*1000;//for debuging only
+var waitingTime1 = 3*60*60*1000;//mention email timeout
+var waitingTime2 = 12*60*60*1000;//regular email timeout 
+var timeout = 60*1000;//for debuging only
 var transport = nodemailer.createTransport("SMTP", {
     host: "email-smtp.us-east-1.amazonaws.com",
     secureConnection: true,
@@ -196,13 +198,12 @@ function initMailSending(username, rooms) {
         
         redis.get("email:" + username + ":isMentioned", function(err, data) {
             var ct = new Date().getTime();
-            var interval = 12*60*60*1000 ;// 12 hours millisec
+            var interval = waitingTime2 ;
             if (data) {
-                interval = 3*60*60*1000;
+                interval = waitingTime1
             }
-                //if isMentioned then 3 hours else 12 hours.
             if (emailConfig.debug) {
-                log("username " + username + " is mentioned"); 
+                log("username " + username + " is mentioned ", data); 
                 interval = timeout/2;
                 if (data) {
                     interval = timeout/8;
@@ -516,7 +517,8 @@ function sendMail(email) {
                         interval = timeout*2;
                     }
                     email.rooms.forEach(function(room) {
-                        redis.zremrangebyscore("email:label:" + room.id + ":labels", 0, new Date().getTime() - interval , function(err, data) {//TODO set expire time 
+                        redis.zremrangebyscore("email:label:" + room.id + ":labels", 0,
+                                               new Date().getTime() - interval , function(err, data) {
                             log("deleted old labels from that room " , err ,data);
                         });//ZREMRANGEBYSCORE email:scrollback:labels -1 1389265655284
                     });
@@ -529,7 +531,7 @@ function sendMail(email) {
 }
 /**
  *
- *Generate Heading and Subject line from email Object
+ *Generate Heading from email Object
  *@param {object} Email Object
  */
 function getHeading(email) {
@@ -547,12 +549,12 @@ function getHeading(email) {
             
             if (!bestLabel) {
                 bestLabel = {};
-                bestLabel.title = label.title.split("-").join(" ");
+                bestLabel.title = formatText(label.title);
                 bestLabel.room = room.id;
                 bestLabel.count = label.count;
             }
             else if(bestLabel.count < label.count){
-                bestLabel.title = label.title.split("-").join(" ");
+                bestLabel.title = formatText(label.title);
                 bestLabel.room = room.id;
                 bestLabel.count = label.count;
             }
@@ -569,15 +571,23 @@ function getHeading(email) {
     });
     email.count = labelCount;
     if (bestMention.mentions) {//if mentioned 
-        heading += "[" + bestMention.from.replace("guest-", "") +  "] " + bestMention.text + " - on " + bestMention.to;
+        heading += "[" + bestMention.from.replace(/guest-/g, "") +  "] " + bestMention.text + " - on " + bestMention.to;
     }
     else {
         var tail = (more > 1 ? " +" + (more - 1) + " more": "");
         heading += "[" + bestLabel.room.substring(0,1).toUpperCase() + bestLabel.room.substring(1) + "] " +
-                    bestLabel.title.substring(0,1).toUpperCase() + bestLabel.title.substring(1) +
-                    tail;
+                    bestLabel.title + tail;
     }
+    email.formatText = formatText;
     return heading;
+}
+
+
+var formatText = function(text) {
+    var s  = text.replace(/-/g,' ');
+    s = s.trim();
+    s = s.substring(0,1).toUpperCase() + s.substring(1);
+    return s;
 }
 
 
