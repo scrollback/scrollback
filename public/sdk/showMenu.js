@@ -22,7 +22,6 @@ function showMenu(el, opt) {
 	menuw = menu.width();
 	menuh = menu.height();
 	
-//	spaceAbove = elt - $(document.body).scrollTop;
 	spaceBelow = scrh - elt - elh;
 	
 	if(spaceBelow > menuh) {
@@ -40,13 +39,15 @@ function showMenu(el, opt) {
 	if(menul < 0) menul = 0;
 	else if(menul > scrw - menuw) menul = scrw - menuw;
 	
-	arrow.css({left: ell + (elw - arrow.width())/2 - menul});
+//	arrow.css({left: ell + (elw - arrow.width())/2 - menul});
+	arrow.css({left: menul + 152 , top: menut - 8 });
 	
 	menu.css({left: menul, top: menut});
 	
 	function hide() {
 		$(".layer").remove();
 		$(".menu").remove();
+		$(".arrow").remove();
 	}
 	
 }
