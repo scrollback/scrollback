@@ -25,17 +25,22 @@ require('newrelic');
 var core = Object.create(require("./lib/emitter.js")), config = require("./config.js");
 
 var pluginList = ["auth","roomauth","repeatban", "ratelimit", "wordban", "usernameban" , "originban", "loginrequired", 
-	"members","http", "irc" , "occupants" , "leveldb", "room", "rooms" , "message" , "messages" , "roomvalidation" , 
-	"messagevalidation" , "email", "threader", "originnotify"];
+	"members","http", "irc" , "occupants" , "room", "rooms" , "message" , "messages" , "roomvalidation" , 
+	"messagevalidation" , "email", "threader","compatApp", "entityloader","originnotify"];
 
 process.nextTick(function(){
 	// The ident server binds to port 113 after a while.
 	if(config.core.uid) process.setuid(config.core.uid);
+	console.log("----------------"+config.core.uid);
+	start("leveldb");
 });
 process.title = config.core.name;
 
 function start(name) {
 	var plugin = require("./"+name+"/"+name+".js");
+	if(name ==="leveldb"){
+		console.log("000000000000000000000000000000000000000000000000000",plugin);
+	}
 	plugin(core);
 }
 

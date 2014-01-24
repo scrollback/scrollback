@@ -9,9 +9,15 @@ module.exports = function (types) {
 		put: function (message, cb) {
 			log("Pushing to leveldb", message);
 			texts.put(message, cb);
+			for(i in message.labels){
+				if(message.labels.hasOwnProperty(i)) {
+					texts.link(message.id, 'hasLabel', i, {score: message.labels[i]});
+				}
+			}
 		},
 		
 		get: function (options, cb) {
+			console.log("request.");
 			var query = {}, reversed, start, end, startTime = new Date().getTime();
 			
 			if(options.since && !options.until) {
@@ -42,11 +48,10 @@ module.exports = function (types) {
 				
 				query.limit = options.limit + 1;
 			}
-			
+			console.log(query)
 			texts.get(query, function(err, data) {
 				if(err) return cb(err);
 				if(reversed) data = data.reverse();
-				
 				var start  = options.since || data.length && data[0].time || 0;
 				var end = options.until || data.length && data[data.length-1].time || new Date().getTime();
 		

@@ -9,6 +9,7 @@ module.exports =function(core){
 	core.on("room", function(room, callback) {
 		var i,j, avatarText;
 		if(!room.id) return callback(new Error("ID_NOT_SPECIFIED"));
+		else	room.id = room.id.toLowerCase();
 		if(!validateRoom(room.id)) return callback(new Error("INVALID_ROOM_ID"));
 		if(!room.type) return callback(new Error("TYPE_NOT_SPECIFIED"));
 		if(room.type=="user")	{

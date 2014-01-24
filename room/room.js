@@ -4,8 +4,6 @@ var roomsApi = require("../rooms/rooms.js"); // This has to be changed.
 var rooms = {}, core;
 var redis = require("../lib/redisProxy.js");
 
-
-
 module.exports = function(coreObject) {
 	var room = {};
 	core =coreObject;
