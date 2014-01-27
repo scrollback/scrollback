@@ -51,6 +51,8 @@ sock.on('connection', function (socket) {
 			case 'messages': messages(d.data, conn); break;
 			case 'room': room(d.data, conn); break;
 			case 'rooms': rooms(d.data, conn); break;
+			case 'getUsers': getUsers(d.data, conn); break;
+			case 'getRooms': getRooms(d.data, conn); break;
 		}
 	});
 	
@@ -150,7 +152,7 @@ function userAway(user, room, conn) {
 			}
 			session.set(conn.sid, sess);
 		});
-	}, 30*1000);
+	}, 3*1000);
 	return false; // never send an away message immediately. Wait.
 }
 
@@ -373,6 +375,37 @@ function room (r, conn) {
 	});
 }
 
+
+
+
+function getrooms(query, conn) {
+	core.emit("getrooms", query, function(err, data) {
+		if(err) {
+			query.err = err;
+			conn.send('error',query);
+			return;
+		}else {
+			log(data);
+			conn.send('getrooms', { query: query, data: data} );
+			//conn.send('rooms', data);	
+		}
+	});
+}
+
+
+function getUsers(query, conn) {
+	core.emit("getUsers", query, function(err, data) {
+		if(err) {
+			query.err = err;
+			conn.send('error',query);
+			return;
+		}else {
+			log(data);
+			conn.send('getUsers', { query: query, data: data} );
+			//conn.send('rooms', data);	
+		}
+	});
+}
 function rooms(query, conn) {
 	console.log(query);
 	core.emit("rooms", query, function(err, data) {
