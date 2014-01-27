@@ -4,6 +4,7 @@ var log = require("../../lib/logger.js");
 module.exports = function (types) {
 	var room = types.rooms;
 	var user = types.users;
+
 	return{
 		getUser: function(query, cb) {			
 			if(query.id){

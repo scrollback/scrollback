@@ -1,8 +1,15 @@
 module.exports = function(store) {
 	var room = store.defineType('room',{
 		indexes: {
-			id: function(room, emit) {
-				emit(room.id);
+			createdOn: function(room, emit) {
+				emit(room.createdOn);
+			},
+			gatewayIdentity: function(room, emit) {
+				room.accounts && room.accounts.forEach(function(account) {
+					//fix this inconsistancy.
+					var parts =  account.id.split(":");
+					emit(parts[0],parts[1]);
+				});
 			}
 		}
 	});

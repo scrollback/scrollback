@@ -154,11 +154,16 @@ function userAway(user, room, conn) {
 			}
 			session.set(conn.sid, sess);
 		});
-	}, 3*1000);
+	}, 30*1000);
 	return false; // never send an away message immediately. Wait.
 }
 
 function userBack(user, room, conn) {
+
+	core.emit("getUsers",{occupantOf:"scrollback"}, function(err, data){
+		log("hello",data);
+	});
+
 	if(rConns[room]) rConns[room].push(conn);
 	else rConns[room] = [conn];
 	conn.rooms.push(room);
@@ -170,6 +175,9 @@ function userBack(user, room, conn) {
 		return false; // we've already sent a back message for this user for this room.
 	}
 	console.log("Should send back msg");
+
+
+	
 	user.rooms[room] = 1;
 	return true;
 }
