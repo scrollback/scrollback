@@ -1,7 +1,10 @@
 var __glo_prevtime = 0;
 
 function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
-    $scope.items = [];
+    
+	$scope.messages = sbmessages;
+	
+	$scope.items = [];
     var messages = messageArray();
         
     messages.load($scope.room.id);
@@ -56,7 +59,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         }else {
             index = i;
         }
-//			$scope.gotoBottom(); 
 		if(bottomIndex === 0) {
             //just to isolate the scope.
 			(function(){
@@ -74,6 +76,14 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 			})();
 		}
     }
+	
+	$scope.showmenu = function(index, item){
+		var el = angular.element('.scrollback-message').eq(index);
+		var twitterLink = encodeURI("http://twitter.com/home/?status=" + item.text  + " via https://scrollback.io/" + $scope.room.id);
+		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id ) + "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id + "&p[summary]=" + item.text;
+		op = {'Tweet Message' : function(){ window.open(twitterLink,'_blank') }, 'Share on FB' : function(){ window.open(facebookLink,'_blank') } };
+		showMenu(el, op);
+	}
 
     $scope.message = function() {
         var text = $scope.text.trim(),message;
@@ -97,9 +107,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         }
     };
     
-    // $scope.loadMoreAt = function(time, before, after, callback) {
-
-    // };
     $scope.gotoBottom = function() {
         $scope.items.length = 0;
         topIndex = 0, bottomIndex = 0;
@@ -149,13 +156,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 				}
                 bottomIndex -= 1;
               }
-//              if(bottomIndex === 0 && $scope.items[$scope.items.length-1] != messages[0]) {
-//                if(messages[0].type == "text"){
-//                    $scope.items.push(messages[0]);
-//					console.log("Pushed in loadMoreDown 2: ", messages[bottomIndex]);
-//				}
-//                bottomIndex = 0;
-//              }
         }
 		
          //this is causing troubles, so the shift is being done only for 2 elements at a time, ideally
@@ -171,7 +171,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                  //}
             }
 			
-			if($(window).scrollTop() + $(window).height() == $(document).height()) $('#body').nudgeInView(0);
+			if($(window).scrollTop() + $(window).height() == $(document).height())	 $('#body').nudgeInView(0);
 			
         } , 1);
     };
@@ -189,7 +189,6 @@ scrollbackApp.directive('message',function($compile) {
                         '<span ng-class="slashMe?me:noSlashMe" ng-repeat="i in text track by $index">'+
                             '<span ng-show="isText(i)">{{i.text}}</span>'+
                             '<span ng-show="!isText(i)"><a href="{{i.link}}">{{i.text}}</a></span></span>'+
-						'<span class = "socialButton" title="Tweet this message"><a href="{{twitterText}}"  target="_blank" ng-class="{darken : hover}" ng-mouseenter="hover=true" ng-mouseleave="hover=false" class="fa fa-twitter default"></a> </span>'+
 						'<span ng-show = "showTime" class="scrollback-message-time"> {{time}}</span>'
 						
                     +'</div>',
@@ -228,10 +227,7 @@ scrollbackApp.directive('message',function($compile) {
 			attr.$observe('time', function(value){
 				var currtime = new Date().getTime();
 				var time = value;
-				
-				console.log("Diff:", time - __glo_prevtime);
-				console.log("new : ", time - (new Date().getTime()));
-				
+
 				if(time - __glo_prevtime > 60000 ) $scope.showTime = true; 
 				else $scope.showTime = false;
 				

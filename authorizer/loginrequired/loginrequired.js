@@ -10,7 +10,7 @@ module.exports = function(coreObject) {
     core=coreObject;
     fs.readFile(__dirname + "/loginrequired.html", "utf8", function(err, data){
         if(err) throw err;
-        core.on("config", function(payload, callback) {
+        core.on("http/config", function(payload, callback) {
             payload.loginrequired = data;
             callback(null, payload);
         }, "setters");

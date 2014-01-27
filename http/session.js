@@ -20,6 +20,7 @@ Boston, MA 02111-1307 USA.
 
 "use strict";
 var config = require("../config.js");
+var crypto = require('crypto');
 
 var express = require("express"),
 	RedisStore = require('connect-redis')(express),
@@ -38,9 +39,11 @@ var express = require("express"),
 	watchers = {};
 	
 function initUser() {
+	var guestname = 'guest-sb-' + names(6);
+	var guestpic = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(guestname).digest('hex') + '/?d=identicon&s=48';
 	return {
-		id: 'guest-sb-' + names(6),
-		picture: '/img/guest.png',
+		id: guestname,
+		picture: guestpic,
 		accounts: [],
 		rooms: {}
 	};

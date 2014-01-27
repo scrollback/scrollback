@@ -25,9 +25,13 @@ code = fs.readFileSync(__dirname + "/../public/client.min.js",'utf8');
 var validateRoom = require('../lib/validate.js');
 var crypto = require('crypto');
 var db = require("../lib/mysql.js");
+var httpConfigResponseObject;
+var scriptResponseObject;
 
-exports.init = function(app, coreObject) {
-    core = coreObject;
+
+
+exports.init = function(app, coreObject) { 
+	core = coreObject;
     var dialogs = {
         "login" : function(req, res){
             res.render("login", {
@@ -45,7 +49,6 @@ exports.init = function(app, coreObject) {
 			res.end(req.cookies["scrollback_sessid"] + '\r\n' + JSON.stringify(require("./session.js").store));
 		}
     };
-
     //handling it for now but should probably think a way to make newProfile the static file.
     app.get("/s/me/edit", function(req, res) {
         var user = req.session.user;
@@ -122,13 +125,11 @@ exports.init = function(app, coreObject) {
         query={}, sqlQuery, roomId = params[0], user = req.session.user,
         queryString, resp={};
         if(roomId=="old") return next();
-        if(roomId && !validateRoom(roomId)) return next();
+        if(!roomId || !validateRoom(roomId)) return next();
         
+		if(/^guest-/.test(user)) req.session.user.picture = crypto.createHash('md5').update(user).digest('hex');
+		
 		responseObj.user = req.session.user;
-
-		// assigning a default gravatar for the guest can go here! 
-		// http://www.gravatar.com/avatar/7af99a09a2a182a118b262cf365cd7df/?d=http://scrollback.io/img/default-avatar/am.png?s=48
-
 
         if(!req.secure) {
             queryString  = req._parsedUrl.search?req._parsedUrl.search:"";
@@ -281,18 +282,41 @@ exports.init = function(app, coreObject) {
     //     });
     // })
 
-
-
     app.get("/s/editRoom", function(req,res) {
-        var responseObject={};
-        core.emit("config", {},function(err, payload) {
-            responseObject.pluginsUI = payload;
-            log(responseObject);
-            if(err) return res.render("error",{error:err.message});
-            return res.render("newConfig", responseObject);
-        });
+		if(!httpConfigResponseObject) {
+			httpConfigResponseObject = {};
+			core.emit("http/config", {},function(err, payload) {
+				httpConfigResponseObject.pluginsUI = payload;
+				if(err) return res.render("error",{error:err.message});
+				return res.render("newConfig", httpConfigResponseObject);
+			});
+		}
+		else {
+			res.render("newConfig", httpConfigResponseObject);
+		}
+        
     });
-
+	
+	app.get("/s/script.js", function(req,res) {
+		if(!scriptResponseObject) {
+			scriptResponseObject = "";
+			core.emit("http/script", {},function(err, payload) {
+				for(js in payload) {
+					scriptResponseObject += payload[js] + "/n";
+				}
+				if(err) return res.render("error",{error:err.message});
+				res.write(scriptResponseObject);
+				return res.end();
+				
+			});
+		}
+		else {
+			res.write(scriptResponseObject);
+			res.end();
+		}
+        
+    });
+	
 
     //commenting out for now. Will not be used.
 //     app.get("*/config",function(req, res, next) {
@@ -363,6 +387,7 @@ exports.init = function(app, coreObject) {
 //             res.end(JSON.stringify({error:"Improper Data"}));
 //         }
     // });
+	
 };
 
 

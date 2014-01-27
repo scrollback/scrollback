@@ -31,7 +31,9 @@ var sockjs = require("sockjs"),core,
 	EventEmitter = require("events").EventEmitter,
 	session = require("./session.js"),
 	guid = require("../lib/guid.js"),
+	crypto = require("crypto"),
 	names = require("../lib/names.js");
+
 
 var rConns = {}, users = {};
 var pid = guid(8);
@@ -269,7 +271,7 @@ function message (m, conn) {
 					//in case of logout.
 					if(/^guest-/.test(m.ref) && !/^guest-/.test(m.from)){
 						sess.user.id = m.ref;
-						sess.user.picture = "//s.gravatar.com/avatar/guestpic";
+						sess.user.picture = "//s.gravatar.com/avatar/" + crypto.createHash('md5').update(sess.user.id).digest('hex') + "/?d=identicon&s=48";
 						sess.user.accounts = [];
 						sess.user.membership = [];
 						session.set(conn.sid, sess);

@@ -154,11 +154,58 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			$factory.enter($routeParams.room);
 		});
 	}
+	// getting users present in the room 
+	
+	function getDisplayList(occupants, members) {
+		var userList = [], ctr=0;
+		occupants = occupants.sort(function(a, b){ return a.id - b.id });
+		
+		function exists(element, userArray, startPos, endPos) {
+			// binary search to see if element exists in userArray, if so return index of element, else return -1
+			if(element === undefined) return -1;
+			if(endPos < startPos)  return -1;
+			var mid = Math.floor((startPos + endPos)/2);
+			if( userArray[mid] && userArray[mid].id === element.id) return mid; 
+			else if( userArray[mid] && userArray[mid].id > element.id ) return exists(element, userArray, 0, mid-1);
+			else return exists(element, userArray, mid+1, endPos);
+		}
+		
+		members.forEach(function(m) {
+			if( (index = exists(m, occupants, 0, occupants.length)) > -1 ) {
+				userList.push(m);
+				console.log("Deleting memebers[m]", members[ctr]);
+				members.splice(ctr, 1);
+				console.log("Deleting occupants[index]", occupants[index]);
+				occupants.splice(index, 1);
+			}
+			ctr++;
+		});
+		
+		userList.push.apply(userList, occupants);
+		userList.push.apply(userList, members);
+		return userList;
+	}
+	
+//	(function(){
+//		// get occupants[]
+//		var occupants, members;
+//		$factory.occupants({occupantOf: $scope.room.id}, function(data){
+//			occupants = data;
+//		});
+//		// get members[]
+//		$factory.membership({memberOf: $scope.room.id}, function(data){
+//			members = data;
+//		});
+//		$scope.usersPresent = getDisplayList(occupants, members);
+//	})();
+	
+	
+	
 	$scope.goToRoomsView = function(){
 		if(/^guest-/.test($scope.user.id)){ 
 			$scope.personaLogin();
 			//$location.path('/me/login');
-		} 
+		}
 		else $location.path("/me");
 	}
 	$scope.toggleEmbed = function(){
@@ -172,7 +219,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		if(/^guest-/.test($scope.user.id)){ 
 			$scope.personaLogin();
 			//$location.path('/me/login');
-		} 
+		}
 		else $location.path("/"+$scope.room.id+"/edit");
 	};
 	$scope.partRoom = function() {
@@ -352,14 +399,12 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 			Object.keys(data.user).forEach(function(key){
 				$scope.user[key] = data.user[key];
 			});
-			if(/^guest-/.test(data.user.id)) {
-				$scope.user.picture = "//s.gravatar.com/avatar/guestpic";
-			}else {
-				if(data.user.membership) {
-					if(data.user.membership instanceof Array) $scope.user.membership = data.user.membership;
-					else $scope.user.membership = Object.keys(data.user.membership);
-				}
-			}	
+		
+			if(data.user.membership) {
+				if(data.user.membership instanceof Array) $scope.user.membership = data.user.membership;
+				else $scope.user.membership = Object.keys(data.user.membership);
+			}
+			
 			if($scope.room.id) $location.path("/" + $scope.room.id);
 			else $location.path("/me");
 		});
@@ -386,10 +431,6 @@ scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location
 		});
 	};
 	$scope.save = function() {
-		if(!$scope.nick){
-			alert('Please Enter a nick!');
-			return;
-		}
 		$scope.status.waiting = true;
 		$factory.message({to:"",type:"nick", user:{id:$scope.nick,accounts:[]}}, function(message) {
 			if(message.message) {
