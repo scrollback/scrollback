@@ -331,6 +331,13 @@ scrollbackApp.controller('loginreqController',['$scope', function($scope) {
 	$scope.editRoom.params.loginrequired = $scope.room.params.loginrequired?true:false;
 }]);
 
+scrollbackApp.controller('seoController',['$scope', function($scope) {
+	//prefilling the editRoom object when the config Page is loaded.
+	if(!$scope.editRoom.params) $scope.editRoom.params = {};
+	if(typeof $scope.room.params.allowSEO === "undefined") $scope.room.params.allowSEO = true; 
+	$scope.editRoom.params.allowSEO = $scope.room.params.allowSEO?true:false;
+}]);
+
 scrollbackApp.controller('wordbanController',['$scope', function($scope) {
 	if(!$scope.editRoom.params) $scope.editRoom.params = {};
 	$scope.editRoom.params.wordban = $scope.room.params.wordban?true:false;
