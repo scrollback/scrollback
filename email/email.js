@@ -9,7 +9,7 @@ var welcomeEmailJade;
 var core;
 var waitingTime1 = 3*60*60*1000;//mention email timeout
 var waitingTime2 = 12*60*60*1000;//regular email timeout 
-var timeout = 60*1000;//for debuging only
+var timeout = 5*60*1000;//for debuging only
 var transport = nodemailer.createTransport("SMTP", {
     host: "email-smtp.us-east-1.amazonaws.com",
     secureConnection: true,
@@ -430,6 +430,7 @@ function sortLabels(room, roomObj, mentions,callback) {
                 label.title = title;
             }
             var pos = r.labels.length;
+            
             for (var i = 0;i < r.labels.length;i++ ) {
                 if (r.labels[i].interesting.length < label.interesting.length ) {
                     pos = i;
@@ -448,6 +449,9 @@ function sortLabels(room, roomObj, mentions,callback) {
                 rm = r.labels.length;
             }
             r.labels.splice(pos,0,label);
+            r.labels.sort(function(l1,l2){
+                return l2.count - l1.count;
+            });
             if (rm != -1) {
                 r.labels.splice(rm,1);
             }
