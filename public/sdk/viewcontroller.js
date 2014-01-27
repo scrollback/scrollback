@@ -154,52 +154,54 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			$factory.enter($routeParams.room);
 		});
 	}
-	// getting users present in the room 
-	
-	function getDisplayList(occupants, members) {
-		var userList = [], ctr=0;
-		occupants = occupants.sort(function(a, b){ return a.id - b.id });
-		
-		function exists(element, userArray, startPos, endPos) {
-			// binary search to see if element exists in userArray, if so return index of element, else return -1
-			if(element === undefined) return -1;
-			if(endPos < startPos)  return -1;
-			var mid = Math.floor((startPos + endPos)/2);
-			if( userArray[mid] && userArray[mid].id === element.id) return mid; 
-			else if( userArray[mid] && userArray[mid].id > element.id ) return exists(element, userArray, 0, mid-1);
-			else return exists(element, userArray, mid+1, endPos);
-		}
-		
-		members.forEach(function(m) {
-			if( (index = exists(m, occupants, 0, occupants.length)) > -1 ) {
-				userList.push(m);
-				console.log("Deleting memebers[m]", members[ctr]);
-				members.splice(ctr, 1);
-				console.log("Deleting occupants[index]", occupants[index]);
-				occupants.splice(index, 1);
-			}
-			ctr++;
-		});
-		
-		userList.push.apply(userList, occupants);
-		userList.push.apply(userList, members);
-		return userList;
-	}
-	
+//	
+//	// getting users present in the room 
+//	
+//	function getDisplayList(occupants, members) {
+//		var userList = [], ctr=0;
+//		occupants = occupants.sort(function(a, b){ return a.id - b.id });
+//		
+//		function exists(element, userArray, startPos, endPos) {
+//			// binary search to see if element exists in userArray, if so return index of element, else return -1
+//			if(element === undefined) return -1;
+//			if(endPos < startPos)  return -1;
+//			var mid = Math.floor((startPos + endPos)/2);
+//			if( userArray[mid] && userArray[mid].id === element.id) return mid; 
+//			else if( userArray[mid] && userArray[mid].id > element.id ) return exists(element, userArray, 0, mid-1);
+//			else return exists(element, userArray, mid+1, endPos);
+//		}
+//		
+//		members.forEach(function(m) {
+//			if( (index = exists(m, occupants, 0, occupants.length)) > -1 ) {
+//				userList.push(m);
+//				console.log("Deleting memebers[m]", members[ctr]);
+//				members.splice(ctr, 1);
+//				console.log("Deleting occupants[index]", occupants[index]);
+//				occupants.splice(index, 1);
+//			}
+//			ctr++;
+//		});
+//		
+//		userList.push.apply(userList, occupants);
+//		userList.push.apply(userList, members);
+//		return userList;
+//	}
+//	
 //	(function(){
+//		console.log("getting users and occuapnats now");
 //		// get occupants[]
 //		var occupants, members;
 //		$factory.occupants({occupantOf: $scope.room.id}, function(data){
 //			occupants = data;
+//			console.log('occu', data);
+//			// get members[]
+//			$factory.membership({memberOf: $scope.room.id}, function(data){
+//				members = data;
+//				console.log('mem', data);
+//				$scope.usersPresent = getDisplayList(occupants, members);
+//			});
 //		});
-//		// get members[]
-//		$factory.membership({memberOf: $scope.room.id}, function(data){
-//			members = data;
-//		});
-//		$scope.usersPresent = getDisplayList(occupants, members);
 //	})();
-	
-	
 	
 	$scope.goToRoomsView = function(){
 		if(/^guest-/.test($scope.user.id)){ 

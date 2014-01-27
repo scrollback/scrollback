@@ -83,7 +83,7 @@ var defaults = {
 		hangTime: 60000     // timeout before disconnecting (ms)
 	},
 	leveldb: {
-		path: "leveldb/data"
+		path: "/data"
 	}
 }
 

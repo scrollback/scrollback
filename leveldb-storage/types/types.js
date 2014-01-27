@@ -22,7 +22,7 @@ module.exports = function(db) {
 	db.defineLink({"hasLabel":labels, "belongsTo": texts}, {
 		indexes: {
 			time: function(data, emit) {
-				emit(date.time);
+				emit(data.time);
 			}
 		}
 	});
