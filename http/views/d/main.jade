@@ -34,8 +34,10 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 				div(ng-repeat="i in items track by $index")
 					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}", time="{{i.time}}", ng-click = "showmenu($index, i)")
-			div(id="nomessagediv", ng-show = "{{items.length ==0}}")
-				| No messages here to show!
+			div(id="nomessagediv", ng-show = "{{items.length === 0}}", ng-cloak="")
+				| This room does not have any messages yet
+			div(ng-show = "{{room.id}}", ng-cloak="")
+				| Select a room to view it's messages.
 			form.messageWrapper(ng-submit="message();")
 				input.messageBox(type="text", ng-model="text")
 				input(id="submitButton" type="submit")

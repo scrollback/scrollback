@@ -227,10 +227,7 @@ scrollbackApp.directive('message',function($compile) {
 			attr.$observe('time', function(value){
 				var currtime = new Date().getTime();
 				var time = value;
-				
-				console.log("Diff:", time - __glo_prevtime);
-				console.log("new : ", time - (new Date().getTime()));
-				
+
 				if(time - __glo_prevtime > 60000 ) $scope.showTime = true; 
 				else $scope.showTime = false;
 				
