@@ -43,13 +43,4 @@ module.exports = function(core) {
 	core.on('messages', texts.get, 'storage');
 	core.on('getUsers', roomuser.getUser, 'storage');
 	core.on('getRooms', roomuser.getRoom, 'storage');
-
-
-
-	core.emit("getUsers", {id:"harish"}, function(err, res){
-		log("---------------------------------",err, res);
-	});
-	core.emit("getRooms", {id:"scrollback"}, function(err, res){
-		log("---------------------------------",err, res);
-	});
 };
