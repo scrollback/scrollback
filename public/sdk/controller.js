@@ -1,7 +1,10 @@
 var __glo_prevtime = 0;
 
 function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
-    $scope.items = [];
+    
+	$scope.messages = sbmessages;
+	
+	$scope.items = [];
     var messages = messageArray();
         
     messages.load($scope.room.id);
@@ -78,7 +81,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 		var el = angular.element('.scrollback-message').eq(index);
 		var twitterLink = encodeURI("http://twitter.com/home/?status=" + item.text  + " via https://scrollback.io/" + $scope.room.id);
 		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id ) + "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id + "&p[summary]=" + item.text;
-		console.log(facebookLink);
 		op = {'Tweet Message' : function(){ window.open(twitterLink,'_blank') }, 'Share on FB' : function(){ window.open(facebookLink,'_blank') } };
 		showMenu(el, op);
 	}

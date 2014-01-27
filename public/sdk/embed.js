@@ -487,7 +487,12 @@ Stream.position = function() {
 	
 	for(i=0; i<l; i+=1) {
 		col = ss[i];
-		col.style.right = (margin + i*pitch) + 'px';
+		if(window.scrollback.position && window.scrollback.position==="left") {
+			console.log("pushing to left");
+			col.style["left"] = (margin + i*pitch) + 'px';
+		}else{
+			col.style.right = (margin + i*pitch) + 'px';
+		}
 		col.style.width = colw + 'px';
 		if(hasClass(col, 'scrollback-stream-selected')) {
 			step = -1;
