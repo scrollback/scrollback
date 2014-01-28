@@ -10,10 +10,16 @@ module.exports = function(types) {
 					link();
 				}
 				function link() {
-					types.rooms.link(data.room.id, 'hasMember', data.user.id, {
-						role: data.role || "none",
-						time: data.time
-					});
+
+					if(data.role == "none"){
+						types.rooms.unlink(data.room.id, 'hasMember', data.user.id);
+					}else{
+						types.rooms.link(data.room.id, 'hasMember', data.user.id, {
+							role: data.role || "none",
+							time: data.time
+						});
+							
+					}
 					cb();
 				}
 			});

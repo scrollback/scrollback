@@ -40,7 +40,7 @@ module.exports = function(core) {
 	}, 'storage');
 
 
-	core.on('messages', texts.get, 'storage');
+	// core.on('messages', texts.get, 'storage');
 	core.on('getUsers', roomuser.getUser, 'storage');
 	core.on('getRooms', roomuser.getRoom, 'storage');
 };
