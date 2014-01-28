@@ -41,7 +41,7 @@
     "connect-redis": "x",
     "generic-pool": "X",
     "nodemailer": "x",
-    "objectlevel": "~0.1.0",
+    "objectlevel": "x",
     "newrelic": "x"
   },
   "devDependencies": {

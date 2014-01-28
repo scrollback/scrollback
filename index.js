@@ -18,8 +18,6 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
-/* global require, module, exports, process, console */
-
 require('newrelic');
 
 var core = Object.create(require("./lib/emitter.js")), config = require("./config.js");
@@ -39,12 +37,5 @@ function start(name) {
 	plugin(core);
 }
 
-pluginList.forEach(function(name) {
-	start(name);
-});
-
-
-
-
-
+pluginList.forEach(start);
 

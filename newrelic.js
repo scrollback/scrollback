@@ -4,15 +4,18 @@
  * See lib/config.defaults.js in the agent distribution for a more complete
  * description of configuration variables and their potential values.
  */
-exports.config = {
+
+var config = require('./config.js');
+
+if(config.core.newrelic.key) exports.config = {
   /**
    * Array of application names.
    */
-  app_name : ['Scrollback local'],
+  app_name : config.core.newrelic.name || "Scrollback local",
   /**
    * Your New Relic license key.
    */
-  license_key : '1f77377c20b46120f10377d45010e4c1a50e7e54',
+  license_key : config.core.newrelic.key,
   logging : {
     /**
      * Level at which to log. 'trace' is most useful to New Relic when diagnosing
