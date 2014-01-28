@@ -28,7 +28,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 			#foot
 				| Scrollback is a product of Askabt Pte Ltd.
 				| We respect your privacy. 
-				a.issues(click='window.open("https://github.com/scrollback/scrollback/issues","_blank")') Help us improve by reporting the bugs you find.
+				a.issues(onclick='window.open("https://github.com/scrollback/scrollback/issues","_blank")') Help us improve by reporting the bugs you find.
 			
 		#body(ng-controller="messageController",class = 'column')
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
