@@ -5,7 +5,7 @@ module.exports = function(types) {
 			types.joinpart.put(data, function() {
 				if(!data.room.id) {
 					data.room ={id:data.to[0], type: "room",params:{}};
-					types.room.put(data.room, link);
+					types.rooms.put(data.room, link);
 				}else{
 					link();
 				}
