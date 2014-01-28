@@ -42,6 +42,14 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 				input.messageBox(type="text", ng-model="text")
 				input(id="submitButton" type="submit")
 			a(name="endoflog")
+			if(typeof room.params.allowSEO === 'undefined' || room.params.allowSEO)
+				div(class="scrollback-hidden")
+					each m in messages
+							if(m.from && m.text)
+									div : [#{m.from.replace("guest-","")}]: !{format(m.text)} 
+					a(target="_self", href='/#{room.id}/until/#{prevLink}') prev
+					a(target="_self", href='/#{room.id}/since/#{nextLink}') next
+							
 		script.
 			window.scrollback = {
 				host : '//' + location.host,
