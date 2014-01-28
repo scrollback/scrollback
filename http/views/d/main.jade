@@ -46,7 +46,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 				div(class="scrollback-hidden")
 					each m in messages
 							if(m.from && m.text)
-									div : [#{m.from.replace("guest-","")}]: !{format(m.text)} 
+									div: [#{m.from.replace("guest-","")}]: !{format(m.text.replace('{{','{ {'))} 
 					a(target="_self", href='/#{room.id}/until/#{prevLink}') prev
 					a(target="_self", href='/#{room.id}/since/#{nextLink}') next
 							
