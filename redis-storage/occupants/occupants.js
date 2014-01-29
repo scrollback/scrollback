@@ -5,7 +5,6 @@ var redisProxy = require('../../lib/redisProxy.js');
 module.exports = function(core) {
 	redisProxy.smembers("rooms", function(err, rooms) {
 		rooms.forEach(function(room) {
-			console.log("un caching "+room);
 			redisProxy.del(room);
 		});
 	});

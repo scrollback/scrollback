@@ -159,14 +159,8 @@ exports.init = function(app, coreObject) {
 
         if(!req.secure) {
             queryString  = req._parsedUrl.search?req._parsedUrl.search:"";
-            //return res.redirect(307, 'https://'+config.http.host+req.path+queryString);
+            return res.redirect(307, 'https://'+config.http.host+req.path+queryString);
         }
-
-        if(roomId.indexOf('%') == 0){
-          res.end();
-          return;  
-        }
-
         core.emit("rooms", {id:roomId,fields:["accounts","members"]}, function(err, room){
             log(room);
             if(room.length>0 && room[0].type =="user") {
