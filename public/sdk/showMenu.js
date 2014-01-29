@@ -9,10 +9,12 @@ function showMenu(el, opt) {
 		}).appendTo(menu);
 	}
 	
-	$(document.body).append(layer, menu, arrow);
+	$(document.body).append(layer, menu);
 	
-	elt = el.offset().top - $(document.body).scrollTop(); // element top relative to window
-	ell = el.offset().left - $(document.body).scrollLeft();
+	el.addClass('elSelected');
+	
+	elt = el.offset().top - $(document).scrollTop(); // element top relative to window
+	ell = el.offset().left - $(document).scrollLeft();
 	elw = el.width();
 	elh = el.height();
 	
@@ -39,8 +41,8 @@ function showMenu(el, opt) {
 	if(menul < 0) menul = 0;
 	else if(menul > scrw - menuw) menul = scrw - menuw;
 	
-//	arrow.css({left: ell + (elw - arrow.width())/2 - menul});
-	arrow.css({left: menul + 152 , top: menut - 8 });
+	if(arrow.hasClass("up")) arrow.css({left: menul + 152 , top: menut - 8 });
+	else arrow.css({left: menul + 152 , top: menut + menuh});
 	
 	menu.css({left: menul, top: menut});
 	
@@ -48,6 +50,7 @@ function showMenu(el, opt) {
 		$(".layer").remove();
 		$(".menu").remove();
 		$(".arrow").remove();
+		el.removeClass('elSelected');
 	}
 	
 }
