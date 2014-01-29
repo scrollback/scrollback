@@ -1,7 +1,7 @@
 var nodemailer = require('nodemailer');
 var config = require('../config.js');
 var log = require("../lib/logger.js"),
-    logMail = log.tag('mail');
+    logMail = log;
 var db = require('../lib/mysql.js');
 var redis = require("redis").createClient();//require('../lib/redisProxy.js');
 var fs=require("fs"),jade = require("jade");
@@ -48,7 +48,9 @@ function send(from,to,subject,html) {
 
 module.exports = function(coreObject) {
     core = coreObject;
-   
+    process.nextTick(function(){
+       logMail = log.tag('mail'); 
+    });
     if (config.email && config.email.auth) {
         init();
         

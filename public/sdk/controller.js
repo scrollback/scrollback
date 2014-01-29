@@ -79,6 +79,9 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 	
 	$scope.showmenu = function(index, item){
 		var el = angular.element('.scrollback-message').eq(index);
+		var shareUser = $scope.user.id;
+		if( $scope.user.id.indexOf('guest-') ==-0 ) shareUser = shareUser.substring(6);
+		if(item.text.indexOf('/me')==0) item.text = item.text.replace('/me', shareUser);
 		var twitterLink = encodeURI("http://twitter.com/home/?status=" + item.text  + " via https://scrollback.io/" + $scope.room.id);
 		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id ) + "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id + "&p[summary]=" + item.text;
 		op = {'Tweet Message' : function(){ window.open(twitterLink,'_blank') }, 'Share on FB' : function(){ window.open(facebookLink,'_blank') } };

@@ -13,8 +13,11 @@ function showMenu(el, opt) {
 	
 	el.addClass('elSelected');
 	
-	elt = el.offset().top - $(document).scrollTop(); // element top relative to window
-	ell = el.offset().left - $(document).scrollLeft();
+	console.log("EL width", el.width());
+	console.log("EL closest width", el.closest('message').width());
+	
+	elt = el.offset().top - $(document).scrollTop() + 5; // element top relative to window
+	ell = el.offset().left - $(document).scrollLeft() - 100;
 	elw = el.width();
 	elh = el.height();
 	
@@ -36,7 +39,6 @@ function showMenu(el, opt) {
 	}
 	
 	// default:
-	
 	menul = ell + (elw - menuw)/2;
 	if(menul < 0) menul = 0;
 	else if(menul > scrw - menuw) menul = scrw - menuw;

@@ -154,6 +154,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			$factory.enter($routeParams.room);
 		});
 	}
+	$scope.room.members.length = 0;
 //	
 //	// getting users present in the room 
 //	
