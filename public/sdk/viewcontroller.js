@@ -208,13 +208,23 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	
 	
 	// ------------------ this code will be removed and above code uncommented once the occupants api is ready on server side 
-	(function(){
+
+
+	function loadMembers() {
 		var members;
+		console.log("load members");
 		$factory.membership({memberOf: $scope.room.id}, function(data){
-//			console.log("Data from server", data);
 			$scope.room.members = data.data;
 		});
-	})();
+	}
+	if($factory.isActive ) {
+		loadMembers();
+	}else {
+		$factory.on("init", function() {
+			loadMembers();
+		});
+	}
+	
 	// ------------------
 	$scope.goToRoomsView = function(){
 		if(/^guest-/.test($scope.user.id)){ 
