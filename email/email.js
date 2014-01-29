@@ -1,6 +1,7 @@
 var nodemailer = require('nodemailer');
 var config = require('../config.js');
-var log = require("../lib/logger.js");
+var log = require("../lib/logger.js"),
+    logMail = log.tag('mail');
 var db = require('../lib/mysql.js');
 var redis = require("redis").createClient();//require('../lib/redisProxy.js');
 var fs=require("fs"),jade = require("jade");
@@ -34,11 +35,10 @@ function send(from,to,subject,html) {
     }
     transport.sendMail(email, function(error) {
         if(!error){
-            log('Test message sent successfully!');
+            logMail('Test message sent successfully!');
         }
         else{
-            log("error in sending email: ",error);
-            log("retrying......");
+            logMail("error in sending email: ",error, "retrying...");
             setTimeout(function(){
                 send(email.from, email.to, email.subject, email.html);
             },300000);
@@ -62,7 +62,7 @@ module.exports = function(coreObject) {
         });
         */
         core.on('message', function(message, callback) {
-            log("Heard \"message\" event", message);
+            logMail("Heard \"message\" event", message);
             callback();
             if(message.type === "text"){
                 addMessage(message);    
@@ -75,7 +75,7 @@ module.exports = function(coreObject) {
         }
     }
     else {
-        log("email module is not enabled");
+        logMail("email module is not enabled");
     }
 };
 
@@ -140,7 +140,7 @@ function addMessage(message){
         multi.ltrim("email:label:" + room + ":" + label +":tail", 0, 2);
         multi.expire("email:label:" + room + ":" + label + ":tail" , getExpireTime());
         multi.exec(function(err,replies) {
-            log("added message in redis" , err, replies);
+            logMail("added message in redis" , err, replies);
         });
         if (message.mentions) {
             message.mentions.forEach(function(username) {
@@ -148,7 +148,7 @@ function addMessage(message){
                 multi.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message));//mentioned msg
                 multi.set("email:" + username + ":isMentioned", true);//mentioned indicator for username
                 multi.exec(function(err,replies) {
-                    log("added mention ", replies);
+                    logMail("added mention ", replies);
                     if (!err) {
                         initMailSending(username);
                     }
@@ -169,7 +169,7 @@ function trySendingToUsers() {
     redis.smembers("email:toSend", function(err,usernames) {
        if(!err && usernames) {
             if (emailConfig.debug) {
-                log("checking for mentions...", usernames);
+                logMail("checking for mentions...", usernames);
             }
             usernames.forEach(function(username) {        
                initMailSending(username); 
@@ -188,10 +188,10 @@ function trySendingToUsers() {
  *@param {array of string}(optional) rooms rooms followed by username.
  */
 function initMailSending(username, rooms) {
-    log("init mail sending for user  " + username, " rooms ", rooms);
-    log("gettting last email sent to user" , username);
+    logMail("init mail sending for user  " + username, " rooms ", rooms);
+    logMail("gettting last email sent to user" , username);
     redis.get("email:" + username + ":lastsent",function(err, lastSent) {
-        log("data returned form redis", lastSent);
+        logMail("data returned form redis", lastSent);
         if (err) {
             return;
         }
@@ -203,12 +203,12 @@ function initMailSending(username, rooms) {
                 interval = waitingTime1
             }
             if (emailConfig.debug) {
-                log("username " + username + " is mentioned ", data); 
+                logMail("username " + username + " is mentioned ", data); 
                 interval = timeout/2;
                 if (data) {
                     interval = timeout/8;
                 }
-                log("interval " , interval);
+                logMail("interval " , interval);
             }
             if (!lastSent ) {//last email sent not set
                 lastSent = ct - interval;
@@ -219,13 +219,13 @@ function initMailSending(username, rooms) {
             if (parseInt(lastSent) + interval <= ct) {
                 //get rooms that user is following...
                 if (!rooms) {
-                    log("getting rooms that user is following....");
+                    logMail("getting rooms that user is following....");
                     core.emit("members",{user: username},function(err,following) {//TODO get only rooms from DB
                         if (err) {
-                           log("error in getting members informtion");
+                           logMail("error in getting members informtion");
                             return;
                         }
-                        log("username ", username ," is following rooms ", following);
+                        logMail("username ", username ," is following rooms ", following);
                         rooms = [];
                         following.forEach(function(r) {
                             rooms.push(r.room);
@@ -241,7 +241,7 @@ function initMailSending(username, rooms) {
                 else {
                     prepareEmailObj(username, rooms, lastSent, function(err, email) {
                         if (emailConfig.debug) {
-                            log(err + " callback of pre email" , email);
+                            logMail(err + " callback of pre email" , email);
                         }
                         if (!err) {
                             sendMail(email);
@@ -252,7 +252,7 @@ function initMailSending(username, rooms) {
                 redis.srem("email:toSend", username);
             }
             else {
-                log("can not send email to user ", username, " now" );
+                logMail("can not send email to user ", username, " now" );
                 redis.sadd("email:toSend", username);
                 return;
             }    
@@ -361,7 +361,7 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
             }
         }
         function done( roomObj, mentions) {
-            log("room done......" , room , qc);
+            logMail("room done......" , room , qc);
             if(--qc > 0 ) return;
             
             sortLabels(room ,roomObj,mentions,function(err,rr) {
@@ -373,7 +373,7 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
                     ct++;
                     if (ct >= rooms.length) {
                         deleteMentions(username, rooms);
-                        log("email object creation complete" , JSON.stringify(email));
+                        logMail("email object creation complete" , JSON.stringify(email));
                         callback(null, email);
                     }   
                 }
@@ -396,7 +396,7 @@ function deleteMentions(username , rooms) {
         m = "email:" + username + ":isMentioned";
         multi.del(m);
         multi.exec(function(replies) {
-           log("mentions deleted" , replies); 
+           logMail("mentions deleted" , replies); 
         });
     });
 }
@@ -408,7 +408,7 @@ function deleteMentions(username , rooms) {
  */
 function sortLabels(room, roomObj, mentions,callback) {
     var maxLabels = 5;   
-    log("sort labels");
+    logMail("sort labels");
     var r = {};
     var ct = 0;
     r.id = room;
@@ -487,7 +487,7 @@ function sortLabels(room, roomObj, mentions,callback) {
                 complete();
             });
         });
-        log("room Obj " , JSON.stringify(r));
+        logMail("room Obj " , JSON.stringify(r));
         function complete() {
             if (--nn > 0) {
                 return;
@@ -528,7 +528,7 @@ function sendMail(email) {
                     email.rooms.forEach(function(room) {
                         redis.zremrangebyscore("email:label:" + room.id + ":labels", 0,
                                                new Date().getTime() - interval , function(err, data) {
-                            log("deleted old labels from that room " , err ,data);
+                            logMail("deleted old labels from that room " , err ,data);
                         });//ZREMRANGEBYSCORE email:scrollback:labels -1 1389265655284
                     });
                 }
@@ -566,7 +566,7 @@ function getHeading(email) {
                 bestLabel.room = room.id;
                 bestLabel.count = label.count;
             }
-            log("best label", bestLabel);
+            logMail("best label", bestLabel);
             label.interesting.forEach(function(m) {
                 if (!bestMention.mentions && m.mentions && m.mentions.indexOf(email.username) != -1) {
                     bestMention = m;
@@ -668,7 +668,7 @@ function sendWelcomeEmail(user) {
         }
     });
     if (emailAdd) {
-        log("sending welcome email." , emailAdd);
+        logMail("sending welcome email." , emailAdd);
         send(emailConfig.from, emailAdd, "Welcome", emailHtml);
     }
     
