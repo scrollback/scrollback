@@ -49,14 +49,14 @@ var rejectable=function(message){
 		users[from].messages.shift();
 	}
 
-	if (message.text!=undefined) {
-		var capsLength=message.text.replace(/[^A-Z]/g, "").length;
-		var totalLength=message.text.length;
+	// if (message.text!=undefined) {
+	// 	var capsLength=message.text.replace(/[^A-Z]/g, "").length;
+	// 	var totalLength=message.text.length;
 
-		if (capsLength>(totalLength*0.6) && totalLength > 6) {
-			return true;
-		}
-	}
+	// 	if (capsLength>(totalLength*0.6) && totalLength > 6) {
+	// 		return true;
+	// 	}
+	// }
 
 	if (checkRepetition(message,users[from].messages)) {
 		return true;
