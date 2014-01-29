@@ -331,7 +331,7 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
                                else {
                                     var ll = {
                                          label: label ,
-                                         count : count                            
+                                         count : parseInt(count)                            
                                      };
                                     roomsObj.labels.push(ll);
                                 }
@@ -555,7 +555,6 @@ function getHeading(email) {
         labelCount += room.totalCount;
         more += room.labels.length;
         room.labels.forEach(function(label) {
-            
             if (!bestLabel) {
                 bestLabel = {};
                 bestLabel.title = formatText(label.title);
