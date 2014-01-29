@@ -41,7 +41,7 @@
     "connect-redis": "x",
     "generic-pool": "X",
     "nodemailer": "x",
-    "objectlevel": "x",
+    "objectlevel": "git://github.com/scrollback/objectlevel",
     "newrelic": "x"
   },
   "devDependencies": {

@@ -160,10 +160,6 @@ function userAway(user, room, conn) {
 
 function userBack(user, room, conn) {
 
-	core.emit("getUsers",{occupantOf:"scrollback"}, function(err, data){
-		log("hello",data);
-	});
-
 	if(rConns[room]) rConns[room].push(conn);
 	else rConns[room] = [conn];
 	conn.rooms.push(room);
