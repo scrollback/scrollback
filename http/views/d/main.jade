@@ -18,7 +18,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 		#meta(ng-controller="metaController",ng-class="status.waiting?'waiting column':'column'")
 			a(href="/me")#logo scrollback	
 			#user(ng-cloak="")
-				a: img.face(src='{{user.picture}}' ng-click='profile()')
+				a: img.face(ng-src='{{user.picture}}' ng-click='profile()')
 				a( id='logoutButton' ng-show='user.owner==user.id' ng-click='logout()' title='logout' class='button buttonText fa fa-power-off right')
 			#username(ng-click='profile()',ng-cloak="") {{user.id}}			
 			div

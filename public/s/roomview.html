@@ -1,6 +1,6 @@
 <h1 ng-cloak="">
 	<a id='backbutton' class='button fa fa-arrow-left left' ng-click='goToRoomsView()'></a>
-	<span>{{room.id || "No room selected"}}</span>
+	<span class="ng-cloak">{{room.id || "No room selected"}}</span>
 	
 	<a class='button buttonText fa fa-tags right' ng-show='!room.owner' ng-click='goToConfigure()'>Claim</a>
 	<a class='button buttonText fa fa-gears right' ng-show='isOwner()' ng-click='goToConfigure()'>Configure</a>
@@ -34,7 +34,7 @@
 
 <div id="members"> 
 	<span ng-repeat = "i in room.members">
-		<img src="{{i.picture}}" class = "face present" title="{{i.id}}"/>
+		<img ng-src="{{i.picture}}" class = "face present" title="{{i.id}}"/>
 	</span>
 <!--
 	<span ng-repeat = "i in room.usersPresent">
