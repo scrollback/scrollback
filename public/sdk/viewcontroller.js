@@ -273,7 +273,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 				$scope.user.membership.splice(index, 1);
 				//deleting gravatar 
 				for(i=0,l=$scope.room.members.length;i<l;i++) {
-					if($scope.room.members[i].id === $scope.user.id){
+					if($scope.room.members[i].id === $scope.user.id && $scope.room.members[i].id != $scope.room.owner ){
 						$scope.room.members.splice(i,1);
 						break;
 					}
