@@ -151,6 +151,7 @@ Stream.prototype.renderTimeline = function() {
 	for (k = 0; k<length; k++) {
 		
 		msg=cacheMessages[k];
+		var label = msg.labels && msg.labels[0]? msg.labels[0].split(":")[0] : "";
 		if (msg.type!=="text") {
 			continue;
 		}
@@ -160,14 +161,14 @@ Stream.prototype.renderTimeline = function() {
 			nicks: {},
 			n: 0,
 			dominant:{
-				nick:msg.from, count:1
+				nick:label, count:1
 			}
 		};
 
-		buckets[i].nicks[msg.from] = (buckets[i].nicks[msg.from] || 0) + (msg.text || "").length;
+		buckets[i].nicks[label] = (buckets[i].nicks[label] || 0) + (msg.text || "").length;
 
-		if (buckets[i].dominant.count<=buckets[i].nicks[msg.from]) {
-			buckets[i].dominant={nick:msg.from,count:buckets[i].nicks[msg.from]};
+		if (buckets[i].dominant.count<=buckets[i].nicks[label]) {
+			buckets[i].dominant={nick:(msg.labels && msg.labels[0])? msg.labels[0].split(":")[0] : "",count:buckets[i].nicks[(msg.labels && msg.labels[0])? msg.labels[0].split(":")[0] : ""]};
 		}
 
 		buckets[i].n += msg.text.length;
@@ -316,7 +317,7 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	console.log();
 	el = JsonML.parse(["div", {
 		'class': 'scrollback-message scrollback-message-' + message.type+mentionedClass,
-		'style': { 'borderLeftColor': hashColor(message.from/*message.from*/) },
+		'style': { 'borderLeftColor': hashColor((message.labels && message.labels[0])? message.labels[0].split(":")[0] : ""/*message.from*/) },
 		'data-time': message.time, 'data-from': formatName(message.from)
 	}].concat(el));
 	
