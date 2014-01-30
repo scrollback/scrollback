@@ -15,8 +15,8 @@ module.exports = function(core) {
 	core.on('room',roomuser.put, "storage");
 	core.on('user',roomuser.put, "storage");
 
-	core.on('away', awayback.put, "storage");
-	core.on('back', awayback.put, "storage");
+	// core.on('away', awayback.put, "storage");
+	// core.on('back', awayback.put, "storage");
 
 	core.on('text', texts.put, 'storage');
 
@@ -27,7 +27,10 @@ module.exports = function(core) {
 	}, 'storage');
 	core.on('part', function(data, cb){
 		//for now user cannot part the room he owns. also this needs to change rooms query is being handled by leveldb.
-		if(data.room.owner == data.user.id)  return cb();
+		if(data.room.owner == data.user.id)  {
+			console.log("cant part sorry...");
+			return cb();
+		}
 		data.role = "none";
 		joinpart.put(data, cb);
 	}, 'storage');

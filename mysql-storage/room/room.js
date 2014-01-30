@@ -8,6 +8,7 @@ module.exports = function(coreObject) {
 	var room = {};
 	core =coreObject;
 	core.on("room", function(room, callback) {
+		console.log(room, callback);
 		db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
 				"`owner`, `params`) values(?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE "+
 				"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+

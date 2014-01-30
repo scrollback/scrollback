@@ -2,6 +2,7 @@ module.exports = function(store) {
 	var room = store.defineType('room',{
 		indexes: {
 			createdOn: function(room, emit) {
+				console.log("inserting room", room);
 				emit(room.createdOn);
 			},
 			gatewayIdentity: function(room, emit) {

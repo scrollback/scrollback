@@ -30,21 +30,29 @@ function migrateRooms(cb) {
 				console.log("USER WITH NO A/C");
 				return;
 			}
-			room.identities = []
-			data.forEach(function(account) {
-				room.identities.push(account.id);
+			var newRoom = {
+				id: room.id,
+				description: room.description,
+				createdOn: room.createdOn,
+				type: room.type,
+				picture: room.picture,
+				timezone:0,
+				identities: [],
+				params: room.params
+			}
+			room.accounts && room.accounts.forEach(function(account) {
+				newRoom.identities.push(account.id);
 			});
-			room.timezone = 0;
-			if(room.type == "user") types.users.put(room, function(){
+			if(newRoom.type == "user") types.users.put(newRoom, function(){
 				if(err) console.log(err);
 				db.resume();
 			});
-			if(room.type == "room") types.rooms.put(room, function(){
+			if(newRoom.type == "room") types.rooms.put(newRoom, function(){
 				if(err) console.log(err);
 				owners[room.id] = room.owner;
 				types.rooms.link(room.id, 'hasMember', room.owner, {
 					role: "owner",
-					time: room.createdOn
+					time: newRoom.createdOn
 				}, function(){
 					db.resume();
 				});

@@ -38,21 +38,33 @@ module.exports = function (types) {
 			}
 		},
 		put: function(data, cb) {
-			var owner = data.owner;
+			var owner = data.owner, createdOn;
 			var currentTime = new Date().getTime();
-			delete data.owner;
 			if(data.old){
-				data.createdOn = data.old.createdOn;
+				createdOn = data.old.createdOn;
 			}else{
-				data.createdOn = new Date().getTime();
+				createdOn = new Date().getTime();
 			}
-			delete data.old;
+			var newRoom = {
+				id: data.id,
+				description: data.description,
+				createdOn: createdOn,
+				type: data.type,
+				picture: data.picture,
+				timezone:0,
+				identities: [],
+				params: data.params
+			}
+			data.accounts && data.accounts.forEach(function(account) {
+				newRoom.identities.push(account.id);
+			});
+
 			if(data.type === "user") {
-				user.put(data, function(err, res) {
+				user.put(newRoom, function(err, res) {
 					cb(err, data);
 				});	
 			} 
-			else room.put(data, function(err, res) {
+			else room.put(newRoom, function(err, res) {
 				if(!data.old) {
 					types.rooms.link(data.id, 'hasMember', owner, {
 						role: "owner",

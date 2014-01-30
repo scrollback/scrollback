@@ -214,6 +214,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		var members;
 		console.log("load members");
 		$factory.membership({memberOf: $scope.room.id}, function(data){
+			console.log(data.data);
 			$scope.room.members = data.data;
 		});
 	}
