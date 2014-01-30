@@ -217,19 +217,21 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	function loadMembers() {
 		var members;
 		$factory.membership({memberOf: $scope.room.id}, function(data){
-			$scope.room.members = data.data;
-			var ownerIndex = -1, ownerObj;
-			// putting room owner as first user in members array
-			for(i=0; i < $scope.room.members.length; i++){
-				if($scope.room.members[i].id === $scope.room.owner){
-					ownerIndex = i;
-					ownerObj = $scope.room.members.splice(i,1);
-					break;
+			$scope.$apply(function(){
+				$scope.room.members = data.data;
+				var ownerIndex = -1, ownerObj;
+				// putting room owner as first user in members array
+				for(i=0; i < $scope.room.members.length; i++){
+					if($scope.room.members[i].id === $scope.room.owner){
+						ownerIndex = i;
+						ownerObj = $scope.room.members.splice(i,1);
+						break;
+					}
 				}
-			}
-			if(ownerIndex > -1){
-				$scope.room.members.unshift(ownerObj[0]);
-			}
+				if(ownerIndex > -1){
+					$scope.room.members.unshift(ownerObj[0]);
+				}
+			});
 		});
 	}
 	if($factory.isActive ) {

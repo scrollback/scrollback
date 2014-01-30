@@ -25,13 +25,13 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         });
     });
     $factory.on("message", function(msg) {
-    	$scope.$apply(function(){
+    	$scope.$apply(function() {
             newMessage(msg);    
         });
     });
     function newMessage(data) {
-        var i, updated,deleted = false,index;
-
+        var i, updated = false, deleted = false,index;
+		
         if($(window).scrollTop() + $(window).height() > $(document).height() - 20) {
            // If a user is reading a message towards the bottom of the page, or typing something, a new incoming message must not 
            //reset the scrollposition.
@@ -52,8 +52,9 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                 break;
             }
         }
-
-        if (!updated && !data.message) {
+		
+        
+		if (!updated && !data.message) {
             messages.unshift(data);
             index = 0;
         }else {
@@ -63,7 +64,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
             //just to isolate the scope.
 			(function(){
                 var l=$scope.items.length,insertPosition=l-1,i;
-                for(i=insertPosition;i>0;i--) {
+                for(i=insertPosition;i>=0;i--) {
                     if($scope.items[i].id == data.id) {
                         $scope.items[i] = data;
                         if(data.message) {
@@ -171,17 +172,17 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         }
     };
     
-    $scope.gotoBottom = function() {
-        $scope.items.length = 0;
-        topIndex = 0, bottomIndex = 0;
-        for (var i = 0; i < 50; i++) {
-            if(topIndex < messages.length){
-                if(messages[topIndex].type == "text")
-                    $scope.items.unshift(messages[topIndex]);
-                topIndex += 1;
-            }
-        }
-    };
+//    $scope.gotoBottom = function() {
+//        $scope.items.length = 0;
+//        topIndex = 0, bottomIndex = 0;
+//        for (var i = 0; i < 50; i++) {
+//            if(topIndex < messages.length){
+//                if(messages[topIndex].type == "text")
+//                    $scope.items.unshift(messages[topIndex]);
+//                topIndex += 1;
+//            }
+//        }
+//    };
 
     $scope.loadMoreUp = function() {
         for (var i = 0; i < 5; i++) {
@@ -204,10 +205,10 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         $timeout( function() {
             if($scope.items.length > 50) {
                 while($scope.items.length > 50) {
-                    if(messages[bottomIndex].type != "text") bottomIndex += 1;
+                    if(messages[bottomIndex] && messages[bottomIndex].type != "text") bottomIndex += 1;
                     $scope.items.pop();
                     bottomIndex += 1;
-                } 
+                }
             }
         });
     };
@@ -215,13 +216,12 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         // TODO : popping from top :)
         for(i=0; i< 5; i++) {
               if(bottomIndex > 0) {
-                if(messages[bottomIndex].type == 'text'){
+				 bottomIndex -= 1;
+                if(messages[bottomIndex] && messages[bottomIndex].type == 'text'){
                     $scope.items.push(messages[bottomIndex]);
 				}
-                bottomIndex -= 1;
               }
         }
-		
          //this is causing troubles, so the shift is being done only for 2 elements at a time, ideally
          // the while should be uncommented
         
@@ -239,6 +239,8 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 			
         } , 1);
     };
+	
+	$timeout(function(){ $('html, body').animate({scrollTop:$(document).height()}, 'slow'); }, 1); //scrolling down to bottom of page.
 }
 
 scrollbackApp.controller('messageController', messageController);
@@ -337,6 +339,7 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
             $('.column').fixInView();
             $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
             $('#body').bind('reposition', function(e) {
+				console.log('reposition event fired', e);
                 if(e.above < 150 && e.by<0) {
                     scope.$apply(attr.whenScrolledUp);
                     $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
