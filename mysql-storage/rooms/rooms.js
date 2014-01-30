@@ -16,8 +16,6 @@ function rooms(coreObject) {
 				}
 				try{
 					data = JSON.parse(data);
-					console.log("cache rooms called", data);
-
 					if(options.fields) {
 						for(i=0, l=options.fields.length;i<l;i++){
 							if(!data[options.fields[i]]) return callback();

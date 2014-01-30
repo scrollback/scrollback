@@ -2,10 +2,7 @@
 module.exports = function(core) {
 	function loader(data, callback) {
 		//core.emit('getRooms', {id: data.from}, function(err, user) {
-		console.log("entity loader", data);
-
 		core.emit('rooms', {id:data.to[0]}, function(err, room) {
-			console.log("entity loader",err, room);
 			if(err) callback(err);
 			data.room = room[0] || {};
 			//core.emit('getUsers', {id: data.from}, function(err, user) {
