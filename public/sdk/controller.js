@@ -90,7 +90,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id ) + "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id + "&p[summary]=" + item.text;
 		
 		op = {'Tweet Message' : function(){ window.open(twitterLink,'_blank') }, 'Share on FB' : function(){ window.open(facebookLink,'_blank') } };
-		//showMenu(el, op);
 		(function showMenu(el, opt) {
 			layer = $("<div>").addClass('layer').click(hide);
 			menu = $("<div>").addClass('menu').addClass('clearfix');
@@ -144,7 +143,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 				$('.elSelected').removeClass('elSelected');
 				$scope.selectedId = null;
 			}
-			
 		})(el, op);
 		
 	}
