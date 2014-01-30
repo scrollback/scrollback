@@ -154,7 +154,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			$factory.enter($routeParams.room);
 		});
 	}
-	$scope.room.members.length = 0;
+	if($scope.room.members) $scope.room.members.length = 0;
 //	
 //	// getting users present in the room 
 //	
@@ -406,6 +406,9 @@ scrollbackApp.controller('wordbanController',['$scope', function($scope) {
 }]);
 
 scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {
+	$scope.room = sbroom;
+	$scope.user = sbuser;
+	$scope.notifications = [];
 	$scope.goBack = function() {
 		$location.path("/"+$scope.room.id);	
 	};
