@@ -155,7 +155,11 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		});
 	}
 	if($scope.room.members) $scope.room.members.length = 0;
-//	
+
+	
+// ------- WILL BE USED ONCE getusers for occupants IS READY	
+	
+	
 //	// getting users present in the room 
 //	
 //	function getDisplayList(occupants, members) {
@@ -212,10 +216,20 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 
 	function loadMembers() {
 		var members;
-		console.log("load members");
 		$factory.membership({memberOf: $scope.room.id}, function(data){
-			console.log(data.data);
 			$scope.room.members = data.data;
+			var ownerIndex = -1, ownerObj;
+			// putting room owner as first user in members array
+			for(i=0; i < $scope.room.members.length; i++){
+				if($scope.room.members[i].id === $scope.room.owner){
+					ownerIndex = i;
+					ownerObj = $scope.room.members.splice(i,1);
+					break;
+				}
+			}
+			if(ownerIndex > -1){
+				$scope.room.members.unshift(ownerObj[0]);
+			}
 		});
 	}
 	if($factory.isActive ) {
@@ -242,7 +256,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		else return false;
 	};
 	$scope.goToConfigure = function() {
-		if(/^guest-/.test($scope.user.id)){ 
+		if(/^guest-/.test($scope.user.id)){
 			$scope.personaLogin();
 			//$location.path('/me/login');
 		}
@@ -269,6 +283,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	};
 	$scope.joinRoom = function() {
 		var msg = {};
+		var flag = 1;
 		if(/^guest-/.test($scope.user.id)){
 			//guest
 			//$location.path('/me/login');
@@ -278,8 +293,18 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		msg.to = $scope.room.id;
 		msg.type = "join";
 		$factory.message(msg);
+		
+		for(i=0; i < $scope.room.members.length; i++ ) {
+			if($scope.room.members[i].id === $scope.user.id){
+				flag = 0;
+				break;
+			}
+		};
+		
+		if(flag == 1){
+			$scope.room.members.unshift($scope.user);
+		}
 		$scope.user.membership.unshift($scope.room.id);
-		$scope.room.members.unshift($scope.user);
 	}
 	
 	$scope.hasMembership = function() {
@@ -431,7 +456,6 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 	$factory.on('init', function(data){
 		//assigning the new new init data to the user scope ---
 		$scope.$apply(function(){
-			console.log(" Sending init ", data);
 			Object.keys(data.user).forEach(function(key){
 				$scope.user[key] = data.user[key];
 			});

@@ -38,7 +38,7 @@ function migrateRooms(cb) {
 				picture: room.picture,
 				timezone:0,
 				identities: [],
-				params: room.params
+				params: JSON.parse(room.params)
 			}
 			room.accounts && room.accounts.forEach(function(account) {
 				newRoom.identities.push(account.id);
