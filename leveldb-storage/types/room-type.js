@@ -5,9 +5,9 @@ module.exports = function(store) {
 				emit(room.createdOn);
 			},
 			gatewayIdentity: function(room, emit) {
-				room.accounts && room.accounts.forEach(function(account) {
+				room.identities && room.identities.forEach(function(identity) {
 					//fix this inconsistancy.
-					var parts =  account.id.split(":");
+					var parts =  identity.split(":");
 					emit(parts[0],parts[1]);
 				});
 			}

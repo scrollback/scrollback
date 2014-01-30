@@ -5,6 +5,8 @@ var log = require("../lib/logger.js");
 var db = require('mysql').createConnection(config.mysql);
 var accountConnection = require('mysql').createConnection(config.mysql);
 var leveldb, types;
+
+var owners = {};
 db.connect();
 accountConnection.connect();
 function closeConnection(){
@@ -14,7 +16,7 @@ function closeConnection(){
 
 
 function migrateRooms(cb) {
-	var stream = db.query("select * from rooms;");
+	var stream = db.query("select * from rooms order by rooms.type DESC;");
 	stream.on("result", function(room) {
 		db.pause();
 		accountConnection.query("select * from accounts where room = ?", room.id, function(err, data) {
@@ -28,14 +30,24 @@ function migrateRooms(cb) {
 				console.log("USER WITH NO A/C");
 				return;
 			}
-			room.accounts = data;
+			room.identities = []
+			data.forEach(function(account) {
+				room.identities.push(account.id);
+			});
+			room.timezone = 0;
 			if(room.type == "user") types.users.put(room, function(){
 				if(err) console.log(err);
 				db.resume();
 			});
 			if(room.type == "room") types.rooms.put(room, function(){
 				if(err) console.log(err);
-				db.resume();
+				owners[room.id] = room.owner;
+				types.rooms.link(room.id, 'hasMember', room.owner, {
+					role: "owner",
+					time: room.createdOn
+				}, function(){
+					db.resume();
+				});
 			});
 		});
 	});
@@ -52,6 +64,7 @@ function migrateMembers(cb){
 	stream.on("result", function(row) {
 		if(row.partedOn) return console.log("parted user");;
 		console.log(row);
+		if(owners[row.room] === row.user) return console.log("owner spotted.");;
 		types.rooms.link(row.room, 'hasMember', row.user, {
 			role: "member",
 			time: row.joinedOn

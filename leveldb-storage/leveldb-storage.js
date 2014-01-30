@@ -22,9 +22,12 @@ module.exports = function(core) {
 
 	core.on('join', function(data, cb){
 		data.role = "member";
+		if(data.room.owner == data.user.id) data.role = "owner";
 		joinpart.put(data, cb);
 	}, 'storage');
 	core.on('part', function(data, cb){
+		//for now user cannot part the room he owns. also this needs to change rooms query is being handled by leveldb.
+		if(data.room.owner == data.user.id)  return cb();
 		data.role = "none";
 		joinpart.put(data, cb);
 	}, 'storage');

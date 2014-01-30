@@ -2,8 +2,8 @@ module.exports = function(store) {
 	var user = store.defineType('user',{
 		indexes: {
 			gatewayIdentity: function(user, emit) {
-				user.accounts && user.accounts.forEach(function(account) {
-					var parts =  account.id.split(":");
+				user.identities && user.identities.forEach(function(identity) {
+					var parts =  identity.split(":");
 					emit(parts[0],parts[1]);
 				});
 			},
