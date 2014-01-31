@@ -152,14 +152,26 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         var text = $scope.text.trim(),message;
 		var mentionedUsers = [];
 		
+		function isMember(m){
+			if($scope.room.members){
+				for(i=0; i < $scope.room.members.length; i++ ){
+					if($scope.room.members[i].id == m) return 1;
+				}
+			}
+			return 0;
+		}
+		
 		function isMention(input){
 			//this function checks if any users were mentioned in a message 
 			if( (/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)){ 						
 				input = input.toLowerCase();
-				mentionedUsers.push(input.replace(/[@:,]/g,""));
+				input = input.replace(/[@:,]/g,"");
+				if(isMember(input)) mentionedUsers.push(input);
 			}
 		}
 		text.split(' ').map(isMention);
+		console.log("MEntioned users ", mentionedUsers);
+		
         $scope.text = "";
         message = {type:"text", text: text, to: $scope.room.id, from: $scope.user.id, mentions: mentionedUsers};
         if(text !== "") {
@@ -339,7 +351,6 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
             $('.column').fixInView();
             $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
             $('#body').bind('reposition', function(e) {
-				console.log('reposition event fired', e);
                 if(e.above < 150 && e.by<0) {
                     scope.$apply(attr.whenScrolledUp);
                     $('#body').nudgeInView(-$('#body').outerHeight() + e.height);

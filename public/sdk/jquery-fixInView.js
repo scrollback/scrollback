@@ -71,7 +71,6 @@
 	}
 	
 	function trigger(column, movement) {
-		console.log('reposition firing', column, movement);
 		column.element.trigger({
 			type: 'reposition',
 			by: movement,
@@ -137,7 +136,7 @@
 	
 	$window.scroll(function(e) {
 //		if(ignoreScroll) { console.log('ignoring scroll event'); return; }
-		console.log('scroll called', e);
+//		console.log('scroll called', e);
 		var lastViewTop = viewTop;
 		read();
 		update(viewTop - lastViewTop);
@@ -155,7 +154,7 @@
 	
 	$.fn.nudgeInView = function(adjustment) {
 		var self = this;
-		console.log('nudge', adjustment, this);
+//		console.log('nudge', adjustment, this);
 		read();
 		columns.forEach(function(column) {
 			if(column.element[0] == self[0]) {
