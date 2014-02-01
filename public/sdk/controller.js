@@ -170,7 +170,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 			}
 		}
 		text.split(' ').map(isMention);
-		console.log("MEntioned users ", mentionedUsers);
 		
         $scope.text = "";
         message = {type:"text", text: text, to: $scope.room.id, from: $scope.user.id, mentions: mentionedUsers};
@@ -246,9 +245,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                 topIndex -= 3;
                  //}
             }
-			
-			if($(window).scrollTop() + $(window).height() == $(document).height())	 $('#body').nudgeInView(0);
-			
         } , 1);
     };
 	
@@ -347,7 +343,6 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
         var $ = angular.element;
         
         $(document).ready(function() {
-
             $('.column').fixInView();
             $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
             $('#body').bind('reposition', function(e) {
@@ -357,6 +352,7 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
                 }
                 else if(e.below < 30) {
 					scope.$apply(attr.whenScrolledDown);
+					$('#body').nudgeInView(1);
                 }
             });
         });
