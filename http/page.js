@@ -27,6 +27,7 @@ var crypto = require('crypto');
 var db = require("../lib/mysql.js");
 var httpConfigResponseObject;
 var scriptResponseObject;
+var configHttp;
 /**
  *add 'a' tag for links in text
  */
@@ -52,8 +53,10 @@ exports.init = function(app, coreObject) {
 	core = coreObject;
 	fs.readFile(__dirname + "/views/SEO.html", "utf8", function(err, data){
 		if(err)	throw err;
-		core.on("http/config", function(payload, callback) {
-            payload.seo = data;
+		core.on("http/init", function(payload, callback) {
+            payload.seo = {
+				config: data
+			};
             callback(null, payload);
         }, "setters");
 	});
@@ -308,36 +311,110 @@ exports.init = function(app, coreObject) {
     //     });
     // })
 
-    app.get("/s/editRoom", function(req,res) {
-		if(!httpConfigResponseObject) {
-			httpConfigResponseObject = {};
-			core.emit("http/config", {},function(err, payload) {
-				if(err) return res.render("error",{error:err.message});
-				httpConfigResponseObject.pluginsUI = payload;
-				return res.render("newConfig", httpConfigResponseObject);
-			});
+	app.get("/s/editRoom" ,function(req, res) {
+		if (!configHttp) {
+			configInit();
 		}
-		else {
-			res.render("newConfig", httpConfigResponseObject);
+		res.render("newConfig", configHttp);
+		
+	});
+	app.get("/s/script.js", function(req, res) {
+		if (!configHttp) {
+			configInit();
 		}
-        
-    });
+		res.end(configHttp.scripts);
+	});
+	/**Object structure for config
+	 *config: {
+		appname : {
+			config: {string}//config html
+			script: {function},
+			routes: {
+				"login": function() {},
+				...
+			}
+		},
+		...
+	}
+	It will set "configHttp"
+	configHttp: {
+		pluginUI:{object},
+		scripts: {string},
+		routes: {object}
+	}
+	 */
+	function configInit() {
+		//memorize all variables.
+		log("init config ");
+		core.emit("http/init", {}, function(err, payload) {
+			if(err) {
+				return;
+			}
+			configHttp = {};
+			configHttp.pluginsUI = {};
+			configHttp.scripts = "";
+			configHttp.routes = {};
+			var p = {};
+			for(var app in payload) {
+				if (payload[app]) {
+					if (payload[app].config) {
+						p[app] = payload[app].config;
+					}
+					if (payload[app].script) {
+						configHttp.scripts += app + ": " + payload[app].script + ","; 
+					}
+					if (payload.routes) {
+						configHttp.routes[app] = payload[app].routes;
+						for(var r in configHttp.routes[app]) {
+							if (configHttp.routes[app].r) {
+								log("adding route handler", "/r/" + app + "/" + r);
+								app.get("/r/" + app + "/" + r, function(req, res, next) {
+									
+									configHttp.routes[app].r();
+									res.end("correct");
+									next();
+								});
+							}
+							
+						}
+					}
+				}
+			}
+			configHttp.scripts = "var scripts = {"  + (configHttp.scripts.substring(0, configHttp.scripts.length-1)) + "}";
+			configHttp.pluginsUI = p;
+		});
+	}
 	
-	app.get("/s/script.js", function(req,res) {
-		if(!scriptResponseObject) {
-			scriptResponseObject = "";
-			core.emit("http/script", {},function(err, payload) {
-				if(err) return res.end("var script = " + JSON.stringify({error:err.message}));
-				scriptResponseObject = "var script = " + JSON.stringify(payload);
-				return res.end(scriptResponseObject);
-			});
-		}
-		else {
-			res.end(scriptResponseObject);
-		}
-        
-    });
-	
+//    app.get("/s/editRoom", function(req,res) {
+//		if(!httpConfigResponseObject) {
+//			httpConfigResponseObject = {};
+//			core.emit("http/config", {},function(err, payload) {
+//				if(err) return res.render("error",{error:err.message});
+//				httpConfigResponseObject.pluginsUI = payload;
+//				return res.render("newConfig", httpConfigResponseObject);
+//			});
+//		}
+//		else {
+//			res.render("newConfig", httpConfigResponseObject);
+//		}
+//        
+//    });
+//	
+//	app.get("/s/script.js", function(req,res) {
+//		if(!scriptResponseObject) {
+//			scriptResponseObject = "";
+//			core.emit("http/script", {},function(err, payload) {
+//				if(err) return res.end("var script = " + JSON.stringify({error:err.message}));
+//				scriptResponseObject = "var script = " + JSON.stringify(payload);
+//				return res.end(scriptResponseObject);
+//			});
+//		}
+//		else {
+//			res.end(scriptResponseObject);
+//		}
+//        
+//    });
+//	
 
     //commenting out for now. Will not be used.
 //     app.get("*/config",function(req, res, next) {

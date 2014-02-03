@@ -18,13 +18,14 @@ var db = require("../lib/mysql.js");
 var botNick=config.irc.nick, clients = {bot: {}}, users = {};
 
 module.exports = function(object){
-	var pluginContent = "";
 	core = object;
 	fs.readFile(__dirname + "/irc.html", "utf8", function(err, data){
 		if(err)	throw err;
-		core.on("http/config", function(payload, callback) {
-            payload.irc = data;
-            callback(null, payload);
+		core.on("http/init", function(payload, callback) {
+            payload.irc = {
+				config: data
+			};
+			callback(null, payload);
         }, "setters");
 	});
 	init();
