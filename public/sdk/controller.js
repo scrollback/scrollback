@@ -3,7 +3,6 @@ var __glo_prevtime = 0;
 function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
     
 	$scope.showMenu = false;
-	$scope.menuOptions = {id: 'amal'};
 	
 	$scope.messages = sbmessages;
 	
