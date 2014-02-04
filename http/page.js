@@ -77,7 +77,7 @@ exports.init = function(app, coreObject) {
 			res.end(req.cookies["scrollback_sessid"] + '\r\n' + JSON.stringify(require("./session.js").store));
 		}
     };
-    //handling it for now but should probably think a way to make newProfile the static file.
+	//handling it for now but should probably think a way to make newProfile the static file.
     app.get("/s/me/edit", function(req, res) {
         var user = req.session.user;
         if(/"guest-"/.test(user.id)) {
@@ -205,7 +205,6 @@ exports.init = function(app, coreObject) {
             });
         });
     }
-	
     app.get("/*", roomHandler);
     app.get("/*/edit", roomHandler);
 
@@ -310,111 +309,8 @@ exports.init = function(app, coreObject) {
     //         res.end(responseHTML);
     //     });
     // })
-
-	app.get("/s/editRoom" ,function(req, res) {
-		if (!configHttp) {
-			configInit();
-		}
-		res.render("newConfig", configHttp);
-		
-	});
-	app.get("/s/script.js", function(req, res) {
-		if (!configHttp) {
-			configInit();
-		}
-		res.end(configHttp.scripts);
-	});
-	/**Object structure for config
-	 *config: {
-		appname : {
-			config: {string}//config html
-			script: {function},
-			routes: {
-				"login": function() {},
-				...
-			}
-		},
-		...
-	}
-	It will set "configHttp"
-	configHttp: {
-		pluginUI:{object},
-		scripts: {string},
-		routes: {object}
-	}
-	 */
-	function configInit() {
-		//memorize all variables.
-		log("init config ");
-		core.emit("http/init", {}, function(err, payload) {
-			if(err) {
-				return;
-			}
-			configHttp = {};
-			configHttp.pluginsUI = {};
-			configHttp.scripts = "";
-			configHttp.routes = {};
-			var p = {};
-			for(var app in payload) {
-				if (payload[app]) {
-					if (payload[app].config) {
-						p[app] = payload[app].config;
-					}
-					if (payload[app].script) {
-						configHttp.scripts += app + ": " + payload[app].script + ","; 
-					}
-					if (payload.routes) {
-						configHttp.routes[app] = payload[app].routes;
-						for(var r in configHttp.routes[app]) {
-							if (configHttp.routes[app].r) {
-								log("adding route handler", "/r/" + app + "/" + r);
-								app.get("/r/" + app + "/" + r, function(req, res, next) {
-									
-									configHttp.routes[app].r();
-									res.end("correct");
-									next();
-								});
-							}
-							
-						}
-					}
-				}
-			}
-			configHttp.scripts = "var scripts = {"  + (configHttp.scripts.substring(0, configHttp.scripts.length-1)) + "}";
-			configHttp.pluginsUI = p;
-		});
-	}
 	
-//    app.get("/s/editRoom", function(req,res) {
-//		if(!httpConfigResponseObject) {
-//			httpConfigResponseObject = {};
-//			core.emit("http/config", {},function(err, payload) {
-//				if(err) return res.render("error",{error:err.message});
-//				httpConfigResponseObject.pluginsUI = payload;
-//				return res.render("newConfig", httpConfigResponseObject);
-//			});
-//		}
-//		else {
-//			res.render("newConfig", httpConfigResponseObject);
-//		}
-//        
-//    });
-//	
-//	app.get("/s/script.js", function(req,res) {
-//		if(!scriptResponseObject) {
-//			scriptResponseObject = "";
-//			core.emit("http/script", {},function(err, payload) {
-//				if(err) return res.end("var script = " + JSON.stringify({error:err.message}));
-//				scriptResponseObject = "var script = " + JSON.stringify(payload);
-//				return res.end(scriptResponseObject);
-//			});
-//		}
-//		else {
-//			res.end(scriptResponseObject);
-//		}
-//        
-//    });
-//	
+	
 
     //commenting out for now. Will not be used.
 //     app.get("*/config",function(req, res, next) {

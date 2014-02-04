@@ -21,13 +21,16 @@ Boston, MA 02111-1307 USA.
 var express = require("./express.js"),
 	socket = require("./socket.js"),
 	log = require("../lib/logger.js"),
+	plugins = require('./plugins.js'),
 	page=require("./page.js");
 	app = express.init();
 
 var init = function(core) {
 	socket.init(app.httpServer, core);
 	if(app.httpsServer) socket.init(app.httpsServer, core);
+	plugins.init(app, core);
 	page.init(app, core);
+	
 };
 
 module.exports = function(core){
