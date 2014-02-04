@@ -2,6 +2,9 @@ var __glo_prevtime = 0;
 
 function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
     
+	$scope.showMenu = false;
+	$scope.menuOptions = {id: 'amal'};
+	
 	$scope.messages = sbmessages;
 	
 	$scope.items = [];
@@ -84,67 +87,16 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 		
 		$scope.selectedId = item.id;
 		
+		$scope.selectedIndex = index;
+		$scope.showMenu = true;
+		
 		if( $scope.user.id.indexOf('guest-') ===0 ) shareUser = shareUser.substring(6);
 		if(item.text.indexOf('/me')==0) item.text = item.text.replace('/me', shareUser);
 		
 		var twitterLink = encodeURI("http://twitter.com/home/?status=" + item.text  + " via https://scrollback.io/" + $scope.room.id);
 		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id ) + "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id + "&p[summary]=" + item.text;
 		
-		op = {'Tweet Message' : function(){ window.open(twitterLink,'_blank') }, 'Share on FB' : function(){ window.open(facebookLink,'_blank') } };
-		(function showMenu(el, opt) {
-			layer = $("<div>").addClass('layer').click(hide);
-			menu = $("<div>").addClass('menu').addClass('clearfix');
-			arrow = $("<div>").addClass('arrow').appendTo(menu);
-			for(i in opt) {
-				$("<button>").addClass('menuitem').text(i).click( {option: i}, function(event) {
-					opt[event.data.option]();
-					hide();
-				}).appendTo(menu);
-			}
-			
-			$(document.body).append(layer, menu);
-			
-			
-			elt = el.offset().top - $(document).scrollTop() + 5; // element top relative to window
-			ell = el.offset().left - $(document).scrollLeft() - 100;
-			elw = el.width();
-			elh = el.height();
-			
-			scrw = $(window).width();
-			scrh = $(window).height();
-			
-			menuw = menu.width();
-			menuh = menu.height();
-			
-			spaceBelow = scrh - elt - elh;
-			
-			if(spaceBelow > menuh) {
-				arrow.addClass('up');
-				menut = elt + elh;
-			}
-			else {
-				arrow.addClass('down');
-				menut = elt - menuh;
-			}
-			
-			// default:
-			menul = ell + (elw - menuw)/2;
-			if(menul < 0) menul = 0;
-			else if(menul > scrw - menuw) menul = scrw - menuw;
-			
-			if(arrow.hasClass("up")) arrow.css({left: menul + 152 , top: menut - 8 });
-			else arrow.css({left: menul + 152 , top: menut + menuh});
-			
-			menu.css({left: menul, top: menut});
-			
-			function hide() {
-				$(".layer").remove();
-				$(".menu").remove();
-				$(".arrow").remove();
-				$('.elSelected').removeClass('elSelected');
-				$scope.selectedId = null;
-			}
-		})(el, op);
+		$scope.options = {'Tweet Message' : function(){ window.open(twitterLink,'_blank') }, 'Share on FB' : function(){ window.open(facebookLink,'_blank') } };
 		
 	}
 
@@ -253,7 +205,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 
 scrollbackApp.controller('messageController', messageController);
 
-scrollbackApp.directive('message',function($compile) {
+scrollbackApp.directive('message',function($compile, $timeout) {
     return{
         restrict: 'E',
         template: '<div class="scrollback-message" style="border-left-color: {{bcolor}}">'+
@@ -266,7 +218,10 @@ scrollbackApp.directive('message',function($compile) {
 						'<span ng-show = "showTime" class="scrollback-message-time"> {{time}}</span>'
 						
                     +'</div>',
-        scope: true,
+        scope: {
+			showMenu: '=',
+			menuOptions: '='
+		},
         link: function($scope, element, attr) {
             var value;
             $scope.me="scrollback-message-content-me";
@@ -293,9 +248,6 @@ scrollbackApp.directive('message',function($compile) {
                     $scope.nick = $scope.from; 
                 }
                 $scope.text = format($scope.text);
-				
-				
-				$scope.twitterText = encodeURI("http://twitter.com/home/?status=" + value + " via https://scrollback.io/" + $scope.room.id);
 				
             });
 			attr.$observe('time', function(value){
@@ -331,6 +283,79 @@ scrollbackApp.directive('message',function($compile) {
 					return str + ' at '+ d.getHours() + ':' +
 						(d.getMinutes()<10? '0': '') + d.getMinutes();
 			}
+			
+			$timeout(function(){
+				$scope.$watch('showMenu', function(val){
+					
+					$messageControllerScope = $scope.$parent.$parent;
+					
+					if( val === true){
+						if($messageControllerScope.selectedIndex && $messageControllerScope.selectedIndex === $scope.$parent.$index){
+							
+							var el = angular.element('.scrollback-message').eq($scope.$parent.$index);
+							$messageControllerScope.showMenu = false;
+							
+							options = $messageControllerScope.options;
+							element = el.eq(0);
+							
+							(function showMenu(el, opt) {
+								layer = $("<div>").addClass('layer').click(hide);
+								menu = $("<div>").addClass('menu').addClass('clearfix');
+								arrow = $("<div>").addClass('arrow').appendTo(menu);
+								for(i in opt) {
+									$("<button>").addClass('menuitem').text(i).click( {option: i}, function(event) {
+										opt[event.data.option]();
+										hide();
+									}).appendTo(menu);
+								}
+								
+								$('body').append(layer, menu);
+								
+								elt = el.offset().top - $(document).scrollTop() + 5; // element top relative to window
+								ell = el.offset().left - $(document).scrollLeft() - 100;
+								elw = el.width();
+								elh = el.height();
+								
+								scrw = $(window).width();
+								scrh = $(window).height();
+								
+								menuw = menu.width();
+								menuh = menu.height();
+								
+								spaceBelow = scrh - elt - elh;
+								
+								if(spaceBelow > menuh) {
+									arrow.addClass('up');
+									menut = elt + elh;
+								}
+								else {
+									arrow.addClass('down');
+									menut = elt - menuh;
+								}
+								
+								// default:
+								menul = ell + (elw - menuw)/2;
+								if(menul < 0) menul = 0;
+								else if(menul > scrw - menuw) menul = scrw - menuw;
+								
+								if(arrow.hasClass("up")) arrow.css({left: menul + 152 , top: menut - 8});
+								else arrow.css({left: menul + 152 , top: menut + menuh});
+								
+								menu.css({left: menul, top: menut});
+								
+								function hide() {
+									$(".layer").remove();
+									$(".menu").remove();
+									$(".arrow").remove();
+									$messageControllerScope.$apply(function(){
+										$messageControllerScope.selectedId = null;
+									});
+								}
+							})(element, options);
+						}
+					}
+				});
+			});
 			
         }
     }
