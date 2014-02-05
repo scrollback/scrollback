@@ -1,19 +1,19 @@
 var __glo_prevtime = 0;
 
 function messageController($scope, $factory, $timeout, $location, $anchorScroll) {
-    
+	
+	var messages = messageArray();
+	var topIndex = 0, bottomIndex = 0;
+	
 	$scope.showMenu = false;
-	
 	$scope.messages = sbmessages;
-	
 	$scope.items = [];
-    var messages = messageArray();
-        
+    
     messages.load($scope.room.id);
     messages.merge($scope.messages.reverse());
     messages.save($scope.room.id);
-   var topIndex = 0, bottomIndex = 0;
-    // initialising items with 50 messages initially 
+
+	// initialising items with 50 messages initially 
     for (var i = 0; i < 50; i++) {
         if(topIndex < messages.length){
             if(messages[topIndex].type == "text")
@@ -21,18 +21,22 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
             topIndex += 1;
         }
     }
+	
     $factory.on("nick", function(nick) {
         $scope.$apply(function() {
             $scope.user.id = nick;
         });
     });
+	
     $factory.on("message", function(msg) {
-    	$scope.$apply(function() {
-            newMessage(msg);    
-        });
+		$scope.$apply(function(){
+			newMessage(msg);    
+		});
     });
+	
     function newMessage(data) {
-        var i, updated = false, deleted = false,index;
+		
+		var i, updated = false, deleted = false, index;
 		
         if($(window).scrollTop() + $(window).height() > $(document).height() - 20) {
            // If a user is reading a message towards the bottom of the page, or typing something, a new incoming message must not 
@@ -42,7 +46,9 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
        }
        
         if(data.type && data.type!="text") return;
+		
 		angular.element('#nomessagediv').hide();
+		
 		for (i =0; i <=50 && i<messages.length; i++ ) {
             if (messages[i].id == data.id) {
                 messages[i] = data;
@@ -62,11 +68,13 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         }else {
             index = i;
         }
+		
 		if(bottomIndex === 0) {
             //just to isolate the scope.
 			(function(){
-                var l=$scope.items.length,insertPosition=l-1,i;
-                for(i=insertPosition;i>=0;i--) {
+				
+				var l=$scope.items.length,insertPosition=l-1,i;
+				for(i=insertPosition;i>=0;i--) {
                     if($scope.items[i].id == data.id) {
                         $scope.items[i] = data;
                         if(data.message) {
@@ -75,59 +83,71 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                         return;  
                     } 
                 }
+				
 				(deleted && !data.message) || $scope.items.push(messages[index]);
+			
 			})();
 		}
     }
 	
 	$scope.showmenu = function(index, item){
+		
 		var el = angular.element('.scrollback-message').eq(index);
 		var shareUser = $scope.user.id;
 		
 		$scope.selectedId = item.id;
-		
 		$scope.selectedIndex = index;
 		$scope.showMenu = true;
 		
-		if( $scope.user.id.indexOf('guest-') ===0 ) shareUser = shareUser.substring(6);
-		if(item.text.indexOf('/me')==0) item.text = item.text.replace('/me', shareUser);
+		if( $scope.user.id.indexOf('guest-') === 0 ) shareUser = shareUser.substring(6);
+		
+		if(item.text.indexOf('/me') === 0) item.text = item.text.replace('/me', shareUser);
 		
 		var twitterLink = encodeURI("http://twitter.com/home/?status=" + item.text  + " via https://scrollback.io/" + $scope.room.id);
-		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id ) + "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id + "&p[summary]=" + item.text;
 		
-		$scope.options = {'Tweet Message' : function(){ window.open(twitterLink,'_blank') }, 'Share on FB' : function(){ window.open(facebookLink,'_blank') } };
+		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id ) 
+		+ "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id 
+		+ "&p[summary]=" + item.text;
 		
-	}
+		$scope.options = {
+			'Tweet Message'	: function(){ window.open(twitterLink,'_blank'); }, 
+			'Share on FB'   : function(){ window.open(facebookLink,'_blank'); } 
+		};
+		
+	};
 
     $scope.message = function() {
-        var text = $scope.text.trim(),message;
+
+		var text = $scope.text.trim(),message;
 		var mentionedUsers = [];
 		
-		function isMember(m){
-			if($scope.room.members){
-				for(i=0; i < $scope.room.members.length; i++ ){
-					if($scope.room.members[i].id == m) return 1;
+		function isMember(m) {
+			if($scope.room.members) {
+				for(i=0; i < $scope.room.members.length; i++ ) {
+					if($scope.room.members[i].id === m) return 1;
 				}
 			}
 			return 0;
 		}
 		
-		function isMention(input){
+		function isMention(input) {
 			//this function checks if any users were mentioned in a message 
-			if( (/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)){ 						
+			if( (/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)) { 						
 				input = input.toLowerCase();
 				input = input.replace(/[@:,]/g,"");
 				if(isMember(input)) mentionedUsers.push(input);
 			}
 		}
+		
 		text.split(' ').map(isMention);
 		
         $scope.text = "";
-        message = {type:"text", text: text, to: $scope.room.id, from: $scope.user.id, mentions: mentionedUsers};
-        if(text !== "") {
+        message = { type:"text", text: text, to: $scope.room.id, from: $scope.user.id, mentions: mentionedUsers };
+        
+		if(text !== "") {
             newMessage(message);
             $factory.message(message, function(data) {
-                $scope.$apply(function(){
+                $scope.$apply(function() {
                     newMessage(data);    
                 });
             });
@@ -145,15 +165,18 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 //            }
 //        }
 //    };
-
+	
     $scope.loadMoreUp = function() {
-        for (var i = 0; i < 5; i++) {
-            if(topIndex < messages.length) {
-                if(messages[topIndex].type == "text")
+        
+		for (var i = 0; i < 5; i++) {
+           
+			if(topIndex < messages.length) {
+                if(messages[topIndex].type === "text")
                     $scope.items.unshift(messages[topIndex]);
                 topIndex += 1;
             }
-            if(messages.length - topIndex == 30) {
+			
+            if(messages.length - topIndex === 30) {
                 // time to request factory for messages from above 
                 $factory.messages($scope.room.id, "", messages[messages.length - 1].time);
                 $factory.on("messages", function(data){
@@ -162,7 +185,9 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                     }
                 });
             }
+			
         }
+		
         // removing elements from the bottom which are out of view scope 
         $timeout( function() {
             if($scope.items.length > 50) {
@@ -173,12 +198,13 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                 }
             }
         });
+		
     };
     $scope.loadMoreDown = function() {
         // TODO : popping from top :)
         for(i=0; i< 5; i++) {
               if(bottomIndex > 0) {
-				 bottomIndex -= 1;
+				bottomIndex -= 1;
                 if(messages[bottomIndex] && messages[bottomIndex].type == 'text'){
                     $scope.items.push(messages[bottomIndex]);
 				}
@@ -205,40 +231,50 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 scrollbackApp.controller('messageController', messageController);
 
 scrollbackApp.directive('message',function($compile, $timeout) {
-    return{
-        restrict: 'E',
-        template: '<div class="scrollback-message" style="border-left-color: {{bcolor}}">'+
+    
+	return {
+        
+		restrict: 'E',
+        
+		template: '<div class="scrollback-message" style="border-left-color: {{bcolor}}">'+
                         '<span class="scrollback-message-separator">[</span>'+
                         '<span class="scrollback-message-nick">{{nick}}</span>'+
                         '<span class="scrollback-message-separator">]</span>'+
                         '<span ng-class="slashMe?me:noSlashMe" ng-repeat="i in text track by $index">'+
                             '<span ng-show="isText(i)">{{i.text}}</span>'+
                             '<span ng-show="!isText(i)"><a href="{{i.link}}">{{i.text}}</a></span></span>'+
-						'<span ng-show = "showTime" class="scrollback-message-time"> {{time}}</span>'
-						
-                    +'</div>',
-        scope: {
+						'<span ng-show = "showTime" class="scrollback-message-time"> {{time}}</span>'+'</div>',
+        
+		scope: {
 			showMenu: '=',
 			menuOptions: '='
 		},
-        link: function($scope, element, attr) {
-            var value;
-            $scope.me="scrollback-message-content-me";
+        
+		link: function($scope, element, attr) {
+			var value;
+            
+			$scope.me ="scrollback-message-content-me";
             $scope.noSlashMe="scrollback-message-content";
-            $scope.isText = function(part) {
+            
+			$scope.isText = function(part) {
                 return ((part.type=="link")?false:true);
             };
 			
             attr.$observe('from', function(value) {
                 $scope.nick = $scope.from = value.replace(/^guest-/,"");
             });
+			
             attr.$observe('label', function(value) {
-                value = value.substring(0,32);
+            
+				value = value.substring(0,32);
                 if(value)$scope.bcolor = hashColor(value);
                 else $scope.bcolor = "";
-            });
+            
+			});
+			
             attr.$observe('text', function(value) {
-                $scope.slashMe = (/^\/me/.test(value));
+                
+				$scope.slashMe = (/^\/me/.test(value));
                 $scope.text = value;
                 if($scope.slashMe) {
                     value = $scope.text = $scope.text.replace(/^\/me/, $scope.from);
@@ -249,20 +285,25 @@ scrollbackApp.directive('message',function($compile, $timeout) {
                 $scope.text = format($scope.text);
 				
             });
-			attr.$observe('time', function(value){
+			
+			attr.$observe('time', function(value) {
+			
 				var currtime = new Date().getTime();
+				
 				var time = value;
 
-				if(time - __glo_prevtime > 60000 ) $scope.showTime = true; 
+				if (time - __glo_prevtime > 60000) $scope.showTime = true; 
 				else $scope.showTime = false;
 				
 				__glo_prevtime = time;
 				
 				var showDate = prettyDate(time, currtime);
 				$scope.time = showDate;
+			
 			});
 			
 			$scope.prettyDate = function prettyDate(time, currTime) {
+					
 					var d = new Date(parseInt(time, 10)), n = new Date(currTime),
 					day_diff = (n.getTime()-d.getTime())/86400000,
 					weekDays=["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
@@ -281,15 +322,17 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 					
 					return str + ' at '+ d.getHours() + ':' +
 						(d.getMinutes()<10? '0': '') + d.getMinutes();
-			}
 			
-			$timeout(function(){
+			};
+			
+			$timeout( function(){
 				$scope.$watch('showMenu', function(val){
 					
 					$messageControllerScope = $scope.$parent.$parent;
 					
-					if( val === true){
-						if($messageControllerScope.selectedIndex && $messageControllerScope.selectedIndex === $scope.$parent.$index){
+					if( val === true) {
+						
+						if($messageControllerScope.selectedIndex && $messageControllerScope.selectedIndex === $scope.$parent.$index) {
 							
 							var el = angular.element('.scrollback-message').eq($scope.$parent.$index);
 							$messageControllerScope.showMenu = false;
@@ -298,9 +341,10 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 							element = el.eq(0);
 							
 							(function showMenu(el, opt) {
-								layer = $("<div>").addClass('layer').click(hide);
-								menu = $("<div>").addClass('menu').addClass('clearfix');
-								arrow = $("<div>").addClass('arrow').appendTo(menu);
+								var layer = $("<div>").addClass('layer').click(hide);
+								var menu = $("<div>").addClass('menu').addClass('clearfix');
+								var arrow = $("<div>").addClass('arrow').appendTo(menu);
+								
 								for(i in opt) {
 									$("<button>").addClass('menuitem').text(i).click( {option: i}, function(event) {
 										opt[event.data.option]();
@@ -310,18 +354,18 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 								
 								$('body').append(layer, menu);
 								
-								elt = el.offset().top - $(document).scrollTop() + 5; // element top relative to window
-								ell = el.offset().left - $(document).scrollLeft() - 100;
-								elw = el.width();
-								elh = el.height();
+								var elt = el.offset().top - $(document).scrollTop() + 5; // element top relative to window
+								var ell = el.offset().left - $(document).scrollLeft() - 100;
+								var elw = el.width();
+								var elh = el.height();
 								
-								scrw = $(window).width();
-								scrh = $(window).height();
+								var scrw = $(window).width();
+								var scrh = $(window).height();
 								
-								menuw = menu.width();
-								menuh = menu.height();
+								var menuw = menu.width();
+								var menuh = menu.height();
 								
-								spaceBelow = scrh - elt - elh;
+								var spaceBelow = scrh - elt - elh;
 								
 								if(spaceBelow > menuh) {
 									arrow.addClass('up');
@@ -333,7 +377,8 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 								}
 								
 								// default:
-								menul = ell + (elw - menuw)/2;
+								var menul = ell + (elw - menuw)/2;
+								
 								if(menul < 0) menul = 0;
 								else if(menul > scrw - menuw) menul = scrw - menuw;
 								
@@ -361,7 +406,8 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 });
 
 scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
-    return function(scope, elm, attr) {
+    
+	return function(scope, elm, attr) {
         
         var raw = elm[0];
         var $ = angular.element;
@@ -380,19 +426,6 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
                 }
             });
         });
-
-
-
-        // elm.bind('scroll', function() {
-        //     if (raw.scrollTop <= 150) { // load more items before you hit the top
-        //         var sh = raw.scrollHeight;
-        //         scope.$apply(attr.whenScrolledUp);
-        //         if(raw.scrollHeight > sh) raw.scrollTop = raw.scrollHeight - sh;
-        //     }
-        //     if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight - 50) {
-        //       scope.$apply(attr.whenScrolledDown);
-        //     }
-        // });
     };
 }]);
 
