@@ -14,6 +14,7 @@ exports.init = function(app, coreObject) {
 		
 	});
 	app.get("/s/script.js", function(req, res) {
+		res.set('Content-Type', 'application/javascript');
 		if (!configPlugins) {
 			configInit(function(){
 				res.end(configPlugins.scripts);		
@@ -35,9 +36,9 @@ exports.init = function(app, coreObject) {
 	function exec(url, r,req,res,next) {
 		var s = url.split('/');
 		log("s=", s);
-		if (s.length === 4) {
-			if (configPlugins && configPlugins[r] && configPlugins[r][s[2]] && configPlugins[r][s[2]][s[3]]) {
-				return configPlugins[r][s[2]][s[3]](req,res,next);
+		if (s.length >= 3) {
+			if (configPlugins && configPlugins[r] && configPlugins[r][s[2]]) {
+				return configPlugins[r][s[2]](req,res,next);
 			}
 		}
 		return next();
@@ -69,8 +70,8 @@ exports.init = function(app, coreObject) {
 	configPlugins: {
 		pluginUI:{object},
 		scripts: {string},
-		get: {object}
-		post: {object}
+		get: {function}
+		post: {function}
 	}
 	 */
 	function configInit(callback) {
@@ -93,15 +94,16 @@ exports.init = function(app, coreObject) {
 					if (payload[ap].script) {
 						configPlugins.scripts += ap + ": " + payload[ap].script + ","; 
 					}
-					if (payload[ap].get) {
+					if (payload[ap].get && typeof payload[ap].get === "function") {
 						configPlugins.get[ap] = payload[ap].get;
 					}
-					if (payload[ap].post) {
+					if (payload[ap].post && typeof payload[ap].post === "function") {
 						configPlugins.post[ap] = payload[ap].post;
 					}
 				}
 			}
-			configPlugins.scripts = "var scripts = {"  + (configPlugins.scripts.substring(0, configPlugins.scripts.length-1)) + "}";
+			configPlugins.scripts = "\"use strict\";var scrollbackScripts = {"  +
+									(configPlugins.scripts.substring(0, configPlugins.scripts.length-1)) + "};";
 			configPlugins.pluginsUI = p;
 			callback();
 		});
