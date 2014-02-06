@@ -77,7 +77,7 @@ function send(message, callback) {
 	message.time = new Date().getTime();
 	message.origin = {
 		gateway : "web",
-		location : window.location.toString(),
+		location : window.location.toString()
 	};
 	if(callback) pendingCallbacks[message.id] = callback;
 	socket.emit("message", message);

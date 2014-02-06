@@ -13,16 +13,15 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 	link(rel="stylesheet",href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css")
 	
 	body
-		div#notifications(ng-show="notifications.length",ng-cloak="")
-			div.notification(ng-repeat="i in notifications track by $index") {{i}}
-		#meta(ng-controller="metaController",ng-class="status.waiting?'waiting column':'column'")
+		#titleBar(ng-controller="metaController")
 			a(href="/me")#logo scrollback	
 			#user(ng-cloak="")
 				a: img.face(ng-src='{{user.picture}}' ng-click='profile()')
 				a(id='logoutButton' ng-show='user.owner==user.id' ng-click='logout()' title='logout' class='button buttonText fa fa-power-off right')
-			#username(ng-click='profile()',ng-cloak="") {{user.id}}			
-			div
-				a.archive(ng-show="room.id !== ''" onclick='window.location ="/old/#{room.id}";') (Switch to old view)
+			#username(ng-click='profile()',ng-cloak="") {{user.id}}
+		div#notifications(ng-show="notifications.length",ng-cloak="")
+			div.notification(ng-repeat="i in notifications track by $index") {{i}}
+		#meta(ng-controller="metaController",ng-class="status.waiting?'waiting column':'column'")			
 			#info 
 				ng-view
 			#foot

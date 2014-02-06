@@ -64,17 +64,16 @@ img.face {
 	}
 }
 
-
-#meta {
-	position: absolute;
+#titleBar{
+	position: fixed;
 	background: #000; color: #eee;
-	width: 38%; min-height: 100%;
+	min-height: 20%;
+	width: 38%; 
 	border-right: @sbthick solid @sbgreen;
-	left: 0; top: 0;
+	left: 0; 
 	padding: 48px;
 	.radial-gradient(#555, #000, 100%, 50%);
 	.box-sizing(border);
-	
 	a#logo {
 		display: block; float: left;
 		line-height: 48px; cursor: pointer; color: transparent;
@@ -90,8 +89,20 @@ img.face {
 	}
 	#username {
 		line-height: 48px; cursor: pointer; float: right; position: relative ;
-		font-weight: bold ;
+		font-weight: bold;
 	}
+}
+
+#meta {
+	position: fixed;
+	background: #000; color: #eee;
+	width: 38%; min-height: 80%;
+	border-right: @sbthick solid @sbgreen;
+	left: 0; top: 20%; bottom: 0;
+	padding: 48px;
+	.radial-gradient(#555, #000, 100%, 50%);
+	.box-sizing(border);
+	
 	#info { clear: both; padding-top: 16px; }
 	#foot { font-size: 0.75em; color: #ccc; margin: 2em 0 0 0; display: inline-block;}
 }
@@ -114,7 +125,7 @@ img.face {
 
 //@media screen and (max-width: 640px) {
 //	#meta {
-//		height: 64px; width: 100%; z-index: 1;
+//		height: 64px; width: 100%; z-index: 1; display: none;
 //		border-right: none; border-bottom: @sbthick solid @sbgreen;
 //		overflow: hidden;
 //		padding: 4px 48px;
@@ -126,10 +137,35 @@ img.face {
 
 //----- room page -----
 
+@media screen and (max-width: 800px) {
+	#titleBar {
+		width: 100%; z-index: 1;
+		height: 30px;
+		padding-top: 15px;
+		padding-bottom: 5px;
+		overflow: hidden;
+		border-right: none;
+		#user {
+			display: none;
+		}
+	}
+	#meta {
+		width: 100%; z-index: 1;
+		left: -100%;
+		overflow: hidden;
+		padding: 4px 48px;
+	}
+	#body {
+		left: 0; 
+		.radial-gradient(#fff, #eee, 50%, 0%);
+		border-right: none; overflow: hidden;
+	}
+}
+
 #info {
 	#description { margin: 0; }
 	#members { margin-top: 1.414em; overflow: hidden; height: 48px; }
-	#members h2 { display: inline; margin: 0 8px 0 0; line-height: 48px; }		
+	#members h2 { display: inline; margin: 0 8px 0 0; line-height: 48px; }
 }
 
 //----- profile page -----
@@ -182,13 +218,6 @@ img.face {
 .fa{
 	font-family: FontAwesome, "Open Sans", sans-serif !important;
 }
-//.loginButon { ... }
-//
-//.loginButton .cancel { ... }
-//
-//.loginButton:before 
-//
-//<div class='loginbttn cancel'>
 
 //----- Rooms page -----
 

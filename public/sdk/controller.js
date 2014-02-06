@@ -201,7 +201,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 		
     };
     $scope.loadMoreDown = function() {
-        // TODO : popping from top :)
+        // TODO : popping from top
         for(i=0; i< 5; i++) {
               if(bottomIndex > 0) {
 				bottomIndex -= 1;

@@ -50,9 +50,11 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 			}, 3000);
 		});
 	});
+	
 	$scope.goBack = function() {
 		$window.history.back();
 	};
+	
 	$scope.profile = function() {
 		if(/^guest-/.test($scope.user.id)) {
 			$scope.personaLogin();
@@ -217,7 +219,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	function loadMembers() {
 		var members;
 		$factory.membership({memberOf: $scope.room.id}, function(data){
-			$scope.$apply(function(){
+			$scope.$apply(function() {
 				$scope.room.members = data.data;
 				var ownerIndex = -1, ownerObj;
 				// putting room owner as first user in members array
@@ -228,7 +230,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 						break;
 					}
 				}
-				if(ownerIndex > -1){
+				if(ownerIndex > -1) {
 					$scope.room.members.unshift(ownerObj[0]);
 				}
 			});
@@ -250,13 +252,16 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		}
 		else $location.path("/me");
 	}
+	
 	$scope.toggleEmbed = function(){
 		$('#embedScript').toggle();
 	}
+	
 	$scope.isOwner = function() {
 		if($scope.user.id == $scope.room.owner) return true;
 		else return false;
 	};
+	
 	$scope.goToConfigure = function() {
 		if(/^guest-/.test($scope.user.id)){
 			$scope.personaLogin();
@@ -264,6 +269,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		}
 		else $location.path("/"+$scope.room.id+"/edit");
 	};
+	
 	$scope.partRoom = function() {
 		var msg = {}, index,i,l;
 		msg.to = $scope.room.id;
@@ -283,6 +289,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			}
 		}
 	};
+	
 	$scope.joinRoom = function() {
 		var msg = {};
 		var flag = 1;
@@ -316,6 +323,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		if(index > -1) return true;
 		else return false;
 	};
+	
 });
 
 scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', function($scope, $timeout, $location) {	
