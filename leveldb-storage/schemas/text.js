@@ -8,22 +8,27 @@ module.exports = function (types) {
 	return {
 		put: function (message, cb) {
 			log("Pushing to leveldb", message);
-			texts.put(message, function(err, res){
+			texts.put(message, function(err, res) {
 				for(i in message.labels){
 					types.labels.put({id:i});
 					if(message.labels.hasOwnProperty(i)) {
 						texts.link(message.id, 'hasLabel', i, {score: message.labels[i]});
 					}
-				}	
+				}
 				log(err, res);
-				cb(err, res);
+				cb && cb(err, res);
 			});
 			
 		},
 		
 		get: function (options, cb) {
 			var query = {}, reversed, start, end, startTime = new Date().getTime();
-			
+			if(options.id) {
+				return texts.get(options.id, function(err, data){
+					console.log("Calling back", data);
+					return cb(true,data);
+				});
+			}
 			if(options.since && !options.until) {
 				reversed = false;
 				start = options.since; end = 9E99;
