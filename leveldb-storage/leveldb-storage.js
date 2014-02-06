@@ -9,19 +9,22 @@ module.exports = function(core) {
 	var joinpart = require("./schemas/joinpart.js")(types);
 	var admitexpel = require("./schemas/admitexpel.js")(types);
 	var awayback = require("./schemas/awayback.js")(types);
+	var edit = require("./schemas/edit.js")(types);
 
 
 
 	core.on('room',roomuser.put, "storage");
 	core.on('user',roomuser.put, "storage");
 
-	// core.on('away', awayback.put, "storage");
-	// core.on('back', awayback.put, "storage");
+	core.on('away', awayback.put, "storage");
+	core.on('back', awayback.put, "storage");
 
 	core.on('text', texts.put, 'storage');
 
 	core.on('join', function(data, cb){
-		data.role = "member";
+		data.role = data.role || "member";
+
+		//for now the user cannot part a room.
 		if(data.room.owner == data.user.id) data.role = "owner";
 		joinpart.put(data, cb);
 	}, 'storage');
@@ -45,7 +48,7 @@ module.exports = function(core) {
 		admitexpel.put(data, cb);
 	}, 'storage');
 
-
+	core.on('edit', edit.put,'storage')
 	// core.on('messages', texts.get, 'storage');
 	core.on('getUsers', roomuser.getUser, 'storage');
 	core.on('getRooms', roomuser.getRoom, 'storage');

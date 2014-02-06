@@ -40,5 +40,9 @@ module.exports = function(core){
 			send(message, message.to);
 		callback();
 	}, "gateway");
+	core.on("edit", function(edit, callback) {
+		send(edit, edit.to);
+		callback();
+	},"gateway");
 	var send = socket.send;
 }

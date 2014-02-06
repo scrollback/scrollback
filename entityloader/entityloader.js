@@ -13,6 +13,15 @@ module.exports = function(core) {
 			});
 		});
 	}
+
+	core.on('edit', function(data, callback) {
+		loader(data, function(data, cb){
+			core.emit("messages", {id: data.ref}, function(err, old) {
+				data.old = old;
+				cb(null, data);
+			});		
+		});
+	},'loader');
 	core.on('text', loader, 'loader');
 	core.on('away', loader, 'loader');
 	core.on('back', loader, 'loader');
@@ -20,7 +29,6 @@ module.exports = function(core) {
 	core.on('part', loader, 'loader');
 	core.on('admit', loader, 'loader');
 	core.on('expel', loader, 'loader');
-	core.on('edit', loader, 'loader');
 	// core.on('user', loader, 'loader');
 	core.on('init', loader, 'loader');
 }

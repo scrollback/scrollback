@@ -55,6 +55,7 @@ sock.on('connection', function (socket) {
 			case 'rooms': rooms(d.data, conn); break;
 			case 'getUsers': getUsers(d.data, conn); break;
 			case 'getRooms': getRooms(d.data, conn); break;
+			case 'edit': edit(d.data, conn); break;
 		}
 	});
 	
@@ -189,6 +190,17 @@ function messages (query, conn) {
 	});
 }
 
+
+function edit(action, conn) {
+	session.get({sid: conn.sid}, function(err, sess) {
+		var user = sess.user;
+		action.from = user.id;
+		core.emit("edit",action, function(err, data){
+			conn.send('edit',data);
+		});
+	});
+	
+}
 function message (m, conn) {
 	
 	if(!conn.sid) return;
