@@ -117,16 +117,19 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 		if($scope.user.id === $scope.room.owner){
 			//user is owner of the room, so show option to hide messages
 			$scope.options['Hide Message'] = function(){
-				$scope.items[index].labels.push('hidden');
-				console.log("Labels: ", $scope.items[index].labels);
+				labels = {};
+				$scope.items[index].labels.forEach(function(i){
+					if(i) labels[i] = 0;
+				});
+				labels['hidden'] = 1;
 				var hideMsg = {
 					type : 'edit',
 					ref : $scope.items[index].id,
 					to : $scope.room.id,
 					from : $scope.user.id,
-					labels : $scope.items[index].labels
+					labels : labels
 				}
-				$factory.message(hideMsg, function(){
+				$factory.message(hideMsg, function() {
 					$scope.items.splice(index, 1);
 					$scope.items.unshift(messages[topIndex]);
 					topIndex += 1;
