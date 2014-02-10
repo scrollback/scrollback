@@ -8,7 +8,17 @@ module.exports = function(core){
 		var startTime = new Date().getTime();
 		var indexes = [];
 		var dbName = "_messages";
-
+		if(options.id) {
+			return db.query("select * from text_messages where id = ?",[options.id], function(err, data) {
+				if(err) return callback(err);
+				data.forEach(function(element) {
+					element.type = "text";
+					fixOrigin(element);
+					fixLabels(element);
+					callback(err, data);
+				});
+			});
+		}
 		if (options.type) dbName = options.type + dbName;
 
 		var query = "SELECT * FROM `" + dbName + "` ",
@@ -84,29 +94,13 @@ module.exports = function(core){
 
 		log(query, params);
 		db.query(query, params, function(err, data) {
-			var start, end;
+			var start, end, labelObj, i;
 
 			if(err && callback) return callback(err);
 			data.forEach(function(element){
 				element.type = options.type;
-				element.labels = [element.labels];
-				try{
-					element.origin = JSON.parse(element.origin);
-				}
-				catch(Exception){
-					originObject = {};
-					originObject.gateway = element.origin.split(":")[0];
-					if (originObject.gateway == "irc")
-						originObject.channel = element.to;
-					if (originObject.gateway == "web") {
-						originObject.ip = element.origin.split("//")[1];
-					}
-					element.origin = originObject;
-				}
-				if (element.origin && element.origin.gateway == "web") {
-					element.origin.ip && delete element.origin.ip;
-					element.origin.location && delete element.origin.location;
-				}
+				fixOrigin(element);
+				fixLabels(element);
 			});
 			start  = since || data.length && data[0].time || 0;
 			end = until || data.length && data[data.length-1].time || 0;
@@ -133,3 +127,40 @@ module.exports = function(core){
 	}, "storage");
 };
 
+function fixOrigin(element) {
+	var originObject;
+	try{
+		element.origin = JSON.parse(element.origin);
+	}
+	catch(Exception){
+		originObject = {};
+		originObject.gateway = element.origin.split(":")[0];
+		if (originObject.gateway == "irc")
+			originObject.channel = element.to;
+		if (originObject.gateway == "web") {
+			originObject.ip = element.origin.split("//")[1];
+		}
+		element.origin = originObject;
+	}
+	if (element.origin && element.origin.gateway == "web") {
+		element.origin.ip && delete element.origin.ip;
+		element.origin.location && delete element.origin.location;
+	}
+	return element;
+}
+
+
+function fixLabels(element) {
+	var labelObj;
+	try{
+		labelObj = JSON.parse(element.labels);
+		for(i in labelObj){
+			element.labels = [];
+			if(labelObj.hasOwnProperty(i)){
+				element.labels.push(i);
+			}
+		}
+	}catch(Exception){
+		element.labels = [element.labels];
+	}
+}
