@@ -10,7 +10,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 	$scope.items = [];
     
     messages.load($scope.room.id);
-    messages.merge($scope.messages.reverse());
+	if($scope.messages) messages.merge($scope.messages.reverse());
     messages.save($scope.room.id);
 
 	// initialising items with 50 messages initially 
