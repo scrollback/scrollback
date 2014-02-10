@@ -28,6 +28,8 @@ module.exports = function (types) {
 					console.log("Calling back", data);
 					return cb(true,data);
 				});
+			}else{
+				return cb();
 			}
 			if(options.since && !options.until) {
 				reversed = false;

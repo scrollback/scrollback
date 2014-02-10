@@ -8,7 +8,11 @@ module.exports = function(core){
 		var startTime = new Date().getTime();
 		var indexes = [];
 		var dbName = "_messages";
-
+		if(options.id){
+			return db.query("select * from text_messages where id = ?",[options.id], function(err, data) {
+				callback(err, data);
+			});
+		}
 		if (options.type) dbName = options.type + dbName;
 
 		var query = "SELECT * FROM `" + dbName + "` ",

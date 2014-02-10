@@ -15,8 +15,9 @@ module.exports = function(core) {
 	}
 
 	core.on('edit', function(data, callback) {
-		loader(data, function(data, cb){
+		loader(data, function(err, data){
 			core.emit("messages", {id: data.ref}, function(err, old) {
+				return callback(new Error("INVALID REF"));
 				data.old = old;
 				cb(null, data);
 			});		
