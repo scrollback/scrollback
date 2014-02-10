@@ -114,6 +114,25 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 			'Share on FB'   : function(){ window.open(facebookLink,'_blank'); } 
 		};
 		
+		if($scope.user.id === $scope.room.owner){
+			//user is owner of the room, so show option to hide messages
+			$scope.options['Hide Message'] = function(){
+				$scope.items[index].labels.push('hidden');
+				console.log("Labels: ", $scope.items[index].labels);
+				var hideMsg = {
+					type : 'edit',
+					ref : $scope.items[index].id,
+					to : $scope.room.id,
+					from : $scope.user.id,
+					labels : $scope.items[index].labels
+				}
+				$factory.message(hideMsg, function(){
+					$scope.items.splice(index, 1);
+					$scope.items.unshift(messages[topIndex]);
+					topIndex += 1;
+				});
+			}
+		}
 	};
 
     $scope.message = function() {
