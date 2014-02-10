@@ -14,6 +14,7 @@ module.exports = function (types) {
 			newText = {
 				id:old.id,
 				time: old.time,
+				type:"text",
 				from:old.from,
 				to:old.to,
 				user:old.user,

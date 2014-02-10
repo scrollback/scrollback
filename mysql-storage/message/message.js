@@ -38,4 +38,13 @@ module.exports = function(core) {
 		});
 		return callback? callback(null, message): null;
 	}, "storage");
+
+
+	core.on("edit", function(message, callback) {
+		var labels;
+		db.query("UPDATE text_message  SET `id`=?, `from`=?, `to`=?, `text`=?, "+
+			"`origin`=?, `time`=?, `labels`= ?", [message.id, message.from, message.to,
+			message.text,  JSON.stringify(message.origin), message.time, JSON.stringify(message.labels)]);
+		callback();
+	},"watchers");
 };

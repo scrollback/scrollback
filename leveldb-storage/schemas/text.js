@@ -9,11 +9,17 @@ module.exports = function (types) {
 		put: function (message, cb) {
 			log("Pushing to leveldb", message);
 			texts.put(message, function(err, res) {
-				for(i in message.labels){
-					types.labels.put({id:i});
-					if(message.labels.hasOwnProperty(i)) {
+				if(message.labels instanceof Array) {
+					message.labels.forEach(function(element) {
 						texts.link(message.id, 'hasLabel', i, {score: message.labels[i]});
-					}
+					});
+				}else {
+					for(i in message.labels){
+						types.labels.put({id:i});
+						if(message.labels.hasOwnProperty(i)) {
+							texts.link(message.id, 'hasLabel', i, {score: message.labels[i]});
+						}
+					}	
 				}
 				log(err, res);
 				cb && cb(err, res);
@@ -28,7 +34,7 @@ module.exports = function (types) {
 					console.log("Calling back", data);
 					return cb(true,data);
 				});
-			}else{
+			}else {
 				return cb();
 			}
 			if(options.since && !options.until) {
