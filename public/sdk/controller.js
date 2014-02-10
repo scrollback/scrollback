@@ -12,7 +12,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     messages.load($scope.room.id);
 	if($scope.messages) messages.merge($scope.messages.reverse());
     messages.save($scope.room.id);
-
+    console.log(sbmessages);
 	// initialising items with 50 messages initially 
     for (var i = 0; i < 50; i++) {
         if(topIndex < messages.length){
@@ -281,13 +281,11 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 			$scope.isText = function(part) {
                 return ((part.type=="link")?false:true);
             };
-			
             attr.$observe('from', function(value) {
                 $scope.nick = $scope.from = value.replace(/^guest-/,"");
             });
 			
             attr.$observe('label', function(value) {
-            
 				value = value.substring(0,32);
                 if(value)$scope.bcolor = hashColor(value);
                 else $scope.bcolor = "";

@@ -11,14 +11,13 @@ module.exports = function (types) {
 		put: function (data, cb) {
 			var old = data.old;
 			var editAction, editInvs = {}, newText;
+			console.log(data.old)
 			newText = {
 				id:old.id,
 				time: old.time,
 				type:"text",
 				from:old.from,
 				to:old.to,
-				user:old.user,
-				room:old.user,
 				labels:{}
 			};
 			for(i in old.labels) if(old.labels.hasOwnProperty(i)) newText.labels[i] = old.labels[i];
@@ -26,12 +25,16 @@ module.exports = function (types) {
 				id:data.id,
 				from:data.from,
 				ref: data.ref,
+				to: old.to,
+				user: data.user,
+				room:data.room,
+				old: data.old
 			};
 			if(data.labels) {
 				 editAction.labels = {};
 				for(i in data.labels) {
 					if(data.labels.hasOwnProperty(i)) {
-						if(old.labels[i]) {
+						if(old.labels && old.labels[i]) {
 							if(!editInvs.labels) editInvs.labels = {};
 							editInvs.labels[i]=old.labels[i];
 						}
@@ -53,6 +56,7 @@ module.exports = function (types) {
 			// console.log("new",newText);
 			textsApi.put(newText);
 			edit.put(editAction);
+			cb(null, editAction);
 		}
 	};
 };

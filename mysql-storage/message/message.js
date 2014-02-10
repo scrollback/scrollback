@@ -42,9 +42,11 @@ module.exports = function(core) {
 
 	core.on("edit", function(message, callback) {
 		var labels;
-		db.query("UPDATE text_message  SET `id`=?, `from`=?, `to`=?, `text`=?, "+
-			"`origin`=?, `time`=?, `labels`= ?", [message.id, message.from, message.to,
-			message.text,  JSON.stringify(message.origin), message.time, JSON.stringify(message.labels)]);
-		callback();
+		console.log("NEW:", message);
+		db.query("UPDATE text_messages  SET  `text`=?, "+
+			"`labels`= ? where `id`=?", [message.text?message.text:message.old.text,JSON.stringify(message.labels),message.old.id], function(){
+				console.log(arguments);
+				callback();
+			});
 	},"watchers");
 };

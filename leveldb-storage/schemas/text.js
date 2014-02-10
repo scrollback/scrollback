@@ -11,7 +11,7 @@ module.exports = function (types) {
 			texts.put(message, function(err, res) {
 				if(message.labels instanceof Array) {
 					message.labels.forEach(function(element) {
-						texts.link(message.id, 'hasLabel', i, {score: message.labels[i]});
+						texts.link(message.id, 'hasLabel', element, {score: 1});
 					});
 				}else {
 					for(i in message.labels){
@@ -32,6 +32,7 @@ module.exports = function (types) {
 			if(options.id) {
 				return texts.get(options.id, function(err, data){
 					console.log("Calling back", data);
+					if(!data) return cb();
 					return cb(true,data);
 				});
 			}else {

@@ -18,7 +18,8 @@ module.exports = function(core) {
 		loader(data, function(err, data){
 			core.emit("messages", {id: data.ref}, function(err, old) {
 				if(!old || old.length==0) return callback(new Error("INVALID REF"));
-				data.old = old;
+				console.log("========", old);
+				data.old = old[0];
 				callback(null, data);
 			});		
 		});

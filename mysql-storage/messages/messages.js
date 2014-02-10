@@ -15,8 +15,8 @@ module.exports = function(core){
 					element.type = "text";
 					fixOrigin(element);
 					fixLabels(element);
-					callback(err, data);
 				});
+				callback(true, data);
 			});
 		}
 		if (options.type) dbName = options.type + dbName;
@@ -95,7 +95,6 @@ module.exports = function(core){
 		log(query, params);
 		db.query(query, params, function(err, data) {
 			var start, end, labelObj, i;
-
 			if(err && callback) return callback(err);
 			data.forEach(function(element){
 				element.type = options.type;
@@ -151,11 +150,15 @@ function fixOrigin(element) {
 
 
 function fixLabels(element) {
-	var labelObj;
+	var labelObj, i;
+	if(!element.labels){
+		element.labels = [];
+		return;
+	}
 	try{
 		labelObj = JSON.parse(element.labels);
+		element.labels = [];
 		for(i in labelObj){
-			element.labels = [];
 			if(labelObj.hasOwnProperty(i)){
 				element.labels.push(i);
 			}
