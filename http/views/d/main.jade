@@ -61,6 +61,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 			var sbmessages = !{JSON.stringify(messages)}; 
 			var sbuser = !{JSON.stringify(user)};
 			var sbroom = !{JSON.stringify(room)};
+		
 		script(src="//code.jquery.com/jquery-1.10.1.min.js")
 		script(src="//code.jquery.com/jquery-migrate-1.2.1.min.js")
 		script(src="https://login.persona.org/include.js")
@@ -68,6 +69,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 		script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js')
 		script(src='/sdk/jquery-fixInView.js')
 		script(src='/sdk/messageArray.js')
+		script(src='/s/script.js')
 		script(src="/sdk/polyfill.js")
 		script(src='/sdk/emitter.js')
 		script(src='/sdk/sockjs.js')
@@ -77,6 +79,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 		script(src='/sdk/controller.js')
 		script(src='/sdk/app.js')
 		script(src='/sdk/viewcontroller.js')
+		
 		script.
 			$('.collapse,#meta').on('click', function() {
 				$(this).toggleClass('expanded');

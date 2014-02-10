@@ -443,6 +443,11 @@ scrollbackApp.controller('wordbanController',['$scope', function($scope) {
 	$scope.editRoom.params.wordban = $scope.room.params.wordban?true:false;
 }]);
 
+scrollbackApp.controller('twitterController',['$scope', function($scope) {
+	if(!$scope.editRoom.params) $scope.editRoom.params = {};
+	$scope.editRoom.params.twitter = $scope.room.params.twitter;
+}]);
+
 scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {
 	$scope.room = sbroom;
 	$scope.user = sbuser;

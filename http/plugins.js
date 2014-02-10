@@ -69,7 +69,7 @@ exports.init = function(app, coreObject) {
 	It will set "configPlugins"
 	configPlugins: {
 		pluginUI:{object},
-		scripts: {string},
+		scripts: {object},
 		get: {function}
 		post: {function}
 	}
@@ -92,7 +92,11 @@ exports.init = function(app, coreObject) {
 						p[ap] = payload[ap].config;
 					}
 					if (payload[ap].script) {
-						configPlugins.scripts += ap + ": " + payload[ap].script + ","; 
+						configPlugins.scripts += ap + ": {";
+						for(var fn in payload[ap].script) {
+							if(payload[ap].script[fn]) configPlugins.scripts += fn + ":" + payload[ap].script[fn] + ",";	
+						}
+						configPlugins.scripts = configPlugins.scripts.substring(0, configPlugins.scripts.length - 1) + "},";
 					}
 					if (payload[ap].get && typeof payload[ap].get === "function") {
 						configPlugins.get[ap] = payload[ap].get;
