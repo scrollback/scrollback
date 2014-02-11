@@ -4,16 +4,17 @@ var redisProxy = require('../lib/redisProxy.js');
 
 module.exports = function(core) {
     core.on("back", function(data, cb){
-        redisProxy.set("room:{{"+data.to+"}}", data.room);
-        redisProxy.set("user:{{"+data.from+"}}", data.user);
-        redisProxy.sadd("room:{{"+data.to+"}}:hasOccupant", data.from);
+        // redisProxy.set("room:{{"+data.to+"}}", JSON.stringify(data.room));
+        // redisProxy.set("user:{{"+data.from+"}}", JSON.stringify(data.user));
+        redisProxy.sadd("room:{{"+data.to+"}}:hasOccupants", data.from);
         redisProxy.sadd("user:{{"+data.from+"}}:occupantOf", data.to);
         cb();
     }, "storage");
 
     core.on("away", function(action, callback) {
-        redisProxy.srem("room:{{"+action.to+"}}:hasOccupant", action.from, function() {
-            redisProxy.scard("room:{{"+action.to+"}}:hasOccupant", function(err, data) {
+        console.log(action);
+        redisProxy.srem("room:{{"+action.to+"}}:hasOccupants", action.from, function() {
+            redisProxy.scard("room:{{"+action.to+"}}:hasOccupants", function(err, data) {
                 if(data==0) {
                     redisProxy.del("room:{{"+action.to+"}}");
                 }
@@ -26,9 +27,8 @@ module.exports = function(core) {
                 }
             });
         });
-    });
-
-    core.on("init", function(action, callback) {
+    },"storage");
+    function onnickchange(action, callback) {
         if(action.old && action.old.id){
             redisProxy.del("user:{{"+action.old.id+"}}");
             redisProxy.smembers("user:{{"+action.old.id+"}}:occupantOf", function(err, data) {
@@ -41,12 +41,30 @@ module.exports = function(core) {
         }
         redisProxy.set("user:{{"+action.user.id+"}}");
         callback();
-    });
+    }
+    // core.on("init",onnickchange);
+    core.on("message",function(action, callback){
+        if(action.type == "nick") {
+            console.log(action);
+            redisProxy.del("user:{{"+action.from+"}}");
+            redisProxy.smembers("user:{{"+action.from+"}}:occupantOf", function(err, data) {
+                data.forEach(function(room){
+                    redisProxy.srem("room:{{"+room+"}}:hasOccupants",action.from);
+                    redisProxy.sadd("room:{{"+room+"}}:hasOccupants",action.ref);
+                });
+            });
+            redisProxy.set("user:{{"+action.user.id+"}}", JSON.stringify(action.user));
+            redisProxy.rename("user:{{"+action.from+"}}:occupantOf","user:{{"+action.ref+"}}:occupantOf");
+            callback();
+        }else{
+            callback();
+        }
+    },"storage");
     core.on("user", function(user, callback) {
-        redisProxy.set("user:{{"+user.id+"}}", user);
+        redisProxy.set("user:{{"+user.id+"}}", JSON.stringify(user));
     });
     core.on("room", function(room, callback) {
-        redisProxy.set("room:{{"+room.id+"}}", room);
+        redisProxy.set("room:{{"+room.id+"}}", JSON.stringify(room));
     });
 
     core.on("getUsers", function(query, callback) {
@@ -58,15 +76,21 @@ module.exports = function(core) {
         if(query.occupantOf){
             return redisProxy.smembers("room:{{"+query.occupantOf+"}}:hasOccupants", function(err, data) {
                 if(err) return callback(err);
+                if(!data || data.length==0) return callback(true, []);
                 data = data.map(function(e){
                     return "user:{{"+e+"}}";
                 });
+                console.log(data);
                 redisProxy.mget(data, function(err, data) {
-                    return callback(err, data);
+                    if(!data) return callback(true, []);
+                    data = data.map(function(e) {
+                        return JSON.parse(e);
+                    });
+                    return callback(true, data);
                 });
             });
         }
-    });
+    }, "storage");
     core.on("getRooms", function(query, callback) {
         if(query.id){
             return redisProxy.get("room:{{"+query.id+"}}", function(err, data) {
@@ -80,11 +104,12 @@ module.exports = function(core) {
                     return "room:{{"+e+"}}";
                 })
                 redisProxy.mget(data, function(err, data) {
+                    data = data.map(function(e) {
+                        return JSON.parse(e);
+                    });
                     return callback(err, data);
                 });
             });
         }
-    });
-    // require("./occupants/occupants.js")(core);
-    // require("./guestinitializer/guestinitializer.js")(core);
+    }, "storage");
 };

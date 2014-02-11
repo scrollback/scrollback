@@ -33,7 +33,7 @@ module.exports = function (types) {
 				return texts.get(options.id, function(err, data){
 					console.log("Calling back", data);
 					if(!data) return cb();
-					return cb(true,data);
+					return cb(true,[data]);
 				});
 			}else {
 				return cb();

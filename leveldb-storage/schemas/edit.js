@@ -48,6 +48,8 @@ module.exports = function (types) {
 				editInvs.text = old.text;
 				editAction.text = data.text;
 				newText.text = data.text;
+			}else{
+				newText.text = old.text;
 			}
 			if(!newText.editInverse) newText.editInverse = [];
 			newText.editInverse.push(editInvs);
@@ -55,6 +57,8 @@ module.exports = function (types) {
 			// console.log("invs",editInvs);
 			// console.log("new",newText);
 			textsApi.put(newText);
+			delete editAction.old.room;
+			delete editAction.old.user;
 			edit.put(editAction);
 			cb(null, editAction);
 		}

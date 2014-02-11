@@ -92,7 +92,6 @@ function newSocket() {
 	socket.onopen = function() {
 		backOff = 1;
 		init();
-		factoryObject.isActive = true;
 		factoryObject.emit("connected");
 	};
 	socket.onerror = socketError;

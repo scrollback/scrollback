@@ -213,24 +213,39 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	
 	// ------------------ this code will be removed and above code uncommented once the occupants api is ready on server side 
 
+	function generateSortedList(members, occupants) {
+		var userMap = {}, userArray=[];
+		members.forEach(function(member) {
+			userMap[member.id] = member;
+			member.score = 1;
+			userArray.push(member);
+		});
+		occupants.forEach(function(occupant) {
+			if(userMap[occupant.id]) {
+				userMap[occupant.id].score +=2;	
+			}else{
+				userMap[occupant.id] = occupant;
+				member.score = 1;
+				userArray.push(occupant);
+			}
+		});
 
+		userArray.sort(function(){
+			
+		});
+
+	}
 	function loadMembers() {
-		var members;
+		var usersList;
 		$factory.membership({memberOf: $scope.room.id}, function(data){
 			$scope.$apply(function(){
 				$scope.room.members = data.data;
-				var ownerIndex = -1, ownerObj;
-				// putting room owner as first user in members array
-				for(i=0; i < $scope.room.members.length; i++){
-					if($scope.room.members[i].id === $scope.room.owner){
-						ownerIndex = i;
-						ownerObj = $scope.room.members.splice(i,1);
-						break;
-					}
-				}
-				if(ownerIndex > -1){
-					$scope.room.members.unshift(ownerObj[0]);
-				}
+				$factory.membership({memberOf: $scope.room.id}, function(data) {
+					$scope.$apply(function() {
+						$scope.room.occupants = data.data;
+						usersList = generateSortedList($scope.room.members, $scope.room.occupants);
+					});
+				});
 			});
 		});
 	}

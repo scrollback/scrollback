@@ -16,9 +16,7 @@ module.exports = function (types) {
 					cb(true, res);
 				});
 			}else if(query.occupantOf) {
-				user.get({by: 'occupantOf', eq: query.occupantOf}, function(err, res){
-					cb(true, res);
-				});
+				cb();
 			}
 		},
 		getRoom: function(query, cb) {

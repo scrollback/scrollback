@@ -87,7 +87,6 @@ function init(data, conn) {
 				if(rooms.hasOwnProperty(i)) rooms[i] = 0;
 			}
 		}
-		log("-------nick----------",sess.user);
 		var query=[];
 		if (sess.user.id.indexOf('guest-')!==0) {
 			query.user=sess.user.id;
@@ -107,7 +106,14 @@ function init(data, conn) {
 				user: sess.user,
 				clientTime: data.clientTime,
 				serverTime: new Date().getTime(),
-				
+			});
+
+			//Temp for now.
+			core.emit("init", {
+				id: sess.user.id,
+				type: "init",
+				from: sess.user.id,
+				time: new Date().getTime()
 			});
 			session.set(conn.sid, sess);
 		});
@@ -155,7 +161,7 @@ function userAway(user, room, conn) {
 			}
 			session.set(conn.sid, sess);
 		});
-	}, 30*1000);
+	}, 3*1000);
 	return false; // never send an away message immediately. Wait.
 }
 
