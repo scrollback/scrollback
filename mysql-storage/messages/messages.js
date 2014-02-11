@@ -159,7 +159,7 @@ function fixLabels(element) {
 		labelObj = JSON.parse(element.labels);
 		element.labels = [];
 		for(i in labelObj){
-			if(labelObj.hasOwnProperty(i)){
+			if(labelObj.hasOwnProperty(i) && labelObj[i]){
 				element.labels.push(i);
 			}
 		}
