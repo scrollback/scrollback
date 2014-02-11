@@ -94,6 +94,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 		
 		var el = angular.element('.scrollback-message').eq(index);
 		var shareUser = $scope.user.id;
+		var isHidden = false;
 		
 		$scope.selectedId = item.id;
 		$scope.selectedIndex = index;
@@ -116,25 +117,50 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 		
 		if($scope.user.id === $scope.room.owner){
 			//user is owner of the room, so show option to hide messages
-			$scope.options['Hide Message'] = function(){
-				labels = {};
-				$scope.items[index].labels.forEach(function(i){
-					if(i) labels[i] = 0;
-				});
-				labels['hidden'] = 1;
-				var hideMsg = {
-					type : 'edit',
-					ref : $scope.items[index].id,
-					to : $scope.room.id,
-					from : $scope.user.id,
-					labels : labels
+			
+			// firstly check if the message has the label hidden 
+			$scope.items[index].labels.forEach(function(i){
+					if(i === "hidden") isHidden = true;
+			});
+			
+			if(isHidden){
+				$scope.options['Unhide Message'] = function(){
+					labels = {};
+					$scope.items[index].labels.forEach(function(i){
+						if(i) labels[i] = 0;
+					});
+					labels['hidden'] = 0;
+					var unhideMsg = {
+							type : 'edit',
+							ref : $scope.items[index].id,
+							to : $scope.room.id,
+							from : $scope.user.id,
+							labels : labels
+					}
+					$factory.message(unhideMsg);
 				}
-				$factory.message(hideMsg, function() {
-					$scope.items.splice(index, 1);
-					$scope.items.unshift(messages[topIndex]);
-					topIndex += 1;
-				});
 			}
+			else{
+				$scope.options['Hide Message'] = function(){
+					labels = {};
+					$scope.items[index].labels.forEach(function(i){
+						if(i) labels[i] = 0;
+					});
+					labels['hidden'] = 1;
+					var hideMsg = {
+						type : 'edit',
+						ref : $scope.items[index].id,
+						to : $scope.room.id,
+						from : $scope.user.id,
+						labels : labels
+					}
+					$factory.message(hideMsg, function() {
+						$scope.items.splice(index, 1);
+						$scope.items.unshift(messages[topIndex]);
+						topIndex += 1;
+					});
+			    }
+		 	}
 		}
 	};
 
@@ -269,11 +295,13 @@ scrollbackApp.directive('message',function($compile, $timeout) {
         
 		scope: {
 			showMenu: '=',
-			menuOptions: '='
+			menuOptions: '=',
+			label: '='
 		},
         
 		link: function($scope, element, attr) {
 			var value;
+			$messageControllerScope = $scope.$parent.$parent;
             
 			$scope.me ="scrollback-message-content-me";
             $scope.noSlashMe="scrollback-message-content";
@@ -285,11 +313,31 @@ scrollbackApp.directive('message',function($compile, $timeout) {
                 $scope.nick = $scope.from = value.replace(/^guest-/,"");
             });
 			
-            attr.$observe('label', function(value) {
-				value = value.substring(0,32);
-                if(value)$scope.bcolor = hashColor(value);
-                else $scope.bcolor = "";
-            
+//            attr.$observe('label', function(value) {
+//				console.log("Label value is ", value); // label : ['32Chars:'Title'']
+//				value = value.substring(0,32);
+//                if(value)$scope.bcolor = hashColor(value);
+//                else $scope.bcolor = "";
+//            
+//			});
+			$scope.$watch('label', function(v){
+				// todo, this has to be rewritten 
+				var bcolor, i, value;
+				for(i=0; i< v.length; i++){
+					if(v[i] == 'hidden'){
+						if($messageControllerScope.room.owner == $messageControllerScope.user.id){
+							console.log("hiddne msg", element[0]);
+						}
+						else $(element.eq(0)).hide();
+						
+					}
+					else{
+						value = value.substring(0, v[i].index(':'));
+						if(value) $scope.bcolor = hashColor(value);
+						else $scope.bcolor = "";
+					}
+				}
+				
 			});
 			
             attr.$observe('text', function(value) {
@@ -347,8 +395,6 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 			
 			$timeout( function(){
 				$scope.$watch('showMenu', function(val){
-					
-					$messageControllerScope = $scope.$parent.$parent;
 					
 					if( val === true) {
 						

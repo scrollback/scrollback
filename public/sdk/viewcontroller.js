@@ -257,7 +257,6 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		});
 	}
 	
-	// ------------------
 	$scope.goToRoomsView = function(){
 		if(/^guest-/.test($scope.user.id)){ 
 			$scope.personaLogin();
