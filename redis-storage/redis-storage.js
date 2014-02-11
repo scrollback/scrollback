@@ -53,10 +53,14 @@ module.exports = function(core) {
                     redisProxy.sadd("room:{{"+room+"}}:hasOccupants",action.ref);
                 });
             });
-            redisProxy.set("user:{{"+action.user.id+"}}", JSON.stringify(action.user));
+            if(action.user) {
+                redisProxy.set("user:{{"+action.user.id+"}}", JSON.stringify(action.user));
+            }else {
+                redisProxy.set("user:{{"+action.ref+"}}", JSON.stringify({id: action.ref}));
+            }
             redisProxy.rename("user:{{"+action.from+"}}:occupantOf","user:{{"+action.ref+"}}:occupantOf");
             callback();
-        }else{
+        }else {
             callback();
         }
     },"storage");
