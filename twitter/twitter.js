@@ -8,6 +8,7 @@ var callbackURL =  "https://kamal.scrollback.io/r/twitter/auth/callback";
 var core;
 var config = require('../config.js');
 var redis = require("redis").createClient();
+var expireTime = 10*60;
 var userData = {};
 module.exports = function(coreObj) {
 	log("twitter app started");
@@ -27,6 +28,7 @@ module.exports = function(coreObj) {
         }, "setters");
 	});
 	core.on("room", function(room, callback){
+		log("twitter room obj", JSON.stringify(room));
 		if (room.type == 'room') {
 			if (room.params && room.params.twitter) {
 				
@@ -55,7 +57,10 @@ return {
 			window.addEventListener("message", function(event) {
 				//console.log("received data---- ", event);
 				//TODO check for origin
-				if(true) $('#twitterLogin').text(event.data);
+				if(true) {
+					$('#twitterLogin').text(event.data);
+					$scope.editRoom.twitterUsername = event.data;
+				}
 			}, false);
 		}
 		
@@ -72,8 +77,7 @@ function getReq(req, res, next) {
 	log("path " , path , req.url ," session" , req.session.user);
 	var ps = path.split('/');
 	if (ps[0] && ps[0] === "login") {
-		//passport.initialize()(req, res, next);
-		//passport.session()(req, res, next);
+		//passport.initialize();
 		log("login request...");
 		passport.serializeUser(function(user, done) {
 			done(null, user);
@@ -89,11 +93,15 @@ function getReq(req, res, next) {
 			},
 			function(token, tokenSecret, profile, done) {
 				log("tokens", token, tokenSecret);
-				//save this in redis....
 				userData[req.session.user.id] = {token: token,tokenSecret: tokenSecret, profile : profile};
-				log("user data added");
-				var user = profile;
-				return done(null, user);
+				done(null, profile);
+				var multi = redis.multi();
+				multi.setex("twitter:userData:token:" + req.session.user.id, expireTime, token);
+				multi.setex("twitter:userData:tokenSecret:" + req.session.user.id, expireTime, tokenSecret);
+				multi.setex("twitter:userData:profile:" + req.session.user.id, expireTime, JSON.stringify(profile));
+				multi.exec(function(err,replies) {
+					log("user data added", replies);	
+				});
 			}
 		));
 		
@@ -101,15 +109,16 @@ function getReq(req, res, next) {
 	}
 	else if (ps.length >= 3 && ps[0] === "auth" && ps[1] === "callback") {
 		var auth = passport.authenticate('twitter', {failureRedirect: '/r/twitter/login' });
-		log("var =" , userData);
 		auth(req, res, function(err) {
-			log("ret ", err , ps[2], userData);
-			
-			res.render(__dirname + "/login.jade", userData[ps[2]]);
-			//res.end("success" + JSON.stringify(userData[ps[2]]));
+			log("ret ", err , ps[2] + "," , req.session.user.id);
+			if (userData[req.session.user.id]) {
+				res.render(__dirname + "/login.jade", userData[req.session.user.id]);
+				delete userData[req.session.user.id];
+			}
+			else {
+				next();
+			}
 		});
-		//passport.authenticate('twitter');
-		//res.end("logged in");
 	}
 	else {
 		next();

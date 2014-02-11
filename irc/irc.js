@@ -55,22 +55,28 @@ module.exports = function(object){
 
 			log("OLD ACCOUNTs",room.old);
 			if(room.old && room.old.accounts) room.old.accounts.forEach(function(oldAccount) {
-				var u;
-				if(room.accounts) {
-					for (i=0,l=room.accounts.length;i<l;i++ )
-						if(room.accounts[i].id == oldAccount.id) return;
+				if (oldAccount.gateway === 'irc') {
+					var u;
+					if(room.accounts) {
+						for (i=0,l=room.accounts.length;i<l;i++ )
+							if(room.accounts[i].id == oldAccount.id) return;
+					}
+					u = url.parse(oldAccount.id);
+					clients.bot[u.host].part(u.hash.toLowerCase());
+					delete clients.bot[u.host].rooms[u.hash.toLowerCase()];
 				}
-				u = url.parse(oldAccount.id);
-				clients.bot[u.host].part(u.hash.toLowerCase());
-				delete clients.bot[u.host].rooms[u.hash.toLowerCase()];
+				
 			});
 
 
 			if(room.accounts) room.accounts.forEach(function(account) {
 				var u = url.parse(account.id);
-				if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
-					addBot(account);
+				if (account.gateway === 'irc') {
+					if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
+						addBot(account);
+					}
 				}
+				
 			});
 		}
 		callback();

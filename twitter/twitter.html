@@ -3,8 +3,10 @@
 		Twitter Config
 		</label>
 		<div class="inlineInput">
-			 <input type="text" class ="inlineTextBox" placeholder ="# tags" ng-model="editRoom.twitter"/>
+			 <input type="text" class ="inlineTextBox" placeholder ="# tags" ng-model="editRoom.twitterTags"/>
 		</div>
-		<div id = "twitterLogin" onclick='scrollbackScripts.twitter.login();'>Sign in with Twitter</div>
+		<div id = "twitterLogin" 
+			 ng-click='twitterLogin();'>
+			{{editRoom.twitterUsername || "Sign IN"}}</div>
 	<label/>
 </div>

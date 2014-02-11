@@ -372,22 +372,34 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		if($scope.editRoom.ircServer && !$scope.editRoom.ircRoom) {
 			return $factory.emit("error","Enter irc room name");
 		}
+		if ($scope.editRoom.twitterUsername) {
+			if(!$scope.editRoom.accounts) $scope.editRoom.accounts = [];
+			console.log("edit room obj", $scope.editRoom);
+			$scope.editRoom.accounts.push({
+					gateway: "twitter",
+					id:"twitter://" + $scope.editRoom.twitterUsername + "#" + $scope.room.id,
+					room: $scope.room.id,
+					params:{tags: $scope.editRoom.twitterTags}
+			});
+			$scope.editRoom.params.twitter = true;
+			delete $scope.editRoom.twitterTags;
+			delete $scope.editRoom.twitterUsername;
+		}
 		if(!$scope.editRoom.ircServer && $scope.editRoom.ircRoom) {
 			return $factory.emit("error","Enter irc server");
 		}
 		if($scope.editRoom.ircServer && $scope.editRoom.ircRoom) {
-			$scope.editRoom.accounts = [
-				{
+			if(!$scope.editRoom.accounts) $scope.editRoom.accounts = [];
+			$scope.editRoom.accounts.push({
 					gateway: "irc",
 					id:"irc://"+$scope.editRoom.ircServer+"/"+$scope.editRoom.ircRoom,
 					room: $scope.room.id,
 					params:{}
-				}
-			];
+			});
 			$scope.editRoom.params.irc = true;
 		}else {
 			$scope.editRoom.params.irc = false;
-			delete $scope.editRoom.accounts;
+			//delete $scope.editRoom.accounts;
 		}
 		//delete $scope.editRoom.ircServer; //what is the purpose of this?? 
 		//delete $scope.editRoom.ircRoom
@@ -399,7 +411,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 					Object.keys(room).forEach(function(element){
 						$scope.room[element] = room[element];
 					});
-					if(!$scope.room.params.irc) delete $scope.room.accounts;
+					//if(!$scope.room.params.irc) delete $scope.room.accounts;
 					$location.path("/"+$scope.room.id);
 					$scope.status.waiting = false;
 				});
@@ -444,8 +456,41 @@ scrollbackApp.controller('wordbanController',['$scope', function($scope) {
 }]);
 
 scrollbackApp.controller('twitterController',['$scope', function($scope) {
-	if(!$scope.editRoom.params) $scope.editRoom.params = {};
-	$scope.editRoom.params.twitter = $scope.room.params.twitter;
+	$scope.twitterLogin = function(){
+		window.open("/r/twitter/login", 'mywin','left=20,top=20,width=500,height=500,toolbar=1,resizable=0');
+		if(!$scope.isEventAdded) $scope.loginEvent();
+		$scope.isEventAdded = true;
+		//scrollbackScripts.twitter.loginEvent = function(){};
+		return false;
+	};
+	$scope.loginEvent = function() {
+		window.addEventListener("message", function(event) {
+			//console.log("received data---- ", event);
+			//TODO check for origin
+			console.log("got msg" , event);
+			if (true) {
+				$scope.$apply(function() {
+					$scope.$parent.editRoom.twitterUsername = event.data;
+				});
+			}
+		}, false);
+		 
+	};
+	if($scope.room.accounts && $scope.room.accounts.forEach) {
+		$scope.room.accounts.forEach(function(account) {
+			console.log("account=====", account , "-----");
+			url = parseUrl(account.id);
+			if(account.gateway === "twitter") {
+				console.log(url);
+				//$scope.$apply(function() {
+				$scope.editRoom.twitterUsername = url.hostname;
+				//});
+				//$scope.$parent.twitterUsername = url.hostname;
+				$scope.editRoom.twitterTags = account.params.tags;
+				console.log("tags" , $scope.editRoom.twitterTags);
+			}
+		});
+	}
 }]);
 
 scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {

@@ -147,6 +147,11 @@ function rooms(coreObject) {
 function getAccounts(ids,callback) {
 	db.query("SELECT * FROM accounts WHERE `room` in (?)", [ids], function(err, accounts) {
 		if(err) return callback(err);
+		
+		
+		accounts.forEach(function(account) {
+			account.params = JSON.parse(account.params);
+		});
 		callback(null, accounts);
 	});
 }
