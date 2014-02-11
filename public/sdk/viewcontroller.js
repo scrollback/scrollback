@@ -215,6 +215,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 
 	function generateSortedList(members, occupants) {
 		var userMap = {}, userArray=[];
+		console.log(members, occupants);
 		members.forEach(function(member) {
 			userMap[member.id] = member;
 			member.score = 1;
@@ -225,25 +226,28 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 				userMap[occupant.id].score +=2;	
 			}else{
 				userMap[occupant.id] = occupant;
-				member.score = 1;
+				occupant.score = 2;
 				userArray.push(occupant);
 			}
 		});
 
-		userArray.sort(function(){
-			
+		userArray.sort(function(a,b) {
+			return -(a.score-b.score);
 		});
-
+		return userArray;
 	}
+
 	function loadMembers() {
 		var usersList;
 		$factory.membership({memberOf: $scope.room.id}, function(data){
 			$scope.$apply(function(){
 				$scope.room.members = data.data;
-				$factory.membership({memberOf: $scope.room.id}, function(data) {
+				$factory.occupants({occupantOf: $scope.room.id}, function(data) {
 					$scope.$apply(function() {
 						$scope.room.occupants = data.data;
 						usersList = generateSortedList($scope.room.members, $scope.room.occupants);
+						$scope.room.relatedUser = usersList;
+
 					});
 				});
 			});
