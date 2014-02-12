@@ -22,7 +22,6 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 				a(id='logoutButton' ng-show='user.owner==user.id' ng-click='logout()' title='logout' class='button buttonText fa fa-power-off right')
 			#username(ng-click='profile()',ng-cloak="") {{user.id}}			
 			div
-				a.archive(ng-show="room.id !== ''" onclick='window.location ="/old/#{room.id}";') (Switch to old view)
 			#info 
 				ng-view
 			#foot
@@ -33,7 +32,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 		#body(ng-controller="messageController",class = 'column')
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 				div(ng-repeat="i in items track by $index")
-					message(from="{{i.from}}", text="{{i.text}}", label="i.labels", time="{{i.time}}", ng-click = "showmenu($index, i)", ng-class="{'elSelected': i.id == selectedId }", show-menu = "showMenu", menu-options ="menuOptions")
+					message(from="{{i.from}}", text="{{i.text}}", label="i.labels", time="{{i.time}}", ng-click = "showmenu($index, i)", ng-class="{'elHidden': i.labels[0] == 'hidden' || i.labels[1] == 'hidden' , 'elSelected': i.id == selectedId}", show-menu = "showMenu", menu-options ="menuOptions", id = "{{i.id}}", ng-hide = "hideMsg(i)")
 			div(id="nomessagediv", ng-show = "{{items.length === 0}}", ng-cloak="")
 				| This room does not have any messages yet
 			div(ng-show = "{{room.id}}", ng-cloak="")

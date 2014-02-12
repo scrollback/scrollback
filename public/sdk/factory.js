@@ -31,6 +31,8 @@ var factory=function() {
 	}
 	factoryObject.occupants = callbackGenerator("getUsers");
 	factoryObject.membership = callbackGenerator("getUsers");
+	factoryObject.getUsers = callbackGenerator("getUsers");
+//	factoryObject.edit = callbackGenerator("edit");
 	factoryObject.leaveRest = function(room) {
 		Object.keys(listening).forEach(function(element) {
 			listening[element] && element!=room && leave(element);
