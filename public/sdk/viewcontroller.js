@@ -183,18 +183,61 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	}
 
 	function loadMembers() {
-		var usersList;
+		var usersList; 
+		var occupants, members;
 		$factory.membership({memberOf: $scope.room.id}, function(data){
 			$scope.$apply(function(){
-				$scope.room.members = data.data;
+				members = data.data;
 				$factory.occupants({occupantOf: $scope.room.id}, function(data) {
 					$scope.$apply(function() {
-						$scope.room.occupants = data.data;
-						usersList = generateSortedList($scope.room.members, $scope.room.occupants);
+						occupants = data.data;
+						usersList = generateSortedList(members, occupants);
 						$scope.room.relatedUser = usersList;
 					});
 				});
 			});
+		});
+		$factory.on("message", function(i){
+			if(i.type == "back"){
+				$factory.getUsers({id: i.from}, function(user){
+					user = JSON.parse(user.data);
+					$scope.$apply(function(){
+						if(user.id !== $scope.user.id) occupants.push(user);
+						$scope.room.relatedUser = generateSortedList(members, occupants);
+					});
+				});
+			}
+			if(i.type == "away"){
+				// remove user from list. 
+				for(j=0; j< occupants.length; j++){
+					if(occupants[j].id === i.from){
+						occupants.splice(j, 1);
+						$scope.$apply(function(){
+							$scope.room.relatedUser = generateSortedList(members, occupants);
+						});
+					}
+				}
+			}
+			if(i.type == "join"){
+				$factory.getUsers({id: i.from}, function(user){
+					user = JSON.parse(user.data);
+					$scope.$apply(function(){
+						members.push(user);
+						$scope.room.relatedUser = generateSortedList(members, occupants);
+					});
+				});
+			}
+			if(i.type == "part"){
+				// remove user from members list
+				for(j=0; j< members.length; j++){
+					if(members[j].id === i.from){
+						members.splice(j, 1);
+						$scope.$apply(function(){
+							$scope.room.relatedUser = generateSortedList(members, occupants);
+						});
+					}
+				}
+			}
 		});
 	}
 	if($factory.isActive ) {

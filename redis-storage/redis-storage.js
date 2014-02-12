@@ -72,7 +72,8 @@ module.exports = function(core) {
     core.on("getUsers", function(query, callback) {
         if(query.id){
             return redisProxy.get("user:{{"+query.id+"}}", function(err, data) {
-                return callback(err, data);
+				console.log("LOg data", data);
+                return callback(true, [data]);
             });
         }
         if(query.occupantOf){
