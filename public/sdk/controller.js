@@ -27,7 +27,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
             $scope.user.id = nick;
         });
     });
-	
     $factory.on("message", function(msg) {
 		$scope.$apply(function(){
 			newMessage(msg);    
@@ -144,7 +143,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 				$scope.options['Hide Message'] = function(){
 					labels = {};
 					$scope.items[index].labels.forEach(function(i){
-						if(i) labels[i] = 0;
+						if(i) labels[i] = 1;
 					});
 					labels['hidden'] = 1;
 					var hideMsg = {
