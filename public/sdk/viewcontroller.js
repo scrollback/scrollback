@@ -192,7 +192,6 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 						$scope.room.occupants = data.data;
 						usersList = generateSortedList($scope.room.members, $scope.room.occupants);
 						$scope.room.relatedUser = usersList;
-
 					});
 				});
 			});

@@ -7,19 +7,27 @@ module.exports = function (types) {
 	
 	return {
 		put: function (message, cb) {
+			var newLabel = {}, room = message.room, user = message.user;
 			log("Pushing to leveldb", message);
+			delete message.user;
+			delete message.room;
+			if(message.labels instanceof Array) {
+				message.labels.forEach(function(element) {
+					newLabel[element] = 1;
+					// texts.link(message.id, 'hasLabel', element, {score: 1});
+				});
+			}else{
+				newLabel = message.labels;
+			}
+			message.labels = newLabel;
 			texts.put(message, function(err, res) {
-				if(message.labels instanceof Array) {
-					message.labels.forEach(function(element) {
-						texts.link(message.id, 'hasLabel', element, {score: 1});
-					});
-				}else {
-					for(i in message.labels){
-						types.labels.put({id:i});
-						if(message.labels.hasOwnProperty(i)) {
-							texts.link(message.id, 'hasLabel', i, {score: message.labels[i]});
-						}
-					}	
+				message.user = user;
+				message.room = room;
+				for(i in message.labels){
+					types.labels.put({id:i});
+					if(message.labels.hasOwnProperty(i)) {
+						texts.link(message.id, 'hasLabel', i, {score: message.labels[i]});
+					}
 				}
 				log(err, res);
 				cb && cb(err, res);

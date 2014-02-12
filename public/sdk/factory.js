@@ -158,9 +158,9 @@ function socketMessage(evt) {
 		case 'members':  
 		case 'occupants': 
 		case 'getUsers':
+		case 'edit':
 			handler(d.type, d.data)
 		break;
-
 		case 'error': onError(d.data); break;
 	}
 }

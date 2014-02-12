@@ -9,6 +9,7 @@ module.exports = function (types) {
 		getUser: function(query, cb) {			
 			if(query.id){
 				user.get(query.id, function(err, res) {
+					if(!res) return cb();
 					cb(true, res);
 				});	
 			}else if(query.memberOf) {

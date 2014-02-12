@@ -45,7 +45,6 @@ module.exports = function(core) {
     // core.on("init",onnickchange);
     core.on("message",function(action, callback){
         if(action.type == "nick") {
-            console.log(action);
             redisProxy.del("user:{{"+action.from+"}}");
             redisProxy.smembers("user:{{"+action.from+"}}:occupantOf", function(err, data) {
                 data.forEach(function(room){
@@ -55,9 +54,8 @@ module.exports = function(core) {
             });
             if(action.user) {
                 redisProxy.set("user:{{"+action.user.id+"}}", JSON.stringify(action.user));
-            }else {
-                redisProxy.set("user:{{"+action.ref+"}}", JSON.stringify({id: action.ref}));
             }
+
             redisProxy.rename("user:{{"+action.from+"}}:occupantOf","user:{{"+action.ref+"}}:occupantOf");
             callback();
         }else {

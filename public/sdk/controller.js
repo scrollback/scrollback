@@ -30,7 +30,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
             $scope.user.id = nick;
         });
     });
-	
     $factory.on("message", function(msg) {
 		$scope.$apply(function(){
 			newMessage(msg);    
