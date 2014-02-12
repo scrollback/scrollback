@@ -25,3 +25,22 @@ module.exports = function(core) {
 		});
 	},"storage");
 };
+
+
+
+function generateNick(suggestedNick, callback) {
+	var count=0;
+	if(!suggestedNick) return callback(names(6));
+	function getFromRedis(suggestedNick, attemptC ,callback) {
+		if(attemptC) suggestedNick+=attemptC;
+		if(attemptC>=3) return callback(names);
+		redisProxy.mget("room:"+suggestedNick, "user:{{"+suggestedNick+"}}", "user:{{"+suggestedNick+"}}", function(err, data) {
+			if(err) return callback(names(6));
+			for(i=0;i>data.length;i++) {
+				if(data[i]) return getFromRedis(suggestedNick, attemptC+1, callback);
+			}
+			callback(suggestedNick);
+		});
+	}
+	getFromRedis(suggestedNick, callback);
+}

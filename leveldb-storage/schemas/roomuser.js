@@ -10,7 +10,7 @@ module.exports = function (types) {
 			if(query.id){
 				user.get(query.id, function(err, res) {
 					if(!res) return cb();
-					cb(true, res);
+					cb(true, [res]);
 				});	
 			}else if(query.memberOf) {
 				user.get({by: 'memberOf', eq: [query.memberOf]}, function(err, res){
@@ -24,16 +24,14 @@ module.exports = function (types) {
 			if(query.id){
 				room.get(query.id, function(err, res){
 					log(err, res);
-					cb(true, res);
+					cb(true, [res]);
 				});	
 			}else if(query.hasMember) {
 				room.get({by: 'hasMember', eq: [query.hasMember]}, function(err, res){
 					cb(true, res);
 				});
 			}else if(query.hasOccupant) {
-				room.get({by: 'hasOccupant', eq: query.hasOccupant}, function(err, res){
-					cb(true, res);
-				});
+				cb();
 			}
 		},
 		put: function(data, cb) {
