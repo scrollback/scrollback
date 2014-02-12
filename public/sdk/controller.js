@@ -8,6 +8,9 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 	$scope.showMenu = false;
 	$scope.messages = sbmessages;
 	$scope.items = [];
+	$scope.test = true;
+	$scope.hiddenMsgId = "";
+	$scope.hide = false;
     
     messages.load($scope.room.id);
 	if($scope.messages) messages.merge($scope.messages.reverse());
@@ -90,6 +93,17 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 		}
     }
 	
+	$scope.hideMsg = function(msg){
+		var flag = false;
+		for(i = 0; i < msg.labels.length; i++){
+			if(msg.labels[i] == "hidden"){
+				flag = true;
+				break;
+			}
+		}
+		if($scope.$parent.user.id !== $scope.$parent.room.owner) return flag;
+		else return false;
+	}
 	$scope.showmenu = function(index, item){
 		
 		var el = angular.element('.scrollback-message').eq(index);
@@ -123,28 +137,35 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 					if(i === "hidden") isHidden = true;
 			});
 			
-			if(isHidden){
-				$scope.options['Unhide Message'] = function(){
+			var showMsgFn = function(){
 					labels = {};
 					$scope.items[index].labels.forEach(function(i){
-						if(i) labels[i] = 0;
+						if(i) labels[i] = 1;
 					});
+//					$scope.hiddenId = "";
 					labels['hidden'] = 0;
 					var unhideMsg = {
-							type : 'edit',
-							ref : $scope.items[index].id,
-							to : $scope.room.id,
-							from : $scope.user.id,
-							labels : labels
+						type : 'edit',
+						ref : $scope.items[index].id,
+						to : $scope.room.id,
+						from : $scope.user.id,
+						labels : labels
 					}
-					$factory.message(unhideMsg);
-				}
-			}
-			else{
-				$scope.options['Hide Message'] = function(){
+					$factory.message(unhideMsg, function(){
+						isHidden = false;
+						$scope.$apply(function(){
+							for(i=0; i<$scope.items[index].labels.length; i++){
+								if($scope.items[index].labels[i] === 'hidden'){
+									$scope.items[index].labels.splice(i, 1);
+								}
+							}
+						});
+					});
+			};
+			var hideMsgFn = function() {
 					labels = {};
 					$scope.items[index].labels.forEach(function(i){
-						if(i) labels[i] = 0;
+						if(i) labels[i] = 1;
 					});
 					labels['hidden'] = 1;
 					var hideMsg = {
@@ -155,11 +176,19 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 						labels : labels
 					}
 					$factory.message(hideMsg, function() {
-						$scope.items.splice(index, 1);
-						$scope.items.unshift(messages[topIndex]);
-						topIndex += 1;
+//						$scope.items.splice(index, 1);
+//						$scope.items.unshift(messages[topIndex]);
+//						topIndex += 1;
+						$scope.$apply(function(){
+							$scope.items[index].labels.push("hidden");
+						});
 					});
 			    }
+			if(isHidden){
+				$scope.options['Unhide Message'] = showMsgFn;
+			}
+			else{
+				$scope.options['Hide Message'] = hideMsgFn;
 		 	}
 		}
 	};
@@ -296,7 +325,8 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 		scope: {
 			showMenu: '=',
 			menuOptions: '=',
-			label: '='
+			label: '=',
+			id: '@'
 		},
         
 		link: function($scope, element, attr) {
@@ -326,13 +356,17 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 				for(i=0; i< v.length; i++){
 					if(v[i] == 'hidden'){
 						if($messageControllerScope.room.owner == $messageControllerScope.user.id){
-							console.log("hiddne msg", element[0]);
+							$messageControllerScope.hiddenMsgId = $scope.id;
 						}
-						else $(element.eq(0)).hide();
+						else{
+							//$(element.eq(0)).hide();	
+							$messageControllerScope.hide = $scope.id;
+						} 
 						
 					}
 					else{
-						value = value.substring(0, v[i].index(':'));
+						console.log("thread", v[i]);
+						value = v[i].substring(0, v[i].indexOf(':'));
 						if(value) $scope.bcolor = hashColor(value);
 						else $scope.bcolor = "";
 					}
