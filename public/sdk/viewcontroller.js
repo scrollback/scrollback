@@ -200,7 +200,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		$factory.on("message", function(i){
 			if(i.type == "back"){
 				$factory.getUsers({id: i.from}, function(user){
-					user = JSON.parse(user.data);
+					user = user.data;
 					$scope.$apply(function(){
 						if(user.id !== $scope.user.id) occupants.push(user);
 						$scope.room.relatedUser = generateSortedList(members, occupants);
@@ -220,7 +220,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			}
 			if(i.type == "join"){
 				$factory.getUsers({id: i.from}, function(user){
-					user = JSON.parse(user.data);
+					user = user.data;
 					$scope.$apply(function(){
 						members.push(user);
 						$scope.room.relatedUser = generateSortedList(members, occupants);

@@ -366,10 +366,11 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 					else{
 						console.log("thread", v[i]);
 						value = v[i].substring(0, v[i].indexOf(':'));
-						if(value) $scope.bcolor = hashColor(value);
-						else $scope.bcolor = "";
 					}
 				}
+				
+				if(value) $scope.bcolor = hashColor(value);
+				else $scope.bcolor = "";
 				
 			});
 			

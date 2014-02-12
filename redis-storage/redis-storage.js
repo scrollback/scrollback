@@ -72,7 +72,8 @@ module.exports = function(core) {
     core.on("getUsers", function(query, callback) {
         if(query.id){
             return redisProxy.get("user:{{"+query.id+"}}", function(err, data) {
-                return callback(true, [data]);
+                if(err || !date) return callback();
+                return callback(true, [JSON.parse(data)]);
             });
         }
         if(query.occupantOf){
@@ -97,7 +98,7 @@ module.exports = function(core) {
         if(query.id) {
             return redisProxy.get("room:{{"+query.id+"}}", function(err, data) {
                 if(err || !date) callback();
-                if(data) return callback(true, [data]);
+                if(data) return callback(true, [JSON.parse(data)]);
             });
         }
         if(query.hasOccupants){
