@@ -15,7 +15,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
     messages.load($scope.room.id);
 	if($scope.messages) messages.merge($scope.messages.reverse());
     messages.save($scope.room.id);
-    console.log(sbmessages);
 	// initialising items with 50 messages initially 
     for (var i = 0; i < 50; i++) {
         if(topIndex < messages.length){
@@ -114,8 +113,6 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 		$scope.showMenu = true;
 		
 		if( $scope.user.id.indexOf('guest-') === 0 ) shareUser = shareUser.substring(6);
-		
-		if(item.text.indexOf('/me') === 0) item.text = item.text.replace('/me', shareUser);
 		
 		var twitterLink = encodeURI("http://twitter.com/home/?status=" + item.text  + " via https://scrollback.io/" + $scope.room.id);
 		

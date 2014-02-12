@@ -157,13 +157,12 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	if($scope.room.members) $scope.room.members.length = 0;
 
 		
-	// ------------------ this code will be removed and above code uncommented once the occupants api is ready on server side 
-
 	function generateSortedList(members, occupants) {
 		var userMap = {}, userArray=[];
 		members.forEach(function(member) {
+			if(member.id === $scope.room.owner) member.score = 2;
+			else member.score = 1;
 			userMap[member.id] = member;
-			member.score = 1;
 			userArray.push(member);
 		});
 		occupants.forEach(function(occupant) {
@@ -201,11 +200,13 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			if(occupants && members){
 				if(i.type == "back"){
 					$factory.getUsers({id: i.from}, function(user){
-						user = user.data;
-						$scope.$apply(function(){
-							if(user.id !== $scope.user.id) occupants.push(user);
-							$scope.room.relatedUser = generateSortedList(members, occupants);
-						});
+						if(user.data && user.data.length > 0){
+							user = user.data[0];
+							$scope.$apply(function(){
+								if(user.id !== $scope.user.id) occupants.push(user);
+								$scope.room.relatedUser = generateSortedList(members, occupants);
+							});
+						}
 					});
 				}
 				if(i.type == "away"){
@@ -221,11 +222,13 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 				}
 				if(i.type == "join"){
 					$factory.getUsers({id: i.from}, function(user){
-						user = user.data;
-						$scope.$apply(function(){
-							members.push(user);
-							$scope.room.relatedUser = generateSortedList(members, occupants);
-						});
+						if(user.data && user.data.length > 0){	
+							user = user.data[0];
+							$scope.$apply(function(){
+								members.push(user);
+								$scope.room.relatedUser = generateSortedList(members, occupants);
+							});
+						}
 					});
 				}
 				if(i.type == "part"){
@@ -235,6 +238,23 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 							members.splice(j, 1);
 							$scope.$apply(function(){
 								$scope.room.relatedUser = generateSortedList(members, occupants);
+							});
+						}
+					}
+				}
+				if(i.type == "nick"){
+					console.log("GOt a nick message!", i);
+					for(j=0; j< occupants.length; j++){
+						if(occupants[j].id === i.from){
+							occupants.splice(j, 1);
+							$factory.getUsers({id: i.ref}, function(user){
+								if(user.data && user.data.length > 0){
+									user = user.data[0];
+									$scope.$apply(function(){
+										occupants.push(user);
+										$scope.room.relatedUser = generateSortedList(members, occupants);
+									});
+								} 
 							});
 						}
 					}
@@ -363,6 +383,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		$location.path("/"+$scope.room.id);
 		return;
 	}
+	
 	if($scope.user.id != $scope.room.owner && typeof $scope.room.owner!= "undefined") {
 		$location.path("/"+$scope.room.id);
 		return;
