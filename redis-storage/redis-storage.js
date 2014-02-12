@@ -27,6 +27,7 @@ module.exports = function(core) {
                 }
             });
         });
+        callback();
     },"storage");
     function onnickchange(action, callback) {
         if(action.old && action.old.id){
@@ -57,16 +58,16 @@ module.exports = function(core) {
             }
 
             redisProxy.rename("user:{{"+action.from+"}}:occupantOf","user:{{"+action.ref+"}}:occupantOf");
-            callback();
-        }else {
-            callback();
         }
+        callback();
     },"storage");
     core.on("user", function(user, callback) {
         redisProxy.set("user:{{"+user.id+"}}", JSON.stringify(user));
+        callback();
     });
     core.on("room", function(room, callback) {
         redisProxy.set("room:{{"+room.id+"}}", JSON.stringify(room));
+        callback();
     });
 
     core.on("getUsers", function(query, callback) {

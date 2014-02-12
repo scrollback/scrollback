@@ -494,9 +494,6 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 				if(data.user.membership instanceof Array) $scope.user.membership = data.user.membership;
 				else $scope.user.membership = Object.keys(data.user.membership);
 			}
-			
-			if($scope.room.id) $location.path("/" + $scope.room.id);
-			else $location.path("/me");
 		});
 	});
 	

@@ -160,7 +160,7 @@ function userAway(user, room, conn) {
 			}
 			session.set(conn.sid, sess);
 		});
-	}, 3*1000);
+	}, 30*1000);
 	return false; // never send an away message immediately. Wait.
 }
 
