@@ -198,43 +198,45 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			});
 		});
 		$factory.on("message", function(i){
-			if(i.type == "back"){
-				$factory.getUsers({id: i.from}, function(user){
-					user = user.data;
-					$scope.$apply(function(){
-						if(user.id !== $scope.user.id) occupants.push(user);
-						$scope.room.relatedUser = generateSortedList(members, occupants);
-					});
-				});
-			}
-			if(i.type == "away"){
-				// remove user from list. 
-				for(j=0; j< occupants.length; j++){
-					if(occupants[j].id === i.from){
-						occupants.splice(j, 1);
+			if(occupants && members){
+				if(i.type == "back"){
+					$factory.getUsers({id: i.from}, function(user){
+						user = user.data;
 						$scope.$apply(function(){
+							if(user.id !== $scope.user.id) occupants.push(user);
 							$scope.room.relatedUser = generateSortedList(members, occupants);
 						});
+					});
+				}
+				if(i.type == "away"){
+					// remove user from list. 
+					for(j=0; j< occupants.length; j++){
+						if(occupants[j].id === i.from){
+							occupants.splice(j, 1);
+							$scope.$apply(function(){
+								$scope.room.relatedUser = generateSortedList(members, occupants);
+							});
+						}
 					}
 				}
-			}
-			if(i.type == "join"){
-				$factory.getUsers({id: i.from}, function(user){
-					user = user.data;
-					$scope.$apply(function(){
-						members.push(user);
-						$scope.room.relatedUser = generateSortedList(members, occupants);
-					});
-				});
-			}
-			if(i.type == "part"){
-				// remove user from members list
-				for(j=0; j< members.length; j++){
-					if(members[j].id === i.from){
-						members.splice(j, 1);
+				if(i.type == "join"){
+					$factory.getUsers({id: i.from}, function(user){
+						user = user.data;
 						$scope.$apply(function(){
+							members.push(user);
 							$scope.room.relatedUser = generateSortedList(members, occupants);
 						});
+					});
+				}
+				if(i.type == "part"){
+					// remove user from members list
+					for(j=0; j< members.length; j++){
+						if(members[j].id === i.from){
+							members.splice(j, 1);
+							$scope.$apply(function(){
+								$scope.room.relatedUser = generateSortedList(members, occupants);
+							});
+						}
 					}
 				}
 			}

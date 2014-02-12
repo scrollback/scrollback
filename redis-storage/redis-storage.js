@@ -72,7 +72,7 @@ module.exports = function(core) {
     core.on("getUsers", function(query, callback) {
         if(query.id){
             return redisProxy.get("user:{{"+query.id+"}}", function(err, data) {
-                if(err || !date) return callback();
+                if(err || !data) return callback();
                 return callback(true, [JSON.parse(data)]);
             });
         }
