@@ -1,12 +1,13 @@
 <div ng-controller="twitterController">
 	<label>
-		Twitter Config
+		Twitter Configuration
 		</label>
 		<div class="inlineInput">
-			 <input type="text" class ="inlineTextBox" placeholder ="# tags" ng-model="editRoom.twitterTags"/>
+			 <input type="text" class ="inlineTextBox" placeholder ="# tags (e.g: scrollback nodejs)" ng-model="editRoom.twitterTags"/>
 		</div>
-		<div id = "twitterLogin" 
+		<button type="button" id = "twitterButton" 
 			 ng-click='twitterLogin();'>
-			{{editRoom.twitterUsername || "Sign IN"}}</div>
+			{{editRoom.twitterUsername || "Sign IN"}}
+		</button>
 	<label/>
 </div>

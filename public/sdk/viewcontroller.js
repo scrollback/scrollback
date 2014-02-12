@@ -379,7 +379,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 					gateway: "twitter",
 					id:"twitter://" + $scope.editRoom.twitterUsername + "#" + $scope.room.id,
 					room: $scope.room.id,
-					params:{tags: $scope.editRoom.twitterTags}
+					params:{tags: $scope.editRoom.twitterTags.trim()}
 			});
 			$scope.editRoom.params.twitter = true;
 			delete $scope.editRoom.twitterTags;
@@ -460,34 +460,25 @@ scrollbackApp.controller('twitterController',['$scope', function($scope) {
 		window.open("/r/twitter/login", 'mywin','left=20,top=20,width=500,height=500,toolbar=1,resizable=0');
 		if(!$scope.isEventAdded) $scope.loginEvent();
 		$scope.isEventAdded = true;
-		//scrollbackScripts.twitter.loginEvent = function(){};
 		return false;
 	};
 	$scope.loginEvent = function() {
 		window.addEventListener("message", function(event) {
-			//console.log("received data---- ", event);
-			//TODO check for origin
-			console.log("got msg" , event);
-			if (true) {
+			var suffix = "scrollback.io";
+			var isOrigin = event.origin.indexOf(suffix, event.origin.length - suffix.length) !== -1;
+			if (isOrigin) {
 				$scope.$apply(function() {
 					$scope.$parent.editRoom.twitterUsername = event.data;
 				});
 			}
 		}, false);
-		 
 	};
 	if($scope.room.accounts && $scope.room.accounts.forEach) {
 		$scope.room.accounts.forEach(function(account) {
-			console.log("account=====", account , "-----");
 			url = parseUrl(account.id);
 			if(account.gateway === "twitter") {
-				console.log(url);
-				//$scope.$apply(function() {
 				$scope.editRoom.twitterUsername = url.hostname;
-				//});
-				//$scope.$parent.twitterUsername = url.hostname;
 				$scope.editRoom.twitterTags = account.params.tags;
-				console.log("tags" , $scope.editRoom.twitterTags);
 			}
 		});
 	}
