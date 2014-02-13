@@ -92,6 +92,7 @@ exports.init = function(app, coreObject) {
         responseObject.user = req.session.user;
 		responseObject.defaultTitle = "Your rooms";
 		responseObject.room = {title: "", id: ""};
+		responseObject.messages = [];
 		res.render("d/main" , responseObject);
     }
     app.get("/me", loginHandler);

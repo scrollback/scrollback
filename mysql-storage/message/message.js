@@ -12,10 +12,12 @@ module.exports = function(core) {
 		if (!message.time) message.time = new Date().getTime();
 		log("Heard \"message\" event");
 		if(typeof message.to === 'string') message.to = [message.to];
-
-		if(typeof message.labels === 'string') message.labels = [message.labels];
-		else if(!message.labels || message.labels.length == 0) message.labels = [ "" ];
-
+		if(message.labels) {
+			if(typeof message.labels === 'string') message.labels = [message.labels];	
+		}
+		else {
+			message.labels = [];
+		}
 		if(message.type) dbName = message.type + "_messages"  ;
 
 		// TODO: Rewrite this to use a single INSERT query.db.
@@ -23,7 +25,7 @@ module.exports = function(core) {
 			if(message.type == "text"){
 				db.query("INSERT INTO `" + dbName + "` SET `id`=?, `from`=?, `to`=?, `text`=?, "+
 				"`origin`=?, `time`=?, `labels`= ?", [message.id, message.from, message.to,
-				message.text,  JSON.stringify(message.origin), message.time, message.labels[0]]);
+				message.text,  JSON.stringify(message.origin), message.time, message.labels[0] || ""]);
 			}
 			if( message.type == "nick"){
 				db.query("INSERT INTO `" + dbName + "` SET `id`=?, `from`=?, `to`=?, "+
@@ -38,4 +40,13 @@ module.exports = function(core) {
 		});
 		return callback? callback(null, message): null;
 	}, "storage");
+
+
+	core.on("edit", function(message, callback) {
+		var labels;
+		db.query("UPDATE text_messages  SET  `text`=?, "+
+			"`labels`= ? where `id`=?", [message.text?message.text:message.old.text,JSON.stringify(message.labels),message.old.id], function(){
+				callback();
+			});
+	},"watchers");
 };

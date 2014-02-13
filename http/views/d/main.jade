@@ -32,7 +32,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 		#body(ng-controller="messageController",class = 'column')
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 				div(ng-repeat="i in items track by $index")
-					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}", time="{{i.time}}", ng-click = "showmenu($index, i)", ng-class="{'elSelected': i.id == selectedId }", show-menu = "showMenu", menu-options ="menuOptions")
+					message(from="{{i.from}}", text="{{i.text}}", label="i.labels", time="{{i.time}}", ng-click = "showmenu($index, i)", ng-class="{'elHidden': i.labels[0] == 'hidden' || i.labels[1] == 'hidden' , 'elSelected': i.id == selectedId}", show-menu = "showMenu", menu-options ="menuOptions", id = "{{i.id}}", ng-hide = "hideMsg(i)")
 			div(id="nomessagediv", ng-show = "{{items.length === 0}}", ng-cloak="")
 				| This room does not have any messages yet
 			div(ng-show = "{{room.id}}", ng-cloak="")
@@ -41,7 +41,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 				input.messageBox(type="text", ng-model="text")
 				input(id="submitButton" type="submit")
 			a(name="endoflog")
-			if(typeof room.params.allowSEO === 'undefined' || room.params.allowSEO)
+			if(room.params && (typeof room.params.allowSEO === 'undefined' || room.params.allowSEO))
 				div(class="scrollback-hidden")
 					each m in messages
 							if(m.from && m.text)
@@ -57,9 +57,9 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 				debug: true
 			};
 		script.
-			var sbmessages = !{JSON.stringify(messages)}; 
 			var sbuser = !{JSON.stringify(user)};
 			var sbroom = !{JSON.stringify(room)};
+			var sbmessages = !{JSON.stringify(messages)};
 		script(src="//code.jquery.com/jquery-1.10.1.min.js")
 		script(src="//code.jquery.com/jquery-migrate-1.2.1.min.js")
 		script(src="https://login.persona.org/include.js")

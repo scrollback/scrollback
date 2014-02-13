@@ -10,6 +10,7 @@ module.exports = function(db) {
 	var joinpart = require("./join-part-type.js")(db);
 	var admitexpel = require("./admit-expel-type.js")(db);
 	var awayback = require("./away-back-type.js")(db);
+	var edit = require("./edit-type.js")(db);
 
 	db.defineLink({"hasMember":users, "memberOf": rooms}, {
 		indexes: {
@@ -42,6 +43,7 @@ module.exports = function(db) {
 		labels: labels,
 		joinpart: joinpart,
 		admitexpel: admitexpel,
-		awayback: awayback
+		awayback: awayback,
+		edit: edit
 	};
 };

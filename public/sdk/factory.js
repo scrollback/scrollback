@@ -31,6 +31,8 @@ var factory=function() {
 	}
 	factoryObject.occupants = callbackGenerator("getUsers");
 	factoryObject.membership = callbackGenerator("getUsers");
+	factoryObject.getUsers = callbackGenerator("getUsers");
+//	factoryObject.edit = callbackGenerator("edit");
 	factoryObject.leaveRest = function(room) {
 		Object.keys(listening).forEach(function(element) {
 			listening[element] && element!=room && leave(element);
@@ -92,7 +94,6 @@ function newSocket() {
 	socket.onopen = function() {
 		backOff = 1;
 		init();
-		factoryObject.isActive = true;
 		factoryObject.emit("connected");
 	};
 	socket.onerror = socketError;
@@ -158,9 +159,9 @@ function socketMessage(evt) {
 		case 'members':  
 		case 'occupants': 
 		case 'getUsers':
+		case 'edit':
 			handler(d.type, d.data)
 		break;
-
 		case 'error': onError(d.data); break;
 	}
 }

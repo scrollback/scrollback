@@ -158,82 +158,110 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	}
 	if($scope.room.members) $scope.room.members.length = 0;
 
-	
-// ------- WILL BE USED ONCE getusers for occupants IS READY	
-	
-	
-//	// getting users present in the room 
-//	
-//	function getDisplayList(occupants, members) {
-//		var userList = [], ctr=0;
-//		occupants = occupants.sort(function(a, b){ return a.id - b.id });
-//		
-//		function exists(element, userArray, startPos, endPos) {
-//			// binary search to see if element exists in userArray, if so return index of element, else return -1
-//			if(element === undefined) return -1;
-//			if(endPos < startPos)  return -1;
-//			var mid = Math.floor((startPos + endPos)/2);
-//			if( userArray[mid] && userArray[mid].id === element.id) return mid; 
-//			else if( userArray[mid] && userArray[mid].id > element.id ) return exists(element, userArray, 0, mid-1);
-//			else return exists(element, userArray, mid+1, endPos);
-//		}
-//		
-//		members.forEach(function(m) {
-//			if( (index = exists(m, occupants, 0, occupants.length)) > -1 ) {
-//				userList.push(m);
-//				console.log("Deleting memebers[m]", members[ctr]);
-//				members.splice(ctr, 1);
-//				console.log("Deleting occupants[index]", occupants[index]);
-//				occupants.splice(index, 1);
-//			}
-//			ctr++;
-//		});
-//		
-//		userList.push.apply(userList, occupants);
-//		userList.push.apply(userList, members);
-//		return userList;
-//	}
-//	
-//	(function(){
-//		console.log("getting users and occuapnats now");
-//		// get occupants[]
-//		var occupants, members;
-//		$factory.occupants({occupantOf: $scope.room.id}, function(data){
-//			occupants = data;
-//			console.log('occu', data);
-//			// get members[]
-//			$factory.membership({memberOf: $scope.room.id}, function(data){
-//				members = data;
-//				console.log('mem', data);
-//				$scope.usersPresent = getDisplayList(occupants, members);
-//			});
-//		});
-//	})();
-	
-	
-	
-	
-	// ------------------ this code will be removed and above code uncommented once the occupants api is ready on server side 
+		
+	function generateSortedList(members, occupants) {
+		var userMap = {}, userArray=[];
+		members.forEach(function(member) {
+			if(member.id === $scope.room.owner) member.score = 2;
+			else member.score = 1;
+			userMap[member.id] = member;
+			userArray.push(member);
+		});
+		occupants.forEach(function(occupant) {
+			if(userMap[occupant.id]) {
+				userMap[occupant.id].score +=2;	
+			}else{
+				userMap[occupant.id] = occupant;
+				occupant.score = 2;
+				userArray.push(occupant);
+			}
+		});
 
+		userArray.sort(function(a,b) {
+			return -(a.score-b.score);
+		});
+		return userArray;
+	}
 
 	function loadMembers() {
-		var members;
+		var usersList; 
+		var occupants, members;
 		$factory.membership({memberOf: $scope.room.id}, function(data){
-			$scope.$apply(function() {
-				$scope.room.members = data.data;
-				var ownerIndex = -1, ownerObj;
-				// putting room owner as first user in members array
-				for(i=0; i < $scope.room.members.length; i++){
-					if($scope.room.members[i].id === $scope.room.owner){
-						ownerIndex = i;
-						ownerObj = $scope.room.members.splice(i,1);
-						break;
+			$scope.$apply(function(){
+				members = data.data;
+				$factory.occupants({occupantOf: $scope.room.id}, function(data) {
+					$scope.$apply(function() {
+						occupants = data.data;
+						usersList = generateSortedList(members, occupants);
+						$scope.room.relatedUser = usersList;
+					});
+				});
+			});
+		});
+		$factory.on("message", function(i){
+			if(occupants && members){
+				if(i.type == "back"){
+					$factory.getUsers({id: i.from}, function(user){
+						if(user.data && user.data.length > 0){
+							user = user.data[0];
+							$scope.$apply(function(){
+								if(user.id !== $scope.user.id) occupants.push(user);
+								$scope.room.relatedUser = generateSortedList(members, occupants);
+							});
+						}
+					});
+				}
+				if(i.type == "away"){
+					// remove user from list. 
+					for(j=0; j< occupants.length; j++){
+						if(occupants[j].id === i.from){
+							occupants.splice(j, 1);
+							$scope.$apply(function(){
+								$scope.room.relatedUser = generateSortedList(members, occupants);
+							});
+						}
 					}
 				}
-				if(ownerIndex > -1) {
-					$scope.room.members.unshift(ownerObj[0]);
+				if(i.type == "join"){
+					$factory.getUsers({id: i.from}, function(user){
+						if(user.data && user.data.length > 0){	
+							user = user.data[0];
+							$scope.$apply(function(){
+								members.push(user);
+								$scope.room.relatedUser = generateSortedList(members, occupants);
+							});
+						}
+					});
 				}
-			});
+				if(i.type == "part"){
+					// remove user from members list
+					for(j=0; j< members.length; j++){
+						if(members[j].id === i.from){
+							members.splice(j, 1);
+							$scope.$apply(function(){
+								$scope.room.relatedUser = generateSortedList(members, occupants);
+							});
+						}
+					}
+				}
+				if(i.type == "nick"){
+					console.log("GOt a nick message!", i);
+					for(j=0; j< occupants.length; j++){
+						if(occupants[j].id === i.from){
+							occupants.splice(j, 1);
+							$factory.getUsers({id: i.ref}, function(user){
+								if(user.data && user.data.length > 0){
+									user = user.data[0];
+									$scope.$apply(function(){
+										occupants.push(user);
+										$scope.room.relatedUser = generateSortedList(members, occupants);
+									});
+								} 
+							});
+						}
+					}
+				}
+			}
 		});
 	}
 	if($factory.isActive ) {
@@ -244,7 +272,6 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		});
 	}
 	
-	// ------------------
 	$scope.goToRoomsView = function(){
 		if(/^guest-/.test($scope.user.id)){ 
 			$scope.personaLogin();
@@ -364,6 +391,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		$location.path("/"+$scope.room.id);
 		return;
 	}
+	
 	if($scope.user.id != $scope.room.owner && typeof $scope.room.owner!= "undefined") {
 		$location.path("/"+$scope.room.id);
 		return;
@@ -474,9 +502,6 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 				if(data.user.membership instanceof Array) $scope.user.membership = data.user.membership;
 				else $scope.user.membership = Object.keys(data.user.membership);
 			}
-			
-			if($scope.room.id) $location.path("/" + $scope.room.id);
-			else $location.path("/me");
 		});
 	});
 	

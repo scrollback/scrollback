@@ -3,6 +3,13 @@ var log = require("../../lib/logger.js");
 var guid = require("../../lib/guid.js");
 var validateRoom = require('../../lib/validate.js');
 module.exports = function(core) {
+	core.on("edit", function(action, callback) {
+		if(action.room.owner && action.user.id != action.room.owner) {
+			return callback(new Error("NOT_ADMIN"));
+		}else{
+			callback();
+		}
+	},"validation");
 	core.on("message", function(message, callback) {
 		var i,j, hashmap = {};
 		log("Heard \"message\" event");
