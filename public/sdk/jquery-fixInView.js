@@ -1,4 +1,8 @@
 (function($) {
+	/* jshint laxcomma: true */
+	/* jshint browser: true */
+	/* global jQuery */
+	
 	var columns = []
 	, 	minh = 0
 	,	$window = $(window)
@@ -67,6 +71,7 @@
 	}
 	
 	function trigger(column, movement) {
+		console.log('reposition firing', column, movement);
 		column.element.trigger({
 			type: 'reposition',
 			by: movement,
@@ -87,14 +92,14 @@
 		column.top += movement;
 	}
 	
-	function update(movement) {
+	function update(movement, silently) {
 		var top=Infinity, bottom=0;
 		movement = movement || 0;
 		columns.forEach(function (column) {
 			var lastTop = column.top;
 			unfix(column, movement);
 			fix(column, movement);
-			trigger(column, movement);
+			if(!silently) trigger(column, movement);
 			if(column.top < top) top = column.top;
 			if(column.top + column.height > bottom) bottom = column.top + column.height;
 		});
@@ -132,6 +137,7 @@
 	
 	$window.scroll(function(e) {
 //		if(ignoreScroll) { console.log('ignoring scroll event'); return; }
+		console.log('scroll called', e);
 		var lastViewTop = viewTop;
 		read();
 		update(viewTop - lastViewTop);
@@ -149,7 +155,7 @@
 	
 	$.fn.nudgeInView = function(adjustment) {
 		var self = this;
-		// console.log('nudge', adjustment, this);
+		console.log('nudge', adjustment, this);
 		read();
 		columns.forEach(function(column) {
 			if(column.element[0] == self[0]) {
@@ -157,7 +163,7 @@
 				column.top += adjustment;
 			}
 		});
-		update(0);
+		update(0, true);
 		write();
 	};
 

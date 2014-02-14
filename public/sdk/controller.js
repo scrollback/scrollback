@@ -25,13 +25,13 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         });
     });
     $factory.on("message", function(msg) {
-    	$scope.$apply(function(){
+    	$scope.$apply(function() {
             newMessage(msg);    
         });
     });
     function newMessage(data) {
-        var i, updated,deleted = false,index;
-
+        var i, updated = false, deleted = false,index;
+		
         if($(window).scrollTop() + $(window).height() > $(document).height() - 20) {
            // If a user is reading a message towards the bottom of the page, or typing something, a new incoming message must not 
            //reset the scrollposition.
@@ -52,8 +52,9 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
                 break;
             }
         }
-
-        if (!updated && !data.message) {
+		
+        
+		if (!updated && !data.message) {
             messages.unshift(data);
             index = 0;
         }else {
@@ -63,7 +64,7 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
             //just to isolate the scope.
 			(function(){
                 var l=$scope.items.length,insertPosition=l-1,i;
-                for(i=insertPosition;i>0;i--) {
+                for(i=insertPosition;i>=0;i--) {
                     if($scope.items[i].id == data.id) {
                         $scope.items[i] = data;
                         if(data.message) {
@@ -79,10 +80,72 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 	
 	$scope.showmenu = function(index, item){
 		var el = angular.element('.scrollback-message').eq(index);
+		var shareUser = $scope.user.id;
+		
+		$scope.selectedId = item.id;
+		
+		if( $scope.user.id.indexOf('guest-') ===0 ) shareUser = shareUser.substring(6);
+		if(item.text.indexOf('/me')==0) item.text = item.text.replace('/me', shareUser);
+		
 		var twitterLink = encodeURI("http://twitter.com/home/?status=" + item.text  + " via https://scrollback.io/" + $scope.room.id);
 		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id ) + "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id + "&p[summary]=" + item.text;
+		
 		op = {'Tweet Message' : function(){ window.open(twitterLink,'_blank') }, 'Share on FB' : function(){ window.open(facebookLink,'_blank') } };
-		showMenu(el, op);
+		(function showMenu(el, opt) {
+			layer = $("<div>").addClass('layer').click(hide);
+			menu = $("<div>").addClass('menu').addClass('clearfix');
+			arrow = $("<div>").addClass('arrow').appendTo(menu);
+			for(i in opt) {
+				$("<button>").addClass('menuitem').text(i).click( {option: i}, function(event) {
+					opt[event.data.option]();
+					hide();
+				}).appendTo(menu);
+			}
+			
+			$(document.body).append(layer, menu);
+			
+			
+			elt = el.offset().top - $(document).scrollTop() + 5; // element top relative to window
+			ell = el.offset().left - $(document).scrollLeft() - 100;
+			elw = el.width();
+			elh = el.height();
+			
+			scrw = $(window).width();
+			scrh = $(window).height();
+			
+			menuw = menu.width();
+			menuh = menu.height();
+			
+			spaceBelow = scrh - elt - elh;
+			
+			if(spaceBelow > menuh) {
+				arrow.addClass('up');
+				menut = elt + elh;
+			}
+			else {
+				arrow.addClass('down');
+				menut = elt - menuh;
+			}
+			
+			// default:
+			menul = ell + (elw - menuw)/2;
+			if(menul < 0) menul = 0;
+			else if(menul > scrw - menuw) menul = scrw - menuw;
+			
+			if(arrow.hasClass("up")) arrow.css({left: menul + 152 , top: menut - 8 });
+			else arrow.css({left: menul + 152 , top: menut + menuh});
+			
+			menu.css({left: menul, top: menut});
+			
+			function hide() {
+				$(".layer").remove();
+				$(".menu").remove();
+				$(".arrow").remove();
+				$('.elSelected').removeClass('elSelected');
+				$scope.selectedId = null;
+			}
+		})(el, op);
+		
 	}
 
     $scope.message = function() {
@@ -91,9 +154,11 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 		
 		function isMention(input){
 			//this function checks if any users were mentioned in a message 
-			if( (/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)) mentionedUsers.push(input.replace(/[@:,]/g,""));
+			if( (/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)){ 						
+				input = input.toLowerCase();
+				mentionedUsers.push(input.replace(/[@:,]/g,""));
+			}
 		}
-
 		text.split(' ').map(isMention);
         $scope.text = "";
         message = {type:"text", text: text, to: $scope.room.id, from: $scope.user.id, mentions: mentionedUsers};
@@ -107,17 +172,17 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         }
     };
     
-    $scope.gotoBottom = function() {
-        $scope.items.length = 0;
-        topIndex = 0, bottomIndex = 0;
-        for (var i = 0; i < 50; i++) {
-            if(topIndex < messages.length){
-                if(messages[topIndex].type == "text")
-                    $scope.items.unshift(messages[topIndex]);
-                topIndex += 1;
-            }
-        }
-    };
+//    $scope.gotoBottom = function() {
+//        $scope.items.length = 0;
+//        topIndex = 0, bottomIndex = 0;
+//        for (var i = 0; i < 50; i++) {
+//            if(topIndex < messages.length){
+//                if(messages[topIndex].type == "text")
+//                    $scope.items.unshift(messages[topIndex]);
+//                topIndex += 1;
+//            }
+//        }
+//    };
 
     $scope.loadMoreUp = function() {
         for (var i = 0; i < 5; i++) {
@@ -140,10 +205,10 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         $timeout( function() {
             if($scope.items.length > 50) {
                 while($scope.items.length > 50) {
-                    if(messages[bottomIndex].type != "text") bottomIndex += 1;
+                    if(messages[bottomIndex] && messages[bottomIndex].type != "text") bottomIndex += 1;
                     $scope.items.pop();
                     bottomIndex += 1;
-                } 
+                }
             }
         });
     };
@@ -151,13 +216,12 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
         // TODO : popping from top :)
         for(i=0; i< 5; i++) {
               if(bottomIndex > 0) {
-                if(messages[bottomIndex].type == 'text'){
+				 bottomIndex -= 1;
+                if(messages[bottomIndex] && messages[bottomIndex].type == 'text'){
                     $scope.items.push(messages[bottomIndex]);
 				}
-                bottomIndex -= 1;
               }
         }
-		
          //this is causing troubles, so the shift is being done only for 2 elements at a time, ideally
          // the while should be uncommented
         
@@ -175,6 +239,8 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 			
         } , 1);
     };
+	
+	$timeout(function(){ $('html, body').animate({scrollTop:$(document).height()}, 'slow'); }, 1); //scrolling down to bottom of page.
 }
 
 scrollbackApp.controller('messageController', messageController);
@@ -227,10 +293,7 @@ scrollbackApp.directive('message',function($compile) {
 			attr.$observe('time', function(value){
 				var currtime = new Date().getTime();
 				var time = value;
-				
-				console.log("Diff:", time - __glo_prevtime);
-				console.log("new : ", time - (new Date().getTime()));
-				
+
 				if(time - __glo_prevtime > 60000 ) $scope.showTime = true; 
 				else $scope.showTime = false;
 				
@@ -276,6 +339,7 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
             $('.column').fixInView();
             $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
             $('#body').bind('reposition', function(e) {
+				console.log('reposition event fired', e);
                 if(e.above < 150 && e.by<0) {
                     scope.$apply(attr.whenScrolledUp);
                     $('#body').nudgeInView(-$('#body').outerHeight() + e.height);

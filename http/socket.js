@@ -1,4 +1,24 @@
 /*
+	Scrollback: Beautiful text chat for your community. 
+	Copyright (c) 2014 Askabt Pte. Ltd.
+	
+This program is free software: you can redistribute it and/or modify it 
+under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any 
+later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
+License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see http://www.gnu.org/licenses/agpl.txt
+or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+Boston, MA 02111-1307 USA.
+*/
+
+/*
 	Websockets gateway
 */
 
@@ -33,6 +53,8 @@ sock.on('connection', function (socket) {
 			case 'messages': messages(d.data, conn); break;
 			case 'room': room(d.data, conn); break;
 			case 'rooms': rooms(d.data, conn); break;
+			case 'getUsers': getUsers(d.data, conn); break;
+			case 'getRooms': getRooms(d.data, conn); break;
 		}
 	});
 	
@@ -137,6 +159,7 @@ function userAway(user, room, conn) {
 }
 
 function userBack(user, room, conn) {
+
 	if(rConns[room]) rConns[room].push(conn);
 	else rConns[room] = [conn];
 	conn.rooms.push(room);
@@ -148,6 +171,9 @@ function userBack(user, room, conn) {
 		return false; // we've already sent a back message for this user for this room.
 	}
 	console.log("Should send back msg");
+
+
+	
 	user.rooms[room] = 1;
 	return true;
 }
@@ -355,6 +381,37 @@ function room (r, conn) {
 	});
 }
 
+
+
+
+function getrooms(query, conn) {
+	core.emit("getrooms", query, function(err, data) {
+		if(err) {
+			query.err = err;
+			conn.send('error',query);
+			return;
+		}else {
+			log(data);
+			conn.send('getrooms', { query: query, data: data} );
+			//conn.send('rooms', data);	
+		}
+	});
+}
+
+
+function getUsers(query, conn) {
+	core.emit("getUsers", query, function(err, data) {
+		if(err) {
+			query.err = err;
+			conn.send('error',query);
+			return;
+		}else {
+			log(data);
+			conn.send('getUsers', { query: query, data: data} );
+			//conn.send('rooms', data);	
+		}
+	});
+}
 function rooms(query, conn) {
 	console.log(query);
 	core.emit("rooms", query, function(err, data) {

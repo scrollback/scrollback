@@ -1,0 +1,81 @@
+/* global module, require, exports */
+var log = require("../../lib/logger.js");
+
+module.exports = function (types) {
+	var room = types.rooms;
+	var user = types.users;
+
+	return{
+		getUser: function(query, cb) {			
+			if(query.id){
+				user.get(query.id, function(err, res) {
+					cb(true, res);
+				});	
+			}else if(query.memberOf) {
+				user.get({by: 'memberOf', eq: [query.memberOf]}, function(err, res){
+					cb(true, res);
+				});
+			}else if(query.occupantOf) {
+				user.get({by: 'occupantOf', eq: query.occupantOf}, function(err, res){
+					cb(true, res);
+				});
+			}
+		},
+		getRoom: function(query, cb) {
+			if(query.id){
+				room.get(query.id, function(err, res){
+					log(err, res);
+					cb(true, res);
+				});	
+			}else if(query.hasMember) {
+				room.get({by: 'hasMember', eq: [query.hasMember]}, function(err, res){
+					cb(true, res);
+				});
+			}else if(query.hasOccupant) {
+				room.get({by: 'hasOccupant', eq: query.hasOccupant}, function(err, res){
+					cb(true, res);
+				});
+			}
+		},
+		put: function(data, cb) {
+			var owner = data.owner, createdOn;
+			var currentTime = new Date().getTime();
+			if(data.old){
+				createdOn = data.old.createdOn;
+			}else{
+				createdOn = new Date().getTime();
+			}
+			var newRoom = {
+				id: data.id,
+				description: data.description,
+				createdOn: createdOn,
+				type: data.type,
+				picture: data.picture,
+				timezone:0,
+				identities: [],
+				params: data.params
+			}
+			data.accounts && data.accounts.forEach(function(account) {
+				newRoom.identities.push(account.id);
+			});
+
+			if(data.type === "user") {
+				user.put(newRoom, function(err, res) {
+					cb(err, data);
+				});	
+			} 
+			else room.put(newRoom, function(err, res) {
+				if(!data.old) {
+					types.rooms.link(data.id, 'hasMember', owner, {
+						role: "owner",
+						time: new Date().getTime()
+					}, function(err, res) {
+						cb(err, data);
+					});
+				}else {
+					cb(err, data);
+				}
+			});
+		}
+	}
+};

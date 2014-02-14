@@ -18,6 +18,7 @@ var factory=function() {
 			socket.onclose = oldSocket.onclose;
 		}, backOff*1000, socket);
 	};
+	
 	factoryObject.message = send;
 	factoryObject.messages = getMessages;
 	//factoryObject.messages = callbackGenerator("messages");
@@ -28,8 +29,8 @@ var factory=function() {
 		}
 		callbackGenerator("rooms")(query, callback);
 	}
-	factoryObject.occupants = callbackGenerator("occupants");
-	factoryObject.membership = callbackGenerator("membership");
+	factoryObject.occupants = callbackGenerator("getUsers");
+	factoryObject.membership = callbackGenerator("getUsers");
 	factoryObject.leaveRest = function(room) {
 		Object.keys(listening).forEach(function(element) {
 			listening[element] && element!=room && leave(element);
@@ -81,7 +82,6 @@ function send(message, callback) {
 	if(callback) pendingCallbacks[message.id] = callback;
 	socket.emit("message", message);
 	
-	$('html, body').animate({scrollTop:$(document).height()}, 'slow'); //scrolling down to bottom of page.
 }
 
 
@@ -156,7 +156,8 @@ function socketMessage(evt) {
 		case 'room':  
 		case 'rooms': 
 		case 'members':  
-		case 'occupants':  
+		case 'occupants': 
+		case 'getUsers':
 			handler(d.type, d.data)
 		break;
 

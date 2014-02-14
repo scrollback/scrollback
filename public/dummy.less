@@ -287,6 +287,7 @@ img.face {
 .scrollback-message-content {color: #000}
 .scrollback-message-content-me{color: #000; font-style:italic}
 .scrollback-message-time{color: #999; float:right; margin-right: 3%}
+.scrollback-hidden{display: none}
 
 #notifications {
 	position: fixed;
@@ -377,10 +378,12 @@ img.face {
 }
 
 .layer { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99998; }
-button.menuitem { height: 48px; width: 160px; font: 700 16px/16px "Open Sans", sans-serif; color: #fff; text-transform: uppercase; background: #000; .box-sizing(border); padding: 0 4px; margin: 0; float: left; border: none}
+button.menuitem { height: 48px; width: 160px; font: 700 12px/12px "Open Sans", sans-serif; color: #fff; text-transform: uppercase; background: #000; .box-sizing(border); padding: 0 4px; margin: 0; float: left; border: none}
 button.menuitem:hover { background: #33ccaa }
 .menu { z-index: 99999; background: #000; position: fixed; box-shadow: 0 4px 32px 0 rgba(0,0,0,0.5); width: 320px; .clearfix(); }
 .arrow { color:#000; position: fixed; }
 
-.arrow.up { top: -8px; height: 0; width: 0; border-style: solid; border-width: 0 8px 8px 8px; border-color: transparent transparent #000 transparent; }
-.arrow.down { bottom: -8px; height: 0; width: 0; border-style: solid; border-width: 8px 8px 0 8px; border-color: #000 transparent transparent transparent; }
+.arrow.up { height: 0; width: 0; border-style: solid; border-width: 0 8px 8px 8px; border-color: transparent transparent #000 transparent; }
+.arrow.down { height: 0; width: 0; border-style: solid; border-width: 8px 8px 0 8px; border-color: #000 transparent transparent transparent; }
+
+.elSelected { text-shadow : 0 0 4px rgba(51,214,187,1)}

@@ -78,7 +78,6 @@ function connect(server, nick, uid, channels, callback) {
 		});
 		
 		client.addListener('nick', function(oldn, newn,channel) {
-			console.log(arguments);
 			message('nick', oldn, (channel.length == 0? "": room(channel[0])), '', (channel.length==0?"":channel[0]), newn);
 		});
 		

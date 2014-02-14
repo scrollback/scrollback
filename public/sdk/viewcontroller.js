@@ -154,11 +154,100 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			$factory.enter($routeParams.room);
 		});
 	}
+	if($scope.room.members) $scope.room.members.length = 0;
+
+	
+// ------- WILL BE USED ONCE getusers for occupants IS READY	
+	
+	
+//	// getting users present in the room 
+//	
+//	function getDisplayList(occupants, members) {
+//		var userList = [], ctr=0;
+//		occupants = occupants.sort(function(a, b){ return a.id - b.id });
+//		
+//		function exists(element, userArray, startPos, endPos) {
+//			// binary search to see if element exists in userArray, if so return index of element, else return -1
+//			if(element === undefined) return -1;
+//			if(endPos < startPos)  return -1;
+//			var mid = Math.floor((startPos + endPos)/2);
+//			if( userArray[mid] && userArray[mid].id === element.id) return mid; 
+//			else if( userArray[mid] && userArray[mid].id > element.id ) return exists(element, userArray, 0, mid-1);
+//			else return exists(element, userArray, mid+1, endPos);
+//		}
+//		
+//		members.forEach(function(m) {
+//			if( (index = exists(m, occupants, 0, occupants.length)) > -1 ) {
+//				userList.push(m);
+//				console.log("Deleting memebers[m]", members[ctr]);
+//				members.splice(ctr, 1);
+//				console.log("Deleting occupants[index]", occupants[index]);
+//				occupants.splice(index, 1);
+//			}
+//			ctr++;
+//		});
+//		
+//		userList.push.apply(userList, occupants);
+//		userList.push.apply(userList, members);
+//		return userList;
+//	}
+//	
+//	(function(){
+//		console.log("getting users and occuapnats now");
+//		// get occupants[]
+//		var occupants, members;
+//		$factory.occupants({occupantOf: $scope.room.id}, function(data){
+//			occupants = data;
+//			console.log('occu', data);
+//			// get members[]
+//			$factory.membership({memberOf: $scope.room.id}, function(data){
+//				members = data;
+//				console.log('mem', data);
+//				$scope.usersPresent = getDisplayList(occupants, members);
+//			});
+//		});
+//	})();
+	
+	
+	
+	
+	// ------------------ this code will be removed and above code uncommented once the occupants api is ready on server side 
+
+
+	function loadMembers() {
+		var members;
+		$factory.membership({memberOf: $scope.room.id}, function(data){
+			$scope.$apply(function(){
+				$scope.room.members = data.data;
+				var ownerIndex = -1, ownerObj;
+				// putting room owner as first user in members array
+				for(i=0; i < $scope.room.members.length; i++){
+					if($scope.room.members[i].id === $scope.room.owner){
+						ownerIndex = i;
+						ownerObj = $scope.room.members.splice(i,1);
+						break;
+					}
+				}
+				if(ownerIndex > -1){
+					$scope.room.members.unshift(ownerObj[0]);
+				}
+			});
+		});
+	}
+	if($factory.isActive ) {
+		loadMembers();
+	}else {
+		$factory.on("init", function() {
+			loadMembers();
+		});
+	}
+	
+	// ------------------
 	$scope.goToRoomsView = function(){
 		if(/^guest-/.test($scope.user.id)){ 
 			$scope.personaLogin();
 			//$location.path('/me/login');
-		} 
+		}
 		else $location.path("/me");
 	}
 	$scope.toggleEmbed = function(){
@@ -169,10 +258,10 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		else return false;
 	};
 	$scope.goToConfigure = function() {
-		if(/^guest-/.test($scope.user.id)){ 
+		if(/^guest-/.test($scope.user.id)){
 			$scope.personaLogin();
 			//$location.path('/me/login');
-		} 
+		}
 		else $location.path("/"+$scope.room.id+"/edit");
 	};
 	$scope.partRoom = function() {
@@ -186,7 +275,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 				$scope.user.membership.splice(index, 1);
 				//deleting gravatar 
 				for(i=0,l=$scope.room.members.length;i<l;i++) {
-					if($scope.room.members[i].id === $scope.user.id){
+					if($scope.room.members[i].id === $scope.user.id && $scope.room.members[i].id != $scope.room.owner ){
 						$scope.room.members.splice(i,1);
 						break;
 					}
@@ -196,6 +285,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	};
 	$scope.joinRoom = function() {
 		var msg = {};
+		var flag = 1;
 		if(/^guest-/.test($scope.user.id)){
 			//guest
 			//$location.path('/me/login');
@@ -205,8 +295,18 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		msg.to = $scope.room.id;
 		msg.type = "join";
 		$factory.message(msg);
+		
+		for(i=0; i < $scope.room.members.length; i++ ) {
+			if($scope.room.members[i].id === $scope.user.id){
+				flag = 0;
+				break;
+			}
+		};
+		
+		if(flag == 1){
+			$scope.room.members.unshift($scope.user);
+		}
 		$scope.user.membership.unshift($scope.room.id);
-		$scope.room.members.unshift($scope.user);
 	}
 	
 	$scope.hasMembership = function() {
@@ -331,12 +431,22 @@ scrollbackApp.controller('loginreqController',['$scope', function($scope) {
 	$scope.editRoom.params.loginrequired = $scope.room.params.loginrequired?true:false;
 }]);
 
+scrollbackApp.controller('seoController',['$scope', function($scope) {
+	//prefilling the editRoom object when the config Page is loaded.
+	if(!$scope.editRoom.params) $scope.editRoom.params = {};
+	if(typeof $scope.room.params.allowSEO === "undefined") $scope.room.params.allowSEO = true; 
+	$scope.editRoom.params.allowSEO = $scope.room.params.allowSEO?true:false;
+}]);
+
 scrollbackApp.controller('wordbanController',['$scope', function($scope) {
 	if(!$scope.editRoom.params) $scope.editRoom.params = {};
 	$scope.editRoom.params.wordban = $scope.room.params.wordban?true:false;
 }]);
 
 scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {
+	$scope.room = sbroom;
+	$scope.user = sbuser;
+	$scope.notifications = [];
 	$scope.goBack = function() {
 		$location.path("/"+$scope.room.id);	
 	};
@@ -348,7 +458,6 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 	$factory.on('init', function(data){
 		//assigning the new new init data to the user scope ---
 		$scope.$apply(function(){
-			console.log(" Sending init ", data);
 			Object.keys(data.user).forEach(function(key){
 				$scope.user[key] = data.user[key];
 			});

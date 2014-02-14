@@ -1,6 +1,6 @@
 doctype html
 
-html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{JSON.stringify(user)}; room = #{JSON.stringify(room)}; notifications = #{JSON.stringify([])}; ")
+html(ng-app='scrollbackApp', ng-controller="rootController")
 	head
 	meta(charset="utf-8")
 	meta(http-equiv="X-UA-Compatible",content="IE=edge")
@@ -18,7 +18,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 		#meta(ng-controller="metaController",ng-class="status.waiting?'waiting column':'column'")
 			a(href="/me")#logo scrollback	
 			#user(ng-cloak="")
-				a: img.face(src='{{user.picture}}' ng-click='profile()')
+				a: img.face(ng-src='{{user.picture}}' ng-click='profile()')
 				a( id='logoutButton' ng-show='user.owner==user.id' ng-click='logout()' title='logout' class='button buttonText fa fa-power-off right')
 			#username(ng-click='profile()',ng-cloak="") {{user.id}}			
 			div
@@ -28,18 +28,28 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 			#foot
 				| Scrollback is a product of Askabt Pte Ltd.
 				| We respect your privacy. 
-				a.issues(click='window.open("https://github.com/scrollback/scrollback/issues","_blank")') Help us improve by reporting the bugs you find.
+				a.issues(onclick='window.open("https://github.com/scrollback/scrollback/issues","_blank")') Help us improve by reporting the bugs you find.
 			
 		#body(ng-controller="messageController",class = 'column')
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 				div(ng-repeat="i in items track by $index")
-					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}", time="{{i.time}}", ng-click = "showmenu($index, i)")
-			div(id="nomessagediv", ng-show = "{{items.length ==0}}")
-				| No messages here to show!
+					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}", time="{{i.time}}", ng-click = "showmenu($index, i)", ng-class="{'elSelected': i.id == selectedId }")
+			div(id="nomessagediv", ng-show = "{{items.length === 0}}", ng-cloak="")
+				| This room does not have any messages yet
+			div(ng-show = "{{room.id}}", ng-cloak="")
+				| Select a room to view it's messages.
 			form.messageWrapper(ng-submit="message();")
 				input.messageBox(type="text", ng-model="text")
 				input(id="submitButton" type="submit")
 			a(name="endoflog")
+			if(typeof room.params.allowSEO === 'undefined' || room.params.allowSEO)
+				div(class="scrollback-hidden")
+					each m in messages
+							if(m.from && m.text)
+									div: [#{m.from.replace("guest-","")}]: !{format(m.text.replace('{{','{ {'))} 
+					a(target="_self", href='/#{room.id}/until/#{prevLink}') prev
+					a(target="_self", href='/#{room.id}/since/#{nextLink}') next
+							
 		script.
 			window.scrollback = {
 				host : '//' + location.host,
@@ -49,6 +59,8 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 			};
 		script.
 			var sbmessages = !{JSON.stringify(messages)}; 
+			var sbuser = !{JSON.stringify(user)};
+			var sbroom = !{JSON.stringify(room)};
 		script(src="//code.jquery.com/jquery-1.10.1.min.js")
 		script(src="//code.jquery.com/jquery-migrate-1.2.1.min.js")
 		script(src="https://login.persona.org/include.js")
@@ -65,7 +77,6 @@ html(ng-app='scrollbackApp', ng-controller="rootController",ng-init=" user = #{J
 		script(src='/sdk/controller.js')
 		script(src='/sdk/app.js')
 		script(src='/sdk/viewcontroller.js')
-		script(src='/sdk/showMenu.js')
 		script.
 			$('.collapse,#meta').on('click', function() {
 				$(this).toggleClass('expanded');
