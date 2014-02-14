@@ -385,6 +385,10 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 			delete $scope.editRoom.twitterTags;
 			delete $scope.editRoom.twitterUsername;
 		}
+		else {
+			$scope.editRoom.params.twitter = false;
+			delete $scope.editRoom.twitterTags;
+		}
 		if(!$scope.editRoom.ircServer && $scope.editRoom.ircRoom) {
 			return $factory.emit("error","Enter irc server");
 		}

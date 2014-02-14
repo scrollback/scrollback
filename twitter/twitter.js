@@ -7,129 +7,139 @@ var guid = require("../lib/guid.js");
 var config = require('../config.js');
 var redis = require("redis").createClient();
 var TwitterStrategy = require('passport-twitter').Strategy;
-var twitterConsumerKey = "7MWjUNkM6OL7hYctSTOA";
-var twitterConsumerSecret = "7CEXmq4wbchWww3g4gEzdnLT9xuTnwxdD5jSOXjVgQ";
-var callbackURL =  "https://kamal.scrollback.io/r/twitter/auth/callback";
+var twitterConsumerKey = config.twitter.consumerKey;
+var twitterConsumerSecret = config.twitter.consumerSecret;
+var callbackURL = config.twitter.callbackURL;
 var core;
-var expireTime = 10*60;
-var timeout  = 100000;//reconnect time for twitter...
+var expireTime = 10*60;//expireTime for twitter API key...
+var timeout  = 1000*60;//search Interval
 var currentConnections = {};
 var userData = {};
 module.exports = function(coreObj) {
-	log("twitter app started");
-	core = coreObj;
-	init();
-	fs.readFile(__dirname + "/twitter.html", "utf8", function(err, data){
-		if(err)	throw err;
-		core.on("http/init", function(payload, callback) {
-            payload.twitter = {
-				config: data,
-				script: getScripts(),
-				get: function(req,res,next) {	
-					getReq(req,res,next);
-				}
-			};
-			callback(null, payload);
-        }, "setters");
-	});
-	core.on("room", function(room, callback){
-		log("twitter room obj", JSON.stringify(room));
-		if (room.type == 'room') {
-			if (room.params && room.params.twitter) {
+	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
+		log("twitter app started");
+		core = coreObj;
+		init();
+		fs.readFile(__dirname + "/twitter.html", "utf8", function(err, data){
+			if(err)	throw err;
+			core.on("http/init", function(payload, callback) {
+				payload.twitter = {
+					config: data,
+					get: function(req,res,next) {	
+						getRequest(req,res,next);
+					}
+				};
+				callback(null, payload);
+			}, "setters");
+		});
+		core.on("room", function(room, callback){
+			log("twitter room obj", JSON.stringify(room));
+			if (room.type == 'room' && room.params && room.params.twitter) {
 				addTwitterTokens(room, callback);			
 			}
 			else {
-				disconnect(room);
 				callback();
 			}
-		}
-		else {
-			callback();
-		}
-		log("twitter", room);
-		//callback();
-	},"gateway");
+			log("twitter", room);
+		},"gateway");
+	}
+	else {
+		log("twitter is not enabled");
+	}
+	
 	
 };
 
 function addTwitterTokens(room, callback) {
-	var isNew = true;
-	var acc;
-	room.old.accounts.forEach(function(account) {
-		if (account.gateway === "twitter") {
-			if (account.params.token && account.params.tokenSecret && account.params.profile) {
-				acc = account;	
-				isNew = false;
-			}
+	log("adding twitter tokens.", room);
+	var multi = redis.multi();
+	multi.get("twitter:userData:token:" + room.owner);
+	multi.get("twitter:userData:tokenSecret:" + room.owner);
+	multi.get("twitter:userData:profile:" + room.owner);
+	multi.exec(function(err, replies) {
+		if (err) {
+			log("some redis Error");
+			callback(err);
 		}
-	});
-	if (isNew) {//if tokens are not present in room obj
-		var multi = redis.multi();
-		multi.get("twitter:userData:token:" + room.owner);
-		multi.get("twitter:userData:tokenSecret:" + room.owner);
-		multi.get("twitter:userData:profile:" + room.owner);
-		multi.exec(function(err, replies) {
-			if (err) {
-				callback(err);
-			}
-			else {
-				if (room.accounts) {
-					var  isTwitter = false;
-					room.accounts.forEach(function (account) { 
-						if (account.gateway === 'twitter') {
-							if (replies[0] && replies[1] && replies[2]) {
-								isTwitter = true;	
-								account.params.token = replies[0];
-								account.params.tokenSecret = replies[1];
-								account.params.profile = replies[2];
-								account.params.tags = account.params.tags.trim();
-								disconnect(room);
-								connect(account);
-								callback();
-							}
-							
+		else {
+			if (room.accounts) {
+				var  isTwitter = false;
+				room.accounts.forEach(function (account) { 
+					if (account.gateway === 'twitter') {
+						isTwitter = true;
+						if (replies[0] && replies[1] && replies[2]) {
+							log("adding new values....");
+							account.params.token = replies[0];
+							account.params.tokenSecret = replies[1];
+							account.params.profile = replies[2];
+							account.params.tags = account.params.tags.trim();
+							callback();
 						}
-					});
-					if (!isTwitter) {
-						//disconnect(room);
-						callback("twitter login error");
+						else {//new values are not present in redis.. copy old
+							copyOld();
+						}
 					}
-				} else {
+				});
+				if (!isTwitter) {
 					//disconnect(room);
 					callback("twitter login error");
 				}
+			} else {
+				//disconnect(room);
+				callback("twitter login error");
+			}
+		}
+	});
+	function copyOld() {
+		log("copyOld");
+		var acc;//old account
+		room.old.accounts.forEach(function(account) {
+			if (account.gateway === "twitter") {
+				if (account.params.token && account.params.tokenSecret && account.params.profile) {
+					acc = account;	
+				}
 			}
 		});
-	}
-	else if(acc) {//just reconnect with new values..
-		//old account token should be copied
-		var ta;
-		room.accounts.forEach(function (account) { 
-			if (account.gateway === 'twitter') {
-				account.params.token = acc.params.token;
-				account.params.tokenSecret = acc.params.tokenSecret;
-				account.params.profile = acc.params.profile;
-				account.params.tags = account.params.tags.trim();
-				ta = account;
+		if(acc) {
+			//old account token should be copied
+			var ta;
+			var isTwitter = false;
+			room.accounts.forEach(function (account) { 
+				if (account.gateway === 'twitter' && !account.params.token) {
+					account.params.token = acc.params.token;
+					account.params.tokenSecret = acc.params.tokenSecret;
+					account.params.profile = acc.params.profile;
+					account.params.tags = account.params.tags.trim();
+					ta = account;
+					isTwitter = true;
+					callback();
+				}
+				
+			});
+			if (!twitter) {
+				callback("Error in twitter login");
 			}
-		});
-		log("old twitter account..");
-		if (ta.params.tags === '') {//tags is a empty String just disconnect
-			log("tags is a empty string disconnecting for room", room.id);
-			disconnect(room);
 		}
 		else {
-			disconnect(room);
-			connect(ta);
+			callback("Error in twitter login");
 		}
-		callback();
 	}
+}
+
+//kamalkishor1991 - 1930219950-w6KJdXDfGeS2FdJ6UtzqAInL8YO8aBwdi2DOFpM",
+//"tokenSecret":"S3Pm1Fp1eYSBrPLfCyyNvVvfUVjqr2tPIGrxss66NtBPp
+//kamalkishor1234- token: '2308231086-4ZUmxV4wnuky02c80WYFqnTFmqW3WGOHy8MAxr7',
+//tokenSecret: '8i76KUNZNl7FTgMQoKjsMnj2r0kPkZj0bDqmyVhfLpk2i'
+//
+function init() {
+	setInterval(tweet, timeout);
+	//setTimeout(init(), 5000 * 10);
+	
 	
 }
 
 
-
-function init() {
+function tweet() {
 	db.query("SELECT * FROM `accounts` WHERE `gateway`='twitter'", function(err, data) {
 		if(err) throw "Cannot retrieve twitter accounts";
 		
@@ -137,96 +147,74 @@ function init() {
 		data.forEach(function(account) {
 			log("connecting for room...", account.room);
 			account.params = JSON.parse(account.params);
-			connect(account);
+			fetchTweets(account);
 		});
 	});
-	
-	
-	
-}
-/**
- *Given a room obj disconnect that room with twitter completly.
-*/
-function disconnect(room) {
-	if (currentConnections[room.id]) {
-		log("removing connection with twitter for ", room.id);
-		currentConnections[room.id].stream.stop();
-		delete currentConnections[room.id];
-	}
 }
 /**
  *Connect with twitter
  *1. if tag is empty will not connect
+ *https://dev.twitter.com/docs/api/1.1/get/application/rate_limit_status
  */
-function connect(account) {
-	log("connecting for account", account);
+function fetchTweets(account) {
+	
 	if (account.params && account.params.tags !== "") {
-		currentConnections[account.room] = {};
-		currentConnections[account.room].twit = new Twit({
+		log("connecting for account", account);
+		var twit;
+		twit = new Twit({
 			consumer_key: twitterConsumerKey ,
 			consumer_secret: twitterConsumerSecret,
 			access_token:  account.params.token,
 			access_token_secret: account.params.tokenSecret
 		});
-		var stream = currentConnections[account.room].twit.stream('statuses/filter',
-					{track: [account.params.tags.split(" ")] });
-		log("connecting to twitter for room ", account.room);
-		currentConnections[account.room].stream = stream;
-		stream.on('tweet', function (tweet) {
-			log("room", account.room);
-			//log("tweet value", tweet);
-			var message = {
-				id: guid(),
-				type: "text",
-				text: tweet.text,
-				origin: "twitter",
-				from: tweet.user.screen_name,
-				to: account.room,
-				time: new Date().getTime()
-			};
-			core.emit("message", message);
-		});
-		stream.on('disconnect', function (disconnectMessage) {
-			log("room ", account.room, " is disconnected");
-			//check if disconnected by owner..
-			setTimeout(function() {
-				connect(account);		
-			},timeout);
-		});
+		log("calling room,", account.room);
+		twit.get(
+			'search/tweets', {
+				q: account.params.tags,
+				count: 100
+			}, function(err, reply) {
+				if (err) {
+					log("error", err);
+				}
+				else {
+					log("reply= ", JSON.stringify(reply));
+					sendMessages(reply, account);
+					log("reply...", account.room);
+					
+				}
+			}	
+		);
 	}
 	
 	
 }
 
-function getScripts() {
-return {
-		login: function() {
-			window.open("/r/twitter/login", 'mywin','left=20,top=20,width=500,height=500,toolbar=1,resizable=0');
-			scrollbackScripts.twitter.loginEvent();
-			scrollbackScripts.twitter.loginEvent = function(){};
-			return false;
-		},
-		loginEvent : function() {
-			console.log("added listen event");
-			window.addEventListener("message", function(event) {
-				//console.log("received data---- ", event);
-				//TODO check for origin
-				if(true) {
-					$('#twitterLogin').text(event.data);
-					$scope.editRoom.twitterUsername = event.data;
-				}
-			}, false);
-		}
-		
-	};
+/**
+ *Send selected messages
+ *@param {object} Twitter reply Object
+ */
+function sendMessages(replies, account) {
+	replies.statuses.forEach(function(r) {
+		var message = {
+			id: guid(),
+			type: "text",
+			text: r.text,
+			origin: "twitter",
+			from: "guest-sb-twitter",
+			to: account.room,
+			time: new Date().getTime()
+		};
+		core.emit("message", message);
+	});
 }
+
 /**** get request handler *******/
 /**
  *  "/r/twitter/login" for login
  *   "/r/twitter/"
  *   "r/twitter/auth/twitter/callback/{username}" callback
  */
-function getReq(req, res, next) {
+function getRequest(req, res, next) {
 	var path = req.path.substring(11);// "/r/twitter/"
 	log("path " , path , req.url ," session" , req.session.user);
 	var ps = path.split('/');
@@ -278,8 +266,6 @@ function getReq(req, res, next) {
 	else {
 		next();
 	}
-	
-	//res.redirect('https://twitter.com/oauth');	
 }
 
 /**** get request handler *******/
