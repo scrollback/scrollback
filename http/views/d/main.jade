@@ -9,7 +9,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 			| #{defaultTitle || room.title} on scrollback
 	meta(name="viewport",content="width=device-width")
 	link(rel="stylesheet",href="/dummy.css")
-	link(rel="stylesheet",href="//fonts.googleapis.com/css?family=Open+Sans:300,800|Source+Code+Pro:300")
+	link(rel="stylesheet",href="//fonts.googleapis.com/css?family=Open+Sans:300,800|Alegreya:400|Source+Code+Pro:300")
 	link(rel="stylesheet",href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css")
 	
 	body
@@ -19,7 +19,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 			a(href="/me")#logo scrollback	
 			#user(ng-cloak="")
 				a: img.face(ng-src='{{user.picture}}' ng-click='profile()')
-				a( id='logoutButton' ng-show='user.owner==user.id' ng-click='logout()' title='logout' class='button buttonText fa fa-power-off right')
+				a(id='logoutButton' ng-show='user.owner==user.id' ng-click='logout()' title='logout' class='button buttonText fa fa-power-off right')
 			#username(ng-click='profile()',ng-cloak="") {{user.id}}			
 			div
 				a.archive(ng-show="room.id !== ''" onclick='window.location ="/old/#{room.id}";') (Switch to old view)
@@ -33,7 +33,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 		#body(ng-controller="messageController",class = 'column')
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 				div(ng-repeat="i in items track by $index")
-					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}", time="{{i.time}}", ng-click = "showmenu($index, i)", ng-class="{'elSelected': i.id == selectedId }")
+					message(from="{{i.from}}", text="{{i.text}}", label="{{i.labels[0]}}", time="{{i.time}}", ng-click = "showmenu($index, i)", ng-class="{'elSelected': i.id == selectedId }", show-menu = "showMenu", menu-options ="menuOptions")
 			div(id="nomessagediv", ng-show = "{{items.length === 0}}", ng-cloak="")
 				| This room does not have any messages yet
 			div(ng-show = "{{room.id}}", ng-cloak="")

@@ -7,7 +7,7 @@
 .selection(#000, #3ca);
 
 html, button, input, select, textarea {
-	font: 300 16px/24px "Open Sans", sans-serif;
+	font: 300 16px/24px "Alegreya", sans-serif;
 	color: #222; .box-sizing(border);
 }
 
@@ -68,7 +68,7 @@ img.face {
 #meta {
 	position: absolute;
 	background: #000; color: #eee;
-	width: 50%; min-height: 100%;
+	width: 38%; min-height: 100%;
 	border-right: @sbthick solid @sbgreen;
 	left: 0; top: 0;
 	padding: 48px;
@@ -104,7 +104,7 @@ img.face {
 #body {
 	position: absolute;
 	min-height: 100%;
-	left: 50%;
+	left: 38%;
 	right: 0;
 	top: 0;
 	overflow: hidden;
@@ -287,12 +287,11 @@ img.face {
 	margin-left: 25%;
 	opacity: 1; height: auto;
 	cursor: default;
-//	max-height: 66px; 
 	min-height: 22px;
 }
 
 .scrollback-message-nick { 
-	position: absolute; width: 25%; left: 0; color: #999; text-align: right; padding-right: 4px;
+	position: absolute; width: 20%; left: 0; color: #999; text-align: right; padding-right: 4px;
 	.box-sizing(border);
 }
 .scrollback-message-separator { color: #999; display:none;  }
@@ -374,7 +373,7 @@ img.face {
 	cursor:wait
 }
 .buttonText{
-	font: 300 "Open Sans", sans-serif;
+	font: 400 "Alegreya", serif;
 	padding-right: 8px;
 	font-size : 16px;
 	font-weight: bold !important;
@@ -395,7 +394,7 @@ img.face {
 .layer { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99998; }
 button.menuitem { height: 48px; width: 160px; font: 700 12px/12px "Open Sans", sans-serif; color: #fff; text-transform: uppercase; background: #000; .box-sizing(border); padding: 0 4px; margin: 0; float: left; border: none}
 button.menuitem:hover { background: #33ccaa }
-.menu { z-index: 99999; background: #000; position: fixed; box-shadow: 0 4px 32px 0 rgba(0,0,0,0.5); width: 320px; .clearfix(); }
+.menu { z-index: 99999; background: #000; position: fixed; border-top: 4px solid #000; box-shadow: 0 4px 32px 0 rgba(0,0,0,0.5); width: 320px; .clearfix(); }
 .arrow { color:#000; position: fixed; }
 
 .arrow.up { height: 0; width: 0; border-style: solid; border-width: 0 8px 8px 8px; border-color: transparent transparent #000 transparent; }
