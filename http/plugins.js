@@ -35,7 +35,6 @@ exports.init = function(app, coreObject) {
 	});
 	function exec(url, r,req,res,next) {
 		var s = url.split('/');
-		log("s=", s);
 		if (s.length >= 3) {
 			if (configPlugins && configPlugins[r] && configPlugins[r][s[2]]) {
 				return configPlugins[r][s[2]](req,res,next);
@@ -55,7 +54,7 @@ exports.init = function(app, coreObject) {
 	 *config: {
 		appname : {
 			config: {string}//config html
-			script: {function},
+			script: {object},//object of function
 			get: {
 				"login": function() {},
 				...

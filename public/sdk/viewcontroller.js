@@ -379,7 +379,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 					gateway: "twitter",
 					id:"twitter://" + $scope.editRoom.twitterUsername + "#" + $scope.room.id,
 					room: $scope.room.id,
-					params:{tags: $scope.editRoom.twitterTags.trim()}
+					params:{tags: $scope.editRoom.twitterTags || ""}
 			});
 			$scope.editRoom.params.twitter = true;
 			delete $scope.editRoom.twitterTags;
