@@ -55,7 +55,7 @@ module.exports = function(core) {
             });
             if(action.user) {
                 redisProxy.set("user:{{"+action.user.id+"}}", JSON.stringify(action.user));
-            }
+            }else
 
             redisProxy.rename("user:{{"+action.from+"}}:occupantOf","user:{{"+action.ref+"}}:occupantOf");
         }
@@ -94,11 +94,11 @@ module.exports = function(core) {
                 });
             });
         }
-    }, "storage");
+    }, "cache");
     core.on("getRooms", function(query, callback) {
         if(query.id) {
             return redisProxy.get("room:{{"+query.id+"}}", function(err, data) {
-                if(err || !date) callback();
+                if(err || !data) callback();
                 if(data) return callback(true, [JSON.parse(data)]);
             });
         }
@@ -116,5 +116,5 @@ module.exports = function(core) {
                 });
             });
         }
-    }, "storage");
+    }, "cache");
 };

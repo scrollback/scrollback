@@ -42,7 +42,6 @@ function connect(server, nick, uid, channels, callback) {
 		
 		if(callback) callback(msg);
 	}
-	
 	client.conn.on("connect",function(){
 		ident.register(this.address().port,this.remotePort,uid);
 	});
@@ -63,7 +62,7 @@ function connect(server, nick, uid, channels, callback) {
 		client.addListener('message', function(nick, channel, text) {
 	
 			// if a user name not registered with askabt, connects via IRC, he is made a  guest.
-			if(!(users[client.opt.server] && users[client.opt.server][nick])) nick = "guest-" + nick;
+			// if(!(users[client.opt.server] && users[client.opt.server][nick])) nick = "guest-" + nick;
 
 			log(client.nick + " hears " + nick + " say \'" +
 				text.substr(0,32) + "\' in " + channel);
@@ -76,6 +75,13 @@ function connect(server, nick, uid, channels, callback) {
 				message('back', from, room(channel), '', channel);
 			}
 		});
+
+		client.addListener('names', function(channel, names) {
+			log("Users on "+channel+" "+ Object.keys(names));
+			Object.keys(names).forEach(function(name) {
+				if(client.nick != name) message('back', name, room(channel), '', channel);
+			});
+		})
 		
 		client.addListener('nick', function(oldn, newn,channel) {
 			message('nick', oldn, (channel.length == 0? "": room(channel[0])), '', (channel.length==0?"":channel[0]), newn);

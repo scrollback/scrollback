@@ -110,7 +110,6 @@ function init(data, conn) {
 
 			//Temp for now.
 			core.emit("init", {
-				type: "init",
 				from: sess.user.id,
 				time: new Date().getTime()
 			});

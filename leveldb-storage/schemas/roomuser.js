@@ -9,7 +9,7 @@ module.exports = function (types) {
 		getUser: function(query, cb) {			
 			if(query.id){
 				user.get(query.id, function(err, res) {
-					if(!res) return cb();
+					if(!res) return cb(true, []);
 					cb(true, [res]);
 				});	
 			}else if(query.memberOf) {
@@ -23,7 +23,7 @@ module.exports = function (types) {
 		getRoom: function(query, cb) {
 			if(query.id){
 				room.get(query.id, function(err, res){
-					log(err, res);
+					if(!res) return cb(true, []);
 					cb(true, [res]);
 				});	
 			}else if(query.hasMember) {

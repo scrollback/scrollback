@@ -16,7 +16,7 @@ var db = require("../lib/mysql.js");
 
 
 var botNick=config.irc.nick, clients = {bot: {}}, users = {};
-
+var nickFromUser = {}, userFromSess = {};
 module.exports = function(object){
 	var pluginContent = "";
 	core = object;
@@ -108,12 +108,40 @@ function addBotChannels(host, channels) {
 	if(!client) {
 		clients.bot[host] = client =
 			connect(host, botNick, botNick, channels, function(m) {
+				var sessionID = "irc://"+m.origin.server+"/"+m.from;
 				if (users[host] && users[host][m.from]) {
 					log("Incoming Echo", m);
 					return;
 				}
-
-				core.emit("message", m);
+				if(m.type == "back") {
+					console.log("backing----", m.from);
+					if(userFromSess[sessionID]) {
+						m.from = userFromSess[sessionID];
+						core.emit("message", m);
+					}else {
+						core.emit("init", {sessionID: sessionID, suggestedNick: m.from}, function(err, data) {
+							console.log("backing----", data);
+							userFromSess[sessionID] = data.user.id;
+							nickFromUser[data.user.id] = m.from
+							m.from = data.user.id;
+							core.emit("message", m);
+						});
+					}
+				}else if(m.type == 'nick') {
+					core.emit("init", {sessionID: sessionID, suggestedNick: m.ref}, function(err, data) {
+						m.from = userFromSess[sessionID];
+						delete nickFromUser[userFromSess[sessionID]];
+						delete userFromSess[sessionID];
+						userFromSess["irc://"+m.origin.server+"/"+m.ref] = data.user.id;
+						nickFromUser[data.user.id] = m.ref;
+						m.ref = data.user.id;
+						core.emit("message", m);
+					});
+				}
+				else {
+					m.from = userFromSess[sessionID] || m.from;
+					core.emit("message", m);
+				}
 			});
 
 		client.on('nick', function(oldn, newn) {
