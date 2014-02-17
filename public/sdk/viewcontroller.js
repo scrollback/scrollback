@@ -160,7 +160,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	function generateSortedList(members, occupants) {
 		var userMap = {}, userArray=[];
 		members.forEach(function(member) {
-			if(member.id === $scope.room.owner) member.score = 2;
+			if(member.id === $scope.room.owner) member.score = 1.5;
 			else member.score = 1;
 			userMap[member.id] = member;
 			userArray.push(member);

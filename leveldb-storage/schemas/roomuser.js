@@ -50,7 +50,8 @@ module.exports = function (types) {
 				picture: data.picture,
 				timezone:0,
 				identities: [],
-				params: data.params
+				params: data.params,
+				accounts: data.accounts
 			}
 			data.accounts && data.accounts.forEach(function(account) {
 				newRoom.identities.push(account.id);

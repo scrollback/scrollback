@@ -9,8 +9,6 @@ module.exports = function (types) {
 		put: function (message, cb) {
 			var newLabel = {}, room = message.room, user = message.user;
 			log("Pushing to leveldb", message);
-			delete message.user;
-			delete message.room;
 			if(message.labels instanceof Array) {
 				message.labels.forEach(function(element) {
 					newLabel[element] = 1;
@@ -20,9 +18,17 @@ module.exports = function (types) {
 				newLabel = message.labels;
 			}
 			message.labels = newLabel;
-			texts.put(message, function(err, res) {
-				message.user = user;
-				message.room = room;
+			texts.put({
+				id:message.id,
+				type:"text",
+				from:message.from,
+				to:message.to,
+				text:message.text,
+				time:message.time,
+				labels:message.labels,
+				editInverse:message.editInverse,
+				mentions:message.mentions
+			}, function(err, res) {
 				for(i in message.labels){
 					types.labels.put({id:i});
 					if(message.labels.hasOwnProperty(i)) {

@@ -37,7 +37,8 @@ function migrateRooms(cb) {
 				type: room.type,
 				picture: room.picture,
 				timezone:0,
-				identities: []
+				identities: [],
+				accounts: room.accounts
 			}
 
 			try{

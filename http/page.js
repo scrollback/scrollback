@@ -32,6 +32,7 @@ var scriptResponseObject;
  */
 var formatText = function format(text) {
 	if(!text) return "";
+    text = text.replace(/[<]/g,"&lt;").replace(/[>]/g, "&gt;");
 	var u = /\b(https?\:\/\/)?([\w.\-]*@)?((?:[a-z0-9\-]+)(?:\.[a-z0-9\-]+)*(?:\.[a-z]{2,4}))((?:\/|\?)\S*)?\b/g;
 	var m = "", r, s=0, protocol, user, domain, path;
 	while((r = u.exec(text)) !== null) {

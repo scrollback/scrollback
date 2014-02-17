@@ -93,6 +93,8 @@ module.exports = function(core) {
                     return callback(true, data);
                 });
             });
+        }else {
+            callback();
         }
     }, "cache");
     core.on("getRooms", function(query, callback) {
@@ -115,6 +117,8 @@ module.exports = function(core) {
                     return callback(err, data);
                 });
             });
+        }else {
+            callback();
         }
     }, "cache");
 };

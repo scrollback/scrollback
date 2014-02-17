@@ -18,8 +18,6 @@ module.exports = function (types) {
 				from:old.from,
 				to:old.to,
 				labels:{},
-				user: old.user,
-				room: old.room
 			};
 			if(old.labels){
 				if(old.labels instanceof Array) {
@@ -69,8 +67,6 @@ module.exports = function (types) {
 			if(!newText.editInverse) newText.editInverse = [];
 			newText.editInverse.push(editInvs);
 			textsApi.put(newText);
-			delete editAction.old.room;
-			delete editAction.old.user;
 			edit.put(editAction);
 			cb(null, editAction);
 		}
