@@ -172,6 +172,7 @@ scrollbackApp.controller('loginController',['$scope','$route','$factory','$locat
 
 
 scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, $location, $routeParams) {
+	$scope.timeout = null;
 	if($factory.isActive ) {
 		$factory.enter($routeParams.room);
 	}else {
@@ -203,34 +204,42 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	console.log("SCope room name is : ", $scope.room.name);
 		
 	if($scope.room.members) $scope.room.members.length = 0;
-
-		
 	function generateSortedList(members, occupants) {
 		var userMap = {}, userArray=[];
 		members.forEach(function(member) {
+			if(!member || !member.id || !member.picture) return;
 			if(member.id === $scope.room.owner) member.score = 1.5;
 			else member.score = 1;
 			userMap[member.id] = member;
 			userArray.push(member);
 		});
 		occupants.forEach(function(occupant) {
-			if(occupant && userMap[occupant.id]) {
+			if(!occupant || !occupant.id || !occupant.picture) return;
+			if(userMap[occupant.id]) {
 				userMap[occupant.id].score +=2;	
-			}else{
-				if(occupant){
-					userMap[occupant.id] = occupant;
-					occupant.score = 2;
-					userArray.push(occupant);
-				}
+			}else {
+				userMap[occupant.id] = occupant;
+				occupant.score = 2;
+				userArray.push(occupant);
 			}
 		});
-
 		userArray.sort(function(a,b) {
 			return -(a.score-b.score);
 		});
 		return userArray;
 	}
-
+	function refreshList(members, occupants){
+		$scope.$apply(function(){
+			if($scope.timeout) {
+				clearTimeout($scope.timeout);
+			}
+			$scope.timeout = setTimeout(function() {
+				$scope.$apply(function() {
+					$scope.room.relatedUser = generateSortedList(members, occupants);
+				});
+			}, 1000);
+		});
+	}
 	function loadMembers() {
 		var usersList; 
 		var occupants, members;
@@ -241,81 +250,69 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 					$scope.$apply(function() {
 						occupants = data.data;
 						usersList = generateSortedList(members, occupants);
-						// stripping out guest- from usernames
-						usersList = usersList.map(function(user){
-							if(/^guest-/.test(user.id)){
-								user.id = user.id.substring(6);
-								return user;
-							}
-							else return user;
-						});
+
 						$scope.room.relatedUser = usersList;
 					});
 				});
 			});
 		});
 		$factory.on("message", function(i){
+			console.log(i);
 			if(occupants && members){
 				if(i.type == "back"){
-					$factory.getUsers({id: i.from}, function(user){
-						if(user.data && user.data.length > 0){
-							user = user.data[0];
-							$scope.$apply(function(){
-								if(user.id !== $scope.user.id) occupants.push(user);
-								$scope.room.relatedUser = generateSortedList(members, occupants);
-							});
+					if(i.user) {
+						user = i.user;
+						if(user.id !== $scope.user.id) {
+							occupants.push(user);
+							refreshList(members, occupants);
 						}
-					});
+					}else{
+						return;
+					}
 				}
 				if(i.type == "away"){
 					// remove user from list. 
-					for(j=0; j< occupants.length; j++){
-						if(occupants[j].id === i.from){
-							occupants.splice(j, 1);
-							$scope.$apply(function(){
-								$scope.room.relatedUser = generateSortedList(members, occupants);
-							});
+					for(j=0; j< occupants.length; j++) {
+						if(occupants[j].id === i.from) {
+							break;
 						}
 					}
+					if(j == occupants.length) return;
+					occupants.splice(j, 1);
+					refreshList(members, occupants);
 				}
-				if(i.type == "join"){
-					$factory.getUsers({id: i.from}, function(user){
-						if(user.data && user.data.length > 0){	
-							user = user.data[0];
-							$scope.$apply(function(){
-								members.push(user);
-								$scope.room.relatedUser = generateSortedList(members, occupants);
-							});
-						}
-					});
+				if(i.type == "join") {
+					if(i.user) {
+						user = i.user;
+						members.push(user);
+						refreshList(members, occupants);
+					}
 				}
 				if(i.type == "part"){
 					// remove user from members list
-					for(j=0; j< members.length; j++){
-						if(members[j].id === i.from){
-							members.splice(j, 1);
-							$scope.$apply(function(){
-								$scope.room.relatedUser = generateSortedList(members, occupants);
-							});
+					for(j=0; j< members.length; j++) {
+						if(members[j].id === i.from) {
+							break;
 						}
 					}
+					if(j == members.length) return;
+					members.splice(j, 1);
+					refreshList(members, occupants);
 				}
 				if(i.type == "nick"){
-					console.log("GOt a nick message!", i);
+					console.log("Got a nick message!", i);
 					for(j=0; j< occupants.length; j++){
 						if(occupants[j].id === i.from){
-							occupants.splice(j, 1);
-							$factory.getUsers({id: i.ref}, function(user){
-								if(user.data && user.data.length > 0){
-									user = user.data[0];
-									$scope.$apply(function(){
-										occupants.push(user);
-										$scope.room.relatedUser = generateSortedList(members, occupants);
-									});
-								} 
-							});
+							break;
 						}
 					}
+					if(j == occupants.length) return;
+					core.emit('getRooms', {id:i.from}, function(err, user) {
+						occupants.splice(j, 1);
+						user = user[0];
+						occupants.push(user);
+						refreshList(members, occupants);	
+					});
 				}
 			}
 		});

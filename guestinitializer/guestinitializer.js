@@ -1,5 +1,6 @@
 var crypto = require('crypto');
 var redisProxy = require('../lib/redisProxy.js');
+var names = require('../lib/names.js');
 var core;
 module.exports = function(c) {
 	core = c;
@@ -10,7 +11,8 @@ module.exports = function(c) {
 			type:"user",
 			session:"",
 			params:{},
-			timezone:0
+			timezone:0,
+			session: data.session || ""
 		};
 		// a temp thing for web gateway.
 		if(data.from) {
@@ -52,6 +54,7 @@ function storeUser(user, callback) {
 		if(err) return callback(err);
 		callback(null, user);
 	});
+	redisProxy.expire("user:{{"+user.id+"}}", 24*60*60);
 }
 function generatePick(id) {
 	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=identicon&s=48';

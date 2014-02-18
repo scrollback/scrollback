@@ -53,9 +53,17 @@ module.exports = function(core) {
                     redisProxy.sadd("room:{{"+room+"}}:hasOccupants",action.ref);
                 });
             });
-            if(action.user) {
-                redisProxy.set("user:{{"+action.user.id+"}}", JSON.stringify(action.user));
-            }else
+            if(!/^guest-/.test(action.ref)) {
+                core.emit("getUsers",{id: action.ref}, function(err, data) {
+                    redisProxy.set("user:{{"+action.ref+"}}", JSON.stringify(data[0]));
+                });
+            }else{
+                if(action.user) {
+                    redisProxy.set("user:{{"+action.user.id+"}}", JSON.stringify(action.user));
+                }
+
+            }
+         
 
             redisProxy.rename("user:{{"+action.from+"}}:occupantOf","user:{{"+action.ref+"}}:occupantOf");
         }

@@ -95,7 +95,6 @@ function init(data, conn) {
 			var m={};
 			if (d) {
 				for (i=0;i<d.length;i++) {
-					log("adding room-------",d[i].room);
 					m[d[i].room]=true;
 				}
 			}
@@ -111,6 +110,7 @@ function init(data, conn) {
 			//Temp for now.
 			core.emit("init", {
 				from: sess.user.id,
+				session: "web:"+conn.sid,
 				time: new Date().getTime()
 			});
 			session.set(conn.sid, sess);
@@ -286,13 +286,13 @@ function message (m, conn) {
 				}
 				
 				if(m && m.type && m.type == 'nick') {
-					core.emit("init",{
-						type:"init", 
-						from:m.ref, 
-						time: new Date().getTime()
-					},function(err, data){
-
-					});
+					// core.emit("init",{
+					// 	type:"init", 
+					// 	from:m.ref, 
+					// 	time: new Date().getTime()
+					// }, function(err, data){
+					// 	console.log();
+					// });
 
 					//in case of logout.
 					if(/^guest-/.test(m.ref) && !/^guest-/.test(m.from)){

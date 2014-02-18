@@ -37,8 +37,6 @@ module.exports = function (types) {
 				from:data.from,
 				ref: data.ref,
 				to: old.to,
-				user: data.user,
-				room:data.room,
 				old: data.old
 			};
 			if(data.labels) {

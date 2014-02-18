@@ -2,16 +2,23 @@
 module.exports = function(core) {
 	function loader(data, callback) {
 		//core.emit('getRooms', {id: data.from}, function(err, user) {
-		core.emit('getRooms', {id:data.to[0]}, function(err, room) {
-			if(err) callback(err);
-			data.room = room[0] || {};
-			//core.emit('getUsers', {id: data.from}, function(err, user) {
-			core.emit('getUsers', {id: data.from}, function(err, user) {
+		if(data.to){
+			core.emit('getRooms', {id:data.to[0]}, function(err, room) {
 				if(err) callback(err);
-				data.user = user[0] || {};
-				callback(null, data);
+				data.room = room[0] || {};
+				//core.emit('getUsers', {id: data.from}, function(err, user) {
+				if(data.type == "nick") return callback();
+				core.emit('getUsers', {id: data.from}, function(err, user) {
+					if(err) callback(err);
+					data.user = user[0] || {};
+					console.log("AFTER ENT LOAD:", data);
+					callback(null, data);
+				});
 			});
-		});
+		}else{
+			callback();
+		}
+	
 	}
 
 	core.on('edit', function(data, callback) {
@@ -23,6 +30,7 @@ module.exports = function(core) {
 			});		
 		});
 	},'loader');
+	core.on('message', loader, 'loader');
 	core.on('text', loader, 'loader');
 	core.on('away', loader, 'loader');
 	core.on('back', loader, 'loader');

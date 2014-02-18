@@ -34,10 +34,11 @@
 <p id="description" class = "collapse expanded"> {{ room.description || "This room does not have a description yet!"}} </p>
 
 <div id="members"> 
-	<div class='person' ng-class = "{'online' : i.score >= 2 }" ng-repeat = "i in room.relatedUser">
+	<div class='person' ng-class = "{'online' : i.score >= 2 }" ng-repeat = "i in room.relatedUser | limitTo:20">
 		<img ng-src="{{i.picture}}" class = "face" title="{{i.id}}"/>
-		<div class='name'>{{i.id}}</div>
+		<div class='name'>{{i.id.replace("guest-","")}}</div>
 	</div>
+	<span ng-show="room.relatedUser.length>20"> and {{room.relatedUser.length-20}} more</span>
 <!--
 	<span ng-repeat = "i in room.usersPresent">
 		<img src="{{i.picture}}" class = "face present" title="{{i.id}}"/>
