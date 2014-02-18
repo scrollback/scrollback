@@ -214,12 +214,14 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			userArray.push(member);
 		});
 		occupants.forEach(function(occupant) {
-			if(userMap[occupant.id]) {
+			if(occupant && userMap[occupant.id]) {
 				userMap[occupant.id].score +=2;	
 			}else{
-				userMap[occupant.id] = occupant;
-				occupant.score = 2;
-				userArray.push(occupant);
+				if(occupant){
+					userMap[occupant.id] = occupant;
+					occupant.score = 2;
+					userArray.push(occupant);
+				}
 			}
 		});
 

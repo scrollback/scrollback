@@ -164,7 +164,7 @@ img.face {
 
 @media screen and (max-width: 750px) {
 	#titleBar {
-		width: 100%; z-index: 1;
+		width: 100%; z-index: 5;
 		height: 60px;
 		padding-top: 3px;
 		padding-bottom: 5px;
@@ -190,9 +190,13 @@ img.face {
 	#meta {
 		width: 100%; z-index: 1;
 		left: -100%;
-		padding-top: 60px;
 		overflow: hidden;
 		padding: 4px 48px;
+		&.expanded{
+			left: 0;
+			padding-top: 60px;
+			border-right: none ;
+		}
 	}
 	#body {
 		left: 0; 
