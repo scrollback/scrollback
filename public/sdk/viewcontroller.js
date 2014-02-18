@@ -372,22 +372,17 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		if($scope.editRoom.ircServer && !$scope.editRoom.ircRoom) {
 			return $factory.emit("error","Enter irc room name");
 		}
-		if ($scope.editRoom.twitterUsername) {
-			if(!$scope.editRoom.accounts) $scope.editRoom.accounts = [];
-			console.log("edit room obj", $scope.editRoom);
-			$scope.editRoom.accounts.push({
-					gateway: "twitter",
-					id:"twitter://" + $scope.editRoom.twitterUsername + "#" + $scope.room.id,
-					room: $scope.room.id,
-					params:{tags: $scope.editRoom.twitterTags || ""}
-			});
-			$scope.editRoom.params.twitter = true;
-			delete $scope.editRoom.twitterTags;
-			delete $scope.editRoom.twitterUsername;
+		if ($scope.twitterUsername) {
+			if(!$scope.editRoom.identities) $scope.editRoom.identities = [];
+			$scope.editRoom.identities.push("twitter://" + $scope.twitterUsername + ":" + $scope.room.id);
+			$scope.editRoom.params.twitter = {};
+			$scope.editRoom.params.twitter.tags = $scope.twitterTags;
+			$scope.editRoom.params.twitter.id = $scope.twitterUsername;
+			//delete $scope.editRoom.twitterTags;
+			//delete $scope.editRoom.twitterUsername;
 		}
 		else {
 			$scope.editRoom.params.twitter = false;
-			delete $scope.editRoom.twitterTags;
 		}
 		if(!$scope.editRoom.ircServer && $scope.editRoom.ircRoom) {
 			return $factory.emit("error","Enter irc server");
@@ -472,19 +467,14 @@ scrollbackApp.controller('twitterController',['$scope', function($scope) {
 			var isOrigin = event.origin.indexOf(suffix, event.origin.length - suffix.length) !== -1;
 			if (isOrigin) {
 				$scope.$apply(function() {
-					$scope.$parent.editRoom.twitterUsername = event.data;
+					$scope.$parent.twitterUsername = event.data;
 				});
 			}
 		}, false);
 	};
-	if($scope.room.accounts && $scope.room.accounts.forEach) {
-		$scope.room.accounts.forEach(function(account) {
-			url = parseUrl(account.id);
-			if(account.gateway === "twitter") {
-				$scope.editRoom.twitterUsername = url.hostname;
-				$scope.editRoom.twitterTags = account.params.tags;
-			}
-		});
+	if($scope.room.params && $scope.room.params.twitter) {
+		$scope.$parent.twitterTags = $scope.room.params.twitter.tags;
+		$scope.$parent.twitterUsername = $scope.room.params.twitter.id;
 	}
 }]);
 

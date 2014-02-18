@@ -14,8 +14,8 @@ var callbackURL = config.twitter.callbackURL;
 var debug = config.twitter.debug;
 var core;
 var expireTime = 10 * 60;//expireTime for twitter API key...
-var timeout  = 1000 * 30;//search Interval
-var maxTweets = 3;//max tweets to search in timeout inteval
+var timeout  = 1000 * 60 ;//search Interval
+var maxTweets = 1;//max tweets to search in timeout inteval
 var currentConnections = {};
 var userData = {};//used to save access token etc.
 module.exports = function(coreObj) {
@@ -53,8 +53,6 @@ module.exports = function(coreObj) {
 	else {
 		log("twitter is not enabled");
 	}
-	
-	
 };
 /**
  *Read twitter token from redis and 
@@ -72,62 +70,34 @@ function addTwitterTokens(room, callback) {
 			callback(err);
 		}
 		else {
-			if (room.accounts) {
-				var  isTwitter = false;
-				room.accounts.forEach(function (account) { 
-					if (account.gateway === 'twitter') {
-						isTwitter = true;
-						if (replies[0] && replies[1] && replies[2]) {
-							logTwitter("adding new values....");
-							account.params.token = replies[0];
-							account.params.tokenSecret = replies[1];
-							account.params.profile = replies[2];
-							account.params.tags = account.params.tags || "";
-							account.params.tags = account.params.tags.trim();
-							callback();
-						}
-						else {//new values are not present in redis.. copy old
-							copyOld();
-						}
-					}
-				});
-				if (!isTwitter) {
-					callback("twitter login error");
-				}
-			} else {
-				callback("twitter login error");
+			//if (room.identities && room.identities.twitter) {
+			if (replies[0] && replies[1] && replies[2]) {
+				logTwitter("adding new values....");
+				room.params.twitter.token = replies[0];
+				room.params.twitter.tokenSecret = replies[1];
+				room.params.twitter.profile = replies[2];
+				room.params.twitter.tags = room.params.twitter.tags || "";
+				room.params.twitter.tags = room.params.twitter.tags.trim();
+				callback();
 			}
+			else {//new values are not present in redis.. copy old
+				copyOld();
+			}
+		
 		}
 	});
 	function copyOld() {
 		logTwitter("copyOld");
-		var acc;//old account
-		room.old.accounts.forEach(function(account) {
-			if (account.gateway === "twitter") {
-				if (account.params.token && account.params.tokenSecret && account.params.profile) {
-					acc = account;	
-				}
-			}
-		});
-		if(acc) {
-			//old account token should be copied
-			var ta;
-			var isTwitter = false;
-			room.accounts.forEach(function (account) { 
-				if (account.gateway === 'twitter' && !account.params.token) {
-					account.params.token = acc.params.token;
-					account.params.tokenSecret = acc.params.tokenSecret;
-					account.params.profile = acc.params.profile;
-					account.params.tags = account.params.tags.trim();
-					ta = account;
-					isTwitter = true;
-					callback();
-				}
-				
-			});
-			if (!isTwitter) {
-				callback("Error in twitter login");
-			}
+		
+		var old;//old account
+		if(room.old.params) old = room.old.params.twitter;
+		if(old) {
+			room.params.twitter.token = old.token;
+			room.params.twitter.tokenSecret = old.tokenSecret;
+			room.params.twitter.profile = old.profile;
+			room.params.twitter.tags = room.params.twitter.tags || "";
+			room.params.twitter.tags = room.params.twitter.tags.trim();
+			callback();
 		}
 		else {
 			callback("Error in twitter login");
@@ -147,68 +117,63 @@ function init() {
  *Get all accounts where gateway = 'twitter' and init searching.
  */
 function initTwitterSeach() {
-	db.query("SELECT * FROM `accounts` WHERE `gateway`='twitter'", function(err, data) {
-		if(err) throw "Cannot retrieve twitter accounts";
-		
-		//logTwitter("all data = ", data);
-		data.forEach(function(account) {
-			logTwitter("connecting for room...", account.room);
-			account.params = JSON.parse(account.params);
-			fetchTweets(account);
-		});
+	log("getting room data....");
+	core.emit("getRooms",{identities:"twitter"}, function(err, data) {
+		if (!err) {
+			log("data returned from labelDB", data);
+			data.forEach(function(room) {
+				fetchTweets(room);
+			});
+		}
 	});
 }
 /**
  *Connect with twitter
  *1. if tag is empty will not connect
  */
-function fetchTweets(account) {
-	
-	if (account.params && account.params.tags !== "") {
-		logTwitter("connecting for account", account);
+function fetchTweets(room) {
+
+	if (room.params && room.params.twitter  && room.params.twitter.tags) {
+		logTwitter("connecting for room...", room);
 		var twit;
 		twit = new Twit({
 			consumer_key: twitterConsumerKey ,
 			consumer_secret: twitterConsumerSecret,
-			access_token:  account.params.token,
-			access_token_secret: account.params.tokenSecret
+			access_token:  room.params.twitter.token,
+			access_token_secret: room.params.twitter.tokenSecret
 		});
-		logTwitter("calling room,", account.room);
-		redis.get("twitter:maxSinceId:" + account.room, function(err, data) {
+		logTwitter("calling room,", room);
+		redis.get("twitter:lastTweetId:" + room.id, function(err, data) {
+			
 			twit.get(
 				'search/tweets', {
-					q: account.params.tags,
+					q: room.params.twitter.tags,
 					count: maxTweets,
-					since_id: data
+					result_type: "recent"
 				}, function(err, reply) {
 					if (err) {
 						logTwitter("error", err);
 					}
 					else {
 						logTwitter("var reply= ", JSON.stringify(reply));
-						redis.set("twitter:maxSinceId:" + account.room, reply.search_metadata.max_id_str, function(err, data) {
-							logTwitter("added data to room...", err, data);
-							sendMessages(reply, account);
-						});
-						
+						if (reply.statuses && reply.statuses[0] && !reply.statuses[0].retweeted && (reply.statuses[0].id + "") !== data) {
+							redis.set("twitter:lastTweetId:" + room.id, reply.statuses[0].id, function(err, data) {
+								logTwitter("added data to room...", err, data);
+								sendMessages(reply, room);
+							});
+						}
 					}
 				}	
 			);
-		});
-		
-	}
-	
-	
+		});	
+	}	
 }
 
 /**
  *Send selected messages
  *@param {object} Twitter reply Object
  */
-function sendMessages(replies, account) {
-	
-	
-	
+function sendMessages(replies, room) {
 	replies.statuses.forEach(function(r) {
 		if (!r.retweeted) {
 			var message = {
@@ -217,7 +182,7 @@ function sendMessages(replies, account) {
 				text: r.text,
 				origin: "twitter",
 				from: r.user.screen_name,
-				to: account.room,
+				to: room.id,
 				time: new Date().getTime()
 			};
 			core.emit("message", message);

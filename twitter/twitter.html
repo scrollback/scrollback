@@ -1,14 +1,17 @@
 <div ng-controller="twitterController">
 	<label>
 		Twitter Configuration
-		</label>
-		<div class="inlineInput">
-			 <input type="text" class ="inlineTextBox" id="twitterTextBox" placeholder ="# tags (e.g: scrollback nodejs)" ng-model="editRoom.twitterTags"/>
-		</div>
-		<button type="button" id = "twitterButton" 
-			 ng-click='twitterLogin();'>
-			<span>{{editRoom.twitterUsername || "Sign IN"}}</span>
+	</label>
+	<label>
+		{{twitterUsername ? ("Admin Twitter Account: " + twitterUsername) : ("Sign In with twitter to watch # tags")}}
+		<button type="button" id = "twitterButton">
+			<span ng-click='twitterLogin();'>{{twitterUsername ?"change" : "Sign IN"}}</span>
 		</button>
-	<label/>
-	<div><p>Use "OR"</p></div>
+	</label>
+	<label>
+		<div class="inlineInput">
+			 <input type="text" class ="inlineTextBox" id="twitterTextBox"
+					placeholder ="# tags (e.g: scrollback nodejs)" ng-model="$parent.twitterTags"/>
+		</div>
+	</label>
 </div>
