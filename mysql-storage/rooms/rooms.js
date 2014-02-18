@@ -8,7 +8,7 @@ function rooms(coreObject) {
 	core.on("rooms",function(options, callback) {
 		log("Heard rooms event cache", options);
 		if(options.id && typeof options.id == "string"){
-			redis.get("room:"+options.id, function(err, data){
+			redis.get("room:{{"+options.id+"}}", function(err, data){
 				var i,l;
 				//redis returns null if key not found
 				if(!data) {
@@ -139,7 +139,7 @@ function rooms(coreObject) {
 		if(err)	throw err;
 		data.forEach(function(element) {
 			console.log("Caching", element);
-			redis.set("room:"+element.id, JSON.stringify(element));
+			redis.set("room:{{"+element.id+"}}", JSON.stringify(element));
 		});
 	});
 };

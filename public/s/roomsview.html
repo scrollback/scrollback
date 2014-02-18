@@ -8,8 +8,8 @@
 </div>
 <div ng-show = "isExists(user.membership)"> 
 	<h1>
-		<a ng-show="room.id" ng-click="goBack()" ><span class="showPointer fa fa-arrow-left btn left"></span></a>
-		<span>Rooms followed by you: </span> <br/>
+		<a ng-show="room.id" ng-click="goBack()" ><span class="button buttonText fa fa-arrow-left btn left"></span></a>
+		<span id="viewTitle">Rooms followed by you: </span> <br/>
 	</h1>
 	<h1 class="room" ng-repeat="m in user.membership">
 		<div>

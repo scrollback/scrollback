@@ -9,32 +9,29 @@ module.exports = function (types) {
 		getUser: function(query, cb) {			
 			if(query.id){
 				user.get(query.id, function(err, res) {
-					cb(true, res);
+					if(!res) return cb(true, []);
+					cb(true, [res]);
 				});	
 			}else if(query.memberOf) {
 				user.get({by: 'memberOf', eq: [query.memberOf]}, function(err, res){
 					cb(true, res);
 				});
 			}else if(query.occupantOf) {
-				user.get({by: 'occupantOf', eq: query.occupantOf}, function(err, res){
-					cb(true, res);
-				});
+				cb();
 			}
 		},
 		getRoom: function(query, cb) {
 			if(query.id){
 				room.get(query.id, function(err, res){
-					log(err, res);
-					cb(true, res);
+					if(!res) return cb(true, []);
+					cb(true, [res]);
 				});	
 			}else if(query.hasMember) {
 				room.get({by: 'hasMember', eq: [query.hasMember]}, function(err, res){
 					cb(true, res);
 				});
 			}else if(query.hasOccupant) {
-				room.get({by: 'hasOccupant', eq: query.hasOccupant}, function(err, res){
-					cb(true, res);
-				});
+				cb();
 			}
 		},
 		put: function(data, cb) {
@@ -53,7 +50,8 @@ module.exports = function (types) {
 				picture: data.picture,
 				timezone:0,
 				identities: [],
-				params: data.params
+				params: data.params,
+				accounts: data.accounts
 			}
 			data.accounts && data.accounts.forEach(function(account) {
 				newRoom.identities.push(account.id);

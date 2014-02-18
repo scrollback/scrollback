@@ -7,23 +7,51 @@ module.exports = function (types) {
 	
 	return {
 		put: function (message, cb) {
+			var newLabel = {}, room = message.room, user = message.user;
 			log("Pushing to leveldb", message);
-			texts.put(message, function(err, res){
+			if(message.labels instanceof Array) {
+				message.labels.forEach(function(element) {
+					newLabel[element] = 1;
+					// texts.link(message.id, 'hasLabel', element, {score: 1});
+				});
+			}else{
+				newLabel = message.labels;
+			}
+			message.labels = newLabel;
+			texts.put({
+				id:message.id,
+				type:"text",
+				from:message.from,
+				to:message.to,
+				text:message.text,
+				time:message.time,
+				labels:message.labels,
+				editInverse:message.editInverse,
+				mentions:message.mentions
+			}, function(err, res) {
 				for(i in message.labels){
 					types.labels.put({id:i});
 					if(message.labels.hasOwnProperty(i)) {
 						texts.link(message.id, 'hasLabel', i, {score: message.labels[i]});
 					}
-				}	
+				}
 				log(err, res);
-				cb(err, res);
+				cb && cb(err, res);
 			});
 			
 		},
 		
 		get: function (options, cb) {
 			var query = {}, reversed, start, end, startTime = new Date().getTime();
-			
+			if(options.id) {
+				return texts.get(options.id, function(err, data){
+					console.log("Calling back", data);
+					if(!data) return cb();
+					return cb(true,[data]);
+				});
+			}else {
+				return cb();
+			}
 			if(options.since && !options.until) {
 				reversed = false;
 				start = options.since; end = 9E99;

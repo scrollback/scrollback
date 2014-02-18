@@ -32,6 +32,7 @@ var scriptResponseObject;
  */
 var formatText = function format(text) {
 	if(!text) return "";
+    text = text.replace(/[<]/g,"&lt;").replace(/[>]/g, "&gt;");
 	var u = /\b(https?\:\/\/)?([\w.\-]*@)?((?:[a-z0-9\-]+)(?:\.[a-z0-9\-]+)*(?:\.[a-z]{2,4}))((?:\/|\?)\S*)?\b/g;
 	var m = "", r, s=0, protocol, user, domain, path;
 	while((r = u.exec(text)) !== null) {
@@ -92,6 +93,7 @@ exports.init = function(app, coreObject) {
         responseObject.user = req.session.user;
 		responseObject.defaultTitle = "Your rooms";
 		responseObject.room = {title: "", id: ""};
+		responseObject.messages = [];
 		res.render("d/main" , responseObject);
     }
     app.get("/me", loginHandler);

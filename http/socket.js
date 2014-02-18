@@ -55,6 +55,7 @@ sock.on('connection', function (socket) {
 			case 'rooms': rooms(d.data, conn); break;
 			case 'getUsers': getUsers(d.data, conn); break;
 			case 'getRooms': getRooms(d.data, conn); break;
+			case 'edit': edit(d.data, conn); break;
 		}
 	});
 	
@@ -86,7 +87,6 @@ function init(data, conn) {
 				if(rooms.hasOwnProperty(i)) rooms[i] = 0;
 			}
 		}
-		log("-------nick----------",sess.user);
 		var query=[];
 		if (sess.user.id.indexOf('guest-')!==0) {
 			query.user=sess.user.id;
@@ -95,7 +95,6 @@ function init(data, conn) {
 			var m={};
 			if (d) {
 				for (i=0;i<d.length;i++) {
-					log("adding room-------",d[i].room);
 					m[d[i].room]=true;
 				}
 			}
@@ -106,7 +105,13 @@ function init(data, conn) {
 				user: sess.user,
 				clientTime: data.clientTime,
 				serverTime: new Date().getTime(),
-				
+			});
+
+			//Temp for now.
+			core.emit("init", {
+				from: sess.user.id,
+				session: "web:"+conn.sid,
+				time: new Date().getTime()
 			});
 			session.set(conn.sid, sess);
 		});
@@ -189,6 +194,16 @@ function messages (query, conn) {
 	});
 }
 
+
+function edit(action, conn) {
+	session.get({sid: conn.sid}, function(err, sess) {
+		var user = sess.user;
+		action.from = user.id;
+		core.emit("edit",action, function(err, data){
+		});
+	});
+	
+}
 function message (m, conn) {
 	
 	if(!conn.sid) return;
@@ -271,6 +286,13 @@ function message (m, conn) {
 				}
 				
 				if(m && m.type && m.type == 'nick') {
+					// core.emit("init",{
+					// 	type:"init", 
+					// 	from:m.ref, 
+					// 	time: new Date().getTime()
+					// }, function(err, data){
+					// 	console.log();
+					// });
 
 					//in case of logout.
 					if(/^guest-/.test(m.ref) && !/^guest-/.test(m.from)){
@@ -297,7 +319,6 @@ function message (m, conn) {
 					} else if(!err){
 						user.id = m.ref;
 					}
-					console.log("Saved session", sess);
 					session.set(conn.sid, sess);
 					var query=[];
 					if (sess.user.id.indexOf('guest-')!==0) {
@@ -453,4 +474,12 @@ exports.send = function (message, rooms) {
 		if(location) message.origin = location;
 		message.to = to;
 	});
+};
+
+
+exports.emit = function(type, action, room) {
+	if(rConns[room]) rConns[room].map(function(conn) {
+		action.to = room;
+		conn.send(type, action);
+	});		
 };

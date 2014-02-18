@@ -8,8 +8,31 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 			}
 		}, 30000);
 	});
+	
+	$scope.userAction = function(){
+		if(/^guest-/.test($scope.user.id)){
+			$scope.profile();
+		}	
+		else{
+			$scope.logout();
+		}
+	}
+	
+	if(/^guest-/.test($scope.user.id)){
+		$scope.actionText = "Sign In ";	
+	}
+	else{
+		$scope.actionText = "Sign Out";
+	}
+	
 	$factory.on("init", function(){
 		$scope.$apply(function(){
+			if(/^guest-/.test($scope.user.id)){
+				$scope.actionText = "Sign In ";	
+			}
+			else{
+				$scope.actionText = "Sign Out";
+			}
 			$scope.isActive = true;
 			$factory.enter($scope.room.id);
 			if($scope.notifications.indexOf("Disconnected. trying to reconnect…")<0) return;
@@ -50,9 +73,11 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 			}, 3000);
 		});
 	});
+	
 	$scope.goBack = function() {
 		$window.history.back();
 	};
+	
 	$scope.profile = function() {
 		if(/^guest-/.test($scope.user.id)) {
 			$scope.personaLogin();
@@ -147,6 +172,7 @@ scrollbackApp.controller('loginController',['$scope','$route','$factory','$locat
 
 
 scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, $location, $routeParams) {
+	$scope.timeout = null;
 	if($factory.isActive ) {
 		$factory.enter($routeParams.room);
 	}else {
@@ -154,84 +180,141 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			$factory.enter($routeParams.room);
 		});
 	}
+	
+	function camelCase(input) {
+		if(input){
+			var inputArr = input.split('');
+			inputArr[0] = inputArr[0].toUpperCase();
+			return inputArr.join('');
+		}
+	}
+	
+	
+	function getRoomName(roomId) {
+		var roomWords = roomId.split('-');
+		var newroomWords = roomWords.map(function(name){
+			return camelCase(name);
+		});
+		console.log("New room words", newroomWords);
+		return newroomWords.join(' ');
+	}
+	
+	$scope.room.name = getRoomName($scope.room.id); 
+	
+	console.log("SCope room name is : ", $scope.room.name);
+		
 	if($scope.room.members) $scope.room.members.length = 0;
-
-	
-// ------- WILL BE USED ONCE getusers for occupants IS READY	
-	
-	
-//	// getting users present in the room 
-//	
-//	function getDisplayList(occupants, members) {
-//		var userList = [], ctr=0;
-//		occupants = occupants.sort(function(a, b){ return a.id - b.id });
-//		
-//		function exists(element, userArray, startPos, endPos) {
-//			// binary search to see if element exists in userArray, if so return index of element, else return -1
-//			if(element === undefined) return -1;
-//			if(endPos < startPos)  return -1;
-//			var mid = Math.floor((startPos + endPos)/2);
-//			if( userArray[mid] && userArray[mid].id === element.id) return mid; 
-//			else if( userArray[mid] && userArray[mid].id > element.id ) return exists(element, userArray, 0, mid-1);
-//			else return exists(element, userArray, mid+1, endPos);
-//		}
-//		
-//		members.forEach(function(m) {
-//			if( (index = exists(m, occupants, 0, occupants.length)) > -1 ) {
-//				userList.push(m);
-//				console.log("Deleting memebers[m]", members[ctr]);
-//				members.splice(ctr, 1);
-//				console.log("Deleting occupants[index]", occupants[index]);
-//				occupants.splice(index, 1);
-//			}
-//			ctr++;
-//		});
-//		
-//		userList.push.apply(userList, occupants);
-//		userList.push.apply(userList, members);
-//		return userList;
-//	}
-//	
-//	(function(){
-//		console.log("getting users and occuapnats now");
-//		// get occupants[]
-//		var occupants, members;
-//		$factory.occupants({occupantOf: $scope.room.id}, function(data){
-//			occupants = data;
-//			console.log('occu', data);
-//			// get members[]
-//			$factory.membership({memberOf: $scope.room.id}, function(data){
-//				members = data;
-//				console.log('mem', data);
-//				$scope.usersPresent = getDisplayList(occupants, members);
-//			});
-//		});
-//	})();
-	
-	
-	
-	
-	// ------------------ this code will be removed and above code uncommented once the occupants api is ready on server side 
-
-
+	function generateSortedList(members, occupants) {
+		var userMap = {}, userArray=[];
+		members.forEach(function(member) {
+			if(!member || !member.id || !member.picture) return;
+			if(member.id === $scope.room.owner) member.score = 1.5;
+			else member.score = 1;
+			userMap[member.id] = member;
+			userArray.push(member);
+		});
+		occupants.forEach(function(occupant) {
+			if(!occupant || !occupant.id || !occupant.picture) return;
+			if(userMap[occupant.id]) {
+				userMap[occupant.id].score +=2;	
+			}else {
+				userMap[occupant.id] = occupant;
+				occupant.score = 2;
+				userArray.push(occupant);
+			}
+		});
+		userArray.sort(function(a,b) {
+			return -(a.score-b.score);
+		});
+		return userArray;
+	}
+	function refreshList(members, occupants){
+		$scope.$apply(function(){
+			if($scope.timeout) {
+				clearTimeout($scope.timeout);
+			}
+			$scope.timeout = setTimeout(function() {
+				$scope.$apply(function() {
+					$scope.room.relatedUser = generateSortedList(members, occupants);
+				});
+			}, 1000);
+		});
+	}
 	function loadMembers() {
-		var members;
+		var usersList; 
+		var occupants, members;
 		$factory.membership({memberOf: $scope.room.id}, function(data){
 			$scope.$apply(function(){
-				$scope.room.members = data.data;
-				var ownerIndex = -1, ownerObj;
-				// putting room owner as first user in members array
-				for(i=0; i < $scope.room.members.length; i++){
-					if($scope.room.members[i].id === $scope.room.owner){
-						ownerIndex = i;
-						ownerObj = $scope.room.members.splice(i,1);
-						break;
+				members = data.data;
+				$factory.occupants({occupantOf: $scope.room.id}, function(data) {
+					$scope.$apply(function() {
+						occupants = data.data;
+						usersList = generateSortedList(members, occupants);
+
+						$scope.room.relatedUser = usersList;
+					});
+				});
+			});
+		});
+		$factory.on("message", function(i){
+			console.log(i);
+			if(occupants && members){
+				if(i.type == "back"){
+					if(i.user) {
+						user = i.user;
+						if(user.id !== $scope.user.id) {
+							occupants.push(user);
+							refreshList(members, occupants);
+						}
+					}else{
+						return;
 					}
 				}
-				if(ownerIndex > -1){
-					$scope.room.members.unshift(ownerObj[0]);
+				if(i.type == "away"){
+					// remove user from list. 
+					for(j=0; j< occupants.length; j++) {
+						if(occupants[j].id === i.from) {
+							break;
+						}
+					}
+					if(j == occupants.length) return;
+					occupants.splice(j, 1);
+					refreshList(members, occupants);
 				}
-			});
+				if(i.type == "join") {
+					if(i.user) {
+						user = i.user;
+						members.push(user);
+						refreshList(members, occupants);
+					}
+				}
+				if(i.type == "part"){
+					// remove user from members list
+					for(j=0; j< members.length; j++) {
+						if(members[j].id === i.from) {
+							break;
+						}
+					}
+					if(j == members.length) return;
+					members.splice(j, 1);
+					refreshList(members, occupants);
+				}
+				if(i.type == "nick"){
+					console.log("Got a nick message!", i);
+					for(j=0; j< occupants.length; j++){
+						if(occupants[j].id === i.from){
+							break;
+						}
+					}
+					if(j == occupants.length) return;
+					core.emit('getRooms', {id:i.from}, function(err, user) {
+						occupants.splice(j, 1);
+						user = user[0];
+						occupants.push(user);
+						refreshList(members, occupants);	
+					});
+				}
+			}
 		});
 	}
 	if($factory.isActive ) {
@@ -242,7 +325,6 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		});
 	}
 	
-	// ------------------
 	$scope.goToRoomsView = function(){
 		if(/^guest-/.test($scope.user.id)){ 
 			$scope.personaLogin();
@@ -250,13 +332,16 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		}
 		else $location.path("/me");
 	}
+	
 	$scope.toggleEmbed = function(){
 		$('#embedScript').toggle();
 	}
+	
 	$scope.isOwner = function() {
 		if($scope.user.id == $scope.room.owner) return true;
 		else return false;
 	};
+	
 	$scope.goToConfigure = function() {
 		if(/^guest-/.test($scope.user.id)){
 			$scope.personaLogin();
@@ -264,6 +349,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		}
 		else $location.path("/"+$scope.room.id+"/edit");
 	};
+	
 	$scope.partRoom = function() {
 		var msg = {}, index,i,l;
 		msg.to = $scope.room.id;
@@ -283,6 +369,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			}
 		}
 	};
+	
 	$scope.joinRoom = function() {
 		var msg = {};
 		var flag = 1;
@@ -316,6 +403,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		if(index > -1) return true;
 		else return false;
 	};
+	
 });
 
 scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', function($scope, $timeout, $location) {	
@@ -356,6 +444,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		$location.path("/"+$scope.room.id);
 		return;
 	}
+	
 	if($scope.user.id != $scope.room.owner && typeof $scope.room.owner!= "undefined") {
 		$location.path("/"+$scope.room.id);
 		return;
@@ -466,9 +555,6 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 				if(data.user.membership instanceof Array) $scope.user.membership = data.user.membership;
 				else $scope.user.membership = Object.keys(data.user.membership);
 			}
-			
-			if($scope.room.id) $location.path("/" + $scope.room.id);
-			else $location.path("/me");
 		});
 	});
 	

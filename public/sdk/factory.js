@@ -31,6 +31,8 @@ var factory=function() {
 	}
 	factoryObject.occupants = callbackGenerator("getUsers");
 	factoryObject.membership = callbackGenerator("getUsers");
+	factoryObject.getUsers = callbackGenerator("getUsers");
+//	factoryObject.edit = callbackGenerator("edit");
 	factoryObject.leaveRest = function(room) {
 		Object.keys(listening).forEach(function(element) {
 			listening[element] && element!=room && leave(element);
@@ -47,7 +49,7 @@ getMessages = function (room, start, end, callback) {
 	if (start) { query.since = start; }
 	if (end) { query.until = end; }
 	query.queryId = guid();
-	pendingCallbacks[query.queryId] = callback;			
+	pendingCallbacks[query.queryId] = callback;
 	socketEmit('messages', query);
 }
 
@@ -59,7 +61,7 @@ function socketEmit(type, data) {
 function callbackGenerator(event){
 	return function(query, callback){
 		query.queryId = guid();
-		pendingCallbacks[query.queryId] = callback;		
+		pendingCallbacks[query.queryId] = callback;
 		socketEmit(event, query);
 	};
 }
@@ -77,7 +79,7 @@ function send(message, callback) {
 	message.time = new Date().getTime();
 	message.origin = {
 		gateway : "web",
-		location : window.location.toString(),
+		location : window.location.toString()
 	};
 	if(callback) pendingCallbacks[message.id] = callback;
 	socket.emit("message", message);
@@ -92,7 +94,6 @@ function newSocket() {
 	socket.onopen = function() {
 		backOff = 1;
 		init();
-		factoryObject.isActive = true;
 		factoryObject.emit("connected");
 	};
 	socket.onerror = socketError;
@@ -158,9 +159,9 @@ function socketMessage(evt) {
 		case 'members':  
 		case 'occupants': 
 		case 'getUsers':
+		case 'edit':
 			handler(d.type, d.data)
 		break;
-
 		case 'error': onError(d.data); break;
 	}
 }

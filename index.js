@@ -25,8 +25,8 @@ require('newrelic');
 var core = Object.create(require("./lib/emitter.js")), config = require("./config.js");
 
 var pluginList = ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
-	"threader", "http", "irc" , "email", "redis-storage", "leveldb-storage", "mysql-storage",
-	"admin-notifier", "custom-emitter","entityloader"];
+	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",
+	"admin-notifier", "custom-emitter","entityloader","guestinitializer"];
 process.nextTick(function(){
 	// The ident server binds to port 113 after a while.
 	if(config.core.uid) process.setuid(config.core.uid);
