@@ -18,13 +18,14 @@ var db = require("../lib/mysql.js");
 var botNick=config.irc.nick, clients = {bot: {}}, users = {};
 var nickFromUser = {}, userFromSess = {};
 module.exports = function(object){
-	var pluginContent = "";
 	core = object;
 	fs.readFile(__dirname + "/irc.html", "utf8", function(err, data){
 		if(err)	throw err;
-		core.on("http/config", function(payload, callback) {
-            payload.irc = data;
-            callback(null, payload);
+		core.on("http/init", function(payload, callback) {
+            payload.irc = {
+				config: data
+			};
+			callback(null, payload);
         }, "setters");
 	});
 	init();
@@ -53,22 +54,28 @@ module.exports = function(object){
 
 			log("OLD ACCOUNTs",room.old);
 			if(room.old && room.old.accounts) room.old.accounts.forEach(function(oldAccount) {
-				var u;
-				if(room.accounts) {
-					for (i=0,l=room.accounts.length;i<l;i++ )
-						if(room.accounts[i].id == oldAccount.id) return;
+				if (oldAccount.gateway === 'irc') {
+					var u;
+					if(room.accounts) {
+						for (i=0,l=room.accounts.length;i<l;i++ )
+							if(room.accounts[i].id == oldAccount.id) return;
+					}
+					u = url.parse(oldAccount.id);
+					clients.bot[u.host].part(u.hash.toLowerCase());
+					delete clients.bot[u.host].rooms[u.hash.toLowerCase()];
 				}
-				u = url.parse(oldAccount.id);
-				clients.bot[u.host].part(u.hash.toLowerCase());
-				delete clients.bot[u.host].rooms[u.hash.toLowerCase()];
+				
 			});
 
 
 			if(room.accounts) room.accounts.forEach(function(account) {
 				var u = url.parse(account.id);
-				if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
-					addBot(account);
+				if (account.gateway === 'irc') {
+					if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
+						addBot(account);
+					}
 				}
+				
 			});
 		}
 		callback();

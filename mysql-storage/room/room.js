@@ -47,13 +47,16 @@ function insertAccounts(data,callback){
 	data.accounts.forEach(function(element) {
 		var id = element.id, room = data.id, gateway;
 		gateway = element.id.split(":")[0];
-
 		accountsQuery += accountValues;
 		ids.push(room);
 		params.push(id);
 		params.push(room);
 		params.push(gateway);
-		params.push("{}");
+		if (!element.params) {
+			params.push("{}");
+		}else{
+			params.push(JSON.stringify(element.params));	
+		}
 		params.push(element.timezone || 0);
 	});
 
