@@ -55,43 +55,83 @@ a.noChange{
 	}
 }
 
-img.face {
-	display: inline-block; .box-sizing(border);
-	height: 48px; width: 48px; vertical-align: top; border-radius: 100%;
-	margin: 0px 8px;
-	&.present {
-//		border-right: 4px solid #0f0;
+.person {
+	width: 48px; padding: 4px; background: rgba(255,255,255,0.1); display: inline-block;
+	margin: 0px 8px 0 0; position: relative; .box-sizing(content);
+	&.online:after { 
+		content: ' '; position: absolute; height: 8px; width: 8px; 
+		border-radius: 100%; bottom: 14px; right: 2px; background: #3c3;
+		border: 2px solid #fff;
+	}
+	& .name {
+		width: 100%; overflow: hidden; line-height: 12px;
+		white-space: nowrap; text-overflow: ellipsis; font-size: 12px;
 	}
 }
 
-
-#meta {
-	position: absolute;
-	background: #000; color: #eee;
-	width: 38%; min-height: 100%;
-	border-right: @sbthick solid @sbgreen;
-	left: 0; top: 0;
-	padding: 48px;
-	.radial-gradient(#555, #000, 100%, 50%);
-	.box-sizing(border);
+img.face {
+	height: 48px; width: 48px; vertical-align: top; 
+//	border-radius: 100%;
 	
+	&.present {
+//		border-right: 4px solid #0f0;
+	}
+	&.top{
+		height: 40px; width: 40px;
+	}
+}
+
+#titleBar{
+	position: fixed;
+	background: #000; color: #eee;
+	height: 40px; z-index: 10;
+	width: 38%; 
+	border-right: @sbthick solid @sbgreen;
+	left: 0; 
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 0;
+//	.radial-gradient(#555, #000, 100%, 50%);
+	.box-sizing(border);
 	a#logo {
 		display: block; float: left;
-		line-height: 48px; cursor: pointer; color: transparent;
-		background: url('/img/logod-54.png') no-repeat left center;
-		height: 48px; width: 192px;
+		line-height: 40px; cursor: pointer; color: transparent;
+		background: url('/img/logo-title.png') no-repeat left center;
+		height: 40px; width: 130px;
 //		
 //		@media screen and (max-width: 640px) {
 //			background-image: url('/img/logod-36.png')
 //		}
 	}
 	#user {
-		line-height: 48px; cursor: pointer; float: right;
+		line-height: 60px; cursor: pointer; float: right;
 	}
 	#username {
-		line-height: 48px; cursor: pointer; float: right; position: relative ;
-		font-weight: bold ;
+		line-height: 10px; cursor: pointer; float: right; position: relative ;
+		font-weight: bold; font-size: 12px; padding-right: 4px; 
+		margin-left: 40%;
 	}
+	#actionText {
+		line-height: 50px !important; float: right; padding-right: 4px;
+		font-size: 14px; height: 5px; text-transform: uppercase;
+		font-weight: bold; font: 700 14px/14px "Open Sans";
+		color: #33ccaa; cursor: pointer;
+	}
+}
+
+#meta {
+	position: fixed;
+	background: #000; color: #eee;
+	width: 38%; 
+	min-height: 100%;
+	border-right: @sbthick solid @sbgreen;
+	left: 0; bottom: 0;
+	padding-top: 40px;
+	padding-left: 48px;
+	padding-right: 48px;
+	.radial-gradient(#555, #000, 100%, 50%);
+	.box-sizing(border);
+	
 	#info { clear: both; padding-top: 16px; }
 	#foot { font-size: 0.75em; color: #ccc; margin: 2em 0 0 0; display: inline-block;}
 }
@@ -109,12 +149,11 @@ img.face {
 	top: 0;
 	overflow: hidden;
 	.box-sizing(border);
-
 }
 
 //@media screen and (max-width: 640px) {
 //	#meta {
-//		height: 64px; width: 100%; z-index: 1;
+//		height: 64px; width: 100%; z-index: 1; display: none;
 //		border-right: none; border-bottom: @sbthick solid @sbgreen;
 //		overflow: hidden;
 //		padding: 4px 48px;
@@ -126,10 +165,49 @@ img.face {
 
 //----- room page -----
 
+@media screen and (max-width: 750px) {
+	#titleBar {
+		width: 100%; z-index: 1;
+		height: 60px;
+		padding-top: 3px;
+		padding-bottom: 5px;
+		padding-left: 0px;
+		padding-right: 2px; 
+		overflow: hidden;
+		border-right: none;
+		border-bottom: @sbthick solid @sbgreen;
+		a#logo{
+			display: block; float: left;
+			line-height: 40px; cursor: pointer; color: transparent;
+			background: url('/img/logo-title.png') no-repeat left center;
+			height: 40px; width: 130px;
+			padding-top: 0;
+		}
+		#user {
+			padding-right: none;
+		}
+		#username {
+			line-height: 10px;
+		}
+	}
+	#meta {
+		width: 100%; z-index: 1;
+		left: -100%;
+		padding-top: 60px;
+		overflow: hidden;
+		padding: 4px 48px;
+	}
+	#body {
+		left: 0; 
+		.radial-gradient(#fff, #eee, 50%, 0%);
+		border-right: none; overflow: hidden;
+	}
+}
+
 #info {
 	#description { margin: 0; }
-	#members { margin-top: 1.414em; overflow: hidden; height: 48px; }
-	#members h2 { display: inline; margin: 0 8px 0 0; line-height: 48px; }		
+	#members { margin-top: 24px; overflow: hidden; }
+	#members h2 { display: inline; margin: 0 8px 0 0; line-height: 48px; }
 }
 
 //----- profile page -----
@@ -182,13 +260,6 @@ img.face {
 .fa{
 	font-family: FontAwesome, "Open Sans", sans-serif !important;
 }
-//.loginButon { ... }
-//
-//.loginButton .cancel { ... }
-//
-//.loginButton:before 
-//
-//<div class='loginbttn cancel'>
 
 //----- Rooms page -----
 
@@ -214,9 +285,9 @@ img.face {
 
 .scrollback-stream {
 	min-height: 100%;
+	padding: 24px 24px 24px 32px; background: #eee; position: relative;
 }
-
-.messageWrapper{
+.messageWrapper {
 	width:100%;
 	font-size: 14px;
 	line-height: 15px;
@@ -241,6 +312,7 @@ img.face {
 	background: #555;	
 	display: none;
 	padding: 12px;
+	overflow: auto;
 }
 #submitButton{
 	display:none;
@@ -264,28 +336,47 @@ img.face {
 .buttonGroup{
 	display : inline-block;
 }
+
 .scrollback-message {
-	overflow: hidden;
-	color: red;
-	padding: 4px 0 4px 4px;
-	border-left: 2px solid transparent;
-	margin-left: 25%;
-	opacity: 1; height: auto;
-	cursor: default;
-	min-height: 22px;
+	font: 16px/24px Alegreya; padding: 4px 0 4px 20%; position: relative; display: block;
 }
 
-.scrollback-message-nick { 
-	position: absolute; width: 20%; left: 0; color: #999; text-align: right; padding-right: 4px;
-	.box-sizing(border);
+.scrollback-message-nick {
+	 float: left; margin-left: -25%; color: #999; padding-right: 0.5em; 
 }
+
+.scrollback-message:before{
+	content: ' '; background: #999; position: absolute; top: 14px; left: -16px; height: 8px; width: 8px; border-radius: 100%;	
+}
+
 .scrollback-message-separator { color: #999; display:none;  }
+
 .scrollback-message-join { color: #999 }
+
 .scrollback-message-part { color: #999 }
+
 .scrollback-message-timestamp {color: #999}
+
 .scrollback-message-content {color: #000}
+
 .scrollback-message-content-me{color: #000; font-style:italic}
-.scrollback-message-time{color: #999; float:right; margin-right: 3%}
+
+.scrollback-message-underline {
+	display: block;
+	height: 1px;
+	background-color: #ccc;
+//	margin-left: -20%;
+	margin-top: 5px;
+}
+.scrollback-message-time {
+	position: absolute;
+	font: 12px/12px "Open Sans"; 
+	display: block; 
+	color: #999; 
+	bottom: 0px; left: 50%; padding: 0 4px;
+	background-color: #eee;
+}
+
 .scrollback-hidden{display: none}
 
 #notifications {
@@ -301,6 +392,7 @@ img.face {
 
 #logoutButton{
 	font-size: 25px;
+	line-height: 40px;
 }
 
 .notification {
@@ -351,21 +443,25 @@ img.face {
 .archive:hover{
 	text-decoration: underline;
 }
+
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+
 .waiting{
 	cursor:wait
 }
+
 .buttonText{
 	font: 400 "Alegreya", serif;
-	padding-right: 8px;
-	font-size : 16px;
-	font-weight: bold !important;
+//	padding-right: 8px;
+	font-size : 24px;
+//	font-weight: bold !important;
 	margin-left: 2px;
 	cursor : pointer ;
 	text-transform: uppercase;
 }
+
 .faButton{
 	font-size : 22px; 
 }
@@ -376,15 +472,19 @@ img.face {
 	padding: 0px 4px;
 }
 
+#viewTitle{ font: 400 28px/28px "Open Sans", sans-serif; }
+
+#roomControlsContainer { float: right }
+
 .layer { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99998; }
 button.menuitem { height: 48px; width: 160px; font: 700 12px/12px "Open Sans", sans-serif; color: #fff; text-transform: uppercase; background: #000; .box-sizing(border); padding: 0 4px; margin: 0; float: left; border: none}
 button.menuitem:hover { background: #33ccaa }
 .menu { z-index: 99999; background: #000; position: fixed; border-top: 4px solid #000; box-shadow: 0 4px 32px 0 rgba(0,0,0,0.5); width: 320px; .clearfix(); }
-.arrow { color:#000; position: fixed; }
+.arrow { color:#000; position: fixed;}
 
 .arrow.up { height: 0; width: 0; border-style: solid; border-width: 0 8px 8px 8px; border-color: transparent transparent #000 transparent; }
 .arrow.down { height: 0; width: 0; border-style: solid; border-width: 8px 8px 0 8px; border-color: #000 transparent transparent transparent; }
 
 .elSelected { text-shadow : 0 0 4px rgba(51,214,187,1)}
 
-.elHidden {display:block;opacity: 0.3}
+.hidden {display:block; opacity: 0.3}

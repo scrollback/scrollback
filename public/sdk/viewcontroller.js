@@ -8,8 +8,31 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 			}
 		}, 30000);
 	});
+	
+	$scope.userAction = function(){
+		if(/^guest-/.test($scope.user.id)){
+			$scope.profile();
+		}	
+		else{
+			$scope.logout();
+		}
+	}
+	
+	if(/^guest-/.test($scope.user.id)){
+		$scope.actionText = "Sign In ";	
+	}
+	else{
+		$scope.actionText = "Sign Out";
+	}
+	
 	$factory.on("init", function(){
 		$scope.$apply(function(){
+			if(/^guest-/.test($scope.user.id)){
+				$scope.actionText = "Sign In ";	
+			}
+			else{
+				$scope.actionText = "Sign Out";
+			}
 			$scope.isActive = true;
 			$factory.enter($scope.room.id);
 			if($scope.notifications.indexOf("Disconnected. trying to reconnect…")<0) return;
@@ -50,9 +73,11 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 			}, 3000);
 		});
 	});
+	
 	$scope.goBack = function() {
 		$window.history.back();
 	};
+	
 	$scope.profile = function() {
 		if(/^guest-/.test($scope.user.id)) {
 			$scope.personaLogin();
@@ -154,6 +179,29 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			$factory.enter($routeParams.room);
 		});
 	}
+	
+	function camelCase(input) {
+		if(input){
+			var inputArr = input.split('');
+			inputArr[0] = inputArr[0].toUpperCase();
+			return inputArr.join('');
+		}
+	}
+	
+	
+	function getRoomName(roomId) {
+		var roomWords = roomId.split('-');
+		var newroomWords = roomWords.map(function(name){
+			return camelCase(name);
+		});
+		console.log("New room words", newroomWords);
+		return newroomWords.join(' ');
+	}
+	
+	$scope.room.name = getRoomName($scope.room.id); 
+	
+	console.log("SCope room name is : ", $scope.room.name);
+		
 	if($scope.room.members) $scope.room.members.length = 0;
 
 		
@@ -191,6 +239,14 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 					$scope.$apply(function() {
 						occupants = data.data;
 						usersList = generateSortedList(members, occupants);
+						// stripping out guest- from usernames
+						usersList = usersList.map(function(user){
+							if(/^guest-/.test(user.id)){
+								user.id = user.id.substring(6);
+								return user;
+							}
+							else return user;
+						});
 						$scope.room.relatedUser = usersList;
 					});
 				});
@@ -277,13 +333,16 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		}
 		else $location.path("/me");
 	}
+	
 	$scope.toggleEmbed = function(){
 		$('#embedScript').toggle();
 	}
+	
 	$scope.isOwner = function() {
 		if($scope.user.id == $scope.room.owner) return true;
 		else return false;
 	};
+	
 	$scope.goToConfigure = function() {
 		if(/^guest-/.test($scope.user.id)){
 			$scope.personaLogin();
@@ -291,6 +350,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		}
 		else $location.path("/"+$scope.room.id+"/edit");
 	};
+	
 	$scope.partRoom = function() {
 		var msg = {}, index,i,l;
 		msg.to = $scope.room.id;
@@ -310,6 +370,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			}
 		}
 	};
+	
 	$scope.joinRoom = function() {
 		var msg = {};
 		var flag = 1;
@@ -343,6 +404,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		if(index > -1) return true;
 		else return false;
 	};
+	
 });
 
 scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', function($scope, $timeout, $location) {	
