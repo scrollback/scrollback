@@ -404,7 +404,11 @@ Stream.prototype.onmessage = function(message) {
 		if (message.from != core.nick()) {
 			browserNotify(message.from.replace(/^guest-/g, "")+" : "+message.text, hasClass(el, "scrollback-message-mentioned"));
 		}
-		this.titleText.innerHTML = (el.innerText || el.textContent);
+		if(this.titleText.innerText) {
+		        this.titleText.innerText = el.innerText;
+		} else {
+		        this.titleText.textContent = el.textContent;
+		}
 	} else {
 		if (core.nick()!==message.ref && message.ref!=message.from) {
 			this.notify(el.innerText || el.textContent);

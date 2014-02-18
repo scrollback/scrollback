@@ -4,25 +4,37 @@ function messageController($scope, $factory, $timeout, $location, $anchorScroll)
 	
 	var messages = messageArray();
 	var topIndex = 0, bottomIndex = 0;
-	
+	messages.load($scope.room.id);
 	$scope.showMenu = false;
-	$scope.messages = sbmessages;
 	$scope.items = [];
 	$scope.test = true;
 	$scope.hiddenMsgId = "";
 	$scope.hide = false;
     
-    messages.load($scope.room.id);
-	if($scope.messages) messages.merge($scope.messages.reverse());
-    messages.save($scope.room.id);
-	// initialising items with 50 messages initially 
-    for (var i = 0; i < 50; i++) {
-        if(topIndex < messages.length){
-            if(messages[topIndex].type == "text")
-                $scope.items.unshift(messages[topIndex]);
-            topIndex += 1;
-        }
+	if($factory.initialized) {
+		loadMessages();
+	}else {
+		$factory.on("init", function() {
+			loadMessages();
+		});
+	}
+	function loadMessages() {
+    	$factory.messages($scope.room.id,null, null, function(data) {
+			$scope.$apply(function() {
+				$scope.messages = data;
+				if($scope.messages) messages.merge($scope.messages.reverse());
+			    messages.save($scope.room.id);
+				// initialising items with 50 messages initially 
+			    for (var i = 0; i < 50; i++) {
+			        if(topIndex < messages.length) {
+			            if(messages[topIndex].type == "text") $scope.items.unshift(messages[topIndex]);
+			            topIndex += 1;
+			        }
+			    }
+			});
+		});
     }
+    
 	
     $factory.on("nick", function(nick) {
         $scope.$apply(function() {
