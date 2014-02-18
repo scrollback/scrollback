@@ -3,15 +3,15 @@
 		Twitter Configuration
 	</label>
 	<label>
-		{{twitterUsername ? ("Admin Twitter Account: " + twitterUsername) : ("Sign In with twitter to watch # tags")}}
+		{{twitterUsername ? ("Admin Twitter Account: " + twitterUsername) : ("Sign in with Twitter to watch hashtags")}}
 		<button type="button" id = "twitterButton">
-			<span ng-click='twitterLogin();'>{{twitterUsername ?"change" : "Sign IN"}}</span>
+			<span ng-click='twitterLogin();'>{{twitterUsername ?"change" : "Sign in"}}</span>
 		</button>
 	</label>
 	<label>
 		<div class="inlineInput">
 			 <input type="text" class ="inlineTextBox" id="twitterTextBox"
-					placeholder ="# tags (e.g: scrollback nodejs)" ng-model="$parent.twitterTags"/>
+					placeholder ="hashtags (e.g: scrollback nodejs)" ng-model="$parent.twitterTags"/>
 		</div>
 	</label>
 </div>

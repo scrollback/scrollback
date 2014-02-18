@@ -77,7 +77,7 @@ function addTwitterTokens(room, callback) {
 				room.params.twitter.tokenSecret = replies[1];
 				room.params.twitter.profile = replies[2];
 				room.params.twitter.tags = room.params.twitter.tags || "";
-				room.params.twitter.tags = room.params.twitter.tags.trim();
+				room.params.twitter.tags = formatString(room.params.twitter.tags);
 				callback();
 			}
 			else {//new values are not present in redis.. copy old
@@ -96,7 +96,7 @@ function addTwitterTokens(room, callback) {
 			room.params.twitter.tokenSecret = old.tokenSecret;
 			room.params.twitter.profile = old.profile;
 			room.params.twitter.tags = room.params.twitter.tags || "";
-			room.params.twitter.tags = room.params.twitter.tags.trim();
+			room.params.twitter.tags = formatString(room.params.twitter.tags);
 			callback();
 		}
 		else {
@@ -106,11 +106,15 @@ function addTwitterTokens(room, callback) {
 }
 
 
+function formatString(s) {
+	if (s & s.length > 1000) {
+		s = s.substring(0,1000);
+	}
+	return s.trim().replace(/\s{2,}/g, ' ');
+}
+
 function init() {
 	setInterval(initTwitterSeach, timeout);
-	//setTimeout(init(), 5000 * 10);
-	
-	
 }
 
 /**
@@ -147,7 +151,7 @@ function fetchTweets(room) {
 			
 			twit.get(
 				'search/tweets', {
-					q: room.params.twitter.tags,
+					q: room.params.twitter.tags.split(" ").join(" OR "),
 					count: maxTweets,
 					result_type: "recent"
 				}, function(err, reply) {
