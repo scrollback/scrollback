@@ -49,7 +49,7 @@ getMessages = function (room, start, end, callback) {
 	if (start) { query.since = start; }
 	if (end) { query.until = end; }
 	query.queryId = guid();
-	pendingCallbacks[query.queryId] = callback;			
+	pendingCallbacks[query.queryId] = callback;
 	socketEmit('messages', query);
 }
 
@@ -61,7 +61,7 @@ function socketEmit(type, data) {
 function callbackGenerator(event){
 	return function(query, callback){
 		query.queryId = guid();
-		pendingCallbacks[query.queryId] = callback;		
+		pendingCallbacks[query.queryId] = callback;
 		socketEmit(event, query);
 	};
 }

@@ -8,8 +8,31 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 			}
 		}, 30000);
 	});
+	
+	$scope.userAction = function(){
+		if(/^guest-/.test($scope.user.id)){
+			$scope.profile();
+		}	
+		else{
+			$scope.logout();
+		}
+	}
+	
+	if(/^guest-/.test($scope.user.id)){
+		$scope.actionText = "Sign In ";	
+	}
+	else{
+		$scope.actionText = "Sign Out";
+	}
+	
 	$factory.on("init", function(){
 		$scope.$apply(function(){
+			if(/^guest-/.test($scope.user.id)){
+				$scope.actionText = "Sign In ";	
+			}
+			else{
+				$scope.actionText = "Sign Out";
+			}
 			$scope.isActive = true;
 			$factory.enter($scope.room.id);
 			if($scope.notifications.indexOf("Disconnected. trying to reconnect…")<0) return;
@@ -156,6 +179,29 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			$factory.enter($routeParams.room);
 		});
 	}
+	
+	function camelCase(input) {
+		if(input){
+			var inputArr = input.split('');
+			inputArr[0] = inputArr[0].toUpperCase();
+			return inputArr.join('');
+		}
+	}
+	
+	
+	function getRoomName(roomId) {
+		var roomWords = roomId.split('-');
+		var newroomWords = roomWords.map(function(name){
+			return camelCase(name);
+		});
+		console.log("New room words", newroomWords);
+		return newroomWords.join(' ');
+	}
+	
+	$scope.room.name = getRoomName($scope.room.id); 
+	
+	console.log("SCope room name is : ", $scope.room.name);
+		
 	if($scope.room.members) $scope.room.members.length = 0;
 
 		
@@ -193,6 +239,14 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 					$scope.$apply(function() {
 						occupants = data.data;
 						usersList = generateSortedList(members, occupants);
+						// stripping out guest- from usernames
+						usersList = usersList.map(function(user){
+							if(/^guest-/.test(user.id)){
+								user.id = user.id.substring(6);
+								return user;
+							}
+							else return user;
+						});
 						$scope.room.relatedUser = usersList;
 					});
 				});

@@ -1,14 +1,15 @@
 <h1 ng-cloak="">
-	<a id='backbutton' class='button fa fa-arrow-left left' ng-click='goToRoomsView()'></a>
-	<span class="ng-cloak">{{room.id || "No room selected"}}</span>
+<!--	<a id='backbutton' class='button fa fa-arrow-left left' ng-click='goToRoomsView()'></a>-->
+	<span id="viewTitle"  class="ng-cloak">{{room.name || room.id || "No room selected"}}</span>
 	
-	<a class='button buttonText fa fa-tags right' ng-show='!room.owner' ng-click='goToConfigure()'>Claim</a>
-	<a class='button buttonText fa fa-gears right' ng-show='isOwner()' ng-click='goToConfigure()'>Configure</a>
-	
-	<a class='button buttonText fa fa-check-square-o right' ng-show='!hasMembership()' ng-click='joinRoom()'>Follow</a>
-	<a class='button buttonText fa fa-repeat right' ng-show='hasMembership()' ng-click='partRoom()'>Unfollow</a>
-	<a class='button buttonText fa fa-code right' ng-click='toggleEmbed()'>Embed</a>
-	
+	<span id="roomControlsContainer"> 
+		<a class='button buttonText fa fa-tags right' title = 'Claim Room' ng-show='!room.owner' ng-click='goToConfigure()'></a>
+		<a class='button buttonText fa fa-gear right' title = 'Configure Room' ng-show='isOwner()' ng-click='goToConfigure()'></a>
+
+		<a class='button buttonText fa fa-star-o right' title = 'Follow Room' ng-show='!hasMembership()' ng-click='joinRoom()'></a>
+		<a class='button buttonText fa fa-repeat right' title = 'Unfollow Room' ng-show='hasMembership()' ng-click='partRoom()'></a>
+		<a class='button buttonText fa fa-code right' title = 'Embed Script' ng-click='toggleEmbed()'></a>
+	</span>
 	
 </h1>
 
@@ -33,9 +34,10 @@
 <p id="description" class = "collapse expanded"> {{ room.description || "This room does not have a description yet!"}} </p>
 
 <div id="members"> 
-	<span ng-repeat = "i in room.relatedUser">
-		<img ng-src="{{i.picture}}" class = "face present" title="{{i.id}}"/>
-	</span>
+	<div class='person' ng-class = "{'online' : i.score >= 2 }" ng-repeat = "i in room.relatedUser">
+		<img ng-src="{{i.picture}}" class = "face" title="{{i.id}}"/>
+		<div class='name'>{{i.id}}</div>
+	</div>
 <!--
 	<span ng-repeat = "i in room.usersPresent">
 		<img src="{{i.picture}}" class = "face present" title="{{i.id}}"/>
