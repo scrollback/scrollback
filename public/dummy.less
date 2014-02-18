@@ -165,33 +165,22 @@ img.face {
 @media screen and (max-width: 750px) {
 	#titleBar {
 		width: 100%; z-index: 5;
-		height: 60px;
-		padding-top: 3px;
-		padding-bottom: 5px;
-		padding-left: 0px;
-		padding-right: 2px; 
-		overflow: hidden;
+		height: 60px; 
 		border-right: none;
-		border-bottom: @sbthick solid @sbgreen;
-		a#logo{
-			display: block; float: left;
-			line-height: 40px; cursor: pointer; color: transparent;
-			background: url('/img/logo-title.png') no-repeat left center;
-			height: 40px; width: 130px;
-			padding-top: 0;
+		border-bottom: 3px solid @sbgreen;
+		padding-left: 0; padding-right: 0;
+		a#logo {
+			margin-left: 5px;
 		}
-		#user {
-			padding-right: none;
-		}
-		#username {
-			line-height: 10px;
+		#user{
+			padding-right: 0;
 		}
 	}
 	#meta {
 		width: 100%; z-index: 1;
 		left: -100%;
 		overflow: hidden;
-		padding: 4px 48px;
+		padding-left: 14px;
 		&.expanded{
 			left: 0;
 			padding-top: 60px;
@@ -314,6 +303,7 @@ img.face {
 	display: none;
 	padding: 12px;
 	overflow: auto;
+	font: 14px/16px "Source Code Pro";
 }
 #submitButton{
 	display:none;

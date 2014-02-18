@@ -32,10 +32,10 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 		#body(ng-controller="messageController",class = 'column')
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
 				message(ng-repeat="i in items track by $index" from="{{i.from}}", text="{{i.text}}", label="i.labels", time="{{i.time}}", ng-click = "showmenu($index, i)", ng-class="{'elHidden': i.labels[0] == 'hidden' || i.labels[1] == 'hidden' , 'elSelected': i.id == selectedId}", show-menu = "showMenu", menu-options ="menuOptions", id = "{{i.id}}", ng-hide = "hideMsg(i)", class='scrollback-message {{i.labels[0]}} {{i.labels[1]}}')
-			div(id="nomessagediv", ng-show = "items.length === 0", ng-cloak="")
+			div(id="nomessagediv", ng-show = "room.id && items.length === 0", ng-cloak="")
 				| This room does not have any messages yet
-			div(ng-show = "{{room.id}}", ng-cloak="")
-				| Select a room to view it's messages.
+			div(ng-show = "!room.id", ng-cloak="")
+				| No room selected, please select a room to view it's messages.
 			form.messageWrapper(ng-submit="message();")
 				input.messageBox(type="text", ng-model="text")
 				input(id="submitButton" type="submit")

@@ -11,13 +11,18 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 	$scope.hiddenMsgId = "";
 	$scope.hide = false;
     
-	if($factory.initialized) {
-		loadMessages();
-	}else {
-		$factory.on("init", function() {
+	if($scope.room.id){
+		
+		if($factory.initialized) {
 			loadMessages();
-		});
+		} else {
+			$factory.on("init", function() {
+				loadMessages();
+			});
+		}
+		
 	}
+	
 	function loadMessages() {
     	$factory.messages($scope.room.id,null, null, function(data) {
 			$scope.$apply(function() {
