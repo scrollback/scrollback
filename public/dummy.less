@@ -56,7 +56,7 @@ a.noChange{
 }
 
 .person {
-	width: 48px; padding: 4px; background: rgba(255,255,255,0.1); display: inline-block;
+	width: 48px; padding: 4px 4px 0 4px; background: rgba(255,255,255,0.1); display: inline-block;
 	margin: 0px 8px 0 0; position: relative; .box-sizing(content);
 	&.online:after { 
 		content: ' '; position: absolute; height: 8px; width: 8px; 
@@ -64,7 +64,7 @@ a.noChange{
 		border: 2px solid #fff;
 	}
 	& .name {
-		width: 100%; overflow: hidden; line-height: 12px;
+		width: 100%; overflow: hidden; line-height: 16px;
 		white-space: nowrap; text-overflow: ellipsis; font-size: 12px;
 	}
 }
@@ -77,14 +77,14 @@ img.face {
 //		border-right: 4px solid #0f0;
 	}
 	&.top{
-		height: 40px; width: 40px;
+		float: right;
 	}
 }
 
 #titleBar{
 	position: fixed;
 	background: #000; color: #eee;
-	height: 40px; z-index: 10;
+	height: 48px; z-index: 10;
 	width: 38%; 
 	border-right: @sbthick solid @sbgreen;
 	left: 0; 
@@ -95,27 +95,24 @@ img.face {
 	.box-sizing(border);
 	a#logo {
 		display: block; float: left;
-		line-height: 40px; cursor: pointer; color: transparent;
+		line-height: 48px; cursor: pointer; color: transparent;
 		background: url('/img/logo-title.png') no-repeat left center;
-		height: 40px; width: 130px;
-//		
-//		@media screen and (max-width: 640px) {
-//			background-image: url('/img/logod-36.png')
-//		}
+		height: 48px; width: 130px; margin-left: 22px;
 	}
 	#user {
 		line-height: 60px; cursor: pointer; float: right;
+		position: relative; display: block; padding-right: 5%;
 	}
 	#username {
-		line-height: 10px; cursor: pointer; float: right; position: relative ;
-		font-weight: bold; font-size: 12px; padding-right: 4px; 
-		margin-left: 40%;
+		padding-top: 8px;
+		line-height: 14px; text-align: right;
+		font-weight: bold; font-size: 12px;
+		white-space: nowrap; padding-right: 52px;
 	}
 	#actionText {
-		line-height: 50px !important; float: right; padding-right: 4px;
-		font-size: 14px; height: 5px; text-transform: uppercase;
-		font-weight: bold; font: 700 14px/14px "Open Sans";
-		color: #33ccaa; cursor: pointer;
+		text-transform: uppercase;
+		font: 700 12px/14px "Open Sans"; text-align: right;
+		color: #33ccaa; white-space: nowrap; padding-right: 52px;
 	}
 }
 
@@ -167,7 +164,7 @@ img.face {
 
 @media screen and (max-width: 750px) {
 	#titleBar {
-		width: 100%; z-index: 1;
+		width: 100%; z-index: 5;
 		height: 60px;
 		padding-top: 3px;
 		padding-bottom: 5px;
@@ -193,9 +190,13 @@ img.face {
 	#meta {
 		width: 100%; z-index: 1;
 		left: -100%;
-		padding-top: 60px;
 		overflow: hidden;
 		padding: 4px 48px;
+		&.expanded{
+			left: 0;
+			padding-top: 60px;
+			border-right: none ;
+		}
 	}
 	#body {
 		left: 0; 
@@ -206,7 +207,7 @@ img.face {
 
 #info {
 	#description { margin: 0; }
-	#members { margin-top: 24px; overflow: hidden; }
+	#members { margin-top: 24px; overflow: hidden; height: 68px }
 	#members h2 { display: inline; margin: 0 8px 0 0; line-height: 48px; }
 }
 
