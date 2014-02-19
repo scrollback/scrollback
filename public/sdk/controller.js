@@ -36,6 +36,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 			            topIndex += 1;
 			        }
 			    }
+				$timeout(function(){ $('html, body').animate({scrollTop:$(document).height()}, 'slow'); }, 1);
 			});
 		});
     }
@@ -108,8 +109,26 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		}
     }
 	
+	$scope.$watch('items', function(items){
+		var hashMap = {};
+		
+		items.forEach(function(item){
+			
+			if(!item.labels) return; 
+			
+			if(item.labels[0] !== 'hidden'){
+				if(item.labels.length > 0) hashMap[item.labels[0].split(':')[0]] = "";
+			}
+		});
+		
+		$scope.convLabelList = Object.keys(hashMap);
+		
+	}, true);
+
+	
 	$scope.hideMsg = function(msg){
 		var flag = false;
+		if(!msg.labels) return false;
 		for(i = 0; i < msg.labels.length; i++){
 			if(msg.labels[i] == "hidden"){
 				flag = true;
@@ -311,5 +330,4 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
         } , 1);
     };
 	
-	$timeout(function(){ $('html, body').animate({scrollTop:$(document).height()}, 'slow'); }, 1); //scrolling down to bottom of page.
 }]);

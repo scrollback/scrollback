@@ -87,7 +87,7 @@ function init(){
 		try {
 			log("data=-:" + data + ":-");
 			data = JSON.parse(data);
-			console.log("Data returned by scrollback.jar="+data.threadId, pendingCallbacks[data.id].message.text);
+//			console.log("Data returned by scrollback.jar="+data.threadId, pendingCallbacks[data.id].message.text);
 			message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 			if(message) {
 				message.labels = [data.threadId];

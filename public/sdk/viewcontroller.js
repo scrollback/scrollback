@@ -195,13 +195,11 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		var newroomWords = roomWords.map(function(name){
 			return camelCase(name);
 		});
-		console.log("New room words", newroomWords);
 		return newroomWords.join(' ');
 	}
 	
 	$scope.room.name = getRoomName($scope.room.id); 
 	
-	console.log("SCope room name is : ", $scope.room.name);
 		
 	if($scope.room.members) $scope.room.members.length = 0;
 	function generateSortedList(members, occupants) {
@@ -257,7 +255,6 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			});
 		});
 		$factory.on("message", function(i){
-			console.log(i);
 			if(occupants && members){
 				if(i.type == "back"){
 					if(i.user) {
@@ -300,7 +297,6 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 					refreshList(members, occupants);
 				}
 				if(i.type == "nick"){
-					console.log("Got a nick message!", i);
 					for(j=0; j< occupants.length; j++){
 						if(occupants[j].id === i.from){
 							break;

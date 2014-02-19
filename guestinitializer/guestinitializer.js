@@ -65,7 +65,7 @@ function generateNick(suggestedNick, callback) {
 	function getFromRedis(suggestedNick, attemptC ,callback) {
 		var trying = suggestedNick;
 		if(attemptC) trying+=attemptC;
-		if(attemptC>=3) return callback(names);
+		if(attemptC>=3) return callback(names(6));
 		core.emit('getUsers', {id:trying},function(err, data) {
 			if(data.length >0) return getFromRedis(suggestedNick, attemptC+1, callback);
 			core.emit('getRooms', {id:trying},function(err, data) {

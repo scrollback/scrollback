@@ -39,30 +39,16 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 			
 			$scope.$watch('label', function(v) {
 				// todo, this has to be rewritten
+				if(!v) return;
 				var bcolor, i, value;
-				for ( i=0; i< v.length; i++ ) {
-					if(v[i] == 'hidden') {
-						if($messageControllerScope.room.owner == $messageControllerScope.user.id) {
+				if(v[0] == "" || v[1] == "hidden") {
+					if($messageControllerScope.room.owner == $messageControllerScope.user.id) {
 							$messageControllerScope.hiddenMsgId = $scope.id;
-						}
-						else {
-							$messageControllerScope.hide = $scope.id;
-						}
 					}
 					else {
-						console.log("thread", v[i]);
-						value = v[i].substring(0, v[i].indexOf(':'));
+						$messageControllerScope.hide = $scope.id;
 					}
 				}
-				
-				if(value) $scope.bcolor = hashColor(value);
-				else $scope.bcolor = "";
-				
-				if(value){
-					$('<style type="text/css">.' + value  + ':before{ background:#' + $scope.bcolor + '} </style>').appendTo("head");
-					$('<style type="text/css">.' + value  + ':{ border-color:#' + $scope.bcolor + '} </style>').appendTo("head");
-				}
-				
 			});
 			
             attr.$observe('text', function(value) {
@@ -218,6 +204,29 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
     };
 }]);
 
+scrollbackApp.directive('conversationStyles', function(){
+	return{
+		restrict: 'E',
+//		template: '<style> {{styleString}} </style>',
+		scope: {
+			conversations : '='
+		},
+		link: function($scope, elem, attrs){
+			$scope.$watch('conversations', function(value){
+				// value is a list of labels that should be applied as styles
+				if(!value) return;
+				var str = "";
+				var color;
+				value.forEach(function(labelClass){
+					color = hashColor(labelClass);
+					str += '.conv' + labelClass + ':before' + '{ background: ' + color + ' !important; } \n';
+				});
+//				$scope.styleString = $scope.value;
+				elem = elem.eq(0).html("<style>"+str+"</style>");
+			});
+		}
+	}
+});
 
 function hashColor(name) {
     if (!name) return '#999';
