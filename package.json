@@ -44,8 +44,8 @@
     "newrelic": "x",
     "passport": "~0.2.0",
     "passport-twitter": "~1.0.2",
-    "twit": "~1.1.12"
-    "objectlevel": "x",
+    "twit": "~1.1.12",
+    "objectlevel": "x"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
