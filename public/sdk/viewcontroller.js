@@ -304,7 +304,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 						}
 					}
 					if(j == occupants.length) return;
-					core.emit('getRooms', {id:i.from}, function(err, user) {
+					$factory.getRooms({id:i.from}, function(err, user) {
 						occupants.splice(j, 1);
 						user = user[0];
 						occupants.push(user);
