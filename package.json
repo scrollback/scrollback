@@ -41,11 +41,11 @@
     "connect-redis": "x",
     "generic-pool": "X",
     "nodemailer": "x",
-    "objectlevel": "git://github.com/scrollback/objectlevel",
     "newrelic": "x",
     "passport": "~0.2.0",
     "passport-twitter": "~1.0.2",
-    "twit": "~1.1.12"
+    "twit": "~1.1.12",
+    "objectlevel": "x"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
