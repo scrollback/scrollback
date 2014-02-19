@@ -5,13 +5,13 @@
  * description of configuration variables and their potential values.
  */
 
-var config = require("./config.js");
+var config = require('./config.js');
 
-exports.config = {
+if(config.core.newrelic.key) exports.config = {
   /**
    * Array of application names.
    */
-  app_name : [config.core.newrelic.name],
+  app_name : config.core.newrelic.name || "Scrollback local",
   /**
    * Your New Relic license key.
    */

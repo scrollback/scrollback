@@ -63,6 +63,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		if(error=="REPEATATIVE") error = "Your message was not delivered because it seems repetitive.";
 		if(error=="BANNED_WORD") error = "Your message was not delivered because something you said was flagged as inappropriate.";
 		if(error == "INVALID_NAME") error= "Invalid user name";
+		if (error == "TWITTER_LOGIN_ERROR") error = "Error in twitter login";  
 		$scope.$apply(function(){
 			$scope.status.waiting = false;
 			if($scope.notifications.indexOf(error)>=0) return;
@@ -457,22 +458,33 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		if($scope.editRoom.ircServer && !$scope.editRoom.ircRoom) {
 			return $factory.emit("error","Enter irc room name");
 		}
+		if ($scope.twitterUsername) {
+			if(!$scope.editRoom.identities) $scope.editRoom.identities = [];
+			$scope.editRoom.identities.push("twitter://" + $scope.twitterUsername + ":" + $scope.room.id);
+			$scope.editRoom.params.twitter = {};
+			$scope.editRoom.params.twitter.tags = $scope.twitterTags;
+			$scope.editRoom.params.twitter.id = $scope.twitterUsername;
+			//delete $scope.editRoom.twitterTags;
+			//delete $scope.editRoom.twitterUsername;
+		}
+		else {
+			$scope.editRoom.params.twitter = false;
+		}
 		if(!$scope.editRoom.ircServer && $scope.editRoom.ircRoom) {
 			return $factory.emit("error","Enter irc server");
 		}
 		if($scope.editRoom.ircServer && $scope.editRoom.ircRoom) {
-			$scope.editRoom.accounts = [
-				{
+			if(!$scope.editRoom.accounts) $scope.editRoom.accounts = [];
+			$scope.editRoom.accounts.push({
 					gateway: "irc",
 					id:"irc://"+$scope.editRoom.ircServer+"/"+$scope.editRoom.ircRoom,
 					room: $scope.room.id,
 					params:{}
-				}
-			];
+			});
 			$scope.editRoom.params.irc = true;
 		}else {
 			$scope.editRoom.params.irc = false;
-			delete $scope.editRoom.accounts;
+			//delete $scope.editRoom.accounts;
 		}
 		//delete $scope.editRoom.ircServer; //what is the purpose of this?? 
 		//delete $scope.editRoom.ircRoom
@@ -484,7 +496,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 					Object.keys(room).forEach(function(element){
 						$scope.room[element] = room[element];
 					});
-					if(!$scope.room.params.irc) delete $scope.room.accounts;
+					//if(!$scope.room.params.irc) delete $scope.room.accounts;
 					$location.path("/"+$scope.room.id);
 					$scope.status.waiting = false;
 				});
@@ -526,6 +538,30 @@ scrollbackApp.controller('seoController',['$scope', function($scope) {
 scrollbackApp.controller('wordbanController',['$scope', function($scope) {
 	if(!$scope.editRoom.params) $scope.editRoom.params = {};
 	$scope.editRoom.params.wordban = $scope.room.params.wordban?true:false;
+}]);
+
+scrollbackApp.controller('twitterController',['$scope', function($scope) {
+	$scope.twitterLogin = function(){
+		window.open("/r/twitter/login", 'mywin','left=20,top=20,width=500,height=500,toolbar=1,resizable=0');
+		if(!$scope.isEventAdded) $scope.loginEvent();
+		$scope.isEventAdded = true;
+		return false;
+	};
+	$scope.loginEvent = function() {
+		window.addEventListener("message", function(event) {
+			var suffix = "scrollback.io";
+			var isOrigin = event.origin.indexOf(suffix, event.origin.length - suffix.length) !== -1;
+			if (isOrigin) {
+				$scope.$apply(function() {
+					$scope.$parent.twitterUsername = event.data;
+				});
+			}
+		}, false);
+	};
+	if($scope.room.params && $scope.room.params.twitter) {
+		$scope.$parent.twitterTags = $scope.room.params.twitter.tags;
+		$scope.$parent.twitterUsername = $scope.room.params.twitter.id;
+	}
 }]);
 
 scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {

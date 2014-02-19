@@ -7,8 +7,10 @@ module.exports = function(core) {
 	var pluginContent = "";
 	fs.readFile(__dirname + "/wordban.html", "utf8", function(err, data){
 		if(err)	throw err;
-		core.on("http/config", function(payload, callback) {
-            payload.wordban = data;
+		core.on("http/init", function(payload, callback) {
+            payload.wordban = {
+				config: data
+			};
             callback(null, payload);
         }, "setters");
 	});

@@ -18,15 +18,13 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
-/* global require, module, exports, process, console */
-
 require('newrelic');
 
 var core = Object.create(require("./lib/emitter.js")), config = require("./config.js");
 
 var pluginList = ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
 	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",
-	"admin-notifier", "custom-emitter","entityloader","guestinitializer"];
+	"admin-notifier", "custom-emitter","entityloader","guestinitializer", "twitter"];
 process.nextTick(function(){
 	// The ident server binds to port 113 after a while.
 	if(config.core.uid) process.setuid(config.core.uid);

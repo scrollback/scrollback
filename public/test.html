@@ -3,7 +3,7 @@
 <html>
     <head>
         <style>
-            #meta { background: #555; height: 100%; overflow: hidden; left: 0; }
+            #meta { background: #555; height: auto; left: 0; }
 			#body { background: #999; height: auto; right: 0; }
 
 			.column { position: absolute; top: 0; width: 50%; }
@@ -153,58 +153,58 @@
 			</div> <!-- body -->
 		<!--/div> <!-- container -->
 		
-		<script src="http://code.jquery.com/jquery.js"></script>
-		<!-- script src="sdk/jquery-fixInView.js"></script -->
+		<script src="jquery.min.js"></script>
+		<script src="sdk/jquery-fixInView.js"></script>
 		<script>
 			
-			var ignore = false;
+//			var ignore = false;
+//			
+//			$(document).scroll(function() {
+//				var top = $(window).scrollTop();
+//				console.log('scroll called', ignore, top);
+//			//	if(ignore) return;
+//				ignore = true;
+//				setTimeout(function() {
+//					console.log('timeout fired', top, $(window).scrollTop());
+//					ignore = false;
+//				}, 0);
+//			});
 			
-			$(document).scroll(function() {
-				var top = $(window).scrollTop();
-				console.log('scroll called', ignore, top);
-			//	if(ignore) return;
-				ignore = true;
-				setTimeout(function() {
-					console.log('timeout fired', top, $(window).scrollTop());
-					ignore = false;
-				}, 0);
+			$(document).click(function() {
+				console.log('clicked');
+				$(window).scrollTop(100);
+				setTimeout(function() {console.log('done');},0);
 			});
 			
-//			$(document).click(function() {
-//				console.log('clicked');
-//				$(window).scrollTop(100);
-//				setTimeout(function() {console.log('done');},0);
-//			});
+//			var container = $('.container');
+						
+			$(document).ready(function() {
+				$('.column').fixInView();
+			});
 			
-////			var container = $('.container');
-//						
-//			$(document).ready(function() {
-//				$('.column').fixInView();
-//			});
-//			
-//
-//			$(window).resize(function() {
-//				container.width($(window).width() + (container.width() - container[0].clientWidth));
-//			});
-//			
-//			/*
-//				onscroll=fn => bind(reposition, fn)
-//				scrollTop < 150 -> e.above < 150
-//				scrollTop = prevH - newH -> $('').nudgeUnView();
-//			*/
-//			$('#body').bind('reposition', function(e) {
-//
-//				//console.log(e);
-//				if(e.above < 150 && e.by<0) {
-////					$('<p>').text(Array(25).join('Dummy text ')).prependTo($(this));
-////					$(this).nudgeInView(-$(this).outerHeight() + e.height);
-//				}
-//				else if(e.below < 150 && e.by>0) {
-////					$('<p>').text(Array(25).join('Dummy text ')).appendTo($(this));
-//				}
-//			});
-//			
-//			$(window).trigger('resize');
+
+			$(window).resize(function() {
+				container.width($(window).width() + (container.width() - container[0].clientWidth));
+			});
+			
+			/*
+				onscroll=fn => bind(reposition, fn)
+				scrollTop < 150 -> e.above < 150
+				scrollTop = prevH - newH -> $('').nudgeUnView();
+			*/
+			$('#body').bind('reposition', function(e) {
+
+				//console.log(e);
+				if(e.above < 150 && e.by<0) {
+//					$('<p>').text(Array(25).join('Dummy text ')).prependTo($(this));
+//					$(this).nudgeInView(-$(this).outerHeight() + e.height);
+				}
+				else if(e.below < 150 && e.by>0) {
+//					$('<p>').text(Array(25).join('Dummy text ')).appendTo($(this));
+				}
+			});
+			
+			$(window).trigger('resize');
 		</script>
     </body>
 </html>

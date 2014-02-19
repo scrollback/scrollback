@@ -27,6 +27,7 @@ var crypto = require('crypto');
 var db = require("../lib/mysql.js");
 var httpConfigResponseObject;
 var scriptResponseObject;
+var configHttp;
 /**
  *add 'a' tag for links in text
  */
@@ -53,8 +54,10 @@ exports.init = function(app, coreObject) {
 	core = coreObject;
 	fs.readFile(__dirname + "/views/SEO.html", "utf8", function(err, data){
 		if(err)	throw err;
-		core.on("http/config", function(payload, callback) {
-            payload.seo = data;
+		core.on("http/init", function(payload, callback) {
+            payload.seo = {
+				config: data
+			};
             callback(null, payload);
         }, "setters");
 	});
@@ -75,7 +78,7 @@ exports.init = function(app, coreObject) {
 			res.end(req.cookies["scrollback_sessid"] + '\r\n' + JSON.stringify(require("./session.js").store));
 		}
     };
-    //handling it for now but should probably think a way to make newProfile the static file.
+	//handling it for now but should probably think a way to make newProfile the static file.
     app.get("/s/me/edit", function(req, res) {
         var user = req.session.user;
         if(/"guest-"/.test(user.id)) {
@@ -204,7 +207,6 @@ exports.init = function(app, coreObject) {
             });
         });
     }
-	
     app.get("/*", roomHandler);
     app.get("/*/edit", roomHandler);
 
@@ -309,36 +311,7 @@ exports.init = function(app, coreObject) {
     //         res.end(responseHTML);
     //     });
     // })
-
-    app.get("/s/editRoom", function(req,res) {
-		if(!httpConfigResponseObject) {
-			httpConfigResponseObject = {};
-			core.emit("http/config", {},function(err, payload) {
-				if(err) return res.render("error",{error:err.message});
-				httpConfigResponseObject.pluginsUI = payload;
-				return res.render("newConfig", httpConfigResponseObject);
-			});
-		}
-		else {
-			res.render("newConfig", httpConfigResponseObject);
-		}
-        
-    });
 	
-	app.get("/s/script.js", function(req,res) {
-		if(!scriptResponseObject) {
-			scriptResponseObject = "";
-			core.emit("http/script", {},function(err, payload) {
-				if(err) return res.end("var script = " + JSON.stringify({error:err.message}));
-				scriptResponseObject = "var script = " + JSON.stringify(payload);
-				return res.end(scriptResponseObject);
-			});
-		}
-		else {
-			res.end(scriptResponseObject);
-		}
-        
-    });
 	
 
     //commenting out for now. Will not be used.

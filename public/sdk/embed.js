@@ -405,9 +405,9 @@ Stream.prototype.onmessage = function(message) {
 			browserNotify(message.from.replace(/^guest-/g, "")+" : "+message.text, hasClass(el, "scrollback-message-mentioned"));
 		}
 		if(this.titleText.innerText) {
-		        this.titleText.innerText = el.innerText;
+			this.titleText.innerText = el.innerText;
 		} else {
-		        this.titleText.textContent = el.textContent;
+			this.titleText.textContent = el.textContent;
 		}
 	} else {
 		if (core.nick()!==message.ref && message.ref!=message.from) {

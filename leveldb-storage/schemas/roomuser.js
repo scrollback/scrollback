@@ -21,6 +21,7 @@ module.exports = function (types) {
 			}
 		},
 		getRoom: function(query, cb) {
+			var gateway, eqArray = [];
 			if(query.id){
 				room.get(query.id, function(err, res){
 					if(!res) return cb(true, []);
@@ -32,6 +33,15 @@ module.exports = function (types) {
 				});
 			}else if(query.hasOccupant) {
 				cb();
+			}else if (query.identities) {
+				gateway = query.identities.split(":");
+				eqArray.push(gateway[0]);
+				if (gateway[1]) {
+					eqArray.push(gateway[1]);
+				}
+				room.get({by: 'gatewayIdentity', eq: eqArray}, function(err, res){
+					cb(true, res);
+				});
 			}
 		},
 		put: function(data, cb) {
@@ -53,10 +63,14 @@ module.exports = function (types) {
 				params: data.params,
 				accounts: data.accounts
 			}
-			data.accounts && data.accounts.forEach(function(account) {
-				newRoom.identities.push(account.id);
-			});
-
+			
+			if (data.identities) {
+				newRoom.identities = data.identities
+			}else{
+				data.accounts && data.accounts.forEach(function(account) {
+					newRoom.identities.push(account.id);
+				});
+			}
 			if(data.type === "user") {
 				user.put(newRoom, function(err, res) {
 					cb(err, data);
