@@ -1,4 +1,24 @@
 /*
+	Scrollback: Beautiful text chat for your community. 
+	Copyright (c) 2014 Askabt Pte. Ltd.
+	
+This program is free software: you can redistribute it and/or modify it 
+under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any 
+later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
+License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see http://www.gnu.org/licenses/agpl.txt
+or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+Boston, MA 02111-1307 USA.
+*/
+
+/*
 	Websockets gateway
 */
 
@@ -33,6 +53,9 @@ sock.on('connection', function (socket) {
 			case 'messages': messages(d.data, conn); break;
 			case 'room': room(d.data, conn); break;
 			case 'rooms': rooms(d.data, conn); break;
+			case 'getUsers': getUsers(d.data, conn); break;
+			case 'getRooms': getRooms(d.data, conn); break;
+			case 'edit': edit(d.data, conn); break;
 		}
 	});
 	
@@ -64,7 +87,6 @@ function init(data, conn) {
 				if(rooms.hasOwnProperty(i)) rooms[i] = 0;
 			}
 		}
-		log("-------nick----------",sess.user);
 		var query=[];
 		if (sess.user.id.indexOf('guest-')!==0) {
 			query.user=sess.user.id;
@@ -73,7 +95,6 @@ function init(data, conn) {
 			var m={};
 			if (d) {
 				for (i=0;i<d.length;i++) {
-					log("adding room-------",d[i].room);
 					m[d[i].room]=true;
 				}
 			}
@@ -84,7 +105,13 @@ function init(data, conn) {
 				user: sess.user,
 				clientTime: data.clientTime,
 				serverTime: new Date().getTime(),
-				
+			});
+
+			//Temp for now.
+			core.emit("init", {
+				from: sess.user.id,
+				session: "web:"+conn.sid,
+				time: new Date().getTime()
 			});
 			session.set(conn.sid, sess);
 		});
@@ -137,6 +164,7 @@ function userAway(user, room, conn) {
 }
 
 function userBack(user, room, conn) {
+
 	if(rConns[room]) rConns[room].push(conn);
 	else rConns[room] = [conn];
 	conn.rooms.push(room);
@@ -148,6 +176,9 @@ function userBack(user, room, conn) {
 		return false; // we've already sent a back message for this user for this room.
 	}
 	console.log("Should send back msg");
+
+
+	
 	user.rooms[room] = 1;
 	return true;
 }
@@ -163,6 +194,16 @@ function messages (query, conn) {
 	});
 }
 
+
+function edit(action, conn) {
+	session.get({sid: conn.sid}, function(err, sess) {
+		var user = sess.user;
+		action.from = user.id;
+		core.emit("edit",action, function(err, data){
+		});
+	});
+	
+}
 function message (m, conn) {
 	
 	if(!conn.sid) return;
@@ -245,6 +286,13 @@ function message (m, conn) {
 				}
 				
 				if(m && m.type && m.type == 'nick') {
+					// core.emit("init",{
+					// 	type:"init", 
+					// 	from:m.ref, 
+					// 	time: new Date().getTime()
+					// }, function(err, data){
+					// 	console.log();
+					// });
 
 					//in case of logout.
 					if(/^guest-/.test(m.ref) && !/^guest-/.test(m.from)){
@@ -271,7 +319,6 @@ function message (m, conn) {
 					} else if(!err){
 						user.id = m.ref;
 					}
-					console.log("Saved session", sess);
 					session.set(conn.sid, sess);
 					var query=[];
 					if (sess.user.id.indexOf('guest-')!==0) {
@@ -355,6 +402,37 @@ function room (r, conn) {
 	});
 }
 
+
+
+
+function getrooms(query, conn) {
+	core.emit("getrooms", query, function(err, data) {
+		if(err) {
+			query.err = err;
+			conn.send('error',query);
+			return;
+		}else {
+			log(data);
+			conn.send('getrooms', { query: query, data: data} );
+			//conn.send('rooms', data);	
+		}
+	});
+}
+
+
+function getUsers(query, conn) {
+	core.emit("getUsers", query, function(err, data) {
+		if(err) {
+			query.err = err;
+			conn.send('error',query);
+			return;
+		}else {
+			log(data);
+			conn.send('getUsers', { query: query, data: data} );
+			//conn.send('rooms', data);	
+		}
+	});
+}
 function rooms(query, conn) {
 	console.log(query);
 	core.emit("rooms", query, function(err, data) {
@@ -396,4 +474,12 @@ exports.send = function (message, rooms) {
 		if(location) message.origin = location;
 		message.to = to;
 	});
+};
+
+
+exports.emit = function(type, action, room) {
+	if(rConns[room]) rConns[room].map(function(conn) {
+		action.to = room;
+		conn.send(type, action);
+	});		
 };

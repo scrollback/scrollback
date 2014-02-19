@@ -1,3 +1,23 @@
+/*
+	Scrollback: Beautiful text chat for your community. 
+	Copyright (c) 2014 Askabt Pte. Ltd.
+	
+This program is free software: you can redistribute it and/or modify it 
+under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any 
+later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
+License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see http://www.gnu.org/licenses/agpl.txt
+or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+Boston, MA 02111-1307 USA.
+*/
+
 var config = require('../config.js'), core,
 log = require("../lib/logger.js"),
 fs = require("fs"),core,
@@ -7,11 +27,40 @@ var crypto = require('crypto');
 var db = require("../lib/mysql.js");
 var httpConfigResponseObject;
 var scriptResponseObject;
-
+var configHttp;
+/**
+ *add 'a' tag for links in text
+ */
+var formatText = function format(text) {
+	if(!text) return "";
+    text = text.replace(/[<]/g,"&lt;").replace(/[>]/g, "&gt;");
+	var u = /\b(https?\:\/\/)?([\w.\-]*@)?((?:[a-z0-9\-]+)(?:\.[a-z0-9\-]+)*(?:\.[a-z]{2,4}))((?:\/|\?)\S*)?\b/g;
+	var m = "", r, s=0, protocol, user, domain, path;
+	while((r = u.exec(text)) !== null) {
+		m += "<span>" + text.substring(s, r.index) + "</span>";
+		protocol = r[1], user = r[2], domain = r[3], path = r[4] || '';
+		
+		protocol = protocol || (user? 'mailto:': 'http://');
+		user = user || '';
+		s = u.lastIndex;
+		m += "<a href='" + protocol + user + domain + path + "'>" + r[0] + "</a>";
+	}
+	m += "<span>" + text.substring(s) + "</span>";
+	return m;
+};
 
 
 exports.init = function(app, coreObject) { 
 	core = coreObject;
+	fs.readFile(__dirname + "/views/SEO.html", "utf8", function(err, data){
+		if(err)	throw err;
+		core.on("http/init", function(payload, callback) {
+            payload.seo = {
+				config: data
+			};
+            callback(null, payload);
+        }, "setters");
+	});
     var dialogs = {
         "login" : function(req, res){
             res.render("login", {
@@ -29,7 +78,7 @@ exports.init = function(app, coreObject) {
 			res.end(req.cookies["scrollback_sessid"] + '\r\n' + JSON.stringify(require("./session.js").store));
 		}
     };
-    //handling it for now but should probably think a way to make newProfile the static file.
+	//handling it for now but should probably think a way to make newProfile the static file.
     app.get("/s/me/edit", function(req, res) {
         var user = req.session.user;
         if(/"guest-"/.test(user.id)) {
@@ -47,6 +96,7 @@ exports.init = function(app, coreObject) {
         responseObject.user = req.session.user;
 		responseObject.defaultTitle = "Your rooms";
 		responseObject.room = {title: "", id: ""};
+		responseObject.messages = [];
 		res.render("d/main" , responseObject);
     }
     app.get("/me", loginHandler);
@@ -101,6 +151,7 @@ exports.init = function(app, coreObject) {
 	});
 	
     function roomHandler(req, res, next) {
+		log("path ", req.path);
         var params = req.path.substring(1).split("/"), responseObj={}, 
         query={}, sqlQuery, roomId = params[0], user = req.session.user,
         queryString, resp={};
@@ -113,14 +164,8 @@ exports.init = function(app, coreObject) {
 
         if(!req.secure) {
             queryString  = req._parsedUrl.search?req._parsedUrl.search:"";
-            //return res.redirect(307, 'https://'+config.http.host+req.path+queryString);
+            return res.redirect(307, 'https://'+config.http.host+req.path+queryString);
         }
-
-        if(roomId.indexOf('%') == 0){
-          res.end();
-          return;  
-        }
-
         core.emit("rooms", {id:roomId,fields:["accounts","members"]}, function(err, room){
             log(room);
             if(room.length>0 && room[0].type =="user") {
@@ -141,19 +186,23 @@ exports.init = function(app, coreObject) {
             query.type="text";
             query.limit=250;
             //disabling this for now.
-            // if (params[1]) switch(params[1]) {
-            //     case 'since':
-            //         query.since=new Date(params[2]).getTime();
-            //         break;
-            //     case 'until':
-            //         query.until=new Date(params[2]).getTime();
-            //         break;
-            // }
-            
+            if (params[1]) switch(params[1]) {
+                 case 'since':
+                     query.since=new Date(params[2]).getTime();
+                     break;
+                 case 'until':
+					log("until--", params[2]);
+                     query.until=new Date(params[2]).getTime();
+                     break;
+            }
+            log("query page", query);
             core.emit("messages", query, function(err, m) {
                 responseObj.query=query;
                 responseObj.messages=m;
                 responseObj.relDate = relDate;
+				responseObj.prevLink = new Date(m[0].time).toISOString();
+				responseObj.nextLink = new Date(m[m.length-1].time).toISOString();
+				responseObj.format = formatText;
                 res.render("d/main" , responseObj);
             });
         });
@@ -242,6 +291,7 @@ exports.init = function(app, coreObject) {
         });
     });
 
+	
 
     // app.get("*/edit/*", function(req, res) {
     //     var params = req.path.substring(1).split("/"), responseHTML = "";
@@ -261,36 +311,7 @@ exports.init = function(app, coreObject) {
     //         res.end(responseHTML);
     //     });
     // })
-
-    app.get("/s/editRoom", function(req,res) {
-		if(!httpConfigResponseObject) {
-			httpConfigResponseObject = {};
-			core.emit("http/config", {},function(err, payload) {
-				if(err) return res.render("error",{error:err.message});
-				httpConfigResponseObject.pluginsUI = payload;
-				return res.render("newConfig", httpConfigResponseObject);
-			});
-		}
-		else {
-			res.render("newConfig", httpConfigResponseObject);
-		}
-        
-    });
 	
-	app.get("/s/script.js", function(req,res) {
-		if(!scriptResponseObject) {
-			scriptResponseObject = "";
-			core.emit("http/script", {},function(err, payload) {
-				if(err) return res.end("var script = " + JSON.stringify({error:err.message}));
-				scriptResponseObject = "var script = " + JSON.stringify(payload);
-				return res.end(scriptResponseObject);
-			});
-		}
-		else {
-			res.end(scriptResponseObject);
-		}
-        
-    });
 	
 
     //commenting out for now. Will not be used.

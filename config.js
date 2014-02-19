@@ -45,7 +45,8 @@ function merge(d, c) {
 
 var defaults = {
 	core: {
-		name: "scrollback"
+		name: "scrollback",
+		newrelic: { name: 'Scrollback Local' }
 	},
 	mysql: {
 		host     : 'localhost',
@@ -58,7 +59,7 @@ var defaults = {
 		host: "local.scrollback.io",
 		cookieDomain: ".scrollback.io",
 		port: 80,
-		home: "public", // the directory containing static files
+		home: "http/public", // the directory containing static files
 		time: 60000,
 		limit: 30
 	},
@@ -77,12 +78,17 @@ var defaults = {
 		host : "local.scrollback.io",
 		port : 12345
 	},
+	twitter: {
+		//consumerKey: ".."
+		//consumerSecret: ".." 
+		callbackURL: "https://scrollback.io/r/twitter/auth/callback"
+	},
 	irc: {
 		nick: 'sbtestbot',		// nickname of the bot
 		hangTime: 60000     // timeout before disconnecting (ms)
 	},
 	leveldb: {
-		path: "data"
+		path: "/data"
 	}
 }
 

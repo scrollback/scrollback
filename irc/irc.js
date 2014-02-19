@@ -16,15 +16,16 @@ var db = require("../lib/mysql.js");
 
 
 var botNick=config.irc.nick, clients = {bot: {}}, users = {};
-
+var nickFromUser = {}, userFromSess = {};
 module.exports = function(object){
-	var pluginContent = "";
 	core = object;
 	fs.readFile(__dirname + "/irc.html", "utf8", function(err, data){
 		if(err)	throw err;
-		core.on("http/config", function(payload, callback) {
-            payload.irc = data;
-            callback(null, payload);
+		core.on("http/init", function(payload, callback) {
+            payload.irc = {
+				config: data
+			};
+			callback(null, payload);
         }, "setters");
 	});
 	init();
@@ -43,7 +44,6 @@ module.exports = function(object){
 						id = id+"#"+u.path.substring(1);
 					}
 					else {
-						console.log("--------------------invalid");
 						return callback({message:"invalid irc account"});
 					}
 				}else {
@@ -54,22 +54,28 @@ module.exports = function(object){
 
 			log("OLD ACCOUNTs",room.old);
 			if(room.old && room.old.accounts) room.old.accounts.forEach(function(oldAccount) {
-				var u;
-				if(room.accounts) {
-					for (i=0,l=room.accounts.length;i<l;i++ )
-						if(room.accounts[i].id == oldAccount.id) return;
+				if (oldAccount.gateway === 'irc') {
+					var u;
+					if(room.accounts) {
+						for (i=0,l=room.accounts.length;i<l;i++ )
+							if(room.accounts[i].id == oldAccount.id) return;
+					}
+					u = url.parse(oldAccount.id);
+					clients.bot[u.host].part(u.hash.toLowerCase());
+					delete clients.bot[u.host].rooms[u.hash.toLowerCase()];
 				}
-				u = url.parse(oldAccount.id);
-				clients.bot[u.host].part(u.hash.toLowerCase());
-				delete clients.bot[u.host].rooms[u.hash.toLowerCase()];
+				
 			});
 
 
 			if(room.accounts) room.accounts.forEach(function(account) {
 				var u = url.parse(account.id);
-				if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
-					addBot(account);
+				if (account.gateway === 'irc') {
+					if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
+						addBot(account);
+					}
 				}
+				
 			});
 		}
 		callback();
@@ -108,12 +114,43 @@ function addBotChannels(host, channels) {
 	if(!client) {
 		clients.bot[host] = client =
 			connect(host, botNick, botNick, channels, function(m) {
+				var sessionID = "irc://"+m.origin.server+"/"+m.from;
 				if (users[host] && users[host][m.from]) {
 					log("Incoming Echo", m);
 					return;
 				}
-
-				core.emit("message", m);
+				if(m.type == "back") {
+					if(userFromSess[sessionID]) {
+						m.from = userFromSess[sessionID];
+						core.emit("message", m);
+					}else {
+						core.emit("init", {session: sessionID, suggestedNick: m.from}, function(err, data) {
+							userFromSess[sessionID] = data.user.id;
+							nickFromUser[data.user.id] = m.from
+							m.from = data.user.id;
+							core.emit("message", m);
+						});
+					}
+				}else if(m.type == 'nick') {
+					core.emit("init", {sessionID: sessionID, suggestedNick: m.ref}, function(err, data) {
+						m.from = userFromSess[sessionID];
+						delete nickFromUser[userFromSess[sessionID]];
+						delete userFromSess[sessionID];
+						userFromSess["irc://"+m.origin.server+"/"+m.ref] = data.user.id;
+						nickFromUser[data.user.id] = m.ref;
+						m.ref = data.user.id;
+						core.emit("message", m);	
+					});
+				}else if(m.type == 'away'){
+					m.from = userFromSess[sessionID];
+					delete nickFromUser[userFromSess[sessionID]];
+					delete userFromSess[sessionID];
+					core.emit("message", m);
+				}
+				else {
+					m.from = userFromSess[sessionID] || m.from;
+					core.emit("message", m);
+				}
 			});
 
 		client.on('nick', function(oldn, newn) {
