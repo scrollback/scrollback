@@ -63,6 +63,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		if(error=="REPEATATIVE") error = "Your message was not delivered because it seems repetitive.";
 		if(error=="BANNED_WORD") error = "Your message was not delivered because something you said was flagged as inappropriate.";
 		if(error == "INVALID_NAME") error= "Invalid user name";
+		if (error == "TWITTER_LOGIN_ERROR") error = "Error in twitter login";  
 		$scope.$apply(function(){
 			$scope.status.waiting = false;
 			if($scope.notifications.indexOf(error)>=0) return;
