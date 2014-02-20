@@ -1,6 +1,6 @@
 var __glo_prevtime = 0;
 
-scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout', '$location', '$anchorScroll', function($scope, $factory, $timeout, $location, $anchorScroll) {
+scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout', function($scope, $factory, $timeout) {
 	
 	var messages = messageArray();
 	var topIndex = 0, bottomIndex = 0;
@@ -36,6 +36,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 			            topIndex += 1;
 			        }
 			    }
+				$timeout(function(){ $('html, body').animate({scrollTop:$(document).height()}, 'slow'); }, 1);
 			});
 		});
     }
@@ -108,8 +109,26 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		}
     }
 	
+	$scope.$watch('items', function(items){
+		var hashMap = {};
+		
+		items.forEach(function(item){
+			
+			if(!item.labels) return; 
+			
+			if(item.labels[0] !== 'hidden'){
+				if(item.labels.length > 0) hashMap[item.labels[0].split(':')[0]] = "";
+			}
+		});
+		
+		$scope.convLabelList = Object.keys(hashMap);
+		
+	}, true);
+
+	
 	$scope.hideMsg = function(msg){
-		var flag = false;
+		var flag = false, i;
+		if(!msg.labels) return false;
 		for(i = 0; i < msg.labels.length; i++){
 			if(msg.labels[i] == "hidden"){
 				flag = true;
@@ -118,10 +137,14 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		}
 		if($scope.$parent.user.id !== $scope.$parent.room.owner) return flag;
 		else return false;
-	}
-	$scope.showmenu = function(index, item){
+	};
+	
+	$scope.showmenu = function(index, item, $event){
 		
-		var el = angular.element('.scrollback-message').eq(index);
+		console.log("Event target", $event);
+		
+		if($event.target.tagName.toLowerCase() == "a") return; // do not show menu when user clicks on an anchor tag
+		
 		var shareUser = $scope.user.id;
 		var isHidden = false;
 		
@@ -151,20 +174,24 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 			});
 			
 			var showMsgFn = function(){
-					labels = {};
+					var labels = {};
+					
 					$scope.items[index].labels.forEach(function(i){
 						if(i) labels[i] = 1;
 					});
 					labels['hidden'] = 0;
+					
 					var unhideMsg = {
 						type : 'edit',
 						ref : $scope.items[index].id,
 						to : $scope.room.id,
 						from : $scope.user.id,
 						labels : labels
-					}
+					};
+				
 					$factory.message(unhideMsg, function(){
 						isHidden = false;
+						var i;
 						$scope.$apply(function(){
 							for(i=0; i<$scope.items[index].labels.length; i++){
 								if($scope.items[index].labels[i] === 'hidden'){
@@ -175,7 +202,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 					});
 			};
 			var hideMsgFn = function() {
-					labels = {};
+					var labels = {};
 					$scope.items[index].labels.forEach(function(i){
 						if(i) labels[i] = 1;
 					});
@@ -186,13 +213,15 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 						to : $scope.room.id,
 						from : $scope.user.id,
 						labels : labels
-					}
+					};
+				
 					$factory.message(hideMsg, function() {
 						$scope.$apply(function(){
 							$scope.items[index].labels.push("hidden");
 						});
 					});
-			}
+			};
+			
 			if(isHidden){
 				$scope.options['Unhide Message'] = showMsgFn;
 			}
@@ -208,6 +237,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		var mentionedUsers = [];
 		
 		function isMember(m) {
+			var i;
 			if($scope.room.members) {
 				for(i=0; i < $scope.room.members.length; i++ ) {
 					if($scope.room.members[i].id === m) return 1;
@@ -287,6 +317,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		
     };
     $scope.loadMoreDown = function() {
+		var i;
         // TODO : popping from top
         for(i=0; i< 5; i++) {
               if(bottomIndex > 0) {
@@ -311,5 +342,4 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
         } , 1);
     };
 	
-	$timeout(function(){ $('html, body').animate({scrollTop:$(document).height()}, 'slow'); }, 1); //scrolling down to bottom of page.
 }]);

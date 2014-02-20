@@ -63,6 +63,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		if(error=="REPEATATIVE") error = "Your message was not delivered because it seems repetitive.";
 		if(error=="BANNED_WORD") error = "Your message was not delivered because something you said was flagged as inappropriate.";
 		if(error == "INVALID_NAME") error= "Invalid user name";
+		if (error == "TWITTER_LOGIN_ERROR") error = "Error in twitter login";  
 		$scope.$apply(function(){
 			$scope.status.waiting = false;
 			if($scope.notifications.indexOf(error)>=0) return;
@@ -195,13 +196,11 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		var newroomWords = roomWords.map(function(name){
 			return camelCase(name);
 		});
-		console.log("New room words", newroomWords);
 		return newroomWords.join(' ');
 	}
 	
 	$scope.room.name = getRoomName($scope.room.id); 
 	
-	console.log("SCope room name is : ", $scope.room.name);
 		
 	if($scope.room.members) $scope.room.members.length = 0;
 	function generateSortedList(members, occupants) {
@@ -226,7 +225,19 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		userArray.sort(function(a,b) {
 			return -(a.score-b.score);
 		});
+		
+		// Removing duplicate elements in userArray
+		for (i=0; i< userArray.length; i++){
+			var hashMap = {};
+			if(hashMap[userArray[i].id]){
+				userArray.splice(i, 1);
+			}else{
+				hashMap[userArray[i].id] = "exists";
+			}
+			hashMap[user.id] = "exists";
+		};
 		return userArray;
+		
 	}
 	function refreshList(members, occupants){
 		$scope.$apply(function(){
@@ -257,7 +268,6 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			});
 		});
 		$factory.on("message", function(i){
-			console.log(i);
 			if(occupants && members){
 				if(i.type == "back"){
 					if(i.user) {
@@ -273,7 +283,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 				if(i.type == "away"){
 					// remove user from list. 
 					for(j=0; j< occupants.length; j++) {
-						if(occupants[j].id === i.from) {
+						if(occupants[j] && occupants[j].id === i.from) {
 							break;
 						}
 					}
@@ -300,14 +310,13 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 					refreshList(members, occupants);
 				}
 				if(i.type == "nick"){
-					console.log("Got a nick message!", i);
 					for(j=0; j< occupants.length; j++){
 						if(occupants[j].id === i.from){
 							break;
 						}
 					}
 					if(j == occupants.length) return;
-					core.emit('getRooms', {id:i.from}, function(err, user) {
+					$factory.getRooms({id:i.from}, function(err, user) {
 						occupants.splice(j, 1);
 						user = user[0];
 						occupants.push(user);
@@ -467,8 +476,6 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 			$scope.editRoom.params.twitter = {};
 			$scope.editRoom.params.twitter.tags = $scope.twitterTags;
 			$scope.editRoom.params.twitter.id = $scope.twitterUsername;
-			//delete $scope.editRoom.twitterTags;
-			//delete $scope.editRoom.twitterUsername;
 		}
 		else {
 			$scope.editRoom.params.twitter = false;
@@ -518,11 +525,6 @@ scrollbackApp.controller('ircController',['$scope', function($scope) {
 			}
 		});
 	}
-}]);
-
-scrollbackApp.controller('threaderController',['$scope', function($scope) {
-	if(!$scope.editRoom.params) $scope.editRoom.params = {};
-	$scope.editRoom.params.threader = $scope.room.params.threader?true:false;
 }]);
 
 scrollbackApp.controller('loginreqController',['$scope', function($scope) {
