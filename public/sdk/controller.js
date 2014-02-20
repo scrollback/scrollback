@@ -47,11 +47,39 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
             $scope.user.id = nick;
         });
     });
+	
     $factory.on("message", function(msg) {
 		$scope.$apply(function(){
 			newMessage(msg);    
 		});
     });
+	
+	$factory.on('message', function(msg){
+		var i, j;
+		if(msg.type == "edit") { 
+			console.log("Edit msg", msg); 
+			for(i = 0; i < $scope.items.length; i++){
+				if($scope.items[i].id === msg.ref && msg.from !== $scope.user.id){
+					$scope.$apply(function(){
+						if( $scope.items[i].labels[0]!=="hidden" && $scope.items[i].labels[1]!=="hidden" ){
+							$scope.items[i].labels.push("hidden");
+							console.log($scope.items[i]);
+						}
+						else{
+							if($scope.items[i].labels){
+								for(j = 0; j < $scope.items[i].labels.length; j++){
+									if($scope.items[i].labels[j] == "hidden"){
+										$scope.items[i].labels.splice(j, 1);
+										break;
+									}
+								}
+							}
+						}
+					});
+				}
+			}
+		}
+	});
 	
     function newMessage(data) {
 		
@@ -140,8 +168,6 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 	};
 	
 	$scope.showmenu = function(index, item, $event){
-		
-		console.log("Event target", $event);
 		
 		if($event.target.tagName.toLowerCase() == "a") return; // do not show menu when user clicks on an anchor tag
 		
