@@ -67,7 +67,7 @@ function addTwitterTokens(room, callback) {
 	multi.exec(function(err, replies) {
 		if (err) {
 			logTwitter("some redis Error: ", err);
-			callback("TWITTER_LOGIN_ERROR");
+			callback(new Error("TWITTER_LOGIN_ERROR"));
 		}
 		else {
 			if (replies[0] && replies[1] && replies[2]) {
@@ -99,7 +99,7 @@ function addTwitterTokens(room, callback) {
 			callback();
 		}
 		else {
-			callback("TWITTER_LOGIN_ERROR");
+			callback(new Error("TWITTER_LOGIN_ERROR"));
 		}
 		
 	}

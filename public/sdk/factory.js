@@ -176,7 +176,6 @@ onInit = function(data) {
 
 handler=function(type, data){
 	if(pendingCallbacks[data.query.queryId]) {
-		console.log("giving back", data);
 		pendingCallbacks[data.query.queryId](data);
 		delete pendingCallbacks[data.queryId];
 	}

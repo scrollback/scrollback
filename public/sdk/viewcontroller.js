@@ -63,7 +63,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		if(error=="REPEATATIVE") error = "Your message was not delivered because it seems repetitive.";
 		if(error=="BANNED_WORD") error = "Your message was not delivered because something you said was flagged as inappropriate.";
 		if(error == "INVALID_NAME") error= "Invalid user name";
-		if (error == "TWITTER_LOGIN_ERROR") error = "Error in twitter login";  
+		if (error == "TWITTER_LOGIN_ERROR") error = "Something went wrong during twitter authentication.";  
 		$scope.$apply(function(){
 			$scope.status.waiting = false;
 			if($scope.notifications.indexOf(error)>=0) return;
@@ -207,10 +207,15 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		var userMap = {}, userArray=[];
 		members.forEach(function(member) {
 			if(!member || !member.id || !member.picture) return;
-			if(member.id === $scope.room.owner) member.score = 1.5;
-			else member.score = 1;
-			userMap[member.id] = member;
-			userArray.push(member);
+			if(!userMap[member.id]){
+				if(member.id === $scope.room.owner) member.score = 1.5;
+				else member.score = 1;
+				userMap[member.id] = member;
+				userArray.push(member);	
+			}else{
+				if(member.id === $scope.room.owner) member.score = 1.5;
+				else member.score = 1;
+			}
 		});
 		occupants.forEach(function(occupant) {
 			if(!occupant || !occupant.id || !occupant.picture) return;
@@ -225,17 +230,6 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		userArray.sort(function(a,b) {
 			return -(a.score-b.score);
 		});
-		
-		// Removing duplicate elements in userArray
-		for (i=0; i< userArray.length; i++){
-			var hashMap = {};
-			if(hashMap[userArray[i].id]){
-				userArray.splice(i, 1);
-			}else{
-				hashMap[userArray[i].id] = "exists";
-			}
-			hashMap[user.id] = "exists";
-		};
 		return userArray;
 		
 	}

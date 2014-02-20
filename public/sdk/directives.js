@@ -6,7 +6,7 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 		template: '<span class="scrollback-message-nick">{{nick}}</span>'+
                   '<span ng-class="slashMe?me:noSlashMe" ng-repeat="i in text track by $index">'+
                             '<span ng-show="isText(i)">{{i.text}}</span>'+
-                            '<span ng-show="!isText(i)"><a href="{{i.link}}">{{i.text}}</a></span>'+
+                            '<span ng-show="!isText(i)"><a href="{{i.link}}" target="_blank">{{i.text}}</a></span>'+
 		          '</span>'+
 				  '<span ng-show= "showTime" class="scrollback-message-underline"></span>' + 
 				  '<span ng-show = "showTime" class="scrollback-message-time"> {{time}}</span>',
@@ -250,9 +250,15 @@ function hashColor(name) {
             h = h.length==1? "0"+h: h;
             return h;
         }
+
+        function darken(c, l) {
+        	return Math.min(255, Math.round(c*(0.5/l)));
+        }
         
         function rgb(r, g, b) {
-            return "#" + hex(r) + hex(g) + hex(b);
+        	var l = (0.3*r + 0.55*g + 0.15*b)/255;
+
+            return "#" + hex(darken(r, l)) + hex(darken(g, l)) + hex(darken(b, l));
         }
         
         if(h<255) return rgb(255, h, 0);

@@ -109,7 +109,7 @@ function init(data, conn) {
 			//Temp for now.
 			core.emit("init", {
 				from: sess.user.id,
-				session: "web:"+conn.sid,
+				session: "web:"+conn.socket.remoteAddress+":"+conn.sid,
 				time: new Date().getTime()
 			});
 			session.set(conn.sid, sess);
@@ -208,7 +208,7 @@ function message (m, conn) {
 		
 		m.from = user.id;
 		m.time = new Date().getTime();
-		m.session = "web "+conn.socket.remoteAddress+" "+ conn.sid;
+		m.session = "web:"+conn.socket.remoteAddress+":"+ conn.sid;
 
 		if (m.origin) m.origin.ip = conn.socket.remoteAddress;
 		else{
@@ -295,8 +295,6 @@ function message (m, conn) {
 								type:"init", 
 								from:m.ref, 
 								time: new Date().getTime()
-							}, function(err, data){
-								console.log();
 							});	
 						}
 						return;
@@ -377,7 +375,7 @@ function room (r, conn) {
 		core.emit("room", r, function(err, data) {
 			if(err) {
 				log("ROOM ERROR", r, err);
-				data = {error:err.message};
+				query.message = err.message;
 				data.query= {
 					queryId : r.queryId
 				};
@@ -399,7 +397,7 @@ function room (r, conn) {
 function getrooms(query, conn) {
 	core.emit("getrooms", query, function(err, data) {
 		if(err) {
-			query.err = err;
+			query.message = err.message;
 			conn.send('error',query);
 			return;
 		}else {
@@ -414,7 +412,7 @@ function getrooms(query, conn) {
 function getUsers(query, conn) {
 	core.emit("getUsers", query, function(err, data) {
 		if(err) {
-			query.err = err;
+			query.message = err.message;
 			conn.send('error',query);
 			return;
 		}else {
@@ -428,7 +426,7 @@ function rooms(query, conn) {
 	core.emit("rooms", query, function(err, data) {
 		if(err) {
 			log("ROOMS ERROR", query, err);
-			query.err = err;
+			query.message = err.message;
 			conn.send('error',query);
 			return;
 		}else {
