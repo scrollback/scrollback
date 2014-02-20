@@ -23,7 +23,6 @@ module.exports = function(core) {
 
 	core.on('join', function(data, cb){
 		data.role = data.role || "member";
-
 		//for now the user cannot part a room.
 		if(data.room.owner == data.user.id) data.role = "owner";
 		joinpart.put(data, cb);

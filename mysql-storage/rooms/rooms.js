@@ -125,7 +125,6 @@ function rooms(coreObject) {
 					}
 				}
 				getFields(options.fields, 0, function(){
-					console.log(data);
 					return callback(true, data);
 				});
 			}
@@ -138,7 +137,6 @@ function rooms(coreObject) {
 	core.emit("rooms", {query:"", type:"room", fields:["accounts"]}, function(err, data){
 		if(err)	throw err;
 		data.forEach(function(element) {
-			console.log("Caching", element);
 			redis.set("room:{{"+element.id+"}}", JSON.stringify(element));
 		});
 	});

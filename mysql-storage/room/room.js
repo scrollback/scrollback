@@ -8,7 +8,6 @@ module.exports = function(coreObject) {
 	var room = {};
 	core =coreObject;
 	core.on("room", function(room, callback) {
-		console.log(room, callback);
 		db.query("INSERT INTO `rooms`(`id`, `type`, `name`, `description`, `picture`, `profile`, `createdOn`,"+
 				"`owner`, `params`) values(?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE "+
 				"`id`=values(`id`),`type`=values(`type`),`name`=values(`name`),`description`=values(`description`)"+
@@ -60,7 +59,6 @@ function insertAccounts(data,callback){
 		params.push(element.timezone || 0);
 	});
 
-	console.log("originalId", data);
 	db.query("delete from accounts where `room`=?",[data.originalId || ids],function(err,res) {
 		if (err && callback) callback(err,res);
 

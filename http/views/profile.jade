@@ -48,11 +48,9 @@ block append scripts
 		$(document).ready(function() {
 			$("#profilefrm").submit(function(e) {
 				var user = { id: $("#nickname").val(), accounts: [] };
-				console.log("sending nick msg");
 				if(validateNick(user.id)) {
 					window.parent.postMessage(user, "*");
 				} else {
-					console.log("user name invalid....");
 					notify("User name is not valid");
 					$("#nickname").addClass("error");
 				}
@@ -60,7 +58,6 @@ block append scripts
 				return false;
 			});
 			$("#logout") && $("#logout").on("click",function(event){
-			console.log("posting logout...");
 				window.parent.postMessage({ guestname: "guest-"}, "*");
 				navigator.id.logout();
 			});

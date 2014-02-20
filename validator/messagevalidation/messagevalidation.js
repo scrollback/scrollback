@@ -12,7 +12,7 @@ module.exports = function(core) {
 	},"validation");
 	core.on("message", function(message, callback) {
 		var i,j, hashmap = {};
-		log("Heard \"message\" event");
+		log("Heard \"message\" event", message);
 		if(message.to) {
 			if(typeof message.to === "string") message.to = [message.to];
 			message.to = message.to.map(function(room) {

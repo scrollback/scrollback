@@ -311,14 +311,15 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 				}
 				if(i.type == "nick"){
 					for(j=0; j< occupants.length; j++){
+						//figure out why this has null. 
 						if(occupants[j] && occupants[j].id === i.from){
 							break;
 						}
 					}
 					if(j == occupants.length) return;
-					$factory.room({id:i.from}, function(err, user) {
+					$factory.getUsers({id:i.ref}, function(user) {
 						occupants.splice(j, 1);
-						user = user[0];
+						user = user.data[0];
 						occupants.push(user);
 						refreshList(members, occupants);	
 					});
