@@ -276,7 +276,7 @@ Stream.prototype.hide = function() {
 function login (options) {
 	options = options || {};
 	if(options.requireAuth && Stream.text && Stream.prevText){
-		Stream.text.value=Stream.prevText;//added prev text value on TextField
+		Stream.text.value=Stream.prevText; //added prev text value on TextField
 		delete Stream.text;
 		delete Stream.prevText;
 	}

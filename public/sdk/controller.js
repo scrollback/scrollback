@@ -284,7 +284,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 	
     $scope.loadMoreUp = function() {
         
-		for (var i = 0; i < 5; i++) {
+		for (var i = 0; i < 15; i++) {
            
 			if(topIndex < messages.length) {
                 if(messages[topIndex].type === "text")
@@ -319,7 +319,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
     $scope.loadMoreDown = function() {
 		var i;
         // TODO : popping from top
-        for(i=0; i< 5; i++) {
+        for(i=0; i< 15; i++) {
               if(bottomIndex > 0) {
 				bottomIndex -= 1;
                 if(messages[bottomIndex] && messages[bottomIndex].type == 'text'){

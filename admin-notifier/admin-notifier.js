@@ -37,7 +37,11 @@ module.exports = function(core) {
 				log("retrying......");
 				setTimeout(function(){
 					send(email.from, email.to, email.subject, email.html);
+<<<<<<< Updated upstream
 				},15*60*1000);
+=======
+				}, 900000);
+>>>>>>> Stashed changes
 			}
 		});
 	}
