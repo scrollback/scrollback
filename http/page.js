@@ -72,10 +72,10 @@ exports.init = function(app, coreObject) {
             res.render("profile", {user: req.session.user});
         },
 		"cookie": function(req, res) {
-			res.end(req.query.callback+"('"+req.cookies["scrollback_sessid"]+"')");
+			res.end(req.query.callback+"('"+req.cookies["sbsid"]+"')");
 		},
 		"debug": function(req, res) {
-			res.end(req.cookies["scrollback_sessid"] + '\r\n' + JSON.stringify(require("./session.js").store));
+			res.end(req.cookies["sbsid"] + '\r\n' + JSON.stringify(require("./session.js").store));
 		}
     };
 	//handling it for now but should probably think a way to make newProfile the static file.

@@ -1,4 +1,5 @@
 /*
+
 	Scrollback: Beautiful text chat for your community. 
 	Copyright (c) 2014 Askabt Pte. Ltd.
 	
@@ -252,7 +253,7 @@ function message (m, conn) {
 			// it returns false if the away message for this user is not to be sent yet
 		} else if(m.type == 'nick') {
 			//validating nick name on server side 
-			console.log("checking for nick validity:" , m.ref);
+			log("checking for nick validity:" , m.ref);
 			if(m.ref && m.ref !== "guest-" && !validateNick(m.ref.substring(6))) {
 				return conn.send('error', {id:m.id , message: "INVALID_NAME"});
 			}
