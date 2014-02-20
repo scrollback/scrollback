@@ -141,6 +141,8 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 	
 	$scope.showmenu = function(index, item, $event){
 		
+		console.log("Event target", $event);
+		
 		if($event.target.tagName.toLowerCase() == "a") return; // do not show menu when user clicks on an anchor tag
 		
 		var shareUser = $scope.user.id;
