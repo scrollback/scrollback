@@ -37,7 +37,8 @@ function connect(server, nick, uid, channels, callback) {
 				server : server,
 				channel : channel,
 			},
-			ref: ref
+			ref: ref,
+			session: "irc://"+server+"/"+from
 		};
 		
 		if(callback) callback(msg);

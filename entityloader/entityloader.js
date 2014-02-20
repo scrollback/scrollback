@@ -11,7 +11,6 @@ module.exports = function(core) {
 				core.emit('getUsers', {id: data.from}, function(err, user) {
 					if(err) callback(err);
 					data.user = user[0] || {};
-					console.log("AFTER ENT LOAD:", data);
 					callback(null, data);
 				});
 			});
