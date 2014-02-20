@@ -213,7 +213,6 @@ scrollbackApp.directive('conversationStyles', function(){
 		},
 		link: function($scope, elem, attrs){
 			$scope.$watch('conversations', function(value){
-				// value is a list of labels that should be applied as styles
 				if(!value) return;
 				var str = "";
 				var color;

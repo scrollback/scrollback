@@ -225,7 +225,19 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		userArray.sort(function(a,b) {
 			return -(a.score-b.score);
 		});
+		
+		// Removing duplicate elements in userArray
+		for (i=0; i< userArray.length; i++){
+			var hashMap = {};
+			if(hashMap[userArray[i].id]){
+				userArray.splice(i, 1);
+			}else{
+				hashMap[userArray[i].id] = "exists";
+			}
+			hashMap[user.id] = "exists";
+		};
 		return userArray;
+		
 	}
 	function refreshList(members, occupants){
 		$scope.$apply(function(){
@@ -271,7 +283,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 				if(i.type == "away"){
 					// remove user from list. 
 					for(j=0; j< occupants.length; j++) {
-						if(occupants[j].id === i.from) {
+						if(occupants[j] && occupants[j].id === i.from) {
 							break;
 						}
 					}
