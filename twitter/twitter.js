@@ -41,6 +41,7 @@ module.exports = function(coreObj) {
 			}, "setters");
 		});
 		core.on("room", function(room, callback){
+			log("room twitter--", JSON.stringify(room));
 			if (room.type == 'room' && room.params && room.params.twitter) {
 				addTwitterTokens(room, callback);			
 			}
@@ -89,14 +90,18 @@ function addTwitterTokens(room, callback) {
 		
 		var old;//old account
 		if(room.old && room.old.params) old = room.old.params.twitter;
-		if(old) {
+		if(old && old.token && old.tokenSecret && old.profile) {
 			room.params.twitter.token = old.token;
 			room.params.twitter.tokenSecret = old.tokenSecret;
 			room.params.twitter.profile = old.profile;
 			if(!room.params.twitter.tags) room.params.twitter.tags = "";
 			room.params.twitter.tags = formatString(room.params.twitter.tags);
+			callback();
 		}
-		callback();
+		else {
+			callback("TWITTER_LOGIN_ERROR");
+		}
+		
 	}
 }
 
@@ -132,7 +137,7 @@ function initTwitterSeach() {
  */
 function fetchTweets(room) {
 
-	if (room.params && room.params.twitter  && room.params.twitter.tags) {
+	if (room.params && room.params.twitter  && room.params.twitter.tags && room.params.twitter.token && room.params.twitter.tokenSecret) {
 		logTwitter("connecting for room: ", room);
 		var twit;
 		twit = new Twit({
@@ -179,10 +184,10 @@ function sendMessages(replies, room) {
 				id: guid(),
 				type: "text",
 				text: r.text,
-				origin: "twitter",
 				from: "guest-" + r.user.screen_name,
 				to: room.id,
-				time: new Date().getTime()
+				time: new Date().getTime(),
+				session: "twitter:" + r.user.screen_name
 			};
 			core.emit("message", message);
 		}
