@@ -37,11 +37,10 @@ module.exports = function(core) {
 				log("retrying......");
 				setTimeout(function(){
 					send(email.from, email.to, email.subject, email.html);
-				},1000);
+				},15*60*1000);
 			}
 		});
 	}
-
 
 	core.on("message", function(message, callback) {
 		var originURL;

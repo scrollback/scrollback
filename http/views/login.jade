@@ -37,12 +37,10 @@ block append scripts
 	script.
 		navigator.id.watch({
 			onlogin: function(assertion) {
-				console.log("onlogin");
 				notify("Signing you in…");
 				window.parent.postMessage({assertion: assertion}, "*");
 			},
 			onlogout: function() {
-				console.log("onloggout");
 				$("#content").css("visibility","visible");
 			}
 		});

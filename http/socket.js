@@ -76,7 +76,6 @@ function init(data, conn) {
 	session.get({ sid:sid, suggestedNick:data.nick }, function(err, sess) {
 		var rooms = sess.user.rooms;
 		var i;
-		console.log("RETRIEVED SESSION", sess);
 		conn.sid = sid;
 		conn.rooms = [];
 
@@ -151,7 +150,6 @@ function userAway(user, room, conn) {
 				if(!Object.keys(user.rooms).length) {
 					delete users[user.id];
 				}
-				console.log("saving the session ",user);
 			}
 			else {
 				user.rooms[room]--;
@@ -175,10 +173,7 @@ function userBack(user, room, conn) {
 		user.rooms[room]++;
 		return false; // we've already sent a back message for this user for this room.
 	}
-	console.log("Should send back msg");
 
-
-	
 	user.rooms[room] = 1;
 	return true;
 }
@@ -207,14 +202,13 @@ function edit(action, conn) {
 function message (m, conn) {
 	
 	if(!conn.sid) return;
-	console.log(conn.sid);
 	session.get({sid: conn.sid}, function(err, sess) {
 		var user = sess.user, tryingNick, roomName;
-		console.log(sess.sid);
 		roomName = m.to;
 		
 		m.from = user.id;
 		m.time = new Date().getTime();
+		m.session = "web "+conn.socket.remoteAddress+" "+ conn.sid;
 
 		if (m.origin) m.origin.ip = conn.socket.remoteAddress;
 		else{
@@ -252,7 +246,6 @@ function message (m, conn) {
 			// it returns false if the away message for this user is not to be sent yet
 		} else if(m.type == 'nick') {
 			//validating nick name on server side 
-			console.log("checking for nick validity:" , m.ref);
 			if(m.ref && m.ref !== "guest-" && !validateNick(m.ref.substring(6))) {
 				return conn.send('error', {id:m.id , message: "INVALID_NAME"});
 			}
@@ -281,18 +274,10 @@ function message (m, conn) {
 					return conn.send('error', {id: m.id, message: err.message});
 				}
 				if (!user || !user.id) {
-					console.log("No session user?");
 					return;
 				}
 				
 				if(m && m.type && m.type == 'nick') {
-					// core.emit("init",{
-					// 	type:"init", 
-					// 	from:m.ref, 
-					// 	time: new Date().getTime()
-					// }, function(err, data){
-					// 	console.log();
-					// });
 
 					//in case of logout.
 					if(/^guest-/.test(m.ref) && !/^guest-/.test(m.from)){
@@ -305,11 +290,19 @@ function message (m, conn) {
 							sid: sess.cookie.value,
 							user: sess.user
 						});
+						if(/^guest-/.test(m.ref)){
+							core.emit("init",{
+								type:"init", 
+								from:m.ref, 
+								time: new Date().getTime()
+							}, function(err, data){
+								console.log();
+							});	
+						}
 						return;
 					}
 
 					if(m.user) {
-						console.log("m.user is", m.user);
 						/*	why shallow copy? why not sess.user = m.user?
 							copying the property like accounts to the session, but the user will not send other properties.
 						*/
@@ -362,9 +355,7 @@ function message (m, conn) {
 		if(m.type=="nick" && m.ref!="guest-" &&( m.ref || m.user)) {
 			tryingNick = m.ref || m.user.id;
 			core.emit("rooms",{id:tryingNick.replace(/^guest-/,"")},function(err,data){
-				console.log(err);
 				if(err) return conn.send('error', {id: m.id, message: err.message});
-				console.log("Result of core on dup check",data);
 				if((data.length>0) || data.id) return conn.send('error', {id: m.id, message: "DUP_NICK"});
 				sendMessage();
 			});
@@ -434,7 +425,6 @@ function getUsers(query, conn) {
 	});
 }
 function rooms(query, conn) {
-	console.log(query);
 	core.emit("rooms", query, function(err, data) {
 		if(err) {
 			log("ROOMS ERROR", query, err);

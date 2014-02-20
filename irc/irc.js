@@ -38,9 +38,7 @@ module.exports = function(object){
 				var u = url.parse(account.id);
 				var id = u.protocol+"//"+u.host+"/";
 				if(!u.hash) {
-					console.log("no hash");
 					if(u.path.substring(1)) {
-						console.log("has path");
 						id = id+"#"+u.path.substring(1);
 					}
 					else {
@@ -142,6 +140,7 @@ function addBotChannels(host, channels) {
 						core.emit("message", m);	
 					});
 				}else if(m.type == 'away'){
+					if(!userFromSess[sessionID]) return;
 					m.from = userFromSess[sessionID];
 					delete nickFromUser[userFromSess[sessionID]];
 					delete userFromSess[sessionID];

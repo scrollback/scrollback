@@ -5,7 +5,6 @@ block append styles
 			pluginPackager.push(function(room) {
 				var status = $("input:radio[name=isLoginEnable]:checked").val()=="true"? true:false;
 				room.params = room.params || {};
-				console.log("loginrequired",room.params.loginrequired, status);
 				room.params.loginrequired = status;
 			});
 		});
