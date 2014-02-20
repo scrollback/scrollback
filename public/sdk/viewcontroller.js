@@ -476,8 +476,6 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 			$scope.editRoom.params.twitter = {};
 			$scope.editRoom.params.twitter.tags = $scope.twitterTags;
 			$scope.editRoom.params.twitter.id = $scope.twitterUsername;
-			//delete $scope.editRoom.twitterTags;
-			//delete $scope.editRoom.twitterUsername;
 		}
 		else {
 			$scope.editRoom.params.twitter = false;
@@ -527,11 +525,6 @@ scrollbackApp.controller('ircController',['$scope', function($scope) {
 			}
 		});
 	}
-}]);
-
-scrollbackApp.controller('threaderController',['$scope', function($scope) {
-	if(!$scope.editRoom.params) $scope.editRoom.params = {};
-	$scope.editRoom.params.threader = $scope.room.params.threader?true:false;
 }]);
 
 scrollbackApp.controller('loginreqController',['$scope', function($scope) {

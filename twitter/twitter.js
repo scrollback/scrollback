@@ -2,7 +2,6 @@ var log = require("../lib/logger.js");
 var logTwitter = log;
 var passport = require('passport');
 var fs = require("fs");
-var db = require("../lib/mysql.js");
 var Twit = require('twit');
 var guid = require("../lib/guid.js");
 var config = require('../config.js');
@@ -19,13 +18,14 @@ var maxTweets = 1;//max tweets to search in timeout inteval
 var currentConnections = {};
 var userData = {};//used to save access token etc.
 module.exports = function(coreObj) {
-	if (!debug) {
-		process.nextTick(function(){
-			logTwitter = log.tag('mail'); 
-		});
-	}
+	
 	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
 		log("twitter app started");
+		if (!debug) {
+			process.nextTick(function(){
+				logTwitter = log.tag('twitter'); 
+			});
+		}
 		core = coreObj;
 		init();
 		fs.readFile(__dirname + "/twitter.html", "utf8", function(err, data){
@@ -50,7 +50,7 @@ module.exports = function(coreObj) {
 		},"gateway");
 	}
 	else {
-		log("TWITTER_LOGIN_ERROR");
+		log("Twitter module is not enabled.");
 	}
 };
 /**
@@ -65,11 +65,10 @@ function addTwitterTokens(room, callback) {
 	multi.get("twitter:userData:profile:" + room.owner);
 	multi.exec(function(err, replies) {
 		if (err) {
-			logTwitter("some redis Error");
+			logTwitter("some redis Error: ", err);
 			callback("TWITTER_LOGIN_ERROR");
 		}
 		else {
-			//if (room.identities && room.identities.twitter) {
 			if (replies[0] && replies[1] && replies[2]) {
 				logTwitter("adding new values....");
 				room.params.twitter.token = replies[0];
@@ -94,13 +93,10 @@ function addTwitterTokens(room, callback) {
 			room.params.twitter.token = old.token;
 			room.params.twitter.tokenSecret = old.tokenSecret;
 			room.params.twitter.profile = old.profile;
-			room.params.twitter.tags = room.params.twitter.tags || "";
+			if(!room.params.twitter.tags) room.params.twitter.tags = "";
 			room.params.twitter.tags = formatString(room.params.twitter.tags);
-			callback();
 		}
-		else {
-			callback();
-		}
+		callback();
 	}
 }
 
@@ -123,7 +119,7 @@ function initTwitterSeach() {
 	log("getting room data....");
 	core.emit("getRooms",{identities:"twitter"}, function(err, data) {
 		if (!err) {
-			log("data returned from labelDB", JSON.stringify(data));
+			if(debug) logTwitter("data returned from labelDB: ", JSON.stringify(data));
 			data.forEach(function(room) {
 				fetchTweets(room);
 			});
@@ -137,7 +133,7 @@ function initTwitterSeach() {
 function fetchTweets(room) {
 
 	if (room.params && room.params.twitter  && room.params.twitter.tags) {
-		logTwitter("connecting for room...", room);
+		logTwitter("connecting for room: ", room);
 		var twit;
 		twit = new Twit({
 			consumer_key: twitterConsumerKey ,
@@ -155,7 +151,7 @@ function fetchTweets(room) {
 					result_type: "recent"
 				}, function(err, reply) {
 					if (err) {
-						logTwitter("Error", err);
+						logTwitter("Error: ", err);
 					}
 					else {
 						logTwitter("var reply= ", JSON.stringify(reply));
@@ -184,7 +180,7 @@ function sendMessages(replies, room) {
 				type: "text",
 				text: r.text,
 				origin: "twitter",
-				from: r.user.screen_name,
+				from: "guest-" + r.user.screen_name,
 				to: room.id,
 				time: new Date().getTime()
 			};
@@ -228,7 +224,7 @@ function getRequest(req, res, next) {
 				multi.setex("twitter:userData:tokenSecret:" + req.session.user.id, expireTime, tokenSecret);
 				multi.setex("twitter:userData:profile:" + req.session.user.id, expireTime, JSON.stringify(profile));
 				multi.exec(function(err,replies) {
-					logTwitter("user data added-----", replies);	
+					logTwitter("user data added: ", replies);	
 				});
 				done(null, profile);
 			}
