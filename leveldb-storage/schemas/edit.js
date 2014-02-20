@@ -18,6 +18,7 @@ module.exports = function (types) {
 				from:old.from,
 				to:old.to,
 				labels:{},
+				session: old.session || ""
 			};
 			if(old.labels){
 				if(old.labels instanceof Array) {
@@ -36,16 +37,16 @@ module.exports = function (types) {
 				id:data.id,
 				from:data.from,
 				ref: data.ref,
-				to: old.to,
-				old: data.old
+				to: old.to
 			};
+
 			if(data.labels) {
 				 editAction.labels = {};
 				for(i in data.labels) {
 					if(data.labels.hasOwnProperty(i)) {
 						if(!editInvs.labels) editInvs.labels = {};
 						if(newText.labels.hasOwnProperty(i)) {
-							editInvs.labels[i]=newText.labels[i];
+							if(newText.labels[i]!== data.labels[i]) editInvs.labels[i]=newText.labels[i];
 						}else{
 							editInvs.labels[i]=null;
 						}

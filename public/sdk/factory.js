@@ -159,7 +159,7 @@ function socketMessage(evt) {
 		case 'members':  
 		case 'occupants': 
 		case 'getUsers':
-		case 'edit':
+		// case 'edit':
 			handler(d.type, d.data)
 		break;
 		case 'error': onError(d.data); break;
@@ -176,6 +176,7 @@ onInit = function(data) {
 
 handler=function(type, data){
 	if(pendingCallbacks[data.query.queryId]) {
+		console.log("giving back", data);
 		pendingCallbacks[data.query.queryId](data);
 		delete pendingCallbacks[data.queryId];
 	}

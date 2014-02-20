@@ -18,7 +18,6 @@ module.exports = function(c) {
 		if(data.from) {
 			core.emit('getUsers',{id: data.from}, function(err, res){
 				var picture;
-				console.log(err,res);
 				if(err || res.length<1){
 					userObj.picture = generatePick(data.from);
 					userObj.id = data.from;

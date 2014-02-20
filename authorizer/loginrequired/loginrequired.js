@@ -19,7 +19,11 @@ module.exports = function(coreObject) {
     });
    core.on("message", function(message, callback) {
         log("Heard \"message\" Event");
-        if (message.origin && message.origin.gateway == "irc") return callback();
+        if (message.origin && (message.origin.gateway !== "web")) return callback();
+        if (message.session){
+            var gateway = message.session.substring(0, message.session.indexOf(":"));
+            if(gateway != "web") return callback();
+        }
         if(message.type == "text" && message.from.indexOf("guest-")==0) {
             core.emit("rooms",{id:message.to},function(err, data) {
                 if(err) return callback(err);

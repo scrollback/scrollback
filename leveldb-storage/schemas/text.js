@@ -45,7 +45,6 @@ module.exports = function (types) {
 			var query = {}, reversed, start, end, startTime = new Date().getTime();
 			if(options.id) {
 				return texts.get(options.id, function(err, data){
-					console.log("Calling back", data);
 					if(!data) return cb();
 					return cb(true,[data]);
 				});

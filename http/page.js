@@ -262,8 +262,6 @@ exports.init = function(app, coreObject) {
                 responseObj.query=query;
                 responseObj.data=m;
                 
-                console.log("MESSAGES GAVE ME ", m.length);
-                
                 if (m[0].type == 'result-start' && m[1]) {
                     responseObj.scrollPrev = new Date(m[1].time).toISOString();
                 }
