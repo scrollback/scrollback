@@ -84,7 +84,7 @@ img.face {
 #titleBar{
 	position: fixed;
 	background: #000; color: #eee;
-	height: 48px; z-index: 10;
+	z-index: 10;
 	width: 38%; 
 	border-right: @sbthick solid @sbgreen;
 	left: 0; 
@@ -93,6 +93,7 @@ img.face {
 	padding-top: 0;
 //	.radial-gradient(#555, #000, 100%, 50%);
 	.box-sizing(border);
+	.clearfix();
 	a#logo {
 		display: block; float: left;
 		line-height: 48px; cursor: pointer; color: transparent;
@@ -162,12 +163,11 @@ img.face {
 
 //----- room page -----
 
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 900px) {
 	#titleBar {
 		width: 100%; z-index: 5;
-		height: 60px; 
 		border-right: none;
-		border-bottom: 3px solid @sbgreen;
+		border-bottom: @sbthick solid @sbgreen;
 		padding-left: 0; padding-right: 0;
 		a#logo {
 			margin-left: 5px;
@@ -383,10 +383,11 @@ img.face {
 	top: 0;
 	left: 0;
 	right: 0;
-	margin: 2% 20% 0% 20%;
-	padding: 2px 2px;
+	margin: 64px 20% 0% 20%;
 	z-index: 20;
-	background: #3ca;
+	@media screen and (max-width: 900px) {
+		margin: 48px 0 0 0;
+	}
 }
 
 #logoutButton{
@@ -395,14 +396,12 @@ img.face {
 }
 
 .notification {
-	position: relative;
-	margin: 8px;
-	line-height: 14px;
-	padding: 8px; 
+	line-height: 16px;
+	padding: 16px; 
 	background: #3ca;
 	color: #fff;
 	font-weight: bold;
-	text-align: center
+	text-align: center;
 }
 
 
@@ -486,4 +485,4 @@ button.menuitem:hover { background: #33ccaa }
 
 .elSelected { text-shadow : 0 0 4px rgba(51,214,187,1)}
 
-.hidden {display:block; opacity: 0.3}
+.elHidden {display:block; opacity: 0.3}
