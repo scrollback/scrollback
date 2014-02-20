@@ -59,7 +59,7 @@ a.noChange{
 	width: 48px; padding: 4px 4px 0 4px; background: rgba(255,255,255,0.1); display: inline-block;
 	margin: 0px 8px 0 0; position: relative; .box-sizing(content);
 	&.online:after { 
-		content: ' '; position: absolute; height: 8px; width: 8px;
+		content: ' '; position: absolute; height: 8px; width: 8px; 
 		border-radius: 100%; bottom: 14px; right: 2px; background: #3c3;
 		border: 2px solid #fff;
 	}
@@ -147,6 +147,7 @@ img.face {
 	top: 0;
 	overflow: hidden;
 	.box-sizing(border);
+	.radial-gradient(#fff, #eee, 0%, 50%);
 }
 
 //@media screen and (max-width: 640px) {
@@ -342,8 +343,7 @@ img.face {
 }
 
 .scrollback-message {
-	font: 16px/24px Alegreya; padding: 4px 0 4px 20%; position: relative; display: block; cursor: default;
-	a { text-decoration: none;  }
+	font: 16px/24px Alegreya; padding: 4px 0 4px 20%; position: relative; display: block;
 }
 
 .scrollback-message-nick {
