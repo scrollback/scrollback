@@ -64,7 +64,6 @@ module.exports = function(coreObject) {
         });
         */
         core.on('message', function(message, callback) {
-            console.log("email");
             logMail("Heard \"message\" event", message);
             callback();
             if(message.type === "text"){
