@@ -6,7 +6,7 @@ var config = require("../config.js"),
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
 		var assertion = message.browserid;
-		log("Heard \"message\ event");
+		log("Heard \"message\" event");
 		delete message.browserid;
 
 		if(message.type !== 'nick') return callback();
@@ -52,14 +52,14 @@ module.exports = function(core) {
 			audience: config.auth.audience
 		}}, function(err, res, body) {
 			var account;
-			if(err) return callback(new Error("AUTH_FAIL_NETWORK/" + err.message));
+			if(err) return callback(new Error("AUTH_FAIL_NETWORK " + err.message));
 			try {
 				body = JSON.parse(body);
 			} catch(e) {
-				return callback(new Error("AUTH_FAIL_SERVER/" + body));
+				return callback(new Error("AUTH_FAIL_SERVER " + body));
 			}
 			if(body.status !== 'okay') {
-				return callback(new Error("AUTH_FAIL/" + body.reason));
+				return callback(new Error("AUTH_FAIL " + body.reason));
 			}
 			account ={
 				id: "mailto:" + body.email,

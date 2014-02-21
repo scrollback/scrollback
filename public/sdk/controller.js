@@ -137,9 +137,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
                         return;  
                     } 
                 }
-				
-				if (deleted && !data.message) $scope.items.push(messages[index]);
-			
+				if (!(deleted && !data.message)) $scope.items.push(messages[index]);
 			})();
 		}
     }
@@ -317,7 +315,8 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 	
     $scope.loadMoreUp = function() {
         
-		for (var i = 0; i < 5; i++) {
+
+		for (var i = 0; i < 15; i++) {
            
 			if(topIndex < messages.length) {
                 if(messages[topIndex].type === "text")
@@ -338,7 +337,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
         }
 		
         // removing elements from the bottom which are out of view scope 
-        $timeout( function() {
+        $timeout(function() {
             if($scope.items.length > 50) {
                 while($scope.items.length > 50) {
                     if(messages[bottomIndex] && messages[bottomIndex].type != "text") bottomIndex += 1;
@@ -352,7 +351,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
     $scope.loadMoreDown = function() {
 		var i;
         // TODO : popping from top
-        for(i=0; i< 5; i++) {
+        for(i=0; i< 15; i++) {
               if(bottomIndex > 0) {
 				bottomIndex -= 1;
                 if(messages[bottomIndex] && messages[bottomIndex].type == 'text'){
@@ -372,7 +371,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
                 topIndex -= 3;
                  //}
             }
-        } , 1);
+        });
     };
 	
 }]);

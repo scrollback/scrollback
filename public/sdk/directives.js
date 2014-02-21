@@ -191,16 +191,22 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
         
         $(document).ready(function() {
             $('.column').fixInView();
-            $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
-            $('#body').bind('reposition', function(e) {
-                if(e.above < 150 && e.by<0) {
-                    scope.$apply(attr.whenScrolledUp);
-                    $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
+			$body = $('#body');
+			$body.anchorBottom();
+            $body.bind('reposition', function(e) {
+                if(e.above < 250 && e.by<0) {
+					$body.anchorBottom();
+					scope.$apply(attr.whenScrolledUp);
+					$body.anchorTop();
                 }
-                else if(e.below < 30) {
+                else if(e.below < 250 && e.by>0) {
+					$body.anchorTop();
 					scope.$apply(attr.whenScrolledDown);
-					$('#body').nudgeInView(1);
-                }
+					$body.anchorBottom();
+                } else {
+					if(e.by < 0) $body.anchorTop();
+					else $body.anchorBottom();
+				}
             });
         });
     };

@@ -20,7 +20,7 @@ module.exports = function(core) {
 			});
 		}
 		if(!message.id )	message.id = guid();
-		if(!validateRoom(message.from.replace(/^guest-/,""))) {
+		if(message.from && !validateRoom(message.from.replace(/^guest-/,""))) {
 			if (message.origin && message.origin.gateway == "irc") message.from ="guest-"+ sanitizeRoomName(message.from.replace(/^guest-/,""));
 			else return callback(new Error("INVALID_USER_ID"));
         }
