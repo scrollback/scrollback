@@ -284,6 +284,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 	
     $scope.loadMoreUp = function() {
         
+
 		for (var i = 0; i < 15; i++) {
            
 			if(topIndex < messages.length) {
@@ -305,7 +306,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
         }
 		
         // removing elements from the bottom which are out of view scope 
-        $timeout( function() {
+        $timeout(function() {
             if($scope.items.length > 50) {
                 while($scope.items.length > 50) {
                     if(messages[bottomIndex] && messages[bottomIndex].type != "text") bottomIndex += 1;
@@ -339,7 +340,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
                 topIndex -= 3;
                  //}
             }
-        } , 1);
+        });
     };
 	
 }]);
