@@ -27,7 +27,8 @@ module.exports = function (types) {
 				time:message.time,
 				labels:message.labels,
 				editInverse:message.editInverse,
-				mentions:message.mentions
+				mentions:message.mentions,
+				session: message.session || ""
 			}, function(err, res) {
 				for(i in message.labels){
 					types.labels.put({id:i});
