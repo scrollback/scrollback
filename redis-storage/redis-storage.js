@@ -92,7 +92,6 @@ module.exports = function(core) {
                 data = data.map(function(e){
                     return "user:{{"+e+"}}";
                 });
-                console.log(data);
                 redisProxy.mget(data, function(err, data) {
                     if(!data) return callback(true, []);
                     data = data.map(function(e) {

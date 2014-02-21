@@ -59,7 +59,7 @@ a.noChange{
 	width: 48px; padding: 4px 4px 0 4px; background: rgba(255,255,255,0.1); display: inline-block;
 	margin: 0px 8px 0 0; position: relative; .box-sizing(content);
 	&.online:after { 
-		content: ' '; position: absolute; height: 8px; width: 8px;
+		content: ' '; position: absolute; height: 8px; width: 8px; 
 		border-radius: 100%; bottom: 14px; right: 2px; background: #3c3;
 		border: 2px solid #fff;
 	}
@@ -84,24 +84,25 @@ img.face {
 #titleBar{
 	position: fixed;
 	background: #000; color: #eee;
-	height: 48px; z-index: 10;
+	z-index: 10;
 	width: 38%; 
 	border-right: @sbthick solid @sbgreen;
 	left: 0; 
-	padding-left: 20px;
-	padding-right: 20px;
+	padding-left: 48px;
+	padding-right: 48px;
 	padding-top: 0;
 //	.radial-gradient(#555, #000, 100%, 50%);
 	.box-sizing(border);
+	.clearfix();
 	a#logo {
 		display: block; float: left;
 		line-height: 48px; cursor: pointer; color: transparent;
 		background: url('/img/logo-title.png') no-repeat left center;
-		height: 48px; width: 130px; margin-left: 22px;
+		height: 48px; width: 130px; margin-left: -5px;
 	}
 	#user {
 		line-height: 60px; cursor: pointer; float: right;
-		position: relative; display: block; padding-right: 5%;
+		position: relative; display: block; 
 	}
 	#username {
 		padding-top: 8px;
@@ -147,6 +148,7 @@ img.face {
 	bottom: 0;
 	overflow: hidden;
 	.box-sizing(border);
+	.radial-gradient(#fff, #eee, 0%, 50%);
 }
 
 //@media screen and (max-width: 640px) {
@@ -163,12 +165,11 @@ img.face {
 
 //----- room page -----
 
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 900px) {
 	#titleBar {
 		width: 100%; z-index: 5;
-		height: 60px; 
 		border-right: none;
-		border-bottom: 3px solid @sbgreen;
+		border-bottom: @sbthick solid @sbgreen;
 		padding-left: 0; padding-right: 0;
 		a#logo {
 			margin-left: 5px;
@@ -286,6 +287,11 @@ img.face {
 	min-height: 100%;
 	padding: 24px 24px 24px 32px; background: #eee; position: relative;
 }
+
+.scrollback-stream-hidden{
+	display: none;	
+}
+
 .messageWrapper {
 	width:100%;
 	font-size: 14px;
@@ -338,8 +344,7 @@ img.face {
 }
 
 .scrollback-message {
-	font: 16px/24px Alegreya; padding: 4px 0 4px 20%; position: relative; display: block; cursor: default;
-	a { text-decoration: none;  }
+	font: 16px/24px Alegreya; padding: 4px 0 4px 20%; position: relative; display: block;
 }
 
 .scrollback-message-nick {
@@ -385,10 +390,11 @@ img.face {
 	top: 0;
 	left: 0;
 	right: 0;
-	margin: 2% 20% 0% 20%;
-	padding: 2px 2px;
+	margin: 64px 20% 0% 20%;
 	z-index: 20;
-	background: #3ca;
+	@media screen and (max-width: 900px) {
+		margin: 48px 0 0 0;
+	}
 }
 
 #logoutButton{
@@ -397,14 +403,12 @@ img.face {
 }
 
 .notification {
-	position: relative;
-	margin: 8px;
-	line-height: 14px;
-	padding: 8px; 
+	line-height: 16px;
+	padding: 16px; 
 	background: #3ca;
 	color: #fff;
 	font-weight: bold;
-	text-align: center
+	text-align: center;
 }
 
 
@@ -455,10 +459,10 @@ img.face {
 
 .buttonText{
 	font: 400 "Alegreya", serif;
-//	padding-right: 8px;
 	font-size : 24px;
 //	font-weight: bold !important;
-	margin-left: 2px;
+	line-height: 48px !important;
+	text-align: center;
 	cursor : pointer ;
 	text-transform: uppercase;
 }
@@ -488,4 +492,4 @@ button.menuitem:hover { background: #33ccaa }
 
 .elSelected { text-shadow : 0 0 4px rgba(51,214,187,1)}
 
-.hidden {display:block; opacity: 0.3}
+.elHidden {display:block; opacity: 0.3}

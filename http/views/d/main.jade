@@ -16,9 +16,9 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 		#titleBar(ng-controller="metaController")
 			a(href="/me")#logo scrollback	
 			a#user(ng-cloak="")
-				img.face.top(ng-src='{{user.picture}}' ng-click='profile()')
-				#username(ng-click='profile()', ng-cloak="") {{user.id.replace("guest-","")}}
-				#actionText(ng-click = 'userAction()', ng-cloak="") {{actionText}}
+				img.face.top(ng-src='{{user.picture}}' ng-click='profile(); $event.stopPropagation();')
+				#username(ng-click='profile(); $event.stopPropagation()', ng-cloak="") {{user.id.replace("guest-","")}}
+				#actionText(ng-click = 'userAction(); $event.stopPropagation()', ng-cloak="") {{actionText}}
 		div#notifications(ng-show="notifications.length",ng-cloak="")
 			div.notification(ng-repeat="i in notifications track by $index") {{i}}
 		#meta(ng-controller="metaController",ng-class="status.waiting?'waiting column':'column'")			
