@@ -35,7 +35,7 @@ module.exports = function(core) {
 					});
 					log("Sending msg to scrollback.jar="+msg);
 					try {
-						msg.replace(/\n/g," ");
+						msg = msg.replace(/\n/g," ");
 						client.write(msg+'\n');
 					} catch(err) {
 						log("--error --"+err);
