@@ -1,4 +1,9 @@
-var __glo_prevtime = 0;
+/* global $ */
+/* global window */
+/* global angular */
+/* global document */
+/* global scrollbackApp */
+/* global messageArray */
 
 scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout', function($scope, $factory, $timeout) {
 	
@@ -24,18 +29,18 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 	}
 	
 	function loadMessages() {
-    	$factory.messages($scope.room.id,null, null, function(data) {
+		$factory.messages($scope.room.id,null, null, function(data) {
 			$scope.$apply(function() {
 				$scope.messages = data;
 				if($scope.messages) messages.merge($scope.messages.reverse());
-			    messages.save($scope.room.id);
+				messages.save($scope.room.id);
 				// initialising items with 50 messages initially 
-			    for (var i = 0; i < 50; i++) {
-			        if(topIndex < messages.length) {
-			            if(messages[topIndex].type == "text") $scope.items.unshift(messages[topIndex]);
-			            topIndex += 1;
-			        }
-			    }
+				for (var i = 0; i < 50; i++) {
+					if(topIndex < messages.length) {
+						if(messages[topIndex].type == "text") $scope.items.unshift(messages[topIndex]);
+						topIndex += 1;
+					}
+				}
 				$timeout(function(){ $('html, body').animate({scrollTop:$(document).height()}, 'slow'); }, 1);
 			});
 		});
@@ -56,26 +61,28 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 	
 	$factory.on('message', function(msg){
 		var i, j;
+		var toggleHide = function(){
+			// function to toggle showing and hiding messages for non moderators
+			if( $scope.items[i].labels[0]!=="hidden" && $scope.items[i].labels[1]!=="hidden" ){
+				$scope.items[i].labels.push("hidden");
+				console.log($scope.items[i]);
+			}
+			else{
+				if($scope.items[i].labels){
+					for(j = 0; j < $scope.items[i].labels.length; j++){
+						if($scope.items[i].labels[j] == "hidden"){
+							$scope.items[i].labels.splice(j, 1);
+							break;
+						}
+					}
+				}
+			}
+		};
 		if(msg.type == "edit") { 
 			console.log("Edit msg", msg); 
 			for(i = 0; i < $scope.items.length; i++){
 				if($scope.items[i].id === msg.ref && msg.from !== $scope.user.id){
-					$scope.$apply(function(){
-						if( $scope.items[i].labels[0]!=="hidden" && $scope.items[i].labels[1]!=="hidden" ){
-							$scope.items[i].labels.push("hidden");
-							console.log($scope.items[i]);
-						}
-						else{
-							if($scope.items[i].labels){
-								for(j = 0; j < $scope.items[i].labels.length; j++){
-									if($scope.items[i].labels[j] == "hidden"){
-										$scope.items[i].labels.splice(j, 1);
-										break;
-									}
-								}
-							}
-						}
-					});
+					$scope.$apply(toggleHide);
 				}
 			}
 		}
@@ -131,7 +138,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
                     } 
                 }
 				
-				(deleted && !data.message) || $scope.items.push(messages[index]);
+				if (deleted && !data.message) $scope.items.push(messages[index]);
 			
 			})();
 		}
@@ -182,7 +189,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		
 		var twitterLink = encodeURI("http://twitter.com/home/?status=" + item.text  + " via https://scrollback.io/" + $scope.room.id);
 		
-		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id ) 
+		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id )
 		+ "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id 
 		+ "&p[summary]=" + item.text;
 		
@@ -205,7 +212,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 					$scope.items[index].labels.forEach(function(i){
 						if(i) labels[i] = 1;
 					});
-					labels['hidden'] = 0;
+					labels.hidden = 0;
 					
 					var unhideMsg = {
 						type : 'edit',
@@ -228,24 +235,24 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 					});
 			};
 			var hideMsgFn = function() {
-					var labels = {};
-					$scope.items[index].labels.forEach(function(i){
-						if(i) labels[i] = 1;
+				var labels = {};
+				$scope.items[index].labels.forEach(function(i){
+					if(i) labels[i] = 1;
+				});
+				labels.hidden = 1;
+				var hideMsg = {
+					type : 'edit',
+					ref : $scope.items[index].id,
+					to : $scope.room.id,
+					from : $scope.user.id,
+					labels : labels
+				};
+
+				$factory.message(hideMsg, function() {
+					$scope.$apply(function(){
+						$scope.items[index].labels.push("hidden");
 					});
-					labels['hidden'] = 1;
-					var hideMsg = {
-						type : 'edit',
-						ref : $scope.items[index].id,
-						to : $scope.room.id,
-						from : $scope.user.id,
-						labels : labels
-					};
-				
-					$factory.message(hideMsg, function() {
-						$scope.$apply(function(){
-							$scope.items[index].labels.push("hidden");
-						});
-					});
+				});
 			};
 			
 			if(isHidden){
@@ -253,7 +260,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 			}
 			else{
 				$scope.options['Hide Message'] = hideMsgFn;
-		 	}
+			}
 		}
 	};
 
@@ -274,7 +281,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		
 		function isMention(input) {
 			//this function checks if any users were mentioned in a message 
-			if( (/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)) { 						
+			if( (/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)) {						
 				input = input.toLowerCase();
 				input = input.replace(/[@:,]/g,"");
 				if(isMember(input)) mentionedUsers.push(input);

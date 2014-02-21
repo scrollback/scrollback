@@ -387,13 +387,15 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		msg.type = "join";
 		$factory.message(msg);
 		
+		if(!$scope.room.members){ $scope.room.members= [] }
+			
 		for(i=0; i < $scope.room.members.length; i++ ) {
 			if($scope.room.members[i].id === $scope.user.id){
 				flag = 0;
 				break;
 			}
 		};
-		
+			
 		if(flag == 1){
 			$scope.room.members.unshift($scope.user);
 		}

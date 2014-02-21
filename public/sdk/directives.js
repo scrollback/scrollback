@@ -1,3 +1,5 @@
+var __glo_prevtime = 0;
+
 scrollbackApp.directive('message',function($compile, $timeout) {
     
 	return {

@@ -88,8 +88,8 @@ img.face {
 	width: 38%; 
 	border-right: @sbthick solid @sbgreen;
 	left: 0; 
-	padding-left: 20px;
-	padding-right: 20px;
+	padding-left: 48px;
+	padding-right: 48px;
 	padding-top: 0;
 //	.radial-gradient(#555, #000, 100%, 50%);
 	.box-sizing(border);
@@ -98,11 +98,11 @@ img.face {
 		display: block; float: left;
 		line-height: 48px; cursor: pointer; color: transparent;
 		background: url('/img/logo-title.png') no-repeat left center;
-		height: 48px; width: 130px; margin-left: 22px;
+		height: 48px; width: 130px; margin-left: -5px;
 	}
 	#user {
 		line-height: 60px; cursor: pointer; float: right;
-		position: relative; display: block; padding-right: 5%;
+		position: relative; display: block; 
 	}
 	#username {
 		padding-top: 8px;
@@ -458,10 +458,11 @@ img.face {
 
 .buttonText{
 	font: 400 "Alegreya", serif;
-//	padding-right: 8px;
 	font-size : 24px;
 //	font-weight: bold !important;
-	margin-left: 2px;
+	line-height: 48px !important;
+	text-align: center;
+	width: 48px;
 	cursor : pointer ;
 	text-transform: uppercase;
 }
