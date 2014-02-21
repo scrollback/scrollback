@@ -137,9 +137,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
                         return;  
                     } 
                 }
-				
-				if (deleted && !data.message) $scope.items.push(messages[index]);
-			
+				if (!(deleted && !data.message)) $scope.items.push(messages[index]);
 			})();
 		}
     }
