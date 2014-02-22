@@ -376,11 +376,11 @@ function room (r, conn) {
 		core.emit("room", r, function(err, data) {
 			if(err) {
 				log("ROOM ERROR", r, err);
-				query.message = err.message;
-				data.query= {
-					queryId : r.queryId
-				};
-				conn.send('error', data);
+				r= {
+  					queryId : r.queryId
+  				};
+				r.message = err.message;
+ 				conn.send('error', r);
 			}else{
 				data.query= {
 					queryId : r.queryId
