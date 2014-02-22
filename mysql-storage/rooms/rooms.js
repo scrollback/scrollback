@@ -72,6 +72,7 @@ function rooms(coreObject) {
 			if(!err) err = true;
 			else return callback(err);
 			data.forEach(function(element) {
+				element.id = element.id.toLowerCase();
 				rooms[element.id] = element;
 				try{
 					element.params = JSON.parse(element.params);
@@ -84,6 +85,7 @@ function rooms(coreObject) {
 			if(options.fields) {
 				if(options.id && typeof options.id !=="string") {
 					options.id.forEach(function(id) {
+						id = id.toLowerCase();
 						if(!rooms[id]) {
 							rooms[id] = {
 								id:options.id,
@@ -94,6 +96,7 @@ function rooms(coreObject) {
 						}
 					});
 				}else if(options.id && data.length ==0) {
+					options.id = options.id.toLowerCase();
 					data[0]=rooms[options.id] = {
 						id:options.id,
 						name:options.id,
@@ -109,6 +112,7 @@ function rooms(coreObject) {
 							var accountsInfo={};
 							if(err) return callback(err);
 							accounts.forEach(function(element) {
+								element.room = element.room.toLowerCase();
 								rooms[element.room].accounts.push(element);
 							});
 							return getFields(fields, index+1, callback);
@@ -118,6 +122,7 @@ function rooms(coreObject) {
 						getMembers(ids,function(err, roomMembers) {
 							if(err) return callback(err);
 							Object.keys(roomMembers).forEach(function(roomId) {
+								roomId= roomId.toLowerCase();
 								rooms[roomId].members = roomMembers[roomId];
 							});
 							return getFields(fields, index+1, callback);
@@ -159,7 +164,9 @@ function getMembers(ids, callback) {
 		if(err) return callback(err);
 		var ids=[], user = {}, rooms = {};
 		members.forEach(function(element) {
+			console.log(element);
 		    ids.push(element.user);
+		    element.room = element.room.toLowerCase();
 		    if(!rooms[element.room]) rooms[element.room] = [];
 		    rooms[element.room].push(element.user);
 		    user[element.user] = element.user;
@@ -171,6 +178,7 @@ function getMembers(ids, callback) {
 				user[element.id] = element;
 			});
 			Object.keys(rooms).forEach(function(roomId) {
+				roomId = roomId.toLowerCase();
 				rooms[roomId].forEach(function(id) {
 					if(!returnData[roomId]) returnData[roomId] =[];
 					returnData[roomId].push(user[id]);
