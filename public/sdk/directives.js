@@ -191,22 +191,18 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
         
         $(document).ready(function() {
             $('.column').fixInView();
-			$body = $('#body');
-			$body.anchorBottom();
-            $body.bind('reposition', function(e) {
+            $('#body').bind('reposition', function(e) {
                 if(e.above < 250 && e.by<0) {
-					$body.anchorBottom();
-					scope.$apply(attr.whenScrolledUp);
-					$body.anchorTop();
+					$('#body').anchorBottom();
+					console.log("loading more up");
+                    scope.$apply(attr.whenScrolledUp);
+                //    $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
                 }
                 else if(e.below < 250 && e.by>0) {
-					$body.anchorTop();
+					$('#body').anchorTop();
+					console.log("loading more down");
 					scope.$apply(attr.whenScrolledDown);
-					$body.anchorBottom();
-                } else {
-					if(e.by < 0) $body.anchorTop();
-					else $body.anchorBottom();
-				}
+                }
             });
         });
     };
