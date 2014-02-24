@@ -131,15 +131,24 @@ function addBotChannels(host, channels) {
 					}
 				}else if(m.type == 'nick') {
 					core.emit("init", {sessionID: sessionID, suggestedNick: m.ref}, function(err, data) {
-						m.from = userFromSess[sessionID];
-						delete nickFromUser[userFromSess[sessionID]];
-						delete userFromSess[sessionID];
+						if(!userFromSess[sessionID]) {
+							m.from = data.user.id;
+							m.type = "back";
+							userFromSess["irc://"+m.origin.server+"/"+m.ref] = data.user.id;
+							nickFromUser[data.user.id] = m.ref;
+							core.emit("message", m);
+							return;
+						}else {
+							m.from = userFromSess[sessionID]
+							delete nickFromUser[userFromSess[sessionID]];
+							delete userFromSess[sessionID];
+						}
 						userFromSess["irc://"+m.origin.server+"/"+m.ref] = data.user.id;
 						nickFromUser[data.user.id] = m.ref;
 						m.ref = data.user.id;
 						core.emit("message", m);	
 					});
-				}else if(m.type == 'away'){
+				}else if(m.type == 'away') {
 					if(!userFromSess[sessionID]) return;
 					m.from = userFromSess[sessionID];
 					delete nickFromUser[userFromSess[sessionID]];
