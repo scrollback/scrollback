@@ -56,9 +56,13 @@ scrollbackApp.directive('message',function($compile, $timeout) {
             attr.$observe('text', function(value) {
 				$scope.slashMe = (/^\/me/.test(value));
                 $scope.text = value;
+				$scope.nick = "";
                 if($scope.slashMe) {
-                    value = $scope.text = $scope.text.replace(/^\/me/, $scope.from);
-                    $scope.nick = ""; 
+					$timeout(function(){
+						console.log("Slashme", $scope.slashMe, "$scope.from", $scope.from, $scope.text[0].text);
+						value = $scope.text[0].text = $scope.text[0].text.replace(/^\/me/, $scope.from);
+                    	$scope.nick = "";
+					});
                 }else {
                     $scope.nick = $scope.from; 
                 }
