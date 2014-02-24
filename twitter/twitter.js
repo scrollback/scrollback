@@ -2,6 +2,7 @@ var log = require("../lib/logger.js");
 var logTwitter = log;
 var passport = require('passport');
 var fs = require("fs");
+var htmlEncode = require('htmlencode');
 var Twit = require('twit');
 var guid = require("../lib/guid.js");
 var config = require('../config.js');
@@ -90,7 +91,7 @@ function addTwitterTokens(room, callback) {
 		
 		var old;//old account
 		if(room.old && room.old.params) old = room.old.params.twitter;
-		if(old && old.token && old.tokenSecret && old.profile) {
+		if(old) {
 			room.params.twitter.token = old.token;
 			room.params.twitter.tokenSecret = old.tokenSecret;
 			room.params.twitter.profile = old.profile;
@@ -179,11 +180,15 @@ function fetchTweets(room) {
  */
 function sendMessages(replies, room) {
 	replies.statuses.forEach(function(r) {
+		var text;
+		if (r.retweeted_status && r.retweeted_status.text) {
+			text = "RT " + r.retweeted_status.text;
+		}else text = r.text;
 		if (!r.retweeted) {
 			var message = {
 				id: guid(),
 				type: "text",
-				text: r.text,
+				text: htmlEncode.htmlDecode(text),
 				from: "guest-" + r.user.screen_name,
 				to: room.id,
 				time: new Date().getTime(),
