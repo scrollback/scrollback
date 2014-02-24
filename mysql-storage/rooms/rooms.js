@@ -153,7 +153,11 @@ function getAccounts(ids,callback) {
 		
 		
 		accounts.forEach(function(account) {
-			account.params = JSON.parse(account.params);
+			try {
+				account.params = JSON.parse(account.params);
+			}catch(err) {
+				account.params = {};
+			}
 		});
 		callback(null, accounts);
 	});

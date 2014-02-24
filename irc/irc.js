@@ -201,6 +201,9 @@ function init() {
 }
 
 function send(message, accounts) {
+	if (message.session && message.session.split(":")[0] === 'twitter') {
+        return;
+    }
 	var ident = "", md5sum = crypto.createHash('md5');
 	clients[message.from] = clients[message.from] || {};
 	accounts.map(function(account) {
