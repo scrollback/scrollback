@@ -5,7 +5,7 @@
 	var columns = [],
 		$window = $(window),
 		$body = $(document.body),
-		viewHeight, lineHeight;
+		viewHeight = $window.height(), lineHeight;
 		
 	(function () {
 		var lhs = $body.css('lineHeight');
@@ -24,6 +24,7 @@
 			el.css({position: 'fixed'});
 			el.data("column", column);
 		});
+		setup();
 	};
 	
 	function read() {
@@ -32,10 +33,10 @@
 	}
 
 	function readColumn(column) {
-		column.top = column.element.offset().top;
+		column.top = column.element.offset().top - $window.scrollTop();
 		column.height = column.element.outerHeight();
 		column.bottom = viewHeight - (column.top + column.height);
-	//	if(column.element.attr('id') == 'body') console.log('Read', column.top, column.bottom, column.anchorBottom);
+//		if(column.element.attr('id') == 'body') console.log('Read', column.top, column.bottom, column.anchorBottom);
 	}
 	
 	function moveView(movement) {
@@ -66,6 +67,12 @@
 	function write() {
 		columns.forEach(writeColumn);
 	}
+	
+	function setup() {
+		console.log('setting up');
+		$body.css({height: 3*viewHeight});
+		$window.scrollTop(viewHeight);
+	}
 
 	function writeColumn(column) {
 	//	if(column.element.attr('id') == 'body') console.log('Write', column.top, column.bottom, column.anchorBottom);
@@ -73,66 +80,71 @@
 			column.anchorBottom? {top: 'auto', bottom: column.bottom}: {top: column.top, bottom: 'auto'}
 		);
 	}
-	var scrolling = false, totalMovement = 0;
 	
 	function scroll(movement) {
-		document.title = movement;
-		if(scrolling) { totalMovement += movement; return; }
-		scrolling = true;
 		read();
 		moveView(movement);
 		write();
-		setTimeout(function() { scrolling = false; scroll(totalMovement); totalMovement = 0; }, 100);
 	}
 	
-	$window.on('wheel', function(e) {
-		var y;
-		e = e.originalEvent;
-		if(e.deltaMode === 0) y = e.deltaY;
-		else if(e.deltaMode === 1) y = e.deltaY * lineHeight;
-		else if(e.deltaMode === 2) y = e.deltaY * viewHeight;
-		
-		if(y) scroll(y);
-	});
-	
-	$window.on('keydown', function(e) {
-		if(e.which == 38) scroll(-3*lineHeight);
-		else if(e.which == 40) scroll(3*lineHeight);
-		else if(e.which == 33) scroll(-viewHeight);
-		else if(e.which == 34) scroll(viewHeight);
-	});
-	
-	/* Handle Touch Events */
-	(function() {
-		
-		var ongoing, lastY;
-		
-		$window.on('touchstart', function(e) {
-			if(ongoing) return;
-			ongoing = true;
-			lastY = e.originalEvent.changedTouches[0].screenY;
-			e.preventDefault();
-		});
-		$window.on('touchend', function(e) {
-			if(!ongoing) return;
-			var currY = e.originalEvent.changedTouches[0].screenY;
-			scroll(lastY - currY);
-			ongoing = false;
-			e.preventDefault();
-		});
-		$window.on('touchcancel', function(e) { 
-			ongoing = false;
-		});
-		$window.on('touchmove', function(e) {
-			if(!ongoing) return;
-			var currY = e.originalEvent.changedTouches[0].screenY;
-			scroll(lastY - currY);
-			lastY = currY;
-			e.preventDefault();
+	(function () {
+		var ignore = false;
+		$window.on('scroll', function() {
+			if(ignore) { ignore = false; return; }
+			scroll(50*($window.scrollTop() - viewHeight));
+			ignore = true;
+			$window.scrollTop(viewHeight);
 		});
 	}());
+	
+//	$window.on('wheel', function(e) {
+//		var y;
+//		e = e.originalEvent;
+//		if(e.deltaMode === 0) y = e.deltaY;
+//		else if(e.deltaMode === 1) y = e.deltaY * lineHeight;
+//		else if(e.deltaMode === 2) y = e.deltaY * viewHeight;
+//		
+//		if(y) scroll(y);
+//	});
+//	
+//	$window.on('keydown', function(e) {
+//		if(e.which == 38) scroll(-3*lineHeight);
+//		else if(e.which == 40) scroll(3*lineHeight);
+//		else if(e.which == 33) scroll(-viewHeight);
+//		else if(e.which == 34) scroll(viewHeight);
+//	});
+//	
+//	/* Handle Touch Events */
+//	(function() {
+//		
+//		var ongoing, lastY;
+//		
+//		$window.on('touchstart', function(e) {
+//			if(ongoing) return;
+//			ongoing = true;
+//			lastY = e.originalEvent.changedTouches[0].screenY;
+//			e.preventDefault();
+//		});
+//		$window.on('touchend', function(e) {
+//			if(!ongoing) return;
+//			var currY = e.originalEvent.changedTouches[0].screenY;
+//			scroll(lastY - currY);
+//			ongoing = false;
+//			e.preventDefault();
+//		});
+//		$window.on('touchcancel', function(e) { 
+//			ongoing = false;
+//		});
+//		$window.on('touchmove', function(e) {
+//			if(!ongoing) return;
+//			var currY = e.originalEvent.changedTouches[0].screenY;
+//			scroll(lastY - currY);
+//			lastY = currY;
+//			e.preventDefault();
+//		});
+//	}());
 
-	$window.resize(function() { scroll(0); });
+	$window.resize(function() { setup(); scroll(0); });
 	
 	$.fn.nudgeInView = function(movement) {
 		read();

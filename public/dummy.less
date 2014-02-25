@@ -121,7 +121,7 @@ img.face {
 #meta, #body {
 	position: fixed;
 	min-height: 100%;
-	.transition(top 0.1s ease-out);
+/*	.transition(top 0.3s ease-out); */
 }
 
 #meta {
@@ -129,7 +129,7 @@ img.face {
 	width: 38%; 
 	border-right: @sbthick solid @sbgreen;
 	left: 0; top: 0;
-	padding-top: 40px;
+	padding-top: 48px;
 	padding-left: 48px;
 	padding-right: 48px;
 	.radial-gradient(#555, #000, 100%, 50%);
@@ -152,18 +152,6 @@ img.face {
 	.box-sizing(border);
 	.radial-gradient(#fff, #eee, 0%, 50%);
 }
-
-//@media screen and (max-width: 640px) {
-//	#meta {
-//		height: 64px; width: 100%; z-index: 1; display: none;
-//		border-right: none; border-bottom: @sbthick solid @sbgreen;
-//		overflow: hidden;
-//		padding: 4px 48px;
-//		.radial-gradient(#555, #000, 50%, 100%);
-//		&.expanded { height: 100%; }
-//	}
-//	#body { left: 0; padding-top: 112px; .radial-gradient(#fff, #eee, 50%, 0%); }
-//}
 
 //----- room page -----
 
@@ -195,6 +183,7 @@ img.face {
 		left: 0; 
 		.radial-gradient(#fff, #eee, 50%, 0%);
 		border-right: none; overflow: hidden;
+		padding-top: 48px;
 	}
 }
 

@@ -328,7 +328,6 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
             }
         }
 		
-        // removing elements from the bottom which are out of view scope 
         $timeout(function() {
             if($scope.items.length > 50) {
 				$('#body').anchorTop();
