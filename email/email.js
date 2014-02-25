@@ -10,14 +10,13 @@ var welcomeEmailJade;
 var core;
 var waitingTime1 = 3*60*60*1000;//mention email timeout
 var waitingTime2 = 12*60*60*1000;//regular email timeout 
-var timeout = 5*60*1000;//for debuging only
+var timeout = 15*1000;//for debuging only
 var transport = nodemailer.createTransport("SMTP", {
     host: "email-smtp.us-east-1.amazonaws.com",
     secureConnection: true,
     port: 465,
     auth: emailConfig && emailConfig.auth
 });
-
 function send(from,to,subject,html) {
     
     var email = {
@@ -45,7 +44,6 @@ function send(from,to,subject,html) {
         }
     });
 }
-
 module.exports = function(coreObject) {
     core = coreObject;
     process.nextTick(function(){
@@ -80,8 +78,6 @@ module.exports = function(coreObject) {
         logMail("email module is not enabled");
     }
 };
-
-
 function init() {
     fs.readFile(__dirname + "/views/digest.jade", "utf8", function(err, data) {
         if(err) throw err;
@@ -110,15 +106,12 @@ function init() {
     });
 }
 
-
-
 function getExpireTime() {
     if (emailConfig.debug) {
         return timeout*2;
     }
     else return 2*24*60*60;//2 days
 }
-
 /**
  *Push message into redis
  *If labels is not defind then it will not send mentions email.
@@ -126,9 +119,7 @@ function getExpireTime() {
  */
 function addMessage(message){
     var room = message.to;
-    
     if(emailConfig.debug) log("email -"  , message);
-    
     if (message.labels && message.labels[0]) {
         var label = message.labels[0].substring(0,message.labels[0].indexOf(':'));
         var title = message.labels[0].substring(message.labels[0].indexOf(':') + 1);
@@ -157,11 +148,8 @@ function addMessage(message){
                 });//mention is a set)
             });        
         }
-    }
-    
-    
+    }   
 }
-
 /**
  *Try sending mail to waiting users.
  *Reads email:toSend from redis.
@@ -179,7 +167,6 @@ function trySendingToUsers() {
        }
     });
 }
-
 /**
  *Init of mail sending to username
  *conditions that can call the function
@@ -197,12 +184,11 @@ function initMailSending(username, rooms) {
         if (err) {
             return;
         }
-        
         redis.get("email:" + username + ":isMentioned", function(err, data) {
             var ct = new Date().getTime();
             var interval = waitingTime2 ;
             if (data) {
-                interval = waitingTime1
+                interval = waitingTime1;
             }
             if (emailConfig.debug) {
                 logMail("username " + username + " is mentioned ", data); 
@@ -215,8 +201,6 @@ function initMailSending(username, rooms) {
             if (!lastSent ) {//last email sent not set
                 lastSent = ct - interval;
             }
-            
-            
             log("time left for user " , (parseInt(lastSent) + interval - ct));
             if (parseInt(lastSent) + interval <= ct) {
                 //get rooms that user is following...
@@ -262,10 +246,6 @@ function initMailSending(username, rooms) {
         
     });             
 }
-
-
-
-
 /**
  *send mail to user read data from redis and create mail object
  *email: {
@@ -333,7 +313,7 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
                                else {
                                     var ll = {
                                          label: label ,
-                                         count : parseInt(count)                            
+                                         count : parseInt(count, 10)                            
                                      };
                                     roomsObj.labels.push(ll);
                                 }
@@ -381,10 +361,8 @@ function prepareEmailObj(username ,rooms, lastSent, callback) {
                 }
             });
         }
-        
     });
 }
-
 /**
  *delete all mentions of user on rooms from redis
  *@param {string} username.
@@ -402,7 +380,6 @@ function deleteMentions(username , rooms) {
         });
     });
 }
-
 /**
  *create email.rooms element
  *filter out labels and generate labels array for current room
@@ -422,17 +399,16 @@ function sortLabels(room, roomObj, mentions,callback) {
             m = JSON.parse(m);
            if(m.labels[0].split(":")[0] === label.label) {
                 label.interesting.push(m);
-                label.title = m.labels[0].split(":")[1];
+                var index = m.labels[0].indexOf(":") + 1;
+                label.title = m.labels[0].substring(index);
            }
         });
         ct++;
         redis.get ("email:label:" + room + ":" + label.label + ":title",function(err, title) {
-            
-            if (title) {
+            if (!err && title) {
                 label.title = title;
             }
             var pos = r.labels.length;
-            
             for (var i = 0;i < r.labels.length;i++ ) {
                 if (r.labels[i].interesting.length < label.interesting.length ) {
                     pos = i;
@@ -445,7 +421,6 @@ function sortLabels(room, roomObj, mentions,callback) {
                     }
                 }
             }
-            
             var rm = -1;
             if (r.labels.length >= maxLabels) {
                 rm = r.labels.length;
@@ -503,7 +478,6 @@ function sortLabels(room, roomObj, mentions,callback) {
         }
     }    
 }
-
 /**
  *Read data from email Object render HTML from email object using /views/digest.jade
  *and then send mail to email.emailId
@@ -517,9 +491,15 @@ function sendMail(email) {
                  log("accounts " ,rooms[0].accounts  , e);
                 if (e.id.indexOf("mailto:") === 0) {
                     email.emailId = e.id.substring(7);
-                    email.heading = getHeading(email);
-                    log("email object" + JSON.stringify(email));
-                    var html = digestJade(email);
+                    var html;
+                    try {
+                        email.heading = getHeading(email);
+                        log("email object" + JSON.stringify(email));
+                        html = digestJade(email);
+                    }catch(err) {
+                        logMail("Error while rendering email: ", err);
+                        return;
+                    }
                     log(email , "sending email to user " , html );
                     send(emailConfig.from, email.emailId, email.heading, html);
                     redis.set("email:" + email.username + ":lastsent", new Date().getTime());
@@ -533,15 +513,12 @@ function sendMail(email) {
                             logMail("deleted old labels from that room " , err ,data);
                         });//ZREMRANGEBYSCORE email:scrollback:labels -1 1389265655284
                     });
-                }
-                
-            });
-            
+                } 
+            }); 
         }
     });
 }
 /**
- *
  *Generate Heading from email Object
  *@param {object} Email Object
  */
@@ -549,8 +526,6 @@ function getHeading(email) {
     var heading = "";
     var bestLabel ;
     var bestMention = {};
-    var r ;
-    var isLable = false;
     var labelCount = 0;
     var more = 0;
     email.rooms.forEach(function(room) {
@@ -591,17 +566,12 @@ function getHeading(email) {
     email.formatText = formatText;
     return heading;
 }
-
-
 var formatText = function(text) {
     var s  = text.replace(/-/g,' ');
     s = s.trim();
     s = s.substring(0,1).toUpperCase() + s.substring(1);
     return s;
-}
-
-
-
+};
 /**
  *Send mails to users based on current time.
  *@param {object} Map of room data.
@@ -655,8 +625,6 @@ function sendperiodicMails(){
         }
     });
 }
-
-
 /**
  *send welcome mail to user
  *@param {Object} user 
@@ -666,12 +634,11 @@ function sendWelcomeEmail(user) {
     var emailAdd = false;
     user.accounts.forEach(function (u) {
         if (u.id.indexOf('mailto:') === 0) {
-            emailAdd = u.id.substring(7);
+			emailAdd = u.id.substring(7);
         }
     });
     if (emailAdd) {
         logMail("sending welcome email." , emailAdd);
         send(emailConfig.from, emailAdd, "Welcome", emailHtml);
-    }
-    
+    }   
 }
