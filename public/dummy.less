@@ -51,7 +51,8 @@ a.noChange{
 		bottom: 0; right: 0;
 	}
 	&.expanded {
-		height: auto;
+		height: 7em;
+		overflow: auto;
 	}
 }
 
@@ -120,6 +121,7 @@ img.face {
 #meta, #body {
 	position: fixed;
 	min-height: 100%;
+	.transition(top 0.1s ease-out);
 }
 
 #meta {

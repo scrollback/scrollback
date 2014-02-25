@@ -1,13 +1,20 @@
 (function($) {
-	/* jshint laxcomma: true */
 	/* jshint browser: true */
 	/* global jQuery */
 	
-	var columns = []
-	,	$window = $(window)
-	,	$body = $(document.body)
-	,	viewHeight
-	;
+	var columns = [],
+		$window = $(window),
+		$body = $(document.body),
+		viewHeight, lineHeight;
+		
+	(function () {
+		var lhs = $body.css('lineHeight');
+		
+		lineHeight = parseFloat(lhs);
+		if(lhs.substr(-2) != 'px') {
+			lineHeight = (isNaN(lineHeight)? 1.5: lineHeight) * parseFloat($body.css('fontSize'));
+		}
+	}());
 	
 	$.fn.fixInView = function() {
 		this.each(function () {
@@ -72,35 +79,37 @@
 		moveView(movement);
 		write();
 	}
-	
-	$window.on('wheel', function(e) {
-		var y, lhs, lh;
+		$window.on('wheel', function(e) {
+		var y;
 		e = e.originalEvent;
 		if(e.deltaMode === 0) y = e.deltaY;
-		else if(e.deltaMode === 1) {
-			lhs = $body.css('lineHeight');
-			lh = parseFloat(lhs);
-			if(lhs.substr(-2) != 'px') {
-				lh = (isNaN(lh)? 1.5: lh) * parseFloat($body.css('fontSize'));
-			}
-			y = e.deltaY * lh;
-		}
+		else if(e.deltaMode === 1) y = e.deltaY * lineHeight;
 		else if(e.deltaMode === 2) y = e.deltaY * viewHeight;
 		
 		if(y) scroll(y);
 	});
 	
 	$window.on('keydown', function(e) {
-			var lhs = $body.css('lineHeight'),
-				lh = parseFloat(lhs);
-			if(lhs.substr(-2) != 'px') {
-				lh = (isNaN(lh)? 1.5: lh) * parseFloat($body.css('fontSize'));
-			}
-		if(e.which == 38) scroll(-3*lh);
-		else if(e.which == 40) scroll(3*lh);
+		if(e.which == 38) scroll(-3*lineHeight);
+		else if(e.which == 40) scroll(3*lineHeight);
 		else if(e.which == 33) scroll(-viewHeight);
 		else if(e.which == 34) scroll(viewHeight);
 	});
+	
+	/* Handle Touch Events */
+	(function() {
+		
+		var ongoing = null;
+		
+		$window.on('touchstart', function(e) {
+			var touch = e.originalEvent.changedTouches[0];
+			if(!ongoing) ongoing = { startX: touch.pageX, startY: touch.pageY };
+		});
+		$window.on('touchend', function(e) {  });
+		$window.on('touchcancel', function(e) {  });
+		$window.on('touchmove', function(e) {  });
+		
+	}())
 
 	$window.resize(function() { scroll(0); });
 	
