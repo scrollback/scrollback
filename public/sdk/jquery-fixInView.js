@@ -73,13 +73,19 @@
 			column.anchorBottom? {top: 'auto', bottom: column.bottom}: {top: column.top, bottom: 'auto'}
 		);
 	}
+	var scrolling = false, totalMovement = 0;
 	
 	function scroll(movement) {
+		document.title = movement;
+		if(scrolling) { totalMovement += movement; return; }
+		scrolling = true;
 		read();
 		moveView(movement);
 		write();
+		setTimeout(function() { scrolling = false; scroll(totalMovement); totalMovement = 0; }, 100);
 	}
-		$window.on('wheel', function(e) {
+	
+	$window.on('wheel', function(e) {
 		var y;
 		e = e.originalEvent;
 		if(e.deltaMode === 0) y = e.deltaY;
@@ -99,17 +105,32 @@
 	/* Handle Touch Events */
 	(function() {
 		
-		var ongoing = null;
+		var ongoing, lastY;
 		
 		$window.on('touchstart', function(e) {
-			var touch = e.originalEvent.changedTouches[0];
-			if(!ongoing) ongoing = { startX: touch.pageX, startY: touch.pageY };
+			if(ongoing) return;
+			ongoing = true;
+			lastY = e.originalEvent.changedTouches[0].screenY;
+			e.preventDefault();
 		});
-		$window.on('touchend', function(e) {  });
-		$window.on('touchcancel', function(e) {  });
-		$window.on('touchmove', function(e) {  });
-		
-	}())
+		$window.on('touchend', function(e) {
+			if(!ongoing) return;
+			var currY = e.originalEvent.changedTouches[0].screenY;
+			scroll(lastY - currY);
+			ongoing = false;
+			e.preventDefault();
+		});
+		$window.on('touchcancel', function(e) { 
+			ongoing = false;
+		});
+		$window.on('touchmove', function(e) {
+			if(!ongoing) return;
+			var currY = e.originalEvent.changedTouches[0].screenY;
+			scroll(lastY - currY);
+			lastY = currY;
+			e.preventDefault();
+		});
+	}());
 
 	$window.resize(function() { scroll(0); });
 	
