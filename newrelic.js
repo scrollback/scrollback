@@ -8,20 +8,14 @@
 var config = require('./config.js');
 
 if(config.core.newrelic.key) exports.config = {
-  /**
-   * Array of application names.
-   */
-  app_name : config.core.newrelic.name || "Scrollback local",
-  /**
-   * Your New Relic license key.
-   */
-  license_key : config.core.newrelic.key,
-  logging : {
-    /**
-     * Level at which to log. 'trace' is most useful to New Relic when diagnosing
-     * issues with the agent, 'info' and higher will impose the least overhead on
-     * production applications.
-     */
-    level : 'trace'
-  }
+	app_name : config.core.newrelic.name || "Scrollback",
+	license_key : config.core.newrelic.key,
+	logging : {
+		level : 'info'
+	},
+	rules: {
+		ignore: [
+			'^/socket/\*',
+		]
+	}
 };
