@@ -6,7 +6,7 @@ var longest = 0;
 module.exports = function(core) {
 	var pluginContent = "";
 	init();
-	core.on('message', function(message, callback) {
+	core.on('text', function(message, callback) {
 		log("Listening");
 		if (message.origin && message.origin.gateway == "irc") return callback();
 		if(rejectable(message)) callback(new Error("BANNED_USERNAME"));

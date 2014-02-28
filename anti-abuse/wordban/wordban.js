@@ -15,8 +15,8 @@ module.exports = function(core) {
         }, "setters");
 	});
 	init();
-	core.on('message', function(message, callback) {
-		log("Heard \"message\" event");
+	core.on('text', function(message, callback) {
+		log("Heard \"text\" event");
 		var text;
 		if (message.origin && message.origin.gateway == "irc") return callback();
 
