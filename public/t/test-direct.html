@@ -1,0 +1,61 @@
+<html>
+	<head>
+		<title>Scrollback: beautiful micro-forums for open communities.</title>
+		 <link rel="stylesheet" href="/t/mocha.css" />
+	</head>
+	<body>
+		
+		<div id="mocha"></div>
+		<script src="/t/mocha.js"></script>
+		<script src="/t/chai.js"></script>
+		<script src="/sdk/sockjs.js"></script>
+		<script>
+			var assert = chai.assert;
+			var scrollback = {
+				host: "//"+location.host
+			};
+			console.log(scrollback);
+			var socket;
+		</script>
+		<script>mocha.setup('bdd');</script> 
+		<script>
+			describe("socket test", function() {
+				describe("socket connection", function() {
+					it("socket connection established.", function(done) {
+						socket = new SockJS(scrollback.host + '/socket');
+						socket.onopen = function() {
+							done();
+						};
+					});
+					it("socket closing.", function(done) {
+						socket.close();
+						done();
+					});
+				});
+
+				describe("sending message over socket", function() {
+					beforeEach(function(done){
+						socket = new SockJS(scrollback.host + '/socket');
+						socket.onopen = function() {
+							done();
+						};
+					});
+					afterEach(function(done){
+						socket.close();
+						done();
+					});
+					it("echo the action", function(done) {
+						var action = {type:"echo", time:new Date().getTime(), text:"hi there..", to:"scrollback", "from":"harish"};
+						socket.onmessage = function(message){
+							message = JSON.parse(message.data);
+							assert.equal(message.type, "echo", "response tampered");
+							done();
+						};
+						socket.send(JSON.stringify(action));
+					});
+				});
+			});
+			mocha.run();
+		</script>
+	</body>
+</html>	
