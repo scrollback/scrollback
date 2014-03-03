@@ -11,19 +11,18 @@ Communicate with scrollback java Process through TCP and set message.labels.
 module.exports = function(core) {
 	if (config.threader) {
 		init();
-		core.on('message', function(message, callback) {
+		core.on('text', function(message, callback) {
 			if(message.type == "text" && client.writable) {//if client connected and text message
 				return core.emit('rooms', {id:message.to}, function(err, rooms) {
 					console.log("threader",rooms);
 					if(err) callback(err);
 					var msg = JSON.stringify({
 						id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
-						text: message.text.replace(/['"]/g, ''),
+						text: message.text.replace(/['"]/g, '').replace(/\n/g," "),
 						room: typeof message.to=="string" ? message.to:message.to[0]
 					});
-					log("Sending msg to scrollback.jar="+msg);
+					log("Sending msg to scrollback.jar= "+msg);
 					try {
-						msg = msg.replace(/\n/g," ");
 						client.write(msg+'\n');
 					} catch(err) {
 						log("--error --"+err);
@@ -36,11 +35,7 @@ module.exports = function(core) {
 							delete pendingCallbacks[message.id];
 							log("pending callback removed after 1 sec for message.id" + message.id);
 						}
-					}, 1000);	
-					/*}else{
-						return callback();	
-					}*/
-					
+					}, 1000);
 				});
 			}
 			return callback();
@@ -75,11 +70,15 @@ function init(){
 		try {
 			log("data=-:" + data + ":-");
 			data = JSON.parse(data);
-//			console.log("Data returned by scrollback.jar="+data.threadId, pendingCallbacks[data.id].message.text);
+    		log("Data returned by scrollback.jar = "+data.threadId, pendingCallbacks[data.id].message.text);
 			message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 			if(message) {
-                if(!message.labels) message.labels = {};
-				message.labels[data.threadId] = 1;
+                if(!message.threads) message.threads = [];
+                var index = data.threadId.indexOf(':');
+                var id = data.threadId.substring(0, index);
+                var title = data.threadId.substring(index + 1);
+				message.threads.push({id: id, title: title, score: 1});
+				//message.labels[data.threadId] = 1;
 				pendingCallbacks[data.id].fn();
 				log("called back in ", new Date().getTime() - pendingCallbacks[data.id].time);
 				delete pendingCallbacks[data.id];

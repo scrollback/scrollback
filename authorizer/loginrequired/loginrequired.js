@@ -6,7 +6,6 @@ var roomNames = {};
 
 
 module.exports = function(coreObject) {
-    var pluginContent = "";
     core=coreObject;
     fs.readFile(__dirname + "/loginrequired.html", "utf8", function(err, data){
         if(err) throw err;
@@ -17,16 +16,17 @@ module.exports = function(coreObject) {
             callback(null, payload);
         }, "setters");
     });
-   core.on("message", function(message, callback) {
-        log("Heard \"message\" Event");
-        if (message.origin && (message.origin.gateway !== "web")) return callback();
+   core.on("text", function(message, callback) {
+        log("Heard \"text\" Event");
         if (message.session){
             var gateway = message.session.substring(0, message.session.indexOf(":"));
             if(gateway != "web") return callback();
         }
         if(message.type == "text" && message.from.indexOf("guest-")==0) {
-            core.emit("rooms",{id:message.to},function(err, data) {
+            core.emit("getRooms",{id:message.to},function(err, data) {
+                data = data.result;
                 if(err) return callback(err);
+                if(!data) callback();
                 if(data.length == 0) return callback();
                 if(data[0].params && data[0].params.loginrequired)
                     callback(new Error("AUTH_REQ_TO_POST"));
