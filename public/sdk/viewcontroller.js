@@ -202,7 +202,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	$scope.room.name = getRoomName($scope.room.id); 
 	
 		
-	if($scope.room.members) $scope.room.members.length = 0;
+//	if($scope.room.members) $scope.room.members.length = 0;
 	function generateSortedList(members, occupants) {
 		var userMap = {}, userArray=[];
 		members.forEach(function(member) {
