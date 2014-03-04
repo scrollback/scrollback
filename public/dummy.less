@@ -12,7 +12,7 @@ html, button, input, select, textarea {
 }
 
 #backbutton{
-	cursor : pointer ;
+	cursor : pointer;
 }
 
 body { padding: 0; margin: 0; width: 100%; height: 100%; }
@@ -117,13 +117,16 @@ img.face {
 	}
 }
 
-#meta {
+#meta, #body {
 	position: fixed;
+	min-height: 100%;
+}
+
+#meta {
 	background: #000; color: #eee;
 	width: 38%; 
-	min-height: 100%;
 	border-right: @sbthick solid @sbgreen;
-	left: 0; bottom: 0;
+	left: 0; top: 0;
 	padding-top: 40px;
 	padding-left: 48px;
 	padding-right: 48px;
@@ -140,11 +143,9 @@ img.face {
 }
 
 #body {
-	position: absolute;
-	min-height: 100%;
 	left: 38%;
 	right: 0;
-	top: 0;
+	bottom: 0;
 	overflow: hidden;
 	.box-sizing(border);
 	.radial-gradient(#fff, #eee, 0%, 50%);

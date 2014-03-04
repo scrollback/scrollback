@@ -198,7 +198,7 @@ function send(message, accounts) {
 		var u = url.parse(account);
 			var client = clients[message.from][u.host],
 			channel = u.hash.toLowerCase();
-		if (message.origin.gateway == "irc" && ("irc://"+message.origin.server+"/"+message.origin.channel).toLowerCase() == (account || "").toLowerCase()) {
+		if (message.origin && message.origin.gateway == "irc" && ("irc://"+message.origin.server+"/"+message.origin.channel).toLowerCase() == (account || "").toLowerCase()) {
 			log("Outgoing echo", message);
 			return;
 		}

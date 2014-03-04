@@ -34,7 +34,7 @@ var express = require("express"),
 	guid = require("../lib/guid.js"),
 	names = require("../lib/names.js"),
 	_get = store.get,
-	key = "scrollback_sessid",
+	key = "sbsid",
 	secret = "ertyuidfghjcrtyujwsvokmdf",
 	watchers = {};
 	

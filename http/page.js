@@ -72,22 +72,32 @@ exports.init = function(app, coreObject) {
             res.render("profile", {user: req.session.user});
         },
 		"cookie": function(req, res) {
-			res.end(req.query.callback+"('"+req.cookies["scrollback_sessid"]+"')");
+			res.on('header', function() {
+				var cookie = res.getHeader('set-cookie');
+				if(!cookie) {
+					cookie = req.cookies["sbsid"];
+				} else {
+					cookie = decodeURIComponent(cookie.substring(cookie.indexOf('=')+1, cookie.indexOf(';')));
+				}
+				res.end(req.query.callback+"('"+ cookie +"')");
+				console.log("PAGE.JS COOKIE SET", cookie);
+			});
+			res.write('');
 		},
 		"debug": function(req, res) {
-			res.end(req.cookies["scrollback_sessid"] + '\r\n' + JSON.stringify(require("./session.js").store));
+			res.end(req.cookies["sbsid"] + '\r\n' + JSON.stringify(require("./session.js").store));
 		}
     };
-	//handling it for now but should probably think a way to make newProfile the static file.
+	// handling it for now but should probably think a way to make newProfile the static file.
     app.get("/s/me/edit", function(req, res) {
         var user = req.session.user;
         if(/"guest-"/.test(user.id)) {
             if(!user.accounts || user.accounts.length ==0) {
                 return res.render("newProfile",{email:user.accounts[0].id.split(":")[1]});        
-            }else {
+            } else {
                 return res.redirect(307, '//'+config.http.host+"/s/login.html"+queryString);
             }
-        }else{
+        } else {
             return res.render("newProfile",{email:user.accounts[0].id.split(":")[1]});
         }
     });
