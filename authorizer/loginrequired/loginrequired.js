@@ -24,7 +24,7 @@ module.exports = function(coreObject) {
         }
         if(message.type == "text" && message.from.indexOf("guest-")==0) {
             core.emit("getRooms",{id:message.to},function(err, data) {
-                data = data.result;
+                data = data.results;
                 if(err) return callback(err);
                 if(!data) callback();
                 if(data.length == 0) return callback();

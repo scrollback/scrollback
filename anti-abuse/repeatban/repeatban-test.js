@@ -6,7 +6,7 @@ var guid = require("../../lib/guid.js");
 var names = require("../../lib/names.js");
 var msg = {id:guid(), text: "values : " + Math.random(), from : "guest-" + names(6), to: "scrollback", type: 'text', time: new Date().getTime()};
 
-describe.only('usernameban', function() {
+describe('usernameban', function() {
 	it('init', function(done) {
 		repeatban(core);
 		setTimeout(function(){

@@ -4,7 +4,10 @@ var users={};
 module.exports = function(core) {
 	core.on('text', function(message, callback) {
 		log("Heard \"text\" event");
-		if (message.origin && message.origin.gateway == "irc") return callback();
+		if (message.session){
+			var gateway = message.session.substring(0, message.session.indexOf(":"));
+			if(gateway != "web") return callback();
+		}
 		if(rejectable(message)) return callback(new Error("REPEATATIVE"));
 		else callback();
 	}, "antiabuse");
@@ -13,15 +16,11 @@ module.exports = function(core) {
 
 var rejectable=function(message){
 	var from, room;
-
-
 	if (!message.from || !message.to || message.type!='text') {
 		return false;
 	}
-
 	room=message.to;
 	from=message.from;
-
 	if (!users[from]) {
 		users[from]={};
 	}

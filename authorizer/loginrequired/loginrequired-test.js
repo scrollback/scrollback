@@ -17,7 +17,7 @@ describe('Login Required', function() {
     });
     it('Username ban test.', function(done) {
         core.on("getRooms", function(query, callback){
-            query.result = [{id: "scrollback",  description: "this is a awesome room", type: "room", params:{ loginrequired: true}}];
+            query.results = [{id: "scrollback",  description: "this is a awesome room", type: "room", params:{ loginrequired: true}}];
             callback();
         }) ;
         core.emit("text", msg, function(err, data) {
