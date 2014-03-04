@@ -79,7 +79,6 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 			}
 		};
 		if(msg.type == "edit") { 
-			console.log("Edit msg", msg); 
 			for(i = 0; i < $scope.items.length; i++){
 				if($scope.items[i].id === msg.ref && msg.from !== $scope.user.id){
 					$scope.$apply(toggleHide);
@@ -193,7 +192,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		
 		$scope.options = {
 			'Tweet Message'	: function(){ window.open(twitterLink,'_blank'); }, 
-			'Share on FB'   : function(){ window.open(facebookLink,'_blank'); } 
+			'Share on FB'   : function(){ window.open(facebookLink,'_blank'); }
 		};
 		
 		if($scope.user.id === $scope.room.owner){
