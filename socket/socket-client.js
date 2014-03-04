@@ -1,8 +1,3 @@
-/*
-	Change extensiuon to typescript later 
-
-*/
-
 var sockjs = require('sockjs-client'),
 	generate = require('generate'),
 	config = require('../client-config');
@@ -15,16 +10,17 @@ module.exports = function(core){
 	core.on('nick-up', sendInit, 1000);
 	
 	core.on('getTexts', getTexts);
-}
+};
 
 var client;
+var pendingQueries = {}, pendingActions = {};
 
 function connect(){
 	client = sockjs.connect(config.sockjs, function(){
 		core.emit('connected');
 	});
 	
-	client.onMessage = recieveMessage;
+	client.onmessage = recieveMessage;
 }
 
 function getTexts(query, next){
@@ -38,8 +34,9 @@ function getTexts(query, next){
 }
 
 function recieveMessage(event){
+	var data;
 	try{
-		var data = JSON.parse(event.data);
+		data = JSON.parse(event.data);
 	}catch(err){
 		core.emit("error", err);
 	}
@@ -53,14 +50,59 @@ function recieveMessage(event){
 	}else{
 		//data is an action
 		if(pendingActions[data.id]){
-			pendingActions[data.id](data){
-				delete pendingActions[data.id];
-			}
+			pendingActions[data.id](data);
+			delete pendingActions[data.id];
 		}
 		core.emit(data.type + '-dn', data);
 	}
 }
 
+function getActionGenerics(){
+	var action = {};
+	action.id = generate.guid();
+	action.from = libsb.user.id;
+	action.user = libsb.user;
+	action.room = libsb.room;
+	action.time = new Date().getTime();
+}
 
+function sendBack(roomId, next){
+	var action = {};
+	
+	action = getActionGenerics();
+	action.type = 'back';
+	action.to = roomId;
+	
+	client.send(JSON.stringify(action));
+	pendingActions[action.actionId] = next;
+}
 
+function sendAway(roomId, next){
+	var action = {};
+	
+	action = getActionGenerics();
+	action.type = 'away';
+	action.to = roomId;
+	
+	client.send(JSON.stringify(action));
+	pendingActions[action.actionId] = next;
+}
+
+function sendText(roomId, next){
+	var action = {};
+	
+	action = getActionGenerics();
+	action.type = 'text';
+	action.to = roomId;
+	
+	client.send(JSON.stringify(action));
+	pendingActions[action.actionId] = next;
+}
+
+function sendInit(roomId, next){
+	var action = {};
+	
+	client.send(JSON.stringify(action));
+	pendingActions[action.actionId] = next;
+}
 
