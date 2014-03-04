@@ -141,6 +141,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		}
     }
 	
+	
 	$scope.$watch('items', function(items){
 		var hashMap = {};
 		
@@ -157,7 +158,6 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		
 	}, true);
 
-	
 	$scope.hideMsg = function(msg){
 		var flag = false, i;
 		if(!msg.labels) return false;
