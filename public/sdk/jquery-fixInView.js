@@ -1,169 +1,169 @@
 (function($) {
+	/* jshint laxcomma: true */
 	/* jshint browser: true */
 	/* global jQuery */
 	
-	var columns = [],
-		$window = $(window),
-		$body = $(document.body),
-		viewHeight = $window.height(), lineHeight;
-		
-	(function () {
-		var lhs = $body.css('lineHeight');
-		
-		lineHeight = parseFloat(lhs);
-		if(lhs.substr(-2) != 'px') {
-			lineHeight = (isNaN(lineHeight)? 1.5: lineHeight) * parseFloat($body.css('fontSize'));
-		}
-	}());
+	var columns = []
+	, 	minh = 0
+	,	$window = $(window)
+	,	$body = $(document.body)
+	,	bodyHeight
+	,	viewHeight
+	,	viewTop
+//	, 	ignoreScroll = false
+	;
 	
 	$.fn.fixInView = function() {
 		this.each(function () {
 			var el = $(this),
-				column = { element: el, anchorBottom: false };
+				column = { status: 'none', element: el };
 			columns.push(column);
-			el.css({position: 'fixed'});
 			el.data("column", column);
 		});
-		setup();
 	};
 	
 	function read() {
+		bodyHeight = $body.height();
 		viewHeight = $window.height();
-		columns.forEach(readColumn);
-	}
-
-	function readColumn(column) {
-		column.top = column.element.offset().top - $window.scrollTop();
-		column.height = column.element.outerHeight();
-		column.bottom = viewHeight - (column.top + column.height);
-//		if(column.element.attr('id') == 'body') console.log('Read', column.top, column.bottom, column.anchorBottom);
-	}
-	
-	function moveView(movement) {
+		viewTop = $window.scrollTop();
+		
 		columns.forEach(function (column) {
-			var t = column.top;
-			moveColumn(column, -movement);
-			if(column.top != t) setTimeout(function() { trigger(column, column.top - t); }, 100);
+			column.top = column.element.offset().top;
+			// if(column.element.css('position') == 'fixed') column.top += viewTop;
+			column.height = column.element.outerHeight();
+			column.small = (column.height < viewHeight);
 		});
 	}
 	
-	function moveColumn(column, movement) {
-		column.top += movement; column.bottom -= movement;
-		if(column.top > 0) { column.top = 0; column.bottom = viewHeight - column.height; }
-		else if(column.bottom > 0) { column.bottom = 0; column.top = viewHeight - column.height; }
+	function unfix(column, movement) {
+		if(
+			((!column.small && movement < 0 || column.small && movement > 0) &&
+			column.status == 'bottom') ||
+			((!column.small && movement > 0 || column.small && movement < 0) && 
+			column.status == 'top')
+		) {
+			column.status = 'none';
+			column.top -= movement;
+			// console.log('unfix', column.element.attr('id'), column.top, movement, column.small);
+		}
 	}
+	
+	function fix(column, movement) {
+		if(
+			column.status != 'top' &&
+			((!column.small && movement <= 0 && column.top > viewTop) ||
+			(column.small && movement >= 0 && column.top < viewTop))
+		) {
+			column.status = 'top';
+			column.top = viewTop;
+			// console.log('fix top', column.element.attr('id'));
+		}
 		
+		else if(
+			column.status != 'bottom' &&
+			((!column.small && movement >= 0 && column.top + column.height < viewTop + viewHeight) ||
+			(column.small && movement <= 0 && column.top + column.height > viewTop + viewHeight))
+		) {
+			column.status = 'bottom';
+			column.top = viewTop + viewHeight - column.height;
+			// console.log('fix bottom', column.element.attr('id'));
+		}
+	}
+	
 	function trigger(column, movement) {
 		column.element.trigger({
 			type: 'reposition',
-			by: -movement,
-			above: -column.top,
+			by: movement,
+			above: viewTop - column.top,
 			range: viewHeight,
-			below: -column.bottom,
+			below: column.top + column.height - (viewTop + viewHeight),
 			height: column.height
 		});
 	}
 	
-	function write() {
-		columns.forEach(writeColumn);
+	function moveView(movement) {
+		viewTop += movement;
+		// console.log('movement', movement);
+		columns.forEach(function(column) { moveColumn(column, movement); });
 	}
 	
-	function setup() {
-		console.log('setting up');
-		$body.css({height: 3*viewHeight});
-		$window.scrollTop(viewHeight);
-	}
-
-	function writeColumn(column) {
-	//	if(column.element.attr('id') == 'body') console.log('Write', column.top, column.bottom, column.anchorBottom);
-		column.element.css(
-			column.anchorBottom? {top: 'auto', bottom: column.bottom}: {top: column.top, bottom: 'auto'}
-		);
+	function moveColumn(column, movement) {
+		column.top += movement;
 	}
 	
-	function scroll(movement) {
-		read();
-		moveView(movement);
-		write();
-	}
-	
-	(function () {
-		var ignore = false;
-		$window.on('scroll', function() {
-			if(ignore) { ignore = false; return; }
-			scroll(50*($window.scrollTop() - viewHeight));
-			ignore = true;
-			$window.scrollTop(viewHeight);
+	function update(movement, silently) {
+		var top=Infinity, bottom=0;
+		movement = movement || 0;
+		columns.forEach(function (column) {
+			var lastTop = column.top;
+			unfix(column, movement);
+			fix(column, movement);
+			if(!silently) trigger(column, movement);
+			if(column.top < top) top = column.top;
+			if(column.top + column.height > bottom) bottom = column.top + column.height;
 		});
-	}());
+		
+		bodyHeight = bottom - top;
+		moveView(-top);
+	}
 	
-//	$window.on('wheel', function(e) {
-//		var y;
-//		e = e.originalEvent;
-//		if(e.deltaMode === 0) y = e.deltaY;
-//		else if(e.deltaMode === 1) y = e.deltaY * lineHeight;
-//		else if(e.deltaMode === 2) y = e.deltaY * viewHeight;
-//		
-//		if(y) scroll(y);
-//	});
-//	
-//	$window.on('keydown', function(e) {
-//		if(e.which == 38) scroll(-3*lineHeight);
-//		else if(e.which == 40) scroll(3*lineHeight);
-//		else if(e.which == 33) scroll(-viewHeight);
-//		else if(e.which == 34) scroll(viewHeight);
-//	});
-//	
-//	/* Handle Touch Events */
-//	(function() {
-//		
-//		var ongoing, lastY;
-//		
-//		$window.on('touchstart', function(e) {
-//			if(ongoing) return;
-//			ongoing = true;
-//			lastY = e.originalEvent.changedTouches[0].screenY;
-//			e.preventDefault();
-//		});
-//		$window.on('touchend', function(e) {
-//			if(!ongoing) return;
-//			var currY = e.originalEvent.changedTouches[0].screenY;
-//			scroll(lastY - currY);
-//			ongoing = false;
-//			e.preventDefault();
-//		});
-//		$window.on('touchcancel', function(e) { 
-//			ongoing = false;
-//		});
-//		$window.on('touchmove', function(e) {
-//			if(!ongoing) return;
-//			var currY = e.originalEvent.changedTouches[0].screenY;
-//			scroll(lastY - currY);
-//			lastY = currY;
-//			e.preventDefault();
-//		});
-//	}());
-
-	$window.resize(function() { setup(); scroll(0); });
+	function write() {
+//		ignoreScroll = true;
+		$body.height(bodyHeight);
+		if(Math.abs($window.scrollTop() - viewTop) > 1) {
+			// console.log('View jump', $window.scrollTop(), viewTop);
+			$window.scrollTop(viewTop);
+		}
+		
+		columns.forEach(function (column) {
+			switch(column.status) {
+				case 'top':
+					column.element.css({position: 'fixed', top: 0, bottom: 'auto'});
+					break;
+				case 'bottom':
+					column.element.css({position: 'fixed', bottom: 0, top: 'auto'});
+					break;
+				default:
+					column.element.css({
+						position: 'absolute',
+						top: column.top,
+						bottom: 'auto'
+					});
+			}
+		});
+//		ignoreScroll = false;
+	}
 	
-	$.fn.nudgeInView = function(movement) {
+	$window.scroll(function(e) {
+//		if(ignoreScroll) { console.log('ignoring scroll event'); return; }
+//		console.log('scroll called', e);
+		var lastViewTop = viewTop;
 		read();
-		moveColumn($(this).data('column'), movement);
+		update(viewTop - lastViewTop);
+/*		console.log(columns.map(function (c) {
+			return [c.element.attr('id'), c.status, c.top, c.height].join(' ');
+		}).join('; ') + '; ' + [viewTop, bodyHeight]); */
 		write();
-	};
+	});
 	
-	$.fn.anchorBottom = function() {
-		var column = $(this).data('column');
-		readColumn(column);
-		column.anchorBottom = true;
-		writeColumn(column);
-	};
+	$(window).resize(function(e) {
+		read();
+		update();
+		write();
+	});
 	
-	$.fn.anchorTop = function() {
-		var column = $(this).data('column');
-		readColumn(column);
-		column.anchorBottom = false;
-		writeColumn(column);
+	$.fn.nudgeInView = function(adjustment) {
+		var self = this;
+//		console.log('nudge', adjustment, this);
+		read();
+		columns.forEach(function(column) {
+			if(column.element[0] == self[0]) {
+				column.status = 'none';
+				column.top += adjustment;
+			}
+		});
+		update(0, true);
+		write();
 	};
 
 }(jQuery));

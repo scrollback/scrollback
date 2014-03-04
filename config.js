@@ -53,8 +53,7 @@ var defaults = {
 		user     : 'scrollback',
 		password : 'scrollback',
 		//debug    :true         ,
-		database : 'scrollback',
-		connectionLimit: 100
+		database : 'scrollback' 
 	},
 	http: {
 		host: "local.scrollback.io",
@@ -91,7 +90,7 @@ var defaults = {
 	leveldb: {
 		path: "/data"
 	}
-};
+}
 
 
 merge(defaults, changes);

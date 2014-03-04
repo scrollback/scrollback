@@ -195,18 +195,16 @@ scrollbackApp.directive('whenScrolledUp', ['$timeout', function($timeout) {
         
         $(document).ready(function() {
             $('.column').fixInView();
-			$body = $('#body');
-			$body.anchorBottom();
-            $body.bind('reposition', function(e) {
-                if(e.above < 250 && e.by<0) {
-					scope.$apply(attr.whenScrolledUp);
+            $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
+            $('#body').bind('reposition', function(e) {
+                if(e.above < 150 && e.by<0) {
+                    scope.$apply(attr.whenScrolledUp);
+                    $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
                 }
-                else if(e.below < 250 && e.by>0) {
+                else if(e.below < 30) {
 					scope.$apply(attr.whenScrolledDown);
-                } else {
-					if(e.below < 16) $body.anchorBottom();
-					else $body.anchorTop();
-				}
+					$('#body').nudgeInView(1);
+                }
             });
         });
     };

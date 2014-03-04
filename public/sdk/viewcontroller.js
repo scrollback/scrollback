@@ -497,7 +497,8 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		//delete $scope.editRoom.ircRoom
 		$scope.status.waiting = true;
 		$factory.room( $scope.editRoom, function(room) {
-			if(!room.message){
+			if(room.message)	alert(room.message);
+			else {
 				$scope.$apply(function() {
 					Object.keys(room).forEach(function(element){
 						$scope.room[element] = room[element];

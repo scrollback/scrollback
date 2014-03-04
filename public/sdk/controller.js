@@ -41,6 +41,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 						topIndex += 1;
 					}
 				}
+				$timeout(function(){ $('html, body').animate({scrollTop:$(document).height()}, 'slow'); }, 1);
 			});
 		});
     }
@@ -91,6 +92,13 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		
 		var i, updated = false, deleted = false, index;
 		
+        if($(window).scrollTop() + $(window).height() > $(document).height() - 20) {
+           // If a user is reading a message towards the bottom of the page, or typing something, a new incoming message must not 
+           //reset the scrollposition.
+           $('html, body').animate({scrollTop:$(document).height()}, 'slow'); 
+          if($(window).scrollTop() + $(window).height() == $(document).height()) $('#body').nudgeInView(0);
+       }
+       
         if(data.type && data.type!="text") return;
 		
 		angular.element('#nomessagediv').hide();
@@ -306,11 +314,9 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 //    };
 	
     $scope.loadMoreUp = function() {
-		
-		console.log("loading more up");
-		
-		$('#body').anchorBottom();
-		for (var i=0; i<25; i++) {
+        
+		for (var i = 0; i < 5; i++) {
+           
 			if(topIndex < messages.length) {
                 if(messages[topIndex].type === "text")
                     $scope.items.unshift(messages[topIndex]);
@@ -326,38 +332,45 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
                     }
                 });
             }
+			
         }
 		
-        $timeout(function() {
+        // removing elements from the bottom which are out of view scope 
+        $timeout( function() {
             if($scope.items.length > 50) {
-				$('#body').anchorTop();
-				$scope.items.splice(50);
-				bottomIndex = topIndex - 50;
+                while($scope.items.length > 50) {
+                    if(messages[bottomIndex] && messages[bottomIndex].type != "text") bottomIndex += 1;
+                    $scope.items.pop();
+                    bottomIndex += 1;
+                }
             }
         });
 		
     };
     $scope.loadMoreDown = function() {
 		var i;
-        
-		console.log("loading more down");
-        for(i=0; i<25; i++) {
-            if(bottomIndex > 0) {
-				$('#body').anchorTop();
+        // TODO : popping from top
+        for(i=0; i< 5; i++) {
+              if(bottomIndex > 0) {
 				bottomIndex -= 1;
-				if(messages[bottomIndex] && messages[bottomIndex].type == 'text'){
-					$scope.items.push(messages[bottomIndex]);
+                if(messages[bottomIndex] && messages[bottomIndex].type == 'text'){
+                    $scope.items.push(messages[bottomIndex]);
 				}
-            }
+              }
         }
-       
+         //this is causing troubles, so the shift is being done only for 2 elements at a time, ideally
+         // the while should be uncommented
+        
 		$timeout(function() {
             if($scope.items.length > 50) {
-				$('#body').anchorBottom();
-                $scope.items.splice(0, $scope.items.length - 50);
-				topIndex = bottomIndex + 50;
+                //while($scope.items.length > 50){ 
+                $scope.items.shift();
+                $scope.items.shift();
+                $scope.items.shift();
+                topIndex -= 3;
+                 //}
             }
-        });
+        } , 1);
     };
 	
 }]);
