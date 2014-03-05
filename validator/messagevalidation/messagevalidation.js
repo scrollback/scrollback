@@ -22,13 +22,13 @@ module.exports = function(core) {
 		if(!message.id )	message.id = guid();
 
 		if(!message.from) return callback(new Error("INVALID_USER_ID"));
-		if(!message.to) return callback(new Error("INVALID_ROOM_ID"));
 		
 		if(message.from && !validateRoom(message.from.replace(/^guest-/,""))) {
 			if (message.origin && message.origin.gateway == "irc") message.from ="guest-"+ sanitizeRoomName(message.from.replace(/^guest-/,""));
 			else return callback(new Error("INVALID_USER_ID"));
         }
 		if(message.type == "text"){
+			if(!message.to) return callback(new Error("INVALID_ROOM_ID"));
 			if(!validateRoom(typeof message.to=="string"?message.to:message.to[0])) return callback(new Error("INVALID_ROOM_ID"));
 			if( message.text.indexOf('/')==0){
 				if(!message.text.indexOf('/me')==0){

@@ -59,7 +59,6 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 				$scope.nick = "";
                 if($scope.slashMe) {
 					$timeout(function(){
-						console.log("Slashme", $scope.slashMe, "$scope.from", $scope.from, $scope.text[0].text);
 						value = $scope.text[0].text = $scope.text[0].text.replace(/^\/me/, $scope.from);
                     	$scope.nick = "";
 					});
@@ -111,10 +110,8 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 			
 			$timeout( function() {
 				$scope.$watch('showMenu', function(val) {
-					
 					if( val === true) {
-						
-						if($messageControllerScope.selectedIndex && $messageControllerScope.selectedIndex === $scope.$parent.$index) {
+						if($messageControllerScope.selectedIndex === $scope.$parent.$index) {
 							
 							var el = angular.element('.scrollback-message').eq($scope.$parent.$index);
 							$messageControllerScope.showMenu = false;

@@ -189,7 +189,7 @@ img.face {
 		}
 	}
 	#body {
-		left: 0; 
+		left: 0; padding-top: 48px;
 		.radial-gradient(#fff, #eee, 50%, 0%);
 		border-right: none; overflow: hidden;
 	}
@@ -284,7 +284,7 @@ img.face {
 
 .scrollback-stream {
 	min-height: 100%;
-	padding: 24px 24px 24px 32px; background: #eee; position: relative;
+	padding: 24px 24px 24px 32px; position: relative;
 }
 
 .scrollback-stream-hidden{
@@ -491,4 +491,21 @@ button.menuitem:hover { background: #33ccaa }
 
 .elSelected { text-shadow : 0 0 4px rgba(51,214,187,1)}
 
-.elHidden {display:block; opacity: 0.3}
+.owner {
+	.hidden{
+		opacity: 0.3;		
+	};
+}
+
+.hidden:before { display: none; }
+
+#body.notOwner{
+	.hidden * {
+		display: none;
+	};
+	.hidden:after{
+		content: 'This message was hidden by an admin';
+		display: inline; 
+		opacity: 0.5;
+	}
+}
