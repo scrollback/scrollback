@@ -32,7 +32,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 		#body(ng-controller="messageController",class = 'column', ng-class="{'owner': room.owner === user.id, 'notOwner': room.owner !== user.id }")
 			conversation-styles(conversations = "convLabelList")
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
-				message(ng-repeat="i in items track by $index" from="{{i.from}}", text="{{i.text}}", label="i.labels", time="{{i.time}}", ng-click = "showmenu($index, i, $event)", ng-class="i.labels", ng-class="{'elSelected': i.id == selectedId}",show-menu = "showMenu", menu-options ="menuOptions", id = "{{i.id}}", class='scrollback-message {{"conv" + i.labels[0].split(":")[0]}} {{"conv" + i.labels[1].split(":")[0]}}')
+				message(ng-repeat="i in items track by $index" from="{{i.from}}", text="{{i.text}}", label="i.labels", time="{{i.time}}", ng-click = "showmenu($index, i, $event)", ng-class="i.labels", show-menu = "showMenu", menu-options ="menuOptions", id = "{{i.id}}", class='scrollback-message {{"conv" + i.labels[0].split(":")[0]}} {{"conv" + i.labels[1].split(":")[0]}} {{i.id == selectedId? "elSelected" : ""}}')
 			div(id="nomessagediv", ng-show = "room.id && items.length === 0", ng-cloak="")
 				| This room does not have any messages yet
 			div(ng-show = "!room.id", ng-cloak="")

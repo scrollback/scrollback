@@ -284,7 +284,7 @@ img.face {
 
 .scrollback-stream {
 	min-height: 100%;
-	padding: 24px 24px 24px 32px; background: #eee; position: relative;
+	padding: 24px 24px 24px 32px; position: relative;
 }
 
 .scrollback-stream-hidden{
@@ -496,8 +496,16 @@ button.menuitem:hover { background: #33ccaa }
 		opacity: 0.3;		
 	};
 }
-.notOwner{
-	.hidden{
+
+.hidden:before { display: none; }
+
+#body.notOwner{
+	.hidden * {
 		display: none;
 	};
+	.hidden:after{
+		content: 'This message was hidden by an admin';
+		display: inline; 
+		opacity: 0.5;
+	}
 }
