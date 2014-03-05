@@ -112,11 +112,12 @@ function addBotChannels(host, channels) {
 	if(!client) {
 		clients.bot[host] = client =
 			connect(host, botNick, botNick, channels, function(m) {
-				var sessionID = "irc://"+m.origin.server+"/"+m.from;
+				var sessionID = "irc://"+m.origin.server+"/"+m.from, newSessionID;
 				if (users[host] && users[host][m.from]) {
 					log("Incoming Echo", m);
 					return;
 				}
+				m.from  = sanitizeRoomName(m.from);
 				if(m.type == "back") {
 					if(userFromSess[sessionID]) {
 						m.from = userFromSess[sessionID];
@@ -130,6 +131,8 @@ function addBotChannels(host, channels) {
 						});
 					}
 				}else if(m.type == 'nick') {
+					newSessionID = "irc://"+m.origin.server+"/"+m.ref;
+					m.ref  = sanitizeRoomName(m.ref);
 					core.emit("init", {sessionID: sessionID, suggestedNick: m.ref}, function(err, data) {
 						if(!userFromSess[sessionID]) {
 							m.from = data.user.id;
@@ -142,6 +145,8 @@ function addBotChannels(host, channels) {
 							m.from = userFromSess[sessionID]
 							delete nickFromUser[userFromSess[sessionID]];
 							delete userFromSess[sessionID];
+							userFromSess[newSessionID] = data.user.id;
+							nickFromUser[data.user.id] = m.ref;
 						}
 						userFromSess["irc://"+m.origin.server+"/"+m.ref] = data.user.id;
 						nickFromUser[data.user.id] = m.ref;
@@ -287,4 +292,12 @@ function send(message, accounts) {
 		clients[message.ref]=clients[message.from];
 		delete clients[message.from];
 	}
+}
+
+function sanitizeRoomName(room) {
+	//this function replaces all spaces in the room name with hyphens in order to create a valid room name
+	room = room.trim();
+	room = room.replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
+	if(room.length<3) room=room+Array(4-room.length).join("-");
+	return room;
 }
