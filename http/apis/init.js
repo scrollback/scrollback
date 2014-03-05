@@ -3,4 +3,3 @@ module.exports = function(core) {
 		core.emit('init', cb);
 	}
 };
-

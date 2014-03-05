@@ -14,7 +14,6 @@ module.exports = function(coreObject) {
 	core = coreObject;
     if(!debug) log = log.tag("mail");
     emailDigest.init();
-	if(!debug) log = log.tag('mail');
 	if (config.email && config.email.auth) {
 		core.on('text', function(message, callback) {
 			logMail("Heard \"message\" event", message);

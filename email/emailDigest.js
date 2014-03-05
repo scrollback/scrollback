@@ -102,7 +102,7 @@ module.exports.intiMailSending = initMailSending;
  * And setInterval
  */
 function init() {
-    fs.readFile("../templates/digest.jade", "utf8", function(err, data) {
+    fs.readFile(__dirname + "/views/digest.jade", "utf8", function(err, data) {
         if(err) throw err;
         digestJade = jade.compile(data,  {basedir: __dirname + "/views/" });
         //send mails in next hour
