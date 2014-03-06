@@ -41,12 +41,13 @@ module.exports = function(coreObject) {
 
 function insertAccounts(data,callback){
 	var account, accountsQuery=" INSERT INTO `accounts`(id, room, gateway, params, timezone)  VALUES", //?
-		accountValues=" (?,?,?,?,?) ",params=[], ids = [];
+		accountValues="",params=[], ids = [];
 
 	data.accounts.forEach(function(element) {
 		var id = element.id, room = data.id, gateway;
 		gateway = element.id.split(":")[0];
-		accountsQuery += accountValues;
+		if(accountValues) accountValues = accountValues + " ,(?,?,?,?,?) " ;
+		else accountValues = accountValues + " (?,?,?,?,?) " ;
 		ids.push(room);
 		params.push(id);
 		params.push(room);
@@ -58,7 +59,7 @@ function insertAccounts(data,callback){
 		}
 		params.push(element.timezone || 0);
 	});
-
+	accountsQuery += accountValues;
 	db.query("delete from accounts where `room`=?",[data.originalId || ids],function(err,res) {
 		if (err && callback) callback(err,res);
 
