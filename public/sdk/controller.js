@@ -41,6 +41,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 						topIndex += 1;
 					}
 				}
+				// $timeout(function(){ $('#body').nudgeInView(-99999); });
 				$timeout(function(){ $('html, body').animate({scrollTop:$(document).height()}, 'slow'); }, 1);
 			});
 		});
@@ -79,7 +80,6 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 			}
 		};
 		if(msg.type == "edit") { 
-			console.log("Edit msg", msg); 
 			for(i = 0; i < $scope.items.length; i++){
 				if($scope.items[i].id === msg.ref && msg.from !== $scope.user.id){
 					$scope.$apply(toggleHide);
@@ -90,13 +90,13 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 	
     function newMessage(data) {
 		
-		var i, updated = false, deleted = false, index;
+		var i, updated = false, deleted = false, bottom =false, index;
 		
         if($(window).scrollTop() + $(window).height() > $(document).height() - 20) {
+			bottom = true;
            // If a user is reading a message towards the bottom of the page, or typing something, a new incoming message must not 
            //reset the scrollposition.
-           $('html, body').animate({scrollTop:$(document).height()}, 'slow'); 
-          if($(window).scrollTop() + $(window).height() == $(document).height()) $('#body').nudgeInView(0);
+//           $('html, body').animate({scrollTop:$(document).height()}, 'slow'); 
        }
        
         if(data.type && data.type!="text") return;
@@ -140,7 +140,13 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 				if (!(deleted && !data.message)) $scope.items.push(messages[index]);
 			})();
 		}
+		
+		if(bottom) {
+			$('#body').nudgeInView(-99999);
+		}
+
     }
+	
 	
 	$scope.$watch('items', function(items){
 		var hashMap = {};
@@ -158,7 +164,6 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		
 	}, true);
 
-	
 	$scope.hideMsg = function(msg){
 		var flag = false, i;
 		if(!msg.labels) return false;
@@ -174,6 +179,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 	
 	$scope.showmenu = function(index, item, $event){
 		
+		if($event.target.className.indexOf('hidden') > -1 && $scope.user.id !== $scope.room.owner ) return;
 		if($event.target.tagName.toLowerCase() == "a") return; // do not show menu when user clicks on an anchor tag
 		
 		var shareUser = $scope.user.id;
@@ -193,7 +199,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		
 		$scope.options = {
 			'Tweet Message'	: function(){ window.open(twitterLink,'_blank'); }, 
-			'Share on FB'   : function(){ window.open(facebookLink,'_blank'); } 
+			'Share on FB'   : function(){ window.open(facebookLink,'_blank'); }
 		};
 		
 		if($scope.user.id === $scope.room.owner){
@@ -315,7 +321,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 	
     $scope.loadMoreUp = function() {
         
-		for (var i = 0; i < 5; i++) {
+		for (var i = 0; i < 15; i++) {
            
 			if(topIndex < messages.length) {
                 if(messages[topIndex].type === "text")
@@ -343,6 +349,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
                     $scope.items.pop();
                     bottomIndex += 1;
                 }
+				$('#body').nudgeInView(0);
             }
         });
 		
@@ -350,7 +357,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
     $scope.loadMoreDown = function() {
 		var i;
         // TODO : popping from top
-        for(i=0; i< 5; i++) {
+        for(i=0; i< 15; i++) {
               if(bottomIndex > 0) {
 				bottomIndex -= 1;
                 if(messages[bottomIndex] && messages[bottomIndex].type == 'text'){
@@ -363,12 +370,13 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
         
 		$timeout(function() {
             if($scope.items.length > 50) {
-                //while($scope.items.length > 50){ 
+//                while($scope.items.length > 50){ 
                 $scope.items.shift();
                 $scope.items.shift();
                 $scope.items.shift();
                 topIndex -= 3;
-                 //}
+//                 }
+				$('#body').nudgeInView(0);
             }
         } , 1);
     };

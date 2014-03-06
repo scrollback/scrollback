@@ -22,7 +22,6 @@ module.exports = function(core) {
 		if(!message.id )	message.id = guid();
 
 		if(!message.from) return callback(new Error("INVALID_USER_ID"));
-		if(!message.to) return callback(new Error("INVALID_ROOM_ID"));
 		
 		if(message.from && !validateRoom(message.from.replace(/^guest-/,""))) {
 			/* this is a temp things. because if the a user sends a msg with a invalid name 
