@@ -1,4 +1,8 @@
-module.exports = function(r, santize){
+function validateRoom(r, santize) {
+	function validate(room) {
+		return (room.match(/^[a-z][a-z0-9\_\-\(\)]{2,32}$/i)?
+	        room!='img'&&room!='css'&&room!='sdk':false);
+	}
 	var valid = validate(r), room = r;
 		room = room.trim();
 		room = room.replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
@@ -10,7 +14,4 @@ module.exports = function(r, santize){
 		else return room === r;
 };
 
-function validate(room) {
-	return (room.match(/^[a-z][a-z0-9\_\-\(\)]{2,32}$/i)?
-        room!='img'&&room!='css'&&room!='sdk':false);
-}
+

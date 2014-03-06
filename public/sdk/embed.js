@@ -334,7 +334,10 @@ core.on('error', function(err) {
 	if(err === 'AUTH_UNREGISTERED') profile();
     if(err === 'AUTH_REQ_TO_POST') login( {requireAuth:1});
 });
-
+Stream.prototype.refresh = function(){
+	var self = this;
+	self.update(m);
+}
 Stream.prototype.show = function() { var self = this;
 	removeClass(this.stream, 'scrollback-stream-hidden');
 	setTimeout(function() {

@@ -11,7 +11,8 @@ var irc = require("irc"),core,
 	connect = require("./connect.js"),
 	log = require("../lib/logger.js"), fs = require("fs"),
 	jade = require("jade"),
-	crypto = require('crypto');
+	crypto = require('crypto'),
+	validate = require('../lib/validate.js');
 var db = require("../lib/mysql.js");
 
 
@@ -117,7 +118,7 @@ function addBotChannels(host, channels) {
 					log("Incoming Echo", m);
 					return;
 				}
-				m.from  = sanitizeRoomName(m.from);
+				m.from  = validate(m.from, true);
 				if(m.type == "back") {
 					if(userFromSess[sessionID]) {
 						m.from = userFromSess[sessionID];
@@ -132,7 +133,7 @@ function addBotChannels(host, channels) {
 					}
 				}else if(m.type == 'nick') {
 					newSessionID = "irc://"+m.origin.server+"/"+m.ref;
-					m.ref  = sanitizeRoomName(m.ref);
+					m.ref  = validate(m.ref, true)
 					core.emit("init", {sessionID: sessionID, suggestedNick: m.ref}, function(err, data) {
 						if(!userFromSess[sessionID]) {
 							m.from = data.user.id;
@@ -292,12 +293,4 @@ function send(message, accounts) {
 		clients[message.ref]=clients[message.from];
 		delete clients[message.from];
 	}
-}
-
-function sanitizeRoomName(room) {
-	//this function replaces all spaces in the room name with hyphens in order to create a valid room name
-	room = room.trim();
-	room = room.replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
-	if(room.length<3) room=room+Array(4-room.length).join("-");
-	return room;
 }

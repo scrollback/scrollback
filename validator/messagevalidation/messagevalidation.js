@@ -16,7 +16,7 @@ module.exports = function(core) {
 		if(message.to) {
 			if(typeof message.to === "string") message.to = [message.to];
 			message.to = message.to.map(function(room) {
-				return sanitizeRoomName(room);
+				return validateRoom(room, true);
 			});
 		}
 		if(!message.id )	message.id = guid();
@@ -25,11 +25,13 @@ module.exports = function(core) {
 		if(!message.to) return callback(new Error("INVALID_ROOM_ID"));
 		
 		if(message.from && !validateRoom(message.from.replace(/^guest-/,""))) {
-			if (message.origin && message.origin.gateway == "irc") message.from ="guest-"+ sanitizeRoomName(message.from.replace(/^guest-/,""));
+			/* this is a temp things. because if the a user sends a msg with a invalid name 
+			and we send the data back to him with a sanitized name, the code will not know that he sent it. 
+			this will have side effects. So only sanitizing irc messages. */
+			if (message.origin && message.origin.gateway == "irc") message.from ="guest-"+ validateRoom(message.from.replace(/^guest-/,""), true);
 			else return callback(new Error("INVALID_USER_ID"));
         }
 		if(message.type == "text"){
-			if(!validateRoom(typeof message.to=="string"?message.to:message.to[0])) return callback(new Error("INVALID_ROOM_ID"));
 			if( message.text.indexOf('/')==0){
 				if(!message.text.indexOf('/me')==0){
 					return callback(new Error("UNRECOGNIZED_SLASH_COMMNAD"));
@@ -55,11 +57,3 @@ module.exports = function(core) {
 	}, "validation");
 
 };
-
-function sanitizeRoomName(room) {
-	//this function replaces all spaces in the room name with hyphens in order to create a valid room name
-	room = room.trim();
-	room = room.replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
-	if(room.length<3) room=room+Array(4-room.length).join("-");
-	return room;
-}
