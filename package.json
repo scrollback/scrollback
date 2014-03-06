@@ -45,7 +45,8 @@
     "passport": "~0.2.0",
     "passport-twitter": "~1.0.2",
     "twit": "~1.1.12",
-    "objectlevel": "x"
+    "objectlevel": "x",
+    "htmlencode": "0.0.3"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

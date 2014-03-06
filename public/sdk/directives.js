@@ -60,9 +60,12 @@ scrollbackApp.directive('message',function($compile, $timeout) {
             attr.$observe('text', function(value) {
 				$scope.slashMe = (/^\/me/.test(value));
                 $scope.text = value;
+				$scope.nick = "";
                 if($scope.slashMe) {
-                    value = $scope.text = $scope.text.replace(/^\/me/, $scope.from);
-                    $scope.nick = ""; 
+					$timeout(function(){
+						value = $scope.text[0].text = $scope.text[0].text.replace(/^\/me/, $scope.from);
+                    	$scope.nick = "";
+					});
                 }else {
                     $scope.nick = $scope.from; 
                 }
@@ -111,10 +114,8 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 			
 			$timeout( function() {
 				$scope.$watch('showMenu', function(val) {
-					
 					if( val === true) {
-						
-						if($messageControllerScope.selectedIndex && $messageControllerScope.selectedIndex === $scope.$parent.$index) {
+						if($messageControllerScope.selectedIndex === $scope.$parent.$index) {
 							
 							var el = angular.element('.scrollback-message').eq($scope.$parent.$index);
 							$messageControllerScope.showMenu = false;
@@ -198,17 +199,15 @@ scrollbackApp.directive('whenScrolledUp', [function() {
         
         $(document).ready(function() {
             $('.column').fixInView();
+            $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
             $('#body').bind('reposition', function(e) {
-                if(e.above < 250 && e.by<0) {
-					$('#body').anchorBottom();
-					console.log("loading more up");
+                if(e.above < 150 && e.by<0) {
                     scope.$apply(attr.whenScrolledUp);
-                //    $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
+                    $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
                 }
-                else if(e.below < 250 && e.by>0) {
-					$('#body').anchorTop();
-					console.log("loading more down");
+                else if(e.below < 30) {
 					scope.$apply(attr.whenScrolledDown);
+					$('#body').nudgeInView(1);
                 }
             });
         });

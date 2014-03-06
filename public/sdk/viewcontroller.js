@@ -42,8 +42,10 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		});
 	});
 	$factory.on("error",function(error) {
+		console.log("Error is ", error);
 		if(error == "AUTH_UNREGISTERED")return;
-		if(error == "DUP_NICK") error = "Username already taken.";;
+		if(error == "DUP_NICK") error = "Username already taken.";
+		if(error.indexOf("ER_DUP_ENTRY")===0) error = "This IRC channel has already been linked to another room. Multiple rooms cannot be linked to the same IRC channel";
 		if(error == "disconnected") {
 			$scope.$apply(function(){
 				error="Disconnected. trying to reconnect…";
@@ -202,7 +204,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	$scope.room.name = getRoomName($scope.room.id); 
 	
 		
-	if($scope.room.members) $scope.room.members.length = 0;
+//	if($scope.room.members) $scope.room.members.length = 0;
 	function generateSortedList(members, occupants) {
 		var userMap = {}, userArray=[];
 		members.forEach(function(member) {
@@ -497,7 +499,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		//delete $scope.editRoom.ircRoom
 		$scope.status.waiting = true;
 		$factory.room( $scope.editRoom, function(room) {
-			if(!room.message){
+			if(!room.message) {
 				$scope.$apply(function() {
 					Object.keys(room).forEach(function(element){
 						$scope.room[element] = room[element];
