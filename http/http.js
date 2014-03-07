@@ -26,8 +26,8 @@ var express = require("./express.js"),
 	app = express.init();
 
 var init = function(core) {
-	socket.init(app.httpServer, core);
-	if(app.httpsServer) socket.init(app.httpsServer, core);
+	socket(app.httpServer, core);
+	if(app.httpsServer) socket(app.httpsServer, core);
 	plugins.init(app, core);
 	page.init(app, core);
 	

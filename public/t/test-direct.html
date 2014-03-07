@@ -44,11 +44,11 @@
 						socket.close();
 						done();
 					});
-					it("echo the action", function(done) {
-						var action = {type:"echo", time:new Date().getTime(), text:"hi there..", to:"scrollback", "from":"harish"};
+					it("echo back the action", function(done) {
+						var action = {type:"back", time:new Date().getTime(), text:"hi there..", to:"scrollback", "from":"harish"};
 						socket.onmessage = function(message){
 							message = JSON.parse(message.data);
-							assert.equal(message.type, "echo", "response tampered");
+							assert.equal(message.type, "back", "response tampered");
 							done();
 						};
 						socket.send(JSON.stringify(action));

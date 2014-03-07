@@ -33,7 +33,10 @@ function merge(d, c) {
 	for(var i in c) {
 		if (typeof d[i] === 'object' && typeof c[i] === 'object' && d[i] !== null && c[i] !== null) {
 			if (d[i] instanceof Array && c[i] instanceof Array) {
-				d[i] = d[i].concat(c[i]);
+				// d[i] = d[i].concat(c[i]);
+				/*Concatinating the plugins array from the default ones and the ones in 
+				myConfig is probably not something that we might be interested in.*/
+				d[i] = c[i];	
 			} else {
 				merge(d[i], c[i]);
 			}
@@ -89,7 +92,10 @@ var defaults = {
 	},
 	leveldb: {
 		path: "/data"
-	}
+	},
+	plugins: ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
+	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",
+	"admin-notifier", "custom-emitter","entityloader","guestinitializer", "twitter"]
 }
 
 
