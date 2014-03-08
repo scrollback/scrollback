@@ -1,6 +1,6 @@
 var crypto = require('crypto');
 var redisProxy = require('../lib/redisProxy.js');
-var names = require('../lib/names.js');
+var names = require('../lib/generate.js').word;
 var core;
 module.exports = function(c) {
 	core = c;

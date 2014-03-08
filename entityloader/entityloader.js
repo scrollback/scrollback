@@ -18,7 +18,7 @@ var handlers = {
 		});
 	},
 	room: function(action, callback) {
-		core.emit("getTexts", {id: action.to}, function(err, actions) {
+		core.emit("getRooms", {id: action.to}, function(err, actions) {
 			if(err) return callback(err);
 			if(!actions.results.length) {
 				action.old = {};
@@ -30,7 +30,7 @@ var handlers = {
 	}
 };
 
-module.exports = function() {
+module.exports = function(core) {
 	events.forEach(function(event) {
 		core.on(event, function(action, callback) {
 			basicLoader(action, function(err) {
@@ -38,7 +38,7 @@ module.exports = function() {
 				if(handlers[event]) handlers[event](action, callback);
 				else callback();
 			})
-		}, "validation");
+		}, "loader");
 	});
 }
 
@@ -70,7 +70,7 @@ function basicLoader(action, callback) {
 	});
 }
 
-/*module.exports =*/ function(core) {
+/*module.exports = function(core) {
 	function loader(data, callback) {
 		//core.emit('getRooms', {id: data.from}, function(err, user) {
 		if(data.to){
@@ -110,4 +110,4 @@ function basicLoader(action, callback) {
 	core.on('expel', loader, 'loader');
 	// core.on('user', loader, 'loader');
 	// core.on('init', loader, 'loader');
-}
+}*/

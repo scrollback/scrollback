@@ -19,7 +19,7 @@ Boston, MA 02111-1307 USA.
 */
 
 var express = require("./express.js"),
-	socket = require("./newsocket.js"),
+	socket = require("./socket.js"),
 	log = require("../lib/logger.js"),
 	plugins = require('./plugins.js'),
 	page=require("./page.js");

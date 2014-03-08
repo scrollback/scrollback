@@ -1,11 +1,11 @@
 var url = require("url");
 var log = require("../../lib/logger.js");
-var guid = require("../../lib/guid.js");
+var generate = require("../../lib/generate.js");
 var validateRoom = require('../../lib/validate.js');
 module.exports = function(core) {
 
 	/* list of event that the basic validation function is called for.*/
-	var events = ['init', 'text', 'edit', 'join', 'part', 'away', 'admit', 'expel', 'room', 'user'];
+	var events = ['init', 'text', 'edit', 'join', 'part', 'away', 'back','admit', 'expel', 'room', 'user'];
 
 	/* if few more validtion is to be added for to any event add it to this list. eq:
 		var handlers = {
@@ -63,7 +63,7 @@ module.exports = function(core) {
 			callback();
 		},
 		edit: function(action, callback) {
-  			if(!action.ref) return callback(new Error("INVALID_REF"));
+  			if(!action.ref) return callback(new Error("REF_NOT_SPECIFIED"));
   			if(!action.text && !action.label) return callback(new Error("NO_OPTION_TO_EDIT"));
   			if(action.label && typeof action.label!= "object") return callback(new Error("INVALID_EDIT_OPTION_LABEL"));
   			if(action.text && typeof action.text!= "string") return callback(new Error("INVALID_EDIT_OPTION_TEXT"));
@@ -82,7 +82,7 @@ module.exports = function(core) {
 };
 
 function basicValidation(action, callback) {
-	if(!action.id) action.id = guid();
+	if(!action.id) action.id = generate.uid();
 	if(!action.type) return callback(new Error("INVALID_ACTION_TYPE"));
 	if(!action.from) return callback(new Error("INVALID_USER"));
 	if(!validateRoom(action.from)) {
