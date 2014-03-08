@@ -190,17 +190,15 @@ scrollbackApp.directive('whenScrolledUp', [function() {
         
         $(document).ready(function() {
             $('.column').fixInView();
+            $('#body').nudgeInView(-$('#body').outerHeight() + $(window).innerHeight());
             $('#body').bind('reposition', function(e) {
-                if(e.above < 250 && e.by<0) {
-					$('#body').anchorBottom();
-					console.log("loading more up");
+                if(e.above < 150 && e.by<0) {
                     scope.$apply(attr.whenScrolledUp);
-                //    $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
+                    $('#body').nudgeInView(-$('#body').outerHeight() + e.height);
                 }
-                else if(e.below < 250 && e.by>0) {
-					$('#body').anchorTop();
-					console.log("loading more down");
+                else if(e.below < 30) {
 					scope.$apply(attr.whenScrolledDown);
+					$('#body').nudgeInView(1);
                 }
             });
         });
