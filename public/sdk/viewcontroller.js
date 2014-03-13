@@ -66,6 +66,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		if(error=="BANNED_WORD") error = "Your message was not delivered because something you said was flagged as inappropriate.";
 		if(error == "INVALID_NAME") error= "Invalid user name";
 		if (error == "TWITTER_LOGIN_ERROR") error = "Something went wrong during twitter authentication.";  
+		if(error == "GUEST_CANNOT_HAVE_MEMBERSHIP") error = "Oops! something went wrong please login again."
 		$scope.$apply(function(){
 			$scope.status.waiting = false;
 			if($scope.notifications.indexOf(error)>=0) return;

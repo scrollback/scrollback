@@ -103,7 +103,7 @@ function init(data, conn) {
 				sid: sess.cookie.value,
 				user: sess.user,
 				clientTime: data.clientTime,
-				serverTime: new Date().getTime(),
+				serverTime: new Date().getTime()
 			});
 
 			//Temp for now.
@@ -221,17 +221,6 @@ function message (m, conn) {
 
 		if(m.to && typeof m.to != "string" && m.to.length===0) return;
 
-		if(m.type == 'join'){
-			//check for user login as well
-			sess.user.membership.push(roomName);
-			session.set(conn.sid, sess);
-		}
-		if(m.type == 'part'){
-			//check for user login as well
-			sess.user.membership.splice(sess.user.membership.indexOf(roomName),1);
-			session.set(conn.sid, sess);
-		}
-		
 		if (m.type == 'back') {
 			if(!userBack(user, m.to, conn)) {
 				session.set(conn.sid, sess);
@@ -277,7 +266,16 @@ function message (m, conn) {
 				if (!user || !user.id) {
 					return;
 				}
-				
+				if(m.type == 'join'){
+					//check for user login as well
+					sess.user.membership.push(roomName);
+					session.set(conn.sid, sess);
+				}
+				if(m.type == 'part'){
+					//check for user login as well
+					sess.user.membership.splice(sess.user.membership.indexOf(roomName),1);
+					session.set(conn.sid, sess);
+				}
 				if(m && m.type && m.type == 'nick') {
 
 					//in case of logout.

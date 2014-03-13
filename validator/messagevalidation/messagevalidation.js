@@ -45,7 +45,7 @@ module.exports = function(core) {
 			}
 		}
 		if(message.type == "join" || message.type == "part"){
-			if(/^guest-/.test(message.to)){
+			if(/^guest-/.test(message.from)){
 				return callback(new Error("GUEST_CANNOT_HAVE_MEMBERSHIP"));
 			}
 		}
