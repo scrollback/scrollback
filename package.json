@@ -44,7 +44,6 @@
     "newrelic": "x",
     "passport": "~0.2.0",
     "passport-twitter": "~1.0.2",
-    "passport-facebook": "x",
     "twit": "~1.1.12",
     "objectlevel": "x",
     "htmlencode": "0.0.3"
