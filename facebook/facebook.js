@@ -11,11 +11,10 @@ module.exports = function(core) {
 		callback(null, payload);
 	}, "setters");
 	core.on('message', function(message, callback) {
-		log("Heard \"message\ event");
+		log("Heard \"message\ event", message);
 		if(message.type !== 'nick') return callback();
 		if (message.origin && message.origin.gateway=="irc") return callback();
 		if (message.ref == 'guest-') return callback();
-		
 		if(message.auth && message.auth.facebook) {
 			request("https://graph.facebook.com/oauth/access_token?client_id="+config.facebook.client_id+
 				"&redirect_uri=https://"+config.http.host+"/r/facebook/return"+
@@ -41,9 +40,21 @@ module.exports = function(core) {
 								}
 								core.emit("getUsers",{identity: "mailto:"+user.email}, function(err, data){
 									if(err || !data) return callback(err);
-									if(data.length == 0) return callback("AUTH_UNREGISTERED");
+									if(data.length == 0){
+										message.user  = {accounts : [{
+											id: "mailto:" + user.email,
+											gateway: "mailto",
+											params: ""
+										}]}
+										return callback(new Error("AUTH_UNREGISTERED"));	
+									} 
 									message.user = data[0];
 									message.ref = message.user.id;
+									message.user.accounts = [{
+										id: "mailto:" + user.email,
+										gateway: "mailto",
+										params: ""
+									}]
 									callback();
 								});
 							}catch(e){
@@ -53,7 +64,7 @@ module.exports = function(core) {
 					}
 			});
 		}else{
-			return callback();
+			callback();
 		}
 	}, "authentication");
 };

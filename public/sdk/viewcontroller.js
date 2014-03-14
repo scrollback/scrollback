@@ -365,8 +365,8 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	
 	$scope.goToRoomsView = function(){
 		if(/^guest-/.test($scope.user.id)){ 
-			$scope.personaLogin();
-			//$location.path('/me/login');
+			// $scope.personaLogin();
+			$location.path('/me/login');
 		}
 		else $location.path("/me");
 	}
@@ -382,8 +382,8 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	
 	$scope.goToConfigure = function() {
 		if(/^guest-/.test($scope.user.id)){
-			$scope.personaLogin();
-			//$location.path('/me/login');
+			// $scope.personaLogin();
+			$location.path('/me/login');
 		}
 		else $location.path("/"+$scope.room.id+"/edit");
 	};
