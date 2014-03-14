@@ -27,7 +27,7 @@ exports.init = function(app, coreObject) {
 		if (!configPlugins) {
 			log("get req starting");
 			configInit(function(){
-				log("get req com", configPlugins);
+				// log("get req com", configPlugins);
 				exec(req.path, 'get', req, res, next);	
 			});
 		}

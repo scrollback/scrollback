@@ -21,6 +21,7 @@ block content
 	div#loginForm.box.span12
 		p.before You aren’t signed in.
 		button#loginbtn.primary.box.span6 Sign into Scrollback
+		button#fbbtn.primary.box.span6 Sign into Scrollback using fb
 		if !requireAuth	
 			p.break.before Don’t sign in, but change my nick to:
 			form#guestfrm.clearfix
@@ -52,6 +53,24 @@ block append scripts
 				navigator.id.request();
 			});
 			
+			$(window).on("message", function(event) {
+				data = event.originalEvent.data;
+				event = event.originalEvent;
+				if(!event.origin === location.protocol+"//"+location.host) return;
+				if(typeof event.data === 'string') {
+					try { data = JSON.parse(event.data); }
+					catch(e) {
+						scrollback.debug && console.log("Error parsing incoming message: ", event.data, e);
+						return;
+					}
+				} else { data = event.data; }
+				if(data.command == "signin") window.parent.postMessage(data, "*");
+			});
+
+			$("#fbbtn").click(function () {
+				window.open(location.protocol+"//"+location.host+"/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');
+			});
+
 			$("#guestfrm").submit(function(e) {
 				var nick = $("#guestnick").val();
 				if(validateNick(nick))

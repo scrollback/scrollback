@@ -299,7 +299,6 @@ function message (m, conn) {
 								time: new Date().getTime()
 							});	
 						}
-						return;
 					}
 
 					if(m.user) {

@@ -89,6 +89,9 @@ var defaults = {
 	},
 	leveldb: {
 		path: "/data"
+	},
+	facebook: {
+		callbackURL: "https://scrollback.io/t/facebook/auth/callback"
 	}
 }
 

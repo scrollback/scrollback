@@ -203,7 +203,18 @@ img.face {
 
 //----- profile page -----
 
+.buttonGroup{
+	display : block; margin-top: 16px; clear: both;
+	button {
+		border: none; width: auto; line-height: 48px; height: 48px; padding: 0 24px;
+		background: #eee; color: #000; text-transform: uppercase; font-weight: 700; font-size: 75%; 
+		img { margin: 0 16px 0 -24px; vertical-align: top; }
+		&.default { background: #3ca; color: #fff; }
+		font: 700 12px "Open Sans" important;
+	}
+}
 #profile {
+	.buttonGroup{ float : right;}
 	margin: 32px 0; 
 	label { display: block; margin-top: 16px; clear: both;
 		.clearfix();
@@ -218,15 +229,7 @@ img.face {
 			&.default { background: #3ca; color: #fff; }
 		}
 	}
-	.buttonGroup{
-		display : block; float : right ; margin-top: 16px; clear: both;
-		button {
-			border: none; width: auto; line-height: 48px; height: 48px; padding: 0 24px;
-			background: #eee; color: #000; text-transform: uppercase; font-weight: 700; font-size: 75%; 
-			img { margin: 0 16px 0 -24px; vertical-align: top; }
-			&.default { background: #3ca; color: #fff; }
-		}
-	}
+	
 	#twitterButton {
 		color: #fff;
 		float: right;
@@ -492,3 +495,28 @@ button.menuitem:hover { background: #33ccaa }
 .elSelected { text-shadow : 0 0 4px rgba(51,214,187,1)}
 
 .elHidden {display:block; opacity: 0.3}
+
+
+.signinForm {
+	font: 400 28px/28px "Open Sans", sans-serif;
+}
+
+.buttonGroup button .icon {
+	vertical-align: middle;
+	margin-left: -24px;
+}
+
+
+.buttonGroup button.facebook{
+	background-color: #4c66a4;
+	color: white;
+}
+
+.buttonGroup button.persona{
+	background-color: #555;
+	color: #fff;
+}
+.backbtn{
+	cursor: pointer;	
+	padding:0px 12px 0px 0px;
+}

@@ -105,9 +105,14 @@ exports.init = function(app, coreObject) {
         var user = req.session.user, responseObject={};
         responseObject.user = req.session.user;
 		responseObject.defaultTitle = "Your rooms";
-		responseObject.room = {title: "", id: ""};
-		responseObject.messages = [];
-		res.render("d/main" , responseObject);
+
+        core.emit("getRooms",{id:"scrollback"}, function(err, room) {
+            if(room&& room.length>0) room = room[0];    
+            else room = {title:"", id:""};
+            responseObject.room = room;
+            responseObject.messages = [];
+            res.render("d/main" , responseObject);    
+        });
     }
     app.get("/me", loginHandler);
 	app.get("/me/login", loginHandler);

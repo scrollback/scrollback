@@ -4,6 +4,7 @@ module.exports = function(store) {
 			gatewayIdentity: function(user, emit) {
 				user.identities && user.identities.forEach(function(identity) {
 					var parts =  identity.split(":");
+					console.log(parts);
 					emit(parts[0],parts[1]);
 				});
 			},

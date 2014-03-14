@@ -18,6 +18,11 @@ module.exports = function (types) {
 				});
 			}else if(query.occupantOf) {
 				cb();
+			}else if(query.identity){
+				user.get({by: 'gatewayIdentity', eq: ["mailto", query.identity]}, function(err, res){
+					if(!res) return cb(true, []);
+					cb(true, res);
+				});
 			}
 		},
 		getRoom: function(query, cb) {
