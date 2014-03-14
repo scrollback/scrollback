@@ -284,6 +284,7 @@ function login (options) {
 		var nickObj;
 		if(!data) return;
 		if(data.assertion) nickObj = { browserid: data.assertion };
+		if(data.command == "signin") nickObj = data;
 		else if(data.guestname) nickObj = 'guest-' + data.guestname;
 		
 		if(nickObj) core.nick(nickObj, function (reply) {

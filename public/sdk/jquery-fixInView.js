@@ -91,7 +91,7 @@
 		column.top += movement;
 	}
 	
-	function update (movement, silently) {
+	function update(movement, silently) {
 		var top=Infinity, bottom=0;
 		movement = movement || 0;
 		columns.forEach(function (column) {
@@ -161,23 +161,8 @@
 				column.status = 'none';
 				column.top += adjustment;
 			}
-			unfix(column, -1);
-			fix(column, -1);
-			unfix(column, 1);
-			fix(column, 1);
 		});
+		update(0, true);
 		write();
 	};
-	
-	$.fn.anchorTop = function() {
-		$(this).top($(this).offset().top);
-		$(this).bottom('auto');
-	}
-	
-	$.fn.anchorBottom = function() {
-		$(this).bottom($(this).offset().top + $(this).height());
-		$(this).bottom('auto');
-	}
-	
-
 }(jQuery));

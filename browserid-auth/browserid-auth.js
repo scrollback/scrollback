@@ -17,7 +17,7 @@ module.exports = function(core) {
 			message.ref += "sb-"+name(6);
 			return callback();
 		}
-
+		if(message.auth && message.auth.facebook) return callback();
 		if (!assertion && message.user) {
 			//message.ref = message.user.id;
 			if (!validateNick(message.user.id)) {

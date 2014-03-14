@@ -47,7 +47,8 @@ function migrateRooms(cb) {
 			catch(e){
 				newRoom.params = {};
 			}
-			room.accounts && room.accounts.forEach(function(account) {
+
+			data && data.forEach(function(account) {
 				newRoom.identities.push(account.id);
 			});
 			if(newRoom.type == "user") types.users.put(newRoom, function(){

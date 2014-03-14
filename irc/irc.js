@@ -280,7 +280,6 @@ function send(message, accounts) {
 				break;
 			case 'nick':
 				var nick=message.ref;
-
 				nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
 				clients[message.from][u.host] = client;
 				users[u.host][message.ref] = true;
