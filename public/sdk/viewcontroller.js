@@ -184,6 +184,10 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 }]);
 
 scrollbackApp.controller('loginController',['$scope','$route','$factory','$location',function($scope, $route, $factory, $location) {
+	if(!/^guest-/.test($scope.user.id)){
+		$location.path("/me");
+		return;
+	}
 	$scope.nickChange = function(event) {
 		$scope.status.waiting = true;
 		if($scope.user.id == "guest-"+$scope.displayNick){
@@ -197,7 +201,11 @@ scrollbackApp.controller('loginController',['$scope','$route','$factory','$locat
 	    	}else{
 	    		$scope.$apply(function() {
 					$scope.status.waiting = false;
-		    		$location.path("/"+$scope.room.id);	
+					if($scope.room.id){
+						$location.path("/"+$scope.room.id);		
+					}else{
+						$location.path("/me");
+					}
 	    		});
 	    	}
 	    });
