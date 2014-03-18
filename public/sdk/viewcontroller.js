@@ -446,7 +446,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	
 });
 
-scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', function($scope, $timeout, $location) {	
+scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', '$factory', function($scope, $timeout, $location, $factory) {	
 	if(/^guest-/.test($scope.user.id)) {
 		//$scope.personaLogin();
         $location.path("/me/login");
@@ -458,6 +458,7 @@ scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', 
     		window.location = "/"+room;
     	}
     };
+	
 	$scope.isExists = function(m) {
 		if (m && m.length > 0) {
 			return true; 

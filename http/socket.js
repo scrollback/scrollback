@@ -392,15 +392,15 @@ function room (r, conn) {
 
 
 
-function getrooms(query, conn) {
-	core.emit("getrooms", query, function(err, data) {
+function getRooms(query, conn) {
+	core.emit("getRooms", query, function(err, data) {
 		if(err) {
 			query.message = err.message;
 			conn.send('error',query);
 			return;
 		}else {
 			log(data);
-			conn.send('getrooms', { query: query, data: data} );
+			conn.send('getRooms', { query: query, data: data} );
 			//conn.send('rooms', data);	
 		}
 	});
