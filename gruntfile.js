@@ -81,7 +81,8 @@ module.exports = function(grunt) {
 		development: {
 			files: {//dest            //source
 				"public/style.css": "public/style.less",
-				"public/dummy.css": "public/dummy.less"
+				"public/dummy.css": "public/dummy.less",
+				"public/s/css/stylesheet.css":"public/s/css//stylesheet.less"
 			},
 		},
 	},
