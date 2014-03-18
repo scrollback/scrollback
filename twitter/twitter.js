@@ -123,7 +123,7 @@ function init() {
  */
 function initTwitterSeach() {
 	log("getting room data....");
-	core.emit("getRooms",{identities:"twitter"}, function(err, data) {
+	core.emit("getRooms",{identity:"twitter"}, function(err, data) {
 		if (!err) {
 			if(debug) logTwitter("data returned from labelDB: ", JSON.stringify(data));
 			data.forEach(function(room) {
