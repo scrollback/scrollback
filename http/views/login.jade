@@ -1,8 +1,8 @@
 extends dialog
 block append styles
 	style.
-		#loginbtn { border-bottom: none; border-left: 32px solid #3ca; position: relative; }
-		#loginbtn:before {
+		.loginbtn { border-bottom: none; border-left: 32px solid #3ca; position: relative; }
+		.loginbtn:before {
 			content: ' '; border-style: solid; color: white;
 			border-color: transparent transparent transparent #3ca;
 			border-width: 20px 0 20px 20px;
@@ -13,6 +13,10 @@ block append styles
 			border-color: #E82206;
 			border-width: 2px;
 		}
+		.or{
+			width: 100%;
+			text-align: center;
+		}
 		/*
 			#content { visibility: hidden; }
 		*/
@@ -20,8 +24,9 @@ block append styles
 block content
 	div#loginForm.box.span12
 		p.before You aren’t signed in.
-		button#loginbtn.primary.box.span6 Sign into Scrollback
-		button#fbbtn.primary.box.span6 Sign into Scrollback using fb
+		button.loginbtn#personabtn.primary.box.span6 Sign into Scrollback
+		div.or (or)
+		button.loginbtn#fbbtn.primary.box.span6 Sign into Scrollback using fb
 		if !requireAuth	
 			p.break.before Don’t sign in, but change my nick to:
 			form#guestfrm.clearfix
@@ -49,7 +54,7 @@ block append scripts
 			//notify("Checking if you’re already signed in…");
 			$("#guestnick").val(location.hash.substr(1).replace(/^guest-/,""));
 			
-			$("#loginbtn").click(function () {
+			$("#personabtn").click(function () {
 				navigator.id.request();
 			});
 			
