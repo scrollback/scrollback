@@ -139,9 +139,7 @@ table {
             width: 50%;
             padding: 1em 1em 1em 0;
 
-            &:nth-of-type(2), &:nth-of-type(4), &:nth-of-type(5) { padding-right: 0; }
-
-            &:nth-of-type(5) { width: 100%; }
+            &:nth-of-type(2n) { padding-right: 0; }
         }
     }
 
@@ -151,9 +149,7 @@ table {
             width: 50%;
             padding: 1em 1em 1em 0;
 
-            &:nth-of-type(2), &:nth-of-type(3) { padding-right: 0; }
-
-            &:nth-of-type(3) { width: 100%; }
+            &:nth-of-type(2n) { padding-right: 0; }
         }
 
         .col-1-5 {
@@ -161,9 +157,7 @@ table {
             width: 33.33%;
             padding: 1em 1em 1em 0;
 
-            &:nth-of-type(3), &:nth-of-type(5) { padding-right: 0; }
-
-            &:nth-of-type(4), &:nth-of-type(5) { width: 50%; }
+            &:nth-of-type(3n) { padding-right: 0; }
         }
     }
 
@@ -388,6 +382,8 @@ footer {
                     border-bottom: 1px solid fade(@light-color, 20%);
                 }
             }
+
+            &:after { .clearfloat; }
         }
 
         .slider > li {
@@ -682,13 +678,13 @@ footer {
             float: right;
             color: @accent-color;
             font-weight: 300;
-			position: relative;
+            position: relative;
 
-			sub {
-				font-size: 0.6em; display: block; position: absolute; right: 0;
-				white-space: nowrap; text-transform: uppercase;
-				color: #999; font-weight: 700;
-			}
+            .sub {
+                font-size: 0.6em; display: block; position: absolute; right: 0;
+                white-space: nowrap; text-transform: uppercase;
+                color: #999; font-weight: 700;
+            }
         }
 
         &:after { .clearfloat; }

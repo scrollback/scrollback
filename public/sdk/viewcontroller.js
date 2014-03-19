@@ -1,5 +1,7 @@
 scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window',function($scope, $location, $factory, $timeout,$window) {
-	
+	$scope.gotoMe = function() {
+		$location.path("/me");
+	}
 	$scope.editRoom = {};
 	$factory.on("disconnected", function(){
 		$scope.isActive = false;
@@ -119,41 +121,43 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	};
 
 
+	function processAuth(event) {
+		var message = {};
+		data = event.originalEvent.data;
+		event = event.originalEvent;
+		if(!event.origin === location.protocol+"//"+location.host) return;
 
-	$scope.facebookLogin = function(){
-		$(window).on("message", function(event) {
-			var message = {};
-			data = event.originalEvent.data;
-			event = event.originalEvent;
-			if(!event.origin === location.protocol+"//"+location.host) return;
+		if(typeof event.data === 'string') {
+			try { message = JSON.parse(event.data); }
+			catch(e) {
+				scrollback.debug && console.log("Error parsing incoming message: ", event.data, e);
+				return;
+			}
+		} else { message = event.data; }
+		if(!data.command || data.command != "signin") return;
+		delete data.command;
 
-			if(typeof event.data === 'string') {
-				try { message = JSON.parse(event.data); }
-				catch(e) {
-					scrollback.debug && console.log("Error parsing incoming message: ", event.data, e);
-					return;
-				}
-			} else { message = event.data; }
-			if(data.command != "signin") return;
-
-			message.type = "nick";
-			$factory.message(message, function(message) {
-				if(message.message && message.message == "AUTH_UNREGISTERED") {
-					$scope.$apply(function() {
-						$scope.status.waiting = false;
-						$location.path("/me/edit");	
-					});
-				}
-				else if(!message.message) {
-					$scope.$apply(function() {
-						$scope.status.waiting = false;
-						if($scope.room.id) $location.path("/"+$scope.room.id);
-						else $location.path("/me");
-						
-					});
-				}
-			});
+		message.type = "nick";
+		$factory.message(message, function(message) {
+			$(window).off("message", processAuth)
+			if(message.message && message.message == "AUTH_UNREGISTERED") {
+				$scope.$apply(function() {
+					$scope.status.waiting = false;
+					$location.path("/me/edit");	
+				});
+			}
+			else if(!message.message) {
+				$scope.$apply(function() {
+					$scope.status.waiting = false;
+					if($scope.room.id) $location.path("/"+$scope.room.id);
+					else $location.path("/me");
+					
+				});
+			}
 		});
+	}
+	$scope.facebookLogin = function(){
+		$(window).on("message", processAuth);
 		window.open(location.protocol+"//"+location.host+"/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');
 	}
 	$scope.logout = function() {
@@ -421,8 +425,8 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		var flag = 1;
 		if(/^guest-/.test($scope.user.id)){
 			//guest
-			//$location.path('/me/login');
-			$scope.personaLogin();
+			$location.path('/me/login');
+			// $scope.personaLogin();
 			return;
 		}
 		msg.to = $scope.room.id;

@@ -168,7 +168,6 @@ function getMembers(ids, callback) {
 		if(err) return callback(err);
 		var ids=[], user = {}, rooms = {};
 		members.forEach(function(element) {
-			console.log(element);
 		    ids.push(element.user);
 		    element.room = element.room.toLowerCase();
 		    if(!rooms[element.room]) rooms[element.room] = [];
