@@ -11,7 +11,7 @@ module.exports = function(core) {
 		callback(null, payload);
 	}, "setters");
 	core.on('message', function(message, callback) {
-		log("Heard \"message\ event", message);
+		log("Heard \"message\ event");
 		if(message.type !== 'nick') return callback();
 		if (message.origin && message.origin.gateway=="irc") return callback();
 		if (message.ref == 'guest-') return callback();
@@ -32,6 +32,7 @@ module.exports = function(core) {
 					if(token) {
 						request("https://graph.facebook.com/me?access_token=" + token, function(err, res, body) {
 							var user;
+							delete message.auth.facebook.code;
 							if(err) return callback(err);
 							try{
 								user = JSON.parse(body);
@@ -54,7 +55,7 @@ module.exports = function(core) {
 										id: "mailto:" + user.email,
 										gateway: "mailto",
 										params: ""
-									}]
+									}];
 									callback();
 								});
 							}catch(e){
