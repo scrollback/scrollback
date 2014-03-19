@@ -335,12 +335,12 @@ footer {
 
 .link-highlight {
     color: @light-color;
-    border-color: fade(@light-color, 50%);
+    border-color: fade(@light-color, 60%);
 }
 
 .link-normal {
-    color: fade(@light-color, 50%);
-    border-bottom: 1px solid fade(@light-color, 30%);
+    color: fade(@light-color, 60%);
+    border-bottom: 1px solid fade(@light-color, 20%);
     cursor: pointer;
 
     &:hover, &:focus, &:active { .link-highlight; }
@@ -370,7 +370,7 @@ footer {
 
             a {
                 color: @light-color;
-                border-bottom: 1px solid fade(@light-color, 50%);
+                border-bottom: 1px solid fade(@light-color, 60%);
 
                 &:hover, &:focus {
                     color: @light-color;
@@ -404,7 +404,7 @@ footer {
             list-style: none;
 
             li {
-                display: inline;
+                display: inline-block;
                 text-transform: uppercase;
                 word-break: keep-all;
                 line-height: 3em;
@@ -414,7 +414,7 @@ footer {
                 &:after {
                     content: " / ";
                     font-weight: 400;
-                    color: fade(@light-color, 50%);
+                    color: fade(@light-color, 60%);
                 }
 
                 &:last-child {
