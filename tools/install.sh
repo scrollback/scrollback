@@ -7,8 +7,8 @@ echo "Installing uglifyjs and grunt."
 sudo npm install -g uglifyjs
 sudo npm install -g grunt-cli
 
-echo "Copying Upstart config file"
-sudo cp scrollback.conf /etc/init/scrollback.conf
+#echo "Copying Upstart config file"
+#sudo cp scrollback.conf /etc/init/scrollback.conf
 
 echo "Your MySQL root password is required to create the scrollback user and database."
 echo "It will be discarded when installation is complete."
