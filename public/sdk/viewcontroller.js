@@ -425,8 +425,8 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		var flag = 1;
 		if(/^guest-/.test($scope.user.id)){
 			//guest
-			//$location.path('/me/login');
-			$scope.personaLogin();
+			$location.path('/me/login');
+			// $scope.personaLogin();
 			return;
 		}
 		msg.to = $scope.room.id;

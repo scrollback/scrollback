@@ -1,4 +1,4 @@
-module.exports = function(r, santize){
+function validateRoom(r, santize) {
 	var room = r;
 		room = room.trim();
 		room = room.replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
