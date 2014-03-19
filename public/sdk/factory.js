@@ -8,7 +8,7 @@ var listening = {};
 var pendingCallbacks = {}, backed=false;
 var backOff = 1;
 var factory=function() {
-	socket.onclose = function() {
+	socket.onclose = function(){
 		factoryObject.emit("disconnected");
 		listening = {};
 		backOff+=backOff;
@@ -83,7 +83,6 @@ function send(message, callback) {
 	};
 	if(callback) pendingCallbacks[message.id] = callback;
 	socket.emit("message", message);
-	
 }
 
 
