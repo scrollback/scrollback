@@ -14,7 +14,7 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 	
 	body
 		#titleBar(ng-controller="metaController")
-			a(href="/me")#logo(ng-click="$event.stopPropagation();") scrollback	
+			a(ng-click="gotoMe();$event.stopPropagation();")#logo scrollback	
 			a#user(ng-cloak="" ng-click="$event.stopPropagation();")
 				img.face.top(ng-src='{{user.picture}}' ng-click='profile();')
 				#username(ng-click='profile();', ng-cloak="") {{user.id.replace("guest-","")}}

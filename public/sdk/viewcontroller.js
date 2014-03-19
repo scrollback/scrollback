@@ -1,5 +1,7 @@
 scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window',function($scope, $location, $factory, $timeout,$window) {
-	
+	$scope.gotoMe = function() {
+		$location.path("/me");
+	}
 	$scope.editRoom = {};
 	$factory.on("disconnected", function(){
 		$scope.isActive = false;
