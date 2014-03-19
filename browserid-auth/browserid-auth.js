@@ -1,5 +1,5 @@
 var config = require("../config.js"),
-	name = require("../lib/names.js"),
+	name = require("../lib/generate.js").word,
 	log = require("../lib/logger.js"),
 	request = require("request");
 

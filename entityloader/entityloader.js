@@ -1,5 +1,76 @@
 
+/* list of event that the basic validation function is called for.*/
+var events = ['text', 'edit', 'join', 'part', 'away', 'admit', 'expel', 'room'];
+
+/* if few more validtion is to be added for to any event add it to this list. eq:
+	var handlers = {
+		'init': function(action, callback){
+			callback();
+		}
+	};
+*/
+var handlers = {
+	edit: function(action, callback) {
+		core.emit("getTexts", {id: action.ref}, function(err, actions) {
+			if(err || !actions.results.length) return callback(new Error("TEXT_NOT_FOUND"));
+			action.old = actions.results[0];
+			callback();
+		});
+	},
+	room: function(action, callback) {
+		core.emit("getRooms", {id: action.to}, function(err, actions) {
+			if(err) return callback(err);
+			if(!actions.results.length) {
+				action.old = {};
+			}else {
+				action.old = actions.results[0];
+			}
+			callback();
+		});
+	}
+};
+
 module.exports = function(core) {
+	events.forEach(function(event) {
+		core.on(event, function(action, callback) {
+			basicLoader(action, function(err) {
+				if(err) return callback(err);
+				if(handlers[event]) handlers[event](action, callback);
+				else callback();
+			})
+		}, "loader");
+	});
+}
+
+
+
+function basicLoader(action, callback) {
+	var wait = true, isErr = false;
+
+	core.emit("getUsers",{id: action.from},function(err, users) {
+		if(err || !user.length) {
+			isErr = true;
+			return callback(new Error("USER_NOT_FOUND"));
+		}
+		if(isErr) return;
+		action.user = users[1];
+		if(wait) wait = false;
+		else callback();
+	});
+	
+	core.emit("getRooms",{id: action.to}, function(err, rooms) {
+		if(err || !rooms.length) {
+			isErr = true;
+			return callback(new Error("ROOM_NOT_FOUND"));
+		}
+		if(isErr) return;
+		action.room = users[1];
+		if(wait) wait = false;
+		else callback();
+	});
+}
+
+/*module.exports = function(core) {
 	function loader(data, callback) {
 		//core.emit('getRooms', {id: data.from}, function(err, user) {
 		if(data.to){
@@ -39,4 +110,4 @@ module.exports = function(core) {
 	core.on('expel', loader, 'loader');
 	// core.on('user', loader, 'loader');
 	// core.on('init', loader, 'loader');
-}
+}*/
