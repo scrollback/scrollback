@@ -108,10 +108,10 @@ table {
 }
 
 /* custom grid system */
-.cols(@n; @i: 1) when (@i < @n) {
-    .col-@{i}-@{n} { width: (@i * 100% / @n); }
+.cols(@colspan: 1; @colcount: 1) when (@colcount =< @colspan) {
+    .col-@{colcount}-@{colspan} { width: (@colcount * 100% / @colspan); }
 
-.cols(@n, (@i + 1));
+    .cols(@colspan, (@colcount + 1));
 }
 
 [class^='col-'] {
@@ -368,6 +368,8 @@ footer {
 
             .ease(.5s);
 
+            &:after { .clearfloat; }
+
             a {
                 color: @light-color;
                 border-bottom: 1px solid fade(@light-color, 60%);
@@ -382,8 +384,6 @@ footer {
                     border-bottom: 1px solid fade(@light-color, 20%);
                 }
             }
-
-            &:after { .clearfloat; }
         }
 
         .slider > li {
