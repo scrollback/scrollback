@@ -8,6 +8,6 @@ Run this command in terminal:
 
 To run Scrollback run:
 
-	node index.js
+	sudo node index.js
 	
 myConfig.js can be used to override default configuration.
