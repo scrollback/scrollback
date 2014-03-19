@@ -17,19 +17,29 @@
     $(window).scroll(detectScroll);
 
     // Show and hide the modal dialog
-    $(".login-toggle").click(function () {
+	function showDialog() {
+		if(history.pushState) history.pushState(null, '');
         $("body").toggleClass("login-open");
-    });
+		$(".modal").find("input").eq(0).focus();
+    }
 
-    $(".dim").click(function () {
+	function hideDialog() {
         $("body").removeClass("login-open");
-    });
+    }
 
-    $(window).keyup(function (e) {
-        if (e.keyCode === 27) {
-            $("body").removeClass("login-open");
-        }
-    });
+	function handleKey(e) {
+        if (e.keyCode === 27) hideDialog();
+    }
+
+	$(window).on('popstate', function() {
+		hideDialog();
+	});
+
+    $(".login-toggle").click(showDialog);
+    $(".dim").click(hideDialog);
+
+    $(window).keyup(handleKey);
+	$(".modal").find("input").keyup(handleKey);
 
     // Check if the array contains a value
     Array.prototype.contains = function (value) {
