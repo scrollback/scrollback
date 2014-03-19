@@ -5,6 +5,7 @@
 @accent-color: #3ca;
 @dark-color: #333;
 @light-color: #fff;
+@error-color: #d95879;
 
 /* animations and transitions */
 .transform (@args) {
@@ -93,7 +94,7 @@ audio:not([controls]) { display: none; }
 
 a { background: transparent; }
 
-a:active, a:hover { outline: 0; }
+a:hover, a:focus, a:active { outline: 0; }
 
 em { font-style: italic; }
 
@@ -199,7 +200,9 @@ a {
 
     .ease(.5s);
 
-    &:hover, &:focus, &:active { color: @accent-color; }
+    &:hover, &:focus { color: @accent-color; }
+
+    &:active { color: darken(@accent-color, 20%); }
 }
 
 img { max-width: 100%; }
@@ -253,9 +256,15 @@ p { margin: .5em 0; }
     .inputs;
     .ease(.5s);
 
-    &:hover, &:focus, &:active {
+    &:hover, &:focus {
         background-color: darken(@bg, 10%);
         border: 1px solid darken(@bg, 10%);
+        color: @fg;
+    }
+
+    &:active {
+        background-color: darken(@bg, 20%);
+        border: 1px solid darken(@bg, 20%);
         color: @fg;
     }
 }
@@ -340,7 +349,7 @@ footer {
     border-bottom: 1px solid fade(@light-color, 30%);
     cursor: pointer;
 
-    &:hover { .link-highlight; }
+    &:hover, &:focus, &:active { .link-highlight; }
 }
 
 .cover-content {
@@ -369,9 +378,14 @@ footer {
                 color: @light-color;
                 border-bottom: 1px solid fade(@light-color, 50%);
 
-                &:hover, &:focus, &:active {
+                &:hover, &:focus {
                     color: @light-color;
                     border-bottom: 1px solid @light-color;
+                }
+
+                &:active {
+                    color: fade(@light-color, 20%);
+                    border-bottom: 1px solid fade(@light-color, 20%);
                 }
             }
         }
@@ -750,7 +764,9 @@ footer {
     top: 0;
     cursor: pointer;
 
-    &:hover, &:focus, &:active { color: @dark-color; }
+    &:hover, &:focus { color: @dark-color; }
+
+    &:active { color: darken(@dark-color, 10%); }
 }
 
 .modal {
@@ -821,56 +837,19 @@ footer {
     }
 }
 
-.iewarning {
-    background-color: #fcf8f2;
-    border-bottom: 2px solid #d95879;
-    text-align: center;
-    font-size: 16px;
-
-    h2 { color: #d95879; }
-}
-
-::selection {
-    background-color: @accent-color;
-    color: @light-color;
-}
-
-::-moz-selection {
-    background-color: @accent-color;
-    color: @light-color;
-}
-
-::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-
-::-webkit-scrollbar-button { display: none; }
-
-::-webkit-scrollbar-track { background-color: @light-color; }
-
-::-webkit-scrollbar-thumb { background-color: darken(@light-color, 10%);
-
-    &:vertical { min-height: 100px; }
-
-    &:horizontal { min-width: 100px; }
-
-    &:hover, &:focus, &:active { background-color: @accent-color; }
-}
-
 #create-field {
     position: relative;
 
     .disabled {
-        background-color: darken(@light-color, 40%);
-        border: 1px solid darken(@light-color, 40%);
-        color: #fff;
+        background-color: lighten(@dark-color, 40%);
+        border: 1px solid lighten(@dark-color, 40%);
+        color: @light-color;
         pointer-events: none;
 
         &:hover, &:focus, &:active {
-            background-color: darken(@light-color, 40%);
-            border: 1px solid darken(@light-color, 40%);
-            color: #fff;
+            background-color: lighten(@dark-color, 40%);
+            border: 1px solid lighten(@dark-color, 40%);
+            color: @light-color;
         }
     }
 
@@ -899,8 +878,47 @@ footer {
         line-height: 3em;
         top: 0;
         left: 0;
-        color: #999;
+        color: lighten(@dark-color, 20%);
     }
 
-    .error { color: #c00; }
+    .error { color: @error-color; }
+}
+
+.iewarning {
+    background-color: lighten(@error-color, 40%);
+    border-bottom: 2px solid @error-color;
+    text-align: center;
+    font-size: 16px;
+
+    h2 { color: @error-color; }
+}
+
+::selection {
+    background-color: @accent-color;
+    color: @light-color;
+}
+
+::-moz-selection {
+    background-color: @accent-color;
+    color: @light-color;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-button { display: none; }
+
+::-webkit-scrollbar-track { background-color: @light-color; }
+
+::-webkit-scrollbar-thumb { background-color: darken(@light-color, 10%);
+
+    &:vertical { min-height: 100px; }
+
+    &:horizontal { min-width: 100px; }
+
+    &:hover, &:focus { background-color: @accent-color; }
+
+    &:active { background-color: darken(@accent-color, 10%); }
 }
