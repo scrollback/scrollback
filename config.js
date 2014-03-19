@@ -52,6 +52,7 @@ var defaults = {
 		host     : 'localhost',
 		user     : 'scrollback',
 		password : 'scrollback',
+		connectionLimit: 100,
 		//debug    :true         ,
 		database : 'scrollback' 
 	},
