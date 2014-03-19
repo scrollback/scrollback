@@ -38,7 +38,7 @@
     "limiter": "x",
     "cookie": "x",
     "redis": "x",
-    "connect-redis": "x",
+    "connect-redis": "1.4.6",
     "generic-pool": "X",
     "nodemailer": "x",
     "newrelic": "x",
