@@ -29,6 +29,33 @@
     animation: bounce @args;
 }
 
+.appearframes() {
+    0% {
+        opacity: 0;
+
+        .transform(scale(.5));
+    }
+
+    30% { .transform(scale(1)); }
+
+    100% { opacity: 1; }
+}
+
+@-webkit-keyframes appear { .appearframes; }
+
+@-moz-keyframes appear { .appearframes; }
+
+@-ms-keyframes appear { .appearframes; }
+
+@keyframes appear { .appearframes; }
+
+.appear(@args: .5s) {
+    -webkit-animation: appear @args;
+    -moz-animation: appear @args;
+    -ms-animation: appear @args;
+    animation: appear @args;
+}
+
 .fadeinframes() {
     0% { opacity: 0; }
     100% { opacity: 1; }
