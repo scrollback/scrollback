@@ -5,25 +5,27 @@ var send = require('./sendEmail.js');
 var fs=require("fs"),jade = require("jade");
 var redis = require("redis").createClient();//require('../lib/redisProxy.js');
 var emailDigest = require('./emailDigest.js');
-var intiMailSending = emailDigest.initMailSending;//function
+var initMailSending = emailDigest.initMailSending;//function
+var sendPeriodicMails = emailDigest.sendPeriodicMails;//function
+var trySendingToUsers = emailDigest.trySendingToUsers;//function.
 var emailConfig = config.email;
 var core;
-
 var debug = emailConfig.debug;
+var timeout = 3*1000;//for debuging only
 module.exports = function(coreObject) {
 	core = coreObject;
     if(!debug) log = log.tag("mail");
     emailDigest.init();
 	if (config.email && config.email.auth) {
 		core.on('text', function(message, callback) {
-			logMail("Heard \"message\" event", message);
+			log("Heard \"message\" event", message);
 			callback();
 			if(message.type === "text"){
 				addMessage(message);
 			}
 		}, "gateway");
 		if (emailConfig.debug) {
-		   setInterval(sendperiodicMails, timeout);
+		   setInterval(sendPeriodicMails, timeout);
 		   setInterval(trySendingToUsers,timeout/8);
 		}
 	}
@@ -39,15 +41,15 @@ function getExpireTime() {
 }
 /**
  *Push message into redis
- *If labels is not defind then it will not send mentions email.
+ *If threads is not defined then it will not send mentions email.
  *and not add data into redis.
  */
 function addMessage(message){
     var room = message.to;
     if(emailConfig.debug) log("email -"  , message);
-    if (message.labels && message.labels[0]) {
-        var label = message.labels[0].substring(0,message.labels[0].indexOf(':'));
-        var title = message.labels[0].substring(message.labels[0].indexOf(':') + 1);
+    if (message.threads && message.threads[0]) {
+        var label = message.threads[0].id;
+        var title = message.threads[0].title;
         var multi = redis.multi();
         multi.zadd("email:label:" + room + ":labels" ,message.time , label); // email: roomname : labels is a sorted set
         multi.incr("email:label:" + room + ":" + label + ":count");

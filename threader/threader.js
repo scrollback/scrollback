@@ -6,7 +6,7 @@ var jade = require("jade")
 var client;
 var pendingCallbacks = {};
 /**
-Communicate with scrollback java Process through TCP and set message.labels.
+Communicate with scrollback java Process through TCP and set message.threads.
 */
 module.exports = function(core) {
 	if (config.threader) {
@@ -64,6 +64,11 @@ function init(){
 	});
 	/**
 	 *Process reply from java process and callback based on message.id
+	 * message.thread [{
+	 * 		id: ..
+	 * 		title: ...
+	 * 		score: ... //sorted based in this score
+	 * }, ... ]
 	 */
 	function processReply(data){
 		var message;
@@ -102,8 +107,6 @@ function init(){
 		setTimeout(function(){
 			init();	
 		},1000*60);//try to reconnect after 1 min
-		
-		
 	});
 }
 

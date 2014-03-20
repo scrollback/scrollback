@@ -2,8 +2,9 @@ var assert = require("assert");
 var config  = require('../../config.js');
 var core = require("../../test/mock-core.js")();
 var roomauth = require("./roomauth.js");
-var guid = require("../../lib/guid.js");
-var names = require("../../lib/names.js");
+var gen = require("../../lib/generate.js")
+var guid = 	gen.uid;
+var names = gen.names;
 var roomAction = {
     id : guid(),
     from: "testUser",
@@ -26,9 +27,9 @@ var roomAction = {
 
 
 describe('roomauth', function() {
-    it('init', function(done) {
+    beforeEach( function(done) {
         roomauth(core);
-        setTimeout(function(){
+        setTimeout(function() {
             done();
         }, 1500);
     });

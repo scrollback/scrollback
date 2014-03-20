@@ -2,8 +2,9 @@ var assert = require("assert");
 var core = require("../test/mock-core.js")();
 var db = require("../test/mock-storage.js")(core);
 var e = require("./entityloader.js")(core);
-var guid = require("../lib/guid.js");
-var names = require("../lib/names.js");
+var gen = require("../lib/generate.js")
+var guid = 	gen.uid;
+var names = gen.names;
 
 /*****************************************************************************
 This file perform tests on the entity loader plugin.
