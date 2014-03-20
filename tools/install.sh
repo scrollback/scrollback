@@ -8,8 +8,9 @@ distro=$(grep '^NAME=' /etc/os-release | sed -e s/NAME=//g -e s/\"//g)
 
 # We only install packages for Ubuntu and Fedora
 if [[ ! "$distro" = "Fedora" && ! "$distro" = "Ubuntu" ]]; then
-    echo "Unsupported distro"
-    exit 1
+    echo "Unsupported distro. You will need to install the dependencies manually. Continue anyway [y/n]?"
+    read ans
+    [[ "$ans" = [Yy] ]] || exit 1
 fi
 
 # Show the list of items to install
@@ -80,8 +81,8 @@ sudo npm install -g grunt
 sudo npm install -g grunt-cli
 sudo npm install -g uglifyjs
 
-# Start the MySQL daemon in case it is not running
-echo "Starting MySQL daemon"
+# Start the MySQL and Redis daemons
+echo "Starting MySQL and Redis"
 sudo service mysqld start
 sudo service redis start
 
