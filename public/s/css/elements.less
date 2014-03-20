@@ -115,9 +115,9 @@ footer {
                 float: left;
                 width: 25%;
                 height: 100%;
-                opacity: 0;
                 pointer-events: none;
 
+                .opacity(0);
                 .ease;
             }
 
@@ -185,8 +185,8 @@ footer {
         position: absolute;
         top: 0;
         left: 0;
-        opacity: 0;
 
+        .opacity(0);
         .ease;
     }
 
@@ -270,19 +270,20 @@ footer {
     margin-left: -20px;
     width: 40px;
     height: 40px;
-    opacity: 1;
     pointer-events: auto;
 
-    .ease;
+    .opacity(1);
     .bounce(5s infinite);
+    .ease;
 
     @media only screen and (min-width: 700px) { display: block; }
 }
 
 .scrolled {
     .arrow {
-        opacity: 0;
         pointer-events: none;
+
+        .opacity(0);
     }
 }
 
@@ -305,15 +306,15 @@ footer {
 
 .login-toggle { cursor: pointer; }
 
-.google { .buttons(#d34836, #fff); }
+.google { .buttons(#d34836; #fff); }
 
-.twitter { .buttons(#55acee, #fff); }
+.twitter { .buttons(#55acee; #fff); }
 
-.facebook { .buttons(#3b5998, #fff); }
+.facebook { .buttons(#3b5998; #fff); }
 
-.persona { .buttons(#0096dd, #fff); }
+.persona { .buttons(#0096dd; #fff); }
 
-.openid { .buttons(#f78c40, #fff); }
+.openid { .buttons(#f78c40; #fff); }
 
 .close {
     color: lighten(@dark-color, 20%);
@@ -389,8 +390,9 @@ footer {
     }
 
     .arrow {
-        opacity: 0;
         pointer-events: none;
+
+        .opacity(0);
     }
 }
 

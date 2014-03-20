@@ -1,14 +1,14 @@
 /* animations and transitions */
-.transform (@args) {
+.transform(@args) {
     -webkit-transform: @args;
     -moz-transform: @args;
     -ms-transform: @args;
     transform: @args;
 }
 
-.translate (@x; @y) { .transform(translate(@x, @y)); }
+.translate(@x; @y) { .transform(translate(@x, @y)); }
 
-.bounceframes () {
+.bounceframes() {
     0%, 10%, 30%, 50%, 100% { .translate(0, 0); }
     20% { .translate(0, -30px); }
     40% { .translate(0, -15px); }
@@ -22,14 +22,14 @@
 
 @keyframes bounce { .bounceframes; }
 
-.bounce (@args: 5s) {
+.bounce(@args: 5s) {
     -webkit-animation: bounce @args;
     -moz-animation: bounce @args;
     -ms-animation: bounce @args;
     animation: bounce @args;
 }
 
-.fadeinframes () {
+.fadeinframes() {
     0% { opacity: 0; }
     100% { opacity: 1; }
 }
@@ -42,14 +42,14 @@
 
 @keyframes fadein { .fadeinframes; }
 
-.fadein (@args: .5s) {
+.fadein(@args: .5s) {
     -webkit-animation: fadein @args;
     -moz-animation: fadein @args;
     -ms-animation: fadein @args;
     animation: fadein @args;
 }
 
-.ease (@args: .5s) {
+.ease(@args: .5s) {
     -webkit-transition: @args ease;
     -moz-transition: @args ease;
     -ms-transition: @args ease;

@@ -1,5 +1,5 @@
 /* custom grid system */
-.cols (@colspan: 1; @colcount: 1) when (@colcount =< @colspan) {
+.cols(@colspan: 1; @colcount: 1) when (@colcount =< @colspan) {
     .col-@{colcount}-@{colspan} { width: (@colcount * 100% / @colspan); }
 
     .cols(@colspan; (@colcount + 1));
