@@ -56,3 +56,28 @@
 
     &:after { .clearfloat; }
 }
+
+[class^='content-'] {
+    width: 100%;
+    padding: 1em 0 1em 0;
+
+    @media only screen and (min-width: 480px) { width: 50%; }
+}
+
+.floated {
+    @media only screen and (min-width: 480px) {
+        .content-left {
+                text-align: right;
+                float: left;
+                padding: 1em 2em 1em 0;
+        }
+
+        .content-right {
+                text-align: left;
+                float: right;
+                padding: 1em 0 1em 2em;
+        }
+    }
+
+    &:after { .clearfloat; }
+}
