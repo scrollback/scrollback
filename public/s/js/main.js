@@ -1,5 +1,5 @@
 /*jslint browser: true, indent: 4, regexp: true*/
-/*global $, jQuery*/
+/*global $*/
 
 (function () {
     'use strict';
