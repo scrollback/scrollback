@@ -31,4 +31,11 @@ public/core.uw.min.js
 public/embed.uw.min.js
 public/dummy.css
 public/style.css
+
+public/s/css/reset.css
+public/s/css/animations.css
+public/s/css/mixins.css
+public/s/css/grid.css
+public/s/css/browser.css
+public/s/css/elements.css
 public/s/css/stylesheet.css
