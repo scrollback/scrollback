@@ -28,7 +28,7 @@ if(window.scrollback.streams) {
 		return validateRoom(room, true);
 	});	
 }
-if(window.scrollback.nick) window.scrollback.nick = sanitizeRoomName(window.scrollback.nick);
+if(window.scrollback.nick) window.scrollback.nick = validateRoom(window.scrollback.nick, true);
 
 socket.emit = function(type, data) {
 	scrollback.debug && console.log("Socket sending ", type, data);
