@@ -4,7 +4,7 @@ Beautiful text chat for your community and website.
 
 Run this command in terminal:
 
-    wget -O scrollback-ubuntu.sh https://bit.ly/1gOVdHk; /bin/sh scrollback-ubuntu.sh
+    wget https://raw.githubusercontent.com/scrollback/scrollback/master/tools/install.sh -O install.sh && chmod +x install.sh && ./install.sh
 
 To run Scrollback run:
 
