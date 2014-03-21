@@ -440,11 +440,17 @@ footer {
     .error { color: @error-color; }
 }
 
-.iewarning {
+.warning {
     background-color: lighten(@error-color, 40%);
     border-bottom: 2px solid @error-color;
     text-align: center;
     font-size: 16px;
 
     h2 { color: @error-color; }
+}
+
+.nojs { display: block; }
+
+.js {
+    .nojs { display: none; }
 }
