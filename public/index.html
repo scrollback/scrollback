@@ -38,7 +38,12 @@
         <p>Please <a href="http://browsehappy.com">upgrade</a> to a modern browser.</p>
         </section>
         <![endif]-->
-        <script>document.body.className = "js"</script>
+        <script>
+            var css = document.createElement("style");
+            css.type = "text/css";
+            css.innerHTML = ".nojs { display: none; }";
+            document.body.appendChild(css);
+        </script>
         <section class="nojs warning">
         <h2>Javascript is disabled in your browser!</h2>
         <p>Please enable Javascript for the website to work.</p>
