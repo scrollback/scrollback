@@ -321,12 +321,24 @@ footer {
     bottom: 10px;
     right: 30px;
     z-index: 1;
+    cursor: pointer;
 
     .ease;
 
     &:hover, &:focus, &:active { bottom: 15px; }
 
     @media only screen and (min-width: 480px) { display: block; }
+}
+
+.scrollback-stream { display: none; }
+
+.scrollback-open {
+    .scrollback-stream { display: block; }
+
+    .room {
+        opacity: 0;
+        pointer-events: none;
+    }
 }
 
 .login-toggle { cursor: pointer; }

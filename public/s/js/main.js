@@ -16,6 +16,11 @@
     detectScroll();
     $(window).scroll(detectScroll);
 
+    // Show scrollback embed widget
+    $(".room").on("click", function () {
+        $("body").addClass("scrollback-open");
+    });
+
     // Show and hide the modal dialog
     function showDialog() {
         if (history.pushState) {
