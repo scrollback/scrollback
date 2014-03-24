@@ -77,9 +77,8 @@ fi
 # Install various dependencies for scrollback
 echo "Installing dependencies..."
 sudo npm install
-sudo npm install -g grunt
 sudo npm install -g grunt-cli
-sudo npm install -g uglifyjs
+sudo npm install -g forever
 
 # Start the MySQL and Redis daemons
 echo "Starting MySQL and Redis"
