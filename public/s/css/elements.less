@@ -95,6 +95,31 @@ footer {
 
     .ease;
 
+    .container {
+        a {
+            color: @light-color;
+            border-bottom: 1px solid fade(@light-color, 40%);
+
+            &:hover, &:focus {
+                color: @light-color;
+                border-color: fade(@light-color, 60%);
+            }
+
+            &:active {
+                color: fade(@light-color, 20%);
+                border-color: fade(@light-color, 20%);
+            }
+        }
+
+        .button { .buttons; }
+
+        .try {
+            margin-left: 1em;
+
+            a { margin-left: 1em; }
+        }
+    }
+
     .slides {
         overflow-x: hidden;
 
@@ -119,21 +144,6 @@ footer {
 
                 .opacity(0);
                 .ease;
-            }
-
-            a {
-                color: @light-color;
-                border-bottom: 1px solid fade(@light-color, 40%);
-
-                &:hover, &:focus {
-                    color: @light-color;
-                    border-color: fade(@light-color, 60%);
-                }
-
-                &:active {
-                    color: fade(@light-color, 20%);
-                    border-color: fade(@light-color, 20%);
-                }
             }
         }
     }
