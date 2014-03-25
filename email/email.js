@@ -12,6 +12,7 @@ var emailConfig = config.email;
 var core;
 var debug = emailConfig.debug;
 var timeout = 3*1000;//for debuging only
+
 module.exports = function(coreObject) {
 	core = coreObject;
     if(!debug) log = log.tag("mail");
@@ -33,6 +34,7 @@ module.exports = function(coreObject) {
 		log("email module is not enabled");
 	}
 };
+
 function getExpireTime() {
 	if (emailConfig.debug) {
 		return timeout*2;
@@ -77,4 +79,3 @@ function addMessage(message){
         }
     }   
 }
-

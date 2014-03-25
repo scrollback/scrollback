@@ -47,23 +47,31 @@ function migrateRooms(cb) {
 			catch(e){
 				newRoom.params = {};
 			}
-			room.accounts && room.accounts.forEach(function(account) {
+		
+			
+			data && data.forEach(function(account) {
 				newRoom.identities.push(account.id);
 			});
 			if(newRoom.type == "user") types.users.put(newRoom, function(){
 				if(err) console.log(err);
 				db.resume();
 			});
-			if(newRoom.type == "room") types.rooms.put(newRoom, function(){
-				if(err) console.log(err);
-				owners[room.id] = room.owner;
-				types.rooms.link(room.id, 'hasMember', room.owner, {
-					role: "owner",
-					time: newRoom.createdOn
-				}, function(){
-					db.resume();
+			if(newRoom.type == "room") {
+				if(newRoom.params.twitter && newRoom.params.twitter.profile && newRoom.params.twitter.profile.username){
+					newRoom.identities.push("twitter:"+newRoom.params.twitter.profile.username);
+				}
+				types.rooms.put(newRoom, function(){
+					if(err) console.log(err);
+					console.log("room", newRoom);
+					owners[room.id] = room.owner;
+					types.rooms.link(room.id, 'hasMember', room.owner, {
+						role: "owner",
+						time: newRoom.createdOn
+					}, function(){
+						db.resume();
+					});
 				});
-			});
+			}
 		});
 	});
 	stream.on("error", function(err){
@@ -78,8 +86,7 @@ function migrateMembers(cb){
 	var stream = db.query("select * from members;");
 	stream.on("result", function(row) {
 		if(row.partedOn) return console.log("parted user");;
-		console.log(row);
-		if(owners[row.room] === row.user) return console.log("owner spotted.");;
+		if(owners[row.room] === row.user) return console.log("owner spotted.");
 		types.rooms.link(row.room, 'hasMember', row.user, {
 			role: "member",
 			time: row.joinedOn

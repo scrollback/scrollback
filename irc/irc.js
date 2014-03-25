@@ -11,7 +11,8 @@ var irc = require("irc"),core,
 	connect = require("./connect.js"),
 	log = require("../lib/logger.js"), fs = require("fs"),
 	jade = require("jade"),
-	crypto = require('crypto');
+	crypto = require('crypto'),
+	validate = require('../lib/validate.js');
 var db = require("../lib/mysql.js");
 
 
@@ -112,11 +113,12 @@ function addBotChannels(host, channels) {
 	if(!client) {
 		clients.bot[host] = client =
 			connect(host, botNick, botNick, channels, function(m) {
-				var sessionID = "irc://"+m.origin.server+"/"+m.from;
+				var sessionID = "irc://"+m.origin.server+"/"+m.from, newSessionID;
 				if (users[host] && users[host][m.from]) {
 					log("Incoming Echo", m);
 					return;
 				}
+				m.from  = validate(m.from, true);
 				if(m.type == "back") {
 					if(userFromSess[sessionID]) {
 						m.from = userFromSess[sessionID];
@@ -130,16 +132,29 @@ function addBotChannels(host, channels) {
 						});
 					}
 				}else if(m.type == 'nick') {
+					newSessionID = "irc://"+m.origin.server+"/"+m.ref;
+					m.ref  = validate(m.ref, true)
 					core.emit("init", {sessionID: sessionID, suggestedNick: m.ref}, function(err, data) {
-						m.from = userFromSess[sessionID];
-						delete nickFromUser[userFromSess[sessionID]];
-						delete userFromSess[sessionID];
+						if(!userFromSess[sessionID]) {
+							m.from = data.user.id;
+							m.type = "back";
+							userFromSess["irc://"+m.origin.server+"/"+m.ref] = data.user.id;
+							nickFromUser[data.user.id] = m.ref;
+							core.emit("message", m);
+							return;
+						}else {
+							m.from = userFromSess[sessionID]
+							delete nickFromUser[userFromSess[sessionID]];
+							delete userFromSess[sessionID];
+							userFromSess[newSessionID] = data.user.id;
+							nickFromUser[data.user.id] = m.ref;
+						}
 						userFromSess["irc://"+m.origin.server+"/"+m.ref] = data.user.id;
 						nickFromUser[data.user.id] = m.ref;
 						m.ref = data.user.id;
 						core.emit("message", m);	
 					});
-				}else if(m.type == 'away'){
+				}else if(m.type == 'away') {
 					if(!userFromSess[sessionID]) return;
 					m.from = userFromSess[sessionID];
 					delete nickFromUser[userFromSess[sessionID]];
@@ -192,6 +207,9 @@ function init() {
 }
 
 function send(message, accounts) {
+	if (message.session && message.session.split(":")[0] === 'twitter') {
+        return;
+    }
 	var ident = "", md5sum = crypto.createHash('md5');
 	clients[message.from] = clients[message.from] || {};
 	accounts.map(function(account) {
@@ -262,7 +280,6 @@ function send(message, accounts) {
 				break;
 			case 'nick':
 				var nick=message.ref;
-
 				nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
 				clients[message.from][u.host] = client;
 				users[u.host][message.ref] = true;

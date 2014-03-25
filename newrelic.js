@@ -19,3 +19,4 @@ if(config.core.newrelic.key) exports.config = {
 		]
 	}
 };
+

@@ -2,7 +2,31 @@
 
 function messageArray(initData) {
 	var messages = initData || [];
-	
+	function edit(obj) {
+		var i,index, pos = find(obj.old.time-1 ), newLabels = [];
+
+		for(i=pos; i<pos+10 && i < messages.length;i++) {
+			if(messages[i].id === obj.old.id) {
+				newLabels = messages[i].labels.map(function(ele){
+					return ele;
+				});
+
+				Object.keys(obj.labels).forEach(function (label) {
+					if(obj.labels[label]) {
+						if(newLabels.indexOf(label) < 0) {
+							newLabels.push(label);
+						}
+					}else if(typeof obj.labels[label]!="undefined"){
+						if(newLabels.indexOf(label) >= 0) {
+							newLabels.splice(newLabels.indexOf(label) , 1);
+						}
+					}
+				});
+				messages[i].labels = newLabels;
+				return;
+			}
+		}
+	}	
 	function find (time, start, end) {
 		var pos;
 
@@ -92,7 +116,7 @@ function messageArray(initData) {
 	messages.merge = merge;
 	messages.find = find;
 	messages.extract = extract;
-	
+	messages.edit = edit;
 	return messages;
 }
 

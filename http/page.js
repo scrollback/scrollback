@@ -88,16 +88,16 @@ exports.init = function(app, coreObject) {
 			res.end(req.cookies["sbsid"] + '\r\n' + JSON.stringify(require("./session.js").store));
 		}
     };
-	// handling it for now but should probably think a way to make newProfile the static file.
+	//handling it for now but should probably think a way to make newProfile the static file.
     app.get("/s/me/edit", function(req, res) {
         var user = req.session.user;
         if(/"guest-"/.test(user.id)) {
             if(!user.accounts || user.accounts.length ==0) {
                 return res.render("newProfile",{email:user.accounts[0].id.split(":")[1]});        
-            } else {
+            }else {
                 return res.redirect(307, '//'+config.http.host+"/s/login.html"+queryString);
             }
-        } else {
+        }else{
             return res.render("newProfile",{email:user.accounts[0].id.split(":")[1]});
         }
     });
@@ -105,9 +105,14 @@ exports.init = function(app, coreObject) {
         var user = req.session.user, responseObject={};
         responseObject.user = req.session.user;
 		responseObject.defaultTitle = "Your rooms";
-		responseObject.room = {title: "", id: ""};
-		responseObject.messages = [];
-		res.render("d/main" , responseObject);
+
+        core.emit("getRooms",{id:"scrollback"}, function(err, room) {
+            if(room&& room.length>0) room = room[0];    
+            else room = {title:"", id:""};
+            responseObject.room = room;
+            responseObject.messages = [];
+            res.render("d/main" , responseObject);    
+        });
     }
     app.get("/me", loginHandler);
 	app.get("/me/login", loginHandler);

@@ -4,14 +4,14 @@
 	</label>
 	<label>
 		{{twitterUsername ? ("Admin Twitter Account: " + twitterUsername) : ("Sign in with Twitter to watch hashtags")}}
-		<button type="button" id = "twitterButton">
-			<span ng-click='twitterLogin();'>{{twitterUsername ?"change" : "Sign in"}}</span>
+		<button ng-click='twitterLogin();' type="button" id = "twitterButton">
+			<span >{{twitterUsername ?"change" : "Sign in"}}</span>
 		</button>
 	</label>
 	<label>
 		<div class="inlineInput">
 			 <input type="text" class ="inlineTextBox" id="twitterTextBox"
-					placeholder ="hashtags (e.g: scrollback nodejs)" ng-model="$parent.twitterTags"/>
+					placeholder ="Twitter #hashtags and search keywords(space separated)"  ng-model="$parent.twitterTags"/>
 		</div>
 	</label>
 </div>

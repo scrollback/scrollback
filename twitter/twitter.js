@@ -2,6 +2,7 @@ var log = require("../lib/logger.js");
 var logTwitter = log;
 var passport = require('passport');
 var fs = require("fs");
+var htmlEncode = require('htmlencode');
 var Twit = require('twit');
 var guid = require("../lib/generate.js").uid;
 var config = require('../config.js');
@@ -90,7 +91,7 @@ function addTwitterTokens(room, callback) {
 		
 		var old;//old account
 		if(room.old && room.old.params) old = room.old.params.twitter;
-		if(old && old.token && old.tokenSecret && old.profile) {
+		if(old) {
 			room.params.twitter.token = old.token;
 			room.params.twitter.tokenSecret = old.tokenSecret;
 			room.params.twitter.profile = old.profile;
@@ -114,15 +115,15 @@ function formatString(s) {
 }
 
 function init() {
-	setInterval(initTwitterSeach, timeout);
+	setInterval(initTwitterSearch, timeout);
 }
 
 /**
  *Get all accounts where gateway = 'twitter' and init searching.
  */
-function initTwitterSeach() {
+function initTwitterSearch() {
 	log("getting room data....");
-	core.emit("getRooms",{identities:"twitter"}, function(err, data) {
+	core.emit("getRooms",{identity:"twitter"}, function(err, data) {
 		if (!err) {
 			if(debug) logTwitter("data returned from labelDB: ", JSON.stringify(data));
 			data.forEach(function(room) {
@@ -179,17 +180,23 @@ function fetchTweets(room) {
  */
 function sendMessages(replies, room) {
 	replies.statuses.forEach(function(r) {
+		var text;
+		if (r.retweeted_status && r.retweeted_status.text) {
+			text = "RT " + r.retweeted_status.text;
+		}else text = r.text;
 		if (!r.retweeted) {
 			var message = {
 				id: guid(),
 				type: "text",
-				text: r.text,
-				from: "guest-" + r.user.screen_name,
+				text: htmlEncode.htmlDecode(text),
+				from: "guest-" + r.user.screen_name.replace(/_/g, "-"),
 				to: room.id,
 				time: new Date().getTime(),
 				session: "twitter:" + r.user.screen_name
 			};
-			core.emit("message", message);
+			core.emit("message", message, function(err) {
+				log("error while sending message:" , err);
+			});
 		}
 		
 	});

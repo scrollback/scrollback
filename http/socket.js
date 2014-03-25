@@ -1,5 +1,4 @@
 /*
-
 	Scrollback: Beautiful text chat for your community. 
 	Copyright (c) 2014 Askabt Pte. Ltd.
 	
@@ -60,9 +59,6 @@ sock.on('connection', function (socket) {
 	};
 	socket.on('close', function() { handleClose(conn); });
 });
-
-
-
 
 function storeInit(conn, init) {
 	if(!uConns[init.user.id]) uConns[init.user.id] = [];
@@ -213,10 +209,10 @@ function verifyBack(conn, back) {
 // 	session.get({session: conn.session}, function(err, sess) {
 // 		var user = sess.user, tryingNick, roomName;
 // 		roomName = m.to;
-		
+
 // 		m.from = user.id;
 // 		m.time = new Date().getTime();
-// 		m.session = "web:"+conn.socket.remoteAddress+":"+ conn.session;
+// 		m.session = "web:"+conn.socket.remoteAddress+":"+ conn.sid;
 
 // 		if (m.origin) m.origin.ip = conn.socket.remoteAddress;
 // 		else{
@@ -228,32 +224,21 @@ function verifyBack(conn, back) {
 
 // 		if(m.to && typeof m.to != "string" && m.to.length===0) return;
 
-// 		if(m.type == 'join'){
-// 			//check for user login as well
-// 			sess.user.membership.push(roomName);
-// 			session.set(conn.session, sess);
-// 		}
-// 		if(m.type == 'part'){
-// 			//check for user login as well
-// 			sess.user.membership.splice(sess.user.membership.indexOf(roomName),1);
-// 			session.set(conn.session, sess);
-// 		}
-		
 // 		if (m.type == 'back') {
 // 			if(!userBack(user, m.to, conn)) {
-// 				session.set(conn.session, sess);
+// 				session.set(conn.sid, sess);
 // 				return; 
 // 			}
-// 			session.set(conn.session, sess);
+// 			session.set(conn.sid, sess);
 // 			// it returns false if the back message for this user is already sent
 // 		} else if (m.type == 'away') {
 // 			if(!userAway(user, m.to, conn)) {
-// 				session.set(conn.session, sess);
+// 				session.set(conn.sid, sess);
 // 				return; 
 // 			}
 // 			// it returns false if the away message for this user is not to be sent yet
 // 		} else if(m.type == 'nick') {
-// 			//validating nick name on server sessione 
+// 			//validating nick name on server side 
 // 			if(m.ref && m.ref !== "guest-" && !validateNick(m.ref.substring(6))) {
 // 				return conn.send('error', {id:m.id , message: "INVALID_NAME"});
 // 			}
@@ -284,7 +269,16 @@ function verifyBack(conn, back) {
 // 				if (!user || !user.id) {
 // 					return;
 // 				}
-				
+// 				if(m.type == 'join'){
+// 					//check for user login as well
+// 					sess.user.membership.push(roomName);
+// 					session.set(conn.sid, sess);
+// 				}
+// 				if(m.type == 'part'){
+// 					//check for user login as well
+// 					sess.user.membership.splice(sess.user.membership.indexOf(roomName),1);
+// 					session.set(conn.sid, sess);
+// 				}
 // 				if(m && m.type && m.type == 'nick') {
 
 // 					//in case of logout.
@@ -293,9 +287,9 @@ function verifyBack(conn, back) {
 // 						sess.user.picture = "//s.gravatar.com/avatar/" + crypto.createHash('md5').update(sess.user.id).digest('hex') + "/?d=identicon&s=48";
 // 						sess.user.accounts = [];
 // 						sess.user.membership = [];
-// 						session.set(conn.session, sess);
+// 						session.set(conn.sid, sess);
 // 						conn.send('init', {
-// 							session: sess.cookie.value,
+// 							sid: sess.cookie.value,
 // 							user: sess.user
 // 						});
 // 						if(/^guest-/.test(m.ref)){
@@ -305,7 +299,6 @@ function verifyBack(conn, back) {
 // 								time: new Date().getTime()
 // 							});	
 // 						}
-// 						return;
 // 					}
 
 // 					if(m.user) {
@@ -318,7 +311,7 @@ function verifyBack(conn, back) {
 // 					} else if(!err){
 // 						user.id = m.ref;
 // 					}
-// 					session.set(conn.session, sess);
+// 					session.set(conn.sid, sess);
 // 					var query=[];
 // 					if (sess.user.id.indexOf('guest-')!==0) {
 // 						query.user=sess.user.id;
@@ -333,11 +326,11 @@ function verifyBack(conn, back) {
 // 						sess.user.membership = Object.keys(m);
 // 						if(!err){
 // 							conn.send('init', {
-// 								session: sess.cookie.value,
+// 								sid: sess.cookie.value,
 // 								user: sess.user
 // 							});
 // 						}
-// 						session.set(conn.session, sess);
+// 						session.set(conn.sid, sess);
 // 					});
 // 					if(m.ref) {
 // 						users[m.ref] = users[user.from] || {};
@@ -372,154 +365,108 @@ function verifyBack(conn, back) {
 // }
 
 
-// function room (r, conn) {
-// 	var user;
-// 	session.get({session: conn.session}, function(err, sess) {
-// 		if(!conn.session) return;
-// 		if(typeof r === 'object') {
-// 			user = sess.user;
-// 			r.owner = user.id;
-// 		}
-// 		core.emit("room", r, function(err, data) {
-// 			if(err) {
-// 				log("ROOM ERROR", r, err);
-				
-// 				r= {
-// 					queryId : r.queryId
-// 				};
-// 				r.message = err.message;
-// 				conn.send('error', r);
-// 			}else{
-// 				data.query= {
-// 					queryId : r.queryId
-// 				};
-// 				conn.send('room', data);
-// 			}
-// 		});
-// 		session.set(conn.session, sess);
-// 	});
-// }
+	// function room (r, conn) {
+	// 	var user;
+	// 	session.get({sid: conn.sid}, function(err, sess) {
+	// 		if(!conn.sid) return;
+	// 		if(typeof r === 'object') {
+	// 			user = sess.user;
+	// 			r.owner = user.id;
+	// 		}
+	// 		core.emit("room", r, function(err, data) {
+	// 			if(err) {
+	// 				log("ROOM ERROR", r, err);
+	// 				r= {
+	//   					queryId : r.queryId
+	//   				};
+	// 				r.message = err.message;
+	//  				conn.send('error', r);
+	// 			}else{
+	// 				data.query= {
+	// 					queryId : r.queryId
+	// 				};
+	// 				conn.send('room', data);
+	// 			}
+	// 		});
+	// 		session.set(conn.sid, sess);
+	// 	});
+	// }
 
 
+	// function getRooms(query, conn) {
+	// 	core.emit("getRooms", query, function(err, data) {
+	// 		if(err) {
+	// 			query.message = err.message;
+	// 			conn.send('error',query);
+	// 			return;
+	// 		}else {
+	// 			log(data);
+	// 			conn.send('getRooms', { query: query, data: data} );
+	// 			//conn.send('rooms', data);	
+	// 		}
+	// 	});
+	// }
 
 
-// function getrooms(query, conn) {
-// 	core.emit("getrooms", query, function(err, data) {
-// 		if(err) {
-// 			query.message = err.message;
-// 			conn.send('error',query);
-// 			return;
-// 		}else {
-// 			log(data);
-// 			conn.send('getrooms', { query: query, data: data} );
-// 			//conn.send('rooms', data);	
-// 		}
-// 	});
-// }
+	// function getUsers(query, conn) {
+	// 	core.emit("getUsers", query, function(err, data) {
+	// 		if(err) {
+	// 			query.message = err.message;
+	// 			conn.send('error',query);
+	// 			return;
+	// 		}else {
+	// 			log(data);
+	// 			conn.send('getUsers', { query: query, data: data} );
+	// 			//conn.send('rooms', data);	
+	// 		}
+	// 	});
+	// }
+	// function rooms(query, conn) {
+	// 	core.emit("rooms", query, function(err, data) {
+	// 		if(err) {
+	// 			log("ROOMS ERROR", query, err);
+	// 			query.message = err.message;
+	// 			conn.send('error',query);
+	// 			return;
+	// 		}else {
+	// 			log(data);
+	// 			conn.send('rooms', { query: query, data: data} );
+	// 			//conn.send('rooms', data);	
+	// 		}
+	// 	});
+	// }
+
+	// function validateNick(nick){
+	// 	if (nick.indexOf("guest-")===0) return false;
+	// 	return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{2,32}$/i)?nick!='img'&&nick!='css'&&nick!='sdk':false);
+	// }
+
+	// // ----- Outgoing send ----
+
+	// exports.send = function (message, rooms) {
+	// 	message.text = message.text || "";
+	// 	log("Socket sending", message, "to", rooms);
+		
+	// 	rooms.map(function(room) {
+	// 		var location, to = message.to;
+	// 		if(message.origin) {
+	// 			location= message.origin;
+	// 			delete message.origin;
+	// 		}
+	// 		//if(message.type == "text") core.occupants(message.to, function(err, data){console.log(err, data);});
+	// 		if(rConns[room]) rConns[room].map(function(conn) {
+	// 			message.to = room;
+	// 			conn.send('message', message);
+	// 		});
+	// 		if(location) message.origin = location;
+	// 		message.to = to;
+	// 	});
+	// };
 
 
-// function getUsers(query, conn) {
-// 	core.emit("getUsers", query, function(err, data) {
-// 		if(err) {
-// 			query.message = err.message;
-// 			conn.send('error',query);
-// 			return;
-// 		}else {
-// 			log(data);
-// 			conn.send('getUsers', { query: query, data: data} );
-// 			//conn.send('rooms', data);	
-// 		}
-// 	});
-// }
-// function rooms(query, conn) {
-// 	core.emit("rooms", query, function(err, data) {
-// 		if(err) {
-// 			log("ROOMS ERROR", query, err);
-// 			query.message = err.message;
-// 			conn.send('error',query);
-// 			return;
-// 		}else {
-// 			log(data);
-// 			conn.send('rooms', { query: query, data: data} );
-// 			//conn.send('rooms', data);	
-// 		}
-// 	});
-// }
-
-// function validateNick(nick){
-// 	if (nick.indexOf("guest-")===0) return false;
-// 	return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{2,32}$/i)?nick!='img'&&nick!='css'&&nick!='sdk':false);
-// }
-
-//// ----- Outgoing send ----
-//
-//exports.send = function (message, rooms) {
-//	message.text = message.text || "";
-//	log("Socket sending", message, "to", rooms);
-//	
-//	rooms.map(function(room) {
-//		var location, to = message.to;
-//		if(message.origin) {
-//			location= message.origin;
-//			delete message.origin;
-//		}
-//		//if(message.type == "text") core.occupants(message.to, function(err, data){console.log(err, data);});
-//		if(rConns[room]) rConns[room].map(function(conn) {
-//			message.to = room;
-//			conn.send('message', message);
-//		});
-//		if(location) message.origin = location;
-//		message.to = to;
-//	});
-//};
-//
-//
-
-
-
-//function init(data, conn) {
-//	var user, session = data.session, nick = data.nick, i;
-//	
-//	session.get({ session:session, suggestedNick:data.nick }, function(err, sess) {
-//		var rooms = sess.user.rooms;
-//		var i;
-//		conn.session = session;
-//		conn.rooms = [];
-//
-//		if (sess.user.id.indexOf("guest-")===0 && data.nick)	sess.user.id="guest-"+data.nick;
-//		if(sess.pid !== pid) {
-//			sess.pid = pid;
-//			for(i in rooms) {
-//				if(rooms.hasOwnProperty(i)) rooms[i] = 0;
-//			}
-//		}
-//		var query=[];
-//		if (sess.user.id.indexOf('guest-')!==0) {
-//			query.user=sess.user.id;
-//		}
-//		core.emit("members", query,function(err,d) {
-//			var m={};
-//			if (d) {
-//				for (i=0;i<d.length;i++) {
-//					m[d[i].room]=true;
-//				}
-//			}
-//			sess.user.membership = Object.keys(m);//Room added to user object
-//			
-//			conn.send('init', {
-//				session: sess.cookie.value,
-//				user: sess.user,
-//				clientTime: data.clientTime,
-//				serverTime: new Date().getTime(),
-//			});
-//
-//			//Temp for now.
-//			core.emit("init", {
-//				from: sess.user.id,
-//				session: "web:"+conn.socket.remoteAddress+":"+conn.session,
-//				time: new Date().getTime()
-//			});
-//			session.set(conn.session, sess);
-//		});
-//	});
-//}
+	// exports.emit = function(type, action, room) {
+	// 	if(rConns[room]) rConns[room].map(function(conn) {
+	// 		action.to = room;
+	// 		conn.send(type, action);
+	// 	});		
+	// };

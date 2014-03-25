@@ -29,7 +29,7 @@ module.exports =function(core){
 		//need to delete the IRC ACCOUNTS
 		room.originalId = room.id;
 		log("heard room event", room);
-		redis.get("room:{{"+room.id+"", function(err, data) {
+		redis.get("room:{{"+room.id+"}}", function(err, data) {
 			if(err) callback(err);
 			if(data){
 				try {

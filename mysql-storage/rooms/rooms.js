@@ -153,7 +153,11 @@ function getAccounts(ids,callback) {
 		
 		
 		accounts.forEach(function(account) {
-			account.params = JSON.parse(account.params);
+			try {
+				account.params = JSON.parse(account.params);
+			}catch(err) {
+				account.params = {};
+			}
 		});
 		callback(null, accounts);
 	});
@@ -164,7 +168,6 @@ function getMembers(ids, callback) {
 		if(err) return callback(err);
 		var ids=[], user = {}, rooms = {};
 		members.forEach(function(element) {
-			console.log(element);
 		    ids.push(element.user);
 		    element.room = element.room.toLowerCase();
 		    if(!rooms[element.room]) rooms[element.room] = [];

@@ -55,6 +55,7 @@ var defaults = {
 		host     : 'localhost',
 		user     : 'scrollback',
 		password : 'scrollback',
+		connectionLimit: 100,
 		//debug    :true         ,
 		database : 'scrollback' 
 	},
@@ -95,7 +96,9 @@ var defaults = {
 	},
 	plugins: ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
 	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",
-	"admin-notifier", "custom-emitter","entityloader","guestinitializer", "twitter"]
+	"admin-notifier", "custom-emitter","entityloader","guestinitializer", "twitter"],
+	facebook: {
+	}
 }
 
 
