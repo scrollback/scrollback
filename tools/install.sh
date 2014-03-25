@@ -56,11 +56,35 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
                 esac;;
         esac
     done
+    # Set caps
+    case "$distro" in
+        Ubuntu)
+            sudo apt-get install -y libcap2-bin;;
+        Fedora)
+            sudo yum install -y libcap;;
+    esac
+    sudo setcap "cap_net_bind_service=+ep" /usr/bin/node
 else
     # We only install packages for Ubuntu and Fedora
     echo "Unsupported distro. You will need to install the dependencies manually. Continue anyway [y/n]?"
     read ans
     [[ "$ans" = [Yy] ]] || exit 1
+fi
+
+# Set open file limits
+filemax=$(( $(cat /proc/sys/fs/file-max) - 2048 ))
+limitconf="/etc/security/limits.conf"
+grep "$(whoami) hard nofile" "$limitconf" > /dev/null 2>&1
+if [[ ! $? -eq 0 ]]; then
+cat <<EOF | sudo tee -a "$limitconf" > /dev/null 2>&1
+$(whoami) hard nofile $filemax
+EOF
+fi
+grep "$(whoami) soft nofile" "$limitconf" > /dev/null 2>&1
+if [[ ! $? -eq 0 ]]; then
+cat <<EOF | sudo tee -a "$limitconf" > /dev/null 2>&1
+$(whoami) soft nofile $filemax
+EOF
 fi
 
 # Are we inside the cloned repository?
