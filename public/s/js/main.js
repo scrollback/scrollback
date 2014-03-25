@@ -115,9 +115,9 @@
     function error(err) {
         $("#create-field > .error").text(err);
         if (typeof err === 'undefined') {
-            $("#create-field > .button").removeClass('disabled');
+            $("#create-field > input[type=submit]").attr('disabled', false);
         } else {
-            $("#create-field > .button").addClass('disabled');
+            $("#create-field > input[type=submit]").attr('disabled', true);
         }
     }
 
@@ -133,14 +133,10 @@
     }
 
     // Handle submit button click
-    $("#create-field > .button").click(function () {
-        if ($(this).hasClass('disabled')) {
-            return;
-        }
-
-        location.href = location.protocol + "//" + location.host + "/" + $("#create-field > input").val();
-        $("#create-field > input").val('');
-        $(this).addClass('disabled');
+    $("#create-field > input[type=submit]").click(function () {
+        location.href = location.protocol + "//" + location.host + "/" + $("#create-text").val();
+        $("#create-text").val('');
+        $(this).attr('disabled', true);
     });
 
     // Prevent form submission if input not valid

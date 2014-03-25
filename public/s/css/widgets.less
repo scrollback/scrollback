@@ -1,0 +1,122 @@
+.headings(@size: 1.8em) {
+    font-size: @size;
+    line-height: 1em;
+    font-family: @heading-font;
+    font-weight: 300;
+    margin: .5em 0;
+}
+
+.opacity(@opacity: 0.5) {
+    @opperc: @opacity * 100;
+
+    -moz-opacity: @opacity;
+    -khtml-opacity: @opacity;
+    -webkit-opacity: @opacity;
+    opacity: @opacity;
+    -ms-filter: ~"progid:DXImageTransform.Microsoft.Alpha(opacity=@{opperc})";
+    filter: ~"alpha(opacity=@{opperc})";
+}
+
+.clearfloat() {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.linked {
+    border-radius: 0;
+
+    &:first-of-type {
+        border-right: none;
+        border-radius: @roundness 0 0 @roundness;
+    }
+
+    &:last-of-type { border-radius: 0 @roundness @roundness 0; }
+}
+
+.inputs() {
+    display: inline-block;
+    margin: 1em 0;
+    padding: .8em 2em;
+    border-radius: 3px;
+}
+
+.buttons(@bg: @accent-color; @fg: @light-color) {
+    background-color: @bg;
+    border: 1px solid @bg;
+    border-bottom-color: darken(@bg, 10%);
+    color: @fg;
+    text-align: center;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+
+    .inputs;
+    .ease;
+
+    &:hover, &:focus {
+        background-color: darken(@bg, 5%);
+        border-color: darken(@bg, 5%);
+        border-bottom-color: darken(@bg, 15%);
+        color: @fg;
+    }
+
+    &:active {
+        background-color: darken(@bg, 10%);
+        border-color: darken(@bg, 10%);
+        border-bottom-color: darken(@bg, 20%);
+        color: @fg;
+    }
+}
+
+.entry {
+    background-color: lighten(@light-color, 50%);
+    border: 1px solid darken(@light-color, 20%);
+    color: @dark-color;
+
+    .inputs;
+    .ease;
+
+    &:hover, &:focus, &:active {
+        border-color: darken(@light-color, 30%);
+        outline: none;
+    }
+}
+
+.button-disabled {
+    background-color: darken(@light-color, 5%);
+    border: 1px solid darken(@light-color, 15%);
+    color: lighten(@dark-color, 50%);
+    pointer-events: none;
+
+    &:hover, &:focus, &:active {
+        background-color: darken(@light-color, 5%);
+        border-color: darken(@light-color, 15%);
+        color: lighten(@dark-color, 50%);
+    }
+}
+
+.button { .buttons; }
+
+.login-toggle { cursor: pointer; }
+
+.google { .buttons(#d34836; #fff); }
+
+.twitter { .buttons(#55acee; #fff); }
+
+.facebook { .buttons(#3b5998; #fff); }
+
+.persona { .buttons(#0096dd; #fff); }
+
+.openid { .buttons(#f78c40; #fff); }
+
+.error { color: @error-color; }
+
+.warning {
+    background-color: lighten(@error-color, 40%);
+    border-bottom: 2px solid @error-color;
+    text-align: center;
+    font-size: 16px;
+
+    h2 { color: @error-color; }
+}
