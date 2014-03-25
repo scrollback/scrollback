@@ -83,10 +83,7 @@
     }
 }
 
-.container {
-    margin: 1em auto;
-    max-width: 68em;
-}
+.container { .row; }
 
 #cover { position: relative; }
 
@@ -126,6 +123,10 @@
     .slides {
         overflow-x: hidden;
 
+        .col(12);
+
+        @media only screen and (min-width: 700px) { .col(8); }
+
         .slider {
             position: relative;
             left: 0;
@@ -137,7 +138,7 @@
 
             .ease;
 
-            &:after { .clearfloat; }
+            .clearfloat;
 
             & > li {
                 float: left;
@@ -240,12 +241,16 @@
         border-radius: @roundness;
         margin: .5em 0;
     }
+
+    .feat { .col(4); }
 }
 
 .testimonials {
     background-color: darken(@light-color, 5%);
 
     .zigzag(darken(@light-color, 5%), @light-color);
+
+    .customers { .col(2.4); }
 }
 
 .pricing {
@@ -253,33 +258,37 @@
 
     .zigzag(@light-color, darken(@light-color, 5%));
 
-    .heading {
-        padding: 1.2em 0 .5em 0;
-        font-size: 1.4em;
-        width: 100%;
-        border-bottom: 1px solid darken(@light-color, 5%);
+    .plan {
+        .col(6);
 
-        h2 { display: inline; }
+        .heading {
+            padding: 1.2em 0 .5em 0;
+            font-size: 1.4em;
+            width: 100%;
+            border-bottom: 1px solid darken(@light-color, 5%);
 
-        .price {
-            float: right;
-            color: @accent-color;
-            font-weight: 300;
-            position: relative;
+            h2 { display: inline; }
 
-            .sub {
-                display: block;
-                position: absolute;
-                right: 0;
-                white-space: nowrap;
-                text-transform: uppercase;
-                font-weight: 700;
-                font-size: 0.6em;
-                color: lighten(@dark-color, 40%);
+            .price {
+                float: right;
+                color: @accent-color;
+                font-weight: 300;
+                position: relative;
+
+                .clearfloat;
+
+                .sub {
+                    display: block;
+                    position: absolute;
+                    right: 0;
+                    white-space: nowrap;
+                    text-transform: uppercase;
+                    font-weight: 700;
+                    font-size: 0.6em;
+                    color: lighten(@dark-color, 40%);
+                }
             }
         }
-
-        &:after { .clearfloat; }
     }
 
     .signup { text-align: center; }
