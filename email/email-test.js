@@ -22,7 +22,7 @@ describe('Email test', function() {
             done();
         }, 1500);
     });
-    it('should get a label with title', function(done) {
+    it('add message test', function(done) {
         this.timeout(30000);
 		core.emit("text", msg, function(err, data) {
             console.log(msg);
