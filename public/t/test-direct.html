@@ -10,6 +10,7 @@
 		<script src="/t/chai.js"></script>
 		<script src="/sdk/sockjs.js"></script>
         <script src="/sdk/polyfill.js"></script>
+		<script src="/sdk/generate.js"></script>
 		<script>
 			var assert = chai.assert;
 			var scrollback = {
@@ -20,41 +21,45 @@
 		</script>
 		<script>mocha.setup('bdd');</script> 
 		<script>
-			describe("socket test", function() {
-				describe("socket connection", function() {
-					it("socket connection established.", function(done) {
-						socket = new SockJS(scrollback.host + '/socket');
-						socket.onopen = function() {
-							done();
-						};
-					});
-					it("socket closing.", function(done) {
-						socket.close();
+				
+			describe("socket connection", function() {
+				it("socket connection established.", function(done) {
+					socket = new SockJS(scrollback.host + '/socket');
+					socket.onopen = function() {
 						done();
-					});
+					};
 				});
-                describe("sending message over socket", function() {
-                    beforeEach(function(done){
-                        socket = new SockJS(scrollback.host + '/socket');
-                        socket.onopen = function() {
-                            done();
-                        };
-                    });
-                    afterEach(function(done){
-                        socket.close();
+				it("socket closing.", function(done) {
+					socket.close();
+					done();
+				});
+			});
+           	describe("sending message over socket", function() {
+                beforeEach(function(done){
+                    socket = new SockJS(scrollback.host + '/socket');
+                    socket.onopen = function() {
                         done();
-                    });
-                    it("echo back the action", function(done) {
-                        var action = {type:"back", time:new Date().getTime(), text:"hi there..", to:"scrollback", "from":"harish"};
-                        socket.onmessage = function(message){
-                            message = JSON.parse(message.data);
-                            assert.equal(message.type, "back", "response tampered");
-                            done();
-                        };
-                        socket.send(JSON.stringify(action));
-                    });
+                    };
                 });
-		    });
+                afterEach(function(done){
+                    socket.close();
+                    done();
+                });
+                it("echo back the action", function(done) {
+                    var action = {type:"back", time:new Date().getTime(), text:"hi there..", to:"scrollback", "from":"harish"};
+                    socket.onmessage = function(message){
+                        message = JSON.parse(message.data);
+                        assert.equal(message.type, "back", "response tampered");
+                        done();
+                    };
+                    socket.send(JSON.stringify(action));
+                });
+            });			
+		</script>
+		<!-- All the scripts go here. -->
+		<script src="/t/backaway.js"></script>
+
+		<script>
 			mocha.run();
 		</script>
         <script src="textMessage/textMessageTest.js"></script>

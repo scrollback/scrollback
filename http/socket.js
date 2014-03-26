@@ -39,7 +39,7 @@ sock.on('connection', function (socket) {
 		try { d = JSON.parse(d); log ("Socket received ", d); }
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 		
-		if(d.type == 'init' && d.session) conn.session = d.data.session;
+		if(d.type == 'init' && d.session) conn.session = d.session;
 		else if(conn.session) { d.session = conn.session; }
 		
 		if(d.type == 'back' && !verifyBack(conn, d)) return;
