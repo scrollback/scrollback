@@ -18,7 +18,7 @@
 }
 
 .linked {
-    border-radius: 0;
+    border-radius: 0 0 0 0;
 
     &:first-of-type {
         border-right: none;
@@ -32,7 +32,7 @@
     display: inline-block;
     margin: 1em 0;
     padding: .8em 2em;
-    border-radius: 3px;
+    border-radius: @roundness;
 }
 
 .buttons(@bg: @accent-color; @fg: @light-color) {
@@ -67,6 +67,7 @@
     background-color: lighten(@light-color, 50%);
     border: 1px solid darken(@light-color, 20%);
     color: @dark-color;
+    box-shadow: inset 0 1px 1px 0 rgba(0,0,0,0.1);
 
     .inputs;
     .ease;
@@ -74,6 +75,25 @@
     &:hover, &:focus, &:active {
         border-color: darken(@light-color, 30%);
         outline: none;
+    }
+}
+
+.button-secondary {
+    background-color: darken(@light-color, 5%);
+    border: 1px solid darken(@light-color, 15%);
+    color: lighten(@dark-color, 10%);
+    text-align: center;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+
+    .inputs;
+    .ease;
+
+    &:hover, &:focus, &:active {
+        background-color: darken(@light-color, 3%);
+        border-color: darken(@light-color, 30%);
+    color: lighten(@dark-color, 5%);
     }
 }
 
@@ -104,6 +124,12 @@
 
 .openid { .buttons(#f78c40; #fff); }
 
+.subtitle {
+    margin: .5em 0;
+    font-size: .9em;
+    font-style: italic;
+}
+
 .error { color: @error-color; }
 
 .warning {
@@ -113,4 +139,46 @@
     font-size: 16px;
 
     h2 { color: @error-color; }
+}
+
+.popover { display: none; }
+
+.popover-active {
+    position: relative;
+
+    .popover {
+        position: absolute;
+        display: block;
+        top: 36px;
+        right: 47%;
+        padding: 1em;
+        border-radius: @roundness;
+        font-weight: normal;
+        border: 1px solid darken(@light-color, 30%);
+        background-color: @light-color;
+        color: @dark-color;
+        box-shadow: 0 0 10px fade(@dark-color, 50%);
+
+        .appear;
+
+        &:before {
+            position: absolute;
+            top: -8px;
+            right: 47%;
+            content: '';
+            display: block;
+            height: 14px;
+            width: 14px;
+            margin-left: -8px;
+            background-color: @light-color;
+            border-color: darken(@light-color, 30%);
+            border-style: solid;
+            border-width: 1px 0 0 1px;
+            -webkit-transform: rotate(45deg);
+            -moz-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            -o-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+    }
 }

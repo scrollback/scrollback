@@ -146,7 +146,4 @@
         return false;
     });
 
-    // Style active states in mobile
-    document.addEventListener("touchstart", function () {}, true);
-
 }());

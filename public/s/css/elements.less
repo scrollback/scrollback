@@ -43,11 +43,19 @@ input[type=submit] {
 
 input[type=entry] { .entry; }
 
+pre {
+    width: 30em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding: 1em;
+    border-radius: @roundness;
+    background-color: darken(@light-color, 5%);
+}
+
 code {
     font-weight: 600;
-    font-size: 1.2em;
     font-family: @monospace-font;
-    line-height: 1.4em;
+    line-height: 1.2em;
 }
 
 section {
@@ -60,18 +68,14 @@ footer {
     border-top: 1px solid darken(@dark-color, 10%);
     background-color: @dark-color;
     color: darken(@light-color, 20%);
-    font-size: .9em;
     text-align: center;
+    font-size: .9em;
 
     padding: 1em;
 
     @media only screen and (min-width: 700px) { padding: 2em; }
 
     a { color: darken(@light-color, 20%); }
-
-    .poweredby {
-        img { padding: 10px 10px 0 10px; }
-    }
 }
 
 ::selection {
