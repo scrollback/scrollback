@@ -1,10 +1,24 @@
 describe("claiming or saving a room", function() {
 	var socket ;
+	var session;
 	beforeEach (function(done) {
 		this.timeout(10000);
 		socket = new SockJS(scrollback.host + '/socket');
 		socket.onopen = function() {
-			done();
+			var init = {
+				id: guid(),
+				type: 'init',
+				to: 'me',
+				session: "web://" + guid(),
+				auth: {persona : {assertion : "TestingSession"}}
+			};
+			session = init.session;
+			socket.onmessage =  function(action) {
+				var it = action.data;
+				console.log("returned session ", it);
+				done();
+			};
+			socket.send(JSON.stringify(init));
 		};
 	});
 
@@ -89,37 +103,102 @@ describe("claiming or saving a room", function() {
 
 	it("save room that user do not own", function(done) {
 		this.timeout(100000);
-		navigator.id.watch({
-			onlogin: function(assertion){
-				console.log("Assertion is ", assertion);
-				//init.auth send it as init
-				var a = {
-					type: 'init',
-					id: guid(),
-					auth: {persona: {assertion : assertion}},
-					to: "me"
-				};
-				socket.onmessage(function(r) {
-					r.data = JSON.parse(r.data);
-					
-				});
-				session.send(a);
-				done();
-			},
-			onlogout: function(){
+		var newInit = {
+			id: guid(),
+			type: 'init',
+			to: 'me',
+			session: "web://" + guid(),
+			auth: {persona : {assertion : "TestingSession"}}
+		}
+		socket.onmessage(function(action) {
 
+			action.data = JSON.parse(action.data);
+			if(action.data.type === 'init') {
+				var room = {
+					id : "roomAlreadyOwned",
+					description:  "this is testing room for scrollback",
+					type:    "room",
+					sessions: [newInit.session] ,
+					timezone: -330,
+					params: {
+						wordban: true
+					}
+				};
+				socket.send(JSON.stringify(room));
+			}else {//room
+				assert.ok(action.data.err, "saving already saved room");
 			}
+
+
 		});
-		navigator.id.request();
+		socket.send(JOSN.stringify(newInit));
 
 	});
 
 	it("save the new room that no one own", function(done) {
-		//TODO ?
+		this.timeout(100000);
+		var newInit = {
+			id: guid(),
+			type: 'init',
+			to: 'me',
+			session: "web://" + guid(),
+			auth: {persona : {assertion : "TestingSession"}}
+		}
+		socket.onmessage(function(action) {
+
+			action.data = JSON.parse(action.data);
+			if(action.data.type === 'init') {
+				var room = {
+					id : "newTestingRoom",
+					description:  "this is testing room for scrollback",
+					type:    "room",
+					sessions: [newInit.session] ,
+					timezone: -330,
+					params: {
+						wordban: true
+					}
+				};
+				socket.send(JSON.stringify(room));
+			}else {//room
+				assert.ok(!action.data.err, "Not saving room");
+			}
+
+
+		});
+		socket.send(JOSN.stringify(newInit));
+
 	});
 
 	it("save the old room that you own", function(done) {
-		//TODO ?
+		this.timeout(100000);
+		var newInit = {
+			id: guid(),
+			type: 'init',
+			to: 'me',
+			session: "web://" + guid(),
+			auth: {persona : {assertion : "TestingSession"}}
+		}
+		socket.onmessage(function(action) {
+
+			action.data = JSON.parse(action.data);
+			if(action.data.type === 'init') {
+				var room = {
+					id : "myOldRoom",
+					description:  "this is testing room for scrollback",
+					type:    "room",
+					sessions: [newInit.session] ,
+					timezone: -330,
+					params: {
+						wordban: true
+					}
+				};
+				socket.send(JSON.stringify(room));
+			}else {//room
+				assert.ok(!action.data.err, "Not saving room");
+			}
+		});
+		socket.send(JOSN.stringify(newInit));
+
 	});
 
 	afterEach (function(done) {
@@ -127,3 +206,7 @@ describe("claiming or saving a room", function() {
 		done();
 	});
 });
+
+
+
+
