@@ -80,6 +80,9 @@ describe("Text Message Test", function() {
 		socket.send(JSON.stringify(text));
 	});
 
+	
+
+
 	it("Repetitive text test(max allowed=3)", function(done) {
 		text.to = "scrollback-test";
 		var uid = guid();
@@ -103,7 +106,6 @@ describe("Text Message Test", function() {
 		text.id = uid;
 		text.time = new Date().getTime();
 		socket.send(JSON.stringify(text));
-
 	});
 
 

@@ -43,7 +43,7 @@ if(!Array.prototype.forEach) Array.prototype.forEach = function(fn, scope) {
 };
 
 if(!Array.prototype.map) Array.prototype.map = function(fn, scope) {
-	var r = [];
+	var r = [];, 
 	for(var i = 0, len = this.length; i < len; ++i) {
 		r.push(fn.call(scope, this[i], i, this));
 	}

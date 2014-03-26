@@ -11,6 +11,7 @@
 		<script src="/sdk/sockjs.js"></script>
         <script src="/sdk/polyfill.js"></script>
 		<script src="/sdk/generate.js"></script>
+		<script src="https://login.persona.org/include.js"></script>
 		<script>
 			var assert = chai.assert;
 			var scrollback = {
@@ -18,10 +19,7 @@
 			};
 			console.log(scrollback);
 			var socket;
-		</script>
-		<script>mocha.setup('bdd');</script> 
-		<script>
-				
+			mocha.setup('bdd');
 			describe("socket connection", function() {
 				it("socket connection established.", function(done) {
 					socket = new SockJS(scrollback.host + '/socket');
@@ -58,12 +56,13 @@
 		</script>
 		<!-- All the scripts go here. -->
 		<script src="/t/backaway.js"></script>
-
-		<script>
-			mocha.run();
-		</script>
-        <script src="textMessage/textMessageTest.js"></script>
+        <script src="socket-test.js"></script>
+		<script src="init-test.js"></script>
+		<script src="user-registration.js"></script>
+		<script src="user-profile-update.js"></script>
+		<script src="textMessage/textMessageTest.js"></script>
         <script src="room/roomTest.js"></script>
         <script src="queries/queriesTest.js"></script>
-        </body>
-    </html>
+		<script>mocha.run();</script>
+	</body>
+</html>	
