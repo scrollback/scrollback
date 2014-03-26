@@ -150,7 +150,6 @@
         position: absolute;
         display: block;
         top: 36px;
-        right: 47%;
         padding: 1em;
         border-radius: @roundness;
         font-weight: normal;
@@ -158,13 +157,14 @@
         background-color: @light-color;
         color: @dark-color;
         box-shadow: 0 0 10px fade(@dark-color, 50%);
+        text-transform: none;
 
         .appear;
 
         &:before {
             position: absolute;
             top: -8px;
-            right: 47%;
+            left: 50%;
             content: '';
             display: block;
             height: 14px;
