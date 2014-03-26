@@ -4,7 +4,19 @@ describe("Queries", function() {
 		this.timeout(10000);
 		socket = new SockJS(scrollback.host + '/socket');
 		socket.onopen = function() {
-			done();
+			var init = {
+				id: guid(),
+				type: 'init',
+				to: 'me',
+				session: "web://" + guid(),
+				auth: {persona : {assertion : "TestingSession"}}
+			};
+			socket.onmessage =  function(action) {
+				var it = action.data;
+				console.log("returned session ", it);
+				done();
+			};
+			socket.send(JSON.stringify(init));
 		};
 	});
 
