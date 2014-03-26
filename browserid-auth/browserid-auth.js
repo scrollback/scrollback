@@ -50,7 +50,7 @@ module.exports = function(core) {
 		request.post("https://verifier.login.persona.org/verify", { form: {
 			assertion: assertion,
 			audience: config.auth.audience
-		}}, function(err, res, body) {
+		}}	, function(err, res, body) {
 			var account;
 			if(err) return callback(new Error("AUTH_FAIL_NETWORK " + err.message));
 			try {
