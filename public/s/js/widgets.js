@@ -2,29 +2,42 @@
 /*global $*/
 
 (function () {
-    'use strict';
+    "use strict";
 
-    // Show popover
-    $(".has-popover").on("click mouseover", function () {
-        $(this).addClass("popover-active");
+    $(function () {
+        var popoverclass = ".popover";
+        var popoverlayer = ".popover-layer";
+        var popoverparent = ".has-popover";
+
+        // Show popover
+        function showPopOver() {
+            $("body").append("<div class='popover-layer'></div>");
+            $(popoverparent).addClass("popover-active");
+            $(popoverlayer).on("click", hidePopOver);
+
+            var popoverheight = $(popoverclass).height();
+            var spaceabove = $(popoverparent).offset().top - $(document).scrollTop() + 20;
+            var spacebelow = $(window).height() - spaceabove - popoverheight + 20;
+
+            console.log(spaceabove);
+            console.log(spacebelow);
+
+            if (spacebelow > popoverheight) {
+                $(popoverclass).addClass('popover-bottom');
+            } else if (spaceabove > popoverheight) {
+                $(popoverclass).addClass('popover-top');
+            }
+        }
+
+        // Hide popover
+        function hidePopOver() {
+            $(popoverparent).removeClass("popover-active");
+            $(popoverclass).removeClass("popover-bottom").removeClass("popover-top");
+            $(popoverlayer).remove();
+        }
+
+        $(popoverparent).on("click", showPopOver);
     });
-
-    // Hide popover
-    function hidePopOver() {
-        $('.popover').on("click mouseover", function (e) {
-            e.stopPropagation();
-        });
-
-        $(".has-popover").removeClass("popover-active");
-    }
-
-    $("body").on("click", function () {
-        hidePopOver();
-    });
-
-    $("body").on("mouseover", setTimeout(function () {
-        hidePopOver();
-    }, 1000));
 
     // Style active states in mobile
     document.addEventListener("touchstart", function () {}, true);

@@ -22,8 +22,7 @@
             <img src="./s/img/example.jpg" />
             <p class="subtitle">Just a subtitle</p>
             <p>This page showcases all the widget styles available in the <code>.less</code> files and contains examples on how to use the widgets. If any new widget style is made, then it should be also be added to this page. This is an example of a small paragraph. Here a link to the <a href="http://scrollback.io">scrollback.io</a> homepage.</p>
-            <p>Click or hover the follwing button to see a popover. Click outside the popover to dismiss. Popovers will usually align to the center only in <code>inline-block</code> elements.
-            </p>
+            <p>Click or hover the follwing button to see a popover. Click outside the popover to dismiss. Popovers will usually align to the center only in <code>inline-block</code> elements. You also need to add one element with the class <code>popover-layer</code> to your markup.</p>
             <div class="has-popover button">
                 Show popover
                 <div class="popover">
@@ -36,6 +35,11 @@
 <pre><code class="definitions">
 </code></pre>
             <p class="error">This is an error message. Did something went wrong?</p>
+            <p>For toggle switches, we can check the state with <code>$("#switch").prop("checked")</code> </p>
+            <p>
+                Toggle switch <input type="checkbox" id="switch" name="switch" class="switch" />
+                <label for="switch"></label>
+            </p>
             <p>
                 <input type="entry" placeholder="Entry" />
                 <input type="submit" value="Submit button" />
@@ -46,7 +50,6 @@
             </p>
             <p>
                 <a class="button-secondary">Secondary button</a>
-                <a class="button">Link button</a>
                 <a class="button google">Google+</a>
                 <a class="button twitter">Twitter</a>
                 <a class="button facebook">Facebook</a>

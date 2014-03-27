@@ -66,6 +66,7 @@
 .entry {
     background-color: lighten(@light-color, 50%);
     border: 1px solid darken(@light-color, 20%);
+    border-top-color: darken(@light-color, 30%);
     color: @dark-color;
     box-shadow: inset 0 1px 1px 0 rgba(0,0,0,0.1);
 
@@ -73,7 +74,8 @@
     .ease;
 
     &:hover, &:focus, &:active {
-        border-color: darken(@light-color, 30%);
+        border-color: darken(@light-color, 40%);
+        border-top-color: darken(@light-color, 50%);
         outline: none;
     }
 }
@@ -141,6 +143,29 @@
     h2 { color: @error-color; }
 }
 
+.rotate(@deg: 45deg) {
+    -webkit-transform: rotate(@deg);
+    -moz-transform: rotate(@deg);
+    -ms-transform: rotate(@deg);
+    -o-transform: rotate(@deg);
+    transform: rotate(@deg);
+}
+
+.popover-arrow() {
+    position: absolute;
+    display: block;
+    content: '';
+    left: 50%;
+    margin-left: -8px;
+    height: 14px;
+    width: 14px;
+    background-color: @light-color;
+    border-color: darken(@light-color, 30%);
+    border-style: solid;
+    border-width: 1px 0 0 1px;
+
+}
+
 .popover { display: none; }
 
 .popover-active {
@@ -149,7 +174,6 @@
     .popover {
         position: absolute;
         display: block;
-        top: 36px;
         padding: 1em;
         border-radius: @roundness;
         font-weight: normal;
@@ -158,27 +182,86 @@
         color: @dark-color;
         box-shadow: 0 0 10px fade(@dark-color, 50%);
         text-transform: none;
+        cursor: auto;
+        z-index: 8;
 
         .appear;
+    }
+
+    .popover-top {
+        bottom: 36px;
 
         &:before {
-            position: absolute;
-            top: -8px;
-            left: 50%;
-            content: '';
-            display: block;
-            height: 14px;
-            width: 14px;
-            margin-left: -8px;
-            background-color: @light-color;
-            border-color: darken(@light-color, 30%);
-            border-style: solid;
-            border-width: 1px 0 0 1px;
-            -webkit-transform: rotate(45deg);
-            -moz-transform: rotate(45deg);
-            -ms-transform: rotate(45deg);
-            -o-transform: rotate(45deg);
-            transform: rotate(45deg);
+            bottom: -8px;
+
+            .popover-arrow;
+            .rotate(225deg);
         }
+    }
+
+    .popover-bottom {
+        top: 36px;
+
+        &:before {
+            top: -8px;
+
+            .popover-arrow;
+            .rotate(45deg);
+        }
+    }
+}
+
+.popover-layer {
+    position: fixed;
+    content: "";
+    display: block;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 7;
+}
+
+input.switch {
+    margin: .5em 0;
+
+    .opacity(0);
+
+    & ~ label {
+        position: relative;
+        cursor: pointer;
+
+        &:before,
+        &:after {
+            position: absolute;
+            display: block;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            content: "";
+            height: 1.8em;
+            width: 3.6em;
+            border-radius: @roundness;
+            background-color: @error-color;
+            box-shadow: inset 0 1px 0 rgba(0,0,0,0.2);
+
+            .ease;
+        }
+
+        &:after {
+            height: 1.5em;
+            width: 1.6em;
+            top: 0.1em;
+            bottom: 0.1em;
+            left: 0.15em;
+            background-color: @light-color;
+            box-shadow: inset 0 -1px 0 rgba(0,0,0,0.2);
+        }
+    }
+
+    &:checked ~ label {
+        &:before { background-color: @accent-color; }
+
+        &:after { left: 1.85em; }
     }
 }
