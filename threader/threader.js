@@ -30,12 +30,11 @@ module.exports = function(core) {
 					//if(true){
 					var msg = JSON.stringify({
 						id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
-						text: message.text.replace(/['"]/g, ''),
+						text: message.text.replace(/['"]/g, ' ').replace(/\n/g, " ").replace(/\\n/g, " "),
 						room: typeof message.to=="string" ? message.to:message.to[0]
 					});
 					log("Sending msg to scrollback.jar="+msg);
 					try {
-						msg = msg.replace(/\n/g," ");
 						client.write(msg+'\n');
 					} catch(err) {
 						log("--error --"+err);

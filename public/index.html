@@ -2,7 +2,7 @@
 <html>
 
     <head>
-        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        <meta charset="utf-8" />
 
         <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
         <meta name="description" content="Scrollback is a beautiful, open source text chat service designed for communities. Scrollback chat rooms can be embedded in websites, linked with Twitter hashtags or with IRC channels." />
@@ -29,15 +29,41 @@
         <link rel="stylesheet" type="text/css" media="screen and (min-width:0\0)" href="./s/css/ie.css" />
 
         <link rel="stylesheet" type="text/css"  media="print" href="./s/css/print.css" />
+
+        <script>
+            var css = document.createElement("style");
+            css.type = "text/css";
+            css.innerHTML = ".nojs { display: none; }";
+            document.getElementsByTagName("head")[0].appendChild(css);
+        </script>
+
+        <script>
+             window.scrollback = {
+                streams:["scrollback"],
+                theme: 'light',
+                ticker: true,
+                minimized: false
+             };
+
+             /***** don't edit below *****/
+             (function(d,s,h,e){e=d.createElement(s);e.async=1;
+             e.src=h+'/client.min.js';scrollback.host=h;
+             d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
+             (document,'script',(location.protocol=="https:"?"https:":"http:")+'//scrollback.io'));
+        </script>
     </head>
 
     <body>
         <!--[if IE]>
-        <section class="iewarning">
+        <section class="ie warning">
         <h2>You are using an outdated browser!</h2>
         <p>Please <a href="http://browsehappy.com">upgrade</a> to a modern browser.</p>
         </section>
         <![endif]-->
+        <section class="nojs warning">
+        <h2>Javascript is disabled in your browser!</h2>
+        <p>Please enable Javascript for the website to work.</p>
+        </section>
         <section id="cover" class="cover-home">
             <div class="cover-bg">
                 <div class="bg-home"></div>
@@ -75,11 +101,12 @@
                                 <li><a class="link-geeks">For geeks</a></li>
                             </ul>
                         </div>
-                        <a class="button login-toggle">Get started</a>
+                        <a class="button login-toggle">Get started</a> <span class="try">or <a href="http://scrollback.io/sandbox" target="_blank">Try it first</a></span>
                     </div>
                 </div>
                 <a class="arrow" href="#features"><img src="./s/img/arrow.png" alt="Go down" /></a>
-                <a  class="fork" href="http://github.com/scrollback/scrollback/"><img src="./s/img/github.png" alt="Fork on GitHub" /></a>
+                <a class="fork" href="http://github.com/scrollback/scrollback/" target="_blank"><img src="./s/img/github.png" alt="Fork on GitHub" /></a>
+                <a class="room"><img src="./s/img/sb-room.png" alt="Scrollback room" /></a>
             </div>
         </section>
         <section id="features" class="features">
@@ -153,8 +180,8 @@
         </section>
         <footer>
             <p>Scrollback is a product of Askabt Pte. Ltd. We respect your <a href="/privacy.html">privacy</a>. Copyright Askabt Pte. Ltd.</p>
-            <p class="credit">Photo credit <a href="http://www.flickr.com/photos/georgio/6261749693/">flickr.com/photos/georgio</a>.</p>
-
+            <p class="credit">Photo credit <a href="http://www.flickr.com/photos/georgio/6261749693/" target="_blank">flickr.com/photos/georgio</a>.</p>
+            <p class="poweredby"><a href="http://softlayer.com/"><img src="./s/img/softlayer.png" /></a><a href="http://browserstack.com"><img src="./s/img/browserstack.png" /></a></p>
         </footer>
         <section class="modal">
             <a class="close login-toggle">&times;</a>
@@ -169,9 +196,7 @@
             <h2>Create or visit a room </h2>
             <p>Type the name of the room you want</p>
             <form id="create-field">
-                <label for="create-text">scrollback.io/</label>
-                <input type="entry" autocomplete="off" id="create-text" placeholder="my-community" />
-                <input type="submit" value="Go" class="button disabled" />
+                <label for="create-text" class="linked">scrollback.io/</label><input type="entry" autocomplete="off" id="create-text" placeholder="my-community" class="linked" /><input type="submit" disabled="true" value="Go" class="linked" />
                 <p class="error"></p>
             </form>
         </section>
@@ -181,6 +206,7 @@
             window.jQuery || document.write('<script src="./s/js/jquery.min.js"><\/script>')
         </script>
         <script src="./s/js/main.js"></script>
+        <script src="./s/js/widgets.js"></script>
     </body>
 
 </html>

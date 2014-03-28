@@ -1,0 +1,62 @@
+/* custom grid system */
+.clearfloat() {
+    *zoom: 1;
+
+    &:before,
+    &:after {
+        content: "";
+        display: table;
+    }
+
+    &:after { clear: both; }
+}
+
+/* custom grid system */
+.cols(@colspan: 1; @colcount: 1) when (@colcount =< @colspan) {
+    .col-@{colcount}-@{colspan} { width: (@colcount * 100% / @colspan); }
+
+    .cols(@colspan; (@colcount + 1));
+}
+
+[class^='col-'] {
+    width: 100%;
+    padding: .5em;
+
+    @media only screen and (min-width: 700px) {
+        float: left;
+        padding: 1em;
+
+        &:last-of-type { padding-right: 0; }
+    }
+}
+
+.grid {
+    @media only screen and (min-width: 320px) and (max-width: 480px) {
+        .col-1-5 {
+            float: left;
+            width: 50%;
+        }
+    }
+
+    @media only screen and (min-width: 480px) and (max-width: 700px) {
+        .col-1-3 {
+            float: left;
+            width: 50%;
+        }
+
+        .col-1-5 {
+            float: left;
+            width: 33.33%;
+        }
+    }
+
+    @media only screen and (min-width: 700px) {
+        .cols(5);
+
+        .cols(3);
+
+        .cols(2);
+    }
+
+    .clearfloat;
+}

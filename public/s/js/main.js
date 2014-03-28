@@ -1,5 +1,5 @@
 /*jslint browser: true, indent: 4, regexp: true*/
-/*global $, jQuery*/
+/*global $*/
 
 (function () {
     'use strict';
@@ -16,30 +16,40 @@
     detectScroll();
     $(window).scroll(detectScroll);
 
+    // Show scrollback embed widget
+    $(".room").on("click", function () {
+        $("body").addClass("scrollback-open");
+    });
+
     // Show and hide the modal dialog
-	function showDialog() {
-		if(history.pushState) history.pushState(null, '');
+    function showDialog() {
+        if (history.pushState) {
+            history.pushState(null, '');
+        }
+
         $("body").toggleClass("login-open");
-		$(".modal").find("input").eq(0).focus();
+        $(".modal").find("input").eq(0).focus();
     }
 
-	function hideDialog() {
+    function hideDialog() {
         $("body").removeClass("login-open");
     }
 
-	function handleKey(e) {
-        if (e.keyCode === 27) hideDialog();
+    function handleKey(e) {
+        if (e.keyCode === 27) {
+            hideDialog();
+        }
     }
 
-	$(window).on('popstate', function() {
-		hideDialog();
-	});
+    $(window).on('popstate', function () {
+        hideDialog();
+    });
 
     $(".login-toggle").click(showDialog);
     $(".dim").click(hideDialog);
 
     $(window).keyup(handleKey);
-	$(".modal").find("input").keyup(handleKey);
+    $(".modal").find("input").keyup(handleKey);
 
     // Check if the array contains a value
     Array.prototype.contains = function (value) {
@@ -105,9 +115,9 @@
     function error(err) {
         $("#create-field > .error").text(err);
         if (typeof err === 'undefined') {
-            $("#create-field > .button").removeClass('disabled');
+            $("#create-field > input[type=submit]").attr('disabled', false);
         } else {
-            $("#create-field > .button").addClass('disabled');
+            $("#create-field > input[type=submit]").attr('disabled', true);
         }
     }
 
@@ -123,14 +133,10 @@
     }
 
     // Handle submit button click
-    $("#create-field > .button").click(function () {
-        if ($(this).hasClass('disabled')) {
-            return;
-        }
-
-        location.href = location.protocol + "//" + location.host + "/" + $("#create-field > input").val();
-        $("#create-field > input").val('');
-        $(this).addClass('disabled');
+    $("#create-field > input[type=submit]").click(function () {
+        location.href = location.protocol + "//" + location.host + "/" + $("#create-text").val();
+        $("#create-text").val('');
+        $(this).attr('disabled', true);
     });
 
     // Prevent form submission if input not valid
@@ -139,8 +145,5 @@
         e.preventDefault();
         return false;
     });
-
-    // Style active states in mobile
-    document.addEventListener("touchstart", function () {}, true);
 
 }());
