@@ -1,0 +1,275 @@
+@import url('widgets.less');
+
+@conv-color1: #b58900;
+@conv-color2: #cb4b16;
+@conv-color3: #dc322f;
+@conv-color4: #d33682;
+@conv-color5: #6c71c4;
+@conv-color6: #268bd2;
+@conv-color7: #2aa198;
+
+.fixed(@width: 50%;) {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: @width;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+}
+
+.titlebar() {
+    height: 4em;
+    z-index: 1;
+}
+
+.absolute(@top: 0; @bottom: 0) {
+    position: absolute;
+    top: @top;
+    bottom: @bottom;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.sidebar {
+    background-color: @dark-color;
+    color: darken(@light-color, 5%);
+    left: 0;
+
+    .fixed(30%);
+
+    .titlebar-left {
+        padding: 1em;
+        border-bottom: 1px solid lighten(@dark-color, 5%);
+
+        .titlebar;
+
+        .icon {
+            display: inline-block;
+            height: 2em;
+            width: 2em;
+            padding: 0;
+        }
+
+        .title {
+            display: inline-block;
+            font-size: 2em;
+            text-transform: uppercase;
+            padding: 0 .5em;
+            margin: 0;
+        }
+    }
+
+    .sidebar-content {
+        .absolute(4em; 0);
+
+        h2 {
+            margin: 0;
+            padding: .5em 0;
+            text-transform: uppercase;
+            border-bottom: 1px solid fade(@light-color, 5%);
+
+            &:before {
+                content: "";
+                display: inline-block;
+                width: 2em;
+                height: 1em;
+                padding-right: .3em;
+            }
+        }
+
+        .member-area {
+            border-bottom: 1px solid fade(@light-color, 5%);
+
+            h2 {
+                &:before { background: url(../img/icons/members.svg) no-repeat center top; }
+            }
+
+            .member-list {
+                padding-left: 3.5em;
+
+                .member {
+                    display: inline-block;
+                    text-align: center;
+                    padding: .5em;
+
+                    &.offline {
+                        color: darken(@light-color, 50%);
+
+                        img {
+                            filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+                            filter: gray; /* IE6-9 */
+                            -webkit-filter: grayscale(100%);
+                        }
+                    }
+
+                    img {
+                        display: block;
+                        width: 50px;
+                        height: 50px;
+                        border-radius: @roundness;
+                        margin: .3em 0;
+                    }
+                }
+            }
+        }
+
+        .conversation-area {
+            border-bottom: 1px solid fade(@light-color, 5%);
+
+            h2 {
+                &:before { background: url(../img/icons/conversations.svg) no-repeat center top; }
+            }
+
+            .conversation {
+                padding: .5em 1em;
+                padding-left: 4em;
+                border-left: 4px solid @conv-color1;
+
+                h3 { margin: 0; }
+
+                .ease;
+
+                &.conv-1 { border-left-color: @conv-color1; }
+
+                &.conv-2 { border-left-color: @conv-color2; }
+
+                &.conv-3 { border-left-color: @conv-color3; }
+
+                &.conv-4 { border-left-color: @conv-color4; }
+
+                &.conv-5 { border-left-color: @conv-color5; }
+
+                &.conv-6 { border-left-color: @conv-color6; }
+
+                &.conv-7 { border-left-color: @conv-color7; }
+
+                &.current { background-color: fade(@light-color, 10%); }
+
+                &:hover, &.current:hover { background-color: fade(@light-color, 20%); }
+            }
+        }
+    }
+}
+
+.mainview {
+    background-color: @light-color;
+    color: @dark-color;
+    right: 0;
+
+    .fixed(70%);
+
+    .titlebar-right {
+        text-align: right;
+        background-color: darken(@light-color, 5%);
+        border-bottom: 1px solid darken(@light-color, 20%);
+        box-shadow: 0 1px 5px 0 rgba(0,0,0,0.1);
+        padding: .5em;
+
+        .titlebar;
+
+        .user-area {
+            .name {
+                font-weight: 700;
+                padding-right: 1em;
+            }
+
+            img {
+                float: right;
+                height: 3em;
+                width: 3em;
+                border-radius: @roundness;
+            }
+        }
+    }
+
+    .chat-area {
+        .absolute(4em; 4em);
+
+        .chat {
+            padding: .5em 1em;
+            border-top: 1px solid darken(@light-color, 5%);
+
+            .clearfloat;
+
+            &:before {
+                display: inline-block;
+                vertical-align: top;
+                margin: 1.1em 1em auto 1em;
+                height: .5em;
+                width: .5em;
+                border-radius: .5em;
+            }
+
+            &.conv-1 {
+                &:before { background-color: @conv-color1; }
+            }
+
+            &.conv-2 {
+                &:before { background-color: @conv-color2; }
+            }
+
+            &.conv-3 {
+                &:before { background-color: @conv-color3; }
+            }
+
+            &.conv-4 {
+                &:before { background-color: @conv-color4; }
+            }
+
+            &.conv-5 {
+                &:before { background-color: @conv-color5; }
+            }
+
+            &.conv-6 {
+                &:before { background-color: @conv-color6; }
+            }
+
+            &.conv-7 {
+                &:before { background-color: @conv-color7; }
+            }
+
+            .username {
+                display: inline-block;
+                vertical-align: top;
+                width: 10%;
+                margin: 0 1em;
+                padding: .5em 0;
+                font-weight: 700;
+            }
+
+            .message {
+                display: inline-block;
+                vertical-align: top;
+                padding: .5em 1em;
+                width: 80%;
+            }
+
+            &:hover {
+                .message-control { .opacity(1); }
+            }
+        }
+    }
+
+    .chat-input {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        padding: .6em 1em;
+        min-height: 3.9em;
+        background-color: darken(@light-color, 5%);
+
+        .textarea {
+            word-wrap: break-word;
+            width: 100%;
+            padding: .5em 1em;
+            min-height: 2.7em;
+            max-height: 12em;
+            border-radius: @roundness;
+            overflow: auto;
+
+            .entry;
+        }
+    }
+}

@@ -41,7 +41,10 @@ input[type=submit] {
     &:disabled { .button-disabled; }
 }
 
-input[type=entry] { .entry; }
+input[type=entry], textarea {
+    .inputs;
+    .entry;
+}
 
 pre {
     width: 30em;
