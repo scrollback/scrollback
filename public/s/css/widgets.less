@@ -4,6 +4,16 @@
 @import url('grid.less');
 @import url('elements.less');
 
+.zigzag(@inner; @outer; @position) {
+    background: linear-gradient(-135deg, @outer 5px, transparent 0) 0 5px,
+                linear-gradient(135deg, @outer 5px, @inner 0) 0 5px;
+
+    background-color: @inner;
+    background-position: left @position;
+    background-repeat: repeat-x;
+    background-size: 10px 10px;
+}
+
 .headings(@size: 1.8em) {
     font-size: @size;
     line-height: 1em;

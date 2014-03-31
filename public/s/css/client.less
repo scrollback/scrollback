@@ -28,19 +28,72 @@
     top: @top;
     bottom: @bottom;
     z-index: -1;
-    overflow: hidden;
+    overflow: auto;
 }
 
-.sidebar {
+.rooms {
     background-color: @dark-color;
-    color: darken(@light-color, 5%);
+    color: darken(@light-color, 10%);
     left: 0;
+    min-height: 100%;
+    overflow: auto;
+
+    .fixed(15%);
+
+    ul {
+        list-style: none;
+
+        li {
+            display: block;
+            padding: 1.2em;
+            font-weight: 700;
+            border-bottom: 1px solid lighten(@dark-color, 5%);
+
+            .ease;
+
+            &.current {
+                position: relative;
+                background-color: lighten(@dark-color, 5%);
+
+                &:after {
+                    right: 0;
+                    top: 1.2em;
+                    position: absolute;
+                    display: block;
+                    content: '';
+                    border-top: .6em solid transparent;
+                    border-bottom: .6em solid transparent;
+                    border-right: .5em solid darken(@light-color, 5%);
+                }
+            }
+
+            &:hover, &.current:hover {
+                background-color: lighten(@dark-color, 10%);
+            }
+
+            .unread:not(:empty) {
+                float: right;
+                text-align: center;
+                min-width: 2em;
+                background-color: @accent-color;
+                color: @light-color;
+                border-radius: @roundness;
+            }
+        }
+    }
+}
+
+.meta {
+    background-color: darken(@light-color, 5%);
+    color: @dark-color;
+    border-right: 1px solid darken(@light-color, 10%);
+    left: 15%;
 
     .fixed(30%);
 
     .titlebar-left {
         padding: 1em;
-        border-bottom: 1px solid lighten(@dark-color, 5%);
+        border-bottom: 1px solid darken(@light-color, 20%);
 
         .titlebar;
 
@@ -54,20 +107,18 @@
         .title {
             display: inline-block;
             font-size: 2em;
-            text-transform: uppercase;
             padding: 0 .5em;
             margin: 0;
         }
     }
 
-    .sidebar-content {
+    .meta-content {
         .absolute(4em; 0);
 
         h2 {
             margin: 0;
             padding: .5em 0;
-            text-transform: uppercase;
-            border-bottom: 1px solid fade(@light-color, 5%);
+            border-bottom: 1px solid fade(@dark-color, 10%);
 
             &:before {
                 content: "";
@@ -79,22 +130,26 @@
         }
 
         .member-area {
-            border-bottom: 1px solid fade(@light-color, 5%);
+            border-bottom: 1px solid fade(@dark-color, 10%);
 
             h2 {
                 &:before { background: url(../img/icons/members.svg) no-repeat center top; }
             }
 
             .member-list {
-                padding-left: 3.5em;
+                padding: .5em;
+                padding-left: 3.2em;
 
                 .member {
                     display: inline-block;
                     text-align: center;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
                     padding: .5em;
+                    width: 6em;
 
                     &.offline {
-                        color: darken(@light-color, 50%);
+                        .opacity(.5);
 
                         img {
                             filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
@@ -105,48 +160,58 @@
 
                     img {
                         display: block;
-                        width: 50px;
-                        height: 50px;
+                        width: 48px;
+                        height: 48px;
                         border-radius: @roundness;
-                        margin: .3em 0;
+                        margin: .3em auto;
+                    }
+
+                    &:hover {
+                        background-color: @accent-color;
+                        color: @light-color;
+                        border-radius: @roundness;
+
+                        .ease;
                     }
                 }
             }
         }
 
         .conversation-area {
-            border-bottom: 1px solid fade(@light-color, 5%);
+            border-bottom: 1px solid fade(@dark-color, 10%);
 
             h2 {
                 &:before { background: url(../img/icons/conversations.svg) no-repeat center top; }
             }
 
             .conversation {
-                padding: .5em 1em;
-                padding-left: 4em;
-                border-left: 4px solid @conv-color1;
+                padding: 1em 1em .5em 4.3em;
+                border-right: .3em solid @conv-color1;
 
                 h3 { margin: 0; }
 
                 .ease;
 
-                &.conv-1 { border-left-color: @conv-color1; }
+                &.conv-1 { border-right-color: @conv-color1; }
 
-                &.conv-2 { border-left-color: @conv-color2; }
+                &.conv-2 { border-right-color: @conv-color2; }
 
-                &.conv-3 { border-left-color: @conv-color3; }
+                &.conv-3 { border-right-color: @conv-color3; }
 
-                &.conv-4 { border-left-color: @conv-color4; }
+                &.conv-4 { border-right-color: @conv-color4; }
 
-                &.conv-5 { border-left-color: @conv-color5; }
+                &.conv-5 { border-right-color: @conv-color5; }
 
-                &.conv-6 { border-left-color: @conv-color6; }
+                &.conv-6 { border-right-color: @conv-color6; }
 
-                &.conv-7 { border-left-color: @conv-color7; }
+                &.conv-7 { border-right-color: @conv-color7; }
 
-                &.current { background-color: fade(@light-color, 10%); }
+                &.current { background-color: fade(@dark-color, 10%); }
 
-                &:hover, &.current:hover { background-color: fade(@light-color, 20%); }
+                &:hover, &.current:hover {
+                    background-color: @accent-color;
+                    color: @light-color;
+                }
             }
         }
     }
@@ -157,14 +222,14 @@
     color: @dark-color;
     right: 0;
 
-    .fixed(70%);
+    .fixed(55%);
 
     .titlebar-right {
         text-align: right;
         background-color: darken(@light-color, 5%);
         border-bottom: 1px solid darken(@light-color, 20%);
-        box-shadow: 0 1px 5px 0 rgba(0,0,0,0.1);
         padding: .5em;
+        box-shadow: 0 3px 2px -1px fade(@dark-color, 5%);
 
         .titlebar;
 
@@ -187,15 +252,15 @@
         .absolute(4em; 4em);
 
         .chat {
-            padding: .5em 1em;
+            position: relative;
+            padding: 1em;
             border-top: 1px solid darken(@light-color, 5%);
 
             .clearfloat;
 
             &:before {
-                display: inline-block;
-                vertical-align: top;
-                margin: 1.1em 1em auto 1em;
+                float: left;
+                margin: .6em 0 auto 1em;
                 height: .5em;
                 width: .5em;
                 border-radius: .5em;
@@ -230,24 +295,38 @@
             }
 
             .username {
-                display: inline-block;
-                vertical-align: top;
-                width: 10%;
-                margin: 0 1em;
-                padding: .5em 0;
+                float: left;
+                padding: 0 2em;
                 font-weight: 700;
+                width: 15%;
+
+                a {
+                    color: @dark-color;
+
+                    &:focus, &:hover, &:active { color: darken(@dark-color, 10%); }
+                }
             }
 
             .message {
-                display: inline-block;
-                vertical-align: top;
-                padding: .5em 1em;
+                float: left;
+                padding: 0 2em;
                 width: 80%;
-            }
+                max-height: 12em;
 
-            &:hover {
-                .message-control { .opacity(1); }
+                &.long {
+                    overflow: hidden;
+                    border-bottom: 1px solid darken(@light-color, 10%);
+                }
             }
+        }
+
+        .timestamp {
+            width: 100%;
+            text-align: right;
+            font-style: italic;
+            padding-right: 2em;
+
+            & + .chat { border-top: none; }
         }
     }
 

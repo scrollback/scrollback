@@ -215,16 +215,6 @@
 
 .cover-geeks { .cover-slide(geeks, 4); }
 
-.zigzag(@inner; @outer) {
-    background: linear-gradient(-135deg, @outer 5px, transparent 0) 0 5px,
-                linear-gradient(135deg, @outer 5px, @inner 0) 0 5px;
-
-    background-color: @inner;
-    background-position: left top;
-    background-repeat: repeat-x;
-    background-size: 10px 10px;
-}
-
 .features {
     background-color: @light-color;
 
@@ -240,13 +230,13 @@
 .testimonials {
     background-color: darken(@light-color, 5%);
 
-    .zigzag(darken(@light-color, 5%), @light-color);
+    .zigzag(darken(@light-color, 5%); @light-color; top);
 }
 
 .pricing {
     background-color: @light-color;
 
-    .zigzag(@light-color, darken(@light-color, 5%));
+    .zigzag(@light-color; darken(@light-color, 5%); top);
 
     .heading {
         padding: 1.2em 0 .5em 0;
