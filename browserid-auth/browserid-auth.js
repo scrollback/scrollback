@@ -6,7 +6,7 @@ var config = require("../config.js"),
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
 		var assertion = message.browserid;
-		log("Heard \"message\ event");
+		log("Heard message event");
 		delete message.browserid;
 
 		if(message.type !== 'nick') return callback();
@@ -61,7 +61,7 @@ module.exports = function(core) {
 			if(body.status !== 'okay') {
 				return callback(new Error("AUTH_FAIL/" + body.reason));
 			}
-			account ={
+			account = {
 				id: "mailto:" + body.email,
 				gateway: "mailto",
 				params: ""
@@ -82,6 +82,6 @@ module.exports = function(core) {
 };
 
 function validateNick(nick){
-	if (nick.indexOf("guest-")==0) return false;
+	if (nick.indexOf("guest-")===0) return false;
 	return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{2,32}$/i)?nick!='img'&&nick!='css'&&nick!='sdk':false);
 }

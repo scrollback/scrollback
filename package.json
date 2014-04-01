@@ -46,7 +46,8 @@
     "passport-twitter": "~1.0.2",
     "twit": "~1.1.12",
     "objectlevel": "x",
-    "htmlencode": "0.0.3"
+    "htmlencode": "0.0.3",
+	"underscrore": "x"
   },
   "devDependencies": {
     "mocha": "x",
