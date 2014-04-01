@@ -19,7 +19,7 @@
     $(window).scroll(handleReposition);
     $(window).resize(handleReposition);
 
-    $(".long").on("click", function() {
+    $(".long").on("click", function () {
         if ($(this).hasClass("active")) {
             $(this).removeClass("active").scrollTop(0);
         } else {
