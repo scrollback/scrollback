@@ -24,6 +24,8 @@
     position: absolute;
     top: @top;
     bottom: @bottom;
+    left: 0;
+    right: 0;
     z-index: -1;
     overflow: auto;
 }
@@ -91,111 +93,120 @@
 
     .fixed(30%);
 
+    .tabs {
+        list-style: none;
+        width: 100%;
+
+        li {
+            text-align: center;
+            float: left;
+            width: 50%;
+            padding: 1em 0;
+            border-bottom: 1px solid fade(@dark-color, 10%);
+            color: fade(@dark-color, 50%);
+            cursor: pointer;
+
+            .ease;
+
+            &:hover { color: @dark-color; }
+
+            &.current {
+                position: relative;
+                color: @dark-color;
+                border-color: @accent-color;
+            }
+
+            h2 {
+                margin: 0;
+                font-size: 1.6em;
+            }
+        }
+    }
+
     .meta-content {
-        .absolute(0; 0);
+        pointer-events: none;
 
-        h2 {
-            margin: 0;
-            padding: .6em 0;
-            border-bottom: 1px solid fade(@dark-color, 10%);
+        .absolute(@bar-height; 0);
+        .opacity(0);
+        .ease;
 
-            &:before {
-                content: "";
-                float: left;
-                width: 2em;
-                height: 1em;
-                padding-right: .3em;
-            }
+        &.current {
+            pointer-events: auto;
+
+            .opacity(1);
         }
 
-        .member-area {
-            border-bottom: 1px solid fade(@dark-color, 10%);
+        .member-list {
+            padding: .5em;
 
-            h2 {
-                &:before { background: url(../img/icons/members.svg) no-repeat center top; }
-            }
-
-            .member-list {
-                padding: .5em;
-                padding-left: 2.5em;
-
-                .member {
-                    display: inline-block;
-                    text-align: center;
-                    text-overflow: ellipsis;
-                    overflow: hidden;
-                    padding: .3em;
-                    width: 6em;
-                    font-weight: 400;
-                    color: @dark-color;
-
-                    &.offline {
-                        .opacity(.5);
-
-                        img {
-                            filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
-                            filter: gray; /* IE6-9 */
-                            -webkit-filter: grayscale(100%);
-                        }
-                    }
-
-                    img {
-                        display: block;
-                        width: 48px;
-                        height: 48px;
-                        border-radius: @roundness;
-                        margin: .3em auto;
-                    }
-
-                    &:hover {
-                        background-color: @accent-color;
-                        color: @light-color;
-                        border-radius: @roundness;
-
-                        .ease;
-                    }
-                }
-            }
-        }
-
-        .conversation-area {
-            border-bottom: 1px solid fade(@dark-color, 10%);
-
-            h2 {
-                &:before { background: url(../img/icons/conversations.svg) no-repeat center top; }
-            }
-
-            .conversation {
-                display: block;
-                padding: 1em 1em .5em 3.8em;
-                border-right: .3em solid @accent-color;
+            .member {
+                display: inline-block;
+                text-align: center;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                padding: .3em;
+                width: 6em;
                 font-weight: 400;
                 color: @dark-color;
 
-                h3 { margin: 0; }
+                &.offline {
+                    .opacity(.5);
 
-                .ease;
+                    img {
+                        filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+                        filter: gray; /* IE6-9 */
+                        -webkit-filter: grayscale(100%);
+                    }
+                }
 
-                &.conv-1 { border-right-color: @conv-color1; }
+                img {
+                    display: block;
+                    width: 48px;
+                    height: 48px;
+                    border-radius: @roundness;
+                    margin: .3em auto;
+                }
 
-                &.conv-2 { border-right-color: @conv-color2; }
-
-                &.conv-3 { border-right-color: @conv-color3; }
-
-                &.conv-4 { border-right-color: @conv-color4; }
-
-                &.conv-5 { border-right-color: @conv-color5; }
-
-                &.conv-6 { border-right-color: @conv-color6; }
-
-                &.conv-7 { border-right-color: @conv-color7; }
-
-                &.current { background-color: fade(@dark-color, 10%); }
-
-                &:hover, &.current:hover {
+                &:hover {
                     background-color: @accent-color;
                     color: @light-color;
+                    border-radius: @roundness;
+
+                    .ease;
                 }
+            }
+        }
+
+        .conversation {
+            display: block;
+            padding: 1em 1em .5em 1em;
+            border-right: .3em solid @accent-color;
+            font-weight: 400;
+            color: @dark-color;
+
+            h3 { margin: 0; }
+
+            .ease;
+
+            &.conv-1 { border-right-color: @conv-color1; }
+
+            &.conv-2 { border-right-color: @conv-color2; }
+
+            &.conv-3 { border-right-color: @conv-color3; }
+
+            &.conv-4 { border-right-color: @conv-color4; }
+
+            &.conv-5 { border-right-color: @conv-color5; }
+
+            &.conv-6 { border-right-color: @conv-color6; }
+
+            &.conv-7 { border-right-color: @conv-color7; }
+
+            &.current { background-color: fade(@dark-color, 10%); }
+
+            &:hover, &.current:hover {
+                background-color: @accent-color;
+                color: @light-color;
             }
         }
     }
