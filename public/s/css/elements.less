@@ -27,11 +27,11 @@ a {
 
 img { max-width: 100%; }
 
-h1 { .headings(2.4em); }
+h1 { .headings(2.2em); }
 
-h2 { .headings(1.8em); }
+h2 { .headings(1.6em); }
 
-h3 { .headings(1.4em); }
+h3 { .headings(1.2em); }
 
 p { margin: .5em 0; }
 
@@ -41,7 +41,10 @@ input[type=submit] {
     &:disabled { .button-disabled; }
 }
 
-input[type=entry] { .entry; }
+input[type=entry], textarea {
+    .inputs;
+    .entry;
+}
 
 pre {
     width: 30em;

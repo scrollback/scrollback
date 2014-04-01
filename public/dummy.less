@@ -26,8 +26,8 @@ h1 button, h1 a.btn {
 	margin: 0; padding: 0; display: inline-block;
 	border: none; background: transparent; font-decoration: none;
 	color: #999; font-size: inherit; line-height: inherit;
-	float: right; 
-	
+	float: right;
+
 	&.left { margin-right: 16px; }
 	&.right { margin-left: 16px; }
 }
@@ -58,8 +58,8 @@ a.noChange{
 .person {
 	width: 48px; padding: 4px 4px 0 4px; background: rgba(255,255,255,0.1); display: inline-block;
 	margin: 0px 8px 0 0; position: relative; .box-sizing(content);
-	&.online:after { 
-		content: ' '; position: absolute; height: 8px; width: 8px; 
+	&.online:after {
+		content: ' '; position: absolute; height: 8px; width: 8px;
 		border-radius: 100%; bottom: 14px; right: 2px; background: #3c3;
 		border: 2px solid #fff;
 	}
@@ -70,9 +70,9 @@ a.noChange{
 }
 
 img.face {
-	height: 48px; width: 48px; vertical-align: top; 
+	height: 48px; width: 48px; vertical-align: top;
 //	border-radius: 100%;
-	
+
 	&.present {
 //		border-right: 4px solid #0f0;
 	}
@@ -85,9 +85,9 @@ img.face {
 	position: fixed;
 	background: #000; color: #eee;
 	z-index: 10;
-	width: 38%; 
+	width: 38%;
 	border-right: @sbthick solid @sbgreen;
-	left: 0; 
+	left: 0;
 	padding-left: 48px;
 	padding-right: 48px;
 	padding-top: 0;
@@ -102,7 +102,7 @@ img.face {
 	}
 	#user {
 		line-height: 60px; cursor: pointer; float: right;
-		position: relative; display: block; 
+		position: relative; display: block;
 	}
 	#username {
 		padding-top: 8px;
@@ -120,7 +120,7 @@ img.face {
 #meta {
 	position: fixed;
 	background: #000; color: #eee;
-	width: 38%; 
+	width: 38%;
 	min-height: 100%;
 	border-right: @sbthick solid @sbgreen;
 	left: 0; bottom: 0;
@@ -129,7 +129,7 @@ img.face {
 	padding-right: 48px;
 	.radial-gradient(#555, #000, 100%, 50%);
 	.box-sizing(border);
-	
+
 	#info { clear: both; padding-top: 16px; }
 	#foot { font-size: 0.75em; color: #ccc; margin: 2em 0 0 0; display: inline-block;}
 }
@@ -209,7 +209,7 @@ img.face {
 	display : block; margin-top: 16px; clear: both;
 	button {
 		border: none; width: auto; line-height: 48px; height: 48px; padding: 0 24px;
-		background: #eee; color: #000; text-transform: uppercase; font-weight: 700; font-size: 75%; 
+		background: #eee; color: #000; text-transform: uppercase; font-weight: 700; font-size: 75%;
 		img { margin: 0 16px 0 -24px; vertical-align: top; }
 		&.default { background: #3ca; color: #fff; }
 		font: 700 12px "Open Sans" important;
@@ -217,7 +217,7 @@ img.face {
 }
 #profile {
 	.buttonGroup{ float : right;}
-	margin: 32px 0; 
+	margin: 32px 0;
 	label { display: block; margin-top: 16px; clear: both;
 		.clearfix();
 		input, select { box-sizing: border-box; display: block; border: none; width: 100%; height: 48px; padding: 0 8px; &[disabled] {background: #ccc;} }
@@ -225,13 +225,13 @@ img.face {
 		.group button { margin-left: 16px; }
 		button {
 			border: none; width: auto; line-height: 48px; height: 48px; padding: 0 24px;
-			background: #eee; color: #000; text-transform: uppercase; font-weight: 700; font-size: 75%; 
+			background: #eee; color: #000; text-transform: uppercase; font-weight: 700; font-size: 75%;
 			img { margin: 0 16px 0 -24px; vertical-align: top; }
 			&.off { background: #555; color: #fff; }
 			&.default { background: #3ca; color: #fff; }
 		}
 	}
-	
+
 	#twitterButton {
 		color: #fff;
 		float: right;
@@ -242,14 +242,14 @@ img.face {
 		width: 100%;
 	}
 	.cancel { background: #9FA7A5 !important; color: #fff !important; }
-		
+
 	.nickBox {
 		display: inline;
 		width: 80%;
 	}
 	.longButton {
 		position: relative; display: block; border: none; width: 100%; line-height: 48px; height: 48px; padding: 0 24px;
-		text-transform: uppercase; font-weight: 700; font-size: 75%; 
+		text-transform: uppercase; font-weight: 700; font-size: 75%;
 		background: #3ca; color: #fff;
 		&:before {
 			content: ' '; border-style: solid; color: white;
@@ -293,7 +293,7 @@ img.face {
 }
 
 .scrollback-stream-hidden{
-	display: none;	
+	display: none;
 }
 
 .messageWrapper {
@@ -318,7 +318,7 @@ img.face {
 .messageBox:focus { border : none }
 
 #embedScript{
-	background: #555;	
+	background: #555;
 	display: none;
 	padding: 12px;
 	overflow: auto;
@@ -352,11 +352,11 @@ img.face {
 }
 
 .scrollback-message-nick {
-	 float: left; margin-left: -25%; color: #999; padding-right: 0.5em; 
+	 float: left; margin-left: -25%; color: #999; padding-right: 0.5em;
 }
 
 .scrollback-message:before{
-	content: ' '; background: #999; position: absolute; top: 14px; left: -16px; height: 8px; width: 8px; border-radius: 100%;	
+	content: ' '; background: #999; position: absolute; top: 14px; left: -16px; height: 8px; width: 8px; border-radius: 100%;
 }
 
 .scrollback-message-separator { color: #999; display:none;  }
@@ -380,9 +380,9 @@ img.face {
 }
 .scrollback-message-time {
 	position: absolute;
-	font: 12px/12px "Open Sans"; 
-	display: block; 
-	color: #999; 
+	font: 12px/12px "Open Sans";
+	display: block;
+	color: #999;
 	bottom: 0px; right: 10%; padding: 0 4px;
 	background-color: #eee;
 }
@@ -408,7 +408,7 @@ img.face {
 
 .notification {
 	line-height: 16px;
-	padding: 16px; 
+	padding: 16px;
 	background: #3ca;
 	color: #fff;
 	font-weight: bold;
@@ -417,7 +417,7 @@ img.face {
 
 
 .scrollback-message:hover .socialButton{
-	visibility: visible;	
+	visibility: visible;
 }
 
 .socialButton{
@@ -472,7 +472,7 @@ img.face {
 }
 
 .faButton{
-	font-size : 22px; 
+	font-size : 22px;
 }
 
 #nomessagediv{
@@ -498,7 +498,7 @@ button.menuitem:hover { background: #33ccaa }
 
 .owner {
 	.hidden{
-		opacity: 0.3;		
+		opacity: 0.3;
 	};
 }
 
@@ -510,7 +510,7 @@ button.menuitem:hover { background: #33ccaa }
 	};
 	.hidden:after{
 		content: 'This message was hidden by an admin';
-		display: inline; 
+		display: inline;
 		opacity: 0.5;
 	}
 }
@@ -537,6 +537,6 @@ button.menuitem:hover { background: #33ccaa }
 	color: #fff;
 }
 .backbtn{
-	cursor: pointer;	
+	cursor: pointer;
 	padding:0px 12px 0px 0px;
 }

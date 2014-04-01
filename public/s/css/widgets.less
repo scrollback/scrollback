@@ -1,3 +1,19 @@
+@import url('definitions.less');
+@import url('reset.less');
+@import url('animations.less');
+@import url('grid.less');
+@import url('elements.less');
+
+.zigzag(@inner; @outer; @position) {
+    background: linear-gradient(-135deg, @outer 5px, transparent 0) 0 5px,
+                linear-gradient(135deg, @outer 5px, @inner 0) 0 5px;
+
+    background-color: @inner;
+    background-position: left @position;
+    background-repeat: repeat-x;
+    background-size: 10px 10px;
+}
+
 .headings(@size: 1.8em) {
     font-size: @size;
     line-height: 1em;
@@ -31,7 +47,7 @@
 .inputs() {
     display: inline-block;
     margin: 1em 0;
-    padding: .8em 2em;
+    padding: .8em 1.2em;
     border-radius: @roundness;
 }
 
@@ -70,12 +86,11 @@
     color: @dark-color;
     box-shadow: inset 0 1px 1px 0 rgba(0,0,0,0.1);
 
-    .inputs;
     .ease;
 
     &:hover, &:focus, &:active {
-        border-color: darken(@light-color, 40%);
-        border-top-color: darken(@light-color, 50%);
+        border-color: darken(@light-color, 30%);
+        border-top-color: darken(@light-color, 40%);
         outline: none;
     }
 }
