@@ -1,3 +1,5 @@
+(function(){
+	var socket;
 	describe("socket test", function() {
 		describe("socket connection", function() {
 			it("socket connection established.", function(done) {
@@ -34,3 +36,4 @@
 			});
 		});
 	});
+})();

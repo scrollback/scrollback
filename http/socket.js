@@ -34,17 +34,23 @@ var rConns = {}, uConns = {}, sConns = {}, urConns = {};
 var sock = sockjs.createServer();
 
 sock.on('connection', function (socket) {
+	log("USER connected");
 	var conn = { socket: socket };
 	socket.on('data', function(d) {
 		try { d = JSON.parse(d); log ("Socket received ", d); }
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 		
-		if(d.type == 'init' && d.session) conn.session = d.session;
-		else if(conn.session) { d.session = conn.session; }
+		if(d.type == 'init' && d.session) {
+			log("got init");
+			conn.session = d.session;
+		}
+		else if(conn.session) {
+		 d.session = conn.session; 
+		}
 		
 		if(d.type == 'back' && !verifyBack(conn, d)) return;
 		if(d.type == 'away' && !verifyAway(conn, d)) return;
-		
+		log("throwing init", d);
 		core.emit(d.type, d, function(err, data) {
 			log(arguments);
 			if(data.type == 'back' && !err) storeBack(conn, d);

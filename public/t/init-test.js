@@ -1,6 +1,5 @@
 describe("Init for guests" , function(){
-	var socket;
-	
+	var socket;	
 	before(function(done){
 		socket = new SockJS(scrollback.host + '/socket');
 		socket.onopen = function(){ done(); };
@@ -10,13 +9,13 @@ describe("Init for guests" , function(){
 		done();
 	});
 	describe("Testing init for guest users", function(){
-		var sessId = guid()
-		, sessId2 = guid()
+		var sessId = generate.uid()
+		, sessId2 = generate.uid()
 		, suggestedNick = 'helloNick'
 		, testNick;
 		
 		it("Sending init without session property", function(done){
-			var init = {id: guid(), type: 'init', to: 'me', time:new Date().getTime()};
+			var init = {id: generate.uid(), type: 'init', to: 'me', time:new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
 				console.log("Message is", message);
@@ -26,7 +25,7 @@ describe("Init for guests" , function(){
 			socket.send(JSON.stringify(init));
 		});
 		it("Sending init with session property", function(done){
-			var init = {id: guid(), type: 'init', session:sessID , to: 'me', time: new Date().getTime()};
+			var init = {id: generate.uid(), type: 'init', session:sessID , to: 'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
 				// assert
@@ -36,7 +35,7 @@ describe("Init for guests" , function(){
 			socket.send(JSON.stringify(init));
 		});
 		it("Sending invalid characters in suggested nick", function(done){
-			var init = {id: guid(), type: 'init', session:guid(), suggestedNick:'9some_invalid_nick', to: 'me', time: new Date().getTime()};
+			var init = {id: generate.uid(), type: 'init', session:generate.uid(), suggestedNick:'9some_invalid_nick', to: 'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
 				// assert
@@ -45,7 +44,7 @@ describe("Init for guests" , function(){
 			socket.send(JSON.stringify(init));
 		});
 		it("Sending init with same session id", function(done){
-			var init = {id: guid(), type: 'init', session:sessID , to: 'me', time: new Date().getTime()};
+			var init = {id: generate.uid(), type: 'init', session:sessID , to: 'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
 				// assert
@@ -55,7 +54,7 @@ describe("Init for guests" , function(){
 			socket.send(JSON.stringify(init));
 		});
 		it("Sending init with session id and suggested nick", function(done){
-			var init = {id: guid(), type: 'init', session: sessId2, suggestedNick: suggestedNick, to: 'me', time: new Date().getTime()};
+			var init = {id: generate.uid(), type: 'init', session: sessId2, suggestedNick: suggestedNick, to: 'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
 				done();
@@ -63,7 +62,7 @@ describe("Init for guests" , function(){
 			socket.send(JSON.stringify(init));
 		});
 		it("Sending init with different session id and same suggestedNick", function(done){
-			var init = {id: guid(), type: 'init', session: guid(), suggestedNick:suggestedNick, to:'me', time: new Date().getTime()};
+			var init = {id: generate.uid(), type: 'init', session: generate.uid(), suggestedNick:suggestedNick, to:'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
 				// suggestedNick should be violated
@@ -72,7 +71,7 @@ describe("Init for guests" , function(){
 			socket.send(JSON.stringify(init));
 		});
 		it("Sending init with same session id and different suggestedNick", function(done){
-			var init = {id: guid(), type: 'init', session: sessId2, suggestedNick: 'newNick', to:'me', time: new Date().getTime()};
+			var init = {id: generate.uid(), type: 'init', session: sessId2, suggestedNick: 'newNick', to:'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
 				// suggestedNick should change
@@ -87,7 +86,7 @@ describe("Init for guests" , function(){
 			navigator.id.watch({
 				onlogin: function(assertion){
 					console.log("Assertion is ", assertion);
-					var init = {id: guid(), type: 'init', session: guid(), to:'me', time: new Date().getTime(), auth: {
+					var init = {id: generate.uid(), type: 'init', session: generate.uid(), to:'me', time: new Date().getTime(), auth: {
 						persona : {assertion: 'aFalseAssertionForInvalidAuth'}
 					}};
 				},
@@ -110,7 +109,7 @@ describe("Init for guests" , function(){
 			this.timeout(150000);
 			navigator.id.watch({
 				onlogin: function(assertion){
-					var init = { id: guid(), type: 'init', session: guid(), to: 'me', time: new Date().getTime(), auth: { 
+					var init = { id: generate.uid(), type: 'init', session: generate.uid(), to: 'me', time: new Date().getTime(), auth: { 
 						persona: {assertion: assertion}
 					}};
 				},
@@ -131,4 +130,3 @@ describe("Init for guests" , function(){
 		});
 	});
 });
-

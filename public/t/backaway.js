@@ -3,17 +3,15 @@ describe('Testing "BACK and away" Action.', function() {
 	// describe('Testing "BACK" Action.', function() {});
 	describe('Basic test', function() {
 		describe('Validation text', function() {
-			var sessionID = generate.guid();
+			var sessionID = generate.uid();
 			users.push(sessionID);
-
-
 			it('No To property in back', function(done) {
-				connectInitAndGiveMeConnectionObject(sessionID, function(c) {
+				getConnection(sessionID, function(c) {
 					var guid;
 					users.push(connection.session);
 					connection = c;
 
-					var guid = generate.guid;
+					var guid = generate.uid();
 					connection.emit({
 						id: guid,
 						type: "back"
@@ -28,12 +26,12 @@ describe('Testing "BACK and away" Action.', function() {
 				});	
 			});
 			it('No To property in away', function(done) {
-				connectInitAndGiveMeConnectionObject(sessionID, function(c) {
+				getConnection(sessionID, function(c) {
 					var guid;
 					users.push(connection.session);
 					connection = c;
 
-					var guid = generate.guid;
+					var guid = generate.uid();
 					connection.emit({
 						id: guid,
 						type: "back"
@@ -49,9 +47,9 @@ describe('Testing "BACK and away" Action.', function() {
 			});
 
 			it('No ID and time property in back', function(done) {
-				connectInitAndGiveMeConnectionObject(users[0], function(c) {
+				getConnection(users[0], function(c) {
 					connection = c;
-					var guid = generate.guid;
+					var guid = generate.uid();
 					connection.emit({
 						id: guid,
 						type: "back",
@@ -66,9 +64,9 @@ describe('Testing "BACK and away" Action.', function() {
 				})
 			});
 			it('No ID and time property in away', function(done) {
-				connectInitAndGiveMeConnectionObject(users[0], function(c) {
+				getConnection(users[0], function(c) {
 					connection = c;
-					var guid = generate.guid;
+					var guid = generate.uid();
 					connection.emit({
 						id: guid,
 						type: "away",
@@ -89,7 +87,7 @@ describe('Testing "BACK and away" Action.', function() {
 			var connection;
 			/*afterEach(function(done) {
 				connection.emit({
-					id: generate.guid,
+					id: generate.uid(),
 					type: "away",
 					to:"scrollback"
 				}, function(){
@@ -97,12 +95,12 @@ describe('Testing "BACK and away" Action.', function() {
 				});
 			});	*/
 			it('Sending back for user1 on scrollback and expecting back', function(done) {
-				connectInitAndGiveMeConnectionObject(users[0], function(c) {
+				getConnection(users[0], function(c) {
 					connection = c;
-					var guid = generate.guid;
+					var guid = generate.uid();
 					connection1.onAction = function(data) {
 						
-					});
+					};
 					connection.emit({
 						id: guid,
 						type: "back",
@@ -116,9 +114,9 @@ describe('Testing "BACK and away" Action.', function() {
 			});
 
 			it('Sending a second back message for user1 on scrollback. Should not hear an echo.', function(done) {
-				connectInitAndGiveMeConnectionObject(users[0], function(c) {
+				getConnection(users[0], function(c) {
 					connection = c;
-					var secondBack = generate.guid;
+					var secondBack = generate.uid();
 
 
 					connection.onAction = function(data) {
@@ -137,15 +135,15 @@ describe('Testing "BACK and away" Action.', function() {
 				});
 			});
 			it('Sending back for user 2 on scrollback and expecting echo on user1', function(done) {
-				var back = generate.guid(), user1 = false, connection1;
-				connectInitAndGiveMeConnectionObject(users[0], function(c) {
+				var back = generate.uid(), user1 = false, connection1;
+				getConnection(users[0], function(c) {
 					connection1 = c;
 					user1 = true;
 					if(user1 && user2){
 						startTest();
 					}
 				});
-				connectInitAndGiveMeConnectionObject(users[1], function(c) {
+				getConnection(users[1], function(c) {
 					connection2 = c;
 					user2 = true;
 					if(user1 && user2){
@@ -171,16 +169,16 @@ describe('Testing "BACK and away" Action.', function() {
 				}
 			});
 			it('Sending back for user2 on scrollbackteam and user1 shouldnt get the echo.', function(done) {
-				var back = generate.guid(), user1 = false, connection1;
+				var back = generate.uid(), user1 = false, connection1;
 
-				connectInitAndGiveMeConnectionObject(users[0], function(c) {
+				getConnection(users[0], function(c) {
 					connection1 = c;
 					user1 = true;
 					if(user1 && user2){
 						startTest();
 					}
 				});
-				connectInitAndGiveMeConnectionObject(users[1], function(c) {
+				getConnection(users[1], function(c) {
 					connection2 = c;
 					user2 = true;
 					if(user1 && user2){
@@ -221,7 +219,7 @@ describe('Testing "BACK and away" Action.', function() {
 
 
 /* Doi, thats a weird function name. */
-function connectInitAndGiveMeConnectionObject(session, callback) {
+function getConnection(session, callback) {
 	var socket = new SockJS(scrollback.host + '/socket'), initDone = false;
 	var callbacks = {};
 

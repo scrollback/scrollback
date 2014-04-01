@@ -94,6 +94,11 @@ var defaults = {
 	leveldb: {
 		path: "/data"
 	},
+	redisDB:{
+		session: 10,
+		user: 9,
+		room: 8
+	},
 	plugins: ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
 	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",
 	"admin-notifier", "custom-emitter","entityloader","guestinitializer", "twitter"],
