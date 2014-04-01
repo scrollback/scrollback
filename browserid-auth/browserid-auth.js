@@ -26,7 +26,6 @@ function browserAuth(action, callback) {
 		if(body.status !== 'okay') {
 			return callback(new Error("AUTH_FAIL/" + body.reason));
 		}
-
 		identity = "mailto:" + body.email;
 		core.emit("getUsers",{identity: identity}, function(err, user) {
 			if(err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
@@ -36,7 +35,6 @@ function browserAuth(action, callback) {
 			}
 			action.user = user[0];
 			callback();
-
 		});
 	});
 }
