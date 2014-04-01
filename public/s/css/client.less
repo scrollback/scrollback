@@ -255,16 +255,18 @@
         .chat {
             position: relative;
             padding: 1em;
+            padding-left: 25%;
             border-top: 1px solid darken(@light-color, 5%);
 
             .clearfloat;
 
             &:before {
                 float: left;
-                margin: .6em 0 auto 1em;
+                margin: .6em 0 auto -25%;
                 height: .5em;
                 width: .5em;
                 border-radius: .5em;
+                background-color: @accent-color;
             }
 
             &.conv-1 {
@@ -297,9 +299,9 @@
 
             .nick {
                 float: left;
-                padding: 0 2em;
+                margin-left: -20%;
+                padding-right: 2em;
                 font-weight: 700;
-                width: 15%;
 
                 a {
                     color: @dark-color;
@@ -309,9 +311,6 @@
             }
 
             .message {
-                float: left;
-                padding: 0 2em;
-                width: 80%;
                 max-height: 12em;
 
                 &.long {
