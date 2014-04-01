@@ -16,7 +16,7 @@
 
     $(".long").on("click", function() {
         if ($(this).hasClass("active")) {
-            $(this).removeClass("active");
+            $(this).removeClass("active").scrollTop(0);
         } else {
             $(this).addClass("active");
         }
