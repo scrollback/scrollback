@@ -8,4 +8,4 @@ module.exports = function(core){
 		if(permissionLevels[action.room.params.readLevel] <= permissionLevels[action.user.role]) return callback();
 		else return callback(new Error('ERR_NOT_ALLOWED'));
 	});
-}; 
+};
