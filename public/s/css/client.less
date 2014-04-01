@@ -8,6 +8,8 @@
 @conv-color6: #268bd2;
 @conv-color7: #2aa198;
 
+@bar-height: 3.6em;
+
 .fixed(@width: 50%;) {
     position: fixed;
     top: 0;
@@ -41,7 +43,7 @@
             a {
                 color: darken(@light-color, 10%);
                 display: block;
-                padding: 1.2em;
+                padding: 1em;
                 font-weight: 700;
                 border-bottom: 1px solid lighten(@dark-color, 5%);
 
@@ -59,7 +61,7 @@
                         content: '';
                         border-top: .6em solid transparent;
                         border-bottom: .6em solid transparent;
-                        border-right: .5em solid darken(@light-color, 5%);
+                        border-right: .55em solid darken(@light-color, 5%);
                     }
                 }
 
@@ -71,6 +73,7 @@
                     float: right;
                     text-align: center;
                     min-width: 2em;
+                    font-size: .9em;
                     background-color: @accent-color;
                     color: @light-color;
                     border-radius: @roundness;
@@ -206,7 +209,7 @@
     .fixed(55%);
 
     .titlebar {
-        height: 4em;
+        height: @bar-height;;
         z-index: 1;
         text-align: right;
         background-color: darken(@light-color, 5%);
@@ -216,15 +219,15 @@
 
         .icon {
             float: left;
-            height: 3em;
-            width: 3em;
+            height: 2.6em;
+            width: 2.6em;
             padding: 0;
             border-radius: @roundness;
         }
 
         .title {
             float: left;
-            font-size: 2em;
+            font-size: 1.8em;
             padding: .25em .3em;
             margin: 0;
         }
@@ -236,21 +239,21 @@
             &:hover { color: darken(@dark-color, 10%); }
 
             .username {
-                line-height: 3em;
+                line-height: 2.6em;
                 padding-right: 1em;
             }
 
             img {
                 float: right;
-                height: 3em;
-                width: 3em;
+                height: 2.6em;
+                width: 2.6em;
                 border-radius: @roundness;
             }
         }
     }
 
     .chat-area {
-        .absolute(4em; 4em);
+        .absolute(@bar-height; @bar-height);
 
         .chat {
             position: relative;
@@ -350,6 +353,7 @@
             width: 100%;
             text-align: center;
             font-style: italic;
+            font-size: .9em;
             padding-top: .8em;
             padding-bottom: .2em;
             margin: 0;
@@ -370,8 +374,8 @@
         right: 0;
         bottom: 0;
         width: 100%;
-        padding: .6em 1em;
-        min-height: 3.9em;
+        padding: .5em 1em;
+        min-height: @bar-height;
         background-color: darken(@light-color, 5%);
 
         .textarea {
