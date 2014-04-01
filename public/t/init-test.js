@@ -1,6 +1,12 @@
+/*global describe*/
+/*global before*/
+/*global after*/
+/*global it*/
+/*global scrollback*/
+/*global guid*/
+/*global sockjs*/
 describe("Init for guests" , function(){
 	var socket;
-	
 	before(function(done){
 		socket = new SockJS(scrollback.host + '/socket');
 		socket.onopen = function(){ done(); };
@@ -10,10 +16,7 @@ describe("Init for guests" , function(){
 		done();
 	});
 	describe("Testing init for guest users", function(){
-		var sessId = guid()
-		, sessId2 = guid()
-		, suggestedNick = 'helloNick'
-		, testNick;
+		var sessId = guid(); var sessId2 = guid(); var suggestedNick = 'helloNick', testNick;
 		
 		it("Sending init without session property", function(done){
 			var init = {id: guid(), type: 'init', to: 'me', time:new Date().getTime()};
