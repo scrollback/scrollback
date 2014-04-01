@@ -14,9 +14,12 @@
         }
     }
 
-    $(".tab-heading").on("click", function() {
-        $(".tab").not($(this).closest(".tab")).removeClass("tab-active");
-        $(this).closest(".tab").addClass("tab-active");
+    $(".long").on("click", function() {
+        if ($(this).hasClass("active")) {
+            $(this).removeClass("active");
+        } else {
+            $(this).addClass("active");
+        }
     });
 
     handleReposition();

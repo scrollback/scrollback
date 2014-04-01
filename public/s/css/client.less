@@ -262,6 +262,12 @@
             overflow: hidden;
 
             &.long {
+                .ease;
+
+                &:hover {
+                    &:after { padding: 1em 0; }
+                }
+
                 &:after {
                     display: block;
                     content: "";
@@ -274,6 +280,16 @@
                     background-image: -webkit-linear-gradient(bottom, fade(@light-color, 0%) 0%, @light-color 100%);
                     background-image: -ms-linear-gradient(bottom, fade(@light-color, 0%) 0%, @light-color 100%);
                     background-image: linear-gradient(to bottom, fade(@light-color, 0%) 0%, @light-color 100%);
+                    cursor: pointer;
+
+                    .ease;
+                }
+
+                &.active {
+                    max-height: 20em;
+                    overflow: auto;
+
+                    &:after { display: none; }
                 }
             }
 
