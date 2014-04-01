@@ -18,11 +18,6 @@
     z-index: 1;
 }
 
-.titlebar() {
-    height: 4em;
-    z-index: 1;
-}
-
 .absolute(@top: 0; @bottom: 0) {
     position: absolute;
     top: @top;
@@ -33,7 +28,6 @@
 
 .rooms {
     background-color: @dark-color;
-    color: darken(@light-color, 10%);
     left: 0;
     min-height: 100%;
     overflow: auto;
@@ -44,40 +38,43 @@
         list-style: none;
 
         li {
-            display: block;
-            padding: 1.2em;
-            font-weight: 700;
-            border-bottom: 1px solid lighten(@dark-color, 5%);
+            a {
+                color: darken(@light-color, 10%);
+                display: block;
+                padding: 1.2em;
+                font-weight: 700;
+                border-bottom: 1px solid lighten(@dark-color, 5%);
 
-            .ease;
+                .ease;
 
-            &.current {
-                position: relative;
-                background-color: lighten(@dark-color, 5%);
+                &.current {
+                    position: relative;
+                    background-color: lighten(@dark-color, 5%);
 
-                &:after {
-                    right: 0;
-                    top: 1.2em;
-                    position: absolute;
-                    display: block;
-                    content: '';
-                    border-top: .6em solid transparent;
-                    border-bottom: .6em solid transparent;
-                    border-right: .5em solid darken(@light-color, 5%);
+                    &:after {
+                        right: 0;
+                        top: 1.2em;
+                        position: absolute;
+                        display: block;
+                        content: '';
+                        border-top: .6em solid transparent;
+                        border-bottom: .6em solid transparent;
+                        border-right: .5em solid darken(@light-color, 5%);
+                    }
                 }
-            }
 
-            &:hover, &.current:hover {
-                background-color: lighten(@dark-color, 10%);
-            }
+                &:hover, &.current:hover {
+                    background-color: lighten(@dark-color, 10%);
+                }
 
-            .unread:not(:empty) {
-                float: right;
-                text-align: center;
-                min-width: 2em;
-                background-color: @accent-color;
-                color: @light-color;
-                border-radius: @roundness;
+                .unread:not(:empty) {
+                    float: right;
+                    text-align: center;
+                    min-width: 2em;
+                    background-color: @accent-color;
+                    color: @light-color;
+                    border-radius: @roundness;
+                }
             }
         }
     }
@@ -91,38 +88,17 @@
 
     .fixed(30%);
 
-    .titlebar-left {
-        padding: 1em;
-        border-bottom: 1px solid darken(@light-color, 20%);
-
-        .titlebar;
-
-        .icon {
-            display: inline-block;
-            height: 2em;
-            width: 2em;
-            padding: 0;
-        }
-
-        .title {
-            display: inline-block;
-            font-size: 2em;
-            padding: 0 .5em;
-            margin: 0;
-        }
-    }
-
     .meta-content {
-        .absolute(4em; 0);
+        .absolute(0; 0);
 
         h2 {
             margin: 0;
-            padding: .5em 0;
+            padding: .6em 0;
             border-bottom: 1px solid fade(@dark-color, 10%);
 
             &:before {
                 content: "";
-                display: inline-block;
+                float: left;
                 width: 2em;
                 height: 1em;
                 padding-right: .3em;
@@ -145,8 +121,10 @@
                     text-align: center;
                     text-overflow: ellipsis;
                     overflow: hidden;
-                    padding: .5em;
+                    padding: .3em;
                     width: 6em;
+                    font-weight: 400;
+                    color: @dark-color;
 
                     &.offline {
                         .opacity(.5);
@@ -185,8 +163,11 @@
             }
 
             .conversation {
+                display: block;
                 padding: 1em 1em .5em 4.3em;
-                border-right: .3em solid @conv-color1;
+                border-right: .3em solid @accent-color;
+                font-weight: 400;
+                color: @dark-color;
 
                 h3 { margin: 0; }
 
@@ -224,18 +205,38 @@
 
     .fixed(55%);
 
-    .titlebar-right {
+    .titlebar {
+        height: 4em;
+        z-index: 1;
         text-align: right;
         background-color: darken(@light-color, 5%);
         border-bottom: 1px solid darken(@light-color, 20%);
         padding: .5em;
         box-shadow: 0 3px 2px -1px fade(@dark-color, 5%);
 
-        .titlebar;
+        .icon {
+            float: left;
+            height: 3em;
+            width: 3em;
+            padding: 0;
+            border-radius: @roundness;
+        }
+
+        .title {
+            float: left;
+            font-size: 2em;
+            padding: .25em .3em;
+            margin: 0;
+        }
 
         .user-area {
-            .name {
-                font-weight: 700;
+            font-weight: 700;
+            color: @dark-color;
+
+            &:hover { color: darken(@dark-color, 10%); }
+
+            .username {
+                line-height: 3em;
                 padding-right: 1em;
             }
 
@@ -294,7 +295,7 @@
                 &:before { background-color: @conv-color7; }
             }
 
-            .username {
+            .nick {
                 float: left;
                 padding: 0 2em;
                 font-weight: 700;
