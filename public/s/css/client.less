@@ -67,7 +67,7 @@
                     background-color: lighten(@dark-color, 10%);
                 }
 
-                .unread:not(:empty) {
+                .unread {
                     float: right;
                     text-align: center;
                     min-width: 2em;
@@ -255,8 +255,27 @@
         .chat {
             position: relative;
             padding: 1em;
+            margin: 0;
             padding-left: 25%;
             border-top: 1px solid darken(@light-color, 5%);
+            max-height: 12em;
+            overflow: hidden;
+
+            &.long {
+                &:after {
+                    display: block;
+                    content: "";
+                    position: absolute;
+                    bottom: 0;
+                    width: 100%;
+                    padding: 3em 0;
+                    background-image: -o-linear-gradient(bottom, fade(@light-color, 0%) 0%, @light-color 100%);
+                    background-image: -moz-linear-gradient(bottom, fade(@light-color, 0%) 0%, @light-color 100%);
+                    background-image: -webkit-linear-gradient(bottom, fade(@light-color, 0%) 0%, @light-color 100%);
+                    background-image: -ms-linear-gradient(bottom, fade(@light-color, 0%) 0%, @light-color 100%);
+                    background-image: linear-gradient(to bottom, fade(@light-color, 0%) 0%, @light-color 100%);
+                }
+            }
 
             .clearfloat;
 
@@ -309,24 +328,24 @@
                     &:focus, &:hover, &:active { color: darken(@dark-color, 10%); }
                 }
             }
-
-            .message {
-                max-height: 12em;
-
-                &.long {
-                    overflow: hidden;
-                    border-bottom: 1px solid darken(@light-color, 10%);
-                }
-            }
         }
 
         .timestamp {
             width: 100%;
-            text-align: right;
+            text-align: center;
             font-style: italic;
-            padding-right: 2em;
+            padding-top: .8em;
+            padding-bottom: .2em;
+            margin: 0;
 
-            & + .chat { border-top: none; }
+            .zigzag(darken(@light-color, 2%); @light-color; top);
+
+            & + .chat {
+                border-top: none;
+                padding-top: 2em;
+
+                .zigzag(@light-color; darken(@light-color, 2%); top);
+            }
         }
     }
 
