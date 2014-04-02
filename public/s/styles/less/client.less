@@ -8,7 +8,7 @@
 @conv-color6: #268bd2;
 @conv-color7: #2aa198;
 
-@bar-height: 3.6em;
+@bar-height: 3.5em;
 
 .fixed(@width: 50%;) {
     position: fixed;
@@ -75,7 +75,7 @@
                     float: right;
                     text-align: center;
                     min-width: 2em;
-                    font-size: .9em;
+                    font-size: .8em;
                     background-color: @accent-color;
                     color: @light-color;
                     border-radius: @roundness;
@@ -119,7 +119,7 @@
 
             h2 {
                 margin: 0;
-                font-size: 1.6em;
+                font-size: 1.5em;
             }
         }
     }
@@ -150,7 +150,7 @@
                 text-align: center;
                 text-overflow: ellipsis;
                 overflow: hidden;
-                padding: .3em;
+                padding: .2em;
                 width: 6em;
                 font-weight: 400;
                 color: @dark-color;
@@ -166,7 +166,7 @@
                     width: 48px;
                     height: 48px;
                     border-radius: @roundness;
-                    margin: .3em auto;
+                    margin: .2em auto;
                 }
 
                 &:hover {
@@ -182,7 +182,7 @@
         .thread {
             display: block;
             padding: 1em 1em .5em 2em;
-            border-right: .3em solid @accent-color;
+            border-right: 4px solid @accent-color;
             font-weight: 400;
             color: @dark-color;
 
@@ -222,8 +222,7 @@
     .fixed(55%);
 
     .titlebar {
-        height: @bar-height;;
-        z-index: 1;
+        height: @bar-height;
         text-align: right;
         background-color: darken(@light-color, 5%);
         border-bottom: 1px solid darken(@light-color, 20%);
@@ -232,16 +231,16 @@
 
         .icon {
             float: left;
-            height: 2.6em;
-            width: 2.6em;
+            height: 2.5em;
+            width: 2.5em;
             padding: 0;
             border-radius: @roundness;
         }
 
         .title {
             float: left;
-            font-size: 1.8em;
-            padding: .25em .3em;
+            font-size: 1.5em;
+            padding: .4em .5em;
             margin: 0;
         }
 
@@ -253,15 +252,17 @@
             &:hover { color: darken(@dark-color, 10%); }
 
             .username {
-                line-height: 2.6em;
+                line-height: 2.5em;
                 padding-right: .5em;
             }
 
             .notifications {
                 position: absolute;
                 top: -1em;
-                right: -2.6em;
-                padding: 0 .1em;
+                right: -3em;
+                padding: 0 .2em;
+                text-align: center;
+                font-size: .8em;
                 border-radius: @roundness;
                 background-color: @error-color;
                 color: @light-color;
@@ -269,8 +270,8 @@
 
             img {
                 float: right;
-                height: 2.6em;
-                width: 2.6em;
+                height: 2.5em;
+                width: 2.5em;
                 border-radius: @roundness;
             }
         }
@@ -344,7 +345,7 @@
                 margin: .6em 0 auto -25%;
                 height: .5em;
                 width: .5em;
-                border-radius: .5em;
+                border-radius: 50%;
                 background-color: @accent-color;
             }
 
@@ -394,18 +395,18 @@
             width: 100%;
             text-align: center;
             font-style: italic;
-            font-size: .9em;
+            font-size: .8em;
             padding-top: .8em;
             padding-bottom: .2em;
             margin: 0;
 
-            .zigzag(darken(@light-color, 2%); @light-color; top);
+            .zigzag(darken(@light-color, 3%); @light-color; top);
 
             & + .chat {
                 border-top: none;
                 padding-top: 2em;
 
-                .zigzag(@light-color; darken(@light-color, 2%); top);
+                .zigzag(@light-color; darken(@light-color, 3%); top);
             }
         }
     }
@@ -422,8 +423,8 @@
         .textarea {
             word-wrap: break-word;
             width: 100%;
-            padding: .5em 1em;
-            min-height: 2.7em;
+            padding: .4em 1em;
+            min-height: 2.5em;
             max-height: 12em;
             border-radius: @roundness;
             overflow: auto;
