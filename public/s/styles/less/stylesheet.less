@@ -25,9 +25,9 @@
     @1300: %("../../img/covers/bg-%s-1300.jpg", @slide);
     @1600: %("../../img/covers/bg-%s-1600.jpg", @slide);
 
-    background-image: url(@320);
-
     .cover;
+
+    background-image: url(@320);
 
     @media only screen and (min-device-width: 320px) { background-image: url(@700); }
 
@@ -49,10 +49,10 @@
 }
 
 .cover-slide(@slide; @index) {
+    .cover;
+
     position: relative;
     display: table;
-
-    .cover;
 
     .cover-bg {
         .bg-@{slide} { .opacity(1); }
@@ -64,9 +64,9 @@
                 margin-left: ( @index - 1 ) * ( -100% );
 
                 li:nth-child(@{index}) {
-                    pointer-events: auto;
-
                     .opacity(1);
+
+                    pointer-events: auto;
                 }
             }
         }
@@ -86,12 +86,12 @@
 #cover { position: relative; }
 
 .cover-content {
+    .ease(.5s);
+
     position: relative;
     display: table-cell;
     height: 100%;
     vertical-align: middle;
-
-    .ease(.5s);
 
     .container {
         a {
@@ -125,6 +125,8 @@
         overflow-x: hidden;
 
         .slider {
+            .ease(.5s);
+
             position: relative;
             left: 0;
             margin: 0;
@@ -133,18 +135,16 @@
             height: 100%;
             list-style: none;
 
-            .ease(.5s);
-
             .clearfloat;
 
             & > li {
+                .opacity(0);
+                .ease(.5s);
+
                 float: left;
                 width: 25%;
                 height: 100%;
                 pointer-events: none;
-
-                .opacity(0);
-                .ease(.5s);
 
                 h1 { font-size: 3em; }
             }
@@ -195,12 +195,12 @@
 
 .cover-bg {
     div {
+        .opacity(0);
+        .ease(.5s);
+
         position: absolute;
         top: 0;
         left: 0;
-
-        .opacity(0);
-        .ease(.5s);
     }
 
     .bg-home { .bg-slide(home); }
@@ -252,12 +252,12 @@
         h2 { display: inline; }
 
         .price {
+            .clearfloat;
+
             float: right;
             color: @accent-color;
             font-weight: 300;
             position: relative;
-
-            .clearfloat;
 
             .sub {
                 display: block;
@@ -283,6 +283,10 @@
 }
 
 .arrow {
+    .opacity(1);
+    .bounce(5s infinite);
+    .ease(.5s);
+
     display: none;
     position: fixed;
     bottom: 0;
@@ -292,29 +296,25 @@
     height: 40px;
     pointer-events: auto;
 
-    .opacity(1);
-    .bounce(5s infinite);
-    .ease(.5s);
-
     @media only screen and (min-width: 700px) { display: block; }
 }
 
 .scrolled {
     .arrow {
-        pointer-events: none;
-
         .opacity(0);
+
+        pointer-events: none;
     }
 }
 
 .fork {
+    .ease(.5s);
+
     display: none;
     position: fixed;
     top: -15px;
     right: 30px;
     z-index: 1;
-
-    .ease(.5s);
 
     &:hover, &:focus, &:active { top: 0; }
 
@@ -356,6 +356,8 @@
         overflow: auto;
 
         .dim {
+            .fadein(.5s 1);
+
             display: block;
             background: rgba(0,0,0,0.7);
             position: fixed;
@@ -364,12 +366,12 @@
             right: 0;
             bottom: 0;
             z-index: 2;
-
-            .fadein(.5s 1);
         }
     }
 
     .modal {
+        .appear(.5s 1);
+
         background: @light-color;
         border-style: none;
         position: fixed;
@@ -383,8 +385,6 @@
         height: 100%;
         overflow: auto;
         display: block;
-
-        .appear(.5s 1);
 
         .button {
             width: 100%;
@@ -406,9 +406,9 @@
     }
 
     .arrow {
-        pointer-events: none;
-
         .opacity(0);
+
+        pointer-events: none;
     }
 }
 
@@ -426,6 +426,8 @@
     }
 
     label {
+        .inputs;
+
         width: 8em;
         text-align: left;
         position: absolute;
@@ -433,7 +435,5 @@
         left: 0;
         border: 1px solid transparent;
         color: lighten(@dark-color, 20%);
-
-        .inputs;
     }
 }

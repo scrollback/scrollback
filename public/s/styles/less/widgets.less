@@ -41,7 +41,26 @@
     border-radius: @roundness;
 }
 
+.entry {
+    .ease;
+
+    background-color: lighten(@light-color, 50%);
+    border: 1px solid darken(@light-color, 20%);
+    border-top-color: darken(@light-color, 30%);
+    color: @dark-color;
+    box-shadow: inset 0 1px 1px 0 rgba(0,0,0,0.1);
+
+    &:hover, &:focus, &:active {
+        border-color: darken(@light-color, 30%);
+        border-top-color: darken(@light-color, 40%);
+        outline: none;
+    }
+}
+
 .buttons(@bg: @accent-color; @fg: @light-color) {
+    .inputs;
+    .ease;
+
     background-color: @bg;
     border: 1px solid @bg;
     border-bottom-color: darken(@bg, 10%);
@@ -50,9 +69,6 @@
     font-weight: 700;
     cursor: pointer;
     text-transform: uppercase;
-
-    .inputs;
-    .ease;
 
     &:hover, &:focus {
         background-color: darken(@bg, 5%);
@@ -69,23 +85,10 @@
     }
 }
 
-.entry {
-    background-color: lighten(@light-color, 50%);
-    border: 1px solid darken(@light-color, 20%);
-    border-top-color: darken(@light-color, 30%);
-    color: @dark-color;
-    box-shadow: inset 0 1px 1px 0 rgba(0,0,0,0.1);
-
+.button-secondary {
+    .inputs;
     .ease;
 
-    &:hover, &:focus, &:active {
-        border-color: darken(@light-color, 30%);
-        border-top-color: darken(@light-color, 40%);
-        outline: none;
-    }
-}
-
-.button-secondary {
     background-color: darken(@light-color, 5%);
     border: 1px solid darken(@light-color, 15%);
     color: lighten(@dark-color, 10%);
@@ -94,13 +97,10 @@
     cursor: pointer;
     text-transform: uppercase;
 
-    .inputs;
-    .ease;
-
     &:hover, &:focus, &:active {
         background-color: darken(@light-color, 3%);
         border-color: darken(@light-color, 30%);
-    color: lighten(@dark-color, 5%);
+        color: lighten(@dark-color, 5%);
     }
 }
 
@@ -177,6 +177,8 @@
     position: relative;
 
     .popover {
+        .appear;
+
         position: absolute;
         display: block;
         padding: 1em;
@@ -189,18 +191,16 @@
         text-transform: none;
         cursor: auto;
         z-index: 8;
-
-        .appear;
     }
 
     .popover-top {
         bottom: 36px;
 
         &:before {
-            bottom: -8px;
-
             .popover-arrow;
             .rotate(225deg);
+
+            bottom: -8px;
         }
     }
 
@@ -208,10 +208,10 @@
         top: 36px;
 
         &:before {
-            top: -8px;
-
             .popover-arrow;
             .rotate(45deg);
+
+            top: -8px;
         }
     }
 }
@@ -228,9 +228,9 @@
 }
 
 input.switch {
-    margin: .5em 0;
-
     .opacity(0);
+
+    margin: .5em 0;
 
     & ~ label {
         position: relative;
@@ -238,6 +238,8 @@ input.switch {
 
         &:before,
         &:after {
+            .ease;
+
             position: absolute;
             display: block;
             top: 0;
@@ -249,8 +251,6 @@ input.switch {
             border-radius: @roundness;
             background-color: @error-color;
             box-shadow: inset 0 1px 0 rgba(0,0,0,0.2);
-
-            .ease;
         }
 
         &:after {

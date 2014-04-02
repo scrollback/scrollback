@@ -23,13 +23,13 @@
 }
 
 .rooms {
+    .fixed(15%);
+
     background-color: @dark-color;
     color: @light-color;
     left: 0;
     min-height: 100%;
     overflow: auto;
-
-    .fixed(15%);
 
     .scrollback-header {
         padding: .5em 1em;
@@ -47,13 +47,13 @@
 
         li {
             a {
+                .ease;
+
                 color: darken(@light-color, 10%);
                 display: block;
                 padding: 1em;
                 font-weight: 700;
                 border-bottom: 1px solid lighten(@dark-color, 5%);
-
-                .ease;
 
                 &.current {
                     position: relative;
@@ -92,12 +92,12 @@
 }
 
 .meta {
+    .fixed(30%);
+
+    left: 15%;
     background-color: darken(@light-color, 5%);
     color: @dark-color;
     border-right: 1px solid darken(@light-color, 10%);
-    left: 15%;
-
-    .fixed(30%);
 
     .tabs {
         list-style: none;
@@ -106,14 +106,14 @@
         table-layout: fixed;
 
         li {
+            .ease;
+
             display: table-cell;
             text-align: center;
             padding: 1em 0;
             border-bottom: 1px solid fade(@dark-color, 10%);
             color: fade(@dark-color, 50%);
             cursor: pointer;
-
-            .ease;
 
             &:hover { color: @dark-color; }
 
@@ -131,16 +131,16 @@
     }
 
     .meta-content {
-        pointer-events: none;
-
         .absolute(@bar-height; 0);
         .opacity(0);
         .ease;
 
-        &.current {
-            pointer-events: auto;
+        pointer-events: none;
 
+        &.current {
             .opacity(1);
+
+            pointer-events: auto;
         }
 
         &.room-info {
@@ -175,16 +175,18 @@
                 }
 
                 &:hover {
+                    .ease;
+
                     background-color: @accent-color;
                     color: @light-color;
                     border-radius: @roundness;
-
-                    .ease;
                 }
             }
         }
 
         .thread {
+            .ease;
+
             display: block;
             padding: 1em 1em .5em 2em;
             border-right: 4px solid @accent-color;
@@ -192,8 +194,6 @@
             color: @dark-color;
 
             h3 { margin: 0; }
-
-            .ease;
 
             &.current { background-color: fade(@accent-color, 10%); }
 
@@ -286,11 +286,11 @@
 }
 
 .mainview {
+    .fixed(55%);
+
+    right: 0;
     background-color: @light-color;
     color: @dark-color;
-    right: 0;
-
-    .fixed(55%);
 
     .titlebar {
         height: @bar-height;
@@ -365,15 +365,17 @@
             overflow: hidden;
 
             &.long {
-                cursor: pointer;
-
                 .ease;
+
+                cursor: pointer;
 
                 &:hover {
                     &:after { padding: 1em 0; }
                 }
 
                 &:after {
+                    .ease;
+
                     display: block;
                     content: "";
                     position: absolute;
@@ -385,8 +387,6 @@
                     background-image: -webkit-linear-gradient(bottom, fade(@light-color, 0%) 0%, @light-color 100%);
                     background-image: -ms-linear-gradient(bottom, fade(@light-color, 0%) 0%, @light-color 100%);
                     background-image: linear-gradient(to bottom, fade(@light-color, 0%) 0%, @light-color 100%);
-
-                    .ease;
                 }
 
                 &.active {
@@ -463,6 +463,8 @@
         }
 
         .timestamp {
+            .zigzag(darken(@light-color, 3%); @light-color; top);
+
             width: 100%;
             text-align: center;
             font-style: italic;
@@ -471,13 +473,11 @@
             padding-bottom: .25em;
             margin: 0;
 
-            .zigzag(darken(@light-color, 3%); @light-color; top);
-
             & + .chat {
+                .zigzag(@light-color; darken(@light-color, 3%); top);
+
                 border-top: none;
                 padding-top: 2em;
-
-                .zigzag(@light-color; darken(@light-color, 3%); top);
             }
         }
     }
@@ -492,6 +492,8 @@
         background-color: darken(@light-color, 5%);
 
         .textarea {
+            .entry;
+
             word-wrap: break-word;
             width: 100%;
             padding: .4em 1em;
@@ -499,8 +501,6 @@
             max-height: 12em;
             border-radius: @roundness;
             overflow: auto;
-
-            .entry;
         }
     }
 }
