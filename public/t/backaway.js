@@ -2,20 +2,20 @@ var users = [];
 describe('Testing "BACK and away" Action.', function() {
 	// describe('Testing "BACK" Action.', function() {});
 	describe('Basic test', function() {
-		describe('Validation text', function() {
+		describe.only('Validation text', function() {
 			var sessionID = generate.uid();
 			users.push(sessionID);
-			it('No To property in back', function(done) {
+			it.only('No To property in back', function(done) {
 				getConnection(sessionID, function(c) {
-					var guid;
+					var guid, connection = c;
+					guid = generate.uid();
 					users.push(connection.session);
-					connection = c;
-
-					var guid = generate.uid();
+					console.log("Got connection......", connection.emit);
 					connection.emit({
 						id: guid,
 						type: "back"
 					}, function(data) {
+						console.log("callback of back event");
 						if(data.id == guid && !data.error){
 							throw new Error("Error Not Thrown");
 						}else{
@@ -27,11 +27,9 @@ describe('Testing "BACK and away" Action.', function() {
 			});
 			it('No To property in away', function(done) {
 				getConnection(sessionID, function(c) {
-					var guid;
+					var guid, connection = c;
+					guid = generate.uid();
 					users.push(connection.session);
-					connection = c;
-
-					var guid = generate.uid();
 					connection.emit({
 						id: guid,
 						type: "back"
@@ -48,8 +46,8 @@ describe('Testing "BACK and away" Action.', function() {
 
 			it('No ID and time property in back', function(done) {
 				getConnection(users[0], function(c) {
-					connection = c;
-					var guid = generate.uid();
+					var guid, connection = c;
+					guid = generate.uid();
 					connection.emit({
 						id: guid,
 						type: "back",
@@ -65,8 +63,8 @@ describe('Testing "BACK and away" Action.', function() {
 			});
 			it('No ID and time property in away', function(done) {
 				getConnection(users[0], function(c) {
-					connection = c;
-					var guid = generate.uid();
+					var guid, connection = c;
+					guid = generate.uid();
 					connection.emit({
 						id: guid,
 						type: "away",
@@ -96,8 +94,8 @@ describe('Testing "BACK and away" Action.', function() {
 			});	*/
 			it('Sending back for user1 on scrollback and expecting back', function(done) {
 				getConnection(users[0], function(c) {
-					connection = c;
-					var guid = generate.uid();
+					var guid, connection = c;
+					guid = generate.uid();
 					connection1.onAction = function(data) {
 						
 					};
@@ -115,10 +113,8 @@ describe('Testing "BACK and away" Action.', function() {
 
 			it('Sending a second back message for user1 on scrollback. Should not hear an echo.', function(done) {
 				getConnection(users[0], function(c) {
-					connection = c;
 					var secondBack = generate.uid();
-
-
+					connection = c;
 					connection.onAction = function(data) {
 						if(data.id == secondBack) throw new Error("Got back second back");
 					}
@@ -221,35 +217,34 @@ describe('Testing "BACK and away" Action.', function() {
 /* Doi, thats a weird function name. */
 function getConnection(session, callback) {
 	var socket = new SockJS(scrollback.host + '/socket'), initDone = false;
+	socket.resource = generate.uid();
 	var callbacks = {};
-
 	var guid = generate.uid();
-	socket.onopen = function() {
-		constructObject();
-	}
-	socket.emit = function(action, callback) {
-		callbacks[action.id] = callback;
+	socket.emit = function(action, c) {
+		callbacks[action.id] = c;
 		socket.send(JSON.stringify(action));
-	}
-
-	function constructObject() {
+	};
+	socket.onopen = function() {
+		constructObject(socket);
+	};
+	function constructObject(socket) {
 		socket.onmessage = function(data) {
-			data = cleanData(data);
+			data = cleanData(data.data);
 			if(data.type === "init" && !initDone && data.id == guid){
 				initDone = true;
 				socket.session = data.session;
 				callback(socket);
 			}else{
-				callbacks[data.id] = callback(data);
+				callbacks[data.id] && callbacks[data.id](data);
 			}
-			socket.onAction();
+			if(socket.onAction) socket.onAction(data);
 		};
 		socket.send(JSON.stringify({
 			id: guid,
 			type:"init",
 			time:new Date().getTime(),
 			session: session || generate.uid(),
-			resource: generate.uid()
+			resource: socket.resource
 		}));	
 	}
 }

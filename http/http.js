@@ -35,18 +35,21 @@ var init = function(core) {
 
 module.exports = function(core){
 	init(core);
-	core.on("message" , function(message, callback) {
-		log("Heard \"message\" Event");
-		if(typeof message.to == "string")
-			send(message, [message.to]);
-		else if(typeof message.to == "object")
-			send(message, message.to);
-		callback();
-	}, "gateway");
-	core.on("edit", function(edit, callback) {
-		emit("edit", edit, edit.to);
-		callback();
-	},"gateway");
 	var send = socket.send;
 	var emit = socket.emit;
+	// core.on("init", function(action, callback) {
+		
+	// });
+	// core.on("message" , function(message, callback) {
+	// 	log("Heard \"message\" Event");
+	// 	if(typeof message.to == "string")
+	// 		send(message, [message.to]);
+	// 	else if(typeof message.to == "object")
+	// 		send(message, message.to);
+	// 	callback();
+	// }, "gateway");
+	// core.on("edit", function(edit, callback) {
+	// 	emit("edit", edit, edit.to);
+	// 	callback();
+	// },"gateway");
 };

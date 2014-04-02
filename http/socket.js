@@ -34,25 +34,36 @@ var rConns = {}, uConns = {}, sConns = {}, urConns = {};
 var sock = sockjs.createServer();
 
 sock.on('connection', function (socket) {
-	log("USER connected");
 	var conn = { socket: socket };
 	socket.on('data', function(d) {
+		var i, l;
 		try { d = JSON.parse(d); log ("Socket received ", d); }
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 		
 		if(d.type == 'init' && d.session) {
-			log("got init");
 			conn.session = d.session;
+			conn.resource  = d.resource;
 		}
 		else if(conn.session) {
 		 d.session = conn.session; 
+		 d.resource  = conn.resource;
 		}
-		
+		if(!sConns[d.session]) {
+			sConns[d.session] = []
+			sConns[d.session].push(conn);
+		}else{
+			for(i=0,l=sConns[d.session].length;i<l;i++) {
+				if(sConns[d.session] != conn) {
+					continue;
+				}
+				break;
+			}
+			if(i!=l) sConns[d.session].push(conn);
+		}
+
 		if(d.type == 'back' && !verifyBack(conn, d)) return;
 		if(d.type == 'away' && !verifyAway(conn, d)) return;
-		log("throwing init", d);
 		core.emit(d.type, d, function(err, data) {
-			log(arguments);
 			if(data.type == 'back' && !err) storeBack(conn, d);
 			if(data.type == 'away' && !err) storeAway(conn, d); 
 			if(data.type == 'init' && !err) storeInit(conn, d); 
@@ -69,12 +80,19 @@ sock.on('connection', function (socket) {
 function storeInit(conn, init) {
 	if(!uConns[init.user.id]) uConns[init.user.id] = [];
 	sConns[init.session].forEach(function(c) {
-		var index = uConns[init.old.id].indexOf(c);
-		uConns.splice(index, 1);
+		var index;
+		if(init.old && init.id) {
+			index = uConns[init.old.id].indexOf(c);	
+			uConns.splice(index, 1);
+		}
+
 		uConns[init.user.id].push(c);
+		
 		init.occupantOf.forEach(function(room) {
-			index = urConns[init.old.id+":"+room].indexOf(conn);
-			urConns.splice(index, 1);
+			if(init.old && init.id) {
+				index = urConns[init.old.id+":"+room].indexOf(conn);
+				urConns.splice(index, 1);
+			}
 			if(!urConns[init.user.id+":"+room]) urConns[init.user.id+":"+room] = [];
 			urConns[init.user.id+":"+room].push(conn);
 		});
@@ -99,22 +117,24 @@ function storeAway(conn, away) {
 
 module.exports = function(server, c) {
     core = c;
+    console.log("http init");
 	// api(core);
-	core.on('init', emit);
-	core.on('away', emit);
-	core.on('back', emit);
-	core.on('join', emit);
-	core.on('part', emit);
-	core.on('room', emit);
-	core.on('user', emit);
-	core.on('admit', emit);
-	core.on('expel', emit);
-	core.on('edit', emit);
-	core.on('text', emit);
+	core.on('init', emit,"gateway");
+	core.on('away', emit,"gateway");
+	core.on('back', emit,"gateway");
+	core.on('join', emit,"gateway");
+	core.on('part', emit,"gateway");
+	core.on('room', emit,"gateway");
+	core.on('user', emit,"gateway");
+	core.on('admit', emit,"gateway");
+	core.on('expel', emit,"gateway");
+	core.on('edit', emit,"gateway");
+	core.on('text', emit,"gateway");
     sock.installHandlers(server, {prefix: '/socket'});
 };
 
-function emit(action) {
+function emit(action, callback) {
+	log("Heard \""+action.type+"\" event: "+ action.id);
 	if(action.type == 'init') {
 		sConns[action.session].forEach(dispatch);
 	} else if(action.type == 'user') {
@@ -122,14 +142,15 @@ function emit(action) {
 	} else {
 		rConns[action.to].forEach(dispatch);
 	}
-	function dispatch(conn) { conn.send(action); }
+	function dispatch(conn) {log("connection:"+conn.resource, action); conn.send(action); }
+	callback();
 };
 
 function handleClose(conn) {
 	if(!conn.session) return;
 	var connections;
 	core.emit('getSessions', {ref: conn.session}, function(err, sess) {
-		if(err || !sess.length) {
+		if(err || !sess || !sess.length) {
 			log("Couldn't find session to close.");
 			return;
 		}
@@ -181,9 +202,7 @@ function verifyBack(conn, back) {
 	if(!urConns[back.from+":"+back.to]) urConns[back.from+":"+back.to] = [];
 	if(!uConns[back.from]) uConns[back.from] = [];
 	rConns[back.to].push(conn);
-	sConns[back.session].push(conn);
 	urConns[back.from+":"+back.to].push(conn);
-	uConns[back.from].push(conn);
 	return (urConns[back.from+":"+back.to].length===1);
 }
 

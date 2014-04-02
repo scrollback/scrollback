@@ -8,8 +8,8 @@ module.exports = function (types) {
 	return{
 		getUser: function(query, cb) {		
 			var gateway, eqArray = [];	
-			if(query.id){
-				user.get(query.id, function(err, res) {
+			if(query.ref && query.ref != 'me'){
+				user.get(query.ref, function(err, res) {
 					if(!res) return cb(true, []);
 					cb(true, [res]);
 				});	

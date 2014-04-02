@@ -7,10 +7,9 @@ var core;
 
 module.exports = function(c) {
     core = c;
+    require("./user.js")(core);
     core.on("back", onBack, "storage");
     core.on("away", onAway, "storage");
-    core.on("init", onInit, "storage");
-    core.on("user", onUser, "storage");
     core.on("room", onRoom, "storage");
     core.on("getUsers", onGetUsers, "cache");
     core.on("getRooms", onGetRooms, "cache");
@@ -39,24 +38,6 @@ function onAway(action, callback) {
     });
     callback();
 }
-function onInit(action, callback) {
-    if(action.old && action.old.id) {
-        userDB.del("user:{{"+action.old.id+"}}");
-        occupantDB.smembers("user:{{"+action.old.id+"}}:occupantOf", function(err, data) {
-            data.forEach(function(room) {
-                occupantDB.srem("room:{{"+room+"}}:hasOccupants",action.old.id);
-                occupantDB.sadd("room:{{"+room+"}}:hasOccupants",action.user.id);
-            });
-        });
-        occupantDB.rename("user:{{"+action.old.id+"}}:occupantOf","user:{{"+action.user.id+"}}:occupantOf");
-    }
-    callback();
-}
-
-function onUser(user, callback) {
-    occupantDB.set("user:{{"+user.id+"}}", JSON.stringify(user));
-    callback();
-}
 
 function onRoom(room, callback) {
     occupantDB.set("room:{{"+room.id+"}}", JSON.stringify(room));
@@ -64,8 +45,9 @@ function onRoom(room, callback) {
 }
 
 function onGetUsers(query, callback) {
-    if(query.id) {
-        return occupantDB.get("user:{{"+query.id+"}}", function(err, data) {
+    if(query.ref) {
+        if(query.ref != 'me' )
+        return occupantDB.get("user:{{"+query.ref+"}}", function(err, data) {
             if(err || !data) return callback();
             return callback(true, [JSON.parse(data)]);
         });

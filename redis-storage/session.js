@@ -35,7 +35,15 @@ module.exports = function(core) {
 	// 	callback();
 	// }, "storage");
 
-
+	core.on('getSessions', function(err, data) {
+		get("session",action.ref, function(err, sessionObj) {
+			var session = {
+				id: action.session,
+				user: action.user.id,
+				session.origin: action.origin
+			};
+		});
+	});
 	core.on("init", function(action, callback) {
 		get("session",action.session, function(err, sessionObj) {
 			var session = {

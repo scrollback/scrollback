@@ -10,6 +10,7 @@ actionLogger = function(){
 }
 module.exports = function(core) {
 	core.on('init', function(action, callback) {
+		if(!action.auth || !action.auth.testauth) return callback();
 		var testauth = action.auth.testauth || "";
 		actionLogger(action, "heard init action");		
 		if(action.type !== 'init' || !action.auth || !action.auth.testauth) return callback();

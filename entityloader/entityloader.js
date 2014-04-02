@@ -1,6 +1,10 @@
+var crypto = require('crypto'), log = require("../lib/logger.js");
+var names = require('../lib/generate.js').names;
+var uid = require('../lib/generate.js').uid;
+
 
 /* list of event that the basic validation function is called for.*/
-var events = ['text', 'edit', 'join', 'part', 'away', 'admit', 'expel', 'room'];
+var core, events = ['init','text', 'edit', 'join', 'part', 'away', 'admit', 'expel', 'room'];
 
 /* if few more validtion is to be added for to any event add it to this list. eq:
 	var handlers = {
@@ -10,29 +14,61 @@ var events = ['text', 'edit', 'join', 'part', 'away', 'admit', 'expel', 'room'];
 	};
 */
 var handlers = {
+	init: function(action, callback) {
+		var wait = true, isErr = false;
+		if(!action.user){
+			core.emit("getRooms",{id: uid(),hasoccupant: action.from},function(err, rooms) {
+				var user = {};
+				if(err) {
+					action.occupantof = [];
+				}
+				if(!rooms.results.length) {
+					action.occupantof = [];
+				}
+				if(isErr) return;
+				action.user = rooms.results;
+				if(wait) wait = false;
+				else callback();
+			});
+		}else{
+			wait = false;
+		}
+		core.emit("getRooms",{id: uid(), hasmember: action.from}, function(err, rooms) {
+			if(err || !rooms ||!rooms.results || !rooms.results.length) {
+				action.memberof = []
+			}else{
+				action.memberof = rooms.results;	
+			}
+			if(isErr) return;
+			if(wait) wait = false;
+			else callback();
+		});
+	},
 	edit: function(action, callback) {
-		core.emit("getTexts", {id: action.ref}, function(err, actions) {
-			if(err || !actions.results.length) return callback(new Error("TEXT_NOT_FOUND"));
+		core.emit("getTexts", {id: uid(),ref: action.ref}, function(err, actions) {
+			if(err || !actions || !actions.results || !actions.results.length) return callback(new Error("TEXT_NOT_FOUND"));
 			action.old = actions.results[0];
 			callback();
 		});
 	},
 	room: function(action, callback) {
-		core.emit("getRooms", {id: action.to}, function(err, actions) {
+		core.emit("getRooms", {ref: action.to}, function(err, data) {
 			if(err) return callback(err);
-			if(!actions.results.length) {
+			if(!data || !data.results || !data.results.length) {
 				action.old = {};
 			}else {
-				action.old = actions.results[0];
+				action.old = data.results[0];
 			}
 			callback();
 		});
 	}
 };
 
-module.exports = function(core) {
+module.exports = function(c) {
+	core = c;
 	events.forEach(function(event) {
 		core.on(event, function(action, callback) {
+			if(action.user) delete action.user;
 			basicLoader(action, function(err) {
 				if(err) return callback(err);
 				if(handlers[event]) handlers[event](action, callback);
@@ -43,71 +79,89 @@ module.exports = function(core) {
 }
 
 
-
-function basicLoader(action, callback) {
-	var wait = true, isErr = false;
-
-	core.emit("getUsers",{id: action.from},function(err, users) {
-		if(err || !user.length) {
-			isErr = true;
-			return callback(new Error("USER_NOT_FOUND"));
+function loadUser(action, callback) {
+	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
+		if(err || !data || !data.results || !data.results.length) {
+			initializerUser(action, function() {
+				callback();
+			});
+		}else {
+			action.from = data[0].user.id;
+			if(action.type == "user") {
+				action.old = data[0]
+			}else{
+				action.user = data[0]
+			}
+			callback();
 		}
-		if(isErr) return;
-		action.user = users[1];
-		if(wait) wait = false;
-		else callback();
-	});
-	
-	core.emit("getRooms",{id: action.to}, function(err, rooms) {
-		if(err || !rooms.length) {
-			isErr = true;
-			return callback(new Error("ROOM_NOT_FOUND"));
-		}
-		if(isErr) return;
-		action.room = users[1];
-		if(wait) wait = false;
-		else callback();
 	});
 }
 
-/*module.exports = function(core) {
-	function loader(data, callback) {
-		//core.emit('getRooms', {id: data.from}, function(err, user) {
-		if(data.to){
-			core.emit('getRooms', {id:data.to[0]}, function(err, room) {
-				if(err) callback(err);
-				data.room = room[0] || {};
-				//core.emit('getUsers', {id: data.from}, function(err, user) {
-				if(data.type == "nick") return callback();
-				core.emit('getUsers', {id: data.from}, function(err, user) {
-					if(err) callback(err);
-					data.user = user[0] || {};
-					callback(null, data);
-				});
-			});
+function loadRoom(action, callback) {
+	core.emit("getRooms",{id: uid(), ref: action.to, session: action.session}, function(err, rooms) {
+		var room;
+		if(err || !rooms ||!rooms.results || !rooms.results.length) {
+			room = {}
 		}else{
-			callback();
+			room = rooms.results[0];	
 		}
-	
-	}
 
-	core.on('edit', function(data, callback) {
-		loader(data, function(err, data){
-			core.emit("messages", {id: data.ref}, function(err, old) {
-				if(!old || old.length==0) return callback(new Error("INVALID REF"));
-				data.old = old[0];
-				callback(null, data);
-			});		
+
+		if(action.type == "room") {
+			if(room.id) action.old = room;
+			else action.old = {}
+		}else {
+			if(room.id) action.room = room;
+			else action.room = {id: action.to}
+		}
+		callback();
+	});
+}
+
+function basicLoader(action, callback) {
+	loadUser(action, function() {
+		loadRoom(action, function() {
+			callback();
 		});
-	},'loader');
-	core.on('message', loader, 'loader');
-	core.on('text', loader, 'loader');
-	core.on('away', loader, 'loader');
-	core.on('back', loader, 'loader');
-	core.on('join', loader, 'loader');
-	core.on('part', loader, 'loader');
-	core.on('admit', loader, 'loader');
-	core.on('expel', loader, 'loader');
-	// core.on('user', loader, 'loader');
-	// core.on('init', loader, 'loader');
-}*/
+	});
+}
+
+function initializerUser(action, callback) {
+	var userObj;
+	generateNick(action.suggestedNick || "", function(possibleNick) {
+		action.from = possibleNick;
+		userObj = {
+			id: action.from,d
+			description: "",
+			createdOn: new Date().getTime(),
+			type:"user",
+			params:{},
+			timezone:0,
+			sessions: [action.session],
+			picture: generatePick(action.from)
+		};
+		action.user = userObj;
+		callback();
+	});
+}
+
+function generateNick(suggestedNick, callback) {
+	if(!suggestedNick) suggestedNick = names(6);
+	function checkUser(suggestedNick, attemptC ,callback) {
+		var trying = suggestedNick;
+		if(attemptC) trying+=attemptC;
+		if(attemptC>=3) return callback(names(6));
+		core.emit('getUsers', {id:trying},function(err, data) {
+			if(data && data.results && data.results.length >0) return checkUser(suggestedNick, attemptC+1, callback);
+			core.emit('getRooms', {id:trying},function(err, data) {
+				if(data && data.results && data.results.length >0) return checkUser(suggestedNick, attemptC+1, callback);
+				callback('guest-'+trying);
+			});
+		})
+	}
+	checkUser(suggestedNick, 0, callback);
+}
+
+function generatePick(id) {
+	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=identicon&s=48';
+}
