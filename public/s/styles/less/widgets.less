@@ -15,7 +15,7 @@
     background-size: 10px 10px;
 }
 
-.headings(@size: 1.8em) {
+.headings(@size: 1.5em) {
     font-size: @size;
     line-height: 1em;
     font-family: @heading-font;
@@ -141,9 +141,9 @@
 
 .warning {
     background-color: lighten(@error-color, 40%);
-    border-bottom: 2px solid @error-color;
+    border-bottom: 1px solid @error-color;
     text-align: center;
-    font-size: 16px;
+    padding: .5em;
 
     h2 { color: @error-color; }
 }
