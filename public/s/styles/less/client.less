@@ -240,6 +240,7 @@
         }
 
         .user-area {
+            position: relative;
             font-weight: 700;
             color: @dark-color;
 
@@ -247,7 +248,17 @@
 
             .username {
                 line-height: 2.6em;
-                padding-right: 1em;
+                padding-right: .5em;
+            }
+
+            .notifications {
+                position: absolute;
+                top: -1em;
+                right: -2.6em;
+                padding: 0 .1em;
+                border-radius: @roundness;
+                background-color: @error-color;
+                color: @light-color;
             }
 
             img {
@@ -257,6 +268,22 @@
                 border-radius: @roundness;
             }
         }
+    }
+
+    .chat-position {
+        .opacity(0);
+        .ease;
+
+        margin: 1em 2em;
+        background-color: @dark-color;
+        color: @light-color;
+        float: right;
+        padding: .5em 1em;
+        border-radius: @roundness;
+    }
+
+    &.scrolling {
+        .chat-position { .opacity(1); }
     }
 
     .chat-area {

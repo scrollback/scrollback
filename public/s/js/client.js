@@ -19,6 +19,21 @@
     $(window).scroll(handleReposition);
     $(window).resize(handleReposition);
 
+
+    (function() {
+        var timeout;
+        $(".chat-area").on("scroll", function() {
+            if(timeout) clearTimeout(timeout);
+
+            timeout = setTimeout(function(){
+                $(".mainview").removeClass("scrolling");
+                timeout = 0;
+            }, 2000);
+
+            $(".mainview").addClass("scrolling");
+        });
+    })();
+
     $(".long").on("click", function () {
         if ($(this).hasClass("active")) {
             $(this).removeClass("active").scrollTop(0);
