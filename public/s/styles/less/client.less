@@ -1,13 +1,5 @@
 @import url('widgets.less');
 
-@conv-color1: #b58900;
-@conv-color2: #cb4b16;
-@conv-color3: #dc322f;
-@conv-color4: #d33682;
-@conv-color5: #6c71c4;
-@conv-color6: #268bd2;
-@conv-color7: #2aa198;
-
 @bar-height: 3.5em;
 
 .fixed(@width: 50%;) {
@@ -210,60 +202,84 @@
                 color: @light-color;
             }
 
+            &.conv-0 {
+                border-right-color: @color0;
+
+                &.current { background-color: fade(@color0, 10%); }
+
+                &:hover { background-color: @color0; }
+            }
+
             &.conv-1 {
-                border-right-color: @conv-color1;
+                border-right-color: @color1;
 
-                &.current { background-color: fade(@conv-color1, 10%); }
+                &.current { background-color: fade(@color1, 10%); }
 
-                &:hover { background-color: @conv-color1; }
+                &:hover { background-color: @color1; }
             }
 
             &.conv-2 {
-                border-right-color: @conv-color2;
+                border-right-color: @color2;
 
-                &.current { background-color: fade(@conv-color2, 10%); }
+                &.current { background-color: fade(@color2, 10%); }
 
-                &:hover { background-color: @conv-color2; }
+                &:hover { background-color: @color2; }
             }
 
             &.conv-3 {
-                border-right-color: @conv-color3;
+                border-right-color: @color3;
 
-                &.current { background-color: fade(@conv-color3, 10%); }
+                &.current { background-color: fade(@color3, 10%); }
 
-                &:hover { background-color: @conv-color3; }
+                &:hover { background-color: @color3; }
             }
 
             &.conv-4 {
-                border-right-color: @conv-color4;
+                border-right-color: @color4;
 
-                &.current { background-color: fade(@conv-color4, 10%); }
+                &.current { background-color: fade(@color4, 10%); }
 
-                &:hover { background-color: @conv-color4; }
+                &:hover { background-color: @color4; }
             }
 
             &.conv-5 {
-                border-right-color: @conv-color5;
+                border-right-color: @color5;
 
-                &.current { background-color: fade(@conv-color5, 10%); }
+                &.current { background-color: fade(@color5, 10%); }
 
-                &:hover { background-color: @conv-color5; }
+                &:hover { background-color: @color5; }
             }
 
             &.conv-6 {
-                border-right-color: @conv-color6;
+                border-right-color: @color6;
 
-                &.current { background-color: fade(@conv-color6, 10%); }
+                &.current { background-color: fade(@color6, 10%); }
 
-                &:hover { background-color: @conv-color6; }
+                &:hover { background-color: @color6; }
             }
 
             &.conv-7 {
-                border-right-color: @conv-color7;
+                border-right-color: @color7;
 
-                &.current { background-color: fade(@conv-color7, 10%); }
+                &.current { background-color: fade(@color7, 10%); }
 
-                &:hover { background-color: @conv-color7; }
+                &:hover { background-color: @color7; }
+            }
+
+            &.conv-8 {
+                border-right-color: @color8;
+
+                &.current { background-color: fade(@color8, 10%); }
+
+                &:hover { background-color: @color8; }
+            }
+
+            &.conv-9 {
+                border-right-color: @color9;
+
+                &.current { background-color: fade(@color9, 10%); }
+
+                &:hover { background-color: @color9; }
             }
         }
     }
@@ -392,32 +408,44 @@
                 background-color: @accent-color;
             }
 
+            &.conv-0 {
+                &:before { background-color: @color0; }
+            }
+
             &.conv-1 {
-                &:before { background-color: @conv-color1; }
+                &:before { background-color: @color1; }
             }
 
             &.conv-2 {
-                &:before { background-color: @conv-color2; }
+                &:before { background-color: @color2; }
             }
 
             &.conv-3 {
-                &:before { background-color: @conv-color3; }
+                &:before { background-color: @color3; }
             }
 
             &.conv-4 {
-                &:before { background-color: @conv-color4; }
+                &:before { background-color: @color4; }
             }
 
             &.conv-5 {
-                &:before { background-color: @conv-color5; }
+                &:before { background-color: @color5; }
             }
 
             &.conv-6 {
-                &:before { background-color: @conv-color6; }
+                &:before { background-color: @color6; }
             }
 
             &.conv-7 {
-                &:before { background-color: @conv-color7; }
+                &:before { background-color: @color7; }
+            }
+
+            &.conv-8 {
+                &:before { background-color: @color8; }
+            }
+
+            &.conv-9 {
+                &:before { background-color: @color9; }
             }
 
             .nick {
