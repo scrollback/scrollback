@@ -96,13 +96,14 @@
     .tabs {
         list-style: none;
         width: 100%;
+        display: table;
+        table-layout: fixed;
 
         li {
+            display: table-cell;
             text-align: center;
-            float: left;
-            width: 50%;
             padding: 1em 0;
-            border-bottom: 1px solid fade(@dark-color, 10%);
+            border-bottom: 1px solid fade(@dark-color, 5%);
             color: fade(@dark-color, 50%);
             cursor: pointer;
 
@@ -136,11 +137,15 @@
             .opacity(1);
         }
 
-        .member-list {
+        &.room-info {
+            padding: 1em;
+        }
+
+        &.people-list {
             padding: 1em .5em;
             text-align: justify;
 
-            .member {
+            .people {
                 display: inline-block;
                 text-align: center;
                 text-overflow: ellipsis;
@@ -174,7 +179,7 @@
             }
         }
 
-        .conversation {
+        .thread {
             display: block;
             padding: 1em 1em .5em 2em;
             border-right: .3em solid @accent-color;
