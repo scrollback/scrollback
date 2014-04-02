@@ -110,7 +110,7 @@
 
             display: table-cell;
             text-align: center;
-            padding: 1em 0;
+            padding: .25em 0;
             border-bottom: 1px solid fade(@dark-color, 10%);
             color: fade(@dark-color, 50%);
             cursor: pointer;
@@ -120,13 +120,10 @@
             &.current {
                 position: relative;
                 color: @dark-color;
-                border-bottom: 2px solid @accent-color;
+                border-bottom-color: @accent-color;
             }
 
-            h2 {
-                margin: 0;
-                font-size: 1.5em;
-            }
+            h2 { font-size: 1.5em; }
         }
     }
 
@@ -188,12 +185,10 @@
             .ease;
 
             display: block;
-            padding: 1em 1em .5em 2em;
+            padding: .5em 2em;
             border-right: 4px solid @accent-color;
             font-weight: 400;
             color: @dark-color;
-
-            h3 { margin: 0; }
 
             &.current { background-color: fade(@accent-color, 10%); }
 
@@ -297,22 +292,19 @@
         text-align: right;
         background-color: darken(@light-color, 5%);
         border-bottom: 1px solid darken(@light-color, 20%);
-        padding: .5em;
         box-shadow: 0 3px 2px -1px fade(@dark-color, 5%);
 
         .icon {
             float: left;
-            height: 2.5em;
-            width: 2.5em;
-            padding: 0;
-            border-radius: @roundness;
+            height: 3.5em;
+            width: 3.5em;
+            border-bottom: 1px solid darken(@light-color, 20%);
         }
 
         .title {
             float: left;
             font-size: 1.5em;
-            padding: .4em .5em;
-            margin: 0;
+            padding: 0 .5em;
         }
 
         .user-area {
@@ -329,9 +321,9 @@
 
             img {
                 float: right;
-                height: 2.5em;
-                width: 2.5em;
-                border-radius: @roundness;
+                height: 3.5em;
+                width: 3.5em;
+                border-bottom: 1px solid darken(@light-color, 20%);
             }
         }
     }
