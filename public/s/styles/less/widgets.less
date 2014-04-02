@@ -23,17 +23,6 @@
     margin: .5em 0;
 }
 
-.opacity(@opacity: 0.5) {
-    @opperc: @opacity * 100;
-
-    -moz-opacity: @opacity;
-    -khtml-opacity: @opacity;
-    -webkit-opacity: @opacity;
-    opacity: @opacity;
-    -ms-filter: ~"progid:DXImageTransform.Microsoft.Alpha(opacity=@{opperc})";
-    filter: ~"alpha(opacity=@{opperc})";
-}
-
 .linked {
     border-radius: 0 0 0 0;
 
