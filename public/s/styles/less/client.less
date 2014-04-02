@@ -32,11 +32,23 @@
 
 .rooms {
     background-color: @dark-color;
+    color: @light-color;
     left: 0;
     min-height: 100%;
     overflow: auto;
 
     .fixed(15%);
+
+    .scrollback-header {
+        padding: .5em 1em;
+        height: @bar-height;
+        border-bottom: 1px solid lighten(@dark-color, 10%);
+
+        img {
+            height: 2.5em;
+            width: auto;
+        }
+    }
 
     ul {
         list-style: none;
@@ -57,7 +69,7 @@
 
                     &:after {
                         right: 0;
-                        top: 1.2em;
+                        top: 1.25em;
                         position: absolute;
                         display: block;
                         content: '';
@@ -75,10 +87,12 @@
                     float: right;
                     text-align: center;
                     min-width: 2em;
-                    font-size: .8em;
+                    font-size: .75em;
                     background-color: @accent-color;
                     color: @light-color;
                     border-radius: @roundness;
+
+                    &.has-replies { background-color: @error-color; }
                 }
             }
         }
@@ -103,7 +117,7 @@
             display: table-cell;
             text-align: center;
             padding: 1em 0;
-            border-bottom: 1px solid fade(@dark-color, 5%);
+            border-bottom: 1px solid fade(@dark-color, 10%);
             color: fade(@dark-color, 50%);
             cursor: pointer;
 
@@ -114,7 +128,7 @@
             &.current {
                 position: relative;
                 color: @dark-color;
-                border-color: @accent-color;
+                border-bottom: 2px solid @accent-color;
             }
 
             h2 {
@@ -138,19 +152,18 @@
         }
 
         &.room-info {
-            padding: 1em;
+            padding: 1.5em;
         }
 
         &.people-list {
             padding: 1em .5em;
-            text-align: justify;
 
             .people {
                 display: inline-block;
                 text-align: center;
                 text-overflow: ellipsis;
                 overflow: hidden;
-                padding: .2em;
+                padding: .25em;
                 width: 6em;
                 font-weight: 400;
                 color: @dark-color;
@@ -166,7 +179,7 @@
                     width: 48px;
                     height: 48px;
                     border-radius: @roundness;
-                    margin: .2em auto;
+                    margin: .25em auto;
                 }
 
                 &:hover {
@@ -190,25 +203,67 @@
 
             .ease;
 
-            &.conv-1 { border-right-color: @conv-color1; }
+            &.current { background-color: fade(@accent-color, 10%); }
 
-            &.conv-2 { border-right-color: @conv-color2; }
-
-            &.conv-3 { border-right-color: @conv-color3; }
-
-            &.conv-4 { border-right-color: @conv-color4; }
-
-            &.conv-5 { border-right-color: @conv-color5; }
-
-            &.conv-6 { border-right-color: @conv-color6; }
-
-            &.conv-7 { border-right-color: @conv-color7; }
-
-            &.current { background-color: fade(@dark-color, 10%); }
-
-            &:hover, &.current:hover {
+            &:hover {
                 background-color: @accent-color;
                 color: @light-color;
+            }
+
+            &.conv-1 {
+                border-right-color: @conv-color1;
+
+                &.current { background-color: fade(@conv-color1, 10%); }
+
+                &:hover { background-color: @conv-color1; }
+            }
+
+            &.conv-2 {
+                border-right-color: @conv-color2;
+
+                &.current { background-color: fade(@conv-color2, 10%); }
+
+                &:hover { background-color: @conv-color2; }
+            }
+
+            &.conv-3 {
+                border-right-color: @conv-color3;
+
+                &.current { background-color: fade(@conv-color3, 10%); }
+
+                &:hover { background-color: @conv-color3; }
+            }
+
+            &.conv-4 {
+                border-right-color: @conv-color4;
+
+                &.current { background-color: fade(@conv-color4, 10%); }
+
+                &:hover { background-color: @conv-color4; }
+            }
+
+            &.conv-5 {
+                border-right-color: @conv-color5;
+
+                &.current { background-color: fade(@conv-color5, 10%); }
+
+                &:hover { background-color: @conv-color5; }
+            }
+
+            &.conv-6 {
+                border-right-color: @conv-color6;
+
+                &.current { background-color: fade(@conv-color6, 10%); }
+
+                &:hover { background-color: @conv-color6; }
+            }
+
+            &.conv-7 {
+                border-right-color: @conv-color7;
+
+                &.current { background-color: fade(@conv-color7, 10%); }
+
+                &:hover { background-color: @conv-color7; }
             }
         }
     }
@@ -254,18 +309,6 @@
             .username {
                 line-height: 2.5em;
                 padding-right: .5em;
-            }
-
-            .notifications {
-                position: absolute;
-                top: -1em;
-                right: -3em;
-                padding: 0 .2em;
-                text-align: center;
-                font-size: .8em;
-                border-radius: @roundness;
-                background-color: @error-color;
-                color: @light-color;
             }
 
             img {
@@ -342,7 +385,7 @@
 
             &:before {
                 float: left;
-                margin: .6em 0 auto -25%;
+                margin: .55em 0 auto -25%;
                 height: .5em;
                 width: .5em;
                 border-radius: 50%;
@@ -395,9 +438,9 @@
             width: 100%;
             text-align: center;
             font-style: italic;
-            font-size: .8em;
-            padding-top: .8em;
-            padding-bottom: .2em;
+            font-size: .75em;
+            padding-top: .75em;
+            padding-bottom: .25em;
             margin: 0;
 
             .zigzag(darken(@light-color, 3%); @light-color; top);
