@@ -4,38 +4,33 @@ var gen = require("../lib/generate.js")
 var search = require("./search.js")
 var guid = 	gen.uid;
 var names = gen.names;
-var msg = {id:guid(), text: "values : " + Math.random(), from : "guest-" + names(6), to: "testingRoom", type: 'text', time: new Date().getTime(), session: "web://sdjfkalja24aadf:dkaslkfjkjaf"};
+var msg = {id:guid(), text: "", from : "guest-" + names(6), to: "testingRoom", type: 'text', time: new Date().getTime(), session: "web://sdjfkalja24aadf:dkaslkfjkjaf"};
 
 describe('search', function() {
 	beforeEach (function(done) {
+		this.timeout(15000);
 		search(core);
 		setTimeout(done,1500);
 	});
-	it('search index test', function(done) {
-		msg.text += " fuck";
+	
+	it('index test', function(done) {
+		msg.text += "Microsoft introduces Universal Windows apps ";
 		core.emit("text", msg, function(err, data) {
 			console.log(msg, err);
-			assert.ok(!err, " Error occured in indexing ");
+			assert.ok(!err, " indexed ");
 			done();
 		});
 	});
-
-
-	/*it('Room banning test', function(done) {
-		core.emit("room",{
-			id: guid(),
-			from: "testUser",
-			to: "fuck",
-			room: {
-				id: "fuck",
-				type: "room"
+	
+	it('search test', function(done) {
+		core.emit("getTexts", {q:'microsoft'}, function(err, data) {
+			var results = data.results.hits.hits;
+			var numOfResults = data.results.hits.total;
+			for(var i = 0; i < numOfResults; i++){
+				console.log(results[i]._source);
 			}
-
-		}, function(err, room) {
-			console.log(err);
-			assert(err, new Error("Abusive room name"), "Not banning word fuck if it is a room name");
+			assert(numOfResults,4, " found "+numOfResults+" result");
 			done();
 		});
 	});
-*/
 });
