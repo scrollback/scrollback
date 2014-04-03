@@ -4,31 +4,32 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 	head
 	meta(charset="utf-8")
 	meta(http-equiv="X-UA-Compatible",content="IE=edge")
-	title	
+	title
 		block title
 			| #{defaultTitle || room.title} on scrollback
 	meta(name="viewport",content="width=device-width")
 	link(rel="stylesheet",href="/dummy.css")
 	link(rel="stylesheet",href="//fonts.googleapis.com/css?family=Open+Sans:300,800|Alegreya:400|Source+Code+Pro:300")
 	link(rel="stylesheet",href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css")
-	
+
 	body
 		#titleBar(ng-controller="metaController")
-			a(ng-click="gotoMe();$event.stopPropagation();")#logo scrollback	
+			a(ng-click="gotoMe();$event.stopPropagation();")#logo scrollback
+			a#goback Back to chat
 			a#user(ng-cloak="" ng-click="$event.stopPropagation();")
 				img.face.top(ng-src='{{user.picture}}' ng-click='profile();')
 				#username(ng-click='profile();', ng-cloak="") {{user.id.replace("guest-","")}}
 				#actionText(ng-click = 'userAction();', ng-cloak="") {{actionText}}
 		div#notifications(ng-show="notifications.length",ng-cloak="")
 			div.notification(ng-repeat="i in notifications track by $index") {{i}}
-		#meta(ng-controller="metaController",ng-class="status.waiting?'waiting column':'column'")			
-			#info 
+		#meta(ng-controller="metaController",ng-class="status.waiting?'waiting column':'column'")
+			#info
 				ng-view
 			#foot
 				| Scrollback is a product of Askabt Pte Ltd.
-				| We respect your privacy. 
+				| We respect your privacy.
 				a.issues(onclick='window.open("https://github.com/scrollback/scrollback/issues","_blank")') Help us improve by reporting the bugs you find.
-			
+
 		#body(ng-controller="messageController",class = 'column', ng-class="{'owner': room.owner === user.id, 'notOwner': room.owner !== user.id }")
 			conversation-styles(conversations = "convLabelList")
 			.scrollback-stream(when-scrolled-up="loadMoreUp()", when-scrolled-down="loadMoreDown()")
@@ -45,10 +46,10 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 				div(class="scrollback-hidden")
 					each m in messages
 							if(m.from && m.text)
-									div: [#{m.from.replace("guest-","")}]: !{format(m.text.replace('{{','{ {'))} 
+									div: [#{m.from.replace("guest-","")}]: !{format(m.text.replace('{{','{ {'))}
 					a(target="_self", href='/#{room.id}/until/#{prevLink}') prev
 					a(target="_self", href='/#{room.id}/since/#{nextLink}') next
-							
+
 		script.
 			window.scrollback = {
 				host : '//' + location.host,
@@ -77,14 +78,14 @@ html(ng-app='scrollbackApp', ng-controller="rootController")
 		script(src='/sdk/directives.js')
 		script(src='/sdk/app.js')
 		script(src='/sdk/viewcontroller.js')
-		
+
 		script.
 			$('.collapse,#titleBar').on('click', function() {
-				$('#meta').toggleClass('expanded');
+				$('body').toggleClass('expanded');
 			});
-			$('#logo, #user').click(function(){
-				if(!$('#meta').hasClass('expanded')){
-					$('#meta').toggleClass('expanded');
+			$('#logo, #goback, #user').click(function(){
+				if(!$('#body').hasClass('expanded')){
+					$('#body').toggleClass('expanded');
 				}
 			});
 		script.
