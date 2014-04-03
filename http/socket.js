@@ -228,7 +228,7 @@ function message (m, conn) {
 			}
 		}
 		
-		if(m.to && typeof m.to != "string" && m.to.length===0) return;
+		// if(m.to && typeof m.to != "string" && m.to.length===0) return;
 
 		if (m.type == 'back') {
 			m.to.forEach(function(room) {
