@@ -32,12 +32,13 @@ function connectBot(server, channels, options, cb) {
 	if (clients[server]) {//already connected to server.
 		client = clients[server];
 		channels.forEach(function(channel) {
-			if (client.opt.channel.indexOf(channel) === -1) {//if not connected.
+			if (client.opt.channels.indexOf(channel) === -1) {//if not connected.
 				client.join(channel);
 			}
 		});
 		cb();//Is there a better way?
 	} else {
+		console.log("Trying to connect to :", server, channels);
 		client = new irc.Client(server, myNick, {
 			userName : myNick,
 			realName: myNick + '@scrollback.io',//TODO use identId
@@ -52,7 +53,6 @@ function connectBot(server, channels, options, cb) {
 		});
 		clients[server] = client;
 		onNames(client);
-		client.conn.on("connect", cb);
 		onRaw(client);
 		onMessage(client);
 		onPM(client);
@@ -60,11 +60,8 @@ function connectBot(server, channels, options, cb) {
 		onJoin(client);
 		onPart(client);
 		onNick(client);
+		client.conn.on("connect", cb);
 	}
-	
-	//onDisconnect(client);
-	//onPart(client);
-	//TODO listen to messages
 }
 
 function onRaw(client) {
@@ -178,7 +175,7 @@ function onNames(client) {
 function connectUser(server, nick, channels,options, cb) {
 	var client;
 	if (!userClients[nick]) userClients[nick] = {};
-	if (userclients[nick][server]) {
+	if (userClients[nick][server]) {
 		client = userClients[nick][server];
 		channels.forEach(function(channel) {
 			if (client.opt.channels.indexOf(channel) === -1) {
@@ -189,15 +186,15 @@ function connectUser(server, nick, channels,options, cb) {
 	} else {
 		client = new irc.Client(server, nick, {
 			userName : nick,
-			realName: identId + '@scrollback.io',
+			realName: nick + '@scrollback.io',
 			channels: channels,
 			debug: false,
 			stripColors: true,
 			floodProtection: true,
-			identId: option.identId,
-			webircPassword: option.webircPassword,
-			userIp : option.userIp,
-			userHostName: option.userHostName
+			identId: options.identId,
+			webircPassword: options.webircPassword,
+			userIp : options.userIp,
+			userHostName: options.userHostName
 		});
 		userClients[nick][server] = client;
 		client.conn.on("connect", cb);
@@ -205,15 +202,27 @@ function connectUser(server, nick, channels,options, cb) {
 }
 
 
-function leave(server, nick, channel) {
-	var client = userClients[server][nick];
+function leave(server, channel) {
+	var client = clients[server];
 	client.part(channel);
-	if (client.channels.length === 0) {
+	if (client.opt.channels.length === 0) {
 		client.disconnect();
-		delete userClients[server][nick];
+		delete client[server];
 	}
 	
 }
+
+
+function leaveUser(server, nick, channel) {
+	var client = userClients[nick][server];
+	client.part(channel);
+	if (client.opt.channels.length === 0) {
+		client.disconnect();
+		delete userClients[nick][server];
+	}
+	
+}
+
 
 
 function onDisconnect(client) {
@@ -229,7 +238,7 @@ function onDisconnect(client) {
 
 //text and action message
 function say(server, nick , channel, message) {
-	userClients[server][nick].say(channel, message);
+	userClients[nick][server].say(channel, message);
 }
 
 /**
@@ -238,10 +247,11 @@ function say(server, nick , channel, message) {
  *callback(nick) with assiged new nick
  */
 function rename(server, oldNick, newNick, cb) {
-	var client = userClients[server][oldNick];
-	client.rename(oldNick, newNick);
-	delete userClients[server][oldNick];
-	userClients[server][newNick] = client;
+	var client = userClients[oldNick][server];
+	client.rename(newNick);
+	delete userClients[oldNick][server];
+	if (!userClients[newNick]) userClients[newNick] = {};
+	userClients[newNick][server] = client;
 	nicks[oldNick] = cb;	
 }
 

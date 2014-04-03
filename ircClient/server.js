@@ -8,15 +8,12 @@ var port = 78910;
 var client;
 var dataQueue = [];
 var isConnected = false;
+
 core.on('data', function(data) {
 	writeObject(data);
 });
+
 ircClient.init(core);
-ircClient.connectBot("localhost", ["#scrollback"], {
-	
-}, function() {
-	console.log("connected................");
-});
 
 var server = net.createServer(function(c) { //'connection' listener
 	if (client && client.writable) {
@@ -36,6 +33,7 @@ var server = net.createServer(function(c) { //'connection' listener
 		console.log('server disconnected');
 	}); 
 });
+
 server.listen(port, function() { //'listening' listener
   console.log('server bound');
 });
@@ -49,6 +47,7 @@ function handleIncomingData(data) {
  */
 core.on('object', function(obj) {
 	var fn = obj.type;
+	console.log("received : ", obj);
 	switch (fn) {
 		case 'connectBot':
 			ircClient.connectBot(obj.server, obj.channels, obj.options, function() {
@@ -59,6 +58,9 @@ core.on('object', function(obj) {
 			ircClient.connectUser(obj.server, obj.nick, obj.channels, obj.options, function() {
 				writeObject({type: 'callback', uid: obj.uid});
 			});
+			break;
+		case 'leave':
+			ircClient.leave(obj.server, obj.channel);
 			break;
 		case 'leave':
 			ircClient.leave(obj.server, obj.nick, obj.channel);
@@ -83,7 +85,7 @@ core.on('object', function(obj) {
 });
 
 
-function writeObject(obj) {
+function writeObject(obj) {//move this inside objectWriter 
 	var v = JSON.stringify(obj);
 	var r = v.length + " ";
 	r += v;
