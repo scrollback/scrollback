@@ -18,6 +18,10 @@ module.exports = function(core) {
 			message.to = message.to.map(function(room) {
 				return validateRoom(room, true);
 			});
+		}else{
+			if(message.type == "back") {
+				message.to = [];	
+			}
 		}
 		if(!message.id )	message.id = guid();
 

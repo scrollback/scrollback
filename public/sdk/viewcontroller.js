@@ -513,7 +513,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		}
 		if ($scope.twitterUsername) {
 			if(!$scope.editRoom.identities) $scope.editRoom.identities = [];
-			$scope.editRoom.identities.push("twitter://" + $scope.twitterUsername + ":" + $scope.room.id);
+			$scope.editRoom.identities.push("twitter:" + $scope.twitterUsername);
 			$scope.editRoom.params.twitter = {};
 			$scope.editRoom.params.twitter.tags = $scope.twitterTags;
 			$scope.editRoom.params.twitter.id = $scope.twitterUsername;
