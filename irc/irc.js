@@ -31,7 +31,7 @@ module.exports = function(object){
 	});
 	init();
 	core.on("room", function(room, callback) {
-		var i=0,l;
+		var i=0, l;
 		log("Heard \"room\" Event");
 		if(room.type == "room") {
 			// just validation.
@@ -82,10 +82,10 @@ module.exports = function(object){
 	core.on("message" , function(message , callback) {
 		log("Heard \"message\" Event");
 
-		if(message.to && message.length){
+		if(message.to && message.length) {
 			db.query("SELECT * FROM `accounts` WHERE `room` IN (?) AND `gateway`='irc'", [message.to], function(err, data) {
 				var i, l, name, list = [], u;
-				if(err) return callback(err);
+				if(err) return;
 				for(i=0, l=data.length; i<l; i+=1) {
 					u = url.parse(data[i].id);
 					if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
@@ -95,10 +95,7 @@ module.exports = function(object){
 				}
 				send(message, list);
 			});	
-		}else{
-			callback();
 		}
-		
 		callback();
 	}, "gateway");
 };
