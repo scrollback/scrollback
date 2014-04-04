@@ -60,7 +60,9 @@ sock.on('connection', function (socket) {
 	});
 	
 	conn.send = function(type, data) {
-		socket.write(JSON.stringify({type: type, data: data}));
+		data = JSON.stringify({type: type, data: data});
+		log("Sending", data.length, 'bytes: ', data.substr(0,50));
+		socket.write(data);
 	};
 	socket.on('close', function() { close(conn); });
 });

@@ -31,7 +31,7 @@ module.exports = function(object){
 	});
 	init();
 	core.on("room", function(room, callback) {
-		var i=0,l;
+		var i=0, l;
 		log("Heard \"room\" Event");
 		if(room.type == "room") {
 			// just validation.
