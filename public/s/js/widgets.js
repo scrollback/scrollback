@@ -52,11 +52,13 @@
         });
 
         $(".tabs > li").on("click", function () {
-            for (var i = 0; i < tabs.length; i++) {
-                if ($(this).hasClass(tabs[i])) {
-                    $("." + tabs[i]).addClass("current");
-                } else {
-                    $("." + tabs[i]).removeClass("current");
+            if (!$(this).hasClass("notab")) {
+                for (var i = 0; i < tabs.length; i++) {
+                    if ($(this).hasClass(tabs[i])) {
+                        $("." + tabs[i]).addClass("current");
+                    } else {
+                        $("." + tabs[i]).removeClass("current");
+                    }
                 }
             }
         });

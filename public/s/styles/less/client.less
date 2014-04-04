@@ -10,7 +10,7 @@
 @metalarge: 30%;
 @metamedium: 36em;
 @metasmall: 27em;
-@metatiny: 15em;
+@metatiny: 18em;
 
 .fixed {
     position: fixed;
@@ -145,24 +145,6 @@
         left: @metatiny * -1;
     }
 
-    .roomlist {
-        display: none;
-
-        @media screen and (max-width: 85em) {
-            .ease(.5s);
-
-            display: block;
-            float: left;
-            height: 3.5em;
-            width: 2.5em;
-            margin: 0;
-            cursor: pointer;
-            background: url(../../img/icons/back.svg) center center no-repeat;
-            background-size: contain;
-            cursor: pointer;
-        }
-    }
-
     .tabs {
         list-style: none;
         width: 100%;
@@ -170,15 +152,7 @@
         display: table;
         table-layout: fixed;
         margin: 0;
-
-        @media screen and (max-width: 85em) {
-            float: right;
-            width: @metamedium - 3.5em;
-        }
-
-        @media screen and (max-width: 70em) { width: @metasmall - 3.5em; }
-
-        @media screen and (max-width: 27em) { width: @metatiny - 3.5em; }
+        border-bottom: 1px solid fade(@dark-color, 20%);
 
         li {
             .ease;
@@ -187,7 +161,6 @@
             display: table-cell;
             text-align: center;
             padding: .25em 0;
-            border-bottom: 1px solid fade(@dark-color, 30%);
             color: @dark-color;
             cursor: pointer;
 
@@ -197,7 +170,7 @@
                 .opacity(1);
 
                 position: relative;
-                border-bottom-color: @accent-color;
+                border-bottom: 2px solid @accent-color;
             }
 
             &.tab-info {
@@ -219,6 +192,21 @@
                 background-size: 28px 28px;
 
                 h2 { display: none; }
+            }
+
+            &.roomlist {
+                display: none;
+
+                @media screen and (max-width: 85em) {
+                    .ease(.3s);
+                    .opacity(1);
+
+                    display: table-cell;
+                    background: url(../../img/icons/back.svg) center center no-repeat;
+                    background-size: 28px 28px;
+
+                    h2 { display: none; }
+                }
             }
 
             h2 { font-size: 1.5em; }
@@ -380,33 +368,34 @@
     }
 }
 
-.mainview {
-    .fixed;
+.mainelems() {
     .ease;
 
     left: @roomlarge + @metalarge;
     right: 0;
-    background-color: @light-color;
-    color: @dark-color;
 
     @media screen and (max-width: 85em) { left: @metamedium;  }
 
     @media screen and (max-width: 70em) { left: 0;  }
+}
+
+.mainview {
+    .fixed;
+    .mainelems;
+
+    background-color: @light-color;
+    color: @dark-color;
 
     .chat-input {
         .ease;
+        .mainelems;
 
         position: fixed;
-        left: @roomlarge + @metalarge;
         right: 0;
         bottom: 0;
         padding: .5em 1em;
         min-height: @bar-height;
         background-color: darken(@light-color, 5%);
-
-        @media screen and (max-width: 85em) { left: @metamedium;  }
-
-        @media screen and (max-width: 70em) { left: 0;  }
 
         .textarea {
             .entry;
@@ -422,6 +411,7 @@
     }
 
     .titlebar {
+        position: relative;
         height: @bar-height;
         text-align: right;
         background-color: darken(@light-color, 5%);
@@ -432,7 +422,7 @@
             display: none;
 
             @media screen and (max-width: 70em) {
-                .ease(.5s);
+                .ease(.3s);
 
                 display: block;
                 float: left;
@@ -440,7 +430,7 @@
                 width: 2.5em;
                 cursor: pointer;
                 background: url(../../img/icons/back.svg) center center no-repeat;
-                background-size: contain;
+                background-size: 28px 28px;
             }
         }
 
@@ -641,25 +631,11 @@
     .menu { .transform(rotate(180deg)); }
 
     @media screen and (max-width: 70em) {
-        .rooms { left: @roomsmall * -1; }
-
-        .meta { left: 0; }
-
-        .mainview, .chat-input {
-            left: @metasmall;
-            right: @metasmall * -1;
-        }
+        .rooms, .meta, .mainview, .chat-input { .transform(translate3d(@metasmall, 0, 0)); }
     }
 
     @media screen and (max-width: 27em) {
-        .rooms { left: @roomtiny * -1; }
-
-        .meta { left: 0; }
-
-        .mainview, .chat-input {
-            left: @metatiny;
-            right: @metatiny * -1;
-        }
+        .rooms, .meta, .mainview, .chat-input { .transform(translate3d(@metatiny, 0, 0)); }
     }
 }
 
@@ -667,35 +643,14 @@
     .roomlist { .transform(rotate(180deg)); }
 
     @media screen and (max-width: 85em) {
-        .rooms { left: 0; }
-
-        .meta { left: @roommedium; }
-
-        .mainview, .chat-input {
-            left: @roommedium + @metamedium;
-            right: @roommedium * -1;
-        }
+        .rooms, .meta, .mainview, .chat-input { .transform(translate3d(@roommedium, 0, 0)); }
     }
 
     @media screen and (max-width: 70em) {
-        .rooms { left: 0; }
-
-        .meta { left: @roomsmall; }
-
-        .mainview, .chat-input {
-            left: @roomsmall + @metasmall;
-            right: ( @roomsmall + @metasmall ) * -1;
-        }
+        .rooms, .meta, .mainview, .chat-input { .transform(translate3d( ( @roomsmall + @metasmall ), 0, 0)); }
     }
 
     @media screen and (max-width: 27em) {
-        .rooms { left: 0; }
-
-        .meta { left: @roomtiny; }
-
-        .mainview, .chat-input {
-            left: @roomtiny + @metatiny;
-            right: ( @roomtiny + @metatiny ) * -1;
-        }
+        .rooms, .meta, .mainview, .chat-input { .transform(translate3d(( @roomtiny + @metatiny ), 0, 0)); }
     }
 }

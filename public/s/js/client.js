@@ -4,24 +4,13 @@
 (function () {
     'use strict';
 
+    // Scroll to bottom of the messages on page load
     $(".chat-area").scrollTop($(".chat-area")[0].scrollHeight);
 
-    function handleReposition() {
-        if ($(window).scrollTop() >= 5) {
-            $(document.body).addClass("scrolled");
-        } else {
-            $(document.body).removeClass("scrolled");
-        }
-    }
-
-    handleReposition();
-
-    $(window).scroll(handleReposition);
-    $(window).resize(handleReposition);
-
-
-    (function() {
+    // Add a class while scrolling so we can do cool stuff
+    $(function() {
         var timeout;
+
         $(".chat-area").on("scroll", function() {
             if(timeout) clearTimeout(timeout);
 
@@ -32,8 +21,9 @@
 
             $(".mainview").addClass("scrolling");
         });
-    })();
+    });
 
+    // Show and hide panes in responsive view
     $(".long").on("click", function () {
         $(this).toggleClass("active").scrollTop(0);
     });
@@ -51,6 +41,7 @@
         $("body").removeClass("roomsinview");
     });
 
+    // Handle swipe gestures (requires jQuery mobile touch events component)
     $("body").on("swiperight", function () {
         if ($("body").hasClass("metainview")) {
             $("body").addClass("roomsinview");
