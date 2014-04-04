@@ -229,12 +229,17 @@ function getRequest(req, res, next) {
 			},
 			function(token, tokenSecret, profile, done) {
 				logTwitter("tokens", token, tokenSecret);
-				userData[req.session.user.id] = {token: token,tokenSecret: tokenSecret, profile : profile};
+				
 				
 				var multi = redis.multi();
+				var pro = {};
+				pro.username = profile.username;
+				pro.id = profile.id;
+				pro.displayName = profile.displayName;
+				userData[req.session.user.id] = {token: token,tokenSecret: tokenSecret, profile : pro};
 				multi.setex("twitter:userData:token:" + req.session.user.id, expireTime, token);
 				multi.setex("twitter:userData:tokenSecret:" + req.session.user.id, expireTime, tokenSecret);
-				multi.setex("twitter:userData:profile:" + req.session.user.id, expireTime, JSON.stringify(profile));
+				multi.setex("twitter:userData:profile:" + req.session.user.id, expireTime, JSON.stringify(pro));
 				multi.exec(function(err,replies) {
 					logTwitter("user data added: ", replies);	
 				});
