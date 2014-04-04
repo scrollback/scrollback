@@ -17,7 +17,7 @@
     $(window).scroll(detectScroll);
 
     // Show scrollback embed widget
-    $(".room").on("click", function () {
+    $(".trial-room").on("click", function () {
         $("body").addClass("scrollback-open");
     });
 

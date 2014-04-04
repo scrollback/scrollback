@@ -36,7 +36,6 @@ module.exports = function (types) {
 						texts.link(message.id, 'hasLabel', i, {score: message.labels[i]});
 					}
 				}
-				log(err, res);
 				cb && cb(err, res);
 			});
 			

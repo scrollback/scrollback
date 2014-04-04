@@ -60,7 +60,9 @@ sock.on('connection', function (socket) {
 	});
 	
 	conn.send = function(type, data) {
-		socket.write(JSON.stringify({type: type, data: data}));
+		data = JSON.stringify({type: type, data: data});
+		log("Sending", data.length, 'bytes: ', data.substr(0,50));
+		socket.write(data);
 	};
 	socket.on('close', function() { close(conn); });
 });
@@ -201,7 +203,7 @@ function edit(action, conn) {
 	
 }
 function message (m, conn) {
-	
+	var sendTo;
 	if(!conn.sid) return;
 	session.get({sid: conn.sid}, function(err, sess) {
 		var user = sess.user, tryingNick, roomName;
@@ -215,19 +217,31 @@ function message (m, conn) {
 		else{
 			m.origin = {gateway: "web", ip: conn.socket.remoteAddress, location:"unknown"};
 		}
-		if(!m.to && Object.keys(user.rooms).length !== 0) {
-			m.to = m.to || Object.keys(user.rooms);
-		}
 
-		if(m.to && typeof m.to != "string" && m.to.length===0) return;
+
+		if(m.to && typeof m.to == "string") {
+			m.to = [m.to]
+		}
+		if(!m.to) {
+			if(!Object.keys(user.rooms).length) {
+				m.to = Object.keys(user.rooms);
+			}else{
+				m.to = [];
+			}
+		}
+		
+		// if(m.to && typeof m.to != "string" && m.to.length===0) return;
 
 		if (m.type == 'back') {
-			if(!userBack(user, m.to, conn)) {
-				session.set(conn.sid, sess);
-				return; 
-			}
+			m.to.forEach(function(room) {
+				sendTo = []
+				// it returns false if the back message for this user is already sent
+				if(userBack(user, room, conn)) {
+					sendTo.push(room);
+				}
+			});
 			session.set(conn.sid, sess);
-			// it returns false if the back message for this user is already sent
+			m.to = sendTo;
 		} else if (m.type == 'away') {
 			if(!userAway(user, m.to, conn)) {
 				session.set(conn.sid, sess);

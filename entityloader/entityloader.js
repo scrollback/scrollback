@@ -2,7 +2,7 @@
 module.exports = function(core) {
 	function loader(data, callback) {
 		//core.emit('getRooms', {id: data.from}, function(err, user) {
-		if(data.to){
+		if(data.to && data.to.length){
 			core.emit('getRooms', {id:data.to[0]}, function(err, room) {
 				if(err) callback(err);
 				data.room = room[0] || {};

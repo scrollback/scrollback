@@ -32,11 +32,4 @@ public/embed.uw.min.js
 public/dummy.css
 public/style.css
 
-public/s/css/widgets.css
-public/s/css/stylesheet.css
-public/s/css/definitions.css
-public/s/css/elements.css
-public/s/css/reset.css
-public/s/css/grid.css
-public/s/css/signup.css
-public/s/css/animations.css
+public/s/styles/less/*.css

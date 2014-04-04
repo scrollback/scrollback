@@ -11,18 +11,18 @@
         <link rel="shortcut icon" href="./s/img/favicon.png" type="image/x-icon" />
 
         <link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
-        <link rel="stylesheet" type="text/css" media="screen" href="./s/css/stylesheet.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="./s/styles/less/widgets.css" />
     </head>
 
     <body>
-        <section class="widgets">
+        <section class="content">
             <h1>Heading level 1</h1>
             <h2>Heading level 2</h2>
             <h3>Heading level 3</h3>
+            <p>This page showcases all the widget styles available in the <code>.less</code> files and contains examples on how to use the widgets. If any new widget style is made, then it should be also be added to this page. This is an example of a small paragraph. Here is a link to the <a href="http://scrollback.io">scrollback.io</a> homepage.</p>
             <img src="./s/img/example.jpg" />
             <p class="subtitle">Just a subtitle</p>
-            <p>This page showcases all the widget styles available in the <code>.less</code> files and contains examples on how to use the widgets. If any new widget style is made, then it should be also be added to this page. This is an example of a small paragraph. Here a link to the <a href="http://scrollback.io">scrollback.io</a> homepage.</p>
-            <p>Click or hover the follwing button to see a popover. Click outside the popover to dismiss. Popovers will usually align to the center only in <code>inline-block</code> elements. You also need to add one element with the class <code>popover-layer</code> to your markup.</p>
+            <p>Click or hover the follwing button to see a popover. Click outside the popover to dismiss. Popovers will usually align to the center only in <code>inline-block</code> elements.</p>
             <div class="has-popover button">
                 Show popover
                 <div class="popover">
@@ -64,7 +64,7 @@
         <script src="./s/js/widgets.js"></script>
         <script>
             $(function() {
-                $(".definitions").load("./s/css/definitions.less");
+                $(".definitions").load("./s/styles/less/definitions.less");
             });
         </script>
     </body>

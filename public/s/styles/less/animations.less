@@ -1,0 +1,84 @@
+/* animations and transitions */
+.transform(@args) {
+    -webkit-transform: @args;
+    -moz-transform: @args;
+    -ms-transform: @args;
+    transform: @args;
+}
+
+.translate(@x; @y) { .transform(translate(@x, @y)); }
+
+.bounceframes() {
+    0%, 10%, 30%, 50%, 100% { .translate(0, 0); }
+    20% { .translate(0, -15px); }
+    40% { .translate(0, -10px); }
+}
+
+@-webkit-keyframes bounce { .bounceframes; }
+
+@-moz-keyframes bounce { .bounceframes; }
+
+@-ms-keyframes bounce { .bounceframes; }
+
+@keyframes bounce { .bounceframes; }
+
+.bounce(@args: 5s) {
+    -webkit-animation: bounce @args;
+    -moz-animation: bounce @args;
+    -ms-animation: bounce @args;
+    animation: bounce @args;
+}
+
+.appearframes() {
+    0% {
+        opacity: 0;
+
+        .transform(scale(.5));
+    }
+
+    30% { .transform(scale(1)); }
+
+    100% { opacity: 1; }
+}
+
+@-webkit-keyframes appear { .appearframes; }
+
+@-moz-keyframes appear { .appearframes; }
+
+@-ms-keyframes appear { .appearframes; }
+
+@keyframes appear { .appearframes; }
+
+.appear(@args: .5s) {
+    -webkit-animation: appear @args;
+    -moz-animation: appear @args;
+    -ms-animation: appear @args;
+    animation: appear @args;
+}
+
+.fadeinframes() {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@-webkit-keyframes fadein { .fadeinframes; }
+
+@-moz-keyframes fadein { .fadeinframes; }
+
+@-ms-keyframes fadein { .fadeinframes; }
+
+@keyframes fadein { .fadeinframes; }
+
+.fadein(@args: .5s) {
+    -webkit-animation: fadein @args;
+    -moz-animation: fadein @args;
+    -ms-animation: fadein @args;
+    animation: fadein @args;
+}
+
+.ease(@args: .15s) {
+    -webkit-transition: @args ease;
+    -moz-transition: @args ease;
+    -ms-transition: @args ease;
+    transition: @args ease;
+}
