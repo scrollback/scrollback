@@ -50,4 +50,20 @@
         $("body").toggleClass("metainview");
         $("body").removeClass("roomsinview");
     });
+
+    $("body").on("swiperight", function () {
+        if ($("body").hasClass("metainview")) {
+            $("body").addClass("roomsinview");
+        } else {
+            $("body").addClass("metainview");
+        }
+    });
+
+    $("body").on("swipeleft", function () {
+        if ($("body").hasClass("roomsinview")) {
+            $("body").removeClass("roomsinview");
+        } else {
+            $("body").removeClass("metainview").removeClass("roomsinview");
+        }
+    });
 }());

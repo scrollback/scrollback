@@ -8,8 +8,8 @@
 @roomtiny: 15em;
 
 @metalarge: 30%;
-@metamedium: 30em;
-@metasmall: 20em;
+@metamedium: 36em;
+@metasmall: 27em;
 @metatiny: 15em;
 
 .fixed {
@@ -34,7 +34,7 @@
 
 .rooms {
     .fixed;
-    .ease(.3s);
+    .ease;
 
     background-color: @dark-color;
     color: @light-color;
@@ -43,17 +43,17 @@
     min-height: 100%;
     overflow: auto;
 
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 85em) {
         width: @roommedium;
         left: @roommedium * -1;
     }
 
-    @media screen and (max-width: 920px) {
+    @media screen and (max-width: 70em) {
         width: @roomsmall;
         left: ( @roomsmall + @metasmall ) * -1;
     }
 
-    @media screen and (max-width: 360px) {
+    @media screen and (max-width: 27em) {
         width: @roomtiny;
         left: ( @roomtiny + @metatiny ) * -1;
     }
@@ -121,7 +121,7 @@
 
 .meta {
     .fixed;
-    .ease(.3s);
+    .ease;
     .clearfloat;
 
     left: @roomlarge;
@@ -130,17 +130,17 @@
     color: @dark-color;
     border-right: 1px solid darken(@light-color, 10%);
 
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 85em) {
         width: @metamedium;
         left: 0;
     }
 
-    @media screen and (max-width: 920px) {
+    @media screen and (max-width: 70em) {
         width: @metasmall;
         left: @metasmall * -1;
     }
 
-    @media screen and (max-width: 360px) {
+    @media screen and (max-width: 27em) {
         width: @metatiny;
         left: @metatiny * -1;
     }
@@ -148,7 +148,7 @@
     .roomlist {
         display: none;
 
-        @media screen and (max-width: 1200px) {
+        @media screen and (max-width: 85em) {
             .ease(.5s);
 
             display: block;
@@ -171,14 +171,14 @@
         table-layout: fixed;
         margin: 0;
 
-        @media screen and (max-width: 1200px) {
+        @media screen and (max-width: 85em) {
             float: right;
             width: @metamedium - 3.5em;
         }
 
-        @media screen and (max-width: 920px) { width: @metasmall - 3.5em; }
+        @media screen and (max-width: 70em) { width: @metasmall - 3.5em; }
 
-        @media screen and (max-width: 360px) { width: @metatiny - 3.5em; }
+        @media screen and (max-width: 27em) { width: @metatiny - 3.5em; }
 
         li {
             .ease;
@@ -231,11 +231,13 @@
         .ease;
 
         pointer-events: none;
+        z-index: -1;
 
         &.current {
             .opacity(1);
 
             pointer-events: auto;
+            z-index: 1;
         }
 
         &.room-info {
@@ -243,15 +245,16 @@
         }
 
         &.people-list {
-            padding: 1em .5em;
+            padding: 1em;
 
             .people {
                 display: inline-block;
                 text-align: center;
                 text-overflow: ellipsis;
                 overflow: hidden;
+                margin: .5em;
                 padding: .25em;
-                width: 6em;
+                width: 5em;
                 font-weight: 400;
                 color: @dark-color;
 
@@ -263,10 +266,9 @@
 
                 img {
                     display: block;
-                    width: 48px;
-                    height: 48px;
+                    width: 4.5em;
+                    height: 4.5em;
                     border-radius: @roundness;
-                    margin: .25em auto;
                 }
 
                 &:hover {
@@ -380,19 +382,19 @@
 
 .mainview {
     .fixed;
-    .ease(.3s);
+    .ease;
 
     left: @roomlarge + @metalarge;
     right: 0;
     background-color: @light-color;
     color: @dark-color;
 
-    @media screen and (max-width: 1200px) { left: @metamedium;  }
+    @media screen and (max-width: 85em) { left: @metamedium;  }
 
-    @media screen and (max-width: 920px) { left: 0;  }
+    @media screen and (max-width: 70em) { left: 0;  }
 
     .chat-input {
-        .ease(.3s);
+        .ease;
 
         position: fixed;
         left: @roomlarge + @metalarge;
@@ -402,9 +404,9 @@
         min-height: @bar-height;
         background-color: darken(@light-color, 5%);
 
-        @media screen and (max-width: 1200px) { left: @metamedium;  }
+        @media screen and (max-width: 85em) { left: @metamedium;  }
 
-        @media screen and (max-width: 920px) { left: 0;  }
+        @media screen and (max-width: 70em) { left: 0;  }
 
         .textarea {
             .entry;
@@ -429,7 +431,7 @@
         .menu {
             display: none;
 
-            @media screen and (max-width: 920px) {
+            @media screen and (max-width: 70em) {
                 .ease(.5s);
 
                 display: block;
@@ -449,7 +451,7 @@
             padding-left: 1em;
             cursor: pointer;
 
-            @media screen and (max-width: 920px) { padding-left: .25em;  }
+            @media screen and (max-width: 70em) { padding-left: .25em;  }
         }
 
         .user-area {
@@ -501,9 +503,9 @@
             max-height: 12em;
             overflow: hidden;
 
-            @media screen and (max-width: 900px) { padding-left: 22%; }
+            @media screen and (max-width: 70em) { padding-left: 22%; }
 
-            @media screen and (max-width: 360px) { padding-left: 3em; }
+            @media screen and (max-width: 27em) { padding-left: 3em; }
 
             &.long {
                 .ease;
@@ -548,9 +550,9 @@
                 border-radius: 50%;
                 background-color: @accent-color;
 
-                @media screen and (max-width: 900px) { margin-left: -25%; }
+                @media screen and (max-width: 70em) { margin-left: -25%; }
 
-                @media screen and (max-width: 360px) { margin-left: -2em; }
+                @media screen and (max-width: 27em) { margin-left: -2em; }
             }
 
             &.conv-0 {
@@ -599,9 +601,9 @@
                 padding-right: 2em;
                 font-weight: 700;
 
-                @media screen and (max-width: 900px) { margin-left: -20%; }
+                @media screen and (max-width: 70em) { margin-left: -20%; }
 
-                @media screen and (max-width: 360px) {
+                @media screen and (max-width: 27em) {
                     padding-right: 1em;
                     margin-left: 0;
                 }
@@ -638,23 +640,23 @@
 .metainview {
     .menu { .transform(rotate(180deg)); }
 
-    @media screen and (max-width: 920px) {
+    @media screen and (max-width: 70em) {
         .rooms { left: @roomsmall * -1; }
 
         .meta { left: 0; }
 
-        .mainview {
+        .mainview, .chat-input {
             left: @metasmall;
             right: @metasmall * -1;
         }
     }
 
-    @media screen and (max-width: 360px) {
+    @media screen and (max-width: 27em) {
         .rooms { left: @roomtiny * -1; }
 
         .meta { left: 0; }
 
-        .mainview {
+        .mainview, .chat-input {
             left: @metatiny;
             right: @metatiny * -1;
         }
@@ -662,9 +664,9 @@
 }
 
 .roomsinview {
-    .roomlist { .transform(scaleX(-1)); }
+    .roomlist { .transform(rotate(180deg)); }
 
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 85em) {
         .rooms { left: 0; }
 
         .meta { left: @roommedium; }
@@ -675,7 +677,7 @@
         }
     }
 
-    @media screen and (max-width: 920px) {
+    @media screen and (max-width: 70em) {
         .rooms { left: 0; }
 
         .meta { left: @roomsmall; }
@@ -686,7 +688,7 @@
         }
     }
 
-    @media screen and (max-width: 360px) {
+    @media screen and (max-width: 27em) {
         .rooms { left: 0; }
 
         .meta { left: @roomtiny; }
