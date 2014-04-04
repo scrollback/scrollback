@@ -12,7 +12,6 @@ module.exports = function(core) {
     }, "storage");
 
     core.on("away", function(action, callback) {
-        console.log(action);
         redisProxy.srem("room:{{"+action.to+"}}:hasOccupants", action.from, function() {
             redisProxy.scard("room:{{"+action.to+"}}:hasOccupants", function(err, data) {
                 if(data==0) {

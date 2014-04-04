@@ -18,7 +18,6 @@ module.exports = function(coreObject) {
         }, "setters");
     });
    core.on("message", function(message, callback) {
-        log("Heard \"message\" Event");
         if (message.origin && (message.origin.gateway !== "web")) return callback();
         if (message.session){
             var gateway = message.session.substring(0, message.session.indexOf(":"));

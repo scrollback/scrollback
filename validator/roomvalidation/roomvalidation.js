@@ -28,7 +28,6 @@ module.exports =function(core){
 		if(room.type!="user" && /^guest-/.test(room.owner)) return callback(new Error("CANNOT_CONFIGURE_AS_GUEST"));
 		//need to delete the IRC ACCOUNTS
 		room.originalId = room.id;
-		log("heard room event", room);
 		redis.get("room:{{"+room.id+"}}", function(err, data) {
 			if(err) callback(err);
 			if(data){

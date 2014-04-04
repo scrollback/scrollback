@@ -3,7 +3,6 @@ var users={};
 
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
-		log("Heard \"message\" event");
 		if (message.origin && message.origin.gateway == "irc") return callback();
 		if(rejectable(message)) return callback(new Error("REPEATATIVE"));
 		else callback();

@@ -11,7 +11,6 @@ module.exports = function(core) {
 		callback(null, payload);
 	}, "setters");
 	core.on('message', function(message, callback) {
-		log("Heard \"message\ event");
 		if(message.type !== 'nick') return callback();
 		if (message.origin && message.origin.gateway=="irc") return callback();
 		if (message.ref == 'guest-') return callback();

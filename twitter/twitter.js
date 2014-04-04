@@ -42,7 +42,6 @@ module.exports = function(coreObj) {
 			}, "setters");
 		});
 		core.on("room", function(room, callback){
-			log("room twitter--", JSON.stringify(room));
 			if (room.type == 'room' && room.params && room.params.twitter) {
 				addTwitterTokens(room, callback);			
 			}
@@ -87,7 +86,6 @@ function addTwitterTokens(room, callback) {
 		}
 	});
 	function copyOld() {
-		logTwitter("copyOld");
 		
 		var old;//old account
 		if(room.old && room.old.params) old = room.old.params.twitter;
@@ -122,7 +120,6 @@ function init() {
  *Get all accounts where gateway = 'twitter' and init searching.
  */
 function initTwitterSearch() {
-	log("getting room data....");
 	core.emit("getRooms",{identity:"twitter"}, function(err, data) {
 		if (!err) {
 			if(debug) logTwitter("data returned from labelDB: ", JSON.stringify(data));
@@ -139,7 +136,6 @@ function initTwitterSearch() {
 function fetchTweets(room) {
 
 	if (room.params && room.params.twitter  && room.params.twitter.tags && room.params.twitter.token && room.params.twitter.tokenSecret) {
-		logTwitter("connecting for room: ", room);
 		var twit;
 		twit = new Twit({
 			consumer_key: twitterConsumerKey ,

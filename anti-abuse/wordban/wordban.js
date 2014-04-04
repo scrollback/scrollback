@@ -16,7 +16,6 @@ module.exports = function(core) {
 	});
 	init();
 	core.on('message', function(message, callback) {
-		log("Heard \"message\" event");
 		var text;
 		if (message.origin && message.origin.gateway == "irc") return callback();
 
@@ -83,7 +82,7 @@ var rejectable = function(text) {
 
 	for(i=0,l=words.length;i<l;i++) {
 		if (blockWords[words[i]]) {
-			log("found the word " + words[i]+"---");
+			log("found the word " + words[i]);
 			return true;
 		}
 	}

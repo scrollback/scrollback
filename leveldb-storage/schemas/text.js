@@ -8,7 +8,6 @@ module.exports = function (types) {
 	return {
 		put: function (message, cb) {
 			var newLabel = {}, room = message.room, user = message.user;
-			log("Pushing to leveldb", message);
 			if(message.labels instanceof Array) {
 				message.labels.forEach(function(element) {
 					newLabel[element] = 1;
@@ -36,7 +35,6 @@ module.exports = function (types) {
 						texts.link(message.id, 'hasLabel', i, {score: message.labels[i]});
 					}
 				}
-				log(err, res);
 				cb && cb(err, res);
 			});
 			

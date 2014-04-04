@@ -6,7 +6,6 @@ Process join and part massages
 */
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
-		log("Heard \"message\ Event");
 		if(message.type && (message.type==="join"||message.type=="part") && message.from.indexOf('guest-')!==0){
 			var part = message.type==="join"?null: new Date().getTime();
 			db.query("INSERT INTO scrollback.members(`user`, `room`, `joinedOn`, `partedOn`)" +
@@ -21,7 +20,6 @@ module.exports = function(core) {
 	core.on("members", function(query, callback) {
 		var sql = "SELECT `room`, `user`, `joinedOn` FROM `members` WHERE ",
 			where = [], params = [];
-		log("Heard \"members\" Event");
 		if (!callback) {
 			return false;
 		}

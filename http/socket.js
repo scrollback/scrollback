@@ -220,16 +220,15 @@ function message (m, conn) {
 		if(m.to && typeof m.to == "string") {
 			m.to = [m.to]
 		}
-		if(!m.to) {
-			if(!Object.keys(user.rooms).length) {
+		if(!m.to || !m.to.length) {
+			if(Object.keys(user.rooms).length) {
 				m.to = Object.keys(user.rooms);
-			}else{
+			}else {
 				m.to = [];
 			}
+			console.log(m.to);
 		}
 		
-		// if(m.to && typeof m.to != "string" && m.to.length===0) return;
-
 		if (m.type == 'back') {
 			m.to.forEach(function(room) {
 				sendTo = []
@@ -354,6 +353,7 @@ function message (m, conn) {
 					Why this is not at the top?
 					this thing should be at the bottom because we need the error AUTH_UNREGISTERED to be handled properly before sending the response.
 				 */
+				 console.log("+++++++++++++++++++++++++++++++++++++",err);
 				if (err) {
 					return conn.send('error', {id: m.id, message: err.message});
 				}
