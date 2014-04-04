@@ -153,7 +153,6 @@ function userAway(user, room, conn) {
 			}
 			else {
 				user.rooms[room]--;
-				log("User still has some active windows or away already sent.",user);
 			}
 			session.set(conn.sid, sess);
 		});
@@ -226,7 +225,6 @@ function message (m, conn) {
 			}else {
 				m.to = [];
 			}
-			console.log(m.to);
 		}
 		
 		if (m.type == 'back') {
@@ -256,7 +254,6 @@ function message (m, conn) {
 				if(!m.user.id) return conn.send("error", {id: m.id, message: "INVALID_NAME"} );
 				m.user.originalId = user.id;
 				if (!m.user.originalId.match(/^guest/)) {
-					log("user cannot change the nick.");
 					return;
 				}
 				if(!m.user.accounts){m.user.accounts=[];}
@@ -353,7 +350,6 @@ function message (m, conn) {
 					Why this is not at the top?
 					this thing should be at the bottom because we need the error AUTH_UNREGISTERED to be handled properly before sending the response.
 				 */
-				 console.log("+++++++++++++++++++++++++++++++++++++",err);
 				if (err) {
 					return conn.send('error', {id: m.id, message: err.message});
 				}
@@ -411,7 +407,6 @@ function getRooms(query, conn) {
 			conn.send('error',query);
 			return;
 		}else {
-			log(data);
 			conn.send('getRooms', { query: query, data: data} );
 			//conn.send('rooms', data);	
 		}
@@ -426,7 +421,6 @@ function getUsers(query, conn) {
 			conn.send('error',query);
 			return;
 		}else {
-			log(data);
 			conn.send('getUsers', { query: query, data: data} );
 			//conn.send('rooms', data);	
 		}
@@ -440,7 +434,6 @@ function rooms(query, conn) {
 			conn.send('error',query);
 			return;
 		}else {
-			log(data);
 			conn.send('rooms', { query: query, data: data} );
 			//conn.send('rooms', data);	
 		}
