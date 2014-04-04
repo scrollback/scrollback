@@ -6,7 +6,6 @@
     position: fixed;
     top: 0;
     bottom: 0;
-    width: @width;
     margin: 0;
     padding: 0;
     z-index: 1;
@@ -18,23 +17,33 @@
     bottom: @bottom;
     left: 0;
     right: 0;
-    z-index: -1;
     overflow: auto;
+    z-index: -1;
 }
 
 .rooms {
-    .fixed(15%);
+    .fixed;
+    .ease(.3s);
 
     background-color: @dark-color;
     color: @light-color;
     left: 0;
+    width: 15%;
     min-height: 100%;
     overflow: auto;
+
+    @media screen and (max-width: 1200px) {
+        width: 15em;
+        left: -15em;
+    }
+
+    @media screen and (max-width: 920px) { left: -35em; }
 
     .scrollback-header {
         padding: .5em 1em;
         height: @bar-height;
         border-bottom: 1px solid lighten(@dark-color, 10%);
+        cursor: pointer;
 
         img {
             height: 2.5em;
@@ -92,35 +101,93 @@
 }
 
 .meta {
-    .fixed(30%);
+    .fixed;
+    .ease(.3s);
+    .clearfloat;
 
+    width: 30%;
     left: 15%;
     background-color: darken(@light-color, 5%);
     color: @dark-color;
     border-right: 1px solid darken(@light-color, 10%);
 
+    @media screen and (max-width: 1200px) {
+        width: 20em;
+        left: 0;
+    }
+
+    @media screen and (max-width: 920px) { left: -20em; }
+
+    .roomlist {
+        display: none;
+
+        @media screen and (max-width: 1200px) {
+            .ease(.5s);
+
+            display: block;
+            float: left;
+            height: 3.5em;
+            width: 2.5em;
+            margin: 0;
+            cursor: pointer;
+            background: url(../../img/icons/back.svg) center center no-repeat;
+            background-size: contain;
+            cursor: pointer;
+        }
+    }
+
     .tabs {
         list-style: none;
         width: 100%;
+        height: @bar-height;
         display: table;
         table-layout: fixed;
 
+        @media screen and (max-width: 1200px) {
+            float: right;
+            width: 16.5em;
+            margin: 0;
+        }
+
         li {
             .ease;
+            .opacity(0.3);
 
             display: table-cell;
             text-align: center;
             padding: .25em 0;
-            border-bottom: 1px solid fade(@dark-color, 10%);
-            color: fade(@dark-color, 50%);
+            border-bottom: 1px solid fade(@dark-color, 30%);
+            color: @dark-color;
             cursor: pointer;
 
-            &:hover { color: @dark-color; }
+            &:hover { .opacity(1); }
 
             &.current {
+                .opacity(1);
+
                 position: relative;
-                color: @dark-color;
                 border-bottom-color: @accent-color;
+            }
+
+            &.tab-info {
+                background: url(../../img/icons/info.svg) center center no-repeat;
+                background-size: 28px 28px;
+
+                h2 { display: none; }
+            }
+
+            &.tab-people {
+                background: url(../../img/icons/people.svg) center center no-repeat;
+                background-size: 28px 28px;
+
+                h2 { display: none; }
+            }
+
+            &.tab-threads {
+                background: url(../../img/icons/threads.svg) center center no-repeat;
+                background-size: 28px 28px;
+
+                h2 { display: none; }
             }
 
             h2 { font-size: 1.5em; }
@@ -281,11 +348,17 @@
 }
 
 .mainview {
-    .fixed(55%);
+    .fixed;
+    .ease(.3s);
 
+    left: 45%;
     right: 0;
     background-color: @light-color;
     color: @dark-color;
+
+    @media screen and (max-width: 1200px) { left: 20em;  }
+
+    @media screen and (max-width: 920px) { left: 0;  }
 
     .titlebar {
         height: @bar-height;
@@ -294,17 +367,30 @@
         border-bottom: 1px solid darken(@light-color, 20%);
         box-shadow: 0 3px 2px -1px fade(@dark-color, 5%);
 
-        .icon {
-            float: left;
-            height: 3.5em;
-            width: 3.5em;
-            border-bottom: 1px solid darken(@light-color, 20%);
+        .menu {
+            display: none;
+
+            @media screen and (max-width: 920px) {
+                .ease(.5s);
+
+                display: block;
+                float: left;
+                height: 3.5em;
+                width: 2.5em;
+                cursor: pointer;
+                background: url(../../img/icons/back.svg) center center no-repeat;
+                background-size: contain;
+            }
         }
 
         .title {
             float: left;
             font-size: 1.5em;
-            padding: 0 .5em;
+            padding: .15em;
+            padding-left: 1em;
+            cursor: pointer;
+
+            @media screen and (max-width: 920px) { padding-left: .25em;  }
         }
 
         .user-area {
@@ -351,10 +437,14 @@
             position: relative;
             padding: 1em;
             margin: 0;
-            padding-left: 22%;
+            padding-left: 12em;
             border-top: 1px solid darken(@light-color, 5%);
             max-height: 12em;
             overflow: hidden;
+
+            @media screen and (max-width: 900px) { padding-left: 22%; }
+
+            @media screen and (max-width: 360px) { padding-left: 3em; }
 
             &.long {
                 .ease;
@@ -393,11 +483,15 @@
 
             &:before {
                 float: left;
-                margin: .55em 0 auto -25%;
+                margin: .55em 0 auto -10em;
                 height: .5em;
                 width: .5em;
                 border-radius: 50%;
                 background-color: @accent-color;
+
+                @media screen and (max-width: 900px) { margin-left: -25%; }
+
+                @media screen and (max-width: 360px) { margin-left: -2em; }
             }
 
             &.conv-0 {
@@ -442,9 +536,13 @@
 
             .nick {
                 float: left;
-                margin-left: -20%;
+                margin-left: -8em;
                 padding-right: 2em;
                 font-weight: 700;
+
+                @media screen and (max-width: 900px) { margin-left: -20%; }
+
+                @media screen and (max-width: 360px) { margin-left: 0; }
 
                 a {
                     color: @dark-color;
@@ -493,6 +591,51 @@
             max-height: 12em;
             border-radius: @roundness;
             overflow: auto;
+        }
+    }
+}
+
+.roomsinview {
+    .roomlist { .transform(scaleX(-1)); }
+
+    @media screen and (max-width: 1200px) {
+        .rooms { left: 0; }
+
+        .meta { left: 15em; }
+
+        .mainview {
+            left: 35em;
+            right: -35em;
+        }
+    }
+}
+
+.metainview {
+    .menu { .transform(rotate(180deg)); }
+
+    @media screen and (max-width: 920px) {
+        .rooms { left: -15em; }
+
+        .meta { left: 0; }
+
+        .mainview {
+            left: 20em;
+            right: -20em;
+        }
+    }
+}
+
+.metainview.roomsinview {
+    .roomlist, .menu { .transform(rotate(180deg)); }
+
+    @media screen and (max-width: 1200px) {
+        .rooms { left: 0; }
+
+        .meta { left: 15em; }
+
+        .mainview {
+            left: 35em;
+            right: -35em;
         }
     }
 }

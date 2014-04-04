@@ -35,10 +35,19 @@
     })();
 
     $(".long").on("click", function () {
-        if ($(this).hasClass("active")) {
-            $(this).removeClass("active").scrollTop(0);
-        } else {
-            $(this).addClass("active");
-        }
+        $(this).toggleClass("active").scrollTop(0);
+    });
+
+    $(".roomlist").on("click", function () {
+        $("body").toggleClass("roomsinview");
+    });
+
+    $(".scrollback-header").on("click", function () {
+        $("body").removeClass("roomsinview");
+    });
+
+    $(".menu, .title").on("click", function () {
+        $("body").toggleClass("metainview");
+        $("body").removeClass("roomsinview");
     });
 }());

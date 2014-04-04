@@ -1,11 +1,17 @@
+.nofilter {
+    -webkit-filter: none;
+    -ms-filter: none;
+    filter: none;
+}
+
 .opacity(@opacity: 0.5) {
     @opperc: @opacity * 100;
 
     -ms-filter: ~"progid:DXImageTransform.Microsoft.Alpha(opacity=@{opperc})";
     filter: ~"alpha(opacity=@{opperc})";
-    -moz-opacity: @opacity;
-    -khtml-opacity: @opacity;
     -webkit-opacity: @opacity;
+    -khtml-opacity: @opacity;
+    -moz-opacity: @opacity;
     opacity: @opacity;
 }
 
