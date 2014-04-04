@@ -2,7 +2,17 @@
 
 @bar-height: 3.5em;
 
-.fixed(@width: 50%;) {
+@roomlarge: 15%;
+@roommedium: 15em;
+@roomsmall: 15em;
+@roomtiny: 15em;
+
+@metalarge: 30%;
+@metamedium: 30em;
+@metasmall: 20em;
+@metatiny: 15em;
+
+.fixed {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -17,8 +27,9 @@
     bottom: @bottom;
     left: 0;
     right: 0;
-    overflow: auto;
     z-index: -1;
+    overflow: auto;
+    -webkit-overflow-scrolling : touch;
 }
 
 .rooms {
@@ -28,16 +39,24 @@
     background-color: @dark-color;
     color: @light-color;
     left: 0;
-    width: 15%;
+    width: @roomlarge;
     min-height: 100%;
     overflow: auto;
 
     @media screen and (max-width: 1200px) {
-        width: 15em;
-        left: -15em;
+        width: @roommedium;
+        left: @roommedium * -1;
     }
 
-    @media screen and (max-width: 920px) { left: -35em; }
+    @media screen and (max-width: 920px) {
+        width: @roomsmall;
+        left: ( @roomsmall + @metasmall ) * -1;
+    }
+
+    @media screen and (max-width: 360px) {
+        width: @roomtiny;
+        left: ( @roomtiny + @metatiny ) * -1;
+    }
 
     .scrollback-header {
         padding: .5em 1em;
@@ -105,18 +124,26 @@
     .ease(.3s);
     .clearfloat;
 
-    width: 30%;
-    left: 15%;
+    left: @roomlarge;
+    width: @metalarge;
     background-color: darken(@light-color, 5%);
     color: @dark-color;
     border-right: 1px solid darken(@light-color, 10%);
 
     @media screen and (max-width: 1200px) {
-        width: 20em;
+        width: @metamedium;
         left: 0;
     }
 
-    @media screen and (max-width: 920px) { left: -20em; }
+    @media screen and (max-width: 920px) {
+        width: @metasmall;
+        left: @metasmall * -1;
+    }
+
+    @media screen and (max-width: 360px) {
+        width: @metatiny;
+        left: @metatiny * -1;
+    }
 
     .roomlist {
         display: none;
@@ -142,12 +169,16 @@
         height: @bar-height;
         display: table;
         table-layout: fixed;
+        margin: 0;
 
         @media screen and (max-width: 1200px) {
             float: right;
-            width: 16.5em;
-            margin: 0;
+            width: @metamedium - 3.5em;
         }
+
+        @media screen and (max-width: 920px) { width: @metasmall - 3.5em; }
+
+        @media screen and (max-width: 360px) { width: @metatiny - 3.5em; }
 
         li {
             .ease;
@@ -351,14 +382,42 @@
     .fixed;
     .ease(.3s);
 
-    left: 45%;
+    left: @roomlarge + @metalarge;
     right: 0;
     background-color: @light-color;
     color: @dark-color;
 
-    @media screen and (max-width: 1200px) { left: 20em;  }
+    @media screen and (max-width: 1200px) { left: @metamedium;  }
 
     @media screen and (max-width: 920px) { left: 0;  }
+
+    .chat-input {
+        .ease(.3s);
+
+        position: fixed;
+        left: @roomlarge + @metalarge;
+        right: 0;
+        bottom: 0;
+        padding: .5em 1em;
+        min-height: @bar-height;
+        background-color: darken(@light-color, 5%);
+
+        @media screen and (max-width: 1200px) { left: @metamedium;  }
+
+        @media screen and (max-width: 920px) { left: 0;  }
+
+        .textarea {
+            .entry;
+
+            word-wrap: break-word;
+            width: 100%;
+            padding: .4em 1em;
+            min-height: 2.5em;
+            max-height: 12em;
+            border-radius: @roundness;
+            overflow: auto;
+        }
+    }
 
     .titlebar {
         height: @bar-height;
@@ -542,7 +601,10 @@
 
                 @media screen and (max-width: 900px) { margin-left: -20%; }
 
-                @media screen and (max-width: 360px) { margin-left: 0; }
+                @media screen and (max-width: 360px) {
+                    padding-right: 1em;
+                    margin-left: 0;
+                }
 
                 a {
                     color: @dark-color;
@@ -571,26 +633,30 @@
             }
         }
     }
+}
 
-    .chat-input {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        padding: .5em 1em;
-        min-height: @bar-height;
-        background-color: darken(@light-color, 5%);
+.metainview {
+    .menu { .transform(rotate(180deg)); }
 
-        .textarea {
-            .entry;
+    @media screen and (max-width: 920px) {
+        .rooms { left: @roomsmall * -1; }
 
-            word-wrap: break-word;
-            width: 100%;
-            padding: .4em 1em;
-            min-height: 2.5em;
-            max-height: 12em;
-            border-radius: @roundness;
-            overflow: auto;
+        .meta { left: 0; }
+
+        .mainview {
+            left: @metasmall;
+            right: @metasmall * -1;
+        }
+    }
+
+    @media screen and (max-width: 360px) {
+        .rooms { left: @roomtiny * -1; }
+
+        .meta { left: 0; }
+
+        .mainview {
+            left: @metatiny;
+            right: @metatiny * -1;
         }
     }
 }
@@ -601,41 +667,33 @@
     @media screen and (max-width: 1200px) {
         .rooms { left: 0; }
 
-        .meta { left: 15em; }
+        .meta { left: @roommedium; }
 
-        .mainview {
-            left: 35em;
-            right: -35em;
+        .mainview, .chat-input {
+            left: @roommedium + @metamedium;
+            right: @roommedium * -1;
         }
     }
-}
-
-.metainview {
-    .menu { .transform(rotate(180deg)); }
 
     @media screen and (max-width: 920px) {
-        .rooms { left: -15em; }
-
-        .meta { left: 0; }
-
-        .mainview {
-            left: 20em;
-            right: -20em;
-        }
-    }
-}
-
-.metainview.roomsinview {
-    .roomlist, .menu { .transform(rotate(180deg)); }
-
-    @media screen and (max-width: 1200px) {
         .rooms { left: 0; }
 
-        .meta { left: 15em; }
+        .meta { left: @roomsmall; }
 
-        .mainview {
-            left: 35em;
-            right: -35em;
+        .mainview, .chat-input {
+            left: @roomsmall + @metasmall;
+            right: ( @roomsmall + @metasmall ) * -1;
+        }
+    }
+
+    @media screen and (max-width: 360px) {
+        .rooms { left: 0; }
+
+        .meta { left: @roomtiny; }
+
+        .mainview, .chat-input {
+            left: @roomtiny + @metatiny;
+            right: ( @roomtiny + @metatiny ) * -1;
         }
     }
 }
