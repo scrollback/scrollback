@@ -7,7 +7,7 @@
 @roomxxxx: 15em;
 @roomxxx: 15em;
 @roomxx: 15em;
-@roomx: 12em;
+@roomx: 15em;
 
 @metaxxxxxx: 30%;
 @metaxxxxx: 36em;
@@ -16,28 +16,19 @@
 @metaxx: 20em;
 @metax: 14em;
 
-.fixed {
-    position: fixed;
-    top: 0;
-    bottom: 0;
+.position(@value: relative; @top: 0; @right: 0; @bottom: 0; @left: 0; @z-index: auto) {
+    position: @value;
+    top: @top;
+    right: @right;
+    bottom: @bottom;
+    left: @left;
+    z-index: @z-index;
     margin: 0;
     padding: 0;
-    z-index: 1;
-}
-
-.absolute(@top: 0; @bottom: 0) {
-    position: absolute;
-    top: @top;
-    bottom: @bottom;
-    left: 0;
-    right: 0;
-    z-index: -1;
-    overflow: auto;
-    -webkit-overflow-scrolling : touch;
 }
 
 .rooms {
-    .fixed;
+    .position(fixed; 0; auto; 0; 0; auto);
     .ease;
 
     background-color: @dark-color;
@@ -46,6 +37,7 @@
     width: @roomxxxxxx;
     min-height: 100%;
     overflow: auto;
+    -webkit-overflow-scrolling : touch;
 
     @media screen and (max-width: 85em) {
         width: @roomxxxxx;
@@ -54,7 +46,7 @@
 
     @media screen and (max-width: 70em) {
         width: @roomxxxx;
-        left: ( @roomxxxx + @metaxxxx ) * -1;
+        left: @roomxxxx * -1;
     }
 
     @media screen and (max-width: 50em) {
@@ -134,11 +126,10 @@
 }
 
 .meta {
-    .fixed;
+    .position(fixed; 0; auto; 0; @roomxxxxxx; auto);
     .ease;
     .clearfloat;
 
-    left: @roomxxxxxx;
     width: @metaxxxxxx;
     background-color: darken(@light-color, 5%);
     color: @dark-color;
@@ -238,12 +229,13 @@
     }
 
     .meta-content {
-        .absolute(@bar-height; 0);
+        .position(absolute; @bar-height; 0; 0; 0; -1);
         .opacity(0);
         .ease;
 
         pointer-events: none;
-        z-index: -1;
+        overflow: auto;
+        -webkit-overflow-scrolling : touch;
 
         &.current {
             .opacity(1);
@@ -405,36 +397,33 @@
     @media screen and (max-width: 50em) { left: 0;  }
 }
 
+.chat-input {
+    .position(fixed; auto; 0; 0; auto; 1);
+    .mainelems;
+
+    padding: .5em 1em;
+    min-height: @bar-height;
+    background-color: darken(@light-color, 5%);
+
+    .textarea {
+        .entry;
+
+        word-wrap: break-word;
+        width: 100%;
+        padding: .4em 1em;
+        min-height: 2.5em;
+        max-height: 12em;
+        border-radius: @roundness;
+        overflow: auto;
+    }
+}
+
 .mainview {
-    .fixed;
+    .position(fixed; 0; 0; @bar-height; auto; auto);
     .mainelems;
 
     background-color: @light-color;
     color: @dark-color;
-
-    .chat-input {
-        .ease;
-        .mainelems;
-
-        position: fixed;
-        right: 0;
-        bottom: 0;
-        padding: .5em 1em;
-        min-height: @bar-height;
-        background-color: darken(@light-color, 5%);
-
-        .textarea {
-            .entry;
-
-            word-wrap: break-word;
-            width: 100%;
-            padding: .4em 1em;
-            min-height: 2.5em;
-            max-height: 12em;
-            border-radius: @roundness;
-            overflow: auto;
-        }
-    }
 
     .titlebar {
         position: relative;
@@ -495,12 +484,14 @@
         .opacity(0);
         .ease;
 
+        position: relative;
         margin: 1em 2em;
         background-color: @dark-color;
         color: @light-color;
         float: right;
         padding: .5em 1em;
         border-radius: @roundness;
+        z-index: 1;
     }
 
     &.scrolling {
@@ -508,7 +499,10 @@
     }
 
     .chat-area {
-        .absolute(@bar-height; @bar-height);
+        .position(absolute; @bar-height; 0; 0; 0; auto);
+
+        overflow: auto;
+        -webkit-overflow-scrolling : touch;
 
         .chat {
             position: relative;
@@ -521,7 +515,7 @@
 
             @media screen and (max-width: 70em) { padding-left: 22%; }
 
-            @media screen and (max-width: 18em) { padding-left: 3em; }
+            @media screen and (max-width: 27em) { padding-left: 3em; }
 
             &.long {
                 .ease;
@@ -568,7 +562,7 @@
 
                 @media screen and (max-width: 70em) { margin-left: -25%; }
 
-                @media screen and (max-width: 18em) { margin-left: -2em; }
+                @media screen and (max-width: 27em) { margin-left: -2em; }
             }
 
             &.conv-0 {
@@ -619,9 +613,11 @@
 
                 @media screen and (max-width: 70em) { margin-left: -20%; }
 
-                @media screen and (max-width: 18em) {
+                @media screen and (max-width: 27em) {
                     padding-right: 1em;
                     margin-left: 0;
+
+                    &:after { content: " :" }
                 }
 
                 a {
@@ -656,39 +652,27 @@
 .metainview {
     .menu { .transform(rotate(180deg)); }
 
-    @media screen and (max-width: 50em) {
-        .rooms, .meta, .mainview { .transform(translate3d(@metaxxx, 0, 0)); }
-    }
+    .rooms, .meta, .mainview, .chat-input {
+        @media screen and (max-width: 50em) { .transform(translate3d(@metaxxx, 0, 0)); }
 
-    @media screen and (max-width: 27em) {
-        .rooms, .meta, .mainview { .transform(translate3d(@metaxx, 0, 0)); }
-    }
+        @media screen and (max-width: 27em) { .transform(translate3d(@metaxx, 0, 0)); }
 
-    @media screen and (max-width: 18em) {
-        .rooms, .meta, .mainview { .transform(translate3d(@metax, 0, 0)); }
+        @media screen and (max-width: 18em) { .transform(translate3d(@metax, 0, 0)); }
     }
 }
 
 .roomsinview {
     .roomlist { .transform(rotate(180deg)); }
 
-    @media screen and (max-width: 85em) {
-        .rooms, .meta, .mainview { .transform(translate3d(@roomxxxxx, 0, 0)); }
-    }
+    .rooms, .meta, .mainview, .chat-input {
+        @media screen and (max-width: 85em) { .transform(translate3d(@roomxxxxx, 0, 0)); }
 
-    @media screen and (max-width: 70em) {
-        .rooms, .meta, .mainview { .transform(translate3d(@roomxxxx, 0, 0)); }
-    }
+        @media screen and (max-width: 70em) { .transform(translate3d(@roomxxxx, 0, 0)); }
 
-    @media screen and (max-width: 50em) {
-        .rooms, .meta, .mainview { .transform(translate3d( ( @roomxxx + @metaxxx ), 0, 0)); }
-    }
+        @media screen and (max-width: 50em) { .transform(translate3d( ( @roomxxx + @metaxxx ), 0, 0)); }
 
-    @media screen and (max-width: 27em) {
-        .rooms, .meta, .mainview { .transform(translate3d( ( @roomxxx + @metaxx ), 0, 0)); }
-    }
+        @media screen and (max-width: 27em) { .transform(translate3d( ( @roomxxx + @metaxx ), 0, 0)); }
 
-    @media screen and (max-width: 18em) {
-        .rooms, .meta, .mainview { .transform(translate3d(( @roomx + @metax ), 0, 0)); }
+        @media screen and (max-width: 18em) { .transform(translate3d(( @roomx + @metax ), 0, 0)); }
     }
 }
