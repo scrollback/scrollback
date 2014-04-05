@@ -5,7 +5,8 @@ function messageArray(initData) {
 	
 	function save(key) {
 		if(!window.localStorage) return;
-		window.localStorage[key] = JSON.stringify(messages);
+		try { window.localStorage[key] = JSON.stringify(messages); }
+		catch(e) { console.log("Quota exceeded?"); }
 	}
 
 	function load(key) {
