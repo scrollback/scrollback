@@ -16,6 +16,8 @@
 @metaxx: 20em;
 @metax: 14em;
 
+* { *behavior: url(./s/polyfills/boxsizing.htc); }
+
 .position(@value: relative; @top: 0; @right: 0; @bottom: 0; @left: 0; @z-index: auto) {
     position: @value;
     top: @top;
@@ -256,9 +258,8 @@
                 text-align: center;
                 text-overflow: ellipsis;
                 overflow: hidden;
-                margin: .25em;
-                padding: .5em;
-                width: 5em;
+                padding: .5em .75em;
+                width: 5.5em;
                 font-weight: 400;
                 color: @dark-color;
 
