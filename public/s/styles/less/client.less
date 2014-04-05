@@ -2,15 +2,19 @@
 
 @bar-height: 3.5em;
 
-@roomlarge: 15%;
-@roommedium: 15em;
-@roomsmall: 15em;
-@roomtiny: 15em;
+@roomxxxxxx: 15%;
+@roomxxxxx: 15em;
+@roomxxxx: 15em;
+@roomxxx: 15em;
+@roomxx: 15em;
+@roomx: 12em;
 
-@metalarge: 30%;
-@metamedium: 36em;
-@metasmall: 27em;
-@metatiny: 18em;
+@metaxxxxxx: 30%;
+@metaxxxxx: 36em;
+@metaxxxx: 26em;
+@metaxxx: 26em;
+@metaxx: 20em;
+@metax: 14em;
 
 .fixed {
     position: fixed;
@@ -39,23 +43,33 @@
     background-color: @dark-color;
     color: @light-color;
     left: 0;
-    width: @roomlarge;
+    width: @roomxxxxxx;
     min-height: 100%;
     overflow: auto;
 
     @media screen and (max-width: 85em) {
-        width: @roommedium;
-        left: @roommedium * -1;
+        width: @roomxxxxx;
+        left: @roomxxxxx * -1;
     }
 
     @media screen and (max-width: 70em) {
-        width: @roomsmall;
-        left: ( @roomsmall + @metasmall ) * -1;
+        width: @roomxxxx;
+        left: ( @roomxxxx + @metaxxxx ) * -1;
+    }
+
+    @media screen and (max-width: 50em) {
+        width: @roomxxx;
+        left: ( @roomxxx + @metaxxx ) * -1;
     }
 
     @media screen and (max-width: 27em) {
-        width: @roomtiny;
-        left: ( @roomtiny + @metatiny ) * -1;
+        width: @roomxx;
+        left: ( @roomxx + @metaxx ) * -1;
+    }
+
+    @media screen and (max-width: 18em) {
+        width: @roomx;
+        left: ( @roomx + @metax ) * -1;
     }
 
     .scrollback-header {
@@ -124,25 +138,35 @@
     .ease;
     .clearfloat;
 
-    left: @roomlarge;
-    width: @metalarge;
+    left: @roomxxxxxx;
+    width: @metaxxxxxx;
     background-color: darken(@light-color, 5%);
     color: @dark-color;
     border-right: 1px solid darken(@light-color, 10%);
 
     @media screen and (max-width: 85em) {
-        width: @metamedium;
+        width: @metaxxxxx;
         left: 0;
     }
 
     @media screen and (max-width: 70em) {
-        width: @metasmall;
-        left: @metasmall * -1;
+        width: @metaxxxx;
+        left: 0;
+    }
+
+    @media screen and (max-width: 50em) {
+        width: @metaxxx;
+        left: @metaxxx * -1;
     }
 
     @media screen and (max-width: 27em) {
-        width: @metatiny;
-        left: @metatiny * -1;
+        width: @metaxx;
+        left: @metaxx * -1;
+    }
+
+    @media screen and (max-width: 18em) {
+        width: @metax;
+        left: @metax * -1;
     }
 
     .tabs {
@@ -152,7 +176,7 @@
         display: table;
         table-layout: fixed;
         margin: 0;
-        border-bottom: 1px solid fade(@dark-color, 20%);
+        border-bottom: 1px solid fade(@dark-color, 10%);
 
         li {
             .ease;
@@ -169,8 +193,7 @@
             &.current {
                 .opacity(1);
 
-                position: relative;
-                border-bottom: 2px solid @accent-color;
+                box-shadow: 0 1px 0 0 @accent-color;
             }
 
             &.tab-info {
@@ -198,12 +221,13 @@
                 display: none;
 
                 @media screen and (max-width: 85em) {
-                    .ease(.3s);
                     .opacity(1);
 
                     display: table-cell;
+                    width: 2.5em;
                     background: url(../../img/icons/back.svg) center center no-repeat;
                     background-size: 28px 28px;
+                    border-bottom-color: transparent;
 
                     h2 { display: none; }
                 }
@@ -233,15 +257,15 @@
         }
 
         &.people-list {
-            padding: 1em;
+            padding: .75em;
 
             .people {
                 display: inline-block;
                 text-align: center;
                 text-overflow: ellipsis;
                 overflow: hidden;
-                margin: .5em;
-                padding: .25em;
+                margin: .25em;
+                padding: .5em;
                 width: 5em;
                 font-weight: 400;
                 color: @dark-color;
@@ -254,8 +278,8 @@
 
                 img {
                     display: block;
-                    width: 4.5em;
-                    height: 4.5em;
+                    width: 4em;
+                    height: 4em;
                     border-radius: @roundness;
                 }
 
@@ -371,12 +395,14 @@
 .mainelems() {
     .ease;
 
-    left: @roomlarge + @metalarge;
+    left: @roomxxxxxx + @metaxxxxxx;
     right: 0;
 
-    @media screen and (max-width: 85em) { left: @metamedium;  }
+    @media screen and (max-width: 85em) { left: @metaxxxxx;  }
 
-    @media screen and (max-width: 70em) { left: 0;  }
+    @media screen and (max-width: 70em) { left: @metaxxxx; }
+
+    @media screen and (max-width: 50em) { left: 0;  }
 }
 
 .mainview {
@@ -421,7 +447,7 @@
         .menu {
             display: none;
 
-            @media screen and (max-width: 70em) {
+            @media screen and (max-width: 50em) {
                 .ease(.3s);
 
                 display: block;
@@ -495,7 +521,7 @@
 
             @media screen and (max-width: 70em) { padding-left: 22%; }
 
-            @media screen and (max-width: 27em) { padding-left: 3em; }
+            @media screen and (max-width: 18em) { padding-left: 3em; }
 
             &.long {
                 .ease;
@@ -542,7 +568,7 @@
 
                 @media screen and (max-width: 70em) { margin-left: -25%; }
 
-                @media screen and (max-width: 27em) { margin-left: -2em; }
+                @media screen and (max-width: 18em) { margin-left: -2em; }
             }
 
             &.conv-0 {
@@ -593,7 +619,7 @@
 
                 @media screen and (max-width: 70em) { margin-left: -20%; }
 
-                @media screen and (max-width: 27em) {
+                @media screen and (max-width: 18em) {
                     padding-right: 1em;
                     margin-left: 0;
                 }
@@ -630,12 +656,16 @@
 .metainview {
     .menu { .transform(rotate(180deg)); }
 
-    @media screen and (max-width: 70em) {
-        .rooms, .meta, .mainview, .chat-input { .transform(translate3d(@metasmall, 0, 0)); }
+    @media screen and (max-width: 50em) {
+        .rooms, .meta, .mainview { .transform(translate3d(@metaxxx, 0, 0)); }
     }
 
     @media screen and (max-width: 27em) {
-        .rooms, .meta, .mainview, .chat-input { .transform(translate3d(@metatiny, 0, 0)); }
+        .rooms, .meta, .mainview { .transform(translate3d(@metaxx, 0, 0)); }
+    }
+
+    @media screen and (max-width: 18em) {
+        .rooms, .meta, .mainview { .transform(translate3d(@metax, 0, 0)); }
     }
 }
 
@@ -643,14 +673,22 @@
     .roomlist { .transform(rotate(180deg)); }
 
     @media screen and (max-width: 85em) {
-        .rooms, .meta, .mainview, .chat-input { .transform(translate3d(@roommedium, 0, 0)); }
+        .rooms, .meta, .mainview { .transform(translate3d(@roomxxxxx, 0, 0)); }
     }
 
     @media screen and (max-width: 70em) {
-        .rooms, .meta, .mainview, .chat-input { .transform(translate3d( ( @roomsmall + @metasmall ), 0, 0)); }
+        .rooms, .meta, .mainview { .transform(translate3d(@roomxxxx, 0, 0)); }
+    }
+
+    @media screen and (max-width: 50em) {
+        .rooms, .meta, .mainview { .transform(translate3d( ( @roomxxx + @metaxxx ), 0, 0)); }
     }
 
     @media screen and (max-width: 27em) {
-        .rooms, .meta, .mainview, .chat-input { .transform(translate3d(( @roomtiny + @metatiny ), 0, 0)); }
+        .rooms, .meta, .mainview { .transform(translate3d( ( @roomxxx + @metaxx ), 0, 0)); }
+    }
+
+    @media screen and (max-width: 18em) {
+        .rooms, .meta, .mainview { .transform(translate3d(( @roomx + @metax ), 0, 0)); }
     }
 }
