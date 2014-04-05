@@ -155,7 +155,6 @@ function userAway(user, room, conn) {
 			}
 			else {
 				user.rooms[room]--;
-				log("User still has some active windows or away already sent.",user);
 			}
 			session.set(conn.sid, sess);
 		});
@@ -222,16 +221,14 @@ function message (m, conn) {
 		if(m.to && typeof m.to == "string") {
 			m.to = [m.to]
 		}
-		if(!m.to) {
-			if(!Object.keys(user.rooms).length) {
+		if(!m.to || !m.to.length) {
+			if(Object.keys(user.rooms).length) {
 				m.to = Object.keys(user.rooms);
-			}else{
+			}else {
 				m.to = [];
 			}
 		}
 		
-		// if(m.to && typeof m.to != "string" && m.to.length===0) return;
-
 		if (m.type == 'back') {
 			m.to.forEach(function(room) {
 				sendTo = []
@@ -259,7 +256,6 @@ function message (m, conn) {
 				if(!m.user.id) return conn.send("error", {id: m.id, message: "INVALID_NAME"} );
 				m.user.originalId = user.id;
 				if (!m.user.originalId.match(/^guest/)) {
-					log("user cannot change the nick.");
 					return;
 				}
 				if(!m.user.accounts){m.user.accounts=[];}
@@ -413,7 +409,6 @@ function getRooms(query, conn) {
 			conn.send('error',query);
 			return;
 		}else {
-			log(data);
 			conn.send('getRooms', { query: query, data: data} );
 			//conn.send('rooms', data);	
 		}
@@ -428,7 +423,6 @@ function getUsers(query, conn) {
 			conn.send('error',query);
 			return;
 		}else {
-			log(data);
 			conn.send('getUsers', { query: query, data: data} );
 			//conn.send('rooms', data);	
 		}
@@ -442,7 +436,6 @@ function rooms(query, conn) {
 			conn.send('error',query);
 			return;
 		}else {
-			log(data);
 			conn.send('rooms', { query: query, data: data} );
 			//conn.send('rooms', data);	
 		}

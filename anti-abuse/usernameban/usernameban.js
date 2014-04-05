@@ -7,7 +7,6 @@ module.exports = function(core) {
 	var pluginContent = "";
 	init();
 	core.on('message', function(message, callback) {
-		log("Listening");
 		if (message.origin && message.origin.gateway == "irc") return callback();
 		if(rejectable(message)) callback(new Error("BANNED_USERNAME"));
 		else callback();
@@ -31,7 +30,6 @@ function loadBannedUsers(){
 				var value=line.split(":");//":" based
 				if (!usersArray[value[0]]) usersArray[value[0]]=[];
 				usersArray[value[0]][value[1]]=true;//0-room 1-username
-				log("added into banned username list="+value[0]+","+[value[1]]);
 			}
 		});
 		blockedUsernames=usersArray;

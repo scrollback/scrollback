@@ -33,10 +33,7 @@ function send(from,to,subject,html) {
         log("sending email :", email);
     }
     transport.sendMail(email, function(error) {
-        if(!error){
-            logMail('Test message sent successfully!');
-        }
-        else{
+        if(error){
             logMail("error in sending email: ",error, "retrying...");
             setTimeout(function(){
                 send(email.from, email.to, email.subject, email.html);
@@ -62,7 +59,6 @@ module.exports = function(coreObject) {
         });
         */
         core.on('message', function(message, callback) {
-            logMail("Heard \"message\" event", message);
             callback();
             if(message.type === "text"){
                 addMessage(message);    
@@ -102,7 +98,6 @@ function init() {
     fs.readFile(__dirname + "/views/welcomeEmail.jade", "utf8", function(err, data) {
         if(err) throw err;
         welcomeEmailJade = jade.compile(data,  {basedir: __dirname + "/views/"});
-        log("welcome emails " , welcomeEmailJade );
     });
 }
 

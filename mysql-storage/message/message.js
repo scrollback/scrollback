@@ -10,7 +10,6 @@ module.exports = function(core) {
 	core.on("message", function(message, callback) {
 		if (!message.id) message.id = guid();
 		if (!message.time) message.time = new Date().getTime();
-		log("Heard \"message\" event");
 		if(typeof message.to === 'string') message.to = [message.to];
 		if(message.labels) {
 			if(typeof message.labels === 'string') message.labels = [message.labels];	

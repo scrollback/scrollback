@@ -29,12 +29,8 @@ module.exports = function(core) {
 			html: html
 		};
 		transport.sendMail(email, function(error) {
-			if(!error){
-				log('Test message sent successfully!');
-			}
-			else{
-				log("error in sending email: ",error);
-				log("retrying......");
+			if(error){
+				log("Retrying. error in sending email: ",error);
 				setTimeout(function(){
 					send(email.from, email.to, email.subject, email.html);
 				},15*60*1000);
@@ -50,7 +46,6 @@ module.exports = function(core) {
 			message.to.forEach(function(room) {
                 redisProxy.get("DEPLOYMENT:"+room+":"+originURL.host, function(err, data) {
                     if(data == null || typeof data.length=="undefined") {
-                        log("sending email");
                         send(config.originnotify.from, config.originnotify.to, "New Deployment:"+originURL.host, "room:"+message.to+" deployed at "+message.origin.location);
                     }
                     redisProxy.set("DEPLOYMENT:"+room+":"+originURL.host, message.origin.location);

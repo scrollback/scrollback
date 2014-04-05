@@ -6,7 +6,6 @@ var config = require("../config.js"),
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
 		var assertion = message.browserid;
-		log("Heard \"message\ event");
 		delete message.browserid;
 
 		if(message.type !== 'nick') return callback();

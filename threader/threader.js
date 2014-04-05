@@ -24,7 +24,6 @@ module.exports = function(core) {
 		core.on('message', function(message, callback) {
 			if(message.type == "text" && client.writable) {//if client connected and text message
 				return core.emit('rooms', {id:message.to}, function(err, rooms) {
-					console.log("threader",rooms);
 					if(err) callback(err);
 					//if(rooms.length !== 0 && (rooms[0].params && rooms[0].params.threader)) {//if threader is enabled or not for room 
 					//if(true){

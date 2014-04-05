@@ -5,7 +5,6 @@ var config = require('../config.js');
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
 		var limiter;
-		log("Heard \"message\" event");
 		if (!users[message.from])
 			users[message.from]=new RateLimiter(config.http.limit, config.http.time);
 		limiter = users[message.from];

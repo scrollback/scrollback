@@ -16,7 +16,6 @@ module.exports = function(core) {
   //       });
 	});
 	core.on('message', function(message, callback) {
-		log("Heard \"message event\"");
 		if (message.origin && message.origin.gateway == "irc") return callback();
 		if(rejectable(message)) callback(new Error("BANNED_WORD"));
 		else callback();

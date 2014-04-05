@@ -1,4 +1,4 @@
-scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window',function($scope, $location, $factory, $timeout,$window) {
+scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window','$routeParams',function($scope, $location, $factory, $timeout,$window, $routeParams) {
 	$scope.gotoMe = function() {
 		$location.path("/me");
 	}
@@ -28,12 +28,21 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		$scope.actionText = "Sign Out";
 	}
 	
-	$factory.on("init", function(){
+	$factory.on("init", function(data){
 		$scope.$apply(function(){
+
+
+			$scope.user = data.user;
 			if(/^guest-/.test($scope.user.id)){
-				$scope.actionText = "Sign In ";	
+				$scope.actionText = "Sign In ";
+				if(window.location.pathname == "/me"){
+					$location.path("/me/login");
+				}
 			}
 			else{
+				if(window.location.pathname == "/me/login"){
+					$location.path("/me");
+				}
 				$scope.actionText = "Sign Out";
 			}
 			$scope.isActive = true;
@@ -45,7 +54,6 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		});
 	});
 	$factory.on("error",function(error) {
-		console.log("Error is ", error);
 		if(error == "AUTH_UNREGISTERED")return;
 		if(error == "DUP_NICK") error = "Username already taken.";
 		if(error.indexOf("ER_DUP_ENTRY")===0) error = "This IRC channel has already been linked to another room. Multiple rooms cannot be linked to the same IRC channel";
@@ -115,7 +123,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 					if($scope.room.id) $location.path("/"+$scope.room.id);
 					else $location.path("/me/login");
 				});
-			}
+			}	
 		});
 		navigator.id.request();
 	};
@@ -481,6 +489,7 @@ scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', 
 
 scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location', '$rootScope', '$routeParams', function($scope, $factory, $location, $rootScope, $routeParams) {
 	var url;
+
 	$scope.editRoom = {
 		id: $scope.room.id,
 		description:$scope.room.description|| "",
@@ -620,14 +629,13 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 		waiting : false
 	};
 
-
 	$factory.on('init', function(data){
 		//assigning the new new init data to the user scope ---
 		$scope.$apply(function(){
 			Object.keys(data.user).forEach(function(key){
 				$scope.user[key] = data.user[key];
 			});
-		
+			
 			if(data.user.membership) {
 				if(data.user.membership instanceof Array) $scope.user.membership = data.user.membership;
 				else $scope.user.membership = Object.keys(data.user.membership);
