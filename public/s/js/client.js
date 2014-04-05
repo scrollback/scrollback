@@ -7,6 +7,22 @@
     // Scroll to bottom of the messages on page load
     $(".chat-area").scrollTop($(".chat-area")[0].scrollHeight);
 
+    // Make our app fullscreen
+    $(function hideAddressBar() {
+        if(!window.location.hash) {
+            if(document.height <= window.outerHeight + 10) {
+                document.body.style.height = (window.outerHeight + 50) +'px';
+                setTimeout(function() {
+                    window.scrollTo(0, 1);
+                }, 50 );
+            } else {
+                setTimeout(function() {
+                    window.scrollTo(0, 1);
+                }, 0 );
+            }
+        }
+    });
+
     // Add a class while scrolling so we can do cool stuff
     $(function() {
         var timeout;
