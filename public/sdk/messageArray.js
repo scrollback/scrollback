@@ -5,11 +5,8 @@ function messageArray(initData) {
 	
 	function save(key) {
 		if(!window.localStorage) return;
-		try {
-			window.localStorage[key] = JSON.stringify(messages);	
-		}catch (e) {
-	        scrollback.debug && console.log("localStorage error: ", e.message);
-	    }
+		try { window.localStorage[key] = JSON.stringify(messages); }
+		catch(e) { console.log("Quota exceeded?"); }
 	}
 
 	function load(key) {
