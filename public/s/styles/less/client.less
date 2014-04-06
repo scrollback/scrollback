@@ -2,15 +2,13 @@
 
 @bar-height: 3.5em;
 
-@roomxxxxxx: 15%;
-@roomxxxxx: 15em;
+@roomxxxxx: 16%;
 @roomxxxx: 15em;
 @roomxxx: 15em;
 @roomxx: 15em;
 @roomx: 15em;
 
-@metaxxxxxx: 30%;
-@metaxxxxx: 36em;
+@metaxxxxx: 30%;
 @metaxxxx: 26em;
 @metaxxx: 26em;
 @metaxx: 20em;
@@ -36,15 +34,10 @@
     background-color: @dark-color;
     color: @light-color;
     left: 0;
-    width: @roomxxxxxx;
+    width: @roomxxxxx;
     min-height: 100%;
     overflow: auto;
     -webkit-overflow-scrolling : touch;
-
-    @media screen and (max-width: 85em) {
-        width: @roomxxxxx;
-        left: @roomxxxxx * -1;
-    }
 
     @media screen and (max-width: 70em) {
         width: @roomxxxx;
@@ -128,19 +121,14 @@
 }
 
 .meta {
-    .position(fixed; 0; auto; 0; @roomxxxxxx; auto);
+    .position(fixed; 0; auto; 0; @roomxxxxx; auto);
     .ease;
     .clearfloat;
 
-    width: @metaxxxxxx;
+    width: @metaxxxxx;
     background-color: darken(@light-color, 5%);
     color: @dark-color;
     border-right: 1px solid darken(@light-color, 10%);
-
-    @media screen and (max-width: 85em) {
-        width: @metaxxxxx;
-        left: 0;
-    }
 
     @media screen and (max-width: 70em) {
         width: @metaxxxx;
@@ -174,12 +162,14 @@
         li {
             .ease;
             .opacity(0.3);
+            .transform(rotate(0deg));
 
             display: table-cell;
             text-align: center;
             padding: .25em 0;
             color: @dark-color;
             cursor: pointer;
+            background-color: none;
 
             &:hover { .opacity(1); }
 
@@ -213,8 +203,9 @@
             &.roomlist {
                 display: none;
 
-                @media screen and (max-width: 85em) {
+                @media screen and (max-width: 70em) {
                     .opacity(1);
+                    .ease(.3s);
 
                     display: table-cell;
                     width: 2.5em;
@@ -258,7 +249,7 @@
                 text-align: center;
                 text-overflow: ellipsis;
                 overflow: hidden;
-                padding: .5em .75em;
+                padding: .25em;
                 width: 5.5em;
                 font-weight: 400;
                 color: @dark-color;
@@ -273,6 +264,7 @@
                     display: block;
                     width: 4em;
                     height: 4em;
+                    margin: .25em .5em;
                     border-radius: @roundness;
                 }
 
@@ -388,10 +380,8 @@
 .mainelems() {
     .ease;
 
-    left: @roomxxxxxx + @metaxxxxxx;
+    left: @roomxxxxx + @metaxxxxx;
     right: 0;
-
-    @media screen and (max-width: 85em) { left: @metaxxxxx;  }
 
     @media screen and (max-width: 70em) { left: @metaxxxx; }
 
@@ -420,9 +410,10 @@
 }
 
 .mainview {
-    .position(fixed; 0; 0; @bar-height; auto; auto);
+    .position(fixed; 0; 0; 0; auto; auto);
     .mainelems;
 
+    min-height: 100%;
     background-color: @light-color;
     color: @dark-color;
 
@@ -500,7 +491,7 @@
     }
 
     .chat-area {
-        .position(absolute; @bar-height; 0; 0; 0; auto);
+        .position(absolute; @bar-height; 0; @bar-height; 0; auto);
 
         overflow: auto;
         -webkit-overflow-scrolling : touch;
@@ -609,13 +600,12 @@
             .nick {
                 float: left;
                 margin-left: -8em;
-                padding-right: 2em;
+                padding-right: 1em;
                 font-weight: 700;
 
                 @media screen and (max-width: 70em) { margin-left: -20%; }
 
                 @media screen and (max-width: 27em) {
-                    padding-right: 1em;
                     margin-left: 0;
 
                     &:after { content: " :" }
@@ -666,14 +656,12 @@
     .roomlist { .transform(rotate(180deg)); }
 
     .rooms, .meta, .mainview, .chat-input {
-        @media screen and (max-width: 85em) { .transform(translate3d(@roomxxxxx, 0, 0)); }
-
         @media screen and (max-width: 70em) { .transform(translate3d(@roomxxxx, 0, 0)); }
 
         @media screen and (max-width: 50em) { .transform(translate3d( ( @roomxxx + @metaxxx ), 0, 0)); }
 
         @media screen and (max-width: 27em) { .transform(translate3d( ( @roomxxx + @metaxx ), 0, 0)); }
 
-        @media screen and (max-width: 18em) { .transform(translate3d(( @roomx + @metax ), 0, 0)); }
+        @media screen and (max-width: 18em) { .transform(translate3d( ( @roomx + @metax ), 0, 0)); }
     }
 }

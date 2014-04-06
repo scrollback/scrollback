@@ -8,7 +8,7 @@
     $(".chat-area").scrollTop($(".chat-area")[0].scrollHeight);
 
     // Make our app fullscreen
-    $(function hideAddressBar() {
+    $(window).on("load orientationchange", function () {
         if(!window.location.hash) {
             if(document.height <= window.outerHeight + 10) {
                 document.body.style.height = (window.outerHeight + 50) +'px';
@@ -36,6 +36,33 @@
             }, 1000);
 
             $(".mainview").addClass("scrolling");
+        });
+    });
+
+    // Handle tabs
+    $(function () {
+        var tabs = [];
+
+        $(".tabs > li").each(function () {
+            var classlist = $(this).attr('class').split(/ +/);
+
+            for (var i = 0; i < classlist.length; i++) {
+                if (classlist[i].length > 0 && classlist[i].match(/^tab-([a-z]+)$/)) {
+                    tabs.push(classlist[i]);
+                }
+            }
+        });
+
+        $(".tabs > li").on("click", function () {
+            if (!$(this).hasClass("notab")) {
+                for (var i = 0; i < tabs.length; i++) {
+                    if ($(this).hasClass(tabs[i])) {
+                        $("." + tabs[i]).addClass("current");
+                    } else {
+                        $("." + tabs[i]).removeClass("current");
+                    }
+                }
+            }
         });
     });
 
