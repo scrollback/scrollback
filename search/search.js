@@ -2,50 +2,153 @@ var log = require("../lib/logger.js");
 var config = require('../config.js');
 var client;
 var es = require('elasticsearch');
-module.exports = function(core) {
-	init();
-	if (config.search) {
-		core.on('text', function(message, callback) {
-		if(message.type == "text") {
-			var msg = JSON.stringify({
-				id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
-				text: message.text.replace(/['"]/g, ''),
-				room: typeof message.to=="string" ? message.to:message.to[0]
-			});
-			log("message: "+msg);	
-			client.index({
-				index:'sb',
-				type:'text',
-				id:message.id,
-				body:{"text":msg.text,"time":msg.time,"room":msg.room,"author":msg.author}
-			}, function(err,resp) {
-				if(err) {console.log("error while endexing data");}
-				console.log(resp);
-			});
-		}
-		return callback();
-		}, "watchers");
-		
-		core.on("getTexts", function(qu, callback){
-			console.log("query string: "+qu.q);
-			if(!qu.q) return callback();
-			client.search({index: 'sb',timeout:30000,body: {query: { match: {text: qu.q}}}}, function (error, response) {
-					if(error) {log("error while searching data");}
-					qu.results = response;
-					callback(qu);
-				});
-		}, "watchers");		
-	}
-	else{
-		log("Search module is not enabled");
-	}
+var indexName = 'sb';
+var searchTimeout = 10000;
+module.exports = function (core) {
+    init();
+    if (config.search) {
+        
+        /*Index text*/
+        core.on('text', function (message, callback) {
+            if (message.type === "text") {
+                callback();
+                var data = {};
+                
+                data.type = 'text';
+                data.id = message.id;
+                data.body =  {
+                    "text": message.text,
+                    "time": message.time,
+                    "room": message.to,
+                    "author": message.from.replace(/guest-/g, ""),
+                    "threads": message.threads
+                }
+                index(data);
+            }
+        }, "watchers");
+        
+        /*Index rooms*/
+        core.on('room', function (room, callback) {
+            if (room.type === "room") {
+                callback();
+                var data = {};
+                data.type = 'room';
+                data.id = room.id;
+                data.body = {
+                    "description": room.description,
+                    "type": room.type
+                }
+                index(data);
+            }
+        }, "watchers");
+        
+        /*Search text by a phrase/keyword */
+        core.on('getTexts', function (qu, callback) {
+            var data = {};
+            var query = {};
+            console.log("query string: " + qu.q);
+            if (!qu.q) {
+                return callback();
+            }
+            data.type = 'text';
+            query = { query: { match: { text: qu.q }}};
+            data.body =  query;   
+            data.qu = qu;
+            search(data,callback);
+        }, "watchers");
+        
+        /*Search rooms by description */
+        core.on('getRooms', function (qu, callback) {
+            var data = {};
+            var query = {};
+            console.log("query string: " + qu.q);
+            if (!qu.q) {
+                return callback();
+            }
+            data.type = 'room';
+            query = { query: { match: { description: qu.q}}};
+            data.body = query;
+            data.qu = qu;
+            search(data,callback); 
+        }, "watchers");
+        
+        /*Search threads by a keyword/phrase */
+        core.on('getThreads', function (qu, callback) {
+            var data = {};
+            var query = {};
+            console.log("query string: " + qu.q);
+            if (!qu.q) {
+                return callback();
+            }
+            data.type = 'text';
+            query = { query: { match: { text: qu.q}}};
+            data.body = query;
+            data.qu = qu;
+            searchThreads(data,callback); 
+        }, "watchers");
+    } else {
+        log("Search module is not enabled");
+    }
 };
 
-function init(){
-	log("Trying to connect to elastic search server .... ");
-	var searchServer = config.search.server+":"+config.search.port;
-	client = new es.Client({
-		host:searchServer
-	});
+function index(data){
+    client.index({
+        index: indexName,
+        type: data.type,
+        id: data.id,
+        body: data.body
+    }, function (error, resp) {
+        if (error) { console.log(error);}
+        log(resp);
+    });
 }
 
+function search(data, callback){
+    var searchParams = {
+        index: indexName,
+        type: data.type,
+        timeout: searchTimeout,
+        body: data.body
+    }
+    client.search(searchParams).then (function (response) {
+        data.qu.results = response.hits.hits;
+        callback(data.qu);
+    }, function (error) {
+        log(error);
+    });
+}
+
+function searchThreads(data, callback){
+    var searchParams = {
+        index: indexName,
+        type: data.type,
+        timeout: searchTimeout,
+        body: data.body
+    }
+    client.search(searchParams).then (function (response) {
+        var threads = new Array();   
+        var unique = {};
+        response.hits.hits.forEach(function(e){ 
+            if(e._source.threads) {
+                var id = e._source.threads[0].id;
+                if(!unique[id]) {
+                    threads.push(e._source.threads[0].id);
+                    unique[id] = true;
+                }
+            }
+        });
+        data.qu.results = threads;
+        callback(data.qu);
+    }, function (error) {
+        log(error);
+    });
+}
+
+ 
+function init() {
+    log("Trying to connect to elastic search server .... ");
+    var searchServer = config.search.server + ":" + config.search.port;
+    client = new es.Client({
+        host: searchServer
+    });
+}
