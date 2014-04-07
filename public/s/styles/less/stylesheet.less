@@ -1,6 +1,29 @@
 /* import less files */
 @import url('widgets.less');
 
+/* we need this to make text vertically centered in a page */
+html, body { height: 100%; }
+
+section {
+    padding: 1em;
+
+    @media only screen and (min-width: 700px) { padding: 2em; }
+}
+
+footer {
+    border-top: 1px solid darken(@dark-color, 10%);
+    background-color: @dark-color;
+    color: darken(@light-color, 20%);
+    text-align: center;
+    font-size: .9em;
+
+    padding: 1em;
+
+    @media only screen and (min-width: 700px) { padding: 2em; }
+
+    a { color: darken(@light-color, 20%); }
+}
+
 .link-highlight() {
     color: @light-color;
     border-color: fade(@light-color, 60%);
@@ -135,7 +158,7 @@
             height: 100%;
             list-style: none;
 
-            .clearfloat;
+            .clearfix;
 
             & > li {
                 .opacity(0);
@@ -252,7 +275,7 @@
         h2 { display: inline; }
 
         .price {
-            .clearfloat;
+            .clearfix;
 
             float: right;
             color: @accent-color;

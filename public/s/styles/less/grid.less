@@ -1,5 +1,5 @@
 /* custom grid system */
-.clearfloat() {
+.clearfix() {
     *zoom: 1;
 
     &:before,
@@ -11,7 +11,6 @@
     &:after { clear: both; }
 }
 
-/* custom grid system */
 .cols(@colspan: 1; @colcount: 1) when (@colcount =< @colspan) {
     .col-@{colcount}-@{colspan} { width: (@colcount * 100% / @colspan); }
 
@@ -31,7 +30,7 @@
 }
 
 .grid {
-    .clearfloat;
+    .clearfix;
 
     @media only screen and (min-width: 320px) and (max-width: 480px) {
         .col-1-5 {

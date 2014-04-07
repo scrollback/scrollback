@@ -14,54 +14,46 @@
 @metaxx: 20em;
 @metax: 14em;
 
-* { *behavior: url(./s/polyfills/boxsizing.htc); }
-
-.position(@value: relative; @top: 0; @right: 0; @bottom: 0; @left: 0; @z-index: auto) {
-    position: @value;
-    top: @top;
-    right: @right;
-    bottom: @bottom;
-    left: @left;
-    z-index: @z-index;
-    margin: 0;
-    padding: 0;
-}
+@breakpointxxxx: ~"screen and (max-width: 70em)";
+@breakpointxxx: ~"screen and (max-width: 50em)";
+@breakpointxx: ~"screen and (max-width: 27em)";
+@breakpointx: ~"screen and (max-width: 18em)";
 
 .rooms {
-    .position(fixed; 0; auto; 0; 0; auto);
-    .ease;
-
-    background-color: @dark-color;
-    color: @light-color;
+    position: fixed;
+    top: 0;
+    bottom: 0;
     left: 0;
     width: @roomxxxxx;
     min-height: 100%;
+    background-color: @dark-color;
+    color: @light-color;
     overflow: auto;
     -webkit-overflow-scrolling : touch;
 
-    @media screen and (max-width: 70em) {
+    @media @breakpointxxxx {
         width: @roomxxxx;
         left: @roomxxxx * -1;
     }
 
-    @media screen and (max-width: 50em) {
+    @media @breakpointxxx {
         width: @roomxxx;
         left: ( @roomxxx + @metaxxx ) * -1;
     }
 
-    @media screen and (max-width: 27em) {
+    @media @breakpointxx {
         width: @roomxx;
         left: ( @roomxx + @metaxx ) * -1;
     }
 
-    @media screen and (max-width: 18em) {
+    @media @breakpointx {
         width: @roomx;
         left: ( @roomx + @metax ) * -1;
     }
 
     .scrollback-header {
-        padding: .5em 1em;
         height: @bar-height;
+        padding: .5em 1em;
         border-bottom: 1px solid lighten(@dark-color, 10%);
         cursor: pointer;
 
@@ -78,10 +70,10 @@
             a {
                 .ease;
 
-                color: darken(@light-color, 10%);
                 display: block;
                 padding: 1em;
                 font-weight: 700;
+                color: darken(@light-color, 10%);
                 border-bottom: 1px solid lighten(@dark-color, 5%);
 
                 &.current {
@@ -89,11 +81,11 @@
                     background-color: lighten(@dark-color, 5%);
 
                     &:after {
+                        content: "";
+                        display: block;
+                        position: absolute;
                         right: 0;
                         top: 1.25em;
-                        position: absolute;
-                        display: block;
-                        content: '';
                         border-top: .6em solid transparent;
                         border-bottom: .6em solid transparent;
                         border-right: .55em solid darken(@light-color, 5%);
@@ -106,8 +98,8 @@
 
                 .unread {
                     float: right;
-                    text-align: center;
                     min-width: 2em;
+                    text-align: center;
                     font-size: .75em;
                     background-color: @accent-color;
                     color: @light-color;
@@ -121,111 +113,96 @@
 }
 
 .meta {
-    .position(fixed; 0; auto; 0; @roomxxxxx; auto);
-    .ease;
-    .clearfloat;
-
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: @roomxxxxx;
     width: @metaxxxxx;
     background-color: darken(@light-color, 5%);
     color: @dark-color;
     border-right: 1px solid darken(@light-color, 10%);
 
-    @media screen and (max-width: 70em) {
+    @media @breakpointxxxx {
         width: @metaxxxx;
         left: 0;
     }
 
-    @media screen and (max-width: 50em) {
+    @media @breakpointxxx {
         width: @metaxxx;
         left: @metaxxx * -1;
     }
 
-    @media screen and (max-width: 27em) {
+    @media @breakpointxx {
         width: @metaxx;
         left: @metaxx * -1;
     }
 
-    @media screen and (max-width: 18em) {
+    @media @breakpointx {
         width: @metax;
         left: @metax * -1;
     }
 
     .tabs {
         list-style: none;
-        width: 100%;
-        height: @bar-height;
         display: table;
         table-layout: fixed;
         margin: 0;
+        width: 100%;
+        height: @bar-height;
         border-bottom: 1px solid fade(@dark-color, 10%);
 
         li {
             .ease;
             .opacity(0.3);
-            .transform(rotate(0deg));
+            .transform(rotate(0deg)); /* hack to fix invisible items in android browser */
 
             display: table-cell;
-            text-align: center;
             padding: .25em 0;
+            text-align: center;
             color: @dark-color;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: 28px 28px;
             cursor: pointer;
-            background-color: none;
 
-            &:hover { .opacity(1); }
+            &:hover, &.current { .opacity(1); }
 
-            &.current {
-                .opacity(1);
+            &.current { box-shadow: 0 1px 0 0 @accent-color; }
 
-                box-shadow: 0 1px 0 0 @accent-color;
-            }
+            &.tab-info { background-image: url(../../img/icons/info.svg); }
 
-            &.tab-info {
-                background: url(../../img/icons/info.svg) center center no-repeat;
-                background-size: 28px 28px;
+            &.tab-people { background-image: url(../../img/icons/people.svg); }
 
-                h2 { display: none; }
-            }
-
-            &.tab-people {
-                background: url(../../img/icons/people.svg) center center no-repeat;
-                background-size: 28px 28px;
-
-                h2 { display: none; }
-            }
-
-            &.tab-threads {
-                background: url(../../img/icons/threads.svg) center center no-repeat;
-                background-size: 28px 28px;
-
-                h2 { display: none; }
-            }
+            &.tab-threads { background-image: url(../../img/icons/threads.svg); }
 
             &.roomlist {
                 display: none;
 
-                @media screen and (max-width: 70em) {
+                @media @breakpointxxxx {
                     .opacity(1);
                     .ease(.3s);
 
                     display: table-cell;
                     width: 2.5em;
-                    background: url(../../img/icons/back.svg) center center no-repeat;
-                    background-size: 28px 28px;
-                    border-bottom-color: transparent;
+                    background-image: url(../../img/icons/back.svg);
 
-                    h2 { display: none; }
+                    .roomsinview & { .transform(rotate(180deg)); }
                 }
             }
 
-            h2 { font-size: 1.5em; }
+            h2 { display: none; }
         }
     }
 
     .meta-content {
-        .position(absolute; @bar-height; 0; 0; 0; -1);
         .opacity(0);
-        .ease;
 
+        position: absolute;
+        top: @bar-height;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: -1;
         pointer-events: none;
         overflow: auto;
         -webkit-overflow-scrolling : touch;
@@ -234,25 +211,31 @@
             .opacity(1);
 
             pointer-events: auto;
-            z-index: 1;
+            z-index: 1; /* fix the content not clickable in some browsers */
         }
 
-        &.room-info {
-            padding: 1.5em;
-        }
+        &.room-info { padding: 1.5em; }
 
         &.people-list {
             padding: .75em;
 
             .people {
+                .ease;
+
                 display: inline-block;
+                padding: .25em;
+                width: 5.5em;
                 text-align: center;
                 text-overflow: ellipsis;
                 overflow: hidden;
-                padding: .25em;
-                width: 5.5em;
                 font-weight: 400;
                 color: @dark-color;
+
+                &:hover {
+                    background-color: @accent-color;
+                    color: @light-color;
+                    border-radius: @roundness;
+                }
 
                 &.offline {
                     .opacity(.5);
@@ -267,14 +250,6 @@
                     margin: .25em .5em;
                     border-radius: @roundness;
                 }
-
-                &:hover {
-                    .ease;
-
-                    background-color: @accent-color;
-                    color: @light-color;
-                    border-radius: @roundness;
-                }
             }
         }
 
@@ -283,137 +258,39 @@
 
             display: block;
             padding: .5em 2em;
-            border-right: 4px solid @accent-color;
             font-weight: 400;
             color: @dark-color;
-
-            &.current { background-color: fade(@accent-color, 10%); }
+            border-right: 4px solid @accent-color;
 
             &:hover {
                 background-color: @accent-color;
                 color: @light-color;
             }
 
-            &.conv-0 {
-                border-right-color: @color0;
+            &.current { background-color: fade(@accent-color, 10%); }
 
-                &.current { background-color: fade(@color0, 10%); }
+            /* set different colors for conversations */
+            .-(@i: 0) when (@i < 10) {
+                @color: ~"color@{i}";
 
-                &:hover { background-color: @color0; }
-            }
+                &.conv-@{i} {
+                    border-right-color: @@color;
 
-            &.conv-1 {
-                border-right-color: @color1;
+                    &:hover { background-color: @@color; }
 
-                &.current { background-color: fade(@color1, 10%); }
+                    &.current { background-color: fade(@@color, 10%); }
+                }
 
-                &:hover { background-color: @color1; }
-            }
-
-            &.conv-2 {
-                border-right-color: @color2;
-
-                &.current { background-color: fade(@color2, 10%); }
-
-                &:hover { background-color: @color2; }
-            }
-
-            &.conv-3 {
-                border-right-color: @color3;
-
-                &.current { background-color: fade(@color3, 10%); }
-
-                &:hover { background-color: @color3; }
-            }
-
-            &.conv-4 {
-                border-right-color: @color4;
-
-                &.current { background-color: fade(@color4, 10%); }
-
-                &:hover { background-color: @color4; }
-            }
-
-            &.conv-5 {
-                border-right-color: @color5;
-
-                &.current { background-color: fade(@color5, 10%); }
-
-                &:hover { background-color: @color5; }
-            }
-
-            &.conv-6 {
-                border-right-color: @color6;
-
-                &.current { background-color: fade(@color6, 10%); }
-
-                &:hover { background-color: @color6; }
-            }
-
-            &.conv-7 {
-                border-right-color: @color7;
-
-                &.current { background-color: fade(@color7, 10%); }
-
-                &:hover { background-color: @color7; }
-            }
-
-            &.conv-8 {
-                border-right-color: @color8;
-
-                &.current { background-color: fade(@color8, 10%); }
-
-                &:hover { background-color: @color8; }
-            }
-
-            &.conv-9 {
-                border-right-color: @color9;
-
-                &.current { background-color: fade(@color9, 10%); }
-
-                &:hover { background-color: @color9; }
-            }
+                .-((@i + 1));
+            } .-;
         }
     }
 }
 
-.mainelems() {
-    .ease;
-
-    left: @roomxxxxx + @metaxxxxx;
+.mainview:extend(.main-elem) {
+    top: 0;
     right: 0;
-
-    @media screen and (max-width: 70em) { left: @metaxxxx; }
-
-    @media screen and (max-width: 50em) { left: 0;  }
-}
-
-.chat-input {
-    .position(fixed; auto; 0; 0; auto; 1);
-    .mainelems;
-
-    padding: .5em 1em;
-    min-height: @bar-height;
-    background-color: darken(@light-color, 5%);
-
-    .textarea {
-        .entry;
-
-        word-wrap: break-word;
-        width: 100%;
-        padding: .4em 1em;
-        min-height: 2.5em;
-        max-height: 12em;
-        border-radius: @roundness;
-        overflow: auto;
-    }
-}
-
-.mainview {
-    .position(fixed; 0; 0; 0; auto; auto);
-    .mainelems;
-
-    min-height: 100%;
+    bottom: 0;
     background-color: @light-color;
     color: @dark-color;
 
@@ -428,27 +305,29 @@
         .menu {
             display: none;
 
-            @media screen and (max-width: 50em) {
+            @media @breakpointxxx {
                 .ease(.3s);
 
                 display: block;
                 float: left;
                 height: 3.5em;
                 width: 2.5em;
-                cursor: pointer;
                 background: url(../../img/icons/back.svg) center center no-repeat;
                 background-size: 28px 28px;
+                cursor: pointer;
             }
+
+            .metainview & { .transform(rotate(180deg)); }
         }
 
         .title {
             float: left;
-            font-size: 1.5em;
             padding: .15em;
             padding-left: 1em;
+            font-size: 1.5em;
             cursor: pointer;
 
-            @media screen and (max-width: 70em) { padding-left: .25em;  }
+            @media @breakpointxxxx { padding-left: .25em;  }
         }
 
         .user-area {
@@ -477,37 +356,63 @@
         .ease;
 
         position: relative;
+        float: right;
         margin: 1em 2em;
+        padding: .5em 1em;
         background-color: @dark-color;
         color: @light-color;
-        float: right;
-        padding: .5em 1em;
         border-radius: @roundness;
         z-index: 1;
-    }
 
-    &.scrolling {
-        .chat-position { .opacity(1); }
+        .scrolling & { .opacity(1); }
     }
 
     .chat-area {
-        .position(absolute; @bar-height; 0; @bar-height; 0; auto);
-
+        position: absolute;
+        top: @bar-height;
+        right: 0;
+        bottom: @bar-height;
+        left: 0;
         overflow: auto;
         -webkit-overflow-scrolling : touch;
 
         .chat {
             position: relative;
-            padding: 1em;
+            max-height: 12em;
             margin: 0;
+            padding: 1em;
             padding-left: 12em;
             border-top: 1px solid darken(@light-color, 5%);
-            max-height: 12em;
             overflow: hidden;
 
-            @media screen and (max-width: 70em) { padding-left: 22%; }
+            @media @breakpointxxxx { padding-left: 22%; }
 
-            @media screen and (max-width: 27em) { padding-left: 3em; }
+            @media @breakpointxx { padding-left: 3em; }
+
+            &:before {
+                content: "";
+                float: left;
+                margin: .55em 0 auto -10em;
+                height: .5em;
+                width: .5em;
+                border-radius: 50%;
+                background-color: @accent-color;
+
+                @media @breakpointxxxx { margin-left: -25%; }
+
+                @media @breakpointxx { margin-left: -2em; }
+            }
+
+            /* set conversations dot colors */
+            .-(@i: 0) when (@i < 10) {
+                @color: ~"color@{i}";
+
+                &.conv-@{i} {
+                    &:before { background-color: @@color; }
+                }
+
+                .-((@i + 1));
+            } .-;
 
             &.long {
                 .ease;
@@ -521,16 +426,12 @@
                 &:after {
                     .ease;
 
-                    display: block;
                     content: "";
                     position: absolute;
+                    display: block;
                     bottom: 0;
                     width: 100%;
                     padding: 3em 0;
-                    background-image: -o-linear-gradient(bottom, fade(@light-color, 0%) 0%, @light-color 100%);
-                    background-image: -moz-linear-gradient(bottom, fade(@light-color, 0%) 0%, @light-color 100%);
-                    background-image: -webkit-linear-gradient(bottom, fade(@light-color, 0%) 0%, @light-color 100%);
-                    background-image: -ms-linear-gradient(bottom, fade(@light-color, 0%) 0%, @light-color 100%);
                     background-image: linear-gradient(to bottom, fade(@light-color, 0%) 0%, @light-color 100%);
                 }
 
@@ -542,70 +443,15 @@
                 }
             }
 
-            .clearfloat;
-
-            &:before {
-                float: left;
-                margin: .55em 0 auto -10em;
-                height: .5em;
-                width: .5em;
-                border-radius: 50%;
-                background-color: @accent-color;
-
-                @media screen and (max-width: 70em) { margin-left: -25%; }
-
-                @media screen and (max-width: 27em) { margin-left: -2em; }
-            }
-
-            &.conv-0 {
-                &:before { background-color: @color0; }
-            }
-
-            &.conv-1 {
-                &:before { background-color: @color1; }
-            }
-
-            &.conv-2 {
-                &:before { background-color: @color2; }
-            }
-
-            &.conv-3 {
-                &:before { background-color: @color3; }
-            }
-
-            &.conv-4 {
-                &:before { background-color: @color4; }
-            }
-
-            &.conv-5 {
-                &:before { background-color: @color5; }
-            }
-
-            &.conv-6 {
-                &:before { background-color: @color6; }
-            }
-
-            &.conv-7 {
-                &:before { background-color: @color7; }
-            }
-
-            &.conv-8 {
-                &:before { background-color: @color8; }
-            }
-
-            &.conv-9 {
-                &:before { background-color: @color9; }
-            }
-
             .nick {
                 float: left;
                 margin-left: -8em;
                 padding-right: 1em;
                 font-weight: 700;
 
-                @media screen and (max-width: 70em) { margin-left: -20%; }
+                @media @breakpointxxxx { margin-left: -20%; }
 
-                @media screen and (max-width: 27em) {
+                @media @breakpointxx {
                     margin-left: 0;
 
                     &:after { content: " :" }
@@ -640,28 +486,58 @@
     }
 }
 
-.metainview {
-    .menu { .transform(rotate(180deg)); }
+.chat-input:extend(.main-elem) {
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    padding: .5em 1em;
+    min-height: @bar-height;
+    background-color: darken(@light-color, 5%);
 
-    .rooms, .meta, .mainview, .chat-input {
-        @media screen and (max-width: 50em) { .transform(translate3d(@metaxxx, 0, 0)); }
+    .textarea {
+        .entry;
 
-        @media screen and (max-width: 27em) { .transform(translate3d(@metaxx, 0, 0)); }
-
-        @media screen and (max-width: 18em) { .transform(translate3d(@metax, 0, 0)); }
+        word-wrap: break-word;
+        width: 100%;
+        padding: .4em 1em;
+        min-height: 2.5em;
+        max-height: 12em;
+        border-radius: @roundness;
+        overflow: auto;
     }
 }
 
-.roomsinview {
-    .roomlist { .transform(rotate(180deg)); }
+.main-elem {
+    position: fixed;
 
-    .rooms, .meta, .mainview, .chat-input {
-        @media screen and (max-width: 70em) { .transform(translate3d(@roomxxxx, 0, 0)); }
+    left: @roomxxxxx + @metaxxxxx;
+    right: 0;
 
-        @media screen and (max-width: 50em) { .transform(translate3d( ( @roomxxx + @metaxxx ), 0, 0)); }
+    @media @breakpointxxxx { left: @metaxxxx; }
 
-        @media screen and (max-width: 27em) { .transform(translate3d( ( @roomxxx + @metaxx ), 0, 0)); }
+    @media @breakpointxxx { left: 0;  }
+}
 
-        @media screen and (max-width: 18em) { .transform(translate3d( ( @roomx + @metax ), 0, 0)); }
+.rooms, .meta, .mainview, .chat-input {
+    .ease; /* animate css transforms */
+    .flickerfix; /* fix flicker in some browsers */
+
+    /* we use 3d transformations for GPU accelerated animations */
+    .metainview & {
+        @media @breakpointxxx { .transform(translate3d(@metaxxx, 0, 0)); }
+
+        @media @breakpointxx { .transform(translate3d(@metaxx, 0, 0)); }
+
+        @media @breakpointx { .transform(translate3d(@metax, 0, 0)); }
+    }
+
+    .roomsinview & {
+        @media @breakpointxxxx { .transform(translate3d(@roomxxxx, 0, 0)); }
+
+        @media @breakpointxxx { .transform(translate3d( ( @roomxxx + @metaxxx ), 0, 0)); }
+
+        @media @breakpointxx { .transform(translate3d( ( @roomxxx + @metaxx ), 0, 0)); }
+
+        @media @breakpointx { .transform(translate3d( ( @roomx + @metax ), 0, 0)); }
     }
 }

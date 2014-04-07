@@ -1,43 +1,44 @@
 /*jslint browser: true, indent: 4, regexp: true*/
 /*global $*/
 
-(function () {
+(function() {
     "use strict";
 
     // Handle PopOver
-    $(function () {
+    $(function() {
         var popoverclass = ".popover",
+            popoverbody = ".popover-body",
             popoverlayer = ".popover-layer",
-            popoverparent = ".has-popover";
+            popoveritem = ".has-popover";
 
         // Hide popover
         function hidePopOver() {
-            $(popoverparent).removeClass("popover-active");
-            $(popoverclass).removeClass("popover-bottom").removeClass("popover-top");
+            $(popoveritem).parent(popoverclass).removeClass("popover-active");
+            $(popoverbody).removeClass("popover-bottom").removeClass("popover-top");
             $(popoverlayer).remove();
         }
 
         // Show popover
         function showPopOver() {
             $("body").append("<div class='popover-layer'></div>");
-            $(popoverparent).addClass("popover-active");
+            $(this).parent(popoverclass).addClass("popover-active");
             $(popoverlayer).on("click", hidePopOver);
 
-            var popoverheight = $(popoverclass).height(),
-                spaceabove = $(popoverparent).offset().top - $(document).scrollTop() + 20,
-                spacebelow = $(window).height() - spaceabove - popoverheight + 20;
+            var popoverheight = $(popoverbody).height(),
+                spaceabove = $(popoverclass).offset().top - $(document).scrollTop() + 60,
+                spacebelow = $(window).height() - spaceabove - popoverheight + 60;
 
             if (spacebelow > popoverheight) {
-                $(popoverclass).addClass('popover-bottom');
+                $(popoverbody).addClass('popover-bottom');
             } else if (spaceabove > popoverheight) {
-                $(popoverclass).addClass('popover-top');
+                $(popoverbody).addClass('popover-top');
             }
         }
 
-        $(popoverparent).on("click", showPopOver);
+        $(popoveritem).on("click", showPopOver);
     });
 
     // Style active states in mobile
-    document.addEventListener("touchstart", function () {}, true);
+    document.addEventListener("touchstart", function() {}, true);
 
 }());

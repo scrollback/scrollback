@@ -12,6 +12,10 @@
 
         <link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
         <link rel="stylesheet" type="text/css" media="screen" href="./s/styles/less/widgets.css" />
+
+        <style type="text/css">
+            section { padding: 1em; }
+        </style>
     </head>
 
     <body>
@@ -19,13 +23,22 @@
             <h1>Heading level 1</h1>
             <h2>Heading level 2</h2>
             <h3>Heading level 3</h3>
+            <div class="popover">
+                <a class="has-popover button">Show popover</a>
+                <div class="popover-body">
+                    <p>
+                        The popover can contain anything.
+                    </p>
+                    <a class="button-secondary">Whatever</a>
+                </div>
+            </div>
             <p>This page showcases all the widget styles available in the <code>.less</code> files and contains examples on how to use the widgets. If any new widget style is made, then it should be also be added to this page. This is an example of a small paragraph. Here is a link to the <a href="http://scrollback.io">scrollback.io</a> homepage.</p>
             <img src="./s/img/example.jpg" />
             <p class="subtitle">Just a subtitle</p>
             <p>Click or hover the follwing button to see a popover. Click outside the popover to dismiss. Popovers will usually align to the center only in <code>inline-block</code> elements.</p>
-            <div class="has-popover button">
-                Show popover
-                <div class="popover">
+            <div class="popover">
+                <a class="has-popover button">Show popover</a>
+                <div class="popover-body">
                     <p>
                         The popover can contain anything.
                     </p>
