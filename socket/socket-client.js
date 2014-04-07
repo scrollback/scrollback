@@ -1,3 +1,4 @@
+/* global libsb */
 var sockjs = require('sockjs-client'),
 	generate = require('generate'),
 	config = require('../client-config');
@@ -75,7 +76,7 @@ function makeAction(o) {
 		time: new Date().getTime()
 	};
 	
-	for(i in o) action[i] = o[i];
+	for(var i in o) action[i] = o[i];
 	return action;
 }
 
