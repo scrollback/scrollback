@@ -1,194 +1,186 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html>
-	<head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Scrollback: beautiful micro-forums for open communities.</title>
-        <meta name="description" content="Scrollback: beautiful micro-forums for open communities, embeddable on any website.">
-        <meta name="viewport" content="width=device-width">
-		<link href='//fonts.googleapis.com/css?family=Open+Sans:300,800|Source+Code+Pro:300' rel='stylesheet' type='text/css' / -->
-        <link rel="stylesheet" href="style.css">
-		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-		<style>
-			nav {
-				position: absolute; background: transparent; color: white; border: none; width: 100%;
-			}
-			nav a { color: #fff; }
-            nav a:hover { background: #3ca; }
-			#hero {
-				background: #000; color: #fff; padding: 150px 0;
-				background: -moz-radial-gradient(bottom center,  #33ccaa 0%, #000000 100%);
-				background: -webkit-gradient(radial, bottom center, 0px, center center, 100%, color-stop(0%,#33ccaa), color-stop(100%,#000000));
-				background: -webkit-radial-gradient(bottom center, ellipse cover,  #33ccaa 0%,#000000 100%);
-				background: -o-radial-gradient(bottom center, ellipse cover,  #33ccaa 0%,#000000 100%);
-				background: -ms-radial-gradient(bottom center, ellipse cover,  #33ccaa 0%,#000000 100%);
-				background: radial-gradient(bottom center,  #33ccaa 0%,#000000 100%);
-			}
-            #hero h1 { padding 0; margin: 16px 0 0 0; }
-            #hero p { padding 0; margin: 0; }
-            
-            #getscrollback {
-                background: #000; color: #fff;
-				padding: 80px;
-            }
-			
-			form#add { margin-top: 80px; color: #999; background: #fff; padding: 8px; }
-            #streamId { font-size: inherit; font-weight: inherit; background: transparent; border: none;
-                width: 300px; color: #000; }
-			
-            #claimBtn { width: auto; background: #000; color: #fff; border: none; float: right; 
-            }
-		
-			
-			pre { margin: 16px; padding: 16px; background: #555; }
-			code { font-size: 12px; line-height: 12px; }
-			
-			footer a img { margin: 0 32px; }
-		</style>
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-			ga('create', 'UA-45130412-1', 'scrollback.io');
-			ga('send', 'pageview');
-		</script>
-		<!-- Google Tag Manager -->
-		<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-T9CW8C"
-		height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-		<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-			'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-		})(window,document,'script','dataLayer','GTM-T9CW8C');</script>
-		<!-- End Google Tag Manager -->
+    <head>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 
-	</head>
-	
-	<body>
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+        <meta name="description" content="Scrollback is a beautiful, open source text chat service designed for communities. Scrollback chat rooms can be embedded in websites, linked with Twitter hashtags or with IRC channels." />
+
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Scrollback - Where communities hang out" />
+        <meta name="twitter:description" content="Scrollback is a beautiful, open source text chat service designed for communities." />
+        <meta name="twitter:image" content="http://scrollback.io/s/img/scrollback.png" />
+
+        <meta property="og:type" content="website"/>
+        <meta property="og:url" content="http://scrollback.io" />
+        <meta property="og:title" content="Scrollback - Where communities hang out" />
+        <meta property="og:description" content="Scrollback is a beautiful, open source text chat service designed for communities." />
+        <meta property="og:image" content="http://scrollback.io/s/img/scrollback.png" />
+
+        <title>Scrollback - Where communities hang out</title>
+
+        <link rel="shortcut icon" href="./s/img/favicon.png" type="image/x-icon" />
+        <link rel="image_src" href="./s/img/scrollback.png" />
+        <link rel="author" href="http://plus.google.com/118029978978376563753" />
+
+        <link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
+        <link rel="stylesheet" type="text/css" media="screen" href="./s/css/stylesheet.css" />
+        <link rel="stylesheet" type="text/css" media="screen and (min-width:0\0)" href="./s/css/ie.css" />
+
+        <link rel="stylesheet" type="text/css"  media="print" href="./s/css/print.css" />
+    </head>
+
+    <body>
+        <!--[if IE]>
+        <section class="iewarning">
+        <h2>You are using an outdated browser!</h2>
+        <p>Please <a href="http://browsehappy.com">upgrade</a> to a modern browser.</p>
+        </section>
         <![endif]-->
-		
-		<nav>
-			<div class="container clearfix">
-				<div class="box span12">
-					<ul>
-						<li><a href="#features">Features</a></li>
-						<li><a href="#whybuilt">Why we built Scrollback</a></li>
-						<li><a href="http://github.com/scrollback/scrollback/wiki/Getting-Started-with-Scrollback">Documentation</a></li>
-						<li><a href="http://github.com/scrollback/scrollback">Fork us on GitHub</a></li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-		<div id="hero">
-			<div class='container clearfix'>
-				<img src="/img/logod-72.png" alt="Scrollback logo" />
-				<h1>Beautiful text chat for your community.</h1>
-                <p>Scrollback hosts <em>rooms</em> that can be easily embedded on any website.</p>
-				<form id="add" class="clearfix">
-				    scrollback.io/<input id="streamId"><input type="submit" id="claimBtn" value="Claim your room ID!"/>
-				</form>
-			</div>
-		</div>
-		
-		<div class='container clearfix'>
-			<div class='box span12 break'>
-				<h1><a name="features">Features</a></h1>
-			</div>
-			<div class='box span4'>
-				<h2>Persistent community</h2>
-				<p>The conversation is never out of sight, even when the chat room is
-                    minimized.</p>
-			</div>
-			<div class='box span4'>
-				<h2>IRC integration</h2>
-				<p>If you have an active IRC channel already, we connect to it
-				    instead of competing with it.</p>
-			</div>
-			<div class='box span4'>				
-				<h2>Email updates</h2>
-				<p>We keep your community members updated through a daily email
-                    summarizing what they missed.
-                </p>
-			</div>
-        </div>
-        <div id="getscrollback">
-            <div class="container clearfix">
-                <div class='box span6'>
-                    <p>To embed a scrollback room in your page, paste this code 
-                        into the HTML. Don’t forget to change the room ID to your
-                        own.</p>
+        <section id="cover" class="cover-home">
+            <div class="cover-bg">
+                <div class="bg-home"></div>
+                <div class="bg-websites"></div>
+                <div class="bg-conferences"></div>
+                <div class="bg-geeks"></div>
+            </div>
+            <div class="cover-content">
+                <div class="grid container">
+                    <div class="col-3-5 slides">
+                        <img class="large-logo" src="./s/img/scrollback-large.png" alt="scrollback" />
+                        <ul class="slider">
+                            <li class="slide-home">
+                                <h1>Where communities hang out</h1>
+                                <p>Scrollback is a beautiful, open source text chat service designed for communities. Scrollback chat rooms can be embedded in websites and linked with Twitter hashtags or IRC channels.</p>
+                            </li>
+                            <li class="slide-websites">
+                                <h1>Text chat within your website</h1>
+                                <p>Sites like <a href="http://blog.mixflavor.com/">the MixFlavor comic blog</a> use Scrollback to turn visitors into a friendly community. People who chat stay longer and return more often.</p>
+                            </li>
+                            <li class="slide-conferences">
+                                <h1>A back-channel for your conference</h1>
+                                <p>Scrollback, used at events like <a href="http://jsconf.asia">JSConf Asia</a>, have allowed attendees to network more freely, share anecdotes related to the talks and have extended QA with speakers.</p>
+                            </li>
+                            <li class="slide-geeks">
+                                <h1>A friendly portal to your IRC channel</h1>
+                                <p>Projects like Mozilla put their IRC channel on their website using Scrollback, so that visitors truly learn why it’s called an open-source <em>community</em>.</p>
+                            </li>
+                        </ul>
+                        <div class="links">
+                            <ul>
+                                <li><a class="link-home">Home</a></li>
+                                <li><a class="link-websites">For websites</a></li>
+                                <li><a class="link-conferences">For conferences</a></li>
+                                <li><a class="link-geeks">For geeks</a></li>
+                            </ul>
+                        </div>
+                        <a class="button login-toggle">Get started</a>
+                    </div>
                 </div>
-                <div class='box span6'><pre><code>&lt;script&gt;
-window.scrollback = {
-  streams: ["your-room-id"]  // Change this!
-};
+                <a class="arrow" href="#features"><img src="./s/img/arrow.png" alt="Go down" /></a>
+                <a  class="fork" href="http://github.com/scrollback/scrollback/"><img src="./s/img/github.png" alt="Fork on GitHub" /></a>
+            </div>
+        </section>
+        <section id="features" class="features">
+            <div class="grid container">
+                <div class="col-1-3">
+                    <h2>Chattier forums</h2>
+                    <img class="icon" src="./s/img/online.png" alt="Online" />
+                    <p>Users are engaged like on their favourite chat app, while the community enjoys viral growth, SEO and moderation.</p>
+                </div>
+                <div class="col-1-3">
+                    <h2>Email notifications</h2>
+                    <img class="icon" src="./s/img/summary.png" alt="Summary" />
+                    <p>Members of your community get email if someone mentions them, as well as summaries of what was said.</p>
+                </div>
+                <div class="col-1-3">
+                    <h2>Twitter integration</h2>
+                    <img class="icon" src="./s/img/twitter.png" alt="Twitter" />
+                    <p>Bring tweets about you into your room instantly, and use them to spark new discussions around the clock.</p>
+                </div>
+            </div>
+        </section>
+        <section class="testimonials">
+            <div class="grid container">
+                <h1>Scrollback in the wild</h1>
+                <div class="col-1-5">
+                    <a href="http://mozillaindia.org" target="_blank">
+                        <img src="./s/img/mozilla.png" alt="Mozilla India, Philippines, and many others." />
+                    </a>
+                </div>
+                <div class="col-1-5">
+                    <a href="http://hasgeek.com/" target="_blank">
+                        <img src="./s/img/hasgeek.png" alt="HasGeek" />
+                    </a>
+                </div>
+                <div class="col-1-5">
+                    <a href="http://jfdi.asia/" target="_blank">
+                        <img src="./s/img/jfdi.png" alt="JFDI Asia" />
+                    </a>
+                </div>
+                <div class="col-1-5">
+                    <a href="http://jsconf.asia" target="_blank">
+                        <img src="./s/img/jsconf.png" alt="JSConf Asia" />
+                    </a>
+                </div>
+                <div class="col-1-5">
+                    <a href="http://numixproject.org" target="_blank">
+                        <img src="./s/img/numix.png" alt="Numix Project" />
+                    </a>
+                </div>
+            </div>
+        </section>
+        <section class="pricing">
+            <div class="grid container">
+                <div class="col-1-2">
+                    <div class="heading"><h2>Standard</h2><span class="price">Free</span></div>
+                    <p>Scrollback is an open source project, and the fully functional hosted service will be
+                        availble free forever. This is the best option for small communities.</p>
+                </div>
+                <div class="col-1-2">
+                    <div class="heading"><h2>Pro</h2><span class="price">$9/mo<span class="sub">Early adopter price</span></span></div>
+                    <p>The pro tier is designed for large communities that need advanced customization,
+                        abuse control and integration options. Features in this tier are under development,
+                        so it’s free for now.</p>
+                </div>
+            </div>
+            <div class="container signup">
+                <p>Sign up today for a free trial of the pro tier. When the beta ends, your account will switch to
+                    standard automatically.</p>
+                <a class="button login-toggle">Get started for free</a>
+            </div>
+        </section>
+        <footer>
+            <p>Scrollback is a product of Askabt Pte. Ltd. We respect your <a href="/privacy.html">privacy</a>. Copyright Askabt Pte. Ltd.</p>
+            <p class="credit">Photo credit <a href="http://www.flickr.com/photos/georgio/6261749693/">flickr.com/photos/georgio</a>.</p>
 
-/* DON'T EDIT: */(function(d,s,h,e){e=d.createElement(s);
-e.src=h+'/client.min.js';e.async=1;scrollback.host=h;
-d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
-(document,'script',location.protocol+'//scrollback.io'));
-&lt;/script&gt;</code></pre></div>
-            
-            </div>
-        </div>
-        
-        <div class="container clearfix">
-			<div class='box span12 break'>
-				<h1><a name="whybuilt">Why we built Scrollback</a></h1>
-				
-				<p>We're a team of developers who got tired of <a href='http://en.wikipedia.org/wiki/Internet_Relay_Chat' target='wikipedia-irc'>IRC</a>.</p>
-				
-				<p>New chat systems have been appearing for the past 20 years, but they are all built for one-to-one or <strong>private</strong> conversations in small groups.</p>
-				
-				<p>Open communities, on the other hand, are larger and <strong>public</strong> by default. These communities form around open source projects, consumer brands, sports teams, entertainment franchises and many more. They need different tools.</p>
-				
-				<p>IRC is one &ndash; it is the great grand-daddy of social text chat &ndash; but it predates the web and most users find it hopelessly complex and archaic.</p>
-				
-				<p>Scrollback is a modern, beautifully designed platform for open communities to converse. It combines the lessons learned from IRC with the ease-of-use of an embeddable web app and the power of a cloud hosted service.</p>
-            </div>
-			
-		</div><!-- container -->
-		
-		<footer>
-			<div class='container clearfix'>
-				<p>We care about <a href='#'>privacy</a>. Copyright Askabt Pte.
-				Ltd. Scrollback is a trademark of Askabt Pte. Ltd.</p>
-				
-				<p><a href="http://www.softlayer.com"><img alt="Softlayer" src="/img/poweredby/softlayer.png"></a>
-					<a href="http://www.browserstack.com"><img alt="Browserstack" src="/img/poweredby/browserstack.png"></a>
-				</p>
-			</div>
-		</footer>
-		
-		<script src="main.js"></script>
-		<script>
- window.scrollback = {
-  streams:["scrollback"],
-  theme: 'light',
-  ticker: true,
-  title : "Scrollback"
- };
- 
- /***** don't edit below *****/
- (function(d,s,h,e){e=d.createElement(s);e.async=1;
- e.src=h+'/client.min.js';scrollback.host=h;
- d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
- (document,'script',location.protocol+'//'+location.host));
-</script>
-		<script src="//code.jquery.com/jquery.min.js"></script>
-		<script>
-			$(document).ready(function() {
-				$("form#add").submit(function (event) {
-					location.href = '/' + $('#streamId').val() + '/';
-					return false;
-				});
-			});
-		</script>
-		
-	</body>
+        </footer>
+        <section class="modal">
+            <a class="close login-toggle">&times;</a>
+            <!--
+            <h2>Login to scrollback with...</h2>
+            <a class="button google">Google+</a>
+            <a class="button twitter">Twitter</a>
+            <a class="button facebook">Facebook</a>
+            <a class="button persona">Persona</a>
+            <a class="button openid">OpenID</a>
+            -->
+            <h2>Create or visit a room </h2>
+            <p>Type the name of the room you want</p>
+            <form id="create-field">
+                <label for="create-text">scrollback.io/</label>
+                <input type="entry" autocomplete="off" id="create-text" placeholder="my-community" />
+                <input type="submit" value="Go" class="button disabled" />
+                <p class="error"></p>
+            </form>
+        </section>
+        <aside class="dim"></aside>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script>
+            window.jQuery || document.write('<script src="./s/js/jquery.min.js"><\/script>')
+        </script>
+        <script src="./s/js/main.js"></script>
+    </body>
+
 </html>

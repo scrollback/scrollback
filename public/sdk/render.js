@@ -99,6 +99,8 @@ Stream.prototype.renderLog = function() {
 	this.log.innerHTML = '';
 	
 	this.messages.forEach(function(message) {
+		var i;
+		
 		if (lastMsg) {
 			el = self.renderMessage(lastMsg, message.time - lastMsg.time > 60000);
 			if(el) self.log.appendChild(el);
@@ -238,9 +240,18 @@ function hashColor(name) {
 
 Stream.prototype.renderMessage = function (message, showTimestamp) {
 	var el, self = this;
-
 	var mentionedRegex = new RegExp("\\b"+core.nick().replace(/^guest-/,"")+"\\b");
 	var mentionedClass = mentionedRegex.test(message.text)&& message.from != core.nick()?" scrollback-message-mentioned ":"";
+	var i, from = message.from, text = message.text;
+	if(message.labels){
+		for(i=0;i<message.labels.length;i++) {
+			if(message.labels[i] == "hidden") {
+				text = "/me has hidden this message.";
+				from = "An admin";
+				break;
+			}
+		}
+	}
 	function format(text) {
 		if(!text) return "";
 		var u = /\b(https?\:\/\/)?([\w.\-]*@)?((?:[a-z0-9\-]+)(?:\.[a-z0-9\-]+)*(?:\.[a-z]{2,4}))((?:\/|\?)\S*)?\b/g;
@@ -282,29 +293,29 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 		case 'text':
 			el = [
 				[ "span", { 'class': 'scrollback-message-separator'}, '['],
-				formatName(message.from)];
-			if(message.text.indexOf('/me ') === 0) {
-				el.push([ "span", format(message.text.substr(3)) ]);
+				formatName(from)];
+			if(text.indexOf('/me ') === 0) {
+				el.push([ "span", format(text.substr(3)) ]);
 				el.push([ "span", { 'class': 'scrollback-message-separator'}, '] ']);
 			} else {
 				el.push([ "span", { 'class': 'scrollback-message-separator'}, '] ']);
-				el.push([ "span", { 'class': 'scrollback-message-content'}, format(message.text) ]);
+				el.push([ "span", { 'class': 'scrollback-message-content'}, format(text) ]);
 			}
 			break;
 		case 'back':
-			el = [["span", formatName(message.from), ' entered.']];
+			el = [["span", formatName(from), ' entered.']];
 			break;
 		case 'away':
-			el = ["span", formatName(message.from), ' left'];
-			if (message.text) el.push(' (', format(message.text), ')');
+			el = ["span", formatName(from), ' left'];
+			if (text) el.push(' (', format(text), ')');
 			else el.push('.');
 			el = [el];
 			break;
 		case 'nick':
-			el = [["span", formatName(message.from), ' is now known as ', formatName(message.ref)]];
+			el = [["span", formatName(from), ' is now known as ', formatName(message.ref)]];
 			break;
 		default:
-			el = [["span", message.text]];
+			el = [["span", text]];
 	}
 	
 	if (showTimestamp && message.time) {
@@ -318,7 +329,7 @@ Stream.prototype.renderMessage = function (message, showTimestamp) {
 	el = JsonML.parse(["div", {
 		'class': 'scrollback-message scrollback-message-' + message.type+mentionedClass,
 		'style': { 'borderLeftColor': hashColor((message.labels && message.labels[0])? message.labels[0].split(":")[0] : ""/*message.from*/) },
-		'data-time': message.time, 'data-from': formatName(message.from)
+		'data-time': message.time, 'data-from': formatName(from)
 	}].concat(el));
 	
 	return el;

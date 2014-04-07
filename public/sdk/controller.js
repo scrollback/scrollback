@@ -193,9 +193,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 		
 		var twitterLink = encodeURI("http://twitter.com/home/?status=" + item.text  + " via https://scrollback.io/" + $scope.room.id);
 		
-		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id )
-		+ "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id 
-		+ "&p[summary]=" + item.text;
+		var facebookLink = "https://www.facebook.com/sharer/sharer.php?s=100&p[url]=" + encodeURIComponent("https://scrollback.io/" + $scope.room.id )+ "&p[images][0]=" + encodeURIComponent('https://scrollback.io/img/logod-72.png') + "&p[title]=Conversation on scrollback.io/"+ $scope.room.id + "&p[summary]=" + item.text;
 		
 		$scope.options = {
 			'Tweet Message'	: function(){ window.open(twitterLink,'_blank'); }, 
@@ -320,9 +318,13 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
 //    };
 	
     $scope.loadMoreUp = function() {
-        
+		var messagesHandler = function(data){
+			if(data.length > 1 && data[data.length-1].type == "result-end") {
+				messages = messages.concat(data.reverse());
+			}
+		};
+		
 		for (var i = 0; i < 15; i++) {
-           
 			if(topIndex < messages.length) {
                 if(messages[topIndex].type === "text")
                     $scope.items.unshift(messages[topIndex]);
@@ -332,11 +334,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
             if(messages.length - topIndex === 30) {
                 // time to request factory for messages from above 
                 $factory.messages($scope.room.id, "", messages[messages.length - 1].time);
-                $factory.on("messages", function(data){
-                    if(data.length > 1 && data[data.length-1].type == "result-end") {
-                        messages = messages.concat(data.reverse());
-                    }
-                });
+                $factory.on("messages", messagesHandler);
             }
 			
         }
@@ -357,7 +355,7 @@ scrollbackApp.controller('messageController', ['$scope', '$factory', '$timeout',
     $scope.loadMoreDown = function() {
 		var i;
         // TODO : popping from top
-        for(i=0; i< 15; i++) {
+        for(i=0; i< 5; i++) {
               if(bottomIndex > 0) {
 				bottomIndex -= 1;
                 if(messages[bottomIndex] && messages[bottomIndex].type == 'text'){

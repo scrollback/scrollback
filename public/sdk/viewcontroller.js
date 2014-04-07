@@ -1,4 +1,7 @@
 scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window',function($scope, $location, $factory, $timeout,$window) {
+	$scope.gotoMe = function() {
+		$location.path("/me");
+	}
 	$scope.editRoom = {};
 	$factory.on("disconnected", function(){
 		$scope.isActive = false;
@@ -11,7 +14,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	
 	$scope.userAction = function(){
 		if(/^guest-/.test($scope.user.id)){
-			$scope.profile();
+			$location.path("/me/login");
 		}	
 		else{
 			$scope.logout();
@@ -66,6 +69,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		if(error=="BANNED_WORD") error = "Your message was not delivered because something you said was flagged as inappropriate.";
 		if(error == "INVALID_NAME") error= "Invalid user name";
 		if (error == "TWITTER_LOGIN_ERROR") error = "Something went wrong during twitter authentication.";  
+		if(error == "GUEST_CANNOT_HAVE_MEMBERSHIP") error = "Oops! something went wrong please login again."
 		$scope.$apply(function(){
 			$scope.status.waiting = false;
 			if($scope.notifications.indexOf(error)>=0) return;
@@ -76,15 +80,10 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 			}, 3000);
 		});
 	});
-	
-	$scope.goBack = function() {
-		$window.history.back();
-	};
-	
+
 	$scope.profile = function() {
 		if(/^guest-/.test($scope.user.id)) {
-			$scope.personaLogin();
-			//$location.path("/me/login");
+			$location.path("/me/login");
 		}else {
 			$location.path("/me/edit");	
 		}	
@@ -120,6 +119,47 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		});
 		navigator.id.request();
 	};
+
+
+	function processAuth(event) {
+		var message = {};
+		data = event.originalEvent.data;
+		event = event.originalEvent;
+		if(!event.origin === location.protocol+"//"+location.host) return;
+
+		if(typeof event.data === 'string') {
+			try { message = JSON.parse(event.data); }
+			catch(e) {
+				scrollback.debug && console.log("Error parsing incoming message: ", event.data, e);
+				return;
+			}
+		} else { message = event.data; }
+		if(!data.command || data.command != "signin") return;
+		delete data.command;
+
+		message.type = "nick";
+		$factory.message(message, function(message) {
+			$(window).off("message", processAuth)
+			if(message.message && message.message == "AUTH_UNREGISTERED") {
+				$scope.$apply(function() {
+					$scope.status.waiting = false;
+					$location.path("/me/edit");	
+				});
+			}
+			else if(!message.message) {
+				$scope.$apply(function() {
+					$scope.status.waiting = false;
+					if($scope.room.id) $location.path("/"+$scope.room.id);
+					else $location.path("/me");
+					
+				});
+			}
+		});
+	}
+	$scope.facebookLogin = function(){
+		$(window).on("message", processAuth);
+		window.open(location.protocol+"//"+location.host+"/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');
+	}
 	$scope.logout = function() {
 		if($scope.room.id) $location.path("/" + $scope.room.id);
 		else $location.path("/me/login");
@@ -148,6 +188,10 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 }]);
 
 scrollbackApp.controller('loginController',['$scope','$route','$factory','$location',function($scope, $route, $factory, $location) {
+	if(!/^guest-/.test($scope.user.id)){
+		$location.path("/me");
+		return;
+	}
 	$scope.nickChange = function(event) {
 		$scope.status.waiting = true;
 		if($scope.user.id == "guest-"+$scope.displayNick){
@@ -161,14 +205,14 @@ scrollbackApp.controller('loginController',['$scope','$route','$factory','$locat
 	    	}else{
 	    		$scope.$apply(function() {
 					$scope.status.waiting = false;
-		    		$location.path("/"+$scope.room.id);	
+					if($scope.room.id){
+						$location.path("/"+$scope.room.id);		
+					}else{
+						$location.path("/me");
+					}
 	    		});
 	    	}
 	    });
-	};
-	$scope.goBack = function(){
-//		$location.path("/"+$scope.room.id);
-		$location.path("/me");
 	};
 	$scope.displayNick = ($scope.user.id).replace(/^guest-/,"");
 }]);
@@ -325,8 +369,8 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	
 	$scope.goToRoomsView = function(){
 		if(/^guest-/.test($scope.user.id)){ 
-			$scope.personaLogin();
-			//$location.path('/me/login');
+			// $scope.personaLogin();
+			$location.path('/me/login');
 		}
 		else $location.path("/me");
 	}
@@ -342,8 +386,8 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	
 	$scope.goToConfigure = function() {
 		if(/^guest-/.test($scope.user.id)){
-			$scope.personaLogin();
-			//$location.path('/me/login');
+			// $scope.personaLogin();
+			$location.path('/me/login');
 		}
 		else $location.path("/"+$scope.room.id+"/edit");
 	};
@@ -373,8 +417,8 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		var flag = 1;
 		if(/^guest-/.test($scope.user.id)){
 			//guest
-			//$location.path('/me/login');
-			$scope.personaLogin();
+			$location.path('/me/login');
+			// $scope.personaLogin();
 			return;
 		}
 		msg.to = $scope.room.id;
@@ -422,6 +466,7 @@ scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', 
     		window.location = "/"+room;
     	}
     };
+	
 	$scope.isExists = function(m) {
 		if (m && m.length > 0) {
 			return true; 
@@ -464,7 +509,7 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		}
 		if ($scope.twitterUsername) {
 			if(!$scope.editRoom.identities) $scope.editRoom.identities = [];
-			$scope.editRoom.identities.push("twitter://" + $scope.twitterUsername + ":" + $scope.room.id);
+			$scope.editRoom.identities.push("twitter:" + $scope.twitterUsername);
 			$scope.editRoom.params.twitter = {};
 			$scope.editRoom.params.twitter.tags = $scope.twitterTags;
 			$scope.editRoom.params.twitter.id = $scope.twitterUsername;

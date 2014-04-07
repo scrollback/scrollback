@@ -284,6 +284,7 @@ function login (options) {
 		var nickObj;
 		if(!data) return;
 		if(data.assertion) nickObj = { browserid: data.assertion };
+		if(data.command == "signin") nickObj = data;
 		else if(data.guestname) nickObj = 'guest-' + data.guestname;
 		
 		if(nickObj) core.nick(nickObj, function (reply) {
@@ -334,7 +335,10 @@ core.on('error', function(err) {
 	if(err === 'AUTH_UNREGISTERED') profile();
     if(err === 'AUTH_REQ_TO_POST') login( {requireAuth:1});
 });
-
+Stream.prototype.refresh = function(){
+	var self = this;
+	self.update(m);
+}
 Stream.prototype.show = function() { var self = this;
 	removeClass(this.stream, 'scrollback-stream-hidden');
 	setTimeout(function() {

@@ -3,7 +3,7 @@
 /* global angular */
 /* global window */
 /* global document */
-/* jshint smarttabs:true */
+/*jshint smarttabs:true */
 
 var __glo_prevtime = 0;
 
@@ -16,7 +16,7 @@ scrollbackApp.directive('message',function($compile, $timeout) {
                   '<span ng-class="slashMe?me:noSlashMe" ng-repeat="i in text track by $index">'+
                             '<span ng-show="isText(i)">{{i.text}}</span>'+
                             '<span ng-show="!isText(i)"><a href="{{i.link}}" target="_blank">{{i.text}}</a></span>'+
-		          '</span>'+
+				  '</span>'+
 				  '<span ng-show= "showTime" class="scrollback-message-underline"></span>' + 
 				  '<span ng-show = "showTime" class="scrollback-message-time"> {{time}}</span>',
         
@@ -28,11 +28,8 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 		},
         
 		link: function($scope, element, attr) {
-			
-			$scope.showTime = true;
-			
 			var $messageControllerScope = $scope.$parent.$parent;
-            
+            $scope.showTime = true;
 			$scope.me ="scrollback-message-content-me";
             $scope.noSlashMe="scrollback-message-content";
             
@@ -73,17 +70,15 @@ scrollbackApp.directive('message',function($compile, $timeout) {
             });
 			
 			attr.$observe('time', function(value) {
-			
 				var currtime = new Date().getTime();
-				
-				var time = value;
+				var time = value, showDate;
 
 				if (time - __glo_prevtime > 60000) $scope.showTime = true; 
 				else $scope.showTime = false;
 				
 				__glo_prevtime = time;
 				
-				var showDate = $scope.prettyDate(time, currtime);
+				showDate = $scope.prettyDate(time, currtime);
 				$scope.time = showDate;
 			
 			});
@@ -149,6 +144,7 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 								
 								var menuw = menu.width();
 								var menuh = menu.height();
+								var menut;
 								
 								var spaceBelow = scrh - elt - elh;
 								
@@ -265,11 +261,11 @@ function hashColor(name) {
 			return Math.min(255, Math.round(c*(0.5/l)));
         }
         
-        function rgb(r, g, b) {
+		function rgb(r, g, b) {
 			var l = (0.3*r + 0.55*g + 0.15*b)/255;
 
-            return "#" + hex(darken(r, l)) + hex(darken(g, l)) + hex(darken(b, l));
-        }
+			return "#" + hex(darken(r, l)) + hex(darken(g, l)) + hex(darken(b, l));
+		}
         
         if(h<255) return rgb(255, h, 0);
         else if(h<510) return rgb(255-(h-255), 255, 0);
@@ -290,11 +286,11 @@ function format(text) {
     var r, s=0, protocol, user, domain, path='';
 
     while((r = u.exec(text)) !== null) {
-        if(text.substring(s, r.index)) parts.push({type:"text", text: text.substring(s, r.index)});
-        protocol = r[1]; 
-		user = r[2]; 
-		domain = r[3]; 
-		path = r[4];                    
+         if(text.substring(s, r.index)) parts.push({type:"text", text: text.substring(s, r.index)});
+        protocol = r[1];
+		user = r[2];
+		domain = r[3];
+		path = r[4] || '';
         protocol = protocol || (user? 'mailto:': 'http://');
         user = user || '';
         s = u.lastIndex;

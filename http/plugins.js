@@ -7,10 +7,10 @@ exports.init = function(app, coreObject) {
 	app.get("/s/editRoom" ,function(req, res) {
 		if (!configPlugins) {
 			configInit(function() {
-				res.render("newConfig", configPlugins);
+				res.render("config", configPlugins);
 			});
 		}
-		else res.render("newConfig", configPlugins);
+		else res.render("config", configPlugins);
 		
 	});
 	app.get("/s/script.js", function(req, res) {
@@ -27,7 +27,7 @@ exports.init = function(app, coreObject) {
 		if (!configPlugins) {
 			log("get req starting");
 			configInit(function(){
-				log("get req com", configPlugins);
+				// log("get req com", configPlugins);
 				exec(req.path, 'get', req, res, next);	
 			});
 		}

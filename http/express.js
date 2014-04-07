@@ -34,7 +34,7 @@ exports.init = function() {
 	app.use(express.logger(
 		"AA/HTTP - [:date] :method :url :referrer :user-agent :status"));
 	app.use(express.cookieParser());
-	app.use(session.parser);
+	// app.use(session.parser);
 	app.use(express.query());
 	app.use(express.bodyParser());
 	

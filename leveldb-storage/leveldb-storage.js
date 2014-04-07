@@ -10,8 +10,7 @@ module.exports = function(core) {
 	var admitexpel = require("./schemas/admitexpel.js")(types);
 	var awayback = require("./schemas/awayback.js")(types);
 	var edit = require("./schemas/edit.js")(types);
-
-
+	
 
 	core.on('room',roomuser.put, "storage");
 	core.on('user',roomuser.put, "storage");

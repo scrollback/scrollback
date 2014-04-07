@@ -6,7 +6,8 @@ module.exports = function (types) {
 	var user = types.users;
 
 	return{
-		getUser: function(query, cb) {			
+		getUser: function(query, cb) {		
+			var gateway, eqArray = [];	
 			if(query.id){
 				user.get(query.id, function(err, res) {
 					if(!res) return cb(true, []);
@@ -18,6 +19,15 @@ module.exports = function (types) {
 				});
 			}else if(query.occupantOf) {
 				cb();
+			}else if(query.identity){
+				gateway = query.identity.split(":");
+				eqArray.push(gateway[0]);
+				if (gateway[1]) {
+					eqArray.push(gateway[1]);
+				}
+				user.get({by: 'gatewayIdentity', eq: eqArray}, function(err, res){
+					cb(true, res);
+				});
 			}
 		},
 		getRoom: function(query, cb) {
@@ -33,8 +43,8 @@ module.exports = function (types) {
 				});
 			}else if(query.hasOccupant) {
 				cb();
-			}else if (query.identities) {
-				gateway = query.identities.split(":");
+			}else if (query.identity) {
+				gateway = query.identity.split(":");
 				eqArray.push(gateway[0]);
 				if (gateway[1]) {
 					eqArray.push(gateway[1]);
@@ -66,8 +76,10 @@ module.exports = function (types) {
 			
 			if (data.identities) {
 				newRoom.identities = data.identities
-			}else{
-				data.accounts && data.accounts.forEach(function(account) {
+			}
+
+			if(data.accounts) {
+				data.accounts.forEach(function(account) {
 					newRoom.identities.push(account.id);
 				});
 			}

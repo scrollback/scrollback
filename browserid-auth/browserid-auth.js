@@ -1,12 +1,12 @@
 var config = require("../config.js"),
-	name = require("../lib/names.js"),
+	name = require("../lib/generate.js").word,
 	log = require("../lib/logger.js"),
 	request = require("request");
 
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
 		var assertion = message.browserid;
-		log("Heard \"message\ event");
+		log("Heard message event");
 		delete message.browserid;
 
 		if(message.type !== 'nick') return callback();
@@ -17,7 +17,7 @@ module.exports = function(core) {
 			message.ref += "sb-"+name(6);
 			return callback();
 		}
-
+		if(message.auth && message.auth.facebook) return callback();
 		if (!assertion && message.user) {
 			//message.ref = message.user.id;
 			if (!validateNick(message.user.id)) {
@@ -50,7 +50,7 @@ module.exports = function(core) {
 		request.post("https://verifier.login.persona.org/verify", { form: {
 			assertion: assertion,
 			audience: config.auth.audience
-		}}, function(err, res, body) {
+		}}	, function(err, res, body) {
 			var account;
 			if(err) return callback(new Error("AUTH_FAIL_NETWORK/" + err.message));
 			try {
@@ -61,7 +61,7 @@ module.exports = function(core) {
 			if(body.status !== 'okay') {
 				return callback(new Error("AUTH_FAIL/" + body.reason));
 			}
-			account ={
+			account = {
 				id: "mailto:" + body.email,
 				gateway: "mailto",
 				params: ""
@@ -82,6 +82,6 @@ module.exports = function(core) {
 };
 
 function validateNick(nick){
-	if (nick.indexOf("guest-")==0) return false;
+	if (nick.indexOf("guest-")===0) return false;
 	return (nick.match(/^[a-z][a-z0-9\_\-\(\)]{2,32}$/i)?nick!='img'&&nick!='css'&&nick!='sdk':false);
 }

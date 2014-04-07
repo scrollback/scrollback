@@ -22,19 +22,13 @@ var socket = new SockJS(scrollback.host + '/socket'),
 	nick = "", user,
 	pendingCallbacks = {};
 
-function sanitizeRoomName(room) {
-	//this function replaces all spaces in the room name with hyphens in order to create a valid room name
-	room = room.trim();
-	room = room.replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
-	if(room.length<3) room=room+Array(3-room.length+1).join("-");
-	return room;
-}
+
 if(window.scrollback.streams) {
 	window.scrollback.streams = window.scrollback.streams.map(function(room) {
-		return sanitizeRoomName(room);
+		return validateRoom(room, true);
 	});	
 }
-if(window.scrollback.nick) window.scrollback.nick = sanitizeRoomName(window.scrollback.nick);
+if(window.scrollback.nick) window.scrollback.nick = validateRoom(window.scrollback.nick, true);
 
 socket.emit = function(type, data) {
 	scrollback.debug && console.log("Socket sending ", type, data);
@@ -85,6 +79,7 @@ socket.onmessage = function(evt) {
 		case 'init': onInit(d.data); break;
 		case 'message': onMessage(d.data); break;
 		case 'messages': onMessages(d.data); break;
+		case 'edit': onEdit(d.data); break;
 		case 'error': onError(d.data); break;
 	}
 };
@@ -182,6 +177,14 @@ function onMessages (data) {
 		if(reqId != data.query.to + '//') delete requests[reqId];
 	}
 }
+
+
+function onEdit(data) {
+	core.emit("edit", data);
+	rooms[data.to].messages.edit(data);	
+	if(requests[data.to + '//']) requests[data.to + '//'](true);
+}
+
 core.get = function(room, start, end, callback) {
 	var query = { to: room, type: 'text' },
 		reqId;
@@ -197,6 +200,7 @@ core.get = function(room, start, end, callback) {
 function onMessage (m) {
 	var i, messages, updated = false;
 	scrollback.debug && console.log("Received:", m);
+	if(m.type == "edit") return;
 	core.emit('message', m);
 	
 	if(m.type=="nick" && m.from==core.nick()) {

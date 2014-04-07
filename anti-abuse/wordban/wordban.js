@@ -4,7 +4,6 @@ var blockWords={};
 var longest = 0;
 
 module.exports = function(core) {
-	var pluginContent = "";
 	fs.readFile(__dirname + "/wordban.html", "utf8", function(err, data){
 		if(err)	throw err;
 		core.on("http/init", function(payload, callback) {
@@ -15,21 +14,31 @@ module.exports = function(core) {
         }, "setters");
 	});
 	init();
-	core.on('message', function(message, callback) {
-		log("Heard \"message\" event");
-		var text;
-		if (message.origin && message.origin.gateway == "irc") return callback();
-
-
+	core.on('text', function(message, callback) {
+		log("Heard \"text\" event");
+        if (message.session){
+            var gateway = message.session.substring(0, message.session.indexOf(":"));
+            if(gateway != "web") return callback();
+        }
+        var text;
 		if(message.type=="text")	text = message.text;
 		if(message.type == "nick")	text = message.ref;
-		if(message.to)	text += " "+message.to;
+		if(message.to)	text += " " + message.to;
 		if(text) {
-			core.emit("rooms",{id:message.to}, function(err, data) {
+			core.emit("getRooms",{id:message.to}, function(err, data) {
+                log("Get Rooms", data);
 				if(err) return callback(err);
+                data = data.results;
+                if(!data) callback();
 				if(data.length == 0) return callback();
-	            if(data[0].params && data[0].params.wordban)
-	            	if(rejectable(text)) return callback(new Error("BANNED_WORD"));
+                data = data[0].room;
+                if(!data) callback();
+	            if(data.params && data.params.wordban) {
+	            	if(rejectable(text)){
+                        if(!message.labels) message.labels = {};
+                        message.labels.abusive = 1;
+                    }
+                }
 	           	callback();
 	        });
 		}else{
@@ -37,8 +46,9 @@ module.exports = function(core) {
 		}
 	}, "antiabuse");
 
-	core.on("room", function(room, callback){
-		var text = room.id+(room.name?(" "+room.name):"")+" "+(room.description?(" "+room.description):"");
+	core.on("room", function(action, callback){
+		var room  = action.room;
+        var text = room.id+(room.name?(" "+room.name):"")+" "+(room.description?(" "+room.description):"");
 		if(rejectable(text)) return callback(new Error("Abusive room name"));
 		callback();
 	}, "antiabuse");
@@ -67,6 +77,7 @@ var init=function(){
 
 
 var rejectable = function(text) {
+    log("text", text);
 	var i, l, j, words, phrase;
 	words=text.replace(/\@/g,'a').replace(/\$/g,'s');
 	words = words.toLowerCase().split(/\W+/);
