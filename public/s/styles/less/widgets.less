@@ -223,8 +223,8 @@ code {
 .popover-arrow() {
     position: absolute;
     display: block;
-    content: '';
-    left: 49%;
+    content: "";
+    left: 50%;
     margin-left: -8px;
     height: 14px;
     width: 14px;
@@ -238,26 +238,25 @@ code {
 .popover-body { display: none; }
 
 .popover-active {
-    position: relative;    width: 20em;
+    position: relative;
 
     .popover-body {
         .appear;
 
         position: absolute;
         display: block;
-        padding: 1em;
+        margin: 1em;
         border-radius: @roundness;
         font-weight: normal;
-        border: 1px solid darken(@light-color, 30%);
+        border: 1px solid darken(@light-color, 20%);
         background-color: @light-color;
         color: @dark-color;
-        box-shadow: 0 0 10px fade(@dark-color, 50%);
+        box-shadow: 0 0 10px fade(@dark-color, 20%);
         text-transform: none;
-        cursor: auto;
-        z-index: 8;
+        z-index: 10;
 
         &.popover-top {
-            bottom: 4em;
+            bottom: 2em;
 
             &:before {
                 .popover-arrow;
@@ -268,7 +267,7 @@ code {
         }
 
         &.popover-bottom {
-            top: 4em;
+            top: 2em;
 
             &:before {
                 .popover-arrow;
@@ -277,18 +276,32 @@ code {
                 top: -8px;
             }
         }
-    }
-}
 
-.popover-layer {
-    position: fixed;
-    content: "";
-    display: block;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 7;
+        &.arrow-left {
+            &:before {
+                left: 1em;
+                right: auto;
+            }
+        }
+
+        &.arrow-right {
+            &:before {
+                left: auto;
+                right: 1em;
+            }
+        }
+    }
+
+    .popover-layer {
+        content: "";
+        display: block;
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 9;
+    }
 }
 
 input.switch {
