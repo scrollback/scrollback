@@ -1,3 +1,8 @@
+/*
+ This unit test tests the authorizer app. Invalid actions/queries will get a ERR_NOT_ALLOWED error and valid queries will get error as null. 
+ These values are asserted for. 
+*/
+
 /* global describe */
 /* global it */
 var assert = require('assert');
@@ -133,17 +138,31 @@ describe("Authorizer App Unit Test", function(){
 	});
 	it("User Auth", function(){
 		// check wit guest
-		var user = {id:'sdfsf', type: 'user', to:'rooms', role: 'guest'};
+		var user = {id:'sdfsf', type: 'user', to:'me', role: 'guest'};
 		core.emit('user', user, function(err, data){
 			assert.equal(err.message, 'ERR_NOT_ALLOWED');
 		});
 		// check with same user, viz user.old = null
+		var user2 = {id:'asdfas2', type: 'user', to: 'me', role: 'registered'};
+		core.emit('user', user2, function(err, data){
+			assert.equal(err, null);
+		});
 		// check with user making decision
-		core.on('user', function(action, callback){
-			
+		var user3 = {id:'afksdbasd', type: 'user', from: 'amal', to: 'me', old: {id: 'amal'}};
+		core.emit('user', user3, function(err, data){
+			assert.equal(err, null);
 		});
 	});
-	it("Queries Auth", function(done){
+	it("Queries Auth", function(){
 		// for getText and getThreads, check perm level for read 
+		var getTexts = {id : 'asdkfjlsjdf', type: 'getUser', from: 'amal', to: 'testroom', user: {role: 'registered'},room: {params: {readLevel: 'follower'}}};
+		core.emit('getTexts', getTexts, function(err, data){
+			assert.equal(err.message, 'ERR_NOT_ALLOWED');
+		});
+		
+		var getTexts2 = {id : 'asdkfjlsjdf', type: 'getUser', from: 'amal', to: 'testroom', user: {role: 'owner'},room: {params: {readLevel: 'follower'}}};
+		core.emit('getTexts', getTexts2, function(err, data){
+			assert.equal(err, null);
+		});
 	});
 });
