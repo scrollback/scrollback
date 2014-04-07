@@ -2,13 +2,13 @@ var net = require('net');
 var irc = require('irc');
 var config = require("../config.js");
 var clients = {};
-var myNick = "testing";//TODO move this to config.
-var userClients = {};
+var myNick = config.irc.nick;
 var nicks = {};//used to store callback of rename event.
 var core;
 module.exports.connectBot = connectBot;
 module.exports.connectUser = connectUser;
-module.exports.leave = leave;
+module.exports.part = part;
+module.exports.partUser = partUser;
 module.exports.say = say;
 module.exports.sendRawMessage = sendRawMessage;
 module.exports.whois = whois;
@@ -23,25 +23,26 @@ TODO's
 ******************************************/
 
 /**
- *always actual nick will be used for identify a user
- *opt.identId is used for ident.
- *myNick will be config of new IRC client
+ *Server already connected.
  */
-function connectBot(server, channels, options, cb) {
-	var client;
-	if (clients[server]) {//already connected to server.
-		client = clients[server];
-		channels.forEach(function(channel) {
-			if (client.opt.channels.indexOf(channel) === -1) {//if not connected.
-				client.join(channel);
-			}
-		});
-		cb();//Is there a better way?
-	} else {
-		console.log("Trying to connect to :", server, channels);
-		client = new irc.Client(server, myNick, {
-			userName : myNick,
-			realName: myNick + '@scrollback.io',//TODO use identId
+function joinChannels(server, nick, channels, cb) {
+	var client = clients[nick][server];
+	channels.forEach(function(channel) {
+		if (client.opt.channels.indexOf(channel) === -1) {
+			client.join(channel);
+		}
+	});
+	cb();
+	return client;
+}
+/**
+ *Join server if not connected already.
+ */
+function joinServer(server, nick, channels, options, cb) {
+	if (!clients[nick]) clients[nick] = {}; 
+	var client = new irc.Client(server, nick, {
+			userName : nick,
+			realName: nick + '@scrollback.io',
 			channels: channels,
 			debug: false,
 			stripColors: true,
@@ -51,7 +52,24 @@ function connectBot(server, channels, options, cb) {
 			userIp : options.userIp,
 			userHostName: options.userHostName
 		});
-		clients[server] = client;
+	client.nick = nick;
+	clients[nick][server] = client;
+	client.conn.on("connect", cb);
+	return client;
+}
+
+/**
+ *always actual nick will be used for identify a user
+ *opt.identId is used for ident.
+ *myNick will be config of new IRC client
+ */
+function connectBot(server, channels, options, cb) {
+	var client;
+	if (!clients[myNick]) clients[myNick] = {}; 
+	if (clients[myNick][server]) {//already connected to server.
+		joinChannels(server, myNick, channels, cb);
+	} else {
+		client = joinServer(server, myNick, channels, options, cb);
 		onNames(client);
 		onRaw(client);
 		onMessage(client);
@@ -60,9 +78,36 @@ function connectBot(server, channels, options, cb) {
 		onJoin(client);
 		onPart(client);
 		onNick(client);
-		client.conn.on("connect", cb);
+		onRegistered(client);
+		onKill(client);
+		onKick(client);
+		onQuit(client);
 	}
 }
+
+function connectUser(server, nick, channels, options, cb) {
+	var client;
+	if (!clients[nick]) clients[nick] = {};
+	if (clients[nick][server]) {
+		client = joinChannels(server, nick, channels,cb);
+	} else {
+		client = joinServer(server, nick, channels, options,cb);
+		onPartUser(client);
+		onRegistered(client);
+	}
+}
+
+function onRegistered(client) {
+	client.addListener('registered', function(message) {
+		core.emit('data', {
+			type: 'registered',
+			server: client.opt.server,
+			nick: client.nick,
+			message: message			
+		});
+	});
+}
+
 
 function onRaw(client) {
 	client.on('raw', function(raw) {
@@ -112,8 +157,9 @@ function onError(client) {
 function onPart(client) {
 	client.on("part", function(channel, nick, reason, message){//TODO delete client if no more connections
 		if(client.opt.channels.length === 0) {
+			console.log("disconnecting.............................", client.opt.server);
 			client.disconnect();
-			
+			delete clients[client.opt.server];
 		}
 		core.emit('data', {
 			type: 'part',
@@ -156,6 +202,45 @@ function onNick(client) {
 	});
 }
 
+function onKill(client) {
+	client.addListener('kill', function (nick, reason, channels, message)  {
+		core.emit('data', {
+			type: 'kill',
+			server: client.opt.server,
+			channels: channels,
+			reason: reason,
+			message: message
+		});
+	});
+}
+
+function onQuit(client) {
+	client.addListener('quit', function (nick, reason, channels, message)  {
+		core.emit('data', {
+			type: 'quit',
+			server: client.opt.server,
+			channels: channels,
+			reason: reason,
+			message: message
+		});
+	});
+}
+
+function onKick(client) {
+	client.addListener('kick', function (channel, nick, by, reason, message)  {
+		core.emit('data', {
+			type: 'kick',
+			server: client.opt.server,
+			channel: channel,
+			nick: nick,
+			by: by,
+			reason: reason,
+			message: message
+		});
+	});
+}
+
+
 /**
  *List of names send by server for channel
  */
@@ -172,73 +257,29 @@ function onNames(client) {
 
 
 
-function connectUser(server, nick, channels,options, cb) {
-	var client;
-	if (!userClients[nick]) userClients[nick] = {};
-	if (userClients[nick][server]) {
-		client = userClients[nick][server];
-		channels.forEach(function(channel) {
-			if (client.opt.channels.indexOf(channel) === -1) {
-				client.join(channel);
-			}
-		});
-		cb();
-	} else {
-		client = new irc.Client(server, nick, {
-			userName : nick,
-			realName: nick + '@scrollback.io',
-			channels: channels,
-			debug: false,
-			stripColors: true,
-			floodProtection: true,
-			identId: options.identId,
-			webircPassword: options.webircPassword,
-			userIp : options.userIp,
-			userHostName: options.userHostName
-		});
-		userClients[nick][server] = client;
-		client.conn.on("connect", cb);
-	}
-}
-
-
-function leave(server, channel) {
-	var client = clients[server];
+function part(server, channel) {
+	var client = clients[myNick][server];
 	client.part(channel);
-	if (client.opt.channels.length === 0) {
-		client.disconnect();
-		delete client[server];
-	}
-	
 }
 
 
-function leaveUser(server, nick, channel) {
+function partUser(server, nick, channel) {
 	var client = userClients[nick][server];
 	client.part(channel);
-	if (client.opt.channels.length === 0) {
-		client.disconnect();
-		delete userClients[nick][server];
-	}
-	
 }
 
-
-
-function onDisconnect(client) {
-	client.on("disconnect", function() {
-		if (client.opt.userName === myNick) {
-			delete clients[client.opt.server]; 
-		} else {
-			delete userClients[client.opt.server][client.opt.userName];
+function onPartUser(client) {
+	client.on('part', function() {
+		if (client.opt.channels.length === 0) {
+			client.disconnect();
+			delete clients[client.nick][client.opt.server];
 		}
 	});
 }
 
-
 //text and action message
 function say(server, nick , channel, message) {
-	userClients[nick][server].say(channel, message);
+	clients[nick][server].say(channel, message);
 }
 
 /**
@@ -247,23 +288,20 @@ function say(server, nick , channel, message) {
  *callback(nick) with assiged new nick
  */
 function rename(server, oldNick, newNick, cb) {
-	var client = userClients[oldNick][server];
+	var client = clients[oldNick][server];
 	client.rename(newNick);
-	delete userClients[oldNick][server];
-	if (!userClients[newNick]) userClients[newNick] = {};
-	userClients[newNick][server] = client;
+	delete clients[oldNick][server];
+	if (!clients[newNick]) clients[newNick] = {};
+	client.nick = newNick;
+	clients[newNick][server] = client;
 	nicks[oldNick] = cb;	
 }
-
-
-
-
 
 /**
  *to send actual raw message to server.
  */
 function sendRawMessage(server, nick,  message) {
-	var client = userClients[server][nick];
+	var client = clients[nick][server];
 	client.send(message);
 }
 
@@ -271,7 +309,7 @@ function sendRawMessage(server, nick,  message) {
  *Return list of users.
  */
 function whois(server, nick, callback) {
-	var client = clients[server];
+	var client = clients[myNick][server];
 	client.whois(nick, callback);
 }
 

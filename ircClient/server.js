@@ -8,11 +8,9 @@ var port = 78910;
 var client;
 var dataQueue = [];
 var isConnected = false;
-
 core.on('data', function(data) {
 	writeObject(data);
 });
-
 ircClient.init(core);
 
 var server = net.createServer(function(c) { //'connection' listener
@@ -33,7 +31,6 @@ var server = net.createServer(function(c) { //'connection' listener
 		console.log('server disconnected');
 	}); 
 });
-
 server.listen(port, function() { //'listening' listener
   console.log('server bound');
 });
@@ -59,11 +56,11 @@ core.on('object', function(obj) {
 				writeObject({type: 'callback', uid: obj.uid});
 			});
 			break;
-		case 'leave':
-			ircClient.leave(obj.server, obj.channel);
+		case 'part':
+			ircClient.part(obj.server, obj.channel);
 			break;
-		case 'leave':
-			ircClient.leave(obj.server, obj.nick, obj.channel);
+		case 'partUser':
+			ircClient.partUser(obj.server, obj.nick, obj.channel);
 			break;
 		case 'say':
 			ircClient.say(obj.server, obj.nick, obj.channel, obj.message);
