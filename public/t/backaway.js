@@ -3,9 +3,9 @@ describe('Testing "BACK and away" Action.', function() {
 	// describe('Testing "BACK" Action.', function() {});
 	describe('Basic test', function() {
 		describe.only('Validation text', function() {
-			var sessionID = generate.uid();
+			var sessionID = "t2crn8fyb9s7vwdiqml3rsti1bwed1xg";
 			users.push(sessionID);
-			it.only('No To property in back', function(done) {
+			it('No To property in back', function(done) {
 				getConnection(sessionID, function(c) {
 					var guid, connection = c;
 					guid = generate.uid();
@@ -25,7 +25,7 @@ describe('Testing "BACK and away" Action.', function() {
 					});
 				});	
 			});
-			it('No To property in away', function(done) {
+			it.skip('No To property in away', function(done) {
 				getConnection(sessionID, function(c) {
 					var guid, connection = c;
 					guid = generate.uid();
@@ -44,7 +44,7 @@ describe('Testing "BACK and away" Action.', function() {
 				});	
 			});
 
-			it('No ID and time property in back', function(done) {
+			it.skip('No ID and time property in back', function(done) {
 				getConnection(users[0], function(c) {
 					var guid, connection = c;
 					guid = generate.uid();
@@ -61,7 +61,7 @@ describe('Testing "BACK and away" Action.', function() {
 					});
 				})
 			});
-			it('No ID and time property in away', function(done) {
+			it.skip('No ID and time property in away', function(done) {
 				getConnection(users[0], function(c) {
 					var guid, connection = c;
 					guid = generate.uid();

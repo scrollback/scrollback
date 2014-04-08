@@ -8,10 +8,10 @@ var core;
 module.exports = function(c) {
     core = c;
     require("./user.js")(core);
+    require("./session.js")(core);
     core.on("back", onBack, "storage");
     core.on("away", onAway, "storage");
     core.on("room", onRoom, "storage");
-    core.on("getUsers", onGetUsers, "cache");
     core.on("getRooms", onGetRooms, "cache");
 };
 
@@ -44,33 +44,6 @@ function onRoom(room, callback) {
     callback();
 }
 
-function onGetUsers(query, callback) {
-    if(query.ref) {
-        if(query.ref != 'me' )
-        return occupantDB.get("user:{{"+query.ref+"}}", function(err, data) {
-            if(err || !data) return callback();
-            return callback(true, [JSON.parse(data)]);
-        });
-    }
-    if(query.occupantOf) {
-        return occupantDB.smembers("room:{{"+query.occupantOf+"}}:hasOccupants", function(err, data) {
-            if(err) return callback(err);
-            if(!data || data.length==0) return callback(true, []);
-            data = data.map(function(e) {
-                return "user:{{"+e+"}}";
-            });
-            occupantDB.mget(data, function(err, data) {
-                if(!data) return callback(true, []);
-                data = data.map(function(e) {
-                    return JSON.parse(e);
-                });
-                return callback(true, data);
-            });
-        });
-    }else {
-        callback();
-    }
-}
 
 
 function onGetRooms(query, callback) {

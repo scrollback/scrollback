@@ -4,8 +4,7 @@ var uid = require('../lib/generate.js').uid;
 
 
 /* list of event that the basic validation function is called for.*/
-var core, events = ['init','text', 'edit', 'join', 'part', 'away', 'admit', 'expel', 'room'];
-
+var core, events = ['text', 'edit', 'join', 'part', 'away', 'admit', 'expel', 'room'];
 /* if few more validtion is to be added for to any event add it to this list. eq:
 	var handlers = {
 		'init': function(action, callback){
@@ -16,30 +15,27 @@ var core, events = ['init','text', 'edit', 'join', 'part', 'away', 'admit', 'exp
 var handlers = {
 	init: function(action, callback) {
 		var wait = true, isErr = false;
-		if(!action.user){
-			core.emit("getRooms",{id: uid(),hasoccupant: action.from},function(err, rooms) {
-				var user = {};
-				if(err) {
-					action.occupantof = [];
-				}
-				if(!rooms.results.length) {
-					action.occupantof = [];
-				}
-				if(isErr) return;
-				action.user = rooms.results;
-				if(wait) wait = false;
-				else callback();
-			});
-		}else{
-			wait = false;
-		}
-		core.emit("getRooms",{id: uid(), hasmember: action.from}, function(err, rooms) {
-			if(err || !rooms ||!rooms.results || !rooms.results.length) {
-				action.memberof = []
-			}else{
-				action.memberof = rooms.results;	
+
+		core.emit("getRooms",{id: uid(),hasOccupant: action.from, session: action.session},function(err, rooms) {
+			var user = {};
+			if(err || !rooms || !rooms.length || !rooms.results.length) {
+				action.occupantOf = [];
+			}else {
+				action.occupantOf = rooms.results;
 			}
-			if(isErr) return;
+			
+			// if(isErr) return;
+			if(wait) wait = false;
+			else callback();
+		});
+
+		core.emit("getRooms",{id: uid(), hasMember: action.from, session: action.session}, function(err, rooms) {
+			if(err || !rooms ||!rooms.results || !rooms.results.length) {
+				action.memberOf = []
+			}else{
+				action.memberOf = rooms.results;	
+			}
+			// if(isErr) return;
 			if(wait) wait = false;
 			else callback();
 		});
@@ -73,8 +69,40 @@ module.exports = function(c) {
 				if(err) return callback(err);
 				if(handlers[event]) handlers[event](action, callback);
 				else callback();
-			})
+			});
 		}, "loader");
+	});
+
+
+	core.on('getUsers', function(data, callback) {
+		if(data.ref == "me") return callback();
+		core.emit("getUsers", {session: data.session, ref: "me"}, function(err, user) {
+			if(err || !user || !user.results || !user.results.length) {
+				data.results = [];
+				callback();
+			}else {
+				data.user = user[0];
+				callback();
+			}
+		});
+	});
+	core.on('getRooms', function(data, callback) {
+		core.emit("getUsers", {session: data.session, ref: "me"}, function(err, user) {
+			if(err || !user || !user.results || !user.results.length) {
+				data.results = [];
+				callback();
+			}else {
+				data.user = user[0];
+				callback();
+			}
+		});
+	});
+
+
+	core.on("init", function(action, callback) {
+		loadUser(action, function() {
+			handlers["init"](action, callback);
+		});
 	});
 }
 
@@ -86,11 +114,11 @@ function loadUser(action, callback) {
 				callback();
 			});
 		}else {
-			action.from = data[0].user.id;
+			action.from = data.results[0].id;
 			if(action.type == "user") {
-				action.old = data[0]
+				action.old = data.results[0];
 			}else{
-				action.user = data[0]
+				action.user = data.results[0];
 			}
 			callback();
 		}
@@ -131,7 +159,7 @@ function initializerUser(action, callback) {
 	generateNick(action.suggestedNick || "", function(possibleNick) {
 		action.from = possibleNick;
 		userObj = {
-			id: action.from,d
+			id: action.from,
 			description: "",
 			createdOn: new Date().getTime(),
 			type:"user",
@@ -165,3 +193,5 @@ function generateNick(suggestedNick, callback) {
 function generatePick(id) {
 	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=identicon&s=48';
 }
+
+

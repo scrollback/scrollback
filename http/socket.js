@@ -41,33 +41,32 @@ sock.on('connection', function (socket) {
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 		
 		if(d.type == 'init' && d.session) {
-			conn.session = d.session;
+			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
 		}
-		else if(conn.session) {
+		else if (conn.session) {
 		 d.session = conn.session; 
 		 d.resource  = conn.resource;
 		}
-		if(!sConns[d.session]) {
+
+		if (!sConns[d.session]) {
 			sConns[d.session] = []
 			sConns[d.session].push(conn);
-		}else{
-			for(i=0,l=sConns[d.session].length;i<l;i++) {
-				if(sConns[d.session] != conn) {
-					continue;
-				}
-				break;
+		} else {
+			if(sConns[d.session].indexOf(conn) == -1) {
+				sConns[d.session].push(conn);
 			}
-			if(i!=l) sConns[d.session].push(conn);
 		}
 
 		if(d.type == 'back' && !verifyBack(conn, d)) return;
 		if(d.type == 'away' && !verifyAway(conn, d)) return;
 		core.emit(d.type, d, function(err, data) {
-			if(data.type == 'back' && !err) storeBack(conn, d);
-			if(data.type == 'away' && !err) storeAway(conn, d); 
-			if(data.type == 'init' && !err) storeInit(conn, d); 
-			conn.send(err? {type: 'error', ref: d.id, message: err.message}: data);
+			if(err) return conn.send({type: 'error', ref: d.id, message: err.message});
+
+			if(data.type == 'back') storeBack(conn, d);
+			if(data.type == 'away') storeAway(conn, d); 
+			if(data.type == 'init') storeInit(conn, d); 
+			conn.send(data);
 		});
 	});
 	
@@ -115,9 +114,12 @@ function storeAway(conn, away) {
 	if(urConns[away.from+":"+away.to]) delete urConns[away.from+":"+away.to];
 }
 
-module.exports = function(server, c) {
+exports.initServer = function (server) {
+	sock.installHandlers(server, {prefix: '/socket'});
+}
+
+exports.initCore = function(c) {
     core = c;
-    console.log("http init");
 	// api(core);
 	core.on('init', emit,"gateway");
 	core.on('away', emit,"gateway");
@@ -130,7 +132,6 @@ module.exports = function(server, c) {
 	core.on('expel', emit,"gateway");
 	core.on('edit', emit,"gateway");
 	core.on('text', emit,"gateway");
-    sock.installHandlers(server, {prefix: '/socket'});
 };
 
 function emit(action, callback) {
@@ -171,6 +172,7 @@ function handleClose(conn) {
 		}, 30*1000);
 	});
 }
+
 function verifyAway(conn, away) {
 	var index;	
 
@@ -205,6 +207,7 @@ function verifyBack(conn, back) {
 	urConns[back.from+":"+back.to].push(conn);
 	return (urConns[back.from+":"+back.to].length===1);
 }
+
 
 // function messages (query, conn) {
 // 	core.emit("messages", query, function(err, m) {

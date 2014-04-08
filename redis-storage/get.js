@@ -1,12 +1,14 @@
+var config = require("../config.js");
 var dataBases = {
 	session: require('../lib/redisProxy.js').select(config.redisDB.session),
 	user: require('../lib/redisProxy.js').select(config.redisDB.user),
 	room: require('../lib/redisProxy.js').select(config.redisDB.room)
 };
 module.exports = function(type,id, callback) {
+	console.log();
 	dataBases[type].get(type+":{{"+id+"}}", function(err, data) {
 		var res;
-		if(res){
+		if(data){
 			try{
 				res = JSON.parse(data);
 			}
