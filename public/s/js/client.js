@@ -69,9 +69,10 @@
     $(function() {
         var maxTime = 1000,
             maxDistance = 500,
-            minDistance = 75,
+            minDistance = 10,
             target = $("body"),
             startX = 0,
+            startY = 0,
             startTime = 0,
             touch = "ontouchend" in document,
             startEvent = (touch) ? 'touchstart' : 'mousedown',
@@ -81,17 +82,19 @@
         target.bind(startEvent, function(e) {
             startTime = (new Date()).getTime();
             startX = e.originalEvent.touches ? e.originalEvent.touches[0].pageX : e.pageX;
+            startY = e.originalEvent.touches ? e.originalEvent.touches[0].pageY : e.pageY;
         }).bind(endEvent, function() {
             startTime = 0;
             startX = 0;
+            startY = 0;
         }).bind(moveEvent, function(e) {
             var currentX = e.originalEvent.touches ? e.originalEvent.touches[0].pageX : e.pageX,
-                currentDistance = (startX === 0) ? 0 : Math.abs(currentX - startX),
+                currentY = e.originalEvent.touches ? e.originalEvent.touches[0].pageY : e.pageY,
+                currentDistanceX = (startX === 0) ? 0 : Math.abs(currentX - startX),
+                currentDistanceY = (startY === 0) ? 0 : Math.abs(currentY - startY),
                 currentTime = (new Date()).getTime();
 
-            if (startTime !== 0 && currentTime - startTime < maxTime && currentDistance < maxDistance && currentDistance > minDistance) {
-
-                console.log(currentTime - startTime);
+            if (startTime !== 0 && currentTime - startTime < maxTime && currentDistanceX > currentDistanceY && currentDistanceX < maxDistance && currentDistanceX > minDistance) {
 
                 if (currentX < startX) {
                     if ($("body").hasClass("roomsinview")) {
