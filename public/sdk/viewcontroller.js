@@ -228,27 +228,19 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		});
 	}
 	
-	function camelCase(input) {
-		if(input){
-			var inputArr = input.split('');
-			inputArr[0] = inputArr[0].toUpperCase();
-			return inputArr.join('');
+	function formatRoomName(roomId) {
+		function camelCase(input) {
+			if(input){
+				var inputArr = input.split('');
+				inputArr[0] = inputArr[0].toUpperCase();
+				return inputArr.join('');
+			}
 		}
+		return roomId.split('-').map(camelCase).join(' '); 
 	}
 	
+	$scope.room.name = formatRoomName($scope.room.id); 
 	
-	function getRoomName(roomId) {
-		var roomWords = roomId.split('-');
-		var newroomWords = roomWords.map(function(name){
-			return camelCase(name);
-		});
-		return newroomWords.join(' ');
-	}
-	
-	$scope.room.name = getRoomName($scope.room.id); 
-	
-		
-//	if($scope.room.members) $scope.room.members.length = 0;
 	function generateSortedList(members, occupants) {
 		var userMap = {}, userArray=[];
 		members.forEach(function(member) {
@@ -459,10 +451,14 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 });
 
 scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', '$factory', function($scope, $timeout, $location, $factory) {	
+	$scope.goBack = function(){
+		$location.path("/"+$scope.room.id);
+	};
 	if(/^guest-/.test($scope.user.id)) {
 		//$scope.personaLogin();
         $location.path("/me/login");
     }
+	
     $scope.goTo = function(room) {
     	if($scope.room.id == room){
     		$location.path("/"+room);
