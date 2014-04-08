@@ -2,9 +2,15 @@ var net = require('net');
 var irc = require('irc');
 var config = require("../config.js");
 var clients = {};
-var myNick = config.irc.nick;
+var botNick ;
 var nicks = {};//used to store callback of rename event.
 var core;
+var serverBotNicks = {};//server bot nick map.
+var roomServChan = {};
+var servChanRoom = {};
+var roomUser = {};
+var nickServerChannel = {};
+var servUsers = {};//irc server, username --> scrollback username
 module.exports.connectBot = connectBot;
 module.exports.connectUser = connectUser;
 module.exports.part = part;
@@ -52,7 +58,7 @@ function joinServer(server, nick, channels, options, cb) {
 			userIp : options.userIp,
 			userHostName: options.userHostName
 		});
-	client.nick = nick;
+	console.log("client=", client);
 	clients[nick][server] = client;
 	client.conn.on("connect", cb);
 	return client;
@@ -61,37 +67,44 @@ function joinServer(server, nick, channels, options, cb) {
 /**
  *always actual nick will be used for identify a user
  *opt.identId is used for ident.
- *myNick will be config of new IRC client
  */
-function connectBot(server, channels, options, cb) {
+function connectBot(room, bn, server, channel, options, cb) {
+	roomServChan[room] = {server: server, channel : channel};
+	if(!servChanRoom[server]){
+		servChanRoom[server] = {};
+		if(!servChanRoom[server][channel]) servChanRoom[server][channel] = [];
+	}
+	servChanRoom[server][channel].push(room);
+	botNick = bn;
 	var client;
-	if (!clients[myNick]) clients[myNick] = {}; 
-	if (clients[myNick][server]) {//already connected to server.
-		joinChannels(server, myNick, channels, cb);
+	if (!clients[botNick]) clients[botNick] = {}; 
+	if (clients[botNick][server]) {//already connected to server.
+		joinChannels(server, botNick, [channel], cb);
 	} else {
-		client = joinServer(server, myNick, channels, options, cb);
-		onNames(client);
-		onRaw(client);
+		client = joinServer(server, botNick, [channel], options, cb);
+		//onNames(client);
+		//onRaw(client);
 		onMessage(client);
-		onPM(client);
-		onError(client);
-		onJoin(client);
-		onPart(client);
-		onNick(client);
-		onRegistered(client);
-		onKill(client);
-		onKick(client);
-		onQuit(client);
+		//onPM(client);
+		//onError(client);
+		//onJoin(client);
+		//onNick(client);
+		//onRegistered(client);
+		//onPart(client);
+		//onKill(client);
+		//onKick(client);
+		//onQuit(client);
 	}
 }
 
-function connectUser(server, nick, channels, options, cb) {
+function connectUser(room, nick, server, channels, options, cb) {
 	var client;
 	if (!clients[nick]) clients[nick] = {};
 	if (clients[nick][server]) {
 		client = joinChannels(server, nick, channels,cb);
 	} else {
 		client = joinServer(server, nick, channels, options,cb);
+		roomUser[room][user] = client;
 		onPartUser(client);
 		onRegistered(client);
 	}
@@ -99,6 +112,7 @@ function connectUser(server, nick, channels, options, cb) {
 
 function onRegistered(client) {
 	client.addListener('registered', function(message) {
+		console.log("after reg:" , client);
 		core.emit('data', {
 			type: 'registered',
 			server: client.opt.server,
@@ -122,12 +136,14 @@ function onRaw(client) {
 function onMessage(client) {
 	client.on('message', function(to, from, message) {
 		console.log("on message");
-		core.emit('data', {
-			type: 'message',
-			server: client.opt.server,
-			to: to,
-			from: from,
-			message: message
+		servChanRoom[client.opt.server][from].forEach(function(room) {
+			core.emit('data', {
+				type: 'message',
+				server: client.opt.server,
+				to: room,
+				from: servUsers[from], 
+				message: message
+			});
 		});
 	});
 }
