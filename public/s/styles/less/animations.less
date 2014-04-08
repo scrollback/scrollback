@@ -1,3 +1,5 @@
+@import url('filters.less');
+
 /* animations and transitions */
 .flickerfix() {
    -webkit-backface-visibility: hidden;
@@ -18,12 +20,12 @@
     transform: @args;
 }
 
-.translate(@x; @y) { .transform(translate(@x, @y)); }
+.translate3d(@x; @y; @z) { .transform(translate3d(@x, @y, @z)); }
 
 .bounceframes() {
-    0%, 10%, 30%, 50%, 100% { .translate(0, 0); }
-    20% { .translate(0, -15px); }
-    40% { .translate(0, -10px); }
+    0%, 10%, 30%, 50%, 100% { .translate3d(0, 0, 0); }
+    20% { .translate3d(0, -15px, 0); }
+    40% { .translate3d(0, -10px, 0); }
 }
 
 @-webkit-keyframes bounce { .bounceframes; }
@@ -41,16 +43,69 @@
     animation: bounce @args;
 }
 
+.slidedownframes() {
+    0% {
+        .opacity(0);
+        .translate3d(0, -20%, 0);
+    }
+
+    100% {
+        .opacity(1);
+        .translate3d(0, 0, 0);
+    }
+}
+
+@-webkit-keyframes slidedown { .slidedownframes; }
+
+@-moz-keyframes slidedown { .slidedownframes; }
+
+@-ms-keyframes slidedown { .slidedownframes; }
+
+@keyframes slidedown { .slidedownframes; }
+
+.slidedown(@args: .15s) {
+    -webkit-animation: slidedown @args;
+    -moz-animation: slidedown @args;
+    -ms-animation: slidedown @args;
+    animation: slidedown @args;
+}
+
+.slideupframes() {
+    0% {
+        .opacity(0);
+        .translate3d(0, 20%, 0);
+    }
+
+    100% {
+        .opacity(1);
+        .translate3d(0, 0, 0);
+    }
+}
+
+@-webkit-keyframes slideup { .slideupframes; }
+
+@-moz-keyframes slideup { .slideupframes; }
+
+@-ms-keyframes slideup { .slideupframes; }
+
+@keyframes slideup { .slideupframes; }
+
+.slideup(@args: .15s) {
+    -webkit-animation: slideup @args;
+    -moz-animation: slideup @args;
+    -ms-animation: slideup @args;
+    animation: slideup @args;
+}
+
 .appearframes() {
     0% {
-        opacity: 0;
-
+        .opacity(0);
         .transform(scale(.5));
     }
 
     30% { .transform(scale(1)); }
 
-    100% { opacity: 1; }
+    100% { .opacity(1); }
 }
 
 @-webkit-keyframes appear { .appearframes; }
@@ -69,8 +124,8 @@
 }
 
 .fadeinframes() {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+    0% { .opacity(0); }
+    100% { .opacity(1); }
 }
 
 @-webkit-keyframes fadein { .fadeinframes; }
@@ -93,4 +148,11 @@
     -moz-transition: @args ease;
     -ms-transition: @args ease;
     transition: @args ease;
+}
+
+.linear(@args: .3s) {
+    -webkit-transition: @args linear;
+    -moz-transition: @args linear;
+    -ms-transition: @args linear;
+    transition: @args linear;
 }

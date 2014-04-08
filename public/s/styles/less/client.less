@@ -68,6 +68,7 @@
 
         li {
             a {
+                .clearfix;
                 .ease;
 
                 display: block;
@@ -121,6 +122,7 @@
     background-color: darken(@light-color, 5%);
     color: @dark-color;
     border-right: 1px solid darken(@light-color, 10%);
+    z-index: 1;
 
     @media @breakpointxxxx {
         width: @metaxxxx;
@@ -162,7 +164,7 @@
             color: @dark-color;
             background-position: center center;
             background-repeat: no-repeat;
-            background-size: 28px 28px;
+            background-size: 2em 2em;
             cursor: pointer;
 
             &:hover, &.current { .opacity(1); }
@@ -180,7 +182,7 @@
 
                 @media @breakpointxxxx {
                     .opacity(1);
-                    .ease(.3s);
+                    .ease(.5s);
 
                     display: table-cell;
                     width: 2.5em;
@@ -288,6 +290,8 @@
 }
 
 .mainview:extend(.main-elem) {
+    .clearfix;
+
     top: 0;
     right: 0;
     bottom: 0;
@@ -295,6 +299,8 @@
     color: @dark-color;
 
     .titlebar {
+        .clearfix;
+
         position: relative;
         height: @bar-height;
         text-align: right;
@@ -306,14 +312,14 @@
             display: none;
 
             @media @breakpointxxx {
-                .ease(.3s);
+                .ease(.5s);
 
                 display: block;
                 float: left;
                 height: 3.5em;
                 width: 2.5em;
                 background: url(../../img/icons/back.svg) center center no-repeat;
-                background-size: 28px 28px;
+                background-size: 2em 2em;
                 cursor: pointer;
             }
 
@@ -331,21 +337,54 @@
         }
 
         .user-area {
+            .clearfix;
+
             position: relative;
+            float: right;
             font-weight: 700;
             color: @dark-color;
 
             &:hover { color: darken(@dark-color, 10%); }
 
             img {
-                float: right;
+                float: left;
                 height: 3.5em;
                 width: 3.5em;
                 border-bottom: 1px solid darken(@light-color, 20%);
                 cursor: pointer;
+
+                @media @breakpointxx {
+                    .guest-user & { display: none; }
+                }
+
+                @media @breakpointx { display: none; }
             }
 
-            .popover-body { padding: 1em; }
+            .guest {
+                display: none;
+
+                .guest-user & {
+                    display: block;
+                    float: left;
+                    padding: .25em .5em;
+                    color: fade(@dark-color, 80%);
+                    cursor: pointer;
+
+                    span { display: block; }
+
+                    .sign-in {
+                        text-transform: uppercase;
+                        color: @accent-color;
+                    }
+                }
+            }
+
+            .popover-body {
+                padding: .5em 1em;
+                text-align: center;
+
+                a { display: block; }
+            }
         }
     }
 
@@ -375,6 +414,8 @@
         -webkit-overflow-scrolling : touch;
 
         .chat {
+            .clearfix;
+
             position: relative;
             max-height: 12em;
             margin: 0;
@@ -488,20 +529,46 @@
     right: 0;
     bottom: 0;
     z-index: 1;
-    padding: .5em 1em;
+    padding: 0;
     min-height: @bar-height;
-    background-color: darken(@light-color, 5%);
+    box-shadow: 0 -3px 2px -1px fade(@dark-color, 5%);
 
     .textarea {
         .entry;
 
         word-wrap: break-word;
         width: 100%;
-        padding: .4em 1em;
-        min-height: 2.5em;
+        min-height: @bar-height;
         max-height: 12em;
-        border-radius: @roundness;
+        padding: .9em 1em;
+        padding-right: 2.5em;
         overflow: auto;
+        border-radius: 0;
+
+        &:hover, &:focus, &:active {
+            border-color: @accent-color;
+            outline: none;
+        }
+    }
+
+    .send {
+        .opacity(.5);
+
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        margin: 0;
+        height: 3.5em;
+        width: 3.5em;
+        background: url(../../img/icons/send.svg) center center no-repeat;
+        background-size: 2em 2em;
+        border: none;
+
+        &:hover, &:focus, &:active {
+            .opacity(1);
+
+            background-color: transparent;
+        }
     }
 }
 
@@ -517,25 +584,25 @@
 }
 
 .rooms, .meta, .mainview, .chat-input {
-    .ease; /* animate css transforms */
+    .ease(.5s); /* animate css transforms */
     .flickerfix; /* fix flicker in some browsers */
 
     /* we use 3d transformations for GPU accelerated animations */
     .metainview & {
-        @media @breakpointxxx { .transform(translate3d(@metaxxx, 0, 0)); }
+        @media @breakpointxxx { .translate3d(@metaxxx, 0, 0); }
 
-        @media @breakpointxx { .transform(translate3d(@metaxx, 0, 0)); }
+        @media @breakpointxx { .translate3d(@metaxx, 0, 0); }
 
-        @media @breakpointx { .transform(translate3d(@metax, 0, 0)); }
+        @media @breakpointx { .translate3d(@metax, 0, 0); }
     }
 
     .roomsinview & {
-        @media @breakpointxxxx { .transform(translate3d(@roomxxxx, 0, 0)); }
+        @media @breakpointxxxx { .translate3d(@roomxxxx, 0, 0); }
 
-        @media @breakpointxxx { .transform(translate3d( ( @roomxxx + @metaxxx ), 0, 0)); }
+        @media @breakpointxxx { .translate3d( ( @roomxxx + @metaxxx ), 0, 0); }
 
-        @media @breakpointxx { .transform(translate3d( ( @roomxxx + @metaxx ), 0, 0)); }
+        @media @breakpointxx { .translate3d( ( @roomxxx + @metaxx ), 0, 0); }
 
-        @media @breakpointx { .transform(translate3d( ( @roomx + @metax ), 0, 0)); }
+        @media @breakpointx { .translate3d( ( @roomx + @metax ), 0, 0); }
     }
 }

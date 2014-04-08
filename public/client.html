@@ -17,7 +17,7 @@
         <link rel="stylesheet" type="text/css" media="screen" href="./s/styles/less/client.css" />
     </head>
 
-    <body>
+    <body class="guest-user">
         <section class="rooms">
             <div class="scrollback-header">
                 <img src="./s/img/scrollback-small.svg" alt="scrollback"/>
@@ -143,9 +143,17 @@
                 <a class="menu"></a>
                 <h1 class="title">Scrollback team</h1>
                 <div class="popover user-area">
-                    <img class="has-popover" alt="" src="http://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" />
+                    <div class="has-popover">
+                        <div class="guest">
+                            <span class="sb-user">sb-walick</span>
+                            <span class="sign-in">Sign in</span>
+                        </div>
+                        <img alt="" src="http://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" />
+                    </div>
                     <div class="popover-body">
-                        Stuff
+                        Sign in to scrollback with
+                        <a class="button facebook">Facebook</a>
+                        <a class="button persona">Persona</a>
                     </div>
                 </div>
             </div>
@@ -256,12 +264,12 @@
         </section>
         <section class="chat-input">
             <div contenteditable="true" class="textarea"></div>
+            <input class="send linked" type="submit" value="" />
         </section>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <script>
             window.jQuery || document.write('<script src="./s/js/jquery.min.js"><\/script>')
         </script>
-        <script src="./s/js/jquery.mobile.touch.min.js"></script>
         <script src="./s/js/html5shiv.min.js"></script>
         <script src="./s/js/pointer.events.polyfill.min.js"></script>
         <script>

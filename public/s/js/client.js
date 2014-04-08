@@ -65,20 +65,53 @@
         $("body").removeClass("roomsinview");
     });
 
-    // Handle swipe gestures (requires jQuery mobile touch events component)
-    $("body").on("swiperight", function() {
-        if ($("body").hasClass("metainview")) {
-            $("body").addClass("roomsinview");
-        } else {
-            $("body").addClass("metainview");
-        }
-    });
+    // Handle swipe gestures
+    $(function() {
+        var maxTime = 1000,
+            maxDistance = 500,
+            minDistance = 75,
+            target = $("body"),
+            startX = 0,
+            startTime = 0,
+            touch = "ontouchend" in document,
+            startEvent = (touch) ? 'touchstart' : 'mousedown',
+            moveEvent = (touch) ? 'touchmove' : 'mousemove',
+            endEvent = (touch) ? 'touchend' : 'mouseup';
 
-    $("body").on("swipeleft", function() {
-        if ($("body").hasClass("roomsinview")) {
-            $("body").removeClass("roomsinview");
-        } else {
-            $("body").removeClass("metainview");
-        }
+        target.bind(startEvent, function(e) {
+            startTime = (new Date()).getTime();
+            startX = e.originalEvent.touches ? e.originalEvent.touches[0].pageX : e.pageX;
+        }).bind(endEvent, function() {
+            startTime = 0;
+            startX = 0;
+        }).bind(moveEvent, function(e) {
+            var currentX = e.originalEvent.touches ? e.originalEvent.touches[0].pageX : e.pageX,
+                currentDistance = (startX === 0) ? 0 : Math.abs(currentX - startX),
+                currentTime = (new Date()).getTime();
+
+            if (startTime !== 0 && currentTime - startTime < maxTime && currentDistance < maxDistance && currentDistance > minDistance) {
+
+                console.log(currentTime - startTime);
+
+                if (currentX < startX) {
+                    if ($("body").hasClass("roomsinview")) {
+                        $("body").removeClass("roomsinview");
+                    } else {
+                        $("body").removeClass("metainview");
+                    }
+                }
+
+                if (currentX > startX) {
+                    if ($("body").hasClass("metainview")) {
+                        $("body").addClass("roomsinview");
+                    } else {
+                        $("body").addClass("metainview");
+                    }
+                }
+
+                startTime = 0;
+                startX = 0;
+            }
+        });
     });
 }());

@@ -52,7 +52,7 @@ h3 { font-size: 1.2em; }
 
 p { margin: .5em 0; }
 
-input[type=submit] {
+input[type=submit], input[type=button] {
     .buttons;
 
     &:disabled { .button-disabled; }
@@ -241,8 +241,6 @@ code {
     position: relative;
 
     .popover-body {
-        .appear;
-
         position: absolute;
         display: block;
         margin: 1em;
@@ -256,7 +254,9 @@ code {
         z-index: 10;
 
         &.popover-top {
-            bottom: 2em;
+            .slideup;
+
+            bottom: 3em;
 
             &:before {
                 .popover-arrow;
@@ -267,7 +267,9 @@ code {
         }
 
         &.popover-bottom {
-            top: 2em;
+            .slidedown;
+
+            top: 3em;
 
             &:before {
                 .popover-arrow;
