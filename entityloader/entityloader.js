@@ -85,7 +85,7 @@ module.exports = function(c) {
 				callback();
 			}
 		});
-	});
+	}, "loader");
 	core.on('getRooms', function(data, callback) {
 		core.emit("getUsers", {session: data.session, ref: "me"}, function(err, user) {
 			if(err || !user || !user.results || !user.results.length) {
@@ -96,23 +96,34 @@ module.exports = function(c) {
 				callback();
 			}
 		});
-	});
+	}, "loader");
 
 
 	core.on("init", function(action, callback) {
 		loadUser(action, function() {
 			handlers["init"](action, callback);
 		});
-	});
+	}, "loader");
 }
 
 
 function loadUser(action, callback) {
+	
 	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
-		if(err || !data || !data.results || !data.results.length) {
-			initializerUser(action, function() {
+
+		if(err || !data || !data.results || !data.results.length){
+			return initializerUser(action, function() {
+				if(action.suggestedNick) action.user.isSuggested = true;
 				callback();
 			});
+		}
+
+		action.from = data.results[0].id;
+		if(action.suggestedNick && action.from != action.suggestedNick && /^guest-/.test(action.from) && !data.results[0].isSuggested) {
+			return initializerUser(action, function() {
+				action.user.isSuggested = true;
+				callback();
+			});	
 		}else {
 			action.from = data.results[0].id;
 			if(action.type == "user") {
@@ -179,13 +190,16 @@ function generateNick(suggestedNick, callback) {
 		var trying = suggestedNick;
 		if(attemptC) trying+=attemptC;
 		if(attemptC>=3) return callback(names(6));
-		core.emit('getUsers', {id:trying},function(err, data) {
+		core.emit('getUsers', {v:"harish",ref:"guest-"+trying},function(err, data) {
 			if(data && data.results && data.results.length >0) return checkUser(suggestedNick, attemptC+1, callback);
-			core.emit('getRooms', {id:trying},function(err, data) {
+			core.emit('getUsers', {v:"harish",ref:trying},function(err, data) {
 				if(data && data.results && data.results.length >0) return checkUser(suggestedNick, attemptC+1, callback);
-				callback('guest-'+trying);
-			});
-		})
+				core.emit('getRooms', {ref:trying},function(err, data) {
+					if(data && data.results && data.results.length >0) return checkUser(suggestedNick, attemptC+1, callback);
+					callback('guest-'+trying);
+				});
+			})
+		});
 	}
 	checkUser(suggestedNick, 0, callback);
 }

@@ -3,40 +3,10 @@ var get = require("./get.js");
 var put = require("./put.js");
 
 module.exports = function(core) {
-	// core.on("getUsers", function(query, callback){
-	// 	if(query.ref && query.ref == "me") {
-	// 		get("session",query.session, function(err, sessionObj) {
-	// 			query.results = [];
-	// 			/*should probably think of a way to change this.
-	// 			if for some reasons redis is working and it throws an error. */
-	// 			if(err || !sessionObj) return callback();
-	// 			if(sessionObj.user) {
-	// 				get("user",sessionObj.user, function(err, user) {
-	// 					if(err) return callback();
-	// 					try{
-	// 						user = JSON.parse(user);
-	// 					}catch(e) {
-	// 						return callback();
-	// 					}
-	// 					query.results = [user];
-	// 					callback();
-	// 				})
-	// 			}else {
-	// 				callback();
-	// 			}
-	// 		});
-	// 	}
-	// }, "storage");
-	// core.on("room", function(action, callback) {
-	// 	roomDB.put("room:{{"+action.room.id+"}}", JSON.stringify(action.room));
-	// 	callback();
-	// }, "storage");
-	// core.on("user", function(action, callback) {
-	// 	userDB.put("user:{{"+action.user.id+"}}", JSON.stringify(action.user));
-	// 	callback();
-	// }, "storage");
 
 	core.on('getSessions', function(action, callback) {
+		// will need to complete this.
+		return callback();
 		get("session",action.ref, function(err, sessionObj) {
 			var session = {
 				id: action.session,
@@ -45,6 +15,7 @@ module.exports = function(core) {
 			};
 		});
 	});
+	
 	core.on("init", function(action, callback) {
 		get("session",action.session, function(err, sessionObj) {
 			var session = {

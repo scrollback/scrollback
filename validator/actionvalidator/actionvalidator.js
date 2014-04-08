@@ -15,6 +15,14 @@ module.exports = function(core) {
 		};
 	*/
 	var handlers = {
+		init: function(action, callback) {
+			var n;
+			if(action.suggestedNick) {
+				n = validateRoom(action.suggestedNick, true);
+				if(n != action.suggestedNick) action.suggestedNick = n;
+			}
+			callback();
+		},
 		join: function(action, callback) {
 			if(/^guest-/.test(action.from)) return callback(new Error("GUEST_CANNOT_JOIN"));
 			if(!action.role) action.role = "follower";

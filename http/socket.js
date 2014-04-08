@@ -61,16 +61,25 @@ sock.on('connection', function (socket) {
 		if(d.type == 'back' && !verifyBack(conn, d)) return;
 		if(d.type == 'away' && !verifyAway(conn, d)) return;
 		core.emit(d.type, d, function(err, data) {
-			if(err) return conn.send({type: 'error', ref: d.id, message: err.message});
+			if(err) {
+				log("Sending Error: ", err);
+				return conn.send({type: 'error', ref: d.id, message: err.message});
+			}
 
 			if(data.type == 'back') storeBack(conn, d);
 			if(data.type == 'away') storeAway(conn, d); 
 			if(data.type == 'init') storeInit(conn, d); 
-			conn.send(data);
+			
+
+			/* no need to send it back to the connection object when no error,
+			 emit function will take care of that.
+				conn.send(data);
+			 */
 		});
 	});
 	
 	conn.send = function(data) {
+		
 		socket.write(JSON.stringify(data));
 	};
 	socket.on('close', function() { handleClose(conn); });
@@ -135,7 +144,7 @@ exports.initCore = function(c) {
 };
 
 function emit(action, callback) {
-	log("Heard \""+action.type+"\" event: "+ action.id);
+	log("Socket Sending: ", action);
 	if(action.type == 'init') {
 		sConns[action.session].forEach(dispatch);
 	} else if(action.type == 'user') {
@@ -143,7 +152,7 @@ function emit(action, callback) {
 	} else {
 		rConns[action.to].forEach(dispatch);
 	}
-	function dispatch(conn) {log("connection:"+conn.resource, action); conn.send(action); }
+	function dispatch(conn) { conn.send(action); }
 	callback();
 };
 
