@@ -117,7 +117,7 @@ function emit(action) {
 		rConns[action.to].forEach(dispatch);
 	}
 	function dispatch(conn) { conn.send(action); }
-};
+}
 
 function handleClose(conn) {
 	if(!conn.session) return;
@@ -139,7 +139,7 @@ function handleClose(conn) {
 			if(verifyAway(conn, awayAction)) return;
 			core.emit('away',awayAction , function(err, action) {
 				if(err) return;
-				storeAway(conn, action)
+				storeAway(conn, action);
 			});
 		}, 30*1000);
 	});
@@ -162,7 +162,7 @@ function verifyAway(conn, away) {
 	if(urConns[away.from+":"+conn.room]) {
 		index = urConns[away.from+":"+conn.room].indexOf(conn);
 		urConns[away.from+":"+conn.room].splice(index,1);
-		return (urConns[away.from+":"+conn.room].length==0);
+		return (urConns[away.from+":"+conn.room].length === 0);
 	}else{
 		return true;
 	}

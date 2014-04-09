@@ -63,7 +63,7 @@ var defaults = {
 		host: "local.scrollback.io",
 		cookieDomain: ".scrollback.io",
 		port: 80,
-		home: "http/public", // the directory containing static files
+		home: "public", // the directory containing static files
 		time: 60000,
 		limit: 30
 	},

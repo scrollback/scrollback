@@ -1,13 +1,13 @@
 /*
-	Scrollback: Beautiful text chat for your community. 
+	Scrollback: Beautiful text chat for your community.
 	Copyright (c) 2014 Askabt Pte. Ltd.
-	
-This program is free software: you can redistribute it and/or modify it 
+
+This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any 
+the Free Software Foundation, either version 3 of the License, or any
 later version.
 
-This program is distributed in the hope that it will be useful, but 
+This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
 License for more details.
@@ -79,15 +79,22 @@ module.exports = function(grunt) {
 	},
 	less: {//style.less--->style.css
 		development: {
+			options: {
+				compress: true,
+				yuicompress: true,
+				ieCompat: true
+			},
 			files: {//dest            //source
 				"public/style.css": "public/style.less",
 				"public/dummy.css": "public/dummy.less",
-				"public/s/css/stylesheet.css":"public/s/css//stylesheet.less"
+				"public/s/styles/less/stylesheet.css": "public/s/styles/less/stylesheet.less",
+				"public/s/styles/less/widgets.css": "public/s/styles/less/widgets.less",
+				"public/s/styles/less/client.css": "public/s/styles/less/client.less"
 			},
 		},
 	},
   });
-  
+
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-wrap');
@@ -95,11 +102,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-less');
   // Default task(s).
-  
+
   grunt.event.on('watch', function(action, filepath, target) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
   grunt.registerTask('default', ['uglify', 'concat', 'wrap', 'less']);
-  
+
 
 };

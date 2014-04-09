@@ -1,0 +1,392 @@
+@import url('definitions.less');
+@import url('reset.less');
+@import url('animations.less');
+@import url('filters.less');
+@import url('grid.less');
+
+/* polyfill for box-sizing support in ie */
+* { *behavior: url(./s/polyfills/boxsizing.htc); }
+
+/* set the viewport properties (limited browser support) */
+@viewport {
+    width: device-width;
+    user-zoom: fixed;
+    zoom: 1;
+    min-zoom: 1;
+    max-zoom: 1;
+}
+
+/* basic elements */
+body {
+    margin: 0;
+    padding: 0;
+    background: @light-color;
+    color: @dark-color;
+    font-family: @body-font;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.5em;
+}
+
+a {
+    .ease;
+
+    font-weight: bold;
+    color: darken(@accent-color, 10%);
+    text-decoration: none;
+
+    &:hover, &:focus { color: @accent-color; }
+
+    &:active { color: darken(@accent-color, 20%); }
+}
+
+img { max-width: 100%; }
+
+h1, h2, h3 { &:extend(.heading); }
+
+h1 { font-size: 2em; }
+
+h2 { font-size: 1.5em; }
+
+h3 { font-size: 1.2em; }
+
+p { margin: .5em 0; }
+
+input[type=submit], input[type=button] {
+    .buttons;
+
+    &:disabled { .button-disabled; }
+}
+
+input[type=entry], textarea {
+    .inputs;
+
+    &:extend(.entry);
+}
+
+pre {
+    width: 30em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding: 1em;
+    border-radius: @roundness;
+    background-color: darken(@light-color, 5%);
+}
+
+code {
+    font-weight: 600;
+    font-family: @monospace-font;
+    line-height: 1.2em;
+}
+
+/* widget styles */
+.heading {
+    line-height: 1em;
+    font-family: @heading-font;
+    font-weight: 300;
+    margin: .5em 0;
+}
+
+.linked {
+    border-radius: 0 0 0 0;
+
+    &:first-of-type {
+        border-right: none;
+        border-radius: @roundness 0 0 @roundness;
+    }
+
+    &:last-of-type { border-radius: 0 @roundness @roundness 0; }
+}
+
+.entry {
+    .ease;
+
+    background-color: lighten(@light-color, 50%);
+    border: 1px solid darken(@light-color, 20%);
+    border-top-color: darken(@light-color, 30%);
+    color: @dark-color;
+    box-shadow: inset 0 1px 1px 0 rgba(0,0,0,0.1);
+
+    &:hover, &:focus, &:active {
+        border-color: darken(@light-color, 30%);
+        border-top-color: darken(@light-color, 40%);
+        outline: none;
+    }
+}
+
+.inputs() {
+    display: inline-block;
+    margin: 1em 0;
+    padding: .8em 1.2em;
+    border-radius: @roundness;
+}
+
+.buttons(@bg: @accent-color; @fg: @light-color) {
+    .inputs;
+    .ease;
+
+    background-color: @bg;
+    border: 1px solid @bg;
+    border-bottom-color: darken(@bg, 10%);
+    color: @fg;
+    text-align: center;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+
+    &:hover, &:focus {
+        background-color: darken(@bg, 5%);
+        border-color: darken(@bg, 5%);
+        border-bottom-color: darken(@bg, 15%);
+        color: @fg;
+    }
+
+    &:active {
+        background-color: darken(@bg, 10%);
+        border-color: darken(@bg, 10%);
+        border-bottom-color: darken(@bg, 20%);
+        color: @fg;
+    }
+}
+
+.button-secondary {
+    .inputs;
+    .ease;
+
+    background-color: darken(@light-color, 5%);
+    border: 1px solid darken(@light-color, 15%);
+    color: lighten(@dark-color, 10%);
+    text-align: center;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+
+    &:hover, &:focus, &:active {
+        background-color: darken(@light-color, 3%);
+        border-color: darken(@light-color, 30%);
+        color: lighten(@dark-color, 5%);
+    }
+}
+
+.button-disabled {
+    background-color: darken(@light-color, 5%);
+    border: 1px solid darken(@light-color, 15%);
+    color: lighten(@dark-color, 50%);
+    pointer-events: none;
+
+    &:hover, &:focus, &:active {
+        background-color: darken(@light-color, 5%);
+        border-color: darken(@light-color, 15%);
+        color: lighten(@dark-color, 50%);
+    }
+}
+
+.button { .buttons; }
+
+.login-toggle { cursor: pointer; }
+
+.google { .buttons(#d34836; #fff); }
+
+.twitter { .buttons(#55acee; #fff); }
+
+.facebook { .buttons(#3b5998; #fff); }
+
+.persona { .buttons(#0096dd; #fff); }
+
+.openid { .buttons(#f78c40; #fff); }
+
+.subtitle {
+    margin: .5em 0;
+    font-size: .9em;
+    font-style: italic;
+}
+
+.error { color: @error-color; }
+
+.warning {
+    background-color: lighten(@error-color, 40%);
+    border-bottom: 1px solid @error-color;
+    text-align: center;
+    padding: .5em;
+
+    h2 { color: @error-color; }
+}
+
+.rotate(@deg: 45deg) {
+    -webkit-transform: rotate(@deg);
+    -moz-transform: rotate(@deg);
+    -ms-transform: rotate(@deg);
+    -o-transform: rotate(@deg);
+    transform: rotate(@deg);
+}
+
+.popover-arrow() {
+    position: absolute;
+    display: block;
+    content: "";
+    left: 50%;
+    margin-left: -8px;
+    height: 14px;
+    width: 14px;
+    background-color: @light-color;
+    border-color: darken(@light-color, 30%);
+    border-style: solid;
+    border-width: 1px 0 0 1px;
+    z-index: 9;
+}
+
+.popover-body { display: none; }
+
+.popover-active {
+    position: relative;
+
+    .popover-body {
+        position: absolute;
+        display: block;
+        margin: 1em;
+        border-radius: @roundness;
+        font-weight: normal;
+        border: 1px solid darken(@light-color, 20%);
+        background-color: @light-color;
+        color: @dark-color;
+        box-shadow: 0 0 10px fade(@dark-color, 20%);
+        text-transform: none;
+        z-index: 10;
+
+        &.popover-top {
+            .slideup;
+
+            bottom: 3em;
+
+            &:before {
+                .popover-arrow;
+                .rotate(225deg);
+
+                bottom: -8px;
+            }
+        }
+
+        &.popover-bottom {
+            .slidedown;
+
+            top: 3em;
+
+            &:before {
+                .popover-arrow;
+                .rotate(45deg);
+
+                top: -8px;
+            }
+        }
+
+        &.arrow-left {
+            &:before {
+                left: 1em;
+                right: auto;
+            }
+        }
+
+        &.arrow-right {
+            &:before {
+                left: auto;
+                right: 1em;
+            }
+        }
+    }
+
+    .popover-layer {
+        content: "";
+        display: block;
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 9;
+    }
+}
+
+input.switch {
+    .opacity(0);
+
+    margin: .5em 0;
+
+    & ~ label {
+        position: relative;
+        cursor: pointer;
+
+        &:before,
+        &:after {
+            .ease;
+
+            position: absolute;
+            display: block;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            content: "";
+            height: 1.8em;
+            width: 3.6em;
+            border-radius: @roundness;
+            background-color: @error-color;
+            box-shadow: inset 0 1px 0 rgba(0,0,0,0.2);
+        }
+
+        &:after {
+            height: 1.5em;
+            width: 1.6em;
+            top: 0.1em;
+            bottom: 0.1em;
+            left: 0.15em;
+            background-color: @light-color;
+            box-shadow: inset 0 -1px 0 rgba(0,0,0,0.2);
+        }
+    }
+
+    &:checked ~ label {
+        &:before { background-color: @accent-color; }
+
+        &:after { left: 1.85em; }
+    }
+}
+
+.zigzag(@inner; @outer; @position) {
+    background: linear-gradient(-135deg, @outer 5px, transparent 0) 0 5px,
+                linear-gradient(135deg, @outer 5px, @inner 0) 0 5px;
+
+    background-color: @inner;
+    background-position: left @position;
+    background-repeat: repeat-x;
+    background-size: 10px 10px;
+}
+
+/* browser specific styles */
+::selection {
+    background-color: @accent-color;
+    color: @light-color;
+}
+
+::-moz-selection {
+    background-color: @accent-color;
+    color: @light-color;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-button { display: none; }
+
+::-webkit-scrollbar-track { background-color: @light-color; }
+
+::-webkit-scrollbar-thumb { background-color: darken(@light-color, 10%);
+
+    &:vertical { min-height: 100px; }
+
+    &:horizontal { min-width: 100px; }
+
+    &:hover, &:focus { background-color: @accent-color; }
+
+    &:active { background-color: darken(@accent-color, 10%); }
+}

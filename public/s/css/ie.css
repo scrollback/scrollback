@@ -1,8 +1,0 @@
-/* ie9 and ie10 specific styles */
-.modal { display: none; }
-
-.login-open .modal { display: block; }
-
-.arrow { display: block; }
-
-.login-open .arrow, .scrolled .arrow { display: none; }
