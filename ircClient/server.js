@@ -46,12 +46,12 @@ core.on('object', function(obj) {
 	console.log("received : ", obj);
 	switch (fn) {
 		case 'connectBot':
-			ircClient.connectBot(obj.room, obj.botNick, obj.server, obj.channel, obj.options, function() {
+			ircClient.connectBot(obj.room, obj.botNick, obj.options, function() {
 				writeObject({type: 'callback', uid : obj.uid});
 			});
 			break;
 		case 'connectUser':
-			ircClient.connectUser(obj.room, obj.nick, obj.server, obj.channels, obj.options, function() {
+			ircClient.connectUser(obj.room, obj.nick, obj.options, function() {
 				writeObject({type: 'callback', uid: obj.uid});
 			});
 			break;
