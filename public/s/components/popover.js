@@ -1,5 +1,5 @@
-/* jshint browser: true */
-/* global $ */
+/*jslint browser: true, indent: 4, regexp: true*/
+/*global $*/
 
 // Handle PopOvers
 $(".has-popover").on("click", function() {

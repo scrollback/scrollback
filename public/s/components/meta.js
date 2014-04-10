@@ -2,11 +2,14 @@
 /* global $ */
 
 $(function() {
+	'use strict';
+
+	// Handle tabs
 	var tabs = [];
 	
 	// Handle tabs
 	$(".tabs > li").each(function() {
-		var classlist = $(this).attr('class').split(/ +/);
+		var classlist = $(this).attr("class").split(/ +/);
 
 		for (var i = 0; i < classlist.length; i++) {
 			if (classlist[i].length > 0 && classlist[i].match(/^tab-([a-z]+)$/)) {

@@ -5,6 +5,7 @@ $(function() {
 	$logs = $(".chat-area");
 	
 	$logs.infinite({
+	$(".chat-area").infinite({
 		scrollSpace: 2000,
 		fillSpace: 500,
 		getItems: function (index, before, after, callback) {
@@ -20,14 +21,14 @@ $(function() {
 		}
 	});
 	
-	libsb.on('text-dn', function(text, next) {
-		if($logs.data("lower-limit")) 
-			$("#logs").addBelow($("<div>").text("New, live text message.").data("index", 42));
-	})
+//	libsb.on('text-dn', function(text, next) {
+//		if($logs.data("lower-limit")) 
+//			$("#logs").addBelow($("<div>").text("New, live text message.").data("index", 42));
+//	})
 	
 	
 	// --- add classes to body to reflect state ---
-	
+
 	var timeout,
 		top = $(this).scrollTop();
 
@@ -51,8 +52,6 @@ $(function() {
 			timeout = 0;
 		}, 1000);
 	});
-
-	
 });
 
 
