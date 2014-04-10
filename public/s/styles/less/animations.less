@@ -41,27 +41,6 @@
     animation: bounce @args;
 }
 
-.hintframes() {
-    0%, 50%, 100% { .transform(translate3d(0, 0, 0)); }
-    30% { .transform(translate3d(30px, 0, 0)); }
-    60% { .transform(translate3d(10px, 0, 0)); }
-}
-
-@-webkit-keyframes hint { .hintframes; }
-
-@-moz-keyframes hint { .hintframes; }
-
-@-ms-keyframes hint { .hintframes; }
-
-@keyframes hint { .hintframes; }
-
-.hint(@args: 1s) {
-    -webkit-animation: hint @args;
-    -moz-animation: hint @args;
-    -ms-animation: hint @args;
-    animation: hint @args;
-}
-
 .slidedownframes() {
     0% {
         .opacity(0);

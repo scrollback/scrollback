@@ -2,6 +2,8 @@
 /* global libsb */
 
 $(function() {
+	'use strict';
+
 	$(".chat-area").infinite({
 		scrollSpace: 2000,
 		fillSpace: 500,
@@ -19,19 +21,19 @@ $(function() {
 //			console.log("requested", index, before, after);
 		}
 	});
-	
-	libsb.on('text-dn', function(text, next) {
-		
-	})
-	
+
+//	libsb.on('text-dn', function(text, next) {
+//
+//	});
+
 	setInterval(function() {
 		var $logs = $("#logs");
 		if($logs.data("lower-limit")) $("#logs").addBelow($("<div>").text("New, live text message.").data("index", 42));
 	}, 4000);
-	
-	
+
+
 	// --- add classes to body to reflect state ---
-	
+
 	var timeout,
 		top = $(this).scrollTop();
 
@@ -55,8 +57,6 @@ $(function() {
 			timeout = 0;
 		}, 1000);
 	});
-
-	
 });
 
 
