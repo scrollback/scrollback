@@ -1,39 +1,25 @@
 var log = require("../lib/logger.js");
 var config = require('../config.js');
-var fs=require("fs");
 var net = require('net');
-var jade = require("jade")
 var client;
 var pendingCallbacks = {};
 /**
-Communicate with scrollback java Process through TCP and set message.labels.
-Add labels only if threader is enabled for room.
+Communicate with scrollback java Process through TCP and set message.threads.
 */
-
 module.exports = function(core) {
 	if (config.threader) {
-		var pluginContent = "";
-		/*fs.readFile(__dirname + "/threader.html", "utf8", function(err, data){
-			if(err)	throw err;
-			core.on("config", function(payload, callback) {
-				payload.threader = data;
-				callback(null, payload);
-			}, "setters");
-		});*/
 		init();
-		core.on('message', function(message, callback) {
+		core.on('text', function(message, callback) {
 			if(message.type == "text" && client.writable) {//if client connected and text message
 				return core.emit('rooms', {id:message.to}, function(err, rooms) {
 					console.log("threader",rooms);
 					if(err) callback(err);
-					//if(rooms.length !== 0 && (rooms[0].params && rooms[0].params.threader)) {//if threader is enabled or not for room 
-					//if(true){
 					var msg = JSON.stringify({
 						id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
 						text: message.text.replace(/['"]/g, ' ').replace(/\n/g, " ").replace(/\\n/g, " "),
 						room: typeof message.to=="string" ? message.to:message.to[0]
 					});
-					log("Sending msg to scrollback.jar="+msg);
+					log("Sending msg to scrollback.jar= "+msg);
 					try {
 						client.write(msg+'\n');
 					} catch(err) {
@@ -47,11 +33,7 @@ module.exports = function(core) {
 							delete pendingCallbacks[message.id];
 							log("pending callback removed after 1 sec for message.id" + message.id);
 						}
-					}, 1000);	
-					/*}else{
-						return callback();	
-					}*/
-					
+					}, 1000);
 				});
 			}
 			return callback();
@@ -70,26 +52,38 @@ function init(){
 	});
 	var d = "";//wait for new line.
 	client.on("data", function(data){
+		var i;
+		
 		data = data.toString('utf8');
 		data = data.split("\n");
 		data[0] = d + data[0];//append previous data
 		d = data[data.length-1];
-		for (i = 0;i < data.length-1;i++) {
+		for (i = 0; i < data.length-1;i++) {
 			processReply(data[i]);
 		}
 	});
 	/**
-	 *Process reply from java process and callback based on message.id
-	 */
+	*Process reply from java process and callback based on message.id
+	* message.thread [{
+	* 		id: ..
+	* 		title: ...
+	* 		score: ... //sorted based in this score
+	* }, ... ]
+	*/
 	function processReply(data){
 		var message;
 		try {
 			log("data=-:" + data + ":-");
 			data = JSON.parse(data);
-//			console.log("Data returned by scrollback.jar="+data.threadId, pendingCallbacks[data.id].message.text);
+			log("Data returned by scrollback.jar = "+data.threadId, pendingCallbacks[data.id].message.text);
 			message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 			if(message) {
-				message.labels = [data.threadId];
+                if(!message.threads) message.threads = [];
+                var index = data.threadId.indexOf(':');
+                var id = data.threadId.substring(0, index);
+                var title = data.threadId.substring(index + 1);
+				message.threads.push({id: id, title: title, score: 1});
+				//message.labels[data.threadId] = 1;
 				pendingCallbacks[data.id].fn();
 				log("called back in ", new Date().getTime() - pendingCallbacks[data.id].time);
 				delete pendingCallbacks[data.id];
@@ -113,8 +107,6 @@ function init(){
 		setTimeout(function(){
 			init();	
 		},1000*60);//try to reconnect after 1 min
-		
-		
 	});
 }
 

@@ -331,16 +331,22 @@
             window.jQuery || document.write('<script src="./s/js/jquery.min.js"><\/script>')
         </script>
         <script src="./s/js/html5shiv.min.js"></script>
-        <script src="./s/js/pointer.events.polyfill.min.js"></script>
-        <script>
-            $(function() {
-                PointerEventsPolyfill.initialize({});
-            });
-        </script>
-        <script src="./s/js/transformie.min.js"></script>
-        <script src="./s/js/cssfx.min.js"></script>
-        <script src="./s/js/widgets.js"></script>
-        <script src="./s/js/client.js"></script>
+        <script src="./s/js/pointer.events.polyfill.min.js"></script> <!-- adds pointer events support for old IE -->
+        <script> $(function() { PointerEventsPolyfill.initialize({}); }); </script>
+		<script> document.addEventListener("touchstart", function() {}, true); </script> <!-- adds CSS :active styles in Safari -->
+
+        <script src="./s/js/transformie.min.js"></script> <!-- adds CSS transforms support in old IE -->
+        <script src="./s/js/cssfx.min.js"></script> <!-- adds CSS vendor prefixes automatically -->
+		
+		<script src="./s/components/infinite.js"></script>
+        <script src="./s/components/popover.js"></script>
+		
+		<script src="./s/components/message.js"></script>
+		
+        <script src="./s/components/chat-area.js"></script>
+        <script src="./s/components/compose.js"></script>
+        <script src="./s/components/meta.js"></script>
+        <script src="./s/components/timeline.js"></script>
     </body>
 
 </html>

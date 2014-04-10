@@ -2,7 +2,7 @@
 
 var irc = require("irc"),
 	log = require("../lib/logger.js"),
-        guid = require("../lib/guid.js"),
+        guid = require("../lib/generate.js").uid,
 	config = require("../config.js"),
 	ident=require("./ident.js"),
 	users;

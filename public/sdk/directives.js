@@ -123,11 +123,13 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 								var menu = $("<div>").addClass('menu').addClass('clearfix');
 								var arrow = $("<div>").addClass('arrow').appendTo(menu);
 								
+								var itemAdder = function(event) {
+									opt[event.data.option]();
+									hide();
+								};
+								
 								for(var i in opt) {
-									$("<button>").addClass('menuitem').text(i).click( {option: i}, function(event) {
-										opt[event.data.option]();
-										hide();
-									}).appendTo(menu);
+									$("<button>").addClass('menuitem').text(i).click( {option: i}, itemAdder).appendTo(menu);
 								}
 								
 								$('body').append(layer, menu);
@@ -145,6 +147,8 @@ scrollbackApp.directive('message',function($compile, $timeout) {
 								var menut;
 								
 								var spaceBelow = scrh - elt - elh;
+								
+								var menut;
 								
 								if(spaceBelow > menuh) {
 									arrow.addClass('up');
@@ -253,9 +257,9 @@ function hashColor(name) {
             return h;
         }
 
-		function darken(c, l) {
+        function darken(c, l) {
 			return Math.min(255, Math.round(c*(0.5/l)));
-		}
+        }
         
 		function rgb(r, g, b) {
 			var l = (0.3*r + 0.55*g + 0.15*b)/255;
@@ -279,7 +283,7 @@ function format(text) {
     var parts = [];
     if(!text) return "";
     var u = /\b(https?\:\/\/)?([\w.\-]*@)?((?:[a-z0-9\-]+)(?:\.[a-z0-9\-]+)*(?:\.[a-z]{2,4}))((?:\/|\?)\S*)?\b/g;
-    var r, s=0, protocol, user, domain, path;
+    var r, s=0, protocol, user, domain, path='';
 
     while((r = u.exec(text)) !== null) {
          if(text.substring(s, r.index)) parts.push({type:"text", text: text.substring(s, r.index)});

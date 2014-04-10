@@ -10,33 +10,6 @@
     // Focus chat entry on pageload
     $(".chat-entry").focus();
 
-    // Add a class while scrolling so we can do cool stuff
-    $(function() {
-        var timeout,
-            top = $(this).scrollTop();
-
-        $(".chat-area").on("scroll", function() {
-            var cur_top = $(this).scrollTop();
-
-            if (top < cur_top) {
-                $("body").removeClass("scroll-up").addClass("scroll-down");
-            } else {
-                $("body").removeClass("scroll-down").addClass("scroll-up");
-            }
-
-            top = cur_top;
-
-            $("body").addClass("scrolling");
-
-            if(timeout) clearTimeout(timeout);
-
-            timeout = setTimeout(function() {
-                $("body").removeClass("scrolling").removeClass("scroll-up").removeClass("scroll-down");
-                timeout = 0;
-            }, 1000);
-        });
-    });
-
     // Handle tabs
     $(function() {
         var tabs = [];

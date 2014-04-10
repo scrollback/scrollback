@@ -36,7 +36,7 @@ exports.init = function() {
 	app.use(express["static"](__dirname + "/../" + config.http.home, { maxAge: 86400000 }));
 
 	app.use(express.cookieParser());
-	app.use(session.parser);
+	// app.use(session.parser);
 	app.use(express.query());
 	app.use(express.bodyParser());
 

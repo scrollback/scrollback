@@ -76,8 +76,10 @@ module.exports = function (types) {
 			
 			if (data.identities) {
 				newRoom.identities = data.identities
-			}else{
-				data.accounts && data.accounts.forEach(function(account) {
+			}
+
+			if(data.accounts) {
+				data.accounts.forEach(function(account) {
 					newRoom.identities.push(account.id);
 				});
 			}

@@ -1,0 +1,68 @@
+<html>
+	<head>
+		<title>Scrollback: beautiful micro-forums for open communities.</title>
+		 <link rel="stylesheet" href="/t/mocha.css" />
+	</head>
+	<body>
+		
+		<div id="mocha"></div>
+		<script src="/t/mocha.js"></script>
+		<script src="/t/chai.js"></script>
+		<script src="/sdk/sockjs.js"></script>
+        <script src="/sdk/polyfill.js"></script>
+		<script src="/sdk/generate.js"></script>
+		<script src="https://login.persona.org/include.js"></script>
+		<script>
+			var assert = chai.assert;
+			var scrollback = {
+				host: "//"+location.host
+			};
+			console.log(scrollback);
+			var socket;
+			mocha.setup('bdd');
+			describe("socket connection", function() {
+				it("socket connection established.", function(done) {
+					socket = new SockJS(scrollback.host + '/socket');
+					socket.onopen = function() {
+						done();
+					};
+				});
+				it("socket closing.", function(done) {
+					socket.close();
+					done();
+				});
+			});
+           	describe("sending message over socket", function() {
+                beforeEach(function(done){
+                    socket = new SockJS(scrollback.host + '/socket');
+                    socket.onopen = function() {
+                        done();
+                    };
+                });
+                afterEach(function(done){
+                    socket.close();
+                    done();
+                });
+                it("echo back the action", function(done) {
+                    var action = {type:"back", time:new Date().getTime(), text:"hi there..", to:"scrollback", "from":"harish"};
+                    socket.onmessage = function(message){
+                        message = JSON.parse(message.data);
+                        assert.equal(message.type, "back", "response tampered");
+                        done();
+                    };
+                    socket.send(JSON.stringify(action));
+                });
+            });			
+		</script>
+		<!-- All the scripts go here. -->
+		<script src="/t/backaway.js"></script>
+        <script src="socket-test.js"></script>
+		<script src="init-test.js"></script>
+		<script src="user-registration.js"></script>
+		<script src="user-profile-update.js"></script>
+		<script src="textMessage/textMessageTest.js"></script>
+        <script src="room/roomTest.js"></script>
+        <script src="queries/queriesTest.js"></script>
+		<script>mocha.run();</script>
+	</body>
+</html>	
