@@ -1,8 +1,10 @@
 var config = require("../config.js");
 var userDB = require('../lib/redisProxy.js').select(config.redis.user);
+var occupantDB = require('../lib/redisProxy.js').select(config.redis.occupants);
+
 var get = require("./get.js");
 var put = require("./put.js");
-var occupantDB = require('../lib/redisProxy.js').select(config.redis.occupants);
+
 
 var core;
 
@@ -13,13 +15,12 @@ function getUserById(id, callback) {
     });    
 }
 
-
 function onGetUsers(query, callback) {
     if(query.ref) {
         if(query.ref == 'me' ) {
             get("session", query.session, function(err, sess) {
             	if(sess){
-            		getUserById(sess.user, function(err, data){
+            		get("user",sess.user, function(err, data){
 	            		if(err || !data){
 	            			return callback();
 	            		}

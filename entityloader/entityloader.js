@@ -100,30 +100,43 @@ module.exports = function(c) {
 
 
 	core.on("init", function(action, callback) {
-		loadUser(action, function() {
+		function done() {
 			handlers["init"](action, callback);
-		});
+		}
+		core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
+			if(err || !data || !data.results || !data.results.length) {
+				
+				return initializerUser(action, function() {
+					if(action.suggestedNick) action.user.nickAssigned = true;
+					done();
+				});
+			}
+			if(action.suggestedNick && action.from != action.suggestedNick && /^guest-/.test(action.from) && !data.results[0].nickAssigned) {
+				return initializerUser(action, function() {
+					action.user.isSuggested = true;
+					done();
+				});	
+			}
+			if(action.ref && /^guest-/.test(data.results[0].id)) {
+				core.emit("getUsers",{id: uid(), ref: action.ref, session: action.session}, function(err, data) {
+					if(err || !data || !data.resutls || !data.results.length) {
+						return callback(new Error("NICK_TAKEN"));
+					}else {
+						initializerUser(action, function() {
+							callback();
+						});
+					}
+				});
+			}
+		});	
 	}, "loader");
 }
 
 
 function loadUser(action, callback) {
-	
 	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
-
-		if(err || !data || !data.results || !data.results.length){
-			return initializerUser(action, function() {
-				if(action.suggestedNick) action.user.isSuggested = true;
-				callback();
-			});
-		}
-
-		action.from = data.results[0].id;
-		if(action.suggestedNick && action.from != action.suggestedNick && /^guest-/.test(action.from) && !data.results[0].isSuggested) {
-			return initializerUser(action, function() {
-				action.user.isSuggested = true;
-				callback();
-			});	
+		if(err || !data || !data.results || !data.results.length) {
+			callback(new Error("USER_NOT_INITED"));
 		}else {
 			action.from = data.results[0].id;
 			if(action.type == "user") {
@@ -167,17 +180,17 @@ function basicLoader(action, callback) {
 
 function initializerUser(action, callback) {
 	var userObj;
-	generateNick(action.suggestedNick || "", function(possibleNick) {
-		action.from = possibleNick;
+	generateNick(action.suggestedNick || action.ref || "", function(possibleNick) {
+		if(!action.ref) action.from = possibleNick;
 		userObj = {
-			id: action.from,
+			id: possibleNick,
 			description: "",
 			createdOn: new Date().getTime(),
 			type:"user",
 			params:{},
 			timezone:0,
 			sessions: [action.session],
-			picture: generatePick(action.from)
+			picture: generatePick(possibleNick)
 		};
 		action.user = userObj;
 		callback();
