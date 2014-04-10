@@ -7,6 +7,9 @@
     // Scroll to bottom of the messages on page load
     $(".chat-area").scrollTop($(".chat-area")[0].scrollHeight);
 
+    // Focus chat entry on pageload
+    $(".chat-entry").focus();
+
     // Add a class while scrolling so we can do cool stuff
     $(function() {
         var timeout,
@@ -27,7 +30,7 @@
 
             if(timeout) clearTimeout(timeout);
 
-            timeout = setTimeout(function(){
+            timeout = setTimeout(function() {
                 $("body").removeClass("scrolling").removeClass("scroll-up").removeClass("scroll-down");
                 timeout = 0;
             }, 1000);
@@ -64,6 +67,19 @@
     // Expand long messages
     $(".long").on("click", function() {
         $(this).toggleClass("active").scrollTop(0);
+    });
+
+    // Show and hide search bar
+    $(".search-button").on("click", function() {
+        $("body").toggleClass("search-focus");
+        // Use a timeout to add focus to avoid double animation in firefox
+        setTimeout(function() {
+            $(".search-entry").focus();
+        }, 500);
+    });
+
+    $('.search-entry').focusout(function() {
+        $("body").removeClass("search-focus");
     });
 
     // Show and hide panes in responsive view

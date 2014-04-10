@@ -22,7 +22,7 @@
             <div class="scrollback-header">
                 <img src="./s/img/scrollback-small.svg" alt="scrollback"/>
             </div>
-            <ul>
+            <ul role="navigation">
                 <li><a class="search-term" href="">Results for firefox</a></li>
                 <li><a href="http://scrollback.io/hasgeek">Hasgeek<span class="unread">2</span></a></li>
                 <li><a href="http://scrollback.io/numix">Numix Project<span class="unread has-replies">12</span></a></li>
@@ -33,19 +33,19 @@
             </ul>
         </section>
         <section class="meta">
-            <ul class="tabs">
-                <li class="roomlist notab"><h2>Rooms</h2></li>
-                <li class="tab-info"><h2>Info</h2></li>
-                <li class="tab-people current"><h2>People</h2></li>
-                <li class="tab-threads"><h2>Threads</h2></li>
-                <li class="tab-thisroom"><h2>This room</h2></li>
-                <li class="tab-allrooms"><h2>All rooms</h2></li>
+            <ul role="tablist" class="tabs">
+                <li role="tab" class="roomlist notab"><h2>Rooms</h2></li>
+                <li role="tab" class="tab-info"><h2>Info</h2></li>
+                <li role="tab" class="tab-people current"><h2>People</h2></li>
+                <li role="tab" class="tab-threads"><h2>Threads</h2></li>
+                <li role="tab" class="tab-thisroom"><h2>This room</h2></li>
+                <li role="tab" class="tab-allrooms"><h2>All rooms</h2></li>
             </ul>
-            <div class="search-banner">Threads matching firefox in this room</div>
-            <div class="meta-content tab-info">
+            <div role="banner" class="search-banner">Threads matching firefox in this room</div>
+            <div role="tabpanel" class="meta-content tab-info">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas tincidunt non nibh id euismod. Donec a facilisis nibh. Proin molestie ante augue, sed elementum ipsum ornare nec. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas tincidunt non nibh id euismod. Donec a facilisis nibh. Proin molestie ante augue, sed elementum ipsum ornare nec. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas tincidunt non nibh id euismod. Donec a facilisis nibh. Proin molestie ante augue, sed elementum ipsum ornare nec. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas tincidunt non nibh id euismod. Donec a facilisis nibh. Proin molestie ante augue, sed elementum ipsum ornare nec.
             </div>
-            <div class="meta-content tab-people current">
+            <div role="tabpanel" class="meta-content tab-people current">
                 <a class="people" href="">
                     <img alt="" src="./s/img/avatars/Adrian.png">
                     <span class="people-name">adrian</span>
@@ -119,7 +119,7 @@
                     <span class="people-name">simon</span>
                 </a>
             </div>
-            <div class="meta-content tab-threads">
+            <div role="tabpanel" class="meta-content tab-threads">
                 <a class="thread" href="">
                     <h3>All threads</h3>
                     <p>At vero eos et accusamus et iusto dignissimos</p>
@@ -141,7 +141,7 @@
                     <p>At vero eos et accusamus et iusto dignissimos</p>
                 </a>
             </div>
-            <div class="meta-content tab-thisroom">
+            <div role="tabpanel" class="meta-content tab-thisroom">
                 <a class="thread" href="">
                     <h3>All threads</h3>
                     <p>At vero eos et accusamus et iusto dignissimos</p>
@@ -163,7 +163,7 @@
                     <p>At vero eos et accusamus et iusto dignissimos</p>
                 </a>
             </div>
-            <div class="meta-content tab-allrooms">
+            <div role="tabpanel" class="meta-content tab-allrooms">
                 <a class="thread" href="">
                     <h3>All threads</h3>
                     <p>At vero eos et accusamus et iusto dignissimos</p>
@@ -194,23 +194,27 @@
                 </a>
             </div>
         </section>
-        <section class="mainview">
+        <main role="main" class="mainview">
             <div class="titlebar">
                 <a class="menu"></a>
                 <h1 class="title">Scrollback team</h1>
-                <div class="popover user-area">
-                    <div class="has-popover">
-                        <div class="guest">
-                            <span class="sb-user">sb-walick</span>
-                            <span class="sign-in">Sign in</span>
+                <div class="right-align">
+                    <div class="popover user-area">
+                        <div class="has-popover">
+                            <div class="guest">
+                                <span class="sb-user">sb-walick</span>
+                                <span class="sign-in">Sign in</span>
+                            </div>
+                            <img alt="" src="http://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" />
                         </div>
-                        <img alt="" src="http://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" />
+                        <div role="menu" class="popover-body">
+                            Sign in to scrollback with
+                            <a class="button facebook">Facebook</a>
+                            <a class="button persona">Persona</a>
+                        </div>
                     </div>
-                    <div class="popover-body">
-                        Sign in to scrollback with
-                        <a class="button facebook">Facebook</a>
-                        <a class="button persona">Persona</a>
-                    </div>
+                    <img class="search-button" role="button" src="./s/img/icons/search.svg" />
+                    <input class="search-entry" type="entry" placeholder="Type to search..." />
                 </div>
             </div>
             <div class="chat-position">27 April 2014</div>
@@ -317,10 +321,10 @@
                     <span class="message">Ut ultrices purus in sagittis accumsan.</span>
                 </p>
             </div>
-        </section>
+        </main>
         <section class="chat-input">
-            <div contenteditable="true" class="textarea"></div>
-            <input class="send linked" type="submit" value="" />
+            <div role="textbox" class="textarea chat-entry" contenteditable></div>
+            <input role="button" class="send" type="submit" value="" />
         </section>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <script>

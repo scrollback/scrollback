@@ -83,7 +83,7 @@
 
                     .search-active & {
                         display: block;
-                        background-image: url(../../img/icons/search.svg);
+                        background-image: url(../../img/icons/search-light.svg);
                         background-position: 90% center;
                         background-repeat: no-repeat;
                         background-size: 2em 2em;
@@ -283,6 +283,7 @@
                 width: 5.5em;
                 text-align: center;
                 text-overflow: ellipsis;
+                white-space: nowrap;
                 overflow: hidden;
                 font-weight: 400;
                 color: @dark-color;
@@ -368,11 +369,13 @@
         .clearfix;
 
         position: relative;
+        display: table;
+        width: 100%;
         height: @bar-height;
-        text-align: right;
         background-color: darken(@light-color, 5%);
         border-bottom: 1px solid darken(@light-color, 20%);
         box-shadow: 0 3px 2px -1px fade(@dark-color, 5%);
+        z-index: 1;
 
         .menu {
             display: none;
@@ -393,64 +396,109 @@
         }
 
         .title {
-            float: left;
-            padding: .15em;
+            display: table-cell;
+            vertical-align: middle;
             padding-left: 1em;
             font-size: 1.5em;
             cursor: pointer;
 
             @media @breakpointxxxx { padding-left: .25em;  }
+
+            .search-focus & {
+                display: none;
+            }
         }
 
-        .user-area {
+        .right-align {
             .clearfix;
 
-            position: relative;
-            float: right;
-            font-weight: 700;
-            color: @dark-color;
+            display: table-cell;
+            vertical-align: middle;
 
-            &:hover { color: darken(@dark-color, 10%); }
+            .search-focus & {
+                padding: .15em;
 
-            img {
-                float: left;
-                height: 3.5em;
-                width: 3.5em;
-                border-bottom: 1px solid darken(@light-color, 20%);
-                cursor: pointer;
-
-                @media @breakpointxx {
-                    .guest-user & { display: none; }
-                }
-
-                @media @breakpointx { display: none; }
+                @media @breakpointxxx { width: 100%;  }
             }
 
-            .guest {
-                display: none;
+            .search-button {
+                float: right;
+                padding: .75em 1em;
 
-                .guest-user & {
-                    display: block;
+                .search-focus & {
+                    display: none;
+                }
+            }
+
+            .user-area {
+                .clearfix;
+
+                position: relative;
+                float: right;
+                font-weight: 700;
+                color: @dark-color;
+
+                &:hover { color: darken(@dark-color, 10%); }
+
+                .search-focus & {
+                    display: none;
+                }
+
+                img {
                     float: left;
-                    padding: .25em .5em;
-                    color: fade(@dark-color, 80%);
+                    height: 3.5em;
+                    width: 3.5em;
+                    border-bottom: 1px solid darken(@light-color, 20%);
                     cursor: pointer;
 
-                    span { display: block; }
-
-                    .sign-in {
-                        text-transform: uppercase;
-                        color: @accent-color;
+                    @media @breakpointxx {
+                        .guest-user & { display: none; }
                     }
+
+                    @media @breakpointx { display: none; }
+                }
+
+                .guest {
+                    display: none;
+
+                    .guest-user & {
+                        display: block;
+                        float: left;
+                        padding: .25em .5em;
+                        color: fade(@dark-color, 80%);
+                        cursor: pointer;
+
+                        span { display: block; }
+
+                        .sign-in {
+                            text-transform: uppercase;
+                            color: @accent-color;
+                        }
+                    }
+                }
+
+                .popover-body {
+                    width: 15em;
+                    padding: .5em 1em;
+                    text-align: center;
+
+                    a { display: block; }
                 }
             }
 
-            .popover-body {
-                width: 15em;
-                padding: .5em 1em;
-                text-align: center;
+            .search-entry {
+                display: none;
 
-                a { display: block; }
+                .search-focus & {
+                    .fadein;
+
+                    display: block;
+                    margin: 0;
+                    width: 100%;
+                    background-image: url("../../img/icons/search-gray.svg");
+                    background-position: right center;
+                    background-repeat: no-repeat;
+                }
             }
         }
     }
