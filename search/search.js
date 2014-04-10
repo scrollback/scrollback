@@ -1,11 +1,14 @@
 var log = require("../lib/logger.js");
 var config = require('../config.js');
-var client;
 var es = require('elasticsearch');
 var indexName = 'sb';
+var client;
+    
 var searchTimeout = 10000;
 module.exports = function (core) {
-    init();
+    if(!client) {
+        init();
+    }
     if (config.search) {
         
         /*Index text*/
@@ -81,7 +84,7 @@ module.exports = function (core) {
                 return callback();
             }
             data.type = 'text';
-            query = { query: { match: { text: qu.q}}};
+            query = { query: { text: qu.q}};
             data.body = query;
             data.qu = qu;
             searchThreads(data,callback); 
@@ -123,8 +126,20 @@ function searchThreads(data, callback){
         index: indexName,
         type: data.type,
         timeout: searchTimeout,
-        body: data.body
-    }
+        query: {
+            "filtered": {
+                "query": data.body.query,
+                "filter": {
+                    "numeric_range": {
+                        "time": {
+                            "lt": Date.now(),
+                            "gte": data.qu.afterThis
+                        }
+                    }
+                }
+            }
+        }    }
+    //log(JSON.stringify(searchParams));
     client.search(searchParams).then (function (response) {
         var threads = new Array();   
         var unique = {};
@@ -143,10 +158,9 @@ function searchThreads(data, callback){
         log(error);
     });
 }
-
  
 function init() {
-    log("Trying to connect to elastic search server .... ");
+    log("Connecting to Elasticsearch server .... ");
     var searchServer = config.search.server + ":" + config.search.port;
     client = new es.Client({
         host: searchServer

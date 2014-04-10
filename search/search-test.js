@@ -12,7 +12,7 @@ var msg = {
     type: 'text',
     time: new Date().getTime(),
     session: "web://sdjfkalja24aadf:dkaslkfjkjaf",
-    threads : [{ id:"lk3dnzbnytxjlot95x4knzov05sdx1cy", title:"will get a microsoft", score:0.53}, {id:"wbyj9i7q0oh26ibae6b5eqxqwx41gjbp", title:"search for an apple", score:0.93}]
+    threads : [{ id: "cdl7c9bnwm6skztk1d7c0vfzr461scni", title: "will get a microsoft", score: 0.53}, {id: "wbyj9i7q0oh26ibae6b5eqxqwx41gjbp", title: "search for an apple", score: 0.93}]
 };
 
 var subjects = ['I', 'You', 'Kamal', 'Harish', 'Bob', 'John', 'Sue', 'Kate', 'The lizard people'];
@@ -35,7 +35,6 @@ describe('search', function () {
         done();
     });
 
-/*
     it('text index test', function (done) {
         msg.text = randomSentence;
         core.emit("text", msg, function (err, data) {
@@ -49,7 +48,7 @@ describe('search', function () {
         room.description = randomSentence;
         core.emit("room", room, vik);        
         function vik (err, data) {
-            if(err){console.log(err)};
+            if(err){console.log(err)}
             assert.ok(!err, " indexed ");
             done();
         }
@@ -85,26 +84,10 @@ describe('search', function () {
             done();
         });
     });
-*/
 
-    it('threads search test', function (done) {
+ /*   it('threads search test', function (done) {
         core.emit("getThreads", {
-            q: 'apple'
-        }, function (err, data) {
-            var results = data.results;
-            var numOfResults = data.results.length;
-            for (var i = 0; i < numOfResults; i++) {
-                console.log(results[i]);
-            }
-            assert(numOfResults, 2, " found " + numOfResults + " result");
-            done();
-        });
-    });
-    
-   /* it('threads search test', function (done) {
-        core.emit("getThreads", {
-            q: 'apple',
-            afterThis:
+            q: 'microsoft'
         }, function (err, data) {
             var results = data.results;
             var numOfResults = data.results.length;
@@ -116,5 +99,18 @@ describe('search', function () {
         });
     });*/
     
-    
+    it('threads search test', function (done) {
+        core.emit("getThreads", {
+            q: 'apple',
+            afterThis: 1397114342685
+        }, function (err, data) {
+            var results = data.results;
+            var numOfResults = data.results.length;
+            for (var i = 0; i < numOfResults; i++) {
+                console.log(results[i]);
+            }
+            assert(numOfResults, 2, " found " + numOfResults + " result");
+            done();
+        });
+    });
 });
