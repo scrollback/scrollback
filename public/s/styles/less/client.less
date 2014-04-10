@@ -383,8 +383,7 @@
             @media @breakpointxxx {
                 .ease(.5s);
 
-                display: block;
-                float: left;
+                display: table-cell;
                 height: 3.5em;
                 width: 2.5em;
                 background: url(../../img/icons/back.svg) center center no-repeat;
@@ -490,7 +489,7 @@
                 display: none;
 
                 .search-focus & {
-                    .fadein;
+                    .slideleft;
 
                     display: block;
                     margin: 0;
@@ -702,22 +701,25 @@
     .ease(.3s); /* animate css transforms */
     .flickerfix; /* fix flicker in some browsers */
 
+    /* show a hint by revealing hidden content on page load */
+    @media @breakpointxxxx { .hint; }
+
     /* we use 3d transformations for GPU accelerated animations */
     .metainview & {
-        @media @breakpointxxx { .translate3d(@metaxxx, 0, 0); }
+        @media @breakpointxxx { .transform(translate3d(@metaxxx, 0, 0)); }
 
-        @media @breakpointxx { .translate3d(@metaxx, 0, 0); }
+        @media @breakpointxx { .transform(translate3d(@metaxx, 0, 0)); }
 
-        @media @breakpointx { .translate3d(@metax, 0, 0); }
+        @media @breakpointx { .transform(translate3d(@metax, 0, 0)); }
     }
 
     .roomsinview & {
-        @media @breakpointxxxx { .translate3d(@roomxxxx, 0, 0); }
+        @media @breakpointxxxx { .transform(translate3d(@roomxxxx, 0, 0)); }
 
-        @media @breakpointxxx { .translate3d( ( @roomxxx + @metaxxx ), 0, 0); }
+        @media @breakpointxxx { .transform(translate3d( ( @roomxxx + @metaxxx ), 0, 0)); }
 
-        @media @breakpointxx { .translate3d( ( @roomxxx + @metaxx ), 0, 0); }
+        @media @breakpointxx { .transform(translate3d( ( @roomxxx + @metaxx ), 0, 0)); }
 
-        @media @breakpointx { .translate3d( ( @roomx + @metax ), 0, 0); }
+        @media @breakpointx { .transform(translate3d( ( @roomx + @metax ), 0, 0)); }
     }
 }
