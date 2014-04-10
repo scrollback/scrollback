@@ -1,7 +1,10 @@
-// Handle tabs
+/* jshint browser: true */
+/* global $ */
+
 $(function() {
 	var tabs = [];
-
+	
+	// Handle tabs
 	$(".tabs > li").each(function() {
 		var classlist = $(this).attr('class').split(/ +/);
 

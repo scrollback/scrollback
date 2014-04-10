@@ -326,10 +326,8 @@
             <div role="textbox" class="textarea chat-entry" contenteditable></div>
             <input role="button" class="send" type="submit" value="" />
         </section>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script>
-            window.jQuery || document.write('<script src="./s/js/jquery.min.js"><\/script>')
-        </script>
+		
+		<!-- scripts -->
         <script src="./s/js/html5shiv.min.js"></script>
         <script src="./s/js/pointer.events.polyfill.min.js"></script> <!-- adds pointer events support for old IE -->
         <script> $(function() { PointerEventsPolyfill.initialize({}); }); </script>
@@ -341,12 +339,13 @@
 		<script src="./s/components/infinite.js"></script>
         <script src="./s/components/popover.js"></script>
 		
-		<script src="./s/components/message.js"></script>
-		
+		<script src="./s/components/panel-layout.js"></script>
+		<script src="./s/components/chat.js"></script>
         <script src="./s/components/chat-area.js"></script>
         <script src="./s/components/compose.js"></script>
         <script src="./s/components/meta.js"></script>
         <script src="./s/components/timeline.js"></script>
-    </body>
+		<script src="./s/components/search.js"></script>
+	</body>
 
 </html>

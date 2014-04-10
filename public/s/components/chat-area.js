@@ -2,32 +2,28 @@
 /* global libsb */
 
 $(function() {
-	$(".chat-area").infinite({
+	$logs = $(".chat-area");
+	
+	$logs.infinite({
 		scrollSpace: 2000,
 		fillSpace: 500,
 		getItems: function (index, before, after, callback) {
 			var els = [], i;
-			for(i=-before; i<0; i++) {
-				if(index+i <= -100) { els.push(false); i=-(100+index); if(i>=0) break; }
-				els.push($("<div>").text("Text message. " + (index + i)).data("index", index+i));
-			}
-			for(i=1; i<=after; i++) {
-				if(index+i > 100) { els.push(false); break; }
-				els.push($("<div>").text("Text message. " + (index + i)).data("index", index+i));
-			}
-			setTimeout(function() { callback(els); }, 1000); // simulate connection delay
-//			console.log("requested", index, before, after);
+			
+			core.emit('getTexts', {time: time, before: before, after: after}, function(err, texts) {
+				if(err) throw err; // TODO: handle the error properly.
+				
+				callback(texts.map(function(text) {
+					return renderChat(null, text);
+				});
+			});
 		}
 	});
 	
 	libsb.on('text-dn', function(text, next) {
-		
+		if($logs.data("lower-limit")) 
+			$("#logs").addBelow($("<div>").text("New, live text message.").data("index", 42));
 	})
-	
-	setInterval(function() {
-		var $logs = $("#logs");
-		if($logs.data("lower-limit")) $("#logs").addBelow($("<div>").text("New, live text message.").data("index", 42));
-	}, 4000);
 	
 	
 	// --- add classes to body to reflect state ---
