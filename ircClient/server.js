@@ -55,15 +55,16 @@ core.on('object', function(obj) {
 				writeObject({type: 'callback', uid: obj.uid});
 			});
 			break;
+		case 'say':
+			ircClient.say(obj.message);
+			break;
 		case 'part':
 			ircClient.part(obj.server, obj.channel);
 			break;
 		case 'partUser':
 			ircClient.partUser(obj.server, obj.nick, obj.channel);
 			break;
-		case 'say':
-			ircClient.say(obj.server, obj.nick, obj.channel, obj.message);
-			break;
+		
 		case 'rename':
 			ircClient.rename(obj.server, obj.oldNick, obj.newNick, function(newNick) {
 				writeObject({type: 'callback', uid: obj.uid, newNick: newNick});
@@ -76,6 +77,9 @@ core.on('object', function(obj) {
 			break;
 		case 'sendRawMessage':
 			ircClient.sendRawMessage(obj.server, obj.nick, obj.message);
+			break;
+		case 'newNick'://new scrollback nick for IRC nick.
+			ircClient.newNick(obj.room, obj.nick, obj.sbNick);
 	}
 	
 });
