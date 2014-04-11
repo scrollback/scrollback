@@ -6,8 +6,7 @@ var clients = {};//for server channel user,server --> client.
 var servChanProp = {};//object of server channel prop
 var rooms = {};//room id to room obj map. //TODO delete room obj if any room deleted irc.
 var servNick = {};//server channel nick -------> sb nick.
-var serverBotNicks = {};//server bot nick map.
-
+var renameCallback = {};
 module.exports.connectBot = connectBot;
 module.exports.connectUser = connectUser;
 module.exports.say = say;
@@ -22,6 +21,17 @@ module.exports.init = function init(coreObj) {
 /******************************************
 TODO's 
 rename IRC user.
+handle this error.
+ERROR: { prefix: 'irc.local',
+  server: 'irc.local',
+  command: 'err_erroneusnickname',
+  rawCommand: '432',
+  commandType: 'error',
+  args: 
+   [ 'test2',
+     'long name' ] }
+//9 char is min max limit if(nick > 9) gen random.
+
 ******************************************/
 
 /**
@@ -50,6 +60,7 @@ function joinServer(server, nick, channels, options, cb) {
 			stripColors: true,
 			floodProtection: true,
 			identId: options.identId,
+			//showErrors: true,
 			webircPassword: options.webircPassword,
 			userIp : options.userIp,
 			userHostName: options.userHostName
@@ -57,6 +68,7 @@ function joinServer(server, nick, channels, options, cb) {
 	//console.log("client=", client);
 	clients[nick][server] = client;
 	client.conn.on("connect", cb);
+	onError(client);
 	return client;
 }
 
@@ -87,7 +99,6 @@ function connectBot(room, bn, options, cb) {
 	} else {
 		client = joinServer(server, botNick, [], options, cb);//after varification connect to channel
 		onPM(client);
-		onError(client);
 		onRaw(client);
 		onMessage(client);
 		onNames(client);
@@ -115,12 +126,17 @@ function connectUser(room, nick, options, cb) {
 			if(!servNick[client.opt.server]) servNick[client.opt.server] = {};	
 			servNick[client.opt.server][client.nick] = {nick: client.sbNick, dir: "out"};
 		});
+		client.on('part', function(channel, nick, reason, message) {//TODO test disconnection 
+			if (client.opt.channels.length === 0) {
+				client.disconnect();
+				delete clients[nick][client.opt.server];	
+			}
+		});
 	}
 }
 
 function onRegistered(client) {
 	client.addListener('registered', function(message) {
-		
 		core.emit('data', {
 			type: 'registered',
 			server: client.opt.server,
@@ -176,7 +192,6 @@ function onPM(client) {
 							if (channel.substring(0,1) == '@' && channel.substring(1) === room.params.irc.channel) {
 								room.params.irc.pending = false;
 								client.join(room.params.irc.channel);
-								//TODO send online users of that channel also
 								core.emit('data', {type: "room", room: room});
 							}
 						});
@@ -203,12 +218,6 @@ function onPM(client) {
 function onLeave(client) {
 
 	client.on("part", function(channel, nick, reason, message){//TODO delete client if no more connections
-		
-		if(client.opt.channels.length === 0) {
-			console.log("disconnecting.............................", client.opt.server);
-			client.disconnect();
-			delete clients[botNick][client.opt.server];
-		}
 		left(client, [channel], nick);
 		core.emit('data', {
 			type: 'part',
@@ -260,7 +269,7 @@ function onLeave(client) {
 }
 
 function left(client, channels, nick) {
-	
+	//TODO disconnect bot from server if not more channels.
 	if (servNick[client.opt.server]) {
 		delete servNick[client.opt.server][nick];
 	}
@@ -289,7 +298,6 @@ function left(client, channels, nick) {
 function addUsers(client, channel, nick) {
 	servChanProp[client.opt.server][channel].rooms.forEach(function(room) {
 		//save data.
-		
 		if(nick != client.nick) servChanProp[client.opt.server][channel].users.push(nick);//don't add myNick 
 		if(nick != client.nick && !servNick[client.opt.server][nick] &&
 			!room.params.irc.pending) {
@@ -305,18 +313,20 @@ function addUsers(client, channel, nick) {
 
 function onNick(client) {
 	client.addListener('nick', function (oldNick, newNick, channels, message)  {
-		channels.forEach(function(channel) {
-			addUsers(client, channel, newNick);
-		});
+		if (!(renameCallback[oldNick] && renameCallback[oldNick][client.opt.server])) {
+			channels.forEach(function(channel) {
+				addUsers(client, channel, newNick);
+			});
+		} else {
+			channels.forEach(function(channel) {
+				servNick[client.opt.server][newNick] = {nick: renameCallback.newNick, dir: "out"};
+				delete servNick[client.opt.server][oldNick];
+				delete renameCallback[oldNick][client.opt.server];
+			});
+		}
 		left(client, channels, oldNick);
-		//core.emit('data', {
-		//	type: 'nick',
-		//	server: client.opt.server,
-		//	channels: channels,
-		//	oldNick: oldNick,
-		//	newNick: newNick,
-		//	message: message
-		//});
+		
+		
 	});
 }
 
@@ -335,9 +345,7 @@ function onNames(client) {
 		for (var nick in nicks) {
 			if (nicks.hasOwnProperty(nick)) {
 				if (client.nick === nick) continue;//my 
-				//servChanProp[client.opt.server][channel].rooms.forEach(function(room) {
-					addUsers(client, channel, nick);
-				//});
+				addUsers(client, channel, nick);
 			}		
 		}
 	});
@@ -365,24 +373,26 @@ function newNick(room, nick, sbNick) {//TODO just send room.id
 	servNick[room.params.irc.server][nick] = {nick: sbNick, dir: "in"};
 }
 
-/**
- *@param oldNick old actual nick
- *@param{string} newNick try to rename to new nick of generate suggestion based on new nick. 
- *callback(nick) with assiged new nick
- //TODO use this to update new schema.
- */
-function rename(room, oldNick, newNick, cb) {
-	var client = clients[oldNick][server];
-	client.rename(newNick);
-	delete clients[oldNick][server];
-	if (!clients[newNick]) clients[newNick] = {};
-	client.nick = newNick;
-	clients[newNick][server] = client;
-	nicks[oldNick] = cb;	
+
+function rename(oldNick, newNick) {//change nick in every server for that user.
+	for(var server in clients[oldNick]) {//
+		if (clients[oldNick].hasOwnProperty(server)) {
+			var client = clients[oldNick][server];
+			if(!renameCallback[client.nick]) renameCallback[client.nick] = {}; 
+			renameCallback[client.nick][server] = {oldNick: oldNick, newNick: newNick};			
+			client.rename(newNick);
+			if (!clients[newNick]) clients[newNick] = {};
+			clients[newNick][server] = clients[oldNick][server];
+		}
+	}
+	delete clients[oldNick];
 }
 
 
 /************************************ update servChanNick *************************/
+
+
+
 
 function onRaw(client) {
 	client.on('raw', function(raw) {
@@ -401,15 +411,6 @@ function onError(client) {
 			server: client.opt.server,
 			message: message
 		});
-	});
-}
-
-function onPartUser(client) {
-	client.on('part', function() {
-		if (client.opt.channels.length === 0) {
-			client.disconnect();
-			delete clients[client.nick][client.opt.server];
-		}
 	});
 }
 

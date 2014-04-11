@@ -66,9 +66,7 @@ core.on('object', function(obj) {
 			break;
 		
 		case 'rename':
-			ircClient.rename(obj.server, obj.oldNick, obj.newNick, function(newNick) {
-				writeObject({type: 'callback', uid: obj.uid, newNick: newNick});
-			});
+			ircClient.rename(obj.oldNick, obj.newNick);
 			break;
 		case 'whois':
 			ircClient.whois(obj.server, obj.nick,function(info) {
