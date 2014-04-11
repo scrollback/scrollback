@@ -16,9 +16,10 @@
 		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
 		<link rel="stylesheet" type="text/css" media="screen" href="s/styles/less/client.css" />
 
-		<!-- enable HTML5 in IE -->
+		<!-- enable HTML5 in IE, we need to place it before body -->
 		<!--[if lt IE 9]>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
+		<script>window.html5 || document.write('<script src="./s/lib/html5shiv.min.js"><\/script>')</script>
 		<![endif]-->
 	</head>
 
@@ -217,7 +218,7 @@
 						<a class="button persona">Persona</a>
 					</div>
 					<div class="avatar has-popover">
-						<img alt="" src="http://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" />
+						<img alt="" src="https://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" />
 					</div>
 					<div role="menu" class="popover-body">
 						<ul>
@@ -338,7 +339,8 @@
 
 		<!-- scripts -->
         <script src="s/lib/html5shiv.min.js"></script>
-		<script src="s/lib/jquery.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="./s/lib/jquery.min.js"><\/script>');</script>
 
         <script src="s/lib/pointer.events.polyfill.min.js"></script> <!-- adds pointer events support for old IE -->
         <script> $(function() { PointerEventsPolyfill.initialize({}); }); </script>

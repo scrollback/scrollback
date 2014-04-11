@@ -28,7 +28,7 @@
     min-height: 100%;
     background-color: @dark-color;
     color: @light-color;
-    z-index: 2;
+    z-index: 4;
     overflow: auto;
     -webkit-overflow-scrolling : touch;
 
@@ -135,7 +135,7 @@
     background-color: darken(@light-color, 5%);
     color: @dark-color;
     border-right: 1px solid darken(@light-color, 10%);
-    z-index: 1;
+    z-index: 3;
 
     @media @breakpointxxxx {
         width: @metaxxxx;
@@ -363,6 +363,7 @@
     top: 0;
     right: 0;
     bottom: 0;
+    z-index: 2;
     background-color: @light-color;
     color: @dark-color;
 
@@ -646,7 +647,7 @@
 .chat-input:extend(.main-elem) {
     right: 0;
     bottom: 0;
-    z-index: 1;
+    z-index: 3;
     padding: 0;
     min-height: @bar-height;
     box-shadow: 0 -3px 2px -1px fade(@dark-color, 5%);

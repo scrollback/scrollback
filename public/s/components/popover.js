@@ -11,7 +11,7 @@ $(".has-popover").on("click", function() {
 		spaceabove = $(this).offset().top - $(document).scrollTop(),
 		spacebelow = $(window).height() - spaceabove - pheight;
 
-	if (spaceleft > spaceavail) 	{
+	if (spaceleft > spaceavail) {
 		spaceleft = spaceavail - 28;
 		$(pbody).addClass("arrow-right");
 	} else if (spaceleft < pwidth / 2 ) {
@@ -24,10 +24,10 @@ $(".has-popover").on("click", function() {
 		$(pbody).addClass("popover-top");
 	}
 
-	// Show PopOver
-	$(this).addClass("popover-active");
+	// Show and hide PopOver
 	$(pbody).css("left", spaceleft);
-	$("body").append("<div class='popover-layer'></div>");
+	$(this).addClass("popover-active");
+	$(this).parent().append("<div class='popover-layer'></div>");
 	$(".popover-layer").on("click", function() {
 		$(".has-popover").removeClass("popover-active");
 		$(pbody).removeClass("popover-bottom").removeClass("popover-top").removeClass("arrow-left").removeClass("arrow-right");
