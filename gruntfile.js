@@ -81,7 +81,6 @@ module.exports = function(grunt) {
 		development: {
 			options: {
 				compress: true,
-				yuicompress: true,
 				ieCompat: true
 			},
 			files: {//dest            //source
