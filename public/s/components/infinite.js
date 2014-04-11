@@ -51,7 +51,7 @@
 					fillBelow = (itemsTop + $items.height()) - (viewTop + viewHeight),
 					recycle = [];
 				
-//				console.log("updateItems", viewTop, fillAbove, fillBelow, atTop, atBottom);
+				console.log("updateItems", viewTop, fillAbove, fillBelow, atTop, atBottom);
 				
 				if(fillAbove > fillSpace) {
 					recycle = recycle.concat(remove(fillAbove - fillSpace, "above"));
@@ -105,17 +105,24 @@
 				else if(where == "below") $items.append(els);
 				
 				els.forEach(function(el) {
+<<<<<<< HEAD
 					if(!el.outerHeight) return console.log("el is " ,el);
+=======
+>>>>>>> webby
 					height += el.outerHeight();
 				});
 				
 				if(where == "above") $above.height(Math.max(0, $above.height() - height));
 				else if(where == "below") $below.height(Math.max(0, $below.height() - height));
 				
+<<<<<<< HEAD
 				itemHeight = $items.height() / $items.children().size();
 				console.log("updated itemHeight to", itemHeight);
 				
 //				console.log("added " + els.length + " " + where + " with height ", height, "; " + $items.children().size() + " items.");
+=======
+				console.log("added " + els.length + " " + where + " with height ", height, "; " + $items.children().size() + " items.");
+>>>>>>> webby
 				update();
 			}
 			
@@ -145,7 +152,7 @@
 				else $below.height($below.height() + height);
 				
 				$(itemsToRemove).remove();
-//				console.log("removed " + itemsToRemove.length + " with height ", height , where + "; " + $items.children().size() + " left.");
+				console.log("removed " + itemsToRemove.length + " with height ", height , where + "; " + $items.children().size() + " left.");
 				return itemsToRemove;
 			}
 			
