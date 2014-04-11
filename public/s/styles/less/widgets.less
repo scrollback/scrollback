@@ -55,7 +55,7 @@ input[type=submit], input[type=button] {
     &:disabled { .button-disabled; }
 }
 
-input[type=entry], textarea {
+input[type=entry], input[type=text], textarea {
     .inputs;
 
     &:extend(.entry);
@@ -234,72 +234,68 @@ code {
 
 .popover-body { display: none; }
 
-.popover-active {
-    position: relative;
+.popover-layer {
+    content: "";
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 9;
+}
 
-    .popover-body {
-        position: absolute;
-        display: block;
-        margin: 1em;
-        border-radius: @roundness;
-        font-weight: normal;
-        border: 1px solid darken(@light-color, 20%);
-        background-color: @light-color;
-        color: @dark-color;
-        box-shadow: 0 0 10px fade(@dark-color, 20%);
-        text-transform: none;
-        z-index: 10;
+.popover-active + .popover-body {
+    position: absolute;
+    display: block;
+    margin: 1em;
+    border-radius: @roundness;
+    font-weight: normal;
+    border: 1px solid darken(@light-color, 20%);
+    background-color: @light-color;
+    color: @dark-color;
+    box-shadow: 0 0 10px fade(@dark-color, 20%);
+    text-transform: none;
+    z-index: 10;
 
-        &.popover-top {
-            .slideup;
+    &.popover-top {
+        .slideup;
 
-            bottom: 3em;
+        bottom: 3em;
 
-            &:before {
-                .popover-arrow;
-                .rotate(225deg);
+        &:before {
+            .popover-arrow;
+            .rotate(225deg);
 
-                bottom: -8px;
-            }
-        }
-
-        &.popover-bottom {
-            .slidedown;
-
-            top: 3em;
-
-            &:before {
-                .popover-arrow;
-                .rotate(45deg);
-
-                top: -8px;
-            }
-        }
-
-        &.arrow-left {
-            &:before {
-                left: 1em;
-                right: auto;
-            }
-        }
-
-        &.arrow-right {
-            &:before {
-                left: auto;
-                right: 1em;
-            }
+            bottom: -8px;
         }
     }
 
-    .popover-layer {
-        content: "";
-        display: block;
-        position: fixed;
-        left: 0;
-        top: 0;
-        height: 100%;
-        width: 100%;
-        z-index: 9;
+    &.popover-bottom {
+        .slidedown;
+
+        top: 3em;
+
+        &:before {
+            .popover-arrow;
+            .rotate(45deg);
+
+            top: -8px;
+        }
+    }
+
+    &.arrow-left {
+        &:before {
+            left: 1em;
+            right: auto;
+        }
+    }
+
+    &.arrow-right {
+        &:before {
+            left: auto;
+            right: 1em;
+        }
     }
 }
 
