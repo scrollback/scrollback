@@ -2,25 +2,23 @@
 /* global libsb */
 
 $(function() {
-	$logs = $(".chat-area");
+	var $logs = $(".chat-area");
 
-// TODO: correct the syntax errors
-//	$logs.infinite({
-//	$(".chat-area").infinite({
-//		scrollSpace: 2000,
-//		fillSpace: 500,
-//		getItems: function (index, before, after, callback) {
-//			var els = [], i;
-//
-//			core.emit('getTexts', {time: time, before: before, after: after}, function(err, texts) {
-//				if(err) throw err; // TODO: handle the error properly.
-//
-//				callback(texts.map(function(text) {
-//					return renderChat(null, text);
-//				});
-//			});
-//		}
-//	});
+	$logs.infinite({
+		scrollSpace: 2000,
+		fillSpace: 500,
+		getItems: function (index, before, after, callback) {
+			var els = [], i;
+
+			core.emit('getTexts', {time: time, before: before, after: after}, function(err, texts) {
+				if(err) throw err; // TODO: handle the error properly.
+
+				callback(texts.map(function(text) {
+					return renderChat(null, text);
+				}));
+			});
+		}
+	});
 
 //	libsb.on('text-dn', function(text, next) {
 //		if($logs.data("lower-limit"))
