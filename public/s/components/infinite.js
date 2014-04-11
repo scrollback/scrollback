@@ -50,7 +50,7 @@
 					fillBelow = (itemsTop + $items.height()) - (viewTop + viewHeight),
 					recycle = [];
 				
-//				console.log("updateItems", viewTop, fillAbove, fillBelow, atTop, atBottom);
+				console.log("updateItems", viewTop, fillAbove, fillBelow, atTop, atBottom);
 				
 				if(fillAbove > fillSpace) {
 					recycle = recycle.concat(remove(fillAbove - fillSpace, "above"));
@@ -104,13 +104,13 @@
 				else if(where == "below") $items.append(els);
 				
 				els.forEach(function(el) {
-					height += el.height();
+					height += el.outerHeight();
 				});
 				
 				if(where == "above") $above.height(Math.max(0, $above.height() - height));
 				else if(where == "below") $below.height(Math.max(0, $below.height() - height));
 				
-//				console.log("added " + els.length + " " + where + " with height ", height, "; " + $items.children().size() + " items.");
+				console.log("added " + els.length + " " + where + " with height ", height, "; " + $items.children().size() + " items.");
 				update();
 			}
 			
@@ -118,7 +118,7 @@
 				var itemsToRemove = [], height = 0, els = $items.children(), i, l;
 				
 				function checkAndRemove(el) {
-					var elh = el.height();
+					var elh = el.outerHeight();
 					if(height + elh > pixels) return true;
 					itemsToRemove.push(el[0]); height += elh;
 					return false;
@@ -140,7 +140,7 @@
 				else $below.height($below.height() + height);
 				
 				$(itemsToRemove).remove();
-//				console.log("removed " + itemsToRemove.length + " with height ", height , where + "; " + $items.children().size() + " left.");
+				console.log("removed " + itemsToRemove.length + " with height ", height , where + "; " + $items.children().size() + " left.");
 				return itemsToRemove;
 			}
 			
