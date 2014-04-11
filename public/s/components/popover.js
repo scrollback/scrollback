@@ -11,7 +11,7 @@ $(".has-popover").on("click", function() {
 		spaceabove = $(this).offset().top - $(document).scrollTop(),
 		spacebelow = $(window).height() - spaceabove - pheight;
 
-	if (spaceleft > spaceavail) 	{
+	if (spaceleft > spaceavail) {
 		spaceleft = spaceavail - 28;
 		$(pbody).addClass("arrow-right");
 	} else if (spaceleft < pwidth / 2 ) {
