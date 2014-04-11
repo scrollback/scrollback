@@ -10,7 +10,7 @@ function formatMessage(str) {
 }
 
 function renderChat(el, msg) {
-	el = el || $tempalte.clone(false);
+	el = el || $template.clone(false);
 	
 	el.find('.nick').text(msg.from);
 	el.find('.message').html(formatMessage(msg.text));

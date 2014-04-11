@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
@@ -345,8 +346,11 @@
         <script src="s/lib/pointer.events.polyfill.min.js"></script> <!-- adds pointer events support for old IE -->
         <script> $(function() { PointerEventsPolyfill.initialize({}); }); </script>
 		<script> document.addEventListener("touchstart", function() {}, true); </script> <!-- adds CSS :active styles in Safari -->
-
         <script src="s/lib/transformie.min.js"></script> <!-- adds CSS transforms support in old IE -->
+		
+		<script src="s/lib/bus.js"></script>
+		<script src="s/lib/generate.js"></script>
+		<script src="s/js/mock-libsb.js"></script>
 
 		<script src="s/components/infinite.js"></script>
 		<script src="s/components/popover.js"></script>
