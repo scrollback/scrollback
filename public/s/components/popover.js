@@ -25,9 +25,9 @@ $(".has-popover").on("click", function() {
 	}
 
 	// Show PopOver
-	$(pbody).css("left", spaceleft);
 	$(this).addClass("popover-active");
-	$(this).before("<div class='popover-layer'></div>");
+	$(pbody).css("left", spaceleft);
+	$("body").append("<div class='popover-layer'></div>");
 	$(".popover-layer").on("click", function() {
 		$(".has-popover").removeClass("popover-active");
 		$(pbody).removeClass("popover-bottom").removeClass("popover-top").removeClass("arrow-left").removeClass("arrow-right");
