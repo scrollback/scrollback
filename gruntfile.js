@@ -93,6 +93,11 @@ module.exports = function(grunt) {
 			},
 		},
 	},
+	autoprefixer: {
+		dist: {
+			src: "public/s/styles/less/*.css"
+		},
+	},
   });
 
   // Load the plugin that provides the "uglify" task.
@@ -101,12 +106,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-autoprefixer');
   // Default task(s).
 
   grunt.event.on('watch', function(action, filepath, target) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
-  grunt.registerTask('default', ['uglify', 'concat', 'wrap', 'less']);
+  grunt.registerTask('default', ['uglify', 'concat', 'wrap', 'less', 'autoprefixer']);
 
 
 };
