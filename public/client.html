@@ -11,10 +11,10 @@
 
 		<title>Scrollback team - Scrollback</title>
 
-		<link rel="shortcut icon" href="./s/img/favicon.png" type="image/x-icon" />
+		<link rel="shortcut icon" href="s/img/favicon.png" type="image/x-icon" />
 
 		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
-		<link rel="stylesheet" type="text/css" media="screen" href="./s/styles/less/client.css" />
+		<link rel="stylesheet" type="text/css" media="screen" href="s/styles/less/client.css" />
 
 		<!-- enable HTML5 in IE -->
 		<!--[if lt IE 9]>
@@ -25,7 +25,7 @@
 	<body>
 		<section class="rooms">
 			<div class="scrollback-header">
-				<img src="./s/img/scrollback-small.png" alt="scrollback"/>
+				<img src="s/img/scrollback-small.png" alt="scrollback"/>
 			</div>
 			<ul role="list">
 				<li><a class="search-term" href="">Results for firefox</a></li>
@@ -52,75 +52,75 @@
 			</div>
 			<div role="tabpanel" class="meta-content tab-people current">
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/Adrian.png">
+					<img alt="" src="s/img/avatars/Adrian.png">
 					<span class="people-name">adrian</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/banekoma.png">
+					<img alt="" src="s/img/avatars/banekoma.png">
 					<span class="people-name">banekoma</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/twavatar.jpg">
+					<img alt="" src="s/img/avatars/twavatar.jpg">
 					<span class="people-name">twavatar</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/Steve.jpg">
+					<img alt="" src="s/img/avatars/Steve.jpg">
 					<span class="people-name">steve</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/Stanton.jpeg.jpg">
+					<img alt="" src="s/img/avatars/Stanton.jpeg.jpg">
 					<span class="people-name">stanton</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/space36.png">
+					<img alt="" src="s/img/avatars/space36.png">
 					<span class="people-name">space36</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/Simon.jpg">
+					<img alt="" src="s/img/avatars/Simon.jpg">
 					<span class="people-name">hawkeye</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/Simon.png">
+					<img alt="" src="s/img/avatars/Simon.png">
 					<span class="people-name">john</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/Shane.jpg">
+					<img alt="" src="s/img/avatars/Shane.jpg">
 					<span class="people-name">shane</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/Rik.png">
+					<img alt="" src="s/img/avatars/Rik.png">
 					<span class="people-name">rik</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/Rob.jpg">
+					<img alt="" src="s/img/avatars/Rob.jpg">
 					<span class="people-name">rob</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/Adam.jpg">
+					<img alt="" src="s/img/avatars/Adam.jpg">
 					<span class="people-name">adam</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/Andrew.jpg">
+					<img alt="" src="s/img/avatars/Andrew.jpg">
 					<span class="people-name">andrew</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/Anthony.jpg">
+					<img alt="" src="s/img/avatars/Anthony.jpg">
 					<span class="people-name">anthony</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/wolverine.png">
+					<img alt="" src="s/img/avatars/wolverine.png">
 					<span class="people-name">wolverine1234hh</span>
 				</a>
 				<a class="people" href="">
-					<img alt="" src="./s/img/avatars/Tomek.jpg">
+					<img alt="" src="s/img/avatars/Tomek.jpg">
 					<span class="people-name">tomek</span>
 				</a>
 				<a class="people offline" href="">
-					<img alt="" src="./s/img/avatars/Richy.png">
+					<img alt="" src="s/img/avatars/Richy.png">
 					<span class="people-name">richy</span>
 				</a>
 				<a class="people offline" href="">
-					<img alt="" src="./s/img/avatars/Simon2.jpg">
+					<img alt="" src="s/img/avatars/Simon2.jpg">
 					<span class="people-name">simon</span>
 				</a>
 			</div>
@@ -337,26 +337,29 @@
 		</section>
 
 		<!-- scripts -->
-        <script src="./s/lib/html5shiv.min.js"></script>
-        <script src="./s/lib/pointer.events.polyfill.min.js"></script> <!-- adds pointer events support for old IE -->
+        <script src="s/lib/html5shiv.min.js"></script>
+		<script src="s/lib/jquery.min.js"></script>
+
+        <script src="s/lib/pointer.events.polyfill.min.js"></script> <!-- adds pointer events support for old IE -->
         <script> $(function() { PointerEventsPolyfill.initialize({}); }); </script>
 		<script> document.addEventListener("touchstart", function() {}, true); </script> <!-- adds CSS :active styles in Safari -->
 
-        <script src="./s/lib/transformie.min.js"></script> <!-- adds CSS transforms support in old IE -->
-        <script src="./s/lib/jquery.min.js"></script> <!-- adds CSS transforms support in old IE -->
+        <script src="s/lib/transformie.min.js"></script> <!-- adds CSS transforms support in old IE -->
 
-		<script src="./s/components/infinite.js"></script>
-		<script src="./s/components/popover.js"></script>
-		<script src="./s/components/panel-layout.js"></script>
-		<script src="./s/components/chat.js"></script>
-		<script src="./s/components/chat-area.js"></script>
-		<script src="./s/components/compose.js"></script>
-		<script src="./s/components/meta.js"></script>
-		<script src="./s/components/timeline.js"></script>
-		<script src="./s/components/search.js"></script>
-
-		<!-- this should go in the end as it doesn't work in IE, hence blocking other scripts -->
-		<script>document.addEventListener("touchstart", function() {}, true);</script> <!-- allow styling of CSS :active state in Safari -->
+		<script src="s/components/infinite.js"></script>
+		<script src="s/components/popover.js"></script>
+		<script src="s/components/panel-layout.js"></script>
+		<script src="s/components/chat.js"></script>
+		<script src="s/components/chat-area.js"></script>
+		<script src="s/components/compose.js"></script>
+		<script src="s/components/meta.js"></script>
+		<script src="s/components/timeline.js"></script>
+		<script src="s/components/search.js"></script>
+		
+		<script>
+			if(document.addEventListener)
+				document.addEventListener("touchstart", function() {}, true);
+		</script> <!-- allow styling of CSS :active state in Safari -->
 	</body>
 
 </html>
