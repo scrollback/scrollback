@@ -3,30 +3,31 @@
 
 $(function() {
 	$logs = $(".chat-area");
-	
-	$logs.infinite({
-	$(".chat-area").infinite({
-		scrollSpace: 2000,
-		fillSpace: 500,
-		getItems: function (index, before, after, callback) {
-			var els = [], i;
-			
-			core.emit('getTexts', {time: time, before: before, after: after}, function(err, texts) {
-				if(err) throw err; // TODO: handle the error properly.
-				
-				callback(texts.map(function(text) {
-					return renderChat(null, text);
-				});
-			});
-		}
-	});
-	
+
+// TODO: correct the syntax errors
+//	$logs.infinite({
+//	$(".chat-area").infinite({
+//		scrollSpace: 2000,
+//		fillSpace: 500,
+//		getItems: function (index, before, after, callback) {
+//			var els = [], i;
+//
+//			core.emit('getTexts', {time: time, before: before, after: after}, function(err, texts) {
+//				if(err) throw err; // TODO: handle the error properly.
+//
+//				callback(texts.map(function(text) {
+//					return renderChat(null, text);
+//				});
+//			});
+//		}
+//	});
+
 //	libsb.on('text-dn', function(text, next) {
-//		if($logs.data("lower-limit")) 
+//		if($logs.data("lower-limit"))
 //			$("#logs").addBelow($("<div>").text("New, live text message.").data("index", 42));
 //	})
-	
-	
+
+
 	// --- add classes to body to reflect state ---
 
 	var timeout,
