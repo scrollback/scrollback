@@ -16,9 +16,10 @@
 		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
 		<link rel="stylesheet" type="text/css" media="screen" href="./s/styles/less/client.css" />
 
-		<!-- enable HTML5 in IE -->
+		<!-- enable HTML5 in IE, we need to place it before body -->
 		<!--[if lt IE 9]>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
+		<script>window.html5 || document.write('<script src="./s/lib/html5shiv.min.js"><\/script>')</script>
 		<![endif]-->
 	</head>
 
@@ -338,12 +339,12 @@
 
 		<!-- scripts -->
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="./s/js/jquery.min.js"><\/script>');</script> <!-- use local jQuery if CDN fails -->
+		<script>window.jQuery || document.write('<script src="./s/lib/jquery.min.js"><\/script>');</script>
 
-		<script src="./s/js/pointer.events.polyfill.min.js"></script> <!-- add pointer events support for old IE -->
+		<script src="./s/lib/pointer.events.polyfill.min.js"></script> <!-- add pointer events support for old IE -->
 		<script>$(function() { PointerEventsPolyfill.initialize({}); });</script>
 
-		<script src="./s/js/transformie.min.js"></script> <!-- add CSS transforms support in old browsers -->
+		<script src="./s/lib/transformie.min.js"></script> <!-- add CSS transforms support in old browsers -->
 
 		<script src="./s/components/infinite.js"></script>
 		<script src="./s/components/popover.js"></script>
