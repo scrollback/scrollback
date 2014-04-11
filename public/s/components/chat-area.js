@@ -1,5 +1,5 @@
 /* jshint jquery: true */
-/* global libsb */
+/* global libsb, renderChat */
 
 $(function() {
 	var $logs = $(".chat-area"),
@@ -9,14 +9,13 @@ $(function() {
 		scrollSpace: 2000,
 		fillSpace: 500,
 		itemHeight: 50,
+		startIndex: time,
 		getItems: function (index, before, after, callback) {
-			var els = [], i;
-
-			libsb.getTexts({time: time, before: before, after: after}, function(err, texts) {
+			libsb.getTexts({time: index, before: before, after: after}, function(err, texts) {
 				if(err) throw err; // TODO: handle the error properly.
 
 				callback(texts.map(function(text) {
-					return renderChat(null, text);
+					return text && renderChat(null, text);
 				}));
 			});
 		}
@@ -24,8 +23,9 @@ $(function() {
 
 	libsb.on('text-dn', function(text, next) {
 		if($logs.data("lower-limit"))
-			$("#logs").addBelow($("<div>").text("New, live text message.").data("index", 42));
-	})
+			$("#logs").addBelow(renderChat(null, text));
+		next();
+	});
 
 
 	// --- add classes to body to reflect state ---

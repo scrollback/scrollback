@@ -7,6 +7,7 @@
 		var scrollSpace = options.scrollSpace || 1000,
 			fillSpace = options.fillSpace     || 200,
 			itemHeight = options.itemHeight   || 20,
+			startIndex = options.startIndex,
 			getItems = options.getItems;
 		
 		if(typeof getItems !== 'function') console.error("Infinite scroll requires a getItems callback.");
@@ -50,7 +51,7 @@
 					fillBelow = (itemsTop + $items.height()) - (viewTop + viewHeight),
 					recycle = [];
 				
-				console.log("updateItems", viewTop, fillAbove, fillBelow, atTop, atBottom);
+//				console.log("updateItems", viewTop, fillAbove, fillBelow, atTop, atBottom);
 				
 				if(fillAbove > fillSpace) {
 					recycle = recycle.concat(remove(fillAbove - fillSpace, "above"));
@@ -63,7 +64,7 @@
 				if(fillAbove < fillSpace && !pendingRequests.above && !atTop) {
 					pendingRequests.above = true;
 					getItems(
-						$items.children().eq(0).data("index") || 0,
+						$items.children().eq(0).data("index") || startIndex,
 						Math.ceil((fillSpace - fillAbove)/itemHeight), 0,
 						function(its) {
 							pendingRequests.above = false;
@@ -75,7 +76,7 @@
 				if(fillBelow < fillSpace && !pendingRequests.below && !atBottom) {
 					pendingRequests.below = true;
 					getItems(
-						$items.children().eq(-1).data("index") || 0, 
+						$items.children().eq(-1).data("index") || startIndex, 
 						0, Math.ceil((fillSpace - fillBelow)/itemHeight),
 						function(its) {
 							pendingRequests.below = false;
@@ -104,13 +105,17 @@
 				else if(where == "below") $items.append(els);
 				
 				els.forEach(function(el) {
+					if(!el.outerHeight) return console.log("el is " ,el);
 					height += el.outerHeight();
 				});
 				
 				if(where == "above") $above.height(Math.max(0, $above.height() - height));
 				else if(where == "below") $below.height(Math.max(0, $below.height() - height));
 				
-				console.log("added " + els.length + " " + where + " with height ", height, "; " + $items.children().size() + " items.");
+				itemHeight = $items.height() / $items.children().size();
+				console.log("updated itemHeight to", itemHeight);
+				
+//				console.log("added " + els.length + " " + where + " with height ", height, "; " + $items.children().size() + " items.");
 				update();
 			}
 			
@@ -140,7 +145,7 @@
 				else $below.height($below.height() + height);
 				
 				$(itemsToRemove).remove();
-				console.log("removed " + itemsToRemove.length + " with height ", height , where + "; " + $items.children().size() + " left.");
+//				console.log("removed " + itemsToRemove.length + " with height ", height , where + "; " + $items.children().size() + " left.");
 				return itemsToRemove;
 			}
 			

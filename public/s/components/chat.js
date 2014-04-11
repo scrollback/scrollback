@@ -13,7 +13,8 @@ function renderChat(el, msg) {
 	el = el || $template.clone(false);
 	
 	el.find('.nick').text(msg.from);
-	el.find('.message').html(formatMessage(msg.text));
+	el.find('.message').html(formatMessage(msg.text) + new Date(msg.time).toString());
+	el.data('index', msg.time);
 	
 	return el;
 }
