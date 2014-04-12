@@ -9,7 +9,7 @@ window.libsb = (function() {
 		return {
 			from: 'guest-' + generate.word(8),
 			to: 'testroom',
-			text: generate.paragraph(2),
+			text: generate.paragraph(),
 			time: time
 		};
 	}
@@ -18,6 +18,15 @@ window.libsb = (function() {
 		core.emit('text-dn', text(new Date().getTime()));
 		setTimeout(gotText, 3000 + (Math.random()-0.5)*2*2500);
 	}
+	
+	core.on('text-up', function (text, next) {
+		text.from = 'you';
+		text.time = new Date().getTime();
+		next();
+		core.emit('text-dn', text);
+	});
+	
+	gotText();
 	
 	return {
 		user: {id: 'guest-default', picture: 'http://gravatar.com/avatar/hello?s=48'},
@@ -33,7 +42,7 @@ window.libsb = (function() {
 		on: core.on.bind(core),
 		
 		getTexts: function (query, cb) {
-			var i, l, r=[], now = (new Date()).getTime(), time, MTBT=6000000;
+			var i, l, r=[], now = (new Date()).getTime(), time, MTBT=600000;
 			
 			query.before = query.before || 0;
 			query.after = query.after || 0;

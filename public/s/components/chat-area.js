@@ -1,40 +1,68 @@
 /* jshint jquery: true */
 /* global libsb, renderChat, format */
+/* exported chatArea */
+
+var chatArea = {};
 
 $(function() {
 	var $logs = $(".chat-area"),
+		room = 'testroom', /* replace with room from URL */
 		time = null; /* replace this with the time from the URL, if available. */
-
+	
+	// Set up infinite scroll here.
+	
 	$logs.infinite({
 		scrollSpace: 2000,
 		fillSpace: 500,
 		itemHeight: 50,
 		startIndex: time,
 		getItems: function (index, before, after, callback) {
-			libsb.getTexts({time: index, before: before, after: after}, function(err, texts) {
+			console.log(arguments);
+			libsb.getTexts({
+				to: room, time: index, before: before, after: after
+			}, function(err, texts) {
+				console.log(arguments);
 				if(err) throw err; // TODO: handle the error properly.
-
 				callback(texts.map(function(text) {
 					return text && renderChat(null, text);
 				}));
 			});
 		}
 	});
-
+	
+	// Insert incoming text messages.
+	
 	libsb.on('text-dn', function(text, next) {
 		if($logs.data("lower-limit"))
-			$("#logs").addBelow(renderChat(null, text));
+			$logs.addBelow(renderChat(null, text));
 		next();
 	});
-
+	
+	// The chatArea API.
+	
+	chatArea.setBottom = function(bottom) {
+		var atBottom = ($logs.scrollTop() + $logs.height() == $logs[0].scrollHeight);
+		
+		$logs.css({ bottom: bottom });
+		if(atBottom) $logs.scrollTop($logs[0].scrollHeight);
+	};
+	
+	chatArea.setRoom = function(r) {
+		room = r;
+		$logs.find(".chat").remove();
+		$logs.scroll();
+	};
 
 	// --- add classes to body to reflect state ---
 
 	var timeout,
 		top = $(this).scrollTop();
 
-	$(".chat-area").on("scroll", function() {
-		var cur_top = $(this).scrollTop();
+	$logs.on("scroll", function() {
+		var atBottom = ($logs.scrollTop() + $logs.height() == $logs[0].scrollHeight);
+		var cur_top = $logs.scrollTop();
+		
+		if(atBottom) return;
 
 		if (top < cur_top) {
 			$("body").removeClass("scroll-up").addClass("scroll-down");
@@ -43,7 +71,7 @@ $(function() {
 		}
 
 		top = cur_top;
-
+		
 		$("body").addClass("scrolling");
 
 		if(timeout) clearTimeout(timeout);
@@ -65,7 +93,7 @@ $(function() {
 			}
 		}
 		
-		$(".chat-position").text(format.friendlyTimeRel(time, new Date().getTime()));
+		$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
 		
 	});
 });

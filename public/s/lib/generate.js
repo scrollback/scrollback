@@ -13,7 +13,7 @@ var generate = (function () {
 	
 	function word(n) {
 		var str = '', l, d, ch;
-		if(!n) return '';
+		n = n || 1 + Math.floor(Math.random()*3 + Math.random()*3 + Math.random()*3);
 		if(n == 1) return Math.random()<0.3?'I':'a';
 		while(l = str.length, l < n) {
 			if(l < 2) {
@@ -32,8 +32,9 @@ var generate = (function () {
 	
 	function sentence(n) {
 		var words = [], i;
+		n = n || 4 + Math.floor(Math.random()*10);
 		for(i=0; i<n; i++) words.push(
-			word(1 + Math.floor(Math.random()*3 + Math.random()*3 + Math.random()*3)) +
+			word() +
 			(i<n-1 && Math.random() < 0.1? ',': '')
 		);
 		words[0] = words[0][0].toUpperCase() + words[0].substr(1);
@@ -42,7 +43,8 @@ var generate = (function () {
 	
 	function paragraph(n) {
 		var sentences = [], i;
-		for(i=0; i<n; i++) sentences.push(sentence(4 + Math.floor(Math.random()*10)));
+		n = n || 1 + Math.floor(Math.random()*4);
+		for(i=0; i<n; i++) sentences.push(sentence());
 		return sentences.join(' ');
 	}
 	

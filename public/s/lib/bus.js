@@ -39,7 +39,7 @@ Bus.prototype.emit = function (event, data, cb) {
 	
 	if (listeners) {
 		fire(0);
-	} else {
+	} else if(cb) {
 		cb();
 	}
 };

@@ -15,6 +15,9 @@ function renderChat(el, msg) {
 	el.find('.nick').text(msg.from);
 	el.find('.message').html(formatMessage(msg.text) + new Date(msg.time).toString());
 	el.data('index', msg.time);
+
+	// TODO: add timestamps, add the 'timestamp-displayed' class, add the 'long' class.
+	// TODO: add thread class (for dot color);
 	
 	return el;
 }

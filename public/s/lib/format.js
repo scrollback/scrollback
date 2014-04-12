@@ -1,5 +1,7 @@
+/* exported format */
+
 var format = {
-	friendlyTimeRel: function (time, currTime) {
+	friendlyTime: function (time, currTime) {
 		var d = new Date(parseInt(time, 10)), n = new Date(currTime),
 			day_diff = (n.getTime()-d.getTime())/86400000,
 			weekDays=["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
@@ -21,5 +23,17 @@ var format = {
 
 		return (str? (str + ' at '): '') + d.getHours() + ':' +
 			(d.getMinutes()<10? '0': '') + d.getMinutes();
+	},
+	
+	htmlToText: function(html) {
+		return html.replace(/<[^>]*>/g, function(m) {
+			return (
+				/^<br/.test(m) || /^<p/.test(m) || /^<div/.test(m) || 
+				/^<\/p/.test(m) || /^<\/div/.test(m)
+			)? "\n": ' ';
+		}).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').
+		replace(/&#(\d+);/g, function(m, d) {
+			return String.fromCharCode(d);
+		});
 	}
 };

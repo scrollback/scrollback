@@ -213,7 +213,7 @@
                 }
             }
 
-            &.roomlist {
+            &.rooms-btn {
                 display: none;
 
                 @media @breakpointxxxx {
@@ -382,7 +382,7 @@
         box-shadow: 0 3px 2px -1px fade(@dark-color, 5%);
         z-index: 2;
 
-        .menu {
+        .meta-btn {
             display: none;
 
             @media @breakpointxxx {
@@ -511,9 +511,8 @@
         .opacity(0);
         .ease;
 
-        position: relative;
-        float: right;
-        margin: 1em 2em;
+        position: absolute;
+        top: 59px; right: 10px;
         padding: .5em 1em;
         background-color: @dark-color;
         color: @light-color;
@@ -705,6 +704,7 @@
 .rooms, .meta, .mainview, .chat-input {
     .ease(.3s); /* animate css transforms */
     .flickerfix; /* fix flicker in some browsers */
+	overflow: hidden;
 
     /* we use 3d transformations for GPU accelerated animations */
     .metainview & {
@@ -725,3 +725,5 @@
         @media @breakpointx { .transform(translate3d( ( @roomx + @metax ), 0, 0)); }
     }
 }
+
+.roomlist { position: absolute; top: 49px; left: 0; right: 0; bottom: 0;}

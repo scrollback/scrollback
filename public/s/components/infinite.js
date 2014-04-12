@@ -60,7 +60,7 @@
 				if(fillBelow > fillSpace) {
 					recycle = recycle.concat(remove(fillBelow - fillSpace, "below"));
 				}
-				
+								
 				if(fillAbove < fillSpace && !pendingRequests.above && !atTop) {
 					pendingRequests.above = true;
 					getItems(
@@ -162,8 +162,8 @@
 			
 			$(window).resize(update);
 			
-			
-			update();
+			read();
+			$logs.scrollTop((scrollHeight - viewHeight)/2);
 		});
 	}; /* end $.fn.infinite */
 	
