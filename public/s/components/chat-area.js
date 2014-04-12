@@ -1,5 +1,5 @@
 /* jshint jquery: true */
-/* global libsb, renderChat */
+/* global libsb, renderChat, format */
 
 $(function() {
 	var $logs = $(".chat-area"),
@@ -9,7 +9,6 @@ $(function() {
 		scrollSpace: 2000,
 		fillSpace: 500,
 		itemHeight: 50,
-<<<<<<< HEAD
 		startIndex: time,
 		getItems: function (index, before, after, callback) {
 			libsb.getTexts({time: index, before: before, after: after}, function(err, texts) {
@@ -17,16 +16,6 @@ $(function() {
 
 				callback(texts.map(function(text) {
 					return text && renderChat(null, text);
-=======
-		getItems: function (index, before, after, callback) {
-			var els = [], i;
-
-			libsb.getTexts({time: time, before: before, after: after}, function(err, texts) {
-				if(err) throw err; // TODO: handle the error properly.
-
-				callback(texts.map(function(text) {
-					return renderChat(null, text);
->>>>>>> webby
 				}));
 			});
 		}
@@ -34,12 +23,8 @@ $(function() {
 
 	libsb.on('text-dn', function(text, next) {
 		if($logs.data("lower-limit"))
-<<<<<<< HEAD
 			$("#logs").addBelow(renderChat(null, text));
 		next();
-=======
-			$("#logs").addBelow($("<div>").text("New, live text message.").data("index", 42));
->>>>>>> webby
 	});
 
 
@@ -67,6 +52,21 @@ $(function() {
 			$("body").removeClass("scrolling").removeClass("scroll-up").removeClass("scroll-down");
 			timeout = 0;
 		}, 1000);
+		
+		var chats = $logs.find('.chat'), 
+			time = chats.eq(0).data("index"), 
+			parentOffset = $logs.offset().top,
+			i;
+		
+		for(i=0; i<chats.size(); i++) {
+			if(chats.eq(i).offset().top - parentOffset > 0) {
+				time = chats.eq(i).data("index");
+				break;
+			}
+		}
+		
+		$(".chat-position").text(format.friendlyTimeRel(time, new Date().getTime()));
+		
 	});
 });
 

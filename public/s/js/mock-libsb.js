@@ -33,23 +33,21 @@ window.libsb = (function() {
 		on: core.on.bind(core),
 		
 		getTexts: function (query, cb) {
-			var i, l, r=[], now = (new Date()).getTime(), time;
-			
-			console.log("query", query.time, query.before, query.after);
+			var i, l, r=[], now = (new Date()).getTime(), time, MTBT=6000000;
 			
 			query.before = query.before || 0;
 			query.after = query.after || 0;
 			query.time = query.time || now;
 			query.to = query.to || 'sandbox';
-			time = query.time - (query.before * 3000);
+			time = query.time - (query.before * MTBT);
 			for(i=0, l=query.before + query.after; i<l; i++) {
 				if(time >= now) { r.push(false); break; }
-				if(time < now - 100 * 3000) {
+				if(time < now - 100 * MTBT) {
 					if(r.length === 0) r.push(false);
 					continue;
 				}
-				r.push(text(time + (Math.random()-0.5)*2*2500));
-				time += 3000;
+				r.push(text(time + (Math.random()-0.5)*MTBT*0.9));
+				time += MTBT;
 			}
 			
 			setTimeout(function() { cb(null, r); }, 500);
