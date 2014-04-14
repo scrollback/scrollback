@@ -35,5 +35,12 @@ var format = {
 		replace(/&#(\d+);/g, function(m, d) {
 			return String.fromCharCode(d);
 		});
+	},
+	
+	textToHtml: function (str) {
+		return str.replace('<', '&lt;').replace('>', '&gt;'); // prevent script injection
+
+		// TODO: linkification, emoticons, markdown?
 	}
+
 };

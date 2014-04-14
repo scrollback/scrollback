@@ -203,7 +203,7 @@
                 .search-active & { display: none; }
             }
 
-            &.tab-thisroom, &.tab-allrooms {
+            &.mode-search {
                 display: none;
 
                 .search-active & {
@@ -245,7 +245,7 @@
         }
     }
 
-    .meta-content {
+    .pane {
         .ease;
         .opacity(0);
 
@@ -269,12 +269,12 @@
             z-index: 1; /* fix the content not clickable in some browsers */
         }
 
-        &.tab-info { padding: 1.5em;
+        &.pane-info { padding: 1.5em;
 
             .search-active & { display: none; }
         }
 
-        &.tab-people {
+        &.pane-people {
             padding: .75em;
 
             .person {
@@ -314,46 +314,45 @@
             .search-active & { display: none; }
         }
 
-        &.tab-threads {
+        &.pane-threads {
             .search-active & { display: none; }
-        }
+			
+			.infinite-items {
+				background-color: darken(@light-color, 5%);
+				box-shadow: 0 0 64px 32px darken(@light-color, 5%);
+			}
+			
+			.thread {
+				.ease;
 
-        &.tab-thisroom, &.tab-allrooms {
-            display: none;
+				display: block;
+				padding: .5em 2em;
+				font-weight: 400;
+				color: @dark-color;
+				border-right: 4px solid @accent-color;
 
-            .search-active & { display: block; }
-        }
+				&.current { background-color: lighten(@accent-color, 25%); }
 
-        .thread {
-            .ease;
+				&:hover, &.current:hover {
+					background-color: @accent-color;
+					color: @light-color;
+				}
 
-            display: block;
-            padding: .5em 2em;
-            font-weight: 400;
-            color: @dark-color;
-            border-right: 4px solid @accent-color;
+				/* set different colors for conversations */
+				.-(@i: 0) when (@i < 10) {
+					@color: ~"color@{i}";
 
-            &.current { background-color: lighten(@accent-color, 25%); }
+					&.conv-@{i} {
+						border-right-color: @@color;
 
-            &:hover, &.current:hover {
-                background-color: @accent-color;
-                color: @light-color;
-            }
+						&.current { background-color: lighten(@@color, 25%); }
 
-            /* set different colors for conversations */
-            .-(@i: 0) when (@i < 10) {
-                @color: ~"color@{i}";
+						&:hover, &.current:hover { background-color: @@color; }
+					}
 
-                &.conv-@{i} {
-                    border-right-color: @@color;
-
-                    &.current { background-color: lighten(@@color, 25%); }
-
-                    &:hover, &.current:hover { background-color: @@color; }
-                }
-
-                .-((@i + 1));
-            } .-;
+					.-((@i + 1));
+				} .-;
+			}
         }
     }
 }
@@ -512,7 +511,7 @@
         .ease;
 
         position: absolute;
-        top: 59px; right: 10px;
+        top: @bar-height + 1em; right: 1em;
         padding: .5em 1em;
         background-color: @dark-color;
         color: @light-color;
@@ -621,26 +620,37 @@
                     &:focus, &:hover, &:active { color: darken(@dark-color, 10%); }
                 }
             }
+			
+			.timestamp {
+//				display: none;
+				position: absolute; bottom: 0; right: 2.5em;
+				font-size: .8em; line-height: 1em;
+				color: darken(@light-color, 10%);
+			}
+			
+			&.showtimestamp .timestamp {
+				display: block;
+			}
         }
-
-        .timestamp {
-            .zigzag(darken(@light-color, 3%); @light-color; top);
-
-            width: 100%;
-            text-align: center;
-            font-style: italic;
-            font-size: .75em;
-            padding-top: .75em;
-            padding-bottom: .25em;
-            margin: 0;
-
-            & + .chat {
-                .zigzag(@light-color; darken(@light-color, 3%); top);
-
-                border-top: none;
-                padding-top: 2em;
-            }
-        }
+//
+//        .timestamp {
+//            .zigzag(darken(@light-color, 3%); @light-color; top);
+//
+//            width: 100%;
+//            text-align: center;
+//            font-style: italic;
+//            font-size: .75em;
+//            padding-top: .75em;
+//            padding-bottom: .25em;
+//            margin: 0;
+//
+//            & + .chat {
+//                .zigzag(@light-color; darken(@light-color, 3%); top);
+//
+//                border-top: none;
+//                padding-top: 2em;
+//            }
+//        }
     }
 }
 

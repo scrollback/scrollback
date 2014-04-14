@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, format, chatArea, libsb */
+/* global $, format, textArea, libsb */
 
 $(function() {
 	var $entry = $(".chat-entry"),
@@ -16,7 +16,7 @@ $(function() {
 			libsb.emit('text-up', {text: text});
 		}
 		setTimeout(function() {
-			chatArea.setBottom($input.outerHeight());
+			textArea.setBottom($input.outerHeight());
 		}, 0);
 	});
 });

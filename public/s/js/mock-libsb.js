@@ -5,14 +5,25 @@
 window.libsb = (function() {
 	var core = new Bus();
 	
-	function text(time) {
-		return {
-			from: 'guest-' + generate.word(8),
-			to: 'testroom',
-			text: generate.paragraph(),
-			time: time
-		};
-	}
+	function text(time) { return {
+		from: 'guest-' + generate.word(8),
+		to: 'testroom',
+		text: generate.paragraph(),
+		threads: [{
+			id: generate.guid(31) + Math.floor(Math.random() * 10),
+			title: generate.sentence(3),
+			score: Math.random()
+		}],
+		time: time
+	};}
+	
+	function thread(time) { return {
+		id: generate.guid(31) + Math.floor(Math.random() * 10),
+		to: generate.word(8),
+		title: generate.sentence(3),
+		startTime: time,
+		endTime: null
+	};}
 	
 	function gotText() {
 		core.emit('text-dn', text(new Date().getTime()));
@@ -50,18 +61,33 @@ window.libsb = (function() {
 			query.to = query.to || 'sandbox';
 			time = query.time - (query.before * MTBT);
 			for(i=0, l=query.before + query.after; i<l; i++) {
-				if(time >= now) { r.push(false); break; }
-				if(time < now - 100 * MTBT) {
-					if(r.length === 0) r.push(false);
-					continue;
+				if(time >= now) break;
+				if(time >= now - 100 * MTBT) {
+					r.push(text(time + (Math.random()-0.5)*MTBT*0.9));
 				}
-				r.push(text(time + (Math.random()-0.5)*MTBT*0.9));
 				time += MTBT;
 			}
 			
 			setTimeout(function() { cb(null, r); }, 500);
 		},
-		getLabels: function (query, cb) {},
+		getThreads: function (query, cb) {
+			var i, l, r=[], now = (new Date()).getTime(), time, MTBT=6000000;
+			
+			query.before = query.before || 0;
+			query.after = query.after || 0;
+			query.time = query.time || now;
+			query.to = query.to || 'sandbox';
+			time = query.time - (query.before * MTBT);
+			for(i=0, l=query.before + query.after; i<l; i++) {
+				if(time >= now) break;
+				if(time >= now - 10 * MTBT) {
+					r.push(thread(time + (Math.random()-0.5)*MTBT*0.9));
+				}
+				time += MTBT;
+			}
+			
+			setTimeout(function() { cb(null, r); }, 500);			
+		},
 		getOccupants: function (rid, cb) {},
 		getMembers: function (rid, cb) {},
 		getRooms: function (query, cb) {},

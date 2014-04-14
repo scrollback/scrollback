@@ -4,29 +4,12 @@
 $(function() {
 	'use strict';
 
-	// Handle tabs
-	var tabs = [];
-	
-	// Handle tabs
-	$(".tabs > li").each(function() {
-		var classlist = $(this).attr("class").split(/ +/);
-
-		for (var i = 0; i < classlist.length; i++) {
-			if (classlist[i].length > 0 && classlist[i].match(/^tab-([a-z]+)$/)) {
-				tabs.push(classlist[i]);
-			}
-		}
-	});
-
-	$(".tabs > li").on("click", function() {
-		if (!$(this).hasClass("notab")) {
-			for (var i = 0; i < tabs.length; i++) {
-				if ($(this).hasClass(tabs[i])) {
-					$("." + tabs[i]).addClass("current");
-				} else {
-					$("." + tabs[i]).removeClass("current");
-				}
-			}
-		}
+	$(".tab").on("click", function() {
+		var tab = $(this).attr("class").match(/\btab-([a-z]+)\b/);
+		if(!tab) return;
+		tab = tab[1]; // match returns an array with the capture groups starting at index 1.
+		
+		$(".tab, .pane").removeClass("current");
+		$(".tab-" + tab + ", .pane-" + tab).addClass("current");
 	});
 });

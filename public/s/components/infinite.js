@@ -112,7 +112,7 @@
 				if(where == "above") $above.height(Math.max(0, $above.height() - height));
 				else if(where == "below") $below.height(Math.max(0, $below.height() - height));
 				
-				itemHeight = $items.height() / $items.children().size();
+				itemHeight = ($items.height() / $items.children().size()) || itemHeight; // dont change if it would become zero.
 				
 //				console.log("added " + els.length + " " + where + " with height ", height, "; " + $items.children().size() + " items.");
 				update();

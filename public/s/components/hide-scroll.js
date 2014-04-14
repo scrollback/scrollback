@@ -14,6 +14,6 @@ $(function() {
 	css({ overflowY: "scroll", right: "-="+swy }).
 	scroll(function() {
 	}).
-	mousemove(function(){
+	mousemove(function() {
 	});
 });
