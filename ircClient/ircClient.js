@@ -14,6 +14,8 @@ module.exports.sendRawMessage = sendRawMessage;
 module.exports.whois = whois;
 module.exports.rename = rename;
 module.exports.newNick = newNick;
+module.exports.partUser = partUser;
+module.exports.getCurrentState = getCurrentState;
 module.exports.init = function init(coreObj) {
 	core = coreObj;
 };
@@ -126,10 +128,12 @@ function connectUser(room, nick, options, cb) {
 			if(!servNick[client.opt.server]) servNick[client.opt.server] = {};	
 			servNick[client.opt.server][client.nick] = {nick: client.sbNick, dir: "out"};
 		});
-		client.on('part', function(channel, nick, reason, message) {//TODO test disconnection 
+		client.on('part', function(channel, nk, reason, message) {
+			
 			if (client.opt.channels.length === 0) {
+				console.log("part channel", nick);
 				client.disconnect();
-				delete clients[nick][client.opt.server];	
+				delete clients[nick][client.opt.server];//TODO some cleanup needed?	
 			}
 		});
 	}
@@ -269,25 +273,28 @@ function onLeave(client) {
 }
 
 function left(client, channels, nick) {
-	//TODO disconnect bot from server if not more channels.
+	var sbUser = servNick[client.opt.server][nick];
 	if (servNick[client.opt.server]) {
 		delete servNick[client.opt.server][nick];
 	}
-	channels.forEach(function(channel) {
-		var index = servChanProp[client.opt.server][channel].users.indexOf(nick);
-		if(index > -1) servChanProp[client.opt.server][channel].users.splice(index, 1);
-		servChanProp[client.opt.server][channel].rooms.forEach(function(room) {
-			if(!room.params.pending) {
-				core.emit("data", {
-					type: "away",
-					to: room.id,
-					from: nick,
-					room: room
-				});
-			}
+	
+	if (sbUser && sbUser.dir === "in") {
+		channels.forEach(function(channel) {
+			var index = servChanProp[client.opt.server][channel].users.indexOf(nick);
+			if(index > -1) servChanProp[client.opt.server][channel].users.splice(index, 1);
+			servChanProp[client.opt.server][channel].rooms.forEach(function(room) {
+				if(!room.params.pending) {
+					core.emit("data", {
+						type: "away",
+						to: room.id,
+						from: sbNick,
+						room: room
+					});
+				}
+			});
+			
 		});
-		
-	});
+	}
 }
 /************************** user left *****************************************/
 
@@ -324,9 +331,7 @@ function onNick(client) {
 				delete renameCallback[oldNick][client.opt.server];
 			});
 		}
-		left(client, channels, oldNick);
-		
-		
+		left(client, channels, oldNick);	
 	});
 }
 
@@ -388,6 +393,27 @@ function rename(oldNick, newNick) {//change nick in every server for that user.
 	delete clients[oldNick];
 }
 
+/**
+ * away message from user
+ * @param roomId ID of room.
+ * @param {nick} nick user's unique nick
+ */
+function partUser(roomId, nick) {
+	console.log("rooms", rooms, "roomId:", roomId, " nick", nick);
+	var room = rooms[roomId];
+	console.log(room);
+	var client = clients[nick][room.params.irc.server];
+	client.part(room.params.irc.channel);
+}
+
+function getCurrentState(callback) {
+	callback({//state 
+		rooms: rooms,
+		//server nick --> nick
+		servChanProp: servChanProp,
+		allUsers: servNick//["All users that are comming from IRC"]
+	});
+}
 
 /************************************ update servChanNick *************************/
 

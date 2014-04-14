@@ -58,13 +58,6 @@ core.on('object', function(obj) {
 		case 'say':
 			ircClient.say(obj.message);
 			break;
-		case 'part':
-			ircClient.part(obj.server, obj.channel);
-			break;
-		case 'partUser':
-			ircClient.partUser(obj.server, obj.nick, obj.channel);
-			break;
-		
 		case 'rename':
 			ircClient.rename(obj.oldNick, obj.newNick);
 			break;
@@ -78,6 +71,15 @@ core.on('object', function(obj) {
 			break;
 		case 'newNick'://new scrollback nick for IRC nick.
 			ircClient.newNick(obj.room, obj.nick, obj.sbNick);
+			break;
+		case 'partUser':
+			console.log("room id", obj.roomId);
+			ircClient.partUser(obj.roomId, obj.nick);
+			break;
+		case 'getCurrentState':
+			ircClient.getCurrentState(function(state) {
+				writeObject({type: 'callback', uid: obj.uid, state: state});
+			});
 	}
 	
 });
