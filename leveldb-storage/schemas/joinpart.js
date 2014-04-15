@@ -2,26 +2,28 @@ var log = require("../../lib/logger.js");
 module.exports = function(types) {
 	return {
 		put : function(data, cb) {
-			types.joinpart.put(data, function() {
-				if(!data.room.id) {
-					data.room ={id:data.to[0], type: "room",params:{}};
-					types.rooms.put(data.room, link);
-				}else{
-					link();
-				}
-				function link() {
-
-					if(data.role == "none"){
-						types.rooms.unlink(data.room.id, 'hasMember', data.user.id);
-					}else{
-						types.rooms.link(data.room.id, 'hasMember', data.user.id, {
-							role: data.role || "none",
-							time: data.time
-						});
-							
+			var linkData = {}. joinMessage = {
+				//add only the relavant properties. dont add the user or room object here...
+			}
+			types.joinpart.put(data, function() {				
+				if(data.type == "join") {
+					linkData.roleSince = new Date().getTime();
+						
+					if(data.role == "follow_requested" || data.requestedRole) {
+						linkData.transitionType = "request";
+						linkData.transitionRole =  data.requestedRole || "follower";
+						linkData.transitionBy = "";
+						linkData.transitionMessage = data.text || "";
+					}else {
+						linkData.role = "follower";
 					}
-					cb();
+				} else if(data.type == "part") {
+					linkData.role = "none";
+					/*types.rooms.unlink(data.room.id, 'hasMember', data.user.id, function(err, data) {
+					});*/
 				}
+				types.rooms.link(data.room.id, 'hasMember', data.user.id, linkData);
+				cb();
 			});
 		}
 	}

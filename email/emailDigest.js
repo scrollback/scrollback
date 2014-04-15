@@ -90,19 +90,26 @@ function trySendingToUsers() {
 				//get rooms that user is following...
 				if (!rooms) {
 					log("getting rooms that user is following....");
-					core.emit("members",{user: username},function(err,following) {//TODO use getMembers and get only rooms from DB
-						if (err) {
+
+					core.emit("getRooms", {hasMember: username}, function(err, rooms) {
+						if(err || !data) {
 							log("error in getting members information" , err);
 							return;
 						}
-						log("username ", username ," is following rooms ", following);
+
+						if(!data.results || !data.results.length) {
+							log("username ", username ," is not following any rooms ");	
+							return;
+						}
 						rooms = [];
-						following.forEach(function(r) {
+						following.results.forEach(function(r) {
 							rooms.push(r.room);
 						});
+
 						prepareEmailObject(username, rooms, lastSent, function(err, email) {
 							if (!err) sendMail(email);
 						});
+
 					});
 				}else {
 					prepareEmailObject(username, rooms, lastSent, function(err, email) {
@@ -357,11 +364,12 @@ function deleteMentions(username , rooms) {
  *@param {object} Email Object
  */
 function sendMail(email) {
-	core.emit("rooms", {id: email.username, fields:["accounts"]}, function(err,rooms) {//TODO user getRooms...
-		log("accounts " ,rooms);
-		if (rooms && rooms[0].accounts) {
-			rooms[0].accounts.forEach(function(e) {
-				log("accounts " ,rooms[0].accounts  , e);
+	core.emit("getUsers", {id: email.username}, function(err, data) {
+		var mailAccount;
+		if (rooms && rooms[0] && rooms[0].identities) {
+			mailAccount = rooms[0].identities;
+
+			mailAccount.forEach(function(e) {
 				if (e.id.indexOf("mailto:") === 0) {
 					email.emailId = e.id.substring(7);
 					var html;

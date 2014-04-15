@@ -1,50 +1,48 @@
-var users = [];
 describe('Testing "BACK and away" Action.', function() {
-	// describe('Testing "BACK" Action.', function() {});
-	describe('Basic test', function() {
-		describe.only('Validation text', function() {
+	var users = [];
+	describe('Testing "BACK" Action.', function() {
+		describe('Validation text', function() {
 			var sessionID = "t2crn8fyb9s7vwdiqml3rsti1bwed1xg";
 			users.push(sessionID);
-			it('No To property in back', function(done) {
+
+			it('when no To property in back', function(done) {
 				getConnection(sessionID, function(c) {
 					var guid, connection = c;
 					guid = generate.uid();
-					users.push(connection.session);
-					console.log("Got connection......", connection.emit);
 					connection.emit({
 						id: guid,
 						type: "back"
 					}, function(data) {
-						console.log("callback of back event");
-						if(data.id == guid && !data.error){
+						if(data.id == guid && data.type !== "error") {
 							throw new Error("Error Not Thrown");
 						}else{
-							assert.equal(data.error, "ERR_NO_TO_PROPERTY", "Error message is incorrect");
-							done();
-						}
-					});
-				});	
-			});
-			it.skip('No To property in away', function(done) {
-				getConnection(sessionID, function(c) {
-					var guid, connection = c;
-					guid = generate.uid();
-					users.push(connection.session);
-					connection.emit({
-						id: guid,
-						type: "back"
-					}, function(data) {
-						if(data.id == guid && !data.error){
-							throw new Error("Error Not Thrown");
-						}else{
-							assert.equal(data.error, "ERR_NO_TO_PROPERTY", "Error message is incorrect");
+							assert.equal(data.message, "INVALID_ROOM", "Error message is incorrect");
 							done();
 						}
 					});
 				});	
 			});
 
-			it.skip('No ID and time property in back', function(done) {
+			it('No To property in away', function(done) {
+				getConnection(sessionID, function(c) {
+					var guid, connection = c;
+					guid = generate.uid();
+					users.push(connection.session);
+					connection.emit({
+						id: guid,
+						type: "away"
+					}, function(data) {
+						if(data.id == guid && data.type !== "error") {
+							throw new Error("Error Not Thrown");
+						}else{
+							assert.equal(data.message, "INVALID_ROOM", "Error message is incorrect");
+							done();
+						}
+					});
+				});	
+			});
+
+			it('No ID and time property in back', function(done) {
 				getConnection(users[0], function(c) {
 					var guid, connection = c;
 					guid = generate.uid();
@@ -53,7 +51,7 @@ describe('Testing "BACK and away" Action.', function() {
 						type: "back",
 						to: "scrollback"
 					}, function(data){
-						if(data.id == guid && !data.error) {
+						if(data.id == guid && data.type !== "error") {
 							done();
 						}else{
 							throw new Error("Error Thrown");
@@ -61,7 +59,8 @@ describe('Testing "BACK and away" Action.', function() {
 					});
 				})
 			});
-			it.skip('No ID and time property in away', function(done) {
+
+			it('No ID and time property in away', function(done) {
 				getConnection(users[0], function(c) {
 					var guid, connection = c;
 					guid = generate.uid();
@@ -70,7 +69,7 @@ describe('Testing "BACK and away" Action.', function() {
 						type: "away",
 						to: "scrollback"
 					}, function(data){
-						if(data.id == guid && !data.error) {
+						if(data.id == guid && data.type !== "error") {
 							done();
 						}else{
 							throw new Error("Error Thrown");
@@ -80,33 +79,41 @@ describe('Testing "BACK and away" Action.', function() {
 			});
 		});
 
-
 		describe('Texting echo of back messages.', function() {
 			var connection;
-			/*afterEach(function(done) {
-				connection.emit({
-					id: generate.uid(),
-					type: "away",
-					to:"scrollback"
-				}, function(){
-					done();	
-				});
-			});	*/
-			it('Sending back for user1 on scrollback and expecting back', function(done) {
+			it('Sending back for user1 on scrollback and expecting back on user0', function(done) {
+
 				getConnection(users[0], function(c) {
-					var guid, connection = c;
+					var guid, guid2, connection = c;
 					guid = generate.uid();
-					connection1.onAction = function(data) {
-						
+					guid2 = generate.uid();
+					c.onAction = function(data) {
+						console.log(data);
+						if(data.id == guid2) done();
 					};
+					console.log("sending back on user0");
 					connection.emit({
 						id: guid,
 						type: "back",
-						to: "scrollback"
+						to: "scrollbackteam"
 					}, function(data){
-						if(data.id == guid && data.error){
-							throw new Error("Error Thrown");
-						}
+						var x = generate.uid();
+						console.log("got back on user0", x);
+						getConnection(x , function(c) {
+							var guid, connection = c;
+							users.push(c.session);
+							console.log("got emitting back on user1");
+							connection.emit({
+								id: guid,
+								type: "back",
+								to: "scrollbackteam"
+							}, function(data){
+								console.log("got back");
+								if(data.id == guid && data.error){
+									throw new Error("Error Thrown");
+								}
+							});
+						});
 					});
 				});
 			});
@@ -205,59 +212,8 @@ describe('Testing "BACK and away" Action.', function() {
 			});
 			
 		});
-
-		describe('Authourizor test', function(){
-
-		});
 	});
 });
 
 
 
-/* Doi, thats a weird function name. */
-function getConnection(session, callback) {
-	var socket = new SockJS(scrollback.host + '/socket'), initDone = false;
-	socket.resource = generate.uid();
-	var callbacks = {};
-	var guid = generate.uid();
-	socket.emit = function(action, c) {
-		callbacks[action.id] = c;
-		socket.send(JSON.stringify(action));
-	};
-	socket.onopen = function() {
-		constructObject(socket);
-	};
-	function constructObject(socket) {
-		socket.onmessage = function(data) {
-			data = cleanData(data.data);
-			if(data.type === "init" && !initDone && data.id == guid){
-				initDone = true;
-				socket.session = data.session;
-				callback(socket);
-			}else{
-				callbacks[data.id] && callbacks[data.id](data);
-			}
-			if(socket.onAction) socket.onAction(data);
-		};
-		socket.send(JSON.stringify({
-			id: guid,
-			type:"init",
-			time:new Date().getTime(),
-			session: session || generate.uid(),
-			resource: socket.resource
-		}));	
-	}
-}
-
-
-
-function cleanData(data){
-	try{
-		if(typeof data == "string"){
-			data = JSON.parse(data);
-		}
-	}catch(e){
-		data = null;
-	}
-	return data;
-}

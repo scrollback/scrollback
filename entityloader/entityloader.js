@@ -5,13 +5,7 @@ var uid = require('../lib/generate.js').uid;
 
 /* list of event that the basic validation function is called for.*/
 var core, events = ['text', 'edit', 'join', 'part', 'away', 'admit', 'expel', 'room'];
-/* if few more validtion is to be added for to any event add it to this list. eq:
-	var handlers = {
-		'init': function(action, callback){
-			callback();
-		}
-	};
-*/
+
 var handlers = {
 	init: function(action, callback) {
 		var wait = true, isErr = false;
@@ -57,9 +51,24 @@ var handlers = {
 			}
 			callback();
 		});
-	}
+	},
+	admit: loadVictim,
+	expel: loadVictim
 };
 
+function loadVictim(action, callback){
+	if(action.ref){
+		core.emit("getUsers", {ref: action.ref, session.action.session}, function(err, data){
+			if(err || !data || !data.resulats || !data.results.length) {
+				return callback(new Error("user "+action.ref+ " not found"));
+			}
+
+			action.victim = data.results[0];
+		});
+	}else{
+		callback();
+	}
+}
 module.exports = function(c) {
 	core = c;
 	events.forEach(function(event) {
@@ -105,28 +114,32 @@ module.exports = function(c) {
 		}
 		core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
 			if(err || !data || !data.results || !data.results.length) {
-				
 				return initializerUser(action, function() {
 					if(action.suggestedNick) action.user.nickAssigned = true;
-					done();
+					return done();
 				});
+			}else {
+				action.user = data.results[0];
 			}
-			if(action.suggestedNick && action.from != action.suggestedNick && /^guest-/.test(action.from) && !data.results[0].nickAssigned) {
+
+			if(action.suggestedNick && /^guest-/.test(action.user.id) && !data.results[0].nickAssigned) {
 				return initializerUser(action, function() {
 					action.user.isSuggested = true;
-					done();
+					return done();
 				});	
 			}
-			if(action.ref && /^guest-/.test(data.results[0].id)) {
+			else if(action.ref && /^guest-/.test(data.results[0].id)) {
 				core.emit("getUsers",{id: uid(), ref: action.ref, session: action.session}, function(err, data) {
 					if(err || !data || !data.resutls || !data.results.length) {
 						return callback(new Error("NICK_TAKEN"));
 					}else {
 						initializerUser(action, function() {
-							callback();
+							done();
 						});
 					}
 				});
+			}else{
+				done();
 			}
 		});	
 	}, "loader");
@@ -136,7 +149,7 @@ module.exports = function(c) {
 function loadUser(action, callback) {
 	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
 		if(err || !data || !data.results || !data.results.length) {
-			callback(new Error("USER_NOT_INITED"));
+			return callback(new Error("USER_NOT_INITED"));
 		}else {
 			action.from = data.results[0].id;
 			if(action.type == "user") {

@@ -17,6 +17,7 @@ function onInit(payload, callback) {
 
 function fbAuth(action, callback) {
 	if(action.auth && action.auth.facebook) {
+		console.log("init5");
 		request("https://graph.facebook.com/oauth/access_token?client_id="+config.facebook.client_id+
 		"&redirect_uri=https://"+config.http.host+"/r/facebook/return"+
 		"&client_secret="+config.facebook.client_secret+
@@ -55,8 +56,10 @@ function fbAuth(action, callback) {
 				});
 			}
 		});
+	}else {
+		callback();
 	}
-}x
+}
 
 function handlerRequest(req, res, next) {
 	var path = req.path.substring(12);

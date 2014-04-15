@@ -6,100 +6,116 @@ module.exports = function (types) {
 	var user = types.users;
 
 	return{
-		getUser: function(query, cb) {		
-			var gateway, eqArray = [];	
-			if(query.ref && query.ref != 'me'){
-				user.get(query.ref, function(err, res) {
-					if(!res) return cb(true, []);
-					cb(true, [res]);
-				});	
-			}else if(query.memberOf) {
-				user.get({by: 'memberOf', eq: [query.memberOf]}, function(err, res){
-					cb(true, res);
-				});
-			}else if(query.occupantOf) {
-				cb();
-			}else if(query.identity){
-				gateway = query.identity.split(":");
-				eqArray.push(gateway[0]);
-				if (gateway[1]) {
-					eqArray.push(gateway[1]);
-				}
-				user.get({by: 'gatewayIdentity', eq: eqArray}, function(err, res){
-					cb(true, res);
+		getUsers: function(query, cb) {		
+			var gateway, eqArray = [], req={};
+			if(query.result) return callback();
+
+			if(query.memberOf) {
+				req.by = "memberOf";
+				req.eq = [];
+				req.eq.push(query.memberOf);
+
+				if(query.ref) req.eq.push(query.ref);
+
+			}else if(query.ref && query.ref != 'me') {
+				//getting use by ids
+				return user.get(query.ref, function(err, res) {
+					if(err || !res) return cb();
+					query.results = [res];
+					cb();
 				});
 			}
-		},
-		getRoom: function(query, cb) {
-			var gateway, eqArray = [];
-			if(query.id){
-				room.get(query.id, function(err, res){
-					if(!res) return cb(true, []);
-					cb(true, [res]);
-				});	
-			}else if(query.hasMember) {
-				room.get({by: 'hasMember', eq: [query.hasMember]}, function(err, res){
-					cb(true, res);
-				});
-			}else if(query.hasOccupant) {
-				cb();
-			}else if (query.identity) {
+
+			if(query.identity) {
+				req.by = "gatewayIdentity";
+
 				gateway = query.identity.split(":");
-				eqArray.push(gateway[0]);
-				if (gateway[1]) {
-					eqArray.push(gateway[1]);
-				}
-				room.get({by: 'gatewayIdentity', eq: eqArray}, function(err, res){
-					cb(true, res);
-				});
+				req.eq.push(gateway[0]);
+
+				if (gateway[1]) req.eq.push(gateway[1]);
 			}
+			user.get(req, function(err, res) {
+				query.results = res;
+				cb();
+			});
 		},
-		put: function(data, cb) {
-			var owner = data.owner, createdOn;
-			var currentTime = new Date().getTime();
-			if(data.old){
-				createdOn = data.old.createdOn;
+		getRooms: function(query, cb) {
+			var gateway, eqArray = [], req={};
+
+			if(query.result) return callback();
+
+			if(query.hasMember) {
+				req.by = "hasMember";
+				req.eq = [];
+				req.eq.push(query.hasMember);
+				if(query.ref) req.eq.push(query.ref);
+			}else if(query.ref && query.ref != 'me') {
+
+				return room.get(query.ref, function(err, res) {
+					if(err || !res) return cb();
+					query.results = [res];
+					cb();
+				});
+
+			}else if(query.identity) {
+				req.by = "gatewayIdentity";
+				gateway = query.identity.split(":");
+				req.eq.push(gateway[0]);
+				if (gateway[1]) req.eq.push(gateway[1]);
 			}else{
+				return callback();
+			}
+
+			room.get(req, function(err, res) {
+				query.results = res;
+				cb();
+			});
+		},
+		put: function(action, cb) {
+			var type = action.type;
+			
+			var data = action[type];
+
+			var createdOn, timezone;
+
+			if(action.old) {
+				createdOn = action.old.createdOn;
+			}else {
 				createdOn = new Date().getTime();
 			}
+
 			var newRoom = {
 				id: data.id,
 				description: data.description,
 				createdOn: createdOn,
 				type: data.type,
 				picture: data.picture,
-				timezone:0,
 				identities: [],
 				params: data.params,
-				accounts: data.accounts
-			}
+			};
 			
 			if (data.identities) {
 				newRoom.identities = data.identities
 			}
 
-			if(data.accounts) {
-				data.accounts.forEach(function(account) {
-					newRoom.identities.push(account.id);
+			if(action.type === "user") {
+				user.put(newRoom, function(err, res) {
+					return cb(err);
+				});
+			}else {
+				room.put(newRoom, function(err, res) {
+					if(!data.old) {
+						types.rooms.link(data.id, 'hasMember', action.user.id, {
+							role: "owner",
+							roleSince: new Date().getTime()
+						}, function(err, res) {
+							cb(err, data);
+						});
+					}else {
+						cb(err, data);
+					}
 				});
 			}
-			if(data.type === "user") {
-				user.put(newRoom, function(err, res) {
-					cb(err, data);
-				});	
-			} 
-			else room.put(newRoom, function(err, res) {
-				if(!data.old) {
-					types.rooms.link(data.id, 'hasMember', owner, {
-						role: "owner",
-						time: new Date().getTime()
-					}, function(err, res) {
-						cb(err, data);
-					});
-				}else {
-					cb(err, data);
-				}
-			});
 		}
 	}
 };

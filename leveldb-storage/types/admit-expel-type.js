@@ -1,7 +1,7 @@
 var config = require("../../config.js");
 
 module.exports = function(store) {
-	return store.defineType('texts',{
+	return store.defineType('admitexpel',{
 		indexes: {
 			totimerole: function (text, emit) {
 				/*	time is stored in negative order because most searches

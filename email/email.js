@@ -19,7 +19,6 @@ module.exports = function(coreObject) {
     emailDigest.init();
 	if (config.email && config.email.auth) {
 		core.on('text', function(message, callback) {
-			log("Heard \"message\" event", message);
 			callback();
 			if(message.type === "text"){
 				addMessage(message);

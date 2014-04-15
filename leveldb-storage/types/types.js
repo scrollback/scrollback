@@ -15,8 +15,8 @@ module.exports = function(db) {
 	db.defineLink({"hasMember":users, "memberOf": rooms}, {
 		indexes: {
 			roleTime: function(data, emit) {
-				emit(data.role,data.time);
-			},
+				emit(data.role,data.roleSince);
+			}
 		}
 	});
 	
@@ -28,13 +28,13 @@ module.exports = function(db) {
 		}
 	});
 
-	db.defineLink({"hasOccupant":users, "occupantOf": rooms}, {
-		indexes: {
-			time: function(data, emit) {
-				emit(data.time);
-			}
-		}
-	});
+	// db.defineLink({"hasOccupant":users, "occupantOf": rooms}, {
+	// 	indexes: {
+	// 		time: function(data, emit) {
+	// 			emit(data.time);
+	// 		}
+	// 	}
+	// });
 
 	return {
 		texts: texts,
