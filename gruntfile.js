@@ -22,6 +22,13 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
+	browserify : {
+		dist: {
+			files: {
+				'public/libsb.bundle.js' : ['libsb.js']
+			}
+		}
+	},
     uglify: {
 		options: {
 			report: 'min'
@@ -94,12 +101,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-browserify');
   // Default task(s).
   
   grunt.event.on('watch', function(action, filepath, target) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
-  grunt.registerTask('default', ['uglify', 'concat', 'wrap', 'less']);
-  
-
+  grunt.registerTask('default', ['browserify', 'uglify', 'concat', 'wrap', 'less']);
 };

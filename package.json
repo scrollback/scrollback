@@ -32,6 +32,7 @@
     "irc": "git://github.com/scrollback/node-irc.git",
     "express": "3.0.x",
     "sockjs": "0.3.x",
+	"sockjs-client": "x",
     "mysql": "2.x",
     "jade": "0.x",
     "request": "x.x",
@@ -47,10 +48,12 @@
     "twit": "~1.1.12",
     "objectlevel": "x",
     "htmlencode": "0.0.3",
-	"underscrore": "x"
+	"underscore": "x",
+	"browserify": "x"
   },
   "devDependencies": {
     "mocha": "x",
+	"grunt-browserify": "x",  
     "grunt": "~0.4.1",
     "grunt-contrib-uglify": "~0.2.4",
     "grunt-wrap": "x",

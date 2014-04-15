@@ -1,9 +1,8 @@
-"use strict";
+function messageArray(initData){
 
-function messageArray(initData) {
 	var messages = initData || [];
-	
-	function find (time, start, end) {
+
+	function find(time, start, end){
 		var pos;
 
 		if (typeof start === 'undefined') {
@@ -24,80 +23,50 @@ function messageArray(initData) {
 			return pos;
 		}
 	}
-	
-	function merge (data) {
-		if (!data.length) return;
-		var startTime = data[0].time, endTime = data[data.length-1].time,
-			start = find(startTime),
-			end = find(endTime);
-		
-		while (messages[start-1] && messages[start-1].time == startTime) {
-			start--;
-		}
-		
-		while (messages[end] && messages[end].time == endTime) {
-			end++;
-		}
-		
-		if (messages[start-1] && messages[start-1].type != 'result-end' && data[0].type == 'result-start') {
-			data.shift();
-		}
-		
-		if (messages[end] && messages[end].type != 'result-start' && data[data.length-1].type == 'result-end') {
-			data.pop();
-		}
-		
-		[].splice.apply(messages, [start, end - start].concat(data));
-	}
-	
-	function extract(time, before, after, missing) {
-		var res = [], mid, i, l = messages.length, c, m, start = null;
-		
-		
-		if (!time && missing) {
-			res.push(missing(null, null));
-			time = Infinity;
-		}
-		
-		mid = find(time);
-		
-		for (i=mid, c=0; i>0 && c<before; i--) {
-			if (messages[i] && messages[i].type == 'text') c++;
-		}
-		
-		for (c=0; i<l && c<before+after+1; i++) {
-			m = messages[i];
-			switch (m.type) {
-				case 'result-start':
-					if (missing) {
-						res.push(missing(start, m.time));
-					}
-					break;
-				case 'result-end':
-					start = m.time;
-					break;
-				case 'text':
-					res.push(m);
-					c++;
-					break;
+
+	function merge(data){
+		// merge and remove duplicates
+		if(!data.length) return;
+		var merged = [], res = [];
+		var unique = {};
+		var i = 0, j = 0, k = 0; 
+
+		while(i < messages.length && j < data.length){
+			if(messages[i].time < data[j].time){
+				 merged[k++] = messages[i++];
+			}
+			else{
+				merged[k++] = data[j++];
 			}
 		}
-		if (m && m.type == 'result-end' && missing) {
-			res.push(missing(m.time, null));
+		while(i < messages.length) {
+			merged[k++] = messages[i++];
 		}
-		
-		return res;
+		while(j < data.length){
+			merged[k++] = data[j++];
+		}
+		// filter merged to remove duplicates
+		merged.forEach(function(msg){
+			if (!unique.hasOwnProperty(msg.id)){
+				unique[msg.id] = "";
+				res.push(msg);
+			}
+		});
+		messages = res;
 	}
-	
+
+	function get(query){
+		var time = query.time, before = query.before, after = query.after;
+		var pos = find(time);
+		var tmpMsg = messages.slice(0);
+		if(pos - before < 0) return;
+		else if(pos + after > tmpMsg.length - 1) return;
+		else return tmpMsg.splice(pos-before, before + after + 1);
+	}
+
 	messages.merge = merge;
 	messages.find = find;
-	messages.extract = extract;
-	
-	return messages;
-}
+	messages.get = get;
 
-//// --- for testing in node.
-//if (module && module.exports) {
-//	module.exports = messageArray;
-//}
-//
+	return messages; 
+}

@@ -1,10 +1,16 @@
-ArrayCache = require('./ArrayCache.js');
+/* global localStorage */
+/* global window */
+var ArrayCache = require('./ArrayCache.js');
+var generate = require('../lib/generate');
 var cache;
 
 function load(){
-	cache = JSON.parse(localStorage.libsb);
-	cache.texts = new ArrayCache(cache.texts);
-	cache.labels = new ArrayCache(cache.labels);
+	if(localStorage.libsb){
+		cache = JSON.parse(localStorage.libsb);
+		cache.texts = cache.texts || [];
+		cache.texts = new ArrayCache(cache.texts);
+		cache.labels = new ArrayCache(cache.labels);
+	}
 }
 
 function save(){
@@ -21,23 +27,29 @@ module.exports = function(core){
 			occupantOf: cache.occupantOf,
 			memberOf: cache.memberOf
 		};
-		
 		core.emit('init-dn', fakeInit);
 	}
 	
-	
-	core.on('getTexts', getTexts);
+	core.on('getTexts', getTextsBefore, 400);
+	core.on('getTexts', getTextsAfter, 600);
 	core.on('getLabels', getLabels);
-	
 	core.on('connected', createInit);
-	
 	core.on('init-dn', recvInit);
-	
 	core.on('away-up', storeAway);
 	core.on('text-up', storeText);
-//	core.on('back-up', sendBack);
-//	core.on('join-up', sendJoin);
-//	core.on('part-up', sendPart);
+	
+	core.on('logout', logout);
+	
+	window.addEventListener('storage', load);
+};
+
+function recvInit(init, next){
+	cache.user = init.user;
+	cache.rooms = init.rooms;
+	cache.occupantOf = init.occupantOf;
+	cache.memberOf = init.memberOf;
+	save();
+	next();
 }
 
 function createInit(){
@@ -52,52 +64,38 @@ function storeAway(away, next){
 	next();
 }
 
+function logout(){
+	// delete user session here
+	delete cache.session;
+	save();
+}
+
 function storeText(text, next){
 	cache.texts.merge([text]);
 	save();
 	next();
 }
 
-function recvInit(init, next){
-	cache.user = init.user;
-	cache.rooms = init.rooms;
-	cache.occupantOf = init.occupantOf;
-	cache.memberOf = init.memberOf;
-	save();
-	next();
-}
-
-function getTexts(query, next, partialOk) {
-	var partial = false, missing
-		data = cache.texts.extract(, , , function(start, end) {
-			partial = true;
-			if(partialOk) {
-				core.emit(''query.onPartUpdate
-			}
-		});
-	if(partialOk || !partial) {
-		query.results = data;
-	}
-	next();
-}
-
-//function getPartial() {
-//	var data = cache.texts.extract(, , , function(start, end) {
-//		generateNewQuery
-//		return {type: 'text-missing'};
-//	})
-//	query.results = data;
-//	next();
-//}
-
-function getTexts(query, next){
+function getTextsBefore(query, next){
 	var results = cache.texts.get(query);
 	if(results) query.results = results;
 	next();
 }
 
-function getLabels(query, next){
+function getTextsAfter(query, next){
+	var results = query.results; 
+	if(results) cache.texts.merge(results);
+	next();
+}
+
+function getLabelsBefore(query, next){
 	var results = cache.labels.get(query);
 	if(results) query.results = results;
+	next();
+}
+
+function getLabelsAfter(query, next){
+	var results = query.results;
+	if(results) cache.labels.merge(results);
 	next();
 }
