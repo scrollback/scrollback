@@ -2,8 +2,8 @@ var ircClient = require('./ircClient.js');
 var net = require('net');
 var events = require('events');
 var core = new events.EventEmitter();
-var or = require('./objectReader.js');
-or.init(core);
+var ObjectReader = require('../lib/ObjectReader.js');
+var or = new ObjectReader(core);
 var port = 78910;
 var client;
 var dataQueue = [];
@@ -46,12 +46,15 @@ core.on('object', function(obj) {
 	console.log("received : ", obj);
 	switch (fn) {
 		case 'connectBot':
-			ircClient.connectBot(obj.room, obj.botNick, obj.options, function() {
-				writeObject({type: 'callback', uid : obj.uid});
+			ircClient.connectBot(obj.room, obj.options, function(msg) {
+				writeObject({type: 'callback', uid: obj.uid, data: msg});
 			});
 			break;
+		case 'partBot':
+			ircClient.partBot(obj.roomId);
+			break;
 		case 'connectUser':
-			ircClient.connectUser(obj.room, obj.nick, obj.options, function() {
+			ircClient.connectUser(obj.roomId, obj.nick, obj.options, function() {
 				writeObject({type: 'callback', uid: obj.uid});
 			});
 			break;
@@ -61,24 +64,20 @@ core.on('object', function(obj) {
 		case 'rename':
 			ircClient.rename(obj.oldNick, obj.newNick);
 			break;
-		case 'whois':
-			ircClient.whois(obj.server, obj.nick,function(info) {
-				writeObject({type: 'callback', uid: obj.uid, info: info});
-			});
-			break;
-		case 'sendRawMessage':
-			ircClient.sendRawMessage(obj.server, obj.nick, obj.message);
-			break;
 		case 'newNick'://new scrollback nick for IRC nick.
-			ircClient.newNick(obj.room, obj.nick, obj.sbNick);
+			ircClient.newNick(obj.roomId, obj.nick, obj.sbNick);
 			break;
 		case 'partUser':
-			console.log("room id", obj.roomId);
 			ircClient.partUser(obj.roomId, obj.nick);
 			break;
 		case 'getCurrentState':
 			ircClient.getCurrentState(function(state) {
-				writeObject({type: 'callback', uid: obj.uid, state: state});
+				writeObject({type: 'callback', uid: obj.uid, data: state});
+			});
+			break;
+		case 'getBotNick':
+			ircClient.getBotNick(obj.roomId, function(nick){
+				writeObject({type: 'callback', uid: obj.uid, data: nick});
 			});
 	}
 	

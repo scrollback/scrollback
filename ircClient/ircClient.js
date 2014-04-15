@@ -1,7 +1,7 @@
 var net = require('net');
 var irc = require('irc');
 var core;
-var botNick ;
+var botNick = "scrollback" ;//part of config of IRC client.
 var clients = {};//for server channel user,server --> client. 
 var servChanProp = {};//object of server channel prop
 var rooms = {};//room id to room obj map. //TODO delete room obj if any room deleted irc.
@@ -10,12 +10,12 @@ var renameCallback = {};
 module.exports.connectBot = connectBot;
 module.exports.connectUser = connectUser;
 module.exports.say = say;
-module.exports.sendRawMessage = sendRawMessage;
-module.exports.whois = whois;
 module.exports.rename = rename;
 module.exports.newNick = newNick;
 module.exports.partUser = partUser;
 module.exports.getCurrentState = getCurrentState;
+module.exports.partBot = partBot;
+module.exports.getBotNick = getBotNick;
 module.exports.init = function init(coreObj) {
 	core = coreObj;
 };
@@ -79,7 +79,7 @@ function joinServer(server, nick, channels, options, cb) {
  *opt.identId is used for ident.
  *TODO handle bot nick change case.
  */
-function connectBot(room, bn, options, cb) {
+function connectBot(room, options, cb) {
 	var server = room.params.irc.server;
 	var channel = room.params.irc.channel;
 	rooms[room.id] = room;
@@ -91,9 +91,13 @@ function connectBot(room, bn, options, cb) {
 		servChanProp[server][channel].rooms = [];
 		servChanProp[server][channel].users = [];
 	}
+	if (servChanProp[server][channel].rooms.length !== 0) {
+		cb("already connected to some other room");
+		return;
+	}
+	//TODO if already connected to some room then callback with error.
 	servChanProp[server][channel].rooms.push(room);
 	if (!servNick[server]) servNick[server] = {};
-	botNick = bn;
 	var client;
 	if (!clients[botNick]) clients[botNick] = {}; 
 	if (clients[botNick][server]) {//already connected to server.
@@ -101,7 +105,7 @@ function connectBot(room, bn, options, cb) {
 	} else {
 		client = joinServer(server, botNick, [], options, cb);//after varification connect to channel
 		onPM(client);
-		onRaw(client);
+		//onRaw(client);
 		onMessage(client);
 		onNames(client);
 		onJoin(client);
@@ -111,8 +115,27 @@ function connectBot(room, bn, options, cb) {
 	}
 }
 
-function connectUser(room, nick, options, cb) {
+function partBot(roomId) {
+	//TODO disconnect all users from this room also
+	var room  = rooms[roomId];
+	var client = clients[botNick][room.params.irc.server];
+	var channel = room.params.irc.channel;
+	var server = room.params.irc.server;
+	//if (client.opt.channels.indexOf(channel) != -1) {
+	client.part(channel);//disconnect bot in case of all part.
+	var users = servChanProp[room.params.irc.server][channel].users;
+	console.log("users", users, ", servNick", servNick);
+	users.forEach(function(user) {
+		if(servNick[server][user].dir === 'out') {
+			var sbNick = servNick[server][user].nick;
+			clients[sbNick][server].part(channel);
+		}
+	});
+}
+
+function connectUser(roomId, nick, options, cb) {
 	console.log("room=", room);
+	var room = rooms[roomId];
 	var server = room.params.irc.server;
 	var channel = room.params.irc.channel;
 	var client;
@@ -124,12 +147,10 @@ function connectUser(room, nick, options, cb) {
 		client = joinServer(server, nick, [channel], options,cb);
 		client.sbNick = nick;
 		client.once('registered', function(message) {
-			console.log("registered ........................ :");
 			if(!servNick[client.opt.server]) servNick[client.opt.server] = {};	
 			servNick[client.opt.server][client.nick] = {nick: client.sbNick, dir: "out"};
 		});
 		client.on('part', function(channel, nk, reason, message) {
-			
 			if (client.opt.channels.length === 0) {
 				console.log("part channel", nick);
 				client.disconnect();
@@ -157,7 +178,7 @@ function onMessage(client) {
 		if (!servChanProp[client.opt.server][from]) {
 			return;
 		}
-		servChanProp[client.opt.server][from].rooms.forEach(function(room) {//TODO not send msg for pending room.
+		servChanProp[client.opt.server][from].rooms.forEach(function(room) {
 			if (!room.pending) {
 				var from;
 				if(servNick[client.opt.server][to].dir === 'in') {
@@ -168,7 +189,7 @@ function onMessage(client) {
 					server: client.opt.server,
 					to: room.id,
 					from: from, 
-					message: message
+					text: message
 				});
 			}	
 		});
@@ -191,7 +212,7 @@ function onPM(client) {
 				servChanProp[client.opt.server][msg[1]].rooms.forEach(function(room) {
 					console.log("room", room);
 					if(room.params.irc.pending && room.id === r && reply.channels) {
-						console.log("room panding true");
+						console.log("room pending true");
 						reply.channels.forEach(function(channel) {
 							if (channel.substring(0,1) == '@' && channel.substring(1) === room.params.irc.channel) {
 								room.params.irc.pending = false;
@@ -277,30 +298,27 @@ function left(client, channels, nick) {
 	if (servNick[client.opt.server]) {
 		delete servNick[client.opt.server][nick];
 	}
-	
-	if (sbUser && sbUser.dir === "in") {
-		channels.forEach(function(channel) {
-			var index = servChanProp[client.opt.server][channel].users.indexOf(nick);
-			if(index > -1) servChanProp[client.opt.server][channel].users.splice(index, 1);
-			servChanProp[client.opt.server][channel].rooms.forEach(function(room) {
-				if(!room.params.pending) {
-					core.emit("data", {
-						type: "away",
-						to: room.id,
-						from: sbNick,
-						room: room
-					});
-				}
-			});
-			
+	channels.forEach(function(channel) {
+		var index = servChanProp[client.opt.server][channel].users.indexOf(nick);
+		if(index > -1) servChanProp[client.opt.server][channel].users.splice(index, 1);
+		servChanProp[client.opt.server][channel].rooms.forEach(function(room) {
+			if(!room.params.pending && sbUser && sbUser.dir === "in") {
+				core.emit("data", {
+					type: "away",
+					to: room.id,
+					from: sbNick,
+					room: room
+				});
+			}
 		});
-	}
+		
+	});
 }
 /************************** user left *****************************************/
 
 /****************************************** add online irc users ***************/
 /**
- * add new member in New member in room 
+ * add new member 
  */
 function addUsers(client, channel, nick) {
 	servChanProp[client.opt.server][channel].rooms.forEach(function(room) {
@@ -308,6 +326,7 @@ function addUsers(client, channel, nick) {
 		if(nick != client.nick) servChanProp[client.opt.server][channel].users.push(nick);//don't add myNick 
 		if(nick != client.nick && !servNick[client.opt.server][nick] &&
 			!room.params.irc.pending) {
+			servNick[client.opt.server][nick] = {nick: nick, dir: "in"};//default nick is irc nick
 			core.emit("data", {
 				type: "back",
 				to: room.id,
@@ -371,7 +390,8 @@ function say(message) {
  * and not reconnect as new user.
  * this will be reply of back message.
  */
-function newNick(room, nick, sbNick) {//TODO just send room.id
+function newNick(roomId, nick, sbNick) {//TODO just send room.id
+	var room = rooms[roomId];
 	if (!servNick[room.params.irc.server]) {
 		servNick[room.param.irc.server] = {};
 	}
@@ -406,18 +426,23 @@ function partUser(roomId, nick) {
 	client.part(room.params.irc.channel);
 }
 
-function getCurrentState(callback) {
-	callback({//state 
-		rooms: rooms,
-		//server nick --> nick
-		servChanProp: servChanProp,
-		allUsers: servNick//["All users that are comming from IRC"]
-	});
-}
 
 /************************************ update servChanNick *************************/
 
 
+function getCurrentState(callback) {
+	callback({//state
+		rooms: rooms,
+		servChanProp: servChanProp,
+		servNick: servNick
+	});
+}
+
+function getBotNick(roomId, callback) {
+	var room = rooms[roomId];
+	var nick = clients[botNick][room.params.irc.server].nick;
+	callback(nick);
+}
 
 
 function onRaw(client) {
@@ -439,25 +464,3 @@ function onError(client) {
 		});
 	});
 }
-
-/**
- *to send actual raw message to server.
- */
-function sendRawMessage(server, nick,  message) {
-	var client = clients[nick][server];
-	client.send(message);
-}
-
-/**
- *Return list of users.
- */
-function whois(server, nick, callback) {
-	var client = clients[botNick][server];
-	client.whois(nick, callback);
-}
-
-
-
-
-
-
