@@ -14,7 +14,7 @@ describe('Testing "join and part" Action.', function() {
 		getConnection(generate.guid(), function(c){
 			users.push(c.session);
 			c.emit({type:"join", to:"testroom", session:c.session}, function(data){
-				if(!data.error && data.error == "GUEST_CANNOT_JOIN"){
+				if(!data.type == "error" && data.message == "GUEST_CANNOT_JOIN"){
 					done();
 				}else{
 					throw new Error("NO ERROR THROWN");
@@ -26,7 +26,7 @@ describe('Testing "join and part" Action.', function() {
 		getConnection(generate.uid(), function(c){
 			users.push(c.session);
 			c.emit({type:"part", to:"testroom", session:c.session}, function(data){
-				if(!data.error && data.error == "GUEST_CANNOT_PART"){
+				if(!data.type == "error" && data.message == "GUEST_CANNOT_PART"){
 					done();
 				}else{
 					throw new Error("NO ERROR THROWN");
@@ -37,7 +37,7 @@ describe('Testing "join and part" Action.', function() {
 	it("testing part as registered user for a room that the user is not following", function)({
 		signedInUser(users[0], "user1:1234567890", function(c){
 			c.emit({type:"part", to:"testroom", session:c.session}, function(data){
-				if(data.error){
+				if(data.type == "error"){
 					throw new Error("ERROR THROWN");	
 				}
 				}else{
@@ -49,7 +49,7 @@ describe('Testing "join and part" Action.', function() {
 	it("testing join as registered user and checking the default role", function)({
 		getConnection(users[0], function(c){
 			c.emit({type:"join", to:"testroom", session:c.session}, function(data){
-				if(data.error){
+				if(data.type == "error"){
 					throw new Error("ERROR THROWN");
 				}
 				}else if(data.role == "follower"){
@@ -63,7 +63,7 @@ describe('Testing "join and part" Action.', function() {
 	it("testing part as registered user", function)({
 		getConnection(users[0], function(c){
 			c.emit({type:"part", to:"testroom", session:c.session}, function(data){
-				if(data.error){
+				if(data.type == "error"){
 					throw new Error("ERROR THROWN");
 				}
 				}else if(data.role == "none"){
@@ -77,7 +77,7 @@ describe('Testing "join and part" Action.', function() {
 	it("testing part again registered user", function)({
 		getConnection(users[0], function(c){
 			c.emit({type:"part", to:"testroom", session:c.session}, function(data){
-				if(data.error){
+				if(data.type == "error"){
 					throw new Error("ERROR THROWN");
 				}
 				}else if(data.role == "none"){
@@ -94,7 +94,7 @@ describe('Testing "join and part" Action.', function() {
 			signedInUser(c.session, "user2:0987654321", function(c){
 				users.push(c.session);
 				c.emit({type:"part", to:"testroom", session:c.session}, function(data){
-					if(data.error){
+					if(data.type == "error"){
 						done();
 					}
 					}else{
