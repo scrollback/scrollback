@@ -16,7 +16,7 @@ $(function() {
 		fillSpace: 500,
 		itemHeight: 50,
 		startIndex: time,
-		getItems: function (index, before, after, callback) {
+		getItems: function (index, before, after, recycle, callback) {
 			libsb.getTexts({
 				to: room, time: index, before: before, after: after
 			}, function(err, texts) {

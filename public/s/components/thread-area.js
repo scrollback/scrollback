@@ -16,7 +16,7 @@ $(function() {
 		fillSpace: 500,
 		itemHeight: 100,
 		startIndex: time,
-		getItems: function (index, before, after, callback) {
+		getItems: function (index, before, after, recycle, callback) {
 			libsb.getThreads({
 				to: room, time: index, before: before, after: after
 			}, function(err, threads) {

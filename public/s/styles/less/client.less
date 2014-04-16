@@ -302,7 +302,7 @@
                     img { .grayscale; }
                 }
 
-                img {
+                img.picture {
                     display: block;
                     width: 4em;
                     height: 4em;
@@ -314,14 +314,14 @@
             .search-active & { display: none; }
         }
 
+		&.pane .infinite-items {
+			background-color: darken(@light-color, 5%);
+			box-shadow: 0 0 64px 32px darken(@light-color, 5%);
+		}
+
         &.pane-threads {
             .search-active & { display: none; }
-			
-			.infinite-items {
-				background-color: darken(@light-color, 5%);
-				box-shadow: 0 0 64px 32px darken(@light-color, 5%);
-			}
-			
+
 			.thread {
 				.ease;
 

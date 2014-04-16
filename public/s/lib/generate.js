@@ -6,11 +6,18 @@ var generate = (function () {
 	
 	function guid (n) {
 		var str="", i;
-		n = n || 32;
+		n = n || 16;
 		for(i=0; i<n; i++) str += (Math.random()*36|0).toString(36);
 		return str;
 	}
 	
+	function hex (n) {
+		var str="", i;
+		n = n || 16;
+		for(i=0; i<n; i++) str += (Math.random()*16|0).toString(16);
+		return str;
+	}
+
 	function word(n) {
 		var str = '', l, d, ch;
 		n = n || 1 + Math.floor(Math.random()*3 + Math.random()*3 + Math.random()*3);
@@ -49,6 +56,6 @@ var generate = (function () {
 	}
 	
 	return {
-		guid: guid, word: word, sentence: sentence, paragraph: paragraph
+		guid: guid, hex: hex, word: word, sentence: sentence, paragraph: paragraph
 	};
 }());

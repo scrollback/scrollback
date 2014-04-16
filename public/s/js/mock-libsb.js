@@ -25,6 +25,11 @@ window.libsb = (function() {
 		endTime: null
 	};}
 	
+	function person(prefix) { return {
+		id: (prefix || "") + generate.word(8),
+		picture: 'http://gravatar.com/avatar/' + generate.hex(16) + '?d=retro&s=%s'
+	};}
+
 	function gotText() {
 		core.emit('text-dn', text(new Date().getTime()));
 		setTimeout(gotText, 3000 + (Math.random()-0.5)*2*2500);
@@ -40,7 +45,7 @@ window.libsb = (function() {
 	gotText();
 	
 	return {
-		user: {id: 'guest-default', picture: 'http://gravatar.com/avatar/hello?s=48'},
+		user: person(),
 		rooms: [],
 		occupantOf: [],
 		memberOf: [],
@@ -86,10 +91,18 @@ window.libsb = (function() {
 				time += MTBT;
 			}
 			
-			setTimeout(function() { cb(null, r); }, 500);			
+			setTimeout(function() { cb(null, r); }, 500);
 		},
-		getOccupants: function (rid, cb) {},
-		getMembers: function (rid, cb) {},
+		getOccupants: function (rid, cb) {
+			var i, r=[];
+			for(i=0; i<200; i++) r.push(person(Math.random()<3? '': 'guest-'));
+			setTimeout(function() { cb(null, r); }, 500);
+		},
+		getMembers: function (rid, cb) {
+			var i, r=[];
+			for(i=0; i<200; i++) r.push(person(''));
+			setTimeout(function() { cb(null, r); }, 500);
+		},
 		getRooms: function (query, cb) {},
 		
 		enter: function (rid, cb) {},

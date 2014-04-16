@@ -27,6 +27,8 @@
 			function read() {
 				viewTop = $logs.scrollTop();
 				viewHeight = $logs.height();
+				atTop = $logs.data("upper-limit");
+				atBottom = $logs.data("lower-limit");
 				scrollHeight = $logs.prop('scrollHeight');
 			}
 			
@@ -45,9 +47,18 @@
 				if(belowHeight != $below.height()) $below.height(belowHeight);
 			}
 			
+			function getGridColumns() {
+				var items = $items.children(), initLeft, i, l;
+				if(items.size() === 0) return 1;
+
+				initLeft = items.eq(0).offset().left;
+				for(i=1, l=items.size(); i<l && items.eq(i).offset().left != initLeft; i++);
+				return i<l? i: 1;
+			}
+
 			function updateItems() {
 				var itemsTop = viewTop + $items.offset().top - $logs.offset().top,
-					fillAbove = viewTop - itemsTop,
+					fillAbove = viewTop - itemsTop, cols,
 					fillBelow = (itemsTop + $items.height()) - (viewTop + viewHeight),
 					recycle = [];
 				
@@ -63,9 +74,11 @@
 								
 				if(fillAbove < fillSpace && !pendingRequests.above && !atTop) {
 					pendingRequests.above = true;
+					cols = getGridColumns();
 					getItems(
 						$items.children().eq(0).data("index") || startIndex,
-						Math.ceil((fillSpace - fillAbove)/itemHeight), 0,
+						Math.ceil((fillSpace - fillAbove)/itemHeight/cols)*cols, 0,
+						recycle,
 						function(its) {
 							pendingRequests.above = false;
 							render(its, "above");
@@ -75,9 +88,11 @@
 				
 				if(fillBelow < fillSpace && !pendingRequests.below && !atBottom) {
 					pendingRequests.below = true;
+					cols = getGridColumns();
 					getItems(
 						$items.children().eq(-1).data("index") || startIndex, 
-						0, Math.ceil((fillSpace - fillBelow)/itemHeight),
+						0, Math.ceil((fillSpace - fillBelow)/itemHeight/cols)*cols,
+						recycle,
 						function(its) {
 							pendingRequests.below = false;
 							render(its, "below");
@@ -87,7 +102,7 @@
 			}
 			
 			function render(els, where) {
-				var height=0;
+				var oldTerm, height=0;
 				
 				if(els[0] === false && where == "above") {
 					atTop = true; $logs.data("upper-limit", true);
@@ -95,23 +110,34 @@
 				}
 				if(els[els.length-1] === false && where == "below") { 
 					atBottom = true; $logs.data("lower-limit", true);
-					els.pop(); 
+					els.pop();
 				}
 				
 				if(els.length === 0) return;
 				
 				// Add elements to the DOM before measuring height.
-				if(where == "above") $items.prepend(els);
-				else if(where == "below") $items.append(els);
-				
-				els.forEach(function(el) {
-//					if(!el.outerHeight) return console.log("el is " ,el);
-					height += el.outerHeight();
-				});
-				
-				if(where == "above") $above.height(Math.max(0, $above.height() - height));
-				else if(where == "below") $below.height(Math.max(0, $below.height() - height));
-				
+				if(where == "above") {
+					oldTerm = $items.children().eq(0);
+					$items.prepend(els);
+					if(oldTerm.size()) {
+						height = oldTerm.offset().top - els[0].offset().top;
+					} else {
+						height = $items.height();
+					}
+					$above.height(Math.max(0, $above.height() - height));
+				}
+				else {
+					oldTerm = $items.children().eq(-1);
+					$items.append(els);
+					if(oldTerm.size()) {
+						height = (els[els.length-1].offset().top + els[els.length-1].height()) -
+							(oldTerm.offset().top + oldTerm.height());
+					} else {
+						height = $items.height();
+					}
+					$below.height(Math.max(0, $below.height() - height));
+				}
+
 				itemHeight = ($items.height() / $items.children().size()) || itemHeight; // dont change if it would become zero.
 				
 //				console.log("added " + els.length + " " + where + " with height ", height, "; " + $items.children().size() + " items.");
@@ -119,25 +145,35 @@
 			}
 			
 			function remove(pixels, where) {
-				var itemsToRemove = [], height = 0, els = $items.children(), i, l;
+				var itemsToRemove = [], height = 0, els = $items.children(), i, l, oldTerm;
 				
 				function checkAndRemove(el) {
-					var elh = el.outerHeight();
-					if(height + elh > pixels) return true;
-					itemsToRemove.push(el[0]); height += elh;
+					var h;
+
+					if(where == 'above') {
+						h = - oldTerm.offset().top + el.offset().top + el.outerHeight();
+					} else {
+						h = - (el.offset().top) + (oldTerm.offset().top + oldTerm.outerHeight());
+					}
+
+					if(h > pixels) return true;
+					itemsToRemove.push(el[0]);
+					height = h;
 					return false;
 				}
-				
+
 				/* We don't remove the last one, even if it's way outside. */
 				
 				if(where == "above") {
+					oldTerm = $items.children().eq(0);
 					atTop = false; $logs.data("upper-limit", false);
 					for(i=0, l=els.size()-1; i<l; i++) if(checkAndRemove(els.eq(i))) break;
 				} else {
+					oldTerm = $items.children().eq(-1);
 					atBottom = false; $logs.data("lower-limit", false);
 					for(i=els.size()-1; i>0; i--) if(checkAndRemove(els.eq(i))) break;
 				}
-				
+
 				if(itemsToRemove.length === 0) return [];
 				
 				if(where == "above") $above.height($above.height() + height);
@@ -157,7 +193,7 @@
 			
 			$logs.scroll(function() {
 				if(timer) clearTimeout(timer);
-				timer = setTimeout(update, 100);
+				timer = setTimeout(update, 200);
 			});
 			
 			$(window).resize(update);
@@ -167,6 +203,14 @@
 		});
 	}; /* end $.fn.infinite */
 	
+	$.fn.reset = function() {
+		var $logs = $(this);
+		$logs.find(".infinite-items").empty();
+		$logs.data("lower-limit", false);
+		$logs.data("upper-limit", false);
+		$logs.data("update-infinite")();
+	};
+
 	$.fn.addBelow = function(el) {
 		var $logs = $(this), 
 			atBottom = $logs.data("lower-limit") && $logs.scrollTop() - $logs[0].scrollHeight + $logs.height() === 0;
