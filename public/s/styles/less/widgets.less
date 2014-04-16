@@ -121,7 +121,7 @@ code {
     &.segmented {
         display: inline-block;
         min-width: 15em;
-        height: 3em;
+        min-height: 3em;
         cursor: text; /* fix firefox showing caret in wrong position */
 
         .segment {
@@ -135,6 +135,8 @@ code {
             outline: none;
 
             &:only-child { width: 100%; }
+
+            &:last-child { min-width: 7em; }
 
             &.done {
                 background-color: lighten(@accent-color, 40%);
