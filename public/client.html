@@ -15,7 +15,7 @@
 		<link rel="shortcut icon" href="s/img/favicon.png" type="image/x-icon" />
 
 		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
-		<link rel="stylesheet" type="text/css" media="screen" href="s/styles/less/client.css" />
+		<link rel="stylesheet" type="text/css" media="screen" href="s/styles/less/client-chat.css" />
 
 		<!-- enable HTML5 in IE, we need to place it before body -->
 		<!--[if lt IE 9]>
@@ -52,26 +52,24 @@
 			<div role="tabpanel" class="pane hide-scroll pane-info">
 				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas tincidunt non nibh id euismod. Donec a facilisis nibh. Proin molestie ante augue, sed elementum ipsum ornare nec. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas tincidunt non nibh id euismod. Donec a facilisis nibh. Proin molestie ante augue, sed elementum ipsum ornare nec. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas tincidunt non nibh id euismod. Donec a facilisis nibh. Proin molestie ante augue, sed elementum ipsum ornare nec. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas tincidunt non nibh id euismod. Donec a facilisis nibh. Proin molestie ante augue, sed elementum ipsum ornare nec.
 			</div>
-			<div role="tabpanel" class="pane  hide-scroll pane-people current">
+			<div role="tabpanel" class="pane hide-scroll pane-people current">
 				<a class="person" href="">
-					<img class="picture">
+					<img class="picture" alt="" src="s/img/avatars/Adrian.png">
 					<span class="name">adrian</span>
 				</a>
 			</div>
 			<div role="tabpanel" class="pane hide-scroll pane-threads">
 				<a class="thread" href="">
-					<h3 class='title'>All threads</h3>
-					<p class='snippet'>At vero eos et accusamus et iusto dignissimos</p>
+					<h3 class="title">All threads</h3>
+					<p class="snippet">At vero eos et accusamus et iusto dignissimos</p>
 				</a>
 			</div>
 		</section>
-		<section role="main" class="mainview">
+		<section role="main" class="mainview chatview">
 			<div class="titlebar">
-				<a class="meta-btn"></a>
-				<h1 class="title">Scrollback team</h1>
-					<div class="search-bar">
-						<input class="search-entry" type="text" placeholder="Type to search..." />
-					</div>
+				<div class="title-normal">
+					<a class="meta-btn"></a>
+					<h1 class="title">Scrollback team</h1>
 					<div class="search-button" role="button"></div>
 					<div class="guest has-popover">
 						<div class="sb-user">sb-walick</div>
@@ -92,6 +90,10 @@
 						</ul>
 					</div>
 				</div>
+				<div class="search-bar">
+					<input class="search-entry" type="text" placeholder="Type to search..." />
+				</div>
+			</div>
 			<div class="chat-position">27 April 2014</div>
 			<div class="chat-area hide-scroll">
 				<p class="chat conv-0">
@@ -111,11 +113,10 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script>window.jQuery || document.write('<script src="s/lib/jquery.min.js"><\/script>');</script>
 
-        <script src="s/lib/pointer.events.polyfill.min.js"></script> <!-- adds pointer events support for old IE -->
-        <script> $(function() { PointerEventsPolyfill.initialize({}); }); </script>
-		<script> document.addEventListener("touchstart", function() {}, true); </script> <!-- adds CSS :active styles in Safari -->
-        <script src="s/lib/transformie.min.js"></script> <!-- adds CSS transforms support in old IE -->
-		
+		<script src="s/lib/pointer.events.polyfill.min.js"></script> <!-- adds pointer events support for old IE -->
+		<script>$(function() { PointerEventsPolyfill.initialize({}); });</script>
+
+		<script src="s/lib/transformie.min.js"></script> <!-- adds CSS transforms support in old IE -->
 
 		<script src="s/lib/bus.js"></script>
 		<script src="s/lib/generate.js"></script>
@@ -124,26 +125,20 @@
 
 		<script src="s/components/infinite.js"></script>
 		<script src="s/components/popover.js"></script>
-		<script src="s/components/hide-scroll.js"></script>
-		<script src="s/components/panel-layout.js"></script>
+		<script src="s/components/hide-scroll.js"></script
+		<script src="s/components/columns.js"></script>
 		<script src="s/components/text.js"></script>
 		<script src="s/components/text-area.js"></script>
 		<script src="s/components/compose.js"></script>
-		<script src="s/components/meta.js"></script>
+		<script src="s/components/panes.js"></script>
 		<script src="s/components/thread.js"></script>
 		<script src="s/components/thread-area.js"></script>
 		<script src="s/components/person.js"></script>
 		<script src="s/components/people-area.js"></script>
-		
-		
-		<script src="s/components/timeline.js"></script>
 		<script src="s/components/search.js"></script>
-		
-		<script>
-			if(document.addEventListener)
-				document.addEventListener("touchstart", function() {}, true);
-		</script> <!-- allow styling of CSS :active state in Safari -->
+		<script src="s/components/timeline.js"></script>
 
+		<script>document.addEventListener && document.addEventListener("touchstart", function() {}, true);</script> <!-- allow styling of CSS :active state in Mobile Safari -->
 	</body>
 
 </html>

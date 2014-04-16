@@ -1,0 +1,215 @@
+@import url('client-common.less');
+
+@settingsitems: "general", "irc", "twitter", "thread", "permissions", "requests", "spam", "seo", "customization";
+
+.meta {
+    .settings-header {
+        display: table;
+        table-layout: fixed;
+        height: @bar-height;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border-bottom: 1px solid darken(@light-color, 15%);
+
+        h2 {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 3em;
+            text-transform: uppercase;
+            background: url(../../img/icons/png/settings.png) .6em center no-repeat;
+
+            @media @breakpointxxxx {
+                background: none;
+                padding-left: .25em;
+            }
+        }
+
+        .rooms-btn {
+            display: none;
+
+            @media @breakpointxxxx {
+                .transform(rotate(0deg));
+                .opacity(1);
+                .ease(.5s);
+
+                display: table-cell;
+                width: 4em;
+                background-image: url(../../img/icons/png/back.png);
+                background-position: 1em center;
+                background-repeat: no-repeat;
+                background-size: 2em 2em;
+                cursor: pointer;
+
+                .roomsinview & { .transform(rotate(180deg)); }
+            }
+        }
+    }
+
+    .meta-content {
+        &.settings-menu {
+            .opacity(1);
+
+            filter: none;
+            pointer-events: auto;
+
+            ul {
+                list-style: none;
+
+                li {
+                    .ease;
+
+                    font-size: 1.5em;
+                    padding: .75em;
+                    padding-left: 3em;
+                    background-size: 24px 24px;
+                    background-position: .75em center;
+                    background-repeat: no-repeat;
+                    border-bottom: 1px solid darken(@light-color, 10%);
+                    cursor: pointer;
+
+                    &.current { background-color: darken(@light-color, 10%); }
+
+                    &:hover, &.current:hover { background-color: darken(@light-color, 15%); }
+
+                    .-(@i: length(@settingsitems)) when (@i > 0) {
+
+                        @item: e(extract(@settingsitems, @i));
+                        @icon: %("../../img/icons/png/%s-settings.png", @item);
+
+                        &.tab-@{item}-settings {
+                            background-image: url(@icon);
+                        }
+
+                        .-((@i - 1));
+                    } .-;
+                }
+            }
+        }
+    }
+}
+
+.settingsview {
+    .settings-area {
+        .pane {
+            display: none;
+
+            &.current {
+                .fadein;
+
+                display: table;
+                border-spacing: 2em;
+                max-width: 100%;
+
+                @media @breakpointxx {
+                    display: block;
+                    border-spacing: 1em;
+                }
+            }
+
+            .settings-item {
+                display: table-row;
+
+                @media @breakpointxx {
+                    display: block;
+                    padding: 1em;
+                }
+
+                .settings-label, .settings-action {
+                    display: table-cell;
+
+                    @media @breakpointxx {
+                        display: block;
+
+                        &.inline { display: inline-block; }
+                    }
+
+                    input, textarea, .button, .button-secondary {
+                        margin: 0 0;
+                        max-width: 100%;
+                    }
+
+                    input[type=text], textarea { width: 100% }
+
+                    textarea { resize: vertical; }
+
+                    input[type=checkbox] {
+                        position: relative;
+                        top: .3em;
+                        margin: .5em 0;
+                    }
+
+                    label {
+                        padding: .5em;
+                    }
+                }
+
+                .settings-label {
+                    text-align: right;
+                    vertical-align: top;
+                    padding: .5em 0;
+
+                    @media @breakpointxx {
+                        text-align: left;
+                        padding-right: 1em;
+                        font-weight: 700;
+                    }
+                }
+
+                .settings-action {
+                    text-align: left;
+                    vertical-align: middle;
+                }
+            }
+
+            .request-msg {
+                display: table-row;
+
+                img {
+                    max-width: 80px;
+                    max-height: 80px;
+                    border-radius: @roundness;
+                }
+
+                img, .request-details {
+                    display: table-cell;
+                    vertical-align: top;
+                }
+
+                .username {
+                    a {
+                        font-size: 1.2em;
+                        color: @dark-color;
+
+                        &:focus, &:hover, &:active { color: darken(@dark-color, 10%); }
+                    }
+                }
+
+                .button, .button-secondary { padding: .5em 1em; }
+            }
+
+            .twitter-account {
+                position: relative;
+                color: @light-color;
+
+                img {
+                    height: 80px;
+                    width: 80px;
+                    border-radius: @roundness;
+                }
+
+                .change {
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    width: 80px;
+                    padding: .75em;
+                    background-color: fade(@dark-color, 70%);
+                    text-transform: uppercase;
+                    border-radius: 0 0 @roundness @roundness;
+                }
+            }
+        }
+    }
+}

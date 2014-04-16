@@ -1,16 +1,22 @@
-/* global $, document */
+/*jslint browser: true, indent: 4, regexp: true*/
+/*global $*/
 
 $(function() {
-	var el = $("<div>").css({
-		visibility: "hidden", width: "100px", height: "100px",
-		overflow: "scroll", padding: "200px",
-		msOverflowStyle: "scrollbar"
-	}).appendTo(document.body),
-		swy = el[0].offsetWidth - el[0].clientWidth;
-	
-	el.remove();
-	
-	$('.hide-scroll').
+	var outer, inner, swy;
+
+	outer = $("<div></div>").css({
+			width: "100px",
+			height: "100px",
+			overflow: "auto"
+		}).appendTo(document.body);
+
+	inner = $("<div></div>").appendTo(outer);
+
+	swy = inner.innerWidth() - inner.height(101).innerWidth();
+
+	outer.remove();
+
+	$(".hide-scroll").
 	css({ overflowY: "scroll", right: "-="+swy }).
 	scroll(function() {
 	}).
