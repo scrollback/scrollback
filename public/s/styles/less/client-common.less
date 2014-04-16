@@ -1,0 +1,362 @@
+@import url('widgets.less');
+
+@bar-height: 3.5em;
+
+@roomxxxxx: 16%;
+@roomxxxx: 15em;
+@roomxxx: 15em;
+@roomxx: 15em;
+@roomx: 15em;
+
+@metaxxxxx: 30%;
+@metaxxxx: 26em;
+@metaxxx: 26em;
+@metaxx: 20em;
+@metax: 14em;
+
+@breakpointxxxx: ~"screen and (max-width: 70em)";
+@breakpointxxx: ~"screen and (max-width: 50em)";
+@breakpointxx: ~"screen and (max-width: 27em)";
+@breakpointx: ~"screen and (max-width: 19em)";
+
+.rooms {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: @roomxxxxx;
+    min-height: 100%;
+    background-color: @dark-color;
+    color: @light-color;
+    z-index: 4;
+    overflow: auto;
+    -webkit-overflow-scrolling : touch;
+
+    @media @breakpointxxxx {
+        width: @roomxxxx;
+        left: @roomxxxx * -1;
+    }
+
+    @media @breakpointxxx {
+        width: @roomxxx;
+        left: ( @roomxxx + @metaxxx ) * -1;
+    }
+
+    @media @breakpointxx {
+        width: @roomxx;
+        left: ( @roomxx + @metaxx ) * -1;
+    }
+
+    @media @breakpointx {
+        width: @roomx;
+        left: ( @roomx + @metax ) * -1;
+    }
+
+    .scrollback-header {
+        height: @bar-height;
+        padding: .5em 1em;
+        border-bottom: 1px solid lighten(@dark-color, 10%);
+        cursor: pointer;
+
+        img {
+            height: 2.5em;
+            width: auto;
+        }
+    }
+
+    ul {
+        list-style: none;
+
+        li {
+            a {
+                .clearfix;
+                .ease;
+
+                display: block;
+                padding: 1em;
+                font-weight: 700;
+                color: darken(@light-color, 10%);
+                border-bottom: 1px solid lighten(@dark-color, 5%);
+
+                &.search-term {
+                    display: none;
+
+                    .search-active & {
+                        display: block;
+                        background-image: url(../../img/icons/png/search-light.png);
+                        background-position: 90% center;
+                        background-repeat: no-repeat;
+                        background-size: 2em 2em;
+                    }
+                }
+
+                &.current {
+                    position: relative;
+                    background-color: lighten(@dark-color, 5%);
+
+                    &:after {
+                        content: "";
+                        display: block;
+                        position: absolute;
+                        right: 0;
+                        top: 1.25em;
+                        border-top: .6em solid transparent;
+                        border-bottom: .6em solid transparent;
+                        border-right: .55em solid darken(@light-color, 5%);
+                    }
+                }
+
+                &:hover, &.current:hover {
+                    background-color: lighten(@dark-color, 10%);
+                }
+
+                .unread {
+                    float: right;
+                    min-width: 2em;
+                    text-align: center;
+                    font-size: .75em;
+                    background-color: @accent-color;
+                    color: @light-color;
+                    border-radius: @roundness;
+
+                    &.has-replies { background-color: @error-color; }
+                }
+            }
+        }
+    }
+}
+
+.roomlist {
+    position: absolute;
+    top: @bar-height;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.meta {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: @roomxxxxx;
+    width: @metaxxxxx;
+    background-color: darken(@light-color, 5%);
+    color: @dark-color;
+    border-right: 1px solid darken(@light-color, 10%);
+    z-index: 3;
+
+    @media @breakpointxxxx {
+        width: @metaxxxx;
+        left: 0;
+    }
+
+    @media @breakpointxxx {
+        width: @metaxxx;
+        left: @metaxxx * -1;
+    }
+
+    @media @breakpointxx {
+        width: @metaxx;
+        left: @metaxx * -1;
+    }
+
+    @media @breakpointx {
+        width: @metax;
+        left: @metax * -1;
+    }
+}
+
+.mainview:extend(.main-elem) {
+    .clearfix;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    background-color: @light-color;
+    color: @dark-color;
+
+    .titlebar {
+        position: relative;
+        background-color: darken(@light-color, 5%);
+        border-bottom: 1px solid darken(@light-color, 20%);
+        box-shadow: 0 3px 2px -1px fade(@dark-color, 5%);
+        z-index: 2;
+
+        .title-normal {
+            .fadein;
+
+            display: table;
+            width: 100%;
+            height: @bar-height;
+
+            .meta-btn {
+                display: none;
+
+                @media @breakpointxxx {
+                    .transform(rotate(0deg));
+                    .ease(.5s);
+
+                    display: table-cell;
+                    width: 3em;
+                    background: url(../../img/icons/png/back.png) center center no-repeat;
+                    background-size: 2em 2em;
+                    cursor: pointer;
+
+                    .metainview & { .transform(rotate(180deg)); }
+                }
+            }
+
+            .action-buttons {
+                display: table-cell;
+                vertical-align: middle;
+                padding: 0 1em;
+
+                @media @breakpointxxx { padding-left: 0;  }
+
+                .button, .button-secondary {
+                    margin: 0;
+                    padding: .5em 1em;
+                }
+            }
+
+            .title {
+                display: table-cell;
+                vertical-align: middle;
+                padding-left: 1em;
+                font-size: 1.5em;
+
+                @media @breakpointxxxx { padding-left: 0;  }
+            }
+
+            .search-button {
+                display: table-cell;
+                vertical-align: top;
+                padding: .75em 1em;
+                width: 4em;
+                background: url(../../img/icons/png/search.png) center center no-repeat;
+                background-size: 2em 2em;
+                cursor: pointer;
+            }
+
+            .guest {
+                display: none;
+
+                .guest-user & {
+                    display: table-cell;
+                    vertical-align: top;
+                    padding: .25em;
+                    width: 6em;
+                    color: lighten(@dark-color, 20%);
+                    cursor: pointer;
+                }
+            }
+
+            .avatar {
+                display: table-cell;
+                vertical-align: top;
+                width: 3.5em;
+                cursor: pointer;
+
+                @media @breakpointxx {
+                    .guest-user & { display: none; }
+                }
+
+                .guest-user & { display: none; }
+
+                img {
+                    display: block;
+                    height: 3.5em;
+                    width: 3.5em;
+                }
+            }
+
+            .popover-body {
+                width: 15em;
+                padding: .5em 1em;
+                text-align: center;
+
+                a { display: block; }
+
+                ul {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+
+                    li {
+                        &:first-child {
+                            border-bottom: 1px solid darken(@light-color, 10%);
+                        }
+
+                        a {
+                            color: lighten(@dark-color, 20%);
+                            padding: .5em;
+
+                            &:hover { color: @dark-color; }
+                        }
+                    }
+                }
+            }
+
+            .search-focus & { display: none; }
+        }
+
+        .search-bar {
+            display: none;
+
+            .search-focus & {
+                .slideleft;
+
+                display: block;
+                width: 100%;
+                height: @bar-height;
+                padding: .35em;
+            }
+
+            .search-entry {
+                display: block;
+                width: 100%;
+                margin: 0;
+                background-image: url("../../img/icons/png/search-gray.png");
+                background-position: right center;
+                background-repeat: no-repeat;
+            }
+        }
+    }
+}
+
+.main-elem {
+    position: fixed;
+    left: @roomxxxxx + @metaxxxxx;
+    right: 0;
+
+    @media @breakpointxxxx { left: @metaxxxx; }
+
+    @media @breakpointxxx { left: 0;  }
+}
+
+.rooms, .meta, .mainview, .chat-input {
+    .ease(.3s); /* animate css transforms */
+    .transform(translate3d(0, 0, 0)); /* get ready, fix flicker in some browsers */
+
+    overflow: hidden;
+
+    /* we use 3d transformations for GPU accelerated animations */
+    .metainview & {
+        @media @breakpointxxx { .transform(translate3d(@metaxxx, 0, 0)); }
+
+        @media @breakpointxx { .transform(translate3d(@metaxx, 0, 0)); }
+
+        @media @breakpointx { .transform(translate3d(@metax, 0, 0)); }
+    }
+
+    .roomsinview & {
+        @media @breakpointxxxx { .transform(translate3d(@roomxxxx, 0, 0)); }
+
+        @media @breakpointxxx { .transform(translate3d( ( @roomxxx + @metaxxx ), 0, 0)); }
+
+        @media @breakpointxx { .transform(translate3d( ( @roomxxx + @metaxx ), 0, 0)); }
+
+        @media @breakpointx { .transform(translate3d( ( @roomx + @metax ), 0, 0)); }
+    }
+}

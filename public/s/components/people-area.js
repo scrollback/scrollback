@@ -46,7 +46,4 @@ $(function() {
 		room = r;
 		$people.reset();
 	};
-
 });
-
-
