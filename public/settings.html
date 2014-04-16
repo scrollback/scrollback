@@ -23,7 +23,7 @@
 		<![endif]-->
 	</head>
 
-	<body>
+	<body class="metainview">
 		<section class="rooms">
 			<div class="scrollback-header">
 				<img src="./s/img/scrollback-small.png" alt="scrollback"/>
@@ -40,28 +40,30 @@
 		</section>
 		<section class="meta">
 			<div class="settings-header">
+				<a class="rooms-btn"></a>
 				<h2>Room settings</h2>
 			</div>
-			<div class="meta-content settings-pane">
+			<div class="meta-content settings-menu">
 				<ul>
-					<li class="general-settings">General</li>
-					<li class="search-settings">Search &amp; grouping</li>
-					<li class="connections-settings">Connections</li>
-					<li class="permissions-settings">Permissions</li>
-					<li class="requests-settings">Requests</li>
-					<li class="spam-settings">Spam control</li>
-					<li class="customization-settings">Customization</li>
+					<li class="tab tab-general-settings current">General</li>
+					<li class="tab tab-irc-settings">IRC integration</li>
+					<li class="tab tab-twitter-settings">Twitter integration</li>
+					<li class="tab tab-thread-settings">Threading</li>
+					<li class="tab tab-permissions-settings">Permissions</li>
+					<li class="tab tab-requests-settings">Requests</li>
+					<li class="tab tab-spam-settings">Spam control</li>
+					<li class="tab tab-seo-settings">SEO</li>
 				</ul>
 			</div>
 		</section>
-		<section role="main" class="settingsview">
+		<section role="main" class="mainview settingsview">
 			<div class="titlebar">
-				<a class="menu"></a>
-				<h1 class="title">Scrollback team</h1>
-					<div class="search-bar">
-						<input class="search-entry" type="text" placeholder="Type to search..." />
+				<div class="title-normal">
+					<a class="meta-btn"></a>
+					<div class="action-buttons">
+						<a class="button">Done</a>
+						<a class="button-secondary">Cancel</a>
 					</div>
-					<div class="search-button" role="button"></div>
 					<div class="guest has-popover">
 						<div class="sb-user">sb-walick</div>
 						<div class="sign-in">Sign in</div>
@@ -81,114 +83,210 @@
 						</ul>
 					</div>
 				</div>
-			<div class="chat-position">27 April 2014</div>
-			<div class="chat-area">
-				<p class="chat conv-0">
-					<span class="nick"><a href="">adam</a></span>
-					<span class="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-				</p>
-
-				<p class="chat conv-2">
-					<span class="nick"><a href="">rick</a></span>
-					<span class="message">In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. Cras lacinia metus sed quam aliquet, non semper magna rutrum. Maecenas sit amet nibh ac justo vestibulum posuere eu a nisl. In et laoreet metus.</span>
-				</p>
-
-				<p class="chat conv-4">
-					<span class="nick"><a href="">satya164</a></span>
-					<span class="message">Vivamus quis urna in erat faucibus aliquam. Suspendisse consectetur pretium massa quis viverra. Sed nec dui ipsum. In elementum ultricies odio, ut porttitor libero vestibulum quis. Suspendisse potenti. Nulla facilisi.</span>
-				</p>
-
-				<p class="chat conv-8">
-					<span class="nick"><a href="">alex</a></span>
-					<span class="message">Donec ultricies tempus dui eu adipiscing. Vivamus et purus rhoncus lectus varius accumsan sed nec purus. Nulla id tellus dictum, aliquam justo a, elementum metus.</span>
-				</p>
-
-				<p class="chat conv-1">
-					<span class="nick"><a href="">stanten</a></span>
-					<span class="message">Integer consectetur venenatis dolor. Nunc varius ullamcorper felis, placerat congue diam lobortis a. Mauris sem turpis, aliquam ac leo rhoncus, viverra placerat leo.</span>
-				</p>
-
-				<p class="chat conv-3">
-					<span class="nick"><a href="">anthony</a></span>
-					<span class="message">Ut ultrices purus in sagittis accumsan. Donec rhoncus justo in nulla ullamcorper mattis. Aenean at nisi et sem luctus ullamcorper. Aliquam est massa, elementum suscipit turpis in, lobortis lobortis est.</span>
-				</p>
-
-				<p class="chat conv-5">
-					<span class="nick"><a href="">shane</a></span>
-					<span class="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas tincidunt non nibh id euismod. Donec a facilisis nibh. Proin molestie ante augue, sed elementum ipsum ornare nec.</span>
-				</p>
-
-				<p class="chat conv-7">
-					<span class="nick"><a href="">john</a></span>
-					<span class="message">Vivamus quis urna in erat faucibus aliquam.</span>
-				</p>
-
-				<p class="chat conv-9">
-					<span class="nick"><a href="">reallylonnnnnnnnnnng</a></span>
-					<span class="message">Vivamus quis urna in erat faucibus aliquam. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc.</span>
-				</p>
-
-				<p class="chat conv-0">
-					<span class="nick"><a href="">andrian</a></span>
-					<span class="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-				</p>
-
-				<p class="chat conv-2">
-					<span class="nick"><a href="">stanton</a></span>
-					<span class="message">In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc.</span>
-				</p>
-
-				<p class="chat long conv-4">
-					<span class="nick"><a href="">steve</a></span>
-					<span class="message">In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc.</span>
-				</p>
-
-				<p class="chat conv-6">
-					<span class="nick"><a href="">space36</a></span>
-					<span class="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-				</p>
-
-				<p class="chat conv-8">
-					<span class="nick"><a href="">john</a></span>
-					<span class="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-				</p>
-
-				<p class="timestamp">5 minutes ago</p>
-
-				<p class="chat conv-1">
-					<span class="nick"><a href="">adam</a></span>
-					<span class="message">Donec ultricies tempus dui eu adipiscing. Vivamus et purus rhoncus lectus varius accumsan sed nec purus. Nulla id tellus dictum, aliquam justo a, elementum metus.</span>
-				</p>
-
-				<p class="chat conv-3">
-					<span class="nick"><a href="">rob</a></span>
-					<span class="message">Integer consectetur venenatis dolor. Nunc varius ullamcorper felis, placerat congue diam lobortis a. Mauris sem turpis, aliquam ac leo rhoncus, viverra placerat leo.</span>
-				</p>
-
-				<p class="chat conv-5">
-					<span class="nick"><a href="">tomek</a></span>
-					<span class="message">Ut ultrices purus in sagittis accumsan. Donec rhoncus justo in nulla ullamcorper mattis.</span>
-				</p>
-
-				<p class="chat conv-7">
-					<span class="nick"><a href="">rik</a></span>
-					<span class="message">Donec ultricies tempus dui eu adipiscing. Vivamus et purus rhoncus lectus varius accumsan sed nec purus. Nulla id tellus dictum, aliquam justo a, elementum metus.</span>
-				</p>
-
-				<p class="chat conv-9">
-					<span class="nick"><a href="">alex</a></span>
-					<span class="message">Integer consectetur venenatis dolor.</span>
-				</p>
-
-				<p class="chat conv-0">
-					<span class="nick"><a href="">satya164</a></span>
-					<span class="message">Ut ultrices purus in sagittis accumsan.</span>
-				</p>
 			</div>
-		</section>
-		<section class="chat-input">
-			<div role="textbox" class="textarea chat-entry" contenteditable></div>
-			<input role="button" class="send" type="submit" value="" />
+			<div class="settings-area">
+				<div class="pane pane-general-settings current">
+					<div class="settings-item">
+						<div class="settings-label">
+							Name
+						</div>
+						<div class="settings-action">
+							<input type="text" id="displayname" name="displayname" />
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Description
+						</div>
+						<div class="settings-action">
+							<textarea id="description"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-irc-settings">
+					<div class="settings-item">
+						<div class="settings-label">
+							IRC Channel
+						</div>
+						<div class="settings-action">
+							<input type="text" id="ircchannel" name="ircchannel" />
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							IRC Server
+						</div>
+						<div class="settings-action">
+							<input type="text" id="ircserver" name="ircserver" />
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-twitter-settings">
+					<div class="settings-item">
+						<div class="settings-label">
+							Twitter hashtags
+						</div>
+						<div class="settings-action">
+							<div class="entry segmented" id="twitterhash"><div contenteditable class="segment"></div></div>
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Signed in as <a href="">satya164</a>
+						</div>
+						<div class="settings-action">
+							<a href="" class="twitter-account">
+								<img src="https://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" />
+								<span class="change">Change</span>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-thread-settings">
+					<div class="settings-item">
+						<div class="settings-label inline">
+							Group messages into threads
+						</div>
+						<div class="settings-action inline">
+							<input class="switch" type="checkbox" id="thread" name="thread" /><label for="thread"></label>
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-permissions-settings">
+					<div class="settings-item">
+						<div class="settings-label">
+							Who can read messsages
+						</div>
+						<div class="settings-action">
+							<input type="checkbox" id="read-guests" name="read-guests" /><label for="read-guests">Guests</label><br/>
+							<input type="checkbox" id="read-visitors" name="read-visitors" /><label for="read-guests">Visitors</label><br/>
+							<input type="checkbox" id="read-followers" name="read-followers" /><label for="read-followers">Followers</label>
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Who can post messages
+						</div>
+						<div class="settings-action">
+							<input type="checkbox" id="write-guests" name="write-guests" /><label for="write-guests">Guests</label><br/>
+							<input type="checkbox" id="write-visitors" name="write-visitors" /><label for="write-guests">Visitors</label><br/>
+							<input type="checkbox" id="write-followers" name="write-followers" /><label for="write-followers">Followers</label>
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label inline">
+							Require approval for following
+						</div>
+						<div class="settings-action inline">
+							<input class="switch" type="checkbox" id="follow-request" name="follow-request" /><label for="follow-request"></label>
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-requests-settings">
+					<div class="request-msg">
+						<img src="./s/img/avatars/Keith.jpg">
+						<div class="request-details">
+							<div class="username"><a href="">randomdude</a></div>
+							<a class="button">Approve</a>
+							<a class="button-secondary">Ignore</a>
+						</div>
+					</div>
+					<div class="request-msg">
+						<img src="./s/img/avatars/Keith.jpg">
+						<div class="request-details">
+							<div class="username"><a href="">randomdude</a></div>
+							<a class="button">Approve</a>
+							<a class="button-secondary">Ignore</a>
+						</div>
+					</div>
+					<div class="request-msg">
+						<img src="./s/img/avatars/Keith.jpg">
+						<div class="request-details">
+							<div class="username"><a href="">randomdude</a></div>
+							<a class="button">Approve</a>
+							<a class="button-secondary">Ignore</a>
+						</div>
+					</div>
+					<div class="request-msg">
+						<img src="./s/img/avatars/Keith.jpg">
+						<div class="request-details">
+							<div class="username"><a href="">randomdude</a></div>
+							<a class="button">Approve</a>
+							<a class="button-secondary">Ignore</a>
+						</div>
+					</div>
+					<div class="request-msg">
+						<img src="./s/img/avatars/Keith.jpg">
+						<div class="request-details">
+							<div class="username"><a href="">randomdude</a></div>
+							<a class="button">Approve</a>
+							<a class="button-secondary">Ignore</a>
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-spam-settings">
+					<div class="settings-item">
+						<div class="settings-label inline">
+							Block repetitive messages
+						</div>
+						<div class="settings-action inline">
+							<input class="switch" type="checkbox" id="block-repetitive" name="block-repetitive" /><label for="block-repetitive"></label>
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label inline">
+							Block nonsense messages
+						</div>
+						<div class="settings-action inline">
+							<input class="switch" type="checkbox" id="block-nonsense" name="block-nonsense" /><label for="block-nonsense"></label>
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Block offensive words
+						</div>
+						<div class="settings-action">
+							<input type="checkbox" id="block-en-mod" name="block-en-mod" /><label for="block-en-mod">English moderate</label><br/>
+							<input type="checkbox" id="block-en-strict" name="block-en-strict" /><label for="block-en-strict">English strict</label><br/>
+							<input type="checkbox" id="block-zn-strict" name="block-zn-strict" /><label for="block-zn-strict">Chinese strict</label>
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Custom blocked words
+						</div>
+						<div class="settings-action">
+							<input type="text" id="blocked-words" name="blocked-words" />
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Gagged users
+						</div>
+						<div class="settings-action">
+							<input type="text" id="gagged-users" name="gagged-users" />
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Banned users
+						</div>
+						<div class="settings-action">
+							<input type="text" id="banned-users" name="banned-users" />
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-seo-settings">
+					<div class="settings-item">
+						<div class="settings-label inline">
+							Allow search engines to index room
+						</div>
+						<div class="settings-action inline">
+							<input class="switch" type="checkbox" id="allow-index" name="allow-index" /><label for="allow-index"></label>
+						</div>
+					</div>
+				</div>
+			</div>
 		</section>
 
 		<!-- scripts -->
@@ -200,15 +298,13 @@
 
 		<script src="./s/lib/transformie.min.js"></script> <!-- add CSS transforms support in old browsers -->
 
-		<script src="./s/components/infinite.js"></script>
-		<script src="./s/components/popover.js"></script>
-		<script src="./s/components/panel-layout.js"></script>
-		<script src="./s/components/chat.js"></script>
-		<script src="./s/components/chat-area.js"></script>
-		<script src="./s/components/compose.js"></script>
-		<script src="./s/components/meta.js"></script>
-		<script src="./s/components/timeline.js"></script>
-		<script src="./s/components/search.js"></script>
+		<script src="s/components/columns.js"></script>
+		<script src="s/components/hide-scroll.js"></script>
+		<script src="s/components/infinite.js"></script>
+		<script src="s/components/panes.js"></script>
+		<script src="s/components/popover.js"></script>
+		<script src="s/components/search.js"></script>
+        <script src="s/components/entry-segments.js"></script>
 
 		<!-- this should go in the end as it doesn't work in IE, hence blocking other scripts -->
 		<script>document.addEventListener("touchstart", function() {}, true);</script> <!-- allow styling of CSS :active state in Safari -->

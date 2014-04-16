@@ -299,10 +299,10 @@
                 &.offline {
                     .opacity(.5);
 
-                    img { .grayscale; }
+                    .picture { .grayscale; }
                 }
 
-                img {
+                .picture {
                     display: block;
                     width: 4em;
                     height: 4em;
@@ -314,14 +314,14 @@
             .search-active & { display: none; }
         }
 
+		&.pane .infinite-items {
+			background-color: darken(@light-color, 5%);
+			box-shadow: 0 0 64px 32px darken(@light-color, 5%);
+		}
+
         &.pane-threads {
             .search-active & { display: none; }
-			
-			.infinite-items {
-				background-color: darken(@light-color, 5%);
-				box-shadow: 0 0 64px 32px darken(@light-color, 5%);
-			}
-			
+
 			.thread {
 				.ease;
 
@@ -620,14 +620,14 @@
                     &:focus, &:hover, &:active { color: darken(@dark-color, 10%); }
                 }
             }
-			
+
 			.timestamp {
 //				display: none;
 				position: absolute; bottom: 0; right: 2.5em;
 				font-size: .8em; line-height: 1em;
 				color: darken(@light-color, 10%);
 			}
-			
+
 			&.showtimestamp .timestamp {
 				display: block;
 			}

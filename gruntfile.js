@@ -88,7 +88,7 @@ module.exports = function(grunt) {
 				"public/dummy.css": "public/dummy.less",
 				"public/s/styles/less/stylesheet.css": "public/s/styles/less/stylesheet.less",
 				"public/s/styles/less/widgets.css": "public/s/styles/less/widgets.less",
-				"public/s/styles/less/client.css": "public/s/styles/less/client.less"
+				"public/s/styles/less/client-chat.css": "public/s/styles/less/client-chat.less"
 			},
 		},
 	},

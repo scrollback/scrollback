@@ -11,6 +11,10 @@ $(function() {
         $("body").toggleClass("metainview");
     });
 
+    $(".settings-menu .tab").on("click", function() {
+        $("body").removeClass("metainview");
+    });
+
     // Handle swipe gestures
     $(function() {
         var maxTime = 1000,

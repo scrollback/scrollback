@@ -61,6 +61,11 @@ input[type=entry], input[type=text], textarea {
     &:extend(.entry);
 }
 
+input[type=checkbox] {
+    width: 1.5em;
+    height: 1.5em;
+}
+
 pre {
     width: 30em;
     white-space: pre-wrap;
@@ -101,13 +106,50 @@ code {
     background-color: lighten(@light-color, 50%);
     border: 1px solid darken(@light-color, 20%);
     border-top-color: darken(@light-color, 30%);
+    border-radius: @roundness;
     color: @dark-color;
+    font-size: 1em;
     box-shadow: inset 0 1px 1px 0 rgba(0,0,0,0.1);
+    outline: none;
 
     &:hover, &:focus, &:active {
         border-color: darken(@light-color, 30%);
         border-top-color: darken(@light-color, 40%);
         outline: none;
+    }
+
+    &.segmented {
+        display: inline-block;
+        min-width: 15em;
+        height: 3em;
+        cursor: text; /* fix firefox showing caret in wrong position */
+
+        .segment {
+            .appear;
+
+            display: inline-block;
+            min-width: 3em;
+            margin: .4em 0 .4em .4em;
+            padding: .2em .25em;
+            border: 1px solid transparent;
+            outline: none;
+
+            &:only-child { width: 100%; }
+
+            &.done {
+                background-color: lighten(@accent-color, 40%);
+                border-color: darken(@accent-color, 5%);
+                border-radius: @roundness;
+            }
+
+            .rem-segment {
+                float: right;
+                padding: 0 .25em;
+                font-weight: bold;
+                color: darken(@accent-color, 5%);
+                cursor: pointer;
+            }
+        }
     }
 }
 
@@ -116,6 +158,8 @@ code {
     margin: 1em 0;
     padding: .8em 1.2em;
     border-radius: @roundness;
+    outline: none;
+    font-size: 1em;
 }
 
 .buttons(@bg: @accent-color; @fg: @light-color) {
@@ -158,10 +202,16 @@ code {
     cursor: pointer;
     text-transform: uppercase;
 
-    &:hover, &:focus, &:active {
+    &:hover, &:focus {
         background-color: darken(@light-color, 3%);
         border-color: darken(@light-color, 30%);
         color: lighten(@dark-color, 5%);
+    }
+
+    &:active {
+        background-color: darken(@light-color, 7%);
+        border-color: darken(@light-color, 20%);
+        color: lighten(@dark-color, 15%);
     }
 }
 
@@ -302,44 +352,41 @@ code {
 input.switch {
     .opacity(0);
 
-    margin: .5em 0;
-
     & ~ label {
         position: relative;
         cursor: pointer;
 
-        &:before,
-        &:after {
+        &:before, &:after {
             .ease;
 
             position: absolute;
             display: block;
             top: 0;
             bottom: 0;
-            left: 0;
+            left: -1.48em;
             content: "";
             height: 1.8em;
             width: 3.6em;
             border-radius: @roundness;
-            background-color: @error-color;
-            box-shadow: inset 0 1px 0 rgba(0,0,0,0.2);
+            background-color: darken(@light-color, 30%);
         }
+
+        &:before { box-shadow: inset 0 1px 0 rgba(0,0,0,0.2); }
 
         &:after {
             height: 1.5em;
             width: 1.6em;
-            top: 0.1em;
-            bottom: 0.1em;
-            left: 0.15em;
+            top: .15em;
+            bottom: .15em;
+            left: -1.34em;
             background-color: @light-color;
-            box-shadow: inset 0 -1px 0 rgba(0,0,0,0.2);
         }
     }
 
     &:checked ~ label {
         &:before { background-color: @accent-color; }
 
-        &:after { left: 1.85em; }
+        &:after { left: .38em; }
     }
 }
 
