@@ -9,7 +9,7 @@ $(function() {
 		if(!tab) return;
 		tab = tab[1]; // match returns an array with the capture groups starting at index 1.
 		
-		$(".tab, .pane").removeClass("current");
+		$(".tab.current, .pane.current").removeClass("current");
 		$(".tab-" + tab + ", .pane-" + tab).addClass("current");
 	});
 });

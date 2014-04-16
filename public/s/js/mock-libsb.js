@@ -30,6 +30,11 @@ window.libsb = (function() {
 		picture: 'http://gravatar.com/avatar/' + generate.hex(16) + '?d=retro&s=%s'
 	};}
 
+	function room(id) { return {
+		id: id || generate.word(),
+		description: generate.paragraph()
+	};}
+
 	function gotText() {
 		core.emit('text-dn', text(new Date().getTime()));
 		setTimeout(gotText, 3000 + (Math.random()-0.5)*2*2500);
@@ -103,7 +108,12 @@ window.libsb = (function() {
 			for(i=0; i<200; i++) r.push(person(''));
 			setTimeout(function() { cb(null, r); }, 500);
 		},
-		getRooms: function (query, cb) {},
+		getRooms: function (query, cb) {
+			var i, r = [];
+			if(typeof query === 'string') r = room(query);
+			else for(i=0; i<20; i++) r.push(room());
+			setTimeout(function() { cb(null, r); }, 500);
+		},
 		
 		enter: function (rid, cb) {},
 		leave: function (rid, cb) {},
