@@ -28,9 +28,7 @@
     min-height: 100%;
     background-color: @dark-color;
     color: @light-color;
-    z-index: 4;
-    overflow: auto;
-    -webkit-overflow-scrolling : touch;
+    z-index: 1;
 
     @media @breakpointxxxx {
         width: @roomxxxx;
@@ -65,6 +63,8 @@
     }
 
     ul {
+        overflow-y: scroll;
+        -webkit-overflow-scrolling : touch;
         list-style: none;
 
         li {
@@ -142,8 +142,7 @@
     width: @metaxxxxx;
     background-color: darken(@light-color, 5%);
     color: @dark-color;
-    border-right: 1px solid darken(@light-color, 10%);
-    z-index: 3;
+    z-index: 2;
 
     @media @breakpointxxxx {
         width: @metaxxxx;
@@ -172,7 +171,8 @@
     top: 0;
     right: 0;
     bottom: 0;
-    z-index: 2;
+    z-index: 3;
+    border-left: 1px solid darken(@light-color, 10%);
     background-color: @light-color;
     color: @dark-color;
 

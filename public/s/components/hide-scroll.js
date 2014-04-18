@@ -19,7 +19,7 @@ $(function() {
 	$(".hide-scroll").
 	css({
 		"overflow-y" : "scroll",
-		"right" : "-" + swy
+		"margin-right" : "-=" + swy
 	}).
 	scroll(function() {
 	}).
