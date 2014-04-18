@@ -352,7 +352,7 @@ code {
 }
 
 input.switch {
-    .opacity(0);
+    display: none;
 
     & ~ label {
         position: relative;
@@ -373,7 +373,7 @@ input.switch {
         &:before {
             top: 0;
             bottom: 0;
-            left: -1.48em;
+            left: 0;
             height: 1.8em;
             width: 3.9em;
             padding: .2em .5em;
@@ -388,7 +388,7 @@ input.switch {
             width: 2.1em;
             top: .15em;
             bottom: .15em;
-            left: -1.34em;
+            left: 0.14em;
             background-color: @light-color;
         }
     }
@@ -400,7 +400,7 @@ input.switch {
             background-color: @accent-color;
         }
 
-        &:after { left: 1.18em; }
+        &:after { left: 2.66em; }
     }
 }
 
