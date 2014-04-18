@@ -17,7 +17,10 @@ $(function() {
 	outer.remove();
 
 	$(".hide-scroll").
-	css({ overflowY: "scroll", right: "-="+swy }).
+	css({
+		"overflow-y" : "scroll",
+		"right" : "-" + swy
+	}).
 	scroll(function() {
 	}).
 	mousemove(function() {

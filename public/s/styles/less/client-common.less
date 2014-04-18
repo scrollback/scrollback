@@ -11,13 +11,13 @@
 @metaxxxxx: 30%;
 @metaxxxx: 26em;
 @metaxxx: 25em;
-@metaxx: 18.5em;
+@metaxx: 19em;
 @metax: 13em;
 
 @breakpointxxxx: ~"screen and (max-width: 70em)";
 @breakpointxxx: ~"screen and (max-width: 50em)";
 @breakpointxx: ~"screen and (max-width: 27em)";
-@breakpointx: ~"screen and (max-width: 19em)";
+@breakpointx: ~"screen and (max-width: 18em)";
 
 .rooms {
     position: fixed;
@@ -315,8 +315,6 @@
 .rooms, .meta, .mainview, .chat-input {
     .ease(.3s); /* animate css transforms */
     .transform(translate3d(0, 0, 0)); /* get ready, fix flicker in some browsers */
-
-    overflow: hidden;
 
     /* we use 3d transformations for GPU accelerated animations */
     .metainview & {
