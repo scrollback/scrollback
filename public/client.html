@@ -26,7 +26,7 @@
 
 	<body>
 		<section class="rooms">
-			<div class="scrollback-header">
+			<div class="scrollback-header has-popover">
 				<img src="s/img/scrollback-small.png" alt="scrollback"/>
 			</div>
 			<ul role="list" class="roomlist hide-scroll">
@@ -52,8 +52,8 @@
 			<div role="tabpanel" class="pane hide-scroll pane-info">
 				<h1 class="name"></h1>
 				<div class="actions">
-					<button class="btn-follow button">Follow</button>
-					<button class="btn-configure button-secondary">Configure</button>
+					<button class="btn-follow button has-popover">Follow</button>
+					<button class="btn-configure button-secondary has-popover">Configure</button>
 				</div>
 				<p class="description"></p>
 			</div>
@@ -80,19 +80,8 @@
 						<div class="sb-user">sb-walick</div>
 						<div class="sign-in">Sign in</div>
 					</div>
-					<div role="menu" class="popover-body">
-						Sign in to scrollback with
-						<a class="button facebook">Facebook</a>
-						<a class="button persona">Persona</a>
-					</div>
 					<div class="avatar has-popover">
 						<img alt="" src="https://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" />
-					</div>
-					<div role="menu" class="popover-body">
-						<ul>
-							<li><a href="">Report an issue</a></li>
-							<li><a href="">Logout</a></li>
-						</ul>
 					</div>
 				</div>
 				<div class="search-bar">
@@ -101,7 +90,7 @@
 			</div>
 			<div class="chat-position">27 April 2014</div>
 			<div class="chat-area hide-scroll">
-				<p class="chat conv-0">
+				<p class="chat has-popover conv-0">
 					<span class="nick"><a href="">adam</a></span>
 					<span class="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
 					<span class="timestamp">Yesterday 12:25</span>
@@ -112,6 +101,12 @@
 			<div role="textbox" class="textarea chat-entry" contenteditable></div>
 			<input role="button" class="send" type="submit" value="" />
 		</section>
+
+		<div role="menu" class="popover-body login-menu">
+			Sign in to scrollback with
+			<a class="button facebook">Facebook</a>
+			<a class="button persona">Persona</a>
+		</div>
 
 		<!-- scripts -->
         <script src="s/lib/html5shiv.min.js"></script>

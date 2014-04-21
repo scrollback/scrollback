@@ -294,59 +294,57 @@ code {
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 1;
+    z-index: 8;
 }
 
-.popover-active + .popover-body {
-    position: absolute;
-    display: block;
-    margin: 1em;
-    border-radius: @roundness;
-    font-weight: normal;
-    border: 1px solid darken(@light-color, 20%);
-    background-color: @light-color;
-    color: @dark-color;
-    box-shadow: 0 0 10px fade(@dark-color, 20%);
-    text-transform: none;
-    z-index: 10;
+.popover-active {
+    .popover-body {
+        position: absolute;
+        display: block;
+        margin: 1em;
+        border-radius: @roundness;
+        font-weight: normal;
+        border: 1px solid darken(@light-color, 20%);
+        background-color: @light-color;
+        color: @dark-color;
+        box-shadow: 0 0 10px fade(@dark-color, 20%);
+        text-transform: none;
+        z-index: 10;
 
-    &.popover-top {
-        .slideup;
+        &.popover-top {
+            .slideup;
 
-        bottom: 3em;
+            &:before {
+                .popover-arrow;
+                .rotate(225deg);
 
-        &:before {
-            .popover-arrow;
-            .rotate(225deg);
-
-            bottom: -8px;
+                bottom: -8px;
+            }
         }
-    }
 
-    &.popover-bottom {
-        .slidedown;
+        &.popover-bottom {
+            .slidedown;
 
-        top: 3em;
+            &:before {
+                .popover-arrow;
+                .rotate(45deg);
 
-        &:before {
-            .popover-arrow;
-            .rotate(45deg);
-
-            top: -8px;
+                top: -8px;
+            }
         }
-    }
 
-    &.arrow-left {
-        &:before {
-            left: 1em;
-            right: auto;
+        &.arrow-left {
+            &:before {
+                left: 1em;
+                right: auto;
+            }
         }
-    }
 
-    &.arrow-right {
-        &:before {
-            left: auto;
-            right: 1em;
+        &.arrow-right {
+            &:before {
+                left: auto;
+                right: 1em;
+            }
         }
     }
 }
