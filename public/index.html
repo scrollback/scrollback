@@ -20,15 +20,21 @@
 
         <title>Scrollback - Where communities hang out</title>
 
-        <link rel="shortcut icon" href="./s/img/favicon.png" type="image/x-icon" />
-        <link rel="image_src" href="./s/img/scrollback.png" />
+        <link rel="shortcut icon" href="s/img/favicon.png" type="image/x-icon" />
+        <link rel="image_src" href="s/img/scrollback.png" />
         <link rel="author" href="http://plus.google.com/118029978978376563753" />
 
         <link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
-        <link rel="stylesheet" type="text/css" media="screen" href="./s/styles/less/stylesheet.css" />
-        <link rel="stylesheet" type="text/css" media="screen and (min-width:0\0)" href="./s/styles/css/ie.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="s/styles/less/stylesheet.css" />
+        <link rel="stylesheet" type="text/css" media="screen and (min-width:0\0)" href="s/styles/css/ie.css" />
 
-        <link rel="stylesheet" type="text/css"  media="print" href="./s/styles/css/print.css" />
+        <link rel="stylesheet" type="text/css"  media="print" href="s/styles/css/print.css" />
+
+		<!-- enable HTML5 in IE, we need to place it before body -->
+		<!--[if lt IE 9]>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
+		<script>window.html5 || document.write('<script src="s/lib/html5shiv.min.js"><\/script>')</script>
+		<![endif]-->
 
         <script>
             var css = document.createElement("style");
@@ -74,7 +80,7 @@
             <div class="cover-content">
                 <div class="grid container">
                     <div class="col-3-5 slides">
-                        <img class="large-logo" src="./s/img/scrollback-large.svg" alt="scrollback" />
+                        <img class="large-logo" src="s/img/scrollback-large.svg" alt="scrollback" />
                         <ul class="slider">
                             <li class="slide-home">
                                 <h1>Where communities hang out</h1>
@@ -104,25 +110,25 @@
                         <a class="button login-toggle">Get started</a> <span class="try">or <a class="trial-room">Try it first</a></span>
                     </div>
                 </div>
-                <a class="arrow" href="#features"><img src="./s/img/arrow.svg" alt="Go down" /></a>
-                <a class="fork" href="http://github.com/scrollback/scrollback/" target="_blank"><img src="./s/img/github.svg" alt="Fork on GitHub" /></a>
+                <a class="arrow" href="#features"><img src="s/img/arrow.svg" alt="Go down" /></a>
+                <a class="fork" href="http://github.com/scrollback/scrollback/" target="_blank"><img src="s/img/github.svg" alt="Fork on GitHub" /></a>
             </div>
         </section>
         <section id="features" class="features">
             <div class="grid container">
                 <div class="col-1-3">
                     <h2>Chattier forums</h2>
-                    <img class="icon" src="./s/img/online.png" alt="Online" />
+                    <img class="icon" src="s/img/online.png" alt="Online" />
                     <p>Users are engaged like on their favourite chat app, while the community enjoys viral growth, SEO and moderation.</p>
                 </div>
                 <div class="col-1-3">
                     <h2>Email notifications</h2>
-                    <img class="icon" src="./s/img/summary.png" alt="Summary" />
+                    <img class="icon" src="s/img/summary.png" alt="Summary" />
                     <p>Members of your community get email if someone mentions them, as well as summaries of what was said.</p>
                 </div>
                 <div class="col-1-3">
                     <h2>Twitter integration</h2>
-                    <img class="icon" src="./s/img/twitter.png" alt="Twitter" />
+                    <img class="icon" src="s/img/twitter.png" alt="Twitter" />
                     <p>Bring tweets about you into your room instantly, and use them to spark new discussions around the clock.</p>
                 </div>
             </div>
@@ -132,27 +138,27 @@
                 <h1>Scrollback in the wild</h1>
                 <div class="col-1-5">
                     <a href="http://mozillaindia.org" target="_blank">
-                        <img src="./s/img/mozilla.png" alt="Mozilla India, Philippines, and many others." />
+                        <img src="s/img/mozilla.png" alt="Mozilla India, Philippines, and many others." />
                     </a>
                 </div>
                 <div class="col-1-5">
                     <a href="http://hasgeek.com/" target="_blank">
-                        <img src="./s/img/hasgeek.png" alt="HasGeek" />
+                        <img src="s/img/hasgeek.png" alt="HasGeek" />
                     </a>
                 </div>
                 <div class="col-1-5">
                     <a href="http://jfdi.asia/" target="_blank">
-                        <img src="./s/img/jfdi.png" alt="JFDI Asia" />
+                        <img src="s/img/jfdi.png" alt="JFDI Asia" />
                     </a>
                 </div>
                 <div class="col-1-5">
                     <a href="http://jsconf.asia" target="_blank">
-                        <img src="./s/img/jsconf.png" alt="JSConf Asia" />
+                        <img src="s/img/jsconf.png" alt="JSConf Asia" />
                     </a>
                 </div>
                 <div class="col-1-5">
                     <a href="http://numixproject.org" target="_blank">
-                        <img src="./s/img/numix.png" alt="Numix Project" />
+                        <img src="s/img/numix.png" alt="Numix Project" />
                     </a>
                 </div>
             </div>
@@ -180,7 +186,7 @@
         <footer>
             <p>Scrollback is a product of Askabt Pte. Ltd. We respect your <a href="/privacy.html">privacy</a>. Copyright Askabt Pte. Ltd.</p>
             <p class="credit">Photo credit <a href="http://www.flickr.com/photos/georgio/6261749693/" target="_blank">flickr.com/photos/georgio</a>.</p>
-            <p class="poweredby"><a href="http://softlayer.com/"><img src="./s/img/softlayer.png" /></a><a href="http://browserstack.com"><img src="./s/img/browserstack.png" /></a></p>
+            <p class="poweredby"><a href="http://softlayer.com/"><img src="s/img/softlayer.png" /></a><a href="http://browserstack.com"><img src="s/img/browserstack.png" /></a></p>
         </footer>
         <section class="modal">
             <a class="close login-toggle">&times;</a>
@@ -201,11 +207,9 @@
         </section>
         <aside class="dim"></aside>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script>
-            window.jQuery || document.write('<script src="./s/js/jquery.min.js"><\/script>')
-        </script>
-        <script src="./s/js/main.js"></script>
-        <script src="./s/js/widgets.js"></script>
+        <script>window.jQuery || document.write('<script src="s/lib/jquery.min.js"><\/script>')</script>
+        <script src="s/js/main.js"></script>
+        <script src="s/js/widgets.js"></script>
     </body>
 
 </html>
