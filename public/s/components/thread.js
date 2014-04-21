@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, format */
+/* global $, format, libsb */
 
 var threadEl = {};
 
@@ -10,8 +10,9 @@ $(function() {
 		el = el || $template.clone(false);
 		
 		el.find('.title').text(thread.title);
-		el.find('.snippet').html("No messages yet.");
+		el.find('.snippet').html("");
 		el.find('.timestamp').html(format.friendlyTime(thread.startTime, new Date().getTime()));
+		el.attr('id', 'thread-' + thread.id);
 		el.data('index', thread.startTime);
 		
 		el.addClass('conv-' + thread.id.substr(-1));
@@ -19,4 +20,12 @@ $(function() {
 		
 		return el;
 	};
+});
+
+libsb.on('navigate', function(state, next) {
+	if(state.thread && state.thread != state.old.thread) {
+		$(".thread.current").removeClass("current");
+		$("#thread-" + state.thread).addClass("current");
+	}
+	next();
 });

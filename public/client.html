@@ -29,21 +29,16 @@
 			<div class="scrollback-header">
 				<img src="s/img/scrollback-small.png" alt="scrollback"/>
 			</div>
-			<ul role="list" class="roomlist hide-scroll">
-				<li><a class="search-term" href="">Results for firefox</a></li>
-				<li><a href="http://scrollback.io/hasgeek">Hasgeek<span class="unread">2</span></a></li>
-				<li><a href="http://scrollback.io/numix">Numix Project<span class="unread has-replies">12</span></a></li>
-				<li><a href="http://scrollback.io/jsconfasia">JSConf Asia</a></li>
-				<li><a class="current" href="http://scrollback.io/scrollbackteam">Scrollback team</a></li>
-				<li><a href="http://scrollback.io/mozillaindia">Mozilla India<span class="unread">9</span></a></li>
-				<li><a href="http://scrollback.io/jfdiasia">JFDI Asia</a></li>
-			</ul>
+			<a class="search-term" href="">Results for firefox</a>
+			<div role="list" class="roomlist hide-scroll">
+				<a class="roomitem"><span class="name"></span><span class="unread"></span></a>
+			</div>
 		</section>
 		<section class="meta">
 			<ul role="tablist" class="tabs">
 				<li role="tab" class="rooms-btn"><h2>Rooms</h2></li>
 				<li role="tab" class="tab tab-info mode-normal"><h2>Info</h2></li>
-				<li role="tab" class="tab tab-people mode-normal current"><h2>People</h2></li>
+				<li role="tab" class="tab tab-people mode-normal"><h2>People</h2></li>
 				<li role="tab" class="tab tab-threads mode-normal"><h2>Threads</h2></li>
 				<li role="tab" class="tab tab-threads mode-search"><h2>This room</h2></li>
 				<li role="tab" class="tab tab-threads mode-search"><h2>All rooms</h2></li>
@@ -58,9 +53,9 @@
 				<p class='description'></p>
 			</div>
 			<div role="tabpanel" class="pane hide-scroll pane-people current">
-				<a class="person" href="">
+				<a class="person">
 					<img class="picture">
-					<span class="name">adrian</span>
+					<span class="name"></span>
 				</a>
 			</div>
 			<div role="tabpanel" class="pane hide-scroll pane-threads">
@@ -99,12 +94,12 @@
 					<input class="search-entry" type="text" placeholder="Type to search..." />
 				</div>
 			</div>
-			<div class="chat-position">27 April 2014</div>
+			<div class="chat-position"></div>
 			<div class="chat-area hide-scroll">
-				<p class="chat conv-0">
-					<span class="nick"><a href="">adam</a></span>
-					<span class="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-					<span class="timestamp">Yesterday 12:25</span>
+				<p class="chat">
+					<span class="nick"></span>
+					<span class="message"></span>
+					<span class="timestamp"></span>
 				</p>
 			</div>
 		</section>
@@ -144,13 +139,15 @@
 		<script src="s/components/person.js"></script>
 		<script src="s/components/people-area.js"></script>
 		<script src="s/components/info-area.js"></script>
+		<script src="s/components/room-item.js"></script>
+		<script src="s/components/room-list.js"></script>
 
 		<script src="s/components/search.js"></script>
 		<script src="s/components/timeline.js"></script>
 
 		<script>
 			$(function() {
-				navigation.set({
+				libsb.emit('navigate', {
 					room: 'scrollback',
 					mode: 'normal'
 				});

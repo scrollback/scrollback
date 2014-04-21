@@ -7,6 +7,7 @@ var textArea = {};
 $(function() {
 	var $logs = $(".chat-area"),
 		room = 'testroom', /* replace with room from URL */
+		thread = '',
 		time = null; /* replace this with the time from the URL, if available. */
 
 	// Set up infinite scroll here.
@@ -17,9 +18,10 @@ $(function() {
 		itemHeight: 50,
 		startIndex: time,
 		getItems: function (index, before, after, recycle, callback) {
-			libsb.getTexts({
-				to: room, time: index, before: before, after: after
-			}, function(err, texts) {
+			var query = { to: room, time: index, before: before, after: after };
+			if(thread) query.thread = thread;
+			
+			libsb.getTexts(query, function(err, texts) {
 				if(err) throw err; // TODO: handle the error properly.
 
 				if(after === 0 && texts.length < before) texts.unshift(false);
@@ -39,6 +41,30 @@ $(function() {
 			$logs.addBelow(textEl.render(null, text));
 		next();
 	});
+	
+	libsb.on('navigate', function(state, next) {
+		var reset = false;
+		
+		if(state.source == 'text-area') return next();
+		
+		if(state.room != state.old.room) {
+			room = state.room;
+			reset = true;
+		}
+		if(state.thread != state.old.thread) {
+			thread = state.thread;
+			reset = true;
+		}
+		if(state.time != state.old.time) {
+			time = state.time;
+			reset = true;
+		}
+		
+		if(reset) $logs.reset(time);
+		
+		next();
+	});
+
 
 	// The chatArea API.
 
