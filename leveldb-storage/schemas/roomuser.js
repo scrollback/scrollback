@@ -8,8 +8,8 @@ module.exports = function (types) {
 	return{
 		getUsers: function(query, cb) {		
 			var gateway, eqArray = [], req={};
-			if(query.result) return callback();
-
+			if(query.results) return cb();
+			if(query.ref && query.ref == 'me') return cb();
 			if(query.memberOf) {
 				req.by = "memberOf";
 				req.eq = [];
@@ -17,11 +17,11 @@ module.exports = function (types) {
 
 				if(query.ref) req.eq.push(query.ref);
 
-			}else if(query.ref && query.ref != 'me') {
+			}else if(query.ref) {
 				//getting use by ids
 				return user.get(query.ref, function(err, res) {
 					if(err || !res) return cb();
-					query.results = [res];
+					query.results = res;
 					cb();
 				});
 			}
@@ -41,19 +41,17 @@ module.exports = function (types) {
 		},
 		getRooms: function(query, cb) {
 			var gateway, eqArray = [], req={};
-
-			if(query.result) return callback();
+			if(query.results) return cb();
 
 			if(query.hasMember) {
 				req.by = "hasMember";
 				req.eq = [];
 				req.eq.push(query.hasMember);
 				if(query.ref) req.eq.push(query.ref);
-			}else if(query.ref && query.ref != 'me') {
-
+			}else if(query.ref) {
 				return room.get(query.ref, function(err, res) {
 					if(err || !res) return cb();
-					query.results = [res];
+					query.results = res;
 					cb();
 				});
 
@@ -63,7 +61,7 @@ module.exports = function (types) {
 				req.eq.push(gateway[0]);
 				if (gateway[1]) req.eq.push(gateway[1]);
 			}else{
-				return callback();
+				return cb();
 			}
 
 			room.get(req, function(err, res) {

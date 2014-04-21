@@ -1,10 +1,11 @@
 var crypto = require('crypto'), log = require("../lib/logger.js");
 var names = require('../lib/generate.js').names;
 var uid = require('../lib/generate.js').uid;
-
+var config = require("../config.js");
+var internalSession = Object.keys(config.whitelists)[0];
 
 /* list of event that the basic validation function is called for.*/
-var core, events = ['text', 'edit', 'join', 'part', 'away', 'admit', 'expel', 'room'];
+var core, events = ['text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'expel', 'room'];
 
 var handlers = {
 	init: function(action, callback) {
@@ -57,12 +58,11 @@ var handlers = {
 };
 
 function loadVictim(action, callback){
-	if(action.ref){
-		core.emit("getUsers", {ref: action.ref, session.action.session}, function(err, data){
+	if(action.ref) {
+		core.emit("getUsers", {ref: action.ref, session: action.session}, function(err, data){
 			if(err || !data || !data.resulats || !data.results.length) {
 				return callback(new Error("user "+action.ref+ " not found"));
 			}
-
 			action.victim = data.results[0];
 		});
 	}else{
@@ -76,32 +76,46 @@ module.exports = function(c) {
 			if(action.user) delete action.user;
 			basicLoader(action, function(err) {
 				if(err) return callback(err);
+				action.from = action.user.id;
+				action.to = action.room.id;
 				if(handlers[event]) handlers[event](action, callback);
 				else callback();
 			});
 		}, "loader");
-	});
+	})
 
+	core.on('getUsers', function(query, callback) {
+		if(query.ref == "me") return callback();
+		if(config.whitelists[query.session]) {
+			query.user = {
+				id: "system"
+			}
+			return callback();
+		}
 
-	core.on('getUsers', function(data, callback) {
-		if(data.ref == "me") return callback();
-		core.emit("getUsers", {session: data.session, ref: "me"}, function(err, user) {
+		core.emit("getUsers", {session: query.session, ref: "me"}, function(err, user) {
 			if(err || !user || !user.results || !user.results.length) {
-				data.results = [];
+				query.results = [];
 				callback();
 			}else {
-				data.user = user[0];
+				query.user = user[0];
 				callback();
 			}
 		});
 	}, "loader");
-	core.on('getRooms', function(data, callback) {
-		core.emit("getUsers", {session: data.session, ref: "me"}, function(err, user) {
+	core.on('getRooms', function(query, callback) {
+		if(config.whitelists[query.session]) {
+			query.user = {
+				id: "system"
+			}
+			return callback();
+		}
+		core.emit("getUsers", {session: query.session, ref: "me"}, function(err, user) {
 			if(err || !user || !user.results || !user.results.length) {
-				data.results = [];
+				query.results = [];
 				callback();
 			}else {
-				data.user = user[0];
+				query.user = user[0];
 				callback();
 			}
 		});
@@ -166,27 +180,26 @@ function loadRoom(action, callback) {
 	core.emit("getRooms",{id: uid(), ref: action.to, session: action.session}, function(err, rooms) {
 		var room;
 		if(err || !rooms ||!rooms.results || !rooms.results.length) {
-			room = {}
+			if(action.type != "room") return callback(new Error("NO_ROOM_WITH_GIVEN_ID"));
 		}else{
 			room = rooms.results[0];	
 		}
-
 
 		if(action.type == "room") {
 			if(room.id) action.old = room;
 			else action.old = {}
 		}else {
-			if(room.id) action.room = room;
-			else action.room = {id: action.to}
+			action.room = room;
 		}
 		callback();
 	});
 }
 
 function basicLoader(action, callback) {
-	loadUser(action, function() {
-		loadRoom(action, function() {
-			callback();
+	loadUser(action, function(err) {
+		if(err) return callback(err);
+		loadRoom(action, function(err) {
+			return callback(err);
 		});
 	});
 }
@@ -194,6 +207,7 @@ function basicLoader(action, callback) {
 function initializerUser(action, callback) {
 	var userObj;
 	generateNick(action.suggestedNick || action.ref || "", function(possibleNick) {
+		possibleNick = "guest-"+possibleNick;
 		if(!action.ref) action.from = possibleNick;
 		userObj = {
 			id: possibleNick,
@@ -216,13 +230,19 @@ function generateNick(suggestedNick, callback) {
 		var trying = suggestedNick;
 		if(attemptC) trying+=attemptC;
 		if(attemptC>=3) return callback(names(6));
-		core.emit('getUsers', {v:"harish",ref:"guest-"+trying},function(err, data) {
-			if(data && data.results && data.results.length >0) return checkUser(suggestedNick, attemptC+1, callback);
-			core.emit('getUsers', {v:"harish",ref:trying},function(err, data) {
-				if(data && data.results && data.results.length >0) return checkUser(suggestedNick, attemptC+1, callback);
-				core.emit('getRooms', {ref:trying},function(err, data) {
-					if(data && data.results && data.results.length >0) return checkUser(suggestedNick, attemptC+1, callback);
-					callback('guest-'+trying);
+		core.emit('getUsers', {ref:"guest-"+trying, session: internalSession},function(err, data) {
+			if(data && data.results && data.results.length >0){
+				return checkUser(suggestedNick, attemptC+1, callback);
+			}
+			core.emit('getUsers', {ref:trying, session: internalSession},function(err, data) {
+				if(data && data.results && data.results.length >0){
+					return checkUser(suggestedNick, attemptC+1, callback);
+				}
+				core.emit('getRooms', {ref:trying, session: internalSession},function(err, data) {
+					if(data && data.results && data.results.length >0) {
+						return checkUser(suggestedNick, attemptC+1, callback);
+					}
+					callback(trying);
 				});
 			})
 		});

@@ -1,10 +1,11 @@
 var config = require("../config.js");
 var log = require("../lib/logger.js");
 //var config = require('../../config.js');
-var occupantDB = require('../lib/redisProxy.js').select(config.redis.occupants);
-var userDB = require('../lib/redisProxy.js').select(config.redis.user);
+var occupantDB = require('../lib/redisProxy.js').select(config.redisDB.occupants);
+var userDB = require('../lib/redisProxy.js').select(config.redisDB.user);
+var roomDB = require('../lib/redisProxy.js').select(config.redisDB.room);
 var core;
-
+console.log(config.redisDB);
 module.exports = function(c) {
     core = c;
     require("./user.js")(core);
@@ -39,27 +40,32 @@ function onAway(action, callback) {
     callback();
 }
 
-function onRoom(room, callback) {
-    occupantDB.set("room:{{"+room.id+"}}", JSON.stringify(room));
+function onRoom(action, callback) {
+    roomDB.set("room:{{"+action.room.id+"}}", JSON.stringify(action.room));
     callback();
 }
 
-
-
 function onGetRooms(query, callback) {
-    if(query.id) {
-        return occupantDB.get("room:{{"+query.id+"}}", function(err, data) {
-            if(err || !data) callback();
-            if(data) return callback(true, [JSON.parse(data)]);
+    if(query.ref && !query.hasMember) {
+        return roomDB.get("room:{{"+query.ref+"}}", function(err, data) {
+            var res;
+            if(err || !data) return callback();
+            if(data){
+                try{
+                    res  = JSON.parse(data)
+                    console.log(res);
+                    query.results = [res];
+                }catch(e){}
+            }
+            callback();
         });
-    }
-    if(query.hasOccupants) {
-        return occupantDB.smembers("user:{{"+query.occupantOf+"}}:occupantOf", function(err, data) {
+    } else if(query.hasOccupants) {
+        return occupantDB.smembers("user:{{"+query.hasOccupants+"}}:occupantOf", function(err, data) {
             if(err) return callback(err);
             data = data.map(function(e){
                 return "room:{{"+e+"}}";
             })
-            occupantDB.mget(data, function(err, data) {
+            roomDB.mget(data, function(err, data) {
                 data = data.map(function(e) {
                     return JSON.parse(e);
                 });

@@ -22,7 +22,6 @@ describe("Init for guests" , function(){
 			var init = {id: generate.uid(), type: 'init', to: 'me', time:new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
-				console.log(message);
 				if(message.type == 'error')	done();
 			};
 			socket.send(JSON.stringify(init));
@@ -33,7 +32,6 @@ describe("Init for guests" , function(){
 				message = JSON.parse(message.data);
 				if(message.type == 'init') done();
 				testNick = message.user.id;
-				console.log(message);
 				done();
 			};
 			socket.send(JSON.stringify(init));
@@ -41,7 +39,6 @@ describe("Init for guests" , function(){
 		it("Sending invalid characters in suggested nick", function(done){
 			var init = {id: generate.uid(), type: 'init', session:generate.uid(), suggestedNick:'!#$%9some_invalid_nick', to: 'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
-				console.log(message);
 				message = JSON.parse(message.data);
 				if(message.user.id == "!#$%9some_invalid_nick") throw new Error("Invalid nick was assigned to user");
 				else done();
@@ -52,15 +49,14 @@ describe("Init for guests" , function(){
 			var init = {id: generate.uid(), type: 'init', session:sessID , to: 'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
-				console.log(message);
 				if(message.user.id == testNick) done();
 			};
 			socket.send(JSON.stringify(init));
 		});
 		it("Sending init with session id and suggested nick-----", function(done){
-			
+			var msgid = generate.uid();
 			var suggestedNick = 'testnickamal';
-			var init = {id: generate.uid(), type: 'init', session: sessID, suggestedNick: suggestedNick, to: 'me', time: new Date().getTime()};
+			var init = {id: msgid, type: 'init', session: sessID, suggestedNick: suggestedNick, to: 'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
 				// suggested nick should be respected 

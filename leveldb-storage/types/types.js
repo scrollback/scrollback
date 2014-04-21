@@ -11,6 +11,7 @@ module.exports = function(db) {
 	var admitexpel = require("./admit-expel-type.js")(db);
 	var awayback = require("./away-back-type.js")(db);
 	var edit = require("./edit-type.js")(db);
+	var threads = require("./thread-type.js")(db);
 
 	db.defineLink({"hasMember":users, "memberOf": rooms}, {
 		indexes: {
@@ -27,15 +28,7 @@ module.exports = function(db) {
 			}
 		}
 	});
-
-	// db.defineLink({"hasOccupant":users, "occupantOf": rooms}, {
-	// 	indexes: {
-	// 		time: function(data, emit) {
-	// 			emit(data.time);
-	// 		}
-	// 	}
-	// });
-
+	
 	return {
 		texts: texts,
 		rooms: rooms,
@@ -44,6 +37,7 @@ module.exports = function(db) {
 		joinpart: joinpart,
 		admitexpel: admitexpel,
 		awayback: awayback,
-		edit: edit
+		edit: edit,
+		threads: threads
 	};
 };

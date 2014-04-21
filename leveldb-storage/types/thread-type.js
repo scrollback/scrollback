@@ -1,12 +1,9 @@
 module.exports = function(store) {
-	return store.defineType('thread',{
+	return store.defineType('threads', {
 		indexes: {
-			tostarttime: function (thread, emit) {
-				emit(thread.to, -thread.startTime);
-			},
-			toendtime: function (thread, emit) {
-				emit(thread.to, -thread.endTime);
-			},
+			tostartend: function (thread, emit) {
+				emit(thread.to, thread.startTime, thread.endTime);
+			}
 		}
 	});
 };

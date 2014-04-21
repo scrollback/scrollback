@@ -1,6 +1,7 @@
 var config = require("../config.js");
-var userDB = require('../lib/redisProxy.js').select(config.redis.user);
-var occupantDB = require('../lib/redisProxy.js').select(config.redis.occupants);
+var userDB = require('../lib/redisProxy.js').select(config.redisDB.user);
+var roomDB = require('../lib/redisProxy.js').select(config.redisDB.room);
+var occupantDB = require('../lib/redisProxy.js').select(config.redisDB.occupants);
 
 var get = require("./get.js");
 var put = require("./put.js");
@@ -35,6 +36,7 @@ function onGetUsers(query, callback) {
             })
         } else{
         	getUserById(query.ref, function(err, data){
+
         		if(err || !data){
         			return callback();
         		}
@@ -42,19 +44,26 @@ function onGetUsers(query, callback) {
         		callback();
         	});
         }
-    }else if(query.occupantOf) {
+    } else if(query.occupantOf) {
         return occupantDB.smembers("room:{{"+query.occupantOf+"}}:hasOccupants", function(err, data) {
             if(err) return callback(err);
-            if(!data || data.length==0) return callback(true, []);
+            if(!data || data.length==0) {
+                query.results = [];
+                return callback();
+            }
             data = data.map(function(e) {
                 return "user:{{"+e+"}}";
             });
             occupantDB.mget(data, function(err, data) {
-                if(!data) return callback(true, []);
+                if(!data) {
+                    query.results = [];
+                    return callback();
+                }
                 data = data.map(function(e) {
                     return JSON.parse(e);
                 });
-                return callback(true, data);
+                query.results = data;
+                return callback();
             });
         });
     }else {
@@ -81,7 +90,7 @@ function updateUser(action, callback) {
 module.exports = function(c) {
 	core = c;
 	core.on("user", function(action, callback) {
-		userDB.put("user:{{"+action.user.id+"}}", JSON.stringify(action.user));
+		userDB.set("user:{{"+action.user.id+"}}", JSON.stringify(action.user));
 		callback();
 	}, "storage");
 	core.on("init", updateUser, "storage");

@@ -13,9 +13,12 @@ function getConnection(session, callback) {
 	function constructObject(socket) {
 		socket.onmessage = function(data) {
 			data = cleanData(data.data);
-			if(data.type === "init" && !initDone && data.id == guid){
+			if(data.type === "init" && !initDone && data.id == guid) {
+				socket.user = data.user;
 				initDone = true;
 				socket.session = data.session;
+				socket.resource = data.resource;
+				socket.user = data.user;
 				callback(socket);
 			}else {
 				callbacks[data.id] && callbacks[data.id](data);

@@ -10,7 +10,7 @@ module.exports = function(core) {
 	var admitexpel = require("./schemas/admitexpel.js")(types);
 	var awayback = require("./schemas/awayback.js")(types);
 	var edit = require("./schemas/edit.js")(types);
-	
+	var threads = require("./schemas/thread.js")(types);
 
 	core.on('room',roomuser.put, "storage");
 	core.on('user',roomuser.put, "storage");
@@ -49,4 +49,5 @@ module.exports = function(core) {
 	core.on('messages', texts.get, 'leveldb');
 	core.on('getUsers', roomuser.getUsers, 'storage');
 	core.on('getRooms', roomuser.getRooms, 'storage');
+	core.on('getThreads',threads.get, 'storage');
 };

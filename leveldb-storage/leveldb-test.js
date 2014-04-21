@@ -128,6 +128,7 @@ describe("get queries: ", function(){
 	});
 	it("getting room that doesnt exist:", function(done) {
 		core.emit("getRooms", {ref:"scrollback1"}, function(err, data){
+			console.log(data);
 			assert(!err, "Error thrown");
 			assert(data, "no response");
 			assert(!data.results, "why did it give results?");
@@ -136,6 +137,7 @@ describe("get queries: ", function(){
 	});
 	it("getting user that doesnt exist:", function(done) {
 		core.emit("getUsers", {ref:"harish1"}, function(err, data){
+			console.log(data);
 			assert(!err, "Error thrown");
 			assert(data, "no response");
 			assert(!data.results, "why did it give results?");
@@ -144,6 +146,7 @@ describe("get queries: ", function(){
 	});
 	it("hasMember query:", function(done) {
 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
+			console.log(data);
 			assert(!err, "Error thrown");
 			assert(data, "no response");
 			assert(data.results[0], "empty results");
@@ -166,12 +169,14 @@ describe("get queries: ", function(){
 				id:"harish",
 			}
 		}, function(err, data){
+			console.log(data);
 			assert(!err, err);
 			done();
 		});
 	});
 	it("hasMember query:", function(done) {
 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
+			console.log(data);
 			var ids = [];
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -187,6 +192,7 @@ describe("get queries: ", function(){
 	});
 	it.skip("hasMember query with ref:", function(done) {
 		core.emit("getRooms", {hasMember:"harish", ref:"scrollback"}, function(err, data){
+			console.log(data);
 			var ids = [];
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -197,7 +203,7 @@ describe("get queries: ", function(){
 		});
 	});
 });
-describe("storing actions", function() {
+describe.skip("storing actions", function() {
 	it("storing back message", function(done) {
 		core.emit("back", {
 			id: generate.uid(),
@@ -345,6 +351,61 @@ describe("storing actions", function() {
 			assert.equal(idRole["scrollbackteam"].transitionRole,"follower", "Not banned yet");
 			assert(idRole["scrollbackteam"].roleUntil,"no timeout");
 			done();	
+		});
+	});
+});
+
+var x; 
+describe.skip("threads", function() {
+	it.skip("insert", function(done) {
+		var threads = new Array(12), i=0;
+		threads = Array.prototype.map.call( generate.uid(20),function() {
+			i++;
+			return {id:"thread"+(i+40), title: "thread"+i};
+		});
+		threads.map(function(e){
+			i++;
+			return {id:"thread"+(i+40), title: "thread"+i};
+		});
+		console.log(threads);
+		
+		core.emit("text", {
+			id: (x = generate.uid()),
+			from:"harish",
+			to:"scrollback",
+			threads: threads,
+			time: new Date().getTime()
+		} ,function(){
+			done();
+		});	
+	});
+	it.skip("query1", function(done) {
+		core.emit("getThreads", {ref: "thread482"}, function(err, data) {
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "no results");
+			assert(data.results.length, "empty results");
+			done();
+		});
+	});
+	it("query2", function(done) {
+		core.emit("getThreads", {time: 1397799628489, to:"scrollbackteam", after: 5}, function(err, data) {
+			console.log(data.results);
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "no results");
+			assert(data.results.length, "empty results");
+			done();
+		});
+	});
+	it.skip("query3", function(done) {
+		core.emit("getThreads", {time: 1397647033905, after: 100}, function(err, data) {
+			console.log(data.results);
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(!data.results, "no results");
+			assert(data.results.length, "empty results");
+			done();
 		});
 	});
 });

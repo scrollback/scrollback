@@ -36,7 +36,7 @@ var sock = sockjs.createServer();
 sock.on('connection', function (socket) {
 	var conn = { socket: socket };
 	socket.on('data', function(d) {
-		var i, l;
+		var i, l, e;
 		try { d = JSON.parse(d); log ("Socket received ", d); }
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 		
@@ -57,10 +57,25 @@ sock.on('connection', function (socket) {
 			d.resource  = conn.resource;
 		}
 		
+		if(d.type == 'back') {
 
-		if(d.type == 'back' && !verifyBack(conn, d)) return;
-		// if(d.type == 'away' && !verifyAway(conn, d)) return;
 
+			//just need for back as storeBack will be called before actionValidator
+			if(!d.to) {
+				e = {type: 'error', id: d.id, message: "INVALID_ROOM"};
+				conn.send(e);
+				return;
+			} else if(!d.from) {
+				e = {type: 'error', id: d.id, message: "INVALID_USER"};
+				conn.send(e);
+				return;
+			}
+			if(!verifyBack(conn, d)){
+				storeBack(conn, d);
+				conn.send(d);
+				return;	
+			}
+		}
 		core.emit(d.type, d, function(err, data) {
 			var e;
 			if(err) {
@@ -72,11 +87,11 @@ sock.on('connection', function (socket) {
 				/* this is need because we dont have the connection object
 				 of the user in the rconn until storeBack is called*/
 				conn.send(data);
-				storeBack(conn, d);
+				storeBack(conn, data);
 				return;
 			}
-			if(data.type == 'away') storeAway(conn, d); 
-			if(data.type == 'init') storeInit(conn, d); 
+			if(data.type == 'away') storeAway(conn, data); 
+			if(data.type == 'init') storeInit(conn, data); 
 			
 
 			/* no need to send it back to the connection object when no error,
@@ -94,7 +109,6 @@ sock.on('connection', function (socket) {
 
 function storeInit(conn, init) {
 	if(!uConns[init.user.id]) uConns[init.user.id] = [];
-
 	sConns[init.session].forEach(function(c) {
 		var index;
 		if(init.old && init.id) {
@@ -120,8 +134,8 @@ function storeBack(conn, back) {
 	if(!sConns[back.session]) sConns[back.session] = [];
 	if(!urConns[back.from+":"+back.to]) urConns[back.from+":"+back.to] = [];
 	if(!uConns[back.from]) uConns[back.from] = [];
-	rConns[back.to].push(conn);
-	urConns[back.from+":"+back.to].push(conn);
+	if(rConns[back.to].indexOf(conn)<=0) rConns[back.to].push(conn);
+	if(urConns[back.from+":"+back.to].indexOf(conn)<=0) urConns[back.from+":"+back.to].push(conn);
 }
 
 
@@ -157,8 +171,13 @@ exports.initCore = function(c) {
 };
 
 function emit(action, callback) {
+	var conns;
+	log("Sending out: ", action);
 	if(action.type == 'init') {
-		sConns[action.session].forEach(dispatch);
+		sConns[action.session].forEach(function(conn){
+			conn.user = action.user;
+			dispatch(conn);
+		});
 	} else if(action.type == 'user') {
 		uConns[action.from].forEach(dispatch);
 	} else {
@@ -166,7 +185,7 @@ function emit(action, callback) {
 			rConns[action.to].forEach(dispatch);	
 		}
 	}
-	function dispatch(conn) { conn.send(action); }
+	function dispatch(conn) {conn.send(action); }
 	callback();
 };
 
@@ -180,17 +199,19 @@ function handleClose(conn) {
 		}
 		var user = sess[0].user;
 		setTimeout(function() {
-			var awayAction = {
-				from: user.id,
-				session: conn.session,
-				type:"away",
-				to: conn.room,
-				time: new Date().getTime()
-			};
-			if(verifyAway(conn, awayAction)) return;
-			core.emit('away',awayAction , function(err, action) {
-				if(err) return;
-				storeAway(conn, action)
+			conn.user.occupantOf.forEach(function(room){
+				var awayAction = {
+					from: user.id,
+					session: conn.session,
+					type:"away",
+					to: room,
+					time: new Date().getTime()
+				};
+				if(verifyAway(conn, awayAction)) return;
+				core.emit('away',awayAction , function(err, action) {
+					if(err) return;
+					storeAway(conn, action)
+				});
 			});
 		}, 30*1000);
 	});
@@ -198,7 +219,6 @@ function handleClose(conn) {
 
 function verifyAway(conn, away) {
 	var index;	
-	if(!away.to) return true;
 	if(rConns[away.to]) {
 		index = rConns[away.to].indexOf(conn);
 		rConns[away.to].splice(index,1);
@@ -221,7 +241,6 @@ function verifyAway(conn, away) {
 }
 
 function verifyBack(conn, back) {
-	if(!back.to) return true;
 	if(!urConns[back.from+":"+back.to]) return true;
 	return (urConns[back.from+":"+back.to].length===0);
 }

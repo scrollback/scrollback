@@ -51,6 +51,9 @@ var defaults = {
 		name: "scrollback",
 		newrelic: { name: 'Scrollback Local' }
 	},
+	whitelists:{
+		
+	},
 	mysql: {
 		host     : 'localhost',
 		user     : 'scrollback',
@@ -95,9 +98,10 @@ var defaults = {
 		path: "/data"
 	},
 	redisDB:{
-		session: 10,
+		session: 8,
 		user: 9,
-		room: 8
+		room: 9,
+		occupants: 10
 	},
 	plugins: ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
 	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",

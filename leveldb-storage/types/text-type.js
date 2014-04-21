@@ -9,17 +9,13 @@ module.exports = function(store) {
 					slow.
 				*/
 				(text.to instanceof Array? text.to: [text.to]).
-				forEach(function(to) {emit(to, -text.time);});
+				forEach(function(to) {emit(to, text.time);});
 			},
-			tolabeltime: function(text, emit) {
+			tothreadtime: function(text, emit) {
 				if(text.labels) for(var i in text.labels) {
 					(text.to instanceof Array? text.to: [text.to]).
-					forEach(function(to) { emit(to, i, -text.time); });
+					forEach(function(to) { emit(to, i, text.time); });
 				}
-			},
-			mentiontotime: function(text, emit) {
-				if(text.mentions) 
-					text.mentions.forEach(function(m) { emit(m, text.to, -text.time); });
 			}
 		}
 	});

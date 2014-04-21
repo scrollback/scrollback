@@ -97,7 +97,7 @@ module.exports = function(core) {
 function basicValidation(action, callback) {
 	if(!action.id) action.id = generate.uid();
 	if(!action.type) return callback(new Error("INVALID_ACTION_TYPE"));
-	if(action.type!="init" && action.from) {
+	if(action.type!="init" && !action.from) {
 		return callback(new Error("INVALID_USER"));
 	}
 
