@@ -4,12 +4,12 @@
 window.libsb = (function() {
 	var core = new Bus();
 
-	function text(time) { return {
+	function text(time, thread) { return {
 		from: 'sb-' + generate.word(8),
 		to: 'testroom',
 		text: generate.paragraph(),
 		threads: [{
-			id: generate.guid(31) + Math.floor(Math.random() * 10),
+			id: thread || generate.guid(31) + Math.floor(Math.random() * 10),
 			title: generate.sentence(3),
 			score: Math.random()
 		}],
@@ -72,7 +72,7 @@ window.libsb = (function() {
 			for(i=0, l=query.before + query.after; i<l; i++) {
 				if(time >= now) break;
 				if(time >= now - 100 * MTBT) {
-					r.push(text(time + (Math.random()-0.5)*MTBT*0.9));
+					r.push(text(time + (Math.random()-0.5)*MTBT*0.9, query.thread));
 				}
 				time += MTBT;
 			}

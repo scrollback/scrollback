@@ -62,12 +62,26 @@
         }
     }
 
-    ul {
+	.search-term {
+		display: none;
+
+		.search-mode & {
+			display: block;
+			background-image: url(../../img/icons/png/search-light.png);
+			background-position: 90% center;
+			background-repeat: no-repeat;
+			background-size: 2em 2em;
+		}
+	}
+
+    .roomlist {
         overflow-y: scroll;
         -webkit-overflow-scrolling : touch;
         list-style: none;
 
-        li {
+		.infinite-items { background: transparent; }
+
+		.roomitem {
             a {
                 .clearfix;
                 .ease;

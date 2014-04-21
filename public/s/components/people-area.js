@@ -34,6 +34,15 @@ $(function() {
 			callback(res);
 		}
 	});
+	
+	libsb.on('navigate', function(state, next) {
+		if(state.source == 'people-area') return next();		
+		if(state.room != state.old.room) {
+			room = state.room;
+			$people.reset();
+		}
+		next();
+	});
 
 	peopleArea.setBottom = function(bottom) {
 		var atBottom = ($people.scrollTop() + $people.height() == $people[0].scrollHeight);

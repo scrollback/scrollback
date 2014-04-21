@@ -207,12 +207,13 @@
 		});
 	}; /* end $.fn.infinite */
 
-	$.fn.reset = function() {
+	$.fn.reset = function(index) {
 		var $logs = $(this);
 		$logs.find(".infinite-items").empty();
 		$logs.data("lower-limit", false);
 		$logs.data("upper-limit", false);
 		$logs.data("update-infinite")();
+		if(typeof index !== undefined) $logs.data("update-start", index);
 	};
 
 	$.fn.addBelow = function(el) {
