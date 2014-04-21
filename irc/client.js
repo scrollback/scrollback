@@ -12,13 +12,7 @@ var server = "localhost";
  */
 module.exports = function(coreObj) {
 	core = coreObj;
-	core.on('text', function(message, callback) {
-		
-	});
 	eventEmitter.on('object', function(obj) {
-		if (obj.type === 'registered') {
-			console.log("GOt obj", obj);
-		}
 		core.emit(obj.type, obj);
 	});
 	core.on('write', function(obj) {
@@ -50,6 +44,8 @@ function writeObject(obj) {
 	r += v;
 	client.write(r);	
 }
+
+
 
 
 

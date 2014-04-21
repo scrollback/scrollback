@@ -272,7 +272,7 @@ function left(client, channels, nick) {
 				core.emit("data", {
 					type: "away",
 					to: room.id,
-					from: sbNick,
+					from: sbUser.nick,
 					room: room
 				});
 			}
@@ -298,7 +298,7 @@ function addUsers(client, channel, nick) {
 				to: room.id,
 				from: nick,
 				room: room,
-				session: "irc//:"+client.opt.server + ":" + nick
+				session: "ircClient//:"+client.opt.server + ":" + nick
 			});
 		}
 	});
@@ -404,12 +404,12 @@ function partUser(roomId, nick) {
  * Return current state of Client.
  * @param {function} callback callback(state)
  */
-function getCurrentState(callback) {
-	callback({//state
+function getCurrentState() {
+	return {//state
 		rooms: rooms,
 		servChanProp: servChanProp,
 		servNick: servNick
-	});
+	};
 }
 
 /**

@@ -4,10 +4,12 @@ var events = require('events');
 var core = new events.EventEmitter();
 var ObjectReader = require('../lib/ObjectReader.js');
 var or = new ObjectReader(core);
+var dataQueue = require("./queue.js");
 var port = 78910;
 var client;
-var dataQueue = [];
+
 var isConnected = false;
+var lastDisconnectData = {rooms: {}, servChanProp: {}, servNick: {}};
 core.on('data', function(data) {
 	writeObject(data);
 });
@@ -19,15 +21,20 @@ var server = net.createServer(function(c) { //'connection' listener
 		return;//allow only one connection.
 	}
 	client = c;
-	while(dataQueue.length !== 0) client.write(dataQueue.pop());
-	isConnected = true;
-	console.log('server connected');
+	console.log("new Connection Request");
+	writeObject({
+		type: "init",
+		state: lastDisconnectData
+	}, true);
+	
 	c.on('data', function(data) { 
 		handleIncomingData(data);	
 	});
 	c.on('end', function() {
+		lastDisconnectData = clone(ircClient.getCurrentState());
+		
 		isConnected = false;
-		console.log('server disconnected');
+		console.log('client disconnected copied data', lastDisconnectData);
 	}); 
 });
 server.listen(port, function() { //'listening' listener
@@ -45,8 +52,19 @@ core.on('object', function(obj) {
 	var fn = obj.type;
 	console.log("received : ", obj);
 	switch (fn) {
+		case 'init':
+			while(dataQueue.length() !== 0) {
+				var a = dataQueue.pop();
+				//TODO change object based on new scrollback names.
+				console.log("writing queue values:", a);
+				client.write(a);
+			}
+			console.log("queue is empty now");
+			isConnected = true;
+			console.log('server connected');
+			break;
 		case 'connectBot':
-			ircClient.connectBot(obj.room, obj.options, function(msg) {
+			ircClient.connectBot(obj.room, obj.options || {}, function(msg) {
 				writeObject({type: 'callback', uid: obj.uid, data: msg});
 			});
 			break;
@@ -54,7 +72,7 @@ core.on('object', function(obj) {
 			ircClient.partBot(obj.roomId);
 			break;
 		case 'connectUser':
-			ircClient.connectUser(obj.roomId, obj.nick, obj.options, function() {
+			ircClient.connectUser(obj.roomId, obj.nick, obj.options || {}, function() {
 				writeObject({type: 'callback', uid: obj.uid});
 			});
 			break;
@@ -71,9 +89,8 @@ core.on('object', function(obj) {
 			ircClient.partUser(obj.roomId, obj.nick);
 			break;
 		case 'getCurrentState':
-			ircClient.getCurrentState(function(state) {
-				writeObject({type: 'callback', uid: obj.uid, data: state});
-			});
+			var state = ircClient.getCurrentState();
+			writeObject({type: 'callback', uid: obj.uid, data: state});
 			break;
 		case 'getBotNick':
 			ircClient.getBotNick(obj.roomId, function(nick){
@@ -84,14 +101,38 @@ core.on('object', function(obj) {
 });
 
 
-function writeObject(obj) {//move this inside objectWriter 
+function writeObject(obj, init) {//move this inside objectWriter 
 	var v = JSON.stringify(obj);
 	var r = v.length + " ";
 	r += v;
-	if (isConnected) {
+	if (isConnected || init) {
 		console.log("sending :", r);
 		client.write(r);
 	} else {
 		dataQueue.push(r);
 	}
+}
+
+function clone(obj) {
+    // Handle the 3 simple types, and null or undefined
+    if (null == obj || "object" != typeof obj) return obj;
+    // Handle Array
+    if (obj instanceof Array) {
+        var copy = [];
+        for (var i = 0, len = obj.length; i < len; i++) {
+            copy[i] = clone(obj[i]);
+        }
+        return copy;
+    }
+
+    // Handle Object
+    if (obj instanceof Object) {
+        var copy = {};
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+        }
+        return copy;
+    }
+
+    throw new Error("Unable to copy obj! Its type isn't supported.");
 }
