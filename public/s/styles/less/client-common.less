@@ -314,7 +314,13 @@
 
 .rooms, .meta, .mainview, .chat-input {
     .ease(.3s); /* animate css transforms */
-    .transform(translate3d(0, 0, 0)); /* get ready, fix flicker in some browsers */
+    .transform(translate3d(0, 0, 0)); /* get ready */
+
+    /* fix flicker in some browsers */
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+    backface-visibility: hidden;
 
     /* use 3d transformations for GPU accelerated animations */
     .metainview & {
