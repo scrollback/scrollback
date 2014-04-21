@@ -316,16 +316,26 @@
     .ease(.3s); /* animate css transforms */
     .transform(translate3d(0, 0, 0)); /* get ready, fix flicker in some browsers */
 
-    /* we use 3d transformations for GPU accelerated animations */
     .metainview & {
+        /* use 3d transformations for GPU accelerated animations */
         @media @breakpointxxx { .transform(translate3d(@metaxxx, 0, 0)); }
 
         @media @breakpointxx { .transform(translate3d(@metaxx, 0, 0)); }
 
         @media @breakpointx { .transform(translate3d(@metax, 0, 0)); }
+
+        /* fallback for browsers without 3D transforms */
+        .no-csstransforms3d & {
+            @media @breakpointxxx { .transform(translateX(@metaxxx)); }
+
+            @media @breakpointxx { .transform(translateX(@metaxx)); }
+
+            @media @breakpointx { .transform(translateX(@metax)); }
+        }
     }
 
     .roomsinview & {
+        /* use 3d transformations for GPU accelerated animations */
         @media @breakpointxxxx { .transform(translate3d(@roomxxxx, 0, 0)); }
 
         @media @breakpointxxx { .transform(translate3d( ( @roomxxx + @metaxxx ), 0, 0)); }
@@ -333,5 +343,78 @@
         @media @breakpointxx { .transform(translate3d( ( @roomxxx + @metaxx ), 0, 0)); }
 
         @media @breakpointx { .transform(translate3d( ( @roomx + @metax ), 0, 0)); }
+
+        /* fallback for browsers without 3D transforms */
+        .no-csstransforms3d & {
+            @media @breakpointxxxx { .transform(translateX(@roomxxxx)); }
+
+            @media @breakpointxxx { .transform(translateX( ( @roomxxx + @metaxxx ) )); }
+
+            @media @breakpointxx { .transform(translateX( ( @roomxxx + @metaxx ) )); }
+
+            @media @breakpointx { .transform(translateX( ( @roomx + @metax ) )); }
+        }
+    }
+}
+
+/* fallback for browsers without CSS transforms */
+.no-csstransforms {
+    .metainview {
+        @media @breakpointxx {
+            .rooms { left: @roomxx * -1; }
+
+            .meta { left: 0; }
+
+            .mainview, .chat-input {
+                left: @metaxx;
+                right: @metaxx * -1;
+            }
+        }
+
+        @media @breakpointx {
+            .rooms { left: @roomx * -1; }
+
+            .meta { left: 0; }
+
+            .mainview, .chat-input {
+                left: @metax;
+                right: @metax * -1;
+            }
+        }
+    }
+
+    .roomsinview {
+        @media @breakpointxxx {
+            .rooms { left: 0; }
+
+            .meta { left: @roomxxx; }
+
+            .mainview, .chat-input {
+                left: @roomxxx + @metaxxx;
+                right: @roomxxx * -1;
+            }
+        }
+
+        @media @breakpointxx {
+            .rooms { left: 0; }
+
+            .meta { left: @roomxx; }
+
+            .mainview, .chat-input {
+                left: @roomxx + @metaxx;
+                right: ( @roomxx + @metaxx ) * -1;
+            }
+        }
+
+        @media @breakpointx {
+            .rooms { left: 0; }
+
+            .meta { left: @roomx; }
+
+            .mainview, .chat-input {
+                left: @roomx + @metax;
+                right: ( @roomx + @metax ) * -1;
+            }
+        }
     }
 }
