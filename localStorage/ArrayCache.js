@@ -1,5 +1,4 @@
-function messageArray(initData){
-
+function ArrayCache(initData){
 	var messages = initData || [];
 
 	function find(time, start, end){
@@ -59,8 +58,8 @@ function messageArray(initData){
 		var time = query.time, before = query.before, after = query.after;
 		var pos = find(time);
 		var tmpMsg = messages.slice(0);
-		if(pos - before < 0) return;
-		else if(pos + after > tmpMsg.length - 1) return;
+		if(pos - before < 0) return null;
+		else if(pos + after > tmpMsg.length - 1) return null;
 		else return tmpMsg.splice(pos-before, before + after + 1);
 	}
 

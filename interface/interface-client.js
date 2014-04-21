@@ -30,7 +30,6 @@ var libsb = {
 	
 	roomConfigForm: roomConfigForm,
 	userPreferForm: userPreferForm
-	
 };
 
 var core;

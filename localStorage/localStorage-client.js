@@ -32,7 +32,8 @@ module.exports = function(core){
 	
 	core.on('getTexts', getTextsBefore, 400);
 	core.on('getTexts', getTextsAfter, 600);
-	core.on('getLabels', getLabels);
+	core.on('getLabels', getLabelsBefore, 400);
+	core.on('getLabels', getLabelsAfter, 600);
 	core.on('connected', createInit);
 	core.on('init-dn', recvInit);
 	core.on('away-up', storeAway);
