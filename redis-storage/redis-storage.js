@@ -5,7 +5,6 @@ var occupantDB = require('../lib/redisProxy.js').select(config.redisDB.occupants
 var userDB = require('../lib/redisProxy.js').select(config.redisDB.user);
 var roomDB = require('../lib/redisProxy.js').select(config.redisDB.room);
 var core;
-console.log(config.redisDB);
 module.exports = function(c) {
     core = c;
     require("./user.js")(core);

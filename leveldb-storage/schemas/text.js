@@ -52,7 +52,6 @@ module.exports = function (types) {
 						};
 						x = x+1000;*/
 						
-						
 						types.threads.put(thread, {preUpdate: function(old, obj) {
 							if(old.startTime) {
 								obj.startTime = old.startTime;
@@ -66,7 +65,6 @@ module.exports = function (types) {
 					}else{
 						insertThread(threads, i+1, callback);
 					}
-					
 				}
 
 				insertThread(message.threads, 0, function() {
@@ -86,39 +84,47 @@ module.exports = function (types) {
 					return cb(true,[data]);
 				});
 			}
-			dbquery.start = [];
-			dbquery.end = [];
+			dbquery.gte = [];
+			dbquery.lte = [];
 			dbQuery.limit = 256;
 
 			if(typeof query.time == "undefined") {
 				query.time  = new Date().getTime();
 				query.before = 256;
 			}
-			
-			dbquery.start.push(query.to);
-			dbquery.end.push(query.to);
+
+			dbquery.gte.push(query.to);
+			dbquery.lte.push(query.to);
 
 			if(options.thread) {
 				dbquery.by = "tothreadtime";
-				dbquery.start.push(query.thread);
-				dbquery.end.push(query.thread);
+				dbquery.gte.push(query.thread);
+				dbquery.lte.push(query.thread);
 			} else {
 				dbQuery.by = "totime";
 			}
 
-
-			if(options.before) {
-				dbquery.start.push(0);
-				dbquery.end.push(query.time);
-				if(query.after <= dbQuery.limit) dbQuery.limit = query.after;
-			} else if(options.after) {
-				dbquery.start.push(query.time);
-				dbquery.end.push(9E99);
-				if(query.before <= dbQuery.limit) dbQuery.limit = query.before;
+			if(typeof query.time !== "undefined") {
+				if(query.after) {
+					dbQuery.gte.push(query.time);
+					if(query.after <= dbQuery.limit) dbQuery.limit = query.after;
+				}else if(query.before) {
+					dbQuery.lte.push(query.time);
+					dbQuery.reverse = true;
+					if(query.before <= dbQuery.limit) dbQuery.limit = query.before;
+				}
+			}else{
+				if(query.after) {
+					query.results = [];
+					return callback();
+				} else if(query.before) {
+					dbQuery.lte.push(0xffff);
+					if(query.before <= dbQuery.limit) dbQuery.limit = query.before;
+				}
 			}
-
-			texts.get(query, function(err, data) {
+			texts.get(dbQuery, function(err, data) {
 				if(err) return cb(err);
+				if(dbQuery.reverse) data = data.reverse();
 				query.results = data;
 				cb();
 			});

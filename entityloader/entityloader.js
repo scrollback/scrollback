@@ -57,7 +57,7 @@ var handlers = {
 	expel: loadVictim
 };
 
-function loadVictim(action, callback){
+function loadVictim(action, callback) {
 	if(action.ref) {
 		core.emit("getUsers", {ref: action.ref, session: action.session}, function(err, data){
 			if(err || !data || !data.resulats || !data.results.length) {
@@ -162,16 +162,28 @@ module.exports = function(c) {
 
 function loadUser(action, callback) {
 	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
+		var user;
 		if(err || !data || !data.results || !data.results.length) {
 			return callback(new Error("USER_NOT_INITED"));
 		}else {
+			user = data.results[0]
 			action.from = data.results[0].id;
 			if(action.type == "user") {
 				action.old = data.results[0];
+			}else if(!/guest-/.test(user.id)){
+				core.emit("getUsers", {id: uid(), session: action.session, ref: user.id, memberOf: action.to}, function() {
+					if(err || !data || !data.results || !data.results.length) {
+						action.user = user;
+						callback();
+					}else {
+						action.user = data.results[0];
+						callback();
+					}
+				});
 			}else{
-				action.user = data.results[0];
+				action.user = user
+				callback();	
 			}
-			callback();
 		}
 	});
 }

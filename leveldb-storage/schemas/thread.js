@@ -22,26 +22,31 @@ module.exports = function(types) {
 			}
 			
 			dbQuery.by = "tostartend";
-			dbQuery.start = [];
-			dbQuery.end = [];
-			dbQuery.start.push(query.to);
-			dbQuery.end.push(query.to);
+			dbQuery.gte = [];
+			dbQuery.lte = [];
+			dbQuery.gte.push(query.to);
+			dbQuery.gte.push(query.to);
 			dbQuery.limit = 256;
 
 			if(typeof query.time !== "undefined") {
 				if(query.after) {
-					dbQuery.start.push(query.time);
-					dbQuery.end.push(9E99);
+					dbQuery.gte.push(query.time);
+					dbQuery.lte.push(9E99);
 					if(query.after <= dbQuery.limit) dbQuery.limit = query.after;
 				}else if(query.before) {
-					dbQuery.start.push(0);
-					dbQuery.end.push(query.time);
+					dbQuery.gte.push(0);
+					dbQuery.lte.push(query.time);
+					if(query.before <= dbQuery.limit) dbQuery.limit = query.before;
+				}
+			}else{
+				if(query.after) {
+					query.results = [];
+					return callback();
+				} else if(query.before){
+					dbQuery.lte.push(0xffff);
 					if(query.before <= dbQuery.limit) dbQuery.limit = query.before;
 				}
 			}
-
-			dbQuery.reverse = false;
-			console.log(dbQuery);
 			types.threads.get(dbQuery, function(err, results) {
 				if(err || !results) { return callback(); }
 				query.results = results;
