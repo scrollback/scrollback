@@ -26,7 +26,7 @@ body {
 }
 
 a {
-    .ease;
+    .transition;
 
     font-weight: bold;
     color: darken(@accent-color, 10%);
@@ -101,7 +101,7 @@ code {
 }
 
 .entry {
-    .ease;
+    .transition;
 
     background-color: lighten(@light-color, 50%);
     border: 1px solid darken(@light-color, 20%);
@@ -166,7 +166,7 @@ code {
 
 .buttons(@bg: @accent-color; @fg: @light-color) {
     .inputs;
-    .ease;
+    .transition;
 
     background-color: @bg;
     border: 1px solid @bg;
@@ -194,7 +194,7 @@ code {
 
 .button-secondary {
     .inputs;
-    .ease;
+    .transition;
 
     background-color: darken(@light-color, 5%);
     border: 1px solid darken(@light-color, 15%);
@@ -357,7 +357,7 @@ input.switch {
         cursor: pointer;
 
         &:before, &:after {
-            .ease;
+            .transition;
 
             position: absolute;
             display: block;

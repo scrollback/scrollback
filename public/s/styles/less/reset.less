@@ -6,10 +6,13 @@
     outline: none;
 }
 
-/* Remove iOS text size adjust without disabling user zoom */
 html {
+    /* remove iOS text size adjust without disabling user zoom */
     -webkit-text-size-adjust:100%;
     -ms-text-size-adjust:100%;
+    /* eliminate 300ms click delay */
+    -ms-touch-action: manipulation; /* IE10 */
+    touch-action: manipulation; /* IE11 */
 }
 
 /* Eric Meyer's Reset CSS v2.0 (http://meyerweb.com/eric/tools/css/reset/) */

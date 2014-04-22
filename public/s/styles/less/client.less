@@ -91,7 +91,7 @@
 
 		.roomitem {
             .clearfix;
-            .ease;
+            .transition;
 
             display: block;
             padding: 1em;
@@ -193,7 +193,7 @@
             border-bottom: 1px solid darken(@light-color, 10%);
 
             li {
-                .ease;
+                .transition;
                 .opacity(0.3);
                 .transform(rotate(0deg)); /* hack to fix invisible items in android browser */
 
@@ -244,7 +244,7 @@
                     @media @breakpointxxxx {
                         .transform(rotate(0deg));
                         .opacity(1);
-                        .ease(.5s);
+                        .transition(.5s);
 
                         display: table-cell;
                         width: 2.5em;
@@ -312,7 +312,7 @@
 
                 .person {
                     .fadein;
-                    .ease;
+                    .transition;
 
                     display: inline-block;
                     padding: .25em;
@@ -363,7 +363,7 @@
 
                 .thread {
                     .fadein;
-                    .ease;
+                    .transition;
 
                     display: block;
                     padding: .5em 2em;
@@ -429,7 +429,7 @@
                 @media @breakpointxxxx {
                     .transform(rotate(0deg));
                     .opacity(1);
-                    .ease(.5s);
+                    .transition(.5s);
 
                     display: table-cell;
                     width: 4em;
@@ -465,7 +465,7 @@
                     list-style: none;
 
                     li {
-                        .ease;
+                        .transition;
 
                         font-size: 1.5em;
                         padding: .75em;
@@ -528,7 +528,7 @@
 
                 @media @breakpointxxx {
                     .transform(rotate(0deg));
-                    .ease(.5s);
+                    .transition(.5s);
 
                     display: table-cell;
                     width: 3em;
@@ -637,7 +637,7 @@
 
         .chat-position {
             .opacity(0);
-            .ease;
+            .transition;
 
             position: relative;
             float: right;
@@ -725,7 +725,7 @@
                 } .-;
 
                 &.long {
-                    .ease;
+                    .transition;
 
                     cursor: pointer;
 
@@ -734,7 +734,7 @@
                     }
 
                     &:after {
-                        .ease;
+                        .transition;
 
                         content: "";
                         position: absolute;
@@ -989,7 +989,7 @@
 }
 
 .rooms, .meta, .mainview, .chat-input {
-    .ease(.3s); /* animate css transforms */
+    .transition(.3s; ease-out); /* animate css transforms */
     .transform(translate3d(0, 0, 0)); /* get ready */
 
     /* fix flicker in some browsers */
