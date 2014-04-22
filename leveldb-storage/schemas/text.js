@@ -8,7 +8,6 @@ module.exports = function (types) {
 	return {
 		put: function (message, cb) {
 			var newLabels = {}, room = message.room, user = message.user;
-
 			if(message.labels) {
 				newLabels = message.labels;
 			} else {
@@ -29,9 +28,6 @@ module.exports = function (types) {
 				cookies: message.cookies || [],
 				session: message.session || ""
 			}, function(err, res) {
-				/*var x = 1000;
-				p = message.time;
-				q = message.time;*/
 				function insertThread(threads, i, callback) {
 					var thread, e = threads[i];
 					if(i>=threads.length) return callback();
@@ -43,15 +39,6 @@ module.exports = function (types) {
 							startTime: message.time,
 							endTime: message.time
 						};
-					/*	thread = {
-							id: e.id,
-							title: e.title,
-							to: message.to,
-							startTime: (p = x+ message.time),
-							endTime: (q = (2*x) + message.time)
-						};
-						x = x+1000;*/
-						
 						types.threads.put(thread, {preUpdate: function(old, obj) {
 							if(old.startTime) {
 								obj.startTime = old.startTime;
@@ -118,7 +105,7 @@ module.exports = function (types) {
 					query.results = [];
 					return callback();
 				} else if(query.before) {
-					dbQuery.lte.push(0xffff);
+					dbQuery.lte.push(0xffffffffffffffff);
 					if(query.before <= dbQuery.limit) dbQuery.limit = query.before;
 				}
 			}

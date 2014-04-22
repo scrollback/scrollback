@@ -2,7 +2,7 @@ var assert = require('assert');
 var core = require('../lib/emitter.js');
 var generate = require("../lib/generate.js");
 require("./leveldb-storage.js")(core);
-
+var time = 1398139968009;
 
 // describe("Just to try something out quick.",function(){
 // 	it("Checking join:", function(done) {
@@ -12,7 +12,7 @@ require("./leveldb-storage.js")(core);
 // 		});
 // 	});
 // });
-describe("user and room action", function(){
+describe.skip("user and room action", function(){
 	it("storing user harish", function(done) {
 		core.emit("user", {
 			id: generate.uid(),
@@ -103,7 +103,7 @@ describe("user and room action", function(){
 });
 
 
-describe("get queries: ", function(){
+describe.skip("get queries: ", function(){
 	it("getting user by id:", function(done) {
 		core.emit("getUsers", {ref:"arvind"}, function(err, data){
 			assert(!err, "Error thrown");
@@ -128,7 +128,6 @@ describe("get queries: ", function(){
 	});
 	it("getting room that doesnt exist:", function(done) {
 		core.emit("getRooms", {ref:"scrollback1"}, function(err, data){
-			console.log(data);
 			assert(!err, "Error thrown");
 			assert(data, "no response");
 			assert(!data.results, "why did it give results?");
@@ -137,7 +136,6 @@ describe("get queries: ", function(){
 	});
 	it("getting user that doesnt exist:", function(done) {
 		core.emit("getUsers", {ref:"harish1"}, function(err, data){
-			console.log(data);
 			assert(!err, "Error thrown");
 			assert(data, "no response");
 			assert(!data.results, "why did it give results?");
@@ -146,7 +144,6 @@ describe("get queries: ", function(){
 	});
 	it("hasMember query:", function(done) {
 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
-			console.log(data);
 			assert(!err, "Error thrown");
 			assert(data, "no response");
 			assert(data.results[0], "empty results");
@@ -169,14 +166,12 @@ describe("get queries: ", function(){
 				id:"harish",
 			}
 		}, function(err, data){
-			console.log(data);
 			assert(!err, err);
 			done();
 		});
 	});
 	it("hasMember query:", function(done) {
 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
-			console.log(data);
 			var ids = [];
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -192,7 +187,6 @@ describe("get queries: ", function(){
 	});
 	it.skip("hasMember query with ref:", function(done) {
 		core.emit("getRooms", {hasMember:"harish", ref:"scrollback"}, function(err, data){
-			console.log(data);
 			var ids = [];
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -356,31 +350,38 @@ describe.skip("storing actions", function() {
 });
 
 var x; 
-describe.skip("threads", function() {
+describe("threads", function() {
 	it.skip("insert", function(done) {
-		var threads = new Array(12), i=0;
-		threads = Array.prototype.map.call( generate.uid(20),function() {
+		var i=0, x = time;
+
+		function insertMessages(count, callback) {
+			var to, from;
 			i++;
-			return {id:"thread"+(i+40), title: "thread"+i};
-		});
-		threads.map(function(e){
-			i++;
-			return {id:"thread"+(i+40), title: "thread"+i};
-		});
-		console.log(threads);
-		
-		core.emit("text", {
-			id: (x = generate.uid()),
-			from:"harish",
-			to:"scrollback",
-			threads: threads,
-			time: new Date().getTime()
-		} ,function(){
+			if(i > count) return callback();
+
+			if(i%2) from = "harish";
+			else from = "arvind";
+			
+			if(i>count/2) to = "nodejs";
+			else to = "scrollback";
+
+			core.emit("text", {
+				id: (generate.uid()),
+				from:from,
+				to: to,
+				threads: [{id:"thread"+to+(i%10), title: "thread"+to+(i%10)}],
+				time: (x+=2000)
+			}, function(){
+				insertMessages(count, callback);
+			});
+		}
+		insertMessages(100, function(){
 			done();
-		});	
+		});
 	});
-	it.skip("query1", function(done) {
-		core.emit("getThreads", {ref: "thread482"}, function(err, data) {
+
+	it("query using id: ", function(done) {
+		core.emit("getThreads", {ref: "thread48"}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
 			assert(data.results, "no results");
@@ -388,9 +389,8 @@ describe.skip("threads", function() {
 			done();
 		});
 	});
-	it("query2", function(done) {
-		core.emit("getThreads", {time: 1397799628489, to:"scrollbackteam", after: 5}, function(err, data) {
-			console.log(data.results);
+	it("query using to and only before: no time", function(done) {
+		core.emit("getThreads", {to:"scrollback", before: 15}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
 			assert(data.results, "no results");
@@ -398,12 +398,29 @@ describe.skip("threads", function() {
 			done();
 		});
 	});
-	it.skip("query3", function(done) {
-		core.emit("getThreads", {time: 1397647033905, after: 100}, function(err, data) {
-			console.log(data.results);
+	it("query with after but no time", function(done) {
+		core.emit("getThreads", {to:"scrollback", after: 5}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
-			assert(!data.results, "no results");
+			assert(data.results, "no results");
+			assert(!data.results.length, "gave some threads");
+			done();
+		});
+	});
+	it("query with after", function(done) {
+		core.emit("getThreads", {time: time, to:"scrollback", after: 5}, function(err, data) {
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "no results");
+			assert(data.results.length, "empty results");
+			done();
+		});
+	});
+	it("query with after", function(done) {
+		core.emit("getThreads", {time: time+(2000*50), to:"scrollback", before: 5}, function(err, data) {
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "no results");
 			assert(data.results.length, "empty results");
 			done();
 		});

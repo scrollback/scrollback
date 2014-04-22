@@ -14,7 +14,6 @@ module.exports = function(types) {
 			var dbQuery = {};
 			if(query.ref) {
 				return types.threads.get(query.ref, function(err, thread) {
-					console.log(err, thread);
 					if(err || !thread) return callback();
 					query.results = [thread];
 					return callback();
@@ -25,16 +24,14 @@ module.exports = function(types) {
 			dbQuery.gte = [];
 			dbQuery.lte = [];
 			dbQuery.gte.push(query.to);
-			dbQuery.gte.push(query.to);
+			dbQuery.lte.push(query.to);
 			dbQuery.limit = 256;
 
 			if(typeof query.time !== "undefined") {
 				if(query.after) {
 					dbQuery.gte.push(query.time);
-					dbQuery.lte.push(9E99);
 					if(query.after <= dbQuery.limit) dbQuery.limit = query.after;
 				}else if(query.before) {
-					dbQuery.gte.push(0);
 					dbQuery.lte.push(query.time);
 					if(query.before <= dbQuery.limit) dbQuery.limit = query.before;
 				}
@@ -43,12 +40,21 @@ module.exports = function(types) {
 					query.results = [];
 					return callback();
 				} else if(query.before){
-					dbQuery.lte.push(0xffff);
+					dbQuery.lte.push(0xffffffffffffffff);
 					if(query.before <= dbQuery.limit) dbQuery.limit = query.before;
 				}
 			}
+			if(query.before) {
+				dbQuery.reverse = true;	
+			}
+			
 			types.threads.get(dbQuery, function(err, results) {
 				if(err || !results) { return callback(); }
+				
+				if(query.before) {
+					dbQuery.reverse = true;	
+					results = results.reverse();
+				}
 				query.results = results;
 				return callback();
 			});
