@@ -82,7 +82,7 @@ module.exports = function(object){
 	core.on("message" , function(message , callback) {
 		log("Heard \"message\" Event");
 
-		if(message.to && message.length) {
+		if(message.to && message.to.length) {
 			db.query("SELECT * FROM `accounts` WHERE `room` IN (?) AND `gateway`='irc'", [message.to], function(err, data) {
 				var i, l, name, list = [], u;
 				if(err) return;
