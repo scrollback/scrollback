@@ -1,8 +1,6 @@
 var log = require("../lib/logger.js");
 var config = require('../config.js');
-var fs=require("fs");
 var net = require('net');
-var jade = require("jade")
 var client;
 var pendingCallbacks = {};
 /**
@@ -58,7 +56,7 @@ function init(){
 		data = data.split("\n");
 		data[0] = d + data[0];//append previous data
 		d = data[data.length-1];
-		for (i = 0;i < data.length-1;i++) {
+		for (var i = 0;i < data.length-1;i++) {
 			processReply(data[i]);
 		}
 	});
@@ -75,7 +73,7 @@ function init(){
 		try {
 			log("data=-:" + data + ":-");
 			data = JSON.parse(data);
-    		log("Data returned by scrollback.jar = "+data.threadId, pendingCallbacks[data.id].message.text);
+			log("Data returned by scrollback.jar = "+data.threadId, pendingCallbacks[data.id].message.text);
 			message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 			if(message) {
                 if(!message.threads) message.threads = [];

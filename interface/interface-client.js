@@ -1,51 +1,51 @@
+/* global window */
 var underscore = require('underscore');
-var libsb = {
-	on: core.on,
-	emit: core.emit,
-	
-	user: "",
-	rooms: "",
-	occupantOf: [],
-	memberOf: [],
-	isConnected: false,
-	
-	connect: connect,
-	disconnect: disconnect,
-	getTexts: getTexts,
-	watch: watch,
-	unwatch: unwatch,
-	
-	getLabels: getLabels,
-	getOccupants: getOccupants,
-	getMembers: getMembers,
-	getRooms: getRooms,
-	enter: enter,
-	leave: leave,
-	join: join,
-	part: part,
-	say: say,
-	
-	roomConfigForm: roomConfigForm,
-	userPreferForm: userPreferForm
-	
-};
-
 var core;
-
 module.exports = function(c){
 	core = c;
+	var libsb = {
+		on: core.on,
+		emit: core.emit,
+		
+		user: "",
+		rooms: "",
+		occupantOf: [],
+		memberOf: [],
+		isConnected: false,
+		
+		connect: connect,
+		disconnect: disconnect,
+		
+		getLoginMenu: getLoginMenu,
+		getTexts: getTexts,
+		getLabels: getLabels,
+		getOccupants: getOccupants,
+		getMembers: getMembers,
+		getRooms: getRooms,
+		getUsers: getUsers,
+		enter: enter,
+		leave: leave,
+		join: join,
+		part: part,
+		say: say,
+		admit: admit,
+		expel: expel,
+		
+		roomConfigForm: roomConfigForm,
+		userPreferForm: userPreferForm
+	};
 	window.libsb = libsb;
-
     core.on('init-dn', recvInit);
 	core.on('back-dn', recvBack);
 	core.on('away-dn', recvAway);
 	core.on('join-dn', recvJoin);
 	core.on('part-dn', recvPart);
-	core.on('text-dn', recvText);
+	core.on('admit-dn', recvAdmit);
+	core.on('expel-dn', recvExpel);
 	
-	core.on('connected', onConnet);
+	core.on('connected', onConnect);
 	core.on('disconnected', onDisconnect);
-}
+};
 
 function onConnect(){
 	libsb.isConnected = true;
@@ -56,6 +56,14 @@ function onDisconnect(){
 }
 function connect(){
 	core.emit('connection-requested');
+}
+
+function disconnect(){
+	core.emit('disconnect');
+}
+
+function getLoginMenu(callback){
+	core.emit('auth-menu', callback);
 }
 
 function getTexts(query, callback){
@@ -78,6 +86,10 @@ function getLabels(query, callback){
 	core.emit('getLabels', query, callback);	
 }
 
+function getUsers(query, callback){
+	core.emit('getUsers', query, callback);
+}
+
 function enter(roomId, callback){
 	core.emit('back-up', {to:roomId}, callback);
 }
@@ -98,6 +110,22 @@ function say(roomId, text, callback){
 	core.emit('text-up', {to: roomId, text: text}, callback);
 }
 
+function admit(roomId, ref, callback){
+	core.emit('admit-up', {to: roomId, ref: ref}, callback);
+}
+
+function expel(roomId, ref, callback){
+	core.emit('expel-up', {to: roomId, ref: ref}, callback);
+}
+
+function roomConfigForm(){
+
+}
+
+function userPreferForm(){
+
+}
+
 function recvInit(init, next){
 	if(underscore.isEqual(libsb.user, init.user)){
 		libsb.user = init.user;
@@ -108,13 +136,13 @@ function recvInit(init, next){
 
 function recvBack(back, next){
 	if(back.from !== libsb.user.id) return next();
-	if(!libsb.rooms.filter(function(room){ return room.id === back.to }).length){
+	if(!libsb.rooms.filter(function(room){ return room.id === back.to; }).length){
 		libsb.rooms.push(back.room);
 		core.emit('rooms-update');
 	}
-	if(!libsb.occupantOf.filter(function(room){ return room.id === back.to}).length){
+	if(!libsb.occupantOf.filter(function(room){ return room.id === back.to; }).length){
 		libsb.occupantOf.push(back.room);
-		core.emit('occupantof-update')
+		core.emit('occupantof-update');
 	}
 	next();
 }
@@ -130,7 +158,7 @@ function recvAway(away, next){
 
 function recvJoin(join, next){
 	if(join.from !== libsb.user.id) return next();
-	if(!libsb.memberOf.filter(function(room){return room.id === join.to }).length){
+	if(!libsb.memberOf.filter(function(room){return room.id === join.to; }).length){
 		libsb.memberOf.push(join.room);
 		core.emit('memberof-update');
 	}
@@ -144,5 +172,16 @@ function recvPart(part, next){
 	next();
 }
 
-function recvText(text, next){
+function recvAdmit(admit, next){
+	if(admit.ref === libsb.user.id){
+		libsb.memberOf.push(admit.room);
+	}
+	next();
+}
+
+function recvExpel(expel, next){
+	if(expel.ref === libsb.user.id){
+		libsb.memberOf = libsb.memberOf.filter(function(room){ return room.id !== expel.to; });
+	}
+	next();
 }
