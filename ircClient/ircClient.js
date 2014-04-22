@@ -7,6 +7,8 @@ var servChanProp = {};//object of server channel prop
 var rooms = {};//room id to room obj map. //TODO delete room obj if any room deleted irc.(Done Test)
 var servNick = {};//server channel nick -------> sb nick.
 var renameCallback = {};
+var connected = false;
+var queue = require("./queue.js");
 module.exports.connectBot = connectBot;
 module.exports.connectUser = connectUser;
 module.exports.say = say;
@@ -16,6 +18,9 @@ module.exports.partUser = partUser;
 module.exports.getCurrentState = getCurrentState;
 module.exports.partBot = partBot;
 module.exports.getBotNick = getBotNick;
+module.exports.isConnected = isConnected;
+module.exports.setConnected = setConnected;
+module.exports.sendQueueData = sendQueueData;
 module.exports.init = function init(coreObj) {
 	core = coreObj;
 };
@@ -179,23 +184,38 @@ function onMessage(client) {
 		if (!servChanProp[client.opt.server][from]) {
 			return;
 		}
-		servChanProp[client.opt.server][from].rooms.forEach(function(room) {
-			if (!room.pending) {
-				var from;
-				if(servNick[client.opt.server][to].dir === 'in') {
-					from = servNick[client.opt.server][to].nick;
-				} else return;
-				core.emit('data', {
-					type: 'message',
-					server: client.opt.server,
-					to: room.id,
-					from: from, 
-					text: message
-				});
-			}	
-		});
+		if (connected) {
+			sendMessage(client.opt.server, to, from, message);
+		} else {
+			queue.push({
+				fn: "sendMessage",
+				server : client.opt.server,
+				to: to,
+				from: from,
+				message: message
+			});
+		}
 	});
 }
+
+function sendMessage(server, to, from, message) {
+	servChanProp[server][from].rooms.forEach(function(room) {
+		if (!room.pending) {
+			var from;
+			if(servNick[server][to].dir === 'in') {
+				from = servNick[server][to].nick;
+			} else return;
+			core.emit('data', {
+				type: 'message',
+				server: server,
+				to: room.id,
+				from: from, 
+				text: message
+			});
+		}	
+	});
+}
+
 
 function onPM(client) {
 	client.on('pm', function(to, from, message) {
@@ -216,9 +236,15 @@ function onPM(client) {
 						console.log("room pending true");
 						reply.channels.forEach(function(channel) {
 							if (channel.substring(0,1) == '@' && channel.substring(1) === room.params.irc.channel) {
-								room.params.irc.pending = false;
 								client.join(room.params.irc.channel);
-								core.emit('data', {type: "room", room: room});
+								if (connected) {
+									sendRoom(room);
+								} else {
+									queue.push({
+										fn: "sendRoom",
+										room: room
+									});
+								}
 							}
 						});
 					}
@@ -228,6 +254,10 @@ function onPM(client) {
 	});
 }
 
+function sendRoom(room) {
+	room.params.irc.pending = false;
+	core.emit('data', {type: "room", room: room});
+}
 
 /************************** user left *****************************************/
 /**
@@ -256,18 +286,32 @@ function onLeave(client) {
 }
 
 function left(client, channels, nick) {
-	var sbUser = servNick[client.opt.server][nick];
-	if (servNick[client.opt.server]) {
-		delete servNick[client.opt.server][nick];
+	if (connected) {
+		sendAway(client.opt.server, channels, nick, client.nick);
+	} else {
+		queue.push({
+			fn: "sendAway",
+			server: client.opt.server,
+			channels: channels,
+			nick: nick,
+			bn : client.nick
+		});
+	}
+}
+
+function sendAway(server, channels, nick, bn) {
+	var sbUser = servNick[server][nick];
+	if (servNick[server]) {
+		delete servNick[server][nick];
 	}
 	channels.forEach(function(channel) {
-		if (client.nick === nick) {//bot left the channel //TODO test
+		if (bn === nick) {//bot left the channel //TODO test
 			delete servChanProp[client.opt.server][channel];
 			return;
 		}
-		var index = servChanProp[client.opt.server][channel].users.indexOf(nick);
-		if(index > -1) servChanProp[client.opt.server][channel].users.splice(index, 1);
-		servChanProp[client.opt.server][channel].rooms.forEach(function(room) {
+		var index = servChanProp[server][channel].users.indexOf(nick);
+		if(index > -1) servChanProp[server][channel].users.splice(index, 1);
+		servChanProp[server][channel].rooms.forEach(function(room) {
 			if(!room.params.pending && sbUser && sbUser.dir === "in") {//send away message for only incoming users
 				core.emit("data", {
 					type: "away",
@@ -277,9 +321,9 @@ function left(client, channels, nick) {
 				});
 			}
 		});
-		
 	});
 }
+
 /************************** user left *****************************************/
 
 /****************************************** add online irc users ***************/
@@ -287,18 +331,31 @@ function left(client, channels, nick) {
  * add new member 
  */
 function addUsers(client, channel, nick) {
-	servChanProp[client.opt.server][channel].rooms.forEach(function(room) {
+	if (connected) {
+		sendBack(client.opt.server, channel, nick, client.nick);
+	} else {
+		queue.push({
+			fn: "sendBack",
+			server: client.opt.server,
+			channel: channel,
+			nick: nick,
+			bn : client.nick
+		});
+	}
+}
+
+function sendBack(server, channel, nick, bn) {
+	servChanProp[server][channel].rooms.forEach(function(room) {
 		//save data.
-		if(nick != client.nick) servChanProp[client.opt.server][channel].users.push(nick);//don't add myNick 
-		if(nick != client.nick && !servNick[client.opt.server][nick] &&
-			!room.params.irc.pending) {
-			servNick[client.opt.server][nick] = {nick: nick, dir: "in"};//default nick is irc nick
+		if(nick != bn) servChanProp[server][channel].users.push(nick);//don't add myNick 
+		if(nick != bn && !servNick[server][nick] && !room.params.irc.pending) {
+			servNick[server][nick] = {nick: nick, dir: "in"};//default nick is irc nick
 			core.emit("data", {
 				type: "back",
 				to: room.id,
 				from: nick,
 				room: room,
-				session: "ircClient//:"+client.opt.server + ":" + nick
+				session: "ircClient//:" + server + ":" + nick
 			});
 		}
 	});
@@ -312,7 +369,7 @@ function onNick(client) {
 			});
 		} else {
 			channels.forEach(function(channel) {
-				servNick[client.opt.server][newNick] = {nick: renameCallback.newNick, dir: "out"};
+				servNick[client.opt.server][newNick] = {nick: renameCallback.newNick, dir: "out"};//this is for user which is connecting from scrollback(NO need to queue updation.)
 				delete servNick[client.opt.server][oldNick];
 				delete renameCallback[oldNick][client.opt.server];
 			});
@@ -423,6 +480,32 @@ function getBotNick(roomId, callback) {
 	callback(nick);
 }
 
+function isConnected() {
+	return connected;
+}
+function setConnected(c) {
+	connected = c;//TODO false to true --> empty queue.
+}
+
+function sendQueueData() {
+	while(queue.length() !== 0 ) {
+		var obj = queue.pop();
+		switch (obj.fn) {
+			case "sendBack":
+				sendBack(obj.server, obj.channel, obj.nick, obj.bn);
+				break;
+			case "sendAway":
+				sendAway(obj.server, obj.channels, obj.nick, obj.bn);
+				break;
+			case "sendMessage":
+				sendMessage(obj.server, obj.to, obj.from, obj.message);
+				break;
+			case "sendRoom":
+				sendRoom(obj.room);
+				
+		}
+	}
+}
 
 function onRaw(client) {
 	client.on('raw', function(raw) {

@@ -21,20 +21,19 @@ var server = net.createServer(function(c) { //'connection' listener
 		return;//allow only one connection.
 	}
 	client = c;
+	
 	console.log("new Connection Request");
 	writeObject({
 		type: "init",
-		state: lastDisconnectData
+		state: ircClient.getCurrentState()
 	}, true);
 	
 	c.on('data', function(data) { 
 		handleIncomingData(data);	
 	});
 	c.on('end', function() {
-		lastDisconnectData = clone(ircClient.getCurrentState());
-		
+		ircClient.setConnected(false);
 		isConnected = false;
-		console.log('client disconnected copied data', lastDisconnectData);
 	}); 
 });
 server.listen(port, function() { //'listening' listener
@@ -53,15 +52,9 @@ core.on('object', function(obj) {
 	console.log("received : ", obj);
 	switch (fn) {
 		case 'init':
-			while(dataQueue.length() !== 0) {
-				var a = dataQueue.pop();
-				//TODO change object based on new scrollback names.
-				console.log("writing queue values:", a);
-				client.write(a);
-			}
-			console.log("queue is empty now");
-			isConnected = true;
-			console.log('server connected');
+			console.log('server connected received init back all users init complete.');
+			ircClient.sendQueueData();
+			ircClient.setConnected(true);
 			break;
 		case 'connectBot':
 			ircClient.connectBot(obj.room, obj.options || {}, function(msg) {
@@ -105,34 +98,7 @@ function writeObject(obj, init) {//move this inside objectWriter
 	var v = JSON.stringify(obj);
 	var r = v.length + " ";
 	r += v;
-	if (isConnected || init) {
-		console.log("sending :", r);
-		client.write(r);
-	} else {
-		dataQueue.push(r);
-	}
+	console.log("sending :", r);
+	client.write(r);
 }
 
-function clone(obj) {
-    // Handle the 3 simple types, and null or undefined
-    if (null == obj || "object" != typeof obj) return obj;
-    // Handle Array
-    if (obj instanceof Array) {
-        var copy = [];
-        for (var i = 0, len = obj.length; i < len; i++) {
-            copy[i] = clone(obj[i]);
-        }
-        return copy;
-    }
-
-    // Handle Object
-    if (obj instanceof Object) {
-        var copy = {};
-        for (var attr in obj) {
-            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
-        }
-        return copy;
-    }
-
-    throw new Error("Unable to copy obj! Its type isn't supported.");
-}
