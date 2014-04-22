@@ -2,17 +2,42 @@
 /*global $*/
 
 $(function() {
-    // Show and hide panes in responsive view
+    // Move forward and backward within columns
+    function columnsGoBack() {
+        if ($("body").hasClass("roomsinview")) {
+            $("body").removeClass("roomsinview");
+        } else {
+            $("body").removeClass("metainview");
+        }
+    }
+
+    function columnsGoForward() {
+        if ($("body").hasClass("metainview")) {
+            $("body").addClass("roomsinview");
+        } else {
+            $("body").addClass("metainview");
+        }
+    }
+
+    // Navigate between columns
     $(".rooms-button, .scrollback-header").on("click", function() {
-        $("body").toggleClass("roomsinview");
+        if ($("body").hasClass("roomsinview")) {
+            columnsGoBack();
+        } else {
+            columnsGoForward();
+        }
     });
 
     $(".meta-button, .title").on("click", function() {
-        $("body").toggleClass("metainview");
+        if ($("body").hasClass("metainview")) {
+            columnsGoBack();
+        } else {
+            columnsGoForward();
+        }
     });
 
     $(".settings-menu .tab").on("click", function() {
-        $("body").removeClass("metainview");
+        columnsGoBack();
     });
 
     // Handle swipe gestures
@@ -24,10 +49,11 @@ $(function() {
             startX = 0,
             startY = 0,
             startTime = 0,
+            pointer = "onpointerup" in document,
             touch = "ontouchend" in document,
-            startEvent = (touch) ? 'touchstart' : 'mousedown',
-            moveEvent = (touch) ? 'touchmove' : 'mousemove',
-            endEvent = (touch) ? 'touchend' : 'mouseup';
+            startEvent = (pointer) ? 'pointerdown' : (touch) ? 'touchstart' : 'mousedown',
+            moveEvent = (pointer) ? 'pointermove' : (touch) ? 'touchmove' : 'mousemove',
+            endEvent = (pointer) ? 'pointerup' : (touch) ? 'touchend' : 'mouseup';
 
         target.bind(startEvent, function(e) {
             startTime = (new Date()).getTime();
@@ -46,20 +72,12 @@ $(function() {
 
             if (startTime !== 0 && currentTime - startTime < maxTime && currentDistanceX > currentDistanceY && currentDistanceX < maxDistance && currentDistanceX > minDistance) {
 
-                if (currentX < startX) {
-                    if ($("body").hasClass("roomsinview")) {
-                        $("body").removeClass("roomsinview");
-                    } else {
-                        $("body").removeClass("metainview");
-                    }
+                if (currentX > startX) {
+                    columnsGoForward();
                 }
 
-                if (currentX > startX) {
-                    if ($("body").hasClass("metainview")) {
-                        $("body").addClass("roomsinview");
-                    } else {
-                        $("body").addClass("metainview");
-                    }
+                if (currentX < startX) {
+                    columnsGoBack();
                 }
 
                 startTime = 0;
