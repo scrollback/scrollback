@@ -1,6 +1,6 @@
 /* global localStorage */
 /* global window */
-var ArrayCache = require('./arrayCache.js');
+var ArrayCache = require('./ArrayCache.js');
 var generate = require('../lib/generate');
 var cache;
 

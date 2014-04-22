@@ -1,7 +1,9 @@
-function ArrayCache(initData){
+"use strict";
+
+function ArrayCache(initData) {
 	var messages = initData || [];
 
-	function find(time, start, end){
+	function find (time, start, end) {
 		var pos;
 
 		if (typeof start === 'undefined') {
@@ -22,50 +24,51 @@ function ArrayCache(initData){
 			return pos;
 		}
 	}
-
-	function merge(data){
-		// merge and remove duplicates
-		if(!data.length) return;
-		var merged = [], res = [];
-		var unique = {};
-		var i = 0, j = 0, k = 0; 
-
-		while(i < messages.length && j < data.length){
-			if(messages[i].time < data[j].time){
-				 merged[k++] = messages[i++];
-			}
-			else{
-				merged[k++] = data[j++];
-			}
+	
+	function put(data) {
+		if (!data.length) return;		
+		var startTime = data[0].time, endTime = data[data.length-1].time,
+			start = find(startTime),
+			end = find(endTime);
+		
+		while (data[0].endtype && data[0].endtype == 'time' && messages[start-1] && messages[start-1].time == startTime) {
+			start--;
 		}
-		while(i < messages.length) {
-			merged[k++] = messages[i++];
+		
+		while (data[data.length-1].endtype && data[data.length-1].endtype == 'time' && messages[end] && messages[end].time == endTime) {
+			end++;
 		}
-		while(j < data.length){
-			merged[k++] = data[j++];
+		
+		if (messages[start-1] && messages[start-1].type != 'result-end' && data[0].type == 'result-start') {
+			data.shift();
 		}
-		// filter merged to remove duplicates
-		merged.forEach(function(msg){
-			if (!unique.hasOwnProperty(msg.id)){
-				unique[msg.id] = "";
-				res.push(msg);
-			}
-		});
-		messages = res;
+		
+		if (messages[end] && messages[end].type != 'result-start' && data[data.length-1].type == 'result-end') {
+			data.pop();
+		}
+		
+		[].splice.apply(messages, [start, end - start].concat(data));
 	}
+	
+	function get(query) {
+		var time = query.time, before = query.before, after = query.after,
+			res = [], pos, i, l = messages.length, c, m, start = null;
+		
+		pos = time? find(time): l-1;
 
-	function get(query){
-		var time = query.time, before = query.before, after = query.after;
-		var pos = find(time);
-		var tmpMsg = messages.slice(0);
-		if(pos - before < 0) return null;
-		else if(pos + after > tmpMsg.length - 1) return null;
-		else return tmpMsg.splice(pos-before, before + after + 1);
+		for(i=-before; i<after; i++) {
+			c = mid + i;
+			if(c<0) i-=c;
+			if(c>=l) break;
+			m = messages[c];
+			if(m.type == 'result-start' || m.type == 'result-end') return null;
+			res.push(m);
+		}
+
+		return res;
 	}
-
-	messages.merge = merge;
-	messages.find = find;
+	
+	messages.put = put;
 	messages.get = get;
-
-	return messages; 
+	return messages;
 }
