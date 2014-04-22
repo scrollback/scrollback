@@ -1,6 +1,6 @@
 /* global localStorage */
 /* global window */
-var ArrayCache = require('./ArrayCache.js');
+var ArrayCache = require('./arrayCache.js');
 var generate = require('../lib/generate');
 var cache;
 
@@ -31,9 +31,9 @@ module.exports = function(core){
 	}
 	
 	core.on('getTexts', getTextsBefore, 400);
-	core.on('getTexts', getTextsAfter, 600);
+	core.on('getTexts', getTextsAfter, 900);
 	core.on('getLabels', getLabelsBefore, 400);
-	core.on('getLabels', getLabelsAfter, 600);
+	core.on('getLabels', getLabelsAfter, 900);
 	core.on('connected', createInit);
 	core.on('init-dn', recvInit);
 	core.on('away-up', storeAway);
@@ -68,11 +68,12 @@ function storeAway(away, next){
 function logout(){
 	// delete user session here
 	delete cache.session;
+	delete cache.user;
 	save();
 }
 
 function storeText(text, next){
-	cache.texts.merge([text]);
+	cache.texts.put([text]);
 	save();
 	next();
 }
@@ -85,7 +86,24 @@ function getTextsBefore(query, next){
 
 function getTextsAfter(query, next){
 	var results = query.results; 
-	if(results) cache.texts.merge(results);
+	if(results){
+		if(query.before) results.push({type: 'result-end', endtype: 'time', time: query.time});
+		if(query.after) results.unshift({type: 'result-start', endtype: 'time', time: query.time});
+
+		if(query.before && results.length === query.before){
+			results.unshift({
+				type: 'result-start', time: results[0].time, endtype: 'limit'
+			});
+		}
+
+		if(query.after && results.length === query.after){
+			results.push({
+				type: 'result-end', time: results[results.length - 1].time, endtype: 'limit'
+			});
+		}
+
+		cache.texts.put(results);
+	}
 	next();
 }
 
@@ -97,6 +115,22 @@ function getLabelsBefore(query, next){
 
 function getLabelsAfter(query, next){
 	var results = query.results;
-	if(results) cache.labels.merge(results);
+	if(results){
+		if(query.before) results.push({type: 'result-end', endtype: 'time', time: query.time});
+		if(query.after) results.unshift({type: 'result-start', endtype: 'time', time: query.time});
+
+		if(query.before && results.length === query.before){
+			results.unshift({
+				type: 'result-start', time: results[0].time, endtype: 'limit'
+			});
+		}
+
+		if(query.after && results.length === query.after){
+			results.push({
+				type: 'result-end', time: results[results.length - 1].time, endtype: 'limit'
+			});
+		}
+		cache.labels.put(results);	
+	} 
 	next();
 }

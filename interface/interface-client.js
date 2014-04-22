@@ -1,43 +1,40 @@
 /* global window */
 var underscore = require('underscore');
-var libsb = {
-	on: core.on,
-	emit: core.emit,
-	
-	user: "",
-	rooms: "",
-	occupantOf: [],
-	memberOf: [],
-	isConnected: false,
-	
-	connect: connect,
-	disconnect: disconnect,
-	
-	getLoginMenu: getLoginMenu,
-	getTexts: getTexts,
-	getLabels: getLabels,
-	getOccupants: getOccupants,
-	getMembers: getMembers,
-	getRooms: getRooms,
-	getUsers: getUsers,
-	enter: enter,
-	leave: leave,
-	join: join,
-	part: part,
-	say: say,
-	admit: admit,
-	expel: expel,
-	
-	roomConfigForm: roomConfigForm,
-	userPreferForm: userPreferForm
-};
-
 var core;
-
 module.exports = function(c){
 	core = c;
+	var libsb = {
+		on: core.on,
+		emit: core.emit,
+		
+		user: "",
+		rooms: "",
+		occupantOf: [],
+		memberOf: [],
+		isConnected: false,
+		
+		connect: connect,
+		disconnect: disconnect,
+		
+		getLoginMenu: getLoginMenu,
+		getTexts: getTexts,
+		getLabels: getLabels,
+		getOccupants: getOccupants,
+		getMembers: getMembers,
+		getRooms: getRooms,
+		getUsers: getUsers,
+		enter: enter,
+		leave: leave,
+		join: join,
+		part: part,
+		say: say,
+		admit: admit,
+		expel: expel,
+		
+		roomConfigForm: roomConfigForm,
+		userPreferForm: userPreferForm
+	};
 	window.libsb = libsb;
-
     core.on('init-dn', recvInit);
 	core.on('back-dn', recvBack);
 	core.on('away-dn', recvAway);
@@ -119,6 +116,14 @@ function admit(roomId, ref, callback){
 
 function expel(roomId, ref, callback){
 	core.emit('expel-up', {to: roomId, ref: ref}, callback);
+}
+
+function roomConfigForm(){
+
+}
+
+function userPreferForm(){
+
 }
 
 function recvInit(init, next){
