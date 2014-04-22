@@ -50,11 +50,7 @@ module.exports = function(types) {
 			
 			types.threads.get(dbQuery, function(err, results) {
 				if(err || !results) { return callback(); }
-				
-				if(query.before) {
-					dbQuery.reverse = true;	
-					results = results.reverse();
-				}
+				if(dbQuery.reverse) results = results.reverse();
 				query.results = results;
 				return callback();
 			});

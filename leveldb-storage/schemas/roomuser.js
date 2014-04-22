@@ -47,6 +47,11 @@ module.exports = function (types) {
 				req.by = "hasMember";
 				req.eq = [];
 				req.eq.push(query.hasMember);
+				req.map = function(element, push) {
+					if(element.role == "none") return false;
+					else push(element);
+
+				}
 				if(query.ref) req.eq.push(query.ref);
 			}else if(query.ref) {
 				return room.get(query.ref, function(err, res) {

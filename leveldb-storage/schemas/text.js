@@ -61,32 +61,27 @@ module.exports = function (types) {
 			});
 		},
 		
-		get: function (options, cb) {
-			var query = {}, reversed, start, end, startTime = new Date().getTime();
+		get: function (query, cb) {
+			var reversed, start, end, startTime = new Date().getTime();
 			var dbQuery = {};
-			
-			if(options.id) {
-				return texts.get(options.id, function(err, data){
+			if(query.ref) {
+				return texts.get(query.ref, function(err, data){
 					if(!data) return cb();
-					return cb(true,[data]);
+					query.results = data;
+					return cb();
 				});
 			}
-			dbquery.gte = [];
-			dbquery.lte = [];
+			dbQuery.gte = [];
+			dbQuery.lte = [];
 			dbQuery.limit = 256;
 
-			if(typeof query.time == "undefined") {
-				query.time  = new Date().getTime();
-				query.before = 256;
-			}
+			dbQuery.gte.push(query.to);
+			dbQuery.lte.push(query.to);
 
-			dbquery.gte.push(query.to);
-			dbquery.lte.push(query.to);
-
-			if(options.thread) {
-				dbquery.by = "tothreadtime";
-				dbquery.gte.push(query.thread);
-				dbquery.lte.push(query.thread);
+			if(query.thread) {
+				dbQuery.by = "tothreadtime";
+				dbQuery.gte.push(query.thread);
+				dbQuery.lte.push(query.thread);
 			} else {
 				dbQuery.by = "totime";
 			}
@@ -103,11 +98,14 @@ module.exports = function (types) {
 			}else{
 				if(query.after) {
 					query.results = [];
-					return callback();
+					return cb();
 				} else if(query.before) {
 					dbQuery.lte.push(0xffffffffffffffff);
 					if(query.before <= dbQuery.limit) dbQuery.limit = query.before;
 				}
+			}
+			if(query.before) {
+				dbQuery.reverse = true;	
 			}
 			texts.get(dbQuery, function(err, data) {
 				if(err) return cb(err);
