@@ -88,8 +88,7 @@ module.exports = function(grunt) {
 				"public/dummy.css": "public/dummy.less",
 				"public/s/styles/less/stylesheet.css": "public/s/styles/less/stylesheet.less",
 				"public/s/styles/less/widgets.css": "public/s/styles/less/widgets.less",
-				"public/s/styles/less/client-chat.css": "public/s/styles/less/client-chat.less",
-				"public/s/styles/less/client-settings.css": "public/s/styles/less/client-settings.less"
+				"public/s/styles/less/client.css": "public/s/styles/less/client.less"
 			},
 		},
 	},
@@ -100,8 +99,8 @@ module.exports = function(grunt) {
 	},
 	imageEmbed: {
 		dist: {
-			src: ["public/s/styles/less/client-settings.css"],
-			dest: "public/s/styles/less/client-settings.css",
+			src: ["public/s/styles/less/client.css"],
+			dest: "public/s/styles/less/client.css",
 			options: {
 				deleteAfterEncoding : false
 			}

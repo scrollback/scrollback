@@ -15,7 +15,7 @@
 		<link rel="shortcut icon" href="s/img/favicon.png" type="image/x-icon" />
 
 		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
-		<link rel="stylesheet" type="text/css" media="screen" href="s/styles/less/client-chat.css" />
+		<link rel="stylesheet" type="text/css" media="screen" href="s/styles/less/client.css" />
 
 		<!-- enable HTML5 in IE, we need to place it before body -->
 		<!--[if lt IE 9]>
@@ -24,7 +24,7 @@
 		<![endif]-->
 	</head>
 
-	<body>
+	<body class="settings-mode">
 		<section class="rooms">
 			<div class="scrollback-header">
 				<img src="s/img/scrollback-small.png" alt="scrollback"/>
@@ -35,34 +35,52 @@
 			</div>
 		</section>
 		<section class="meta">
-			<ul role="tablist" class="tabs">
-				<li role="tab" class="rooms-btn"><h2>Rooms</h2></li>
-				<li role="tab" class="tab tab-info mode-normal"><h2>Info</h2></li>
-				<li role="tab" class="tab tab-people mode-normal"><h2>People</h2></li>
-				<li role="tab" class="tab tab-threads mode-normal"><h2>Threads</h2></li>
-				<li role="tab" class="tab tab-threads mode-search"><h2>This room</h2></li>
-				<li role="tab" class="tab tab-threads mode-search"><h2>All rooms</h2></li>
-			</ul>
-			<div role="banner" class="search-banner">Threads matching firefox in this room</div>
-			<div role="tabpanel" class="pane hide-scroll pane-info">
-				<h1 class="name"></h1>
-				<div class="actions">
-					<button class="btn-follow button">Follow</button>
-					<button class="btn-configure button-secondary">Configure</button>
+			<div class="meta-content chat-meta">
+				<ul role="tablist" class="tabs">
+					<li role="tab" class="rooms-btn"><h2>Rooms</h2></li>
+					<li role="tab" class="tab tab-info mode-normal"><h2>Info</h2></li>
+					<li role="tab" class="tab tab-people mode-normal current"><h2>People</h2></li>
+					<li role="tab" class="tab tab-threads mode-normal"><h2>Threads</h2></li>
+					<li role="tab" class="tab tab-threads mode-search"><h2>This room</h2></li>
+					<li role="tab" class="tab tab-threads mode-search"><h2>All rooms</h2></li>
+				</ul>
+				<div role="banner" class="search-banner">Threads matching firefox in this room</div>
+				<div role="tabpanel" class="pane hide-scroll pane-info">
+					<h1 class="name"></h1>
+					<div class="actions">
+						<button class="btn-follow button">Follow</button>
+						<button class="btn-configure button-secondary">Configure</button>
+					</div>
+					<p class="description"></p>
 				</div>
-				<p class="description"></p>
+				<div role="tabpanel" class="pane hide-scroll pane-people current">
+					<a class="person">
+						<img class="picture">
+						<span class="name"></span>
+					</a>
+				</div>
+				<div role="tabpanel" class="pane hide-scroll pane-threads">
+					<a class="thread" href="">
+						<h3 class="title">All threads</h3>
+						<p class="snippet">At vero eos et accusamus et iusto dignissimos</p>
+					</a>
+				</div>
 			</div>
-			<div role="tabpanel" class="pane hide-scroll pane-people current">
-				<a class="person">
-					<img class="picture">
-					<span class="name"></span>
-				</a>
+			<div class="settings-header">
+				<a class="rooms-btn"></a>
+				<h2>Room settings</h2>
 			</div>
-			<div role="tabpanel" class="pane hide-scroll pane-threads">
-				<a class="thread" href="">
-					<h3 class="title">All threads</h3>
-					<p class="snippet">At vero eos et accusamus et iusto dignissimos</p>
-				</a>
+			<div class="meta-content settings-menu">
+				<ul>
+					<li class="tab tab-general-settings current">General</li>
+					<li class="tab tab-irc-settings">IRC integration</li>
+					<li class="tab tab-twitter-settings">Twitter integration</li>
+					<li class="tab tab-thread-settings">Threading</li>
+					<li class="tab tab-permissions-settings">Permissions</li>
+					<li class="tab tab-requests-settings">Requests</li>
+					<li class="tab tab-spam-settings">Spam control</li>
+					<li class="tab tab-seo-settings">SEO</li>
+				</ul>
 			</div>
 		</section>
 		<section role="main" class="mainview chatview">
@@ -92,6 +110,238 @@
 				</p>
 			</div>
 		</section>
+		<section role="main" class="mainview settingsview">
+			<div class="titlebar">
+				<div class="title-normal">
+					<a class="meta-btn"></a>
+					<div class="action-buttons">
+						<a class="button">Done</a>
+						<a class="button-secondary">Cancel</a>
+					</div>
+					<div class="guest has-popover">
+						<div class="sb-user">sb-walick</div>
+						<div class="sign-in">Sign in</div>
+					</div>
+					<div role="menu" class="popover-body">
+						Sign in to scrollback with
+						<a class="button facebook">Facebook</a>
+						<a class="button persona">Persona</a>
+					</div>
+					<div class="avatar has-popover">
+						<img alt="" src="https://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" />
+					</div>
+					<div role="menu" class="popover-body">
+						<ul>
+							<li><a href="">Report an issue</a></li>
+							<li><a href="">Logout</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="settings-area">
+				<div class="pane pane-general-settings current">
+					<div class="settings-item">
+						<div class="settings-label">
+							Name
+						</div>
+						<div class="settings-action">
+							<input type="text" id="displayname" name="displayname" />
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Description
+						</div>
+						<div class="settings-action">
+							<textarea id="description"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-irc-settings">
+					<div class="settings-item">
+						<div class="settings-label">
+							IRC Channel
+						</div>
+						<div class="settings-action">
+							<input type="text" id="ircchannel" name="ircchannel" />
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							IRC Server
+						</div>
+						<div class="settings-action">
+							<input type="text" id="ircserver" name="ircserver" />
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-twitter-settings">
+					<div class="settings-item">
+						<div class="settings-label">
+							Twitter hashtags
+						</div>
+						<div class="settings-action">
+							<span class="entry segmented" id="twitterhash"><span contenteditable class="segment"></span></span>
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Signed in as <a href="">satya164</a>
+						</div>
+						<div class="settings-action">
+							<a href="" class="twitter-account">
+								<img src="https://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" />
+								<span class="change">Change</span>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-thread-settings">
+					<div class="settings-item">
+						<div class="settings-label inline">
+							Group messages into threads
+						</div>
+						<div class="settings-action inline">
+							<input class="switch" type="checkbox" id="thread" name="thread" /><label for="thread"></label>
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-permissions-settings">
+					<div class="settings-item">
+						<div class="settings-label">
+							Who can read messsages
+						</div>
+						<div class="settings-action">
+							<input type="checkbox" id="read-guests" name="read-guests" /><label for="read-guests">Guests</label><br/>
+							<input type="checkbox" id="read-visitors" name="read-visitors" /><label for="read-guests">Visitors</label><br/>
+							<input type="checkbox" id="read-followers" name="read-followers" /><label for="read-followers">Followers</label>
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Who can post messages
+						</div>
+						<div class="settings-action">
+							<input type="checkbox" id="write-guests" name="write-guests" /><label for="write-guests">Guests</label><br/>
+							<input type="checkbox" id="write-visitors" name="write-visitors" /><label for="write-guests">Visitors</label><br/>
+							<input type="checkbox" id="write-followers" name="write-followers" /><label for="write-followers">Followers</label>
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label inline">
+							Require approval for following
+						</div>
+						<div class="settings-action inline">
+							<input class="switch" type="checkbox" id="follow-request" name="follow-request" /><label for="follow-request"></label>
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-requests-settings">
+					<div class="request-msg">
+						<img src="s/img/avatars/Keith.jpg">
+						<div class="request-details">
+							<div class="username"><a href="">randomdude</a></div>
+							<a class="button">Approve</a>
+							<a class="button-secondary">Ignore</a>
+						</div>
+					</div>
+					<div class="request-msg">
+						<img src="s/img/avatars/Keith.jpg">
+						<div class="request-details">
+							<div class="username"><a href="">randomdude</a></div>
+							<a class="button">Approve</a>
+							<a class="button-secondary">Ignore</a>
+						</div>
+					</div>
+					<div class="request-msg">
+						<img src="s/img/avatars/Keith.jpg">
+						<div class="request-details">
+							<div class="username"><a href="">randomdude</a></div>
+							<a class="button">Approve</a>
+							<a class="button-secondary">Ignore</a>
+						</div>
+					</div>
+					<div class="request-msg">
+						<img src="s/img/avatars/Keith.jpg">
+						<div class="request-details">
+							<div class="username"><a href="">randomdude</a></div>
+							<a class="button">Approve</a>
+							<a class="button-secondary">Ignore</a>
+						</div>
+					</div>
+					<div class="request-msg">
+						<img src="s/img/avatars/Keith.jpg">
+						<div class="request-details">
+							<div class="username"><a href="">randomdude</a></div>
+							<a class="button">Approve</a>
+							<a class="button-secondary">Ignore</a>
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-spam-settings">
+					<div class="settings-item">
+						<div class="settings-label inline">
+							Block repetitive messages
+						</div>
+						<div class="settings-action inline">
+							<input class="switch" type="checkbox" id="block-repetitive" name="block-repetitive" /><label for="block-repetitive"></label>
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label inline">
+							Block nonsense messages
+						</div>
+						<div class="settings-action inline">
+							<input class="switch" type="checkbox" id="block-nonsense" name="block-nonsense" /><label for="block-nonsense"></label>
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Block offensive words
+						</div>
+						<div class="settings-action">
+							<input type="checkbox" id="block-en-mod" name="block-en-mod" /><label for="block-en-mod">English moderate</label><br/>
+							<input type="checkbox" id="block-en-strict" name="block-en-strict" /><label for="block-en-strict">English strict</label><br/>
+							<input type="checkbox" id="block-zn-strict" name="block-zn-strict" /><label for="block-zn-strict">Chinese strict</label>
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Custom blocked words
+						</div>
+						<div class="settings-action">
+							<input type="text" id="blocked-words" name="blocked-words" />
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Gagged users
+						</div>
+						<div class="settings-action">
+							<input type="text" id="gagged-users" name="gagged-users" />
+						</div>
+					</div>
+					<div class="settings-item">
+						<div class="settings-label">
+							Banned users
+						</div>
+						<div class="settings-action">
+							<input type="text" id="banned-users" name="banned-users" />
+						</div>
+					</div>
+				</div>
+				<div class="pane pane-seo-settings">
+					<div class="settings-item">
+						<div class="settings-label inline">
+							Allow search engines to index room
+						</div>
+						<div class="settings-action inline">
+							<input class="switch" type="checkbox" id="allow-index" name="allow-index" /><label for="allow-index"></label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
 		<section class="chat-input">
 			<div role="textbox" class="textarea chat-entry" contenteditable></div>
 			<input role="button" class="send" type="submit" value="" />
@@ -119,10 +369,10 @@
 		<script src="s/js/mock-libsb.js"></script>
 
 		<script src="s/components/infinite.js"></script>
-		<script src="s/components/popover.js"></script>
 		<script src="s/components/hide-scroll.js"></script>
 		<script src="s/components/navigation.js"></script>
 		<script src="s/components/columns.js"></script>
+		<script src="s/components/popover.js"></script>
 		<script src="s/components/entry-segments.js"></script>
 
 		<script src="s/components/text.js"></script>
@@ -136,7 +386,6 @@
 		<script src="s/components/info-area.js"></script>
 		<script src="s/components/room-item.js"></script>
 		<script src="s/components/room-list.js"></script>
-
 		<script src="s/components/search.js"></script>
 		<script src="s/components/timeline.js"></script>
 
