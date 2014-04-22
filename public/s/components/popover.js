@@ -25,12 +25,10 @@ $(document).on("click", ".has-popover", function() {
 	}
 
 	// Show and hide PopOver
-	$(this).addClass("selected");
 	$(popover).css({"top" : spacetop, "left" : spaceleft});
 	$("body").addClass("popover-active").append("<div class='layer'></div>");
 	$(".layer").on("click", function() {
 		$("body").removeClass("popover-active");
-		$(".has-popover").removeClass("selected");
 		$(popover).removeClass("popover-bottom").removeClass("popover-top").removeClass("arrow-left").removeClass("arrow-right");
 		$(this).remove();
 	});
