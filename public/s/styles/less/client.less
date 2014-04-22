@@ -128,7 +128,7 @@
                 }
             }
 
-            &:hover, &.current:hover {
+            &:hover, &:focus, &.current:hover, &.current:focus {
                 background-color: lighten(@dark-color, 10%);
             }
 
@@ -206,7 +206,7 @@
                 background-size: 2em 2em;
                 cursor: pointer;
 
-                &:hover, &.current { .opacity(1); }
+                &:hover, &:focus, &.current { .opacity(1); }
 
                 &.current { box-shadow: 0 1px 0 0 @accent-color; }
 
@@ -238,7 +238,7 @@
                     }
                 }
 
-                &.rooms-btn {
+                &.rooms-button {
                     display: none;
 
                     @media @breakpointxxxx {
@@ -324,7 +324,7 @@
                     font-weight: 400;
                     color: @dark-color;
 
-                    &:hover {
+                    &:hover, &:focus {
                         background-color: @accent-color;
                         color: @light-color;
                         border-radius: @roundness;
@@ -373,7 +373,7 @@
 
                     &.current { background-color: lighten(@accent-color, 25%); }
 
-                    &:hover, &.current:hover {
+                    &:hover, &:focus, &.current:hover, &.current:focus {
                         background-color: @accent-color;
                         color: @light-color;
                     }
@@ -387,7 +387,7 @@
 
                             &.current { background-color: lighten(@@color, 25%); }
 
-                            &:hover, &.current:hover { background-color: @@color; }
+                            &:hover, &:focus, &.current:hover, &.current:focus { background-color: @@color; }
                         }
 
                         .-((@i + 1));
@@ -423,7 +423,7 @@
                 }
             }
 
-            .rooms-btn {
+            .rooms-button {
                 display: none;
 
                 @media @breakpointxxxx {
@@ -478,7 +478,7 @@
 
                         &.current { background-color: darken(@light-color, 10%); }
 
-                        &:hover, &.current:hover { background-color: darken(@light-color, 15%); }
+                        &:hover, &:focus, &.current:hover, &.current:focus { background-color: darken(@light-color, 15%); }
 
                         .-(@i: length(@settingsitems)) when (@i > 0) {
 
@@ -523,7 +523,7 @@
             width: 100%;
             height: @bar-height;
 
-            .meta-btn {
+            .meta-button {
                 display: none;
 
                 @media @breakpointxxx {
@@ -559,6 +559,18 @@
                 font-size: 1.5em;
 
                 @media @breakpointxxxx { padding-left: 0;  }
+            }
+
+            .follow-button {
+                display: table-cell;
+                vertical-align: top;
+                padding: .75em 1em;
+                width: 4em;
+                background: url(../../img/icons/png/follow-no.png) center center no-repeat;
+                background-size: 2em 2em;
+                cursor: pointer;
+
+                .following & { background: url(../../img/icons/png/follow.png) center center no-repeat; }
             }
 
             .search-button {
@@ -625,12 +637,14 @@
                 }
 
                 .search-entry {
+                    position: relative;
                     display: block;
                     width: 100%;
                     margin: 0;
                     background-image: url("../../img/icons/png/search-gray.png");
                     background-position: right center;
                     background-repeat: no-repeat;
+                    z-index: 9;
                 }
             }
         }
@@ -697,7 +711,14 @@
 
                 @media @breakpointxx { padding-left: 3em; }
 
-                &.selected { background-color: lighten(@accent-color, 45%); }
+                &.selected, &.selected:hover, &.selected:focus {
+                    background-color: lighten(@accent-color, 45%);
+                    border-top: 1px solid lighten(@accent-color, 40%);
+
+                    & + * { border-top: 1px solid lighten(@accent-color, 40%); }
+                }
+
+                &:hover, &:focus { background-color: darken(@light-color, 2%); }
 
                 &:before {
                     content: "";
@@ -729,7 +750,7 @@
 
                     cursor: pointer;
 
-                    &:hover {
+                    &:hover, &:focus {
                         &:after { padding: 1em 0; }
                     }
 
@@ -770,7 +791,7 @@
                     a {
                         color: @dark-color;
 
-                        &:focus, &:hover, &:active { color: darken(@dark-color, 10%); }
+                        &:hover, &:focus, &:active { color: darken(@dark-color, 10%); }
                     }
                 }
 
@@ -894,7 +915,7 @@
                                 font-size: 1.2em;
                                 color: @dark-color;
 
-                                &:focus, &:hover, &:active { color: darken(@dark-color, 10%); }
+                                &:hover, &:focus, &:active { color: darken(@dark-color, 10%); }
                             }
                         }
 
@@ -1039,7 +1060,7 @@
                     color: lighten(@dark-color, 20%);
                     padding: .5em;
 
-                    &:hover { color: @dark-color; }
+                    &:hover, &:focus { color: @dark-color; }
                 }
             }
         }

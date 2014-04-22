@@ -3,11 +3,11 @@
 
 $(function() {
     // Show and hide panes in responsive view
-    $(".rooms-btn, .scrollback-header").on("click", function() {
+    $(".rooms-button, .scrollback-header").on("click", function() {
         $("body").toggleClass("roomsinview");
     });
 
-    $(".meta-btn, .title").on("click", function() {
+    $(".meta-button, .title").on("click", function() {
         $("body").toggleClass("metainview");
     });
 
