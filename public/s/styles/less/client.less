@@ -250,7 +250,7 @@
                         width: 2.5em;
                         background-image: url(../../img/icons/png/back.png);
 
-                        .roomsinview & { .transform(rotate(180deg)); }
+                        .rooms-view & { .transform(rotate(180deg)); }
                     }
                 }
 
@@ -353,11 +353,10 @@
 
                 .infinite-above, .infinite-below {
                     background-color: transparent;
-                    background-image:  linear-gradient(to bottom, transparent, transparent 15%, lighten(@dark-color, 70%) 15%, lighten(@dark-color, 70%) 35%, transparent 35%, transparent),
-                                       linear-gradient(to bottom, transparent, transparent 50%, lighten(@dark-color, 70%) 50%, lighten(@dark-color, 70%) 65%, transparent 65%, transparent),
+                    background-image:  linear-gradient(to bottom, transparent, transparent 35%, lighten(@dark-color, 70%) 35%, lighten(@dark-color, 70%) 65%, transparent 65%, transparent),
                                        linear-gradient(to bottom, lighten(@dark-color, 70%), lighten(@dark-color, 70%));
-                    background-size: 60% 5em, 40% 5em, 4px 100%;
-                    background-position: 2em center, 2em center, center right;
+                    background-size: 60% 3em, 4px 100%;
+                    background-position: 2em center, center right;
                     background-repeat: repeat-y;
                 }
 
@@ -439,7 +438,7 @@
                     background-size: 2em 2em;
                     cursor: pointer;
 
-                    .roomsinview & { .transform(rotate(180deg)); }
+                    .rooms-view & { .transform(rotate(180deg)); }
                 }
             }
         }
@@ -536,7 +535,7 @@
                     background-size: 2em 2em;
                     cursor: pointer;
 
-                    .metainview & { .transform(rotate(180deg)); }
+                    .meta-view & { .transform(rotate(180deg)); }
                 }
             }
 
@@ -710,13 +709,6 @@
                 @media @breakpointxxxx { padding-left: 22%; }
 
                 @media @breakpointxx { padding-left: 3em; }
-
-                &.selected, &.selected:hover, &.selected:focus {
-                    background-color: lighten(@accent-color, 45%);
-                    border-top: 1px solid lighten(@accent-color, 40%);
-
-                    & + * { border-top: 1px solid lighten(@accent-color, 40%); }
-                }
 
                 &:hover, &:focus { background-color: darken(@light-color, 2%); }
 
@@ -1020,7 +1012,7 @@
     backface-visibility: hidden;
 
     /* use 3d transformations for GPU accelerated animations */
-    .metainview & {
+    .meta-view & {
         @media @breakpointxxx { .transform(translate3d(@metaxxx, 0, 0)); }
 
         @media @breakpointxx { .transform(translate3d(@metaxx, 0, 0)); }
@@ -1028,7 +1020,7 @@
         @media @breakpointx { .transform(translate3d(@metax, 0, 0)); }
     }
 
-    .roomsinview & {
+    .rooms-view & {
         @media @breakpointxxxx { .transform(translate3d(@roomxxxx, 0, 0)); }
 
         @media @breakpointxxx { .transform(translate3d( ( @roomxxx + @metaxxx ), 0, 0)); }

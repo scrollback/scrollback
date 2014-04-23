@@ -1,43 +1,26 @@
 /*jslint browser: true, indent: 4, regexp: true*/
-/*global $*/
+/*global $, libsb*/
 
 $(function() {
-    // Move forward and backward within columns
-    function columnsGoBack() {
-        if ($("body").hasClass("roomsinview")) {
-            $("body").removeClass("roomsinview");
-        } else {
-            $("body").removeClass("metainview");
-        }
-    }
-
-    function columnsGoForward() {
-        if ($("body").hasClass("metainview")) {
-            $("body").addClass("roomsinview");
-        } else {
-            $("body").addClass("metainview");
-        }
-    }
-
     // Navigate between columns
     $(".rooms-button, .scrollback-header").on("click", function() {
-        if ($("body").hasClass("roomsinview")) {
-            columnsGoBack();
+        if ($("body").hasClass("rooms-view")) {
+            libsb.emit('navigate', { view: "meta" });
         } else {
-            columnsGoForward();
+            libsb.emit('navigate', { view: "rooms" });
         }
     });
 
     $(".meta-button, .title").on("click", function() {
-        if ($("body").hasClass("metainview")) {
-            columnsGoBack();
+        if ($("body").hasClass("meta-view")) {
+            libsb.emit('navigate', { view: "normal" });
         } else {
-            columnsGoForward();
+            libsb.emit('navigate', { view: "meta" });
         }
     });
 
     $(".settings-menu .tab").on("click", function() {
-        columnsGoBack();
+        libsb.emit('navigate', { view: "normal" });
     });
 
     // Handle swipe gestures
@@ -73,11 +56,17 @@ $(function() {
             if (startTime !== 0 && currentTime - startTime < maxTime && currentDistanceX > currentDistanceY && currentDistanceX < maxDistance && currentDistanceX > minDistance) {
 
                 if (currentX > startX) {
-                    columnsGoForward();
-                }
-
-                if (currentX < startX) {
-                    columnsGoBack();
+                    if ($("body").hasClass("meta-view")) {
+                        libsb.emit('navigate', { view: "rooms" });
+                    } else {
+                        libsb.emit('navigate', { view: "meta" });
+                    }
+                } else if (currentX < startX) {
+                    if ($("body").hasClass("rooms-view")) {
+                        libsb.emit('navigate', { view: "meta" });
+                    } else {
+                        libsb.emit('navigate', { view: "normal" });
+                    }
                 }
 
                 startTime = 0;
