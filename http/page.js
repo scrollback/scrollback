@@ -151,15 +151,7 @@ exports.init = function(app, coreObject) {
                 return m.toUpperCase();
             })
         });
-    });
-	
-	app.get("/dummy/:page", function (req, res) {
-		res.render("dummy/" + req.params.page, { room: { 
-            id: "roomId", name: "Sample Room 1", 
-            description: "This is a sample room and this is a description for the sample room, this description should be a little larger I presume. Here is the Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis semper lobortis leo accumsan adipiscing. Curabitur eu leo id elit aliquet sagittis ut eu leo. Nulla facilisi. .", picture: "",
-            profile: "http://sampleroom.blogspot.com" 
-        }});
-	});   
+    });   
 	
 	app.get("/beta/*", function(req, res){
 		return res.redirect(307, 'https://'+config.http.host+ req.path.substring(5));
@@ -224,9 +216,6 @@ exports.init = function(app, coreObject) {
     }
     app.get("/*", roomHandler);
     app.get("/*/edit", roomHandler);
-
-
-
 
     app.get("/old/*", function(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[1],
