@@ -1,12 +1,7 @@
 /* global window */
 var underscore = require('underscore');
 var core;
-module.exports = function(c){
-	core = c;
-	var libsb = {
-		on: core.on,
-		emit: core.emit,
-		
+var libsb = {
 		user: "",
 		rooms: "",
 		occupantOf: [],
@@ -33,8 +28,15 @@ module.exports = function(c){
 		
 		roomConfigForm: roomConfigForm,
 		userPreferForm: userPreferForm
-	};
+};
+module.exports = function(c){	
+	core = c;
+
+	libsb.on = core.on;
+	libsb.emit = core.emit;
+
 	window.libsb = libsb;
+
     core.on('init-dn', recvInit);
 	core.on('back-dn', recvBack);
 	core.on('away-dn', recvAway);
@@ -62,7 +64,7 @@ function disconnect(){
 	core.emit('disconnect');
 }
 
-function getLoginMenu(callback){
+function getLoginMenu(callback){ 
 	core.emit('auth-menu', callback);
 }
 
@@ -185,3 +187,4 @@ function recvExpel(expel, next){
 	}
 	next();
 }
+

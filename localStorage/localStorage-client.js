@@ -2,7 +2,7 @@
 /* global window */
 var ArrayCache = require('./ArrayCache.js');
 var generate = require('../lib/generate');
-var cache;
+var cache, core;
 
 function load(){
 	if(localStorage.libsb){
@@ -19,7 +19,8 @@ function save(){
 
 load();
 
-module.exports = function(core){
+module.exports = function(c){
+	core = c;
 	if(localStorage.user){
 		var fakeInit = {
 			user: cache.user,
@@ -55,7 +56,7 @@ function recvInit(init, next){
 
 function createInit(){
 	var sid = cache.session;
-	if(!sid) cache.session = sid = generate.guid();
+	if(!sid) cache.session = sid = generate.uid();
 	core.emit('init-up', {session: sid});
 }
 
