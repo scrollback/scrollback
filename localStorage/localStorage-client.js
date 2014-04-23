@@ -55,8 +55,12 @@ function recvInit(init, next){
 }
 
 function createInit(){
-	var sid = cache.session;
-	if(!sid) cache.session = sid = generate.uid();
+	var sid;
+	if(!cache) cache = {};
+	if(cache && cache.session) sid = cache.session;
+	if(!sid){
+		cache.session = sid = generate.uid();
+	} 
 	core.emit('init-up', {session: sid});
 }
 
