@@ -4,8 +4,10 @@
 var sockjs = require('sockjs-client'),
 	generate = require('../lib/generate'),
 	config = require('../client-config');
+var core;
 
-module.exports = function(core){
+module.exports = function(c){
+	core = c;
 	core.on('connection-requested', connect);
 	core.on('disconnect', disconnect);
 	
@@ -31,10 +33,12 @@ var client;
 var pendingQueries = {}, pendingActions = {};
 
 function connect(){
-	client = sockjs.create(config.sockjs.host, function(){
+	client = new SockJS(config.sockjs.host);
+
+	client.onopen = function(){
 		core.emit('connected');
-	});
-	
+	} 
+
 	client.onmessage = receiveMessage;
 	client.onclose = disconnected;
 }
@@ -52,7 +56,7 @@ function sendQuery(query, next){
 	
 	if(!query.id) query.id = generate.guid();
 	
-	client.write(JSON.stringify(query));
+	client.send(JSON.stringify(query));
 	pendingQueries[query.id] = next;
 }
 
@@ -84,7 +88,6 @@ function makeAction(o) {
 	var action = {
 		id: generate.guid,
 		from: libsb.user.id,
-		to: libsb.room.id,
 		time: new Date().getTime()
 	};
 	
@@ -92,59 +95,53 @@ function makeAction(o) {
 	return action;
 }
 
-function sendInit(init, next){
-	var action = makeAction({type: 'init', to: 'me'});
-	client.write(JSON.stringify(action));
-	pendingActions[action.id] = next;
-}
-
 function sendJoin(join, next){
 	var action = makeAction({type: 'join', to: join.to});
-	client.write(JSON.stringify(action));
+	client.send(JSON.stringify(action));
 	pendingActions[action.id] = next;
 }
 
 function sendPart(part, next){
 	var action = makeAction({type: 'part', to: part.to});
-	client.write(JSON.stringify(action));
+	client.send(JSON.stringify(action));
 	pendingActions[action.id] = next;
 }
 
 function sendBack(back, next){
 	var action = makeAction({type: 'back', to: back.to});
-	client.write(JSON.stringify(action));
+	client.send(JSON.stringify(action));
 	pendingActions[action.id] = next;
 }
 
 function sendAway(away, next){
 	var action = makeAction({type: 'away', to: away.to});
-	client.write(JSON.stringify(action));
+	client.send(JSON.stringify(action));
 	pendingActions[action.id] = next;
 }
 
 function sendText(text, next){
 	var action = makeAction({type: 'text', to: text.to, text: text.text});
-	client.write(JSON.stringify(action));
+	client.send(JSON.stringify(action));
 	pendingActions[action.id] = next;
 }
 
 function sendInit(init, next){
-	var action = makeAction({type: 'init'});
+	var action = makeAction({type: 'init', to: 'me'});
 	if(init.session) action.session = init.session;
 	if(init.auth) action.auth = init.auth;
 	if(init.suggestedNick) action.suggestedNick = init.suggestedNick;
-	client.write(JSON.stringify(action));
+	client.send(JSON.stringify(action));
 	pendingActions[action.id] = next;
 }
 
 function sendAdmit(admit, next){
 	var action = makeAction({type: 'admit', to: admit.to, ref: admit.ref});
-	client.write(JSON.stringify(action));
+	client.send(JSON.stringify(action));
 	pendingActions[action.id] = next;
 }
 
 function sendExpel(admit, next){
 	var action = makeAction({type: 'expel', to: admit.to, ref: admit.ref});
-	client.write(JSON.stringify(action));
+	client.send(JSON.stringify(action));
 	pendingActions[action.id] = next;
 }

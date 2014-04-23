@@ -27,6 +27,9 @@ module.exports = function(grunt) {
 			files: {
 				'public/libsb.bundle.js' : ['libsb.js']
 			}
+		},
+		options: {
+			debug: true
 		}
 	},
     uglify: {
