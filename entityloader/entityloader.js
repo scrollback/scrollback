@@ -84,8 +84,8 @@ module.exports = function(c) {
 		}, "loader");
 	})
 
-	core.on('getUsers', function(query, callback) {
-		if(query.ref == "me") return callback();
+
+	function simpleUserLoad(action, callback) {
 		if(config.whitelists[query.session]) {
 			query.user = {
 				id: "system"
@@ -102,24 +102,14 @@ module.exports = function(c) {
 				callback();
 			}
 		});
+	}
+	core.on('getUsers', function(query, callback) {
+		if(query.ref == "me") return callback();
+		simpleUserLoad(query, callback)
 	}, "loader");
-	core.on('getRooms', function(query, callback) {
-		if(config.whitelists[query.session]) {
-			query.user = {
-				id: "system"
-			}
-			return callback();
-		}
-		core.emit("getUsers", {session: query.session, ref: "me"}, function(err, user) {
-			if(err || !user || !user.results || !user.results.length) {
-				query.results = [];
-				callback();
-			}else {
-				query.user = user[0];
-				callback();
-			}
-		});
-	}, "loader");
+	core.on('getRooms', simpleUserLoad, "loader");
+	core.on('getTexts', simpleUserLoad, "loader");
+	core.on('getThreads', simpleUserLoad, "loader");
 
 
 	core.on("init", function(action, callback) {
