@@ -94,7 +94,7 @@ core.on('object', function(obj) {
 });
 
 
-function writeObject(obj, init) {//move this inside objectWriter 
+function writeObject(obj) {//move this inside objectWriter 
 	var v = JSON.stringify(obj);
 	var r = v.length + " ";
 	r += v;
