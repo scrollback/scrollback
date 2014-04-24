@@ -1,10 +1,12 @@
 var assert = require("assert");
 var config  = require('../config.js');
 var core = require("../lib/emitter.js");
-var irc = require("./irc.js");
+var ircSb = require("./irc.js");
 var gen = require("../lib/generate.js");
+var irc = require('irc');
 var guid = gen.uid;
 var names = gen.names;
+var client;
 var msg = {id:guid(), text: "values : " + Math.random(), from : "guest-" + names(6), to: "scrollback", type: 'text', time: new Date().getTime()};
 var users = [
 	{
@@ -27,18 +29,18 @@ var rooms = [{
 			pending: false
 		}
 	}
-}, {
-	id: "testingRoom",
+} /*{
+	id: "testingRoom2",
 	type: "room",
 	params: {
 		irc: {
 			server: "localhost",
-			channel: "#testingRoom",
+			channel: "#testingRoom2",
 			enabled: true,
-			pending: true
+			pending: false
 		}
-	}
-}];
+	}}*/
+];
 describe('connect new IRC channel', function() {
 	before( function(done) {
 		this.timeout(40000);
@@ -63,31 +65,43 @@ describe('connect new IRC channel', function() {
 			if(!text.session) text.session = "ircClient://" + rooms[0].params.irc.server + ":" + "test";
 			callback();
 		}, "cache");
-		irc(core);
+		client = new irc.Client("localhost", "testingBot", {});
+		ircSb(core);
 		setTimeout(function(){
 			done();		
-		}, 30000);
+		}, 15000);
 	});
 	it('Single room test new IRC config.', function(done) {
-		this.timeout(30000);
+		this.timeout(40000);
 		console.log("running Test");
 		
-		for(var i = 0;i < 4;i++) {
+		for(var i = 0;i < 7;i++) {
 			core.emit("text", {
 				type: 'back',
 				to: "scrollback",
 				room: rooms[0],
-				from: "outUser" + i,
+				from: "outuser" + i,
 				session: "web://outuser" 
 			});
-			core.emit("text", {
+			if(i !== 3) core.emit("text", { //3 should not connect.
 				type: 'text',
 				to: "scrollback",
-				from: "outUser" + i,
+				from: "outuser" + i,
 				text: "this is message from outUser" + i,
 				session: "web://outuser" 
 			});
+			
 		}
+		setTimeout ( function() {
+			core.emit('text', {
+				type: "away",
+				to: "scrollback",
+				from: "outuser" + 0,
+				session: "web://outuser"
+			});
+		}, 10000);
+		
+		
 	});
 	
 	

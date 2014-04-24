@@ -8,17 +8,18 @@ var client = require('./client.js')(clientEmitter);
 var core;
 var callbacks = {};
 var onlineUsers = {};
+var pendingBack = {};
 var userExp = 45000;
-
+var initCount = 0;
 module.exports = function (coreObj) {
 	core = coreObj;
 	init();
 	core.on ('room', function(room, callback) {
 		if (room.type == "room" && room.params && room.params.irc && room.session.indexOf('internal') !== 0) {
-			if (room.type === 'room' && !room.old && room.params.irc) {//TODO chack if new irc config.
+			if (!room.old && room.params.irc) {//TODO chack if new irc config.
 				room.params.irc.channel = room.params.irc.channel.toLowerCase();
 				addNewBot(room, callback);
-			} if (room) {//room config changed
+			} if (room.old) {//room config changed
 				//code
 			} 
 		} else callback();
@@ -32,20 +33,27 @@ module.exports = function (coreObj) {
 		if (text.room.params && text.room.params.irc && text.session.indexOf('ircClient') !== 0) {//session of incoming users from irc 
 			switch (type) {
 				case 'text':
+					if(pendingBack[text.to] && pendingBack[text.to][text.from]) {
+						connectUser(text.to, text.from);
+						delete pendingBack[text.to][text.from];
+					}
 					say(text.to, text.from, text.text);
 					break;
 				case 'back':
 					if (onlineUsers[text.to] && onlineUsers[text.to][text.from]) {
 						delete onlineUsers[text.to][text.from];
 					} else {
-						connectUser(text.to, text.from);
+						if(!pendingBack[text.to]) pendingBack[text.to] = {};
+						pendingBack[text.to][text.from] = true;
+						
 					}
 					break;
 				case 'away':
-					disconnectUser(text.to, text.from);
-					break;
-				case 'init':
-					
+					if(pendingBack[text.to] && pendingBack[text.to][text.from]) {
+						delete pendingBack[text.to][text.from];
+					} else {
+						disconnectUser(text.to, text.from);
+					}
 					break;
 			}	
 		}
@@ -60,7 +68,7 @@ function init() {
 		core.emit("getRooms", {identity: "irc"}, function(data) {
 			var rooms = data.results;
 			log("rooms:", rooms);
-			log("returned state from IRC:", state);
+			log("returned state from IRC:", JSON.stringify(state));
 			log("results of getRooms: ", rooms);
 			rooms.forEach(function(room) {
 				if (state.rooms[room.id]) {
@@ -68,9 +76,9 @@ function init() {
 					if (!(r.id === room.id && room.params.irc.server == r.params.irc.server &&
 						room.params.irc.channel && room.params.irc.pending === r.params.irc.pending &&
 						room.params.irc.enabled === r.params.irc.enabled)) {
-							log("reconnecting bot with new values:", room.id);
-							disconnectBot(r);
-							addNewBot(room);
+							log("reconnecting bot with new values: Not tested.", room.id);
+							//disconnectBot(r.id);//disconnect bot should have a callback
+							//setInterval(addNewBot(room), 3000);//or wait for some time 
 						//TODO remove other rooms bots.
 					} 
 				} else {
@@ -81,6 +89,7 @@ function init() {
 				log("creating online users list");
 				var servChanProp = state.servChanProp;
 				var servNick = state.servNick;
+				
 				if (servChanProp[room.params.irc.server] &&
 					servChanProp[room.params.irc.server][room.params.irc.channel]) {
 					var users = servChanProp[room.params.irc.server][room.params.irc.channel].users;
@@ -88,6 +97,7 @@ function init() {
 						if(servNick[room.params.irc.server] &&
 							servNick[room.params.irc.server][user].dir === "in") {
 							sendInitAndBack(user, "ircClient://" + room.params.irc.server + ":" + user, room);
+							initCount++;
 						}
 						if(servNick[room.params.irc.server] &&
 								servNick[room.params.irc.server][user].dir === "out") {
@@ -104,12 +114,8 @@ function init() {
 						}
 					});
 				}
-				
+				isInitDone();
 			});	
-
-			clientEmitter.emit('write', {
-				type: 'init'//notify ircClient about comp.
-			});
 		});
 	});
 	
@@ -160,15 +166,28 @@ function init() {
 	
 }
 
+function  isInitDone() {
+	if (initCount === 0) {
+		//send back init.
+		log("init Done");
+		clientEmitter.emit('write', {
+			type: 'init'//notify ircClient about comp.
+		});
+		initCount--;
+	}
+}
+
+
 function sendInitAndBack(suggestedNick, session ,room) {
-	log("values: ", suggestedNick, session, room);
+	log("sending init values: ", suggestedNick, session, room);
 	core.emit('init', {
 			suggestedNick: suggestedNick,
 			session: session,
 			to: "me"
 		}, function(init) {
 			log("init back", init);
-			//if (init.user.id !== suggestedNick) 
+			
+			if (init.user.id !== suggestedNick) 
 			clientEmitter.emit('write', {
 				type: "newNick",//change mapping only.
 				nick: suggestedNick,//from,
@@ -183,6 +202,8 @@ function sendInitAndBack(suggestedNick, session ,room) {
 					from: init.user.id//nick returned from init.
 				}, function(text) {
 			});
+			initCount--;
+			isInitDone();
 	});
 }
 
@@ -225,7 +246,7 @@ function disconnectBot(roomId) {
 	clientEmitter.emit('write', {
 		uid: uid,
 		type: 'partBot',
-		room: roomId
+		roomId: roomId
 	});
 }
 
