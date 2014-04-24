@@ -20,10 +20,11 @@ $(function() {
             startX = 0,
             startY = 0,
             startTime = 0,
+            pointer = "onpointerup" in document,
             touch = "ontouchend" in document,
-            startEvent = (touch) ? 'touchstart' : 'mousedown',
-            moveEvent = (touch) ? 'touchmove' : 'mousemove',
-            endEvent = (touch) ? 'touchend' : 'mouseup';
+            startEvent = (pointer) ? 'pointerdown' : (touch) ? 'touchstart' : 'mousedown',
+            moveEvent = (pointer) ? 'pointermove' : (touch) ? 'touchmove' : 'mousemove',
+            endEvent = (pointer) ? 'pointerup' : (touch) ? 'touchend' : 'mouseup';
 
         target.bind(startEvent, function(e) {
             startTime = (new Date()).getTime();

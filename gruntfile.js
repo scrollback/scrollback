@@ -88,7 +88,8 @@ module.exports = function(grunt) {
 				"public/dummy.css": "public/dummy.less",
 				"public/s/styles/less/stylesheet.css": "public/s/styles/less/stylesheet.less",
 				"public/s/styles/less/widgets.css": "public/s/styles/less/widgets.less",
-				"public/s/styles/less/client-chat.css": "public/s/styles/less/client-chat.less"
+				"public/s/styles/less/client-chat.css": "public/s/styles/less/client-chat.less",
+				"public/s/styles/less/client-settings.css": "public/s/styles/less/client-settings.less"
 			},
 		},
 	},
@@ -97,6 +98,15 @@ module.exports = function(grunt) {
 			src: "public/s/styles/less/*.css"
 		},
 	},
+	imageEmbed: {
+		dist: {
+			src: ["public/s/styles/less/client-settings.css"],
+			dest: "public/s/styles/less/client-settings.css",
+			options: {
+				deleteAfterEncoding : false
+			}
+		}
+	}
   });
 
   // Load the plugin that provides the "uglify" task.
@@ -106,12 +116,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-autoprefixer');
+  grunt.loadNpmTasks('grunt-image-embed');
   // Default task(s).
 
   grunt.event.on('watch', function(action, filepath, target) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
-  grunt.registerTask('default', ['uglify', 'concat', 'wrap', 'less', 'autoprefixer']);
+  grunt.registerTask('default', ['uglify', 'concat', 'wrap', 'less', 'autoprefixer', 'imageEmbed']);
 
 
 };

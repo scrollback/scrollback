@@ -89,7 +89,7 @@ window.libsb = (function() {
 			time = query.time - (query.before * MTBT);
 			for(i=0, l=query.before + query.after; i<l; i++) {
 				if(time >= now) break;
-				if(time >= now - 10 * MTBT) {
+				if(time >= now - 100 * MTBT) {
 					r.push(thread(time + (Math.random()-0.5)*MTBT*0.9));
 				}
 				time += MTBT;

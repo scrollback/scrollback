@@ -10,14 +10,14 @@
 
 @metaxxxxx: 30%;
 @metaxxxx: 26em;
-@metaxxx: 26em;
-@metaxx: 20em;
-@metax: 14em;
+@metaxxx: 25em;
+@metaxx: 19em;
+@metax: 13em;
 
 @breakpointxxxx: ~"screen and (max-width: 70em)";
 @breakpointxxx: ~"screen and (max-width: 50em)";
 @breakpointxx: ~"screen and (max-width: 27em)";
-@breakpointx: ~"screen and (max-width: 19em)";
+@breakpointx: ~"screen and (max-width: 18em)";
 
 .rooms {
     position: fixed;
@@ -28,9 +28,7 @@
     min-height: 100%;
     background-color: @dark-color;
     color: @light-color;
-    z-index: 4;
-    overflow: auto;
-    -webkit-overflow-scrolling : touch;
+    z-index: 1;
 
     @media @breakpointxxxx {
         width: @roomxxxx;
@@ -77,6 +75,8 @@
 	}
 
     .roomlist {
+        overflow-y: scroll;
+        -webkit-overflow-scrolling : touch;
         list-style: none;
 		
 		.infinite-items { background: transparent; }
@@ -88,7 +88,7 @@
 			display: block;
 			padding: 1em;
 			font-weight: 700;
-			color: darken(@light-color, 10%);
+			color: darken(@light-color, 10%);$
 			border-bottom: 1px solid lighten(@dark-color, 5%);
 
 			&.current {
@@ -142,8 +142,7 @@
     width: @metaxxxxx;
     background-color: darken(@light-color, 5%);
     color: @dark-color;
-    border-right: 1px solid darken(@light-color, 10%);
-    z-index: 3;
+    z-index: 2;
 
     @media @breakpointxxxx {
         width: @metaxxxx;
@@ -172,7 +171,8 @@
     top: 0;
     right: 0;
     bottom: 0;
-    z-index: 2;
+    z-index: 3;
+    border-left: 1px solid darken(@light-color, 10%);
     background-color: @light-color;
     color: @dark-color;
 
@@ -210,13 +210,12 @@
             .action-buttons {
                 display: table-cell;
                 vertical-align: middle;
-                padding: 0 1em;
+                padding: 0 .3em;
 
                 @media @breakpointxxx { padding-left: 0;  }
 
                 .button, .button-secondary {
                     margin: 0;
-                    padding: .5em 1em;
                 }
             }
 
@@ -300,28 +299,6 @@
 
             .search-focus & { display: none; }
         }
-
-        .search-bar {
-            display: none;
-
-            .search-focus & {
-                .slideleft;
-
-                display: block;
-                width: 100%;
-                height: @bar-height;
-                padding: .35em;
-            }
-
-            .search-entry {
-                display: block;
-                width: 100%;
-                margin: 0;
-                background-image: url("../../img/icons/png/search-gray.png");
-                background-position: right center;
-                background-repeat: no-repeat;
-            }
-        }
     }
 }
 
@@ -337,11 +314,15 @@
 
 .rooms, .meta, .mainview, .chat-input {
     .ease(.3s); /* animate css transforms */
-    .transform(translate3d(0, 0, 0)); /* get ready, fix flicker in some browsers */
+    .transform(translate3d(0, 0, 0)); /* get ready */
 
-    overflow: hidden;
+    /* fix flicker in some browsers */
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+    backface-visibility: hidden;
 
-    /* we use 3d transformations for GPU accelerated animations */
+    /* use 3d transformations for GPU accelerated animations */
     .metainview & {
         @media @breakpointxxx { .transform(translate3d(@metaxxx, 0, 0)); }
 

@@ -50,8 +50,15 @@
         &.settings-menu {
             .opacity(1);
 
+            position: absolute;
+            top: @bar-height;
+            right: 0;
+            bottom: 0;
+            left: 0;
             filter: none;
             pointer-events: auto;
+            overflow: auto;
+            -webkit-overflow-scrolling : touch;
 
             ul {
                 list-style: none;
@@ -91,6 +98,14 @@
 
 .settingsview {
     .settings-area {
+        position: absolute;
+        top: @bar-height;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: auto;
+        -webkit-overflow-scrolling : touch;
+
         .pane {
             display: none;
 
@@ -129,14 +144,14 @@
                         max-width: 100%;
                     }
 
-                    input[type=text], textarea { width: 100% }
+                    input[type=text], textarea, .entry { width: 100% }
 
                     textarea { resize: vertical; }
 
                     input[type=checkbox] {
                         position: relative;
                         top: .3em;
-                        margin: .5em 0;
+                        margin: .25em 0 1.25em 0;
                     }
 
                     label {

@@ -61,7 +61,8 @@
 		"grunt-contrib-less": "x",
 		"grunt-autoprefixer": "x",
 		"browserify": "x",
-		"grunt-browserify": "x"
+		"grunt-browserify": "x",
+		"grunt-image-embed": "x"
 	},
 	"optionalDependencies": {},
 	"license": "AGPL",
