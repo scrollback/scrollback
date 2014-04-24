@@ -86,19 +86,19 @@ module.exports = function(c) {
 
 
 	function simpleUserLoad(action, callback) {
-		if(config.whitelists[query.session]) {
-			query.user = {
+		if(config.whitelists[action.session]) {
+			action.user = {
 				id: "system"
 			}
 			return callback();
 		}
 
-		core.emit("getUsers", {session: query.session, ref: "me"}, function(err, user) {
+		core.emit("getUsers", {session: action.session, ref: "me"}, function(err, user) {
 			if(err || !user || !user.results || !user.results.length) {
-				query.results = [];
+				action.results = [];
 				callback();
 			}else {
-				query.user = user[0];
+				action.user = user[0];
 				callback();
 			}
 		});
