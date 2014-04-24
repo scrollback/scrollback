@@ -47,7 +47,7 @@
     "twit": "~1.1.12",
     "objectlevel": "x",
     "htmlencode": "0.0.3",
-	"underscrore": "x"
+	"underscore": "x"
   },
   "devDependencies": {
     "mocha": "x",
