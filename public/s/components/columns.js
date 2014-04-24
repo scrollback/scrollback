@@ -5,22 +5,22 @@ $(function() {
     // Navigate between columns
     $(".rooms-button, .scrollback-header").on("click", function() {
         if ($("body").hasClass("rooms-view")) {
-            libsb.emit('navigate', { view: "meta" });
+            libsb.emit('navigate', { view: "meta", source: "rooms-button" });
         } else {
-            libsb.emit('navigate', { view: "rooms" });
+            libsb.emit('navigate', { view: "rooms", source: "rooms-button" });
         }
     });
 
     $(".meta-button, .title").on("click", function() {
         if ($("body").hasClass("meta-view")) {
-            libsb.emit('navigate', { view: "normal" });
+            libsb.emit('navigate', { view: "normal", source: "meta-button" });
         } else {
-            libsb.emit('navigate', { view: "meta" });
+            libsb.emit('navigate', { view: "meta", source: "meta-button" });
         }
     });
 
     $(".settings-menu .tab").on("click", function() {
-        libsb.emit('navigate', { view: "normal" });
+        libsb.emit('navigate', { view: "normal", source: "settings-menu" });
     });
 
     // Handle swipe gestures
@@ -57,15 +57,15 @@ $(function() {
 
                 if (currentX > startX) {
                     if ($("body").hasClass("meta-view")) {
-                        libsb.emit('navigate', { view: "rooms" });
+                        libsb.emit('navigate', { view: "rooms", source: "swipe-right" });
                     } else {
-                        libsb.emit('navigate', { view: "meta" });
+                        libsb.emit('navigate', { view: "meta", source: "swipe-right" });
                     }
                 } else if (currentX < startX) {
                     if ($("body").hasClass("rooms-view")) {
-                        libsb.emit('navigate', { view: "meta" });
+                        libsb.emit('navigate', { view: "meta", source: "swipe-left" });
                     } else {
-                        libsb.emit('navigate', { view: "normal" });
+                        libsb.emit('navigate', { view: "normal", source: "swipe-left" });
                     }
                 }
 

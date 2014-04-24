@@ -45,6 +45,8 @@
 }());
 
 libsb.on("navigate", function(state, next) {
+	console.log("Navigate", state);
+
 	if(state.mode !== state.old.mode) {
 		$(document.body).removeClass(state.old.mode + "-mode");
 		$(document.body).addClass(state.mode + "-mode");
@@ -69,6 +71,8 @@ libsb.on("navigate", function(state, next) {
 //		});
 
 	function buildurl() {
+		console.log("Getting url", state);
+
 		var url, room, thread, time, mode, query;
 
 		if (state.room !== undefined) {
@@ -159,6 +163,8 @@ libsb.on("navigate", function(state, next) {
 	if (state.source !== "history") {
 		var url = buildurl();
 
+		console.log("Change history", state);
+
 		if (history.pushState) {
 			if (url) {
 				history.pushState(state, null, url);
@@ -181,6 +187,8 @@ $(window).on("popstate", function() {
 			state[prop] = history.state[prop];
 		}
 	}
+
+	console.log("Back in time", state);
 
 	state.source = "history";
 
