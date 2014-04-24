@@ -20,7 +20,7 @@ $(function() {
 		getItems: function (index, before, after, recycle, callback) {
 			var query = { to: room, time: index, before: before, after: after };
 			if(thread) query.thread = thread;
-			
+
 			libsb.getTexts(query, function(err, texts) {
 				if(err) throw err; // TODO: handle the error properly.
 
@@ -41,12 +41,12 @@ $(function() {
 			$logs.addBelow(textEl.render(null, text));
 		next();
 	});
-	
+
 	libsb.on('navigate', function(state, next) {
 		var reset = false;
-		
+
 		if(state.source == 'text-area') return next();
-		
+
 		if(state.room != state.old.room) {
 			room = state.room;
 			reset = true;
@@ -59,9 +59,9 @@ $(function() {
 			time = state.time;
 			reset = true;
 		}
-		
+
 		if(reset) $logs.reset(time);
-		
+
 		next();
 	});
 
@@ -121,6 +121,7 @@ $(function() {
 			}
 		}
 
+		libsb.emit('navigate', { time: time, source: 'text-area' });
 		$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
 
 	});

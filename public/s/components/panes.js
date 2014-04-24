@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $ */
+/* global $, libsb */
 
 $(function() {
 	$(".tab").on("click", function() {
@@ -9,5 +9,7 @@ $(function() {
 
 		$(".tab, .pane").removeClass("current");
 		$(".tab-" + tab + ", .pane-" + tab).addClass("current");
+
+		libsb.emit('navigate', { tab: tab });
 	});
 });

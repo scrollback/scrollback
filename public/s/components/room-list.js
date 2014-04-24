@@ -23,24 +23,24 @@ $(function() {
 		startIndex: 0,
 		getItems: function (index, before, after, recycle, callback) {
 			var res = [], i;
-			
+
 			for(i=index-before; i<=index+after; i++) {
 				if(i<0) { res.push(false); i=0; }
 				if(i==index) continue;
 				if(i>rooms.length-1) { res.push(false); break; }
 				res.push(roomEl.render(null, rooms[i], i));
 			}
-			
+
 			callback(res);
 		}
 	});
-	
+
 	// Set up a click listener.
-	
+
 	$roomlist.click(function(event) {
 		var $el = $(event.target).closest(".roomitem");
 		if(!$el.size()) return;
-		libsb.emit('navigate', {room: $el.attr("id").split('-')[1] });
+		libsb.emit('navigate', { room: $el.attr("id").split('-')[1], view: 'normal', source: 'roomlist', thread: null });
 		event.preventDefault();
 	});
 });

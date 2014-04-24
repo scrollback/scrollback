@@ -39,7 +39,7 @@
 				<ul role="tablist" class="tabs">
 					<li role="tab" class="rooms-button"><h2>Rooms</h2></li>
 					<li role="tab" class="tab tab-info mode-normal"><h2>Info</h2></li>
-					<li role="tab" class="tab tab-people mode-normal current"><h2>People</h2></li>
+					<li role="tab" class="tab tab-people mode-normal"><h2>People</h2></li>
 					<li role="tab" class="tab tab-threads mode-normal"><h2>Threads</h2></li>
 					<li role="tab" class="tab tab-threads mode-search"><h2>This room</h2></li>
 					<li role="tab" class="tab tab-threads mode-search"><h2>All rooms</h2></li>
@@ -50,7 +50,7 @@
 					<p class="description"></p>
 					<a class="button configure-button">Configure room</a>
 				</div>
-				<div role="tabpanel" class="pane hide-scroll pane-people current">
+				<div role="tabpanel" class="pane hide-scroll pane-people">
 					<a class="person">
 						<img class="picture" src="" alt="">
 						<span class="name"></span>
@@ -377,10 +377,13 @@
 		<script src="s/components/timeline.js"></script>
 
 		<script>
+			'room', 'view', 'mode', 'tab', 'thread', 'query', 'text', 'time'
 			$(function() {
 				libsb.emit('navigate', {
 					room: 'scrollback',
-					mode: 'normal'
+					view: 'normal',
+					mode: 'normal',
+					tab: 'people'
 				});
 			});
 		</script>
