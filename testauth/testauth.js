@@ -10,19 +10,15 @@ module.exports = function(core) {
 		if(action.type !== 'init' || !action.auth || !action.auth.testauth) return callback();
 		delete action.auth.testauth;
 		if(testauth == "user1:1234567890") {
-			core.emit("getUsers", {id: "testuser1"}, function(err, users) {
-				action.user = {
-					id:"testUser"
-				}
-				callback();
-			});
+			action.user = {
+				id:"testUser1"
+			}
+			callback();
 		}else if(testauth == "user2:0987654321") {
-			core.emit("getUsers", {id: "testuser2"}, function(err, users) {
-				action.user = {
-					id:"testUser2"
-				}
-				callback();
-			});
+			action.user = {
+				id:"testUser2"
+			}
+			callback();
 		}else {
 			callback(new Error("AUTH_UNREGISTERED"));
 		}

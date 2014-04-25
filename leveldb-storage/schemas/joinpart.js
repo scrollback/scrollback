@@ -8,15 +8,19 @@ module.exports = function(types) {
 			types.joinpart.put(data, function() {				
 				if(data.type == "join") {
 					linkData.roleSince = new Date().getTime();
-						
-					if(data.role == "follow_requested" || data.requestedRole) {
+					
+
+					//for now getting all the basic join to follower. special roles wil come later.	
+					linkData.role = data.role;
+
+					/*if(data.role == "follow_requested" || data.requestedRole) {
 						linkData.transitionType = "request";
 						linkData.transitionRole =  data.requestedRole || "follower";
 						linkData.transitionBy = "";
 						linkData.transitionMessage = data.text || "";
 					}else {
 						linkData.role = "follower";
-					}
+					}*/
 				} else if(data.type == "part") {
 					linkData.role = "none";
 					/*types.rooms.unlink(data.room.id, 'hasMember', data.user.id, function(err, data) {
