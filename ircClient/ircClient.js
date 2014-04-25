@@ -1,8 +1,9 @@
 var net = require('net');
 var irc = require('irc');
 var log = require('../lib/logger.js');
+var config = require('./config.js');
 var core;
-var botNick = "intensiv" ;//part of config of IRC client.
+var botNick =  config.botNick;//part of config of IRC client.
 var clients = {};//for server channel user,server --> client. 
 var servChanProp = {};//object of server channel prop
 var rooms = {};//room id to room obj map. //TODO delete room obj if any room deleted irc.(Done Test)
@@ -10,6 +11,8 @@ var servNick = {};//server channel nick -------> sb nick.
 var renameCallback = {};
 var connected = false;
 var queue = require("./queue.js");
+
+/******************************* Exports ****************************************/
 module.exports.say = say;
 module.exports.rename = rename;
 module.exports.partBot = partBot;
@@ -25,6 +28,7 @@ module.exports.getCurrentState = getCurrentState;
 module.exports.init = function init(coreObj) {
 	core = coreObj;
 };
+/*********************************** Exports ****************************************/
 
 /******************************************
 TODO's 
@@ -75,7 +79,6 @@ function joinServer(server, nick, channels, options, cb) {
 			userIp : options.userIp,
 			userHostName: options.userHostName
 		});
-	//log("client=", client);
 	clients[nick][server] = client;
 	client.conn.on("connect", cb);
 	onError(client);
@@ -101,7 +104,6 @@ function connectBot(room, options, cb) {
 		cb("already connected to some other room");
 		return;
 	}
-	//TODO if already connected to some room then callback with error.
 	servChanProp[server][channel].rooms.push(room);
 	var ch = room.params.irc.pending ? [] : [channel];//after varification connect to channel
 	if (!servNick[server]) servNick[server] = {};
@@ -112,7 +114,7 @@ function connectBot(room, options, cb) {
 	} else {
 		client = joinServer(server, botNick, ch, options, cb);
 		onPM(client);
-		//onRaw(client);
+		onRaw(client);
 		onMessage(client);
 		onNames(client);
 		onJoin(client);
@@ -135,8 +137,8 @@ function partBot(roomId) {
 			clients[sbNick][server].part(channel);
 		}
 	});
-	
-	delete rooms[roomId];//how to delete servChanProp[serv][chan]
+	delete servChanProp[server][channel];
+	delete rooms[roomId];
 }
 
 function connectUser(roomId, nick, options, cb) {
@@ -201,7 +203,8 @@ function sendMessage(server, to, from, message) {
 				server: server,
 				to: room.id,
 				from: from, 
-				text: message
+				text: message,
+				session: "irc://" + server + ":" + to
 			});
 		}	
 	});
@@ -216,7 +219,6 @@ function onPM(client) {
 		if (message.args && message.args.length >= 2) {
 			msg = message.args[1].split(" ");
 		}
-		log("servChanProp:", JSON.stringify(servChanProp));
 		if (msg.length >= 3 && msg[0] === 'connect' && servChanProp[client.opt.server][msg[1]]) {//connect #channel room.
 			var r = msg[2];//
 			log("r=", r);
@@ -314,7 +316,8 @@ function sendAway(server, channels, nick, bn) {
 					type: "away",
 					to: room.id,
 					from: sbUser.nick,
-					room: room
+					room: room,
+					session: "irc://" + server + ":" + nick
 				});
 			}
 		});
@@ -326,10 +329,8 @@ function sendAway(server, channels, nick, bn) {
 			}
 		}
 	}
-	//if (servNick[server]) {
-		log("user:", nick, "went away from all channel in ", server, "server");
-		delete servNick[server][nick];//TODO check if user left from all connected channels(rooms).
-	//}
+	log("user:", nick, "went away from all channel in ", server, "server");
+	delete servNick[server][nick];//TODO check if user left from all connected channels(rooms).
 }
 
 /************************** user left *****************************************/
@@ -366,7 +367,7 @@ function sendBack(server, channel, nick, bn) {
 				to: room.id,
 				from: nick,
 				room: room,
-				session: "ircClient//:" + server + ":" + nick
+				session: "irc//:" + server + ":" + nick
 			});
 		}
 	});
@@ -486,10 +487,10 @@ function getCurrentState() {
  * @param {string} roomId 
  * @param {function} callback callback(nick)
  */
-function getBotNick(roomId, callback) {
+function getBotNick(roomId) {
 	var room = rooms[roomId];
 	var nick = clients[botNick][room.params.irc.server].nick;
-	callback(nick);
+	return nick;
 }
 
 function isConnected() {
@@ -524,16 +525,13 @@ function sendQueueData() {
 
 function onRaw(client) {
 	client.on('raw', function(raw) {
-		core.emit('data', {
-			type: 'raw',
-			server: client.opt.server,
-			data: raw
-		});
+		log("Raw message:", raw);
 	});
 }
 
 function onError(client) {
 	client.on('error', function(message) {
+		log("IRC error:", message);
 		core.emit('data', {
 			type: 'ircError',
 			server: client.opt.server,

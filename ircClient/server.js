@@ -1,11 +1,12 @@
 var ircClient = require('./ircClient.js');
+var config = require('./config.js');
 var net = require('net');
 var events = require('events');
 var core = new events.EventEmitter();
 var ObjectReader = require('../lib/ObjectReader.js');
 var or = new ObjectReader(core);
 var dataQueue = require("./queue.js");
-var port = 78910;
+var port = config.port;
 var client;
 
 var isConnected = false;
@@ -86,9 +87,8 @@ core.on('object', function(obj) {
 			writeObject({type: 'callback', uid: obj.uid, data: state});
 			break;
 		case 'getBotNick':
-			ircClient.getBotNick(obj.roomId, function(nick){
-				writeObject({type: 'callback', uid: obj.uid, data: nick});
-			});
+			var nick = ircClient.getBotNick(obj.roomId);
+			writeObject({type: 'callback', uid: obj.uid, data: {nick: nick}});
 	}
 	
 });
