@@ -15,6 +15,7 @@ module.exports = function(core) {
 	core.on('room',roomuser.put, "storage");
 	core.on('user',roomuser.put, "storage");
 
+
 	core.on('away', awayback.put, "storage");
 	core.on('back', awayback.put, "storage");
 
@@ -51,4 +52,7 @@ module.exports = function(core) {
 	core.on('getRooms', roomuser.getRooms, 'storage');
 	core.on('getThreads',threads.get, 'storage');
 	core.on('getTexts',texts.get, 'storage');
+	core.emit("getRooms", {session:"internalSession",ref:"scrollback"}, function(err, data) {
+		console.log(data);
+	});
 };

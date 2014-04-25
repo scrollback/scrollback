@@ -21,7 +21,7 @@ module.exports = function (types) {
 				//getting use by ids
 				return user.get(query.ref, function(err, res) {
 					if(err || !res) return cb();
-					query.results = res;
+					query.results = [res];
 					cb();
 				});
 			}
@@ -49,14 +49,12 @@ module.exports = function (types) {
 				req.eq.push(query.hasMember);
 				req.map = function(element, push) {
 					if(element.role == "none") return false;
-					else push(element);
-
 				}
 				if(query.ref) req.eq.push(query.ref);
 			}else if(query.ref) {
 				return room.get(query.ref, function(err, res) {
 					if(err || !res) return cb();
-					query.results = res;
+					query.results = [res];
 					cb();
 				});
 

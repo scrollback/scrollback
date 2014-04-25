@@ -67,7 +67,7 @@ module.exports = function (types) {
 			if(query.ref) {
 				return texts.get(query.ref, function(err, data){
 					if(!data) return cb();
-					query.results = data;
+					query.results = [data];
 					return cb();
 				});
 			}

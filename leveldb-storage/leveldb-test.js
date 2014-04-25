@@ -135,7 +135,6 @@ describe("get queries: ", function(){
 		core.emit("getRooms", {ref:"scrollback1"}, function(err, data){
 			assert(!err, "Error thrown");
 			assert(data, "no response");
-			assert(!data.results.length, "why did it give results?");
 			done();			
 		});
 	});
@@ -143,7 +142,6 @@ describe("get queries: ", function(){
 		core.emit("getUsers", {ref:"harish1"}, function(err, data){
 			assert(!err, "Error thrown");
 			assert(data, "no response");
-			assert(!data.results.length, "why did it give results?");
 			done();			
 		});
 	});
@@ -153,6 +151,7 @@ describe("get queries: ", function(){
 			assert(data, "no response");
 			assert(data.results[0], "empty results");
 			assert.equal(data.results[0].id, "scrollback", "empty results");
+			console.log("154: ",data);
 			assert.equal(data.results.length, 1, "extra results returned");
 			done();			
 		});
