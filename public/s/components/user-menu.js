@@ -3,7 +3,7 @@
 
 $(function() {
 	$(".has-popover").on("click", function() {
-		$(".popover-body").removeClass().empty();
+		$(".popover-body").removeClass().addClass("popover-body").empty();
 	});
 
 	$(".guest").on("click", function() {
