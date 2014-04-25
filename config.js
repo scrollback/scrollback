@@ -92,7 +92,9 @@ var defaults = {
 	},
 	irc: {
 		nick: 'sbtestbot',		// nickname of the bot
-		hangTime: 60000     // timeout before disconnecting (ms)
+		hangTime: 60000,     // timeout before disconnecting (ms)
+		port: 78910,
+		server: "localhost"
 	},
 	leveldb: {
 		path: "/data"

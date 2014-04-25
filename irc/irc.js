@@ -1,295 +1,301 @@
-/*
-	the irc accounts are updated right away.
-	There is a performance issue though.
-	The old client objects of all the individual users are not removed.
-*/
-
-/* global require, module, __dirname, console */
-var irc = require("irc"),core,
-	config = require("../config.js"),
-	url = require("url"),
-	connect = require("./connect.js"),
-	log = require("../lib/logger.js"), fs = require("fs"),
-	jade = require("jade"),
-	crypto = require('crypto'),
-	validate = require('../lib/validate.js');
-var db = require("../lib/mysql.js");
-
-
-var botNick=config.irc.nick, clients = {bot: {}}, users = {};
-var nickFromUser = {}, userFromSess = {};
-module.exports = function(object){
-	core = object;
-	fs.readFile(__dirname + "/irc.html", "utf8", function(err, data){
-		if(err)	throw err;
-		core.on("http/init", function(payload, callback) {
-            payload.irc = {
-				config: data
-			};
-			callback(null, payload);
-        }, "setters");
-	});
+var gen = require("../lib/generate.js");
+var guid = gen.uid;
+var config = require('../config.js');
+var log = require("../lib/logger.js");
+var events = require('events');
+var clientEmitter = new events.EventEmitter();
+var client = require('./client.js');
+client.init(clientEmitter);
+var core;
+var callbacks = {};
+var onlineUsers = {};
+var pendingBack = {};//[room][username] = true
+var userExp = 10*60*1000;
+var initCount = 0;
+module.exports = function (coreObj) {
+	core = coreObj;
 	init();
-	core.on("room", function(room, callback) {
-		var i=0,l;
-		log("Heard \"room\" Event");
-		if(room.type == "room") {
-			// just validation.
-			if(room.accounts) room.accounts.forEach(function(account) {
-				var u = url.parse(account.id);
-				var id = u.protocol+"//"+u.host+"/";
-				if(!u.hash) {
-					if(u.path.substring(1)) {
-						id = id+"#"+u.path.substring(1);
-					}
-					else {
-						return callback({message:"invalid irc account"});
-					}
-				}else {
-					id = id+u.hash;
+	core.on ('room', function(room, callback) {
+		if (room.type == "room" && room.params && room.params.irc && room.session.indexOf('internal') !== 0 && client.connected()) {
+			if (!room.old && room.params.irc) {//TODO chack if new irc config.
+				room.params.irc.channel = room.params.irc.channel.toLowerCase();
+				addNewBot(room, callback);
+			} if (room.old) {//room config changed
+				var oldIrc = room.old.params.irc;
+				var newIrc = room.params.irc;
+				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel ||
+					oldIrc.enable !== newIrc.enable || oldIrc.pending !== newIrc.pending) {
+					disconnectBot(room.id);
+					addNewBot(room, callback);
 				}
-				account.id = id;
-			});
-
-			log("OLD ACCOUNTs",room.old);
-			if(room.old && room.old.accounts) room.old.accounts.forEach(function(oldAccount) {
-				if (oldAccount.gateway === 'irc') {
-					var u;
-					if(room.accounts) {
-						for (i=0,l=room.accounts.length;i<l;i++ )
-							if(room.accounts[i].id == oldAccount.id) return;
-					}
-					u = url.parse(oldAccount.id);
-					clients.bot[u.host].part(u.hash.toLowerCase());
-					delete clients.bot[u.host].rooms[u.hash.toLowerCase()];
-				}
-				
-			});
-
-
-			if(room.accounts) room.accounts.forEach(function(account) {
-				var u = url.parse(account.id);
-				if (account.gateway === 'irc') {
-					if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
-						addBot(account);
-					}
-				}
-				
-			});
-		}
-		callback();
+			} 
+		} else callback();
 	}, "gateway");
-	core.on("message" , function(message , callback) {
-		log("Heard \"message\" Event");
-		db.query("SELECT * FROM `accounts` WHERE `room` IN (?) AND `gateway`='irc'", [message.to], function(err, data) {
-			var i, l, name, list = [], u;
-			if(err) return callback(err);
-			for(i=0, l=data.length; i<l; i+=1) {
-				u = url.parse(data[i].id);
-				if(!clients.bot[u.host] || !clients.bot[u.host].rooms[u.hash.toLowerCase()]) {
-					addBot(data[i]);
-				}
-				list.push(data[i].id);
-			}
-			send(message, list);
-		});
+	core.on('text', function(text, callback) {
+		log("On text:", client.connected());
+		var type = text.type;
+		log("text called irc:", text);
+		log("online users:", onlineUsers);
+		if (text.room.params && text.room.params.irc && text.session.indexOf('irc') !== 0 && client.connected()) {//session of incoming users from irc 
+			switch (type) {
+				case 'text':
+					if(pendingBack[text.to] && pendingBack[text.to][text.from]) {
+						connectUser(text.to, text.from);
+						delete pendingBack[text.to][text.from];
+					}
+					say(text.to, text.from, text.text);
+					break;
+				case 'back':
+					if (onlineUsers[text.to] && onlineUsers[text.to][text.from]) {
+						delete onlineUsers[text.to][text.from];
+					} else {
+						if(!pendingBack[text.to]) pendingBack[text.to] = {};
+						pendingBack[text.to][text.from] = true;
+						
+					}
+					break;
+				case 'away':
+					if(pendingBack[text.to] && pendingBack[text.to][text.from]) {
+						delete pendingBack[text.to][text.from];
+					} else {
+						disconnectUser(text.to, text.from);
+					}
+					break;
+			}	
+		}
 		callback();
 	}, "gateway");
 };
-
-function addBot(account) {
-	var u, client;
-	if(account.joined) return;
-	u = url.parse(account.id);
-	client = addBotChannels(u.host, [u.hash.toLowerCase()]);
-	client.rooms[u.hash.toLowerCase()] = account.room;
-	account.joined = true;
-}
-
-function addBotChannels(host, channels) {
-	log("ADD_BOT_CHANNELS", host, channels);
-	
-	var client = clients.bot[host];
-	if(!client) {
-		clients.bot[host] = client =
-			connect(host, botNick, botNick, channels, function(m) {
-				var sessionID = "irc://"+m.origin.server+"/"+m.from, newSessionID;
-				if (users[host] && users[host][m.from]) {
-					log("Incoming Echo", m);
-					return;
-				}
-				m.from  = validate(m.from, true);
-				if(m.type == "back") {
-					if(userFromSess[sessionID]) {
-						m.from = userFromSess[sessionID];
-						core.emit("message", m);
-					}else {
-						core.emit("init", {session: sessionID, suggestedNick: m.from}, function(err, data) {
-							userFromSess[sessionID] = data.user.id;
-							nickFromUser[data.user.id] = m.from
-							m.from = data.user.id;
-							core.emit("message", m);
-						});
-					}
-				}else if(m.type == 'nick') {
-					newSessionID = "irc://"+m.origin.server+"/"+m.ref;
-					m.ref  = validate(m.ref, true)
-					core.emit("init", {sessionID: sessionID, suggestedNick: m.ref}, function(err, data) {
-						if(!userFromSess[sessionID]) {
-							m.from = data.user.id;
-							m.type = "back";
-							userFromSess["irc://"+m.origin.server+"/"+m.ref] = data.user.id;
-							nickFromUser[data.user.id] = m.ref;
-							core.emit("message", m);
-							return;
-						}else {
-							m.from = userFromSess[sessionID]
-							delete nickFromUser[userFromSess[sessionID]];
-							delete userFromSess[sessionID];
-							userFromSess[newSessionID] = data.user.id;
-							nickFromUser[data.user.id] = m.ref;
-						}
-						userFromSess["irc://"+m.origin.server+"/"+m.ref] = data.user.id;
-						nickFromUser[data.user.id] = m.ref;
-						m.ref = data.user.id;
-						core.emit("message", m);	
-					});
-				}else if(m.type == 'away') {
-					if(!userFromSess[sessionID]) return;
-					m.from = userFromSess[sessionID];
-					delete nickFromUser[userFromSess[sessionID]];
-					delete userFromSess[sessionID];
-					core.emit("message", m);
-				}
-				else {
-					m.from = userFromSess[sessionID] || m.from;
-					core.emit("message", m);
-				}
-			});
-
-		client.on('nick', function(oldn, newn) {
-			if (users[host][oldn]) {
-				users[host][newn] = true;
-				delete users[host][oldn];
-			}
-		});
-		
-	}else{
-		channels.forEach(function(room){
-			client.join(room);	
-		});
-	}
-	if (!users[host]) users[host] = {};
-	
-	return client;
-}
-
 function init() {
-	var servchan = {};
 	
-	db.query("SELECT * FROM `accounts` WHERE `gateway`='irc'", function(err, data) {
-		if(err) throw "Cannot retrieve IRC accounts";
-		var host, client;
-		
-		data.forEach(function(account) {
-			var u = url.parse(account.id);
-			if(!servchan[u.host]) servchan[u.host] = {};
-			servchan[u.host][u.hash.toLowerCase()] = account.room;
+	clientEmitter.on('init', function(st) {
+		var state = st.state;
+		log("init from ircClient", state);
+		core.emit("getRooms", {identity: "irc"}, function(data) {
+			var rooms = data.results;
+			log("rooms:", rooms);
+			log("returned state from IRC:", JSON.stringify(state));
+			log("results of getRooms: ", rooms);
+			rooms.forEach(function(room) {
+				if (state.rooms[room.id]) {
+					var r1 = room.params.irc;
+					var r2 = state.rooms[room.id].params.irc;
+					if (!(r1.server === r2.server && r1.channel === r2.channel && r1.pending === r2.pending)) {
+							log("reconnecting bot with new values: Not tested.", room.id);
+							disconnectBot(r.id);
+							addNewBot(room); 
+						//TODO remove other rooms bots.
+					} 
+				} else {
+					log("adding new Bot", room);
+					addNewBot(room);
+				}
+				//send init and back for incoming users with irc sessionIDs
+				log("creating online users list");
+				var servChanProp = state.servChanProp;
+				var servNick = state.servNick;
+				
+				if (servChanProp[room.params.irc.server] &&
+					servChanProp[room.params.irc.server][room.params.irc.channel]) {
+					var users = servChanProp[room.params.irc.server][room.params.irc.channel].users;
+					users.forEach(function(user) {
+						if(servNick[room.params.irc.server] &&
+							servNick[room.params.irc.server][user].dir === "in") {
+							sendInitAndBack(user, "irc://" + room.params.irc.server + ":" + user, room);
+							initCount++;
+						}
+						if(servNick[room.params.irc.server] &&
+								servNick[room.params.irc.server][user].dir === "out") {
+							log("room:", room.id, " nick", servNick[room.params.irc.server][user].nick);
+							if (!onlineUsers[room.id]) onlineUsers[room.id] = {}; 
+							onlineUsers[room.id][servNick[room.params.irc.server][user].nick] = user;
+							setTimeout(function() {
+								if(	onlineUsers[room.id][servNick[room.params.irc.server][user].nick]) {
+									log("disconnecting user ", servNick[room.params.irc.server][user].nick, " from ", room.id);
+									disconnectUser(room.id, servNick[room.params.irc.server][user].nick);
+									delete onlineUsers[room.id][servNick[room.params.irc.server][user].nick];
+								}
+							}, userExp);				
+						}
+					});
+				}
+				isInitDone();
+			});	
 		});
-		
-		for(host in servchan) {
-			client = addBotChannels(host, Object.keys(servchan[host]));
-			client.rooms = servchan[host];
+	});
+	
+	clientEmitter.on('callback', function(data) {
+		console.log("callback =", data);//each callback have 1 parameter as input.
+		if(data.uid && callbacks[data.uid]) {
+			console.log("callbacks calling..");
+			callbacks[data.uid](data.data);//other information of callback should be inside data.
 		}
 	});
 	
-	connect.init(users);
+	clientEmitter.on('room', function(room) {
+		log("room event:", room);
+		room.room.session = "internal:irc//" + room.room.id;
+		core.emit("room", room.room);
+		connectAllUsers(room.room);		
+		//TODO check if room pending is true get all online users of that room and connect.
+	});
+	clientEmitter.on("back", function(data) {
+		console.log("back", data);
+		sendInitAndBack(data.from, data.session, data.room);
+		
+	});
+	
+	clientEmitter.on("away", function(data) {
+		core.emit('text', {
+			id: guid(),
+			type: 'away',
+			from: data.from,
+			to: data.to
+		});
+	});
+	
+	clientEmitter.on('message', function(data) {
+		log("message from :", data);
+		core.emit('text', {
+			id: guid(),
+			type: 'text',
+			to: data.to,
+			from: data.from,
+			text: data.text
+		});
+	});	
 }
 
-function send(message, accounts) {
-	if (message.session && message.session.split(":")[0] === 'twitter') {
-        return;
-    }
-	var ident = "", md5sum = crypto.createHash('md5');
-	clients[message.from] = clients[message.from] || {};
-	accounts.map(function(account) {
-		var u = url.parse(account);
-			var client = clients[message.from][u.host],
-			channel = u.hash.toLowerCase();
-		if (message.origin && message.origin.gateway == "irc" && ("irc://"+message.origin.server+"/"+message.origin.channel).toLowerCase() == (account || "").toLowerCase()) {
-			log("Outgoing echo", message);
-			return;
-		}
-		switch(message.type) {
-			case 'text':
-				if(!client) {
-					//when an replaced irc connection's client is still active. msgs must be ignored.
-					if(message.origin.ip) {
-						ident = message.origin.ip.split('.').map(function(d) {
-							var h = parseInt(d, 10).toString(16);
-							if (h.length < 2) h = '0'+h;
-							return h;
-						}).join('').toUpperCase();
-					}
-					else {
-						ident =  md5sum.update(JSON.stringify(message.origin)).digest("hex");
-					}
-					clients[message.from][u.host] = client = connect(u.host, message.from, ident, []);
+function  isInitDone() {
+	if (initCount === 0) {
+		//send back init.
+		log("init Done");
+		clientEmitter.emit('write', {
+			type: 'init'//notify ircClient about comp.
+		});
+		initCount--;
+	}
+}
 
-					var disconnect = function(nick) {
-						if (nick !== client.nick || Object.keys(client.chans).length) return;
-						delete clients[message.from][u.host];
-						delete users[u.host][client.nick];
-					};
-					client.on('quit', disconnect);
-					client.on('kill', disconnect);
-					client.on('registered', function() {
-						if (!users[u.host]) users[u.host] = {};
-						users[u.host][client.nick] = true;
-					});
-					
-				}
-				if (!client.chans[channel]) {
-					client.join(channel);
-					client.rooms[channel.toLowerCase()] = message.to;
-				}
-				//check for "/me "
-				if (message.text.indexOf("/me ") === 0) {
-					client.action(channel,message.text.substring(4));
-				}
-				else{
-					client.say(channel, message.text);
-				}
-				break;
-			case 'away':
-//				if (!client) return;
-//				log("Start countdown " + (client && client.nick) + " leaving " + channel);
-//				client.timers['part-' + channel] = setTimeout(function() {
-					if (client && client.chans[channel]) {
-						log("Sending " + client && client.nick + " parts " + channel);
-						client.part(channel);
-						delete client.rooms[channel.toLowerCase()];
-					}
-//				}, config.irc.hangTime);
-				break;
-			case 'back':
-//				if (client && client.timers['part-' + channel]) {
-//					log("Abort countdown " + (client && client.nick) + " leaving " + channel);
-//					clearTimeout(client.timers['part-' + channel]);
-//				}
-				break;
-			case 'nick':
-				var nick=message.ref;
-				nick=(nick.indexOf("guest-")===0)?(nick.replace("guest-","")):nick;
-				clients[message.from][u.host] = client;
-				users[u.host][message.ref] = true;
-				
-				if(client) client.rename(nick);
-				break;
+function sendInitAndBack(suggestedNick, session ,room) {
+	log("sending init values: ", suggestedNick, session, room);
+	core.emit('init', {
+			suggestedNick: suggestedNick,
+			session: session,
+			to: "me"
+		}, function(init) {
+			log("init back", init);
+			
+			if (init.user.id !== suggestedNick) 
+			clientEmitter.emit('write', {
+				type: "newNick",//change mapping only.
+				nick: suggestedNick,//from,
+				sbNick: init.user.id ,//init.from,
+				roomId: room.id
+			});
+			//gen back messages.
+			core.emit('text', {
+					id: guid(),
+					type: 'back',
+					to: room.id,
+					from: init.user.id//nick returned from init.
+				}, function(text) {
+			});
+			initCount--;
+			isInitDone();
+	});
+}
+
+
+function connectAllUsers(room) {
+	core.emit('getUsers', {occupantOf: room.id}, function(data) {
+		var users = data.results;
+		users.forEach(function(user) {
+			connectUser(room.id, user.id);//TODO use proper format of user object
+		});
+	});
+}
+
+function connectUser(roomId, user) {
+	var uid = guid();
+	console.log("connecting user:", user, uid);
+	clientEmitter.emit('write', {
+		uid: uid,
+		type: "connectUser",
+		roomId: roomId,
+		nick: user,
+		options: {}
+	});
+}
+
+
+function say(roomId, from, text) {
+	clientEmitter.emit('write', {
+		type: 'say',
+		message: {
+			to: roomId,
+			from: from,
+			text: text
 		}
 	});
-	if(message.type == "nick") {
-		clients[message.ref]=clients[message.from];
-		delete clients[message.from];
+}
+
+function disconnectBot(roomId) {
+	var uid = guid();
+	clientEmitter.emit('write', {
+		uid: uid,
+		type: 'partBot',
+		roomId: roomId
+	});
+}
+
+function disconnectUser(roomId, user) {
+	var uid = guid();
+	clientEmitter.emit('write', {
+		uid: uid,
+		type: 'partUser',
+		roomId: roomId,
+		nick: user
+	});
+}
+
+
+/*new Request.*/
+function addNewBot(r, callback) {
+	var room  = copyRoomOnlyIrc(r);
+	if(callback) {
+		room.params.irc.enabled = true;
+		room.params.irc.pending = true;
 	}
+	var uid = guid();
+	clientEmitter.emit('write', {
+		uid: uid,
+		type: 'connectBot',
+		room: room,
+		options: {}
+	});
+	if (callback) {
+		callbacks[uid] = function(message) {
+			room.params.irc.message = message;
+			if(message) callback(room);
+		};
+	}
+}
+/**
+ * Copy only roomId and IRC params.
+ */
+function copyRoomOnlyIrc(room) {
+	return {id: room.id, params: {irc: room.params.irc}};
+}
+
+function getBotNick(roomId, callback) {
+	var uid = guid();
+	clientEmitter.emit('write', {
+		uid: uid,
+		type: 'getBotNick',
+		roomId: roomId
+	});
+	callbacks[uid] = function(data) {
+		callback(data.nick);
+	};
 }
