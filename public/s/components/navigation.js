@@ -24,6 +24,7 @@
 
 	libsb.on("navigate", function(state, next) {
 		state.old = current;
+		state.changes = {};
 		current = {};
 
 		["room", "view", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
@@ -34,19 +35,22 @@
 			}
 
 			if(state[prop] != state.old[prop]) {
-				if(state[prop] === null) delete state[prop];
-				current[prop] = state[prop];
+				if(state[prop] === null) {
+					delete state[prop];
+					delete current[prop];
+					state.changes[prop] = null;
+				} else {
+					current[prop] = state.changes[prop] = state[prop];
+				}
 			}
 		});
-
+		console.log("set current to ", current);
 		next();
 
 	}, 10);
 }());
 
 libsb.on("navigate", function(state, next) {
-	console.log("Navigate", state);
-
 	if(state.mode !== state.old.mode) {
 		$(document.body).removeClass(state.old.mode + "-mode");
 		$(document.body).addClass(state.mode + "-mode");
@@ -66,113 +70,57 @@ libsb.on("navigate", function(state, next) {
 });
 
 libsb.on("navigate", function(state, next) {
-//		libsb.getThreads(state.thread, function (err, thread) {
-//			thread.title;
-//		});
+	var threadTitle;
 
 	function buildurl() {
-		console.log("Getting url", state);
-
-		var url, room, thread, time, mode, query;
-
-		if (state.room !== undefined) {
-			room = "/" + state.room;
-		} else {
-			room = "/me";
+		var path, params = [];
+		switch(state.mode) {
+			case 'conf':
+				path = '/' + (state.room? state.room + '/edit': 'me');
+				break;
+			case 'pref':
+				path = '/me/edit';
+				break;
+			case 'search':
+				path = (state.room? '/' + state.room: '') + '/search';
+				params.push('q=' + encodeURIComponent(state.query));
+				break;
+			case 'home':
+				path = '/me';
+				break;
+			case 'normal':
+				path = (state.room? '/' + state.room + (
+					state.thread? '/' + state.thread + '/' + format.sanitize(threadTitle): ''
+				): '');
 		}
+		if(state.time) params.push('time=' + new Date(state.time).toISOString());
+		if(state.tab) params.push('tab=' + state.tab);
 
-		if (state.thread !== undefined) {
-			thread = "/" + state.thread;
-		} else {
-			thread = "";
+		return path + (params.length? '?' + params.join('&'): '');
+	}
+
+	function pushState() {
+		var url = buildurl();
+		console.log("got url", url, "for", state);
+		if (history.pushState && url != location.pathname + location.search) {
+			if(state.changes.time && Object.keys(state.changes).length == 1) {
+				console.log("time change only");
+				history.replaceState(state, null, url);
+			} else {
+				history.pushState(state, null, url);
+			}
+
 		}
-
-		if (state.time !== undefined && state.time !== null) {
-			time = "?time=" + new Date(state.time).toISOString();
-		} else {
-			time = "";
-		}
-
-		if (state.tab === "global") {
-			room = "";
-		}
-
-		if (state.mode === "conf") {
-			mode = "/edit";
-		} if (state.mode === "search") {
-			mode = "/search";
-		} else {
-			mode = "";
-		}
-
-		if (state.query !== undefined) {
-			query = "?q=" + encodeURIComponent(state.query);
-		} else {
-			query = "";
-		}
-
-		url = room + thread + time + mode + query;
-
-//		if (state.room !== undefined) {
-//			if (state.room !== state.old.room) {
-//				url = "/" + state.room;
-//			}
-//
-//			if (state.thread !== state.old.thread) {
-//				if (state.thread === undefined) {
-//					// room is present, thread is blank: scrollback.io/roomname
-//					url = "/" + state.room;
-//				} else {
-//					// room & thread both are present: scrollback.io/roomname/threadid/format.sanitize(thread-title)
-//					// TODO
-//					url = "/" + state.room + "/" + state.thread;
-//				}
-//			}
-//
-//			if (state.time !== state.old.time && state.time !== undefined && state.time !== null) {
-//				// scrolled to a particular time: ...?time=<timestamp> new Date(state.time).toISOString()
-//				if (state.thread === undefined) {
-//					url = "/" + state.room + "?time=" + new Date(state.time).toISOString();
-//				} else {
-//					url = "/" + state.room + "/" + state.thread + "?time=" + new Date(state.time).toISOString();
-//				}
-//			}
-//		} else {
-//			// room is blank: scrollback.io/me
-//			url = "/me";
-//		}
-//
-//		if (state.mode !== state.old.mode || state.tab !== state.old.tab) {
-//			if (state.mode === "conf" && state.room !== undefined) {
-//				// mode is conf: scrollback.io/roomname/edit
-//				url = "/" + state.room + "/edit";
-//			} else if (state.mode === "search") {
-//				if (state.tab === "local" && state.room !== undefined) {
-//					// mode is search (local): scrollback.io/roomname/search?q=encodeURIComponent(state.query)
-//					url = "/" + state.room + "/search?q=" + encodeURIComponent(state.query);
-//				} else if (state.tab === "global") {
-//					// mode is search (global): scrollback.io/search?q=encodeURIComponent(state.query)
-//					url = "/search?q=" + encodeURIComponent(state.query);
-//				}
-//			}
-//		}
-
-		return url;
 	}
 
 	if (state.source !== "history") {
-		var url = buildurl();
-
-		console.log("Change history", state);
-
-		if (history.pushState) {
-			if (url) {
-				history.pushState(state, null, url);
-			} else {
-				history.pushState(state, null, null);
-			}
+		if(state.thread) {
+			libsb.getThreads(state.thread, function(err, thread) {
+				threadTitle = thread.title;
+				pushState();
+			});
 		} else {
-			window.location.href = window.location.host + url;
+			pushState();
 		}
 	}
 
@@ -184,7 +132,9 @@ $(window).on("popstate", function() {
 
 	for (prop in history.state) {
 		if (history.state.hasOwnProperty(prop)) {
-			state[prop] = history.state[prop];
+			if(prop !== 'old' && prop !== 'changes')
+				state[prop] = history.state[prop];
+			else console.log(prop);
 		}
 	}
 
