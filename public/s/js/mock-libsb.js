@@ -16,8 +16,8 @@ window.libsb = (function() {
 		time: time
 	};}
 
-	function thread(time) { return {
-		id: generate.guid(31) + Math.floor(Math.random() * 10),
+	function thread(time, id) { return {
+		id: id || generate.guid(31) + Math.floor(Math.random() * 10),
 		to: generate.word(8),
 		title: generate.sentence(3),
 		startTime: time,
@@ -81,6 +81,7 @@ window.libsb = (function() {
 		},
 		getThreads: function (query, cb) {
 			var i, l, r=[], now = (new Date()).getTime(), time, MTBT=6000000;
+			if(typeof query === 'string') return cb(null, thread(now, query));
 
 			query.before = query.before || 0;
 			query.after = query.after || 0;

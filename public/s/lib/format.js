@@ -41,6 +41,12 @@ var format = {
 		return str.replace('<', '&lt;').replace('>', '&gt;'); // prevent script injection
 
 		// TODO: linkification, emoticons, markdown?
-	}
+	},
 
+	sanitize: function(str) {
+		str = str.trim().replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
+		if(str.length < 3) str = str + Array(4-str.length).join("-");
+		str = str.substring(0, 32);
+		return str;
+	}
 };

@@ -1,18 +1,26 @@
 /*jslint browser: true, indent: 4, regexp: true*/
-/*global $*/
+/*global $, libsb*/
 
 $(function() {
-    // Show and hide panes in responsive view
-    $(".rooms-btn, .scrollback-header").on("click", function() {
-        $("body").toggleClass("roomsinview");
+    // Navigate between columns
+    $(".rooms-button, .scrollback-header").on("click", function() {
+        if ($("body").hasClass("rooms-view")) {
+            libsb.emit('navigate', { view: "meta", source: "rooms-button" });
+        } else {
+            libsb.emit('navigate', { view: "rooms", source: "rooms-button" });
+        }
     });
 
-    $(".meta-btn, .title").on("click", function() {
-        $("body").toggleClass("metainview");
+    $(".meta-button, .title").on("click", function() {
+        if ($("body").hasClass("meta-view")) {
+            libsb.emit('navigate', { view: "normal", source: "meta-button" });
+        } else {
+            libsb.emit('navigate', { view: "meta", source: "meta-button" });
+        }
     });
 
     $(".settings-menu .tab").on("click", function() {
-        $("body").removeClass("metainview");
+        libsb.emit('navigate', { view: "normal", source: "settings-menu" });
     });
 
     // Handle swipe gestures
@@ -24,10 +32,11 @@ $(function() {
             startX = 0,
             startY = 0,
             startTime = 0,
+            pointer = "onpointerup" in document,
             touch = "ontouchend" in document,
-            startEvent = (touch) ? 'touchstart' : 'mousedown',
-            moveEvent = (touch) ? 'touchmove' : 'mousemove',
-            endEvent = (touch) ? 'touchend' : 'mouseup';
+            startEvent = (pointer) ? 'pointerdown' : (touch) ? 'touchstart' : 'mousedown',
+            moveEvent = (pointer) ? 'pointermove' : (touch) ? 'touchmove' : 'mousemove',
+            endEvent = (pointer) ? 'pointerup' : (touch) ? 'touchend' : 'mouseup';
 
         target.bind(startEvent, function(e) {
             startTime = (new Date()).getTime();
@@ -46,19 +55,17 @@ $(function() {
 
             if (startTime !== 0 && currentTime - startTime < maxTime && currentDistanceX > currentDistanceY && currentDistanceX < maxDistance && currentDistanceX > minDistance) {
 
-                if (currentX < startX) {
-                    if ($("body").hasClass("roomsinview")) {
-                        $("body").removeClass("roomsinview");
-                    } else {
-                        $("body").removeClass("metainview");
-                    }
-                }
-
                 if (currentX > startX) {
-                    if ($("body").hasClass("metainview")) {
-                        $("body").addClass("roomsinview");
+                    if ($("body").hasClass("meta-view")) {
+                        libsb.emit('navigate', { view: "rooms", source: "swipe-right" });
                     } else {
-                        $("body").addClass("metainview");
+                        libsb.emit('navigate', { view: "meta", source: "swipe-right" });
+                    }
+                } else if (currentX < startX) {
+                    if ($("body").hasClass("rooms-view")) {
+                        libsb.emit('navigate', { view: "meta", source: "swipe-left" });
+                    } else {
+                        libsb.emit('navigate', { view: "normal", source: "swipe-left" });
                     }
                 }
 

@@ -165,6 +165,7 @@
 
 .fadeinframes() {
     0% { .opacity(0); }
+    30% { .opacity(.5); }
     100% { .opacity(1); }
 }
 
@@ -183,16 +184,9 @@
     animation: fadein @args;
 }
 
-.ease(@args: .15s) {
-    -webkit-transition: @args ease;
-    -moz-transition: @args ease;
-    -ms-transition: @args ease;
-    transition: @args ease;
-}
-
-.linear(@args: .3s) {
-    -webkit-transition: @args linear;
-    -moz-transition: @args linear;
-    -ms-transition: @args linear;
-    transition: @args linear;
+.transition(@duration: .15s; @timing: ease) {
+    -webkit-transition: @duration @timing;
+    -moz-transition: @duration @timing;
+    -ms-transition: @duration @timing;
+    transition: @duration @timing;
 }

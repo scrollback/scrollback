@@ -2,35 +2,34 @@
 /*global $*/
 
 // Handle PopOvers
-$(".has-popover").on("click", function() {
-	var pbody = $(this).next(".popover-body"),
-		pheight = $(pbody).height(),
-		pwidth = $(pbody).outerWidth(),
-		spaceleft = $(this).offset().left,
-		spaceavail = $(this).parent().innerWidth() - pwidth,
-		spaceabove = $(this).offset().top - $(document).scrollTop(),
-		spacebelow = $(window).height() - spaceabove - pheight;
+$(document).on("click", ".has-popover", function() {
+	var popover = $(".popover-body"),
+		spacetop = $(this).offset().top - $(document).scrollTop() + $(this).height(),
+		spacebottom = $(window).height() - spacetop + ( $(this).height() * 2 ) - popover.outerHeight(),
+		spaceleft = $(this).offset().left - $(document).scrollLeft() + ( $(this).width() / 2 ) - ( popover.outerWidth() / 2 ),
+		spaceright = $(window).width() - spaceleft - popover.outerWidth();
 
-	if (spaceleft > spaceavail) {
-		spaceleft = spaceavail - 28;
-		$(pbody).addClass("arrow-right");
-	} else if (spaceleft < pwidth / 2 ) {
-		$(pbody).addClass("arrow-left");
+	if (spaceleft <= 0) {
+		$(popover).addClass("arrow-left");
+		spaceleft = $(this).width() / 2;
+	} else if (spaceright <= 0) {
+		$(popover).addClass("arrow-right");
+		spaceleft = $(window).width() - ( $(this).width() / 2 ) - popover.outerWidth();
 	}
 
-	if (spacebelow > pheight) {
-		$(pbody).addClass("popover-bottom");
-	} else if (spaceabove > pheight) {
-		$(pbody).addClass("popover-top");
+	if (spacebottom > popover.outerHeight() ) {
+		$(popover).addClass("popover-bottom");
+	} else {
+		$(popover).addClass("popover-top");
+		spacetop = spacetop - $(this).height() - popover.outerHeight();
 	}
 
 	// Show and hide PopOver
-	$(pbody).css("left", spaceleft);
-	$(this).addClass("popover-active");
-	$(this).parent().append("<div class='popover-layer'></div>");
-	$(".popover-layer").on("click", function() {
-		$(".has-popover").removeClass("popover-active");
-		$(pbody).removeClass("popover-bottom").removeClass("popover-top").removeClass("arrow-left").removeClass("arrow-right");
+	$(popover).css({"top" : spacetop, "left" : spaceleft});
+	$("body").addClass("popover-active").append("<div class='layer'></div>");
+	$(".layer").on("click", function() {
+		$("body").removeClass("popover-active");
+		$(popover).removeClass("popover-bottom").removeClass("popover-top").removeClass("arrow-left").removeClass("arrow-right");
 		$(this).remove();
 	});
 });

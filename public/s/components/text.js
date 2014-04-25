@@ -15,7 +15,7 @@ $(function() {
 		el.data('index', text.time);
 
 		// TODO: add timestamps, add the 'timestamp-displayed' class, add the 'long' class.
-		
+
 		if(text.threads && text.threads.length)
 			el.addClass('conv-' + text.threads[0].id.substr(-1));
 

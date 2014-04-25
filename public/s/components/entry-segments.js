@@ -9,7 +9,7 @@ $(".segmented").on("click", function() {
 // Create a new segment
 function addSegment(el, text) {
 	if (!text.match(/^\s*$/) ) {
-		$("<div class='segment done'>" + text + "<span class='rem-segment'>&times;</span></div>").insertBefore(el);
+		$("<div class='segment done'><span class='segment-text'>" + text + "</span><span class='segment-remove'>&times;</span></div>").insertBefore(el);
 		el.empty();
 	}
 }
@@ -34,9 +34,8 @@ $(".segment").on("paste", function(e) {
 });
 
 // Remove a segment when close button clicked
-$(document).on("click", ".rem-segment", function() {
+$(document).on("click", ".segment-remove", function() {
 	$(this).parent().remove();
-	$(this).parent().parent().focus();
 });
 
 // Remove segment when backspace pressed
