@@ -1,6 +1,7 @@
 /* jshint browser: true */
 /* jshint jquery: true */
 /* global libsb, format */
+/* exported currentState */
 
 /*
 	Properties of the navigation state object:
@@ -19,36 +20,35 @@
 
 */
 
-(function() {
-	var current = {};
+var currentState = window.currentState = {};
 
-	libsb.on("navigate", function(state, next) {
-		state.old = current;
-		state.changes = {};
-		current = {};
+libsb.on("navigate", function(state, next) {
+	state.old = currentState;
+	state.changes = {};
+	currentState = {};
 
-		["room", "view", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
-			if(typeof state[prop] === "undefined") {
-				if(typeof state.old[prop] !== "undefined")
-					current[prop] = state[prop] = state.old[prop];
-				return;
+	["room", "view", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
+		if(typeof state[prop] === "undefined") {
+			if(typeof state.old[prop] !== "undefined")
+				currentState[prop] = state[prop] = state.old[prop];
+			return;
+		}
+
+		if(state[prop] != state.old[prop]) {
+			if(state[prop] === null) {
+				delete state[prop];
+				delete currentState[prop];
+				state.changes[prop] = null;
+			} else {
+				currentState[prop] = state.changes[prop] = state[prop];
 			}
+		}
+	});
+	console.log("set current to ", currentState);
+	next();
+}, 10);
 
-			if(state[prop] != state.old[prop]) {
-				if(state[prop] === null) {
-					delete state[prop];
-					delete current[prop];
-					state.changes[prop] = null;
-				} else {
-					current[prop] = state.changes[prop] = state[prop];
-				}
-			}
-		});
-		console.log("set current to ", current);
-		next();
-
-	}, 10);
-}());
+// On navigation, set the body classes.
 
 libsb.on("navigate", function(state, next) {
 	if(state.mode !== state.old.mode) {
@@ -68,6 +68,8 @@ libsb.on("navigate", function(state, next) {
 
 	next();
 });
+
+// on navigation, add history and URLs
 
 libsb.on("navigate", function(state, next) {
 	var threadTitle;
@@ -127,6 +129,8 @@ libsb.on("navigate", function(state, next) {
 	next();
 });
 
+// Handle back button
+
 $(window).on("popstate", function() {
 	var state = { }, prop;
 
@@ -141,6 +145,5 @@ $(window).on("popstate", function() {
 	console.log("Back in time", state);
 
 	state.source = "history";
-
 	libsb.emit("navigate", state);
 });
