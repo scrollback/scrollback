@@ -1,0 +1,198 @@
+@import url('filters.less');
+
+/* animations and transitions */
+.transform(@args) {
+    -webkit-transform: @args;
+    -moz-transform: @args;
+    -ms-transform: @args;
+    transform: @args;
+}
+
+.bounceframes() {
+    0%, 10%, 30%, 50%, 100% { .transform(translate3d(0, 0, 0)); }
+    20% { .transform(translate3d(0, -15px, 0)); }
+    40% { .transform(translate3d(0, -10px, 0)); }
+}
+
+@-webkit-keyframes bounce { .bounceframes; }
+
+@-moz-keyframes bounce { .bounceframes; }
+
+@-ms-keyframes bounce { .bounceframes; }
+
+@keyframes bounce { .bounceframes; }
+
+.bounce(@args: 5s) {
+    -webkit-animation: bounce @args;
+    -moz-animation: bounce @args;
+    -ms-animation: bounce @args;
+    animation: bounce @args;
+}
+
+.slidedownframes() {
+    0% {
+        .opacity(0);
+        .transform(translate3d(0, -10%, 0));
+    }
+
+    100% {
+        .opacity(1);
+        .transform(translate3d(0, 0, 0));
+    }
+}
+
+@-webkit-keyframes slidedown { .slidedownframes; }
+
+@-moz-keyframes slidedown { .slidedownframes; }
+
+@-ms-keyframes slidedown { .slidedownframes; }
+
+@keyframes slidedown { .slidedownframes; }
+
+.slidedown(@args: .15s) {
+    -webkit-animation: slidedown @args;
+    -moz-animation: slidedown @args;
+    -ms-animation: slidedown @args;
+    animation: slidedown @args;
+}
+
+.slideupframes() {
+    0% {
+        .opacity(0);
+        .transform(translate3d(0, 10%, 0));
+    }
+
+    100% {
+        .opacity(1);
+        .transform(translate3d(0, 0, 0));
+    }
+}
+
+@-webkit-keyframes slideup { .slideupframes; }
+
+@-moz-keyframes slideup { .slideupframes; }
+
+@-ms-keyframes slideup { .slideupframes; }
+
+@keyframes slideup { .slideupframes; }
+
+.slideup(@args: .15s) {
+    -webkit-animation: slideup @args;
+    -moz-animation: slideup @args;
+    -ms-animation: slideup @args;
+    animation: slideup @args;
+}
+
+.slideleftframes() {
+    0% {
+        .opacity(0);
+        .transform(translate3d(100%, 0, 0));
+    }
+
+    100% {
+        .opacity(1);
+        .transform(translate3d(0, 0, 0));
+    }
+}
+
+@-webkit-keyframes slideleft { .slideleftframes; }
+
+@-moz-keyframes slideleft { .slideleftframes; }
+
+@-ms-keyframes slideleft { .slideleftframes; }
+
+@keyframes slideleft { .slideleftframes; }
+
+.slideleft(@args: .15s) {
+    -webkit-animation: slideleft @args;
+    -moz-animation: slideleft @args;
+    -ms-animation: slideleft @args;
+    animation: slideleft @args;
+}
+
+.sliderightframes() {
+    0% {
+        .opacity(0);
+        .transform(translate3d(-100%, 0, 0));
+    }
+
+    100% {
+        .opacity(1);
+        .transform(translate3d(0, 0, 0));
+    }
+}
+
+@-webkit-keyframes slideright { .sliderightframes; }
+
+@-moz-keyframes slideright { .sliderightframes; }
+
+@-ms-keyframes slideright { .sliderightframes; }
+
+@keyframes slideright { .sliderightframes; }
+
+.slideright(@args: .15s) {
+    -webkit-animation: slideright @args;
+    -moz-animation: slideright @args;
+    -ms-animation: slideright @args;
+    animation: slideright @args;
+}
+
+.appearframes() {
+    0% {
+        .opacity(0);
+        .transform(scale(.5));
+    }
+
+    30% { .transform(scale(1)); }
+
+    100% { .opacity(1); }
+}
+
+@-webkit-keyframes appear { .appearframes; }
+
+@-moz-keyframes appear { .appearframes; }
+
+@-ms-keyframes appear { .appearframes; }
+
+@keyframes appear { .appearframes; }
+
+.appear(@args: .5s) {
+    -webkit-animation: appear @args;
+    -moz-animation: appear @args;
+    -ms-animation: appear @args;
+    animation: appear @args;
+}
+
+.fadeinframes() {
+    0% { .opacity(0); }
+    100% { .opacity(1); }
+}
+
+@-webkit-keyframes fadein { .fadeinframes; }
+
+@-moz-keyframes fadein { .fadeinframes; }
+
+@-ms-keyframes fadein { .fadeinframes; }
+
+@keyframes fadein { .fadeinframes; }
+
+.fadein(@args: .5s) {
+    -webkit-animation: fadein @args;
+    -moz-animation: fadein @args;
+    -ms-animation: fadein @args;
+    animation: fadein @args;
+}
+
+.ease(@args: .15s) {
+    -webkit-transition: @args ease;
+    -moz-transition: @args ease;
+    -ms-transition: @args ease;
+    transition: @args ease;
+}
+
+.linear(@args: .3s) {
+    -webkit-transition: @args linear;
+    -moz-transition: @args linear;
+    -ms-transition: @args linear;
+    transition: @args linear;
+}

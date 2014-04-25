@@ -1,3 +1,6 @@
+*~
+.DS_Store
+
 lib-cov
 *.seed
 *.log
@@ -19,8 +22,13 @@ node_modules
 npm-debug.log
 
 myConfig.js
-/scrollback.komodoproject
-public/style.css
-public/s/css/stylesheet.css
-public/validator/actionvalidator
 
+/scrollback.komodoproject
+
+public/client.min.js
+public/core.min.js
+public/core.uw.min.js
+public/embed.uw.min.js
+public/dummy.css
+public/style.css
+public/s/styles/less/*.css

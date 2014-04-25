@@ -16,7 +16,7 @@ module.exports = function(core) {
 					if(err) callback(err);
 					var msg = JSON.stringify({
 						id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
-						text: message.text.replace(/['"]/g, '').replace(/\n/g," "),
+						text: message.text.replace(/['"]/g, ' ').replace(/\n/g, " ").replace(/\\n/g, " "),
 						room: typeof message.to=="string" ? message.to:message.to[0]
 					});
 					log("Sending msg to scrollback.jar= "+msg);
@@ -52,22 +52,25 @@ function init(){
 	});
 	var d = "";//wait for new line.
 	client.on("data", function(data){
+		var i;
+		
 		data = data.toString('utf8');
 		data = data.split("\n");
 		data[0] = d + data[0];//append previous data
 		d = data[data.length-1];
-		for (var i = 0;i < data.length-1;i++) {
+
+		for (i = 0; i < data.length-1;i++) {
 			processReply(data[i]);
 		}
 	});
 	/**
-	 *Process reply from java process and callback based on message.id
-	 * message.thread [{
-	 * 		id: ..
-	 * 		title: ...
-	 * 		score: ... //sorted based in this score
-	 * }, ... ]
-	 */
+	*Process reply from java process and callback based on message.id
+	* message.thread [{
+	* 		id: ..
+	* 		title: ...
+	* 		score: ... //sorted based in this score
+	* }, ... ]
+	*/
 	function processReply(data){
 		var message;
 		try {

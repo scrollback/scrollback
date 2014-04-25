@@ -1,13 +1,13 @@
 /*
-	Scrollback: Beautiful text chat for your community. 
+	Scrollback: Beautiful text chat for your community.
 	Copyright (c) 2014 Askabt Pte. Ltd.
-	
-This program is free software: you can redistribute it and/or modify it 
+
+This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any 
+the Free Software Foundation, either version 3 of the License, or any
 later version.
 
-This program is distributed in the hope that it will be useful, but 
+This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
 License for more details.
@@ -30,31 +30,31 @@ exports.init = function() {
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 	app.set('view options', { debug: true });
-	
-	app.use(express.logger(
-		"AA/HTTP - [:date] :method :url :referrer :user-agent :status"));
+
+	app.use(express.logger("AA/HTTP - [:date] :method :url :referrer :user-agent :status"));
+	app.use(express.compress());
+	app.use(express["static"](__dirname + "/../" + config.http.home, { maxAge: 86400000 }));
+
 	app.use(express.cookieParser());
 	// app.use(session.parser);
 	app.use(express.query());
 	app.use(express.bodyParser());
-	
-	app.use(express["static"](__dirname + "/../" + config.http.home));
-	
+
 	srv = http.createServer(app);
-	
+
 	srv.listen(config.http.port);
 	app.httpServer = srv;
-	
+
 	if (config.http.https) {
 		srvs = https.createServer({
 			key: fs.readFileSync(__dirname + "/../" + config.http.https.key),
 			cert: fs.readFileSync(__dirname + "/../" + config.http.https.cert),
-			ca : !config.http.https.ca || fs.readFileSync(__dirname + "/../" + config.http.https.ca) 
+			ca : !config.http.https.ca || fs.readFileSync(__dirname + "/../" + config.http.https.ca)
 		}, app);
 		srvs.listen(config.http.https.port);
 		app.httpsServer = srvs;
 	}
-	
+
 	return app;
 };
 

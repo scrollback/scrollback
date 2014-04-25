@@ -1,0 +1,4 @@
+/* ie9 and ie10 specific styles */
+.arrow { display: block; }
+
+.login-open .arrow, .scrolled .arrow { display: none; }
