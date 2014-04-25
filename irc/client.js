@@ -1,23 +1,33 @@
 var net = require('net');
+var log = require('../lib/logger.js');
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
 var ObjectReader = require('../lib/ObjectReader.js');
 var or = new ObjectReader(eventEmitter);
 var log = require("../lib/logger.js");
+var config = require('../config.js');
 var core;
-var port = 78910;
-var server = "localhost";
+var port = config.irc.port;
+var server = config.irc.server;
+var client;
 /**
  *@param coreObj event emitter.
  */
-module.exports = function(coreObj) {
+module.exports.init = function(coreObj) {
 	core = coreObj;
+	init();
 	eventEmitter.on('object', function(obj) {
 		core.emit(obj.type, obj);
 	});
 	core.on('write', function(obj) {
 		writeObject(obj);
 	});
+};
+
+module.exports.connected = function() {
+	return client && client.writable;
+}
+function init() {
 	client = net.connect({port: port, host: server},
 		function() { //'connect' listener
 		log('client connected');
@@ -25,17 +35,19 @@ module.exports = function(coreObj) {
 	client.on("data", function(data){
 		or.addData(data);	
 	});
-	
 	client.on('error', function(error){
-		//TODO handle error and end events.
-		
+		log("Can not connect to java Process ", error);
+		setTimeout(function(){
+			init();	
+		},1000*60);//try to reconnect after 1 min
 	});
-	
 	client.on('end', function() {
-		//TODO handle end event
-		
+		log('connection terminated');
+		setTimeout(function(){
+			init();	
+		},1000*60);//try to reconnect after 1 min
 	});
-};
+}
 
 
 function writeObject(obj) {

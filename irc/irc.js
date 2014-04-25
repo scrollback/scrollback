@@ -4,33 +4,39 @@ var config = require('../config.js');
 var log = require("../lib/logger.js");
 var events = require('events');
 var clientEmitter = new events.EventEmitter();
-var client = require('./client.js')(clientEmitter);
+var client = require('./client.js');
+client.init(clientEmitter);
 var core;
 var callbacks = {};
 var onlineUsers = {};
-var pendingBack = {};
-var userExp = 45000;
+var pendingBack = {};//[room][username] = true
+var userExp = 10*60*1000;
 var initCount = 0;
 module.exports = function (coreObj) {
 	core = coreObj;
 	init();
 	core.on ('room', function(room, callback) {
-		if (room.type == "room" && room.params && room.params.irc && room.session.indexOf('internal') !== 0) {
+		if (room.type == "room" && room.params && room.params.irc && room.session.indexOf('internal') !== 0 && client.connected()) {
 			if (!room.old && room.params.irc) {//TODO chack if new irc config.
 				room.params.irc.channel = room.params.irc.channel.toLowerCase();
 				addNewBot(room, callback);
 			} if (room.old) {//room config changed
-				//code
+				var oldIrc = room.old.params.irc;
+				var newIrc = room.params.irc;
+				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel ||
+					oldIrc.enable !== newIrc.enable || oldIrc.pending !== newIrc.pending) {
+					disconnectBot(room.id);
+					addNewBot(room, callback);
+				}
 			} 
 		} else callback();
-		
-		
 	}, "gateway");
 	core.on('text', function(text, callback) {
+		log("On text:", client.connected());
 		var type = text.type;
 		log("text called irc:", text);
 		log("online users:", onlineUsers);
-		if (text.room.params && text.room.params.irc && text.session.indexOf('ircClient') !== 0) {//session of incoming users from irc 
+		if (text.room.params && text.room.params.irc && text.session.indexOf('irc') !== 0 && client.connected()) {//session of incoming users from irc 
 			switch (type) {
 				case 'text':
 					if(pendingBack[text.to] && pendingBack[text.to][text.from]) {
@@ -72,13 +78,12 @@ function init() {
 			log("results of getRooms: ", rooms);
 			rooms.forEach(function(room) {
 				if (state.rooms[room.id]) {
-					var r = state.rooms[room.id];
-					if (!(r.id === room.id && room.params.irc.server == r.params.irc.server &&
-						room.params.irc.channel && room.params.irc.pending === r.params.irc.pending &&
-						room.params.irc.enabled === r.params.irc.enabled)) {
+					var r1 = room.params.irc;
+					var r2 = state.rooms[room.id].params.irc;
+					if (!(r1.server === r2.server && r1.channel === r2.channel && r1.pending === r2.pending)) {
 							log("reconnecting bot with new values: Not tested.", room.id);
-							//disconnectBot(r.id);//disconnect bot should have a callback
-							//setInterval(addNewBot(room), 3000);//or wait for some time 
+							disconnectBot(r.id);
+							addNewBot(room); 
 						//TODO remove other rooms bots.
 					} 
 				} else {
@@ -96,7 +101,7 @@ function init() {
 					users.forEach(function(user) {
 						if(servNick[room.params.irc.server] &&
 							servNick[room.params.irc.server][user].dir === "in") {
-							sendInitAndBack(user, "ircClient://" + room.params.irc.server + ":" + user, room);
+							sendInitAndBack(user, "irc://" + room.params.irc.server + ":" + user, room);
 							initCount++;
 						}
 						if(servNick[room.params.irc.server] &&
@@ -119,8 +124,6 @@ function init() {
 		});
 	});
 	
-	
-
 	clientEmitter.on('callback', function(data) {
 		console.log("callback =", data);//each callback have 1 parameter as input.
 		if(data.uid && callbacks[data.uid]) {
@@ -128,7 +131,6 @@ function init() {
 			callbacks[data.uid](data.data);//other information of callback should be inside data.
 		}
 	});
-	
 	
 	clientEmitter.on('room', function(room) {
 		log("room event:", room);
@@ -161,9 +163,7 @@ function init() {
 			from: data.from,
 			text: data.text
 		});
-	});
-	
-	
+	});	
 }
 
 function  isInitDone() {
@@ -176,7 +176,6 @@ function  isInitDone() {
 		initCount--;
 	}
 }
-
 
 function sendInitAndBack(suggestedNick, session ,room) {
 	log("sending init values: ", suggestedNick, session, room);
@@ -287,4 +286,16 @@ function addNewBot(r, callback) {
  */
 function copyRoomOnlyIrc(room) {
 	return {id: room.id, params: {irc: room.params.irc}};
+}
+
+function getBotNick(roomId, callback) {
+	var uid = guid();
+	clientEmitter.emit('write', {
+		uid: uid,
+		type: 'getBotNick',
+		roomId: roomId
+	});
+	callbacks[uid] = function(data) {
+		callback(data.nick);
+	};
 }
