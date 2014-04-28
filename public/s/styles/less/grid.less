@@ -29,12 +29,23 @@
 }
 
 @media screen and (min-width: 768px) {
-    .row {
-        @supports (display: flex) {
-                display: -webkit-flex;
-                display: -ms-flexbox;
-                display: flex;
+    @supports (display: -webkit-flex) or
+              (display: -moz-flex) or
+              (display: -ms-flexbox) or
+              (display: flex) {
+        .row {
+            display: -webkit-flex;
+            display: -moz-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-flex-flow: row wrap;
+            -moz-flex-flow: row wrap;
+            -ms-flex-flow: row wrap;
+            flex-flow: row wrap;
         }
+    }
+
+    .row {
 
         .-(@i: 1) when (@i =< @columns) {
             .col-@{i} { width: (@i * 100% / @columns); }
@@ -47,9 +58,7 @@
 }
 
 /* thumb based grid */
-@thumbsize: 5em;
-
-.thumbs {
+.thumbgrid(@thumbsize: 5em; @gutter: 1em) {
     .clearfix;
 
     margin-right: @gutter * -1;
@@ -58,7 +67,8 @@
     .-(@i: 1) when (@i =< @columns) {
         .thumb-@{i} {
             display: inline-block;
-            width: (@i * @thumbsize);
+            vertical-align: top;
+            max-width: (@i * @thumbsize);
             padding-right: @gutter;
             padding-left: @gutter;
         }
@@ -66,6 +76,8 @@
         .-((@i + 1));
     } .-;
 }
+
+.thumbs { .thumbgrid; }
 
 /* floating contents */
 .content-row {
