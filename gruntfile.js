@@ -126,6 +126,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-autoprefixer');
   grunt.loadNpmTasks('grunt-image-embed');
+  grunt.loadNpmTasks('grunt-browserify');
   // Default task(s).
 
   grunt.event.on('watch', function(action, filepath, target) {
