@@ -62,7 +62,7 @@ libsb.on("navigate", function(state, next) {
 	}
 
 	if(state.tab !== state.old.tab) {
-		$(".tab-" + state.old.tab + ", .pane-" + state.old.tab).removeClass("current");
+		$(".tab.current, .pane.current").removeClass("current");
 		$(".tab-" + state.tab + ", .pane-" + state.tab).addClass("current");
 	}
 
