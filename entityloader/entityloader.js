@@ -84,34 +84,47 @@ module.exports = function(c) {
 		}, "loader");
 	})
 
-
+/*
 	function simpleUserLoad(action, callback) {
 		if(config.whitelists[action.session]) {
 			action.user = {
-				id: "system"
+				id: "system",
+				role: "owner" // should look for alternatives.
 			}
 			return callback();
 		}
 
-		core.emit("getUsers", {session: action.session, ref: "me"}, function(err, user) {
-			if(err || !user || !user.results || !user.results.length) {
+		core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
+			var user;
+			if(err || !data || !data.results || !data.results.length) {
 				action.results = [];
 				callback();
 			}else {
-				action.user = user[0];
-				callback();
+				user = data.results[0]
+				action.from = data.results[0].id;
+				if(action.to && !/guest-/.test(user.id)) {
+					core.emit("getUsers", {id: uid(), session: action.session, ref: user.id, memberOf: action.to}, function() {
+						if(err || !data || !data.results || !data.results.length) {
+							action.user = user;
+							callback();
+						}else {
+							action.user = data.results[0];
+							callback();
+						}
+					});
+				}else{
+					action.user = user
+					callback();	
+				}
 			}
 		});
-	}
-	core.on('getUsers', function(query, callback) {
-		if(query.ref == "me") return callback();
-		simpleUserLoad(query, callback)
-	}, "loader");
-	core.on('getRooms', simpleUserLoad, "loader");
-	core.on('getTexts', simpleUserLoad, "loader");
-	core.on('getThreads', simpleUserLoad, "loader");
+	}*/
+	core.on('getUsers', loadUser, "loader");
+	core.on('getRooms', loadUser, "loader");
+	core.on('getTexts', loadUser, "loader");
+	core.on('getThreads',loadUser, "loader");
 
-
+	
 	core.on("init", function(action, callback) {
 		function done() {
 			handlers["init"](action, callback);
@@ -151,16 +164,25 @@ module.exports = function(c) {
 
 
 function loadUser(action, callback) {
+	if(action.ref == "me") return callback();
+	if(config.whitelists[action.session]) {
+		action.user = {
+			id: "system",
+			role: "owner" // should look for alternatives.
+		}
+		return callback();
+	}
+	
 	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
 		var user;
 		if(err || !data || !data.results || !data.results.length) {
 			return callback(new Error("USER_NOT_INITED"));
 		}else {
 			user = data.results[0]
-			action.from = data.results[0].id;
+			if((action.type && events.indexOf(action.type)>=0)|| action.type =="init" ) action.from = data.results[0].id;
 			if(action.type == "user") {
 				action.old = data.results[0];
-			}else if(!/guest-/.test(user.id)){
+			}else if(!/guest-/.test(user.id) && action.to){
 				core.emit("getUsers", {id: uid(), session: action.session, ref: user.id, memberOf: action.to}, function() {
 					if(err || !data || !data.results || !data.results.length) {
 						action.user = user;

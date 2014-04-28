@@ -49,7 +49,7 @@ module.exports = function(coreObj) {
 };
 
 
-function(action, callback) {
+function twitterRoomHandler(action, callback) {
 	var room = action.room;
 	log("room twitter--", JSON.stringify(room));
 	if (room.type == 'room' && room.params && room.params.twitter) {
@@ -58,7 +58,7 @@ function(action, callback) {
 	else {
 		callback();
 	}
-},"gateway");
+};
 /**
  *Read twitter token from redis and 
  *add it to room object

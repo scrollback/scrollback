@@ -31,30 +31,26 @@ $(function() {
 			});
 		}
 	});
-	
+
 	$threads.click(function(event) {
 		event.preventDefault();
 		var $el = $(event.target).closest('.thread');
 		if(!$el.size()) return;
 		libsb.emit('navigate', {source: 'thread-area', thread: $el.attr("id").split('-')[1] });
 	});
-	
+
 	libsb.on('navigate', function(state, next) {
 		var reset = false;
-		
+
 		if(state.source == 'thread-area') return next();
-		
+
 		if(state.room != state.old.room) {
 			room = state.room;
 			reset = true;
 		}
-		if(state.time != state.old.time) {
-			time = state.time;
-			reset = true;
-		}
-		
+
 		if(reset) $threads.reset(time);
-		
+
 		next();
 	});
 

@@ -37,7 +37,10 @@ a {
     &:active { color: darken(@accent-color, 20%); }
 }
 
-img { max-width: 100%; }
+img {
+    max-width: 100%;
+    height: auto;
+}
 
 h1, h2, h3 { &:extend(.heading); }
 
@@ -55,7 +58,7 @@ input[type=submit], input[type=button] {
     &:disabled { .button-disabled; }
 }
 
-input[type=entry], input[type=text], textarea {
+input[type=entry], input[type=text], input[type=search], input[type=email], textarea {
     .inputs;
 
     &:extend(.entry);
@@ -372,8 +375,8 @@ input.switch {
             top: 0;
             bottom: 0;
             left: 0;
-            height: 1.8em;
-            width: 3.9em;
+            height: 2.2em;
+            width: 4.9em;
             padding: .2em .5em;
             content: "OFF";
             line-height: 1.7em;

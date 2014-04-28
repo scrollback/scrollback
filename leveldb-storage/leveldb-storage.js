@@ -25,9 +25,12 @@ module.exports = function(core) {
 		// data.role = data.role || "member";
 		//for now the user cannot part a room.
 		// if(data.room.owner == data.user.id) data.role = "owner";
+		if(data.user.role == "owner") data.role = "owner";
+		else data.role = "follower"
 		joinpart.put(data, cb);
 	}, 'storage');
 	core.on('part', function(data, cb){
+		if(data.user.role == "owner") return cb(new Error("cant part as owner"));
 		// if(data.room.owner == data.user.id)  {
 		// 	console.log("cant part sorry...");
 		// 	return cb();
@@ -52,7 +55,5 @@ module.exports = function(core) {
 	core.on('getRooms', roomuser.getRooms, 'storage');
 	core.on('getThreads',threads.get, 'storage');
 	core.on('getTexts',texts.get, 'storage');
-	core.emit("getRooms", {session:"internalSession",ref:"scrollback"}, function(err, data) {
-		console.log(data);
-	});
 };
+
