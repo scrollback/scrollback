@@ -6,5 +6,5 @@ module.exports = function(core){
 			if(action.from === action.old.from && action.from === action.old.editInverse[action.old.editInverse.length-1].from) return callback();
 		}
 		return callback(new Error('ERR_NOT_ALLOWED'));
-	});
+	}, "authorization");
 };

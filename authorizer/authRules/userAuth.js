@@ -4,5 +4,5 @@ module.exports = function(core){
 		if(action.old == null) return callback();
 		else if (action.from === action.old.id) return callback();
 		else callback(new Error('ERR_NOT_ALLOWED'));
-	});
+	}, "authorization");
 };

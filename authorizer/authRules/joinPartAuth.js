@@ -1,5 +1,6 @@
 module.exports = function(core){
 	core.on('join', function(action, callback){
+		if(action.room.params.openFollow === 'undefined') action.room.params.openFollow = true;
 		if(action.role === "guest") return callback(new Error('ERR_NOT_ALLOWED'));
 		if(action.role === "owner") return callback(); // owner can switch to any role
 		else if(action.role === "moderator" && action.user.requestedRole !== "owner") return callback();
@@ -15,5 +16,5 @@ module.exports = function(core){
 			if(action.role === action.user.invitedRole)	return callback();
 			else return callback(new Error("ERR_NOT_ALLOWED"));
 		}
-	});
+	}, "authorization");
 };

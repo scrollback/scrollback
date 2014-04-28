@@ -68,7 +68,7 @@ function receiveMessage(event){
 		core.emit("error", err);
 	}
 	
-	if(["getTexts", "getLabels", "getUsers", "getRooms", "getSessions"].indexOf(data.type) != -1){
+	if(["getTexts", "getThreads", "getUsers", "getRooms", "getSessions"].indexOf(data.type) != -1){
 		// data is a query
 		if(pendingQueries[data.id]){
 			pendingQueries[data.id](data);

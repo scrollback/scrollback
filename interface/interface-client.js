@@ -13,7 +13,7 @@ var libsb = {
 		
 		getLoginMenu: getLoginMenu,
 		getTexts: getTexts,
-		getLabels: getLabels,
+		getThreads: getThreads,
 		getOccupants: getOccupants,
 		getMembers: getMembers,
 		getRooms: getRooms,
@@ -84,8 +84,8 @@ function getRooms(query, callback){
 	core.emit('getRooms', query, callback);
 }
 
-function getLabels(query, callback){
-	core.emit('getLabels', query, callback);	
+function getThreads(query, callback){
+	core.emit('getThreads', query, callback);	
 }
 
 function getUsers(query, callback){

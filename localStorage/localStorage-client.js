@@ -33,8 +33,8 @@ module.exports = function(c){
 	
 	core.on('getTexts', getTextsBefore, 400);
 	core.on('getTexts', getTextsAfter, 900);
-	core.on('getLabels', getLabelsBefore, 400);
-	core.on('getLabels', getLabelsAfter, 900);
+	core.on('getThreads', getThreadsBefore, 400);
+	core.on('getThreads', getThreadsAfter, 900);
 	core.on('connected', createInit);
 	core.on('init-dn', recvInit);
 	core.on('away-up', storeAway);
@@ -112,13 +112,13 @@ function getTextsAfter(query, next){
 	next();
 }
 
-function getLabelsBefore(query, next){
+function getThreadsBefore(query, next){
 	var results = cache.labels.get(query);
 	if(results) query.results = results;
 	next();
 }
 
-function getLabelsAfter(query, next){
+function getThreadsAfter(query, next){
 	var results = query.results;
 	if(results){
 		if(query.before) results.push({type: 'result-end', endtype: 'time', time: query.time});
