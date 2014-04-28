@@ -56,3 +56,4 @@ module.exports = function(core) {
 	core.on('getThreads',threads.get, 'storage');
 	core.on('getTexts',texts.get, 'storage');
 };
+
