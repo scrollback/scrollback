@@ -53,6 +53,8 @@
         left: ( @roomx + @metax ) * -1;
     }
 
+    .embed-mode & { display: none; }
+
     .scrollback-header {
         height: @bar-height;
         padding: .5em 1em;
@@ -179,9 +181,34 @@
         left: @metax * -1;
     }
 
+    .embed-mode & {
+        width: @metaxxxxx;
+        left: 0;
+
+        @media @breakpointxxxx {
+            width: @metaxxxx;
+            left: 0;
+        }
+
+        @media @breakpointxxx {
+            width: @metaxxx;
+            left: @metaxxx * -1;
+        }
+
+        @media @breakpointxx {
+            width: @metaxx;
+            left: @metaxx * -1;
+        }
+
+        @media @breakpointx {
+            width: @metax;
+            left: @metax * -1;
+        }
+    }
+
     .chat-meta {
 
-        .settings-mode & { display: none; }
+        .conf-mode & { display: none; }
 
         .tabs {
             list-style: none;
@@ -251,6 +278,8 @@
                         background-image: url(../../img/icons/png/back.png);
 
                         .rooms-view & { .transform(rotate(180deg)); }
+
+                        .embed-mode & { display: none; }
                     }
                 }
 
@@ -400,7 +429,7 @@
     .settings-header {
         display: none;
 
-        .settings-mode & {
+        .conf-mode & {
             display: table;
             table-layout: fixed;
             height: @bar-height;
@@ -448,7 +477,7 @@
         &.settings-menu {
             display: none;
 
-            .settings-mode & {
+            .conf-mode & {
                 display: block;
                 position: absolute;
                 top: @bar-height;
@@ -501,12 +530,19 @@
     .clearfix;
 
     top: 0;
-    right: 0;
     bottom: 0;
     z-index: 3;
     border-left: 1px solid darken(@light-color, 10%);
     background-color: @light-color;
     color: @dark-color;
+
+    .embed-mode & {
+        left: @metaxxxxx;
+
+        @media @breakpointxxxx { left: @metaxxxx; }
+
+        @media @breakpointxxx { left: 0;  }
+    }
 
     .titlebar {
         position: relative;
@@ -580,6 +616,8 @@
                 background: url(../../img/icons/png/search.png) center center no-repeat;
                 background-size: 2em 2em;
                 cursor: pointer;
+
+                .embed-mode & { display: none;}
             }
 
             .guest {
@@ -620,7 +658,7 @@
 
     &.chatview {
 
-        .settings-mode & { display: none; }
+        .conf-mode & { display: none; }
 
         .titlebar {
             .search-bar {
@@ -805,7 +843,7 @@
     &.settingsview {
         display: none;
 
-        .settings-mode & {
+        .conf-mode & {
             display: block;
 
             .settings-area {
@@ -943,14 +981,21 @@
 }
 
 .chat-input:extend(.main-elem) {
-    right: 0;
     bottom: 0;
     z-index: 3;
     padding: 0;
     min-height: @bar-height;
     box-shadow: 0 -3px 2px -1px fade(@dark-color, 5%);
 
-    .settings-mode & { display: none; }
+    .conf-mode & { display: none; }
+
+    .embed-mode & {
+        left: @metaxxxxx;
+
+        @media @breakpointxxxx { left: @metaxxxx; }
+
+        @media @breakpointxxx { left: 0;  }
+    }
 
     .textarea {
         .entry;
@@ -1032,7 +1077,7 @@
 }
 
 .popover-body {
-    &.login-menu {
+    &.user-menu {
         width: 15em;
         padding: .5em 1em;
 
