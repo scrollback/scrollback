@@ -25,6 +25,8 @@ myConfig.js
 
 /scrollback.komodoproject
 
+public/manifest.appcache
+
 public/client.min.js
 public/core.min.js
 public/core.uw.min.js
