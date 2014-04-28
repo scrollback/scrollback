@@ -36,7 +36,7 @@ function init() {
 		or.addData(data);	
 	});
 	client.on('error', function(error){
-		log("Can not connect to java Process ", error);
+		log("Can not connect to ircClient process", error);
 		setTimeout(function(){
 			init();	
 		},1000*60);//try to reconnect after 1 min

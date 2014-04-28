@@ -14,14 +14,16 @@ var ff = fs.openSync(fn, "r+");
 var writeIndex = 0;
 var readIndex  = 0;
 event.on("object", function(obj) {
-	log("Objects", obj);
+	log("Objects:", obj);
 	q.push(obj);
 });
 module.exports.push = function(obj) {
 	var d = writeObject(obj);
 	log("Object :", d);
-	fs.writeSync(ff, d, writeIndex, "utf8");
-	writeIndex += d.length;
+	var buffer = new Buffer(d);
+	console.log("buffer", buffer , buffer.length);
+	/*var nb = */fs.writeSync(ff, buffer, 0, buffer.length, writeIndex);
+	writeIndex += buffer.length;
 	//q.push(obj);
 };
 module.exports.pop = function() {
@@ -53,7 +55,6 @@ function writeObject(obj) {//move this inside objectWriter
 	var v = JSON.stringify(obj);
 	var r = v.length + " ";
 	r += v;
-	log("sending :", r);
 	return r;
 }
 
@@ -76,6 +77,7 @@ function processData(d) {
 	}
 	if(!isNumber) {
 		if (d.length >= no) {
+			log("value if d:", d, no);
 			event.emit('object', JSON.parse(d.substring(0, no)));
 			d = d.substring(no);
 			isNumber = true;
