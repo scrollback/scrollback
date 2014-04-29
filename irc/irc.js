@@ -16,7 +16,6 @@ module.exports = function (coreObj) {
 	core = coreObj;
 	init();
 	core.on ('room', function(room, callback) {
-		
 		if (room.type == "room" && room.params && room.params.irc && room.session.indexOf('internal') !== 0 && client.connected()) {
 			if (!room.old && room.params.irc) {//TODO chack if new irc config.
 				room.params.irc.channel = room.params.irc.channel.toLowerCase();
@@ -90,7 +89,6 @@ function init() {
 							log("reconnecting bot with new values:", room.id);
 							disconnectBot(state.rooms[room.id].id);
 							addNewBot(room); 
-						//TODO remove other rooms bots.
 					}
 					delete notUsedRooms[room.id];
 				} else {
