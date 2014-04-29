@@ -3,7 +3,7 @@ var log = require('../lib/logger.js');
 var events = require('events');
 var event = new events.EventEmitter();
 var q = [];
-//TODO use (fixed)Object reader
+var or = new require('../lib/ObjectReader.js')(event);
 //TODO path and new file for each restart.
 var timestamp = new Date().getTime();
 var fn = "ircClient/Data/queue" /*+ timestamp*/ + ".txt";
@@ -39,7 +39,7 @@ module.exports.pop = function() {
 			for (var i = 0;i < l;i++) {
 				bCopy.push(buffer[i]);
 			}
-			addData(new Buffer(bCopy));
+			or.addData(new Buffer(bCopy));
 			
 			if (q.length !== 0) break;
 		}
@@ -57,41 +57,4 @@ function writeObject(obj) {//move this inside objectWriter
 	r += v;
 	return r;
 }
-
-var pd = "";
-var isNumber = true;
-var no = -1;
-
-function addData(data) {
-	data = data.toString('utf8');
-	pd = processData(pd + data);
-}
-
-function processData(d) {
-	if (isNumber) {
-		if (d.indexOf(' ') != -1 ) {
-			no = parseInt(d.substring(0, d.indexOf(' ')), 10);
-			d = d.substring(d.indexOf(' ') + 1);
-			isNumber = false;
-		}
-	}
-	if(!isNumber) {
-		if (d.length >= no) {
-			log("value if d:", d, no);
-			event.emit('object', JSON.parse(d.substring(0, no)));
-			d = d.substring(no);
-			isNumber = true;
-			if (d.length > 0) {
-				return processData(d);
-			}
-			
-		}
-	}
-	return d;
-}
-
-
-
-
-
 
