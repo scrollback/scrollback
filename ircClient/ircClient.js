@@ -1,16 +1,17 @@
 var net = require('net');
 var irc = require('irc');
+var queue = require("./queue.js");
 var log = require('../lib/logger.js');
 var config = require('./config.js');
 var core;
-var botNick =  config.botNick;//part of config of IRC client.
+var botNick = config.botNick;//part of config of IRC client.
 var clients = {};//for server channel user,server --> client. 
 var servChanProp = {};//object of server channel prop
 var rooms = {};//room id to room obj map. //TODO delete room obj if any room deleted irc.(Done Test)
 var servNick = {};//server channel nick -------> sb nick.
 var renameCallback = {};
 var connected = false;
-var queue = require("./queue.js");
+
 
 /******************************* Exports ****************************************/
 module.exports.say = say;
@@ -104,6 +105,7 @@ function connectBot(room, options, cb) {
 		cb("already connected to some other room");
 		return;
 	}
+	rooms[room.id] = room;
 	servChanProp[server][channel].rooms.push(room);
 	var ch = room.params.irc.pending ? [] : [channel];//after varification connect to channel
 	if (!servNick[server]) servNick[server] = {};
@@ -124,6 +126,7 @@ function connectBot(room, options, cb) {
 }
 
 function partBot(roomId) {
+	log("part bot for room ", roomId);
 	var room  = rooms[roomId];
 	var client = clients[botNick][room.params.irc.server];
 	var channel = room.params.irc.channel;
@@ -137,13 +140,13 @@ function partBot(roomId) {
 			clients[sbNick][server].part(channel);
 		}
 	});
-	delete servChanProp[server][channel];
+	//delete servChanProp[server][channel];
 	delete rooms[roomId];
 }
 
 function connectUser(roomId, nick, options, cb) {
-	log("room=", room);
 	var room = rooms[roomId];
+	log("room=", room);
 	var server = room.params.irc.server;
 	var channel = room.params.irc.channel;
 	var client;
@@ -169,42 +172,42 @@ function connectUser(roomId, nick, options, cb) {
 }
 
 function onMessage(client) {
-	client.on('message', function(to, from, message) {
+	client.on('message#', function(nick, to, text, message) {
 		log("on message" /*, JSON.stringify(servNick)*/);
-		from = from.toLowerCase();
-		if (!servChanProp[client.opt.server][from]) {
+		to = to.toLowerCase();
+		
+		if (!servChanProp[client.opt.server][to]) {
 			return;
 		}
 		if (connected) {
-			sendMessage(client.opt.server, to, from, message);
+			sendMessage(client.opt.server, nick, to, text);
 		} else {
 			queue.push({
 				fn: "sendMessage",
 				server : client.opt.server,
 				to: to,
-				from: from,
-				message: message
+				from: nick,
+				text: text
 			});
 		}
 	});
 }
 
-function sendMessage(server, to, from, message) {
-	log("message from:", from, to, server, message);
-	from = from.toLowerCase();
-	servChanProp[server][from].rooms.forEach(function(room) {
+function sendMessage(server, from, to, text) {
+	to = to.toLowerCase();
+	log("on message :", server, from, to, text);
+	servChanProp[server][to].rooms.forEach(function(room) {
 		if (!room.pending) {
-			var from;
-			if(servNick[server][to].dir === 'in') {
-				from = servNick[server][to].nick;
+			var f;
+			if(servNick[server][from].dir === 'in') {
+				f = servNick[server][from].nick;
 			} else return;
 			core.emit('data', {
 				type: 'message',
-				server: server,
 				to: room.id,
-				from: from, 
-				text: message,
-				session: "irc://" + server + ":" + to
+				from: f, 
+				text: text,
+				session: "irc://" + server + ":" + from
 			});
 		}	
 	});
@@ -340,6 +343,7 @@ function sendAway(server, channels, nick, bn) {
  * add new member 
  */
 function addUsers(client, channel, nick) {
+	channel = channel.toLowerCase();
 	if (connected) {
 		sendBack(client.opt.server, channel, nick, client.nick);
 	} else {
@@ -428,6 +432,7 @@ function say(message) {
  * this will be reply of back message if nick changes.
  */
 function newNick(roomId, nick, sbNick) {
+	log("rooms", roomId, rooms);
 	var room = rooms[roomId];
 	if (!servNick[room.params.irc.server]) {
 		servNick[room.param.irc.server] = {};
@@ -514,7 +519,7 @@ function sendQueueData() {
 				sendAway(obj.server, obj.channels, obj.nick, obj.bn);
 				break;
 			case "sendMessage":
-				sendMessage(obj.server, obj.to, obj.from, obj.message);
+				sendMessage(obj.server, obj.from, obj.to, obj.text);
 				break;
 			case "sendRoom":
 				sendRoom(obj.room);

@@ -16,6 +16,7 @@ module.exports = function (coreObj) {
 	core = coreObj;
 	init();
 	core.on ('room', function(room, callback) {
+		
 		if (room.type == "room" && room.params && room.params.irc && room.session.indexOf('internal') !== 0 && client.connected()) {
 			if (!room.old && room.params.irc) {//TODO chack if new irc config.
 				room.params.irc.channel = room.params.irc.channel.toLowerCase();
@@ -67,9 +68,14 @@ module.exports = function (coreObj) {
 	}, "gateway");
 };
 function init() {
-	
+	var notUsedRooms = {};
 	clientEmitter.on('init', function(st) {
 		var state = st.state;
+		for(var roomId in state.rooms) {
+			if(state.rooms.hasOwnProperty(roomId)) {
+				notUsedRooms[roomId] = true;
+			}
+		}
 		log("init from ircClient", state);
 		core.emit("getRooms", {identity: "irc"}, function(data) {
 			var rooms = data.results;
@@ -81,11 +87,12 @@ function init() {
 					var r1 = room.params.irc;
 					var r2 = state.rooms[room.id].params.irc;
 					if (!(r1.server === r2.server && r1.channel === r2.channel && r1.pending === r2.pending)) {
-							log("reconnecting bot with new values: Not tested.", room.id);
-							disconnectBot(r.id);
+							log("reconnecting bot with new values:", room.id);
+							disconnectBot(state.rooms[room.id].id);
 							addNewBot(room); 
 						//TODO remove other rooms bots.
-					} 
+					}
+					delete notUsedRooms[room.id];
 				} else {
 					log("adding new Bot", room);
 					addNewBot(room);
@@ -119,9 +126,17 @@ function init() {
 						}
 					});
 				}
-				isInitDone();
-			});	
+				
+			});
+			
 		});
+		for (var ri in notUsedRooms) {
+			if (notUsedRooms.hasOwnProperty(ri)) {
+				log("disconnecing bot for room ", ri);
+				disconnectBot(ri);
+			}
+		}
+		isInitDone();
 	});
 	
 	clientEmitter.on('callback', function(data) {
@@ -224,7 +239,7 @@ function connectUser(roomId, user) {
 		type: "connectUser",
 		roomId: roomId,
 		nick: user,
-		options: {}
+		options: {identId: user + "@scrollback.io"}
 	});
 }
 
@@ -272,7 +287,7 @@ function addNewBot(r, callback) {
 		uid: uid,
 		type: 'connectBot',
 		room: room,
-		options: {}
+		options: {identId: "scrollback@scrollback.io"}
 	});
 	if (callback) {
 		callbacks[uid] = function(message) {
