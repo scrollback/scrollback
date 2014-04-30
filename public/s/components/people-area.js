@@ -6,14 +6,24 @@ var peopleArea = {};
 
 $(function() {
 	var $people = $(".pane-people"),
-		room = 'testroom', /* replace with room from URL */
+		room = window.location.pathname.split("/")[1], /* replace with room from URL */
 		people = [];
 
-	libsb.getOccupants(room, function(err, p) {
-		if(err) throw err;
-		people = people.concat(p);
-		$people.reset();
-	});
+		if(libsb.isInited){
+			loadMembers();
+		}else{
+			libsb.on("inited", loadMembers, 1000);
+		}
+
+		function loadMembers(p,n) {
+			libsb.getMembers(room, function(err, p) {
+				if(err) throw err;
+				people = p.results;
+				$people.reset();
+			});
+
+			if(n) n();
+		}
 
 	// Set up infinite scroll here.
 	$people.infinite({
@@ -23,10 +33,9 @@ $(function() {
 		startIndex: 0,
 		getItems: function (index, before, after, recycle, callback) {
 			var res = [], i;
-
 			for(i=index-before; i<=index+after; i++) {
 				if(i<0) { res.push(false); i=0; }
-				if(i==index) continue;
+				// if(i==index) continue;
 				if(i>people.length-1) { res.push(false); break; }
 				res.push(personEl.render(null, people[i], i));
 			}
@@ -36,8 +45,9 @@ $(function() {
 	});
 	
 	libsb.on('navigate', function(state, next) {
-		if(state.source == 'people-area') return next();		
-		if(state.room != state.old.room) {
+		if(state.source == 'people-area') return next();
+
+		if(!state.old ||(state.tab == "people" && state.old.tab!="people") || (state.old.room != state.room)) {
 			room = state.room;
 			$people.reset();
 		}

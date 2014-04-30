@@ -6,7 +6,7 @@ var textArea = {};
 
 $(function() {
 	var $logs = $(".chat-area"),
-		room = 'testroom', /* replace with room from URL */
+		room = window.location.pathname.split("/")[1], /* replace with room from URL */
 		thread = '',
 		time = null; /* replace this with the time from the URL, if available. */
 
@@ -20,17 +20,26 @@ $(function() {
 		getItems: function (index, before, after, recycle, callback) {
 			var query = { to: room, time: index, before: before, after: after };
 			if(thread) query.thread = thread;
-
-			libsb.getTexts(query, function(err, texts) {
-				if(err) throw err; // TODO: handle the error properly.
-
-				if(after === 0 && texts.length < before) texts.unshift(false);
-				else if(before === 0 && texts.length < after) texts.push(false);
-
-				callback(texts.map(function(text) {
-					return text && textEl.render(null, text);
-				}));
-			});
+			if(libsb.isInited) {
+				loadTexts();
+			}else{
+				libsb.on("inited", function(p, n){
+					loadTexts();	
+					n();
+				})
+			}
+			function loadTexts(){
+				libsb.getTexts(query, function(err, t) {
+					var texts = t.results
+					if(err) throw err; // TODO: handle the error properly.
+					if(after === 0 && texts.length < before) texts.unshift(false);
+					else if(before === 0 && texts.length < after) texts.push(false);
+					callback(texts.map(function(text) {
+						return text && textEl.render(null, text);
+					}));
+				});
+			}
+			
 		}
 	});
 
@@ -44,18 +53,17 @@ $(function() {
 
 	libsb.on('navigate', function(state, next) {
 		var reset = false;
-
 		if(state.source == 'text-area') return next();
 
-		if(state.room != state.old.room) {
+		if(state && (!state.old || state.room != state.old.room)) {
 			room = state.room;
 			reset = true;
 		}
-		if(state.thread != state.old.thread) {
+		if(state.thread && state.old && state.thread != state.old.thread) {
 			thread = state.thread;
 			reset = true;
 		}
-		if(state.time != state.old.time) {
+		if(state.old && state.time != state.old.time) {
 			time = state.time;
 			reset = true;
 		}
@@ -120,8 +128,15 @@ $(function() {
 				break;
 			}
 		}
-
-		libsb.emit('navigate', { time: time, source: 'text-area' });
+		if(libsb.isInited) {
+			libsb.emit('navigate', { time: time, source: 'text-area' });
+		}else{
+			libsb.on("inited", function(q, n){
+				libsb.emit('navigate', { time: time, source: 'text-area' });
+				n();
+			});
+		}
+		
 		$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
 
 	});

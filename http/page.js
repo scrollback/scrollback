@@ -214,7 +214,11 @@ exports.init = function(app, coreObject) {
             });
         });
     }
-    app.get("/*", roomHandler);
+    app.get("/*", function(req, res){
+        fs.readFile(__dirname + "/../public/client.html", "utf8", function(err, data){
+           res.end(data);
+        });
+    });
     app.get("/*/edit", roomHandler);
 
     app.get("/old/*", function(req, res, next) {

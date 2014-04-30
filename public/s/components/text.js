@@ -8,7 +8,6 @@ $(function() {
 
 	textEl.render = function (el, text) {
 		el = el || $template.clone(false);
-
 		el.find('.nick').text(text.from);
 		el.find('.message').html(format.textToHtml(text.text));
 		el.find('.timestamp').html(format.friendlyTime(text.time, new Date().getTime()));

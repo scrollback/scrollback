@@ -13,7 +13,8 @@ $(function() {
 			e.preventDefault();
 			var text = format.htmlToText($entry.html());
 			$entry.text("");
-			libsb.emit('text-up', {text: text});
+			console.log({text: text, room: window.location.pathname.split("/")[1]});
+			libsb.emit('text-up', {text: text, to: window.location.pathname.split("/")[1]});
 		}
 		setTimeout(function() {
 			textArea.setBottom($input.outerHeight());

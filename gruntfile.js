@@ -132,5 +132,5 @@ module.exports = function(grunt) {
   grunt.event.on('watch', function(action, filepath, target) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
-  grunt.registerTask('default', ['browserify', 'uglify', 'concat', 'wrap', 'less', 'autoprefixer', 'imageEmbed']);
+  grunt.registerTask('default', ['grunt-browserify', 'uglify', 'concat', 'wrap', 'less', 'autoprefixer', 'imageEmbed']);
 };

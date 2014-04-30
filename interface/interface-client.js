@@ -7,9 +7,10 @@ var libsb = {
 		occupantOf: [],
 		memberOf: [],
 		isConnected: false,
-		
+		isInited: false,
 		connect: connect,
 		disconnect: disconnect,
+		resource: generate.uid(),
 		
 		getLoginMenu: getLoginMenu,
 		getTexts: getTexts,
@@ -25,6 +26,7 @@ var libsb = {
 		say: say,
 		admit: admit,
 		expel: expel,
+		getSession: getSession,
 		
 		roomConfigForm: roomConfigForm,
 		userPreferForm: userPreferForm
@@ -47,6 +49,14 @@ module.exports = function(c){
 	
 	core.on('connected', onConnect);
 	core.on('disconnected', onDisconnect);
+
+	core.on("init-dn", function() {
+		if(!libsb.isInited){
+			libsb.isInited = true;
+			core.emit("inited");
+		}
+
+	}, 10)
 };
 
 function onConnect(){
@@ -55,6 +65,7 @@ function onConnect(){
 
 function onDisconnect(){
 	libsb.isConnected = false;
+	libsb.isInited = false;
 }
 function connect(){
 	core.emit('connection-requested');
@@ -73,11 +84,11 @@ function getTexts(query, callback){
 }
 
 function getOccupants(query, callback){
-	core.emit('getUsers', query, callback);
+	core.emit('getUsers', {occupantOf: query}, callback);
 }
 
 function getMembers(query, callback){
-	core.emit('getUsers', query, callback);
+	core.emit('getUsers', {memberOf: query}, callback);
 }
 
 function getRooms(query, callback){
@@ -88,8 +99,12 @@ function getThreads(query, callback){
 	core.emit('getThreads', query, callback);	
 }
 
+function getSession(query, callback){
+	core.emit('getSession', query, callback);
+}
+
 function getUsers(query, callback){
-	core.emit('getUsers', query, callback);
+	core.emit('getUsers', {ref: query}, callback);
 }
 
 function enter(roomId, callback){
@@ -129,6 +144,7 @@ function userPreferForm(){
 }
 
 function recvInit(init, next){
+	libsb.session = init.session;
 	if(underscore.isEqual(libsb.user, init.user)){
 		libsb.user = init.user;
 		core.emit('user-update');

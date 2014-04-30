@@ -2,8 +2,8 @@
 /* global core */
 
 var sockjs = require('sockjs-client'),
-	generate = require('../lib/generate'),
-	config = require('../client-config');
+	generate = require('../lib/generate.js'),
+	config = require('../client-config.js');
 var core;
 
 module.exports = function(c){
@@ -21,12 +21,22 @@ module.exports = function(c){
 	core.on('admit-up', sendAdmit, 1000);
 	core.on('expel-up', sendExpel, 1000);
 	
-	core.on('getTexts', sendQuery);
-	core.on('getThreads', sendQuery);
-	core.on('getUsers', sendQuery);
-	core.on('getRooms', sendQuery);
-	core.on('getSessions', sendQuery);
-	
+	core.on('getTexts', function(query, callback){
+		query.type="getTexts";
+		sendQuery(query, callback);
+	});
+	core.on('getThreads',  function(query, callback){
+		query.type="getThreads";
+		sendQuery(query, callback);
+	});
+	core.on('getUsers',  function(query, callback){
+		query.type="getUsers";
+		sendQuery(query, callback);
+	});
+	core.on('getRooms',  function(query, callback){
+		query.type="getRooms";
+		sendQuery(query, callback);
+	});
 };
 
 var client;
@@ -54,10 +64,14 @@ function disconnected(){
 function sendQuery(query, next){
 	if(query.results) return next();
 	
-	if(!query.id) query.id = generate.guid();
-	
+	if(!query.id) query.id = generate.uid();
+
+	query.session = libsb.session;
+	query.resource = libsb.resource;
 	client.send(JSON.stringify(query));
 	pendingQueries[query.id] = next;
+	// a hacky solution. please change this.
+	pendingQueries[query.id].query = query;
 }
 
 function receiveMessage(event){
@@ -71,7 +85,9 @@ function receiveMessage(event){
 	if(["getTexts", "getThreads", "getUsers", "getRooms", "getSessions"].indexOf(data.type) != -1){
 		// data is a query
 		if(pendingQueries[data.id]){
-			pendingQueries[data.id](data);
+			// a hacky solution. please change this.
+			pendingQueries[data.id].query.results = data.results;
+			pendingQueries[data.id]();
 			delete pendingQueries[data.id];
 		}
 	}else{
@@ -92,6 +108,8 @@ function makeAction(o) {
 	};
 	
 	for(var i in o) action[i] = o[i];
+	action.session = libsb.session;
+	action.resource = libsb.resource;
 	return action;
 }
 

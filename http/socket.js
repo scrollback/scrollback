@@ -92,7 +92,11 @@ sock.on('connection', function (socket) {
 			}
 			if(data.type == 'away') storeAway(conn, data); 
 			if(data.type == 'init') storeInit(conn, data); 
-			
+
+			if(['getUsers', 'getTexts', 'getRooms', 'getThreads'].indexOf(data.type)>=0){
+				// console.log("sending response for: "+data.type+": " ,data);
+				conn.send(data);
+			}
 
 			/* no need to send it back to the connection object when no error,
 			 emit function will take care of that.

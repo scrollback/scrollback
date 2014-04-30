@@ -8,12 +8,13 @@ $(function() {
 	var $roomlist = $(".roomlist"),
 		rooms = [];
 
+	/* add this back and do this after connecting.
 	libsb.getRooms({}, function(err, r) {
 //		console.log("Got rooms", r);
 		if(err) throw err;
 		rooms = rooms.concat(r);
 		$roomlist.reset();
-	});
+	});*/
 
 	// Set up infinite scroll here.
 	$roomlist.infinite({
@@ -40,7 +41,9 @@ $(function() {
 	$roomlist.click(function(event) {
 		var $el = $(event.target).closest(".roomitem");
 		if(!$el.size()) return;
+		
 		libsb.emit('navigate', { room: $el.attr("id").split('-')[1], view: 'normal', source: 'roomlist', thread: null });
+		
 		event.preventDefault();
 	});
 });

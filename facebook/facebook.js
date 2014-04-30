@@ -1,10 +1,12 @@
 var config = require("../config.js"),
-	name = require("../lib/names.js"),
+	name = require("../lib/generate.js").names,
 	log = require("../lib/logger.js"),
-	request = require("request");
+	request = require("request"), core,
+	internalSession = Object.keys(config.whitelists)[0];
 
-module.exports = function(core) {
-	core.on("http/init", payload, "setters");
+module.exports = function(c) {
+	core = c;
+	core.on("http/init", onInit, "setters");
 	core.on("init", fbAuth, "authentication");
 };
 
@@ -21,7 +23,7 @@ function fbAuth(action, callback) {
 		request("https://graph.facebook.com/oauth/access_token?client_id="+config.facebook.client_id+
 		"&redirect_uri=https://"+config.http.host+"/r/facebook/return"+
 		"&client_secret="+config.facebook.client_secret+
-		"&code="+message.auth.facebook.code,
+		"&code="+action.auth.facebook.code,
 		function(err, res, body) {
 			if(err) return callback(err);
 			var queries = body.split("&"), i,l, token;
@@ -34,20 +36,23 @@ function fbAuth(action, callback) {
 			if(token) {
 				request("https://graph.facebook.com/me?access_token=" + token, function(err, res, body) {
 					var user;
-					delete message.auth.facebook.code;
+					delete action.auth.facebook.code;
 					if(err) return callback(err);
 					try{
 						user = JSON.parse(body);
 						if(user.error) {
+							console.log(user.error);
 							return callback(new Error(user.error))
 						}
-						core.emit("getUsers",{identity: "mailto:"+user.email}, function(err, data) {
+						core.emit("getUsers",{identity: "mailto:"+user.email, session: internalSession}, function(err, data) {
 							if(err || !data) return callback(err);
-							if(data.length == 0) {
-								message.user.identities = ["mailto:" + user.email];
+							
+							if(data.results.length == 0) {
+								action.user = {};
+								action.user.identities = ["mailto:" + user.email];
 								return callback();	
 							}
-							message.user = data[0];
+							action.user = data.results[0];
 							callback();
 						});
 					}catch(e) {

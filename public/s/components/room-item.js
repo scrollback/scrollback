@@ -19,7 +19,7 @@ $(function() {
 });
 
 libsb.on('navigate', function(state, next) {
-	if(state.room && state.room != state.old.room) {
+	if(state.room && state.old && state.room != state.old.room) {
 		$(".roomitem.current").removeClass("current");
 		$("#roomitem-" + state.room).addClass("current");
 	}

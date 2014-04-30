@@ -17,6 +17,9 @@ module.exports = function(core) {
 	});
 	
 	core.on("init", function(action, callback) {
+		if(action.auth && !action.user.id) {
+	        return callback();
+	    }
 		get("session",action.session, function(err, sessionObj) {
 			var session = {
 				id: action.session,

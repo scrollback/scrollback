@@ -72,6 +72,9 @@ function onGetUsers(query, callback) {
 }
 
 function updateUser(action, callback) {
+    if(action.auth && !action.user.id) {
+        return callback();
+    }
 	put("user", action.user.id, action.user, function() {
 		if(action.old && action.old.id) {
 	        userDB.del("user:{{"+action.old.id+"}}");

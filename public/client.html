@@ -24,7 +24,7 @@
 		<![endif]-->
 	</head>
 
-	<body>
+	<body class="guest-user">
 		<section class="rooms">
 			<div class="scrollback-header">
 				<img src="s/img/scrollback-small.png" alt="scrollback"/>
@@ -88,7 +88,7 @@
 					<a class="follow-button" role="button"></a>
 					<a class="search-button" role="button"></a>
 					<div class="guest has-popover">
-						<div class="sb-user">sb-walick</div>
+						<div class="sb-user"></div>
 						<div class="sign-in">Sign in</div>
 					</div>
 					<div class="avatar has-popover">
@@ -346,10 +346,13 @@
 
 		<script src="s/lib/transformie.min.js"></script> <!-- adds CSS transforms support in old IE -->
 
+		<script src="/sdk/sockjs.js"></script>
 		<script src="s/lib/bus.js"></script>
-		<script src="s/lib/generate.js"></script>
 		<script src="s/lib/format.js"></script>
-		<script src="s/js/mock-libsb.js"></script>
+
+		console.log();
+		<!--<script src="s/js/mock-libsb.js"></script> -->
+		<script src="/libsb.bundle.js"></script>
 
 		<script src="s/components/infinite.js"></script>
 		<script src="s/components/hide-scroll.js"></script>
@@ -374,16 +377,27 @@
 		<script src="s/components/follow-room.js"></script>
 		<script src="s/components/user-menu.js"></script>
 		<script src="s/components/config-mode.js"></script>
+		<script src="s/components/facebook.js"></script>
 
 		<script>
+			/*what is this?
 			'room', 'view', 'mode', 'tab', 'thread', 'query', 'text', 'time'
+			*/
 			$(function() {
-				libsb.emit('navigate', {
-					room: 'scrollback',
-					view: 'normal',
-					mode: 'normal',
-					tab: 'people'
-				});
+				libsb.connect();
+				libsb.on("inited", start);
+
+
+				
+				function start(q,n) {
+					libsb.emit('navigate', {
+						room: window.location.pathname.split("/")[1],
+						view: 'normal',
+						mode: 'normal',
+						tab: 'people'
+					});
+					n();
+				}
 			});
 		</script>
 
