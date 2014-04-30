@@ -47,7 +47,7 @@ function connect(){
 
 	client.onopen = function(){
 		core.emit('connected');
-	} 
+	}
 
 	client.onmessage = receiveMessage;
 	client.onclose = disconnected;

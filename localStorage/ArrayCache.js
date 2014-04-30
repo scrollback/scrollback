@@ -1,6 +1,6 @@
 "use strict";
 
-function ArrayCache(initData) {
+module.exports = function ArrayCache(initData) {
 	var messages = initData || [];
 
 	function find (time, start, end) {
