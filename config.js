@@ -51,6 +51,9 @@ var defaults = {
 		name: "scrollback",
 		newrelic: { name: 'Scrollback Local' }
 	},
+	whitelists:{
+		
+	},
 	mysql: {
 		host     : 'localhost',
 		user     : 'scrollback',
@@ -89,14 +92,22 @@ var defaults = {
 	},
 	irc: {
 		nick: 'sbtestbot',		// nickname of the bot
-		hangTime: 60000     // timeout before disconnecting (ms)
+		hangTime: 60000,     // timeout before disconnecting (ms)
+		port: 78910,
+		server: "localhost"
 	},
 	leveldb: {
 		path: "/data"
 	},
+	redisDB:{
+		session: 8,
+		user: 9,
+		room: 9,
+		occupants: 10
+	},
 	plugins: ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
 	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",
-	"admin-notifier", "custom-emitter","entityloader","guestinitializer", "twitter"],
+	"admin-notifier", "custom-emitter","entityloader", "twitter"],
 	facebook: {
 	}
 }

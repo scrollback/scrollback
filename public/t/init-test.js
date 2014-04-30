@@ -4,9 +4,10 @@
 /*global it*/
 /*global scrollback*/
 /*global guid*/
-/*global sockjs*/
+/*global SockJS*/
+
 describe("Init for guests" , function(){
-	var socket;
+	var socket;	
 	before(function(done){
 		socket = new SockJS(scrollback.host + '/socket');
 		socket.onopen = function(){ done(); };
@@ -16,122 +17,90 @@ describe("Init for guests" , function(){
 		done();
 	});
 	describe("Testing init for guest users", function(){
-		var sessId = guid(); var sessId2 = guid(); var suggestedNick = 'helloNick', testNick;
-		
+		var sessID = generate.uid(); var sessId2 = guid(); var suggestedNick = 'helloNick', testNick;
 		it("Sending init without session property", function(done){
-			var init = {id: guid(), type: 'init', to: 'me', time:new Date().getTime()};
+			var init = {id: generate.uid(), type: 'init', to: 'me', time:new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
-				console.log("Message is", message);
-				// assert here
-				done();
-			}
+				if(message.type == 'error')	done();
+			};
 			socket.send(JSON.stringify(init));
 		});
-		it("Sending init with session property", function(done){
-			var init = {id: guid(), type: 'init', session:sessID , to: 'me', time: new Date().getTime()};
+		it("Sending init with session property: "+sessID, function(done){
+			var init = {id: generate.uid(), type: 'init', session:sessID , to: 'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
-				// assert
-				testNick = message.id;
+				if(message.type == 'init') done();
+				testNick = message.user.id;
 				done();
 			};
 			socket.send(JSON.stringify(init));
 		});
 		it("Sending invalid characters in suggested nick", function(done){
-			var init = {id: guid(), type: 'init', session:guid(), suggestedNick:'9some_invalid_nick', to: 'me', time: new Date().getTime()};
+			var init = {id: generate.uid(), type: 'init', session:generate.uid(), suggestedNick:'!#$%9some_invalid_nick', to: 'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
-				// assert
-				done();
+				if(message.user.id == "!#$%9some_invalid_nick") throw new Error("Invalid nick was assigned to user");
+				else done();
 			};
 			socket.send(JSON.stringify(init));
 		});
-		it("Sending init with same session id", function(done){
-			var init = {id: guid(), type: 'init', session:sessID , to: 'me', time: new Date().getTime()};
+		it("Sending init with same session id ", function(done){
+			var init = {id: generate.uid(), type: 'init', session:sessID , to: 'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
-				// assert
-				// check if message.id == testNick
-				done();
+				if(message.user.id == testNick) done();
 			};
 			socket.send(JSON.stringify(init));
 		});
-		it("Sending init with session id and suggested nick", function(done){
-			var init = {id: guid(), type: 'init', session: sessId2, suggestedNick: suggestedNick, to: 'me', time: new Date().getTime()};
+		it("Sending init with session id and suggested nick-----", function(done){
+			var msgid = generate.uid();
+			var suggestedNick = 'testnickamal';
+			var init = {id: msgid, type: 'init', session: sessID, suggestedNick: suggestedNick, to: 'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
-				done();
+				// suggested nick should be respected 
+				if(message.user.id == 'guest-'+suggestedNick) done();
 			};
 			socket.send(JSON.stringify(init));
 		});
 		it("Sending init with different session id and same suggestedNick", function(done){
-			var init = {id: guid(), type: 'init', session: guid(), suggestedNick:suggestedNick, to:'me', time: new Date().getTime()};
+			var suggestedNick = 'testnickamal';
+			var init = {id: generate.uid(), type: 'init', session: generate.uid(), suggestedNick:suggestedNick, to:'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
 				// suggestedNick should be violated
-				done();
+				if(message.user.id !== 'guest-'+suggestedNick) done();
 			};
 			socket.send(JSON.stringify(init));
 		});
 		it("Sending init with same session id and different suggestedNick", function(done){
-			var init = {id: guid(), type: 'init', session: sessId2, suggestedNick: 'newNick', to:'me', time: new Date().getTime()};
+			var init = {id: generate.uid(), type: 'init', session: sessId2, suggestedNick: 'newNick', to:'me', time: new Date().getTime()};
 			socket.onmessage = function(message){
 				message = JSON.parse(message.data);
 				// suggestedNick should change
-				done();
-			}
+				if(message.user.id == 'guest-'+'newNick') done();
+			};
+			socket.send(JSON.stringify(init));
 		});
 	});
-	describe("Testing Init for Logged in users", function(){
-		var assertion;
-		it("Init with invalid auth for Persona Login", function(done){
-			this.timeout(150000);
-			navigator.id.watch({
-				onlogin: function(assertion){
-					console.log("Assertion is ", assertion);
-					var init = {id: guid(), type: 'init', session: guid(), to:'me', time: new Date().getTime(), auth: {
-						persona : {assertion: 'aFalseAssertionForInvalidAuth'}
-					}};
-				},
-				onlogout: function(){
-					
-				}
-			});
-			navigator.id.request();
-			socket.onmessage = function(message){
+
+	describe("Testing init for logged in users", function() {
+		it("successfull login", function(done) {
+			var init = {id: generate.uid(), type: 'init', session: guid(), to:'me', time: new Date().getTime(), auth:{testauth: 'user1:1234567890'}};
+			socket.onmessage = function(message) {
 				message = JSON.parse(message.data);
-				//
-				navigator.id.logout();
-				done();
-			}
+				if(message.type == "init") done();
+			};
+			socket.send(JSON.stringify(init));
 		});
-		it("Init with invalid auth for Facebook Login", function(done){
-			done();
-		});
-		it("Init with valid auth for Persona Login for an existing user", function(done){
-			this.timeout(150000);
-			navigator.id.watch({
-				onlogin: function(assertion){
-					var init = { id: guid(), type: 'init', session: guid(), to: 'me', time: new Date().getTime(), auth: { 
-						persona: {assertion: assertion}
-					}};
-				},
-				onlogout: function(){
-					
-				}
-			});
-			navigator.id.request();
-			socket.onmessage = function(message){
+		it("failed login", function(done) {
+			var init = {id: generate.uid(), type: 'init', session: guid(), to:'me', time: new Date().getTime(), auth:{testauth: 'fakeassert'}};
+			socket.onmessage = function(message) {
 				message = JSON.parse(message.data);
-				//
-				navigator.id.logout();
-				done();
-			}
-		});
-		it("Init with valid auth for Facebook Login for an existing user", function(done){
-			done();
+				if(message.type == 'error') done();
+			};
+			socket.send(JSON.stringify(init));
 		});
 	});
 });
-

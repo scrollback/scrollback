@@ -10,10 +10,11 @@ module.exports = function(core) {
 	var admitexpel = require("./schemas/admitexpel.js")(types);
 	var awayback = require("./schemas/awayback.js")(types);
 	var edit = require("./schemas/edit.js")(types);
-	
+	var threads = require("./schemas/thread.js")(types);
 
 	core.on('room',roomuser.put, "storage");
 	core.on('user',roomuser.put, "storage");
+
 
 	core.on('away', awayback.put, "storage");
 	core.on('back', awayback.put, "storage");
@@ -21,17 +22,19 @@ module.exports = function(core) {
 	core.on('text', texts.put, 'storage');
 
 	core.on('join', function(data, cb){
-		data.role = data.role || "member";
+		// data.role = data.role || "member";
 		//for now the user cannot part a room.
-		if(data.room.owner == data.user.id) data.role = "owner";
+		// if(data.room.owner == data.user.id) data.role = "owner";
+		if(data.user.role == "owner") data.role = "owner";
+		else data.role = "follower"
 		joinpart.put(data, cb);
 	}, 'storage');
 	core.on('part', function(data, cb){
-		//for now user cannot part the room he owns. also this needs to change rooms query is being handled by leveldb.
-		if(data.room.owner == data.user.id)  {
-			console.log("cant part sorry...");
-			return cb();
-		}
+		if(data.user.role == "owner") return cb(new Error("cant part as owner"));
+		// if(data.room.owner == data.user.id)  {
+		// 	console.log("cant part sorry...");
+		// 	return cb();
+		// }
 		data.role = "none";
 		joinpart.put(data, cb);
 	}, 'storage');
@@ -48,6 +51,9 @@ module.exports = function(core) {
 
 	core.on('edit', edit.put,'storage');
 	core.on('messages', texts.get, 'leveldb');
-	core.on('getUsers', roomuser.getUser, 'storage');
-	core.on('getRooms', roomuser.getRoom, 'storage');
+	core.on('getUsers', roomuser.getUsers, 'storage');
+	core.on('getRooms', roomuser.getRooms, 'storage');
+	core.on('getThreads',threads.get, 'storage');
+	core.on('getTexts',texts.get, 'storage');
 };
+

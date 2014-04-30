@@ -15,18 +15,20 @@ module.exports = function(coreObject) {
 	core = coreObject;
 	if (config.email && config.email.auth) {
 		init();
-		core.on('room', function(user, callback ){
-			 callback();
-			 if(user && user.type == 'user' && user.old === null) {//Signup
-		        sendWelcomeEmail(user);
-			 }
-		 });
+		core.on('user',emailRoomListner ,"gateway");function(user, callback );
 	}
 	else {
 		log("email module is not enabled");
 	}
 
 };
+
+function emailRoomListner(action, callback){
+    callback();
+     if(action.old === null) {//Signup
+        sendWelcomeEmail(user);
+     }
+}
 
 function init() {
     //read welcome email jade
@@ -45,7 +47,7 @@ function init() {
 function sendWelcomeEmail(user) {
     var emailHtml = welcomeEmailJade(user);
     var emailAdd = false;
-    user.accounts.forEach(function (u) {
+    user.identities.forEach(function (u) {
         if (u.id.indexOf('mailto:') === 0) {
             emailAdd = u.id.substring(7);
         }
@@ -54,5 +56,4 @@ function sendWelcomeEmail(user) {
         log("sending welcome email." , emailAdd);
         send(emailConfig.from, emailAdd, "Welcome", emailHtml);
     }
-
 }

@@ -4,5 +4,5 @@ module.exports = function(core){
 		if(action.role === "owner") return callback();
 		else if(action.role === "registered" && action.room.old == null) return callback();
 		else return callback(new Error('ERR_NOT_ALLOWED'));
-	});
+	}, "authorization");
 };

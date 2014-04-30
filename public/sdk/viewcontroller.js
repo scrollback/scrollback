@@ -1,7 +1,16 @@
-scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout','$window',function($scope, $location, $factory, $timeout,$window) {
+/* global scrollbackApp */
+/* global $ */
+/* global window */
+/* global navigator */
+/* global scrollback */
+/* global sbroom */
+/* global sbuser */
+/* global document */
+/* global location */
+scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$timeout', function($scope, $location, $factory, $timeout) {
 	$scope.gotoMe = function() {
 		$location.path("/me");
-	}
+	};
 	$scope.editRoom = {};
 	$factory.on("disconnected", function(){
 		$scope.isActive = false;
@@ -19,7 +28,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 		else{
 			$scope.logout();
 		}
-	}
+	};
 	
 	if(/^guest-/.test($scope.user.id)){
 		$scope.actionText = "Sign In ";	
@@ -62,14 +71,14 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 			$scope.$apply(function() {
 				$location.path("/me/login");
 			});
-			error="You must sign in to post in this room."
+			error="You must sign in to post in this room.";
 		}
 		if(error=="API Limit exceeded") error = "Your message was not delivered because you sent too many messages in a very short time.";
 		if(error=="REPEATATIVE") error = "Your message was not delivered because it seems repetitive.";
 		if(error=="BANNED_WORD") error = "Your message was not delivered because something you said was flagged as inappropriate.";
 		if(error == "INVALID_NAME") error= "Invalid user name";
 		if (error == "TWITTER_LOGIN_ERROR") error = "Something went wrong during twitter authentication.";  
-		if(error == "GUEST_CANNOT_HAVE_MEMBERSHIP") error = "Oops! something went wrong please login again."
+		if(error == "GUEST_CANNOT_HAVE_MEMBERSHIP") error = "Oops! something went wrong please login again.";
 		$scope.$apply(function(){
 			$scope.status.waiting = false;
 			if($scope.notifications.indexOf(error)>=0) return;
@@ -123,9 +132,9 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 
 	function processAuth(event) {
 		var message = {};
-		data = event.originalEvent.data;
+		var data = event.originalEvent.data;
 		event = event.originalEvent;
-		if(!event.origin === location.protocol+"//"+location.host) return;
+		if(event.origin !== location.protocol+"//"+location.host) return;
 
 		if(typeof event.data === 'string') {
 			try { message = JSON.parse(event.data); }
@@ -139,7 +148,7 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 
 		message.type = "nick";
 		$factory.message(message, function(message) {
-			$(window).off("message", processAuth)
+			$(window).off("message", processAuth);
 			if(message.message && message.message == "AUTH_UNREGISTERED") {
 				$scope.$apply(function() {
 					$scope.status.waiting = false;
@@ -159,32 +168,14 @@ scrollbackApp.controller('metaController',['$scope', '$location', '$factory', '$
 	$scope.facebookLogin = function(){
 		$(window).on("message", processAuth);
 		window.open(location.protocol+"//"+location.host+"/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');
-	}
+	};
 	$scope.logout = function() {
 		if($scope.room.id) $location.path("/" + $scope.room.id);
 		else $location.path("/me/login");
-		$factory.message({type:"nick", to:"", ref:"guest-"},function(message) {
+		$factory.message({type:"nick", to:"", ref:"guest-"},function() {
 			navigator.id.logout();
 		});
 	};
-	var statusObject = {};
-	// function personaWatch() {
-	// 	console.log("WATCHING...", $scope.nick
-	// 	if(/^guest-/.test($factory.me)) {
-	// 		navigator.id.watch({
-	// 			onlogin:function(assertion) {
-	// 			console.log("onLogin");
-	// 			var message = {browserid:assertion, type: "nick", to:''};
-	// 			$factory.message(message, function(resp) {
-	// 				$location.path("/me");
-	// 			});
-	// 		},
-	// 		onlogout: function() {}
-	// 		});
-	// 		//adding something to keep track of this..
-	// 		navigator.id.watching = true;
-	// 	}
-	// }
 }]);
 
 scrollbackApp.controller('loginController',['$scope','$route','$factory','$location',function($scope, $route, $factory, $location) {
@@ -192,27 +183,27 @@ scrollbackApp.controller('loginController',['$scope','$route','$factory','$locat
 		$location.path("/me");
 		return;
 	}
-	$scope.nickChange = function(event) {
+	$scope.nickChange = function() {
 		$scope.status.waiting = true;
 		if($scope.user.id == "guest-"+$scope.displayNick){
 			$location.path("/"+$scope.room.id);
 			return;
 		}
 		
-	    $factory.message({to:"",type:"nick", ref:"guest-"+$scope.displayNick}, function(message){
-	    	if(message.message){
-	    		//error
-	    	}else{
-	    		$scope.$apply(function() {
+		$factory.message({to:"",type:"nick", ref:"guest-"+$scope.displayNick}, function(message){
+			if(message.message){
+				//error
+			}else{
+				$scope.$apply(function() {
 					$scope.status.waiting = false;
 					if($scope.room.id){
 						$location.path("/"+$scope.room.id);		
 					}else{
 						$location.path("/me");
 					}
-	    		});
-	    	}
-	    });
+				});
+			}
+		});
 	};
 	$scope.displayNick = ($scope.user.id).replace(/^guest-/,"");
 }]);
@@ -300,6 +291,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			});
 		});
 		$factory.on("message", function(i){
+			var j;
 			if(occupants && members){
 				if(i.type == "back"){
 					if(i.user) {
@@ -325,7 +317,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 				}
 				if(i.type == "join") {
 					if(i.user) {
-						user = i.user;
+						var user = i.user;
 						members.push(user);
 						refreshList(members, occupants);
 					}
@@ -373,11 +365,11 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 			$location.path('/me/login');
 		}
 		else $location.path("/me");
-	}
+	};
 	
 	$scope.toggleEmbed = function(){
 		$('#embedScript').toggle();
-	}
+	};
 	
 	$scope.isOwner = function() {
 		if($scope.user.id == $scope.room.owner) return true;
@@ -414,7 +406,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	
 	$scope.joinRoom = function() {
 		var msg = {};
-		var flag = 1;
+		var flag = 1, i;
 		if(/^guest-/.test($scope.user.id)){
 			//guest
 			$location.path('/me/login');
@@ -425,20 +417,20 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 		msg.type = "join";
 		$factory.message(msg);
 		
-		if(!$scope.room.members){ $scope.room.members= [] }
+		if(!$scope.room.members){ $scope.room.members= []; }
 			
 		for(i=0; i < $scope.room.members.length; i++ ) {
 			if($scope.room.members[i].id === $scope.user.id){
 				flag = 0;
 				break;
 			}
-		};
+		}
 			
 		if(flag == 1){
 			$scope.room.members.unshift($scope.user);
 		}
 		$scope.user.membership.unshift($scope.room.id);
-	}
+	};
 	
 	$scope.hasMembership = function() {
 		var index = -1;
@@ -450,7 +442,7 @@ scrollbackApp.controller('roomcontroller', function($scope, $timeout, $factory, 
 	
 });
 
-scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', '$factory', function($scope, $timeout, $location, $factory) {	
+scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', function($scope, $timeout, $location) {	
 	$scope.goBack = function(){
 		$location.path("/"+$scope.room.id);
 	};
@@ -460,11 +452,11 @@ scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', 
     }
 	
     $scope.goTo = function(room) {
-    	if($scope.room.id == room){
-    		$location.path("/"+room);
-    	}else{
-    		window.location = "/"+room;
-    	}
+		if($scope.room.id == room){
+			$location.path("/"+room);
+		}else{
+			window.location = "/"+room;
+		}
     };
 	
 	$scope.isExists = function(m) {
@@ -475,8 +467,7 @@ scrollbackApp.controller('roomscontroller', ['$scope', '$timeout', '$location', 
 	};
 }]); 
 
-scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location', '$rootScope', '$routeParams', function($scope, $factory, $location, $rootScope, $routeParams) {
-	var url;
+scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location', function($scope, $factory, $location) {
 	$scope.editRoom = {
 		id: $scope.room.id,
 		description:$scope.room.description|| "",
@@ -499,7 +490,6 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 		$location.path("/"+$scope.room.id);
 	};
 	$scope.saveRoom = function() {
-		var room={};
 		$scope.editRoom.id = $scope.room.id;
 		$scope.editRoom.name = $scope.room.id;
 		$scope.editRoom.description = $scope.editRoom.description || "";
@@ -553,8 +543,8 @@ scrollbackApp.controller('configcontroller' ,['$scope', '$factory', '$location',
 }]);
 scrollbackApp.controller('ircController',['$scope', function($scope) {
 	if($scope.room.accounts && $scope.room.accounts.forEach) {
-		$scope.room.accounts.forEach(function(account) {
-			url = parseUrl($scope.room.accounts[0].id);
+		$scope.room.accounts.forEach(function() {
+			var url = parseUrl($scope.room.accounts[0].id);
 			if(url.protocol == "irc") {
 				$scope.editRoom.ircServer = url.hostname;
 				$scope.editRoom.ircRoom = url.hash;	
@@ -645,7 +635,7 @@ scrollbackApp.controller('rootController' , ['$scope', '$factory', '$location', 
 scrollbackApp.controller('profileController' , ['$scope', '$factory', '$location', function($scope, $factory, $location) {
 	
 	$scope.logout = function() {
-		$factory.message({type:"nick", to:"", ref:"guest-"},function(message) {
+		$factory.message({type:"nick", to:"", ref:"guest-"},function() {
 			navigator.id.logout();
 			if($scope.room.id) $location.path("/"+$scope.room.id);
 			else $location.path("/me/login");

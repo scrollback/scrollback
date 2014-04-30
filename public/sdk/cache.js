@@ -55,11 +55,13 @@ function messageArray(initData) {
 			start = find(startTime),
 			end = find(endTime);
 		
-		while (messages[start-1] && messages[start-1].time == startTime) {
+// TODO: THIS SHOULD BE DONE ONLY FOR the end with specified time
+
+		while (data[0].endtype && data[0].endtype == 'time' && messages[start-1] && messages[start-1].time == startTime) {
 			start--;
 		}
 		
-		while (messages[end] && messages[end].time == endTime) {
+		while (data[data.length-1].endtype && data[data.length-1].endtype == 'time' && messages[end] && messages[end].time == endTime) {
 			end++;
 		}
 		

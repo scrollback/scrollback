@@ -33,8 +33,6 @@ function start(name) {
 	plugin(core);
 }
 
-console.log(config.plugins);
 config.plugins.forEach(function(name) {
-	if(name === "leveldb-storage") return;
 	start(name);
 });

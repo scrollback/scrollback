@@ -41,18 +41,22 @@ module.exports = function(coreObj) {
 				callback(null, payload);
 			}, "setters");
 		});
-		core.on("room", function(room, callback){
-			log("room twitter--", JSON.stringify(room));
-			if (room.type == 'room' && room.params && room.params.twitter) {
-				addTwitterTokens(room, callback);			
-			}
-			else {
-				callback();
-			}
-		},"gateway");
+		core.on("room", twitterRoomHandler, "gateway");
 	}
 	else {
 		log("Twitter module is not enabled.");
+	}
+};
+
+
+function twitterRoomHandler(action, callback) {
+	var room = action.room;
+	log("room twitter--", JSON.stringify(room));
+	if (room.type == 'room' && room.params && room.params.twitter) {
+		addTwitterTokens(room, callback);			
+	}
+	else {
+		callback();
 	}
 };
 /**
@@ -61,48 +65,52 @@ module.exports = function(coreObj) {
  */
 function addTwitterTokens(room, callback) {
 	logTwitter("adding twitter tokens.", room);
-	var multi = redis.multi();
-	multi.get("twitter:userData:token:" + room.owner);
-	multi.get("twitter:userData:tokenSecret:" + room.owner);
-	multi.get("twitter:userData:profile:" + room.owner);
-	multi.exec(function(err, replies) {
-		if (err) {
-			logTwitter("some redis Error: ", err);
-			callback(new Error("TWITTER_LOGIN_ERROR"));
-		}
-		else {
-			if (replies[0] && replies[1] && replies[2]) {
-				logTwitter("adding new values....");
-				room.params.twitter.token = replies[0];
-				room.params.twitter.tokenSecret = replies[1];
-				room.params.twitter.profile = JSON.parse(replies[2]);
-				room.params.twitter.tags = room.params.twitter.tags || "";
-				room.params.twitter.tags = formatString(room.params.twitter.tags);
-				callback();
+	redis.multi(function(multi) {
+		multi.get("twitter:userData:token:" + room.owner);
+		multi.get("twitter:userData:tokenSecret:" + room.owner);
+		multi.get("twitter:userData:profile:" + room.owner);
+		multi.exec(function(err, replies) {
+			if (err) {
+				logTwitter("some redis Error: ", err);
+				callback(new Error("TWITTER_LOGIN_ERROR"));
 			}
-			else {//new values are not present in redis.. copy old
-				copyOld();
+			else {
+				if (replies[0] && replies[1] && replies[2]) {
+					logTwitter("adding new values....");
+					room.params.twitter.token = replies[0];
+					room.params.twitter.tokenSecret = replies[1];
+					room.params.twitter.profile = JSON.parse(replies[2]);
+					room.params.twitter.tags = room.params.twitter.tags || "";
+					room.params.twitter.tags = formatString(room.params.twitter.tags);
+					callback();
+					redis.multi(function(multi) {
+						
+					});
+				}
+				else {//new values are not present in redis.. copy old
+					copyOld();
+				}
+			
 			}
-		
-		}
+		});
 	});
-	function copyOld() {
-		logTwitter("copyOld");
-		
-		var old;//old account
-		if(room.old && room.old.params) old = room.old.params.twitter;
-		if(old) {
-			room.params.twitter.token = old.token;
-			room.params.twitter.tokenSecret = old.tokenSecret;
-			room.params.twitter.profile = old.profile;
-			if(!room.params.twitter.tags) room.params.twitter.tags = "";
-			room.params.twitter.tags = formatString(room.params.twitter.tags);
-			callback();
-		}
-		else {
-			callback(new Error("TWITTER_LOGIN_ERROR"));
-		}
-		
+}
+
+function copyOld(room) {
+	logTwitter("copyOld");
+	
+	var old;//old account
+	if(room.old && room.old.params) old = room.old.params.twitter;
+	if(old) {
+		room.params.twitter.token = old.token;
+		room.params.twitter.tokenSecret = old.tokenSecret;
+		room.params.twitter.profile = old.profile;
+		if(!room.params.twitter.tags) room.params.twitter.tags = "";
+		room.params.twitter.tags = formatString(room.params.twitter.tags);
+		callback();
+	}
+	else {
+		callback(new Error("TWITTER_LOGIN_ERROR"));
 	}
 }
 
@@ -230,18 +238,17 @@ function getRequest(req, res, next) {
 			function(token, tokenSecret, profile, done) {
 				logTwitter("tokens", token, tokenSecret);
 				userData[req.session.user.id] = {token: token,tokenSecret: tokenSecret, profile : profile};
-				
-				var multi = redis.multi();
-				multi.setex("twitter:userData:token:" + req.session.user.id, expireTime, token);
-				multi.setex("twitter:userData:tokenSecret:" + req.session.user.id, expireTime, tokenSecret);
-				multi.setex("twitter:userData:profile:" + req.session.user.id, expireTime, JSON.stringify(profile));
-				multi.exec(function(err,replies) {
-					logTwitter("user data added: ", replies);	
+				redis.multi(function(multi) {
+					multi.setex("twitter:userData:token:" + req.session.user.id, expireTime, token);
+					multi.setex("twitter:userData:tokenSecret:" + req.session.user.id, expireTime, tokenSecret);
+					multi.setex("twitter:userData:profile:" + req.session.user.id, expireTime, JSON.stringify(profile));
+					multi.exec(function(err,replies) {
+						logTwitter("user data added: ", replies);	
+					});
+					done(null, profile);
 				});
-				done(null, profile);
 			}
 		));
-		
 		passport.authenticate('twitter')(req, res, next);
 	}
 	else if (ps.length >= 3 && ps[0] === "auth" && ps[1] === "callback") {
@@ -261,12 +268,4 @@ function getRequest(req, res, next) {
 		next();
 	}
 }
-
 /**** get request handler *******/
-
-
-
-
-
-
-

@@ -15,6 +15,14 @@ module.exports = function(core) {
 		};
 	*/
 	var handlers = {
+		init: function(action, callback) {
+			var n;
+			if(action.suggestedNick) {
+				n = validateRoom(action.suggestedNick, true);
+				if(n != action.suggestedNick) action.suggestedNick = n;
+			}
+			callback();
+		},
 		join: function(action, callback) {
 			if(/^guest-/.test(action.from)) return callback(new Error("GUEST_CANNOT_JOIN"));
 			if(!action.role) action.role = "follower";
@@ -70,12 +78,17 @@ module.exports = function(core) {
   			callback();
 		}
 	};
+	
 	events.forEach(function(event) {
 		core.on(event, function(action, callback) {
 			basicValidation(action, function(err) {
 				if(err) return callback(err);
-				if(handlers[event]) handlers[event](action, callback);
-				else callback();
+				if(handlers[event]){
+					handlers[event](action, callback);	
+				} 
+				else{
+					callback();	
+				} 
 			})
 		}, "validation");
 	});
@@ -84,16 +97,19 @@ module.exports = function(core) {
 function basicValidation(action, callback) {
 	if(!action.id) action.id = generate.uid();
 	if(!action.type) return callback(new Error("INVALID_ACTION_TYPE"));
-	if(!action.from) return callback(new Error("INVALID_USER"));
-	if(!validateRoom(action.from)) {
+	if(action.type!="init" && !action.from) {
 		return callback(new Error("INVALID_USER"));
 	}
-	action.from = action.from.toLowerCase();
-	if(!action.to) return callback(new Error("INVALID_ROOM"));
+
 	if(action.type === "init" || action.type === "user") {
 		action.to = "me";
-	}else if(!validateRoom(action.to)) { 
-		return callback(new Error("INVALID_ROOM"));
+	}else{
+		if(!action.to){
+			return callback(new Error("INVALID_ROOM"));	
+		}
+		else if(!validateRoom(action.to)) { 
+			return callback(new Error("INVALID_ROOM"));
+		}
 	}
 	action.to = action.to.toLowerCase();
 	if(!action.session) return callback(new Error("NO_SESSION_ID"));

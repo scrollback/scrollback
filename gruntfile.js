@@ -22,6 +22,16 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
+	browserify : {
+		dist: {
+			files: {
+				'public/libsb.bundle.js' : ['libsb.js']
+			}
+		},
+		options: {
+			debug: true
+		}
+	},
     uglify: {
 		options: {
 			report: 'min'
@@ -120,6 +130,7 @@ module.exports = function(grunt) {
   });
 
   // Load the plugin that provides the "uglify" task.
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-wrap');
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -128,12 +139,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-autoprefixer');
   grunt.loadNpmTasks('grunt-image-embed');
   grunt.loadNpmTasks('grunt-appcache');
-  // Default task(s).
 
+  // Default task(s).
   grunt.event.on('watch', function(action, filepath, target) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
-  grunt.registerTask('default', ['uglify', 'concat', 'wrap', 'less', 'autoprefixer', 'imageEmbed', 'appcache']);
 
-
+  grunt.registerTask('default', ['browserify', 'uglify', 'concat', 'wrap', 'less', 'autoprefixer', 'imageEmbed', 'appcache']);
 };

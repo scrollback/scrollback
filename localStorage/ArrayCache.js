@@ -1,8 +1,8 @@
 "use strict";
 
-function messageArray(initData) {
+module.exports = function ArrayCache(initData) {
 	var messages = initData || [];
-	
+
 	function find (time, start, end) {
 		var pos;
 
@@ -25,17 +25,17 @@ function messageArray(initData) {
 		}
 	}
 	
-	function merge (data) {
-		if (!data.length) return;
+	function put(data) {
+		if (!data.length) return;		
 		var startTime = data[0].time, endTime = data[data.length-1].time,
 			start = find(startTime),
 			end = find(endTime);
 		
-		while (messages[start-1] && messages[start-1].time == startTime) {
+		while (data[0].endtype && data[0].endtype == 'time' && messages[start-1] && messages[start-1].time == startTime) {
 			start--;
 		}
 		
-		while (messages[end] && messages[end].time == endTime) {
+		while (data[data.length-1].endtype && data[data.length-1].endtype == 'time' && messages[end] && messages[end].time == endTime) {
 			end++;
 		}
 		
@@ -50,54 +50,25 @@ function messageArray(initData) {
 		[].splice.apply(messages, [start, end - start].concat(data));
 	}
 	
-	function extract(time, before, after, missing) {
-		var res = [], mid, i, l = messages.length, c, m, start = null;
+	function get(query) {
+		var time = query.time, before = query.before, after = query.after,
+			res = [], pos, i, l = messages.length, c, m, start = null;
 		
-		
-		if (!time && missing) {
-			res.push(missing(null, null));
-			time = Infinity;
+		pos = time? find(time): l-1;
+
+		for(i=-before; i<after; i++) {
+			c = mid + i;
+			if(c<0) i-=c;
+			if(c>=l) break;
+			m = messages[c];
+			if(m.type == 'result-start' || m.type == 'result-end') return null;
+			res.push(m);
 		}
-		
-		mid = find(time);
-		
-		for (i=mid, c=0; i>0 && c<before; i--) {
-			if (messages[i] && messages[i].type == 'text') c++;
-		}
-		
-		for (c=0; i<l && c<before+after+1; i++) {
-			m = messages[i];
-			switch (m.type) {
-				case 'result-start':
-					if (missing) {
-						res.push(missing(start, m.time));
-					}
-					break;
-				case 'result-end':
-					start = m.time;
-					break;
-				case 'text':
-					res.push(m);
-					c++;
-					break;
-			}
-		}
-		if (m && m.type == 'result-end' && missing) {
-			res.push(missing(m.time, null));
-		}
-		
+
 		return res;
 	}
 	
-	messages.merge = merge;
-	messages.find = find;
-	messages.extract = extract;
-	
+	messages.put = put;
+	messages.get = get;
 	return messages;
 }
-
-//// --- for testing in node.
-//if (module && module.exports) {
-//	module.exports = messageArray;
-//}
-//

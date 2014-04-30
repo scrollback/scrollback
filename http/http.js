@@ -26,8 +26,9 @@ var express = require("./express.js"),
 	app = express.init();
 
 var init = function(core) {
-	socket(app.httpServer, core);
-	if(app.httpsServer) socket(app.httpsServer, core);
+	socket.initCore(core);
+	socket.initServer(app.httpServer);
+	if(app.httpsServer) socket.initServer(app.httpsServer, core);
 	plugins.init(app, core);
 	page.init(app, core);
 	
@@ -35,18 +36,21 @@ var init = function(core) {
 
 module.exports = function(core){
 	init(core);
-	core.on("message" , function(message, callback) {
-		log("Heard \"message\" Event");
-		if(typeof message.to == "string")
-			send(message, [message.to]);
-		else if(typeof message.to == "object")
-			send(message, message.to);
-		callback();
-	}, "gateway");
-	core.on("edit", function(edit, callback) {
-		emit("edit", edit, edit.to);
-		callback();
-	},"gateway");
 	var send = socket.send;
 	var emit = socket.emit;
+	// core.on("init", function(action, callback) {
+		
+	// });
+	// core.on("message" , function(message, callback) {
+	// 	log("Heard \"message\" Event");
+	// 	if(typeof message.to == "string")
+	// 		send(message, [message.to]);
+	// 	else if(typeof message.to == "object")
+	// 		send(message, message.to);
+	// 	callback();
+	// }, "gateway");
+	// core.on("edit", function(edit, callback) {
+	// 	emit("edit", edit, edit.to);
+	// 	callback();
+	// },"gateway");
 };
