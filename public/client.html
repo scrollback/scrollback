@@ -73,10 +73,8 @@
 					<li class="tab tab-irc-settings">IRC integration</li>
 					<li class="tab tab-twitter-settings">Twitter integration</li>
 					<li class="tab tab-thread-settings">Threading</li>
-					<li class="tab tab-permissions-settings">Permissions</li>
-					<li class="tab tab-requests-settings">Requests</li>
-					<li class="tab tab-spam-settings">Spam control</li>
 					<li class="tab tab-seo-settings">SEO</li>
+					<li class="tab tab-embed-settings">Embed code</li>
 				</ul>
 			</div>
 		</section>
@@ -193,130 +191,6 @@
 						</div>
 					</div>
 				</div>
-				<div class="pane pane-permissions-settings">
-					<div class="settings-item">
-						<div class="settings-label">
-							Who can read messsages
-						</div>
-						<div class="settings-action">
-							<input type="checkbox" id="read-guests" name="read-guests"><label for="read-guests">Guests</label><br/>
-							<input type="checkbox" id="read-visitors" name="read-visitors"><label for="read-guests">Visitors</label><br/>
-							<input type="checkbox" id="read-followers" name="read-followers"><label for="read-followers">Followers</label>
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label">
-							Who can post messages
-						</div>
-						<div class="settings-action">
-							<input type="checkbox" id="write-guests" name="write-guests"><label for="write-guests">Guests</label><br/>
-							<input type="checkbox" id="write-visitors" name="write-visitors"><label for="write-guests">Visitors</label><br/>
-							<input type="checkbox" id="write-followers" name="write-followers"><label for="write-followers">Followers</label>
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label inline">
-							Require approval for following
-						</div>
-						<div class="settings-action inline">
-							<input class="switch" type="checkbox" id="follow-request" name="follow-request"><label for="follow-request"></label>
-						</div>
-					</div>
-				</div>
-				<div class="pane pane-requests-settings">
-					<div class="request-msg">
-						<img src="s/img/avatars/Keith.jpg" alt="">
-						<div class="request-details">
-							<div class="username"><a href="">randomdude</a></div>
-							<a class="button">Approve</a>
-							<a class="button-secondary">Ignore</a>
-						</div>
-					</div>
-					<div class="request-msg">
-						<img src="s/img/avatars/Keith.jpg" alt="">
-						<div class="request-details">
-							<div class="username"><a href="">randomdude</a></div>
-							<a class="button">Approve</a>
-							<a class="button-secondary">Ignore</a>
-						</div>
-					</div>
-					<div class="request-msg">
-						<img src="s/img/avatars/Keith.jpg" alt="">
-						<div class="request-details">
-							<div class="username"><a href="">randomdude</a></div>
-							<a class="button">Approve</a>
-							<a class="button-secondary">Ignore</a>
-						</div>
-					</div>
-					<div class="request-msg">
-						<img src="s/img/avatars/Keith.jpg" alt="">
-						<div class="request-details">
-							<div class="username"><a href="">randomdude</a></div>
-							<a class="button">Approve</a>
-							<a class="button-secondary">Ignore</a>
-						</div>
-					</div>
-					<div class="request-msg">
-						<img src="s/img/avatars/Keith.jpg" alt="">
-						<div class="request-details">
-							<div class="username"><a href="">randomdude</a></div>
-							<a class="button">Approve</a>
-							<a class="button-secondary">Ignore</a>
-						</div>
-					</div>
-				</div>
-				<div class="pane pane-spam-settings">
-					<div class="settings-item">
-						<div class="settings-label inline">
-							Block repetitive messages
-						</div>
-						<div class="settings-action inline">
-							<input class="switch" type="checkbox" id="block-repetitive" name="block-repetitive"><label for="block-repetitive"></label>
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label inline">
-							Block nonsense messages
-						</div>
-						<div class="settings-action inline">
-							<input class="switch" type="checkbox" id="block-nonsense" name="block-nonsense"><label for="block-nonsense"></label>
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label">
-							Block offensive words
-						</div>
-						<div class="settings-action">
-							<input type="checkbox" id="block-en-mod" name="block-en-mod"><label for="block-en-mod">English moderate</label><br/>
-							<input type="checkbox" id="block-en-strict" name="block-en-strict"><label for="block-en-strict">English strict</label><br/>
-							<input type="checkbox" id="block-zn-strict" name="block-zn-strict"><label for="block-zn-strict">Chinese strict</label>
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label">
-							Custom blocked words
-						</div>
-						<div class="settings-action">
-							<input type="text" id="blocked-words" name="blocked-words">
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label">
-							Gagged users
-						</div>
-						<div class="settings-action">
-							<input type="text" id="gagged-users" name="gagged-users">
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label">
-							Banned users
-						</div>
-						<div class="settings-action">
-							<input type="text" id="banned-users" name="banned-users">
-						</div>
-					</div>
-				</div>
 				<div class="pane pane-seo-settings">
 					<div class="settings-item">
 						<div class="settings-label inline">
@@ -325,6 +199,25 @@
 						<div class="settings-action inline">
 							<input class="switch" type="checkbox" id="allow-index" name="allow-index"><label for="allow-index"></label>
 						</div>
+					</div>
+				</div>
+				<div class="pane pane-embed-settings">
+					<div class="settings-item">
+						<p>Place the following code just before the closing <code>&lt;/body&gt;</code> tag.</p>
+						<pre><code>&lt;script&gt;
+// Scrollback embed code
+window.scrollback = {
+	streams:["scrollbackteam"],
+	theme: 'light',
+	ticker: true
+};
+
+/***** don't edit below *****/
+(function(d,s,h,e){e=d.createElement(s);e.async=1;
+e.src=h+'/client.min.js';scrollback.host=h;
+d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
+(document,'script',(location.protocol=="https:"?"https:":"http:")+'//scrollback.io'));
+&lt;/script&gt;</code></pre>
 					</div>
 				</div>
 			</div>
