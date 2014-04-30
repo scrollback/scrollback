@@ -145,5 +145,5 @@ module.exports = function(grunt) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
   
-  grunt.registerTask('default', ['grunt-browserify', 'uglify', 'concat', 'wrap', 'less', 'autoprefixer', 'imageEmbed', 'appcache']);
+  grunt.registerTask('default', ['browserify', 'uglify', 'concat', 'wrap', 'less', 'autoprefixer', 'imageEmbed', 'appcache']);
 };

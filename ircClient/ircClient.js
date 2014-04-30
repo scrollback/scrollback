@@ -7,7 +7,7 @@ var core;
 var botNick = config.botNick;//part of config of IRC client.
 var clients = {};//for server channel user,server --> client. 
 var servChanProp = {};//object of server channel prop
-var rooms = {};//room id to room obj map. //TODO delete room obj if any room deleted irc.(Done Test)
+var rooms = {};//room id to room obj map.
 var servNick = {};//server channel nick -------> sb nick.
 var renameCallback = {};
 var connected = false;

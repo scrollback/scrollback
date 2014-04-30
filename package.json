@@ -62,7 +62,6 @@
     "grunt-contrib-less": "~0.7.0",
     "grunt-autoprefixer": "x",
     "browserify": "~3.24.6",
-    "grunt-browserify": "~1.3.0",
     "grunt-image-embed": "x",
     "grunt-appcache": "x"
   },

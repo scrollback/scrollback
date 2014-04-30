@@ -35,7 +35,7 @@ function init() {
 			sub = 30;
 		}
 		setTimeout(function(){
-			sendperiodicMails();
+			sendPeriodicMails();
 			setInterval(sendPeriodicMails, 60*60*1000);//TODO move these numbers to myConfig
 		}, (sub-x)*60000);
 		setTimeout(function(){

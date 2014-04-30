@@ -40,10 +40,10 @@ module.exports = function (types) {
 		getRooms: function(query, cb) {
 			var gateway, eqArray = [], req={};
 			if(query.results) return cb();
-
+			req.eq = [];
 			if(query.hasMember) {
 				req.by = "hasMember";
-				req.eq = [];
+				
 				req.eq.push(query.hasMember);
 				req.map = function(element, push) {
 					if(element.role == "none") return false;

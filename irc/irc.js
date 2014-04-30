@@ -5,6 +5,7 @@ var log = require("../lib/logger.js");
 var events = require('events');
 var clientEmitter = new events.EventEmitter();
 var client = require('./client.js');
+var internalSession = Object.keys(config.whitelists)[0];
 client.init(clientEmitter);
 var core;
 var callbacks = {};
@@ -76,7 +77,7 @@ function init() {
 			}
 		}
 		log("init from ircClient", state);
-		core.emit("getRooms", {identity: "irc"}, function(data) {
+		core.emit("getRooms", {identity: "irc", session: internalSession}, function(err, data) {
 			var rooms = data.results;
 			log("rooms:", rooms);
 			log("returned state from IRC:", JSON.stringify(state));
@@ -221,10 +222,10 @@ function sendInitAndBack(suggestedNick, session ,room) {
 
 
 function connectAllUsers(room) {
-	core.emit('getUsers', {occupantOf: room.id}, function(data) {
+	core.emit('getUsers', {occupantOf: room.id, session: internalSession}, function(err, data) {
 		var users = data.results;
 		users.forEach(function(user) {
-			connectUser(room.id, user.id);//TODO use proper format of user object
+			connectUser(room.id, user.id);
 		});
 	});
 }
