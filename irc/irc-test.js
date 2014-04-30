@@ -7,6 +7,7 @@ var irc = require('irc');
 var guid = gen.uid;
 var names = gen.names;
 var client;
+var testingServer = "dev.scrollback.io";
 var users = [
 	{
 		id: 'abc123',
@@ -22,7 +23,7 @@ var rooms = [{
 	type: "room",
 	params: {
 		irc: {
-			server: "localhost",
+			server: testingServer,
 			channel: "#scrollback",
 			enabled: true,
 			pending: false
@@ -33,34 +34,12 @@ var rooms = [{
 	type: "room",
 	params: {
 		irc: {
-			server: "localhost",
+			server: testingServer,
 			channel: "#testingroom",
 			enabled: true,
 			pending: false
 		}
-	}}/*,
-	{
-	id: "nodejs",
-	type: "room",
-	params: {
-		irc: {
-			server: "chat.freenode.net",
-			channel: "#node.js",
-			enabled: true,
-			pending: false
-		}
-	}},
-	{
-	id: "dogecoin",
-	type: "room",
-	params: {
-		irc: {
-			server: "chat.freenode.net",
-			channel: "#dogecoin",
-			enabled: true,
-			pending: false
-		}
-	}}*/
+	}}
 ];
 describe('connect new IRC channel', function() {
 	before( function(done) {
@@ -83,11 +62,11 @@ describe('connect new IRC channel', function() {
 		core.on('text', function(text, callback) {
 			console.log("text called irc test:", text);
 			text.room = rooms[0];
-			if(!text.session) text.session = "ircClient://" + rooms[0].params.irc.server + ":" + "test";
+			if(!text.session) text.session = "irc://" + rooms[0].params.irc.server + ":" + "test";
 			callback();
 		}, "modifier");
-		client = new irc.Client("localhost", "testingBot", {
-			channels: ["#scrollback", "#testingRoom"]
+		client = new irc.Client(testingServer, "testingbot", {
+			channels: ["#scrollback", "#testingroom"]
 		});
 		
 		ircSb(core);
@@ -110,8 +89,9 @@ describe('connect new IRC channel', function() {
 		});
 		console.log("running Test");
 		
-		for(var i = 0;i < 15;i++) {
-			qu.push(guid());
+		for(var i = 0;i < 8;i++) {
+			var text = guid();
+			qu.push(text);
 			core.emit("text", {
 				type: 'back',
 				to: "scrollback",
@@ -123,12 +103,29 @@ describe('connect new IRC channel', function() {
 				type: 'text',
 				to: "scrollback",
 				from: "outuser" + i,
-				text: qu[i],
+				text: text,
 				session: "web://outuser" 
 			});
 			
 		}
 	});
 	
+	it("receiving messages from irc user", function(done) {
+		this.timeout(1000*60);//1 min
+		var msg = guid();
+		core.on('text', function(text, callback) {
+			if (text.type === 'text' && text.from == "c" + client.nick && text.to === "scrollback" && text.text === "this is testing message id=" + msg) {
+				done();
+			}
+			callback();
+		});
+		client.say("#scrollback", "this is testing message id=" + msg);
+		
+	});
+	
+	//it("wait", function(done) {
+	//	this.timeout(1000*120);
+	//	
+	//});
 	
 });

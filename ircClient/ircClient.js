@@ -44,9 +44,11 @@ ERROR: { prefix: 'irc.local',
    [ 'test2',
      'long name' ] }
 TODO if room changes b/w restart then discart queuing messages.
-//9 char is min max limit if(nick > 9) gen random.
-//handle the case if connection is disconnected by other party
-
+1.//9 char is min max limit if(nick > 9) gen random.
+2.//handle the case if connection is disconnected by other party
+3.{ command: 'ERROR', rawCommand: 'ERROR', commandType: 'normal', args: [ 'Closing Link: 122.166.181.21 (No more connections allowed on that IP)' ] }
+4.Raw message: { command: 'ERROR', rawCommand: 'ERROR', commandType: 'normal', args: [ 'Trying to reconnect too fast.' ] }
+this error caused by throttle_time = some_value;
 ******************************************/
 
 /**
@@ -232,7 +234,7 @@ function onPM(client) {
 					if(room.params.irc.pending && room.id === r && reply.channels) {
 						log("room pending true");
 						reply.channels.forEach(function(channel) {
-							if (channel.substring(0,1) == '@' && channel.substring(1) === room.params.irc.channel) {
+							if (channel.substring(0,1) === '@' && channel.substring(1) === room.params.irc.channel) {
 								client.join(room.params.irc.channel);
 								if (connected) {
 									sendRoom(room);
@@ -427,7 +429,6 @@ function say(message) {
 
 /**
  * changes mapping of old nick to new nick
- * called from other side of app.
  * and not reconnect as new user.
  * this will be reply of back message if nick changes.
  */
