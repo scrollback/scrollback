@@ -38,7 +38,7 @@ var format = {
 	},
 
 	textToHtml: function (str) {
-		return str.replace('<', '&lt;').replace('>', '&gt;'); // prevent script injection
+		if(str)	return str.replace('<', '&lt;').replace('>', '&gt;'); // prevent script injection
 
 		// TODO: linkification, emoticons, markdown?
 	},

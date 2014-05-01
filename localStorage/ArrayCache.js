@@ -73,4 +73,3 @@ module.exports = function ArrayCache(initData) {
 	messages.get = get;
 	return messages;
 }
-module.exports = ArrayCache;
