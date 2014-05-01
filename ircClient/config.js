@@ -1,4 +1,4 @@
 module.exports = {
-	botNick: "scrollback",//default bot nick,
+	botNick: "intensiv",//default bot nick,
 	port: 78910
 };

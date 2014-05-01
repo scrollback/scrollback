@@ -46,11 +46,11 @@ describe('connect new IRC channel', function() {
 		this.timeout(5*40000);
 		core.on('getUsers', function(v, callback) {
 			v.results = users;
-			callback(v);
+			callback(null, v);
 		});
 		core.on("getRooms", function(q, callback) {
 			q.results = rooms;
-			callback(q);
+			callback(null, q);
 		});
 		core.on('init', function(init, callback) {
 			init.user = {
@@ -66,7 +66,7 @@ describe('connect new IRC channel', function() {
 			callback();
 		}, "modifier");
 		client = new irc.Client(testingServer, "testingbot", {
-			channels: ["#scrollback", "#testingroom"]
+			channels: ["#scrollback", "#testingroom", "#testingroom2"]
 		});
 		
 		ircSb(core);
@@ -78,7 +78,7 @@ describe('connect new IRC channel', function() {
 		this.timeout(1000*60);
 		var qu = [];
 		client.on("message#", function(from, to, message) {
-			console.log(to, from, message);
+			console.log("get message from irc:", to, from, message);
 			var a = qu.indexOf(message);
 			if (a != -1) {
 				qu.splice(a, 1);
@@ -104,7 +104,7 @@ describe('connect new IRC channel', function() {
 				to: "scrollback",
 				from: "outuser" + i,
 				text: text,
-				session: "web://outuser" 
+				session: "web://outuser"  + i
 			});
 			
 		}
@@ -123,9 +123,84 @@ describe('connect new IRC channel', function() {
 		
 	});
 	
-	//it("wait", function(done) {
-	//	this.timeout(1000*120);
-	//	
-	//});
+	it("away message test", function(done) {
+		this.timeout(1000*60);
+		client.on("part", function(channel, nick, reason, message){
+			if (nick === 'outuser0' && channel == "#scrollback") {
+				done();
+			}
+		});
+		core.emit('text', {
+			type: "away",
+			to: "scrollback",
+			from: "outuser0",
+			session: "web://outuser0"
+		});
+		
+	});
 	
+	it("Adding new Room", function(done) {
+		console.log("Running new room");
+		//client.
+		this.timeout(60 * 1000);
+		core.emit("room", {
+			id: "testingroom2",
+			type: "room",
+			session: "web://somesession",
+			params: {
+				irc: {
+					server: testingServer,
+					channel: "#testingroom2",
+					pending: false,
+					enabled: true
+				}
+			}
+		}, function(err, room) {
+			console.log("room is connected now");
+			done();
+		});
+		
+		
+	});
+	
+	
+	
+	it("Update Old room", function(done) {
+		console.log("Running new room should disconnect from #testingroom2 and connect to #testingroom3");
+		//client.
+		this.timeout(60 * 1000);
+		core.emit("room", {
+			id: "testingroom2",
+			type: "room",
+			params: {
+				irc: {
+					server: testingServer,
+					channel: "#testingroom3",
+					pending: false,
+					enabled: true
+				}
+			},
+			old: {
+				id: "testingroom2",
+				type: "room",
+				params: {
+					irc: {
+						server: testingServer,
+						channel: "#testingroom2",
+						pending: false,
+						enabled: true
+					}
+				}
+				
+			},
+			session: "web://somesession"
+		}, function(room) {
+			console.log("room is connected now");
+			done();
+		});
+		
+		
+	});
+	
+
 });

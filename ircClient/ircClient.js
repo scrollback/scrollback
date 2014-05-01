@@ -11,7 +11,7 @@ var rooms = {};//room id to room obj map.
 var servNick = {};//server channel nick -------> sb nick.
 var renameCallback = {};
 var connected = false;
-
+//var botPartCallbacks = {};0
 
 /******************************* Exports ****************************************/
 module.exports.say = say;
@@ -133,7 +133,6 @@ function partBot(roomId) {
 	var client = clients[botNick][room.params.irc.server];
 	var channel = room.params.irc.channel;
 	var server = room.params.irc.server;
-	client.part(channel);//disconnect bot in case of all part.
 	var users = servChanProp[room.params.irc.server][channel].users;
 	log("users", users, ", servNick", servNick);
 	users.forEach(function(user) {
@@ -142,6 +141,7 @@ function partBot(roomId) {
 			clients[sbNick][server].part(channel);
 		}
 	});
+	client.part(channel);//disconnect bot in case of all part.
 	//delete servChanProp[server][channel];
 	delete rooms[roomId];
 }
@@ -306,8 +306,10 @@ function sendAway(server, channels, nick, bn) {
 		
 		channel = channel.toLowerCase();
 		log("users", servChanProp[server][channel].users.length);
-		if (bn === nick) {//bot left the channel //TODO test
+		if (bn === nick) {//bot left the channel //TODO test partBot.
+			
 			delete servChanProp[server][channel];
+			
 			return;
 		}
 		if (!servChanProp[server][channel]) {
