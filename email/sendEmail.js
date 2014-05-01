@@ -36,4 +36,4 @@ function send(from,to,subject,html) {
     });
 }
 
-module.export = send;
+module.exports = send;

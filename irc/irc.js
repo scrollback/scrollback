@@ -276,11 +276,8 @@ function disconnectUser(roomId, user) {
 
 /*new Request.*/
 function addNewBot(r, callback) {
+	console.log("Adding new bot for room :", r.id);
 	var room  = copyRoomOnlyIrc(r);
-	if(callback) {
-		room.params.irc.enabled = true;
-		room.params.irc.pending = true;
-	}
 	var uid = guid();
 	clientEmitter.emit('write', {
 		uid: uid,
@@ -290,8 +287,8 @@ function addNewBot(r, callback) {
 	});
 	if (callback) {
 		callbacks[uid] = function(message) {
-			room.params.irc.message = message;
-			if(message) callback(room);
+			if(message) room.params.irc.message = message;
+			callback(r);
 		};
 	}
 }
