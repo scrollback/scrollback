@@ -92,14 +92,18 @@ then
         ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
         echo "Installed"
     fi
-    echo "Installing mysql"
-    brew install mysql
-    echo "Installing git"
-    brew install git
-    echo "Installiing node.js"
-    brew install node
-    echo "Installing redis"
-    brew install redis
+    echo "Install MySQL [y/n]?"
+    read ans
+    [[ "$ans" = [Yy] ]] && brew install mysql
+    echo "Install git [y/n]?"
+    read ans
+    [[ "$ans" = [Yy] ]] && brew install git
+    echo "Install node.js [y/n]?"
+    read ans
+    [[ "$ans" = [Yy] ]] && brew install node
+    echo "Install redis [y/n]?"
+    read ans
+    [[ "$ans" = [Yy] ]] && brew install redis
 else
     # We only install packages for Ubuntu, Fedora and OSX
     echo "Unsupported distro. You will need to install the dependencies manually. Continue anyway [y/n]?"
