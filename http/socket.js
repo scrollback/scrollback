@@ -58,15 +58,15 @@ sock.on('connection', function (socket) {
 		}
 		
 		if(d.type == 'back') {
-
-
 			//just need for back as storeBack will be called before actionValidator
 			if(!d.to) {
 				e = {type: 'error', id: d.id, message: "INVALID_ROOM"};
+				console.log(e);
 				conn.send(e);
 				return;
 			} else if(!d.from) {
 				e = {type: 'error', id: d.id, message: "INVALID_USER"};
+				console.log(e);
 				conn.send(e);
 				return;
 			}
@@ -92,7 +92,7 @@ sock.on('connection', function (socket) {
 			}
 			if(data.type == 'away') storeAway(conn, data); 
 			if(data.type == 'init') storeInit(conn, data); 
-
+			if(data.type == 'user') processUser(conn, data);
 			if(['getUsers', 'getTexts', 'getRooms', 'getThreads'].indexOf(data.type)>=0){
 				// console.log("sending response for: "+data.type+": " ,data);
 				conn.send(data);
@@ -111,6 +111,11 @@ sock.on('connection', function (socket) {
 	socket.on('close', function() { handleClose(conn); });
 });
 
+function processUser(conn, user) {
+	if(/^guest-/.test(user.from)) {
+		core.emit("init",  {time: new Date().getTime(), to: 'me', session: conn.session, resource: conn.resource, type: "init"});
+	}
+}
 function storeInit(conn, init) {
 	if(!uConns[init.user.id]) uConns[init.user.id] = [];
 	sConns[init.session].forEach(function(c) {

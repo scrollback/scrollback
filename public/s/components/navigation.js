@@ -44,7 +44,7 @@ libsb.on("navigate", function(state, next) {
 			}
 		}
 	});
-	// console.log("set current to ", currentState);
+	// console.log("set current to ", currentState, "from", state.old);
 	next();
 }, 1000);
 

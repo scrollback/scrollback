@@ -58,18 +58,26 @@ function onGetRooms(query, callback) {
             }
             callback();
         });
-    } else if(query.hasOccupants) {
-        return occupantDB.smembers("user:{{"+query.hasOccupants+"}}:occupantOf", function(err, data) {
+    } else if(query.hasOccupant) {
+        return occupantDB.smembers("user:{{"+query.hasOccupant+"}}:occupantOf", function(err, data) {
             if(err) return callback(err);
-            data = data.map(function(e){
-                return "room:{{"+e+"}}";
-            })
+            console.log("++++++++++++++++++", data);
+            // data = data.map(function(e){
+            //     return "room:{{"+e+"}}";
+            // });
+            query.results = data;
+            return callback(err, data);
+/*  there are a few issues.. 
+    sometimes room data is not in the cache.
+    Also loading up so many rooms for init might be overkill.
+    considering its done for every navigation.
             roomDB.mget(data, function(err, data) {
                 data = data.map(function(e) {
                     return JSON.parse(e);
                 });
+                query.results = data;
                 return callback(err, data);
-            });
+            });*/
         });
     }else {
         callback();

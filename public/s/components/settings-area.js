@@ -33,7 +33,7 @@ $(function() {
 
 	libsb.on('navigate', function(state, next) {
 		// check state.mode == settings
-		console.log("State is ", state);
+		// console.log("State is ", state);
 		if(state.mode === "conf"){
 			if(state.tab) $('.settingsview').empty().append(currentConfig[state.tab]);
 			// if currentConfig is blank, then

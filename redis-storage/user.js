@@ -94,7 +94,7 @@ module.exports = function(c) {
 	core = c;
 	core.on("user", function(action, callback) {
 		userDB.set("user:{{"+action.user.id+"}}", JSON.stringify(action.user));
-		callback();
+        callback();
 	}, "storage");
 	core.on("init", updateUser, "storage");
 	core.on("getUsers", onGetUsers, "cache");

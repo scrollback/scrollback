@@ -111,6 +111,9 @@ module.exports = function (types) {
 			texts.get(dbQuery, function(err, data) {
 				if(err) return cb(err);
 				if(dbQuery.reverse) data = data.reverse();
+				data.forEach(function(e) {
+					console.log(e.to);
+				});
 				query.results = data;
 				cb();
 			});

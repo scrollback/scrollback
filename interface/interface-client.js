@@ -145,23 +145,29 @@ function userPreferForm(){
 
 function recvInit(init, next){
 	libsb.session = init.session;
+	if(init.auth && !init.user.id) {
+		core.emit("navigate", {});
+	}
+	libsb.user = init.user;
+	/* why????? 
 	if(underscore.isEqual(libsb.user, init.user)){
 		libsb.user = init.user;
 		core.emit('user-update');
 	}
+	*/
 	next();
 }
 
 function recvBack(back, next){
 	if(back.from !== libsb.user.id) return next();
-	if(!libsb.rooms.filter(function(room){ return room.id === back.to; }).length){
+/*	if(!libsb.rooms.filter(function(room){ return room.id === back.to; }).length){
 		libsb.rooms.push(back.room);
 		core.emit('rooms-update');
 	}
 	if(!libsb.occupantOf.filter(function(room){ return room.id === back.to; }).length){
 		libsb.occupantOf.push(back.room);
 		core.emit('occupantof-update');
-	}
+	}*/
 	next();
 }
 

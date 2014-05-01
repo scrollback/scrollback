@@ -1,5 +1,6 @@
 var config = require("../config.js"),
 	name = require("../lib/generate.js").names,
+	crypto = require('crypto'),
 	log = require("../lib/logger.js"),
 	request = require("request"), core,
 	internalSession = Object.keys(config.whitelists)[0];
@@ -50,6 +51,7 @@ function fbAuth(action, callback) {
 							if(data.results.length == 0) {
 								action.user = {};
 								action.user.identities = ["mailto:" + user.email];
+								action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update( user.email).digest('hex') + '/?d=identicon&s=48';
 								return callback();	
 							}
 							action.user = data.results[0];

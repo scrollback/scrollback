@@ -20,14 +20,14 @@
 		<!-- enable HTML5 in IE, we need to place it before body -->
 		<!--[if lt IE 9]>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
-		<script>window.html5 || document.write('<script src="s/lib/html5shiv.min.js"><\/script>')</script>
+		<script>window.html5 || document.write('<script src="/s/lib/html5shiv.min.js"><\/script>')</script>
 		<![endif]-->
 	</head>
 
 	<body class="guest-user">
 		<section class="rooms">
 			<div class="scrollback-header">
-				<img src="s/img/scrollback-small.png" alt="scrollback"/>
+				<img src="/s/img/scrollback-small.png" alt="scrollback"/>
 			</div>
 <!--			<a class="search-term" href="">Results for firefox</a>-->
 			<div role="list" class="roomlist hide-scroll">
@@ -92,7 +92,7 @@
 						<div class="sign-in">Sign in</div>
 					</div>
 					<div class="avatar has-popover">
-						<img alt="" src="https://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06">
+						<img alt="" id="userGrav" >
 					</div>
 				</div>
 <!--
@@ -235,8 +235,9 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 				<h1>Choose a username</h1>
 				<img src="">
 				<form>
-				<input type="text" name="username" placeholder="Enter username" autofocus><br/>
-				<input type="submit" value="Create account">
+				<input type="text" id="signup-id" name="username" placeholder="Enter username" autofocus><br/>
+				<input class="signup-save" type="button" value="Create account">
+				<input class="signup-cancel" type="button" value="cancel"
 				</form>
 			</div>
 		</section>
@@ -244,49 +245,49 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 		<div role="menu" class="popover-body"></div>
 
 		<!-- scripts -->
-        <script src="s/lib/html5shiv.min.js"></script>
+        <script src="/s/lib/html5shiv.min.js"></script>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="s/lib/jquery.min.js"><\/script>');</script>
+		<script>window.jQuery || document.write('<script src="/s/lib/jquery.min.js"><\/script>');</script>
 
-		<script src="s/lib/pointer.events.polyfill.min.js"></script> <!-- adds pointer events support for old IE -->
+		<script src="/s/lib/pointer.events.polyfill.min.js"></script> <!-- adds pointer events support for old IE -->
 		<script>$(function() { PointerEventsPolyfill.initialize({}); });</script>
 
-		<script src="s/lib/transformie.min.js"></script> <!-- adds CSS transforms support in old IE -->
+		<script src="/s/lib/transformie.min.js"></script> <!-- adds CSS transforms support in old IE -->
 
 		<script src="/sdk/sockjs.js"></script>
-		<script src="s/lib/bus.js"></script>
-		<script src="s/lib/format.js"></script>
+		<script src="/s/lib/bus.js"></script>
+		<script src="/s/lib/format.js"></script>
 
 		console.log();
-		<!-- <script src="s/js/mock-libsb.js"></script> -->
+		<!-- <script src="/s/js/mock-libsb.js"></script> -->
 		<script src="/libsb.bundle.js"></script>
 
-		<script src="s/components/infinite.js"></script>
-		<script src="s/components/hide-scroll.js"></script>
-		<script src="s/components/navigation.js"></script>
-		<script src="s/components/columns.js"></script>
-		<script src="s/components/popover.js"></script>
-		<script src="s/components/entry-segments.js"></script>
+		<script src="/s/components/infinite.js"></script>
+		<script src="/s/components/hide-scroll.js"></script>
+		<script src="/s/components/navigation.js"></script>
+		<script src="/s/components/columns.js"></script>
+		<script src="/s/components/popover.js"></script>
+		<script src="/s/components/entry-segments.js"></script>
 
-		<script src="s/components/text.js"></script>
-		<script src="s/components/text-area.js"></script>
-		<script src="s/components/compose.js"></script>
-		<script src="s/components/panes.js"></script>
-		<script src="s/components/thread.js"></script>
-		<script src="s/components/thread-area.js"></script>
-		<script src="s/components/person.js"></script>
-		<script src="s/components/people-area.js"></script>
-		<script src="s/components/info-area.js"></script>
-		<script src="s/components/room-item.js"></script>
-		<script src="s/components/room-list.js"></script>
-<!--		<script src="s/components/search.js"></script>-->
-		<script src="s/components/timeline.js"></script>
-		<script src="s/components/follow-room.js"></script>
-		<script src="s/components/user-menu.js"></script>
-		<!-- <script src="s/components/config-mode.js"></script> -->
-		<!-- <script src="s/components/facebook.js"></script> -->
-		<script src="s/components/settings-area.js"></script>
-
+		<script src="/s/components/text.js"></script>
+		<script src="/s/components/text-area.js"></script>
+		<script src="/s/components/compose.js"></script>
+		<script src="/s/components/panes.js"></script>
+		<script src="/s/components/thread.js"></script>
+		<script src="/s/components/thread-area.js"></script>
+		<script src="/s/components/person.js"></script>
+		<script src="/s/components/people-area.js"></script>
+		<script src="/s/components/info-area.js"></script>
+		<script src="/s/components/room-item.js"></script>
+		<script src="/s/components/room-list.js"></script>
+<!--		<script src="/s/components/search.js"></script>-->
+		<script src="/s/components/timeline.js"></script>
+		<script src="/s/components/follow-room.js"></script>
+		<script src="/s/components/user-area.js"></script>
+		<!-- <script src="/s/components/config-mode.js"></script> -->
+		<script src="/s/components/facebook.js"></script>
+		<script src="/s/components/settings-area.js"></script>
+		<script src="/s/components/signup-area.js"></script>
 		<script>
 			/*what is this?
 			'room', 'view', 'mode', 'tab', 'thread', 'query', 'text', 'time'
@@ -312,6 +313,7 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 		<script>
 			document.addEventListener && document.addEventListener("touchstart", function() {}, true);
 		</script> <!-- allow styling of CSS :active state in Mobile Safari -->
+		<script src="https://login.persona.org/include.js"></script>
 	</body>
 
 </html>
