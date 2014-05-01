@@ -29,6 +29,25 @@
     animation: bounce @args;
 }
 
+.spinframes() {
+    to { .transform(rotate(180deg)); }
+}
+
+@-webkit-keyframes spin { .spinframes; }
+
+@-moz-keyframes spin { .spinframes; }
+
+@-ms-keyframes spin { .spinframes; }
+
+@keyframes spin { .spinframes; }
+
+.spin(@args: .5s ease infinite) {
+    -webkit-animation: spin @args;
+    -moz-animation: spin @args;
+    -ms-animation: spin @args;
+    animation: spin @args;
+}
+
 .slidedownframes() {
     0% {
         .opacity(0);
