@@ -13,7 +13,6 @@ var handlers = {
 
 		core.emit("getRooms",{id: uid(),hasOccupant: action.user.id, session: action.session},function(err, rooms) {
 			var user = {};
-			console.log("++++", rooms);
 			if(err || !rooms || !rooms.results || !rooms.results.length) {
 				action.occupantOf = [];
 			}else {
@@ -94,9 +93,11 @@ module.exports = function(c) {
 
 function userHandler(action, callback) {
 	core.emit("getUsers", {ref: "me", session: action.session}, function(err, data){
+		console.log(err, data);
 		if(err || !data || !data.results || !data.results.length) {
 			return callback(new Error("USER_NOT_INITED"));
 		}else {
+			console.log(err, data);
 			action.from = data.results[0].id;
 			core.emit("getUsers", {ref: action.user.id, session: internalSession}, function(err, data){
 				if(err || !data || !data.results || !data.results.length) {
@@ -104,7 +105,7 @@ function userHandler(action, callback) {
 				}else {
 					action.old = data.results[0];
 				}
-				action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex');
+				action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0]).digest('hex');
 				action.user.description = "";
 				callback();
 			});

@@ -1,7 +1,9 @@
 var config = require("../config.js"),
 	name = require("../lib/generate.js").word,
 	log = require("../lib/logger.js"),
-	request = require("request"), core;
+	crypto = require('crypto'),
+	request = require("request"), core,
+	internalSession = Object.keys(config.whitelists)[0];
 
 module.exports = function(c) {
 	core = c;
@@ -27,10 +29,12 @@ function browserAuth(action, callback) {
 			return callback(new Error("AUTH_FAIL/" + body.reason));
 		}
 		identity = "mailto:" + body.email;
-		core.emit("getUsers",{identity: identity}, function(err, user) {
+		core.emit("getUsers",{identity: identity, session: internalSession}, function(err, user) {
 			if(err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
-			if(data.length === 0) {
+			if(!user.results || user.results.length === 0) {
+				action.user = {};
 				action.user.identities = [identity];
+				action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex');
 				return callback();
 			}
 			action.user = user[0];

@@ -51,7 +51,7 @@ function fbAuth(action, callback) {
 							if(data.results.length == 0) {
 								action.user = {};
 								action.user.identities = ["mailto:" + user.email];
-								action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update( user.email).digest('hex') + '/?d=identicon&s=48';
+								action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update( user.email).digest('hex');
 								return callback();	
 							}
 							action.user = data.results[0];

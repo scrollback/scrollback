@@ -14,9 +14,7 @@ $(function(){
 	$(document).on("click", ".button.facebook", function() {
 		window.open(location.protocol+"//"+location.host+"/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');
 	});
-	$(document).on("click", ".button.persona", function() {
-		navigator.id.request();
-	});
+
 
 
 
