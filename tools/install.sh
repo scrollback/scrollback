@@ -4,7 +4,11 @@
 trap exit 1 INT
 
 # Detect the current ditro
-distro=$(grep '^NAME=' /etc/os-release | sed -e s/NAME=//g -e s/\"//g)
+distro=$(uname)
+if [ $distro == 'Linux' ]
+then
+    distro=$(grep '^NAME=' /etc/os-release | sed -e s/NAME=//g -e s/\"//g)
+fi
 
 if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
     # Show the list of items to install
@@ -64,8 +68,40 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
             sudo yum install -y libcap;;
     esac
     sudo setcap "cap_net_bind_service=+ep" /usr/bin/node
+elif [[ $distro = "Darwin" ]]
+then
+    echo "==========================================="
+    echo "Scrollback requires the following packages"
+    echo "MySQL Server"
+    echo "Git Version Control"
+    echo "Node.js"
+    echo "Redis Server"
+
+    echo "The above packages (except mysql) will be installed using homebrew (http://brew.sh/)"
+    echo "Looking for homebrew..."
+    if [[ `which brew` = '' ]]
+    then
+        echo "Installing homebrew first..."
+        echo "Checking homebrew dependencies..."
+        if [[ `which curl` = '' ]]
+        then
+            echo "Please install curl first: http://curl.haxx.se/download.html"
+            echo "Exiting"
+            exit 1
+        fi
+        ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+        echo "Installed"
+    fi
+    echo "Installing mysql"
+    brew install mysql
+    echo "Installing git"
+    brew install git
+    echo "Installiing node.js"
+    brew install node
+    echo "Installing redis"
+    brew install redis
 else
-    # We only install packages for Ubuntu and Fedora
+    # We only install packages for Ubuntu, Fedora and OSX
     echo "Unsupported distro. You will need to install the dependencies manually. Continue anyway [y/n]?"
     read ans
     [[ "$ans" = [Yy] ]] || exit 1
@@ -106,8 +142,14 @@ sudo npm install -g forever
 
 # Start the MySQL and Redis daemons
 echo "Starting MySQL and Redis"
-sudo service mysqld start
-sudo service redis start
+if [[ $distro = 'Darwin' ]]
+then
+    sudo mysqld_safe
+    sudo redis-server
+else
+    sudo service mysqld start
+    sudo service redis start
+fi
 
 # Give option to set root password for MySQL in case it has not been set
 echo "Do you want to set/change MySQL root password [y/n]?"
