@@ -23,7 +23,6 @@
 var currentState = window.currentState = {};
 
 libsb.on("navigate", function(state, next) {
-	console.log("state obj", state);
 	state.old = currentState;
 	state.changes = {};
 	currentState = {};
@@ -45,14 +44,12 @@ libsb.on("navigate", function(state, next) {
 			}
 		}
 	});
-	// console.log("set current to ", currentState, "from", state.old);
+
 	next();
 }, 1000);
 
 // On navigation, set the body classes.
-
 libsb.on("navigate", function(state, next) {
-	console.log("state obj", state);
 	if(state.old && state.mode !== state.old.mode) {
 		$(document.body).removeClass(state.old.mode + "-mode");
 		$(document.body).addClass(state.mode + "-mode");
@@ -77,84 +74,78 @@ libsb.on("navigate", function(state, next) {
 	next();
 });
 
-// on navigation, add history and URLs
-
+// On navigation, add history and change URLs
 libsb.on("navigate", function(state, next) {
-	console.log("state obj", state);
 	var threadTitle;
-	console.log("state ", state);
+
 	function buildurl() {
 		var path, params = [];
+
 		switch(state.mode) {
 			case 'conf':
-				path = '/' + (state.room? state.room + '/edit': 'me');
+				path = '/' + (state.room ? state.room + '/edit': 'me');
 				break;
 			case 'pref':
 				path = '/me/edit';
 				break;
 			case 'search':
-				path = (state.room? '/' + state.room: '') + '/search';
+				path = (state.room ? '/' + state.room: '') + '/search';
 				params.push('q=' + encodeURIComponent(state.query));
 				break;
 			case 'home':
 				path = '/me';
 				break;
-			case 'normal':
-				path = (state.room? '/' + state.room + (
-					state.thread? '/' + state.thread + '/' + format.sanitize(threadTitle): ''
-				): '');
+			default:
+				path = (state.room ? '/' + state.room + (
+						state.thread ? '/' + state.thread + '/' + format.sanitize(threadTitle): ''
+					): '');
 		}
+
 		if(state.time) params.push('time=' + new Date(state.time).toISOString());
 		if(state.tab) params.push('tab=' + state.tab);
-		return path + (params.length? '?' + params.join('&'): '');
+
+		return path + (params.length ? '?' + params.join('&'): '');
 	}
 
 	function pushState() {
 		var url = buildurl();
-		console.log("got url", url, "for", state);
-		if (history.pushState && url != location.pathname + location.search) {
+
+		if (url && history.pushState && url != location.pathname + location.search && state.source !== "history") {
 			if(state.changes.time && Object.keys(state.changes).length == 1) {
-				console.log("time change only");
 				history.replaceState(state, null, url);
 			} else {
 				history.pushState(state, null, url);
 			}
-
 		}
 	}
 
-	if (state.source !== "history") {
-		if(state.thread) {
-			libsb.getThreads(state.thread, function(err, thread) {
-				threadTitle = thread.title;
-				pushState();
-			});
-		} else {
-			pushState();
-		}
+	if (state.thread) {
+		libsb.getThreads(state.thread, function(err, thread) {
+			threadTitle = thread.title;
+		});
 	}
+
+	pushState();
 
 	next();
 });
 
-// Handle back button
-
-
+// On history change, load the appropriate state
 $(window).on("popstate", function() {
-	var state = { }, prop;
-	
-	for (prop in history.state) {
-		if (history.state.hasOwnProperty(prop)) {
-			if(prop !== 'old' && prop !== 'changes')
-				state[prop] = history.state[prop];
-			else console.log(prop);
-		}
-	}
-	
-	console.log("Back in time", state);
-	
-	state.source = "history";
-	libsb.emit("navigate", state);
+	if (('state' in window.history && window.history.state !== null)) {
+		var state = { }, prop;
 
+		for (prop in history.state) {
+			if (history.state.hasOwnProperty(prop)) {
+				if(prop !== 'old' && prop !== 'changes') {
+					state[prop] = history.state[prop];
+				}
+			}
+		}
+
+		state.source = "history";
+
+		libsb.emit("navigate", state);
+	}
 });
 
