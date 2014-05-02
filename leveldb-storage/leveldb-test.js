@@ -87,6 +87,24 @@ describe("user and room action", function(){
 			done();
 		});
 	});
+	it("storing room nodejs", function(done) {
+		core.emit("room", {
+			id: generate.uid(),
+			type:"room",
+			room: {
+				id:"nodejs",
+				description:"this is a room",
+				type:"room",
+				params:{}
+			},
+			user: {
+				id:"harish",
+			}
+		}, function(err, data){
+			assert(!err, "Error thrown");
+			done();
+		});
+	});
 	it("storing room scrollbackteam", function(done) {
 		core.emit("room", {
 			id: generate.uid(),
@@ -373,7 +391,8 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 			if(i%2) from = "harish";
 			else from = "arvind";
 			
-			if(i>count/2) to = "nodejs";
+			if(i>count/1.5) to = "scrollbackteam";
+			else if(i>count/3) to = "nodejs";
 			else to = "scrollback";
 			
 			core.emit("text", {
