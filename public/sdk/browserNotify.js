@@ -42,7 +42,7 @@ var browserNotify = (function() {
 			originalTitle = null;
 			titleTimer = null;
 		}, 2000);
-		if (!scrollback.sounds === false) return; // allow site admin to opt out of sounds.
+		if (scrollback.sounds === false) return; // allow site admin to opt out of sounds.
 		if(force && soundTimer) { clearTimeout(soundTimer); soundTimer = null; }
 		if (!soundTimer) {
 			play();
