@@ -124,7 +124,7 @@ function part(roomId, callback){
 }
 
 function say(roomId, text, callback){
-	core.emit('text-up', {to: roomId, text: text}, callback);
+	core.emit('text-up', {to: roomId, text: text, from: libsb.user.id}, callback);
 }
 
 function admit(roomId, ref, callback){
@@ -144,17 +144,18 @@ function userPreferForm(){
 }
 
 function recvInit(init, next){
+
 	libsb.session = init.session;
 	if(init.auth && !init.user.id) {
 		core.emit("navigate", {});
 	}
+	console.log(init);
 	libsb.user = init.user;
-	/* why????? 
+
 	if(underscore.isEqual(libsb.user, init.user)){
-		libsb.user = init.user;
 		core.emit('user-update');
 	}
-	*/
+	
 	next();
 }
 

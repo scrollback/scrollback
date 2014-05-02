@@ -27,7 +27,7 @@ $(function(){
 		next();
 	});
 	libsb.on("init-dn", function(init, next) {
-		if(init.auth) return next();
+		if(init.auth && !init.user.id) return next();
 
 		if(/^guest-/.test(init.user.id)) {
 			$("body").addClass("guest-user");

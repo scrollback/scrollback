@@ -6,7 +6,7 @@
 
 $(function() {
 	var $roomlist = $(".roomlist"),
-		rooms = [];
+		rooms = ["scrollback", "nodejs", "scrollbackteam"];
 
 	/* add this back and do this after connecting.
 	libsb.getRooms({}, function(err, r) {
@@ -50,6 +50,17 @@ $(function() {
 		event.preventDefault();
 	});
 
+
+	libsb.on("navigate", function(state, next) {
+		var room = state.room;
+
+		if(rooms.indexOf(room)<0) {
+			rooms.push(room);
+			libsb.enter(room);
+		}
+
+		next();
+	});
 	libsb.on("init-dn", function(init, next) {
 		if(init.occupantOf){
 			init.occupantOf.forEach(function(r) {

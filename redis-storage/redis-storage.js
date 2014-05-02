@@ -61,7 +61,6 @@ function onGetRooms(query, callback) {
     } else if(query.hasOccupant) {
         return occupantDB.smembers("user:{{"+query.hasOccupant+"}}:occupantOf", function(err, data) {
             if(err) return callback(err);
-            console.log("++++++++++++++++++", data);
             // data = data.map(function(e){
             //     return "room:{{"+e+"}}";
             // });
