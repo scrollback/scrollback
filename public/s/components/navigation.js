@@ -7,7 +7,7 @@
 	Properties of the navigation state object:
 
 	room: "roomid",
-	view: (normal|rooms|meta)
+	view: (normal|rooms|meta|signup)
 	mode: (normal|search|conf|prefs|home),
 	tab: (info|people|threads|local|global|<conf/pref tabs>),
 	thread: "selected_thread",
@@ -23,6 +23,7 @@
 var currentState = window.currentState = {};
 
 libsb.on("navigate", function(state, next) {
+	console.log("state obj", state);
 	state.old = currentState;
 	state.changes = {};
 	currentState = {};
@@ -51,6 +52,7 @@ libsb.on("navigate", function(state, next) {
 // On navigation, set the body classes.
 
 libsb.on("navigate", function(state, next) {
+	console.log("state obj", state);
 	if(state.old && state.mode !== state.old.mode) {
 		$(document.body).removeClass(state.old.mode + "-mode");
 		$(document.body).addClass(state.mode + "-mode");
@@ -78,7 +80,9 @@ libsb.on("navigate", function(state, next) {
 // on navigation, add history and URLs
 
 libsb.on("navigate", function(state, next) {
+	console.log("state obj", state);
 	var threadTitle;
+	console.log("state ", state);
 	function buildurl() {
 		var path, params = [];
 		switch(state.mode) {
@@ -102,7 +106,6 @@ libsb.on("navigate", function(state, next) {
 		}
 		if(state.time) params.push('time=' + new Date(state.time).toISOString());
 		if(state.tab) params.push('tab=' + state.tab);
-
 		return path + (params.length? '?' + params.join('&'): '');
 	}
 
@@ -119,7 +122,7 @@ libsb.on("navigate", function(state, next) {
 
 		}
 	}
-/*
+
 	if (state.source !== "history") {
 		if(state.thread) {
 			libsb.getThreads(state.thread, function(err, thread) {
@@ -130,26 +133,28 @@ libsb.on("navigate", function(state, next) {
 			pushState();
 		}
 	}
-*/
+
 	next();
 });
 
 // Handle back button
 
-// $(window).on("popstate", function() {
-// 	var state = { }, prop;
 
-// 	for (prop in history.state) {
-// 		if (history.state.hasOwnProperty(prop)) {
-// 			if(prop !== 'old' && prop !== 'changes')
-// 				state[prop] = history.state[prop];
-// 			else console.log(prop);
-// 		}
-// 	}
+$(window).on("popstate", function() {
+	var state = { }, prop;
+	
+	for (prop in history.state) {
+		if (history.state.hasOwnProperty(prop)) {
+			if(prop !== 'old' && prop !== 'changes')
+				state[prop] = history.state[prop];
+			else console.log(prop);
+		}
+	}
+	
+	console.log("Back in time", state);
+	
+	state.source = "history";
+	libsb.emit("navigate", state);
 
-// 	console.log("Back in time", state);
+});
 
-// 	state.source = "history";
-// 	libsb.emit("navigate", state);
-
-// });

@@ -331,21 +331,23 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 			/*what is this?
 			'room', 'view', 'mode', 'tab', 'thread', 'query', 'text', 'time'
 			*/
+			
 			$(function() {
-				libsb.connect();
-				libsb.on("inited", start);
-
-
-
+				
 				function start(q,n) {
+					console.log("loc", window.location);
+					console.log("q,n", q, n);
 					libsb.emit('navigate', {
-						room: window.location.pathname.split("/")[1],
+						
+						room: "scrollback",//window.location.pathname.split("/")[1],
 						view: 'normal',
 						mode: 'normal',
 						tab: 'people'
 					});
 					n();
 				}
+				libsb.connect();
+				libsb.on("inited", start);
 			});
 		</script>
 
