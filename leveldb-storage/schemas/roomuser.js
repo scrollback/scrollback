@@ -32,7 +32,6 @@ module.exports = function (types) {
 				if (gateway[1]) req.eq.push(gateway[1]);
 			}
 			user.get(req, function(err, res) {
-				console.log(err, res);
 				query.results = res;
 				cb();
 			});

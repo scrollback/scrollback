@@ -46,8 +46,13 @@ $(function() {
 	// Insert incoming text messages.
 
 	libsb.on('text-dn', function(text, next) {
-		if($logs.data("lower-limit"))
-			$logs.addBelow(textEl.render(null, text));
+		if(text.resource == libsb.resource) return next();
+		if($logs.data("lower-limit")) $logs.addBelow(textEl.render(null, text));
+		next();
+	});
+
+	libsb.on('text-up', function(text, next) {
+		if($logs.data("lower-limit")) $logs.addBelow(textEl.render(null, text));
 		next();
 	});
 
