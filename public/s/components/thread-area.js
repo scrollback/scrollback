@@ -17,10 +17,7 @@ $(function() {
 		itemHeight: 100,
 		startIndex: time,
 		getItems: function (index, before, after, recycle, callback) {
-			/*console.log("getThreads", {
-				to: room, time: index, before: before, after: after
-			});*/
-
+			console.log(index, before, after);
 			if(libsb.isInited) {
 				loadThreads();
 			}else {
@@ -36,10 +33,22 @@ $(function() {
 				}, function(err, t) {
 					var threads = t.results;
 					if(err) throw err; // TODO: handle the error properly.
-
-					if(after === 0 && threads.length < before) threads.unshift(false);
-					else if(before === 0 && threads.length < after) threads.push(false);
-
+					
+					if(after === 0) {
+						if(threads.length < before) {
+							threads.unshift(false);	
+						}
+						if(t.time) {
+							threads.pop();	
+						}
+					}else if(before === 0) {
+						if(threads.length < after) {
+							threads.push(false);
+						}else{
+							threads.splice(0,1);
+						}
+					}
+					
 					callback(threads.map(function(thread) {
 						return thread && threadEl.render(null, thread);
 					}));

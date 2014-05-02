@@ -367,7 +367,7 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 			
 			if(i>count/2) to = "nodejs";
 			else to = "scrollback";
-
+			
 			core.emit("text", {
 				id: (id = generate.uid()),
 				from:from,

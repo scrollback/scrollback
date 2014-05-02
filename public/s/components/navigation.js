@@ -139,7 +139,7 @@ libsb.on("navigate", function(state, next) {
 
 // Handle back button
 
-
+/*
 $(window).on("popstate", function() {
 	var state = { }, prop;
 	
@@ -156,5 +156,5 @@ $(window).on("popstate", function() {
 	state.source = "history";
 	libsb.emit("navigate", state);
 
-});
+});*/
 

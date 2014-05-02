@@ -28,12 +28,25 @@ $(function() {
 					n();
 				})
 			}
+			console.log(index, before, after);
 			function loadTexts(){
 				libsb.getTexts(query, function(err, t) {
-					var texts = t.results
+					var texts = t.results;
 					if(err) throw err; // TODO: handle the error properly.
-					if(after === 0 && texts.length < before) texts.unshift(false);
-					else if(before === 0 && texts.length < after) texts.push(false);
+					if(after === 0) {
+						if(texts.length < before) {
+							texts.unshift(false);	
+						}
+						if(t.time){
+							texts.pop();	
+						}
+					}else if(before === 0) {
+						if(texts.length < after) {
+							texts.push(false);
+						}else{
+							texts.splice(0,1);
+						}
+					}
 					callback(texts.map(function(text) {
 						return text && textEl.render(null, text);
 					}));
