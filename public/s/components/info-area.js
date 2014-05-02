@@ -33,7 +33,7 @@ libsb.on('navigate', function(state, next) {
 			libsb.getRooms({ ref: state.room }, function(err, room) {
 				if(err) throw err;
 				if(room.results && room.results.length)  infoArea.render(room.results[0]);
-			});	
+			});
 		}
 	}
 	next();

@@ -6,7 +6,7 @@ $(function() {
 		$input = $(".chat-input");
 	// Focus chat entry on pageload
 	$entry.focus();
-	
+
 	$entry.keypress(function(e) {
 		if(e.which == 13 && !e.shiftKey) {
 			e.preventDefault();

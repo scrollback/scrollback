@@ -40,13 +40,13 @@ $(function() {
 	$roomlist.click(function(event) {
 		var $el = $(event.target).closest(".roomitem");
 		if(!$el.size()) return;
-		
+
 		libsb.emit('navigate', {
 			room: $el.attr("id").split('-')[1],
 			view: 'normal', source: 'roomlist',
 			thread: null
 		});
-		
+
 		event.preventDefault();
 	});
 
