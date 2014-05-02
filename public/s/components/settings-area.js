@@ -8,7 +8,7 @@ $(function() {
 	function renderTab(label) {
 		var tab = $tabTmpl.clone();
 		tab.text(label);
-		return;
+		return tab;
 	}
 
 	$('.settings-menu').click(function(event) {
@@ -37,11 +37,12 @@ $(function() {
 			if(currentConfig && state.tab) $('.settingsview').empty().append(currentConfig[state.tab]);
 			// if currentConfig is blank, then
 			if(!currentConfig){
-				libsb.emit('config-show', function(err, config) {
+				libsb.emit('config-show', {},function(err, config) {
 					currentConfig = config;
 					$('conf-area').empty();
-					for(i in conf) {
-						$('conf-area').append(renderTab(i));
+					for(i in config) {
+						$('.settings-menu').append('<ul><li class = "tab">' + i + '</li></ul>');
+						$('.settings-area').append(config[i]);
 					}
 				});
 			}
