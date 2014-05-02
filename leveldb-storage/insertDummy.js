@@ -36,12 +36,39 @@ core.emit("room", {
 		id:"testroom1",
 		description: generate.sentence(4),
 		type:"room",
-		params:{}
+		params:{
+		}
 	},
 	user: {
 		id:"testuser1",
 	}
 });
+
+
+core.emit("room", {
+	id: generate.uid(),
+	type:"room",
+	room: {
+		id:"scrollback",
+		description: generate.sentence(4),
+		type:"room",
+		params:{
+			irc: {
+				server: "dev.scrollback.io",
+				channel: "#scrollback",
+				enabled: true,
+				pending: false
+			}
+		},
+		identities: ["irc://dev.scrollback.io/#scrollback"]
+	},
+	user: {
+		id:"testuser1",
+	}
+});
+
+
+
 
 core.emit("room", {
 	id: generate.uid(),
