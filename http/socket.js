@@ -39,7 +39,9 @@ sock.on('connection', function (socket) {
 		var i, l, e;
 		try { d = JSON.parse(d); log ("Socket received ", d); }
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
-		if(!d.type) return;
+
+		if (!d.type) return;
+		
 		if(d.type == 'init' && d.session) {
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
