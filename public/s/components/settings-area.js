@@ -13,8 +13,6 @@ $(function() {
 
 	$('.settings-menu').click(function(event) {
 		// check event.target.closest('.tab').text()
-
-
 	});
 
 	$(".configure-button").on("click", function() {
@@ -41,8 +39,9 @@ $(function() {
 					currentConfig = config;
 					$('conf-area').empty();
 					for(i in config) {
-						$('.settings-menu').append('<ul><li class = "tab">' + i + '</li></ul>');
-						$('.settings-area').append(config[i]);
+						var className = 'tab-' + i + '-settings';
+						$('.settings-menu ul').append('<li class = "tab ' + className + '">' + i + '</li>');
+						// $('.settings-menu').addClass(config[i]);
 					}
 				});
 			}
