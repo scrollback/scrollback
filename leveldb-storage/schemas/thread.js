@@ -27,7 +27,7 @@ module.exports = function(types) {
 			dbQuery.lte.push(query.to);
 			dbQuery.limit = 256;
 
-			if(typeof query.time !== "undefined") {
+			if(query.time!=0 && query.time) {
 				if(query.after) {
 					dbQuery.gte.push(query.time);
 					if(query.after <= dbQuery.limit) dbQuery.limit = query.after;

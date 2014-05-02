@@ -13,12 +13,24 @@ $(function() {
 });
 
 libsb.on('navigate', function(state, next) {
-	if(state.room != state.old.room) {
+	if(!state.old || state.room != state.old.room) {
 		if(state.tab == 'info') infoArea.render({id: state.room, description: "Loading room description."});
-		libsb.getRooms(state.room, function(err, room) {
-			if(err) throw err;
-			infoArea.render(room);
-		});
+		if(libsb.isInited) {
+			loadRooms();
+		}else{
+			libsb.on("inited", function(q, n){
+				loadRooms();
+				n();
+			})
+		}
+
+		function loadRooms(){
+			libsb.getRooms({ref: state.room}, function(err, room) {
+				if(err) throw err;
+				infoArea.render(room.results[0]);
+			});	
+		}
+		
 	}
 	next();
 });

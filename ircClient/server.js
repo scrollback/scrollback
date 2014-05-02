@@ -8,9 +8,7 @@ var or = new ObjectReader(core);
 var dataQueue = require("./queue.js");
 var port = config.port;
 var client;
-
 var isConnected = false;
-var lastDisconnectData = {rooms: {}, servChanProp: {}, servNick: {}};
 core.on('data', function(data) {
 	writeObject(data);
 });
@@ -22,20 +20,24 @@ var server = net.createServer(function(c) { //'connection' listener
 		return;//allow only one connection.
 	}
 	client = c;
-	
 	console.log("new Connection Request");
 	writeObject({
 		type: "init",
 		state: ircClient.getCurrentState()
-	}, true);
+	});
 	
 	c.on('data', function(data) { 
 		handleIncomingData(data);	
 	});
 	c.on('end', function() {
+		console.log("End Event");
 		ircClient.setConnected(false);
 		isConnected = false;
-	}); 
+	});
+	c.on('error', function(err) {
+		//TODO handle error conditions properily
+		console.log("error event", err);
+	});
 });
 server.listen(port, function() { //'listening' listener
   console.log('server bound');

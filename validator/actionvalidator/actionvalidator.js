@@ -97,9 +97,11 @@ module.exports = function(core) {
 function basicValidation(action, callback) {
 	if(!action.id) action.id = generate.uid();
 	if(!action.type) return callback(new Error("INVALID_ACTION_TYPE"));
-	if(action.type!="init" && !action.from) {
-		return callback(new Error("INVALID_USER"));
-	}
+
+	/*
+		validation on action.from is not need because we add the from ignore the from sent be the client.
+		from and user is loaded by the entity loader using the session property.
+	*/
 
 	if(action.type === "init" || action.type === "user") {
 		action.to = "me";

@@ -372,6 +372,7 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 				id: (id = generate.uid()),
 				from:from,
 				to: to,
+				text: generate.sentence(10),
 				threads: [{id:"thread"+to+(i%10), title: "thread"+to+(i%10)}],
 				time: (x+=2000)
 			}, function(){

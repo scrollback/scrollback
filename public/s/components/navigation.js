@@ -44,25 +44,31 @@ libsb.on("navigate", function(state, next) {
 			}
 		}
 	});
-	console.log("set current to ", currentState);
+	// console.log("set current to ", currentState);
 	next();
-}, 10);
+}, 1000);
 
 // On navigation, set the body classes.
 
 libsb.on("navigate", function(state, next) {
-	if(state.mode !== state.old.mode) {
+	if(state.old && state.mode !== state.old.mode) {
 		$(document.body).removeClass(state.old.mode + "-mode");
+		$(document.body).addClass(state.mode + "-mode");
+	}else if(state.mode){
 		$(document.body).addClass(state.mode + "-mode");
 	}
 
-	if(state.view !== state.old.view) {
+	if(state.old && state.view !== state.old.view) {
 		$(document.body).removeClass(state.old.view + "-view");
+		$(document.body).addClass(state.view + "-view");
+	}else if(state.view){
 		$(document.body).addClass(state.view + "-view");
 	}
 
-	if(state.tab !== state.old.tab) {
-		$(".tab.current, .pane.current").removeClass("current");
+	if(state.old && state.tab !== state.old.tab) {
+		$(".tab-" + state.old.tab + ", .pane-" + state.old.tab).removeClass("current");
+		$(".tab-" + state.tab + ", .pane-" + state.tab).addClass("current");
+	}else if(state.tab){
 		$(".tab-" + state.tab + ", .pane-" + state.tab).addClass("current");
 	}
 
@@ -73,7 +79,6 @@ libsb.on("navigate", function(state, next) {
 
 libsb.on("navigate", function(state, next) {
 	var threadTitle;
-
 	function buildurl() {
 		var path, params = [];
 		switch(state.mode) {
@@ -114,7 +119,7 @@ libsb.on("navigate", function(state, next) {
 
 		}
 	}
-
+/*
 	if (state.source !== "history") {
 		if(state.thread) {
 			libsb.getThreads(state.thread, function(err, thread) {
@@ -125,25 +130,26 @@ libsb.on("navigate", function(state, next) {
 			pushState();
 		}
 	}
-
+*/
 	next();
 });
 
 // Handle back button
 
-$(window).on("popstate", function() {
-	var state = { }, prop;
+// $(window).on("popstate", function() {
+// 	var state = { }, prop;
 
-	for (prop in history.state) {
-		if (history.state.hasOwnProperty(prop)) {
-			if(prop !== 'old' && prop !== 'changes')
-				state[prop] = history.state[prop];
-			else console.log(prop);
-		}
-	}
+// 	for (prop in history.state) {
+// 		if (history.state.hasOwnProperty(prop)) {
+// 			if(prop !== 'old' && prop !== 'changes')
+// 				state[prop] = history.state[prop];
+// 			else console.log(prop);
+// 		}
+// 	}
 
-	console.log("Back in time", state);
+// 	console.log("Back in time", state);
 
-	state.source = "history";
-	libsb.emit("navigate", state);
-});
+// 	state.source = "history";
+// 	libsb.emit("navigate", state);
+	
+// });

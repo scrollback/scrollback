@@ -35,7 +35,7 @@ function init() {
 			sub = 30;
 		}
 		setTimeout(function(){
-			sendperiodicMails();
+			sendPeriodicMails();
 			setInterval(sendPeriodicMails, 60*60*1000);//TODO move these numbers to myConfig
 		}, (sub-x)*60000);
 		setTimeout(function(){
@@ -86,7 +86,7 @@ function trySendingToUsers() {
 			}
 			if (!lastSent )	lastSent = ct - interval;
 			log("time left for user " , (parseInt(lastSent, 10) + interval - ct));
-			if (parseInt(lastSent) + interval <= ct) {
+			if (parseInt(lastSent, 10) + interval <= ct) {
 				//get rooms that user is following...
 				if (!rooms) {
 					log("getting rooms that user is following....");
@@ -96,7 +96,6 @@ function trySendingToUsers() {
 							log("error in getting members information" , err);
 							return;
 						}
-
 						if(!data.results || !data.results.length) {
 							log("username ", username ," is not following any rooms ");	
 							return;
@@ -105,11 +104,9 @@ function trySendingToUsers() {
 						following.results.forEach(function(r) {
 							rooms.push(r.room);
 						});
-
 						prepareEmailObject(username, rooms, lastSent, function(err, email) {
 							if (!err) sendMail(email);
 						});
-
 					});
 				}else {
 					prepareEmailObject(username, rooms, lastSent, function(err, email) {

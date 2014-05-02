@@ -39,6 +39,17 @@ module.exports = function(c){
 	core.on('init-dn', recvInit);
 	core.on('away-up', storeAway);
 	core.on('text-up', storeText);
+	core.on("getSession", function(query, callback){
+		try {
+			query.results = [{
+				session: cache.session,
+				user: cache.user.id
+			}];
+			callback();	
+		}catch(e){
+			callback(e);
+		};
+	});
 	
 	core.on('logout', logout);
 	
@@ -60,6 +71,7 @@ function createInit(){
 	if(cache && cache.session) sid = cache.session;
 	if(!sid){
 		cache.session = sid = generate.uid();
+		libsb.session = cache.session
 	} 
 	core.emit('init-up', {session: sid});
 }
@@ -74,6 +86,7 @@ function logout(){
 	// delete user session here
 	delete cache.session;
 	delete cache.user;
+	delete libsb.session;
 	save();
 }
 

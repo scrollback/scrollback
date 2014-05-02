@@ -53,15 +53,16 @@ module.exports = function ArrayCache(initData) {
 	function get(query) {
 		var time = query.time, before = query.before, after = query.after,
 			res = [], pos, i, l = messages.length, c, m, start = null;
-		
-		pos = time? find(time): l-1;
+	
+			pos = time? find(time): l-1;
+
 
 		for(i=-before; i<after; i++) {
-			c = mid + i;
+			c = pos + i;
 			if(c<0) i-=c;
 			if(c>=l) break;
 			m = messages[c];
-			if(m.type == 'result-start' || m.type == 'result-end') return null;
+			if(!m || m.type == 'result-start' || m.type == 'result-end') return null;
 			res.push(m);
 		}
 

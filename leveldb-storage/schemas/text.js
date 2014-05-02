@@ -21,16 +21,17 @@ module.exports = function (types) {
 				to:message.to,
 				text:message.text,
 				time:message.time,
-				threads: message.threads || {},
+				threads: message.threads || [],
 				labels: newLabels,
-				editInverse:message.editInverse || {},
+				editInverse:message.editInverse || [],
 				mentions: message.mentions || [],
 				cookies: message.cookies || [],
 				session: message.session || ""
 			}, function(err, res) {
 				function insertThread(threads, i, callback) {
-					var thread, e = threads[i];
+					var thread, e;
 					if(i>=threads.length) return callback();
+					e = threads[i]
 					if(e.title) {
 						thread = {
 							id: e.id,
@@ -53,11 +54,11 @@ module.exports = function (types) {
 						insertThread(threads, i+1, callback);
 					}
 				}
-
-				insertThread(message.threads, 0, function() {
-					cb && cb(err, res);	
-				});
-				
+				if(message.threads) {
+					insertThread(message.threads, 0, function() {
+						cb && cb(err, res);	
+					});		
+				}
 			});
 		},
 		
@@ -86,7 +87,7 @@ module.exports = function (types) {
 				dbQuery.by = "totime";
 			}
 
-			if(typeof query.time !== "undefined") {
+			if(query.time!=0 && query.time) {
 				if(query.after) {
 					dbQuery.gte.push(query.time);
 					if(query.after <= dbQuery.limit) dbQuery.limit = query.after;

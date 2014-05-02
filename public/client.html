@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<!-- <html> -->
 <html manifest="manifest.appcache" lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -24,12 +24,12 @@
 		<![endif]-->
 	</head>
 
-	<body>
+	<body class="guest-user">
 		<section class="rooms">
 			<div class="scrollback-header">
 				<img src="s/img/scrollback-small.png" alt="scrollback"/>
 			</div>
-			<a class="search-term" href="">Results for firefox</a>
+<!--			<a class="search-term" href="">Results for firefox</a>-->
 			<div role="list" class="roomlist hide-scroll">
 				<a class="roomitem"><span class="name"></span><span class="unread"></span></a>
 			</div>
@@ -41,10 +41,12 @@
 					<li role="tab" class="tab tab-info mode-normal"><h2>Info</h2></li>
 					<li role="tab" class="tab tab-people mode-normal"><h2>People</h2></li>
 					<li role="tab" class="tab tab-threads mode-normal"><h2>Threads</h2></li>
+<!--
 					<li role="tab" class="tab tab-threads mode-search"><h2>This room</h2></li>
 					<li role="tab" class="tab tab-threads mode-search"><h2>All rooms</h2></li>
+-->
 				</ul>
-				<div role="banner" class="search-banner"></div>
+<!--				<div role="banner" class="search-banner"></div>-->
 				<div role="tabpanel" class="pane hide-scroll pane-info">
 					<h1 class="name"></h1>
 					<p class="description"></p>
@@ -86,18 +88,20 @@
 						<h1>Scrollback team</h1>
 						<a class="follow-button" role="button"></a>
 					</div>
-					<a class="search-button" role="button"></a>
+<!--					<a class="search-button" role="button"></a>-->
 					<div class="guest has-popover">
-						<div class="sb-user">sb-walick</div>
+						<div class="sb-user"></div>
 						<div class="sign-in">Sign in</div>
 					</div>
 					<div class="avatar has-popover">
 						<img alt="" src="https://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06">
 					</div>
 				</div>
+<!--
 				<div class="search-bar">
 					<input class="search-entry" type="search" placeholder="Type to search...">
 				</div>
+-->
 			</div>
 			<div class="chat-position"></div>
 			<div class="chat-area hide-scroll">
@@ -251,10 +255,13 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 
 		<script src="s/lib/transformie.min.js"></script> <!-- adds CSS transforms support in old IE -->
 
+		<script src="/sdk/sockjs.js"></script>
 		<script src="s/lib/bus.js"></script>
-		<script src="s/lib/generate.js"></script>
 		<script src="s/lib/format.js"></script>
-		<script src="s/js/mock-libsb.js"></script>
+
+		console.log();
+		<!-- <script src="s/js/mock-libsb.js"></script> -->
+		<script src="/libsb.bundle.js"></script>
 
 		<script src="s/components/infinite.js"></script>
 		<script src="s/components/hide-scroll.js"></script>
@@ -274,21 +281,33 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 		<script src="s/components/info-area.js"></script>
 		<script src="s/components/room-item.js"></script>
 		<script src="s/components/room-list.js"></script>
-		<script src="s/components/search.js"></script>
+<!--		<script src="s/components/search.js"></script>-->
 		<script src="s/components/timeline.js"></script>
 		<script src="s/components/follow-room.js"></script>
 		<script src="s/components/user-menu.js"></script>
+		<!-- <script src="s/components/config-mode.js"></script> -->
+		<!-- <script src="s/components/facebook.js"></script> -->
 		<script src="s/components/settings-area.js"></script>
 
 		<script>
+			/*what is this?
 			'room', 'view', 'mode', 'tab', 'thread', 'query', 'text', 'time'
+			*/
 			$(function() {
-				libsb.emit('navigate', {
-					room: 'scrollback',
-					view: 'normal',
-					mode: 'normal',
-					tab: 'people'
-				});
+				libsb.connect();
+				libsb.on("inited", start);
+
+
+
+				function start(q,n) {
+					libsb.emit('navigate', {
+						room: window.location.pathname.split("/")[1],
+						view: 'normal',
+						mode: 'normal',
+						tab: 'people'
+					});
+					n();
+				}
 			});
 		</script>
 

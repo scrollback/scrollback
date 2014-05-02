@@ -5,6 +5,7 @@ var log = require("../lib/logger.js");
 var events = require('events');
 var clientEmitter = new events.EventEmitter();
 var client = require('./client.js');
+var internalSession = Object.keys(config.whitelists)[0];
 client.init(clientEmitter);
 var core;
 var callbacks = {};
@@ -16,7 +17,6 @@ module.exports = function (coreObj) {
 	core = coreObj;
 	init();
 	core.on ('room', function(room, callback) {
-		
 		if (room.type == "room" && room.params && room.params.irc && room.session.indexOf('internal') !== 0 && client.connected()) {
 			if (!room.old && room.params.irc) {//TODO chack if new irc config.
 				room.params.irc.channel = room.params.irc.channel.toLowerCase();
@@ -77,7 +77,7 @@ function init() {
 			}
 		}
 		log("init from ircClient", state);
-		core.emit("getRooms", {identity: "irc"}, function(data) {
+		core.emit("getRooms", {identity: "irc", session: internalSession}, function(err, data) {
 			var rooms = data.results;
 			log("rooms:", rooms);
 			log("returned state from IRC:", JSON.stringify(state));
@@ -90,7 +90,6 @@ function init() {
 							log("reconnecting bot with new values:", room.id);
 							disconnectBot(state.rooms[room.id].id);
 							addNewBot(room); 
-						//TODO remove other rooms bots.
 					}
 					delete notUsedRooms[room.id];
 				} else {
@@ -223,10 +222,10 @@ function sendInitAndBack(suggestedNick, session ,room) {
 
 
 function connectAllUsers(room) {
-	core.emit('getUsers', {occupantOf: room.id}, function(data) {
+	core.emit('getUsers', {occupantOf: room.id, session: internalSession}, function(err, data) {
 		var users = data.results;
 		users.forEach(function(user) {
-			connectUser(room.id, user.id);//TODO use proper format of user object
+			connectUser(room.id, user.id);
 		});
 	});
 }
@@ -277,11 +276,8 @@ function disconnectUser(roomId, user) {
 
 /*new Request.*/
 function addNewBot(r, callback) {
+	console.log("Adding new bot for room :", r.id);
 	var room  = copyRoomOnlyIrc(r);
-	if(callback) {
-		room.params.irc.enabled = true;
-		room.params.irc.pending = true;
-	}
 	var uid = guid();
 	clientEmitter.emit('write', {
 		uid: uid,
@@ -291,8 +287,8 @@ function addNewBot(r, callback) {
 	});
 	if (callback) {
 		callbacks[uid] = function(message) {
-			room.params.irc.message = message;
-			if(message) callback(room);
+			if(message) room.params.irc.message = message;
+			callback(r);
 		};
 	}
 }

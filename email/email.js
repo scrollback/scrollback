@@ -25,8 +25,8 @@ module.exports = function(coreObject) {
 			}
 		}, "gateway");
 		if (emailConfig.debug) {
-		   setInterval(sendPeriodicMails, timeout);
-		   setInterval(trySendingToUsers,timeout/8);
+			setInterval(sendPeriodicMails, timeout);
+			setInterval(trySendingToUsers,timeout/8);
 		}
 	}
 	else {
@@ -75,7 +75,7 @@ function addMessage(message){
 							initMailSending(username);
 						}
 					});//mention is a set)
-            	});
+				});
 			});
         }
     }   

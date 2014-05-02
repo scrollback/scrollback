@@ -83,46 +83,10 @@ module.exports = function(c) {
 			});
 		}, "loader");
 	})
-
-/*
-	function simpleUserLoad(action, callback) {
-		if(config.whitelists[action.session]) {
-			action.user = {
-				id: "system",
-				role: "owner" // should look for alternatives.
-			}
-			return callback();
-		}
-
-		core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
-			var user;
-			if(err || !data || !data.results || !data.results.length) {
-				action.results = [];
-				callback();
-			}else {
-				user = data.results[0]
-				action.from = data.results[0].id;
-				if(action.to && !/guest-/.test(user.id)) {
-					core.emit("getUsers", {id: uid(), session: action.session, ref: user.id, memberOf: action.to}, function() {
-						if(err || !data || !data.results || !data.results.length) {
-							action.user = user;
-							callback();
-						}else {
-							action.user = data.results[0];
-							callback();
-						}
-					});
-				}else{
-					action.user = user
-					callback();	
-				}
-			}
-		});
-	}*/
 	core.on('getUsers', loadUser, "loader");
 	core.on('getRooms', loadUser, "loader");
-	core.on('getTexts', loadUser, "loader");
-	core.on('getThreads',loadUser, "loader");
+	core.on('getTexts', basicLoader, "loader");
+	core.on('getThreads',basicLoader, "loader");
 
 	
 	core.on("init", function(action, callback) {
@@ -172,7 +136,6 @@ function loadUser(action, callback) {
 		}
 		return callback();
 	}
-	
 	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
 		var user;
 		if(err || !data || !data.results || !data.results.length) {

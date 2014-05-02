@@ -24,17 +24,15 @@ module.exports = function (types) {
 					query.results = [res];
 					cb();
 				});
-			}
-
-			if(query.identity) {
+			}else if(query.identity) {
 				req.by = "gatewayIdentity";
-
+				req.eq = [];
 				gateway = query.identity.split(":");
 				req.eq.push(gateway[0]);
-
 				if (gateway[1]) req.eq.push(gateway[1]);
 			}
 			user.get(req, function(err, res) {
+				console.log(err, res);
 				query.results = res;
 				cb();
 			});
@@ -42,10 +40,10 @@ module.exports = function (types) {
 		getRooms: function(query, cb) {
 			var gateway, eqArray = [], req={};
 			if(query.results) return cb();
-
+			req.eq = [];
 			if(query.hasMember) {
 				req.by = "hasMember";
-				req.eq = [];
+				
 				req.eq.push(query.hasMember);
 				req.map = function(element, push) {
 					if(element.role == "none") return false;

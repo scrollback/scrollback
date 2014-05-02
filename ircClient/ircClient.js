@@ -7,11 +7,11 @@ var core;
 var botNick = config.botNick;//part of config of IRC client.
 var clients = {};//for server channel user,server --> client. 
 var servChanProp = {};//object of server channel prop
-var rooms = {};//room id to room obj map. //TODO delete room obj if any room deleted irc.(Done Test)
+var rooms = {};//room id to room obj map.
 var servNick = {};//server channel nick -------> sb nick.
 var renameCallback = {};
 var connected = false;
-
+//var botPartCallbacks = {};0
 
 /******************************* Exports ****************************************/
 module.exports.say = say;
@@ -44,9 +44,11 @@ ERROR: { prefix: 'irc.local',
    [ 'test2',
      'long name' ] }
 TODO if room changes b/w restart then discart queuing messages.
-//9 char is min max limit if(nick > 9) gen random.
-//handle the case if connection is disconnected by other party
-
+1.//9 char is min max limit if(nick > 9) gen random.
+2.//handle the case if connection is disconnected by other party
+3.{ command: 'ERROR', rawCommand: 'ERROR', commandType: 'normal', args: [ 'Closing Link: 122.166.181.21 (No more connections allowed on that IP)' ] }
+4.Raw message: { command: 'ERROR', rawCommand: 'ERROR', commandType: 'normal', args: [ 'Trying to reconnect too fast.' ] }
+this error caused by throttle_time = some_value;
 ******************************************/
 
 /**
@@ -131,7 +133,6 @@ function partBot(roomId) {
 	var client = clients[botNick][room.params.irc.server];
 	var channel = room.params.irc.channel;
 	var server = room.params.irc.server;
-	client.part(channel);//disconnect bot in case of all part.
 	var users = servChanProp[room.params.irc.server][channel].users;
 	log("users", users, ", servNick", servNick);
 	users.forEach(function(user) {
@@ -140,6 +141,7 @@ function partBot(roomId) {
 			clients[sbNick][server].part(channel);
 		}
 	});
+	client.part(channel);//disconnect bot in case of all part.
 	//delete servChanProp[server][channel];
 	delete rooms[roomId];
 }
@@ -232,7 +234,7 @@ function onPM(client) {
 					if(room.params.irc.pending && room.id === r && reply.channels) {
 						log("room pending true");
 						reply.channels.forEach(function(channel) {
-							if (channel.substring(0,1) == '@' && channel.substring(1) === room.params.irc.channel) {
+							if (channel.substring(0,1) === '@' && channel.substring(1) === room.params.irc.channel) {
 								client.join(room.params.irc.channel);
 								if (connected) {
 									sendRoom(room);
@@ -304,8 +306,10 @@ function sendAway(server, channels, nick, bn) {
 		
 		channel = channel.toLowerCase();
 		log("users", servChanProp[server][channel].users.length);
-		if (bn === nick) {//bot left the channel //TODO test
+		if (bn === nick) {//bot left the channel //TODO test partBot.
+			
 			delete servChanProp[server][channel];
+			
 			return;
 		}
 		if (!servChanProp[server][channel]) {
@@ -427,7 +431,6 @@ function say(message) {
 
 /**
  * changes mapping of old nick to new nick
- * called from other side of app.
  * and not reconnect as new user.
  * this will be reply of back message if nick changes.
  */
