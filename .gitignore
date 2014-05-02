@@ -34,3 +34,5 @@ public/embed.uw.min.js
 public/dummy.css
 public/style.css
 public/s/styles/less/*.css
+/client-config.js
+/public/libsb.bundle.js

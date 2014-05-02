@@ -51,10 +51,7 @@ function fbAuth(action, callback) {
 							if(data.results.length == 0) {
 								action.user = {};
 								action.user.identities = ["mailto:" + user.email];
-<<<<<<< HEAD
 								action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update( user.email).digest('hex');
-=======
->>>>>>> webby
 								return callback();
 							}
 							action.user = data.results[0];

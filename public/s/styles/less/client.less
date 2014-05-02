@@ -625,32 +625,38 @@
                 .embed-mode & { display: none;}
             }
 
-            .guest {
-                display: none;
+            .user-area {
+                display: table-cell;
+                vertical-align: top;
 
-                .guest-user & {
-                    display: table-cell;
-                    vertical-align: top;
-                    padding: .25em;
+                .userdetail {
+                    float: right;
+                    padding: .25em 1em;
                     width: 6em;
                     color: lighten(@dark-color, 20%);
                     text-align: right;
                     cursor: pointer;
 
-                    .sign-in { text-transform: uppercase; }
+                    .sign-in {
+                        display: none;
+
+                        .guest-user & {
+                            display: inline;
+                            text-transform: uppercase;
+                        }
+                    }
                 }
-            }
 
-            .avatar {
-                display: table-cell;
-                vertical-align: top;
-                width: 3.5em;
-                cursor: pointer;
-
-                img {
-                    display: block;
-                    height: 3.5em;
+                .avatar {
+                    float: right;
                     width: 3.5em;
+                    cursor: pointer;
+
+                    img {
+                        display: block;
+                        height: 3.5em;
+                        width: 3.5em;
+                    }
                 }
             }
 

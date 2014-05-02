@@ -1,18 +1,23 @@
 $(function(){
-	$(".has-popover").on("click", function() {
+	function hidePopOver() {
 		$(".popover-body").removeClass().addClass("popover-body").empty();
+	}
+
+	$(".has-popover").on("click", function() {
+		hidePopOver();
 	});
 
-	$(".guest").on("click", function() {
-		$(".popover-body").addClass("user-menu").append('Sign in to scrollback with<a class="button facebook">Facebook</a><a class="button persona">Persona</a>');
-	});
-
-	$(".avatar").on("click", function() {
-		$(".popover-body").addClass("user-menu").append('<ul><li><a href="">Report an issue</a></li><li><a href="">Logout</a></li></ul>');
+	$(".user-area").on("click", function() {
+		if ($("body").hasClass("guest-user")) {
+			$(".popover-body").addClass("user-menu").append('Sign in to scrollback with<a class="button facebook">Facebook</a><a class="button persona">Persona</a>');
+		} else {
+			$(".popover-body").addClass("user-menu").append('<ul><li><a href="">Report an issue</a></li><li><a href="">Logout</a></li></ul>');
+		}	
 	});
 
 	$(document).on("click", ".button.facebook", function() {
 		window.open(location.protocol+"//"+location.host+"/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');
+		hidePopOver();
 	});
 
 
@@ -27,7 +32,7 @@ $(function(){
 		next();
 	});
 	libsb.on("init-dn", function(init, next) {
-		if(init.auth) return next();
+		if(init.auth && !init.user.id) return next();
 
 		if(/^guest-/.test(init.user.id)) {
 			$("body").addClass("guest-user");
