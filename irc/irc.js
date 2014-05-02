@@ -10,7 +10,7 @@ client.init(clientEmitter);
 var core;
 var callbacks = {};
 var onlineUsers = {};
-var pendingBack = {};//[room][username] = true
+var firstMessage = {};//[room][username] = true
 var userExp = 10*60*1000;
 var initCount = 0;
 module.exports = function (coreObj) {
@@ -40,26 +40,23 @@ module.exports = function (coreObj) {
 		if (text.room.params && text.room.params.irc && text.session.indexOf('irc') !== 0 && client.connected()) {//session of incoming users from irc 
 			switch (type) {
 				case 'text':
-					if(pendingBack[text.to] && pendingBack[text.to][text.from]) {
-						connectUser(text.to, text.from);
-						delete pendingBack[text.to][text.from];
+					if(!(firstMessage[text.to] && firstMessage[text.to][text.from])) {
+						if (!firstMessage[text.to]) {
+							firstMessage[text.to] = {};
+						}
+						firstMessage[text.to][text.from] = true;
+						if (onlineUsers[text.to] && onlineUsers[text.to][text.from]) {
+							delete onlineUsers[text.to][text.from];
+						} else connectUser(text.to, text.from);
 					}
 					say(text.to, text.from, text.text);
 					break;
 				case 'back':
-					if (onlineUsers[text.to] && onlineUsers[text.to][text.from]) {
-						delete onlineUsers[text.to][text.from];
-					} else {
-						if(!pendingBack[text.to]) pendingBack[text.to] = {};
-						pendingBack[text.to][text.from] = true;
-						
-					}
 					break;
 				case 'away':
-					if(pendingBack[text.to] && pendingBack[text.to][text.from]) {
-						delete pendingBack[text.to][text.from];
-					} else {
+					if(firstMessage[text.to] && firstMessage[text.to][text.from]) {
 						disconnectUser(text.to, text.from);
+						delete firstMessage[text.to][text.from];
 					}
 					break;
 			}	
@@ -127,14 +124,14 @@ function init() {
 				}
 				
 			});
-			
-		});
-		for (var ri in notUsedRooms) {
-			if (notUsedRooms.hasOwnProperty(ri)) {
-				log("disconnecing bot for room ", ri);
-				disconnectBot(ri);
+			for (var ri in notUsedRooms) {
+				if (notUsedRooms.hasOwnProperty(ri)) {
+					log("disconnecing bot for room ", ri);
+					disconnectBot(ri);
+				}
 			}
-		}
+		});
+		
 		isInitDone();
 	});
 	
@@ -175,7 +172,11 @@ function init() {
 			type: 'text',
 			to: data.to,
 			from: data.from,
-			text: data.text
+			text: data.text,
+			time: new Date().getTime(),
+			session: data.session
+		}, function(err, message) {
+			log(err, message);
 		});
 	});	
 }
@@ -196,8 +197,13 @@ function sendInitAndBack(suggestedNick, session ,room) {
 	core.emit('init', {
 			suggestedNick: suggestedNick,
 			session: session,
-			to: "me"
-		}, function(init) {
+			to: "me",
+			type: "init",
+			origin: {
+				gateway: "irc",
+				server: room.params.irc.server
+			}
+		}, function(err, init) {
 			log("init back", init);
 			
 			if (init.user.id !== suggestedNick) 

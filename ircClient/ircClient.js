@@ -437,6 +437,7 @@ function say(message) {
 function newNick(roomId, nick, sbNick) {
 	log("rooms", roomId, rooms);
 	var room = rooms[roomId];
+	//if (room) return;
 	if (!servNick[room.params.irc.server]) {
 		servNick[room.param.irc.server] = {};
 	}

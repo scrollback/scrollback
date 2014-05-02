@@ -183,7 +183,8 @@ function emit(action, callback) {
 	var conns;
 	log("Sending out: ", action);
 	if(action.type == 'init') {
-		sConns[action.session].forEach(function(conn){
+		
+		if(sConns[action.session]) sConns[action.session].forEach(function(conn){
 			conn.user = action.user;
 			dispatch(conn);
 		});

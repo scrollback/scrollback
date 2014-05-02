@@ -49,7 +49,6 @@ libsb.on("navigate", function(state, next) {
 }, 1000);
 
 // On navigation, set the body classes.
-
 libsb.on("navigate", function(state, next) {
 	if(state.old && state.mode !== state.old.mode) {
 		$(document.body).removeClass(state.old.mode + "-mode");
@@ -75,8 +74,7 @@ libsb.on("navigate", function(state, next) {
 	next();
 });
 
-// on navigation, add history and URLs
-
+// On navigation, add history and change URLs
 libsb.on("navigate", function(state, next) {
 	var threadTitle;
 
@@ -132,9 +130,7 @@ libsb.on("navigate", function(state, next) {
 	next();
 });
 
-// Handle back button
-
-
+// On history change, load the appropriate state
 $(window).on("popstate", function() {
 	if (('state' in window.history && window.history.state !== null)) {
 		var state = { }, prop;
@@ -151,6 +147,5 @@ $(window).on("popstate", function() {
 
 		libsb.emit("navigate", state);
 	}
-
 });
 
