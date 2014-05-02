@@ -10,7 +10,7 @@ module.exports = function(c){
 	core = c;
 	core.on('connection-requested', connect);
 	core.on('disconnect', disconnect);
-	
+
 	core.on('init-up', sendInit, 1000);
 	core.on('text-up', sendText, 1000);
 	core.on('back-up', sendBack, 1000);
@@ -20,7 +20,7 @@ module.exports = function(c){
 	core.on('part-up', sendPart, 1000);
 	core.on('admit-up', sendAdmit, 1000);
 	core.on('expel-up', sendExpel, 1000);
-	
+	core.on('user-up', sendUser, 1000);
 	core.on('getTexts', function(query, callback){
 		query.type="getTexts";
 		sendQuery(query, callback);
@@ -47,7 +47,7 @@ function connect(){
 
 	client.onopen = function(){
 		core.emit('connected');
-	}
+	};
 
 	client.onmessage = receiveMessage;
 	client.onclose = disconnected;
@@ -63,7 +63,7 @@ function disconnected(){
 
 function sendQuery(query, next){
 	if(query.results) return next();
-	
+
 	if(!query.id) query.id = generate.uid();
 
 	query.session = libsb.session;
@@ -81,7 +81,7 @@ function receiveMessage(event){
 	}catch(err){
 		core.emit("error", err);
 	}
-	
+
 	if(["getTexts", "getThreads", "getUsers", "getRooms", "getSessions"].indexOf(data.type) != -1){
 		// data is a query
 		if(pendingQueries[data.id]){
@@ -92,21 +92,22 @@ function receiveMessage(event){
 		}
 	}else{
 		//data is an action
-		if(pendingActions[data.id]){
+		/*if(pendingActions[data.id]){
 			pendingActions[data.id](data);
 			delete pendingActions[data.id];
-		}
+		}*/
 		core.emit(data.type + '-dn', data);
 	}
 }
 
 function makeAction(o) {
 	var action = {
-		id: generate.guid,
+		id: generate.uid(),
 		from: libsb.user.id,
-		time: new Date().getTime()
+		time: new Date().getTime(),
 	};
-	
+	console.log(action);
+
 	for(var i in o) action[i] = o[i];
 	action.session = libsb.session;
 	action.resource = libsb.resource;
@@ -116,31 +117,36 @@ function makeAction(o) {
 function sendJoin(join, next){
 	var action = makeAction({type: 'join', to: join.to});
 	client.send(JSON.stringify(action));
-	pendingActions[action.id] = next;
+	next();
+	// pendingActions[action.id] = next;
 }
 
 function sendPart(part, next){
 	var action = makeAction({type: 'part', to: part.to});
 	client.send(JSON.stringify(action));
-	pendingActions[action.id] = next;
+	next();
+	// pendingActions[action.id] = next;
 }
 
 function sendBack(back, next){
 	var action = makeAction({type: 'back', to: back.to});
 	client.send(JSON.stringify(action));
-	pendingActions[action.id] = next;
+	next();
+	// pendingActions[action.id] = next;
 }
 
 function sendAway(away, next){
 	var action = makeAction({type: 'away', to: away.to});
 	client.send(JSON.stringify(action));
-	pendingActions[action.id] = next;
+	next();
+	// pendingActions[action.id] = next;
 }
 
 function sendText(text, next){
 	var action = makeAction({type: 'text', to: text.to, text: text.text});
 	client.send(JSON.stringify(action));
-	pendingActions[action.id] = next;
+	next();
+	// pendingActions[action.id] = next;
 }
 
 function sendInit(init, next){
@@ -149,17 +155,27 @@ function sendInit(init, next){
 	if(init.auth) action.auth = init.auth;
 	if(init.suggestedNick) action.suggestedNick = init.suggestedNick;
 	client.send(JSON.stringify(action));
-	pendingActions[action.id] = next;
+	next();
+	// pendingActions[action.id] = next;
 }
 
 function sendAdmit(admit, next){
 	var action = makeAction({type: 'admit', to: admit.to, ref: admit.ref});
 	client.send(JSON.stringify(action));
-	pendingActions[action.id] = next;
+	next();
+	// pendingActions[action.id] = next;
 }
 
 function sendExpel(admit, next){
 	var action = makeAction({type: 'expel', to: admit.to, ref: admit.ref});
 	client.send(JSON.stringify(action));
-	pendingActions[action.id] = next;
+	next();
+	// pendingActions[action.id] = next;
+}
+
+function sendUser(user, next) {
+	console.log("user up");
+	var action = makeAction({type: 'user', to: "me", user: user.user});
+	client.send(JSON.stringify(action));
+	next();
 }

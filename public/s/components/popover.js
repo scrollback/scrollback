@@ -27,9 +27,16 @@ $(document).on("click", ".has-popover", function() {
 	// Show and hide PopOver
 	$(popover).css({"top" : spacetop, "left" : spaceleft});
 	$("body").addClass("popover-active").append("<div class='layer'></div>");
-	$(".layer").on("click", function() {
+	$(".layer").bind("click", function() {
 		$("body").removeClass("popover-active");
 		$(popover).removeClass("popover-bottom").removeClass("popover-top").removeClass("arrow-left").removeClass("arrow-right");
 		$(this).remove();
 	});
 });
+
+
+function hideAllPopUp() {
+	$("body").removeClass("popover-active");
+	$(".popover-body").removeClass("popover-bottom").removeClass("popover-top").removeClass("arrow-left").removeClass("arrow-right");
+	$(".layer").remove();
+}

@@ -9,9 +9,9 @@ $(function() {
 	roomEl.render = function (el, room, index) {
 		el = el || $template.clone(false);
 
-		el.find(".name").text(room.id);
+		el.find(".name").text(room);
 		el.find(".unread").addClass("hidden");
-		el.attr('id', 'roomitem-' + room.id);
+		el.attr('id', 'roomitem-' + room);
 		el.data('index', index);
 		
 		return el;

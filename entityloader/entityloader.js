@@ -11,14 +11,14 @@ var handlers = {
 	init: function(action, callback) {
 		var wait = true, isErr = false;
 
-		core.emit("getRooms",{id: uid(),hasOccupant: action.from, session: action.session},function(err, rooms) {
+		core.emit("getRooms",{id: uid(),hasOccupant: action.user.id, session: action.session},function(err, rooms) {
 			var user = {};
-			if(err || !rooms || !rooms.length || !rooms.results.length) {
+			if(err || !rooms || !rooms.results || !rooms.results.length) {
 				action.occupantOf = [];
 			}else {
 				action.occupantOf = rooms.results;
 			}
-			
+
 			// if(isErr) return;
 			if(wait) wait = false;
 			else callback();
@@ -28,7 +28,7 @@ var handlers = {
 			if(err || !rooms ||!rooms.results || !rooms.results.length) {
 				action.memberOf = []
 			}else{
-				action.memberOf = rooms.results;	
+				action.memberOf = rooms.results;
 			}
 			// if(isErr) return;
 			if(wait) wait = false;
@@ -87,43 +87,66 @@ module.exports = function(c) {
 	core.on('getRooms', loadUser, "loader");
 	core.on('getTexts', basicLoader, "loader");
 	core.on('getThreads',basicLoader, "loader");
+	core.on("init", initHandler, "loader");
+	core.on("user", userHandler, "loader");
+}
 
-	
-	core.on("init", function(action, callback) {
-		function done() {
-			handlers["init"](action, callback);
+function userHandler(action, callback) {
+	core.emit("getUsers", {ref: "me", session: action.session}, function(err, data){
+		console.log(err, data);
+		if(err || !data || !data.results || !data.results.length) {
+			return callback(new Error("USER_NOT_INITED"));
+		}else {
+			console.log(err, data);
+			action.from = data.results[0].id;
+			core.emit("getUsers", {ref: action.user.id, session: internalSession}, function(err, data){
+				if(err || !data || !data.results || !data.results.length) {
+					action.old = {};
+				}else {
+					action.old = data.results[0];
+				}
+				action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0]).digest('hex');
+				action.user.description = "";
+				callback();
+			});
 		}
-		core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
-			if(err || !data || !data.results || !data.results.length) {
-				return initializerUser(action, function() {
-					if(action.suggestedNick) action.user.nickAssigned = true;
-					return done();
-				});
-			}else {
-				action.user = data.results[0];
-			}
+	});
+}
 
-			if(action.suggestedNick && /^guest-/.test(action.user.id) && !data.results[0].nickAssigned) {
-				return initializerUser(action, function() {
-					action.user.isSuggested = true;
-					return done();
-				});	
+
+function initHandler(action, callback) {
+	function done() {
+		handlers["init"](action, callback);
+	}
+	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
+		if(err || !data || !data.results || !data.results.length) {
+			return initializerUser(action, function() {
+				if(action.suggestedNick) action.user.nickAssigned = true;
+				return done();
+			});
+		}else {
+			action.user = data.results[0];
+		}
+		if(action.suggestedNick && /^guest-/.test(action.user.id) && !data.results[0].nickAssigned) {
+			return initializerUser(action, function() {
+				action.user.isSuggested = true;
+				return done();
+			});
 			}
-			else if(action.ref && /^guest-/.test(data.results[0].id)) {
-				core.emit("getUsers",{id: uid(), ref: action.ref, session: action.session}, function(err, data) {
-					if(err || !data || !data.resutls || !data.results.length) {
-						return callback(new Error("NICK_TAKEN"));
-					}else {
-						initializerUser(action, function() {
-							done();
-						});
-					}
-				});
-			}else{
-				done();
-			}
-		});	
-	}, "loader");
+		else if(action.ref && /^guest-/.test(data.results[0].id)) {
+			core.emit("getUsers",{id: uid(), ref: action.ref, session: action.session}, function(err, data) {
+				if(err || !data || !data.resutls || !data.results.length) {
+					return callback(new Error("NICK_TAKEN"));
+				}else {
+					initializerUser(action, function() {
+						done();
+					});
+				}
+			});
+		}else{
+			done();
+		}
+	});
 }
 
 
@@ -157,7 +180,7 @@ function loadUser(action, callback) {
 				});
 			}else{
 				action.user = user
-				callback();	
+				callback();
 			}
 		}
 	});
@@ -169,7 +192,7 @@ function loadRoom(action, callback) {
 		if(err || !rooms ||!rooms.results || !rooms.results.length) {
 			if(action.type != "room") return callback(new Error("NO_ROOM_WITH_GIVEN_ID"));
 		}else{
-			room = rooms.results[0];	
+			room = rooms.results[0];
 		}
 
 		if(action.type == "room") {

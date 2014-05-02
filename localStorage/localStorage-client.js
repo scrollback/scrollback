@@ -97,8 +97,11 @@ function storeText(text, next){
 }
 
 function getTextsBefore(query, next){
-	var results = cache.texts.get(query);
-	if(results) query.results = results;
+
+	/*
+		not giving the correct data right now.
+		var results = cache.texts.get(query);
+	if(results) query.results = results;*/
 	next();
 }
 
@@ -126,8 +129,9 @@ function getTextsAfter(query, next){
 }
 
 function getThreadsBefore(query, next){
+	/* not giving the correct data right now.
 	var results = cache.labels.get(query);
-	if(results) query.results = results;
+	if(results) query.results = results;*/
 	next();
 }
 

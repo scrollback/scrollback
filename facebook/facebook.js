@@ -1,5 +1,6 @@
 var config = require("../config.js"),
 	name = require("../lib/generate.js").names,
+	crypto = require('crypto'),
 	log = require("../lib/logger.js"),
 	request = require("request"), core,
 	internalSession = Object.keys(config.whitelists)[0];
@@ -46,11 +47,15 @@ function fbAuth(action, callback) {
 						}
 						core.emit("getUsers",{identity: "mailto:"+user.email, session: internalSession}, function(err, data) {
 							if(err || !data) return callback(err);
-							
+
 							if(data.results.length == 0) {
 								action.user = {};
 								action.user.identities = ["mailto:" + user.email];
-								return callback();	
+<<<<<<< HEAD
+								action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update( user.email).digest('hex');
+=======
+>>>>>>> webby
+								return callback();
 							}
 							action.user = data.results[0];
 							callback();
@@ -71,11 +76,11 @@ function handlerRequest(req, res, next) {
 	path = path.split("/");
 	if(path[0] == "login") {
 		return res.render(__dirname+"/login.jade", {
-			client_id: config.facebook.client_id, 
+			client_id: config.facebook.client_id,
 			redirect_uri: "https://"+config.http.host+"/r/facebook/return"
 		});
 	}
 	if(path[0] == "return") {
-		return res.render(__dirname+"/return.jade", {});	
+		return res.render(__dirname+"/return.jade", {});
 	}
 }

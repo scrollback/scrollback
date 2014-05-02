@@ -24,10 +24,9 @@ $(function() {
 		startIndex: 0,
 		getItems: function (index, before, after, recycle, callback) {
 			var res = [], i;
-
-			for(i=index-before; i<=index+after; i++) {
+			for(i=index+1-before; i<=index+after; i++) {
 				if(i<0) { res.push(false); i=0; }
-				if(i==index) continue;
+				// if(i==index) continue;
 				if(i>rooms.length-1) { res.push(false); break; }
 				res.push(roomEl.render(null, rooms[i], i));
 			}
@@ -41,9 +40,36 @@ $(function() {
 	$roomlist.click(function(event) {
 		var $el = $(event.target).closest(".roomitem");
 		if(!$el.size()) return;
-		
-		libsb.emit('navigate', { room: $el.attr("id").split('-')[1], view: 'normal', source: 'roomlist', thread: null });
-		
+
+		libsb.emit('navigate', {
+			room: $el.attr("id").split('-')[1],
+			view: 'normal', source: 'roomlist',
+			thread: null
+		});
+
 		event.preventDefault();
 	});
+
+	libsb.on("init-dn", function(init, next) {
+		if(init.occupantOf){
+			init.occupantOf.forEach(function(r) {
+				if(rooms.indexOf(r)<0) {
+					rooms.push(r);
+					libsb.enter(r);
+				}
+			});
+		}
+		if(init.memberOf){
+			init.memberOf.forEach(function(r) {
+				if(rooms.indexOf(r)<0) {
+					rooms.push(r);
+					libsb.enter(r);
+				}
+			});
+		}
+		console.log(rooms);
+		$roomlist.reset();
+		next();
+	}, 10);
+
 });

@@ -22,7 +22,7 @@ $(function() {
 	});
 
 	$(".conf-save").on("click", function() {
-		currentConfig = null;	
+		currentConfig = null;
         libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
 	});
 

@@ -45,7 +45,7 @@ $(function() {
 					}));
 				});
 			}
-			
+
 		}
 	});
 
@@ -75,8 +75,7 @@ $(function() {
 
 
 	libsb.on('text-dn', function(text, next) {
-		if($threads.data("lower-limit"))
-			$threads.addBelow(renderChat(null, text));
+		// if($threads.data("lower-limit")) $threads.addBelow(renderChat(null, text));
 		next();
 	});
 

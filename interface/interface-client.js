@@ -11,7 +11,7 @@ var libsb = {
 		connect: connect,
 		disconnect: disconnect,
 		resource: generate.uid(),
-		
+
 		getLoginMenu: getLoginMenu,
 		getTexts: getTexts,
 		getThreads: getThreads,
@@ -27,11 +27,11 @@ var libsb = {
 		admit: admit,
 		expel: expel,
 		getSession: getSession,
-		
+
 		roomConfigForm: roomConfigForm,
 		userPreferForm: userPreferForm
 };
-module.exports = function(c){	
+module.exports = function(c){
 	core = c;
 
 	libsb.on = core.on;
@@ -46,7 +46,7 @@ module.exports = function(c){
 	core.on('part-dn', recvPart);
 	core.on('admit-dn', recvAdmit);
 	core.on('expel-dn', recvExpel);
-	
+
 	core.on('connected', onConnect);
 	core.on('disconnected', onDisconnect);
 
@@ -75,7 +75,7 @@ function disconnect(){
 	core.emit('disconnect');
 }
 
-function getLoginMenu(callback){ 
+function getLoginMenu(callback){
 	core.emit('auth-menu', callback);
 }
 
@@ -96,7 +96,7 @@ function getRooms(query, callback){
 }
 
 function getThreads(query, callback){
-	core.emit('getThreads', query, callback);	
+	core.emit('getThreads', query, callback);
 }
 
 function getSession(query, callback){
@@ -145,23 +145,29 @@ function userPreferForm(){
 
 function recvInit(init, next){
 	libsb.session = init.session;
+	if(init.auth && !init.user.id) {
+		core.emit("navigate", {});
+	}
+	libsb.user = init.user;
+	/* why?????
 	if(underscore.isEqual(libsb.user, init.user)){
 		libsb.user = init.user;
 		core.emit('user-update');
 	}
+	*/
 	next();
 }
 
 function recvBack(back, next){
 	if(back.from !== libsb.user.id) return next();
-	if(!libsb.rooms.filter(function(room){ return room.id === back.to; }).length){
+/*	if(!libsb.rooms.filter(function(room){ return room.id === back.to; }).length){
 		libsb.rooms.push(back.room);
 		core.emit('rooms-update');
 	}
 	if(!libsb.occupantOf.filter(function(room){ return room.id === back.to; }).length){
 		libsb.occupantOf.push(back.room);
 		core.emit('occupantof-update');
-	}
+	}*/
 	next();
 }
 

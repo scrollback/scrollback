@@ -16,6 +16,26 @@ module.exports = function(core) {
 		});
 	});
 	
+
+	core.on('user', function(action, callback) {
+		if(/^guest-/.test(action.from)) {
+            get("session",action.session, function(err, sessionObj) {
+				var session = {
+					id: action.session,
+					user: action.user.id,
+					origin: action.origin
+				};
+				if(!err) {
+					session.origin = sessionObj.origin || {};
+						
+				}
+				put("session",action.session,session);
+				return callback();
+			});
+        }else{
+        	callback();
+        }
+	});
 	core.on("init", function(action, callback) {
 		if(action.auth && !action.user.id) {
 	        return callback();
