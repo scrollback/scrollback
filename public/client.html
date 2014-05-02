@@ -122,13 +122,6 @@
 						<a class="button conf-save">Done</a>
 						<a class="button-secondary conf-cancel">Cancel</a>
 					</div>
-					<div class="guest has-popover">
-						<div class="sb-user">sb-walick</div>
-						<div class="sign-in">Sign in</div>
-					</div>
-					<div class="avatar has-popover">
-						<img alt="" src="https://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06">
-					</div>
 				</div>
 			</div>
 			<div class="settings-area">
@@ -275,7 +268,7 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 		<script src="/s/components/popover.js"></script>
 		<script src="/s/components/entry-segments.js"></script>
 
-		
+
 		<script src="s/components/text.js"></script>
 		<script src="s/components/text-area.js"></script>
 		<script src="s/components/compose.js"></script>
@@ -301,14 +294,14 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 			/*what is this?
 			'room', 'view', 'mode', 'tab', 'thread', 'query', 'text', 'time'
 			*/
-			
+
 			$(function() {
-				
+
 				function start(q,n) {
 					console.log("loc", window.location);
 					console.log("q,n", q, n);
 					libsb.emit('navigate', {
-						
+
 						room: "scrollback",//window.location.pathname.split("/")[1],
 						view: 'normal',
 						mode: 'normal',
