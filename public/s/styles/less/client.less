@@ -1078,32 +1078,56 @@
     }
 }
 
-.signup {
-    .signup-view & {
-        .appear;
+.signup, .dim { display: none; }
 
-        display: table;
-        z-index: 40;
-        height: 100%;
-        width: 100%;
-        position: fixed;
-        background-color: @light-color;
+.signup-view {
+    @media only screen and (min-width: 480px) {
+        overflow: auto;
 
-        .container {
-            display: table-cell;
-            vertical-align: middle;
-            text-align: center;
+        .dim {
+            .fadein(.5s 1);
 
-            img {
-                margin: 1em;
-                border-radius: @roundness;
-            }
-
-            input { margin: .5em; }
+            display: block;
+            background: rgba(0,0,0,0.7);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 40;
         }
     }
 
-    display: none;
+    .signup {
+        .appear(.5s 1);
+
+        background: @light-color;
+        border-style: none;
+        position: fixed;
+        z-index: 50;
+        border-radius: 0;
+        left: 0;
+        top: 0;
+        margin-left: 0;
+        margin-top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        display: block;
+
+        input[type=text] { width: 100%; }
+
+        @media only screen and (min-width: 480px) {
+            border-radius: @roundness;
+            left: 50%;
+            top: 50%;
+            margin-left: -14.5em;
+            margin-top: -9em;
+            padding: 1.3em;
+            width: 29em;
+            height: 18em;
+        }
+    }
 }
 
 .popover-body {
