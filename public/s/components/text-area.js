@@ -28,7 +28,6 @@ $(function() {
 					n();
 				})
 			}
-			console.log(index, before, after);
 			function loadTexts(){
 				libsb.getTexts(query, function(err, t) {
 					var texts = t.results;
