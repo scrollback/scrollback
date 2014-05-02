@@ -589,29 +589,34 @@
 
             .title {
                 display: table-cell;
-                vertical-align: middle;
+                vertical-align: bottom;
+                padding: .5em 0;
                 padding-left: 1em;
-                font-size: 1.5em;
 
-                @media @breakpointxxx { padding-left: 0;  }
-            }
+                h1 {
+                    float: left;
+                    font-size: 1.5em;
+                    margin: 0;
 
-            .follow-button {
-                display: table-cell;
-                vertical-align: top;
-                padding: .75em 1em;
-                width: 4em;
-                background: url(../../img/icons/png/follow-no.png) center center no-repeat;
-                background-size: 2em 2em;
-                cursor: pointer;
+                    @media @breakpointxxx { padding-left: 0;  }
+                }
 
-                .following & { background: url(../../img/icons/png/follow.png) center center no-repeat; }
+                .follow-button {
+                    float: left;
+                    width: 4em;
+                    height: 2em;
+                    background: url(../../img/icons/png/follow-no.png) center center no-repeat;
+                    background-size: 2em 2em;
+                    cursor: pointer;
+
+                    .following & { background: url(../../img/icons/png/follow.png) center center no-repeat; }
+                }
             }
 
             .search-button {
                 display: table-cell;
                 vertical-align: top;
-                padding: .75em 1em;
+                padding: .5em 1em;
                 width: 4em;
                 background: url(../../img/icons/png/search.png) center center no-repeat;
                 background-size: 2em 2em;

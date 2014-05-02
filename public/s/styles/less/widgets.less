@@ -267,6 +267,15 @@ code {
 
 .error { color: @error-color; }
 
+.error-msg {
+    background-color: lighten(@error-color, 40%);
+    border: 1px solid @error-color;
+    border-radius: @roundness;
+    padding: .5em;
+    margin: .5em 0;
+    color: @error-color;
+}
+
 .warning {
     background-color: lighten(@error-color, 40%);
     border-bottom: 1px solid @error-color;
