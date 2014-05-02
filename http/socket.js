@@ -1,13 +1,13 @@
 /*
-	Scrollback: Beautiful text chat for your community. 
+	Scrollback: Beautiful text chat for your community.
 	Copyright (c) 2014 Askabt Pte. Ltd.
-	
-This program is free software: you can redistribute it and/or modify it 
+
+This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any 
+the Free Software Foundation, either version 3 of the License, or any
 later version.
 
-This program is distributed in the hope that it will be useful, but 
+This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
 License for more details.
@@ -39,7 +39,7 @@ sock.on('connection', function (socket) {
 		var i, l, e;
 		try { d = JSON.parse(d); log ("Socket received ", d); }
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
-		
+
 		if(d.type == 'init' && d.session) {
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
@@ -53,10 +53,10 @@ sock.on('connection', function (socket) {
 			}
 		}
 		else if (conn.session) {
-			d.session = conn.session; 
+			d.session = conn.session;
 			d.resource  = conn.resource;
 		}
-		
+
 		if(d.type == 'back') {
 			//just need for back as storeBack will be called before actionValidator
 			if(!d.to) {
@@ -73,7 +73,7 @@ sock.on('connection', function (socket) {
 			if(!verifyBack(conn, d)){
 				storeBack(conn, d);
 				conn.send(d);
-				return;	
+				return;
 			}
 		}
 		core.emit(d.type, d, function(err, data) {
@@ -90,8 +90,8 @@ sock.on('connection', function (socket) {
 				storeBack(conn, data);
 				return;
 			}
-			if(data.type == 'away') storeAway(conn, data); 
-			if(data.type == 'init') storeInit(conn, data); 
+			if(data.type == 'away') storeAway(conn, data);
+			if(data.type == 'init') storeInit(conn, data);
 			if(data.type == 'user') processUser(conn, data);
 			if(['getUsers', 'getTexts', 'getRooms', 'getThreads'].indexOf(data.type)>=0){
 				// console.log("sending response for: "+data.type+": " ,data);
@@ -104,7 +104,7 @@ sock.on('connection', function (socket) {
 			 */
 		});
 	});
-	
+
 	conn.send = function(data) {
 		socket.write(JSON.stringify(data));
 	};
@@ -121,12 +121,12 @@ function storeInit(conn, init) {
 	sConns[init.session].forEach(function(c) {
 		var index;
 		if(init.old && init.id) {
-			index = uConns[init.old.id].indexOf(c);	
+			index = uConns[init.old.id].indexOf(c);
 			uConns.splice(index, 1);
 		}
 
 		uConns[init.user.id].push(c);
-		
+
 		init.occupantOf.forEach(function(room) {
 			if(init.old && init.id) {
 				index = urConns[init.old.id+":"+room].indexOf(c);
@@ -191,7 +191,7 @@ function emit(action, callback) {
 		uConns[action.from].forEach(dispatch);
 	} else {
 		if(rConns[action.to]){
-			rConns[action.to].forEach(dispatch);	
+			rConns[action.to].forEach(dispatch);
 		}
 	}
 	function dispatch(conn) {conn.send(action); }
@@ -227,7 +227,7 @@ function handleClose(conn) {
 }
 
 function verifyAway(conn, away) {
-	var index;	
+	var index;
 	if(rConns[away.to]) {
 		index = rConns[away.to].indexOf(conn);
 		rConns[away.to].splice(index,1);

@@ -18,7 +18,7 @@ var handlers = {
 			}else {
 				action.occupantOf = rooms.results;
 			}
-			
+
 			// if(isErr) return;
 			if(wait) wait = false;
 			else callback();
@@ -28,7 +28,7 @@ var handlers = {
 			if(err || !rooms ||!rooms.results || !rooms.results.length) {
 				action.memberOf = []
 			}else{
-				action.memberOf = rooms.results;	
+				action.memberOf = rooms.results;
 			}
 			// if(isErr) return;
 			if(wait) wait = false;
@@ -114,7 +114,7 @@ function userHandler(action, callback) {
 }
 
 
-function initHandler(action, callback) {	
+function initHandler(action, callback) {
 	function done() {
 		handlers["init"](action, callback);
 	}
@@ -131,7 +131,7 @@ function initHandler(action, callback) {
 			return initializerUser(action, function() {
 				action.user.isSuggested = true;
 				return done();
-			});	
+			});
 			}
 		else if(action.ref && /^guest-/.test(data.results[0].id)) {
 			core.emit("getUsers",{id: uid(), ref: action.ref, session: action.session}, function(err, data) {
@@ -146,7 +146,7 @@ function initHandler(action, callback) {
 		}else{
 			done();
 		}
-	});	
+	});
 }
 
 
@@ -180,7 +180,7 @@ function loadUser(action, callback) {
 				});
 			}else{
 				action.user = user
-				callback();	
+				callback();
 			}
 		}
 	});
@@ -192,7 +192,7 @@ function loadRoom(action, callback) {
 		if(err || !rooms ||!rooms.results || !rooms.results.length) {
 			if(action.type != "room") return callback(new Error("NO_ROOM_WITH_GIVEN_ID"));
 		}else{
-			room = rooms.results[0];	
+			room = rooms.results[0];
 		}
 
 		if(action.type == "room") {

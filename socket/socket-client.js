@@ -10,7 +10,7 @@ module.exports = function(c){
 	core = c;
 	core.on('connection-requested', connect);
 	core.on('disconnect', disconnect);
-	
+
 	core.on('init-up', sendInit, 1000);
 	core.on('text-up', sendText, 1000);
 	core.on('back-up', sendBack, 1000);
@@ -21,7 +21,6 @@ module.exports = function(c){
 	core.on('admit-up', sendAdmit, 1000);
 	core.on('expel-up', sendExpel, 1000);
 	core.on('user-up', sendUser, 1000);
-
 	core.on('getTexts', function(query, callback){
 		query.type="getTexts";
 		sendQuery(query, callback);
@@ -48,7 +47,7 @@ function connect(){
 
 	client.onopen = function(){
 		core.emit('connected');
-	}
+	};
 
 	client.onmessage = receiveMessage;
 	client.onclose = disconnected;
@@ -64,7 +63,7 @@ function disconnected(){
 
 function sendQuery(query, next){
 	if(query.results) return next();
-	
+
 	if(!query.id) query.id = generate.uid();
 
 	query.session = libsb.session;
@@ -82,7 +81,7 @@ function receiveMessage(event){
 	}catch(err){
 		core.emit("error", err);
 	}
-	
+
 	if(["getTexts", "getThreads", "getUsers", "getRooms", "getSessions"].indexOf(data.type) != -1){
 		// data is a query
 		if(pendingQueries[data.id]){
