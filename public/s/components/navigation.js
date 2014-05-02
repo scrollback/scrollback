@@ -97,7 +97,7 @@ libsb.on("navigate", function(state, next) {
 			case 'home':
 				path = '/me';
 				break;
-			case 'normal':
+			default:
 				path = (state.room ? '/' + state.room + (
 						state.thread ? '/' + state.thread + '/' + format.sanitize(threadTitle): ''
 					): '');
@@ -106,32 +106,28 @@ libsb.on("navigate", function(state, next) {
 		if(state.time) params.push('time=' + new Date(state.time).toISOString());
 		if(state.tab) params.push('tab=' + state.tab);
 
-		return path + (params.length? '?' + params.join('&'): '');
+		return path + (params.length ? '?' + params.join('&'): '');
 	}
 
 	function pushState() {
 		var url = buildurl();
 
-		if (url && history.pushState && url != location.pathname + location.search) {
+		if (url && history.pushState && url != location.pathname + location.search && state.source !== "history") {
 			if(state.changes.time && Object.keys(state.changes).length == 1) {
 				history.replaceState(state, null, url);
 			} else {
 				history.pushState(state, null, url);
 			}
-
 		}
 	}
 
-	if (state.source !== "history") {
-		if(state.thread) {
-			libsb.getThreads(state.thread, function(err, thread) {
-				threadTitle = thread.title;
-				pushState();
-			});
-		} else {
-			pushState();
-		}
+	if (state.thread) {
+		libsb.getThreads(state.thread, function(err, thread) {
+			threadTitle = thread.title;
+		});
 	}
+
+	pushState();
 
 	next();
 });
