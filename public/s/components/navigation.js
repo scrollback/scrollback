@@ -130,6 +130,9 @@ libsb.on("navigate", function(state, next) {
 	next();
 });
 
+// Handle back button
+
+
 // On history change, load the appropriate state
 $(window).on("popstate", function() {
 	if (('state' in window.history && window.history.state !== null)) {
@@ -147,5 +150,5 @@ $(window).on("popstate", function() {
 
 		libsb.emit("navigate", state);
 	}
-});
 
+});
