@@ -76,7 +76,7 @@ $(function() {
 			room = state.room;
 			reset = true;
 		}
-		if(state.thread && state.old && state.thread != state.old.thread) {
+		if(typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
 			thread = state.thread;
 			reset = true;
 		}
