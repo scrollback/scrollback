@@ -11,9 +11,8 @@ $(function() {
 	function sendMsg(){
 		var text = format.htmlToText($entry.html());
 		$entry.text("");
-		console.log("==="+window.currentState.room);
 		if(window.currentState && window.currentState.room) {
-			libsb.say(window.currentState.room, text);
+			libsb.say(window.currentState.room, text, window.currentState.thread);
 		}else{
 			// show the error that no part of any room yet.
 		}

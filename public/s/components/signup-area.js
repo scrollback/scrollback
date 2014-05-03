@@ -24,7 +24,6 @@ $(function(){
 
 	libsb.on("user-dn", function(action, next) {
 		libsb.emit('navigate', {
-			room: window.location.pathname.split("/")[1],
 			view: 'normal',
 			mode: 'normal',
 			tab: 'info'
@@ -35,7 +34,6 @@ $(function(){
 
 	$(document).on("click", ".signup-cancel", function(){
 		libsb.emit('navigate', {
-			room: window.location.pathname.split("/")[1],
 			view: 'normal',
 			mode: 'normal',
 			tab: 'info'

@@ -128,8 +128,10 @@ function part(roomId, callback){
 	core.emit('part-up', {to: roomId}, callback);
 }
 
-function say(roomId, text, callback){
-	core.emit('text-up', {to: roomId, text: text, from: libsb.user.id}, callback);
+function say(roomId, text, thread, callback){
+	var obj =  {to: roomId, text: text, from: libsb.user.id};
+	if(thread) obj.threads = [{id: thread}];
+	core.emit('text-up', obj, callback);
 }
 
 function admit(roomId, ref, callback){

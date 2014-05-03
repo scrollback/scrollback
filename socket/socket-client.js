@@ -101,16 +101,13 @@ function receiveMessage(event){
 	}
 }
 
-function makeAction(o) {
-	var action = {
-		id: generate.uid(),
-		from: libsb.user.id,
-		time: new Date().getTime(),
-	};
-
-	for(var i in o) action[i] = o[i];
+function makeAction(action) {
+	action.id = generate.uid();
+	action.from = libsb.user.id;
+	action.time = new Date().getTime();
 	action.session = libsb.session;
 	action.resource = libsb.resource;
+	console.log(action);
 	return action;
 }
 
@@ -143,7 +140,8 @@ function sendAway(away, next){
 }
 
 function sendText(text, next){
-	var action = makeAction({type: 'text', to: text.to, text: text.text});
+	text.type = "text";
+	var action = makeAction(text);
 	client.send(JSON.stringify(action));
 	next();
 	// pendingActions[action.id] = next;
@@ -174,7 +172,6 @@ function sendExpel(admit, next){
 }
 
 function sendUser(user, next) {
-	console.log("user up");
 	var action = makeAction({type: 'user', to: "me", user: user.user});
 	user.id = action.id;
 	client.send(JSON.stringify(action));

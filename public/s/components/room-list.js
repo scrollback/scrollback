@@ -78,7 +78,6 @@ $(function() {
 				}
 			});
 		}
-		console.log(rooms);
 		$roomlist.reset();
 		next();
 	}, 10);

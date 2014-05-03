@@ -6,7 +6,7 @@ var textArea = {};
 
 $(function() {
 	var $logs = $(".chat-area"),
-		room = window.location.pathname.split("/")[1], /* replace with room from URL */
+		room = "", /* replace with room from URL */
 		thread = '',
 		time = null; /* replace this with the time from the URL, if available. */
 
@@ -59,11 +59,10 @@ $(function() {
 
 	libsb.on('text-dn', function(text, next) {
 		var i = 0, l;
-		console.log(text.to, " 	",room);
+
 		if(text.resource == libsb.resource) return next();
-		if(text.to !== room) next();
-		console.log(text.to, " 	",room);
-		if(text.threads && texts.threads.length) {
+		if(text.to != room) return next();
+		if(text.threads && text.threads.length && thread) {
 			for(i=0, l=text.threads.length;i<l;i++) {
 				if(text.threads[i].id == thread) {
 					break;
@@ -73,6 +72,7 @@ $(function() {
 				return next();
 			}
 		}else if(thread) {
+			console.log(thread);
 			return next();
 		}
 		
@@ -90,17 +90,14 @@ $(function() {
 		if(state.source == 'text-area') return next();
 
 		if(state && (!state.old || state.room != state.old.room)) {
-			console.log("reseting...", state);
 			room = state.room;
 			reset = true;
 		}
 		if(typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
-			console.log("reseting...");
 			thread = state.thread;
 			reset = true;
 		}
 		if(state.old && state.time != state.old.time) {
-			console.log("reseting...");
 			time = state.time;
 			reset = true;
 		}

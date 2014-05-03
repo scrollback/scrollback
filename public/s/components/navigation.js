@@ -23,7 +23,6 @@
 var currentState = window.currentState = {};
 
 libsb.on("navigate", function(state, next) {
-	console.log(state);
 	state.old = currentState;
 	state.changes = {};
 	currentState = {};
@@ -43,9 +42,10 @@ libsb.on("navigate", function(state, next) {
 			} else {
 				currentState[prop] = state.changes[prop] = state[prop];
 			}
+		}else {
+			currentState[prop] = state[prop]
 		}
 	});
-	console.log(currentState);
 	next();
 }, 1000);
 
@@ -71,7 +71,7 @@ libsb.on("navigate", function(state, next) {
 	}
 
 	next();
-});
+}, 999);
 
 // On navigation, add history and change URLs
 libsb.on("navigate", function(state, next) {
@@ -126,14 +126,14 @@ libsb.on("navigate", function(state, next) {
 	pushState();
 
 	next();
-});
+}, 200);
 
 libsb.on("logout", function(p,n) {
 	libsb.emit('navigate', {
 		view: 'loggedout',
 	});
 	n();
-});
+}, 1000);
 		
 // Handle back button
 

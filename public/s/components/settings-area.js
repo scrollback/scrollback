@@ -36,7 +36,7 @@ $(function() {
 	});
 
 	$(".configure-button").on("click", function() {
-        libsb.emit('navigate', { mode: "conf", tab: "general-settings", source: "configure-button", room: location.pathname.replace('/','') });
+        libsb.emit('navigate', { mode: "conf", tab: "general-settings", source: "configure-button" });
 	});
 
 	$(".conf-save").on("click", function() {

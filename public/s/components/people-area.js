@@ -6,7 +6,6 @@ var peopleArea = {};
 
 $(function() {
 	var $people = $(".pane-people"),
-		room = window.location.pathname.split("/")[1], /* replace with room from URL */
 		people = [];
 
 		
