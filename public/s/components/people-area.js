@@ -9,21 +9,7 @@ $(function() {
 		room = window.location.pathname.split("/")[1], /* replace with room from URL */
 		people = [];
 
-		if(libsb.isInited){
-			loadMembers();
-		}else{
-			libsb.on("inited", loadMembers, 1000);
-		}
-
-		function loadMembers(p,n) {
-			libsb.getMembers(room, function(err, p) {
-				if(err) throw err;
-				people = p.results;
-				$people.reset();
-			});
-
-			if(n) n();
-		}
+		
 
 	// Set up infinite scroll here.
 	$people.infinite({
@@ -33,9 +19,11 @@ $(function() {
 		startIndex: 0,
 		getItems: function (index, before, after, recycle, callback) {
 			var res = [], i;
+
+			console.log(index-before, index+after);
 			for(i=index-before; i<=index+after; i++) {
 				if(i<0) { res.push(false); i=0; }
-				// if(i==index) continue;
+				if(before && i==index) continue;
 				if(i>people.length-1) { res.push(false); break; }
 				res.push(personEl.render(null, people[i], i));
 			}
@@ -49,6 +37,21 @@ $(function() {
 
 		if(!state.old ||(state.tab == "people" && state.old.tab!="people") || (state.old.room != state.room)) {
 			room = state.room;
+			if(libsb.isInited) {
+				loadMembers();
+			}else{
+				libsb.on("inited", loadMembers, 1000);
+			}
+
+			function loadMembers(p,n) {
+				libsb.getMembers(room, function(err, p) {
+					if(err) throw err;
+					people = p.results;
+					$people.reset();
+				});
+
+				if(n) n();
+			}
 			$people.reset();
 		}
 		next();

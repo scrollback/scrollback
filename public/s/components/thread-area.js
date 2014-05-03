@@ -17,7 +17,6 @@ $(function() {
 		itemHeight: 100,
 		startIndex: time,
 		getItems: function (index, before, after, recycle, callback) {
-			console.log(index, before, after);
 			if(libsb.isInited) {
 				loadThreads();
 			}else {

@@ -24,13 +24,14 @@ $(function(){
 
 
 	libsb.on('navigate', function(state, next) {
-
 		if(state && (!state.old || state.room != state.old.room)) {
 			room = state.room;
 			$("#roomTitle").text(room);
 		}
 		next();
 	});
+
+	
 	libsb.on("init-dn", function(init, next) {
 		if(init.auth && !init.user.id) return next();
 

@@ -106,7 +106,6 @@ function makeAction(o) {
 		from: libsb.user.id,
 		time: new Date().getTime(),
 	};
-	console.log(action);
 
 	for(var i in o) action[i] = o[i];
 	action.session = libsb.session;
