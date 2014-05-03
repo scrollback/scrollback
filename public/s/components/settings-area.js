@@ -11,12 +11,32 @@ $(function() {
 		return tab;
 	}
 
+	function renderSettings(roomId){
+		libsb.getRooms({ref: roomId}, function(err, data){
+			console.log("DATA ", data);
+			var results = data.results[0];
+			// general settings 
+			$('.pane-general-settings #description').val(results.description);
+			$('.pane-general-settings #displayname').val(results.id);
+
+			//irc settings 
+			$('.pane-irc-settings #ircserver').val(results.params.irc.server);
+			$('.pane-irc-settings #ircchannel').val(results.params.irc.cleint);
+
+			//spam settings 
+			$('#block-offensive').prop('checked', results.params.wordban);
+
+			//seo settings
+			$('#allow-index').prop('checked', results.params.allowSEO);
+		});
+	}
+
 	$('.settings-menu').click(function(event) {
 		// check event.target.closest('.tab').text()
 	});
 
 	$(".configure-button").on("click", function() {
-        libsb.emit('navigate', { mode: "conf", tab: "general-settings", source: "configure-button" });
+        libsb.emit('navigate', { mode: "conf", tab: "general-settings", source: "configure-button", room: location.pathname.replace('/','') });
 	});
 
 	$(".conf-save").on("click", function() {
@@ -65,7 +85,9 @@ $(function() {
 						$('.settings-menu ul').append('<li class = "tab ' + className + '">' + i + '</li>');
 						$('.settings-area').append(config[i]);
 					}
+					renderSettings(state.room);
 				});
+				
 			}
 			else{
 				libsb.emit('navigate', {tab: 'General'});
