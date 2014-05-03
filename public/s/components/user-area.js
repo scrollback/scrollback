@@ -56,7 +56,7 @@ $(function(){
 		}
 
 		$("#userGrav").attr("src", init.user.picture);
-		$(".sb-user")[0].innerText = init.user.id.replace(/^guest-/,'');
+		$(".sb-user").text(init.user.id.replace(/^guest-/,''));
 		next();
 	}, 1000);
 });

@@ -12,7 +12,7 @@ $(function() {
 			$(pane).addClass('current');
 			// libsb.emit('navigate', {tab: tab});
 		} else{
-			libsb.emit('navigate', { tab: tab, source: "tabs", room: window.location.pathname.split("/")[1]});
+			libsb.emit('navigate', { tab: tab, source: "tabs"});
 		}
 	});
 });

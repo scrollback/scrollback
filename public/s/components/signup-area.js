@@ -3,7 +3,7 @@
 
 
 $(function(){
-	var signingUser;
+	var signingUser, signupId;
 	$(document).on("click", ".signup-save", function(){
 		console.log(signingUser);
 		libsb.emit("user-up", {
@@ -12,9 +12,14 @@ $(function(){
 				id: $("#signup-id").val(),
 				identities: signingUser.identities,
 			}
-		}, function(){
-			console.log("user signup sent");
+		}, function(err, u){
+			console.log("user signup sent", u);
+			signupId = u.id;
 		});
+	});
+	libsb.on("error-dn", function(action, next) {
+		console.log(action);
+		next();
 	});
 
 	libsb.on("user-dn", function(action, next) {

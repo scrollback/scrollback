@@ -58,7 +58,24 @@ $(function() {
 	// Insert incoming text messages.
 
 	libsb.on('text-dn', function(text, next) {
+		var i = 0, l;
+		console.log(text.to, " 	",room);
 		if(text.resource == libsb.resource) return next();
+		if(text.to !== room) next();
+		console.log(text.to, " 	",room);
+		if(text.threads && texts.threads.length) {
+			for(i=0, l=text.threads.length;i<l;i++) {
+				if(text.threads[i].id == thread) {
+					break;
+				}
+			}
+			if(i==l){
+				return next();
+			}
+		}else if(thread) {
+			return next();
+		}
+		
 		if($logs.data("lower-limit")) $logs.addBelow(textEl.render(null, text));
 		next();
 	});

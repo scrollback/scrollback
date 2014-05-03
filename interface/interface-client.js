@@ -50,6 +50,7 @@ module.exports = function(c){
 	core.on('part-dn', recvPart);
 	core.on('admit-dn', recvAdmit);
 	core.on('expel-dn', recvExpel);
+	// core.on('error-dn', recvError);
 
 	core.on('connected', onConnect);
 	core.on('disconnected', onDisconnect);

@@ -23,6 +23,7 @@
 var currentState = window.currentState = {};
 
 libsb.on("navigate", function(state, next) {
+	console.log(state);
 	state.old = currentState;
 	state.changes = {};
 	currentState = {};
@@ -44,7 +45,7 @@ libsb.on("navigate", function(state, next) {
 			}
 		}
 	});
-
+	console.log(currentState);
 	next();
 }, 1000);
 
