@@ -27,6 +27,10 @@ var libsb = {
 		admit: admit,
 		expel: expel,
 		getSession: getSession,
+		logout: function(){
+			core.emit("logout");
+			core.emit("disconnect");
+		},
 
 		roomConfigForm: roomConfigForm,
 		userPreferForm: userPreferForm
@@ -149,7 +153,6 @@ function recvInit(init, next){
 	if(init.auth && !init.user.id) {
 		core.emit("navigate", {});
 	}
-	console.log(init);
 	libsb.user = init.user;
 
 	if(underscore.isEqual(libsb.user, init.user)){
