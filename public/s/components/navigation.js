@@ -80,7 +80,6 @@ libsb.on("navigate", function(state, next) {
 
 	function buildurl() {
 		var path, params = [];
-
 		switch(state.mode) {
 			case 'conf':
 				path = '/' + (state.room ? state.room + '/edit': 'me');
@@ -120,7 +119,7 @@ libsb.on("navigate", function(state, next) {
 	}
 
 	if (state.thread) {
-		libsb.getThreads(state.thread, function(err, thread) {
+		libsb.getThreads({ref: state.thread}, function(err, thread) {
 			threadTitle = thread.title;
 		});
 	}

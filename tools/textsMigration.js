@@ -5,7 +5,7 @@ var log = require("../lib/logger.js");
 var db = require('mysql').createConnection(config.mysql);
 var accountConnection = require('mysql').createConnection(config.mysql);
 var leveldb, types;
-
+var startTimes = {};
 var owners = {};
 db.connect();
 
@@ -19,11 +19,39 @@ function migrateTexts(cb) {
 		db.pause();
 		// types.texts.put()
 		text.type = "text";
-		console.log(text);
+
+		// console.log("+++++++++++");
+		text.threads = [];
+		if(text.labels) {
+			l = fixLabels(text);
+			// console.log("---l---",l);
+			if(l.indexOf("hidden") >= 0) {
+				text.labels = {
+					hidden: 1
+				};
+				l.splice(l.indexOf("hidden"),1);
+			}else{
+				text.labels = {};
+			}
+			
+			if(l.length) {
+				l.forEach(function(i) {
+					if(!startTimes[i]) startTimes[i] = text.time;
+
+					text.threads.push({
+						id: i,
+						title: i,
+						startTime: startTimes[i] || {}
+					});
+				});
+			}
+		}
+		// console.log("---l---",text.threads);
+		// console.log("+++++++++++");
 		types.texts.put(text, function(err){
 			if(err) console.log("Error inserting", text);
 			else{
-				console.log("Inserting ", text);
+				// console.log("Inserting ", text);
 				db.resume();
 			}
 		});
@@ -46,3 +74,28 @@ function migrateTexts(cb) {
 	types = require("../leveldb-storage/types/types.js")(leveldb);
 	migrateTexts();
 })();
+
+
+
+
+function fixLabels(element) {
+	var labelObj, i, l ;
+	if(!element.labels){
+		return [];
+	}
+	try{
+		labelObj = JSON.parse(element.labels);
+		l = [];
+		for(i in labelObj){
+			if(labelObj.hasOwnProperty(i) && labelObj[i]){
+				l.push(i);
+			}
+		}
+		console.log(element.labels);
+	}catch(Exception){
+
+		l = [element.labels];
+	}
+	// console.log(element.labels, l);
+	return l;
+}

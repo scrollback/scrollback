@@ -36,7 +36,16 @@ $(function(){
 			tab: 'info'
 		});
 	});
-	
+
+	$(document).on("click", ".reload-page", function(){
+		libsb.emit('navigate', {
+			room: "scrollback",
+			view: 'normal',
+			mode: 'normal',
+			tab: 'info'
+		});
+	});
+
 	libsb.on("init-dn", function(init, next) {
 		if(init.auth && init.user.identities && !init.user.id ) {
 			if(init.resource == libsb.resource) {
