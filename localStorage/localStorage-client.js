@@ -82,12 +82,13 @@ function storeAway(away, next){
 	next();
 }
 
-function logout(){
+function logout(p,n){
 	// delete user session here
 	delete cache.session;
 	delete cache.user;
 	delete libsb.session;
 	save();
+	n();
 }
 
 function storeText(text, next){

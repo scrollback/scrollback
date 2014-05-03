@@ -19,7 +19,7 @@ $(function(){
 
 	libsb.on("user-dn", function(action, next) {
 		libsb.emit('navigate', {
-			room: "scrollback",
+			room: window.location.pathname.split("/")[1],
 			view: 'normal',
 			mode: 'normal',
 			tab: 'info'
@@ -30,7 +30,7 @@ $(function(){
 
 	$(document).on("click", ".signup-cancel", function(){
 		libsb.emit('navigate', {
-			room: "scrollback",
+			room: window.location.pathname.split("/")[1],
 			view: 'normal',
 			mode: 'normal',
 			tab: 'info'
@@ -38,12 +38,7 @@ $(function(){
 	});
 
 	$(document).on("click", ".reload-page", function(){
-		libsb.emit('navigate', {
-			room: "scrollback",
-			view: 'normal',
-			mode: 'normal',
-			tab: 'info'
-		});
+		location.reload();
 	});
 
 	libsb.on("init-dn", function(init, next) {

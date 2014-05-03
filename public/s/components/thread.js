@@ -8,7 +8,7 @@ $(function() {
 
 	threadEl.render = function (el, thread) {
 		el = el || $template.clone(false);
-		
+		console.log(thread);
 		el.find('.title').text(thread.title);
 		el.find('.snippet').html("");
 		el.find('.timestamp').html(format.friendlyTime(thread.startTime, new Date().getTime()));
@@ -23,7 +23,7 @@ $(function() {
 });
 
 libsb.on('navigate', function(state, next) {
-	if(state.thread && state.thread != state.old.thread) {
+	if(typeof state.thread != "undefined"  && state.thread != state.old.thread) {
 		$(".thread.current").removeClass("current");
 		$("#thread-" + state.thread).addClass("current");
 	}

@@ -4,7 +4,7 @@ var log = require("../lib/logger.js");
 // var leveldb = new objectlevel(__dirname+"/"+config.leveldb.path);
 var db = require('mysql').createConnection(config.mysql);
 var accountConnection = require('mysql').createConnection(config.mysql);
-var leveldb, types;
+var leveldb, types, text;
 var startTimes = {};
 var owners = {};
 db.connect();
@@ -20,7 +20,6 @@ function migrateTexts(cb) {
 		// types.texts.put()
 		text.type = "text";
 
-		// console.log("+++++++++++");
 		text.threads = [];
 		if(text.labels) {
 			l = fixLabels(text);
@@ -37,10 +36,10 @@ function migrateTexts(cb) {
 			if(l.length) {
 				l.forEach(function(i) {
 					if(!startTimes[i]) startTimes[i] = text.time;
-
 					text.threads.push({
 						id: i,
 						title: i,
+						to: text.to,
 						startTime: startTimes[i] || {}
 					});
 				});
@@ -48,7 +47,7 @@ function migrateTexts(cb) {
 		}
 		// console.log("---l---",text.threads);
 		// console.log("+++++++++++");
-		types.texts.put(text, function(err){
+		texts.put(text, function(err){
 			if(err) console.log("Error inserting", text);
 			else{
 				// console.log("Inserting ", text);
@@ -72,6 +71,7 @@ function migrateTexts(cb) {
 	}
 	leveldb = new objectlevel(process.cwd()+"/leveldb-storage/"+config.leveldb.path);
 	types = require("../leveldb-storage/types/types.js")(leveldb);
+	texts = require("../leveldb-storage/schemas/texts.js")(leveldb);
 	migrateTexts();
 })();
 

@@ -96,7 +96,7 @@ libsb.on("navigate", function(state, next) {
 				break;
 			default:
 				path = (state.room ? '/' + state.room + (
-						state.thread ? '/' + state.thread + '/' + format.sanitize(threadTitle): ''
+						state.thread ? '/' + state.thread + '/' + format.sanitize(state.thread): ''
 					): '');
 		}
 
@@ -119,9 +119,9 @@ libsb.on("navigate", function(state, next) {
 	}
 
 	if (state.thread) {
-		libsb.getThreads({ref: state.thread}, function(err, thread) {
-			threadTitle = thread.title;
-		});
+		// libsb.getThreads({ref: state.thread}, function(err, thread) {
+		// 	threadTitle = thread.title;
+		// });
 	}
 
 	pushState();
@@ -129,6 +129,13 @@ libsb.on("navigate", function(state, next) {
 	next();
 });
 
+libsb.on("logout", function(p,n) {
+	libsb.emit('navigate', {
+		view: 'loggedout',
+	});
+	n();
+});
+		
 // Handle back button
 
 
