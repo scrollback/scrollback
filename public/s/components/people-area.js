@@ -20,7 +20,6 @@ $(function() {
 		getItems: function (index, before, after, recycle, callback) {
 			var res = [], i;
 
-			console.log(index-before, index+after);
 			for(i=index-before; i<=index+after; i++) {
 				if(i<0) { res.push(false); i=0; }
 				if(before && i==index) continue;

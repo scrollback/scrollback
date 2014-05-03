@@ -84,7 +84,7 @@ $(function() {
 			time = state.time;
 			reset = true;
 		}
-
+		
 		if(reset) $logs.reset(time);
 
 		next();

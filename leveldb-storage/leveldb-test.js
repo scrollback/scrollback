@@ -3,6 +3,7 @@ var core = require('../lib/emitter.js');
 var generate = require("../lib/generate.js");
 require("./leveldb-storage.js")(core);
 var time = 1398139968009, id;
+var crypto = require('crypto'), log = require("../lib/logger.js");
 
 // describe("Just to try something out quick.",function(){
 // 	it("Checking join:", function(done) {
@@ -19,6 +20,8 @@ console.log("+++++Text should be run after clearing the DB+++++");
 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
 describe("user and room action", function(){
 	it("storing user harish", function(done) {
+		var email = "harish@scrollback.io";
+
 		core.emit("user", {
 			id: generate.uid(),
 			type:"user",
@@ -26,8 +29,8 @@ describe("user and room action", function(){
 				id:"harish",
 				description:"this is me?",
 				type:"user",
-				picture:"http://gravatar.com/avatar/alscalladf",
-				identities:["mailto:harish@scrollback.io"], 
+				picture: generatePick(email),
+				identities:["mailto:"+email], 
 				params:{}
 			}
 		}, function(err, data){
@@ -36,6 +39,7 @@ describe("user and room action", function(){
 		});
 	});
 	it("storing user arvind", function(done) {
+		var email = "arvind@scrollback.io"
 		core.emit("user", {
 			id: generate.uid(),
 			type:"user",
@@ -43,8 +47,8 @@ describe("user and room action", function(){
 				id:"arvind",
 				description:"this is him",
 				type:"user",
-				picture:"http://gravatar.com/avatar/ksdcnsdjfsl",
-				identities:["mailto:arvind@scrollback.io"],
+				picture: generatePick(email),
+				identities:["mailto:"+email], 
 				params:{}
 			}
 		}, function(err, data){
@@ -53,6 +57,7 @@ describe("user and room action", function(){
 		});
 	});
 	it("storing user amal", function(done) {
+		var email = "amal.scrollback.io";
 		core.emit("user", {
 			id: generate.uid(),
 			type:"user",
@@ -60,8 +65,8 @@ describe("user and room action", function(){
 				id:"amal",
 				description:"this is another him",
 				type:"user",
-				picture:"http://gravatar.com/avatar/coaubnllnksdj",
-				identities:["mailto:amal@scrollback.io"],
+				picture: generatePick(email),
+				identities:["mailto:"+email], 
 				params:{}
 			}
 		}, function(err, data){
@@ -506,3 +511,7 @@ describe("Text: Add assertions to the validity of the data: ", function() {
 		});
 	});
 });
+
+function generatePick(id) {
+	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=identicon&s=48';
+}
