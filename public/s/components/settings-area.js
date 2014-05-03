@@ -39,11 +39,10 @@ $(function() {
 				}
 			};
 			libsb.emit('room-up', room, function(){
-				alert("ROOM up emitted");
+				currentConfig = null;
+        		libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
 			});
 		});
-		currentConfig = null;
-        libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
 	});
 
 	$(".conf-cancel").on("click", function() {
