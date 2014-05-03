@@ -20,12 +20,36 @@ $(function() {
 	});
 
 	$(".conf-save").on("click", function() {
+		libsb.emit('config-save', {}, function(err, configData){
+			console.log(configData);
+			var sessions = libsb.session;
+			sessions = typeof libsb.session === "string" ? [libsb.session] : sessions;
+			var room = {
+				id: $('.roomitem.current .name').text(),
+				description: configData.description,
+				sessions : sessions,
+				identities: '',
+				params: {
+					irc : {
+						channel: configData.irc.channel,
+						server: configData.irc.server
+					},
+					allowSEO: configData.seo,
+					wordban: configData.spam.offensive
+				}
+			};
+			libsb.emit('room-up', room, function(){
+				alert("ROOM up emitted");
+			});
+		});
 		currentConfig = null;
         libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
 	});
 
 	$(".conf-cancel").on("click", function() {
 		currentConfig = null;
+		// $('.settings-menu').empty();
+		$('.settings-area').empty();
         libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-cancel" });
 	});
 
@@ -37,16 +61,16 @@ $(function() {
 			if(!currentConfig){
 				libsb.emit('config-show', {},function(err, config) {
 					currentConfig = config;
-					$('conf-area').empty();
 					for(i in config) {
 						var className = 'tab-' + i + '-settings';
 						$('.settings-menu ul').append('<li class = "tab ' + className + '">' + i + '</li>');
-						// $('.settings-menu').addClass(config[i]);
+						$('.settings-area').append(config[i]);
 					}
 				});
 			}
 			else{
 				libsb.emit('navigate', {tab: 'General'});
+				// $('.settings-menu').empty();
 			}
 		}
 		next();

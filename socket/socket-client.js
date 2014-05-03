@@ -21,6 +21,7 @@ module.exports = function(c){
 	core.on('admit-up', sendAdmit, 1000);
 	core.on('expel-up', sendExpel, 1000);
 	core.on('user-up', sendUser, 1000);
+	core.on('room-up', sendRoom, 1000);
 	core.on('getTexts', function(query, callback){
 		query.type="getTexts";
 		sendQuery(query, callback);
@@ -178,4 +179,10 @@ function sendUser(user, next) {
 	var action = makeAction({type: 'user', to: "me", user: user.user});
 	client.send(JSON.stringify(action));
 	next();
+}
+
+function sendRoom(room, next){
+	var action = makeAction({type: 'room', to: room.id, room: room});
+	client.send(JSON.stringify(action));
+	next();	
 }
