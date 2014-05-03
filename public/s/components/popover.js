@@ -9,12 +9,18 @@ $(document).on("click", ".has-popover", function() {
 		spaceleft = $(this).offset().left - $(document).scrollLeft() + ( $(this).width() / 2 ) - ( popover.outerWidth() / 2 ),
 		spaceright = $(window).width() - spaceleft - popover.outerWidth();
 
-	if (spaceleft <= 0) {
+	if (spaceright >= ( $(window).width() / 3 )) {
 		$(popover).addClass("arrow-left");
-		spaceleft = $(this).width() / 2;
-	} else if (spaceright <= 0) {
+
+		if (spaceleft <= 0) {
+			spaceleft = $(this).width() / 2;
+		}
+	} else if (spaceleft >= ( $(window).width() / 3 )) {
 		$(popover).addClass("arrow-right");
-		spaceleft = $(window).width() - ( $(this).width() / 2 ) - popover.outerWidth();
+
+		if (spaceright <= 0) {
+			spaceleft = $(window).width() - ( $(this).width() / 2 ) - popover.outerWidth();
+		}
 	}
 
 	if (spacebottom > popover.outerHeight() ) {
