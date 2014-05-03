@@ -113,7 +113,15 @@ describe("user and room action", function(){
 				id:"scrollbackteam",
 				description:"this is a room",
 				type:"room",
-				params:{}
+				 params:{
+                        irc: {
+                                server: "dev.scrollback.io",
+                                channel: "#scrollbackteam",
+                                enabled: true,
+                                pending: false
+                        }
+                },
+                identities: ["irc://dev.scrollback.io/#scrollbackteam"]
 			},
 			user: {
 				id:"arvind",
