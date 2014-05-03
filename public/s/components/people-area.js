@@ -36,11 +36,7 @@ $(function() {
 
 		if(!state.old ||(state.tab == "people" && state.old.tab!="people") || (state.old.room != state.room)) {
 			room = state.room;
-			if(libsb.isInited) {
-				loadMembers();
-			}else{
-				libsb.on("inited", loadMembers, 1000);
-			}
+			
 
 			function loadMembers(p,n) {
 				libsb.getMembers(room, function(err, p) {
@@ -50,6 +46,12 @@ $(function() {
 				});
 
 				if(n) n();
+			}
+			
+			if(libsb.isInited) {
+				loadMembers();
+			}else{
+				libsb.on("inited", loadMembers, 1000);
 			}
 			$people.reset();
 		}

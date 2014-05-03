@@ -73,14 +73,17 @@ $(function() {
 		if(state.source == 'text-area') return next();
 
 		if(state && (!state.old || state.room != state.old.room)) {
+			console.log("reseting...", state);
 			room = state.room;
 			reset = true;
 		}
 		if(typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
+			console.log("reseting...");
 			thread = state.thread;
 			reset = true;
 		}
 		if(state.old && state.time != state.old.time) {
+			console.log("reseting...");
 			time = state.time;
 			reset = true;
 		}

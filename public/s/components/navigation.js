@@ -64,10 +64,8 @@ libsb.on("navigate", function(state, next) {
 		$(document.body).addClass(state.view + "-view");
 	}
 
-	if(state.old && state.tab !== state.old.tab) {
-		$(".tab.current, .pane.current").removeClass("current");
-		$(".tab-" + state.tab + ", .pane-" + state.tab).addClass("current");
-	}else if(state.tab){
+	if(state.tab) {
+		$(".tab, .pane").removeClass("current");
 		$(".tab-" + state.tab + ", .pane-" + state.tab).addClass("current");
 	}
 

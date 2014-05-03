@@ -62,7 +62,7 @@ $(function() {
 		event.preventDefault();
 		var $el = $(event.target).closest('.thread');
 		if(!$el.size()) return;
-		libsb.emit('navigate', {source: 'thread-area', thread: $el.attr("id").split('-')[1] });
+		libsb.emit('navigate', {source: 'thread-area',room: window.location.pathname.split("/")[1], thread: $el.attr("id").split('-')[1] });
 	});
 
 	libsb.on('navigate', function(state, next) {
