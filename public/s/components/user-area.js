@@ -1,6 +1,7 @@
 $(function(){
 	function hidePopOver() {
 		$(".popover-body").removeClass().addClass("popover-body").empty();
+		$(".layer").remove();
 	}
 
 	$(".has-popover").on("click", function() {
