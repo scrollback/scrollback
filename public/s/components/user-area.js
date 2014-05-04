@@ -12,10 +12,13 @@ $(function(){
 		if ($("body").hasClass("guest-user")) {
 			$(".popover-body").addClass("user-menu").append('Sign in to scrollback with<a class="button facebook">Facebook</a><a class="button persona">Persona</a>');
 		} else {
-			$(".popover-body").addClass("user-menu").append('<ul><li><a href="">Report an issue</a></li><li><a class="logout" href="#">Logout</a></li></ul>');
+			$(".popover-body").addClass("user-menu").append('<ul><li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li><li><a class="logout" href="#">Logout</a></li></ul>');
 		}	
 	});
-
+	
+	$(document).on("click", ".reportissue", function() {
+		hidePopOver();
+	});
 	$(document).on("click", ".button.facebook", function() {
 		window.open(location.protocol+"//"+location.host+"/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');
 		hidePopOver();

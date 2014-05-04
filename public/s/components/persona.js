@@ -1,4 +1,9 @@
 (function(){
+	function hidePopOver() {
+		$(".popover-body").removeClass().addClass("popover-body").empty();
+		$(".layer").remove();
+	}
+
 	$(document).on("click", ".button.persona", function() {
 		navigator.id.watch({
 			onlogin: function(assertion){
@@ -13,5 +18,6 @@
 			}
 		});
 		navigator.id.request();
+		hidePopOver();
 	});
 })();
