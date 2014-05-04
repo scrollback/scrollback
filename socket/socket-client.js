@@ -107,7 +107,6 @@ function makeAction(action) {
 	action.time = new Date().getTime();
 	action.session = libsb.session;
 	action.resource = libsb.resource;
-	console.log(action);
 	return action;
 }
 

@@ -53,12 +53,17 @@ $(function() {
 
 	libsb.on("navigate", function(state, next) {
 		var room = state.room;
-
-		if(rooms.indexOf(room)<0) {
-			rooms.push(room);
-			libsb.enter(room);
+		if(room && rooms.indexOf(room)<0) {
+			function back(){
+				rooms.push(room);
+				libsb.enter(room);
+			}
+			if(libsb.isInited){
+				back();
+			}else{
+				libsb.on("inited", back);
+			}
 		}
-
 		next();
 	});
 	libsb.on("init-dn", function(init, next) {
