@@ -6,7 +6,7 @@ var textArea = {};
 
 $(function() {
 	var $logs = $(".chat-area"),
-		room = "", /* replace with room from URL */
+		room = window.location.pathname.split("/")[1], /* replace with room from URL */
 		thread = '',
 		time = null; /* replace this with the time from the URL, if available. */
 

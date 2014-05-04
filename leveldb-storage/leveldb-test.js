@@ -19,7 +19,7 @@ console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
 console.log("+++++Text should be run after clearing the DB+++++");
 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
 describe("user and room action", function(){
-	it("storing user harish", function(done) {
+	it.skip("storing user harish", function(done) {
 		var email = "harish@scrollback.io";
 
 		core.emit("user", {
@@ -38,7 +38,7 @@ describe("user and room action", function(){
 			done();
 		});
 	});
-	it("storing user arvind", function(done) {
+	it.skip("storing user arvind", function(done) {
 		var email = "arvind@scrollback.io"
 		core.emit("user", {
 			id: generate.uid(),
@@ -56,7 +56,7 @@ describe("user and room action", function(){
 			done();
 		});
 	});
-	it("storing user amal", function(done) {
+	it.skip("storing user amal", function(done) {
 		var email = "amal.scrollback.io";
 		core.emit("user", {
 			id: generate.uid(),
@@ -80,7 +80,7 @@ describe("user and room action", function(){
 			type:"room",
 			room: {
 				id:"scrollback",
-				description:"this is a room",
+				description:generate.sentence(24),
 				type:"room",
 				params:{}
 			},
@@ -98,7 +98,7 @@ describe("user and room action", function(){
 			type:"room",
 			room: {
 				id:"nodejs",
-				description:"this is a room",
+				description:generate.sentence(24),
 				type:"room",
 				params:{}
 			},
@@ -116,7 +116,7 @@ describe("user and room action", function(){
 			type:"room",
 			room: {
 				id:"scrollbackteam",
-				description:"this is a room",
+				description:generate.sentence(24),
 				type:"room",
 				 params:{
                         irc: {
