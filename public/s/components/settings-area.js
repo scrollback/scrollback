@@ -15,15 +15,15 @@ $(function() {
 		libsb.getRooms({ref: roomId}, function(err, data){
 			console.log("DATA ", data);
 			var results = data.results[0];
-			// general settings 
+			// general settings
 			$('.pane-general-settings #description').val(results.description);
 			$('.pane-general-settings #displayname').val(results.id);
 
-			//irc settings 
+			//irc settings
 			$('.pane-irc-settings #ircserver').val(results.params.irc.server);
 			$('.pane-irc-settings #ircchannel').val(results.params.irc.cleint);
 
-			//spam settings 
+			//spam settings
 			$('#block-offensive').prop('checked', results.params.wordban);
 
 			//seo settings
@@ -80,14 +80,16 @@ $(function() {
 			if(!currentConfig){
 				libsb.emit('config-show', {},function(err, config) {
 					currentConfig = config;
+
 					for(i in config) {
 						var className = 'tab-' + i + '-settings';
 						$('.settings-menu ul').append('<li class = "tab ' + className + '">' + i + '</li>');
 						$('.settings-area').append(config[i]);
 					}
+
 					renderSettings(state.room);
 				});
-				
+
 			}
 			else{
 				libsb.emit('navigate', {tab: 'General'});
