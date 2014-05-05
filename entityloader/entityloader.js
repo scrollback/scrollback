@@ -42,17 +42,6 @@ var handlers = {
 			callback();
 		});
 	},
-	room: function(action, callback) {
-		core.emit("getRooms", {ref: action.to}, function(err, data) {
-			if(err) return callback(err);
-			if(!data || !data.results || !data.results.length) {
-				action.old = {};
-			}else {
-				action.old = data.results[0];
-			}
-			callback();
-		});
-	},
 	admit: loadVictim,
 	expel: loadVictim
 };
@@ -196,7 +185,7 @@ function loadRoom(action, callback) {
 		}
 
 		if(action.type == "room") {
-			if(room.id) action.old = room;
+			if(room && room.id) action.old = room;
 			else action.old = {}
 		}else {
 			action.room = room;
