@@ -13,7 +13,6 @@ $(function() {
 
 	function renderSettings(roomId){
 		libsb.getRooms({ref: roomId}, function(err, data){
-			console.log("DATA ", data);
 			var results = data.results[0];
 			// general settings
 			$('.pane-general-settings #description').val(results.description);
@@ -43,7 +42,6 @@ $(function() {
 		libsb.emit('config-save', {}, function(err, configData){
 			console.log(configData);
 			var sessions = libsb.session;
-			sessions = typeof libsb.session === "string" ? [libsb.session] : sessions;
 			var room = {
 				id: $('.roomitem.current .name').text(),
 				description: configData.description,

@@ -67,6 +67,7 @@ libsb.on('config-show', function(conf, next) {
 
 	$(".twitter-account").click(function() {
 		// do stuff here!
+		window.open("r/twitter/login", 'mywin','left=20,top=20,width=500,height=500,toolbar=1,resizable=0');
 	});
 
 	conf.twitter = "<div class='pane pane-twitter-settings'>" + formField("Hashtags", "segmented", "twitterhashtags") + $twitteruser + "</div>";

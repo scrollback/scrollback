@@ -7,11 +7,11 @@ core.emit("user", {
 	id: generate.uid(),
 	type:"user",
 	user: {
-		id:"testuser1",
+		id:"amalantony",
 		description: generate.sentence(4),
 		type:"user",
 		picture:"http://gravatar.com/avatar/alscalladf",
-		identities:["mailto:testuser1@sb.lk"], 
+		identities:["mailto:amal@scrollback.io"], 
 		params:{}
 	}
 });
@@ -40,7 +40,7 @@ core.emit("room", {
 		}
 	},
 	user: {
-		id:"testuser1",
+		id:"amalantony",
 	}
 });
 
