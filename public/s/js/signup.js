@@ -4,6 +4,12 @@
 (function() {
     'use strict';
 
+    function gotoPane(i) {
+        $("body").removeClass(function(index, css) {
+            return (css.match(/(^|\s)step-\S+/g) || []).join(" ");
+        }).addClass("step-" + i);
+    }
+
     function changePane(i) {
         $(".action-" + i).on("click", function() {
             var $el = $(this);
@@ -13,12 +19,14 @@
 
             setTimeout(function() {
                 $el.removeClass("working");
-                $("body").removeClass().addClass("step-" + i);
+
+                gotoPane(i);
+
             }, 1000);
         });
     }
 
-    for (var i = 1; i < 6; i++) {
+    for (var i = 1; i < 4; i++) {
         changePane(i);
     }
 
@@ -29,5 +37,4 @@
             $("#roomname").removeAttr("disabled");
         }
     });
-
 }());

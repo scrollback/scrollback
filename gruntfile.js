@@ -91,7 +91,9 @@ module.exports = function(grunt) {
 		development: {
 			options: {
 				compress: true,
-				ieCompat: true
+				ieCompat: true,
+				sourceMap: true,
+				sourceMapFilename: "style.less.map"
 			},
 			files: {//dest            //source
 				"public/style.css": "public/style.less",
@@ -109,11 +111,6 @@ module.exports = function(grunt) {
 	},
 	imageEmbed: {
 		dist: {
-			src: ["public/s/styles/less/client.css"],
-			dest: "public/s/styles/less/client.css",
-			options: {
-				deleteAfterEncoding : false
-			}
 		}
 	},
 	appcache: {
@@ -144,6 +141,6 @@ module.exports = function(grunt) {
   grunt.event.on('watch', function(action, filepath, target) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
-  
+
   grunt.registerTask('default', ['browserify', 'uglify', 'concat', 'wrap', 'less', 'autoprefixer', 'imageEmbed', 'appcache']);
 };
