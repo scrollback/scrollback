@@ -21,7 +21,3 @@ function showNotifcation(title, body, icon, id, func) {
 		}
 	}
 }
-
-$(".send").on("click", function() {
-	showNotifcation("Hi", "This is notification", null, null, function() { window.location.href = "http://google.com"; });
-});
