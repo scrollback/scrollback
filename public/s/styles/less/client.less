@@ -566,6 +566,8 @@
             width: 100%;
             height: @bar-height;
 
+            .search-focus & { display: none; }
+
             .meta-button {
                 display: none;
 
@@ -621,86 +623,87 @@
                 }
             }
 
-            .search-button {
-                display: table-cell;
-                vertical-align: top;
-                padding: .5em 1em;
-                width: 4em;
-                background: url(../../img/icons/png/search.png) center center no-repeat;
-                background-size: 2em 2em;
-                cursor: pointer;
-
-                .embed-mode & { display: none;}
-            }
-
-            .user-area {
+            .right-area {
                 display: table-cell;
                 vertical-align: top;
 
-                .userdetail {
+                .search-button {
                     float: right;
-                    text-align: right;
                     padding: .25em 1em;
-                    color: lighten(@dark-color, 20%);
-                    font-weight: 700;
+                    width: 4em;
+                    height: @bar-height;
+                    background: url(../../img/icons/png/search.png) center center no-repeat;
+                    background-size: 2em 2em;
                     cursor: pointer;
 
-                    .sign-in {
-                        display: none;
+                    .embed-mode & { display: none;}
+                }
 
-                        .guest-user & {
-                            display: inline;
-                            text-transform: uppercase;
+                .user-area {
+                    float: right;
+                    height: @bar-height;
+
+                    .userdetail {
+                        float: right;
+                        text-align: right;
+                        padding: .25em 1em;
+                        color: lighten(@dark-color, 20%);
+                        font-weight: 700;
+                        cursor: pointer;
+
+                        .sign-in {
+                            display: none;
+
+                            .guest-user & {
+                                display: inline;
+                                text-transform: uppercase;
+                            }
+                        }
+                    }
+
+                    .avatar {
+                        float: right;
+                        width: @bar-height;
+                        cursor: pointer;
+
+                        img {
+                            display: block;
+                            height: @bar-height;
+                            width: @bar-height;
                         }
                     }
                 }
+            }
+        }
 
-                .avatar {
-                    float: right;
-                    width: 3.5em;
-                    cursor: pointer;
+        .search-bar {
+            display: none;
 
-                    img {
-                        display: block;
-                        height: 3.5em;
-                        width: 3.5em;
-                    }
-                }
+            .search-focus & {
+                .slideleft;
+
+                display: block;
+                width: 100%;
+                height: @bar-height;
+                padding: .25em;
             }
 
-            .search-focus & { display: none; }
+            .search-entry {
+                position: relative;
+                display: block;
+                width: 100%;
+                margin: 0;
+                background-image: url("../../img/icons/png/search-gray.png");
+                background-position: right center;
+                background-repeat: no-repeat;
+                z-index: 30;
+            }
         }
     }
 
     &.chatview {
 
         .conf-mode & { display: none; }
-
-        .titlebar {
-            .search-bar {
-                display: none;
-
-                .search-focus & {
-                    .slideleft;
-
-                    display: block;
-                    width: 100%;
-                    height: @bar-height;
-                    padding: .25em;
-                }
-
-                .search-entry {
-                    position: relative;
-                    display: block;
-                    width: 100%;
-                    margin: 0;
-                    background-image: url("../../img/icons/png/search-gray.png");
-                    background-position: right center;
-                    background-repeat: no-repeat;
-                    z-index: 30;
-                }
-            }
-        }
 
         .chat-position {
             .opacity(0);
