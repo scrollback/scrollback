@@ -19,9 +19,11 @@ $(function() {
 			$('.pane-general-settings #displayname').val(results.id);
 
 			//irc settings
-			$('.pane-irc-settings #ircserver').val(results.params.irc.server);
-			$('.pane-irc-settings #ircchannel').val(results.params.irc.cleint);
-
+			if(results.params.irc){
+				$('.pane-irc-settings #ircserver').val(results.params.irc.server);
+				$('.pane-irc-settings #ircchannel').val(results.params.irc.cleint);
+			}
+		
 			//spam settings
 			$('#block-offensive').prop('checked', results.params.wordban);
 
@@ -35,17 +37,15 @@ $(function() {
 	});
 
 	$(".configure-button").on("click", function() {
-        libsb.emit('navigate', { mode: "conf", tab: "general-settings", source: "configure-button" });
+        libsb.emit('navigate', { mode: "conf", tab: "general-settings", source: "configure-button", room: location.pathname.replace('/', '') });
 	});
 
 	$(".conf-save").on("click", function() {
 		libsb.emit('config-save', {}, function(err, configData){
 			console.log(configData);
-			var sessions = libsb.session;
 			var room = {
-				id: $('.roomitem.current .name').text(),
+				id: window.currentState.room,
 				description: configData.description,
-				sessions : sessions,
 				identities: '',
 				params: {
 					irc : {
