@@ -34,7 +34,7 @@ libsb.on("navigate", function(state, next) {
 			return;
 		}
 
-		if(state[prop] != state.old[prop]) {
+		if (state[prop] != state.old[prop]) {
 			if(state[prop] === null) {
 				delete state[prop];
 				delete currentState[prop];
@@ -42,8 +42,8 @@ libsb.on("navigate", function(state, next) {
 			} else {
 				currentState[prop] = state.changes[prop] = state[prop];
 			}
-		}else {
-			currentState[prop] = state[prop]
+		} else {
+			currentState[prop] = state[prop];
 		}
 	});
 	next();
@@ -75,7 +75,7 @@ libsb.on("navigate", function(state, next) {
 
 // On navigation, add history and change URLs
 libsb.on("navigate", function(state, next) {
-	var threadTitle;
+//	var threadTitle;
 
 	function buildurl() {
 		var path, params = [];
@@ -118,8 +118,9 @@ libsb.on("navigate", function(state, next) {
 	}
 
 	if (state.thread) {
+		// TODO
 		// libsb.getThreads({ref: state.thread}, function(err, thread) {
-		// 	threadTitle = thread.title;
+		// threadTitle = thread.title;
 		// });
 	}
 
@@ -134,13 +135,10 @@ libsb.on("logout", function(p,n) {
 	});
 	n();
 }, 1000);
-		
-// Handle back button
-
 
 // On history change, load the appropriate state
 $(window).on("popstate", function() {
-	if (('state' in window.history && window.history.state !== null)) {
+	if (('state' in history && history.state !== null)) {
 		var state = { }, prop;
 
 		for (prop in history.state) {

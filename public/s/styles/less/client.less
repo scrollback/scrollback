@@ -593,12 +593,12 @@
                 padding: .5em 0;
                 padding-left: 1em;
 
+                @media @breakpointxxx { padding-left: 0;  }
+
                 h1 {
                     float: left;
                     font-size: 1.5em;
                     margin: 0;
-
-                    @media @breakpointxxx { padding-left: 0;  }
                 }
 
                 .follow-button {
@@ -631,6 +631,7 @@
 
                 .userdetail {
                     float: right;
+                    text-align: right;
                     padding: .25em 1em;
                     color: lighten(@dark-color, 20%);
                     font-weight: 700;
@@ -1198,13 +1199,16 @@
             margin: 0;
 
             li {
-                &:first-child {
-                    border-bottom: 1px solid darken(@light-color, 10%);
+                border-bottom: 1px solid darken(@light-color, 10%);
+
+                &:last-child {
+                    border-bottom: none;
                 }
 
                 a {
                     color: lighten(@dark-color, 20%);
-                    padding: .5em;
+                    padding: 1em;
+                    cursor: pointer;
 
                     &:hover, &:focus { color: @dark-color; }
                 }
