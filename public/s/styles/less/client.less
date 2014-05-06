@@ -474,53 +474,61 @@
     }
 
     .meta-content {
-        &.settings-menu {
+        &.settings-menu, &.userprefs-menu {
             display: none;
+            position: absolute;
+            top: @bar-height;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            filter: none;
+            pointer-events: auto;
+            overflow: auto;
+            -webkit-overflow-scrolling : touch;
 
+            ul {
+                list-style: none;
+
+                li {
+                    .transition;
+
+                    font-size: 1.5em;
+                    padding: .75em;
+                    padding-left: 3em;
+                    background-size: 24px 24px;
+                    background-position: .75em center;
+                    background-repeat: no-repeat;
+                    border-bottom: 1px solid darken(@light-color, 10%);
+                    cursor: pointer;
+
+                    &.current { background-color: darken(@light-color, 10%); }
+
+                    &:hover, &:focus, &.current:hover, &.current:focus { background-color: darken(@light-color, 15%); }
+
+                    .-(@i: length(@settingsitems)) when (@i > 0) {
+
+                        @item: e(extract(@settingsitems, @i));
+                        @icon: %("../../img/icons/png/%s-settings.png", @item);
+
+                        &.tab-@{item}-settings {
+                            background-image: url(@icon);
+                        }
+
+                        .-((@i - 1));
+                    } .-;
+                }
+            }
+        }
+
+        &.settings-menu {
             .conf-mode & {
                 display: block;
-                position: absolute;
-                top: @bar-height;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                filter: none;
-                pointer-events: auto;
-                overflow: auto;
-                -webkit-overflow-scrolling : touch;
+            }
+        }
 
-                ul {
-                    list-style: none;
-
-                    li {
-                        .transition;
-
-                        font-size: 1.5em;
-                        padding: .75em;
-                        padding-left: 3em;
-                        background-size: 24px 24px;
-                        background-position: .75em center;
-                        background-repeat: no-repeat;
-                        border-bottom: 1px solid darken(@light-color, 10%);
-                        cursor: pointer;
-
-                        &.current { background-color: darken(@light-color, 10%); }
-
-                        &:hover, &:focus, &.current:hover, &.current:focus { background-color: darken(@light-color, 15%); }
-
-                        .-(@i: length(@settingsitems)) when (@i > 0) {
-
-                            @item: e(extract(@settingsitems, @i));
-                            @icon: %("../../img/icons/png/%s-settings.png", @item);
-
-                            &.tab-@{item}-settings {
-                                background-image: url(@icon);
-                            }
-
-                            .-((@i - 1));
-                        } .-;
-                    }
-                }
+        &.userprefs-menu {
+            .pref-mode & {
+                display: block;
             }
         }
     }
