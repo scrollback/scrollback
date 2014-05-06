@@ -81,6 +81,7 @@ $(function() {
 
 					for(i in config) {
 						var className = 'tab-' + i + '-settings';
+						$('.' + className).remove();
 						$('.settings-menu ul').append('<li class = "tab ' + className + '">' + i + '</li>');
 						$('.settings-area').append(config[i]);
 					}

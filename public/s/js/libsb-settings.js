@@ -39,6 +39,7 @@ libsb.on('config-show', function(conf, next) {
 });
 libsb.on('config-save', function(conf, next){
 	var name = $('.pane-general-settings #displayname').val();
+	
 	var desc = $('.pane-general-settings #description').val();
 	conf.name = name;
 	conf.description = desc;
