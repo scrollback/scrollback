@@ -5,8 +5,8 @@ var infoArea = {};
 
 $(function() {
 	var $template = $(".pane-info").eq(0);
-
 	infoArea.render = function (room) {
+		if($('body').hasClass("guest-user"))  $('.configure-button').hide() ;
 		$template.find('.name').text(room.id);
 		$template.find('.description').html(format.textToHtml(room.description || "This room has no description."));
 	};
@@ -17,11 +17,19 @@ $(function() {
 
 });
 
+libsb.on('room-dn', function(action, next){
+	infoArea.render(action.room);
+	next();
+});
+
+libsb.on('logout', function(logout, next){
+	$('.configure-button').hide();
+	next();
+});
+
 libsb.on('navigate', function(state, next) {
 	if(!state.old || state.room != state.old.room) {
 		if(state.tab == 'info') infoArea.render({id: state.room, description: "Loading room description."});
-		
-
 		function loadRooms() {
 			libsb.getRooms({ ref: state.room }, function(err, room) {
 				if(err) throw err;

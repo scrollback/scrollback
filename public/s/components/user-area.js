@@ -34,7 +34,7 @@ $(function(){
 	});
 
 	$(document).on("click", ".logout", function() {
-		libsb.emit("logout");
+		libsb.logout();
 	});
 
 	libsb.on('navigate', function(state, next) {
