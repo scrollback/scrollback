@@ -1,0 +1,140 @@
+@import "widgets";
+
+$steps: 5;
+
+body { overflow-x: hidden; }
+
+header {
+    padding-top: 1em;
+    text-align: center;
+
+    @media only screen and (min-width: 700px) { padding-top: 2em; }
+}
+
+section {
+    @include transition;
+
+    width: $steps * 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+
+    .step {
+        float: left;
+        width: 100% / $steps;
+        height: 100%;
+
+        .container {
+            width: 30em;
+            max-width: 100%;
+            margin: auto;
+            margin-bottom: 3em;
+            padding: 1em;
+            overflow: auto;
+
+            @media only screen and (min-width: 700px) { padding: 2em; }
+
+            h1 {
+                text-align: center;
+                margin-bottom: 1em;
+            }
+
+            label {
+                display: block;
+                margin-top: 1em;
+            }
+
+            input[type=checkbox] {
+                float: left;
+                margin-right: 0.5em;
+            }
+
+            input[type=text], .button, .button-secondary, .error {
+                display: block;
+                width: 100%;
+                margin: 1em auto;
+            }
+
+            textarea {
+                width: 20em;
+                max-width: 100%;
+                height: 20em;
+            }
+
+            pre {
+                margin: 1em auto;
+                text-align: left;
+            }
+
+            .roomurl { text-align: center; }
+
+            .qrcode {
+                display: block;
+                margin: 1em auto;
+            }
+
+            .widget-type {
+                @include transition;
+
+                position: relative;
+                display: inline-block;
+                margin: 1em;
+                border-radius: 2px;
+                padding: 10px;
+                background-color: darken($light-color, 5%);
+                border: 1px solid darken($light-color, 10%);
+                cursor: pointer;
+
+                &:focus, &:hover {
+                    background-color: darken($light-color, 10%);
+                    border-color: darken($light-color, 20%);
+                }
+
+                &:active { background-color: darken($light-color, 15%); }
+
+                span {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    margin: 10px;
+                    padding: 1em;
+                    background-color: darken($light-color, 5%);
+                }
+            }
+        }
+    }
+}
+
+nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: $light-color;
+    border-top: 1px solid darken($light-color, 10%);
+    z-index: 20;
+    text-align: center;
+
+    ul {
+        margin: .5em 0;
+
+        li {
+            list-style: none;
+            display: inline-block;
+            background: darken($light-color, 20%);
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin: 1em;
+        }
+    }
+}
+
+
+@for $i from 1 through $steps {
+    .step-#{$i} {
+        section { margin-left: ( ( $i - 1 ) * -100% ); }
+
+        nav li:nth-child(#{$i}) { background-color: $accent-color; }
+    }
+}

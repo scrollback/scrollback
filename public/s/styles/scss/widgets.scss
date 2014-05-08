@@ -1,0 +1,525 @@
+@import "definitions";
+@import "reset";
+@import "animations";
+@import "filters";
+@import "grid";
+
+/* mixins */
+@mixin modal($el, $left, $top, $height, $width) {
+    @media only screen and (min-width: 480px) {
+        overflow: auto;
+
+        .dim {
+            @include fadein(.5s 1);
+
+            display: block;
+            background: rgba(0,0,0,0.7);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 40;
+        }
+    }
+
+    #{$el} {
+        @include appear(.5s 1);
+        @extend %nofilter;
+
+        background: $light-color;
+        border-style: none;
+        position: fixed;
+        z-index: 50;
+        border-radius: 0;
+        left: 0;
+        top: 0;
+        margin-left: 0;
+        margin-top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        display: block;
+
+        @media only screen and (min-width: 480px) {
+            border-radius: $roundness;
+            left: 50%;
+            top: 50%;
+            margin-left: $left * -1;
+            margin-top: $top * -1;
+            height: $height;
+            width: $width;
+            padding: 1.2em;
+        }
+    }
+}
+
+@mixin buttons($bg: $accent-color, $fg: $light-color) {
+    @extend %ease;
+    @extend %inputs;
+
+    background-color: $bg;
+    border: 1px solid $bg;
+    border-bottom-color: darken($bg, 10%);
+    color: $fg;
+    text-align: center;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+
+    &:hover, &:focus {
+        background-color: darken($bg, 5%);
+        border-color: darken($bg, 5%);
+        color: $fg;
+    }
+
+    &:active {
+        background-color: darken($bg, 10%);
+        border-color: darken($bg, 10%);
+        color: $fg;
+    }
+
+    &.working {
+        @extend %spinner;
+
+        &, &:hover, &:focus, &:active {
+            background-color: darken($bg, 10%);
+            border-color: darken($bg, 10%);
+            color: mix($bg, $fg, 30%);
+        }
+    }
+}
+
+@mixin zigzag($inner, $outer, $position) {
+    background: linear-gradient(-135deg, $outer 5px, transparent 0) 0 5px,
+        linear-gradient(135deg, $outer 5px, $inner 0) 0 5px;
+
+    background-color: $inner;
+    background-position: left $position;
+    background-repeat: repeat-x;
+    background-size: 10px 10px;
+}
+
+/* set the viewport properties (limited browser support) */
+@viewport {
+    width: device-width;
+    user-zoom: fixed;
+    zoom: 1;
+    min-zoom: 1;
+    max-zoom: 1;
+}
+
+/* widget styles */
+body {
+    background: $light-color;
+    color: $dark-color;
+    font-family: $body-font;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 23px;
+}
+
+a {
+    @extend %ease;
+
+    font-weight: bold;
+    color: darken($accent-color, 10%);
+    text-decoration: none;
+
+    &:hover, &:focus { color: $accent-color; }
+
+    &:active { color: darken($accent-color, 20%); }
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+h1, h2, h3 { @extend %heading; }
+
+h1 { font-size: 2em; }
+
+h2 { font-size: 1.5em; }
+
+h3 { font-size: 1.2em; }
+
+p { margin: .5em 0; }
+
+input[type=submit], input[type=button] {
+    @include buttons;
+
+    &:disabled { @extend .button-disabled; }
+}
+
+input[type=entry], input[type=text], input[type=search], input[type=email], textarea {
+    @extend %inputs;
+    @extend .entry;
+
+    &:disabled { background-color: darken($light-color, 10%); }
+
+    &.error { border-color: $error-color; }
+}
+
+input[type=checkbox] {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+pre {
+    width: 30em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding: 1em;
+    border-radius: $roundness;
+    background-color: darken($light-color, 5%);
+}
+
+code {
+    font-weight: 600;
+    font-family: $monospace-font;
+    line-height: 1.2em;
+}
+
+%heading {
+    line-height: 1.5em;
+    font-family: $heading-font;
+    font-weight: 300;
+    margin: .5em 0;
+}
+
+.linked {
+    border-radius: 0 0 0 0;
+
+    &:first-of-type {
+        border-right: none;
+        border-radius: $roundness 0 0 $roundness;
+    }
+
+    &:last-of-type { border-radius: 0 $roundness $roundness 0; }
+}
+
+.entry {
+    @extend %ease;
+
+    background-color: $light-color;
+    border: 1px solid darken($light-color, 20%);
+    border-top-color: darken($light-color, 30%);
+    border-radius: $roundness;
+    color: $dark-color;
+    font-size: 1em;
+    box-shadow: inset 0 1px 1px 0 rgba(0,0,0,0.1);
+    outline: none;
+
+    &:hover, &:focus, &:active {
+        border-color: darken($light-color, 30%);
+        border-top-color: darken($light-color, 40%);
+        outline: none;
+    }
+
+    &.segmented {
+        display: inline-block;
+        min-width: 15em;
+        min-height: 3em;
+        cursor: text; /* fix firefox showing caret in wrong position */
+
+        .segment {
+            @include appear;
+
+            display: inline-block;
+            min-width: 3em;
+            margin: .4em 0 .4em .4em;
+            padding: .2em .25em;
+            border: 1px solid transparent;
+            outline: none;
+
+            &:only-child { width: 100%; }
+
+            &:last-child { min-width: 7em; }
+
+            &.done {
+                background-color: lighten($accent-color, 40%);
+                border-color: darken($accent-color, 5%);
+                border-radius: $roundness;
+            }
+
+            .rem-segment {
+                float: right;
+                padding: 0 .25em;
+                font-weight: bold;
+                color: darken($accent-color, 5%);
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+%inputs {
+    display: inline-block;
+    margin: .5em 0;
+    padding: .8em 1.2em;
+    border-radius: $roundness;
+    outline: none;
+    font-size: 1em;
+}
+
+.button-secondary {
+    @extend %ease;
+    @extend %inputs;
+
+    background-color: darken($light-color, 5%);
+    border: 1px solid darken($light-color, 15%);
+    color: lighten($dark-color, 10%);
+    text-align: center;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+
+    &:hover, &:focus {
+        background-color: darken($light-color, 3%);
+        border-color: darken($light-color, 30%);
+        color: lighten($dark-color, 5%);
+    }
+
+    &:active {
+        background-color: darken($light-color, 7%);
+        border-color: darken($light-color, 20%);
+        color: lighten($dark-color, 15%);
+    }
+}
+
+.button-disabled {
+    background-color: darken($light-color, 5%);
+    border: 1px solid darken($light-color, 15%);
+    color: lighten($dark-color, 50%);
+    pointer-events: none;
+
+    &:hover, &:focus, &:active {
+        background-color: darken($light-color, 5%);
+        border-color: darken($light-color, 15%);
+        color: lighten($dark-color, 50%);
+    }
+}
+
+.login-toggle { cursor: pointer; }
+
+.button { @include buttons; }
+
+.google { @include buttons(#d34836, #fff); }
+
+.twitter { @include buttons(#55acee, #fff); }
+
+.facebook { @include buttons(#3b5998, #fff); }
+
+.persona { @include buttons(#0096dd, #fff); }
+
+.openid { @include buttons(#f78c40, #fff); }
+
+.subtitle {
+    margin: .5em 0;
+    font-size: .9em;
+    font-style: italic;
+}
+
+.error { color: $error-color; }
+
+.error-msg {
+    background-color: lighten($error-color, 40%);
+    border: 1px solid $error-color;
+    border-radius: $roundness;
+    padding: .5em;
+    margin: .5em 0;
+    color: $error-color;
+}
+
+.warning {
+    background-color: lighten($error-color, 40%);
+    border-bottom: 1px solid $error-color;
+    text-align: center;
+    padding: .5em;
+
+    h2 { color: $error-color; }
+}
+
+.layer {
+    content: "";
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 80;
+}
+
+%popover-arrow {
+    position: absolute;
+    display: block;
+    content: "";
+    left: 50%;
+    margin-left: -8px;
+    height: 14px;
+    width: 14px;
+    background-color: $light-color;
+    border-color: darken($light-color, 30%);
+    border-style: solid;
+    border-width: 1px 0 0 1px;
+    z-index: 90;
+}
+
+.popover-body {
+    display: none;
+
+    .popover-active & {
+        position: absolute;
+        display: block;
+        margin: 1em;
+        border-radius: $roundness;
+        font-weight: normal;
+        border: 1px solid darken($light-color, 20%);
+        background-color: $light-color;
+        color: $dark-color;
+        box-shadow: 0 0 10px lighten($dark-color, 65%);
+        text-transform: none;
+        z-index: 100;
+
+        &.popover-top {
+            @include slideup;
+
+            &:before {
+                @include transform(rotate(225deg));
+                @extend %popover-arrow;
+
+                bottom: -8px;
+            }
+        }
+
+        &.popover-bottom {
+            @include slidedown;
+
+            &:before {
+                @include transform(rotate(45deg));
+                @extend %popover-arrow;
+
+                top: -8px;
+            }
+        }
+
+        &.arrow-left {
+            &:before {
+                left: 1em;
+                right: auto;
+            }
+        }
+
+        &.arrow-right {
+            &:before {
+                left: auto;
+                right: 1em;
+            }
+        }
+    }
+}
+
+input.switch {
+    display: none;
+
+    & ~ label {
+        position: relative;
+        cursor: pointer;
+
+        &:before, &:after {
+            @extend %ease;
+
+            position: absolute;
+            display: block;
+            content: "";
+            font-weight: 700;
+            color: $light-color;
+            border-radius: $roundness;
+            background-color: darken($light-color, 30%);
+        }
+
+        &:before {
+            top: 0;
+            bottom: 0;
+            left: 0;
+            height: 2.2em;
+            width: 4.9em;
+            padding: .2em .5em;
+            content: "OFF";
+            line-height: 1.7em;
+            text-align: right;
+            box-shadow: inset 0 1px 0 rgba(0,0,0,0.2);
+        }
+
+        &:after {
+            height: 1.9em;
+            width: 2.1em;
+            top: .15em;
+            bottom: .15em;
+            left: 0.14em;
+            background-color: $light-color;
+        }
+    }
+
+    &:checked ~ label {
+        &:before {
+            content: "ON";
+            text-align: left;
+            background-color: $accent-color;
+        }
+
+        &:after { left: 2.66em; }
+    }
+}
+
+%spinner {
+    &:before {
+        @include spin;
+
+        content: "";
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        margin: 0 1em;
+        border-top: 2px solid currentColor;
+        border-right: 2px solid transparent;
+        border-bottom: 2px solid currentColor;
+        border-left: 2px solid transparent;
+        border-radius: 50%;
+    }
+}
+
+%ease { @include transition; }
+
+/* browser specific styles */
+::selection {
+    background-color: $accent-color;
+    color: $light-color;
+}
+
+::-moz-selection {
+    background-color: $accent-color;
+    color: $light-color;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-button { display: none; }
+
+::-webkit-scrollbar-track { background-color: $light-color; }
+
+::-webkit-scrollbar-thumb { background-color: darken($light-color, 10%);
+
+    &:vertical { min-height: 100px; }
+
+    &:horizontal { min-width: 100px; }
+
+    &:hover, &:focus { background-color: $accent-color; }
+
+    &:active { background-color: darken($accent-color, 10%); }
+}

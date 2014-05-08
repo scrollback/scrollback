@@ -87,7 +87,18 @@ module.exports = function(grunt) {
 			tasks: ['less']
 		}
 	},
-	less: {//style.less--->style.css
+	sass: {
+		dist: {
+			options: {
+				style: "compressed"
+			},
+			 files: {
+				"public/s/styles/gen/signup.css": "public/s/styles/scss/signup.scss",
+				"public/s/styles/gen/client.css": "public/s/styles/scss/client.scss"
+			}
+		}
+	},
+	less: {
 		development: {
 			options: {
 				compress: true,
@@ -95,19 +106,18 @@ module.exports = function(grunt) {
 				sourceMap: true,
 				sourceMapFilename: "style.less.map"
 			},
-			files: {//dest            //source
+			files: {
 				"public/style.css": "public/style.less",
 				"public/dummy.css": "public/dummy.less",
 				"public/s/styles/less/stylesheet.css": "public/s/styles/less/stylesheet.less",
-				"public/s/styles/less/widgets.css": "public/s/styles/less/widgets.less",
 				"public/s/styles/less/client.css": "public/s/styles/less/client.less"
-			},
-		},
+			}
+		}
 	},
 	autoprefixer: {
 		dist: {
-			src: "public/s/styles/less/*.css"
-		},
+			src: "public/s/styles/*/*.css"
+		}
 	},
 	imageEmbed: {
 		dist: {
@@ -122,7 +132,7 @@ module.exports = function(grunt) {
 			cache: "public/s/**/*",
 			network: "*",
 			fallback: "/ /offline.html"
-		},
+		}
 	},
   });
 
@@ -133,6 +143,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-autoprefixer');
   grunt.loadNpmTasks('grunt-image-embed');
   grunt.loadNpmTasks('grunt-appcache');
@@ -142,5 +153,5 @@ module.exports = function(grunt) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
 
-  grunt.registerTask('default', ['browserify', 'uglify', 'concat', 'wrap', 'less', 'autoprefixer', 'imageEmbed', 'appcache']);
+  grunt.registerTask('default', ['browserify', 'uglify', 'concat', 'wrap', 'less', 'sass', 'autoprefixer', 'imageEmbed', 'appcache']);
 };
