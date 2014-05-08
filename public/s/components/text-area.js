@@ -9,7 +9,6 @@ $(function() {
 		room = window.location.pathname.split("/")[1], /* replace with room from URL */
 		thread = '',
 		time = null; /* replace this with the time from the URL, if available. */
-
 	// Set up infinite scroll here.
 
 	$logs.infinite({
@@ -103,7 +102,6 @@ $(function() {
 		}
 		
 		if(reset) $logs.reset(time);
-
 		next();
 	});
 

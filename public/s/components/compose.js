@@ -10,6 +10,7 @@ $(function() {
 
 	function sendMsg(){
 		var text = format.htmlToText($entry.html());
+		if(!text) return;
 		$entry.text("");
 		if(window.currentState && window.currentState.room) {
 			libsb.say(window.currentState.room, text, window.currentState.thread);

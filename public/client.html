@@ -29,7 +29,7 @@
 			<div class="scrollback-header">
 				<img src="/s/img/scrollback-small.png" alt="scrollback"/>
 			</div>
-<!--			<a class="search-term" href="">Results for firefox</a>-->
+			<a class="search-term" href="">Results for firefox</a>
 			<div role="list" class="roomlist hide-scroll">
 				<a class="roomitem"><span class="name"></span><span class="unread"></span></a>
 			</div>
@@ -41,12 +41,12 @@
 					<li role="tab" class="tab tab-info mode-normal"><h2>Info</h2></li>
 					<li role="tab" class="tab tab-people mode-normal"><h2>People</h2></li>
 					<li role="tab" class="tab tab-threads mode-normal"><h2>Threads</h2></li>
-<!--
+
 					<li role="tab" class="tab tab-threads mode-search"><h2>This room</h2></li>
 					<li role="tab" class="tab tab-threads mode-search"><h2>All rooms</h2></li>
--->
+
 				</ul>
-<!--				<div role="banner" class="search-banner"></div>-->
+				<div role="banner" class="search-banner"></div>
 				<div role="tabpanel" class="pane hide-scroll pane-info">
 					<h1 class="name"></h1>
 					<p class="description"></p>
@@ -88,7 +88,7 @@
 						<h1 id="roomTitle"></h1>
 						<a class="follow-button" role="button"></a>
 					</div>
-<!--					<a class="search-button" role="button"></a>-->
+					<a class="search-button" role="button"></a>
 					<div class="user-area has-popover">
 						<div class="avatar">
 							<img alt="" id="userGrav" >
@@ -99,11 +99,11 @@
 						</div>
 					</div>
 				</div>
-<!--
+
 				<div class="search-bar">
 					<input class="search-entry" type="search" placeholder="Type to search...">
 				</div>
--->
+
 			</div>
 			<div class="chat-position"></div>
 			<div class="chat-area hide-scroll">
@@ -284,7 +284,7 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 		<script src="/s/components/info-area.js"></script>
 		<script src="/s/components/room-item.js"></script>
 		<script src="/s/components/room-list.js"></script>
-<!--		<script src="/s/components/search.js"></script>-->
+		<script src="/s/components/search.js"></script>
 		<script src="/s/components/timeline.js"></script>
 		<script src="/s/components/follow-room.js"></script>
 		<!-- <script src="/s/components/config-mode.js"></script> -->
@@ -295,24 +295,8 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 		<script src="/s/components/persona.js"></script>
 
 		<script>
-			/*what is this?
-			'room', 'view', 'mode', 'tab', 'thread', 'query', 'text', 'time'
-			*/
 			$(function() {
-				var room = window.location.pathname.split("/")[1];
-
-				function start(q,n) {
-					libsb.emit('navigate', {
-						room: room,
-						view: 'normal',
-						mode: 'normal',
-						tab: 'people'
-					});
-					n();
-				}
-
 				libsb.connect();
-				libsb.on("inited", start);
 			});
 		</script>
 
