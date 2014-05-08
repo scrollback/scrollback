@@ -24,7 +24,7 @@ $(function() {
 				loadTexts();
 			}else{
 				libsb.on("inited", function(p, n){
-					loadTexts();	
+					loadTexts();
 					n();
 				})
 			}
@@ -34,10 +34,10 @@ $(function() {
 					if(err) throw err; // TODO: handle the error properly.
 					if(after === 0) {
 						if(texts.length < before) {
-							texts.unshift(false);	
+							texts.unshift(false);
 						}
 						if(t.time){
-							texts.pop();	
+							texts.pop();
 						}
 					}else if(before === 0) {
 						if(texts.length < after) {
@@ -51,7 +51,7 @@ $(function() {
 					}));
 				});
 			}
-			
+
 		}
 	});
 
@@ -75,7 +75,7 @@ $(function() {
 			console.log(thread);
 			return next();
 		}
-		
+
 		if($logs.data("lower-limit")) $logs.addBelow(textEl.render(null, text));
 		next();
 	});
@@ -101,7 +101,7 @@ $(function() {
 			time = state.time;
 			reset = true;
 		}
-		
+
 		if(reset) $logs.reset(time);
 
 		next();
@@ -170,7 +170,7 @@ $(function() {
 				n();
 			});
 		}
-		
+
 		$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
 
 	});
