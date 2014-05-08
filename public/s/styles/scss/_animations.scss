@@ -1,0 +1,156 @@
+@import "filters";
+
+/* animations and transitions */
+@mixin transform($args) {
+    -webkit-transform: $args;
+    -moz-transform: $args;
+    -ms-transform: $args;
+    transform: $args;
+}
+
+@mixin keyframes($animation) {
+    @-webkit-keyframes $animation { @content; }
+
+    @-moz-keyframes $animation { @content; }
+
+    @-ms-keyframes $animation { @content; }
+
+    @keyframes $animation { @content; }
+}
+
+@include keyframes(bounce) {
+    0%, 10%, 30%, 50%, 100%  { @include transform(translate3d(0, 0, 0)); }
+    20%  { @include transform(translate3d(0, -15px, 0)); }
+    40%  { @include transform(translate3d(0, -10px, 0)); }
+}
+
+@mixin bounce($args: 5s) {
+    -webkit-animation: bounce $args;
+    -moz-animation: bounce $args;
+    -ms-animation: bounce $args;
+    animation: bounce $args;
+}
+
+@include keyframes(spin) {
+    to  { @include transform(rotate(180deg)); }
+}
+
+@mixin spin($args: .5s ease infinite) {
+    -webkit-animation: spin $args;
+    -moz-animation: spin $args;
+    -ms-animation: spin $args;
+    animation: spin $args;
+}
+
+@include keyframes(slidedown) {
+    0% {
+        @include opacity(0);
+        @include transform(translate3d(0, -10%, 0));
+    }
+
+    100% {
+        @include opacity(1);
+        @include transform(translate3d(0, 0, 0));
+    }
+}
+
+@mixin slidedown($args: .15s) {
+    -webkit-animation: slidedown $args;
+    -moz-animation: slidedown $args;
+    -ms-animation: slidedown $args;
+    animation: slidedown $args;
+}
+
+@include keyframes(slideup) {
+    0% {
+        @include opacity(0);
+        @include transform(translate3d(0, 10%, 0));
+    }
+
+    100% {
+        @include opacity(1);
+        @include transform(translate3d(0, 0, 0));
+    }
+}
+
+@mixin slideup($args: .15s) {
+    -webkit-animation: slideup $args;
+    -moz-animation: slideup $args;
+    -ms-animation: slideup $args;
+    animation: slideup $args;
+}
+
+@include keyframes(slideleft) {
+    0% {
+        @include opacity(0);
+        @include transform(translate3d(100%, 0, 0));
+    }
+
+    100% {
+        @include opacity(1);
+        @include transform(translate3d(0, 0, 0));
+    }
+}
+
+@mixin slideleft($args: .15s) {
+    -webkit-animation: slideleft $args;
+    -moz-animation: slideleft $args;
+    -ms-animation: slideleft $args;
+    animation: slideleft $args;
+}
+
+@include keyframes(slideright) {
+    0% {
+        @include opacity(0);
+        @include transform(translate3d(-100%, 0, 0));
+    }
+
+    100% {
+        @include opacity(1);
+        @include transform(translate3d(0, 0, 0));
+    }
+}
+
+@mixin slideright($args: .15s) {
+    -webkit-animation: slideright $args;
+    -moz-animation: slideright $args;
+    -ms-animation: slideright $args;
+    animation: slideright $args;
+}
+
+@include keyframes(appear) {
+    0% {
+        @include opacity(0);
+        @include transform(scale(.5));
+    }
+
+    30%  { @include transform(scale(1)); }
+
+    100%  { @include opacity(1); }
+}
+
+@mixin appear($args: .5s) {
+    -webkit-animation: appear $args;
+    -moz-animation: appear $args;
+    -ms-animation: appear $args;
+    animation: appear $args;
+}
+
+@include keyframes(fadein) {
+    0%  { @include opacity(0); }
+    100%  { @include opacity(1); }
+}
+
+@mixin fadein($args: .5s) {
+    -webkit-animation: fadein $args;
+    -moz-animation: fadein $args;
+    -ms-animation: fadein $args;
+    animation: fadein $args;
+}
+
+@mixin transition($duration: .15s, $timing: ease) {
+    -webkit-transition: $duration $timing;
+    -moz-transition: $duration $timing;
+    -ms-transition: $duration $timing;
+    transition: $duration $timing;
+}

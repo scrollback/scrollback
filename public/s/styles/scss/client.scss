@@ -1,64 +1,65 @@
-@import url('widgets.less');
-@import url('infinite.less');
+@import "widgets";
 
-@bar-height: 3.5em;
+$bar-height: 3.5em;
 
-@roomxxxxx: 16%;
-@roomxxxx: 15em;
-@roomxxx: 15em;
-@roomxx: 15em;
-@roomx: 15em;
+$roomxxxxx: 16%;
+$roomxxxx: 15em;
+$roomxxx: 15em;
+$roomxx: 15em;
+$roomx: 15em;
 
-@metaxxxxx: 30%;
-@metaxxxx: 26em;
-@metaxxx: 25em;
-@metaxx: 19em;
-@metax: 13em;
+$metaxxxxx: 30%;
+$metaxxxx: 26em;
+$metaxxx: 25em;
+$metaxx: 19em;
+$metax: 13em;
 
-@breakpointxxxx: ~"screen and (max-width: 70em)";
-@breakpointxxx: ~"screen and (max-width: 50em)";
-@breakpointxx: ~"screen and (max-width: 27em)";
-@breakpointx: ~"screen and (max-width: 18em)";
+$breakpointxxxx: "screen and (max-width: 70em)";
+$breakpointxxx: "screen and (max-width: 50em)";
+$breakpointxx: "screen and (max-width: 27em)";
+$breakpointx: "screen and (max-width: 18em)";
 
-@settingsitems: "general", "irc", "twitter", "thread", "permissions", "requests", "spam", "seo", "customization", "embed";
+$settingsitems: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed;
+$tabitems: info, people, threads;
 
+/* widget styles */
 .rooms {
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
-    width: @roomxxxxx;
+    width: $roomxxxxx;
     min-height: 100%;
-    background-color: @dark-color;
-    color: @light-color;
+    background-color: $dark-color;
+    color: $light-color;
     z-index: 10;
 
-    @media @breakpointxxxx {
-        width: @roomxxxx;
-        left: @roomxxxx * -1;
+    @media #{$breakpointxxxx} {
+        width: $roomxxxx;
+        left: $roomxxxx * -1;
     }
 
-    @media @breakpointxxx {
-        width: @roomxxx;
-        left: ( @roomxxx + @metaxxx ) * -1;
+    @media #{$breakpointxxx} {
+        width: $roomxxx;
+        left: ( $roomxxx + $metaxxx ) * -1;
     }
 
-    @media @breakpointxx {
-        width: @roomxx;
-        left: ( @roomxx + @metaxx ) * -1;
+    @media #{$breakpointxx} {
+        width: $roomxx;
+        left: ( $roomxx + $metaxx ) * -1;
     }
 
-    @media @breakpointx {
-        width: @roomx;
-        left: ( @roomx + @metax ) * -1;
+    @media #{$breakpointx} {
+        width: $roomx;
+        left: ( $roomx + $metax ) * -1;
     }
 
     .embed-mode & { display: none; }
 
     .scrollback-header {
-        height: @bar-height;
+        height: $bar-height;
         padding: .5em 1em;
-        border-bottom: 1px solid lighten(@dark-color, 10%);
+        border-bottom: 1px solid lighten($dark-color, 10%);
         cursor: pointer;
 
         img {
@@ -67,39 +68,19 @@
         }
     }
 
-	.search-term {
-		display: none;
-
-		.search-mode & {
-			display: block;
-			background-image: url(../../img/icons/png/search-light.png);
-			background-position: 90% center;
-			background-repeat: no-repeat;
-			background-size: 2em 2em;
-		}
-	}
-
     .roomlist {
-        position: absolute;
-        top: @bar-height;
-        left: 0;
-        right: 0;
-        bottom: 0;
         overflow-y: scroll;
         -webkit-overflow-scrolling : touch;
-        list-style: none;
 
-		.infinite-items { background: transparent; }
-
-		.roomitem {
-            .clearfix;
-            .transition;
+        .roomitem {
+            @extend %ease;
+            @extend %clearfix;
 
             display: block;
             padding: 1em;
             font-weight: 700;
-            color: darken(@light-color, 10%);
-            border-bottom: 1px solid lighten(@dark-color, 5%);
+            color: darken($light-color, 10%);
+            border-bottom: 1px solid lighten($dark-color, 5%);
             cursor: pointer;
 
             &.search-term {
@@ -107,16 +88,13 @@
 
                 .search-mode & {
                     display: block;
-                    background-image: url(../../img/icons/png/search-light.png);
-                    background-position: 90% center;
-                    background-repeat: no-repeat;
-                    background-size: 2em 2em;
+                    background: url(../../img/icons/png/search-light.png) no-repeat 90% center 2em/2em;
                 }
             }
 
             &.current {
                 position: relative;
-                background-color: lighten(@dark-color, 5%);
+                background-color: lighten($dark-color, 5%);
 
                 &:after {
                     content: "";
@@ -126,26 +104,26 @@
                     top: 1.25em;
                     border-top: .6em solid transparent;
                     border-bottom: .6em solid transparent;
-                    border-right: .55em solid darken(@light-color, 5%);
+                    border-right: .55em solid darken($light-color, 5%);
                 }
             }
 
             &:hover, &:focus, &.current:hover, &.current:focus {
-                background-color: lighten(@dark-color, 10%);
+                background-color: lighten($dark-color, 10%);
             }
 
             .unread {
                 float: right;
                 min-width: 2em;
                 text-align: center;
-                font-size: .75em;
-                background-color: @accent-color;
-                color: @light-color;
-                border-radius: @roundness;
+                font-size: .8em;
+                background-color: $accent-color;
+                color: $light-color;
+                border-radius: $roundness;
 
                 &:empty { display: none; }
 
-                &.mentioned { background-color: @error-color; }
+                &.mentioned { background-color: $error-color; }
             }
         }
     }
@@ -155,59 +133,58 @@
     position: fixed;
     top: 0;
     bottom: 0;
-    left: @roomxxxxx;
-    width: @metaxxxxx;
-    background-color: darken(@light-color, 5%);
-    color: @dark-color;
+    left: $roomxxxxx;
+    width: $metaxxxxx;
+    background-color: darken($light-color, 5%);
+    color: $dark-color;
     z-index: 20;
 
-    @media @breakpointxxxx {
-        width: @metaxxxx;
+    @media #{$breakpointxxxx} {
+        width: $metaxxxx;
         left: 0;
     }
 
-    @media @breakpointxxx {
-        width: @metaxxx;
-        left: @metaxxx * -1;
+    @media #{$breakpointxxx} {
+        width: $metaxxx;
+        left: $metaxxx * -1;
     }
 
-    @media @breakpointxx {
-        width: @metaxx;
-        left: @metaxx * -1;
+    @media #{$breakpointxx} {
+        width: $metaxx;
+        left: $metaxx * -1;
     }
 
-    @media @breakpointx {
-        width: @metax;
-        left: @metax * -1;
+    @media #{$breakpointx} {
+        width: $metax;
+        left: $metax * -1;
     }
 
     .embed-mode & {
-        width: @metaxxxxx;
+        width: $metaxxxxx;
         left: 0;
 
-        @media @breakpointxxxx {
-            width: @metaxxxx;
+        @media #{$breakpointxxxx} {
+            width: $metaxxxx;
             left: 0;
         }
 
-        @media @breakpointxxx {
-            width: @metaxxx;
-            left: @metaxxx * -1;
+        @media #{$breakpointxxx} {
+            width: $metaxxx;
+            left: $metaxxx * -1;
         }
 
-        @media @breakpointxx {
-            width: @metaxx;
-            left: @metaxx * -1;
+        @media #{$breakpointxx} {
+            width: $metaxx;
+            left: $metaxx * -1;
         }
 
-        @media @breakpointx {
-            width: @metax;
-            left: @metax * -1;
+        @media #{$breakpointx} {
+            width: $metax;
+            left: $metax * -1;
         }
     }
 
     .chat-meta {
-
         .conf-mode & { display: none; }
 
         .tabs {
@@ -216,48 +193,40 @@
             table-layout: fixed;
             margin: 0;
             width: 100%;
-            height: @bar-height;
-            border-bottom: 1px solid darken(@light-color, 15%);
+            height: $bar-height;
+            border-bottom: 1px solid darken($light-color, 15%);
 
             li {
-                .transition;
-                .opacity(0.3);
-                .transform(rotate(0deg)); /* hack to fix invisible items in android browser */
+                @include opacity(0.3);
+                @include transform(rotate(0deg)); /* hack to fix invisible items in android browser */
+                @extend %ease;
 
                 display: table-cell;
                 vertical-align: middle;
                 text-align: center;
-                color: @dark-color;
-                background-position: center center;
-                background-repeat: no-repeat;
-                background-size: 2em 2em;
+                color: $dark-color;
                 cursor: pointer;
 
+                background: {
+                    position: center center;
+                    repeat: no-repeat;
+                    size: 2em 2em;
+                }
+
                 &:hover, &:focus, &.current {
-                    .opacity(1);
+                    @include opacity(1);
+                    @extend %nofilter;
 
-                    background-color: darken(@light-color, 15%);
+                    background-color: darken($light-color, 15%);
                 }
 
-                &.current {
-                    background-color: darken(@light-color, 10%);
+                @each $item in $tabitems {
+                    &.tab-#{$item} { background-image: url(../../img/icons/png/#{$item}.png); }
                 }
 
-                &.tab-info {
-                    background-image: url(../../img/icons/png/info.png);
+                &.current { background-color: darken($light-color, 10%); }
 
-                    .search-mode & { display: none; }
-                }
-
-                &.tab-people {
-                    background-image: url(../../img/icons/png/people.png);
-
-                    .search-mode & { display: none; }
-                }
-
-                &.tab-threads {
-                    background-image: url(../../img/icons/png/threads.png);
-
+                &.mode-normal {
                     .search-mode & { display: none; }
                 }
 
@@ -277,16 +246,16 @@
                 &.rooms-button {
                     display: none;
 
-                    @media @breakpointxxxx {
-                        .transform(rotate(0deg));
-                        .opacity(1);
-                        .transition(.5s);
+                    @media #{$breakpointxxxx} {
+                        @include transform(rotate(0deg));
+                        @include transition(.5s);
+                        @include opacity(1);
 
                         display: table-cell;
                         width: 2.5em;
                         background-image: url(../../img/icons/png/back.png);
 
-                        .rooms-view & { .transform(rotate(180deg)); }
+                        .rooms-view & { @include transform(rotate(180deg)); }
 
                         .embed-mode & { display: none; }
                     }
@@ -311,7 +280,7 @@
 
         .pane {
             position: absolute;
-            top: @bar-height;
+            top: $bar-height;
             right: 0;
             bottom: 0;
             left: 0;
@@ -319,10 +288,11 @@
             overflow-y: scroll;
             -webkit-overflow-scrolling : touch;
 
-            .search-mode & { top: @bar-height * 2; }
+            .search-mode & { top: $bar-height * 2; }
 
             &.current {
-                .fadein;
+                @include fadein;
+                @extend %nofilter;
 
                 display: block;
                 filter: none; /* fix text rendering in IE */
@@ -340,8 +310,8 @@
 
                 .infinite-above, .infinite-below {
                     background-color: transparent;
-                    background-image:  linear-gradient(to right, darken(@light-color, 5%), darken(@light-color, 5%) 15%, transparent 15%, transparent 85%, darken(@light-color, 5%) 85%, darken(@light-color, 5%)),
-                                       linear-gradient(to bottom, transparent, transparent 25%, lighten(@dark-color, 70%) 25%, lighten(@dark-color, 70%) 65%, transparent 65%, transparent 75%, lighten(@dark-color, 70%) 75%, lighten(@dark-color, 70%) 85%, transparent 85%, transparent);
+                    background-image:  linear-gradient(to right, darken($light-color, 5%), darken($light-color, 5%) 15%, transparent 15%, transparent 85%, darken($light-color, 5%) 85%, darken($light-color, 5%)),
+                                       linear-gradient(to bottom, transparent, transparent 25%, lighten($dark-color, 70%) 25%, lighten($dark-color, 70%) 65%, transparent 65%, transparent 75%, lighten($dark-color, 70%) 75%, lighten($dark-color, 70%) 85%, transparent 85%, transparent);
                     background-size: 5.5em 8em;
                     background-position: top left;
                     background-repeat: repeat;
@@ -349,8 +319,9 @@
                 }
 
                 .person {
-                    .fadein;
-                    .transition;
+                    @include fadein;
+                    @extend %nofilter;
+                    @extend %ease;
 
                     display: inline-block;
                     padding: .25em;
@@ -360,18 +331,18 @@
                     white-space: nowrap;
                     overflow: hidden;
                     font-weight: 400;
-                    color: @dark-color;
+                    color: $dark-color;
 
                     &:hover, &:focus {
-                        background-color: @accent-color;
-                        color: @light-color;
-                        border-radius: @roundness;
+                        background-color: $accent-color;
+                        color: $light-color;
+                        border-radius: $roundness;
                     }
 
                     &.offline {
-                        .opacity(.5);
+                        @include opacity(.5);
 
-                        .picture { .grayscale; }
+                        .picture { @extend %grayscale; }
                     }
 
                     .picture {
@@ -379,7 +350,7 @@
                         width: 4em;
                         height: 4em;
                         margin: .25em .5em;
-                        border-radius: @roundness;
+                        border-radius: $roundness;
                     }
                 }
 
@@ -391,44 +362,43 @@
 
                 .infinite-above, .infinite-below {
                     background-color: transparent;
-                    background-image:  linear-gradient(to bottom, transparent, transparent 35%, lighten(@dark-color, 70%) 35%, lighten(@dark-color, 70%) 65%, transparent 65%, transparent),
-                                       linear-gradient(to bottom, lighten(@dark-color, 70%), lighten(@dark-color, 70%));
+                    background-image:  linear-gradient(to bottom, transparent, transparent 35%, lighten($dark-color, 70%) 35%, lighten($dark-color, 70%) 65%, transparent 65%, transparent),
+                                       linear-gradient(to bottom, lighten($dark-color, 70%), lighten($dark-color, 70%));
                     background-size: 60% 3em, 4px 100%;
                     background-position: 2em center, center right;
                     background-repeat: repeat-y;
                 }
 
                 .thread {
-                    .fadein;
-                    .transition;
+                    @include fadein;
+                    @extend %nofilter;
+                    @extend %ease;
 
                     display: block;
                     padding: .5em 2em;
                     font-weight: 400;
-                    color: @dark-color;
-                    border-right: 4px solid @accent-color;
+                    color: $dark-color;
+                    border-right: 4px solid $accent-color;
 
-                    &.current { background-color: lighten(@accent-color, 25%); }
+                    &.current { background-color: lighten($accent-color, 25%); }
 
                     &:hover, &:focus, &.current:hover, &.current:focus {
-                        background-color: @accent-color;
-                        color: @light-color;
+                        background-color: $accent-color;
+                        color: $light-color;
                     }
 
                     /* set different colors for conversations */
-                    .-(@i: 0) when (@i < 10) {
-                        @color: ~"color@{i}";
+                    @for $i from 1 through length($palette) {
+                        $color: nth($palette, $i);
 
-                        &.conv-@{i} {
-                            border-right-color: @@color;
+                        &.conv-#{$i} {
+                            border-right-color: $color;
 
-                            &.current { background-color: lighten(@@color, 25%); }
+                            &.current { background-color: lighten($color, 25%); }
 
-                            &:hover, &:focus, &.current:hover, &.current:focus { background-color: @@color; }
+                            &:hover, &:focus, &.current:hover, &.current:focus { background-color: $color; }
                         }
-
-                        .-((@i + 1));
-                    } .-;
+                    }
                 }
 
             }
@@ -441,11 +411,11 @@
         .conf-mode & {
             display: table;
             table-layout: fixed;
-            height: @bar-height;
+            height: $bar-height;
             width: 100%;
             margin: 0;
             padding: 0;
-            border-bottom: 1px solid darken(@light-color, 15%);
+            border-bottom: 1px solid darken($light-color, 15%);
 
             h2 {
                 display: table-cell;
@@ -454,7 +424,7 @@
                 text-transform: uppercase;
                 background: url(../../img/icons/png/settings.png) .6em center no-repeat;
 
-                @media @breakpointxxxx {
+                @media #{$breakpointxxxx} {
                     background: none;
                     padding-left: .25em;
                 }
@@ -463,20 +433,17 @@
             .rooms-button {
                 display: none;
 
-                @media @breakpointxxxx {
-                    .transform(rotate(0deg));
-                    .opacity(1);
-                    .transition(.5s);
+                @media #{$breakpointxxxx} {
+                    @include transform(rotate(0deg));
+                    @include transition(.5s);
+                    @include opacity(1);
 
                     display: table-cell;
                     width: 4em;
-                    background-image: url(../../img/icons/png/back.png);
-                    background-position: 1em center;
-                    background-repeat: no-repeat;
-                    background-size: 2em 2em;
+                    background: url(../../img/icons/png/back.png) no-repeat 1em center 2em/2em;
                     cursor: pointer;
 
-                    .rooms-view & { .transform(rotate(180deg)); }
+                    .rooms-view & { @include transform(rotate(180deg)); }
                 }
             }
         }
@@ -486,7 +453,7 @@
         &.settings-menu, &.userprefs-menu {
             display: none;
             position: absolute;
-            top: @bar-height;
+            top: $bar-height;
             right: 0;
             bottom: 0;
             left: 0;
@@ -499,7 +466,7 @@
                 list-style: none;
 
                 li {
-                    .transition;
+                    @extend %ease;
 
                     font-size: 1.5em;
                     padding: .75em;
@@ -507,24 +474,18 @@
                     background-size: 24px 24px;
                     background-position: .75em center;
                     background-repeat: no-repeat;
-                    border-bottom: 1px solid darken(@light-color, 10%);
+                    border-bottom: 1px solid darken($light-color, 10%);
                     cursor: pointer;
 
-                    &.current { background-color: darken(@light-color, 10%); }
+                    &.current { background-color: darken($light-color, 10%); }
 
-                    &:hover, &:focus, &.current:hover, &.current:focus { background-color: darken(@light-color, 15%); }
+                    &:hover, &:focus, &.current:hover, &.current:focus { background-color: darken($light-color, 15%); }
 
-                    .-(@i: length(@settingsitems)) when (@i > 0) {
-
-                        @item: e(extract(@settingsitems, @i));
-                        @icon: %("../../img/icons/png/%s-settings.png", @item);
-
-                        &.tab-@{item}-settings {
-                            background-image: url(@icon);
+                    @each $item in $settingsitems {
+                        &.tab-#{$item}-settings {
+                            background-image: url(../../img/icons/png/#{$item}-settings.png);
                         }
-
-                        .-((@i - 1));
-                    } .-;
+                    }
                 }
             }
         }
@@ -543,46 +504,48 @@
     }
 }
 
-.mainview:extend(.main-elem) {
-    .clearfix;
+.mainview {
+    @extend %clearfix;
+    @extend %main-elem;
 
     top: 0;
     bottom: 0;
     z-index: 30;
-    border-left: 1px solid darken(@light-color, 15%);
-    background-color: @light-color;
-    color: @dark-color;
+    border-left: 1px solid darken($light-color, 15%);
+    background-color: $light-color;
+    color: $dark-color;
 
     .embed-mode & {
-        left: @metaxxxxx;
+        left: $metaxxxxx;
 
-        @media @breakpointxxxx { left: @metaxxxx; }
+        @media #{$breakpointxxxx} { left: $metaxxxx; }
 
-        @media @breakpointxxx { left: 0;  }
+        @media #{$breakpointxxx} { left: 0;  }
     }
 
     .titlebar {
         position: relative;
-        background-color: darken(@light-color, 5%);
-        box-shadow: inset 0 -1px 0 0 darken(@light-color, 20%),
-                    0 3px 2px -1px fade(@dark-color, 5%);
+        background-color: darken($light-color, 5%);
+        box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
+                    0 3px 2px -1px lighten($dark-color, 75%);
         z-index: 20;
 
         .title-normal {
-            .fadein;
+            @include fadein;
+            @extend %nofilter;
 
             display: table;
             width: 100%;
-            height: @bar-height;
+            height: $bar-height;
 
             .search-focus & { display: none; }
 
             .meta-button {
                 display: none;
 
-                @media @breakpointxxx {
-                    .transform(rotate(0deg));
-                    .transition(.5s);
+                @media #{$breakpointxxx} {
+                    @include transform(rotate(0deg));
+                    @include transition(.5s);
 
                     display: table-cell;
                     width: 3em;
@@ -590,7 +553,7 @@
                     background-size: 2em 2em;
                     cursor: pointer;
 
-                    .meta-view & { .transform(rotate(180deg)); }
+                    .meta-view & { @include transform(rotate(180deg)); }
                 }
             }
 
@@ -599,7 +562,7 @@
                 vertical-align: middle;
                 padding: 0 .3em;
 
-                @media @breakpointxxx { padding-left: 0;  }
+                @media #{$breakpointxxx} { padding-left: 0;  }
 
                 .button, .button-secondary {
                     margin: 0;
@@ -611,7 +574,7 @@
                 vertical-align: middle;
                 padding-left: 1em;
 
-                @media @breakpointxxx { padding-left: 0;  }
+                @media #{$breakpointxxx} { padding-left: 0;  }
 
                 h1 {
                     float: left;
@@ -638,7 +601,7 @@
                 vertical-align: middle;
 
                 .search-button {
-                    height: @bar-height;
+                    height: $bar-height;
                     float: right;
                     padding: 0 1em;
                     width: 4em;
@@ -651,12 +614,12 @@
 
                 .user-area {
                     float: right;
-                    height: @bar-height;
+                    height: $bar-height;
 
                     .userdetail {
                         float: right;
                         text-align: right;
-                        padding: .25em 1em;
+                        padding: 0 1em;
                         font-weight: 700;
                         cursor: pointer;
 
@@ -676,8 +639,8 @@
 
                         img {
                             display: block;
-                            height: @bar-height;
-                            width: @bar-height;
+                            height: $bar-height;
+                            width: $bar-height;
                         }
                     }
                 }
@@ -688,11 +651,11 @@
             display: none;
 
             .search-focus & {
-                .slideleft;
+                @include slideleft;
 
                 display: block;
                 width: 100%;
-                height: @bar-height;
+                height: $bar-height;
                 padding: .25em;
             }
 
@@ -701,7 +664,7 @@
                 display: block;
                 width: 100%;
                 margin: 0;
-                background-image: url("../../img/icons/png/search-gray.png");
+                background-image: url(../../img/icons/png/search-gray.png);
                 background-position: right center;
                 background-repeat: no-repeat;
                 z-index: 30;
@@ -710,72 +673,75 @@
     }
 
     &.chatview {
-
         .conf-mode & { display: none; }
 
         .chat-position {
-            .opacity(0);
-            .transition;
+            @include opacity(0);
+            @extend %ease;
 
             position: relative;
             float: right;
             margin: 1em 2em;
             padding: .5em 1em;
-            background-color: @dark-color;
-            color: @light-color;
-            border-radius: @roundness;
+            background-color: $dark-color;
+            color: $light-color;
+            border-radius: $roundness;
             pointer-events: none;
             z-index: 20;
 
-            .scrolling & { .opacity(1); }
+            .scrolling & {
+                @include opacity(1);
+                @extend %nofilter;
+            }
         }
 
         .chat-area {
             position: absolute;
-            top: @bar-height;
+            top: $bar-height;
             right: 0;
-            bottom: @bar-height;
+            bottom: $bar-height;
             left: 0;
             overflow-y: scroll;
             -webkit-overflow-scrolling : touch;
 
             .infinite-above, .infinite-below {
                 background-color: transparent;
-                background-image: linear-gradient(to bottom, transparent, transparent 30%, lighten(@accent-color, 40%) 30%, lighten(@accent-color, 40%) 40%, transparent 40%, transparent),
-                                  linear-gradient(to bottom, transparent, transparent 30%, lighten(@dark-color, 75%) 30%, lighten(@dark-color, 75%) 40%, transparent 40%, transparent),
-                                  linear-gradient(to bottom, transparent, transparent 30%, lighten(@dark-color, 75%) 30%, lighten(@dark-color, 75%) 40%, transparent 40%, transparent),
-                                  linear-gradient(to bottom, transparent, transparent 60%, lighten(@dark-color, 75%) 60%, lighten(@dark-color, 75%) 70%, transparent 70%, transparent);
+                background-image: linear-gradient(to bottom, transparent, transparent 30%, lighten($accent-color, 40%) 30%, lighten($accent-color, 40%) 40%, transparent 40%, transparent),
+                                  linear-gradient(to bottom, transparent, transparent 30%, lighten($dark-color, 75%) 30%, lighten($dark-color, 75%) 40%, transparent 40%, transparent),
+                                  linear-gradient(to bottom, transparent, transparent 30%, lighten($dark-color, 75%) 30%, lighten($dark-color, 75%) 40%, transparent 40%, transparent),
+                                  linear-gradient(to bottom, transparent, transparent 60%, lighten($dark-color, 75%) 60%, lighten($dark-color, 75%) 70%, transparent 70%, transparent);
                 background-size: .6em 6em, 6em 6em, 80% 6em, 60% 6em;
                 background-position: 2em 2em, 4em 2em, 12em 2em, 12em 2em;
                 background-repeat: repeat-y;
                 background-attachment: scroll;
 
-                @media @breakpointxx {
-                    background-image: linear-gradient(to bottom, transparent, transparent 30%, lighten(@accent-color, 40%) 30%, lighten(@accent-color, 40%) 40%, transparent 40%, transparent),
-                                      linear-gradient(to bottom, transparent, transparent 30%, lighten(@dark-color, 75%) 30%, lighten(@dark-color, 75%) 40%, transparent 40%, transparent),
-                                      linear-gradient(to bottom, transparent, transparent 60%, lighten(@dark-color, 75%) 60%, lighten(@dark-color, 75%) 70%, transparent 70%, transparent);
+                @media #{$breakpointxx} {
+                    background-image: linear-gradient(to bottom, transparent, transparent 30%, lighten($accent-color, 40%) 30%, lighten($accent-color, 40%) 40%, transparent 40%, transparent),
+                                      linear-gradient(to bottom, transparent, transparent 30%, lighten($dark-color, 75%) 30%, lighten($dark-color, 75%) 40%, transparent 40%, transparent),
+                                      linear-gradient(to bottom, transparent, transparent 60%, lighten($dark-color, 75%) 60%, lighten($dark-color, 75%) 70%, transparent 70%, transparent);
                     background-size: .6em 6em, 80% 6em, 60% 6em;
                     background-position: 1em 2em, 3em 2em, 3em 2em;
                 }
             }
 
             .chat {
-                .fadein;
-                .clearfix;
+                @include fadein;
+                @extend %nofilter;
+                @extend %clearfix;
 
                 position: relative;
                 max-height: 12em;
                 margin: 0;
                 padding: 1em;
                 padding-left: 12em;
-                border-top: 1px solid darken(@light-color, 5%);
+                border-top: 1px solid darken($light-color, 5%);
                 overflow: hidden;
 
-                @media @breakpointxxxx { padding-left: 22%; }
+                @media #{$breakpointxxxx} { padding-left: 22%; }
 
-                @media @breakpointxx { padding-left: 3em; }
+                @media #{$breakpointxx} { padding-left: 3em; }
 
-                &:hover, &:focus { background-color: darken(@light-color, 2%); }
+                &:hover, &:focus { background-color: darken($light-color, 2%); }
 
                 &:before {
                     content: "";
@@ -784,26 +750,22 @@
                     height: .5em;
                     width: .5em;
                     border-radius: 50%;
-                    background-color: @accent-color;
+                    background-color: $accent-color;
 
-                    @media @breakpointxxxx { margin-left: -25%; }
+                    @media #{$breakpointxxxx} { margin-left: -25%; }
 
-                    @media @breakpointxx { margin-left: -2em; }
+                    @media #{$breakpointxx} { margin-left: -2em; }
                 }
 
                 /* set conversations dot colors */
-                .-(@i: 0) when (@i < 10) {
-                    @color: ~"color@{i}";
+                @for $i from 1 through length($palette) {
+                    $color: nth($palette, $i);
 
-                    &.conv-@{i} {
-                        &:before { background-color: @@color; }
-                    }
-
-                    .-((@i + 1));
-                } .-;
+                    &.conv-#{$i}:before { background-color: $color; }
+                }
 
                 &.long {
-                    .transition;
+                    @extend %ease;
 
                     cursor: pointer;
 
@@ -812,7 +774,7 @@
                     }
 
                     &:after {
-                        .transition;
+                        @extend %ease;
 
                         content: "";
                         position: absolute;
@@ -820,7 +782,7 @@
                         bottom: 0;
                         width: 100%;
                         padding: 3em 0;
-                        background-image: linear-gradient(to bottom, fade(@light-color, 0%) 0%, @light-color 100%);
+                        background-image: linear-gradient(to bottom, $light-color 0%, $light-color 100%);
                     }
 
                     &.active {
@@ -837,18 +799,18 @@
                     padding-right: 1em;
                     font-weight: 700;
 
-                    @media @breakpointxxxx { margin-left: -20%; }
+                    @media #{$breakpointxxxx} { margin-left: -20%; }
 
-                    @media @breakpointxx {
+                    @media #{$breakpointxx} {
                         margin-left: 0;
 
                         &:after { content: " :" }
                     }
 
                     a {
-                        color: @dark-color;
+                        color: $dark-color;
 
-                        &:hover, &:focus, &:active { color: darken(@dark-color, 10%); }
+                        &:hover, &:focus, &:active { color: darken($dark-color, 10%); }
                     }
                 }
 
@@ -857,7 +819,7 @@
                     bottom: 0;
                     right: 1.5em;
                     font-size: .8em;
-                    color: lighten(@dark-color, 40%);
+                    color: lighten($dark-color, 40%);
                 }
 
                 &.showtimestamp .timestamp {
@@ -875,7 +837,7 @@
 
             .settings-area {
                 position: absolute;
-                top: @bar-height;
+                top: $bar-height;
                 right: 0;
                 bottom: 0;
                 left: 0;
@@ -886,13 +848,14 @@
                     display: none;
 
                     &.current {
-                        .fadein;
+                        @include fadein;
+                        @extend %nofilter;
 
                         display: table;
                         border-spacing: 2em;
                         max-width: 100%;
 
-                        @media @breakpointxx {
+                        @media #{$breakpointxx} {
                             display: block;
                             border-spacing: 1em;
                         }
@@ -901,7 +864,7 @@
                     .settings-item {
                         display: table-row;
 
-                        @media @breakpointxx {
+                        @media #{$breakpointxx} {
                             display: block;
                             padding: 1em;
                         }
@@ -909,7 +872,7 @@
                         .settings-label, .settings-action {
                             display: table-cell;
 
-                            @media @breakpointxx {
+                            @media #{$breakpointxx} {
                                 display: block;
 
                                 &.inline { display: inline-block; }
@@ -940,7 +903,7 @@
                             vertical-align: top;
                             padding: .5em 0;
 
-                            @media @breakpointxx {
+                            @media #{$breakpointxx} {
                                 text-align: left;
                                 padding-right: 1em;
                                 font-weight: 700;
@@ -959,7 +922,7 @@
                         img {
                             max-width: 80px;
                             max-height: 80px;
-                            border-radius: @roundness;
+                            border-radius: $roundness;
                         }
 
                         img, .request-details {
@@ -970,9 +933,9 @@
                         .username {
                             a {
                                 font-size: 1.2em;
-                                color: @dark-color;
+                                color: $dark-color;
 
-                                &:hover, &:focus, &:active { color: darken(@dark-color, 10%); }
+                                &:hover, &:focus, &:active { color: darken($dark-color, 10%); }
                             }
                         }
 
@@ -981,12 +944,12 @@
 
                     .twitter-account {
                         position: relative;
-                        color: @light-color;
+                        color: $light-color;
 
                         img {
                             height: 80px;
                             width: 80px;
-                            border-radius: @roundness;
+                            border-radius: $roundness;
                         }
 
                         .change {
@@ -996,9 +959,9 @@
                             bottom: 0;
                             width: 80px;
                             padding: .75em;
-                            background-color: fade(@dark-color, 70%);
+                            background-color: $accent-color;
                             text-transform: uppercase;
-                            border-radius: 0 0 @roundness @roundness;
+                            border-radius: 0 0 $roundness $roundness;
                         }
                     }
                 }
@@ -1007,29 +970,31 @@
     }
 }
 
-.chat-input:extend(.main-elem) {
+.chat-input {
+    @extend %main-elem;
+
     bottom: 0;
     z-index: 30;
     padding: 0;
-    min-height: @bar-height;
-    box-shadow: 0 -3px 2px -1px fade(@dark-color, 5%);
+    min-height: $bar-height;
+    box-shadow: 0 -3px 2px -1px lighten($dark-color, 75%);
 
     .conf-mode & { display: none; }
 
     .embed-mode & {
-        left: @metaxxxxx;
+        left: $metaxxxxx;
 
-        @media @breakpointxxxx { left: @metaxxxx; }
+        @media #{$breakpointxxxx} { left: $metaxxxx; }
 
-        @media @breakpointxxx { left: 0;  }
+        @media #{$breakpointxxx} { left: 0;  }
     }
 
     .textarea {
-        .entry;
+        @extend .entry;
 
         word-wrap: break-word;
         width: 100%;
-        min-height: @bar-height;
+        min-height: $bar-height;
         max-height: 12em;
         padding: .9em 1em;
         padding-right: 2.5em;
@@ -1037,13 +1002,13 @@
         border-radius: 0;
 
         &:hover, &:focus, &:active {
-            border-color: @accent-color;
+            border-color: $accent-color;
             outline: none;
         }
     }
 
     .send {
-        .opacity(.5);
+        @include opacity(.5);
 
         position: absolute;
         right: 0;
@@ -1056,26 +1021,27 @@
         border: none;
 
         &:hover, &:focus, &:active {
-            .opacity(1);
+            @include opacity(1);
+            @extend %nofilter;
 
             background-color: transparent;
         }
     }
 }
 
-.main-elem {
+%main-elem {
     position: fixed;
-    left: @roomxxxxx + @metaxxxxx;
+    left: $roomxxxxx + $metaxxxxx;
     right: 0;
 
-    @media @breakpointxxxx { left: @metaxxxx; }
+    @media #{$breakpointxxxx} { left: $metaxxxx; }
 
-    @media @breakpointxxx { left: 0;  }
+    @media #{$breakpointxxx} { left: 0; }
 }
 
 .rooms, .meta, .mainview, .chat-input {
-    .transition(.3s; ease-out); /* animate css transforms */
-    .transform(translate3d(0, 0, 0)); /* get ready */
+    @include transition(.3s, ease-out); /* animate css transforms */
+    @include transform(translate3d(0, 0, 0)); /* get ready */
 
     /* fix flicker in some browsers */
     -webkit-backface-visibility: hidden;
@@ -1085,123 +1051,46 @@
 
     /* use 3d transformations for GPU accelerated animations */
     .meta-view & {
-        @media @breakpointxxx { .transform(translate3d(@metaxxx, 0, 0)); }
+        @media #{$breakpointxxx} { @include transform(translate3d($metaxxx, 0, 0)); }
 
-        @media @breakpointxx { .transform(translate3d(@metaxx, 0, 0)); }
+        @media #{$breakpointxx} { @include transform(translate3d($metaxx, 0, 0)); }
 
-        @media @breakpointx { .transform(translate3d(@metax, 0, 0)); }
+        @media #{$breakpointx} { @include transform(translate3d($metax, 0, 0)); }
     }
 
     .rooms-view & {
-        @media @breakpointxxxx { .transform(translate3d(@roomxxxx, 0, 0)); }
+        @media #{$breakpointxxxx} { @include transform(translate3d($roomxxxx, 0, 0)); }
 
-        @media @breakpointxxx { .transform(translate3d( ( @roomxxx + @metaxxx ), 0, 0)); }
+        @media #{$breakpointxxx} { @include transform(translate3d( ( $roomxxx + $metaxxx ), 0, 0)); }
 
-        @media @breakpointxx { .transform(translate3d( ( @roomxxx + @metaxx ), 0, 0)); }
+        @media #{$breakpointxx} { @include transform(translate3d( ( $roomxxx + $metaxx ), 0, 0)); }
 
-        @media @breakpointx { .transform(translate3d( ( @roomx + @metax ), 0, 0)); }
+        @media #{$breakpointx} { @include transform(translate3d( ( $roomx + $metax ), 0, 0)); }
     }
 }
+
+.infinite-above, .infinite-below {
+    height: 100%;
+    width: 100%;
+}
+
+.infinite-items { width: 100%; }
 
 .signup, .dim { display: none; }
 
 .signup-view {
-    @media only screen and (min-width: 480px) {
-        overflow: auto;
-
-        .dim {
-            .fadein(.5s 1);
-
-            display: block;
-            background: rgba(0,0,0,0.7);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 40;
-        }
-    }
+    @include modal(".signup", 14.5em, 9em, 18em, 29em);
 
     .signup {
-        .appear(.5s 1);
-
-        background: @light-color;
-        border-style: none;
-        position: fixed;
-        z-index: 50;
-        border-radius: 0;
-        left: 0;
-        top: 0;
-        margin-left: 0;
-        margin-top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        display: block;
-
         input[type=text] { width: 100%; }
-
-        @media only screen and (min-width: 480px) {
-            border-radius: @roundness;
-            left: 50%;
-            top: 50%;
-            margin-left: -14.5em;
-            margin-top: -9em;
-            padding: 1.3em;
-            width: 29em;
-            height: 18em;
-        }
     }
 }
 
 .loggedout-view {
-    @media only screen and (min-width: 480px) {
-        overflow: auto;
-
-        .dim {
-            .fadein(.5s 1);
-
-            display: block;
-            background: rgba(0,0,0,0.7);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 40;
-        }
-    }
+    @include modal(".loggedout-msg", 14.5em, 7em, 14em, 29em);
 
     .loggedout-msg {
-        .appear(.5s 1);
-
-        background: @light-color;
-        border-style: none;
-        position: fixed;
-        z-index: 50;
-        border-radius: 0;
-        left: 0;
-        top: 0;
-        margin-left: 0;
-        margin-top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        display: block;
-
         .button { width: 100%; }
-
-        @media only screen and (min-width: 480px) {
-            border-radius: @roundness;
-            left: 50%;
-            top: 50%;
-            margin-left: -14.5em;
-            margin-top: -7em;
-            padding: 1.3em;
-            width: 29em;
-            height: 14em;
-        }
     }
 }
 
@@ -1218,18 +1107,18 @@
             margin: 0;
 
             li {
-                border-bottom: 1px solid darken(@light-color, 10%);
+                border-bottom: 1px solid darken($light-color, 10%);
 
                 &:last-child {
                     border-bottom: none;
                 }
 
                 a {
-                    color: lighten(@dark-color, 20%);
+                    color: lighten($dark-color, 20%);
                     padding: 1em;
                     cursor: pointer;
 
-                    &:hover, &:focus { color: @dark-color; }
+                    &:hover, &:focus { color: $dark-color; }
                 }
             }
         }

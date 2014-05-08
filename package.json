@@ -60,6 +60,7 @@
     "grunt-contrib-concat": "x",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-contrib-less": "x",
+    "grunt-contrib-sass": "x",
     "grunt-autoprefixer": "x",
     "browserify": "x",
     "grunt-image-embed": "x",
