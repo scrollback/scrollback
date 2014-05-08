@@ -69,6 +69,7 @@ $tabitems: info, people, threads;
     }
 
     .roomlist {
+        height: 100%;
         overflow-y: scroll;
         -webkit-overflow-scrolling : touch;
 
@@ -299,11 +300,7 @@ $tabitems: info, people, threads;
             }
 
 
-            &.pane-info {
-                padding: 1.5em;
-
-                .search-mode & { display: none; }
-            }
+            &.pane-info { padding: 1.5em; }
 
             &.pane-people {
                 padding: .75em;
@@ -353,13 +350,9 @@ $tabitems: info, people, threads;
                         border-radius: $roundness;
                     }
                 }
-
-                .search-mode & { display: none; }
             }
 
             &.pane-threads {
-                .search-mode & { display: none; }
-
                 .infinite-above, .infinite-below {
                     background-color: transparent;
                     background-image:  linear-gradient(to bottom, transparent, transparent 35%, lighten($dark-color, 70%) 35%, lighten($dark-color, 70%) 65%, transparent 65%, transparent),
