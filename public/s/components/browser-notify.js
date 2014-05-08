@@ -14,15 +14,30 @@ Array.prototype.contains = function(value) {
 	return false;
 };
 
+// Alert bar
+function showAlert(type, text) {
+	var $alert = $("<div class='alert-bar " + type + "'>" + text + "<a class='alert-remove close'>&times;</span></div>");
+
+	$("body").append($alert);
+
+	$(document).on("click", ".alert-remove", function() {
+		$(this).parent().remove();
+	});
+}
+
 // HTML5 notifications
 function requestNotifcation() {
 	if ("webkitNotifications" in window) {
 		if (webkitNotifications.checkPermission() !== 0) {
 			webkitNotifications.requestPermission();
+		} else {
+			return true;
 		}
 	} else if ("Notification" in window) {
 		if (Notification.permission !== "granted" && Notification.permission !== 'denied') {
 			Notification.requestPermission();
+		} else {
+			return true;
 		}
 	}
 }
@@ -134,4 +149,7 @@ libsb.on('text-dn', function(text, next) {
 	next();
 });
 
-$(".requestnotif").on("click", requestNotifcation);
+//$(function() {
+//	showAlert("info", "<a class='requestnotif alert-remove'>Enable desktop notifications</a> for replies.");
+//	$(document).on("click", ".requestnotif", requestNotifcation);
+//});

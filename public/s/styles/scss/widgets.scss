@@ -341,6 +341,61 @@ code {
     h2 { color: $error-color; }
 }
 
+.alert-bar {
+    @include fadein;
+
+    position: fixed;
+    top: 1em;
+    left: 1em;
+    right: 1em;
+    z-index: 120;
+    padding: 1em;
+    border-radius: $roundness;
+    text-align: center;
+    box-shadow: 0 0 2px 1px rgba(0,0,0,0.1);
+
+    a {
+        font-weight: 700;
+        border-bottom: 1px solid transparent;
+        cursor: pointer;
+
+        &:focus, &:hover, &:active { border-bottom-color: currentColor; }
+    }
+
+    &.info {
+        background-color: lighten($info-color, 30%);
+        border: 1px solid $info-color;
+        color: darken($info-color, 30%);
+
+        a, a:hover, a:focus, a:active { color: darken($info-color, 30%); }
+    }
+
+    &.success {
+        background-color: lighten($success-color, 30%);
+        border: 1px solid $success-color;
+        color: darken($success-color, 30%);
+    }
+
+    &.warning {
+        background-color: lighten($warning-color, 30%);
+        border: 1px solid $warning-color;
+        color: darken($warning-color, 30%);
+    }
+
+    &.error {
+        background-color: lighten($error-color, 30%);
+        border: 1px solid $error-color;
+        color: darken($error-color, 30%);
+    }
+
+    .close {
+        font-size: 2em;
+        float: right;
+        padding: 0 .5em;
+        cursor: pointer;
+    }
+}
+
 .layer {
     content: "";
     display: block;
