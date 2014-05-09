@@ -86,7 +86,7 @@
 						<a class="follow-button" role="button"></a>
 					</div>
 					<div class="right-area">
-						<div class="user-area has-popover">
+						<div class="user-area">
 							<div class="avatar">
 								<img alt="" id="userGrav" >
 							</div>
@@ -107,7 +107,10 @@
 				<p class="chat">
 					<span class="nick"></span>
 					<span class="message"></span>
-					<span class="timestamp"></span>
+					<span class="extra">
+						<span class="timestamp"></span>
+						<a class="chat-options"><img src="./s/img/icons/svg/more.svg"></a>
+					</span>
 				</p>
 			</div>
 		</section>
@@ -238,7 +241,6 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 			<a class="button reload-page">Go back as guest</a>
 		</section>
 
-		<div role="menu" class="popover-body"></div>
 		<div class="dim"></div>
 
 		<!-- scripts -->
@@ -261,12 +263,12 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 
 		<script src="/libsb.bundle.js"></script>
 		<script src="/s/js/libsb-settings.js"></script>
+		<script src="/s/components/ui.js"></script>
 
 		<script src="/s/components/infinite.js"></script>
 		<script src="/s/components/hide-scroll.js"></script>
 		<script src="/s/components/navigation.js"></script>
 		<script src="/s/components/columns.js"></script>
-		<script src="/s/components/popover.js"></script>
 		<script src="/s/components/entry-segments.js"></script>
 		<script src="/s/components/text.js"></script>
 		<script src="/s/components/text-area.js"></script>

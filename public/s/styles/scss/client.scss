@@ -136,6 +136,7 @@ $tabitems: info, people, threads;
     bottom: 0;
     left: $roomxxxxx;
     width: $metaxxxxx;
+    border-right: 1px solid darken($light-color, 15%);
     background-color: darken($light-color, 5%);
     color: $dark-color;
     z-index: 20;
@@ -372,7 +373,7 @@ $tabitems: info, people, threads;
                     color: $dark-color;
                     border-right: 4px solid $accent-color;
 
-                    &.current { background-color: lighten($accent-color, 25%); }
+                    &.current { background-color: lighten($accent-color, 30%); }
 
                     &:hover, &:focus, &.current:hover, &.current:focus {
                         background-color: $accent-color;
@@ -386,7 +387,7 @@ $tabitems: info, people, threads;
                         &.conv-#{$i} {
                             border-right-color: $color;
 
-                            &.current { background-color: lighten($color, 25%); }
+                            &.current { background-color: lighten($color, 30%); }
 
                             &:hover, &:focus, &.current:hover, &.current:focus { background-color: $color; }
                         }
@@ -503,7 +504,6 @@ $tabitems: info, people, threads;
     top: 0;
     bottom: 0;
     z-index: 30;
-    border-left: 1px solid darken($light-color, 15%);
     background-color: $light-color;
     color: $dark-color;
 
@@ -724,7 +724,6 @@ $tabitems: info, people, threads;
                 @extend %clearfix;
 
                 position: relative;
-                max-height: 12em;
                 margin: 0;
                 padding: 1em;
                 padding-left: 12em;
@@ -736,6 +735,8 @@ $tabitems: info, people, threads;
                 @media #{$breakpointxx} { padding-left: 3em; }
 
                 &:hover, &:focus { background-color: darken($light-color, 2%); }
+
+                &.current { background-color: darken($light-color, 5%); }
 
                 &:before {
                     content: "";
@@ -761,6 +762,7 @@ $tabitems: info, people, threads;
                 &.long {
                     @extend %ease;
 
+                    max-height: 12em;
                     cursor: pointer;
 
                     &:hover, &:focus {
@@ -808,16 +810,17 @@ $tabitems: info, people, threads;
                     }
                 }
 
-                .timestamp {
-                    position: absolute;
-                    bottom: 0;
-                    right: 1.5em;
-                    font-size: .8em;
-                    color: lighten($dark-color, 40%);
-                }
-
-                &.showtimestamp .timestamp {
+                .extra {
                     display: block;
+                    font-size: .9em;
+                    text-align: right;
+
+                    .timestamp {
+                    }
+
+                    .more {
+                        padding: 0 1em;
+                    }
                 }
             }
         }
@@ -1089,7 +1092,7 @@ $tabitems: info, people, threads;
 }
 
 .popover-body {
-    &.user-menu {
+    .user-menu {
         width: 15em;
         padding: .5em 1em;
 
@@ -1110,7 +1113,7 @@ $tabitems: info, people, threads;
                 a {
                     color: lighten($dark-color, 20%);
                     padding: 1em;
-                    cursor: pointer;
+                    font-weight: 700;
 
                     &:hover, &:focus { color: $dark-color; }
                 }

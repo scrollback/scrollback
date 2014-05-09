@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, ui */
 
 
 $(function(){
@@ -49,9 +49,7 @@ $(function(){
 			if(init.resource == libsb.resource) {
 				signingUser = init.user;
 
-				$("body").removeClass("popover-active");
-				$(".popover-body").removeClass("popover-bottom").removeClass("popover-top").removeClass("arrow-left").removeClass("arrow-right");
-				$(".layer").remove();
+				ui.popover.hide();
 
 				libsb.emit('navigate', {
 					mode: "user", tab: "create", source: "libsb", view: "signup"

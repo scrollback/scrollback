@@ -312,7 +312,7 @@ code {
         &:focus, &:hover, &:active { border-bottom-color: currentColor; }
     }
 
-    $types: info success, warning error;
+    $types: info, success, warning, error;
     $colors: $info-color, $success-color, $warning-color, $error-color;
 
     @for $i from 1 through length($types) {
@@ -364,57 +364,53 @@ code {
 }
 
 .popover-body {
-    display: none;
+    position: absolute;
+    display: block;
+    margin: 1em;
+    border-radius: $roundness;
+    font-weight: normal;
+    border: 1px solid darken($light-color, 20%);
+    background-color: $light-color;
+    color: $dark-color;
+    box-shadow: 0 0 5px 1px rgba(0,0,0,.1);
+    text-transform: none;
+    z-index: 100;
 
-    .popover-active & {
-        position: absolute;
-        display: block;
-        margin: 1em;
-        border-radius: $roundness;
-        font-weight: normal;
-        border: 1px solid darken($light-color, 20%);
-        background-color: $light-color;
-        color: $dark-color;
-        box-shadow: 0 0 5px 1px rgba(0,0,0,.1);
-        text-transform: none;
-        z-index: 100;
+    &.popover-top {
+        @include slideup;
+        @extend %nofilter;
 
-        &.popover-top {
-            @include slideup;
-            @extend %nofilter;
+        &:before {
+            @include transform(rotate(225deg));
+            @extend %popover-arrow;
 
-            &:before {
-                @include transform(rotate(225deg));
-                @extend %popover-arrow;
-
-                bottom: -8px;
-            }
+            bottom: -8px;
         }
+    }
 
-        &.popover-bottom {
-            @include slidedown;
-            @extend %nofilter;
+    &.popover-bottom {
+        @include slidedown;
+        @extend %nofilter;
 
-            &:before {
-                @include transform(rotate(45deg));
-                @extend %popover-arrow;
+        &:before {
+            @include transform(rotate(45deg));
+            @extend %popover-arrow;
 
-                top: -8px;
-            }
+            top: -8px;
         }
+    }
 
-        &.arrow-left {
-            &:before {
-                left: 1em;
-                right: auto;
-            }
+    &.arrow-left {
+        &:before {
+            left: 1em;
+            right: auto;
         }
+    }
 
-        &.arrow-right {
-            &:before {
-                left: auto;
-                right: 1em;
-            }
+    &.arrow-right {
+        &:before {
+            left: auto;
+            right: 1em;
         }
     }
 }
@@ -503,15 +499,17 @@ code {
 }
 
 ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 9px;
+    height: 9px;
 }
 
 ::-webkit-scrollbar-button { display: none; }
 
-::-webkit-scrollbar-track { background-color: $light-color; }
+::-webkit-scrollbar-track { background-color: transparent; }
 
-::-webkit-scrollbar-thumb { background-color: darken($light-color, 10%);
+::-webkit-scrollbar-thumb {
+    background-color: darken($light-color, 10%);
+    border-radius: 9px;
 
     &:vertical { min-height: 100px; }
 
