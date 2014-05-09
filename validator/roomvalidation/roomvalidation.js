@@ -4,7 +4,6 @@ var redis = require("../../lib/redisProxy.js");
 var validateRoom = require('../../lib/validate.js');
 var crypto = require('crypto');
 var getAvatarText = require('../../lib/getAvatarText.js');
-
 module.exports =function(core){
 	core.on("room", function(room, callback) {
 		var i,j, avatarText;
@@ -28,15 +27,15 @@ module.exports =function(core){
 		if(room.type!="user" && /^guest-/.test(room.owner)) return callback(new Error("CANNOT_CONFIGURE_AS_GUEST"));
 		//need to delete the IRC ACCOUNTS
 		room.originalId = room.id;
-		redis.get("room:{{"+room.id+"}}", function(err, data) {
-			if(err) callback(err);
-			if(data){
-				try {
-					room.old = JSON.parse(data);
-				}catch(e) {
-					log(e);
-					room.old = {};
+		core.emit("rooms", { id : room.id }, function(err, data) {
+			if(err) return callback(err);
+			if(data && data.length){
+				if(data[0].type !== room.type) {						
+					return callback(new Error("Cannot save room"));
 				}
+				room.old = data[0];
+			}else{
+				room.old = {};
 			}
 			if(room.type!="user" && room.old && room.old.owner && room.owner !== room.old.owner) return callback(new Error("NOT_ADMIN"));
 			if(room.accounts) {
