@@ -6,20 +6,20 @@
 
 /* mixins */
 @mixin modal($el, $left, $top, $height, $width) {
-    @media only screen and (min-width: 480px) {
+    @media only screen and (min-width: 27em) {
         overflow: auto;
 
         .dim {
             @include fadein(.5s 1);
 
             display: block;
-            background: rgba(0,0,0,0.7);
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
+            height: 100%;
+            width: 100%;
             z-index: 40;
+            background: rgba(0,0,0,.7);
         }
     }
 
@@ -27,29 +27,25 @@
         @include appear(.5s 1);
         @extend %nofilter;
 
-        background: $light-color;
-        border-style: none;
+        display: block;
         position: fixed;
-        z-index: 50;
-        border-radius: 0;
-        left: 0;
         top: 0;
-        margin-left: 0;
-        margin-top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
+        z-index: 50;
         overflow: auto;
-        display: block;
+        background: $light-color;
+        padding: 1.2em;
 
-        @media only screen and (min-width: 480px) {
-            border-radius: $roundness;
+        @media only screen and (min-width: 27em) {
             left: 50%;
             top: 50%;
             margin-left: $left * -1;
             margin-top: $top * -1;
             height: $height;
             width: $width;
-            padding: 1.2em;
+            border-radius: $roundness;
         }
     }
 }
@@ -58,9 +54,10 @@
     @extend %ease;
     @extend %inputs;
 
-    background-color: $bg;
     border: 1px solid $bg;
     border-bottom-color: darken($bg, 10%);
+    border-radius: $roundness;
+    background-color: $bg;
     color: $fg;
     text-align: center;
     font-weight: 700;
@@ -91,38 +88,23 @@
 }
 
 @mixin zigzag($inner, $outer, $position) {
-    background: linear-gradient(-135deg, $outer 5px, transparent 0) 0 5px,
-        linear-gradient(135deg, $outer 5px, $inner 0) 0 5px;
-
+    background-image: linear-gradient(-135deg, $outer 5px, transparent 0) 0 5px, linear-gradient(135deg, $outer 5px, $inner 0) 0 5px;
     background-color: $inner;
     background-position: left $position;
     background-repeat: repeat-x;
     background-size: 10px 10px;
 }
 
-/* set the viewport properties (limited browser support) */
-@viewport {
-    width: device-width;
-    user-zoom: fixed;
-    zoom: 1;
-    min-zoom: 1;
-    max-zoom: 1;
-}
-
-/* widget styles */
+/* base styles */
 body {
     background: $light-color;
     color: $dark-color;
-    font-family: $body-font;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 23px;
+    font: 14px/21px $body-font;
 }
 
 a {
     @extend %ease;
 
-    font-weight: bold;
     color: darken($accent-color, 10%);
     text-decoration: none;
 
@@ -136,7 +118,12 @@ img {
     height: auto;
 }
 
-h1, h2, h3 { @extend %heading; }
+h1, h2, h3 {
+    line-height: 1.5em;
+    font-family: $heading-font;
+    font-weight: 300;
+    margin: .5em 0;
+}
 
 h1 { font-size: 2em; }
 
@@ -146,28 +133,25 @@ h3 { font-size: 1.2em; }
 
 p { margin: .5em 0; }
 
-input[type=submit], input[type=button] {
-    @include buttons;
+input[type="submit"], input[type="button"] {
+    @extend .button;
 
-    &:disabled { @extend .button-disabled; }
+    &:disabled { @extend .button.disabled; }
 }
 
-input[type=entry], input[type=text], input[type=search], input[type=email], textarea {
+input[type="entry"], input[type="text"], input[type="search"], input[type="email"], textarea {
     @extend %inputs;
     @extend .entry;
 
-    &:disabled { background-color: darken($light-color, 10%); }
-
-    &.error { border-color: $error-color; }
+    &:disabled { @extend .entry.disabled; }
 }
 
-input[type=checkbox] {
+input[type="checkbox"] {
     width: 1.5em;
     height: 1.5em;
 }
 
 pre {
-    width: 30em;
     white-space: pre-wrap;
     word-wrap: break-word;
     padding: 1em;
@@ -181,35 +165,58 @@ code {
     line-height: 1.2em;
 }
 
-%heading {
-    line-height: 1.5em;
-    font-family: $heading-font;
-    font-weight: 300;
+%inputs {
+    display: inline-block;
     margin: .5em 0;
+    padding: .8em 1.2em;
+    font-size: 1em;
+    outline: none;
+
+    &:hover, &:focus, &:active { outline: none; }
 }
 
-.linked {
-    border-radius: 0 0 0 0;
+.button {
+    @include buttons;
 
-    &:first-of-type {
-        border-right: none;
-        border-radius: $roundness 0 0 $roundness;
+    &.secondary {
+        background-color: darken($light-color, 5%);
+        border: 1px solid darken($light-color, 15%);
+        color: lighten($dark-color, 10%);
+
+        &:hover, &:focus {
+            background-color: darken($light-color, 3%);
+            border-color: darken($light-color, 30%);
+            color: lighten($dark-color, 5%);
+        }
+
+        &:active {
+            background-color: darken($light-color, 7%);
+            border-color: darken($light-color, 20%);
+            color: lighten($dark-color, 15%);
+        }
     }
 
-    &:last-of-type { border-radius: 0 $roundness $roundness 0; }
+    &.disabled {
+        &, &:hover, &:focus, &:active {
+            background-color: darken($light-color, 5%);
+            border-color: darken($light-color, 15%);
+            color: lighten($dark-color, 50%);
+            pointer-events: none;
+        }
+    }
+
+    &.linked { @extend .linked; }
 }
 
 .entry {
     @extend %ease;
 
-    background-color: $light-color;
     border: 1px solid darken($light-color, 20%);
     border-top-color: darken($light-color, 30%);
     border-radius: $roundness;
+    background-color: $light-color;
     color: $dark-color;
-    font-size: 1em;
-    box-shadow: inset 0 1px 1px 0 rgba(0,0,0,0.1);
-    outline: none;
+    box-shadow: inset 0 1px 1px 0 rgba(0,0,0,.1);
 
     &:hover, &:focus, &:active {
         border-color: darken($light-color, 30%);
@@ -217,14 +224,20 @@ code {
         outline: none;
     }
 
+    &.disabled { background-color: darken($light-color, 10%); }
+
+    &.error { border-color: $error-color; }
+
     &.segmented {
         display: inline-block;
         min-width: 15em;
         min-height: 3em;
+        padding: 0;
         cursor: text; /* fix firefox showing caret in wrong position */
 
         .segment {
             @include appear;
+            @extend %nofilter;
 
             display: inline-block;
             min-width: 3em;
@@ -243,67 +256,18 @@ code {
                 border-radius: $roundness;
             }
 
-            .rem-segment {
+            .close {
                 float: right;
-                padding: 0 .25em;
                 font-weight: bold;
+                font-size: 1.5em;
                 color: darken($accent-color, 5%);
                 cursor: pointer;
             }
         }
     }
+
+    &.linked { @extend .linked; }
 }
-
-%inputs {
-    display: inline-block;
-    margin: .5em 0;
-    padding: .8em 1.2em;
-    border-radius: $roundness;
-    outline: none;
-    font-size: 1em;
-}
-
-.button-secondary {
-    @extend %ease;
-    @extend %inputs;
-
-    background-color: darken($light-color, 5%);
-    border: 1px solid darken($light-color, 15%);
-    color: lighten($dark-color, 10%);
-    text-align: center;
-    font-weight: 700;
-    cursor: pointer;
-    text-transform: uppercase;
-
-    &:hover, &:focus {
-        background-color: darken($light-color, 3%);
-        border-color: darken($light-color, 30%);
-        color: lighten($dark-color, 5%);
-    }
-
-    &:active {
-        background-color: darken($light-color, 7%);
-        border-color: darken($light-color, 20%);
-        color: lighten($dark-color, 15%);
-    }
-}
-
-.button-disabled {
-    background-color: darken($light-color, 5%);
-    border: 1px solid darken($light-color, 15%);
-    color: lighten($dark-color, 50%);
-    pointer-events: none;
-
-    &:hover, &:focus, &:active {
-        background-color: darken($light-color, 5%);
-        border-color: darken($light-color, 15%);
-        color: lighten($dark-color, 50%);
-    }
-}
-
-.login-toggle { cursor: pointer; }
-
-.button { @include buttons; }
 
 .google { @include buttons(#d34836, #fff); }
 
@@ -315,83 +279,60 @@ code {
 
 .openid { @include buttons(#f78c40, #fff); }
 
-.subtitle {
-    margin: .5em 0;
-    font-size: .9em;
-    font-style: italic;
-}
+.linked {
+    border-radius: 0;
 
-.error { color: $error-color; }
+    &:not(:only-of-type):not(:last-of-type) { border-right: none; }
 
-.error-msg {
-    background-color: lighten($error-color, 40%);
-    border: 1px solid $error-color;
-    border-radius: $roundness;
-    padding: .5em;
-    margin: .5em 0;
-    color: $error-color;
-}
+    &:first-of-type { border-radius: $roundness 0 0 $roundness; }
 
-.warning {
-    background-color: lighten($error-color, 40%);
-    border-bottom: 1px solid $error-color;
-    text-align: center;
-    padding: .5em;
+    &:last-of-type { border-radius: 0 $roundness $roundness 0; }
 
-    h2 { color: $error-color; }
+    &:only-of-type { border-radius: $roundness; }
 }
 
 .alert-bar {
-    @include fadein;
+    @include slidedown;
+    @extend %nofilter;
 
     position: fixed;
     top: 1em;
     left: 1em;
     right: 1em;
-    z-index: 120;
+    z-index: 200;
     padding: 1em;
-    border-radius: $roundness;
     text-align: center;
-    box-shadow: 0 0 2px 1px rgba(0,0,0,0.1);
+    border-radius: $roundness;
+    box-shadow: 0 0 5px 1px rgba(0,0,0,.1);
 
     a {
         font-weight: 700;
         border-bottom: 1px solid transparent;
-        cursor: pointer;
 
         &:focus, &:hover, &:active { border-bottom-color: currentColor; }
     }
 
-    &.info {
-        background-color: lighten($info-color, 30%);
-        border: 1px solid $info-color;
-        color: darken($info-color, 30%);
+    $types: info success, warning error;
+    $colors: $info-color, $success-color, $warning-color, $error-color;
 
-        a, a:hover, a:focus, a:active { color: darken($info-color, 30%); }
-    }
+    @for $i from 1 through length($types) {
+        $type: nth($types, $i);
+        $color: nth($colors, $i);
 
-    &.success {
-        background-color: lighten($success-color, 30%);
-        border: 1px solid $success-color;
-        color: darken($success-color, 30%);
-    }
+        &.#{$type} {
+            background-color: lighten($color, 30%);
+            border: 1px solid $color;
+            color: darken($color, 30%);
 
-    &.warning {
-        background-color: lighten($warning-color, 30%);
-        border: 1px solid $warning-color;
-        color: darken($warning-color, 30%);
-    }
-
-    &.error {
-        background-color: lighten($error-color, 30%);
-        border: 1px solid $error-color;
-        color: darken($error-color, 30%);
+            a, a:hover, a:focus, a:active { color: darken($color, 30%); }
+        }
     }
 
     .close {
         font-size: 2em;
         float: right;
         padding: 0 .5em;
+        border-bottom: none;
         cursor: pointer;
     }
 }
@@ -434,12 +375,13 @@ code {
         border: 1px solid darken($light-color, 20%);
         background-color: $light-color;
         color: $dark-color;
-        box-shadow: 0 0 10px lighten($dark-color, 65%);
+        box-shadow: 0 0 5px 1px rgba(0,0,0,.1);
         text-transform: none;
         z-index: 100;
 
         &.popover-top {
             @include slideup;
+            @extend %nofilter;
 
             &:before {
                 @include transform(rotate(225deg));
@@ -451,6 +393,7 @@ code {
 
         &.popover-bottom {
             @include slidedown;
+            @extend %nofilter;
 
             &:before {
                 @include transform(rotate(45deg));
@@ -476,7 +419,7 @@ code {
     }
 }
 
-input.switch {
+.switch {
     display: none;
 
     & ~ label {
@@ -505,7 +448,7 @@ input.switch {
             content: "OFF";
             line-height: 1.7em;
             text-align: right;
-            box-shadow: inset 0 1px 0 rgba(0,0,0,0.2);
+            box-shadow: inset 0 1px 0 rgba(0,0,0,.2);
         }
 
         &:after {
@@ -513,7 +456,7 @@ input.switch {
             width: 2.1em;
             top: .15em;
             bottom: .15em;
-            left: 0.14em;
+            left: .14em;
             background-color: $light-color;
         }
     }

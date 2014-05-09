@@ -1,4 +1,4 @@
-@mixin opacity($opacity: 0.5) {
+@mixin opacity($opacity: .5) {
     $opperc: $opacity * 100;
 
     -ms-filter: progid:DXImageTransform.Microsoft.Alpha(opacity=#{$opperc});

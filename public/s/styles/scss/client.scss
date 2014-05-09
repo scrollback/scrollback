@@ -205,16 +205,13 @@ $tabitems: info, people, threads;
                 display: table-cell;
                 vertical-align: middle;
                 text-align: center;
+                background-position: center center;
+                background-repeat: no-repeat;
+                background-size: 2em 2em;
                 color: $dark-color;
                 cursor: pointer;
 
-                background: {
-                    position: center center;
-                    repeat: no-repeat;
-                    size: 2em 2em;
-                }
-
-                &:hover, &:focus, &.current {
+                &:hover, &:focus, &:active, &.current {
                     @include opacity(1);
                     @extend %nofilter;
 
@@ -255,6 +252,8 @@ $tabitems: info, people, threads;
                         display: table-cell;
                         width: 2.5em;
                         background-image: url(../../img/icons/png/back.png);
+
+                        &:hover, &:focus, &:active { background-color: transparent; }
 
                         .rooms-view & { @include transform(rotate(180deg)); }
 
@@ -520,7 +519,7 @@ $tabitems: info, people, threads;
         position: relative;
         background-color: darken($light-color, 5%);
         box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
-                    0 3px 2px -1px lighten($dark-color, 75%);
+                    0 3px 2px -1px rgba(0,0,0,0.05);
         z-index: 20;
 
         .title-normal {
@@ -635,6 +634,8 @@ $tabitems: info, people, threads;
                             height: $bar-height;
                             width: $bar-height;
                         }
+
+                        @media #{$breakpointxx} { display: none; }
                     }
                 }
             }
@@ -649,7 +650,7 @@ $tabitems: info, people, threads;
                 display: block;
                 width: 100%;
                 height: $bar-height;
-                padding: .25em;
+                padding: .15em;
             }
 
             .search-entry {
@@ -970,7 +971,7 @@ $tabitems: info, people, threads;
     z-index: 30;
     padding: 0;
     min-height: $bar-height;
-    box-shadow: 0 -3px 2px -1px lighten($dark-color, 75%);
+    box-shadow: 0 -3px 2px -1px rgba(0,0,0,0.05);
 
     .conf-mode & { display: none; }
 

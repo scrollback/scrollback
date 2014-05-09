@@ -9,7 +9,7 @@ $(".segmented").on("click", function() {
 // Create a new segment
 function addSegment(el, text) {
 	if (!text.match(/^\s*$/) ) {
-		$("<div class='segment done'><span class='segment-text'>" + text + "</span><span class='segment-remove'>&times;</span></div>").insertBefore(el);
+		$("<div class='segment done'><span class='segment-text'>" + text + "</span><span class='segment-remove close'>&times;</span></div>").insertBefore(el);
 		el.empty();
 	}
 }
