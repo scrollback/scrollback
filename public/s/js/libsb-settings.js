@@ -33,13 +33,18 @@ function formField(label, type, id) {
 		case 'toggle':
 			input = "<input class='switch' type='checkbox' id='" + id + "' name='" + id + "'><label for='" + id +"'></label>";
 			break;
-		case 'segmented':
-			input = "<span class='entry segmented' id='" + id + "'><span contenteditable class='segment'></span></span>";
+		case 'multientry':
+			input = "<span class='entry multientry' id='" + id + "'><span contenteditable class='item'></span></span>";
 			break;
 	}
 
 	return "<div class='settings-item'><div class='settings-label'>" + label + "</div><div class='settings-action'>" + input + "</div></div>";
 }
+
+// Add event listeners for multientry
+$(function() {
+	ui.multientry.init();
+});
 
 // General
 libsb.on('config-show', function(conf, next) {
@@ -52,7 +57,7 @@ libsb.on('config-show', function(conf, next) {
 });
 libsb.on('config-save', function(conf, next){
 	var name = $('.pane-general-settings #displayname').val();
-	
+
 	var desc = $('.pane-general-settings #description').val();
 	conf.name = name;
 	conf.description = desc;
@@ -87,7 +92,7 @@ libsb.on('config-show', function(conf, next) {
 	});
 
 	conf.twitter = {
-		html: "<div class='pane pane-twitter-settings'>" + formField("Hashtags", "segmented", "twitterhashtags") + $twitteruser + "</div>",
+		html: "<div class='pane pane-twitter-settings'>" + formField("Hashtags", "multientry", "twitterhashtags") + $twitteruser + "</div>",
 		text: "Twitter",
 		prio: 700
 	}
@@ -132,7 +137,7 @@ libsb.on('config-save', function(conf, next){
 
 // Spam control
 libsb.on('config-show', function(conf, next) {
-	// conf.spam = "<div class='pane pane-spam-settings'>" + formField("Block repetitive messages", "toggle", "block-repetitive") + formField("Block nonsense messages", "toggle", "block-nonsense") + formField("Bloack offesnive words", "checks", [ [ "en-moderate", "English moderate" ], [ "en-strict", "English strict" ], [ "zh-strict", "Chinese strict" ] ]) + formField("Custom blocked word", "segmented", "blocked-words" ) + formField("Gaggded users", "segmented", "gagged-users" ) + formField("Banned users", "segmented", "banned-users" ) + "</div>";
+	// conf.spam = "<div class='pane pane-spam-settings'>" + formField("Block repetitive messages", "toggle", "block-repetitive") + formField("Block nonsense messages", "toggle", "block-nonsense") + formField("Bloack offesnive words", "checks", [ [ "en-moderate", "English moderate" ], [ "en-strict", "English strict" ], [ "zh-strict", "Chinese strict" ] ]) + formField("Custom blocked word", "multientry", "blocked-words" ) + formField("Gaggded users", "multientry", "gagged-users" ) + formField("Banned users", "multientry", "banned-users" ) + "</div>";
 	conf.spam = {
 		html: "<div class='pane pane-spam-settings'>" + formField("Block offensive words", "toggle", 'block-offensive'),
 		text: "Spam control",

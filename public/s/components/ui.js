@@ -3,7 +3,7 @@
 
 var ui = {
     animate: {
-        support: function () {
+        support: function() {
             if (typeof document.body.style.transition === 'string') {
                 return true;
             } else {
@@ -11,7 +11,7 @@ var ui = {
             }
         },
 
-        fadeout: function (el, func) {
+        fadeout: function(el, func) {
             if (ui.animate.support()) {
                 $(el).addClass("hidden").data("transitioning", true);
                 $(el).on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function (e) {
@@ -22,6 +22,45 @@ var ui = {
                 });
             } else {
                 func();
+            }
+        }
+    },
+
+    multientry: {
+        init: function() {
+            $(document).on("keydown", ".multientry .item", function(e) {
+                if (e.keyCode === 13 || e.keyCode === 32 || e.keyCode === 188) {
+                    e.preventDefault();
+                    ui.multientry.add($(this), $(this).text());
+                }
+            });
+
+            $(document).on("paste", ".multientry .item", function(e) {
+                e.preventDefault();
+                var items = e.originalEvent.clipboardData.getData('Text').split(/[\s,]+/);
+                for (var i = 0; i < items.length; i++) {
+                    ui.multientry.add($(this), items[i]);
+                }
+            });
+
+            $(document).on("keydown", ".multientry .item", function(e) {
+                if (e.keyCode === 8 && $(this).text().match(/^\s*$/)) {
+                    $(this).prev().remove();
+                }
+            });
+
+            $(document).on("click", ".multientry .item-remove", function() {
+                $(this).parent().remove();
+            });
+
+            $(document).on("click", ".multientry", function() {
+                $(this).children().last().focus();
+            });
+        },
+
+        add: function(el, text) {
+            if (!text.match(/^\s*$/) ) {
+                $("<div class='item done'><span class='item-text'>" + text + "</span><span class='item-remove close'>&times;</span></div>").insertBefore($(el).empty());
             }
         }
     },

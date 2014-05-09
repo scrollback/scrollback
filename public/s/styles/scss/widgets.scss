@@ -228,14 +228,14 @@ code {
 
     &.error { border-color: $error-color; }
 
-    &.segmented {
+    &.multientry {
         display: inline-block;
         min-width: 15em;
         min-height: 3em;
         padding: 0;
         cursor: text; /* fix firefox showing caret in wrong position */
 
-        .segment {
+        .item {
             @include appear;
             @extend %nofilter;
 
