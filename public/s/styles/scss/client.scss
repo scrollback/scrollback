@@ -185,7 +185,7 @@ $tabitems: info, people, threads;
     }
 
     .chat-meta {
-        .conf-mode & { display: none; }
+        .conf-mode &, .pref-mode & { display: none; }
 
         .tabs {
             list-style: none;
@@ -408,7 +408,7 @@ $tabitems: info, people, threads;
     .settings-header {
         display: none;
 
-        .conf-mode & {
+        .conf-mode &, .pref-mode & {
             display: table;
             table-layout: fixed;
             height: $bar-height;
@@ -673,7 +673,7 @@ $tabitems: info, people, threads;
     }
 
     &.chatview {
-        .conf-mode & { display: none; }
+        .conf-mode &, .pref-mode & { display: none; }
 
         .chat-position {
             @include opacity(0);
@@ -832,7 +832,7 @@ $tabitems: info, people, threads;
     &.settingsview {
         display: none;
 
-        .conf-mode & {
+        .conf-mode & , .pref-mode & {
             display: block;
 
             .settings-area {
@@ -979,7 +979,7 @@ $tabitems: info, people, threads;
     min-height: $bar-height;
     box-shadow: 0 -3px 2px -1px lighten($dark-color, 75%);
 
-    .conf-mode & { display: none; }
+    .conf-mode &, .pref-mode & { display: none; }
 
     .embed-mode & {
         left: $metaxxxxx;

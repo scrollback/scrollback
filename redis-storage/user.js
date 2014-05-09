@@ -17,6 +17,9 @@ function getUserById(id, callback) {
 }
 
 function onGetUsers(query, callback) {
+    if(query.memberOf || query.results) {
+        return callback();
+    }
     if(query.ref) {
         if(query.ref == 'me' ) {
             get("session", query.session, function(err, sess) {
