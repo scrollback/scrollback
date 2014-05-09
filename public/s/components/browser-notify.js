@@ -1,5 +1,65 @@
 /*jslint browser: true, indent: 4, regexp: true*/
-/*global $, libsb*/
+/*global $, libsb, Notification, webkitNotifications*/
+
+// Check if the array contains a value
+Array.prototype.contains = function(value) {
+	var i;
+
+	for (i in this) {
+		if (this[i] === value) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
+// Alert bar
+function showAlert(type, text) {
+	var $alert = $("<div class='alert-bar " + type + "'>" + text + "<a class='alert-remove close'>&times;</span></div>");
+
+	$("body").append($alert);
+
+	$(document).on("click", ".alert-remove", function() {
+		$(this).parent().remove();
+	});
+}
+
+// HTML5 notifications
+function requestNotifcation() {
+	if ("webkitNotifications" in window) {
+		if (webkitNotifications.checkPermission() !== 0) {
+			webkitNotifications.requestPermission();
+		} else {
+			return true;
+		}
+	} else if ("Notification" in window) {
+		if (Notification.permission !== "granted" && Notification.permission !== 'denied') {
+			Notification.requestPermission();
+		} else {
+			return true;
+		}
+	}
+}
+
+function showNotifcation(title, body, icon, id, func) {
+	var notification;
+
+	body = body.substr(0, 70);
+
+	if ("webkitNotifications" in window) {
+		if (webkitNotifications.checkPermission() === 0) {
+			notification = webkitNotifications.createNotification(icon, title, body);
+			notification.show();
+			notification.onclick = func;
+		}
+	} else if ("Notification" in window) {
+		if (Notification.permission === "granted") {
+			notification = new Notification(title, { dir: "auto", lang: "en-US", body: body, tag: id, icon: icon });
+			notification.onclick = func;
+		}
+	}
+}
 
 var browserNotify = (function() {
 	var hasFocus = false,
@@ -38,7 +98,7 @@ var browserNotify = (function() {
 		hasFocus = document.hasFocus();
 	});
 
-	return function(text, force) {
+	return function(text, important) {
 		if (hasFocus) {
 			return;
 		}
@@ -47,7 +107,7 @@ var browserNotify = (function() {
 			originalTitle = document.title;
 		}
 
-		document.title = text;
+		document.title = text.text;
 
 		if (titleTimer) {
 			clearTimeout(titleTimer);
@@ -59,7 +119,7 @@ var browserNotify = (function() {
 			titleTimer = null;
 		}, 3000);
 
-		if(force && soundTimer) {
+		if (important && soundTimer) {
 			clearTimeout(soundTimer);
 			soundTimer = null;
 		}
@@ -70,15 +130,26 @@ var browserNotify = (function() {
 				soundTimer = null;
 			}, 60000);
 		}
+
+		if (important) {
+			showNotifcation("New mention on " + text.to, text.from + ": " + text.text, "s/img/scrollback.png", text.id, function() {
+				libsb.emit("navigate", { room: text.to, time: text.time });
+			});
+		}
 	};
 }());
 
 libsb.on('text-dn', function(text, next) {
 	if (text.mentions.contains(libsb.user.id)) {
-		browserNotify(text.text, true);
+		browserNotify(text, true);
 	} else {
-		browserNotify(text.text, false);
+		browserNotify(text, false);
 	}
 
 	next();
 });
+
+//$(function() {
+//	showAlert("info", "<a class='requestnotif alert-remove'>Enable desktop notifications</a> for replies.");
+//	$(document).on("click", ".requestnotif", requestNotifcation);
+//});

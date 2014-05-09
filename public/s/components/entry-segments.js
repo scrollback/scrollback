@@ -2,20 +2,20 @@
 /*global $*/
 
 // Fix firefox not showing caret in correct position
-$(".segmented").on("click", function() {
+$(document).on("click", ".segmented", function() {
 	$(this).children().last().focus();
 });
 
 // Create a new segment
 function addSegment(el, text) {
 	if (!text.match(/^\s*$/) ) {
-		$("<div class='segment done'><span class='segment-text'>" + text + "</span><span class='segment-remove'>&times;</span></div>").insertBefore(el);
+		$("<div class='segment done'><span class='segment-text'>" + text + "</span><span class='segment-remove close'>&times;</span></div>").insertBefore(el);
 		el.empty();
 	}
 }
 
 // Add a segment on space, comma or enter key
-$(".segment").on("keydown", function(e) {
+$(document).on("keydown", ".segmented .segment", function(e) {
 	if (e.keyCode === 13 || e.keyCode === 32 || e.keyCode === 188) {
 		e.preventDefault();
 		addSegment($(this), $(this).text());
@@ -23,7 +23,7 @@ $(".segment").on("keydown", function(e) {
 });
 
 // Convert words to segments when text is pasted
-$(".segment").on("paste", function(e) {
+$(document).on("paste", ".segmented .segment", function(e) {
 	e.preventDefault();
 
 	var segments = e.originalEvent.clipboardData.getData('Text').split(/[\s,]+/);

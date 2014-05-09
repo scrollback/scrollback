@@ -1,5 +1,5 @@
 /* jshint jquery: true */
-/* global libsb, textEl, format */
+/* global libsb, textEl, format, window */
 /* exported textArea */
 
 var textArea = {};
@@ -11,7 +11,6 @@ $(function() {
 		time = null; /* replace this with the time from the URL, if available. */
 
 	// Set up infinite scroll here.
-
 	$logs.infinite({
 		scrollSpace: 2000,
 		fillSpace: 500,
@@ -26,7 +25,7 @@ $(function() {
 				libsb.on("inited", function(p, n){
 					loadTexts();
 					n();
-				})
+				});
 			}
 			function loadTexts(){
 				libsb.getTexts(query, function(err, t) {
@@ -55,8 +54,43 @@ $(function() {
 		}
 	});
 
-	// Insert incoming text messages.
+	// Check for mentions
+	libsb.on('text-dn', function(text, next) {
+		var people;
 
+		libsb.getMembers(room, function(err, p) {
+			if (err) throw err;
+			people = p.results;
+		});
+
+		function isMember(m) {
+			if (people) {
+				for (var i=0; i < people.length; i++ ) {
+					if (people[i].id === m) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		function isMention(input) {
+			if ((/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)) {
+				input = input.toLowerCase();
+				input = input.replace(/[@:,]/g,"");
+				if (isMember(input)) {
+					text.mentions.push(input);
+				}
+			}
+		}
+
+		text.text.split("\\s+").map(isMention);
+
+		next();
+	});
+
+	// Insert incoming text messages.
 	libsb.on('text-dn', function(text, next) {
 		var i = 0, l;
 
@@ -109,7 +143,6 @@ $(function() {
 
 
 	// The chatArea API.
-
 	textArea.setBottom = function(bottom) {
 		var atBottom = ($logs.scrollTop() + $logs.height() == $logs[0].scrollHeight);
 
