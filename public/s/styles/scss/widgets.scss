@@ -506,6 +506,11 @@ code {
     }
 }
 
+.hidden {
+    @include opacity(0);
+    @extend %ease;
+}
+
 %ease { @include transition; }
 
 /* browser specific styles */

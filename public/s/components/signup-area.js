@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, ui */
+/* global $, libsb */
 
 
 $(function(){
@@ -48,8 +48,6 @@ $(function(){
 		if(init.auth && init.user.identities && !init.user.id ) {
 			if(init.resource == libsb.resource) {
 				signingUser = init.user;
-
-				ui.popover.hide();
 
 				libsb.emit('navigate', {
 					mode: "user", tab: "create", source: "libsb", view: "signup"

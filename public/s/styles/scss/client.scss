@@ -296,7 +296,6 @@ $tabitems: info, people, threads;
                 @extend %nofilter;
 
                 display: block;
-                filter: none; /* fix text rendering in IE */
             }
 
 
@@ -523,9 +522,6 @@ $tabitems: info, people, threads;
         z-index: 20;
 
         .title-normal {
-            @include fadein;
-            @extend %nofilter;
-
             display: table;
             width: 100%;
             height: $bar-height;
@@ -645,7 +641,7 @@ $tabitems: info, people, threads;
             display: none;
 
             .search-focus & {
-                @include slideleft;
+                @include fadein;
 
                 display: block;
                 width: 100%;

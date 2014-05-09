@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $ */
+/* global $, ui */
 
 $(function() {
     // Show and hide search bar
@@ -11,7 +11,11 @@ $(function() {
         }, 500);
     });
 
-    $(".search-entry").focusout(function() {
-        $("body").removeClass("search-focus");
+    $(document).on("click", function(e) {
+        if (e.target !== $(".search-button")[0] && e.target !== $(".search-entry")[0]) {
+            ui.animate.fadeout(".search-entry", function() {
+                $("body").removeClass("search-focus");
+            });
+        }
     });
 });

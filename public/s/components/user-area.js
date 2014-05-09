@@ -2,10 +2,6 @@
 /* global $, libsb, ui */
 
 $(function(){
-	$(".has-popover").on("click", function() {
-		ui.popover.hide();
-	});
-
 	$(document).on("click", ".popover-body a", function() {
 		ui.popover.hide();
 	});

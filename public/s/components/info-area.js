@@ -65,7 +65,7 @@ libsb.on('navigate', function(state, next) {
 				if(room.results && room.results.length)  infoArea.render(room.results[0]);
 			});
 		}
-		
+
 		if(libsb.isInited) {
 			loadRooms();
 		}else{

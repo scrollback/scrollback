@@ -18,7 +18,7 @@ $(function() {
 		}
 		setTimeout(function() {
 			textArea.setBottom($input.outerHeight());
-		}, 0)
+		}, 0);
 	}
 	$entry.keypress(function(e) {
 		if(e.which == 13 && !e.shiftKey) {

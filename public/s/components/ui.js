@@ -1,12 +1,36 @@
-/*jslint browser: true, indent: 4, regexp: true*/
-/*global $, Notification, webkitNotifications*/
+/* jslint browser: true, indent: 4, regexp: true */
+/* global $, Notification, webkitNotifications */
 
 var ui = {
+    animate: {
+        support: function () {
+            if (typeof document.body.style.transition === 'string') {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
+        fadeout: function (el, func) {
+            if (ui.animate.support()) {
+                $(el).addClass("hidden").data("transitioning", true);
+                $(el).on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function (e) {
+                    if (e.target === e.currentTarget && $(this).data("transitioning") === true) {
+                        $(el).removeClass("hidden").data("transitioning", false);
+                        func();
+                    }
+                });
+            } else {
+                func();
+            }
+        }
+    },
+
     popover: {
         show: function(el, content) {
             var popover = $('<div role="menu" class="popover-body">' + content + '</div>'),
                 spacetop = $(el).offset().top - $(document).scrollTop() + $(el).height(),
-                spacebottom = $(window).height() - spacetop + $(el).height(),
+                spacebottom = $(window).height() - spacetop,
                 spaceleft = $(el).offset().left - $(document).scrollLeft() + ( $(el).width() / 2 ),
                 spaceright = $(window).width() - spaceleft;
 
@@ -20,9 +44,9 @@ var ui = {
                 spaceleft = $(window).width() - ( $(el).width() / 2 ) - popover.outerWidth();
             }
 
-            if (spacebottom <= ( popover.outerHeight() * 2 ) ) {
+            if (spacebottom <= spacetop ) {
                 $(popover).addClass("popover-top");
-                spacetop = spacetop - $(el).height() - ( popover.outerHeight() * 2 );
+                spacetop = spacetop - ( $(el).height() * 2 ) - popover.outerHeight();
             } else {
                 $(popover).addClass("popover-bottom");
             }
@@ -35,8 +59,10 @@ var ui = {
         },
 
         hide: function() {
-            $(".popover-body").remove();
-            $(".layer").remove();
+            ui.animate.fadeout(".popover-body", function() {
+                $(".popover-body").remove();
+                $(".layer").remove();
+            });
         }
     },
 
@@ -50,7 +76,9 @@ var ui = {
         },
 
         hide: function() {
-            $(".alert-bar").remove();
+            ui.animate.fadeout(".alert-bar", function() {
+                $(".alert-bar").remove();
+            });
         }
     },
 
@@ -97,8 +125,6 @@ var ui = {
         show: function(title, body, icon, id, func) {
             var check = ui.notify.support(),
                 notification;
-
-            body = body.substr(0, 70);
 
             if (check.permission === "granted") {
                 if (check.type === "webkit") {

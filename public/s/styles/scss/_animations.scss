@@ -18,19 +18,6 @@
     @keyframes $animation { @content; }
 }
 
-@include keyframes(bounce) {
-    0%, 10%, 30%, 50%, 100%  { @include transform(translate3d(0, 0, 0)); }
-    20%  { @include transform(translate3d(0, -15px, 0)); }
-    40%  { @include transform(translate3d(0, -10px, 0)); }
-}
-
-@mixin bounce($args: 5s) {
-    -webkit-animation: bounce $args;
-    -moz-animation: bounce $args;
-    -ms-animation: bounce $args;
-    animation: bounce $args;
-}
-
 @include keyframes(spin) {
     to  { @include transform(rotate(180deg)); }
 }
@@ -54,7 +41,7 @@
     }
 }
 
-@mixin slidedown($args: .15s) {
+@mixin slidedown($args: .3s) {
     -webkit-animation: slidedown $args;
     -moz-animation: slidedown $args;
     -ms-animation: slidedown $args;
@@ -73,49 +60,11 @@
     }
 }
 
-@mixin slideup($args: .15s) {
+@mixin slideup($args: .3s) {
     -webkit-animation: slideup $args;
     -moz-animation: slideup $args;
     -ms-animation: slideup $args;
     animation: slideup $args;
-}
-
-@include keyframes(slideleft) {
-    0% {
-        @include opacity(0);
-        @include transform(translate3d(100%, 0, 0));
-    }
-
-    100% {
-        @include opacity(1);
-        @include transform(translate3d(0, 0, 0));
-    }
-}
-
-@mixin slideleft($args: .15s) {
-    -webkit-animation: slideleft $args;
-    -moz-animation: slideleft $args;
-    -ms-animation: slideleft $args;
-    animation: slideleft $args;
-}
-
-@include keyframes(slideright) {
-    0% {
-        @include opacity(0);
-        @include transform(translate3d(-100%, 0, 0));
-    }
-
-    100% {
-        @include opacity(1);
-        @include transform(translate3d(0, 0, 0));
-    }
-}
-
-@mixin slideright($args: .15s) {
-    -webkit-animation: slideright $args;
-    -moz-animation: slideright $args;
-    -ms-animation: slideright $args;
-    animation: slideright $args;
 }
 
 @include keyframes(appear) {
@@ -148,7 +97,7 @@
     animation: fadein $args;
 }
 
-@mixin transition($duration: .15s, $timing: ease) {
+@mixin transition($duration: .3s, $timing: ease) {
     -webkit-transition: $duration $timing;
     -moz-transition: $duration $timing;
     -ms-transition: $duration $timing;

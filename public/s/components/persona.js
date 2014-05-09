@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, ui */
+/* global $, libsb */
 
 (function(){
 	$(document).on("click", ".button.persona", function() {
@@ -16,6 +16,5 @@
 			}
 		});
 		navigator.id.request();
-		ui.popover.hide();
 	});
 })();
