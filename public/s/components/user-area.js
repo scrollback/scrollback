@@ -14,7 +14,7 @@ $(function(){
 		if ($("body").hasClass("guest-user")) {
 			ui.popover.show($(this), '<div class="user-menu">Sign in to scrollback with<a class="button facebook">Facebook</a><a class="button persona">Persona</a></div>');
 		} else {
-			ui.popover.show($(this), '<div class="user-menu"><ul><li><a class="userprefs">Account settings</a></li><li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li><li><a class="logout">Logout</a></li></ul></div>');
+			ui.popover.show($(this), '<ul class="user-menu"><li><a class="userprefs">Account settings</a></li><li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li><li><a class="logout">Logout</a></li></ul>');
 		}
 	});
 
@@ -29,7 +29,7 @@ $(function(){
 	});
 
 	$(document).on("click", ".logout", function() {
-		libsb.emit("logout");
+		libsb.logout();
 	});
 
 	libsb.on('navigate', function(state, next) {

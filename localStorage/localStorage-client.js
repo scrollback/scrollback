@@ -87,6 +87,7 @@ function logout(p,n){
 	delete cache.session;
 	delete cache.user;
 	delete libsb.session;
+	delete libsb.user;
 	save();
 	n();
 }

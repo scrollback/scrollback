@@ -187,7 +187,7 @@ $tabitems: info, people, threads;
     }
 
     .chat-meta {
-        .conf-mode & { display: none; }
+        .conf-mode &, .pref-mode & { display: none; }
 
         .tabs {
             list-style: none;
@@ -401,7 +401,7 @@ $tabitems: info, people, threads;
     .settings-header {
         display: none;
 
-        .conf-mode & {
+        .conf-mode &, .pref-mode & {
             display: table;
             table-layout: fixed;
             height: $bar-height;
@@ -667,7 +667,7 @@ $tabitems: info, people, threads;
     }
 
     &.chatview {
-        .conf-mode & { display: none; }
+        .conf-mode &, .pref-mode & { display: none; }
 
         .chat-position {
             @include opacity(0);
@@ -829,7 +829,7 @@ $tabitems: info, people, threads;
     &.settingsview {
         display: none;
 
-        .conf-mode & {
+        .conf-mode & , .pref-mode & {
             display: block;
 
             .settings-area {
@@ -976,7 +976,7 @@ $tabitems: info, people, threads;
     min-height: $bar-height;
     box-shadow: 0 -3px 2px -1px rgba(0,0,0,0.05);
 
-    .conf-mode & { display: none; }
+    .conf-mode &, .pref-mode & { display: none; }
 
     .embed-mode & {
         left: $metaxxxxx;
@@ -1097,27 +1097,5 @@ $tabitems: info, people, threads;
         padding: .5em 1em;
 
         a { display: block; }
-
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-
-            li {
-                border-bottom: 1px solid darken($light-color, 10%);
-
-                &:last-child {
-                    border-bottom: none;
-                }
-
-                a {
-                    color: lighten($dark-color, 20%);
-                    padding: 1em;
-                    font-weight: 700;
-
-                    &:hover, &:focus { color: $dark-color; }
-                }
-            }
-        }
     }
 }

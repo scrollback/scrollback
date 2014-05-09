@@ -58,10 +58,7 @@ var ui = {
         support: function() {
             var type, permission;
 
-            if ("Notification" in window) {
-                type = "html5";
-                permission = Notification.permission;
-            } else if ("webkitNotifications" in window) {
+            if ("webkitNotifications" in window) {
                 type = "webkit";
                 switch(webkitNotifications.checkPermission()) {
                     case "0":
@@ -73,6 +70,9 @@ var ui = {
                     default:
                         permission = "default";
                 }
+            } else if ("Notification" in window) {
+                type = "html5";
+                permission = Notification.permission;
             } else {
                 return false;
             }

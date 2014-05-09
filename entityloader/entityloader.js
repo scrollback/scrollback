@@ -158,7 +158,7 @@ function loadUser(action, callback) {
 			if(action.type == "user") {
 				action.old = data.results[0];
 			}else if(!/guest-/.test(user.id) && action.to){
-				core.emit("getUsers", {id: uid(), session: action.session, ref: user.id, memberOf: action.to}, function() {
+				core.emit("getUsers", {id: uid(), session: action.session, ref: user.id, memberOf: action.to}, function(err, data) {
 					if(err || !data || !data.results || !data.results.length) {
 						action.user = user;
 						callback();

@@ -413,6 +413,27 @@ code {
             right: 1em;
         }
     }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            border-bottom: 1px solid darken($light-color, 10%);
+
+            &:last-child { border-bottom: none; }
+
+            a {
+                display: block;
+                color: lighten($dark-color, 20%);
+                padding: 1em 1.5em;
+                font-weight: 700;
+
+                &:hover, &:focus { color: $dark-color; }
+            }
+        }
+    }
 }
 
 .switch {

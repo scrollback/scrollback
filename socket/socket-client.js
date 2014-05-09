@@ -171,8 +171,7 @@ function sendExpel(admit, next){
 }
 
 function sendUser(user, next) {
-	var action = makeAction({type: 'user', to: "me", user: user.user});
-	user.id = action.id;
+	var action = makeAction({type: 'user', to: "me", user: user});
 	client.send(JSON.stringify(action));
 	next();
 }

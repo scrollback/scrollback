@@ -2,7 +2,7 @@
 /* global libsb, $ */
 
 function formField(label, type, id) {
-	var input;
+	var input = "";
 
 	switch(type) {
 		case 'area':
@@ -14,10 +14,20 @@ function formField(label, type, id) {
 		case 'checks':
 			if (id instanceof Array) {
 				for (var i = 0; i < id.length; i++) {
-					input = "<input type='checkbox' id='" + id[i][0] + "' name='" + id[i][0] + "'><label for='" + id[i][0] +"'>" + id[i][1] + "</label>";
+					input += "<input type='checkbox' id='" + id[i][0] + "' name='" + id[i][0] + "'><label for='" + id[i][0] +"'>" + id[i][1] + "</label>";
 				}
 			} else {
 				input = "<input type='checkbox' id='" + id + "' name='" + id + "'><label for='" + id +"'>" + label + "</label>";
+			}
+			break;
+		case 'radio':
+			if (id instanceof Array) {
+				for (var i = 0; i < id.length; i++) {
+					input += "<input " + id[i][2] + " type='radio' id='" + id[i][0] + "' name='" + id[i][0] + "'/><label for='" + id[i][0] +"'>" + id[i][1] + "</label>";
+				}
+
+			} else {
+				input = "<input type='radio' id='" + id + "' name='" + id + "'/><label for='" + id +"'>" + label + "</label>";
 			}
 			break;
 		case 'toggle':
@@ -33,8 +43,11 @@ function formField(label, type, id) {
 
 // General
 libsb.on('config-show', function(conf, next) {
-	conf.general = "<div class='pane pane-general-settings'>" + formField("Name", "text", "displayname") + formField("Description", "area", "description") + "</div>";
-
+	conf.general = {
+		html: "<div class='pane pane-general-settings'>" + formField("Name", "text", "displayname") + formField("Description", "area", "description") + "</div>",
+		text: "General settings",
+		prio: 900
+	}
 	next();
 });
 libsb.on('config-save', function(conf, next){
@@ -49,8 +62,11 @@ libsb.on('config-save', function(conf, next){
 
 // IRC integration
 libsb.on('config-show', function(conf, next) {
-	conf.irc = "<div class='pane pane-irc-settings'>" + formField("IRC Server", "text", "ircserver") + formField("IRC Channel", "text", "ircchannel") + "</div>";
-
+	conf.irc = {
+		html: "<div class='pane pane-irc-settings'>" + formField("IRC Server", "text", "ircserver") + formField("IRC Channel", "text", "ircchannel") + "</div>",
+		text: "IRC setup",
+		prio: 800
+	}
 	next();
 });
 libsb.on('config-save', function(conf, next){
@@ -58,7 +74,6 @@ libsb.on('config-save', function(conf, next){
 		server : $('.pane-irc-settings #ircserver').val(),
 		channel : $('.pane-irc-settings #ircchannel').val()
 	};
-
 	next();
 });
 
@@ -71,7 +86,11 @@ libsb.on('config-show', function(conf, next) {
 		window.open("r/twitter/login", 'mywin','left=20,top=20,width=500,height=500,toolbar=1,resizable=0');
 	});
 
-	conf.twitter = "<div class='pane pane-twitter-settings'>" + formField("Hashtags", "segmented", "twitterhashtags") + $twitteruser + "</div>";
+	conf.twitter = {
+		html: "<div class='pane pane-twitter-settings'>" + formField("Hashtags", "segmented", "twitterhashtags") + $twitteruser + "</div>",
+		text: "Twitter",
+		prio: 700
+	}
 
 	next();
 });
@@ -86,10 +105,10 @@ libsb.on('config-save', function(conf, next){
 
 // 	next();
 // });
-libsb.on('config-save', function(conf, next){
+// libsb.on('config-save', function(conf, next){
 
-	next();
-});
+// 	next();
+// });
 
 // Permissions
 // libsb.on('config-show', function(conf, next) {
@@ -114,7 +133,11 @@ libsb.on('config-save', function(conf, next){
 // Spam control
 libsb.on('config-show', function(conf, next) {
 	// conf.spam = "<div class='pane pane-spam-settings'>" + formField("Block repetitive messages", "toggle", "block-repetitive") + formField("Block nonsense messages", "toggle", "block-nonsense") + formField("Bloack offesnive words", "checks", [ [ "en-moderate", "English moderate" ], [ "en-strict", "English strict" ], [ "zh-strict", "Chinese strict" ] ]) + formField("Custom blocked word", "segmented", "blocked-words" ) + formField("Gaggded users", "segmented", "gagged-users" ) + formField("Banned users", "segmented", "banned-users" ) + "</div>";
-	conf.spam = "<div class='pane pane-spam-settings'>" + formField("Block offensive words", "toggle", 'block-offensive');
+	conf.spam = {
+		html: "<div class='pane pane-spam-settings'>" + formField("Block offensive words", "toggle", 'block-offensive'),
+		text: "Spam control",
+		prio: 600
+	}
 
 	next();
 });
@@ -128,7 +151,11 @@ libsb.on('config-save', function(conf, next){
 
 // SEO
 libsb.on('config-show', function(conf, next) {
-	conf.seo = "<div class='pane pane-seo-settings'>" + formField("Allow search engines to index room", "toggle", "allow-index") + "</div>";
+	conf.seo = {
+		html: "<div class='pane pane-seo-settings'>" + formField("Allow search engines to index room", "toggle", "allow-index") + "</div>",
+		text: "Search engine indexing",
+		prio: 500
+	}
 
 	next();
 });

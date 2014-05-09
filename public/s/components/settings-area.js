@@ -37,7 +37,7 @@ $(function() {
 	});
 
 	$(".configure-button").on("click", function() {
-        libsb.emit('navigate', { mode: "conf", tab: "general-settings", source: "configure-button", room: location.pathname.replace('/', '') });
+        libsb.emit('navigate', { mode: "conf", source: "configure-button", room: location.pathname.replace('/', '') });
 	});
 
 	$(".conf-save").on("click", function() {
@@ -72,6 +72,7 @@ $(function() {
 
 	libsb.on('navigate', function(state, next) {
 		// check state.mode == settings
+		var sortable = []; // for sorting the config options based on priority
 		if(state.mode === "conf"){
 			if(currentConfig && state.tab) $('.settingsview').empty().append(currentConfig[state.tab]);
 			// if currentConfig is blank, then
@@ -80,19 +81,23 @@ $(function() {
 					currentConfig = config;
 
 					for(i in config) {
-						var className = 'tab-' + i + '-settings';
-						$('.' + className).remove();
-						$('.settings-menu ul').append('<li class = "tab ' + className + '">' + i + '</li>');
-						$('.settings-area').append(config[i]);
+						sortable.push([config[i].prio, i, config[i]]);
 					}
+					sortable.sort(function(a,b){
+						return b[0] - a[0];
+					});
+					sortable.forEach(function(config){
+						var className = 'tab-' + config[1] + '-settings';
+						$('.' + className).remove();
+						$('.settings-menu ul').append('<li class = "tab ' + className + '">' + config[2].text + '</li>');
+						$('.settings-area').append(config[2].html);
+					});
+					// making general settings the default tab
+					$('.tab-general-settings').addClass('current');
+					$('.pane-general-settings').addClass('current');
 
 					renderSettings(state.room);
 				});
-
-			}
-			else{
-				libsb.emit('navigate', {tab: 'General'});
-				// $('.settings-menu').empty();
 			}
 		}
 		next();
