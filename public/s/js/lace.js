@@ -79,6 +79,37 @@ var lace = {
         }
     },
 
+    modal: {
+        show: function(content) {
+            var modal = $('<div class="modal">' + content + '</div>');
+
+            $("body").append("<div class='dim'></div>").append(modal);
+
+            modal.css({
+                "margin-top" : modal.outerHeight() / -2,
+                "margin-left" : modal.outerWidth() / -2
+            });
+
+            if (modal.find(".modal-remove").length === 0) {
+                $(".dim").on("click", function() {
+                    lace.modal.hide();
+                });
+            }
+
+            $(".modal-remove").on("click", function() {
+                lace.modal.hide();
+            });
+        },
+
+        hide: function() {
+            [".dim", ".modal"].forEach(function(el) {
+                lace.animate.fadeout(el, function() {
+                    $(el).remove();
+                });
+            });
+        }
+    },
+
     popover: {
         show: function(el, content) {
             var popover = $('<div role="menu" class="popover-body">' + content + '</div>'),
@@ -104,7 +135,10 @@ var lace = {
                 $(popover).addClass("popover-bottom");
             }
 
-            popover.css({"top" : spacetop, "left" : spaceleft});
+            popover.css({
+                "top" : spacetop,
+                "left" : spaceleft
+            });
 
             $(".layer").on("click", function() {
                 lace.popover.hide();

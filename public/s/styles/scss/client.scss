@@ -1078,22 +1078,18 @@ $tabitems: info, people, threads;
 
 .infinite-items { width: 100%; }
 
-.signup, .dim { display: none; }
+.signup {
+    width: 27em;
 
-.signup-view {
-    @include modal(".signup", 14.5em, 9em, 18em, 29em);
+    input { margin: .25em; }
 
-    .signup {
-        input[type=text] { width: 100%; }
-    }
+    input[type=text] { width: 100%; }
+
+    @media #{$breakpointxx} { width: 100%; }
 }
 
-.loggedout-view {
-    @include modal(".loggedout-msg", 14.5em, 7em, 14em, 29em);
-
-    .loggedout-msg {
-        .button { width: 100%; }
-    }
+.loggedout-msg {
+    .button { width: 100%; }
 }
 
 .popover-body {

@@ -28,6 +28,20 @@ $(function(){
 		libsb.logout();
 	});
 
+	libsb.on("logout", function(p,n) {
+		libsb.emit('navigate', {
+			view: 'loggedout',
+		});
+
+		lace.modal.show("<div class='loggedout-msg'><h1>You\'ve been logged out!</h1><a class='button reload-page modal-remove'>Go back as guest</a></div>");
+
+		n();
+	}, 1000);
+
+	$(document).on("click", ".reload-page", function(){
+		location.reload();
+	});
+
 	libsb.on('navigate', function(state, next) {
 		if(state && (!state.old || state.room != state.old.room)) {
 			var room = state.room;
