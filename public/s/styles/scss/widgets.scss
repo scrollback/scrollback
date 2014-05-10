@@ -60,7 +60,7 @@
     background-color: $bg;
     color: $fg;
     text-align: center;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
     text-transform: uppercase;
 
@@ -306,7 +306,7 @@ code {
     box-shadow: 0 0 5px 1px rgba(0,0,0,.1);
 
     a {
-        font-weight: 700;
+        font-weight: 600;
         border-bottom: 1px solid transparent;
 
         &:focus, &:hover, &:active { border-bottom-color: currentColor; }
@@ -428,7 +428,7 @@ code {
                 display: block;
                 color: lighten($dark-color, 20%);
                 padding: 1em 1.5em;
-                font-weight: 700;
+                font-weight: 600;
 
                 &:hover, &:focus { color: $dark-color; }
             }
@@ -449,7 +449,7 @@ code {
             position: absolute;
             display: block;
             content: "";
-            font-weight: 700;
+            font-weight: 600;
             color: $light-color;
             border-radius: $roundness;
             background-color: darken($light-color, 30%);

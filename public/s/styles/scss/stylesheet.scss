@@ -18,7 +18,7 @@ footer {
     margin: auto;
     padding: 1em;
 
-    @media only screen and (min-width: 700px) { padding: 2em; }
+    @media only screen and (min-width: 60em) { padding: 2em; }
 }
 
 .cover {
@@ -103,7 +103,7 @@ footer {
                 right: 0;
                 white-space: nowrap;
                 text-transform: uppercase;
-                font-weight: 700;
+                font-weight: 600;
                 font-size: 0.6em;
                 color: lighten($dark-color, 40%);
             }
