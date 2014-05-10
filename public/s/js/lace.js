@@ -6,6 +6,7 @@ var lace = {
         fadeout: function(el, func) {
             if (typeof document.body.style.transition === 'string') {
                 $(el).addClass("hidden").data("transitioning", true);
+
                 $(el).on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function (e) {
                     if (e.target === e.currentTarget && $(this).data("transitioning") === true) {
                         $(el).removeClass("hidden").data("transitioning", false);
@@ -29,7 +30,9 @@ var lace = {
 
             $(document).on("paste", ".multientry .item", function(e) {
                 e.preventDefault();
+
                 var items = e.originalEvent.clipboardData.getData('Text').split(/[\s,]+/);
+
                 for (var i = 0; i < items.length; i++) {
                     lace.multientry.add($(this), items[i]);
                 }
@@ -37,12 +40,12 @@ var lace = {
 
             $(document).on("keydown", ".multientry .item", function(e) {
                 if (e.keyCode === 8 && $(this).text().match(/^\s*$/)) {
-                    $(this).prev().remove();
+                    lace.multientry.remove($(this).prev());
                 }
             });
 
             $(document).on("click", ".multientry .item-remove", function() {
-                $(this).parent().remove();
+                lace.multientry.remove($(this).parent());
             });
 
             $(document).on("click", ".multientry", function() {
@@ -54,6 +57,14 @@ var lace = {
             if (!text.match(/^\s*$/) ) {
                 $("<div class='item done'><span class='item-text'>" + text + "</span><span class='item-remove close'>&times;</span></div>").insertBefore($(el).empty());
             }
+        },
+
+        remove: function(el) {
+            if (!el) {
+                el = ".multientry .item";
+            }
+
+            $(el).remove();
         },
 
         items: function(el) {
@@ -110,16 +121,33 @@ var lace = {
 
     alert: {
         show: function(type, text) {
-            var $alert = $("<div class='alert-bar " + type + "'>" + text + "<a class='alert-remove close'>&times;</span></div>");
-            $("body").append($alert);
+            var container = ".alert-container",
+                alert = "<div class='alert-bar " + type + "'>" + text + "<a class='alert-remove close'>&times;</span></div>";
+
+            if ($(container).length === 0) {
+                $("body").append("<div class='" + container.substr(1) + "'></div>");
+            }
+
+            $(container).append(alert);
+
             $(document).on("click", ".alert-remove", function() {
-                lace.alert.hide();
+                lace.alert.hide($(this).parent($(".alert-bar")));
             });
         },
 
-        hide: function() {
-            lace.animate.fadeout(".alert-bar", function() {
-                $(".alert-bar").remove();
+        hide: function(el) {
+            var container = ".alert-container";
+
+            if (!el) {
+                el = ".alert-bar";
+            }
+
+            lace.animate.fadeout(el, function() {
+                $(el).remove();
+
+                if ($(container).children().length === 0) {
+                    $(container).remove();
+                }
             });
         }
     },

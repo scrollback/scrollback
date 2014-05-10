@@ -291,49 +291,53 @@ code {
     &:only-of-type { border-radius: $roundness; }
 }
 
-.alert-bar {
-    @include slidedown;
-    @extend %nofilter;
-
+.alert-container {
     position: fixed;
-    top: 1em;
-    left: 1em;
-    right: 1em;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 200;
-    padding: 1em;
-    text-align: center;
-    border-radius: $roundness;
-    box-shadow: 0 0 5px 1px rgba(0,0,0,.1);
 
-    a {
-        font-weight: 600;
-        border-bottom: 1px solid transparent;
+    .alert-bar {
+        @include slidedown;
+        @extend %nofilter;
 
-        &:focus, &:hover, &:active { border-bottom-color: currentColor; }
-    }
+        margin: 1em;
+        padding: 1em;
+        text-align: center;
+        border-radius: $roundness;
+        box-shadow: 0 0 5px 1px rgba(0,0,0,.1);
 
-    $types: info, success, warning, error;
-    $colors: $info-color, $success-color, $warning-color, $error-color;
+        a {
+            font-weight: 600;
+            border-bottom: 1px solid transparent;
 
-    @for $i from 1 through length($types) {
-        $type: nth($types, $i);
-        $color: nth($colors, $i);
-
-        &.#{$type} {
-            background-color: lighten($color, 30%);
-            border: 1px solid $color;
-            color: darken($color, 30%);
-
-            a, a:hover, a:focus, a:active { color: darken($color, 30%); }
+            &:focus, &:hover, &:active { border-bottom-color: currentColor; }
         }
-    }
 
-    .close {
-        font-size: 2em;
-        float: right;
-        padding: 0 .5em;
-        border-bottom: none;
-        cursor: pointer;
+        $types: info, success, warning, error;
+        $colors: $info-color, $success-color, $warning-color, $error-color;
+
+        @for $i from 1 through length($types) {
+            $type: nth($types, $i);
+            $color: nth($colors, $i);
+
+            &.#{$type} {
+                background-color: lighten($color, 30%);
+                border: 1px solid $color;
+                color: darken($color, 30%);
+
+                a, a:hover, a:focus, a:active { color: darken($color, 30%); }
+            }
+        }
+
+        .close {
+            font-size: 2em;
+            float: right;
+            padding: 0 .5em;
+            border-bottom: none;
+            cursor: pointer;
+        }
     }
 }
 
