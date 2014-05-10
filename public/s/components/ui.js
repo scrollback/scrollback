@@ -3,16 +3,8 @@
 
 var ui = {
     animate: {
-        support: function() {
-            if (typeof document.body.style.transition === 'string') {
-                return true;
-            } else {
-                return false;
-            }
-        },
-
         fadeout: function(el, func) {
-            if (ui.animate.support()) {
+            if (typeof document.body.style.transition === 'string') {
                 $(el).addClass("hidden").data("transitioning", true);
                 $(el).on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function (e) {
                     if (e.target === e.currentTarget && $(this).data("transitioning") === true) {
@@ -62,6 +54,17 @@ var ui = {
             if (!text.match(/^\s*$/) ) {
                 $("<div class='item done'><span class='item-text'>" + text + "</span><span class='item-remove close'>&times;</span></div>").insertBefore($(el).empty());
             }
+        },
+
+        items: function(el) {
+            var elems = $(el).find(".item-text"),
+                items = new Array(elems.length);
+
+            for (var i = 0; i < elems.length; i++) {
+                items[i] = $(elems[i]).text();
+            }
+
+            return items;
         }
     },
 

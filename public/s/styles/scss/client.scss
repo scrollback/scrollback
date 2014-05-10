@@ -578,7 +578,11 @@ $tabitems: info, people, threads;
                     background-size: 2em 2em;
                     cursor: pointer;
 
-                    .following & { background: url(../../img/icons/png/follow.png) center center no-repeat; }
+                    .following & {
+                        @include spin(.5s ease 1);
+
+                        background: url(../../img/icons/png/follow.png) center center no-repeat;
+                    }
 
                     .search-mode & { display: none; }
                 }

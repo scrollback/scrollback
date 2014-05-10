@@ -19,10 +19,10 @@
 }
 
 @include keyframes(spin) {
-    to  { @include transform(rotate(180deg)); }
+    to  { @include transform(rotate(360deg)); }
 }
 
-@mixin spin($args: .5s ease infinite) {
+@mixin spin($args: 1s ease infinite) {
     -webkit-animation: spin $args;
     -moz-animation: spin $args;
     -ms-animation: spin $args;
