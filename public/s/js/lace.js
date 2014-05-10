@@ -1,7 +1,7 @@
 /* jslint browser: true, indent: 4, regexp: true */
 /* global $, Notification, webkitNotifications */
 
-var ui = {
+var lace = {
     animate: {
         fadeout: function(el, func) {
             if (typeof document.body.style.transition === 'string') {
@@ -23,7 +23,7 @@ var ui = {
             $(document).on("keydown", ".multientry .item", function(e) {
                 if (e.keyCode === 13 || e.keyCode === 32 || e.keyCode === 188) {
                     e.preventDefault();
-                    ui.multientry.add($(this), $(this).text());
+                    lace.multientry.add($(this), $(this).text());
                 }
             });
 
@@ -31,7 +31,7 @@ var ui = {
                 e.preventDefault();
                 var items = e.originalEvent.clipboardData.getData('Text').split(/[\s,]+/);
                 for (var i = 0; i < items.length; i++) {
-                    ui.multientry.add($(this), items[i]);
+                    lace.multientry.add($(this), items[i]);
                 }
             });
 
@@ -96,12 +96,12 @@ var ui = {
             popover.css({"top" : spacetop, "left" : spaceleft});
 
             $(".layer").on("click", function() {
-                ui.popover.hide();
+                lace.popover.hide();
             });
         },
 
         hide: function() {
-            ui.animate.fadeout(".popover-body", function() {
+            lace.animate.fadeout(".popover-body", function() {
                 $(".popover-body").remove();
                 $(".layer").remove();
             });
@@ -113,12 +113,12 @@ var ui = {
             var $alert = $("<div class='alert-bar " + type + "'>" + text + "<a class='alert-remove close'>&times;</span></div>");
             $("body").append($alert);
             $(document).on("click", ".alert-remove", function() {
-                ui.alert.hide();
+                lace.alert.hide();
             });
         },
 
         hide: function() {
-            ui.animate.fadeout(".alert-bar", function() {
+            lace.animate.fadeout(".alert-bar", function() {
                 $(".alert-bar").remove();
             });
         }
@@ -151,7 +151,7 @@ var ui = {
         },
 
         request: function() {
-            var check = ui.notify.support();
+            var check = lace.notify.support();
 
             if (check.permission !== "granted" && check.permission !== "denied") {
                 if (check.type === "webkit") {
@@ -165,7 +165,7 @@ var ui = {
         },
 
         show: function(title, body, icon, id, func) {
-            var check = ui.notify.support(),
+            var check = lace.notify.support(),
                 notification;
 
             if (check.permission === "granted") {
@@ -178,7 +178,7 @@ var ui = {
                     notification.onclick = func;
                 }
             } else {
-                ui.notify.request();
+                lace.notify.request();
             }
         }
     }

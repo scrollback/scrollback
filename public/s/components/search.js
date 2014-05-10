@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, ui */
+/* global $, lace */
 
 $(function() {
     // Show and hide search bar
@@ -13,7 +13,7 @@ $(function() {
 
     $(document).on("click", function(e) {
         if (e.target !== $(".search-button")[0] && e.target !== $(".search-entry")[0]) {
-            ui.animate.fadeout(".search-entry", function() {
+            lace.animate.fadeout(".search-entry", function() {
                 $("body").removeClass("search-focus");
             });
         }

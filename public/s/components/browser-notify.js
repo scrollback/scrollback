@@ -1,5 +1,5 @@
-/*jslint browser: true, indent: 4, regexp: true*/
-/*global $, libsb, ui*/
+/* jslint browser: true, indent: 4, regexp: true */
+/* global $, libsb, lace */
 
 // Check if the array contains a value
 Array.prototype.contains = function(value) {
@@ -85,7 +85,7 @@ var browserNotify = (function() {
 		}
 
 		if (important) {
-			ui.notify.show("New mention on " + text.to, text.from + ": " + text.text, "s/img/scrollback.png", text.id, function() {
+			lace.notify.show("New mention on " + text.to, text.from + ": " + text.text, "s/img/scrollback.png", text.id, function() {
 				libsb.emit("navigate", { room: text.to, time: text.time });
 			});
 		}
@@ -104,6 +104,6 @@ libsb.on('text-dn', function(text, next) {
 
 
 //$(function() {
-//	ui.alert.show("info", "<a class='requestnotif alert-remove'>Enable desktop notifications</a> for replies.");
-//	$(document).on("click", ".requestnotif", ui.notify.request);
+//	lace.alert.show("info", "<a class='requestnotif alert-remove'>Enable desktop notifications</a> for replies.");
+//	$(document).on("click", ".requestnotif", lace.notify.request);
 //});

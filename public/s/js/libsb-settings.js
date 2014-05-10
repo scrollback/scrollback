@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global libsb, $ */
+/* global $, libsb, lace */
 
 function formField(label, type, id) {
 	var input = "";
@@ -43,7 +43,7 @@ function formField(label, type, id) {
 
 // Add event listeners for multientry
 $(function() {
-	ui.multientry.init();
+	lace.multientry.init();
 });
 
 // General
