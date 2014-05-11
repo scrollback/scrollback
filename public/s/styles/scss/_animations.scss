@@ -29,21 +29,6 @@
     animation: spin $args;
 }
 
-@include keyframes(pulse) {
-    0% { @include transform(scale(1, 1)); }
-
-    50% { @include transform(scale(1.5, 1.5)); }
-
-    100% { @include transform(scale(1, 1)); }
-}
-
-@mixin pulse($args: .3s) {
-    -webkit-animation: pulse $args;
-    -moz-animation: pulse $args;
-    -ms-animation: pulse $args;
-    animation: pulse $args;
-}
-
 @include keyframes(slidedown) {
     0% {
         @include opacity(0);

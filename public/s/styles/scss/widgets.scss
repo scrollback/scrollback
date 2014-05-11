@@ -426,11 +426,11 @@ code {
 
             a {
                 display: block;
-                color: lighten($dark-color, 20%);
+                color: $dark-color;
                 padding: 1em 1.5em;
                 font-weight: 600;
 
-                &:hover, &:focus { color: $dark-color; }
+                &:hover, &:focus { color: darken($dark-color, 30%); }
             }
         }
     }
@@ -506,9 +506,14 @@ code {
     }
 }
 
-.hidden {
+.fadeout {
     @include opacity(0);
     @extend %ease;
+}
+
+.grow {
+    @include transform(scale(1.2, 1.2));;
+    @include transition(.15s);
 }
 
 %ease { @include transition; }

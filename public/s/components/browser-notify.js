@@ -85,8 +85,14 @@ var browserNotify = (function() {
 		}
 
 		if (important) {
-			lace.notify.show("New mention on " + text.to, text.from + ": " + text.text, "s/img/scrollback.png", text.id, function() {
-				libsb.emit("navigate", { room: text.to, time: text.time });
+			lace.notify.show({
+				title: "New mention on " + text.to,
+				body: text.from + ": " + text.text,
+				icon: "s/img/scrollback.png",
+				tag: text.id,
+				action: function() {
+					libsb.emit("navigate", { room: text.to, time: text.time });
+				}
 			});
 		}
 	};
@@ -101,9 +107,3 @@ libsb.on('text-dn', function(text, next) {
 
 	next();
 });
-
-
-//$(function() {
-//	lace.alert.show("info", "<a class='requestnotif alert-remove'>Enable desktop notifications</a> for replies.");
-//	$(document).on("click", ".requestnotif", lace.notify.request);
-//});

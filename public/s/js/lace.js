@@ -3,18 +3,18 @@
 
 var lace = {
     animate: {
-        fadeout: function(el, func) {
+        transition: function(classname, el, action) {
             if (typeof document.body.style.transition === 'string') {
-                $(el).addClass("hidden").data("transitioning", true);
+                $(el).addClass(classname).data("transitioning", true);
 
-                $(el).on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function (e) {
+                $(el).on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function(e) {
                     if (e.target === e.currentTarget && $(this).data("transitioning") === true) {
-                        $(el).removeClass("hidden").data("transitioning", false);
-                        func();
+                        $(el).removeClass(classname).data("transitioning", false);
+                        action();
                     }
                 });
             } else {
-                func();
+                action();
             }
         }
     },
@@ -55,7 +55,7 @@ var lace = {
 
         add: function(el, text) {
             if (!text.match(/^\s*$/) ) {
-                $("<div class='item done'><span class='item-text'>" + text + "</span><span class='item-remove close'>&times;</span></div>").insertBefore($(el).empty());
+                $("<div class='item done'><span class='item-text'>" + text.trim() + "</span><span class='item-remove close'>&times;</span></div>").insertBefore($(el).empty());
             }
         },
 
@@ -91,19 +91,16 @@ var lace = {
             });
 
             if (modal.find(".modal-remove").length === 0) {
-                $(".dim").on("click", function() {
-                    lace.modal.hide();
-                });
+                $(".dim").on("click", lace.modal.hide);
             }
 
-            $(".modal-remove").on("click", function() {
-                lace.modal.hide();
-            });
+            $(".modal-remove").on("click", lace.modal.hide);
+            $(window).on("popstate", lace.modal.hide);
         },
 
         hide: function() {
             [".dim", ".modal"].forEach(function(el) {
-                lace.animate.fadeout(el, function() {
+                lace.animate.transition("fadeout", el, function() {
                     $(el).remove();
                 });
             });
@@ -120,15 +117,20 @@ var lace = {
 
             $("body").append("<div class='layer'></div>").append(popover);
 
-            if (spaceleft <= popover.outerWidth()) {
+            if (popover.outerWidth() >= spaceleft) {
                 $(popover).addClass("arrow-left");
                 spaceleft = $(el).width() / 2;
-            } else if (spaceright <= popover.outerWidth()) {
+            } else if (popover.outerWidth() >= spaceright) {
                 $(popover).addClass("arrow-right");
                 spaceleft = $(window).width() - ( $(el).width() / 2 ) - popover.outerWidth();
+            } else {
+                spaceleft = spaceleft - ( popover.outerWidth() / 2 );
             }
 
-            if (spacebottom <= spacetop ) {
+            if ($(el).height() >= $(window).height()) {
+                $(popover).addClass("popover-bottom");
+                spacetop = $(window).height() / 2;
+            } else if (popover.outerHeight() >= spacebottom) {
                 $(popover).addClass("popover-top");
                 spacetop = spacetop - ( $(el).height() * 2 ) - popover.outerHeight();
             } else {
@@ -140,13 +142,11 @@ var lace = {
                 "left" : spaceleft
             });
 
-            $(".layer").on("click", function() {
-                lace.popover.hide();
-            });
+            $(".layer").on("click", lace.popover.hide);
         },
 
         hide: function() {
-            lace.animate.fadeout(".popover-body", function() {
+            lace.animate.transition("fadeout", ".popover-body", function() {
                 $(".popover-body").remove();
                 $(".layer").remove();
             });
@@ -154,9 +154,9 @@ var lace = {
     },
 
     alert: {
-        show: function(type, text) {
+        show: function(classname, content) {
             var container = ".alert-container",
-                alert = "<div class='alert-bar " + type + "'>" + text + "<a class='alert-remove close'>&times;</span></div>";
+                alert = "<div class='alert-bar " + classname + "'>" + content + "<a class='alert-remove close'>&times;</span></div>";
 
             if ($(container).length === 0) {
                 $("body").append("<div class='" + container.substr(1) + "'></div>");
@@ -176,7 +176,7 @@ var lace = {
                 el = ".alert-bar";
             }
 
-            lace.animate.fadeout(el, function() {
+            lace.animate.transition("fadeout", el, function() {
                 $(el).remove();
 
                 if ($(container).children().length === 0) {
@@ -201,6 +201,7 @@ var lace = {
                         break;
                     default:
                         permission = "default";
+                        break;
                 }
             } else if ("Notification" in window) {
                 type = "html5";
@@ -226,18 +227,18 @@ var lace = {
             }
         },
 
-        show: function(title, body, icon, id, func) {
+        show: function(obj) {
             var check = lace.notify.support(),
                 notification;
 
             if (check.permission === "granted") {
                 if (check.type === "webkit") {
-                    notification = webkitNotifications.createNotification(icon, title, body);
+                    notification = webkitNotifications.createNotification(obj.icon, obj.title, obj.body);
                     notification.show();
-                    notification.onclick = func;
+                    notification.onclick = obj.action;
                 } else if (check.type === "html5") {
-                    notification = new Notification(title, { dir: "auto", lang: "en-US", body: body, tag: id, icon: icon });
-                    notification.onclick = func;
+                    notification = new Notification(obj.title, { dir: "auto", lang: "en-US", body: obj.body, tag: obj.tag, icon: obj.icon });
+                    notification.onclick = obj.action;
                 }
             } else {
                 lace.notify.request();

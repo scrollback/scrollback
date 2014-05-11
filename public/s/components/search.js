@@ -13,7 +13,7 @@ $(function() {
 
     $(document).on("click", function(e) {
         if (e.target !== $(".search-button")[0] && e.target !== $(".search-entry")[0]) {
-            lace.animate.fadeout(".search-entry", function() {
+            lace.animate.transition("fadeout", ".search-entry", function() {
                 $("body").removeClass("search-focus");
             });
         }
