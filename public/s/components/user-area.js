@@ -1,25 +1,16 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, lace */
 
 $(function(){
-	function hidePopOver() {
-		$(".popover-body").removeClass().addClass("popover-body").empty();
-		$(".layer").remove();
-	}
-
-	$(".has-popover").on("click", function() {
-		hidePopOver();
-	});
-
 	$(document).on("click", ".popover-body a", function() {
-		hidePopOver();
+		lace.popover.hide();
 	});
 
 	$(".user-area").on("click", function() {
 		if ($("body").hasClass("guest-user")) {
-			$(".popover-body").addClass("user-menu").append('Sign in to scrollback with<a class="button facebook">Facebook</a><a class="button persona">Persona</a>');
+			lace.popover.show($(this), '<div class="user-menu">Sign in to scrollback with<a class="button facebook">Facebook</a><a class="button persona">Persona</a></div>');
 		} else {
-			$(".popover-body").addClass("user-menu").append('<ul><li><a class="userprefs">Account settings</a></li><li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li><li><a class="logout">Logout</a></li></ul>');
+			lace.popover.show($(this), '<ul class="user-menu"><li><a class="userprefs">Account settings</a></li><li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li><li><a class="logout">Logout</a></li></ul>');
 		}
 	});
 
@@ -35,6 +26,20 @@ $(function(){
 
 	$(document).on("click", ".logout", function() {
 		libsb.logout();
+	});
+
+	libsb.on("logout", function(p,n) {
+		libsb.emit('navigate', {
+			view: 'loggedout',
+		});
+
+		lace.modal.show("<div class='loggedout-msg'><h1>You\'ve been logged out!</h1><a class='button reload-page modal-remove'>Go back as guest</a></div>");
+
+		n();
+	}, 1000);
+
+	$(document).on("click", ".reload-page", function(){
+		location.reload();
 	});
 
 	libsb.on('navigate', function(state, next) {

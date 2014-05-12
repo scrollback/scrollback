@@ -14,7 +14,7 @@
 
 		<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
 
-		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600">
 		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/gen/client.css">
 
 		<!-- enable HTML5 in IE, we need to place it before body -->
@@ -67,14 +67,10 @@
 				<h2>Room settings</h2>
 			</div>
 			<div class="meta-content settings-menu">
-				<ul>
-					<!-- <li class="tab tab-general-settings">General</li>
-					<li class="tab tab-irc-settings">IRC integration</li>
-					<li class="tab tab-twitter-settings">Twitter integration</li>
-					<li class="tab tab-thread-settings">Threading</li>
-					<li class="tab tab-seo-settings">SEO</li>
-					<li class="tab tab-embed-settings">Embed code</li> -->
-				</ul>
+				<ul></ul>
+			</div>
+			<div class="meta-content userprefs-menu">
+				<ul></ul>
 			</div>
 			<div class="meta-content userprefs-menu"><ul></ul></div>
 		</section>
@@ -82,12 +78,12 @@
 			<div class="titlebar">
 				<div class="title-normal">
 					<a class="meta-button"></a>
-					<div class="title">
-						<h1 id="roomTitle"></h1>
+					<div class="left-area">
+						<h1 class="title" id="roomTitle"></h1>
 						<a class="follow-button" role="button"></a>
 					</div>
 					<div class="right-area">
-						<div class="user-area has-popover">
+						<div class="user-area">
 							<div class="avatar">
 								<img alt="" id="userGrav" >
 							</div>
@@ -165,7 +161,7 @@
 							Twitter hashtags
 						</div>
 						<div class="settings-action">
-							<span class="entry segmented" id="twitterhash"><span contenteditable class="segment"></span></span>
+							<span class="entry multientry" id="twitterhash"><span contenteditable class="item"></span></span>
 						</div>
 					</div>
 					<div class="settings-item">
@@ -225,22 +221,6 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 			<div role="textbox" class="textarea chat-entry" contenteditable></div>
 			<input role="button" class="send" type="submit" value="">
 		</section>
-		<section class="signup">
-			<h1>Choose a username</h1>
-			<img src="">
-			<form>
-				<input type="text" id="signup-id" name="username" placeholder="Enter username" autofocus><br/>
-				<input class="signup-save" type="submit" value="Create account">
-				<input class="signup-cancel secondary" type="button" value="cancel">
-			</form>
-		</section>
-		<section class="loggedout-msg">
-			<h1>You've been logged out!</h1>
-			<a class="button reload-page">Go back as guest</a>
-		</section>
-
-		<div role="menu" class="popover-body"></div>
-		<div class="dim"></div>
 
 		<!-- scripts -->
         <script src="/s/lib/html5shiv.min.js"></script>
@@ -261,6 +241,8 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 		<script src="/s/lib/format.js"></script>
 
 		<script src="/libsb.bundle.js"></script>
+		<script src="/s/js/lace.js"></script>
+		<script src="/s/js/swipe-events.js"></script>
 		<script src="/s/js/libsb-settings.js"></script>
 		<script src="/s/js/user-settings.js"></script>
 
@@ -268,8 +250,6 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 		<script src="/s/components/hide-scroll.js"></script>
 		<script src="/s/components/navigation.js"></script>
 		<script src="/s/components/columns.js"></script>
-		<script src="/s/components/popover.js"></script>
-		<script src="/s/components/entry-segments.js"></script>
 		<script src="/s/components/text.js"></script>
 		<script src="/s/components/text-area.js"></script>
 		<script src="/s/components/compose.js"></script>

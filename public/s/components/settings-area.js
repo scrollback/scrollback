@@ -72,7 +72,7 @@ $(function() {
 
 	libsb.on('navigate', function(state, next) {
 		// check state.mode == settings
-		var sortable = []; // for sorting the config options based on priority 
+		var sortable = []; // for sorting the config options based on priority
 		if(state.mode === "conf"){
 			if(currentConfig && state.tab) $('.settingsview').empty().append(currentConfig[state.tab]);
 			// if currentConfig is blank, then
@@ -82,7 +82,7 @@ $(function() {
 
 					for(i in config) {
 						sortable.push([config[i].prio, i, config[i]]);
-					}   
+					}
 					sortable.sort(function(a,b){
 						return b[0] - a[0];
 					});

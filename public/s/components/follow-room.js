@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, lace */
 
 $(function() {
 	$(".follow-button").on("click", function() {
@@ -10,5 +10,7 @@ $(function() {
 			libsb.join(window.currentState.room);
 			$("body").addClass("following");
 		}
+
+		lace.animate.transition("grow", $(this), function() {});
 	});
 });

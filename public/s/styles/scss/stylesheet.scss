@@ -1,0 +1,149 @@
+@import "widgets";
+
+/* we need this to make text vertically centered in a page */
+html, body { height: 100%; }
+
+footer {
+    border-top: 1px solid darken($light-color, 10%);
+    background-color: darken($light-color, 5%);
+    color: lighten($dark-color, 40%);
+    text-align: center;
+    font-size: .9em;
+
+    a { color: lighten($dark-color, 40%); }
+}
+
+.container {
+    max-width: 60em;
+    margin: auto;
+    padding: 1em;
+
+    @media only screen and (min-width: 60em) { padding: 2em; }
+}
+
+.cover {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    height: 100%;
+    background-attachment: scroll;
+    background-position: center center;
+    background-size: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: $dark-color;
+    background-image: url(../../img/cover.jpg);
+    color: $light-color;
+
+    .cover-content {
+        position: relative;
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        font-size: 1.2em;
+
+        a {
+            color: $light-color;
+            cursor: pointer;
+
+            &#trial-room {
+                border-bottom: 1px solid transparentize($light-color, .7);
+
+                &:focus, &:hover { border-bottom-color: transparentize($light-color, .5); }
+
+                &:active { border-bottom-color: transparentize($light-color, .3); }
+            }
+        }
+    }
+}
+
+.features {
+    border-top: 1px solid darken($light-color, 10%);
+    background-color: $light-color;
+
+    .feat {
+        border-bottom: 1px solid darken($light-color, 5%);
+
+        &:last-of-type { border-bottom: none; }
+
+        img { border-radius: $roundness; }
+    }
+}
+
+.testimonials {
+    border-top: 1px solid darken($light-color, 10%);
+    background-color: darken($light-color, 5%);
+    text-align: center;
+}
+
+.pricing {
+    border-top: 1px solid darken($light-color, 10%);
+    background-color: $light-color;
+
+    .heading {
+        padding: 1.2em 0 .5em 0;
+        font-size: 1.4em;
+        width: 100%;
+
+        h2 { display: inline; }
+
+        .price {
+            @extend %clearfix;
+
+            float: right;
+            color: $accent-color;
+            font-weight: 300;
+            position: relative;
+
+            .sub {
+                display: block;
+                position: absolute;
+                right: 0;
+                white-space: nowrap;
+                text-transform: uppercase;
+                font-weight: 600;
+                font-size: 0.6em;
+                color: lighten($dark-color, 40%);
+            }
+        }
+    }
+
+    .signup {
+        border-top: 1px solid darken($light-color, 5%);
+        text-align: center;
+    }
+}
+
+.poweredby {
+    img {
+        display: inline-block;
+        padding: 10px 10px 0 10px;
+    }
+}
+
+.fork {
+    @include transition(.5s);
+
+    display: none;
+    position: fixed;
+    top: -15px;
+    right: 30px;
+    z-index: 1;
+
+    &:hover, &:focus, &:active { top: 0; }
+
+    @media only screen and (min-width: 480px) { display: block; }
+}
+
+.scrollback-stream { display: none; }
+
+.scrollback-open {
+    .scrollback-stream { display: block; }
+
+    .room {
+        opacity: 0;
+        pointer-events: none;
+    }
+}

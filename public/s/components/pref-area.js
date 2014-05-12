@@ -15,7 +15,7 @@ $(function() {
 		libsb.getUsers({ref: userId}, function(err, data){
 			var results = data.results[0];
 			var radio = {"daily": 0, "weekly": 1, "never": 2};
-			// user profile 
+			// user profile
 			$('#about-me').val(results.description);
 
 			//email
@@ -23,7 +23,6 @@ $(function() {
 				$('input:radio[name="email-freq"]').eq(radio[results.params.email.frequency]).prop('checked' , 'true');
 				$('.pane-email-settings #mention').prop('checked', results.params.email.notifications);
 			}
-			
 			//notifications 
 			if(results.params && results.params.notifications){
 				$('#sound-notification').prop('checked', results.params.notifications.sound);
@@ -58,7 +57,7 @@ $(function() {
 
 	libsb.on('navigate', function(state, next) {
 		// check state.mode == settings
-		var sortable = []; // for sorting the config options based on priority 
+		var sortable = []; // for sorting the config options based on priority
 		if(state.mode === "pref"){
 			if(currentConfig && state.tab) $('.settingsview').empty().append(currentConfig[state.tab]);
 			// if currentConfig is blank, then
@@ -69,7 +68,7 @@ $(function() {
 					sortable = [];
 					for(i in config) {
 						sortable.push([config[i].prio, i, config[i]]);
-					}   
+					}
 					sortable.sort(function(a,b){
 						return b[0] - a[0];
 					});
