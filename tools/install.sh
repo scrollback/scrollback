@@ -1,12 +1,25 @@
 #!/bin/bash
 
+# Checks if a package is already installed before installing it
+function safe_install() {
+    echo "Checking if $1 is installed..."
+    brew list $1 > /dev/null
+    if [[ $? -eq 0 ]]; then
+        echo "Found! Skipping installation..."
+    else
+        echo "Package not found! Installing it..."
+        brew install $1
+        echo "Done"
+    fi
+}
+
+
 # Exit script on Ctrl+C
 trap exit 1 INT
 
 # Detect the current ditro
 distro=$(uname)
-if [ $distro == 'Linux' ]
-then
+if [[ "$distro" == 'Linux' ]]; then
     distro=$(grep '^NAME=' /etc/os-release | sed -e s/NAME=//g -e s/\"//g)
 fi
 
@@ -68,8 +81,7 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
             sudo yum install -y libcap;;
     esac
     sudo setcap "cap_net_bind_service=+ep" /usr/bin/node
-elif [[ $distro = "Darwin" ]]
-then
+elif [[ $distro = "Darwin" ]]; then
     echo "==========================================="
     echo "Scrollback requires the following packages"
     echo "MySQL Server"
@@ -79,12 +91,10 @@ then
 
     echo "The above packages (except mysql) will be installed using homebrew (http://brew.sh/)"
     echo "Looking for homebrew..."
-    if [[ `which brew` = '' ]]
-    then
+    if [[ `which brew` = '' ]]; then
         echo "Installing homebrew first..."
         echo "Checking homebrew dependencies..."
-        if [[ `which curl` = '' ]]
-        then
+        if [[ `which curl` = '' ]]; then
             echo "Please install curl first: http://curl.haxx.se/download.html"
             echo "Exiting"
             exit 1
@@ -92,18 +102,11 @@ then
         ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
         echo "Installed"
     fi
-    echo "Install MySQL [y/n]?"
-    read ans
-    [[ "$ans" = [Yy] ]] && brew install mysql
-    echo "Install git [y/n]?"
-    read ans
-    [[ "$ans" = [Yy] ]] && brew install git
-    echo "Install node.js [y/n]?"
-    read ans
-    [[ "$ans" = [Yy] ]] && brew install node
-    echo "Install redis [y/n]?"
-    read ans
-    [[ "$ans" = [Yy] ]] && brew install redis
+
+    safe_install mysql
+    safe_install git
+    safe_install node
+    safe_install redis
 else
     # We only install packages for Ubuntu, Fedora and OSX
     echo "Unsupported distro. You will need to install the dependencies manually. Continue anyway [y/n]?"
@@ -146,8 +149,7 @@ sudo npm install -g forever
 
 # Start the MySQL and Redis daemons
 echo "Starting MySQL and Redis"
-if [[ $distro = 'Darwin' ]]
-then
+if [[ $distro = 'Darwin' ]]; then
     sudo mysqld_safe
     sudo redis-server
 else
