@@ -1,5 +1,5 @@
-/* jshint jquery: true */
-/* global libsb, textEl, format, window */
+/* jslint browser: true, indent: 4, regexp: true*/
+/* global $, libsb, textEl, format */
 /* exported textArea */
 
 var textArea = {};

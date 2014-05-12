@@ -7,14 +7,15 @@ $(function() {
         $("body").addClass("search-focus");
         // Use a timeout to add focus to avoid double animation in firefox
         setTimeout(function() {
-            $(".search-entry").focus();
-        }, 500);
+            $(".search-entry").focus().data("search-ready", true);
+        }, 300);
     });
 
     $(document).on("click", function(e) {
-        if (e.target !== $(".search-button")[0] && e.target !== $(".search-entry")[0]) {
+        if (e.target !== $(".search-button")[0] && e.target !== $(".search-entry")[0] && $(".search-entry").data("search-ready")) {
             lace.animate.transition("fadeout", ".search-entry", function() {
                 $("body").removeClass("search-focus");
+                $(".search-entry").data("search-ready", false);
             });
         }
     });

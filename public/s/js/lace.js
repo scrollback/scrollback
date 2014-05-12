@@ -8,7 +8,7 @@ var lace = {
                 $(el).addClass(classname).data("transitioning", true);
 
                 $(el).on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function(e) {
-                    if (e.target === e.currentTarget && $(this).data("transitioning") === true) {
+                    if (e.target === e.currentTarget && $(this).data("transitioning")) {
                         $(el).removeClass(classname).data("transitioning", false);
                         action();
                     }
@@ -109,35 +109,35 @@ var lace = {
 
     popover: {
         show: function(el, content) {
-            var popover = $('<div role="menu" class="popover-body">' + content + '</div>'),
+            var popover = ".popover-body",
                 spacetop = $(el).offset().top - $(document).scrollTop() + $(el).height(),
                 spacebottom = $(window).height() - spacetop,
                 spaceleft = $(el).offset().left - $(document).scrollLeft() + ( $(el).width() / 2 ),
                 spaceright = $(window).width() - spaceleft;
 
-            $("body").append("<div class='layer'></div>").append(popover);
+            $("body").append("<div class='layer'></div>").append($('<div role="menu" class="' + popover.substr(1) + '">' + content + '</div>'));
 
-            if (popover.outerWidth() >= spaceleft) {
+            if ($(popover).outerWidth() >= spaceleft) {
                 $(popover).addClass("arrow-left");
                 spaceleft = $(el).width() / 2;
-            } else if (popover.outerWidth() >= spaceright) {
+            } else if ($(popover).outerWidth() >= spaceright) {
                 $(popover).addClass("arrow-right");
-                spaceleft = $(window).width() - ( $(el).width() / 2 ) - popover.outerWidth();
+                spaceleft = $(window).width() - ( $(el).width() / 2 ) - $(popover).outerWidth();
             } else {
-                spaceleft = spaceleft - ( popover.outerWidth() / 2 );
+                spaceleft = spaceleft - ( $(popover).outerWidth() / 2 );
             }
 
             if ($(el).height() >= $(window).height()) {
                 $(popover).addClass("popover-bottom");
                 spacetop = $(window).height() / 2;
-            } else if (popover.outerHeight() >= spacebottom) {
+            } else if ($(popover).outerHeight() >= spacebottom) {
                 $(popover).addClass("popover-top");
-                spacetop = spacetop - ( $(el).height() * 2 ) - popover.outerHeight();
+                spacetop = spacetop - ( $(el).height() * 2 ) - $(popover).outerHeight();
             } else {
                 $(popover).addClass("popover-bottom");
             }
 
-            popover.css({
+            $(popover).css({
                 "top" : spacetop,
                 "left" : spaceleft
             });
@@ -147,8 +147,7 @@ var lace = {
 
         hide: function() {
             lace.animate.transition("fadeout", ".popover-body", function() {
-                $(".popover-body").remove();
-                $(".layer").remove();
+                $(".popover-body, .layer").remove();
             });
         }
     },

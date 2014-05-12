@@ -1,7 +1,6 @@
 /* jshint browser: true */
 /* global $, libsb, lace */
 
-
 $(function(){
 	var signingUser, signupId;
 	$(document).on("click", ".signup-save", function(){
