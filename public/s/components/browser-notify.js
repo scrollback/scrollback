@@ -37,14 +37,17 @@ var browserNotify = (function() {
 
 	$(function() {
 		$(window).on("focus", function() {
-			if(originalTitle) {
+			if (originalTitle) {
 				document.title = originalTitle;
 				originalTitle = null;
 			}
 
+			if (titleTimer) {
+				clearInterval(titleTimer);
+			}
+
 			hasFocus = true;
-		})
-		.on("blur", function() {
+		}).on("blur", function() {
 			hasFocus = false;
 		});
 
@@ -60,17 +63,9 @@ var browserNotify = (function() {
 			originalTitle = document.title;
 		}
 
-		document.title = text.text;
-
-		if (titleTimer) {
-			clearTimeout(titleTimer);
-		}
-
-		titleTimer = setTimeout(function () {
-			document.title = originalTitle;
-			originalTitle = null;
-			titleTimer = null;
-		}, 3000);
+		titleTimer = setInterval(function() {
+			document.title = (document.title === originalTitle) ? text.text : originalTitle;
+		}, 1000);
 
 		if (important && soundTimer) {
 			clearTimeout(soundTimer);

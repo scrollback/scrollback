@@ -85,7 +85,7 @@ $(function() {
 			}
 		}
 
-		text.text.split("\\s+").map(isMention);
+		text.text.split(" ").map(isMention);
 
 		next();
 	});
