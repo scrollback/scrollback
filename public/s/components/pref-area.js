@@ -83,6 +83,16 @@ $(function() {
 					$('.pane-profile-settings').addClass('current');
 
 					renderSettings(libsb.user.id);
+
+					$('#desktop-notification').change(function(){
+						if($(this).is(':checked')){
+							lace.notify.request();
+							var laceObj = lace.notify.support();
+							if(laceObj.permission === "denied"){
+								lace.alert.show("error", "Permission for desktop notifcations denied!");
+							}
+						} 
+					});
 				});
 			}
 		}
