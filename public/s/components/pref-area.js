@@ -23,8 +23,7 @@ $(function() {
 				$('input:radio[name="email-freq"]').eq(radio[results.params.email.frequency]).prop('checked' , 'true');
 				$('.pane-email-settings #mention').prop('checked', results.params.email.notifications);
 			}
-
-			//notifications
+			//notifications 
 			if(results.params && results.params.notifications){
 				$('#sound-notification').prop('checked', results.params.notifications.sound);
 				$('#desktop-notification').prop('checked', results.params.notifications.desktop);
@@ -84,6 +83,16 @@ $(function() {
 					$('.pane-profile-settings').addClass('current');
 
 					renderSettings(libsb.user.id);
+
+					$('#desktop-notification').change(function(){
+						if($(this).is(':checked')){
+							lace.notify.request();
+							var laceObj = lace.notify.support();
+							if(laceObj.permission === "denied"){
+								lace.alert.show("error", "Permission for desktop notifcations denied!");
+							}
+						} 
+					});
 				});
 			}
 		}

@@ -71,7 +71,7 @@ libsb.on('config-show', function(conf, next) {
 		html: "<div class='pane pane-irc-settings'>" + formField("IRC Server", "text", "ircserver") + formField("IRC Channel", "text", "ircchannel") + "</div>",
 		text: "IRC setup",
 		prio: 800
-	}
+	} 
 	next();
 });
 libsb.on('config-save', function(conf, next){
@@ -158,7 +158,7 @@ libsb.on('config-save', function(conf, next){
 libsb.on('config-show', function(conf, next) {
 	conf.seo = {
 		html: "<div class='pane pane-seo-settings'>" + formField("Allow search engines to index room", "toggle", "allow-index") + "</div>",
-		text: "Search engine indexing",
+		text: "Search engine indexing", 
 		prio: 500
 	}
 

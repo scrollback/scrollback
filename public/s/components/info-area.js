@@ -30,7 +30,6 @@ function configButtonRender(user){
 				} else{
 					$('.configure-button').show();
 				}
-
 			}
 		}
 	});

@@ -17,7 +17,7 @@ libsb.on('pref-save', function(conf, next){
 
 // email settings
 /*
- - Email digest frequency (Daily/Weekly, Never)
+ - Email digest frequency (Daily/Weekly, Never) 
  - Email me when I'm mentioned in a room (On/Off)
 */
 libsb.on('pref-show', function(conf, next){
@@ -53,4 +53,5 @@ libsb.on('pref-save', function(conf, next){
 		desktop: $('#desktop-notification').is(':checked')
 	}
 	next();
-})
+});
+
