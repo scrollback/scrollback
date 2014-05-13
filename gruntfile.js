@@ -122,19 +122,19 @@ grunt.initConfig({
 	manifest: {
 		generate: {
 			options: {
-				basePath: "public/s",
+				basePath: "public",
 				network: ["*"],
 				fallback: ["/ /offline.html"],
 				preferOnline: true,
 				timestamp: true
 			},
 			src: [
-				"js/*.js",
-				"lib/*.js",
-				"components/*.js",
-				"styles/gen/*.css",
-				"img/client/*",
-				"img/client/*/*.*",
+				"s/js/*.js",
+				"s/lib/*.js",
+				"s/components/*.js",
+				"s/styles/gen/*.css",
+				"s/img/client/*.*",
+				"s/img/client/*/*.*",
 			],
 			dest: "public/manifest.appcache"
 		}
