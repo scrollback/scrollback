@@ -89,7 +89,7 @@ $tabitems: info, people, threads;
 
                 .search-mode & {
                     display: block;
-                    background: url(../../img/icons/png/search-light.png) no-repeat 90% center 2em/2em;
+                    background: url(../../img/client/icons/png/search-light.png) no-repeat 90% center 2em/2em;
                 }
             }
 
@@ -220,7 +220,7 @@ $tabitems: info, people, threads;
                 }
 
                 @each $item in $tabitems {
-                    &.tab-#{$item} { background-image: url(../../img/icons/png/#{$item}.png); }
+                    &.tab-#{$item} { background-image: url(../../img/client/icons/png/#{$item}.png); }
                 }
 
                 &.current { background-color: darken($light-color, 10%); }
@@ -252,7 +252,7 @@ $tabitems: info, people, threads;
 
                         display: table-cell;
                         width: 2.5em;
-                        background-image: url(../../img/icons/png/back.png);
+                        background-image: url(../../img/client/icons/png/back.png);
 
                         &:hover, &:focus, &:active { background-color: transparent; }
 
@@ -414,7 +414,7 @@ $tabitems: info, people, threads;
                 vertical-align: middle;
                 padding-left: 3em;
                 text-transform: uppercase;
-                background: url(../../img/icons/png/settings.png) .6em center no-repeat;
+                background: url(../../img/client/icons/png/settings.png) .6em center no-repeat;
 
                 @media #{$breakpointxxxx} {
                     background: none;
@@ -432,7 +432,7 @@ $tabitems: info, people, threads;
 
                     display: table-cell;
                     width: 4em;
-                    background: url(../../img/icons/png/back.png) no-repeat 1em center 2em/2em;
+                    background: url(../../img/client/icons/png/back.png) no-repeat 1em center 2em/2em;
                     cursor: pointer;
 
                     .rooms-view & { @include transform(rotate(180deg)); }
@@ -475,7 +475,7 @@ $tabitems: info, people, threads;
 
                     @each $item in $settingsitems {
                         &.tab-#{$item}-settings {
-                            background-image: url(../../img/icons/png/#{$item}-settings.png);
+                            background-image: url(../../img/client/icons/png/#{$item}-settings.png);
                         }
                     }
                 }
@@ -539,7 +539,7 @@ $tabitems: info, people, threads;
 
                     display: table-cell;
                     width: 3em;
-                    background: url(../../img/icons/png/back.png) center center no-repeat;
+                    background: url(../../img/client/icons/png/back.png) center center no-repeat;
                     background-size: 2em 2em;
                     cursor: pointer;
 
@@ -576,11 +576,11 @@ $tabitems: info, people, threads;
                     float: left;
                     width: 4em;
                     height: 2em;
-                    background: url(../../img/icons/png/follow-no.png) center center no-repeat;
+                    background: url(../../img/client/icons/png/follow-no.png) center center no-repeat;
                     background-size: 2em 2em;
                     cursor: pointer;
 
-                    .following & { background: url(../../img/icons/png/follow.png) center center no-repeat; }
+                    .following & { background: url(../../img/client/icons/png/follow.png) center center no-repeat; }
 
                     .search-mode & { display: none; }
                 }
@@ -595,7 +595,7 @@ $tabitems: info, people, threads;
                     float: right;
                     padding: 0 1em;
                     width: 4em;
-                    background: url(../../img/icons/png/search.png) center center no-repeat;
+                    background: url(../../img/client/icons/png/search.png) center center no-repeat;
                     background-size: 2em 2em;
                     cursor: pointer;
 
@@ -613,7 +613,7 @@ $tabitems: info, people, threads;
                         font-weight: 600;
                         cursor: pointer;
 
-                        .guest-user & { padding: 0 1em; }
+                        .guest-user & { padding: .2em 1em; }
 
                         .sign-in {
                             display: none;
@@ -658,7 +658,7 @@ $tabitems: info, people, threads;
                 display: block;
                 width: 100%;
                 margin: 0;
-                background-image: url(../../img/icons/png/search-gray.png);
+                background-image: url(../../img/client/icons/png/search-gray.png);
                 background-position: right center;
                 background-repeat: no-repeat;
                 z-index: 30;
@@ -675,7 +675,7 @@ $tabitems: info, people, threads;
 
             position: relative;
             float: right;
-            margin: 1em 2em;
+            margin: 1em;
             padding: .5em 1em;
             background-color: $dark-color;
             color: $light-color;
@@ -1007,7 +1007,7 @@ $tabitems: info, people, threads;
         margin: 0;
         height: 3.5em;
         width: 3.5em;
-        background: url(../../img/icons/png/send.png) center center no-repeat;
+        background: url(../../img/client/icons/png/send.png) center center no-repeat;
         background-size: 2em 2em;
         border: none;
 
