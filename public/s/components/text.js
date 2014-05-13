@@ -15,8 +15,9 @@ $(function() {
 
 		// TODO: add timestamps, add the 'timestamp-displayed' class, add the 'long' class.
 
-		if(text.threads && text.threads.length)
+		if (text.threads && text.threads.length) {
 			el.addClass('conv-' + text.threads[0].id.substr(-1));
+		}
 
 		return el;
 	};
@@ -24,5 +25,27 @@ $(function() {
 	// Expand long messages
 	$(".long").on("click", function() {
 		$(this).toggleClass("active").scrollTop(0);
+	});
+
+	$(document).on("click", ".chat", function() {
+		$(this).attr("class").split(" ").forEach(function(s) {
+			var conv = s.match(/^conv-\d+$/);
+
+			if (conv) {
+				$("body").addClass(conv[0]);
+			}
+		});
+
+		$(".chat").not(this).removeClass("current");
+		$(this).toggleClass("current");
+
+		var nick = $(this).children(".nick").text(),
+			msg = $(".chat-entry").text();
+
+		if (msg.indexOf(nick) < 0) {
+			msg = msg + " @" + nick + "&nbsp;";
+		}
+
+		$(".chat-entry").html(msg).focus();
 	});
 });

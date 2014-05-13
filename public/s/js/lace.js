@@ -284,7 +284,6 @@ var lace = {
         /**
          * Request permission for desktop notifications.
          * @constructor
-         * @return {Boolean}
          */
         request: function() {
             var check = lace.notify.support();
@@ -295,14 +294,6 @@ var lace = {
                 } else if (check.type === "html5") {
                     Notification.requestPermission();
                 }
-
-                if (check.permission === "granted") {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
             }
         },
 

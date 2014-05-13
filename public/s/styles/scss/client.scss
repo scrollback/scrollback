@@ -79,7 +79,7 @@ $tabitems: info, people, threads;
 
             display: block;
             padding: 1em;
-            font-weight: 600;
+            font-weight: 700;
             color: $light-color;
             border-bottom: 1px solid lighten($dark-color, 5%);
             cursor: pointer;
@@ -89,7 +89,7 @@ $tabitems: info, people, threads;
 
                 .search-mode & {
                     display: block;
-                    background: url(../../img/client/icons/png/search-light.png) no-repeat 90% center 2em/2em;
+                    background: url(../../img/client/icons/svg/search-light.svg) no-repeat 90% center 2em/2em;
                 }
             }
 
@@ -220,7 +220,7 @@ $tabitems: info, people, threads;
                 }
 
                 @each $item in $tabitems {
-                    &.tab-#{$item} { background-image: url(../../img/client/icons/png/#{$item}.png); }
+                    &.tab-#{$item} { background-image: url(../../img/client/icons/svg/#{$item}.svg); }
                 }
 
                 &.current { background-color: darken($light-color, 10%); }
@@ -252,7 +252,7 @@ $tabitems: info, people, threads;
 
                         display: table-cell;
                         width: 2.5em;
-                        background-image: url(../../img/client/icons/png/back.png);
+                        background-image: url(../../img/client/icons/svg/back.svg);
 
                         &:hover, &:focus, &:active { background-color: transparent; }
 
@@ -379,7 +379,6 @@ $tabitems: info, people, threads;
                         color: $light-color;
                     }
 
-                    /* set different colors for conversations */
                     @for $i from 1 through length($palette) {
                         $color: nth($palette, $i);
 
@@ -414,7 +413,7 @@ $tabitems: info, people, threads;
                 vertical-align: middle;
                 padding-left: 3em;
                 text-transform: uppercase;
-                background: url(../../img/client/icons/png/settings.png) .6em center no-repeat;
+                background: url(../../img/client/icons/svg/settings.svg) .6em center no-repeat;
 
                 @media #{$breakpointxxxx} {
                     background: none;
@@ -432,7 +431,7 @@ $tabitems: info, people, threads;
 
                     display: table-cell;
                     width: 4em;
-                    background: url(../../img/client/icons/png/back.png) no-repeat 1em center 2em/2em;
+                    background: url(../../img/client/icons/svg/back.svg) no-repeat 1em center 2em/2em;
                     cursor: pointer;
 
                     .rooms-view & { @include transform(rotate(180deg)); }
@@ -475,7 +474,7 @@ $tabitems: info, people, threads;
 
                     @each $item in $settingsitems {
                         &.tab-#{$item}-settings {
-                            background-image: url(../../img/client/icons/png/#{$item}-settings.png);
+                            background-image: url(../../img/client/icons/svg/#{$item}-settings.svg);
                         }
                     }
                 }
@@ -539,7 +538,7 @@ $tabitems: info, people, threads;
 
                     display: table-cell;
                     width: 3em;
-                    background: url(../../img/client/icons/png/back.png) center center no-repeat;
+                    background: url(../../img/client/icons/svg/back.svg) center center no-repeat;
                     background-size: 2em 2em;
                     cursor: pointer;
 
@@ -576,11 +575,11 @@ $tabitems: info, people, threads;
                     float: left;
                     width: 4em;
                     height: 2em;
-                    background: url(../../img/client/icons/png/follow-no.png) center center no-repeat;
+                    background: url(../../img/client/icons/svg/follow-no.svg) center center no-repeat;
                     background-size: 2em 2em;
                     cursor: pointer;
 
-                    .following & { background: url(../../img/client/icons/png/follow.png) center center no-repeat; }
+                    .following & { background: url(../../img/client/icons/svg/follow.svg) center center no-repeat; }
 
                     .search-mode & { display: none; }
                 }
@@ -595,7 +594,7 @@ $tabitems: info, people, threads;
                     float: right;
                     padding: 0 1em;
                     width: 4em;
-                    background: url(../../img/client/icons/png/search.png) center center no-repeat;
+                    background: url(../../img/client/icons/svg/search.svg) center center no-repeat;
                     background-size: 2em 2em;
                     cursor: pointer;
 
@@ -610,7 +609,7 @@ $tabitems: info, people, threads;
                         float: right;
                         text-align: right;
                         padding: 1em;
-                        font-weight: 600;
+                        font-weight: 700;
                         cursor: pointer;
 
                         .guest-user & { padding: .2em 1em; }
@@ -658,7 +657,7 @@ $tabitems: info, people, threads;
                 display: block;
                 width: 100%;
                 margin: 0;
-                background-image: url(../../img/client/icons/png/search-gray.png);
+                background-image: url(../../img/client/icons/svg/search-gray.svg);
                 background-position: right center;
                 background-repeat: no-repeat;
                 z-index: 30;
@@ -734,7 +733,11 @@ $tabitems: info, people, threads;
 
                 @media #{$breakpointxx} { padding-left: 3em; }
 
-                &:hover, &:focus { background-color: darken($light-color, 2%); }
+                &:hover, &:focus {
+                    background-color: darken($light-color, 2%);
+
+                    .timestamp { color: lighten($dark-color, 10%); }
+                }
 
                 &.current { background-color: darken($light-color, 5%); }
 
@@ -793,7 +796,7 @@ $tabitems: info, people, threads;
                     float: left;
                     margin-left: -8em;
                     padding-right: 1em;
-                    font-weight: 600;
+                    font-weight: 700;
 
                     @media #{$breakpointxxxx} { margin-left: -20%; }
 
@@ -897,7 +900,7 @@ $tabitems: info, people, threads;
                             @media #{$breakpointxx} {
                                 text-align: left;
                                 padding-right: 1em;
-                                font-weight: 600;
+                                font-weight: 700;
                             }
                         }
 
@@ -995,27 +998,37 @@ $tabitems: info, people, threads;
         &:hover, &:focus, &:active {
             border-color: $accent-color;
             outline: none;
+
+            @for $i from 1 through length($palette) {
+                .conv-#{$i} & { border-color: nth($palette, $i); }
+            }
         }
     }
 
     .send {
-        @include opacity(.5);
+        @extend %ease;
 
         position: absolute;
         right: 0;
         bottom: 0;
         margin: 0;
+        padding: .75em;
         height: 3.5em;
         width: 3.5em;
-        background: url(../../img/client/icons/png/send.png) center center no-repeat;
-        background-size: 2em 2em;
         border: none;
+        cursor: pointer;
+        fill: lighten($dark-color, 30%); /* inline SVG */
 
-        &:hover, &:focus, &:active {
-            @include opacity(1);
-            @extend %nofilter;
+        &:hover, &:focus, &:active { fill: $dark-color; }
 
-            background-color: transparent;
+        @for $i from 1 through length($palette) {
+            $color: nth($palette, $i);
+
+            .conv-#{$i} & {
+                fill: lighten($color, 15%);
+
+                &:hover, &:focus, &:active { fill: $color; }
+            }
         }
     }
 }

@@ -15,7 +15,7 @@
     background-color: $bg;
     color: $fg;
     text-align: center;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     text-transform: uppercase;
 
@@ -115,7 +115,7 @@ pre {
 }
 
 code {
-    font-weight: 600;
+    font-weight: 700;
     font-family: $monospace-font;
     line-height: 1.2em;
 }
@@ -305,7 +305,7 @@ code {
         box-shadow: 0 0 5px 1px rgba(0,0,0,.1);
 
         a {
-            font-weight: 600;
+            font-weight: 700;
             border-bottom: 1px solid transparent;
 
             &:focus, &:hover, &:active { border-bottom-color: currentColor; }
@@ -428,7 +428,7 @@ code {
                 display: block;
                 color: $dark-color;
                 padding: 1em 1.5em;
-                font-weight: 600;
+                font-weight: 700;
 
                 &:hover, &:focus { color: darken($dark-color, 30%); }
             }
@@ -449,7 +449,7 @@ code {
             position: absolute;
             display: block;
             content: "";
-            font-weight: 600;
+            font-weight: 700;
             color: $light-color;
             border-radius: $roundness;
             background-color: darken($light-color, 30%);
