@@ -21,6 +21,8 @@ $(function() {
 	};
 });
 
+window.threadEl = threadEl; 
+
 libsb.on('navigate', function(state, next) {
 	if(typeof state.thread != "undefined"  && state.thread != state.old.thread) {
 		$(".thread.current").removeClass("current");

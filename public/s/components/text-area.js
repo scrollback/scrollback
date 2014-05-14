@@ -207,4 +207,5 @@ $(function() {
 		$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
 
 	});
+	window.textArea = textArea;
 });

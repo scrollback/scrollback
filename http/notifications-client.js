@@ -1,8 +1,10 @@
 //notifications settings
+var formField = require("../lib/formField.js");
+
 libsb.on('pref-show', function(conf, next){
 	conf.sound = {
 		html: "<div class='pane pane-sound-settings'> " + formField('Sound Notification ', 'toggle', 'sound-notifcation') + formField('Desktop Notification ', 'toggle', 'desktop-notification') + " </div>",
-		text: "Notications",
+		text: "Notifications",
 		prio: 800
 	}
 	next();

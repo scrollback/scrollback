@@ -26,3 +26,5 @@ $(function() {
 		$(this).toggleClass("active").scrollTop(0);
 	});
 });
+
+window.textEl = textEl;

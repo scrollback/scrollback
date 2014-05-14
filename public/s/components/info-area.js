@@ -72,7 +72,7 @@ libsb.on('navigate', function(state, next) {
 			libsb.on("inited", function(q, n) {
 				loadRooms();
 				n();
-			})
+			});
 		}
 	}
 	next();

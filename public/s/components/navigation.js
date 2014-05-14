@@ -23,9 +23,8 @@
 var currentState = window.currentState = {};
 
 libsb.on("navigate", function(state, next) {
-	state.old = currentState;
+	state.old = $.extend(true, {}, currentState); // copying object by value
 	state.changes = {};
-	currentState = {};
 
 	["room", "view", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
 		if(typeof state[prop] === "undefined") {

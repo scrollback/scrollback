@@ -1,4 +1,5 @@
 // Room general settings
+var formField = require("../lib/formField.js");
 
 libsb.on('config-show', function(conf, next) {
 	conf.general = {

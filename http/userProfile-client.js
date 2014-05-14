@@ -1,4 +1,6 @@
 //user profile settings
+var formField = require("../lib/formField.js");
+
 libsb.on('pref-show', function(conf, next){
 	conf.profile = {
 		html: "<div class='pane pane-profile-settings'>" + formField("About me", "area", "about-me") + " </div>",

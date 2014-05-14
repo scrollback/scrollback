@@ -3,7 +3,6 @@
 /* exported chatArea */
 
 // var roomList = {};
-
 $(function() {
 	var $roomlist = $(".roomlist"),
 		rooms = ["scrollback", "nodejs", "scrollbackteam"];

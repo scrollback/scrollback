@@ -16,3 +16,5 @@ $(function() {
 		return el;
 	};
 });
+
+window.personEl = personEl;

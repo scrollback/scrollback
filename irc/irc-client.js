@@ -1,4 +1,4 @@
-var formField = require('../tools/formField.js');
+var formField = require('../lib/formField.js');
 
 libsb.on('config-show', function(conf, next) {
 	conf.irc = {

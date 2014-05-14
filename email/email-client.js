@@ -2,7 +2,7 @@
  - Email digest frequency (Daily/Weekly, Never) 
  - Email me when I'm mentioned in a room (On/Off)
 */
-var formField = require('../tools/formField.js');
+var formField = require('../lib/formField.js');
 
 libsb.on('pref-show', function(conf, next){
 	conf.email = {
