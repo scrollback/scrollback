@@ -366,7 +366,7 @@ code {
 .popover-body {
     position: absolute;
     display: block;
-    margin: 1em;
+    margin: .5em;
     border-radius: $roundness;
     font-weight: normal;
     border: 1px solid darken($light-color, 20%);
@@ -530,8 +530,8 @@ code {
 }
 
 ::-webkit-scrollbar {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
 }
 
 ::-webkit-scrollbar-button { display: none; }
@@ -540,7 +540,6 @@ code {
 
 ::-webkit-scrollbar-thumb {
     background-color: darken($light-color, 10%);
-    border-radius: 9px;
 
     &:vertical { min-height: 100px; }
 

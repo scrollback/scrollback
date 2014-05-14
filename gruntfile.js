@@ -93,6 +93,7 @@ grunt.initConfig({
 				style: "compressed"
 			},
 			files: {
+				"public/s/styles/gen/stylesheet.css": "public/s/styles/scss/stylesheet.scss",
 				"public/s/styles/gen/signup.css": "public/s/styles/scss/signup.scss",
 				"public/s/styles/gen/client.css": "public/s/styles/scss/client.scss"
 			}
@@ -108,9 +109,7 @@ grunt.initConfig({
 			},
 			files: {
 				"public/style.css": "public/style.less",
-				"public/dummy.css": "public/dummy.less",
-				"public/s/styles/less/stylesheet.css": "public/s/styles/less/stylesheet.less",
-				"public/s/styles/less/client.css": "public/s/styles/less/client.less"
+				"public/dummy.css": "public/dummy.less"
 			}
 		}
 	},

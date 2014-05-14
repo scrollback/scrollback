@@ -89,7 +89,7 @@ $tabitems: info, people, threads;
 
                 .search-mode & {
                     display: block;
-                    background: url(../../img/client/icons/svg/search-light.svg) no-repeat 90% center 2em/2em;
+                    background: url(../../img/client/icons/search-light.svg) no-repeat 90% center 2em/2em;
                 }
             }
 
@@ -220,7 +220,7 @@ $tabitems: info, people, threads;
                 }
 
                 @each $item in $tabitems {
-                    &.tab-#{$item} { background-image: url(../../img/client/icons/svg/#{$item}.svg); }
+                    &.tab-#{$item} { background-image: url(../../img/client/icons/#{$item}.svg); }
                 }
 
                 &.current { background-color: darken($light-color, 10%); }
@@ -252,7 +252,7 @@ $tabitems: info, people, threads;
 
                         display: table-cell;
                         width: 2.5em;
-                        background-image: url(../../img/client/icons/svg/back.svg);
+                        background-image: url(../../img/client/icons/back.svg);
 
                         &:hover, &:focus, &:active { background-color: transparent; }
 
@@ -413,7 +413,7 @@ $tabitems: info, people, threads;
                 vertical-align: middle;
                 padding-left: 3em;
                 text-transform: uppercase;
-                background: url(../../img/client/icons/svg/settings.svg) .6em center no-repeat;
+                background: url(../../img/client/icons/settings.svg) .6em center no-repeat;
 
                 @media #{$breakpointxxxx} {
                     background: none;
@@ -431,7 +431,7 @@ $tabitems: info, people, threads;
 
                     display: table-cell;
                     width: 4em;
-                    background: url(../../img/client/icons/svg/back.svg) no-repeat 1em center 2em/2em;
+                    background: url(../../img/client/icons/back.svg) no-repeat 1em center 2em/2em;
                     cursor: pointer;
 
                     .rooms-view & { @include transform(rotate(180deg)); }
@@ -474,7 +474,7 @@ $tabitems: info, people, threads;
 
                     @each $item in $settingsitems {
                         &.tab-#{$item}-settings {
-                            background-image: url(../../img/client/icons/svg/#{$item}-settings.svg);
+                            background-image: url(../../img/client/icons/#{$item}-settings.svg);
                         }
                     }
                 }
@@ -538,7 +538,7 @@ $tabitems: info, people, threads;
 
                     display: table-cell;
                     width: 3em;
-                    background: url(../../img/client/icons/svg/back.svg) center center no-repeat;
+                    background: url(../../img/client/icons/back.svg) center center no-repeat;
                     background-size: 2em 2em;
                     cursor: pointer;
 
@@ -575,11 +575,11 @@ $tabitems: info, people, threads;
                     float: left;
                     width: 4em;
                     height: 2em;
-                    background: url(../../img/client/icons/svg/follow-no.svg) center center no-repeat;
+                    background: url(../../img/client/icons/follow-no.svg) center center no-repeat;
                     background-size: 2em 2em;
                     cursor: pointer;
 
-                    .following & { background: url(../../img/client/icons/svg/follow.svg) center center no-repeat; }
+                    .following & { background: url(../../img/client/icons/follow.svg) center center no-repeat; }
 
                     .search-mode & { display: none; }
                 }
@@ -594,7 +594,7 @@ $tabitems: info, people, threads;
                     float: right;
                     padding: 0 1em;
                     width: 4em;
-                    background: url(../../img/client/icons/svg/search.svg) center center no-repeat;
+                    background: url(../../img/client/icons/search.svg) center center no-repeat;
                     background-size: 2em 2em;
                     cursor: pointer;
 
@@ -657,7 +657,7 @@ $tabitems: info, people, threads;
                 display: block;
                 width: 100%;
                 margin: 0;
-                background-image: url(../../img/client/icons/svg/search-gray.svg);
+                background-image: url(../../img/client/icons/search-gray.svg);
                 background-position: right center;
                 background-repeat: no-repeat;
                 z-index: 30;
@@ -733,13 +733,23 @@ $tabitems: info, people, threads;
 
                 @media #{$breakpointxx} { padding-left: 3em; }
 
-                &:hover, &:focus {
-                    background-color: darken($light-color, 2%);
+                &:hover, &:focus { background-color: darken($light-color, 1%); }
 
-                    .timestamp { color: lighten($dark-color, 10%); }
+                &.current {
+                    background-color: darken($light-color, 3%);
+
+                    .chat-more { background-color: darken($light-color, 3%); }
                 }
 
-                &.current { background-color: darken($light-color, 5%); }
+                &:hover, &:focus, &.current {
+                    border-top: 1px solid darken($light-color, 10%);
+
+                    & + .chat { border-top: 1px solid darken($light-color, 10%); }
+
+                    .timestamp { color: lighten($dark-color, 10%); }
+
+                    .chat-more { left: 0; }
+                }
 
                 &:before {
                     content: "";
@@ -781,7 +791,7 @@ $tabitems: info, people, threads;
                         bottom: 0;
                         width: 100%;
                         padding: 3em 0;
-                        background-image: linear-gradient(to bottom, $light-color 0%, $light-color 100%);
+                        background-image: linear-gradient(to bottom, transparentize($light-color, 1) 0%, $light-color 100%);
                     }
 
                     &.active {
@@ -817,7 +827,28 @@ $tabitems: info, people, threads;
                     display: block;
                     font-size: .9em;
                     text-align: right;
-                    color: lighten($dark-color, 50%);
+                    color: lighten($dark-color, 30%);
+                }
+
+                &.hide-timestamp {
+                    .timestamp { display: none; }
+                }
+
+                .chat-more {
+                    @extend %ease;
+
+                    position: absolute;
+                    display: block;
+                    background-color: darken($light-color, 1%);
+                    background-image: url(../../img/client/icons/more.svg);
+                    background-repeat: no-repeat;
+                    background-position: center center;
+                    background-size: 3em 3em;
+                    height: 3.5em;
+                    width: 3.5em;
+                    top: 0;
+                    left: -100%;
+                    cursor: pointer;
                 }
             }
         }
@@ -1025,9 +1056,9 @@ $tabitems: info, people, threads;
             $color: nth($palette, $i);
 
             .conv-#{$i} & {
-                fill: lighten($color, 15%);
+                fill: $color;
 
-                &:hover, &:focus, &:active { fill: $color; }
+                &:hover, &:focus, &:active { fill: darken($color, 15%); }
             }
         }
     }

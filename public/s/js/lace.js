@@ -181,7 +181,7 @@ var lace = {
                 spacetop = $(window).height() / 2;
             } else if ($(popover).outerHeight() >= spacebottom) {
                 $(popover).addClass("popover-top");
-                spacetop = spacetop - ( $(element).height() * 2 ) - $(popover).outerHeight();
+                spacetop = spacetop - $(element).height() - $(popover).outerHeight();
             } else {
                 $(popover).addClass("popover-bottom");
             }
