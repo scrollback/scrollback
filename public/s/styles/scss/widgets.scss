@@ -60,12 +60,12 @@ body {
 a {
     @extend %ease;
 
-    color: darken($accent-color, 10%);
+    color: $accent-color;
     text-decoration: none;
 
-    &:hover, &:focus { color: $accent-color; }
+    &:hover, &:focus { color: darken($accent-color, 15%); }
 
-    &:active { color: darken($accent-color, 20%); }
+    &:active { color: darken($accent-color, 30%); }
 }
 
 img {

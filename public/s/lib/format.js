@@ -1,3 +1,4 @@
+/* jslint browser: true, regexp: true */
 /* exported format */
 
 window.format = {
@@ -37,10 +38,21 @@ window.format = {
 		});
 	},
 
-	textToHtml: function (str) {
+	textToHtml: function(str) {
 		if(str)	return str.replace('<', '&lt;').replace('>', '&gt;'); // prevent script injection
 
 		// TODO: linkification, emoticons, markdown?
+	},
+
+	linkify: function(str) {
+		var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+		var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+		var emailAddressPattern = /(([a-zA-Z0-9_\-\.]+)@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6}))+/gim;
+
+		return str
+		.replace(urlPattern, '<a href="$&">$&</a>')
+		.replace(pseudoUrlPattern, '$1<a href="http://$2">$2</a>')
+		.replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
 	},
 
 	sanitize: function(str) {

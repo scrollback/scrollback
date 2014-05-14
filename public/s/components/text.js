@@ -10,15 +10,13 @@ $(function() {
 	textEl.render = function (el, text) {
 		el = el || $template.clone(false);
 		el.find('.nick').text(text.from);
-		el.find('.message').html(format.textToHtml(text.text));
+		el.find('.message').html(format.linkify(format.textToHtml(text.text)));
 		el.find('.timestamp').html(format.friendlyTime(text.time, new Date().getTime()));
 		el.data('index', text.time);
 
-		// TODO: add timestamps, add the 'timestamp-displayed' class.
-
 		if (timeBefore) {
-			if (Math.abs(text.time - timeBefore) < 300000) {
-				el.addClass("hide-timestamp");
+			if (Math.abs(text.time - timeBefore) > 300000) {
+				el.addClass("timestamp-displayed");
 			}
 		}
 

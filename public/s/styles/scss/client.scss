@@ -315,7 +315,6 @@ $tabitems: info, people, threads;
                 }
 
                 .person {
-                    @include slideup;
                     @extend %nofilter;
                     @extend %ease;
 
@@ -362,7 +361,6 @@ $tabitems: info, people, threads;
                 }
 
                 .thread {
-                    @include slideup;
                     @extend %nofilter;
                     @extend %ease;
 
@@ -719,6 +717,7 @@ $tabitems: info, people, threads;
 
             .chat {
                 @include fadein;
+                @extend %ease;
                 @extend %nofilter;
                 @extend %clearfix;
 
@@ -802,6 +801,14 @@ $tabitems: info, people, threads;
                     }
                 }
 
+                a {
+                    color: darken($accent-color, 15%);
+
+                    &:hover, &:focus { text-decoration: underline;}
+
+                    &:active { color: darken($accent-color, 30%); }
+                }
+
                 .nick {
                     float: left;
                     margin-left: -8em;
@@ -823,15 +830,15 @@ $tabitems: info, people, threads;
                     }
                 }
 
-                .timestamp {
-                    display: block;
-                    font-size: .9em;
-                    text-align: right;
-                    color: lighten($dark-color, 30%);
-                }
+                .timestamp { display: none; }
 
-                &.hide-timestamp {
-                    .timestamp { display: none; }
+                &.timestamp-displayed {
+                    .timestamp {
+                        display: block;
+                        font-size: .9em;
+                        text-align: right;
+                        color: lighten($dark-color, 30%);
+                    }
                 }
 
                 .chat-more {
@@ -1004,7 +1011,7 @@ $tabitems: info, people, threads;
     min-height: $bar-height;
     box-shadow: 0 -3px 2px -1px rgba(0,0,0,0.05);
 
-    .conf-mode &, .pref-mode & { display: none; }
+    .conf-mode &, .pref-mode &, .search-mode & { display: none; }
 
     .embed-mode & {
         left: $metaxxxxx;
