@@ -1,6 +1,7 @@
 var core = Object.create(require("./lib/emitter.js"));
 window.generate = require('./lib/generate');
 
+require('./public/s/lib/format.js');
 // libsb files
 require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(core);

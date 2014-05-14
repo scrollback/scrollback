@@ -1,6 +1,6 @@
 /* exported format */
 
-var format = {
+window.format = {
 	friendlyTime: function (time, currTime) {
 		var d = new Date(parseInt(time, 10)), n = new Date(currTime),
 			day_diff = (n.getTime()-d.getTime())/86400000,
