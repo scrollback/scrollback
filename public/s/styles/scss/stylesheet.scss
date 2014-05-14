@@ -1,5 +1,18 @@
 /* import less files */
-@import url('widgets.less');
+@import "widgets";
+
+@include keyframes(bounce) {
+    0%, 10%, 30%, 50%, 100% { @include transform(translate3d(0, 0, 0)); }
+    20% { @include transform(translate3d(0, -15px, 0)); }
+    40% { @include transform(translate3d(0, -10px, 0)); }
+}
+
+@mixin bounce($args: 5s infinite) {
+    -webkit-animation: bounce $args;
+    -moz-animation: bounce $args;
+    -ms-animation: bounce $args;
+    animation: bounce $args;
+}
 
 /* we need this to make text vertically centered in a page */
 html, body { height: 100%; }
@@ -11,9 +24,9 @@ section {
 }
 
 footer {
-    border-top: 1px solid darken(@dark-color, 10%);
-    background-color: @dark-color;
-    color: darken(@light-color, 20%);
+    border-top: 1px solid darken($dark-color, 10%);
+    background-color: $dark-color;
+    color: darken($light-color, 20%);
     text-align: center;
     font-size: .9em;
 
@@ -21,15 +34,10 @@ footer {
 
     @media only screen and (min-width: 700px) { padding: 2em; }
 
-    a { color: darken(@light-color, 20%); }
+    a { color: darken($light-color, 20%); }
 }
 
-.link-highlight() {
-    color: @light-color;
-    border-color: fade(@light-color, 60%);
-}
-
-.cover() {
+%cover {
     width: 100%;
     height: 100%;
     background-attachment: scroll;
@@ -38,21 +46,14 @@ footer {
     -moz-background-size: cover;
     background-size: cover;
     background-repeat: no-repeat;
-    background-color: @dark-color;
-    color: @light-color;
+    background-color: $dark-color;
+    color: $light-color;
 }
 
-.bg-slide(@slide) {
-    @320: %("../../img/covers/bg-%s-320.jpg", @slide);
-    @700: %("../../img/covers/bg-%s-700.jpg", @slide);
-    @1300: %("../../img/covers/bg-%s-1300.jpg", @slide);
-    @1600: %("../../img/covers/bg-%s-1600.jpg", @slide);
+@mixin bg-slide($slide) {
+    background-image: url(../../img/covers/bg-#{$slide}-320.jpg);
 
-    .cover;
-
-    background-image: url(@320);
-
-    @media only screen and (min-device-width: 320px) { background-image: url(@700); }
+    @media only screen and (min-device-width: 320px) { background-image: url(../../img/covers/bg-#{$slide}-700.jpg); }
 
     @media only screen and (min-device-width: 700px),
         only screen and (-webkit-min-device-pixel-ratio: 2) and (min-device-width: 320px),
@@ -60,7 +61,7 @@ footer {
         only screen and (-o-min-device-pixel-ratio: 2/1) and (min-device-width: 320px),
         only screen and (min-device-pixel-ratio: 2) and (min-device-width: 320px),
         only screen and (min-resolution: 192dpi) and (min-device-width: 320px),
-        only screen and (min-resolution: 2dppx) and (min-device-width: 320px) { background-image: url(@1300); }
+        only screen and (min-resolution: 2dppx) and (min-device-width: 320px) { background-image: url(../../img/covers/bg-#{$slide}-1300.jpg); }
 
     @media only screen and (min-width: 1300px),
         only screen and (-webkit-min-device-pixel-ratio: 2) and (min-device-width: 700px),
@@ -68,35 +69,35 @@ footer {
         only screen and (-o-min-device-pixel-ratio: 2/1) and (min-device-width: 700px),
         only screen and (min-device-pixel-ratio: 2) and (min-device-width: 700px),
         only screen and (min-resolution: 192dpi) and (min-device-width: 700px),
-        only screen and (min-resolution: 2dppx) and (min-device-width: 700px) { background-image: url(@1600); }
+        only screen and (min-resolution: 2dppx) and (min-device-width: 700px) { background-image: url(../../img/covers/bg-#{$slide}-1600.jpg); }
 }
 
-.cover-slide(@slide; @index) {
-    .cover;
+@mixin cover-slide($slide, $index) {
+    @extend %cover;
 
     position: relative;
     display: table;
 
     .cover-bg {
-        .bg-@{slide} { .opacity(1); }
+        .bg-#{$slide} { @include opacity(1); }
     }
 
     .cover-content {
         .slides {
             .slider {
-                margin-left: ( @index - 1 ) * ( -100% );
+                margin-left: ( $index - 1 ) * ( -100% );
 
-                li:nth-child(@{index}) {
-                    .opacity(1);
+                li:nth-child(#{$index}) {
+                    @include opacity(1);
 
                     pointer-events: auto;
                 }
             }
         }
 
-        .link-@{slide} {
-            color: @light-color;
-            border-color: fade(@light-color, 60%);
+        .link-#{$slide} {
+            color: $light-color;
+            border-color: transparentize($light-color, .4);
         }
     }
 }
@@ -110,7 +111,7 @@ footer {
 #cover { position: relative; }
 
 .cover-content {
-    .transition(.5s);
+    @include transition(.5s);
 
     position: relative;
     display: table-cell;
@@ -119,21 +120,19 @@ footer {
 
     .container {
         a {
-            color: @light-color;
-            border-bottom: 1px solid fade(@light-color, 40%);
+            color: $light-color;
+            border-bottom: 1px solid transparentize($light-color, .6);
 
             &:hover, &:focus {
-                color: @light-color;
-                border-color: fade(@light-color, 60%);
+                color: $light-color;
+                border-color: transparentize($light-color, .4);
             }
 
             &:active {
-                color: fade(@light-color, 20%);
-                border-color: fade(@light-color, 20%);
+                color: transparentize($light-color, .8);
+                border-color: transparentize($light-color, .8);
             }
         }
-
-        .button { .buttons; }
 
         .try {
             margin-left: 1em;
@@ -149,7 +148,7 @@ footer {
         overflow-x: hidden;
 
         .slider {
-            .transition(.5s);
+            @include transition(.5s);
 
             position: relative;
             left: 0;
@@ -159,11 +158,11 @@ footer {
             height: 100%;
             list-style: none;
 
-            .clearfix;
+            @extend %clearfix;
 
             & > li {
-                .opacity(0);
-                .transition(.5s);
+                @include opacity(0);
+                @include transition(.5s);
 
                 float: left;
                 width: 25%;
@@ -190,7 +189,7 @@ footer {
                 &:after {
                     content: " / ";
                     font-weight: 400;
-                    color: fade(@light-color, 60%);
+                    color: transparentize($light-color, .4);
                 }
 
                 &:last-child {
@@ -198,18 +197,18 @@ footer {
                 }
 
                 a {
-                    color: fade(@light-color, 60%);
-                    border-bottom: 1px solid fade(@light-color, 20%);
+                    color: transparentize($light-color, .4);
+                    border-bottom: 1px solid transparentize($light-color, .8);
                     cursor: pointer;
 
                     &:hover, &:focus {
-                        color: @light-color;
-                        border-color: fade(@light-color, 60%);
+                        color: $light-color;
+                        border-color: transparentize($light-color, .4);
                     }
 
                     &:active {
-                        color: fade(@light-color, 20%);
-                        border-color: fade(@light-color, 40%);
+                        color: transparentize($light-color, .8);
+                        border-color: transparentize($light-color, .6);
                     }
                 }
             }
@@ -219,67 +218,73 @@ footer {
 
 .cover-bg {
     div {
-        .opacity(0);
-        .transition(.5s);
+        @include opacity(0);
+        @include transition(.5s);
 
         position: absolute;
         top: 0;
         left: 0;
     }
 
-    .bg-home { .bg-slide(home); }
+    .bg-home {
+        @include bg-slide(home);
+        @extend %cover;
+    }
 
-    .bg-websites { .bg-slide(websites); }
+    .bg-websites {
+        @include bg-slide(websites);
+        @extend %cover;
+    }
 
-    .bg-conferences { .bg-slide(conferences); }
+    .bg-conferences {
+        @include bg-slide(conferences);
+        @extend %cover;
+    }
 
-    .bg-geeks { .bg-slide(geeks); }
+    .bg-geeks {
+        @include bg-slide(geeks);
+        @extend %cover;
+    }
 }
 
-.cover-home { .cover-slide(home, 1); }
+.cover-home { @include cover-slide(home, 1); }
 
-.cover-websites { .cover-slide(websites, 2); }
+.cover-websites { @include cover-slide(websites, 2); }
 
-.cover-conferences { .cover-slide(conferences, 3); }
+.cover-conferences { @include cover-slide(conferences, 3); }
 
-.cover-geeks { .cover-slide(geeks, 4); }
+.cover-geeks { @include cover-slide(geeks, 4); }
 
 .features {
-    background-color: @light-color;
+    background-color: $light-color;
 
     img {
         padding: 5px;
-        background-color: darken(@light-color, 5%);
-        border: 1px solid darken(@light-color, 10%);
-        border-radius: @roundness;
+        background-color: darken($light-color, 5%);
+        border: 1px solid darken($light-color, 10%);
+        border-radius: $roundness;
         margin: .5em 0;
     }
 }
 
-.testimonials {
-    background-color: darken(@light-color, 5%);
-
-    .zigzag(darken(@light-color, 5%); @light-color; top);
-}
+.testimonials { background-color: darken($light-color, 5%); }
 
 .pricing {
-    background-color: @light-color;
-
-    .zigzag(@light-color; darken(@light-color, 5%); top);
+    background-color: $light-color;
 
     .heading {
         padding: 1.2em 0 .5em 0;
         font-size: 1.4em;
         width: 100%;
-        border-bottom: 1px solid darken(@light-color, 5%);
+        border-bottom: 1px solid darken($light-color, 5%);
 
         h2 { display: inline; }
 
         .price {
-            .clearfix;
+            @extend %clearfix;
 
             float: right;
-            color: @accent-color;
+            color: $accent-color;
             font-weight: 300;
             position: relative;
 
@@ -291,7 +296,7 @@ footer {
                 text-transform: uppercase;
                 font-weight: 700;
                 font-size: 0.6em;
-                color: lighten(@dark-color, 40%);
+                color: lighten($dark-color, 40%);
             }
         }
     }
@@ -307,9 +312,9 @@ footer {
 }
 
 .arrow {
-    .opacity(1);
-    .bounce(5s infinite);
-    .transition(.5s);
+    @include opacity(1);
+    @include bounce(5s infinite);
+    @include transition(.5s);
 
     display: none;
     position: fixed;
@@ -325,14 +330,14 @@ footer {
 
 .scrolled {
     .arrow {
-        .opacity(0);
+        @include opacity(0);
 
         pointer-events: none;
     }
 }
 
 .fork {
-    .transition(.5s);
+    @include transition(.5s);
 
     display: none;
     position: fixed;
@@ -357,7 +362,7 @@ footer {
 }
 
 .close {
-    color: lighten(@dark-color, 20%);
+    color: lighten($dark-color, 20%);
     font-size: 3em;
     text-decoration: none;
     position: absolute;
@@ -366,9 +371,9 @@ footer {
     top: 0;
     cursor: pointer;
 
-    &:hover, &:focus { color: @dark-color; }
+    &:hover, &:focus { color: $dark-color; }
 
-    &:active { color: darken(@dark-color, 10%); }
+    &:active { color: darken($dark-color, 10%); }
 }
 
 .dim, .modal { display: none; }
@@ -380,7 +385,7 @@ footer {
         overflow: auto;
 
         .dim {
-            .fadein(.5s 1);
+            @include fadein(.5s 1);
 
             display: block;
             background: rgba(0,0,0,0.7);
@@ -394,9 +399,9 @@ footer {
     }
 
     .modal {
-        .appear(.5s 1);
+        @include appear(.5s 1);
 
-        background: @light-color;
+        background: $light-color;
         border-style: none;
         position: fixed;
         z-index: 5;
@@ -418,7 +423,7 @@ footer {
         }
 
         @media only screen and (min-width: 480px) {
-            border-radius: @roundness;
+            border-radius: $roundness;
             left: 50%;
             top: 50%;
             margin-left: -14.5em;
@@ -430,7 +435,7 @@ footer {
     }
 
     .arrow {
-        .opacity(0);
+        @include opacity(0);
 
         pointer-events: none;
     }
@@ -450,7 +455,7 @@ footer {
     }
 
     label {
-        .inputs;
+        @extend %inputs;
 
         width: 8em;
         text-align: left;
@@ -458,6 +463,6 @@ footer {
         top: 0;
         left: 0;
         border: 1px solid transparent;
-        color: lighten(@dark-color, 20%);
+        color: lighten($dark-color, 20%);
     }
 }

@@ -1,5 +1,5 @@
-/*jslint browser: true, indent: 4, regexp: true*/
-/*global $, libsb, Notification, webkitNotifications*/
+/* jslint browser: true, indent: 4, regexp: true */
+/* global $, libsb, lace */
 
 // Check if the array contains a value
 Array.prototype.contains = function(value) {
@@ -13,53 +13,6 @@ Array.prototype.contains = function(value) {
 
 	return false;
 };
-
-// Alert bar
-function showAlert(type, text) {
-	var $alert = $("<div class='alert-bar " + type + "'>" + text + "<a class='alert-remove close'>&times;</span></div>");
-
-	$("body").append($alert);
-
-	$(document).on("click", ".alert-remove", function() {
-		$(this).parent().remove();
-	});
-}
-
-// HTML5 notifications
-function requestNotifcation() {
-	if ("webkitNotifications" in window) {
-		if (webkitNotifications.checkPermission() !== 0) {
-			webkitNotifications.requestPermission();
-		} else {
-			return true;
-		}
-	} else if ("Notification" in window) {
-		if (Notification.permission !== "granted" && Notification.permission !== 'denied') {
-			Notification.requestPermission();
-		} else {
-			return true;
-		}
-	}
-}
-
-function showNotifcation(title, body, icon, id, func) {
-	var notification;
-
-	body = body.substr(0, 70);
-
-	if ("webkitNotifications" in window) {
-		if (webkitNotifications.checkPermission() === 0) {
-			notification = webkitNotifications.createNotification(icon, title, body);
-			notification.show();
-			notification.onclick = func;
-		}
-	} else if ("Notification" in window) {
-		if (Notification.permission === "granted") {
-			notification = new Notification(title, { dir: "auto", lang: "en-US", body: body, tag: id, icon: icon });
-			notification.onclick = func;
-		}
-	}
-}
 
 var browserNotify = (function() {
 	var hasFocus = false,
@@ -84,14 +37,17 @@ var browserNotify = (function() {
 
 	$(function() {
 		$(window).on("focus", function() {
-			if(originalTitle) {
+			if (originalTitle) {
 				document.title = originalTitle;
 				originalTitle = null;
 			}
 
+			if (titleTimer) {
+				clearInterval(titleTimer);
+			}
+
 			hasFocus = true;
-		})
-		.on("blur", function() {
+		}).on("blur", function() {
 			hasFocus = false;
 		});
 
@@ -107,17 +63,9 @@ var browserNotify = (function() {
 			originalTitle = document.title;
 		}
 
-		document.title = text.text;
-
-		if (titleTimer) {
-			clearTimeout(titleTimer);
-		}
-
-		titleTimer = setTimeout(function () {
-			document.title = originalTitle;
-			originalTitle = null;
-			titleTimer = null;
-		}, 3000);
+		titleTimer = setInterval(function() {
+			document.title = (document.title === originalTitle) ? text.text : originalTitle;
+		}, 1000);
 
 		if (important && soundTimer) {
 			clearTimeout(soundTimer);
@@ -132,8 +80,14 @@ var browserNotify = (function() {
 		}
 
 		if (important) {
-			showNotifcation("New mention on " + text.to, text.from + ": " + text.text, "s/img/scrollback.png", text.id, function() {
-				libsb.emit("navigate", { room: text.to, time: text.time });
+			lace.notify.show({
+				title: "New mention on " + text.to,
+				body: text.from + ": " + text.text,
+				icon: "s/img/scrollback.png",
+				tag: text.id,
+				action: function() {
+					libsb.emit("navigate", { room: text.to, time: text.time });
+				}
 			});
 		}
 	};
@@ -148,8 +102,3 @@ libsb.on('text-dn', function(text, next) {
 
 	next();
 });
-
-//$(function() {
-//	showAlert("info", "<a class='requestnotif alert-remove'>Enable desktop notifications</a> for replies.");
-//	$(document).on("click", ".requestnotif", requestNotifcation);
-//});

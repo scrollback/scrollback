@@ -29,22 +29,6 @@ $gutter: 1em;
 }
 
 @media screen and (min-width: 768px) {
-    @supports (display: -webkit-flex) or
-              (display: -moz-flex) or
-              (display: -ms-flexbox) or
-              (display: flex) {
-        .row {
-            display: -webkit-flex;
-            display: -moz-flex;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-flex-flow: row wrap;
-            -moz-flex-flow: row wrap;
-            -ms-flex-flow: row wrap;
-            flex-flow: row wrap;
-        }
-    }
-
     .row {
         @for $i from 1 through $columns {
             .col-#{$i} { width: ($i * 100% / $columns); }

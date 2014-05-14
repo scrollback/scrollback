@@ -20,8 +20,8 @@ Boston, MA 02111-1307 USA.
 
 module.exports = function(grunt) {
 
-  // Project configuration.
-  grunt.initConfig({
+// Project configuration.
+grunt.initConfig({
 	browserify : {
 		dist: {
 			files: {
@@ -32,7 +32,7 @@ module.exports = function(grunt) {
 			}
 		}
 	},
-    uglify: {
+	uglify: {
 		options: {
 			report: 'min'
 		},
@@ -49,7 +49,7 @@ module.exports = function(grunt) {
 				'public/sdk/browserNotify.js','public/sdk/dialog.js'],
 			dest: 'public/embed.uw.min.js'
 		}
-    },
+	},
 	concat: {
 		options: { separator: ';\n\n' },
 		client: {
@@ -92,7 +92,8 @@ module.exports = function(grunt) {
 			options: {
 				style: "compressed"
 			},
-			 files: {
+			files: {
+				"public/s/styles/gen/stylesheet.css": "public/s/styles/scss/stylesheet.scss",
 				"public/s/styles/gen/signup.css": "public/s/styles/scss/signup.scss",
 				"public/s/styles/gen/client.css": "public/s/styles/scss/client.scss"
 			}
@@ -108,9 +109,7 @@ module.exports = function(grunt) {
 			},
 			files: {
 				"public/style.css": "public/style.less",
-				"public/dummy.css": "public/dummy.less",
-				"public/s/styles/less/stylesheet.css": "public/s/styles/less/stylesheet.less",
-				"public/s/styles/less/client.css": "public/s/styles/less/client.less"
+				"public/dummy.css": "public/dummy.less"
 			}
 		}
 	},
@@ -119,22 +118,27 @@ module.exports = function(grunt) {
 			src: "public/s/styles/*/*.css"
 		}
 	},
-	imageEmbed: {
-		dist: {
+	manifest: {
+		generate: {
+			options: {
+				basePath: "public",
+				network: ["*"],
+				fallback: ["/ /offline.html"],
+				preferOnline: true,
+				timestamp: true
+			},
+			src: [
+				"s/js/*.js",
+				"s/lib/*.js",
+				"s/components/*.js",
+				"s/styles/gen/*.css",
+				"s/img/client/*.*",
+				"s/img/client/*/*.*",
+			],
+			dest: "public/manifest.appcache"
 		}
 	},
-	appcache: {
-		options: {
-			basePath: "public"
-		},
-		dist: {
-			dest: "public/manifest.appcache",
-			cache: "public/s/**/*",
-			network: "*",
-			fallback: "/ /offline.html"
-		}
-	},
-  });
+});
 
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-browserify');
@@ -145,13 +149,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-autoprefixer');
-  grunt.loadNpmTasks('grunt-image-embed');
-  grunt.loadNpmTasks('grunt-appcache');
+  grunt.loadNpmTasks('grunt-manifest');
 
   // Default task(s).
   grunt.event.on('watch', function(action, filepath, target) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
 
-  grunt.registerTask('default', ['browserify', 'uglify', 'concat', 'wrap', 'less', 'sass', 'autoprefixer', 'imageEmbed', 'appcache']);
+  grunt.registerTask('default', ['browserify', 'uglify', 'concat', 'wrap', 'less', 'sass', 'autoprefixer', 'manifest']);
 };

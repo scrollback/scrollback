@@ -1,6 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
-
+/* global $, libsb, lace */
 
 $(function(){
 	var signingUser, signupId;
@@ -32,6 +31,21 @@ $(function(){
 		next();
 	}, 500);
 
+	libsb.on("init-dn", function(init, next) {
+		if(init.auth && init.user.identities && !init.user.id ) {
+			if(init.resource == libsb.resource) {
+				signingUser = init.user;
+
+				libsb.emit('navigate', {
+					mode: "user", tab: "create", source: "libsb", view: "signup"
+				});
+
+				lace.modal.show("<div class='signup'><h1>Choose a username</h1><img src=''><form><input type='text' id='signup-id' name='username' placeholder='Enter username' autofocus><br/><input class='signup-save' type='submit' value='Create account'><input class='signup-cancel secondary modal-remove' type='button' value='cancel'></form></div>");
+			}
+		}
+		next();
+	},1000);
+
 	$(document).on("click", ".signup-cancel", function(){
 		libsb.emit('navigate', {
 			view: 'normal',
@@ -39,25 +53,4 @@ $(function(){
 			tab: 'info'
 		});
 	});
-
-	$(document).on("click", ".reload-page", function(){
-		location.reload();
-	});
-
-	libsb.on("init-dn", function(init, next) {
-		if(init.auth && init.user.identities && !init.user.id ) {
-			if(init.resource == libsb.resource) {
-				signingUser = init.user;
-
-				$("body").removeClass("popover-active");
-				$(".popover-body").removeClass("popover-bottom").removeClass("popover-top").removeClass("arrow-left").removeClass("arrow-right");
-				$(".layer").remove();
-
-				libsb.emit('navigate', {
-					mode: "user", tab: "create", source: "libsb", view: "signup"
-				});
-			}
-		}
-		next();
-	},1000);
 });

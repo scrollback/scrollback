@@ -128,13 +128,6 @@ libsb.on("navigate", function(state, next) {
 	next();
 }, 200);
 
-libsb.on("logout", function(p,n) {
-	libsb.emit('navigate', {
-		view: 'loggedout',
-	});
-	n();
-}, 1000);
-
 // On history change, load the appropriate state
 $(window).on("popstate", function() {
 	if (('state' in history && history.state !== null)) {

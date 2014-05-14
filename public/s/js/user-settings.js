@@ -53,4 +53,5 @@ libsb.on('pref-save', function(conf, next){
 		desktop: $('#desktop-notification').is(':checked')
 	}
 	next();
-})
+});
+
