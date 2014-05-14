@@ -25,8 +25,6 @@ require('./public/s/components/infinite.js');
 require('./public/s/components/hide-scroll.js');
 require('./public/s/components/navigation.js');
 require('./public/s/components/columns.js');
-require('./public/s/components/popover.js');
-require('./public/s/components/entry-segments.js');
 require('./public/s/components/text.js');
 require('./public/s/components/text-area.js');
 require('./public/s/components/compose.js');
