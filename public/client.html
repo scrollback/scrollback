@@ -29,6 +29,7 @@
 			<div class="scrollback-header">
 				<img src="/s/img/scrollback-small.png" alt="scrollback"/>
 			</div>
+
 			<div role="list" class="roomlist hide-scroll">
 				<a class="roomitem"><span class="name"></span><span class="unread"></span></a>
 			</div>
@@ -273,24 +274,8 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 		<script src="/s/components/persona.js"></script>
 
 		<script>
-			/*what is this?
-			'room', 'view', 'mode', 'tab', 'thread', 'query', 'text', 'time'
-			*/
 			$(function() {
-				var room = window.location.pathname.split("/")[1];
-
-				function start(q,n) {
-					libsb.emit('navigate', {
-						room: room,
-						view: 'normal',
-						mode: 'normal',
-						tab: 'people'
-					});
-					n();
-				}
-
 				libsb.connect();
-				libsb.on("inited", start);
 			});
 		</script>
 

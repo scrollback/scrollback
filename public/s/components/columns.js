@@ -39,4 +39,13 @@ $(function() {
             libsb.emit('navigate', { view: "meta", source: "swipe-right" });
         }
     });
+
+
+    // libsb.on('navigate', function(state, next) {
+    //     console.log(state);
+    //     if(state.view == "normal") {
+    //         $("body").removeClass("meta-view").removeClass("rooms-view");
+    //     }
+    //     next();
+    // },100);
 });

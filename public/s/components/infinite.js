@@ -71,7 +71,6 @@
 				if(fillBelow > fillSpace) {
 					recycle = recycle.concat(remove(fillBelow - fillSpace, "below"));
 				}
-
 				if(fillAbove < fillSpace && !pendingRequests.above && !atTop) {
 					pendingRequests.above = true;
 					cols = getGridColumns();
@@ -212,8 +211,8 @@
 		$logs.find(".infinite-items").empty();
 		$logs.data("lower-limit", false);
 		$logs.data("upper-limit", false);
+		if(typeof index !== undefined) $logs.data("index", index);
 		$logs.data("update-infinite")();
-		if(typeof index !== undefined) $logs.data("update-start", index);
 	};
 
 	$.fn.addBelow = function(el) {

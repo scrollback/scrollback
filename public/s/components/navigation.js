@@ -22,6 +22,34 @@
 
 var currentState = window.currentState = {};
 
+
+libsb.on("inited", function(){
+	var path  = window.location.pathname.substr(1);
+	var search = window.location.search.substr(1), properties={};
+	var state = {};
+	path = path.split("/");
+	state.source = "init";
+	if(path[0]){
+		state.room = path[0]
+	}
+
+	if(path[1]){
+		state.thread = path[1]
+	}
+
+	search.split("&").map(function(i) {
+		var q;
+		if(!i) return;
+		q = i.split("=");
+		state[q[0]] = q[1];
+	});
+	if(!state.mode) state.mode = "normal";
+	if(state.time) {
+		state.time = new Date(state.time).getTime();
+	}
+	if(!state.tab) state.tab = "people";
+	libsb.emit("navigate", state);
+});
 libsb.on("navigate", function(state, next) {
 	state.old = currentState;
 	state.changes = {};
@@ -46,6 +74,12 @@ libsb.on("navigate", function(state, next) {
 			currentState[prop] = state[prop];
 		}
 	});
+
+	if(!state.time && !state.room && !state.thread) {
+		if(!state.time && state.old.time) {
+			state.time = state.old.time;
+		}
+	}
 	next();
 }, 1000);
 
@@ -63,6 +97,8 @@ libsb.on("navigate", function(state, next) {
 		$(document.body).addClass(state.view + "-view");
 	}else if(state.view){
 		$(document.body).addClass(state.view + "-view");
+	}else {
+		// $("body").remove();
 	}
 
 	if(state.tab) {
@@ -75,8 +111,10 @@ libsb.on("navigate", function(state, next) {
 
 // On navigation, add history and change URLs
 libsb.on("navigate", function(state, next) {
-//	var threadTitle;
-
+	var threadTitle, addHistory = false;
+	if(state.source == "history"){
+		return;
+	}
 	function buildurl() {
 		var path, params = [];
 		switch(state.mode) {
@@ -93,13 +131,17 @@ libsb.on("navigate", function(state, next) {
 			case 'home':
 				path = '/me';
 				break;
+			case 'view':
+				
+				break;
 			default:
 				path = (state.room ? '/' + state.room + (
-						state.thread ? '/' + state.thread + '/' + format.sanitize(state.thread): ''
+						state.thread ? '/' + state.thread:"" /*+ '/' + format.sanitize(state.thread): ''*/
 					): '');
 		}
 
 		if(state.time) params.push('time=' + new Date(state.time).toISOString());
+		if(state.mode) params.push('mode=' + state.mode);
 		if(state.tab) params.push('tab=' + state.tab);
 
 		return path + (params.length ? '?' + params.join('&'): '');
@@ -107,7 +149,19 @@ libsb.on("navigate", function(state, next) {
 
 	function pushState() {
 		var url = buildurl();
-
+		if(Object.keys(state.changes).length == "") state.view = "normal";
+		if(state.source == "init" || state.source == "text-area") {
+			history.replaceState(state, null, url);
+			return;
+		}
+		
+		if((state.changes.view == "rooms" || state.changes.view == "meta" || state.changes.view =="normal") && Object.keys(state.changes).length == 1) {
+			history.pushState(state, null, url);
+			return;
+		}else if(Object.keys(state.changes).length == 0) {
+			history.pushState(state, null, url);
+			return;
+		}
 		if (url && history.pushState && url != location.pathname + location.search && state.source !== "history") {
 			if(state.changes.time && Object.keys(state.changes).length == 1) {
 				history.replaceState(state, null, url);
@@ -133,7 +187,6 @@ libsb.on("navigate", function(state, next) {
 $(window).on("popstate", function() {
 	if (('state' in history && history.state !== null)) {
 		var state = { }, prop;
-
 		for (prop in history.state) {
 			if (history.state.hasOwnProperty(prop)) {
 				if(prop !== 'old' && prop !== 'changes') {
@@ -143,7 +196,6 @@ $(window).on("popstate", function() {
 		}
 
 		state.source = "history";
-
 		libsb.emit("navigate", state);
 	}
 
