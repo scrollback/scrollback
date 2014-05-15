@@ -131,7 +131,7 @@ libsb.on("navigate", function(state, next) {
 // On history change, load the appropriate state
 $(window).on("popstate", function() {
 	if (('state' in history && history.state !== null)) {
-		var state = { }, prop;
+		var state = {}, prop;
 
 		for (prop in history.state) {
 			if (history.state.hasOwnProperty(prop)) {
