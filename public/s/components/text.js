@@ -84,6 +84,9 @@ $(function() {
 
 		$(".chat-entry").html(msg).focus();
 		setEndOfContenteditable($('.chat-entry').get(0));
+		$(".chat-entry").on("click", function() {
+			$(".chat").removeClass("current");
+		});
 	});
 
 	$(document).on("click", ".chat-more", function() {

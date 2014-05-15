@@ -379,8 +379,9 @@ $tabitems: info, people, threads;
 
                     @for $i from 1 through length($palette) {
                         $color: nth($palette, $i);
+                        $j: $i - 1;
 
-                        &.conv-#{$i} {
+                        &.conv-#{$j} {
                             border-right-color: $color;
 
                             &.current { background-color: lighten($color, 30%); }
@@ -778,8 +779,9 @@ $tabitems: info, people, threads;
                 /* set conversations dot colors */
                 @for $i from 1 through length($palette) {
                     $color: nth($palette, $i);
+                    $j: $i - 1;
 
-                    &.conv-#{$i}:before { background-color: $color; }
+                    &.conv-#{$j}:before { background-color: $color; }
                 }
 
                 &.long {
@@ -1050,7 +1052,9 @@ $tabitems: info, people, threads;
             outline: none;
 
             @for $i from 1 through length($palette) {
-                .conv-#{$i} & { border-color: nth($palette, $i); }
+                $j: $i - 1;
+
+                .conv-#{$j} & { border-color: nth($palette, $i); }
             }
         }
     }
@@ -1073,8 +1077,9 @@ $tabitems: info, people, threads;
 
         @for $i from 1 through length($palette) {
             $color: nth($palette, $i);
+            $j: $i - 1;
 
-            .conv-#{$i} & {
+            .conv-#{$j} & {
                 fill: $color;
 
                 &:hover, &:focus, &:active { fill: darken($color, 15%); }
