@@ -101,9 +101,9 @@ libsb.on("navigate", function(state, next) {
 		// $("body").remove();
 	}
 
-	if(state.tab) {
-		$(".tab, .pane").removeClass("current");
-		$(".tab-" + state.tab + ", .pane-" + state.tab).addClass("current");
+	if(state.tab) {	
+		$(".tab").removeClass("current");
+		$(".tab-" + state.tab).addClass("current");
 	}
 
 	next();

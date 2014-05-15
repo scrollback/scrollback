@@ -96,7 +96,7 @@ sock.on('connection', function (socket) {
 			if(data.type == 'init') storeInit(conn, data);
 			if(data.type == 'user') processUser(conn, data);
 			if(['getUsers', 'getTexts', 'getRooms', 'getThreads'].indexOf(data.type)>=0){
-				// console.log("sending response for: "+data.type+": " ,data);
+				console.log("sending response for: "+data.type+": " ,data);
 				conn.send(data);
 			}
 

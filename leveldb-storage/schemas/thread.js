@@ -1,4 +1,6 @@
-module.exports = function(types) {
+var types;
+module.exports = function(t) {
+    types = t;
 	return {
 		put : function(data, cb) {
 			var thread = {
@@ -9,16 +11,20 @@ module.exports = function(types) {
 				endTime: data.endTime
 			};
 			types.threads.put(thread);
+            if(cb) cb();
 		},
 		get: function(query, callback) {
 			var dbQuery = {};
-			if(query.ref) {
+			if(query.results) return callback();
+			if(typeof query.ref == "string") {
 				return types.threads.get(query.ref, function(err, thread) {
 					if(err || !thread) return callback();
 					query.results = [thread];
 					return callback();
 				});
-			}
+			}else if(query.ref){
+                return fetchThreads(query, callback);
+            }
 			
 			dbQuery.by = "tostartend";
 			dbQuery.gte = [];
@@ -27,7 +33,7 @@ module.exports = function(types) {
 			dbQuery.lte.push(query.to);
 			dbQuery.limit = 256;
 
-			if(query.time!=0 && query.time) {
+			if(query.time!==0 && query.time) {
 				if(query.after) {
 					dbQuery.gte.push(query.time);
 					if(query.after <= dbQuery.limit) dbQuery.limit = query.after;
@@ -55,5 +61,23 @@ module.exports = function(types) {
 				return callback();
 			});
 		}
-	}
+	};
 };
+
+function fetchThreads(query, cb) {
+    var callbackCount = 0, idCount = query.ref.length, results = [];
+    
+    query.ref.forEach(function (id) {
+        types.threads.get(id, function(err, t) {
+            if(!err && t) {
+                results.push(t);
+            }
+            
+            callbackCount++;
+            if(callbackCount == idCount) {
+                query.results = results;
+                cb();
+            }
+        });
+    });
+}

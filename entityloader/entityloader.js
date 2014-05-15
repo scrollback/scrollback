@@ -75,7 +75,12 @@ module.exports = function(c) {
 	core.on('getUsers', loadUser, "loader");
 	core.on('getRooms', loadUser, "loader");
 	core.on('getTexts', basicLoader, "loader");
-	core.on('getThreads',basicLoader, "loader");
+	core.on('getThreads',function(action, cb) {
+		if(action.to) basicLoader(action, cb);
+		else{
+			return loadUser(action, cb);
+		}
+	}, "loader");
 	core.on("init", initHandler, "loader");
 	core.on("user", userHandler, "loader");
 }

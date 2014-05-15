@@ -92,6 +92,13 @@ module.exports = function(core) {
 			})
 		}, "validation");
 	});
+
+
+	core.on("getThreads", function(action, callback) {
+		// do some basic validation for this.
+		//remember to is optional when q property is set.
+		callback();
+	}, "validation");
 };
 
 function basicValidation(action, callback) {

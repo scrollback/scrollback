@@ -8,7 +8,7 @@ $(function() {
 	var $threads = $(".pane-threads"),
 		room = "",
 		time = null; /* replace this with the time from the URL, if available. */
-
+		search = "";
 	// Set up infinite scroll here.
 
 	$threads.infinite({
@@ -27,12 +27,24 @@ $(function() {
 			}
 
 			function loadThreads() {
-				libsb.getThreads({
-					to: room, time: index, before: before, after: after
-				}, function(err, t) {
+				var query ={};
+
+				if(search) {
+					query = {
+						q: search
+					};
+
+					if(currentState.tab == "search-local") query.to = currentState.room || "";
+				}else {
+					query = {
+						to: currentState.room || "", time: index, before: before, after: after
+					};
+				}
+
+				libsb.getThreads(query, function(err, t) {
 					var threads = t.results;
 					if(err) throw err; // TODO: handle the error properly.
-					
+					console.log(t);
 					if(after === 0) {
 						if(threads.length < before) {
 							threads.unshift({id:"", title: "All Conversations"});
@@ -67,6 +79,16 @@ $(function() {
 
 	libsb.on('navigate', function(state, next) {
 		var reset = false;
+		if(['search-local', 'search-global', 'threads'].indexOf(state.tab)>=0) {
+			$(".pane-threads").addClass("current");
+		}else{
+			$(".pane-threads").removeClass("current");			
+		}
+
+		if(currentState.mode == "search") {
+			$(".tab-"+state.tab).addClass("current");
+		}
+
 		if(state.source == 'thread-area') return next();
 
 		if(!state.old) {
@@ -75,9 +97,18 @@ $(function() {
 		}else if(state.room != state.old.room) {
 			room = state.room;
 			reset = true;
+		}else if(state.query) {
+			reset = true;
+			search = state.query || "";
 		}
 
-		if(reset) $threads.reset(time);
+		if(reset) {
+			if(search) {
+				$threads.reset(0);
+			}else {
+				$threads.reset(time);
+			}
+		}
 
 		next();
 	});

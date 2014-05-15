@@ -25,7 +25,7 @@ module.exports = function (core) {
                     "room": message.to,
                     "author": message.from.replace(/guest-/g, ""),
                     "threads": message.threads
-                }
+                };
                 index(data);
             }
         }, "watchers");
@@ -40,7 +40,7 @@ module.exports = function (core) {
                 data.body = {
                     "description": room.description,
                     "type": room.type
-                }
+                };
                 index(data);
             }
         }, "watchers");
@@ -49,10 +49,11 @@ module.exports = function (core) {
         core.on('getTexts', function (qu, callback) {
             var data = {};
             var query = {};
-            console.log("query string: " + qu.q);
+            
             if (!qu.q) {
                 return callback();
             }
+            console.log("query string: " + qu.q);
             data.type = 'text';
             query = { query: { match: { text: qu.q }}};
             data.body =  query;   
@@ -64,10 +65,11 @@ module.exports = function (core) {
         core.on('getRooms', function (qu, callback) {
             var data = {};
             var query = {};
-            console.log("query string: " + qu.q);
             if (!qu.q) {
                 return callback();
             }
+
+            console.log("query string getThre: " + qu.q);
             data.type = 'room';
             query = { query: { match: { description: qu.q}}};
             data.body = query;
@@ -79,12 +81,19 @@ module.exports = function (core) {
         core.on('getThreads', function (qu, callback) {
             var data = {};
             var query = {};
-            console.log("query string: " + qu.q);
             if (!qu.q) {
                 return callback();
             }
+            console.log("query string threads: " + qu.q);
             data.type = 'text';
-            query = { query: { text: qu.q}};
+            query = { query: { match: {text: qu.q}}};
+            if(qu.to){
+                query.filter = {
+                    term: {
+                        room: qu.to
+                    }
+                };
+            }
             data.body = query;
             data.qu = qu;
             searchThreads(data,callback); 
@@ -112,10 +121,10 @@ function search(data, callback){
         type: data.type,
         timeout: searchTimeout,
         body: data.body
-    }
+    };
     client.search(searchParams).then (function (response) {
         data.qu.results = response.hits.hits;
-        callback(data.qu);
+        callback();
     }, function (error) {
         log(error);
     });
@@ -126,22 +135,11 @@ function searchThreads(data, callback){
         index: indexName,
         type: data.type,
         timeout: searchTimeout,
-        query: {
-            "filtered": {
-                "query": data.body.query,
-                "filter": {
-                    "numeric_range": {
-                        "time": {
-                            "lt": Date.now(),
-                            "gte": data.qu.afterThis
-                        }
-                    }
-                }
-            }
-        }    }
+        body:data.body
+    };
     //log(JSON.stringify(searchParams));
     client.search(searchParams).then (function (response) {
-        var threads = new Array();   
+        var threads = [];   
         var unique = {};
         response.hits.hits.forEach(function(e){ 
             if(e._source.threads) {
@@ -152,8 +150,8 @@ function searchThreads(data, callback){
                 }
             }
         });
-        data.qu.results = threads;
-        callback(data.qu);
+        data.qu.ref = threads;
+        callback();
     }, function (error) {
         log(error);
     });
