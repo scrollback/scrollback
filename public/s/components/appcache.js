@@ -1,11 +1,20 @@
 /* jslint browser: true, indent: 4, regexp: true*/
+/* global $ */
 
-// Check if a new cache is available on page load.
-window.addEventListener('load', function() {
-	window.applicationCache.addEventListener('updateready', function() {
-		if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
-			window.location.reload();
+$(function() {
+	// Check if a new cache is available on page load.
+	$(applicationCache).on("updateready", function() {
+		if (applicationCache.status === applicationCache.UPDATEREADY) {
+			location.reload();
 		}
-	}, false);
+	});
 
-}, false);
+	// Check if online or not
+	$(window).on("offline", function() {
+		$("body").addClass("offline-mode");
+	});
+
+	$(window).on("online", function() {
+		$("body").removeClass("offline-mode");
+	});
+});

@@ -34,8 +34,8 @@ $(function() {
 	};
 
 	// Expand long messages
-	$(document).on("click", ".long .message", function() {
-		$(this).parent(".long").toggleClass("active").scrollTop(0);
+	$(document).on("click", ".long", function() {
+		$(this).toggleClass("active").scrollTop(0);
 	});
 
 	$(document).on("click", ".chat", function() {
@@ -65,7 +65,7 @@ $(function() {
 	});
 
 	$(document).on("click", ".chat-more", function() {
-		lace.popover.show($(this), '<ul class="chat-menu"><li><a class="tweetmsg">Tweet message</a></li><li><a class="hidemsg">Hide message</a></li></ul>');
+		lace.popover.show($(this), $("#chat-menu").html());
 	});
 });
 

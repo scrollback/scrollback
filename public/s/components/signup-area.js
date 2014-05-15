@@ -40,7 +40,7 @@ $(function(){
 					mode: "user", tab: "create", source: "libsb", view: "signup"
 				});
 
-				lace.modal.show("<div class='signup'><h1>Choose a username</h1><img src=''><form><input type='text' id='signup-id' name='username' placeholder='Enter username' autofocus><br/><input class='signup-save' type='submit' value='Create account'><input class='signup-cancel secondary modal-remove' type='button' value='cancel'></form></div>");
+				lace.modal.show($("#signup-dialog").html());
 			}
 		}
 		next();

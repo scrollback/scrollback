@@ -515,7 +515,7 @@ $tabitems: info, people, threads;
         position: relative;
         background-color: darken($light-color, 5%);
         box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
-                    0 3px 2px -1px rgba(0,0,0,0.05);
+                    0 3px 2px -1px rgba(0,0,0,0.1);
         z-index: 20;
 
         .title-normal {
@@ -524,8 +524,6 @@ $tabitems: info, people, threads;
             display: table;
             width: 100%;
             height: $bar-height;
-
-            .search-focus & { display: none; }
 
             .meta-button {
                 display: none;
@@ -637,29 +635,42 @@ $tabitems: info, people, threads;
                 }
             }
         }
+    }
 
-        .search-bar {
-            display: none;
+    .search-bar {
+        @include transform(translate3d(0, ( $bar-height * -1 ), 0));
+        @include opacity(0);
+        @include transition(.3s, ease-out);
 
-            .search-focus & {
-                @include appear;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 20;
+        height: $bar-height;
+        padding: .15em;
+        background-color: darken($light-color, 5%);
 
-                display: block;
-                width: 100%;
-                height: $bar-height;
-                padding: .15em;
-            }
+        .search-focus & {
+            @include transform(translate3d(0, 0, 0));
+            @include opacity(1);
+            @extend %nofilter;
 
-            .search-entry {
-                position: relative;
-                display: block;
-                width: 100%;
-                margin: 0;
-                background-image: url(../../img/client/icons/search-gray.svg);
-                background-position: right center;
-                background-repeat: no-repeat;
-                z-index: 30;
-            }
+            box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
+                        0 3px 2px -1px rgba(0,0,0,0.1);
+        }
+
+        .search-entry {
+            position: relative;
+            display: block;
+            width: 100%;
+            margin: 0;
+            padding-left: 3.5em;
+            background-image: url(../../img/client/icons/search-gray.svg);
+            background-position: .5em center;
+            background-repeat: no-repeat;
+            background-size: 3em 2em;
+            z-index: 30;
         }
     }
 
@@ -730,7 +741,7 @@ $tabitems: info, people, threads;
 
                 @media #{$breakpointxxxx} { padding-left: 22%; }
 
-                @media #{$breakpointxx} { padding-left: 3em; }
+                @media #{$breakpointxx} { padding-left: 3.5em; }
 
                 &:hover, &:focus { background-color: darken($light-color, 1%); }
 
@@ -747,7 +758,7 @@ $tabitems: info, people, threads;
 
                     .timestamp { color: lighten($dark-color, 10%); }
 
-                    .chat-more { left: 0; }
+                    .chat-more { @include transform(translate3d(0, 0, 0)); }
                 }
 
                 &:before {
@@ -842,6 +853,7 @@ $tabitems: info, people, threads;
                 }
 
                 .chat-more {
+                    @include transform(translate3d(-3.5em, 0, 0));
                     @extend %ease;
 
                     position: absolute;
@@ -849,12 +861,12 @@ $tabitems: info, people, threads;
                     background-color: darken($light-color, 1%);
                     background-image: url(../../img/client/icons/more.svg);
                     background-repeat: no-repeat;
-                    background-position: center center;
-                    background-size: 3em 3em;
-                    height: 3.5em;
+                    background-position: top center;
+                    background-size: 3.5em 3.5em;
                     width: 3.5em;
+                    height: 3.5em;
                     top: 0;
-                    left: -100%;
+                    left: 0;
                     cursor: pointer;
                 }
             }
@@ -1009,7 +1021,7 @@ $tabitems: info, people, threads;
     z-index: 30;
     padding: 0;
     min-height: $bar-height;
-    box-shadow: 0 -3px 2px -1px rgba(0,0,0,0.05);
+    box-shadow: 0 -3px 2px -1px rgba(0,0,0,0.1);
 
     .conf-mode &, .pref-mode &, .search-mode & { display: none; }
 
@@ -1123,7 +1135,7 @@ $tabitems: info, people, threads;
 
 .infinite-items { width: 100%; }
 
-.signup {
+.signup-dialog {
     width: 27em;
 
     input { margin: .25em; }
@@ -1133,18 +1145,16 @@ $tabitems: info, people, threads;
     @media #{$breakpointxx} { width: 100%; }
 }
 
-.loggedout-msg {
+.loggedout-dialog {
     .button { width: 100%; }
 }
 
 .popover-body {
-    .user-menu {
-        width: 15em;
+    width: 15em;
 
-        .guest-user & { padding: .5em 1em; }
+    .login-menu {
+        padding: .5em 1em;
 
         .button { display: block; }
     }
-
-    .chat-menu { width: 15em; }
 }
