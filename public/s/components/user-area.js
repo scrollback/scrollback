@@ -8,9 +8,9 @@ $(function(){
 
 	$(".user-area").on("click", function() {
 		if ($("body").hasClass("guest-user")) {
-			lace.popover.show($(this), '<div class="user-menu">Sign in to scrollback with<a class="button facebook">Facebook</a><a class="button persona">Persona</a></div>');
+			lace.popover.show($(this), $("#login-menu").html());
 		} else {
-			lace.popover.show($(this), '<ul class="user-menu"><li><a class="userprefs">Account settings</a></li><li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li><li><a class="logout">Logout</a></li></ul>');
+			lace.popover.show($(this), $("#user-menu").html());
 		}
 	});
 
@@ -33,7 +33,7 @@ $(function(){
 			view: 'loggedout',
 		});
 
-		lace.modal.show("<div class='loggedout-msg'><h1>You\'ve been logged out!</h1><a class='button reload-page modal-remove'>Go back as guest</a></div>");
+		lace.modal.show($("#loggedout-dialog").html());
 
 		n();
 	}, 1000);

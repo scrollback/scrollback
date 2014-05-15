@@ -1,16 +1,16 @@
 var core = Object.create(require("./lib/emitter.js"));
 window.generate = require('./lib/generate');
 
-require('./public/s/lib/format.js');
 // libsb files
 require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(core);
 require('./socket/socket-client')(core);
 
 require('./public/s/js/lace.js');
+require('./public/s/js/format.js');
 require('./public/s/js/swipe-events.js');
 
-// client uis 
+// client uis
 require('./email/email-client.js');
 require('./http/notifications-client.js');
 require('./http/seo-client.js');
@@ -19,7 +19,7 @@ require('./http/userProfile-client.js');
 require('./http/embed-client.js');
 require('./irc/irc-client.js');
 
-// components 
+// components
 require('./public/s/components/appcache.js');
 require('./public/s/components/infinite.js');
 require('./public/s/components/hide-scroll.js');
@@ -38,7 +38,6 @@ require('./public/s/components/info-area.js');
 require('./public/s/components/room-item.js');
 require('./public/s/components/room-list.js');
 require('./public/s/components/search.js');
-require('./public/s/components/timeline.js');
 require('./public/s/components/follow-room.js');
 require('./public/s/components/facebook.js');
 require('./public/s/components/settings-area.js');
