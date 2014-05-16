@@ -182,7 +182,7 @@ $(function() {
 			timeout = 0;
 		}, 1000);
 
-		var chats = $logs.find('.chat'),
+		var chats = $logs.find('.chat-item'),
 			time = chats.eq(0).data("index"),
 			parentOffset = $logs.offset().top,
 			i;

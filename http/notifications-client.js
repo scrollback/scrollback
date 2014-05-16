@@ -2,8 +2,8 @@
 var formField = require("../lib/formField.js");
 
 libsb.on('pref-show', function(conf, next){
-	conf.sound = {
-		html: "<div class='list-view list-view-sound-settings'> " + formField('Sound Notification ', 'toggle', 'sound-notifcation') + formField('Desktop Notification ', 'toggle', 'desktop-notification') + " </div>",
+	conf.notification = {
+		html: "<div class='list-view list-view-notification-settings'> " + formField('Sound notifications ', 'toggle', 'sound-notifcation') + formField('Desktop notifications ', 'toggle', 'desktop-notification') + " </div>",
 		text: "Notifications",
 		prio: 800
 	}
