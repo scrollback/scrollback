@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html manifest="/manifest.appcache" lang="en">
+<!--<html manifest="/manifest.appcache" lang="en">-->
+
+<html lang="en">
 
 	<head>
 		<meta charset="utf-8">
@@ -25,92 +27,53 @@
 	</head>
 
 	<body>
-		<section class="rooms">
-			<div class="scrollback-header">
+		<section class="room-area">
+			<div class="room-header">
 				<img src="/s/img/client/scrollback-small.svg" alt="scrollback"/>
 			</div>
-			<div role="list" class="roomlist hide-scroll">
-				<a class="roomitem"><span class="name"></span><span class="unread"></span></a>
+			<div role="list" class="room-list hide-scroll">
+				<a class="room-item"><span class="room-name"></span><span class="unread"></span></a>
 			</div>
 		</section>
-		<section class="meta">
-			<div class="meta-content chat-meta">
-				<ul role="tablist" class="tabs">
-					<li role="tab" class="rooms-button"><h2>Rooms</h2></li>
-					<li role="tab" class="tab tab-info mode-normal"><h2>Info</h2></li>
-					<li role="tab" class="tab tab-people mode-normal"><h2>People</h2></li>
-					<li role="tab" class="tab tab-threads mode-normal"><h2>Threads</h2></li>
-					<li role="tab" class="tab tab-search-this mode-search"><h2>This room</h2></li>
-					<li role="tab" class="tab tab-search-all mode-search"><h2>All rooms</h2></li>
-				</ul>
-				<div role="banner" class="search-banner"></div>
+		<section class="meta-area">
+			<ul role="tablist" class="meta-tabs">
+				<li role="tab" class="rooms-button"></li>
+				<li role="tab" class="tab tab-info mode-normal"></li>
+				<li role="tab" class="tab tab-people mode-normal"></li>
+				<li role="tab" class="tab tab-threads mode-normal"></li>
+				<li role="tab" class="tab tab-search-this mode-search"><h2>This room</h2></li>
+				<li role="tab" class="tab tab-search-all mode-search"><h2>All rooms</h2></li>
+				<li class="header mode-conf"><h2>Room settings</h2></li>
+				<li class="header mode-pref"><h2>Account settings</h2></li>
+			</ul>
+			<div class="meta-panes">
 				<div role="tabpanel" class="pane hide-scroll pane-info">
-					<h1 class="name"></h1>
-					<p class="description"></p>
+					<h1 class="info-title"></h1>
+					<p class="info-description"></p>
 					<a class="button configure-button">Configure room</a>
 				</div>
 				<div role="tabpanel" class="pane hide-scroll pane-people">
 					<a class="person">
-						<img class="picture" src="" alt="">
-						<span class="name"></span>
+						<img class="person-avatar" src="" alt="">
+						<span class="person-name"></span>
 					</a>
 				</div>
 				<div role="tabpanel" class="pane hide-scroll pane-threads">
 					<a class="thread" href="">
-						<h3 class="title"></h3>
-						<p class="snippet"></p>
+						<h3 class="thread-title"></h3>
+						<p class="thread-snippet"></p>
 					</a>
 				</div>
 			</div>
-			<div class="settings-header">
-				<a class="rooms-button"></a>
-				<h2>Room settings</h2>
+			<div class="meta-conf">
+				<a class="list-item"></a>
 			</div>
-			<div class="meta-content settings-menu">
-				<ul></ul>
-			</div>
-			<div class="meta-content userprefs-menu">
-				<ul></ul>
-			</div>
-			<div class="meta-content userprefs-menu"><ul></ul></div>
-		</section>
-		<section role="main" class="mainview chatview">
-			<div class="titlebar">
-				<div class="title-normal">
-					<a class="meta-button"></a>
-					<div class="left-area">
-						<h1 class="title" id="roomTitle"></h1>
-						<a class="follow-button" role="button"></a>
-					</div>
-					<div class="right-area">
-						<div class="user-area">
-							<div class="avatar">
-								<img alt="" id="userGrav" >
-							</div>
-							<div class="userdetail">
-								<div class="sb-user"></div>
-								<div class="sign-in">Sign in</div>
-							</div>
-						</div>
-						<a class="search-button" role="button"></a>
-					</div>
-				</div>
-			</div>
-			<div class="search-bar">
-				<input class="search-entry" type="search" placeholder="Type to search...">
-			</div>
-			<div class="chat-position"></div>
-			<div class="chat-area hide-scroll">
-				<p class="chat">
-					<span class="nick"></span>
-					<span class="message"></span>
-					<span class="timestamp"></span>
-					<span class="chat-more"></span>
-				</p>
+			<div class="meta-pref">
+				<a class="list-item"></a>
 			</div>
 		</section>
-		<section role="main" class="mainview settingsview">
-			<div class="titlebar">
+		<section role="main" class="main-area settings-area">
+			<div class="title-bar">
 				<div class="title-normal">
 					<a class="meta-button"></a>
 					<div class="action-buttons">
@@ -119,109 +82,47 @@
 					</div>
 				</div>
 			</div>
-			<div class="settings-area">
-
-	<!-- 			<div class="pane pane-general-settings">
-					<div class="settings-item">
-						<div class="settings-label">
-							Name
-						</div>
-						<div class="settings-action">
-							<input type="text" id="displayname" name="displayname">
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label">
-							Description
-						</div>
-						<div class="settings-action">
-							<textarea id="description"></textarea>
-						</div>
-					</div>
+			<div class="conf-area">
+			</div>
+			<div class="pref-area">
+			</div>
+		</section>
+		<section role="main" class="main-area content-area">
+			<div class="title-bar">
+				<a class="meta-button"></a>
+				<div class="left-area">
+					<h1 class="title" id="roomTitle"></h1>
+					<a class="follow-button" role="button"></a>
 				</div>
-				<div class="pane pane-irc-settings">
-					<div class="settings-item">
-						<div class="settings-label">
-							IRC Channel
+				<div class="right-area">
+					<div class="user-area">
+						<div class="avatar">
+							<img alt="" id="userGrav" >
 						</div>
-						<div class="settings-action">
-							<input type="text" id="ircchannel" name="ircchannel">
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label">
-							IRC Server
-						</div>
-						<div class="settings-action">
-							<input type="text" id="ircserver" name="ircserver">
+						<div class="userdetail">
+							<div class="sb-user"></div>
+							<div class="sign-in">Sign in</div>
 						</div>
 					</div>
+					<a class="search-button" role="button"></a>
 				</div>
-				<div class="pane pane-twitter-settings">
-					<div class="settings-item">
-						<div class="settings-label">
-							Twitter hashtags
-						</div>
-						<div class="settings-action">
-							<span class="entry multientry" id="twitterhash"><span contenteditable class="item"></span></span>
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label">
-							Signed in as <a href="">satya164</a>
-						</div>
-						<div class="settings-action">
-							<a href="" class="twitter-account">
-								<img src="https://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" alt="satya164">
-								<span class="change">Change</span>
-							</a>
-						</div>
-					</div>
-				</div>
-				<div class="pane pane-thread-settings">
-					<div class="settings-item">
-						<div class="settings-label inline">
-							Group messages into threads
-						</div>
-						<div class="settings-action inline">
-							<input class="switch" type="checkbox" id="thread" name="thread"><label for="thread"></label>
-						</div>
-					</div>
-				</div>
-				<div class="pane pane-seo-settings">
-					<div class="settings-item">
-						<div class="settings-label inline">
-							Allow search engines to index room
-						</div>
-						<div class="settings-action inline">
-							<input class="switch" type="checkbox" id="allow-index" name="allow-index"><label for="allow-index"></label>
-						</div>
-					</div>
-				</div>
-				<div class="pane pane-embed-settings">
-					<div class="settings-item">
-						<p>Place the following code just before the closing <code>&lt;/body&gt;</code> tag.</p>
-						<pre><code>&lt;script&gt;
-// Scrollback embed code
-window.scrollback = {
-	streams:["scrollbackteam"],
-	theme: 'light',
-	ticker: true
-};
-
-/***** don't edit below *****/
-(function(d,s,h,e){e=d.createElement(s);e.async=1;
-e.src=h+'/client.min.js';scrollback.host=h;
-d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
-(document,'script',(location.protocol=="https:"?"https:":"http:")+'//scrollback.io'));
-&lt;/script&gt;</code></pre>
-					</div>
-				</div> -->
+			</div>
+			<div class="search-bar">
+				<input class="search-entry" type="search" placeholder="Type to search...">
+			</div>
+			<div class="chat-position"></div>
+			<div class="chat-area hide-scroll">
+				<p class="chat-item">
+					<span class="chat-nick"></span>
+					<span class="chat-message"></span>
+					<span class="chat-timestamp"></span>
+					<span class="chat-more"></span>
+				</p>
 			</div>
 		</section>
 		<section class="chat-input">
-			<div role="textbox" class="textarea chat-entry" contenteditable></div>
-			<svg version="1.1" class="send" xmlns="http://www.w3.org/2000/svg">
+			<div role="textbox" class="chat-entry" contenteditable></div>
+			<svg version="1.1" class="chat-send" xmlns="http://www.w3.org/2000/svg">
 				<g transform="matrix(1.4744843,0,0,1.4744843,-3.6938117,-15.489686)">
 					<path d="m 5.1264798,20 c 0,-2 7.2e-4,-2 2,-2 l 6.0002502,0 -3.00025,-4 c 0,-3 1,-3 5,1 4.99276,5.99132 5,4 0,10 -4,4 -5,4 -5,1 l 3.00025,-4 -6.0002502,0 c -2.06669,0 -2,0 -2,-2 z"/>
 				</g>
@@ -239,7 +140,7 @@ d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
 
 		<script type="text/template" id="user-menu">
 			<ul class="user-menu">
-				<li><a class="userprefs">Account settings</a></li>
+				<li><a class="userpref">Account settings</a></li>
 				<li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li>
 				<li><a class="logout">Logout</a></li>
 			</ul>

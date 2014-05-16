@@ -17,7 +17,7 @@ function setEndOfContenteditable(contentEditableElement)
         selection.addRange(range);//make the range you have just created the visible selection
     }
     else if(document.selection)//IE 8 and lower
-    { 
+    {
         range = document.body.createTextRange();//Create a range (a range is a like the selection but invisible)
         range.moveToElementText(contentEditableElement);//Select the entire contents of the element with the range
         range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
@@ -26,13 +26,13 @@ function setEndOfContenteditable(contentEditableElement)
 }
 
 $(function() {
-	var $template = $(".chat").eq(0);
+	var $template = $(".chat-item").eq(0);
 
 	textEl.render = function (el, text) {
 		el = el || $template.clone(false);
-		el.find('.nick').text(text.from);
-		el.find('.message').html(format.linkify(format.textToHtml(text.text)));
-		el.find('.timestamp').html(format.friendlyTime(text.time, new Date().getTime()));
+		el.find('.chat-nick').text(text.from);
+		el.find('.chat-message').html(format.linkify(format.textToHtml(text.text)));
+		el.find('.chat-timestamp').html(format.friendlyTime(text.time, new Date().getTime()));
 		el.data('index', text.time);
 
 		if (timeBefore) {
@@ -59,7 +59,7 @@ $(function() {
 		$(this).toggleClass("active").scrollTop(0);
 	});
 
-	$(document).on("click", ".chat", function() {
+	$(document).on("click", ".chat-item", function() {
 		var classes = $("body").attr('class').replace(/conv-\d+/g, '');
 
 		$("body").attr('class', classes);
@@ -72,10 +72,10 @@ $(function() {
 			}
 		});
 
-		$(".chat").not(this).removeClass("current");
+		$(".chat-item").not(this).removeClass("current");
 		$(this).addClass("current");
 
-		var nick = $(this).children(".nick").text(),
+		var nick = $(this).children(".chat-nick").text(),
 			msg = $(".chat-entry").text().replace(/@\S+[\s+{1}]?$/, "");
 
 		if (msg.indexOf(nick) < 0) {
@@ -85,7 +85,7 @@ $(function() {
 		$(".chat-entry").html(msg).focus();
 		setEndOfContenteditable($('.chat-entry').get(0));
 		$(".chat-entry").on("click", function() {
-			$(".chat").removeClass("current");
+			$(".chat-item").removeClass("current");
 		});
 	});
 

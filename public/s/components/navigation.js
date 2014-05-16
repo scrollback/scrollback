@@ -64,11 +64,6 @@ libsb.on("navigate", function(state, next) {
 		$(document.body).addClass(state.view + "-view");
 	}
 
-	if(state.tab) {
-		$(".tab, .pane").removeClass("current");
-		$(".tab-" + state.tab + ", .pane-" + state.tab).addClass("current");
-	}
-
 	next();
 }, 999);
 

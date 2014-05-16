@@ -21,145 +21,140 @@ $breakpointx: "screen and (max-width: 18em)";
 
 $settingsitems: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed;
 $tabitems: info, people, threads;
+$modeitems: normal, search, conf, pref, home;
 
 /* widget styles */
-.rooms {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: $roomxxxxx;
-    min-height: 100%;
-    background-color: $dark-color;
-    color: $light-color;
-    z-index: 10;
-
-    @media #{$breakpointxxxx} {
-        width: $roomxxxx;
-        left: $roomxxxx * -1;
-    }
-
-    @media #{$breakpointxxx} {
-        width: $roomxxx;
-        left: ( $roomxxx + $metaxxx ) * -1;
-    }
-
-    @media #{$breakpointxx} {
-        width: $roomxx;
-        left: ( $roomxx + $metaxx ) * -1;
-    }
-
-    @media #{$breakpointx} {
-        width: $roomx;
-        left: ( $roomx + $metax ) * -1;
-    }
-
-    .embed-mode & { display: none; }
-
-    .scrollback-header {
-        height: $bar-height;
-        padding: .5em 1em;
-        border-bottom: 1px solid lighten($dark-color, 5%);
-        cursor: pointer;
-
-        img {
-            height: 2.5em;
-            width: auto;
-        }
-    }
-
-    .roomlist {
-        height: 100%;
-        overflow-y: scroll;
-        -webkit-overflow-scrolling : touch;
-
-        .roomitem {
-            @extend %ease;
-            @extend %clearfix;
-
-            display: block;
-            padding: 1em;
-            font-weight: 700;
-            color: $light-color;
-            border-bottom: 1px solid lighten($dark-color, 5%);
-            cursor: pointer;
-
-            &.search-term {
-                display: none;
-
-                .search-mode & {
-                    display: block;
-                    background: url(../../img/client/icons/search-light.svg) no-repeat 90% center 2em/2em;
-                }
-            }
-
-            &.current {
-                position: relative;
-                background-color: darken($dark-color, 5%);
-
-                &:after {
-                    content: "";
-                    display: block;
-                    position: absolute;
-                    right: 0;
-                    top: 1.2em;
-                    border-top: .6em solid transparent;
-                    border-bottom: .6em solid transparent;
-                    border-right: .6em solid darken($light-color, 5%);
-                }
-            }
-
-            &:hover, &:focus, &.current:hover, &.current:focus {
-                background-color: darken($dark-color, 10%);
-            }
-
-            .unread {
-                float: right;
-                min-width: 2em;
-                text-align: center;
-                font-size: .8em;
-                background-color: $accent-color;
-                color: $light-color;
-                border-radius: $roundness;
-
-                &:empty { display: none; }
-
-                &.mentioned { background-color: $error-color; }
-            }
-        }
-    }
+%column {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	min-height: 100%;
 }
 
-.meta {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: $roomxxxxx;
-    width: $metaxxxxx;
-    border-right: 1px solid darken($light-color, 15%);
-    background-color: darken($light-color, 5%);
-    color: $dark-color;
-    z-index: 20;
+.room-area {
+	@extend %column;
 
-    @media #{$breakpointxxxx} {
-        width: $metaxxxx;
-        left: 0;
-    }
+	left: 0;
+	width: $roomxxxxx;
+	background-color: $dark-color;
+	color: $light-color;
 
-    @media #{$breakpointxxx} {
-        width: $metaxxx;
-        left: $metaxxx * -1;
-    }
+	@media #{$breakpointxxxx} {
+		width: $roomxxxx;
+		left: $roomxxxx * -1;
+	}
 
-    @media #{$breakpointxx} {
-        width: $metaxx;
-        left: $metaxx * -1;
-    }
+	@media #{$breakpointxxx} {
+		width: $roomxxx;
+		left: ( $roomxxx + $metaxxx ) * -1;
+	}
 
-    @media #{$breakpointx} {
-        width: $metax;
-        left: $metax * -1;
-    }
+	@media #{$breakpointxx} {
+		width: $roomxx;
+		left: ( $roomxx + $metaxx ) * -1;
+	}
+
+	@media #{$breakpointx} {
+		width: $roomx;
+		left: ( $roomx + $metax ) * -1;
+	}
+
+	.embed-mode & { display: none; }
+}
+
+.room-header {
+	height: $bar-height;
+	padding: .5em 1em;
+	border-bottom: 1px solid lighten($dark-color, 5%);
+	cursor: pointer;
+
+	img {
+		height: 2.5em;
+		width: auto;
+	}
+}
+
+.room-list {
+	height: 100%;
+	overflow-y: scroll;
+	-webkit-overflow-scrolling : touch;
+}
+
+.room-item {
+	@extend %ease;
+
+	display: block;
+	padding: 1em;
+	font-weight: 700;
+	color: $light-color;
+	border-bottom: 1px solid lighten($dark-color, 5%);
+
+	&:hover, &:focus, &.current:hover, &.current:focus {
+		color: $light-color;
+		background-color: darken($dark-color, 10%);
+	}
+
+	&.current {
+		position: relative;
+		background-color: darken($dark-color, 5%);
+
+		&:after {
+			content: "";
+			display: block;
+			position: absolute;
+			right: 0;
+			top: 1.2em;
+			border-top: .6em solid transparent;
+			border-bottom: .6em solid transparent;
+			border-right: .6em solid darken($light-color, 5%);
+		}
+	}
+
+	&.search-term { background: url(../../img/client/icons/search-light.svg) no-repeat 90% center 2em/2em; }
+
+	.unread {
+		float: right;
+		min-width: 2em;
+		text-align: center;
+		font-size: .8em;
+		background-color: $accent-color;
+		color: $light-color;
+		border-radius: $roundness;
+
+		&:empty { display: none; }
+
+		&.mentioned { background-color: $error-color; }
+	}
+}
+
+.meta-area {
+	@extend %column;
+
+	left: $roomxxxxx;
+	width: $metaxxxxx;
+	border-right: 1px solid darken($light-color, 15%);
+	background-color: darken($light-color, 5%);
+	color: $dark-color;
+
+	@media #{$breakpointxxxx} {
+		width: $metaxxxx;
+		left: 0;
+	}
+
+	@media #{$breakpointxxx} {
+		width: $metaxxx;
+		left: $metaxxx * -1;
+	}
+
+	@media #{$breakpointxx} {
+		width: $metaxx;
+		left: $metaxx * -1;
+	}
+
+	@media #{$breakpointx} {
+		width: $metax;
+		left: $metax * -1;
+	}
 
     .embed-mode & {
         width: $metaxxxxx;
@@ -185,911 +180,260 @@ $tabitems: info, people, threads;
             left: $metax * -1;
         }
     }
-
-    .chat-meta {
-        .conf-mode &, .pref-mode & { display: none; }
-
-        .tabs {
-            list-style: none;
-            display: table;
-            table-layout: fixed;
-            margin: 0;
-            width: 100%;
-            height: $bar-height;
-            border-bottom: 1px solid darken($light-color, 15%);
-
-            li {
-                @include opacity(0.3);
-                @include transform(rotate(0deg)); /* hack to fix invisible items in android browser */
-                @extend %ease;
-
-                display: table-cell;
-                vertical-align: middle;
-                text-align: center;
-                background-position: center center;
-                background-repeat: no-repeat;
-                background-size: 2em 2em;
-                color: $dark-color;
-                cursor: pointer;
-
-                &:hover, &:focus, &:active, &.current {
-                    @include opacity(1);
-                    @extend %nofilter;
-
-                    background-color: darken($light-color, 15%);
-                }
-
-                @each $item in $tabitems {
-                    &.tab-#{$item} { background-image: url(../../img/client/icons/#{$item}.svg); }
-                }
-
-                &.current { background-color: darken($light-color, 10%); }
-
-                &.mode-normal {
-                    .search-mode & { display: none; }
-                }
-
-                &.mode-search {
-                    display: none;
-
-                    .search-mode & {
-                        display: table-cell;
-
-                        h2 {
-                            display: block;
-                            margin: 0;
-                        }
-                    }
-                }
-
-                &.rooms-button {
-                    display: none;
-
-                    @media #{$breakpointxxxx} {
-                        @include transform(rotate(0deg));
-                        @include transition(.5s);
-                        @include opacity(1);
-
-                        display: table-cell;
-                        width: 2.5em;
-                        background-image: url(../../img/client/icons/back.svg);
-
-                        &:hover, &:focus, &:active { background-color: transparent; }
-
-                        .rooms-view & { @include transform(rotate(180deg)); }
-
-                        .embed-mode & { display: none; }
-                    }
-                }
-
-                h2 { display: none; }
-            }
-        }
-
-        .search-banner {
-            display: none;
-
-            .search-mode & {
-                display: block;
-                padding: .8em 1.6em;
-                font-size: 1.2em;
-                background-color: lighten($info-color, 30%);
-                color: darken($info-color, 30%);
-                border-bottom: 1px solid $info-color;
-            }
-        }
-
-        .pane {
-            position: absolute;
-            top: $bar-height;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            display: none;
-            overflow-y: scroll;
-            -webkit-overflow-scrolling : touch;
-
-            .search-mode & { top: $bar-height * 2; }
-
-            &.current {
-                @include fadein;
-                @extend %nofilter;
-
-                display: block;
-            }
-
-
-            &.pane-info { padding: 1.5em; }
-
-            &.pane-people {
-                padding: .75em;
-
-                .infinite-above, .infinite-below {
-                    background-color: transparent;
-                    background-image:  linear-gradient(to right, darken($light-color, 5%), darken($light-color, 5%) 15%, transparent 15%, transparent 85%, darken($light-color, 5%) 85%, darken($light-color, 5%)),
-                                       linear-gradient(to bottom, transparent, transparent 25%, darken($light-color, 15%) 25%, darken($light-color, 15%) 65%, transparent 65%, transparent 75%, darken($light-color, 15%) 75%, darken($light-color, 15%) 85%, transparent 85%, transparent);
-                    background-size: 5.5em 8em;
-                    background-position: top left;
-                    background-repeat: repeat;
-                    background-repeat: round; /* limited browser support */
-                }
-
-                .person {
-                    @extend %nofilter;
-                    @extend %ease;
-
-                    display: inline-block;
-                    padding: .25em;
-                    width: 5.5em;
-                    text-align: center;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    font-weight: 400;
-                    color: $dark-color;
-
-                    &:hover, &:focus {
-                        background-color: $accent-color;
-                        color: $light-color;
-                        border-radius: $roundness;
-                    }
-
-                    &.offline {
-                        @include opacity(.5);
-
-                        .picture { @extend %grayscale; }
-                    }
-
-                    .picture {
-                        display: block;
-                        width: 4em;
-                        height: 4em;
-                        margin: .25em .5em;
-                        border-radius: $roundness;
-                    }
-                }
-            }
-
-            &.pane-threads {
-                .infinite-above, .infinite-below {
-                    background-color: transparent;
-                    background-image:  linear-gradient(to bottom, transparent, transparent 35%, darken($light-color, 15%) 35%, darken($light-color, 15%) 65%, transparent 65%, transparent),
-                                       linear-gradient(to bottom, darken($light-color, 15%), darken($light-color, 15%));
-                    background-size: 60% 3em, 4px 100%;
-                    background-position: 2em center, center right;
-                    background-repeat: repeat-y;
-                }
-
-                .thread {
-                    @extend %nofilter;
-                    @extend %ease;
-
-                    display: block;
-                    padding: .5em 2em;
-                    font-weight: 400;
-                    color: $dark-color;
-                    border-right: 4px solid $accent-color;
-
-                    &.current { background-color: lighten($accent-color, 30%); }
-
-                    &:hover, &:focus, &.current:hover, &.current:focus {
-                        background-color: $accent-color;
-                        color: $light-color;
-                    }
-
-                    @for $i from 1 through length($palette) {
-                        $color: nth($palette, $i);
-                        $j: $i - 1;
-
-                        &.conv-#{$j} {
-                            border-right-color: $color;
-
-                            &.current { background-color: lighten($color, 30%); }
-
-                            &:hover, &:focus, &.current:hover, &.current:focus { background-color: $color; }
-                        }
-                    }
-                }
-
-            }
-        }
-    }
-
-    .settings-header {
-        display: none;
-
-        .conf-mode &, .pref-mode & {
-            display: table;
-            table-layout: fixed;
-            height: $bar-height;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            border-bottom: 1px solid darken($light-color, 15%);
-
-            h2 {
-                display: table-cell;
-                vertical-align: middle;
-                padding-left: 3em;
-                text-transform: uppercase;
-                background: url(../../img/client/icons/settings.svg) .6em center no-repeat;
-
-                @media #{$breakpointxxxx} {
-                    background: none;
-                    padding-left: .25em;
-                }
-            }
-
-            .rooms-button {
-                display: none;
-
-                @media #{$breakpointxxxx} {
-                    @include transform(rotate(0deg));
-                    @include transition(.5s);
-                    @include opacity(1);
-
-                    display: table-cell;
-                    width: 4em;
-                    background: url(../../img/client/icons/back.svg) no-repeat 1em center 2em/2em;
-                    cursor: pointer;
-
-                    .rooms-view & { @include transform(rotate(180deg)); }
-                }
-            }
-        }
-    }
-
-    .meta-content {
-        &.settings-menu, &.userprefs-menu {
-            display: none;
-            position: absolute;
-            top: $bar-height;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            filter: none;
-            pointer-events: auto;
-            overflow: auto;
-            -webkit-overflow-scrolling : touch;
-
-            ul {
-                list-style: none;
-
-                li {
-                    @extend %ease;
-
-                    font-size: 1.5em;
-                    padding: .75em;
-                    padding-left: 3em;
-                    background-size: 24px 24px;
-                    background-position: .75em center;
-                    background-repeat: no-repeat;
-                    border-bottom: 1px solid darken($light-color, 10%);
-                    cursor: pointer;
-
-                    &.current { background-color: darken($light-color, 10%); }
-
-                    &:hover, &:focus, &.current:hover, &.current:focus { background-color: darken($light-color, 15%); }
-
-                    @each $item in $settingsitems {
-                        &.tab-#{$item}-settings {
-                            background-image: url(../../img/client/icons/#{$item}-settings.svg);
-                        }
-                    }
-                }
-            }
-        }
-
-        &.settings-menu {
-            .conf-mode & {
-                display: block;
-            }
-        }
-
-        &.userprefs-menu {
-            .pref-mode & {
-                display: block;
-            }
-        }
-    }
 }
 
-.mainview {
-    @extend %clearfix;
-    @extend %main-elem;
-
-    top: 0;
-    bottom: 0;
-    z-index: 30;
-    background-color: $light-color;
-    color: $dark-color;
-
-    .embed-mode & {
-        left: $metaxxxxx;
-
-        @media #{$breakpointxxxx} { left: $metaxxxx; }
-
-        @media #{$breakpointxxx} { left: 0;  }
-    }
-
-    .titlebar {
-        position: relative;
-        background-color: darken($light-color, 5%);
-        box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
-                    0 3px 2px -1px rgba(0,0,0,0.1);
-        z-index: 20;
-
-        .title-normal {
-            @include appear;
-
-            display: table;
-            width: 100%;
-            height: $bar-height;
-
-            .meta-button {
-                display: none;
-
-                @media #{$breakpointxxx} {
-                    @include transform(rotate(0deg));
-                    @include transition(.5s);
-
-                    display: table-cell;
-                    width: 3em;
-                    background: url(../../img/client/icons/back.svg) center center no-repeat;
-                    background-size: 2em 2em;
-                    cursor: pointer;
-
-                    .meta-view & { @include transform(rotate(180deg)); }
-                }
-            }
-
-            .action-buttons {
-                display: table-cell;
-                vertical-align: middle;
-                padding: 0 .3em;
-
-                @media #{$breakpointxxx} { padding-left: 0;  }
-
-                .button, .button-secondary {
-                    margin: 0;
-                }
-            }
-
-            .left-area {
-                display: table-cell;
-                vertical-align: middle;
-                padding-left: 1em;
-
-                @media #{$breakpointxxx} { padding-left: 0;  }
-
-                h1 {
-                    float: left;
-                    font-size: 1.5em;
-                    margin: 0;
-                }
-
-                .follow-button {
-                    float: left;
-                    width: 4em;
-                    height: 2em;
-                    background: url(../../img/client/icons/follow-no.svg) center center no-repeat;
-                    background-size: 2em 2em;
-                    cursor: pointer;
-
-                    .following & { background: url(../../img/client/icons/follow.svg) center center no-repeat; }
-
-                    .search-mode & { display: none; }
-                }
-            }
-
-            .right-area {
-                display: table-cell;
-                vertical-align: middle;
-
-                .search-button {
-                    height: $bar-height;
-                    float: right;
-                    padding: 0 1em;
-                    width: 4em;
-                    background: url(../../img/client/icons/search.svg) center center no-repeat;
-                    background-size: 2em 2em;
-                    cursor: pointer;
-
-                    .embed-mode & { display: none;}
-                }
-
-                .user-area {
-                    float: right;
-                    height: $bar-height;
-
-                    .userdetail {
-                        float: right;
-                        text-align: right;
-                        padding: 1em;
-                        font-weight: 700;
-                        cursor: pointer;
-
-                        .guest-user & { padding: .2em 1em; }
-
-                        .sign-in {
-                            display: none;
-
-                            .guest-user & {
-                                display: inline;
-                                text-transform: uppercase;
-                            }
-                        }
-                    }
-
-                    .avatar {
-                        float: right;
-                        cursor: pointer;
-
-                        img {
-                            display: block;
-                            height: $bar-height;
-                            width: $bar-height;
-                        }
-
-                        @media #{$breakpointxx} { display: none; }
-                    }
-                }
-            }
-        }
-    }
-
-    .search-bar {
-        @include transform(translate3d(0, ( $bar-height * -1 ), 0));
-        @include opacity(0);
-        @include transition(.3s, ease-out);
-
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 20;
-        height: $bar-height;
-        padding: .15em;
-        background-color: darken($light-color, 5%);
-
-        .search-focus & {
-            @include transform(translate3d(0, 0, 0));
-            @include opacity(1);
-            @extend %nofilter;
-
-            box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
-                        0 3px 2px -1px rgba(0,0,0,0.1);
-        }
-
-        .search-entry {
-            position: relative;
-            display: block;
-            width: 100%;
-            margin: 0;
-            padding-left: 3.5em;
-            background-image: url(../../img/client/icons/search-gray.svg);
-            background-position: .5em center;
-            background-repeat: no-repeat;
-            background-size: 3em 2em;
-            z-index: 30;
-        }
-    }
-
-    &.chatview {
-        .conf-mode &, .pref-mode & { display: none; }
-
-        .chat-position {
-            @include opacity(0);
-            @extend %ease;
-
-            position: relative;
-            float: right;
-            margin: 1em;
-            padding: .5em 1em;
-            background-color: $dark-color;
-            color: $light-color;
-            border-radius: $roundness;
-            pointer-events: none;
-            z-index: 20;
-
-            .scrolling & {
-                @include opacity(1);
-                @extend %nofilter;
-            }
-        }
-
-        .chat-area {
-            position: absolute;
-            top: $bar-height;
-            right: 0;
-            bottom: $bar-height;
-            left: 0;
-            overflow-y: scroll;
-            -webkit-overflow-scrolling : touch;
-
-            .infinite-above, .infinite-below {
-                background-color: transparent;
-                background-image: linear-gradient(to bottom, transparent, transparent 30%, lighten($accent-color, 40%) 30%, lighten($accent-color, 40%) 40%, transparent 40%, transparent),
-                                  linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 5%) 30%, darken($light-color, 5%) 40%, transparent 40%, transparent),
-                                  linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 5%) 30%, darken($light-color, 5%) 40%, transparent 40%, transparent),
-                                  linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 5%) 60%, darken($light-color, 5%) 70%, transparent 70%, transparent);
-                background-size: .6em 6em, 6em 6em, 80% 6em, 60% 6em;
-                background-position: 2em 2em, 4em 2em, 12em 2em, 12em 2em;
-                background-repeat: repeat-y;
-                background-attachment: scroll;
-
-                @media #{$breakpointxx} {
-                    background-image: linear-gradient(to bottom, transparent, transparent 30%, lighten($accent-color, 40%) 30%, lighten($accent-color, 40%) 40%, transparent 40%, transparent),
-                                      linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 5%) 30%, darken($light-color, 5%) 40%, transparent 40%, transparent),
-                                      linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 5%) 60%, darken($light-color, 5%) 70%, transparent 70%, transparent);
-                    background-size: .6em 6em, 80% 6em, 60% 6em;
-                    background-position: 1em 2em, 3em 2em, 3em 2em;
-                }
-            }
-
-            .chat {
-                @include fadein;
-                @extend %ease;
-                @extend %nofilter;
-                @extend %clearfix;
-
-                position: relative;
-                margin: 0;
-                padding: 1em;
-                padding-left: 12em;
-                border-top: 1px solid darken($light-color, 5%);
-                overflow: hidden;
-
-                @media #{$breakpointxxxx} { padding-left: 22%; }
-
-                @media #{$breakpointxx} { padding-left: 3.5em; }
-
-                &:hover, &:focus { background-color: darken($light-color, 1%); }
-
-                &.current {
-                    background-color: darken($light-color, 3%);
-
-                    .chat-more { background-color: darken($light-color, 3%); }
-                }
-
-                &:hover, &:focus, &.current {
-                    border-top: 1px solid darken($light-color, 10%);
-
-                    & + .chat { border-top: 1px solid darken($light-color, 10%); }
-
-                    .timestamp { color: lighten($dark-color, 10%); }
-
-                    .chat-more { @include transform(translate3d(0, 0, 0)); }
-                }
-
-                &:before {
-                    content: "";
-                    float: left;
-                    margin: .55em 0 auto -10em;
-                    height: .5em;
-                    width: .5em;
-                    border-radius: 50%;
-                    background-color: $accent-color;
-
-                    @media #{$breakpointxxxx} { margin-left: -25%; }
-
-                    @media #{$breakpointxx} { margin-left: -2em; }
-                }
-
-                /* set conversations dot colors */
-                @for $i from 1 through length($palette) {
-                    $color: nth($palette, $i);
-                    $j: $i - 1;
-
-                    &.conv-#{$j}:before { background-color: $color; }
-                }
-
-                &.long {
-                    @extend %ease;
-
-                    max-height: 12em;
-                    cursor: pointer;
-
-                    &:hover, &:focus {
-                        &:after { padding: 1em 0; }
-                    }
-
-                    &:after {
-                        @extend %ease;
-
-                        content: "";
-                        position: absolute;
-                        display: block;
-                        bottom: 0;
-                        width: 100%;
-                        padding: 3em 0;
-                        background-image: linear-gradient(to bottom, transparentize($light-color, 1) 0%, $light-color 100%);
-                    }
-
-                    &.active {
-                        max-height: 20em;
-                        overflow: auto;
-
-                        &:after { display: none; }
-                    }
-                }
-
-                a {
-                    color: darken($accent-color, 15%);
-
-                    &:hover, &:focus { text-decoration: underline;}
-
-                    &:active { color: darken($accent-color, 30%); }
-                }
-
-                .nick {
-                    float: left;
-                    margin-left: -8em;
-                    padding-right: 1em;
-                    font-weight: 700;
-
-                    @media #{$breakpointxxxx} { margin-left: -20%; }
-
-                    @media #{$breakpointxx} {
-                        margin-left: 0;
-
-                        &:after { content: " :" }
-                    }
-
-                    a {
-                        color: $dark-color;
-
-                        &:hover, &:focus, &:active { color: darken($dark-color, 10%); }
-                    }
-                }
-
-                .timestamp { display: none; }
-
-                &.timestamp-displayed {
-                    .timestamp {
-                        display: block;
-                        font-size: .9em;
-                        text-align: right;
-                        color: lighten($dark-color, 30%);
-                    }
-                }
-
-                .chat-more {
-                    @include transform(translate3d(-3.5em, 0, 0));
-                    @extend %ease;
-
-                    position: absolute;
-                    display: block;
-                    background-color: darken($light-color, 1%);
-                    background-image: url(../../img/client/icons/more.svg);
-                    background-repeat: no-repeat;
-                    background-position: top center;
-                    background-size: 3.5em 3.5em;
-                    width: 3.5em;
-                    height: 3.5em;
-                    top: 0;
-                    left: 0;
-                    cursor: pointer;
-                }
-            }
-        }
-    }
-
-    &.settingsview {
-        display: none;
-
-        .conf-mode & , .pref-mode & {
-            display: block;
-
-            .settings-area {
-                position: absolute;
-                top: $bar-height;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                overflow: auto;
-                -webkit-overflow-scrolling : touch;
-
-                .pane {
-                    display: none;
-
-                    &.current {
-                        @include fadein;
-                        @extend %nofilter;
-
-                        display: table;
-                        border-spacing: 2em;
-                        max-width: 100%;
-
-                        @media #{$breakpointxx} {
-                            display: block;
-                            border-spacing: 1em;
-                        }
-                    }
-
-                    .settings-item {
-                        display: table-row;
-
-                        @media #{$breakpointxx} {
-                            display: block;
-                            padding: 1em;
-                        }
-
-                        .settings-label, .settings-action {
-                            display: table-cell;
-
-                            @media #{$breakpointxx} {
-                                display: block;
-
-                                &.inline { display: inline-block; }
-                            }
-
-                            input, textarea, .button, .button-secondary {
-                                margin: 0 0;
-                                max-width: 100%;
-                            }
-
-                            input[type=text], textarea, .entry { width: 100% }
-
-                            textarea { resize: vertical; }
-
-                            input[type=checkbox] {
-                                position: relative;
-                                top: .3em;
-                                margin: .25em 0 1.25em 0;
-                            }
-
-                            label {
-                                padding: .5em;
-                            }
-                        }
-
-                        .settings-label {
-                            text-align: right;
-                            vertical-align: top;
-                            padding: .5em 0;
-
-                            @media #{$breakpointxx} {
-                                text-align: left;
-                                padding-right: 1em;
-                                font-weight: 700;
-                            }
-                        }
-
-                        .settings-action {
-                            text-align: left;
-                            vertical-align: middle;
-                        }
-                    }
-
-                    .request-msg {
-                        display: table-row;
-
-                        img {
-                            max-width: 80px;
-                            max-height: 80px;
-                            border-radius: $roundness;
-                        }
-
-                        img, .request-details {
-                            display: table-cell;
-                            vertical-align: top;
-                        }
-
-                        .username {
-                            a {
-                                font-size: 1.2em;
-                                color: $dark-color;
-
-                                &:hover, &:focus, &:active { color: darken($dark-color, 10%); }
-                            }
-                        }
-
-                        .button, .button-secondary { padding: .5em 1em; }
-                    }
-
-                    .twitter-account {
-                        position: relative;
-                        color: $light-color;
-
-                        img {
-                            height: 80px;
-                            width: 80px;
-                            border-radius: $roundness;
-                        }
-
-                        .change {
-                            position: absolute;
-                            left: 0;
-                            right: 0;
-                            bottom: 0;
-                            width: 80px;
-                            padding: .75em;
-                            background-color: $accent-color;
-                            text-transform: uppercase;
-                            border-radius: 0 0 $roundness $roundness;
-                        }
-                    }
-                }
-            }
-        }
-    }
+.meta-tabs {
+	list-style: none;
+	display: table;
+	table-layout: fixed;
+	margin: 0;
+	width: 100%;
+	height: $bar-height;
+	border-bottom: 1px solid darken($light-color, 15%);
+
+	li {
+		@include transform(rotate(0deg)); /* hack to fix invisible items in android browser */
+		@extend %ease;
+
+		display: none;
+		vertical-align: middle;
+		color: $dark-color;
+		cursor: pointer;
+
+		@each $mode in $modeitems {
+			&.mode-#{$mode} {
+				.#{$mode}-mode & { display: table-cell; }
+			}
+		}
+
+		&.rooms-button {
+			display: none;
+
+			@media #{$breakpointxxxx} {
+				@include transition(.5s);
+
+				display: table-cell;
+				width: 2.5em;
+				background: url(../../img/client/icons/back.svg) no-repeat center center;
+
+				.rooms-view & { @include transform(rotate(180deg)); }
+
+				.embed-mode & { display: none; }
+			}
+		}
+	}
+
+	.header {
+		padding-left: 4.25em;
+		text-transform: uppercase;
+		background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
+
+		@media #{$breakpointxxxx} {
+			background: none;
+			padding-left: 1.5em;
+		}
+
+		h2 { margin: 0; }
+	}
+
+	.tab {
+		@include opacity(0.3);
+
+		text-align: center;
+		background-position: center center;
+		background-repeat: no-repeat;
+		background-size: 2em 2em;
+
+		@each $item in $tabitems {
+			&.tab-#{$item} { background-image: url(../../img/client/icons/#{$item}.svg); }
+		}
+
+		&:hover, &:focus, &:active, &.current {
+			@include opacity(1);
+			@extend %nofilter;
+
+			background-color: darken($light-color, 15%);
+		}
+
+		&.current { background-color: darken($light-color, 10%); }
+	}
 }
 
-.chat-input {
-    @extend %main-elem;
+.meta-panes {
+	display: none;
+	position: relative;
+	height: 100%;
 
-    bottom: 0;
-    z-index: 30;
-    padding: 0;
-    min-height: $bar-height;
-    box-shadow: 0 -3px 2px -1px rgba(0,0,0,0.1);
+	.normal-mode &, .search-mode & { display: block; }
 
-    .conf-mode &, .pref-mode &, .search-mode & { display: none; }
+	.pane {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		display: none;
+		overflow-y: scroll;
+		-webkit-overflow-scrolling : touch;
 
-    .embed-mode & {
-        left: $metaxxxxx;
+		&.current {
+			@include fadein;
+			@extend %nofilter;
 
-        @media #{$breakpointxxxx} { left: $metaxxxx; }
-
-        @media #{$breakpointxxx} { left: 0;  }
-    }
-
-    .textarea {
-        @extend .entry;
-
-        word-wrap: break-word;
-        width: 100%;
-        min-height: $bar-height;
-        max-height: 12em;
-        padding: .9em 1em;
-        padding-right: 2.5em;
-        overflow: auto;
-        border-radius: 0;
-
-        &:hover, &:focus, &:active {
-            border-color: $accent-color;
-            outline: none;
-
-            @for $i from 1 through length($palette) {
-                $j: $i - 1;
-
-                .conv-#{$j} & { border-color: nth($palette, $i); }
-            }
-        }
-    }
-
-    .send {
-        @extend %ease;
-
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        margin: 0;
-        padding: .75em;
-        height: 3.5em;
-        width: 3.5em;
-        border: none;
-        cursor: pointer;
-        fill: lighten($dark-color, 30%); /* inline SVG */
-
-        &:hover, &:focus, &:active { fill: $dark-color; }
-
-        @for $i from 1 through length($palette) {
-            $color: nth($palette, $i);
-            $j: $i - 1;
-
-            .conv-#{$j} & {
-                fill: $color;
-
-                &:hover, &:focus, &:active { fill: darken($color, 15%); }
-            }
-        }
-    }
+			display: block;
+		}
+	}
 }
 
-%main-elem {
-    position: fixed;
+.pane-info {
+	padding: 0 1.5em;
+
+	.guest-user & {
+		.configure-button { display: none; }
+	}
+}
+
+.pane-people {
+	padding: .75em;
+
+	.infinite-above, .infinite-below {
+		background-color: transparent;
+		background-image:  linear-gradient(to right, darken($light-color, 5%), darken($light-color, 5%) 15%, transparent 15%, transparent 85%, darken($light-color, 5%) 85%, darken($light-color, 5%)),
+						   linear-gradient(to bottom, transparent, transparent 25%, darken($light-color, 15%) 25%, darken($light-color, 15%) 65%, transparent 65%, transparent 75%, darken($light-color, 15%) 75%, darken($light-color, 15%) 85%, transparent 85%, transparent);
+		background-size: 5.5em 8em;
+		background-position: top left;
+		background-repeat: repeat;
+		background-repeat: round; /* limited browser support */
+	}
+
+	.person {
+		@extend %nofilter;
+		@extend %ease;
+
+		display: inline-block;
+		padding: .25em;
+		width: 5.5em;
+		text-align: center;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		font-weight: 400;
+		color: $dark-color;
+
+		&:hover, &:focus {
+			background-color: $accent-color;
+			color: $light-color;
+			border-radius: $roundness;
+		}
+
+		&.offline {
+			@include opacity(.5);
+
+			.picture { @extend %grayscale; }
+		}
+
+		.person-avatar {
+			display: block;
+			width: 4em;
+			height: 4em;
+			margin: .25em .5em;
+			border-radius: $roundness;
+		}
+	}
+}
+
+.pane-threads {
+	.infinite-above, .infinite-below {
+		background-color: transparent;
+		background-image:  linear-gradient(to bottom, transparent, transparent 35%, darken($light-color, 15%) 35%, darken($light-color, 15%) 65%, transparent 65%, transparent),
+						   linear-gradient(to bottom, darken($light-color, 15%), darken($light-color, 15%));
+		background-size: 60% 3em, 4px 100%;
+		background-position: 2em center, center right;
+		background-repeat: repeat-y;
+	}
+
+	.thread {
+		@extend %nofilter;
+		@extend %ease;
+
+		display: block;
+		padding: .5em 2em;
+		font-weight: 400;
+		color: $dark-color;
+		border-right: 4px solid $accent-color;
+
+		&.current { background-color: lighten($accent-color, 30%); }
+
+		&:hover, &:focus, &.current:hover, &.current:focus {
+			background-color: $accent-color;
+			color: $light-color;
+		}
+
+		@for $i from 1 through length($palette) {
+			$color: nth($palette, $i);
+			$j: $i - 1;
+
+			&.conv-#{$j} {
+				border-right-color: $color;
+
+				&.current { background-color: lighten($color, 30%); }
+
+				&:hover, &:focus, &.current:hover, &.current:focus { background-color: $color; }
+			}
+		}
+	}
+}
+
+%settings-elem {
+	display: none;
+	filter: none;
+	pointer-events: auto;
+	overflow: auto;
+	-webkit-overflow-scrolling : touch;
+}
+
+.meta-conf {
+	@extend %settings-elem;
+
+	.conf-mode & { display: block; }
+}
+
+.meta-pref {
+	@extend %settings-elem;
+
+	.pref-mode & { display: block; }
+}
+
+.list-item {
+	@extend %ease;
+
+	display: block;
+	font-size: 1.5em;
+	padding: .75em;
+	padding-left: 2.75em;
+	background-size: 24px 24px;
+	background-position: .75em center;
+	background-repeat: no-repeat;
+	border-bottom: 1px solid darken($light-color, 10%);
+	color: $dark-color;
+	cursor: pointer;
+
+	&.current { background-color: darken($light-color, 10%); }
+
+	&:hover, &:focus, &.current:hover, &.current:focus {
+		background-color: darken($light-color, 15%);
+		color: $dark-color;
+	}
+
+	@each $item in $settingsitems {
+		&.list-item-#{$item}-settings {
+			background-image: url(../../img/client/icons/#{$item}-settings.svg);
+		}
+	}
+}
+
+%chat-elem {
+	position: fixed;
     left: $roomxxxxx + $metaxxxxx;
     right: 0;
 
@@ -1098,7 +442,597 @@ $tabitems: info, people, threads;
     @media #{$breakpointxxx} { left: 0; }
 }
 
-.rooms, .meta, .mainview, .chat-input {
+.main-area {
+	@extend %column;
+	@extend %chat-elem;
+}
+
+.content-area {
+	display: none;
+
+	.normal-mode &, .search-mode & { display: block; }
+
+	.embed-mode & {
+		left: $metaxxxxx;
+
+		@media #{$breakpointxxxx} { left: $metaxxxx; }
+
+		@media #{$breakpointxxx} { left: 0;  }
+	}
+}
+
+.title-bar {
+	position: relative;
+	display: table;
+	height: $bar-height;
+	width: 100%;
+	background-color: darken($light-color, 5%);
+	box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
+				0 3px 2px -1px rgba(0,0,0,0.1);
+
+	.meta-button {
+		display: none;
+
+		@media #{$breakpointxxx} {
+			@include transform(rotate(0deg));
+			@include transition(.5s);
+
+			display: table-cell;
+			width: 3em;
+			background: url(../../img/client/icons/back.svg) center center no-repeat;
+			background-size: 2em 2em;
+			cursor: pointer;
+
+			.meta-view & { @include transform(rotate(180deg)); }
+		}
+	}
+
+	.action-buttons {
+		display: table-cell;
+		vertical-align: middle;
+		padding: 0 .3em;
+
+		@media #{$breakpointxxx} { padding-left: 0;  }
+
+		.button, .button-secondary {
+			margin: 0;
+		}
+	}
+
+	.left-area {
+		display: table-cell;
+		vertical-align: middle;
+		padding-left: 1em;
+
+		@media #{$breakpointxxx} { padding-left: 0;  }
+
+		h1 {
+			float: left;
+			font-size: 1.5em;
+			margin: 0;
+		}
+
+		.follow-button {
+			float: left;
+			width: 4em;
+			height: 2em;
+			background: url(../../img/client/icons/follow-no.svg) center center no-repeat;
+			background-size: 2em 2em;
+			cursor: pointer;
+
+			.following & { background: url(../../img/client/icons/follow.svg) center center no-repeat; }
+
+			.search-mode & { display: none; }
+		}
+	}
+
+	.right-area {
+		display: table-cell;
+		vertical-align: middle;
+
+		.search-button {
+			height: $bar-height;
+			float: right;
+			padding: 0 1em;
+			width: 4em;
+			background: url(../../img/client/icons/search.svg) center center no-repeat;
+			background-size: 2em 2em;
+			cursor: pointer;
+
+			.embed-mode & { display: none;}
+		}
+
+		.user-area {
+			float: right;
+			height: $bar-height;
+
+			.userdetail {
+				float: right;
+				text-align: right;
+				padding: 1em;
+				font-weight: 700;
+				cursor: pointer;
+
+				.guest-user & { padding: .2em 1em; }
+
+				.sign-in {
+					display: none;
+
+					.guest-user & {
+						display: inline;
+						text-transform: uppercase;
+					}
+				}
+			}
+
+			.avatar {
+				float: right;
+				cursor: pointer;
+
+				img {
+					display: block;
+					height: $bar-height;
+					width: $bar-height;
+				}
+
+				@media #{$breakpointxx} { display: none; }
+			}
+		}
+	}
+}
+
+.chat-area {
+	position: absolute;
+	top: $bar-height;
+	right: 0;
+	bottom: $bar-height;
+	left: 0;
+	overflow-y: scroll;
+	-webkit-overflow-scrolling : touch;
+
+	.infinite-above, .infinite-below {
+		background-color: transparent;
+		background-image: linear-gradient(to bottom, transparent, transparent 30%, lighten($accent-color, 40%) 30%, lighten($accent-color, 40%) 40%, transparent 40%, transparent),
+						  linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 5%) 30%, darken($light-color, 5%) 40%, transparent 40%, transparent),
+						  linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 5%) 30%, darken($light-color, 5%) 40%, transparent 40%, transparent),
+						  linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 5%) 60%, darken($light-color, 5%) 70%, transparent 70%, transparent);
+		background-size: .6em 6em, 6em 6em, 80% 6em, 60% 6em;
+		background-position: 2em 2em, 4em 2em, 12em 2em, 12em 2em;
+		background-repeat: repeat-y;
+		background-attachment: scroll;
+
+		@media #{$breakpointxx} {
+			background-image: linear-gradient(to bottom, transparent, transparent 30%, lighten($accent-color, 40%) 30%, lighten($accent-color, 40%) 40%, transparent 40%, transparent),
+							  linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 5%) 30%, darken($light-color, 5%) 40%, transparent 40%, transparent),
+							  linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 5%) 60%, darken($light-color, 5%) 70%, transparent 70%, transparent);
+			background-size: .6em 6em, 80% 6em, 60% 6em;
+			background-position: 1em 2em, 3em 2em, 3em 2em;
+		}
+	}
+}
+
+.chat-position {
+	@include opacity(0);
+	@extend %ease;
+
+	position: relative;
+	float: right;
+	margin: 1em;
+	padding: .5em 1em;
+	background-color: $dark-color;
+	color: $light-color;
+	border-radius: $roundness;
+	pointer-events: none;
+	z-index: 20;
+
+	.scrolling & {
+		@include opacity(1);
+		@extend %nofilter;
+	}
+}
+
+.chat-item {
+	@include fadein;
+	@extend %ease;
+	@extend %nofilter;
+
+	position: relative;
+	margin: 0;
+	padding: 1em;
+	padding-left: 12em;
+	border-top: 1px solid darken($light-color, 5%);
+	overflow: hidden;
+
+	@media #{$breakpointxxxx} { padding-left: 22%; }
+
+	@media #{$breakpointxx} { padding-left: 3.5em; }
+
+	&:hover, &:focus { background-color: darken($light-color, 1%); }
+
+	&.current {
+		background-color: darken($light-color, 3%);
+
+		.chat-more { background-color: darken($light-color, 3%); }
+	}
+
+	&:hover, &:focus, &.current {
+		border-top: 1px solid darken($light-color, 10%);
+
+		& + .chat-item { border-top: 1px solid darken($light-color, 10%); }
+
+		.chat-timestamp { color: lighten($dark-color, 10%); }
+
+		.chat-more { @include transform(translate3d(0, 0, 0)); }
+	}
+
+	&:before {
+		content: "";
+		float: left;
+		margin: .55em 0 auto -10em;
+		height: .5em;
+		width: .5em;
+		border-radius: 50%;
+		background-color: $accent-color;
+
+		@media #{$breakpointxxxx} { margin-left: -25%; }
+
+		@media #{$breakpointxx} { margin-left: -2em; }
+	}
+
+	/* set conversations dot colors */
+	@for $i from 1 through length($palette) {
+		$color: nth($palette, $i);
+		$j: $i - 1;
+
+		&.conv-#{$j}:before { background-color: $color; }
+	}
+
+	&.long {
+		@extend %ease;
+
+		max-height: 12em;
+		cursor: pointer;
+
+		&:hover, &:focus {
+			&:after { padding: 1em 0; }
+		}
+
+		&:after {
+			@extend %ease;
+
+			content: "";
+			position: absolute;
+			display: block;
+			bottom: 0;
+			width: 100%;
+			padding: 3em 0;
+			background-image: linear-gradient(to bottom, transparentize($light-color, 1) 0%, $light-color 100%);
+		}
+
+		&.active {
+			max-height: 20em;
+			overflow: auto;
+
+			&:after { display: none; }
+		}
+	}
+
+	a {
+		color: darken($accent-color, 15%);
+
+		&:hover, &:focus { text-decoration: underline;}
+
+		&:active { color: darken($accent-color, 30%); }
+	}
+
+	.chat-timestamp { display: none; }
+
+	&.timestamp-displayed {
+		.chat-timestamp {
+			display: block;
+			font-size: .9em;
+			text-align: right;
+			color: lighten($dark-color, 30%);
+		}
+	}
+}
+
+.chat-nick {
+	float: left;
+	margin-left: -8em;
+	padding-right: 1em;
+	font-weight: 700;
+
+	@media #{$breakpointxxxx} { margin-left: -20%; }
+
+	@media #{$breakpointxx} {
+		margin-left: 0;
+
+		&:after { content: " :" }
+	}
+
+	a {
+		color: $dark-color;
+
+		&:hover, &:focus, &:active { color: darken($dark-color, 10%); }
+	}
+}
+
+.chat-more {
+	@include transform(translate3d(-3.5em, 0, 0));
+	@extend %ease;
+
+	position: absolute;
+	display: block;
+	background-color: darken($light-color, 1%);
+	background-image: url(../../img/client/icons/more.svg);
+	background-repeat: no-repeat;
+	background-position: top center;
+	background-size: 3.5em 3.5em;
+	width: 3.5em;
+	height: 3.5em;
+	top: 0;
+	left: 0;
+	cursor: pointer;
+}
+
+.chat-input {
+	@extend %chat-elem;
+
+	bottom: 0;
+    padding: 0;
+    min-height: $bar-height;
+    box-shadow: 0 -3px 2px -1px rgba(0,0,0,0.1);
+
+    .normal-mode & { display: block; }
+
+    .embed-mode & {
+        left: $metaxxxxx;
+
+        @media #{$breakpointxxxx} { left: $metaxxxx; }
+
+        @media #{$breakpointxxx} { left: 0;  }
+    }
+}
+
+.chat-entry {
+	@extend .entry;
+
+	word-wrap: break-word;
+	width: 100%;
+	min-height: $bar-height;
+	max-height: 12em;
+	padding: .9em 1em;
+	padding-right: 2.5em;
+	overflow: auto;
+	border-radius: 0;
+
+	&:hover, &:focus, &:active {
+		border-color: $accent-color;
+		outline: none;
+
+		@for $i from 1 through length($palette) {
+			$j: $i - 1;
+
+			.conv-#{$j} & { border-color: nth($palette, $i); }
+		}
+	}
+}
+
+.chat-send {
+	@extend %ease;
+
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	margin: 0;
+	padding: .75em;
+	height: 3.5em;
+	width: 3.5em;
+	border: none;
+	cursor: pointer;
+	fill: lighten($dark-color, 30%); /* inline SVG */
+
+	&:hover, &:focus, &:active { fill: $dark-color; }
+
+	@for $i from 1 through length($palette) {
+		$color: nth($palette, $i);
+		$j: $i - 1;
+
+		.conv-#{$j} & {
+			fill: $color;
+
+			&:hover, &:focus, &:active { fill: darken($color, 15%); }
+		}
+	}
+}
+
+.search-bar {
+	@include transform(translate3d(0, ( $bar-height * -1 ), 0));
+	@include opacity(0);
+	@include transition(.3s, ease-out);
+
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 20;
+	height: $bar-height;
+	padding: .15em;
+	background-color: darken($light-color, 5%);
+
+	.search-focus & {
+		@include transform(translate3d(0, 0, 0));
+		@include opacity(1);
+		@extend %nofilter;
+
+		box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
+			0 3px 2px -1px rgba(0,0,0,0.1);
+	}
+
+	.search-entry {
+		position: relative;
+		display: block;
+		width: 100%;
+		margin: 0;
+		padding-left: 3.5em;
+		background-image: url(../../img/client/icons/search-gray.svg);
+		background-position: .5em center;
+		background-repeat: no-repeat;
+		background-size: 3em 2em;
+	}
+}
+
+.settings-area {
+	display: none;
+
+	.conf-mode &, .pref-mode & { display: block; }
+}
+
+.conf-area, .pref-area {
+	display: none;
+	position: absolute;
+	top: $bar-height;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	overflow: auto;
+	-webkit-overflow-scrolling : touch;
+
+	.list-view {
+		display: none;
+
+		&.current {
+			@include fadein;
+			@extend %nofilter;
+
+			display: table;
+			border-spacing: 2em;
+			max-width: 100%;
+
+			@media #{$breakpointxx} {
+				display: block;
+				border-spacing: 1em;
+			}
+		}
+
+		.settings-item {
+			display: table-row;
+
+			@media #{$breakpointxx} {
+				display: block;
+				padding: 1em;
+			}
+
+			.settings-label, .settings-action {
+				display: table-cell;
+
+				@media #{$breakpointxx} {
+					display: block;
+
+					&.inline { display: inline-block; }
+				}
+
+				input, textarea, .button, .button-secondary {
+					margin: 0 0;
+					max-width: 100%;
+				}
+
+				input[type=text], textarea, .entry { width: 100% }
+
+				textarea { resize: vertical; }
+
+				input[type=checkbox] {
+					position: relative;
+					top: .3em;
+					margin: .25em 0 1.25em 0;
+				}
+
+				label {
+					padding: .5em;
+				}
+			}
+
+			.settings-label {
+				text-align: right;
+				vertical-align: top;
+				padding: .5em 0;
+
+				@media #{$breakpointxx} {
+					text-align: left;
+					padding-right: 1em;
+					font-weight: 700;
+				}
+			}
+
+			.settings-action {
+				text-align: left;
+				vertical-align: middle;
+			}
+		}
+
+		.request-msg {
+			display: table-row;
+
+			img {
+				max-width: 80px;
+				max-height: 80px;
+				border-radius: $roundness;
+			}
+
+			img, .request-details {
+				display: table-cell;
+				vertical-align: top;
+			}
+
+			.username {
+				a {
+					font-size: 1.2em;
+					color: $dark-color;
+
+					&:hover, &:focus, &:active { color: darken($dark-color, 10%); }
+				}
+			}
+
+			.button, .button-secondary { padding: .5em 1em; }
+		}
+
+		.twitter-account {
+			position: relative;
+			color: $light-color;
+
+			img {
+				height: 80px;
+				width: 80px;
+				border-radius: $roundness;
+			}
+
+			.change {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				width: 80px;
+				padding: .75em;
+				background-color: $accent-color;
+				text-transform: uppercase;
+				border-radius: 0 0 $roundness $roundness;
+			}
+		}
+	}
+}
+
+.conf-area {
+	.conf-mode & { display: block; }
+}
+
+.pref-area {
+	@extend %settings-elem;
+
+	.pref-mode & { display: block; }
+}
+
+.room-area, .meta-area, .main-area, .chat-input {
     @include transition(.3s, ease-out); /* animate css transforms */
 
     /* fix flicker in some browsers */

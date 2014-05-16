@@ -2,28 +2,28 @@
 /* global $, libsb */
 
 $(function() {
-	var $tabTmpl = $(".config .tab");
+	var $itemTmpl = $(".meta-conf .list-item");
 	var currentConfig;
 
-	function renderTab(label) {
-		var tab = $tabTmpl.clone();
-		tab.text(label);
-		return tab;
+	function renderItem(label) {
+		var item = $itemTmpl.clone();
+		item.text(label);
+		return item;
 	}
 
 	function renderSettings(roomId){
 		libsb.getRooms({ref: roomId}, function(err, data){
 			var results = data.results[0];
 			// general settings
-			$('.pane-general-settings #description').val(results.description);
-			$('.pane-general-settings #displayname').val(results.id);
+			$('.list-view-general-settings #description').val(results.description);
+			$('.list-view-general-settings #displayname').val(results.id);
 
 			//irc settings
 			if(results.params.irc){
-				$('.pane-irc-settings #ircserver').val(results.params.irc.server);
-				$('.pane-irc-settings #ircchannel').val(results.params.irc.cleint);
+				$('.list-view-irc-settings #ircserver').val(results.params.irc.server);
+				$('.list-view-irc-settings #ircchannel').val(results.params.irc.cleint);
 			}
-		
+
 			//spam settings
 			$('#block-offensive').prop('checked', results.params.wordban);
 
@@ -32,8 +32,8 @@ $(function() {
 		});
 	}
 
-	$('.settings-menu').click(function(event) {
-		// check event.target.closest('.tab').text()
+	$('.meta-conf').click(function(event) {
+		// check event.target.closest('.list-item').text()
 	});
 
 	$(".configure-button").on("click", function() {
@@ -66,7 +66,7 @@ $(function() {
 	$(".conf-cancel").on("click", function() {
 		currentConfig = null;
 		// $('.settings-menu').empty();
-		$('.settings-area').empty();
+		$('.conf-area').empty();
         libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-cancel" });
 	});
 
@@ -74,11 +74,13 @@ $(function() {
 		// check state.mode == settings
 		var sortable = []; // for sorting the config options based on priority
 		if(state.mode === "conf"){
-			if(currentConfig && state.tab) $('.settingsview').empty().append(currentConfig[state.tab]);
+			if(currentConfig && state.tab) $('.conf-area').empty().append(currentConfig[state.tab]);
 			// if currentConfig is blank, then
 			if(!currentConfig){
 				libsb.emit('config-show', {},function(err, config) {
 					currentConfig = config;
+
+					$('.meta-conf').empty();
 
 					for(i in config) {
 						sortable.push([config[i].prio, i, config[i]]);
@@ -87,14 +89,14 @@ $(function() {
 						return b[0] - a[0];
 					});
 					sortable.forEach(function(config){
-						var className = 'tab-' + config[1] + '-settings';
+						var className = 'list-item-' + config[1] + '-settings';
 						$('.' + className).remove();
-						$('.settings-menu ul').append('<li class = "tab ' + className + '">' + config[2].text + '</li>');
-						$('.settings-area').append(config[2].html);
+						$('.meta-conf').append('<a class="list-item ' + className + '">' + config[2].text + '</a>');
+						$('.conf-area').append(config[2].html);
 					});
 					// making general settings the default tab
-					$('.tab-general-settings').addClass('current');
-					$('.pane-general-settings').addClass('current');
+					$('.list-item-general-settings').addClass('current');
+					$('.list-view-general-settings').addClass('current');
 
 					renderSettings(state.room);
 				});

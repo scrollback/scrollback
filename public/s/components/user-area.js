@@ -18,7 +18,7 @@ $(function(){
 		window.open(location.protocol+"//"+location.host+"/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');
 	});
 
-	$(document).on("click", ".userprefs", function() {
+	$(document).on("click", ".userpref", function() {
 		libsb.emit("navigate", {
 			mode: "pref",
 		});

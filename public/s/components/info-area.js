@@ -6,9 +6,8 @@ var infoArea = {};
 $(function() {
 	var $template = $(".pane-info").eq(0);
 	infoArea.render = function (room) {
-		if($('body').hasClass("guest-user"))  $('.configure-button').hide() ;
-		$template.find('.name').text(room.id);
-		$template.find('.description').html(format.textToHtml(room.description || "This room has no description."));
+		$template.find('.info-title').text(room.id);
+		$template.find('.info-description').html(format.textToHtml(room.description || "This room has no description."));
 	};
 	libsb.on("inited", function(q, n) {
 		libsb.enter(window.location.pathname.split("/")[1]);

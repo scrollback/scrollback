@@ -49,16 +49,16 @@ $(function() {
 // General
 libsb.on('config-show', function(conf, next) {
 	conf.general = {
-		html: "<div class='pane pane-general-settings'>" + formField("Name", "text", "displayname") + formField("Description", "area", "description") + "</div>",
+		html: "<div class='list-view list-view-general-settings'>" + formField("Name", "text", "displayname") + formField("Description", "area", "description") + "</div>",
 		text: "General settings",
 		prio: 900
 	}
 	next();
 });
 libsb.on('config-save', function(conf, next){
-	var name = $('.pane-general-settings #displayname').val();
+	var name = $('.list-view-general-settings #displayname').val();
 
-	var desc = $('.pane-general-settings #description').val();
+	var desc = $('.list-view-general-settings #description').val();
 	conf.name = name;
 	conf.description = desc;
 
@@ -68,16 +68,16 @@ libsb.on('config-save', function(conf, next){
 // IRC integration
 libsb.on('config-show', function(conf, next) {
 	conf.irc = {
-		html: "<div class='pane pane-irc-settings'>" + formField("IRC Server", "text", "ircserver") + formField("IRC Channel", "text", "ircchannel") + "</div>",
+		html: "<div class='list-view list-view-irc-settings'>" + formField("IRC Server", "text", "ircserver") + formField("IRC Channel", "text", "ircchannel") + "</div>",
 		text: "IRC setup",
 		prio: 800
-	} 
+	}
 	next();
 });
 libsb.on('config-save', function(conf, next){
 	conf.irc = {
-		server : $('.pane-irc-settings #ircserver').val(),
-		channel : $('.pane-irc-settings #ircchannel').val()
+		server : $('.list-view-irc-settings #ircserver').val(),
+		channel : $('.list-view-irc-settings #ircchannel').val()
 	};
 	next();
 });
@@ -92,7 +92,7 @@ libsb.on('config-show', function(conf, next) {
 	});
 
 	conf.twitter = {
-		html: "<div class='pane pane-twitter-settings'>" + formField("Hashtags", "multientry", "twitterhashtags") + $twitteruser + "</div>",
+		html: "<div class='list-view list-view-twitter-settings'>" + formField("Hashtags", "multientry", "twitterhashtags") + $twitteruser + "</div>",
 		text: "Twitter",
 		prio: 700
 	}
@@ -106,7 +106,7 @@ libsb.on('config-save', function(conf, next){
 
 // Threading, is room level threading required for now?
 // libsb.on('config-show', function(conf, next) {
-// 	conf.thread = "<div class='pane pane-thread-settings'>" + formField("Group messages into threads", "toggle", "threading") + "</div>";
+// 	conf.thread = "<div class='list-view list-view-thread-settings'>" + formField("Group messages into threads", "toggle", "threading") + "</div>";
 
 // 	next();
 // });
@@ -117,7 +117,7 @@ libsb.on('config-save', function(conf, next){
 
 // Permissions
 // libsb.on('config-show', function(conf, next) {
-// 	conf.permissions = "<div class='pane pane-permissions-settings'>" + formField("Who can read messages", "checks", [ [ "read-guests", "Guests" ], [ "read-visitors", "Visitors" ], [ "read-followers", "Followers" ] ]) + formField("Who can post messages", "checks", [ [ "write-guests", "Guests" ], [ "write-visitors", "Visitors" ], [ "write-followers", "Followers" ] ]) + formField("Require approval for following", "toggle", "follow-request") + "</div>";
+// 	conf.permissions = "<div class='list-view list-view-permissions-settings'>" + formField("Who can read messages", "checks", [ [ "read-guests", "Guests" ], [ "read-visitors", "Visitors" ], [ "read-followers", "Followers" ] ]) + formField("Who can post messages", "checks", [ [ "write-guests", "Guests" ], [ "write-visitors", "Visitors" ], [ "write-followers", "Followers" ] ]) + formField("Require approval for following", "toggle", "follow-request") + "</div>";
 
 // 	next();
 // });
@@ -130,16 +130,16 @@ libsb.on('config-save', function(conf, next){
 // libsb.on('config-show', function(conf, next) {
 // 	var $requests = '<div class="request-msg"><img src="s/img/avatars/Keith.jpg" alt=""><div class="request-details"><div class="username"><a href="">randomdude</a></div><a class="button">Approve</a><a class="button-secondary">Ignore</a></div></div>';
 
-// 	conf.requests = "<div class='pane pane-requests-settings'>" + $requests + "</div>";
+// 	conf.requests = "<div class='list-view list-view-requests-settings'>" + $requests + "</div>";
 
 // 	next();
 // });
 
 // Spam control
 libsb.on('config-show', function(conf, next) {
-	// conf.spam = "<div class='pane pane-spam-settings'>" + formField("Block repetitive messages", "toggle", "block-repetitive") + formField("Block nonsense messages", "toggle", "block-nonsense") + formField("Bloack offesnive words", "checks", [ [ "en-moderate", "English moderate" ], [ "en-strict", "English strict" ], [ "zh-strict", "Chinese strict" ] ]) + formField("Custom blocked word", "multientry", "blocked-words" ) + formField("Gaggded users", "multientry", "gagged-users" ) + formField("Banned users", "multientry", "banned-users" ) + "</div>";
+	// conf.spam = "<div class='list-view list-view-spam-settings'>" + formField("Block repetitive messages", "toggle", "block-repetitive") + formField("Block nonsense messages", "toggle", "block-nonsense") + formField("Bloack offesnive words", "checks", [ [ "en-moderate", "English moderate" ], [ "en-strict", "English strict" ], [ "zh-strict", "Chinese strict" ] ]) + formField("Custom blocked word", "multientry", "blocked-words" ) + formField("Gaggded users", "multientry", "gagged-users" ) + formField("Banned users", "multientry", "banned-users" ) + "</div>";
 	conf.spam = {
-		html: "<div class='pane pane-spam-settings'>" + formField("Block offensive words", "toggle", 'block-offensive'),
+		html: "<div class='list-view list-view-spam-settings'>" + formField("Block offensive words", "toggle", 'block-offensive'),
 		text: "Spam control",
 		prio: 600
 	}
@@ -157,15 +157,15 @@ libsb.on('config-save', function(conf, next){
 // SEO
 libsb.on('config-show', function(conf, next) {
 	conf.seo = {
-		html: "<div class='pane pane-seo-settings'>" + formField("Allow search engines to index room", "toggle", "allow-index") + "</div>",
-		text: "Search engine indexing", 
+		html: "<div class='list-view list-view-seo-settings'>" + formField("Allow search engines to index room", "toggle", "allow-index") + "</div>",
+		text: "Search engine indexing",
 		prio: 500
 	}
 
 	next();
 });
 libsb.on('config-save', function(conf, next){
-	conf.seo = $('.pane-seo-settings #allow-index').is(':checked');
+	conf.seo = $('.list-view-seo-settings #allow-index').is(':checked');
 
 	next();
 });

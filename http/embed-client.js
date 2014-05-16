@@ -1,6 +1,6 @@
 libsb.on('config-show', function(conf, next){
 	conf.embed = {
-		html: "<div class='pane pane-embed-settings'><div class='settings-item'><p>Place the following code just before the closing <code>&lt;/body&gt;</code> tag.</p><pre><code>&lt;script&gt;\
+		html: "<div class='list-view list-view-embed-settings'><div class='settings-item'><p>Place the following code just before the closing <code>&lt;/body&gt;</code> tag.</p><pre><code>&lt;script&gt;\
 				window.scrollback = {\
 				streams:['scrollbackteam'],\
 				theme: 'light',\
