@@ -186,24 +186,8 @@
 		<script src="/libsb.bundle.js"></script>
 
 		<script>
-			/*what is this?
-			'room', 'view', 'mode', 'tab', 'thread', 'query', 'text', 'time'
-			*/
 			$(function() {
-				var room = window.location.pathname.split("/")[1];
-
-				function start(q,n) {
-					libsb.emit('navigate', {
-						room: room,
-						view: 'normal',
-						mode: 'normal',
-						tab: 'people'
-					});
-					n();
-				}
-
 				libsb.connect();
-				libsb.on("inited", start);
 			});
 		</script>
 

@@ -12,6 +12,8 @@ $(function() {
 	function sendMsg(){
 		var text = format.htmlToText($entry.html());
 
+		if(!text) return;
+
 		$entry.text("");
 
 		if (window.currentState && window.currentState.room) {
