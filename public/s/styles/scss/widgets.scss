@@ -1,8 +1,8 @@
-@import "definitions";
+@import "global";
+@import "functions";
 @import "reset";
 @import "animations";
 @import "filters";
-@import "grid";
 
 /* mixins */
 @mixin buttons($bg: $accent-color, $fg: $light-color) {
@@ -15,7 +15,7 @@
     background-color: $bg;
     color: $fg;
     text-align: center;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     text-transform: uppercase;
 
@@ -42,30 +42,24 @@
     }
 }
 
-@mixin zigzag($inner, $outer, $position) {
-    background-image: linear-gradient(-135deg, $outer 5px, transparent 0) 0 5px, linear-gradient(135deg, $outer 5px, $inner 0) 0 5px;
-    background-color: $inner;
-    background-position: left $position;
-    background-repeat: repeat-x;
-    background-size: 10px 10px;
-}
-
 /* base styles */
+html { font-size: 62.5%; }
+
 body {
     background: $light-color;
     color: $dark-color;
-    font: 14px/21px $body-font;
+    font: #{$font-size}/($font-size * 1.5) $font-family-normal;
 }
 
 a {
     @extend %ease;
 
-    color: darken($accent-color, 10%);
+    color: $accent-color;
     text-decoration: none;
 
-    &:hover, &:focus { color: $accent-color; }
+    &:hover, &:focus { color: darken($accent-color, 15%); }
 
-    &:active { color: darken($accent-color, 20%); }
+    &:active { color: darken($accent-color, 30%); }
 }
 
 img {
@@ -75,16 +69,16 @@ img {
 
 h1, h2, h3 {
     line-height: 1.5em;
-    font-family: $heading-font;
+    font-family: $font-family-headings;
     font-weight: 300;
     margin: .5em 0;
 }
 
-h1 { font-size: 2em; }
+h1 { font-size: 2.5em; }
 
-h2 { font-size: 1.5em; }
+h2 { font-size: 2em; }
 
-h3 { font-size: 1.2em; }
+h3 { font-size: 1.5em; }
 
 p { margin: .5em 0; }
 
@@ -115,8 +109,8 @@ pre {
 }
 
 code {
-    font-weight: 600;
-    font-family: $monospace-font;
+    font-weight: 700;
+    font-family: $font-family-monospace;
     line-height: 1.2em;
 }
 
@@ -305,7 +299,7 @@ code {
         box-shadow: 0 0 5px 1px rgba(0,0,0,.1);
 
         a {
-            font-weight: 600;
+            font-weight: 700;
             border-bottom: 1px solid transparent;
 
             &:focus, &:hover, &:active { border-bottom-color: currentColor; }
@@ -366,7 +360,7 @@ code {
 .popover-body {
     position: absolute;
     display: block;
-    margin: 1em;
+    margin: .5em;
     border-radius: $roundness;
     font-weight: normal;
     border: 1px solid darken($light-color, 20%);
@@ -420,6 +414,8 @@ code {
         margin: 0;
 
         li {
+            @extend %ease;
+
             border-bottom: 1px solid darken($light-color, 10%);
 
             &:last-child { border-bottom: none; }
@@ -428,7 +424,7 @@ code {
                 display: block;
                 color: $dark-color;
                 padding: 1em 1.5em;
-                font-weight: 600;
+                font-weight: 700;
 
                 &:hover, &:focus { color: darken($dark-color, 30%); }
             }
@@ -449,7 +445,7 @@ code {
             position: absolute;
             display: block;
             content: "";
-            font-weight: 600;
+            font-weight: 700;
             color: $light-color;
             border-radius: $roundness;
             background-color: darken($light-color, 30%);
@@ -530,8 +526,8 @@ code {
 }
 
 ::-webkit-scrollbar {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
 }
 
 ::-webkit-scrollbar-button { display: none; }
@@ -540,7 +536,6 @@ code {
 
 ::-webkit-scrollbar-thumb {
     background-color: darken($light-color, 10%);
-    border-radius: 9px;
 
     &:vertical { min-height: 100px; }
 

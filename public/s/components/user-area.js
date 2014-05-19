@@ -8,9 +8,9 @@ $(function(){
 
 	$(".user-area").on("click", function() {
 		if ($("body").hasClass("guest-user")) {
-			lace.popover.show($(this), '<div class="user-menu">Sign in to scrollback with<a class="button facebook">Facebook</a><a class="button persona">Persona</a></div>');
+			lace.popover.show($(this), $("#login-menu").html());
 		} else {
-			lace.popover.show($(this), '<ul class="user-menu"><li><a class="userprefs">Account settings</a></li><li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li><li><a class="logout">Logout</a></li></ul>');
+			lace.popover.show($(this), $("#user-menu").html());
 		}
 	});
 
@@ -18,7 +18,7 @@ $(function(){
 		window.open(location.protocol+"//"+location.host+"/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');
 	});
 
-	$(document).on("click", ".userprefs", function() {
+	$(document).on("click", ".userpref", function() {
 		libsb.emit("navigate", {
 			mode: "pref",
 		});
@@ -33,7 +33,7 @@ $(function(){
 			view: 'loggedout',
 		});
 
-		lace.modal.show("<div class='loggedout-msg'><h1>You\'ve been logged out!</h1><a class='button reload-page modal-remove'>Go back as guest</a></div>");
+		lace.modal.show($("#loggedout-dialog").html());
 
 		n();
 	}, 1000);
@@ -45,7 +45,7 @@ $(function(){
 	libsb.on('navigate', function(state, next) {
 		if(state && (!state.old || state.room != state.old.room)) {
 			var room = state.room;
-			$("#roomTitle").text(room);
+			$("#room-title").text(room);
 		}
 
 		next();
@@ -61,7 +61,7 @@ $(function(){
 			$("body").removeClass("guest-user");
 		}
 
-		$(".sb-user")[0].innerText = init.user.id.replace(/^guest-/,'');
+		$("#sb-user").text = init.user.id.replace(/^guest-/,'');
 
 		if(/^guest-/.test(init.user.id)) {
 			$("body").addClass("guest-user");
@@ -69,8 +69,9 @@ $(function(){
 			$("body").removeClass("guest-user");
 		}
 
-		$("#userGrav").attr("src", init.user.picture);
-		$(".sb-user").text(init.user.id.replace(/^guest-/,''));
+		$("#sb-avatar").attr("src", init.user.picture);
+		$("#sb-user").text(init.user.id.replace(/^guest-/,''));
+
 		next();
 	}, 1000);
 });

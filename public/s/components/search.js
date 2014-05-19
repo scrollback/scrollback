@@ -13,10 +13,8 @@ $(function() {
 
     $(document).on("click", function(e) {
         if (e.target !== $(".search-button")[0] && e.target !== $(".search-entry")[0] && $(".search-entry").data("search-ready")) {
-            lace.animate.transition("fadeout", ".search-entry", function() {
-                $("body").removeClass("search-focus");
-                $(".search-entry").data("search-ready", false);
-            });
+            $("body").removeClass("search-focus");
+            $(".search-entry").data("search-ready", false);
         }
     });
 

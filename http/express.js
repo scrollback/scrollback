@@ -31,6 +31,22 @@ exports.init = function() {
 	app.set('view engine', 'jade');
 	app.set('view options', { debug: true });
 
+	/**
+	* We need to serve the correct mimetype for the manifest.appcache file.
+	* Even though latest browsers don't require this, older versions of browsers do.
+	* Also, we need to make sure that the manifest.appcache is not cached.
+	*/
+	app.use(function(req, res, next) {
+		if((req.url).match(/.*\.appcache$/)) {
+			res.header('Content-Type', 'text/cache-manifest');
+			res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+			res.header('Expires', '0');
+			res.header('Pragma', 'no-cache');
+		}
+
+		next();
+	});
+
 	app.use(express.logger("AA/HTTP - [:date] :method :url :referrer :user-agent :status"));
 	app.use(express.compress());
 	app.use(express["static"](__dirname + "/../" + config.http.home, { maxAge: 86400000 }));

@@ -3,10 +3,9 @@
 /* exported chatArea */
 
 // var roomList = {};
-
 $(function() {
-	var $roomlist = $(".roomlist"),
-		rooms = ["scrollback", "nodejs", "scrollbackteam"];
+	var $roomlist = $(".room-list"),
+		rooms = ["scrollback", "nodejs", "scrollbackteam" ];
 
 	/* add this back and do this after connecting.
 	libsb.getRooms({}, function(err, r) {
@@ -38,12 +37,12 @@ $(function() {
 	// Set up a click listener.
 
 	$roomlist.click(function(event) {
-		var $el = $(event.target).closest(".roomitem");
+		var $el = $(event.target).closest(".room-item");
 		if(!$el.size()) return;
 
 		libsb.emit('navigate', {
 			room: $el.attr("id").split('-')[1],
-			view: 'normal', source: 'roomlist',
+			view: 'normal', source: 'room-list',
 			thread: null
 		});
 

@@ -54,7 +54,7 @@ module.exports = function ArrayCache(initData) {
 		var time = query.time, before = query.before, after = query.after,
 			res = [], pos, i, l = messages.length, c, m, start = null;
 	
-			pos = time? find(time): l-1;
+			pos = time?find(time): l-1;
 
 
 		for(i=-before; i<after; i++) {

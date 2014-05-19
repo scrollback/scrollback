@@ -88,12 +88,12 @@ function getTexts(query, callback){
 	core.emit('getTexts', query, callback);
 }
 
-function getOccupants(query, callback){
-	core.emit('getUsers', {occupantOf: query}, callback);
+function getOccupants(roomId, callback){
+	core.emit('getUsers', {occupantOf: roomId}, callback);
 }
 
-function getMembers(query, callback){
-	core.emit('getUsers', {memberOf: query}, callback);
+function getMembers(roomId, callback){
+	core.emit('getUsers', {memberOf: roomId}, callback);
 }
 
 function getRooms(query, callback){

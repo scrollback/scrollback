@@ -84,9 +84,9 @@ function init() {
 					var r1 = room.params.irc;
 					var r2 = state.rooms[room.id].params.irc;
 					if (!(r1.server === r2.server && r1.channel === r2.channel && r1.pending === r2.pending)) {
-							log("reconnecting bot with new values:", room.id);
-							disconnectBot(state.rooms[room.id].id);
-							addNewBot(room); 
+						log("reconnecting bot with new values:", room.id);
+						disconnectBot(state.rooms[room.id].id);
+						addNewBot(room); 
 					}
 					delete notUsedRooms[room.id];
 				} else {
@@ -145,10 +145,14 @@ function init() {
 	
 	clientEmitter.on('room', function(room) {
 		log("room event:", room);
-		room.room.session = "internal:irc//" + room.room.id;
-		core.emit("room", room.room);
-		connectAllUsers(room.room);		
-		//TODO check if room pending is true get all online users of that room and connect.
+		core.emit("getRooms", {id: room.room.id}, function(err, reply) {
+			if (err) return;
+			var r = reply.results;
+			r.session = "internal:irc//" + room.room.id;
+			r.params.irc = room.room.params.irc;
+			core.emit("room", r);
+			connectAllUsers(room.room);
+		});
 	});
 	clientEmitter.on("back", function(data) {
 		console.log("back", data);

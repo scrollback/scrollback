@@ -1,11 +1,9 @@
+@import "functions";
 @import "filters";
 
 /* animations and transitions */
 @mixin transform($args) {
-    -webkit-transform: $args;
-    -moz-transform: $args;
-    -ms-transform: $args;
-    transform: $args;
+    @include prefix(transform, $args);
 }
 
 @mixin keyframes($animation) {
@@ -23,10 +21,7 @@
 }
 
 @mixin spin($args: 1s ease infinite) {
-    -webkit-animation: spin $args;
-    -moz-animation: spin $args;
-    -ms-animation: spin $args;
-    animation: spin $args;
+    @include prefix(animation, spin $args);
 }
 
 @include keyframes(slidedown) {
@@ -42,10 +37,7 @@
 }
 
 @mixin slidedown($args: .3s) {
-    -webkit-animation: slidedown $args;
-    -moz-animation: slidedown $args;
-    -ms-animation: slidedown $args;
-    animation: slidedown $args;
+    @include prefix(animation, slidedown $args);
 }
 
 @include keyframes(slideup) {
@@ -61,10 +53,7 @@
 }
 
 @mixin slideup($args: .3s) {
-    -webkit-animation: slideup $args;
-    -moz-animation: slideup $args;
-    -ms-animation: slideup $args;
-    animation: slideup $args;
+    @include prefix(animation, slideup $args);
 }
 
 @include keyframes(appear) {
@@ -79,10 +68,7 @@
 }
 
 @mixin appear($args: .5s) {
-    -webkit-animation: appear $args;
-    -moz-animation: appear $args;
-    -ms-animation: appear $args;
-    animation: appear $args;
+    @include prefix(animation, appear $args);
 }
 
 @include keyframes(fadein) {
@@ -91,15 +77,9 @@
 }
 
 @mixin fadein($args: .5s) {
-    -webkit-animation: fadein $args;
-    -moz-animation: fadein $args;
-    -ms-animation: fadein $args;
-    animation: fadein $args;
+    @include prefix(animation, fadein $args);
 }
 
 @mixin transition($duration: .3s, $timing: ease) {
-    -webkit-transition: $duration $timing;
-    -moz-transition: $duration $timing;
-    -ms-transition: $duration $timing;
-    transition: $duration $timing;
+    @include prefix(transition, $duration $timing);
 }

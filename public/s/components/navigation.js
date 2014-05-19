@@ -51,9 +51,8 @@ libsb.on("inited", function(){
 	libsb.emit("navigate", state);
 });
 libsb.on("navigate", function(state, next) {
-	state.old = currentState;
+	state.old = $.extend(true, {}, currentState); // copying object by value
 	state.changes = {};
-	currentState = {};
 
 	["room", "view", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
 		if(typeof state[prop] === "undefined") {
@@ -132,7 +131,7 @@ libsb.on("navigate", function(state, next) {
 				path = '/me';
 				break;
 			case 'view':
-				
+
 				break;
 			default:
 				path = (state.room ? '/' + state.room + (
@@ -154,7 +153,7 @@ libsb.on("navigate", function(state, next) {
 			history.replaceState(state, null, url);
 			return;
 		}
-		
+
 		if((state.changes.view == "rooms" || state.changes.view == "meta" || state.changes.view =="normal") && Object.keys(state.changes).length == 1) {
 			history.pushState(state, null, url);
 			return;
@@ -186,7 +185,7 @@ libsb.on("navigate", function(state, next) {
 // On history change, load the appropriate state
 $(window).on("popstate", function() {
 	if (('state' in history && history.state !== null)) {
-		var state = { }, prop;
+		var state = {}, prop;
 		for (prop in history.state) {
 			if (history.state.hasOwnProperty(prop)) {
 				if(prop !== 'old' && prop !== 'changes') {
