@@ -11,10 +11,10 @@ $(function() {
 
 	// Check if online or not
 	$(window).on("offline", function() {
-		$("body").addClass("offline-mode");
+		$("body").addClass("offline");
 	});
 
 	$(window).on("online", function() {
-		$("body").removeClass("offline-mode");
+		$("body").removeClass("offline");
 	});
 });

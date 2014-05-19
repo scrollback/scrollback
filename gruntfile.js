@@ -20,114 +20,116 @@ Boston, MA 02111-1307 USA.
 
 module.exports = function(grunt) {
 
-// Project configuration.
-grunt.initConfig({
-	browserify : {
-		dist: {
-			files: {
-				'public/libsb.bundle.js' : ['libsb.js']
-			},
-			options: {
-				debug: true
+	// Project configuration.
+	grunt.initConfig({
+		browserify: {
+			dist: {
+				files: {
+					"public/libsb.bundle.js": ["libsb.js"]
+				},
+				options: {
+					debug: true
+				}
 			}
-		}
-	},
-	uglify: {
-		options: {
-			report: 'min'
 		},
-		core: {
-			src: ['public/sdk/polyfill.js','public/sdk/addEvent.js',
-				'public/sdk/emitter.js' ,'public/sdk/request.js', 'public/sdk/cache.js',
-				'public/sdk/client.js','public/sdk/validate.js' ],
-			dest: 'public/core.uw.min.js'
-		},
-		embed: {
-			src: ['public/sdk/addStyle.js','public/sdk/css.js','public/sdk/dom.js',
-				'public/sdk/domReady.js','public/sdk/getByClass.js','public/sdk/jsonml2.js',
-				'public/sdk/embed.js','public/sdk/render.js',
-				'public/sdk/browserNotify.js','public/sdk/dialog.js'],
-			dest: 'public/embed.uw.min.js'
-		}
-	},
-	concat: {
-		options: { separator: ';\n\n' },
-		client: {
-			src: ["public/sdk/sockjs.js", "public/core.uw.min.js", "public/embed.uw.min.js"],
-			dest: "public/client.min.js",
-		},
-		core: {
-			src: ["public/sdk/sockjs.js", "public/core.uw.min.js"],
-			dest: "public/core.min.js",
-		}
-	},
-	wrap: {
-		options: {
-			wrapper: ["(function() {", "}())"]
-		},
-		client: {
-			src: ["public/client.min.js"],
-			dest: "public/client.min.js"
-		},
-		core: {
-			src: ["public/core.uw.min.js"],
-			dest: "public/core.min.js"
-		}
-	},
-	watch: {
-		scripts: {
-			files: ['public/sdk/sockjs.js','public/sdk/polyfill.js','public/sdk/addEvent.js',
-					'public/sdk/emitter.js' ,'public/sdk/request.js','public/sdk/addStyle.js',
-					'public/sdk/css.js', 'public/sdk/dom.js','public/sdk/domReady.js','public/sdk/getByClass.js',
-					'public/sdk/jsonml2.js','public/sdk/cache.js','public/sdk/embed.js','public/sdk/render.js','public/sdk/validate.js'],
-			tasks: ['uglify', 'concat', 'wrap'],
-		},
-		styles: {
-			files: ['public/style.less', 'public/dummy.less'],
-			tasks: ['less']
-		}
-	},
-	sass: {
-		dist: {
+		uglify: {
 			options: {
-				style: "compressed"
+				report: "min"
 			},
-			files: {
-				"public/s/styles/gen/stylesheet.css": "public/s/styles/scss/stylesheet.scss",
-				"public/s/styles/gen/signup.css": "public/s/styles/scss/signup.scss",
-				"public/s/styles/gen/client.css": "public/s/styles/scss/client.scss"
+			core: {
+				src: ["public/sdk/polyfill.js", "public/sdk/addEvent.js",
+				"public/sdk/emitter.js", "public/sdk/request.js", "public/sdk/cache.js",
+				"public/sdk/client.js", "public/sdk/validate.js"],
+				dest: "public/core.uw.min.js"
+			},
+			embed: {
+				src: ["public/sdk/addStyle.js", "public/sdk/css.js", "public/sdk/dom.js",
+				"public/sdk/domReady.js", "public/sdk/getByClass.js", "public/sdk/jsonml2.js",
+				"public/sdk/embed.js", "public/sdk/render.js",
+				"public/sdk/browserNotify.js", "public/sdk/dialog.js"],
+				dest: "public/embed.uw.min.js"
 			}
-		}
-	},
-	less: {
-		development: {
+		},
+		concat: {
 			options: {
-				compress: true,
-				ieCompat: true,
-				sourceMap: true,
-				sourceMapFilename: "style.less.map"
+				separator: ";\n\n"
 			},
-			files: {
-				"public/style.css": "public/style.less",
-				"public/dummy.css": "public/dummy.less"
+			client: {
+				src: ["public/sdk/sockjs.js", "public/core.uw.min.js", "public/embed.uw.min.js"],
+				dest: "public/client.min.js",
+			},
+			core: {
+				src: ["public/sdk/sockjs.js", "public/core.uw.min.js"],
+				dest: "public/core.min.js",
 			}
-		}
-	},
-	autoprefixer: {
-		dist: {
-			src: "public/s/styles/*/*.css"
-		}
-	},
-	manifest: {
-		generate: {
+		},
+		wrap: {
 			options: {
-				basePath: "public",
-				network: ["*"],
-				fallback: ["/ /offline.html"],
-				preferOnline: true,
-				timestamp: true
+				wrapper: ["(function() {", "}())"]
 			},
-			src: [
+			client: {
+				src: ["public/client.min.js"],
+				dest: "public/client.min.js"
+			},
+			core: {
+				src: ["public/core.uw.min.js"],
+				dest: "public/core.min.js"
+			}
+		},
+		watch: {
+			scripts: {
+				files: ["public/sdk/sockjs.js", "public/sdk/polyfill.js", "public/sdk/addEvent.js",
+					"public/sdk/emitter.js", "public/sdk/request.js", "public/sdk/addStyle.js",
+					"public/sdk/css.js", "public/sdk/dom.js", "public/sdk/domReady.js", "public/sdk/getByClass.js",
+					"public/sdk/jsonml2.js", "public/sdk/cache.js", "public/sdk/embed.js", "public/sdk/render.js", "public/sdk/validate.js"],
+				tasks: ["uglify", "concat", "wrap"],
+			},
+			styles: {
+				files: ["public/s/styles/scss/stylesheet.scss", "public/s/styles/scss/client.scss"],
+				tasks: ["sass"]
+			}
+		},
+		sass: {
+			dist: {
+				options: {
+					style: "compressed"
+				},
+				files: {
+					"public/s/styles/gen/signup.css": "public/s/styles/scss/signup.scss",
+					"public/s/styles/gen/stylesheet.css": "public/s/styles/scss/stylesheet.scss",
+					"public/s/styles/gen/client.css": "public/s/styles/scss/client.scss"
+				}
+			}
+		},
+		less: {
+			development: {
+				options: {
+					compress: true,
+					ieCompat: true,
+					sourceMap: true,
+					sourceMapFilename: "style.less.map"
+				},
+				files: {
+					"public/style.css": "public/style.less",
+					"public/dummy.css": "public/dummy.less"
+				}
+			}
+		},
+		autoprefixer: {
+			dist: {
+				src: "public/s/styles/*/*.css"
+			}
+		},
+		manifest: {
+			generate: {
+				options: {
+					basePath: "public",
+					network: ["*"],
+					fallback: ["/ /offline.html"],
+					preferOnline: true,
+					timestamp: true
+				},
+				src: [
 				"s/js/*.js",
 				"s/lib/*.js",
 				"s/components/*.js",
@@ -135,26 +137,26 @@ grunt.initConfig({
 				"s/img/client/*.*",
 				"s/img/client/*/*.*",
 			],
-			dest: "public/manifest.appcache"
-		}
-	},
-});
+				dest: "public/manifest.appcache"
+			}
+		},
+	});
 
-  // Load the plugin that provides the "uglify" task.
-  grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-wrap');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-sass');
-  grunt.loadNpmTasks('grunt-autoprefixer');
-  grunt.loadNpmTasks('grunt-manifest');
+	// Load the plugin that provides the "uglify" task.
+	grunt.loadNpmTasks("grunt-browserify");
+	grunt.loadNpmTasks("grunt-contrib-uglify");
+	grunt.loadNpmTasks("grunt-wrap");
+	grunt.loadNpmTasks("grunt-contrib-concat");
+	grunt.loadNpmTasks("grunt-contrib-watch");
+	grunt.loadNpmTasks("grunt-contrib-less");
+	grunt.loadNpmTasks("grunt-contrib-sass");
+	grunt.loadNpmTasks("grunt-autoprefixer");
+	grunt.loadNpmTasks("grunt-manifest");
 
-  // Default task(s).
-  grunt.event.on('watch', function(action, filepath, target) {
-		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
-  });
+	// Default task(s).
+	grunt.event.on("watch", function(action, filepath, target) {
+		grunt.log.writeln(target + ": " + filepath + " has " + action);
+	});
 
-  grunt.registerTask('default', ['browserify', 'uglify', 'concat', 'wrap', 'less', 'sass', 'autoprefixer', 'manifest']);
+	grunt.registerTask("default", ["browserify", "uglify", "concat", "wrap", "less", "sass", "autoprefixer", "manifest"]);
 };

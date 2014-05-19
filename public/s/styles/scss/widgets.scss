@@ -1,8 +1,8 @@
-@import "definitions";
+@import "global";
+@import "functions";
 @import "reset";
 @import "animations";
 @import "filters";
-@import "grid";
 
 /* mixins */
 @mixin buttons($bg: $accent-color, $fg: $light-color) {
@@ -42,19 +42,13 @@
     }
 }
 
-@mixin zigzag($inner, $outer, $position) {
-    background-image: linear-gradient(-135deg, $outer 5px, transparent 0) 0 5px, linear-gradient(135deg, $outer 5px, $inner 0) 0 5px;
-    background-color: $inner;
-    background-position: left $position;
-    background-repeat: repeat-x;
-    background-size: 10px 10px;
-}
-
 /* base styles */
+html { font-size: 62.5%; }
+
 body {
     background: $light-color;
     color: $dark-color;
-    font: 14px/21px $body-font;
+    font: #{$font-size}/($font-size * 1.5) $font-family-normal;
 }
 
 a {
@@ -75,16 +69,16 @@ img {
 
 h1, h2, h3 {
     line-height: 1.5em;
-    font-family: $heading-font;
+    font-family: $font-family-headings;
     font-weight: 300;
     margin: .5em 0;
 }
 
-h1 { font-size: 2em; }
+h1 { font-size: 2.5em; }
 
-h2 { font-size: 1.5em; }
+h2 { font-size: 2em; }
 
-h3 { font-size: 1.2em; }
+h3 { font-size: 1.5em; }
 
 p { margin: .5em 0; }
 
@@ -116,7 +110,7 @@ pre {
 
 code {
     font-weight: 700;
-    font-family: $monospace-font;
+    font-family: $font-family-monospace;
     line-height: 1.2em;
 }
 
@@ -420,6 +414,8 @@ code {
         margin: 0;
 
         li {
+            @extend %ease;
+
             border-bottom: 1px solid darken($light-color, 10%);
 
             &:last-child { border-bottom: none; }

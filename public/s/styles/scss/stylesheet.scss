@@ -1,5 +1,5 @@
-/* import less files */
 @import "widgets";
+@import "grid";
 
 @include keyframes(bounce) {
     0%, 10%, 30%, 50%, 100% { @include transform(translate3d(0, 0, 0)); }
@@ -97,7 +97,7 @@ footer {
 
         .link-#{$slide} {
             color: $light-color;
-            border-color: transparentize($light-color, .4);
+            border-color: fade-out($light-color, .4);
         }
     }
 }
@@ -121,16 +121,16 @@ footer {
     .container {
         a {
             color: $light-color;
-            border-bottom: 1px solid transparentize($light-color, .6);
+            border-bottom: 1px solid fade-out($light-color, .6);
 
             &:hover, &:focus {
                 color: $light-color;
-                border-color: transparentize($light-color, .4);
+                border-color: fade-out($light-color, .4);
             }
 
             &:active {
-                color: transparentize($light-color, .8);
-                border-color: transparentize($light-color, .8);
+                color: fade-out($light-color, .8);
+                border-color: fade-out($light-color, .8);
             }
         }
 
@@ -189,7 +189,7 @@ footer {
                 &:after {
                     content: " / ";
                     font-weight: 400;
-                    color: transparentize($light-color, .4);
+                    color: fade-out($light-color, .4);
                 }
 
                 &:last-child {
@@ -197,18 +197,18 @@ footer {
                 }
 
                 a {
-                    color: transparentize($light-color, .4);
-                    border-bottom: 1px solid transparentize($light-color, .8);
+                    color: fade-out($light-color, .4);
+                    border-bottom: 1px solid fade-out($light-color, .8);
                     cursor: pointer;
 
                     &:hover, &:focus {
                         color: $light-color;
-                        border-color: transparentize($light-color, .4);
+                        border-color: fade-out($light-color, .4);
                     }
 
                     &:active {
-                        color: transparentize($light-color, .8);
-                        border-color: transparentize($light-color, .6);
+                        color: fade-out($light-color, .8);
+                        border-color: fade-out($light-color, .6);
                     }
                 }
             }
@@ -274,7 +274,6 @@ footer {
 
     .heading {
         padding: 1.2em 0 .5em 0;
-        font-size: 1.4em;
         width: 100%;
         border-bottom: 1px solid darken($light-color, 5%);
 
@@ -376,7 +375,7 @@ footer {
     &:active { color: darken($dark-color, 10%); }
 }
 
-.dim, .modal { display: none; }
+.dim, .login-modal { display: none; }
 
 .login-open {
     overflow: hidden;
@@ -398,7 +397,7 @@ footer {
         }
     }
 
-    .modal {
+    .login-modal {
         @include appear(.5s 1);
 
         background: $light-color;
@@ -426,11 +425,11 @@ footer {
             border-radius: $roundness;
             left: 50%;
             top: 50%;
-            margin-left: -14.5em;
-            margin-top: -7em;
+            margin-left: -15em;
+            margin-top: -9em;
             padding: 1.3em;
-            width: 29em;
-            height: 16em;
+            width: 30em;
+            height: 18em;
         }
     }
 
@@ -444,13 +443,8 @@ footer {
 #create-field {
     position: relative;
 
-    input[type=submit] {
-        right: 0;
-        width: 20%;
-    }
-
-    input[type=entry] {
-        width: 80%;
+    input[type=text] {
+        width: 100%;
         padding-left: 8em;
     }
 

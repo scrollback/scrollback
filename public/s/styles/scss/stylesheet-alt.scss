@@ -1,4 +1,5 @@
 @import "widgets";
+@import "grid";
 
 /* we need this to make text vertically centered in a page */
 html, body { height: 100%; }
@@ -48,11 +49,11 @@ footer {
             color: $light-color;
 
             &#trial-room {
-                border-bottom: 1px solid transparentize($light-color, .7);
+                border-bottom: 1px solid fade-out($light-color, .7);
 
-                &:focus, &:hover { border-bottom-color: transparentize($light-color, .5); }
+                &:focus, &:hover { border-bottom-color: fade-out($light-color, .5); }
 
-                &:active { border-bottom-color: transparentize($light-color, .3); }
+                &:active { border-bottom-color: fade-out($light-color, .3); }
             }
         }
     }

@@ -78,8 +78,8 @@
                 <div class="bg-geeks"></div>
             </div>
             <div class="cover-content">
-                <div class="grid container">
-                    <div class="col-3-5 slides">
+                <div class="row container">
+                    <div class="small-12 medium-10 large-8 slides">
                         <img class="large-logo" src="s/img/scrollback-large.svg" alt="scrollback" />
                         <ul class="slider">
                             <li class="slide-home">
@@ -117,17 +117,17 @@
         <section id="features" class="features">
             <div class="container">
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col small-12 medium-6 large-4">
                         <h2>Chattier forums</h2>
                         <img class="icon" src="s/img/online.png" alt="Online" />
                         <p>Users are engaged like on their favourite chat app, while the community enjoys viral growth, SEO and moderation.</p>
                     </div>
-                    <div class="col-4">
+                    <div class="col small-12 medium-6 large-4">
                         <h2>Email notifications</h2>
                         <img class="icon" src="s/img/summary.png" alt="Summary" />
                         <p>Members of your community get email if someone mentions them, as well as summaries of what was said.</p>
                     </div>
-                    <div class="col-4">
+                    <div class="col small-12 medium-6 large-4">
                         <h2>Twitter integration</h2>
                         <img class="icon" src="s/img/twitter.png" alt="Twitter" />
                         <p>Bring tweets about you into your room instantly, and use them to spark new discussions around the clock.</p>
@@ -138,28 +138,28 @@
         <section class="testimonials">
             <div class="container">
                 <h1>Scrollback in the wild</h1>
-                <div class="thumbs">
-                    <div class="thumb-2">
+                <div class="row">
+                    <div class="col block-1">
                         <a href="http://mozillaindia.org" target="_blank">
                             <img src="s/img/mozilla.png" alt="Mozilla India, Philippines, and many others.">
                         </a>
                     </div>
-                    <div class="thumb-2">
+                    <div class="col block-1">
                         <a href="http://hasgeek.com/" target="_blank">
                             <img src="s/img/hasgeek.png" alt="HasGeek">
                         </a>
                     </div>
-                    <div class="thumb-2">
+                    <div class="col block-1">
                         <a href="http://jfdi.asia/" target="_blank">
                             <img src="s/img/jfdi.png" alt="JFDI Asia">
                         </a>
                     </div>
-                    <div class="thumb-2">
+                    <div class="col block-1">
                         <a href="http://jsconf.asia" target="_blank">
                             <img src="s/img/jsconf.png" alt="JSConf Asia">
                         </a>
                     </div>
-                    <div class="thumb-2">
+                    <div class="col block-1">
                         <a href="http://numixproject.org" target="_blank">
                             <img src="s/img/numix.png" alt="Numix Project">
                         </a>
@@ -170,12 +170,12 @@
         <section class="pricing">
             <div class="container">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col small-12 medium-6">
                         <div class="heading"><h2>Standard</h2><span class="price">Free</span></div>
                         <p>Scrollback is an open source project, and the fully functional hosted service will be
                             availble free forever. This is the best option for small communities.</p>
                     </div>
-                    <div class="col-6">
+                    <div class="col small-12 medium-6">
                         <div class="heading"><h2>Pro</h2><span class="price">$9/mo<span class="sub">Early adopter price</span></span></div>
                         <p>The pro tier is designed for large communities that need advanced customization,
                             abuse control and integration options. Features in this tier are under development,
@@ -194,7 +194,7 @@
             <p class="credit">Photo credit <a href="http://www.flickr.com/photos/georgio/6261749693/" target="_blank">flickr.com/photos/georgio</a>.</p>
             <p class="poweredby"><a href="http://softlayer.com/"><img src="s/img/softlayer.png" alt="Softlayer"/></a><a href="http://browserstack.com"><img src="s/img/browserstack.png" alt="Browserstack"/></a></p>
         </footer>
-        <section class="modal">
+        <section class="login-modal">
             <a class="close login-toggle">&times;</a>
             <!--
             <h2>Login to scrollback with...</h2>
@@ -207,7 +207,8 @@
             <h2>Create or visit a room </h2>
             <p>Type the name of the room you want</p>
             <form id="create-field">
-                <label for="create-text" class="linked">scrollback.io/</label><input type="text" autocomplete="off" id="create-text" placeholder="my-community" class="linked" /><input type="submit" disabled="true" value="Go" class="linked" />
+                <label for="create-text">scrollback.io/</label>
+                <input type="text" autocomplete="off" id="create-text" placeholder="my-community" /><input type="submit" disabled="true" value="Go" />
                 <p class="error"></p>
             </form>
         </section>
