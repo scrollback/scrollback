@@ -18,6 +18,7 @@ require('./http/roomGeneralSettings-client.js');
 require('./http/userProfile-client.js');
 require('./http/embed-client.js');
 require('./irc/irc-client.js');
+require('./anti-abuse/anti-abuse-client.js');
 
 // components
 require('./public/s/components/appcache.js');
