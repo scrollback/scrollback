@@ -554,7 +554,8 @@ $modeitems: normal, search, conf, pref, home;
     top: $bar-height;
     bottom: $bar-height;
 	right: 0;
-	left: 0;
+    left: 0;
+    background-color: $light-color;
 
 	.infinite-above, .infinite-below {
 		background-color: transparent;
@@ -741,7 +742,7 @@ $modeitems: normal, search, conf, pref, home;
 .chat-input {
 	@include chat-elem;
 	@include prefix(box-shadow, 0 -3px 2px -1px rgba(0,0,0,0.1));
-    @include display-in(normal);
+    @include display-in(normal search);
 
 	bottom: 0;
     padding: 0;
@@ -798,42 +799,6 @@ $modeitems: normal, search, conf, pref, home;
 
 			&:hover, &:focus, &:active { fill: darken($color, 15%); }
 		}
-	}
-}
-
-.search-bar {
-	@include transform(translate3d(0, -100%, 0));
-	@include opacity(0);
-	@extend %ease;
-
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 20;
-	height: $bar-height;
-	padding: .15em;
-	background-color: darken($light-color, 5%);
-
-	.search-focus & {
-		@include transform(translate3d(0, 0, 0));
-		@include opacity(1);
-		@extend %nofilter;
-
-		box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
-			0 3px 2px -1px rgba(0,0,0,0.05);
-	}
-
-	.search-entry {
-		position: relative;
-		display: block;
-		width: 100%;
-		margin: 0;
-		padding-left: 3.5em;
-		background-image: url(../../img/client/icons/search-gray.svg);
-		background-position: .5em center;
-		background-repeat: no-repeat;
-		background-size: 3em 2em;
 	}
 }
 
@@ -1003,6 +968,42 @@ $modeitems: normal, search, conf, pref, home;
 
 		@media #{$screenxxxx} { @include transform(translate3d(0, 0, 0)); }
     }
+}
+
+.search-bar {
+	@include transform(translate3d(0, -100%, 0));
+	@include opacity(0);
+	@extend %ease;
+
+	position: fixed;
+	top: 0;
+	left: 0;
+    right: 0;
+	z-index: 20;
+	height: $bar-height;
+	padding: .15em;
+	background-color: darken($light-color, 5%);
+
+	.search-focus & {
+		@include transform(translate3d(0, 0, 0));
+		@include opacity(1);
+		@extend %nofilter;
+
+		box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
+			0 3px 2px -1px rgba(0,0,0,0.05);
+	}
+
+	.search-entry {
+		position: relative;
+		display: block;
+		width: 100%;
+		margin: 0;
+		padding-left: 3.5em;
+		background-image: url(../../img/client/icons/search-gray.svg);
+		background-position: .5em center;
+		background-repeat: no-repeat;
+		background-size: 3em 2em;
+	}
 }
 
 .infinite-above, .infinite-below {
