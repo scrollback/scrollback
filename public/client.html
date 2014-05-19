@@ -14,16 +14,16 @@
 
 		<title>Scrollback team - Scrollback</title>
 
-		<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
-
-		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600">
-		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/gen/client.css">
-
 		<!-- enable HTML5 in IE, we need to place it before body -->
 		<!--[if lt IE 9]>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
 		<script>window.html5 || document.write('<script src="/s/lib/html5shiv.min.js"><\/script>')</script>
 		<![endif]-->
+
+		<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
+
+		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/gen/client.css">
 	</head>
 
 	<body>
@@ -41,14 +41,14 @@
 				<li role="tab" class="tab tab-info mode-normal"></li>
 				<li role="tab" class="tab tab-people mode-normal"></li>
 				<li role="tab" class="tab tab-threads mode-normal"></li>
-				<li role="tab" class="tab tab-search-this mode-search"><h2>This room</h2></li>
-				<li role="tab" class="tab tab-search-all mode-search"><h2>All rooms</h2></li>
-				<li class="header mode-conf"><h2>Room settings</h2></li>
-				<li class="header mode-pref"><h2>Account settings</h2></li>
+				<li role="tab" class="tab tab-search-this mode-search"><h3>This room</h3></li>
+				<li role="tab" class="tab tab-search-all mode-search"><h3>All rooms</h3></li>
+				<li class="header mode-conf"><h3>Room settings</h3></li>
+				<li class="header mode-pref"><h3>Account settings</h3></li>
 			</ul>
 			<div class="meta-panes">
 				<div role="tabpanel" class="pane hide-scroll pane-info">
-					<h1 class="info-title"></h1>
+					<h2 class="info-title"></h2>
 					<p class="info-description"></p>
 					<a class="button configure-button">Configure room</a>
 				</div>
@@ -65,10 +65,10 @@
 					</a>
 				</div>
 			</div>
-			<div class="meta-conf">
+			<div class="meta-conf hide-scroll">
 				<a class="list-item"></a>
 			</div>
-			<div class="meta-pref">
+			<div class="meta-pref hide-scroll">
 				<a class="list-item"></a>
 			</div>
 		</section>
@@ -91,16 +91,16 @@
 			<div class="title-bar">
 				<a class="meta-button"></a>
 				<div class="left-area">
-					<h1 class="title" id="roomTitle"></h1>
+					<h2 class="title" id="room-title"></h2>
 					<a class="follow-button" role="button"></a>
 				</div>
 				<div class="right-area">
 					<div class="user-area">
-						<div class="avatar">
-							<img alt="" id="userGrav" >
+						<div class="user-avatar">
+							<img alt="" id="sb-avatar" >
 						</div>
-						<div class="userdetail">
-							<div class="sb-user"></div>
+						<div class="user-detail">
+							<div id="sb-user"></div>
 							<div class="sign-in">Sign in</div>
 						</div>
 					</div>

@@ -45,7 +45,7 @@ $(function(){
 	libsb.on('navigate', function(state, next) {
 		if(state && (!state.old || state.room != state.old.room)) {
 			var room = state.room;
-			$("#roomTitle").text(room);
+			$("#room-title").text(room);
 		}
 
 		next();
@@ -61,7 +61,7 @@ $(function(){
 			$("body").removeClass("guest-user");
 		}
 
-		$(".sb-user")[0].innerText = init.user.id.replace(/^guest-/,'');
+		$("#sb-user").text = init.user.id.replace(/^guest-/,'');
 
 		if(/^guest-/.test(init.user.id)) {
 			$("body").addClass("guest-user");
@@ -69,8 +69,9 @@ $(function(){
 			$("body").removeClass("guest-user");
 		}
 
-		$("#userGrav").attr("src", init.user.picture);
-		$(".sb-user").text(init.user.id.replace(/^guest-/,''));
+		$("#sb-avatar").attr("src", init.user.picture);
+		$("#sb-user").text(init.user.id.replace(/^guest-/,''));
+
 		next();
 	}, 1000);
 });
