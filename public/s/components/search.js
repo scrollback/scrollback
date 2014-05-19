@@ -24,7 +24,7 @@ $(function() {
     $(".search-entry").keypress(function(e) {
         if(e.which == 13){
             e.preventDefault();
-            libsb.emit('navigate', {mode: "search", tab: "search-local", query: $(".search-entry").val()});
+            libsb.emit('navigate', {view: "meta", mode: "search", tab: "search-local", query: $(".search-entry").val()});
         }
     });;
 });

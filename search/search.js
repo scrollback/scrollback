@@ -79,12 +79,11 @@ module.exports = function (core) {
         
         /*Search threads by a keyword/phrase */
         core.on('getThreads', function (qu, callback) {
-            var data = {};
+            var data = {}, position;
             var query = {};
             if (!qu.q) {
                 return callback();
             }
-            console.log("query string threads: " + qu.q);
             data.type = 'text';
             query = { query: { match: {text: qu.q}}};
             if(qu.to){
@@ -94,6 +93,25 @@ module.exports = function (core) {
                     }
                 };
             }
+            
+            position = query.from = qu.pos || 0;
+
+            if(qu.before) {
+                position = position - qu.before;
+                if(position<0) {
+                    query.size = qu.before + position;
+                    position = 0;
+                }else {
+                    query.size = qu.before;
+                }
+            } else {
+                query.size = qu.after || 10;
+            }
+            
+            console.log("++++++++++++++++++++++++++++++++++++++", qu);
+            console.log("++++++++++++++++++++++++++++++++++++++");
+            console.log("******************************************", query);
+            console.log("******************************************");
             data.body = query;
             data.qu = qu;
             searchThreads(data,callback); 
@@ -150,8 +168,13 @@ function searchThreads(data, callback){
                 }
             }
         });
-        data.qu.ref = threads;
-        callback();
+        if(threads.length) {
+            data.qu.ref = threads;
+            callback();
+        }else{
+            data.qu.results  = [];
+            return callback();
+        }
     }, function (error) {
         log(error);
     });

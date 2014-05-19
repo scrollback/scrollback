@@ -1,4 +1,5 @@
 var log = require("../lib/logger.js");
+var gen = require("../lib/generate.js");
 var config = require('../config.js');
 var net = require('net');
 var redis = require('../lib/redisProxy.js').select(config.threader.database || 0);
@@ -12,6 +13,13 @@ module.exports = function(core) {
 	if (config.threader) {
 		init();
 		core.on('text', function(message, callback) {
+			message.threads = [{
+				id: gen.uid(),
+				title: gen.sentence(3).split(" ").join("-")
+			}];
+
+			log("fake: ", message.threads);
+			return callback();
 			if(message.type == "text" && client.writable) {//if client connected and text message
 				var msg = JSON.stringify({
 					id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
@@ -19,6 +27,10 @@ module.exports = function(core) {
 					room: message.to
 				});
 				log("Sending msg to scrollback.jar= "+msg);
+
+				
+
+				/*
 				try {
 					client.write(msg+'\n');
 				} catch(err) {
@@ -33,7 +45,7 @@ module.exports = function(core) {
 						delete pendingCallbacks[message.id];
 						log("pending callback removed after 1 sec for message.id" + message.id);
 					}
-				}, 1000);
+				}, 1000);*/
 			} else callback();
 		}, "modifier");
 	}
