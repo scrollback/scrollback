@@ -8,18 +8,20 @@ $(function() {
 
 	threadEl.render = function (el, thread) {
 		el = el || $template.clone(false);
-		el.find('.title').text(thread.title);
-		el.find('.snippet').html("");
+		el.find('.thread-title').text(thread.title);
+		el.find('.thread-snippet').html("");
 		el.find('.timestamp').html(format.friendlyTime(thread.startTime, new Date().getTime()));
 		el.attr('id', 'thread-' + thread.id);
 		el.data('index', thread.startTime);
-		
+
 		el.addClass('conv-' + thread.id.substr(-1));
 		// TODO: add thread class (for color);
-		
+
 		return el;
 	};
 });
+
+window.threadEl = threadEl;
 
 libsb.on('navigate', function(state, next) {
 	if(typeof state.thread != "undefined"  && state.thread != state.old.thread) {

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
-<!-- <html manifest="manifest.appcache" lang="en"> -->
+<!--<html manifest="/manifest.appcache" lang="en">-->
+
+<html lang="en">
+
 	<head>
 		<meta charset="utf-8">
 
@@ -12,105 +14,68 @@
 
 		<title>Scrollback team - Scrollback</title>
 
-		<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
-
-		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600">
-		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/gen/client.css">
-
 		<!-- enable HTML5 in IE, we need to place it before body -->
 		<!--[if lt IE 9]>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
 		<script>window.html5 || document.write('<script src="/s/lib/html5shiv.min.js"><\/script>')</script>
 		<![endif]-->
+
+		<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
+
+		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/gen/client.css">
 	</head>
 
 	<body>
-		<section class="rooms">
-			<div class="scrollback-header">
-				<img src="/s/img/scrollback-small.png" alt="scrollback"/>
+		<section class="room-area">
+			<div class="room-header">
+				<img src="/s/img/client/scrollback-small.svg" alt="scrollback"/>
 			</div>
 
-			<div role="list" class="roomlist hide-scroll">
-				<a class="roomitem"><span class="name"></span><span class="unread"></span></a>
+			<div role="list" class="room-list hide-scroll">
+				<a class="room-item"><span class="room-name"></span><span class="unread"></span></a>
 			</div>
 		</section>
-		<section class="meta">
-			<div class="meta-content chat-meta">
-				<ul role="tablist" class="tabs">
-					<li role="tab" class="rooms-button"><h2>Rooms</h2></li>
-					<li role="tab" class="tab tab-info mode-normal"><h2>Info</h2></li>
-					<li role="tab" class="tab tab-people mode-normal"><h2>People</h2></li>
-					<li role="tab" class="tab tab-threads mode-normal"><h2>Threads</h2></li>
-					<li role="tab" class="tab tab-search-this mode-search"><h2>This room</h2></li>
-					<li role="tab" class="tab tab-search-all mode-search"><h2>All rooms</h2></li>
-				</ul>
-				<div role="banner" class="search-banner"></div>
+		<section class="meta-area">
+			<ul role="tablist" class="meta-tabs">
+				<li role="tab" class="rooms-button"></li>
+				<li role="tab" class="tab tab-info mode-normal"></li>
+				<li role="tab" class="tab tab-people mode-normal"></li>
+				<li role="tab" class="tab tab-threads mode-normal"></li>
+				<li role="tab" class="tab tab-search-this mode-search"><h3>This room</h3></li>
+				<li role="tab" class="tab tab-search-all mode-search"><h3>All rooms</h3></li>
+				<li class="header mode-conf"><h3>Room settings</h3></li>
+				<li class="header mode-pref"><h3>Account settings</h3></li>
+			</ul>
+			<div class="meta-panes">
 				<div role="tabpanel" class="pane hide-scroll pane-info">
-					<h1 class="name"></h1>
-					<p class="description"></p>
+					<h2 class="info-title"></h2>
+					<p class="info-description"></p>
 					<a class="button configure-button">Configure room</a>
 				</div>
 				<div role="tabpanel" class="pane hide-scroll pane-people">
 					<a class="person">
-						<img class="picture" src="" alt="">
-						<span class="name"></span>
+						<img class="person-avatar" src="" alt="">
+						<span class="person-name"></span>
 					</a>
 				</div>
 				<div role="tabpanel" class="pane hide-scroll pane-threads">
 					<a class="thread" href="">
-						<h3 class="title"></h3>
-						<p class="snippet"></p>
+						<h3 class="thread-title"></h3>
+						<p class="thread-snippet"></p>
 					</a>
 				</div>
 			</div>
-			<div class="settings-header">
-				<a class="rooms-button"></a>
-				<h2>Room settings</h2>
+
+			<div class="meta-conf hide-scroll">
+				<a class="list-item"></a>
 			</div>
-			<div class="meta-content settings-menu">
-				<ul></ul>
-			</div>
-			<div class="meta-content userprefs-menu">
-				<ul></ul>
-			</div>
-			<div class="meta-content userprefs-menu"><ul></ul></div>
-		</section>
-		<section role="main" class="mainview chatview">
-			<div class="titlebar">
-				<div class="title-normal">
-					<a class="meta-button"></a>
-					<div class="left-area">
-						<h1 class="title" id="roomTitle"></h1>
-						<a class="follow-button" role="button"></a>
-					</div>
-					<div class="right-area">
-						<div class="user-area">
-							<div class="avatar">
-								<img alt="" id="userGrav" >
-							</div>
-							<div class="userdetail">
-								<div class="sb-user"></div>
-								<div class="sign-in">Sign in</div>
-							</div>
-						</div>
-						<a class="search-button" role="button"></a>
-					</div>
-				</div>
-				<div class="search-bar">
-					<input class="search-entry" type="search" placeholder="Type to search...">
-				</div>
-			</div>
-			<div class="chat-position"></div>
-			<div class="chat-area hide-scroll">
-				<p class="chat">
-					<span class="nick"></span>
-					<span class="message"></span>
-					<span class="timestamp"></span>
-				</p>
+			<div class="meta-pref hide-scroll">
+				<a class="list-item"></a>
 			</div>
 		</section>
-		<section role="main" class="mainview settingsview">
-			<div class="titlebar">
+		<section role="main" class="main-area settings-area">
+			<div class="title-bar">
 				<div class="title-normal">
 					<a class="meta-button"></a>
 					<div class="action-buttons">
@@ -119,159 +84,108 @@
 					</div>
 				</div>
 			</div>
-			<div class="settings-area">
-	<!-- 			<div class="pane pane-general-settings">
-					<div class="settings-item">
-						<div class="settings-label">
-							Name
-						</div>
-						<div class="settings-action">
-							<input type="text" id="displayname" name="displayname">
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label">
-							Description
-						</div>
-						<div class="settings-action">
-							<textarea id="description"></textarea>
-						</div>
-					</div>
+			<div class="conf-area">
+			</div>
+			<div class="pref-area">
+			</div>
+		</section>
+		<section role="main" class="main-area content-area">
+			<div class="title-bar">
+				<a class="meta-button"></a>
+				<div class="left-area">
+					<h2 class="title" id="room-title"></h2>
+					<a class="follow-button" role="button"></a>
 				</div>
-				<div class="pane pane-irc-settings">
-					<div class="settings-item">
-						<div class="settings-label">
-							IRC Channel
+				<div class="right-area">
+					<div class="user-area">
+						<div class="user-avatar">
+							<img alt="" id="sb-avatar" >
 						</div>
-						<div class="settings-action">
-							<input type="text" id="ircchannel" name="ircchannel">
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label">
-							IRC Server
-						</div>
-						<div class="settings-action">
-							<input type="text" id="ircserver" name="ircserver">
+						<div class="user-detail">
+							<div id="sb-user"></div>
+							<div class="sign-in">Sign in</div>
 						</div>
 					</div>
+					<a class="search-button" role="button"></a>
 				</div>
-				<div class="pane pane-twitter-settings">
-					<div class="settings-item">
-						<div class="settings-label">
-							Twitter hashtags
-						</div>
-						<div class="settings-action">
-							<span class="entry multientry" id="twitterhash"><span contenteditable class="item"></span></span>
-						</div>
-					</div>
-					<div class="settings-item">
-						<div class="settings-label">
-							Signed in as <a href="">satya164</a>
-						</div>
-						<div class="settings-action">
-							<a href="" class="twitter-account">
-								<img src="https://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" alt="satya164">
-								<span class="change">Change</span>
-							</a>
-						</div>
-					</div>
-				</div>
-				<div class="pane pane-thread-settings">
-					<div class="settings-item">
-						<div class="settings-label inline">
-							Group messages into threads
-						</div>
-						<div class="settings-action inline">
-							<input class="switch" type="checkbox" id="thread" name="thread"><label for="thread"></label>
-						</div>
-					</div>
-				</div>
-				<div class="pane pane-seo-settings">
-					<div class="settings-item">
-						<div class="settings-label inline">
-							Allow search engines to index room
-						</div>
-						<div class="settings-action inline">
-							<input class="switch" type="checkbox" id="allow-index" name="allow-index"><label for="allow-index"></label>
-						</div>
-					</div>
-				</div>
-				<div class="pane pane-embed-settings">
-					<div class="settings-item">
-						<p>Place the following code just before the closing <code>&lt;/body&gt;</code> tag.</p>
-						<pre><code>&lt;script&gt;
-// Scrollback embed code
-window.scrollback = {
-	streams:["scrollbackteam"],
-	theme: 'light',
-	ticker: true
-};
-
-/***** don't edit below *****/
-(function(d,s,h,e){e=d.createElement(s);e.async=1;
-e.src=h+'/client.min.js';scrollback.host=h;
-d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
-(document,'script',(location.protocol=="https:"?"https:":"http:")+'//scrollback.io'));
-&lt;/script&gt;</code></pre>
-					</div>
-				</div> -->
+			</div>
+			<div class="search-bar">
+				<input class="search-entry" type="search" placeholder="Type to search...">
+			</div>
+			<div class="chat-position"></div>
+			<div class="chat-area hide-scroll">
+				<p class="chat-item">
+					<span class="chat-nick"></span>
+					<span class="chat-message"></span>
+					<span class="chat-timestamp"></span>
+					<span class="chat-more"></span>
+				</p>
 			</div>
 		</section>
 		<section class="chat-input">
-			<div role="textbox" class="textarea chat-entry" contenteditable></div>
-			<input role="button" class="send" type="submit" value="">
+			<div role="textbox" class="chat-entry" contenteditable></div>
+			<svg version="1.1" class="chat-send" xmlns="http://www.w3.org/2000/svg">
+				<g transform="matrix(1.4744843,0,0,1.4744843,-3.6938117,-15.489686)">
+					<path d="m 5.1264798,20 c 0,-2 7.2e-4,-2 2,-2 l 6.0002502,0 -3.00025,-4 c 0,-3 1,-3 5,1 4.99276,5.99132 5,4 0,10 -4,4 -5,4 -5,1 l 3.00025,-4 -6.0002502,0 c -2.06669,0 -2,0 -2,-2 z"/>
+				</g>
+			</svg>
 		</section>
 
+		<!-- templates -->
+		<script type="text/template" id="login-menu">
+			<div class="login-menu">
+				Sign in to scrollback with
+				<a class="button facebook">Facebook</a>
+				<a class="button persona">Persona</a>
+			</div>
+		</script>
+
+		<script type="text/template" id="user-menu">
+			<ul class="user-menu">
+				<li><a class="userpref">Account settings</a></li>
+				<li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li>
+				<li><a class="logout">Logout</a></li>
+			</ul>
+		</script>
+
+		<script type="text/template" id="chat-menu">
+			<ul class="chat-menu">
+				<li><a class="tweetmsg">Tweet message</a></li>
+				<li><a class="hidemsg">Hide message</a></li>
+			</ul>
+		</script>
+
+		<script type="text/template" id="loggedout-dialog">
+			<div class="loggedout-dialog">
+				<h1>You've been logged out!</h1>
+				<a class="button reload-page modal-remove">Go back as guest</a>
+			</div>
+		</script>
+
+		<script type="text/template" id="signup-dialog">
+			<div class="signup-dialog">
+				<h1>Choose a username</h1>
+				<form>
+					<input type="text" id="signup-id" name="username" placeholder="Enter username" autofocus><br/>
+					<input class="signup-save" type="submit" value="Create account">
+					<input class="signup-cancel secondary modal-remove" type="button" value="cancel">
+				</form>
+			</div>
+		</script>
+
 		<!-- scripts -->
-        <script src="/s/lib/html5shiv.min.js"></script>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script>window.jQuery || document.write('<script src="/s/lib/jquery.min.js"><\/script>');</script>
 
-		<script src="/s/lib/pointer.events.polyfill.min.js"></script> <!-- adds pointer events support for old IE -->
+		<!--[if IE]>
+		<script src="/s/lib/pointer.events.polyfill.min.js"></script>
 		<script>$(function() { PointerEventsPolyfill.initialize({}); });</script>
-
-		<script src="/s/lib/transformie.min.js"></script> <!-- adds CSS transforms support in old IE -->
-
-		<script src="/sdk/sockjs.js"></script>
-		<script src="/s/lib/bus.js"></script>
-		<script src="/s/lib/format.js"></script>
+		<script src="/s/lib/transformie.min.js"></script>
+		<![endif]-->
 
 		<script src="/sdk/sockjs.js"></script>
-		<script src="/s/lib/bus.js"></script>
-		<script src="/s/lib/format.js"></script>
 
 		<script src="/libsb.bundle.js"></script>
-		<script src="/s/js/lace.js"></script>
-		<script src="/s/js/swipe-events.js"></script>
-		<script src="/s/js/libsb-settings.js"></script>
-		<script src="/s/js/user-settings.js"></script>
-
-		<script src="/s/components/infinite.js"></script>
-		<script src="/s/components/hide-scroll.js"></script>
-		<script src="/s/components/navigation.js"></script>
-		<script src="/s/components/columns.js"></script>
-		<script src="/s/components/text.js"></script>
-		<script src="/s/components/text-area.js"></script>
-		<script src="/s/components/compose.js"></script>
-		<script src="/s/components/browser-notify.js"></script>
-		<script src="/s/components/panes.js"></script>
-		<script src="/s/components/thread.js"></script>
-		<script src="/s/components/thread-area.js"></script>
-		<script src="/s/components/person.js"></script>
-		<script src="/s/components/people-area.js"></script>
-		<script src="/s/components/info-area.js"></script>
-		<script src="/s/components/room-item.js"></script>
-		<script src="/s/components/room-list.js"></script>
-		<script src="/s/components/search.js"></script>
-		<script src="/s/components/timeline.js"></script>
-		<script src="/s/components/follow-room.js"></script>
-		<script src="/s/components/facebook.js"></script>
-		<script src="/s/components/settings-area.js"></script>
-		<script src="/s/components/pref-area.js"></script>
-		<script src="/s/components/user-area.js"></script>
-		<script src="/s/components/signup-area.js"></script>
-		<script src="/s/components/persona.js"></script>
 
 		<script>
 			$(function() {

@@ -35,8 +35,6 @@ $(function() {
 
 		if(!state.old ||(state.tab == "people" && state.old.tab!="people") || (state.old.room != state.room)) {
 			room = state.room;
-			
-
 			function loadMembers(p,n) {
 				libsb.getMembers(room, function(err, p) {
 					if(err) throw err;

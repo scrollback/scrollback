@@ -1,6 +1,10 @@
-/* column based grid  */
-$columns: 12;
-$gutter: 1em;
+$grid-block-size: 10em !default;
+$grid-columns: 12 !default;
+$grid-gutter: 1.5em !default;
+
+$small: "only screen" !default;
+$medium: "only screen and (min-width: 40.063em)" !default;
+$large: "only screen and (min-width: 64.063em)" !default;
 
 %clearfix {
     *zoom: 1;
@@ -16,69 +20,51 @@ $gutter: 1em;
 .row {
     @extend %clearfix;
 
-    margin-right: $gutter * -1;
-    margin-left: $gutter * -1;
+    margin-right: $grid-gutter * -1;
+    margin-left: $grid-gutter * -1;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
-[class^="col-"] {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    padding-right: $gutter;
-    padding-left: $gutter;
+.col {
+    padding-right: $grid-gutter;
+    padding-left: $grid-gutter;
 }
 
-@media screen and (min-width: 768px) {
-    .row {
-        @for $i from 1 through $columns {
-            .col-#{$i} { width: ($i * 100% / $columns); }
-        }
+@mixin grid-classes($size) {
+    $dirs: left, right;
+
+    @each $dir in $dirs {
+        .#{$size}-#{$dir} { float: $dir; }
     }
 
-    [class^="col-"] { float: left; }
-}
-
-/* thumb based grid */
-@mixin thumbgrid($thumbsize: 5em, $gutter: 1em) {
-    @extend %clearfix;
-
-    margin-right: $gutter * -1;
-    margin-left: $gutter * -1;
-
-    @for $i from 1 through $columns {
-        .thumb-#{$i} {
-            display: inline-block;
-            vertical-align: top;
-            max-width: ($i * $thumbsize);
-            padding-right: $gutter;
-            padding-left: $gutter;
+    @for $i from 1 through $grid-columns {
+        .#{$size}-#{$i} {
+            float: left;
+            width: ($i * 100% / $grid-columns);
         }
     }
 }
 
-.thumbs { @include thumbgrid; }
+@media #{$small} {
+    @include grid-classes($size: small);
+}
 
-/* floating contents */
-.content-row {
-    @extend %clearfix;
+@media #{$medium} {
+    @include grid-classes($size: medium);
+}
 
-    padding: $gutter 0;
+@media #{$large} {
+    @include grid-classes($size: large);
+}
 
-    .pull-right {
-        float: right;
-        margin-left: $gutter * 2;
-    }
-
-    .pull-left {
-        float: left;
-        margin-right: $gutter * 2;
-    }
-
-    @media only screen and (max-width: 640px) {
-        [class^="pull-"] {
-            float: none;
-            display: block;
-            margin: 0;
-        }
+@for $i from 1 through $grid-columns {
+    .block-#{$i} {
+        display: inline-block;
+        vertical-align: top;
+        width: $i * $grid-block-size;
+        max-width: 100%;
+        padding-right: $grid-gutter;
+        padding-left: $grid-gutter;
     }
 }

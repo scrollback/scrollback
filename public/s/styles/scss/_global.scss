@@ -1,0 +1,18 @@
+/* font settings */
+$font-family-normal: "Open Sans", "Myriad Pro", Helvetica, Tahoma, "Nimbus Sans", Arial, sans-serif !default;
+$font-family-headings: "Open Sans", "Open Sans Light", Candara, Calibri, Segoe, "Segoe UI", Optima, Arial, sans-serif !default;
+$font-family-monospace: Consolas, "Andale Mono", "Lucida Console", "Nimbus Mono", "Courier New", monospace !default;
+$font-size: 14px !default;
+
+/* colors */
+$accent-color: #3ca !default;
+$dark-color: #555 !default;
+$light-color: #fff !default;
+$info-color: #638ce8 !default;
+$success-color: #43b43b !default;
+$warning-color: #e77f1b !default;
+$error-color: #ef513d !default;
+$palette: #43b43b #e77f1b #f04986 #a1da21 #769f1a #e360c8 #638ce8 #ef513d #b079e7 #5ee43d !default;
+
+/* misc */
+$roundness: 2px !default;

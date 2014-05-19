@@ -1,5 +1,6 @@
 /* jslint browser: true, indent: 4, regexp: true */
 /* global $, Notification, webkitNotifications */
+/* exported lace */
 
 /**
  * @fileOverview Various UI components.
@@ -7,7 +8,7 @@
  * @requires jQuery
  */
 
-var lace = {
+window.lace = {
     animate: {
         /**
          * Add a class to an element and execute an action after transition.
@@ -41,7 +42,7 @@ var lace = {
             $(document).on("keydown", ".multientry .item", function(e) {
                 if (e.keyCode === 13 || e.keyCode === 32 || e.keyCode === 188) {
                     e.preventDefault();
-                    lace.multientry.add($(this), $(this).text());
+                    window.lace.multientry.add($(this), $(this).text());
                 }
             });
 
@@ -51,18 +52,18 @@ var lace = {
                 var items = e.originalEvent.clipboardData.getData('Text').split(/[\s,]+/);
 
                 for (var i = 0; i < items.length; i++) {
-                    lace.multientry.add($(this), items[i]);
+                    window.lace.multientry.add($(this), items[i]);
                 }
             });
 
             $(document).on("keydown", ".multientry .item", function(e) {
                 if (e.keyCode === 8 && $(this).text().match(/^\s*$/)) {
-                    lace.multientry.remove($(this).prev());
+                    window.lace.multientry.remove($(this).prev());
                 }
             });
 
             $(document).on("click", ".multientry .item-remove", function() {
-                lace.multientry.remove($(this).parent());
+                window.lace.multientry.remove($(this).parent());
             });
 
             $(document).on("click", ".multientry", function() {
@@ -130,11 +131,11 @@ var lace = {
             });
 
             if (modal.find(".modal-remove").length === 0) {
-                $(".dim").on("click", lace.modal.hide);
+                $(".dim").on("click", window.lace.modal.hide);
             }
 
-            $(".modal-remove").on("click", lace.modal.hide);
-            $(window).on("popstate", lace.modal.hide);
+            $(".modal-remove").on("click", window.lace.modal.hide);
+            $(window).on("popstate", window.lace.modal.hide);
         },
 
         /**
@@ -143,7 +144,7 @@ var lace = {
          */
         hide: function() {
             [".dim", ".modal"].forEach(function(el) {
-                lace.animate.transition("fadeout", el, function() {
+                window.lace.animate.transition("fadeout", el, function() {
                     $(el).remove();
                 });
             });
@@ -181,7 +182,7 @@ var lace = {
                 spacetop = $(window).height() / 2;
             } else if ($(popover).outerHeight() >= spacebottom) {
                 $(popover).addClass("popover-top");
-                spacetop = spacetop - ( $(element).height() * 2 ) - $(popover).outerHeight();
+                spacetop = spacetop - $(element).height() - $(popover).outerHeight();
             } else {
                 $(popover).addClass("popover-bottom");
             }
@@ -191,7 +192,7 @@ var lace = {
                 "left" : spaceleft
             });
 
-            $(".layer").on("click", lace.popover.hide);
+            $(".layer").on("click", window.lace.popover.hide);
         },
 
         /**
@@ -199,7 +200,7 @@ var lace = {
          * @constructor
          */
         hide: function() {
-            lace.animate.transition("fadeout", ".popover-body", function() {
+            window.lace.animate.transition("fadeout", ".popover-body", function() {
                 $(".popover-body, .layer").remove();
             });
         }
@@ -223,7 +224,7 @@ var lace = {
             $(container).append(alert);
 
             $(document).on("click", ".alert-remove", function() {
-                lace.alert.hide($(this).parent($(".alert-bar")));
+                window.lace.alert.hide($(this).parent($(".alert-bar")));
             });
         },
 
@@ -239,7 +240,7 @@ var lace = {
                 element = ".alert-bar";
             }
 
-            lace.animate.transition("fadeout", element, function() {
+            window.lace.animate.transition("fadeout", element, function() {
                 $(element).remove();
 
                 if ($(container).children().length === 0) {
@@ -284,10 +285,9 @@ var lace = {
         /**
          * Request permission for desktop notifications.
          * @constructor
-         * @return {Boolean}
          */
         request: function() {
-            var check = lace.notify.support();
+            var check = window.lace.notify.support();
 
             if (check.permission !== "granted" && check.permission !== "denied") {
                 if (check.type === "webkit") {
@@ -295,14 +295,6 @@ var lace = {
                 } else if (check.type === "html5") {
                     Notification.requestPermission();
                 }
-
-                if (check.permission === "granted") {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
             }
         },
 
@@ -312,7 +304,7 @@ var lace = {
          * @param {{ title: String, body: String, tag: String, icon: String, action: Function }} notification
          */
         show: function(notification) {
-            var check = lace.notify.support(),
+            var check = window.lace.notify.support(),
                 n;
 
             if (check.permission === "granted") {
@@ -325,7 +317,7 @@ var lace = {
                     n.onclick = notification.action;
                 }
             } else {
-                lace.notify.request();
+                window.lace.notify.request();
             }
         }
     }

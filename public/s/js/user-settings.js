@@ -1,7 +1,7 @@
 //general settings
 libsb.on('pref-show', function(conf, next){
 	conf.profile = {
-		html: "<div class='pane pane-profile-settings'>" + formField("About me", "area", "about-me") + " </div>",
+		html: "<div class='list-view list-view-profile-settings'>" + formField("About me", "area", "about-me") + " </div>",
 		text: "Profile",
 		prio: 1000
 	}
@@ -17,12 +17,12 @@ libsb.on('pref-save', function(conf, next){
 
 // email settings
 /*
- - Email digest frequency (Daily/Weekly, Never) 
+ - Email digest frequency (Daily/Weekly, Never)
  - Email me when I'm mentioned in a room (On/Off)
 */
 libsb.on('pref-show', function(conf, next){
 	conf.email = {
-		html: "<div class='pane pane-email-settings'>" + formField("Email digest frequency", 'radio', [["email-freq", "daily", "checked"],["email-freq", "weekly"],["email-freq", "never"]]) + formField("Notify me via email when I am mentioned in chat ", "toggle", 'mention') + " </div>",
+		html: "<div class='list-view list-view-email-settings'>" + formField("Email digest frequency", 'radio', [["email-freq", "daily", "checked"],["email-freq", "weekly"],["email-freq", "never"]]) + formField("Notify me via email when I am mentioned in chat ", "toggle", 'mention') + " </div>",
 		text: "Email",
 		prio: 900
 	}
@@ -40,7 +40,7 @@ libsb.on('pref-save', function(conf, next){
 //notifications settings
 libsb.on('pref-show', function(conf, next){
 	conf.sound = {
-		html: "<div class='pane pane-sound-settings'> " + formField('Sound Notification ', 'toggle', 'sound-notifcation') + formField('Desktop Notification ', 'toggle', 'desktop-notification') + " </div>",
+		html: "<div class='list-view list-view-sound-settings'> " + formField('Sound Notification ', 'toggle', 'sound-notifcation') + formField('Desktop Notification ', 'toggle', 'desktop-notification') + " </div>",
 		text: "Notications",
 		prio: 800
 	}
