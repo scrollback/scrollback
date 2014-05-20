@@ -375,7 +375,7 @@ function sendBack(server, channel, nick, bn) {
 				to: room.id,
 				from: nick,
 				room: room,
-				session: "irc//:" + server + ":" + nick
+				session: "irc://" + server + ":" + nick
 			});
 		}
 	});
