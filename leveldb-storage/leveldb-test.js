@@ -384,7 +384,7 @@ describe("storing actions", function() {
 	});
 });
 
-describe("Threads: Add assertions to the validity of the data: ", function() {
+describe.skip("Threads: Add assertions to the validity of the data: ", function() {
 	it("insert few text", function(done) {
 		var i=0, x = time;
 		this.timeout(10000);

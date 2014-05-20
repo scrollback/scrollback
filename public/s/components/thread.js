@@ -6,14 +6,14 @@ var threadEl = {};
 $(function() {
 	var $template = $(".thread").eq(0);
 
-	threadEl.render = function (el, thread) {
+	threadEl.render = function (el, thread, index) {
 		el = el || $template.clone(false);
 		el.find('.thread-title').text(thread.title);
 		el.find('.thread-snippet').html("");
 		el.find('.timestamp').html(format.friendlyTime(thread.startTime, new Date().getTime()));
 		el.attr('id', 'thread-' + thread.id);
-		el.data('index', thread.startTime);
-
+		el.data('index', index);
+		
 		el.addClass('conv-' + thread.id.substr(-1));
 		// TODO: add thread class (for color);
 

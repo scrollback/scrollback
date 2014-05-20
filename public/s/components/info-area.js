@@ -55,6 +55,11 @@ libsb.on('logout', function(logout, next){
 });
 
 libsb.on('navigate', function(state, next) {
+	if(state.tab == "info") {
+		$(".pane-info").addClass("current");
+	}else{
+		$(".pane-info").removeClass("current");			
+	}
 	if(!state.old || state.room != state.old.room) {
 		if(state.tab == 'info')	 infoArea.render({id: state.room, description: "Loading room description."});
 		function loadRooms() {

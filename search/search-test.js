@@ -1,3 +1,4 @@
+/*global describe, before, it*/
 var assert = require("assert");
 var core = require("../test/mock-core.js")();
 var gen = require("../lib/generate.js");
@@ -38,7 +39,9 @@ describe('search', function () {
     it('text index test', function (done) {
         msg.text = randomSentence;
         core.emit("text", msg, function (err, data) {
+            
             assert.ok(!err, " indexed ");
+            assert.ok(data, " no data ");
             done();
         });
     });
@@ -48,8 +51,9 @@ describe('search', function () {
         room.description = randomSentence;
         core.emit("room", room, vik);        
         function vik (err, data) {
-            if(err){console.log(err)}
+            if(err){console.log(err);}
             assert.ok(!err, " indexed ");
+            assert.ok(data, " no data ");
             done();
         }
     });

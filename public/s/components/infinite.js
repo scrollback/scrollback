@@ -71,6 +71,9 @@
 				if(fillBelow > fillSpace) {
 					recycle = recycle.concat(remove(fillBelow - fillSpace, "below"));
 				}
+
+				// console.log(fillAbove, fillSpace, pendingRequests.above, atTop);
+
 				if(fillAbove < fillSpace && !pendingRequests.above && !atTop) {
 					pendingRequests.above = true;
 					cols = getGridColumns();
@@ -102,7 +105,6 @@
 
 			function render(els, where) {
 				var oldTerm, height=0;
-
 				if(els[0] === false && where == "above") {
 					atTop = true;
 					$logs.data("upper-limit", true);
@@ -212,6 +214,7 @@
 		$logs.data("lower-limit", false);
 		$logs.data("upper-limit", false);
 		if(typeof index !== undefined) $logs.data("index", index);
+		$logs.scrollTop(($logs.prop('scrollHeight') - $logs.height())/2);
 		$logs.data("update-infinite")();
 	};
 

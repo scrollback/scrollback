@@ -100,6 +100,11 @@ libsb.on("navigate", function(state, next) {
 		// $("body").remove();
 	}
 
+	if(state.tab) {	
+		$(".tab").removeClass("current");
+		$(".tab-" + state.tab).addClass("current");
+	}
+
 	next();
 }, 999);
 

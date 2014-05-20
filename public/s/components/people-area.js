@@ -31,6 +31,12 @@ $(function() {
 	});
 	
 	libsb.on('navigate', function(state, next) {
+		if(state.tab == "people") {
+			$(".pane-people").addClass("current");
+		}else{
+			$(".pane-people").removeClass("current");			
+		}
+		
 		if(state.source == 'people-area') return next();
 
 		if(!state.old ||(state.tab == "people" && state.old.tab!="people") || (state.old.room != state.room)) {

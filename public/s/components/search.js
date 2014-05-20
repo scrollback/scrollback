@@ -17,4 +17,12 @@ $(function() {
             $(".search-entry").data("search-ready", false);
         }
     });
+
+
+    $(".search-entry").keypress(function(e) {
+        if(e.which == 13){
+            e.preventDefault();
+            libsb.emit('navigate', {view: "meta", mode: "search", tab: "search-local", query: $(".search-entry").val()});
+        }
+    });;
 });

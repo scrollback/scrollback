@@ -8,7 +8,6 @@ $(function() {
 		if(!tab) return;
 		tab = tab[1]; // match returns an array with the capture groups starting at index 1.
 
-
 		libsb.emit("navigate", { tab: tab, source: "tabs"});
 	});
 
