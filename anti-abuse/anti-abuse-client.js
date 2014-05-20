@@ -5,7 +5,7 @@ libsb.on('config-show', function(conf, next) {
 		html: "<div class='list-view list-view-spam-settings'>" + formField("Block offensive words", "toggle", 'block-offensive'),
 		text: "Spam control",
 		prio: 600
-	}
+	};
 
 	next();
 });

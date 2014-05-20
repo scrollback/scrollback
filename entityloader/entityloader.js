@@ -91,7 +91,6 @@ function userHandler(action, callback) {
 		if(err || !data || !data.results || !data.results.length) {
 			return callback(new Error("USER_NOT_INITED"));
 		}else {
-			console.log(err, data);
 			action.from = data.results[0].id;
 			core.emit("getUsers", {ref: action.user.id, session: internalSession}, function(err, data){
 				if(err || !data || !data.results || !data.results.length) {
@@ -99,6 +98,7 @@ function userHandler(action, callback) {
 				}else {
 					action.old = data.results[0];
 				}
+
 				action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0]).digest('hex');
 				action.user.description = "";
 				callback();

@@ -11,8 +11,8 @@ libsb.on('config-show', function(conf, next) {
 
 libsb.on('config-save', function(conf, next){
 	conf.irc = {
-		server : $('.list-view-irc-settings #ircserver').val(),
-		channel : $('.list-view-irc-settings #ircchannel').val()
+		server : $('#ircserver').val(),
+		channel : $('#ircchannel').val()
 	};
 	next();
 });
