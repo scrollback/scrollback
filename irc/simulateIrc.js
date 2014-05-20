@@ -16,7 +16,7 @@ nextTime();
 
 function nextTime() {
 	next();
-	var time = getRandom(5 * 1000, 100 * 1000);
+	var time = getRandom(11 * 1000, 50 * 1000);
 	setTimeout(nextTime, time);
 }
 
@@ -26,25 +26,22 @@ function next() {
 	var client;
 	var disCl;
 	var tt = 10 * 1000;
-	var noOfOp = getRandom(0, 50);
-	console.log("total users:", ircClients.length);
+	var noOfOp = getRandom(0, 100);
+	console.log("total users:", ircClients.length, noOfOp);
 	for (i = 0;i < noOfOp;i++) {
-		var op = getRandom(0, 2);
-		console.log(i , op);
-		tt = getRandom(250, 20 * 1000);
-		switch(op) {
-			case 0:
-				console.log("connecting");
-				
-				setTimeout (function() {
-					var ic = new irc.Client(testingServer, names(6), {
-						channels: [channel]
-					});
-					ircClients.push(ic);
-				}, tt);
-				break;
-			case 1:
-				if (ircClients.length === 0) break;
+		var v = getRandom(0, 500);
+		console.log("v=", v, i);
+		tt = getRandom(250, 10 * 1000);
+		if (v < Math.max(1, 100 - ircClients.length)) {
+			console.log("connecting");
+			setTimeout (function() {
+				var ic = new irc.Client(testingServer, names(6), {
+					channels: [channel]
+				});
+				ircClients.push(ic);
+			}, tt);
+		} else if (v >= 100 && v < 100 + ircClients.length) {
+			if (ircClients.length !== 0) {
 				setTimeout(function() {
 					disCl = getRandom(0, ircClients.length - 1);
 					client = ircClients[disCl];
@@ -55,18 +52,16 @@ function next() {
 						ircClients.splice(disCl, 1);
 					}
 				}, tt);
-				
-				break;
-			case 2:
-				if (ircClients.length === 0) break;
+			}
+		} else {
+			if (ircClients.length !== 0) {
 				setTimeout(function() {
 					disCl = getRandom(0, ircClients.length - 1);
 					client = ircClients[disCl];
-					if(client) client.say(channel, sentence(getRandom(1, 40)));
+					if(client) client.say(channel, sentence(getRandom(1, 20)));
 				}, tt);
-				break;
+			}
 		}
-		
 	}
 }
 
