@@ -741,7 +741,6 @@ $modeitems: normal, search, conf, pref, home;
 
 .chat-input {
 	@include chat-elem;
-	@include prefix(box-shadow, 0 -3px 2px -1px rgba(0,0,0,0.1));
     @include display-in(normal search);
 
 	bottom: 0;
