@@ -12,10 +12,12 @@ $(function() {
 	}
 
 	function renderSettings(userId){
+		console.log(" type of userId , userID ", userId);
 		libsb.getUsers({ref: userId}, function(err, data){
 			var results = data.results[0];
 			var radio = {"daily": 0, "weekly": 1, "never": 2};
 
+			console.log("** DATA , user ", results);
 			// user profile
 			$('#about-me').val(results.description);
 
@@ -42,7 +44,8 @@ $(function() {
 				params: {
 					email : configData.email,
 					notifications: configData.notifications
-				}
+				},
+				identities: libsb.user.identities
 			};
 
 			libsb.emit('user-up', user, function(err, data){

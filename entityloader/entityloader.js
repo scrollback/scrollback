@@ -98,9 +98,9 @@ function userHandler(action, callback) {
 				}else {
 					action.old = data.results[0];
 				}
-
-				action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0]).digest('hex');
-				action.user.description = "";
+				if(action.user.identities) action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0]).digest('hex');
+				else action.user.picture = 'https://gravatar.com/avatar/default';
+				action.user.description = action.user.description || "";
 				callback();
 			});
 		}
