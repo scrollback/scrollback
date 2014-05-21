@@ -1,14 +1,18 @@
 var formField = require("../lib/formField.js");
+
+var div = $('<div>').addClass('list-view list-view-spam-settings');
+div.append(formField("Block offensive words", "toggle", 'block-offensive'));
+
 libsb.on('config-show', function(conf, next) {
-	// conf.spam = "<div class='list-view list-view-spam-settings'>" + formField("Block repetitive messages", "toggle", "block-repetitive") + formField("Block nonsense messages", "toggle", "block-nonsense") + formField("Bloack offesnive words", "checks", [ [ "en-moderate", "English moderate" ], [ "en-strict", "English strict" ], [ "zh-strict", "Chinese strict" ] ]) + formField("Custom blocked word", "segmented", "blocked-words" ) + formField("Gaggded users", "segmented", "gagged-users" ) + formField("Banned users", "segmented", "banned-users" ) + "</div>";
 	conf.spam = {
-		html: "<div class='list-view list-view-spam-settings'>" + formField("Block offensive words", "toggle", 'block-offensive'),
+		html: div,
 		text: "Spam control",
 		prio: 600
 	};
 
 	next();
 });
+
 libsb.on('config-save', function(conf, next){
 	conf.spam = {
 		offensive : $('#block-offensive').is(':checked')
