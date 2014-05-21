@@ -165,7 +165,7 @@ window.lace = {
                 spaceleft = $(element).offset().left - $(document).scrollLeft() + ( $(element).width() / 2 ),
                 spaceright = $(window).width() - spaceleft;
 
-            $("body").append("<div class='layer'></div>").append($('<div role="menu" class="' + popover.substr(1) + '">' + content + '</div>'));
+            $("body").append("<div class='popover-layer'></div>").append($('<div role="menu" class="' + popover.substr(1) + '">' + content + '</div>'));
 
             if ($(popover).outerWidth() >= spaceleft) {
                 $(popover).addClass("arrow-left");
@@ -192,7 +192,7 @@ window.lace = {
                 "left" : spaceleft
             });
 
-            $(".layer").on("click", lace.popover.hide);
+            $(".popover-layer").on("click", lace.popover.hide);
         },
 
         /**
@@ -201,7 +201,7 @@ window.lace = {
          */
         hide: function() {
             lace.animate.transition("fadeout", ".popover-body", function() {
-                $(".popover-body, .layer").remove();
+                $(".popover-body, .popover-layer").remove();
             });
         }
     },
