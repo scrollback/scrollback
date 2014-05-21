@@ -3,12 +3,13 @@ var log = require("../lib/logger.js");
 var db = require('../lib/mysql.js');
 var send = require('./sendEmail.js');
 var fs=require("fs"),jade = require("jade");
-var redis = require('../lib/redisProxy.js').select(5);//TODO move this to config
+var redis = require('../lib/redisProxy.js').select(config.redisDB.email);//TODO move this to config
 var core;
+var internalSession = Object.keys(config.whitelists)[0];
 var emailConfig = config.email, digestJade;
 var waitingTime1 = config.mentionEmailTimeout; //mention email timeout
 var waitingTime2 = config.regularEmailTimeout;//regular email timeout
-var timeout = 3*1000;//for debuging only
+var timeout = 30 * 1000;//for debuging only
 var debug = emailConfig.debug;
 if(!debug) log = log.tag("mail");
 
@@ -67,53 +68,45 @@ function trySendingToUsers() {
  *2 - On nick mention
  *3 - Periodic check for mention timeout.
  *@param {string} username username
- *@param {array of string}(optional) rooms rooms followed by username.
  */
- function initMailSending(username, rooms) {
-	log("init mail sending for user  " + username, " rooms ", rooms);
+ function initMailSending(username) {
+	log("init mail sending for user  " + username);
 	redis.get("email:" + username + ":lastsent",function(err, lastSent) {
 		log("data returned form redis", lastSent + " , " , err);
 		if (err) return;
-		redis.get("email:" + username + ":isMentioned", function(err, isMentioned) {
+		redis.get("email:" + username + ":isMentioned", function(err, data) {
 			var ct = new Date().getTime();
 			var interval = waitingTime2 ;
-			if (isMentioned) interval = waitingTime1;
+			if (data) interval = waitingTime1;
 			if (emailConfig.debug) {
 				log("username " + username + " is mentioned ", data);
 				interval = timeout/2;
-				if (isMentioned) interval = timeout/8;
+				if (data) interval = timeout/8;
 				log("interval " , interval);
 			}
 			if (!lastSent )	lastSent = ct - interval;
 			log("time left for user " , (parseInt(lastSent, 10) + interval - ct));
 			if (parseInt(lastSent, 10) + interval <= ct) {
 				//get rooms that user is following...
-				if (!rooms) {
-					log("getting rooms that user is following....");
-
-					core.emit("getRooms", {hasMember: username}, function(err, rooms) {
-						if(err || !data) {
-							log("error in getting members information" , err);
-							return;
-						}
-						if(!data.results || !data.results.length) {
-							log("username ", username ," is not following any rooms ");	
-							return;
-						}
-						rooms = [];
-						following.results.forEach(function(r) {
-							rooms.push(r.room);
-						});
-						prepareEmailObject(username, rooms, lastSent, function(err, email) {
-							if (!err) sendMail(email);
-						});
+				log("getting rooms that user is following....");
+				core.emit("getRooms", {hasMember: username, session: internalSession}, function(err, following) {
+					log("results:", following);
+					if(err || !following) {
+						log("error in getting members information" , err);
+						return;
+					}
+					if(!following.results || !following.results.length) {
+						log("username ", username ," is not following any rooms ");	
+						return;
+					}
+					rooms = [];
+					following.results.forEach(function(r) {
+						rooms.push(r.id);
 					});
-				}else {
 					prepareEmailObject(username, rooms, lastSent, function(err, email) {
-						if (emailConfig.debug) log(err + " callback of pre email" , email);
 						if (!err) sendMail(email);
 					});
-				}
+				});
 				redis.srem("email:toSend", username);
 			}else {
 				log("can not send email to user ", username, " now" );
@@ -170,9 +163,9 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 					b = JSON.parse(b);
 					return a.time - b.time;
 				});
-				log("mentions returned from redis ", room ,mentions);
+				log("mentions returned from redis ", room ,mentions, lastSent);
 				var l = "email:label:" + room + ":labels";
-
+	
 				redis.zrangebyscore(l, lastSent, "+inf",  function(err,labels) {
 					if(emailConfig.debug) log("labels returned from redis" , labels);
 					roomsObj.labels = [];
@@ -345,12 +338,13 @@ function sortLabels(room, roomObj, mentions,callback) {
 function deleteMentions(username , rooms) {
 	rooms.forEach(function(room) {
 		var m = "email:mentions:" + room + ":" + username ;
-		var multi = redis.multi();
-		multi.del(m);
-		m = "email:" + username + ":isMentioned";
-		multi.del(m);
-		multi.exec(function(replies) {
-			log("mentions deleted" , replies);
+		redis.multi(function(multi) {
+			multi.del(m);
+			m = "email:" + username + ":isMentioned";
+			multi.del(m);
+			multi.exec(function(replies) {
+				log("mentions deleted" , replies);
+			});
 		});
 	});
 }
@@ -361,14 +355,17 @@ function deleteMentions(username , rooms) {
  *@param {object} Email Object
  */
 function sendMail(email) {
-	core.emit("getUsers", {id: email.username}, function(err, data) {
+	core.emit("getUsers", {id: email.username, session: internalSession}, function(err, data) {
+		if (err || !data.results) return;
+		var user = data.results;
+		log("getting email id", data);
 		var mailAccount;
-		if (rooms && rooms[0] && rooms[0].identities) {
-			mailAccount = rooms[0].identities;
+		if (user && user[0] && user[0].identities) {
+			mailAccount = user[0].identities;
 
 			mailAccount.forEach(function(e) {
-				if (e.id.indexOf("mailto:") === 0) {
-					email.emailId = e.id.substring(7);
+				if (e.indexOf("mailto:") === 0) {
+					email.emailId = e.substring(7);
 					var html;
 					try {
 						email.heading = getHeading(email);
@@ -475,32 +472,18 @@ function sendPeriodicMails(){
 		end2 = start2 + 59;
 	}
 	log("current time hour:",x+","+start1+","+start2);
-	var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on" +
-		" members.user=accounts.room where accounts.gateway='mailto' and `partedOn` is null"+
-		" and timezone between ? and ?  or timezone between ? and ?";
-	/*var query = "SELECT accounts.id,members.user,members.room from accounts inner join members on " +
-	 "members.user=accounts.room where accounts.gateway='mailto' order by accounts.id";
-	 */
-	db.query(query, [start1, end1, start2, end2], function(error,data){//TODO use labelDB for Getting members Info.
-		if (error) {
-			log("error in geting email member..",error);
-			return;
-		}
-		log("data  returned:",data.length);
-		var us = {};
-		for (i = 0;i < data.length; i++){
-			var d = data[i];
-			if (!us[d.user]) {
-				us[d.user] = [];
-				us[d.user].rooms = [];
-				us[d.user].email = d.id.replace(/mailto:/g, '');
-			}
-			us[d.user].rooms.push(d.room);
-		}
-
-		for (var key in us) { //send (key -user)
-			var rm = us[key].rooms;//all rooms as array
-			initMailSending(key, rm);
-		}
+	core.emit("getUsers", {timezone: {gte: start1, lte: end1}, session: internalSession}, function(err, data) {
+		if (err || !data.results) return;
+		var users = data.results;
+		users.forEach(function(user) {
+			initMailSending(user.id);
+		});
+	});
+	core.emit("getUsers", {timezone: {gte: start2, lte: end2}, session: internalSession}, function(err, data) {
+		if (err || !data.results) return;
+		var users = data.results;
+		users.forEach(function(user) {
+			initMailSending(user.id);
+		});
 	});
 }

@@ -7,12 +7,13 @@ core.emit("user", {
 	id: generate.uid(),
 	type:"user",
 	user: {
-		id:"amalantony",
+		id:"kamal",
 		description: generate.sentence(4),
 		type:"user",
 		picture:"http://gravatar.com/avatar/alscalladf",
-		identities:["mailto:amal@scrollback.io"], 
-		params:{}
+		identities:["mailto:kamal@scrollback.io"], 
+		params:{},
+		timezone: 60
 	}
 });
 
@@ -24,8 +25,9 @@ core.emit("user", {
 		description: generate.sentence(4),
 		type:"user",
 		picture:"http://gravatar.com/avatar/alscalladf",
-		identities:["mailto:testuser2@sb.lk"], 
-		params:{}
+		identities:["mailto:kamal@sb.lk"], 
+		params:{},
+		timezone: 90
 	}
 });
 
@@ -85,17 +87,32 @@ core.emit("room", {
 });
 
 
+//core.emit("join", {
+//	id: generate.uid(),
+//	type:"join",
+//	room: {
+//		id:"testroom2",
+//		description: generate.sentence(4),
+//		type:"room",
+//		params:{openFollow: false, readLevel: "guest", writeLevel: "follower"}
+//	},
+//	user: {
+//		id:"testuser1",
+//	},
+//	role: "follower"
+//});
+
 core.emit("join", {
 	id: generate.uid(),
+	role:"follower",
+	to: "scrollback",
+	from:"kamal",
 	type:"join",
-	room: {
-		id:"testroom2",
-		description: generate.sentence(4),
-		type:"room",
-		params:{openFollow: false, readLevel: "guest", writeLevel: "follower"}
-	},
-	user: {
-		id:"testuser1",
-	},
-	role: "follower"
+	session:generate.uid(),
+	resource:generate.uid(),
+	user:{id:"kamal"},
+	room:{id:"scrollback"}
+}, function(err, data){
+	if(err) throw err;
+	
 });
