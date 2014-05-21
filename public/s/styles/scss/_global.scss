@@ -6,7 +6,7 @@ $font-size: 14px !default;
 
 /* colors */
 $accent-color: #3ca !default;
-$dark-color: #555 !default;
+$dark-color: mix($accent-color, #333, 5%) !default;
 $light-color: #fff !default;
 $info-color: #638ce8 !default;
 $success-color: #43b43b !default;
