@@ -3,7 +3,7 @@
 
 $(function() {
     // Navigate between columns
-    $(".rooms-button, .scrollback-header").on("click", function() {
+    $(".rooms-button").on("click", function() {
         if ($("body").hasClass("rooms-view")) {
             libsb.emit('navigate', { view: "meta", source: "rooms-button" });
         } else {
@@ -11,16 +11,12 @@ $(function() {
         }
     });
 
-    $(".meta-button, .title").on("click", function() {
+    $(".meta-button").on("click", function() {
         if ($("body").hasClass("meta-view")) {
             libsb.emit('navigate', { view: "normal", source: "meta-button" });
         } else {
             libsb.emit('navigate', { view: "meta", source: "meta-button" });
         }
-    });
-
-    $(".settings-menu .tab").on("click", function() {
-        libsb.emit('navigate', { view: "normal", source: "settings-menu" });
     });
 
     // Handle swipe gestures

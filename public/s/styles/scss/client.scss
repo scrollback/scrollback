@@ -1,4 +1,8 @@
 @import "widgets";
+@import "alert";
+@import "modal";
+@import "popover";
+@import "switch";
 
 $screenx: "only screen and (min-width: 18em)";
 $screenxx: "only screen and (min-width: 27em)";
@@ -104,12 +108,12 @@ $modeitems: normal, search, conf, pref, home;
 
     &:hover, &:focus, &.current:hover, &.current:focus {
         color: $light-color;
-        background-color: darken($dark-color, 10%);
+        background-color: rgba(0,0,0,.3);
     }
 
     &.current {
         position: relative;
-        background-color: darken($dark-color, 5%);
+        background-color: rgba(0,0,0,.1);
 
         &:after {
             content: "";
@@ -119,7 +123,7 @@ $modeitems: normal, search, conf, pref, home;
             top: 1.2em;
             border-top: .6em solid transparent;
             border-bottom: .6em solid transparent;
-            border-right: .6em solid darken($light-color, 5%);
+            border-right: .6em solid darken($light-color, 2%);
         }
     }
 
@@ -145,8 +149,8 @@ $modeitems: normal, search, conf, pref, home;
 
     left: $width-meta * -1;
     width: $width-meta;
-    border-right: 1px solid darken($light-color, 15%);
-    background-color: darken($light-color, 5%);
+    border-right: 1px solid rgba(0,0,0,.1);
+    background-color: darken($light-color, 2%);
     color: $dark-color;
 
     @media #{$screenx} {
@@ -179,7 +183,7 @@ $modeitems: normal, search, conf, pref, home;
     margin: 0;
     width: 100%;
     height: $bar-height;
-    border-bottom: 1px solid darken($light-color, 15%);
+    border-bottom: 1px solid rgba(0,0,0,.05);
 
     li {
         @include transform(rotate(0deg)); /* hack to fix invisible items in android browser */
@@ -197,11 +201,8 @@ $modeitems: normal, search, conf, pref, home;
         }
 
         &.rooms-button {
-            @include transition(.5s);
-
             display: table-cell;
-            width: 2.5em;
-            background: url(../../img/client/icons/back.svg) no-repeat center center;
+            fill: lighten($dark-color, 10%);
 
             .rooms-view & { @include transform(rotate(180deg)); }
 
@@ -239,10 +240,10 @@ $modeitems: normal, search, conf, pref, home;
             @include opacity(1);
             @extend %nofilter;
 
-            background-color: darken($light-color, 15%);
+            background-color: rgba(0,0,0,.1);
         }
 
-        &.current { background-color: darken($light-color, 10%); }
+        &.current { background-color: rgba(0,0,0,.05); }
     }
 }
 
@@ -395,11 +396,11 @@ $modeitems: normal, search, conf, pref, home;
 	color: $dark-color;
 	cursor: pointer;
 
-	&.current { background-color: darken($light-color, 10%); }
+    &.current { background-color: rgba(0,0,0,.05); }
 
-	&:hover, &:focus, &.current:hover, &.current:focus {
-		background-color: darken($light-color, 15%);
-		color: $dark-color;
+    &:hover, &:focus, &.current:hover, &.current:focus {
+        color: $dark-color;
+        background-color: rgba(0,0,0,.1);
 	}
 
 	@each $item in $settingsitems {
@@ -430,31 +431,97 @@ $modeitems: normal, search, conf, pref, home;
 
 .content-area { @include display-in(normal search); }
 
+@mixin title-icon {
+    @extend %ease;
+
+    display: block;
+    margin: auto;
+    height: 2em;
+    width: 2em;
+    fill: fade-out($dark-color, .3);
+
+    &:hover { fill: $dark-color; }
+
+    .embed & {
+        fill: fade-out($light-color, .3);
+
+        &:hover { fill: $light-color; }
+    }
+}
+
+.meta-button, .rooms-button {
+    @include transform(rotate(0deg));
+    @include transition(.5s);
+
+    display: table-cell;
+    vertical-align: middle;
+    width: 3em;
+    cursor: pointer;
+
+    .rooms-icon {
+        display: block;
+        margin: auto;
+        height: 2em;
+        width: 2em;
+    }
+}
+
+.meta-button {
+    position: relative;
+    perspective: 800px;
+
+    .meta-icon { @include title-icon; }
+
+    .meta-view &, .rooms-view & { @include transform(rotate(180deg)); }
+
+    @media #{$screenxxx} { display: none; }
+}
+
+.meta-card {
+    @include transform(rotateY(180deg));
+    @extend %ease;
+
+    top: .75em;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+
+    figure {
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+    }
+
+    .back { @include transform(rotateY(180deg)); }
+
+    .embed.meta-view & { @include transform(rotateY(180deg)); }
+
+    .embed & { @include transform(rotateY(0deg)); }
+}
+
 .title-bar {
 	position: relative;
 	display: table;
 	height: $bar-height;
 	width: 100%;
 	z-index: 20;
-	background-color: darken($light-color, 5%);
-	box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
-				0 3px 2px -1px rgba(0,0,0,0.05);
-}
+    background-color: darken($light-color, 2%);
+    color: $dark-color;
+    box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1),
+				0 3px 2px -1px rgba(0,0,0,.05);
 
-.meta-button {
-	@include transform(rotate(0deg));
-	@include transition(.5s);
+    &:focus, &:hover, &:active {
+        .meta-card { transform: rotateY( 180deg ); }
+    }
 
-	display: table-cell;
-	width: 3em;
-	height: 100%;
-	background: url(../../img/client/icons/back.svg) center center no-repeat;
-	background-size: 2em 2em;
-	cursor: pointer;
-
-	.meta-view & { @include transform(rotate(180deg)); }
-
-	@media #{$screenxxx} { display: none; }
+    .embed & {
+        background-color: $dark-color;
+        color: $light-color;
+    }
 }
 
 .action-buttons {
@@ -467,27 +534,58 @@ $modeitems: normal, search, conf, pref, home;
 .left-area {
 	display: table-cell;
 	vertical-align: middle;
-	padding-left: 0;
+	padding-left: .5em;
 
 	@media #{$screenxxx} { padding-left: 1em;  }
 
 	h2 {
 		display: table-cell;
-		font-size: 1.5em;
+        vertical-align: middle;
+		font-size: 1.2em;
 		margin: 0;
+
+        @media #{$screenxxx} { font-size: 1.5em; }
 	}
 
 	.follow-button {
         @include display-in(normal, table-cell);
 
-		width: 4em;
-		height: 2em;
-		background: url(../../img/client/icons/follow-no.svg) center center no-repeat;
-		background-size: 2em 2em;
-		cursor: pointer;
+        width: 3.5em;
+        padding: .75em;
+        vertical-align: middle;
 
-		.following & { background: url(../../img/client/icons/follow.svg) center center no-repeat; }
-	}
+        .follow-icon {
+            @include title-icon;
+            @extend %ease;
+
+            stroke-width: 2px;
+            stroke: fade-out($dark-color, .3);
+
+            &, &:hover { fill: transparent; }
+
+            &:hover { stroke: $dark-color; }
+
+            .following & { fill: fade-out($dark-color, .3); }
+
+            .embed & {
+                stroke: fade-out($light-color, .3);
+
+                &, &:hover { fill: transparent; }
+
+                &:hover { stroke: $light-color; }
+            }
+
+            .embed.following & {
+                fill: fade-out($light-color, .3);
+                stroke: fade-out($light-color, .3);
+
+                &:hover {
+                    fill: $light-color;
+                    stroke: $light-color;
+                }
+            }
+        }
+    }
 }
 
 .right-area {
@@ -495,20 +593,19 @@ $modeitems: normal, search, conf, pref, home;
 	vertical-align: middle;
 
 	.search-button {
-		float: right;
-		height: $bar-height;
-		padding: 0 1em;
-		width: 4em;
-		background: url(../../img/client/icons/search.svg) center center no-repeat;
-		background-size: 2em 2em;
-		cursor: pointer;
+        float: right;
+        padding: .75em .5em;
+        width: 3em;
+        cursor: pointer;
+
+        .search-icon { @include title-icon; }
 
 		.embed & { display: none;}
 	}
 
 	.user-area {
 		float: right;
-		height: $bar-height;
+        height: $bar-height;
 
 		.user-detail {
 			float: right;
@@ -545,6 +642,20 @@ $modeitems: normal, search, conf, pref, home;
 			}
 		}
 	}
+
+    .fullview-button {
+        display: none;
+
+        .fullview-icon { @include title-icon; }
+
+        .embed:not(.guest-user) & {
+            display: block;
+            float: right;
+            width: 3.5em;
+            padding: .75em;
+            cursor: pointer;
+        }
+    }
 }
 
 .chat-area {
@@ -607,7 +718,7 @@ $modeitems: normal, search, conf, pref, home;
 	margin: 0;
 	padding: 1em;
 	padding-left: 3.5em;
-	border-top: 1px solid darken($light-color, 5%);
+    border-top: 1px solid rgba(0,0,0,0.05);
 	overflow: hidden;
 
 	@media #{$screenxx} { padding-left: 12em; }
@@ -746,7 +857,7 @@ $modeitems: normal, search, conf, pref, home;
 	bottom: 0;
     padding: 0;
     min-height: $bar-height;
-    box-shadow: 0 -3px 2px -1px rgba(0,0,0,0.05);
+    box-shadow: 0 -3px 2px -1px rgba(0,0,0,.05);
 }
 
 .chat-entry {
@@ -796,7 +907,7 @@ $modeitems: normal, search, conf, pref, home;
 		.conv-#{$j} & {
 			fill: $color;
 
-			&:hover, &:focus, &:active { fill: darken($color, 15%); }
+			&:hover, &:focus, &:active { fill: darken($color, 10%); }
 		}
 	}
 }
@@ -989,7 +1100,7 @@ $modeitems: normal, search, conf, pref, home;
 		@extend %nofilter;
 
 		box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
-			0 3px 2px -1px rgba(0,0,0,0.05);
+			        0 3px 2px -1px rgba(0,0,0,.05);
 	}
 
 	.search-entry {
