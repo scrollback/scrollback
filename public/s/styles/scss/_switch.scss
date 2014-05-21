@@ -1,0 +1,54 @@
+@import "global";
+
+.switch {
+	display: none;
+
+	& ~ label {
+		position: relative;
+		cursor: pointer;
+
+		&:before, &:after {
+			@extend %ease;
+
+			position: absolute;
+			display: block;
+			content: "";
+			font-weight: 700;
+			color: $light-color;
+			border-radius: $roundness;
+			background-color: darken($light-color, 30%);
+		}
+
+		&:before {
+			top: 0;
+			bottom: 0;
+			left: 0;
+			height: 2.2em;
+			width: 4.9em;
+			padding: .2em .5em;
+			content: "OFF";
+			line-height: 1.7em;
+			text-align: right;
+			box-shadow: inset 0 1px 0 rgba(0,0,0,.15);
+		}
+
+		&:after {
+			height: 1.9em;
+			width: 2.1em;
+			top: .15em;
+			bottom: .15em;
+			left: .14em;
+			background-color: $light-color;
+		}
+	}
+
+	&:checked ~ label {
+		&:before {
+			content: "ON";
+			text-align: left;
+			background-color: $accent-color;
+		}
+
+		&:after { left: 2.66em; }
+	}
+}

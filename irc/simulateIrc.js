@@ -1,7 +1,7 @@
 /**
  * This is virtual irc client which will connect random users to dev.scrollback.io
  * and users will messages in the channel and  they will disconnect/part from the channel.
- * basically it will try to simulate irc behaviour. 
+ * basically it will try to simulate irc behaviour.
  */
 var channel = "#testingroom";
 var irc = require("irc");
@@ -68,4 +68,3 @@ function next() {
 function getRandom(a, b) {
 	return Math.floor(Math.random() * (b - a + 1)) + a;
 }
-
