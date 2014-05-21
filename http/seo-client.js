@@ -11,3 +11,9 @@ libsb.on('config-show', function(conf, next) {
 	}
 	next();
 });
+
+libsb.on('config-save', function(conf, next){
+	conf.seo = $('#allow-index').is(':checked');
+
+	next();
+});

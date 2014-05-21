@@ -21,7 +21,7 @@ $(function() {
 			//irc settings
 			if(results.params.irc){
 				$('.list-view-irc-settings #ircserver').val(results.params.irc.server);
-				$('.list-view-irc-settings #ircchannel').val(results.params.irc.cleint);
+				$('.list-view-irc-settings #ircchannel').val(results.params.irc.channel);
 			}
 
 			//spam settings
