@@ -807,23 +807,6 @@ $modeitems: normal, search, conf, pref, home;
 		&.conv-#{$j}:before { background-color: $color; }
 	}
 
-    /* fade out other conversations */
-    @for $i from 1 through length($palette) {
-        $color: nth($palette, $i);
-        $j: $i - 1;
-
-        &:not(.conv-#{$j}) {
-            .conv-#{$j} & {
-                @include opacity(.5);
-
-                &:focus, &:hover, &:active {
-                    @include opacity(1);
-                    @extend %nofilter;
-                }
-            }
-        }
-    }
-
 	&.long {
 		@extend %ease;
 
