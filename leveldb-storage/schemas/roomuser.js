@@ -6,7 +6,7 @@ module.exports = function (types) {
 	var user = types.users;
 
 	return{
-		getUsers: function(query, cb) {		
+		getUsers: function(query, cb) {
 			var gateway, eqArray = [], req={};
 			if(query.results) return cb();
 			if(query.ref && query.ref == 'me') return cb();
@@ -30,6 +30,10 @@ module.exports = function (types) {
 				gateway = query.identity.split(":");
 				req.eq.push(gateway[0]);
 				if (gateway[1]) req.eq.push(gateway[1]);
+			} else if (query.timezone) {
+				req.by = "timezone";
+				req.gte = [query.timezone.gte];
+				req.lte = [query.timezone.lte];
 			}
 			user.get(req, function(err, res) {
 				query.results = res;
@@ -75,7 +79,7 @@ module.exports = function (types) {
 			
 			var data = action[type];
 
-			var createdOn, timezone;
+			var createdOn;
 
 			if(action.old) {
 				createdOn = action.old.createdOn;
@@ -94,10 +98,11 @@ module.exports = function (types) {
 			};
 			
 			if (data.identities) {
-				newRoom.identities = data.identities
+				newRoom.identities = data.identities;
 			}
 
 			if(action.type === "user") {
+				data.timezone = newRoom.timezone = data.timezone? data.timezone : 0;
 				user.put(newRoom, function(err, res) {
 					return cb(err);
 				});

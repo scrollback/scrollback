@@ -9,6 +9,9 @@ module.exports = function(store) {
 			},
 			createdOn: function(user, emit) {
 				emit(user.createdOn);
+			},
+			timezone: function(user, emit) {
+				emit(user.timezone);
 			}
 		}
 	});

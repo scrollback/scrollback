@@ -6,12 +6,9 @@ $(function(){
 	$(document).on("click", ".signup-save", function(){
 		console.log(signingUser);
 		libsb.emit("user-up", {
-			type: "user",
-			user:{
 				id: $("#signup-id").val(),
 				identities: signingUser.identities,
-			}
-		}, function(err, u){
+			}, function(err, u){
 			console.log("user signup sent", u);
 			signupId = u.id;
 		});

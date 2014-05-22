@@ -1,5 +1,5 @@
-/* jshint jquery: true */
-/* global libsb, threadEl */
+/* jshint browser: true */
+/* global $, libsb, threadEl, currentState */
 /* exported chatArea */
 
 var threadArea = {};
@@ -25,7 +25,6 @@ $(function() {
 	function loadSearchResult(index, before, after, callback) {
 		var query={}, i, l, res = [];
 			if(!index) index = 0;
-			console.log();
 			if(before) {
 				if(index === 0){
 					return callback([]);
@@ -38,7 +37,7 @@ $(function() {
 				}else {
 					to = index;
 				}
-			}else{
+			}else {
 				if(index){
 					index++;
 				}else{
@@ -59,7 +58,6 @@ $(function() {
 			if(to<searchResult.length ) {
 				return processResults(from, to);
 			}else if(searchResult.length<=1 || searchResult[searchResult.length-1]!== false){
-				console.log("++++++++++++", searchResult.length);
 				query.pos = searchResult.length-1;
 				query.after = to - query.pos+1;
 			}else {
@@ -128,8 +126,6 @@ $(function() {
 		itemHeight: 100,
 		startIndex: index,
 		getItems: function (index, before, after, recycle, callback) {
-			// if(queryCount>10) return;
-
 			if(currentState.mode == "search"){
 				// queryCount++;
 				if(libsb.isInited) {
@@ -155,7 +151,7 @@ $(function() {
 
 	$threads.click(function(event) {
 		event.preventDefault();
-		var $el = $(event.target).closest('.thread');
+		var $el = $(event.target).closest('.thread-item');
 		if(!$el.size()) return;
 		libsb.emit('navigate', {source: 'thread-area', thread: $el.attr("id").split('-')[1] });
 	});
@@ -166,7 +162,7 @@ $(function() {
 		if(['search-local', 'search-global', 'threads'].indexOf(state.tab)>=0) {
 			$(".pane-threads").addClass("current");
 		}else{
-			$(".pane-threads").removeClass("current");			
+			$(".pane-threads").removeClass("current");
 		}
 
 		if(state.mode) mode = state.mode;

@@ -1,8 +1,12 @@
 var formField = require('../lib/formField.js');
 
+var div = $('<div>').addClass('list-view list-view-irc-settings');
+div.append(formField("IRC Server", "text", "ircserver"));
+div.append(formField("IRC Channel", "text", "ircchannel"));
+
 libsb.on('config-show', function(conf, next) {
 	conf.irc = {
-		html: "<div class='list-view list-view-irc-settings'>" + formField("IRC Server", "text", "ircserver") + formField("IRC Channel", "text", "ircchannel") + "</div>",
+		html: div,
 		text: "IRC setup",
 		prio: 800
 	}
@@ -11,8 +15,8 @@ libsb.on('config-show', function(conf, next) {
 
 libsb.on('config-save', function(conf, next){
 	conf.irc = {
-		server : $('.list-view-irc-settings #ircserver').val(),
-		channel : $('.list-view-irc-settings #ircchannel').val()
+		server : $('#ircserver').val(),
+		channel : $('#ircchannel').val()
 	};
 	next();
 });
