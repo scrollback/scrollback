@@ -76,6 +76,18 @@ module.exports = function(core) {
   			if(action.label && typeof action.label!= "object") return callback(new Error("INVALID_EDIT_OPTION_LABEL"));
   			if(action.text && typeof action.text!= "string") return callback(new Error("INVALID_EDIT_OPTION_TEXT"));
   			callback();
+		},
+		user: function(action, callback){
+			if(!action.user && !action.user.id) return callback(new Error("INVALID_USER"));
+			if(!action.user.identities) return callback(new Error("INVALID_USER"));
+			else{
+				if(!action.user.identities instanceof Array) return callback(new Error("INVALID_USER"));
+				else{
+					action.user.identities.forEach(function(identity){
+						if(typeof identity !== "string") return callback(new Error(INVALID_USER));
+					});
+				}
+			}
 		}
 	};
 	

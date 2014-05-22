@@ -42,9 +42,9 @@ $(function() {
 				params: {
 					email : configData.email,
 					notifications: configData.notifications
-				}
+				},
+				identities: libsb.user.identities
 			};
-
 			libsb.emit('user-up', user, function(err, data){
 				currentConfig = null;
         		libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
