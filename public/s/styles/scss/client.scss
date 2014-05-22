@@ -258,8 +258,6 @@ $modeitems: normal, search, conf, pref, home;
     height: 100%;
 
     .pane {
-        @extend %scroll-elem;
-
         position: absolute;
         top: 0;
         right: 0;
@@ -277,6 +275,8 @@ $modeitems: normal, search, conf, pref, home;
 }
 
 .pane-info {
+    @extend %scroll-elem;
+
     padding: 0 1.5em;
 
     .guest-user & {
@@ -285,6 +285,8 @@ $modeitems: normal, search, conf, pref, home;
 }
 
 .pane-people {
+    @extend %scroll-elem;
+
     padding: .75em;
 
     .infinite-above, .infinite-below {
@@ -342,6 +344,16 @@ $modeitems: normal, search, conf, pref, home;
 		background-repeat: repeat-y;
 	}
 }
+
+.thread-search-query {
+    @include display-in(search);
+
+    padding: 1em 1.5em;
+    background-color: lighten($info-color, 30%);
+    font-size: 1.2em;
+}
+
+.thread-item-container { @extend %scroll-elem; }
 
 .thread-item {
     @extend %nofilter;

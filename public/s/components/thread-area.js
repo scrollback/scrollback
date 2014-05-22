@@ -7,7 +7,7 @@ var threadArea = {};
 $(function() {
 	 /* replace this time initialization from the URL, if available. */
 
-	var $threads = $(".pane-threads"), room = "", time = null,
+	var $threads = $(".thread-item-container"), room = "", time = null,
 		search = "", mode = "", searchResult = [false], index = null, queryCount = 0;
 
 	function renderObjects(threads){
@@ -33,7 +33,7 @@ $(function() {
 				from = index - before;
 				if(from <0) {
 					to = from+before;
-					from = 0;	
+					from = 0;
 				}else {
 					to = index;
 				}
@@ -41,7 +41,7 @@ $(function() {
 				if(index){
 					index++;
 				}else{
-					after++;	
+					after++;
 				}
 				from = index;
 				to = index+after;
@@ -88,7 +88,7 @@ $(function() {
 			if(after === 0) {
 				if(threads.length < before) {
 					threads.unshift({id:"", title: "All Conversations"});
-					threads.unshift(false);	
+					threads.unshift(false);
 				}
 				if(t.time) {
 					threads.pop();
@@ -102,7 +102,7 @@ $(function() {
 			}
 			renderThreads(threads, callback);
 		});
-			
+
 	}
 
 	function renderSearchResult(threads, callback) {
