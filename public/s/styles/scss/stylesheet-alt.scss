@@ -4,6 +4,8 @@
 /* we need this to make text vertically centered in a page */
 html, body { height: 100%; }
 
+h1, h2, h3, h4 { font-weight: 300; }
+
 footer {
     border-top: 1px solid darken($light-color, 10%);
     background-color: darken($light-color, 5%);

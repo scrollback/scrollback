@@ -50,9 +50,9 @@ window.format = {
 		var emailAddressPattern = /(([a-zA-Z0-9_\-\.]+)@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6}))+/gim;
 
 		return str
-		.replace(urlPattern, '<a href="$&">$&</a>')
-		.replace(pseudoUrlPattern, '$1<a href="http://$2">$2</a>')
-		.replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
+		.replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
+		.replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>')
+		.replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
 	},
 
 	sanitize: function(str) {

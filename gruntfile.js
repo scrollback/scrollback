@@ -83,10 +83,6 @@ module.exports = function(grunt) {
 					"public/sdk/css.js", "public/sdk/dom.js", "public/sdk/domReady.js", "public/sdk/getByClass.js",
 					"public/sdk/jsonml2.js", "public/sdk/cache.js", "public/sdk/embed.js", "public/sdk/render.js", "public/sdk/validate.js"],
 				tasks: ["uglify", "concat", "wrap"],
-			},
-			styles: {
-				files: ["public/s/styles/scss/stylesheet.scss", "public/s/styles/scss/client.scss"],
-				tasks: ["sass"]
 			}
 		},
 		sass: {
@@ -97,7 +93,8 @@ module.exports = function(grunt) {
 				files: {
 					"public/s/styles/gen/signup.css": "public/s/styles/scss/signup.scss",
 					"public/s/styles/gen/stylesheet.css": "public/s/styles/scss/stylesheet.scss",
-					"public/s/styles/gen/client.css": "public/s/styles/scss/client.scss"
+					"public/s/styles/gen/client.css": "public/s/styles/scss/client.scss",
+					"public/s/styles/gen/embed.css": "public/s/styles/scss/embed.scss"
 				}
 			}
 		},

@@ -1,0 +1,80 @@
+@mixin flexbox {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+}
+
+@mixin flex($values) {
+	-webkit-box-flex: $values;
+	-moz-box-flex: $values;
+	-webkit-flex: $values;
+	-ms-flex: $values;
+	flex: $values;
+}
+
+@mixin flex-direction($value) {
+	$oldvalue: ();
+
+	@if $value == row {
+		$oldvalue: horizontal;
+	} @else if $value == column {
+		$oldvalue: vertical;
+	} @else {
+		$oldvalue: $value;
+	}
+
+	-webkit-box-orient: $oldvalue;
+	-moz-box-orient: $oldvalue;
+	-ms-flex-direction: $oldvalue;
+	-webkit-flex-direction: $value;
+	flex-direction: $value;
+}
+
+@mixin align-items($value) {
+	$oldvalue: ();
+
+	@if $value == flex-start {
+		$oldvalue: start;
+	} @else if $value == flex-end {
+		$oldvalue: end;
+	} @else {
+		$oldvalue: $value;
+	}
+
+	-webkit-box-align: $oldvalue;
+	-moz-box-align: $oldvalue;
+	-ms-flex-align: $oldvalue;
+	-webkit-align-items: $value;
+	align-items: $value;
+}
+
+@mixin justify-content($value) {
+	$oldvalue: ();
+
+	@if $value == flex-start {
+		$oldvalue: start;
+	} @else if $value == flex-end {
+		$oldvalue: end;
+	} @else if $value == space-between {
+		$oldvalue: justify;
+	} @else if $value == space-around {
+		$oldvalue: distribute;
+	} @else {
+		$oldvalue: $value;
+	}
+
+	-webkit-box-pack: $oldvalue;
+	-moz-box-pack: $oldvalue;
+	-ms-flex-pack: $oldvalue;
+	-webkit-justify-content: $value;
+	justify-content: $value;
+}
+
+@mixin order($value) {
+	-webkit-box-ordinal-group: $value;
+	-moz-box-ordinal-group: $value;
+	-ms-flex-order: $value;
+	-webkit-order: $value;
+	order: $value;
+}

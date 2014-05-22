@@ -1,11 +1,24 @@
+@import "functions";
+
+$bar-height: 49px;
+
 .scrollback-stream {
-	height: 26em;
-	max-height: 100%;
-	max-width: 100%;
-	border: 1px solid rgba(0,0,0,.2);
-	border-bottom: none;
+	@include prefix(box-shadow, 0 0 5px 1px rgba(0,0,0,.1));
+	@include prefix(transition, .15s ease);
+
 	position: fixed;
 	bottom: 0;
-	right: 2em;
-	box-shadow: 0 0 5px 1px rgba(0,0,0,.1);
+	right: 30px;
+	height: 400px;
+	width: 380px;
+	max-height: 100%;
+	max-width: 100%;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0,0,0,.2);
+	border-bottom: none;
+
+	&.minimized {
+		height: $bar-height * 2;
+		bottom: $bar-height * -1;
+	}
 }

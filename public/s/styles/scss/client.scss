@@ -1,8 +1,11 @@
+@import "global";
+@import "functions";
 @import "widgets";
 @import "alert";
 @import "modal";
 @import "popover";
 @import "switch";
+@import "flexbox";
 
 $screenx: "only screen and (min-width: 18em)";
 $screenxx: "only screen and (min-width: 27em)";
@@ -305,7 +308,6 @@ $modeitems: normal, search, conf, pref, home;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
-		font-weight: 400;
 		color: $dark-color;
 
 		&:hover, &:focus {
@@ -339,38 +341,42 @@ $modeitems: normal, search, conf, pref, home;
 		background-position: 2em center, center right;
 		background-repeat: repeat-y;
 	}
-
-	.thread {
-		@extend %nofilter;
-		@extend %ease;
-
-		display: block;
-		padding: .5em 2em;
-		font-weight: 400;
-		color: $dark-color;
-		border-right: 4px solid $accent-color;
-
-		&.current { background-color: lighten($accent-color, 30%); }
-
-		&:hover, &:focus, &.current:hover, &.current:focus {
-			background-color: $accent-color;
-			color: $light-color;
-		}
-
-		@for $i from 1 through length($palette) {
-			$color: nth($palette, $i);
-			$j: $i - 1;
-
-			&.conv-#{$j} {
-				border-right-color: $color;
-
-				&.current { background-color: lighten($color, 30%); }
-
-				&:hover, &:focus, &.current:hover, &.current:focus { background-color: $color; }
-			}
-		}
-	}
 }
+
+.thread-item {
+    @extend %nofilter;
+    @extend %ease;
+
+    display: block;
+    padding: 1em 1.5em;
+    color: $dark-color;
+    border-right: 4px solid $accent-color;
+    cursor: pointer;
+
+    &.current { background-color: lighten($accent-color, 30%); }
+
+    &:hover, &:focus, &.current:hover, &.current:focus {
+        background-color: $accent-color;
+        color: $light-color;
+    }
+
+    @for $i from 1 through length($palette) {
+        $color: nth($palette, $i);
+        $j: $i - 1;
+
+        &.conv-#{$j} {
+            border-right-color: $color;
+
+            &.current { background-color: lighten($color, 30%); }
+
+            &:hover, &:focus, &.current:hover, &.current:focus { background-color: $color; }
+        }
+    }
+}
+
+.thread-title { margin: 0; }
+
+.thread-snippet { margin: 0; }
 
 .meta-conf { @include display-in(conf); }
 
@@ -431,21 +437,27 @@ $modeitems: normal, search, conf, pref, home;
 
 .content-area { @include display-in(normal search); }
 
-@mixin title-icon {
-    @extend %ease;
+@mixin title-icon($elem) {
+    .#{$elem} {
+        @extend %ease;
 
-    display: block;
-    margin: auto;
-    height: 2em;
-    width: 2em;
-    fill: fade-out($dark-color, .3);
+        display: block;
+        margin: auto;
+        height: 2em;
+        width: 2em;
+        fill: fade-out($dark-color, .5);
 
-    &:hover { fill: $dark-color; }
+        .embed & { fill: fade-out($light-color, .3); }
+    }
 
-    .embed & {
-        fill: fade-out($light-color, .3);
+    &:focus, &:hover, &:active {
+        .#{$elem} {
+            &, &:focus, &:hover, &:active { fill: fade-out($dark-color, .3); }
 
-        &:hover { fill: $light-color; }
+            .embed & {
+                &, &:focus, &:hover, &:active { fill: $light-color; }
+            }
+        }
     }
 }
 
@@ -453,8 +465,6 @@ $modeitems: normal, search, conf, pref, home;
     @include transform(rotate(0deg));
     @include transition(.5s);
 
-    display: table-cell;
-    vertical-align: middle;
     width: 3em;
     cursor: pointer;
 
@@ -467,10 +477,12 @@ $modeitems: normal, search, conf, pref, home;
 }
 
 .meta-button {
-    position: relative;
-    perspective: 800px;
+    @include title-icon(meta-icon);
+    @include prefix(perspective, 800px);
 
-    .meta-icon { @include title-icon; }
+    position: relative;
+    height: $bar-height;
+    width: 3em;
 
     .meta-view &, .rooms-view & { @include transform(rotate(180deg)); }
 
@@ -479,21 +491,24 @@ $modeitems: normal, search, conf, pref, home;
 
 .meta-card {
     @include transform(rotateY(180deg));
+    @include prefix(transform-style, preserve-3d);
     @extend %ease;
 
-    top: .75em;
-    left: 0;
-    width: 100%;
-    height: 100%;
     position: absolute;
-    transform-style: preserve-3d;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
 
     figure {
-        display: block;
+        @include prefix(backface-visibility, hidden);
+
         position: absolute;
-        width: 100%;
+        top: 0;
+        left: 0;
         height: 100%;
-        backface-visibility: hidden;
+        width: 100%;
+        padding: .75em .5em;
     }
 
     .back { @include transform(rotateY(180deg)); }
@@ -503,9 +518,20 @@ $modeitems: normal, search, conf, pref, home;
     .embed & { @include transform(rotateY(0deg)); }
 }
 
+.embed {
+    &:focus, &:hover, &:active {
+        .meta-card { transform: rotateY( 180deg ); }
+    }
+}
+
 .title-bar {
+    @include flexbox;
+    @include flex-direction(row);
+    @include justify-content(space-between);
+    @include align-items(center);
+
+    flex-wrap: nowrap;
 	position: relative;
-	display: table;
 	height: $bar-height;
 	width: 100%;
 	z-index: 20;
@@ -514,147 +540,162 @@ $modeitems: normal, search, conf, pref, home;
     box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1),
 				0 3px 2px -1px rgba(0,0,0,.05);
 
-    &:focus, &:hover, &:active {
-        .meta-card { transform: rotateY( 180deg ); }
-    }
-
     .embed & {
         background-color: $dark-color;
         color: $light-color;
     }
 }
 
-.action-buttons {
-	display: table-cell;
-	padding: .15em;
+.left-area {
+    @include flexbox;
+    @include flex-direction(row);
+    @include justify-content(flex-start);
+    @include align-items(center);
 
-	.button { margin: 0; }
+    flex-wrap: nowrap;
 }
 
-.left-area {
-	display: table-cell;
-	vertical-align: middle;
-	padding-left: .5em;
+.right-area {
+    display: none;
 
-	@media #{$screenxxx} { padding-left: 1em;  }
+    .normal-mode &, .search-mode & {
+        @include flexbox;
+        @include flex-direction(row);
+        @include justify-content(flex-end);
+        @include align-items(center);
 
-	h2 {
-		display: table-cell;
-        vertical-align: middle;
-		font-size: 1.2em;
-		margin: 0;
+        flex-wrap: nowrap;
+    }
+}
 
-        @media #{$screenxxx} { font-size: 1.5em; }
-	}
+.room-title {
+    @include display-in(normal search);
 
-	.follow-button {
-        @include display-in(normal, table-cell);
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: 700;
 
-        width: 3.5em;
-        padding: .75em;
-        vertical-align: middle;
+    @media #{$screenxxx} {
+        padding-left: 1em;
+        font-size: 1.5em;
+        font-weight: 400;
+    }
+}
 
+.follow-button {
+    @include title-icon(follow-icon);
+    @include display-in(normal, block);
+
+    width: 3.5em;
+    padding: .75em;
+
+    .follow-icon {
+        fill: none;
+        stroke-width: 2px;
+        stroke: lighten($dark-color, 30%);
+
+        .following & { fill: lighten($dark-color, 30%); }
+
+        .embed & {
+            fill: none;
+            stroke: darken($light-color, 30%);
+        }
+
+        .embed.following & { fill: darken($light-color, 30%); }
+    }
+
+    &:focus, &:hover, &:active {
         .follow-icon {
-            @include title-icon;
-            @extend %ease;
+            fill: none;
+            stroke: lighten($dark-color, 10%);
 
-            stroke-width: 2px;
-            stroke: fade-out($dark-color, .3);
-
-            &, &:hover { fill: transparent; }
-
-            &:hover { stroke: $dark-color; }
-
-            .following & { fill: fade-out($dark-color, .3); }
+            .following & { fill: lighten($dark-color, 10%); }
 
             .embed & {
-                stroke: fade-out($light-color, .3);
-
-                &, &:hover { fill: transparent; }
-
-                &:hover { stroke: $light-color; }
+                fill: none;
+                stroke: $light-color;
             }
 
-            .embed.following & {
-                fill: fade-out($light-color, .3);
-                stroke: fade-out($light-color, .3);
+            .embed.following & { fill: $light-color; }
+        }
+    }
+}
 
-                &:hover {
-                    fill: $light-color;
-                    stroke: $light-color;
-                }
+.search-button {
+    @include title-icon(search-icon);
+
+    padding: .75em;
+    width: 3.5em;
+    cursor: pointer;
+
+    .embed & { display: none;}
+}
+
+.fullview-button, .minimize-button {
+    display: none;
+
+    .embed & {
+        display: block;
+        width: 3em;
+        padding: .75em .5em;
+        cursor: pointer;
+    }
+}
+
+.fullview-button {
+    @include title-icon(fullview-icon);
+}
+
+.minimize-button {
+    @include title-icon(minimize-icon);
+}
+
+.user-area {
+    .user-detail {
+        float: right;
+        text-align: right;
+        padding: 1em;
+        font-weight: 700;
+        cursor: pointer;
+
+        .guest-user & { padding: .2em 1em; }
+
+        .sign-in {
+            display: none;
+
+            .guest-user & {
+                display: inline;
+                text-transform: uppercase;
+            }
+        }
+    }
+
+    .user-avatar {
+        display: none;
+
+        @media #{$screenxx} {
+            display: block;
+            float: right;
+            cursor: pointer;
+
+            img {
+                display: block;
+                height: $bar-height;
+                width: $bar-height;
             }
         }
     }
 }
 
-.right-area {
-	display: table-cell;
-	vertical-align: middle;
+.action-buttons {
+    @include display-in(conf pref);
 
-	.search-button {
-        float: right;
-        padding: .75em .5em;
-        width: 3em;
-        cursor: pointer;
+    padding: .125em;
 
-        .search-icon { @include title-icon; }
-
-		.embed & { display: none;}
-	}
-
-	.user-area {
-		float: right;
-        height: $bar-height;
-
-		.user-detail {
-			float: right;
-			text-align: right;
-			padding: 1em;
-			font-weight: 700;
-			cursor: pointer;
-
-			.guest-user & { padding: .2em 1em; }
-
-			.sign-in {
-				display: none;
-
-				.guest-user & {
-					display: inline;
-					text-transform: uppercase;
-				}
-			}
-		}
-
-		.user-avatar {
-			display: none;
-
-			@media #{$screenxx} {
-				display: block;
-				float: right;
-				cursor: pointer;
-
-				img {
-					display: block;
-					height: $bar-height;
-					width: $bar-height;
-				}
-			}
-		}
-	}
-
-    .fullview-button {
-        display: none;
-
-        .fullview-icon { @include title-icon; }
-
-        .embed:not(.guest-user) & {
-            display: block;
-            float: right;
-            width: 3.5em;
-            padding: .75em;
-            cursor: pointer;
-        }
+    .button {
+        display: block;
+        float: left;
+        margin-right: .125em;
     }
 }
 
@@ -716,12 +757,15 @@ $modeitems: normal, search, conf, pref, home;
 
 	position: relative;
 	margin: 0;
-	padding: 1em;
-	padding-left: 3.5em;
-    border-top: 1px solid rgba(0,0,0,0.05);
+	padding: .75em;
+	padding-left: 3em;
+    border-top: 1px solid rgba(0,0,0,0.025);
 	overflow: hidden;
 
-	@media #{$screenxx} { padding-left: 12em; }
+	@media #{$screenxx} {
+        padding: 1em;
+        padding-left: 12em;
+    }
 
 	&:hover, &:focus { background-color: darken($light-color, 1%); }
 
@@ -760,6 +804,23 @@ $modeitems: normal, search, conf, pref, home;
 
 		&.conv-#{$j}:before { background-color: $color; }
 	}
+
+    /* fade out other conversations */
+    @for $i from 1 through length($palette) {
+        $color: nth($palette, $i);
+        $j: $i - 1;
+
+        &:not(.conv-#{$j}) {
+            .conv-#{$j} & {
+                @include opacity(.5);
+
+                &:focus, &:hover, &:active {
+                    @include opacity(1);
+                    @extend %nofilter;
+                }
+            }
+        }
+    }
 
 	&.long {
 		@extend %ease;
@@ -841,13 +902,18 @@ $modeitems: normal, search, conf, pref, home;
 	background-color: darken($light-color, 1%);
 	background-image: url(../../img/client/icons/more.svg);
 	background-repeat: no-repeat;
-	background-position: top center;
-	background-size: 3.5em 3.5em;
-	width: 3.5em;
-	height: 3.5em;
+	background-position: center center;
+	background-size: 2em 2em;
+	width: 3em;
+	height: 3em;
 	top: 0;
 	left: 0;
-	cursor: pointer;
+    cursor: pointer;
+
+    @media #{$screenxx} {
+        width: 3.5em;
+        height: 3.5em;
+    }
 }
 
 .chat-input {
@@ -911,8 +977,6 @@ $modeitems: normal, search, conf, pref, home;
 		}
 	}
 }
-
-.settings-area { @include display-in(conf pref); }
 
 .conf-area, .pref-area {
     @extend %scroll-elem;
@@ -1046,14 +1110,8 @@ $modeitems: normal, search, conf, pref, home;
 
     /* fix flicker in some browsers */
     .meta-view &, .rooms-view & {
-        -webkit-backface-visibility: hidden;
-        -moz-backface-visibility: hidden;
-        -ms-backface-visibility: hidden;
-        backface-visibility: hidden;
-        -webkit-perspective: 1000;
-        -moz-perspective: 1000;
-        -ms-perspective: 1000;
-        perspective: 1000;
+        @include prefix(backface-visibility, hidden);
+        @include prefix(perspective, 1000);
     }
 
     /* use 3d transformations for GPU accelerated animations */
