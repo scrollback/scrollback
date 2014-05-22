@@ -509,9 +509,9 @@ $modeitems: normal, search, conf, pref, home;
         padding: .75em .5em;
     }
 
-    .front { @include opacity(1); }
+    .front { @include opacity(0); }
 
-    .back { @include opacity(0); }
+    .back { @include opacity(1); }
 
     .embed.meta-view & {
         .front { @include opacity(0); }
