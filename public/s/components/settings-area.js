@@ -41,30 +41,32 @@ $(function() {
 	});
 
 	$(".conf-save").on("click", function() {
-		libsb.emit('config-save', {}, function(err, configData){
-			console.log(configData);
-			var ircIdentity = "";
-			if(configData.irc && configData.irc.channel && configData.irc.server) {
-				ircIdentity += "irc://" + configData.irc.server +  ":" + configData.irc.channel;
-			}
-			var room = {
-				id: window.currentState.room,
-				description: configData.description,
-				identities: [ircIdentity],
-				params: {
-					irc : {
-						channel: configData.irc.channel,
-						server: configData.irc.server
-					},
-					allowSEO: configData.seo,
-					wordban: configData.spam.offensive
+		if(currentState.mode == 'conf'){
+			libsb.emit('config-save', {}, function(err, configData){
+				console.log(configData);
+				var ircIdentity = "";
+				if(configData.irc && configData.irc.channel && configData.irc.server) {
+					ircIdentity += "irc://" + configData.irc.server +  ":" + configData.irc.channel;
 				}
-			};
-			libsb.emit('room-up', room, function(){
-				currentConfig = null;
-        		libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
+				var room = {
+					id: window.currentState.room,
+					description: configData.description,
+					identities: [ircIdentity],
+					params: {
+						irc : {
+							channel: configData.irc.channel,
+							server: configData.irc.server
+						},
+						allowSEO: configData.seo,
+						wordban: configData.spam.offensive
+					}
+				};
+				libsb.emit('room-up', room, function(){
+					currentConfig = null;
+	        		libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
+				});
 			});
-		});
+		}
 	});
 
 	$(".conf-cancel").on("click", function() {

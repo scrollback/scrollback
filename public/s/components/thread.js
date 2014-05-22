@@ -7,8 +7,9 @@ $(function() {
 	var $template = $(".thread-item").eq(0);
 
 	threadEl.render = function (el, thread, index) {
+		var title = thread.title || "";
 		el = el || $template.clone(false);
-		el.find('.thread-title').text(thread.title);
+		el.find('.thread-title').text(title.replace(/-/g, " "));
 		el.find('.thread-snippet').html("");
 		el.find('.timestamp').html(format.friendlyTime(thread.startTime, new Date().getTime()));
 		el.attr('id', 'thread-' + thread.id);
