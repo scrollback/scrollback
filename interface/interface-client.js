@@ -109,7 +109,7 @@ function getSession(query, callback){
 }
 
 function getUsers(query, callback){
-	core.emit('getUsers', {ref: query}, callback);
+	core.emit('getUsers', query, callback);
 }
 
 function enter(roomId, callback){

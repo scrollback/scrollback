@@ -13,7 +13,7 @@ $(function() {
 
 	function renderSettings(userId){
 		libsb.getUsers({ref: userId}, function(err, data){
-			var results = data.results[0][0];
+			var results = data.results[0];
 			var radio = {"daily": 0, "weekly": 1, "never": 2};
 
 			// user profile
@@ -34,22 +34,24 @@ $(function() {
 		});
 	}
 
-	$(".pref-save").on("click", function() {
-		libsb.emit('pref-save', {}, function(err, configData){
-			var user = {
-				id: libsb.user.id,
-				description: configData.aboutMe,
-				params: {
-					email : configData.email,
-					notifications: configData.notifications
-				},
-				identities: libsb.user.identities
-			};
-			libsb.emit('user-up', user, function(err, data){
-				currentConfig = null;
-        		libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
+	$(".conf-save").on("click", function() {
+		if(currentState.mode == 'pref' ){
+			libsb.emit('pref-save', {}, function(err, configData){
+				var user = {
+					id: libsb.user.id,
+					description: configData.aboutMe,
+					params: {
+						email : configData.email,
+						notifications: configData.notifications
+					},
+					identities: libsb.user.identities
+				};
+				libsb.emit('user-up', user, function(err, data){
+					currentConfig = null;
+	        		libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
+				});
 			});
-		});
+		}
 	});
 
 	$(".conf-cancel").on("click", function() {
@@ -100,7 +102,7 @@ $(function() {
 							lace.notify.request();
 							var laceObj = lace.notify.support();
 							if(laceObj.permission === "denied"){
-								lace.alert.show({type: 'error', body: 'Permission for desktop notifcations denied!'});
+								lace.alert.show({type: 'error', body: 'Permission for desktop notifications denied!'});
 							}
 						}
 					});
