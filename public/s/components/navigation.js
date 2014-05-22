@@ -124,7 +124,7 @@ libsb.on("navigate", function(state, next) {
 				path = '/me/edit';
 				break;
 			case 'search':
-				// path = (state.room ? '/' + state.room: '') + '/search';
+				path = state.room ? '/' + state.room: '';
 				params.push('q=' + encodeURIComponent(state.query));
 				break;
 			case 'home':
