@@ -1,5 +1,5 @@
-/* jshint jquery: true */
-/* global libsb, threadEl */
+/* jshint browser: true */
+/* global $, libsb, threadEl, currentState */
 /* exported chatArea */
 
 var threadArea = {};
@@ -7,12 +7,13 @@ var threadArea = {};
 $(function() {
 	var $threads = $(".pane-threads"),
 		room = "",
-		time = null; /* replace this with the time from the URL, if available. */
-		search = "";
+		time = null, /* replace this with the time from the URL, if available. */
+		search = "",
 		mode = "",
+		index,
 		searchResult = [];
 	// Set up infinite scroll here.
-		
+
 		if(currentState.mode == "search") {
 			index = 0;
 		}else {
@@ -25,13 +26,14 @@ $(function() {
 		startIndex: index,
 		getItems: function (index, before, after, recycle, callback) {
 			var start = (index === null);
+
 			if(libsb.isInited) {
 				loadThreads();
 			}else {
 				libsb.on("inited", function(q, n) {
 					loadThreads();
 					n();
-				})
+				});
 			}
 			console.log(index, before, after);
 			function loadThreads() {
@@ -71,10 +73,10 @@ $(function() {
 						if(after === 0) {
 							if(threads.length < before) {
 								threads.unshift({id:"", title: "All Conversations"});
-								threads.unshift(false);	
+								threads.unshift(false);
 							}
 							if(t.time) {
-								threads.pop();	
+								threads.pop();
 							}
 						}else if(before === 0) {
 							if(threads.length < after) {
@@ -84,7 +86,7 @@ $(function() {
 							}
 						}
 					}
-					
+
 					callback(threads.map(function(thread) {
 						var index;
 						if(currentState.mode == "search") {
@@ -103,7 +105,7 @@ $(function() {
 
 	$threads.click(function(event) {
 		event.preventDefault();
-		var $el = $(event.target).closest('.thread');
+		var $el = $(event.target).closest('.thread-item');
 		if(!$el.size()) return;
 		libsb.emit('navigate', {source: 'thread-area', thread: $el.attr("id").split('-')[1] });
 	});
@@ -113,7 +115,7 @@ $(function() {
 		if(['search-local', 'search-global', 'threads'].indexOf(state.tab)>=0) {
 			$(".pane-threads").addClass("current");
 		}else{
-			$(".pane-threads").removeClass("current");			
+			$(".pane-threads").removeClass("current");
 		}
 
 		if(state.mode) mode = state.mode;

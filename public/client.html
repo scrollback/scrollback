@@ -64,10 +64,10 @@
 					</a>
 				</div>
 				<div role="tabpanel" class="pane hide-scroll pane-threads">
-					<a class="thread" href="">
-						<h3 class="thread-title"></h3>
+					<div class="thread-item" href="">
+						<h4 class="thread-title"></h4>
 						<p class="thread-snippet"></p>
-					</a>
+					</div>
 				</div>
 			</div>
 
@@ -78,63 +78,58 @@
 				<a class="list-item"></a>
 			</div>
 		</section>
-		<section role="main" class="main-area settings-area">
+		<section role="main" class="main-area">
 			<div class="title-bar">
-				<div class="title-normal">
+				<div class="left-area">
 					<a class="meta-button">
-						<svg version="1.1" class="meta-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-							<path d="M 16.899495,4.100505 8.767767,12.232233 7,14 l 1.767767,1.767767 8.131728,8.131728 c 0.707107,0.707107 0.707107,0.707107 1.414213,0 l 0.353554,-0.353553 c 0.707107,-0.707107 0.707107,-0.707107 0,-1.414214 L 10.535534,14 18.667262,5.868272 c 0.707107,-0.707107 0.707107,-0.707107 0,-1.414214 L 18.313708,4.100505 c -0.707106,-0.707107 -0.707106,-0.707107 -1.414213,0 z"/>
-						</svg>
+						<span class="meta-card">
+							<figure class="front">
+								<svg version="1.1" class="meta-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+									<defs>
+										<path d="m 14.000043,1048.3622 -10.000046,-10 5.664746,0 4.335208,4.3664 4.335305,-4.3664 5.664766,0 z" id="0"/>
+										<path fill="#33ccaa" d="m 14.000045,1020.3622 -10.000045,10 5.664746,0 4.335208,-4.3664 4.335305,4.3664 5.664766,0 z" id="1"/>
+									</defs>
+									<g transform="matrix(0.4999993,0,0,0.4999993,4,1.96e-5)">
+										<use transform="matrix(2,0,0,2,-7.999994,-2040.7244)" height="372.05" width="524.41" xlink:href="#1"/>
+										<path d="m 0,23.9996 0,8 40,0 0,-8 z" fill="#ffffff"/>
+										<use transform="matrix(2,0,0,2,-7.999994,-2040.7244)" height="372.05" width="524.41" xlink:href="#0" fill="#ffffff"/>
+									</g>
+								</svg>
+							</figure>
+							<figure class="back">
+								<svg version="1.1" class="meta-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+									<path d="M 16.899495,4.100505 8.767767,12.232233 7,14 l 1.767767,1.767767 8.131728,8.131728 c 0.707107,0.707107 0.707107,0.707107 1.414213,0 l 0.353554,-0.353553 c 0.707107,-0.707107 0.707107,-0.707107 0,-1.414214 L 10.535534,14 18.667262,5.868272 c 0.707107,-0.707107 0.707107,-0.707107 0,-1.414214 L 18.313708,4.100505 c -0.707106,-0.707107 -0.707106,-0.707107 -1.414213,0 z"/>
+								</svg>
+							</figure>
+						</span>
 					</a>
 					<div class="action-buttons">
 						<a class="button conf-save">Done</a>
 						<a class="button pref-save">Done User</a>
 						<a class="button secondary conf-cancel">Cancel</a>
 					</div>
-				</div>
-			</div>
-			<div class="conf-area">
-			</div>
-			<div class="pref-area">
-			</div>
-		</section>
-		<section role="main" class="main-area content-area">
-			<div class="title-bar">
-				<a class="meta-button">
-					<span class="meta-card">
-						<figure class="front">
-							<svg version="1.1" class="meta-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-								<defs>
-									<path d="m 14.000043,1048.3622 -10.000046,-10 5.664746,0 4.335208,4.3664 4.335305,-4.3664 5.664766,0 z" id="0"/>
-									<path fill="#33ccaa" d="m 14.000045,1020.3622 -10.000045,10 5.664746,0 4.335208,-4.3664 4.335305,4.3664 5.664766,0 z" id="1"/>
-								</defs>
-								<g transform="matrix(0.4999993,0,0,0.4999993,4,1.96e-5)">
-									<use transform="matrix(2,0,0,2,-7.999994,-2040.7244)" height="372.05" width="524.41" xlink:href="#1"/>
-									<path d="m 0,23.9996 0,8 40,0 0,-8 z" fill="#ffffff"/>
-									<use transform="matrix(2,0,0,2,-7.999994,-2040.7244)" height="372.05" width="524.41" xlink:href="#0" fill="#ffffff"/>
-								</g>
-							</svg>
-						</figure>
-						<figure class="back">
-							<svg version="1.1" class="meta-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-								<path d="M 16.899495,4.100505 8.767767,12.232233 7,14 l 1.767767,1.767767 8.131728,8.131728 c 0.707107,0.707107 0.707107,0.707107 1.414213,0 l 0.353554,-0.353553 c 0.707107,-0.707107 0.707107,-0.707107 0,-1.414214 L 10.535534,14 18.667262,5.868272 c 0.707107,-0.707107 0.707107,-0.707107 0,-1.414214 L 18.313708,4.100505 c -0.707106,-0.707107 -0.707106,-0.707107 -1.414213,0 z"/>
-							</svg>
-						</figure>
-					</span>
-				</a>
-				<div class="left-area">
-					<h2 class="title" id="room-title"></h2>
+					<h2 class="room-title" id="room-title"></h2>
 					<a class="follow-button" role="button">
 						<svg version="1.1" class="follow-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-							<path d="M 14.0738,22.971623 C 3.2900491,29.225341 5.3840644,28.790591 7.0806226,17.753445 -1.9219172,8.9281371 -0.88064728,10.88277 9.6508776,9.1645832 14.870754,-2.54347 13.420277,-0.90069994 18.232561,9.0745522 30.46116,10.663884 28.52345,9.7245413 20.966076,17.607772 23.303891,30.298088 23.556797,28.074768 14.0738,22.971623 z"/>
+							<path d="M 14.062341,21.199584 C 4.9530909,26.218092 6.721947,25.869211 8.155064,17.012079 0.55043921,9.9299118 1.4300202,11.498473 10.32621,10.119655 c 4.409333,-9.39552471 3.184087,-8.077228 7.249118,-0.07225 10.329742,1.275413 8.69292,0.521605 2.309055,6.847772 1.974798,10.183776 2.188435,8.399596 -5.822042,4.304403 z"/>
 						</svg>
 					</a>
 				</div>
 				<div class="right-area">
-					<a class="fullview-button" role="button">
+					<a class="search-button" role="button">
+						<svg version="1.1" class="search-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+							<path d="m 12.15671,4 c -4.4182781,0 -8.0000001,3.5818867 -8.0000001,8.000368 0,4.418481 3.581722,8.000368 8.0000001,8.000368 1.681874,0 3.243239,-0.519684 4.53125,-1.406315 l 4.875,4.875225 c 0.707107,0.707139 0.699144,0.707139 1.40625,0 l 0.34375,-0.375018 c 0.707107,-0.707139 0.707107,-0.699175 0,-1.406314 l -4.8125,-4.812722 c 1.039684,-1.350059 1.65625,-3.039441 1.65625,-4.875224 C 20.15671,7.5818867 16.574988,4 12.15671,4 z m 0,2.0000919 c 3.313708,0 6,2.6864151 6,6.0002761 0,3.313861 -2.686292,6.000276 -6,6.000276 -3.3137086,0 -6.0000001,-2.686415 -6.0000001,-6.000276 0,-3.313861 2.6862915,-6.0002761 6.0000001,-6.0002761 z"/>
+							<path d="m 19.9375,17.688688 -2.4375,2.4375 3.5625,3.59375 c 0.973373,0.973416 0.964129,0.973416 1.9375,0 l 0.46875,-0.53125 c 0.973372,-0.973416 0.973372,-0.964085 0,-1.9375 l -3.53125,-3.5625 z"/>
+						</svg>
+					</a>
+					<a class="minimize-button" role="button">
+						<svg version="1.1" class="minimize-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+							<path d="m 5,13 c -1,0 -1,0 -1,1 0,1 0,1 1,1 l 18,0 c 1,0 1,0 1,-1 0,-1 0,-1 -1,-1 -4.197917,0 -13.802083,0 -18,0 z"/>
+						</svg>
+					</a>
+					<a target="_blank" class="fullview-button" role="button">
 						<svg version="1.1" class="fullview-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-							<path d="M 7.9999997,3 C 6.0000001,3 6.0000001,2.9999126 6.0000001,5 l 0,15 c 0,2 0,2 1.9999996,2 L 23,22 c 2.000087,0 2,0 2,-2 L 25,5 C 25,3 25,3 23,3 z M 11,7 20,7 c 1.000031,0 1,-3.05e-5 1,1 l 0,9 c 0,1 3.1e-5,1 -1,1 l -9,0 c -1.0000001,0 -1.0000001,3e-5 -1.0000001,-1 l 0,-9 c 0,-1 0,-1 1.0000001,-1 z"/>
-							<path d="M 3.9999998,10 C 3,10 3,10 3,10.857143 L 3,23 c 0,2 0,2 1.9999996,2 L 17,25 c 1,0 1,0 1,-1 0,-1 0,-1 -1,-1 L 6.0000001,23 C 4.9999996,23 4.9999996,23 4.9999996,22 l 0,-11 c 0,-1 0,-1 -0.9999998,-1 z"/>
+							<path d="m 21.933522,6.0947441 c -0.07339,-0.07208 -0.238086,-0.08839 -0.530331,-0.08839 l -7.999145,5e-7 c -0.935887,-0.02395 -0.921784,-0.03249 -0.99437,0.9943699 l 3.601825,3.6018235 -8.48528,8.485281 c -0.703126,0.703126 -0.707107,0.707107 0,1.414213 0.707105,0.707109 0.707128,0.707086 1.414214,0 l 8.485281,-8.485279 3.579728,3.579728 c 1.000002,0 0.994376,0.01113 0.994369,-0.994369 l 0,-7.9991442 c 0,-0.2974685 0.0071,-0.436154 -0.06629,-0.5082329 z"/>
 						</svg>
 					</a>
 					<div class="user-area">
@@ -146,22 +141,22 @@
 							<div class="sign-in">Sign in</div>
 						</div>
 					</div>
-					<a class="search-button" role="button">
-						<svg version="1.1" class="search-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-							<path d="m 12.15671,4 c -4.4182781,0 -8.0000001,3.5818867 -8.0000001,8.000368 0,4.418481 3.581722,8.000368 8.0000001,8.000368 1.681874,0 3.243239,-0.519684 4.53125,-1.406315 l 4.875,4.875225 c 0.707107,0.707139 0.699144,0.707139 1.40625,0 l 0.34375,-0.375018 c 0.707107,-0.707139 0.707107,-0.699175 0,-1.406314 l -4.8125,-4.812722 c 1.039684,-1.350059 1.65625,-3.039441 1.65625,-4.875224 C 20.15671,7.5818867 16.574988,4 12.15671,4 z m 0,2.0000919 c 3.313708,0 6,2.6864151 6,6.0002761 0,3.313861 -2.686292,6.000276 -6,6.000276 -3.3137086,0 -6.0000001,-2.686415 -6.0000001,-6.000276 0,-3.313861 2.6862915,-6.0002761 6.0000001,-6.0002761 z"/>
-							<path d="m 19.9375,17.688688 -2.4375,2.4375 3.5625,3.59375 c 0.973373,0.973416 0.964129,0.973416 1.9375,0 l 0.46875,-0.53125 c 0.973372,-0.973416 0.973372,-0.964085 0,-1.9375 l -3.53125,-3.5625 z"/>
-						</svg>
-					</a>
 				</div>
 			</div>
-			<div class="chat-position"></div>
-			<div class="chat-area hide-scroll">
-				<p class="chat-item">
-					<span class="chat-nick"></span>
-					<span class="chat-message"></span>
-					<span class="chat-timestamp"></span>
-					<span class="chat-more"></span>
-				</p>
+			<div class="content-area">
+				<div class="chat-position"></div>
+				<div class="chat-area hide-scroll">
+					<p class="chat-item">
+						<span class="chat-nick"></span>
+						<span class="chat-message"></span>
+						<span class="chat-timestamp"></span>
+						<span class="chat-more"></span>
+					</p>
+				</div>
+			</div>
+			<div class="conf-area">
+			</div>
+			<div class="pref-area">
 			</div>
 		</section>
 		<section class="chat-input">
@@ -174,6 +169,9 @@
 		</section>
 		<section class="search-bar">
 			<input class="search-entry" type="search" placeholder="Type to search...">
+		</section>
+		<section class="noroom-area">
+			<h1>This room doesn't exist :(</h1>
 		</section>
 
 		<!-- templates -->
@@ -222,25 +220,19 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script>window.jQuery || document.write('<script src="/s/lib/jquery.min.js"><\/script>');</script>
 
+		<!-- polyfills -->
 		<!--[if IE]>
 		<script src="/s/lib/pointer.events.polyfill.min.js"></script>
 		<script>$(function() { PointerEventsPolyfill.initialize({}); });</script>
 		<script src="/s/lib/transformie.min.js"></script>
+		<script src="/s/lib/flexie.min.js"></script>
 		<![endif]-->
 
 		<script src="/sdk/sockjs.js"></script>
-
 		<script src="/libsb.bundle.js"></script>
-
-		<script>
-			$(function() {
-				libsb.connect();
-			});
-		</script>
-
-		<script>
-			document.addEventListener && document.addEventListener("touchstart", function() {}, true);
-		</script> <!-- allow styling of CSS :active state in Mobile Safari -->
+		<script>$(function() { libsb.connect(); });</script>
 		<script src="https://login.persona.org/include.js"></script>
+		<!-- allow styling of CSS :active state in Mobile Safari -->
+		<script>document.addEventListener && document.addEventListener("touchstart", function() {}, true);</script>
 	</body>
 </html>
