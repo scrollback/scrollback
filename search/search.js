@@ -1,10 +1,13 @@
 var log = require("../lib/logger.js");
 var config = require('../config.js');
+var searchDB = require('../lib/redisProxy.js').select(config.redisDB.search);
 var es = require('elasticsearch');
 var indexName = 'sb';
 var client;
     
 var searchTimeout = 10000;
+var messageCount = 0;
+var updateThreads = []
 module.exports = function (core) {
     if(!client) {
         init();
@@ -15,18 +18,31 @@ module.exports = function (core) {
         core.on('text', function (message, callback) {
             if (message.type === "text") {
                 callback();
-                var data = {};
                 
-                data.type = 'text';
-                data.id = message.id;
-                data.body =  {
-                    "text": message.text,
-                    "time": message.time,
-                    "room": message.to,
-                    "author": message.from.replace(/guest-/g, ""),
-                    "threads": message.threads
-                };
-                index(data);
+                if(message.threads) {
+                    message.threads.forEach(function(e) {
+                        if(updateThreads.indexOf(e.id)<0) {
+                            updateThreads.push(e.id);
+                                searchDB.set("thread:{{"+e.id+"}}", JSON.stringify( {
+                                id: e.id,
+                                room: message.to
+                            }), insertText);
+                            searchDB.sadd("updateThread", e.id);
+                        }else {
+                            insertText();
+                        }
+
+                        function insertText() {
+                            searchDB.sadd("thread:{{"+e.id+"}}:texts", message.id+":"+message.text, function() {
+                                messageCount++;
+                                if(messageCount >=5) {
+                                    indexTexts();
+                                }
+                            });
+                        }
+                        
+                    });
+                }
             }
         }, "watchers");
         
@@ -77,15 +93,16 @@ module.exports = function (core) {
             search(data,callback); 
         }, "watchers");
         
-        /*Search threads by a keyword/phrase */
+        /* Search threads by a keyword/phrase */
         core.on('getThreads', function (qu, callback) {
             var data = {}, position;
             var query = {};
             if (!qu.q) {
                 return callback();
             }
-            data.type = 'text';
-            query = { query: { match: {text: qu.q}}};
+            data.type = 'threads';
+            query = {query: { match: {"_all": qu.q}}};
+
             if(qu.to){
                 query.filter = {
                     term: {
@@ -108,14 +125,11 @@ module.exports = function (core) {
                 query.size = qu.after || 10;
             }
             
-            console.log("++++++++++++++++++++++++++++++++++++++", qu);
-            console.log("++++++++++++++++++++++++++++++++++++++");
-            console.log("******************************************", query);
-            console.log("******************************************");
             data.body = query;
             data.qu = qu;
+            console.log(query);
             searchThreads(data,callback); 
-        }, "watchers");
+        }, "cache");
     } else {
         log("Search module is not enabled");
     }
@@ -159,14 +173,9 @@ function searchThreads(data, callback){
     client.search(searchParams).then (function (response) {
         var threads = [];   
         var unique = {};
+        
         response.hits.hits.forEach(function(e){ 
-            if(e._source.threads) {
-                var id = e._source.threads[0].id;
-                if(!unique[id]) {
-                    threads.push(e._source.threads[0].id);
-                    unique[id] = true;
-                }
-            }
+            threads.push(e._source.id);
         });
         if(threads.length) {
             data.qu.ref = threads;
@@ -186,4 +195,79 @@ function init() {
     client = new es.Client({
         host: searchServer
     });
+}
+
+
+
+function indexTexts() {
+    var threads = {}, postData = {body: []}, ids = updateThreads, count=messageCount;
+            
+    updateThreads = [];
+    messageCount = 0;
+
+    constructBulk(ids, function(postData) {
+        client.bulk(postData, function(err, resp) {
+            console.log(err, resp);
+        });
+    });
+}
+
+
+/* couldnt think of a better name here. please feel free to change*/
+function generateNewThread(threadID, callback) {
+    var newThread = {};
+    newThread.id = threadID;
+
+    searchDB.get("thread:{{"+threadID+"}}", function(err, t) {
+        if(err || !t) return callback(null);
+
+        try{ t = JSON.parse(t); }
+        catch(e) { return callback(null); }
+
+        newThread.room = t.room;
+
+        searchDB.smembers("thread:{{"+threadID+"}}:texts", function(err, texts) {
+
+            if(err || !texts) return callback(null);
+
+            texts.forEach(function(e) {
+                var index = e.indexOf(':');
+                var id = e.substring(0, index);
+                var text = e.substring(index + 1);
+                newThread[id] = text;
+            });
+
+            callback(newThread);
+        });
+    });
+}
+
+
+
+function constructBulk(threadIds, callback) {
+    var i=0, l = threadIds.length, threads={}, postData = {body: []};
+
+    threadIds.forEach(function(e) {
+        generateNewThread(e, function(t) {
+            i++;
+            if(t) threads[t.id] = t;
+            if(i>=l) processThreads();
+        });
+    });
+
+    function processThreads() {
+         Object.keys(threads).forEach(function(e) {
+            e = threads[e];
+
+            postData.body.push({
+                index: {
+                    _index: indexName,
+                    _type: 'threads',
+                    _id: e.id
+                }
+            });
+            postData.body.push(e);
+        });
+        callback(postData);
+    }
 }

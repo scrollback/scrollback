@@ -21,6 +21,7 @@ $(function() {
 
     $(".search-entry").keypress(function(e) {
         if(e.which == 13){
+            $("body").removeClass("search-focus");
             e.preventDefault();
             libsb.emit('navigate', {view: "meta", mode: "search", tab: "search-local", query: $(".search-entry").val()});
         }

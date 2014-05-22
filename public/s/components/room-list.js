@@ -33,16 +33,18 @@ $(function() {
 			callback(res);
 		}
 	});
-
-	// Set up a click listener.
-
+	// Set up a click listener.,
 	$roomlist.click(function(event) {
 		var $el = $(event.target).closest(".room-item");
 		if(!$el.size()) return;
 
 		libsb.emit('navigate', {
-			room: $el.attr("id").split('-')[1],
+			room: $el.attr("id").split('-')[2],
 			view: 'normal', source: 'room-list',
+			mode: "normal",
+			view: "normal",
+			query: "",
+			tab:"people",
 			thread: null
 		});
 

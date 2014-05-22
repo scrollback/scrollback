@@ -143,7 +143,7 @@ function partBot(roomId) {
 	});
 	client.part(channel);//disconnect bot in case of all part.
 	//delete servChanProp[server][channel];
-	delete rooms[roomId];
+	//delete rooms[roomId];//TODO find a better way to delete this
 }
 
 function connectUser(roomId, nick, options, cb) {
