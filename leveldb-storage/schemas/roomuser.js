@@ -100,7 +100,6 @@ module.exports = function (types) {
 			if (data.identities) {
 				newRoom.identities = data.identities;
 			}
-
 			if(action.type === "user") {
 				data.timezone = newRoom.timezone = data.timezone? data.timezone : 0;
 				user.put(newRoom, function(err, res) {

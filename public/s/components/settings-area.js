@@ -43,10 +43,14 @@ $(function() {
 	$(".conf-save").on("click", function() {
 		libsb.emit('config-save', {}, function(err, configData){
 			console.log(configData);
+			var ircIdentity = "";
+			if(configData.irc && configData.irc.channel && configData.irc.server) {
+				ircIdentity += "irc://" + configData.irc.server +  ":" + configData.irc.channel;
+			}
 			var room = {
 				id: window.currentState.room,
 				description: configData.description,
-				identities: '',
+				identities: [ircIdentity],
 				params: {
 					irc : {
 						channel: configData.irc.channel,
