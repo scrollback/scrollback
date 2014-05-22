@@ -1,6 +1,6 @@
 @import "global";
 @import "functions";
-@import "widgets";
+@import "base";
 @import "alert";
 @import "modal";
 @import "popover";
@@ -1174,6 +1174,30 @@ $modeitems: normal, search, conf, pref, home;
 		background-repeat: no-repeat;
 		background-size: 3em 2em;
 	}
+}
+
+.noroom-area {
+    display: none;
+
+    .noroom-mode & {
+        @include flexbox;
+        @include justify-content(space-around);
+        @include align-items(center);
+        @extend %column;
+
+        left: 0;
+        right: 0;
+        padding: 1em;
+        background-color: $light-color;
+        color: lighten($dark-color, 30%);
+        z-index: 40;
+
+        @media #{$screenxxxx} {
+            left: $width-roomxxxx;
+
+            .embed & { left: 0; }
+        }
+    }
 }
 
 .infinite-above, .infinite-below {

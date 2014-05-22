@@ -1,10 +1,13 @@
-@import "widgets";
+@import "base";
 @import "grid";
 
 /* we need this to make text vertically centered in a page */
 html, body { height: 100%; }
 
-h1, h2, h3, h4 { font-weight: 300; }
+h1, h2, h3, h4 {
+    font-weight: 300;
+    margin: .5em 0;
+}
 
 footer {
     border-top: 1px solid darken($light-color, 10%);
