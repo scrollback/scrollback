@@ -88,6 +88,7 @@ module.exports = function(core) {
 					});
 				}
 			}
+			callback();
 		}
 	};
 	

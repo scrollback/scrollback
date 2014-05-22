@@ -32,7 +32,7 @@ libsb.on('pref-show', function(conf, next){
 libsb.on('pref-save', function(conf, next){
 	conf.email = {
 		frequency : $('input:radio[name="email-freq"]:checked').next().text(),
-		notifcations : $('#mention').is(':checked')
+		notifications : $('#mention').is(':checked')
 	}
 	next();
 });
