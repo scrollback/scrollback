@@ -144,15 +144,17 @@ describe('connect new IRC channel', function() {
 		//client.
 		this.timeout(60 * 1000);
 		core.emit("room", {
-			id: "testingroom2",
 			type: "room",
 			session: "web://somesession",
-			params: {
-				irc: {
-					server: testingServer,
-					channel: "#testingroom2",
-					pending: false,
-					enabled: true
+			room: {
+				id: "testingroom2",
+				params: {
+					irc: {
+						server: testingServer,
+						channel: "#testingroom2",
+						pending: false,
+						enabled: true
+					}
 				}
 			}
 		}, function(err, room) {
@@ -170,14 +172,17 @@ describe('connect new IRC channel', function() {
 		//client.
 		this.timeout(60 * 1000);
 		core.emit("room", {
-			id: "testingroom2",
+			
 			type: "room",
-			params: {
-				irc: {
-					server: testingServer,
-					channel: "#testingroom3",
-					pending: false,
-					enabled: true
+			room: {
+				id: "testingroom2",
+				params: {
+					irc: {
+						server: testingServer,
+						channel: "#testingroom3",
+						pending: false,
+						enabled: true
+					}
 				}
 			},
 			old: {

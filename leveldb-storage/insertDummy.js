@@ -65,7 +65,7 @@ core.emit("room", {
 		identities: ["irc://dev.scrollback.io/#scrollback"]
 	},
 	user: {
-		id:"testuser1",
+		id:"kamal"
 	}
 });
 
@@ -102,17 +102,17 @@ core.emit("room", {
 //	role: "follower"
 //});
 
-core.emit("join", {
-	id: generate.uid(),
-	role:"follower",
-	to: "scrollback",
-	from:"kamal",
-	type:"join",
-	session:generate.uid(),
-	resource:generate.uid(),
-	user:{id:"kamal"},
-	room:{id:"scrollback"}
-}, function(err, data){
-	if(err) throw err;
-	
-});
+//core.emit("join", {
+//	id: generate.uid(),
+//	role:"follower",
+//	to: "scrollback",
+//	from:"kamal",
+//	type:"join",
+//	session:generate.uid(),
+//	resource:generate.uid(),
+//	user:{id:"kamal"},
+//	room:{id:"scrollback"}
+//}, function(err, data){
+//	if(err) throw err;
+//	
+//});

@@ -490,8 +490,6 @@ $modeitems: normal, search, conf, pref, home;
 }
 
 .meta-card {
-    @include transform(rotateY(180deg));
-    @include prefix(transform-style, preserve-3d);
     @extend %ease;
 
     position: absolute;
@@ -501,7 +499,7 @@ $modeitems: normal, search, conf, pref, home;
     width: 100%;
 
     figure {
-        @include prefix(backface-visibility, hidden);
+        @extend %ease;
 
         position: absolute;
         top: 0;
@@ -511,16 +509,30 @@ $modeitems: normal, search, conf, pref, home;
         padding: .75em .5em;
     }
 
-    .back { @include transform(rotateY(180deg)); }
+    .front { @include opacity(0); }
 
-    .embed.meta-view & { @include transform(rotateY(180deg)); }
+    .back { @include opacity(1); }
 
-    .embed & { @include transform(rotateY(0deg)); }
+    .embed.meta-view & {
+        .front { @include opacity(0); }
+
+        .back { @include opacity(1); }
+    }
+
+    .embed & {
+        .front { @include opacity(1); }
+
+        .back { @include opacity(0); }
+    }
 }
 
 .embed {
     &:focus, &:hover, &:active {
-        .meta-card { transform: rotateY( 180deg ); }
+        .meta-card {
+            .front { @include opacity(0); }
+
+            .back { @include opacity(1); }
+        }
     }
 }
 

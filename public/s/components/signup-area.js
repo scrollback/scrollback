@@ -34,7 +34,7 @@ $(function(){
 				signingUser = init.user;
 
 				libsb.emit('navigate', {
-					mode: "user", tab: "create", source: "libsb", view: "signup"
+					mode: "user", tab: "create", source: "libsb"
 				});
 
 				lace.modal.show($("#signup-dialog").html());

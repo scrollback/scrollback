@@ -138,7 +138,7 @@ libsb.on("navigate", function(state, next) {
 				path = '/me/edit';
 				break;
 			case 'search':
-				path = (state.room ? '/' + state.room: '') + '/search';
+				path = state.room ? '/' + state.room: '';
 				params.push('q=' + encodeURIComponent(state.query));
 				break;
 			case 'home':
@@ -153,7 +153,7 @@ libsb.on("navigate", function(state, next) {
 					): '');
 		}
 
-		if(state.time) params.push('time=' + new Date(state.time).toISOString());
+		// if(state.time) params.push('time=' + new Date(state.time).toISOString());
 		if(state.mode) params.push('mode=' + state.mode);
 		if(state.tab) params.push('tab=' + state.tab);
 

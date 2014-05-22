@@ -19,7 +19,7 @@ console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
 console.log("+++++Text should be run after clearing the DB+++++");
 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
 describe("user and room action", function(){
-	it.skip("storing user harish", function(done) {
+	it("storing user harish", function(done) {
 		var email = "harish@scrollback.io";
 
 		core.emit("user", {
@@ -38,7 +38,7 @@ describe("user and room action", function(){
 			done();
 		});
 	});
-	it.skip("storing user arvind", function(done) {
+	it("storing user arvind", function(done) {
 		var email = "arvind@scrollback.io"
 		core.emit("user", {
 			id: generate.uid(),
@@ -56,7 +56,7 @@ describe("user and room action", function(){
 			done();
 		});
 	});
-	it.skip("storing user amal", function(done) {
+	it("storing user amal", function(done) {
 		var email = "amal.scrollback.io";
 		core.emit("user", {
 			id: generate.uid(),
@@ -384,7 +384,7 @@ describe("storing actions", function() {
 	});
 });
 
-describe.skip("Threads: Add assertions to the validity of the data: ", function() {
+describe("Threads: Add assertions to the validity of the data: ", function() {
 	it("insert few text", function(done) {
 		var i=0, x = time;
 		this.timeout(10000);
