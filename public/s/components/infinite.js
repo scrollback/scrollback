@@ -72,8 +72,6 @@
 					recycle = recycle.concat(remove(fillBelow - fillSpace, "below"));
 				}
 
-				// console.log(fillAbove, fillSpace, pendingRequests.above, atTop);
-
 				if(fillAbove < fillSpace && !pendingRequests.above && !atTop) {
 					pendingRequests.above = true;
 					cols = getGridColumns();
@@ -87,7 +85,6 @@
 						}
 					);
 				}
-
 				if(fillBelow < fillSpace && !pendingRequests.below && !atBottom) {
 					pendingRequests.below = true;
 					cols = getGridColumns();
@@ -105,6 +102,7 @@
 
 			function render(els, where) {
 				var oldTerm, height=0;
+
 				if(els[0] === false && where == "above") {
 					atTop = true;
 					$logs.data("upper-limit", true);
@@ -117,11 +115,11 @@
 				}
 
 				if(els.length === 0) return;
-
 				// Add elements to the DOM before measuring height.
 				if(where == "above") {
 					oldTerm = $items.children().eq(0);
 					$items.prepend(els);
+					
 					if(oldTerm.size()) {
 						height = oldTerm.offset().top - els[0].offset().top;
 					} else {

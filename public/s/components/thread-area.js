@@ -5,99 +5,151 @@
 var threadArea = {};
 
 $(function() {
-	var $threads = $(".pane-threads"),
-		room = "",
-		time = null; /* replace this with the time from the URL, if available. */
-		search = "";
-		mode = "",
-		searchResult = [];
-	// Set up infinite scroll here.
-		
-		if(currentState.mode == "search") {
-			index = 0;
-		}else {
-			index = time;
-		}
+	 /* replace this time initialization from the URL, if available. */
+
+	var $threads = $(".pane-threads"), room = "", time = null,
+		search = "", mode = "", searchResult = [false], index = null, queryCount = 0;
+
+	function renderObjects(threads){
+		callback(threads.map(function(thread) {
+			var index;
+			if(currentState.mode == "search") {
+				index = thread.i;
+			}else {
+				index = thread.startTime;
+			}
+			return thread && threadEl.render(null, thread, index);
+		}));
+	}
+
+	function loadSearchResult(index, before, after, callback) {
+		var query={}, i, l, res = [];
+			if(!index) index = 0;
+			console.log();
+			if(before) {
+				if(index === 0){
+					return callback([]);
+				}
+				index--;
+				from = index - before;
+				if(from <0) {
+					to = from+before;
+					from = 0;	
+				}else {
+					to = index;
+				}
+			}else{
+				if(index){
+					index++;
+				}else{
+					after++;	
+				}
+				from = index;
+				to = index+after;
+			}
+			function processResults(from, to){
+				console.log(from, to);
+				for(i=from;i<=to;i++) {
+					if(typeof searchResult[i] !== "undefined") res.push(searchResult[i]);
+				}
+				console.log(res);
+				renderSearchResult(res, callback);
+			}
+
+			if(to<searchResult.length ) {
+				return processResults(from, to);
+			}else if(searchResult.length<=1 || searchResult[searchResult.length-1]!== false){
+				console.log("++++++++++++", searchResult.length);
+				query.pos = searchResult.length-1;
+				query.after = to - query.pos+1;
+			}else {
+				return processResults(from, searchResult.length-1)
+			}
+
+			if(currentState.tab === "search-local") query.to = currentState.room || "";
+			query.q = currentState.query;
+			libsb.getThreads(query, function(err, t) {
+				var threads = t.results;
+				searchResult = searchResult.concat(threads);
+				if(t.results.length < query.after) {
+					searchResult.push(false);
+				}
+				processResults(from, to);
+
+			});
+	}
+	function loadThread(index, before, after, callback) {
+		var query  = { before: before, after: after};
+
+		query.to =  currentState.room || "";
+		query.time = index;
+
+		libsb.getThreads(query, function(err, t) {
+			var threads = t.results;
+
+			if(err) throw err; // TODO: handle the error properly.
+
+			if(after === 0) {
+				if(threads.length < before) {
+					threads.unshift({id:"", title: "All Conversations"});
+					threads.unshift(false);	
+				}
+				if(t.time) {
+					threads.pop();
+				}
+			}else if(before === 0) {
+				if(threads.length < after) {
+					threads.push(false);
+				}else{
+					threads.splice(0,1);
+				}
+			}
+			renderThreads(threads, callback);
+		});
+			
+	}
+
+	function renderSearchResult(threads, callback) {
+		callback(threads.map(function(thread) {
+			return thread && threadEl.render(null, thread, searchResult.indexOf(thread));
+		}));
+	}
+
+	function renderThreads(threads, callback) {
+		callback(threads.map(function(thread) {
+			return thread && threadEl.render(null, thread, thread.startTime);
+		}));
+	}
+
+
 	$threads.infinite({
 		scrollSpace: 2000,
 		fillSpace: 500,
 		itemHeight: 100,
 		startIndex: index,
 		getItems: function (index, before, after, recycle, callback) {
-			var start = (index === null);
-			if(libsb.isInited) {
-				loadThreads();
-			}else {
-				libsb.on("inited", function(q, n) {
-					loadThreads();
-					n();
-				})
-			}
-			console.log(index, before, after);
-			function loadThreads() {
-				var query ={};
-				query = { before: before, after: after};
-				if(search) {
-					query.q = search;
-					if(currentState.tab == "search-local") query.to = currentState.room || "";
+			// if(queryCount>10) return;
+
+			if(currentState.mode == "search"){
+				// queryCount++;
+				if(libsb.isInited) {
+					loadSearchResult(index, before, after, callback);
 				}else {
-					query.to =  currentState.room || "";
+					libsb.on("inited", function(q, n) {
+						loadSearchResult(index, before, after, callback);
+						n();
+					})
 				}
-				if(currentState.mode == "search") {
-					query.pos = index;
+			}else{
+				if(libsb.isInited) {
+					loadThread(index, before, after, callback);
 				}else {
-					query.time = index;
+					libsb.on("inited", function(q, n) {
+						loadThread(index, before, after, callback);
+						n();
+					})
 				}
-
-				libsb.getThreads(query, function(err, t) {
-					var threads = t.results, i;
-
-					if(err) throw err; // TODO: handle the error properly.
-					if(currentState.mode !== "search") {
-						i = index || 0;
-					}
-
-					if(currentState.mode == "search") {
-						if(after !== 0) {
-							if(threads.length < after) {
-								threads.push(false);
-							}
-						}else if(before !== 0) {
-							if(threads.length < before) {
-								threads.unshift(false);
-							}
-						}
-					}else{
-						if(after === 0) {
-							if(threads.length < before) {
-								threads.unshift({id:"", title: "All Conversations"});
-								threads.unshift(false);	
-							}
-							if(t.time) {
-								threads.pop();	
-							}
-						}else if(before === 0) {
-							if(threads.length < after) {
-								threads.push(false);
-							}else{
-								threads.splice(0,1);
-							}
-						}
-					}
-					
-					callback(threads.map(function(thread) {
-						var index;
-						if(currentState.mode == "search") {
-							index = i;
-							i++;
-						}else {
-							index = thread.startTime;
-						}
-						return thread && threadEl.render(null, thread, index);
-					}));
-				});
 			}
-
 		}
 	});
 
@@ -110,6 +162,7 @@ $(function() {
 
 	libsb.on('navigate', function(state, next) {
 		var reset = false;
+		console.log(state);
 		if(['search-local', 'search-global', 'threads'].indexOf(state.tab)>=0) {
 			$(".pane-threads").addClass("current");
 		}else{
@@ -136,7 +189,8 @@ $(function() {
 		}
 
 		if(reset) {
-			if(search) {
+			console.log("resetting");
+			if(currentState.mode == "search") {
 				$threads.reset(0);
 			}else {
 				$threads.reset(time);

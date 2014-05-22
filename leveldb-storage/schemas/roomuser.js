@@ -90,7 +90,7 @@ module.exports = function (types) {
 				type: data.type,
 				picture: data.picture,
 				identities: [],
-				params: data.params,
+				params: data.params
 			};
 			
 			if (data.identities) {

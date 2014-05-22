@@ -103,7 +103,8 @@ var defaults = {
 		session: 8,
 		user: 9,
 		room: 9,
-		occupants: 10
+		occupants: 10,
+		search: 14
 	},
 	plugins: ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
 	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",
