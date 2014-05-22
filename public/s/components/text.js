@@ -75,7 +75,7 @@ $(function() {
 		var nick = $(this).children(".chat-nick").text(),
 			msg = $(".chat-entry").text().replace(/@\S+[\s+{1}]?$/, "");
 
-		if (msg.indexOf(nick) < 0) {
+		if (msg.indexOf(nick) < 0 && libsb.user.id !== nick) {
 			msg = msg + " @" + nick + "&nbsp;";
 		}
 

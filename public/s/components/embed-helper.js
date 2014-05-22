@@ -2,16 +2,18 @@
 /* global $ */
 
 $(function() {
-	// Check if inside an iframe
-	if (window.parent) {
-		// Add embed class to body
-		$("body").addClass("embed");
+	if (window.parent.postMessage) {
+		// Tell the parent that we are ready
+		window.parent.postMessage("ready", "*");
 
 		// Handle minimize button click
-		if (window.parent.postMessage) {
-			$(".minimize-button").on("click", function() {
-				window.parent.postMessage("minimize", "*");
-			});
-		}
+		$(".minimize-button").on("click", function() {
+			window.parent.postMessage("minimize", "*");
+		});
+
+		// Handle fullview button click
+		$(".fullview-button").on("click", function() {
+			window.open(window.location.href, '_blank');
+		});
 	}
 });

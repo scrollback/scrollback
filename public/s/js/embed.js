@@ -6,6 +6,7 @@
 			// Variables
 			var room = "scrollback",
 				host = "http://local.scrollback.io",
+				embed = "toast",
 				style,
 				iframe;
 
@@ -18,7 +19,7 @@
 
 			// Create and append the iframe
 			iframe = document.createElement("iframe");
-			iframe.src = host + "/" + room;
+			iframe.src = host + "/" + room + "?embed=" + embed;
 			iframe.className = "scrollback-stream";
 			document.body.appendChild(iframe);
 

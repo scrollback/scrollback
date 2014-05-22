@@ -1,12 +1,12 @@
 /* jshint browser: true */
-/* jshint jquery: true */
-/* global libsb, format */
+/* global $, libsb */
 /* exported currentState */
 
 /*
 	Properties of the navigation state object:
 
 	room: "roomid",
+	embed: (toast|comment)
 	view: (normal|rooms|meta|signup)
 	mode: (normal|search|conf|prefs|home),
 	tab: (info|people|threads|local|global|<conf/pref tabs>),
@@ -30,11 +30,11 @@ libsb.on("inited", function(){
 	path = path.split("/");
 	state.source = "init";
 	if(path[0]){
-		state.room = path[0]
+		state.room = path[0];
 	}
 
 	if(path[1]){
-		state.thread = path[1]
+		state.thread = path[1];
 	}
 
 	search.split("&").map(function(i) {
@@ -44,17 +44,21 @@ libsb.on("inited", function(){
 		state[q[0]] = q[1];
 	});
 	if(!state.mode) state.mode = "normal";
+
 	if(state.time) {
 		state.time = new Date(state.time).getTime();
 	}
+	console.log(state.embed);
+
 	if(!state.tab) state.tab = "people";
+	if(!state.embed) state.embed = "";
 	libsb.emit("navigate", state);
 });
 libsb.on("navigate", function(state, next) {
 	state.old = $.extend(true, {}, currentState); // copying object by value
 	state.changes = {};
 
-	["room", "view", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
+	["room", "view", "embed", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
 		if(typeof state[prop] === "undefined") {
 			if(typeof state.old[prop] !== "undefined")
 				currentState[prop] = state[prop] = state.old[prop];
@@ -84,6 +88,16 @@ libsb.on("navigate", function(state, next) {
 
 // On navigation, set the body classes.
 libsb.on("navigate", function(state, next) {
+	if(state.old && state.embed !== state.old.embed) {
+		if (state.embed === "toast") {
+			$("body").addClass("embed embed-toast");
+		} else if (state.embed === "comment") {
+			$("body").addClass("embed embed-comment");
+		} else {
+			$("body").removeClass("embed embed-toast embed-comment");
+		}
+	}
+
 	if(state.old && state.mode !== state.old.mode) {
 		$(document.body).removeClass(state.old.mode + "-mode");
 		$(document.body).addClass(state.mode + "-mode");
@@ -100,7 +114,7 @@ libsb.on("navigate", function(state, next) {
 		// $("body").remove();
 	}
 
-	if(state.tab) {	
+	if(state.tab) {
 		$(".tab").removeClass("current");
 		$(".tab-" + state.tab).addClass("current");
 	}
@@ -148,7 +162,7 @@ libsb.on("navigate", function(state, next) {
 
 	function pushState() {
 		var url = buildurl();
-		if(Object.keys(state.changes).length == "") state.view = "normal";
+		if(Object.keys(state.changes).length === "") state.view = "normal";
 		if(state.source == "init" || state.source == "text-area") {
 			history.replaceState(state, null, url);
 			return;
@@ -157,7 +171,7 @@ libsb.on("navigate", function(state, next) {
 		if((state.changes.view == "rooms" || state.changes.view == "meta" || state.changes.view =="normal") && Object.keys(state.changes).length == 1) {
 			history.pushState(state, null, url);
 			return;
-		}else if(Object.keys(state.changes).length == 0) {
+		}else if(Object.keys(state.changes).length === 0) {
 			history.pushState(state, null, url);
 			return;
 		}
