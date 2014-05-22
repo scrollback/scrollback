@@ -47,11 +47,9 @@ $(function() {
 				to = index+after;
 			}
 			function processResults(from, to){
-				console.log(from, to);
 				for(i=from;i<=to;i++) {
 					if(typeof searchResult[i] !== "undefined") res.push(searchResult[i]);
 				}
-				console.log(res);
 				renderSearchResult(res, callback);
 			}
 
@@ -158,11 +156,12 @@ $(function() {
 
 	libsb.on('navigate', function(state, next) {
 		var reset = false;
-		console.log(state);
 		if(['search-local', 'search-global', 'threads'].indexOf(state.tab)>=0) {
 			$(".pane-threads").addClass("current");
 		}else{
+			searchResult = [false];
 			$(".pane-threads").removeClass("current");
+			return next();
 		}
 
 		if(state.mode) mode = state.mode;
@@ -185,7 +184,6 @@ $(function() {
 		}
 
 		if(reset) {
-			console.log("resetting");
 			if(currentState.mode == "search") {
 				$threads.reset(0);
 			}else {

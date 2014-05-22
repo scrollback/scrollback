@@ -118,7 +118,6 @@
 				// Add elements to the DOM before measuring height.
 				if(where == "above") {
 					oldTerm = $items.children().eq(0);
-					console.log(els);
 					$items.prepend(els);
 					
 					if(oldTerm.size()) {
@@ -130,7 +129,6 @@
 				}
 				else {
 					oldTerm = $items.children().eq(-1);
-					console.log(els);
 					$items.append(els);
 					if(oldTerm.size()) {
 						height = (els[els.length-1].offset().top + els[els.length-1].height()) -
