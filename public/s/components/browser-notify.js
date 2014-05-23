@@ -16,6 +16,8 @@ Array.prototype.contains = function(value) {
 
 var browserNotify = (function() {
 	var hasFocus = false,
+		notifyStatus = false,
+		newTitle,
 		originalTitle,
 		titleTimer,
 		soundTimer,
@@ -43,10 +45,12 @@ var browserNotify = (function() {
 			}
 
 			if (titleTimer) {
+				titleTimer = 0;
 				clearInterval(titleTimer);
 			}
 
 			hasFocus = true;
+			notifyStatus = false;
 		}).on("blur", function() {
 			hasFocus = false;
 		});
@@ -63,9 +67,16 @@ var browserNotify = (function() {
 			originalTitle = document.title;
 		}
 
-		titleTimer = setInterval(function() {
-			document.title = (document.title === originalTitle) ? text.text : originalTitle;
-		}, 1000);
+		newTitle = text.text;
+
+		if(!notifyStatus) {
+			clearInterval(titleTimer);
+			titleTimer = setInterval(function() {
+				document.title = (document.title === originalTitle) ? newTitle : originalTitle;
+				notifyStatus = true;
+			}, 1000);
+		}
+
 
 		if (important && soundTimer) {
 			clearTimeout(soundTimer);

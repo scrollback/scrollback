@@ -43,15 +43,15 @@ libsb.on("inited", function(){
 		q = i.split("=");
 		state[q[0]] = q[1];
 	});
+
 	if(!state.mode) state.mode = "normal";
+	if(!state.tab) state.tab = "people";
+	if(!state.embed) state.embed = "";
 
 	if(state.time) {
 		state.time = new Date(state.time).getTime();
 	}
-	console.log(state.embed);
 
-	if(!state.tab) state.tab = "people";
-	if(!state.embed) state.embed = "";
 	libsb.emit("navigate", state);
 });
 libsb.on("navigate", function(state, next) {
