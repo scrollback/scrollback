@@ -108,6 +108,9 @@ module.exports = function (types) {
 			}else {
 				room.put(newRoom, function(err, res) {
 					if(!data.old) {
+						if (action.user.id === "system") {
+							return cb();
+						}
 						types.rooms.link(data.id, 'hasMember', action.user.id, {
 							role: "owner",
 							roleSince: new Date().getTime()
