@@ -213,8 +213,6 @@ $modeitems: normal, search, conf, pref, home;
 
             @media #{$screenxxxx} { display: none;    }
         }
-
-        h3 { margin: 0; }
     }
 
     .header {
@@ -254,15 +252,10 @@ $modeitems: normal, search, conf, pref, home;
     @include display-in(normal search);
 
     display: none;
-    position: relative;
     height: 100%;
+    padding-bottom: $bar-height;
 
     .pane {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
         display: none;
 
         &.current {
@@ -270,6 +263,7 @@ $modeitems: normal, search, conf, pref, home;
             @extend %nofilter;
 
             display: block;
+            height: 100%;
         }
     }
 }
@@ -353,7 +347,11 @@ $modeitems: normal, search, conf, pref, home;
     font-size: 1.2em;
 }
 
-.thread-item-container { @extend %scroll-elem; }
+.thread-item-container {
+    @extend %scroll-elem;
+
+    height: 100%;
+}
 
 .thread-item {
     @extend %nofilter;
@@ -595,7 +593,6 @@ $modeitems: normal, search, conf, pref, home;
 .room-title {
     @include display-in(normal search);
 
-    margin: 0;
     font-size: 1.2em;
     font-weight: 700;
 
