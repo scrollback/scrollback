@@ -1,14 +1,13 @@
 /* jslint browser: true, indent: 4, regexp: true */
-/* global $, lace, Notification, webkitNotifications */
-/* exported lace */
+/* global $, Notification, webkitNotifications */
 
 /**
  * @fileOverview Various UI components.
- * @author <a href="mailto:satyajit.happy@gmail.com">Satyajit Sahoo</a>
+ * @author Satyajit Sahoo <satya@scrollback.io>
  * @requires jQuery
  */
 
-window.lace = {
+var lace = {
     animate: {
         /**
          * Add a class to an element and execute an action after transition.
@@ -335,3 +334,5 @@ window.lace = {
         }
     }
 };
+
+window.lace = lace;

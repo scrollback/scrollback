@@ -234,7 +234,7 @@ body { word-wrap: break-word; }
         background-position: center center;
         background-repeat: no-repeat;
         background-size: 2em 2em;
-        background-color: rgba(0,0,0,.02);
+        background-color: rgba(0,0,0,.05);
         border: 1px solid rgba(0,0,0,.1);
         border-right: none;
         border-top: none;
@@ -246,7 +246,7 @@ body { word-wrap: break-word; }
         }
 
         &:hover, &:focus, &:active {
-            background-color: rgba(0,0,0,.05);
+            background-color: rgba(0,0,0,.07);
         }
 
         &.current {

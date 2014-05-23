@@ -1,3 +1,5 @@
+/* jslint browser: true */
+
 var core = Object.create(require("./lib/emitter.js"));
 window.generate = require('./lib/generate');
 
@@ -27,8 +29,9 @@ require('./public/s/components/infinite.js');
 require('./public/s/components/hide-scroll.js');
 require('./public/s/components/navigation.js');
 require('./public/s/components/columns.js');
-require('./public/s/components/text.js');
-require('./public/s/components/text-area.js');
+require('./public/s/components/chat.js');
+require('./public/s/components/chat-item.js');
+require('./public/s/components/chat-area.js');
 require('./public/s/components/compose.js');
 require('./public/s/components/browser-notify.js');
 require('./public/s/components/panes.js');

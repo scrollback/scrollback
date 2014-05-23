@@ -59,7 +59,7 @@ $(function() {
 				query.pos = searchResult.length-1;
 				query.after = to - query.pos+1;
 			}else {
-				return processResults(from, searchResult.length-1)
+				return processResults(from, searchResult.length-1);
 			}
 
 			if(currentState.tab === "search-local") query.to = currentState.room || "";
@@ -132,7 +132,7 @@ $(function() {
 					libsb.on("inited", function(q, n) {
 						loadSearchResult(index, before, after, callback);
 						n();
-					})
+					});
 				}
 			}else{
 				if(libsb.isInited) {
@@ -141,7 +141,7 @@ $(function() {
 					libsb.on("inited", function(q, n) {
 						loadThread(index, before, after, callback);
 						n();
-					})
+					});
 				}
 			}
 		}
