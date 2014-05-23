@@ -76,7 +76,6 @@ $(function() {
 	}
 	function loadThread(index, before, after, callback) {
 		var query  = { before: before, after: after};
-
 		query.to =  currentState.room || "";
 		query.time = index;
 
@@ -117,7 +116,6 @@ $(function() {
 		}));
 	}
 
-
 	$threads.infinite({
 		scrollSpace: 2000,
 		fillSpace: 500,
@@ -135,6 +133,7 @@ $(function() {
 					})
 				}
 			}else{
+
 				if(libsb.isInited) {
 					loadThread(index, before, after, callback);
 				}else {
@@ -181,6 +180,8 @@ $(function() {
 		}else if(state.query) {
 			reset = true;
 			search = state.query || "";
+		}else if(state.tab != state.old.tab && state.tab == "threads") {
+			reset = true;
 		}
 
 		if(reset) {

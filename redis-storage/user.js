@@ -57,7 +57,7 @@ function onGetUsers(query, callback) {
             data = data.map(function(e) {
                 return "user:{{"+e+"}}";
             });
-            occupantDB.mget(data, function(err, data) {
+            userDB.mget(data, function(err, data) {
                 if(!data) {
                     query.results = [];
                     return callback();

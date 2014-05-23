@@ -48,7 +48,6 @@ libsb.on("inited", function(){
 	if(state.time) {
 		state.time = new Date(state.time).getTime();
 	}
-	console.log(state.embed);
 
 	if(!state.tab) state.tab = "people";
 	if(!state.embed) state.embed = "";

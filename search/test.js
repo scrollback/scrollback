@@ -23,7 +23,7 @@ var client = es.Client({
 		console.log(resp);
 	});
 */
-/*
+
 client.bulk({
 	body: [
 	{
@@ -61,7 +61,7 @@ client.bulk({
 	if(err) {console.log("error in indexing");}
 	console.log(resp);
 });
-*/
+
 
 client.search({index: 'sb',type:"threads", timeout:30000,body: {query: { match: {"_all": 'life'}}}}).then(function (body) {
 		var hits = body.hits.hits;
