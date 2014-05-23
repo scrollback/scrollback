@@ -205,7 +205,7 @@ $modeitems: normal, search, conf, pref, home;
 
         &.rooms-button {
             display: table-cell;
-            fill: lighten($dark-color, 10%);
+            fill: fade-out($dark-color, .3);
 
             .rooms-view & { @include transform(rotate(180deg)); }
 
@@ -343,7 +343,7 @@ $modeitems: normal, search, conf, pref, home;
     @include display-in(search);
 
     padding: 1em 1.5em;
-    background-color: lighten($info-color, 30%);
+    background-color: fade-out($info-color, .7);
     font-size: 1.2em;
 }
 
@@ -363,7 +363,7 @@ $modeitems: normal, search, conf, pref, home;
     border-right: 4px solid $accent-color;
     cursor: pointer;
 
-    &.current { background-color: lighten($accent-color, 30%); }
+    &.current { background-color: fade-out($accent-color, .7); }
 
     &:hover, &:focus, &.current:hover, &.current:focus {
         background-color: $accent-color;
@@ -377,7 +377,7 @@ $modeitems: normal, search, conf, pref, home;
         &.conv-#{$j} {
             border-right-color: $color;
 
-            &.current { background-color: lighten($color, 30%); }
+            &.current { background-color: fade-out($color, .7); }
 
             &:hover, &:focus, &.current:hover, &.current:focus { background-color: $color; }
         }
@@ -803,7 +803,7 @@ $modeitems: normal, search, conf, pref, home;
 
 		& + .chat-item { border-top: 1px solid darken($light-color, 10%); }
 
-		.chat-timestamp { color: lighten($dark-color, 10%); }
+		.chat-timestamp { color: fade-out($dark-color, .3); }
 
 		.chat-more { @include transform(translate3d(0, 0, 0)); }
 	}
@@ -866,15 +866,17 @@ $modeitems: normal, search, conf, pref, home;
 		&:active { color: darken($accent-color, 30%); }
 	}
 
-	.chat-timestamp { display: none; }
+	.chat-timestamp {
+        @extend %ease;
+
+        display: none;
+        font-size: .9em;
+        text-align: right;
+        color: fade-out($dark-color, .5);
+    }
 
 	&.timestamp-displayed {
-		.chat-timestamp {
-			display: block;
-			font-size: .9em;
-			text-align: right;
-			color: lighten($dark-color, 30%);
-		}
+		.chat-timestamp { display: block; }
 	}
 }
 
@@ -968,7 +970,7 @@ $modeitems: normal, search, conf, pref, home;
 	width: 3.5em;
 	border: none;
 	cursor: pointer;
-	fill: lighten($dark-color, 30%); /* inline SVG */
+	fill: fade-out($dark-color, .3); /* inline SVG */
 
 	&:hover, &:focus, &:active { fill: $dark-color; }
 
@@ -1193,7 +1195,7 @@ $modeitems: normal, search, conf, pref, home;
         right: 0;
         padding: 1em;
         background-color: $light-color;
-        color: lighten($dark-color, 30%);
+        color: fade-out($dark-color, .3);
         z-index: 40;
 
         @media #{$screenxxxx} {
