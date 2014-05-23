@@ -35,7 +35,11 @@ $modeitems: normal, search, conf, pref, home;
     display: none;
 
     @each $mode in $modes {
-        .#{$mode}-mode & { display: $display; }
+        @if $display == flex {
+            .#{$mode}-mode & { @include flexbox; }
+        } @else {
+            .#{$mode}-mode & { display: $display; }
+        }
     }
 }
 
@@ -50,6 +54,8 @@ $modeitems: normal, search, conf, pref, home;
     bottom: 0;
     min-height: 100%;
 }
+
+body { word-wrap: break-word; }
 
 .room-area {
     @extend %column;
@@ -186,7 +192,6 @@ $modeitems: normal, search, conf, pref, home;
     margin: 0;
     width: 100%;
     height: $bar-height;
-    border-bottom: 1px solid rgba(0,0,0,.05);
 
     li {
         @include transform(rotate(0deg)); /* hack to fix invisible items in android browser */
@@ -194,7 +199,6 @@ $modeitems: normal, search, conf, pref, home;
 
         display: none;
         vertical-align: middle;
-        color: $dark-color;
         cursor: pointer;
 
         @each $mode in $modeitems {
@@ -205,7 +209,7 @@ $modeitems: normal, search, conf, pref, home;
 
         &.rooms-button {
             display: table-cell;
-            fill: lighten($dark-color, 10%);
+            fill: fade-out($dark-color, .3);
 
             .rooms-view & { @include transform(rotate(180deg)); }
 
@@ -226,32 +230,35 @@ $modeitems: normal, search, conf, pref, home;
     }
 
     .tab {
-        @include opacity(0.3);
-
         text-align: center;
         background-position: center center;
         background-repeat: no-repeat;
         background-size: 2em 2em;
+        background-color: rgba(0,0,0,.02);
+        border: 1px solid rgba(0,0,0,.1);
+        border-right: none;
+        border-top: none;
+
+        &:first-child { border-left: none; }
 
         @each $item in $tabitems {
             &.tab-#{$item} { background-image: url(../../img/client/icons/#{$item}.svg); }
         }
 
-        &:hover, &:focus, &:active, &.current {
-            @include opacity(1);
-            @extend %nofilter;
-
-            background-color: rgba(0,0,0,.1);
+        &:hover, &:focus, &:active {
+            background-color: rgba(0,0,0,.05);
         }
 
-        &.current { background-color: rgba(0,0,0,.05); }
+        &.current {
+            background-color: transparent;
+            border-bottom-color: rgba(0,0,0,.05);
+        }
     }
 }
 
 .meta-panes {
     @include display-in(normal search);
 
-    display: none;
     height: 100%;
     padding-bottom: $bar-height;
 
@@ -271,7 +278,7 @@ $modeitems: normal, search, conf, pref, home;
 .pane-info {
     @extend %scroll-elem;
 
-    padding: 0 1.5em;
+    padding: 1.5em;
 
     .guest-user & {
         .configure-button { display: none; }
@@ -281,16 +288,18 @@ $modeitems: normal, search, conf, pref, home;
 .pane-people {
     @extend %scroll-elem;
 
-    padding: .75em;
+    padding: 1.5em .75em;
 
     .infinite-above, .infinite-below {
         background-color: transparent;
-        background-image:  linear-gradient(to right, darken($light-color, 5%), darken($light-color, 5%) 15%, transparent 15%, transparent 85%, darken($light-color, 5%) 85%, darken($light-color, 5%)),
-                           linear-gradient(to bottom, transparent, transparent 25%, darken($light-color, 15%) 25%, darken($light-color, 15%) 65%, transparent 65%, transparent 75%, darken($light-color, 15%) 75%, darken($light-color, 15%) 85%, transparent 85%, transparent);
+        background-image:  linear-gradient(to right, darken($light-color, 2%), darken($light-color, 2%) 15%, transparent 15%, transparent 85%, darken($light-color, 2%) 85%, darken($light-color, 2%)),
+                           linear-gradient(to bottom, transparent, transparent 25%, darken($light-color, 5%) 25%, darken($light-color, 5%) 65%, transparent 65%, transparent 75%, darken($light-color, 5%) 75%, darken($light-color, 5%) 85%, transparent 85%, transparent);
         background-size: 5.5em 8em;
 		background-position: top left;
 		background-repeat: repeat;
-		background-repeat: round; /* limited browser support */
+        background-repeat: round; /* limited browser support */
+
+        .infinite-above.upper-limit, .infinite-below.lower-limit { background: none; }
 	}
 
 	.person {
@@ -331,11 +340,13 @@ $modeitems: normal, search, conf, pref, home;
 .pane-threads {
 	.infinite-above, .infinite-below {
 		background-color: transparent;
-		background-image:  linear-gradient(to bottom, transparent, transparent 35%, darken($light-color, 15%) 35%, darken($light-color, 15%) 65%, transparent 65%, transparent),
-						   linear-gradient(to bottom, darken($light-color, 15%), darken($light-color, 15%));
+		background-image:  linear-gradient(to bottom, transparent, transparent 35%, darken($light-color, 5%) 35%, darken($light-color, 5%) 65%, transparent 65%, transparent),
+						   linear-gradient(to bottom, darken($light-color, 5%), darken($light-color, 5%));
 		background-size: 60% 3em, 4px 100%;
 		background-position: 2em center, center right;
-		background-repeat: repeat-y;
+        background-repeat: repeat-y;
+
+        .infinite-above.upper-limit, .infinite-below.lower-limit { background: none; }
 	}
 }
 
@@ -343,7 +354,7 @@ $modeitems: normal, search, conf, pref, home;
     @include display-in(search);
 
     padding: 1em 1.5em;
-    background-color: lighten($info-color, 30%);
+    background-color: fade-out($info-color, .7);
     font-size: 1.2em;
 }
 
@@ -363,7 +374,7 @@ $modeitems: normal, search, conf, pref, home;
     border-right: 4px solid $accent-color;
     cursor: pointer;
 
-    &.current { background-color: lighten($accent-color, 30%); }
+    &.current { background-color: fade-out($accent-color, .7); }
 
     &:hover, &:focus, &.current:hover, &.current:focus {
         background-color: $accent-color;
@@ -377,7 +388,7 @@ $modeitems: normal, search, conf, pref, home;
         &.conv-#{$j} {
             border-right-color: $color;
 
-            &.current { background-color: lighten($color, 30%); }
+            &.current { background-color: fade-out($color, .7); }
 
             &:hover, &:focus, &.current:hover, &.current:focus { background-color: $color; }
         }
@@ -578,16 +589,10 @@ $modeitems: normal, search, conf, pref, home;
 }
 
 .right-area {
-    display: none;
-
-    .normal-mode &, .search-mode & {
-        @include flexbox;
-        @include flex-direction(row);
-        @include justify-content(flex-end);
-        @include align-items(center);
-
-        flex-wrap: nowrap;
-    }
+    @include display-in(normal search, flex);
+    @include flex-direction(row);
+    @include justify-content(flex-end);
+    @include align-items(center);
 }
 
 .room-title {
@@ -734,22 +739,28 @@ $modeitems: normal, search, conf, pref, home;
 
 	.infinite-above, .infinite-below {
 		background-color: transparent;
-		background-image: linear-gradient(to bottom, transparent, transparent 30%, lighten($accent-color, 40%) 30%, lighten($accent-color, 40%) 40%, transparent 40%, transparent),
-			linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 5%) 30%, darken($light-color, 5%) 40%, transparent 40%, transparent),
-			linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 5%) 60%, darken($light-color, 5%) 70%, transparent 70%, transparent);
+        background-image: linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+			linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+			linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
 		background-size: .6em 6em, 80% 6em, 60% 6em;
 		background-position: 1em 2em, 3em 2em, 3em 2em;
 		background-repeat: repeat-y;
-		background-attachment: scroll;
+        background-attachment: scroll;
 
 		@media #{$screenxx} {
-			background-image: linear-gradient(to bottom, transparent, transparent 30%, lighten($accent-color, 40%) 30%, lighten($accent-color, 40%) 40%, transparent 40%, transparent),
-				linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 5%) 30%, darken($light-color, 5%) 40%, transparent 40%, transparent),
-				linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 5%) 30%, darken($light-color, 5%) 40%, transparent 40%, transparent),
-				linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 5%) 60%, darken($light-color, 5%) 70%, transparent 70%, transparent);
+            background-image: linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+				linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+				linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+				linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
 			background-size: .6em 6em, 6em 6em, 80% 6em, 60% 6em;
-			background-position: 2em 2em, 4em 2em, 12em 2em, 12em 2em;
-		}
+            background-position: 2em 2em, 4em 2em, 12em 2em, 12em 2em;
+        }
+
+        .infinite-above.upper-limit, .infinite-below.lower-limit {
+            background: none;
+
+            @media #{$screenxx} { background: none; }
+        }
 	}
 }
 
@@ -803,7 +814,7 @@ $modeitems: normal, search, conf, pref, home;
 
 		& + .chat-item { border-top: 1px solid darken($light-color, 10%); }
 
-		.chat-timestamp { color: lighten($dark-color, 10%); }
+		.chat-timestamp { color: fade-out($dark-color, .3); }
 
 		.chat-more { @include transform(translate3d(0, 0, 0)); }
 	}
@@ -815,7 +826,7 @@ $modeitems: normal, search, conf, pref, home;
 		height: .5em;
 		width: .5em;
 		border-radius: 50%;
-		background-color: $accent-color;
+		background-color: fade-out($accent-color, .5);
 
 		@media #{$screenxx} { margin-left: -10em; }
 	}
@@ -866,15 +877,18 @@ $modeitems: normal, search, conf, pref, home;
 		&:active { color: darken($accent-color, 30%); }
 	}
 
-	.chat-timestamp { display: none; }
+	.chat-timestamp {
+        @extend %ease;
+
+        display: none;
+        padding-left: 3em;
+        font-size: .9em;
+        float: right;
+        color: fade-out($dark-color, .5);
+    }
 
 	&.timestamp-displayed {
-		.chat-timestamp {
-			display: block;
-			font-size: .9em;
-			text-align: right;
-			color: lighten($dark-color, 30%);
-		}
+		.chat-timestamp { display: inline-block; }
 	}
 }
 
@@ -968,7 +982,7 @@ $modeitems: normal, search, conf, pref, home;
 	width: 3.5em;
 	border: none;
 	cursor: pointer;
-	fill: lighten($dark-color, 30%); /* inline SVG */
+	fill: fade-out($dark-color, .3); /* inline SVG */
 
 	&:hover, &:focus, &:active { fill: $dark-color; }
 
@@ -1181,26 +1195,22 @@ $modeitems: normal, search, conf, pref, home;
 }
 
 .noroom-area {
-    display: none;
+    @include display-in(noroom, flex);
+    @include justify-content(space-around);
+    @include align-items(center);
+    @extend %column;
 
-    .noroom-mode & {
-        @include flexbox;
-        @include justify-content(space-around);
-        @include align-items(center);
-        @extend %column;
+    left: 0;
+    right: 0;
+    padding: 1em;
+    background-color: $light-color;
+    color: fade-out($dark-color, .3);
+    z-index: 40;
 
-        left: 0;
-        right: 0;
-        padding: 1em;
-        background-color: $light-color;
-        color: lighten($dark-color, 30%);
-        z-index: 40;
+    @media #{$screenxxxx} {
+        left: $width-roomxxxx;
 
-        @media #{$screenxxxx} {
-            left: $width-roomxxxx;
-
-            .embed & { left: 0; }
-        }
+        .embed & { left: 0; }
     }
 }
 

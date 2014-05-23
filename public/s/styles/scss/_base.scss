@@ -10,7 +10,7 @@
     @extend %inputs;
 
     border: 1px solid $bg;
-    border-bottom-color: darken($bg, 10%);
+    border-bottom-color: darken($bg, 5%);
     border-radius: $roundness;
     background-color: $bg;
     color: $fg;
