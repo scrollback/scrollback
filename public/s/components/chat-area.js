@@ -1,8 +1,8 @@
 /* jslint browser: true, indent: 4, regexp: true*/
-/* global $, libsb, textEl, format */
-/* exported textArea */
+/* global $, libsb, chatEl, format */
+/* exported chatArea */
 
-var textArea = {};
+var chatArea = {};
 
 $(function() {
 	var $logs = $(".chat-area"),
@@ -45,7 +45,7 @@ $(function() {
 						}
 					}
 					callback(texts.map(function(text) {
-						return text && textEl.render(null, text);
+						return text && chatEl.render(null, text);
 					}));
 				});
 			}
@@ -109,12 +109,12 @@ $(function() {
 			return next();
 		}
 
-		if($logs.data("lower-limit")) $logs.addBelow(textEl.render(null, text));
+		if($logs.data("lower-limit")) $logs.addBelow(chatEl.render(null, text));
 		next();
 	});
 
 	libsb.on('text-up', function(text, next) {
-		if($logs.data("lower-limit")) $logs.addBelow(textEl.render(null, text));
+		if($logs.data("lower-limit")) $logs.addBelow(chatEl.render(null, text));
 		next();
 	});
 
@@ -141,14 +141,14 @@ $(function() {
 
 
 	// The chatArea API.
-	textArea.setBottom = function(bottom) {
+	chatArea.setBottom = function(bottom) {
 		var atBottom = ($logs.scrollTop() + $logs.height() == $logs[0].scrollHeight);
 
 		$logs.css({ bottom: bottom });
 		if(atBottom) $logs.scrollTop($logs[0].scrollHeight);
 	};
 
-	textArea.setRoom = function(r) {
+	chatArea.setRoom = function(r) {
 		room = r;
 		$logs.find(".chat").remove();
 		$logs.scroll();
@@ -205,5 +205,5 @@ $(function() {
 		$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
 
 	});
-	window.textArea = textArea;
+	window.chatArea = chatArea;
 });

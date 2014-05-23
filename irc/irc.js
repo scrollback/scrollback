@@ -18,7 +18,7 @@ module.exports = function (coreObj) {
 	init();
 	core.on ('room', function(room, callback) {
 		log("room irc:", room, client.connected(), room.session.indexOf('internal') !== 0);
-		if (room.type !== "room" || room.session.indexOf('internal') === 0) return callback();
+		if (room.type !== "room" || room.session === internalSession) return callback();
 		if (room.room.params && room.room.params.irc && client.connected()) {
 			room = changeRoomParams(room);
 			var rr = room.room;
@@ -162,15 +162,21 @@ function init() {
 	
 	clientEmitter.on('room', function(room) {
 		log("room event:", room);
-		core.emit("getRooms", {id: room.room.id}, function(err, reply) {
+		core.emit("getRooms", {ref: room.room.id, session: internalSession}, function(err, reply) {
+			log("results of getRooms", err, reply);
 			if (err || !reply.results) return;
 			var r = reply.results[0];
-			var rr = {type: "room", session: "internal:irc//" + room.room.id, room: {}};
+			var rr = {type: "room", session: internalSession, room: {}};
 			
 			r.params.irc = room.room.params.irc;
 			rr.room = r;
-			core.emit("room", rr);
-			connectAllUsers(room.room);
+			rr.to = r.id;
+			log("emitting room from irc", rr);
+			core.emit("room", rr, function(err, d) {
+				log("reply while saving room ", err, d);
+			});
+			//clear the first msg list
+			delete firstMessage[rr.room.id];
 		});
 	});
 	clientEmitter.on("back", function(data) {
@@ -246,16 +252,6 @@ function sendInitAndBack(suggestedNick, session ,room) {
 			});
 			initCount--;
 			isInitDone();
-	});
-}
-
-
-function connectAllUsers(room) {
-	core.emit('getUsers', {occupantOf: room.id, session: internalSession}, function(err, data) {
-		var users = data.results;
-		users.forEach(function(user) {
-			connectUser(room.id, user.id);
-		});
 	});
 }
 

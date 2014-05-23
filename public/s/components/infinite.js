@@ -105,12 +105,12 @@
 
 				if(els[0] === false && where == "above") {
 					atTop = true;
-					$logs.data("upper-limit", true);
+					$logs.data("upper-limit", true).addClass("upper-limit");
 					els.shift();
 				}
 				if(els[els.length-1] === false && where == "below") {
 					atBottom = true;
-					$logs.data("lower-limit", true);
+					$logs.data("lower-limit", true).addClass("lower-limit");
 					els.pop();
 				}
 
@@ -119,7 +119,7 @@
 				if(where == "above") {
 					oldTerm = $items.children().eq(0);
 					$items.prepend(els);
-					
+
 					if(oldTerm.size()) {
 						height = oldTerm.offset().top - els[0].offset().top;
 					} else {
@@ -168,12 +168,12 @@
 				if(where == "above") {
 					oldTerm = $items.children().eq(0);
 					atTop = false;
-					$logs.data("upper-limit", false);
+					$logs.data("upper-limit", false).removeClass("upper-limit");
 					for(i=0, l=els.size()-1; i<l; i++) if(checkAndRemove(els.eq(i))) break;
 				} else {
 					oldTerm = $items.children().eq(-1);
 					atBottom = false;
-					$logs.data("lower-limit", false);
+					$logs.data("lower-limit", false).removeClass("lower-limit");
 					for(i=els.size()-1; i>0; i--) if(checkAndRemove(els.eq(i))) break;
 				}
 
@@ -209,8 +209,8 @@
 	$.fn.reset = function(index) {
 		var $logs = $(this);
 		$logs.find(".infinite-items").empty();
-		$logs.data("lower-limit", false);
-		$logs.data("upper-limit", false);
+		$logs.data("lower-limit", false).removeClass("upper-limit");
+		$logs.data("upper-limit", false).removeClass("lower-limit");
 		if(typeof index !== undefined) $logs.data("index", index);
 		$logs.scrollTop(($logs.prop('scrollHeight') - $logs.height())/2);
 		$logs.data("update-infinite")();
