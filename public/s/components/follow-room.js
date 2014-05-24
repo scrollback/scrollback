@@ -11,6 +11,6 @@ $(function() {
 			$("body").addClass("following");
 		}
 
-		lace.animate.transition("grow", $(this), function() {});
+		lace.animate.transition("grow", $(this));
 	});
 });

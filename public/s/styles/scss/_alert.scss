@@ -16,7 +16,7 @@
 	padding: 0;
 	text-align: center;
 	border-radius: $roundness;
-	box-shadow: 0 0 5px 0 rgba(0,0,0,.15);
+	box-shadow: 0 0 10px 0 rgba(0,0,0,.15);
 
 	$types: info, success, warning, error;
 	$colors: $info-color, $success-color, $warning-color, $error-color;

@@ -46,6 +46,7 @@ libsb.on("inited", function(){
 
 	if(!state.mode) state.mode = "normal";
 	if(!state.tab) state.tab = "people";
+	if(!state.theme) state.theme = "light";
 	if(!state.embed) state.embed = "";
 
 	if(state.time) {
@@ -58,7 +59,7 @@ libsb.on("navigate", function(state, next) {
 	state.old = $.extend(true, {}, currentState); // copying object by value
 	state.changes = {};
 
-	["room", "view", "embed", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
+	["room", "view", "theme", "embed", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
 		if(typeof state[prop] === "undefined") {
 			if(typeof state.old[prop] !== "undefined")
 				currentState[prop] = state[prop] = state.old[prop];
@@ -88,13 +89,15 @@ libsb.on("navigate", function(state, next) {
 
 // On navigation, set the body classes.
 libsb.on("navigate", function(state, next) {
+	if(state.old && state.theme !== state.old.theme) {
+		if (state.theme !== "") {
+			$("body").addClass("theme-" + state.theme);
+		}
+	}
+
 	if(state.old && state.embed !== state.old.embed) {
-		if (state.embed === "toast") {
-			$("body").addClass("embed embed-toast");
-		} else if (state.embed === "comment") {
-			$("body").addClass("embed embed-comment");
-		} else {
-			$("body").removeClass("embed embed-toast embed-comment");
+		if (state.embed !== "") {
+			$("body").addClass("embed embed-" + state.embed);
 		}
 	}
 
@@ -144,9 +147,6 @@ libsb.on("navigate", function(state, next) {
 			case 'home':
 				path = '/me';
 				break;
-			case 'view':
-
-				break;
 			default:
 				path = (state.room ? '/' + state.room + (
 						state.thread ? '/' + state.thread:"" /*+ '/' + format.sanitize(state.thread): ''*/
@@ -156,6 +156,8 @@ libsb.on("navigate", function(state, next) {
 		// if(state.time) params.push('time=' + new Date(state.time).toISOString());
 		if(state.mode) params.push('mode=' + state.mode);
 		if(state.tab) params.push('tab=' + state.tab);
+		if(state.embed) params.push('embed=' + state.embed);
+		if(state.theme) params.push('theme=' + state.theme);
 
 		return path + (params.length ? '?' + params.join('&'): '');
 	}

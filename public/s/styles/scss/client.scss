@@ -27,23 +27,11 @@ $width-metaxxxx: 30%;
 $bar-height: 3.5em;
 
 $settingsitems: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
-$tabitems: info, people, threads;
-$modeitems: normal, search, conf, pref, home;
+$modeitems: normal, search, conf, pref, home, noroom;
 
 /* widget styles */
-@mixin display-in($modes, $display: block) {
-    display: none;
-
-    @each $mode in $modes {
-        @if $display == flex {
-            .#{$mode}-mode & { @include flexbox; }
-        } @else {
-            .#{$mode}-mode & { display: $display; }
-        }
-    }
-}
-
 %scroll-elem {
+    max-height: 100%;
     overflow-y: scroll;
     -webkit-overflow-scrolling : touch;
 }
@@ -52,10 +40,27 @@ $modeitems: normal, search, conf, pref, home;
     position: fixed;
     top: 0;
     bottom: 0;
-    min-height: 100%;
+    height: 100%;
 }
 
-body { word-wrap: break-word; }
+body {
+    word-wrap: break-word;
+    height: 100%;
+
+    @each $mode in $modeitems {
+        &.#{$mode}-mode {
+            $selector: ();
+
+            @each $item in $modeitems {
+                @if $item != $mode {
+                    $selector: $selector, unquote("[data-mode~=#{$item}]:not([data-mode~=#{$mode}])");
+                }
+            }
+
+            #{$selector} { display: none; }
+        }
+    }
+}
 
 .room-area {
     @extend %column;
@@ -101,9 +106,9 @@ body { word-wrap: break-word; }
 }
 
 .room-list {
-    height: 100%;
-
     @extend %scroll-elem;
+
+    padding-bottom: $bar-height;
 }
 
 .room-item {
@@ -133,6 +138,8 @@ body { word-wrap: break-word; }
             border-top: .6em solid transparent;
             border-bottom: .6em solid transparent;
             border-right: .6em solid darken($light-color, 2%);
+
+            .theme-dark & { border-right: .6em solid lighten($dark-color, 10%); }
         }
     }
 
@@ -183,6 +190,11 @@ body { word-wrap: break-word; }
 
         .embed & { left: 0; }
     }
+
+    .theme-dark & {
+        background-color: lighten($dark-color, 10%);
+        color: $light-color;
+    }
 }
 
 .meta-tabs {
@@ -197,19 +209,19 @@ body { word-wrap: break-word; }
         @include transform(rotate(0deg)); /* hack to fix invisible items in android browser */
         @extend %ease;
 
-        display: none;
+        display: table-cell;
         vertical-align: middle;
         cursor: pointer;
-
-        @each $mode in $modeitems {
-            &.mode-#{$mode} {
-                .#{$mode}-mode & { display: table-cell; }
-            }
-        }
 
         &.rooms-button {
             display: table-cell;
             fill: fade-out($dark-color, .3);
+
+            .theme-dark & {
+                fill: fade-out($light-color, .3);
+
+                &:focus, &:hover, &:active { fill: $light-color; }
+            }
 
             .rooms-view & { @include transform(rotate(180deg)); }
 
@@ -226,6 +238,8 @@ body { word-wrap: break-word; }
         @media #{$screenxxxx} {
             padding-left: 4.25em;
             background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
+
+            .theme-dark & { background-image: url(../../img/client/icons/settings-dark.svg); }
         }
     }
 
@@ -238,27 +252,33 @@ body { word-wrap: break-word; }
         border: 1px solid rgba(0,0,0,.1);
         border-right: none;
         border-top: none;
+        fill: fade-out($dark-color, .5);
+
+        .theme-dark & {
+            fill: fade-out($light-color, .5);
+            background-color: rgba(0,0,0,.3);
+        }
 
         &:first-child { border-left: none; }
 
-        @each $item in $tabitems {
-            &.tab-#{$item} { background-image: url(../../img/client/icons/#{$item}.svg); }
-        }
-
         &:hover, &:focus, &:active {
-            background-color: rgba(0,0,0,.07);
+            fill: fade-out($dark-color, .3);
+            background-color: rgba(0,0,0,.1);
+
+            .theme-dark & { fill: fade-out($light-color, .3); }
         }
 
         &.current {
+            fill: fade-out($dark-color, .3);
             background-color: transparent;
             border-bottom-color: rgba(0,0,0,.05);
+
+            .theme-dark & { fill: fade-out($light-color, .3); }
         }
     }
 }
 
 .meta-panes {
-    @include display-in(normal search);
-
     height: 100%;
     padding-bottom: $bar-height;
 
@@ -279,6 +299,7 @@ body { word-wrap: break-word; }
     @extend %scroll-elem;
 
     padding: 1.5em;
+    padding-bottom: $bar-height;
 
     .guest-user & {
         .configure-button { display: none; }
@@ -289,6 +310,7 @@ body { word-wrap: break-word; }
     @extend %scroll-elem;
 
     padding: 1.5em .75em;
+    padding-bottom: $bar-height;
 
     .infinite-above, .infinite-below {
         background-color: transparent;
@@ -315,7 +337,9 @@ body { word-wrap: break-word; }
 		overflow: hidden;
 		color: $dark-color;
 
-		&:hover, &:focus {
+        .theme-dark & { color: $light-color; }
+
+		&:hover, &:focus, &:active {
 			background-color: $accent-color;
 			color: $light-color;
 			border-radius: $roundness;
@@ -351,18 +375,12 @@ body { word-wrap: break-word; }
 }
 
 .thread-search-query {
-    @include display-in(search);
-
     padding: 1em 1.5em;
     background-color: fade-out($info-color, .7);
     font-size: 1.2em;
 }
 
-.thread-item-container {
-    @extend %scroll-elem;
-
-    height: 100%;
-}
+.thread-item-container { @extend %scroll-elem; }
 
 .thread-item {
     @extend %nofilter;
@@ -373,6 +391,8 @@ body { word-wrap: break-word; }
     color: $dark-color;
     border-right: 4px solid $accent-color;
     cursor: pointer;
+
+    .theme-dark & { color: $light-color; }
 
     &.current { background-color: fade-out($accent-color, .7); }
 
@@ -398,10 +418,6 @@ body { word-wrap: break-word; }
 .thread-title { margin: 0; }
 
 .thread-snippet { margin: 0; }
-
-.meta-conf { @include display-in(conf); }
-
-.meta-pref { @include display-in(pref); }
 
 .meta-conf, .meta-pref {
     @extend %scroll-elem;
@@ -456,8 +472,6 @@ body { word-wrap: break-word; }
 	@include chat-elem;
 }
 
-.content-area { @include display-in(normal search); }
-
 @mixin title-icon($elem) {
     .#{$elem} {
         @extend %ease;
@@ -468,14 +482,14 @@ body { word-wrap: break-word; }
         width: 2em;
         fill: fade-out($dark-color, .5);
 
-        .embed-toast & { fill: fade-out($light-color, .3); }
+        .theme-dark & { fill: fade-out($light-color, .3); }
     }
 
     &:focus, &:hover, &:active {
         .#{$elem} {
             &, &:focus, &:hover, &:active { fill: fade-out($dark-color, .3); }
 
-            .embed-toast & {
+            .theme-dark & {
                 &, &:focus, &:hover, &:active { fill: $light-color; }
             }
         }
@@ -573,7 +587,7 @@ body { word-wrap: break-word; }
     box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1),
 				0 3px 2px -1px rgba(0,0,0,.05);
 
-    .embed-toast & {
+    .theme-dark & {
         background-color: $dark-color;
         color: $light-color;
     }
@@ -589,15 +603,13 @@ body { word-wrap: break-word; }
 }
 
 .right-area {
-    @include display-in(normal search, flex);
+    @include flexbox;
     @include flex-direction(row);
     @include justify-content(flex-end);
     @include align-items(center);
 }
 
 .room-title {
-    @include display-in(normal search);
-
     font-size: 1.2em;
     font-weight: 700;
 
@@ -610,7 +622,6 @@ body { word-wrap: break-word; }
 
 .follow-button {
     @include title-icon(follow-icon);
-    @include display-in(normal, block);
 
     width: 3.5em;
     padding: .75em;
@@ -622,12 +633,12 @@ body { word-wrap: break-word; }
 
         .following & { fill: lighten($dark-color, 30%); }
 
-        .embed-toast & {
+        .theme-dark & {
             fill: none;
             stroke: darken($light-color, 30%);
         }
 
-        .embed-toast.following & { fill: darken($light-color, 30%); }
+        .theme-dark.following & { fill: darken($light-color, 30%); }
     }
 
     &:focus, &:hover, &:active {
@@ -637,12 +648,12 @@ body { word-wrap: break-word; }
 
             .following & { fill: lighten($dark-color, 10%); }
 
-            .embed-toast & {
+            .theme-dark & {
                 fill: none;
                 stroke: $light-color;
             }
 
-            .embed-toast.following & { fill: $light-color; }
+            .theme-dark.following & { fill: $light-color; }
         }
     }
 }
@@ -659,13 +670,9 @@ body { word-wrap: break-word; }
 
 .fullview-button, .minimize-button {
     display: none;
-
-    .embed-toast & {
-        display: block;
-        width: 3em;
-        padding: .75em .5em;
-        cursor: pointer;
-    }
+    width: 3em;
+    padding: .75em .5em;
+    cursor: pointer;
 }
 
 .fullview-button {
@@ -676,6 +683,8 @@ body { word-wrap: break-word; }
 
 .minimize-button {
     @include title-icon(minimize-icon);
+
+    .embed-toast & { display: block; }
 }
 
 .user-area {
@@ -716,8 +725,6 @@ body { word-wrap: break-word; }
 }
 
 .action-buttons {
-    @include display-in(conf pref);
-
     padding: .125em;
 
     .button {
@@ -887,7 +894,7 @@ body { word-wrap: break-word; }
         color: fade-out($dark-color, .5);
     }
 
-	&.timestamp-displayed {
+    &:last-of-type, &.timestamp-displayed {
 		.chat-timestamp { display: inline-block; }
 	}
 }
@@ -938,7 +945,6 @@ body { word-wrap: break-word; }
 
 .chat-input {
 	@include chat-elem;
-    @include display-in(normal search);
 
 	bottom: 0;
     padding: 0;
@@ -1121,10 +1127,6 @@ body { word-wrap: break-word; }
 	}
 }
 
-.conf-area { @include display-in(conf); }
-
-.pref-area { @include display-in(pref); }
-
 .room-area, .meta-area, .main-area, .chat-input {
     @include transition(.3s, ease-out); /* animate css transforms */
 
@@ -1195,7 +1197,7 @@ body { word-wrap: break-word; }
 }
 
 .noroom-area {
-    @include display-in(noroom, flex);
+    @include flexbox;
     @include justify-content(space-around);
     @include align-items(center);
     @extend %column;

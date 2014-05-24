@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, lace */
+/* global $, libsb */
 
 $(function() {
     // Show and hide search bar
@@ -25,5 +25,5 @@ $(function() {
             e.preventDefault();
             libsb.emit('navigate', {view: "meta", mode: "search", tab: "search-local", query: $(".search-entry").val()});
         }
-    });;
+    });
 });
