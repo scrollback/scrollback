@@ -26,6 +26,8 @@ module.exports.isConnected = isConnected;
 module.exports.setConnected = setConnected;
 module.exports.sendQueueData = sendQueueData;
 module.exports.getCurrentState = getCurrentState;
+module.exports.isUserConnected = isUserConnected;
+module.exports.disconnectUser = disconnectUser;
 module.exports.init = function init(coreObj) {
 	core = coreObj;
 };
@@ -477,6 +479,14 @@ function partUser(roomId, nick) {
 }
 
 
+function disconnectUser(nick) {
+	for (var key in clients[nick]) {
+		if (clients[nick].hasOwnProperty(key)) {
+			clients[nick][key].disconnect();
+		}
+	}
+}
+
 /************************************ update servChanNick *************************/
 
 /**
@@ -508,6 +518,10 @@ function isConnected() {
 
 function setConnected(c) {
 	connected = c;//TODO false to true --> empty queue.
+}
+
+function isUserConnected(sbNick) {
+	return clients[sbNick] ? true : false;
 }
 
 function sendQueueData() {
