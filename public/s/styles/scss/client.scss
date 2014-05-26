@@ -30,16 +30,36 @@ $settingsitems: general, irc, twitter, thread, permissions, requests, spam, seo,
 $modeitems: normal, search, conf, pref, home, noroom;
 
 /* themes */
-@mixin theme($name, $base, $color, $meta, $text, $icon, $focus) {
+@mixin theme($name, $base, $color, $meta, $text, $icon, $focus, $border) {
     .theme-#{$name} {
         .room-item.current:after { border-right: .6em solid $meta; }
 
         .meta-area {
             background-color: $meta;
             color: $text;
+
+            .button {
+                &.secondary {
+                    background-color: lighten($meta, 5%);
+                    border: 1px solid lighten($meta, 15%);
+                    color: darken($text, 10%);
+
+                    &:hover, &:focus {
+                        background-color: lighten($meta, 3%);
+                        border-color: lighten($meta, 30%);
+                        color: darken($text, 5%);
+                    }
+
+                    &:active {
+                        background-color: lighten($meta, 7%);
+                        border-color: lighten($meta, 20%);
+                        color: darken($text, 15%);
+                    }
+                }
+            }
         }
 
-        .person, .thread-item { color: $text; }
+        .meta-area a { color: $text; }
 
         .meta-tabs .tab {
             fill: fade-out($text, .3);
@@ -57,12 +77,40 @@ $modeitems: normal, search, conf, pref, home, noroom;
         }
 
         .meta-header {
+            border-bottom-color: $border;
+
             @media #{$screenxxxx} { background-image: url(../../img/client/icons/settings-dark.svg); }
+        }
+
+        .list-item {
+            border-bottom-color: $border;
+
+            &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active { color: $text; }
         }
 
         .title-bar {
             background-color: $base;
             color: $color;
+
+            .button {
+                &.secondary {
+                    background-color: lighten($base, 5%);
+                    border: 1px solid lighten($base, 15%);
+                    color: darken($color, 10%);
+
+                    &:hover, &:focus {
+                        background-color: lighten($base, 3%);
+                        border-color: lighten($base, 30%);
+                        color: darken($color, 5%);
+                    }
+
+                    &:active {
+                        background-color: lighten($base, 7%);
+                        border-color: lighten($base, 20%);
+                        color: darken($color, 15%);
+                    }
+                }
+            }
         }
 
         .follow-button {
@@ -83,7 +131,7 @@ $modeitems: normal, search, conf, pref, home, noroom;
     }
 }
 
-@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $icon: darken($light-color, 30%), $focus: $light-color);
+@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $icon: darken($light-color, 30%), $focus: $light-color, $border: lighten($dark-color, 10%));
 
 /* widget styles */
 %scroll-elem {
@@ -303,6 +351,7 @@ body {
 .meta-header {
     padding-left: 1.5em;
     text-transform: uppercase;
+    border-bottom: 1px solid darken($light-color, 10%);
 
     @media #{$screenxxxx} {
         padding-left: 4.25em;
@@ -467,7 +516,7 @@ body {
 
     &.current { background-color: rgba(0,0,0,.05); }
 
-    &:hover, &:focus, &.current:hover, &.current:focus {
+    &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active {
         color: $dark-color;
         background-color: rgba(0,0,0,.1);
 	}
@@ -529,18 +578,8 @@ body {
     .meta-view &, .rooms-view & { @include transform(rotate(180deg)); }
 
     @media #{$screenxxx} { display: none; }
-}
 
-.meta-card {
-    @extend %ease;
-
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-
-    figure {
+    .front, .back {
         @extend %ease;
 
         position: absolute;
@@ -551,29 +590,29 @@ body {
         padding: .75em .5em;
     }
 
-    .front { @include opacity(0); }
+    .front { @include opacity(1); }
 
-    .back { @include opacity(1); }
+    .back { @include opacity(0); }
 
     .embed.meta-view & {
-        .front { @include opacity(0); }
-
-        .back { @include opacity(1); }
-    }
-
-    .embed & {
         .front { @include opacity(1); }
 
         .back { @include opacity(0); }
+    }
+
+    .embed & {
+        .front { @include opacity(0); }
+
+        .back { @include opacity(1); }
     }
 }
 
 .embed {
     &:focus, &:hover, &:active {
-        .meta-card {
-            .front { @include opacity(0); }
+        .meta-button {
+            .front { @include opacity(1); }
 
-            .back { @include opacity(1); }
+            .back { @include opacity(0); }
         }
     }
 }

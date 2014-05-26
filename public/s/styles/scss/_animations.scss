@@ -80,6 +80,22 @@
     @include prefix(animation, fadein $args);
 }
 
+@include keyframes(progress) {
+    0% { width: 0; }
+
+    10% { width: 30%; }
+
+    30% { width: 50%; }
+
+    40% { width: 70%; }
+
+    100% { width: 80%; }
+}
+
+@mixin progress($args: 3s ease) {
+    @include prefix(animation, progress $args);
+}
+
 @mixin transition($duration: .3s, $timing: ease) {
     @include prefix(transition, $duration $timing);
 }
