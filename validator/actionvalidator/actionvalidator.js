@@ -102,17 +102,45 @@ module.exports = function(core) {
 				else{
 					callback();	
 				} 
-			})
+			});
 		}, "validation");
 	});
-
+	
 
 	core.on("getThreads", function(action, callback) {
-		// do some basic validation for this.
-		//remember to is optional when q property is set.
-		callback();
+		if (!(action.to || action.q)) {
+			return callback(new Error("INVALID_ROOM"));
+		}
+		return sessionValidation(action, callback);
+	}, "validation");
+	core.on("getTexts", function(action, callback) {
+		if (!action.to) {
+			return callback(new Error("INVALID_ROOM"));
+		}
+		return sessionValidation(action, callback);
+	}, "validation");
+	core.on("getRooms", function(action, callback) {
+		console.log("getRooms", action);
+		if (!(action.ref || action.hasOccupant || action.hasMember || action.identity)) {
+			return callback(new Error("INVALID_QUERY"));
+		}
+		return sessionValidation(action, callback);
+	}, "validation");
+	core.on("getUsers", function(action, callback) {
+		if (!(action.ref || action.occupantOf || action.memberOf || action.identity)) {
+			return callback(new Error("INVALID_QUERY"));
+		}
+		return sessionValidation(action, callback);
 	}, "validation");
 };
+
+function sessionValidation(action, callback) {
+	if (!action.session) {
+		callback(new Error("NO_SESSION_ID"));
+	} else {
+		callback();
+	}
+}
 
 function basicValidation(action, callback) {
 	if(!action.id) action.id = generate.uid();
