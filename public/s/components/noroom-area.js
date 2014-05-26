@@ -28,6 +28,8 @@
         });
     });
     $("#login-and-create-room-button").click(function(){
-        libsb.emit("navigate", {mode: 'normal'});
+       if ($("body").hasClass("guest-user")) {
+           lace.popover.show($(this), $("#login-menu").html());
+       }  
     });
 })();
