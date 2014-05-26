@@ -30,10 +30,7 @@ var libsb = {
 		logout: function(){
 			core.emit("logout");
 			core.emit("disconnect");
-		},
-
-		roomConfigForm: roomConfigForm,
-		userPreferForm: userPreferForm
+		}
 };
 module.exports = function(c){
 	core = c;
@@ -140,14 +137,6 @@ function admit(roomId, ref, callback){
 
 function expel(roomId, ref, callback){
 	core.emit('expel-up', {to: roomId, ref: ref}, callback);
-}
-
-function roomConfigForm(){
-
-}
-
-function userPreferForm(){
-
 }
 
 function recvInit(init, next){

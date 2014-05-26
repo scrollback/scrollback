@@ -61,7 +61,8 @@ $(function() {
 						wordban: configData.spam.offensive
 					}
 				};
-				libsb.emit('room-up', room, function(){
+                                var roomObj = {type: 'room', to: currentState.room, id: generate.uid(), room: room, user: {id: libsb.user}};
+				libsb.emit('room-up', roomObj, function(){
 					currentConfig = null;
 	        		libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
 				});

@@ -173,7 +173,7 @@
 			</div>
 		</section>
 		<section role="main" class="main-area">
-			<div class="title-bar">
+			<div data-mode="normal search conf pref" class="title-bar">
 				<div data-mode="conf pref" class="action-buttons">
 					<a class="button conf-save">Done</a>
 					<a class="button secondary conf-cancel">Cancel</a>
@@ -262,8 +262,14 @@
 			<input class="search-entry" type="search" placeholder="Type to search...">
 		</section>
 		<section data-mode="noroom" class="noroom-area">
-			<h1>This room doesn't exist ;(</h1>
-		</section>
+                    <p>
+                	<h1>This room does not exist yet, you may claim it :)</h1>
+                        <p> 
+                            <a class="button create-room-button"  id="create-room-button"> Claim! </a>
+                            <a class="button login-and-create-room-button"  id="login-and-create-room-button"> Login &amp; Claim! </a>
+                        </p>
+                    </p>
+                </section>
 		<section class="overlay">
 			<h1>Getting ready...</h1>
 		</section>
@@ -325,21 +331,6 @@
 		<script src="/libsb.bundle.js"></script>
 		<script>$(function() { libsb.connect(); });</script>
 		<script src="https://login.persona.org/include.js"></script>
-
-		<script>
-			$(function() {
-				var loadingIndicator = setInterval(function() {
-					if ($("body").attr("class").match(/-mode/)) {
-						lace.animate.transition("fadeout", ".overlay", function() {
-							$(".overlay").remove();
-							lace.progress.hide();
-							clearInterval(loadingIndicator);
-						});
-					}
-				}, 10);
-			});
-		</script>
-
 		<script>document.addEventListener && document.addEventListener("touchstart", function() {}, true);</script>
 	</body>
 </html>
