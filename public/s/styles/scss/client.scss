@@ -385,7 +385,11 @@ body {
     padding-bottom: $bar-height;
 }
 
-.configure-button { display: none; }
+.configure-button {
+    display: none;
+
+    .role-owner & { display: inline-block; }
+}
 
 .pane-people {
     @extend %scroll-elem;
@@ -725,12 +729,12 @@ body {
         font-weight: 700;
         cursor: pointer;
 
-        .guest-user & { padding: .2em 1em; }
+        .role-guest & { padding: .2em 1em; }
 
         .sign-in {
             display: none;
 
-            .guest-user & {
+            .role-guest & {
                 display: inline;
                 text-transform: uppercase;
             }
@@ -1247,13 +1251,17 @@ body {
     }
 }
 
+.noroom-container {
+    display: block;
+}
+
 .login-and-create-room-button {
-    display: none; 
-    .guest-user & { display: inline-block;} 
+    display: none;
+    .role-guest & { display: inline-block;}
 }
 
 .create-room-button {
-    .guest-user & { display: none;} 
+    .role-guest & { display: none;}
 }
 
 .infinite-above, .infinite-below {
