@@ -177,7 +177,7 @@ function sendUser(user, next) {
 }
 
 function sendRoom(room, next){
-	var action = makeAction({type: 'room', to: room.id, room: room});
-	client.send(JSON.stringify(action));
+	//var action = makeAction({type: 'room', to: room.id, room: room});
+	client.send(JSON.stringify(room));
 	next();	
 }

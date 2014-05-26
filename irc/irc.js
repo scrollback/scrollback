@@ -76,7 +76,7 @@ function changeRoomParams(room) {
 		room.room.params.irc.pending = true;
 	}
 	var or = room.old;
-	if (or && (or.params.irc.server !== room.room.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel)) {
+	if (or && or.params.irc && (or.params.irc.server !== room.room.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel)) {
 		room.room.params.irc.pending = true;
 	}
 	return room;

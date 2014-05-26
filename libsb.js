@@ -48,6 +48,7 @@ require('./public/s/components/facebook.js');
 require('./public/s/components/settings-area.js');
 require('./public/s/components/pref-area.js');
 require('./public/s/components/user-area.js');
+require('./public/s/components/noroom-area.js');
 require('./public/s/components/signup-area.js');
 require('./public/s/components/persona.js');
 
