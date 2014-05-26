@@ -87,7 +87,6 @@ module.exports = function(c) {
 
 function userHandler(action, callback) {
 	core.emit("getUsers", {ref: "me", session: action.session}, function(err, data){
-		console.log(err, data);
 		if(err || !data || !data.results || !data.results.length) {
 			return callback(new Error("USER_NOT_INITED"));
 		}else {
