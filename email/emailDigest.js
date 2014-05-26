@@ -472,18 +472,24 @@ function sendPeriodicMails(){
 		end2 = start2 + 59;
 	}
 	log("current time hour:",x+","+start1+","+start2);
-	core.emit("getUsers", {timezone: {gte: start1, lte: end1}, session: internalSession}, function(err, data) {
+	function processResults(err, data) {
 		if (err || !data.results) return;
 		var users = data.results;
 		users.forEach(function(user) {
-			initMailSending(user.id);
+			log("trying for user", user);
+			if (user.params && user.params.email && user.params.email.frequency !== "never") {//TODO write a query based on freq
+				initMailSending(user.id);
+			}
+			
 		});
+	}
+	core.emit("getUsers", {timezone: {gte: start1, lte: end1}, session: internalSession}, function(err, data) {
+		processResults(err, data);
 	});
 	core.emit("getUsers", {timezone: {gte: start2, lte: end2}, session: internalSession}, function(err, data) {
-		if (err || !data.results) return;
-		var users = data.results;
-		users.forEach(function(user) {
-			initMailSending(user.id);
-		});
+		processResults(err, data);
 	});
+	
+	
+	
 }

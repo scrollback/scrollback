@@ -16,6 +16,7 @@ module.exports = function(c) {
 };
 
 function onBack(data, cb) {
+    roomDB.set("room:{{"+data.room.id+"}}", JSON.stringify(data.room));
     occupantDB.sadd("room:{{"+data.to+"}}:hasOccupants", data.from);
     occupantDB.sadd("user:{{"+data.from+"}}:occupantOf", data.to);
     cb();
@@ -52,7 +53,6 @@ function onGetRooms(query, callback) {
             if(data){
                 try{
                     res  = JSON.parse(data)
-                    console.log(res);
                     query.results = [res];
                 }catch(e){}
             }
@@ -61,22 +61,31 @@ function onGetRooms(query, callback) {
     } else if(query.hasOccupant) {
         return occupantDB.smembers("user:{{"+query.hasOccupant+"}}:occupantOf", function(err, data) {
             if(err) return callback(err);
+            if(!data || !data.length) {
+                query.results = [];
+                return callback();
+            }
             data = data.map(function(e){
                 return "room:{{"+e+"}}";
             });
             // query.results = data;
-            return callback(err, data);
+            // return callback(err, data);
 /*  there are a few issues.. 
     sometimes if room data is not in the cache.
     Also loading up so many rooms for init might be overkill.
     considering its done for every navigation.
     right now cannot think of a possiblity that can cause this issue.
-*/
+*/          
             roomDB.mget(data, function(err, data) {
-                data = data.map(function(e) {
-                    return JSON.parse(e);
-                });
-                query.results = data;
+                if(data){
+                    data = data.map(function(e) {
+                        return JSON.parse(e);
+                    });
+                    query.results = data;    
+                }else{
+                    query.results = [];
+                }
+                
                 return callback(err, data);
             });
         });

@@ -8,6 +8,39 @@ $(function() {
 	var $people = $(".pane-people"),
 		people = [];
 
+	function getPeople(callback) {
+		var ppl = {}, sorted = [];
+		libsb.getUsers({memberOf: currentState.room}, function(err, res) {
+			var r = res.results, i, l;
+			console.log(r);
+			for(i=0, l=r.length; i<l; i++) {
+				ppl[r[i].id] = r[i];
+				if(r[i].role == "owner") ppl[r[i].id].score = 3;
+				else ppl[r[i].id].score = 1;
+			}
+			console.log(ppl);
+			libsb.getUsers({occupantOf: currentState.room}, function(err, res) {
+				var r = res.results, i, l;
+				for(i=0, l=r.length; i<l; i++) {
+					if(ppl[r[i].id]) {
+						ppl[r[i].id].score += 1.5;
+					}else {
+						ppl[r[i].id] = r[i];	
+						ppl[r[i].id].score = 1.5;
+					}
+				}
+				console.log(ppl);
+				Object.keys(ppl).forEach(function(e) {
+					sorted.push(ppl[e]);
+				});
+				console.log(sorted);
+				sorted.sort(function(a,b) {
+					return -(a.score-b.score);
+				});
+				callback(sorted);
+			});
+		});
+	}
 		
 
 	// Set up infinite scroll here.
@@ -42,12 +75,10 @@ $(function() {
 		if(!state.old ||(state.tab == "people" && state.old.tab!="people") || (state.old.room != state.room)) {
 			room = state.room;
 			function loadMembers(p,n) {
-				libsb.getMembers(room, function(err, p) {
-					if(err) throw err;
-					people = p.results;
+				getPeople(function(sortedList) {
+					people = sortedList;
 					$people.reset();
 				});
-
 				if(n) n();
 			}
 			

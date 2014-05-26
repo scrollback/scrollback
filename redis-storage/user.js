@@ -49,6 +49,7 @@ function onGetUsers(query, callback) {
         }
     } else if(query.occupantOf) {
         return occupantDB.smembers("room:{{"+query.occupantOf+"}}:hasOccupants", function(err, data) {
+            var res = [];
             if(err) return callback(err);
             if(!data || data.length==0) {
                 query.results = [];
@@ -58,6 +59,7 @@ function onGetUsers(query, callback) {
                 return "user:{{"+e+"}}";
             });
             userDB.mget(data, function(err, data) {
+
                 if(!data) {
                     query.results = [];
                     return callback();
@@ -65,7 +67,10 @@ function onGetUsers(query, callback) {
                 data = data.map(function(e) {
                     return JSON.parse(e);
                 });
-                query.results = data;
+                data.forEach(function(e) {
+                    if(e && e.id) res.push(e);
+                });
+                query.results = res;
                 return callback();
             });
         });
