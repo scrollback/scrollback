@@ -88,23 +88,23 @@ module.exports = function(grunt) {
 		sass: {
 			dist: {
 				options: {
-					style: "compressed"
+					style: "compressed",
+					sourcemap: true
 				},
-				files: {
-					"public/s/styles/gen/signup.css": "public/s/styles/scss/signup.scss",
-					"public/s/styles/gen/stylesheet.css": "public/s/styles/scss/stylesheet.scss",
-					"public/s/styles/gen/client.css": "public/s/styles/scss/client.scss",
-					"public/s/styles/gen/embed.css": "public/s/styles/scss/embed.scss"
-				}
+				files: [{
+					expand: true,
+					cwd: "public/s/styles/scss",
+					src: ["*.scss"],
+					dest: "public/s/styles/gen",
+					ext: ".css"
+				}]
 			}
 		},
 		less: {
 			development: {
 				options: {
 					compress: true,
-					ieCompat: true,
-					sourceMap: true,
-					sourceMapFilename: "style.less.map"
+					ieCompat: true
 				},
 				files: {
 					"public/style.css": "public/style.less",
@@ -127,13 +127,13 @@ module.exports = function(grunt) {
 					timestamp: true
 				},
 				src: [
-				"s/js/*.js",
-				"s/lib/*.js",
-				"s/components/*.js",
-				"s/styles/gen/*.css",
-				"s/img/client/*.*",
-				"s/img/client/*/*.*",
-			],
+					"libsb.bundle.js",
+					"sdk/sockjs.js",
+					"s/lib/jquery.min.js",
+					"s/styles/gen/*.css",
+					"s/img/client/*.*",
+					"s/img/client/*/*.*",
+				],
 				dest: "public/manifest.appcache"
 			}
 		},
