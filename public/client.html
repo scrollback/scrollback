@@ -24,6 +24,83 @@
 
 		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600">
 		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/gen/client.css">
+
+		<style type="text/css">
+			@-webkit-keyframes progress {
+				0% { width: 0; }
+				10% { width: 30%; }
+				30% { width: 50%; }
+				40% { width: 70%; }
+				100% { width: 80%; }
+			}
+
+			@-moz-keyframes progress {
+				0% { width: 0; }
+				10% { width: 30%; }
+				30% { width: 50%; }
+				40% { width: 70%; }
+				100% { width: 80%; }
+			}
+
+			@-ms-keyframes progress {
+				0% { width: 0; }
+				10% { width: 30%; }
+				30% { width: 50%; }
+				40% { width: 70%; }
+				100% { width: 80%; }
+			}
+
+			@keyframes progress {
+				0% { width: 0; }
+				10% { width: 30%; }
+				30% { width: 50%; }
+				40% { width: 70%; }
+				100% { width: 80%; }
+			}
+
+			.progress {
+				position: fixed;
+				top: 0;
+				left: 0;
+				height: 2px;
+				width: 80%;
+				z-index: 500;
+				background-color: #33ccaa;
+				-webkit-transition: .3s ease-out;
+				-moz-transition: .3s ease-out;
+				-ms-transition: .3s ease-out;
+				-o-transition: .3s ease-out;
+				transition: .3s ease-out;
+			}
+
+			.progress.loading {
+				-webkit-animation: progress 3s ease;
+				-moz-animation: progress 3s ease;
+				-ms-animation: progress 3s ease;
+				-o-animation: progress 3s ease;
+				animation: progress 3s ease;
+			}
+
+			.progress.complete { width: 100%; }
+
+			.overlay {
+				display: table;
+				position: fixed;
+				top: 0;
+				left: 0;
+				height: 100%;
+				width: 100%;
+				background-color: #fff;
+				color: #555;
+				z-index: 400;
+			}
+
+			.overlay h1 {
+				display: table-cell;
+				vertical-align: middle;
+				text-align: center;
+			}
+		</style>
 	</head>
 
 	<body>
@@ -103,25 +180,23 @@
 				</div>
 				<div class="left-area">
 					<a class="meta-button">
-						<span class="meta-card">
-							<figure class="front">
-								<svg version="1.1" class="meta-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-									<defs>
-										<path d="m 14.000043,1048.3622 -10.000046,-10 5.664746,0 4.335208,4.3664 4.335305,-4.3664 5.664766,0 z" id="0"/>
-										<path fill="#33ccaa" d="m 14.000045,1020.3622 -10.000045,10 5.664746,0 4.335208,-4.3664 4.335305,4.3664 5.664766,0 z" id="1"/>
-									</defs>
-									<g transform="matrix(0.4999993,0,0,0.4999993,4,1.96e-5)">
-										<use transform="matrix(2,0,0,2,-7.999994,-2040.7244)" height="372.05" width="524.41" xlink:href="#1"/>
-										<path d="m 0,23.9996 0,8 40,0 0,-8 z" fill="#ffffff"/>
-										<use transform="matrix(2,0,0,2,-7.999994,-2040.7244)" height="372.05" width="524.41" xlink:href="#0" fill="#ffffff"/>
-									</g>
-								</svg>
-							</figure>
-							<figure class="back">
-								<svg version="1.1" class="meta-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-									<path d="M 16.899495,4.100505 8.767767,12.232233 7,14 l 1.767767,1.767767 8.131728,8.131728 c 0.707107,0.707107 0.707107,0.707107 1.414213,0 l 0.353554,-0.353553 c 0.707107,-0.707107 0.707107,-0.707107 0,-1.414214 L 10.535534,14 18.667262,5.868272 c 0.707107,-0.707107 0.707107,-0.707107 0,-1.414214 L 18.313708,4.100505 c -0.707106,-0.707107 -0.707106,-0.707107 -1.414213,0 z"/>
-								</svg>
-							</figure>
+						<span class="front">
+							<svg version="1.1" class="meta-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+								<path d="M 16.899495,4.100505 8.767767,12.232233 7,14 l 1.767767,1.767767 8.131728,8.131728 c 0.707107,0.707107 0.707107,0.707107 1.414213,0 l 0.353554,-0.353553 c 0.707107,-0.707107 0.707107,-0.707107 0,-1.414214 L 10.535534,14 18.667262,5.868272 c 0.707107,-0.707107 0.707107,-0.707107 0,-1.414214 L 18.313708,4.100505 c -0.707106,-0.707107 -0.707106,-0.707107 -1.414213,0 z"/>
+							</svg>
+						</span>
+						<span class="back">
+							<svg version="1.1" class="meta-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+								<defs>
+									<path d="m 14.000043,1048.3622 -10.000046,-10 5.664746,0 4.335208,4.3664 4.335305,-4.3664 5.664766,0 z" id="0"/>
+									<path fill="#33ccaa" d="m 14.000045,1020.3622 -10.000045,10 5.664746,0 4.335208,-4.3664 4.335305,4.3664 5.664766,0 z" id="1"/>
+								</defs>
+								<g transform="matrix(0.4999993,0,0,0.4999993,4,1.96e-5)">
+									<use transform="matrix(2,0,0,2,-7.999994,-2040.7244)" height="372.05" width="524.41" xlink:href="#1"/>
+									<path d="m 0,23.9996 0,8 40,0 0,-8 z" fill="#ffffff"/>
+									<use transform="matrix(2,0,0,2,-7.999994,-2040.7244)" height="372.05" width="524.41" xlink:href="#0" fill="#ffffff"/>
+								</g>
+							</svg>
 						</span>
 					</a>
 					<h2 data-mode="normal search" class="room-title" id="room-title"></h2>
@@ -189,6 +264,11 @@
 		<section data-mode="noroom" class="noroom-area">
 			<h1>This room doesn't exist ;(</h1>
 		</section>
+		<section class="overlay">
+			<h1>Getting ready...</h1>
+		</section>
+		<section class="progress loading">
+		</section>
 
 		<!-- templates -->
 		<script type="text/template" id="login-menu">
@@ -245,6 +325,21 @@
 		<script src="/libsb.bundle.js"></script>
 		<script>$(function() { libsb.connect(); });</script>
 		<script src="https://login.persona.org/include.js"></script>
+
+		<script>
+			$(function() {
+				var loadingIndicator = setInterval(function() {
+					if ($("body").attr("class").match(/-mode/)) {
+						lace.animate.transition("fadeout", ".overlay", function() {
+							$(".overlay").remove();
+							lace.progress.hide();
+							clearInterval(loadingIndicator);
+						});
+					}
+				}, 10);
+			});
+		</script>
+
 		<script>document.addEventListener && document.addEventListener("touchstart", function() {}, true);</script>
 	</body>
 </html>
