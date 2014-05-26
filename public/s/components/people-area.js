@@ -12,13 +12,11 @@ $(function() {
 		var ppl = {}, sorted = [];
 		libsb.getUsers({memberOf: currentState.room}, function(err, res) {
 			var r = res.results, i, l;
-			console.log(r);
 			for(i=0, l=r.length; i<l; i++) {
 				ppl[r[i].id] = r[i];
 				if(r[i].role == "owner") ppl[r[i].id].score = 3;
 				else ppl[r[i].id].score = 1;
 			}
-			console.log(ppl);
 			libsb.getUsers({occupantOf: currentState.room}, function(err, res) {
 				var r = res.results, i, l;
 				for(i=0, l=r.length; i<l; i++) {
@@ -29,11 +27,9 @@ $(function() {
 						ppl[r[i].id].score = 1.5;
 					}
 				}
-				console.log(ppl);
 				Object.keys(ppl).forEach(function(e) {
 					sorted.push(ppl[e]);
 				});
-				console.log(sorted);
 				sorted.sort(function(a,b) {
 					return -(a.score-b.score);
 				});
