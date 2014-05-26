@@ -29,6 +29,62 @@ $bar-height: 3.5em;
 $settingsitems: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
 $modeitems: normal, search, conf, pref, home, noroom;
 
+/* themes */
+@mixin theme($name, $base, $color, $meta, $text, $icon, $focus) {
+    .theme-#{$name} {
+        .room-item.current:after { border-right: .6em solid $meta; }
+
+        .meta-area {
+            background-color: $meta;
+            color: $text;
+        }
+
+        .person, .thread-item { color: $text; }
+
+        .meta-tabs .tab {
+            fill: fade-out($text, .3);
+            background-color: darken($meta, 10%);
+
+            &:hover, &:focus, &:active {
+                fill: $text;
+                background-color: darken($meta, 5%);
+            }
+
+            &.current {
+                fill: $text;
+                background-color: $meta;
+            }
+        }
+
+        .meta-header {
+            @media #{$screenxxxx} { background-image: url(../../img/client/icons/settings-dark.svg); }
+        }
+
+        .title-bar {
+            background-color: $base;
+            color: $color;
+        }
+
+        .follow-button {
+            fill: none;
+            stroke: $icon;
+
+            &:focus, &:hover, &:active {
+                fill: none;
+                stroke: $focus;
+            }
+        }
+
+        &.following .follow-button, .rooms-button, .meta-button, .search-button, .fullview-button, .minimize-button {
+            fill: $icon;
+
+            &, &:focus, &:hover, &:active { fill: $focus; }
+        }
+    }
+}
+
+@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $icon: darken($light-color, 30%), $focus: $light-color);
+
 /* widget styles */
 %scroll-elem {
     max-height: 100%;
@@ -137,9 +193,7 @@ body {
             top: 1.2em;
             border-top: .6em solid transparent;
             border-bottom: .6em solid transparent;
-            border-right: .6em solid darken($light-color, 2%);
-
-            .theme-dark & { border-right: .6em solid lighten($dark-color, 10%); }
+            border-right: .6em solid darken($light-color, 5%);
         }
     }
 
@@ -166,7 +220,7 @@ body {
     left: $width-meta * -1;
     width: $width-meta;
     border-right: 1px solid rgba(0,0,0,.1);
-    background-color: darken($light-color, 2%);
+    background-color: darken($light-color, 5%);
     color: $dark-color;
 
     @media #{$screenx} {
@@ -190,11 +244,6 @@ body {
 
         .embed & { left: 0; }
     }
-
-    .theme-dark & {
-        background-color: lighten($dark-color, 10%);
-        color: $light-color;
-    }
 }
 
 .meta-tabs {
@@ -215,13 +264,7 @@ body {
 
         &.rooms-button {
             display: table-cell;
-            fill: fade-out($dark-color, .3);
-
-            .theme-dark & {
-                fill: fade-out($light-color, .3);
-
-                &:focus, &:hover, &:active { fill: $light-color; }
-            }
+            fill: lighten($dark-color, 30%);
 
             .rooms-view & { @include transform(rotate(180deg)); }
 
@@ -231,50 +274,39 @@ body {
         }
     }
 
-    .header {
-        padding-left: 1.5em;
-        text-transform: uppercase;
-
-        @media #{$screenxxxx} {
-            padding-left: 4.25em;
-            background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
-
-            .theme-dark & { background-image: url(../../img/client/icons/settings-dark.svg); }
-        }
-    }
-
     .tab {
         text-align: center;
         background-position: center center;
         background-repeat: no-repeat;
         background-size: 2em 2em;
         background-color: rgba(0,0,0,.05);
-        border: 1px solid rgba(0,0,0,.1);
+        border: 1px solid rgba(0,0,0,.07);
         border-right: none;
         border-top: none;
-        fill: fade-out($dark-color, .5);
-
-        .theme-dark & {
-            fill: fade-out($light-color, .5);
-            background-color: rgba(0,0,0,.3);
-        }
+        fill: lighten($dark-color, 50%);
 
         &:first-child { border-left: none; }
 
         &:hover, &:focus, &:active {
-            fill: fade-out($dark-color, .3);
+            fill: lighten($dark-color, 30%);
             background-color: rgba(0,0,0,.1);
-
-            .theme-dark & { fill: fade-out($light-color, .3); }
         }
 
         &.current {
-            fill: fade-out($dark-color, .3);
+            fill: lighten($dark-color, 30%);
             background-color: transparent;
             border-bottom-color: rgba(0,0,0,.05);
-
-            .theme-dark & { fill: fade-out($light-color, .3); }
         }
+    }
+}
+
+.meta-header {
+    padding-left: 1.5em;
+    text-transform: uppercase;
+
+    @media #{$screenxxxx} {
+        padding-left: 4.25em;
+        background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
     }
 }
 
@@ -300,11 +332,9 @@ body {
 
     padding: 1.5em;
     padding-bottom: $bar-height;
-
-    .guest-user & {
-        .configure-button { display: none; }
-    }
 }
+
+.configure-button { display: none; }
 
 .pane-people {
     @extend %scroll-elem;
@@ -323,42 +353,40 @@ body {
 
         .infinite-above.upper-limit, .infinite-below.lower-limit { background: none; }
 	}
+}
 
-	.person {
-		@extend %nofilter;
-		@extend %ease;
+.person {
+    @extend %nofilter;
+    @extend %ease;
 
-		display: inline-block;
-		padding: .25em;
-		width: 5.5em;
-		text-align: center;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
-		color: $dark-color;
+    display: inline-block;
+    padding: .25em;
+    width: 5.5em;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    color: $dark-color;
 
-        .theme-dark & { color: $light-color; }
+    &:hover, &:focus, &:active {
+        background-color: $accent-color;
+        color: $light-color;
+        border-radius: $roundness;
+    }
 
-		&:hover, &:focus, &:active {
-			background-color: $accent-color;
-			color: $light-color;
-			border-radius: $roundness;
-		}
+    &.offline {
+        @include opacity(.5);
 
-		&.offline {
-			@include opacity(.5);
+        .picture { @extend %grayscale; }
+    }
 
-			.picture { @extend %grayscale; }
-		}
-
-		.person-avatar {
-			display: block;
-			width: 4em;
-			height: 4em;
-			margin: .25em .5em;
-			border-radius: $roundness;
-		}
-	}
+    .person-avatar {
+        display: block;
+        width: 4em;
+        height: 4em;
+        margin: .25em .5em;
+        border-radius: $roundness;
+    }
 }
 
 .pane-threads {
@@ -391,8 +419,6 @@ body {
     color: $dark-color;
     border-right: 4px solid $accent-color;
     cursor: pointer;
-
-    .theme-dark & { color: $light-color; }
 
     &.current { background-color: fade-out($accent-color, .7); }
 
@@ -474,25 +500,10 @@ body {
 
 @mixin title-icon($elem) {
     .#{$elem} {
-        @extend %ease;
-
         display: block;
         margin: auto;
         height: 2em;
         width: 2em;
-        fill: fade-out($dark-color, .5);
-
-        .theme-dark & { fill: fade-out($light-color, .3); }
-    }
-
-    &:focus, &:hover, &:active {
-        .#{$elem} {
-            &, &:focus, &:hover, &:active { fill: fade-out($dark-color, .3); }
-
-            .theme-dark & {
-                &, &:focus, &:hover, &:active { fill: $light-color; }
-            }
-        }
     }
 }
 
@@ -502,13 +513,6 @@ body {
 
     width: 3em;
     cursor: pointer;
-
-    .rooms-icon {
-        display: block;
-        margin: auto;
-        height: 2em;
-        width: 2em;
-    }
 }
 
 .meta-button {
@@ -518,6 +522,9 @@ body {
     position: relative;
     height: $bar-height;
     width: 3em;
+    fill: lighten($dark-color, 50%);
+
+    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 30%); }
 
     .meta-view &, .rooms-view & { @include transform(rotate(180deg)); }
 
@@ -582,15 +589,10 @@ body {
 	height: $bar-height;
 	width: 100%;
 	z-index: 20;
-    background-color: darken($light-color, 2%);
+    background-color: darken($light-color, 5%);
     color: $dark-color;
     box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1),
 				0 3px 2px -1px rgba(0,0,0,.05);
-
-    .theme-dark & {
-        background-color: $dark-color;
-        color: $light-color;
-    }
 }
 
 .left-area {
@@ -625,37 +627,24 @@ body {
 
     width: 3.5em;
     padding: .75em;
+    fill: none;
+    stroke-width: 2px;
+    stroke: lighten($dark-color, 30%);
 
-    .follow-icon {
-        fill: none;
-        stroke-width: 2px;
-        stroke: lighten($dark-color, 30%);
-
-        .following & { fill: lighten($dark-color, 30%); }
-
-        .theme-dark & {
-            fill: none;
-            stroke: darken($light-color, 30%);
-        }
-
-        .theme-dark.following & { fill: darken($light-color, 30%); }
-    }
+    .following & { fill: lighten($dark-color, 30%); }
 
     &:focus, &:hover, &:active {
-        .follow-icon {
-            fill: none;
-            stroke: lighten($dark-color, 10%);
+        fill: none;
+        stroke: lighten($dark-color, 10%);
 
-            .following & { fill: lighten($dark-color, 10%); }
-
-            .theme-dark & {
-                fill: none;
-                stroke: $light-color;
-            }
-
-            .theme-dark.following & { fill: $light-color; }
-        }
+        .following & { fill: lighten($dark-color, 10%); }
     }
+}
+
+.search-button, .fullview-button, .minimize-button {
+    fill: lighten($dark-color, 50%);
+
+    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 30%); }
 }
 
 .search-button {
@@ -988,7 +977,7 @@ body {
 	width: 3.5em;
 	border: none;
 	cursor: pointer;
-	fill: fade-out($dark-color, .3); /* inline SVG */
+	fill: lighten($dark-color, 30%); /* inline SVG */
 
 	&:hover, &:focus, &:active { fill: $dark-color; }
 
@@ -1207,7 +1196,7 @@ body {
     padding: 1em;
     background-color: $light-color;
     color: fade-out($dark-color, .3);
-    z-index: 40;
+    text-align: center;
 
     @media #{$screenxxxx} {
         left: $width-roomxxxx;

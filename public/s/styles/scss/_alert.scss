@@ -1,4 +1,5 @@
 @import "global";
+@import "flexbox";
 
 .alert-container {
 	position: fixed;
@@ -9,8 +10,11 @@
 }
 
 .alert-bar {
+	@include flexbox;
+	@include flex-direction(row);
+	@include justify-content(space-between);
+	@include align-items(center);
 	@include slidedown;
-	@extend %nofilter;
 
 	margin: 1em;
 	padding: 0;
@@ -33,7 +37,7 @@
 }
 
 .alert-content {
-	display: inline-block;
+	width: 100%;
 	padding: 1em;
 
 	a {
@@ -50,7 +54,6 @@
 
 .alert-remove {
 	font-size: 2em;
-	float: right;
 	padding: .5em .6em;
 	cursor: pointer;
 	background-color: rgba(0,0,0,.1);

@@ -127,7 +127,7 @@ var lace = {
             var modal = ".modal",
                 dim = ".dim";
 
-            if ($(modal).length > 0 || $(dim).length > 0) {
+            if ($(modal).length || $(dim).length) {
                 $(modal + "," + dim).remove();
             }
 
@@ -138,7 +138,7 @@ var lace = {
                 "margin-left" : $(modal).outerWidth() / -2
             });
 
-            if ($(modal).find(".modal-remove").length === 0) {
+            if (!$(modal).find(".modal-remove").length) {
                 $(".dim").on("click", lace.modal.hide);
             }
 
@@ -174,7 +174,7 @@ var lace = {
                 spaceleft = $(element).offset().left - $(document).scrollLeft() + ( $(element).width() / 2 ),
                 spaceright = $(window).width() - spaceleft;
 
-            if ($(popover).length > 0 || $(layer).length > 0) {
+            if ($(popover).length || $(layer).length) {
                 $(popover + "," + layer).remove();
             }
 
@@ -237,7 +237,7 @@ var lace = {
             var container = ".alert-container",
                 banner = "<div id='" + alert.id + "' class='alert-bar " + alert.type + "'><span class='alert-content'>" + alert.body + "</span><a class='alert-remove close'>&times;</a></div>";
 
-            if ($(container).length === 0) {
+            if (!$(container).length) {
                 $("body").append("<div class='" + container.substr(1) + "'></div>");
             }
 
@@ -269,7 +269,7 @@ var lace = {
             lace.animate.transition("fadeout", element, function() {
                 $(element).remove();
 
-                if ($(container).children().length === 0) {
+                if (!$(container).children().length) {
                     $(container).remove();
                 }
             });
