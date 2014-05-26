@@ -20,7 +20,6 @@ function onInit(payload, callback) {
 
 function fbAuth(action, callback) {
 	if(action.auth && action.auth.facebook) {
-		console.log("init5");
 		request("https://graph.facebook.com/oauth/access_token?client_id="+config.facebook.client_id+
 		"&redirect_uri=https://"+config.http.host+"/r/facebook/return"+
 		"&client_secret="+config.facebook.client_secret+
@@ -42,7 +41,6 @@ function fbAuth(action, callback) {
 					try{
 						user = JSON.parse(body);
 						if(user.error) {
-							console.log(user.error);
 							return callback(new Error(user.error))
 						}
 						core.emit("getUsers",{identity: "mailto:"+user.email, session: internalSession}, function(err, data) {

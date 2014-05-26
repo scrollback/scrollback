@@ -4,16 +4,28 @@
 
 // var roomList = {};
 $(function() {
-	var $roomlist = $(".room-list");
-		window.rooms = [ ];
+	var $roomlist = $(".room-list"),
+		rooms = [false, false], listenQueue = [], inited = false;
 
-	/* add this back and do this after connecting.
-	libsb.getRooms({}, function(err, r) {
-//		console.log("Got rooms", r);
-		if(err) throw err;
-		rooms = rooms.concat(r);
-		$roomlist.reset();
-	});*/
+	function enter(room) {
+		if(rooms.indexOf(room)<0) {
+			rooms.pop();
+			rooms.push(room);
+			rooms.push(false);
+			if(inited) libsb.enter(room);
+			else listenQueue.push(room);
+			$roomlist.reset();
+		}
+	}
+	libsb.on("inited", function(d, n) {
+		inited = true;
+		listenQueue.forEach(function(e) {
+			libsb.enter(e);
+		});
+
+		n();
+	});
+
 
 	// Set up infinite scroll here.
 	$roomlist.infinite({
@@ -23,15 +35,36 @@ $(function() {
 		startIndex: 0,
 		getItems: function (index, before, after, recycle, callback) {
 			var res = [], i;
-
-			for(i=index+1-before; i<=index+after; i++) {
-				if(i<0) { res.push(false); i=0; }
-				// if(i==index) continue;
-				if(i>rooms.length-1) { res.push(false); break; }
-				res.push(roomEl.render(null, rooms[i], i));
+			console.log("++++++++++++=roomslist", rooms,index, before, after);
+			if(!index) index = 0;
+			if(before) {
+				if(index === 0){
+					return callback([]);
+				}
+				index--;
+				from = index - before;
+				if(from <0) {
+					to = from+before;
+					from = 0;
+				}else {
+					to = index;
+				}
+			}else {
+				if(index){
+					index++;
+				}else{
+					after++;
+				}
+				from = index;
+				to = index+after;
+			}
+			for(i=from;i<=to;i++) {
+				if(typeof rooms[i] !== "undefined") res.push(rooms[i]);
 			}
 
-			callback(res);
+			callback(res.map(function(r) {
+				return r && roomEl.render(null, r, rooms.indexOf(r));
+			}));
 		}
 	});
 	// Set up a click listener.,
@@ -55,38 +88,20 @@ $(function() {
 
 	libsb.on("navigate", function(state, next) {
 		var room = state.room;
-		if(room && rooms.indexOf(room)<0) {
-			function back(){
-				rooms.push(room);
-				libsb.enter(room);
-			}
-			if(libsb.isInited){
-				back();
-			}else{
-				libsb.on("inited", back);
-			}
-		}
-		$roomlist.reset();
+		enter(room);
 		next();
 	});
 	libsb.on("init-dn", function(init, next) {
 		if(init.occupantOf){
 			init.occupantOf.forEach(function(r) {
-				if(rooms.indexOf(r.id)<0) {
-					rooms.push(r.id);
-					libsb.enter(r.id);
-				}
+				enter(r.id);
 			});
 		}
 		if(init.memberOf){
 			init.memberOf.forEach(function(r) {
-				if(rooms.indexOf(r.id)<0) {
-					rooms.push(r.id);
-					libsb.enter(r.id);
-				}
+				enter(r.id);
 			});
 		}
-		$roomlist.reset();
 		next();
 	}, 10);
 
