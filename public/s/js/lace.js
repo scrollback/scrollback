@@ -14,9 +14,13 @@ var lace = {
          * @constructor
          * @param {String} classname
          * @param {String} element
-         * @callback action
+         * @callback [action]
          */
         transition: function(classname, element, action) {
+            if (!action) {
+                action = function() {};
+            }
+
             if (typeof document.body.style.transition === 'string') {
                 $(element).addClass(classname).data("transitioning", true);
 
@@ -120,16 +124,21 @@ var lace = {
          * @param {String} content
          */
         show: function(content) {
-            var modal = $('<div class="modal">' + content + '</div>');
+            var modal = ".modal",
+                dim = ".dim";
 
-            $("body").append("<div class='dim'></div>").append(modal);
+            if ($(modal).length || $(dim).length) {
+                $(modal + "," + dim).remove();
+            }
 
-            modal.css({
-                "margin-top" : modal.outerHeight() / -2,
-                "margin-left" : modal.outerWidth() / -2
+            $("body").append("<div class='" + dim.substr(1) + "'></div>").append("<div class='" + modal.substr(1) + "'>" + content + "</div>");
+
+            $(modal).css({
+                "margin-top" : $(modal).outerHeight() / -2,
+                "margin-left" : $(modal).outerWidth() / -2
             });
 
-            if (modal.find(".modal-remove").length === 0) {
+            if (!$(modal).find(".modal-remove").length) {
                 $(".dim").on("click", lace.modal.hide);
             }
 
@@ -159,12 +168,17 @@ var lace = {
          */
         show: function(element, content) {
             var popover = ".popover-body",
+                layer = ".popover-layer",
                 spacetop = $(element).offset().top - $(document).scrollTop() + $(element).height(),
                 spacebottom = $(window).height() - spacetop,
                 spaceleft = $(element).offset().left - $(document).scrollLeft() + ( $(element).width() / 2 ),
                 spaceright = $(window).width() - spaceleft;
 
-            $("body").append("<div class='popover-layer'></div>").append($('<div role="menu" class="' + popover.substr(1) + '">' + content + '</div>'));
+            if ($(popover).length || $(layer).length) {
+                $(popover + "," + layer).remove();
+            }
+
+            $("body").append("<div class='" + layer.substr(1) + "'></div>").append($('<div role="menu" class="' + popover.substr(1) + '">' + content + '</div>'));
 
             if ($(popover).outerWidth() >= spaceleft) {
                 $(popover).addClass("arrow-left");
@@ -191,7 +205,7 @@ var lace = {
                 "left" : spaceleft
             });
 
-            $(".popover-layer").on("click", lace.popover.hide);
+            $(layer).on("click", lace.popover.hide);
         },
 
         /**
@@ -223,7 +237,7 @@ var lace = {
             var container = ".alert-container",
                 banner = "<div id='" + alert.id + "' class='alert-bar " + alert.type + "'><span class='alert-content'>" + alert.body + "</span><a class='alert-remove close'>&times;</a></div>";
 
-            if ($(container).length === 0) {
+            if (!$(container).length) {
                 $("body").append("<div class='" + container.substr(1) + "'></div>");
             }
 
@@ -255,7 +269,7 @@ var lace = {
             lace.animate.transition("fadeout", element, function() {
                 $(element).remove();
 
-                if ($(container).children().length === 0) {
+                if (!$(container).children().length) {
                     $(container).remove();
                 }
             });

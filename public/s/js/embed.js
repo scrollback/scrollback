@@ -7,6 +7,7 @@
 			var room = "scrollback",
 				host = "http://local.scrollback.io",
 				embed = "toast",
+				theme = "dark",
 				style,
 				iframe;
 
@@ -19,7 +20,7 @@
 
 			// Create and append the iframe
 			iframe = document.createElement("iframe");
-			iframe.src = host + "/" + room + "?embed=" + embed;
+			iframe.src = host + "/" + room + "?embed=" + embed + "&theme=" + theme;
 			iframe.className = "scrollback-stream";
 			document.body.appendChild(iframe);
 

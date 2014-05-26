@@ -27,23 +27,67 @@ $width-metaxxxx: 30%;
 $bar-height: 3.5em;
 
 $settingsitems: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
-$tabitems: info, people, threads;
-$modeitems: normal, search, conf, pref, home;
+$modeitems: normal, search, conf, pref, home, noroom;
 
-/* widget styles */
-@mixin display-in($modes, $display: block) {
-    display: none;
+/* themes */
+@mixin theme($name, $base, $color, $meta, $text, $icon, $focus) {
+    .theme-#{$name} {
+        .room-item.current:after { border-right: .6em solid $meta; }
 
-    @each $mode in $modes {
-        @if $display == flex {
-            .#{$mode}-mode & { @include flexbox; }
-        } @else {
-            .#{$mode}-mode & { display: $display; }
+        .meta-area {
+            background-color: $meta;
+            color: $text;
+        }
+
+        .person, .thread-item { color: $text; }
+
+        .meta-tabs .tab {
+            fill: fade-out($text, .3);
+            background-color: darken($meta, 10%);
+
+            &:hover, &:focus, &:active {
+                fill: $text;
+                background-color: darken($meta, 5%);
+            }
+
+            &.current {
+                fill: $text;
+                background-color: $meta;
+            }
+        }
+
+        .meta-header {
+            @media #{$screenxxxx} { background-image: url(../../img/client/icons/settings-dark.svg); }
+        }
+
+        .title-bar {
+            background-color: $base;
+            color: $color;
+        }
+
+        .follow-button {
+            fill: none;
+            stroke: $icon;
+
+            &:focus, &:hover, &:active {
+                fill: none;
+                stroke: $focus;
+            }
+        }
+
+        &.following .follow-button, .rooms-button, .meta-button, .search-button, .fullview-button, .minimize-button {
+            fill: $icon;
+
+            &, &:focus, &:hover, &:active { fill: $focus; }
         }
     }
 }
 
+@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $icon: darken($light-color, 30%), $focus: $light-color);
+
+/* widget styles */
 %scroll-elem {
+    max-height: 100%;
     overflow-y: scroll;
     -webkit-overflow-scrolling : touch;
 }
@@ -52,10 +96,27 @@ $modeitems: normal, search, conf, pref, home;
     position: fixed;
     top: 0;
     bottom: 0;
-    min-height: 100%;
+    height: 100%;
 }
 
-body { word-wrap: break-word; }
+body {
+    word-wrap: break-word;
+    height: 100%;
+
+    @each $mode in $modeitems {
+        &.#{$mode}-mode {
+            $selector: ();
+
+            @each $item in $modeitems {
+                @if $item != $mode {
+                    $selector: $selector, unquote("[data-mode~=#{$item}]:not([data-mode~=#{$mode}])");
+                }
+            }
+
+            #{$selector} { display: none; }
+        }
+    }
+}
 
 .room-area {
     @extend %column;
@@ -101,9 +162,9 @@ body { word-wrap: break-word; }
 }
 
 .room-list {
-    height: 100%;
-
     @extend %scroll-elem;
+
+    padding-bottom: $bar-height;
 }
 
 .room-item {
@@ -132,7 +193,7 @@ body { word-wrap: break-word; }
             top: 1.2em;
             border-top: .6em solid transparent;
             border-bottom: .6em solid transparent;
-            border-right: .6em solid darken($light-color, 2%);
+            border-right: .6em solid darken($light-color, 5%);
         }
     }
 
@@ -159,7 +220,7 @@ body { word-wrap: break-word; }
     left: $width-meta * -1;
     width: $width-meta;
     border-right: 1px solid rgba(0,0,0,.1);
-    background-color: darken($light-color, 2%);
+    background-color: darken($light-color, 5%);
     color: $dark-color;
 
     @media #{$screenx} {
@@ -197,19 +258,13 @@ body { word-wrap: break-word; }
         @include transform(rotate(0deg)); /* hack to fix invisible items in android browser */
         @extend %ease;
 
-        display: none;
+        display: table-cell;
         vertical-align: middle;
         cursor: pointer;
 
-        @each $mode in $modeitems {
-            &.mode-#{$mode} {
-                .#{$mode}-mode & { display: table-cell; }
-            }
-        }
-
         &.rooms-button {
             display: table-cell;
-            fill: fade-out($dark-color, .3);
+            fill: lighten($dark-color, 30%);
 
             .rooms-view & { @include transform(rotate(180deg)); }
 
@@ -219,46 +274,43 @@ body { word-wrap: break-word; }
         }
     }
 
-    .header {
-        padding-left: 1.5em;
-        text-transform: uppercase;
-
-        @media #{$screenxxxx} {
-            padding-left: 4.25em;
-            background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
-        }
-    }
-
     .tab {
         text-align: center;
         background-position: center center;
         background-repeat: no-repeat;
         background-size: 2em 2em;
         background-color: rgba(0,0,0,.05);
-        border: 1px solid rgba(0,0,0,.1);
+        border: 1px solid rgba(0,0,0,.07);
         border-right: none;
         border-top: none;
+        fill: lighten($dark-color, 50%);
 
         &:first-child { border-left: none; }
 
-        @each $item in $tabitems {
-            &.tab-#{$item} { background-image: url(../../img/client/icons/#{$item}.svg); }
-        }
-
         &:hover, &:focus, &:active {
-            background-color: rgba(0,0,0,.07);
+            fill: lighten($dark-color, 30%);
+            background-color: rgba(0,0,0,.1);
         }
 
         &.current {
+            fill: lighten($dark-color, 30%);
             background-color: transparent;
             border-bottom-color: rgba(0,0,0,.05);
         }
     }
 }
 
-.meta-panes {
-    @include display-in(normal search);
+.meta-header {
+    padding-left: 1.5em;
+    text-transform: uppercase;
 
+    @media #{$screenxxxx} {
+        padding-left: 4.25em;
+        background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
+    }
+}
+
+.meta-panes {
     height: 100%;
     padding-bottom: $bar-height;
 
@@ -279,16 +331,16 @@ body { word-wrap: break-word; }
     @extend %scroll-elem;
 
     padding: 1.5em;
-
-    .guest-user & {
-        .configure-button { display: none; }
-    }
+    padding-bottom: $bar-height;
 }
+
+.configure-button { display: none; }
 
 .pane-people {
     @extend %scroll-elem;
 
     padding: 1.5em .75em;
+    padding-bottom: $bar-height;
 
     .infinite-above, .infinite-below {
         background-color: transparent;
@@ -301,40 +353,40 @@ body { word-wrap: break-word; }
 
         .infinite-above.upper-limit, .infinite-below.lower-limit { background: none; }
 	}
+}
 
-	.person {
-		@extend %nofilter;
-		@extend %ease;
+.person {
+    @extend %nofilter;
+    @extend %ease;
 
-		display: inline-block;
-		padding: .25em;
-		width: 5.5em;
-		text-align: center;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
-		color: $dark-color;
+    display: inline-block;
+    padding: .25em;
+    width: 5.5em;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    color: $dark-color;
 
-		&:hover, &:focus {
-			background-color: $accent-color;
-			color: $light-color;
-			border-radius: $roundness;
-		}
+    &:hover, &:focus, &:active {
+        background-color: $accent-color;
+        color: $light-color;
+        border-radius: $roundness;
+    }
 
-		&.offline {
-			@include opacity(.5);
+    &.offline {
+        @include opacity(.5);
 
-			.picture { @extend %grayscale; }
-		}
+        .picture { @extend %grayscale; }
+    }
 
-		.person-avatar {
-			display: block;
-			width: 4em;
-			height: 4em;
-			margin: .25em .5em;
-			border-radius: $roundness;
-		}
-	}
+    .person-avatar {
+        display: block;
+        width: 4em;
+        height: 4em;
+        margin: .25em .5em;
+        border-radius: $roundness;
+    }
 }
 
 .pane-threads {
@@ -351,18 +403,12 @@ body { word-wrap: break-word; }
 }
 
 .thread-search-query {
-    @include display-in(search);
-
     padding: 1em 1.5em;
     background-color: fade-out($info-color, .7);
     font-size: 1.2em;
 }
 
-.thread-item-container {
-    @extend %scroll-elem;
-
-    height: 100%;
-}
+.thread-item-container { @extend %scroll-elem; }
 
 .thread-item {
     @extend %nofilter;
@@ -398,10 +444,6 @@ body { word-wrap: break-word; }
 .thread-title { margin: 0; }
 
 .thread-snippet { margin: 0; }
-
-.meta-conf { @include display-in(conf); }
-
-.meta-pref { @include display-in(pref); }
 
 .meta-conf, .meta-pref {
     @extend %scroll-elem;
@@ -456,29 +498,12 @@ body { word-wrap: break-word; }
 	@include chat-elem;
 }
 
-.content-area { @include display-in(normal search); }
-
 @mixin title-icon($elem) {
     .#{$elem} {
-        @extend %ease;
-
         display: block;
         margin: auto;
         height: 2em;
         width: 2em;
-        fill: fade-out($dark-color, .5);
-
-        .embed-toast & { fill: fade-out($light-color, .3); }
-    }
-
-    &:focus, &:hover, &:active {
-        .#{$elem} {
-            &, &:focus, &:hover, &:active { fill: fade-out($dark-color, .3); }
-
-            .embed-toast & {
-                &, &:focus, &:hover, &:active { fill: $light-color; }
-            }
-        }
     }
 }
 
@@ -488,13 +513,6 @@ body { word-wrap: break-word; }
 
     width: 3em;
     cursor: pointer;
-
-    .rooms-icon {
-        display: block;
-        margin: auto;
-        height: 2em;
-        width: 2em;
-    }
 }
 
 .meta-button {
@@ -504,6 +522,9 @@ body { word-wrap: break-word; }
     position: relative;
     height: $bar-height;
     width: 3em;
+    fill: lighten($dark-color, 50%);
+
+    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 30%); }
 
     .meta-view &, .rooms-view & { @include transform(rotate(180deg)); }
 
@@ -568,15 +589,10 @@ body { word-wrap: break-word; }
 	height: $bar-height;
 	width: 100%;
 	z-index: 20;
-    background-color: darken($light-color, 2%);
+    background-color: darken($light-color, 5%);
     color: $dark-color;
     box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1),
 				0 3px 2px -1px rgba(0,0,0,.05);
-
-    .embed-toast & {
-        background-color: $dark-color;
-        color: $light-color;
-    }
 }
 
 .left-area {
@@ -589,15 +605,13 @@ body { word-wrap: break-word; }
 }
 
 .right-area {
-    @include display-in(normal search, flex);
+    @include flexbox;
     @include flex-direction(row);
     @include justify-content(flex-end);
     @include align-items(center);
 }
 
 .room-title {
-    @include display-in(normal search);
-
     font-size: 1.2em;
     font-weight: 700;
 
@@ -610,41 +624,27 @@ body { word-wrap: break-word; }
 
 .follow-button {
     @include title-icon(follow-icon);
-    @include display-in(normal, block);
 
     width: 3.5em;
     padding: .75em;
+    fill: none;
+    stroke-width: 2px;
+    stroke: lighten($dark-color, 30%);
 
-    .follow-icon {
-        fill: none;
-        stroke-width: 2px;
-        stroke: lighten($dark-color, 30%);
-
-        .following & { fill: lighten($dark-color, 30%); }
-
-        .embed-toast & {
-            fill: none;
-            stroke: darken($light-color, 30%);
-        }
-
-        .embed-toast.following & { fill: darken($light-color, 30%); }
-    }
+    .following & { fill: lighten($dark-color, 30%); }
 
     &:focus, &:hover, &:active {
-        .follow-icon {
-            fill: none;
-            stroke: lighten($dark-color, 10%);
+        fill: none;
+        stroke: lighten($dark-color, 10%);
 
-            .following & { fill: lighten($dark-color, 10%); }
-
-            .embed-toast & {
-                fill: none;
-                stroke: $light-color;
-            }
-
-            .embed-toast.following & { fill: $light-color; }
-        }
+        .following & { fill: lighten($dark-color, 10%); }
     }
+}
+
+.search-button, .fullview-button, .minimize-button {
+    fill: lighten($dark-color, 50%);
+
+    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 30%); }
 }
 
 .search-button {
@@ -659,13 +659,9 @@ body { word-wrap: break-word; }
 
 .fullview-button, .minimize-button {
     display: none;
-
-    .embed-toast & {
-        display: block;
-        width: 3em;
-        padding: .75em .5em;
-        cursor: pointer;
-    }
+    width: 3em;
+    padding: .75em .5em;
+    cursor: pointer;
 }
 
 .fullview-button {
@@ -676,6 +672,8 @@ body { word-wrap: break-word; }
 
 .minimize-button {
     @include title-icon(minimize-icon);
+
+    .embed-toast & { display: block; }
 }
 
 .user-area {
@@ -716,8 +714,6 @@ body { word-wrap: break-word; }
 }
 
 .action-buttons {
-    @include display-in(conf pref);
-
     padding: .125em;
 
     .button {
@@ -887,7 +883,7 @@ body { word-wrap: break-word; }
         color: fade-out($dark-color, .5);
     }
 
-	&.timestamp-displayed {
+    &:last-of-type, &.timestamp-displayed {
 		.chat-timestamp { display: inline-block; }
 	}
 }
@@ -938,7 +934,6 @@ body { word-wrap: break-word; }
 
 .chat-input {
 	@include chat-elem;
-    @include display-in(normal search);
 
 	bottom: 0;
     padding: 0;
@@ -982,7 +977,7 @@ body { word-wrap: break-word; }
 	width: 3.5em;
 	border: none;
 	cursor: pointer;
-	fill: fade-out($dark-color, .3); /* inline SVG */
+	fill: lighten($dark-color, 30%); /* inline SVG */
 
 	&:hover, &:focus, &:active { fill: $dark-color; }
 
@@ -1121,10 +1116,6 @@ body { word-wrap: break-word; }
 	}
 }
 
-.conf-area { @include display-in(conf); }
-
-.pref-area { @include display-in(pref); }
-
 .room-area, .meta-area, .main-area, .chat-input {
     @include transition(.3s, ease-out); /* animate css transforms */
 
@@ -1195,7 +1186,7 @@ body { word-wrap: break-word; }
 }
 
 .noroom-area {
-    @include display-in(noroom, flex);
+    @include flexbox;
     @include justify-content(space-around);
     @include align-items(center);
     @extend %column;
@@ -1205,7 +1196,7 @@ body { word-wrap: break-word; }
     padding: 1em;
     background-color: $light-color;
     color: fade-out($dark-color, .3);
-    z-index: 40;
+    text-align: center;
 
     @media #{$screenxxxx} {
         left: $width-roomxxxx;
