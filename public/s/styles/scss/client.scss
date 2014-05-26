@@ -295,42 +295,43 @@ body {
 }
 
 .meta-tabs {
+    @include flexbox;
+    @include flex-direction(row);
+    @include align-items(center);
+
     list-style: none;
-    display: table;
-    table-layout: fixed;
-    margin: 0;
-    width: 100%;
     height: $bar-height;
+    border-bottom: 1px solid rgba(0,0,0,.07);
 
     li {
+        @include flexbox;
+        @include flex-direction(row);
+        @include justify-content(space-around);
+        @include align-items(center);
         @include transform(rotate(0deg)); /* hack to fix invisible items in android browser */
         @extend %ease;
 
-        display: table-cell;
-        vertical-align: middle;
+        width: 100%;
+        height: 100%;
         cursor: pointer;
 
         &.rooms-button {
-            display: table-cell;
+            min-width: 3em;
+            width: 3em;
             fill: lighten($dark-color, 30%);
 
             .rooms-view & { @include transform(rotate(180deg)); }
 
             .embed & { display: none; }
 
-            @media #{$screenxxxx} { display: none;    }
+            @media #{$screenxxxx} { display: none; }
         }
     }
 
     .tab {
         text-align: center;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: 2em 2em;
         background-color: rgba(0,0,0,.05);
-        border: 1px solid rgba(0,0,0,.07);
-        border-right: none;
-        border-top: none;
+        border-left: 1px solid rgba(0,0,0,.07);
         fill: lighten($dark-color, 50%);
 
         &:first-child { border-left: none; }
@@ -343,19 +344,20 @@ body {
         &.current {
             fill: lighten($dark-color, 30%);
             background-color: transparent;
-            border-bottom-color: rgba(0,0,0,.05);
         }
     }
-}
 
-.meta-header {
-    padding-left: 1.5em;
-    text-transform: uppercase;
-    border-bottom: 1px solid darken($light-color, 10%);
+    .meta-header {
+        @include justify-content(flex-start);
 
-    @media #{$screenxxxx} {
-        padding-left: 4.25em;
-        background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
+        padding-left: 1.5em;
+        text-transform: uppercase;
+        border-bottom: 1px solid darken($light-color, 10%);
+
+        @media #{$screenxxxx} {
+            padding-left: 4.25em;
+            background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
+        }
     }
 }
 
