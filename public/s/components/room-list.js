@@ -80,7 +80,7 @@ $(function() {
 		}
 		if(init.memberOf){
 			init.memberOf.forEach(function(r) {
-				if(rooms.indexOf(r)<0) {
+				if(rooms.indexOf(r.id)<0) {
 					rooms.push(r.id);
 					libsb.enter(r.id);
 				}
