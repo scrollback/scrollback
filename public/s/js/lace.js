@@ -14,7 +14,7 @@ var lace = {
          * @constructor
          * @param {String} classname
          * @param {String} element
-         * @callback [action]
+         * @param {Function} [action]
          */
         transition: function(classname, element, action) {
             if (!action) {

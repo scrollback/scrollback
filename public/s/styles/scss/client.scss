@@ -31,13 +31,15 @@ $modes: normal, search, conf, pref, home, noroom;
 $roles: guest, user, owner;
 
 /* themes */
-@mixin theme($name, $base, $color, $meta, $text, $icon, $focus, $border) {
+@mixin theme($name, $base, $color, $meta, $border, $text, $icon, $focus) {
     .theme-#{$name} {
         .room-item.current:after { border-right: .6em solid $meta; }
 
         .meta-area {
             background-color: $meta;
             color: $text;
+
+            a, .thread-item { color: $text; }
 
             .button {
                 &.secondary {
@@ -47,40 +49,55 @@ $roles: guest, user, owner;
 
                     &:hover, &:focus {
                         background-color: lighten($meta, 3%);
-                        border-color: lighten($meta, 30%);
+                        border-color: lighten($meta, 10%);
                         color: darken($text, 5%);
                     }
 
                     &:active {
                         background-color: lighten($meta, 7%);
-                        border-color: lighten($meta, 20%);
+                        border-color: lighten($meta, 5%);
                         color: darken($text, 15%);
                     }
                 }
             }
         }
 
-        .meta-area a { color: $text; }
+        .meta-tabs {
+            border-bottom-color: $border;
 
-        .meta-tabs .tab {
-            fill: fade-out($text, .3);
-            background-color: darken($meta, 10%);
+            .tab {
+                fill: fade-out($text, .3);
+                background-color: darken($meta, 10%);
+                border-left-color: $border;
 
-            &:hover, &:focus, &:active {
-                fill: $text;
-                background-color: darken($meta, 5%);
+                &:hover, &:focus, &:active {
+                    fill: $text;
+                    background-color: darken($meta, 5%);
+                }
+
+                &.current {
+                    fill: $text;
+                    background-color: $meta;
+                }
             }
 
-            &.current {
-                fill: $text;
-                background-color: $meta;
+            .meta-header {
+                @media #{$screenxxxx} { background-image: url(../../img/client/icons/settings-dark.svg); }
             }
         }
 
-        .meta-header {
-            border-bottom-color: $border;
+        .pane-people {
+            .infinite-above, .infinite-below {
+                background-image:  linear-gradient(to right, $meta, $meta 15%, transparent 15%, transparent 85%, $meta 85%, $meta),
+                    linear-gradient(to bottom, transparent, transparent 25%, lighten($meta, 5%) 25%, lighten($meta, 5%) 65%, transparent 65%, transparent 75%, lighten($meta, 5%) 75%, lighten($meta, 5%) 85%, transparent 85%, transparent);
+            }
+        }
 
-            @media #{$screenxxxx} { background-image: url(../../img/client/icons/settings-dark.svg); }
+        .pane-threads {
+            .infinite-above, .infinite-below {
+                background-image:  linear-gradient(to bottom, transparent, transparent 35%, lighten($meta, 5%) 35%, lighten($meta, 5%) 65%, transparent 65%, transparent),
+                    linear-gradient(to bottom, lighten($meta, 5%), lighten($meta, 5%));
+            }
         }
 
         .list-item {
@@ -127,12 +144,12 @@ $roles: guest, user, owner;
         &.following .follow-button, .rooms-button, .meta-button, .search-button, .fullview-button, .minimize-button {
             fill: $icon;
 
-            &, &:focus, &:hover, &:active { fill: $focus; }
+            &:focus, &:hover, &:active { fill: $focus; }
         }
     }
 }
 
-@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $icon: darken($light-color, 30%), $focus: $light-color, $border: lighten($dark-color, 10%));
+@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $border: lighten($dark-color, 10%), $icon: darken($light-color, 30%), $focus: $light-color);
 
 /* widget styles */
 %scroll-elem {
@@ -351,7 +368,6 @@ body {
 
         padding-left: 1.5em;
         text-transform: uppercase;
-        border-bottom: 1px solid darken($light-color, 15%);
 
         @media #{$screenxxxx} {
             padding-left: 4.25em;
@@ -497,6 +513,7 @@ body {
     @extend %scroll-elem;
 
     height: 100%;
+    padding-bottom: $bar-height;
 }
 
 .list-item {
@@ -1039,6 +1056,7 @@ body {
 	right: 0;
 	bottom: 0;
 	left: 0;
+    background-color: $light-color;
 
 	.list-view {
 		display: none;
