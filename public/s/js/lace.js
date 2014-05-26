@@ -36,6 +36,43 @@ var lace = {
         }
     },
 
+    progress: {
+        /**
+         * Show a progress indicator.
+         * @constructor
+         */
+        show: function() {
+            var progress = ".progress";
+
+            if ($(progress).length) {
+                $(progress).remove();
+            }
+
+            $("body").append("<div class='" + progress.substr(1) + " loading'></div>");
+        },
+
+        /**
+         * Set progress by percentage
+         * @constructor
+         * @param {Number} amount
+         */
+        set: function(amount) {
+            $(".progress").removeClass("loading").css({ "width" : amount + "%" });
+        },
+
+        /**
+         * Hide progress.
+         * @constructor
+         */
+        hide: function() {
+            lace.progress.set(100);
+
+            setTimeout(function() {
+                $(".progress").remove();
+            }, 500);
+        }
+    },
+
     multientry: {
         /**
          * Add event handlers for multientry.
