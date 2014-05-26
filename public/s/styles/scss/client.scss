@@ -1187,6 +1187,7 @@ body {
 
 .noroom-area {
     @include flexbox;
+    @include flex-direction(column);
     @include justify-content(space-around);
     @include align-items(center);
     @extend %column;
@@ -1203,6 +1204,15 @@ body {
 
         .embed & { left: 0; }
     }
+}
+
+.login-and-create-room-button {
+    display: none; 
+    .guest-user & { display: inline-block;} 
+}
+
+.create-room-button {
+    .guest-user & { display: none;} 
 }
 
 .infinite-above, .infinite-below {
