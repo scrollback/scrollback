@@ -91,6 +91,14 @@ core.on('object', function(obj) {
 		case 'getBotNick':
 			var nick = ircClient.getBotNick(obj.roomId);
 			writeObject({type: 'callback', uid: obj.uid, data: {nick: nick}});
+			break;
+		case 'isUserConnected':
+			var isConn = ircClient.isUserConnected(obj.sbNick);
+			writeObject({type: 'callback', uid: obj.uid, data: isConn});
+			break;
+		case 'disconnectUser':
+			ircClient.disconnectUser(obj.sbNick);
+			
 	}
 	
 });
