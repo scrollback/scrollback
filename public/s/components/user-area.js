@@ -68,10 +68,10 @@ $(function(){
 	libsb.on("init-dn", function(init, next) {
 		if(init.auth && !init.user.id) return next();
 
-		if(/^guest-/.test(init.user.id)) {
-			$("body").addClass("role-guest");
+		if (/^guest-/.test(init.user.id)) {
+			$("body").removeClass("role-user").addClass("role-guest");
 		} else {
-			$("body").removeClass("role-guest");
+			$("body").removeClass("role-guest").addClass("role-user");
 		}
 
 		$("#sb-user").text = init.user.id.replace(/^guest-/,'');

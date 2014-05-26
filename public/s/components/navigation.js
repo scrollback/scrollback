@@ -8,7 +8,7 @@
 	room: "roomid",
 	embed: (toast|comment)
 	view: (normal|rooms|meta|signup)
-	mode: (normal|search|conf|prefs|home),
+	mode: (normal|search|conf|pref|home),
 	tab: (info|people|threads|local|global|<conf/pref tabs>),
 	thread: "selected_thread",
 	query; "search_query",
@@ -89,35 +89,33 @@ libsb.on("navigate", function(state, next) {
 
 // On navigation, set the body classes.
 libsb.on("navigate", function(state, next) {
-	if(state.old && state.theme !== state.old.theme) {
-		if (state.theme !== "") {
+	if (state.old && state.theme !== state.old.theme) {
+		if (state.theme) {
 			$("body").addClass("theme-" + state.theme);
 		}
 	}
 
-	if(state.old && state.embed !== state.old.embed) {
-		if (state.embed !== "") {
+	if (state.old && state.embed !== state.old.embed) {
+		if (state.embed) {
 			$("body").addClass("embed embed-" + state.embed);
 		}
 	}
 
-	if(state.old && state.mode !== state.old.mode) {
-		$(document.body).removeClass(state.old.mode + "-mode");
-		$(document.body).addClass(state.mode + "-mode");
-	}else if(state.mode){
-		$(document.body).addClass(state.mode + "-mode");
+	if (state.old && state.mode !== state.old.mode) {
+		$(document.body).removeClass("mode-" + state.old.mode);
+		$(document.body).addClass("mode-" + state.mode);
+	} else if (state.mode) {
+		$(document.body).addClass("mode-" + state.mode);
 	}
 
-	if(state.old && state.view !== state.old.view) {
-		$(document.body).removeClass(state.old.view + "-view");
-		$(document.body).addClass(state.view + "-view");
-	}else if(state.view){
-		$(document.body).addClass(state.view + "-view");
-	}else {
-		// $("body").remove();
+	if (state.old && state.view !== state.old.view) {
+		$(document.body).removeClass("view-" + state.old.view);
+		$(document.body).addClass("view-" + state.view);
+	} else if (state.view){
+		$(document.body).addClass("view-" + state.view);
 	}
 
-	if(state.tab) {
+	if (state.tab) {
 		$(".tab").removeClass("current");
 		$(".tab-" + state.tab).addClass("current");
 	}

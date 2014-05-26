@@ -146,7 +146,7 @@
 				<div role="tabpanel" class="pane hide-scroll pane-info">
 					<h2 class="info-title"></h2>
 					<p class="info-description"></p>
-					<a class="button configure-button">Configure room</a>
+					<a data-role="owner" class="button configure-button">Configure room</a>
 				</div>
 				<div role="tabpanel" class="pane hide-scroll pane-people">
 					<a class="person">
@@ -263,10 +263,10 @@
 		</section>
 		<section data-mode="noroom" class="noroom-area">
 			<div class="noroom-container">
-			<h1>This room does not exist yet, you may claim it :)</h1>
+			<h1>This room does not exist yet ;)</h1>
 				<p>
-					<a class="button create-room-button"  id="create-room-button"> Claim! </a>
-					<a class="button login-and-create-room-button"  id="login-and-create-room-button"> Login &amp; Claim! </a>
+					<a data-role="user" class="button create-room-button" id="create-room-button">Claim room</a>
+					<a data-role="guest" class="button login-and-create-room-button"  id="login-and-create-room-button">Login &amp; claim room</a>
 				</p>
 			</div>
 		</section>

@@ -26,8 +26,9 @@ $width-metaxxxx: 30%;
 
 $bar-height: 3.5em;
 
-$settingsitems: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
-$modeitems: normal, search, conf, pref, home, noroom;
+$settings: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
+$modes: normal, search, conf, pref, home, noroom;
+$roles: guest, user, owner;
 
 /* themes */
 @mixin theme($name, $base, $color, $meta, $text, $icon, $focus, $border) {
@@ -151,17 +152,15 @@ body {
     word-wrap: break-word;
     height: 100%;
 
-    @each $mode in $modeitems {
-        &.#{$mode}-mode {
-            $selector: ();
+    @each $mode in $modes {
+        &.mode-#{$mode} {
+            [data-mode]:not([data-mode~=#{$mode}]) { display: none; }
+        }
+    }
 
-            @each $item in $modeitems {
-                @if $item != $mode {
-                    $selector: $selector, unquote("[data-mode~=#{$item}]:not([data-mode~=#{$mode}])");
-                }
-            }
-
-            #{$selector} { display: none; }
+    @each $role in $roles {
+        &:not(.role-#{$role}) {
+            [data-role~=#{$role}] { display: none; }
         }
     }
 }
@@ -301,7 +300,7 @@ body {
 
     list-style: none;
     height: $bar-height;
-    border-bottom: 1px solid rgba(0,0,0,.07);
+    border-bottom: 1px solid darken($light-color, 15%);
 
     li {
         @include flexbox;
@@ -320,7 +319,7 @@ body {
             width: 3em;
             fill: lighten($dark-color, 30%);
 
-            .rooms-view & { @include transform(rotate(180deg)); }
+            .view-rooms & { @include transform(rotate(180deg)); }
 
             .embed & { display: none; }
 
@@ -331,7 +330,7 @@ body {
     .tab {
         text-align: center;
         background-color: rgba(0,0,0,.05);
-        border-left: 1px solid rgba(0,0,0,.07);
+        border-left: 1px solid darken($light-color, 15%);
         fill: lighten($dark-color, 50%);
 
         &:first-child { border-left: none; }
@@ -352,7 +351,7 @@ body {
 
         padding-left: 1.5em;
         text-transform: uppercase;
-        border-bottom: 1px solid darken($light-color, 10%);
+        border-bottom: 1px solid darken($light-color, 15%);
 
         @media #{$screenxxxx} {
             padding-left: 4.25em;
@@ -383,12 +382,6 @@ body {
 
     padding: 1.5em;
     padding-bottom: $bar-height;
-}
-
-.configure-button {
-    display: none;
-
-    .role-owner & { display: inline-block; }
 }
 
 .pane-people {
@@ -527,9 +520,9 @@ body {
         background-color: rgba(0,0,0,.1);
 	}
 
-	@each $item in $settingsitems {
-		&.list-item-#{$item}-settings {
-			background-image: url(../../img/client/icons/#{$item}-settings.svg);
+	@each $setting in $settings {
+		&.list-item-#{$setting}-settings {
+			background-image: url(../../img/client/icons/#{$setting}-settings.svg);
 		}
 	}
 }
@@ -581,7 +574,7 @@ body {
 
     &, &:focus, &:hover, &:active { fill: lighten($dark-color, 30%); }
 
-    .meta-view &, .rooms-view & { @include transform(rotate(180deg)); }
+    .view-meta &, .view-rooms & { @include transform(rotate(180deg)); }
 
     @media #{$screenxxx} { display: none; }
 
@@ -600,7 +593,7 @@ body {
 
     .back { @include opacity(0); }
 
-    .embed.meta-view & {
+    .embed.view-meta & {
         .front { @include opacity(1); }
 
         .back { @include opacity(0); }
@@ -1165,13 +1158,13 @@ body {
     @include transition(.3s, ease-out); /* animate css transforms */
 
     /* fix flicker in some browsers */
-    .meta-view &, .rooms-view & {
+    .view-meta &, .view-rooms & {
         @include prefix(backface-visibility, hidden);
         @include prefix(perspective, 1000);
     }
 
     /* use 3d transformations for GPU accelerated animations */
-    .meta-view & {
+    .view-meta & {
 		@include transform(translate3d($width-meta, 0, 0));
 
 		@media #{$screenx} { @include transform(translate3d($width-metax, 0, 0)); }
@@ -1181,7 +1174,7 @@ body {
 		@media #{$screenxxx} { @include transform(translate3d(0, 0, 0)); }
     }
 
-    .rooms-view & {
+    .view-rooms & {
 		@include transform(translate3d( ( $width-room + $width-meta ), 0, 0));
 
 		@media #{$screenx} { @include transform(translate3d( ( $width-roomxx + $width-metax ), 0, 0)); }
@@ -1251,18 +1244,7 @@ body {
     }
 }
 
-.noroom-container {
-    display: block;
-}
-
-.login-and-create-room-button {
-    display: none;
-    .role-guest & { display: inline-block;}
-}
-
-.create-room-button {
-    .role-guest & { display: none;}
-}
+.noroom-container { display: block; }
 
 .infinite-above, .infinite-below {
     height: 100%;
