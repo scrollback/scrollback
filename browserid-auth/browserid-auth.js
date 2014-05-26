@@ -37,6 +37,7 @@ function browserAuth(action, callback) {
 				action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex');
 				return callback();
 			}
+			action.old = action.user;
 			action.user = user.results[0];
 			callback();
 		});

@@ -54,6 +54,7 @@ function fbAuth(action, callback) {
 								action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update( user.email).digest('hex');
 								return callback();
 							}
+							action.old = action.user;
 							action.user = data.results[0];
 							callback();
 						});

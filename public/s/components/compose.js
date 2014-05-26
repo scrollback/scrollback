@@ -23,7 +23,7 @@ $(function() {
 		}
 
 		setTimeout(function() {
-			textArea.setBottom($input.outerHeight());
+			chatArea.setBottom($input.outerHeight());
 		}, 0);
 	}
 
