@@ -28,7 +28,7 @@ $bar-height: 3.5em;
 
 $settings: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
 $modes: normal, search, conf, pref, home, noroom;
-$roles: guest, user, owner;
+$roles: guest, user, follower, owner;
 
 /* themes */
 @mixin theme($name, $base, $color, $meta, $border, $text, $icon, $focus) {
@@ -141,10 +141,16 @@ $roles: guest, user, owner;
             }
         }
 
-        &.following .follow-button, .rooms-button, .meta-button, .search-button, .fullview-button, .minimize-button {
+        &.role-follower .follow-button, .rooms-button, .meta-button, .search-button, .fullview-button, .minimize-button {
             fill: $icon;
 
             &:focus, &:hover, &:active { fill: $focus; }
+        }
+
+        .sb-icon {
+            .sb-top { fill: $accent-color; }
+
+            .sb-bottom { fill: $light-color; }
         }
     }
 }
@@ -633,6 +639,12 @@ body {
     }
 }
 
+.sb-icon {
+    .sb-top { fill: $accent-color; }
+
+    .sb-bottom { fill: $dark-color; }
+}
+
 .title-bar {
     @include flexbox;
     @include flex-direction(row);
@@ -686,13 +698,13 @@ body {
     stroke-width: 2px;
     stroke: lighten($dark-color, 30%);
 
-    .following & { fill: lighten($dark-color, 30%); }
+    .role-follower & { fill: lighten($dark-color, 30%); }
 
     &:focus, &:hover, &:active {
         fill: none;
         stroke: lighten($dark-color, 10%);
 
-        .following & { fill: lighten($dark-color, 10%); }
+        .role-follower & { fill: lighten($dark-color, 10%); }
     }
 }
 
