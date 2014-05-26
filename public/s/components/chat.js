@@ -15,7 +15,7 @@ $(function() {
 		el.data('index', text.time);
 
 		if (timeBefore) {
-			if (Math.abs(text.time - timeBefore) > 300000) {
+			if ((text.time - timeBefore) > 180000) {
 				el.addClass("timestamp-displayed");
 			}
 		}
