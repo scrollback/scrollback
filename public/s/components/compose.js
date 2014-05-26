@@ -19,7 +19,7 @@ $(function() {
 		if (window.currentState && window.currentState.room) {
 			libsb.say(window.currentState.room, text, window.currentState.thread);
 		}else{
-			// show the error that no part of any room yet.
+			// show the error that not part of any room yet.
 		}
 
 		setTimeout(function() {
