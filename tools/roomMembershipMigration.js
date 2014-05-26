@@ -1,11 +1,11 @@
 var config = require("../config.js");
 var objectlevel = require("objectlevel");
 var log = require("../lib/logger.js");
+var url = require("url");
 // var leveldb = new objectlevel(__dirname+"/"+config.leveldb.path);
 var db = require('mysql').createConnection(config.mysql);
 var accountConnection = require('mysql').createConnection(config.mysql);
 var leveldb, types;
-
 var owners = {};
 db.connect();
 accountConnection.connect();
@@ -38,7 +38,6 @@ function migrateRooms(cb) {
 				picture: room.picture,
 				timezone:0,
 				identities: [],
-				accounts: room.accounts
 			}
 
 			try{
@@ -50,12 +49,30 @@ function migrateRooms(cb) {
 		
 			
 			data && data.forEach(function(account) {
+				var u;
 				newRoom.identities.push(account.id);
+				if(/^irc/.test(account.id)) {
+					u = url.parse(account.id);
+					newRoom.params.irc = {
+						server: u.host,
+						channel: u.hash,
+						enabled: true,
+						pending: false
+					};
+				}
 			});
-			if(newRoom.type == "user") types.users.put(newRoom, function(){
-				if(err) console.log(err);
-				db.resume();
-			});
+
+			if(newRoom.type == "user"){
+				newRoom.params.email = {
+					frequency : "daily",
+					notifications : true
+				};
+				types.users.put(newRoom, function(){
+					if(err) console.log(err);
+
+					db.resume();
+				});	
+			} 
 			if(newRoom.type == "room") {
 				if(newRoom.params.twitter && newRoom.params.twitter.profile && newRoom.params.twitter.profile.username){
 					newRoom.identities.push("twitter:"+newRoom.params.twitter.profile.username);
