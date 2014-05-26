@@ -78,7 +78,6 @@ $(function() {
 		var query  = { before: before, after: after};
 		query.to =  currentState.room || "";
 		query.time = index;
-
 		libsb.getThreads(query, function(err, t) {
 			var threads = t.results;
 
@@ -95,9 +94,8 @@ $(function() {
 			}else if(before === 0) {
 				if(threads.length < after) {
 					threads.push(false);
-				}else{
-					threads.splice(0,1);
 				}
+				threads.splice(0,1);
 			}
 			renderThreads(threads, callback);
 		});
@@ -133,7 +131,6 @@ $(function() {
 					});
 				}
 			}else{
-
 				if(libsb.isInited) {
 					loadThread(index, before, after, callback);
 				}else {

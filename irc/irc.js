@@ -25,50 +25,84 @@ module.exports = function (coreObj) {
 			log("room irc after adding additional properties:", room.room.params.irc);
 			if (!room.old && rr.params.irc) {//TODO chack if new irc config.
 				rr.params.irc.channel = rr.params.irc.channel.toLowerCase();
-				addNewBot(rr, callback);
+				return addNewBot(rr, callback);
 			} else if (room.old) {//room config changed
 				var oldIrc = room.old.params.irc;
 				var newIrc = rr.params.irc;
 				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel ||
 					oldIrc.enable !== newIrc.enable || oldIrc.pending !== newIrc.pending) {
 					disconnectBot(rr.id);
-					addNewBot(rr, callback);
+					return addNewBot(rr, callback);
 				} else return callback();
 			} else return callback(); 
 		} else return callback();
 	}, "gateway");
-	core.on('text', function(text, callback) {
-		log("On text:", client.connected());
-		var type = text.type;
-		log("text called irc:", text);
-		log("online users:", onlineUsers);
-		if (text.room.params && text.room.params.irc && text.session.indexOf('irc') !== 0 && client.connected()) {//session of incoming users from irc 
-			switch (type) {
-				case 'text':
-					if(!(firstMessage[text.to] && firstMessage[text.to][text.from])) {
-						if (!firstMessage[text.to]) {
-							firstMessage[text.to] = {};
-						}
-						firstMessage[text.to][text.from] = true;
-						if (onlineUsers[text.to] && onlineUsers[text.to][text.from]) {
-							delete onlineUsers[text.to][text.from];
-						} else connectUser(text.to, text.from);
-					}
-					say(text.to, text.from, text.text);
-					break;
-				case 'back':
-					break;
-				case 'away':
-					if(firstMessage[text.to] && firstMessage[text.to][text.from]) {
-						disconnectUser(text.to, text.from);
-						delete firstMessage[text.to][text.from];
-					}
-					break;
-			}	
+	
+	
+	core.on("init", function(init, callback) {
+		log("init irc:", init);
+		var oldUser = {id: init.from};
+		var newUser = init.user;
+		
+		if (oldUser && newUser && oldUser.id != newUser.id) {
+			var uid = guid();
+			clientEmitter.emit("write", {
+				type: "isUserConnected",
+				sbNick: oldUser.id,
+				uid: uid
+			});
+			callbacks[uid] = function(isConn) {
+				if (isConn) {
+					uid = guid();
+					clientEmitter.emit("write", {
+						type: "isUserConnected",
+						sbNick: newUser.id,
+						uid: uid
+					});
+					clientEmitter.emit('write', {
+						type: "disconnectUser",
+						sbNick: oldUser.id
+					});	
+				}
+			};
+			
 		}
 		callback();
 	}, "gateway");
+	
+	core.on('text', function(text, callback) {
+		log("On text:", client.connected());
+		log("text called irc:", text);
+		log("online users:", onlineUsers);
+		if (text.room.params && text.room.params.irc && text.session.indexOf('irc') !== 0 && client.connected()) {//session of incoming users from irc 
+			if(!(firstMessage[text.to] && firstMessage[text.to][text.from])) {
+				if (!firstMessage[text.to]) {
+					firstMessage[text.to] = {};
+				}
+				firstMessage[text.to][text.from] = true;
+				if (onlineUsers[text.to] && onlineUsers[text.to][text.from]) {
+					delete onlineUsers[text.to][text.from];
+				} else connectUser(text.to, text.from);
+			}
+			say(text.to, text.from, text.text);
+		}
+		callback();
+	}, "gateway");
+	
+	core.on('away', function(action, callback) {
+		log("On away:", client.connected());
+		if (action.room.params && action.room.params.irc && action.session.indexOf('irc') !== 0 && client.connected()) {//session of incoming users from irc 
+			if(firstMessage[action.to] && firstMessage[action.to][action.from]) {
+				disconnectUser(action.to, action.from);
+				delete firstMessage[action.to][action.from];
+			}
+		}
+		callback();
+	}, "gateway");	
 };
+
+
+
 
 function changeRoomParams(room) {
 	room.room.params.irc.enable = true;
@@ -182,15 +216,15 @@ function init() {
 	clientEmitter.on("back", function(data) {
 		console.log("back", data);
 		sendInitAndBack(data.from, data.session, data.room);
-		
 	});
 	
 	clientEmitter.on("away", function(data) {
-		core.emit('text', {
+		core.emit('away', {
 			id: guid(),
 			type: 'away',
 			from: data.from,
-			to: data.to
+			to: data.to,
+			session: data.session
 		});
 	});
 	
@@ -243,10 +277,11 @@ function sendInitAndBack(suggestedNick, session ,room) {
 				roomId: room.id
 			});
 			//gen back messages.
-			core.emit('text', {
+			core.emit('back', {
 					id: guid(),
 					type: 'back',
 					to: room.id,
+					session: session,
 					from: init.user.id//nick returned from init.
 				}, function(text) {
 			});

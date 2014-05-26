@@ -4,8 +4,8 @@
 
 // var roomList = {};
 $(function() {
-	var $roomlist = $(".room-list"),
-		rooms = ["scrollback", "nodejs", "scrollbackteam" ];
+	var $roomlist = $(".room-list");
+		window.rooms = [ ];
 
 	/* add this back and do this after connecting.
 	libsb.getRooms({}, function(err, r) {
@@ -23,6 +23,7 @@ $(function() {
 		startIndex: 0,
 		getItems: function (index, before, after, recycle, callback) {
 			var res = [], i;
+
 			for(i=index+1-before; i<=index+after; i++) {
 				if(i<0) { res.push(false); i=0; }
 				// if(i==index) continue;
@@ -65,22 +66,23 @@ $(function() {
 				libsb.on("inited", back);
 			}
 		}
+		$roomlist.reset();
 		next();
 	});
 	libsb.on("init-dn", function(init, next) {
 		if(init.occupantOf){
 			init.occupantOf.forEach(function(r) {
-				if(rooms.indexOf(r)<0) {
-					rooms.push(r);
-					libsb.enter(r);
+				if(rooms.indexOf(r.id)<0) {
+					rooms.push(r.id);
+					libsb.enter(r.id);
 				}
 			});
 		}
 		if(init.memberOf){
 			init.memberOf.forEach(function(r) {
 				if(rooms.indexOf(r)<0) {
-					rooms.push(r);
-					libsb.enter(r);
+					rooms.push(r.id);
+					libsb.enter(r.id);
 				}
 			});
 		}

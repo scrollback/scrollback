@@ -9,7 +9,6 @@ $(function() {
 	threadEl.render = function (el, thread, index) {
 		var title = thread.title || "";
 		el = el || $template.clone(false);
-		console.log("="+title.replace(/-/g, " ").trim());
 		el.find('.thread-title').text(title.replace(/-/g, " ").trim());
 		el.find('.thread-snippet').html("");
 		el.find('.timestamp').html(format.friendlyTime(thread.startTime, new Date().getTime()));
@@ -17,8 +16,6 @@ $(function() {
 		el.data('index', index);
 
 		el.addClass('conv-' + thread.id.substr(-1));
-		// TODO: add thread class (for color);
-
 		return el;
 	};
 });
