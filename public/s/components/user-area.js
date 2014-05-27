@@ -50,7 +50,7 @@ $(function(){
 
 		next();
 	});
-        
+
         function setOwnerClass(){
             if(libsb.isInited){
                libsb.getUsers({memberOf: currentState.room}, function(err, data) {
@@ -75,12 +75,12 @@ $(function(){
                 });
             }
         }
-        
+
         libsb.on('init-dn', function(init, next){
             setOwnerClass();
             next();
         });
-        
+
         libsb.on('back-dn', function(init, next){
             setOwnerClass();
             next();

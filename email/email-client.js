@@ -5,8 +5,8 @@
 var formField = require('../lib/formField.js');
 var div = $('<div>').addClass('list-view list-view-email-settings');
 // ["email-freq", "weekly"],
-div.append(formField("Email digest frequency", 'radio', [["email-freq", "daily", "checked"], ["email-freq", "never"]]));
-div.append(formField("Notify me via email when I am mentioned in chat ", "toggle", 'mention'));
+div.append(formField("Email digest frequency", 'radio', [["email-freq", "Daily", "checked"], ["email-freq", "Never"]]));
+div.append(formField("Mention notifications via email", "toggle", 'mention'));
 
 libsb.on('pref-show', function(conf, next){
 	conf.email = {

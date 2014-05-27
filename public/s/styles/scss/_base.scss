@@ -96,7 +96,7 @@ input[type="entry"], input[type="text"], input[type="search"], input[type="email
     &:disabled { @extend .entry.disabled; }
 }
 
-input[type="checkbox"] {
+input[type="checkbox"], input[type="radio"] {
     width: 1.5em;
     height: 1.5em;
 }
