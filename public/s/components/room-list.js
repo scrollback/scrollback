@@ -35,7 +35,6 @@ $(function() {
 		startIndex: 0,
 		getItems: function (index, before, after, recycle, callback) {
 			var res = [], i;
-			console.log("++++++++++++=roomslist", rooms,index, before, after);
 			if(!index) index = 0;
 			if(before) {
 				if(index === 0){
