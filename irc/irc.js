@@ -23,10 +23,10 @@ module.exports = function (coreObj) {
 			room = changeRoomParams(room);
 			var rr = room.room;
 			log("room irc after adding additional properties:", room.room.params.irc);
-			if (!room.old && rr.params.irc) {//TODO chack if new irc config.
+			if ((!room.old || !room.old.id) && rr.params.irc && rr.params.irc.server && rr.params.irc.channel) {//TODO chack if new irc config.
 				rr.params.irc.channel = rr.params.irc.channel.toLowerCase();
 				return addNewBot(rr, callback);
-			} else if (room.old) {//room config changed
+			} else if (room.old && room.old.id) {//room config changed
 				var oldIrc = room.old.params.irc;
 				var newIrc = rr.params.irc;
 				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel ||
@@ -110,7 +110,7 @@ function changeRoomParams(room) {
 		room.room.params.irc.pending = true;
 	}
 	var or = room.old;
-	if (or && (or.params.irc.server !== room.room.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel)) {
+	if (or && or.id && or.params.irc && (or.params.irc.server !== room.room.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel)) {
 		room.room.params.irc.pending = true;
 	}
 	return room;

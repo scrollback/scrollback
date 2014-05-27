@@ -120,7 +120,6 @@ module.exports = function(core) {
 		return sessionValidation(action, callback);
 	}, "validation");
 	core.on("getRooms", function(action, callback) {
-		console.log("getRooms", action);
 		if (!(action.ref || action.hasOccupant || action.hasMember || action.identity)) {
 			return callback(new Error("INVALID_QUERY"));
 		}
