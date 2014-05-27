@@ -360,8 +360,8 @@ function addNewBot(r, callback) {
 	});
 	if (callback) {
 		callbacks[uid] = function(message) {
-			if(message) room.params.irc.message = message;
-			callback();
+			if(message) callback(new Error(message));
+			return callback();
 		};
 	}
 }

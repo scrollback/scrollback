@@ -5,7 +5,7 @@
 var peopleArea = {};
 
 $(function() {
-	var $people = $(".pane-people"),
+	var $people = $(".pane-people"), shown = false, room = "",
 		people = [];
 
 	function getPeople(callback) {
@@ -68,7 +68,7 @@ $(function() {
 		
 		if(state.source == 'people-area') return next();
 
-		if(!state.old ||(state.tab == "people" && state.old.tab!="people") || (state.old.room != state.room)) {
+		if(state.tab == "people" && state.room != room) {
 			room = state.room;
 			function loadMembers(p,n) {
 				getPeople(function(sortedList) {
@@ -84,7 +84,9 @@ $(function() {
 				libsb.on("inited", loadMembers, 1000);
 			}
 			$people.reset();
+			room = state.room;
 		}
+
 		next();
 	});
 

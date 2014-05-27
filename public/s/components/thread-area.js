@@ -172,7 +172,7 @@ $(function() {
 		if(!state.old) {
 			room = state.room;
 			reset = true;
-		}else if(state.room != state.old.room) {
+		}else if(state.room != room) {
 			room = state.room;
 			reset = true;
 		}else if(state.query) {

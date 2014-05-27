@@ -106,7 +106,7 @@ function connectBot(room, options, cb) {
 		servChanProp[server][channel].users = [];
 	}
 	if (servChanProp[server][channel].rooms.length !== 0) {
-		cb("already connected to some other room");
+		cb("ERR_CONNECTED_OTHER_ROOM");
 		return;
 	}
 	rooms[room.id] = room;
@@ -546,6 +546,7 @@ function sendQueueData() {
 				break;
 		}
 	}
+	
 }
 
 function onRaw(client) {
