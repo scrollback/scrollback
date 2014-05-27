@@ -3,12 +3,12 @@
 
 $(function() {
 	$(".follow-button").on("click", function() {
-		if ($("body").hasClass("following")) {
+		if ($("body").hasClass("role-follower")) {
 			libsb.part(window.currentState.room);
-			$("body").removeClass("following");
+			$("body").removeClass("role-follower");
 		} else {
 			libsb.join(window.currentState.room);
-			$("body").addClass("following");
+			$("body").addClass("role-follower");
 		}
 
 		lace.animate.transition("grow", $(this));

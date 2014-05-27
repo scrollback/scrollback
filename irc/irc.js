@@ -15,6 +15,14 @@ var userExp = 10*60*1000;
 var initCount = 0;
 module.exports = function (coreObj) {
 	core = coreObj;
+	core.on("http/init", function(payload, callback) {
+		payload.irc = {
+			get: function(req,res,next) {	
+				getRequest(req,res,next);
+			}
+		};
+		callback(null, payload);
+	}, "setters");
 	init();
 	core.on ('room', function(room, callback) {
 		log("room irc:", room, client.connected(), room.session.indexOf('internal') !== 0);
@@ -23,15 +31,16 @@ module.exports = function (coreObj) {
 			room = changeRoomParams(room);
 			var rr = room.room;
 			log("room irc after adding additional properties:", room.room.params.irc);
-			if (!room.old && rr.params.irc) {//TODO chack if new irc config.
+			if ((!room.old || !room.old.id) && rr.params.irc && rr.params.irc.server && rr.params.irc.channel) {//TODO chack if new irc config.
 				rr.params.irc.channel = rr.params.irc.channel.toLowerCase();
 				return addNewBot(rr, callback);
-			} else if (room.old) {//room config changed
+			} else if (room.old && room.old.id) {//room config changed
 				var oldIrc = room.old.params.irc;
 				var newIrc = rr.params.irc;
 				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel ||
 					oldIrc.enable !== newIrc.enable || oldIrc.pending !== newIrc.pending) {
-					disconnectBot(rr.id);
+					if(oldIrc.server && oldIrc.channel &&
+						oldIrc.server.length > 0 && oldIrc.channel.length > 0) disconnectBot(rr.id);
 					return addNewBot(rr, callback);
 				} else return callback();
 			} else return callback(); 
@@ -101,6 +110,10 @@ module.exports = function (coreObj) {
 	}, "gateway");	
 };
 
+function ircParamsValidation(room) {
+	return true;
+}
+
 
 
 
@@ -110,7 +123,7 @@ function changeRoomParams(room) {
 		room.room.params.irc.pending = true;
 	}
 	var or = room.old;
-	if (or && or.params.irc && (or.params.irc.server !== room.room.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel)) {
+	if (or && or.id && or.params.irc && (or.params.irc.server !== room.room.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel)) {
 		room.room.params.irc.pending = true;
 	}
 	return room;
@@ -369,4 +382,22 @@ function getBotNick(roomId, callback) {
 	callbacks[uid] = function(data) {
 		callback(data.nick);
 	};
+}
+
+
+function getRequest(req, res, next) {
+	var path = req.path.substring(7);// "/r/irc/"
+	log("path " , path , req.url );
+	var ps = path.split('/');
+	if (ps[0]) {//room name
+		getBotNick(ps[0], function(nick) {
+			log("nick for room :", ps[0], nick);
+			if (nick === "NO_ROOM") {//error 
+				next();//say invalid req(404)
+			} else {
+				res.write(nick);
+				res.end();
+			}
+		});
+	}
 }

@@ -132,6 +132,7 @@ function connectBot(room, options, cb) {
 function partBot(roomId) {
 	log("part bot for room ", roomId);
 	var room  = rooms[roomId];
+	if (!room) return;
 	var client = clients[botNick][room.params.irc.server];
 	var channel = room.params.irc.channel;
 	var server = room.params.irc.server;
@@ -508,7 +509,8 @@ function getCurrentState() {
  */
 function getBotNick(roomId) {
 	var room = rooms[roomId];
-	var nick = clients[botNick][room.params.irc.server].nick;
+	var nick = "NO_ROOM";
+	if(room) nick = clients[botNick][room.params.irc.server].nick;
 	return nick;
 }
 

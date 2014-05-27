@@ -146,7 +146,7 @@
 				<div role="tabpanel" class="pane hide-scroll pane-info">
 					<h2 class="info-title"></h2>
 					<p class="info-description"></p>
-					<a class="button configure-button">Configure room</a>
+					<a data-role="owner" class="button configure-button">Configure room</a>
 				</div>
 				<div role="tabpanel" class="pane hide-scroll pane-people">
 					<a class="person">
@@ -174,10 +174,6 @@
 		</section>
 		<section role="main" class="main-area">
 			<div data-mode="normal search conf pref" class="title-bar">
-				<div data-mode="conf pref" class="action-buttons">
-					<a class="button conf-save">Done</a>
-					<a class="button secondary conf-cancel">Cancel</a>
-				</div>
 				<div class="left-area">
 					<a class="meta-button">
 						<span class="front">
@@ -186,16 +182,14 @@
 							</svg>
 						</span>
 						<span class="back">
-							<svg version="1.1" class="meta-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+							<svg version="1.1" class="meta-icon sb-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
 								<defs>
 									<path d="m 14.000043,1048.3622 -10.000046,-10 5.664746,0 4.335208,4.3664 4.335305,-4.3664 5.664766,0 z" id="0"/>
-									<path fill="#33ccaa" d="m 14.000045,1020.3622 -10.000045,10 5.664746,0 4.335208,-4.3664 4.335305,4.3664 5.664766,0 z" id="1"/>
+									<path class="sb-top" d="m 14.000045,1020.3622 -10.000045,10 5.664746,0 4.335208,-4.3664 4.335305,4.3664 5.664766,0 z" id="1"/>
 								</defs>
-								<g transform="matrix(0.4999993,0,0,0.4999993,4,1.96e-5)">
-									<use transform="matrix(2,0,0,2,-7.999994,-2040.7244)" height="372.05" width="524.41" xlink:href="#1"/>
-									<path d="m 0,23.9996 0,8 40,0 0,-8 z" fill="#ffffff"/>
-									<use transform="matrix(2,0,0,2,-7.999994,-2040.7244)" height="372.05" width="524.41" xlink:href="#0" fill="#ffffff"/>
-								</g>
+								<use xlink:href="#1" width="524.41" height="372.05" transform="matrix(0.9999986,0,0,0.9999986,8.5999958e-6,-1020.3608)"/>
+								<path d="m 4,11.999803 0,3.999994 19.999972,0 0,-3.999994 z" class="sb-bottom"/>
+								<use xlink:href="#0" width="524.41" height="372.05" transform="matrix(0.9999986,0,0,0.9999986,8.5999958e-6,-1020.3608)" class="sb-bottom"/>
 							</svg>
 						</span>
 					</a>
@@ -205,6 +199,10 @@
 							<path d="M 14.062341,21.199584 C 4.9530909,26.218092 6.721947,25.869211 8.155064,17.012079 0.55043921,9.9299118 1.4300202,11.498473 10.32621,10.119655 c 4.409333,-9.39552471 3.184087,-8.077228 7.249118,-0.07225 10.329742,1.275413 8.69292,0.521605 2.309055,6.847772 1.974798,10.183776 2.188435,8.399596 -5.822042,4.304403 z"/>
 						</svg>
 					</a>
+					<div data-mode="conf pref" class="action-buttons">
+						<a class="button conf-save">Done</a>
+						<a class="button secondary conf-cancel">Cancel</a>
+					</div>
 				</div>
 				<div data-mode="normal search" class="right-area">
 					<a class="search-button" role="button">
@@ -259,19 +257,21 @@
 			</svg>
 		</section>
 		<section class="search-bar">
-			<input class="search-entry" type="search" placeholder="Type to search...">
+			<form>
+				<input class="search-entry" type="search" placeholder="Type to search...">
+			</form>
 		</section>
 		<section data-mode="noroom" class="noroom-area">
 			<div class="noroom-container">
-			<h1>This room does not exist yet, you may claim it :)</h1>
+			<h1>This room does not exist yet ;)</h1>
 				<p>
-					<a class="button create-room-button"  id="create-room-button"> Claim! </a>
-					<a class="button login-and-create-room-button"  id="login-and-create-room-button"> Login &amp; Claim! </a>
+					<a data-role="user" class="button create-room-button" id="create-room-button">Claim room</a>
+					<a data-role="guest" class="button login-and-create-room-button"  id="login-and-create-room-button">Login &amp; claim room</a>
 				</p>
 			</div>
 		</section>
 		<section class="overlay">
-			<h1>Getting ready...</h1>
+			<h1>Warming up...</h1>
 		</section>
 		<section class="progress loading">
 		</section>
@@ -323,6 +323,7 @@
 		<script>window.jQuery || document.write('<script src="/s/lib/jquery.min.js"><\/script>');</script>
 
 		<!--[if IE]>
+		<script src="/s/lib/selectivizr-min.js"
 		<script src="/s/lib/transformie.min.js"></script>
 		<script src="/s/lib/flexie.min.js"></script>
 		<![endif]-->

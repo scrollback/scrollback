@@ -26,17 +26,20 @@ $width-metaxxxx: 30%;
 
 $bar-height: 3.5em;
 
-$settingsitems: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
-$modeitems: normal, search, conf, pref, home, noroom;
+$settings: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
+$modes: normal, search, conf, pref, home, noroom;
+$roles: guest, user, follower, owner;
 
 /* themes */
-@mixin theme($name, $base, $color, $meta, $text, $icon, $focus, $border) {
+@mixin theme($name, $base, $color, $meta, $border, $text, $icon, $focus) {
     .theme-#{$name} {
         .room-item.current:after { border-right: .6em solid $meta; }
 
         .meta-area {
             background-color: $meta;
             color: $text;
+
+            a, .thread-item { color: $text; }
 
             .button {
                 &.secondary {
@@ -46,40 +49,55 @@ $modeitems: normal, search, conf, pref, home, noroom;
 
                     &:hover, &:focus {
                         background-color: lighten($meta, 3%);
-                        border-color: lighten($meta, 30%);
+                        border-color: lighten($meta, 10%);
                         color: darken($text, 5%);
                     }
 
                     &:active {
                         background-color: lighten($meta, 7%);
-                        border-color: lighten($meta, 20%);
+                        border-color: lighten($meta, 5%);
                         color: darken($text, 15%);
                     }
                 }
             }
         }
 
-        .meta-area a { color: $text; }
+        .meta-tabs {
+            border-bottom-color: $border;
 
-        .meta-tabs .tab {
-            fill: fade-out($text, .3);
-            background-color: darken($meta, 10%);
+            .tab {
+                fill: fade-out($text, .3);
+                background-color: darken($meta, 10%);
+                border-left-color: $border;
 
-            &:hover, &:focus, &:active {
-                fill: $text;
-                background-color: darken($meta, 5%);
+                &:hover, &:focus, &:active {
+                    fill: $text;
+                    background-color: darken($meta, 5%);
+                }
+
+                &.current {
+                    fill: $text;
+                    background-color: $meta;
+                }
             }
 
-            &.current {
-                fill: $text;
-                background-color: $meta;
+            .meta-header {
+                @media #{$screenxxxx} { background-image: url(../../img/client/icons/settings-dark.svg); }
             }
         }
 
-        .meta-header {
-            border-bottom-color: $border;
+        .pane-people {
+            .infinite-above, .infinite-below {
+                background-image:  linear-gradient(to right, $meta, $meta 15%, transparent 15%, transparent 85%, $meta 85%, $meta),
+                    linear-gradient(to bottom, transparent, transparent 25%, lighten($meta, 5%) 25%, lighten($meta, 5%) 65%, transparent 65%, transparent 75%, lighten($meta, 5%) 75%, lighten($meta, 5%) 85%, transparent 85%, transparent);
+            }
+        }
 
-            @media #{$screenxxxx} { background-image: url(../../img/client/icons/settings-dark.svg); }
+        .pane-threads {
+            .infinite-above, .infinite-below {
+                background-image:  linear-gradient(to bottom, transparent, transparent 35%, lighten($meta, 5%) 35%, lighten($meta, 5%) 65%, transparent 65%, transparent),
+                    linear-gradient(to bottom, lighten($meta, 5%), lighten($meta, 5%));
+            }
         }
 
         .list-item {
@@ -123,15 +141,21 @@ $modeitems: normal, search, conf, pref, home, noroom;
             }
         }
 
-        &.following .follow-button, .rooms-button, .meta-button, .search-button, .fullview-button, .minimize-button {
+        &.role-follower .follow-button, .rooms-button, .meta-button, .search-button, .fullview-button, .minimize-button {
             fill: $icon;
 
-            &, &:focus, &:hover, &:active { fill: $focus; }
+            &:focus, &:hover, &:active { fill: $focus; }
+        }
+
+        .sb-icon {
+            .sb-top { fill: $accent-color; }
+
+            .sb-bottom { fill: $light-color; }
         }
     }
 }
 
-@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $icon: darken($light-color, 30%), $focus: $light-color, $border: lighten($dark-color, 10%));
+@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $border: lighten($dark-color, 10%), $icon: darken($light-color, 30%), $focus: $light-color);
 
 /* widget styles */
 %scroll-elem {
@@ -147,21 +171,28 @@ $modeitems: normal, search, conf, pref, home, noroom;
     height: 100%;
 }
 
+@mixin title-icon($elem) {
+    .#{$elem} {
+        display: block;
+        margin: auto;
+        height: 2em;
+        width: 2em;
+    }
+}
+
 body {
     word-wrap: break-word;
     height: 100%;
 
-    @each $mode in $modeitems {
-        &.#{$mode}-mode {
-            $selector: ();
+    @each $mode in $modes {
+        &.mode-#{$mode} {
+            [data-mode]:not([data-mode~=#{$mode}]) { display: none; }
+        }
+    }
 
-            @each $item in $modeitems {
-                @if $item != $mode {
-                    $selector: $selector, unquote("[data-mode~=#{$item}]:not([data-mode~=#{$mode}])");
-                }
-            }
-
-            #{$selector} { display: none; }
+    @each $role in $roles {
+        &:not(.role-#{$role}) {
+            [data-role~=#{$role}] { display: none; }
         }
     }
 }
@@ -297,21 +328,24 @@ body {
 .meta-tabs {
     @include flexbox;
     @include flex-direction(row);
+    @include flex-wrap(nowrap);
     @include align-items(center);
+    @include align-content(center);
 
     list-style: none;
     height: $bar-height;
-    border-bottom: 1px solid rgba(0,0,0,.07);
+    border-bottom: 1px solid darken($light-color, 15%);
 
     li {
         @include flexbox;
         @include flex-direction(row);
+        @include flex-wrap(nowrap);
         @include justify-content(space-around);
         @include align-items(center);
+        @include align-content(center);
         @include transform(rotate(0deg)); /* hack to fix invisible items in android browser */
         @extend %ease;
 
-        width: 100%;
         height: 100%;
         cursor: pointer;
 
@@ -320,7 +354,7 @@ body {
             width: 3em;
             fill: lighten($dark-color, 30%);
 
-            .rooms-view & { @include transform(rotate(180deg)); }
+            .view-rooms & { @include transform(rotate(180deg)); }
 
             .embed & { display: none; }
 
@@ -329,9 +363,11 @@ body {
     }
 
     .tab {
+        @include flex-grow(1);
+
         text-align: center;
         background-color: rgba(0,0,0,.05);
-        border-left: 1px solid rgba(0,0,0,.07);
+        border-left: 1px solid darken($light-color, 15%);
         fill: lighten($dark-color, 50%);
 
         &:first-child { border-left: none; }
@@ -352,7 +388,6 @@ body {
 
         padding-left: 1.5em;
         text-transform: uppercase;
-        border-bottom: 1px solid darken($light-color, 10%);
 
         @media #{$screenxxxx} {
             padding-left: 4.25em;
@@ -383,12 +418,6 @@ body {
 
     padding: 1.5em;
     padding-bottom: $bar-height;
-}
-
-.configure-button {
-    display: none;
-
-    .role-owner & { display: inline-block; }
 }
 
 .pane-people {
@@ -432,7 +461,7 @@ body {
     &.offline {
         @include opacity(.5);
 
-        .picture { @extend %grayscale; }
+        .person-avatar { @extend %grayscale; }
     }
 
     .person-avatar {
@@ -504,6 +533,7 @@ body {
     @extend %scroll-elem;
 
     height: 100%;
+    padding-bottom: $bar-height;
 }
 
 .list-item {
@@ -527,9 +557,9 @@ body {
         background-color: rgba(0,0,0,.1);
 	}
 
-	@each $item in $settingsitems {
-		&.list-item-#{$item}-settings {
-			background-image: url(../../img/client/icons/#{$item}-settings.svg);
+	@each $setting in $settings {
+		&.list-item-#{$setting}-settings {
+			background-image: url(../../img/client/icons/#{$setting}-settings.svg);
 		}
 	}
 }
@@ -553,15 +583,6 @@ body {
 	@include chat-elem;
 }
 
-@mixin title-icon($elem) {
-    .#{$elem} {
-        display: block;
-        margin: auto;
-        height: 2em;
-        width: 2em;
-    }
-}
-
 .meta-button, .rooms-button {
     @include transform(rotate(0deg));
     @include transition(.5s);
@@ -581,7 +602,7 @@ body {
 
     &, &:focus, &:hover, &:active { fill: lighten($dark-color, 30%); }
 
-    .meta-view &, .rooms-view & { @include transform(rotate(180deg)); }
+    .view-meta &, .view-rooms & { @include transform(rotate(180deg)); }
 
     @media #{$screenxxx} { display: none; }
 
@@ -600,7 +621,7 @@ body {
 
     .back { @include opacity(0); }
 
-    .embed.meta-view & {
+    .embed.view-meta & {
         .front { @include opacity(1); }
 
         .back { @include opacity(0); }
@@ -623,13 +644,20 @@ body {
     }
 }
 
+.sb-icon {
+    .sb-top { fill: $accent-color; }
+
+    .sb-bottom { fill: $dark-color; }
+}
+
 .title-bar {
     @include flexbox;
     @include flex-direction(row);
+    @include flex-wrap(nowrap);
     @include justify-content(space-between);
     @include align-items(center);
+    @include align-content(center);
 
-    flex-wrap: nowrap;
 	position: relative;
 	height: $bar-height;
 	width: 100%;
@@ -643,17 +671,19 @@ body {
 .left-area {
     @include flexbox;
     @include flex-direction(row);
+    @include flex-wrap(nowrap);
     @include justify-content(flex-start);
     @include align-items(center);
-
-    flex-wrap: nowrap;
+    @include align-content(center);
 }
 
 .right-area {
     @include flexbox;
     @include flex-direction(row);
+    @include flex-wrap(nowrap);
     @include justify-content(flex-end);
     @include align-items(center);
+    @include align-content(center);
 }
 
 .room-title {
@@ -676,13 +706,13 @@ body {
     stroke-width: 2px;
     stroke: lighten($dark-color, 30%);
 
-    .following & { fill: lighten($dark-color, 30%); }
+    .role-follower & { fill: lighten($dark-color, 30%); }
 
     &:focus, &:hover, &:active {
         fill: none;
         stroke: lighten($dark-color, 10%);
 
-        .following & { fill: lighten($dark-color, 10%); }
+        .role-follower & { fill: lighten($dark-color, 10%); }
     }
 }
 
@@ -1046,6 +1076,7 @@ body {
 	right: 0;
 	bottom: 0;
 	left: 0;
+    background-color: $light-color;
 
 	.list-view {
 		display: none;
@@ -1135,13 +1166,16 @@ body {
 
 		textarea { resize: vertical; }
 
-		input[type=checkbox] {
+        input[type=checkbox], input[type=radio] {
 			position: relative;
 			top: .3em;
 			margin: .25em 0 1.25em 0;
 		}
 
-		label { padding: .5em; }
+		input + label {
+            display: inline-block;
+            padding: .5em;
+        }
 	}
 
 	.settings-label {
@@ -1159,19 +1193,21 @@ body {
 		text-align: left;
 		vertical-align: middle;
 	}
+
+    .check-item, .radio-item { display: block; }
 }
 
 .room-area, .meta-area, .main-area, .chat-input {
     @include transition(.3s, ease-out); /* animate css transforms */
 
     /* fix flicker in some browsers */
-    .meta-view &, .rooms-view & {
+    .view-meta &, .view-rooms & {
         @include prefix(backface-visibility, hidden);
         @include prefix(perspective, 1000);
     }
 
     /* use 3d transformations for GPU accelerated animations */
-    .meta-view & {
+    .view-meta & {
 		@include transform(translate3d($width-meta, 0, 0));
 
 		@media #{$screenx} { @include transform(translate3d($width-metax, 0, 0)); }
@@ -1181,7 +1217,7 @@ body {
 		@media #{$screenxxx} { @include transform(translate3d(0, 0, 0)); }
     }
 
-    .rooms-view & {
+    .view-rooms & {
 		@include transform(translate3d( ( $width-room + $width-meta ), 0, 0));
 
 		@media #{$screenx} { @include transform(translate3d( ( $width-roomxx + $width-metax ), 0, 0)); }
@@ -1233,8 +1269,10 @@ body {
 .noroom-area {
     @include flexbox;
     @include flex-direction(column);
+    @include flex-wrap(nowrap);
     @include justify-content(space-around);
     @include align-items(center);
+    @include align-content(center);
     @extend %column;
 
     left: 0;
@@ -1251,18 +1289,7 @@ body {
     }
 }
 
-.noroom-container {
-    display: block;
-}
-
-.login-and-create-room-button {
-    display: none;
-    .role-guest & { display: inline-block;}
-}
-
-.create-room-button {
-    .role-guest & { display: none;}
-}
+.noroom-container { display: block; }
 
 .infinite-above, .infinite-below {
     height: 100%;
