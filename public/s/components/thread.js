@@ -27,5 +27,6 @@ libsb.on('navigate', function(state, next) {
 		$(".thread-item.current").removeClass("current");
 		$("#thread-" + state.thread).addClass("current");
 	}
+
 	next();
 });
