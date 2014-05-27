@@ -35,7 +35,6 @@ $(function() {
 		startIndex: 0,
 		getItems: function (index, before, after, recycle, callback) {
 			var res = [], i;
-			console.log("++++++++++++=roomslist", rooms,index, before, after);
 			if(!index) index = 0;
 			if(before) {
 				if(index === 0){
@@ -92,11 +91,11 @@ $(function() {
 		next();
 	});
 	libsb.on("init-dn", function(init, next) {
-		if(init.occupantOf){
+	/*	if(init.occupantOf){
 			init.occupantOf.forEach(function(r) {
 				enter(r.id);
 			});
-		}
+		}*/
 		if(init.memberOf){
 			init.memberOf.forEach(function(r) {
 				enter(r.id);
