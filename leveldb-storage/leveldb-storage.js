@@ -14,7 +14,16 @@ module.exports = function(core) {
 
 	core.on('room',roomuser.put, "storage");
 	core.on('user',roomuser.put, "storage");
+	core.on('init', function(init, callback) {
+		if(/^guest-/.test(init.user.id)) return callback();
 
+		core.emit("getRooms", {hasMember: init.user.id, session: init.session}, function(err, data) {
+			if(err) return callback();
+			if(!data || !data.results ) init.memberOf = [];
+			else init.memberOf = data.results;
+			return callback();
+		});
+	}, "modifier");
 
 	core.on('away', awayback.put, "storage");
 	core.on('back', awayback.put, "storage");

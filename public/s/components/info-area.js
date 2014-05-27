@@ -16,40 +16,8 @@ $(function() {
 
 });
 
-function configButtonRender(user){
-
-	// checks if the roomConfig button must be hidden for user
-	libsb.emit("getRooms", {hasMember: user}, function(err, data){
-		var i,l;
-		$('.configure-button').hide();
-		if(!err && data && data.results) {
-			for(i=0, l=data.results.length;i<l;i++) {
-				if(data.results[i].id == currentState.room && data.results[i].role == "owner") {
-					$('.configure-button').show();
-					return;
-				}
-			}
-		}
-	});
-}
-
 libsb.on('room-dn', function(action, next){
 	infoArea.render(action.room);
-	next();
-});
-
-libsb.on('back-dn', function(back, next){
-	configButtonRender(back.from);
-	next();
-});
-
-libsb.on('init-dn', function(init, next){
-	configButtonRender(init.user.id)
-	next();
-})
-
-libsb.on('logout', function(logout, next){
-	$('.configure-button').hide();
 	next();
 });
 
@@ -57,7 +25,7 @@ libsb.on('navigate', function(state, next) {
 	if(state.tab == "info") {
 		$(".pane-info").addClass("current");
 	}else{
-		$(".pane-info").removeClass("current");			
+		$(".pane-info").removeClass("current");
 	}
 	if(!state.old || state.room != state.old.room) {
 		if(state.tab == 'info')	 infoArea.render({id: state.room, description: "Loading room description."});

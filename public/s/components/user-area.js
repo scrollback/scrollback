@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb, lace, currentState */
 
 $(function(){
 	$(document).on("click", ".popover-body a", function() {
@@ -7,7 +7,7 @@ $(function(){
 	});
 
 	$(".user-area").on("click", function() {
-		if ($("body").hasClass("guest-user")) {
+		if ($("body").hasClass("role-guest")) {
 			lace.popover.show($(this), $("#login-menu").html());
 		} else {
 			lace.popover.show($(this), $("#user-menu").html());
@@ -51,22 +51,35 @@ $(function(){
 		next();
 	});
 
+	libsb.on('navigate', function(state, next) {
+		libsb.getUsers({memberOf: currentState.room}, function(err, data) {
+			data = data.results;
+
+			data.forEach(function(user) {
+				if (user.id === libsb.user.id && user.role === "owner") {
+					$("body").addClass("role-owner");
+				}
+			});
+		});
+
+		next();
+	});
 
 	libsb.on("init-dn", function(init, next) {
 		if(init.auth && !init.user.id) return next();
 
-		if(/^guest-/.test(init.user.id)) {
-			$("body").addClass("guest-user");
+		if (/^guest-/.test(init.user.id)) {
+			$("body").removeClass("role-user").addClass("role-guest");
 		} else {
-			$("body").removeClass("guest-user");
+			$("body").removeClass("role-guest").addClass("role-user");
 		}
 
 		$("#sb-user").text = init.user.id.replace(/^guest-/,'');
 
 		if(/^guest-/.test(init.user.id)) {
-			$("body").addClass("guest-user");
+			$("body").addClass("role-guest");
 		} else {
-			$("body").removeClass("guest-user");
+			$("body").removeClass("role-guest");
 		}
 
 		$("#sb-avatar").attr("src", init.user.picture);

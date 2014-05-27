@@ -40,9 +40,8 @@ $(function() {
 					}else if(before === 0) {
 						if(texts.length < after) {
 							texts.push(false);
-						}else{
-							texts.splice(0,1);
 						}
+						texts.splice(0,1);
 					}
 					callback(texts.map(function(text) {
 						return text && chatEl.render(null, text);

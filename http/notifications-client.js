@@ -2,7 +2,11 @@
 var formField = require("../lib/formField.js");
 var div = $('<div>').addClass('list-view list-view-notification-settings');
 div.append(formField('Sound notifications ', 'toggle', 'sound-notification'));
-div.append(formField('Desktop notifications ', 'toggle', 'desktop-notification'));
+
+if(lace.notify.support()){
+	// show desktop notifications settings, only if it is supported.
+	div.append(formField('Desktop notifications ', 'toggle', 'desktop-notification'));
+}
 
 libsb.on('pref-show', function(conf, next){
 	conf.notification = {
