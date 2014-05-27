@@ -26,6 +26,7 @@ $(function() {
 
 			//spam settings
 			$('#block-offensive').prop('checked', results.params.wordban);
+			$('#block-text').text(results.params.textban);
 
 			//seo settings
 			$('#allow-index').prop('checked', results.params.allowSEO);
@@ -58,7 +59,8 @@ $(function() {
 							server: configData.irc.server
 						},
 						allowSEO: configData.seo,
-						wordban: configData.spam.offensive
+						wordban: configData.spam.offensive,
+						textban: configData.spam.wordlist
 					}
 				};
                                 var roomObj = {type: 'room', to: currentState.room, id: generate.uid(), room: room, user: {id: libsb.user}};
