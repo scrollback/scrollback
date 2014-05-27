@@ -15,6 +15,14 @@ var userExp = 10*60*1000;
 var initCount = 0;
 module.exports = function (coreObj) {
 	core = coreObj;
+	core.on("http/init", function(payload, callback) {
+		payload.irc = {
+			get: function(req,res,next) {	
+				getRequest(req,res,next);
+			}
+		};
+		callback(null, payload);
+	}, "setters");
 	init();
 	core.on ('room', function(room, callback) {
 		log("room irc:", room, client.connected(), room.session.indexOf('internal') !== 0);
@@ -31,7 +39,8 @@ module.exports = function (coreObj) {
 				var newIrc = rr.params.irc;
 				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel ||
 					oldIrc.enable !== newIrc.enable || oldIrc.pending !== newIrc.pending) {
-					disconnectBot(rr.id);
+					if(oldIrc.server && oldIrc.channel &&
+						oldIrc.server.length > 0 && oldIrc.channel.length > 0) disconnectBot(rr.id);
 					return addNewBot(rr, callback);
 				} else return callback();
 			} else return callback(); 
@@ -100,6 +109,10 @@ module.exports = function (coreObj) {
 		callback();
 	}, "gateway");	
 };
+
+function ircParamsValidation(room) {
+	return true;
+}
 
 
 
@@ -369,4 +382,22 @@ function getBotNick(roomId, callback) {
 	callbacks[uid] = function(data) {
 		callback(data.nick);
 	};
+}
+
+
+function getRequest(req, res, next) {
+	var path = req.path.substring(7);// "/r/irc/"
+	log("path " , path , req.url );
+	var ps = path.split('/');
+	if (ps[0]) {//room name
+		getBotNick(ps[0], function(nick) {
+			log("nick for room :", ps[0], nick);
+			if (nick === "NO_ROOM") {//error 
+				next();//say invalid req(404)
+			} else {
+				res.write(nick);
+				res.end();
+			}
+		});
+	}
 }

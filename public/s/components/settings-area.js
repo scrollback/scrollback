@@ -20,6 +20,14 @@ $(function() {
 
 			//irc settings
 			if(results.params.irc){
+				if(results.params.irc.pending) {
+					$.get('/r/irc/' + results.id, function(botName) {
+						var displayString = "Any Ops can type  \"/msg " + botName + " connect " + results.params.irc.channel + " " + results.id + "\" in your irc channel to enable your room";
+						$('#roomAllowed').html(displayString);	
+					});
+				} else {
+					$('#roomAllowed').html("Connected to irc channel: " + results.params.irc.channel);
+				}
 				$('.list-view-irc-settings #ircserver').val(results.params.irc.server);
 				$('.list-view-irc-settings #ircchannel').val(results.params.irc.channel);
 			}
