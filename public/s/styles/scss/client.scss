@@ -171,6 +171,15 @@ $roles: guest, user, follower, owner;
     height: 100%;
 }
 
+@mixin title-icon($elem) {
+    .#{$elem} {
+        display: block;
+        margin: auto;
+        height: 2em;
+        width: 2em;
+    }
+}
+
 body {
     word-wrap: break-word;
     height: 100%;
@@ -334,7 +343,6 @@ body {
         @include justify-content(space-around);
         @include align-items(center);
         @include align-content(center);
-        @include flex-grow(1);
         @include transform(rotate(0deg)); /* hack to fix invisible items in android browser */
         @extend %ease;
 
@@ -355,6 +363,8 @@ body {
     }
 
     .tab {
+        @include flex-grow(1);
+
         text-align: center;
         background-color: rgba(0,0,0,.05);
         border-left: 1px solid darken($light-color, 15%);
@@ -451,7 +461,7 @@ body {
     &.offline {
         @include opacity(.5);
 
-        .picture { @extend %grayscale; }
+        .person-avatar { @extend %grayscale; }
     }
 
     .person-avatar {
@@ -571,15 +581,6 @@ body {
 .main-area {
 	@extend %column;
 	@include chat-elem;
-}
-
-@mixin title-icon($elem) {
-    .#{$elem} {
-        display: block;
-        margin: auto;
-        height: 2em;
-        width: 2em;
-    }
 }
 
 .meta-button, .rooms-button {
@@ -1165,13 +1166,16 @@ body {
 
 		textarea { resize: vertical; }
 
-		input[type=checkbox] {
+        input[type=checkbox], input[type=radio] {
 			position: relative;
 			top: .3em;
 			margin: .25em 0 1.25em 0;
 		}
 
-		label { padding: .5em; }
+		input + label {
+            display: inline-block;
+            padding: .5em;
+        }
 	}
 
 	.settings-label {
@@ -1189,6 +1193,8 @@ body {
 		text-align: left;
 		vertical-align: middle;
 	}
+
+    .check-item, .radio-item { display: block; }
 }
 
 .room-area, .meta-area, .main-area, .chat-input {

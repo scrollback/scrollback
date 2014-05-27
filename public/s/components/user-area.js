@@ -52,15 +52,17 @@ $(function(){
 	});
 
 	libsb.on('navigate', function(state, next) {
-		libsb.getUsers({memberOf: currentState.room}, function(err, data) {
-			data = data.results;
+		if(state && (!state.old || state.room != state.old.room)) {
+			libsb.getUsers({memberOf: currentState.room}, function(err, data) {
+				data = data.results;
 
-			data.forEach(function(user) {
-				if (user.id === libsb.user.id && user.role === "owner") {
-					$("body").addClass("role-owner");
-				}
+				data.forEach(function(user) {
+					if (user.id === libsb.user.id && user.role === "owner") {
+						$("body").addClass("role-owner");
+					}
+				});
 			});
-		});
+		}
 
 		next();
 	});
