@@ -135,7 +135,10 @@ $(function() {
 			reset = true;
 		}
 
-		if(reset) $logs.reset(time);
+		if(reset) {
+			if(time) $logs.reset(time);
+			else $logs.reset(time);
+		}
 		next();
 	});
 

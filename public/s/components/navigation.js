@@ -152,7 +152,9 @@ libsb.on("navigate", function(state, next) {
 					): '');
 		}
 
-		// if(state.time) params.push('time=' + new Date(state.time).toISOString());
+		if(state.time) {
+			params.push('time=' + new Date(state.time).toISOString());	
+		}
 		if(state.mode) params.push('mode=' + state.mode);
 		if(state.tab) params.push('tab=' + state.tab);
 		if(state.embed) params.push('embed=' + state.embed);
@@ -183,13 +185,6 @@ libsb.on("navigate", function(state, next) {
 				history.pushState(state, null, url);
 			}
 		}
-	}
-
-	if (state.thread) {
-		// TODO
-		// libsb.getThreads({ref: state.thread}, function(err, thread) {
-		// threadTitle = thread.title;
-		// });
 	}
 
 	pushState();

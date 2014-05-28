@@ -51,10 +51,11 @@ $(function() {
 		});
 	}
 
-/*
+
 	libsb.on("away-dn", function(action, next) {
 		var i,l, lis;
-
+		if(!currentState.room || action.from !== currentState.room) return next();
+		
 		if(action.user.role == "follower") {
 			lis = 4;
 			lists["people1"].push(action.user);
@@ -70,19 +71,27 @@ $(function() {
 				break;
 			}
 		}
-
+		// $people.reset();
 		next();
 	},1);
 	libsb.on("back-dn", function(action, next) {
 		var index, l,i;
-
-		if(action.user.role == "follower") {
-			for(i=0,l=lists["people1"].length;i<l;i++) {
-				
+		if(!currentState.room || action.from !== currentState.room) return next();
+		function RemoveAndInsert(r, n, obj) {
+			for(i=0,l=lists["people"+r].length;i<l;i++) {
+				if(action.user.id == lists["people"+r][i].id){
+					delete lists["people"+r][i];
+					break;
+				}
 			}
+			lists["people"+n].push(action.user);
 		}
+		if(action.user.role == "follower") {action.user.status = "online"; removeAndInsert(1,4,action.user);}
+		else if(action.user.role == "owner") {action.user.status = "online"; removeAndInsert(6,9,action.user);}
+		else {action.user.status = "online"; lists["people3"].push(action.user);}
+		// $people.reset();
 		next();
-	},1);*/
+	},1);
 
 	// Set up infinite scroll here.
 	$people.infinite({

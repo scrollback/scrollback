@@ -27,4 +27,5 @@ libsb.on("navigate", function(state,next){
             }
         }); 
     }
+    next();
 });
