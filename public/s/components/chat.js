@@ -10,7 +10,7 @@ $(function() {
 	chatEl.render = function (el, text) {
 		el = el || $template.clone(false);
 		el.find('.chat-nick').text(text.from);
-		el.find('.chat-message').html(format.linkify(format.textToHtml(text.text)));
+		el.find('.chat-message').text(format.linkify(text.text));
 		el.find('.chat-timestamp').html(format.friendlyTime(text.time, new Date().getTime()));
 		el.data('index', text.time);
 
