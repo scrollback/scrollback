@@ -37,7 +37,7 @@ $(function() {
 
 			//spam settings
 			$('#block-offensive').prop('checked', results.params.wordban);
-			$('#block-text').text(results.params.textban);
+			$('#block-text').val(results.params.textban);
 
 			//seo settings
 			$('#allow-index').prop('checked', results.params.allowSEO);
