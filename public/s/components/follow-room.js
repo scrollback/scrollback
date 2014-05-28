@@ -19,12 +19,15 @@ libsb.on("navigate", function(state,next){
     if(state.mode === "normal"){
         libsb.emit('getUsers', {memberOf: currentState.room, ref: libsb.user.id }, function(err, data){
             var user = data.results[0];
-            var role = user.role;
-            if(role == 'owner' || role == 'follower'){
-                $('body').addClass('role-follower');
-            }else{
-                $('body').removeClass('role-follower');
+            if(user){
+                var role = user.role;
+                if(role == 'owner' || role == 'follower'){
+                    $('body').addClass('role-follower');
+                }else{
+                    $('body').removeClass('role-follower');
+                }
             }
-        }); 
+         }); 
     }
+    next();
 });

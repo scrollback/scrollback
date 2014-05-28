@@ -21,6 +21,7 @@ libsb.on('room-dn', function(action, next){
 	next();
 });
 
+
 libsb.on('navigate', function(state, next) {
 	if(state.tab == "info") {
 		$(".pane-info").addClass("current");
