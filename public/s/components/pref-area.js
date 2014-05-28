@@ -65,8 +65,6 @@ $(function() {
 		var sortable = []; // for sorting the config options based on priority
 
 		if(state.mode === "pref"){
-			if(currentConfig && state.tab) $('.pref-area').empty().append(currentConfig[state.tab]);
-
 			// if currentConfig is blank, then
 			if(!currentConfig){
 				libsb.emit('pref-show', {},function(err, config) {
