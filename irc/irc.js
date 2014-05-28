@@ -132,6 +132,7 @@ function changeRoomParams(room) {
 function init() {
 	var notUsedRooms = {};
 	clientEmitter.on('init', function(st) {
+		initCount = 0;
 		var state = st.state;
 		for(var roomId in state.rooms) {
 			if(state.rooms.hasOwnProperty(roomId)) {
@@ -165,6 +166,7 @@ function init() {
 				
 				if (servChanProp[room.params.irc.server] &&
 					servChanProp[room.params.irc.server][room.params.irc.channel]) {
+					
 					var users = servChanProp[room.params.irc.server][room.params.irc.channel].users;
 					users.forEach(function(user) {
 						if(servNick[room.params.irc.server] &&
@@ -264,7 +266,6 @@ function  isInitDone() {
 		clientEmitter.emit('write', {
 			type: 'init'//notify ircClient about comp.
 		});
-		initCount--;
 	}
 }
 
