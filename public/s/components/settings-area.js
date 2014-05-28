@@ -20,6 +20,17 @@ $(function() {
 
 			//irc settings
 			if(results.params.irc){
+				if(results.params.irc.pending) {
+					$.get('/r/irc/' + results.id, function(botName) {
+						var displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + results.params.irc.channel + " " + results.id + "\" in the irc channel.";
+						$('#roomAllowed').html(displayString);
+					});
+				} else if (results.params.irc.channel && results.params.irc.channel.length) {
+					$('#roomAllowed').html("Connected to irc channel: " + results.params.irc.channel);
+				} else {
+					$('#roomAllowed').html("Not connected to any channel :(");
+				}
+
 				$('.list-view-irc-settings #ircserver').val(results.params.irc.server);
 				$('.list-view-irc-settings #ircchannel').val(results.params.irc.channel);
 			}

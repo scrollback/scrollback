@@ -10,7 +10,7 @@ $(function() {
 	var $threads = $(".thread-item-container"), room = "", time = null,
 		search = "", mode = "", searchResult = [false], index = null, queryCount = 0;
 
-	function renderObjects(threads){
+	function renderObjects(threads) {
 		callback(threads.map(function(thread) {
 			var index;
 			if(currentState.mode == "search") {
@@ -23,7 +23,8 @@ $(function() {
 	}
 
 	function loadSearchResult(index, before, after, callback) {
-		var query={}, i, l, res = [];
+		var query={}, i, res = [];
+
 			if(!index) index = 0;
 			if(before) {
 				if(index === 0){
@@ -171,7 +172,7 @@ $(function() {
 		if(!state.old) {
 			room = state.room;
 			reset = true;
-		}else if(state.room != state.old.room) {
+		}else if(state.room != room) {
 			room = state.room;
 			reset = true;
 		}else if(state.query) {

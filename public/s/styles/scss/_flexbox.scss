@@ -110,6 +110,9 @@
 	} @else if $value == space-between {
 		-webkit-box-pack: justify;
 		-ms-flex-pack: justify;
+	} @else if $value == space-around {
+		-webkit-box-pack: center;
+		-ms-flex-pack: center;
 	} @else {
 		-webkit-box-pack: $value;
 		-ms-flex-pack: $value;

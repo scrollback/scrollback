@@ -91,11 +91,11 @@ $(function() {
 		next();
 	});
 	libsb.on("init-dn", function(init, next) {
-		if(init.occupantOf){
+	/*	if(init.occupantOf){
 			init.occupantOf.forEach(function(r) {
 				enter(r.id);
 			});
-		}
+		}*/
 		if(init.memberOf){
 			init.memberOf.forEach(function(r) {
 				enter(r.id);
