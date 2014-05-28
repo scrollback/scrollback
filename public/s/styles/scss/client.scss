@@ -887,7 +887,9 @@ body {
 
 		.chat-timestamp { color: fade-out($dark-color, .3); }
 
-		.chat-more { @include transform(translate3d(0, 0, 0)); }
+		&:not(.clicked) {
+            .chat-more { @include transform(translate3d(0, 0, 0)); }
+        }
 	}
 
 	&:before {
