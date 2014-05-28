@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, lace, currentState */
 
 $(function() {
 	var $itemTmpl = $(".meta-conf .list-item");
@@ -23,29 +23,35 @@ $(function() {
 				if(results.params.irc.pending) {
 					$.get('/r/irc/' + results.id, function(botName) {
 						var displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + results.params.irc.channel + " " + results.id + "\" in the irc channel.";
-						$('#roomAllowed').html(displayString);
+						$('#roomAllowed').text(displayString);
 					});
 				} else if (results.params.irc.channel && results.params.irc.channel.length) {
-					$('#roomAllowed').html("Connected to irc channel: " + results.params.irc.channel);
+					$('#roomAllowed').text("Connected to irc channel: " + results.params.irc.channel);
 				} else {
-					$('#roomAllowed').html("Not connected to any channel :(");
+					$('#roomAllowed').text("Not connected to any channel :(");
 				}
 
 				$('.list-view-irc-settings #ircserver').val(results.params.irc.server);
 				$('.list-view-irc-settings #ircchannel').val(results.params.irc.channel);
 			}
 			//twitter setting
-			if (!results.params.twitter) results.params.twitter = {}; 
+			if (!results.params.twitter) results.params.twitter = {};
 			if (results.params.twitter) {
 				var twitter = results.params.twitter;
+
 				if (twitter.username) {
-					$('#twitter-text').html("Admin Twitter Account: " + twitter.username);
-					$("#twitter-account").html("CHANGE");
+					$('#twitter-text').text("Twitter Account: " + twitter.username);
+					$("#twitter-account").text("Change");
 				} else {
-					$('#twitter-text').html("Sign in with Twitter to watch hashtags");
-					$("#twitter-account").html("SIGN IN");
+					$('#twitter-text').text("Not signed in");
+					$("#twitter-account").text("Sign in");
+					$("#twitter-message").text("Please sign in to twitter to watch hashtags.");
 				}
-				
+
+				if (twitter.tags) {
+					lace.multientry.add($("#twitter-hashtags"), twitter.tags);
+				}
+
 			}
 			//spam settings
 			$('#block-offensive').prop('checked', results.params.wordban);
@@ -88,7 +94,8 @@ $(function() {
                                 var roomObj = {type: 'room', to: currentState.room, id: generate.uid(), room: room, user: {id: libsb.user}};
 				libsb.emit('room-up', roomObj, function(){
 					currentConfig = null;
-					libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
+                                        $('.conf-area').empty();
+	        		        libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
 				});
 			});
 		}

@@ -183,8 +183,11 @@ function loadRoom(action, callback) {
 	core.emit("getRooms",{id: uid(), ref: action.to, session: action.session}, function(err, rooms) {
 		var room;
 		if(err || !rooms ||!rooms.results || !rooms.results.length) {
-			if(action.type != "room") return callback(new Error("NO_ROOM_WITH_GIVEN_ID"));
-		}else{
+			if(action.type != "room"){
+                            console.log("**** ENTITY LOADER **********");
+                            return callback(new Error("NO_ROOM_WITH_GIVEN_ID"));
+                        }		
+                }else{
 			room = rooms.results[0];
 		}
 

@@ -29,7 +29,7 @@
     });
     $("#login-and-create-room-button").click(function(){
        if ($("body").hasClass("role-guest")) {
-           lace.popover.show($(this), $("#login-menu").html());
+           lace.modal.show($("#login-dialog").html());
        }
     });
 })();
