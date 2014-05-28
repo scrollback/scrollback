@@ -37,7 +37,7 @@ $(function(){
 					mode: "user", tab: "create", source: "libsb"
 				});
 
-				lace.modal.show($("#signup-dialog").html());
+				lace.modal.show({ body: $("#signup-dialog").html() });
 			}
 		}
 		next();

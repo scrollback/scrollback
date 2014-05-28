@@ -58,7 +58,7 @@ $(function() {
 	});
 
 	$(document).on("click", ".chat-more", function() {
-		lace.popover.show($(this), $("#chat-menu").html());
+		lace.popover.show({ body: $("#chat-menu").html(), el: $(this) });
 	});
 
 	$(document).on("keydown", function(e){

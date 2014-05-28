@@ -1,4 +1,5 @@
 @import "global";
+@import "animations";
 @import "flexbox";
 
 .alert-container {
@@ -13,7 +14,7 @@
 	@include flexbox;
 	@include flex-direction(row);
 	@include justify-content(space-between);
-	@include align-items(center);
+	@include align-items(stretch);
 	@include slidedown;
 
 	margin: 1em;
@@ -37,7 +38,8 @@
 }
 
 .alert-content {
-	width: 100%;
+	@include flex-grow(1);
+
 	padding: 1em;
 
 	a {
@@ -53,8 +55,9 @@
 }
 
 .alert-remove {
-	font-size: 2em;
-	padding: .5em .6em;
+	@include transition;
+
+	padding: 1em 1.25em;
 	cursor: pointer;
 	background-color: rgba(0,0,0,.1);
 	color: $light-color;
@@ -68,5 +71,12 @@
 	&:active {
 		color: $light-color;
 		background-color: rgba(0,0,0,.3);
+	}
+
+	&:after {
+		display: block;
+		content: "\00d7";
+		font-weight: bold;
+		font-size: 2em;
 	}
 }

@@ -45,7 +45,6 @@ var browserNotify = (function() {
 			}
 
 			if (titleTimer) {
-				titleTimer = 0;
 				clearInterval(titleTimer);
 			}
 
@@ -71,12 +70,12 @@ var browserNotify = (function() {
 
 		if(!notifyStatus) {
 			clearInterval(titleTimer);
+
 			titleTimer = setInterval(function() {
 				document.title = (document.title === originalTitle) ? newTitle : originalTitle;
 				notifyStatus = true;
 			}, 1000);
 		}
-
 
 		if (important && soundTimer) {
 			clearTimeout(soundTimer);
@@ -85,9 +84,10 @@ var browserNotify = (function() {
 
 		if (!soundTimer) {
 			play();
+
 			soundTimer = setTimeout(function() {
 				soundTimer = null;
-			}, 60000);
+			}, 30000);
 		}
 
 		if (important) {

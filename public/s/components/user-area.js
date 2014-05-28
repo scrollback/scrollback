@@ -8,9 +8,9 @@ $(function(){
 
 	$(".user-area").on("click", function() {
 		if ($("body").hasClass("role-guest")) {
-			lace.popover.show($(this), $("#login-menu").html());
+			lace.popover.show({ body: $("#login-menu").html(), el: $(this) });
 		} else {
-			lace.popover.show($(this), $("#user-menu").html());
+			lace.popover.show({ body: $("#user-menu").html(), el: $(this) });
 		}
 	});
 
@@ -33,7 +33,7 @@ $(function(){
 			view: 'loggedout',
 		});
 
-		lace.modal.show($("#loggedout-dialog").html());
+		lace.modal.show({ body: $("#loggedout-dialog").html(), dismiss: false });
 
 		n();
 	}, 1000);
