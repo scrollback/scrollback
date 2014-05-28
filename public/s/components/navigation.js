@@ -36,7 +36,8 @@ libsb.on("inited", function(){
 	if(path[1]){
 		state.thread = path[1];
 	}
-
+	state.room = state.room.toLowerCase();
+	
 	search.split("&").map(function(i) {
 		var q;
 		if(!i) return;
