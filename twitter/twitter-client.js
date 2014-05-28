@@ -11,16 +11,16 @@ libsb.on('config-show', function(conf, next) {
 
 	var textField = formField("Hashtags", "multientry", "twitter-hashtags");
 
-	$("#twitter-account").on("click", function(){
+
+	div.append(p);
+	div.append(textField);
+	$(document).on("click", "#twitter-account" ,function(){
 		console.log("twitter sign in button clicked");
 		// do stuff here!
 		window.open("../r/twitter/login", 'mywin','left=20,top=20,width=500,height=500,toolbar=1,resizable=0');
 	});
 
-	div.append(p);
-	div.append(textField);
-
-	$(window).on("message", function(event) {
+	window.addEventListener("message", function(event) {
 		console.log("event", event);
 		var suffix = "scrollback.io";
 		var isOrigin = event.origin.indexOf(suffix, event.origin.length - suffix.length) !== -1;
@@ -28,6 +28,7 @@ libsb.on('config-show', function(conf, next) {
 			twitterUsername = event.data;
 			$("#twitter-account").text("Change");
 			$('#twitter-text').text("Admin Twitter Account: " + twitterUsername);
+			$("#twitter-message").empty();
 		}
 	}, false);
 
