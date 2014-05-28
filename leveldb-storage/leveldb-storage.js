@@ -11,7 +11,7 @@ module.exports = function(core) {
 	var awayback = require("./schemas/awayback.js")(types);
 	var edit = require("./schemas/edit.js")(types);
 	var threads = require("./schemas/thread.js")(types);
-
+        
 	core.on('room',roomuser.put, "storage");
 	core.on('user',roomuser.put, "storage");
 	core.on('init', function(init, callback) {

@@ -112,7 +112,6 @@ $(function() {
 		// check state.mode == settings
 		var sortable = []; // for sorting the config options based on priority
 		if(state.mode === "conf"){
-			if(currentConfig && state.tab) $('.conf-area').empty().append(currentConfig[state.tab]);
 			// if currentConfig is blank, then
 			if(!currentConfig){
 				libsb.emit('config-show', {},function(err, config) {
