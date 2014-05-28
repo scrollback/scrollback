@@ -29,7 +29,6 @@ libsb.on('navigate', function(state, next) {
 		$(".pane-info").removeClass("current");
 	}
 	if(!state.old || state.room != state.old.room) {
-		if(state.tab == 'info')	 infoArea.render({id: state.room, description: "Loading room description."});
 		function loadRooms() {
 			libsb.getRooms({ ref: state.room }, function(err, room) {
 				if(err) throw err;
@@ -38,9 +37,11 @@ libsb.on('navigate', function(state, next) {
 		}
 
 		if(libsb.isInited) {
+                        if(state.tab == 'info')	 infoArea.render({id: state.room, description: "Loading room description."});
 			loadRooms();
 		}else{
 			libsb.on("inited", function(q, n) {
+                                if(state.tab == 'info')	 infoArea.render({id: state.room, description: "Loading room description."});
 				loadRooms();
 				n();
 			});
