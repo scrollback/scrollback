@@ -77,12 +77,17 @@ var lace = {
         /**
          * Add event handlers for multientry.
          * @constructor
+         * @example <span class="entry multientry"><span contenteditable="" class="item"></span></span>
          */
         init: function() {
+            if (lace.multientry.init.done) {
+                return;
+            }
+
             $(document).on("keydown", ".multientry .item", function(e) {
                 if (e.keyCode === 13 || e.keyCode === 32 || e.keyCode === 188) {
                     e.preventDefault();
-                    lace.multientry.add($(this), $(this).text());
+                    lace.multientry.add($(this).parent(".multientry"), $(this).text());
                 }
             });
 
@@ -91,9 +96,7 @@ var lace = {
 
                 var items = e.originalEvent.clipboardData.getData('Text').split(/[\s,]+/);
 
-                for (var i = 0; i < items.length; i++) {
-                    lace.multientry.add($(this), items[i]);
-                }
+                lace.multientry.add($(this).parent(".multientry"), items);
             });
 
             $(document).on("keydown", ".multientry .item", function(e) {
@@ -109,17 +112,27 @@ var lace = {
             $(document).on("click", ".multientry", function() {
                 $(this).children().last().focus();
             });
+
+            lace.multientry.init.done = true;
         },
 
         /**
-         * Add an item to multientry.
+         * Add items to multientry.
          * @constructor
          * @param {String} element
-         * @param {String} text
+         * @param {String[]} content
          */
-        add: function(element, text) {
-            if (!text.match(/^\s*$/) ) {
-                $("<div class='item done'><span class='item-text'>" + text.trim() + "</span><span class='item-remove close'>&times;</span></div>").insertBefore($(element).empty());
+        add: function(element, content) {
+            if (content) {
+                if (!(content instanceof Array)) {
+                    content = content.split(" ");
+                }
+
+                content.forEach(function(text) {
+                    if (!text.match(/^\s*$/) ) {
+                        $("<div class='item done'><span class='item-text'>" + text.trim() + "</span><span class='item-remove close'>&times;</span></div>").insertBefore(($(element).children().last()).empty());
+                    }
+                });
             }
         },
 
