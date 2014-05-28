@@ -1,13 +1,14 @@
 var log = require("../lib/logger.js");
 var logTwitter = log;
-var passport = require('passport');
 var fs = require("fs");
 var htmlEncode = require('htmlencode');
 var Twit = require('twit');
 var guid = require("../lib/generate.js").uid;
 var config = require('../config.js');
-var redis = require("redis").createClient();
-var TwitterStrategy = require('passport-twitter').Strategy;
+var OAuth = require('oauth');
+var internalSession = Object.keys(config.whitelists)[0];
+var host = config.http.host;
+var redis = require('../lib/redisProxy.js').select(config.redisDB.twitter);
 var twitterConsumerKey = config.twitter.consumerKey;
 var twitterConsumerSecret = config.twitter.consumerSecret;
 var callbackURL = config.twitter.callbackURL;
@@ -17,6 +18,7 @@ var expireTime = 15 * 60;//expireTime for twitter API key...
 var timeout  = 1000 * 60 ;//search Interval
 var maxTweets = 1;//max tweets to search in timeout inteval
 var currentConnections = {};
+var pendingOauths = {};//TODO delete pending oauth after some time
 var userData = {};//used to save access token etc.
 module.exports = function(coreObj) {
 	
@@ -33,7 +35,6 @@ module.exports = function(coreObj) {
 			if(err)	throw err;
 			core.on("http/init", function(payload, callback) {
 				payload.twitter = {
-					config: data,
 					get: function(req,res,next) {	
 						getRequest(req,res,next);
 					}
@@ -52,61 +53,82 @@ module.exports = function(coreObj) {
 function twitterRoomHandler(action, callback) {
 	var room = action.room;
 	log("room twitter--", JSON.stringify(room));
-	if (room.type == 'room' && room.params && room.params.twitter) {
-		addTwitterTokens(room, callback);			
+	if (action.type == 'room' && room.params && room.params.twitter) {
+		addTwitterTokens(action, callback);			
 	}
 	else {
 		callback();
 	}
-};
+}
 /**
  *Read twitter token from redis and 
  *add it to room object
  */
 function addTwitterTokens(room, callback) {
-	logTwitter("adding twitter tokens.", room);
+	logTwitter("adding twitter tokens.", JSON.stringify(room));
 	redis.multi(function(multi) {
-		multi.get("twitter:userData:token:" + room.owner);
-		multi.get("twitter:userData:tokenSecret:" + room.owner);
-		multi.get("twitter:userData:profile:" + room.owner);
+		var key = room.room.params.twitter.username;
+		multi.get("twitter:userData:token:" + key);
+		multi.get("twitter:userData:tokenSecret:" + key);
+		multi.get("twitter:userData:profile:" + key);
 		multi.exec(function(err, replies) {
+			log("replies from redis", replies);
 			if (err) {
-				logTwitter("some redis Error: ", err);
+				logTwitter(" Error: ", err);
 				callback(new Error("TWITTER_LOGIN_ERROR"));
 			}
 			else {
 				if (replies[0] && replies[1] && replies[2]) {
-					logTwitter("adding new values....");
-					room.params.twitter.token = replies[0];
-					room.params.twitter.tokenSecret = replies[1];
-					room.params.twitter.profile = JSON.parse(replies[2]);
-					room.params.twitter.tags = room.params.twitter.tags || "";
-					room.params.twitter.tags = formatString(room.params.twitter.tags);
+					logTwitter("twitter ---adding new values....");
+					room.room.params.twitter.token = replies[0];
+					room.room.params.twitter.tokenSecret = replies[1];
+					room.room.params.twitter.profile = JSON.parse(replies[2]);
+					room.room.params.twitter.tags = room.room.params.twitter.tags || "";
+					room.room.params.twitter.tags = formatString(room.room.params.twitter.tags);
+					log("added values from redis");
+					addIdentity(room, key);
 					callback();
 					redis.multi(function(multi) {
-						
+						multi.del("twitter:userData:token:" + key);
+						multi.del("twitter:userData:tokenSecret:" + key);
+						multi.del("twitter:userData:profile:" + key);
+						multi.exec(function(err, r) {
+							log("values deleted from redis", r);
+						});
 					});
+					
 				}
 				else {//new values are not present in redis.. copy old
-					copyOld();
+					copyOld(room, callback);
 				}
 			
 			}
 		});
 	});
 }
+function addIdentity(room, username) {
+	if(!room.room.identities) room.room.identities = [];
+	for (var i = 0;i < room.room.identities;i++) {
+		if (room.room.identities[i].indexOf("twitter") === 0) {
+			return;
+		}
+	}
+	room.room.identities.push("twitter://" + room.room.id + ":" + username);
+}
 
-function copyOld(room) {
+
+function copyOld(room, callback) {
 	logTwitter("copyOld");
 	
 	var old;//old account
 	if(room.old && room.old.params) old = room.old.params.twitter;
 	if(old) {
-		room.params.twitter.token = old.token;
-		room.params.twitter.tokenSecret = old.tokenSecret;
-		room.params.twitter.profile = old.profile;
-		if(!room.params.twitter.tags) room.params.twitter.tags = "";
-		room.params.twitter.tags = formatString(room.params.twitter.tags);
+		room.room.params.twitter.token = old.token;
+		room.room.params.twitter.tokenSecret = old.tokenSecret;
+		room.room.params.twitter.profile = old.profile;
+		if(!room.room.params.twitter.tags) room.params.twitter.tags = "";
+		room.room.params.twitter.tags = formatString(room.room.params.twitter.tags);
+		addIdentity(room, old.profile.screen_name);
 		callback();
 	}
 	else {
@@ -131,10 +153,11 @@ function init() {
  */
 function initTwitterSearch() {
 	log("getting room data....");
-	core.emit("getRooms",{identity:"twitter"}, function(err, data) {
+	core.emit("getRooms",{identity:"twitter", session: internalSession}, function(err, data) {
 		if (!err) {
 			if(debug) logTwitter("data returned from labelDB: ", JSON.stringify(data));
-			data.forEach(function(room) {
+			var rooms = data.results;
+			rooms.forEach(function(room) {
 				fetchTweets(room);
 			});
 		}
@@ -193,17 +216,28 @@ function sendMessages(replies, room) {
 			text = "RT " + r.retweeted_status.text;
 		}else text = r.text;
 		if (!r.retweeted) {
-			var message = {
-				id: guid(),
-				type: "text",
-				text: htmlEncode.htmlDecode(text),
-				from: "guest-" + r.user.screen_name.replace(/_/g, "-"),
-				to: room.id,
-				time: new Date().getTime(),
-				session: "twitter:" + r.user.screen_name
-			};
-			core.emit("message", message, function(err) {
-				log("error while sending message:" , err);
+			core.emit('init', {
+				suggestedNick: r.user.screen_name,
+				session:  "twitter://" + r.user.screen_name,
+				to: "me",
+				type: "init",
+				origin: {
+					gateway: "twitter"
+				}
+			}, function(err, init) {
+				if (err) return;
+				var message = {
+					id: guid(),
+					type: "text",
+					text: htmlEncode.htmlDecode(text),
+					from: init.user.id,
+					to: room.id,
+					time: new Date().getTime(),
+					session: "twitter://" + r.user.screen_name
+				};
+				core.emit("text", message, function(err) {
+					log("error while sending message:" , err);
+				});
 			});
 		}
 		
@@ -218,54 +252,60 @@ function sendMessages(replies, room) {
  */
 function getRequest(req, res, next) {
 	var path = req.path.substring(11);// "/r/twitter/"
-	logTwitter("path " , path , req.url ," session" , req.session.user);
 	var ps = path.split('/');
 	if (ps[0] && ps[0] === "login") {
-		//passport.initialize();
-		logTwitter("login request...");
-		passport.serializeUser(function(user, done) {
-			done(null, user);
+		var uid = guid();
+		var oauth = new OAuth.OAuth (
+			'https://api.twitter.com/oauth/request_token',
+			'https://api.twitter.com/oauth/access_token',
+			twitterConsumerKey,
+			twitterConsumerSecret,
+			'1.0A',
+			host + "/r/twitter/oauth/callback/" + uid,
+			'HMAC-SHA1'
+		);
+		pendingOauths[uid] = {oauth: oauth};
+		oauth.getOAuthRequestToken({"scope": "https://api.twitter.com/oauth/request_token"},
+								function(error, oauth_token, oauth_token_secret, results) {
+			res.redirect("https://api.twitter.com/oauth/authenticate?oauth_token=" + oauth_token);
+			pendingOauths[uid].oauthToken = oauth_token;
+			pendingOauths[uid].oauthTokenSecret = oauth_token_secret;
+			
+			log("callback url", arguments);
 		});
-	 
-		passport.deserializeUser(function(obj, done) {
-			done(null, obj);
-		});
-		passport.use(new TwitterStrategy({
-				consumerKey: twitterConsumerKey,
-				consumerSecret: twitterConsumerSecret,
-				callbackURL: callbackURL +"/" + req.session.user.id
-			},
-			function(token, tokenSecret, profile, done) {
-				logTwitter("tokens", token, tokenSecret);
-				userData[req.session.user.id] = {token: token,tokenSecret: tokenSecret, profile : profile};
-				redis.multi(function(multi) {
-					multi.setex("twitter:userData:token:" + req.session.user.id, expireTime, token);
-					multi.setex("twitter:userData:tokenSecret:" + req.session.user.id, expireTime, tokenSecret);
-					multi.setex("twitter:userData:profile:" + req.session.user.id, expireTime, JSON.stringify(profile));
-					multi.exec(function(err,replies) {
-						logTwitter("user data added: ", replies);	
+		log("twitter oauth=", oauth);
+	}
+	else if (ps.length >= 3 && ps[0] === "oauth" && ps[1] === "callback") {
+		log("oauth", pendingOauths[ps[2]]);
+		var obj = pendingOauths[ps[2]];
+		if (obj) {
+			obj.oauth.getOAuthAccessToken(obj.oauthToken, obj.oauthTokenSecret, req.query.oauth_verifier,
+										function(error, access_token, access_token_secret, results) {
+				if (error) return console.log('error: ' + JSON.stringify(error));
+				else {
+					console.log('oauth_access_token: ' + access_token);
+					console.log('oauth_access_token_secret: ' + access_token_secret);
+					//save tokens.
+					console.log("results: ", results);
+					var uid = results.screen_name;
+					redis.multi(function(multi) {
+						multi.setex("twitter:userData:token:" + uid, expireTime, access_token);
+						multi.setex("twitter:userData:tokenSecret:" + uid, expireTime, access_token_secret);
+						multi.setex("twitter:userData:profile:" + uid, expireTime, JSON.stringify(results));
+						multi.exec(function(err,replies) {
+							logTwitter("user data added: ", replies);	
+						});
 					});
-					done(null, profile);
-				});
-			}
-		));
-		passport.authenticate('twitter')(req, res, next);
-	}
-	else if (ps.length >= 3 && ps[0] === "auth" && ps[1] === "callback") {
-		var auth = passport.authenticate('twitter', {failureRedirect: '/r/twitter/login' });
-		auth(req, res, function(err) {
-			logTwitter("ret ", err , ps[2] + "," , req.session.user.id);
-			if (userData[req.session.user.id]) {
-				res.render(__dirname + "/login.jade", userData[req.session.user.id]);
-				delete userData[req.session.user.id];
-			}
-			else {
-				next();
-			}
-		});
-	}
-	else {
+					return res.render(__dirname + "/login.jade", {profile: {screen_name: results.screen_name}});
+				}
+			});
+			delete pendingOauths[ps[2]];
+		}
+		
+	} else {
 		next();
 	}
+	
 }
+
 /**** get request handler *******/
