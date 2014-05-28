@@ -11,7 +11,7 @@ var core;
 var callbacks = {};
 var onlineUsers = {};
 var firstMessage = {};//[room][username] = true
-var userExp = 10*60*1000;
+var userExp = 2*60*1000;
 var initCount = 0;
 module.exports = function (coreObj) {
 	core = coreObj;
@@ -360,8 +360,8 @@ function addNewBot(r, callback) {
 	});
 	if (callback) {
 		callbacks[uid] = function(message) {
-			if(message) room.params.irc.message = message;
-			callback();
+			if(message) return callback(new Error(message));
+			else return callback();
 		};
 	}
 }
