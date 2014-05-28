@@ -34,7 +34,19 @@ $(function() {
 				$('.list-view-irc-settings #ircserver').val(results.params.irc.server);
 				$('.list-view-irc-settings #ircchannel').val(results.params.irc.channel);
 			}
-
+			//twitter setting
+			if (!results.params.twitter) results.params.twitter = {}; 
+			if (results.params.twitter) {
+				var twitter = results.params.twitter;
+				if (twitter.username) {
+					$('#twitter-text').html("Admin Twitter Account: " + twitter.username);
+					$("#twitter-account").html("CHANGE");
+				} else {
+					$('#twitter-text').html("Sign in with Twitter to watch hashtags");
+					$("#twitter-account").html("SIGN IN");
+				}
+				
+			}
 			//spam settings
 			$('#block-offensive').prop('checked', results.params.wordban);
 			$('#block-text').val(results.params.textban);
@@ -56,19 +68,20 @@ $(function() {
 		if(currentState.mode == 'conf'){
 			libsb.emit('config-save', {}, function(err, configData){
 				console.log(configData);
-				var ircIdentity = "";
+				var ircIdentity;
 				if(configData.irc && configData.irc.channel && configData.irc.server) {
 					ircIdentity += "irc://" + configData.irc.server +  ":" + configData.irc.channel;
 				}
 				var room = {
 					id: window.currentState.room,
 					description: configData.description,
-					identities: [ircIdentity],
+					identities: ircIdentity ? [ircIdentity]: [],
 					params: {
 						irc : {
 							channel: configData.irc.channel,
 							server: configData.irc.server
 						},
+						twitter: configData.twitter,
 						allowSEO: configData.seo,
 						wordban: configData.spam.offensive,
 						textban: configData.spam.wordlist
@@ -77,7 +90,7 @@ $(function() {
                                 var roomObj = {type: 'room', to: currentState.room, id: generate.uid(), room: room, user: {id: libsb.user}};
 				libsb.emit('room-up', roomObj, function(){
 					currentConfig = null;
-	        		libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
+					libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
 				});
 			});
 		}

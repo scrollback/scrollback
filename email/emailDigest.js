@@ -3,7 +3,7 @@ var log = require("../lib/logger.js");
 var db = require('../lib/mysql.js');
 var send = require('./sendEmail.js');
 var fs=require("fs"),jade = require("jade");
-var redis = require('../lib/redisProxy.js').select(config.redisDB.email);//TODO move this to config
+var redis = require('../lib/redisProxy.js').select(config.redisDB.email);
 var core;
 var internalSession = Object.keys(config.whitelists)[0];
 var emailConfig = config.email, digestJade;

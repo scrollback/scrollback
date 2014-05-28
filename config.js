@@ -100,6 +100,7 @@ var defaults = {
 		path: "/data"
 	},
 	redisDB:{
+		twitter: 6,
 		email: 7,
 		session: 8,
 		user: 9,

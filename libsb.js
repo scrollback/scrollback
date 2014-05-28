@@ -21,7 +21,7 @@ require('./http/userProfile-client.js');
 require('./http/embed-client.js');
 require('./irc/irc-client.js');
 require('./anti-abuse/anti-abuse-client.js');
-
+require('./twitter/twitter-client.js');
 // components
 require('./public/s/components/embed-helper.js');
 require('./public/s/components/appcache.js');
