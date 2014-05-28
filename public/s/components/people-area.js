@@ -33,6 +33,7 @@ $(function() {
 						ppl[r[i].id] = r[i];	
 						ppl[r[i].id].score = 3;
 					}
+					ppl[r[i].id].status = "online";
 				}
 				Object.keys(ppl).forEach(function(e) {
 					sorted.push(ppl[e]);
@@ -43,12 +44,45 @@ $(function() {
 				sorted.forEach(function(e) {
 					lists["people"+e.score].push(e);
 				});
-				lists["people1"].unshift(false);
+				// lists["people1"].push(false);
 				lists["people9"].push(false);
 				callback(lists);
 			});
 		});
 	}
+
+/*
+	libsb.on("away-dn", function(action, next) {
+		var i,l, lis;
+
+		if(action.user.role == "follower") {
+			lis = 4;
+			lists["people1"].push(action.user);
+		}
+		else if(action.user.role == "owner") {
+			lis = 9;
+			lists["people6"].push(action.user);
+		} else lis = 3;
+
+		for(i=0,l=lists["people"+lis].length;i<l;i++) {
+			if(lists["people"+lis][i].id == action.user.id){
+				delete lists["people"+lis][i];
+				break;
+			}
+		}
+
+		next();
+	},1);
+	libsb.on("back-dn", function(action, next) {
+		var index, l,i;
+
+		if(action.user.role == "follower") {
+			for(i=0,l=lists["people1"].length;i<l;i++) {
+				
+			}
+		}
+		next();
+	},1);*/
 
 	// Set up infinite scroll here.
 	$people.infinite({
@@ -86,8 +120,13 @@ $(function() {
 					}
 				}
 				if(isDone) break;
-				if(sum>0) l = getNextArray(l);
-				else l = getPrevArray(l);
+				if(sum>0){
+					l = getNextArray(l);
+					p = 0;
+				} else {
+					l = getPrevArray(l);
+					if(l) p = lists[people+l].length-1;
+				}
 			}
 			if(index && after) ppl.splice(0, 1);
 			if(l == 0) ppl.push(false);
@@ -156,6 +195,7 @@ function getNextArray(l){
 	else return 0;
 }
 function getPrevArray(l){
+	if(l === 0) return 1;
 	if(l === 1) return 3;
 	if(l === 3) return 4;
 	if(l === 4) return 6;

@@ -8,7 +8,9 @@ $(function() {
 		rooms = [false, false], listenQueue = [], inited = false;
 
 	function enter(room) {
-		if(room && rooms.indexOf(room)<0) {
+		if(!room) return;
+		room = room.toLowerCase();
+		if(rooms.indexOf(room)<0) {
 			rooms.pop();
 			rooms.push(room);
 			rooms.push(false);
