@@ -8,13 +8,12 @@ libsb.on('config-show', function(tabs, next) {
 	var div = $('<div>').addClass('list-view list-view-twitter-settings');
 
 //	var p = $('<div class="settings-item"><div class="settings-label" id="twitter-text"></div><div class="settings-action"><a id="twitter-account" class="button"></a></div></div><div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="twitter-message"></div></div>');
-         
+
         var settingsItem = $('<div>').addClass('settings-item');
         var twitterText = $('<div>').addClass('settings-label').attr('id', 'twitter-text');
-        var twitterMessage = $('<div>').addClass('settings-action').attr('id', 'twitter-message');
         var settingsAction = $('<div>').addClass('settings-action');
-        var button = $('<a>').addClass('button').attr('id', 'twitter-account');
-        var settingsLabel = $('<div>').addClass('settings-label');
+		var button = $('<a>').addClass('button').attr('id', 'twitter-account');
+		var twitterMessage = $('<p>').attr('id', 'twitter-message');
 
 	var textField = formField("Hashtags", "multientry", "twitter-hashtags");
 
@@ -36,15 +35,15 @@ libsb.on('config-show', function(tabs, next) {
 		        $("#twitter-message").empty();
 		}
 	}, false);
-        
+
 
         //twitter setting
-        results = tabs.room; 
+        results = tabs.room;
         if (!results.params.twitter) results.params.twitter = {};
         var twitter = results.params.twitter;
 
         if (twitter.username) {
-                twitterText.text("Twitter Account: " + twitter.username); 
+                twitterText.text("Twitter Account: " + twitter.username);
                 // $('#twitter-text').text("Twitter Account: " + twitter.username);
                 // $("#twitter-account").text("Change");
                 button.text("Change");
@@ -65,13 +64,11 @@ libsb.on('config-show', function(tabs, next) {
         var innerDiv1 = settingsItem;
         innerDiv1.append(twitterText);
         settingsAction.append(button);
+		settingsAction.append(twitterMessage);
         innerDiv1.append(settingsAction);
 
-        var innerDiv2 = settingsItem;
-        innerDiv2.append($('<div>').addClass('settingsLabel'));
-        innerDiv2.append(twitterMessage);
-        
-        div.append(innerDiv1, innerDiv2);
+        div.append(innerDiv1);
+
 	tabs.twitter = {
 		html: div,
 		text: "Twitter",

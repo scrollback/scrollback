@@ -1237,6 +1237,15 @@ body {
 	}
 
     .check-item, .radio-item { display: block; }
+
+    .embed-code {
+        min-width: 27em;
+        min-height: 15em;
+        background-color: darken($light-color, 5%);
+        font-weight: 700;
+        font-family: $font-family-monospace;
+        line-height: 1.2em;
+    }
 }
 
 .room-area, .meta-area, .main-area, .chat-input {
