@@ -33,8 +33,15 @@ $(function() {
 	libsb.on('navigate', function(state, next) {
 		// check state.mode == settings
 		var sortable = []; // for sorting the config options based on priority
+                var isOwner = false;
 		if(state.mode === "conf"){
 			// if currentConfig is blank, then
+                        libsb.memberOf.forEach(function(room){
+                              if(room.id == currentState.room && room.role == "owner") isOwner = true;
+                        });
+                        if(isOwner == false){
+                              libsb.emit('navigate', {mode: 'normal'});
+                        }
 			if(!currentConfig){
                                 libsb.getRooms({ref: currentState.room}, function(err, data){
                                    var room = data.results[0];
