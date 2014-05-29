@@ -1,7 +1,10 @@
+/* jshint browser: true */
+/* global $, libsb */
+
 var formField = require("../lib/formField.js");
 
 var div = $('<div>').addClass('list-view list-view-spam-settings');
-div.append(formField("Block offensive words", "toggle", 'block-offensive'));
+div.append(formField("Block offensive words", "toggle", "block-offensive", true));
 
 libsb.on('config-show', function(conf, next) {
 	conf.spam = {
