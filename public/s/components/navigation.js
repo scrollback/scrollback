@@ -23,7 +23,7 @@
 var currentState = window.currentState = {};
 
 
-libsb.on("inited", function(){
+libsb.on("inited", function(f, n){
 	var path  = window.location.pathname.substr(1);
 	var search = window.location.search.substr(1), properties={};
 	var state = {};
@@ -53,9 +53,9 @@ libsb.on("inited", function(){
 	if(state.time) {
 		state.time = new Date(state.time).getTime();
 	}
-
 	libsb.emit("navigate", state);
-});
+	n();
+}, 1000);
 libsb.on("navigate", function(state, next) {
 	state.old = $.extend(true, {}, currentState); // copying object by value
 	state.changes = {};
@@ -194,6 +194,7 @@ libsb.on("navigate", function(state, next) {
 
 // On history change, load the appropriate state
 $(window).on("popstate", function() {
+	if(!libsb.inited) return; // remove this when you enable offline access.
 	if (('state' in history && history.state !== null)) {
 		var state = {}, prop;
 		for (prop in history.state) {

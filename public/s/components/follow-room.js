@@ -15,7 +15,7 @@ $(function() {
 	});
 });
 
-function getFollow(){
+function getFollow(f,n){
     libsb.emit('getUsers', {memberOf: currentState.room, ref: libsb.user.id }, function(err, data){
         var user = data.results[0];
         if(user){
@@ -27,6 +27,7 @@ function getFollow(){
             }
         }
      }); 
+    if(n) n();
 }
 
 libsb.on("navigate", function(state,next){
