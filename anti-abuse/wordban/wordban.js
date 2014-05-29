@@ -3,6 +3,19 @@ var jade = require("jade"), fs = require("fs");
 var blockWords={};
 var longest = 0;
 
+var lists = {
+/*
+	en:{
+		'foo':true,
+		'adsfadsf': true
+	},
+	hi: {
+		''
+	}
+*/
+
+};
+
 module.exports = function(core) {
 	fs.readFile(__dirname + "/wordban.html", "utf8", function(err, data){
 		if(err)	throw err;
@@ -14,11 +27,79 @@ module.exports = function(core) {
         }, "setters");
 	});
 	init();
+
 	core.on('text', function(message, callback) {
 		log("Heard \"text\" event");
         if (message.session){
             var gateway = message.session.substring(0, message.session.indexOf(":"));
             if(gateway != "web") return callback();
+
+            if(!message.room.params["anti-abuse"].wordblock) return callback();
+
+            var textMessage = message.text;
+            var enabledLists = message.room.params['anti-abuse'].blockLists;
+        	var customWords = message.room.params['anti-abuse'].blockCustom;
+
+        	for (listIndex=0; listIndex<enabledLists.length; listIndex++) {
+        	if(enabledLists[listIndex] === "en"){
+
+        	var init=function(){
+				fs.readFile(__dirname + "/blockedWords.txt","utf-8", function (err, data) {
+				if (err) throw err;
+
+				data.split("\n").forEach(function(word) {
+					if (word) {
+						word.replace(/\@/g,'a');
+						word.replace(/\$/g,'s');
+
+						word = word.replace(/\W+/, ' ').toLowerCase().trim();
+						if (word.length==0) {
+							return;
+						}
+						if (word.length > longest) {
+							longest = word.length;
+						}
+						blockWords[word] = true;
+					}
+				});
+			});
+			}
+        }
+
+        else if (enabledLists[listIndex] === "hi")	{
+        	var init=function(){
+				fs.readFile(__dirname + "/HindiblockedWords.txt","utf-8", function (err, data) {
+				if (err) throw err;
+
+				data.split("\n").forEach(function(word) {
+					if (word) {
+						word.replace(/\@/g,'a');
+						word.replace(/\$/g,'s');
+
+						word = word.replace(/\W+/, ' ').toLowerCase().trim();
+						if (word.length==0) {
+							return;
+						}
+						if (word.length > longest) {
+							longest = word.length;
+						}
+						blockWords[word] = true;
+					}
+				});
+			});
+			}
+        }
+    }
+
+        	for (index=0; index<customWords.length; ++index) {
+				if(textMessage.toLowerCase().indexOf(customWords[index]) != -1)
+				{
+					log("You cannot use banned words!");
+					if(!message.labels) message.labels = {};
+					message.labels.hidden = 1;
+					return callback();
+				}
+        	}
         }
         var text;
 		if(message.type=="text")	text = message.text;
@@ -26,7 +107,7 @@ module.exports = function(core) {
 		if(message.to)	text += " " + message.to;
 		if(text) {
 			core.emit("getRooms",{id:message.to}, function(err, data) {
-                log("Get Rooms", data);
+				log("Get Rooms", data);
 				if(err) return callback(err);
                 data = data.results;
                 if(!data) callback();
@@ -53,27 +134,7 @@ module.exports = function(core) {
 		callback();
 	}, "antiabuse");
 };
-var init=function(){
-	fs.readFile(__dirname + "/blockedWords.txt","utf-8", function (err, data) {
-		if (err) throw err;
 
-		data.split("\n").forEach(function(word) {
-			if (word) {
-				word.replace(/\@/g,'a');
-				word.replace(/\$/g,'s');
-
-				word = word.replace(/\W+/, ' ').toLowerCase().trim();
-				if (word.length==0) {
-					return;
-				}
-				if (word.length > longest) {
-					longest = word.length;
-				}
-				blockWords[word] = true;
-			}
-		});
-	});
-}
 
 
 var rejectable = function(text) {
