@@ -1,26 +1,6 @@
 /* jshint browser: true */
 /* global $, libsb, lace */
 
-$.fn.setCursorEnd = function() {
-	var range, selection;
-
-	if (document.createRange) {
-		range = document.createRange();
-		range.selectNodeContents(this[0]);
-		range.collapse(false);
-		selection = window.getSelection();
-		selection.removeAllRanges();
-		selection.addRange(range);
-	} else if (document.selection) {
-		range = document.body.createTextRange();
-		range.moveToElementText(this[0]);
-		range.collapse(false);
-		range.select();
-	}
-
-	return this;
-};
-
 $(function() {
 	$(document).on("click", ".long", function() {
 		$(this).toggleClass("active").scrollTop(0);
@@ -50,7 +30,11 @@ $(function() {
 			msg = msg + " @" + nick + "&nbsp;";
 		}
 
-		$(".chat-entry").html(msg).focus().setCursorEnd();
+		$(".chat-entry").html(msg).focus();
+
+		if ($.fn.setCursorEnd) {
+			$(".chat-entry").setCursorEnd();
+		}
 
 		$(".chat-entry").on("click", function() {
 			$(".chat-item").removeClass("current");
@@ -58,7 +42,7 @@ $(function() {
 	});
 
 	$(document).on("click", ".chat-more", function() {
-		lace.popover.show({ body: $("#chat-menu").html(), el: $(this) });
+		lace.popover.show({ body: $("#chat-menu").html(), origin: $(this) });
 	});
 
 	$(document).on("keydown", function(e){
