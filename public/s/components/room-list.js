@@ -8,6 +8,8 @@ $(function() {
 		rooms = [false, false], listenQueue = [], inited = false;
 
 	function enter(room) {
+		if(!room) return;
+		room = room.toLowerCase();
 		if(rooms.indexOf(room)<0) {
 			rooms.pop();
 			rooms.push(room);
@@ -22,7 +24,6 @@ $(function() {
 		listenQueue.forEach(function(e) {
 			libsb.enter(e);
 		});
-
 		n();
 	});
 
@@ -38,7 +39,7 @@ $(function() {
 			if(!index) index = 0;
 			if(before) {
 				if(index === 0){
-					return callback([]);
+					return callback([false]);
 				}
 				index--;
 				from = index - before;

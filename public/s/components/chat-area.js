@@ -20,13 +20,14 @@ $(function() {
 			if(thread) query.thread = thread;
 			if(libsb.isInited) {
 				loadTexts();
-			}else{
+			}else {
+
 				libsb.on("inited", function(p, n){
-					loadTexts();
+					loadTexts(true);
 					n();
 				});
 			}
-			function loadTexts(){
+			function loadTexts() {
 				libsb.getTexts(query, function(err, t) {
 					var texts = t.results;
 					if(err) throw err; // TODO: handle the error properly.

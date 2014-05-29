@@ -1,6 +1,6 @@
 @import "global";
 
-.dim {
+.backdrop {
 	@include fadein(.5s 1);
 
 	display: block;

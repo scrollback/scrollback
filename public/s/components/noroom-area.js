@@ -1,3 +1,6 @@
+/* jshint browser: true */
+/* global $, libsb, lace, currentState */
+
 (function(){
     libsb.on('error-dn', function(err, data){
         if(err.message === "NO_ROOM_WITH_GIVEN_ID"){
@@ -29,7 +32,7 @@
     });
     $("#login-and-create-room-button").click(function(){
        if ($("body").hasClass("role-guest")) {
-           lace.popover.show($(this), $("#login-menu").html());
+           lace.modal.show({ body: $("#login-dialog").html() });
        }
     });
 })();

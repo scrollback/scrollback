@@ -5,6 +5,7 @@
 @import "modal";
 @import "popover";
 @import "switch";
+@import "multientry";
 @import "flexbox";
 
 $screenx: "only screen and (min-width: 18em)";
@@ -1310,8 +1311,10 @@ body {
 	@media only screen and (max-width: 27em) { width: 100%; }
 }
 
-.loggedout-dialog {
-    .button { width: 100%; }
+.loggedout-dialog, .login-dialog {
+     min-width: 20em;
+
+    .button { display: block; }
 }
 
 .popover-body {
