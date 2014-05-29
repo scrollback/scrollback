@@ -8,6 +8,7 @@ require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(core);
 require('./socket/socket-client')(core);
 
+require('./public/s/js/setCursorEnd.js');
 require('./public/s/js/lace.js');
 require('./public/s/js/format.js');
 require('./public/s/js/swipe-events.js');

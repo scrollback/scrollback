@@ -1,3 +1,6 @@
+/* jshint browser: true */
+/* global $, libsb */
+
 var formField = require("../lib/formField.js");
 
 libsb.on('config-show', function(tabs, next) {

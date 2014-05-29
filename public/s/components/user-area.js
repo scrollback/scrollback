@@ -8,9 +8,9 @@ $(function(){
 
 	$(".user-area").on("click", function() {
 		if ($("body").hasClass("role-guest")) {
-			lace.popover.show({ body: $("#login-menu").html(), el: $(this) });
+			lace.popover.show({ body: $("#login-menu").html(), origin: $(this) });
 		} else {
-			lace.popover.show({ body: $("#user-menu").html(), el: $(this) });
+			lace.popover.show({ body: $("#user-menu").html(), origin: $(this) });
 		}
 	});
 
