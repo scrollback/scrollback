@@ -4,14 +4,59 @@
 
 var chatArea = {};
 
-
-
-(function() {
+$(function() {
 	var $logs = $(".chat-area"),
-	room = window.location.pathname.split("/")[1], /* replace with room from URL */
-	thread = '',
-	time = null; /* replace this with the time from the URL, if available. */
-	var ready = false;
+		room = window.location.pathname.split("/")[1], /* replace with room from URL */
+		thread = '',
+		time = null; /* replace this with the time from the URL, if available. */
+	// Set up infinite scroll here.
+	$logs.infinite({
+		scrollSpace: 2000,
+		fillSpace: 500,
+		itemHeight: 50,
+		startIndex: time,
+		getItems: function (index, before, after, recycle, callback) {
+			var query = { to: room, time: index || time, before: before, after: after };
+
+			if(thread) query.thread = thread;
+			if(!index && !before) return callback([false]);
+			if(libsb.isInited) {
+				loadTexts();
+			}else {
+				libsb.on("inited", function(p, n){
+					loadTexts(true);
+					n();
+				});
+			}
+			function loadTexts() {
+				libsb.getTexts(query, function(err, t) {
+					var texts = t.results;
+					if(err) throw err; // TODO: handle the error properly.
+
+					if(!index && texts.length === "0") {
+						return callback([false]);
+					}
+					if(after === 0) {
+						if(texts.length < before) {
+							texts.unshift(false);
+						}
+						if(t.time){
+							texts.pop();
+						}
+					}else if(before === 0) {
+						if(texts.length < after) {
+							texts.push(false);
+						}
+						texts.splice(0,1);
+					}
+					callback(texts.map(function(text) {
+						return text && chatEl.render(null, text);
+					}));
+				});
+			}
+
+		}
+	});
 
 	// Check for mentions
 	libsb.on('text-dn', function(text, next) {
@@ -45,6 +90,7 @@ var chatArea = {};
 		}
 
 		text.text.split(" ").map(isMention);
+
 		next();
 	});
 
@@ -77,15 +123,12 @@ var chatArea = {};
 	});
 
 	libsb.on('navigate', function(state, next) {
-		var reset = false
-		var chats = $logs.find('.chat-item');	
-		
+		var reset = false;
 		if(state.source == 'text-area') return next();
 		if(state.source == "init") {
 			room = state.room || currentState.room;
 			thread = state.thread || currentState.thread;
 			time = state.time || time
-			// ready = true;
 			reset = true;
 		}else {
 			if(state && (!state.old || state.room != state.old.room)) {
@@ -101,125 +144,78 @@ var chatArea = {};
 				reset = true;
 			}
 		}
-		if(chats.size() === 0) return next();
+
 		if(reset) {
 			$logs.reset(time);
 		}
 		next();
 	}, 200);
 
-	$(function() {
-		// Set up infinite scroll here.
-		$logs.infinite({
-			scrollSpace: 2000,
-			fillSpace: 500,
-			itemHeight: 50,
-			startIndex: time,
-			getItems: function (index, before, after, recycle, callback) {
-				var query = { to: room, time: index || time, before: before, after: after };
-				// if(!ready) return;
 
-				if(thread) query.thread = thread;
-				if(libsb.isInited) {
-					loadTexts();
-				}else {
-					libsb.on("inited", function(p, n){
-						loadTexts(true);
-						n();
-					});
-				}
-				function loadTexts() {
-					libsb.getTexts(query, function(err, t) {
-						var texts = t.results;
-						if(err) throw err; // TODO: handle the error properly.
-						if(after === 0) {
-							if(texts.length < before) {
-								texts.unshift(false);
-							}
-							if(t.time){
-								texts.pop();
-							}
-						}else if(before === 0) {
-							if(texts.length < after) {
-								texts.push(false);
-							}
-							texts.splice(0,1);
-						}
-						callback(texts.map(function(text) {
-							return text && chatEl.render(null, text);
-						}));
-					});
-				}
+	// The chatArea API.
+	chatArea.setBottom = function(bottom) {
+		var atBottom = ($logs.scrollTop() + $logs.height() == $logs[0].scrollHeight);
 
+		$logs.css({ bottom: bottom });
+		if(atBottom) $logs.scrollTop($logs[0].scrollHeight);
+	};
+
+	chatArea.setRoom = function(r) {
+		room = r;
+		$logs.find(".chat").remove();
+		$logs.scroll();
+	};
+
+	// --- add classes to body to reflect state ---
+
+	var timeout,
+		top = $(this).scrollTop();
+
+	$logs.on("scroll", function() {
+		var atBottom = ($logs.scrollTop() + $logs.height() == $logs[0].scrollHeight);
+		var cur_top = $logs.scrollTop();
+
+		if(atBottom) return;
+
+		if (top < cur_top) {
+			$("body").removeClass("scroll-up").addClass("scroll-down");
+		} else {
+			$("body").removeClass("scroll-down").addClass("scroll-up");
+		}
+
+		top = cur_top;
+
+		$("body").addClass("scrolling");
+
+		if(timeout) clearTimeout(timeout);
+
+		timeout = setTimeout(function(){
+			$("body").removeClass("scrolling").removeClass("scroll-up").removeClass("scroll-down");
+			timeout = 0;
+		}, 1000);
+
+		var chats = $logs.find('.chat-item'),
+			time = chats.eq(0).data("index"),
+			parentOffset = $logs.offset().top,
+			i;
+
+		for(i=0; i<chats.size(); i++) {
+			if(chats.eq(i).offset().top - parentOffset > 0) {
+				time = chats.eq(i).data("index");
+				break;
 			}
-		});
-
-	
-
-		// The chatArea API.
-		chatArea.setBottom = function(bottom) {
-			var atBottom = ($logs.scrollTop() + $logs.height() == $logs[0].scrollHeight);
-
-			$logs.css({ bottom: bottom });
-			if(atBottom) $logs.scrollTop($logs[0].scrollHeight);
-		};
-
-		var timeout,
-			top = $(this).scrollTop();
-
-		$logs.on("scroll", function() {
-
-			var chats = $logs.find('.chat-item'),
-				time = chats.eq(0).data("index"),
-				parentOffset = $logs.offset().top,
-				i;
-
-			if(chats.size() === 0) return;
-
-			var atBottom = ($logs.scrollTop() + $logs.height() == $logs[0].scrollHeight);
-			var cur_top = $logs.scrollTop();
-
-			if(atBottom) return;
-
-			if (top < cur_top) {
-				$("body").removeClass("scroll-up").addClass("scroll-down");
-			} else {
-				$("body").removeClass("scroll-down").addClass("scroll-up");
-			}
-
-			top = cur_top;
-
-			$("body").addClass("scrolling");
-
-			if(timeout) clearTimeout(timeout);
-
-			timeout = setTimeout(function(){
-				$("body").removeClass("scrolling").removeClass("scroll-up").removeClass("scroll-down");
-				timeout = 0;
-			}, 1000);
-
-			for(i=0; i<chats.size(); i++) {
-				if(chats.eq(i).offset().top - parentOffset > 0) {
-					time = chats.eq(i).data("index");
-					break;
-				}
-			}
-			if(libsb.isInited) {
+		}
+		if(libsb.isInited) {
+			libsb.emit('navigate', { time: time, source: 'text-area' });
+		}else{
+			libsb.on("inited", function(q, n){
 				libsb.emit('navigate', { time: time, source: 'text-area' });
-			}
+				n();
+			});
+		}
 
-			// else{
-			// 	libsb.on("init-dn", function(q, n){
-			// 		libsb.emit('navigate', { time: time, source: 'text-area' });
-			// 		n();
-			// 	});
-			// }
+		$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
 
-			$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
-
-		});
-		window.chatArea = chatArea;
 	});
-
-
-})()
+	window.chatArea = chatArea;
+});

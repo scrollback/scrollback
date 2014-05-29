@@ -2,7 +2,7 @@
 /* global $, format, libsb */
 
 var threadEl = {};
-
+var thread = "";
 $(function() {
 	var $template = $(".thread-item").eq(0);
 
@@ -23,10 +23,12 @@ $(function() {
 window.threadEl = threadEl;
 
 libsb.on('navigate', function(state, next) {
-	if(typeof state.thread != "undefined"  && state.thread != state.old.thread) {
+	console.log("hi ", state);
+	if(typeof state.thread != "undefined"  && state.thread != thread) {
+		thread = state.thread;
 		$(".thread-item.current").removeClass("current");
 		$("#thread-" + state.thread).addClass("current");
 	}
 
 	next();
-});
+},1);

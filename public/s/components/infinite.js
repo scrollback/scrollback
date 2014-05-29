@@ -72,7 +72,6 @@
 				if(fillBelow > fillSpace) {
 					recycle = recycle.concat(remove(fillBelow - fillSpace, "below"));
 				}
-
 				if(fillAbove < fillSpace && !pendingRequests.above && !atTop) {
 					pendingRequests.above = true;
 					cols = getGridColumns();
@@ -86,6 +85,7 @@
 						}
 					);
 				}
+
 				if(fillBelow < fillSpace && !pendingRequests.below && !atBottom) {
 					pendingRequests.below = true;
 					cols = getGridColumns();

@@ -47,13 +47,14 @@ module.exports = function(t) {
 					return callback();
 				} else if(query.before){
 					dbQuery.lte.push(0xffffffffffffffff);
-					if(query.before <= dbQuery.limit) dbQuery.limit = query.before;
+					dbQuery.gte.push(1);
+					if(query.before < dbQuery.limit) dbQuery.limit = query.before;
 				}
 			}
 			if(query.before) {
 				dbQuery.reverse = true;	
 			}
-			
+			console.log(dbQuery);
 			types.threads.get(dbQuery, function(err, results) {
 				if(err || !results) { return callback(); }
 				if(dbQuery.reverse) results = results.reverse();
