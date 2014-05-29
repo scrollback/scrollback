@@ -15,6 +15,14 @@ $(function() {
 		people9: []
 	}
 
+
+	function checkForUser(user, list) {
+		var i,l;
+		for(i=0,l=list.length;i<l;i++) {
+			if(list[i] && list[i].id == user.id) return true;
+		}
+		return false;
+	}
 	function getPeople(callback) {
 		var ppl = {}, sorted = [];
 		libsb.getUsers({memberOf: currentState.room}, function(err, res) {
@@ -42,10 +50,10 @@ $(function() {
 					return -(a.score-b.score);
 				});
 				sorted.forEach(function(e) {
-					lists["people"+e.score].push(e);
+					if(!checkForUser(e, lists["people"+e.score])) lists["people"+e.score].push(e);
 				});
 				// lists["people1"].push(false);
-				lists["people9"].push(false);
+				// lists["people9"].push(false);
 				callback(lists);
 			});
 		});
@@ -54,42 +62,58 @@ $(function() {
 
 	libsb.on("away-dn", function(action, next) {
 		var i,l, lis;
-		if(!currentState.room || action.from !== currentState.room) return next();
-		
+		if(!currentState.room || action.to !== currentState.room/* || action.from == libsb.user.id*/) return next();
 		if(action.user.role == "follower") {
 			lis = 4;
 			lists["people1"].push(action.user);
+			action.user.score = 1;
 		}
 		else if(action.user.role == "owner") {
 			lis = 9;
 			lists["people6"].push(action.user);
+			action.user.score = 6;
 		} else lis = 3;
 
 		for(i=0,l=lists["people"+lis].length;i<l;i++) {
-			if(lists["people"+lis][i].id == action.user.id){
+			if(lists["people"+lis][i] && lists["people"+lis][i].id == action.user.id){
 				delete lists["people"+lis][i];
 				break;
 			}
 		}
-		// $people.reset();
+		$people.reset();
 		next();
 	},1);
+
 	libsb.on("back-dn", function(action, next) {
 		var index, l,i;
-		if(!currentState.room || action.from !== currentState.room) return next();
-		function RemoveAndInsert(r, n, obj) {
+		if(!currentState.room || action.to !== currentState.room || !action.user /*|| action.from == libsb.user.id*/) return next();
+	
+		function removeAndInsert(r, n, obj) {
 			for(i=0,l=lists["people"+r].length;i<l;i++) {
-				if(action.user.id == lists["people"+r][i].id){
-					delete lists["people"+r][i];
+				if(lists["people"+r][i] && obj.id == lists["people"+r][i].id) {
+					lists["people"+r][i] = null;
 					break;
 				}
 			}
-			lists["people"+n].push(action.user);
+			if(!checkForUser(obj, lists["people"+n])) lists["people"+n].push(obj);
 		}
-		if(action.user.role == "follower") {action.user.status = "online"; removeAndInsert(1,4,action.user);}
-		else if(action.user.role == "owner") {action.user.status = "online"; removeAndInsert(6,9,action.user);}
-		else {action.user.status = "online"; lists["people3"].push(action.user);}
-		// $people.reset();
+		if(action.user.role == "follower") {
+			action.user.status = "online";
+			action.user.score = 4;
+			removeAndInsert(1,4,action.user);
+		}else if(action.user.role == "owner") {
+			action.user.status = "online";
+			removeAndInsert(6,9,action.user);
+			action.user.score = 9;
+		}else {
+			action.user.status = "online";
+			if(!checkForUser(action.user, lists["people3"])) {
+				lists["people3"].push(action.user);
+			}
+			
+			action.user.score = 3;
+		}
+		$people.reset();
 		next();
 	},1);
 
@@ -134,7 +158,7 @@ $(function() {
 					p = 0;
 				} else {
 					l = getPrevArray(l);
-					if(l) p = lists[people+l].length-1;
+					if(l) p = lists["people"+l].length-1;
 				}
 			}
 			if(index && after) ppl.splice(0, 1);
@@ -161,6 +185,13 @@ $(function() {
 
 		if(state.tab == "people" && state.room != room) {
 			room = state.room;
+			lists = {
+				people1: [],
+				people3: [],
+				people4: [],
+				people6: [],
+				people9: []
+			}
 			function loadMembers(p,n) {
 				getPeople(function(sortedList) {
 					people = sortedList;
@@ -209,6 +240,6 @@ function getPrevArray(l){
 	if(l === 3) return 4;
 	if(l === 4) return 6;
 	if(l === 6) return 9;
-	if(l === 9) return 10;
+	if(l === 9) return 0;
 	else return 0;
 }

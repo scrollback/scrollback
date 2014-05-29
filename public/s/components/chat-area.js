@@ -18,7 +18,7 @@ $(function() {
 		startIndex: time,
 		getItems: function (index, before, after, recycle, callback) {
 			var query = { to: room, time: index || time, before: before, after: after };
-			if(!ready) return;
+			if(!ready) return; // dont remove this unless you are absolutely certain why you doing it.. :-p
 
 			if(thread) query.thread = thread;
 			if(libsb.isInited) {

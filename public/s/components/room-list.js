@@ -20,6 +20,7 @@ $(function() {
 		}
 	}
 	libsb.on("inited", function(d, n) {
+		if(currentState.embed == "toast") return next();
 		inited = true;
 		listenQueue.forEach(function(e) {
 			libsb.enter(e);
@@ -88,10 +89,12 @@ $(function() {
 
 	libsb.on("navigate", function(state, next) {
 		var room = state.room;
+		if(currentState.embed == "toast") return next();
 		enter(room);
 		next();
 	});
 	libsb.on("init-dn", function(init, next) {
+		if(currentState.embed == "toast") return next();
 	/*	if(init.occupantOf){
 			init.occupantOf.forEach(function(r) {
 				enter(r.id);
