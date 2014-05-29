@@ -66,4 +66,10 @@ $(function() {
 			}
 		}
 	});
+
+	$(document).on('DOMNodeInserted', function(e) {
+		if ($(e.target).hasClass("chat-item") && $.fn.oembed) {
+			$(e.target).find("a.oembed").oembed();
+		}
+	});
 });
