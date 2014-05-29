@@ -30,7 +30,11 @@ $(function() {
 			msg = msg + " @" + nick + "&nbsp;";
 		}
 
-		$(".chat-entry").html(msg).focus().setCursorEnd();
+		$(".chat-entry").html(msg).focus();
+
+		if ($.fn.setCursorEnd) {
+			$(".chat-entry").setCursorEnd();
+		}
 
 		$(".chat-entry").on("click", function() {
 			$(".chat-item").removeClass("current");

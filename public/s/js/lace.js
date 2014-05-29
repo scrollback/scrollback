@@ -101,8 +101,12 @@ var lace = {
                 if (e.keyCode === 8 && $(this).text().match(/^\s*$/)) {
                     e.preventDefault();
 
-                    $(this).text($(this).prev().find(".item-text").text()).setCursorEnd();
+                    $(this).text($(this).prev().find(".item-text").text());
                     $(this).prev().remove();
+
+                    if ($.fn.setCursorEnd) {
+                        $(this).setCursorEnd();
+                    }
                 }
             });
 
