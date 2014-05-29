@@ -4,6 +4,7 @@ libsb.on('config-show', function(tabs, next){
     var results = tabs.room; 
     var div = $('<div>').addClass('list-view list-view-irc-settings');
     var displayString = "";
+    div.append(formField("IRC Server", "text", "ircserver", results.params.irc.server), formField("IRC Channel", "text", "ircchannel", results.params.irc.channel));
     if(results.params.irc){
         if(results.params.irc.pending) {
             $.get('/r/irc/' + results.id, function(botName) {
@@ -19,7 +20,6 @@ libsb.on('config-show', function(tabs, next){
         }
 
     }
-    div.append(formField("IRC Server", "text", "ircserver", results.params.irc.server), formField("IRC Channel", "text", "ircchannel", results.params.irc.channel));
     tabs.irc = {
             html: div,
             text: "IRC setup",
