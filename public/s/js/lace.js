@@ -2,9 +2,9 @@
 /* global $, Notification, webkitNotifications */
 
 /**
- * @fileOverview Various UI components.
+ * @fileOverview User interface components.
  * @author Satyajit Sahoo <satya@scrollback.io>
- * @requires jQuery
+ * @requires jQuery, setCursorEnd
  */
 
 var lace = {
@@ -99,7 +99,10 @@ var lace = {
 
             $(document).on("keydown", ".multientry .item", function(e) {
                 if (e.keyCode === 8 && $(this).text().match(/^\s*$/)) {
-                    lace.multientry.remove($(this).prev());
+                    e.preventDefault();
+
+                    $(this).text($(this).prev().find(".item-text").text()).setCursorEnd();
+                    $(this).prev().remove();
                 }
             });
 
