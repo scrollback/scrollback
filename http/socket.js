@@ -27,7 +27,8 @@ Boston, MA 02111-1307 USA.
 var sockjs = require("sockjs"), core,
 	// api = require("./api.js"),
 	log = require("../lib/logger.js"),
-	config = require("../config.js");
+	config = require("../config.js"),
+	generate = require("../lib/generate.js");;
 
 
 var rConns = {}, uConns = {}, sConns = {}, urConns = {};
@@ -91,7 +92,26 @@ sock.on('connection', function (socket) {
 				return;
 			}
 			if(data.type == 'away') storeAway(conn, data);
-			if(data.type == 'init') storeInit(conn, data);
+			if(data.type == 'init') {
+				if(data.old){
+					console.log("+++++++++sending back");
+					data.occupantOf.forEach(function(e) {
+						var role, i,l;
+
+						for(i=0,l=data.memberOf.length;i<l;i++) {
+							if(data.memberOf[i].id ==e.id) {
+								role = data.memberOf[i].role;
+								break;
+							}
+						}
+						
+						data.user.role = role;
+						emit({id: generate.uid(), type: "away", to: e.id, from: data.old.id, user: data.old, room: e});
+						emit({id: generate.uid(), type: "back",to: e.id, from: data.user.id, session: data.session,user: data.user, room: e});
+					});	
+				}
+				storeInit(conn, data);
+			}
 			if(data.type == 'user') processUser(conn, data);
 			if(['getUsers', 'getTexts', 'getRooms', 'getThreads'].indexOf(data.type)>=0){
 				conn.send(data);
@@ -196,7 +216,7 @@ function emit(action, callback) {
 	}
 	
 	function dispatch(conn) {conn.send(action); }
-	callback();
+	if(callback) callback();
 };
 
 function handleClose(conn) {
@@ -232,7 +252,7 @@ function handleClose(conn) {
 					});
 				});
 			});
-		}, 30*1000);
+		}, 3*1000);
 	});
 }
 

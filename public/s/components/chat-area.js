@@ -9,6 +9,7 @@ $(function() {
 		room = window.location.pathname.split("/")[1], /* replace with room from URL */
 		thread = '',
 		time = null; /* replace this with the time from the URL, if available. */
+	var ready = false;
 	// Set up infinite scroll here.
 	$logs.infinite({
 		scrollSpace: 2000,
@@ -16,7 +17,9 @@ $(function() {
 		itemHeight: 50,
 		startIndex: time,
 		getItems: function (index, before, after, recycle, callback) {
-			var query = { to: room, time: index, before: before, after: after };
+			var query = { to: room, time: index || time, before: before, after: after };
+			if(!ready) return; // dont remove this unless you are absolutely certain why you doing it.. :-p
+
 			if(thread) query.thread = thread;
 			if(libsb.isInited) {
 				loadTexts();
@@ -105,7 +108,6 @@ $(function() {
 				return next();
 			}
 		}else if(thread) {
-			console.log(thread);
 			return next();
 		}
 
@@ -121,23 +123,33 @@ $(function() {
 	libsb.on('navigate', function(state, next) {
 		var reset = false;
 		if(state.source == 'text-area') return next();
+		if(state.source == "init") {
+			room = state.room || currentState.room;
+			thread = state.thread || currentState.thread;
+			time = state.time || time
+			ready = true;
+			reset = true;
+		}else {
+			if(state && (!state.old || state.room != state.old.room)) {
+				room = state.room;
+				reset = true;
+			}
+			if(typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
+				thread = state.thread;
+				reset = true;
+			}
+			if(state.old && state.time != state.old.time) {
+				time = state.time;
+				reset = true;
+			}	
+		}
 
-		if(state && (!state.old || state.room != state.old.room)) {
-			room = state.room;
-			reset = true;
+		if(reset) {
+			if(time) $logs.reset(time);
+			else $logs.reset();
 		}
-		if(typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
-			thread = state.thread;
-			reset = true;
-		}
-		if(state.old && state.time != state.old.time) {
-			time = state.time;
-			reset = true;
-		}
-
-		if(reset) $logs.reset(time);
 		next();
-	});
+	}, 200);
 
 
 	// The chatArea API.

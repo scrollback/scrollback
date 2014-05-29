@@ -114,7 +114,7 @@ exports.init = function(app, coreObject) {
             res.render("d/main" , responseObject);    
         });
     }
-    app.get("/me", loginHandler);
+/*    app.get("/me", loginHandler);
 	app.get("/me/login", loginHandler);
     app.get("/dlg/*",function(req,res){
         var dialog=req.path.substring(1).split("/")[1];
@@ -137,7 +137,7 @@ exports.init = function(app, coreObject) {
             url:url
         });
     });
-
+*/
     app.get('/t/*', function(req, res, next) {
         var streams = req.path.substring(3);
 
@@ -152,11 +152,11 @@ exports.init = function(app, coreObject) {
             })
         });
     });   
-	
+/*	
 	app.get("/beta/*", function(req, res){
 		return res.redirect(307, 'https://'+config.http.host+ req.path.substring(5));
 	});
-	
+*/	
     function roomHandler(req, res, next) {
 		log("path ", req.path);
         var params = req.path.substring(1).split("/"), responseObj={}, 
@@ -219,8 +219,8 @@ exports.init = function(app, coreObject) {
            res.end(data);
         });
     });
-    app.get("/*/edit", roomHandler);
-
+    // app.get("/*/edit", roomHandler);
+/*
     app.get("/old/*", function(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[1],
         user = req.session.user;
@@ -295,7 +295,7 @@ exports.init = function(app, coreObject) {
                 res.render("archive", responseObj);
             });
         });
-    });
+    });*/
 };
 
 
