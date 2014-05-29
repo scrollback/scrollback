@@ -9,41 +9,46 @@ var internalSession = Object.keys(config.whitelists)[0];
 client.init(clientEmitter);
 var core;
 var callbacks = {};
-var onlineUsers = {};
+var onlineUsers = {};//scrollback users that are already online 
 var firstMessage = {};//[room][username] = true
 var userExp = 2*60*1000;
 var initCount = 0;
+var ircUtils = new require('./ircUtils.js')(clientEmitter, callbacks);
+
 module.exports = function (coreObj) {
 	core = coreObj;
+	init();
 	core.on("http/init", function(payload, callback) {
 		payload.irc = {
 			get: function(req,res,next) {	
-				getRequest(req,res,next);
+				ircUtils.getRequest(req,res,next);
 			}
 		};
 		callback(null, payload);
 	}, "setters");
-	init();
+	
 	core.on ('room', function(room, callback) {
-		log("room irc:", room, client.connected(), room.session.indexOf('internal') !== 0);
-		if (room.type !== "room" || room.session === internalSession) return callback();
-		if (room.room.params && room.room.params.irc && client.connected()) {
-			room = changeRoomParams(room);
+		log("room irc:", JSON.stringify(room), client.connected());
+		if (room.session === internalSession) return callback();
+		
+		if (ircParamsValidation(room) && client.connected()) {
+			changeRoomParams(room);
 			var rr = room.room;
-			log("room irc after adding additional properties:", room.room.params.irc);
-			if ((!room.old || !room.old.id) && rr.params.irc && rr.params.irc.server && rr.params.irc.channel) {//TODO chack if new irc config.
+			log("room irc after adding additional properties:", JSON.stringify(room));
+			if (isNewRoom(room)) {//TODO chack if new irc config.
+				log("IRC setting added first time", JSON.stringify(room));
 				rr.params.irc.channel = rr.params.irc.channel.toLowerCase();
-				return addNewBot(rr, callback);
-			} else if (room.old && room.old.id) {//room config changed
+				return ircUtils.addNewBot(rr, callback);
+			} else {//room config changed
 				var oldIrc = room.old.params.irc;
 				var newIrc = rr.params.irc;
 				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel ||
-					oldIrc.enable !== newIrc.enable || oldIrc.pending !== newIrc.pending) {
-					if(oldIrc.server && oldIrc.channel &&
-						oldIrc.server.length > 0 && oldIrc.channel.length > 0) disconnectBot(rr.id);
-					return addNewBot(rr, callback);
+					oldIrc.pending !== newIrc.pending) {
+					if(oldIrc.server && oldIrc.channel) ircUtils.disconnectBot(rr.id);//if old is connected
+					if(rr.params.irc.server && rr.params.irc.channel) return ircUtils.addNewBot(rr, callback);
+					else return callback();
 				} else return callback();
-			} else return callback(); 
+			}  
 		} else return callback();
 	}, "gateway");
 	
@@ -73,17 +78,18 @@ module.exports = function (coreObj) {
 						sbNick: oldUser.id
 					});	
 				}
-			};
-			
+			};	
 		}
 		callback();
 	}, "gateway");
 	
 	core.on('text', function(text, callback) {
 		log("On text:", client.connected());
-		log("text called irc:", text);
+		log("text called irc:", JSON.stringify(text));
 		log("online users:", onlineUsers);
-		if (text.room.params && text.room.params.irc && text.session.indexOf('irc') !== 0 && client.connected()) {//session of incoming users from irc 
+		if (text.room.params && text.room.params.irc && text.room.params.irc.server &&
+			text.room.params.irc.channel && !text.room.params.irc.pending &&
+			text.session.indexOf('irc') !== 0 && client.connected()) {//session of incoming users from irc 
 			if(!(firstMessage[text.to] && firstMessage[text.to][text.from])) {
 				if (!firstMessage[text.to]) {
 					firstMessage[text.to] = {};
@@ -91,18 +97,20 @@ module.exports = function (coreObj) {
 				firstMessage[text.to][text.from] = true;
 				if (onlineUsers[text.to] && onlineUsers[text.to][text.from]) {
 					delete onlineUsers[text.to][text.from];
-				} else connectUser(text.to, text.from);
+				} else ircUtils.connectUser(text.to, text.from);
 			}
-			say(text.to, text.from, text.text);
+			ircUtils.say(text.to, text.from, text.text);
 		}
 		callback();
 	}, "gateway");
 	
 	core.on('away', function(action, callback) {
 		log("On away:", client.connected());
-		if (action.room.params && action.room.params.irc && action.session.indexOf('irc') !== 0 && client.connected()) {//session of incoming users from irc 
+		if (action.room.params && action.room.params.irc && action.room.params.irc.server &&
+			action.room.params.irc.channel && !action.room.params.irc.pending &&
+			action.session.indexOf('irc') !== 0 && client.connected()) {//session of incoming users from irc 
 			if(firstMessage[action.to] && firstMessage[action.to][action.from]) {
-				disconnectUser(action.to, action.from);
+				ircUtils.disconnectUser(action.to, action.from);
 				delete firstMessage[action.to][action.from];
 			}
 		}
@@ -111,23 +119,44 @@ module.exports = function (coreObj) {
 };
 
 function ircParamsValidation(room) {
-	return true;
+	return (room.room.params && room.room.params.irc &&
+			room.room.params.irc.server && room.room.params.irc.channel) ||
+			(room.old && room.old.params && room.old.params.irc && room.old.params.irc.server &&
+			room.old.params.irc.channel);// old or new 
 }
 
 
 
 
+/**
+ *add or copy pending status 
+ */
 function changeRoomParams(room) {
 	room.room.params.irc.enable = true;
-	if (!room.room.params.irc.pending) {
-		room.room.params.irc.pending = true;
-	}
 	var or = room.old;
-	if (or && or.id && or.params.irc && (or.params.irc.server !== room.room.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel)) {
-		room.room.params.irc.pending = true;
+	var r = true;
+	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel &&
+		or.params.irc.pending) { //this is old room
+		if (room.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel) {
+			room.room.params.irc.pending = true;//if server or channel changes
+			r = false;
+		} else room.room.params.irc.pending =(!or.params.irc.pending? true : or.params.irc.pending);	
+	} else {
+		room.room.params.irc.pending = true;//this is new room.
 	}
-	return room;
+	return r;
 }
+
+function isNewRoom(room) {
+	var or = room.old;
+	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel ) { //this is old room
+		return false;
+	} else {
+		return true;
+	}
+}
+
+
 
 function init() {
 	var notUsedRooms = {};
@@ -151,13 +180,13 @@ function init() {
 					var r2 = state.rooms[room.id].params.irc;
 					if (!(r1.server === r2.server && r1.channel === r2.channel && r1.pending === r2.pending)) {
 						log("reconnecting bot with new values:", room.id);
-						disconnectBot(state.rooms[room.id].id);
-						addNewBot(room); 
+						ircUtils.disconnectBot(state.rooms[room.id].id);
+						ircUtils.addNewBot(room); 
 					}
 					delete notUsedRooms[room.id];
 				} else {
 					log("adding new Bot", room);
-					addNewBot(room);
+					ircUtils.addNewBot(room);
 				}
 				//send init and back for incoming users with irc sessionIDs
 				log("creating online users list");
@@ -182,7 +211,7 @@ function init() {
 							setTimeout(function() {
 								if(	onlineUsers[room.id][servNick[room.params.irc.server][user].nick]) {
 									log("disconnecting user ", servNick[room.params.irc.server][user].nick, " from ", room.id);
-									disconnectUser(room.id, servNick[room.params.irc.server][user].nick);
+									ircUtils.disconnectUser(room.id, servNick[room.params.irc.server][user].nick);
 									delete onlineUsers[room.id][servNick[room.params.irc.server][user].nick];
 								}
 							}, userExp);				
@@ -194,7 +223,7 @@ function init() {
 			for (var ri in notUsedRooms) {
 				if (notUsedRooms.hasOwnProperty(ri)) {
 					log("disconnecing bot for room ", ri);
-					disconnectBot(ri);
+					ircUtils.disconnectBot(ri);
 				}
 			}
 		});
@@ -304,101 +333,3 @@ function sendInitAndBack(suggestedNick, session ,room) {
 	});
 }
 
-function connectUser(roomId, user) {
-	var uid = guid();
-	console.log("connecting user:", user, uid);
-	clientEmitter.emit('write', {
-		uid: uid,
-		type: "connectUser",
-		roomId: roomId,
-		nick: user,
-		options: {identId: user + "@scrollback.io"}
-	});
-}
-
-
-function say(roomId, from, text) {
-	clientEmitter.emit('write', {
-		type: 'say',
-		message: {
-			to: roomId,
-			from: from,
-			text: text
-		}
-	});
-}
-
-function disconnectBot(roomId) {
-	var uid = guid();
-	clientEmitter.emit('write', {
-		uid: uid,
-		type: 'partBot',
-		roomId: roomId
-	});
-}
-
-function disconnectUser(roomId, user) {
-	var uid = guid();
-	clientEmitter.emit('write', {
-		uid: uid,
-		type: 'partUser',
-		roomId: roomId,
-		nick: user
-	});
-}
-
-
-/*new Request.*/
-function addNewBot(r, callback) {
-	console.log("room irc Adding new bot for room :", r.id);
-	var room  = copyRoomOnlyIrc(r);
-	var uid = guid();
-	clientEmitter.emit('write', {
-		uid: uid,
-		type: 'connectBot',
-		room: room,
-		options: {identId: "scrollback@scrollback.io"}
-	});
-	if (callback) {
-		callbacks[uid] = function(message) {
-			if(message) return callback(new Error(message));
-			else return callback();
-		};
-	}
-}
-/**
- * Copy only roomId and IRC params.
- */
-function copyRoomOnlyIrc(room) {
-	return {id: room.id, params: {irc: room.params.irc}};
-}
-
-function getBotNick(roomId, callback) {
-	var uid = guid();
-	clientEmitter.emit('write', {
-		uid: uid,
-		type: 'getBotNick',
-		roomId: roomId
-	});
-	callbacks[uid] = function(data) {
-		callback(data.nick);
-	};
-}
-
-
-function getRequest(req, res, next) {
-	var path = req.path.substring(7);// "/r/irc/"
-	log("path " , path , req.url );
-	var ps = path.split('/');
-	if (ps[0]) {//room name
-		getBotNick(ps[0], function(nick) {
-			log("nick for room :", ps[0], nick);
-			if (nick === "NO_ROOM") {//error 
-				next();//say invalid req(404)
-			} else {
-				res.write(nick);
-				res.end();
-			}
-		});
-	}
-}

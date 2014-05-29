@@ -1,11 +1,15 @@
+/* jshint browser: true */
+/* global $, libsb, lace */
+
 //notifications settings
 var formField = require("../lib/formField.js");
 var div = $('<div>').addClass('list-view list-view-notification-settings');
-div.append(formField('Sound notifications ', 'toggle', 'sound-notification'));
+
+div.append(formField('Sound notifications ', 'toggle', 'sound-notification', true));
 
 if(lace.notify.support()){
 	// show desktop notifications settings, only if it is supported.
-	div.append(formField('Desktop notifications ', 'toggle', 'desktop-notification'));
+	div.append(formField('Desktop notifications ', 'toggle', 'desktop-notification', true));
 }
 
 libsb.on('pref-show', function(conf, next){
@@ -13,7 +17,7 @@ libsb.on('pref-show', function(conf, next){
 		html: div,
 		text: "Notifications",
 		prio: 800
-	}
+	};
 	next();
 });
 
@@ -21,6 +25,6 @@ libsb.on('pref-save', function(conf, next){
 	conf.notifications = {
 		sound: $('#sound-notification').is(':checked'),
 		desktop: $('#desktop-notification').is(':checked')
-	}
+	};
 	next();
 });

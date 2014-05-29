@@ -5,6 +5,7 @@
 @import "modal";
 @import "popover";
 @import "switch";
+@import "multientry";
 @import "flexbox";
 
 $screenx: "only screen and (min-width: 18em)";
@@ -443,6 +444,7 @@ body {
     @extend %nofilter;
     @extend %ease;
 
+    position: relative;
     display: inline-block;
     padding: .25em;
     width: 5.5em;
@@ -462,6 +464,44 @@ body {
         @include opacity(.5);
 
         .person-avatar { @extend %grayscale; }
+    }
+
+    &.owner, &.admin, &.moderator {
+        &:after {
+            display: block;
+            position: absolute;
+            top: .25em;
+            right: .25em;
+            font-size: .8em;
+            font-weight: 700;
+            padding: 0 .25em;
+            text-transform: uppercase;
+            border-radius: $roundness;
+        }
+    }
+
+    &.owner {
+        &:after {
+            content: "Owner";
+            background-color: $error-color;
+            color: $light-color;
+        }
+    }
+
+    &.admin {
+        &:after {
+            content: "Admin";
+            background-color: $warning-color;
+            color: $light-color;
+        }
+    }
+
+    &.moderator {
+        &:after {
+            content: "Mod";
+            background-color: $success-color;
+            color: $light-color;
+        }
     }
 
     .person-avatar {
@@ -501,13 +541,13 @@ body {
     display: block;
     padding: 1em 1.5em;
     color: $dark-color;
-    border-right: 4px solid $accent-color;
+    border-right: 4px solid lighten($dark-color, 30%);
     cursor: pointer;
 
-    &.current { background-color: fade-out($accent-color, .7); }
+    &.current { background-color: fade-out(lighten($dark-color, 30%), .7); }
 
     &:hover, &:focus, &.current:hover, &.current:focus {
-        background-color: $accent-color;
+        background-color: lighten($dark-color, 30%);
         color: $light-color;
     }
 
@@ -899,7 +939,7 @@ body {
 		height: .5em;
 		width: .5em;
 		border-radius: 50%;
-		background-color: fade-out($accent-color, .5);
+        background-color: fade-out(lighten($dark-color, 30%), .5);
 
 		@media #{$screenxx} { margin-left: -10em; }
 	}
@@ -955,7 +995,7 @@ body {
 
         display: none;
         padding-left: 3em;
-        font-size: .9em;
+        font-size: .8em;
         float: right;
         color: fade-out($dark-color, .5);
     }
@@ -1197,6 +1237,15 @@ body {
 	}
 
     .check-item, .radio-item { display: block; }
+
+    .embed-code {
+        min-width: 27em;
+        min-height: 15em;
+        background-color: darken($light-color, 5%);
+        font-weight: 700;
+        font-family: $font-family-monospace;
+        line-height: 1.2em;
+    }
 }
 
 .room-area, .meta-area, .main-area, .chat-input {
@@ -1311,7 +1360,7 @@ body {
 }
 
 .loggedout-dialog, .login-dialog {
-     min-width: 20em; 
+     min-width: 20em;
 
     .button { display: block; }
 }

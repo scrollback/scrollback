@@ -1,25 +1,27 @@
 // Room general settings
 var formField = require("../lib/formField.js");
 
-var div = $('<div>').addClass('list-view list-view-general-settings');
-div.append(formField("Name", "text", "displayname"));
-div.append(formField("Description", "area", "description"));
+libsb.on('config-show', function(tabs, next) {
+    var div = $('<div>').addClass('list-view list-view-general-settings');
+    var displayname = formField("Name", "text", "displayname", tabs.room.id);
+    var description = formField("Description", "area", "description", tabs.room.description);
+    
+    div.append(displayname, description);
+    
+    tabs.general = {
+        html: div,
+        text: "General settings",
+        prio: 900
+    };
 
-libsb.on('config-show', function(conf, next) {
-	conf.general = {
-		html: div,
-		text: "General settings",
-		prio: 900
-	}
-	next();
+    next();
 });
 
-libsb.on('config-save', function(conf, next){
-	var name = $('#displayname').val();
+libsb.on('config-save', function(room, next){
+    var name = $('#displayname').val();
+    var desc = $('#description').val();
+    room.name = name;
+    room.description = desc;
 
-	var desc = $('#description').val();
-	conf.name = name;
-	conf.description = desc;
-
-	next();
+    next();
 });

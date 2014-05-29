@@ -178,44 +178,6 @@ code {
 
     &.error { border-color: $error-color; }
 
-    &.multientry {
-        display: inline-block;
-        min-width: 15em;
-        min-height: 3em;
-        padding: 0;
-        cursor: text; /* fix firefox showing caret in wrong position */
-
-        .item {
-            @include appear;
-            @extend %nofilter;
-
-            display: inline-block;
-            min-width: 3em;
-            margin: .4em 0 .4em .4em;
-            padding: .2em .25em;
-            border: 1px solid transparent;
-            outline: none;
-
-            &:only-child { width: 100%; }
-
-            &:last-child { min-width: 7em; }
-
-            &.done {
-                background-color: lighten($accent-color, 40%);
-                border-color: darken($accent-color, 5%);
-                border-radius: $roundness;
-            }
-
-            .item-remove {
-                float: right;
-                font-weight: bold;
-                font-size: 1.5em;
-                color: darken($accent-color, 5%);
-                cursor: pointer;
-            }
-        }
-    }
-
     &.linked { @extend .linked; }
 }
 
