@@ -67,43 +67,48 @@ $(function() {
 		if(state.mode === "pref"){
 			// if currentConfig is blank, then
 			if(!currentConfig){
+                                if(libsb.user.id.indexOf('guest-') == 0){
+                                    libsb.emit('navigate', {
+                                        mode: 'normal'
+                                    });
+                                }
 				libsb.emit('pref-show', {},function(err, config) {
-					currentConfig = config;
+                                    currentConfig = config;
 
-					$('.meta-pref').empty();
+                                    $('.meta-pref').empty();
 
-					sortable = [];
+                                    sortable = [];
 
-					for(i in config) {
-						sortable.push([config[i].prio, i, config[i]]);
-					}
+                                    for(i in config) {
+                                            sortable.push([config[i].prio, i, config[i]]);
+                                    }
 
-					sortable.sort(function(a,b){
-						return b[0] - a[0];
-					});
+                                    sortable.sort(function(a,b){
+                                            return b[0] - a[0];
+                                    });
 
-					sortable.forEach(function(config){
-						var className = 'list-item-' + config[1] + '-settings';
-						$('.' + className).remove();
-						$('.meta-pref').append('<a class="list-item ' + className + '">' + config[2].text + '</a>');
-						$('.pref-area').append(config[2].html);
-					});
+                                    sortable.forEach(function(config){
+                                            var className = 'list-item-' + config[1] + '-settings';
+                                            $('.' + className).remove();
+                                            $('.meta-pref').append('<a class="list-item ' + className + '">' + config[2].text + '</a>');
+                                            $('.pref-area').append(config[2].html);
+                                    });
 
-					// making profile settings the default list-item
-					$('.list-item-profile-settings').addClass('current');
-					$('.list-view-profile-settings').addClass('current');
+                                    // making profile settings the default list-item
+                                    $('.list-item-profile-settings').addClass('current');
+                                    $('.list-view-profile-settings').addClass('current');
 
-					renderSettings(libsb.user.id);
+                                    renderSettings(libsb.user.id);
 
-					$('#desktop-notification').change(function(){
-						if($(this).is(':checked')){
-							lace.notify.request();
-							var laceObj = lace.notify.support();
-							if(laceObj.permission === "denied"){
-								lace.alert.show({type: 'error', body: 'Permission for desktop notifications denied!'});
-							}
-						}
-					});
+                                    $('#desktop-notification').change(function(){
+                                            if($(this).is(':checked')){
+                                                    lace.notify.request();
+                                                    var laceObj = lace.notify.support();
+                                                    if(laceObj.permission === "denied"){
+                                                            lace.alert.show({type: 'error', body: 'Permission for desktop notifications denied!'});
+                                                    }
+                                            }
+                                    });
 				});
 			}
 		}

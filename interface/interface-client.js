@@ -142,6 +142,9 @@ function expel(roomId, ref, callback){
 function recvInit(init, next){
 
 	libsb.session = init.session;
+        libsb.memberOf = init.memberOf;
+        libsb.occupantOf = init.occupantOf;
+
 	if(init.auth && !init.user.id) {
 		core.emit("navigate", {});
 	}
