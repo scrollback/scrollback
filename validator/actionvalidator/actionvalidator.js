@@ -133,7 +133,7 @@ module.exports = function(core) {
 		return sessionValidation(action, callback);
 	}, "validation");
 	core.on("getUsers", function(action, callback) {
-		if (!(action.ref || action.occupantOf || action.memberOf || action.identity)) {
+		if (!(action.ref || action.occupantOf || action.memberOf || action.identity || action.timezone)) {
 			return callback(new Error("INVALID_QUERY"));
 		}
 		return sessionValidation(action, callback);

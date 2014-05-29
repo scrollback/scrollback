@@ -7,7 +7,7 @@ module.exports = function (types) {
 
 	return{
 		getUsers: function(query, cb) {
-			var gateway, eqArray = [], req={};
+			var gateway,  req={};
 			if(query.results) return cb();
 			if(query.ref && query.ref == 'me') return cb();
 			if(query.memberOf) {
@@ -101,7 +101,7 @@ module.exports = function (types) {
 				newRoom.identities = data.identities;
 			}
 			if(action.type === "user") {
-				data.timezone = newRoom.timezone = data.timezone? data.timezone : 0;
+				data.timezone = (newRoom.timezone = data.timezone ? data.timezone : 0);
 				user.put(newRoom, function(err, res) {
 					return cb(err);
 				});
@@ -117,11 +117,12 @@ module.exports = function (types) {
 						}, function(err, res) {
 							cb(err, data);
 						});
+						
 					}else {
 						cb(err, data);
 					}
 				});
 			}
 		}
-	}
+	};
 };
