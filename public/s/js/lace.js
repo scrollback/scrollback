@@ -152,7 +152,7 @@ var lace = {
          */
         remove: function(element) {
             if (!element) {
-                element = $(".multientry .item");
+                element = $(".multientry .item.done");
             }
 
             $(element).remove();
@@ -268,14 +268,14 @@ var lace = {
         /**
          * Show a popover.
          * @constructor
-         * @param {{ body: String, el: String }} popover
+         * @param {{ body: String, origin: String }} popover
          */
         show: function(popover) {
             lace.popover.init();
 
-            var spacetop = $(popover.el).offset().top - $(document).scrollTop() + $(popover.el).height(),
+            var spacetop = $(popover.origin).offset().top - $(document).scrollTop() + $(popover.origin).height(),
                 spacebottom = $(window).height() - spacetop,
-                spaceleft = $(popover.el).offset().left - $(document).scrollLeft() + ( $(popover.el).width() / 2 ),
+                spaceleft = $(popover.origin).offset().left - $(document).scrollLeft() + ( $(popover.origin).width() / 2 ),
                 spaceright = $(window).width() - spaceleft;
 
             if ($(".popover-body").length || $(".popover-layer").length) {
@@ -287,20 +287,20 @@ var lace = {
 
             if ($(".popover-body").outerWidth() >= spaceleft) {
                 $(".popover-body").addClass("arrow-left");
-                spaceleft = $(popover.el).width() / 2;
+                spaceleft = $(popover.origin).width() / 2;
             } else if ($(".popover-body").outerWidth() >= spaceright) {
                 $(".popover-body").addClass("arrow-right");
-                spaceleft = $(window).width() - ( $(popover.el).width() / 2 ) - $(".popover-body").outerWidth();
+                spaceleft = $(window).width() - ( $(popover.origin).width() / 2 ) - $(".popover-body").outerWidth();
             } else {
                 spaceleft = spaceleft - ( $(".popover-body").outerWidth() / 2 );
             }
 
-            if ($(popover.el).height() >= $(window).height()) {
+            if ($(popover.origin).height() >= $(window).height()) {
                 $(".popover-body").addClass("popover-bottom");
                 spacetop = $(window).height() / 2;
             } else if ($(".popover-body").outerHeight() >= spacebottom) {
                 $(".popover-body").addClass("popover-top");
-                spacetop = spacetop - $(popover.el).height() - $(".popover-body").outerHeight();
+                spacetop = spacetop - $(popover.origin).height() - $(".popover-body").outerHeight();
             } else {
                 $(".popover-body").addClass("popover-bottom");
             }
