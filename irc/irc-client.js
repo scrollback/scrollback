@@ -1,25 +1,41 @@
 var formField = require('../lib/formField.js');
 
-var div = $('<div>').addClass('list-view list-view-irc-settings');
+libsb.on('config-show', function(tabs, next){
+    var results = tabs.room; 
+    var div = $('<div>').addClass('list-view list-view-irc-settings');
+    var displayString = "";
+    div.append(formField("IRC Server", "text", "ircserver", results.params.irc.server), formField("IRC Channel", "text", "ircchannel", results.params.irc.channel));
+    if(results.params.irc){
+        if(results.params.irc.pending) {
+            $.get('/r/irc/' + results.id, function(botName) {
+                displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + results.params.irc.channel + " " + results.id + "\" in the irc channel.";
+                div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
+            });
+        } else if (results.params.irc.channel && results.params.irc.channel.length) {
+            displayString = "Connected to irc channel: " + results.params.irc.channel;
+            div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
+        } else {
+            displayString = "Not connected to any channel";
+            div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
+        }
 
-
-div.append(formField("IRC Server", "text", "ircserver"));
-div.append(formField("IRC Channel", "text", "ircchannel"));
-div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed"></div></div>'));
-
-libsb.on('config-show', function(conf, next) {
-	conf.irc = {
-		html: div,
-		text: "IRC setup",
-		prio: 800
-	};
-	next();
+    }
+    tabs.irc = {
+            html: div,
+            text: "IRC setup",
+            prio: 800
+    };
+    next();
 });
 
-libsb.on('config-save', function(conf, next){
-	conf.irc = {
-		server : $('#ircserver').val(),
-		channel : $('#ircchannel').val()
-	};
-	next();
+libsb.on('config-save', function(room, next){
+    room.params.irc = {
+        server : $('#ircserver').val(),
+        channel : $('#ircchannel').val()
+    };
+    if(room.irc && room.irc.channel && room.irc.server) {
+	ircIdentity += "irc://" + room.irc.server +  ":" + room.irc.channel;
+        room.identities.push(ircIdentity);
+    }
+    next();
 });

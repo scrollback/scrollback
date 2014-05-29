@@ -3,7 +3,7 @@ var underscore = require('underscore');
 var core;
 var libsb = {
 		user: "",
-		rooms: "",
+		rooms: [],
 		occupantOf: [],
 		memberOf: [],
 		isConnected: false,
@@ -142,6 +142,9 @@ function expel(roomId, ref, callback){
 function recvInit(init, next){
 
 	libsb.session = init.session;
+        libsb.memberOf = init.memberOf;
+        libsb.occupantOf = init.occupantOf;
+
 	if(init.auth && !init.user.id) {
 		core.emit("navigate", {});
 	}
@@ -169,10 +172,10 @@ function recvBack(back, next){
 
 function recvAway(away, next){
 	if(away.from !== libsb.user.id) return next();
-	libsb.rooms = underscore.compact(libsb.rooms.map(function(room){ if(room.id !== away.to) return room; }));
+	/*libsb.rooms = underscore.compact(libsb.rooms.map(function(room){ if(room.id !== away.to) return room; }));
 	libsb.occupantOf = underscore.compact(libsb.occupantOf.map(function(room){ if(room.id !== away.to) return room; }));
 	core.emit('rooms-update');
-	core.emit('occupantof-update');
+	core.emit('occupantof-update');*/
 	next();
 }
 

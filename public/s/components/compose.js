@@ -10,15 +10,13 @@ $(function() {
 
 
 	function sendMsg(){
-		var text = format.htmlToText($entry.html());
-
-		if(!text) return;
-
+		var text = $entry.text();
+		text = text.trim();
 		$entry.text("");
-
+		if(!text) return;
 		if (window.currentState && window.currentState.room) {
 			libsb.say(window.currentState.room, text, window.currentState.thread);
-		}else{
+		}else {
 			// show the error that not part of any room yet.
 		}
 

@@ -23,20 +23,13 @@
 var currentState = window.currentState = {};
 
 
-libsb.on("inited", function(){
+libsb.on("inited", function(f, n){
 	var path  = window.location.pathname.substr(1);
 	var search = window.location.search.substr(1), properties={};
 	var state = {};
 	path = path.split("/");
 	state.source = "init";
-	if(path[0]){
-		state.room = path[0];
-	}
-
-	if(path[1]){
-		state.thread = path[1];
-	}
-	state.room = state.room.toLowerCase();
+	
 	
 	search.split("&").map(function(i) {
 		var q;
@@ -54,8 +47,25 @@ libsb.on("inited", function(){
 		state.time = new Date(state.time).getTime();
 	}
 
+	if(path[0] == "me") {
+		state.mode = "pref"
+		libsb.emit("navigate", state);
+		return n();
+	}else{
+		state.room = path[0]
+		state.room = state.room.toLowerCase();
+	} 
+
+	if(path[1] == "edit"){		
+		state.mode = "conf"
+		libsb.emit("navigate", state);
+	}else if(path[1]) {
+		state.thread = path[1];
+	}
+
 	libsb.emit("navigate", state);
-});
+	n();
+}, 1000);
 libsb.on("navigate", function(state, next) {
 	state.old = $.extend(true, {}, currentState); // copying object by value
 	state.changes = {};
@@ -152,7 +162,9 @@ libsb.on("navigate", function(state, next) {
 					): '');
 		}
 
-		// if(state.time) params.push('time=' + new Date(state.time).toISOString());
+		if(state.time) {
+			params.push('time=' + new Date(state.time).toISOString());	
+		}
 		if(state.mode) params.push('mode=' + state.mode);
 		if(state.tab) params.push('tab=' + state.tab);
 		if(state.embed) params.push('embed=' + state.embed);
@@ -185,13 +197,6 @@ libsb.on("navigate", function(state, next) {
 		}
 	}
 
-	if (state.thread) {
-		// TODO
-		// libsb.getThreads({ref: state.thread}, function(err, thread) {
-		// threadTitle = thread.title;
-		// });
-	}
-
 	pushState();
 
 	next();
@@ -199,6 +204,7 @@ libsb.on("navigate", function(state, next) {
 
 // On history change, load the appropriate state
 $(window).on("popstate", function() {
+	if(!libsb.inited) return; // remove this when you enable offline access.
 	if (('state' in history && history.state !== null)) {
 		var state = {}, prop;
 		for (prop in history.state) {

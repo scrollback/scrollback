@@ -3,23 +3,26 @@
 
 var formField = require("../lib/formField.js");
 
-var div = $('<div>').addClass('list-view list-view-spam-settings');
-div.append(formField("Block offensive words", "toggle", "block-offensive", true));
+libsb.on('config-show', function(tabs, next) {
+    var results = tabs.room;
+    var div = $('<div>').addClass('list-view list-view-spam-settings');
 
-libsb.on('config-show', function(conf, next) {
-	conf.spam = {
-		html: div,
-		text: "Spam control",
-		prio: 600
-	};
+    if (!results.params.antiAbuse) {
+        results.params.antiAbuse = { offensive: true };
+    }
 
-	next();
+    div.append(formField("Block offensive words", "toggle", 'block-offensive', results.params.antiAbuse.offensive));
+    tabs.spam = {
+        html: div,
+        text: "Spam control",
+        prio: 600
+    };
+    next();
 });
 
-libsb.on('config-save', function(conf, next){
-	conf.spam = {
-		offensive : $('#block-offensive').is(':checked')
-	};
-
-	next();
+libsb.on('config-save', function(room, next){
+    room.params.antiAbuse = {
+        offensive : $('#block-offensive').is(':checked')
+    };
+    next();
 });
