@@ -366,12 +366,12 @@ function addUsers(client, channel, nick) {
 
 function sendBack(server, channel, nick, bn) {
 	log("servChanProp", JSON.stringify(servChanProp));
-	log("server", server, " channel:", channel);
+	log("server", server, " channel:", channel, "servNick", JSON.stringify(servNick));
 	channel = channel.toLowerCase();
 	servChanProp[server][channel].rooms.forEach(function(room) {
 		//save data.
 		if(nick != bn) servChanProp[server][channel].users.push(nick);//don't add myNick 
-		if(nick != bn && !servNick[server][nick] && !room.params.irc.pending) {
+		if(nick != bn && (!servNick[server][nick] || (servNick[server][nick].dir == "in")) && !room.params.irc.pending) {//TODO test
 			servNick[server][nick] = {nick: nick, dir: "in"};//default nick is irc nick
 			core.emit("data", {
 				type: "back",
