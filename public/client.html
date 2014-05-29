@@ -155,7 +155,13 @@
 					</a>
 				</div>
 				<div role="tabpanel" class="pane pane-threads">
-					<div data-mode="search" class="thread-search-query"></div>
+					<!-- <div data-mode="search" class="thread-search-query"></div> -->
+					<div data-mode="normal" class="thread-all-coversations">
+						<div class="thread-item" href="" id="thread-">
+							<h4 class="thread-title">All coversations</h4>
+							<p class="thread-snippet"></p>
+						</div>
+					</div>
 					<div class="thread-item-container hide-scroll">
 						<div class="thread-item" href="">
 							<h4 class="thread-title"></h4>
@@ -341,5 +347,51 @@
 		<script>$(function() { libsb.connect(); });</script>
 		<script src="https://login.persona.org/include.js"></script>
 		<script>document.addEventListener && document.addEventListener("touchstart", function() {}, true);</script>
+
+		<script>
+			$(function(){
+				var path  = window.location.pathname.substr(1);
+				var search = window.location.search.substr(1), properties={};
+				var state = {};
+				path = path.split("/");
+				state.source = "init";
+				
+				
+				search.split("&").map(function(i) {
+					var q;
+					if(!i) return;
+					q = i.split("=");
+					state[q[0]] = q[1];
+				});
+
+				if(!state.mode) state.mode = "normal";
+				if(!state.tab) state.tab = "people";
+				if(!state.theme) state.theme = "light";
+				if(!state.embed) state.embed = "";
+
+				if(state.time) {
+					state.time = new Date(state.time).getTime();
+				}
+
+				if(path[0] == "me") {
+					state.mode = "pref"
+					libsb.emit("navigate", state);
+					return;
+				}else{
+					state.room = path[0]
+					state.room = state.room.toLowerCase();
+				} 
+
+				if(path[1] == "edit"){		
+					state.mode = "conf"
+					libsb.emit("navigate", state);
+				}else if(path[1]) {
+					state.thread = path[1];
+				}
+
+				libsb.emit("navigate", state);
+				// n();
+			});
+		</script>
 	</body>
 </html>
