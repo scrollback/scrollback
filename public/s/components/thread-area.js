@@ -83,12 +83,11 @@ $(function() {
 			var threads = t.results;
 
 			if(err) throw err; // TODO: handle the error properly.
-
+			console.log(threads);
+			if(index === null && threads.length == "0") {
+				return callback([false, false]);
+			}
 			if(after === 0) {
-				if(threads.length < before) {
-					threads.unshift({id:"", title: "All Conversations"});
-					threads.unshift(false);
-				}
 				if(t.time) {
 					threads.pop();
 				}
@@ -98,6 +97,7 @@ $(function() {
 				}
 				threads.splice(0,1);
 			}
+			
 			renderThreads(threads, callback);
 		});
 
