@@ -541,13 +541,13 @@ body {
     display: block;
     padding: 1em 1.5em;
     color: $dark-color;
-    border-right: 4px solid $accent-color;
+    border-right: 4px solid lighten($dark-color, 30%);
     cursor: pointer;
 
-    &.current { background-color: fade-out($accent-color, .7); }
+    &.current { background-color: fade-out(lighten($dark-color, 30%), .7); }
 
     &:hover, &:focus, &.current:hover, &.current:focus {
-        background-color: $accent-color;
+        background-color: lighten($dark-color, 30%);
         color: $light-color;
     }
 
@@ -939,7 +939,7 @@ body {
 		height: .5em;
 		width: .5em;
 		border-radius: 50%;
-		background-color: fade-out($accent-color, .5);
+        background-color: fade-out(lighten($dark-color, 30%), .5);
 
 		@media #{$screenxx} { margin-left: -10em; }
 	}
@@ -1237,6 +1237,15 @@ body {
 	}
 
     .check-item, .radio-item { display: block; }
+
+    .embed-code {
+        min-width: 27em;
+        min-height: 15em;
+        background-color: darken($light-color, 5%);
+        font-weight: 700;
+        font-family: $font-family-monospace;
+        line-height: 1.2em;
+    }
 }
 
 .room-area, .meta-area, .main-area, .chat-input {

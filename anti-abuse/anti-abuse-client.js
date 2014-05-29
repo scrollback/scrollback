@@ -4,8 +4,13 @@
 var formField = require("../lib/formField.js");
 
 libsb.on('config-show', function(tabs, next) {
-    var results = tabs.room; 
+    var results = tabs.room;
     var div = $('<div>').addClass('list-view list-view-spam-settings');
+
+    if (!results.params.antiAbuse) {
+        results.params.antiAbuse = { offensive: true };
+    }
+
     div.append(formField("Block offensive words", "toggle", 'block-offensive', results.params.antiAbuse.offensive));
     tabs.spam = {
         html: div,
