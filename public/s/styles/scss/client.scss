@@ -444,6 +444,7 @@ body {
     @extend %nofilter;
     @extend %ease;
 
+    position: relative;
     display: inline-block;
     padding: .25em;
     width: 5.5em;
@@ -463,6 +464,44 @@ body {
         @include opacity(.5);
 
         .person-avatar { @extend %grayscale; }
+    }
+
+    &.owner, &.admin, &.moderator {
+        &:after {
+            display: block;
+            position: absolute;
+            top: .25em;
+            right: .25em;
+            font-size: .8em;
+            font-weight: 700;
+            padding: 0 .25em;
+            text-transform: uppercase;
+            border-radius: $roundness;
+        }
+    }
+
+    &.owner {
+        &:after {
+            content: "Owner";
+            background-color: $error-color;
+            color: $light-color;
+        }
+    }
+
+    &.admin {
+        &:after {
+            content: "Admin";
+            background-color: $warning-color;
+            color: $light-color;
+        }
+    }
+
+    &.moderator {
+        &:after {
+            content: "Mod";
+            background-color: $success-color;
+            color: $light-color;
+        }
     }
 
     .person-avatar {
@@ -956,7 +995,7 @@ body {
 
         display: none;
         padding-left: 3em;
-        font-size: .9em;
+        font-size: .8em;
         float: right;
         color: fade-out($dark-color, .5);
     }
