@@ -47,7 +47,6 @@ module.exports = function(t) {
 					return callback();
 				} else if(query.before){
 					dbQuery.lte.push(0xffffffffffffffff);
-					dbQuery.gte.push(1);
 					if(query.before < dbQuery.limit) dbQuery.limit = query.before;
 				}
 			}
