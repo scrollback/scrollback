@@ -101,6 +101,7 @@ libsb.on("navigate", function(state, next) {
 	}
 	function buildurl() {
 		var path, params = [];
+		console.log("+++", state);
 		switch(state.mode) {
 			case 'conf':
 				path = '/' + (state.room ? state.room + '/edit': 'me');

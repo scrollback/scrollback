@@ -28,7 +28,7 @@ var threadArea = {};
 			if(!index) index = 0;
 			if(before) {
 				if(index === 0){
-					return callback([]);
+					return callback([false]);
 				}
 				index--;
 				from = index - before;
