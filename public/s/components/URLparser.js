@@ -10,9 +10,12 @@ module.exports =function() {
 			var q;
 			if(!i) return;
 			q = i.split("=");
-			state[q[0]] = q[1];
+			if(q[0]=="q") state["query"] = q[1];
+			else state[q[0]] = q[1];
 		});
-
+		if(state.query) {
+			state.mode = "search"
+		}
 		if(!state.mode) state.mode = "normal";
 		if(!state.tab) state.tab = "people";
 		if(!state.theme) state.theme = "light";
