@@ -1,4 +1,5 @@
 var gen = require("../lib/generate.js");
+
 var guid = gen.uid;
 var config = require('../config.js');
 var log = require("../lib/logger.js");

@@ -29,7 +29,7 @@
   "private": true,
   "homepage": "http://scrollback.com",
   "dependencies": {
-    "irc": "git://github.com/scrollback/node-irc.git#c243570c9b058d4831901b30912a8437c3127903",
+    "irc": "git://github.com/scrollback/node-irc.git#1bf8829ade12f2fd188b2798f0380e214ce82307",
     "express": "3.0.x",
     "sockjs": "0.3.x",
     "sockjs-client": "x",
@@ -43,8 +43,6 @@
     "generic-pool": "X",
     "nodemailer": "x",
     "newrelic": "x",
-    "passport": "~0.2.0",
-    "passport-twitter": "~1.0.2",
     "twit": "~1.1.12",
     "objectlevel": "x",
     "htmlencode": "0.0.3",
