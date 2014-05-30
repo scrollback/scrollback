@@ -3,22 +3,29 @@
 
 //notifications settings
 var formField = require("../lib/formField.js");
-var div = $('<div>').addClass('list-view list-view-notification-settings');
 
-div.append(formField('Sound notifications ', 'toggle', 'sound-notification', true));
+libsb.on('pref-show', function(tabs, next){
+    if(results.params && results.params.notifications){
+        var div = $('<div>').addClass('list-view list-view-notification-settings');
 
-if(lace.notify.support()){
-	// show desktop notifications settings, only if it is supported.
-	div.append(formField('Desktop notifications ', 'toggle', 'desktop-notification', true));
-}
+        if(!results.params.notifications.sound)results.params.notifications.sound = false;
+        if(!results.params.notifications.desktop)results.params.notifications.desktop = false;
+        
+        div.append(formField('Sound notifications ', 'toggle', 'sound-notification', results.params.notifications.sound));
 
-libsb.on('pref-show', function(conf, next){
-	conf.notification = {
-		html: div,
-		text: "Notifications",
-		prio: 800
-	};
-	next();
+        if(lace.notify.support()){
+                // show desktop notifications settings, only if it is supported.
+                div.append(formField('Desktop notifications ', 'toggle', 'desktop-notification', results.params.notifications.desktop));
+        }
+        tabs.notification = {
+            html: div,
+            text: "Notifications",
+            prio: 800
+        };
+
+    }
+    next();
+
 });
 
 libsb.on('pref-save', function(conf, next){
