@@ -16,7 +16,7 @@ $(function() {
 		itemHeight: 50,
 		startIndex: time,
 		getItems: function (index, before, after, recycle, callback) {
-			var query = { to: room, before: before, after: after };.
+			var query = { to: room, before: before, after: after };
 			index = index || time;
 			query.time = index; 
 			if(thread) query.thread = thread;
