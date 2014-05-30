@@ -95,13 +95,12 @@ libsb.on("navigate", function(state, next) {
 
 // On navigation, add history and change URLs
 libsb.on("navigate", function(state, next) {
-	var threadTitle, addHistory = false;
 	if(state.source == "history"){
 		return;
 	}
 	function buildurl() {
 		var path, params = [];
-		console.log("+++", state);
+
 		switch(state.mode) {
 			case 'conf':
 				path = '/' + (state.room ? state.room + '/edit': 'me');
@@ -123,7 +122,7 @@ libsb.on("navigate", function(state, next) {
 		}
 
 		if(state.time) {
-			params.push('time=' + new Date(state.time).toISOString());	
+			params.push('time=' + new Date(state.time).toISOString());
 		}
 		if(state.mode) params.push('mode=' + state.mode);
 		if(state.tab) params.push('tab=' + state.tab);
