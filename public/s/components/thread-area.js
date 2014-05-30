@@ -97,11 +97,12 @@ var threadArea = {};
 			if(!after) {
 				if(!t.time) {
 					threads.push(false);
+
 				}else {
-					if(threads.length < before) {
-						threads.unshift(false);
-					}
 					threads.pop();
+				}
+				if(threads.length < before) {
+					threads.unshift(false);
 				}
 			}else if(before === 0) {
 				if(threads.length) threads.splice(0,1);
@@ -131,7 +132,7 @@ var threadArea = {};
 		var reset = false;
 		if(['search-local', 'search-global', 'threads'].indexOf(state.tab)>=0) {
 			$(".pane-threads").addClass("current");
-		}else{
+		}else {
 			searchResult = [false];
 			$(".pane-threads").removeClass("current");
 			return next();
