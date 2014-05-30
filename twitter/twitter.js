@@ -97,8 +97,7 @@ function addTwitterTokens(room, callback) {
 						});
 					});
 					
-				}
-				else {//new values are not present in redis.. copy old
+				} else {//new values are not present in redis.. copy old
 					copyOld(room, callback);
 				}
 			

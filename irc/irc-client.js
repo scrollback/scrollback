@@ -33,9 +33,10 @@ libsb.on('config-save', function(room, next){
         server : $('#ircserver').val(),
         channel : $('#ircchannel').val()
     };
-    if(room.irc && room.irc.channel && room.irc.server) {
-	ircIdentity += "irc://" + room.irc.server +  ":" + room.irc.channel;
-        room.identities.push(ircIdentity);
+    if(room.params.irc && room.params.irc.channel && room.params.irc.server) {
+		var ircIdentity = "irc://" + room.params.irc.server +  ":" + room.params.irc.channel;
+		if (!room.identities) room.identities = [];
+		room.identities.push(ircIdentity);
     }
     next();
 });
