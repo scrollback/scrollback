@@ -4,7 +4,7 @@
 var threadEl = {};
 var thread = "";
 $(function() {
-	var $template = $(".thread-item").eq(0);
+	var $template = $(".thread-item-container .thread-item").eq(0);
 
 	threadEl.render = function (el, thread, index) {
 		var title = thread.title || "";
@@ -16,6 +16,11 @@ $(function() {
 		el.data('index', index);
 
 		el.addClass('conv-' + thread.id.substr(-1));
+
+		if (thread.id === window.currentState.thread) {
+			el.addClass("current");
+		}
+
 		return el;
 	};
 });
