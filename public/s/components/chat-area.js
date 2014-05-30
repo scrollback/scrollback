@@ -1,5 +1,5 @@
 /* jslint browser: true, indent: 4, regexp: true*/
-/* global $, libsb, chatEl, format */
+/* global $, libsb, chatEl, format, currentState */
 /* exported chatArea */
 
 var chatArea = {};
@@ -99,8 +99,13 @@ $(function() {
 	libsb.on('text-dn', function(text, next) {
 		var i = 0, l;
 
+		if (text.threads && text.threads.length && $("#" + text.id).length) {
+			$("#" + text.id).addClass('conv-' + text.threads[0].id.substr(-1));
+		}
+
 		if(text.resource == libsb.resource) return next();
 		if(text.to != room) return next();
+
 		if(text.threads && text.threads.length && thread) {
 			for(i=0, l=text.threads.length;i<l;i++) {
 				if(text.threads[i].id == thread) {
@@ -129,7 +134,7 @@ $(function() {
 		if(state.source == "init") {
 			room = state.room || currentState.room;
 			thread = state.thread || currentState.thread;
-			time = state.time || time
+			time = state.time || time;
 			reset = true;
 		}else {
 			if(state && (!state.old || state.room != state.old.room)) {

@@ -418,14 +418,12 @@ body {
     @extend %scroll-elem;
 
     padding: 1.5em;
-    padding-bottom: $bar-height;
 }
 
 .pane-people {
     @extend %scroll-elem;
 
     padding: 1.5em .75em;
-    padding-bottom: $bar-height;
 
     .infinite-above, .infinite-below {
         background-color: transparent;
@@ -532,7 +530,11 @@ body {
     font-size: 1.2em;
 }
 
-.thread-item-container { @extend %scroll-elem; }
+.thread-item-container {
+    @extend %scroll-elem;
+
+    padding-bottom: $bar-height;
+}
 
 .thread-item {
     @extend %nofilter;
