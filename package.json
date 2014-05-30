@@ -29,7 +29,7 @@
   "private": true,
   "homepage": "http://scrollback.com",
   "dependencies": {
-    "irc": "git://github.com/scrollback/node-irc.git#1bf8829ade12f2fd188b2798f0380e214ce82307",
+    "irc": "git://github.com/scrollback/node-irc.git#7d82b336eb110551fd9327b206a3148d05fb298b",
     "express": "3.0.x",
     "sockjs": "0.3.x",
     "sockjs-client": "x",
