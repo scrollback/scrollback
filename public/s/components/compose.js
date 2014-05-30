@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, format, textArea, libsb */
+/* global $, chatArea, libsb */
 
 $(function() {
 	var $entry = $(".chat-entry"),

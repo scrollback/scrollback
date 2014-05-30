@@ -51,8 +51,10 @@ $(function() {
 				$el;
 
 			if (e.keyCode === 38 && $chat.prev().length > 0) {
+				e.preventDefault();
 				$el = $chat.prev();
 			} else if (e.keyCode === 40 && $chat.next().length > 0) {
+				e.preventDefault();
 				$el = $chat.next();
 			}
 

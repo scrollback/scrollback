@@ -54,5 +54,6 @@ require('./public/s/components/noroom-area.js');
 require('./public/s/components/signup-area.js');
 require('./public/s/components/persona.js');
 require('./public/s/components/load-indicator.js');
+require('./public/s/components/URLparser.js')();
 
 //# sourceMappingURL=libsb.js.map

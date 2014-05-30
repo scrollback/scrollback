@@ -1,4 +1,5 @@
 var gen = require("../lib/generate.js");
+
 var guid = gen.uid;
 var config = require('../config.js');
 var log = require("../lib/logger.js");
@@ -30,9 +31,8 @@ module.exports = function (coreObj) {
 	core.on ('room', function(room, callback) {
 		log("room irc:", JSON.stringify(room), client.connected());
 		if (room.session === internalSession) return callback();
-		
+		changeRoomParams(room);
 		if (ircParamsValidation(room) && client.connected()) {
-			changeRoomParams(room);
 			var rr = room.room;
 			log("room irc after adding additional properties:", JSON.stringify(room));
 			if (isNewRoom(room)) {//TODO chack if new irc config.
@@ -42,8 +42,7 @@ module.exports = function (coreObj) {
 			} else {//room config changed
 				var oldIrc = room.old.params.irc;
 				var newIrc = rr.params.irc;
-				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel ||
-					oldIrc.pending !== newIrc.pending) {
+				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel) {
 					if(oldIrc.server && oldIrc.channel) ircUtils.disconnectBot(rr.id);//if old is connected
 					if(rr.params.irc.server && rr.params.irc.channel) return ircUtils.addNewBot(rr, callback);
 					else return callback();
@@ -89,7 +88,7 @@ module.exports = function (coreObj) {
 		log("online users:", onlineUsers);
 		if (text.room.params && text.room.params.irc && text.room.params.irc.server &&
 			text.room.params.irc.channel && !text.room.params.irc.pending &&
-			text.session.indexOf('irc') !== 0 && client.connected()) {//session of incoming users from irc 
+			(text.session.indexOf('irc') !== 0 && text.session.indexOf('twitter') !== 0) && client.connected()) {//session of incoming users from irc 
 			if(!(firstMessage[text.to] && firstMessage[text.to][text.from])) {
 				if (!firstMessage[text.to]) {
 					firstMessage[text.to] = {};
@@ -108,7 +107,7 @@ module.exports = function (coreObj) {
 		log("On away:", client.connected());
 		if (action.room.params && action.room.params.irc && action.room.params.irc.server &&
 			action.room.params.irc.channel && !action.room.params.irc.pending &&
-			action.session.indexOf('irc') !== 0 && client.connected()) {//session of incoming users from irc 
+			(action.session.indexOf('irc') !== 0 && action.session.indexOf('twitter') !== 0) && client.connected()) {//session of incoming users from irc 
 			if(firstMessage[action.to] && firstMessage[action.to][action.from]) {
 				ircUtils.disconnectUser(action.to, action.from);
 				delete firstMessage[action.to][action.from];
@@ -134,17 +133,13 @@ function ircParamsValidation(room) {
 function changeRoomParams(room) {
 	room.room.params.irc.enable = true;
 	var or = room.old;
-	var r = true;
-	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel &&
-		or.params.irc.pending) { //this is old room
+	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel) { //this is old room
 		if (room.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel) {
 			room.room.params.irc.pending = true;//if server or channel changes
-			r = false;
-		} else room.room.params.irc.pending =(!or.params.irc.pending? true : or.params.irc.pending);	
+		} else room.room.params.irc.pending = or.params.irc.pending;	
 	} else {
 		room.room.params.irc.pending = true;//this is new room.
 	}
-	return r;
 }
 
 function isNewRoom(room) {

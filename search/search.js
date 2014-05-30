@@ -7,7 +7,7 @@ var client;
     
 var searchTimeout = 10000;
 var messageCount = 0;
-var updateThreads = []
+var updateThreads = [];
 module.exports = function (core) {
     if(!client) {
         init();
@@ -171,8 +171,7 @@ function searchThreads(data, callback){
     };
     //log(JSON.stringify(searchParams));
     client.search(searchParams).then (function (response) {
-        var threads = [];   
-        var unique = {};
+        var threads = [];
         
         response.hits.hits.forEach(function(e){ 
             threads.push(e._source.id);
@@ -200,10 +199,9 @@ function init() {
 
 
 function indexTexts() {
-    var threads = {}, postData = {body: []}, ids = updateThreads, count=messageCount;
+    var ids = updateThreads;
             
     updateThreads = [];
-    messageCount = 0;
 
     constructBulk(ids, function(postData) {
         client.bulk(postData, function(err, resp) {

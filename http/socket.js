@@ -94,7 +94,6 @@ sock.on('connection', function (socket) {
 			if(data.type == 'away') storeAway(conn, data);
 			if(data.type == 'init') {
 				if(data.old){
-					console.log("+++++++++sending back");
 					data.occupantOf.forEach(function(e) {
 						var role, i,l;
 
@@ -114,6 +113,7 @@ sock.on('connection', function (socket) {
 			}
 			if(data.type == 'user') processUser(conn, data);
 			if(['getUsers', 'getTexts', 'getRooms', 'getThreads'].indexOf(data.type)>=0){
+				console.log(data);
 				conn.send(data);
 			}
 
