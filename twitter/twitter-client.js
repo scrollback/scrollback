@@ -9,6 +9,7 @@ libsb.on('config-show', function(tabs, next) {
 	results = tabs.room;
 	if (!results.params.twitter) results.params.twitter = {};
 	var twitter = results.params.twitter;
+	twitterUsername = twitter.username;
 //	var p = $('<div class="settings-item"><div class="settings-label" id="twitter-text"></div><div class="settings-action"><a id="twitter-account" class="button"></a></div></div><div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="twitter-message"></div></div>');
 
 	var settingsItem = $('<div>').addClass('settings-item');
