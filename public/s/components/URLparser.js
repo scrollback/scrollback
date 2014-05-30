@@ -35,7 +35,7 @@ module.exports =function() {
 			state.mode = "conf"
 			libsb.emit("navigate", state);
 		}else if(path[1]) {
-			state.thread = path[1];
+			state.thread = path[1] || "";
 		}
 		libsb.emit("navigate", state);
 	});
