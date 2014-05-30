@@ -16,8 +16,9 @@ $(function() {
 		itemHeight: 50,
 		startIndex: time,
 		getItems: function (index, before, after, recycle, callback) {
-			var query = { to: room, time: index || time, before: before, after: after };
-
+			var query = { to: room, before: before, after: after };.
+			index = index || time;
+			query.time = index; 
 			if(thread) query.thread = thread;
 			if(!index && !before) return callback([false]);
 			if(libsb.isInited) {
@@ -198,6 +199,8 @@ $(function() {
 			time = chats.eq(0).data("index"),
 			parentOffset = $logs.offset().top,
 			i;
+
+		// TODO: Treat bottom as a special case; navigate with time=null
 
 		for(i=0; i<chats.size(); i++) {
 			if(chats.eq(i).offset().top - parentOffset > 0) {

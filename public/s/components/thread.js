@@ -23,7 +23,6 @@ $(function() {
 window.threadEl = threadEl;
 
 libsb.on('navigate', function(state, next) {
-	console.log("hi ", state);
 	if(typeof state.thread != "undefined"  && state.thread != thread) {
 		thread = state.thread;
 		$(".thread-item.current").removeClass("current");
