@@ -11,6 +11,7 @@ var port = config.irc.port;
 var server = config.irc.server;
 var client;
 var connected = false;
+var reconnectTime = 1000 * 60;
 /**
  *@param coreObj event emitter.
  */
@@ -26,8 +27,8 @@ module.exports.init = function(coreObj) {
 };
 
 module.exports.connected = function() {
-	return client && connected;
-}
+	return connected;
+};
 function init() {
 	client = net.connect({port: port, host: server},
 		function() { //'connect' listener
@@ -39,13 +40,17 @@ function init() {
 	});
 	client.on('error', function(error){
 		log("Can not connect to ircClient process", error);
+		connected = false;
+		setTimeout(function(){
+			init();	
+		},reconnectTime);
 	});
 	client.on('end', function() {
 		log('connection terminated');
 		connected = false;
 		setTimeout(function(){
 			init();	
-		},1000*60);//try to reconnect after 1 min
+		},reconnectTime);
 	});
 }
 
