@@ -11,8 +11,9 @@ libsb.on('pref-show', function(tabs, next){
     next();
 });
 
-libsb.on('pref-save', function(conf, next){
+libsb.on('pref-save', function(user, next){
 	var about = $('#about-me').val();
-	conf.aboutMe = about;
+	user.description = about;
+        user.identities = libsb.user.identities;
 	next();
 });

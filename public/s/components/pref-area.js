@@ -1,50 +1,23 @@
 /* jshint browser: true */
 /* global $, libsb */
 
-var $itemTmpl = $(".meta-pref .list-item");
 var currentConfig;
 
-function renderSettings(userId){
-        libsb.getUsers({ref: userId}, function(err, data){
-                var results = data.results[0];
-                var radio = {"daily": 0, "weekly": 1, "never": 2};
-
-                // user profile
-                $('#about-me').val(results.description);
-
-                //email
-                if(results.params && results.params.email){
-                        $('input:radio[name="email-freq"]').eq(radio[results.params.email.frequency]).prop('checked' , 'true');
-                        $('#mention').prop('checked', results.params.email.notifications);
-                }
-
-                //notifications
-                if(results.params && results.params.notifications){
-                        $('#sound-notification').prop('checked', results.params.notifications.sound);
-                        $('#desktop-notification').prop('checked', results.params.notifications.desktop);
-                }
-
+$(".conf-save").on("click", function(){
+    if(currentState.mode == 'pref'){
+        var userObj = {
+            id: libsb.user.id,
+            description: '',
+            identities: [],
+            params: {}
+        };
+        libsb.emit('pref-save', userObj, function(err, user){
+            libsb.emit('user-up', user, function(err, data){
+                    currentConfig = null;
+                    libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
+            });
         });
-}
-
-$(".conf-save").on("click", function() {
-        if(currentState.mode == 'pref'){
-                libsb.emit('pref-save', {}, function(err, configData){
-                        var user = {
-                                id: libsb.user.id,
-                                description: configData.aboutMe,
-                                params: {
-                                        email : configData.email,
-                                        notifications: configData.notifications
-                                },
-                                identities: libsb.user.identities
-                        };
-                        libsb.emit('user-up', user, function(err, data){
-                                currentConfig = null;
-                                libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
-                        });
-                });
-        }
+    }
 });
 
 $(".conf-cancel").on("click", function() {
@@ -68,6 +41,8 @@ libsb.on('navigate', function(state, next) {
                 if(!currentConfig){
                     libsb.emit('getUsers', {ref: libsb.user.id}, function(err,data){
                          var user = data.results[0];
+                         console.log("Get users query executed :", libsb.user.id, data);
+                         if(!user.params) user.params = {};
                          var userObj = {user: user}
                          libsb.emit('pref-show', userObj,function(err, tabs) {
                             delete tabs.user;
@@ -94,8 +69,6 @@ libsb.on('navigate', function(state, next) {
                             // making profile settings the default list-item
                             $('.list-item-profile-settings').addClass('current');
                             $('.list-view-profile-settings').addClass('current');
-
-                            // renderSettings(libsb.user.id);
 
                             $('#desktop-notification').change(function(){
                                 if($(this).is(':checked')){
