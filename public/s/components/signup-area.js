@@ -8,6 +8,7 @@ $(function(){
 		libsb.emit("user-up", {
 				id: $("#signup-id").val(),
 				identities: signingUser.identities,
+				params: { email: {frequency: "daily", notifications: true} }
 			}, function(err, u){
 			console.log("user signup sent", u);
 			signupId = u.id;

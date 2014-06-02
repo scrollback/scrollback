@@ -14,8 +14,10 @@ var debug = emailConfig.debug;
 var timeout = 30*1000;//for debuging only
 
 module.exports = function(coreObject) {
+	log("email mudule");
 	core = coreObject;
-    if(!debug) log = log.tag("mail");
+    //if(!debug) log = log.tag("mail");
+	log("email digest", emailDigest);
     emailDigest.init(core);
 	if (config.email && config.email.auth) {
 		core.on('text', function(message, callback) {
