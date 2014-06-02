@@ -72,7 +72,6 @@
 				if(fillBelow > fillSpace) {
 					recycle = recycle.concat(remove(fillBelow - fillSpace, "below"));
 				}
-
 				if(fillAbove < fillSpace && !pendingRequests.above && !atTop) {
 					pendingRequests.above = true;
 					cols = getGridColumns();
@@ -86,6 +85,7 @@
 						}
 					);
 				}
+
 				if(fillBelow < fillSpace && !pendingRequests.below && !atBottom) {
 					pendingRequests.below = true;
 					cols = getGridColumns();
@@ -106,12 +106,12 @@
 
 				if(els[0] === false && where == "above") {
 					atTop = true;
-					$logs.data("upper-limit", true).addClass("upper-limit");
+					$logs.data("upper-limit", true).children(".infinite-above").addClass("upper-limit");
 					els.shift();
 				}
 				if(els[els.length-1] === false && where == "below") {
 					atBottom = true;
-					$logs.data("lower-limit", true).addClass("lower-limit");
+					$logs.data("lower-limit", true).children(".infinite-below").addClass("lower-limit");
 					els.pop();
 				}
 
@@ -169,12 +169,12 @@
 				if(where == "above") {
 					oldTerm = $items.children().eq(0);
 					atTop = false;
-					$logs.data("upper-limit", false).removeClass("upper-limit");
+					$logs.data("upper-limit", false).children(".infinite-above").removeClass("upper-limit");
 					for(i=0, l=els.size()-1; i<l; i++) if(checkAndRemove(els.eq(i))) break;
 				} else {
 					oldTerm = $items.children().eq(-1);
 					atBottom = false;
-					$logs.data("lower-limit", false).removeClass("lower-limit");
+					$logs.data("lower-limit", false).children(".infinite-below").removeClass("lower-limit");
 					for(i=els.size()-1; i>0; i--) if(checkAndRemove(els.eq(i))) break;
 				}
 

@@ -2,9 +2,9 @@
 /* global $, format, libsb */
 
 var threadEl = {};
-
+var thread = "";
 $(function() {
-	var $template = $(".thread-item").eq(0);
+	var $template = $(".thread-item-container .thread-item").eq(0);
 
 	threadEl.render = function (el, thread, index) {
 		var title = thread.title || "";
@@ -16,6 +16,11 @@ $(function() {
 		el.data('index', index);
 
 		el.addClass('conv-' + thread.id.substr(-1));
+
+		if (thread.id === window.currentState.thread) {
+			el.addClass("current");
+		}
+
 		return el;
 	};
 });
@@ -23,10 +28,11 @@ $(function() {
 window.threadEl = threadEl;
 
 libsb.on('navigate', function(state, next) {
-	if(typeof state.thread != "undefined"  && state.thread != state.old.thread) {
+	if(typeof state.thread != "undefined"  && state.thread != thread) {
+		thread = state.thread;
 		$(".thread-item.current").removeClass("current");
 		$("#thread-" + state.thread).addClass("current");
 	}
 
 	next();
-});
+},1);

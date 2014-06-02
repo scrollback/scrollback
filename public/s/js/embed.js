@@ -5,7 +5,7 @@
 		if (document.readyState === "complete") {
 			// Variables
 			var room = "scrollback",
-				host = "http://local.scrollback.io",
+				host = "http://dev.scrollback.io",
 				embed = "toast",
 				theme = "dark",
 				style,
@@ -31,7 +31,7 @@
 
 			// Listen to message from child iframe
 			eventListener(messageEvent, function(e) {
-				if (e.origin === "http://local.scrollback.io" && e.data === "minimize") {
+				if (e.origin === host && e.data === "minimize") {
 					var className = "minimized",
 						classString = iframe.className,
 						nameIndex = classString.indexOf(className);

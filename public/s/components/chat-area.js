@@ -1,5 +1,5 @@
 /* jslint browser: true, indent: 4, regexp: true*/
-/* global $, libsb, chatEl, format */
+/* global $, libsb, chatEl, format, currentState */
 /* exported chatArea */
 
 var chatArea = {};
@@ -9,7 +9,6 @@ $(function() {
 		room = window.location.pathname.split("/")[1], /* replace with room from URL */
 		thread = '',
 		time = null; /* replace this with the time from the URL, if available. */
-	var ready = false;
 	// Set up infinite scroll here.
 	$logs.infinite({
 		scrollSpace: 2000,
@@ -17,14 +16,14 @@ $(function() {
 		itemHeight: 50,
 		startIndex: time,
 		getItems: function (index, before, after, recycle, callback) {
-			var query = { to: room, time: index || time, before: before, after: after };
-			if(!ready) return; // dont remove this unless you are absolutely certain why you doing it.. :-p
-
+			var query = { to: room, before: before, after: after };
+			index = index || time;
+			query.time = index; 
 			if(thread) query.thread = thread;
+			if(!index && !before) return callback([false]);
 			if(libsb.isInited) {
 				loadTexts();
 			}else {
-
 				libsb.on("inited", function(p, n){
 					loadTexts(true);
 					n();
@@ -34,6 +33,10 @@ $(function() {
 				libsb.getTexts(query, function(err, t) {
 					var texts = t.results;
 					if(err) throw err; // TODO: handle the error properly.
+
+					if(!index && texts.length === "0") {
+						return callback([false]);
+					}
 					if(after === 0) {
 						if(texts.length < before) {
 							texts.unshift(false);
@@ -96,8 +99,13 @@ $(function() {
 	libsb.on('text-dn', function(text, next) {
 		var i = 0, l;
 
+		if (text.threads && text.threads.length && $("#" + text.id).length) {
+			$("#" + text.id).addClass('conv-' + text.threads[0].id.substr(-1));
+		}
+
 		if(text.resource == libsb.resource) return next();
 		if(text.to != room) return next();
+
 		if(text.threads && text.threads.length && thread) {
 			for(i=0, l=text.threads.length;i<l;i++) {
 				if(text.threads[i].id == thread) {
@@ -126,8 +134,7 @@ $(function() {
 		if(state.source == "init") {
 			room = state.room || currentState.room;
 			thread = state.thread || currentState.thread;
-			time = state.time || time
-			ready = true;
+			time = state.time || time;
 			reset = true;
 		}else {
 			if(state && (!state.old || state.room != state.old.room)) {
@@ -141,12 +148,11 @@ $(function() {
 			if(state.old && state.time != state.old.time) {
 				time = state.time;
 				reset = true;
-			}	
+			}
 		}
 
 		if(reset) {
-			if(time) $logs.reset(time);
-			else $logs.reset();
+			$logs.reset(time);
 		}
 		next();
 	}, 200);
@@ -198,6 +204,8 @@ $(function() {
 			time = chats.eq(0).data("index"),
 			parentOffset = $logs.offset().top,
 			i;
+
+		// TODO: Treat bottom as a special case; navigate with time=null
 
 		for(i=0; i<chats.size(); i++) {
 			if(chats.eq(i).offset().top - parentOffset > 0) {

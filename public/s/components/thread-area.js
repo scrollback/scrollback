@@ -4,11 +4,11 @@
 
 var threadArea = {};
 
-$(function() {
-	 /* replace this time initialization from the URL, if available. */
 
-	var $threads = $(".thread-item-container"), room = "", time = null,
-		search = "", mode = "", searchResult = [false], index = null, queryCount = 0;
+
+(function() {
+	var $threads, room = "", time = null,
+	search = "", mode = "", searchResult = [false], index = null, queryCount = 0;
 
 	function renderObjects(threads) {
 		callback(threads.map(function(thread) {
@@ -28,7 +28,7 @@ $(function() {
 			if(!index) index = 0;
 			if(before) {
 				if(index === 0){
-					return callback([]);
+					return callback([false]);
 				}
 				index--;
 				from = index - before;
@@ -77,30 +77,42 @@ $(function() {
 	}
 	function loadThread(index, before, after, callback) {
 		var query  = { before: before, after: after};
+
+		if(!index && after) return callback([false]);
+		if(after) query.after = index?after+1: after;
+		if(before) query.before = index?before+1: before;
+
 		query.to =  currentState.room || "";
 		query.time = index;
 		libsb.getThreads(query, function(err, t) {
+			console.log(t);
 			var threads = t.results;
 
 			if(err) throw err; // TODO: handle the error properly.
+			
 
-			if(after === 0) {
-				if(threads.length < before) {
-					threads.unshift({id:"", title: "All Conversations"});
-					threads.unshift(false);
-				}
-				if(t.time) {
+			if(!index && threads.length === "0") {
+				return callback([false]);
+			}
+			if(!after) {
+				if(!t.time) {
+					threads.push(false);
+
+				}else {
 					threads.pop();
 				}
+				if(threads.length < before) {
+					threads.unshift(false);
+				}
 			}else if(before === 0) {
+				if(threads.length) threads.splice(0,1);
 				if(threads.length < after) {
 					threads.push(false);
 				}
-				threads.splice(0,1);
 			}
+			console.log(threads);
 			renderThreads(threads, callback);
 		});
-
 	}
 
 	function renderSearchResult(threads, callback) {
@@ -115,47 +127,12 @@ $(function() {
 		}));
 	}
 
-	$threads.infinite({
-		scrollSpace: 2000,
-		fillSpace: 500,
-		itemHeight: 100,
-		startIndex: index,
-		getItems: function (index, before, after, recycle, callback) {
-			if(currentState.mode == "search"){
-				// queryCount++;
-				if(libsb.isInited) {
-					loadSearchResult(index, before, after, callback);
-				}else {
-					libsb.on("inited", function(q, n) {
-						loadSearchResult(index, before, after, callback);
-						n();
-					});
-				}
-			}else{
-				if(libsb.isInited) {
-					loadThread(index, before, after, callback);
-				}else {
-					libsb.on("inited", function(q, n) {
-						loadThread(index, before, after, callback);
-						n();
-					});
-				}
-			}
-		}
-	});
-
-	$threads.click(function(event) {
-		event.preventDefault();
-		var $el = $(event.target).closest('.thread-item');
-		if(!$el.size()) return;
-		libsb.emit('navigate', {source: 'thread-area', thread: $el.attr("id").split('-')[1] });
-	});
 
 	libsb.on('navigate', function(state, next) {
 		var reset = false;
 		if(['search-local', 'search-global', 'threads'].indexOf(state.tab)>=0) {
 			$(".pane-threads").addClass("current");
-		}else{
+		}else {
 			searchResult = [false];
 			$(".pane-threads").removeClass("current");
 			return next();
@@ -198,9 +175,6 @@ $(function() {
 		// if($threads.data("lower-limit")) $threads.addBelow(renderChat(null, text));
 		next();
 	});
-
-	// The threadArea API.
-
 	threadArea.setBottom = function(bottom) {
 		var atBottom = ($threads.scrollTop() + $threads.height() == $threads[0].scrollHeight);
 
@@ -214,4 +188,50 @@ $(function() {
 		$threads.scroll();
 	};
 
-});
+
+	$(function() {
+		 /* replace this time initialization from the URL, if available. */
+		 $threads = $(".thread-item-container");
+
+		
+		$threads.infinite({
+			scrollSpace: 2000,
+			fillSpace: 500,
+			itemHeight: 100,
+			startIndex: index,
+			getItems: function (index, before, after, recycle, callback) {
+				if(currentState.mode == "search"){
+					if(libsb.isInited) {
+						loadSearchResult(index, before, after, callback);
+					}else {
+						libsb.on("inited", function(q, n) {
+							loadSearchResult(index, before, after, callback);
+							n();
+						});
+					}
+				}else{
+					if(libsb.isInited) {
+						loadThread(index, before, after, callback);
+					}else {
+						libsb.on("inited", function(q, n) {
+							loadThread(index, before, after, callback);
+							n();
+						});
+					}
+				}
+			}
+		});
+
+		$threads.click(function(event) {
+			event.preventDefault();
+			var $el = $(event.target).closest('.thread-item');
+			if(!$el.size()) return;
+			libsb.emit('navigate', {source: 'thread-area', time: null, thread: $el.attr("id").split('-')[1] });
+		});
+		$(".thread-all-coversations").click(function(event){
+			event.preventDefault();
+			console.log("+++ clicked +++");
+			libsb.emit('navigate', {source: 'thread-area', time: null, thread: ""});
+		});;
+	});
+})();

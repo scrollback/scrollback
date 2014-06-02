@@ -7,6 +7,7 @@
 @import "switch";
 @import "multientry";
 @import "flexbox";
+@import "oembed";
 
 $screenx: "only screen and (min-width: 18em)";
 $screenxx: "only screen and (min-width: 27em)";
@@ -418,14 +419,12 @@ body {
     @extend %scroll-elem;
 
     padding: 1.5em;
-    padding-bottom: $bar-height;
 }
 
 .pane-people {
     @extend %scroll-elem;
 
     padding: 1.5em .75em;
-    padding-bottom: $bar-height;
 
     .infinite-above, .infinite-below {
         background-color: transparent;
@@ -532,7 +531,11 @@ body {
     font-size: 1.2em;
 }
 
-.thread-item-container { @extend %scroll-elem; }
+.thread-item-container {
+    @extend %scroll-elem;
+
+    padding-bottom: $bar-height;
+}
 
 .thread-item {
     @extend %nofilter;
@@ -983,12 +986,17 @@ body {
 	}
 
 	a {
-		color: darken($accent-color, 15%);
+        color: #2a5db0;
 
-		&:hover, &:focus { text-decoration: underline;}
-
-		&:active { color: darken($accent-color, 30%); }
+		&:hover, &:focus, &:active { text-decoration: underline; }
 	}
+
+    iframe, embed {
+        display: block;
+        margin: .5em 0;
+        max-width: 100%;
+        max-height: auto;
+    }
 
 	.chat-timestamp {
         @extend %ease;

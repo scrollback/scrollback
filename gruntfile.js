@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 					"public/libsb.bundle.js": ["libsb.js"]
 				},
 				options: {
-					debug: true
+					bundleOptions: { debug: true }
 				}
 			}
 		},
