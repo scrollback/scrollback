@@ -75,7 +75,6 @@ var lace = {
         /**
          * Add event handlers for multientry.
          * @constructor
-         * @example <span class="entry multientry"><span contenteditable class="item"></span></span>
          */
         init: function() {
             if (lace.multientry.init.done) {
@@ -119,6 +118,21 @@ var lace = {
             });
 
             lace.multientry.init.done = true;
+        },
+
+        /**
+         * Create the markup required for multientry.
+         * @constructor
+         * @return {Object}
+         */
+        create: function() {
+            lace.multientry.init();
+
+            var multientry = $("<span>").addClass("entry multientry").append(
+                $("<span>").addClass("item").attr({"contenteditable": true})
+            );
+
+            return multientry;
         },
 
         /**
