@@ -24,13 +24,14 @@ libsb.on('pref-show', function(tabs, next){
         
         switch(user.params.email.frequency){
             case 'daily':
-                div.append(formField("Email digest frequency", 'radio', [["email-freq-daily", "Daily"], ["email-freq-never", "Never"]], ["email-freq-daily"]));
+                div.append(formField("Email digest frequency", 'radio', 'email-freq',[["email-freq-daily", "Daily", "checked"], ["email-freq-never", "Never"]]));
                 break;
             case 'never':
-                div.append(formField("Email digest frequency", 'radio', [["email-freq-daily", "Daily"], ["email-freq-never", "Never"]], ["email-freq-never"]));
+                console.log("NEVER EMAIL ");
+                div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily"], ["email-freq-never", "Never", "checked"]]));
                 break;
-            default: 
-                div.append(formField("Email digest frequency", 'radio', [["email-freq-daily", "Daily"], ["email-freq-never", "Never"]], ["email-freq-daily"]));
+            default:
+                div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily", "checked"], ["email-freq-never", "Never"]]));
         }
 
 	tabs.email = {
@@ -44,7 +45,7 @@ libsb.on('pref-show', function(tabs, next){
 
 libsb.on('pref-save', function(user, next){
 	user.params.email = {
-            frequency : $('input:radio[name="email-freq"]:checked').next().text(),
+            frequency : $('input:radio[name="email-freq"]:checked').next().text().toLowerCase(),
             notifications : $('#mention').is(':checked')
 	};
         console.log(" email notifications ", user.params.email.frequency);
