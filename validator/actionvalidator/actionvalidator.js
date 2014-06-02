@@ -156,8 +156,9 @@ function basicValidation(action, callback) {
 		validation on action.from is not need because we add the from ignore the from sent be the client.
 		from and user is loaded by the entity loader using the session property.
 	*/
-
+	
 	if(action.type === "init" || action.type === "user") {
+		if (action.suggestedNick) action.suggestedNick = action.suggestedNick.toLowerCase();
 		action.to = "me";
 	}else{
 		if(!action.to){
@@ -167,8 +168,9 @@ function basicValidation(action, callback) {
 			return callback(new Error("INVALID_ROOM"));
 		}
 	}
+	if (action.from) action.from = action.from.toLowerCase();
 	action.to = action.to.toLowerCase();
 	if(!action.session) return callback(new Error("NO_SESSION_ID"));
 	action.time = new Date().getTime();
-	callback();
+	return callback();
 }

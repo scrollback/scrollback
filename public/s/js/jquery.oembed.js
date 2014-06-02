@@ -18,7 +18,9 @@
 
         settings = $.extend(true, $.fn.oembed.defaults, options);
 
-        if ($('#jqoembeddata').length === 0) $('<span id="jqoembeddata"></span>').appendTo('body');
+        if ($('#jqoembeddata').length === 0) {
+            $('<span id="jqoembeddata"></span>').appendTo('body');
+        }
 
         return this.each(function () {
 
@@ -80,14 +82,20 @@
 
         for (i in provider.params) {
             // We don't want them to jack everything up by changing the callback parameter
-            if (i === provider.callbackparameter) continue;
+            if (i === provider.callbackparameter) {
+                continue;
+            }
 
             // allows the options to be set to null, don't send null values to the server as parameters
-            if (provider.params[i] !== null) qs += "&" + escape(i) + "=" + provider.params[i];
+            if (provider.params[i] !== null) {
+                qs += "&" + escape(i) + "=" + provider.params[i];
+            }
         }
 
         url += "format=" + provider.format + "&url=" + escape(externalUrl) + qs;
-        if (provider.dataType !== 'json') url += "&" + provider.callbackparameter + "=?";
+        if (provider.dataType !== 'json') {
+            url += "&" + provider.callbackparameter + "=?";
+        }
 
         return url;
     }
@@ -109,7 +117,10 @@
             var from = embedProvider.yql.from || 'htmlstring';
             var url = embedProvider.yql.url ? embedProvider.yql.url(externalUrl) : externalUrl;
             var query = 'SELECT * FROM ' + from + ' WHERE url="' + (url) + '"' + " and " + (/html/.test(from) ? 'xpath' : 'itemPath') + "='" + (embedProvider.yql.xpath || '/') + "'";
-            if (from === 'html') query += " and compat='html5'";
+            if (from === 'html') {
+                query += " and compat='html5'";
+            }
+
             var ajaxopts = $.extend({
                 url: "http://query.yahooapis.com/v1/public/yql",
                 dataType: 'jsonp',
@@ -130,7 +141,9 @@
                         }
                         for (var i = 0, l = data.query.results.meta.length; i < l; i++) {
                             var name = data.query.results.meta[i].name || data.query.results.meta[i].property || null;
-                            if (name === null) continue;
+                            if (name === null) {
+                                continue;
+                            }
                             meta[name.toLowerCase()] = data.query.results.meta[i].content;
                         }
                         if (!meta.hasOwnProperty("title") || !meta.hasOwnProperty("og:title")) {
@@ -155,7 +168,9 @@
                     } else {
                         result = embedProvider.yql.datareturn ? embedProvider.yql.datareturn(data.query.results) : data.query.results.result;
                     }
-                    if (result === false) return;
+                    if (result === false) {
+                        return;
+                    }
                     var oembedData = $.extend({}, result);
                     oembedData.code = result;
                     success(oembedData, externalUrl, container);
@@ -173,9 +188,12 @@
                 var width = embedProvider.embedtag.width || 'auto';
                 var height = embedProvider.embedtag.height || 'auto';
                 var src = externalUrl.replace(embedProvider.templateRegex, embedProvider.apiendpoint);
-                if (!embedProvider.nocache) src += '&jqoemcache=' + rand(5);
-                if (embedProvider.apikey) src = src.replace('_APIKEY_', settings.apikeys[embedProvider.name]);
-
+                if (!embedProvider.nocache) {
+                    src += '&jqoemcache=' + rand(5);
+                }
+                if (embedProvider.apikey) {
+                    src = src.replace('_APIKEY_', settings.apikeys[embedProvider.name]);
+                }
 
                 var code = $('<' + tag + '>')
                     .attr('src', src)
@@ -183,15 +201,16 @@
                     .attr('height', height)
                     .attr('allowfullscreen', embedProvider.embedtag.allowfullscreen || 'true')
                     .attr('allowscriptaccess', embedProvider.embedtag.allowfullscreen || 'always');
-                if (tag === 'embed')
+                if (tag === 'embed') {
                     code
                     .attr('type', embedProvider.embedtag.type || "application/x-shockwave-flash")
                     .attr('flashvars', externalUrl.replace(embedProvider.templateRegex, flashvars));
-                if (tag === 'iframe')
+                }
+                if (tag === 'iframe') {
                     code
                     .attr('scrolling', embedProvider.embedtag.scrolling || "no")
                     .attr('frameborder', embedProvider.embedtag.frameborder || "0");
-
+                }
 
                 oembedData = {
                     code: code
@@ -199,7 +218,10 @@
                 success(oembedData, externalUrl, container);
             } else if (embedProvider.apiendpoint) {
                 //Add APIkey if true
-                if (embedProvider.apikey) embedProvider.apiendpoint = embedProvider.apiendpoint.replace('_APIKEY_', settings.apikeys[embedProvider.name]);
+                if (embedProvider.apikey) {
+                    embedProvider.apiendpoint = embedProvider.apiendpoint.replace('_APIKEY_', settings.apikeys[embedProvider.name]);
+                }
+
                 ajaxopts = $.extend({
                     url: externalUrl.replace(embedProvider.templateRegex, embedProvider.apiendpoint),
                     dataType: 'jsonp',
@@ -219,13 +241,13 @@
                 success(oembedData, externalUrl, container);
             }
         } else {
-
             var requestUrl = getRequestUrl(embedProvider, externalUrl),
                 ajaxopts = $.extend({
                     url: requestUrl,
-                    dataType: embedProvider.dataType || 'jsonp',
+                    dataType: embedProvider.dataType || "jsonp",
                     success: function (data) {
                         var oembedData = $.extend({}, data);
+
                         switch (oembedData.type) {
                             case "file": //Deviant Art has this
                             case "photo":
@@ -249,19 +271,28 @@
     }
 
     function getNormalizedParams(params) {
-        if (params === null) return null;
+        if (params === null) {
+            return null;
+        }
         var key, normalizedParams = {};
         for (key in params) {
-            if (key !== null) normalizedParams[key.toLowerCase()] = params[key];
+            if (key !== null) {
+                normalizedParams[key.toLowerCase()] = params[key];
+            }
         }
         return normalizedParams;
     }
 
     /* Public functions */
     $.fn.oembed.insertCode = function (container, embedMethod, oembedData) {
-        if (oembedData === null) return;
-        if (embedMethod === 'auto' && container.attr("href") !== null) embedMethod = 'append';
-        else if (embedMethod === 'auto') embedMethod = 'replace';
+        if (oembedData === null) {
+            return;
+        }
+        if (embedMethod === 'auto' && container.attr("href") !== null) {
+            embedMethod = 'append';
+        } else if (embedMethod === 'auto') {
+            embedMethod = 'replace';
+        }
         switch (embedMethod) {
         case "replace":
             container.replaceWith(oembedData.code);
@@ -282,7 +313,7 @@
                 });
             }
 
-            var oembedContents = $("<p>").addClass("oembedall-content").appendTo(oembedContainer);
+            var oembedContents = $("<div>").addClass("oembedall-content").appendTo(oembedContainer);
 
             try {
                 oembedData.code.clone().appendTo(oembedContents);
@@ -306,7 +337,9 @@
         } else {
             code = '<div>Error loading this picture</div>';
         }
-        if (oembedData.html) code += "<div>" + oembedData.html + "</div>";
+        if (oembedData.html) {
+            code += "<div>" + oembedData.html + "</div>";
+        }
         return code;
     };
 
@@ -318,7 +351,9 @@
     $.fn.oembed.getGenericCode = function (url, oembedData) {
         var title = (oembedData.title !== null) ? oembedData.title : url,
             code = '<a href="' + url + '">' + title + '</a>';
-        if (oembedData.html) code += "<div>" + oembedData.html + "</div>";
+        if (oembedData.html) {
+            code += "<div>" + oembedData.html + "</div>";
+        }
         return code;
     };
 
@@ -326,7 +361,9 @@
         for (var i = 0; i < $.fn.oembed.providers.length; i++) {
             for (var j = 0, l = $.fn.oembed.providers[i].urlschemes.length; j < l; j++) {
                 var regExp = new RegExp($.fn.oembed.providers[i].urlschemes[j], "i");
-                if (url.match(regExp) !== null) return $.fn.oembed.providers[i];
+                if (url.match(regExp) !== null) {
+                    return $.fn.oembed.providers[i];
+                }
             }
         }
         return null;
@@ -340,7 +377,6 @@
         extraSettings = extraSettings || {};
 
         if (extraSettings.useYQL) {
-
             if (extraSettings.useYQL === 'xml') {
                 extraSettings.yql = {
                     xpath: "//oembed/html",
@@ -743,7 +779,9 @@
         new $.fn.oembed.OEmbedProvider("wikipedia", "rich", ["wikipedia.org/wiki/.+"], "http://$1.wikipedia.org/w/api.php?action=parse&page=$2&format=json&section=0&callback=?", {
             templateRegex: /.*\/\/([\w]+).*\/wiki\/([^\/]+).*/,
             templateData: function (data) {
-                if (!data.parse) return false;
+                if (!data.parse) {
+                    return false;
+                }
                 var text = data.parse['text']['*'].replace(/href="\/wiki/g, 'href="http://en.wikipedia.org/wiki');
                 return '<div id="content"><h3><a class="nav-link" href="http://en.wikipedia.org/wiki/' + data.parse['displaytitle'] + '">' + data.parse['displaytitle'] + '</a></h3><p>' + text + '</p></div>';
             }
@@ -751,7 +789,9 @@
         new $.fn.oembed.OEmbedProvider("imdb", "rich", ["imdb.com/title/.+"], "http://www.imdbapi.com/?i=$1&callback=?", {
             templateRegex: /.*\/title\/([^\/]+).*/,
             templateData: function (data) {
-                if (!data.Title) return false;
+                if (!data.Title) {
+                    return false;
+                }
                 return '<div id="content"><h3><a class="nav-link" href="http://imdb.com/title/' + data.imdbID + '/">' + data.Title + '</a> (' + data.Year + ')</h3><p><strong>Rating:</strong> ' + data.imdbRating + '<br><strong>Genre:</strong> ' + data.Genre + '<br><strong>Starring:</strong> ' + data.Actors + '</p></div>  <div id="view-photo-caption">' + data.Plot + '</div></div>';
             }
         }),
@@ -847,28 +887,53 @@
         new $.fn.oembed.OEmbedProvider("github", "rich", ["github.com/[-.\\w@]+/[-.\\w@]+"], "https://api.github.com/repos/$1/$2?callback=?", {
             templateRegex: /.*\/([^\/]+)\/([^\/]+).*/,
             templateData: function (data) {
-                if (!data.data.html_url) return false;
+                if (!data.data.html_url) {
+                    return false;
+                }
                 return '<div class="oembedall-githubrepos"><ul class="oembedall-repo-stats"><li>' + data.data.language + '</li><li class="oembedall-watchers"><a title="Watchers" href="' + data.data.html_url + '/watchers">&#x25c9; ' + data.data.watchers + '</a></li>' + '<li class="oembedall-forks"><a title="Forks" href="' + data.data.html_url + '/network">&#x0265; ' + data.data.forks + '</a></li></ul><h3><a href="' + data.data.html_url + '">' + data.data.name + '</a></h3><div class="oembedall-body"><p class="oembedall-description">' + data.data.description + '</p>' + '<p class="oembedall-updated-at">Last updated: ' + data.data.pushed_at + '</p></div></div>';
             }
         }),
         new $.fn.oembed.OEmbedProvider("facebook", "rich", ["facebook.com/(people/[^\\/]+/\\d+|[^\\/]+$)"], "https://graph.facebook.com/$2$3/?callback=?", {
             templateRegex: /.*facebook.com\/(people\/[^\/]+\/(\d+).*|([^\/]+$))/,
             templateData: function (data) {
-                if (!data.id) return false;
+                if (!data.id) {
+                    return false;
+                }
+
                 var out = '<div class="oembedall-facebook"><div class="oembedall-facebook-head"><a href="http://www.facebook.com/">facebook</a> ';
                 out += '</div><div class="oembedall-facebook-body"><div class="contents">';
-                if (data.picture) out += '<a href="' + data.link + '"><img src="' + data.picture + '"></a>';
-                else out += '<img src="https://graph.facebook.com/' + data.id + '/picture">';
-                if (data.from) out += '<a href="http://www.facebook.com/' + data.from.id + '">' + data.from.name + '</a><br>';
-                else if (data.link) out += '<a href="' + data.link + '">' + data.name + '</a><br>';
-                else if (data.username) out += '<a href="http://www.facebook.com/' + data.username + '">' + data.name + '</a><br>';
-                else out += '<a href="http://www.facebook.com/' + data.id + '">' + data.name + '</a><br>';
-                if (data.founded) out += 'Founded: <strong>' + data.founded + '</strong><br>';
-                if (data.category) out += 'Category: <strong>' + data.category + '</strong><br>';
-                if (data.website) out += 'Website: <strong><a href="' + data.website + '">' + data.website + '</a></strong><br>';
-                if (data.gender) out += 'Gender: <strong>' + data.gender + '</strong><br>';
-                if (data.description) out += data.description + '<br>';
+                if (data.picture) {
+                    out += '<a href="' + data.link + '"><img src="' + data.picture + '"></a>';
+                } else {
+                    out += '<img src="https://graph.facebook.com/' + data.id + '/picture">';
+                }
+                if (data.from) {
+                    out += '<a href="http://www.facebook.com/' + data.from.id + '">' + data.from.name + '</a><br>';
+                } else if (data.link) {
+                    out += '<a href="' + data.link + '">' + data.name + '</a><br>';
+                } else if (data.username) {
+                    out += '<a href="http://www.facebook.com/' + data.username + '">' + data.name + '</a><br>';
+                } else {
+                    out += '<a href="http://www.facebook.com/' + data.id + '">' + data.name + '</a><br>';
+                }
+                if (data.founded) {
+                    out += 'Founded: <strong>' + data.founded + '</strong><br>';
+                }
+                if (data.category) {
+                    out += 'Category: <strong>' + data.category + '</strong><br>';
+                }
+                if (data.website) {
+                    out += 'Website: <strong><a href="' + data.website + '">' + data.website + '</a></strong><br>';
+                }
+                if (data.gender) {
+                    out += 'Gender: <strong>' + data.gender + '</strong><br>';
+                }
+                if (data.description) {
+                    out += data.description + '<br>';
+                }
+
                 out += '</div></div>';
+
                 return out;
             }
         }),
@@ -923,7 +988,10 @@
                 xpath: '//pre/font',
                 from: 'htmlstring',
                 datareturn: function (results) {
-                    if (!results.result) return false;
+                    if (!results.result) {
+                        return false;
+                    }
+
                     return '<pre>' + results.result + '</pre>';
                 }
             }
@@ -935,29 +1003,58 @@
                 xpath: "//meta|//title|//link",
                 from: 'html',
                 datareturn: function (results) {
-                    if (!results['og:title'] && results['title'] && results['description']) results['og:title'] = results['title'];
-                    if (!results['og:title'] && !results['title']) return false;
+                    if (!results['og:title'] && results['title'] && results['description']) {
+                        results['og:title'] = results['title'];
+                    }
+
+                    if (!results['og:title'] && !results['title']) {
+                        return false;
+                    }
 
                     var code = $('<p>').addClass("oembedall-opengraph");
 
                     if (results['og:video']) {
                         var embed = $('<embed src="' + results['og:video'] + '">');
-                        embed
-                            .attr('type', results['og:video:type'] || "application/x-shockwave-flash");
-                        if (results['og:video:width']) embed.attr('width', results['og:video:width']);
-                        if (results['og:video:height']) embed.attr('height', results['og:video:height']);
+
+                        embed.attr('type', results['og:video:type'] || "application/x-shockwave-flash");
+
+                        if (results['og:video:width']) {
+                            embed.attr('width', results['og:video:width']);
+                        }
+
+                        if (results['og:video:height']) {
+                            embed.attr('height', results['og:video:height']);
+                        }
+
                         code.append(embed);
                     } else if (results['og:image']) {
                         var img = $('<img src="' + results['og:image'] + '">');
-                        if (results['og:image:width']) img.attr('width', results['og:image:width']);
-                        if (results['og:image:height']) img.attr('height', results['og:image:height']);
+
+                        if (results['og:image:width']) {
+                            img.attr('width', results['og:image:width']);
+                        }
+
+                        if (results['og:image:height']) {
+                            img.attr('height', results['og:image:height']);
+                        }
+
                         code.append(img);
                     }
-                    if (results['og:title']) code.append('<h3>' + results['og:title'] + '</h3>');
-                    if (results['og:description'])
+
+                    if (results['og:title']) {
+                        if (results['og:url']) {
+                            code.append('<h3><a href="' + results['og:url'] + '">' + results['og:title'] + '</a></h3>');
+                        } else {
+                            code.append('<h3>' + results['og:title'] + '</h3>');
+                        }
+                    }
+
+                    if (results['og:description']) {
                         code.append('<p>' + results['og:description'] + '</p>');
-                    else if (results['description'])
+                    } else if (results['description']) {
                         code.append(results['<p>' + 'description'] + '</p>');
+                    }
+
                     return code;
                 }
             }
