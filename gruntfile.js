@@ -82,7 +82,7 @@ module.exports = function(grunt) {
 					"public/sdk/emitter.js", "public/sdk/request.js", "public/sdk/addStyle.js",
 					"public/sdk/css.js", "public/sdk/dom.js", "public/sdk/domReady.js", "public/sdk/getByClass.js",
 					"public/sdk/jsonml2.js", "public/sdk/cache.js", "public/sdk/embed.js", "public/sdk/render.js", "public/sdk/validate.js"],
-				tasks: ["uglify", "concat", "wrap"],
+				tasks: ["uglify", "concat", "wrap", "browserify"],
 			}
 		},
 		sass: {
@@ -140,11 +140,11 @@ module.exports = function(grunt) {
 	});
 
 	// Load the plugin that provides the "uglify" task.
+	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadNpmTasks("grunt-browserify");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-wrap");
 	grunt.loadNpmTasks("grunt-contrib-concat");
-	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadNpmTasks("grunt-contrib-less");
 	grunt.loadNpmTasks("grunt-contrib-sass");
 	grunt.loadNpmTasks("grunt-autoprefixer");

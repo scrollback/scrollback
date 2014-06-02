@@ -7,6 +7,7 @@
 @import "switch";
 @import "multientry";
 @import "flexbox";
+@import "oembed";
 
 $screenx: "only screen and (min-width: 18em)";
 $screenxx: "only screen and (min-width: 27em)";
@@ -985,12 +986,17 @@ body {
 	}
 
 	a {
-		color: darken($accent-color, 15%);
+        color: #2a5db0;
 
-		&:hover, &:focus { text-decoration: underline;}
-
-		&:active { color: darken($accent-color, 30%); }
+		&:hover, &:focus, &:active { text-decoration: underline; }
 	}
+
+    iframe, embed {
+        display: block;
+        margin: .5em 0;
+        max-width: 100%;
+        max-height: auto;
+    }
 
 	.chat-timestamp {
         @extend %ease;
