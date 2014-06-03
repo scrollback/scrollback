@@ -12,6 +12,7 @@
             id: generate.uid(),
             type: 'room',
             to: currentState.room,
+            session: libsb.session,
             room: {
                 id: currentState.room,
                 description: '',
