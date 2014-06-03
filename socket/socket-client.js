@@ -82,8 +82,13 @@ function receiveMessage(event){
 	}catch(err){
 		core.emit("error", err);
 	}
-
-	if(["getTexts", "getThreads", "getUsers", "getRooms", "getSessions"].indexOf(data.type) != -1){
+	if(data.type == "error") {
+		if(pendingActions[data.id]){
+			pendingActions[data.id](data);
+			delete pendingActions[data.id];
+		}
+		core.emit("error-dn", data);
+	}else if(["getTexts", "getThreads", "getUsers", "getRooms", "getSessions"].indexOf(data.type) != -1){
 		// data is a query
 		if(pendingQueries[data.id]){
 			// a hacky solution. please change this.
@@ -173,7 +178,8 @@ function sendExpel(admit, next){
 function sendUser(user, next) {
 	var action = makeAction({type: 'user', to: "me", user: user});
 	client.send(JSON.stringify(action));
-	next();
+	pendingActions[action.id] = next;
+	// next();
 }
 
 function sendRoom(room, next){
