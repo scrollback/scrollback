@@ -24,7 +24,8 @@
             user: { id: libsb.user }
         };
         libsb.emit('room-up', roomObj,function(err, data){
-           libsb.emit("navigate", {mode: 'normal', tab: 'info'});
+             libsb.emit("navigate", {mode: 'normal', tab: 'info'});
+             location.reload();
         });
     });
     $("#login-and-create-room-button").click(function(){
