@@ -91,6 +91,12 @@ sock.on('connection', function (socket) {
 				storeBack(conn, data);
 				return;
 			}
+			if(data.type == 'room') {
+				/* this is need because we dont have the connection object in the
+				rconn until the room can be setup and a back message is sent.*/
+				if(!data.old || !data.old.id) conn.send(data);
+				// return;
+			}
 			if(data.type == 'away') storeAway(conn, data);
 			if(data.type == 'init') {
 				if(data.old){
