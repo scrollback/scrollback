@@ -56,14 +56,16 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
                 esac;;
         esac
     done
-    # Set caps
     case "$distro" in
         Ubuntu)
-            sudo apt-get install -y libcap2-bin;;
+            sudo apt-get install -y libcap2-bin rubygems;;
         Fedora)
-            sudo yum install -y libcap;;
+            sudo yum install -y libcap rubygems;;
     esac
+    # Set caps
     sudo setcap "cap_net_bind_service=+ep" /usr/bin/node
+    # Install sass
+    sudo gem install sass
 else
     # We only install packages for Ubuntu and Fedora
     echo "Unsupported distro. You will need to install the dependencies manually. Continue anyway [y/n]?"
