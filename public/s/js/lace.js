@@ -401,10 +401,6 @@ var lace = {
                 element = $(".alert-bar");
             }
 
-            if (!$(element).hasClass(".alert-bar")) {
-                return;
-            }
-
             lace.animate.transition("fadeout", element, function() {
                 $(element).remove();
 
