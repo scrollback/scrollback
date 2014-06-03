@@ -12,6 +12,7 @@
             id: generate.uid(),
             type: 'room',
             to: currentState.room,
+            session: libsb.session,
             room: {
                 id: currentState.room,
                 description: '',
@@ -24,7 +25,9 @@
             user: { id: libsb.user }
         };
         libsb.emit('room-up', roomObj,function(err, data){
-           libsb.emit("navigate", {mode: 'normal', tab: 'info'});
+             libsb.emit("navigate", {mode: 'normal', tab: 'info'}, function(){
+                 location.reload();    
+             });
         });
     });
     $("#login-and-create-room-button").click(function(){
