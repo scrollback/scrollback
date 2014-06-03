@@ -36,7 +36,7 @@ libsb.on('navigate', function(state, next) {
                         mode: 'normal'
                     });
                 }
- 
+
                 // if currentConfig is blank, then
                 if(!currentConfig){
                     libsb.emit('getUsers', {ref: libsb.user.id}, function(err,data){
@@ -50,7 +50,7 @@ libsb.on('navigate', function(state, next) {
 
                             $('.meta-pref').empty();
                             $('.pref-area').empty();
-                            
+
                             for(i in tabs) {
                                     sortable.push([tabs[i].prio, i, tabs[i]]);
                             }
@@ -72,10 +72,10 @@ libsb.on('navigate', function(state, next) {
 
                             $('#desktop-notification').change(function(){
                                 if($(this).is(':checked')){
-                                    lace.notify.request();
-                                    var laceObj = lace.notify.support();
-                                    if(laceObj.permission === "denied"){
-                                            lace.alert.show({type: 'error', body: 'Permission for desktop notifications denied!'});
+                                    desktopnotify.request();
+                                    var notifObj = desktopnotify.support();
+                                    if(notifObj.permission === "denied"){
+                                            notif.alert.show({type: 'error', body: 'Permission for desktop notifications denied!'});
                                     }
                                 }
                             });

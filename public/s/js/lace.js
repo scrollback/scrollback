@@ -1,5 +1,5 @@
 /* jslint browser: true, indent: 4, regexp: true */
-/* global $, Notification, webkitNotifications */
+/* global $ */
 
 /**
  * @fileOverview User interface components.
@@ -167,6 +167,10 @@ var lace = {
         remove: function(element) {
             if (!element) {
                 element = $(".multientry .item.done");
+            }
+
+            if (!$(element).hasClass(".item")) {
+                return;
             }
 
             $(element).remove();
@@ -366,7 +370,7 @@ var lace = {
             }
 
             if (!alert.id) {
-                alert.id = new Date().getTime();
+                alert.id = "lace-alert-" + new Date().getTime();
             }
 
             if (!$(".alert-container").length) {
@@ -397,6 +401,10 @@ var lace = {
                 element = $(".alert-bar");
             }
 
+            if (!$(element).hasClass(".alert-bar")) {
+                return;
+            }
+
             lace.animate.transition("fadeout", element, function() {
                 $(element).remove();
 
@@ -406,83 +414,6 @@ var lace = {
             });
         }
     },
-
-    notify: {
-        /**
-         * Check desktop notifications support.
-         * @constructor
-         * @return {{ type: String, permission: String }}
-         */
-        support: function() {
-            var type, permission;
-
-            if ("webkitNotifications" in window) {
-                type = "webkit";
-                switch(webkitNotifications.checkPermission()) {
-                    case "0":
-                        permission = "granted";
-                        break;
-                    case "2":
-                        permission = "denied";
-                        break;
-                    default:
-                        permission = "default";
-                        break;
-                }
-            } else if ("Notification" in window) {
-                type = "html5";
-
-                if (Notification.permission) {
-                    permission = Notification.permission;
-                } else if (Notification.permissionLevel) {
-                    permission = Notification.permissionLevel();
-                }
-            } else {
-                return false;
-            }
-
-            return { "type" : type, "permission" : permission };
-        },
-
-        /**
-         * Request permission for desktop notifications.
-         * @constructor
-         */
-        request: function() {
-            var check = lace.notify.support();
-
-            if (check.permission !== "granted" && check.permission !== "denied") {
-                if (check.type === "webkit") {
-                    webkitNotifications.requestPermission();
-                } else if (check.type === "html5") {
-                    Notification.requestPermission();
-                }
-            }
-        },
-
-        /**
-         * Show a desktop notification.
-         * @constructor
-         * @param {{ title: String, body: String, tag: String, icon: String, action: Function }} notification
-         */
-        show: function(notification) {
-            var check = lace.notify.support(),
-                n;
-
-            if (check.permission === "granted") {
-                if (check.type === "webkit") {
-                    n = webkitNotifications.createNotification(notification.icon, notification.title, notification.body);
-                    n.show();
-                    n.onclick = notification.action;
-                } else if (check.type === "html5") {
-                    n = new Notification(notification.title, { dir: "auto", lang: "en-US", body: notification.body, tag: notification.tag, icon: notification.icon });
-                    n.onclick = notification.action;
-                }
-            } else {
-                lace.notify.request();
-            }
-        }
-    }
 };
 
 window.lace = lace;

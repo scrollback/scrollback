@@ -1,5 +1,5 @@
 /* jslint browser: true, indent: 4, regexp: true */
-/* global $, libsb, lace */
+/* global $, libsb, desktopnotify */
 
 var browserNotify = (function() {
 	var hasFocus = false,
@@ -76,24 +76,22 @@ var browserNotify = (function() {
 				soundTimer = null;
 			}, 30000);
 		}
-
-		if (important) {
-			lace.notify.show({
-				title: "New mention on " + text.to,
-				body: text.from + ": " + text.text,
-				icon: "s/img/scrollback.png",
-				tag: text.id,
-				action: function() {
-					libsb.emit("navigate", { room: text.to, time: text.time });
-				}
-			});
-		}
 	};
 }());
 
 libsb.on('text-dn', function(text, next) {
 	if (text.mentions.contains(libsb.user.id)) {
 		browserNotify(text, true);
+
+		desktopnotify.show({
+			title: "New mention on " + text.to,
+			body: text.from + ": " + text.text,
+			icon: "s/img/scrollback.png",
+			tag: text.id,
+			action: function() {
+				libsb.emit("navigate", { room: text.to, time: text.time });
+			}
+		});
 	} else {
 		browserNotify(text, false);
 	}
