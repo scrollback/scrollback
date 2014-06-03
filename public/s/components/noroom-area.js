@@ -26,9 +26,6 @@
         libsb.emit('room-up', roomObj,function(err, data){
            libsb.emit("navigate", {mode: 'normal', tab: 'info'});
         });
-        setTimeout(function(){
-            location.reload(); // reload page on claim.
-        });
     });
     $("#login-and-create-room-button").click(function(){
        if ($("body").hasClass("role-guest")) {
