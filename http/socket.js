@@ -28,8 +28,9 @@ var sockjs = require("sockjs"), core,
 	// api = require("./api.js"),
 	log = require("../lib/logger.js"),
 	config = require("../config.js"),
-	generate = require("../lib/generate.js");;
+	generate = require("../lib/generate.js");
 
+var internalSession = Object.keys(config.whitelists)[0];
 
 var rConns = {}, uConns = {}, sConns = {}, urConns = {};
 var sock = sockjs.createServer();
@@ -44,6 +45,7 @@ sock.on('connection', function (socket) {
 		if (!d.type) return;
 		
 		if(d.type == 'init' && d.session) {
+			if(d.session == internalSession) return;
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
 			if (!sConns[d.session]) {
@@ -90,6 +92,12 @@ sock.on('connection', function (socket) {
 				conn.send(data);
 				storeBack(conn, data);
 				return;
+			}
+			if(data.type == 'room') {
+				/* this is need because we dont have the connection object in the
+				rconn until the room can be setup and a back message is sent.*/
+				if(!data.old || !data.old.id) conn.send(data);
+				// return;
 			}
 			if(data.type == 'away') storeAway(conn, data);
 			if(data.type == 'init') {
