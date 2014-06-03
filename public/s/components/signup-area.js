@@ -4,8 +4,13 @@
 $(function(){
 	var signingUser, signupId, saveId = "", id = generate.uid();
 	function submitUser() {
+		var userId = $("#signup-id").val();
+		if(!validate(userId)) {
+			lace.alert.show({type:"error", body: "invalid name", id: id, timeout: 3000});
+			return;
+		}
 		libsb.emit("user-up", {
-				id: $("#signup-id").val(),
+				id: userId,
 				identities: signingUser.identities,
 				params: { 
 					email: {
@@ -18,14 +23,14 @@ $(function(){
 					}
 				}
 			}, function(err, u) {
-				// console.log(err, u);
-			if(err) {
-				if(err.message == "ERR_USER_EXISTS"){
-					lace.alert.show({type:"error", body: "user name already taken", id: id, timeout: 3000});
-				}else {
-					lace.alert.show({type:"error", body: err.message});
+				console.log(err, u);
+				if(err) {
+					if(err.message == "ERR_USER_EXISTS"){
+						lace.alert.show({type:"error", body: "user name already taken", timeout: 3000});
+					}else {
+						lace.alert.show({type:"error", body: err.message});
+					}
 				}
-			}
 		});
 	}
 	$(document).on("submit", "#signup", function(event){
