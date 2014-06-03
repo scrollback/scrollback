@@ -1,19 +1,19 @@
 /* jshint jquery: true */
-/* global libsb, personEl */
+/* global libsb, currentState, personEl */
 /* exported chatArea */
 
 var peopleArea = {};
 
 $(function() {
 	var $people = $(".pane-people"), shown = false, room = "",
-		people = [];
-	var lists = {
-		people1: [],
-		people3: [],
-		people4: [],
-		people6: [],
-		people9: []
-	}
+		people = [],
+		lists = {
+			people1: [],
+			people3: [],
+			people4: [],
+			people6: [],
+			people9: []
+		};
 
 
 	function checkForUser(user, list) {
@@ -38,7 +38,7 @@ $(function() {
 					if(ppl[r[i].id]) {
 						ppl[r[i].id].score += 3;
 					}else {
-						ppl[r[i].id] = r[i];	
+						ppl[r[i].id] = r[i];
 						ppl[r[i].id].score = 3;
 					}
 					ppl[r[i].id].status = "online";
@@ -87,7 +87,7 @@ $(function() {
 	libsb.on("back-dn", function(action, next) {
 		var index, l,i;
 		if(!currentState.room || action.to !== currentState.room || !action.user /*|| action.from == libsb.user.id*/) return next();
-	
+
 		function removeAndInsert(r, n, obj) {
 			for(i=0,l=lists["people"+r].length;i<l;i++) {
 				if(lists["people"+r][i] && obj.id == lists["people"+r][i].id) {
@@ -110,7 +110,7 @@ $(function() {
 			if(!checkForUser(action.user, lists["people3"])) {
 				lists["people3"].push(action.user);
 			}
-			
+
 			action.user.score = 3;
 		}
 		$people.reset();
@@ -162,8 +162,8 @@ $(function() {
 				}
 			}
 			if(index && after) ppl.splice(0, 1);
-			if(l == 0) ppl.push(false);
-			if(l==10) ppl.unshift(false);
+			if(l === 0) ppl.push(false);
+			if(l === 10) ppl.unshift(false);
 			ppl.forEach(function(e) {
 				var index;
 				if(e)index = (lists["people"+e.score].indexOf(e)+(e.score/10));
@@ -173,14 +173,14 @@ $(function() {
 			callback(res);
 		}
 	});
-	
+
 	libsb.on('navigate', function(state, next) {
 		if(state.tab == "people") {
-			$(".pane-people").addClass("e && current");
+			$(".pane-people").addClass("current");
 		}else{
-			$(".pane-people").removeClass("current");			
+			$(".pane-people").removeClass("current");
 		}
-		
+
 		if(state.source == 'people-area') return next();
 
 		if(state.tab == "people" && state.room != room) {
@@ -191,7 +191,8 @@ $(function() {
 				people4: [],
 				people6: [],
 				people9: []
-			}
+			};
+
 			function loadMembers(p,n) {
 				getPeople(function(sortedList) {
 					people = sortedList;
@@ -199,7 +200,7 @@ $(function() {
 				});
 				if(n) n();
 			}
-			
+
 			if(libsb.isInited) {
 				loadMembers();
 			}else{
