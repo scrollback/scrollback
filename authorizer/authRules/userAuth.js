@@ -24,7 +24,7 @@ module.exports = function(core){
 		else if (!action.old.identities) {
 			return callback();
 		} else if (emailValidation(action.old.identities, action.user.identities)) {
-			return callback("ERR_USER_EXISTS");
+			return callback(new Error("ERR_USER_EXISTS"));
 		} else if (action.from === action.old.id) return callback();
 		else return callback(new Error('ERR_NOT_ALLOWED'));
 		
