@@ -38,19 +38,16 @@ module.exports = function(core){
 	init(core);
 	var send = socket.send;
 	var emit = socket.emit;
-	// core.on("init", function(action, callback) {
-		
-	// });
-	// core.on("message" , function(message, callback) {
-	// 	log("Heard \"message\" Event");
-	// 	if(typeof message.to == "string")
-	// 		send(message, [message.to]);
-	// 	else if(typeof message.to == "object")
-	// 		send(message, message.to);
-	// 	callback();
-	// }, "gateway");
-	// core.on("edit", function(edit, callback) {
-	// 	emit("edit", edit, edit.to);
-	// 	callback();
-	// },"gateway");
+
+
+	core.on("room", function(action, callback) {
+		if(action.room.params.seo !== true && action.room.params.seo !== false) return callback(new Error("ERR_INVAILD_PARAMS"));
+	}, 'applevelValidation');
+
+	core.on("user", function(action, callback) {
+		if(!action.user.params.notifications) return callback(new Error("ERR_INVAILD_PARAMS"));
+		if(action.user.params.notifications.sound !== true && action.user.params.notifications.sound !== false) return callback(new Error("ERR_INVAILD_PARAMS"));
+		if(action.user.params.notifications.desktop !== true && action.user.params.notifications.desktop !== false) return callback(new Error("ERR_INVAILD_PARAMS"));
+		callback();
+	}, 'applevelValidation');
 };

@@ -41,9 +41,9 @@ $(function() {
 		});
 	});
 
-	$(document).on("click", ".chat-more", function() {
+/*	$(document).on("click", ".chat-more", function() {
 		lace.popover.show({ body: $("#chat-menu").html(), origin: $(this) });
-	});
+	});*/
 
 	$(document).on("keydown", function(e){
 		if ($(".chat-item.current").length > 0) {

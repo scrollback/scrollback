@@ -53,11 +53,10 @@ module.exports = function(c){
 	core.on('disconnected', onDisconnect);
 
 	core.on("init-dn", function() {
-		if(!libsb.isInited){
+		if(!libsb.isInited) {
 			libsb.isInited = true;
 			core.emit("inited");
 		}
-
 	}, 10)
 };
 

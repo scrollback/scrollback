@@ -81,4 +81,9 @@ function addMessage(message){
 			});
         }
     }   
+
+    core.on("room", function(data, callback) {
+    	
+    	callback();
+    }, "validation");
 }
