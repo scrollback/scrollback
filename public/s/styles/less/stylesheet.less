@@ -437,3 +437,16 @@
         color: lighten(@dark-color, 20%);
     }
 }
+
+.notification {
+    text-align: center;
+    padding: 1em;
+    background-color: darken(@accent-color, 10%);
+    color: @light-color;
+
+    a {
+        &, &:focus, &:hover, &:active { color: @light-color; }
+
+        &:focus, &:hover, &:active { text-decoration: underline; }
+    }
+}
