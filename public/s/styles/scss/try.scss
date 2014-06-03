@@ -1,0 +1,71 @@
+@import "base";
+
+/* we need this to make text vertically centered in a page */
+html, body { height: 100%; }
+
+body { font-size: 16px; }
+
+h1 {
+    font-weight: 300;
+    margin-bottom: .5em;
+}
+
+a {
+    &, &:focus, &:hover, &:active {
+        color: $light-color;
+        font-weight: 700;
+    }
+
+    &:focus, &:hover, &:active { text-decoration: underline; }
+}
+
+.cover-wrapper {
+    display: table;
+    width: 100%;
+    height: 100%;
+    background-attachment: scroll;
+    background-position: center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: $dark-color;
+    color: $light-color;
+    background-image: url(../../img/covers/bg-home-320.jpg);
+
+    @media only screen and (min-device-width: 320px) { background-image: url(../../img/covers/bg-home-700.jpg); }
+
+    @media only screen and (min-device-width: 700px),
+        only screen and (-webkit-min-device-pixel-ratio: 2) and (min-device-width: 320px),
+        only screen and (min--moz-device-pixel-ratio: 2) and (min-device-width: 320px),
+        only screen and (-o-min-device-pixel-ratio: 2/1) and (min-device-width: 320px),
+        only screen and (min-device-pixel-ratio: 2) and (min-device-width: 320px),
+        only screen and (min-resolution: 192dpi) and (min-device-width: 320px),
+        only screen and (min-resolution: 2dppx) and (min-device-width: 320px) { background-image: url(../../img/covers/bg-home-1300.jpg); }
+
+    @media only screen and (min-width: 1300px),
+        only screen and (-webkit-min-device-pixel-ratio: 2) and (min-device-width: 700px),
+        only screen and (min--moz-device-pixel-ratio: 2) and (min-device-width: 700px),
+        only screen and (-o-min-device-pixel-ratio: 2/1) and (min-device-width: 700px),
+        only screen and (min-device-pixel-ratio: 2) and (min-device-width: 700px),
+        only screen and (min-resolution: 192dpi) and (min-device-width: 700px),
+        only screen and (min-resolution: 2dppx) and (min-device-width: 700px) { background-image: url(../../img/covers/bg-home-1600.jpg); }
+}
+
+.cover {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.cover-inner {
+    width: 50em;
+    max-width: 100%;
+    margin: auto;
+}
+
+@for $i from 1 through 2 {
+    .step-#{$i} {
+        .form:not(.form-#{$i}) { display: none; }
+    }
+}
