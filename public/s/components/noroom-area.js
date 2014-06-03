@@ -18,8 +18,12 @@
                 description: '',
                 params: {
                     irc: {},
-                    allowSEO: true,
-                    wordban: false
+                    http: {
+                        seo: true
+                    },
+                    antiAbuse: {
+                        offensive: true
+                    }
                 }
             },
             user: { id: libsb.user }
