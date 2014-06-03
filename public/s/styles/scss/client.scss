@@ -375,7 +375,7 @@ body {
         &:first-child { border-left: none; }
 
         &:hover, &:focus, &:active {
-            fill: lighten($dark-color, 30%);
+            fill: lighten($dark-color, 10%);
             background-color: rgba(0,0,0,.1);
         }
 
@@ -760,9 +760,9 @@ body {
 }
 
 .search-button, .fullview-button, .minimize-button {
-    fill: lighten($dark-color, 50%);
+    fill: lighten($dark-color, 30%);
 
-    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 30%); }
+    &:focus, &:hover, &:active { fill: lighten($dark-color, 10%); }
 }
 
 .search-button {
@@ -986,8 +986,6 @@ body {
 	}
 
 	a {
-        color: #2a5db0;
-
 		&:hover, &:focus, &:active { text-decoration: underline; }
 	}
 

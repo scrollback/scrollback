@@ -208,7 +208,7 @@
             <p>Type the name of the room you want</p>
             <form id="create-field">
                 <label for="create-text">scrollback.io/</label>
-                <input type="text" autocomplete="off" id="create-text" placeholder="my-community" /><input type="submit" disabled="true" value="Go" />
+                <input type="text" id="create-text" placeholder="my-community" pattern="[a-z][a-z0-9-]{2,31}" oninvalid="setCustomValidity('Please enter a valid room name')" onchange="try{setCustomValidity('')}catch(e){}" /><input type="submit" disabled="true" value="Go" />
                 <p class="error"></p>
             </form>
         </section>
