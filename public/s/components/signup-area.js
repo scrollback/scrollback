@@ -20,7 +20,7 @@ $(function(){
 			}, function(err, u) {
 				// console.log(err, u);
 			if(err) {
-				if(err.message == "ERR_USER_EXIST"){
+				if(err.message == "ERR_USER_EXISTS"){
 					lace.alert.show({type:"error", body: "user name already taken", id: id, timeout: 3000});
 				}else {
 					lace.alert.show({type:"error", body: err.message});

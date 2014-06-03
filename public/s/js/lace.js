@@ -375,6 +375,7 @@ var lace = {
 
             $("<div>")
                 .addClass("alert-bar " + alert.type)
+                .attr("id", alert.id)
                 .append($("<span>").addClass("alert-content").html(alert.body))
                 .append($("<span>").addClass("alert-remove"))
                 .appendTo(".alert-container");
