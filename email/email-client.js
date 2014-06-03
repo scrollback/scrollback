@@ -7,7 +7,6 @@
 */
 
 
-// formField("Languages", "checks", [["zh", "Block chinese swear words"], ["en", "es"]);
 
 var formField = require('../lib/formField.js');
 
@@ -48,6 +47,5 @@ libsb.on('pref-save', function(user, next){
             frequency : $('input:radio[name="email-freq"]:checked').next().text().toLowerCase(),
             notifications : $('#mention').is(':checked')
 	};
-        console.log(" email notifications ", user.params.email.frequency);
 	next();
 });

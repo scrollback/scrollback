@@ -2,19 +2,54 @@
 /* global window, libsb */
 var ArrayCache = require('./ArrayCache.js');
 var generate = require('../lib/generate');
-var cache, core;
+var cache = {}, core;
 
-function load(){
-	if(localStorage.libsb){
-		cache = JSON.parse(localStorage.libsb);
-		cache.texts = cache.texts || [];
-		cache.texts = new ArrayCache(cache.texts);
-		cache.labels = new ArrayCache(cache.labels);
-	}
+function deleteLRU(){
+    // deletes the least recently used entry from LocalStorage
 }
 
-function save(){
-	localStorage.libsb = JSON.stringify(cache);
+function getLSkey(){
+        var args = Array.prototype.slice.call(arguments, 0); 
+        var argumentsLC = args.map(function(val){
+            return val.toLowerCase();
+        });
+        return argumentsLC.join('_');
+}
+
+libsb.on('navigate', function(state, next){
+    if(state.room){
+        var lsKeyTexts = getLSkey(state.room, 'texts');
+        var lsKeyLabels = getLSkey(state.room, 'labels');
+        if(!cache.hasOwnProperty(lsKeyTexts)){
+                cache[lsKeyTexts] = localStorage[lsKeyTexts];
+        }
+        if(!cache.hasOwnProperty(lsKeyLabels)){
+                cache[lsKeyLabels] = localStorage[lsKeyLabels];
+        }
+    }
+});
+
+function load(roomName, dataType){
+	var lsKey = getLSkey(roomName, dataType);
+        cache[lsKey] = localStorage[lsKey];
+        /*if(localStorage[lsKey]){
+		cache[lsKey] = JSON.parse(localStorage[lsKey]);
+		cache[lsKey] = new ArrayCache(cache[lsKey]);
+                //cache.texts = cache.texts || [];
+		//cache.texts = new ArrayCache(cache.texts);
+		//cache.labels = new ArrayCache(cache.labels);
+	}*/
+}
+
+function save(roomName, dataType){
+         try{
+                localStorage.libsb = JSON.stringify(cache);
+         }catch(e){
+                if (e == QUOTA_EXCEEDED_ERR){
+                    deleteLRU();
+                    save(roomName, dataType);
+                }
+         };
 }
 
 load();
@@ -104,12 +139,16 @@ function getTextsBefore(query, next){
 		not giving the correct data right now.
 		var results = cache.texts.get(query);
 	if(results) query.results = results;*/
+        var room = query.to;
+        var lsKey = getLSkey(room, 'texts');
+        var results = cache[lsKey].get(query);
+        if(results.length) query.results = results;
 	next();
 }
 
 function getTextsAfter(query, next){
 	var results = query.results; 
-	if(results){
+	if(!results.length){
 		if(query.before) results.push({type: 'result-end', endtype: 'time', time: query.time});
 		if(query.after) results.unshift({type: 'result-start', endtype: 'time', time: query.time});
 
