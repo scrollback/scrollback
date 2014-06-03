@@ -150,10 +150,10 @@ var lace = {
                 content.forEach(function(text) {
                     if (!text.match(/^\s*$/) ) {
                         $("<div>")
-                            .addClass("item done")
-                            .append($("<span>").addClass("item-text").text(text.trim()))
-                            .append($("<span>").addClass("item-remove"))
-                            .insertBefore(($(element).children().last()).empty());
+                        .addClass("item done")
+                        .append($("<span>").addClass("item-text").text(text.trim()))
+                        .append($("<span>").addClass("item-remove"))
+                        .insertBefore(($(element).children().last()).empty());
                     }
                 });
             }
@@ -369,7 +369,7 @@ var lace = {
                 alert.type = "info";
             }
 
-            if (!alert.id) {
+            if ((!alert.id) || $("#" + alert.id).length) {
                 alert.id = "lace-alert-" + new Date().getTime();
             }
 
@@ -378,11 +378,11 @@ var lace = {
             }
 
             $("<div>")
-                .addClass("alert-bar " + alert.type)
-                .attr("id", alert.id)
-                .append($("<span>").addClass("alert-content").html(alert.body))
-                .append($("<span>").addClass("alert-remove"))
-                .appendTo(".alert-container");
+            .addClass("alert-bar " + alert.type)
+            .attr("id", alert.id)
+            .append($("<span>").addClass("alert-content").html(alert.body))
+            .append($("<span>").addClass("alert-remove"))
+            .appendTo(".alert-container");
 
             if (alert.timeout) {
                 setTimeout(function() {
@@ -399,6 +399,10 @@ var lace = {
         hide: function(element) {
             if (!element) {
                 element = $(".alert-bar");
+            }
+
+            if (!$(element).hasClass("alert-bar")) {
+                return;
             }
 
             lace.animate.transition("fadeout", element, function() {
