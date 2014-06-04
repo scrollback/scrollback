@@ -114,49 +114,28 @@ exports.init = function(app, coreObject) {
             res.render("d/main" , responseObject);    
         });
     }
-/*    app.get("/me", loginHandler);
-	app.get("/me/login", loginHandler);
-    app.get("/dlg/*",function(req,res){
-        var dialog=req.path.substring(1).split("/")[1];
-        if(dialogs[dialog]) {
-            dialogs[dialog](req,res);
-        }
-        else{
-            res.render("error",{error: "dialog missing"});
-        }
-    });
 
-    app.get("/pwn/*",function(req,res){
+    app.get('/t/:room/*', function(req, res, next) {
         var room = req.path.substring(1).split("/")[1];
-        var url=req.path.replace("/pwn/"+room+"/","");
-        if(url.indexOf("http://")<0){
+        var url=req.path.replace("/t/"+room, "").substring(1);
+
+        if(url && url.indexOf("http://")<0){
+            url = url.substring(1);
             url="http://"+url;
         }
-        res.render("pwn",{
-            room:room,
-            url:url
-        });
+        
+        if(url) {
+            res.render("pwn",{
+                room:room,
+                url:url
+            });    
+        }else {
+            res.render("room", {
+                room: room
+            });
+        }
     });
-*/
-    app.get('/t/*', function(req, res, next) {
-        var streams = req.path.substring(3);
 
-        streams = streams.split("/+/").map(function(p) {
-            return p.split('/')[0];
-        });
-
-        res.render("room", {
-            streams: JSON.stringify(streams),
-            title: streams.join(', ').replace(/\b[a-z]/g, function(m) {
-                return m.toUpperCase();
-            })
-        });
-    });   
-/*	
-	app.get("/beta/*", function(req, res){
-		return res.redirect(307, 'https://'+config.http.host+ req.path.substring(5));
-	});
-*/	
     function roomHandler(req, res, next) {
 		log("path ", req.path);
         var params = req.path.substring(1).split("/"), responseObj={}, 

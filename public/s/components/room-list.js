@@ -11,16 +11,19 @@ $(function() {
 		if(!room) return;
 		room = room.toLowerCase();
 		if(rooms.indexOf(room)<0) {
-			rooms.pop();
-			rooms.push(room);
-			rooms.push(false);
-			if(inited) libsb.enter(room);
-			else listenQueue.push(room);
+			if(inited) {
+				libsb.enter(room);
+				rooms.pop();
+				rooms.push(room);
+				rooms.push(false);
+			}else {
+				listenQueue.push(room);
+			}
 			$roomlist.reset();
 		}
 	}
 	libsb.on("inited", function(d, n) {
-		if(currentState.embed == "toast") return next();
+		if(currentState.embed == "toast") return n();
 		inited = true;
 		listenQueue.forEach(function(e) {
 			libsb.enter(e);
