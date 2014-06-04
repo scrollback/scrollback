@@ -388,12 +388,22 @@ body {
     .meta-header {
         @include justify-content(flex-start);
 
-        padding-left: 1.5em;
+        padding-left: .25em;
         text-transform: uppercase;
 
         @media #{$screenxxxx} {
             padding-left: 4.25em;
             background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
+        }
+
+        h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+
+            @media #{$screenxxxx} {
+                font-size: 1.5em;
+                font-weight: 400;
+            }
         }
     }
 }
@@ -583,7 +593,7 @@ body {
 	@extend %ease;
 
 	display: block;
-	font-size: 1.5em;
+    font-size: 1.2em;
 	padding: .75em;
 	padding-left: 2.75em;
 	background-size: 24px 24px;
@@ -591,7 +601,9 @@ body {
 	background-repeat: no-repeat;
 	border-bottom: 1px solid darken($light-color, 10%);
 	color: $dark-color;
-	cursor: pointer;
+    cursor: pointer;
+
+    @media #{$screenxxxx} { font-size: 1.5em; }
 
     &.current { background-color: rgba(0,0,0,.05); }
 
