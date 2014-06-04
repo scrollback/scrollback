@@ -71,7 +71,7 @@ $(function(){
                                  $("body").addClass("role-owner");
                             }
                         });
-	            });
+		            });
                     next();
                 });
             }
