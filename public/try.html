@@ -59,19 +59,23 @@
                         <h1>Want to visit an existing room on Scrollback?</h1>
                         <form id="preview-room">
                             <input id="room-name" type="text" placeholder="Enter your room name" pattern="[a-z][a-z0-9-]{2,31}" oninvalid="setCustomValidity('Please enter a valid room name')" onchange="try{setCustomValidity('')}catch(e){}" required autofocus>
-                            <input type="submit" value="Preview on Scrollback">
-                            <input id="preview-embed-prev" type="button" value="Preview on your site">
+                            <p>
+                                <input type="submit" value="Preview on Scrollback">
+                                <input id="preview-embed-prev" class="secondary" type="button" value="Preview on your site">
+                            </p>
                         </form>
                     </div>
                     <div class="form form-2">
                         <h1>What is your website URL?</h1>
                         <form id="preview-embed">
                             <input id="web-address" type="text" placeholder="Enter your web address" required>
-                            <input type="submit" value="Preview on your site">
+                            <p>
+                                <input type="submit" value="Preview on your site">
+                            </p>
                         </form>
-                    </div><br>
-                    <p style="font-size:0.9em">This is a preview version and is not ready for production uses yet. Any data on this version will not be retained later.</p><br>
-                    <p><a href="http://blog.scrollback.io/the-all-new-scrollback/">Checkout what's new in Scrollback</a></p>
+                    </div>
+                    <p>This is a preview version and is not ready for production uses yet. Any data on this version will not be retained later.</p>
+                    <p><a href="http://blog.scrollback.io/the-all-new-scrollback/">Checkout what's new in Scrollback</a>.</p>
                 </div>
             </div>
         </section>

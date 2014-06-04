@@ -3,8 +3,6 @@
 /* we need this to make text vertically centered in a page */
 html, body { height: 100%; }
 
-body { font-size: 16px; }
-
 h1 {
     font-weight: 300;
     margin-bottom: .5em;
@@ -19,8 +17,18 @@ a {
     &:focus, &:hover, &:active { text-decoration: underline; }
 }
 
+p { margin: 1em 0; }
+
+input[type="text"] {
+    display: block;
+    width: 36em;
+    max-width: 100%;
+    margin: auto;
+}
+
 .cover-wrapper {
     display: table;
+    table-layout: fixed;
     width: 100%;
     height: 100%;
     background-attachment: scroll;
@@ -56,11 +64,13 @@ a {
     display: table-cell;
     vertical-align: middle;
     text-align: center;
+    width: 100%;
 }
 
 .cover-inner {
-    width: 50em;
+    width: 60em;
     max-width: 100%;
+    padding: 1em;
     margin: auto;
 }
 
