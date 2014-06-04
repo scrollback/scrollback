@@ -60,17 +60,27 @@ function getRooms(){
              });
         });
 }
+function checkOwnerShip(){
+    libsb.memberOf.forEach(function(room){
+          if(room.id == currentState.room && room.role == "owner") isOwner = true;
+    });
+    if(isOwner == false){
+          libsb.emit('navigate', {mode: 'normal'});
+    }
 
+}
 libsb.on('navigate', function(state, next) {
         // check state.mode == settings
         var isOwner = false;
         if(state.mode === "conf"){
                 // if currentConfig is blank, then
-                libsb.memberOf.forEach(function(room){
-                      if(room.id == currentState.room && room.role == "owner") isOwner = true;
-                });
-                if(isOwner == false){
-                      libsb.emit('navigate', {mode: 'normal'});
+                if(libsb.isInited){
+                    checkOwnerShip();
+                }else{
+                    libsb.on('inited', function(d, next){
+                        checkOwnerShip();
+                        next();
+                    });
                 }
                 if(!currentConfig){
                     if(libsb.isInited){
