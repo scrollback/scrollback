@@ -11,7 +11,7 @@ require('./socket/socket-client')(core);
 
 require('./public/s/js/array.contains.js');
 require('./public/s/js/jquery.setCursorEnd.js');
-require('./public/s/js/jquery.oembed.js');
+//require('./public/s/js/jquery.oembed.js');
 require('./public/s/js/lace.js');
 require('./public/s/js/desktopnotify.js');
 require('./public/s/js/format.js');
@@ -57,7 +57,7 @@ require('./public/s/components/noroom-area.js');
 require('./public/s/components/signup-area.js');
 require('./public/s/components/persona.js');
 require('./public/s/components/URLparser.js')();
-require('./public/s/components/oembed-init.js');
+//require('./public/s/components/oembed-init.js');
 require('./public/s/components/load-indicator.js');
 
 //# sourceMappingURL=libsb.js.map

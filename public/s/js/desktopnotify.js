@@ -4,7 +4,6 @@
 /**
  * @fileOverview Wrapper for desktop notifications.
  * @author Satyajit Sahoo <satya@scrollback.io>
- * @requires jQuery
  */
 
 var desktopnotify = {
