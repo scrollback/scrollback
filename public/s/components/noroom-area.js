@@ -25,7 +25,6 @@
             }
         };
         libsb.emit('room-up', roomObj,function(err, data){
-             console.log("ROOM UP EMITTED with ", roomObj);
              libsb.emit("navigate", {mode: 'normal', tab: 'info'}, function(){
                  location.reload();    
              });

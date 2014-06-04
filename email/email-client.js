@@ -27,7 +27,6 @@ libsb.on('pref-show', function(tabs, next){
                 div.append(formField("Email digest frequency", 'radio', 'email-freq',[["email-freq-daily", "Daily", "checked"], ["email-freq-never", "Never"]]));
                 break;
             case 'never':
-                console.log("NEVER EMAIL ");
                 div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily"], ["email-freq-never", "Never", "checked"]]));
                 break;
             default:
@@ -48,6 +47,5 @@ libsb.on('pref-save', function(user, next){
             frequency : $('input:radio[name="email-freq"]:checked').next().text().toLowerCase(),
             notifications : $('#mention').is(':checked')
 	};
-        console.log(" email notifications ", user.params.email.frequency);
 	next();
 });

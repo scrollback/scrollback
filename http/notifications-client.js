@@ -6,7 +6,6 @@ var formField = require("../lib/formField.js");
 
 libsb.on('pref-show', function(tabs, next){
     user = tabs.user;
-    console.log("recieved user OBJECT ", user);
     var div = $('<div>').addClass('list-view list-view-notification-settings');
     if(!user.params.notifications){
         user.params.notifications = {};

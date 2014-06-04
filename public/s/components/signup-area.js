@@ -49,7 +49,7 @@ $(function(){
 	});*/
 
 	libsb.on("user-dn", function(action, next) {
-                location.reload();
+                //location.reload();
                 lace.modal.hide();
 		libsb.emit('navigate', {
 			view: 'normal',

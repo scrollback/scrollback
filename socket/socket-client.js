@@ -179,7 +179,7 @@ function sendUser(user, next) {
 	var action = makeAction({type: 'user', to: "me", user: user.user});
 	client.send(JSON.stringify(action));
 	pendingActions[action.id] = next;
-	// next();
+	next();
 }
 
 function sendRoom(room, next){
