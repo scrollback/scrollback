@@ -2,7 +2,7 @@
 /* global $, libsb, lace */
 
 $(function(){
-	var signingUser, signupId, saveId = "", id = generate.uid();
+	var signingUser, signupId, saveId = "", id = generate.uid(), signingUp = false;
 	function submitUser() {
 		var userId = $("#signup-id").val();
 		if(!validate(userId)) {
@@ -26,6 +26,7 @@ $(function(){
 			 	}
 			}
 		}, function(err, u) {
+                                signingUp = true;
 				if(err) {
 					if(err.message == "ERR_USER_EXISTS"){
 						lace.alert.show({type:"error", body: "user name already taken", timeout: 3000});
@@ -49,9 +50,9 @@ $(function(){
 	});*/
 
 	libsb.on("user-dn", function(action, next) {
-                //location.reload();
                 lace.modal.hide();
-		libsb.emit('navigate', {
+                if(signingUp === true) location.reload(); 		
+                libsb.emit('navigate', {
 			view: 'normal',
 			mode: 'normal',
 			tab: 'info'
