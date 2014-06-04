@@ -11,7 +11,7 @@ $(".configure-button").on("click", function() {
 $(".conf-save").on("click", function(){
     if(currentState.mode == 'conf'){
         libsb.emit('config-save', {id: window.currentState.room, description: '', identities: [], params: {}}, function(err, room){
-            var roomObj = {type: 'room', to: currentState.room, id: generate.uid(), room: room, user: {id: libsb.user}};
+            var roomObj = {to: currentState.room, room: room};
             libsb.emit('room-up', roomObj, function(){
                     currentConfig = null;
                     $('.conf-area').empty();

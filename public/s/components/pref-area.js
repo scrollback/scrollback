@@ -12,7 +12,7 @@ $(".conf-save").on("click", function(){
             params: {}
         };
         libsb.emit('pref-save', userObj, function(err, user){
-            libsb.emit('user-up', user, function(err, data){
+            libsb.emit('user-up', {user: user}, function(err, data){
                     currentConfig = null;
                     libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
             });

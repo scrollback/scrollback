@@ -10,6 +10,7 @@ $(function(){
 			return;
 		}
 		libsb.emit("user-up", {
+			user: {
 				id: userId,
 				identities: signingUser.identities,
 				params: { 
@@ -20,9 +21,11 @@ $(function(){
 					notifications: {
 						sound: true,
 						desktop: true
+						
 					}
-				}
-			}, function(err, u) {
+			 	}
+			}
+		}, function(err, u) {
 				if(err) {
 					if(err.message == "ERR_USER_EXISTS"){
 						lace.alert.show({type:"error", body: "user name already taken", timeout: 3000});
@@ -46,7 +49,8 @@ $(function(){
 	});*/
 
 	libsb.on("user-dn", function(action, next) {
-		lace.modal.hide();
+                location.reload();
+                lace.modal.hide();
 		libsb.emit('navigate', {
 			view: 'normal',
 			mode: 'normal',
