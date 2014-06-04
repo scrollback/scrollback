@@ -2,7 +2,7 @@
 /* global $, libsb */
 
 libsb.on('config-show', function (conf, next) {
-    var code = '<script>window.scrollback = {room:"' + window.currentState.room + '",embed:"toast",theme:"dark",host:(location.protocol == "https:" ? "https:" : "http:") + "//' + window.location.host + '"};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=h+"/s/js/embed.js";scrollback.host=h;d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script",scrollback.host));</script>';
+    var code = '<script>window.scrollback = {room:"' + window.currentState.room + '",embed:"toast",theme:"dark",host:(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '"};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=h+"/s/js/embed.js";scrollback.host=h;d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script",scrollback.host));</script>';
 
     var div = $('<div>').addClass('list-view list-view-embed-settings');
     var innerDiv = $('<div>').addClass('settings-item');
