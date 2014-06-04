@@ -4,10 +4,10 @@
 	document.onreadystatechange = function() {
 		if (document.readyState === "complete") {
 			// Variables
-			var room = "scrollback",
-				host = "http://dev.scrollback.io",
-				embed = "toast",
-				theme = "dark",
+			var room = window.scrollback.room || "scrollback",
+				embed = window.scrollback.embed || "toast",
+				theme = window.scrollback.theme || "dark",
+				host = window.scrollback.host || (location.protocol === "https:" ? "https:" : "http:") + "//next.scrollback.io",
 				style,
 				iframe;
 

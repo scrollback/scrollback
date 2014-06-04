@@ -17,6 +17,12 @@ $(function() {
 	});
 
 	$("#preview-embed").on("submit", function() {
-		window.open("http://next.scrollback.io/pwn/" + $("#room-name").val() + "/" + $("#web-address").val(), '_blank');
+		var web = $("#web-address").val();
+
+		if(!/^(https?):\/\//i.test(web)) {
+			web = "http://" + web;
+		}
+
+		window.open("http://next.scrollback.io/t/" + $("#room-name").val() + "/" + web, '_blank');
 	});
 });
