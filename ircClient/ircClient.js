@@ -12,8 +12,6 @@ var rooms = {};//room id to room obj map.
 var servNick = {};//server channel nick -------> sb nick.
 var renameCallback = {};
 var connected = false;
-//var botPartCallbacks = {};0
-
 /******************************* Exports ****************************************/
 module.exports.say = say;
 module.exports.rename = rename;
@@ -178,8 +176,7 @@ function connectUser(roomId, nick, options, cb) {
 }
 
 function onMessage(client) {
-	client.on('message#', function(nick, to, text, message) {
-		log("on message" /*, JSON.stringify(servNick)*/);
+	function msg(nick, to, text) {
 		to = to.toLowerCase();
 		
 		if (!servChanProp[client.opt.server][to]) {
@@ -196,6 +193,13 @@ function onMessage(client) {
 				text: text
 			});
 		}
+	}
+	client.on('message#', function(nick, to, text, message) {
+		log("on message" /*, JSON.stringify(servNick)*/);
+		msg(nick, to, text);
+	});
+	client.on("action", function(nick, channel, text) {
+		msg(nick, channel, "/me " + text);
 	});
 }
 
@@ -429,7 +433,8 @@ function onNames(client) {
 function say(message) {
 	log("message sending to irc:", message);
 	var client = clients[message.from][rooms[message.to].params.irc.server];
-	client.say(rooms[message.to].params.irc.channel, message.text);
+	if(message.text.indexOf("/me ") !== 0) client.say(rooms[message.to].params.irc.channel, message.text);
+	else client.action(rooms[message.to].params.irc.channel, message.text.substring(4));
 }
 /************************* send users msg ***************************************/
 
@@ -481,7 +486,7 @@ function partUser(roomId, nick) {
 }
 
 
-function disconnectUser(nick) {
+function disconnectUser(nick) {//TODO delete users from state object.
 	for (var key in clients[nick]) {
 		if (clients[nick].hasOwnProperty(key)) {
 			clients[nick][key].disconnect();
@@ -489,11 +494,8 @@ function disconnectUser(nick) {
 	}
 }
 
-/************************************ update servChanNick *************************/
-
 /**
  * Return current state of Client.
- * @param {function} callback callback(state)
  */
 function getCurrentState() {
 	return {//state
