@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+        <meta name="description" content="Scrollback is a beautiful, open source text chat service designed for communities. Scrollback chat rooms can be embedded in websites, linked with Twitter hashtags or with IRC channels." />
+
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Scrollback - Where communities hang out" />
+        <meta name="twitter:description" content="Scrollback is a beautiful, open source text chat service designed for communities." />
+        <meta name="twitter:image" content="http://scrollback.io/s/img/scrollback.png" />
+
+        <meta property="og:type" content="website"/>
+        <meta property="og:url" content="http://scrollback.io" />
+        <meta property="og:title" content="Scrollback - Where communities hang out" />
+        <meta property="og:description" content="Scrollback is a beautiful, open source text chat service designed for communities." />
+        <meta property="og:image" content="http://scrollback.io/s/img/scrollback.png" />
+
+        <title>Scrollback - Where communities hang out</title>
+
+        <link rel="shortcut icon" href="s/img/favicon.png" type="image/x-icon" />
+        <link rel="image_src" href="s/img/scrollback.png" />
+        <link rel="author" href="http://plus.google.com/118029978978376563753" />
+
+        <link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
+        <link rel="stylesheet" type="text/css" media="screen" href="s/styles/gen/try.css" />
+
+		<!-- enable HTML5 in IE, we need to place it before body -->
+		<!--[if lt IE 9]>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
+		<script>window.html5 || document.write('<script src="s/lib/html5shiv.min.js"><\/script>')</script>
+		<![endif]-->
+
+        <script>
+            var css = document.createElement("style");
+            css.type = "text/css";
+            css.innerHTML = ".nojs { display: none; }";
+            document.getElementsByTagName("head")[0].appendChild(css);
+        </script>
+    </head>
+
+    <body>
+        <!--[if IE]>
+        <div class="ie warning">
+        <h2>You are using an outdated browser!</h2>
+        <p>Please <a href="http://browsehappy.com">upgrade</a> to a modern browser.</p>
+        </div>
+        <![endif]-->
+        <div class="nojs warning">
+        <h2>Javascript is disabled in your browser!</h2>
+        <p>Please enable Javascript for the website to work.</p>
+        </div>
+        <section id="cover" class="cover-wrapper">
+            <div class="cover">
+                <div class="cover-inner">
+                    <div class="form form-1">
+                        <h1>Want to visit an existing room on Scrollback?</h1>
+                        <form id="preview-room">
+                            <input id="room-name" type="text" placeholder="Enter your room name" pattern="[a-z][a-z0-9-]{2,31}" oninvalid="setCustomValidity('Please enter a valid room name')" onchange="try{setCustomValidity('')}catch(e){}" required autofocus>
+                            <input type="submit" value="Preview on Scrollback">
+                            <input id="preview-embed-prev" type="button" value="Preview on your site">
+                        </form>
+                    </div>
+                    <div class="form form-2">
+                        <h1>What is your website URL?</h1>
+                        <form id="preview-embed">
+                            <input id="web-address" type="text" placeholder="Enter your web address" required>
+                            <input type="submit" value="Preview on your site">
+                        </form>
+                    </div><br>
+                    <p style="font-size:0.9em">This is a preview version and is not ready for production uses yet. Any data on this version will not be retained later.</p><br>
+                    <p><a href="http://blog.scrollback.io/the-all-new-scrollback/">Checkout what's new in Scrollback</a></p>
+                </div>
+            </div>
+        </section>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="s/lib/jquery.min.js"><\/script>')</script>
+        <script src="s/js/try.js"></script>
+    </body>
+</html>

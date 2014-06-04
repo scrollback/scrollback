@@ -13,7 +13,7 @@ $(function() {
 
 		// Handle fullview button click
 		$(".fullview-button").on("click", function() {
-			window.open(window.location.href, '_blank');
+			window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, "").replace("&theme=dark", ""), '_blank');
 		});
 	}
 });

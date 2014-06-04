@@ -9,10 +9,7 @@
     });
     $("#create-room-button").click(function(){
         var roomObj = {
-            id: generate.uid(),
-            type: 'room',
             to: currentState.room,
-            session: libsb.session,
             room: {
                 id: currentState.room,
                 description: '',
@@ -25,8 +22,7 @@
                         offensive: true
                     }
                 }
-            },
-            user: { id: libsb.user }
+            }
         };
         libsb.emit('room-up', roomObj,function(err, data){
              libsb.emit("navigate", {mode: 'normal', tab: 'info'}, function(){
