@@ -1,5 +1,8 @@
-libsb.on('config-show', function(conf, next){
-    var code = "<script>window.scrollback = {streams: [" + currentState.room + "], theme: 'light', ticker: true};" + "(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=h+'/client.min.js';scrollback.host=h;d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,'script',( location.protocol == 'https:' ? 'https:' : 'http:') + '//scrollback.io'));</script>"
+/* jslint browser: true, indent: 4, regexp: true */
+/* global $, libsb */
+
+libsb.on('config-show', function (conf, next) {
+    var code = '<script>window.scrollback = {room:"' + window.currentState.room + '",embed:"toast",theme:"dark",host:(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '"};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=h+"/s/js/embed.js";scrollback.host=h;d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script",scrollback.host));</script>';
 
     var div = $('<div>').addClass('list-view list-view-embed-settings');
     var innerDiv = $('<div>').addClass('settings-item');
@@ -8,14 +11,15 @@ libsb.on('config-show', function(conf, next){
     innerDiv.append(para, textarea);
     div.append(innerDiv);
 
-    textarea.click(function(){
+    textarea.click(function () {
         this.select();
     });
 
     conf.embed = {
-            html: div,
-            text: "Embed code",
-            prio: 400
-    }
+        html: div,
+        text: "Embed code",
+        prio: 400
+    };
+
     next();
 });
