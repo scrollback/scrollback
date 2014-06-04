@@ -13,8 +13,9 @@ function closeConnection(){
 	db.end();
 }
 
-function migrateTexts(cb) {
-	var stream = db.query("select * from text_messages order by time desc");
+function migrateTexts(limit, cb) {
+	var f = 0;
+	var stream = db.query("select * from text_messages order by time limit "+limit*1000+" , 1000");
 	stream.on("result", function(text) {
 		db.pause();
 		// types.texts.put()
@@ -61,18 +62,31 @@ function migrateTexts(cb) {
 
 	stream.on('end', function(){
 		console.log("Mirgration Complete!");
+		cb && cb();
 	});
 }
 
 (function(){
+	var i;
 	var path = process.cwd();
 	if(path.split("/")[path.split("/").length-1] !="scrollback"){
 		return console.log("execute from the root of scrollback");
 	}
 	leveldb = new objectlevel(process.cwd()+"/leveldb-storage/"+config.leveldb.path);
 	types = require("../leveldb-storage/types/types.js")(leveldb);
-	texts = require("../leveldb-storage/schemas/texts.js")(leveldb);
-	migrateTexts();
+	texts = require("../leveldb-storage/schemas/text.js")(types);
+
+
+	var i =0;
+	function loop() {
+		if(i>6) return;
+		else {
+			console.log(i*1000, (i+1)*1000);
+			migrateTexts(i++, loop);
+		}
+	}
+	loop();
+	
 })();
 
 
