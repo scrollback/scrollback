@@ -5,29 +5,32 @@
 // var roomList = {};
 $(function() {
 	var $roomlist = $(".room-list"),
-		rooms = [false, false], listenQueue = [], inited = false;
+		rooms = [false, false], listenQueue = [];
 
 	function enter(room) {
 		if(!room) return;
 		room = room.toLowerCase();
 		if(rooms.indexOf(room)<0) {
-			if(inited) {
+			if(libsb.isInited) {
 				libsb.enter(room);
 				rooms.pop();
 				rooms.push(room);
 				rooms.push(false);
 			}else {
-				listenQueue.push(room);
+				if(listenQueue.indexOf(room)<0){
+					listenQueue.push(room);
+				}
 			}
 			$roomlist.reset();
 		}
 	}
 	libsb.on("inited", function(d, n) {
 		if(currentState.embed == "toast") return n();
-		inited = true;
+
 		listenQueue.forEach(function(e) {
-			libsb.enter(e);
+			enter(e);
 		});
+		listenQueue = [];
 		n();
 	});
 
@@ -94,6 +97,7 @@ $(function() {
 		var room = state.room;
 		if(currentState.embed == "toast") return next();
 		enter(room);
+		if(state.old && state.old.room === state.room) return next();
 		next();
 	});
 	libsb.on("init-dn", function(init, next) {

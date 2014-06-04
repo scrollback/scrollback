@@ -76,8 +76,9 @@ libsb.on('navigate', function(state, next) {
                     if(libsb.isInited){
                         getRooms();
                     }else{
-                        libsb.on('inited', function(){
+                        libsb.on('inited', function(e, n){
                             getRooms();
+                            if(n) n();
                         });
                     }
                }

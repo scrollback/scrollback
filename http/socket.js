@@ -121,7 +121,6 @@ sock.on('connection', function (socket) {
 			}
 			if(data.type == 'user') processUser(conn, data);
 			if(['getUsers', 'getTexts', 'getRooms', 'getThreads'].indexOf(data.type)>=0){
-				console.log(data);
 				conn.send(data);
 			}
 
