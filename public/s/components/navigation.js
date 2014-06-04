@@ -100,7 +100,7 @@ libsb.on("navigate", function(state, next) {
 	next();
 }, 999);
 
-// On navigation, add history and change URLs
+// On navigation, add history and change URLs and title
 libsb.on("navigate", function(state, next) {
 	if (state.source == "history"){
 		return;
@@ -110,23 +110,27 @@ libsb.on("navigate", function(state, next) {
 		var path, params = [];
 
 		switch(state.mode) {
-			case "conf":
-				path = "/" + (state.room ? state.room + "/edit": "me");
+			case 'conf':
+				path = '/' + (state.room ? state.room + '/edit': 'me');
+				document.title = state.room+" - settings";
 				break;
-			case "pref":
-				path = "/me/edit";
+			case 'pref':
+				path = '/me/edit';
+				document.title = "Account settings";
 				break;
-			case "search":
-				path = state.room ? "/" + state.room: "";
-				params.push("q=" + encodeURIComponent(state.query));
+			case 'search':
+				path = state.room ? '/' + state.room: '';
+				document.title = "Showing results: "+state.query;
+				params.push('q=' + encodeURIComponent(state.query));
 				break;
 			case "home":
 				path = "/me";
 				break;
 			default:
-				path = (state.room ? "/" + state.room + (
-						state.thread ? "/" + state.thread: "" /*+ "/" + format.sanitize(state.thread): ""*/
-					): "");
+				path = (state.room ? '/' + state.room + (
+						state.thread ? '/' + state.thread:"" /*+ '/' + format.sanitize(state.thread): ''*/
+					): '');
+				document.title = state.room? state.room+" on scrollback": "Scrollback.io";
 		}
 
 		if (state.time) {
