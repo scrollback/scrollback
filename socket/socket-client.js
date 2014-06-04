@@ -11,17 +11,17 @@ module.exports = function(c){
 	core.on('connection-requested', connect);
 	core.on('disconnect', disconnect);
 
-	core.on('init-up', sendInit, 1000);
-	core.on('text-up', sendText, 1000);
-	core.on('back-up', sendBack, 1000);
-	core.on('away-up', sendAway, 1000);
-	core.on('nick-up', sendInit, 1000);
-	core.on('join-up', sendJoin, 1000);
-	core.on('part-up', sendPart, 1000);
-	core.on('admit-up', sendAdmit, 1000);
-	core.on('expel-up', sendExpel, 1000);
-	core.on('user-up', sendUser, 1000);
-	core.on('room-up', sendRoom, 1000);
+	core.on('init-up', sendInit, 10);
+	core.on('text-up', sendText, 10);
+	core.on('back-up', sendBack, 10);
+	core.on('away-up', sendAway, 10);
+	core.on('nick-up', sendInit, 10);
+	core.on('join-up', sendJoin, 10);
+	core.on('part-up', sendPart, 10);
+	core.on('admit-up', sendAdmit, 10);
+	core.on('expel-up', sendExpel, 10);
+	core.on('user-up', sendUser, 10);
+	core.on('room-up', sendRoom, 10);
 	core.on('getTexts', function(query, callback){
 		query.type="getTexts";
 		sendQuery(query, callback);
@@ -176,14 +176,14 @@ function sendExpel(admit, next){
 }
 
 function sendUser(user, next) {
-	var action = makeAction({type: 'user', to: "me", user: user});
+	var action = makeAction({type: 'user', to: "me", user: user.user});
 	client.send(JSON.stringify(action));
 	pendingActions[action.id] = next;
 	// next();
 }
 
 function sendRoom(room, next){
-	//var action = makeAction({type: 'room', to: room.id, room: room});
-	client.send(JSON.stringify(room));
+	var action = makeAction({type: 'room', to: room.to, room: room.room});
+	client.send(JSON.stringify(action));
 	next();	
 }
