@@ -18,15 +18,15 @@ require('./public/s/js/format.js');
 require('./public/s/js/swipe-events.js');
 
 // client uis
-require('./email/email-client.js');
+// require('./email/email-client.js');
 require('./http/notifications-client.js');
 require('./http/seo-client.js');
 require('./http/roomGeneralSettings-client.js');
 require('./http/userProfile-client.js');
 require('./http/embed-client.js');
-require('./irc/irc-client.js');
+// require('./irc/irc-client.js');
 require('./anti-abuse/anti-abuse-client.js');
-require('./twitter/twitter-client.js');
+// require('./twitter/twitter-client.js');
 // components
 require('./public/s/components/embed-helper.js');
 require('./public/s/components/appcache.js');
