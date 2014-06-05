@@ -52,7 +52,6 @@ module.exports = function() {
 		if (!state.mode) state.mode = "normal";
 		if (!state.tab) state.tab = "people";
 		if (!state.theme) state.theme = "light";
-
 		libsb.emit("navigate", state);
 	});
 };

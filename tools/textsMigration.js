@@ -2,19 +2,25 @@ var config = require("../config.js");
 var objectlevel = require("objectlevel");
 var log = require("../lib/logger.js");
 // var leveldb = new objectlevel(__dirname+"/"+config.leveldb.path);
-var db = require('mysql').createConnection(config.mysql);
-var accountConnection = require('mysql').createConnection(config.mysql);
+var db;
+// = require('mysql').createConnection(config.mysql);
+//var accountConnection = require('mysql').createConnection(config.mysql);
 var leveldb, types, text;
 var startTimes = {};
-var owners = {};
-db.connect();
+var owners = {}, startingIndex = "";
+var recordCount = 0;
+
+//db.connect();
 
 function closeConnection(){
 	db.end();
 }
 
-function migrateTexts(cb) {
-	var stream = db.query("select * from text_messages order by time desc");
+function migrateTexts(limit, cb) {
+	db = require('mysql').createConnection(config.mysql);
+	db.connect();
+	var f = 0;
+	var stream = db.query("select * from text_messages where id > '"+startingIndex+"' limit 1000");
 	stream.on("result", function(text) {
 		db.pause();
 		// types.texts.put()
@@ -45,34 +51,48 @@ function migrateTexts(cb) {
 				});
 			}
 		}
-		// console.log("---l---",text.threads);
-		// console.log("+++++++++++");
-		texts.put(text, function(err){
-			if(err) console.log("Error inserting", text);
-			else{
-				// console.log("Inserting ", text);
+		texts.put(text, function(err) {
+			recordCount++;
+			console.log(text.id+": record: "+recordCount);
+			startingIndex = text.id;
+			if(err) {
+				db.resume();
+			}else{
 				db.resume();
 			}
 		});
 	});
 	stream.on("error", function(err){
-		log("Error:", err);
+		db.end();
+		cb && cb();
 	});
 
-	stream.on('end', function(){
-		console.log("Mirgration Complete!");
+	stream.on('end', function() {
+		db.end();
+		cb && cb();
 	});
 }
 
 (function(){
+	var i;
 	var path = process.cwd();
 	if(path.split("/")[path.split("/").length-1] !="scrollback"){
 		return console.log("execute from the root of scrollback");
 	}
 	leveldb = new objectlevel(process.cwd()+"/leveldb-storage/"+config.leveldb.path);
 	types = require("../leveldb-storage/types/types.js")(leveldb);
-	texts = require("../leveldb-storage/schemas/texts.js")(leveldb);
-	migrateTexts();
+	texts = require("../leveldb-storage/schemas/text.js")(types);
+
+
+	var i = 0;
+	function loop() {
+		if(i>8170) return;
+		else {
+			migrateTexts(i++, loop);
+		}
+	}
+	loop();
+	
 })();
 
 
@@ -96,6 +116,5 @@ function fixLabels(element) {
 
 		l = [element.labels];
 	}
-	// console.log(element.labels, l);
 	return l;
 }

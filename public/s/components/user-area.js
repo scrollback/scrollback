@@ -21,6 +21,7 @@ $(function(){
 	$(document).on("click", ".userpref", function() {
 		libsb.emit("navigate", {
 			mode: "pref",
+			view: "meta"
 		});
 	});
 
@@ -70,7 +71,7 @@ $(function(){
                                  $("body").addClass("role-owner");
                             }
                         });
-	            });
+		            });
                     next();
                 });
             }

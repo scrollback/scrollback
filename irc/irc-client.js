@@ -42,7 +42,6 @@ libsb.on('config-save', function(room, next){
 });
 
 libsb.on("room-dn", function(room, next) {
-	console.log("room:", room);
 	if (room.user.id !== libsb.user.id) {
 		var r = room.room;
 		$.get('/r/irc/' + r.id, function(botName) {
@@ -53,7 +52,6 @@ libsb.on("room-dn", function(room, next) {
 	next();
 });
 libsb.on("error-dn", function(reply, next) {
-	console.log("err:", reply);
 	if (reply.message === "ERR_CONNECTED_OTHER_ROOM") {
 		lace.alert.show({type: "error", body: "IRC channel is already connected to some other room"});
 	}
