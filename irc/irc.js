@@ -1,5 +1,4 @@
 var gen = require("../lib/generate.js");
-
 var guid = gen.uid;
 var config = require('../config.js');
 var log = require("../lib/logger.js");
@@ -12,7 +11,7 @@ var core;
 var callbacks = {};
 var onlineUsers = {};//scrollback users that are already online 
 var firstMessage = {};//[room][username] = true
-var userExp = 2*60*1000;
+var userExp = 10*60*1000;
 var initCount = 0;
 var ircUtils = new require('./ircUtils.js')(clientEmitter, callbacks);
 
@@ -124,9 +123,6 @@ function ircParamsValidation(room) {
 			room.old.params.irc.channel);// old or new 
 }
 
-
-
-
 /**
  *add or copy pending status 
  */
@@ -151,12 +147,12 @@ function isNewRoom(room) {
 	}
 }
 
-
-
 function init() {
 	var notUsedRooms = {};
 	clientEmitter.on('init', function(st) {
 		initCount = 0;
+		firstMessage = {};
+		onlineUsers = {};
 		var state = st.state;
 		for(var roomId in state.rooms) {
 			if(state.rooms.hasOwnProperty(roomId)) {
@@ -166,7 +162,6 @@ function init() {
 		log("init from ircClient", state);
 		core.emit("getRooms", {identity: "irc", session: internalSession}, function(err, data) {
 			var rooms = data.results;
-			log("rooms:", rooms);
 			log("returned state from IRC:", JSON.stringify(state));
 			log("results of getRooms: ", rooms);
 			rooms.forEach(function(room) {
@@ -187,10 +182,8 @@ function init() {
 				log("creating online users list");
 				var servChanProp = state.servChanProp;
 				var servNick = state.servNick;
-				
 				if (servChanProp[room.params.irc.server] &&
 					servChanProp[room.params.irc.server][room.params.irc.channel]) {
-					
 					var users = servChanProp[room.params.irc.server][room.params.irc.channel].users;
 					users.forEach(function(user) {
 						if(servNick[room.params.irc.server] &&
@@ -275,10 +268,10 @@ function init() {
 			to: data.to,
 			from: data.from,
 			text: data.text,
-			time: new Date().getTime(),
+			time: data.time ? data.time : new Date().getTime(),
 			session: data.session
 		}, function(err, message) {
-			log(err, message);
+			log("message",  err, message);
 		});
 	});	
 }

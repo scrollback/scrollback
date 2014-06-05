@@ -30,6 +30,20 @@ module.exports = function(coreObject) {
 			setInterval(sendPeriodicMails, timeout);
 			setInterval(trySendingToUsers,timeout/8);
 		}
+		
+		core.on("user", function(data, callback) {
+			console.log("email user validation...");
+			var user = data.user; 
+			if (user.params.email && user.params.email.frequency && user.params.email.notifications) {
+				var fq = user.params.email.frequency === 'daily' || user.params.email.frequency === 'never' || user.params.email.frequency === 'weekly';
+				if(fq && typeof user.params.email.notifications === 'boolean') {
+					return callback();
+				}
+			}
+			log("Err email params in user object"); 
+			return callback("ERR_EMAIL_PARAMS");
+			
+		}, "applevelValidation");
 	}
 	else {
 		log("email module is not enabled");
@@ -81,9 +95,5 @@ function addMessage(message){
 			});
         }
     }   
-
-    core.on("room", function(data, callback) {
-    	
-    	callback();
-    }, "validation");
+    
 }
