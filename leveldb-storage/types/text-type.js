@@ -12,7 +12,6 @@ module.exports = function(store) {
 					emit(text.to, i.id, text.time)
 				});
 				}
-				
 			}
 		}
 	});
