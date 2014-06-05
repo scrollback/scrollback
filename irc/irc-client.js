@@ -43,14 +43,15 @@ libsb.on('config-save', function(room, next){
 
 libsb.on("room-dn", function(room, next) {
 	console.log("room:", room);
-	var r = room.room;
-	$.get('/r/irc/' + r.id, function(botName) {
-        displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel.";
-        lace.alert.show({type: "success", body: displayString});
-    });
+	if (room.user.id !== libsb.user.id) {
+		var r = room.room;
+		$.get('/r/irc/' + r.id, function(botName) {
+			displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel.";
+			lace.alert.show({type: "success", body: displayString});
+		});
+	}
 	next();
 });
-console.log("error event reg");
 libsb.on("error-dn", function(reply, next) {
 	console.log("err:", reply);
 	if (reply.message === "ERR_CONNECTED_OTHER_ROOM") {

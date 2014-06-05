@@ -144,7 +144,7 @@ function partBot(roomId) {
 		}
 	});
 	client.part(channel);//disconnect bot in case of all part.
-	//delete servChanProp[server][channel];
+	delete servChanProp[server][channel];
 	//delete rooms[roomId];//TODO find a better way to delete this
 }
 
@@ -182,14 +182,16 @@ function onMessage(client) {
 		if (!servChanProp[client.opt.server][to]) {
 			return;
 		}
+		var time = new Date().getTime();
 		if (connected) {
-			sendMessage(client.opt.server, nick, to, text);
+			sendMessage(client.opt.server, nick, to, text, time);
 		} else {
 			queue.push({
 				fn: "sendMessage",
 				server : client.opt.server,
 				to: to,
 				from: nick,
+				time: time,
 				text: text
 			});
 		}
@@ -203,7 +205,7 @@ function onMessage(client) {
 	});
 }
 
-function sendMessage(server, from, to, text) {
+function sendMessage(server, from, to, text, time) {
 	to = to.toLowerCase();
 	log("on message :", server, from, to, text);
 	servChanProp[server][to].rooms.forEach(function(room) {
@@ -217,6 +219,7 @@ function sendMessage(server, from, to, text) {
 				to: room.id,
 				from: f, 
 				text: text,
+				time: time,
 				session: "irc://" + server + ":" + from
 			});
 		}	
@@ -311,15 +314,12 @@ function sendAway(server, channels, nick, bn) {
 	var sbUser = servNick[server][nick];
 	
 	channels.forEach(function(channel) {
-		
 		channel = channel.toLowerCase();
-		log("users", servChanProp[server][channel].users.length);
 		if (bn === nick) {//bot left the channel //TODO test partBot.
-			
 			delete servChanProp[server][channel];
-			
 			return;
 		}
+		log("users", servChanProp[server][channel].users.length);
 		if (!servChanProp[server][channel]) {
 			return;
 		}
@@ -370,13 +370,12 @@ function addUsers(client, channel, nick) {
 }
 
 function sendBack(server, channel, nick, bn) {
-	log("servChanProp", JSON.stringify(servChanProp));
 	log("server", server, " channel:", channel, "servNick", JSON.stringify(servNick));
 	channel = channel.toLowerCase();
 	servChanProp[server][channel].rooms.forEach(function(room) {
 		//save data.
 		if(nick != bn) servChanProp[server][channel].users.push(nick);//don't add myNick 
-		if(nick != bn && (!servNick[server][nick] || (servNick[server][nick].dir == "in")) && !room.params.irc.pending) {//TODO test
+		if(nick != bn && (!servNick[server][nick] || (servNick[server][nick].dir == "in")) && !room.params.irc.pending) {
 			servNick[server][nick] = {nick: nick, dir: "in"};//default nick is irc nick
 			core.emit("data", {
 				type: "back",
@@ -407,7 +406,7 @@ function onNick(client) {
 }
 
 function onJoin(client) {
-	client.on('join', function(channel, nick, message) {//TODO use room.pending and send diff event for each room.	
+	client.on('join', function(channel, nick, message) {	
 		addUsers(client, channel, nick);
 	});
 }
@@ -542,7 +541,7 @@ function sendQueueData() {
 				sendAway(obj.server, obj.channels, obj.nick, obj.bn);
 				break;
 			case "sendMessage":
-				sendMessage(obj.server, obj.from, obj.to, obj.text);
+				sendMessage(obj.server, obj.from, obj.to, obj.text, obj.time);
 				break;
 			case "sendRoom":
 				sendRoom(obj.room);
