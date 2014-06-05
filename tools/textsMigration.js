@@ -1,6 +1,7 @@
 var config = require("../config.js");
 var objectlevel = require("objectlevel");
 var log = require("../lib/logger.js");
+var generate = require("../lib/generate.js");
 var db;
 var leveldb, types, text;
 var startTimes = {};
@@ -11,6 +12,32 @@ var fs = require('fs');
 function closeConnection(){
 	db.end();
 }
+
+
+function hashIt(name) {
+	function hash(s) {		
+		var h=7, i, l;
+		for (i=0, l=s.length; i<l; i++) {
+			h = (h*31+s.charCodeAt(i)*795028841)%(1e9+9);
+		}
+		return h%(1e9+9);
+	}
+	return hash(name);
+}
+
+function generateThreaderId(id){
+	var h = "";
+	for (var i = 0;i < 1000;i++) {
+		h += hashIt(id + "," + i).toString(16);
+		if(h.length >= 32) {
+			h = h.substring(0, 32);
+			break
+		}
+	}
+	
+	return h;
+}
+
 
 function migrateTexts(limit, cb) {
 	var stream, lastIndex = 0;
@@ -24,7 +51,6 @@ function migrateTexts(limit, cb) {
 		text.threads = [];
 		if(text.labels) {
 			l = fixLabels(text);
-			// console.log("---l---",l);
 			if(l.indexOf("hidden") >= 0) {
 				text.labels = {
 					hidden: 1
@@ -36,10 +62,29 @@ function migrateTexts(limit, cb) {
 			
 			if(l.length) {
 				l.forEach(function(i) {
+					var t = {}, id, title, index;
+					i = i.replace(/^thread-/, "");
+					index = i.indexOf(":");
+
+					if(index>=0) {
+						title = i.substring(index+1);
+						i = i.substring(0,index);
+					}else {
+						title = text.text;
+					}
+
+					if(i.length<32) {
+						i = generateThreaderId(i);	
+					}
+
+					if(i.length == 32){
+						i += hashIt(i) & 9;
+					}
+
 					if(!startTimes[i]) startTimes[i] = text.time;
 					text.threads.push({
 						id: i,
-						title: i,
+						title: title,
 						to: text.to,
 						startTime: startTimes[i] || {}
 					});

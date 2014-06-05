@@ -4,7 +4,13 @@ libsb.on('config-show', function(tabs, next){
     var results = tabs.room; 
     var div = $('<div>').addClass('list-view list-view-irc-settings');
     var displayString = "";
-    div.append(formField("IRC Server", "text", "ircserver", results.params.irc.server), formField("IRC Channel", "text", "ircchannel", results.params.irc.channel));
+    var ircServer = "";
+    var ircChannel = "";
+    if(results.params.irc && results.params.irc.server && results.params.irc.channel){
+        ircServer = results.params.irc.server;
+        ircChannel = results.params.irc.channel;
+    }
+    div.append(formField("IRC Server", "text", "ircserver", ircServer), formField("IRC Channel", "text", "ircchannel", ircChannel));
     if(results.params.irc){
         if(results.params.irc.server && results.params.irc.channel && results.params.irc.pending) {
             $.get('/r/irc/' + results.id, function(botName) {
@@ -42,7 +48,7 @@ libsb.on('config-save', function(room, next){
 });
 
 libsb.on("room-dn", function(room, next) {
-	if (room.user.id !== libsb.user.id) {
+	if (room.user.id === libsb.user.id) {
 		var r = room.room;
 		$.get('/r/irc/' + r.id, function(botName) {
 			displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel.";
