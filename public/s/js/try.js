@@ -2,21 +2,38 @@
 /* global $ */
 
 $(function() {
-	$("body").addClass("step-1");
+	$("body").addClass("stage-1");
 
-	$("form").on("submit", function() {
-		return false;
+	function validateRoom() {
+		var roomname = $("#room-name").val();
+
+		if (roomname.length > 2 && roomname.match(/^[a-z][a-z0-9-]{2,31}/)) {
+			return true;
+		} else {
+			$("body").addClass("form-error");
+			$("#room-name").focus();
+
+			return false;
+		}
+	}
+
+	$(".to-2").on("click", function() {
+		if (validateRoom()) {
+			$("body").removeClass("stage-1").addClass("stage-2");
+
+			setTimeout(function() {
+				$("#web-address").focus();
+			}, 300);
+		}
 	});
 
-	$("#preview-room").on("submit", function() {
-		window.open("http://next.scrollback.io/" + $("#room-name").val(), '_blank');
+	$("#preview-full").on("click", function() {
+		if (validateRoom()) {
+			window.open("http://next.scrollback.io/" + $("#room-name").val(), '_blank');
+		}
 	});
 
-	$("#preview-embed-prev").on("click", function() {
-		$("body").removeClass("step-1").addClass("step-2");
-	});
-
-	$("#preview-embed").on("submit", function() {
+	$("#preview-embed").on("click", function() {
 		var web = $("#web-address").val();
 
 		if(!/^(https?):\/\//i.test(web)) {
@@ -24,5 +41,9 @@ $(function() {
 		}
 
 		window.open("http://next.scrollback.io/t/" + $("#room-name").val() + "/" + web, '_blank');
+	});
+
+	$("input[type=text]").on("click keyup", function() {
+		$("body").removeClass("form-error");
 	});
 });
