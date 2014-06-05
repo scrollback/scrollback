@@ -2,20 +2,25 @@ var config = require("../config.js");
 var objectlevel = require("objectlevel");
 var log = require("../lib/logger.js");
 // var leveldb = new objectlevel(__dirname+"/"+config.leveldb.path);
-var db = require('mysql').createConnection(config.mysql);
-var accountConnection = require('mysql').createConnection(config.mysql);
+var db;
+// = require('mysql').createConnection(config.mysql);
+//var accountConnection = require('mysql').createConnection(config.mysql);
 var leveldb, types, text;
 var startTimes = {};
-var owners = {};
-db.connect();
+var owners = {}, startingIndex = "";
+var recordCount = 0;
+
+//db.connect();
 
 function closeConnection(){
 	db.end();
 }
 
 function migrateTexts(limit, cb) {
+	db = require('mysql').createConnection(config.mysql);
+	db.connect();
 	var f = 0;
-	var stream = db.query("select * from text_messages order by time limit "+limit*1000+" , 1000");
+	var stream = db.query("select * from text_messages where id > '"+startingIndex+"' limit 1000");
 	stream.on("result", function(text) {
 		db.pause();
 		// types.texts.put()
@@ -46,22 +51,24 @@ function migrateTexts(limit, cb) {
 				});
 			}
 		}
-		// console.log("---l---",text.threads);
-		// console.log("+++++++++++");
-		texts.put(text, function(err){
-			if(err) console.log("Error inserting", text);
-			else{
-				// console.log("Inserting ", text);
+		texts.put(text, function(err) {
+			recordCount++;
+			console.log(text.id+": record: "+recordCount);
+			startingIndex = text.id;
+			if(err) {
+				db.resume();
+			}else{
 				db.resume();
 			}
 		});
 	});
 	stream.on("error", function(err){
-		log("Error:", err);
+		db.end();
+		cb && cb();
 	});
 
-	stream.on('end', function(){
-		console.log("Mirgration Complete!");
+	stream.on('end', function() {
+		db.end();
 		cb && cb();
 	});
 }
@@ -77,11 +84,10 @@ function migrateTexts(limit, cb) {
 	texts = require("../leveldb-storage/schemas/text.js")(types);
 
 
-	var i =0;
+	var i = 0;
 	function loop() {
-		if(i>6) return;
+		if(i>8170) return;
 		else {
-			console.log(i*1000, (i+1)*1000);
 			migrateTexts(i++, loop);
 		}
 	}
@@ -110,6 +116,5 @@ function fixLabels(element) {
 
 		l = [element.labels];
 	}
-	// console.log(element.labels, l);
 	return l;
 }
