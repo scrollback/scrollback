@@ -1,6 +1,7 @@
 var config = require("../config.js");
 var objectlevel = require("objectlevel");
 var log = require("../lib/logger.js");
+var generate = require("../lib/generate.js");
 var db;
 var leveldb, types, text;
 var startTimes = {};
@@ -24,7 +25,6 @@ function migrateTexts(limit, cb) {
 		text.threads = [];
 		if(text.labels) {
 			l = fixLabels(text);
-			// console.log("---l---",l);
 			if(l.indexOf("hidden") >= 0) {
 				text.labels = {
 					hidden: 1
@@ -36,6 +36,21 @@ function migrateTexts(limit, cb) {
 			
 			if(l.length) {
 				l.forEach(function(i) {
+					/*var t = {}, id, title, index;
+					i = i.replace(/^thread-/, "");
+					index = i.indexOf(":");
+
+					if(index>=0) {
+						title = i.substring(index);
+						i = i.substring(0,index);
+					}else {
+						title = i;
+					}
+
+					if(id.length <32) {
+						id = generate.uid();
+					}*/
+
 					if(!startTimes[i]) startTimes[i] = text.time;
 					text.threads.push({
 						id: i,
