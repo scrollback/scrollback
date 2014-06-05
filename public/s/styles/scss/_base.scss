@@ -101,6 +101,11 @@ input[type="checkbox"], input[type="radio"] {
     height: 1.5em;
 }
 
+[contenteditable]:empty:before{
+    content: attr(data-placeholder);
+    color: fade-out($dark-color, .5);
+}
+
 pre {
     white-space: pre-wrap;
     word-wrap: break-word;

@@ -12,7 +12,7 @@
 
 		<meta name="apple-mobile-web-app-capable" content="yes">
 
-		<title>Scrollback team - Scrollback</title>
+		<title></title>
 
 		<!-- enable HTML5 in IE, we need to place it before body -->
 		<!--[if lt IE 9]>
@@ -104,7 +104,7 @@
 	</head>
 
 	<body>
-		<section class="room-area">
+		<section data-embed="none" class="room-area">
 			<div class="room-header">
 				<img src="/s/img/client/scrollback-small.svg" alt="scrollback"/>
 			</div>
@@ -115,7 +115,7 @@
 		</section>
 		<section class="meta-area">
 			<ul role="tablist" class="meta-tabs">
-				<li role="tab" class="rooms-button">
+				<li data-embed="none" role="tab" class="rooms-button">
 					<svg version="1.1" class="rooms-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
 						<path d="M 16.899495,4.100505 8.767767,12.232233 7,14 l 1.767767,1.767767 8.131728,8.131728 c 0.707107,0.707107 0.707107,0.707107 1.414213,0 l 0.353554,-0.353553 c 0.707107,-0.707107 0.707107,-0.707107 0,-1.414214 L 10.535534,14 18.667262,5.868272 c 0.707107,-0.707107 0.707107,-0.707107 0,-1.414214 L 18.313708,4.100505 c -0.707106,-0.707107 -0.707106,-0.707107 -1.414213,0 z"/>
 					</svg>
@@ -211,29 +211,40 @@
 					</div>
 				</div>
 				<div data-mode="normal search" class="right-area">
-					<a class="search-button" role="button">
+					<a data-embed="none" class="search-button" role="button">
 						<svg version="1.1" class="search-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
 							<path d="m 12.15671,4 c -4.4182781,0 -8.0000001,3.5818867 -8.0000001,8.000368 0,4.418481 3.581722,8.000368 8.0000001,8.000368 1.681874,0 3.243239,-0.519684 4.53125,-1.406315 l 4.875,4.875225 c 0.707107,0.707139 0.699144,0.707139 1.40625,0 l 0.34375,-0.375018 c 0.707107,-0.707139 0.707107,-0.699175 0,-1.406314 l -4.8125,-4.812722 c 1.039684,-1.350059 1.65625,-3.039441 1.65625,-4.875224 C 20.15671,7.5818867 16.574988,4 12.15671,4 z m 0,2.0000919 c 3.313708,0 6,2.6864151 6,6.0002761 0,3.313861 -2.686292,6.000276 -6,6.000276 -3.3137086,0 -6.0000001,-2.686415 -6.0000001,-6.000276 0,-3.313861 2.6862915,-6.0002761 6.0000001,-6.0002761 z"/>
 							<path d="m 19.9375,17.688688 -2.4375,2.4375 3.5625,3.59375 c 0.973373,0.973416 0.964129,0.973416 1.9375,0 l 0.46875,-0.53125 c 0.973372,-0.973416 0.973372,-0.964085 0,-1.9375 l -3.53125,-3.5625 z"/>
 						</svg>
 					</a>
-					<a class="minimize-button" role="button">
-						<svg version="1.1" class="minimize-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-							<path d="m 5,13 c -1,0 -1,0 -1,1 0,1 0,1 1,1 l 18,0 c 1,0 1,0 1,-1 0,-1 0,-1 -1,-1 -4.197917,0 -13.802083,0 -18,0 z"/>
-						</svg>
-					</a>
-					<a target="_blank" class="fullview-button" role="button">
-						<svg version="1.1" class="fullview-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-							<path d="m 21.933522,6.0947441 c -0.07339,-0.07208 -0.238086,-0.08839 -0.530331,-0.08839 l -7.999145,5e-7 c -0.935887,-0.02395 -0.921784,-0.03249 -0.99437,0.9943699 l 3.601825,3.6018235 -8.48528,8.485281 c -0.703126,0.703126 -0.707107,0.707107 0,1.414213 0.707105,0.707109 0.707128,0.707086 1.414214,0 l 8.485281,-8.485279 3.579728,3.579728 c 1.000002,0 0.994376,0.01113 0.994369,-0.994369 l 0,-7.9991442 c 0,-0.2974685 0.0071,-0.436154 -0.06629,-0.5082329 z"/>
-						</svg>
-					</a>
+					<div data-embed="toast comment" class="embed-area">
+						<a data-embed="toast" class="embed-button minimize-button" role="button">
+							<svg version="1.1" class="embed-icon minimize-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+								<path d="m 5,13 c -1,0 -1,0 -1,1 0,1 0,1 1,1 l 18,0 c 1,0 1,0 1,-1 0,-1 0,-1 -1,-1 -4.197917,0 -13.802083,0 -18,0 z"/>
+							</svg>
+						</a>
+						<a class="embed-button fullview-button" role="button">
+							<svg version="1.1" class="embed-icon fullview-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+								<path d="m 21.933522,6.0947441 c -0.07339,-0.07208 -0.238086,-0.08839 -0.530331,-0.08839 l -7.999145,5e-7 c -0.935887,-0.02395 -0.921784,-0.03249 -0.99437,0.9943699 l 3.601825,3.6018235 -8.48528,8.485281 c -0.703126,0.703126 -0.707107,0.707107 0,1.414213 0.707105,0.707109 0.707128,0.707086 1.414214,0 l 8.485281,-8.485279 3.579728,3.579728 c 1.000002,0 0.994376,0.01113 0.994369,-0.994369 l 0,-7.9991442 c 0,-0.2974685 0.0071,-0.436154 -0.06629,-0.5082329 z"/>
+							</svg>
+						</a>
+						<a data-role="user" class="embed-button user-menu-button" role="button">
+							<svg version="1.1" class="embed-icon user-menu-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+								<g transform="translate(-10,-10)">
+									<path d="m 18,32 12,0 c 2,0 2,0 2,-1 l 0,-1 c 0,-1 0,-1 -2,-1 l -12,0 c -2.000249,0 -2,0 -2,1 l 0,1 c 0,1 0,1 2,1 z"/>
+									<path d="m 18,26 12,0 c 2,0 2,0 2,-1 l 0,-1 c 0,-1 0,-1 -2,-1 l -12,0 c -2.000249,0 -2,0 -2,1 l 0,1 c 0,1 0,1 2,1 z"/>
+									<path d="m 18,20 12,0 c 2,0 2,0 2,-1 l 0,-1 c 0,-1 0,-1 -2,-1 l -12,0 c -2.000249,0 -2,0 -2,1 l 0,1 c 0,1 0,1 2,1 z"/>
+								</g>
+							</svg>
+						</a>
+					</div>
 					<div class="user-area">
-						<div class="user-avatar">
-							<img alt="" id="sb-avatar" >
-						</div>
 						<div class="user-detail">
 							<div id="sb-user"></div>
-							<div class="sign-in">Sign in</div>
+							<div data-role="guest" class="sign-in">Sign in</div>
+						</div>
+						<div class="user-avatar">
+							<img alt="" id="sb-avatar" >
 						</div>
 					</div>
 				</div>
@@ -255,7 +266,7 @@
 			</div>
 		</section>
 		<section data-mode="normal search" class="chat-input">
-			<div role="textbox" class="chat-entry" contenteditable></div>
+			<div role="textbox" class="chat-entry" data-placeholder="" contenteditable></div>
 			<svg version="1.1" class="chat-send" xmlns="http://www.w3.org/2000/svg">
 				<g transform="matrix(1.4744843,0,0,1.4744843,-3.6938117,-15.489686)">
 					<path d="m 5.1264798,20 c 0,-2 7.2e-4,-2 2,-2 l 6.0002502,0 -3.00025,-4 c 0,-3 1,-3 5,1 4.99276,5.99132 5,4 0,10 -4,4 -5,4 -5,1 l 3.00025,-4 -6.0002502,0 c -2.06669,0 -2,0 -2,-2 z"/>

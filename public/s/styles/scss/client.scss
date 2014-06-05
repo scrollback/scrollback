@@ -31,6 +31,7 @@ $bar-height: 3.5em;
 $settings: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
 $modes: normal, search, conf, pref, home, noroom;
 $roles: guest, user, follower, owner;
+$embeds: toast, comment;
 
 /* themes */
 @mixin theme($name, $base, $color, $meta, $border, $text, $icon, $focus) {
@@ -143,7 +144,7 @@ $roles: guest, user, follower, owner;
             }
         }
 
-        &.role-follower .follow-button, .rooms-button, .meta-button, .search-button, .fullview-button, .minimize-button {
+        &.role-follower .follow-button, .rooms-button, .meta-button, .search-button, .embed-button {
             fill: $icon;
 
             &:focus, &:hover, &:active { fill: $focus; }
@@ -153,6 +154,14 @@ $roles: guest, user, follower, owner;
             .sb-top { fill: $accent-color; }
 
             .sb-bottom { fill: $light-color; }
+        }
+
+        &.embed-toast {
+            .user-detail {
+                .sign-in {
+                    color: $accent-color;
+                }
+            }
         }
     }
 }
@@ -185,6 +194,16 @@ $roles: guest, user, follower, owner;
 body {
     word-wrap: break-word;
     height: 100%;
+
+    &:not(.embed) {
+        [data-embed]:not([data-embed=none]) { display: none; }
+    }
+
+    @each $embed in $embeds {
+        &.embed-#{$embed} {
+            [data-embed]:not([data-embed~=#{$embed}]) { display: none; }
+        }
+    }
 
     @each $mode in $modes {
         &.mode-#{$mode} {
@@ -226,8 +245,6 @@ body {
         left: 0;
         width: $width-roomxxxx;
     }
-
-    .embed & { display: none; }
 }
 
 .room-header {
@@ -357,8 +374,6 @@ body {
             fill: lighten($dark-color, 30%);
 
             .view-rooms & { @include transform(rotate(180deg)); }
-
-            .embed & { display: none; }
 
             @media #{$screenxxxx} { display: none; }
         }
@@ -771,76 +786,70 @@ body {
     }
 }
 
-.search-button, .fullview-button, .minimize-button {
+.embed-area, .user-area {
+    @include flexbox;
+    @include flex-direction(row);
+    @include flex-wrap(nowrap);
+    @include justify-content(flex-end);
+    @include align-items(center);
+    @include align-content(center);
+}
+
+.embed-button, .search-button {
+    @include title-icon(search-icon);
+    @include title-icon(embed-icon);
+
+    width: 3em;
+    padding: .75em .5em;
+    cursor: pointer;
     fill: lighten($dark-color, 30%);
 
     &:focus, &:hover, &:active { fill: lighten($dark-color, 10%); }
 }
 
-.search-button {
-    @include title-icon(search-icon);
-
-    padding: .75em;
-    width: 3.5em;
+.user-detail {
+    text-align: right;
+    padding: 1em;
+    font-weight: 700;
     cursor: pointer;
 
-    .embed & { display: none;}
-}
+    .role-guest & { padding: .2em 1em; }
 
-.fullview-button, .minimize-button {
-    display: none;
-    width: 3em;
-    padding: .75em .5em;
-    cursor: pointer;
-}
-
-.fullview-button {
-    @include title-icon(fullview-icon);
-
-    .embed & { display: block; }
-}
-
-.minimize-button {
-    @include title-icon(minimize-icon);
-
-    .embed-toast & { display: block; }
-}
-
-.user-area {
-    .user-detail {
-        float: right;
-        text-align: right;
-        padding: 1em;
-        font-weight: 700;
-        cursor: pointer;
-
-        .role-guest & { padding: .2em 1em; }
-
-        .sign-in {
-            display: none;
-
-            .role-guest & {
-                display: inline;
-                text-transform: uppercase;
-            }
-        }
+    .sign-in {
+        display: inline;
+        text-transform: uppercase;
     }
 
-    .user-avatar {
+    .role-user.embed-toast & {
         display: none;
 
         @media #{$screenxx} {
             display: block;
-            float: right;
-            cursor: pointer;
-
-            img {
-                display: block;
-                height: $bar-height;
-                width: $bar-height;
-            }
         }
     }
+}
+
+.user-avatar {
+    display: none;
+
+    @media #{$screenxx} {
+        display: block;
+        cursor: pointer;
+
+        img {
+            display: block;
+            height: $bar-height;
+            width: $bar-height;
+        }
+    }
+}
+
+.user-menu-button {
+    @include title-icon(user-menu-icon);
+
+    display: block;
+
+    @media #{$screenxx} { display: none; }
 }
 
 .action-buttons {
@@ -1097,7 +1106,12 @@ body {
 
 			.conv-#{$j} & { border-color: nth($palette, $i); }
 		}
-	}
+    }
+
+    &:empty:before{
+        content: "Reply as " attr(data-placeholder);
+        color: fade-out($dark-color, .5);
+    }
 }
 
 .chat-send {
