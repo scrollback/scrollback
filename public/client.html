@@ -200,7 +200,7 @@
 						</span>
 					</a>
 					<h2 data-mode="normal search" class="room-title" id="room-title"></h2>
-					<a data-mode="normal" class="follow-button" role="button">
+					<a data-mode="normal" data-role="user" class="follow-button" role="button">
 						<svg version="1.1" class="follow-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
 							<path d="M 14.062341,21.199584 C 4.9530909,26.218092 6.721947,25.869211 8.155064,17.012079 0.55043921,9.9299118 1.4300202,11.498473 10.32621,10.119655 c 4.409333,-9.39552471 3.184087,-8.077228 7.249118,-0.07225 10.329742,1.275413 8.69292,0.521605 2.309055,6.847772 1.974798,10.183776 2.188435,8.399596 -5.822042,4.304403 z"/>
 						</svg>
@@ -269,10 +269,11 @@
 		</section>
 		<section data-mode="noroom" class="noroom-area">
 			<div class="noroom-container">
-			<h1>This room does not exist yet</h1>
+				<h1>This room does not exist yet :(</h1>
+				<p data-role="guest">You need to sign in to create a room</p>
 				<p>
-					<a data-role="user" class="button create-room-button" id="create-room-button">Create and Claim room</a>
-					<a data-role="guest" class="button login-and-create-room-button"  id="login-and-create-room-button">Login to create room</a>
+					<a data-role="user" class="button create-room-button" id="create-room-button">Create room</a>
+					<a data-role="guest" class="button login-and-create-room-button"  id="login-and-create-room-button">Sign in</a>
 				</p>
 			</div>
 		</section>
