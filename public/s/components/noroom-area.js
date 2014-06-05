@@ -2,10 +2,11 @@
 /* global $, libsb, lace, currentState */
 
 (function(){
-    libsb.on('error-dn', function(err, data){
+    libsb.on('error-dn', function(err, next){
         if(err.message === "NO_ROOM_WITH_GIVEN_ID"){
             libsb.emit("navigate", {mode:'noroom'});
         }
+        next();
     });
     $("#create-room-button").click(function(){
         var roomObj = {
