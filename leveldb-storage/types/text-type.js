@@ -9,8 +9,8 @@ module.exports = function(store) {
 			tothreadtime: function(text, emit) {
 				if(text.threads) {
 					text.threads.forEach(function(i) {
-					emit(text.to, i.id, text.time)
-				});
+						emit(text.to, i.id, text.time)
+					});
 				}
 			}
 		}

@@ -17,16 +17,17 @@ module.exports = function (core) {
         /*Index text*/
         core.on('text', function (message, callback) {
             if (message.type === "text") {
-                callback();
                 
                 if(message.threads) {
                     message.threads.forEach(function(e) {
                         if(updateThreads.indexOf(e.id)<0) {
                             updateThreads.push(e.id);
-                                searchDB.set("thread:{{"+e.id+"}}", JSON.stringify( {
+
+                            searchDB.set("thread:{{"+e.id+"}}", JSON.stringify( {
                                 id: e.id,
                                 room: message.to
                             }), insertText);
+
                             searchDB.sadd("updateThread", e.id);
                         }else {
                             insertText();
@@ -43,6 +44,7 @@ module.exports = function (core) {
                         
                     });
                 }
+                callback();
             }
         }, "watchers");
         
@@ -243,7 +245,7 @@ function generateNewThread(threadID, callback) {
 
 
 function constructBulk(threadIds, callback) {
-    var i=0, l = threadIds.length, threads={}, postData = {body: []};
+    var threads={}, postData = {body: []};
 
     threadIds.forEach(function(e) {
         generateNewThread(e, function(t) {
