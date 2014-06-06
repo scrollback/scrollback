@@ -15,7 +15,7 @@ module.exports = function(coreObject) {
 	core = coreObject;
 	if (config.email && config.email.auth) {
 		init();
-		core.on('user',emailRoomListner , "gateway"); 
+		core.on('user',emailRoomListener , "gateway"); 
 	}
 	else {
 		log("email module is not enabled");
@@ -23,7 +23,7 @@ module.exports = function(coreObject) {
 
 };
 
-function emailRoomListner(action, callback){
+function emailRoomListener(action, callback){
     log("user welcome email ", action);
 	callback();
      if(!action.old.id) {//Signup
