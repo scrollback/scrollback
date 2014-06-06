@@ -120,7 +120,7 @@ function receiveMessage(event){
 }
 
 function makeAction(action) {
-	action.id = generate.uid();
+        // action.id = generate.uid();
 	action.from = libsb.user.id;
 	action.time = new Date().getTime();
 	action.session = libsb.session;
@@ -143,7 +143,7 @@ function sendPart(part, next){
 }
 
 function sendBack(back, next){
-	var action = makeAction({type: 'back', to: back.to});
+	var action = makeAction({type: 'back', to: back.to, id: back.id});
 	safeSend(JSON.stringify(action));
 	next();
 	// pendingActions[action.id] = next;
