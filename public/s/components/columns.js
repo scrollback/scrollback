@@ -33,7 +33,7 @@ $(function() {
     });
 
     $(document).on("swiperight", function() {
-        if ($("body").hasClass("view-meta")) {
+        if ($("body").hasClass("view-meta") && !$("body").hasClass("embed")) {
             libsb.emit("navigate", { view: "rooms", source: "swipe-right" });
         } else {
             libsb.emit("navigate", { view: "meta", source: "swipe-right" });

@@ -1004,7 +1004,31 @@ body {
 
 			&:after { display: none; }
 		}
-	}
+    }
+
+    &.chat-action {
+        color: lighten($dark-color, 10%);
+        border-right: 2px solid lighten($dark-color, 30%);
+        font-style: italic;
+
+        @for $i from 1 through length($palette) {
+            $color: nth($palette, $i);
+            $j: $i - 1;
+
+            &.conv-#{$j} { border-right-color: $color; }
+        }
+
+        &:before { display: none; }
+
+        .chat-nick {
+            font-weight: 400;
+            padding-right: .25em;
+
+            &:after { content: " "; }
+
+            @media #{$screenxx} { margin-left: 0; }
+        }
+    }
 
 	a {
 		&:hover, &:focus, &:active { text-decoration: underline; }
