@@ -1,38 +1,51 @@
 /* jshint browser: true */
 /* global $, libsb, lace, currentState */
 
-(function(){
-    libsb.on('error-dn', function(err, data){
-        if(err.message === "NO_ROOM_WITH_GIVEN_ID"){
+(function(){ // funciton wrapper to maintain the closure of msessageID.
+    var messageID = -1;
+    
+    libsb.on('back-up', function(back, next){
+        if(back.to === currentState.room){
+            messageID = back.id;
+        }
+        next();
+    }, 50); // execute at prio value 50, ie before socket(10) and after id-generator(100)
+
+    libsb.on('error-dn', function(err, next){
+        if(err.id === messageID && err.message === "NO_ROOM_WITH_GIVEN_ID"){
             libsb.emit("navigate", {mode:'noroom'});
         }
+        next();
     });
-    $("#create-room-button").click(function(){
-        var roomObj = {
-            id: generate.uid(),
-            type: 'room',
-            to: currentState.room,
-            room: {
-                id: currentState.room,
-                description: '',
-                params: {
-                    irc: {},
-                    allowSEO: true,
-                    wordban: false
-                }
-            },
-            user: { id: libsb.user }
-        };
-        libsb.emit('room-up', roomObj,function(err, data){
-           libsb.emit("navigate", {mode: 'normal', tab: 'info'});
-        });
-        setTimeout(function(){
-            location.reload(); // reload page on claim.
-        });
-    });
-    $("#login-and-create-room-button").click(function(){
-       if ($("body").hasClass("role-guest")) {
-           lace.modal.show({ body: $("#login-dialog").html() });
-       }
-    });
+
 })();
+
+$("#create-room-button").click(function(){
+    var roomObj = {
+        to: currentState.room,
+        room: {
+            id: currentState.room,
+            description: '',
+            params: {
+                irc: {},
+                http: {
+                    seo: true
+                },
+                antiAbuse: {
+                    offensive: true
+                }
+            }
+        }
+    };
+    libsb.emit('room-up', roomObj,function(){
+         libsb.emit("navigate", {mode: 'normal', tab: 'info'}, function(){
+             location.reload();    
+         });
+    });
+});
+
+$("#login-and-create-room-button").click(function(){
+   if($("body").hasClass("role-guest")) {
+       lace.modal.show({ body: $("#login-dialog").html()});
+   }
+});

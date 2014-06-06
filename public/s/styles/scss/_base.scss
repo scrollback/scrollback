@@ -54,12 +54,12 @@ body {
 a {
     @extend %ease;
 
-    color: $accent-color;
+    color: $link-color;
     text-decoration: none;
 
-    &:hover, &:focus { color: darken($accent-color, 15%); }
+    &:hover, &:focus { color: darken($link-color, 15%); }
 
-    &:active { color: darken($accent-color, 30%); }
+    &:active { color: darken($link-color, 30%); }
 }
 
 img {
@@ -99,6 +99,11 @@ input[type="entry"], input[type="text"], input[type="search"], input[type="email
 input[type="checkbox"], input[type="radio"] {
     width: 1.5em;
     height: 1.5em;
+}
+
+[contenteditable]:empty:before{
+    content: attr(data-placeholder);
+    color: fade-out($dark-color, .5);
 }
 
 pre {

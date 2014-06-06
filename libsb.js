@@ -1,30 +1,33 @@
 /* jslint browser: true */
 
 var core = Object.create(require("./lib/emitter.js"));
+window.validate = require('./lib/validate.js');
 window.generate = require('./lib/generate');
 
 // libsb files
 require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(core);
 require('./socket/socket-client')(core);
+require('./id-generator/id-generator-client.js');
 
 require('./public/s/js/array.contains.js');
 require('./public/s/js/jquery.setCursorEnd.js');
-require('./public/s/js/jquery.oembed.js');
+//require('./public/s/js/jquery.oembed.js');
 require('./public/s/js/lace.js');
+require('./public/s/js/desktopnotify.js');
 require('./public/s/js/format.js');
 require('./public/s/js/swipe-events.js');
 
 // client uis
-require('./email/email-client.js');
+// require('./email/email-client.js');
 require('./http/notifications-client.js');
 require('./http/seo-client.js');
 require('./http/roomGeneralSettings-client.js');
 require('./http/userProfile-client.js');
 require('./http/embed-client.js');
-require('./irc/irc-client.js');
+// require('./irc/irc-client.js');
 require('./anti-abuse/anti-abuse-client.js');
-require('./twitter/twitter-client.js');
+// require('./twitter/twitter-client.js');
 // components
 require('./public/s/components/embed-helper.js');
 require('./public/s/components/appcache.js');
@@ -55,7 +58,7 @@ require('./public/s/components/noroom-area.js');
 require('./public/s/components/signup-area.js');
 require('./public/s/components/persona.js');
 require('./public/s/components/URLparser.js')();
-require('./public/s/components/oembed-init.js');
+//require('./public/s/components/oembed-init.js');
 require('./public/s/components/load-indicator.js');
 
 //# sourceMappingURL=libsb.js.map

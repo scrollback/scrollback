@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, format, libsb */
+/* global $, format, libsb, currentState */
 
 var infoArea = {};
 
@@ -14,8 +14,7 @@ $(function() {
 			libsb.enter(window.location.pathname.split("/")[1]);
 		}
 		n();
-	})
-
+	});
 });
 
 libsb.on('room-dn', function(action, next){

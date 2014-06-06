@@ -26,9 +26,12 @@
 
         <link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600">
         <link rel="stylesheet" type="text/css" media="screen" href="s/styles/gen/try.css">
-      
-        <script>window.scrollback = {room:"scrollback",embed:"toast",theme:"dark",host:(location.protocol === "https:" ? "https:" : "http:") + "//next.scrollback.io"};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=h+"/s/js/embed.js";scrollback.host=h;d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script",scrollback.host));
-        </script>
+
+        <!-- enable HTML5 in IE, we need to place it before body -->
+        <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
+        <script>window.html5 || document.write('<script src="s/lib/html5shiv.min.js"><\/script>')</script>
+        <![endif]-->
     </head>
 
     <body class="stage-1">
@@ -42,10 +45,10 @@
             <div class="cover-content">
                 <div class="container">
                     <header>
-                        <img class="large-logo" src="s/scrollback-large-preview-alt.svg" alt="Scrollback">
-                        <h2>We think it is awesome but don't trust us,</h2>
-                        <h2>try it for yourself!  </h2> <br>
-                        <em><h3>Any data in preview will not be retained in production.</em></h3> 
+                        <img class="large-logo" src="s/img/scrollback-large.png" alt="Scrollback">
+                        <h1>A glimpse into the new version...</h1>
+                        <p>This is a preview version and is not ready for production use yet. Any data on this version will not be retained.</p>
+                        <p><a class="features" href="http://blog.scrollback.io/the-all-new-scrollback/" target="_blank">Read details of all new features on our blog</a>.</p>
                     </header>
                     <div class="form">
                         <div class="form-inner">
@@ -58,8 +61,8 @@
                                 </ul>
                                 <h3 class="separator">Don't have a room on Scrollback?</h3>
                                 <ul class="button-group-2">
-                                    <li><a class="trial-room">Preview demo widget on Scrollback</a></li>
-                                    <li><a href="http://next.scrollback.io/scrollback" target="_blank">Preview demo room on Scrollback</a></li>
+                                    <li><a href="http://next.scrollback.io" target="_blank">Preview demo widget on Scrollback</a></li>
+                                    <li><a href="http://next.scrollback.io/demo" target="_blank">Preview demo room on Scrollback</a></li>
                                 </ul>
                             </div>
                             <div class="step step-2">
@@ -69,7 +72,6 @@
                                 </ul>
                             </div>
                         </div>
-                        <strong><a class="features" href="http://blog.scrollback.io/the-all-new-scrollback/" target="_blank">Read details of all new features on our blog</a>.</strong> <br>
                     </div>
                 </div>
             </div>

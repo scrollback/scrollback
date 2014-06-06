@@ -3,7 +3,7 @@ var log = require("../lib/logger.js");
 var db = require('../lib/mysql.js');
 var send = require('./sendEmail.js');
 var fs=require("fs"),jade = require("jade");
-var redis = /*require("redis").createClient();*/require('../lib/redisProxy.js').select(config.redisDB.email);//TODO move this to config.
+var redis = require('../lib/redisProxy.js').select(config.redisDB.email);//TODO move this to config.
 var emailDigest = require('./emailDigest.js');
 var initMailSending = emailDigest.initMailSending;//function
 var sendPeriodicMails = emailDigest.sendPeriodicMails;//function
@@ -16,6 +16,7 @@ var timeout = 30*1000;//for debuging only
 module.exports = function(coreObject) {
 	log("email mudule");
 	core = coreObject;
+	require('./welcomeEmail.js')(core);
     //if(!debug) log = log.tag("mail");
 	log("email digest", emailDigest);
     emailDigest.init(core);
@@ -30,6 +31,19 @@ module.exports = function(coreObject) {
 			setInterval(sendPeriodicMails, timeout);
 			setInterval(trySendingToUsers,timeout/8);
 		}
+		core.on("user", function(data, callback) {
+			console.log("email user validation...");
+			var user = data.user; 
+			if (user.params.email && user.params.email.frequency && user.params.email.notifications) {
+				var fq = user.params.email.frequency === 'daily' || user.params.email.frequency === 'never' || user.params.email.frequency === 'weekly';
+				if(fq && typeof user.params.email.notifications === 'boolean') {
+					return callback();
+				}
+			}
+			log("Err email params in user object"); 
+			return callback("ERR_EMAIL_PARAMS");
+			
+		}, "applevelValidation");
 	}
 	else {
 		log("email module is not enabled");
@@ -81,4 +95,5 @@ function addMessage(message){
 			});
         }
     }   
+    
 }

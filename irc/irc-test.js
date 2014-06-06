@@ -65,6 +65,18 @@ describe('connect new IRC channel', function() {
 			if(!text.session) text.session = "irc://" + rooms[0].params.irc.server + ":" + "test";
 			callback();
 		}, "modifier");
+		core.on('back', function(text, callback) {
+			console.log("text called irc test:", text);
+			text.room = rooms[0];
+			if(!text.session) text.session = "irc://" + rooms[0].params.irc.server + ":" + "test";
+			callback();
+		}, "modifier");
+		core.on('away', function(text, callback) {
+			console.log("text called irc test:", text);
+			text.room = rooms[0];
+			if(!text.session) text.session = "irc://" + rooms[0].params.irc.server + ":" + "test";
+			callback();
+		}, "modifier");
 		client = new irc.Client(testingServer, "testingbot", {
 			channels: ["#scrollback", "#testingroom", "#testingroom2"]
 		});
@@ -92,7 +104,7 @@ describe('connect new IRC channel', function() {
 		for(var i = 0;i < 8;i++) {
 			var text = guid();
 			qu.push(text);
-			core.emit("text", {
+			core.emit("back", {
 				type: 'back',
 				to: "scrollback",
 				room: rooms[0],
@@ -130,7 +142,7 @@ describe('connect new IRC channel', function() {
 				done();
 			}
 		});
-		core.emit('text', {
+		core.emit('away', {
 			type: "away",
 			to: "scrollback",
 			from: "outuser0",

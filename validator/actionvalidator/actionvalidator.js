@@ -90,11 +90,14 @@ module.exports = function(core) {
 					});
 				}
 			}
+			if(!action.user.params) return callback(new Error("ERR_NO_PARAMS"));
 			callback();
 		},
 		room: function(action, callback) {
 			if(!action.room && !action.room.id) return callback(new Error("INVALID_ROOM"));
 			action.room.id = action.room.id.toLowerCase();
+			if(!action.room.params) return callback(new Error("ERR_NO_PARAMS"));
+			if(!action.room.params.http) return callback(new Error("ERR_NO_PARAMS"));
 			callback();
 		}
 	};

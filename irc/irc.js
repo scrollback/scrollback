@@ -1,5 +1,4 @@
 var gen = require("../lib/generate.js");
-
 var guid = gen.uid;
 var config = require('../config.js');
 var log = require("../lib/logger.js");
@@ -12,7 +11,7 @@ var core;
 var callbacks = {};
 var onlineUsers = {};//scrollback users that are already online 
 var firstMessage = {};//[room][username] = true
-var userExp = 2*60*1000;
+var userExp = 10*60*1000;
 var initCount = 0;
 var ircUtils = new require('./ircUtils.js')(clientEmitter, callbacks);
 
@@ -31,8 +30,8 @@ module.exports = function (coreObj) {
 	core.on ('room', function(room, callback) {
 		log("room irc:", JSON.stringify(room), client.connected());
 		if (room.session === internalSession) return callback();
-		changeRoomParams(room);
 		if (ircParamsValidation(room) && client.connected()) {
+			changeRoomParams(room);
 			var rr = room.room;
 			log("room irc after adding additional properties:", JSON.stringify(room));
 			if (isNewRoom(room)) {//TODO chack if new irc config.
@@ -51,13 +50,24 @@ module.exports = function (coreObj) {
 		} else return callback();
 	}, "gateway");
 	
+	core.on("room", function(room, callback) {
+		var r = room.room;
+		if (r.params.irc) {
+			var v = typeof r.params.irc.server === 'string' && typeof r.params.irc.channel === 'string';
+			if (v) {
+				callback();
+			} else {
+				callback("ERR_INVALID_IRC_PARAMS");
+			}
+		} else callback();
+	}, "applevelValidation");
 	
 	core.on("init", function(init, callback) {
 		log("init irc:", init);
 		var oldUser = {id: init.from};
 		var newUser = init.user;
 		
-		if (oldUser && newUser && oldUser.id != newUser.id) {
+		if (oldUser && newUser && oldUser.id !== newUser.id) {
 			var uid = guid();
 			clientEmitter.emit("write", {
 				type: "isUserConnected",
@@ -98,6 +108,9 @@ module.exports = function (coreObj) {
 					delete onlineUsers[text.to][text.from];
 				} else ircUtils.connectUser(text.to, text.from);
 			}
+			if (text.labels) {
+				if(text.labels.action) text.text += '/me ' + text.text;
+			}
 			ircUtils.say(text.to, text.from, text.text);
 		}
 		callback();
@@ -124,9 +137,6 @@ function ircParamsValidation(room) {
 			room.old.params.irc.channel);// old or new 
 }
 
-
-
-
 /**
  *add or copy pending status 
  */
@@ -151,12 +161,12 @@ function isNewRoom(room) {
 	}
 }
 
-
-
 function init() {
 	var notUsedRooms = {};
 	clientEmitter.on('init', function(st) {
 		initCount = 0;
+		firstMessage = {};
+		onlineUsers = {};
 		var state = st.state;
 		for(var roomId in state.rooms) {
 			if(state.rooms.hasOwnProperty(roomId)) {
@@ -166,7 +176,6 @@ function init() {
 		log("init from ircClient", state);
 		core.emit("getRooms", {identity: "irc", session: internalSession}, function(err, data) {
 			var rooms = data.results;
-			log("rooms:", rooms);
 			log("returned state from IRC:", JSON.stringify(state));
 			log("results of getRooms: ", rooms);
 			rooms.forEach(function(room) {
@@ -187,10 +196,8 @@ function init() {
 				log("creating online users list");
 				var servChanProp = state.servChanProp;
 				var servNick = state.servNick;
-				
 				if (servChanProp[room.params.irc.server] &&
 					servChanProp[room.params.irc.server][room.params.irc.channel]) {
-					
 					var users = servChanProp[room.params.irc.server][room.params.irc.channel].users;
 					users.forEach(function(user) {
 						if(servNick[room.params.irc.server] &&
@@ -269,16 +276,22 @@ function init() {
 	
 	clientEmitter.on('message', function(data) {
 		log("message from :", data);
+		var labels = {};
+		if (data.text.indexOf('/me ') === 0) {
+			data.text = substring(4);
+			labels.action = 1;
+		}
 		core.emit('text', {
 			id: guid(),
 			type: 'text',
 			to: data.to,
 			from: data.from,
 			text: data.text,
-			time: new Date().getTime(),
+			labels: labels,
+			time: data.time ? data.time : new Date().getTime(),
 			session: data.session
 		}, function(err, message) {
-			log(err, message);
+			log("message",  err, message);
 		});
 	});	
 }

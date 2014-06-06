@@ -6,7 +6,7 @@ $(function(){
 		lace.popover.hide();
 	});
 
-	$(".user-area").on("click", function() {
+	$(".user-area, .user-menu-button").on("click", function() {
 		if ($("body").hasClass("role-guest")) {
 			lace.popover.show({ body: $("#login-menu").html(), origin: $(this) });
 		} else {
@@ -21,6 +21,7 @@ $(function(){
 	$(document).on("click", ".userpref", function() {
 		libsb.emit("navigate", {
 			mode: "pref",
+			view: "meta"
 		});
 	});
 
@@ -70,7 +71,7 @@ $(function(){
                                  $("body").addClass("role-owner");
                             }
                         });
-	            });
+		            });
                     next();
                 });
             }

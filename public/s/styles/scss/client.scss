@@ -31,6 +31,7 @@ $bar-height: 3.5em;
 $settings: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
 $modes: normal, search, conf, pref, home, noroom;
 $roles: guest, user, follower, owner;
+$embeds: toast, comment;
 
 /* themes */
 @mixin theme($name, $base, $color, $meta, $border, $text, $icon, $focus) {
@@ -143,7 +144,7 @@ $roles: guest, user, follower, owner;
             }
         }
 
-        &.role-follower .follow-button, .rooms-button, .meta-button, .search-button, .fullview-button, .minimize-button {
+        &.role-follower .follow-button, .rooms-button, .meta-button, .search-button, .embed-button {
             fill: $icon;
 
             &:focus, &:hover, &:active { fill: $focus; }
@@ -153,6 +154,14 @@ $roles: guest, user, follower, owner;
             .sb-top { fill: $accent-color; }
 
             .sb-bottom { fill: $light-color; }
+        }
+
+        &.embed-toast {
+            .user-detail {
+                .sign-in {
+                    color: $accent-color;
+                }
+            }
         }
     }
 }
@@ -185,6 +194,16 @@ $roles: guest, user, follower, owner;
 body {
     word-wrap: break-word;
     height: 100%;
+
+    &:not(.embed) {
+        [data-embed]:not([data-embed=none]) { display: none; }
+    }
+
+    @each $embed in $embeds {
+        &.embed-#{$embed} {
+            [data-embed]:not([data-embed~=#{$embed}]) { display: none; }
+        }
+    }
 
     @each $mode in $modes {
         &.mode-#{$mode} {
@@ -226,8 +245,6 @@ body {
         left: 0;
         width: $width-roomxxxx;
     }
-
-    .embed & { display: none; }
 }
 
 .room-header {
@@ -358,8 +375,6 @@ body {
 
             .view-rooms & { @include transform(rotate(180deg)); }
 
-            .embed & { display: none; }
-
             @media #{$screenxxxx} { display: none; }
         }
     }
@@ -375,7 +390,7 @@ body {
         &:first-child { border-left: none; }
 
         &:hover, &:focus, &:active {
-            fill: lighten($dark-color, 30%);
+            fill: lighten($dark-color, 10%);
             background-color: rgba(0,0,0,.1);
         }
 
@@ -388,12 +403,22 @@ body {
     .meta-header {
         @include justify-content(flex-start);
 
-        padding-left: 1.5em;
+        padding-left: .25em;
         text-transform: uppercase;
 
         @media #{$screenxxxx} {
             padding-left: 4.25em;
             background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
+        }
+
+        h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+
+            @media #{$screenxxxx} {
+                font-size: 1.5em;
+                font-weight: 400;
+            }
         }
     }
 }
@@ -481,7 +506,7 @@ body {
 
     &.owner {
         &:after {
-            content: "Owner";
+            content: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\'><g transform=\'translate(0,-1036.3622)\' fill=\'#fff\'><path d=\'m 2,1050.3622 -2,-8 c 0,-1 1,0 1,0 l 4,3 2,-3 c 1,-1 1,-1 2,0 l 2,3 4,-3 c 0,0 1,-1 1,0 l -2,8 c -1,2 -1,2 -3,2 l -6,0 c -2,0 -2,0 -3,-2 z\'/></g></svg>");
             background-color: $error-color;
             color: $light-color;
         }
@@ -583,7 +608,7 @@ body {
 	@extend %ease;
 
 	display: block;
-	font-size: 1.5em;
+    font-size: 1.2em;
 	padding: .75em;
 	padding-left: 2.75em;
 	background-size: 24px 24px;
@@ -591,7 +616,9 @@ body {
 	background-repeat: no-repeat;
 	border-bottom: 1px solid darken($light-color, 10%);
 	color: $dark-color;
-	cursor: pointer;
+    cursor: pointer;
+
+    @media #{$screenxxxx} { font-size: 1.5em; }
 
     &.current { background-color: rgba(0,0,0,.05); }
 
@@ -759,76 +786,70 @@ body {
     }
 }
 
-.search-button, .fullview-button, .minimize-button {
-    fill: lighten($dark-color, 50%);
-
-    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 30%); }
+.embed-area, .user-area {
+    @include flexbox;
+    @include flex-direction(row);
+    @include flex-wrap(nowrap);
+    @include justify-content(flex-end);
+    @include align-items(center);
+    @include align-content(center);
 }
 
-.search-button {
+.embed-button, .search-button {
     @include title-icon(search-icon);
+    @include title-icon(embed-icon);
 
-    padding: .75em;
-    width: 3.5em;
-    cursor: pointer;
-
-    .embed & { display: none;}
-}
-
-.fullview-button, .minimize-button {
-    display: none;
     width: 3em;
     padding: .75em .5em;
     cursor: pointer;
+    fill: lighten($dark-color, 30%);
+
+    &:focus, &:hover, &:active { fill: lighten($dark-color, 10%); }
 }
 
-.fullview-button {
-    @include title-icon(fullview-icon);
+.user-detail {
+    text-align: right;
+    padding: 1em;
+    font-weight: 700;
+    cursor: pointer;
 
-    .embed & { display: block; }
-}
+    .role-guest & { padding: .2em 1em; }
 
-.minimize-button {
-    @include title-icon(minimize-icon);
-
-    .embed-toast & { display: block; }
-}
-
-.user-area {
-    .user-detail {
-        float: right;
-        text-align: right;
-        padding: 1em;
-        font-weight: 700;
-        cursor: pointer;
-
-        .role-guest & { padding: .2em 1em; }
-
-        .sign-in {
-            display: none;
-
-            .role-guest & {
-                display: inline;
-                text-transform: uppercase;
-            }
-        }
+    .sign-in {
+        display: inline;
+        text-transform: uppercase;
     }
 
-    .user-avatar {
+    .role-user.embed-toast & {
         display: none;
 
         @media #{$screenxx} {
             display: block;
-            float: right;
-            cursor: pointer;
-
-            img {
-                display: block;
-                height: $bar-height;
-                width: $bar-height;
-            }
         }
     }
+}
+
+.user-avatar {
+    display: none;
+
+    @media #{$screenxx} {
+        display: block;
+        cursor: pointer;
+
+        img {
+            display: block;
+            height: $bar-height;
+            width: $bar-height;
+        }
+    }
+}
+
+.user-menu-button {
+    @include title-icon(user-menu-icon);
+
+    display: block;
+
+    @media #{$screenxx} { display: none; }
 }
 
 .action-buttons {
@@ -983,11 +1004,33 @@ body {
 
 			&:after { display: none; }
 		}
-	}
+    }
+
+    &.chat-action {
+        color: lighten($dark-color, 10%);
+        border-right: 2px solid lighten($dark-color, 30%);
+        font-style: italic;
+
+        @for $i from 1 through length($palette) {
+            $color: nth($palette, $i);
+            $j: $i - 1;
+
+            &.conv-#{$j} { border-right-color: $color; }
+        }
+
+        &:before { display: none; }
+
+        .chat-nick {
+            font-weight: 400;
+            padding-right: .25em;
+
+            &:after { content: " "; }
+
+            @media #{$screenxx} { margin-left: 0; }
+        }
+    }
 
 	a {
-        color: #2a5db0;
-
 		&:hover, &:focus, &:active { text-decoration: underline; }
 	}
 
@@ -1087,7 +1130,12 @@ body {
 
 			.conv-#{$j} & { border-color: nth($palette, $i); }
 		}
-	}
+    }
+
+    &:empty:before{
+        content: "Reply as " attr(data-placeholder);
+        color: fade-out($dark-color, .5);
+    }
 }
 
 .chat-send {
@@ -1248,7 +1296,7 @@ body {
 
     .embed-code {
         min-width: 27em;
-        min-height: 15em;
+        min-height: 16em;
         background-color: darken($light-color, 5%);
         font-weight: 700;
         font-family: $font-family-monospace;
