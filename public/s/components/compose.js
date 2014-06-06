@@ -33,4 +33,10 @@ $(function() {
 	});
 
 	$(".chat-send").on("click", sendMsg);
+
+	libsb.on("init-dn", function(action, next) {
+		$entry.attr("data-placeholder", libsb.user.id );
+
+		next();
+	}, 10);
 });
