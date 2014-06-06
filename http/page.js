@@ -120,7 +120,6 @@ exports.init = function(app, coreObject) {
         var url=req.path.replace("/t/"+room, "").substring(1);
 
         if(url && url.indexOf("http://")<0){
-            url = url.substring(1);
             url="http://"+url;
         }
         
