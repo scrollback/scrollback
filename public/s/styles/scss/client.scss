@@ -1399,6 +1399,8 @@ body {
 .noroom-container { display: block; }
 
 .infinite-above, .infinite-below {
+    @include pulse;
+
     height: 100%;
     width: 100%;
 }

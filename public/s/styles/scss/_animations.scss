@@ -16,6 +16,18 @@
     @keyframes $animation { @content; }
 }
 
+@include keyframes(pulse) {
+    0% { @include opacity(1); }
+
+    50% { @include opacity(0); }
+
+    100% { @include opacity(1); }
+}
+
+@mixin pulse($args: 1s ease infinite) {
+    @include prefix(animation, pulse $args);
+}
+
 @include keyframes(spin) {
     to  { @include transform(rotate(360deg)); }
 }
