@@ -2,16 +2,14 @@
 /* global $, libsb, lace */
 
 $(function() {
-	$(document).on("click", ".long", function() {
-		$(this).toggleClass("active").scrollTop(0);
-	});
+	var $entry = $(".chat-entry");
 
-	$(document).on("click", ".chat-item, .thread-item", function() {
-		var classes = $("body").attr('class').replace(/conv-\d+/g, '');
+	$.fn.selectConv = function() {
+		var classes = $("body").attr("class").replace(/conv-\d+/g, "");
 
-		$("body").attr('class', classes);
+		$("body").attr("class", classes);
 
-		$(this).attr("class").split(" ").forEach(function(s) {
+		this.attr("class").split(" ").forEach(function(s) {
 			var conv = s.match(/^conv-\d+$/);
 
 			if (conv) {
@@ -19,53 +17,86 @@ $(function() {
 			}
 		});
 
+		$entry.focus();
+
+		return this;
+	};
+
+	$.fn.selectMsg = function() {
 		$(".chat-item").not(this).removeClass("current");
 
-		$(this).addClass("current");
+		this.addClass("current");
 
-		var nick = $(this).children(".chat-nick").text(),
-			msg = $(".chat-entry").text().replace(/@\S+[\s+{1}]?$/, "");
+		var nick = this.find(".chat-nick").text(),
+			msg = $entry.text().replace(/@\S+[\s+{1}]?$/, "");
 
 		if (msg.indexOf(nick) < 0 && libsb.user.id !== nick) {
 			msg = msg + " @" + nick + "&nbsp;";
 		}
 
-		$(".chat-entry").html(msg).focus();
+		$entry.html(msg).focus();
 
 		if ($.fn.setCursorEnd) {
-			$(".chat-entry").setCursorEnd();
+			$entry.setCursorEnd();
 		}
 
-		$(".chat-entry").on("click", function() {
-			$(".chat-item").removeClass("current");
-		});
+		return this;
+	};
+
+	$(document).on("click", ".chat-item", function() {
+		$(this).selectConv().selectMsg();
 	});
 
-/*	$(document).on("click", ".chat-more", function() {
-		lace.popover.show({ body: $("#chat-menu").html(), origin: $(this) });
-	});*/
+	$(document).on("click", ".thread-item", function() {
+		$(this).selectConv();
+	});
 
 	$(document).on("keydown", function(e){
-		if ($(".chat-item.current").length > 0) {
-			var $chat = $(".chat-item.current"),
-				$el;
+		if (e.keyCode === 38 || e.keyCode === 40) {
+				if ($(".chat-item.current").length) {
+				var $chat = $(".chat-item.current"),
+					$el;
 
-			if (e.keyCode === 38 && $chat.prev().length > 0) {
-				e.preventDefault();
-				$el = $chat.prev();
-			} else if (e.keyCode === 40 && $chat.next().length > 0) {
-				e.preventDefault();
-				$el = $chat.next();
-			}
+				if (e.keyCode === 38 && $chat.prev().length) {
+					e.preventDefault();
+					$el = $chat.prev();
+				} else if (e.keyCode === 40) {
+					e.preventDefault();
 
-			if ($el && (e.keyCode === 38 || e.keyCode === 40)) {
-				$el[0].scrollIntoView(true);
-				$el.click().addClass("clicked");
+					if ($chat.next().length) {
+						$el = $chat.next();
+					} else {
+						$chat.removeClass("current");
+					}
+				}
 
-				setTimeout(function() {
-					$el.removeClass("clicked");
-				}, 500);
+				if ($el) {
+					$el.get(0).scrollIntoView(true);
+					$el.addClass("clicked").selectConv().selectMsg();
+
+					setTimeout(function() {
+						$el.removeClass("clicked");
+					}, 500);
+				}
+			} else {
+				if (e.target === $entry.get(0) && $(".chat-item").last().length && e.keyCode === 38) {
+					e.preventDefault();
+
+					$(".chat-item").last().selectConv().selectMsg();
+				}
 			}
 		}
+	});
+
+	$(document).on("click", ".long", function() {
+		$(this).toggleClass("active").scrollTop(0);
+	});
+
+	$(document).on("click", ".chat-more", function() {
+		lace.popover.show({ body: $("#chat-menu").html(), origin: $(this) });
+	});
+
+	$entry.on("click", function() {
+		$(".chat-item").removeClass("current");
 	});
 });
