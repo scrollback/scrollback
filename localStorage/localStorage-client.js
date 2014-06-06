@@ -1,11 +1,25 @@
 /* global localStorage */
-/* global window, libsb */
+/* global window, libsb, QUOTA_EXCEEDED_ERR */
 var ArrayCache = require('./ArrayCache.js');
 var generate = require('../lib/generate');
 var cache = {}, core;
+var LRU = {};
+
+// add values to LRU 
 
 function deleteLRU(){
     // deletes the least recently used entry from LocalStorage
+    var leastTime = Infinity, leastEntry;
+    for(var i in LRU) {
+        if(LRU[i] < leastTime){
+            leastTime = LRU[i];
+            leastEntry = i;
+        }
+    }
+    if(leastTime != Infinity){
+        delete LRU[leastEntry];
+        delete localStorage[leastEntry];
+    }
 }
 
 function getLSkey(){
@@ -17,21 +31,25 @@ function getLSkey(){
 }
 
 libsb.on('navigate', function(state, next){
+    console.log("Navigated to ", state.room, " ----- Loading texts and labels ");
     if(state.room){
         var lsKeyTexts = getLSkey(state.room, 'texts');
         var lsKeyLabels = getLSkey(state.room, 'labels');
         if(!cache.hasOwnProperty(lsKeyTexts)){
-                cache[lsKeyTexts] = localStorage[lsKeyTexts];
+                if(localStorage.hasOwnProperty(lsKeyTexts)) cache[lsKeyTexts] = new ArrayCache(JSON.parse(localStorage[lsKeyTexts]));
+                else cache[lsKeyTexts] = new ArrayCache([]);
         }
         if(!cache.hasOwnProperty(lsKeyLabels)){
-                cache[lsKeyLabels] = localStorage[lsKeyLabels];
+                if(localStorage.hasOwnProperty(lsKeyLabels)) cache[lsKeyLabels] = new ArrayCache(JSON.parse(localStorage[lsKeyLabels]));
+                else cache[lsKeyLabels] = new ArrayCache([]);
         }
     }
+    next();
 });
 
 function load(roomName, dataType){
 	var lsKey = getLSkey(roomName, dataType);
-        cache[lsKey] = localStorage[lsKey];
+        cache[lsKey] = new ArrayCache(JSON.parse(localStorage[lsKey]));
         /*if(localStorage[lsKey]){
 		cache[lsKey] = JSON.parse(localStorage[lsKey]);
 		cache[lsKey] = new ArrayCache(cache[lsKey]);
@@ -42,17 +60,19 @@ function load(roomName, dataType){
 }
 
 function save(roomName, dataType){
-         try{
-                localStorage.libsb = JSON.stringify(cache);
-         }catch(e){
-                if (e == QUOTA_EXCEEDED_ERR){
-                    deleteLRU();
-                    save(roomName, dataType);
-                }
-         };
+     try{
+        var lsKey = getLSkey(roomName, dataType);
+        localStorage[lsKey] = JSON.stringify(cache[lsKey]);
+        LRU[lsKey] = new Date().getTime();
+     }catch(e){
+        if (e.name == 'QuotaExceededError' || e.code == 22){ // localStorage quota has been exceeded
+            deleteLRU();
+            save(roomName, dataType);
+        }
+     }
 }
 
-load();
+// load();
 
 module.exports = function(c){
 	core = c;
@@ -66,10 +86,10 @@ module.exports = function(c){
 		core.emit('init-dn', fakeInit);
 	}
 	
-	core.on('getTexts', getTextsBefore, 400);
-	core.on('getTexts', getTextsAfter, 900);
-	core.on('getThreads', getThreadsBefore, 400);
-	core.on('getThreads', getThreadsAfter, 900);
+	core.on('getTexts', getTextsBefore, 900);
+	core.on('getTexts', getTextsAfter, 400);
+	core.on('getThreads', getThreadsBefore, 900);
+	core.on('getThreads', getThreadsAfter, 400);
 	core.on('connected', createInit);
 	core.on('init-dn', recvInit);
 	core.on('away-up', storeAway);
@@ -134,11 +154,6 @@ function storeText(text, next){
 }
 
 function getTextsBefore(query, next){
-
-	/*
-		not giving the correct data right now.
-		var results = cache.texts.get(query);
-	if(results) query.results = results;*/
         var room = query.to;
         var lsKey = getLSkey(room, 'texts');
         var results = cache[lsKey].get(query);

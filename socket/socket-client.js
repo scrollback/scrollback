@@ -1,9 +1,7 @@
-/* global libsb */
-/* global core */
+/* global libsb, SockJS */
 
-var sockjs = require('sockjs-client'),
-	generate = require('../lib/generate.js'),
-	config = require('../client-config.js');
+var generate = require('../lib/generate.js'),
+config = require('../client-config.js');
 var core;
 
 module.exports = function(c){
@@ -11,37 +9,38 @@ module.exports = function(c){
 	core.on('connection-requested', connect);
 	core.on('disconnect', disconnect);
 
-	core.on('init-up', sendInit, 1000);
-	core.on('text-up', sendText, 1000);
-	core.on('back-up', sendBack, 1000);
-	core.on('away-up', sendAway, 1000);
-	core.on('nick-up', sendInit, 1000);
-	core.on('join-up', sendJoin, 1000);
-	core.on('part-up', sendPart, 1000);
-	core.on('admit-up', sendAdmit, 1000);
-	core.on('expel-up', sendExpel, 1000);
-	core.on('user-up', sendUser, 1000);
-	core.on('room-up', sendRoom, 1000);
+	core.on('init-up', sendInit, 10);
+	core.on('text-up', sendText, 10);
+	core.on('back-up', sendBack, 10);
+	core.on('away-up', sendAway, 10);
+	core.on('nick-up', sendInit, 10);
+	core.on('join-up', sendJoin, 10);
+	core.on('part-up', sendPart, 10);
+	core.on('admit-up', sendAdmit, 10);
+	core.on('expel-up', sendExpel, 10);
+	core.on('user-up', sendUser, 10);
+	core.on('room-up', sendRoom, 10);
 	core.on('getTexts', function(query, callback){
 		query.type="getTexts";
 		sendQuery(query, callback);
-	});
+	}, 10);
 	core.on('getThreads',  function(query, callback){
 		query.type="getThreads";
 		sendQuery(query, callback);
-	});
+	}, 10);
 	core.on('getUsers',  function(query, callback){
 		query.type="getUsers";
 		sendQuery(query, callback);
-	});
+	}, 10);
 	core.on('getRooms',  function(query, callback){
 		query.type="getRooms";
 		sendQuery(query, callback);
-	});
+	}, 10);
 };
 
 var client;
-var pendingQueries = {}, pendingActions = {};
+var pendingQueries = {};
+// var pendingActions = {};
 
 function connect(){
 	client = new SockJS(config.sockjs.host);

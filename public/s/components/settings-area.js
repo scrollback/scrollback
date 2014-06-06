@@ -1,7 +1,7 @@
 /* jshint browser: true */
-/* global $, libsb, lace, currentState */
+/* global $, libsb, currentState */
 
-var $itemTmpl = $(".meta-conf .list-item");
+var generate = ("../../../lib/generate.js");
 var currentConfig;
 
 $(".configure-button").on("click", function() {
@@ -37,7 +37,7 @@ libsb.on('navigate', function(state, next) {
                 libsb.memberOf.forEach(function(room){
                       if(room.id == currentState.room && room.role == "owner") isOwner = true;
                 });
-                if(isOwner == false){
+                if(isOwner === false){
                       libsb.emit('navigate', {mode: 'normal'});
                 }
                 if(!currentConfig){
@@ -51,7 +51,7 @@ libsb.on('navigate', function(state, next) {
 
                                 $('.meta-conf').empty();
                                 $('.conf-area').empty();
-                                for(i in tabs) {
+                                for(var i in tabs) {
                                         sortable.push([tabs[i].prio, i, tabs[i]]);
                                 }
                                 sortable.sort(function(a,b){
