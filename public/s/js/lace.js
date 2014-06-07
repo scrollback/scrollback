@@ -239,15 +239,19 @@ var lace = {
                 lace.modal.dismiss = false;
             }
 
-            if ($(".modal").length || $(".backdrop").length) {
-                $(".modal, .backdrop").remove();
-            }
-
             if (typeof modal.backdrop !== "boolean" || modal.backdrop) {
-                $("<div>").addClass("backdrop").appendTo("body");
+                if (!$(".backdrop").length) {
+                    $("<div>").addClass("backdrop").appendTo("body");
+                }
+            } else if ($(".backdrop").length) {
+                $(".backdrop").remove();
             }
 
-            $("<div>").addClass("modal").html(modal.body).appendTo("body");
+            if ($(".modal").length) {
+                $(".modal").empty().html(modal.body);
+            } else {
+                $("<div>").addClass("modal").html(modal.body).appendTo("body");
+            }
 
             $(".modal").css({
                 "margin-top" : $(".modal").outerHeight() / -2,
@@ -296,11 +300,14 @@ var lace = {
                 spaceleft = $(popover.origin).offset().left - $(document).scrollLeft() + ( $(popover.origin).width() / 2 ),
                 spaceright = $(window).width() - spaceleft;
 
-            if ($(".popover-body").length || $(".popover-layer").length) {
-                $(".popover-body, .popover-layer").remove();
+            if (!$(".popover-layer").length) {
+                $("<div>").addClass("popover-layer").appendTo("body");
             }
 
-            $("<div>").addClass("popover-layer").appendTo("body");
+            if ($(".popover-body").length) {
+                $(".popover-body").remove();
+            }
+
             $("<div>").addClass("popover-body").html(popover.body).appendTo("body");
 
             if ($(".popover-body").outerWidth() >= spaceleft) {
@@ -369,7 +376,7 @@ var lace = {
                 alert.type = "info";
             }
 
-            if ((!alert.id) || $("#" + alert.id).length) {
+            if ((!alert.id)) {
                 alert.id = "lace-alert-" + new Date().getTime();
             }
 
@@ -377,12 +384,16 @@ var lace = {
                 $("<div>").addClass("alert-container").appendTo("body");
             }
 
-            $("<div>")
-            .addClass("alert-bar " + alert.type)
-            .attr("id", alert.id)
-            .append($("<span>").addClass("alert-content").html(alert.body))
-            .append($("<span>").addClass("alert-remove"))
-            .appendTo(".alert-container");
+            if ($("#" + alert.id).length && $("#" + alert.id).hasClass("alert-bar")) {
+                $("#" + alert.id).find(".alert-content").empty().html(alert.body);
+            } else {
+                $("<div>")
+                .addClass("alert-bar " + alert.type)
+                .attr("id", alert.id)
+                .append($("<span>").addClass("alert-content").html(alert.body))
+                .append($("<span>").addClass("alert-remove"))
+                .appendTo(".alert-container");
+            }
 
             if (alert.timeout) {
                 setTimeout(function() {
