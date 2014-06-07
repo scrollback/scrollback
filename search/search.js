@@ -245,13 +245,13 @@ function generateNewThread(threadID, callback) {
 
 
 function constructBulk(threadIds, callback) {
-    var threads={}, postData = {body: []};
+    var threads={}, postData = {body: []}, l = threadIds.length;
 
     threadIds.forEach(function(e) {
         generateNewThread(e, function(t) {
             i++;
             if(t) threads[t.id] = t;
-            if(i>=l) processThreads();
+            if(!(i<l)) processThreads();
         });
     });
 

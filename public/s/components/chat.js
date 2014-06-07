@@ -9,7 +9,7 @@ $(function() {
 
 	chatEl.render = function (el, text) {
 		el = el || $template.clone(false);
-		if(text.labels && text.labels["action"]) el.addClasss("action");
+		if(text.labels && text.labels["action"]) el.addClass("chat-action");
 		el.find('.chat-nick').text(text.from);
 		el.find('.chat-message').html(format.linkify(format.textToHtml(text.text)));	
 		
