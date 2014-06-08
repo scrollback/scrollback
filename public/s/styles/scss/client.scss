@@ -1,5 +1,4 @@
 @import "global";
-@import "functions";
 @import "base";
 @import "alert";
 @import "modal";
@@ -473,18 +472,13 @@ body {
     display: inline-block;
     padding: .25em;
     width: 5.5em;
+    text-align: center;
     color: $dark-color;
 
     &:hover, &:focus, &:active {
         background-color: $accent-color;
         color: $light-color;
         border-radius: $roundness;
-    }
-
-    &.offline {
-        @include opacity(.5);
-
-        .person-avatar { @extend %grayscale; }
     }
 
     &.owner, &.admin, &.moderator {
@@ -524,6 +518,12 @@ body {
             color: $light-color;
         }
     }
+
+    &.offline {
+        @include opacity(.5);
+
+        .person-avatar { @extend %grayscale; }
+    }
 }
 
 .person-avatar {
@@ -535,7 +535,6 @@ body {
 }
 
 .person-name {
-    text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;

@@ -27,10 +27,10 @@
 	&:before, &:after {
 		@include opacity(0);
 		@include transform(translate3d(0, -.5em, 0));
-		@include transition(.15s, ease);
+		@include transition;
 
 		position: absolute;
-		z-index: 500;
+		z-index: 300;
 		top: 100%;
 		left: 50%;
 		pointer-events: none;

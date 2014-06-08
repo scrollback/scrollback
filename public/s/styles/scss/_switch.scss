@@ -1,4 +1,5 @@
 @import "global";
+@import "animations";
 
 .switch {
 	display: none;
@@ -8,7 +9,7 @@
 		cursor: pointer;
 
 		&:before, &:after {
-			@extend %ease;
+			@include transition;
 
 			position: absolute;
 			display: block;

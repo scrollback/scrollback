@@ -1,3 +1,4 @@
+@import "global";
 @import "animations";
 
 .progress {
@@ -9,7 +10,7 @@
 	height: 2px;
 	width: 80%;
 	z-index: 500;
-	background-color: #33ccaa;
+	background-color: $accent-color;
 
 	&.loading { @include progress; }
 
