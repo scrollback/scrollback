@@ -17,16 +17,18 @@ var lace = {
          * @param {Function} [action]
          */
         transition: function(classname, element, action) {
+            var $element = $(element);
+
             if (!action) {
                 action = function() {};
             }
 
             if (typeof document.body.style.transition === 'string') {
-                $(element).addClass(classname).data("transitioning", true);
+                $element.addClass(classname).data("transitioning", true);
 
-                $(element).on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function(e) {
+                $element.on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function(e) {
                     if (e.target === e.currentTarget && $(this).data("transitioning")) {
-                        $(element).removeClass(classname).data("transitioning", false);
+                        $(this).removeClass(classname).data("transitioning", false);
                         action();
                     }
                 });
@@ -42,11 +44,14 @@ var lace = {
          * @constructor
          */
         show: function() {
-            if ($(".progress").length) {
-                $(".progress").remove();
+            var $progress = $(".progress");
+
+            if ($progress.length) {
+                $progress.remove();
             }
 
-            $("<div>").addClass("progress loading").appendTo("body");
+            $progress = $("<div>").addClass("progress loading");
+            $progress.appendTo("body");
         },
 
         /**
@@ -128,11 +133,11 @@ var lace = {
         create: function() {
             lace.multientry.init();
 
-            var multientry = $("<span>").addClass("entry multientry").append(
+            var $multientry = $("<span>").addClass("entry multientry").append(
                 $("<span>").addClass("item").attr({"contenteditable": true})
             );
 
-            return multientry;
+            return $multientry;
         },
 
         /**
@@ -142,6 +147,8 @@ var lace = {
          * @param {String[]} content
          */
         add: function(element, content) {
+            var $element = $(element);
+
             if (content) {
                 if (!(content instanceof Array)) {
                     content = content.split(/[\s,]+/);
@@ -153,7 +160,7 @@ var lace = {
                         .addClass("item done")
                         .append($("<span>").addClass("item-text").text(text.trim()))
                         .append($("<span>").addClass("item-remove"))
-                        .insertBefore(($(element).children().last()).empty());
+                        .insertBefore(($element.children().last()).empty());
                     }
                 });
             }
@@ -165,15 +172,19 @@ var lace = {
          * @param {String} [element]
          */
         remove: function(element) {
-            if (!element) {
-                element = $(".multientry .item.done");
+            var $element;
+
+            if (element) {
+                $element = $(element);
+            } else {
+                $element = $(".multientry .item.done");
             }
 
-            if (!$(element).hasClass(".item")) {
+            if (!$element.hasClass(".item")) {
                 return;
             }
 
-            $(element).remove();
+            $element.remove();
         },
 
         /**
@@ -183,11 +194,15 @@ var lace = {
          * @return {String[]}
          */
         items: function(element) {
-            if (!element) {
-                element = $(".multientry");
+            var $element;
+
+            if (element) {
+                $element = $(element);
+            } else {
+                $element = $(".multientry");
             }
 
-            var elems = $(element).find(".item-text"),
+            var elems = $element.find(".item-text"),
                 items = new Array(elems.length);
 
             for (var i = 0; i < elems.length; i++) {
@@ -233,6 +248,9 @@ var lace = {
         show: function(modal) {
             lace.modal.init();
 
+            var $modal = $(".modal"),
+                $backdrop = $(".backdrop");
+
             if (typeof modal.dismiss !== "boolean" || modal.dismiss) {
                 lace.modal.dismiss = true;
             } else {
@@ -240,22 +258,24 @@ var lace = {
             }
 
             if (typeof modal.backdrop !== "boolean" || modal.backdrop) {
-                if (!$(".backdrop").length) {
-                    $("<div>").addClass("backdrop").appendTo("body");
+                if (!$backdrop.length) {
+                    $backdrop = $("<div>").addClass("backdrop");
+                    $backdrop.appendTo("body");
                 }
-            } else if ($(".backdrop").length) {
-                $(".backdrop").remove();
+            } else if ($backdrop.length) {
+                $backdrop.remove();
             }
 
-            if ($(".modal").length) {
-                $(".modal").empty().html(modal.body);
+            if ($modal.length) {
+                $modal.empty().html(modal.body);
             } else {
-                $("<div>").addClass("modal").html(modal.body).appendTo("body");
+                $modal = $("<div>").addClass("modal").html(modal.body);
+                $modal.appendTo("body");
             }
 
-            $(".modal").css({
-                "margin-top" : $(".modal").outerHeight() / -2,
-                "margin-left" : $(".modal").outerWidth() / -2
+            $modal.css({
+                "margin-top" : $modal.outerHeight() / -2,
+                "margin-left" : $modal.outerWidth() / -2
             });
         },
 
@@ -295,42 +315,47 @@ var lace = {
         show: function(popover) {
             lace.popover.init();
 
-            var spacetop = $(popover.origin).offset().top - $(document).scrollTop() + $(popover.origin).height(),
+            var $popover = $(".popover-body"),
+                $layer = $(".popover-layer"),
+                $origin = $(popover.origin),
+                spacetop = $origin.offset().top - $(document).scrollTop() + $origin.height(),
                 spacebottom = $(window).height() - spacetop,
-                spaceleft = $(popover.origin).offset().left - $(document).scrollLeft() + ( $(popover.origin).width() / 2 ),
+                spaceleft = $origin.offset().left - $(document).scrollLeft() + ( $origin.width() / 2 ),
                 spaceright = $(window).width() - spaceleft;
 
-            if (!$(".popover-layer").length) {
-                $("<div>").addClass("popover-layer").appendTo("body");
+            if (!$layer.length) {
+                $layer = $("<div>").addClass("popover-layer");
+                $layer.appendTo("body");
             }
 
-            if ($(".popover-body").length) {
-                $(".popover-body").remove();
+            if ($popover.length) {
+                $popover.remove();
             }
 
-            $("<div>").addClass("popover-body").html(popover.body).appendTo("body");
+            $popover = $("<div>").addClass("popover-body").html(popover.body);
+            $popover.appendTo("body");
 
-            if ($(".popover-body").outerWidth() >= spaceleft) {
-                $(".popover-body").addClass("arrow-left");
-                spaceleft = $(popover.origin).width() / 2;
-            } else if ($(".popover-body").outerWidth() >= spaceright) {
-                $(".popover-body").addClass("arrow-right");
-                spaceleft = $(window).width() - ( $(popover.origin).width() / 2 ) - $(".popover-body").outerWidth();
+            if ($popover.outerWidth() >= spaceleft) {
+                $popover.addClass("arrow-left");
+                spaceleft = $origin.width() / 2;
+            } else if ($popover.outerWidth() >= spaceright) {
+                $popover.addClass("arrow-right");
+                spaceleft = $(window).width() - ( $origin.width() / 2 ) - $popover.outerWidth();
             } else {
-                spaceleft = spaceleft - ( $(".popover-body").outerWidth() / 2 );
+                spaceleft = spaceleft - ( $popover.outerWidth() / 2 );
             }
 
-            if ($(popover.origin).height() >= $(window).height()) {
-                $(".popover-body").addClass("popover-bottom");
+            if ($origin.height() >= $(window).height()) {
+                $popover.addClass("popover-bottom");
                 spacetop = $(window).height() / 2;
-            } else if ($(".popover-body").outerHeight() >= spacebottom) {
-                $(".popover-body").addClass("popover-top");
-                spacetop = spacetop - $(popover.origin).height() - $(".popover-body").outerHeight();
+            } else if ($popover.outerHeight() >= spacebottom) {
+                $popover.addClass("popover-top");
+                spacetop = spacetop - $origin.height() - $popover.outerHeight();
             } else {
-                $(".popover-body").addClass("popover-bottom");
+                $popover.addClass("popover-bottom");
             }
 
-            $(".popover-body").css({
+            $popover.css({
                 "top" : spacetop,
                 "left" : spaceleft
             });
@@ -380,24 +405,29 @@ var lace = {
                 alert.id = "lace-alert-" + new Date().getTime();
             }
 
-            if (!$(".alert-container").length) {
-                $("<div>").addClass("alert-container").appendTo("body");
+            var $alert = $("#" + alert.id),
+                $container = $(".alert-container");
+
+            if (!$container.length) {
+                $container = $("<div>").addClass("alert-container");
+                $container.appendTo("body");
             }
 
-            if ($("#" + alert.id).length && $("#" + alert.id).hasClass("alert-bar")) {
-                $("#" + alert.id).find(".alert-content").empty().html(alert.body);
+            if ($alert.length && $alert.hasClass("alert-bar")) {
+                $alert.removeClass().addClass("alert-bar " + alert.type)
+                      .find(".alert-content").empty().html(alert.body);
             } else {
-                $("<div>")
-                .addClass("alert-bar " + alert.type)
-                .attr("id", alert.id)
-                .append($("<span>").addClass("alert-content").html(alert.body))
-                .append($("<span>").addClass("alert-remove"))
-                .appendTo(".alert-container");
+                $alert = $("<div>")
+                         .addClass("alert-bar " + alert.type)
+                         .attr("id", alert.id)
+                         .append($("<span>").addClass("alert-content").html(alert.body))
+                         .append($("<span>").addClass("alert-remove"));
+                $alert.appendTo($container);
             }
 
             if (alert.timeout) {
                 setTimeout(function() {
-                    lace.alert.hide("#" + alert.id);
+                    lace.alert.hide($alert);
                 }, alert.timeout);
             }
         },
@@ -408,19 +438,24 @@ var lace = {
          * @param {String} [element]
          */
         hide: function(element) {
-            if (!element) {
-                element = $(".alert-bar");
+            var $element,
+                $container = $(".alert-container");
+
+            if (element) {
+                $element = $(element);
+            } else {
+                $element = $(".alert-bar");
             }
 
-            if (!$(element).hasClass("alert-bar")) {
+            if (!$element.hasClass("alert-bar")) {
                 return;
             }
 
             lace.animate.transition("fadeout", element, function() {
-                $(element).remove();
+                $element.remove();
 
-                if (!$(".alert-container").children().length) {
-                    $(".alert-container").remove();
+                if (!$container.children().length) {
+                    $container.remove();
                 }
             });
         }
