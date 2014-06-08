@@ -146,3 +146,7 @@ li {
         .form-inner { @include transform(translateX((1 - $i) * 50%)) }
     }
 }
+
+body:not(.scrollback-open) {
+    .scrollback-stream { display: none; }
+}
