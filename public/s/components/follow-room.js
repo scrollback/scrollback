@@ -32,7 +32,7 @@ $(function() {
     });
 
     libsb.on("navigate", function(state, next){
-        if(state.mode === "normal"){
+        if(state.mode === "normal" && state.room !== state.old.room){
             if (libsb.isInited) {
                 getFollow();
             } else {

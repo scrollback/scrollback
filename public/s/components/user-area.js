@@ -88,7 +88,7 @@ $(function(){
         });
 
 	libsb.on('navigate', function(state, next) {
-            if(state.mode == 'normal' && state.tab == 'info'){
+            if(state.mode == 'normal' && state.tab == 'info' && state.room !== state.old.room){
                 setOwnerClass();
             }
             next();
