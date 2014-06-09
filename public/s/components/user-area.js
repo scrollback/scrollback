@@ -62,41 +62,48 @@ $(function () {
 	});
 
 	function setOwnerClass() {
-		if (libsb.isInited) {
-			libsb.getUsers({
-				memberOf: currentState.room
-			}, function (err, data) {
-				for (var i = 0; i < data.results.length; i++) {
-					if (data.results[i].id === libsb.user.id && data.results[i].role === "owner") {
-						$("body").addClass("role-owner");
-						break;
-					} else {
-						$("body").removeClass("role-owner");
-					}
-				}
-			});
-		} else {
-			libsb.on('inited', function (d, next) {
-				libsb.getUsers({
-					memberOf: location.pathname.replace('/', '')
-				}, function (err, data) {
-					for (var i = 0; i < data.results.length; i++) {
-						if (data.results[i].id === libsb.user.id && data.results[i].role === "owner") {
+		function check() {
+			libsb.getRooms({hasMember: libsb.user.id}, function(err, data) {
+				var i, l;
+
+				for(i=0,l=data.results.length;i<l;i++) {
+					if(data.results[i].id == currentState.room) {
+						if (data.results[i].role === "owner") {
 							$("body").addClass("role-owner");
-							break;
-						} else {
-							$("body").removeClass("role-owner");
+							return;
 						}
 					}
-				});
+				}
+
+				$("body").removeClass("role-owner");
+			});
+		}
+
+
+		if(libsb.isInited) {check();}
+		else {
+			libsb.on('inited', function(d, next){
+				check();
 				next();
 			});
 		}
 	}
 
-	libsb.on('init-dn', function (init, next) {
+	libsb.on('init-dn', function(init, next){
 		setOwnerClass();
 		next();
+	});
+
+	libsb.on('back-dn', function(init, next){
+		setOwnerClass();
+		next();
+	});
+
+	libsb.on('navigate', function(state, next) {
+            if(state.mode == 'normal' && state.room){
+                setOwnerClass();
+            }
+            next();
 	});
 
 	libsb.on('back-dn', function (init, next) {

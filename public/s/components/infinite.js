@@ -189,6 +189,7 @@
 			}
 
 			function update() {
+				if(!$logs.is(':visible')) return;
 				read();
 				updateSpaces();
 				updateItems();
