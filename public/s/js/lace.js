@@ -24,14 +24,13 @@ var lace = {
             }
 
             if (typeof document.body.style.transition === 'string') {
-                $element.addClass(classname).data("transitioning", true);
-
                 $element.on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function(e) {
+                    console.log(e.target, e.currentTarget);
                     if (e.target === e.currentTarget && $(this).data("transitioning")) {
                         $(this).removeClass(classname).data("transitioning", false);
                         action.call($element);
                     }
-                });
+                }).addClass(classname).data("transitioning", true);
             } else {
                 action.call($element);
             }

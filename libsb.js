@@ -12,6 +12,7 @@ require('./id-generator/id-generator-client.js');
 
 require('./public/s/js/array.contains.js');
 require('./public/s/js/jquery.setCursorEnd.js');
+require('./public/s/js/jquery.attrchange.js');
 //require('./public/s/js/jquery.oembed.js');
 require('./public/s/js/lace.js');
 require('./public/s/js/desktopnotify.js');
