@@ -46,4 +46,10 @@ $(function() {
 	$("input[type=text]").on("click keyup", function() {
 		$("body").removeClass("form-error");
 	});
+
+	
+    // Show scrollback embed widget
+    $(".trial-room").on("click", function () {
+        $("body").addClass("scrollback-open");
+    });
 });

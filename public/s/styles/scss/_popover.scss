@@ -1,4 +1,5 @@
 @import "global";
+@import "animations";
 
 .popover-layer {
 	content: "";
@@ -42,7 +43,6 @@
 
 	&.popover-top {
 		@include slideup;
-		@extend %nofilter;
 
 		&:before {
 			@include transform(rotate(225deg));
@@ -54,7 +54,6 @@
 
 	&.popover-bottom {
 		@include slidedown;
-		@extend %nofilter;
 
 		&:before {
 			@include transform(rotate(45deg));
@@ -84,8 +83,6 @@
 		margin: 0;
 
 		li {
-			@extend %ease;
-
 			border-bottom: 1px solid darken($light-color, 10%);
 
 			&:last-child { border-bottom: none; }

@@ -1,5 +1,4 @@
 @import "global";
-@import "functions";
 @import "base";
 @import "alert";
 @import "modal";
@@ -8,6 +7,7 @@
 @import "multientry";
 @import "flexbox";
 @import "oembed";
+@import "tooltip";
 
 $screenx: "only screen and (min-width: 18em)";
 $screenxx: "only screen and (min-width: 27em)";
@@ -156,7 +156,7 @@ $embeds: toast, comment;
             .sb-bottom { fill: $light-color; }
         }
 
-        &.embed-toast {
+        &.embed {
             .user-detail {
                 .sign-in {
                     color: $accent-color;
@@ -473,21 +473,12 @@ body {
     padding: .25em;
     width: 5.5em;
     text-align: center;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
     color: $dark-color;
 
     &:hover, &:focus, &:active {
         background-color: $accent-color;
         color: $light-color;
         border-radius: $roundness;
-    }
-
-    &.offline {
-        @include opacity(.5);
-
-        .person-avatar { @extend %grayscale; }
     }
 
     &.owner, &.admin, &.moderator {
@@ -528,13 +519,25 @@ body {
         }
     }
 
-    .person-avatar {
-        display: block;
-        width: 4em;
-        height: 4em;
-        margin: .25em .5em;
-        border-radius: $roundness;
+    &.offline {
+        @include opacity(.5);
+
+        .person-avatar { @extend %grayscale; }
     }
+}
+
+.person-avatar {
+    display: block;
+    width: 4em;
+    height: 4em;
+    margin: .25em .5em;
+    border-radius: $roundness;
+}
+
+.person-name {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .pane-threads {
@@ -661,14 +664,37 @@ body {
     cursor: pointer;
 }
 
+@mixin meta-logo-visible {
+    .meta-button-logo {
+        @include opacity(1);
+        @include transform(translate3d(0, 0, 0));
+    }
+
+    .meta-button-back {
+        @include opacity(0);
+        @include transform(translate3d(0, 0, 0));
+    }
+}
+
+@mixin meta-back-visible {
+    .meta-button-logo {
+        @include opacity(0);
+        @include transform(translate3d(0, -100%, 0));
+    }
+
+    .meta-button-back {
+        @include opacity(1);
+        @include transform(translate3d(0, -100%, 0));
+    }
+}
+
 .meta-button {
     @include title-icon(meta-icon);
-    @include prefix(perspective, 800px);
 
-    position: relative;
     height: $bar-height;
     width: 3em;
     fill: lighten($dark-color, 50%);
+    overflow: hidden;
 
     &, &:focus, &:hover, &:active { fill: lighten($dark-color, 30%); }
 
@@ -676,41 +702,27 @@ body {
 
     @media #{$screenxxx} { display: none; }
 
-    .front, .back {
+    .meta-button-back, .meta-button-logo {
         @extend %ease;
 
-        position: absolute;
-        top: 0;
-        left: 0;
+        display: block;
         height: 100%;
         width: 100%;
         padding: .75em .5em;
     }
-
-    .front { @include opacity(1); }
-
-    .back { @include opacity(0); }
-
-    .embed.view-meta & {
-        .front { @include opacity(1); }
-
-        .back { @include opacity(0); }
-    }
-
-    .embed & {
-        .front { @include opacity(0); }
-
-        .back { @include opacity(1); }
-    }
 }
 
 .embed {
-    &:focus, &:hover, &:active {
-        .meta-button {
-            .front { @include opacity(1); }
+    .meta-button {
+        @include meta-logo-visible;
+    }
 
-            .back { @include opacity(0); }
-        }
+    &:focus, &:hover, &:active {
+        .meta-button { @include meta-back-visible; }
+    }
+
+    &.view-meta {
+        .meta-button { @include meta-back-visible; }
     }
 }
 
@@ -807,27 +819,26 @@ body {
     &:focus, &:hover, &:active { fill: lighten($dark-color, 10%); }
 }
 
-.user-detail {
+%title-multiline {
     text-align: right;
-    padding: 1em;
+    padding: 0 1em;
     font-weight: 700;
     cursor: pointer;
+    white-space: nowrap;
+}
+
+.user-area {
+    .role-user.embed & { display: none; }
+}
+
+.user-detail {
+    @extend %title-multiline;
 
     .role-guest & { padding: .2em 1em; }
 
-    .sign-in {
-        display: inline;
-        text-transform: uppercase;
-    }
-
-    .role-user.embed-toast & {
-        display: none;
-
-        @media #{$screenxx} {
-            display: block;
-        }
-    }
+    .sign-in { text-transform: uppercase; }
 }
+
 
 .user-avatar {
     display: none;
@@ -846,10 +857,6 @@ body {
 
 .user-menu-button {
     @include title-icon(user-menu-icon);
-
-    display: block;
-
-    @media #{$screenxx} { display: none; }
 }
 
 .action-buttons {
@@ -1399,6 +1406,8 @@ body {
 .noroom-container { display: block; }
 
 .infinite-above, .infinite-below {
+    @include pulse;
+
     height: 100%;
     width: 100%;
 }

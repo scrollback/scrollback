@@ -52,6 +52,7 @@ libsb.on("room-dn", function(room, next) {
 		var r = room.room;
 		$.get('/r/irc/' + r.id, function(botName) {
 			displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel.";
+			console.log("discp", displayString);
 			lace.alert.show({type: "success", body: displayString});
 		});
 	}

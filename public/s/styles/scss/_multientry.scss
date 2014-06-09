@@ -1,5 +1,4 @@
 @import "global";
-@import "animations";
 
 .entry.multientry {
 	display: inline-block;
@@ -9,9 +8,6 @@
 	cursor: text; /* fix firefox showing caret in wrong position */
 
 	.item {
-		@include appear;
-		@extend %nofilter;
-
 		display: inline-block;
 		min-width: 3em;
 		margin: .4em 0 .4em .4em;

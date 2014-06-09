@@ -17,7 +17,7 @@ module.exports = function(core){
 			}
 		}
 		else {
-			if(action.user.role === action.user.invitedRole)	return callback();
+			if(action.user.role === action.user.invitedRole) return callback();
 			else return callback(new Error("ERR_NOT_ALLOWED"));
 		}
 	}, "authorization");

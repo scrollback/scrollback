@@ -30,8 +30,8 @@ module.exports = function (coreObj) {
 	core.on ('room', function(room, callback) {
 		log("room irc:", JSON.stringify(room), client.connected());
 		if (room.session === internalSession) return callback();
-		changeRoomParams(room);
 		if (ircParamsValidation(room) && client.connected()) {
+			changeRoomParams(room);
 			var rr = room.room;
 			log("room irc after adding additional properties:", JSON.stringify(room));
 			if (isNewRoom(room)) {//TODO chack if new irc config.
@@ -50,13 +50,24 @@ module.exports = function (coreObj) {
 		} else return callback();
 	}, "gateway");
 	
+	core.on("room", function(room, callback) {
+		var r = room.room;
+		if (r.params.irc) {
+			var v = typeof r.params.irc.server === 'string' && typeof r.params.irc.channel === 'string';
+			if (v) {
+				callback();
+			} else {
+				callback("ERR_INVALID_IRC_PARAMS");
+			}
+		} else callback();
+	}, "applevelValidation");
 	
 	core.on("init", function(init, callback) {
 		log("init irc:", init);
 		var oldUser = {id: init.from};
 		var newUser = init.user;
 		
-		if (oldUser && newUser && oldUser.id != newUser.id) {
+		if (oldUser && newUser && oldUser.id !== newUser.id) {
 			var uid = guid();
 			clientEmitter.emit("write", {
 				type: "isUserConnected",
@@ -96,6 +107,9 @@ module.exports = function (coreObj) {
 				if (onlineUsers[text.to] && onlineUsers[text.to][text.from]) {
 					delete onlineUsers[text.to][text.from];
 				} else ircUtils.connectUser(text.to, text.from);
+			}
+			if (text.labels) {
+				if(text.labels.action) text.text += '/me ' + text.text;
 			}
 			ircUtils.say(text.to, text.from, text.text);
 		}
@@ -262,12 +276,18 @@ function init() {
 	
 	clientEmitter.on('message', function(data) {
 		log("message from :", data);
+		var labels = {};
+		if (data.text.indexOf('/me ') === 0) {
+			data.text = substring(4);
+			labels.action = 1;
+		}
 		core.emit('text', {
 			id: guid(),
 			type: 'text',
 			to: data.to,
 			from: data.from,
 			text: data.text,
+			labels: labels,
 			time: data.time ? data.time : new Date().getTime(),
 			session: data.session
 		}, function(err, message) {
