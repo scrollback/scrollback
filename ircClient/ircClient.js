@@ -144,8 +144,7 @@ function partBot(roomId) {
 		}
 	});
 	client.part(channel);//disconnect bot in case of all part.
-	delete servChanProp[server][channel];
-	//delete rooms[roomId];//TODO find a better way to delete this
+	
 }
 
 function connectUser(roomId, nick, options, cb) {
@@ -276,7 +275,7 @@ function sendRoom(room) {
  */
 function onLeave(client) {
 
-	client.on("part", function(channel, nick, reason, message){//TODO delete client if no more connections
+	client.on("part", function(channel, nick, reason, message){
 		left(client, [channel], nick);
 	});	
 	
@@ -296,7 +295,11 @@ function onLeave(client) {
 }
 
 function left(client, channels, nick) {
-	
+	if (client.nick === nick) {//My nick leaving the channel
+		if (client.opt.channels.length === 0) {
+			client.disconnect();
+		}
+	}
 	if (connected) {
 		sendAway(client.opt.server, channels, nick, client.nick);
 	} else {
@@ -316,10 +319,12 @@ function sendAway(server, channels, nick, bn) {
 	channels.forEach(function(channel) {
 		channel = channel.toLowerCase();
 		if (bn === nick) {//bot left the channel //TODO test partBot.
+			var roomId = servChanProp[server][channel].rooms[0].id;
 			delete servChanProp[server][channel];
+			delete rooms[roomId];
 			return;
 		}
-		log("users", servChanProp[server][channel].users.length);
+		//log("users", servChanProp[server][channel].users.length);
 		if (!servChanProp[server][channel]) {
 			return;
 		}
@@ -345,7 +350,7 @@ function sendAway(server, channels, nick, bn) {
 		}
 	}
 	log("user:", nick, "went away from all channel in ", server, "server");
-	delete servNick[server][nick];//TODO check if user left from all connected channels(rooms).
+	delete servNick[server][nick];
 }
 
 /************************** user left *****************************************/
