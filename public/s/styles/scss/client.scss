@@ -792,6 +792,8 @@ body {
 
     .role-follower & { fill: lighten($dark-color, 30%); }
 
+    .role-owner & { display: none; }
+
     &:focus, &:hover, &:active {
         fill: none;
         stroke: lighten($dark-color, 10%);
@@ -1015,7 +1017,7 @@ body {
 		}
     }
 
-    &.chat-action {
+    &.chat-label-action {
         color: lighten($dark-color, 10%);
         border-right: 2px solid lighten($dark-color, 30%);
         font-style: italic;
