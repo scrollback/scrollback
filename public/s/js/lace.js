@@ -23,9 +23,8 @@ var lace = {
                 action = function() {};
             }
 
-            if (typeof document.body.style.transition === 'string') {
+            if (typeof document.body.style.transition === "string" && $element.is(":visible")) {
                 $element.on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function(e) {
-                    console.log(e.target, e.currentTarget);
                     if (e.target === e.currentTarget && $(this).data("transitioning")) {
                         $(this).removeClass(classname).data("transitioning", false);
                         action.call($element);
@@ -97,7 +96,7 @@ var lace = {
             $(document).on("paste", ".multientry .item", function(e) {
                 e.preventDefault();
 
-                var items = e.originalEvent.clipboardData.getData('Text');
+                var items = e.originalEvent.clipboardData.getData("Text");
 
                 lace.multientry.add($(this).parent(".multientry"), items);
             });
