@@ -29,11 +29,11 @@ var lace = {
                 $element.on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function(e) {
                     if (e.target === e.currentTarget && $(this).data("transitioning")) {
                         $(this).removeClass(classname).data("transitioning", false);
-                        action();
+                        action.call($element);
                     }
                 });
             } else {
-                action();
+                action.call($element);
             }
         }
     },
@@ -52,6 +52,8 @@ var lace = {
 
             $progress = $("<div>").addClass("progress loading");
             $progress.appendTo("body");
+
+            return $progress;
         },
 
         /**
@@ -277,6 +279,8 @@ var lace = {
                 "margin-top" : $modal.outerHeight() / -2,
                 "margin-left" : $modal.outerWidth() / -2
             });
+
+            return $modal;
         },
 
         /**
@@ -286,7 +290,7 @@ var lace = {
         hide: function() {
             [".backdrop", ".modal"].forEach(function(el) {
                 lace.animate.transition("fadeout", el, function() {
-                    $(el).remove();
+                    $(this).remove();
                 });
             });
         }
@@ -359,6 +363,8 @@ var lace = {
                 "top" : spacetop,
                 "left" : spaceleft
             });
+
+            return $popover;
         },
 
         /**
@@ -367,7 +373,8 @@ var lace = {
          */
         hide: function() {
             lace.animate.transition("fadeout", ".popover-body", function() {
-                $(".popover-body, .popover-layer").remove();
+                $(".popover-layer").remove();
+                $(this).remove();
             });
         }
     },
@@ -430,6 +437,8 @@ var lace = {
                     lace.alert.hide($alert);
                 }, alert.timeout);
             }
+
+            return $alert;
         },
 
         /**
@@ -452,7 +461,7 @@ var lace = {
             }
 
             lace.animate.transition("fadeout", element, function() {
-                $element.remove();
+                $(this).remove();
 
                 if (!$container.children().length) {
                     $container.remove();
