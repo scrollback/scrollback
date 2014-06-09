@@ -4,7 +4,7 @@
 $(function() {
     var $button = $(".follow-button");
 
-    function getFollow() {
+    function getFollow(x,n) {
         libsb.emit("getUsers", { memberOf: window.currentState.room, ref: libsb.user.id }, function(err, data){
             var user = data.results[0];
 
@@ -16,6 +16,7 @@ $(function() {
                 $button.attr("data-tooltip", "Follow " + window.currentState.room);
             }
         });
+        n && n();
     }
 
     $button.on("click", function() {
