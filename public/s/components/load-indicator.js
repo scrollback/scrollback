@@ -1,14 +1,15 @@
 /* jshint browser: true */
-/* global $, lace */
+/* global $, lace, libsb */
 
 $(function() {
-	var loadIndicator = setInterval(function() {
-		if ($("body").attr("class") && $("body").attr("class").match(/mode-/)) {
+	libsb.on("navigate", function(state, next) {
+		if ($(".overlay").length && $("body").attr("class") && $("body").attr("class").match(/mode-/)) {
 			lace.animate.transition("fadeout", ".overlay", function() {
 				$(this).remove();
 				lace.progress.hide();
-				clearInterval(loadIndicator);
 			});
 		}
-	}, 10);
+
+		next();
+	});
 });
