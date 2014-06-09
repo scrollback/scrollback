@@ -31,8 +31,8 @@ $(function() {
         getFollow();
     });
 
-    libsb.on("navigate", function(state, next){
-        if(state.mode === "normal"){
+    libsb.on("navigate", function(state, next) {
+        if(state.mode === "normal") {
             if (libsb.isInited) {
                 getFollow();
             } else {
@@ -41,7 +41,7 @@ $(function() {
         }
 
         next();
-    });
+    }, 600);
 
     libsb.on("init-dn", function(state, next){
         if (libsb.isInited) {
