@@ -37,7 +37,7 @@ $(function() {
 		var web = $("#web-address").val();
 
 		if(!/^(https?):\/\//i.test(web)) {
-			web = "http://" + web;
+			web = web;
 		}
 
 		window.open("http://next.scrollback.io/t/" + $("#room-name").val() + "/" + web, '_blank');
