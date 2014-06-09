@@ -134,7 +134,7 @@ var lace = {
         create: function() {
             lace.multientry.init();
 
-            var $multientry = $("<span>").addClass("entry multientry").append(
+            var $multientry = $("<span>").addClass("multientry").append(
                 $("<span>").addClass("item").attr({"contenteditable": true})
             );
 
