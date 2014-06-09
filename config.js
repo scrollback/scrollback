@@ -88,13 +88,13 @@ var defaults = {
 	twitter: {
 		//consumerKey: ".."
 		//consumerSecret: ".." 
-		callbackURL: "https://scrollback.io/r/twitter/auth/callback"
 	},
 	irc: {
 		nick: 'sbtestbot',		// nickname of the bot
 		hangTime: 60000,     // timeout before disconnecting (ms)
 		port: 78910,
-		server: "localhost"
+		server: "localhost",
+		debug: true
 	},
 	leveldb: {
 		path: "/data"

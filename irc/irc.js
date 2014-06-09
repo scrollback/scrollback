@@ -13,8 +13,8 @@ var onlineUsers = {};//scrollback users that are already online
 var firstMessage = {};//[room][username] = true
 var userExp = 10*60*1000;
 var initCount = 0;
-var ircUtils = new require('./ircUtils.js')(clientEmitter, callbacks);
-
+var ircUtils = new require('./ircUtils.js')(clientEmitter, client,callbacks);
+var debug = config.irc.debug;
 module.exports = function (coreObj) {
 	core = coreObj;
 	init();
@@ -47,17 +47,18 @@ module.exports = function (coreObj) {
 					else return callback();
 				} else return callback();
 			}  
-		} else return callback();
+		} else if(!client.connected() && room.room.params.irc && room.room.params.irc.server && room.room.params.irc.channel) return callback(new Error("ERR_IRC_NOT_CONNECTED"));
+		else return callback();
 	}, "gateway");
 	
 	core.on("room", function(room, callback) {
 		var r = room.room;
 		if (r.params.irc) {
-			var v = typeof r.params.irc.server === 'string' && typeof r.params.irc.channel === 'string';
+			var v = (typeof r.params.irc.server === 'string') && (typeof r.params.irc.channel === 'string');
 			if (v) {
 				callback();
 			} else {
-				callback("ERR_INVALID_IRC_PARAMS");
+				callback(new Error("ERR_INVALID_IRC_PARAMS"));
 			}
 		} else callback();
 	}, "applevelValidation");
@@ -145,10 +146,10 @@ function changeRoomParams(room) {
 	var or = room.old;
 	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel) { //this is old room
 		if (room.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel) {
-			room.room.params.irc.pending = true;//if server or channel changes
+			room.room.params.irc.pending = debug ? false : true;//if server or channel changes
 		} else room.room.params.irc.pending = or.params.irc.pending;	
 	} else {
-		room.room.params.irc.pending = true;//this is new room.
+		room.room.params.irc.pending = debug? false: true;//this is new room.
 	}
 }
 
@@ -278,7 +279,7 @@ function init() {
 		log("message from :", data);
 		var labels = {};
 		if (data.text.indexOf('/me ') === 0) {
-			data.text = substring(4);
+			data.text = data.text.substring(4);
 			labels.action = 1;
 		}
 		core.emit('text', {

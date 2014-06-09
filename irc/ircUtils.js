@@ -1,7 +1,7 @@
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
 var log = require("../lib/logger.js");
-module.exports = function(clientEmitter, callbacks) {
+module.exports = function(clientEmitter, client, callbacks) {
 
 	function connectUser(roomId, user) {
 		var uid = guid();
@@ -74,14 +74,16 @@ module.exports = function(clientEmitter, callbacks) {
 	
 	function getBotNick(roomId, callback) {
 		var uid = guid();
-		clientEmitter.emit('write', {
-			uid: uid,
-			type: 'getBotNick',
-			roomId: roomId
-		});
-		callbacks[uid] = function(data) {
-			callback(data.nick);
-		};
+		if(client.connected()) {
+			clientEmitter.emit('write', {
+				uid: uid,
+				type: 'getBotNick',
+				roomId: roomId
+			});
+			callbacks[uid] = function(data) {
+				callback(data.nick);
+			};
+		} else callback("ERR_NOT_CONNECTED");
 	}
 	
 	
