@@ -1,41 +1,47 @@
+@import "functions";
 @import "global";
+@import "entry";
 
-.entry.multientry {
-	display: inline-block;
-	min-width: 15em;
-	min-height: 3em;
-	padding: 0;
-	cursor: text; /* fix firefox showing caret in wrong position */
+@include exports("multientry") {
+	.multientry {
+		@extend .entry;
 
-	.item {
 		display: inline-block;
-		min-width: 3em;
-		margin: .4em 0 .4em .4em;
-		padding: .2em .25em;
-		border: 1px solid transparent;
-		outline: none;
+		min-width: 15em;
+		min-height: 3em;
+		padding: 0;
+		cursor: text; /* fix firefox showing caret in wrong position */
 
-		&:only-child { width: 100%; }
+		.item {
+			display: inline-block;
+			min-width: 3em;
+			margin: .4em 0 .4em .4em;
+			padding: .2em .25em;
+			border: 1px solid transparent;
+			outline: none;
 
-		&:last-child { min-width: 7em; }
+			&:only-child { width: 100%; }
 
-		&.done {
-			background-color: lighten($accent-color, 40%);
-			border-color: darken($accent-color, 5%);
-			border-radius: $roundness;
-		}
+			&:last-child { min-width: 7em; }
 
-		.item-remove {
-			float: right;
-			color: darken($accent-color, 5%);
-			cursor: pointer;
+			&.done {
+				background-color: lighten($accent-color, 40%);
+				border-color: darken($accent-color, 5%);
+				border-radius: $roundness;
+			}
 
-			&:after {
-				display: block;
-				content: "\00d7";
-				font-weight: bold;
-				font-size: 1.5em;
-				padding: 0 .5em;
+			.item-remove {
+				float: right;
+				color: darken($accent-color, 5%);
+				cursor: pointer;
+
+				&:after {
+					display: block;
+					content: "\00d7";
+					font-weight: bold;
+					font-size: 1.5em;
+					padding: 0 .5em;
+				}
 			}
 		}
 	}
