@@ -209,7 +209,7 @@ var threadArea = {};
 							n();
 						});
 					}
-				}else{
+				}else if(currentState.tab == "threads"){
 					if(libsb.isInited) {
 						loadThread(index, before, after, callback);
 					}else {
