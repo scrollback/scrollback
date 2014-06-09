@@ -23,6 +23,7 @@
 			
 		</iframe>
 		<script>
+			var elem;
 
 			var backgroundURL = "";
 			window.scrollback = {
@@ -32,12 +33,16 @@
 
 			window.scrollback.room = window.location.pathname.split("/")[2];
 
-			backgroundURL = window.location.pathname.replace("/t/"+window.scrollback.room+"/", "");
+			backgroundURL = window.location.pathname.replace("/t/"+window.scrollback.room, "");
+			backgroundURL = backgroundURL.replace(/^\//, "");
 
 			backgroundURL = backgroundURL.replace(/^.*:\/\//,"");
 			if(backgroundURL) {
 				backgroundURL = "//"+backgroundURL;
 				document.getElementById("background").src = backgroundURL;
+			}else{
+				elem = document.getElementById("background");
+				elem.parentNode.removeChild(elem);
 			}
 			
 			// Don't change below this line ------------------------------------------------
