@@ -1437,3 +1437,21 @@ body {
         .button { display: block; }
     }
 }
+
+.overlay {
+    display: table;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+    color: #555;
+    z-index: 400;
+}
+
+.overlay h1 {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
