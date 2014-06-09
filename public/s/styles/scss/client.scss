@@ -8,6 +8,7 @@
 @import "flexbox";
 @import "oembed";
 @import "tooltip";
+@import "progress";
 
 $screenx: "only screen and (min-width: 18em)";
 $screenxx: "only screen and (min-width: 27em)";
@@ -692,7 +693,6 @@ body {
     @include title-icon(meta-icon);
 
     height: $bar-height;
-    width: 3em;
     fill: lighten($dark-color, 50%);
     overflow: hidden;
 
@@ -1406,8 +1406,6 @@ body {
 .noroom-container { display: block; }
 
 .infinite-above, .infinite-below {
-    @include pulse;
-
     height: 100%;
     width: 100%;
 }

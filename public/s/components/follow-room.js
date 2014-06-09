@@ -2,21 +2,23 @@
 /* global $, libsb */
 
 $(function() {
+    var $button = $(".follow-button");
+
     function getFollow() {
         libsb.emit("getUsers", { memberOf: window.currentState.room, ref: libsb.user.id }, function(err, data){
             var user = data.results[0];
 
             if (user && (user.role === "owner" || user.role === "follower")) {
                 $("body").addClass("role-follower");
-                $(".follow-button").attr("data-tooltip", "Unfollow " + window.currentState.room);
+                $button.attr("data-tooltip", "Unfollow " + window.currentState.room);
             } else {
                 $("body").removeClass("role-follower");
-                $(".follow-button").attr("data-tooltip", "Follow " + window.currentState.room);
+                $button.attr("data-tooltip", "Follow " + window.currentState.room);
             }
         });
     }
 
-    $(".follow-button").on("click", function() {
+    $button.on("click", function() {
         if ($("body").hasClass("role-follower")) {
             libsb.part(window.currentState.room);
         } else {

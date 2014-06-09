@@ -1,20 +1,15 @@
 /* jslint browser: true, indent: 4, regexp: true*/
-/* global $ */
+/* global $, lace */
 
 $(function() {
 	// Check if a new cache is available on page load.
 	$(applicationCache).on("updateready", function() {
 		if (applicationCache.status === applicationCache.UPDATEREADY) {
-			location.reload();
+			lace.alert.show({ type: "info", body: "A new version of the client has been downloaded. <a class='reload-page'>Reload to start using it</a>." });
 		}
 	});
 
-	// Check if online or not
-	$(window).on("offline", function() {
-		$("body").addClass("offline");
-	});
-
-	$(window).on("online", function() {
-		$("body").removeClass("offline");
+	$(document).on("click", ".reload-page", function() {
+		location.reload();
 	});
 });
