@@ -39,4 +39,24 @@ $(function() {
 
         next();
     });
+
+    libsb.on("init-dn", function(state, next){
+        if (libsb.isInited) {
+            getFollow();
+        } else {
+            libsb.on("inited", getFollow);
+        }
+
+        next();
+    });
+
+    libsb.on("back-dn", function(state, next){
+        if (libsb.isInited) {
+            getFollow();
+        } else {
+            libsb.on("inited", getFollow);
+        }
+
+        next();
+    });
 });
