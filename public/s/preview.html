@@ -35,10 +35,11 @@
 			backgroundURL = window.location.pathname.replace("/t/"+window.scrollback.room+"/", "");
 
 			backgroundURL = backgroundURL.replace(/^.*:\/\//,"");
-			backgroundURL = "//"+backgroundURL;
-
-			document.getElementById("background").src = backgroundURL;
-
+			if(backgroundURL) {
+				backgroundURL = "//"+backgroundURL;
+				document.getElementById("background").src = backgroundURL;
+			}
+			
 			// Don't change below this line ------------------------------------------------
 			(function(d,h,e){e=d.createElement('script');e.async=1;e.src=h+'/s/js/embed.js';
 			scrollback.host=h;d.body.appendChild(e);}(document,location.protocol+'//'+location.host));
