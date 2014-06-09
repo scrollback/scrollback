@@ -30,7 +30,7 @@ require('./http/embed-client.js');
 require('./anti-abuse/anti-abuse-client.js');
 // require('./twitter/twitter-client.js');
 // components
-//require('./public/s/components/load-indicator.js');
+require('./public/s/components/load-indicator.js');
 require('./public/s/components/embed-helper.js');
 require('./public/s/components/appcache.js');
 require('./public/s/components/infinite.js');
