@@ -120,7 +120,7 @@ function receiveMessage(event){
 }
 
 function makeAction(action) {
-	action.id = generate.uid();
+        // action.id = generate.uid();
 	action.from = libsb.user.id;
 	action.time = new Date().getTime();
 	action.session = libsb.session;
@@ -129,28 +129,28 @@ function makeAction(action) {
 }
 
 function sendJoin(join, next){
-	var action = makeAction({type: 'join', to: join.to});
+	var action = makeAction({type: 'join', to: join.to, id: join.id});
 	safeSend(JSON.stringify(action));
 	next();
 	// pendingActions[action.id] = next;
 }
 
 function sendPart(part, next){
-	var action = makeAction({type: 'part', to: part.to});
+	var action = makeAction({type: 'part', to: part.to, id: part.id});
 	safeSend(JSON.stringify(action));
 	next();
 	// pendingActions[action.id] = next;
 }
 
 function sendBack(back, next){
-	var action = makeAction({type: 'back', to: back.to});
+	var action = makeAction({type: 'back', to: back.to, id: back.id});
 	safeSend(JSON.stringify(action));
 	next();
 	// pendingActions[action.id] = next;
 }
 
 function sendAway(away, next){
-	var action = makeAction({type: 'away', to: away.to});
+	var action = makeAction({type: 'away', to: away.to, id: away.id});
 	safeSend(JSON.stringify(action));
 	next();
 	// pendingActions[action.id] = next;
@@ -165,7 +165,7 @@ function sendText(text, next){
 }
 
 function sendInit(init, next){
-	var action = makeAction({type: 'init', to: 'me'});
+	var action = makeAction({type: 'init', to: 'me', id: init.id});
 	if(init.session) action.session = init.session;
 	if(init.auth) action.auth = init.auth;
 	if(init.suggestedNick) action.suggestedNick = init.suggestedNick;
@@ -175,28 +175,28 @@ function sendInit(init, next){
 }
 
 function sendAdmit(admit, next){
-	var action = makeAction({type: 'admit', to: admit.to, ref: admit.ref});
+	var action = makeAction({type: 'admit', to: admit.to, ref: admit.ref, id: admit.id});
 	safeSend(JSON.stringify(action));
 	next();
 	// pendingActions[action.id] = next;
 }
 
-function sendExpel(admit, next){
-	var action = makeAction({type: 'expel', to: admit.to, ref: admit.ref});
+function sendExpel(expel, next){
+	var action = makeAction({type: 'expel', to: expel.to, ref: expel.ref, id: expel.id});
 	safeSend(JSON.stringify(action));
 	next();
 	// pendingActions[action.id] = next;
 }
 
 function sendUser(user, next) {
-	var action = makeAction({type: 'user', to: "me", user: user.user});
+	var action = makeAction({type: 'user', to: "me", user: user.user, id: user.id});
 	safeSend(JSON.stringify(action));
 	pendingActions[action.id] = next;
 	next();
 }
 
 function sendRoom(room, next){
-	var action = makeAction({type: 'room', to: room.to, room: room.room});
+	var action = makeAction({type: 'room', to: room.to, room: room.room, id: room.id});
 	safeSend(JSON.stringify(action));
 	next();	
 }

@@ -64,7 +64,7 @@ function checkOwnerShip(){
     libsb.memberOf.forEach(function(room){
           if(room.id == currentState.room && room.role == "owner") isOwner = true;
     });
-    if(isOwner == false){
+    if(isOwner === false){
           libsb.emit('navigate', {mode: 'normal'});
     }
 

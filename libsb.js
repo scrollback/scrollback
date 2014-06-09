@@ -8,6 +8,7 @@ window.generate = require('./lib/generate');
 require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(core);
 require('./socket/socket-client')(core);
+require('./id-generator/id-generator-client.js');
 
 require('./public/s/js/array.contains.js');
 require('./public/s/js/jquery.setCursorEnd.js');
