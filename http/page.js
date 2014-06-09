@@ -114,8 +114,9 @@ exports.init = function(app, coreObject) {
             res.render("d/main" , responseObject);    
         });
     }
-
-    app.get('/t/:room/*', function(req, res, next) {
+    app.get('/t/:room', tHandler);
+    app.get('/t/:room/*', tHandler);
+    function tHandler(req, res, next) {
         var room = req.path.substring(1).split("/")[1];
         var url=req.path.replace("/t/"+room, "").substring(1);
 
@@ -133,7 +134,7 @@ exports.init = function(app, coreObject) {
                 room: room
             });
         }
-    });
+    }
 
     function roomHandler(req, res, next) {
 		log("path ", req.path);
