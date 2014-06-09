@@ -147,6 +147,8 @@ li {
     }
 }
 
-body:not(.scrollback-open) {
-    .scrollback-stream { display: none; }
+.scrollback-stream {
+    display: none;
+
+    .scrollback-open & { display: block; }
 }
