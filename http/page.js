@@ -180,9 +180,9 @@ exports.init = function(app, coreObject) {
            next();
         });
     });
-    
-    app.get("/*", function(req, res){
-        // if(/^/t//)
+
+    app.get("/*", function(req, res, next){
+        if(/^\/t\//.test(req.path)) return next();
         fs.readFile(__dirname + "/../public/client.html", "utf8", function(err, data){
            res.end(data);
         });

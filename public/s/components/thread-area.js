@@ -200,6 +200,8 @@ var threadArea = {};
 			itemHeight: 100,
 			startIndex: index,
 			getItems: function (index, before, after, recycle, callback) {
+				if (['search-local', 'search-global', 'threads'].indexOf(state.tab)) return callback([]);
+				
 				if(currentState.mode == "search"){
 					if(libsb.isInited) {
 						loadSearchResult(index, before, after, callback);
