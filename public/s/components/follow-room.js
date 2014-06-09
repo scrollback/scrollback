@@ -8,7 +8,7 @@ $(function() {
         libsb.emit("getUsers", { memberOf: window.currentState.room, ref: libsb.user.id }, function(err, data){
             var user = data.results[0];
 
-            if (user && (user.role === "owner" || user.role === "follower")) {
+            if (user && user.role === "follower") {
                 $("body").addClass("role-follower");
                 $button.attr("data-tooltip", "Unfollow " + window.currentState.room);
             } else {
@@ -16,6 +16,7 @@ $(function() {
                 $button.attr("data-tooltip", "Follow " + window.currentState.room);
             }
         });
+
         n && n();
     }
 
@@ -41,7 +42,7 @@ $(function() {
         }
 
         next();
-    });
+    }, 600);
 
     libsb.on("init-dn", function(state, next){
         if (libsb.isInited) {
