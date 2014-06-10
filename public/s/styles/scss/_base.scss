@@ -71,6 +71,7 @@ input[type="checkbox"], input[type="radio"] {
 [contenteditable]:empty:before{
     content: attr(data-placeholder);
     color: fade-out($dark-color, .5);
+    pointer-events: none;
 }
 
 pre {
