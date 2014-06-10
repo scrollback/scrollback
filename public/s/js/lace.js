@@ -245,7 +245,9 @@ var lace = {
                 return;
             }
 
-            $element.remove();
+            lace.animate.transition("fadeout", $element, function() {
+                $(this).remove();
+            });
         },
 
         /**

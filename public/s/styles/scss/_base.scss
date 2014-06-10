@@ -121,7 +121,7 @@ code {
 }
 
 .grow {
-    @include transform(scale(1.2, 1.2));;
+    @include transform(scale(1.2, 1.2));
     @include transition(.15s);
 }
 

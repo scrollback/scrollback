@@ -1406,7 +1406,7 @@ body {
     h1 {
         font-size: 1.5em;
 
-        @media #{$screenxxxx} { font-size: 2em; }
+        @media #{$screenxxxx} { font-size: 2.4em; }
     }
 }
 
@@ -1462,6 +1462,6 @@ body {
         text-align: center;
         font-size: 1.5em;
 
-        @media #{$screenxxxx} { font-size: 2em; }
+        @media #{$screenxxxx} { font-size: 2.4em; }
     }
 }
