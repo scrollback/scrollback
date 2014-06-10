@@ -37,7 +37,7 @@ var lace = {
                     $element.removeClass(core.classname).data("lace.animate", false);
                     core.action.call($element);
                 }
-            })
+            });
         },
 
         /**

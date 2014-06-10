@@ -1402,6 +1402,12 @@ body {
 
         .embed & { left: 0; }
     }
+
+    h1 {
+        font-size: 1.5em;
+
+        @media #{$screenxxxx} { font-size: 2em; }
+    }
 }
 
 .noroom-container { display: block; }
@@ -1449,10 +1455,13 @@ body {
     background-color: #fff;
     color: #555;
     z-index: 400;
-}
 
-.overlay h1 {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
+    h1 {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        font-size: 1.5em;
+
+        @media #{$screenxxxx} { font-size: 2em; }
+    }
 }
