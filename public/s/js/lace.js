@@ -12,9 +12,15 @@ var lace = {
         /**
          * Add a class to an element and execute an action after an event.
          * @constructor
-         * @param {{ element: String, event: String, classname: String, type: String, action: Function, support: Boolean }} core
+         * @param {{ element: String, event: String, classname: String, action: Function, support: Boolean }} core
          */
         core: function(core) {
+            if (lace.animate.core.obj === core) {
+                return;
+            } else {
+                lace.animate.core.obj = core;
+            }
+
             var $element = $(core.element);
 
             if (!core.action) {
@@ -23,7 +29,7 @@ var lace = {
 
             if (core.support && $element.is(":visible") && document.hasFocus()) {
                 $element.on(core.event, function(e) {
-                    if (e.target === e.currentTarget && $(this).data("lace.animate")) {
+                    if (e.target === e.currentTarget && $(this).hasClass(core.classname) && $(this).data("lace.animate")) {
                         $(this).removeClass(core.classname).data("lace.animate", false);
                         core.action.call(this);
                     }
@@ -33,7 +39,7 @@ var lace = {
             }
 
             $(window).on("blur", function() {
-                if ($element.data("lace.animate")) {
+                if ($element.hasClass(core.classname) && $element.data("lace.animate")) {
                     $element.removeClass(core.classname).data("lace.animate", false);
                     core.action.call($element);
                 }
