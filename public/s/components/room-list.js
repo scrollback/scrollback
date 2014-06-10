@@ -78,9 +78,8 @@ $(function() {
 	$roomlist.click(function(event) {
 		var $el = $(event.target).closest(".room-item");
 		if(!$el.size()) return;
-
 		libsb.emit('navigate', {
-			room: $el.attr("id").split('-')[2],
+			room: $el.attr("id").replace(/^room-item-/, ""),
 			view: 'normal', source: 'room-list',
 			mode: "normal",
 			view: "normal",
