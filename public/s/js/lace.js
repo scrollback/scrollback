@@ -31,6 +31,13 @@ var lace = {
             } else {
                 core.action.call($element);
             }
+
+            $(window).on("blur", function() {
+                if ($element.data("lace.animate")) {
+                    $element.removeClass(core.classname).data("lace.animate", false);
+                    core.action.call($element);
+                }
+            })
         },
 
         /**
