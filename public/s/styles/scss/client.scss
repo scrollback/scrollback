@@ -476,6 +476,9 @@ body {
     padding: .25em;
     width: 5.5em;
     text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     color: $dark-color;
 
     &:hover, &:focus, &:active {
@@ -535,12 +538,6 @@ body {
     height: 4em;
     margin: .25em .5em;
     border-radius: $roundness;
-}
-
-.person-name {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
 }
 
 .pane-threads {

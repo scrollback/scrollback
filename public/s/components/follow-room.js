@@ -7,8 +7,8 @@ $(function() {
     function getFollow(x,n) {
         libsb.emit("getUsers", { memberOf: window.currentState.room, ref: libsb.user.id }, function(err, data){
             var user = data.results[0];
-
-            if (user && user.role === "follower") {
+            console.log("User is ", user);
+            if (user && (user.role === "follower" || user.role === "member")) {
                 $("body").addClass("role-follower");
                 $button.attr("data-tooltip", "Unfollow " + window.currentState.room);
             } else {
