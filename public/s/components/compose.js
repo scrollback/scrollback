@@ -23,6 +23,10 @@ $(function() {
 		setTimeout(function() {
 			chatArea.setBottom($input.outerHeight());
 		}, 0);
+
+		var classes = $("body").attr("class").replace(/conv-\d+/g, "");
+
+		$("body").attr("class", classes);
 	}
 
 	$entry.keypress(function(e) {
