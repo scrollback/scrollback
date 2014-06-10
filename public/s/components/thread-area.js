@@ -200,6 +200,7 @@ var threadArea = {};
 			itemHeight: 100,
 			startIndex: index,
 			getItems: function (index, before, after, recycle, callback) {
+				
 				if(currentState.mode == "search"){
 					if(libsb.isInited) {
 						loadSearchResult(index, before, after, callback);
@@ -209,7 +210,7 @@ var threadArea = {};
 							n();
 						});
 					}
-				}else{
+				}else if(currentState.tab == "threads"){
 					if(libsb.isInited) {
 						loadThread(index, before, after, callback);
 					}else {

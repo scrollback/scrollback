@@ -7,7 +7,7 @@
 			var room = window.scrollback.room || "scrollback",
 				embed = window.scrollback.embed || "toast",
 				theme = window.scrollback.theme || "dark",
-				host = window.scrollback.host || (location.protocol === "https:" ? "https:" : "http:") + "//next.scrollback.io",
+				host = window.scrollback.host || "https://next.scrollback.io",
 				style,
 				iframe;
 

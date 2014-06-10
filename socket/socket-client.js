@@ -1,8 +1,9 @@
 /* global libsb, SockJS */
 
-var generate = require('../lib/generate.js'),
-config = require('../client-config.js');
-var core;
+var sockjs = require('sockjs-client'),
+	generate = require('../lib/generate.js'),
+	config = require('../client-config.js'),
+	core;
 
 module.exports = function(c){
 	core = c;
@@ -46,7 +47,7 @@ function safeSend(data){
         // safeSends sends the data over the socket only after the socket has
         // been initialised
         if(libsb.isInited){
-             client.send(data); 
+             client.send(data);
         }else{
             libsb.on('inited', function(d,n){
                 client.send(data);
@@ -156,8 +157,7 @@ function sendAway(away, next){
 }
 
 function sendText(text, next){
-	text.type = "text";
-	var action = makeAction(text);
+	var action = makeAction({to: text.to, type: 'text', text: text.text, from: text.from, id: text.id});
 	safeSend(JSON.stringify(action));
 	next();
 	// pendingActions[action.id] = next;
@@ -197,5 +197,5 @@ function sendUser(user, next) {
 function sendRoom(room, next){
 	var action = makeAction({type: 'room', to: room.to, room: room.room, id: room.id});
 	safeSend(JSON.stringify(action));
-	next();	
+	next();
 }

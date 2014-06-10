@@ -126,6 +126,11 @@ function part(roomId, callback){
 
 function say(roomId, text, thread, callback){
 	var obj =  {to: roomId, text: text, from: libsb.user.id};
+	if(/^\/me /.test(text)) {
+		obj.text = text.replace(/^\/me /,"");
+		obj.labels = {action: 1};
+	}
+
 	if(thread) obj.threads = [{id: thread}];
 	core.emit('text-up', obj, callback);
 }
@@ -141,8 +146,9 @@ function expel(roomId, ref, callback){
 function recvInit(init, next){
 
 	libsb.session = init.session;
-        libsb.memberOf = init.memberOf;
-        libsb.occupantOf = init.occupantOf;
+    console.log("* *** * LIbsb memberOf ", init.memberOf);
+    libsb.memberOf = init.memberOf;
+    libsb.occupantOf = init.occupantOf;
 
 	if(init.auth && !init.user.id) {
 		core.emit("navigate", {});

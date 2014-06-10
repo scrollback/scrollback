@@ -1,46 +1,9 @@
 @import "global";
-@import "functions";
 @import "reset";
 @import "animations";
 @import "filters";
-
-/* mixins */
-@mixin buttons($bg: $accent-color, $fg: $light-color) {
-    @extend %ease;
-    @extend %inputs;
-
-    border: 1px solid $bg;
-    border-bottom-color: darken($bg, 5%);
-    border-radius: $roundness;
-    background-color: $bg;
-    color: $fg;
-    text-align: center;
-    font-weight: 700;
-    cursor: pointer;
-    text-transform: uppercase;
-
-    &:hover, &:focus {
-        background-color: darken($bg, 5%);
-        border-color: darken($bg, 5%);
-        color: $fg;
-    }
-
-    &:active {
-        background-color: darken($bg, 10%);
-        border-color: darken($bg, 10%);
-        color: $fg;
-    }
-
-    &.working {
-        @extend %spinner;
-
-        &, &:hover, &:focus, &:active {
-            background-color: darken($bg, 10%);
-            border-color: darken($bg, 10%);
-            color: mix($bg, $fg, 30%);
-        }
-    }
-}
+@import "button";
+@import "entry";
 
 /* base styles */
 html { font-size: 62.5%; }
@@ -90,8 +53,12 @@ input[type="submit"], input[type="button"] {
 }
 
 input[type="entry"], input[type="text"], input[type="search"], input[type="email"], textarea {
-    @extend %inputs;
     @extend .entry;
+
+    margin: .5em 0;
+    padding: .8em 1.2em;
+    font-size: 1em;
+    outline: none;
 
     &:disabled { @extend .entry.disabled; }
 }
@@ -104,6 +71,7 @@ input[type="checkbox"], input[type="radio"] {
 [contenteditable]:empty:before{
     content: attr(data-placeholder);
     color: fade-out($dark-color, .5);
+    pointer-events: none;
 }
 
 pre {
@@ -120,72 +88,6 @@ code {
     line-height: 1.2em;
 }
 
-%inputs {
-    display: inline-block;
-    margin: .5em 0;
-    padding: .8em 1.2em;
-    font-size: 1em;
-    outline: none;
-
-    &:hover, &:focus, &:active { outline: none; }
-}
-
-.button {
-    @include buttons;
-
-    &.secondary {
-        background-color: darken($light-color, 5%);
-        border: 1px solid darken($light-color, 15%);
-        color: lighten($dark-color, 10%);
-
-        &:hover, &:focus {
-            background-color: darken($light-color, 3%);
-            border-color: darken($light-color, 30%);
-            color: lighten($dark-color, 5%);
-        }
-
-        &:active {
-            background-color: darken($light-color, 7%);
-            border-color: darken($light-color, 20%);
-            color: lighten($dark-color, 15%);
-        }
-    }
-
-    &.disabled {
-        &, &:hover, &:focus, &:active {
-            background-color: darken($light-color, 5%);
-            border-color: darken($light-color, 15%);
-            color: lighten($dark-color, 50%);
-            pointer-events: none;
-        }
-    }
-
-    &.linked { @extend .linked; }
-}
-
-.entry {
-    @extend %ease;
-
-    border: 1px solid darken($light-color, 20%);
-    border-top-color: darken($light-color, 30%);
-    border-radius: $roundness;
-    background-color: $light-color;
-    color: $dark-color;
-    box-shadow: inset 0 1px 1px 0 rgba(0,0,0,.1);
-
-    &:hover, &:focus, &:active {
-        border-color: darken($light-color, 30%);
-        border-top-color: darken($light-color, 40%);
-        outline: none;
-    }
-
-    &.disabled { background-color: darken($light-color, 10%); }
-
-    &.error { border-color: $error-color; }
-
-    &.linked { @extend .linked; }
-}
-
 .google { @include buttons(#d34836, #fff); }
 
 .twitter { @include buttons(#55acee, #fff); }
@@ -195,18 +97,6 @@ code {
 .persona { @include buttons(#0096dd, #fff); }
 
 .openid { @include buttons(#f78c40, #fff); }
-
-.linked {
-    border-radius: 0;
-
-    &:not(:only-of-type):not(:last-of-type) { border-right: none; }
-
-    &:first-of-type { border-radius: $roundness 0 0 $roundness; }
-
-    &:last-of-type { border-radius: 0 $roundness $roundness 0; }
-
-    &:only-of-type { border-radius: $roundness; }
-}
 
 %spinner {
     &:before {

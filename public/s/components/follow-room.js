@@ -1,40 +1,66 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb */
 
-$(".follow-button").on("click", function() {
-    if ($("body").hasClass("role-follower")) {
-            libsb.part(window.currentState.room);
-            $("body").removeClass("role-follower");
-    } else {
-            libsb.join(window.currentState.room);
-            $("body").addClass("role-follower");
+$(function() {
+    var $button = $(".follow-button");
+
+    function getFollow(x,n) {
+        libsb.emit("getUsers", { memberOf: window.currentState.room, ref: libsb.user.id }, function(err, data){
+            var user = data.results[0];
+            console.log("User is ", user);
+            if (user && (user.role === "follower" || user.role === "member")) {
+                $("body").addClass("role-follower");
+                $button.attr("data-tooltip", "Unfollow " + window.currentState.room);
+            } else {
+                $("body").removeClass("role-follower");
+                $button.attr("data-tooltip", "Follow " + window.currentState.room);
+            }
+        });
+
+        n && n();
     }
 
-    lace.animate.transition("grow", $(this));
-});
+    $button.on("click", function() {
+        if ($("body").hasClass("role-follower")) {
+            libsb.part(window.currentState.room);
+        } else {
+            libsb.join(window.currentState.room);
+        }
 
-function getFollow(f,n){
-    libsb.emit('getUsers', {memberOf: currentState.room, ref: libsb.user.id }, function(err, data){
-        var user = data.results[0];
-        if(user){
-            var role = user.role;
-            if(role == 'owner' || role == 'follower'){
-                $('body').addClass('role-follower');
-            }else{
-                $('body').removeClass('role-follower');
+        $("body").toggleClass("role-follower");
+
+        getFollow();
+    });
+
+    libsb.on("navigate", function(state, next){
+        if(state.mode === "normal" && state.room !== state.old.room){
+            if (libsb.isInited) {
+                getFollow();
+            } else {
+                libsb.on("inited", getFollow);
             }
         }
-     }); 
-    if(n) n();
-}
 
-libsb.on("navigate", function(state,next){
-    if(state.mode === "normal"){
-        if(libsb.isInited){
+        next();
+    }, 600);
+
+    libsb.on("init-dn", function(state, next){
+        if (libsb.isInited) {
             getFollow();
-        }else {
-            libsb.on('inited', getFollow);
+        } else {
+            libsb.on("inited", getFollow);
         }
-    }
-    next();
+
+        next();
+    });
+
+    libsb.on("back-dn", function(state, next){
+        if (libsb.isInited) {
+            getFollow();
+        } else {
+            libsb.on("inited", getFollow);
+        }
+
+        next();
+    });
 });

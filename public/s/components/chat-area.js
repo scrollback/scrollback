@@ -18,7 +18,7 @@ $(function() {
 		getItems: function (index, before, after, recycle, callback) {
 			var query = { to: room, before: before, after: after };
 			index = index || time;
-			query.time = index; 
+			query.time = index;
 			if(thread) query.thread = thread;
 			if(!index && !before) return callback([false]);
 			if(libsb.isInited) {
@@ -30,6 +30,7 @@ $(function() {
 				});
 			}
 			function loadTexts() {
+				console.log("load texts.");
 				libsb.getTexts(query, function(err, t) {
 					var texts = t.results;
 					if(err) throw err; // TODO: handle the error properly.
@@ -97,10 +98,12 @@ $(function() {
 
 	// Insert incoming text messages.
 	libsb.on('text-dn', function(text, next) {
-		var i = 0, l;
+		var i = 0,
+			l,
+			$text = $("#" + text.id);
 
-		if (text.threads && text.threads.length && $("#" + text.id).length) {
-			$("#" + text.id).addClass('conv-' + text.threads[0].id.substr(-1));
+		if (text.threads && text.threads.length && $text.length) {
+			$text.addClass('conv-' + text.threads[0].id.substr(-1));
 		}
 
 		if(text.resource == libsb.resource) return next();
@@ -126,7 +129,7 @@ $(function() {
 	libsb.on('text-up', function(text, next) {
 		if($logs.data("lower-limit")) $logs.addBelow(chatEl.render(null, text));
 		next();
-	});
+	}, 90);
 
 	libsb.on('navigate', function(state, next) {
 		var reset = false;

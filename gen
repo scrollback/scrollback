@@ -1,0 +1,24 @@
+/*
+Errno::ENOENT: No such file or directory - scss
+
+Backtrace:
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/../lib/sass/plugin/compiler.rb:405:in `read'
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/../lib/sass/plugin/compiler.rb:405:in `update_stylesheet'
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/../lib/sass/plugin/compiler.rb:189:in `update_stylesheets'
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/../lib/sass/plugin/compiler.rb:186:in `each'
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/../lib/sass/plugin/compiler.rb:186:in `update_stylesheets'
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/../lib/sass/plugin/compiler.rb:221:in `watch'
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/../lib/sass/plugin.rb:108:in `send'
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/../lib/sass/plugin.rb:108:in `method_missing'
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/../lib/sass/exec.rb:509:in `watch_or_update'
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/../lib/sass/exec.rb:346:in `process_result'
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/../lib/sass/exec.rb:43:in `parse'
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/../lib/sass/exec.rb:22:in `parse!'
+/var/lib/gems/1.8/gems/sass-3.3.7/bin/sass:13
+/usr/local/bin/sass:19:in `load'
+/usr/local/bin/sass:19
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Errno::ENOENT: No such file or directory - scss"; }
