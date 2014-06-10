@@ -125,6 +125,8 @@ li {
     }
 }
 
+.step-2 li:last-child a:after { content: ""; }
+
 .features:after { content: "\00BB"; }
 
 .separator { margin-top: 2em; }
