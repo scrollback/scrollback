@@ -91,6 +91,7 @@ module.exports = function(core) {
 				}
 			}
 			if(!action.user.params) return callback(new Error("ERR_NO_PARAMS"));
+			if (action.role) delete action.role;
 			callback();
 		},
 		room: function(action, callback) {

@@ -50,17 +50,17 @@ module.exports = function (coreObj) {
 		} else return callback();
 	}, "gateway");
 	
-	core.on("room", function(room, callback) {
-		var r = room.room;
-		if (r.params.irc) {
-			var v = typeof r.params.irc.server === 'string' && typeof r.params.irc.channel === 'string';
-			if (v) {
-				callback();
-			} else {
-				callback("ERR_INVALID_IRC_PARAMS");
-			}
-		} else callback();
-	}, "applevelValidation");
+	//core.on("room", function(room, callback) {
+	//	var r = room.room;
+	//	if (r.params.irc) {
+	//		var v = typeof r.params.irc.server === 'string' && typeof r.params.irc.channel === 'string';
+	//		if (v) {
+	//			callback();
+	//		} else {
+	//			callback("ERR_INVALID_IRC_PARAMS");
+	//		}
+	//	} else callback();
+	//}, "applevelValidation");
 	
 	core.on("init", function(init, callback) {
 		log("init irc:", init);
