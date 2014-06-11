@@ -43,7 +43,7 @@ var formatText = function format(text) {
 		protocol = protocol || (user? 'mailto:': 'http://');
 		user = user || '';
 		s = u.lastIndex;
-		m += "<a href='" + protocol + user + domain + path + "'>" + r[0] + "</a>";
+		m += "<a rel='nofollow' href='" + protocol + user + domain + path + "'>" + r[0] + "</a>";
 	}
 	m += "<span>" + text.substring(s) + "</span>";
 	return m;
