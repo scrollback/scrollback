@@ -382,6 +382,8 @@ body {
         }
     }
 
+    h3 { margin: 0; }
+
     .tab {
         @include flex-grow(1);
 
@@ -770,6 +772,7 @@ body {
 .room-title {
     font-size: 1.2em;
     font-weight: 700;
+    margin: 0;
 
     @media #{$screenxxx} {
         padding-left: 1em;
@@ -861,12 +864,12 @@ body {
 }
 
 .action-buttons {
-    padding: .125em;
+    padding: .25em;
 
     .button {
         display: block;
         float: left;
-        margin-right: .125em;
+        margin: .25em;
     }
 }
 
@@ -1362,7 +1365,7 @@ body {
     right: 0;
 	z-index: 20;
 	height: $bar-height;
-	padding: .15em;
+	padding: .5em;
 	background-color: darken($light-color, 5%);
 
 	.search-focus & {
@@ -1438,7 +1441,7 @@ body {
 .loggedout-dialog, .login-dialog {
      min-width: 20em;
 
-    .button { display: block; }
+    .button { width: 100%; }
 }
 
 .popover-body {
@@ -1447,7 +1450,7 @@ body {
     .login-menu {
         padding: .5em 1em;
 
-        .button { display: block; }
+        .button { width: 100%; }
     }
 }
 

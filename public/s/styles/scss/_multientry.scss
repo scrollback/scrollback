@@ -8,17 +8,18 @@
 		@extend .entry;
 
 		display: inline-block;
-		min-height: 3em;
+		min-height: 2.5em;
 		min-width: 15em;
 		max-width: 100%;
-		padding: .25em;
+		margin: .5em 0;
+		padding: 0 .0625em;
 		cursor: text; /* fix firefox showing caret in wrong position */
 
 		.item {
 			display: inline-block;
 			min-width: 3em;
 			max-width: 100%;
-			margin: .125em;
+			margin: .125em .0625em;
 			border: 1px solid transparent;
 			outline: none;
 
