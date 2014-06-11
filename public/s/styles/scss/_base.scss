@@ -93,23 +93,6 @@ code {
 
 .openid { @include buttons(#f78c40, #fff); }
 
-%spinner {
-    &:before {
-        @include spin;
-
-        content: "";
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        margin: 0 1em;
-        border-top: 2px solid currentColor;
-        border-right: 2px solid transparent;
-        border-bottom: 2px solid currentColor;
-        border-left: 2px solid transparent;
-        border-radius: 50%;
-    }
-}
-
 .fadeout {
     @include opacity(0);
     @extend %ease;

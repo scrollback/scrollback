@@ -1,6 +1,7 @@
 @import "functions";
 @import "global";
 @import "animations";
+@import "spinner";
 
 @mixin buttons($bg: $accent-color, $fg: $light-color) {
 	@include transition;
@@ -32,7 +33,7 @@
 	}
 
 	&.working {
-		@extend %spinner;
+		@include spinner;
 
 		&, &:hover, &:focus, &:active {
 			background-color: darken($bg, 10%);

@@ -11,6 +11,7 @@
 @import "oembed";
 @import "tooltip";
 @import "progress";
+@import "overlay";
 
 $screenx: "only screen and (min-width: 18em)";
 $screenxx: "only screen and (min-width: 27em)";
@@ -410,6 +411,8 @@ body {
 
         padding-left: .25em;
         text-transform: uppercase;
+
+        .embed & { padding-left: .75em; }
 
         @media #{$screenxxxx} {
             padding-left: 4.25em;
@@ -1451,26 +1454,5 @@ body {
         padding: .5em 1em;
 
         .button { width: 100%; }
-    }
-}
-
-.overlay {
-    display: table;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: #fff;
-    color: #555;
-    z-index: 400;
-
-    h1 {
-        display: table-cell;
-        vertical-align: middle;
-        text-align: center;
-        font-size: 1.5em;
-
-        @media #{$screenxxxx} { font-size: 2.4em; }
     }
 }
