@@ -10,6 +10,69 @@
 var lace = {
     animate: {
         /**
+         * Add a class to an element and execute an action after an event.
+         * @constructor
+         * @param {{ element: String, event: String, classname: String, action: Function, support: Boolean }} core
+         */
+        core: function(core) {
+            var $element = $(core.element);
+
+            if (!core.action) {
+                core.action = function() {};
+            }
+
+            if (core.support && $element.is(":visible") && document.hasFocus()) {
+                var onanimate = function() {
+                    if ($element.data("lace.animate")) {
+                        $element.removeClass(core.classname).data("lace.animate", false);
+                        core.action.call($element);
+
+                        // Remove event handlers
+                        $element.off(core.event);
+                        $(window).off("blur.lace.animate");
+                    }
+                };
+
+                $element.on(core.event, function(e) {
+                    if (e.target === e.currentTarget) {
+                        onanimate();
+                    }
+                }).addClass(core.classname).data("lace.animate", true);
+
+                // Fix event not firing when window not focused
+                $(window).on("blur.lace.animate", function() {
+                    onanimate();
+                });
+            } else {
+                core.action.call($element);
+            }
+        },
+
+        /**
+        * Add a class to an element and execute an action after animation.
+        * @constructor
+        * @param {String} classname
+        * @param {String} element
+        * @param {Function} [action]
+        */
+        animation: function(classname, element, action) {
+            var event = "animationend webkitAnimationEnd mozAnimationEnd MSAnimationEnd oAnimationEnd",
+                support = typeof document.body.style.animation === "string" ||
+                          typeof document.body.style.WebkitAnimation === "string" ||
+                          typeof document.body.style.MozAnimation === "string" ||
+                          typeof document.body.style.MsAnimation === "string" ||
+                          typeof document.body.style.OAnimation === "string";
+
+            lace.animate.core({
+                classname: classname,
+                element: element,
+                action: action,
+                event: event,
+                support: support
+            });
+        },
+
+        /**
          * Add a class to an element and execute an action after transition.
          * @constructor
          * @param {String} classname
@@ -17,24 +80,20 @@ var lace = {
          * @param {Function} [action]
          */
         transition: function(classname, element, action) {
-            var $element = $(element);
+            var event = "transitionend webkitTransitionEnd mozTransitionEnd msTransitionEnd oTransitionEnd",
+                support = typeof document.body.style.transition === "string" ||
+                          typeof document.body.style.WebkitTransition === "string" ||
+                          typeof document.body.style.MozTransition === "string" ||
+                          typeof document.body.style.MsTransition === "string" ||
+                          typeof document.body.style.OTransition === "string";
 
-            if (!action) {
-                action = function() {};
-            }
-
-            if (typeof document.body.style.transition === 'string') {
-                $element.addClass(classname).data("transitioning", true);
-
-                $element.on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function(e) {
-                    if (e.target === e.currentTarget && $(this).data("transitioning")) {
-                        $(this).removeClass(classname).data("transitioning", false);
-                        action();
-                    }
-                });
-            } else {
-                action();
-            }
+            lace.animate.core({
+                classname: classname,
+                element: element,
+                action: action,
+                event: event,
+                support: support
+            });
         }
     },
 
@@ -52,6 +111,8 @@ var lace = {
 
             $progress = $("<div>").addClass("progress loading");
             $progress.appendTo("body");
+
+            return $progress;
         },
 
         /**
@@ -96,7 +157,7 @@ var lace = {
             $(document).on("paste", ".multientry .item", function(e) {
                 e.preventDefault();
 
-                var items = e.originalEvent.clipboardData.getData('Text');
+                var items = e.originalEvent.clipboardData.getData("Text");
 
                 lace.multientry.add($(this).parent(".multientry"), items);
             });
@@ -133,7 +194,7 @@ var lace = {
         create: function() {
             lace.multientry.init();
 
-            var $multientry = $("<span>").addClass("entry multientry").append(
+            var $multientry = $("<span>").addClass("multientry").append(
                 $("<span>").addClass("item").attr({"contenteditable": true})
             );
 
@@ -180,11 +241,13 @@ var lace = {
                 $element = $(".multientry .item.done");
             }
 
-            if (!$element.hasClass(".item")) {
+            if (!$element.hasClass("item")) {
                 return;
             }
 
-            $element.remove();
+            lace.animate.transition("fadeout", $element, function() {
+                $(this).remove();
+            });
         },
 
         /**
@@ -277,6 +340,8 @@ var lace = {
                 "margin-top" : $modal.outerHeight() / -2,
                 "margin-left" : $modal.outerWidth() / -2
             });
+
+            return $modal;
         },
 
         /**
@@ -286,7 +351,7 @@ var lace = {
         hide: function() {
             [".backdrop", ".modal"].forEach(function(el) {
                 lace.animate.transition("fadeout", el, function() {
-                    $(el).remove();
+                    $(this).remove();
                 });
             });
         }
@@ -359,6 +424,8 @@ var lace = {
                 "top" : spacetop,
                 "left" : spaceleft
             });
+
+            return $popover;
         },
 
         /**
@@ -367,7 +434,8 @@ var lace = {
          */
         hide: function() {
             lace.animate.transition("fadeout", ".popover-body", function() {
-                $(".popover-body, .popover-layer").remove();
+                $(".popover-layer").remove();
+                $(this).remove();
             });
         }
     },
@@ -430,6 +498,8 @@ var lace = {
                     lace.alert.hide($alert);
                 }, alert.timeout);
             }
+
+            return $alert;
         },
 
         /**
@@ -452,7 +522,7 @@ var lace = {
             }
 
             lace.animate.transition("fadeout", element, function() {
-                $element.remove();
+                $(this).remove();
 
                 if (!$container.children().length) {
                     $container.remove();

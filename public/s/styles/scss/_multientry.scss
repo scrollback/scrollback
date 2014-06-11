@@ -1,41 +1,61 @@
+@import "functions";
 @import "global";
+@import "animations";
+@import "entry";
 
-.entry.multientry {
-	display: inline-block;
-	min-width: 15em;
-	min-height: 3em;
-	padding: 0;
-	cursor: text; /* fix firefox showing caret in wrong position */
+@include exports("multientry") {
+	.multientry {
+		@extend .entry;
 
-	.item {
 		display: inline-block;
-		min-width: 3em;
-		margin: .4em 0 .4em .4em;
-		padding: .2em .25em;
-		border: 1px solid transparent;
-		outline: none;
+		min-height: 3em;
+		min-width: 15em;
+		max-width: 100%;
+		padding: .25em;
+		cursor: text; /* fix firefox showing caret in wrong position */
 
-		&:only-child { width: 100%; }
+		.item {
+			display: inline-block;
+			min-width: 3em;
+			max-width: 100%;
+			margin: .125em;
+			border: 1px solid transparent;
+			outline: none;
 
-		&:last-child { min-width: 7em; }
+			&:only-child { width: 100%; }
 
-		&.done {
-			background-color: lighten($accent-color, 40%);
-			border-color: darken($accent-color, 5%);
-			border-radius: $roundness;
-		}
+			&.done {
+				@include fadein;
 
-		.item-remove {
-			float: right;
-			color: darken($accent-color, 5%);
-			cursor: pointer;
+				border-radius: $roundness;
+				background-color: $info-color;
+				color: $light-color;
+			}
 
-			&:after {
-				display: block;
-				content: "\00d7";
-				font-weight: bold;
-				font-size: 1.5em;
-				padding: 0 .5em;
+			.item-text {
+				padding: 0 .75em;
+				line-height: 2em;
+			}
+
+			.item-remove {
+				@include transition;
+
+				float: right;
+				cursor: pointer;
+				background-color: rgba(0,0,0,.1);
+				border-radius: 0 $roundness $roundness 0;
+
+				&:focus, &:hover { background-color: rgba(0,0,0,.2); }
+
+				&:active { background-color: rgba(0,0,0,.3); }
+
+				&:after {
+					display: block;
+					content: "\00d7";
+					font-weight: 700;
+					font-size: 1.5em;
+					padding: .17em .5em;
+				}
 			}
 		}
 	}

@@ -49,9 +49,16 @@ module.exports = function() {
 			}
 		}
 
+		if (state.minimize === "true") {
+			state.minimize = true;
+		} else {
+			state.minimize = false;
+		}
+
 		if (!state.mode) state.mode = "normal";
 		if (!state.tab) state.tab = "people";
 		if (!state.theme) state.theme = "light";
+
 		libsb.emit("navigate", state);
 	});
 };

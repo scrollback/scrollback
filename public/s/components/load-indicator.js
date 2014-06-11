@@ -2,13 +2,12 @@
 /* global $, lace */
 
 $(function() {
-	var loadIndicator = setInterval(function() {
-		if ($("body").attr("class") && $("body").attr("class").match(/mode-/)) {
-			lace.animate.transition("fadeout", ".overlay", function() {
-				$(".overlay").remove();
-				lace.progress.hide();
-				clearInterval(loadIndicator);
-			});
+	$("body").attrchange(function() {
+		if ($(".overlay").length && $("body").attr("class") && $("body").attr("class").match(/mode-/)) {
+//			lace.animate.transition("fadeout", ".overlay", function() {
+			$(".overlay").remove();
+			lace.progress.hide();
+//			});
 		}
-	}, 10);
+	});
 });

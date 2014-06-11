@@ -4,10 +4,13 @@
 @import "modal";
 @import "popover";
 @import "switch";
+@import "button";
+@import "entry";
 @import "multientry";
 @import "flexbox";
 @import "oembed";
 @import "tooltip";
+@import "progress";
 
 $screenx: "only screen and (min-width: 18em)";
 $screenxx: "only screen and (min-width: 27em)";
@@ -473,6 +476,9 @@ body {
     padding: .25em;
     width: 5.5em;
     text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     color: $dark-color;
 
     &:hover, &:focus, &:active {
@@ -532,12 +538,6 @@ body {
     height: 4em;
     margin: .25em .5em;
     border-radius: $roundness;
-}
-
-.person-name {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
 }
 
 .pane-threads {
@@ -692,7 +692,6 @@ body {
     @include title-icon(meta-icon);
 
     height: $bar-height;
-    width: 3em;
     fill: lighten($dark-color, 50%);
     overflow: hidden;
 
@@ -789,6 +788,8 @@ body {
     stroke: lighten($dark-color, 30%);
 
     .role-follower & { fill: lighten($dark-color, 30%); }
+
+    .role-owner & { display: none; }
 
     &:focus, &:hover, &:active {
         fill: none;
@@ -1013,7 +1014,7 @@ body {
 		}
     }
 
-    &.chat-action {
+    &.chat-label-action {
         color: lighten($dark-color, 10%);
         border-right: 2px solid lighten($dark-color, 30%);
         font-style: italic;
@@ -1116,6 +1117,17 @@ body {
     box-shadow: 0 -3px 2px -1px rgba(0,0,0,.05);
 }
 
+.chat-entry-wrap { position: relative; }
+
+.chat-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: .9em 1em;
+    color: fade-out($dark-color, .5);
+    pointer-events: none;
+}
+
 .chat-entry {
 	@extend .entry;
 
@@ -1137,11 +1149,6 @@ body {
 
 			.conv-#{$j} & { border-color: nth($palette, $i); }
 		}
-    }
-
-    &:empty:before{
-        content: "Reply as " attr(data-placeholder);
-        color: fade-out($dark-color, .5);
     }
 }
 
@@ -1401,13 +1408,17 @@ body {
 
         .embed & { left: 0; }
     }
+
+    h1 {
+        font-size: 1.5em;
+
+        @media #{$screenxxxx} { font-size: 2.4em; }
+    }
 }
 
 .noroom-container { display: block; }
 
 .infinite-above, .infinite-below {
-    @include pulse;
-
     height: 100%;
     width: 100%;
 }
@@ -1437,5 +1448,26 @@ body {
         padding: .5em 1em;
 
         .button { display: block; }
+    }
+}
+
+.overlay {
+    display: table;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+    color: #555;
+    z-index: 400;
+
+    h1 {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        font-size: 1.5em;
+
+        @media #{$screenxxxx} { font-size: 2.4em; }
     }
 }

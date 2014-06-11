@@ -12,6 +12,7 @@ require('./id-generator/id-generator-client.js');
 
 require('./public/s/js/array.contains.js');
 require('./public/s/js/jquery.setCursorEnd.js');
+require('./public/s/js/jquery.attrchange.js');
 //require('./public/s/js/jquery.oembed.js');
 require('./public/s/js/lace.js');
 require('./public/s/js/desktopnotify.js');
@@ -29,6 +30,7 @@ require('./irc/irc-client.js');
 require('./anti-abuse/anti-abuse-client.js');
 // require('./twitter/twitter-client.js');
 // components
+require('./public/s/components/load-indicator.js');
 require('./public/s/components/embed-helper.js');
 require('./public/s/components/appcache.js');
 require('./public/s/components/infinite.js');
@@ -59,6 +61,5 @@ require('./public/s/components/signup-area.js');
 require('./public/s/components/persona.js');
 require('./public/s/components/URLparser.js')();
 //require('./public/s/components/oembed-init.js');
-require('./public/s/components/load-indicator.js');
 
 //# sourceMappingURL=libsb.js.map

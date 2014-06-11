@@ -2,21 +2,24 @@
 /* global $, libsb */
 
 $(function() {
-    function getFollow() {
+    var $button = $(".follow-button");
+
+    function getFollow(x,n) {
         libsb.emit("getUsers", { memberOf: window.currentState.room, ref: libsb.user.id }, function(err, data){
             var user = data.results[0];
-
-            if (user && (user.role === "owner" || user.role === "follower")) {
+            if (user && (user.role === "follower" || user.role === "member")) {
                 $("body").addClass("role-follower");
-                $(".follow-button").attr("data-tooltip", "Unfollow " + window.currentState.room);
+                $button.attr("data-tooltip", "Unfollow " + window.currentState.room);
             } else {
                 $("body").removeClass("role-follower");
-                $(".follow-button").attr("data-tooltip", "Follow " + window.currentState.room);
+                $button.attr("data-tooltip", "Follow " + window.currentState.room);
             }
         });
+
+        n && n();
     }
 
-    $(".follow-button").on("click", function() {
+    $button.on("click", function() {
         if ($("body").hasClass("role-follower")) {
             libsb.part(window.currentState.room);
         } else {
@@ -29,12 +32,32 @@ $(function() {
     });
 
     libsb.on("navigate", function(state, next){
-        if(state.mode === "normal"){
+        if(state.mode === "normal" && state.room !== state.old.room){
             if (libsb.isInited) {
                 getFollow();
             } else {
                 libsb.on("inited", getFollow);
             }
+        }
+
+        next();
+    }, 600);
+
+    libsb.on("init-dn", function(state, next){
+        if (libsb.isInited) {
+            getFollow();
+        } else {
+            libsb.on("inited", getFollow);
+        }
+
+        next();
+    });
+
+    libsb.on("back-dn", function(state, next){
+        if (libsb.isInited) {
+            getFollow();
+        } else {
+            libsb.on("inited", getFollow);
         }
 
         next();

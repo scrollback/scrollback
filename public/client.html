@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!--<html manifest="/manifest.appcache" lang="en">-->
+<!-- <html manifest="/manifest.appcache" lang="en"> -->
 
 <html lang="en">
 
@@ -24,83 +24,6 @@
 
 		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600">
 		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/gen/client.css">
-
-		<style type="text/css">
-			@-webkit-keyframes progress {
-				0% { width: 0; }
-				10% { width: 30%; }
-				30% { width: 50%; }
-				40% { width: 70%; }
-				100% { width: 80%; }
-			}
-
-			@-moz-keyframes progress {
-				0% { width: 0; }
-				10% { width: 30%; }
-				30% { width: 50%; }
-				40% { width: 70%; }
-				100% { width: 80%; }
-			}
-
-			@-ms-keyframes progress {
-				0% { width: 0; }
-				10% { width: 30%; }
-				30% { width: 50%; }
-				40% { width: 70%; }
-				100% { width: 80%; }
-			}
-
-			@keyframes progress {
-				0% { width: 0; }
-				10% { width: 30%; }
-				30% { width: 50%; }
-				40% { width: 70%; }
-				100% { width: 80%; }
-			}
-
-			.progress {
-				position: fixed;
-				top: 0;
-				left: 0;
-				height: 2px;
-				width: 80%;
-				z-index: 500;
-				background-color: #33ccaa;
-				-webkit-transition: .3s ease-out;
-				-moz-transition: .3s ease-out;
-				-ms-transition: .3s ease-out;
-				-o-transition: .3s ease-out;
-				transition: .3s ease-out;
-			}
-
-			.progress.loading {
-				-webkit-animation: progress 3s ease;
-				-moz-animation: progress 3s ease;
-				-ms-animation: progress 3s ease;
-				-o-animation: progress 3s ease;
-				animation: progress 3s ease;
-			}
-
-			.progress.complete { width: 100%; }
-
-			.overlay {
-				display: table;
-				position: fixed;
-				top: 0;
-				left: 0;
-				height: 100%;
-				width: 100%;
-				background-color: #fff;
-				color: #555;
-				z-index: 400;
-			}
-
-			.overlay h1 {
-				display: table-cell;
-				vertical-align: middle;
-				text-align: center;
-			}
-		</style>
 	</head>
 
 	<body>
@@ -156,9 +79,9 @@
 				</div>
 				<div role="tabpanel" class="pane pane-threads">
 					<!-- <div data-mode="search" class="thread-search-query"></div> -->
-					<div data-mode="normal" class="thread-all-coversations">
+					<div data-mode="normal" class="thread-all-conversations">
 						<div class="thread-item current" href="" id="thread-">
-							<h4 class="thread-title">All coversations</h4>
+							<h4 class="thread-title">All conversations</h4>
 							<p class="thread-snippet"></p>
 						</div>
 					</div>
@@ -266,7 +189,10 @@
 			</div>
 		</section>
 		<section data-mode="normal search" class="chat-input">
-			<div role="textbox" class="chat-entry" data-placeholder="" contenteditable></div>
+			<div class="chat-entry-wrap">
+				<div class="chat-placeholder"></div>
+				<div role="textbox" class="chat-entry" contenteditable></div>
+			</div>
 			<svg version="1.1" class="chat-send" xmlns="http://www.w3.org/2000/svg">
 				<g transform="matrix(1.4744843,0,0,1.4744843,-3.6938117,-15.489686)">
 					<path d="m 5.1264798,20 c 0,-2 7.2e-4,-2 2,-2 l 6.0002502,0 -3.00025,-4 c 0,-3 1,-3 5,1 4.99276,5.99132 5,4 0,10 -4,4 -5,4 -5,1 l 3.00025,-4 -6.0002502,0 c -2.06669,0 -2,0 -2,-2 z"/>
@@ -307,7 +233,7 @@
 			<ul class="user-menu">
 				<li><a class="userpref">Account settings</a></li>
 				<li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li>
-				<li><a class="logout">Logout</a></li>
+				<li><a class="logout">Sign out</a></li>
 			</ul>
 		</script>
 
@@ -320,7 +246,7 @@
 
 		<script type="text/template" id="loggedout-dialog">
 			<div class="loggedout-dialog">
-				<h1>You've been logged out!</h1>
+				<h1>You've been signed out!</h1>
 				<a class="button reload-page modal-remove">Go back as guest</a>
 			</div>
 		</script>
@@ -345,7 +271,7 @@
 		</script>
 
 		<!-- scripts -->
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script>window.jQuery || document.write('<script src="/s/lib/jquery.min.js"><\/script>');</script>
 
 		<!--[if IE]>
@@ -358,6 +284,10 @@
 		<script src="/libsb.bundle.js"></script>
 		<script>$(function() { libsb.connect(); });</script>
 		<script src="https://login.persona.org/include.js"></script>
+		<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+			ga('create', 'UA-45130412-1', 'scrollback.io');
+			ga('send', 'pageview');
+		</script>
 		<script>document.addEventListener && document.addEventListener("touchstart", function() {}, true);</script>
 	</body>
 </html>

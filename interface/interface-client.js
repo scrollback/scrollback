@@ -1,4 +1,5 @@
-/* global window */
+/* global window, generate */
+
 var underscore = require('underscore');
 var core;
 var libsb = {
@@ -57,7 +58,7 @@ module.exports = function(c){
 			libsb.isInited = true;
 			core.emit("inited");
 		}
-	}, 10)
+	}, 10);
 };
 
 function onConnect(){
@@ -126,6 +127,11 @@ function part(roomId, callback){
 
 function say(roomId, text, thread, callback){
 	var obj =  {to: roomId, text: text, from: libsb.user.id};
+	if(/^\/me /.test(text)) {
+		obj.text = text.replace(/^\/me /,"");
+		obj.labels = {action: 1};
+	}
+
 	if(thread) obj.threads = [{id: thread}];
 	core.emit('text-up', obj, callback);
 }
@@ -141,8 +147,8 @@ function expel(roomId, ref, callback){
 function recvInit(init, next){
 
 	libsb.session = init.session;
-        libsb.memberOf = init.memberOf;
-        libsb.occupantOf = init.occupantOf;
+    libsb.memberOf = init.memberOf;
+    libsb.occupantOf = init.occupantOf;
 
 	if(init.auth && !init.user.id) {
 		core.emit("navigate", {});
@@ -152,7 +158,7 @@ function recvInit(init, next){
 	if(underscore.isEqual(libsb.user, init.user)){
 		core.emit('user-update');
 	}
-	
+
 	next();
 }
 
