@@ -1117,6 +1117,17 @@ body {
     box-shadow: 0 -3px 2px -1px rgba(0,0,0,.05);
 }
 
+.chat-entry-wrap { position: relative; }
+
+.chat-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: .9em 1em;
+    color: fade-out($dark-color, .5);
+    pointer-events: none;
+}
+
 .chat-entry {
 	@extend .entry;
 
@@ -1138,11 +1149,6 @@ body {
 
 			.conv-#{$j} & { border-color: nth($palette, $i); }
 		}
-    }
-
-    &:empty:before{
-        content: "Reply as " attr(data-placeholder);
-        color: fade-out($dark-color, .5);
     }
 }
 
