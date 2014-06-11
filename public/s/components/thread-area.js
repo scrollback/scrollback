@@ -229,9 +229,8 @@ var threadArea = {};
 			if(!$el.size()) return;
 			libsb.emit('navigate', {source: 'thread-area', time: null, thread: $el.attr("id").split('-')[1] });
 		});
-		$(".thread-all-coversations").click(function(event){
+		$(".thread-all-conversations").click(function(event){
 			event.preventDefault();
-			console.log("+++ clicked +++");
 			libsb.emit('navigate', {source: 'thread-area', time: null, thread: ""});
 		});;
 	});
