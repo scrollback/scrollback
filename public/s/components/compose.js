@@ -10,18 +10,18 @@ $(function() {
 	$entry.focus();
 
 	function sendMsg(){
-		var text = $entry.text();
-		text = text.trim();
+		var text = $entry.text().trim();
 		$entry.text("");
-		if(!text) return;
+
+		if (!text) return;
 		if (window.currentState && window.currentState.room) {
 			libsb.say(window.currentState.room, text, window.currentState.thread);
-		}else {
+		} else {
 			// show the error that not part of any room yet.
 		}
 
 		setTimeout(function() {
-			chatArea.setBottom($input.outerHeight());
+			chatArea.setPosition($input.outerHeight());
 		}, 0);
 
 		var classes = $("body").attr("class").replace(/conv-\d+/g, "");
@@ -47,7 +47,11 @@ $(function() {
 		$entry.focus();
 	});
 
-	$entry.on("DOMSubtreeModified keyup input paste change", setPlaceHolder);
+	$entry.on("DOMSubtreeModified keyup input paste change", function() {
+		chatArea.setPosition($input.outerHeight());
+
+		setPlaceHolder();
+	});
 
 	$entry.on("keypress", function(e) {
 		if(e.which === 13 && !e.shiftKey) {
