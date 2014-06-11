@@ -4,10 +4,14 @@
 $(function() {
 	var $entry = $(".chat-entry");
 
-	$.fn.selectConv = function() {
+	$.fn.resetConv = function() {
 		var classes = $("body").attr("class").replace(/conv-\d+/g, "");
 
 		$("body").attr("class", classes);
+	};
+
+	$.fn.selectConv = function() {
+		$.fn.resetConv();
 
 		this.attr("class").split(" ").forEach(function(s) {
 			var conv = s.match(/^conv-\d+$/);
@@ -53,7 +57,7 @@ $(function() {
 
 	$(document).on("keydown", function(e){
 		if (e.keyCode === 38 || e.keyCode === 40) {
-				if ($(".chat-item.current").length) {
+			if ($(".chat-item.current").length) {
 				var $chat = $(".chat-item.current"),
 					$el;
 
@@ -66,6 +70,7 @@ $(function() {
 					if ($chat.next().length) {
 						$el = $chat.next();
 					} else {
+						$.fn.resetConv();
 						$chat.removeClass("current");
 					}
 				}
@@ -94,9 +99,5 @@ $(function() {
 
 	$(document).on("click", ".chat-more", function() {
 		lace.popover.show({ body: $("#chat-menu").html(), origin: $(this) });
-	});
-
-	$entry.on("click", function() {
-		$(".chat-item").removeClass("current");
 	});
 });
