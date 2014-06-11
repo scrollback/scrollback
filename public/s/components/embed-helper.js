@@ -1,19 +1,34 @@
 /* jshint browser: true */
-/* global $ */
+/* global $, libsb */
 
 $(function() {
 	if (window.parent.postMessage) {
-		// Tell the parent that we are ready
-		window.parent.postMessage("ready", "*");
-
-		// Handle minimize button click
-		$(".minimize-button").on("click", function() {
-			window.parent.postMessage("minimize", "*");
-		});
-
 		// Handle fullview button click
 		$(".fullview-button").on("click", function() {
-			window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, "").replace(/[&,?]theme=[^&,?]+/g, ""), '_blank');
+			window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, "").replace(/[&,?]theme=[^&,?]+/g, "").replace(/[&,?]minimize=[^&,?]+/g, ""), "_blank");
+		});
+
+		// Handle minimize button click
+		$(".minimize-button, .title-bar").on("click", function(e) {
+			if (e.target === e.currentTarget) {
+				if (window.currentState.minimize) {
+					libsb.emit("navigate", { minimize: false });
+				} else {
+					libsb.emit("navigate", { minimize: true });
+				}
+			}
+		});
+
+		libsb.on("navigate", function(state, next) {
+			if (state.old && state.minimize !== state.old.minimize) {
+				if (state.minimize) {
+					window.parent.postMessage("minimize", "*");
+				} else {
+					window.parent.postMessage("maximize", "*");
+				}
+			}
+
+			next();
 		});
 	}
 });

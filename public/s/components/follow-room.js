@@ -7,8 +7,7 @@ $(function() {
     function getFollow(x,n) {
         libsb.emit("getUsers", { memberOf: window.currentState.room, ref: libsb.user.id }, function(err, data){
             var user = data.results[0];
-
-            if (user && (user.role === "owner" || user.role === "follower")) {
+            if (user && (user.role === "follower" || user.role === "member")) {
                 $("body").addClass("role-follower");
                 $button.attr("data-tooltip", "Unfollow " + window.currentState.room);
             } else {
@@ -16,6 +15,7 @@ $(function() {
                 $button.attr("data-tooltip", "Follow " + window.currentState.room);
             }
         });
+
         n && n();
     }
 
@@ -32,7 +32,7 @@ $(function() {
     });
 
     libsb.on("navigate", function(state, next){
-        if(state.mode === "normal"){
+        if(state.mode === "normal" && state.room !== state.old.room){
             if (libsb.isInited) {
                 getFollow();
             } else {
@@ -41,7 +41,7 @@ $(function() {
         }
 
         next();
-    });
+    }, 600);
 
     libsb.on("init-dn", function(state, next){
         if (libsb.isInited) {

@@ -39,9 +39,19 @@ window.format = {
 	},
 
 	textToHtml: function(str) {
-		if(str)	return str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'); // prevent script injection
-
-		// TODO: linkification, emoticons, markdown?
+		// Replace &, <, >, ", ', `, , !, @, $, %, (, ), =, +, {, }, [, and ]
+		if (str) {
+			return str.replace("&", "&amp;")
+					  .replace("<", "&lt;").replace(">", "&gt;")
+					  .replace('"', "&quot;").replace("'", "&#39").replace("`", "&#96")
+					  .replace(" ", "&#32;").replace(" ", "&nbsp;")
+					  .replace("!", "&#33;").replace("@", "&#64;")
+					  .replace("$", "&#36;").replace("%", "&#37;")
+					  .replace("(", "&#40;").replace(")", "&#41;")
+					  .replace("=", "&#61;").replace("+", "&#43;")
+					  .replace("{", "&#123;").replace("}", "&#125;")
+					  .replace("[", "&#91;").replace("]", "&#93;");
+		}
 	},
 
 	linkify: function(str) {

@@ -68,11 +68,6 @@ input[type="checkbox"], input[type="radio"] {
     height: 1.5em;
 }
 
-[contenteditable]:empty:before{
-    content: attr(data-placeholder);
-    color: fade-out($dark-color, .5);
-}
-
 pre {
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -120,7 +115,7 @@ code {
 }
 
 .grow {
-    @include transform(scale(1.2, 1.2));;
+    @include transform(scale(1.2, 1.2));
     @include transition(.15s);
 }
 
