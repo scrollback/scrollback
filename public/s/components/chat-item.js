@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb, format, lace */
 
 $(function() {
 	var $entry = $(".chat-entry");
@@ -28,13 +28,13 @@ $(function() {
 		this.addClass("current");
 
 		var nick = this.find(".chat-nick").text(),
-			msg = $entry.text().replace(/@\S+[\s+{1}]?$/, "");
+			msg = format.htmlToText($entry.html()).trim().replace(/@\S+[\s+{1}]?$/, "");
 
 		if (msg.indexOf(nick) < 0 && libsb.user.id !== nick) {
-			msg = msg + " @" + nick + "&nbsp;";
+			msg = msg + " @" + nick + " ";
 		}
 
-		$entry.html(msg).focus();
+		$entry.html(format.textToHtml(msg)).focus();
 
 		if ($.fn.setCursorEnd) {
 			$entry.setCursorEnd();
