@@ -18,8 +18,5 @@ $bar-height: 49px;
 	border: 1px solid rgba(0,0,0,.2);
 	border-bottom: none;
 
-	&.minimized {
-		height: $bar-height * 2;
-		bottom: $bar-height * -1;
-	}
+	&.minimized { height: $bar-height }
 }

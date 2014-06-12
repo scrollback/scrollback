@@ -60,7 +60,7 @@ $(function() {
 		}
 	});
 
-	$entry.on("DOMSubtreeModified keyup input paste change", function() {
+	$entry.on("DOMSubtreeModified input paste", function() {
 		chatArea.setPosition($input.outerHeight());
 
 		setPlaceHolder();

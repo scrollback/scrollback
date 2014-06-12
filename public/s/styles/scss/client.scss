@@ -113,7 +113,7 @@ $embeds: toast, full;
             &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active { color: $text; }
         }
 
-        .title-bar {
+        .title-bar, .minimize-bar {
             background-color: $base;
             color: $color;
 
@@ -154,11 +154,9 @@ $embeds: toast, full;
             &:focus, &:hover, &:active { fill: $focus; }
         }
 
-        .sb-icon {
-            .sb-top { fill: $accent-color; }
+        .sb-icon { fill: $light-color; }
 
-            .sb-bottom { fill: $light-color; }
-        }
+        .sb-logotype { fill: $light-color; }
 
         &.embed {
             .cta-area {
@@ -730,11 +728,7 @@ body {
     }
 }
 
-.sb-icon {
-    .sb-top { fill: $accent-color; }
-
-    .sb-bottom { fill: $dark-color; }
-}
+.sb-icon { fill: $dark-color; }
 
 .title-bar {
     @include flexbox;
@@ -880,6 +874,60 @@ body {
         display: block;
         float: left;
         margin: .25em;
+    }
+}
+
+.minimize-bar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    height: $bar-height;
+    width: 100%;
+    background-color: darken($light-color, 5%);
+    color: $dark-color;
+
+    .minimized & {
+        @include fadein;
+
+        display: table;
+        table-layout: fixed;
+    }
+}
+
+.minimize-logo {
+    @include title-icon(minimize-bar-icon);
+
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: 3em;
+    height: 100%;
+}
+
+.minimize-logotype {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    height: 100%;
+
+    .has-messages & { display: none; }
+}
+
+.sb-logotype {
+    display: block;
+    fill: $dark-color;
+}
+
+.minimize-ticker {
+    display: none;
+
+    .has-messages & {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        padding: 1em;
     }
 }
 

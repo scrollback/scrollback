@@ -19,6 +19,14 @@ $(function() {
 			}
 		});
 
+		$(".minimize-bar").on("click", function() {
+			if (window.currentState.minimize) {
+				libsb.emit("navigate", { minimize: false });
+			} else {
+				libsb.emit("navigate", { minimize: true });
+			}
+		});
+
 		libsb.on("navigate", function(state, next) {
 			if (state.old && state.minimize !== state.old.minimize) {
 				if (state.minimize) {
