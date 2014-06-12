@@ -3,24 +3,65 @@
 
 $(function() {
 	var msgarr = [],
+		loopMsg,
 		checkMsg = function() {
-			var $bar = $(".minimize-bar");
+			clearInterval(loopMsg);
 
-			if (msgarr.length) {
-				$bar.removeClass("no-messages");
-		    } else {
-			    $bar.addClass("no-messages");
-		    }
+			if (window.currentState.minimize) {
+				var $bar = $(".minimize-bar"),
+					$ticker = $(".minimize-ticker"),
+					classes = $bar.attr("class").replace(/has-messages-\d+/g, "").trim();
+
+				$bar.attr("class", classes);
+
+				if (msgarr.length) {
+					var i = 0,
+						setMsg = function() {
+							$ticker.text(msgarr[i]);
+
+							i++;
+
+							if (i >= msgarr.length) {
+								i = 0;
+							}
+						};
+
+					setMsg();
+					loopMsg = setInterval(setMsg, 1500);
+
+					$bar.addClass("has-messages has-messages-" + msgarr.length);
+				} else {
+					$bar.removeClass("has-messages");
+				}
+			} else if (msgarr.length) {
+				msgarr = [];
+			}
 		};
 
 	libsb.on("text-dn", function(text, next) {
-		msgarr.push(text.text);
+		if (window.currentState.minimize) {
+			msgarr.push(text.from + ": " + text.text);
 
-		if (msgarr.length > 3) {
-			msgarr = msgarr.splice(Math.max(msgarr.length - 3, 1));
+			if (msgarr.length > 3) {
+				msgarr = msgarr.splice(Math.max(msgarr.length - 3, 1));
+			}
+
+			checkMsg();
 		}
 
-		checkMsg();
+		next();
+	});
+
+	libsb.on("navigate", function(state, next) {
+		var $title = $(".minimize-room-title");
+
+		if (state && (!state.old || state.room != state.old.room)) {
+			$title.text(state.room);
+		}
+
+		if (state.old && state.minimize !== state.old.minimize) {
+			checkMsg();
+		}
 
 		next();
 	});

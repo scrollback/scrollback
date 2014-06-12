@@ -11,20 +11,12 @@ $(function() {
 		// Handle minimize
 		$(".title-bar").on("click", function(e) {
 			if (e.target === e.currentTarget) {
-				if (window.currentState.minimize) {
-					libsb.emit("navigate", { minimize: false });
-				} else {
-					libsb.emit("navigate", { minimize: true });
-				}
+				libsb.emit("navigate", { minimize: true });
 			}
 		});
 
 		$(".minimize-bar").on("click", function() {
-			if (window.currentState.minimize) {
-				libsb.emit("navigate", { minimize: false });
-			} else {
-				libsb.emit("navigate", { minimize: true });
-			}
+			libsb.emit("navigate", { minimize: false });
 		});
 
 		libsb.on("navigate", function(state, next) {

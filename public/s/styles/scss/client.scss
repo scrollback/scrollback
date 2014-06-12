@@ -889,8 +889,6 @@ body {
     color: $dark-color;
 
     .minimized & {
-        @include fadein;
-
         display: table;
         table-layout: fixed;
     }
@@ -903,31 +901,29 @@ body {
     vertical-align: middle;
     text-align: center;
     width: 3em;
-    height: 100%;
 }
 
-.minimize-logotype {
+.minimize-room-title {
     display: table-cell;
     vertical-align: middle;
-    text-align: center;
-    height: 100%;
+    font-size: 1.2em;
+    font-weight: 700;
 
     .has-messages & { display: none; }
-}
-
-.sb-logotype {
-    display: block;
-    fill: $dark-color;
 }
 
 .minimize-ticker {
     display: none;
 
     .has-messages & {
+        @include fadein;
+
         display: table-cell;
         vertical-align: middle;
-        text-align: center;
-        padding: 1em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0 1em;
     }
 }
 

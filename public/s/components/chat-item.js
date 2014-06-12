@@ -5,7 +5,7 @@ $(function() {
 	var $entry = $(".chat-entry");
 
 	$.fn.resetConv = function() {
-		var classes = $("body").attr("class").replace(/conv-\d+/g, "");
+		var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
 
 		$("body").attr("class", classes);
 	};

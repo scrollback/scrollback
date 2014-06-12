@@ -41,6 +41,7 @@ require('./public/s/components/chat.js');
 require('./public/s/components/chat-item.js');
 require('./public/s/components/chat-area.js');
 require('./public/s/components/compose.js');
+require('./public/s/components/notify-ticker.js');
 require('./public/s/components/browser-notify.js');
 require('./public/s/components/panes.js');
 require('./public/s/components/thread.js');
