@@ -35,7 +35,7 @@ $bar-height: 3.5em;
 $settings: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
 $modes: normal, search, conf, pref, home, noroom;
 $roles: guest, user, follower, owner;
-$embeds: toast, comment;
+$embeds: toast, full;
 
 /* themes */
 @mixin theme($name, $base, $color, $meta, $border, $text, $icon, $focus) {
@@ -161,8 +161,8 @@ $embeds: toast, comment;
         }
 
         &.embed {
-            .user-detail {
-                .sign-in {
+            .cta-area {
+                .cta-action {
                     color: $accent-color;
                 }
             }
@@ -795,7 +795,7 @@ body {
 
     .role-follower & { fill: lighten($dark-color, 30%); }
 
-    .role-owner & { display: none; }
+    .role-owner &, .embed & { display: none; }
 
     &:focus, &:hover, &:active {
         fill: none;
@@ -826,26 +826,29 @@ body {
     &:focus, &:hover, &:active { fill: lighten($dark-color, 10%); }
 }
 
-%title-multiline {
+.cta-area {
     text-align: right;
     padding: 0 1em;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
+
+    .cta-action { text-transform: uppercase; }
 }
 
 .user-area {
     .role-user.embed & { display: none; }
 }
 
-.user-detail {
-    @extend %title-multiline;
-
-    .role-guest & { padding: .2em 1em; }
-
-    .sign-in { text-transform: uppercase; }
+.follow-room-action {
+    .role-follower.embed &, .role-owner.embed & { display: none; }
 }
 
+.full-view-action {
+    display: none;
+
+    .role-follower.embed &, .role-owner.embed & { display: block; }
+}
 
 .user-avatar {
     display: none;
@@ -864,6 +867,10 @@ body {
 
 .user-menu-button {
     @include title-icon(user-menu-icon);
+
+    background-color: rgba(0,0,0,0.15);
+
+    &:focus, &:hover, &:active { background-color: rgba(0,0,0,0.3); }
 }
 
 .action-buttons {

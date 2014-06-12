@@ -4,12 +4,12 @@
 $(function() {
 	if (window.parent.postMessage) {
 		// Handle fullview button click
-		$(".fullview-button").on("click", function() {
+		$(".full-view-action").on("click", function() {
 			window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, "").replace(/[&,?]theme=[^&,?]+/g, "").replace(/[&,?]minimize=[^&,?]+/g, ""), "_blank");
 		});
 
-		// Handle minimize button click
-		$(".minimize-button, .title-bar").on("click", function(e) {
+		// Handle minimize
+		$(".title-bar").on("click", function(e) {
 			if (e.target === e.currentTarget) {
 				if (window.currentState.minimize) {
 					libsb.emit("navigate", { minimize: false });

@@ -2,7 +2,8 @@
 /* global $, libsb */
 
 $(function() {
-    var $button = $(".follow-button");
+    var $button = $(".follow-button"),
+        $action = $(".follow-room-action");
 
     function getFollow(x,n) {
         libsb.emit("getUsers", { memberOf: window.currentState.room, ref: libsb.user.id }, function(err, data){
@@ -19,7 +20,7 @@ $(function() {
         n && n();
     }
 
-    $button.on("click", function() {
+    $action.on("click", function() {
         if ($("body").hasClass("role-follower")) {
             libsb.part(window.currentState.room);
         } else {

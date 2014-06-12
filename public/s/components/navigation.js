@@ -7,7 +7,7 @@
  * Properties of naviagtion state object
  *
  * room: {String} roomId
- * embed: {String} (toast|comment)
+ * embed: {String} (toast|full)
  * minimize: {Boolean} (true|false)
  * theme: {String} (dark|light)
  * view: {String} (normal|rooms|meta|signup)
@@ -76,7 +76,7 @@ libsb.on("navigate", function(state, next) {
 	}
 
 	if (state.old && state.minimize !== state.old.minimize) {
-		if (state.minimize) {
+		if (state.minimize && state.embed === "toast") {
 			$("body").addClass("minimized");
 		} else {
 			$("body").removeClass("minimized");
@@ -154,7 +154,7 @@ libsb.on("navigate", function(state, next) {
 			params.push("embed=" + state.embed);
 		}
 
-		if (state.minimize) {
+		if (state.embed === "toast" && state.minimize) {
 			params.push("minimize=true");
 		}
 

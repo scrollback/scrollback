@@ -105,7 +105,7 @@
 			<div data-mode="normal search conf pref" class="title-bar">
 				<div class="left-area">
 					<a class="meta-button">
-						<span data-embed="toast comment" class="meta-button-logo">
+						<span data-embed="toast full" class="meta-button-logo">
 							<svg version="1.1" class="meta-icon sb-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
 								<defs>
 									<path d="m 14.000043,1048.3622 -10.000046,-10 5.664746,0 4.335208,4.3664 4.335305,-4.3664 5.664766,0 z" id="0"/>
@@ -123,7 +123,7 @@
 						</span>
 					</a>
 					<h2 data-mode="normal search" class="room-title" id="room-title"></h2>
-					<a data-mode="normal" data-role="user" class="follow-button" role="button">
+					<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
 						<svg version="1.1" class="follow-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
 							<path d="M 14.062341,21.199584 C 4.9530909,26.218092 6.721947,25.869211 8.155064,17.012079 0.55043921,9.9299118 1.4300202,11.498473 10.32621,10.119655 c 4.409333,-9.39552471 3.184087,-8.077228 7.249118,-0.07225 10.329742,1.275413 8.69292,0.521605 2.309055,6.847772 1.974798,10.183776 2.188435,8.399596 -5.822042,4.304403 z"/>
 						</svg>
@@ -140,17 +140,24 @@
 							<path d="m 19.9375,17.688688 -2.4375,2.4375 3.5625,3.59375 c 0.973373,0.973416 0.964129,0.973416 1.9375,0 l 0.46875,-0.53125 c 0.973372,-0.973416 0.973372,-0.964085 0,-1.9375 l -3.53125,-3.5625 z"/>
 						</svg>
 					</a>
-					<div data-embed="toast comment" class="embed-area">
-						<a data-embed="toast" class="embed-button minimize-button" role="button">
-							<svg version="1.1" class="embed-icon minimize-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-								<path d="m 5,13 c -1,0 -1,0 -1,1 0,1 0,1 1,1 l 18,0 c 1,0 1,0 1,-1 0,-1 0,-1 -1,-1 -4.197917,0 -13.802083,0 -18,0 z"/>
-							</svg>
-						</a>
-						<a class="embed-button fullview-button" role="button">
-							<svg version="1.1" class="embed-icon fullview-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-								<path d="m 21.933522,6.0947441 c -0.07339,-0.07208 -0.238086,-0.08839 -0.530331,-0.08839 l -7.999145,5e-7 c -0.935887,-0.02395 -0.921784,-0.03249 -0.99437,0.9943699 l 3.601825,3.6018235 -8.48528,8.485281 c -0.703126,0.703126 -0.707107,0.707107 0,1.414213 0.707105,0.707109 0.707128,0.707086 1.414214,0 l 8.485281,-8.485279 3.579728,3.579728 c 1.000002,0 0.994376,0.01113 0.994369,-0.994369 l 0,-7.9991442 c 0,-0.2974685 0.0071,-0.436154 -0.06629,-0.5082329 z"/>
-							</svg>
-						</a>
+					<div class="user-area">
+						<div class="user-detail cta-area">
+							<div id="sb-user"></div>
+							<div data-role="guest" class="sign-in cta-action">Sign in</div>
+						</div>
+						<div class="user-avatar">
+							<img alt="" id="sb-avatar" >
+						</div>
+					</div>
+					<div data-embed="toast full" class="embed-area">
+						<div data-role="user" class="follow-room-action cta-area">
+							<div>Stay connected</div>
+							<div class="cta-action">Follow room</div>
+						</div>
+						<div class="full-view-action cta-area">
+							<div>Browse archives</div>
+							<div class="cta-action">Visit room</div>
+						</div>
 						<a data-role="user" class="embed-button user-menu-button" role="button">
 							<svg version="1.1" class="embed-icon user-menu-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
 								<g transform="translate(-10,-10)">
@@ -160,15 +167,6 @@
 								</g>
 							</svg>
 						</a>
-					</div>
-					<div class="user-area">
-						<div class="user-detail">
-							<div id="sb-user"></div>
-							<div data-role="guest" class="sign-in">Sign in</div>
-						</div>
-						<div class="user-avatar">
-							<img alt="" id="sb-avatar" >
-						</div>
 					</div>
 				</div>
 			</div>
@@ -213,6 +211,8 @@
 					<a data-role="guest" class="button login-and-create-room-button"  id="login-and-create-room-button">Sign in</a>
 				</p>
 			</div>
+		</section>
+		<section data-embed="toast" class="minimize-bar">
 		</section>
 		<section class="overlay">
 			<h1>Warming up...</h1>
