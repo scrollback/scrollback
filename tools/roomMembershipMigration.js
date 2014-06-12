@@ -105,7 +105,7 @@ function migrateMembers(cb){
 		if(row.partedOn) return console.log("parted user");;
 		if(owners[row.room] === row.user) return console.log("owner spotted.");
 		types.rooms.link(row.room, 'hasMember', row.user, {
-			role: "member",
+			role: "follower",
 			time: row.joinedOn
 		});
 	});

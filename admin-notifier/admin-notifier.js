@@ -2,14 +2,14 @@ var log = require("../lib/logger.js");
 var config = require('../config.js');
 var nodemailer = require('nodemailer');
 var redisProxy = require('../lib/redisProxy.js');
-var origins = {};
 var url = require("url");
 
-var emailConfig = config.email, digestJade;
+var emailConfig = config.email;
 var core;
 
 
-module.exports = function(core) {
+module.exports = function(c) {
+    core = c;
 	if (!emailConfig) {
 		return;
 	}
@@ -49,7 +49,7 @@ module.exports = function(core) {
 			originURL = url.parse(message.origin.location);
 			message.to.forEach(function(room) {
                 redisProxy.get("DEPLOYMENT:"+room+":"+originURL.host, function(err, data) {
-                    if(data == null || typeof data.length=="undefined") {
+                    if(data === null || typeof data.length=="undefined") {
                         log("sending email");
                         send(config.originnotify.from, config.originnotify.to, "New Deployment:"+originURL.host, "room:"+message.to+" deployed at "+message.origin.location);
                     }

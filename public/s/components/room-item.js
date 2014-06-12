@@ -2,7 +2,7 @@
 /* global $, libsb */
 
 var roomEl = {};
-
+var roomName = "";
 var $template = $(".room-item").eq(0);
 
 roomEl.render = function (el, room, index) {
@@ -11,7 +11,7 @@ roomEl.render = function (el, room, index) {
 	el.find(".unread").addClass("hidden");
 	el.attr('id', 'room-item-' + room);
 	el.data('index', index);
-	if(currentState.room == room) {
+	if(roomName == room) {
 		$(".room-item.current").removeClass("current");
 		el.addClass("current");
 	}
@@ -21,9 +21,13 @@ window.roomEl = roomEl;
 
 
 libsb.on('navigate', function(state, next) {
-	if(state.room && state.old && state.room != state.old.room) {
+    if(state.roomName == "pending" && state.room ===null) return next();
+    
+	if(state.roomName && state.room!== null) {
+        roomName = state.roomName;
 		$(".room-item.current").removeClass("current");
-		$("#room-item-" + state.room).addClass("current");
+		$("#room-item-" + state.roomName).addClass("current");
 	}
-	next();
+	
+    next();
 });

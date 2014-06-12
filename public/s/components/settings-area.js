@@ -10,8 +10,8 @@ $(".configure-button").on("click", function() {
 
 $(".conf-save").on("click", function(){
     if(currentState.mode == 'conf'){
-        libsb.emit('config-save', {id: window.currentState.room, description: '', identities: [], params: {}}, function(err, room){
-            var roomObj = {to: currentState.room, room: room};
+        libsb.emit('config-save', {id: window.currentState.roomName, description: '', identities: [], params: {}}, function(err, room){
+            var roomObj = {to: currentState.roomName, room: room};
             libsb.emit('room-up', roomObj, function(){
                     currentConfig = null;
                     $('.conf-area').empty();
@@ -31,7 +31,7 @@ $(".conf-cancel").on("click", function() {
 
 function getRooms(){
         var sortable = []; // for sorting the config options based on priority
-        libsb.getRooms({ref: currentState.room}, function(err, data){
+        libsb.getRooms({ref: currentState.roomName}, function(err, data){
            var room = data.results[0];
            var roomObj = {room: room};
             libsb.emit('config-show', roomObj, function(err, tabs) {
@@ -62,7 +62,7 @@ function getRooms(){
 }
 function checkOwnerShip(){
     libsb.memberOf.forEach(function(room){
-          if(room.id == currentState.room && room.role == "owner") isOwner = true;
+          if(room.id == currentState.roomName && room.role == "owner") isOwner = true;
     });
     if(isOwner === false){
           libsb.emit('navigate', {mode: 'normal'});

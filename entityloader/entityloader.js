@@ -91,7 +91,7 @@ function userHandler(action, callback) {
 			return callback(new Error("USER_NOT_INITED"));
 		}else {
 			action.from = data.results[0].id;
-			core.emit("getUsers", {ref: action.user.id, session: internalSession}, function(err, data){
+			core.emit("getUsers", {ref: action.from, session: internalSession}, function(err, data){
 				if(err || !data || !data.results || !data.results.length) {
 					action.old = {};
 				}else {
@@ -125,8 +125,7 @@ function initHandler(action, callback) {
 				action.user.isSuggested = true;
 				return done();
 			});
-			}
-		else if(action.ref && /^guest-/.test(data.results[0].id)) {
+		}else if(action.ref && /^guest-/.test(data.results[0].id)) {
 			core.emit("getUsers",{id: uid(), ref: action.ref, session: action.session}, function(err, data) {
 				if(err || !data || !data.resutls || !data.results.length) {
 					return callback(new Error("NICK_TAKEN"));

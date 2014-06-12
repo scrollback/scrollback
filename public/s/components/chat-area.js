@@ -6,31 +6,28 @@ var chatArea = {};
 
 $(function() {
 	var $logs = $(".chat-area"),
-		room = window.location.pathname.split("/")[1], /* replace with room from URL */
+		roomName = "",
+        room = null,
 		thread = '',
-		time = null; /* replace this with the time from the URL, if available. */
-	// Set up infinite scroll here.
-	$logs.infinite({
+		time = null;
+    window.log = $logs;
+    $logs.infinite({
 		scrollSpace: 2000,
 		fillSpace: 500,
 		itemHeight: 50,
 		startIndex: time,
 		getItems: function (index, before, after, recycle, callback) {
-			var query = { to: room, before: before, after: after };
+			var query = { to: roomName, before: before, after: after };
+            if(!roomName) return callback([]);
 			index = index || time;
 			query.time = index;
 			if(thread) query.thread = thread;
-			if(!index && !before) return callback([false]);
-			if(libsb.isInited) {
-				loadTexts();
-			}else {
-				libsb.on("inited", function(p, n){
-					loadTexts(true);
-					n();
-				});
-			}
+            
+            if(roomName == "pending" && room ===null) return callback();
+			
+            if(!index && !before) return callback([false]);
+            
 			function loadTexts() {
-				console.log("load texts.");
 				libsb.getTexts(query, function(err, t) {
 					var texts = t.results;
 					if(err) throw err; // TODO: handle the error properly.
@@ -56,7 +53,8 @@ $(function() {
 					}));
 				});
 			}
-
+            
+            loadTexts();
 		}
 	});
 
@@ -107,7 +105,7 @@ $(function() {
 		}
 
 		if(text.resource == libsb.resource) return next();
-		if(text.to != room) return next();
+		if(text.to != roomName) return next();
 
 		if(text.threads && text.threads.length && thread) {
 			for(i=0, l=text.threads.length;i<l;i++) {
@@ -124,31 +122,36 @@ $(function() {
 
 		if($logs.data("lower-limit")) $logs.addBelow(chatEl.render(null, text));
 		next();
-	});
+	}, 100);
 
 	libsb.on('text-up', function(text, next) {
 		if($logs.data("lower-limit")) $logs.addBelow(chatEl.render(null, text));
 		next();
-	}, 90);
+	}, 100);
 
 	libsb.on('navigate', function(state, next) {
 		var reset = false;
 		if(state.source == 'text-area') return next();
 		if(state.source == "init") {
-			room = state.room || currentState.room;
+			roomName = state.roomName || currentState.roomName;
 			thread = state.thread || currentState.thread;
 			time = state.time || time;
 			reset = true;
 		}else {
-			if(state && (!state.old || state.room != state.old.room)) {
-				room = state.room;
+            if(state.roomName == "pending" && state.room === null) {
+                reset = true;
+                roomName = currentState.roomName;
+            }else if(state.roomName && state.roomName !== state.old.roomName) {
+				roomName = state.roomName;
 				reset = true;
-			}
-			if(typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
+            }
+			
+            if(typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
 				thread = state.thread;
 				reset = true;
 			}
-			if(state.old && state.time != state.old.time) {
+			
+            if(state.old && state.time != state.old.time) {
 				time = state.time;
 				reset = true;
 			}
@@ -170,7 +173,7 @@ $(function() {
 	};
 
 	chatArea.setRoom = function(r) {
-		room = r;
+		roomName = r;
 		$logs.find(".chat").remove();
 		$logs.scroll();
 	};
@@ -216,14 +219,12 @@ $(function() {
 				break;
 			}
 		}
-		if(libsb.isInited) {
-			libsb.emit('navigate', { time: time, source: 'text-area' });
-		}else{
-			libsb.on("inited", function(q, n){
-				libsb.emit('navigate', { time: time, source: 'text-area' });
-				n();
-			});
-		}
+
+        if($logs.data("lower-limit")) {        
+            libsb.emit('navigate', { time: 0, source: 'text-area' });
+        }else {
+            libsb.emit('navigate', { time: time, source: 'text-area' });
+        }
 
 		$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
 

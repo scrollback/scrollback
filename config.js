@@ -113,7 +113,7 @@ var defaults = {
 	"admin-notifier", "custom-emitter","entityloader", "twitter"],
 	facebook: {
 	}
-}
+};
 
 
 merge(defaults, changes);

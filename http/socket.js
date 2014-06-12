@@ -38,7 +38,7 @@ var sock = sockjs.createServer();
 sock.on('connection', function (socket) {
 	var conn = { socket: socket };
 	socket.on('data', function(d) {
-		var i, l, e;
+		var e;
 		try { d = JSON.parse(d); log ("Socket received ", d); }
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 
@@ -49,7 +49,7 @@ sock.on('connection', function (socket) {
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
 			if (!sConns[d.session]) {
-				sConns[d.session] = []
+				sConns[d.session] = [];
 				sConns[d.session].push(conn);
 			} else {
 				if(sConns[d.session].indexOf(conn) == -1) {
@@ -88,7 +88,7 @@ sock.on('connection', function (socket) {
 			}
 			if(data.type == 'back') {
 				/* this is need because we dont have the connection object
-				 of the user in the rconn until storeBack is called*/
+				of the user in the rconn until storeBack is called*/
 				conn.send(data);
 				storeBack(conn, data);
 				return;
@@ -125,7 +125,7 @@ sock.on('connection', function (socket) {
 			}
 
 			/* no need to send it back to the connection object when no error,
-			 emit function will take care of that.
+                emit function will take care of that.
 				conn.send(data);
 			 */
 		});
@@ -187,7 +187,7 @@ function storeAway(conn, away) {
 
 exports.initServer = function (server) {
 	sock.installHandlers(server, {prefix: '/socket'});
-}
+};
 
 exports.initCore = function(c) {
     core = c;
@@ -206,7 +206,6 @@ exports.initCore = function(c) {
 };
 
 function emit(action, callback) {
-	var conns;
 	log("Sending out: ", action);
 
 	if(action.type == 'init') {		
@@ -224,11 +223,10 @@ function emit(action, callback) {
 	
 	function dispatch(conn) {conn.send(action); }
 	if(callback) callback();
-};
+}
 
 function handleClose(conn) {
 	if(!conn.session) return;
-	var connections;
 	core.emit('getUsers', {ref: "me", session: conn.session}, function(err, sess) {
 
 		if(err || !sess || !sess.results) {
@@ -255,7 +253,7 @@ function handleClose(conn) {
 					if(!verifyAway(conn, awayAction)) return;
 					core.emit('away',awayAction , function(err, action) {
 						if(err) return;
-						storeAway(conn, action)
+						storeAway(conn, action);
 					});
 				});
 			});
@@ -280,7 +278,7 @@ function verifyAway(conn, away) {
 	if(urConns[away.from+":"+away.to]) {
 		index = urConns[away.from+":"+away.to].indexOf(conn);
 		urConns[away.from+":"+away.to].splice(index,1);
-		return (urConns[away.from+":"+away.to].length==0);
+		return (urConns[away.from+":"+away.to].length===0);
 	}else{
 		return true;
 	}

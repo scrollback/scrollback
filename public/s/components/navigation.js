@@ -52,7 +52,7 @@ libsb.on("navigate", function(state, next) {
 
 // On navigation, set the body classes.
 libsb.on("navigate", function(state, next) {
-	if (!state.time && !state.room && !state.thread) {
+	if (!state.time && !state.roomName && !state.thread) {
 		if(!state.time && state.old.time) {
 			state.time = state.old.time;
 		}
@@ -105,21 +105,20 @@ libsb.on("navigate", function(state, next) {
 	if (state.source == "history"){
 		return;
 	}
-
 	function buildurl() {
 		var path, params = [];
 
 		switch(state.mode) {
 			case 'conf':
-				path = '/' + (state.room ? state.room + '/edit': 'me');
-				document.title = state.room+" - settings";
+				path = '/' + (state.roomName ? state.roomName + '/edit': 'me');
+				document.title = state.roomName+" - settings";
 				break;
 			case 'pref':
 				path = '/me/edit';
 				document.title = "Account settings";
 				break;
 			case 'search':
-				path = state.room ? '/' + state.room: '';
+				path = state.roomName ? '/' + state.roomName: '';
 				document.title = "Showing results: "+state.query;
 				params.push('q=' + encodeURIComponent(state.query));
 				break;
@@ -127,10 +126,10 @@ libsb.on("navigate", function(state, next) {
 				path = "/me";
 				break;
 			default:
-				path = (state.room ? '/' + state.room + (
+				path = (state.roomName ? '/' + state.roomName + (
 						state.thread ? '/' + state.thread:"" /*+ '/' + format.sanitize(state.thread): ''*/
 					): '');
-				document.title = state.room? state.room+" on scrollback": "Scrollback.io";
+				document.title = state.roomName? state.roomName+" on scrollback": "Scrollback.io";
 		}
 
 		if (state.time) {

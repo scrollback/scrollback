@@ -22,7 +22,7 @@ var express = require("./express.js"),
 	socket = require("./socket.js"),
 	log = require("../lib/logger.js"),
 	plugins = require('./plugins.js'),
-	page=require("./page.js");
+	page=require("./page.js"),
 	app = express.init();
 
 var init = function(core) {

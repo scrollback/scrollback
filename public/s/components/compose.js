@@ -14,8 +14,8 @@ $(function() {
 		text = text.trim();
 		$entry.text("");
 		if(!text) return;
-		if (window.currentState && window.currentState.room) {
-			libsb.say(window.currentState.room, text, window.currentState.thread);
+		if (window.currentState && window.currentState.roomName) {
+			libsb.say(window.currentState.roomName, text, window.currentState.thread);
 		}else {
 			// show the error that not part of any room yet.
 		}

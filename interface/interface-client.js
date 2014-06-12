@@ -1,6 +1,8 @@
-/* global window */
+/* global window, generate*/
 var underscore = require('underscore');
 var core;
+var events = [ 'init-dn', 'back-dn', 'away-dn', 'join-dn', 'part-dn', 'admit-dn', 'expel-dn', 'text-up'];
+
 var libsb = {
 		user: "",
 		rooms: [],
@@ -26,7 +28,7 @@ var libsb = {
 		say: say,
 		admit: admit,
 		expel: expel,
-		getSession: getSession,
+    
 		logout: function(){
 			core.emit("logout");
 			core.emit("disconnect");
@@ -34,12 +36,11 @@ var libsb = {
 };
 module.exports = function(c){
 	core = c;
-
+	
 	libsb.on = core.on;
 	libsb.emit = core.emit;
-
 	window.libsb = libsb;
-
+    
     core.on('init-dn', recvInit);
 	core.on('back-dn', recvBack);
 	core.on('away-dn', recvAway);
@@ -57,7 +58,7 @@ module.exports = function(c){
 			libsb.isInited = true;
 			core.emit("inited");
 		}
-	}, 10)
+	}, 10);
 };
 
 function onConnect(){
@@ -146,7 +147,6 @@ function expel(roomId, ref, callback){
 function recvInit(init, next){
 
 	libsb.session = init.session;
-    console.log("* *** * LIbsb memberOf ", init.memberOf);
     libsb.memberOf = init.memberOf;
     libsb.occupantOf = init.occupantOf;
 
