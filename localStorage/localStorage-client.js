@@ -31,18 +31,16 @@ function getLSkey(){
 }
 
 libsb.on('navigate', function(state, next){
-    console.log("Navigated to ", state.room, " ----- Loading texts and labels ");
-    if(state.room){
+    if(state.room !== state.old.room){
         var lsKeyTexts = getLSkey(state.room, 'texts');
         var lsKeyLabels = getLSkey(state.room, 'labels');
-        if(!cache.hasOwnProperty(lsKeyTexts)){
-                if(localStorage.hasOwnProperty(lsKeyTexts)) cache[lsKeyTexts] = new ArrayCache(JSON.parse(localStorage[lsKeyTexts]));
-                else cache[lsKeyTexts] = new ArrayCache([]);
-        }
-        if(!cache.hasOwnProperty(lsKeyLabels)){
-                if(localStorage.hasOwnProperty(lsKeyLabels)) cache[lsKeyLabels] = new ArrayCache(JSON.parse(localStorage[lsKeyLabels]));
-                else cache[lsKeyLabels] = new ArrayCache([]);
-        }
+        
+        console.log("ON navigate ", localStorage[lsKeyTexts]);
+        if(localStorage.hasOwnProperty(lsKeyTexts)) cache[lsKeyTexts] = new ArrayCache(JSON.parse(localStorage[lsKeyTexts]));
+        else cache[lsKeyTexts] = new ArrayCache([]);
+       
+        //if(localStorage.hasOwnProperty(lsKeyLabels)) cache[lsKeyLabels] = new ArrayCache(JSON.parse(localStorage[lsKeyLabels]));
+        //else cache[lsKeyLabels] = new ArrayCache([]);
     }
     next();
 });
@@ -87,7 +85,7 @@ module.exports = function(c){
 	}
 	
 	core.on('getTexts', getTextsBefore, 900);
-	core.on('getTexts', getTextsAfter, 400);
+	core.on('getTexts', getTextsAfter, 9); // runs after socket
 	core.on('getThreads', getThreadsBefore, 900);
 	core.on('getThreads', getThreadsAfter, 400);
 	core.on('connected', createInit);
@@ -154,16 +152,17 @@ function storeText(text, next){
 }
 
 function getTextsBefore(query, next){
-        var room = query.to;
-        var lsKey = getLSkey(room, 'texts');
-        var results = cache[lsKey].get(query);
-        if(results.length) query.results = results;
+    var room = query.to;
+    var lsKey = getLSkey(room, 'texts');
+    var results = cache[lsKey].get(query);
+    if(results && results.length > 0) query.results = results;
 	next();
 }
 
 function getTextsAfter(query, next){
 	var results = query.results; 
-	if(!results.length){
+    console.log("IN get texts after, results : ", query.results);
+	if(results && results.length){
 		if(query.before) results.push({type: 'result-end', endtype: 'time', time: query.time});
 		if(query.after) results.unshift({type: 'result-start', endtype: 'time', time: query.time});
 
@@ -178,8 +177,9 @@ function getTextsAfter(query, next){
 				type: 'result-end', time: results[results.length - 1].time, endtype: 'limit'
 			});
 		}
-
-		cache.texts.put(results);
+        var lsKey = getLSkey(query.to, 'texts');
+		cache[lsKey].put(results);
+        save(query.to, 'texts');
 	}
 	next();
 }

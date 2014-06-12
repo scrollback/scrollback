@@ -41,7 +41,7 @@ module.exports = function(c){
 
 var client;
 var pendingQueries = {};
-// var pendingActions = {};
+var pendingActions = {};
 
 function safeSend(data){
         // safeSends sends the data over the socket only after the socket has
@@ -76,8 +76,10 @@ function disconnected(){
 }
 
 function sendQuery(query, next){
-	if(query.results) return next();
-
+	if(query.results){
+        console.log("RESUTS exist, no need to requiest to server ", query.type);
+        return next();
+    }
 	if(!query.id) query.id = generate.uid();
 
 	query.session = libsb.session;

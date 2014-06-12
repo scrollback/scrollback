@@ -1,4 +1,4 @@
-var config = require("../config.js");
+;var config = require("../config.js");
 var objectlevel = require("objectlevel");
 var log = require("../lib/logger.js");
 var url = require("url");

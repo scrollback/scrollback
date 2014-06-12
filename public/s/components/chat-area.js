@@ -30,7 +30,6 @@ $(function() {
 				});
 			}
 			function loadTexts() {
-				console.log("load texts.");
 				libsb.getTexts(query, function(err, t) {
 					var texts = t.results;
 					if(err) throw err; // TODO: handle the error properly.

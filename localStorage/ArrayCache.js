@@ -1,5 +1,5 @@
 "use strict";
-
+var __ = require('underscore');
 module.exports = function ArrayCache(initData) {
 	var messages = initData || [];
 
@@ -51,6 +51,10 @@ module.exports = function ArrayCache(initData) {
 	}
 	
 	function get(query) {
+        messages = __.uniq(messages, function(item, key, id){
+            return item.id;
+        });
+
 		var time = query.time, before = query.before, after = query.after,
 			res = [], pos, i, l = messages.length, c, m, start = null;
 	

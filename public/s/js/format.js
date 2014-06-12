@@ -48,12 +48,14 @@ window.format = {
 		var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
 		var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
 		var emailAddressPattern = /(([a-zA-Z0-9_\-\.]+)@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6}))+/gim;
+        if(str){
+            return str
+		    .replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
+		    .replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>')
+		    .replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
 
-		return str
-		.replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
-		.replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>')
-		.replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
-	},
+        }
+    },
 
 	sanitize: function(str) {
 		str = str.trim().replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");

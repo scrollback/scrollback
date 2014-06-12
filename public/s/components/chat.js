@@ -24,7 +24,7 @@ $(function() {
 
 		timeBefore = text.time;
 
-		if (text.text.length >= 400) {
+		if (text.text && text.text.length >= 400) {
 			el.addClass("long");
 		}
 
