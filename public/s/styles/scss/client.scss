@@ -11,6 +11,7 @@
 @import "oembed";
 @import "tooltip";
 @import "progress";
+@import "overlay";
 
 $screenx: "only screen and (min-width: 18em)";
 $screenxx: "only screen and (min-width: 27em)";
@@ -34,7 +35,7 @@ $bar-height: 3.5em;
 $settings: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
 $modes: normal, search, conf, pref, home, noroom;
 $roles: guest, user, follower, owner;
-$embeds: toast, comment;
+$embeds: toast, full;
 
 /* themes */
 @mixin theme($name, $base, $color, $meta, $border, $text, $icon, $focus) {
@@ -112,7 +113,7 @@ $embeds: toast, comment;
             &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active { color: $text; }
         }
 
-        .title-bar {
+        .title-bar, .minimize-bar {
             background-color: $base;
             color: $color;
 
@@ -153,15 +154,13 @@ $embeds: toast, comment;
             &:focus, &:hover, &:active { fill: $focus; }
         }
 
-        .sb-icon {
-            .sb-top { fill: $accent-color; }
+        .sb-icon { fill: $light-color; }
 
-            .sb-bottom { fill: $light-color; }
-        }
+        .sb-logotype { fill: $light-color; }
 
         &.embed {
-            .user-detail {
-                .sign-in {
+            .cta-area {
+                .cta-action {
                     color: $accent-color;
                 }
             }
@@ -382,6 +381,8 @@ body {
         }
     }
 
+    h3 { margin: 0; }
+
     .tab {
         @include flex-grow(1);
 
@@ -408,6 +409,8 @@ body {
 
         padding-left: .25em;
         text-transform: uppercase;
+
+        .embed & { padding-left: .75em; }
 
         @media #{$screenxxxx} {
             padding-left: 4.25em;
@@ -725,11 +728,7 @@ body {
     }
 }
 
-.sb-icon {
-    .sb-top { fill: $accent-color; }
-
-    .sb-bottom { fill: $dark-color; }
-}
+.sb-icon { fill: $dark-color; }
 
 .title-bar {
     @include flexbox;
@@ -770,6 +769,7 @@ body {
 .room-title {
     font-size: 1.2em;
     font-weight: 700;
+    margin: 0;
 
     @media #{$screenxxx} {
         padding-left: 1em;
@@ -789,7 +789,7 @@ body {
 
     .role-follower & { fill: lighten($dark-color, 30%); }
 
-    .role-owner & { display: none; }
+    .role-owner &, .embed & { display: none; }
 
     &:focus, &:hover, &:active {
         fill: none;
@@ -820,26 +820,29 @@ body {
     &:focus, &:hover, &:active { fill: lighten($dark-color, 10%); }
 }
 
-%title-multiline {
+.cta-area {
     text-align: right;
     padding: 0 1em;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
+
+    .cta-action { text-transform: uppercase; }
 }
 
 .user-area {
     .role-user.embed & { display: none; }
 }
 
-.user-detail {
-    @extend %title-multiline;
-
-    .role-guest & { padding: .2em 1em; }
-
-    .sign-in { text-transform: uppercase; }
+.follow-room-action {
+    .role-follower.embed &, .role-owner.embed & { display: none; }
 }
 
+.full-view-action {
+    display: none;
+
+    .role-follower.embed &, .role-owner.embed & { display: block; }
+}
 
 .user-avatar {
     display: none;
@@ -858,15 +861,69 @@ body {
 
 .user-menu-button {
     @include title-icon(user-menu-icon);
+
+    background-color: rgba(0,0,0,0.15);
+
+    &:focus, &:hover, &:active { background-color: rgba(0,0,0,0.3); }
 }
 
 .action-buttons {
-    padding: .125em;
+    padding: .25em;
 
     .button {
         display: block;
         float: left;
-        margin-right: .125em;
+        margin: .25em;
+    }
+}
+
+.minimize-bar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    height: $bar-height;
+    width: 100%;
+    background-color: darken($light-color, 5%);
+    color: $dark-color;
+
+    .minimized & {
+        display: table;
+        table-layout: fixed;
+    }
+}
+
+.minimize-logo {
+    @include title-icon(minimize-bar-icon);
+
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: 3em;
+}
+
+.minimize-room-title {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 1.2em;
+    font-weight: 700;
+
+    .has-messages & { display: none; }
+}
+
+.minimize-ticker {
+    display: none;
+
+    .has-messages & {
+        @include fadein;
+
+        display: table-cell;
+        vertical-align: middle;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0 1em;
     }
 }
 
@@ -1362,7 +1419,7 @@ body {
     right: 0;
 	z-index: 20;
 	height: $bar-height;
-	padding: .15em;
+	padding: .5em;
 	background-color: darken($light-color, 5%);
 
 	.search-focus & {
@@ -1438,7 +1495,7 @@ body {
 .loggedout-dialog, .login-dialog {
      min-width: 20em;
 
-    .button { display: block; }
+    .button { width: 100%; }
 }
 
 .popover-body {
@@ -1447,27 +1504,6 @@ body {
     .login-menu {
         padding: .5em 1em;
 
-        .button { display: block; }
-    }
-}
-
-.overlay {
-    display: table;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: #fff;
-    color: #555;
-    z-index: 400;
-
-    h1 {
-        display: table-cell;
-        vertical-align: middle;
-        text-align: center;
-        font-size: 1.5em;
-
-        @media #{$screenxxxx} { font-size: 2.4em; }
+        .button { width: 100%; }
     }
 }

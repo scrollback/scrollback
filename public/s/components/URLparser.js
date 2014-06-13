@@ -49,7 +49,7 @@ module.exports = function() {
 			}
 		}
 
-		if (state.minimize === "true") {
+		if (state.embed === "toast" && state.minimize === "true") {
 			state.minimize = true;
 		} else {
 			state.minimize = false;

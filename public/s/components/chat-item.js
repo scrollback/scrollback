@@ -1,13 +1,17 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb, format, lace */
 
 $(function() {
 	var $entry = $(".chat-entry");
 
-	$.fn.selectConv = function() {
-		var classes = $("body").attr("class").replace(/conv-\d+/g, "");
+	$.fn.resetConv = function() {
+		var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
 
 		$("body").attr("class", classes);
+	};
+
+	$.fn.selectConv = function() {
+		$.fn.resetConv();
 
 		this.attr("class").split(" ").forEach(function(s) {
 			var conv = s.match(/^conv-\d+$/);
@@ -28,13 +32,13 @@ $(function() {
 		this.addClass("current");
 
 		var nick = this.find(".chat-nick").text(),
-			msg = $entry.text().replace(/@\S+[\s+{1}]?$/, "");
+			msg = format.htmlToText($entry.html()).trim().replace(/@\S+[\s+{1}]?$/, "");
 
 		if (msg.indexOf(nick) < 0 && libsb.user.id !== nick) {
-			msg = msg + " @" + nick + "&nbsp;";
+			msg = msg + " @" + nick + " ";
 		}
 
-		$entry.html(msg).focus();
+		$entry.html(format.textToHtml(msg)).focus();
 
 		if ($.fn.setCursorEnd) {
 			$entry.setCursorEnd();
@@ -53,7 +57,7 @@ $(function() {
 
 	$(document).on("keydown", function(e){
 		if (e.keyCode === 38 || e.keyCode === 40) {
-				if ($(".chat-item.current").length) {
+			if ($(".chat-item.current").length) {
 				var $chat = $(".chat-item.current"),
 					$el;
 
@@ -66,6 +70,7 @@ $(function() {
 					if ($chat.next().length) {
 						$el = $chat.next();
 					} else {
+						$.fn.resetConv();
 						$chat.removeClass("current");
 					}
 				}
@@ -94,9 +99,5 @@ $(function() {
 
 	$(document).on("click", ".chat-more", function() {
 		lace.popover.show({ body: $("#chat-menu").html(), origin: $(this) });
-	});
-
-	$entry.on("click", function() {
-		$(".chat-item").removeClass("current");
 	});
 });

@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, chatArea, libsb */
+/* global $, chatArea, libsb, format */
 
 $(function() {
 	var $entry = $(".chat-entry"),
@@ -10,7 +10,8 @@ $(function() {
 	$entry.focus();
 
 	function sendMsg(){
-		var text = $entry.text().trim();
+		var text = format.htmlToText($entry.html());
+
 		$entry.text("");
 
 		if (!text) return;
@@ -47,7 +48,19 @@ $(function() {
 		$entry.focus();
 	});
 
-	$entry.on("DOMSubtreeModified keyup input paste change", function() {
+	$entry.on("paste", function(e) {
+		e.preventDefault();
+
+		var text = e.originalEvent.clipboardData.getData("Text");
+
+		$entry.html(format.textToHtml(text)).scrollTop($entry[0].scrollHeight);
+
+		if ($.fn.setCursorEnd) {
+			$entry.setCursorEnd();
+		}
+	});
+
+	$entry.on("DOMSubtreeModified input paste", function() {
 		chatArea.setPosition($input.outerHeight());
 
 		setPlaceHolder();
