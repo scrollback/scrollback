@@ -147,7 +147,7 @@ function ircParamsValidation(room) {
  *add or copy pending status 
  */
 function changeRoomParams(room) {
-	room.room.params.irc.enable = true;
+	room.room.params.irc.enabled = true;
 	var or = room.old;
 	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel) { //this is old room
 		if (room.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel) {
@@ -218,7 +218,7 @@ function init() {
 							if (!onlineUsers[room.id]) onlineUsers[room.id] = {}; 
 							onlineUsers[room.id][servNick[room.params.irc.server][user].nick] = user;
 							setTimeout(function() {
-								if(	onlineUsers[room.id][servNick[room.params.irc.server][user].nick]) {
+								if(	onlineUsers[room.id] && onlineUsers[room.id][servNick[room.params.irc.server][user].nick]) {
 									log("disconnecting user ", servNick[room.params.irc.server][user].nick, " from ", room.id);
 									ircUtils.disconnectUser(room.id, servNick[room.params.irc.server][user].nick);
 									delete onlineUsers[room.id][servNick[room.params.irc.server][user].nick];

@@ -43,6 +43,7 @@ module.exports = function(coreObj) {
 			}, "setters");
 		});
 		core.on("room", twitterRoomHandler, "gateway");
+		core.on("room", twitterParamsValidation, "applevelValidation");
 	}
 	else {
 		log("Twitter module is not enabled.");
@@ -50,10 +51,27 @@ module.exports = function(coreObj) {
 };
 
 
+function twitterParamsValidation(action, callback) {
+	if (room.params.twitter) {
+		var t = room.params.twitter;
+		var b = typeof t.username === 'string' && typeof t.tags === 'string';
+		if (t.token) {
+			b = b && (typeof t.token === 'string');
+			b = b && (t.tokenSecret) && (typeof t.tokenSecret === 'string');
+			b = b && (typeof t.profile === 'object');
+			b = b && (t.profile.screen_name && typeof t.profile.screen_name === 'string');
+			b = b && (t.profile.user_id && typeof t.profile.user_id === 'string');
+		}
+		if (b) callback();
+		else callback("ERR_INVALID_TWITTER_PARAMS");
+	} else callback();
+}
+
+
 function twitterRoomHandler(action, callback) {
 	var room = action.room;
 	log("room twitter--", JSON.stringify(room));
-	if (action.type == 'room' && room.params && room.params.twitter && room.params.twitter.username) {
+	if (room.params.twitter && room.params.twitter.username) {
 		addTwitterTokens(action, callback);			
 	}
 	else {
@@ -235,7 +253,7 @@ function sendMessages(replies, room) {
 					session: "twitter://" + r.user.screen_name
 				};
 				core.emit("text", message, function(err) {
-					log("error while sending message:" , err);
+					if(err) log("error while sending message:" , err);
 				});
 			});
 		}
