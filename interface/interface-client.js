@@ -122,13 +122,11 @@ function part(roomId, callback){
 }
 
 function say(roomId, text, thread, callback) {
-    console.log("SAY: ", roomId, text, thread);
 	var obj =  {to: roomId, text: text, from: libsb.user.id};
 	if(/^\/me /.test(text)) {
 		obj.text = text.replace(/^\/me /,"");
 		obj.labels = {action: 1};
 	}
-
 	if(thread) obj.threads = [{id: thread}];
 	core.emit('text-up', obj, callback);
 }
