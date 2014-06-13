@@ -10,3 +10,4 @@ require('./localStorage/localStorage-client')(core);
 require('./socket/socket-client')(core);
 require('./id-generator/id-generator-client.js');
 
+//# sourceMappingURL=libsb.js.map
