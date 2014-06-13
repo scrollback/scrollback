@@ -2,12 +2,12 @@
 /* global $, libsb */
 
 $(function() {
-    var $button = $(".follow-button");
+    var $button = $(".follow-button"),
+        $action = $(".follow-room-action");
 
     function getFollow(x,n) {
         libsb.emit("getUsers", { memberOf: window.currentState.room, ref: libsb.user.id }, function(err, data){
             var user = data.results[0];
-            console.log("User is ", user);
             if (user && (user.role === "follower" || user.role === "member")) {
                 $("body").addClass("role-follower");
                 $button.attr("data-tooltip", "Unfollow " + window.currentState.room);
@@ -20,7 +20,7 @@ $(function() {
         n && n();
     }
 
-    $button.on("click", function() {
+    $action.on("click", function() {
         if ($("body").hasClass("role-follower")) {
             libsb.part(window.currentState.room);
         } else {

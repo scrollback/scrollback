@@ -12,7 +12,7 @@ var lace = {
         /**
          * Add a class to an element and execute an action after an event.
          * @constructor
-         * @param {{ element: String, event: String, classname: String, type: String, action: Function, support: Boolean }} core
+         * @param {{ element: String, event: String, classname: String, action: Function, support: Boolean }} core
          */
         core: function(core) {
             var $element = $(core.element);
@@ -22,22 +22,30 @@ var lace = {
             }
 
             if (core.support && $element.is(":visible") && document.hasFocus()) {
+                var onanimate = function() {
+                    if ($element.data("lace.animate")) {
+                        $element.removeClass(core.classname).data("lace.animate", false);
+                        core.action.call($element);
+
+                        // Remove event handlers
+                        $element.off(core.event);
+                        $(window).off("blur.lace.animate");
+                    }
+                };
+
                 $element.on(core.event, function(e) {
-                    if (e.target === e.currentTarget && $(this).data("lace.animate")) {
-                        $(this).removeClass(core.classname).data("lace.animate", false);
-                        core.action.call(this);
+                    if (e.target === e.currentTarget) {
+                        onanimate();
                     }
                 }).addClass(core.classname).data("lace.animate", true);
+
+                // Fix event not firing when window not focused
+                $(window).on("blur.lace.animate", function() {
+                    onanimate();
+                });
             } else {
                 core.action.call($element);
             }
-
-            $(window).on("blur", function() {
-                if ($element.data("lace.animate")) {
-                    $element.removeClass(core.classname).data("lace.animate", false);
-                    core.action.call($element);
-                }
-            })
         },
 
         /**
@@ -233,11 +241,13 @@ var lace = {
                 $element = $(".multientry .item.done");
             }
 
-            if (!$element.hasClass(".item")) {
+            if (!$element.hasClass("item")) {
                 return;
             }
 
-            $element.remove();
+            lace.animate.transition("fadeout", $element, function() {
+                $(this).remove();
+            });
         },
 
         /**

@@ -1,4 +1,5 @@
-/* global window */
+/* global window, generate */
+
 var underscore = require('underscore');
 var core;
 var libsb = {
@@ -57,7 +58,7 @@ module.exports = function(c){
 			libsb.isInited = true;
 			core.emit("inited");
 		}
-	}, 10)
+	}, 10);
 };
 
 function onConnect(){
@@ -146,7 +147,6 @@ function expel(roomId, ref, callback){
 function recvInit(init, next){
 
 	libsb.session = init.session;
-    console.log("* *** * LIbsb memberOf ", init.memberOf);
     libsb.memberOf = init.memberOf;
     libsb.occupantOf = init.occupantOf;
 
@@ -158,7 +158,7 @@ function recvInit(init, next){
 	if(underscore.isEqual(libsb.user, init.user)){
 		core.emit('user-update');
 	}
-	
+
 	next();
 }
 

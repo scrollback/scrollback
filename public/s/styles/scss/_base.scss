@@ -34,6 +34,7 @@ h1, h2, h3, h4 {
     line-height: 1.5em;
     font-family: $font-family-headings;
     font-weight: 400;
+    margin-bottom: .5em;
 }
 
 h1 { font-size: 2.5em; }
@@ -56,7 +57,7 @@ input[type="entry"], input[type="text"], input[type="search"], input[type="email
     @extend .entry;
 
     margin: .5em 0;
-    padding: .8em 1.2em;
+    padding: .5em 1em;
     font-size: 1em;
     outline: none;
 
@@ -66,12 +67,6 @@ input[type="entry"], input[type="text"], input[type="search"], input[type="email
 input[type="checkbox"], input[type="radio"] {
     width: 1.5em;
     height: 1.5em;
-}
-
-[contenteditable]:empty:before{
-    content: attr(data-placeholder);
-    color: fade-out($dark-color, .5);
-    pointer-events: none;
 }
 
 pre {
@@ -98,30 +93,13 @@ code {
 
 .openid { @include buttons(#f78c40, #fff); }
 
-%spinner {
-    &:before {
-        @include spin;
-
-        content: "";
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        margin: 0 1em;
-        border-top: 2px solid currentColor;
-        border-right: 2px solid transparent;
-        border-bottom: 2px solid currentColor;
-        border-left: 2px solid transparent;
-        border-radius: 50%;
-    }
-}
-
 .fadeout {
     @include opacity(0);
     @extend %ease;
 }
 
 .grow {
-    @include transform(scale(1.2, 1.2));;
+    @include transform(scale(1.2, 1.2));
     @include transition(.15s);
 }
 
