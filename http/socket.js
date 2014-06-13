@@ -22,7 +22,7 @@ Boston, MA 02111-1307 USA.
 	Websockets gateway
 */
 
-/* global require, module, exports, console, setTimeout */
+/* global require, exports, setTimeout */
 
 var sockjs = require("sockjs"), core,
 	// api = require("./api.js"),

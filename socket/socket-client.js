@@ -20,38 +20,49 @@ module.exports = function(c){
 	core.on('expel-up', sendExpel, 10);
 	core.on('user-up', sendUser, 10);
 	core.on('room-up', sendRoom, 10);
-	core.on('getTexts', function(query, callback){
+
+    core.on('getTexts', function(query, callback){
 		query.type="getTexts";
 		sendQuery(query, callback);
 	});
-	core.on('getThreads',  function(query, callback){
+	
+    core.on('getThreads',  function(query, callback){
 		query.type="getThreads";
 		sendQuery(query, callback);
 	});
-	core.on('getUsers',  function(query, callback){
+	
+    core.on('getUsers',  function(query, callback){
 		query.type="getUsers";
 		sendQuery(query, callback);
 	});
-	core.on('getRooms',  function(query, callback){
+	
+    core.on('getRooms',  function(query, callback){
 		query.type="getRooms";
 		sendQuery(query, callback);
 	});
 };
 
 var client;
-var pendingQueries = {}, pendingActions = {};
+var pendingQueries = {}, pendingActions = {}, queue = [];
 
+libsb.on("inited", function(undef, next) {
+    while(queue.length) {
+        queue.splice(0,1)[0]();
+    }
+    next();
+});
 function safeSend(data){
-        // safeSends sends the data over the socket only after the socket has
-        // been initialised
-        if(libsb.isInited){
-             client.send(data);
-        }else{
-            libsb.on('inited', function(d,n){
-                client.send(data);
-                n();
-            });
-        }
+    // safeSends sends the data over the socket only after the socket has
+    // been initialised
+    console.log("Sending: ", data);
+    
+    if(libsb.isInited) {
+         client.send(data);
+    }else {
+        queue.push(function() {
+            client.send(data);
+        });
+    }
 }
 
 function connect(){
@@ -81,8 +92,8 @@ function sendQuery(query, next){
 	query.session = libsb.session;
 	query.resource = libsb.resource;
 	safeSend(JSON.stringify(query));
+    
 	pendingQueries[query.id] = next;
-	// a hacky solution. please change this.
 	pendingQueries[query.id].query = query;
 }
 
@@ -107,6 +118,7 @@ function receiveMessage(event){
 		}
 	}else {
 		//data is an action
+        console.log("calling the callback");
 		if(pendingActions[data.id]) {
 			pendingActions[data.id](null, data);
 			delete pendingActions[data.id];
@@ -127,31 +139,31 @@ function makeAction(action) {
 function sendJoin(join, next) {
 	var action = makeAction({type: 'join', to: join.to, id: join.id});
 	safeSend(JSON.stringify(action));
-	 pendingActions[action.id] = next;
+    pendingActions[action.id] = next;
 }
 
 function sendPart(part, next) {
 	var action = makeAction({type: 'part', to: part.to, id: part.id});
 	safeSend(JSON.stringify(action));
-	 pendingActions[action.id] = next;
+    pendingActions[action.id] = next;
 }
 
 function sendBack(back, next) {
 	var action = makeAction({type: 'back', to: back.to, id: back.id});
 	safeSend(JSON.stringify(action));
-	 pendingActions[action.id] = next;
+    pendingActions[action.id] = next;
 }
 
 function sendAway(away, next) {
 	var action = makeAction({type: 'away', to: away.to, id: away.id});
 	safeSend(JSON.stringify(action));
-	 pendingActions[action.id] = next;
+    pendingActions[action.id] = next;
 }
 
 function sendText(text, next) {
 	var action = makeAction({to: text.to, type: 'text', text: text.text, from: text.from, id: text.id});
 	safeSend(JSON.stringify(action));
-	 pendingActions[action.id] = next;
+    pendingActions[action.id] = next;
 }
 
 function sendInit(init, next) {
@@ -163,16 +175,16 @@ function sendInit(init, next) {
 	pendingActions[action.id] = next;
 }
 
-function sendAdmit(admit, next){
+function sendAdmit(admit, next) {
 	var action = makeAction({type: 'admit', to: admit.to, ref: admit.ref, id: admit.id});
 	safeSend(JSON.stringify(action));
-	 pendingActions[action.id] = next;
+    pendingActions[action.id] = next;
 }
 
-function sendExpel(expel, next){
+function sendExpel(expel, next) {
 	var action = makeAction({type: 'expel', to: expel.to, ref: expel.ref, id: expel.id});
 	safeSend(JSON.stringify(action));
-	 pendingActions[action.id] = next;
+    pendingActions[action.id] = next;
 }
 
 function sendUser(user, next) {
@@ -181,7 +193,7 @@ function sendUser(user, next) {
 	pendingActions[action.id] = next;
 }
 
-function sendRoom(room, next){
+function sendRoom(room, next) {
 	var action = makeAction({type: 'room', to: room.to, room: room.room, id: room.id});
 	safeSend(JSON.stringify(action));
     pendingActions[action.id] = next;

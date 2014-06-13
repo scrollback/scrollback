@@ -4,7 +4,7 @@
 $(function() {
 	var $entry = $(".chat-entry"),
 		$input = $(".chat-input");
-
+    var roomName = "", thread = "";
 	// Focus chat entry on pageload
 	$entry.focus();
 
@@ -14,8 +14,8 @@ $(function() {
 		text = text.trim();
 		$entry.text("");
 		if(!text) return;
-		if (window.currentState && window.currentState.roomName) {
-			libsb.say(window.currentState.roomName, text, window.currentState.thread);
+		if (roomName) {
+			libsb.say(roomName, text, thread);
 		}else {
 			// show the error that not part of any room yet.
 		}
@@ -36,7 +36,13 @@ $(function() {
 
 	libsb.on("init-dn", function(action, next) {
 		$entry.attr("data-placeholder", libsb.user.id );
-
 		next();
 	}, 10);
+    
+    libsb.on("navigate", function(state, next) {
+        if(state.roomName === "pending" && state.room !== null) return next();
+        if(state.roomName) roomName = state.roomName;
+        if(state.thread) thread = state.thread;
+        next();
+    });
 });

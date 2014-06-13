@@ -2,7 +2,7 @@
 var underscore = require('underscore');
 var core;
 var events = [ 'init-dn', 'back-dn', 'away-dn', 'join-dn', 'part-dn', 'admit-dn', 'expel-dn', 'text-up'];
-
+console.log(events);
 var libsb = {
 		user: "",
 		rooms: [],
@@ -101,10 +101,6 @@ function getThreads(query, callback){
 	core.emit('getThreads', query, callback);
 }
 
-function getSession(query, callback){
-	core.emit('getSession', query, callback);
-}
-
 function getUsers(query, callback){
 	core.emit('getUsers', query, callback);
 }
@@ -125,7 +121,8 @@ function part(roomId, callback){
 	core.emit('part-up', {to: roomId}, callback);
 }
 
-function say(roomId, text, thread, callback){
+function say(roomId, text, thread, callback) {
+    console.log("SAY: ", roomId, text, thread);
 	var obj =  {to: roomId, text: text, from: libsb.user.id};
 	if(/^\/me /.test(text)) {
 		obj.text = text.replace(/^\/me /,"");

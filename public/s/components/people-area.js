@@ -39,7 +39,6 @@ $(function() {
     
 	function getPeople(callback) {
 		var ppl = {}, sorted = [];
-        console.log("MemberOf: "+roomName);
 		libsb.getUsers({memberOf: roomName}, function(err, res) {
 			var r = res.results, i, l;
 			for(i=0, l=r.length; i<l; i++) {
@@ -194,13 +193,11 @@ $(function() {
 		}
 	});
     
-    function loadMembers(n) {
+    function loadMembers() {
         getPeople(function(sortedList) {
             people = sortedList;
             $people.reset();
-            n();
         });
-        
     }
 
 	libsb.on('navigate', function(state, next) {
