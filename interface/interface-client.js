@@ -1,4 +1,5 @@
-/* global window, generate*/
+/* global window, generate */
+
 var underscore = require('underscore');
 var core;
 var events = [ 'init-dn', 'back-dn', 'away-dn', 'join-dn', 'part-dn', 'admit-dn', 'expel-dn', 'text-up'];
@@ -153,7 +154,7 @@ function recvInit(init, next){
 	if(underscore.isEqual(libsb.user, init.user)){
 		core.emit('user-update');
 	}
-	
+
 	next();
 }
 

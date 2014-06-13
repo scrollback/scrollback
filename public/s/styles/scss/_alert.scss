@@ -57,23 +57,21 @@
 	}
 
 	.alert-remove {
+		@include flexbox;
+		@include flex-direction(row);
+		@include flex-wrap(nowrap);
+		@include align-items(center);
+		@include align-content(center);
 		@include transition;
 
 		padding: 1em 1.25em;
 		cursor: pointer;
 		background-color: rgba(0,0,0,.1);
-		color: $light-color;
 		border-radius: 0 $roundness $roundness 0;
 
-		&:focus, &:hover {
-			color: $light-color;
-			background-color: rgba(0,0,0,.2);
-		}
+		&:focus, &:hover { background-color: rgba(0,0,0,.2); }
 
-		&:active {
-			color: $light-color;
-			background-color: rgba(0,0,0,.3);
-		}
+		&:active { background-color: rgba(0,0,0,.3); }
 
 		&:after {
 			display: block;

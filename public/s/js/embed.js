@@ -7,6 +7,7 @@
 			var room = window.scrollback.room || "scrollback",
 				embed = window.scrollback.embed || "toast",
 				theme = window.scrollback.theme || "dark",
+				minimize = window.scrollback.minimize || false,
 				host = window.scrollback.host || "https://next.scrollback.io",
 				style,
 				iframe;
@@ -20,7 +21,7 @@
 
 			// Create and append the iframe
 			iframe = document.createElement("iframe");
-			iframe.src = host + "/" + room + "?embed=" + embed + "&theme=" + theme;
+			iframe.src = host + "/" + room + "?embed=" + embed + "&theme=" + theme + "&minimize=" + minimize;
 			iframe.className = "scrollback-stream";
 			document.body.appendChild(iframe);
 
@@ -31,18 +32,18 @@
 
 			// Listen to message from child iframe
 			eventListener(messageEvent, function(e) {
-				if (e.origin === host && e.data === "minimize") {
-					var className = "minimized",
+				if (e.origin === host && (e.data === "minimize" || e.data === "maximize")) {
+					var styleClass = "minimized",
 						classString = iframe.className,
-						nameIndex = classString.indexOf(className);
+						nameIndex = classString.indexOf(styleClass);
 
-					if (nameIndex == -1) {
-						classString += " " + className;
-					} else {
-						classString = classString.substr(0, nameIndex) + classString.substr(nameIndex + className.length);
+					if (e.data === "minimize") {
+						classString += " " + styleClass;
+					} else if (nameIndex !== -1 && e.data === "maximize") {
+						classString = classString.substr(0, nameIndex) + classString.substr(nameIndex + styleClass.length);
 					}
 
-					iframe.className = classString;
+					iframe.className = classString.trim();
 				}
 			}, false);
 		}

@@ -2,23 +2,24 @@
 /* global $, libsb */
 /* exported currentState */
 
-/*
-	Properties of the navigation state object:
 
-	room: "roomid",
-	embed: (toast|comment)
-	view: (normal|rooms|meta|signup)
-	mode: (normal|search|conf|pref|home),
-	tab: (info|people|threads|local|global|<conf/pref tabs>),
-	thread: "selected_thread",
-	query; "search_query",
-	text: "selected text id",
-	time: "current scroll time"
-
-	old: {old state object},
-	changes: {new values of changed properties only}
-
-*/
+/**
+ * Properties of naviagtion state object
+ *
+ * room: {String} roomId
+ * embed: {String} (toast|full)
+ * minimize: {Boolean} (true|false)
+ * theme: {String} (dark|light)
+ * view: {String} (normal|rooms|meta|signup)
+ * mode: {String} (normal|search|conf|pref|home)
+ * tab: {String} (info|people|threads|local|global)
+ * thread: {String} threadId
+ * query: {String} searchQuery
+ * text: {String} textId
+ * time: {String} - Timestamp of chat message
+ * old: {Object} - Old state object
+ * changes: {Object} - New values of changed properties
+ */
 
 var currentState = window.currentState = {};
 
@@ -26,7 +27,7 @@ libsb.on("navigate", function(state, next) {
 	state.old = $.extend(true, {}, currentState); // copying object by value
 	state.changes = {};
 
-	["room", "view", "theme", "embed", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
+	["room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
 		if (typeof state[prop] === "undefined") {
 			if (typeof state.old[prop] !== "undefined") {
 				currentState[prop] = state[prop] = state.old[prop];
@@ -71,6 +72,14 @@ libsb.on("navigate", function(state, next) {
 
 		if (state.embed) {
 			$("body").addClass("embed embed-" + state.embed);
+		}
+	}
+
+	if (state.old && state.minimize !== state.old.minimize) {
+		if (state.minimize && state.embed === "toast") {
+			$("body").addClass("minimized");
+		} else {
+			$("body").removeClass("minimized");
 		}
 	}
 
@@ -142,6 +151,10 @@ libsb.on("navigate", function(state, next) {
 
 		if (state.embed) {
 			params.push("embed=" + state.embed);
+		}
+
+		if (state.embed === "toast" && state.minimize) {
+			params.push("minimize=true");
 		}
 
 		if (state.theme && state.theme !== "light") {

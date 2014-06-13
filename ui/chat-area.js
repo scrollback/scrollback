@@ -6,12 +6,21 @@ var chatArea = {};
 
 $(function() {
 	var $logs = $(".chat-area"),
+<<<<<<< HEAD:public/s/components/chat-area.js
 		roomName = "",
         room = null,
 		thread = '',
 		time = null;
     window.log = $logs;
     $logs.infinite({
+=======
+		room = window.location.pathname.split("/")[1], /* replace with room from URL */
+		thread = "",
+		time = null; /* replace this with the time from the URL, if available. */
+
+	// Set up infinite scroll here.
+	$logs.infinite({
+>>>>>>> development:ui/chat-area.js
 		scrollSpace: 2000,
 		fillSpace: 500,
 		itemHeight: 50,
@@ -21,12 +30,26 @@ $(function() {
             if(!roomName) return callback([]);
 			index = index || time;
 			query.time = index;
+<<<<<<< HEAD:public/s/components/chat-area.js
 			if(thread) query.thread = thread;
             
             if(roomName == "pending" && room ===null) return callback();
 			
             if(!index && !before) return callback([false]);
             
+=======
+			if (thread) query.thread = thread;
+			if (!index && !before) return callback([false]);
+			if (libsb.isInited) {
+				loadTexts();
+			} else {
+				libsb.on("inited", function(p, n){
+					loadTexts(true);
+					n();
+				});
+			}
+
+>>>>>>> development:ui/chat-area.js
 			function loadTexts() {
 				libsb.getTexts(query, function(err, t) {
 					var texts = t.results;
@@ -53,13 +76,16 @@ $(function() {
 					}));
 				});
 			}
+<<<<<<< HEAD:public/s/components/chat-area.js
             
             loadTexts();
+=======
+>>>>>>> development:ui/chat-area.js
 		}
 	});
 
 	// Check for mentions
-	libsb.on('text-dn', function(text, next) {
+	libsb.on("text-dn", function(text, next) {
 		var people;
 
 		libsb.getMembers(room, function(err, p) {
@@ -95,13 +121,13 @@ $(function() {
 	});
 
 	// Insert incoming text messages.
-	libsb.on('text-dn', function(text, next) {
+	libsb.on("text-dn", function(text, next) {
 		var i = 0,
 			l,
 			$text = $("#" + text.id);
 
 		if (text.threads && text.threads.length && $text.length) {
-			$text.addClass('conv-' + text.threads[0].id.substr(-1));
+			$text.addClass("conv-" + text.threads[0].id.substr(-1));
 		}
 
 		if(text.resource == libsb.resource) return next();
@@ -124,13 +150,14 @@ $(function() {
 		next();
 	}, 100);
 
-	libsb.on('text-up', function(text, next) {
+	libsb.on("text-up", function(text, next) {
 		if($logs.data("lower-limit")) $logs.addBelow(chatEl.render(null, text));
 		next();
 	}, 100);
 
-	libsb.on('navigate', function(state, next) {
+	libsb.on("navigate", function(state, next) {
 		var reset = false;
+<<<<<<< HEAD:public/s/components/chat-area.js
 		if(state.source == 'text-area') return next();
 		if(state.source == "init") {
 			roomName = state.roomName || currentState.roomName;
@@ -152,24 +179,55 @@ $(function() {
 			}
 			
             if(state.old && state.time != state.old.time) {
+=======
+
+		if (state.source === "text-area") return next();
+
+		if (state.source == "init") {
+			room = state.room || currentState.room;
+			thread = state.thread || currentState.thread;
+			time = state.time || time;
+			reset = true;
+		} else {
+			if(state && (!state.old || state.room != state.old.room)) {
+				room = state.room;
+				reset = true;
+			}
+			if (typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
+				thread = state.thread;
+				reset = true;
+			}
+			if (state.old && state.time != state.old.time) {
+>>>>>>> development:ui/chat-area.js
 				time = state.time;
 				reset = true;
 			}
 		}
 
-		if(reset) {
+		if (reset) {
 			$logs.reset(time);
 		}
+
 		next();
 	}, 200);
 
-
 	// The chatArea API.
-	chatArea.setBottom = function(bottom) {
-		var atBottom = ($logs.scrollTop() + $logs.height() == $logs[0].scrollHeight);
+	chatArea.getPosition = function() {
+		var pos = $logs[0].scrollHeight - ($logs.scrollTop() + $logs.height());
 
+		if (!this.value) {
+			this.value = pos;
+		}
+
+		return pos;
+	};
+
+	chatArea.setPosition = function(bottom) {
 		$logs.css({ bottom: bottom });
-		if(atBottom) $logs.scrollTop($logs[0].scrollHeight);
+
+		if (chatArea.getPosition.value === 0) {
+			$logs.scrollTop($logs[0].scrollHeight);
+		}
 	};
 
 	chatArea.setRoom = function(r) {
@@ -178,16 +236,11 @@ $(function() {
 		$logs.scroll();
 	};
 
-	// --- add classes to body to reflect state ---
-
 	var timeout,
 		top = $(this).scrollTop();
 
 	$logs.on("scroll", function() {
-		var atBottom = ($logs.scrollTop() + $logs.height() == $logs[0].scrollHeight);
 		var cur_top = $logs.scrollTop();
-
-		if(atBottom) return;
 
 		if (top < cur_top) {
 			$("body").removeClass("scroll-up").addClass("scroll-down");
@@ -206,28 +259,43 @@ $(function() {
 			timeout = 0;
 		}, 1000);
 
-		var chats = $logs.find('.chat-item'),
+		var chats = $logs.find(".chat-item"),
 			time = chats.eq(0).data("index"),
-			parentOffset = $logs.offset().top,
-			i;
+			parentOffset = $logs.offset().top;
 
-		// TODO: Treat bottom as a special case; navigate with time=null
-
-		for(i=0; i<chats.size(); i++) {
-			if(chats.eq(i).offset().top - parentOffset > 0) {
+		for (var i=0; i<chats.size(); i++) {
+			if (chats.eq(i).offset().top - parentOffset > 0) {
 				time = chats.eq(i).data("index");
 				break;
 			}
 		}
 
+<<<<<<< HEAD:public/s/components/chat-area.js
         if($logs.data("lower-limit")) {        
             libsb.emit('navigate', { time: 0, source: 'text-area' });
         }else {
             libsb.emit('navigate', { time: time, source: 'text-area' });
         }
-
+=======
 		$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
 
+		chatArea.getPosition.value = chatArea.getPosition();
+
+		if (chatArea.getPosition.value === 0) {
+			time = null;
+		}
+
+		if (libsb.isInited) {
+			libsb.emit("navigate", { time: time, source: "text-area" });
+		} else {
+			libsb.on("inited", function(q, n){
+				libsb.emit("navigate", { time: time, source: "text-area" });
+				n();
+			});
+		}
+>>>>>>> development:ui/chat-area.js
+
 	});
+
 	window.chatArea = chatArea;
 });
