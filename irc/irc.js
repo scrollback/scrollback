@@ -55,7 +55,7 @@ module.exports = function (coreObj) {
 		} else if(!client.connected() && room.room.params.irc && room.room.params.irc.server && room.room.params.irc.channel) return callback(new Error("ERR_IRC_NOT_CONNECTED"));
 		else return callback();
 	}, "gateway");
-	
+
 	core.on("room", function(room, callback) {
 		var r = room.room;
 		if (r.params.irc) {
@@ -67,7 +67,7 @@ module.exports = function (coreObj) {
 			}
 		} else callback();
 	}, "applevelValidation");
-	
+
 	core.on("init", function(init, callback) {
 		log("init irc:", init);
 		var oldUser = {id: init.from};

@@ -108,6 +108,9 @@ var defaults = {
 		occupants: 10,
 		search: 14
 	},
+	su: {
+		
+	},
 	plugins: ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
 	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",
 	"admin-notifier", "custom-emitter","entityloader", "twitter"],

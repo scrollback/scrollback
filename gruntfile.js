@@ -25,6 +25,7 @@ module.exports = function(grunt) {
 		browserify: {
 			dist: {
 				files: {
+					"public/client.bundle.js": ["client.js"],
 					"public/libsb.bundle.js": ["libsb.js"]
 				},
 				options: {
@@ -127,7 +128,7 @@ module.exports = function(grunt) {
 					timestamp: true
 				},
 				src: [
-					"libsb.bundle.js",
+					"client.bundle.js",
 					"sdk/sockjs.js",
 					"s/lib/jquery.min.js",
 					"s/styles/gen/*.css",
