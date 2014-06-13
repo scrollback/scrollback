@@ -42,8 +42,13 @@ module.exports = function (coreObj) {
 				var oldIrc = room.old.params.irc;
 				var newIrc = rr.params.irc;
 				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel) {
-					if(oldIrc.server && oldIrc.channel) ircUtils.disconnectBot(rr.id);//if old is connected
-					if(rr.params.irc.server && rr.params.irc.channel) return ircUtils.addNewBot(rr, callback);
+					if(oldIrc.server && oldIrc.channel) {
+						ircUtils.disconnectBot(rr.id, function() {
+							log("disconnected from ", oldIrc.channel);
+							if(rr.params.irc.server && rr.params.irc.channel) return ircUtils.addNewBot(rr, callback);	
+							else return callback();
+						});
+					} else if(rr.params.irc.server && rr.params.irc.channel) return ircUtils.addNewBot(rr, callback);
 					else return callback();
 				} else return callback();
 			}  
@@ -185,8 +190,9 @@ function init() {
 					var r2 = state.rooms[room.id].params.irc;
 					if (!(r1.server === r2.server && r1.channel === r2.channel && r1.pending === r2.pending)) {
 						log("reconnecting bot with new values:", room.id);
-						ircUtils.disconnectBot(state.rooms[room.id].id);
-						ircUtils.addNewBot(room); 
+						ircUtils.disconnectBot(state.rooms[room.id].id, function() {
+							ircUtils.addNewBot(room); 
+						});
 					}
 					delete notUsedRooms[room.id];
 				} else {

@@ -27,13 +27,14 @@ module.exports = function(clientEmitter, client, callbacks) {
 		});
 	}
 	
-	function disconnectBot(roomId) {
+	function disconnectBot(roomId, callback) {
 		var uid = guid();
 		clientEmitter.emit('write', {
 			uid: uid,
 			type: 'partBot',
 			roomId: roomId
 		});
+		if(callback) callbacks[uid] = callback;
 	}
 	
 	function disconnectUser(roomId, user) {
