@@ -1,26 +1,16 @@
 /* jslint browser: true, indent: 4, regexp: true*/
-/* global $, libsb, chatEl, format, currentState */
+/* global $, libsb, chatEl, currentState */
 /* exported chatArea */
 
 var chatArea = {};
 
 $(function() {
 	var $logs = $(".chat-area"),
-<<<<<<< HEAD:public/s/components/chat-area.js
 		roomName = "",
         room = null,
 		thread = '',
 		time = null;
-    window.log = $logs;
     $logs.infinite({
-=======
-		room = window.location.pathname.split("/")[1], /* replace with room from URL */
-		thread = "",
-		time = null; /* replace this with the time from the URL, if available. */
-
-	// Set up infinite scroll here.
-	$logs.infinite({
->>>>>>> development:ui/chat-area.js
 		scrollSpace: 2000,
 		fillSpace: 500,
 		itemHeight: 50,
@@ -30,26 +20,13 @@ $(function() {
             if(!roomName) return callback([]);
 			index = index || time;
 			query.time = index;
-<<<<<<< HEAD:public/s/components/chat-area.js
-			if(thread) query.thread = thread;
+
+            if(thread) query.thread = thread;
             
             if(roomName == "pending" && room ===null) return callback();
 			
             if(!index && !before) return callback([false]);
-            
-=======
-			if (thread) query.thread = thread;
-			if (!index && !before) return callback([false]);
-			if (libsb.isInited) {
-				loadTexts();
-			} else {
-				libsb.on("inited", function(p, n){
-					loadTexts(true);
-					n();
-				});
-			}
 
->>>>>>> development:ui/chat-area.js
 			function loadTexts() {
 				libsb.getTexts(query, function(err, t) {
 					var texts = t.results;
@@ -76,11 +53,7 @@ $(function() {
 					}));
 				});
 			}
-<<<<<<< HEAD:public/s/components/chat-area.js
-            
             loadTexts();
-=======
->>>>>>> development:ui/chat-area.js
 		}
 	});
 
@@ -157,7 +130,6 @@ $(function() {
 
 	libsb.on("navigate", function(state, next) {
 		var reset = false;
-<<<<<<< HEAD:public/s/components/chat-area.js
 		if(state.source == 'text-area') return next();
 		if(state.source == "init") {
 			roomName = state.roomName || currentState.roomName;
@@ -179,26 +151,6 @@ $(function() {
 			}
 			
             if(state.old && state.time != state.old.time) {
-=======
-
-		if (state.source === "text-area") return next();
-
-		if (state.source == "init") {
-			room = state.room || currentState.room;
-			thread = state.thread || currentState.thread;
-			time = state.time || time;
-			reset = true;
-		} else {
-			if(state && (!state.old || state.room != state.old.room)) {
-				room = state.room;
-				reset = true;
-			}
-			if (typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
-				thread = state.thread;
-				reset = true;
-			}
-			if (state.old && state.time != state.old.time) {
->>>>>>> development:ui/chat-area.js
 				time = state.time;
 				reset = true;
 			}
@@ -270,31 +222,12 @@ $(function() {
 			}
 		}
 
-<<<<<<< HEAD:public/s/components/chat-area.js
         if($logs.data("lower-limit")) {        
             libsb.emit('navigate', { time: 0, source: 'text-area' });
         }else {
             libsb.emit('navigate', { time: time, source: 'text-area' });
         }
-=======
-		$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
-
-		chatArea.getPosition.value = chatArea.getPosition();
-
-		if (chatArea.getPosition.value === 0) {
-			time = null;
-		}
-
-		if (libsb.isInited) {
-			libsb.emit("navigate", { time: time, source: "text-area" });
-		} else {
-			libsb.on("inited", function(q, n){
-				libsb.emit("navigate", { time: time, source: "text-area" });
-				n();
-			});
-		}
->>>>>>> development:ui/chat-area.js
-
+        
 	});
 
 	window.chatArea = chatArea;
