@@ -60,7 +60,7 @@ module.exports = function (coreObj) {
 				callback("ERR_INVALID_IRC_PARAMS");
 			}
 		} else callback();
-	}, "applevelValidation");
+	}, "appLevelValidation");
 	
 	core.on("init", function(init, callback) {
 		log("init irc:", init);

@@ -221,12 +221,15 @@ $(function() {
 				break;
 			}
 		}
+        $(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
 
-        if($logs.data("lower-limit")) {        
-            libsb.emit('navigate', { time: 0, source: 'text-area' });
-        }else {
-            libsb.emit('navigate', { time: time, source: 'text-area' });
-        }
+		chatArea.getPosition.value = chatArea.getPosition();
+
+		if (chatArea.getPosition.value === 0) {
+			time = null;
+		}
+        
+        libsb.emit('navigate', { time: time, source: 'text-area' });
         
 	});
 
