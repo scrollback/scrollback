@@ -1483,18 +1483,10 @@ body {
 .infinite-items { width: 100%; }
 
 .signup-dialog {
-    width: 27em;
-
-    input { margin: .25em; }
-
     input[type=text] { width: 100%; }
-
-	@media only screen and (max-width: 27em) { width: 100%; }
 }
 
 .loggedout-dialog, .login-dialog {
-     min-width: 20em;
-
     .button { width: 100%; }
 }
 

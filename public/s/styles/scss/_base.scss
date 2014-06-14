@@ -47,23 +47,6 @@ h4 { font-size: 1.2em; }
 
 p { margin: .5em 0; }
 
-input[type="submit"], input[type="button"] {
-    @extend .button;
-
-    &:disabled { @extend .button.disabled; }
-}
-
-input[type="entry"], input[type="text"], input[type="search"], input[type="email"], textarea {
-    @extend .entry;
-
-    margin: .5em 0;
-    padding: .5em 1em;
-    font-size: 1em;
-    outline: none;
-
-    &:disabled { @extend .entry.disabled; }
-}
-
 input[type="checkbox"], input[type="radio"] {
     width: 1.5em;
     height: 1.5em;
@@ -96,11 +79,6 @@ code {
 .fadeout {
     @include opacity(0);
     @extend %ease;
-}
-
-.grow {
-    @include transform(scale(1.2, 1.2));
-    @include transition(.15s);
 }
 
 %ease { @include transition; }
