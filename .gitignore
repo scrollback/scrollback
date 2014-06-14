@@ -23,7 +23,6 @@ results
 node_modules
 
 myConfig.js
-client-config.js
 
 public/client.min.js
 public/core.min.js
