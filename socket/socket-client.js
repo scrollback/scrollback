@@ -54,7 +54,6 @@ libsb.on("inited", function(undef, next) {
 function safeSend(data){
     // safeSends sends the data over the socket only after the socket has
     // been initialised
-    console.log("Sending: ", data);
     
     if(libsb.isInited) {
          client.send(data);
@@ -181,8 +180,8 @@ function sendText(text, next) {
 }
 
 function sendInit(init, next) {
-    var newAction = {type: 'init', to: 'me', id: init.id};
-	var action;
+    var action, newAction = {type: 'init', to: 'me', id: init.id};
+    newAction.session = init.session;
     
     if(init.auth) newAction.auth = init.auth;
 	if(init.suggestedNick) newAction.suggestedNick = init.suggestedNick;
