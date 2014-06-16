@@ -96,7 +96,7 @@
 					font-weight: 700;
 
 					&:hover, &:focus {
-						background-color: darken($light-color, 5%);
+						background-color: darken($light-color, 2.5%);
 						color: darken($dark-color, 30%);
 					}
 				}

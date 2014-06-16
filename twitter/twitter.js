@@ -21,27 +21,26 @@ var currentConnections = {};
 var pendingOauths = {};//TODO delete pending oauth after some time
 var userData = {};//used to save access token etc.
 module.exports = function(coreObj) {
-	
+
 	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
 		log("twitter app started");
 		if (!debug) {
 			process.nextTick(function(){
-				logTwitter = log.tag('twitter'); 
+				logTwitter = log.tag('twitter');
 			});
 		}
 		core = coreObj;
 		init();
-		fs.readFile(__dirname + "/twitter.html", "utf8", function(err, data){
-			if(err)	throw err;
-			core.on("http/init", function(payload, callback) {
-				payload.twitter = {
-					get: function(req,res,next) {	
-						getRequest(req,res,next);
-					}
-				};
-				callback(null, payload);
-			}, "setters");
-		});
+
+		core.on("http/init", function(payload, callback) {
+			payload.twitter = {
+				get: function(req,res,next) {
+					getRequest(req,res,next);
+				}
+			};
+			callback(null, payload);
+		}, "setters");
+
 		core.on("room", twitterRoomHandler, "gateway");
 		core.on("room", twitterParamsValidation, "applevelValidation");
 	}
@@ -72,14 +71,14 @@ function twitterRoomHandler(action, callback) {
 	var room = action.room;
 	log("room twitter--", JSON.stringify(room));
 	if (room.params.twitter && room.params.twitter.username) {
-		addTwitterTokens(action, callback);			
+		addTwitterTokens(action, callback);
 	}
 	else {
 		callback();
 	}
 }
 /**
- *Read twitter token from redis and 
+ *Read twitter token from redis and
  *add it to room object
  */
 function addTwitterTokens(room, callback) {
@@ -114,11 +113,11 @@ function addTwitterTokens(room, callback) {
 							log("values deleted from redis", r);
 						});
 					});
-					
+
 				} else {//new values are not present in redis.. copy old
 					copyOld(room, callback);
 				}
-			
+
 			}
 		});
 	});
@@ -136,7 +135,7 @@ function addIdentity(room, username) {
 
 function copyOld(room, callback) {
 	logTwitter("copyOld");
-	
+
 	var old;//old account
 	if(room.old && room.old.params) old = room.old.params.twitter;
 	if(old) {
@@ -197,7 +196,7 @@ function fetchTweets(room) {
 		});
 		logTwitter("calling room,", room);
 		redis.get("twitter:lastTweetId:" + room.id, function(err, data) {
-			
+
 			twit.get(
 				'search/tweets', {
 					q: room.params.twitter.tags.split(" ").join(" OR "),
@@ -216,10 +215,10 @@ function fetchTweets(room) {
 							});
 						}
 					}
-				}	
+				}
 			);
-		});	
-	}	
+		});
+	}
 }
 
 /**
@@ -257,7 +256,7 @@ function sendMessages(replies, room) {
 				});
 			});
 		}
-		
+
 	});
 }
 
@@ -287,7 +286,7 @@ function getRequest(req, res, next) {
 			res.redirect("https://api.twitter.com/oauth/authenticate?oauth_token=" + oauth_token);
 			pendingOauths[uid].oauthToken = oauth_token;
 			pendingOauths[uid].oauthTokenSecret = oauth_token_secret;
-			
+
 			log("callback url", arguments);
 		});
 		log("twitter oauth=", oauth);
@@ -310,7 +309,7 @@ function getRequest(req, res, next) {
 						multi.setex("twitter:userData:tokenSecret:" + uid, expireTime, access_token_secret);
 						multi.setex("twitter:userData:profile:" + uid, expireTime, JSON.stringify(results));
 						multi.exec(function(err,replies) {
-							logTwitter("user data added: ", replies);	
+							logTwitter("user data added: ", replies);
 						});
 					});
 					return res.render(__dirname + "/login.jade", {profile: {screen_name: results.screen_name}});
@@ -318,11 +317,11 @@ function getRequest(req, res, next) {
 			});
 			delete pendingOauths[ps[2]];
 		}
-		
+
 	} else {
 		next();
 	}
-	
+
 }
 
 /**** get request handler *******/

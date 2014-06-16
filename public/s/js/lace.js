@@ -217,7 +217,7 @@ var lace = {
 
                 content.forEach(function(text) {
                     if (!text.match(/^\s*$/) ) {
-                        $("<div>")
+                        $("<span>")
                         .addClass("item done")
                         .append($("<span>").addClass("item-text").text(text.trim()))
                         .append($("<span>").addClass("item-remove"))
