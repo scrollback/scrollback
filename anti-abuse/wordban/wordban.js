@@ -13,7 +13,10 @@ module.exports = function(core) {
             if(gateway != "web") return callback();
         }
         
-        var text;
+    var text;
+    var customWords = message.room.params['anti-abuse'].blockCustom;
+    	log(message);
+
 		if(message.type=="text")	text = message.text;
 		if(message.type == "nick")	text = message.ref;
 		if(message.to)	text += " " + message.to;
@@ -32,17 +35,29 @@ module.exports = function(core) {
                         message.labels.abusive = 1;
                     }
                 }
-	           	callback();
 	        });
-		}else{
+		}
+		else{
 			callback();
 		}
+	        	
+	        	for (index=0; index<customWords.length; ++index) {
+				if(text.toLowerCase().indexOf(customWords[index]) != -1)
+				{
+					log("You cannot use banned words!");
+					if(!message.labels) message.labels = {};
+					message.labels.abusive = 1;
+					return callback(new Error("Abusive_word"));
+				}
+        	}	
+
+		
 	}, "antiabuse");
 
 	core.on("room", function(action, callback){
 		var room  = action.room;
         var text = room.id+(room.name?(" "+room.name):"")+" "+(room.description?(" "+room.description):"");
-		if(rejectable(text)) return callback(new Error("Abusive room name"));
+		if(rejectable(text)) return callback(new Error("Abusive_room_name"));
 		callback();
 	}, "antiabuse");
 };
@@ -93,17 +108,5 @@ var rejectable = function(text) {
 			return true;
 		}
 	}
-
-	for (index=0; index<customWords.length; ++index) {
-				if(textMessage.toLowerCase().indexOf(customWords[index]) != -1)
-				{
-					log("You cannot use banned words!");
-					if(!message.labels) message.labels = {};
-					message.labels.abusive = 1;
-					return callback();
-				}
-        	}
-        	
-	return false;
 };
 

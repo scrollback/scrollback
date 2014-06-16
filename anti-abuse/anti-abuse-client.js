@@ -11,14 +11,6 @@ libsb.on('config-show', function(conf, next) {
 		text: "Spam control",
 		prio: 600
 	};
-
-
-    div.append(formField("Block offensive words", "toggle", 'block-offensive', results.params.antiAbuse.offensive));
-    tabs.spam = {
-        html: div,
-        text: "Spam control",
-        prio: 600
-    };
     next();
 });
 
@@ -26,7 +18,7 @@ libsb.on('config-save', function(room, next){
 	var lists = [];
 	room.params["anti-abuse"] = {
 		wordblock : $('#block-offensive').is(':checked'),
-		block-lists: lists,
+		"block-lists": lists,
 		customWords : $('#block-custom').val()
 	};
 
