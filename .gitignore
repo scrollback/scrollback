@@ -33,3 +33,4 @@ public/style.css
 public/s/styles/gen
 public/s/styles/less/*.css
 public/libsb.bundle.js
+/public/embed.js
