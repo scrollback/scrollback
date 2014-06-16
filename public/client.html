@@ -216,7 +216,7 @@
 
 		<!-- templates -->
 		<script type="text/template" id="login-menu">
-			<div class="login-menu">
+			<div data-role="guest" class="login-menu">
 				<p>Sign in to scrollback with</p>
 				<a class="button facebook">Facebook</a>
 				<a class="button persona">Persona</a>
@@ -224,7 +224,7 @@
 		</script>
 
 		<script type="text/template" id="user-menu">
-			<ul class="user-menu">
+			<ul data-role="user" class="user-menu">
 				<li><a class="userpref">Account settings</a></li>
 				<li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li>
 				<li><a class="logout">Sign out</a></li>
@@ -251,13 +251,12 @@
 				<form id="signup">
 					<input type="text" id="signup-id" name="username" placeholder="Enter username" autofocus><br/>
 					<input class="signup-save" type="button" value="Create account">
-					<input class="signup-cancel secondary modal-remove" type="button" value="cancel">
 				</form>
 			</div>
 		</script>
 
 		<script type="text/template" id="login-dialog">
-			<div class="login-dialog">
+			<div data=role="guest" class="login-dialog">
 				<h1>Sign in to scrollback with</h1>
 				<a class="button facebook modal-remove">Facebook</a>
 				<a class="button persona modal-remove">Persona</a>
