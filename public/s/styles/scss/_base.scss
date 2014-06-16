@@ -1,46 +1,9 @@
 @import "global";
-@import "functions";
 @import "reset";
 @import "animations";
 @import "filters";
-
-/* mixins */
-@mixin buttons($bg: $accent-color, $fg: $light-color) {
-    @extend %ease;
-    @extend %inputs;
-
-    border: 1px solid $bg;
-    border-bottom-color: darken($bg, 5%);
-    border-radius: $roundness;
-    background-color: $bg;
-    color: $fg;
-    text-align: center;
-    font-weight: 700;
-    cursor: pointer;
-    text-transform: uppercase;
-
-    &:hover, &:focus {
-        background-color: darken($bg, 5%);
-        border-color: darken($bg, 5%);
-        color: $fg;
-    }
-
-    &:active {
-        background-color: darken($bg, 10%);
-        border-color: darken($bg, 10%);
-        color: $fg;
-    }
-
-    &.working {
-        @extend %spinner;
-
-        &, &:hover, &:focus, &:active {
-            background-color: darken($bg, 10%);
-            border-color: darken($bg, 10%);
-            color: mix($bg, $fg, 30%);
-        }
-    }
-}
+@import "button";
+@import "entry";
 
 /* base styles */
 html { font-size: 62.5%; }
@@ -54,12 +17,12 @@ body {
 a {
     @extend %ease;
 
-    color: $accent-color;
+    color: $link-color;
     text-decoration: none;
 
-    &:hover, &:focus { color: darken($accent-color, 15%); }
+    &:hover, &:focus { color: darken($link-color, 15%); }
 
-    &:active { color: darken($accent-color, 30%); }
+    &:active { color: darken($link-color, 30%); }
 }
 
 img {
@@ -71,6 +34,7 @@ h1, h2, h3, h4 {
     line-height: 1.5em;
     font-family: $font-family-headings;
     font-weight: 400;
+    margin-bottom: .5em;
 }
 
 h1 { font-size: 2.5em; }
@@ -82,19 +46,6 @@ h3 { font-size: 1.5em; }
 h4 { font-size: 1.2em; }
 
 p { margin: .5em 0; }
-
-input[type="submit"], input[type="button"] {
-    @extend .button;
-
-    &:disabled { @extend .button.disabled; }
-}
-
-input[type="entry"], input[type="text"], input[type="search"], input[type="email"], textarea {
-    @extend %inputs;
-    @extend .entry;
-
-    &:disabled { @extend .entry.disabled; }
-}
 
 input[type="checkbox"], input[type="radio"] {
     width: 1.5em;
@@ -115,110 +66,6 @@ code {
     line-height: 1.2em;
 }
 
-%inputs {
-    display: inline-block;
-    margin: .5em 0;
-    padding: .8em 1.2em;
-    font-size: 1em;
-    outline: none;
-
-    &:hover, &:focus, &:active { outline: none; }
-}
-
-.button {
-    @include buttons;
-
-    &.secondary {
-        background-color: darken($light-color, 5%);
-        border: 1px solid darken($light-color, 15%);
-        color: lighten($dark-color, 10%);
-
-        &:hover, &:focus {
-            background-color: darken($light-color, 3%);
-            border-color: darken($light-color, 30%);
-            color: lighten($dark-color, 5%);
-        }
-
-        &:active {
-            background-color: darken($light-color, 7%);
-            border-color: darken($light-color, 20%);
-            color: lighten($dark-color, 15%);
-        }
-    }
-
-    &.disabled {
-        &, &:hover, &:focus, &:active {
-            background-color: darken($light-color, 5%);
-            border-color: darken($light-color, 15%);
-            color: lighten($dark-color, 50%);
-            pointer-events: none;
-        }
-    }
-
-    &.linked { @extend .linked; }
-}
-
-.entry {
-    @extend %ease;
-
-    border: 1px solid darken($light-color, 20%);
-    border-top-color: darken($light-color, 30%);
-    border-radius: $roundness;
-    background-color: $light-color;
-    color: $dark-color;
-    box-shadow: inset 0 1px 1px 0 rgba(0,0,0,.1);
-
-    &:hover, &:focus, &:active {
-        border-color: darken($light-color, 30%);
-        border-top-color: darken($light-color, 40%);
-        outline: none;
-    }
-
-    &.disabled { background-color: darken($light-color, 10%); }
-
-    &.error { border-color: $error-color; }
-
-    &.multientry {
-        display: inline-block;
-        min-width: 15em;
-        min-height: 3em;
-        padding: 0;
-        cursor: text; /* fix firefox showing caret in wrong position */
-
-        .item {
-            @include appear;
-            @extend %nofilter;
-
-            display: inline-block;
-            min-width: 3em;
-            margin: .4em 0 .4em .4em;
-            padding: .2em .25em;
-            border: 1px solid transparent;
-            outline: none;
-
-            &:only-child { width: 100%; }
-
-            &:last-child { min-width: 7em; }
-
-            &.done {
-                background-color: lighten($accent-color, 40%);
-                border-color: darken($accent-color, 5%);
-                border-radius: $roundness;
-            }
-
-            .item-remove {
-                float: right;
-                font-weight: bold;
-                font-size: 1.5em;
-                color: darken($accent-color, 5%);
-                cursor: pointer;
-            }
-        }
-    }
-
-    &.linked { @extend .linked; }
-}
-
 .google { @include buttons(#d34836, #fff); }
 
 .twitter { @include buttons(#55acee, #fff); }
@@ -229,43 +76,9 @@ code {
 
 .openid { @include buttons(#f78c40, #fff); }
 
-.linked {
-    border-radius: 0;
-
-    &:not(:only-of-type):not(:last-of-type) { border-right: none; }
-
-    &:first-of-type { border-radius: $roundness 0 0 $roundness; }
-
-    &:last-of-type { border-radius: 0 $roundness $roundness 0; }
-
-    &:only-of-type { border-radius: $roundness; }
-}
-
-%spinner {
-    &:before {
-        @include spin;
-
-        content: "";
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        margin: 0 1em;
-        border-top: 2px solid currentColor;
-        border-right: 2px solid transparent;
-        border-bottom: 2px solid currentColor;
-        border-left: 2px solid transparent;
-        border-radius: 50%;
-    }
-}
-
 .fadeout {
     @include opacity(0);
     @extend %ease;
-}
-
-.grow {
-    @include transform(scale(1.2, 1.2));;
-    @include transition(.15s);
 }
 
 %ease { @include transition; }

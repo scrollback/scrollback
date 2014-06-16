@@ -52,7 +52,7 @@ var formatText = function format(text) {
 
 exports.init = function(app, coreObject) { 
 	core = coreObject;
-	fs.readFile(__dirname + "/views/SEO.html", "utf8", function(err, data){
+/*	fs.readFile(__dirname + "/views/SEO.html", "utf8", function(err, data){
 		if(err)	throw err;
 		core.on("http/init", function(payload, callback) {
             payload.seo = {
@@ -114,49 +114,8 @@ exports.init = function(app, coreObject) {
             res.render("d/main" , responseObject);    
         });
     }
-    app.get("/me", loginHandler);
-	app.get("/me/login", loginHandler);
-    app.get("/dlg/*",function(req,res){
-        var dialog=req.path.substring(1).split("/")[1];
-        if(dialogs[dialog]) {
-            dialogs[dialog](req,res);
-        }
-        else{
-            res.render("error",{error: "dialog missing"});
-        }
-    });
-
-    app.get("/pwn/*",function(req,res){
-        var room = req.path.substring(1).split("/")[1];
-        var url=req.path.replace("/pwn/"+room+"/","");
-        if(url.indexOf("http://")<0){
-            url="http://"+url;
-        }
-        res.render("pwn",{
-            room:room,
-            url:url
-        });
-    });
-
-    app.get('/t/*', function(req, res, next) {
-        var streams = req.path.substring(3);
-
-        streams = streams.split("/+/").map(function(p) {
-            return p.split('/')[0];
-        });
-
-        res.render("room", {
-            streams: JSON.stringify(streams),
-            title: streams.join(', ').replace(/\b[a-z]/g, function(m) {
-                return m.toUpperCase();
-            })
-        });
-    });   
-	
-	app.get("/beta/*", function(req, res){
-		return res.redirect(307, 'https://'+config.http.host+ req.path.substring(5));
-	});
-	
+*/
+  
     function roomHandler(req, res, next) {
 		log("path ", req.path);
         var params = req.path.substring(1).split("/"), responseObj={}, 
@@ -214,13 +173,22 @@ exports.init = function(app, coreObject) {
             });
         });
     }
-    app.get("/*", function(req, res){
+
+    app.get('/t/*', function(req, res, next) {
+        fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data){
+           res.end(data);
+           next();
+        });
+    });
+
+    app.get("/*", function(req, res, next){
+        if(/^\/t\//.test(req.path)) return next();
         fs.readFile(__dirname + "/../public/client.html", "utf8", function(err, data){
            res.end(data);
         });
     });
-    app.get("/*/edit", roomHandler);
-
+    // app.get("/*/edit", roomHandler);
+/*
     app.get("/old/*", function(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[1],
         user = req.session.user;
@@ -295,7 +263,7 @@ exports.init = function(app, coreObject) {
                 res.render("archive", responseObj);
             });
         });
-    });
+    });*/
 };
 
 

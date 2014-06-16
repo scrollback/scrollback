@@ -77,17 +77,27 @@ module.exports = function(core) {
   			if(action.text && typeof action.text!= "string") return callback(new Error("INVALID_EDIT_OPTION_TEXT"));
   			callback();
 		},
-		user: function(action, callback){
+		user: function(action, callback) {
 			if(!action.user && !action.user.id) return callback(new Error("INVALID_USER"));
+			action.user.id = action.user.id.toLowerCase();
 			if(!action.user.identities) return callback(new Error("INVALID_USER"));
-			else{
-				if(!action.user.identities instanceof Array) return callback(new Error("INVALID_USER"));
-				else{
+			else {
+				if(!action.user.identities instanceof Array) {
+					return callback(new Error("INVALID_USER"));
+				} else {
 					action.user.identities.forEach(function(identity){
 						if(typeof identity !== "string") return callback(new Error(INVALID_USER));
 					});
 				}
 			}
+			if(!action.user.params) return callback(new Error("ERR_NO_PARAMS"));
+			callback();
+		},
+		room: function(action, callback) {
+			if(!action.room && !action.room.id) return callback(new Error("INVALID_ROOM"));
+			action.room.id = action.room.id.toLowerCase();
+			if(!action.room.params) return callback(new Error("ERR_NO_PARAMS"));
+			if(!action.room.params.http) return callback(new Error("ERR_NO_PARAMS"));
 			callback();
 		}
 	};
@@ -126,7 +136,7 @@ module.exports = function(core) {
 		return sessionValidation(action, callback);
 	}, "validation");
 	core.on("getUsers", function(action, callback) {
-		if (!(action.ref || action.occupantOf || action.memberOf || action.identity)) {
+		if (!(action.ref || action.occupantOf || action.memberOf || action.identity || action.timezone)) {
 			return callback(new Error("INVALID_QUERY"));
 		}
 		return sessionValidation(action, callback);
@@ -149,8 +159,9 @@ function basicValidation(action, callback) {
 		validation on action.from is not need because we add the from ignore the from sent be the client.
 		from and user is loaded by the entity loader using the session property.
 	*/
-
+	
 	if(action.type === "init" || action.type === "user") {
+		if (action.suggestedNick) action.suggestedNick = action.suggestedNick.toLowerCase();
 		action.to = "me";
 	}else{
 		if(!action.to){
@@ -160,8 +171,9 @@ function basicValidation(action, callback) {
 			return callback(new Error("INVALID_ROOM"));
 		}
 	}
+	if (action.from) action.from = action.from.toLowerCase();
 	action.to = action.to.toLowerCase();
 	if(!action.session) return callback(new Error("NO_SESSION_ID"));
 	action.time = new Date().getTime();
-	callback();
+	return callback();
 }

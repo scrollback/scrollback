@@ -1,4 +1,3 @@
-
 var formField = require("../lib/formField.js");
 
 libsb.on('config-show', function(conf, next) {
@@ -13,7 +12,14 @@ libsb.on('config-show', function(conf, next) {
 		prio: 600
 	};
 
-	next();
+
+    div.append(formField("Block offensive words", "toggle", 'block-offensive', results.params.antiAbuse.offensive));
+    tabs.spam = {
+        html: div,
+        text: "Spam control",
+        prio: 600
+    };
+    next();
 });
 
 libsb.on('config-save', function(room, next){

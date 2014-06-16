@@ -27,8 +27,10 @@ Boston, MA 02111-1307 USA.
 var sockjs = require("sockjs"), core,
 	// api = require("./api.js"),
 	log = require("../lib/logger.js"),
-	config = require("../config.js");
+	config = require("../config.js"),
+	generate = require("../lib/generate.js");
 
+var internalSession = Object.keys(config.whitelists)[0];
 
 var rConns = {}, uConns = {}, sConns = {}, urConns = {};
 var sock = sockjs.createServer();
@@ -43,6 +45,7 @@ sock.on('connection', function (socket) {
 		if (!d.type) return;
 		
 		if(d.type == 'init' && d.session) {
+			if(d.session == internalSession) return;
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
 			if (!sConns[d.session]) {
@@ -90,8 +93,32 @@ sock.on('connection', function (socket) {
 				storeBack(conn, data);
 				return;
 			}
+			if(data.type == 'room') {
+				/* this is need because we dont have the connection object in the
+				rconn until the room can be setup and a back message is sent.*/
+				if(!data.old || !data.old.id) conn.send(data);
+				// return;
+			}
 			if(data.type == 'away') storeAway(conn, data);
-			if(data.type == 'init') storeInit(conn, data);
+			if(data.type == 'init') {
+				if(data.old){
+					data.occupantOf.forEach(function(e) {
+						var role, i,l;
+
+						for(i=0,l=data.memberOf.length;i<l;i++) {
+							if(data.memberOf[i].id ==e.id) {
+								role = data.memberOf[i].role;
+								break;
+							}
+						}
+						
+						data.user.role = role;
+						emit({id: generate.uid(), type: "away", to: e.id, from: data.old.id, user: data.old, room: e});
+						emit({id: generate.uid(), type: "back",to: e.id, from: data.user.id, session: data.session,user: data.user, room: e});
+					});	
+				}
+				storeInit(conn, data);
+			}
 			if(data.type == 'user') processUser(conn, data);
 			if(['getUsers', 'getTexts', 'getRooms', 'getThreads'].indexOf(data.type)>=0){
 				conn.send(data);
@@ -119,7 +146,7 @@ function storeInit(conn, init) {
 	if(!uConns[init.user.id]) uConns[init.user.id] = [];
 	sConns[init.session].forEach(function(c) {
 		var index;
-		if(init.old && init.id) {
+		if(init.old && init.old.id) {
 			index = uConns[init.old.id].indexOf(c);
 			uConns[init.old.id].splice(index, 1);
 		}
@@ -196,7 +223,7 @@ function emit(action, callback) {
 	}
 	
 	function dispatch(conn) {conn.send(action); }
-	callback();
+	if(callback) callback();
 };
 
 function handleClose(conn) {

@@ -6,6 +6,7 @@ var q = [];
 var or = new require('../lib/ObjectReader.js')(event);
 var timestamp = new Date().getTime();
 var fn = "ircClient/Data/queue" + timestamp + ".txt";
+deleteFolder("ircClient/Data");
 if(!fs.existsSync("ircClient/Data")) fs.mkdirSync("ircClient/Data");
 fs.openSync(fn, "w");
 var ff = fs.openSync(fn, "r+");
@@ -55,3 +56,20 @@ function writeObject(obj) {//move this inside objectWriter
 	return r;
 }
 
+
+
+function deleteFolder (path) {
+    var files = [];
+    if( fs.existsSync(path) ) {
+        files = fs.readdirSync(path);
+        files.forEach(function(file,index){
+            var curPath = path + "/" + file;
+            if(fs.lstatSync(curPath).isDirectory()) { // recurse
+                deleteFolder(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+};

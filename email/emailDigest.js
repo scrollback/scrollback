@@ -11,13 +11,12 @@ var waitingTime1 = config.mentionEmailTimeout; //mention email timeout
 var waitingTime2 = config.regularEmailTimeout;//regular email timeout
 var timeout = 30 * 1000;//for debuging only
 var debug = emailConfig.debug;
-if(!debug) log = log.tag("mail");
 
 module.exports.init = function (coreObj) {
 	core = coreObj;
 	init();
 };
-module.exports.intiMailSending = initMailSending;
+module.exports.initMailSending = initMailSending;
 module.exports.trySendingToUsers = trySendingToUsers;
 module.exports.sendPeriodicMails = sendPeriodicMails;
 
@@ -30,11 +29,12 @@ function init() {
 		if(err) throw err;
 		digestJade = jade.compile(data,  {basedir: __dirname + "/views/" });
 		//send mails in next hour
-		var x = new Date().getMinutes();
+		var x = new Date().getUTCMinutes();
 		var sub = 90;
 		if (x < 30) {
 			sub = 30;
 		}
+		log("Init email will send email after ", (sub - x)* 60000, " ms");
 		setTimeout(function(){
 			sendPeriodicMails();
 			setInterval(sendPeriodicMails, 60*60*1000);//TODO move these numbers to myConfig
@@ -454,7 +454,8 @@ var formatText = function(text) {
  */
 function sendPeriodicMails(){
 	var x = new Date().getUTCHours();
-	var start1 = x >= 12?(24 - x)*60:-x*60;
+	var t;
+	var start1 = x >= 12 ? (24 - x)*60 : -x*60;
 	var end1 = start1 + 59;
 	var start2 = -100*60;//big values
 	var end2 = -200*60;
@@ -473,6 +474,7 @@ function sendPeriodicMails(){
 	}
 	log("current time hour:",x+","+start1+","+start2);
 	function processResults(err, data) {
+		log("err", err, " data: ", data );
 		if (err || !data.results) return;
 		var users = data.results;
 		users.forEach(function(user) {
@@ -480,8 +482,17 @@ function sendPeriodicMails(){
 			if (user.params && user.params.email && user.params.email.frequency !== "never") {//TODO write a query based on freq
 				initMailSending(user.id);
 			}
-			
 		});
+	}
+	if (start1 < 0) {
+		t = start1;
+		start1 = end1;
+		end1 = t;
+	}
+	if (start2 < 0) {
+		t = start2;
+		start2 = end2;
+		end2 = t;
 	}
 	core.emit("getUsers", {timezone: {gte: start1, lte: end1}, session: internalSession}, function(err, data) {
 		processResults(err, data);

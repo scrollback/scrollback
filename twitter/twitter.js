@@ -53,7 +53,7 @@ module.exports = function(coreObj) {
 function twitterRoomHandler(action, callback) {
 	var room = action.room;
 	log("room twitter--", JSON.stringify(room));
-	if (action.type == 'room' && room.params && room.params.twitter) {
+	if (action.type == 'room' && room.params && room.params.twitter && room.params.twitter.username) {
 		addTwitterTokens(action, callback);			
 	}
 	else {
@@ -97,8 +97,7 @@ function addTwitterTokens(room, callback) {
 						});
 					});
 					
-				}
-				else {//new values are not present in redis.. copy old
+				} else {//new values are not present in redis.. copy old
 					copyOld(room, callback);
 				}
 			

@@ -15,10 +15,11 @@ core.on('data', function(data) {
 ircClient.init(core);
 
 var server = net.createServer(function(c) { //'connection' listener
-	if (client && client.writable) {
+	if (client && isConnected) {
 		c.destroy();//disconnect.
 		return;//allow only one connection.
 	}
+	isConnected = true;
 	client = c;
 	console.log("new Connection Request");
 	writeObject({

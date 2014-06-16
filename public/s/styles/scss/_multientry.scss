@@ -1,0 +1,63 @@
+@import "functions";
+@import "global";
+@import "animations";
+@import "entry";
+
+@include exports("multientry") {
+	.multientry {
+		@extend .entry;
+
+		display: inline-block;
+		min-height: 2.5em;
+		min-width: 15em;
+		max-width: 100%;
+		margin: .5em 0;
+		padding: 0 .0625em;
+		cursor: text; /* fix firefox showing caret in wrong position */
+
+		.item {
+			display: inline-block;
+			min-width: 3em;
+			max-width: 100%;
+			margin: .125em .0625em;
+			border: 1px solid transparent;
+			outline: none;
+
+			&:only-child { width: 100%; }
+
+			&.done {
+				@include fadein;
+
+				border-radius: $roundness;
+				background-color: $accent-color;
+				color: $light-color;
+			}
+
+			.item-text {
+				padding: 0 .75em;
+				line-height: 2em;
+			}
+
+			.item-remove {
+				@include transition;
+
+				float: right;
+				cursor: pointer;
+				background-color: rgba(0,0,0,.1);
+				border-radius: 0 $roundness $roundness 0;
+
+				&:focus, &:hover { background-color: rgba(0,0,0,.2); }
+
+				&:active { background-color: rgba(0,0,0,.3); }
+
+				&:after {
+					display: block;
+					content: "\00d7";
+					font-weight: 700;
+					font-size: 1.5em;
+					padding: .17em .5em;
+				}
+			}
+		}
+	}
+}

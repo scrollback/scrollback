@@ -90,6 +90,9 @@ img { border: 0; }
 /* correct overflow not hidden in IE */
 svg:not(:root) { overflow: hidden; }
 
+/* cascade SVG fill color */
+svg:not[class] { fill: currentColor; }
+
 /* contain overflow in all browsers. */
 pre { overflow: auto; }
 

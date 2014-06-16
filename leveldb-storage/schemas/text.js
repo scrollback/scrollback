@@ -63,6 +63,7 @@ module.exports = function (types) {
 		},
 		
 		get: function (query, cb) {
+			var qStart = new Date().getTime(), qEnd;
 			var reversed, start, end, startTime = new Date().getTime();
 			var dbQuery = {};
 			if(query.ref) {
@@ -111,6 +112,7 @@ module.exports = function (types) {
 			texts.get(dbQuery, function(err, data) {
 				if(err) return cb(err);
 				if(dbQuery.reverse) data = data.reverse();
+				log("Query completed in ", new Date().getTime()-qStart, dbQuery);
 				query.results = data;
 				cb();
 			});

@@ -1,14 +1,77 @@
 /* jslint browser: true, indent: 4, regexp: true */
-/* global $, Notification, webkitNotifications */
+/* global $ */
 
 /**
- * @fileOverview Various UI components.
+ * @fileOverview User interface components.
  * @author Satyajit Sahoo <satya@scrollback.io>
- * @requires jQuery
+ * @requires jQuery, setCursorEnd
  */
 
 var lace = {
     animate: {
+        /**
+         * Add a class to an element and execute an action after an event.
+         * @constructor
+         * @param {{ element: String, event: String, classname: String, action: Function, support: Boolean }} core
+         */
+        core: function(core) {
+            var $element = $(core.element);
+
+            if (!core.action) {
+                core.action = function() {};
+            }
+
+            if (core.support && $element.is(":visible") && document.hasFocus()) {
+                var onanimate = function() {
+                    if ($element.data("lace.animate")) {
+                        $element.removeClass(core.classname).data("lace.animate", false);
+                        core.action.call($element);
+
+                        // Remove event handlers
+                        $element.off(core.event);
+                        $(window).off("blur.lace.animate");
+                    }
+                };
+
+                $element.on(core.event, function(e) {
+                    if (e.target === e.currentTarget) {
+                        onanimate();
+                    }
+                }).addClass(core.classname).data("lace.animate", true);
+
+                // Fix event not firing when window not focused
+                $(window).on("blur.lace.animate", function() {
+                    onanimate();
+                });
+            } else {
+                core.action.call($element);
+            }
+        },
+
+        /**
+        * Add a class to an element and execute an action after animation.
+        * @constructor
+        * @param {String} classname
+        * @param {String} element
+        * @param {Function} [action]
+        */
+        animation: function(classname, element, action) {
+            var event = "animationend webkitAnimationEnd mozAnimationEnd MSAnimationEnd oAnimationEnd",
+                support = typeof document.body.style.animation === "string" ||
+                          typeof document.body.style.WebkitAnimation === "string" ||
+                          typeof document.body.style.MozAnimation === "string" ||
+                          typeof document.body.style.MsAnimation === "string" ||
+                          typeof document.body.style.OAnimation === "string";
+
+            lace.animate.core({
+                classname: classname,
+                element: element,
+                action: action,
+                event: event,
+                support: support
+            });
+        },
+
         /**
          * Add a class to an element and execute an action after transition.
          * @constructor
@@ -17,22 +80,20 @@ var lace = {
          * @param {Function} [action]
          */
         transition: function(classname, element, action) {
-            if (!action) {
-                action = function() {};
-            }
+            var event = "transitionend webkitTransitionEnd mozTransitionEnd msTransitionEnd oTransitionEnd",
+                support = typeof document.body.style.transition === "string" ||
+                          typeof document.body.style.WebkitTransition === "string" ||
+                          typeof document.body.style.MozTransition === "string" ||
+                          typeof document.body.style.MsTransition === "string" ||
+                          typeof document.body.style.OTransition === "string";
 
-            if (typeof document.body.style.transition === 'string') {
-                $(element).addClass(classname).data("transitioning", true);
-
-                $(element).on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function(e) {
-                    if (e.target === e.currentTarget && $(this).data("transitioning")) {
-                        $(element).removeClass(classname).data("transitioning", false);
-                        action();
-                    }
-                });
-            } else {
-                action();
-            }
+            lace.animate.core({
+                classname: classname,
+                element: element,
+                action: action,
+                event: event,
+                support: support
+            });
         }
     },
 
@@ -42,13 +103,16 @@ var lace = {
          * @constructor
          */
         show: function() {
-            var progress = ".progress";
+            var $progress = $(".progress");
 
-            if ($(progress).length) {
-                $(progress).remove();
+            if ($progress.length) {
+                $progress.remove();
             }
 
-            $("body").append("<div class='" + progress.substr(1) + " loading'></div>");
+            $progress = $("<div>").addClass("progress loading");
+            $progress.appendTo("body");
+
+            return $progress;
         },
 
         /**
@@ -61,7 +125,7 @@ var lace = {
         },
 
         /**
-         * Hide progress.
+         * Hide progress indicator.
          * @constructor
          */
         hide: function() {
@@ -79,26 +143,35 @@ var lace = {
          * @constructor
          */
         init: function() {
+            if (lace.multientry.init.done) {
+                return;
+            }
+
             $(document).on("keydown", ".multientry .item", function(e) {
                 if (e.keyCode === 13 || e.keyCode === 32 || e.keyCode === 188) {
                     e.preventDefault();
-                    lace.multientry.add($(this), $(this).text());
+                    lace.multientry.add($(this).parent(".multientry"), $(this).text());
                 }
             });
 
             $(document).on("paste", ".multientry .item", function(e) {
                 e.preventDefault();
 
-                var items = e.originalEvent.clipboardData.getData('Text').split(/[\s,]+/);
+                var items = e.originalEvent.clipboardData.getData("Text");
 
-                for (var i = 0; i < items.length; i++) {
-                    lace.multientry.add($(this), items[i]);
-                }
+                lace.multientry.add($(this).parent(".multientry"), items);
             });
 
             $(document).on("keydown", ".multientry .item", function(e) {
                 if (e.keyCode === 8 && $(this).text().match(/^\s*$/)) {
-                    lace.multientry.remove($(this).prev());
+                    e.preventDefault();
+
+                    $(this).text($(this).prev().find(".item-text").text());
+                    $(this).prev().remove();
+
+                    if ($.fn.setCursorEnd) {
+                        $(this).setCursorEnd();
+                    }
                 }
             });
 
@@ -109,17 +182,48 @@ var lace = {
             $(document).on("click", ".multientry", function() {
                 $(this).children().last().focus();
             });
+
+            lace.multientry.init.done = true;
         },
 
         /**
-         * Add an item to multientry.
+         * Create the markup required for multientry.
+         * @constructor
+         * @return {Object}
+         */
+        create: function() {
+            lace.multientry.init();
+
+            var $multientry = $("<span>").addClass("multientry").append(
+                $("<span>").addClass("item").attr({"contenteditable": true})
+            );
+
+            return $multientry;
+        },
+
+        /**
+         * Add items to multientry.
          * @constructor
          * @param {String} element
-         * @param {String} text
+         * @param {String[]} content
          */
-        add: function(element, text) {
-            if (!text.match(/^\s*$/) ) {
-                $("<div class='item done'><span class='item-text'>" + text.trim() + "</span><span class='item-remove close'>&times;</span></div>").insertBefore($(element).empty());
+        add: function(element, content) {
+            var $element = $(element);
+
+            if (content) {
+                if (!(content instanceof Array)) {
+                    content = content.split(/[\s,]+/);
+                }
+
+                content.forEach(function(text) {
+                    if (!text.match(/^\s*$/) ) {
+                        $("<span>")
+                        .addClass("item done")
+                        .append($("<span>").addClass("item-text").text(text.trim()))
+                        .append($("<span>").addClass("item-remove"))
+                        .insertBefore(($element.children().last()).empty());
+                    }
+                });
             }
         },
 
@@ -129,21 +233,39 @@ var lace = {
          * @param {String} [element]
          */
         remove: function(element) {
-            if (!element) {
-                element = ".multientry .item";
+            var $element;
+
+            if (element) {
+                $element = $(element);
+            } else {
+                $element = $(".multientry .item.done");
             }
 
-            $(element).remove();
+            if (!$element.hasClass("item")) {
+                return;
+            }
+
+            lace.animate.transition("fadeout", $element, function() {
+                $(this).remove();
+            });
         },
 
         /**
          * Get items from multientry.
          * @constructor
-         * @param {String} element
+         * @param {String} [element]
          * @return {String[]}
          */
         items: function(element) {
-            var elems = $(element).find(".item-text"),
+            var $element;
+
+            if (element) {
+                $element = $(element);
+            } else {
+                $element = $(".multientry");
+            }
+
+            var elems = $element.find(".item-text"),
                 items = new Array(elems.length);
 
             for (var i = 0; i < elems.length; i++) {
@@ -156,41 +278,80 @@ var lace = {
 
     modal: {
         /**
-         * Show a modal dialog.
+         * Add event handlers for modal dialog.
          * @constructor
-         * @param {String} content
          */
-        show: function(content) {
-            var modal = ".modal",
-                dim = ".dim";
-
-            if ($(modal).length || $(dim).length) {
-                $(modal + "," + dim).remove();
+        init: function() {
+            if (lace.modal.init.done) {
+                return;
             }
 
-            $("body").append("<div class='" + dim.substr(1) + "'></div>").append("<div class='" + modal.substr(1) + "'>" + content + "</div>");
-
-            $(modal).css({
-                "margin-top" : $(modal).outerHeight() / -2,
-                "margin-left" : $(modal).outerWidth() / -2
+            $(document).on("keydown", function(e) {
+                if (e.keyCode === 27 && lace.modal.dismiss) {
+                    lace.modal.hide();
+                }
             });
 
-            if (!$(modal).find(".modal-remove").length) {
-                $(".dim").on("click", lace.modal.hide);
-            }
+            $(document).on("click", ".backdrop", function() {
+                if (lace.modal.dismiss) {
+                    lace.modal.hide();
+                }
+            });
 
-            $(".modal-remove").on("click", lace.modal.hide);
-            $(window).on("popstate", lace.modal.hide);
+            $(document).on("click", ".modal-remove", lace.modal.hide);
+
+            lace.modal.init.done = true;
         },
 
         /**
-         * Hide modal dialog(s).
+         * Show a modal dialog.
+         * @constructor
+         * @param {{ body: String, dismiss: Boolean, backdrop: Boolean }} modal
+         */
+        show: function(modal) {
+            lace.modal.init();
+
+            var $modal = $(".modal"),
+                $backdrop = $(".backdrop");
+
+            if (typeof modal.dismiss !== "boolean" || modal.dismiss) {
+                lace.modal.dismiss = true;
+            } else {
+                lace.modal.dismiss = false;
+            }
+
+            if (typeof modal.backdrop !== "boolean" || modal.backdrop) {
+                if (!$backdrop.length) {
+                    $backdrop = $("<div>").addClass("backdrop");
+                    $backdrop.appendTo("body");
+                }
+            } else if ($backdrop.length) {
+                $backdrop.remove();
+            }
+
+            if ($modal.length) {
+                $modal.empty().html(modal.body);
+            } else {
+                $modal = $("<div>").addClass("modal").html(modal.body);
+                $modal.appendTo("body");
+            }
+
+            $modal.css({
+                "margin-top" : $modal.outerHeight() / -2,
+                "margin-left" : $modal.outerWidth() / -2
+            });
+
+            return $modal;
+        },
+
+        /**
+         * Hide modal dialog.
          * @constructor
          */
         hide: function() {
-            [".dim", ".modal"].forEach(function(el) {
+            [".backdrop", ".modal"].forEach(function(el) {
                 lace.animate.transition("fadeout", el, function() {
-                    $(el).remove();
+                    $(this).remove();
                 });
             });
         }
@@ -198,97 +359,147 @@ var lace = {
 
     popover: {
         /**
-         * Show a PopOver.
+         * Add event handlers for popover.
          * @constructor
-         * @param {String} element
-         * @param {String} content
          */
-        show: function(element, content) {
-            var popover = ".popover-body",
-                layer = ".popover-layer",
-                spacetop = $(element).offset().top - $(document).scrollTop() + $(element).height(),
+        init: function() {
+            if (lace.popover.init.done) {
+                return;
+            }
+
+            $(document).on("click", ".popover-layer", lace.popover.hide);
+
+            lace.popover.init.done = true;
+        },
+
+        /**
+         * Show a popover.
+         * @constructor
+         * @param {{ body: String, origin: String }} popover
+         */
+        show: function(popover) {
+            lace.popover.init();
+
+            var $popover = $(".popover-body"),
+                $layer = $(".popover-layer"),
+                $origin = $(popover.origin),
+                spacetop = $origin.offset().top - $(document).scrollTop() + $origin.height(),
                 spacebottom = $(window).height() - spacetop,
-                spaceleft = $(element).offset().left - $(document).scrollLeft() + ( $(element).width() / 2 ),
+                spaceleft = $origin.offset().left - $(document).scrollLeft() + ( $origin.width() / 2 ),
                 spaceright = $(window).width() - spaceleft;
 
-            if ($(popover).length || $(layer).length) {
-                $(popover + "," + layer).remove();
+            if (!$layer.length) {
+                $layer = $("<div>").addClass("popover-layer");
+                $layer.appendTo("body");
             }
 
-            $("body").append("<div class='" + layer.substr(1) + "'></div>").append($('<div role="menu" class="' + popover.substr(1) + '">' + content + '</div>'));
+            if ($popover.length) {
+                $popover.remove();
+            }
 
-            if ($(popover).outerWidth() >= spaceleft) {
-                $(popover).addClass("arrow-left");
-                spaceleft = $(element).width() / 2;
-            } else if ($(popover).outerWidth() >= spaceright) {
-                $(popover).addClass("arrow-right");
-                spaceleft = $(window).width() - ( $(element).width() / 2 ) - $(popover).outerWidth();
+            $popover = $("<div>").addClass("popover-body").html(popover.body);
+            $popover.appendTo("body");
+
+            if ($popover.outerWidth() >= spaceleft) {
+                $popover.addClass("arrow-left");
+                spaceleft = $origin.width() / 2;
+            } else if ($popover.outerWidth() >= spaceright) {
+                $popover.addClass("arrow-right");
+                spaceleft = $(window).width() - ( $origin.width() / 2 ) - $popover.outerWidth();
             } else {
-                spaceleft = spaceleft - ( $(popover).outerWidth() / 2 );
+                spaceleft = spaceleft - ( $popover.outerWidth() / 2 );
             }
 
-            if ($(element).height() >= $(window).height()) {
-                $(popover).addClass("popover-bottom");
+            if ($origin.height() >= $(window).height()) {
+                $popover.addClass("popover-bottom");
                 spacetop = $(window).height() / 2;
-            } else if ($(popover).outerHeight() >= spacebottom) {
-                $(popover).addClass("popover-top");
-                spacetop = spacetop - $(element).height() - $(popover).outerHeight();
+            } else if ($popover.outerHeight() >= spacebottom) {
+                $popover.addClass("popover-top");
+                spacetop = spacetop - $origin.height() - $popover.outerHeight();
             } else {
-                $(popover).addClass("popover-bottom");
+                $popover.addClass("popover-bottom");
             }
 
-            $(popover).css({
+            $popover.css({
                 "top" : spacetop,
                 "left" : spaceleft
             });
 
-            $(layer).on("click", lace.popover.hide);
+            return $popover;
         },
 
         /**
-         * Hide PopOver(s).
+         * Hide popover.
          * @constructor
          */
         hide: function() {
             lace.animate.transition("fadeout", ".popover-body", function() {
-                $(".popover-body, .popover-layer").remove();
+                $(".popover-layer").remove();
+                $(this).remove();
             });
         }
     },
 
     alert: {
         /**
-         * Show an alert message.
+         * Add event handlers for alert message.
          * @constructor
-         * @param {{ type: String, body: String, id: String, timeout: Number }} alert
          */
-        show: function(alert) {
-            if (!alert.type) {
-                alert.type = "info";
+        init: function() {
+            if (lace.alert.init.done) {
+                return;
             }
-
-            if (!alert.id) {
-                alert.id = new Date().getTime();
-            }
-
-            var container = ".alert-container",
-                banner = "<div id='" + alert.id + "' class='alert-bar " + alert.type + "'><span class='alert-content'>" + alert.body + "</span><a class='alert-remove close'>&times;</a></div>";
-
-            if (!$(container).length) {
-                $("body").append("<div class='" + container.substr(1) + "'></div>");
-            }
-
-            $(container).append(banner);
 
             $(document).on("click", ".alert-remove", function() {
                 lace.alert.hide($(this).parent($(".alert-bar")));
             });
 
+            lace.alert.init.done = true;
+        },
+
+        /**
+         * Show an alert message.
+         * @constructor
+         * @param {{ type: String, body: String, id: String, timeout: Number }} alert
+         */
+        show: function(alert) {
+            lace.alert.init();
+
+            if (!alert.type) {
+                alert.type = "info";
+            }
+
+            if ((!alert.id)) {
+                alert.id = "lace-alert-" + new Date().getTime();
+            }
+
+            var $alert = $("#" + alert.id),
+                $container = $(".alert-container");
+
+            if (!$container.length) {
+                $container = $("<div>").addClass("alert-container");
+                $container.appendTo("body");
+            }
+
+            if ($alert.length && $alert.hasClass("alert-bar")) {
+                $alert.removeClass().addClass("alert-bar " + alert.type)
+                      .find(".alert-content").empty().html(alert.body);
+            } else {
+                $alert = $("<div>")
+                         .addClass("alert-bar " + alert.type)
+                         .attr("id", alert.id)
+                         .append($("<span>").addClass("alert-content").html(alert.body))
+                         .append($("<span>").addClass("alert-remove"));
+                $alert.appendTo($container);
+            }
+
             if (alert.timeout) {
                 setTimeout(function() {
-                    lace.alert.hide("#" + alert.id);
+                    lace.alert.hide($alert);
                 }, alert.timeout);
             }
+
+            return $alert;
         },
 
         /**
@@ -297,93 +508,28 @@ var lace = {
          * @param {String} [element]
          */
         hide: function(element) {
-            var container = ".alert-container";
+            var $element,
+                $container = $(".alert-container");
 
-            if (!element) {
-                element = ".alert-bar";
+            if (element) {
+                $element = $(element);
+            } else {
+                $element = $(".alert-bar");
+            }
+
+            if (!$element.hasClass("alert-bar")) {
+                return;
             }
 
             lace.animate.transition("fadeout", element, function() {
-                $(element).remove();
+                $(this).remove();
 
-                if (!$(container).children().length) {
-                    $(container).remove();
+                if (!$container.children().length) {
+                    $container.remove();
                 }
             });
         }
     },
-
-    notify: {
-        /**
-         * Check desktop notifications support.
-         * @constructor
-         * @return {{ type: String, permission: String }}
-         */
-        support: function() {
-            var type, permission;
-
-            if ("webkitNotifications" in window) {
-                type = "webkit";
-                switch(webkitNotifications.checkPermission()) {
-                    case "0":
-                        permission = "granted";
-                        break;
-                    case "2":
-                        permission = "denied";
-                        break;
-                    default:
-                        permission = "default";
-                        break;
-                }
-            } else if ("Notification" in window) {
-                type = "html5";
-                permission = Notification.permission;
-            } else {
-                return false;
-            }
-
-            return { "type" : type, "permission" : permission };
-        },
-
-        /**
-         * Request permission for desktop notifications.
-         * @constructor
-         */
-        request: function() {
-            var check = lace.notify.support();
-
-            if (check.permission !== "granted" && check.permission !== "denied") {
-                if (check.type === "webkit") {
-                    webkitNotifications.requestPermission();
-                } else if (check.type === "html5") {
-                    Notification.requestPermission();
-                }
-            }
-        },
-
-        /**
-         * Show a desktop notification.
-         * @constructor
-         * @param {{ title: String, body: String, tag: String, icon: String, action: Function }} notification
-         */
-        show: function(notification) {
-            var check = lace.notify.support(),
-                n;
-
-            if (check.permission === "granted") {
-                if (check.type === "webkit") {
-                    n = webkitNotifications.createNotification(notification.icon, notification.title, notification.body);
-                    n.show();
-                    n.onclick = notification.action;
-                } else if (check.type === "html5") {
-                    n = new Notification(notification.title, { dir: "auto", lang: "en-US", body: notification.body, tag: notification.tag, icon: notification.icon });
-                    n.onclick = notification.action;
-                }
-            } else {
-                lace.notify.request();
-            }
-        }
-    }
 };
 
 window.lace = lace;

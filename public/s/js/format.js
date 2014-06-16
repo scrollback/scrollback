@@ -39,9 +39,19 @@ window.format = {
 	},
 
 	textToHtml: function(str) {
-		if(str)	return str.replace('<', '&lt;').replace('>', '&gt;'); // prevent script injection
-
-		// TODO: linkification, emoticons, markdown?
+		// Replace &, <, >, ", ', `, , !, @, $, %, (, ), =, +, {, }, [, and ]
+		if (str) {
+			return str.replace("&", "&amp;")
+					  .replace("<", "&lt;").replace(">", "&gt;")
+					  .replace('"', "&quot;").replace("'", "&#39").replace("`", "&#96")
+					  .replace("!", "&#33;").replace("@", "&#64;")
+					  .replace("$", "&#36;").replace("%", "&#37;")
+					  .replace("(", "&#40;").replace(")", "&#41;")
+					  .replace("=", "&#61;").replace("+", "&#43;")
+					  .replace("{", "&#123;").replace("}", "&#125;")
+					  .replace("[", "&#91;").replace("]", "&#93;")
+					  .replace(" ", "&#32;").replace(/(?:\r\n|\r|\n)/g, '<br />');
+		}
 	},
 
 	linkify: function(str) {
@@ -50,8 +60,8 @@ window.format = {
 		var emailAddressPattern = /(([a-zA-Z0-9_\-\.]+)@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6}))+/gim;
 
 		return str
-		.replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
-		.replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>')
+		.replace(urlPattern, '<a href="$&" rel="nofollow" target="_blank">$&</a>')
+		.replace(pseudoUrlPattern, '$1<a rel="nofollow" href="http://$2" target="_blank">$2</a>')
 		.replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
 	},
 

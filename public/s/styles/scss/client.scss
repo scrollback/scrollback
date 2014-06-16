@@ -1,11 +1,17 @@
 @import "global";
-@import "functions";
 @import "base";
 @import "alert";
 @import "modal";
 @import "popover";
 @import "switch";
+@import "button";
+@import "entry";
+@import "multientry";
 @import "flexbox";
+@import "oembed";
+@import "tooltip";
+@import "progress";
+@import "overlay";
 
 $screenx: "only screen and (min-width: 18em)";
 $screenxx: "only screen and (min-width: 27em)";
@@ -29,6 +35,7 @@ $bar-height: 3.5em;
 $settings: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
 $modes: normal, search, conf, pref, home, noroom;
 $roles: guest, user, follower, owner;
+$embeds: toast, full;
 
 /* themes */
 @mixin theme($name, $base, $color, $meta, $border, $text, $icon, $focus) {
@@ -67,7 +74,7 @@ $roles: guest, user, follower, owner;
 
             .tab {
                 fill: fade-out($text, .3);
-                background-color: darken($meta, 10%);
+                background-color: $meta;
                 border-left-color: $border;
 
                 &:hover, &:focus, &:active {
@@ -77,7 +84,7 @@ $roles: guest, user, follower, owner;
 
                 &.current {
                     fill: $text;
-                    background-color: $meta;
+                    background-color: darken($meta, 10%);
                 }
             }
 
@@ -106,7 +113,7 @@ $roles: guest, user, follower, owner;
             &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active { color: $text; }
         }
 
-        .title-bar {
+        .title-bar, .minimize-bar {
             background-color: $base;
             color: $color;
 
@@ -141,16 +148,22 @@ $roles: guest, user, follower, owner;
             }
         }
 
-        &.role-follower .follow-button, .rooms-button, .meta-button, .search-button, .fullview-button, .minimize-button {
+        &.role-follower .follow-button, .rooms-button, .meta-button, .search-button, .embed-button {
             fill: $icon;
 
             &:focus, &:hover, &:active { fill: $focus; }
         }
 
-        .sb-icon {
-            .sb-top { fill: $accent-color; }
+        .sb-icon { fill: $light-color; }
 
-            .sb-bottom { fill: $light-color; }
+        .sb-logotype { fill: $light-color; }
+
+        &.embed {
+            .cta-area {
+                .cta-action {
+                    color: $accent-color;
+                }
+            }
         }
     }
 }
@@ -183,6 +196,16 @@ $roles: guest, user, follower, owner;
 body {
     word-wrap: break-word;
     height: 100%;
+
+    &:not(.embed) {
+        [data-embed]:not([data-embed=none]) { display: none; }
+    }
+
+    @each $embed in $embeds {
+        &.embed-#{$embed} {
+            [data-embed]:not([data-embed~=#{$embed}]) { display: none; }
+        }
+    }
 
     @each $mode in $modes {
         &.mode-#{$mode} {
@@ -224,8 +247,6 @@ body {
         left: 0;
         width: $width-roomxxxx;
     }
-
-    .embed & { display: none; }
 }
 
 .room-header {
@@ -352,46 +373,58 @@ body {
         &.rooms-button {
             min-width: 3em;
             width: 3em;
-            fill: lighten($dark-color, 30%);
+            fill: lighten($dark-color, 15%);
 
             .view-rooms & { @include transform(rotate(180deg)); }
-
-            .embed & { display: none; }
 
             @media #{$screenxxxx} { display: none; }
         }
     }
 
+    h3 { margin: 0; }
+
     .tab {
         @include flex-grow(1);
 
         text-align: center;
-        background-color: rgba(0,0,0,.05);
+        background-color: transparent;
         border-left: 1px solid darken($light-color, 15%);
         fill: lighten($dark-color, 50%);
 
         &:first-child { border-left: none; }
 
         &:hover, &:focus, &:active {
-            fill: lighten($dark-color, 30%);
+            fill: lighten($dark-color, 5%);
             background-color: rgba(0,0,0,.1);
         }
 
         &.current {
-            fill: lighten($dark-color, 30%);
-            background-color: transparent;
+            fill: lighten($dark-color, 15%);
+            background-color: rgba(0,0,0,.05);
         }
     }
 
     .meta-header {
         @include justify-content(flex-start);
 
-        padding-left: 1.5em;
+        padding-left: .25em;
         text-transform: uppercase;
+
+        .embed & { padding-left: .75em; }
 
         @media #{$screenxxxx} {
             padding-left: 4.25em;
             background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
+        }
+
+        h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+
+            @media #{$screenxxxx} {
+                font-size: 1.5em;
+                font-weight: 400;
+            }
         }
     }
 }
@@ -417,14 +450,12 @@ body {
     @extend %scroll-elem;
 
     padding: 1.5em;
-    padding-bottom: $bar-height;
 }
 
 .pane-people {
     @extend %scroll-elem;
 
     padding: 1.5em .75em;
-    padding-bottom: $bar-height;
 
     .infinite-above, .infinite-below {
         background-color: transparent;
@@ -443,6 +474,7 @@ body {
     @extend %nofilter;
     @extend %ease;
 
+    position: relative;
     display: inline-block;
     padding: .25em;
     width: 5.5em;
@@ -458,19 +490,57 @@ body {
         border-radius: $roundness;
     }
 
+    &.owner, &.admin, &.moderator {
+        &:after {
+            display: block;
+            position: absolute;
+            top: .25em;
+            right: .25em;
+            font-size: .8em;
+            font-weight: 700;
+            padding: 0 .25em;
+            text-transform: uppercase;
+            border-radius: $roundness;
+        }
+    }
+
+    &.owner {
+        &:after {
+            content: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\'><g transform=\'translate(0,-1036.3622)\' fill=\'#fff\'><path d=\'m 2,1050.3622 -2,-8 c 0,-1 1,0 1,0 l 4,3 2,-3 c 1,-1 1,-1 2,0 l 2,3 4,-3 c 0,0 1,-1 1,0 l -2,8 c -1,2 -1,2 -3,2 l -6,0 c -2,0 -2,0 -3,-2 z\'/></g></svg>");
+            background-color: $error-color;
+            color: $light-color;
+        }
+    }
+
+    &.admin {
+        &:after {
+            content: "Admin";
+            background-color: $warning-color;
+            color: $light-color;
+        }
+    }
+
+    &.moderator {
+        &:after {
+            content: "Mod";
+            background-color: $success-color;
+            color: $light-color;
+        }
+    }
+
     &.offline {
         @include opacity(.5);
 
         .person-avatar { @extend %grayscale; }
     }
+}
 
-    .person-avatar {
-        display: block;
-        width: 4em;
-        height: 4em;
-        margin: .25em .5em;
-        border-radius: $roundness;
-    }
+.person-avatar {
+    display: block;
+    width: 4em;
+    height: 4em;
+    margin: .25em .5em;
+    border-radius: $roundness;
 }
 
 .pane-threads {
@@ -492,7 +562,11 @@ body {
     font-size: 1.2em;
 }
 
-.thread-item-container { @extend %scroll-elem; }
+.thread-item-container {
+    @extend %scroll-elem;
+
+    padding-bottom: $bar-height;
+}
 
 .thread-item {
     @extend %nofilter;
@@ -501,13 +575,13 @@ body {
     display: block;
     padding: 1em 1.5em;
     color: $dark-color;
-    border-right: 4px solid $accent-color;
+    border-right: 4px solid lighten($dark-color, 30%);
     cursor: pointer;
 
-    &.current { background-color: fade-out($accent-color, .7); }
+    &.current { background-color: fade-out(lighten($dark-color, 15%), .7); }
 
     &:hover, &:focus, &.current:hover, &.current:focus {
-        background-color: $accent-color;
+        background-color: lighten($dark-color, 15%);
         color: $light-color;
     }
 
@@ -540,7 +614,7 @@ body {
 	@extend %ease;
 
 	display: block;
-	font-size: 1.5em;
+    font-size: 1.2em;
 	padding: .75em;
 	padding-left: 2.75em;
 	background-size: 24px 24px;
@@ -548,7 +622,9 @@ body {
 	background-repeat: no-repeat;
 	border-bottom: 1px solid darken($light-color, 10%);
 	color: $dark-color;
-	cursor: pointer;
+    cursor: pointer;
+
+    @media #{$screenxxxx} { font-size: 1.5em; }
 
     &.current { background-color: rgba(0,0,0,.05); }
 
@@ -591,64 +667,68 @@ body {
     cursor: pointer;
 }
 
+@mixin meta-logo-visible {
+    .meta-button-logo {
+        @include opacity(1);
+        @include transform(translate3d(0, 0, 0));
+    }
+
+    .meta-button-back {
+        @include opacity(0);
+        @include transform(translate3d(0, 0, 0));
+    }
+}
+
+@mixin meta-back-visible {
+    .meta-button-logo {
+        @include opacity(0);
+        @include transform(translate3d(0, -100%, 0));
+    }
+
+    .meta-button-back {
+        @include opacity(1);
+        @include transform(translate3d(0, -100%, 0));
+    }
+}
+
 .meta-button {
     @include title-icon(meta-icon);
-    @include prefix(perspective, 800px);
 
-    position: relative;
     height: $bar-height;
-    width: 3em;
     fill: lighten($dark-color, 50%);
+    overflow: hidden;
 
-    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 30%); }
+    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 15%); }
 
     .view-meta &, .view-rooms & { @include transform(rotate(180deg)); }
 
     @media #{$screenxxx} { display: none; }
 
-    .front, .back {
+    .meta-button-back, .meta-button-logo {
         @extend %ease;
 
-        position: absolute;
-        top: 0;
-        left: 0;
+        display: block;
         height: 100%;
         width: 100%;
         padding: .75em .5em;
     }
-
-    .front { @include opacity(1); }
-
-    .back { @include opacity(0); }
-
-    .embed.view-meta & {
-        .front { @include opacity(1); }
-
-        .back { @include opacity(0); }
-    }
-
-    .embed & {
-        .front { @include opacity(0); }
-
-        .back { @include opacity(1); }
-    }
 }
 
 .embed {
-    &:focus, &:hover, &:active {
-        .meta-button {
-            .front { @include opacity(1); }
+    .meta-button {
+        @include meta-logo-visible;
+    }
 
-            .back { @include opacity(0); }
-        }
+    &:focus, &:hover, &:active {
+        .meta-button { @include meta-back-visible; }
+    }
+
+    &.view-meta {
+        .meta-button { @include meta-back-visible; }
     }
 }
 
-.sb-icon {
-    .sb-top { fill: $accent-color; }
-
-    .sb-bottom { fill: $dark-color; }
-}
+.sb-icon { fill: $dark-color; }
 
 .title-bar {
     @include flexbox;
@@ -689,6 +769,7 @@ body {
 .room-title {
     font-size: 1.2em;
     font-weight: 700;
+    margin: 0;
 
     @media #{$screenxxx} {
         padding-left: 1em;
@@ -704,97 +785,145 @@ body {
     padding: .75em;
     fill: none;
     stroke-width: 2px;
-    stroke: lighten($dark-color, 30%);
+    stroke: lighten($dark-color, 15%);
 
-    .role-follower & { fill: lighten($dark-color, 30%); }
+    .role-follower & { fill: lighten($dark-color, 15%); }
+
+    .role-owner &, .embed & { display: none; }
 
     &:focus, &:hover, &:active {
         fill: none;
-        stroke: lighten($dark-color, 10%);
+        stroke: lighten($dark-color, 5%);
 
-        .role-follower & { fill: lighten($dark-color, 10%); }
+        .role-follower & { fill: lighten($dark-color, 5%); }
     }
 }
 
-.search-button, .fullview-button, .minimize-button {
-    fill: lighten($dark-color, 50%);
-
-    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 30%); }
+.embed-area, .user-area {
+    @include flexbox;
+    @include flex-direction(row);
+    @include flex-wrap(nowrap);
+    @include justify-content(flex-end);
+    @include align-items(center);
+    @include align-content(center);
 }
 
-.search-button {
+.embed-button, .search-button {
     @include title-icon(search-icon);
+    @include title-icon(embed-icon);
 
-    padding: .75em;
-    width: 3.5em;
-    cursor: pointer;
-
-    .embed & { display: none;}
-}
-
-.fullview-button, .minimize-button {
-    display: none;
     width: 3em;
     padding: .75em .5em;
     cursor: pointer;
+    fill: lighten($dark-color, 15%);
+
+    &:focus, &:hover, &:active { fill: lighten($dark-color, 5%); }
 }
 
-.fullview-button {
-    @include title-icon(fullview-icon);
+.cta-area {
+    text-align: right;
+    padding: 0 1em;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
 
-    .embed & { display: block; }
-}
-
-.minimize-button {
-    @include title-icon(minimize-icon);
-
-    .embed-toast & { display: block; }
+    .cta-action { text-transform: uppercase; }
 }
 
 .user-area {
-    .user-detail {
-        float: right;
-        text-align: right;
-        padding: 1em;
-        font-weight: 700;
+    .role-user.embed & { display: none; }
+}
+
+.follow-room-action {
+    .role-follower.embed &, .role-owner.embed & { display: none; }
+}
+
+.full-view-action {
+    display: none;
+
+    .role-follower.embed &, .role-owner.embed & { display: block; }
+}
+
+.user-avatar {
+    display: none;
+
+    @media #{$screenxx} {
+        display: block;
         cursor: pointer;
 
-        .role-guest & { padding: .2em 1em; }
-
-        .sign-in {
-            display: none;
-
-            .role-guest & {
-                display: inline;
-                text-transform: uppercase;
-            }
-        }
-    }
-
-    .user-avatar {
-        display: none;
-
-        @media #{$screenxx} {
+        img {
             display: block;
-            float: right;
-            cursor: pointer;
-
-            img {
-                display: block;
-                height: $bar-height;
-                width: $bar-height;
-            }
+            height: $bar-height;
+            width: $bar-height;
         }
     }
 }
 
+.user-menu-button {
+    @include title-icon(user-menu-icon);
+
+    background-color: rgba(0,0,0,0.15);
+
+    &:focus, &:hover, &:active { background-color: rgba(0,0,0,0.3); }
+}
+
 .action-buttons {
-    padding: .125em;
+    padding: .25em;
 
     .button {
         display: block;
         float: left;
-        margin-right: .125em;
+        margin: .25em;
+    }
+}
+
+.minimize-bar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    height: $bar-height;
+    width: 100%;
+    background-color: darken($light-color, 5%);
+    color: $dark-color;
+
+    .minimized & {
+        display: table;
+        table-layout: fixed;
+    }
+}
+
+.minimize-logo {
+    @include title-icon(minimize-bar-icon);
+
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: 3em;
+}
+
+.minimize-room-title {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 1.2em;
+    font-weight: 700;
+
+    .has-messages & { display: none; }
+}
+
+.minimize-ticker {
+    display: none;
+
+    .has-messages & {
+        @include fadein;
+
+        display: table-cell;
+        vertical-align: middle;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0 1em;
     }
 }
 
@@ -899,7 +1028,7 @@ body {
 		height: .5em;
 		width: .5em;
 		border-radius: 50%;
-		background-color: fade-out($accent-color, .5);
+        background-color: fade-out(lighten($dark-color, 15%), .5);
 
 		@media #{$screenxx} { margin-left: -10em; }
 	}
@@ -940,22 +1069,49 @@ body {
 
 			&:after { display: none; }
 		}
-	}
+    }
+
+    &.chat-label-action {
+        color: lighten($dark-color, 5%);
+        border-right: 2px solid lighten($dark-color, 30%);
+        font-style: italic;
+
+        @for $i from 1 through length($palette) {
+            $color: nth($palette, $i);
+            $j: $i - 1;
+
+            &.conv-#{$j} { border-right-color: $color; }
+        }
+
+        &:before { display: none; }
+
+        .chat-nick {
+            font-weight: 400;
+            padding-right: .25em;
+
+            &:after { content: " "; }
+
+            @media #{$screenxx} { margin-left: 0; }
+        }
+    }
 
 	a {
-		color: darken($accent-color, 15%);
-
-		&:hover, &:focus { text-decoration: underline;}
-
-		&:active { color: darken($accent-color, 30%); }
+		&:hover, &:focus, &:active { text-decoration: underline; }
 	}
+
+    iframe, embed {
+        display: block;
+        margin: .5em 0;
+        max-width: 100%;
+        max-height: auto;
+    }
 
 	.chat-timestamp {
         @extend %ease;
 
         display: none;
         padding-left: 3em;
-        font-size: .9em;
+        font-size: .8em;
         float: right;
         color: fade-out($dark-color, .5);
     }
@@ -1018,6 +1174,17 @@ body {
     box-shadow: 0 -3px 2px -1px rgba(0,0,0,.05);
 }
 
+.chat-entry-wrap { position: relative; }
+
+.chat-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: .9em 1em;
+    color: fade-out($dark-color, .5);
+    pointer-events: none;
+}
+
 .chat-entry {
 	@extend .entry;
 
@@ -1039,7 +1206,7 @@ body {
 
 			.conv-#{$j} & { border-color: nth($palette, $i); }
 		}
-	}
+    }
 }
 
 .chat-send {
@@ -1054,7 +1221,7 @@ body {
 	width: 3.5em;
 	border: none;
 	cursor: pointer;
-	fill: lighten($dark-color, 30%); /* inline SVG */
+	fill: lighten($dark-color, 15%); /* inline SVG */
 
 	&:hover, &:focus, &:active { fill: $dark-color; }
 
@@ -1173,11 +1340,6 @@ body {
 			top: .3em;
 			margin: .25em 0 1.25em 0;
 		}
-
-		input + label {
-            display: inline-block;
-            padding: .5em;
-        }
 	}
 
 	.settings-label {
@@ -1197,6 +1359,15 @@ body {
 	}
 
     .check-item, .radio-item { display: block; }
+
+    .embed-code {
+        min-width: 27em;
+        min-height: 16em;
+        background-color: darken($light-color, 5%);
+        font-weight: 700;
+        font-family: $font-family-monospace;
+        line-height: 1.2em;
+    }
 }
 
 .room-area, .meta-area, .main-area, .chat-input {
@@ -1243,7 +1414,7 @@ body {
     right: 0;
 	z-index: 20;
 	height: $bar-height;
-	padding: .15em;
+	padding: .5em;
 	background-color: darken($light-color, 5%);
 
 	.search-focus & {
@@ -1289,6 +1460,12 @@ body {
 
         .embed & { left: 0; }
     }
+
+    h1 {
+        font-size: 1.5em;
+
+        @media #{$screenxxxx} { font-size: 2.4em; }
+    }
 }
 
 .noroom-container { display: block; }
@@ -1300,18 +1477,8 @@ body {
 
 .infinite-items { width: 100%; }
 
-.signup-dialog {
-    width: 27em;
-
-    input { margin: .25em; }
-
-    input[type=text] { width: 100%; }
-
-	@media only screen and (max-width: 27em) { width: 100%; }
-}
-
-.loggedout-dialog {
-    .button { width: 100%; }
+.loggedout-dialog, .login-dialog, .signup-dialog {
+    input, .button { width: 100%; }
 }
 
 .popover-body {
@@ -1320,6 +1487,6 @@ body {
     .login-menu {
         padding: .5em 1em;
 
-        .button { display: block; }
+        .button { width: 100%; }
     }
 }

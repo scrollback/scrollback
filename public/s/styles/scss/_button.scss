@@ -1,0 +1,99 @@
+@import "functions";
+@import "global";
+@import "animations";
+@import "spinner";
+
+@mixin buttons($bg: $accent-color, $fg: $light-color) {
+	@include transition;
+
+	display: inline-block;
+	margin: .5em 0;
+	padding: .5em 1em;
+	font-size: 1em;
+	border: 1px solid $bg;
+	border-bottom-color: darken($bg, 5%);
+	border-radius: $roundness;
+	background-color: $bg;
+	color: $fg;
+	text-align: center;
+	font-weight: 700;
+	cursor: pointer;
+	text-transform: uppercase;
+
+	&:hover, &:focus {
+		background-color: darken($bg, 5%);
+		border-color: darken($bg, 5%);
+		color: $fg;
+	}
+
+	&:active {
+		background-color: darken($bg, 10%);
+		border-color: darken($bg, 10%);
+		color: $fg;
+	}
+
+	&.working {
+		@include spinner;
+
+		padding-left: 0;
+
+		&, &:hover, &:focus, &:active {
+			background-color: darken($bg, 10%);
+			border-color: darken($bg, 10%);
+			color: mix($bg, $fg, 30%);
+		}
+	}
+}
+
+@include exports("button") {
+	.linked {
+		border-radius: 0;
+
+		&:not(:only-of-type):not(:last-of-type) { border-right: none; }
+
+		&:first-of-type { border-radius: $roundness 0 0 $roundness; }
+
+		&:last-of-type { border-radius: 0 $roundness $roundness 0; }
+
+		&:only-of-type { border-radius: $roundness; }
+	}
+
+	.button {
+		@include buttons;
+
+		&.secondary {
+			background-color: darken($light-color, 5%);
+			border: 1px solid darken($light-color, 15%);
+			color: lighten($dark-color, 10%);
+
+			&:hover, &:focus {
+				background-color: darken($light-color, 3%);
+				border-color: darken($light-color, 30%);
+				color: lighten($dark-color, 5%);
+			}
+
+			&:active {
+				background-color: darken($light-color, 7%);
+				border-color: darken($light-color, 20%);
+				color: lighten($dark-color, 15%);
+			}
+		}
+
+		&.disabled {
+			&, &:hover, &:focus, &:active {
+				background-color: darken($light-color, 5%);
+				border-color: darken($light-color, 15%);
+				color: lighten($dark-color, 50%);
+				pointer-events: none;
+			}
+		}
+
+		&.linked { @extend .linked; }
+	}
+
+	button, input[type="submit"], input[type="button"] {
+		@extend .button;
+
+		&:disabled { @extend .button.disabled; }
+	}
+}

@@ -1,5 +1,5 @@
 /* global localStorage */
-/* global window */
+/* global window, libsb */
 var ArrayCache = require('./ArrayCache.js');
 var generate = require('../lib/generate');
 var cache, core;
@@ -48,7 +48,7 @@ module.exports = function(c){
 			callback();	
 		}catch(e){
 			callback(e);
-		};
+		}
 	});
 	
 	core.on('logout', logout);
@@ -71,7 +71,7 @@ function createInit(){
 	if(cache && cache.session) sid = cache.session;
 	if(!sid){
 		cache.session = sid = generate.uid();
-		libsb.session = cache.session
+		libsb.session = cache.session;
 	} 
 	core.emit('init-up', {session: sid});
 }

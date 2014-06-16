@@ -7,7 +7,7 @@ var client;
     
 var searchTimeout = 10000;
 var messageCount = 0;
-var updateThreads = []
+var updateThreads = [];
 module.exports = function (core) {
     if(!client) {
         init();
@@ -17,16 +17,17 @@ module.exports = function (core) {
         /*Index text*/
         core.on('text', function (message, callback) {
             if (message.type === "text") {
-                callback();
                 
                 if(message.threads) {
                     message.threads.forEach(function(e) {
                         if(updateThreads.indexOf(e.id)<0) {
                             updateThreads.push(e.id);
-                                searchDB.set("thread:{{"+e.id+"}}", JSON.stringify( {
+
+                            searchDB.set("thread:{{"+e.id+"}}", JSON.stringify( {
                                 id: e.id,
                                 room: message.to
                             }), insertText);
+
                             searchDB.sadd("updateThread", e.id);
                         }else {
                             insertText();
@@ -43,6 +44,7 @@ module.exports = function (core) {
                         
                     });
                 }
+                callback();
             }
         }, "watchers");
         
@@ -171,8 +173,7 @@ function searchThreads(data, callback){
     };
     //log(JSON.stringify(searchParams));
     client.search(searchParams).then (function (response) {
-        var threads = [];   
-        var unique = {};
+        var threads = [];
         
         response.hits.hits.forEach(function(e){ 
             threads.push(e._source.id);
@@ -200,10 +201,9 @@ function init() {
 
 
 function indexTexts() {
-    var threads = {}, postData = {body: []}, ids = updateThreads, count=messageCount;
+    var ids = updateThreads;
             
     updateThreads = [];
-    messageCount = 0;
 
     constructBulk(ids, function(postData) {
         client.bulk(postData, function(err, resp) {
@@ -245,13 +245,13 @@ function generateNewThread(threadID, callback) {
 
 
 function constructBulk(threadIds, callback) {
-    var i=0, l = threadIds.length, threads={}, postData = {body: []};
+    var threads={}, postData = {body: []}, l = threadIds.length;
 
     threadIds.forEach(function(e) {
         generateNewThread(e, function(t) {
             i++;
             if(t) threads[t.id] = t;
-            if(i>=l) processThreads();
+            if(!(i<l)) processThreads();
         });
     });
 
