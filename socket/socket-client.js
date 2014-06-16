@@ -1,7 +1,6 @@
 /* global libsb, SockJS */
 
-var sockjs = require('sockjs-client'),
-	generate = require('../lib/generate.js'),
+var generate = require('../lib/generate.js'),
 	config = require('../client-config.js'),
 	core;
 
@@ -44,19 +43,20 @@ var pendingQueries = {};
 var pendingActions = {};
 
 function safeSend(data){
-        // safeSends sends the data over the socket only after the socket has
-        // been initialised
-        if(libsb.isInited){
-             client.send(data);
-        }else{
-            libsb.on('inited', function(d,n){
-                client.send(data);
-                n();
-            });
-        }
+	// safeSends sends the data over the socket only after the socket has
+	// been initialised
+	if(libsb.isInited){
+		client.send(data);
+	}else{
+		libsb.on('inited', function(d,n){
+			client.send(data);
+			n();
+		});
+	}
 }
 
 function connect(){
+	console.log("Connection requested ...");
 	client = new SockJS(config.sockjs.host);
 
 	client.onopen = function(){
