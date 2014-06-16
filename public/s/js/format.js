@@ -32,10 +32,10 @@ window.format = {
 				/^<br/.test(m) || /^<p/.test(m) || /^<div/.test(m) ||
 				/^<\/p/.test(m) || /^<\/div/.test(m)
 			)? "\n": ' ';
-		}).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').
-		replace(/&#(\d+);/g, function(m, d) {
+		}).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&nbsp;/, ' ')
+		.replace(/&#(\d+);/g, function(m, d) {
 			return String.fromCharCode(d);
-		});
+		}).trim();
 	},
 
 	textToHtml: function(str) {
