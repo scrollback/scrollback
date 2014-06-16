@@ -91,7 +91,7 @@ img { border: 0; }
 svg:not(:root) { overflow: hidden; }
 
 /* cascade SVG fill color */
-svg { fill: currentColor; }
+svg:not[class] { fill: currentColor; }
 
 /* contain overflow in all browsers. */
 pre { overflow: auto; }
