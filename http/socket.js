@@ -46,7 +46,7 @@ sock.on('connection', function (socket) {
 		try { d = JSON.parse(d); log ("Socket received ", d); }
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 		
-		
+		if(!d.data) return;
 		switch(d.type) {
 			case 'init': init(d.data, conn); break;
 			case 'message': message(d.data, conn); break;
