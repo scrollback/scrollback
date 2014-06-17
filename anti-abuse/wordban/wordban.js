@@ -46,11 +46,13 @@ module.exports = function(core) {
 
 		var customWords = message.room.params['anti-abuse'].customWords;
 		textMessage = message.text;
-		log("Custom words", customWords);
+		log("Text message: ",textMessage);
+		log("Custom words: ", customWords);
 
 	    for (index=0; index<customWords.length; ++index) {
 			if((textMessage.toLowerCase()).indexOf(customWords[index])!= -1)
 				{
+					
 					if(customWords[index]===''){
 						return callback();
 					}

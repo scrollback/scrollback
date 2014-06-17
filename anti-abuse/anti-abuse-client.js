@@ -20,7 +20,7 @@ libsb.on('config-save', function(room, next){
 		wordblock : $('#block-offensive').is(':checked'),
 		"block-lists": lists,
 		customWords : $('#block-custom').val().split(',').
-			map(function(item) {return item.trim(); })
+			map(function(item) {return (item.trim()).toLowerCase(); })
 	};
 
 	next();
