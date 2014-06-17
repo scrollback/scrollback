@@ -6,14 +6,14 @@ var twitterUsername;
 // Twitter integration
 libsb.on('config-show', function(tabs, next) {
 	var div = $('<div>').addClass('list-view list-view-twitter-settings');
-	results = tabs.room;
+	var results = tabs.room;
 	if (!results.params.twitter) results.params.twitter = {};
 	var twitter = results.params.twitter;
 	twitterUsername = twitter.username;
 	var settingsItem = $('<div>').addClass('settings-item');
 	var twitterText = $('<div>').addClass('settings-label').attr('id', 'twitter-text');
 	var settingsAction = $('<div>').addClass('settings-action');
-	var button = $('<a>').addClass('button').attr('id', 'twitter-account');
+	var button = $('<a>').addClass('button twitter-account-button').attr('id', 'twitter-account').add;
 	var twitterMessage = $('<p>').attr('id', 'twitter-message');
 	var textField = formField("Hashtags", "multientry", "twitter-hashtags", twitter.tags);
 
@@ -38,7 +38,7 @@ libsb.on('config-show', function(tabs, next) {
 
 
 	//twitter setting
-	
+
 
 	if (twitter.username) {
 			twitterText.text("Twitter Account: " + twitter.username);
