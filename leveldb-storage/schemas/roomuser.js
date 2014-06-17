@@ -1,5 +1,8 @@
 /* global module, require */
 var log = require("../../lib/logger.js");
+var config = require('../../config.js');
+var internalSessions = Object.keys(config.whitelists);
+var su = config.su;
 
 module.exports = function (types) {
 	var room = types.rooms;
@@ -106,9 +109,9 @@ module.exports = function (types) {
 					return cb(err);
 				});
 			}else {
-				room.put(newRoom, function(err) {
-					if(!err && !data.old) {
-						if (action.user.id === "system") {
+				room.put(newRoom, function(err, res) {
+					if(!data.old) {
+						if (internalSessions.indexOf(action.session) !== -1 || su[action.user.id] ) {//if user is a super user do not create links
 							return cb();
 						}
 						types.rooms.link(data.id, 'hasMember', action.user.id, {

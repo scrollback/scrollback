@@ -13,8 +13,8 @@ var onlineUsers = {};//scrollback users that are already online
 var firstMessage = {};//[room][username] = true
 var userExp = 10*60*1000;
 var initCount = 0;
-var ircUtils = new require('./ircUtils.js')(clientEmitter, callbacks);
-
+var ircUtils = new require('./ircUtils.js')(clientEmitter, client,callbacks);
+var debug = config.irc.debug;
 module.exports = function (coreObj) {
 	core = coreObj;
 	init();
@@ -42,18 +42,25 @@ module.exports = function (coreObj) {
 				var oldIrc = room.old.params.irc;
 				var newIrc = rr.params.irc;
 				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel) {
-					if(oldIrc.server && oldIrc.channel) ircUtils.disconnectBot(rr.id);//if old is connected
-					if(rr.params.irc.server && rr.params.irc.channel) return ircUtils.addNewBot(rr, callback);
+					if(oldIrc.server && oldIrc.channel) {
+						delete firstMessage[rr.id];
+						ircUtils.disconnectBot(rr.id, function() {
+							log("disconnected from ", oldIrc.channel);
+							if(rr.params.irc.server && rr.params.irc.channel) return ircUtils.addNewBot(rr, callback);	
+							else return callback();
+						});
+					} else if(rr.params.irc.server && rr.params.irc.channel) return ircUtils.addNewBot(rr, callback);
 					else return callback();
 				} else return callback();
 			}  
-		} else return callback();
+		} else if(!client.connected() && room.room.params.irc && room.room.params.irc.server && room.room.params.irc.channel) return callback(new Error("ERR_IRC_NOT_CONNECTED"));
+		else return callback();
 	}, "gateway");
-	
+
 	core.on("room", function(room, callback) {
 		var r = room.room;
 		if (r.params.irc) {
-			var v = typeof r.params.irc.server === 'string' && typeof r.params.irc.channel === 'string';
+			var v = (typeof r.params.irc.server === 'string') && (typeof r.params.irc.channel === 'string');
 			if (v) {
 				callback();
 			} else {
@@ -62,7 +69,6 @@ module.exports = function (coreObj) {
 			}
 		} else callback();
 	}, "appLevelValidation");
-	
 	core.on("init", function(init, callback) {
 		log("init irc:", init);
 		var oldUser = {id: init.from};
@@ -142,14 +148,14 @@ function ircParamsValidation(room) {
  *add or copy pending status 
  */
 function changeRoomParams(room) {
-	room.room.params.irc.enable = true;
+	room.room.params.irc.enabled = true;
 	var or = room.old;
 	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel) { //this is old room
 		if (room.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel) {
-			room.room.params.irc.pending = true;//if server or channel changes
+			room.room.params.irc.pending = debug ? false : true;//if server or channel changes
 		} else room.room.params.irc.pending = or.params.irc.pending;	
 	} else {
-		room.room.params.irc.pending = true;//this is new room.
+		room.room.params.irc.pending = debug? false: true;//this is new room.
 	}
 }
 
@@ -185,8 +191,9 @@ function init() {
 					var r2 = state.rooms[room.id].params.irc;
 					if (!(r1.server === r2.server && r1.channel === r2.channel && r1.pending === r2.pending)) {
 						log("reconnecting bot with new values:", room.id);
-						ircUtils.disconnectBot(state.rooms[room.id].id);
-						ircUtils.addNewBot(room); 
+						ircUtils.disconnectBot(state.rooms[room.id].id, function() {
+							ircUtils.addNewBot(room); 
+						});
 					}
 					delete notUsedRooms[room.id];
 				} else {
@@ -212,7 +219,7 @@ function init() {
 							if (!onlineUsers[room.id]) onlineUsers[room.id] = {}; 
 							onlineUsers[room.id][servNick[room.params.irc.server][user].nick] = user;
 							setTimeout(function() {
-								if(	onlineUsers[room.id][servNick[room.params.irc.server][user].nick]) {
+								if(	onlineUsers[room.id] && onlineUsers[room.id][servNick[room.params.irc.server][user].nick]) {
 									log("disconnecting user ", servNick[room.params.irc.server][user].nick, " from ", room.id);
 									ircUtils.disconnectUser(room.id, servNick[room.params.irc.server][user].nick);
 									delete onlineUsers[room.id][servNick[room.params.irc.server][user].nick];
@@ -279,7 +286,7 @@ function init() {
 		log("message from :", data);
 		var labels = {};
 		if (data.text.indexOf('/me ') === 0) {
-			data.text = substring(4);
+			data.text = data.text.substring(4);
 			labels.action = 1;
 		}
 		core.emit('text', {

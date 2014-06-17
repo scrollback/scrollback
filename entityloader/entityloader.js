@@ -26,7 +26,7 @@ var handlers = {
 
 		core.emit("getRooms",{id: uid(), hasMember: action.from, session: action.session}, function(err, rooms) {
 			if(err || !rooms ||!rooms.results || !rooms.results.length) {
-				action.memberOf = []
+				action.memberOf = [];
 			}else{
 				action.memberOf = rooms.results;
 			}
@@ -48,7 +48,7 @@ var handlers = {
 
 function loadVictim(action, callback) {
 	if(action.ref) {
-		core.emit("getUsers", {ref: action.ref, session: action.session}, function(err, data){
+		core.emit("getUsers", {ref: action.ref, session: action.session}, function(err, data) {
 			if(err || !data || !data.resulats || !data.results.length) {
 				return callback(new Error("user "+action.ref+ " not found"));
 			}
@@ -71,7 +71,7 @@ module.exports = function(c) {
 				else callback();
 			});
 		}, "loader");
-	})
+	});
 	core.on('getUsers', loadUser, "loader");
 	core.on('getRooms', loadUser, "loader");
 	core.on('getTexts', basicLoader, "loader");
@@ -83,7 +83,7 @@ module.exports = function(c) {
 	}, "loader");
 	core.on("init", initHandler, "loader");
 	core.on("user", userHandler, "loader");
-}
+};
 
 function userHandler(action, callback) {
 	core.emit("getUsers", {ref: "me", session: action.session}, function(err, data){
@@ -148,7 +148,7 @@ function loadUser(action, callback) {
 		action.user = {
 			id: "system",
 			role: "owner" // should look for alternatives.
-		}
+		};
 		return callback();
 	}
 	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
@@ -156,7 +156,7 @@ function loadUser(action, callback) {
 		if(err || !data || !data.results || !data.results.length) {
 			return callback(new Error("USER_NOT_INITED"));
 		}else {
-			user = data.results[0]
+			user = data.results[0];
 			if((action.type && events.indexOf(action.type)>=0)|| action.type =="init" ) action.from = data.results[0].id;
 			if(action.type == "user") {
 				action.old = data.results[0];
@@ -171,7 +171,7 @@ function loadUser(action, callback) {
 					}
 				});
 			}else{
-				action.user = user
+				action.user = user;
 				callback();
 			}
 		}
@@ -192,7 +192,7 @@ function loadRoom(action, callback) {
 
 		if(action.type == "room") {
 			if(room && room.id) action.old = room;
-			else action.old = {}
+			else action.old = {};
 		}else {
 			action.room = room;
 		}
@@ -249,7 +249,7 @@ function generateNick(suggestedNick, callback) {
 					}
 					callback(trying);
 				});
-			})
+			});
 		});
 	}
 	checkUser(suggestedNick, 0, callback);

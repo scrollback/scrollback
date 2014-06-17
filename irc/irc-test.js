@@ -8,6 +8,12 @@ var guid = gen.uid;
 var names = gen.names;
 var client;
 var testingServer = "dev.scrollback.io";
+var botName = require('../ircClient/config.js').botNick;
+/**
+ * All test cases should run in sequence
+ * Do not change the order of test cases.
+ * 
+ */
 var users = [
 	{
 		id: 'abc123',
@@ -41,7 +47,7 @@ var rooms = [{
 		}
 	}}
 ];
-describe('connect new IRC channel', function() {
+describe('connect new IRC channel', function() {//this will connect 2 rooms scrollback and testingroom
 	before( function(done) {
 		this.timeout(5*40000);
 		core.on('getUsers', function(v, callback) {
@@ -78,7 +84,7 @@ describe('connect new IRC channel', function() {
 			callback();
 		}, "modifier");
 		client = new irc.Client(testingServer, "testingbot", {
-			channels: ["#scrollback", "#testingroom", "#testingroom2"]
+			channels: ["#scrollback", "#testingroom", "#testingroom2", "#testingroom3"]
 		});
 		
 		ircSb(core);
@@ -155,6 +161,9 @@ describe('connect new IRC channel', function() {
 		console.log("Running new room");
 		//client.
 		this.timeout(60 * 1000);
+		client.on("join#testingroom2", function() {
+			done();
+		});
 		core.emit("room", {
 			type: "room",
 			session: "web://somesession",
@@ -171,7 +180,8 @@ describe('connect new IRC channel', function() {
 			}
 		}, function(err, room) {
 			console.log("room is connected now");
-			done();
+			
+			//done();
 		});
 		
 		
@@ -183,6 +193,16 @@ describe('connect new IRC channel', function() {
 		console.log("Running new room should disconnect from #testingroom2 and connect to #testingroom3");
 		//client.
 		this.timeout(60 * 1000);
+		var c = 0;
+		function go() {
+			if (c == 2) {
+				done();
+			}
+		}
+		client.on("join#testingroom3", function() {
+			c++;
+			go();
+		});
 		core.emit("room", {
 			
 			type: "room",
@@ -212,12 +232,156 @@ describe('connect new IRC channel', function() {
 			},
 			session: "web://somesession"
 		}, function(room) {
+			//TODO test if bot joined the room.
 			console.log("room is connected now");
-			done();
+			c++;
+			go();
 		});
 		
 		
 	});
+	
+	it("Disconnect All rooms", function(done) {
+		this.timeout(60 * 1000);
+		var c = 0;
+		client.on("part", function(channel, nick, reason, message) {
+			if(nick === "scrollback") c++;
+			go();
+		});
+		client.on("quit", function(channel, nick, reason, message) {
+			if(nick === "scrollback") c++;
+			go();
+		});
+		function go() {
+			if (c === 6) {
+				done();
+			}
+		}
+		core.emit("room", {
+			type: "room",
+			old: {
+				id: "testingroom2",
+				params: {
+					irc: {
+						server: testingServer,
+						channel: "#testingroom3",
+						pending: false,
+						enabled: true
+					}
+				}
+			},
+			room: {
+				id: "testingroom2",
+				type: "room",
+				params: {
+					irc: {
+						server: "",
+						channel: "",
+						pending: false,
+						enabled: true
+					}
+				}
+				
+			},
+			session: "web://somesession"
+		}, function(err, room) {
+			c++;
+			go();
+			console.log("Disconnected", arguments);
+		});
+		
+		core.emit("room", {
+			type: "room",
+			old: {
+				id: "scrollback",
+				params: {
+					irc: {
+						server: testingServer,
+						channel: "#scrollback",
+						pending: false,
+						enabled: true
+					}
+				}
+			},
+			room: {
+				id: "scrollback",
+				type: "room",
+				params: {
+					irc: {
+						server: "",
+						channel: "",
+						pending: false,
+						enabled: true
+					}
+				}
+				
+			},
+			session: "web://somesession"
+		}, function(err, room) {
+			c++;
+			go();
+			console.log("Disconnected", arguments);
+		});
+		core.emit("room", {
+			type: "room",
+			old: {
+				id: "testingroom",
+				params: {
+					irc: {
+						server: testingServer,
+						channel: "#testingroom",
+						pending: false,
+						enabled: true
+					}
+				}
+			},
+			room: {
+				id: "testingroom",
+				type: "room",
+				params: {
+					irc: {
+						server: "",
+						channel: "",
+						pending: false,
+						enabled: true
+					}
+				}
+				
+			},
+			session: "web://somesession"
+		}, function(err, room) {
+			c++;
+			go();
+			console.log("Disconnected", arguments);
+		});
+
+	});
+	
+	
+	
+	it("Bot left the server", function(done) {
+		this.timeout(15 * 1000);
+		client.on("error", function(err) {
+			if (err.command === 'err_nosuchnick') {
+				done();
+			}
+			console.log("error:", err);
+		});
+		client.whois(botName, function(info) {
+			console.log("whois", info);
+		});
+
+	});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 
 });

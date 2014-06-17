@@ -11,11 +11,10 @@
 		border-radius: $roundness;
 		background-color: $light-color;
 		color: $dark-color;
-		box-shadow: inset 0 1px 1px 0 rgba(0,0,0,.1);
 
 		&:hover, &:focus, &:active {
-			border-color: darken($light-color, 30%);
-			border-top-color: darken($light-color, 40%);
+			border-color: $accent-color;
+			border-top-color: darken($accent-color, 5%);
 			outline: none;
 		}
 
@@ -24,5 +23,16 @@
 		&.error { border-color: $error-color; }
 
 		&.linked { @extend .linked; }
+	}
+
+	input, textarea {
+		@extend .entry;
+
+		margin: .5em 0;
+		padding: .5em;
+		font-size: 1em;
+		outline: none;
+
+		&:disabled { @extend .entry.disabled; }
 	}
 }

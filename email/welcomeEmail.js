@@ -25,10 +25,10 @@ module.exports = function(coreObject) {
 
 function emailRoomListener(action, callback){
     log("user welcome email ", action);
-	callback();
-     if(!action.old.id) {//Signup
+    if(!action.old.id) {//Signup
         sendWelcomeEmail(action.user);
-     }
+    }
+	callback();
 }
 
 function init() {
@@ -45,15 +45,16 @@ function init() {
  *@param {Object} user
  */
 function sendWelcomeEmail(user) {
-    var emailHtml = welcomeEmailJade(user);
-    var emailAdd = false;
-    user.identities.forEach(function (u) {
-        if (u.indexOf('mailto:') === 0) {
-            emailAdd = u.substring(7);
-        }
-    });
-    if (emailAdd) {
-        log("sending welcome email." , emailAdd);
-        send(emailConfig.from, emailAdd, "Welcome", emailHtml);
-    }
+	var emailHtml = welcomeEmailJade(user);
+	var emailAdd = false;
+	user.identities.forEach(function (u) {
+		if (u.indexOf('mailto:') === 0) {
+			emailAdd = u.substring(7);
+		}
+	});
+	log("email add", user, emailAdd);
+	if (emailAdd) {
+		log("sending welcome email." , emailAdd);
+		send(emailConfig.from, emailAdd, "Welcome to Scrollback", emailHtml);
+	}
 }

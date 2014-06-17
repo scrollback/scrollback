@@ -48,10 +48,11 @@ libsb.on('config-save', function(room, next){
 });
 
 libsb.on("room-dn", function(room, next) {
-	if (room.user.id === libsb.user.id) {
+	if (room.user.id === libsb.user.id && room.room.params.irc && room.room.params.irc.server && room.room.params.irc.channel) {
 		var r = room.room;
 		$.get('/r/irc/' + r.id, function(botName) {
-			displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel.";
+			var displayString = "Something went wrong while connecting to IRC server";
+			if(botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel.";
 			console.log("discp", displayString);
 			lace.alert.show({type: "success", body: displayString});
 		});
@@ -59,9 +60,13 @@ libsb.on("room-dn", function(room, next) {
 	next();
 });
 libsb.on("error-dn", function(reply, next) {
+	var displayString;
 	if (reply.message === "ERR_CONNECTED_OTHER_ROOM") {
-		lace.alert.show({type: "error", body: "IRC channel is already connected to some other room"});
+		displayString = "IRC channel is already connected to some other room";
+	} else if (reply.message === "ERR_IRC_NOT_CONNECTED") {
+		displayString = "We are facing some issue with our irc client please try again after some time";
 	}
+	if(displayString) lace.alert.show({type: "error", body: displayString});
 	next();
 });
 

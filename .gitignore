@@ -23,7 +23,6 @@ results
 node_modules
 
 myConfig.js
-client-config.js
 
 public/client.min.js
 public/core.min.js
@@ -34,3 +33,5 @@ public/style.css
 public/s/styles/gen
 public/s/styles/less/*.css
 public/libsb.bundle.js
+/public/embed.js
+/public/client.bundle.js

@@ -74,7 +74,7 @@ $embeds: toast, full;
 
             .tab {
                 fill: fade-out($text, .3);
-                background-color: darken($meta, 10%);
+                background-color: $meta;
                 border-left-color: $border;
 
                 &:hover, &:focus, &:active {
@@ -84,7 +84,7 @@ $embeds: toast, full;
 
                 &.current {
                     fill: $text;
-                    background-color: $meta;
+                    background-color: darken($meta, 10%);
                 }
             }
 
@@ -168,7 +168,7 @@ $embeds: toast, full;
     }
 }
 
-@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $border: lighten($dark-color, 10%), $icon: darken($light-color, 30%), $focus: $light-color);
+@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $border: $dark-color, $icon: darken($light-color, 30%), $focus: $light-color);
 
 /* widget styles */
 %scroll-elem {
@@ -373,7 +373,7 @@ body {
         &.rooms-button {
             min-width: 3em;
             width: 3em;
-            fill: lighten($dark-color, 30%);
+            fill: lighten($dark-color, 15%);
 
             .view-rooms & { @include transform(rotate(180deg)); }
 
@@ -387,20 +387,20 @@ body {
         @include flex-grow(1);
 
         text-align: center;
-        background-color: rgba(0,0,0,.05);
+        background-color: transparent;
         border-left: 1px solid darken($light-color, 15%);
         fill: lighten($dark-color, 50%);
 
         &:first-child { border-left: none; }
 
         &:hover, &:focus, &:active {
-            fill: lighten($dark-color, 10%);
-            background-color: rgba(0,0,0,.1);
+            fill: lighten($dark-color, 5%);
+            background-color: rgba(0,0,0,.05);
         }
 
         &.current {
-            fill: lighten($dark-color, 30%);
-            background-color: transparent;
+            fill: lighten($dark-color, 15%);
+            background-color: rgba(0,0,0,.1);
         }
     }
 
@@ -578,10 +578,10 @@ body {
     border-right: 4px solid lighten($dark-color, 30%);
     cursor: pointer;
 
-    &.current { background-color: fade-out(lighten($dark-color, 30%), .7); }
+    &.current { background-color: fade-out(lighten($dark-color, 15%), .7); }
 
     &:hover, &:focus, &.current:hover, &.current:focus {
-        background-color: lighten($dark-color, 30%);
+        background-color: lighten($dark-color, 15%);
         color: $light-color;
     }
 
@@ -698,7 +698,7 @@ body {
     fill: lighten($dark-color, 50%);
     overflow: hidden;
 
-    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 30%); }
+    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 15%); }
 
     .view-meta &, .view-rooms & { @include transform(rotate(180deg)); }
 
@@ -785,17 +785,17 @@ body {
     padding: .75em;
     fill: none;
     stroke-width: 2px;
-    stroke: lighten($dark-color, 30%);
+    stroke: lighten($dark-color, 15%);
 
-    .role-follower & { fill: lighten($dark-color, 30%); }
+    .role-follower & { fill: lighten($dark-color, 15%); }
 
     .role-owner &, .embed & { display: none; }
 
     &:focus, &:hover, &:active {
         fill: none;
-        stroke: lighten($dark-color, 10%);
+        stroke: lighten($dark-color, 5%);
 
-        .role-follower & { fill: lighten($dark-color, 10%); }
+        .role-follower & { fill: lighten($dark-color, 5%); }
     }
 }
 
@@ -815,9 +815,9 @@ body {
     width: 3em;
     padding: .75em .5em;
     cursor: pointer;
-    fill: lighten($dark-color, 30%);
+    fill: lighten($dark-color, 15%);
 
-    &:focus, &:hover, &:active { fill: lighten($dark-color, 10%); }
+    &:focus, &:hover, &:active { fill: lighten($dark-color, 5%); }
 }
 
 .cta-area {
@@ -1028,7 +1028,7 @@ body {
 		height: .5em;
 		width: .5em;
 		border-radius: 50%;
-        background-color: fade-out(lighten($dark-color, 30%), .5);
+        background-color: fade-out(lighten($dark-color, 15%), .5);
 
 		@media #{$screenxx} { margin-left: -10em; }
 	}
@@ -1072,7 +1072,7 @@ body {
     }
 
     &.chat-label-action {
-        color: lighten($dark-color, 10%);
+        color: lighten($dark-color, 5%);
         border-right: 2px solid lighten($dark-color, 30%);
         font-style: italic;
 
@@ -1221,7 +1221,7 @@ body {
 	width: 3.5em;
 	border: none;
 	cursor: pointer;
-	fill: lighten($dark-color, 30%); /* inline SVG */
+	fill: lighten($dark-color, 15%); /* inline SVG */
 
 	&:hover, &:focus, &:active { fill: $dark-color; }
 
@@ -1340,11 +1340,6 @@ body {
 			top: .3em;
 			margin: .25em 0 1.25em 0;
 		}
-
-		input + label {
-            display: inline-block;
-            padding: .5em;
-        }
 	}
 
 	.settings-label {
@@ -1482,20 +1477,8 @@ body {
 
 .infinite-items { width: 100%; }
 
-.signup-dialog {
-    width: 27em;
-
-    input { margin: .25em; }
-
-    input[type=text] { width: 100%; }
-
-	@media only screen and (max-width: 27em) { width: 100%; }
-}
-
-.loggedout-dialog, .login-dialog {
-     min-width: 20em;
-
-    .button { width: 100%; }
+.loggedout-dialog, .login-dialog, .signup-dialog {
+    input, .button { width: 100%; }
 }
 
 .popover-body {

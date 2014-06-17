@@ -35,6 +35,8 @@
 	&.working {
 		@include spinner;
 
+		padding-left: 0;
+
 		&, &:hover, &:focus, &:active {
 			background-color: darken($bg, 10%);
 			border-color: darken($bg, 10%);
@@ -87,5 +89,11 @@
 		}
 
 		&.linked { @extend .linked; }
+	}
+
+	button, input[type="submit"], input[type="button"] {
+		@extend .button;
+
+		&:disabled { @extend .button.disabled; }
 	}
 }

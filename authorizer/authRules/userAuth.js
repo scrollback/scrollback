@@ -19,15 +19,17 @@ function emailValidation(old, user) {
 module.exports = function(core){
 	
 	core.on('user', function(action, callback){
-		if(action.role === "guest") return callback(new Error('ERR_NOT_ALLOWED'));
+		if(action.user.role === "guest") return callback(new Error('ERR_NOT_ALLOWED'));
 		if(!action.old || !action.old.id) return callback();
 		else if (!action.old.identities) {
 			return callback();
 		} else if (emailValidation(action.old.identities, action.user.identities)) {
 			return callback(new Error("ERR_USER_EXISTS"));
+		} else if (action.role === 'su') {
+			delete action.role;
+			return callback();
 		} else if (action.from === action.old.id) return callback();
 		else return callback(new Error('ERR_NOT_ALLOWED'));
-		
 		
 	}, "authorization");
 	
