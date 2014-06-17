@@ -61,8 +61,10 @@ module.exports = function(clientEmitter, client, callbacks) {
 		});
 		if (callback) {
 			callbacks[uid] = function(message) {
-				if(message) return callback(new Error(message));
-				else return callback();
+				if(message) {
+					r.params.irc.error = message;	
+				}
+				return callback();
 			};
 		}
 	}

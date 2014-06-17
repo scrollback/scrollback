@@ -30,7 +30,7 @@ module.exports = function (coreObj) {
 	core.on ('room', function(room, callback) {
 		log("room irc:", JSON.stringify(room), client.connected());
 		if (room.session === internalSession) return callback();
-		if (ircParamsValidation(room) && client.connected()) {
+		if (actionRequired(room) && client.connected()) {
 			changeRoomParams(room);
 			var rr = room.room;
 			log("room irc after adding additional properties:", JSON.stringify(room));
@@ -53,8 +53,10 @@ module.exports = function (coreObj) {
 					else return callback();
 				} else return callback();
 			}  
-		} else if(!client.connected() && room.room.params.irc && room.room.params.irc.server && room.room.params.irc.channel) return callback(new Error("ERR_IRC_NOT_CONNECTED"));
-		else return callback();
+		} else if(!client.connected() && room.room.params.irc && room.room.params.irc.server && room.room.params.irc.channel) {
+			room.room.params.irc.error = "ERR_IRC_NOT_CONNECTED";
+			return callback();
+		} else return callback();
 	}, "gateway");
 
 	core.on("room", function(room, callback) {
@@ -64,8 +66,8 @@ module.exports = function (coreObj) {
 			if (v) {
 				callback();
 			} else {
-                r.params.err = true;
-				callback("ERR_INVALID_IRC_PARAMS");
+				r.params.irc.error = "ERR_INVALID_IRC_PARAMS";
+				callback();//
 			}
 		} else callback();
 	}, "appLevelValidation");
@@ -137,7 +139,7 @@ module.exports = function (coreObj) {
 	}, "gateway");	
 };
 
-function ircParamsValidation(room) {
+function actionRequired(room) {
 	return (room.room.params && room.room.params.irc &&
 			room.room.params.irc.server && room.room.params.irc.channel) ||
 			(room.old && room.old.params && room.old.params.irc && room.old.params.irc.server &&

@@ -89,7 +89,7 @@ function addTwitterTokens(room, callback) {
 			log("replies from redis", replies);
 			if (err) {
 				logTwitter(" Error: ", err);
-                room.params.twitter.error = "RRR_TWITTER_LOGIN";
+                room.params.twitter.error = "ERR_TWITTER_LOGIN";
 				callback();
 			}
 			else {
