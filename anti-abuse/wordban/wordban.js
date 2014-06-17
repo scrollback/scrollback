@@ -1,8 +1,7 @@
-var log = require("../../lib/logger.js");
-var jade = require("jade"), fs = require("fs");
-var config = require("../../config.js");
-var blockWords={};
-var longest = 0;
+var log = require("../../lib/logger.js"),
+	fs = require("fs"),
+	blockWords={},
+	longest = 0;
 
 log("Checking");
 
@@ -10,6 +9,8 @@ module.exports = function(core) {
 
 	init();
 	core.on('text', function(message, callback) {
+		var room = message.room, text, customWords, index, l;
+
 		log("Heard \"text\" event");
         if (message.session){
             var gateway = message.session.substring(0, message.session.indexOf(":"));
@@ -18,51 +19,35 @@ module.exports = function(core) {
             }
         }
 
-    	var text;
-   		
-    	log(message);
-		if(message.type=="text")	text = message.text;
-		if(message.type == "nick")	text = message.ref;
-		if(message.to)	text += " " + message.to;
+		text = message.text;
+		text += " " + message.to;
 
-		if(text) {
-			session = Object.keys(config.whitelists)[0];
-			core.emit("getRooms",{id:message.to, session:session}, function(err, data) {
-                log("Get Rooms", data);
-				if(err) return callback(err);
-                data = data.results;
-                if(!data) callback();
-				if(data.length == 0) return callback();
-                data = data[0].room;
-                if(!data) callback();
-	            if(data.params && data.params.wordban) {
-	            	if(rejectable(text)){
-                        if(!message.labels) message.labels = {};
-                        message.labels.abusive = 1;
-                    }
-                }
-	        });
-		}
-
-		var customWords = message.room.params['anti-abuse'].customWords;
-		textMessage = message.text;
-		log("Text message: ",textMessage);
-		log("Custom words: ", customWords);
-
-	    for (index=0; index<customWords.length; ++index) {
-			if((textMessage.toLowerCase()).indexOf(customWords[index])!= -1)
-				{
-					
-					if(customWords[index]===''){
-						return callback();
-					}
-					log("You cannot use banned words!");
+		if(room.params && room.params['anti-abuse']) {
+			if (room.params['anti-abuse'].wordblock) {
+				if(rejectable(text)){
 					if(!message.labels) message.labels = {};
 					message.labels.abusive = 1;
-					return callback(new Error("Abusive_word"));
+					log(message);
+					return callback();
 				}
+			}
+
+			if (message.room.params['anti-abuse'].customWords) {
+				customWords = message.room.params['anti-abuse'].customWords;
+
+				for (index=0, l = customWords.length; index<l; ++index) {
+					if((text.toLowerCase()).indexOf(customWords[index])!= -1) {
+						if(customWords[index]==='') continue;
+						log("You cannot use banned words!");
+						if(!message.labels) message.labels = {};
+						message.labels.abusive = 1;
+						break;
+					}
+				}
+			}
 		}
-		
+
+		return callback();
 	}, "antiabuse");
 
 	core.on("room", function(action, callback){
@@ -83,7 +68,7 @@ var init=function(){
 				word.replace(/\$/g,'s');
 
 				word = word.replace(/\W+/, ' ').toLowerCase().trim();
-				if (word.length==0) {
+				if (word.length===0) {
 					return;
 				}
 				if (word.length > longest) {
@@ -93,9 +78,8 @@ var init=function(){
 			}
 		});
 	});
-	
-}
 
+};
 
 var rejectable = function(text) {
     log("text", text);

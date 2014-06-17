@@ -43,16 +43,16 @@ var client;
 var pendingQueries = {}, pendingActions = {};
 
 function safeSend(data){
-        // safeSends sends the data over the socket only after the socket has
-        // been initialised
-        if(libsb.isInited){
-             client.send(data);
-        }else{
-            libsb.on('inited', function(d,n){
-                client.send(data);
-                n();
-            });
-        }
+	// safeSends sends the data over the socket only after the socket has
+	// been initialised
+	if(libsb.isInited){
+		client.send(data);
+	}else{
+		libsb.on('inited', function(d,n){
+			client.send(data);
+			n();
+		});
+	}
 }
 
 function connect(){
@@ -119,7 +119,7 @@ function receiveMessage(event){
 }
 
 function makeAction(action) {
-        // action.id = generate.uid();
+	// action.id = generate.uid();
 	action.from = libsb.user.id;
 	action.time = new Date().getTime();
 	action.session = libsb.session;
@@ -156,7 +156,7 @@ function sendAway(away, next){
 }
 
 function sendText(text, next){
-	var action = makeAction({to: text.to, type: 'text', text: text.text, from: text.from, id: text.id});
+	var action = makeAction({to: text.to, type: 'text', text: text.text, from: text.from, id: text.id, labels: text.labels || {}, mentions: text.mentions || []});
 	safeSend(JSON.stringify(action));
 	next();
 	// pendingActions[action.id] = next;
