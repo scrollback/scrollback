@@ -118,7 +118,6 @@ $(function() {
 		}else if(thread) {
 			return next();
 		}
-
 		if($logs.data("lower-limit")) $logs.addBelow(chatEl.render(null, text));
 		next();
 	}, 100);

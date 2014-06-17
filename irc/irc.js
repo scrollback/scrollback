@@ -57,6 +57,7 @@ module.exports = function (coreObj) {
 			if (v) {
 				callback();
 			} else {
+                r.params.err = true;
 				callback("ERR_INVALID_IRC_PARAMS");
 			}
 		} else callback();

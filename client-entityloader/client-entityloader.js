@@ -12,8 +12,10 @@ module.exports = function() {
 				if(!data || !data.results || !data.results.length) {
 					state.roomName = "pending";
 					state.room = null;
+                    currentState.room = null; // this is a bad thing to do.. 
 				}else{
 					state.room = data.results[0];
+                    currentState.room = state.room; // so is this... fix it.
 				}
 				next();
 			});

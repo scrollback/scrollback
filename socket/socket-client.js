@@ -151,6 +151,7 @@ function makeAction(action, props) {
 
 function sendJoin(join, next) {
 	var action = makeAction(join, {type: 'join', to: join.to, id: join.id});
+    console.log("JOIN:",action);
 	safeSend(JSON.stringify(action));
     pendingActions[action.id] = returnPending(action, next);
 }

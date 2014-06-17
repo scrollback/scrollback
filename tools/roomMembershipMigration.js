@@ -14,7 +14,6 @@ function closeConnection(){
 	accountConnection.end();
 }
 
-
 function migrateRooms(cb) {
 	var stream = db.query("select * from rooms order by rooms.type DESC;");
 	stream.on("result", function(room) {

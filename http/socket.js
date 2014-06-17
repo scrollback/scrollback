@@ -80,7 +80,7 @@ sock.on('connection', function (socket) {
 			}
 		}
 		core.emit(d.type, d, function(err, data) {
-			var e;
+			var e, action;
 			if(err) {
 				e = {type: 'error', id: d.id, message: err.message};
 				log("Sending Error: ", e);
@@ -113,8 +113,11 @@ sock.on('connection', function (socket) {
 						}
 						
 						data.user.role = role;
+                        action = {id: generate.uid(), type: "back",to: e.id, from: data.user.id, session: data.session,user: data.user, room: e};
 						emit({id: generate.uid(), type: "away", to: e.id, from: data.old.id, user: data.old, room: e});
-						emit({id: generate.uid(), type: "back",to: e.id, from: data.user.id, session: data.session,user: data.user, room: e});
+                        
+                        storeBack(action);
+                        if(verifyBack(conn, action)) emit(action);
 					});	
 				}
 				storeInit(conn, data);
