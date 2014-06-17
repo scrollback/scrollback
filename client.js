@@ -56,6 +56,7 @@ require('./ui/room-list.js');
 require('./ui/search.js');
 require('./ui/follow-room.js');
 require('./ui/facebook.js');
+require('./ui/render-settings.js');
 require('./ui/settings-area.js');
 require('./ui/pref-area.js');
 require('./ui/user-area.js');

@@ -4,8 +4,7 @@
 var formField = require("../lib/formField.js");
 
 libsb.on("config-show", function(tabs, next) {
-	var $div = $("<div>").addClass("list-view list-view-spam-settings"),
-		room = tabs.room,
+	var room = tabs.room,
 		lists = room.params["anti-abuse"]["block-lists"];
 
 	if (!room.params["anti-abuse"] || typeof room.params["anti-abuse"].wordblock !== "boolean") {
@@ -16,7 +15,7 @@ libsb.on("config-show", function(tabs, next) {
 		lists = [];
 	}
 
-	$div.append(
+	var $div = $("<div>").append(
 		formField("Block offensive words", "toggle", "block-offensive", room.params["anti-abuse"].wordblock),
 		formField("Blocked words list", "check", "blocklists-list", [
 			["list-en-strict", "English strict", (lists.indexOf("list-en-strict") > -1)],
@@ -27,8 +26,8 @@ libsb.on("config-show", function(tabs, next) {
 	);
 
 	tabs.spam = {
-		html: $div,
 		text: "Spam control",
+		html: $div,
 		prio: 600
 	};
 
