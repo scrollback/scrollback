@@ -28,6 +28,8 @@ require('./embed/embed-client.js');
 require('./irc/irc-client.js');
 require('./anti-abuse/anti-abuse-client.js');
 require('./twitter/twitter-client.js');
+//require('./customization/customization-client.js');
+
 // components
 require('./ui/load-indicator.js');
 require('./ui/embed-helper.js');
