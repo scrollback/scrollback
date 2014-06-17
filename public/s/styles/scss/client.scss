@@ -168,7 +168,7 @@ $embeds: toast, full;
     }
 }
 
-@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $border: lighten($dark-color, 10%), $icon: darken($light-color, 30%), $focus: $light-color);
+@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $border: $dark-color, $icon: darken($light-color, 30%), $focus: $light-color);
 
 /* widget styles */
 %scroll-elem {
@@ -395,12 +395,12 @@ body {
 
         &:hover, &:focus, &:active {
             fill: lighten($dark-color, 5%);
-            background-color: rgba(0,0,0,.1);
+            background-color: rgba(0,0,0,.05);
         }
 
         &.current {
             fill: lighten($dark-color, 15%);
-            background-color: rgba(0,0,0,.05);
+            background-color: rgba(0,0,0,.1);
         }
     }
 
