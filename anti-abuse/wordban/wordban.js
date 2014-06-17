@@ -1,7 +1,10 @@
 var log = require("../../lib/logger.js");
 var jade = require("jade"), fs = require("fs");
+var config = require("../../config.js");
 var blockWords={};
 var longest = 0;
+
+log("Checking");
 
 module.exports = function(core) {
 
@@ -10,18 +13,21 @@ module.exports = function(core) {
 		log("Heard \"text\" event");
         if (message.session){
             var gateway = message.session.substring(0, message.session.indexOf(":"));
-            if(gateway != "web") return callback();
+            if(gateway == "irc" || gateway=="twitter") {
+            	return callback();
+            }
         }
-        
-    var text;
-    var customWords = message.room.params['anti-abuse'].blockCustom;
-    	log(message);
 
+    	var text;
+   		
+    	log(message);
 		if(message.type=="text")	text = message.text;
 		if(message.type == "nick")	text = message.ref;
 		if(message.to)	text += " " + message.to;
+
 		if(text) {
-			core.emit("getRooms",{id:message.to}, function(err, data) {
+			session = Object.keys(config.whitelists)[0];
+			core.emit("getRooms",{id:message.to, session:session}, function(err, data) {
                 log("Get Rooms", data);
 				if(err) return callback(err);
                 data = data.results;
@@ -37,20 +43,23 @@ module.exports = function(core) {
                 }
 	        });
 		}
-		else{
-			callback();
-		}
-	        	
-	        	for (index=0; index<customWords.length; ++index) {
-				if(text.toLowerCase().indexOf(customWords[index]) != -1)
+
+		var customWords = message.room.params['anti-abuse'].customWords;
+		textMessage = message.text;
+		log("Custom words", customWords);
+
+	    for (index=0; index<customWords.length; ++index) {
+			if((textMessage.toLowerCase()).indexOf(customWords[index])!= -1)
 				{
+					if(customWords[index]===''){
+						return callback();
+					}
 					log("You cannot use banned words!");
 					if(!message.labels) message.labels = {};
 					message.labels.abusive = 1;
 					return callback(new Error("Abusive_word"));
 				}
-        	}	
-
+		}
 		
 	}, "antiabuse");
 

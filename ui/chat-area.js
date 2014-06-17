@@ -106,6 +106,11 @@ $(function() {
 			$text.addClass("conv-" + text.threads[0].id.substr(-1));
 		}
 
+		if (text.labels.abusive){
+			$text.addClass("anti-abuse");
+		}
+
+
 		if(text.resource == libsb.resource) return next();
 		if(text.to != room) return next();
 

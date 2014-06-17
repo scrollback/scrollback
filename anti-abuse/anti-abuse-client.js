@@ -19,7 +19,8 @@ libsb.on('config-save', function(room, next){
 	room.params["anti-abuse"] = {
 		wordblock : $('#block-offensive').is(':checked'),
 		"block-lists": lists,
-		customWords : $('#block-custom').val()
+		customWords : $('#block-custom').val().split(',').
+			map(function(item) {return item.trim(); })
 	};
 
 	next();
