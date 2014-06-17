@@ -13,7 +13,6 @@ require('./id-generator/id-generator-client.js');
 require('./public/s/js/array.contains.js');
 require('./public/s/js/jquery.setCursorEnd.js');
 require('./public/s/js/jquery.attrchange.js');
-//require('./public/s/js/jquery.oembed.js');
 require('./public/s/js/lace.js');
 require('./public/s/js/desktopnotify.js');
 require('./public/s/js/format.js');
@@ -33,6 +32,7 @@ require('./twitter/twitter-client.js');
 require('./ui/load-indicator.js');
 require('./ui/embed-helper.js');
 require('./ui/appcache.js');
+require('./ui/customization.js');
 require('./ui/infinite.js');
 require('./ui/hide-scroll.js');
 require('./ui/navigation.js');
@@ -61,7 +61,5 @@ require('./ui/noroom-area.js');
 require('./ui/signup-area.js');
 require('./ui/persona.js');
 require('./ui/URLparser.js')();
-//require('./ui/oembed-init.js');
 
 //# sourceMappingURL=libsb.js.map
-

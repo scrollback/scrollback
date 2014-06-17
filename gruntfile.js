@@ -26,7 +26,6 @@ module.exports = function(grunt) {
 			dist: {
 				files: {
 					"public/client.bundle.js": ["client.js"],
-					"public/libsb.bundle.js": ["libsb.js"],
 					"public/embed.js": ["embed/embed-widget.js"]
 				},
 				options: {
