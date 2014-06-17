@@ -1,5 +1,6 @@
 module.exports = {
-	sockjs: {
-		host: '//local.scrollback.io/socket'
-	}	
-}
+	server: {
+		protocol: "http:",
+		host: "//local.scrollback.io"
+	}
+};

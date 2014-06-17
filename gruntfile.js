@@ -25,7 +25,8 @@ module.exports = function(grunt) {
 		browserify: {
 			dist: {
 				files: {
-					"public/libsb.bundle.js": ["libsb.js"]
+					"public/libsb.bundle.js": ["libsb.js"],
+					"public/embed.js": ["embed/embed-widget.js"]
 				},
 				options: {
 					bundleOptions: { debug: true }
