@@ -43,6 +43,7 @@ module.exports = function (coreObj) {
 				var newIrc = rr.params.irc;
 				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel) {
 					if(oldIrc.server && oldIrc.channel) {
+						delete firstMessage[rr.id];
 						ircUtils.disconnectBot(rr.id, function() {
 							log("disconnected from ", oldIrc.channel);
 							if(rr.params.irc.server && rr.params.irc.channel) return ircUtils.addNewBot(rr, callback);	
