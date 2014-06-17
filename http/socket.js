@@ -116,7 +116,7 @@ sock.on('connection', function (socket) {
                         action = {id: generate.uid(), type: "back",to: e.id, from: data.user.id, session: data.session,user: data.user, room: e};
 						emit({id: generate.uid(), type: "away", to: e.id, from: data.old.id, user: data.old, room: e});
                         
-                        storeBack(action);
+                        storeBack(conn, action);
                         if(verifyBack(conn, action)) emit(action);
 					});	
 				}

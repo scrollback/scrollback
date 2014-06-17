@@ -65,7 +65,7 @@ function safeSend(data){
 }
 
 function connect(){
-	client = new SockJS(config.server.host + "/socket");
+	client = new SockJS(config.server.host || location.hostname + "/socket");
 
 	client.onopen = function(){
 		core.emit('connected');

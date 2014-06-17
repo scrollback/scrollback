@@ -37,15 +37,17 @@ module.exports = function(core) {
 			var mentionMap = {};
 			if(!action.text) return callback(new Error("TEXT_MISSING"));
 
-			if(/^\//.test(action.text)){
-				if(!/^\/me/.test(action.text)){
+			if(/^\//.test(action.text)) {
+				if(!/^\/me/.test(action.text)) {
 					return callback(new Error("UNRECOGNIZED_SLASH_COMMNAD"));
 				}
 			}
-
+            
+            if(!action.labels) action.labels = {};
+            
 			if(action.mentions && action.mentions.length > 0 ) {
 				//checking for multiple mentions for the same user
-				action.mentions.forEach(function(i){
+				action.mentions.forEach(function(i) {
 					mentionMap[i] = true;
 				});
 				action.mentions = Object.keys(hashmap);

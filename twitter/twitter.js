@@ -1,6 +1,5 @@
 var log = require("../lib/logger.js");
 var logTwitter = log;
-var fs = require("fs");
 var htmlEncode = require('htmlencode');
 var Twit = require('twit');
 var guid = require("../lib/generate.js").uid;
@@ -11,15 +10,12 @@ var host = config.http.host;
 var redis = require('../lib/redisProxy.js').select(config.redisDB.twitter);
 var twitterConsumerKey = config.twitter.consumerKey;
 var twitterConsumerSecret = config.twitter.consumerSecret;
-var callbackURL = config.twitter.callbackURL;
 var debug = config.twitter.debug;
 var core;
 var expireTime = 15 * 60;//expireTime for twitter API key...
 var timeout  = 1000 * 60 ;//search Interval
 var maxTweets = 1;//max tweets to search in timeout inteval
-var currentConnections = {};
 var pendingOauths = {};//TODO delete pending oauth after some time
-var userData = {};//used to save access token etc.
 module.exports = function(coreObj) {
 
 	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
@@ -42,7 +38,7 @@ module.exports = function(coreObj) {
 		}, "setters");
 
 		core.on("room", twitterRoomHandler, "gateway");
-		core.on("room", twitterParamsValidation, "applevelValidation");
+		core.on("room", twitterParamsValidation, "appLevelValidation");
 	}
 	else {
 		log("Twitter module is not enabled.");
@@ -51,6 +47,7 @@ module.exports = function(coreObj) {
 
 
 function twitterParamsValidation(action, callback) {
+    var room = action.room;
 	if (room.params.twitter) {
 		var t = room.params.twitter;
 		var b = typeof t.username === 'string' && typeof t.tags === 'string';
@@ -92,7 +89,8 @@ function addTwitterTokens(room, callback) {
 			log("replies from redis", replies);
 			if (err) {
 				logTwitter(" Error: ", err);
-				callback(new Error("TWITTER_LOGIN_ERROR"));
+                room.params.twitter.error = "RRR_TWITTER_LOGIN";
+				callback();
 			}
 			else {
 				if (replies[0] && replies[1] && replies[2]) {
@@ -148,7 +146,8 @@ function copyOld(room, callback) {
 		callback();
 	}
 	else {
-		callback(new Error("TWITTER_LOGIN_ERROR"));
+        room.params.twitter.error = "ERR_TWITTER_LOGIN";
+		callback();
 	}
 }
 
@@ -282,7 +281,7 @@ function getRequest(req, res, next) {
 		);
 		pendingOauths[uid] = {oauth: oauth};
 		oauth.getOAuthRequestToken({"scope": "https://api.twitter.com/oauth/request_token"},
-								function(error, oauth_token, oauth_token_secret, results) {
+								function(error, oauth_token, oauth_token_secret/*, results*/) {
 			res.redirect("https://api.twitter.com/oauth/authenticate?oauth_token=" + oauth_token);
 			pendingOauths[uid].oauthToken = oauth_token;
 			pendingOauths[uid].oauthTokenSecret = oauth_token_secret;
