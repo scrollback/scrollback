@@ -1370,6 +1370,21 @@ body {
     }
 }
 
+#twitter-account {
+    background-color: transparent;
+    background-image: url(../../img/client/twitter-button.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    border: none;
+    color: $dark-color;
+    text-transform: none;
+    padding-left: 2em;
+    height: 37px;
+    width: 120px;
+
+    &:focus, &:hover, &:active { background-image: url(../../img/client/twitter-button-hover.svg); }
+}
+
 .room-area, .meta-area, .main-area, .chat-input {
     @include transition(.3s, ease-out); /* animate css transforms */
 
