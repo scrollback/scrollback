@@ -8,7 +8,7 @@ $(".configure-button").on("click", function () {
     libsb.emit('navigate', {
         mode: "conf",
         source: "configure-button",
-        room: room: window.currentState.roomName
+        room: window.currentState.roomName
     });
 });
 
@@ -77,7 +77,7 @@ libsb.on('navigate', function (state, next) {
     var isOwner = false,
         checkOwnerShip = function() {
             libsb.memberOf.forEach(function (room) {
-                if (room.id == currentState.room && room.role == "owner") isOwner = true;
+                if (room.id == currentState.roomName && room.role == "owner") isOwner = true;
             });
 
             if (isOwner === false) {

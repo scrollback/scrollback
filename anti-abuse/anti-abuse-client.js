@@ -4,16 +4,22 @@
 var formField = require("../lib/formField.js");
 
 libsb.on("config-show", function(tabs, next) {
-	var room = tabs.room,
-		lists = room.params["anti-abuse"]["block-lists"];
+	var room = tabs.room, lists;
 
-	if (!room.params["anti-abuse"] || typeof room.params["anti-abuse"].wordblock !== "boolean") {
+    if(!room.params) room.params = {};
+    if(!room.params["anti-abuse"]) room.params["anti-abuse"] = {};
+    
+    if (typeof room.params["anti-abuse"].wordblock !== "boolean") {
 		room.params["anti-abuse"].wordblock = true;
 	}
-
-	if (!room.params["anti-abuse"] || !(lists instanceof Array)) {
+    
+	if (!(room.params["anti-abuse"]["block-lists"] instanceof Array)) {
 		lists = [];
-	}
+	}else {
+        lists = room.params["anti-abuse"]["block-lists"];
+    }
+    
+    if(!room.params["anti-abuse"].customWords) room.params["anti-abuse"].customWords = [];
 
 	var $div = $("<div>").append(
 		formField("Block offensive words", "toggle", "block-offensive", room.params["anti-abuse"].wordblock),

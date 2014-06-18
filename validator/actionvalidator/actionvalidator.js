@@ -167,7 +167,7 @@ function basicValidation(action, callback) {
 		if (action.suggestedNick) action.suggestedNick = action.suggestedNick.toLowerCase();
 		action.to = "me";
 	}else{
-		if(!action.to){
+		if(typeof action.to != "string" && action.to){
 			return callback(new Error("INVALID_ROOM"));	
 		}
 		else if(!validateRoom(action.to)) { 
