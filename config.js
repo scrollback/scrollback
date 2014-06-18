@@ -51,9 +51,7 @@ var defaults = {
 		name: "scrollback",
 		newrelic: { name: 'Scrollback Local' }
 	},
-	whitelists:{
-		
-	},
+	
 	mysql: {
 		host     : 'localhost',
 		user     : 'scrollback',

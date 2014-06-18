@@ -80,7 +80,7 @@ var browserNotify = (function() {
 }());
 
 libsb.on('text-dn', function(text, next) {
-	if (text.mentions.contains(libsb.user.id)) {
+	if (text.mentions.indexOf(libsb.user.id) > -1) {
 		browserNotify(text, true);
 
 		desktopnotify.show({

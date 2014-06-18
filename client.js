@@ -12,7 +12,6 @@ require('./socket/socket-client')(core);
 require('./id-generator/id-generator-client.js')();
 require('./client-entityloader/client-entityloader.js')();
 
-require('./public/s/js/array.contains.js');
 require('./public/s/js/jquery.setCursorEnd.js');
 require('./public/s/js/jquery.attrchange.js');
 require('./public/s/js/lace.js');
@@ -30,6 +29,8 @@ require('./embed/embed-client.js');
 require('./irc/irc-client.js');
 require('./anti-abuse/anti-abuse-client.js');
 require('./twitter/twitter-client.js');
+//require('./customization/customization-client.js');
+
 // components
 require('./ui/quicknotify.js');
 require('./ui/load-indicator.js');
@@ -57,7 +58,8 @@ require('./ui/room-list.js');
 require('./ui/search.js');
 require('./ui/follow-room.js');
 require('./ui/facebook.js');
-require('./ui/settings-area.js');
+require('./ui/render-settings.js');
+require('./ui/conf-area.js');
 require('./ui/pref-area.js');
 require('./ui/user-area.js');
 require('./ui/noroom-area.js');

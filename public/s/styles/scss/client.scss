@@ -1091,7 +1091,7 @@ body {
 		&.conv-#{$j}:before { background-color: $color; }
 	}
 
-	&.long {
+	&.chat-mark-long {
 		@extend %ease;
 
 		max-height: 12em;
@@ -1166,7 +1166,7 @@ body {
         color: fade-out($dark-color, .5);
     }
 
-    &:last-of-type, &.timestamp-displayed {
+    &:last-of-type, &.chat-mark-timestamp-shown {
 		.chat-timestamp { display: inline-block; }
 	}
 }
@@ -1370,45 +1370,10 @@ body {
 
 	@media #{$screenxx} { display: table-row; }
 
-	.settings-label, .settings-action {
-		display: block;
-		padding: .25em;
-
-		@media #{$screenxx} { display: table-cell; }
-
-		input, textarea, .button, .button-secondary {
-			margin: 0 0;
-			max-width: 100%;
-		}
-
-		input[type=text], textarea, .entry { width: 100% }
-
-		textarea { resize: vertical; }
-
-        input[type=checkbox], input[type=radio] {
-			position: relative;
-			top: .3em;
-			margin: .25em 0 1.25em 0;
-		}
-	}
-
-	.settings-label {
-		text-align: left;
-		padding-right: 1em;
-
-		@media #{$screenxx} {
-			text-align: right;
-			vertical-align: top;
-			padding: .5em 0;
-		}
-	}
-
-	.settings-action {
-		text-align: left;
-		vertical-align: middle;
-	}
-
-    .check-item, .radio-item { display: block; }
+    .check-item, .radio-item {
+        display: block;
+        padding: .5em 0;
+    }
 
     .embed-code {
         min-width: 27em;
@@ -1417,6 +1382,61 @@ body {
         font-weight: 700;
         font-family: $font-family-monospace;
         line-height: 1.2em;
+    }
+
+    input, textarea, .button, .button-secondary, .multientry {
+        margin: 0 0;
+        max-width: 100%;
+    }
+
+    textarea { resize: vertical; }
+
+    input[type="checkbox"], input[type="radio"] {
+        float: left;
+        margin-right: .5em;
+    }
+}
+
+.settings-label, .settings-action {
+    display: block;
+    padding: .25em;
+
+    @media #{$screenxx} { display: table-cell; }
+}
+
+.settings-label {
+    text-align: left;
+    padding-right: 1em;
+
+    @media #{$screenxx} {
+        text-align: right;
+        vertical-align: top;
+        padding: .5em 0;
+    }
+}
+
+.settings-action {
+    text-align: left;
+    vertical-align: middle;
+}
+
+.twitter-account-button {
+    background-color: transparent;
+    background-image: url(../../img/client/twitter-button.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    border: none;
+    color: $dark-color;
+    text-transform: none;
+    padding-left: 2em;
+    height: 37px;
+    width: 120px;
+
+    &:focus, &:hover, &:active {
+        background-color: transparent;
+        background-image: url(../../img/client/twitter-button-hover.svg);
+        border: none;
+        color: $dark-color;
     }
 }
 

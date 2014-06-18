@@ -129,32 +129,20 @@ function receiveMessage(event){
 function returnPending(action, next) {
     return function(newAction) {
         var i;
-<<<<<<< HEAD
         if(newAction.type === "error") return next(newAction);
         
         for(i in action) delete action[i];
         for(i in newAction) {
             if(newAction.hasOwnProperty(i)) action[i] = newAction[i];
         }
-=======
-        console.log("BLAH:",action, newAction);
-        for(i in action) delete action[i];
-        for(i in newAction) action[i] = newAction[i];
-
->>>>>>> 169cfa1bd8111205a4b02d21b921fe117d70f653
         next();
     };
 }
 function makeAction(action, props) {
     var i;
     for(i in action){ delete action[i]; }
-<<<<<<< HEAD
     for(i in props){ if(props.hasOwnProperty(i))  action[i] = props[i]; }
-    
-=======
-    for(i in props){ action[i] = props[i]; }
 
->>>>>>> 169cfa1bd8111205a4b02d21b921fe117d70f653
 	action.from = libsb.user.id;
 	action.time = new Date().getTime();
 	action.session = libsb.session;
@@ -187,8 +175,8 @@ function sendAway(away, next) {
     pendingActions[action.id] = returnPending(action, next);
 }
 
-function sendText(text, next) {
-	var action = makeAction(text, {to: text.to, type: 'text', text: text.text, from: text.from, id: text.id});
+function sendText(text, next){
+	var action = makeAction({to: text.to, type: 'text', text: text.text, from: text.from, id: text.id, labels: text.labels || {}, mentions: text.mentions || []});
 	safeSend(JSON.stringify(action));
     pendingActions[action.id] = returnPending(action, next);
 }
