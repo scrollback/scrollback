@@ -1,7 +1,8 @@
 /* jshint browser: true */
-/* global $, libsb, currentState, renderSettings */
+/* global $, libsb, currentState */
 
-var currentConfig;
+var currentConfig,
+    renderSettings = require("./render-settings.js");
 
 $(".configure-button").on("click", function () {
     libsb.emit('navigate', {

@@ -1382,7 +1382,12 @@ body {
     height: 37px;
     width: 120px;
 
-    &:focus, &:hover, &:active { background-image: url(../../img/client/twitter-button-hover.svg); }
+    &:focus, &:hover, &:active {
+        background-color: transparent;
+        background-image: url(../../img/client/twitter-button-hover.svg);
+        border: none;
+        color: $dark-color;
+    }
 }
 
 .room-area, .meta-area, .main-area, .chat-input {

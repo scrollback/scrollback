@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $ */
 
-var renderSettings = function (tabs) {
+module.exports = function(tabs) {
     var $items = $("<div>"),
         $views = $("<div>"),
         data = [];
@@ -27,5 +27,3 @@ var renderSettings = function (tabs) {
 
     return [ $items, $views ];
 };
-
-window.renderSettings = renderSettings;

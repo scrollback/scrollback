@@ -1,7 +1,8 @@
 /* jshint browser: true */
-/* global $, libsb, currentState, renderSettings, desktopnotify, lace */
+/* global $, libsb, currentState, desktopnotify, lace */
 
-var currentConfig;
+var currentConfig,
+    renderSettings = require("./render-settings.js");
 
 $(".conf-save").on("click", function () {
     if (currentState.mode == 'pref') {

@@ -30,7 +30,7 @@ libsb.on("config-save", function(room, next){
 		room.params.customization = {};
 	}
 
-	room.params.customization.css = $("#custom-css").val();
+	room.params.customization.css = $("#custom-css").val().replace("<", "\\3c").replace(">", "\\3e");
 
 	next();
 });
