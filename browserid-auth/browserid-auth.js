@@ -1,5 +1,4 @@
 var config = require("../config.js"),
-	name = require("../lib/generate.js").word,
 	log = require("../lib/logger.js"),
 	crypto = require('crypto'),
 	request = require("request"), core,
@@ -23,6 +22,7 @@ function browserAuth(action, callback) {
 		try {
 			body = JSON.parse(body);
 		} catch(e) {
+            log("Network failure");
 			return callback(new Error("AUTH_FAIL_SERVER/" + body));
 		}
 		if(body.status !== 'okay') {

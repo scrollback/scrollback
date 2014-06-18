@@ -59,7 +59,7 @@ function writeObject(obj) {
 	var v = JSON.stringify(obj);
 	var r = v.length + " ";
 	r += v;
-	client.write(r);	
+	if(connected) client.write(r);	
 }
 
 

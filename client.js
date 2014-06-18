@@ -8,31 +8,34 @@ window.generate = require('./lib/generate');
 require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(core);
 require('./socket/socket-client')(core);
-require('./id-generator/id-generator-client.js');
+
+require('./id-generator/id-generator-client.js')();
+require('./client-entityloader/client-entityloader.js')();
 
 require('./public/s/js/array.contains.js');
 require('./public/s/js/jquery.setCursorEnd.js');
 require('./public/s/js/jquery.attrchange.js');
-//require('./public/s/js/jquery.oembed.js');
 require('./public/s/js/lace.js');
 require('./public/s/js/desktopnotify.js');
 require('./public/s/js/format.js');
 require('./public/s/js/swipe-events.js');
 
 // client uis
-// require('./email/email-client.js');
+require('./email/email-client.js');
 require('./http/notifications-client.js');
 require('./http/seo-client.js');
 require('./http/roomGeneralSettings-client.js');
 require('./http/userProfile-client.js');
 require('./embed/embed-client.js');
-// require('./irc/irc-client.js');
+require('./irc/irc-client.js');
 require('./anti-abuse/anti-abuse-client.js');
-// require('./twitter/twitter-client.js');
+require('./twitter/twitter-client.js');
 // components
+require('./ui/quicknotify.js');
 require('./ui/load-indicator.js');
 require('./ui/embed-helper.js');
 require('./ui/appcache.js');
+require('./ui/customization.js');
 require('./ui/infinite.js');
 require('./ui/hide-scroll.js');
 require('./ui/navigation.js');
@@ -61,6 +64,5 @@ require('./ui/noroom-area.js');
 require('./ui/signup-area.js');
 require('./ui/persona.js');
 require('./ui/URLparser.js')();
-//require('./ui/oembed-init.js');
 
 //# sourceMappingURL=libsb.js.map

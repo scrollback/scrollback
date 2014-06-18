@@ -64,7 +64,7 @@ var client = new es.Client({
     }
 
 	types.threads.get(function(err, data) {
-		var i=0, l = 10;//data.length;
+		var i=0, l = data.length;
 		
 		// console.log(data.length);
 
@@ -74,7 +74,6 @@ var client = new es.Client({
 				if(i<l) loop(i);
 			});	
 		}
-
 		loop(i);
     });
 })();

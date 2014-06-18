@@ -2,7 +2,7 @@ var permissionLevels = require('../permissionWeights.js');
 module.exports = function(core){
 	core.on('getTexts', function(query, callback){
 		if(!query.room.params || !query.room.params.readLevel) return callback();
-		if(query.room.params || query.room.params.readLevel === 'undefined') query.room.params.readLevel = 'guest';
+		if(query.room.params || query.room.params.readLevel === undefined) query.room.params.readLevel = 'guest';
 		if(permissionLevels[query.room.params.readLevel] <= permissionLevels[query.user.role]) return callback();
 		else return callback(new Error('ERR_NOT_ALLOWED'));
 	}, "authorization");
@@ -11,7 +11,7 @@ module.exports = function(core){
 			return callback();
 		}
 		if(!query.room.params || !query.room.params.readLevel) return callback();
-		if(query.room.params.readLevel === 'undefined') query.room.params.readLevel = 'guest';
+		if(query.room.params.readLevel === undefined) query.room.params.readLevel = 'guest';
 		if(permissionLevels[query.room.params.readLevel] <= permissionLevels[query.user.role]) return callback();
 		else return callback(new Error('ERR_NOT_ALLOWED'));
 	}, "authorization");

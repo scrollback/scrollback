@@ -10,7 +10,7 @@ $(function() {
 
 		// Handle minimize
 		$(".title-bar").on("click", function(e) {
-			if (e.target === e.currentTarget) {
+			if (e.target === e.currentTarget || e.target === $("#room-title")[0]) {
 				libsb.emit("navigate", { minimize: true });
 			}
 		});

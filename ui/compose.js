@@ -15,8 +15,8 @@ $(function() {
 		$entry.text("");
 
 		if (!text) return;
-		if (window.currentState && window.currentState.room) {
-			libsb.say(window.currentState.room, text, window.currentState.thread);
+		if (window.currentState && window.currentState.roomName) {
+			libsb.say(window.currentState.roomName, text, window.currentState.thread);
 		} else {
 			// show the error that not part of any room yet.
 		}
@@ -26,7 +26,7 @@ $(function() {
 		}, 0);
 
 		var classes = $("body").attr("class").replace(/conv-\d+/g, "");
-
+        
 		$("body").attr("class", classes);
 	}
 

@@ -5,5 +5,6 @@ module.exports = { // higher permission value = more permissions
 	registered: 1,
 	follower: 2,
 	moderator: 3,
-	owner: 4
+	owner: 4,
+	su: 5
 };

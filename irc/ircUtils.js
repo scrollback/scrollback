@@ -1,7 +1,7 @@
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
 var log = require("../lib/logger.js");
-module.exports = function(clientEmitter, callbacks) {
+module.exports = function(clientEmitter, client, callbacks) {
 
 	function connectUser(roomId, user) {
 		var uid = guid();
@@ -27,13 +27,14 @@ module.exports = function(clientEmitter, callbacks) {
 		});
 	}
 	
-	function disconnectBot(roomId) {
+	function disconnectBot(roomId, callback) {
 		var uid = guid();
 		clientEmitter.emit('write', {
 			uid: uid,
 			type: 'partBot',
 			roomId: roomId
 		});
+		if(callback) callbacks[uid] = callback;
 	}
 	
 	function disconnectUser(roomId, user) {
@@ -60,8 +61,10 @@ module.exports = function(clientEmitter, callbacks) {
 		});
 		if (callback) {
 			callbacks[uid] = function(message) {
-				if(message) return callback(new Error(message));
-				else return callback();
+				if(message) {
+					r.params.irc.error = message;	
+				}
+				return callback();
 			};
 		}
 	}
@@ -74,14 +77,16 @@ module.exports = function(clientEmitter, callbacks) {
 	
 	function getBotNick(roomId, callback) {
 		var uid = guid();
-		clientEmitter.emit('write', {
-			uid: uid,
-			type: 'getBotNick',
-			roomId: roomId
-		});
-		callbacks[uid] = function(data) {
-			callback(data.nick);
-		};
+		if(client.connected()) {
+			clientEmitter.emit('write', {
+				uid: uid,
+				type: 'getBotNick',
+				roomId: roomId
+			});
+			callbacks[uid] = function(data) {
+				callback(data.nick);
+			};
+		} else callback("ERR_NOT_CONNECTED");
 	}
 	
 	

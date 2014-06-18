@@ -14,7 +14,6 @@ function closeConnection(){
 	accountConnection.end();
 }
 
-
 function migrateRooms(cb) {
 	var stream = db.query("select * from rooms order by rooms.type DESC;");
 	stream.on("result", function(room) {
@@ -105,7 +104,7 @@ function migrateMembers(cb){
 		if(row.partedOn) return console.log("parted user");;
 		if(owners[row.room] === row.user) return console.log("owner spotted.");
 		types.rooms.link(row.room, 'hasMember', row.user, {
-			role: "member",
+			role: "follower",
 			time: row.joinedOn
 		});
 	});

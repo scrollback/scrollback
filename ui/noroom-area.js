@@ -5,7 +5,7 @@
     var messageID = -1;
     
     libsb.on('back-up', function(back, next){
-        if(back.to === currentState.room){
+        if(back.to === currentState.roomName){
             messageID = back.id;
         }
         next();
@@ -22,9 +22,9 @@
 
 $("#create-room-button").click(function(){
     var roomObj = {
-        to: currentState.room,
+        to: currentState.roomName,
         room: {
-            id: currentState.room,
+            id: currentState.roomName,
             description: '',
             params: {
                 irc: {},

@@ -42,8 +42,8 @@ window.format = {
 		// Replace &, <, >, ", ', `, , !, @, $, %, (, ), =, +, {, }, [, and ]
 		if (str) {
 			return str.replace("&", "&amp;")
-					  .replace("<", "&lt;").replace(">", "&gt;")
-					  .replace('"', "&quot;").replace("'", "&#39").replace("`", "&#96")
+					  .replace("<", "&lt;").replace(">", "&gt;").replace("/", "&#x2F;")
+				      .replace('"', "&quot;").replace("'", "&#39;").replace("`", "&#96;").replace("‘", "&#x27;")
 					  .replace("!", "&#33;").replace("@", "&#64;")
 					  .replace("$", "&#36;").replace("%", "&#37;")
 					  .replace("(", "&#40;").replace(")", "&#41;")

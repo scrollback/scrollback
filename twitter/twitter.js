@@ -1,6 +1,5 @@
 var log = require("../lib/logger.js");
 var logTwitter = log;
-var fs = require("fs");
 var htmlEncode = require('htmlencode');
 var Twit = require('twit');
 var guid = require("../lib/generate.js").uid;
@@ -11,38 +10,35 @@ var host = config.http.host;
 var redis = require('../lib/redisProxy.js').select(config.redisDB.twitter);
 var twitterConsumerKey = config.twitter.consumerKey;
 var twitterConsumerSecret = config.twitter.consumerSecret;
-var callbackURL = config.twitter.callbackURL;
 var debug = config.twitter.debug;
 var core;
 var expireTime = 15 * 60;//expireTime for twitter API key...
 var timeout  = 1000 * 60 ;//search Interval
 var maxTweets = 1;//max tweets to search in timeout inteval
-var currentConnections = {};
 var pendingOauths = {};//TODO delete pending oauth after some time
-var userData = {};//used to save access token etc.
 module.exports = function(coreObj) {
-	
+
 	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
 		log("twitter app started");
 		if (!debug) {
 			process.nextTick(function(){
-				logTwitter = log.tag('twitter'); 
+				logTwitter = log.tag('twitter');
 			});
 		}
 		core = coreObj;
 		init();
-		fs.readFile(__dirname + "/twitter.html", "utf8", function(err, data){
-			if(err)	throw err;
-			core.on("http/init", function(payload, callback) {
-				payload.twitter = {
-					get: function(req,res,next) {	
-						getRequest(req,res,next);
-					}
-				};
-				callback(null, payload);
-			}, "setters");
-		});
+
+		core.on("http/init", function(payload, callback) {
+			payload.twitter = {
+				get: function(req,res,next) {
+					getRequest(req,res,next);
+				}
+			};
+			callback(null, payload);
+		}, "setters");
+
 		core.on("room", twitterRoomHandler, "gateway");
+		core.on("room", twitterParamsValidation, "appLevelValidation");
 	}
 	else {
 		log("Twitter module is not enabled.");
@@ -50,18 +46,36 @@ module.exports = function(coreObj) {
 };
 
 
+function twitterParamsValidation(action, callback) {
+    var room = action.room;
+	if (room.params.twitter) {
+		var t = room.params.twitter;
+		var b = typeof t.username === 'string' && typeof t.tags === 'string';
+		if (t.token) {
+			b = b && (typeof t.token === 'string');
+			b = b && (t.tokenSecret) && (typeof t.tokenSecret === 'string');
+			b = b && (typeof t.profile === 'object');
+			b = b && (t.profile.screen_name && typeof t.profile.screen_name === 'string');
+			b = b && (t.profile.user_id && typeof t.profile.user_id === 'string');
+		}
+		if (b) callback();
+		else callback("ERR_INVALID_TWITTER_PARAMS");
+	} else callback();
+}
+
+
 function twitterRoomHandler(action, callback) {
 	var room = action.room;
 	log("room twitter--", JSON.stringify(room));
-	if (action.type == 'room' && room.params && room.params.twitter && room.params.twitter.username) {
-		addTwitterTokens(action, callback);			
+	if (room.params.twitter && room.params.twitter.username) {
+		addTwitterTokens(action, callback);
 	}
 	else {
 		callback();
 	}
 }
 /**
- *Read twitter token from redis and 
+ *Read twitter token from redis and
  *add it to room object
  */
 function addTwitterTokens(room, callback) {
@@ -75,7 +89,8 @@ function addTwitterTokens(room, callback) {
 			log("replies from redis", replies);
 			if (err) {
 				logTwitter(" Error: ", err);
-				callback(new Error("TWITTER_LOGIN_ERROR"));
+                room.params.twitter.error = "ERR_TWITTER_LOGIN";
+				callback();
 			}
 			else {
 				if (replies[0] && replies[1] && replies[2]) {
@@ -96,11 +111,11 @@ function addTwitterTokens(room, callback) {
 							log("values deleted from redis", r);
 						});
 					});
-					
+
 				} else {//new values are not present in redis.. copy old
 					copyOld(room, callback);
 				}
-			
+
 			}
 		});
 	});
@@ -118,7 +133,7 @@ function addIdentity(room, username) {
 
 function copyOld(room, callback) {
 	logTwitter("copyOld");
-	
+
 	var old;//old account
 	if(room.old && room.old.params) old = room.old.params.twitter;
 	if(old) {
@@ -131,7 +146,8 @@ function copyOld(room, callback) {
 		callback();
 	}
 	else {
-		callback(new Error("TWITTER_LOGIN_ERROR"));
+        room.params.twitter.error = "ERR_TWITTER_LOGIN";
+		callback();
 	}
 }
 
@@ -179,7 +195,7 @@ function fetchTweets(room) {
 		});
 		logTwitter("calling room,", room);
 		redis.get("twitter:lastTweetId:" + room.id, function(err, data) {
-			
+
 			twit.get(
 				'search/tweets', {
 					q: room.params.twitter.tags.split(" ").join(" OR "),
@@ -198,10 +214,10 @@ function fetchTweets(room) {
 							});
 						}
 					}
-				}	
+				}
 			);
-		});	
-	}	
+		});
+	}
 }
 
 /**
@@ -235,11 +251,11 @@ function sendMessages(replies, room) {
 					session: "twitter://" + r.user.screen_name
 				};
 				core.emit("text", message, function(err) {
-					log("error while sending message:" , err);
+					if(err) log("error while sending message:" , err);
 				});
 			});
 		}
-		
+
 	});
 }
 
@@ -265,11 +281,11 @@ function getRequest(req, res, next) {
 		);
 		pendingOauths[uid] = {oauth: oauth};
 		oauth.getOAuthRequestToken({"scope": "https://api.twitter.com/oauth/request_token"},
-								function(error, oauth_token, oauth_token_secret, results) {
+								function(error, oauth_token, oauth_token_secret/*, results*/) {
 			res.redirect("https://api.twitter.com/oauth/authenticate?oauth_token=" + oauth_token);
 			pendingOauths[uid].oauthToken = oauth_token;
 			pendingOauths[uid].oauthTokenSecret = oauth_token_secret;
-			
+
 			log("callback url", arguments);
 		});
 		log("twitter oauth=", oauth);
@@ -292,7 +308,7 @@ function getRequest(req, res, next) {
 						multi.setex("twitter:userData:tokenSecret:" + uid, expireTime, access_token_secret);
 						multi.setex("twitter:userData:profile:" + uid, expireTime, JSON.stringify(results));
 						multi.exec(function(err,replies) {
-							logTwitter("user data added: ", replies);	
+							logTwitter("user data added: ", replies);
 						});
 					});
 					return res.render(__dirname + "/login.jade", {profile: {screen_name: results.screen_name}});
@@ -300,11 +316,11 @@ function getRequest(req, res, next) {
 			});
 			delete pendingOauths[ps[2]];
 		}
-		
+
 	} else {
 		next();
 	}
-	
+
 }
 
 /**** get request handler *******/
