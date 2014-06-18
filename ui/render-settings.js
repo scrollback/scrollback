@@ -4,17 +4,17 @@
 var renderSettings = function (tabs) {
     var $items = $("<div>"),
         $views = $("<div>"),
-        data = [], i;
+        data = [];
 
-    for (i in tabs) {
-        data.push([tabs[i].prio, i, tabs[i]]);
+    for (var tab in tabs) {
+        data.push([tabs[tab].prio, tab, tabs[tab]]);
     }
 
     data.sort(function(a,b) {
         return b[0] - a[0];
     });
 
-    for (i = 0; i < data.length; i++) {
+    for (var i = 0; i < data.length; i++) {
         var current = (i === 0) ? "current" : "";
 
         $("<a>").addClass("list-item list-item-" + data[i][1] + "-settings " + current)

@@ -65,8 +65,6 @@ function getRooms() {
 
             var data = renderSettings(tabs);
 
-            console.log(data);
-
             $('.meta-conf').empty().append(data[0]);
             $('.conf-area').empty().append(data[1]);
         });
@@ -97,7 +95,6 @@ libsb.on('navigate', function (state, next) {
             });
         }
 
-        // if currentConfig is blank, then
         if (!currentConfig) {
             if (libsb.isInited) {
                 getRooms();
