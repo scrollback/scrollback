@@ -60,10 +60,12 @@ libsb.on('config-show', function(tabs, next) {
 	//var $p = $('<div class="settings-item"><div class="settings-label" id="twitter-text"></div><div class="settings-action"><a id="twitter-account" class="button"></a></div></div><div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="twitter-message"></div></div>');
 
 	$div.append(
-		$settingsItem.append($twitterText),
-		$settingsAction.append(
-			$button,
-			$twitterMessage
+		$settingsItem.append(
+			$twitterText,
+			$settingsAction.append(
+				$button,
+				$twitterMessage
+			)
 		)
 	);
 
