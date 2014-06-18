@@ -25,17 +25,17 @@ module.exports = function(c){
 		query.type="getTexts";
 		sendQuery(query, callback);
 	});
-	
+
     core.on('getThreads',  function(query, callback){
 		query.type="getThreads";
 		sendQuery(query, callback);
 	});
-	
+
     core.on('getUsers',  function(query, callback){
 		query.type="getUsers";
 		sendQuery(query, callback);
 	});
-	
+
     core.on('getRooms',  function(query, callback){
 		query.type="getRooms";
 		sendQuery(query, callback);
@@ -54,7 +54,7 @@ libsb.on("inited", function(undef, next) {
 function safeSend(data){
     // safeSends sends the data over the socket only after the socket has
     // been initialised
-    
+
     if(libsb.isInited) {
          client.send(data);
     }else {
@@ -65,7 +65,7 @@ function safeSend(data){
 }
 
 function connect(){
-	client = new SockJS(config.server.host || location.hostname + "/socket");
+	client = new SockJS(config.server.host + "/socket");
 
 	client.onopen = function(){
 		core.emit('connected');
@@ -91,7 +91,7 @@ function sendQuery(query, next){
 	query.session = libsb.session;
 	query.resource = libsb.resource;
 	safeSend(JSON.stringify(query));
-    
+
 	pendingQueries[query.id] = next;
 	pendingQueries[query.id].query = query;
 }
@@ -132,7 +132,7 @@ function returnPending(action, next) {
         console.log("BLAH:",action, newAction);
         for(i in action) delete action[i];
         for(i in newAction) action[i] = newAction[i];
-        
+
         next();
     };
 }
@@ -140,7 +140,7 @@ function makeAction(action, props) {
     var i;
     for(i in action){ delete action[i]; }
     for(i in props){ action[i] = props[i]; }
-    
+
 	action.from = libsb.user.id;
 	action.time = new Date().getTime();
 	action.session = libsb.session;
@@ -183,11 +183,11 @@ function sendText(text, next) {
 function sendInit(init, next) {
     var action, newAction = {type: 'init', to: 'me', id: init.id};
     newAction.session = init.session;
-    
+
     if(init.auth) newAction.auth = init.auth;
 	if(init.suggestedNick) newAction.suggestedNick = init.suggestedNick;
     action = makeAction(init, newAction);
-	
+
 	client.send(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);
 }

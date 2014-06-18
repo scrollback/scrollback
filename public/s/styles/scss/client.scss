@@ -927,6 +927,42 @@ body {
     }
 }
 
+.quick-notification-container {
+    @include chat-elem;
+
+    position: fixed;
+    top: $bar-height;
+    z-index: 200;
+}
+
+.quick-notification-item {
+    @include slidedown;
+
+    padding: 1em;
+
+    @media #{$screenxxxx} { padding: 1em 1.5em; }
+
+    &.info {
+        background-color: $info-color;
+        color: $light-color;
+    }
+
+    &.success {
+        background-color: $success-color;
+        color: $light-color;
+    }
+
+    &.warning {
+        background-color: $warning-color;
+        color: $light-color;
+    }
+
+    &.error {
+        background-color: $error-color;
+        color: $light-color;
+    }
+}
+
 .chat-area {
     @extend %scroll-elem;
 
