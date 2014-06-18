@@ -613,6 +613,7 @@ body {
 .list-item {
 	@extend %ease;
 
+    position: relative;
 	display: block;
     font-size: 1.2em;
 	padding: .75em;
@@ -627,6 +628,19 @@ body {
     @media #{$screenxxxx} { font-size: 1.5em; }
 
     &.current { background-color: rgba(0,0,0,.05); }
+
+    &.error {
+        &:after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 2em;
+            display: block;
+            content: "";
+            background: transparent url(../../img/client/icons/error.svg) no-repeat center center;
+        }
+    }
 
     &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active {
         color: $dark-color;
@@ -924,6 +938,42 @@ body {
         text-overflow: ellipsis;
         white-space: nowrap;
         padding: 0 1em;
+    }
+}
+
+.quick-notification-container {
+    @include chat-elem;
+
+    position: fixed;
+    top: $bar-height;
+    z-index: 200;
+}
+
+.quick-notification-item {
+    @include slidedown;
+
+    padding: 1em;
+
+    @media #{$screenxxxx} { padding: 1em 1.5em; }
+
+    &.info {
+        background-color: $info-color;
+        color: $light-color;
+    }
+
+    &.success {
+        background-color: $success-color;
+        color: $light-color;
+    }
+
+    &.warning {
+        background-color: $warning-color;
+        color: $light-color;
+    }
+
+    &.error {
+        background-color: $error-color;
+        color: $light-color;
     }
 }
 
@@ -1370,7 +1420,7 @@ body {
     }
 }
 
-.room-area, .meta-area, .main-area, .chat-input {
+.room-area, .meta-area, .main-area, .chat-input, .quick-notification-container {
     @include transition(.3s, ease-out); /* animate css transforms */
 
     /* fix flicker in some browsers */

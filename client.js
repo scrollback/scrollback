@@ -31,6 +31,7 @@ require('./irc/irc-client.js');
 require('./anti-abuse/anti-abuse-client.js');
 require('./twitter/twitter-client.js');
 // components
+require('./ui/quicknotify.js');
 require('./ui/load-indicator.js');
 require('./ui/embed-helper.js');
 require('./ui/appcache.js');
