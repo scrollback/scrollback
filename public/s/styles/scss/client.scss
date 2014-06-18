@@ -613,6 +613,7 @@ body {
 .list-item {
 	@extend %ease;
 
+    position: relative;
 	display: block;
     font-size: 1.2em;
 	padding: .75em;
@@ -627,6 +628,19 @@ body {
     @media #{$screenxxxx} { font-size: 1.5em; }
 
     &.current { background-color: rgba(0,0,0,.05); }
+
+    &.error {
+        &:after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 2em;
+            display: block;
+            content: "";
+            background: transparent url(../../img/client/icons/error.svg) no-repeat center center;
+        }
+    }
 
     &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active {
         color: $dark-color;
