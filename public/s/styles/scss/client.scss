@@ -1406,7 +1406,7 @@ body {
     }
 }
 
-.room-area, .meta-area, .main-area, .chat-input {
+.room-area, .meta-area, .main-area, .chat-input, .quick-notification-container {
     @include transition(.3s, ease-out); /* animate css transforms */
 
     /* fix flicker in some browsers */
