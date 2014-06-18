@@ -22,7 +22,6 @@ function loadArrayCache(key){
 
 function saveCache(key){
 	// saves an ArrayCache to LocalStorage
-	console.log("Saving arrayCache ", key);
 	try{
 		localStorage[key] = JSON.stringify(cache[key].getItems());
 	}catch(e){
@@ -117,7 +116,6 @@ module.exports = function(c){
 			next();
 		}else{
 			query.results = results;
-			next();
 		}
 		
 		next();
@@ -153,6 +151,7 @@ module.exports = function(c){
 		texts.push({type: 'result-end', endtype: 'time', time: text.time});
 		var key = generateLSKey(text.to, 'texts');
 		cache[key].put(texts);
+		console.log("Aft4r putting text ", cache[key].getItems());
 		saveCache(key);
 		next();
 	}); // storing new texts to cache.

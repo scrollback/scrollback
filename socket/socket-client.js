@@ -56,7 +56,6 @@ function safeSend(data){
 }
 
 function connect(){
-	console.log("Connection requested ...");
 	client = new SockJS(config.sockjs.host);
 
 	client.onopen = function(){
@@ -77,7 +76,6 @@ function disconnected(){
 
 function sendQuery(query, next){
 	if(query.results){
-        console.log("RESUTS exist, no need to requiest to server ", query.type);
         return next();
     }
 	if(!query.id) query.id = generate.uid();

@@ -55,6 +55,9 @@ ArrayCache.prototype.put = function(data) {
 			data.pop();
 		}
 		[].splice.apply(this.messages, [start, end - start].concat(data));
+		this.messages = __.uniq(this.messages, function(item){
+            return item.id;
+        });
 };
 
 ArrayCache.prototype.get = function (query) {
@@ -77,7 +80,7 @@ ArrayCache.prototype.get = function (query) {
 			if(c>=l) break;
 			m = this.messages[c];
 			if(!m || m.type == 'result-start' || m.type == 'result-end') return null;
-			if(m.type !== 'result-start' && m.type !== 'result-end') res.push(m);
+			if(m.type == "text") res.push(m);
 		}
 		return res;
 };
