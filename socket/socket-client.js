@@ -65,7 +65,7 @@ function safeSend(data){
 }
 
 function connect(){
-	client = new SockJS(config.server.host || location.hostname + "/socket");
+	client = new SockJS(config.server.host || "//"+location.hostname + "/socket");
 
 	client.onopen = function(){
 		core.emit('connected');
@@ -129,23 +129,24 @@ function receiveMessage(event){
 function returnPending(action, next) {
     return function(newAction) {
         var i;
-        console.log("BLAH:",action, newAction);
-        for(i in action) delete action[i];
-        for(i in newAction) action[i] = newAction[i];
+        if(newAction.type === "error") return next(newAction);
         
+        for(i in action) delete action[i];
+        for(i in newAction) {
+            if(newAction.hasOwnProperty(i)) action[i] = newAction[i];
+        }
         next();
     };
 }
 function makeAction(action, props) {
     var i;
     for(i in action){ delete action[i]; }
-    for(i in props){ action[i] = props[i]; }
+    for(i in props){ if(props.hasOwnProperty(i))  action[i] = props[i]; }
     
 	action.from = libsb.user.id;
 	action.time = new Date().getTime();
 	action.session = libsb.session;
 	action.resource = libsb.resource;
-    console.log("Action Made", action);
 	return action;
 }
 

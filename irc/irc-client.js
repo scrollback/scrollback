@@ -17,10 +17,13 @@ libsb.on('config-show', function(tabs, next){
                 displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + results.params.irc.channel + " " + results.id + "\" in the irc channel.";
                 div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
             });
-        } else if (results.params.irc.server && results.params.irc.channel) {
+        } else if ((results.params.irc.server && results.params.irc.channel)) {
             displayString = "Connected to irc channel: " + results.params.irc.channel;
             div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
-        } else {
+        } else if(results.params.irc.error) {
+            displayString = "Error while saving the room";
+            div.append($('<div class="settings-item error"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
+        }else {
             displayString = "Not connected to any channel";
             div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
         }
@@ -47,14 +50,20 @@ libsb.on('config-save', function(room, next){
     next();
 });
 
-libsb.on("room-dn", function(room, next) {
-	if (room.user.id === libsb.user.id && room.room.params.irc && room.room.params.irc.server && room.room.params.irc.channel) {
+libsb.on("room-dn", function(action, next) {
+    var room = action.room;
+    if(action.user.id != libsb.user.id || !room.params || !room.params.irc) return next();
+    
+    if(room.irc.error) {
+        
+        return next();
+    }else if (room.room.params.irc.server && room.room.params.irc.channel) {
 		var r = room.room;
 		$.get('/r/irc/' + r.id, function(botName) {
 			var displayString = "Something went wrong while connecting to IRC server";
 			if(botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel.";
-			console.log("discp", displayString);
-			lace.alert.show({type: "success", body: displayString});
+//			console.log("discp", displayString);
+//			lace.alert.show({type: "success", body: displayString});
 		});
 	}
 	next();

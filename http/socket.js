@@ -43,7 +43,7 @@ sock.on('connection', function (socket) {
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 
 		if (!d.type) return;
-		
+		d.returned = "yes";
 		if(d.type == 'init' && d.session) {
 			if(d.session == internalSession) return;
 			conn.session = d.session; // Pin the session and resource.
