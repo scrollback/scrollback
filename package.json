@@ -48,7 +48,8 @@
     "htmlencode": "0.0.3",
     "underscore": "x",
     "browserify": "x",
-    "oauth": "~0.9.12"
+    "oauth": "~0.9.12",
+    "pg": "~3.3.0"
   },
   "devDependencies": {
     "mocha": "x",

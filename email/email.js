@@ -18,7 +18,6 @@ module.exports = function(coreObject) {
 	core = coreObject;
 	require('./welcomeEmail.js')(core);
     //if(!debug) log = log.tag("mail");
-	log("email digest", emailDigest);
     emailDigest.init(core);
 	if (config.email && config.email.auth) {
 		core.on('text', function(message, callback) {
