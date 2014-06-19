@@ -100,7 +100,7 @@ module.exports = function(core) {
 			if(!action.room && !action.room.id) return callback(new Error("INVALID_ROOM"));
 			action.room.id = action.room.id.toLowerCase();
 			if(!action.room.params) return callback(new Error("ERR_NO_PARAMS"));
-			if(!action.room.params.http) return callback(new Error("ERR_NO_PARAMS"));
+//			if(!action.room.params.http) return callback(new Error("ERR_NO_PARAMS"));
 			callback();
 		}
 	};
@@ -167,7 +167,7 @@ function basicValidation(action, callback) {
 		if (action.suggestedNick) action.suggestedNick = action.suggestedNick.toLowerCase();
 		action.to = "me";
 	}else{
-		if(!action.to){
+		if(typeof action.to != "string" && action.to){
 			return callback(new Error("INVALID_ROOM"));	
 		}
 		else if(!validateRoom(action.to)) { 

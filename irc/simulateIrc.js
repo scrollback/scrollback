@@ -3,10 +3,10 @@
  * and users will messages in the channel and  they will disconnect/part from the channel.
  * basically it will try to simulate irc behaviour.
  */
-var channel = "#testingroom";
+var channel = "#scrollbacknew";
 var irc = require("irc");
 var ircClients = [];
-var testingServer = "dev.scrollback.io";
+var testingServer = "harry.scrollback.io";
 var gen = require('../lib/generate.js');
 var names = gen.names;
 var sentence = gen.sentence;

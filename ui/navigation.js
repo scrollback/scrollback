@@ -166,12 +166,14 @@ libsb.on("navigate", function(state, next) {
 
 	function pushState() {
 		var url = buildurl();
-
+        /*state.old && delete state.old;
+        state.changes && delete state.changes;*/
 		if (Object.keys(state.changes).length === "") {
 			state.view = "normal";
 		}
 
 		if (state.source == "init" || state.source == "text-area") {
+            console.log(state);
 			history.replaceState(state, null, url);
 			return;
 		}
@@ -200,9 +202,6 @@ libsb.on("navigate", function(state, next) {
 
 // On history change, load the appropriate state
 $(window).on("popstate", function() {
-	if(!libsb.inited) {
-		return; // remove this when you enable offline access.
-	}
 
 	if (("state" in history && history.state !== null)) {
 		var state = {},

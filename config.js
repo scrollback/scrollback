@@ -51,9 +51,7 @@ var defaults = {
 		name: "scrollback",
 		newrelic: { name: 'Scrollback Local' }
 	},
-	whitelists:{
-		
-	},
+	
 	mysql: {
 		host     : 'localhost',
 		user     : 'scrollback',
@@ -90,11 +88,8 @@ var defaults = {
 		//consumerSecret: ".." 
 	},
 	irc: {
-		nick: 'sbtestbot',		// nickname of the bot
-		hangTime: 60000,     // timeout before disconnecting (ms)
 		port: 78910,
-		server: "localhost",
-		debug: true
+		server: "localhost"
 	},
 	leveldb: {
 		path: "/data"

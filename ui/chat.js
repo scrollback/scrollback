@@ -9,23 +9,30 @@ $(function() {
 
 	chatEl.render = function (el, text) {
 		el = el || $template.clone(false);
-		if(text.labels && text.labels.action) el.addClass("chat-label-action");
 		el.find('.chat-nick').text(text.from);
 		el.find('.chat-message').html(format.linkify(format.textToHtml(text.text || "")));
 		el.find('.chat-timestamp').text(format.friendlyTime(text.time, new Date().getTime()));
 		el.data('index', text.time);
 		el.attr("id", text.id);
 
+		if (text.labels) {
+			for (var label in text.labels) {
+				if (text.labels[label] === 1) {
+					el.addClass("chat-label-" + label);
+				}
+			}
+		}
+
 		if (timeBefore) {
 			if ((text.time - timeBefore) > 180000) {
-				el.addClass("timestamp-displayed");
+				el.addClass("chat-mark-timestamp-shown");
 			}
 		}
 
 		timeBefore = text.time;
 
 		if (text.text.length >= 400) {
-			el.addClass("long");
+			el.addClass("chat-mark-long");
 		}
 
 		if (text.threads && text.threads.length) {

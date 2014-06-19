@@ -47,7 +47,6 @@ module.exports = function(clientEmitter, client, callbacks) {
 		});
 	}
 	
-	
 	/*new Request.*/
 	function addNewBot(r, callback) {
 		console.log("room irc Adding new bot for room :", r.id);
@@ -62,7 +61,8 @@ module.exports = function(clientEmitter, client, callbacks) {
 		if (callback) {
 			callbacks[uid] = function(message) {
 				if(message) {
-					r.params.irc.error = message;	
+                    r.params.irc.error = message;
+                    return disconnectBot(r.id, callback);
 				}
 				return callback();
 			};
