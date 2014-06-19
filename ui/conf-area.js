@@ -32,7 +32,7 @@ $(".conf-save").on("click", function () {
                 if(err) {
                     // handle the error
                 }else {
-                    for(i in room.room.params) {
+                    for(var i in room.room.params) {
                         if(!room.room.params.hasOwnProperty(i)) continue;
                         if(room.room.params[i].error) {
                             console.log("Error happed when saving the room");
@@ -64,10 +64,13 @@ $(".conf-cancel").on("click", function () {
 function showConfig(room){
     var roomObj = {room: room};
     libsb.emit('config-show', roomObj, function(err, tabs) {
-        var data = renderSettings(tabs);
+        var data;
+
         delete tabs.room;
+
         currentConfig = tabs;
 
+        data = renderSettings(tabs);
 
         $('.meta-conf').empty().append(data[0]);
         $('.conf-area').empty().append(data[1]);
@@ -103,7 +106,7 @@ libsb.on('navigate', function (state, next) {
                 showConfig(state.room);
             } else {
                 libsb.on('inited', function (e, n) {
-                    showConfig(state,room);
+                    showConfig(state.room);
                     if (n) n();
                 });
             }

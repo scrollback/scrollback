@@ -41,15 +41,15 @@ function fbAuth(action, callback) {
 					try{
 						user = JSON.parse(body);
 						if(user.error) {
-							return callback(new Error(user.error))
+							return callback(new Error(user.error));
 						}
 						core.emit("getUsers",{identity: "mailto:"+user.email, session: internalSession}, function(err, data) {
 							if(err || !data) return callback(err);
 
-							if(data.results.length == 0) {
+							if(! data.results.length) {
 								action.user = {};
 								action.user.identities = ["mailto:" + user.email];
-								action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update( user.email).digest('hex');
+								action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update( user.email).digest('hex') + '/?d=monsterid';
 								return callback();
 							}
 							action.old = action.user;
@@ -57,7 +57,7 @@ function fbAuth(action, callback) {
 							callback();
 						});
 					}catch(e) {
-						return callback(e)
+						return callback(e);
 					}
 				});
 			}

@@ -33,6 +33,7 @@
 	.popover-body {
 		position: absolute;
 		display: block;
+		width: 15em;
 		margin: .5em;
 		border-radius: $roundness;
 		font-weight: normal;
@@ -79,6 +80,18 @@
 			}
 		}
 
+		.popover-title {
+			padding: .5em 1em;
+			font-weight: 700;
+			border-bottom: 1px solid darken($light-color, 15%);
+		}
+
+		.popover-buttons {
+			padding: .5em 1em;
+
+			.button { width: 100%; }
+		}
+
 		ul {
 			list-style: none;
 			padding: 0;
@@ -92,7 +105,7 @@
 				a {
 					display: block;
 					color: $dark-color;
-					padding: 1em 1.5em;
+					padding: 1em;
 					font-weight: 700;
 
 					&:hover, &:focus {

@@ -1550,13 +1550,3 @@ body {
 .loggedout-dialog, .login-dialog, .signup-dialog {
     input, .button { width: 100%; }
 }
-
-.popover-body {
-    width: 15em;
-
-    .login-menu {
-        padding: .5em 1em;
-
-        .button { width: 100%; }
-    }
-}

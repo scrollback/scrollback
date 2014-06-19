@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, currentState, desktopnotify, lace */
+/* global $, libsb, currentState */
 
 var currentConfig,
     renderSettings = require("./render-settings.js");
@@ -62,23 +62,6 @@ function getUsers() {
 
             $('.meta-pref').empty().append(data[0]);
             $('.pref-area').empty().append(data[1]);
-
-            // TODO: move to notification-client
-            $("#desktop-notification").change(function() {
-                if ($(this).is(":checked")) {
-                    desktopnotify.request();
-                }
-
-                if (desktopnotify.support().permission === "denied") {
-                    $(this).attr("checked", false);
-
-                    lace.alert.show({
-                        type: "error",
-                        body: "Permission for desktop notifications denied!",
-                        id: "desktopnotify-error-perm-denied"
-                    });
-                }
-            });
         });
     });
 }

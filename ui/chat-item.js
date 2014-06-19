@@ -1,8 +1,9 @@
 /* jshint browser: true */
-/* global $, libsb, format, lace */
+/* global $, libsb, format */
 
 $(function() {
-	var $entry = $(".chat-entry");
+	var lace = require("../lib/lace.js"),
+		$entry = $(".chat-entry");
 
 	$.fn.resetConv = function() {
 		var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();

@@ -1,22 +1,26 @@
 /* jshint browser: true */
-/* global $, lace */
+/* global $ */
 
-lace.quicknotify = {
+var lace = require("../lib/lace.js");
+
+var quicknotify = {
     /**
      * Show an notify message.
      * @constructor
-     * @param {{ type: String, text: String, id: String, timeout: Number }} notify
+     * @param {{ type: String, text: String, id: String, timeout: Number }} options
      */
-    show: function(notify) {
-        if (!notify.type) {
-            notify.type = "info";
+    show: function(options) {
+        var notify = this;
+
+        if (!options.type) {
+            options.type = "info";
         }
 
-        if (!notify.id) {
-            notify.id = "quick-notification-" + new Date().getTime();
+        if (!options.id) {
+            options.id = "quick-notification-" + new Date().getTime();
         }
 
-        var $quicknotification = $("#" + notify.id),
+        var $quicknotification = $("#" + options.id),
             $container = $(".quick-notification-container");
 
         if (!$container.length) {
@@ -25,20 +29,20 @@ lace.quicknotify = {
         }
 
         if ($quicknotification.length && $quicknotification.hasClass("quick-notification-item")) {
-            lace.quicknotify.hide($quicknotification);
+            notify.hide($quicknotification);
         }
 
         $quicknotification = $("<div>")
-            .addClass("quick-notification-item " + notify.type)
-            .attr("id", notify.id)
-            .text(notify.text);
+            .addClass("quick-notification-item " + options.type)
+            .attr("id", options.id)
+            .text(options.text);
 
         $quicknotification.appendTo($container);
 
-        if (typeof notify.timeout == "number") {
+        if (typeof options.timeout == "number") {
             setTimeout(function() {
-                lace.quicknotify.hide($quicknotification);
-            }, notify.timeout);
+                notify.hide($quicknotification);
+            }, options.timeout);
         }
 
         return $quicknotification;
@@ -72,3 +76,5 @@ lace.quicknotify = {
         });
     }
 };
+
+window.quicknotify = quicknotify;

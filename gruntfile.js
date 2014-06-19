@@ -124,7 +124,7 @@ module.exports = function(grunt) {
 				options: {
 					basePath: "public",
 					network: ["*"],
-					fallback: ["/ /offline.html"],
+					fallback: ["https://gravatar.com/avatar/ /s/img/client/avatar-fallback.svg", "/ /offline.html"],
 					preferOnline: true,
 					timestamp: true
 				},

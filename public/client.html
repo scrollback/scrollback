@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<!-- <html manifest="/manifest.appcache" lang="en"> -->
-
-<html lang="en">
-
+<html manifest="/manifest.appcache" lang="en">
 	<head>
 		<meta charset="utf-8">
 
@@ -217,9 +214,11 @@
 		<!-- templates -->
 		<script type="text/template" id="login-menu">
 			<div data-role="guest" class="login-menu">
-				<p>Sign in to scrollback with</p>
-				<a class="button facebook">Facebook</a>
-				<a class="button persona">Persona</a>
+				<div class="popover-title">Sign in to scrollback with</div>
+				<div class="popover-buttons">
+					<a class="button facebook">Facebook</a>
+					<a class="button persona">Persona</a>
+				</div>
 			</div>
 		</script>
 
