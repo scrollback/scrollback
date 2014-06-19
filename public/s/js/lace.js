@@ -87,7 +87,7 @@ var lace = {
                           typeof document.body.style.MsTransition === "string" ||
                           typeof document.body.style.OTransition === "string";
 
-            lace.animate.core({
+            $.lace.animate.core({
                 classname: classname,
                 element: element,
                 action: action,
@@ -375,7 +375,7 @@ var lace = {
         /**
          * Show a popover.
          * @constructor
-         * @param {{ body: String, origin: String }} popover
+         * @param {{ body: String, origin: String, heading: String, menu: Object }} popover
          */
         show: function(popover) {
             lace.popover.init();

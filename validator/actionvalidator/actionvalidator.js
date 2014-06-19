@@ -73,11 +73,11 @@ module.exports = function(core) {
 			callback();
 		},
 		edit: function(action, callback) {
-  			if(!action.ref) return callback(new Error("REF_NOT_SPECIFIED"));
-  			if(!action.text && !action.label) return callback(new Error("NO_OPTION_TO_EDIT"));
-  			if(action.label && typeof action.label!= "object") return callback(new Error("INVALID_EDIT_OPTION_LABEL"));
-  			if(action.text && typeof action.text!= "string") return callback(new Error("INVALID_EDIT_OPTION_TEXT"));
-  			callback();
+			if(!action.ref) return callback(new Error("REF_NOT_SPECIFIED"));
+			if(!action.text && !action.label) return callback(new Error("NO_OPTION_TO_EDIT"));
+			if(action.label && typeof action.label!= "object") return callback(new Error("INVALID_EDIT_OPTION_LABEL"));
+			if(action.text && typeof action.text!= "string") return callback(new Error("INVALID_EDIT_OPTION_TEXT"));
+			callback();
 		},
 		user: function(action, callback) {
 			if(!action.user && !action.user.id) return callback(new Error("INVALID_USER"));

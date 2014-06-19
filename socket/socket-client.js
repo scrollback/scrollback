@@ -11,6 +11,7 @@ module.exports = function(c){
 
 	core.on('init-up', sendInit, 10);
 	core.on('text-up', sendText, 10);
+	core.on('edit-up', sendEdit, 10);
 	core.on('back-up', sendBack, 10);
 	core.on('away-up', sendAway, 10);
 	core.on('nick-up', sendInit, 10);
@@ -178,6 +179,12 @@ function sendText(text, next) {
 	var action = makeAction(text, {to: text.to, type: 'text', text: text.text, from: text.from, id: text.id});
 	safeSend(JSON.stringify(action));
     pendingActions[action.id] = returnPending(action, next);
+}
+
+function sendEdit(edit, next){
+	var action = makeAction(edit, {to: edit.to, type: 'edit', id: edit.id});
+	safeSend(JSON.stringify(action));
+	pendingActions[action.id] = returnPending(action, next);
 }
 
 function sendInit(init, next) {

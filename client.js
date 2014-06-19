@@ -63,6 +63,7 @@ require('./ui/user-area.js');
 require('./ui/noroom-area.js');
 require('./ui/signup-area.js');
 require('./ui/persona.js');
+require('./ui/message-menu.js');
 require('./ui/URLparser.js')();
 
 //# sourceMappingURL=libsb.js.map
