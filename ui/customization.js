@@ -22,9 +22,15 @@
             var room = window.currentState.room,
 				roomObj;
 
-            room.params.customization = {
-                css: customCss
-            };
+			if (!room || !room.params) {
+				return;
+			}
+
+			if (!room.params.customization) {
+				room.params.customization = {};
+			}
+
+            room.params.customization.css = customCss;
 
             roomObj = { to: window.currentState.roomName, room: room };
 
@@ -33,7 +39,13 @@
 
 		applyCss: function() {
 			var room = window.currentState.room,
-				customization = room.params.customization;
+				customization;
+
+			if (!room || !room.params || !room.params.customization) {
+				return;
+			}
+
+			customization = room.params.customization;
 
             $("#custom-style").remove();
 
