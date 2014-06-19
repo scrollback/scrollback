@@ -97,9 +97,15 @@ module.exports = function (types) {
 				type: data.type,
 				picture: data.picture,
 				identities: [],
-				params: data.params
+				params: {}
 			};
 			
+            for(i in data.params) {
+                if(data.params.hasOwnProperty(i)) {
+                    if(data.params[i].error) newRoom.params[i] = action.old.params[i];
+                    else newRoom.params[i] = data.params[i];
+                }
+            }
 			if (data.identities) {
 				newRoom.identities = data.identities;
 			}

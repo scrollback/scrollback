@@ -20,7 +20,7 @@ $(function() {
 		});
 
 		libsb.on("navigate", function(state, next) {
-			if (state.old && state.minimize !== state.old.minimize) {
+			if (state.embed === "toast" && state.old && state.minimize !== state.old.minimize) {
 				if (state.minimize) {
 					window.parent.postMessage("minimize", "*");
 				} else {

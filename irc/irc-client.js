@@ -59,11 +59,8 @@ libsb.on("room-dn", function(action, next) {
     var room = action.room;
     if(action.user.id != libsb.user.id || !room.params || !room.params.irc) return next();
     
-    if(room.irc.error) {
-        
-        return next();
-    }else if (room.room.params.irc.server && room.room.params.irc.channel) {
-		var r = room.room;
+    if (room.params.irc.server && room.params.irc.channel) {
+		var r = room;
 		$.get('/r/irc/' + r.id, function(botName) {
 			var displayString = "Something went wrong while connecting to IRC server";
 			if(botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel.";

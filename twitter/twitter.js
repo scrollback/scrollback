@@ -50,6 +50,7 @@ function twitterParamsValidation(action, callback) {
     var room = action.room;
 	if (room.params.twitter) {
 		var t = room.params.twitter;
+        if(Object.keys(t).length === 0) return callback(); 
 		var b = typeof t.username === 'string' && typeof t.tags === 'string';
 		if (t.token) {
 			b = b && (typeof t.token === 'string');
@@ -59,7 +60,11 @@ function twitterParamsValidation(action, callback) {
 			b = b && (t.profile.user_id && typeof t.profile.user_id === 'string');
 		}
 		if (b) callback();
-		else callback("ERR_INVALID_TWITTER_PARAMS");
+		else {
+            t.error = "ERR_INVALID_TWITTER_PARAMS";
+//            callback(new Error("ERR_INVALID_TWITTER_PARAMS"));
+            callback();
+        }
 	} else callback();
 }
 
@@ -134,19 +139,20 @@ function addIdentity(room, username) {
 function copyOld(room, callback) {
 	logTwitter("copyOld");
 
-	var old;//old account
+	var old, newParams;//old account
 	if(room.old && room.old.params) old = room.old.params.twitter;
+    newParams = room.room.params.twitter;
 	if(old) {
-		room.room.params.twitter.token = old.token;
-		room.room.params.twitter.tokenSecret = old.tokenSecret;
-		room.room.params.twitter.profile = old.profile;
-		if(!room.room.params.twitter.tags) room.params.twitter.tags = "";
-		room.room.params.twitter.tags = formatString(room.room.params.twitter.tags);
+		newParams.token = old.token;
+		newParams.tokenSecret = old.tokenSecret;
+		newParams.profile = old.profile;
+		if(!newParams.tags) newParams.tags = "";
+		newParams.tags = formatString(newParams.tags);
 		addIdentity(room, old.profile.screen_name);
 		callback();
 	}
 	else {
-        room.params.twitter.error = "ERR_TWITTER_LOGIN";
+        newParams.error = "ERR_TWITTER_LOGIN";
 		callback();
 	}
 }

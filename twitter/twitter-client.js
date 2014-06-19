@@ -31,14 +31,21 @@ libsb.on('config-show', function(tabs, next) {
 
 	window.addEventListener("message", function(event) {
 		console.log("event", event);
-		var suffix = "scrollback.io";
+		var suffix = "scrollback.io", data;
+        console.log();
 		var isOrigin = event.origin.indexOf(suffix, event.origin.length - suffix.length) !== -1;
-		if (isOrigin) {
-			twitterUsername = event.data;
-			$("#twitter-account").text("Change");
-			$('#twitter-text').text("Admin Twitter Account: " + twitterUsername);
-			$("#twitter-message").empty();
-		}
+        try{
+            data = JSON.parse(event.data);
+        } catch(e) {
+            return;
+        }
+        if(!isOrigin || !data.twitter ) return;
+        
+        twitterUsername = data.twitter.username;
+        $("#twitter-account").text("Change");
+        $('#twitter-text').text("Admin Twitter Account: " + twitterUsername);
+        $("#twitter-message").empty();
+        
 	}, false);
 
 
@@ -79,10 +86,13 @@ libsb.on('config-show', function(tabs, next) {
 });
 
 libsb.on('config-save', function(room, next){
-	room.params.twitter = {
-		tags: lace.multientry.items($('#twitter-hashtags')).join(" "),
+    var tags = lace.multientry.items($('#twitter-hashtags')).join(" ");
+    room.params.twitter = {};
+    if(tags || twitterUsername) {
+        room.params.twitter = {
+		tags: tags,
 		username: twitterUsername
-	};
-
+        }
+    }
 	next();
 });
