@@ -6,32 +6,34 @@
 		if (state.old && state.room !== state.old.room) {
 			customStyle.applyCss();
 		}
+
 		next();
 	});
 
 	libsb.on("room-dn", function(room, next) {
 		customStyle.applyCss();
+
 		next();
 	});
 
 	// Customization API
 	var customStyle = {
 		setCss: function(customCss) {
-            var room = window.currentState.room, roomObj;
+            var room = window.currentState.room,
+				roomObj;
+
             room.params.customization = {
                 css: customCss
             };
-            roomObj = { to: window.currentState.roomName, room: room }
-            
-            
-            libsb.emit("room-up", roomObj, function(){
-                libsb.emit("navigate", {});
-            });
+
+            roomObj = { to: window.currentState.roomName, room: room };
+
+            libsb.emit("room-up", roomObj);
 		},
 
 		applyCss: function() {
-			var room = window.currentState.room;
-            var customization = room.params.customization;
+			var room = window.currentState.room,
+				customization = room.params.customization;
 
             $("#custom-style").remove();
 

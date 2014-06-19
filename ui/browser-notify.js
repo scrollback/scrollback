@@ -1,5 +1,7 @@
 /* jslint browser: true, indent: 4, regexp: true */
-/* global $, libsb, desktopnotify */
+/* global $, libsb */
+
+var desktopnotify = require("../ui/desktopnotify.js");
 
 var browserNotify = (function() {
 	var hasFocus = false,

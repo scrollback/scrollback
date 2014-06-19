@@ -1,9 +1,11 @@
 /* jshint browser: true */
-/* global $, libsb, lace, currentState */
+/* global $, libsb, currentState */
+
+var lace = require("../lib/lace.js");
 
 (function(){ // funciton wrapper to maintain the closure of msessageID.
     var messageID = -1;
-    
+
     libsb.on('back-up', function(back, next){
         if(back.to === currentState.roomName){
             messageID = back.id;
@@ -39,7 +41,7 @@ $("#create-room-button").click(function(){
     };
     libsb.emit('room-up', roomObj,function(){
          libsb.emit("navigate", {mode: 'normal', tab: 'info'}, function(){
-             location.reload();    
+             location.reload();
          });
     });
 });

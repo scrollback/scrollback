@@ -1,7 +1,8 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb */
 
-var formField = require('../lib/formField.js');
+var lace = require("../lib/lace.js"),
+    formField = require("../lib/formField.js");
 
 libsb.on('config-show', function(tabs, next){
     var results = tabs.room,
@@ -58,9 +59,9 @@ libsb.on('config-save', function(room, next){
 libsb.on("room-dn", function(action, next) {
     var room = action.room;
     if(action.user.id != libsb.user.id || !room.params || !room.params.irc) return next();
-    
+
     if(room.irc.error) {
-        
+
         return next();
     }else if (room.room.params.irc.server && room.room.params.irc.channel) {
 		var r = room.room;

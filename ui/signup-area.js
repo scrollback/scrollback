@@ -1,8 +1,10 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb */
 
 $(function(){
-	var signingUser, signupId, saveId = "", id = generate.uid(), signingUp = false;
+	var lace = require("../lib/lace.js"),
+		signingUser, signupId, saveId = "", id = generate.uid(), signingUp = false;
+
 	function submitUser() {
 		var userId = $("#signup-id").val();
 		if(!validate(userId)) {
@@ -13,7 +15,7 @@ $(function(){
 			user: {
 				id: userId,
 				identities: signingUser.identities,
-				params: { 
+				params: {
 					email: {
 						frequency: "daily",
 						notifications: true
@@ -21,7 +23,7 @@ $(function(){
 					notifications: {
 						sound: true,
 						desktop: true
-						
+
 					}
 			 	}
 			}
@@ -51,7 +53,7 @@ $(function(){
 
 	libsb.on("user-dn", function(action, next) {
                 lace.modal.hide();
-                if(signingUp === true) location.reload(); 		
+                if(signingUp === true) location.reload();
                 libsb.emit('navigate', {
 			view: 'normal',
 			mode: 'normal',

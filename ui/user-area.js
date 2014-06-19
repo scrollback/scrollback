@@ -1,7 +1,9 @@
 /* jshint browser: true */
-/* global $, libsb, lace, currentState */
+/* global $, libsb, currentState */
 
 $(function () {
+	var lace = require("../lib/lace.js");
+
 	$(document).on("click", ".popover-body a", function () {
 		lace.popover.hide();
 	});
