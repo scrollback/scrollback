@@ -7,6 +7,7 @@ var lace = require("../lib/lace.js");
  * @example
  *
  * showMenu({
+ *     origin: $("a"),
  *     title: "This is a title",
  *     buttons: {
  *         "Facebook" : function() {},
@@ -34,9 +35,11 @@ var showMenu = function(menu) {
         $buttons = $("<div>").addClass("popover-buttons");
 
         for (var button in menu.buttons) {
-            $("<a>").addClass("button " + button.toLowerCase()).text(button)
-                    .on("click", menu.buttons[button])
-                    .appendTo($buttons);
+            if (typeof button === "string" && typeof menu.buttons[button] === "function") {
+                $("<a>").addClass("button " + button.toLowerCase()).text(button)
+                        .on("click", menu.buttons[button])
+                        .appendTo($buttons);
+            }
         }
 
         $buttons.appendTo($popover);
@@ -46,16 +49,18 @@ var showMenu = function(menu) {
         $list = $("<ul>");
 
         for (var item in menu.items) {
-            $("<li>").append($("<a>")
-                     .text(item)
-                     .on("click", menu.items[item]))
-                     .appendTo($list);
+            if (typeof item === "string" && typeof menu.items[item] === "function") {
+                $("<li>").append($("<a>")
+                         .text(item)
+                         .on("click", menu.items[item]))
+                         .appendTo($list);
+            }
         }
 
         $list.appendTo($popover);
     }
 
-    return lace.popover.show({ origin: $(".user-area"), body: $popover });
+    return lace.popover.show({ origin: $(menu.origin), body: $popover });
 };
 
 module.exports = showMenu;
