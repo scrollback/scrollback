@@ -65,7 +65,7 @@ var desktopnotify = {
 	 * @param {{ title: String, body: String, tag: String, icon: String, action: Function }} notification
 	 */
 	show: function(notification) {
-		var check = this.support(),
+		var check = this.supported(),
 			n;
 
 		if (check.permission === "granted") {

@@ -17,22 +17,23 @@ $(".conf-save").on("click", function () {
     if (currentState.mode == 'conf') {
         self.addClass("working");
         libsb.emit('config-save', {
-            id: window.currentState.room,
+            id: window.currentState.roomName,
             description: '',
             identities: [],
             params: {}
         }, function (err, room) {
             var roomObj = {
-                to: currentState.room,
+                to: currentState.roomName,
                 room: room
             };
 
-            libsb.emit('room-up', roomObj, function () {
+            libsb.emit('room-up', roomObj, function (err, room) {
                 self.removeClass("working");
                 if(err) {
                     // handle the error
                 }else {
                     for(var i in room.room.params) {
+                        if(!room.room.params.hasOwnProperty(i)) continue;
                         if(room.room.params[i].error) {
                             console.log("Error happed when saving the room");
                             return;
