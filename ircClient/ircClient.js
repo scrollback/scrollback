@@ -135,7 +135,7 @@ function connectBot(room, options, cb) {
 function partBot(roomId, callback) {
 	log("****part bot for room ", roomId);
 	var room  = rooms[roomId];
-	//if (!room) return;
+	if (!room) return callback(); //should throw an error? not sure... 
 	var client = clients[botNick][room.params.irc.server];
 	var channel = room.params.irc.channel;
 	var server = room.params.irc.server;

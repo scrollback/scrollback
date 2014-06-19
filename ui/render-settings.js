@@ -24,6 +24,16 @@ module.exports = function(tabs) {
         $(data[i][2].html).addClass("list-view list-view-" + data[i][1] + "-settings " + current)
                           .appendTo($views);
     }
-
+    libsb.on("room-dn", function(action, next) {
+        var room = action.room;
+        if(!room.params) return next();
+        console.log("checking for error.", room);
+        ["irc","twitter"].forEach(function(e) {
+            if(room.params[e] && room.params[e].error) {
+                $(".list-item-"+e+"-settings").addClass("error");
+            }
+        });
+        next();
+    }, 200);
     return [ $items, $views ];
 };
