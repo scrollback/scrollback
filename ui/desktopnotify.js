@@ -48,7 +48,7 @@ var desktopnotify = {
 	 * @constructor
 	 */
 	request: function() {
-		var check = this.support();
+		var check = this.supported();
 
 		if (check.permission !== "granted" && check.permission !== "denied") {
 			if (check.type === "webkit") {
