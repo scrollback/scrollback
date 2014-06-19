@@ -71,19 +71,22 @@ function saveSessionActions(action) {
 			values.push(action[p]);
 		}
 	});
+	if (action.auth && Object.keys(action.auth)[0]) {
+		var a = Object.keys(action.auth)[0];
+		params.push("authApp");
+		params.push("authData");
+		values.push(a);
+		values.push(action.auth[a]);
+	}
 	if (action.origin) {
-		if (action.origin.gateway) {
-			params.push("gateway");
-			values.push(action.origin.gateway);
-		}
-		if (action.origin.client) {
-			params.push("client");
-			values.push(action.origin.client);
-		}
-		if (action.origin.server) {
-			params.push("server");
-			values.push(action.origin.server);
-		}
+		list = ['gateway', 'client', 'server', 'domain', 'path'];
+		list.forEach(function(p) {
+			if (action.origin[p]) {
+				params.push(p);
+				values.push(action.origin[p]);
+			}
+		});
+		
 	}
 	insert("session_actions", params, values);
 }

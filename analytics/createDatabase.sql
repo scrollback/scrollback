@@ -88,7 +88,7 @@ CREATE TABLE session_actions (
     gateway text,
     client inet,
     server text,
-    origin text,
+    domain text,
     path text,
     success boolean
 );
