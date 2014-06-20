@@ -128,7 +128,7 @@ function say(roomId, text, thread, callback) {
 		obj.text = text.replace(/^\/me /,"");
 		obj.labels = {action: 1};
 	}
-	if(thread) obj.threads = [{id: thread}];
+	if(thread) obj.threads = [{id: thread, score: 1}];
 	core.emit('text-up', obj, callback);
 }
 
