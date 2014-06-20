@@ -38,53 +38,25 @@ $roles: guest, user, follower, owner;
 $embeds: toast, full;
 
 /* themes */
-@mixin theme($name, $base, $color, $meta, $border, $text, $icon, $focus) {
+@mixin theme($name, $base, $text, $icon, $focus) {
     .theme-#{$name} {
-        .room-item.current:after { border-right: .6em solid $meta; }
-
-        .meta-area {
-            background-color: $meta;
-            color: $text;
-
-            a, .thread-item { color: $text; }
-
-            .button {
-                &.secondary {
-                    background-color: lighten($meta, 5%);
-                    border: 1px solid lighten($meta, 15%);
-                    color: darken($text, 10%);
-
-                    &:hover, &:focus {
-                        background-color: lighten($meta, 3%);
-                        border-color: lighten($meta, 10%);
-                        color: darken($text, 5%);
-                    }
-
-                    &:active {
-                        background-color: lighten($meta, 7%);
-                        border-color: lighten($meta, 5%);
-                        color: darken($text, 15%);
-                    }
-                }
-            }
-        }
-
         .meta-tabs {
-            border-bottom-color: $border;
+            background-color: $base;
+            color: $text;
+            border-bottom-color: darken($base, 2%);
 
             .tab {
-                fill: fade-out($text, .3);
-                background-color: $meta;
-                border-left-color: $border;
+                fill: fade-out($icon, .15);
+                border-left-color: darken($base, 2%);
 
                 &:hover, &:focus, &:active {
-                    fill: $text;
-                    background-color: darken($meta, 5%);
+                    fill: $icon;
+                    background-color: darken($base, 5%);
                 }
 
                 &.current {
-                    fill: $text;
-                    background-color: darken($meta, 10%);
+                    fill: $icon;
+                    background-color: rgba(0,0,0,.15);
                 }
             }
 
@@ -93,46 +65,29 @@ $embeds: toast, full;
             }
         }
 
-        .pane-people {
-            .infinite-above, .infinite-below {
-                background-image:  linear-gradient(to right, $meta, $meta 15%, transparent 15%, transparent 85%, $meta 85%, $meta),
-                    linear-gradient(to bottom, transparent, transparent 25%, lighten($meta, 5%) 25%, lighten($meta, 5%) 65%, transparent 65%, transparent 75%, lighten($meta, 5%) 75%, lighten($meta, 5%) 85%, transparent 85%, transparent);
-            }
-        }
-
-        .pane-threads {
-            .infinite-above, .infinite-below {
-                background-image:  linear-gradient(to bottom, transparent, transparent 35%, lighten($meta, 5%) 35%, lighten($meta, 5%) 65%, transparent 65%, transparent),
-                    linear-gradient(to bottom, lighten($meta, 5%), lighten($meta, 5%));
-            }
-        }
-
-        .list-item {
-            border-bottom-color: $border;
-
-            &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active { color: $text; }
-        }
-
         .title-bar, .minimize-bar {
             background-color: $base;
-            color: $color;
+            color: $text;
+            box-shadow: inset 0 -1px 0 0 darken($base, 2%),
+                        -1px 0 0 darken($base, 2%),
+                        0 3px 2px -1px rgba(0,0,0,.05);
 
             .button {
                 &.secondary {
                     background-color: lighten($base, 5%);
-                    border: 1px solid lighten($base, 15%);
-                    color: darken($color, 10%);
+                    border: 1px solid darken($base, 2%);
+                    color: darken($text, 10%);
 
                     &:hover, &:focus {
                         background-color: lighten($base, 3%);
-                        border-color: lighten($base, 30%);
-                        color: darken($color, 5%);
+                        border-color: darken($base, 3%);
+                        color: darken($text, 5%);
                     }
 
                     &:active {
                         background-color: lighten($base, 7%);
-                        border-color: lighten($base, 20%);
-                        color: darken($color, 15%);
+                        border-color: darken($base, 5%);
+                        color: darken($text, 15%);
                     }
                 }
             }
@@ -148,7 +103,7 @@ $embeds: toast, full;
             }
         }
 
-        &.role-follower .follow-button, .rooms-button, .meta-button, .search-button, .embed-button {
+        &.role-follower .follow-button, .meta-tabs li.rooms-button, .meta-button, .search-button, .embed-button {
             fill: $icon;
 
             &:focus, &:hover, &:active { fill: $focus; }
@@ -157,18 +112,10 @@ $embeds: toast, full;
         .sb-icon { fill: $light-color; }
 
         .sb-logotype { fill: $light-color; }
-
-        &.embed {
-            .cta-area {
-                .cta-action {
-                    color: $accent-color;
-                }
-            }
-        }
     }
 }
 
-@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $border: $dark-color, $icon: darken($light-color, 30%), $focus: $light-color);
+@include theme($name: dark, $base: $dark-color, $text: $light-color, $icon: fade-out($light-color, .15), $focus: $light-color);
 
 /* widget styles */
 %scroll-elem {
@@ -838,7 +785,11 @@ body {
     cursor: pointer;
     white-space: nowrap;
 
-    .cta-action { text-transform: uppercase; }
+    .cta-action {
+        text-transform: uppercase;
+
+        &.theme-dark { color: $accent-color; }
+    }
 }
 
 .user-area {
@@ -1199,7 +1150,7 @@ body {
 	position: absolute;
 	display: block;
 	background-color: darken($light-color, 1%);
-	background-image: url(../../img/client/icons/more.svg);
+	background-image: url(../../img/client/icons/chat-more.svg);
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: 2em 2em;
