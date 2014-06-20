@@ -45,35 +45,39 @@ module.exports = function (coreObj) {
         if(!room.params.irc || room.params.irc.error) return callback();
         
         function done(err) {
-            var i,l;
             if(err) {
-                room.params.irc.err = err.message;
+                room.params.irc.error = err.message;
                 removeIrcIdentity(room);
+                return ircUtils.disconnectBot(room.id,callback);
             }
             callback();
         }
 		if (action.session === internalSession) return callback();
 		if (actionRequired(action) && client.connected()) {
 			changeRoomParams(action);
-			log("room irc after adding additional properties:", JSON.stringify(action));
-			if (isNewRoom(action)) {//TODO chack if new irc config.
-				log("IRC setting added first time", JSON.stringify(action));
+			if (isNewRoom(action)) {//TODO check if new irc config.
 				room.params.irc.channel = room.params.irc.channel.toLowerCase();
 				return ircUtils.addNewBot(room, done);
 			} else {//room config changed
 				var oldIrc = action.old.params.irc;
 				var newIrc = room.params.irc;
-				if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel) {
+                
+                if (oldIrc.server === newIrc.server && oldIrc.channel === newIrc.channel) {
+                    room.params.irc = action.old.params.irc;
+                    if(room.params.irc.error) removeIrcIdentity(room);
+                    return callback();
+                }else if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel) {
 					if(oldIrc.server && oldIrc.channel) {
 						delete firstMessage[room.id];
 						ircUtils.disconnectBot(room.id, function() {
-							log("disconnected from ", oldIrc.channel);
 							if(room.params.irc.server && room.params.irc.channel) return ircUtils.addNewBot(room, done);	
 							else return callback();
 						});
 					} else if(room.params.irc.server && room.params.irc.channel) return ircUtils.addNewBot(room, done);
 					else return callback();
-				} else return callback();
+				} else{
+                    return callback();
+                }
 			}  
 		} else if(!client.connected() && room.room.params.irc && room.room.params.irc.server && room.room.params.irc.channel) {
 			done(new Error("ERR_IRC_NOT_CONNECTED"));
@@ -88,7 +92,7 @@ module.exports = function (coreObj) {
 				callback();
 			} else {
 				r.params.irc.error = "ERR_INVALID_IRC_PARAMS";
-                removeIrcIdentity(room)
+                removeIrcIdentity(room);
 				callback();//
 			}
 		} else callback();
@@ -205,7 +209,7 @@ function init() {
 			}
 		}
 		log("init from ircClient", state);
-        return;
+
 		core.emit("getRooms", {identity: "irc", session: internalSession}, function(err, data) {
 			var rooms = data.results;
 			log("returned state from IRC:", JSON.stringify(state));
@@ -367,7 +371,8 @@ function sendInitAndBack(suggestedNick, session ,room) {
 					to: room.id,
 					session: session,
 					from: init.user.id//nick returned from init.
-				}, function(text) {
+				}, function(err, back) {
+                    if(err) log("Error:", err.message);
 			});
 			initCount--;
 			isInitDone();

@@ -9,7 +9,7 @@ libsb.on('config-show', function(tabs, next){
         $div = $('<div>'),
         displayString = "",
         ircServer = "",
-        ircChannel = "";
+        ircChannel = "", notify = {};
 
     if(results.params.irc && results.params.irc.server && results.params.irc.channel){
         ircServer = results.params.irc.server;
@@ -18,7 +18,14 @@ libsb.on('config-show', function(tabs, next){
 
     $div.append(formField("IRC Server", "text", "ircserver", ircServer), formField("IRC Channel", "text", "ircchannel", ircChannel));
     if(results.params.irc){
-        if(results.params.irc.server && results.params.irc.channel && results.params.irc.pending) {
+        if(results.params.irc.error) {
+            notify.type = "error";
+            notify.value = null;
+            displayString = "Error when saving";
+             $div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
+        } else if(results.params.irc.server && results.params.irc.channel && results.params.irc.pending) {
+            notify.type = "info";
+            notify.value = null;
             $.get('/r/irc/' + results.id, function(botName) {
                 displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + results.params.irc.channel + " " + results.id + "\" in the irc channel.";
                 $div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
@@ -35,9 +42,9 @@ libsb.on('config-show', function(tabs, next){
     tabs.irc = {
         text: "IRC integration",
         html: $div,
-        prio: 800
+        prio: 800,
+        notify: notify
     };
-
     next();
 });
 
@@ -48,7 +55,7 @@ libsb.on('config-save', function(room, next){
     };
 
     if(room.params.irc && room.params.irc.channel && room.params.irc.server) {
-		var ircIdentity = "irc://" + room.params.irc.server +  ":" + room.params.irc.channel;
+		var ircIdentity = "irc://" + room.params.irc.server +  "/" + room.params.irc.channel;
 		if (!room.identities) room.identities = [];
 		room.identities.push(ircIdentity);
     }
@@ -56,11 +63,11 @@ libsb.on('config-save', function(room, next){
     next();
 });
 
-libsb.on("room-dn", function(action, next) {
+/*libsb.on("room-dn", function(action, next) {
     var room = action.room;
     if(action.user.id != libsb.user.id || !room.params || !room.params.irc) return next();
 
-    if (room.params.irc.server && room.params.irc.channel) {
+    if (!room.params.irc.error && room.params.irc.server && room.params.irc.channel) {
 		var r = room;
 
 		$.get('/r/irc/' + r.id, function(botName) {
@@ -71,7 +78,7 @@ libsb.on("room-dn", function(action, next) {
 	}
 
 	next();
-});
+});*/
 
 libsb.on("error-dn", function(reply, next) {
 	var displayString;

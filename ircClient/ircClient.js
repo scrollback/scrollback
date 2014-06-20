@@ -1,4 +1,3 @@
-var net = require('net');
 var irc = require('irc');
 irc.startIdentServer();
 var queue = require("./queue.js");
@@ -99,7 +98,7 @@ function connectBot(room, options, cb) {
 	console.log("****", room, JSON.stringify(servChanProp));
 	var server = room.params.irc.server;
 	var channel = room.params.irc.channel.toLowerCase();
-	rooms[room.id] = room;
+	
 	if(!servChanProp[server]) {
 		servChanProp[server] = {};
 	}
@@ -107,6 +106,8 @@ function connectBot(room, options, cb) {
 		cb("ERR_CONNECTED_OTHER_ROOM");
 		return;
 	}
+    
+    rooms[room.id] = room;
 	if (!servChanCount[server]) {
 		servChanCount[server] = 1;
 	} else servChanCount[server]++;
@@ -133,12 +134,22 @@ function connectBot(room, options, cb) {
 }
 
 function partBot(roomId, callback) {
-	log("****part bot for room ", roomId);
+	
 	var room  = rooms[roomId];
+    log("****part bot for room ", roomId, room);
 	if (!room) return callback(); //should throw an error? not sure... 
 	var client = clients[botNick][room.params.irc.server];
 	var channel = room.params.irc.channel;
 	var server = room.params.irc.server;
+    var pending = room.params.irc.pending;
+    if(pending) {
+        servChanCount[server]--;
+		if (servChanCount[server] === 0) {
+			client.disconnect();
+			delete clients[botNick][server];		
+		}
+        return callback();
+    }
 	var users = servChanProp[room.params.irc.server][channel].users;
 	log("users", users, ", servNick", servNick);
 	users.forEach(function(user) {

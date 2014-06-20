@@ -13,9 +13,10 @@ $(function() {
 		var text = format.htmlToText($entry.html());
 
 		$entry.text("");
-
+        console.log("entered text", text);
 		if (!text) return;
 		if (window.currentState && window.currentState.roomName) {
+            console.log("saying ", text);
 			libsb.say(window.currentState.roomName, text, window.currentState.thread);
 		} else {
 			// show the error that not part of any room yet.
