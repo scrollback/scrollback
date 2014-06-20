@@ -106,11 +106,11 @@ function connectBot(room, options, cb) {
 		cb("ERR_CONNECTED_OTHER_ROOM");
 		return;
 	}
-    
-    rooms[room.id] = room;
 	if (!servChanCount[server]) {
 		servChanCount[server] = 1;
 	} else servChanCount[server]++;
+	
+	rooms[room.id] = room;
 	servChanProp[server][channel] = {};
 	servChanProp[server][channel].users = [];
 	rooms[room.id] = room;
@@ -136,7 +136,7 @@ function connectBot(room, options, cb) {
 function partBot(roomId, callback) {
 	
 	var room  = rooms[roomId];
-    log("****part bot for room ", roomId, room);
+    log("****part bot for room ", roomId, room, servChanCount);
 	if (!room) return callback(); //should throw an error? not sure... 
 	var client = clients[botNick][room.params.irc.server];
 	var channel = room.params.irc.channel;
@@ -148,6 +148,8 @@ function partBot(roomId, callback) {
 			client.disconnect();
 			delete clients[botNick][server];		
 		}
+		delete room[roomId];
+		delete servChanProp[server][channel];
         return callback();
     }
 	var users = servChanProp[room.params.irc.server][channel].users;
@@ -159,7 +161,7 @@ function partBot(roomId, callback) {
 		}
 	});
 	partBotCallback[roomId] = callback;
-	client.part(channel);//disconnect bot in case of all part.
+	return client.part(channel);//disconnect bot in case of all part.
 	
 }
 
