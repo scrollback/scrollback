@@ -1,8 +1,6 @@
 /* jslint browser: true, indent: 4, regexp: true */
 /* global $ */
 
-var lace = require("../lib/lace.js");
-
 /**
  * @example
  *
@@ -20,23 +18,25 @@ var lace = require("../lib/lace.js");
  * });
  */
 
+var lace = require("../lib/lace.js");
+
 var showMenu = function(menu) {
     var $popover = $("<div>"),
         $list,
         $buttons;
 
     if (typeof menu.title === "string") {
-        $("<div>").addClass("popover-title")
+        $("<div>").addClass("popover-section popover-title")
                   .text(menu.title)
                   .appendTo($popover);
     }
 
     if (typeof menu.buttons === "object") {
-        $buttons = $("<div>").addClass("popover-buttons");
+        $buttons = $("<div>").addClass("popover-section popover-buttons");
 
         for (var button in menu.buttons) {
             if (typeof button === "string" && typeof menu.buttons[button] === "function") {
-                $("<a>").addClass("button " + button.toLowerCase()).text(button)
+                $("<a>").addClass("button " + button.toLowerCase().replace(/\s+/g, "-")).text(button)
                         .on("click", menu.buttons[button])
                         .appendTo($buttons);
             }
@@ -46,21 +46,21 @@ var showMenu = function(menu) {
     }
 
     if (typeof menu.items === "object") {
-        $list = $("<ul>");
+        $list = $("<div>").addClass("popover-section").append("<ul>");
 
         for (var item in menu.items) {
             if (typeof item === "string" && typeof menu.items[item] === "function") {
                 $("<li>").append($("<a>")
                          .text(item)
                          .on("click", menu.items[item]))
-                         .appendTo($list);
+                         .appendTo($list.find("ul"));
             }
         }
 
         $list.appendTo($popover);
     }
 
-    return lace.popover.show({ origin: $(menu.origin), body: $popover });
+    return lace.popover.show({ origin: menu.origin, body: $popover });
 };
 
 module.exports = showMenu;

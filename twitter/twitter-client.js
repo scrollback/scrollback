@@ -18,7 +18,7 @@ libsb.on('config-show', function(tabs, next) {
 	var $settingsItem = $('<div>').addClass('settings-item'),
 		$twitterText = $('<div>').addClass('settings-label').attr('id', 'twitter-text'),
 		$settingsAction = $('<div>').addClass('settings-action'),
-		$button = $('<a>').addClass('button twitter-account-button').attr('id', 'twitter-account'),
+		$button = $('<a>').addClass('button twitter').attr('id', 'twitter-account'),
 		$twitterMessage = $('<p>').attr('id', 'twitter-message'),
 		$textField = formField("Hashtags", "multientry", "twitter-hashtags", twitter.tags);
 
@@ -41,12 +41,12 @@ libsb.on('config-show', function(tabs, next) {
             return;
         }
         if(!isOrigin || !data.twitter ) return;
-        
+
         twitterUsername = data.twitter.username;
         $("#twitter-account").text("Change");
         $('#twitter-text').text("Admin Twitter Account: " + twitterUsername);
         $("#twitter-message").empty();
-        
+
 	}, false);
 
 
@@ -55,11 +55,11 @@ libsb.on('config-show', function(tabs, next) {
 			$twitterText.text("Twitter Account: " + twitter.username);
 			// $('#twitter-text').text("Twitter Account: " + twitter.username);
 			// $("#twitter-account").text("Change");
-			$button.text("Change");
+			$button.text("Change account");
 	} else {
 			// $('#twitter-text').text("Not signed in");
 			$twitterText.text("Not signed in");
-			$button.text("Sign in");
+			$button.text("Sign in to Twitter");
 			$twitterMessage.text("Please sign in to Twitter to watch hashtags");
 			// $("#twitter-account").text("Sign in");
 			// $("#twitter-message").text("Please sign in to twitter to watch hashtags.");
@@ -93,7 +93,7 @@ libsb.on('config-save', function(room, next){
         room.params.twitter = {
 		tags: tags,
 		username: twitterUsername
-        }
+        };
     }
 	next();
 });

@@ -80,14 +80,19 @@
 			}
 		}
 
+		.popover-section {
+			border-bottom: 1px solid darken($light-color, 10%);
+
+			&:only-of-type, &:last-of-type { border-bottom: none; }
+		}
+
 		.popover-title {
-			padding: .5em 1em;
+			padding: 1em;
 			font-weight: 700;
-			border-bottom: 1px solid darken($light-color, 15%);
 		}
 
 		.popover-buttons {
-			padding: .5em 1em;
+			padding: 1em;
 
 			.button { width: 100%; }
 		}
@@ -100,7 +105,7 @@
 			li {
 				border-bottom: 1px solid darken($light-color, 10%);
 
-				&:last-child { border-bottom: none; }
+				&:only-child, &:last-child { border-bottom: none; }
 
 				a {
 					display: block;
