@@ -9,7 +9,7 @@ var threadArea = {};
 (function() {
 	var $threads, room = "", time = null,
 	search = "", mode = "", searchResult = [false], index = null;
-    
+
 	function renderSearchResult(threads, callback) {
 		callback(threads.map(function(thread) {
 			return thread && threadEl.render(null, thread, searchResult.indexOf(thread));
@@ -88,7 +88,7 @@ var threadArea = {};
 			var threads = t.results;
 
 			if(err) throw err; // TODO: handle the error properly.
-			
+
 
 			if(!index && threads.length === "0") {
 				return callback([false]);
@@ -109,7 +109,7 @@ var threadArea = {};
 					threads.push(false);
 				}
 			}
-			console.log(threads);
+
 			renderThreads(threads, callback);
 		});
 	}
@@ -118,13 +118,13 @@ var threadArea = {};
 
 	libsb.on('navigate', function(state, next) {
 		var reset = false;
-	
+
 		if(state.mode) mode = state.mode;
 
 		if(currentState.mode == "search") {
 			$(".tab-"+state.tab).addClass("current");
 		}
-        
+
         if(state.roomName == "pending" && state.room === null) return next();
         if(state.source == 'thread-area') return next();
 
@@ -141,7 +141,7 @@ var threadArea = {};
 		}else if(state.tab != state.old.tab && state.tab == "threads") {
 			reset = true;
 		}
-        
+
         if(['search-local', 'search-global', 'threads'].indexOf(state.tab)>=0) {
 			$(".pane-threads").addClass("current");
 		}else {
@@ -149,7 +149,7 @@ var threadArea = {};
 			$(".pane-threads").removeClass("current");
 			return next();
 		}
-		
+
         if(reset) {
 			if(currentState.mode == "search") {
 				$threads.reset(0);
@@ -182,7 +182,7 @@ var threadArea = {};
 
 	$(function() {
         $threads = $(".thread-item-container");
-		
+
 		$threads.infinite({
 			scrollSpace: 2000,
 			fillSpace: 500,

@@ -124,7 +124,7 @@ libsb.on("navigate", function(state, next) {
 				break;
 			case 'pref':
 				path = '/me/edit';
-				document.title = "Account settings - " + state.user.id;
+				document.title = "Account settings - " + libsb.user.id;
 				break;
 			case 'search':
 				path = state.roomName ? '/' + state.roomName: '';
@@ -174,8 +174,7 @@ libsb.on("navigate", function(state, next) {
 		}
 
 		if (state.source == "init" || state.source == "text-area") {
-            console.log(state);
-			history.replaceState(state, null, url);
+            history.replaceState(state, null, url);
 			return;
 		}
 

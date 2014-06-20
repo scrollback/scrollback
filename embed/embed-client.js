@@ -14,7 +14,7 @@ libsb.on("config-show", function (conf, next) {
     });
 
     conf.embed = {
-        text: "Embed code",
+        text: "Embed",
         html: $div,
         prio: 400
     };

@@ -1,9 +1,9 @@
 /* global window, generate */
 
-var underscore = require('underscore');
-var core;
-var events = [ 'init-dn', 'back-dn', 'away-dn', 'join-dn', 'part-dn', 'admit-dn', 'expel-dn', 'text-up'];
-console.log(events);
+var underscore = require('underscore'),
+	core,
+	events = [ 'init-dn', 'back-dn', 'away-dn', 'join-dn', 'part-dn', 'admit-dn', 'expel-dn', 'text-up'];
+
 var libsb = {
 		user: "",
 		rooms: [],
@@ -29,7 +29,7 @@ var libsb = {
 		say: say,
 		admit: admit,
 		expel: expel,
-    
+
 		logout: function(){
 			core.emit("logout");
 			core.emit("disconnect");
@@ -37,11 +37,11 @@ var libsb = {
 };
 module.exports = function(c){
 	core = c;
-	
+
 	libsb.on = core.on;
 	libsb.emit = core.emit;
 	window.libsb = libsb;
-    
+
     core.on('init-dn', recvInit);
 	core.on('back-dn', recvBack);
 	core.on('away-dn', recvAway);

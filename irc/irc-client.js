@@ -17,26 +17,26 @@ libsb.on('config-show', function(tabs, next){
     }
 
     $div.append(formField("IRC Server", "text", "ircserver", ircServer), formField("IRC Channel", "text", "ircchannel", ircChannel));
+
     if(results.params.irc){
         if(results.params.irc.error) {
             notify.type = "error";
             notify.value = null;
             displayString = "Error when saving";
-             $div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
         } else if(results.params.irc.server && results.params.irc.channel && results.params.irc.pending) {
             notify.type = "info";
             notify.value = null;
+
             $.get('/r/irc/' + results.id, function(botName) {
                 displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + results.params.irc.channel + " " + results.id + "\" in the irc channel.";
-                $div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
             });
         } else if ((results.params.irc.server && results.params.irc.channel)) {
             displayString = "Connected to irc channel: " + results.params.irc.channel;
-            $div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
         } else {
             displayString = "Not connected to any channel";
-            $div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
         }
+
+        $div.append(formField("", "", "", displayString));
     }
 
     tabs.irc = {
