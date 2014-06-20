@@ -654,23 +654,20 @@ body {
 	}
 }
 
-@mixin chat-elem {
-	position: fixed;
+.main-area {
+    @extend %column;
+
+    position: fixed;
     left: 0;
     right: 0;
 
     @media #{$screenxxx} { left: $width-metaxxx; }
 
-	@media #{$screenxxxx} {
-		left: $width-roomxxxx + $width-metaxxxx;
+    @media #{$screenxxxx} {
+        left: $width-roomxxxx + $width-metaxxxx;
 
-		.embed & { left: $width-metaxxxx; }
-	}
-}
-
-.main-area {
-	@extend %column;
-	@include chat-elem;
+        .embed & { left: $width-metaxxxx; }
+    }
 }
 
 .meta-button, .rooms-button {
@@ -942,10 +939,10 @@ body {
 }
 
 .quick-notification-container {
-    @include chat-elem;
-
-    position: fixed;
+    position: absolute;
     top: $bar-height;
+    left: 0;
+    right: 0;
     z-index: 200;
 }
 
@@ -953,6 +950,9 @@ body {
     @include slidedown;
 
     padding: 1em;
+    border-bottom: 1px solid rgba(0,0,0,.15);
+
+    &:only-of-type, &:last-of-type { border-bottom: none; }
 
     @media #{$screenxxxx} { padding: 1em 1.5em; }
 
@@ -1216,8 +1216,9 @@ body {
 }
 
 .chat-input {
-	@include chat-elem;
-
+    position: absolute;
+    left: 0;
+    right: 0;
 	bottom: 0;
     padding: 0;
     min-height: $bar-height;
@@ -1418,39 +1419,6 @@ body {
 .settings-action {
     text-align: left;
     vertical-align: middle;
-}
-
-.room-area, .meta-area, .main-area, .chat-input, .quick-notification-container {
-    @include transition(.3s, ease-out); /* animate css transforms */
-
-    /* fix flicker in some browsers */
-    .view-meta &, .view-rooms & {
-        @include prefix(backface-visibility, hidden);
-        @include prefix(perspective, 1000);
-    }
-
-    /* use 3d transformations for GPU accelerated animations */
-    .view-meta & {
-		@include transform(translate3d($width-meta, 0, 0));
-
-		@media #{$screenx} { @include transform(translate3d($width-metax, 0, 0)); }
-
-		@media #{$screenxx} { @include transform(translate3d($width-metaxx, 0, 0)); }
-
-		@media #{$screenxxx} { @include transform(translate3d(0, 0, 0)); }
-    }
-
-    .view-rooms & {
-		@include transform(translate3d( ( $width-room + $width-meta ), 0, 0));
-
-		@media #{$screenx} { @include transform(translate3d( ( $width-roomxx + $width-metax ), 0, 0)); }
-
-		@media #{$screenxx} { @include transform(translate3d( ( $width-roomxx + $width-metaxx ), 0, 0)); }
-
-		@media #{$screenxxx} { @include transform(translate3d($width-roomxxx, 0, 0)); }
-
-		@media #{$screenxxxx} { @include transform(translate3d(0, 0, 0)); }
-    }
 }
 
 .search-bar {

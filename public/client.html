@@ -24,7 +24,7 @@
 	</head>
 
 	<body>
-		<section data-embed="none" class="room-area">
+		<section data-embed="none" class="room-area column">
 			<div class="room-header">
 				<img src="/s/img/client/scrollback-small.svg" alt="scrollback"/>
 			</div>
@@ -33,7 +33,7 @@
 				<a class="room-item"><span class="room-name"></span><span class="unread"></span></a>
 			</div>
 		</section>
-		<section class="meta-area">
+		<section class="meta-area column">
 			<ul role="tablist" class="meta-tabs">
 				<li data-embed="none" role="tab" class="rooms-button">
 					<svg class="rooms-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -98,7 +98,7 @@
 				<a class="list-item"></a>
 			</div>
 		</section>
-		<section role="main" class="main-area">
+		<section role="main" class="main-area column">
 			<div data-mode="normal search conf pref" class="title-bar">
 				<div class="left-area">
 					<a class="meta-button">
@@ -171,15 +171,15 @@
 			</div>
 			<div data-mode="pref" class="pref-area">
 			</div>
-		</section>
-		<section data-mode="normal search" class="chat-input">
-			<div class="chat-entry-wrap">
-				<div class="chat-placeholder"></div>
-				<div role="textbox" class="chat-entry" contenteditable></div>
+			<div data-mode="normal search" class="chat-input">
+				<div class="chat-entry-wrap">
+					<div class="chat-placeholder"></div>
+					<div role="textbox" class="chat-entry" contenteditable></div>
+				</div>
+				<svg version="1.1" class="chat-send">
+					<use xlink:href="/s/img/client/icons/send.svg#icon"></use>
+				</svg>
 			</div>
-			<svg version="1.1" class="chat-send">
-				<use xlink:href="/s/img/client/icons/send.svg#icon"></use>
-			</svg>
 		</section>
 		<section class="search-bar">
 			<form>

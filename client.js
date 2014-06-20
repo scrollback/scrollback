@@ -12,6 +12,8 @@ require('./socket/socket-client')(core);
 require('./id-generator/id-generator-client.js')();
 require('./client-entityloader/client-entityloader.js')();
 
+require('./public/s/lib/jquery.velocity.min.js');
+
 require('./public/s/js/jquery.setCursorEnd.js');
 require('./public/s/js/jquery.attrchange.js');
 require('./public/s/js/format.js');
