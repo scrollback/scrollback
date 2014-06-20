@@ -58,7 +58,7 @@ function getUsers() {
 
             currentConfig = tabs;
 
-            var data = renderSettings(tabs);
+            var data = renderSettings(tabs, user);
 
             $('.meta-pref').empty().append(data[0]);
             $('.pref-area').empty().append(data[1]);
