@@ -5,11 +5,11 @@ var formField = require("../lib/formField.js");
 
 libsb.on("config-show", function(tabs, next) {
 	var room = tabs.room, lists;
-
+	
 	if(!room.params) room.params = {};
-    if (!results.params.antiAbuse) {
-        results.params.antiAbuse = {offensive: true};
-    
+    if (!room.params.antiAbuse) {
+        room.params.antiAbuse = {offensive: true};
+	}
     
     if (typeof room.params.antiAbuse.wordblock !== "boolean") {
 		room.params.antiAbuse.wordblock = true;
@@ -69,7 +69,6 @@ libsb.on('text-menu', function(menu, next){
 	var textObj;
 	libsb.emit('getTexts', {ref: menu.target.id, to: currentState.roomName}, function(err, data){
 		textObj = data.results[0];
-		console.log("Recieved ", err, textObj);
 		if(!hasLabel('hidden', textObj.labels)){
 			menu["Hide Message"] = function(){
 				libsb.emit('edit-up', {to: currentState.room, labels: {hidden: 1}, ref: menu.target.id, cookie: false});
