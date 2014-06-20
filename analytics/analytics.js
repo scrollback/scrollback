@@ -4,20 +4,13 @@ var log  = require('../lib/logger.js');
 var pg = require('pg');
 var conString = "pg://" + config.pg.username + ":" +
 	config.pg.password + "@" + config.pg.server + "/" + config.pg.db;
-var client = new pg.Client(conString);
 var textActions = ['text', 'edit'];
 var occupantActions = ['back', 'away'];
 var memberActions = ['join', 'part', 'admit', 'expel'];
-client.connect(function(err) {
-  if(err) {
-    console.error('could not connect to postgres', err);
-  } else log("connected");
-});
 
-module.exports = function(c) {
-	core = c;
+
+module.exports = function(core) {
 	textActions.forEach(function(type) {
-		log("Reg ", type, " event");
 		core.on(type, function(action, cb) {
 			log("type:", action);
 			saveTextActions(action);
@@ -47,6 +40,7 @@ module.exports = function(c) {
 	});
 };
 
+//}
 function saveOccupantAction(action) {
 	var pav = getParamsAndValues(action);
 	var params = pav.params;
@@ -195,7 +189,19 @@ function insert(tableName, params, values) {
 		no.push("$"+i);
 	}
 	q += no.join(",") + ")";
-	client.query(q, values);
+	pg.connect(conString, function(err, client, done) {
+		if (err) {
+			log("Unable to get Pool Connection Object: ", err, q, values);
+			return;
+		}
+		client.query(q, values, function(e, result) {
+		log("Error:", e, " result: ", result);
+			if (e) {
+				log("Unable to run query: ", q, values);
+			}
+			done();	
+		});
+	});
 }
 
 
