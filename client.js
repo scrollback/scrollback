@@ -1,6 +1,7 @@
 /* jslint browser: true */
 
 var core = Object.create(require("./lib/emitter.js"));
+
 window.validate = require('./lib/validate.js');
 window.generate = require('./lib/generate');
 
@@ -12,12 +13,11 @@ require('./socket/socket-client')(core);
 require('./id-generator/id-generator-client.js')();
 require('./client-entityloader/client-entityloader.js')();
 
-require('./public/s/lib/jquery.velocity.min.js');
-
-require('./public/s/js/jquery.setCursorEnd.js');
-require('./public/s/js/jquery.attrchange.js');
-require('./public/s/js/format.js');
-require('./public/s/js/swipe-events.js');
+require('./lib/jquery.velocity.min.js');
+require('./lib/jquery.setCursorEnd.js');
+require('./lib/jquery.attrchange.js');
+require('./lib/format.js');
+require('./lib/swipe-events.js');
 
 // client uis
 require('./email/email-client.js');

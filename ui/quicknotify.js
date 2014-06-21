@@ -68,9 +68,7 @@ var quicknotify = {
             return;
         }
 
-        lace.animate.transition("fadeout", $element, function() {
-            $(this).remove();
-
+        lace.animate.fadeout($element, function() {
             if (!$container.children().length) {
                 $container.remove();
             }
