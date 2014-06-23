@@ -55,8 +55,8 @@ $(function() {
 	libsb.on("navigate", function(state, next) {
 		var $title = $(".minimize-room-title");
 
-		if (state && (!state.old || state.room != state.old.room)) {
-			$title.text(state.room);
+		if (state && (!state.old || state.roomName != state.old.roomName)) {
+			$title.text(state.roomName);
 		}
 
 		if (state.old && state.minimize !== state.old.minimize) {

@@ -788,7 +788,7 @@ body {
     .cta-action {
         text-transform: uppercase;
 
-        &.theme-dark { color: $accent-color; }
+        .theme-dark & { color: $accent-color; }
     }
 }
 
