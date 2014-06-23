@@ -65,7 +65,7 @@ $(function() {
         }
 
         next();
-    });
+    }, 500);
 
     $(window).on("resize", adaptLayout);
 });

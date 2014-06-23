@@ -28,7 +28,7 @@ libsb.on("config-show", function(tabs, next) {
 		formField("Blocked words list", "check", "blocklists-list", [
 			["list-en-strict", "English strict", (lists.indexOf("list-en-strict") > -1)],
 			["list-en-moderate", "English moderate", (lists.indexOf("list-en-moderate") > -1)],
-			["list-zh-strict", "Chinese strict", (lists.indexOf("list-zh-strict") > -1)],
+			["list-zh-strict", "Chinese strict", (lists.indexOf("list-zh-strict") > -1)]
 		]),
 		formField("Custom blocked words", "area", "block-custom", room.params.antiAbuse.customWords)
 	);

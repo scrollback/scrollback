@@ -40,7 +40,6 @@ module.exports = function(core) {
 	});
 };
 
-//}
 function saveOccupantAction(action) {
 	var pav = getParamsAndValues(action);
 	var params = pav.params;

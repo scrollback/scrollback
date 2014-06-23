@@ -6,8 +6,8 @@ var generate = require('../lib/generate.js'),
 
 module.exports = function(c){
 	core = c;
-	core.on('connection-requested', connect);
-	core.on('disconnect', disconnect);
+	core.on('connection-requested', connect, 1000);
+	core.on('disconnect', disconnect, 1000);
 
 	core.on('init-up', sendInit, 10);
 	core.on('text-up', sendText, 10);
@@ -25,22 +25,22 @@ module.exports = function(c){
     core.on('getTexts', function(query, callback){
 		query.type="getTexts";
 		sendQuery(query, callback);
-	});
+	}, 10);
 
     core.on('getThreads',  function(query, callback){
 		query.type="getThreads";
 		sendQuery(query, callback);
-	});
+	}, 10);
 
     core.on('getUsers',  function(query, callback){
 		query.type="getUsers";
 		sendQuery(query, callback);
-	});
+	}, 10);
 
     core.on('getRooms',  function(query, callback){
 		query.type="getRooms";
 		sendQuery(query, callback);
-	});
+	}, 10);
 };
 
 var client;
