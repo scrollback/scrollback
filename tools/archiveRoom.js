@@ -24,7 +24,12 @@ var fs = require("fs");
         }else {
             
             data.forEach(function(e) {
-                archive = archive + JSON.stringify(e)+ "\n";
+                var row = "", i;
+                row += e.from +"\t";
+                row += e.text +"\t";
+                row += e.time;
+                
+                archive = archive + row + "\n";
             });
             fs.writeFile("./"+process.argv[3], archive, function(err) {
                 console.log(data.length+1 + " texts saved");
