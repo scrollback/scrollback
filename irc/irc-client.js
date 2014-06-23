@@ -1,8 +1,7 @@
 /* jshint browser: true */
 /* global $, libsb */
 
-var lace = require("../lib/lace.js"),
-    formField = require("../lib/formField.js");
+var formField = require("../lib/formField.js");
 
 libsb.on('config-show', function(tabs, next){
     var results = tabs.room,
@@ -73,7 +72,6 @@ libsb.on('config-save', function(room, next){
 		$.get('/r/irc/' + r.id, function(botName) {
 			var displayString = "Something went wrong while connecting to IRC server";
 			if(botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel.";
-			lace.alert.show({type: "success", body: displayString, timeout: 3000});
 		});
 	}
 
@@ -88,8 +86,6 @@ libsb.on("error-dn", function(reply, next) {
 	} else if (reply.message === "ERR_IRC_NOT_CONNECTED") {
 		displayString = "We are facing some issue with our irc client please try again after some time";
 	}
-
-	if(displayString) lace.alert.show({type: "error", body: displayString});
 
 	next();
 });

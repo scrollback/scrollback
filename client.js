@@ -40,6 +40,7 @@ require('./ui/customization.js');
 require('./ui/infinite.js');
 require('./ui/hide-scroll.js');
 require('./ui/navigation.js');
+require('./ui/error-notify.js');
 require('./ui/columns.js');
 require('./ui/chat.js');
 require('./ui/chat-item.js');
