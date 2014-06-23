@@ -81,6 +81,7 @@ function disconnect(){
 }
 
 function disconnected(){
+	libsb.isInited = false;
 	core.emit('disconnected');
 }
 

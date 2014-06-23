@@ -28,7 +28,7 @@ module.exports = function(c){
 			occupantOf: cache.occupantOf,
 			memberOf: cache.memberOf
 		};
-		core.emit('init-dn', fakeInit);
+		//core.emit('init-dn', fakeInit);
 	}
 	
 	core.on('getTexts', getTextsBefore, 400);
