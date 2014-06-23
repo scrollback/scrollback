@@ -45,7 +45,7 @@ libsb.on('config-show', function(tabs, next){
         notify: notify
     };
     next();
-});
+}, "default");
 
 libsb.on('config-save', function(room, next){
     room.params.irc = {
@@ -60,7 +60,7 @@ libsb.on('config-save', function(room, next){
     }
 
     next();
-});
+}, 500);
 
 /*libsb.on("room-dn", function(action, next) {
     var room = action.room;
@@ -88,4 +88,4 @@ libsb.on("error-dn", function(reply, next) {
 	}
 
 	next();
-});
+}, 500);

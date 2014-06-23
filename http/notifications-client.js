@@ -55,7 +55,7 @@ libsb.on("pref-show", function(tabs, next){
     };
 
     next();
-});
+}, 500);
 
 libsb.on("pref-save", function(user, next){
     user.params.notifications = {
@@ -64,4 +64,4 @@ libsb.on("pref-save", function(user, next){
 	};
 
 	next();
-});
+}, 500);

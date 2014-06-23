@@ -42,23 +42,24 @@ module.exports = function(c){
 	libsb.emit = core.emit;
 	window.libsb = libsb;
 
-    core.on('init-dn', recvInit);
-	core.on('back-dn', recvBack);
-	core.on('away-dn', recvAway);
-	core.on('join-dn', recvJoin);
-	core.on('part-dn', recvPart);
-	core.on('admit-dn', recvAdmit);
-	core.on('expel-dn', recvExpel);
+    core.on('init-dn', recvInit, 1000);
+	core.on('back-dn', recvBack, 1000);
+	core.on('away-dn', recvAway, 1000);
+	core.on('join-dn', recvJoin, 1000);
+	core.on('part-dn', recvPart, 1000);
+	core.on('admit-dn', recvAdmit, 1000);
+	core.on('expel-dn', recvExpel, 1000);
 	// core.on('error-dn', recvError);
 
-	core.on('connected', onConnect);
-	core.on('disconnected', onDisconnect);
+	core.on('connected', onConnect, 1000);
+	core.on('disconnected', onDisconnect, 1000);
 
-	core.on("init-dn", function() {
+	core.on("init-dn", function(init, next) {
 		if(!libsb.isInited) {
 			libsb.isInited = true;
 			core.emit("inited");
 		}
+		next();
 	}, 10);
 };
 
@@ -128,7 +129,8 @@ function say(roomId, text, thread, callback) {
 		obj.text = text.replace(/^\/me /,"");
 		obj.labels = {action: 1};
 	}
-	if(thread) obj.threads = [{id: thread}];
+
+	if(thread) obj.threads = [{id: thread, score: 1}];
 	core.emit('text-up', obj, callback);
 }
 

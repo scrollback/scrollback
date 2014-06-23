@@ -60,6 +60,13 @@ var defaults = {
 		//debug    :true         ,
 		database : 'scrollback' 
 	},
+	pg: {//post gre config
+		server: "localhost",//server:port
+		db: "logs",
+		username: "username",
+		password: "password"
+		//port: 
+	},
 	http: {
 		host: "local.scrollback.io",
 		cookieDomain: ".scrollback.io",

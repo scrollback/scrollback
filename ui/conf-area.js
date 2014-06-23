@@ -111,10 +111,10 @@ libsb.on('navigate', function (state, next) {
                 libsb.on('inited', function (e, n) {
                     showConfig(state.room);
                     if (n) n();
-                });
+                }, 500);
             }
         }
     }
 
     next();
-});
+}, 500);

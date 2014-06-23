@@ -210,7 +210,24 @@ exports.initCore = function(c) {
 
 function emit(action, callback) {
 	log("Sending out: ", action);
-
+    var outAction = {}, i, j;
+    
+    for (i in action) {
+        if(action.hasOwnProperty(i)) {
+            outAction[i] = action[i];
+            if(i == "room" || i == "user") { 
+                for (j in action) {
+                    if(action.hasOwnProperty(j) && !j == "params") {
+                        outAction[i][j] = action[i][j];
+                    }
+                }
+            }
+        }
+    }
+    
+    delete outAction.session;
+    delete outAction.user.identities;
+    
 	if(action.type == 'init') {		
 		if(sConns[action.session]) sConns[action.session].forEach(function(conn){
 			conn.user = action.user;
@@ -224,7 +241,7 @@ function emit(action, callback) {
 		}
 	}
 	
-	function dispatch(conn) {conn.send(action); }
+	function dispatch(conn) {conn.send(outAction); }
 	if(callback) callback();
 }
 

@@ -70,7 +70,7 @@ libsb.on("config-show", function(tabs, next) {
 	};
 
 	next();
-});
+}, 500);
 
 libsb.on("config-save", function(room, next){
     var tags = lace.multientry.items($("#twitter-hashtags")).join(" ");
@@ -85,4 +85,4 @@ libsb.on("config-save", function(room, next){
     }
 
 	next();
-});
+}, 500);

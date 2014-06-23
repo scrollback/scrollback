@@ -21,7 +21,7 @@ load();
 
 module.exports = function(c){
 	core = c;
-	if(localStorage.user){
+	if(localStorage.libsb){
 		var fakeInit = {
 			user: cache.user,
 			rooms: cache.rooms,
@@ -35,23 +35,12 @@ module.exports = function(c){
 	core.on('getTexts', getTextsAfter, 900);
 	core.on('getThreads', getThreadsBefore, 400);
 	core.on('getThreads', getThreadsAfter, 900);
-	core.on('connected', createInit);
-	core.on('init-dn', recvInit);
-	core.on('away-up', storeAway);
-	core.on('text-up', storeText);
-	core.on("getSession", function(query, callback){
-		try {
-			query.results = [{
-				session: cache.session,
-				user: cache.user.id
-			}];
-			callback();	
-		}catch(e){
-			callback(e);
-		}
-	});
-	
-	core.on('logout', logout);
+	core.on('connected', createInit, 1000);
+	core.on('init-dn', recvInit, 900);
+	core.on('away-up', storeAway, 100); // can be in the end.
+	//core.on('text-up', storeText);
+
+	core.on('logout', logout, 1000);
 	
 	window.addEventListener('storage', load);
 };

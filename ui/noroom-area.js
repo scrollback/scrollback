@@ -18,7 +18,7 @@ var lace = require("../lib/lace.js");
         if(state.source == "noroom") return next();
         if(state.room === null && libsb.isInited) libsb.emit("navigate", {mode:'noroom', source: "noroom"});
         next();
-    });
+    }, 500);
 /*
     libsb.on('error-dn', function(err, next){
         if(err.id === messageID && err.message === "NO_ROOM_WITH_GIVEN_ID"){

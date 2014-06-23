@@ -56,9 +56,9 @@ module.exports = function (types) {
 				}
 				if(message.threads) {
 					insertThread(message.threads, 0, function() {
-						cb && cb(err, res);	
+						if(cb) cb(err, res);	
 					});		
-				}
+				} else if(cb) cb();
 			});
 		},
 		

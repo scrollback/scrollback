@@ -62,7 +62,9 @@
     "objectlevel": "latest",
     "htmlencode": "0.0.3",
     "underscore": "latest",
-    "oauth": "~0.9.12"
+    "browserify": "x",
+    "oauth": "~0.9.12",
+    "pg": "~3.3.0"
   },
   "optionalDependencies": {},
   "devDependencies": {

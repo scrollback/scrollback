@@ -19,10 +19,10 @@ libsb.on('config-show', function (tabs, next) {
     };
 
     next();
-});
+}, 500);
 
 libsb.on('config-save', function (room, next) {
     if (!room.params.http) room.params.http = {};
     room.params.http.seo = $('#allow-index').is(':checked');
     next();
-});
+}, 500);

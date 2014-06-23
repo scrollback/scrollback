@@ -39,7 +39,7 @@ $(function() {
             if (libsb.isInited) {
                 getFollow();
             } else {
-                libsb.on("inited", getFollow);
+                libsb.on("inited", getFollow, 100);
             }
         }
 
@@ -50,19 +50,19 @@ $(function() {
         if (libsb.isInited) {
             getFollow();
         } else {
-            libsb.on("inited", getFollow);
+            libsb.on("inited", getFollow, 100);
         }
 
         next();
-    });
+    }, 100);
 
     libsb.on("back-dn", function(state, next){
         if (libsb.isInited) {
             getFollow();
         } else {
-            libsb.on("inited", getFollow);
+            libsb.on("inited", getFollow, 100);
         }
 
         next();
-    });
+    }, 100);
 });

@@ -32,11 +32,15 @@ function migrateRooms(cb) {
 			var newRoom = {
 				id: room.id,
 				description: room.description,
-				createdOn: room.createdOn,
+				createTime: room.createdOn,
 				type: room.type,
 				picture: room.picture,
 				timezone:0,
 				identities: [],
+                guides: {
+                    authorizer: {
+                    }
+                }
 			};
 
 			try{
@@ -45,8 +49,7 @@ function migrateRooms(cb) {
 			catch(e){
 				newRoom.params = {};
 			}
-		
-			
+            
 			if(data) {
                 data.forEach(function(account) {
                     var u;
@@ -77,10 +80,35 @@ function migrateRooms(cb) {
 			if (newRoom.type == "room") {
 				if (newRoom.params.twitter && newRoom.params.twitter.profile && newRoom.params.twitter.profile.username) {
 					newRoom.identities.push("twitter://" + newRoom.id + ":" + newRoom.params.twitter.profile.username);
+                    (function() {
+                        var twitter = {
+                            username: newRoom.params.twitter.id,
+                            tags: newRoom.params.twitter.tags
+                            token: newRoom.params.twitter.token,
+                            tokenSecret: newRoom.params.twitter.tokenSecret,
+                            profile: { screen_name: newRoom.params.twitter.profile.username, user_id: newRoom.params.twitter.profile.id}
+                        };
+                        newRoom.params.twitter = twitter;
+                    })();
 				}
+                
+                newRoom.params.http = {};
+                if(typeof newRoom.params.allowSeo !== "undefined") {
+                    newRoom.params.http.seo = newRoom.params.allowSeo;
+                    delete newRoom.params.allowSeo;
+                }else{
+                    newRoom.params.http.seo = true;
+                }
+                
+                newRoom.guides.authorizer.readLevel = "guest";
+                newRoom.guides.authorizer.openFollow = true;
+                if(typeof newRoom.params.loginrequired !== "undefined") {
+                    newRoom.guides.authorizer.writeLevel = newRoom.params.loginrequired? "follower" : "guest";
+                    delete newRoom.params.loginrequired;
+                }
+                
 				types.rooms.put(newRoom, function(){
 					if (err) console.log(err);
-					console.log("room", newRoom);
 					owners[room.id] = room.owner;
 					types.rooms.link(room.id, 'hasMember', room.owner, {
 						role: "owner",
