@@ -156,7 +156,7 @@ function sendAway(away, next){
 }
 
 function sendText(text, next){
-	var action = makeAction({to: text.to, type: 'text', text: text.text, from: text.from, id: text.id});
+	var action = makeAction(text, {to: text.to, type: 'text', text: text.text, from: text.from, threads: text.threads, id: text.id, labels: text.labels || {}, mentions: text.mentions || []});
 	safeSend(JSON.stringify(action));
 	next();
 	// pendingActions[action.id] = next;
