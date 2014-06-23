@@ -20,4 +20,4 @@ libsb.on("config-show", function (conf, next) {
     };
 
     next();
-});
+}, 500);

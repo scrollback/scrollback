@@ -40,7 +40,7 @@ libsb.on("config-show", function(tabs, next) {
 	};
 
 	next();
-});
+}, 500);
 
 libsb.on("config-save", function(room, next){
 	room.params.antiAbuse = {
@@ -54,7 +54,7 @@ libsb.on("config-save", function(room, next){
 	};
 
 	next();
-});
+}, 500);
 
 function hasLabel(label, labels){
 	for(var i=0; i<labels.length; i++){
@@ -64,7 +64,7 @@ function hasLabel(label, labels){
 	}
 	return false;
 }
-libsb.on('text-menu', function(menu, next){
+libsb.on('text-menu', function(menu, next) {
 	if(menu.role !== "owner") return next();
 	var textObj;
 	libsb.emit('getTexts', {ref: menu.target.id, to: currentState.roomName}, function(err, data){
@@ -87,4 +87,4 @@ libsb.on('text-menu', function(menu, next){
 		}
 	});
 	next();
-});
+}, 500);

@@ -91,7 +91,7 @@ $(function() {
 		text.text.split(" ").map(isMention);
 
 		next();
-	});
+	}, 100);
 
 	// Insert incoming text messages.
 	libsb.on("text-dn", function(text, next) {
