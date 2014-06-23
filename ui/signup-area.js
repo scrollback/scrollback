@@ -52,13 +52,16 @@ $(function(){
 	});*/
 
 	libsb.on("user-dn", function(action, next) {
-                lace.modal.hide();
-                if(signingUp === true) location.reload();
-                libsb.emit('navigate', {
+		lace.modal.hide();
+
+		if(signingUp === true) location.reload();
+
+		libsb.emit('navigate', {
 			view: 'normal',
 			mode: 'normal',
 			tab: 'info'
 		});
+
 		next();
 	}, 500);
 

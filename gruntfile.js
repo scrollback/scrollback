@@ -127,11 +127,13 @@ module.exports = function(grunt) {
 				livereload: true,
 			},
 			scripts: {
-				files: ["*/*-client.js", "lib/*.js", "ui/*.js"],
+				files: ["gruntfile.js", "*/*-client.js",
+						"public/client.js", "public/libsb.js",
+						"lib/*.js", "ui/*.js"],
 				tasks: ["browserify", "uglify", "manifest"],
 			},
 			styles: {
-				files: ["public/s/styles/scss/*.scss"],
+				files: ["gruntfile.js", "public/s/styles/scss/*.scss"],
 				tasks: ["sass", "autoprefixer", "manifest"],
 			}
 		}

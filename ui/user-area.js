@@ -43,7 +43,7 @@ $(function () {
 		});
 
 		lace.modal.show({
-			body: $("#loggedout-dialog").html(),
+			body: $("#signedout-dialog").html(),
 			dismiss: false
 		});
 

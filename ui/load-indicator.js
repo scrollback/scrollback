@@ -10,6 +10,8 @@ $(function() {
 
 			if ($overlay.length && $("body").attr("class") && $("body").attr("class").match(/mode-/)) {
 				lace.animate.fadeout($overlay, function() {
+					$(this).remove();
+
 					lace.progress.hide();
 				});
 			}
@@ -17,6 +19,8 @@ $(function() {
 	} else {
 		setTimeout(function() {
 			lace.animate.fadeout($overlay, function() {
+				$(this).remove();
+
 				lace.progress.hide();
 			});
 		}, 300);

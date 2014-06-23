@@ -55,6 +55,6 @@ $("#create-room-button").click(function(){
 
 $("#login-and-create-room-button").click(function(){
    if($("body").hasClass("role-guest")) {
-       lace.modal.show({ body: $("#login-dialog").html()});
+       lace.modal.show({ body: $("#signin-dialog").html()});
    }
 });
