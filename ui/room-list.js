@@ -34,7 +34,7 @@ $(function() {
 
         listenQueue = [];
 		n();
-	});
+	}, 100);
 
 
 	// Set up infinite scroll here.
@@ -102,7 +102,7 @@ $(function() {
 		enter(room);
 		if(state.old && state.old.roomName === state.roomName) return next();
 		next();
-	});
+	}, 10);
     
 	libsb.on("init-dn", function(init, next) {
 		if(currentState.embed == "toast") return next();

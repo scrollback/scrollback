@@ -162,10 +162,10 @@ var threadArea = {};
 	}, 200);
 
 
-	libsb.on('text-dn', function(text, next) {
-		// if($threads.data("lower-limit")) $threads.addBelow(renderChat(null, text));
+	/*libsb.on('text-dn', function(text, next) {
+		if($threads.data("lower-limit")) $threads.addBelow(renderChat(null, text));
 		next();
-	});
+	}, 100);*/
 	threadArea.setBottom = function(bottom) {
 		var atBottom = ($threads.scrollTop() + $threads.height() == $threads[0].scrollHeight);
 

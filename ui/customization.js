@@ -8,13 +8,12 @@
         }
 
         next();
-    });
+    }, 700);
 
     libsb.on("room-dn", function(room, next) {
         customStyle.applyCss();
-
         next();
-    });
+    }, 100);
 
     // Customization API
     var customStyle = {

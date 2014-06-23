@@ -40,7 +40,7 @@ module.exports = function(coreObject) {
 				}
 			}
 			log("Err email params in user object"); 
-			return callback("ERR_EMAIL_PARAMS");
+			return callback(new Error("ERR_EMAIL_PARAMS"));
 			
 		}, "appLevelValidation");
 	}

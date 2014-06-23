@@ -17,7 +17,7 @@ libsb.on('config-show', function(tabs, next) {
     };
 
     next();
-});
+}, 500);
 
 libsb.on('config-save', function(room, next){
     var name = $('#displayname').val(),
@@ -27,4 +27,4 @@ libsb.on('config-save', function(room, next){
     room.description = desc;
 
     next();
-});
+}, 500);

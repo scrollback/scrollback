@@ -211,7 +211,6 @@ exports.initCore = function(c) {
 function emit(action, callback) {
 	log("Sending out: ", action);
     var outAction = {}, i, j;
-
     
     for (i in action) {
         if(action.hasOwnProperty(i)) {
