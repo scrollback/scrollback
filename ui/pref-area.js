@@ -81,10 +81,10 @@ libsb.on('navigate', function (state, next) {
                 libsb.on('inited', function (a, next) {
                     getUsers();
                     next();
-                });
+                }, 500);
             }
         }
     }
 
     next();
-});
+}, 500);

@@ -12,7 +12,7 @@ libsb.on('pref-show', function(tabs, next){
             prio: 1000
     };
     next();
-});
+}, 500);
 
 libsb.on('pref-save', function(user, next){
 	var about = $('#about-me').val();
@@ -20,4 +20,4 @@ libsb.on('pref-save', function(user, next){
     user.identities = libsb.user.identities;
 
 	next();
-});
+}, 500);

@@ -50,7 +50,7 @@ $(function() {
 		}
 
 		next();
-	});
+	}, 100);
 
 	libsb.on("navigate", function(state, next) {
 		var $title = $(".minimize-room-title");
@@ -64,5 +64,5 @@ $(function() {
 		}
 
 		next();
-	});
+	}, 100);
 });
