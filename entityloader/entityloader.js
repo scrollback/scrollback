@@ -97,7 +97,7 @@ function userHandler(action, callback) {
 				}else {
 					action.old = data.results[0];
 				}
-				if(action.user.identities) action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0]).digest('hex');
+				if(action.user.identities) action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0].substring(7)).digest('hex') + '/?d=monsterid';
 				else action.user.picture = 'https://gravatar.com/avatar/default';
 				action.user.description = action.user.description || "";
 				callback();
@@ -125,8 +125,7 @@ function initHandler(action, callback) {
 				action.user.isSuggested = true;
 				return done();
 			});
-			}
-		else if(action.ref && /^guest-/.test(data.results[0].id)) {
+		}else if(action.ref && /^guest-/.test(data.results[0].id)) {
 			core.emit("getUsers",{id: uid(), ref: action.ref, session: action.session}, function(err, data) {
 				if(err || !data || !data.resutls || !data.results.length) {
 					return callback(new Error("NICK_TAKEN"));
@@ -186,7 +185,7 @@ function loadRoom(action, callback) {
 			if(action.type != "room"){
                             console.log("**** ENTITY LOADER **********");
                             return callback(new Error("NO_ROOM_WITH_GIVEN_ID"));
-                        }		
+                        }
                 }else{
 			room = rooms.results[0];
 		}
@@ -257,7 +256,7 @@ function generateNick(suggestedNick, callback) {
 }
 
 function generatePick(id) {
-	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=identicon&s=48';
+	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=wavatar';
 }
 
 

@@ -2,20 +2,59 @@
 /* global $, libsb */
 
 (function() {
-	libsb.on("navigate", function(state, next) {
-		if (state.old && state.room !== state.old.room) {
-			libsb.emit("getRooms", { ref: state.room }, function(err, data) {
-				var customization = data.results[0].params.customization;
+    libsb.on("navigate", function(state, next) {
+        if (state.old && state.room !== state.old.room) {
+            customStyle.applyCss();
+        }
 
-				$("#custom-style").remove();
+        next();
+    });
 
-				if (customization && customization.stylesheet) {
-					$("<style>").text(customization.stylesheet.replace("<", "\\3c").replace(">", "\\3e"))
-					.attr("id", "custom-style").appendTo("head");
-				}
-			});
-		}
+    libsb.on("room-dn", function(room, next) {
+        customStyle.applyCss();
 
-		next();
-	});
+        next();
+    });
+
+    // Customization API
+    var customStyle = {
+        setCss: function(customCss) {
+            var room = window.currentState.room,
+                roomObj;
+
+            if (!room || !room.params) {
+                return;
+            }
+
+            if (!room.params.customization) {
+                room.params.customization = {};
+            }
+
+            room.params.customization.css = customCss;
+
+            roomObj = { to: window.currentState.roomName, room: room };
+
+            libsb.emit("room-up", roomObj);
+        },
+
+        applyCss: function() {
+            var room = window.currentState.room,
+                customization;
+
+            if (!room || !room.params || !room.params.customization) {
+                return;
+            }
+
+            customization = room.params.customization;
+
+            $("#custom-style").remove();
+
+            if (customization && customization.css) {
+                $("<style>").text(customization.css.replace("<", "\\3c").replace(">", "\\3e"))
+                .attr("id", "custom-style").appendTo("head");
+            }
+        }
+    };
+
+    window.customStyle = customStyle;
 })();

@@ -4,7 +4,7 @@ module.exports = function(core){
 		if (action.user.role === 'su') return callback(); 
 		if(action.user.role === "guest") return callback(new Error('ERR_NOT_ALLOWED'));
         if(action.user.role === "owner") return callback();
-        else if(action.room.old === null) return callback();
-        else return callback(new Error('ERR_NOT_ALLOWED'));
+        if(!action.old || (typeof action.old == "object" && Object.keys(action.old).length===0)) return callback();
+        return callback(new Error('ERR_NOT_ALLOWED'));
     }, "authorization");
 };

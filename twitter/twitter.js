@@ -1,6 +1,5 @@
 var log = require("../lib/logger.js");
 var logTwitter = log;
-var fs = require("fs");
 var htmlEncode = require('htmlencode');
 var Twit = require('twit');
 var guid = require("../lib/generate.js").uid;
@@ -11,7 +10,6 @@ var host = config.http.host;
 var redis = require('../lib/redisProxy.js').select(config.redisDB.twitter);
 var twitterConsumerKey = config.twitter.consumerKey;
 var twitterConsumerSecret = config.twitter.consumerSecret;
-var callbackURL = config.twitter.callbackURL;
 var debug = config.twitter.debug;
 var core;
 var expireTime = 15 * 60;//expireTime for twitter API key...
@@ -42,7 +40,7 @@ module.exports = function(coreObj) {
 		}, "setters");
 
 		core.on("room", twitterRoomHandler, "gateway");
-		core.on("room", twitterParamsValidation, "applevelValidation");
+		core.on("room", twitterParamsValidation, "appLevelValidation");
 	}
 	else {
 		log("Twitter module is not enabled.");
@@ -51,8 +49,10 @@ module.exports = function(coreObj) {
 
 
 function twitterParamsValidation(action, callback) {
+    var room = action.room;
 	if (room.params.twitter) {
 		var t = room.params.twitter;
+        if(Object.keys(t).length === 0) return callback(); 
 		var b = typeof t.username === 'string' && typeof t.tags === 'string';
 		if (t.token) {
 			b = b && (typeof t.token === 'string');
@@ -62,7 +62,11 @@ function twitterParamsValidation(action, callback) {
 			b = b && (t.profile.user_id && typeof t.profile.user_id === 'string');
 		}
 		if (b) callback();
-		else callback("ERR_INVALID_TWITTER_PARAMS");
+		else {
+            t.error = "ERR_INVALID_TWITTER_PARAMS";
+//            callback(new Error("ERR_INVALID_TWITTER_PARAMS"));
+            callback();
+        }
 	} else callback();
 }
 
@@ -92,7 +96,8 @@ function addTwitterTokens(room, callback) {
 			log("replies from redis", replies);
 			if (err) {
 				logTwitter(" Error: ", err);
-				callback(new Error("TWITTER_LOGIN_ERROR"));
+                room.params.twitter.error = "ERR_TWITTER_LOGIN";
+				callback();
 			}
 			else {
 				if (replies[0] && replies[1] && replies[2]) {
@@ -136,19 +141,21 @@ function addIdentity(room, username) {
 function copyOld(room, callback) {
 	logTwitter("copyOld");
 
-	var old;//old account
+	var old, newParams;//old account
 	if(room.old && room.old.params) old = room.old.params.twitter;
+    newParams = room.room.params.twitter;
 	if(old) {
-		room.room.params.twitter.token = old.token;
-		room.room.params.twitter.tokenSecret = old.tokenSecret;
-		room.room.params.twitter.profile = old.profile;
-		if(!room.room.params.twitter.tags) room.params.twitter.tags = "";
-		room.room.params.twitter.tags = formatString(room.room.params.twitter.tags);
+		newParams.token = old.token;
+		newParams.tokenSecret = old.tokenSecret;
+		newParams.profile = old.profile;
+		if(!newParams.tags) newParams.tags = "";
+		newParams.tags = formatString(newParams.tags);
 		addIdentity(room, old.profile.screen_name);
 		callback();
 	}
 	else {
-		callback(new Error("TWITTER_LOGIN_ERROR"));
+        newParams.error = "ERR_TWITTER_LOGIN";
+		callback();
 	}
 }
 
@@ -283,7 +290,7 @@ function getRequest(req, res, next) {
 		);
 		pendingOauths[uid] = {oauth: oauth, time: new Date().getTime()};
 		oauth.getOAuthRequestToken({"scope": "https://api.twitter.com/oauth/request_token"},
-								function(error, oauth_token, oauth_token_secret, results) {
+								function(error, oauth_token, oauth_token_secret/*, results*/) {
 			res.redirect("https://api.twitter.com/oauth/authenticate?oauth_token=" + oauth_token);
 			pendingOauths[uid].oauthToken = oauth_token;
 			pendingOauths[uid].oauthTokenSecret = oauth_token_secret;

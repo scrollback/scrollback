@@ -1,7 +1,9 @@
 /* global window, generate */
 
-var underscore = require('underscore');
-var core;
+var underscore = require('underscore'),
+	core,
+	events = [ 'init-dn', 'back-dn', 'away-dn', 'join-dn', 'part-dn', 'admit-dn', 'expel-dn', 'text-up'];
+
 var libsb = {
 		user: "",
 		rooms: [],
@@ -27,7 +29,7 @@ var libsb = {
 		say: say,
 		admit: admit,
 		expel: expel,
-		getSession: getSession,
+
 		logout: function(){
 			core.emit("logout");
 			core.emit("disconnect");
@@ -38,7 +40,6 @@ module.exports = function(c){
 
 	libsb.on = core.on;
 	libsb.emit = core.emit;
-
 	window.libsb = libsb;
 
     core.on('init-dn', recvInit);
@@ -101,10 +102,6 @@ function getThreads(query, callback){
 	core.emit('getThreads', query, callback);
 }
 
-function getSession(query, callback){
-	core.emit('getSession', query, callback);
-}
-
 function getUsers(query, callback){
 	core.emit('getUsers', query, callback);
 }
@@ -125,13 +122,17 @@ function part(roomId, callback){
 	core.emit('part-up', {to: roomId}, callback);
 }
 
-function say(roomId, text, thread, callback){
+function say(roomId, text, thread, callback) {
 	var obj =  {to: roomId, text: text, from: libsb.user.id};
 	if(/^\/me /.test(text)) {
 		obj.text = text.replace(/^\/me /,"");
 		obj.labels = {action: 1};
 	}
+<<<<<<< HEAD
 	if(thread) obj.threads = [{id: thread, score: 1}];
+=======
+	if(thread) obj.threads = [{id: thread}];
+>>>>>>> webby
 	core.emit('text-up', obj, callback);
 }
 

@@ -32,59 +32,31 @@ $width-metaxxxx: 30%;
 
 $bar-height: 3.5em;
 
-$settings: general, irc, twitter, thread, permissions, requests, spam, seo, customization, embed, profile, email, notification;
+$settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification;
 $modes: normal, search, conf, pref, home, noroom;
 $roles: guest, user, follower, owner;
 $embeds: toast, full;
 
 /* themes */
-@mixin theme($name, $base, $color, $meta, $border, $text, $icon, $focus) {
+@mixin theme($name, $base, $text, $icon, $focus) {
     .theme-#{$name} {
-        .room-item.current:after { border-right: .6em solid $meta; }
-
-        .meta-area {
-            background-color: $meta;
-            color: $text;
-
-            a, .thread-item { color: $text; }
-
-            .button {
-                &.secondary {
-                    background-color: lighten($meta, 5%);
-                    border: 1px solid lighten($meta, 15%);
-                    color: darken($text, 10%);
-
-                    &:hover, &:focus {
-                        background-color: lighten($meta, 3%);
-                        border-color: lighten($meta, 10%);
-                        color: darken($text, 5%);
-                    }
-
-                    &:active {
-                        background-color: lighten($meta, 7%);
-                        border-color: lighten($meta, 5%);
-                        color: darken($text, 15%);
-                    }
-                }
-            }
-        }
-
         .meta-tabs {
-            border-bottom-color: $border;
+            background-color: $base;
+            color: $text;
+            border-bottom-color: darken($base, 2%);
 
             .tab {
-                fill: fade-out($text, .3);
-                background-color: $meta;
-                border-left-color: $border;
+                fill: fade-out($icon, .15);
+                border-left-color: darken($base, 2%);
 
                 &:hover, &:focus, &:active {
-                    fill: $text;
-                    background-color: darken($meta, 5%);
+                    fill: $icon;
+                    background-color: darken($base, 5%);
                 }
 
                 &.current {
-                    fill: $text;
-                    background-color: darken($meta, 10%);
+                    fill: $icon;
+                    background-color: rgba(0,0,0,.15);
                 }
             }
 
@@ -93,46 +65,29 @@ $embeds: toast, full;
             }
         }
 
-        .pane-people {
-            .infinite-above, .infinite-below {
-                background-image:  linear-gradient(to right, $meta, $meta 15%, transparent 15%, transparent 85%, $meta 85%, $meta),
-                    linear-gradient(to bottom, transparent, transparent 25%, lighten($meta, 5%) 25%, lighten($meta, 5%) 65%, transparent 65%, transparent 75%, lighten($meta, 5%) 75%, lighten($meta, 5%) 85%, transparent 85%, transparent);
-            }
-        }
-
-        .pane-threads {
-            .infinite-above, .infinite-below {
-                background-image:  linear-gradient(to bottom, transparent, transparent 35%, lighten($meta, 5%) 35%, lighten($meta, 5%) 65%, transparent 65%, transparent),
-                    linear-gradient(to bottom, lighten($meta, 5%), lighten($meta, 5%));
-            }
-        }
-
-        .list-item {
-            border-bottom-color: $border;
-
-            &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active { color: $text; }
-        }
-
         .title-bar, .minimize-bar {
             background-color: $base;
-            color: $color;
+            color: $text;
+            box-shadow: inset 0 -1px 0 0 darken($base, 2%),
+                        -1px 0 0 darken($base, 2%),
+                        0 3px 2px -1px rgba(0,0,0,.05);
 
             .button {
                 &.secondary {
                     background-color: lighten($base, 5%);
-                    border: 1px solid lighten($base, 15%);
-                    color: darken($color, 10%);
+                    border: 1px solid darken($base, 2%);
+                    color: darken($text, 10%);
 
                     &:hover, &:focus {
                         background-color: lighten($base, 3%);
-                        border-color: lighten($base, 30%);
-                        color: darken($color, 5%);
+                        border-color: darken($base, 3%);
+                        color: darken($text, 5%);
                     }
 
                     &:active {
                         background-color: lighten($base, 7%);
-                        border-color: lighten($base, 20%);
-                        color: darken($color, 15%);
+                        border-color: darken($base, 5%);
+                        color: darken($text, 15%);
                     }
                 }
             }
@@ -148,7 +103,7 @@ $embeds: toast, full;
             }
         }
 
-        &.role-follower .follow-button, .rooms-button, .meta-button, .search-button, .embed-button {
+        &.role-follower .follow-button, .meta-tabs li.rooms-button, .meta-button, .search-button, .embed-button {
             fill: $icon;
 
             &:focus, &:hover, &:active { fill: $focus; }
@@ -157,18 +112,10 @@ $embeds: toast, full;
         .sb-icon { fill: $light-color; }
 
         .sb-logotype { fill: $light-color; }
-
-        &.embed {
-            .cta-area {
-                .cta-action {
-                    color: $accent-color;
-                }
-            }
-        }
     }
 }
 
-@include theme($name: dark, $base: $dark-color, $color: $light-color, $meta: lighten($dark-color, 5%), $text: $light-color, $border: $dark-color, $icon: darken($light-color, 30%), $focus: $light-color);
+@include theme($name: dark, $base: $dark-color, $text: $light-color, $icon: fade-out($light-color, .15), $focus: $light-color);
 
 /* widget styles */
 %scroll-elem {
@@ -613,6 +560,7 @@ body {
 .list-item {
 	@extend %ease;
 
+    position: relative;
 	display: block;
     font-size: 1.2em;
 	padding: .75em;
@@ -628,6 +576,19 @@ body {
 
     &.current { background-color: rgba(0,0,0,.05); }
 
+    &.error {
+        &:after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 2em;
+            display: block;
+            content: "";
+            background: transparent url(../../img/client/icons/error.svg) no-repeat center center;
+        }
+    }
+
     &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active {
         color: $dark-color;
         background-color: rgba(0,0,0,.1);
@@ -640,23 +601,20 @@ body {
 	}
 }
 
-@mixin chat-elem {
-	position: fixed;
+.main-area {
+    @extend %column;
+
+    position: fixed;
     left: 0;
     right: 0;
 
     @media #{$screenxxx} { left: $width-metaxxx; }
 
-	@media #{$screenxxxx} {
-		left: $width-roomxxxx + $width-metaxxxx;
+    @media #{$screenxxxx} {
+        left: $width-roomxxxx + $width-metaxxxx;
 
-		.embed & { left: $width-metaxxxx; }
-	}
-}
-
-.main-area {
-	@extend %column;
-	@include chat-elem;
+        .embed & { left: $width-metaxxxx; }
+    }
 }
 
 .meta-button, .rooms-button {
@@ -827,7 +785,11 @@ body {
     cursor: pointer;
     white-space: nowrap;
 
-    .cta-action { text-transform: uppercase; }
+    .cta-action {
+        text-transform: uppercase;
+
+        .theme-dark & { color: $accent-color; }
+    }
 }
 
 .user-area {
@@ -924,6 +886,45 @@ body {
         text-overflow: ellipsis;
         white-space: nowrap;
         padding: 0 1em;
+    }
+}
+
+.quick-notification-container {
+    position: absolute;
+    top: $bar-height;
+    left: 0;
+    right: 0;
+    z-index: 200;
+}
+
+.quick-notification-item {
+    @include slidedown;
+
+    padding: 1em;
+    border-bottom: 1px solid rgba(0,0,0,.15);
+
+    &:only-of-type, &:last-of-type { border-bottom: none; }
+
+    @media #{$screenxxxx} { padding: 1em 1.5em; }
+
+    &.info {
+        background-color: $info-color;
+        color: $light-color;
+    }
+
+    &.success {
+        background-color: $success-color;
+        color: $light-color;
+    }
+
+    &.warning {
+        background-color: $warning-color;
+        color: $light-color;
+    }
+
+    &.error {
+        background-color: $error-color;
+        color: $light-color;
     }
 }
 
@@ -1041,7 +1042,7 @@ body {
 		&.conv-#{$j}:before { background-color: $color; }
 	}
 
-	&.long {
+	&.chat-mark-long {
 		@extend %ease;
 
 		max-height: 12em;
@@ -1116,7 +1117,7 @@ body {
         color: fade-out($dark-color, .5);
     }
 
-    &:last-of-type, &.timestamp-displayed {
+    &:last-of-type, &.chat-mark-timestamp-shown {
 		.chat-timestamp { display: inline-block; }
 	}
 }
@@ -1149,7 +1150,7 @@ body {
 	position: absolute;
 	display: block;
 	background-color: darken($light-color, 1%);
-	background-image: url(../../img/client/icons/more.svg);
+	background-image: url(../../img/client/icons/chat-more.svg);
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: 2em 2em;
@@ -1166,8 +1167,9 @@ body {
 }
 
 .chat-input {
-	@include chat-elem;
-
+    position: absolute;
+    left: 0;
+    right: 0;
 	bottom: 0;
     padding: 0;
     min-height: $bar-height;
@@ -1320,45 +1322,10 @@ body {
 
 	@media #{$screenxx} { display: table-row; }
 
-	.settings-label, .settings-action {
-		display: block;
-		padding: .25em;
-
-		@media #{$screenxx} { display: table-cell; }
-
-		input, textarea, .button, .button-secondary {
-			margin: 0 0;
-			max-width: 100%;
-		}
-
-		input[type=text], textarea, .entry { width: 100% }
-
-		textarea { resize: vertical; }
-
-        input[type=checkbox], input[type=radio] {
-			position: relative;
-			top: .3em;
-			margin: .25em 0 1.25em 0;
-		}
-	}
-
-	.settings-label {
-		text-align: left;
-		padding-right: 1em;
-
-		@media #{$screenxx} {
-			text-align: right;
-			vertical-align: top;
-			padding: .5em 0;
-		}
-	}
-
-	.settings-action {
-		text-align: left;
-		vertical-align: middle;
-	}
-
-    .check-item, .radio-item { display: block; }
+    .check-item, .radio-item {
+        display: block;
+        padding: .5em 0;
+    }
 
     .embed-code {
         min-width: 27em;
@@ -1368,39 +1335,41 @@ body {
         font-family: $font-family-monospace;
         line-height: 1.2em;
     }
+
+    input, textarea, .button, .button-secondary, .multientry {
+        margin: 0 0;
+        max-width: 100%;
+    }
+
+    textarea { resize: vertical; }
+
+    input[type="checkbox"], input[type="radio"] {
+        float: left;
+        margin-right: .5em;
+    }
 }
 
-.room-area, .meta-area, .main-area, .chat-input {
-    @include transition(.3s, ease-out); /* animate css transforms */
+.settings-label, .settings-action {
+    display: block;
+    padding: .25em;
 
-    /* fix flicker in some browsers */
-    .view-meta &, .view-rooms & {
-        @include prefix(backface-visibility, hidden);
-        @include prefix(perspective, 1000);
+    @media #{$screenxx} { display: table-cell; }
+}
+
+.settings-label {
+    text-align: left;
+    padding-right: 1em;
+
+    @media #{$screenxx} {
+        text-align: right;
+        vertical-align: top;
+        padding: .5em 0;
     }
+}
 
-    /* use 3d transformations for GPU accelerated animations */
-    .view-meta & {
-		@include transform(translate3d($width-meta, 0, 0));
-
-		@media #{$screenx} { @include transform(translate3d($width-metax, 0, 0)); }
-
-		@media #{$screenxx} { @include transform(translate3d($width-metaxx, 0, 0)); }
-
-		@media #{$screenxxx} { @include transform(translate3d(0, 0, 0)); }
-    }
-
-    .view-rooms & {
-		@include transform(translate3d( ( $width-room + $width-meta ), 0, 0));
-
-		@media #{$screenx} { @include transform(translate3d( ( $width-roomxx + $width-metax ), 0, 0)); }
-
-		@media #{$screenxx} { @include transform(translate3d( ( $width-roomxx + $width-metaxx ), 0, 0)); }
-
-		@media #{$screenxxx} { @include transform(translate3d($width-roomxxx, 0, 0)); }
-
-		@media #{$screenxxxx} { @include transform(translate3d(0, 0, 0)); }
-    }
+.settings-action {
+    text-align: left;
+    vertical-align: middle;
 }
 
 .search-bar {
@@ -1477,16 +1446,6 @@ body {
 
 .infinite-items { width: 100%; }
 
-.loggedout-dialog, .login-dialog, .signup-dialog {
+.signedout-dialog, .signin-dialog, .signup-dialog {
     input, .button { width: 100%; }
-}
-
-.popover-body {
-    width: 15em;
-
-    .login-menu {
-        padding: .5em 1em;
-
-        .button { width: 100%; }
-    }
 }

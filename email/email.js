@@ -42,7 +42,7 @@ module.exports = function(coreObject) {
 			log("Err email params in user object"); 
 			return callback("ERR_EMAIL_PARAMS");
 			
-		}, "applevelValidation");
+		}, "appLevelValidation");
 	}
 	else {
 		log("email module is not enabled");

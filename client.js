@@ -1,6 +1,7 @@
 /* jslint browser: true */
 
 var core = Object.create(require("./lib/emitter.js"));
+
 window.validate = require('./lib/validate.js');
 window.generate = require('./lib/generate');
 
@@ -8,15 +9,15 @@ window.generate = require('./lib/generate');
 require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(core);
 require('./socket/socket-client')(core);
-require('./id-generator/id-generator-client.js');
 
-require('./public/s/js/array.contains.js');
-require('./public/s/js/jquery.setCursorEnd.js');
-require('./public/s/js/jquery.attrchange.js');
-require('./public/s/js/lace.js');
-require('./public/s/js/desktopnotify.js');
-require('./public/s/js/format.js');
-require('./public/s/js/swipe-events.js');
+require('./id-generator/id-generator-client.js')();
+require('./client-entityloader/client-entityloader.js')();
+
+require('./lib/jquery.velocity.min.js');
+require('./lib/jquery.setCursorEnd.js');
+require('./lib/jquery.attrchange.js');
+require('./lib/format.js');
+require('./lib/swipe-events.js');
 
 // client uis
 require('./email/email-client.js');
@@ -28,7 +29,10 @@ require('./embed/embed-client.js');
 require('./irc/irc-client.js');
 require('./anti-abuse/anti-abuse-client.js');
 require('./twitter/twitter-client.js');
+//require('./customization/customization-client.js');
+
 // components
+require('./ui/quicknotify.js');
 require('./ui/load-indicator.js');
 require('./ui/embed-helper.js');
 require('./ui/appcache.js');
@@ -54,7 +58,7 @@ require('./ui/room-list.js');
 require('./ui/search.js');
 require('./ui/follow-room.js');
 require('./ui/facebook.js');
-require('./ui/settings-area.js');
+require('./ui/conf-area.js');
 require('./ui/pref-area.js');
 require('./ui/user-area.js');
 require('./ui/noroom-area.js');

@@ -37,18 +37,20 @@ module.exports = function(core) {
 			var mentionMap = {};
 			if(!action.text) return callback(new Error("TEXT_MISSING"));
 
-			if(/^\//.test(action.text)){
-				if(!/^\/me/.test(action.text)){
+			if(/^\//.test(action.text)) {
+				if(!/^\/me/.test(action.text)) {
 					return callback(new Error("UNRECOGNIZED_SLASH_COMMNAD"));
 				}
 			}
-
+            
+            if(!action.labels) action.labels = {};
+            
 			if(action.mentions && action.mentions.length > 0 ) {
 				//checking for multiple mentions for the same user
-				action.mentions.forEach(function(i){
+				action.mentions.forEach(function(i) {
 					mentionMap[i] = true;
 				});
-				action.mentions = Object.keys(hashmap);
+				action.mentions = Object.keys(mentionMap);
 			}else{
 				action.mentions = [];
 			}
@@ -71,11 +73,11 @@ module.exports = function(core) {
 			callback();
 		},
 		edit: function(action, callback) {
-  			if(!action.ref) return callback(new Error("REF_NOT_SPECIFIED"));
-  			if(!action.text && !action.label) return callback(new Error("NO_OPTION_TO_EDIT"));
-  			if(action.label && typeof action.label!= "object") return callback(new Error("INVALID_EDIT_OPTION_LABEL"));
-  			if(action.text && typeof action.text!= "string") return callback(new Error("INVALID_EDIT_OPTION_TEXT"));
-  			callback();
+            if(!action.ref) return callback(new Error("REF_NOT_SPECIFIED"));
+            if(!action.text && !action.label) return callback(new Error("NO_OPTION_TO_EDIT"));
+            if(action.label && typeof action.label!= "object") return callback(new Error("INVALID_EDIT_OPTION_LABEL"));
+            if(action.text && typeof action.text!= "string") return callback(new Error("INVALID_EDIT_OPTION_TEXT"));
+            callback();
 		},
 		user: function(action, callback) {
 			if(!action.user && !action.user.id) return callback(new Error("INVALID_USER"));
@@ -86,7 +88,7 @@ module.exports = function(core) {
 					return callback(new Error("INVALID_USER"));
 				} else {
 					action.user.identities.forEach(function(identity){
-						if(typeof identity !== "string") return callback(new Error(INVALID_USER));
+						if(typeof identity !== "string") return callback(new Error("INVALID_USER"));
 					});
 				}
 			}
@@ -98,7 +100,7 @@ module.exports = function(core) {
 			if(!action.room && !action.room.id) return callback(new Error("INVALID_ROOM"));
 			action.room.id = action.room.id.toLowerCase();
 			if(!action.room.params) return callback(new Error("ERR_NO_PARAMS"));
-			if(!action.room.params.http) return callback(new Error("ERR_NO_PARAMS"));
+//			if(!action.room.params.http) return callback(new Error("ERR_NO_PARAMS"));
 			callback();
 		}
 	};
@@ -165,7 +167,7 @@ function basicValidation(action, callback) {
 		if (action.suggestedNick) action.suggestedNick = action.suggestedNick.toLowerCase();
 		action.to = "me";
 	}else{
-		if(!action.to){
+		if(typeof action.to != "string" && action.to){
 			return callback(new Error("INVALID_ROOM"));	
 		}
 		else if(!validateRoom(action.to)) { 

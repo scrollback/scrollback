@@ -29,20 +29,20 @@ libsb.on('navigate', function(state, next) {
 	}else{
 		$(".pane-info").removeClass("current");
 	}
-	if(!state.old || state.room != state.old.room) {
+	if(!state.old || state.roomName != state.old.roomName) {
 		function loadRooms() {
-			libsb.getRooms({ ref: state.room }, function(err, room) {
+			libsb.getRooms({ ref: state.roomName }, function(err, room) {
 				if(err) throw err;
 				if(room.results && room.results.length)  infoArea.render(room.results[0]);
 			});
 		}
 
 		if(libsb.isInited) {
-                        if(state.tab == 'info')	 infoArea.render({id: state.room, description: "Loading room description."});
+                        if(state.tab == 'info')	 infoArea.render({id: state.roomName, description: "Loading room description."});
 			loadRooms();
 		}else{
 			libsb.on("inited", function(q, n) {
-                                if(state.tab == 'info')	 infoArea.render({id: state.room, description: "Loading room description."});
+                                if(state.tab == 'info')	 infoArea.render({id: state.roomName, description: "Loading room description."});
 				loadRooms();
 				n();
 			});

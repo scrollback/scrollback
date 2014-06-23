@@ -1,7 +1,9 @@
 /* jshint browser: true */
-/* global $, libsb, lace, currentState */
+/* global $, libsb, currentState */
 
 $(function () {
+	var lace = require("../lib/lace.js");
+
 	$(document).on("click", ".popover-body a", function () {
 		lace.popover.hide();
 	});
@@ -41,7 +43,7 @@ $(function () {
 		});
 
 		lace.modal.show({
-			body: $("#loggedout-dialog").html(),
+			body: $("#signedout-dialog").html(),
 			dismiss: false
 		});
 
@@ -53,8 +55,8 @@ $(function () {
 	});
 
 	libsb.on('navigate', function (state, next) {
-		if (state && (!state.old || state.room != state.old.room)) {
-			var room = state.room;
+		if (state && (!state.old || state.roomName != state.old.roomName)) {
+			var room = state.roomName;
 			$("#room-title").text(room);
 		}
 
@@ -67,7 +69,7 @@ $(function () {
 				var i, l;
 
 				for(i=0,l=data.results.length;i<l;i++) {
-					if(data.results[i].id == currentState.room) {
+					if(data.results[i].id == currentState.roomName) {
 						if (data.results[i].role === "owner") {
 							$("body").addClass("role-owner");
 							return;
@@ -100,7 +102,7 @@ $(function () {
 	});
 
 	libsb.on('navigate', function(state, next) {
-            if(state.mode == 'normal' && state.room){
+            if(state.mode == 'normal' && state.roomName){
                 setOwnerClass();
             }
             next();
