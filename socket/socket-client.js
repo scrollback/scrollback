@@ -51,7 +51,7 @@ libsb.on("inited", function(undef, next) {
         queue.splice(0,1)[0]();
     }
     next();
-});
+}, 500);
 function safeSend(data){
     // safeSends sends the data over the socket only after the socket has
     // been initialised

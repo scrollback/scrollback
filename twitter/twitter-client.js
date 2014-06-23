@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb,currentState */
+/* global $, libsb */
 
 var lace = require("../lib/lace.js"),
 	formField = require("../lib/formField.js"),
@@ -56,6 +56,7 @@ libsb.on("config-show", function(tabs, next) {
 	});
 
     updateFields();
+
 	$div.append(
         $twitterTags,
         $twitterAccount,
@@ -69,7 +70,7 @@ libsb.on("config-show", function(tabs, next) {
 	};
 
 	next();
-});
+}, 500);
 
 libsb.on("config-save", function(room, next){
     var tags = lace.multientry.items($("#twitter-hashtags")).join(" ");
@@ -84,14 +85,4 @@ libsb.on("config-save", function(room, next){
     }
 
 	next();
-});
-
-libsb.on('text-menu', function(menu, next){
-	var chatMessage = $(menu.target).find('.chat-message').text();
-	var tweetUrl = encodeURI("https://twitter.com/home/?status=" + chatMessage  + " via https://scrollback.io/" + currentState.roomName);
-	
-	menu['Tweet this Message'] = function(){
-		window.open(tweetUrl, '_blank');
-	};
-	next();
-});
+}, 500);
