@@ -20,14 +20,14 @@ libsb.on('pref-show', function (tabs, next) {
     $div.append(formField("Mention notifications via email", "toggle", "mention", user.params.email.notifications));
 
     switch (user.params.email.frequency) {
-    case 'daily':
-        $div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily", true], ["email-freq-never", "Never"]]));
-        break;
-    case 'never':
-        $div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily"], ["email-freq-never", "Never", true]]));
-        break;
-    default:
-        $div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily", true], ["email-freq-never", "Never"]]));
+		case 'daily':
+			$div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily", true], ["email-freq-never", "Never"]]));
+			break;
+		case 'never':
+			$div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily"], ["email-freq-never", "Never", true]]));
+			break;
+		default:
+			$div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily", true], ["email-freq-never", "Never"]]));
     }
 
     tabs.email = {

@@ -21,7 +21,7 @@ load();
 
 module.exports = function(c){
 	core = c;
-	if(localStorage.user){
+	if(localStorage.libsb){
 		var fakeInit = {
 			user: cache.user,
 			rooms: cache.rooms,

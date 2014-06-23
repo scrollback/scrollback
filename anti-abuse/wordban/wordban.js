@@ -22,8 +22,8 @@ module.exports = function(core) {
 		text = message.text;
 		text += " " + message.to;
 
-		if(room.params && room.params['anti-abuse']) {
-			if (room.params['anti-abuse'].wordblock) {
+		if(room.params && room.params.antiAbuse) {
+			if (room.params.antiAbuse.wordblock) {
 				if(rejectable(text)){
 					if(!message.labels) message.labels = {};
 					message.labels.abusive = 1;
@@ -32,8 +32,8 @@ module.exports = function(core) {
 				}
 			}
 
-			if (message.room.params['anti-abuse'].customWords) {
-				customWords = message.room.params['anti-abuse'].customWords;
+			if (message.room.params.antiAbuse.customWords) {
+				customWords = message.room.params.antiAbuse.customWords;
 
 				for (index=0, l = customWords.length; index<l; ++index) {
 					if((text.toLowerCase()).indexOf(customWords[index])!= -1) {
