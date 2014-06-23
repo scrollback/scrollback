@@ -22,6 +22,7 @@ module.exports = function(grunt) {
 
 	// Project configuration.
 	grunt.initConfig({
+		pkg: grunt.file.readJSON("package.json"),
 		browserify: {
 			dist: {
 				files: {
@@ -39,17 +40,16 @@ module.exports = function(grunt) {
 				report: "min"
 			},
 			core: {
-				src: ["public/sdk/polyfill.js", "public/sdk/addEvent.js",
-				"public/sdk/emitter.js", "public/sdk/request.js", "public/sdk/cache.js",
-				"public/sdk/client.js", "public/sdk/validate.js"],
-				dest: "public/core.uw.min.js"
+				src: ["public/libsb.bundle.js"],
+				dest: "public/libsb.bundle.min.js"
+			},
+			client: {
+				src: ["public/client.bundle.js"],
+				dest: "public/client.bundle.min.js"
 			},
 			embed: {
-				src: ["public/sdk/addStyle.js", "public/sdk/css.js", "public/sdk/dom.js",
-				"public/sdk/domReady.js", "public/sdk/getByClass.js", "public/sdk/jsonml2.js",
-				"public/sdk/embed.js", "public/sdk/render.js",
-				"public/sdk/browserNotify.js", "public/sdk/dialog.js"],
-				dest: "public/embed.uw.min.js"
+				src: ["public/embed.js"],
+				dest: "public/embed.min.js"
 			}
 		},
 		concat: {
@@ -69,22 +69,17 @@ module.exports = function(grunt) {
 			options: {
 				wrapper: ["(function() {", "}())"]
 			},
-			client: {
-				src: ["public/client.min.js"],
-				dest: "public/client.min.js"
-			},
 			core: {
-				src: ["public/core.uw.min.js"],
-				dest: "public/core.min.js"
-			}
-		},
-		watch: {
-			scripts: {
-				files: ["public/sdk/sockjs.js", "public/sdk/polyfill.js", "public/sdk/addEvent.js",
-					"public/sdk/emitter.js", "public/sdk/request.js", "public/sdk/addStyle.js",
-					"public/sdk/css.js", "public/sdk/dom.js", "public/sdk/domReady.js", "public/sdk/getByClass.js",
-					"public/sdk/jsonml2.js", "public/sdk/cache.js", "public/sdk/embed.js", "public/sdk/render.js", "public/sdk/validate.js"],
-				tasks: ["uglify", "concat", "wrap", "browserify"],
+				src: ["public/libsb.bundle.min.js"],
+				dest: "public/libsb.bundle.min.js"
+			},
+			client: {
+				src: ["public/client.bundle.min.js"],
+				dest: "public/client.bundle.min.js"
+			},
+			embed: {
+				src: ["public/embed.min.js"],
+				dest: "public/embed.min.js"
 			}
 		},
 		sass: {
@@ -100,18 +95,6 @@ module.exports = function(grunt) {
 					dest: "public/s/styles/gen",
 					ext: ".css"
 				}]
-			}
-		},
-		less: {
-			development: {
-				options: {
-					compress: true,
-					ieCompat: true
-				},
-				files: {
-					"public/style.css": "public/style.less",
-					"public/dummy.css": "public/dummy.less"
-				}
 			}
 		},
 		autoprefixer: {
@@ -139,15 +122,26 @@ module.exports = function(grunt) {
 				dest: "public/manifest.appcache"
 			}
 		},
+		watch: {
+			options: {
+				livereload: true,
+			},
+			scripts: {
+				files: ["*/*-client.js", "lib/*.js", "ui/*.js"],
+				tasks: ["browserify", "uglify", "manifest"],
+			},
+			styles: {
+				files: ["public/s/styles/scss/*.scss"],
+				tasks: ["sass", "autoprefixer", "manifest"],
+			}
+		}
 	});
 
-	// Load the plugin that provides the "uglify" task.
 	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadNpmTasks("grunt-browserify");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-wrap");
 	grunt.loadNpmTasks("grunt-contrib-concat");
-	grunt.loadNpmTasks("grunt-contrib-less");
 	grunt.loadNpmTasks("grunt-contrib-sass");
 	grunt.loadNpmTasks("grunt-autoprefixer");
 	grunt.loadNpmTasks("grunt-manifest");
@@ -157,5 +151,5 @@ module.exports = function(grunt) {
 		grunt.log.writeln(target + ": " + filepath + " has " + action);
 	});
 
-	grunt.registerTask("default", ["browserify", "uglify", "concat", "wrap", "less", "sass", "autoprefixer", "manifest"]);
+	grunt.registerTask("default", ["browserify", "uglify", "concat", "wrap", "sass", "autoprefixer", "manifest"]);
 };
