@@ -45,7 +45,7 @@ libsb.on('config-show', function(tabs, next){
         notify: notify
     };
     next();
-}, "default");
+}, 500);
 
 libsb.on('config-save', function(room, next){
     room.params.irc = {
