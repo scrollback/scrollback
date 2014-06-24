@@ -78,22 +78,18 @@ module.exports = function (types) {
 			});
 		},
 		put: function(action, cb) {
-			var type = action.type;
-			
-			var data = action[type];
-
-			var createdOn;
+			var i, type = action.type, data = action[type], createTime;
 
 			if(action.old) {
-				createdOn = action.old.createdOn;
+				createTime = action.old.createTime;
 			}else {
-				createdOn = new Date().getTime();
+				createTime = new Date().getTime();
 			}
 
 			var newRoom = {
 				id: data.id,
 				description: data.description,
-				createdOn: createdOn,
+				createTime: createTime,
 				type: data.type,
 				picture: data.picture,
 				identities: [],
