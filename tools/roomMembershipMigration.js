@@ -1,8 +1,9 @@
+var crypto = require('crypto');
 var config = require("../config.js");
 var objectlevel = require("objectlevel");
 var log = require("../lib/logger.js");
+
 var url = require("url");
-// var leveldb = new objectlevel(__dirname+"/"+config.leveldb.path);
 var db = require('mysql').createConnection(config.mysql);
 var accountConnection = require('mysql').createConnection(config.mysql);
 var leveldb, types;
@@ -84,10 +85,11 @@ function migrateRooms(cb) {
                     (function() {
                         var twitter = {
                             username: newRoom.params.twitter.id,
-                            tags: newRoom.params.twitter.tags
+                            tags: newRoom.params.twitter.tags,
                             token: newRoom.params.twitter.token,
                             tokenSecret: newRoom.params.twitter.tokenSecret,
-                            profile: { screen_name: newRoom.params.twitter.profile.username, user_id: newRoom.params.twitter.profile.id}
+                            profile: {
+                                screen_name: newRoom.params.twitter.profile.username, user_id: newRoom.params.twitter.profile.id}
                         };
                         newRoom.params.twitter = twitter;
                     })();
