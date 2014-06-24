@@ -59,9 +59,8 @@ function processReply(data){
 		log("data=-:" + data + ":-");
 		data = JSON.parse(data);
 		log("Data returned by scrollback.jar = "+data.threadId, pendingCallbacks[data.id].message.text);
-		var index = data.threadId.indexOf(':');
-		var id = data.threadId.substring(0, index);
-		var title = data.threadId.substring(index + 1);
+		var id = data.threadId;
+		var title = data.title;
 		if (data.bucketStatus === 'end') {
 			redis.get("threader:last:" + id, function(err, d) {
 				d = JSON.parse(d);

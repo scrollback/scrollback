@@ -79,7 +79,7 @@ module.exports = function (coreObj) {
                     return callback();
                 }
 			}  
-		} else if(!client.connected() && room.room.params.irc && room.room.params.irc.server && room.room.params.irc.channel) {
+		} else if(!client.connected() && room.params.irc && room.params.irc.server && room.params.irc.channel) {
 			done(new Error("ERR_IRC_NOT_CONNECTED"));
 		} else return callback();
 	}, "gateway");

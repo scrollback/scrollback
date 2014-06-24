@@ -36,14 +36,9 @@ $("#create-room-button").click(function(){
             id: currentState.roomName,
             description: '',
             params: {
-                irc: {},
-                http: {
-                    seo: true
-                },
-                antiAbuse: {
-                    offensive: true
-                }
-            }
+                
+            },
+            guides: {}
         }
     };
     libsb.emit('room-up', roomObj,function(){
