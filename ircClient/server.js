@@ -5,7 +5,7 @@ var events = require('events');
 var core = new events.EventEmitter();
 var ObjectReader = require('../lib/ObjectReader.js');
 var or = new ObjectReader(core);
-var dataQueue = require("./queue.js");
+//var dataQueue = require("./queue.js");
 var port = config.port;
 var client;
 var isConnected = false;

@@ -34,7 +34,7 @@ function migrateRooms(cb) {
 				description: room.description,
 				createTime: room.createdOn,
 				type: room.type,
-				picture: room.picture,
+				picture: "",
 				timezone:0,
 				identities: [],
                 guides: {
@@ -67,6 +67,7 @@ function migrateRooms(cb) {
             }
 
 			if (newRoom.type == "user") {
+                newRoom.picture = generatePick(newRoom.identities[0]);
 				newRoom.params.email = {
 					frequency : "daily",
 					notifications : true
@@ -157,3 +158,6 @@ function migrateMembers(cb){
 		migrateMembers(closeConnection);
 	});
 })();
+function generatePick(id) {
+	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=monsterid';
+}
