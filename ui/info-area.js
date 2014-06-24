@@ -14,13 +14,13 @@ $(function() {
 			libsb.enter(window.location.pathname.split("/")[1]);
 		}
 		n();
-	});
+	}, 600);
 });
 
 libsb.on('room-dn', function(action, next){
 	infoArea.render(action.room);
 	next();
-});
+}, 600);
 
 
 libsb.on('navigate', function(state, next) {
@@ -49,4 +49,4 @@ libsb.on('navigate', function(state, next) {
 		}
 	}
 	next();
-});
+}, 600);

@@ -33,13 +33,13 @@ $(function() {
     });
 
     libsb.on("navigate", function(state, next){
-        if(state.roomName !== "pending" && state.room === null){ return next();}
+        if(state.roomName && state.room === null){ return next();}
         
         if(state.mode === "normal" && state.roomName !== state.old.roomName){
             if (libsb.isInited) {
                 getFollow();
             } else {
-                libsb.on("inited", getFollow);
+                libsb.on("inited", getFollow, 100);
             }
         }
 
@@ -50,19 +50,19 @@ $(function() {
         if (libsb.isInited) {
             getFollow();
         } else {
-            libsb.on("inited", getFollow);
+            libsb.on("inited", getFollow, 100);
         }
 
         next();
-    });
+    }, 100);
 
     libsb.on("back-dn", function(state, next){
         if (libsb.isInited) {
             getFollow();
         } else {
-            libsb.on("inited", getFollow);
+            libsb.on("inited", getFollow, 100);
         }
 
         next();
-    });
+    }, 100);
 });

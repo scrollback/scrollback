@@ -58,7 +58,7 @@ function getUsers() {
 
             currentConfig = tabs;
 
-            var data = renderSettings(tabs);
+            var data = renderSettings(tabs, user);
 
             $('.meta-pref').empty().append(data[0]);
             $('.pref-area').empty().append(data[1]);
@@ -81,10 +81,10 @@ libsb.on('navigate', function (state, next) {
                 libsb.on('inited', function (a, next) {
                     getUsers();
                     next();
-                });
+                }, 500);
             }
         }
     }
 
     next();
-});
+}, 500);

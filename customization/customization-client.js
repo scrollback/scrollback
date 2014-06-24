@@ -23,7 +23,7 @@ libsb.on("config-show", function(tabs, next) {
 	};
 
 	next();
-});
+}, 500);
 
 libsb.on("config-save", function(room, next){
 	if (!room.params.customization) {
@@ -33,4 +33,4 @@ libsb.on("config-save", function(room, next){
 	room.params.customization.css = $("#custom-css").val().replace("<", "\\3c").replace(">", "\\3e");
 
 	next();
-});
+}, 500);

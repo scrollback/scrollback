@@ -1,5 +1,3 @@
-var url = require("url");
-var log = require("../../lib/logger.js");
 var generate = require("../../lib/generate.js");
 var validateRoom = require('../../lib/validate.js');
 module.exports = function(core) {
@@ -50,7 +48,7 @@ module.exports = function(core) {
 				action.mentions.forEach(function(i) {
 					mentionMap[i] = true;
 				});
-				action.mentions = Object.keys(hashmap);
+				action.mentions = Object.keys(mentionMap);
 			}else{
 				action.mentions = [];
 			}
@@ -88,7 +86,7 @@ module.exports = function(core) {
 					return callback(new Error("INVALID_USER"));
 				} else {
 					action.user.identities.forEach(function(identity){
-						if(typeof identity !== "string") return callback(new Error(INVALID_USER));
+						if(typeof identity !== "string") return callback(new Error("INVALID_USER"));
 					});
 				}
 			}

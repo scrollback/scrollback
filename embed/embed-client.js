@@ -2,7 +2,7 @@
 /* global $, libsb */
 
 libsb.on("config-show", function (conf, next) {
-    var code = '<script>window.scrollback = {room:"' + window.currentState.room + '",embed:"toast",theme:"dark",minimize:true};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol == "https:" ? "https:" : "http:") + "//' + window.location.host + '/embed.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>',
+    var code = '<script>window.scrollback = {room:"' + window.currentState.roomName + '",embed:"toast",theme:"dark",minimize:true};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/embed.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>',
         $textarea = $("<textarea>").addClass("embed-code").attr("readonly", true).text(code),
         $div = $("<div>").append($("<div>").addClass("settings-item").append(
             $("<p>").text("Place the following code just before the closing </body> tag "),
@@ -14,10 +14,10 @@ libsb.on("config-show", function (conf, next) {
     });
 
     conf.embed = {
-        text: "Embed code",
+        text: "Embed",
         html: $div,
         prio: 400
     };
 
     next();
-});
+}, 500);

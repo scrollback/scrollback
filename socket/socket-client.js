@@ -6,8 +6,8 @@ var generate = require('../lib/generate.js'),
 
 module.exports = function(c){
 	core = c;
-	core.on('connection-requested', connect);
-	core.on('disconnect', disconnect);
+	core.on('connection-requested', connect, 1000);
+	core.on('disconnect', disconnect, 1000);
 
 	core.on('init-up', sendInit, 10);
 	core.on('text-up', sendText, 10);
@@ -25,22 +25,22 @@ module.exports = function(c){
     core.on('getTexts', function(query, callback){
 		query.type="getTexts";
 		sendQuery(query, callback);
-	});
+	}, 10);
 
     core.on('getThreads',  function(query, callback){
 		query.type="getThreads";
 		sendQuery(query, callback);
-	});
+	}, 10);
 
     core.on('getUsers',  function(query, callback){
 		query.type="getUsers";
 		sendQuery(query, callback);
-	});
+	}, 10);
 
     core.on('getRooms',  function(query, callback){
 		query.type="getRooms";
 		sendQuery(query, callback);
-	});
+	}, 10);
 };
 
 var client;
@@ -51,7 +51,7 @@ libsb.on("inited", function(undef, next) {
         queue.splice(0,1)[0]();
     }
     next();
-});
+}, 500);
 function safeSend(data){
     // safeSends sends the data over the socket only after the socket has
     // been initialised
@@ -81,6 +81,7 @@ function disconnect(){
 }
 
 function disconnected(){
+	libsb.isInited = false;
 	core.emit('disconnected');
 }
 
@@ -141,7 +142,7 @@ function returnPending(action, next) {
 }
 function makeAction(action, props) {
     var i;
-    for(i in action){ delete action[i]; }
+    for(i in action){ delete action[i]; }//doing something weird and stupid to maintain the reference of the object. should change this soon.
     for(i in props){ if(props.hasOwnProperty(i))  action[i] = props[i]; }
 
 	action.from = libsb.user.id;
@@ -177,8 +178,11 @@ function sendAway(away, next) {
 }
 
 function sendText(text, next){
-	var action = makeAction({to: text.to, type: 'text', text: text.text, from: text.from, id: text.id, labels: text.labels || {}, mentions: text.mentions || []});
+
+	var action = makeAction(text, {to: text.to, type: 'text', text: text.text, from: text.from, threads: text.threads, id: text.id, labels: text.labels || {}, mentions: text.mentions || []});
+
 	safeSend(JSON.stringify(action));
+    console.log("sending text", action);
     pendingActions[action.id] = returnPending(action, next);
 }
 

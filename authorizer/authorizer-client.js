@@ -45,7 +45,7 @@ libsb.on('config-show', function(tabs, next){
 		prio: 700
 	};
 	next();
-});
+}, 500);
 
 libsb.on('config-save', function(room, next){
 	var mapRoles = {
@@ -60,4 +60,4 @@ libsb.on('config-save', function(room, next){
 		writeLevel: writeLevel
 	};
 	next();
-});
+}, 500);

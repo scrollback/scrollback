@@ -66,7 +66,7 @@ $(function () {
 		});
 
 		lace.modal.show({
-			body: $("#loggedout-dialog").html(),
+			body: $("#signedout-dialog").html(),
 			dismiss: false
 		});
 
@@ -82,9 +82,8 @@ $(function () {
 			var room = state.roomName;
 			$("#room-title").text(room);
 		}
-
 		next();
-	});
+	}, 100);
 
 	function setOwnerClass() {
 		function check() {
@@ -107,45 +106,33 @@ $(function () {
 
 		if(libsb.isInited) {check();}
 		else {
-			libsb.on('inited', function(d, next){
+			libsb.on('inited', function(d, next) {
 				check();
 				next();
-			});
+            }, 100);
 		}
 	}
 
 	libsb.on('init-dn', function(init, next){
 		setOwnerClass();
 		next();
-	});
+	}, 100);
 
 	libsb.on('back-dn', function(init, next){
 		setOwnerClass();
 		next();
-	});
+	}, 100);
 
 	libsb.on('navigate', function(state, next) {
-            if(state.mode == 'normal' && state.roomName){
+            if(state.mode == 'normal' && state.roomName) {
                 setOwnerClass();
             }
             next();
-	});
-
-	libsb.on('back-dn', function (init, next) {
-		setOwnerClass();
-		next();
-	});
-
-	libsb.on('navigate', function (state, next) {
-		if (state.mode === 'normal') {
-			setOwnerClass();
-		}
-		next();
-	});
+	}, 100);
 
 	libsb.on("init-dn", function (init, next) {
 		if (init.auth && !init.user.id) return next();
-
+		
 		if (/^guest-/.test(init.user.id)) {
 			$("body").removeClass("role-user").addClass("role-guest");
 		} else {

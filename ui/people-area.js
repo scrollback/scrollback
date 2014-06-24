@@ -223,7 +223,7 @@ $(function() {
 		}
         if(state.roomName) roomName = state.roomName; 
 		next();
-	});
+	}, 600);
 
 	peopleArea.setBottom = function(bottom) {
 		var atBottom = ($people.scrollTop() + $people.height() == $people[0].scrollHeight);

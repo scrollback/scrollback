@@ -30,4 +30,4 @@ libsb.on('navigate', function(state, next) {
 	}
 	
     next();
-});
+}, 500);

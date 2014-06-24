@@ -16,6 +16,7 @@ $(".conf-save").on("click", function () {
     var self = $(this);
     if (currentState.mode == 'conf') {
         self.addClass("working");
+        self.attr("disabled", true);
         libsb.emit('config-save', {
             id: window.currentState.roomName,
             description: '',
@@ -29,13 +30,15 @@ $(".conf-save").on("click", function () {
 
             libsb.emit('room-up', roomObj, function (err, room) {
                 self.removeClass("working");
+                self.attr("disabled", false);
+
                 if(err) {
                     // handle the error
-                }else {
+                } else {
                     for(var i in room.room.params) {
                         if(!room.room.params.hasOwnProperty(i)) continue;
                         if(room.room.params[i].error) {
-                            console.log("Error happed when saving the room");
+                            console.log("Error happed when saving the room", room.room);
                             return;
                         }
                     }
@@ -108,10 +111,10 @@ libsb.on('navigate', function (state, next) {
                 libsb.on('inited', function (e, n) {
                     showConfig(state.room);
                     if (n) n();
-                });
+                }, 500);
             }
         }
     }
 
     next();
-});
+}, 500);

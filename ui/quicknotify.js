@@ -10,7 +10,9 @@ var quicknotify = {
      * @param {{ type: String, text: String, id: String, timeout: Number }} options
      */
     show: function(options) {
-        var notify = this;
+        var notify = this,
+            $quicknotification,
+            $container = $(".quick-notification-container");
 
         if (!options.type) {
             options.type = "info";
@@ -20,12 +22,11 @@ var quicknotify = {
             options.id = "quick-notification-" + new Date().getTime();
         }
 
-        var $quicknotification = $("#" + options.id),
-            $container = $(".quick-notification-container");
+        $quicknotification = $("#" + options.id);
 
         if (!$container.length) {
             $container = $("<div>").addClass("quick-notification-container");
-            $container.appendTo("body");
+            $container.appendTo(".main-area");
         }
 
         if ($quicknotification.length && $quicknotification.hasClass("quick-notification-item")) {
@@ -67,7 +68,7 @@ var quicknotify = {
             return;
         }
 
-        lace.animate.transition("fadeout", $element, function() {
+        lace.animate.fadeout($element, function() {
             $(this).remove();
 
             if (!$container.children().length) {
@@ -77,4 +78,4 @@ var quicknotify = {
     }
 };
 
-window.quicknotify = quicknotify;
+module.exports = quicknotify;

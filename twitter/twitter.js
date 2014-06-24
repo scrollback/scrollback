@@ -15,7 +15,9 @@ var core;
 var expireTime = 15 * 60;//expireTime for twitter API key...
 var timeout  = 1000 * 60 ;//search Interval
 var maxTweets = 1;//max tweets to search in timeout inteval
-var pendingOauths = {};//TODO delete pending oauth after some time
+var currentConnections = {};
+var pendingOauths = {};
+var oauthTimeout = 15 * 60 * 60;//15 min
 module.exports = function(coreObj) {
 
 	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
@@ -166,6 +168,7 @@ function formatString(s) {
 }
 
 function init() {
+	setInterval(deletePendingOAuths, oauthTimeout);//expire Oauth Object
 	setInterval(initTwitterSearch, timeout);
 }
 
@@ -285,7 +288,7 @@ function getRequest(req, res, next) {
 			host + "/r/twitter/oauth/callback/" + uid,
 			'HMAC-SHA1'
 		);
-		pendingOauths[uid] = {oauth: oauth};
+		pendingOauths[uid] = {oauth: oauth, time: new Date().getTime()};
 		oauth.getOAuthRequestToken({"scope": "https://api.twitter.com/oauth/request_token"},
 								function(error, oauth_token, oauth_token_secret/*, results*/) {
 			res.redirect("https://api.twitter.com/oauth/authenticate?oauth_token=" + oauth_token);
@@ -328,5 +331,19 @@ function getRequest(req, res, next) {
 	}
 
 }
+
+function deletePendingOAuths(args) {
+	for (var id in pendingOauths) {
+		if (pendingOauths.hasOwnProperty(id)) {
+			var t = new Date().getTime();
+			var pt = pendingOauths[id].time;
+			if (t - pt >= oauthTimeout) {
+				log("deleting Pending oauth");
+				delete pendingOauths[id];
+			}
+		}
+	}
+}
+
 
 /**** get request handler *******/

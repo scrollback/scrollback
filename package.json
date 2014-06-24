@@ -1,8 +1,17 @@
 {
   "name": "Scrollback",
   "version": "0.1.0",
+  "description": "Where communities hangout.",
   "author": "Askabt (info@askabt.in)",
-  "description": "A host for embeddable real-time discussion groups.",
+  "homepage": "http://scrollback.io",
+  "keywords": [
+    "scrollback"
+  ],
+  "repository": {
+    "type": "git",
+    "path": "git://github.com/scrollback/scrollback.git"
+  },
+  "bugs": "https://github.com/scrollback/scrollback/issues",
   "contributors": [
     {
       "name": "Aravind R S",
@@ -19,54 +28,57 @@
     {
       "name": "Amal Antony",
       "email": "amal@scrollback.io"
+    },
+    {
+      "name": "Satyajit Sahoo",
+      "email": "satya@scrollback.io"
     }
   ],
-  "main": "./index.js",
-  "repository": {
-    "type": "git",
-    "path": "git://github.com/scrollback/scrollback.git"
-  },
   "private": true,
-  "homepage": "http://scrollback.com",
+  "license": "AGPL",
+  "main": "./index.js",
+  "scripts": {
+    "start": "node index"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
   "dependencies": {
     "irc": "git://github.com/scrollback/node-irc.git#6cdabf9a66a15cbb7ec57e0681c924bff3861239",
     "express": "3.0.x",
     "sockjs": "0.3.x",
-    "sockjs-client": "x",
+    "sockjs-client": "latest",
     "mysql": "2.x",
     "jade": "0.x",
     "request": "x.x",
-    "limiter": "x",
-    "cookie": "x",
-    "redis": "x",
+    "limiter": "latest",
+    "cookie": "latest",
+    "redis": "latest",
     "connect-redis": "1.4.6",
-    "generic-pool": "X",
-    "nodemailer": "x",
-    "newrelic": "x",
+    "generic-pool": "latest",
+    "nodemailer": "latest",
+    "newrelic": "latest",
     "twit": "~1.1.12",
-    "objectlevel": "x",
+    "objectlevel": "latest",
     "htmlencode": "0.0.3",
-    "underscore": "x",
+    "underscore": "latest",
     "browserify": "x",
-    "oauth": "~0.9.12"
-  },
-  "devDependencies": {
-    "mocha": "x",
-    "grunt-browserify": "x",
-    "grunt": "~0.4.1",
-    "grunt-contrib-uglify": "~0.2.4",
-    "grunt-wrap": "x",
-    "grunt-contrib-concat": "x",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-less": "x",
-    "grunt-contrib-sass": "x",
-    "grunt-autoprefixer": "x",
-    "browserify": "x",
-    "grunt-manifest": "x"
+    "oauth": "~0.9.12",
+    "pg": "~3.3.0"
   },
   "optionalDependencies": {},
-  "license": "AGPL",
-  "engines": {
-    "node": ">=0.8"
+  "devDependencies": {
+    "mocha": "latest",
+    "browserify": "latest",
+    "grunt": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-wrap": "latest",
+    "grunt-contrib-concat": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-contrib-less": "latest",
+    "grunt-contrib-sass": "latest",
+    "grunt-autoprefixer": "latest",
+    "grunt-manifest": "latest",
+    "grunt-browserify": "latest"
   }
 }

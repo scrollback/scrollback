@@ -99,4 +99,4 @@ libsb.on('text-dn', function(text, next) {
 	}
 
 	next();
-},"100");
+}, 100);

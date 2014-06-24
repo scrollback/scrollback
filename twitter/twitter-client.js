@@ -1,77 +1,66 @@
 /* jshint browser: true */
-/* global $, libsb,currentState */
+/* global $, libsb */
 
 var lace = require("../lib/lace.js"),
-	formField = require('../lib/formField.js'),
+	formField = require("../lib/formField.js"),
 	twitterUsername;
 
 // Twitter integration
-libsb.on('config-show', function(tabs, next) {
-	var $div = $('<div>'),
-		results = tabs.room;
-	if (!results.params.twitter) results.params.twitter = {};
+libsb.on("config-show", function(tabs, next) {
+	var $div = $("<div>"),
+        results = tabs.room,
+        twitter = results.params.twitter;
 
-	var twitter = results.params.twitter;
+	if (!twitter) {
+        twitter = {};
+    }
+
 	twitterUsername = twitter.username;
 
-	var $settingsItem = $('<div>').addClass('settings-item'),
-		$twitterText = $('<div>').addClass('settings-label').attr('id', 'twitter-text'),
-		$settingsAction = $('<div>').addClass('settings-action'),
-		$button = $('<a>').addClass('button twitter-account-button').attr('id', 'twitter-account'),
-		$twitterMessage = $('<p>').attr('id', 'twitter-message'),
-		$textField = formField("Hashtags", "multientry", "twitter-hashtags", twitter.tags);
+    var $twitterTags = formField("Hashtags", "multientry", "twitter-hashtags", twitter.tags),
+        $twitterButton = $("<a>").addClass("button twitter").attr("id", "twitter-account"),
+        $twitterAccount = formField("", "", "twitter-text", $twitterButton),
+        $twitterMessage = formField("", "", "twitter-message", $("<div>").attr("id", "twitter-message")),
+        updateFields = function() {
+            if (twitterUsername) {
+                $twitterButton.text("Change account");
+                $twitterAccount.find(".settings-label").text("Signed in as " + twitterUsername);
+                $twitterMessage.find(".settings-action").empty();
+            } else {
+                $twitterButton.text("Sign in to Twitter");
+                $twitterAccount.find(".settings-label").text("Not signed in");
+                $twitterMessage.find(".settings-action").text("Please sign in to Twitter to watch hashtags");
+            }
+        };
 
-	$div.append($textField);
-
-	$(document).on("click", "#twitter-account" ,function(){
-		console.log("twitter sign in button clicked");
-		window.open("../r/twitter/login", 'mywin','left=20,top=20,width=500,height=500,toolbar=1,resizable=0');
+    $twitterButton.on("click", function(){
+		// do stuff here!
+		window.open("../r/twitter/login", "mywin","left=20,top=20,width=500,height=500,toolbar=1,resizable=0");
 	});
 
-	window.addEventListener("message", function(event) {
-		console.log("event", event);
-		var suffix = "scrollback.io", data;
-        console.log();
-		var isOrigin = event.origin.indexOf(suffix, event.origin.length - suffix.length) !== -1;
-        try{
-            data = JSON.parse(event.data);
+	$(window).on("message", function(e) {
+		var suffix = "scrollback.io", data,
+			isOrigin = e.originalEvent.origin.indexOf(suffix, e.originalEvent.origin.length - suffix.length) !== -1;
+
+        try {
+            data = JSON.parse(e.originalEvent.data);
         } catch(e) {
             return;
         }
-        if(!isOrigin || !data.twitter ) return;
-        
+
+        if (!isOrigin || !data.twitter ) return;
+
         twitterUsername = data.twitter.username;
-        $("#twitter-account").text("Change");
-        $('#twitter-text').text("Admin Twitter Account: " + twitterUsername);
-        $("#twitter-message").empty();
-        
-	}, false);
 
+        updateFields();
+	});
 
-	//twitter setting
-	if (twitter.username) {
-			$twitterText.text("Twitter Account: " + twitter.username);
-			// $('#twitter-text').text("Twitter Account: " + twitter.username);
-			// $("#twitter-account").text("Change");
-			$button.text("Change");
-	} else {
-			// $('#twitter-text').text("Not signed in");
-			$twitterText.text("Not signed in");
-			$button.text("Sign in");
-			$twitterMessage.text("Please sign in to Twitter to watch hashtags");
-			// $("#twitter-account").text("Sign in");
-			// $("#twitter-message").text("Please sign in to twitter to watch hashtags.");
-	}
+    updateFields();
 
-	//var $p = $('<div class="settings-item"><div class="settings-label" id="twitter-text"></div><div class="settings-action"><a id="twitter-account" class="button"></a></div></div><div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="twitter-message"></div></div>');
 	$div.append(
-		$settingsItem.append(
-			$twitterText,
-			$settingsAction.append(
-				$button,
-				$twitterMessage
-			)
-		)
+        $twitterTags,
+        $twitterAccount,
+        $twitterMessage
 	);
 
 	tabs.twitter = {
@@ -81,26 +70,19 @@ libsb.on('config-show', function(tabs, next) {
 	};
 
 	next();
-});
+}, 500);
 
-libsb.on('config-save', function(room, next){
-    var tags = lace.multientry.items($('#twitter-hashtags')).join(" ");
+libsb.on("config-save", function(room, next){
+    var tags = lace.multientry.items($("#twitter-hashtags")).join(" ");
+
     room.params.twitter = {};
-    if(tags || twitterUsername) {
-        room.params.twitter = {
-		tags: tags,
-		username: twitterUsername
-        }
-    }
-	next();
-});
 
-libsb.on('text-menu', function(menu, next){
-	var chatMessage = $(menu.target).find('.chat-message').text();
-	var tweetUrl = encodeURI("https://twitter.com/home/?status=" + chatMessage  + " via https://scrollback.io/" + currentState.roomName);
-	
-	menu['Tweet this Message'] = function(){
-		window.open(tweetUrl, '_blank');
-	};
+    if (tags || twitterUsername) {
+        room.params.twitter = {
+            tags: tags,
+            username: twitterUsername
+        };
+    }
+
 	next();
-});
+}, 500);

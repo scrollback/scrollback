@@ -60,11 +60,8 @@ module.exports = function(clientEmitter, client, callbacks) {
 		});
 		if (callback) {
 			callbacks[uid] = function(message) {
-				if(message) {
-                    r.params.irc.error = message;
-                    return disconnectBot(r.id, callback);
-				}
-				return callback();
+                if(message) callback(new Error(message));
+                else callback();
 			};
 		}
 	}
