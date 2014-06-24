@@ -130,7 +130,7 @@ $(function() {
 	libsb.on("text-up", function(text, next) {
 		if($logs.data("lower-limit")) $logs.addBelow(chatEl.render(null, text));
 		next();
-	}, 100);
+	}, 90);
 
 	libsb.on("navigate", function(state, next) {
 		var reset = false;
