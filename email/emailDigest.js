@@ -7,8 +7,8 @@ var redis = require('../lib/redisProxy.js').select(config.redisDB.email);
 var core;
 var internalSession = Object.keys(config.whitelists)[0];
 var emailConfig = config.email, digestJade;
-var waitingTime1 = config.mentionEmailTimeout; //mention email timeout
-var waitingTime2 = config.regularEmailTimeout;//regular email timeout
+var waitingTime1 = emailConfig.mentionEmailTimeout || 3 * 60 * 1000; //mention email timeout
+var waitingTime2 = emailConfig.regularEmailTimeout || 12 * 60 * 1000;//regular email timeout
 var timeout = 30 * 1000;//for debuging only
 var debug = emailConfig.debug;
 
@@ -71,7 +71,7 @@ function trySendingToUsers() {
  */
  function initMailSending(username) {
 	log("init mail sending for user  " + username);
-	redis.get("email:" + username + ":lastsent",function(err, lastSent) {
+	redis.get("email:" + username + ":lastsent", function(err, lastSent) {
 		log("data returned form redis", lastSent + " , " , err);
 		if (err) return;
 		redis.get("email:" + username + ":isMentioned", function(err, data) {
@@ -255,10 +255,10 @@ function sortLabels(room, roomObj, mentions,callback) {
 			}
 		});
 		ct++;
-		redis.get ("email:label:" + room + ":" + label.label + ":title",function(err, title) {
+		redis.get ("email:label:" + room + ":" + label.label + ":title", function(err, title) {
 			if (!err && title) {
 				label.title = title;
-			}
+			} else label.title = "Title";
 			var pos = r.labels.length;
 			for (var i = 0;i < r.labels.length;i++ ) {
 				if (r.labels[i].interesting.length < label.interesting.length ) {
@@ -355,7 +355,7 @@ function deleteMentions(username , rooms) {
  *@param {object} Email Object
  */
 function sendMail(email) {
-	core.emit("getUsers", {id: email.username, session: internalSession}, function(err, data) {
+	core.emit("getUsers", {ref: email.username, session: internalSession}, function(err, data) {
 		if (err || !data.results) return;
 		var user = data.results;
 		log("getting email id", data);
@@ -484,12 +484,12 @@ function sendPeriodicMails(){
 			}
 		});
 	}
-	if (start1 < 0) {
+	if (start1 > end1) {
 		t = start1;
 		start1 = end1;
 		end1 = t;
 	}
-	if (start2 < 0) {
+	if (start2 > end2) {
 		t = start2;
 		start2 = end2;
 		end2 = t;

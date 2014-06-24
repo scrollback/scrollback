@@ -1,39 +1,67 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb */
 
-//notifications settings
-var formField = require("../lib/formField.js");
+var desktopnotify = require("../ui/desktopnotify.js"),
+    lace = require("../lib/lace.js"),
+    formField = require("../lib/formField.js");
 
-libsb.on('pref-show', function(tabs, next){
-    user = tabs.user;
-    var div = $('<div>').addClass('list-view list-view-notification-settings');
-    if(!user.params.notifications){
-        user.params.notifications = {};
-        user.params.notifications.sound = false;
-        user.params.notifications.desktop = false;
+libsb.on("pref-show", function(tabs, next){
+    var user = tabs.user,
+        $div = $("<div>"),
+        notifications = user.params.notifications;
+
+    if (!notifications) {
+        notifications = {};
     }
 
-    div.append(formField('Sound notifications ', 'toggle', 'sound-notification', user.params.notifications.sound));
-
-    if(desktopnotify.support()){
-            // show desktop notifications settings, only if it is supported.
-            div.append(formField('Desktop notifications ', 'toggle', 'desktop-notification', user.params.notifications.desktop));
+    if (typeof notifications.sound !== "boolean") {
+        notifications.sound = false;
     }
+
+    var $soundtoggle = formField("Sound notifications ", "toggle", "sound-notification", notifications.sound);
+
+    $div.append($soundtoggle);
+
+    if (desktopnotify.supported()) {
+        if (typeof notifications.desktop !== "boolean" || desktopnotify.supported().permission !== "granted") {
+            notifications.desktop = false;
+        }
+
+        var $desktoptoggle = formField("Desktop notifications ", "toggle", "desktop-notification", notifications.desktop);
+
+        $div.append($desktoptoggle);
+
+        $desktoptoggle.find("#desktop-notification").on("change", function() {
+            if ($(this).is(":checked")) {
+                desktopnotify.request();
+            }
+
+            if (desktopnotify.supported().permission === "denied") {
+                $(this).attr("checked", false);
+
+                lace.alert.show({
+                    type: "error",
+                    body: "Permission for desktop notifications denied!",
+                    id: "desktopnotify-err-perm-denied"
+                });
+            }
+        });
+    }
+
     tabs.notification = {
-        html: div,
         text: "Notifications",
+        html: $div,
         prio: 800
     };
 
-
     next();
+}, 500);
 
-});
-
-libsb.on('pref-save', function(user, next){
-        user.params.notifications = {
-            sound: $('#sound-notification').is(':checked'),
-            desktop: $('#desktop-notification').is(':checked')
+libsb.on("pref-save", function(user, next){
+    user.params.notifications = {
+        sound: $("#sound-notification").is(":checked"),
+        desktop: $("#desktop-notification").is(":checked")
 	};
+
 	next();
-});
+}, 500);

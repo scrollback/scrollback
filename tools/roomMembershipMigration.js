@@ -14,7 +14,6 @@ function closeConnection(){
 	accountConnection.end();
 }
 
-
 function migrateRooms(cb) {
 	var stream = db.query("select * from rooms order by rooms.type DESC;");
 	stream.on("result", function(room) {
@@ -22,8 +21,8 @@ function migrateRooms(cb) {
 		accountConnection.query("select * from accounts where room = ?", room.id, function(err, data) {
 			if(err) {
 				db.resume();
-				 console.log(err);
-				 return;
+                console.log(err);
+                return;
 			}
 			if(!data.length && room.type == "user") {
 				db.resume();
@@ -33,12 +32,16 @@ function migrateRooms(cb) {
 			var newRoom = {
 				id: room.id,
 				description: room.description,
-				createdOn: room.createdOn,
+				createTime: room.createdOn,
 				type: room.type,
 				picture: room.picture,
 				timezone:0,
 				identities: [],
-			}
+                guides: {
+                    authorizer: {
+                    }
+                }
+			};
 
 			try{
 				newRoom.params = JSON.parse(room.params);
@@ -46,40 +49,66 @@ function migrateRooms(cb) {
 			catch(e){
 				newRoom.params = {};
 			}
-		
-			
-			data && data.forEach(function(account) {
-				var u;
-				newRoom.identities.push(account.id);
-				if(/^irc/.test(account.id)) {
-					u = url.parse(account.id);
-					newRoom.params.irc = {
-						server: u.host,
-						channel: u.hash,
-						enabled: true,
-						pending: false
-					};
-				}
-			});
+            
+			if(data) {
+                data.forEach(function(account) {
+                    var u;
+                    newRoom.identities.push(account.id);
+                    if (/^irc/.test(account.id)) {
+                        u = url.parse(account.id);
+                        newRoom.params.irc = {
+                            server: u.host,
+                            channel: u.hash,
+                            enabled: true,
+                            pending: false
+                        };
+                    }
+                });
+            }
 
-			if(newRoom.type == "user"){
+			if (newRoom.type == "user") {
 				newRoom.params.email = {
 					frequency : "daily",
 					notifications : true
 				};
-				types.users.put(newRoom, function(){
+				types.users.put(newRoom, function() {
 					if(err) console.log(err);
 
 					db.resume();
 				});	
 			} 
-			if(newRoom.type == "room") {
-				if(newRoom.params.twitter && newRoom.params.twitter.profile && newRoom.params.twitter.profile.username){
-					newRoom.identities.push("twitter:"+newRoom.params.twitter.profile.username);
+			if (newRoom.type == "room") {
+				if (newRoom.params.twitter && newRoom.params.twitter.profile && newRoom.params.twitter.profile.username) {
+					newRoom.identities.push("twitter://" + newRoom.id + ":" + newRoom.params.twitter.profile.username);
+                    (function() {
+                        var twitter = {
+                            username: newRoom.params.twitter.id,
+                            tags: newRoom.params.twitter.tags
+                            token: newRoom.params.twitter.token,
+                            tokenSecret: newRoom.params.twitter.tokenSecret,
+                            profile: { screen_name: newRoom.params.twitter.profile.username, user_id: newRoom.params.twitter.profile.id}
+                        };
+                        newRoom.params.twitter = twitter;
+                    })();
 				}
+                
+                newRoom.params.http = {};
+                if(typeof newRoom.params.allowSeo !== "undefined") {
+                    newRoom.params.http.seo = newRoom.params.allowSeo;
+                    delete newRoom.params.allowSeo;
+                }else{
+                    newRoom.params.http.seo = true;
+                }
+                
+                newRoom.guides.authorizer.readLevel = "guest";
+                newRoom.guides.authorizer.openFollow = true;
+                if(typeof newRoom.params.loginrequired !== "undefined") {
+                    newRoom.guides.authorizer.writeLevel = newRoom.params.loginrequired? "follower" : "guest";
+                    delete newRoom.params.loginrequired;
+                }
+                
 				types.rooms.put(newRoom, function(){
-					if(err) console.log(err);
-					console.log("room", newRoom);
+					if (err) console.log(err);
 					owners[room.id] = room.owner;
 					types.rooms.link(room.id, 'hasMember', room.owner, {
 						role: "owner",
@@ -102,10 +131,10 @@ function migrateRooms(cb) {
 function migrateMembers(cb){
 	var stream = db.query("select * from members;");
 	stream.on("result", function(row) {
-		if(row.partedOn) return console.log("parted user");;
+		if(row.partedOn) return console.log("parted user");
 		if(owners[row.room] === row.user) return console.log("owner spotted.");
 		types.rooms.link(row.room, 'hasMember', row.user, {
-			role: "member",
+			role: "follower",
 			time: row.joinedOn
 		});
 	});

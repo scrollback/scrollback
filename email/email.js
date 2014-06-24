@@ -18,7 +18,6 @@ module.exports = function(coreObject) {
 	core = coreObject;
 	require('./welcomeEmail.js')(core);
     //if(!debug) log = log.tag("mail");
-	log("email digest", emailDigest);
     emailDigest.init(core);
 	if (config.email && config.email.auth) {
 		core.on('text', function(message, callback) {
@@ -41,9 +40,9 @@ module.exports = function(coreObject) {
 				}
 			}
 			log("Err email params in user object"); 
-			return callback("ERR_EMAIL_PARAMS");
+			return callback(new Error("ERR_EMAIL_PARAMS"));
 			
-		}, "applevelValidation");
+		}, "appLevelValidation");
 	}
 	else {
 		log("email module is not enabled");

@@ -27,7 +27,7 @@ libsb.on("navigate", function(state, next) {
 	state.old = $.extend(true, {}, currentState); // copying object by value
 	state.changes = {};
 
-	["room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
+	["roomName", "room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
 		if (typeof state[prop] === "undefined") {
 			if (typeof state.old[prop] !== "undefined") {
 				currentState[prop] = state[prop] = state.old[prop];
@@ -53,7 +53,7 @@ libsb.on("navigate", function(state, next) {
 
 // On navigation, set the body classes.
 libsb.on("navigate", function(state, next) {
-	if (!state.time && !state.room && !state.thread) {
+	if (!state.time && !state.roomName && !state.thread) {
 		if(!state.time && state.old.time) {
 			state.time = state.old.time;
 		}
@@ -114,32 +114,32 @@ libsb.on("navigate", function(state, next) {
 	if (state.source == "history"){
 		return;
 	}
-
 	function buildurl() {
 		var path, params = [];
 
 		switch(state.mode) {
 			case 'conf':
-				path = '/' + (state.room ? state.room + '/edit': 'me');
-				document.title = state.room+" - settings";
+				path = '/' + (state.roomName ? state.roomName + '/edit': 'me');
+				document.title = "Room settings - " + state.roomName;
 				break;
 			case 'pref':
 				path = '/me/edit';
-				document.title = "Account settings";
+				document.title = "Account settings - " + libsb.user.id;
 				break;
 			case 'search':
-				path = state.room ? '/' + state.room: '';
-				document.title = "Showing results: "+state.query;
+				path = state.roomName ? '/' + state.roomName: '';
+				document.title = "Results for " + state.query;
 				params.push('q=' + encodeURIComponent(state.query));
 				break;
 			case "home":
 				path = "/me";
+				document.title = state.user.id;
 				break;
 			default:
-				path = (state.room ? '/' + state.room + (
-						state.thread ? '/' + state.thread:"" /*+ '/' + format.sanitize(state.thread): ''*/
-					): '');
-				document.title = state.room? state.room+" on scrollback": "Scrollback.io";
+				path = (state.roomName ? '/' + state.roomName + (
+						state.thread ? '/' + state.thread: "" /*+ '/' + format.sanitize(state.thread): ''*/
+					   ): '');
+				document.title = state.roomName ? state.roomName + " on scrollback" : "Scrollback.io";
 		}
 
 		if (state.time) {
@@ -167,13 +167,14 @@ libsb.on("navigate", function(state, next) {
 
 	function pushState() {
 		var url = buildurl();
-
+        /*state.old && delete state.old;
+        state.changes && delete state.changes;*/
 		if (Object.keys(state.changes).length === "") {
 			state.view = "normal";
 		}
 
 		if (state.source == "init" || state.source == "text-area") {
-			history.replaceState(state, null, url);
+            history.replaceState(state, null, url);
 			return;
 		}
 
@@ -201,9 +202,6 @@ libsb.on("navigate", function(state, next) {
 
 // On history change, load the appropriate state
 $(window).on("popstate", function() {
-	if(!libsb.inited) {
-		return; // remove this when you enable offline access.
-	}
 
 	if (("state" in history && history.state !== null)) {
 		var state = {},

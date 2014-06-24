@@ -24,13 +24,7 @@ node_modules
 
 myConfig.js
 
-public/client.min.js
-public/core.min.js
-public/core.uw.min.js
-public/embed.uw.min.js
-public/dummy.css
-public/style.css
+public/*.bundle.js
+public/*.min.js
+public/embed.js
 public/s/styles/gen
-public/s/styles/less/*.css
-public/libsb.bundle.js
-/public/embed.js

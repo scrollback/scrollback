@@ -10,7 +10,7 @@ $(function() {
 
 		// Handle minimize
 		$(".title-bar").on("click", function(e) {
-			if (e.target === e.currentTarget) {
+			if (e.target === e.currentTarget || e.target === $("#room-title")[0]) {
 				libsb.emit("navigate", { minimize: true });
 			}
 		});
@@ -20,7 +20,7 @@ $(function() {
 		});
 
 		libsb.on("navigate", function(state, next) {
-			if (state.old && state.minimize !== state.old.minimize) {
+			if (state.embed === "toast" && state.old && state.minimize !== state.old.minimize) {
 				if (state.minimize) {
 					window.parent.postMessage("minimize", "*");
 				} else {
@@ -29,6 +29,6 @@ $(function() {
 			}
 
 			next();
-		});
+		}, 500);
 	}
 });

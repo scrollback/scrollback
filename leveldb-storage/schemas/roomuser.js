@@ -1,5 +1,8 @@
-/* global module, require, exports */
+/* global module, require */
 var log = require("../../lib/logger.js");
+var config = require('../../config.js');
+var internalSessions = Object.keys(config.whitelists);
+var su = config.su;
 
 module.exports = function (types) {
 	var room = types.rooms;
@@ -41,7 +44,7 @@ module.exports = function (types) {
 			});
 		},
 		getRooms: function(query, cb) {
-			var gateway, eqArray = [], req={};
+			var gateway, req={};
 			if(query.results) return cb();
 			req.eq = [];
 			if(query.hasMember) {
@@ -51,7 +54,7 @@ module.exports = function (types) {
 				req.map = function(element, push) {
 					if(element.role == "none") return false;
 					else push(element);
-				}
+				};
 				if(query.ref) req.eq.push(query.ref);
 			}else if(query.ref) {
 				return room.get(query.ref, function(err, res) {
@@ -94,32 +97,39 @@ module.exports = function (types) {
 				type: data.type,
 				picture: data.picture,
 				identities: [],
-				params: data.params
+				params: {}
 			};
 			
+            for(i in data.params) {
+                if(data.params.hasOwnProperty(i)) {
+                    if(data.params[i].error) newRoom.params[i] = action.old.params[i];
+                    else newRoom.params[i] = data.params[i];
+                }
+            }
 			if (data.identities) {
 				newRoom.identities = data.identities;
 			}
 			if(action.type === "user") {
 				data.timezone = (newRoom.timezone = data.timezone ? data.timezone : 0);
-				user.put(newRoom, function(err, res) {
+				user.put(newRoom, function(err) {
 					return cb(err);
 				});
 			}else {
-				room.put(newRoom, function(err, res) {
+				room.put(newRoom, function(err/*, res*/) {
 					if(!data.old) {
-						if (action.user.id === "system") {
+						if (internalSessions.indexOf(action.session) !== -1 || su[action.user.id] ) {//if user is a super user do not create links
 							return cb();
 						}
 						types.rooms.link(data.id, 'hasMember', action.user.id, {
 							role: "owner",
 							roleSince: new Date().getTime()
-						}, function(err, res) {
-							cb(err, data);
+						}, function(err) {
+							cb(err);
 						});
 						
 					}else {
-						cb(err, data);
+                        log(err);
+						cb(err);
 					}
 				});
 			}

@@ -60,6 +60,13 @@ var defaults = {
 		//debug    :true         ,
 		database : 'scrollback' 
 	},
+	pg: {//post gre config
+		server: "localhost",//server:port
+		db: "logs",
+		username: "username",
+		password: "password"
+		//port: 
+	},
 	http: {
 		host: "local.scrollback.io",
 		cookieDomain: ".scrollback.io",
@@ -86,11 +93,8 @@ var defaults = {
 	twitter: {
 		//consumerKey: ".."
 		//consumerSecret: ".." 
-		callbackURL: "https://scrollback.io/r/twitter/auth/callback"
 	},
 	irc: {
-		nick: 'sbtestbot',		// nickname of the bot
-		hangTime: 60000,     // timeout before disconnecting (ms)
 		port: 78910,
 		server: "localhost"
 	},
@@ -104,14 +108,18 @@ var defaults = {
 		user: 9,
 		room: 9,
 		occupants: 10,
+		threader: 11,
 		search: 14
+	},
+	su: {
+		
 	},
 	plugins: ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
 	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",
 	"admin-notifier", "custom-emitter","entityloader", "twitter"],
 	facebook: {
 	}
-}
+};
 
 
 merge(defaults, changes);

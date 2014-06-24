@@ -22,7 +22,7 @@ Boston, MA 02111-1307 USA.
 	Websockets gateway
 */
 
-/* global require, module, exports, console, setTimeout */
+/* global require, exports, setTimeout */
 
 var sockjs = require("sockjs"), core,
 	// api = require("./api.js"),
@@ -38,18 +38,18 @@ var sock = sockjs.createServer();
 sock.on('connection', function (socket) {
 	var conn = { socket: socket };
 	socket.on('data', function(d) {
-		var i, l, e;
+		var e;
 		try { d = JSON.parse(d); log ("Socket received ", d); }
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 
 		if (!d.type) return;
-		
+		d.returned = "yes";
 		if(d.type == 'init' && d.session) {
 			if(d.session == internalSession) return;
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
 			if (!sConns[d.session]) {
-				sConns[d.session] = []
+				sConns[d.session] = [];
 				sConns[d.session].push(conn);
 			} else {
 				if(sConns[d.session].indexOf(conn) == -1) {
@@ -80,7 +80,7 @@ sock.on('connection', function (socket) {
 			}
 		}
 		core.emit(d.type, d, function(err, data) {
-			var e;
+			var e, action;
 			if(err) {
 				e = {type: 'error', id: d.id, message: err.message};
 				log("Sending Error: ", e);
@@ -88,7 +88,7 @@ sock.on('connection', function (socket) {
 			}
 			if(data.type == 'back') {
 				/* this is need because we dont have the connection object
-				 of the user in the rconn until storeBack is called*/
+				of the user in the rconn until storeBack is called*/
 				conn.send(data);
 				storeBack(conn, data);
 				return;
@@ -113,8 +113,11 @@ sock.on('connection', function (socket) {
 						}
 						
 						data.user.role = role;
+                        action = {id: generate.uid(), type: "back",to: e.id, from: data.user.id, session: data.session,user: data.user, room: e};
 						emit({id: generate.uid(), type: "away", to: e.id, from: data.old.id, user: data.old, room: e});
-						emit({id: generate.uid(), type: "back",to: e.id, from: data.user.id, session: data.session,user: data.user, room: e});
+                        
+                        storeBack(conn, action);
+                        if(verifyBack(conn, action)) emit(action);
 					});	
 				}
 				storeInit(conn, data);
@@ -125,7 +128,7 @@ sock.on('connection', function (socket) {
 			}
 
 			/* no need to send it back to the connection object when no error,
-			 emit function will take care of that.
+                emit function will take care of that.
 				conn.send(data);
 			 */
 		});
@@ -187,7 +190,7 @@ function storeAway(conn, away) {
 
 exports.initServer = function (server) {
 	sock.installHandlers(server, {prefix: '/socket'});
-}
+};
 
 exports.initCore = function(c) {
     core = c;
@@ -206,29 +209,50 @@ exports.initCore = function(c) {
 };
 
 function emit(action, callback) {
-	var conns;
-	log("Sending out: ", action);
-
-	if(action.type == 'init') {		
-		if(sConns[action.session]) sConns[action.session].forEach(function(conn){
-			conn.user = action.user;
-			dispatch(conn);
-		});
+    var outAction = {}, i, j;
+    log("Sending out: ", init);
+    function dispatch(conn, action) {conn.send(action); }
+    
+    if(action.type == 'init') {		
+		if(sConns[action.session]) {
+            sConns[action.session].forEach(function(conn) {
+                conn.user = action.user;
+                dispatch(conn);
+            });
+        }
+        return callback();
 	} else if(action.type == 'user') {
 		uConns[action.from].forEach(dispatch);
-	} else {
-		if(rConns[action.to]){
-			rConns[action.to].forEach(dispatch);
-		}
+        return callback();
 	}
-	
-	function dispatch(conn) {conn.send(action); }
+    
+    for (i in action) {
+        if(action.hasOwnProperty(i)) {
+            if(i == "room" || i == "user") { 
+                outAction[i] = {};
+                for (j in action) {
+                    if(action.hasOwnProperty(j) && !j == "params") {
+                        outAction[i][j] = action[i][j];
+                    }
+                }
+            }else {
+                outAction[i] = action[i];
+            }
+        }
+    }
+    
+    delete outAction.session;
+    delete outAction.user.identities;
+    action = outAction;
+    
+    if(rConns[action.to]){
+        rConns[action.to].forEach(dispatch);
+    }
 	if(callback) callback();
-};
+}
 
 function handleClose(conn) {
 	if(!conn.session) return;
-	var connections;
 	core.emit('getUsers', {ref: "me", session: conn.session}, function(err, sess) {
 
 		if(err || !sess || !sess.results) {
@@ -255,7 +279,7 @@ function handleClose(conn) {
 					if(!verifyAway(conn, awayAction)) return;
 					core.emit('away',awayAction , function(err, action) {
 						if(err) return;
-						storeAway(conn, action)
+						storeAway(conn, action);
 					});
 				});
 			});
@@ -280,7 +304,7 @@ function verifyAway(conn, away) {
 	if(urConns[away.from+":"+away.to]) {
 		index = urConns[away.from+":"+away.to].indexOf(conn);
 		urConns[away.from+":"+away.to].splice(index,1);
-		return (urConns[away.from+":"+away.to].length==0);
+		return (urConns[away.from+":"+away.to].length===0);
 	}else{
 		return true;
 	}

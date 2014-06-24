@@ -1,7 +1,9 @@
 /* jshint browser: true */
-/* global $, libsb, lace, currentState */
+/* global $, libsb, currentState */
 
 $(function () {
+	var lace = require("../lib/lace.js");
+
 	$(document).on("click", ".popover-body a", function () {
 		lace.popover.hide();
 	});
@@ -41,7 +43,7 @@ $(function () {
 		});
 
 		lace.modal.show({
-			body: $("#loggedout-dialog").html(),
+			body: $("#signedout-dialog").html(),
 			dismiss: false
 		});
 
@@ -53,13 +55,12 @@ $(function () {
 	});
 
 	libsb.on('navigate', function (state, next) {
-		if (state && (!state.old || state.room != state.old.room)) {
-			var room = state.room;
+		if (state && (!state.old || state.roomName != state.old.roomName)) {
+			var room = state.roomName;
 			$("#room-title").text(room);
 		}
-
 		next();
-	});
+	}, 100);
 
 	function setOwnerClass() {
 		function check() {
@@ -67,7 +68,7 @@ $(function () {
 				var i, l;
 
 				for(i=0,l=data.results.length;i<l;i++) {
-					if(data.results[i].id == currentState.room) {
+					if(data.results[i].id == currentState.roomName) {
 						if (data.results[i].role === "owner") {
 							$("body").addClass("role-owner");
 							return;
@@ -82,41 +83,29 @@ $(function () {
 
 		if(libsb.isInited) {check();}
 		else {
-			libsb.on('inited', function(d, next){
+			libsb.on('inited', function(d, next) {
 				check();
 				next();
-			});
+            }, 100);
 		}
 	}
 
 	libsb.on('init-dn', function(init, next){
 		setOwnerClass();
 		next();
-	});
+	}, 100);
 
 	libsb.on('back-dn', function(init, next){
 		setOwnerClass();
 		next();
-	});
+	}, 100);
 
 	libsb.on('navigate', function(state, next) {
-            if(state.mode == 'normal' && state.room){
+            if(state.mode == 'normal' && state.roomName) {
                 setOwnerClass();
             }
             next();
-	});
-
-	libsb.on('back-dn', function (init, next) {
-		setOwnerClass();
-		next();
-	});
-
-	libsb.on('navigate', function (state, next) {
-		if (state.mode === 'normal') {
-			setOwnerClass();
-		}
-		next();
-	});
+	}, 100);
 
 	libsb.on("init-dn", function (init, next) {
 		if (init.auth && !init.user.id) return next();
