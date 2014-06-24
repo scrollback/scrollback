@@ -33,7 +33,7 @@ $(function() {
     });
 
     libsb.on("navigate", function(state, next){
-        if(state.roomName !== "pending" && state.room === null){ return next();}
+        if(state.roomName && state.room === null){ return next();}
         
         if(state.mode === "normal" && state.roomName !== state.old.roomName){
             if (libsb.isInited) {

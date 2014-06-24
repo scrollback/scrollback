@@ -209,39 +209,45 @@ exports.initCore = function(c) {
 };
 
 function emit(action, callback) {
-	log("Sending out: ", action);
     var outAction = {}, i, j;
+    log("Sending out: ", init);
+    function dispatch(conn, action) {conn.send(action); }
+    
+    if(action.type == 'init') {		
+		if(sConns[action.session]) {
+            sConns[action.session].forEach(function(conn) {
+                conn.user = action.user;
+                dispatch(conn);
+            });
+        }
+        return callback();
+	} else if(action.type == 'user') {
+		uConns[action.from].forEach(dispatch);
+        return callback();
+	}
     
     for (i in action) {
         if(action.hasOwnProperty(i)) {
-            outAction[i] = action[i];
             if(i == "room" || i == "user") { 
+                outAction[i] = {};
                 for (j in action) {
                     if(action.hasOwnProperty(j) && !j == "params") {
                         outAction[i][j] = action[i][j];
                     }
                 }
+            }else {
+                outAction[i] = action[i];
             }
         }
     }
     
     delete outAction.session;
     delete outAction.user.identities;
+    action = outAction;
     
-	if(action.type == 'init') {		
-		if(sConns[action.session]) sConns[action.session].forEach(function(conn){
-			conn.user = action.user;
-			dispatch(conn);
-		});
-	} else if(action.type == 'user') {
-		uConns[action.from].forEach(dispatch);
-	} else {
-		if(rConns[action.to]){
-			rConns[action.to].forEach(dispatch);
-		}
-	}
-	
-	function dispatch(conn) {conn.send(outAction); }
+    if(rConns[action.to]){
+        rConns[action.to].forEach(dispatch);
+    }
 	if(callback) callback();
 }
 
