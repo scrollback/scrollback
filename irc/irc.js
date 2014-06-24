@@ -371,7 +371,7 @@ function sendInitAndBack(suggestedNick, session ,room) {
 					to: room.id,
 					session: session,
 					from: init.user.id//nick returned from init.
-				}, function(err, back) {
+				}, function(err/*, back*/) {
                     if(err) log("Error:", err.message);
 			});
 			initCount--;

@@ -1,5 +1,5 @@
 /* jslint browser: true, indent: 4, regexp: true*/
-/* global $, libsb, chatEl, currentState */
+/* global $, libsb, chatEl, currentState, format */
 /* exported chatArea */
 
 var chatArea = {};

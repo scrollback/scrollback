@@ -22,7 +22,12 @@ libsb.on('config-show', function(tabs, next){
         if(results.params.irc.error) {
             notify.type = "error";
             notify.value = null;
-            displayString = "Error when saving";
+            if(results.params.irc.error == "ERR_CONNECTED_OTHER_ROOM") {
+                displayString = "This IRC account is already linked with another room. Try a different server.";    
+            }else
+                displayString = "Error in saving, please try again after some time";    
+            }
+            
         } else if(results.params.irc.server && results.params.irc.channel && results.params.irc.pending) {
             notify.type = "info";
             notify.value = null;

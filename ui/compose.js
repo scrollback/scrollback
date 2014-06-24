@@ -13,7 +13,6 @@ $(function() {
 		var text = format.htmlToText($entry.html());
 
 		$entry.text("");
-        console.log("entered text", text);
 		if (!text) return;
 		if (window.currentState && window.currentState.roomName) {
             console.log("saying ", text);
