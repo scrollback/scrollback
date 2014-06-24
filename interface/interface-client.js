@@ -124,7 +124,7 @@ function part(roomId, callback){
 }
 
 function say(roomId, text, thread, callback) {
-	var obj =  {to: roomId, text: text, from: libsb.user.id};
+	var obj =  {to: roomId, text: text, from: libsb.user.id, time: new Date().getTime()};
 	if(/^\/me /.test(text)) {
 		obj.text = text.replace(/^\/me /,"");
 		obj.labels = {action: 1};

@@ -15,7 +15,7 @@ module.exports = function(core) {
         if (message.session){
             var gateway = message.session.substring(0, message.session.indexOf(":"));
             if(gateway == "irc" || gateway=="twitter") {
-            	return callback();
+				return callback();
             }
         }
 

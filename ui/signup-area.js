@@ -73,7 +73,6 @@ $(function(){
 				libsb.emit('navigate', {
 					mode: "user", tab: "create", source: "libsb"
 				});
-
 				lace.modal.show({ body: $("#signup-dialog").html() });
 			}
 		}

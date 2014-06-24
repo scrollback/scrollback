@@ -14,7 +14,7 @@ $(function() {
 		el.find('.chat-timestamp').text(format.friendlyTime(text.time, new Date().getTime()));
 		el.data('index', text.time);
 		el.attr("id", text.id);
-
+		
 		if (text.labels) {
 			for (var label in text.labels) {
 				if (text.labels[label] === 1) {
