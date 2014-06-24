@@ -22,8 +22,8 @@ var lace = require("../lib/lace.js");
 
 var showMenu = function(menu) {
     var $popover = $("<div>"),
-        $list,
-        $buttons;
+        $list, item,
+        $buttons, button, sortable = [];
 
     if (typeof menu.title === "string") {
         $("<div>").addClass("popover-title")
@@ -33,29 +33,46 @@ var showMenu = function(menu) {
 
     if (typeof menu.buttons === "object") {
         $buttons = $("<div>").addClass("popover-buttons");
-
-        for (var button in menu.buttons) {
-            if (typeof button === "string" && typeof menu.buttons[button] === "function") {
-                $("<a>").addClass("button " + button.toLowerCase()).text(button)
-                        .on("click", menu.buttons[button])
-                        .appendTo($buttons);
-            }
+        
+        for(button in menu.buttons){
+            sortable.push([button.prio, button]);
         }
+        
+        sortable.sort(function(a, b){
+            return b[0] - a[0];
+        });
+        
+        // append buttons in sorted order
+        sortable.forEach(function(button){
+            if (typeof button[1].text === "string" && typeof button[1].action === "function"){
+                $("<a>").addClass("button " + button[1].text.toLowerCase()).text(button[1].text).on("click", button[1].action).appendTo($buttons);
+            }
+        });
 
         $buttons.appendTo($popover);
     }
 
     if (typeof menu.items === "object") {
         $list = $("<ul>");
-
-        for (var item in menu.items) {
+		sortable = [];
+		
+		for(item in menu.items){
+			sortable.push([item.prio, item]);
+		}
+		
+		sortable.sort(function(a, b){
+			return b[0] - a[0];
+		});
+		
+		// append items in sorted order
+        sortable.forEach(function(){
             if (typeof item === "string" && typeof menu.items[item] === "function") {
                 $("<li>").append($("<a>")
-                         .text(item)
-                         .on("click", menu.items[item]))
+                         .text(item[1].text)
+                         .on("click", item[1].action))
                          .appendTo($list);
             }
-        }
+        });
 
         $list.appendTo($popover);
     }

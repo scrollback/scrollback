@@ -1,6 +1,7 @@
 /* jshint browser: true */
 /* global $, libsb, currentState */
 
+var showMenu = require('./showmenu.js');
 $(function () {
 	var lace = require("../lib/lace.js");
 
@@ -8,34 +9,56 @@ $(function () {
 		lace.popover.hide();
 	});
 
-	$(".user-area, .user-menu-button").on("click", function () {
-		if ($("body").hasClass("role-guest")) {
-			lace.popover.show({
-				body: $("#login-menu").html(),
-				origin: $(this)
+//	$(".user-area, .user-menu-button").on("click", function () {
+//		if ($("body").hasClass("role-guest")) {
+//			lace.popover.show({
+//				body: $("#login-menu").html(),
+//				origin: $(this)
+//			});
+//		} else {
+//			lace.popover.show({
+//				body: $("#user-menu").html(),
+//				origin: $(this)
+//			});
+//		}
+//	});
+
+	$(".user-area .user-menu-button").on('click', function(){
+		if($('body').hasClass('role-guest')){
+			libsb.emit('auth-menu', {origin: $('.user-area'), buttons: {}, title: 'Login with'}, function(err, menu){
+				showMenu(menu);
 			});
-		} else {
-			lace.popover.show({
-				body: $("#user-menu").html(),
-				origin: $(this)
+		} else{
+			libsb.emit('user-menu', {origin: $('.user-area'), buttons: {}, text: {}}, function(err, menu){
+				showMenu(menu);
 			});
 		}
 	});
 
-	$(document).on("click", ".button.facebook", function () {
-		window.open(location.protocol + "//" + location.host + "/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');
-	});
+	libsb.on('user-menu', function(menu, next){
+		menu.items.userpref = {
+			text: 'My Account',
+			prio: 300,
+			action: function(){
+				libsb.emit("navigate",{
+					mode: "pref",
+					view: "meta"
+				});
+			}
+		};
+		next();
+	}, 1000);
+	
+//	$(document).on("click", ".userpref", function () {
+//		libsb.emit("navigate", {
+//			mode: "pref",
+//			view: "meta"
+//		});
+//	});
 
-	$(document).on("click", ".userpref", function () {
-		libsb.emit("navigate", {
-			mode: "pref",
-			view: "meta"
-		});
-	});
-
-	$(document).on("click", ".logout", function () {
-		libsb.logout();
-	});
+//	$(document).on("click", ".logout", function () {
+//		libsb.logout();
+//	});
 
 	libsb.on("logout", function (p, n) {
 		libsb.emit('navigate', {
