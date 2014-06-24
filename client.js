@@ -32,6 +32,12 @@ require('./anti-abuse/anti-abuse-client.js');
 require('./twitter/twitter-client.js');
 //require('./customization/customization-client.js');
 
+// user menus 
+require('./http/logout-client.js');
+require('./facebook/facebook-client.js');
+require('./github/github-client.js');
+require('./persona/persona-client.js');
+
 // components
 require('./ui/quicknotify.js');
 require('./ui/load-indicator.js');

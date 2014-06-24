@@ -23,13 +23,14 @@ $(function () {
 //		}
 //	});
 
-	$(".user-area .user-menu-button").on('click', function(){
-		if($('body').hasClass('role-guest')){
-			libsb.emit('auth-menu', {origin: $('.user-area'), buttons: {}, title: 'Login with'}, function(err, menu){
+	$(".user-area").on('click', function(){
+		if($('body').hasClass('role-user')){
+			libsb.emit('user-menu', {origin: $('.user-area'), buttons: {}, items: {}}, function(err, menu){
+				console.log("Recieved menu ", menu);
 				showMenu(menu);
 			});
-		} else{
-			libsb.emit('user-menu', {origin: $('.user-area'), buttons: {}, text: {}}, function(err, menu){
+		} else if($('body').hasClass('role-guest')){
+			libsb.emit('auth-menu', {origin: $('.user-area'), buttons: {}, title: 'Login to Scrollback with'}, function(err, menu){
 				showMenu(menu);
 			});
 		}

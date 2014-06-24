@@ -31,42 +31,44 @@ var showMenu = function(menu) {
                   .appendTo($popover);
     }
 
-    if (typeof menu.buttons === "object") {
+    if (typeof menu.buttons === "object" && !$.isEmptyObject(menu.buttons)) {
         $buttons = $("<div>").addClass("popover-section popover-buttons");
- 
-        for(button in menu.buttons){
-            sortable.push([button.prio, button]); 
+		
+        for(var b in menu.buttons){
+			button = menu.buttons[b];
+            sortable.push([button.prio, button, b]); 
         }
         sortable.sort(function(a, b){
-            return b[0] - a[0];
+            return a[0] - b[0];
         });
-        
+		
         // append buttons in sorted order
         sortable.forEach(function(button){
             if (typeof button[1].text === "string" && typeof button[1].action === "function"){
-                $("<a>").addClass("button " + button[1].text.toLowerCase()).text(button[1].text).on("click", button[1].action).appendTo($buttons);
+                $("<a>").addClass("button " + button[2].toLowerCase().replace(' ', '-')).text(button[1].text).on("click", button[1].action).appendTo($buttons);
             }
         });
 
         $buttons.appendTo($popover);
     }
 
-    if (typeof menu.items === "object") {
+    if (typeof menu.items === "object" && !$.isEmptyObject(menu.items)) {
         $list = $("<div>").addClass("popover-section").append("<ul>");
 		sortable = [];
 		
-		for(item in menu.items){
-			sortable.push([item.prio, item]);
+		for(var i in menu.items){
+			item = menu.items[i];
+			sortable.push([item.prio, item, i]);
 		}
 		
 		sortable.sort(function(a, b){
-			return b[0] - a[0];
+			return a[0] - b[0];
 		});
 		
 		// append items in sorted order
-        sortable.forEach(function(){
-            if (typeof item === "string" && typeof menu.items[item] === "function") {
-                $("<li>").append($("<a>")
+        sortable.forEach(function(item){
+            if (typeof item[1].text === "string" && typeof item[1].action === "function") {
+                $("<li>").append($("<a>").addClass(item[2].toLowerCase().replace(' ', '-'))
                          .text(item[1].text)
                          .on("click", item[1].action))
                          .appendTo($list.find("ul"));
