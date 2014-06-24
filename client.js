@@ -13,9 +13,10 @@ require('./socket/socket-client')(core);
 require('./id-generator/id-generator-client.js')();
 require('./client-entityloader/client-entityloader.js')();
 
-require('./lib/jquery.velocity.min.js');
 require('./lib/jquery.setCursorEnd.js');
 require('./lib/jquery.attrchange.js');
+require('./lib/jquery.velocity.min.js');
+require('./lib/velocity.ui.js');
 require('./lib/format.js');
 require('./lib/swipe-events.js');
 

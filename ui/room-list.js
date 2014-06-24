@@ -1,8 +1,9 @@
 /* jshint jquery: true */
-/* global libsb, roomEl, currentState */
-/* exported chatArea */
+/* global libsb, currentState */
 
-// var roomList = {};
+var roomEl = require("./room-item.js"),
+	roomName = "";
+
 $(function() {
 	var $roomlist = $(".room-list"),
 		rooms = [false, false], listenQueue = [];
@@ -24,7 +25,7 @@ $(function() {
 			$roomlist.reset();
 		}
 	}
-    
+
 	libsb.on("inited", function(d, n) {
 		if(currentState.embed == "toast") return n();
 
@@ -76,7 +77,7 @@ $(function() {
 			}));
 		}
 	});
-    
+
 	// Set up a click listener.,
 	$roomlist.click(function(event) {
 		var $el = $(event.target).closest(".room-item");
@@ -103,7 +104,7 @@ $(function() {
 		if(state.old && state.old.roomName === state.roomName) return next();
 		next();
 	}, 10);
-    
+
 	libsb.on("init-dn", function(init, next) {
 		if(currentState.embed == "toast") return next();
 	/*	if(init.occupantOf){
@@ -118,5 +119,17 @@ $(function() {
 		}
 		next();
 	}, 10);
+
+	libsb.on('navigate', function(state, next) {
+		if(state.roomName == "pending" && state.room ===null) return next();
+
+		if(state.roomName && state.room!== null) {
+			roomName = state.roomName;
+			$(".room-item.current").removeClass("current");
+			$("#room-item-" + state.roomName).addClass("current");
+		}
+
+		next();
+	}, 500);
 
 });

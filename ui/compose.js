@@ -1,5 +1,7 @@
 /* jshint browser: true */
-/* global $, chatArea, libsb, format */
+/* global $, libsb, format */
+
+var chatArea = require("./chat-area.js");
 
 $(function() {
 	var $entry = $(".chat-entry"),
@@ -27,7 +29,7 @@ $(function() {
 		}, 0);
 
 		var classes = $("body").attr("class").replace(/conv-\d+/g, "");
-        
+
 		$("body").attr("class", classes);
 	}
 

@@ -2,8 +2,8 @@
 /* global $, libsb, format */
 
 $(function() {
-	var lace = require("../lib/lace.js"),
-		$entry = $(".chat-entry");
+	var $entry = $(".chat-entry"),
+		lastMsg, currMsg, currThread;
 
 	$.fn.resetConv = function() {
 		var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
@@ -11,26 +11,19 @@ $(function() {
 		$("body").attr("class", classes);
 	};
 
-	$.fn.selectConv = function() {
+	$.fn.selectMsg = function() {
 		$.fn.resetConv();
 
-		this.attr("class").split(" ").forEach(function(s) {
-			var conv = s.match(/^conv-\d+$/);
+		currMsg = this.attr("id");
+		currThread = this.attr("data-thread");
 
-			if (conv) {
-				$("body").addClass(conv[0]);
-			}
-		});
+		if (currThread) {
+			$("body").addClass("conv-" + currThread.substr(-1));
+		}
 
-		$entry.focus();
-
-		return this;
-	};
-
-	$.fn.selectMsg = function() {
 		$(".chat-item").not(this).removeClass("current");
 
-		this.addClass("current");
+		this.addClass("current").get(0).scrollIntoView(true);
 
 		var nick = this.find(".chat-nick").text(),
 			msg = format.htmlToText($entry.html()).trim().replace(/@\S+[\s+{1}]?$/, "");
@@ -49,11 +42,7 @@ $(function() {
 	};
 
 	$(document).on("click", ".chat-item", function() {
-		$(this).selectConv().selectMsg();
-	});
-
-	$(document).on("click", ".thread-item", function() {
-		$(this).selectConv();
+		$(this).selectMsg();
 	});
 
 	$(document).on("keydown", function(e){
@@ -77,8 +66,7 @@ $(function() {
 				}
 
 				if ($el) {
-					$el.get(0).scrollIntoView(true);
-					$el.addClass("clicked").selectConv().selectMsg();
+					$el.addClass("clicked").selectMsg();
 
 					setTimeout(function() {
 						$el.removeClass("clicked");
@@ -88,17 +76,27 @@ $(function() {
 				if (e.target === $entry.get(0) && $(".chat-item").last().length && e.keyCode === 38) {
 					e.preventDefault();
 
-					$(".chat-item").last().selectConv().selectMsg();
+					$(".chat-item").last().selectMsg();
 				}
 			}
 		}
 	});
 
-	$(document).on("click", ".long", function() {
-		$(this).toggleClass("active").scrollTop(0);
-	});
+	libsb.on("text-up", function(text, next) {
+		lastMsg = text.id;
 
-	$(document).on("click", ".chat-more", function() {
-		lace.popover.show({ body: $("#chat-menu").html(), origin: $(this) });
+		next();
+	}, 90);
+
+	libsb.on("text-dn", function(text, next) {
+		if ((text.threads && text.threads.length) || lastMsg === text.id) {
+			$("#" + text.id).selectMsg();
+		}
+
+		next();
+	}, 90);
+
+	$(document).on("click", ".chat-mark-long", function() {
+		$(this).toggleClass("active").scrollTop(0);
 	});
 });
