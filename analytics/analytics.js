@@ -20,12 +20,12 @@ module.exports = function(core) {
 	
 	core.on('room', function(room, cb) {
 		cb();
-		saveRoomUserActions(room.room);
+		saveRoomUserActions(room);
 	}, "watcher");
 	
 	core.on('user', function(user, cb) {
 		cb();
-		saveRoomUserActions(user.user);
+		saveRoomUserActions(user);
 	}, "watcher");
 	
 	core.on('init', function(init, cb) {
@@ -57,7 +57,7 @@ function saveSessionActions(action) {
 	var pav = getParamsAndValues(action);
 	var params = pav.params;
 	var values = pav.values;
-	var list = ['suggestedNick'];
+	var list = ['suggestednick'];
 	list.forEach(function(p) {
 		if (action[p]) {
 			params.push(p);
@@ -66,8 +66,8 @@ function saveSessionActions(action) {
 	});
 	if (action.auth && Object.keys(action.auth)[0]) {
 		var a = Object.keys(action.auth)[0];
-		params.push("authApp");
-		params.push("authData");
+		params.push("authapp");
+		params.push("authdata");
 		values.push(a);
 		values.push(action.auth[a]);
 	}
@@ -89,7 +89,7 @@ function saveMembersAction(action) {
 	var pav = getParamsAndValues(action);
 	var params = pav.params;
 	var values = pav.values;
-	var list = ['text', 'ref', 'to', 'role', 'transitionRole', 'transitionType'];
+	var list = ['text', 'ref', 'to', 'role', 'transitionrole', 'transitiontype'];
 	list.forEach(function(p) {
 		if (action[p]) {
 			params.push(p);
@@ -119,8 +119,8 @@ function saveTextActions(action) {
 	}
 	if (action.threads) {
 		params.push('threads');
-		params.push('threadTitles');
-		params.push('threadScores');
+		params.push('threadtitles');//threadTitles
+		params.push('threadscores');
 		var threads = [];
 		var threadTitles = [];
 		var threadScores = [];
@@ -142,7 +142,9 @@ function saveTextActions(action) {
 				labelScores.push(action.labels[l]);
 			}
 		}
-		params.push(labels);
+		params.push("labels");
+		values.push(labels);
+		params.push("labelscores");
 		values.push(labelScores);
 	}
 	insert("text_actions", params, values);
@@ -154,20 +156,23 @@ function saveRoomUserActions(action) {
 	var pav = getParamsAndValues(action);
 	var params = pav.params;
 	var values = pav.values;
+	var type = action.type;
 	params.push("creation");
 	if (action.old.id) values.push(true);			
 	else values.push(false);
 	params.push("description");
-	values.push(action.description);
-	var list = ['picture', 'timezone', 'identities', 'to'];
+	values.push(action[type].description);
+	params.push("to");
+	values.push(action.to);
+	var list = ['picture', 'timezone', 'identities'];
 	list.forEach(function(p) {
-		if (action[p]) {
+		if (action[type][p]) {
 			params.push(p);
-			values.push(action[p]);
+			values.push(action[type][p]);
 		}
 	});
 	params.push("params");
-	values.push(JSON.stringify(action.params));
+	values.push(JSON.stringify(action[type].params));
 	insert("user_room_actions", params, values);
 }
 
