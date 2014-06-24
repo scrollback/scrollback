@@ -109,7 +109,7 @@ $(function () {
 
 	libsb.on("init-dn", function (init, next) {
 		if (init.auth && !init.user.id) return next();
-
+		
 		if (/^guest-/.test(init.user.id)) {
 			$("body").removeClass("role-user").addClass("role-guest");
 		} else {
