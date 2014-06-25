@@ -1,5 +1,5 @@
 html
 	head
 		script.
-			window.opener.postMessage("{twitter: {username: !{profile.screen_name}}}","*");
+			window.opener.postMessage("{\"twitter\": {\"username\": !{'\\"' + profile.screen_name + '\\"'}}}","*");
 			window.close();

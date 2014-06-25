@@ -23,9 +23,7 @@ module.exports = function(coreObj) {
 	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
 		log("twitter app started");
 		if (!debug) {
-			process.nextTick(function(){
-				logTwitter = log.tag('twitter');
-			});
+			logTwitter = log.tag('twitter');
 		}
 		core = coreObj;
 		init();
@@ -61,13 +59,13 @@ function twitterParamsValidation(action, callback) {
 			b = b && (t.profile.screen_name && typeof t.profile.screen_name === 'string');
 			b = b && (t.profile.user_id && typeof t.profile.user_id === 'string');
 		}
-		if (b) callback();
+		if (b) return callback();
 		else {
             t.error = "ERR_INVALID_TWITTER_PARAMS";
 //            callback(new Error("ERR_INVALID_TWITTER_PARAMS"));
-            callback();
+            return callback();
         }
-	} else callback();
+	} else return callback();
 }
 
 

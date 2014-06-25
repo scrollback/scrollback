@@ -21,7 +21,8 @@ $(".conf-save").on("click", function () {
             id: window.currentState.roomName,
             description: '',
             identities: [],
-            params: {}
+            params: {},
+            guides: {}
         }, function (err, room) {
             var roomObj = {
                 to: currentState.roomName,
