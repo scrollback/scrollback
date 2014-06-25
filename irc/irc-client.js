@@ -42,7 +42,7 @@ libsb.on('config-show', function(tabs, next){
         }
 
         $div.append(formField("", "", "", displayString));
-    }
+    
 
     tabs.irc = {
         text: "IRC integration",

@@ -39,19 +39,18 @@ libsb.on("config-show", function(tabs, next) {
 	});
 
 	$(window).on("message", function(e) {
+		console.log("twitter event=", e);
 		var suffix = "scrollback.io", data,
-			isOrigin = e.originalEvent.origin.indexOf(suffix, e.originalEvent.origin.length - suffix.length) !== -1;
-
-        try {
+		isOrigin = e.originalEvent.origin.indexOf(suffix, e.originalEvent.origin.length - suffix.length) !== -1;
+		data = e.originalEvent.data;
+        console.log("data: ", data);
+		try {
             data = JSON.parse(e.originalEvent.data);
         } catch(e) {
             return;
         }
-
         if (!isOrigin || !data.twitter ) return;
-
         twitterUsername = data.twitter.username;
-
         updateFields();
 	});
 
