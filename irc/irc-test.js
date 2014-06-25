@@ -7,12 +7,13 @@ var irc = require('irc');
 var guid = gen.uid;
 var names = gen.names;
 var client;
-var testingServer = "dev.scrollback.io";
+var testingServer = "localhost";
 var botName = require('../ircClient/config.js').botNick;
+
 /**
  * All test cases should run in sequence
  * Do not change the order of test cases.
- * 
+ * config.irc.debug should be true to run test cases
  */
 var users = [
 	{
@@ -47,24 +48,24 @@ var rooms = [{
 		}
 	}}
 ];
-describe('connect new IRC channel', function() {//this will connect 2 rooms scrollback and testingroom
+describe('IRC test: ', function() {//this will connect 2 rooms scrollback and testingroom
 	before( function(done) {
 		this.timeout(5*40000);
 		core.on('getUsers', function(v, callback) {
 			v.results = users;
 			callback(null, v);
-		});
+		}, 500);
 		core.on("getRooms", function(q, callback) {
 			q.results = rooms;
 			callback(null, q);
-		});
+		}, 500);
 		core.on('init', function(init, callback) {
 			init.user = {
 				id: "c" + init.suggestedNick,
 				type: "user"
 			};
 			callback(init);
-		});
+		}, 500);
 		core.on('text', function(text, callback) {
 			console.log("text called irc test:", text);
 			text.room = rooms[0];
@@ -136,7 +137,7 @@ describe('connect new IRC channel', function() {//this will connect 2 rooms scro
 				done();
 			}
 			callback();
-		});
+		}, 500);
 		client.say("#scrollback", "this is testing message id=" + msg);
 		
 	});
@@ -179,12 +180,8 @@ describe('connect new IRC channel', function() {//this will connect 2 rooms scro
 				}
 			}
 		}, function(err, room) {
-			console.log("room is connected now");
-			
-			//done();
+			console.log("room is connected now", err, room);
 		});
-		
-		
 	});
 	
 	
@@ -372,16 +369,5 @@ describe('connect new IRC channel', function() {//this will connect 2 rooms scro
 		});
 
 	});
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 });

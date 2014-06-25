@@ -48,14 +48,13 @@ module.exports = function (coreObj) {
             if(err) {
                 room.params.irc.error = err.message;
                 removeIrcIdentity(room);
-                return ircUtils.disconnectBot(room.id,callback);
-            }
-            callback();
+                ircUtils.disconnectBot(room.id,callback);
+            } else callback();
         }
 		if (action.session === internalSession) return callback();
 		if (actionRequired(action) && client.connected()) {
 			changeRoomParams(action);
-			if (isNewRoom(action)) {//TODO check if new irc config.
+			if (isNewRoom(action)) {
 				room.params.irc.channel = room.params.irc.channel.toLowerCase();
 				return ircUtils.addNewBot(room, done);
 			} else {//room config changed
@@ -79,8 +78,11 @@ module.exports = function (coreObj) {
                     return callback();
                 }
 			}  
-		} else if(!client.connected() && room.params.irc && room.params.irc.server && room.params.irc.channel) {
-			done(new Error("ERR_IRC_NOT_CONNECTED"));
+		} else if(!client.connected() && actionRequired(action)) {
+			log("irc Client is not connected: ");
+			room.params.irc.error = "ERR_IRC_NOT_CONNECTED";
+			removeIrcIdentity(room);
+			return callback();
 		} else return callback();
 	}, "gateway");
 
@@ -183,7 +185,7 @@ function changeRoomParams(room) {
 			room.room.params.irc.pending = debug ? false : true;//if server or channel changes
 		} else room.room.params.irc.pending = or.params.irc.pending;	
 	} else {
-		room.room.params.irc.pending = debug? false: true;//this is new room.
+		room.room.params.irc.pending = debug ? false: true;//this is new room.
 	}
 }
 
@@ -371,7 +373,7 @@ function sendInitAndBack(suggestedNick, session ,room) {
 					to: room.id,
 					session: session,
 					from: init.user.id//nick returned from init.
-				}, function(err, back) {
+				}, function(err/*, back*/) {
                     if(err) log("Error:", err.message);
 			});
 			initCount--;
