@@ -4,19 +4,6 @@ var put = require("./put.js");
 
 module.exports = function(core) {
 
-	//core.on('getSessions', function(action, callback) {
-	//	// will need to complete this.
-	//	return callback();
-	//	get("session",action.ref, function(err, sessionObj) {
-	//		var session = {
-	//			id: action.session,
-	//			user: action.user.id,
-	//			origin: action.origin
-	//		};
-	//	});
-	//});
-	
-
 	core.on('user', function(action, callback) {
 		if(/^guest-/.test(action.from)) {
             get("session",action.session, function(err, sessionObj) {
@@ -36,7 +23,8 @@ module.exports = function(core) {
         	callback();
         }
 	}, "storage");
-	core.on("init", function(action, callback) {
+
+    core.on("init", function(action, callback) {
 		if(action.auth && !action.user.id) {
 	        return callback();
 	    }

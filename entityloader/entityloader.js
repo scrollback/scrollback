@@ -1,4 +1,4 @@
-var crypto = require('crypto'), log = require("../lib/logger.js");
+var crypto = require('crypto')/*, log = require("../lib/logger.js")*/;
 var names = require('../lib/generate.js').names;
 var uid = require('../lib/generate.js').uid;
 var config = require("../config.js");
@@ -9,10 +9,9 @@ var core, events = ['text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'ex
 
 var handlers = {
 	init: function(action, callback) {
-		var wait = true, isErr = false;
+		var wait = true;
 
 		core.emit("getRooms",{id: uid(),hasOccupant: action.user.id, session: action.session},function(err, rooms) {
-			var user = {};
 			if(err || !rooms || !rooms.results || !rooms.results.length) {
 				action.occupantOf = [];
 			}else {
@@ -109,7 +108,7 @@ function userHandler(action, callback) {
 
 function initHandler(action, callback) {
 	function done() {
-		handlers["init"](action, callback);
+		handlers.init(action, callback);
 	}
 	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
 		if(err || !data || !data.results || !data.results.length) {
@@ -182,11 +181,10 @@ function loadRoom(action, callback) {
 	core.emit("getRooms",{id: uid(), ref: action.to, session: action.session}, function(err, rooms) {
 		var room;
 		if(err || !rooms ||!rooms.results || !rooms.results.length) {
-			if(action.type != "room"){
-                            console.log("**** ENTITY LOADER **********");
-                            return callback(new Error("NO_ROOM_WITH_GIVEN_ID"));
-                        }
-                }else{
+			if(action.type != "room") {
+                return callback(new Error("NO_ROOM_WITH_GIVEN_ID"));
+            }
+        }else{
 			room = rooms.results[0];
 		}
 
@@ -217,7 +215,7 @@ function initializerUser(action, callback) {
 		userObj = {
 			id: possibleNick,
 			description: "",
-			createdOn: new Date().getTime(),
+			createTime: new Date().getTime(),
 			type:"user",
 			params:{},
 			timezone:0,

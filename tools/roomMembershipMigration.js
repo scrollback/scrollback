@@ -1,8 +1,9 @@
+var crypto = require('crypto');
 var config = require("../config.js");
 var objectlevel = require("objectlevel");
 var log = require("../lib/logger.js");
+
 var url = require("url");
-// var leveldb = new objectlevel(__dirname+"/"+config.leveldb.path);
 var db = require('mysql').createConnection(config.mysql);
 var accountConnection = require('mysql').createConnection(config.mysql);
 var leveldb, types;
@@ -34,7 +35,7 @@ function migrateRooms(cb) {
 				description: room.description,
 				createTime: room.createdOn,
 				type: room.type,
-				picture: room.picture,
+				picture: "",
 				timezone:0,
 				identities: [],
                 guides: {
@@ -67,6 +68,7 @@ function migrateRooms(cb) {
             }
 
 			if (newRoom.type == "user") {
+                newRoom.picture = generatePick(newRoom.identities[0]);
 				newRoom.params.email = {
 					frequency : "daily",
 					notifications : true
@@ -83,10 +85,11 @@ function migrateRooms(cb) {
                     (function() {
                         var twitter = {
                             username: newRoom.params.twitter.id,
-                            tags: newRoom.params.twitter.tags
+                            tags: newRoom.params.twitter.tags,
                             token: newRoom.params.twitter.token,
                             tokenSecret: newRoom.params.twitter.tokenSecret,
-                            profile: { screen_name: newRoom.params.twitter.profile.username, user_id: newRoom.params.twitter.profile.id}
+                            profile: {
+                                screen_name: newRoom.params.twitter.profile.username, user_id: newRoom.params.twitter.profile.id}
                         };
                         newRoom.params.twitter = twitter;
                     })();
@@ -157,3 +160,6 @@ function migrateMembers(cb){
 		migrateMembers(closeConnection);
 	});
 })();
+function generatePick(id) {
+	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=monsterid';
+}

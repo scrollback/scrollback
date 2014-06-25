@@ -149,7 +149,7 @@ function storeInit(conn, init) {
 	if(!uConns[init.user.id]) uConns[init.user.id] = [];
 	sConns[init.session].forEach(function(c) {
 		var index;
-		if(init.old && init.old.id) {
+		if(init.old && init.old.id && uConns[init.old.id]) {
 			index = uConns[init.old.id].indexOf(c);
 			uConns[init.old.id].splice(index, 1);
 		}
@@ -210,8 +210,8 @@ exports.initCore = function(c) {
 
 function emit(action, callback) {
     var outAction = {}, i, j;
-    log("Sending out: ", init);
-    function dispatch(conn, action) {conn.send(action); }
+    log("Sending out: ", action);
+    function dispatch(conn) {conn.send(action); }
     
     if(action.type == 'init') {		
 		if(sConns[action.session]) {
@@ -231,7 +231,7 @@ function emit(action, callback) {
             if(i == "room" || i == "user") { 
                 outAction[i] = {};
                 for (j in action) {
-                    if(action.hasOwnProperty(j) && !j == "params") {
+                    if(action.hasOwnProperty(j) && j !== "params") {
                         outAction[i][j] = action[i][j];
                     }
                 }
@@ -245,7 +245,7 @@ function emit(action, callback) {
     delete outAction.user.identities;
     action = outAction;
     
-    if(rConns[action.to]){
+    if(rConns[action.to]) {
         rConns[action.to].forEach(dispatch);
     }
 	if(callback) callback();
