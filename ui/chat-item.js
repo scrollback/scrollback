@@ -83,8 +83,9 @@ $(function() {
 	});
 
 	libsb.on("text-up", function(text, next) {
-		$("#" + text.id).selectMsg();
-
+		if ($("#" + text.id).length) {
+			$("#" + text.id).selectMsg();	
+		}
 		next();
 	}, 90);
 
