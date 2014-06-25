@@ -6,7 +6,6 @@ var internalSession = Object.keys(config.whitelists)[0];
 var core, events = ['text', 'edit', 'admit', 'expel',
 							'room', 'getRooms', "getUsers", "getTexts", "getThreads"];
 var su = config.su;
-var queries = ['getRooms', "getUsers", "getTexts", "getThreads"];
 module.exports = function(c) {
 	
 	core = c;
@@ -22,11 +21,7 @@ module.exports = function(c) {
 				}else {
 					action.old = data.results[0];
 				}
-				if(action.user.identities) action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0]).digest('hex');
-				else action.user.picture = 'https://gravatar.com/avatar/default';
-				action.user.description = action.user.description || "";
-				action.role = "su";
-				log("action :****", JSON.stringify(action));
+				action.role = "su";//it will be deleted in autherizer
 				cb();
 			});
 		} else cb();
