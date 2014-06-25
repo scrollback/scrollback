@@ -58,7 +58,7 @@ $(function() {
 	});
 
 	// Check for mentions
-	libsb.on("text-dn", function(text, next) {
+	libsb.on("text-up", function(text, next) {
 		var people;
 
 		libsb.getMembers(room, function(err, p) {
@@ -87,7 +87,7 @@ $(function() {
 				}
 			}
 		}
-
+		text.mentions = [];
 		text.text.split(" ").map(isMention);
 
 		next();

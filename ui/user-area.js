@@ -26,7 +26,6 @@ $(function () {
 	$(".user-area").on('click', function(){
 		if($('body').hasClass('role-user')){
 			libsb.emit('user-menu', {origin: $('.user-area'), buttons: {}, items: {}}, function(err, menu){
-				console.log("Recieved menu ", menu);
 				showMenu(menu);
 			});
 		} else if($('body').hasClass('role-guest')){
@@ -132,6 +131,7 @@ $(function () {
 	}, 100);
 
 	libsb.on("init-dn", function (init, next) {
+		console.log("*************");
 		if (init.auth && !init.user.id) return next();
 		
 		if (/^guest-/.test(init.user.id)) {
