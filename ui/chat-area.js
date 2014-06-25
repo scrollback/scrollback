@@ -1,6 +1,5 @@
 /* jslint browser: true, indent: 4, regexp: true*/
 /* global $, libsb, currentState, format */
-/* exported chatArea */
 
 var chatEl = require("./chat.js"),
 	chatArea = {};
