@@ -81,39 +81,40 @@ function showConfig(room){
 }
 
 libsb.on('navigate', function (state, next) {
-    var isOwner = false,
-        checkOwnerShip = function() {
+    var isOwner = false;
+    
+    function cancelEdit() {
+        libsb.emit('navigate', {
+            mode: 'normal',
+            source: "conf-cancel"
+        });
+    }
+    function checkOwnerShip() {
+        if(libsb.memberOf) {
             libsb.memberOf.forEach(function (room) {
                 if (room.id == currentState.roomName && room.role == "owner") isOwner = true;
             });
-
-            if (isOwner === false) {
-                libsb.emit('navigate', {
-                    mode: 'normal'
-                });
-            }
-        };
-
+        }
+        return isOwner;
+    }
+    
     if (state.mode === "conf") {
-        if (libsb.isInited) {
-            checkOwnerShip();
-        } else {
-            libsb.on('inited', function (d, next) {
-                checkOwnerShip();
-                next();
-            });
+        if (!checkOwnerShip()) {
+            cancelEdit();
+            return next();
         }
-
-        if (!currentConfig) {
-            if (libsb.isInited) {
-                showConfig(state.room);
-            } else {
-                libsb.on('inited', function (e, n) {
-                    showConfig(state.room);
-                    if (n) n();
-                }, 500);
+        
+        libsb.getRooms({ref: currentState.roomName, hasMember: libsb.user.id}, function(err, data) {
+            if(err || !data.results || !data.results.length) {
+                //may be even show error.
+                cancelEdit();
+                return next();
             }
-        }
+            console.log(data.results[0]);
+            if (!currentConfig) {
+                showConfig(data.results[0]);
+            }
+        });
     }
 
     next();

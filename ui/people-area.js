@@ -208,7 +208,7 @@ $(function() {
 		}
 
 		if(state.source == 'people-area') return next();
-        if(state.roomName === "pending" || state.room === null) return next();
+        if(!state.roomName || state.room === null) return next();
 		if(state.tab == "people") {
 			roomName = state.roomName || roomName;
             lists = {

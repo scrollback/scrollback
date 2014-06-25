@@ -43,7 +43,7 @@ $(".conf-cancel").on("click", function () {
 
 function getUsers() {
     libsb.emit('getUsers', {
-        ref: libsb.user.id
+        ref: "me"
     }, function (err, data) {
         var user = data.results[0];
 
@@ -69,22 +69,13 @@ function getUsers() {
 libsb.on('navigate', function (state, next) {
     if (state.mode === "pref") {
         if (!currentConfig) {
-            if (libsb.isInited) {
-                if (libsb.user.id.indexOf('guest-') === 0) {
-                    libsb.emit('navigate', {
-                        mode: 'normal'
-                    });
-                }
-
-                getUsers();
-            } else {
-                libsb.on('inited', function (a, next) {
-                    getUsers();
-                    next();
-                }, 500);
+            if (libsb.user.id.indexOf('guest-') === 0) {
+                libsb.emit('navigate', {
+                    mode: 'normal'
+                });
             }
+            getUsers();
         }
     }
-
     next();
 }, 500);

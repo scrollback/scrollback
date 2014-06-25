@@ -24,7 +24,7 @@ libsb.on('config-show', function(tabs, next){
             notify.value = null;
             if(results.params.irc.error == "ERR_CONNECTED_OTHER_ROOM") {
                 displayString = "This IRC account is already linked with another room. Try a different server.";    
-            }else
+            }else {
                 displayString = "Error in saving, please try again after some time";    
             }
             
