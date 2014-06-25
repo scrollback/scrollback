@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $,libsb */
+/* global libsb, $ */
 
 module.exports = function(tabs, room) {
     var $items = $("<div>"),

@@ -576,16 +576,26 @@ body {
 
     &.current { background-color: rgba(0,0,0,.05); }
 
-    &.error {
-        &:after {
-            position: absolute;
-            top: 0;
-            right: 0;
-            height: 100%;
-            width: 2em;
-            display: block;
-            content: "";
-            background: transparent url(../../img/client/icons/error.svg) no-repeat center center;
+    &:after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 2em;
+        display: block;
+        content: "";
+        background-color: transparent;
+        background-repeat: no-repeat;
+        background-position: center center;
+    }
+
+    $types: info, success, warning, error;
+
+    @for $i from 1 through length($types) {
+        $type: nth($types, $i);
+
+        &.#{$type} {
+            &:after { background-image: url(../../img/client/icons/#{$type}-icon.svg); }
         }
     }
 
@@ -986,9 +996,7 @@ body {
 }
 
 .chat-item {
-	@include fadein;
 	@extend %ease;
-	@extend %nofilter;
 
 	position: relative;
 	margin: 0;

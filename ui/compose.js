@@ -1,42 +1,44 @@
 /* jshint browser: true */
-/* global $, chatArea, libsb, format */
+/* global $, libsb, format */
+
+var chatArea = require("./chat-area.js");
 
 $(function() {
 	var $entry = $(".chat-entry"),
 		$placeholder = $(".chat-placeholder"),
-		$input = $(".chat-input");
+		$input = $(".chat-input"),
+		sendMsg = function(){
+			var text = format.htmlToText($entry.html());
+
+			$entry.text("");
+
+			if (!text) return;
+
+			if (window.currentState && window.currentState.roomName) {
+				libsb.say(window.currentState.roomName, text, window.currentState.thread);
+			} else {
+				// show the error that not part of any room yet.
+			}
+
+			setTimeout(function() {
+				chatArea.setPosition($input.outerHeight());
+			}, 0);
+
+			var classes = $("body").attr("class").replace(/conv-\d+/g, "");
+
+			$("body").attr("class", classes);
+		},
+
+		setPlaceHolder = function() {
+			if ($entry.text().trim() === "") {
+				$placeholder.text("Reply as " + libsb.user.id );
+			} else {
+				$placeholder.empty();
+			}
+		};
 
 	// Focus chat entry on pageload
 	$entry.focus();
-
-	function sendMsg(){
-		var text = format.htmlToText($entry.html());
-
-		$entry.text("");
-		if (!text) return;
-		if (window.currentState && window.currentState.roomName) {
-            console.log("saying ", text);
-			libsb.say(window.currentState.roomName, text, window.currentState.thread);
-		} else {
-			// show the error that not part of any room yet.
-		}
-
-		setTimeout(function() {
-			chatArea.setPosition($input.outerHeight());
-		}, 0);
-
-		var classes = $("body").attr("class").replace(/conv-\d+/g, "");
-        
-		$("body").attr("class", classes);
-	}
-
-	function setPlaceHolder() {
-		if ($entry.text().trim() === "") {
-			$placeholder.text("Reply as " + libsb.user.id );
-		} else {
-			$placeholder.empty();
-		}
-	}
 
 	libsb.on("init-dn", function(action, next) {
 		setPlaceHolder();

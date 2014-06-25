@@ -13,9 +13,10 @@ require('./socket/socket-client')(core);
 require('./id-generator/id-generator-client.js')();
 require('./client-entityloader/client-entityloader.js')();
 
-require('./lib/jquery.velocity.min.js');
 require('./lib/jquery.setCursorEnd.js');
 require('./lib/jquery.attrchange.js');
+require('./lib/jquery.velocity.min.js');
+require('./lib/velocity.ui.js');
 require('./lib/format.js');
 require('./lib/swipe-events.js');
 
@@ -32,6 +33,12 @@ require('./anti-abuse/anti-abuse-client.js');
 require('./twitter/twitter-client.js');
 //require('./customization/customization-client.js');
 
+// user menus
+require('./http/logout-client.js');
+require('./facebook/facebook-client.js');
+require('./github/github-client.js');
+require('./persona/persona-client.js');
+
 // components
 require('./ui/quicknotify.js');
 require('./ui/load-indicator.js');
@@ -41,6 +48,7 @@ require('./ui/customization.js');
 require('./ui/infinite.js');
 require('./ui/hide-scroll.js');
 require('./ui/navigation.js');
+require('./ui/error-notify.js');
 require('./ui/columns.js');
 require('./ui/chat.js');
 require('./ui/chat-item.js');
@@ -66,6 +74,8 @@ require('./ui/noroom-area.js');
 require('./ui/signup-area.js');
 require('./ui/persona.js');
 require('./ui/message-menu.js');
+require('./ui/animations.js');
+require('./ui/room-notifications.js');
 require('./ui/URLparser.js')();
 
 //# sourceMappingURL=libsb.js.map

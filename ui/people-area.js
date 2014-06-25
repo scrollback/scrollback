@@ -1,12 +1,12 @@
 /* jshint jquery: true */
-/* global libsb, personEl */
-/* exported chatArea */
+/* global libsb */
 
-var peopleArea = {};
+var personEl = require("./person.js"),
+    peopleArea = {};
 
 $(function() {
     var levels = [0,1,3,4,6,9];
-    
+
 	var $people = $(".pane-people"), roomName = "",
 		people = [],
 		lists = {
@@ -36,7 +36,7 @@ $(function() {
 		}
 		return false;
 	}
-    
+
 	function getPeople(callback) {
 		var ppl = {}, sorted = [];
 		libsb.getUsers({memberOf: roomName}, function(err, res) {
@@ -48,7 +48,7 @@ $(function() {
 			}
 			libsb.getUsers({occupantOf: roomName}, function(err, res) {
 				var r = res.results, i, l;
-                
+
 				for(i=0, l=r.length; i<l; i++) {
 					if(ppl[r[i].id]) {
 						ppl[r[i].id].score += 3;
@@ -58,19 +58,19 @@ $(function() {
 					}
 					ppl[r[i].id].status = "online";
 				}
-                
+
 				Object.keys(ppl).forEach(function(e) {
 					sorted.push(ppl[e]);
 				});
-                
+
 				sorted.sort(function(a,b) {
 					return -(a.score-b.score);
 				});
-                
+
 				sorted.forEach(function(e) {
 					if(!checkForUser(e, lists["people"+e.score])) lists["people"+e.score].push(e);
 				});
-                
+
 				callback(lists);
 			});
 		});
@@ -79,9 +79,9 @@ $(function() {
 
 	libsb.on("away-dn", function(action, next) {
 		var i,l, lis;
-		
+
         if(!roomName || action.to !== roomName) return next();
-        
+
 		if(action.user.role == "follower") {
 			lis = 4;
 			lists.people1.push(action.user);
@@ -192,7 +192,7 @@ $(function() {
 			callback(res);
 		}
 	});
-    
+
     function loadMembers() {
         getPeople(function(sortedList) {
             people = sortedList;
@@ -221,7 +221,7 @@ $(function() {
 
             loadMembers();
 		}
-        if(state.roomName) roomName = state.roomName; 
+        if(state.roomName) roomName = state.roomName;
 		next();
 	}, 600);
 

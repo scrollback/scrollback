@@ -1,10 +1,9 @@
 /* jshint browser: true */
-/* global $, libsb, threadEl, currentState */
-/* exported chatArea */
+/* global $, libsb, currentState */
 
-var threadArea = {};
-
-
+var threadEl = require("./thread.js"),
+	threadArea = {},
+	thread = "";
 
 (function() {
 	var $threads, room = "", time = null,
@@ -179,7 +178,6 @@ var threadArea = {};
 		$threads.scroll();
 	};
 
-
 	$(function() {
         $threads = $(".thread-item-container");
 
@@ -200,7 +198,7 @@ var threadArea = {};
 		$threads.click(function(event) {
 			event.preventDefault();
 			var $el = $(event.target).closest('.thread-item');
-			if(!$el.size()) return;
+			if(!$el.length) return;
 			libsb.emit('navigate', {source: 'thread-area', time: null, thread: $el.attr("id").split('-')[1] });
 		});
 		$(".thread-all-conversations").click(function(event){
@@ -208,4 +206,22 @@ var threadArea = {};
 			libsb.emit('navigate', {source: 'thread-area', time: null, thread: ""});
 		});
 	});
+
+	libsb.on('navigate', function(state, next) {
+		if (state.old && state.thread !== state.old.thread) {
+			if (typeof state.thread !== "undefined"  && state.thread !== thread) {
+				thread = state.thread;
+				$(".thread-item.current").removeClass("current");
+				$("#thread-" + state.thread).addClass("current");
+
+				$("body").addClass('conv-' + thread.id.substr(-1));
+			} else {
+				var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
+
+				$("body").attr("class", classes);
+			}
+		}
+
+		next();
+	}, 1);
 })();
