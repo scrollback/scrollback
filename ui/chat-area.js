@@ -74,6 +74,23 @@ $(function () {
 		var $oldEl = $("#chat-" + text.id),
 			$newEl = chatEl.render(null, text);
 
+		if (text.resource === libsb.resource) return next();
+		if (text.to != roomName) return next();
+
+		if (text.threads && text.threads.length && thread) {
+			for (var i = 0, l = text.threads.length; i < l; i++) {
+				if (text.threads[i].id == thread) {
+					break;
+				}
+			}
+
+			if (i == l) {
+				return next();
+			}
+		} else if (thread) {
+			return next();
+		}
+
 		if ($oldEl.length) {
 			$oldEl.remove();
 		}
