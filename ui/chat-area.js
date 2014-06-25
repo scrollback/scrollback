@@ -74,15 +74,7 @@ $(function () {
 		var $oldEl = $("#chat-" + text.id),
 			$newEl = chatEl.render(null, text);
 
-		if (text.resource === libsb.resource) return next();
-		if (text.to != roomName) return next();
-        if ($oldEl.length) {
-			$oldEl.remove();
-		}
-
-		if ($logs.data("lower-limit")) {
-			$logs.addBelow($newEl);
-		}
+		if (text.to !== window.currentState.roomName) return next();
 
 		if (text.threads && text.threads.length && thread) {
 			for (var i = 0, l = text.threads.length; i < l; i++) {
@@ -98,7 +90,14 @@ $(function () {
 			return next();
 		}
 
-		
+		if ($oldEl.length) {
+			$oldEl.remove();
+		}
+
+		if ($logs.data("lower-limit")) {
+			$logs.addBelow($newEl);
+		}
+
 		next();
 	}, 100);
 
@@ -110,9 +109,10 @@ $(function () {
 			    text.mentions.push(input);
 			}
 		}
+
         text.mentions = [];
 		text.text.split(" ").map(isMention);
-        
+
         if ($logs.data("lower-limit")) {
 			$logs.addBelow(chatEl.render(null, text));
 		}

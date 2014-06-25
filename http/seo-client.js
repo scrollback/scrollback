@@ -13,7 +13,7 @@ libsb.on('config-show', function (tabs, next) {
     var $div = $('<div>').append(formField("Allow search engines to index room", "toggle", "allow-index", results.params.http.seo));
 
     tabs.seo = {
-        text: "Search engine indexing",
+        text: "Search visibility",
         html: $div,
         prio: 500
     };

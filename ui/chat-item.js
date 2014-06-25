@@ -83,19 +83,18 @@ $(function() {
 	});
 
 	libsb.on("text-up", function(text, next) {
-		if ($("#" + text.id).length) {
-			$("#" + text.id).selectMsg();	
-		}
+		lastMsg = text.id;
+
 		next();
-	}, 90);
+	}, 10);
 
 	libsb.on("text-dn", function(text, next) {
-		if (text.threads && text.threads.length && text.threads[0].id && text.threads[0].id === currThread) {
-			$("#" + text.id).selectMsg();
+		if (text.id === lastMsg || (text.threads && text.threads.length && text.threads[0].id === currThread)) {
+			$("#chat-" + text.id).selectMsg();
 		}
 
 		next();
-	}, 90);
+	}, 10);
 
 	$(document).on("click", ".chat-mark-long", function() {
 		$(this).toggleClass("active").scrollTop(0);
