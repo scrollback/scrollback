@@ -11,7 +11,7 @@ $(function() {
 
 		$el.find(".person-avatar").attr({src: person.picture});
 		$el.find(".person-name").text(person.id.replace(/^guest-/, ""));
-		$el.data("index", index);
+		$el.attr("data-index", index);
 
 		if (person.status !== "online") {
 			$el.addClass("offline");

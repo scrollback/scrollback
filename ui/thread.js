@@ -15,7 +15,7 @@ $(function() {
 		$el.find(".thread-snippet").html("");
 		$el.find(".timestamp").html(format.friendlyTime(thread.startTime, new Date().getTime()));
 		$el.attr("id", "thread-" + thread.id);
-		$el.data("index", index);
+		$el.attr("data-index", index);
 		$el.addClass("conv-" + thread.id.substr(-1));
 
 		if (thread.id === window.currentState.thread) {

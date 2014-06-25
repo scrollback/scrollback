@@ -210,7 +210,7 @@ $(function () {
 			time = chats.eq(0).data("index"),
 			parentOffset = $logs.offset().top;
 
-		for (var i = 0; i < chats.size(); i++) {
+		for (var i = 0; i < chats.length; i++) {
 			if (chats.eq(i).offset().top - parentOffset > 0) {
 				time = chats.eq(i).data("index");
 				break;
@@ -231,6 +231,14 @@ $(function () {
 		});
 
 	});
+
+	setInterval(function() {
+		$(".chat-timestamp").each(function() {
+			var time = $(this).parent().data("index");
+
+			$(this).empty().text(format.friendlyTime(time, new Date().getTime()));
+		});
+	}, 60000);
 });
 
 module.exports = chatArea;

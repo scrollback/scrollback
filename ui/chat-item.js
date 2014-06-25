@@ -86,7 +86,7 @@ $(function() {
 		lastMsg = text.id;
 
 		next();
-	}, 10);
+	}, 50);
 
 	libsb.on("text-dn", function(text, next) {
 		if (text.id === lastMsg || (text.threads && text.threads.length && text.threads[0].id === currThread)) {
@@ -94,7 +94,7 @@ $(function() {
 		}
 
 		next();
-	}, 10);
+	}, 50);
 
 	$(document).on("click", ".chat-mark-long", function() {
 		$(this).toggleClass("active").scrollTop(0);

@@ -50,7 +50,7 @@
 
 			function getGridColumns() {
 				var items = $items.children(), initLeft, i, l;
-				if(items.size() === 0) return 1;
+				if(items.length === 0) return 1;
 
 				initLeft = items.eq(0).offset().left;
 				for(i=1, l=items.size(); i<l && items.eq(i).offset().left != initLeft; i++);
