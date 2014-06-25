@@ -25,11 +25,11 @@ libsb.on("config-show", function(tabs, next) {
 
 	var $div = $("<div>").append(
 		formField("Block offensive words", "toggle", "block-offensive", room.params.antiAbuse.wordblock),
-		formField("Blocked words list", "check", "blocklists-list", [
+		/*formField("Blocked words list", "check", "blocklists-list", [
 			["list-en-strict", "English strict", (lists.indexOf("list-en-strict") > -1)],
 			["list-en-moderate", "English moderate", (lists.indexOf("list-en-moderate") > -1)],
 			["list-zh-strict", "Chinese strict", (lists.indexOf("list-zh-strict") > -1)]
-		]),
+		]),*/
 		formField("Custom blocked words", "area", "block-custom", room.params.antiAbuse.customWords)
 	);
 
@@ -45,9 +45,9 @@ libsb.on("config-show", function(tabs, next) {
 libsb.on("config-save", function(room, next){
 	room.params.antiAbuse = {
 		wordblock: $("#block-offensive").is(":checked"),
-		"block-lists": $("input[name='blocklists-list']:checked").map(function(i, el) {
+		/*"block-lists": $("input[name='blocklists-list']:checked").map(function(i, el) {
 			return $(el).attr("value");
-		}).get(),
+		}).get(),*/
 		customWords: $("#block-custom").val().split(",").map(function(item) {
 			return (item.trim()).toLowerCase();
 		})
