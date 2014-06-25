@@ -129,7 +129,7 @@ $(function () {
             }
             next();
 	}, 100);
-
+	
 	libsb.on("init-dn", function (init, next) {
 		console.log("*************");
 		if (init.auth && !init.user.id) return next();
@@ -145,5 +145,5 @@ $(function () {
 		$("#sb-user").text(init.user.id.replace(/^guest-/, ''));
 
 		next();
-	}, 1000);
+	}, 100);
 });
