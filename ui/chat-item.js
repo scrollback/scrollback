@@ -83,13 +83,13 @@ $(function() {
 	});
 
 	libsb.on("text-up", function(text, next) {
-		lastMsg = text.id;
+		$("#" + text.id).selectMsg();
 
 		next();
 	}, 90);
 
 	libsb.on("text-dn", function(text, next) {
-		if ((text.threads && text.threads.length) || lastMsg === text.id) {
+		if (text.threads && text.threads.length && text.threads[0].id && text.threads[0].id === currThread) {
 			$("#" + text.id).selectMsg();
 		}
 
