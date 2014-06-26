@@ -66,14 +66,12 @@ function hasLabel(label, labels){
 	return false;
 }
 libsb.on('text-menu', function(menu, next) {
-	console.log("User role is ", menu.role);
 	if(menu.role !== "owner") return next();
 	var textObj;
 	libsb.emit('getTexts', {ref: menu.target.id.substring(5), to: currentState.roomName}, function(err, data){
 		textObj = data.results[0];
 		var target = menu.target;
 		var textMsg = $(target).find('.chat-message').text();
-		console.log(" HAS LABEL IN ", textObj.labels);
 		if(!hasLabel('hidden', textObj.labels)){
 			menu.items.hidemessage = {
 				prio: 500,
