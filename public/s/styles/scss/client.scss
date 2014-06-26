@@ -1016,12 +1016,16 @@ body {
 
 	&.current { background-color: darken($light-color, 3%); }
 
-    &.active {
-        .chat-more {
-            @include transform(translate3d(0, 0, 0));
+    &:hover, &:focus, &.active {
+        .chat-more { @include transform(translate3d(0, 0, 0)); }
+    }
 
-            background-color: darken($light-color, 3%);
-        }
+    &:hover, &:focus {
+        .chat-more { background-color: darken($light-color, 1%); }
+    }
+
+    &.active, &.current {
+        .chat-more { background-color: darken($light-color, 3%); }
     }
 
 	&:hover, &:focus, &.active, &.current {
@@ -1029,7 +1033,7 @@ body {
 
 		& + .chat-item { border-top: 1px solid darken($light-color, 10%); }
 
-		.chat-timestamp { color: fade-out($dark-color, .3); }
+        .chat-timestamp { color: fade-out($dark-color, .3); }
 	}
 
 	&:before {
@@ -1104,6 +1108,12 @@ body {
 
             @media #{$screenxx} { margin-left: 0; }
         }
+    }
+
+    &.chat-label-hidden {
+        @include opacity(0.3);
+
+        [data-role]:not([data-role=owner]) { display: none; }
     }
 
 	a {
