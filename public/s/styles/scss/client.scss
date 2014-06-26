@@ -1012,22 +1012,24 @@ body {
 
 	&:hover, &:focus { background-color: darken($light-color, 1%); }
 
-	&.current {
-		background-color: darken($light-color, 3%);
+    &:last-of-type { border-bottom: 1px solid rgba(0,0,0,0.025); }
 
-		.chat-more { background-color: darken($light-color, 3%); }
-	}
+	&.current { background-color: darken($light-color, 3%); }
 
-	&:hover, &:focus, &.current {
+    &.active {
+        .chat-more {
+            @include transform(translate3d(0, 0, 0));
+
+            background-color: darken($light-color, 3%);
+        }
+    }
+
+	&:hover, &:focus, &.active, &.current {
 		border-top: 1px solid darken($light-color, 10%);
 
 		& + .chat-item { border-top: 1px solid darken($light-color, 10%); }
 
 		.chat-timestamp { color: fade-out($dark-color, .3); }
-
-		&:not(.clicked) {
-            .chat-more { @include transform(translate3d(0, 0, 0)); }
-        }
 	}
 
 	&:before {
@@ -1184,9 +1186,7 @@ body {
     box-shadow: 0 -3px 2px -1px rgba(0,0,0,.05);
 }
 
-.chat-entry-wrap {
-    position: relative;
-}
+.chat-entry-wrap { position: relative; }
 
 .chat-conv-dot {
     position: absolute;
@@ -1227,7 +1227,7 @@ body {
     color: fade-out($dark-color, .5);
     pointer-events: none;
 
-    @media #{$screenxx} { padding-left: 3.5em; }
+    @media #{$screenxx} { padding-left: 3.9em; }
 }
 
 .chat-entry {
@@ -1241,7 +1241,7 @@ body {
 	overflow: auto;
     border-radius: 0;
 
-    @media #{$screenxx} { padding-left: 3.5em; }
+    @media #{$screenxx} { padding-left: 3.9em; }
 
 	&:hover, &:focus, &:active {
 		border-color: $accent-color;

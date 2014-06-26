@@ -15,6 +15,8 @@ $(function() {
 	};
 
 	$.fn.selectMsg = function() {
+		var $container = $(".chat-area");
+
 		$.fn.resetConv();
 
 		currMsg = this.attr("id");
@@ -24,9 +26,17 @@ $(function() {
 			$("body").addClass("conv-" + currThread.substr(-1));
 		}
 
-		$(".chat-item").not(this).removeClass("current");
+		$(".chat-item").not(this).removeClass("current active");
 
-		this.addClass("current").get(0).scrollIntoView(true);
+		this.addClass("current");
+
+		if ($.fn.velocity) {
+			if ((this.offset().top - $container.offset().top) < 0 || this.offset().top > $container.height()) {
+				this.velocity("scroll", { duration: 150, container: $container });
+			}
+		} else {
+			this.get(0).scrollIntoView(true);
+		}
 
 		var nick = this.find(".chat-nick").text(),
 			msg = format.htmlToText($entry.html()).trim(),
@@ -78,16 +88,12 @@ $(function() {
 						$el = $chat.next();
 					} else {
 						$.fn.resetConv();
-						$chat.removeClass("current");
+						$chat.removeClass("current active");
 					}
 				}
 
 				if ($el) {
-					$el.addClass("clicked").selectMsg();
-
-					setTimeout(function() {
-						$el.removeClass("clicked");
-					}, 500);
+					$el.selectMsg();
 				}
 			} else {
 				if (e.target === $entry.get(0) && $(".chat-item").last().length && e.keyCode === 38) {
@@ -119,12 +125,13 @@ $(function() {
 		next();
 	}, 50);
 
-	$(document).on("click", ".chat-mark-long", function() {
+	$(document).on("click", ".chat-item", function() {
 		$(this).toggleClass("active").scrollTop(0);
 	});
 
 	$(document).on("click", ".chat-conv-dot", function() {
 		$.fn.resetConv();
-		$(".chat-item.current").removeClass("current");
+
+		$(".chat-item").removeClass("current active");
 	});
 });
