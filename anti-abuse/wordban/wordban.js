@@ -34,9 +34,10 @@ module.exports = function(core) {
 
 			if (message.room.params.antiAbuse.customWords) {
 				customWords = message.room.params.antiAbuse.customWords;
+				textMessage = message.text;
 
 				for (index=0, l = customWords.length; index<l; ++index) {
-					if((text.toLowerCase()).indexOf(customWords[index])!= -1) {
+					if((textMessage.toLowerCase()).indexOf(customWords[index])!= -1) {
 						if(customWords[index]==='') continue;
 						log("You cannot use banned words!");
 						if(!message.labels) message.labels = {};

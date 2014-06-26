@@ -10,7 +10,7 @@ roomEl.render = function ($el, room, index) {
 
 	$el.find(".room-name").text(room);
 	$el.attr("id", "room-item-" + room);
-	$el.data("index", index);
+	$el.attr("data-index", index);
 
 	if(roomName === room) {
 		$(".room-item.current").removeClass("current");

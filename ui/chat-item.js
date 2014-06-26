@@ -9,6 +9,9 @@ $(function() {
 		var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
 
 		$("body").attr("class", classes);
+
+		currMsg = null;
+		currThread = null;
 	};
 
 	$.fn.selectMsg = function() {
@@ -26,13 +29,27 @@ $(function() {
 		this.addClass("current").get(0).scrollIntoView(true);
 
 		var nick = this.find(".chat-nick").text(),
-			msg = format.htmlToText($entry.html()).trim().replace(/@\S+[\s+{1}]?$/, "");
+			msg = format.htmlToText($entry.html()).trim(),
+			atStart = false;
 
-		if (msg.indexOf(nick) < 0 && libsb.user.id !== nick) {
-			msg = msg + " @" + nick + " ";
+		if (msg.match(/^@\S+[\s+{1}]?/, "")) {
+			msg = msg.replace(/^@\S+[\s+{1}]?/, "");
+			atStart = true;
+		} else {
+			msg = msg.replace(/@\S+[\s+{1}]?$/, "");
 		}
 
-		$entry.html(format.textToHtml(msg)).focus();
+		if (msg.indexOf("@" + nick) < 0 && libsb.user.id !== nick) {
+			if (atStart) {
+				msg = "@" + nick + (msg ? " " + msg : "");
+			} else {
+				msg = (msg ? msg + " " : "") + "@" + nick;
+			}
+		}
+
+		msg = format.textToHtml(msg);
+
+		$entry.html(msg ? msg + "&nbsp;" : "").focus();
 
 		if ($.fn.setCursorEnd) {
 			$entry.setCursorEnd();
@@ -83,21 +100,31 @@ $(function() {
 	});
 
 	libsb.on("text-up", function(text, next) {
-		if ($("#" + text.id).length) {
-			$("#" + text.id).selectMsg();	
+		var $chat = $(".chat-item.current");
+
+		if ($chat.length && currThread) {
+			text.threads = [ { id: currThread, score: 1.0 } ];
 		}
+
+		lastMsg = text.id;
+
 		next();
-	}, 90);
+	}, 50);
 
 	libsb.on("text-dn", function(text, next) {
-		if (text.threads && text.threads.length && text.threads[0].id && text.threads[0].id === currThread) {
-			$("#" + text.id).selectMsg();
+		if (text.id === lastMsg || (text.threads && text.threads.length && text.threads[0].id === currThread)) {
+			$("#chat-" + text.id).selectMsg();
 		}
 
 		next();
-	}, 90);
+	}, 50);
 
 	$(document).on("click", ".chat-mark-long", function() {
 		$(this).toggleClass("active").scrollTop(0);
+	});
+
+	$(document).on("click", ".chat-conv-dot", function() {
+		$.fn.resetConv();
+		$(".chat-item.current").removeClass("current");
 	});
 });

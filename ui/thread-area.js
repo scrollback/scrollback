@@ -197,7 +197,7 @@ var threadEl = require("./thread.js"),
 		$threads.click(function(event) {
 			event.preventDefault();
 			var $el = $(event.target).closest('.thread-item');
-			if(!$el.size()) return;
+			if(!$el.length) return;
 			libsb.emit('navigate', {source: 'thread-area', time: null, thread: $el.attr("id").split('-')[1] });
 		});
 		$(".thread-all-conversations").click(function(event){

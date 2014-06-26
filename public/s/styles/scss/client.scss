@@ -1152,7 +1152,7 @@ body {
 }
 
 .chat-more {
-	@include transform(translate3d(3.5em, 0, 0));
+	@include transform(translate3d(-3.5em, 0, 0));
 	@extend %ease;
 
 	position: absolute;
@@ -1165,7 +1165,7 @@ body {
 	width: 3em;
 	height: 3em;
 	top: 0;
-	right: 0;
+	left: 0;
     cursor: pointer;
 
     @media #{$screenxx} {
@@ -1184,15 +1184,50 @@ body {
     box-shadow: 0 -3px 2px -1px rgba(0,0,0,.05);
 }
 
-.chat-entry-wrap { position: relative; }
+.chat-entry-wrap {
+    position: relative;
+}
+
+.chat-conv-dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 3em;
+
+    @media #{$screenxx} { width: 3.5em; }
+
+    &:after {
+        position: absolute;
+        content: "";
+        top: 1em;
+        left: 1em;
+        margin: .55em 0 auto 0;
+        height: .5em;
+        width: .5em;
+        border-radius: 50%;
+        background-color: fade-out(lighten($dark-color, 15%), .5);
+
+        @for $i from 1 through length($palette) {
+            $color: nth($palette, $i);
+            $j: $i - 1;
+
+            .conv-#{$j} & { background-color: $color; }
+        }
+
+        @media #{$screenxx} { left: 2em; }
+    }
+}
 
 .chat-placeholder {
     position: absolute;
     top: 0;
     left: 0;
-    padding: .9em 1em;
+    padding: .9em 1em .9em 2.9em;
     color: fade-out($dark-color, .5);
     pointer-events: none;
+
+    @media #{$screenxx} { padding-left: 3.5em; }
 }
 
 .chat-entry {
@@ -1202,10 +1237,11 @@ body {
 	width: 100%;
 	min-height: $bar-height;
 	max-height: 12em;
-	padding: .9em 1em;
-	padding-right: 2.5em;
+	padding: .9em 2.5em .9em 2.9em;
 	overflow: auto;
-	border-radius: 0;
+    border-radius: 0;
+
+    @media #{$screenxx} { padding-left: 3.5em; }
 
 	&:hover, &:focus, &:active {
 		border-color: $accent-color;

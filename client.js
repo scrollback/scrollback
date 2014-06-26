@@ -33,7 +33,7 @@ require('./anti-abuse/anti-abuse-client.js');
 require('./twitter/twitter-client.js');
 //require('./customization/customization-client.js');
 
-// user menus 
+// user menus
 require('./http/logout-client.js');
 require('./facebook/facebook-client.js');
 require('./github/github-client.js');
@@ -74,6 +74,7 @@ require('./ui/noroom-area.js');
 require('./ui/signup-area.js');
 require('./ui/persona.js');
 require('./ui/message-menu.js');
+require('./ui/animations.js');
 require('./ui/room-notifications.js');
 require('./ui/URLparser.js')();
 

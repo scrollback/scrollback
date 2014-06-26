@@ -74,15 +74,7 @@ $(function () {
 		var $oldEl = $("#chat-" + text.id),
 			$newEl = chatEl.render(null, text);
 
-		if (text.resource === libsb.resource) return next();
-		if (text.to != roomName) return next();
-        if ($oldEl.length) {
-			$oldEl.remove();
-		}
-
-		if ($logs.data("lower-limit")) {
-			$logs.addBelow($newEl);
-		}
+		if (text.to !== window.currentState.roomName) return next();
 
 		if (text.threads && text.threads.length && thread) {
 			for (var i = 0, l = text.threads.length; i < l; i++) {
@@ -98,7 +90,14 @@ $(function () {
 			return next();
 		}
 
-		
+		if ($oldEl.length) {
+			$oldEl.remove();
+		}
+
+		if ($logs.data("lower-limit")) {
+			$logs.addBelow($newEl);
+		}
+
 		next();
 	}, 100);
 
@@ -110,9 +109,10 @@ $(function () {
 			    text.mentions.push(input);
 			}
 		}
+
         text.mentions = [];
 		text.text.split(" ").map(isMention);
-        
+
         if ($logs.data("lower-limit")) {
 			$logs.addBelow(chatEl.render(null, text));
 		}
@@ -210,7 +210,7 @@ $(function () {
 			time = chats.eq(0).data("index"),
 			parentOffset = $logs.offset().top;
 
-		for (var i = 0; i < chats.size(); i++) {
+		for (var i = 0; i < chats.length; i++) {
 			if (chats.eq(i).offset().top - parentOffset > 0) {
 				time = chats.eq(i).data("index");
 				break;
@@ -231,6 +231,14 @@ $(function () {
 		});
 
 	});
+
+	setInterval(function() {
+		$(".chat-timestamp").each(function() {
+			var time = $(this).parent().data("index");
+
+			$(this).empty().text(format.friendlyTime(time, new Date().getTime()));
+		});
+	}, 60000);
 });
 
 module.exports = chatArea;
