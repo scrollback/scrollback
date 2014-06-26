@@ -8,6 +8,7 @@ $(function(){
 	$(document).click('.chat-area', function(event){
 		var elem = $(event.target).closest('.chat-item').get(0);
 		var target = $(elem).find('.chat-more').get(0);
+		if(event.target !== target) return;
 		var messageId = elem ? elem.id : "";
 		var role = 'registered';
 		if(messageId){
