@@ -1,4 +1,6 @@
 var permissionLevels = require('../permissionWeights.js');
+var config = require('../../config.js');
+var internalSession = Object.keys(config.whitelists)[0];
 module.exports = function(core){
     
 	core.on('getTexts', function(query, callback){
@@ -19,9 +21,9 @@ module.exports = function(core){
     
     ['getRooms', 'getUsers'].forEach(function(e) {
         core.on(e, function(query, next) {
-            if(query.identity && query.user.role !== 'su') return callback(new Error("ERR_QUERY_NOT_ALLOWED"));
-            next();
-        });
+            if(query.identity && query.user.role !== 'su' && query.session !== internalSession) next(new Error("ERR_QUERY_NOT_ALLOWED"));
+            else next();
+        }, "authorization");
     });
     
 };
