@@ -208,8 +208,9 @@ var threadEl = require("./thread.js"),
 
 	libsb.on('navigate', function(state, next) {
 		if (state.old && state.thread !== state.old.thread) {
-			if (typeof state.thread !== "undefined"  && state.thread !== thread) {
+			if (state.thread && state.thread !== thread) {
 				thread = state.thread;
+				
 				$(".thread-item.current").removeClass("current");
 				$("#thread-" + state.thread).addClass("current");
 
