@@ -35,7 +35,7 @@ var handlers = {
 		});
 	},
 	edit: function(action, callback) {
-		core.emit("getTexts", {id: uid(),ref: action.ref}, function(err, actions) {
+		core.emit("getTexts", {id: uid(),ref: action.ref, to: action.room.id, session: internalSession}, function(err, actions) {
 			if(err || !actions || !actions.results || !actions.results.length) return callback(new Error("TEXT_NOT_FOUND"));
 			action.old = actions.results[0];
 			callback();

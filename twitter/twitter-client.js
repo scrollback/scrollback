@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, currentState */
 
 var lace = require("../lib/lace.js"),
 	formField = require("../lib/formField.js"),
@@ -83,5 +83,19 @@ libsb.on("config-save", function(room, next){
         };
     }
 
+	next();
+}, 500);
+
+libsb.on('text-menu', function(menu, next){
+	var chatMessage = $(menu.target).find('.chat-message').text();
+	var tweetUrl = encodeURI("https://twitter.com/home/?status=" + chatMessage  + " via https://scrollback.io/" + currentState.roomName);
+
+	menu.items.tweetmessage = {
+		text: 'Tweet this message',
+		prio: 300,
+		action: function(){
+			window.open(tweetUrl, '_blank');
+		}
+	};
 	next();
 }, 500);

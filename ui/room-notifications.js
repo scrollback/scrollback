@@ -2,7 +2,6 @@
 
 function upDateNotifier(roomName, type){
 	// updates the room notifer
-	console.log("Update notifier ", roomName);
 	var className = '#room-item-' + roomName;
 	if(type === 'remove'){
 		$(className).find('.notif-counter').text("");

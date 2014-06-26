@@ -131,7 +131,6 @@ var threadEl = require("./thread.js"),
 			room = state.roomName;
 			reset = true;
 		}else if(state.roomName && state.roomName != room) {
-            console.log("Setting the room");
 			room = state.roomName;
 			reset = true;
 		}else if(state.query) {

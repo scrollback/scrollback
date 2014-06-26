@@ -133,7 +133,6 @@ libsb.on('navigate', function(state, next) {
 }, 100);
 
 libsb.on("init-dn", function (init, next) {
-	console.log("*************");
 	if (init.auth && !init.user.id) return next();
 
 	if (/^guest-/.test(init.user.id)) {
