@@ -41,11 +41,13 @@ module.exports = function(core){
 
 
 	core.on("room", function(action, callback) {
+
+		if(action.room.params.http && typeof action.room.params.http.seo !== "boolean") return callback(new Error("ERR_INVAILD_PARAMS"));
 		callback();
 	}, 'appLevelValidation');
 
 	core.on("user", function(action, callback) {
-		if(!action.user.params.notifications) return callback(new Error("ERR_INVAILD_PARAMS"));
+		if(!action.user.params.notifications) return callback();
 		if(typeof action.user.params.notifications.sound !== "boolean") return callback(new Error("ERR_INVAILD_PARAMS"));
 		if(typeof action.user.params.notifications.desktop !== "boolean") return callback(new Error("ERR_INVAILD_PARAMS"));
 		callback();

@@ -4,40 +4,63 @@
 var roomEl = require("./room-item.js"),
 	roomName = "";
 
+// var roomList = {};
+var $roomlist, rooms = [false, false], listenQueue = [];
+
+function enter(room) {
+    if(!room) return;
+    room = room.toLowerCase();
+    if(rooms.indexOf(room)<0) {
+        if(libsb.isInited) {
+            libsb.enter(room);
+            rooms.pop();
+            rooms.push(room);
+            rooms.push(false);
+        }else {
+            if(listenQueue.indexOf(room)<0){
+                listenQueue.push(room);
+            }
+        }
+        if($roomlist) $roomlist.reset();
+    }
+}
+libsb.on("inited", function(d, n) {
+    if(currentState.embed == "toast") return n();
+
+    listenQueue.forEach(function(e) {
+        enter(e);
+    });
+
+    listenQueue = [];
+    n();
+}, 100);
+
+
+libsb.on("navigate", function(state, next) {
+    var room = state.roomName;
+    if(currentState.embed == "toast") return next();
+    enter(room);
+    if(state.old && state.old.roomName === state.roomName) return next();
+    next();
+}, 10);
+
+libsb.on("init-dn", function(init, next) {
+    if(currentState.embed == "toast") return next();
+/*	if(init.occupantOf){
+        init.occupantOf.forEach(function(r) {
+            enter(r.id);
+        });
+    }*/
+    if(init.memberOf){
+        init.memberOf.forEach(function(r) {
+            enter(r.id);
+        });
+    }
+    next();
+}, 10);
+
 $(function() {
-	var $roomlist = $(".room-list"),
-		rooms = [false, false], listenQueue = [];
-
-	function enter(room) {
-		if(!room) return;
-		room = room.toLowerCase();
-		if(rooms.indexOf(room)<0) {
-			if(libsb.isInited) {
-				libsb.enter(room);
-				rooms.pop();
-				rooms.push(room);
-				rooms.push(false);
-			}else {
-				if(listenQueue.indexOf(room)<0){
-					listenQueue.push(room);
-				}
-			}
-			$roomlist.reset();
-		}
-	}
-
-	libsb.on("inited", function(d, n) {
-		if(currentState.embed == "toast") return n();
-
-		listenQueue.forEach(function(e) {
-			enter(e);
-		});
-
-        listenQueue = [];
-		n();
-	}, 100);
-
-
+	$roomlist = $(".room-list");    
 	// Set up infinite scroll here.
 	$roomlist.infinite({
 		scrollSpace: 2000,
@@ -95,41 +118,5 @@ $(function() {
 
 		event.preventDefault();
 	});
-
-
-	libsb.on("navigate", function(state, next) {
-		var room = state.roomName;
-		if(currentState.embed == "toast") return next();
-		enter(room);
-		if(state.old && state.old.roomName === state.roomName) return next();
-		next();
-	}, 10);
-
-	libsb.on("init-dn", function(init, next) {
-		if(currentState.embed == "toast") return next();
-	/*	if(init.occupantOf){
-			init.occupantOf.forEach(function(r) {
-				enter(r.id);
-			});
-		}*/
-		if(init.memberOf){
-			init.memberOf.forEach(function(r) {
-				enter(r.id);
-			});
-		}
-		next();
-	}, 10);
-
-	libsb.on('navigate', function(state, next) {
-		if(state.roomName == "pending" && state.room ===null) return next();
-
-		if(state.roomName && state.room!== null) {
-			roomName = state.roomName;
-			$(".room-item.current").removeClass("current");
-			$("#room-item-" + state.roomName).addClass("current");
-		}
-
-		next();
-	}, 500);
 
 });
