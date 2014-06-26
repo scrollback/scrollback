@@ -72,8 +72,8 @@ module.exports = function(core) {
 		},
 		edit: function(action, callback) {
 			if(!action.ref) return callback(new Error("REF_NOT_SPECIFIED"));
-			if(!action.text && !action.label) return callback(new Error("NO_OPTION_TO_EDIT"));
-			if(action.label && typeof action.label!= "object") return callback(new Error("INVALID_EDIT_OPTION_LABEL"));
+			if(!action.text && !action.labels) return callback(new Error("NO_OPTION_TO_EDIT"));
+			if(action.labels && typeof action.labels!= "object") return callback(new Error("INVALID_EDIT_OPTION_LABEL"));
 			if(action.text && typeof action.text!= "string") return callback(new Error("INVALID_EDIT_OPTION_TEXT"));
 			callback();
 		},

@@ -20,7 +20,7 @@ $(function(){
 					}
 				});
 			}
-			libsb.emit('text-menu', {origin: target, buttons: {}, items: {}, role: role, target: elem}, function(err, menu){
+			libsb.emit('text-menu', {origin: target, items: {}, role: role, target: elem}, function(err, menu){
 				delete menu.role;
 				delete menu.target;
 				showMenu(menu);

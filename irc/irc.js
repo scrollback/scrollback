@@ -216,6 +216,10 @@ function init() {
 			var rooms = data.results;
 			log("returned state from IRC:", JSON.stringify(state));
 			log("results of getRooms: ", rooms);
+			if (err) {
+				log("Get room query :", err);
+				return;
+			}
 			rooms.forEach(function(room) {
 				if (state.rooms[room.id]) {
 					var r1 = room.params.irc;

@@ -187,7 +187,7 @@ function sendText(text, next){
 }
 
 function sendEdit(edit, next){
-	var action = makeAction(edit, {to: edit.to, type: 'edit', id: edit.id});
+	var action = makeAction(edit, {to: edit.to, type: 'edit', id: edit.id, ref: edit.ref, labels: edit.labels, text: edit.text});
 	safeSend(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);
 }

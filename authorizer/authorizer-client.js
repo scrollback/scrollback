@@ -55,6 +55,8 @@ libsb.on('config-save', function(room, next){
 	};
 	var readLevel = mapRoles[$('input:radio[name="authorizer-read"]:checked').attr('id').substring(16)];
 	var writeLevel = mapRoles[$('input:radio[name="authorizer-write"]:checked').attr('id').substring(16)];
+    if(!room.guides) room.guides = {};
+
 	room.guides.authorizer = {
 		readLevel: readLevel,
 		writeLevel: writeLevel

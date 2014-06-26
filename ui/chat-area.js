@@ -28,11 +28,14 @@ $(function () {
 			index = index || time;
 			query.time = index;
 
-			if (thread) query.thread = thread;
 
-			if (roomName == "pending" && room === null) return callback();
-
-			if (!index && !before) return callback([false]);
+            if(thread) query.thread = thread;
+            /*console.log(roomName, room);
+            if(roomName && room ===null){
+                // room object no available in the localstorage.
+                return callback([false]);
+            }*/
+            if(!index && !before) return callback([false]);
 
 			function loadTexts() {
 				libsb.getTexts(query, function (err, t) {
@@ -129,11 +132,11 @@ $(function () {
 			thread = state.thread || currentState.thread;
 			time = state.time || time;
 			reset = true;
-		} else {
-			if (state.roomName == "pending" && state.room === null) {
-				reset = true;
-				roomName = currentState.roomName;
-			} else if (state.roomName && state.roomName !== state.old.roomName) {
+		}else {
+            if(state.roomName && state.room === null) {
+                reset = true;
+                roomName = currentState.roomName;
+            }else if(state.roomName && state.roomName !== state.old.roomName) {
 				roomName = state.roomName;
 				reset = true;
 			}
@@ -224,12 +227,7 @@ $(function () {
 		if (chatArea.getPosition.value === 0) {
 			time = null;
 		}
-
-		libsb.emit('navigate', {
-			time: time,
-			source: 'text-area'
-		});
-
+        libsb.emit('navigate', { time: time, source: 'text-area' });
 	});
 
 	setInterval(function() {

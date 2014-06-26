@@ -30,7 +30,6 @@ var showMenu = function(menu) {
                   .text(menu.title)
                   .appendTo($popover);
     }
-
     if (typeof menu.buttons === "object" && !$.isEmptyObject(menu.buttons)) {
         $buttons = $("<div>").addClass("popover-section popover-buttons");
 		
@@ -51,7 +50,8 @@ var showMenu = function(menu) {
 
         $buttons.appendTo($popover);
     }
-
+	
+	
     if (typeof menu.items === "object" && !$.isEmptyObject(menu.items)) {
         $list = $("<div>").addClass("popover-section").append("<ul>");
 		sortable = [];
