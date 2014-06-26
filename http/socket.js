@@ -174,10 +174,14 @@ function storeBack(conn, back) {
 	if(!uConns[back.from]) uConns[back.from] = [];
 	if(rConns[back.to].indexOf(conn)<0) rConns[back.to].push(conn);
 	if(urConns[back.from+":"+back.to].indexOf(conn)<0) urConns[back.from+":"+back.to].push(conn);
+    if(!conn.listeningTo) conn.listeningTo = [];
+    conn.listeningTo.push(back.to);
+//    console.log("LOG:"+ back.from +" got back from :"+back.to);
 }
 
 
 function storeAway(conn, away) {
+    var index;
 	delete urConns[away.from+":"+away.to];
 	if (sConns[away.session] && !sConns[away.session].length) {
 		delete sConns[away.session];
@@ -186,6 +190,11 @@ function storeAway(conn, away) {
 		delete uConns[away.session];
 	}
 	if(urConns[away.from+":"+away.to]) delete urConns[away.from+":"+away.to];
+    if(conn.listeningTo) {
+        index = conn.listeningTo.indexOf(away.to);
+        if(index>=0)conn.listeningTo.splice(index, 1);
+    }
+//    console.log("LOG: "+ away.from +"sending away to :"+away.to);
 }
 
 exports.initServer = function (server) {
@@ -254,36 +263,35 @@ function emit(action, callback) {
 function handleClose(conn) {
 	if(!conn.session) return;
 	core.emit('getUsers', {ref: "me", session: conn.session}, function(err, sess) {
-
+        
 		if(err || !sess || !sess.results) {
 			log("Couldn't find session to close.", err, sess);
 			return;
 		}
 		var user = sess.results[0];
+        // console.log("LOG: "+ user.id +" closed tab which had", conn.listeningTo.join(","), "open");
 		setTimeout(function() {
-			core.emit('getRooms', {hasOccupant: user.id, session: conn.session}, function(err, rooms) {
-				if(err || !rooms ||!rooms.results) {
-					log("couldnt find his rooms: away message not sent:", err, rooms);
-					return;
-				}
-
-				rooms.results.forEach(function(room) {
-					var awayAction = {
-						from: user.id,
-						session: conn.session,
-						type:"away",
-						to: room.id,
-						time: new Date().getTime()
-					};
-					
-					if(!verifyAway(conn, awayAction)) return;
-					core.emit('away',awayAction , function(err, action) {
-						if(err) return;
-						storeAway(conn, action);
-					});
-				});
-			});
-		}, 30*1000);
+            // console.log("LOG: "+ user.id +"30 seconds lated");
+            if(!conn.listeningTo || !conn.listeningTo.length) return;
+            
+            conn.listeningTo.forEach(function(room) {
+                var awayAction = {
+                    from: user.id,
+                    session: conn.session,
+                    type:"away",
+                    to: room,
+                    time: new Date().getTime()
+                };
+                // console.log("LOG: "+user.id +"verifing away for", room);
+                if(!verifyAway(conn, awayAction)) return;
+                // console.log("LOG: "+ user.id +"sending away for", room);
+                core.emit('away',awayAction , function(err, action) {
+                    if(err) return;
+                    storeAway(conn, action);
+                });
+                
+            });
+		}, 3*1000);
 	});
 }
 
@@ -291,19 +299,20 @@ function verifyAway(conn, away) {
 	var index;
 	if(rConns[away.to]) {
 		index = rConns[away.to].indexOf(conn);
-		rConns[away.to].splice(index,1);
+		if(index >=0) rConns[away.to].splice(index,1);
 	}
 	if(sConns[conn.session]) {
 		index = sConns[conn.session].indexOf(conn);
-		sConns[conn.session].splice(index,1);
+		if(index >=0) sConns[conn.session].splice(index,1);
 	}
 	if(uConns[away.from]) {
 		index = uConns[away.from].indexOf(conn);
-		uConns[away.from].splice(index,1);
+		if(index >=0) uConns[away.from].splice(index,1);
 	}
 	if(urConns[away.from+":"+away.to]) {
 		index = urConns[away.from+":"+away.to].indexOf(conn);
-		urConns[away.from+":"+away.to].splice(index,1);
+		if(index >=0) urConns[away.from+":"+away.to].splice(index,1);
+        // console.log("LOG: "+ away.from +"Connections still available: ", urConns[away.from+":"+away.to].length);
 		return (urConns[away.from+":"+away.to].length===0);
 	}else{
 		return true;

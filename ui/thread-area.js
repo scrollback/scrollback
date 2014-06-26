@@ -124,7 +124,7 @@ var threadEl = require("./thread.js"),
 			$(".tab-"+state.tab).addClass("current");
 		}
 
-        if(state.roomName == "pending" && state.room === null) return next();
+        if(state.roomName && state.room === null) return next();
         if(state.source == 'thread-area') return next();
 
 		if(!state.old) {
