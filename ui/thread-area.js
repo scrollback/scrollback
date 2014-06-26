@@ -125,7 +125,7 @@ var threadArea = {};
 			$(".tab-"+state.tab).addClass("current");
 		}
 
-        if(state.roomName == "pending" && state.room === null) return next();
+        if(state.roomName && state.room === null) return next();
         if(state.source == 'thread-area') return next();
 
 		if(!state.old) {
@@ -201,7 +201,8 @@ var threadArea = {};
 			event.preventDefault();
 			var $el = $(event.target).closest('.thread-item');
 			if(!$el.size()) return;
-			libsb.emit('navigate', {source: 'thread-area', time: null, thread: $el.attr("id").split('-')[1] });
+			libsb.emit('navigate', {source: 'thread-area',thread: $el.attr("id").split('-')[1] }, function(){
+            });
 		});
 		$(".thread-all-conversations").click(function(event){
 			event.preventDefault();
