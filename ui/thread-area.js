@@ -124,7 +124,7 @@ var threadEl = require("./thread.js"),
 			$(".tab-"+state.tab).addClass("current");
 		}
 
-        if(state.roomName == "pending" && state.room === null) return next();
+        if(state.roomName && state.room === null) return next();
         if(state.source == 'thread-area') return next();
 
 		if(!state.old) {
@@ -208,12 +208,13 @@ var threadEl = require("./thread.js"),
 
 	libsb.on('navigate', function(state, next) {
 		if (state.old && state.thread !== state.old.thread) {
-			if (typeof state.thread !== "undefined"  && state.thread !== thread) {
+			if (state.thread && state.thread !== thread) {
 				thread = state.thread;
+				
 				$(".thread-item.current").removeClass("current");
 				$("#thread-" + state.thread).addClass("current");
 
-				$("body").addClass('conv-' + thread.id.substr(-1));
+				$("body").addClass('conv-' + thread.substr(-1));
 			} else {
 				var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
 

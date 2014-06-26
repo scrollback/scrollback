@@ -135,6 +135,10 @@ module.exports = function(grunt) {
 			styles: {
 				files: ["gruntfile.js", "public/s/styles/scss/*.scss"],
 				tasks: ["sass", "autoprefixer", "manifest"],
+			},
+			misc: {
+				files: ["public/client.html", "public/s/img/client/*.*", "public/s/img/client/*/*.*"],
+				tasks: ["manifest"],
 			}
 		}
 	});
