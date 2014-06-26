@@ -213,7 +213,7 @@ var threadEl = require("./thread.js"),
 				$(".thread-item.current").removeClass("current");
 				$("#thread-" + state.thread).addClass("current");
 
-				$("body").addClass('conv-' + thread.id.substr(-1));
+				$("body").addClass('conv-' + thread.substr(-1));
 			} else {
 				var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
 
