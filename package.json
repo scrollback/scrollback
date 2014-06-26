@@ -59,7 +59,7 @@
     "nodemailer": "latest",
     "newrelic": "latest",
     "twit": "~1.1.12",
-    "objectlevel": "latest",
+    "objectlevel": "git://github.com/scrollback/objectlevel.git",
     "htmlencode": "0.0.3",
     "underscore": "latest",
     "browserify": "x",
