@@ -2,22 +2,74 @@
 /* global $, libsb, format */
 
 $(function() {
-	var $entry = $(".chat-entry"),
-		lastMsg, currMsg, currThread;
+	var $container = $(".chat-area"),
+		$entry = $(".chat-entry"),
+		lastMsg, currMsg, currThread,
+		resetConv = function() {
+			var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
 
-	$.fn.resetConv = function() {
-		var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
+			$("body").attr("class", classes);
 
-		$("body").attr("class", classes);
+			currMsg = null;
+			currThread = null;
 
-		currMsg = null;
-		currThread = null;
-	};
+			removeLine();
+
+			$(".chat-item").removeClass("current active");
+		},
+		removeLine = function() {
+			var $line = $(".chat-conv-line"),
+				$dot = $(".chat-item-dot, .chat-conv-dot");
+
+			$dot.velocity("stop")
+				.velocity({ scale: 1 }, 150);
+
+			if ($line.length) {
+				$line.velocity("stop")
+					 .velocity({ translateY: ( $line.height() / 2 ), scaleY: 0, opacity: 0 },
+											   300, function() { $(this).remove(); });
+			}
+		},
+		drawLine = function() {
+			removeLine();
+
+			if (currThread) {
+				var $line = $("<div>").addClass("chat-conv-line"),
+					$chatdot = $(".chat-item-dot"),
+					$convdot = $(".chat-conv-dot"),
+					$dot = $("[data-thread=" + currThread + "]").find($chatdot).add($convdot),
+					left = $container.offset().left,
+					top = $dot.first().offset().top,
+					bottom = $(document).height() - $convdot.offset().top - ($convdot.height() / 2);
+
+				$chatdot.not($dot).velocity("stop")
+								  .velocity({ scale: 1 }, { duration: 150 });
+
+				$dot.velocity("stop")
+					.velocity({ scale: 1 }, { duration: 150 })
+					.velocity({ scale: 1.5 }, { duration: 300 });
+
+				$line.css({ top: ((top > 0) ? top : 0), left: left, bottom: bottom }).appendTo($container);
+
+				$line.velocity("stop")
+					 .velocity({ translateY: ( $line.height() / 2 ), scaleY: 0, opacity: 0 }, 0)
+					 .velocity({ translateY: 0, scaleY: 1, opacity: 0.5 }, 300)
+					 .velocity({ opacity: 1 }, 150);
+			}
+		};
+
+	$container.scroll(function() {
+		clearTimeout($(this).data("scrollTimer"));
+
+		removeLine();
+
+		$(this).data("scrollTimer", setTimeout(function() {
+			drawLine();
+		}, 500));
+	});
 
 	$.fn.selectMsg = function() {
-		var $container = $(".chat-area");
-
-		$.fn.resetConv();
+		resetConv();
 
 		currMsg = this.attr("id");
 		currThread = this.attr("data-thread");
@@ -25,8 +77,6 @@ $(function() {
 		if (currThread) {
 			$("body").addClass("conv-" + currThread.substr(-1));
 		}
-
-		$(".chat-item").not(this).removeClass("current active");
 
 		this.addClass("current");
 
@@ -65,6 +115,8 @@ $(function() {
 			$entry.setCursorEnd();
 		}
 
+		drawLine();
+
 		return this;
 	};
 
@@ -87,8 +139,7 @@ $(function() {
 					if ($chat.next().length) {
 						$el = $chat.next();
 					} else {
-						$.fn.resetConv();
-						$chat.removeClass("current active");
+						resetConv();
 					}
 				}
 
@@ -118,7 +169,7 @@ $(function() {
 	}, 50);
 
 	libsb.on("text-dn", function(text, next) {
-		if (text.id === lastMsg || (text.threads && text.threads.length && text.threads[0].id === currThread)) {
+		if (currThread && (text.id === lastMsg || (text.threads && text.threads.length && text.threads[0].id === currThread))) {
 			$("#chat-" + text.id).selectMsg();
 		}
 
@@ -130,8 +181,6 @@ $(function() {
 	});
 
 	$(document).on("click", ".chat-conv-dot", function() {
-		$.fn.resetConv();
-
-		$(".chat-item").removeClass("current active");
+		resetConv();
 	});
 });

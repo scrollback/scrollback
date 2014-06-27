@@ -1010,6 +1010,15 @@ body {
         padding-left: 12em;
     }
 
+    @for $i from 1 through length($palette) {
+        $color: nth($palette, $i);
+        $j: $i - 1;
+
+        &:not(.conv-#{$j}) .chat-item-dot {
+            body.conv-#{$j} & { @include opacity(0.3); }
+        }
+    }
+
 	&:hover, &:focus { background-color: darken($light-color, 1%); }
 
     &:last-of-type { border-bottom: 1px solid rgba(0,0,0,0.025); }
@@ -1034,26 +1043,6 @@ body {
 		& + .chat-item { border-top: 1px solid darken($light-color, 10%); }
 
         .chat-timestamp { color: fade-out($dark-color, .3); }
-	}
-
-	&:before {
-		content: "";
-		float: left;
-		margin: .55em 0 auto -2em;
-		height: .5em;
-		width: .5em;
-		border-radius: 50%;
-        background-color: fade-out(lighten($dark-color, 15%), .5);
-
-		@media #{$screenxx} { margin-left: -10em; }
-	}
-
-	/* set conversations dot colors */
-	@for $i from 1 through length($palette) {
-		$color: nth($palette, $i);
-		$j: $i - 1;
-
-		&.conv-#{$j}:before { background-color: $color; }
 	}
 
 	&.chat-mark-long {
@@ -1111,9 +1100,24 @@ body {
     }
 
     &.chat-label-hidden {
-        @include opacity(0.3);
+        color: fade-out($dark-color, .5);
+        font-style: italic;
 
         [data-role]:not([data-role=owner]) { display: none; }
+    }
+
+    .chat-timestamp {
+        @extend %ease;
+
+        display: none;
+        padding-left: 3em;
+        font-size: .8em;
+        float: right;
+        color: fade-out($dark-color, .5);
+    }
+
+    &:last-of-type, &.chat-mark-timestamp-shown {
+        .chat-timestamp { display: inline-block; }
     }
 
 	a {
@@ -1126,20 +1130,25 @@ body {
         max-width: 100%;
         max-height: auto;
     }
+}
 
-	.chat-timestamp {
-        @extend %ease;
+.chat-item-dot {
+    content: "";
+    float: left;
+    margin: .55em 0 auto -2em;
+    height: .5em;
+    width: .5em;
+    border-radius: 50%;
+    background-color: fade-out(lighten($dark-color, 15%), .5);
 
-        display: none;
-        padding-left: 3em;
-        font-size: .8em;
-        float: right;
-        color: fade-out($dark-color, .5);
+    @media #{$screenxx} { margin-left: -10em; }
+
+    @for $i from 1 through length($palette) {
+        $color: nth($palette, $i);
+        $j: $i - 1;
+
+        .chat-item.conv-#{$j} & { background-color: $color; }
     }
-
-    &:last-of-type, &.chat-mark-timestamp-shown {
-		.chat-timestamp { display: inline-block; }
-	}
 }
 
 .chat-nick {
@@ -1163,8 +1172,24 @@ body {
 	}
 }
 
+.chat-conv-line {
+    width: 3px;
+    position: fixed;
+    margin-left: 1.15em;
+    z-index: 10;
+
+    @media #{$screenxx} { margin-left: 2.15em; }
+
+    @for $i from 1 through length($palette) {
+        $color: nth($palette, $i);
+        $j: $i - 1;
+
+        .conv-#{$j} & { background-color: $color; }
+    }
+}
+
 .chat-more {
-	@include transform(translate3d(-3.5em, 0, 0));
+	@include transform(translate3d(3.5em, 0, 0));
 	@extend %ease;
 
 	position: absolute;
@@ -1177,7 +1202,7 @@ body {
 	width: 3em;
 	height: 3em;
 	top: 0;
-	left: 0;
+	right: 0;
     cursor: pointer;
 
     @media #{$screenxx} {
@@ -1198,7 +1223,7 @@ body {
 
 .chat-entry-wrap { position: relative; }
 
-.chat-conv-dot {
+.chat-conv-dot-wrap {
     position: absolute;
     top: 0;
     left: 0;
@@ -1207,7 +1232,7 @@ body {
 
     @media #{$screenxx} { width: 3.5em; }
 
-    &:after {
+    .chat-conv-dot {
         position: absolute;
         content: "";
         top: 1em;

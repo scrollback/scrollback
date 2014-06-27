@@ -160,6 +160,7 @@
 				<div class="chat-position"></div>
 				<div class="chat-area hide-scroll">
 					<p class="chat-item">
+						<span class="chat-item-dot"></span>
 						<span class="chat-nick"></span>
 						<span class="chat-message"></span>
 						<span class="chat-timestamp"></span>
@@ -173,7 +174,9 @@
 			</div>
 			<div data-mode="normal search" class="chat-input">
 				<div class="chat-entry-wrap">
-					<div class="chat-conv-dot"></div>
+					<div class="chat-conv-dot-wrap">
+						<span class="chat-conv-dot"></span>
+					</div>
 					<div class="chat-placeholder"></div>
 					<div role="textbox" class="chat-entry" contenteditable></div>
 				</div>
@@ -181,6 +184,7 @@
 					<use xlink:href="/s/img/client/icons/send.svg#icon"></use>
 				</svg>
 			</div>
+			<div data-mode="normal" class="chat-conv-line"></div>
 		</section>
 		<section class="search-bar">
 			<form>
