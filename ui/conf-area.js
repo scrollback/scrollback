@@ -104,18 +104,19 @@ libsb.on('navigate', function (state, next) {
             cancelEdit();
             return next();
         }
-        
-        libsb.getRooms({ref: currentState.roomName, hasMember: libsb.user.id}, function(err, data) {
-            if(err || !data.results || !data.results.length) {
-                //may be even show error.
-                cancelEdit();
-                return next();
-            }
-            console.log(data.results[0]);
-            if (!currentConfig) {
-                showConfig(data.results[0]);
-            }
-        });
+        if(state.roomName != state.old.roomName){
+			libsb.getRooms({ref: currentState.roomName, hasMember: libsb.user.id}, function(err, data) {
+				if(err || !data.results || !data.results.length) {
+					//may be even show error.
+					cancelEdit();
+					return next();
+				}
+				console.log(data.results[0]);
+				if (!currentConfig) {
+					showConfig(data.results[0]);
+				}
+			});
+		}
     }
 
     next();

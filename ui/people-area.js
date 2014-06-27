@@ -1,8 +1,9 @@
 /* jshint jquery: true */
-/* global libsb */
+/* global libsb, window */
 
 var personEl = require("./person.js"),
     peopleArea = {};
+window.peopleAreaLoaded = false;
 
 $(function() {
     var levels = [0,1,3,4,6,9];
@@ -194,6 +195,7 @@ $(function() {
 	});
 
     function loadMembers() {
+		window.peopleAreaLoaded = true;
         getPeople(function(sortedList) {
             people = sortedList;
             $people.reset();
@@ -218,8 +220,7 @@ $(function() {
 				people6: [],
 				people9: []
 			};
-
-            loadMembers();
+            if(!window.peopleAreaLoaded || state.roomName != state.old.roomName) loadMembers();
 		}
         if(state.roomName) roomName = state.roomName;
 		next();

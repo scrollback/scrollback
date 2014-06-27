@@ -72,7 +72,7 @@ libsb.on('config-save', function(room, next){
 }, 500);
 
 libsb.on("room-dn", function(room, next) {
-	if (room.user.id === libsb.user.id && room.room.params.irc && room.room.params.irc.pending) {
+	if (room.user.id === libsb.user.id && room.params.irc  && room.params.irc.pending) {
 		var r = room.room;
 		$.get('/r/irc/' + r.id, function(botName) {
 			var displayString = "Something went wrong while connecting to IRC server";
