@@ -3,6 +3,10 @@
 var ArrayCache = require('./ArrayCache.js');
 var generate = require('../lib/generate');
 var cache, core;
+var messageListener = false;
+var domain = location.host;
+var path = location.pathname;
+
 
 function load(){
 	if(localStorage.libsb){
@@ -35,7 +39,26 @@ module.exports = function(c){
 	core.on('getTexts', getTextsAfter, 900);
 	core.on('getThreads', getThreadsBefore, 400);
 	core.on('getThreads', getThreadsAfter, 900);
-	core.on('connected', createInit, 1000);
+	core.on('connected', function() {
+		if (window.parent.location === window.location) {
+			createInit();	
+		} else {
+			if(!messageListener) {
+				$(window).on("message", function(e) {
+					var data = e.originalEvent.data;
+					try { data = JSON.parse(data);} catch(e) {return;}
+					if (typeof data === "object" && data.location) {
+						domain = data.location.host;
+						path = data.location.pathname;
+					}
+					createInit();
+				});
+				window.parent.postMessage("getDomain", "*");
+				messageListener = true;
+			} else createInit();
+		}
+		
+	}, 1000);
 	core.on('init-dn', recvInit, 900);
 	core.on('away-up', storeAway, 100); // can be in the end.
 	//core.on('text-up', storeText);
@@ -65,18 +88,11 @@ function createInit(){
 		cache.session = sid = "web:"+generate.uid();
 		libsb.session = cache.session;
 	}
-
-//	window.parent.postMessage("getLocation", "*");
-//
-//	$(window).on("message", function(e) {
-//		var data = e.originalEvent.data;
-//
-//		if (typeof data === "object" && data.location) {
-//			// do stuff
-//		}
-//	});
-
-	core.emit('init-up', {session: sid});
+	core.emit('init-up', {session: sid, origin: {
+		gateway: "web",
+		domain: domain,
+		path: path
+	}});
 }
 
 function storeAway(away, next){

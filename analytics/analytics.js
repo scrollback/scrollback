@@ -157,8 +157,8 @@ function saveRoomUserActions(action) {
 	var params = pav.params;
 	var values = pav.values;
 	var type = action.type;
-	params.push("creation");
-	if (action.old.id) values.push(true);			
+	params.push("iscreated");
+	if (action.old && action.old.id) values.push(true);			
 	else values.push(false);
 	params.push("description");
 	values.push(action[type].description);

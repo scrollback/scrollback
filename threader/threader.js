@@ -79,6 +79,7 @@ function processReply(data){
 				
 				redis.get("threader:last:" + id, function(err, d) {
 					message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
+					if (!message) return; 
 					d = JSON.parse(d);
 					var tt = title;
 					if(!message.threads) message.threads = [];

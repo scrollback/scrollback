@@ -48,7 +48,7 @@
 
 						iframe.className = classString.trim();
 					} else if (e.data === "getDomain") {
-						iframe.postMessage({ location: window.location }, host);
+						iframe.contentWindow.postMessage(JSON.stringify({ location: window.location }), host);
 					}
 				}
 			}, false);

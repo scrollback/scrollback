@@ -183,7 +183,7 @@ $(function() {
 		$(this).toggleClass("active").scrollTop(0);
 	});
 
-	$(document).on("click", ".chat-conv-dot", function() {
+	$(document).on("click", ".chat-conv-dot-wrap", function() {
 		resetConv();
 	});
 });
