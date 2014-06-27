@@ -30,7 +30,7 @@ module.exports = function(c){
 		};
 		//core.emit('init-dn', fakeInit);
 	}
-	
+
 	core.on('getTexts', getTextsBefore, 400);
 	core.on('getTexts', getTextsAfter, 900);
 	core.on('getThreads', getThreadsBefore, 400);
@@ -41,7 +41,7 @@ module.exports = function(c){
 	//core.on('text-up', storeText);
 
 	core.on('logout', logout, 1000);
-	
+
 	window.addEventListener('storage', load);
 };
 
@@ -63,7 +63,18 @@ function createInit(){
 	if(!sid){
 		cache.session = sid = generate.uid();
 		libsb.session = cache.session;
-	} 
+	}
+
+//	window.parent.postMessage("getLocation", "*");
+//
+//	$(window).on("message", function(e) {
+//		var data = e.originalEvent.data;
+//
+//		if (typeof data === "object" && data.location) {
+//			// do stuff
+//		}
+//	});
+
 	core.emit('init-up', {session: sid});
 }
 
@@ -99,7 +110,7 @@ function getTextsBefore(query, next){
 }
 
 function getTextsAfter(query, next){
-	var results = query.results; 
+	var results = query.results;
 	if(results){
 		if(query.before) results.push({type: 'result-end', endtype: 'time', time: query.time});
 		if(query.after) results.unshift({type: 'result-start', endtype: 'time', time: query.time});
@@ -145,7 +156,7 @@ function getThreadsAfter(query, next){
 				type: 'result-end', time: results[results.length - 1].time, endtype: 'limit'
 			});
 		}
-		cache.labels.put(results);	
-	} 
+		cache.labels.put(results);
+	}
 	next();
 }
