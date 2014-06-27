@@ -30,7 +30,6 @@ $(".conf-save").on("click", function () {
             };
 
             libsb.emit('room-up', roomObj, function (err, room) {
-//                console.log(room);
                 self.removeClass("working");
                 self.attr("disabled", false);
 
@@ -40,13 +39,12 @@ $(".conf-save").on("click", function () {
                     for(var i in room.room.params) {
                         if(!room.room.params.hasOwnProperty(i)) continue;
                         if(room.room.params[i].error) {
-//                            console.log("Error happed when saving the room", room.room);
                             return;
                         }
                     }
                     currentConfig = null;
                     $('.conf-area').empty();
-                    libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
+                    libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" , roomName: room.room.id});
                 }
             });
         });

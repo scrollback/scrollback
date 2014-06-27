@@ -22,7 +22,6 @@ $(function () {
 				before: before,
 				after: after
 			};
-            console.log("++++++",index, before, after);
 			if (!roomName) return callback([]);
 
 			index = index || time;
@@ -131,7 +130,7 @@ $(function () {
 		if (state.source == "init") {
 			roomName = state.roomName || currentState.roomName;
 			thread = state.thread || currentState.thread;
-			time = state.time || state.thread? 1: time;
+			time = state.time || (state.thread? 1: time);
 			reset = true;
 		}else {
             if(state.roomName && state.room === null) {
@@ -152,8 +151,10 @@ $(function () {
                 time = 1;
 				reset = true;
 			}
+            if(/^conf-/.test(state.source)) {
+                reset = true;
+            }
 		}
-
 		if (reset) {
 			$logs.reset(time);
 		}

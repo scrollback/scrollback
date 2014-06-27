@@ -72,8 +72,8 @@ libsb.on('config-save', function(room, next){
 }, 500);
 
 libsb.on("room-dn", function(room, next) {
-	if (room.user.id === libsb.user.id && room.params.irc  && room.params.irc.pending) {
-		var r = room.room;
+    var r = room.room;
+	if (room.user.id === libsb.user.id && r.params.irc  && r.params.irc.pending) {
 		$.get('/r/irc/' + r.id, function(botName) {
 			var displayString = "Something went wrong while connecting to IRC server";
 			if(botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel.";
