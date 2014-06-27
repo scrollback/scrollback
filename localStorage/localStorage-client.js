@@ -61,7 +61,8 @@ function createInit(){
         libsb.session = sid = cache.session;
     }
 	if(!sid){
-		cache.session = sid = generate.uid();
+        
+		cache.session = sid = "web:"+generate.uid();
 		libsb.session = cache.session;
 	} 
 	core.emit('init-up', {session: sid});
