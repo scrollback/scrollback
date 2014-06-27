@@ -220,18 +220,20 @@ exports.initCore = function(c) {
 function emit(action, callback) {
     var outAction = {}, i, j;
     log("Sending out: ", action);
-    function dispatch(conn) {conn.send(action); }
+    function dispatch(conn, a) {conn.send(a); }
     
     if(action.type == 'init') {		
 		if(sConns[action.session]) {
             sConns[action.session].forEach(function(conn) {
                 conn.user = action.user;
-                dispatch(conn);
+                dispatch(conn, action);
             });
         }
         return callback();
 	} else if(action.type == 'user') {
-		uConns[action.from].forEach(dispatch);
+		uConns[action.from].forEach(function(e) {
+            dispatch(e, action);
+        });
         return callback();
 	}
     
@@ -239,8 +241,8 @@ function emit(action, callback) {
         if(action.hasOwnProperty(i)) {
             if(i == "room" || i == "user") { 
                 outAction[i] = {};
-                for (j in action) {
-                    if(action.hasOwnProperty(j) && j !== "params") {
+                for (j in action[i]) {
+                    if(action[i].hasOwnProperty(j) && j !== "params") {
                         outAction[i][j] = action[i][j];
                     }
                 }
@@ -252,10 +254,12 @@ function emit(action, callback) {
     
     delete outAction.session;
     delete outAction.user.identities;
-    action = outAction;
     
     if(rConns[action.to]) {
-        rConns[action.to].forEach(dispatch);
+        rConns[action.to].forEach(function(e) {
+            if(e.session == action.session && action.type == "room") dispatch(e, action);
+            else dispatch(e, outAction);
+        });
     }
 	if(callback) callback();
 }
@@ -291,7 +295,7 @@ function handleClose(conn) {
                 });
                 
             });
-		}, 3*1000);
+		}, 30*1000);
 	});
 }
 

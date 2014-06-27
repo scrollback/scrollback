@@ -1,14 +1,14 @@
 /* jshint browser: true */
-/* global $, libsb,generate,validate */
+/* global $, libsb, validate */
 
 $(function(){
 	var lace = require("../lib/lace.js"),
-		signingUser, id = generate.uid(), signingUp = false;
+		signingUser, signingUp = false;
 
 	function submitUser() {
 		var userId = $("#signup-id").val();
 		if(!validate(userId)) {
-			lace.alert.show({type:"error", body: "invalid name", id: id, timeout: 3000});
+			lace.alert.show({type:"error", body: "Entered username is invalid", timeout: 3000});
 			return;
 		}
 		libsb.emit("user-up", {
@@ -30,7 +30,7 @@ $(function(){
                 signingUp = true;
 				if(err) {
 					if(err.message == "ERR_USER_EXISTS"){
-						lace.alert.show({type:"error", body: "user name already taken", timeout: 3000});
+						lace.alert.show({type:"error", body: "Username already taken", timeout: 3000});
 					}else {
 						lace.alert.show({type:"error", body: err.message});
 					}
@@ -69,9 +69,6 @@ $(function(){
 			if(init.resource == libsb.resource) {
 				signingUser = init.user;
 
-				libsb.emit('navigate', {
-					mode: "user", tab: "create", source: "libsb"
-				});
 				lace.modal.show({ body: $("#signup-dialog").html() });
 			}
 		}

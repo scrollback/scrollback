@@ -22,7 +22,7 @@ $(function () {
 				before: before,
 				after: after
 			};
-
+            console.log("++++++",index, before, after);
 			if (!roomName) return callback([]);
 
 			index = index || time;
@@ -41,7 +41,7 @@ $(function () {
 				libsb.getTexts(query, function (err, t) {
 					var texts = t.results;
 					if (err) throw err; // TODO: handle the error properly.
-
+                    
 					if (!index && texts.length === "0") {
 						return callback([false]);
 					}
@@ -50,18 +50,19 @@ $(function () {
 						if (texts.length < before) {
 							texts.unshift(false);
 						}
-
-						if (t.time) {
-							texts.pop();
-						}
+                        
+                        if(t.time && texts.length && texts[texts.length-1].time === t.time) {
+                            texts.pop();
+                        }
 					} else if (before === 0) {
 						if (texts.length < after) {
 							texts.push(false);
 						}
-
-						texts.splice(0, 1);
+                        if(texts.length && texts[0].time == t.time) {
+                            texts.splice(0, 1);
+                        }
+						
 					}
-
 					callback(texts.map(function (text) {
 						return text && chatEl.render(null, text);
 					}));
@@ -125,12 +126,12 @@ $(function () {
 
 	libsb.on("navigate", function (state, next) {
 		var reset = false;
-
+        
 		if (state.source == 'text-area') return next();
 		if (state.source == "init") {
 			roomName = state.roomName || currentState.roomName;
 			thread = state.thread || currentState.thread;
-			time = state.time || time;
+			time = state.time || state.thread? 1: time;
 			reset = true;
 		}else {
             if(state.roomName && state.room === null) {
@@ -140,14 +141,15 @@ $(function () {
 				roomName = state.roomName;
 				reset = true;
 			}
-
-			if (typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
-				thread = state.thread;
-				reset = true;
-			}
-
+            
 			if (state.old && state.time != state.old.time) {
 				time = state.time;
+				reset = true;
+			}
+            
+			if (typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
+				thread = state.thread;
+                time = 1;
 				reset = true;
 			}
 		}
