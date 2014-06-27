@@ -1010,15 +1010,6 @@ body {
         padding-left: 12em;
     }
 
-    @for $i from 1 through length($palette) {
-        $color: nth($palette, $i);
-        $j: $i - 1;
-
-        &:not(.conv-#{$j}) .chat-item-dot {
-            body.conv-#{$j} & { @include opacity(0.3); }
-        }
-    }
-
 	&:hover, &:focus { background-color: darken($light-color, 1%); }
 
     &:last-of-type { border-bottom: 1px solid rgba(0,0,0,0.025); }
@@ -1487,7 +1478,7 @@ body {
 	}
 }
 
-.noroom-area {
+.noroom-area, .offline-area {
     @include flexbox;
     @include flex-direction(column);
     @include flex-wrap(nowrap);
@@ -1516,7 +1507,11 @@ body {
     }
 }
 
-.noroom-container { display: block; }
+.noroom-container, .offline-container { display: block; }
+
+.offline-area {
+    body:not(.state-offline) & { display: none; }
+}
 
 .infinite-above, .infinite-below {
     height: 100%;

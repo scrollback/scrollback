@@ -22,7 +22,7 @@ $(function() {
 				$dot = $(".chat-item-dot, .chat-conv-dot");
 
 			$dot.velocity("stop")
-				.velocity({ scale: 1 }, 150);
+			.velocity({ scale: 1, opacity: 1 }, 150);
 
 			if ($line.length) {
 				$line.velocity("stop")
@@ -44,11 +44,11 @@ $(function() {
 					containertop = $container.offset().top;
 
 				$chatdot.not($dot).velocity("stop")
-								  .velocity({ scale: 1 }, { duration: 150 });
+								  .velocity({ scale: 1, opacity: 0.3 }, { duration: 150 });
 
 				$dot.velocity("stop")
 					.velocity({ scale: 1 }, { duration: 150 })
-					.velocity({ scale: 1.5 }, { duration: 300 });
+					.velocity({ scale: 1.5, opacity: 1 }, { duration: 300 });
 
 				$line.css({ top: ((top < containertop) ? containertop : top), left: left, bottom: bottom }).appendTo("body");
 
@@ -172,7 +172,11 @@ $(function() {
 	}, 50);
 
 	libsb.on("text-dn", function(text, next) {
-		if (currThread && (text.id === lastMsg || (text.threads && text.threads.length && text.threads[0].id === currThread))) {
+		if (currThread && (
+			(text.from && lastMsg.mentions && lastMsg.mentions.length && (lastMsg.mentions.indexOf(text.from) > -1)) ||
+			(text.threads && text.threads.length && text.threads[0].id === currThread) ||
+			(text.id && text.id === lastMsg)
+		)) {
 			$("#chat-" + text.id).selectMsg();
 		}
 
