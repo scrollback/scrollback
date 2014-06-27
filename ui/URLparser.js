@@ -36,7 +36,7 @@ module.exports = function() {
 				state.mode = "home";
 			}
 		} else {
-			state.room = path[0].toLowerCase();
+			state.roomName = path[0].toLowerCase();
 
 			if (path[1] == "edit") {
 				state.mode = "conf";

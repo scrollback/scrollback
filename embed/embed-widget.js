@@ -2,13 +2,15 @@
 
 (function() {
 	document.onreadystatechange = function() {
+		var config = require("../client-config.js");
+
 		if (document.readyState === "complete") {
 			// Variables
 			var room = window.scrollback.room || "scrollback",
 				embed = window.scrollback.embed || "toast",
 				theme = window.scrollback.theme || "dark",
 				minimize = window.scrollback.minimize || false,
-				host = window.scrollback.host || "https://next.scrollback.io",
+				host = config.server.protocol + config.server.host,
 				style,
 				iframe;
 

@@ -14,14 +14,20 @@ $(function() {
 			libsb.enter(window.location.pathname.split("/")[1]);
 		}
 		n();
-	});
+	}, 600);
 });
 
 libsb.on('room-dn', function(action, next){
 	infoArea.render(action.room);
 	next();
-});
+}, 600);
 
+function loadRooms(state) {
+	libsb.getRooms({ ref: state.roomName }, function(err, room) {
+		if(err) throw err;
+		if(room.results && room.results.length)  infoArea.render(room.results[0]);
+	});
+}
 
 libsb.on('navigate', function(state, next) {
 	if(state.tab == "info") {
@@ -29,24 +35,19 @@ libsb.on('navigate', function(state, next) {
 	}else{
 		$(".pane-info").removeClass("current");
 	}
-	if(!state.old || state.room != state.old.room) {
-		function loadRooms() {
-			libsb.getRooms({ ref: state.room }, function(err, room) {
-				if(err) throw err;
-				if(room.results && room.results.length)  infoArea.render(room.results[0]);
-			});
-		}
-
+	if(state.roomName != state.old.roomName) {
 		if(libsb.isInited) {
-                        if(state.tab == 'info')	 infoArea.render({id: state.room, description: "Loading room description."});
-			loadRooms();
+            if(state.tab == 'info')
+				infoArea.render({id: state.roomName, description: "Loading room description."});
+			loadRooms(state);
 		}else{
 			libsb.on("inited", function(q, n) {
-                                if(state.tab == 'info')	 infoArea.render({id: state.room, description: "Loading room description."});
-				loadRooms();
+                if(state.tab == 'info')
+					infoArea.render({id: state.roomName, description: "Loading room description."});
+				loadRooms(state);
 				n();
 			});
 		}
 	}
 	next();
-});
+}, 600);

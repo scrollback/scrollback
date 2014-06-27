@@ -1,5 +1,5 @@
 var config = require("../config.js");
-var log = require("../lib/logger.js");
+//var log = require("../lib/logger.js");
 //var config = require('../../config.js');
 var occupantDB = require('../lib/redisProxy.js').select(config.redisDB.occupants);
 var userDB = require('../lib/redisProxy.js').select(config.redisDB.user);
@@ -9,6 +9,7 @@ module.exports = function(c) {
     core = c;
     require("./user.js")(core);
     require("./session.js")(core);
+    occupantDB.flushdb();   
     core.on("back", onBack, "storage");
     core.on("away", onAway, "storage");
     core.on("room", onRoom, "storage");
@@ -24,17 +25,15 @@ function onBack(data, cb) {
 
 function onAway(action, callback) {
     occupantDB.srem("room:{{"+action.to+"}}:hasOccupants", action.from, function() {
+        if(/^guest-/.test(action.from)) return;
         occupantDB.scard("room:{{"+action.to+"}}:hasOccupants", function(err, data) {
-            if(data==0) {
-                userDB.del("room:{{"+action.to+"}}");
-            }
+            if(!data) userDB.del("room:{{"+action.to+"}}");
         });
     });
     occupantDB.srem("user:{{"+action.from+"}}:occupantOf", action.to, function() {
+        if(/^guest-/.test(action.from)) return;
         occupantDB.scard("user:{{"+action.from+"}}:occupantOf", function(err, data) {
-            if(data==0) {
-                userDB.del("user:{{"+action.from+"}}");
-            }
+            if(!data) userDB.del("user:{{"+action.from+"}}");
         });
     });
     callback();
@@ -52,7 +51,7 @@ function onGetRooms(query, callback) {
             if(err || !data) return callback();
             if(data){
                 try{
-                    res  = JSON.parse(data)
+                    res  = JSON.parse(data);
                     query.results = [res];
                 }catch(e){}
             }
@@ -68,14 +67,7 @@ function onGetRooms(query, callback) {
             data = data.map(function(e){
                 return "room:{{"+e+"}}";
             });
-            // query.results = data;
-            // return callback(err, data);
-/*  there are a few issues.. 
-    sometimes if room data is not in the cache.
-    Also loading up so many rooms for init might be overkill.
-    considering its done for every navigation.
-    right now cannot think of a possiblity that can cause this issue.
-*/          
+            
             roomDB.mget(data, function(err, data) {
                 if(data){
                     data = data.map(function(e) {

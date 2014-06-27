@@ -3,7 +3,7 @@ var log = require("../lib/logger.js");
 var db = require('../lib/mysql.js');
 var send = require('./sendEmail.js');
 var fs=require("fs"),jade = require("jade");
-var redis = require('../lib/redisProxy.js').select(config.redisDB.email);//TODO move this to config.
+var redis = require('../lib/redisProxy.js').select(config.redisDB.email);
 var emailDigest = require('./emailDigest.js');
 var initMailSending = emailDigest.initMailSending;//function
 var sendPeriodicMails = emailDigest.sendPeriodicMails;//function
@@ -18,7 +18,6 @@ module.exports = function(coreObject) {
 	core = coreObject;
 	require('./welcomeEmail.js')(core);
     //if(!debug) log = log.tag("mail");
-	log("email digest", emailDigest);
     emailDigest.init(core);
 	if (config.email && config.email.auth) {
 		core.on('text', function(message, callback) {
@@ -41,9 +40,9 @@ module.exports = function(coreObject) {
 				}
 			}
 			log("Err email params in user object"); 
-			return callback("ERR_EMAIL_PARAMS");
+			return callback(new Error("ERR_EMAIL_PARAMS"));
 			
-		}, "applevelValidation");
+		}, "appLevelValidation");
 	}
 	else {
 		log("email module is not enabled");
@@ -71,7 +70,7 @@ function addMessage(message){
 			multi.zadd("email:label:" + room + ":labels" ,message.time , label); // email: roomname : labels is a sorted set
 			multi.incr("email:label:" + room + ":" + label + ":count");
 			multi.expire("email:label:" + room + ":" + label + ":count" , getExpireTime());
-			multi.set("email:label:" + room + ":" + label + ":title", title);
+			if(title) multi.set("email:label:" + room + ":" + label + ":title", title);
 			multi.expire("email:label:" + room + ":" + label + ":title" , getExpireTime());
 			multi.lpush("email:label:" + room + ":" + label +":tail", JSON.stringify(message));//last message of label
 			multi.ltrim("email:label:" + room + ":" + label +":tail", 0, 2);

@@ -12,7 +12,7 @@ var desktopnotify = {
 	 * @constructor
 	 * @return {{ type: String, permission: String }}
 	 */
-	support: function() {
+	supported: function() {
 		var type, permission;
 
 		if ("webkitNotifications" in window) {
@@ -48,7 +48,7 @@ var desktopnotify = {
 	 * @constructor
 	 */
 	request: function() {
-		var check = desktopnotify.support();
+		var check = this.supported();
 
 		if (check.permission !== "granted" && check.permission !== "denied") {
 			if (check.type === "webkit") {
@@ -65,7 +65,7 @@ var desktopnotify = {
 	 * @param {{ title: String, body: String, tag: String, icon: String, action: Function }} notification
 	 */
 	show: function(notification) {
-		var check = desktopnotify.support(),
+		var check = this.supported(),
 			n;
 
 		if (check.permission === "granted") {
@@ -78,9 +78,9 @@ var desktopnotify = {
 				n.onclick = notification.action;
 			}
 		} else {
-			desktopnotify.request();
+			this.request();
 		}
 	}
 };
 
-window.desktopnotify = desktopnotify;
+module.exports = desktopnotify;

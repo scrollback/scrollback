@@ -33,6 +33,7 @@
 	.popover-body {
 		position: absolute;
 		display: block;
+		width: 15em;
 		margin: .5em;
 		border-radius: $roundness;
 		font-weight: normal;
@@ -79,6 +80,23 @@
 			}
 		}
 
+		.popover-section {
+			border-bottom: 1px solid darken($light-color, 10%);
+
+			&:only-of-type, &:last-of-type { border-bottom: none; }
+		}
+
+		.popover-title {
+			padding: 1em;
+			font-weight: 700;
+		}
+
+		.popover-buttons {
+			padding: 1em;
+
+			.button { width: 100%; }
+		}
+
 		ul {
 			list-style: none;
 			padding: 0;
@@ -87,16 +105,16 @@
 			li {
 				border-bottom: 1px solid darken($light-color, 10%);
 
-				&:last-child { border-bottom: none; }
+				&:only-child, &:last-child { border-bottom: none; }
 
 				a {
 					display: block;
 					color: $dark-color;
-					padding: 1em 1.5em;
+					padding: 1em;
 					font-weight: 700;
 
 					&:hover, &:focus {
-						background-color: darken($light-color, 5%);
+						background-color: darken($light-color, 2.5%);
 						color: darken($dark-color, 30%);
 					}
 				}

@@ -1,5 +1,4 @@
 var config = require("../config.js"),
-	name = require("../lib/generate.js").word,
 	log = require("../lib/logger.js"),
 	crypto = require('crypto'),
 	request = require("request"), core,
@@ -23,6 +22,7 @@ function browserAuth(action, callback) {
 		try {
 			body = JSON.parse(body);
 		} catch(e) {
+            log("Network failure");
 			return callback(new Error("AUTH_FAIL_SERVER/" + body));
 		}
 		if(body.status !== 'okay') {
@@ -34,7 +34,7 @@ function browserAuth(action, callback) {
 			if(!user.results || user.results.length === 0) {
 				action.user = {};
 				action.user.identities = [identity];
-				action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex');
+                action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=monsterid';;
 				return callback();
 			}
 			action.old = action.user;

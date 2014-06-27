@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<!-- <html manifest="/manifest.appcache" lang="en"> -->
-
-<html lang="en">
-
+<html manifest="/manifest.appcache" lang="en">
 	<head>
 		<meta charset="utf-8">
 
@@ -27,16 +24,16 @@
 	</head>
 
 	<body>
-		<section data-embed="none" class="room-area">
+		<section data-embed="none" class="room-area column">
 			<div class="room-header">
-				<img src="/s/img/client/scrollback-small.svg" alt="scrollback"/>
+				<a href="http://scrollback.io" target="_blank"><img src="/s/img/client/scrollback-small.svg" alt="scrollback"></a>
 			</div>
 
 			<div role="list" class="room-list hide-scroll">
-				<a class="room-item"><span class="room-name"></span><span class="unread"></span></a>
+				<a class="room-item"><span class="room-name"></span><span class="notif-counter unread"></span></a>
 			</div>
 		</section>
-		<section class="meta-area">
+		<section class="meta-area column">
 			<ul role="tablist" class="meta-tabs">
 				<li data-embed="none" role="tab" class="rooms-button">
 					<svg class="rooms-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -101,7 +98,7 @@
 				<a class="list-item"></a>
 			</div>
 		</section>
-		<section role="main" class="main-area">
+		<section role="main" class="main-area column">
 			<div data-mode="normal search conf pref" class="title-bar">
 				<div class="left-area">
 					<a class="meta-button">
@@ -166,7 +163,7 @@
 						<span class="chat-nick"></span>
 						<span class="chat-message"></span>
 						<span class="chat-timestamp"></span>
-						<!-- <span class="chat-more"></span> -->
+						 <span class="chat-more"></span>
 					</p>
 				</div>
 			</div>
@@ -174,15 +171,16 @@
 			</div>
 			<div data-mode="pref" class="pref-area">
 			</div>
-		</section>
-		<section data-mode="normal search" class="chat-input">
-			<div class="chat-entry-wrap">
-				<div class="chat-placeholder"></div>
-				<div role="textbox" class="chat-entry" contenteditable></div>
+			<div data-mode="normal search" class="chat-input">
+				<div class="chat-entry-wrap">
+					<div class="chat-conv-dot"></div>
+					<div class="chat-placeholder"></div>
+					<div role="textbox" class="chat-entry" contenteditable></div>
+				</div>
+				<svg version="1.1" class="chat-send">
+					<use xlink:href="/s/img/client/icons/send.svg#icon"></use>
+				</svg>
 			</div>
-			<svg version="1.1" class="chat-send">
-				<use xlink:href="/s/img/client/icons/send.svg#icon"></use>
-			</svg>
 		</section>
 		<section class="search-bar">
 			<form>
@@ -192,7 +190,7 @@
 		<section data-mode="noroom" class="noroom-area">
 			<div class="noroom-container">
 				<h1>This room does not exist yet :(</h1>
-				<p data-role="guest">You need to sign in to create a room</p>
+				<p data-role="guest">You need to sign in first to create a room</p>
 				<p>
 					<a data-role="user" class="button create-room-button" id="create-room-button">Create room</a>
 					<a data-role="guest" class="button login-and-create-room-button"  id="login-and-create-room-button">Sign in</a>
@@ -216,15 +214,17 @@
 
 		<!-- templates -->
 		<script type="text/template" id="login-menu">
-			<div class="login-menu">
-				<p>Sign in to scrollback with</p>
-				<a class="button facebook">Facebook</a>
-				<a class="button persona">Persona</a>
+			<div data-role="guest" class="login-menu">
+				<div class="popover-title popover-section">Sign in to scrollback with</div>
+				<div class="popover-buttons popover-section">
+					<a class="button facebook">Facebook</a>
+					<a class="button persona">Persona</a>
+				</div>
 			</div>
 		</script>
 
 		<script type="text/template" id="user-menu">
-			<ul class="user-menu">
+			<ul data-role="user" class="user-menu">
 				<li><a class="userpref">Account settings</a></li>
 				<li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li>
 				<li><a class="logout">Sign out</a></li>
@@ -238,29 +238,28 @@
 			</ul>
 		</script>
 
-		<script type="text/template" id="loggedout-dialog">
-			<div class="loggedout-dialog">
-				<h1>You've been signed out!</h1>
-				<a class="button reload-page modal-remove">Go back as guest</a>
-			</div>
-		</script>
-
 		<script type="text/template" id="signup-dialog">
 			<div class="signup-dialog">
 				<h1>Choose a username</h1>
 				<form id="signup">
 					<input type="text" id="signup-id" name="username" placeholder="Enter username" autofocus><br/>
 					<input class="signup-save" type="button" value="Create account">
-					<input class="signup-cancel secondary modal-remove" type="button" value="cancel">
-				</form>
+			</form>
 			</div>
 		</script>
 
-		<script type="text/template" id="login-dialog">
-			<div class="login-dialog">
+		<script type="text/template" id="signin-dialog">
+			<div data=role="guest" class="signin-dialog">
 				<h1>Sign in to scrollback with</h1>
 				<a class="button facebook modal-remove">Facebook</a>
 				<a class="button persona modal-remove">Persona</a>
+			</div>
+		</script>
+
+		<script type="text/template" id="signedout-dialog">
+			<div class="signedout-dialog">
+				<h1>You've been signed out!</h1>
+				<a class="button reload-page modal-remove">Go back as guest</a>
 			</div>
 		</script>
 
@@ -277,7 +276,7 @@
 		<script src="/s/lib/svg4everybody.min.js"></script>
 
 		<script src="/sdk/sockjs.js"></script>
-		<script src="/libsb.bundle.js"></script>
+		<script src="/client.bundle.js"></script>
 		<script>libsb.connect();</script>
 		<script src="https://login.persona.org/include.js"></script>
 		<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');

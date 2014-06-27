@@ -1,4 +1,4 @@
-var crypto = require('crypto'), log = require("../lib/logger.js");
+var crypto = require('crypto')/*, log = require("../lib/logger.js")*/;
 var names = require('../lib/generate.js').names;
 var uid = require('../lib/generate.js').uid;
 var config = require("../config.js");
@@ -9,10 +9,9 @@ var core, events = ['text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'ex
 
 var handlers = {
 	init: function(action, callback) {
-		var wait = true, isErr = false;
+		var wait = true;
 
 		core.emit("getRooms",{id: uid(),hasOccupant: action.user.id, session: action.session},function(err, rooms) {
-			var user = {};
 			if(err || !rooms || !rooms.results || !rooms.results.length) {
 				action.occupantOf = [];
 			}else {
@@ -26,7 +25,7 @@ var handlers = {
 
 		core.emit("getRooms",{id: uid(), hasMember: action.from, session: action.session}, function(err, rooms) {
 			if(err || !rooms ||!rooms.results || !rooms.results.length) {
-				action.memberOf = []
+				action.memberOf = [];
 			}else{
 				action.memberOf = rooms.results;
 			}
@@ -36,7 +35,7 @@ var handlers = {
 		});
 	},
 	edit: function(action, callback) {
-		core.emit("getTexts", {id: uid(),ref: action.ref}, function(err, actions) {
+		core.emit("getTexts", {id: uid(),ref: action.ref, to: action.room.id, session: internalSession}, function(err, actions) {
 			if(err || !actions || !actions.results || !actions.results.length) return callback(new Error("TEXT_NOT_FOUND"));
 			action.old = actions.results[0];
 			callback();
@@ -48,7 +47,7 @@ var handlers = {
 
 function loadVictim(action, callback) {
 	if(action.ref) {
-		core.emit("getUsers", {ref: action.ref, session: action.session}, function(err, data){
+		core.emit("getUsers", {ref: action.ref, session: action.session}, function(err, data) {
 			if(err || !data || !data.resulats || !data.results.length) {
 				return callback(new Error("user "+action.ref+ " not found"));
 			}
@@ -71,7 +70,7 @@ module.exports = function(c) {
 				else callback();
 			});
 		}, "loader");
-	})
+	});
 	core.on('getUsers', loadUser, "loader");
 	core.on('getRooms', loadUser, "loader");
 	core.on('getTexts', basicLoader, "loader");
@@ -83,7 +82,7 @@ module.exports = function(c) {
 	}, "loader");
 	core.on("init", initHandler, "loader");
 	core.on("user", userHandler, "loader");
-}
+};
 
 function userHandler(action, callback) {
 	core.emit("getUsers", {ref: "me", session: action.session}, function(err, data){
@@ -91,13 +90,13 @@ function userHandler(action, callback) {
 			return callback(new Error("USER_NOT_INITED"));
 		}else {
 			action.from = data.results[0].id;
-			core.emit("getUsers", {ref: action.user.id, session: internalSession}, function(err, data){
+			core.emit("getUsers", {ref: action.from, session: internalSession}, function(err, data){
 				if(err || !data || !data.results || !data.results.length) {
 					action.old = {};
 				}else {
 					action.old = data.results[0];
 				}
-				if(action.user.identities) action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0]).digest('hex');
+				if(action.user.identities) action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0].substring(7)).digest('hex') + '/?d=monsterid';
 				else action.user.picture = 'https://gravatar.com/avatar/default';
 				action.user.description = action.user.description || "";
 				callback();
@@ -109,7 +108,7 @@ function userHandler(action, callback) {
 
 function initHandler(action, callback) {
 	function done() {
-		handlers["init"](action, callback);
+		handlers.init(action, callback);
 	}
 	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
 		if(err || !data || !data.results || !data.results.length) {
@@ -125,8 +124,7 @@ function initHandler(action, callback) {
 				action.user.isSuggested = true;
 				return done();
 			});
-			}
-		else if(action.ref && /^guest-/.test(data.results[0].id)) {
+		}else if(action.ref && /^guest-/.test(data.results[0].id)) {
 			core.emit("getUsers",{id: uid(), ref: action.ref, session: action.session}, function(err, data) {
 				if(err || !data || !data.resutls || !data.results.length) {
 					return callback(new Error("NICK_TAKEN"));
@@ -149,7 +147,7 @@ function loadUser(action, callback) {
 		action.user = {
 			id: "system",
 			role: "owner" // should look for alternatives.
-		}
+		};
 		return callback();
 	}
 	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
@@ -157,7 +155,7 @@ function loadUser(action, callback) {
 		if(err || !data || !data.results || !data.results.length) {
 			return callback(new Error("USER_NOT_INITED"));
 		}else {
-			user = data.results[0]
+			user = data.results[0];
 			if((action.type && events.indexOf(action.type)>=0)|| action.type =="init" ) action.from = data.results[0].id;
 			if(action.type == "user") {
 				action.old = data.results[0];
@@ -172,7 +170,7 @@ function loadUser(action, callback) {
 					}
 				});
 			}else{
-				action.user = user
+				action.user = user;
 				callback();
 			}
 		}
@@ -183,17 +181,16 @@ function loadRoom(action, callback) {
 	core.emit("getRooms",{id: uid(), ref: action.to, session: action.session}, function(err, rooms) {
 		var room;
 		if(err || !rooms ||!rooms.results || !rooms.results.length) {
-			if(action.type != "room"){
-                            console.log("**** ENTITY LOADER **********");
-                            return callback(new Error("NO_ROOM_WITH_GIVEN_ID"));
-                        }		
-                }else{
+			if(action.type != "room") {
+                return callback(new Error("NO_ROOM_WITH_GIVEN_ID"));
+            }
+        }else{
 			room = rooms.results[0];
 		}
 
 		if(action.type == "room") {
 			if(room && room.id) action.old = room;
-			else action.old = {}
+			else action.old = {};
 		}else {
 			action.room = room;
 		}
@@ -218,7 +215,7 @@ function initializerUser(action, callback) {
 		userObj = {
 			id: possibleNick,
 			description: "",
-			createdOn: new Date().getTime(),
+			createTime: new Date().getTime(),
 			type:"user",
 			params:{},
 			timezone:0,
@@ -250,14 +247,14 @@ function generateNick(suggestedNick, callback) {
 					}
 					callback(trying);
 				});
-			})
+			});
 		});
 	}
 	checkUser(suggestedNick, 0, callback);
 }
 
 function generatePick(id) {
-	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=identicon&s=48';
+	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=wavatar';
 }
 
 

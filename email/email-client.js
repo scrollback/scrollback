@@ -5,46 +5,44 @@
  - Email digest frequency (Daily/Weekly, Never)
  - Email me when I'm mentioned in a room (On/Off)
 */
-
-
-
 var formField = require('../lib/formField.js');
 
-libsb.on('pref-show', function(tabs, next){
-        //email
-        var user = tabs.user;
-                
-        var div = $('<div>').addClass('list-view list-view-email-settings');
-        
-        if(!user.params.email) user.params.email = {};
-        if(user.params.email.notifications === undefined) user.params.email.notifications = true;
-        
-        div.append(formField("Mention notifications via email", "toggle", "mention", user.params.email.notifications));
-        
-        switch(user.params.email.frequency){
-            case 'daily':
-                div.append(formField("Email digest frequency", 'radio', 'email-freq',[["email-freq-daily", "Daily", "checked"], ["email-freq-never", "Never"]]));
-                break;
-            case 'never':
-                div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily"], ["email-freq-never", "Never", "checked"]]));
-                break;
-            default:
-                div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily", "checked"], ["email-freq-never", "Never"]]));
-        }
+libsb.on('pref-show', function (tabs, next) {
+    //email
+    var user = tabs.user;
 
-	tabs.email = {
-		html: div,
-		text: "Email",
-		prio: 900
-	};
+    var $div = $('<div>');
 
-	next();
-});
+    if (!user.params.email) user.params.email = {};
+    if (user.params.email.notifications === undefined) user.params.email.notifications = true;
 
-libsb.on('pref-save', function(user, next){
-	user.params.email = {
-            frequency : $('input:radio[name="email-freq"]:checked').next().text().toLowerCase(),
-            notifications : $('#mention').is(':checked')
-	};
-	next();
-});
+    $div.append(formField("Mention notifications via email", "toggle", "mention", user.params.email.notifications));
+
+    switch (user.params.email.frequency) {
+		case 'daily':
+			$div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily", true], ["email-freq-never", "Never"]]));
+			break;
+		case 'never':
+			$div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily"], ["email-freq-never", "Never", true]]));
+			break;
+		default:
+			$div.append(formField("Email digest frequency", 'radio', 'email-freq', [["email-freq-daily", "Daily", true], ["email-freq-never", "Never"]]));
+    }
+
+    tabs.email = {
+        text: "Email",
+        html: $div,
+        prio: 900
+    };
+
+    next();
+}, 500);
+
+libsb.on('pref-save', function (user, next) {
+    user.params.email = {
+        frequency: $('input:radio[name="email-freq"]:checked').next().text().toLowerCase(),
+        notifications: $('#mention').is(':checked')
+    };
+
+    next();
+}, 500);

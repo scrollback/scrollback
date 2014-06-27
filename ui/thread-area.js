@@ -1,29 +1,28 @@
 /* jshint browser: true */
-/* global $, libsb, threadEl, currentState */
-/* exported chatArea */
+/* global $, libsb, currentState */
 
-var threadArea = {};
-
-
+var threadEl = require("./thread.js"),
+	threadArea = {},
+	thread = "";
 
 (function() {
 	var $threads, room = "", time = null,
-	search = "", mode = "", searchResult = [false], index = null, queryCount = 0;
+	search = "", mode = "", searchResult = [false], index = null;
 
-	function renderObjects(threads) {
+	function renderSearchResult(threads, callback) {
 		callback(threads.map(function(thread) {
-			var index;
-			if(currentState.mode == "search") {
-				index = thread.i;
-			}else {
-				index = thread.startTime;
-			}
-			return thread && threadEl.render(null, thread, index);
+			return thread && threadEl.render(null, thread, searchResult.indexOf(thread));
+		}));
+	}
+
+	function renderThreads(threads, callback) {
+		callback(threads.map(function(thread) {
+			return thread && threadEl.render(null, thread, thread.startTime);
 		}));
 	}
 
 	function loadSearchResult(index, before, after, callback) {
-		var query={}, i, res = [];
+		var query={}, i, res = [], from, to;
 
 			if(!index) index = 0;
 			if(before) {
@@ -63,7 +62,7 @@ var threadArea = {};
 				return processResults(from, searchResult.length-1);
 			}
 
-			if(currentState.tab === "search-local") query.to = currentState.room || "";
+			if(currentState.tab === "search-local") query.to = currentState.roomName || "";
 			query.q = currentState.query;
 			libsb.getThreads(query, function(err, t) {
 				var threads = t.results;
@@ -82,14 +81,13 @@ var threadArea = {};
 		if(after) query.after = index?after+1: after;
 		if(before) query.before = index?before+1: before;
 
-		query.to =  currentState.room || "";
+		query.to =  room;
 		query.time = index;
 		libsb.getThreads(query, function(err, t) {
-			console.log(t);
 			var threads = t.results;
 
 			if(err) throw err; // TODO: handle the error properly.
-			
+
 
 			if(!index && threads.length === "0") {
 				return callback([false]);
@@ -110,33 +108,15 @@ var threadArea = {};
 					threads.push(false);
 				}
 			}
-			console.log(threads);
+
 			renderThreads(threads, callback);
 		});
 	}
 
-	function renderSearchResult(threads, callback) {
-		callback(threads.map(function(thread) {
-			return thread && threadEl.render(null, thread, searchResult.indexOf(thread));
-		}));
-	}
-
-	function renderThreads(threads, callback) {
-		callback(threads.map(function(thread) {
-			return thread && threadEl.render(null, thread, thread.startTime);
-		}));
-	}
 
 
 	libsb.on('navigate', function(state, next) {
 		var reset = false;
-		if(['search-local', 'search-global', 'threads'].indexOf(state.tab)>=0) {
-			$(".pane-threads").addClass("current");
-		}else {
-			searchResult = [false];
-			$(".pane-threads").removeClass("current");
-			return next();
-		}
 
 		if(state.mode) mode = state.mode;
 
@@ -144,13 +124,14 @@ var threadArea = {};
 			$(".tab-"+state.tab).addClass("current");
 		}
 
-		if(state.source == 'thread-area') return next();
+        if(state.roomName && state.room === null) return next();
+        if(state.source == 'thread-area') return next();
 
 		if(!state.old) {
-			room = state.room;
+			room = state.roomName;
 			reset = true;
-		}else if(state.room != room) {
-			room = state.room;
+		}else if(state.roomName && state.roomName != room) {
+			room = state.roomName;
 			reset = true;
 		}else if(state.query) {
 			reset = true;
@@ -159,7 +140,15 @@ var threadArea = {};
 			reset = true;
 		}
 
-		if(reset) {
+        if(['search-local', 'search-global', 'threads'].indexOf(state.tab)>=0) {
+			$(".pane-threads").addClass("current");
+		}else {
+			searchResult = [false];
+			$(".pane-threads").removeClass("current");
+			return next();
+		}
+
+        if(reset) {
 			if(currentState.mode == "search") {
 				$threads.reset(0);
 			}else {
@@ -168,13 +157,13 @@ var threadArea = {};
 		}
 
 		next();
-	});
+	}, 200);
 
 
-	libsb.on('text-dn', function(text, next) {
-		// if($threads.data("lower-limit")) $threads.addBelow(renderChat(null, text));
+	/*libsb.on('text-dn', function(text, next) {
+		if($threads.data("lower-limit")) $threads.addBelow(renderChat(null, text));
 		next();
-	});
+	}, 100);*/
 	threadArea.setBottom = function(bottom) {
 		var atBottom = ($threads.scrollTop() + $threads.height() == $threads[0].scrollHeight);
 
@@ -188,37 +177,19 @@ var threadArea = {};
 		$threads.scroll();
 	};
 
-
 	$(function() {
-		 /* replace this time initialization from the URL, if available. */
-		 $threads = $(".thread-item-container");
+        $threads = $(".thread-item-container");
 
-		
 		$threads.infinite({
 			scrollSpace: 2000,
 			fillSpace: 500,
 			itemHeight: 100,
 			startIndex: index,
 			getItems: function (index, before, after, recycle, callback) {
-				
-				if(currentState.mode == "search"){
-					if(libsb.isInited) {
-						loadSearchResult(index, before, after, callback);
-					}else {
-						libsb.on("inited", function(q, n) {
-							loadSearchResult(index, before, after, callback);
-							n();
-						});
-					}
-				}else if(currentState.tab == "threads"){
-					if(libsb.isInited) {
-						loadThread(index, before, after, callback);
-					}else {
-						libsb.on("inited", function(q, n) {
-							loadThread(index, before, after, callback);
-							n();
-						});
-					}
+				if(currentState.mode == "search") {
+                    loadSearchResult(index, before, after, callback);
+				}else if(currentState.tab == "threads") {
+                    loadThread(index, before, after, callback);
 				}
 			}
 		});
@@ -226,12 +197,31 @@ var threadArea = {};
 		$threads.click(function(event) {
 			event.preventDefault();
 			var $el = $(event.target).closest('.thread-item');
-			if(!$el.size()) return;
+			if(!$el.length) return;
 			libsb.emit('navigate', {source: 'thread-area', time: null, thread: $el.attr("id").split('-')[1] });
 		});
 		$(".thread-all-conversations").click(function(event){
 			event.preventDefault();
 			libsb.emit('navigate', {source: 'thread-area', time: null, thread: ""});
-		});;
+		});
 	});
+
+	libsb.on('navigate', function(state, next) {
+		if (state.old && state.thread !== state.old.thread) {
+			if (state.thread && state.thread !== thread) {
+				thread = state.thread;
+				
+				$(".thread-item.current").removeClass("current");
+				$("#thread-" + state.thread).addClass("current");
+
+				$("body").addClass('conv-' + thread.substr(-1));
+			} else {
+				var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
+
+				$("body").attr("class", classes);
+			}
+		}
+
+		next();
+	}, 1);
 })();

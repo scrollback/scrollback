@@ -22,7 +22,7 @@ Boston, MA 02111-1307 USA.
 	Websockets gateway
 */
 
-/* global require, module, exports, console, setTimeout */
+/* global require, exports, setTimeout */
 
 var sockjs = require("sockjs"), core,
 	// api = require("./api.js"),
@@ -38,18 +38,18 @@ var sock = sockjs.createServer();
 sock.on('connection', function (socket) {
 	var conn = { socket: socket };
 	socket.on('data', function(d) {
-		var i, l, e;
+		var e;
 		try { d = JSON.parse(d); log ("Socket received ", d); }
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 
 		if (!d.type) return;
-		
+		d.returned = "yes";
 		if(d.type == 'init' && d.session) {
 			if(d.session == internalSession) return;
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
 			if (!sConns[d.session]) {
-				sConns[d.session] = []
+				sConns[d.session] = [];
 				sConns[d.session].push(conn);
 			} else {
 				if(sConns[d.session].indexOf(conn) == -1) {
@@ -80,7 +80,7 @@ sock.on('connection', function (socket) {
 			}
 		}
 		core.emit(d.type, d, function(err, data) {
-			var e;
+			var e, action;
 			if(err) {
 				e = {type: 'error', id: d.id, message: err.message};
 				log("Sending Error: ", e);
@@ -88,7 +88,7 @@ sock.on('connection', function (socket) {
 			}
 			if(data.type == 'back') {
 				/* this is need because we dont have the connection object
-				 of the user in the rconn until storeBack is called*/
+				of the user in the rconn until storeBack is called*/
 				conn.send(data);
 				storeBack(conn, data);
 				return;
@@ -113,8 +113,11 @@ sock.on('connection', function (socket) {
 						}
 						
 						data.user.role = role;
+                        action = {id: generate.uid(), type: "back",to: e.id, from: data.user.id, session: data.session,user: data.user, room: e};
 						emit({id: generate.uid(), type: "away", to: e.id, from: data.old.id, user: data.old, room: e});
-						emit({id: generate.uid(), type: "back",to: e.id, from: data.user.id, session: data.session,user: data.user, room: e});
+                        
+                        storeBack(conn, action);
+                        if(verifyBack(conn, action)) emit(action);
 					});	
 				}
 				storeInit(conn, data);
@@ -125,7 +128,7 @@ sock.on('connection', function (socket) {
 			}
 
 			/* no need to send it back to the connection object when no error,
-			 emit function will take care of that.
+                emit function will take care of that.
 				conn.send(data);
 			 */
 		});
@@ -146,7 +149,7 @@ function storeInit(conn, init) {
 	if(!uConns[init.user.id]) uConns[init.user.id] = [];
 	sConns[init.session].forEach(function(c) {
 		var index;
-		if(init.old && init.old.id) {
+		if(init.old && init.old.id && uConns[init.old.id]) {
 			index = uConns[init.old.id].indexOf(c);
 			uConns[init.old.id].splice(index, 1);
 		}
@@ -171,10 +174,14 @@ function storeBack(conn, back) {
 	if(!uConns[back.from]) uConns[back.from] = [];
 	if(rConns[back.to].indexOf(conn)<0) rConns[back.to].push(conn);
 	if(urConns[back.from+":"+back.to].indexOf(conn)<0) urConns[back.from+":"+back.to].push(conn);
+    if(!conn.listeningTo) conn.listeningTo = [];
+    conn.listeningTo.push(back.to);
+//    console.log("LOG:"+ back.from +" got back from :"+back.to);
 }
 
 
 function storeAway(conn, away) {
+    var index;
 	delete urConns[away.from+":"+away.to];
 	if (sConns[away.session] && !sConns[away.session].length) {
 		delete sConns[away.session];
@@ -183,11 +190,16 @@ function storeAway(conn, away) {
 		delete uConns[away.session];
 	}
 	if(urConns[away.from+":"+away.to]) delete urConns[away.from+":"+away.to];
+    if(conn.listeningTo) {
+        index = conn.listeningTo.indexOf(away.to);
+        if(index>=0)conn.listeningTo.splice(index, 1);
+    }
+//    console.log("LOG: "+ away.from +"sending away to :"+away.to);
 }
 
 exports.initServer = function (server) {
 	sock.installHandlers(server, {prefix: '/socket'});
-}
+};
 
 exports.initCore = function(c) {
     core = c;
@@ -206,60 +218,80 @@ exports.initCore = function(c) {
 };
 
 function emit(action, callback) {
-	var conns;
-	log("Sending out: ", action);
-
-	if(action.type == 'init') {		
-		if(sConns[action.session]) sConns[action.session].forEach(function(conn){
-			conn.user = action.user;
-			dispatch(conn);
-		});
+    var outAction = {}, i, j;
+    log("Sending out: ", action);
+    function dispatch(conn) {conn.send(action); }
+    
+    if(action.type == 'init') {		
+		if(sConns[action.session]) {
+            sConns[action.session].forEach(function(conn) {
+                conn.user = action.user;
+                dispatch(conn);
+            });
+        }
+        return callback();
 	} else if(action.type == 'user') {
 		uConns[action.from].forEach(dispatch);
-	} else {
-		if(rConns[action.to]){
-			rConns[action.to].forEach(dispatch);
-		}
+        return callback();
 	}
-	
-	function dispatch(conn) {conn.send(action); }
+    
+    for (i in action) {
+        if(action.hasOwnProperty(i)) {
+            if(i == "room" || i == "user") { 
+                outAction[i] = {};
+                for (j in action) {
+                    if(action.hasOwnProperty(j) && j !== "params") {
+                        outAction[i][j] = action[i][j];
+                    }
+                }
+            }else {
+                outAction[i] = action[i];
+            }
+        }
+    }
+    
+    delete outAction.session;
+    delete outAction.user.identities;
+    action = outAction;
+    
+    if(rConns[action.to]) {
+        rConns[action.to].forEach(dispatch);
+    }
 	if(callback) callback();
-};
+}
 
 function handleClose(conn) {
 	if(!conn.session) return;
-	var connections;
 	core.emit('getUsers', {ref: "me", session: conn.session}, function(err, sess) {
-
+        
 		if(err || !sess || !sess.results) {
 			log("Couldn't find session to close.", err, sess);
 			return;
 		}
 		var user = sess.results[0];
+        // console.log("LOG: "+ user.id +" closed tab which had", conn.listeningTo.join(","), "open");
 		setTimeout(function() {
-			core.emit('getRooms', {hasOccupant: user.id, session: conn.session}, function(err, rooms) {
-				if(err || !rooms ||!rooms.results) {
-					log("couldnt find his rooms: away message not sent:", err, rooms);
-					return;
-				}
-
-				rooms.results.forEach(function(room) {
-					var awayAction = {
-						from: user.id,
-						session: conn.session,
-						type:"away",
-						to: room.id,
-						time: new Date().getTime()
-					};
-					
-					if(!verifyAway(conn, awayAction)) return;
-					core.emit('away',awayAction , function(err, action) {
-						if(err) return;
-						storeAway(conn, action)
-					});
-				});
-			});
-		}, 30*1000);
+            // console.log("LOG: "+ user.id +"30 seconds lated");
+            if(!conn.listeningTo || !conn.listeningTo.length) return;
+            
+            conn.listeningTo.forEach(function(room) {
+                var awayAction = {
+                    from: user.id,
+                    session: conn.session,
+                    type:"away",
+                    to: room,
+                    time: new Date().getTime()
+                };
+                // console.log("LOG: "+user.id +"verifing away for", room);
+                if(!verifyAway(conn, awayAction)) return;
+                // console.log("LOG: "+ user.id +"sending away for", room);
+                core.emit('away',awayAction , function(err, action) {
+                    if(err) return;
+                    storeAway(conn, action);
+                });
+                
+            });
+		}, 3*1000);
 	});
 }
 
@@ -267,20 +299,21 @@ function verifyAway(conn, away) {
 	var index;
 	if(rConns[away.to]) {
 		index = rConns[away.to].indexOf(conn);
-		rConns[away.to].splice(index,1);
+		if(index >=0) rConns[away.to].splice(index,1);
 	}
 	if(sConns[conn.session]) {
 		index = sConns[conn.session].indexOf(conn);
-		sConns[conn.session].splice(index,1);
+		if(index >=0) sConns[conn.session].splice(index,1);
 	}
 	if(uConns[away.from]) {
 		index = uConns[away.from].indexOf(conn);
-		uConns[away.from].splice(index,1);
+		if(index >=0) uConns[away.from].splice(index,1);
 	}
 	if(urConns[away.from+":"+away.to]) {
 		index = urConns[away.from+":"+away.to].indexOf(conn);
-		urConns[away.from+":"+away.to].splice(index,1);
-		return (urConns[away.from+":"+away.to].length==0);
+		if(index >=0) urConns[away.from+":"+away.to].splice(index,1);
+        // console.log("LOG: "+ away.from +"Connections still available: ", urConns[away.from+":"+away.to].length);
+		return (urConns[away.from+":"+away.to].length===0);
 	}else{
 		return true;
 	}

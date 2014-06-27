@@ -1,5 +1,7 @@
 /* jslint browser: true, indent: 4, regexp: true */
-/* global $, libsb, desktopnotify */
+/* global $, libsb */
+
+var desktopnotify = require("../ui/desktopnotify.js");
 
 var browserNotify = (function() {
 	var hasFocus = false,
@@ -80,7 +82,7 @@ var browserNotify = (function() {
 }());
 
 libsb.on('text-dn', function(text, next) {
-	if (text.mentions.contains(libsb.user.id)) {
+	if (text.mentions.indexOf(libsb.user.id) > -1) {
 		browserNotify(text, true);
 
 		desktopnotify.show({
@@ -97,4 +99,4 @@ libsb.on('text-dn', function(text, next) {
 	}
 
 	next();
-});
+}, 100);

@@ -1,4 +1,3 @@
-var net = require('net');
 var irc = require('irc');
 irc.startIdentServer();
 var queue = require("./queue.js");
@@ -7,11 +6,13 @@ var config = require('./config.js');
 var core;
 var botNick = config.botNick;//part of config of IRC client.
 var clients = {};//for server channel user,server --> client. 
-var servChanProp = {};//object of server channel prop
+var servChanProp = {};//object of server channel prop (room, user)
 var rooms = {};//room id to room obj map.
 var servNick = {};//server channel nick -------> sb nick.
 var renameCallback = {};
+var partBotCallback = {};
 var connected = false;
+var servChanCount = {};
 /******************************* Exports ****************************************/
 module.exports.say = say;
 module.exports.rename = rename;
@@ -70,8 +71,9 @@ function joinChannels(server, nick, channels, cb) {
  */
 function joinServer(server, nick, channels, options, cb) {
 	if (!clients[nick]) clients[nick] = {}; 
-	var client = new irc.Client(server, nick, {
-			userName : nick,
+	var displayNick = nick.indexOf('guest-') === 0 ? nick.substring(6) : nick;
+	var client = new irc.Client(server, displayNick, {
+			userName : displayNick,
 			realName: nick + '@scrollback.io',
 			channels: channels,
 			debug: false,
@@ -93,23 +95,26 @@ function joinServer(server, nick, channels, options, cb) {
  *opt.identId is used for ident.
  */
 function connectBot(room, options, cb) {
+	console.log("****", room, JSON.stringify(servChanProp));
 	var server = room.params.irc.server;
 	var channel = room.params.irc.channel.toLowerCase();
-	rooms[room.id] = room;
+	
 	if(!servChanProp[server]) {
 		servChanProp[server] = {};
 	}
-	if (!servChanProp[server][channel]) {
-		servChanProp[server][channel] = {};
-		servChanProp[server][channel].rooms = [];
-		servChanProp[server][channel].users = [];
-	}
-	if (servChanProp[server][channel].rooms.length !== 0) {
+	if (servChanProp[server][channel] && servChanProp[server][channel].room) {
 		cb("ERR_CONNECTED_OTHER_ROOM");
 		return;
 	}
+	if (!servChanCount[server]) {
+		servChanCount[server] = 1;
+	} else servChanCount[server]++;
+	
 	rooms[room.id] = room;
-	servChanProp[server][channel].rooms.push(room);
+	servChanProp[server][channel] = {};
+	servChanProp[server][channel].users = [];
+	rooms[room.id] = room;
+	servChanProp[server][channel].room = room;
 	var ch = room.params.irc.pending ? [] : [channel];//after varification connect to channel
 	if (!servNick[server]) servNick[server] = {};
 	var client;
@@ -128,13 +133,25 @@ function connectBot(room, options, cb) {
 	}
 }
 
-function partBot(roomId) {
-	log("part bot for room ", roomId);
+function partBot(roomId, callback) {
+	
 	var room  = rooms[roomId];
-	if (!room) return;
+    log("****part bot for room ", roomId, room, servChanCount);
+	if (!room) return callback(); //should throw an error? not sure... 
 	var client = clients[botNick][room.params.irc.server];
 	var channel = room.params.irc.channel;
 	var server = room.params.irc.server;
+    var pending = room.params.irc.pending;
+    if(pending) {
+        servChanCount[server]--;
+		if (servChanCount[server] === 0) {
+			client.disconnect();
+			delete clients[botNick][server];		
+		}
+		delete room[roomId];
+		delete servChanProp[server][channel];
+        return callback();
+    }
 	var users = servChanProp[room.params.irc.server][channel].users;
 	log("users", users, ", servNick", servNick);
 	users.forEach(function(user) {
@@ -143,9 +160,9 @@ function partBot(roomId) {
 			clients[sbNick][server].part(channel);
 		}
 	});
-	client.part(channel);//disconnect bot in case of all part.
-	delete servChanProp[server][channel];
-	//delete rooms[roomId];//TODO find a better way to delete this
+	partBotCallback[roomId] = callback;
+	return client.part(channel);//disconnect bot in case of all part.
+	
 }
 
 function connectUser(roomId, nick, options, cb) {
@@ -167,7 +184,7 @@ function connectUser(roomId, nick, options, cb) {
 		});
 		client.on('part', function(channel, nk, reason, message) {
 			if (client.opt.channels.length === 0) {
-				log("part channel", nick);
+				log("part channel", nick, arguments);
 				client.disconnect();
 				delete clients[nick][client.opt.server];//TODO some cleanup needed?	
 			}
@@ -178,7 +195,6 @@ function connectUser(roomId, nick, options, cb) {
 function onMessage(client) {
 	function msg(nick, to, text) {
 		to = to.toLowerCase();
-		
 		if (!servChanProp[client.opt.server][to]) {
 			return;
 		}
@@ -208,22 +224,21 @@ function onMessage(client) {
 function sendMessage(server, from, to, text, time) {
 	to = to.toLowerCase();
 	log("on message :", server, from, to, text);
-	servChanProp[server][to].rooms.forEach(function(room) {
-		if (!room.pending) {
-			var f;
-			if(servNick[server][from].dir === 'in') {
-				f = servNick[server][from].nick;
-			} else return;
-			core.emit('data', {
-				type: 'message',
-				to: room.id,
-				from: f, 
-				text: text,
-				time: time,
-				session: "irc://" + server + ":" + from
-			});
-		}	
-	});
+	var room = servChanProp[server][to].room;
+	if (!room.pending) {
+		var f;
+		if(servNick[server][from].dir === 'in') {
+			f = servNick[server][from].nick;
+		} else return;
+		core.emit('data', {
+			type: 'message',
+			to: room.id,
+			from: f, 
+			text: text,
+			time: time,
+			session: "irc://" + server + ":" + from
+		});
+	}	
 }
 
 
@@ -239,26 +254,25 @@ function onPM(client) {
 			var r = msg[2];//
 			log("r=", r);
 			client.whois(message.nick, function(reply) {
-				log("whois reply: ", reply);
-				servChanProp[client.opt.server][msg[1]].rooms.forEach(function(room) {
-					log("room", room);
-					if(room.params.irc.pending && room.id === r && reply.channels) {
-						log("room pending true");
-						reply.channels.forEach(function(channel) {
-							if (channel.substring(0,1) === '@' && channel.substring(1) === room.params.irc.channel) {
-								client.join(room.params.irc.channel);
-								if (connected) {
-									sendRoom(room);
-								} else {
-									queue.push({
-										fn: "sendRoom",
-										room: room
-									});
-								}
+			log("whois reply: ", reply);
+				var room = servChanProp[client.opt.server][msg[1]].room;
+				log("room", room);
+				if(room.params.irc.pending && room.id === r && reply.channels) {
+					log("room pending true");
+					reply.channels.forEach(function(channel) {
+						if (channel.substring(0,1) === '@' && channel.substring(1) === room.params.irc.channel) {
+							client.join(room.params.irc.channel);
+							if (connected) {
+								sendRoom(room);
+							} else {
+								queue.push({
+									fn: "sendRoom",
+									room: room
+								});
 							}
-						});
-					}
-				});
+						}
+					});
+				}
 			});
 		}
 	});
@@ -276,7 +290,7 @@ function sendRoom(room) {
  */
 function onLeave(client) {
 
-	client.on("part", function(channel, nick, reason, message){//TODO delete client if no more connections
+	client.on("part", function(channel, nick, reason, message){
 		left(client, [channel], nick);
 	});	
 	
@@ -296,6 +310,19 @@ function onLeave(client) {
 }
 
 function left(client, channels, nick) {
+	if (client.nick === nick) {//My nick leaving the channel
+		servChanCount[client.opt.server]--;
+		if (servChanCount[client.opt.server] === 0) {
+			client.disconnect();
+			delete clients[nick][client.opt.server];		
+		}
+		//setTimeout(function() {
+		//	if (client.opt.channels.length === 0) {
+		//		console.log("client disconnected from all channels ****", channels);
+		//		
+		//	}
+		//}, 60 * 1000);
+	}
 	
 	if (connected) {
 		sendAway(client.opt.server, channels, nick, client.nick);
@@ -312,30 +339,35 @@ function left(client, channels, nick) {
 
 function sendAway(server, channels, nick, bn) {
 	var sbUser = servNick[server][nick];
-	
+	console.log("send away****", channels, nick, bn);
 	channels.forEach(function(channel) {
 		channel = channel.toLowerCase();
-		if (bn === nick) {//bot left the channel //TODO test partBot.
+		if (bn === nick) {//bot left the channel
+			
+			var roomId = servChanProp[server][channel].room.id;
+			console.log("deleting data:****", roomId);
 			delete servChanProp[server][channel];
+			delete rooms[roomId];
+			partBotCallback[roomId]();
+			delete partBotCallback[roomId];
+			
 			return;
 		}
-		log("users", servChanProp[server][channel].users.length);
 		if (!servChanProp[server][channel]) {
 			return;
 		}
 		var index = servChanProp[server][channel].users.indexOf(nick);
 		if(index > -1) servChanProp[server][channel].users.splice(index, 1);
-		servChanProp[server][channel].rooms.forEach(function(room) {
-			if(!room.params.pending && sbUser && sbUser.dir === "in") {//send away message for only incoming users
-				core.emit("data", {
-					type: "away",
-					to: room.id,
-					from: sbUser.nick,
-					room: room,
-					session: "irc://" + server + ":" + nick
-				});
-			}
-		});
+		var room = servChanProp[server][channel].room;
+		if(!room.params.pending && sbUser && sbUser.dir === "in") {//send away message for only incoming users
+			core.emit("data", {
+				type: "away",
+				to: room.id,
+				from: sbUser.nick,
+				room: room,
+				session: "irc://" + server + ":" + nick
+			});
+		}
 	});
 	for( var channel in servChanProp[server]) {//if user left from all channel 
 		if (servChanProp[server].hasOwnProperty(channel)) {
@@ -345,7 +377,7 @@ function sendAway(server, channels, nick, bn) {
 		}
 	}
 	log("user:", nick, "went away from all channel in ", server, "server");
-	delete servNick[server][nick];//TODO check if user left from all connected channels(rooms).
+	delete servNick[server][nick];
 }
 
 /************************** user left *****************************************/
@@ -372,20 +404,19 @@ function addUsers(client, channel, nick) {
 function sendBack(server, channel, nick, bn) {
 	log("server", server, " channel:", channel, "servNick", JSON.stringify(servNick));
 	channel = channel.toLowerCase();
-	servChanProp[server][channel].rooms.forEach(function(room) {
-		//save data.
-		if(nick != bn) servChanProp[server][channel].users.push(nick);//don't add myNick 
-		if(nick != bn && (!servNick[server][nick] || (servNick[server][nick].dir == "in")) && !room.params.irc.pending) {
-			servNick[server][nick] = {nick: nick, dir: "in"};//default nick is irc nick
-			core.emit("data", {
-				type: "back",
-				to: room.id,
-				from: nick,
-				room: room,
-				session: "irc://" + server + ":" + nick
-			});
-		}
-	});
+	var room = servChanProp[server][channel].room;
+	//save data.
+	if(nick != bn) servChanProp[server][channel].users.push(nick);//don't add myNick 
+	if(nick != bn && (!servNick[server][nick] || (servNick[server][nick].dir == "in")) && !room.params.irc.pending) {
+		servNick[server][nick] = {nick: nick, dir: "in"};//default nick is irc nick
+		core.emit("data", {
+			type: "back",
+			to: room.id,
+			from: nick,
+			room: room,
+			session: "irc://" + server + ":" + nick
+		});
+	}
 }
 
 function onNick(client) {
@@ -445,7 +476,7 @@ function say(message) {
 function newNick(roomId, nick, sbNick) {
 	log("rooms", roomId, rooms);
 	var room = rooms[roomId];
-	//if (room) return;
+	if (!room) return;
 	if (!servNick[room.params.irc.server]) {
 		servNick[room.param.irc.server] = {};
 	}

@@ -5,7 +5,7 @@ var events = require('events');
 var core = new events.EventEmitter();
 var ObjectReader = require('../lib/ObjectReader.js');
 var or = new ObjectReader(core);
-var dataQueue = require("./queue.js");
+//var dataQueue = require("./queue.js");
 var port = config.port;
 var client;
 var isConnected = false;
@@ -38,6 +38,8 @@ var server = net.createServer(function(c) { //'connection' listener
 	c.on('error', function(err) {
 		//TODO handle error conditions properily
 		console.log("error event", err);
+		ircClient.setConnected(false);
+		isConnected = false;
 	});
 });
 server.listen(port, function() { //'listening' listener
@@ -66,7 +68,9 @@ core.on('object', function(obj) {
 			});
 			break;
 		case 'partBot':
-			ircClient.partBot(obj.roomId);
+			ircClient.partBot(obj.roomId, function() {
+				writeObject({type: 'callback', uid: obj.uid});
+			});
 			break;
 		case 'connectUser':
 			ircClient.connectUser(obj.roomId, obj.nick, obj.options || {}, function() {

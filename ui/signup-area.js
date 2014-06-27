@@ -1,8 +1,10 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb,generate,validate */
 
 $(function(){
-	var signingUser, signupId, saveId = "", id = generate.uid(), signingUp = false;
+	var lace = require("../lib/lace.js"),
+		signingUser, id = generate.uid(), signingUp = false;
+
 	function submitUser() {
 		var userId = $("#signup-id").val();
 		if(!validate(userId)) {
@@ -13,7 +15,7 @@ $(function(){
 			user: {
 				id: userId,
 				identities: signingUser.identities,
-				params: { 
+				params: {
 					email: {
 						frequency: "daily",
 						notifications: true
@@ -21,12 +23,11 @@ $(function(){
 					notifications: {
 						sound: true,
 						desktop: true
-						
-					}
-			 	}
-			}
-		}, function(err, u) {
-                                signingUp = true;
+                    }
+                }
+            }
+		}, function(err) {
+                signingUp = true;
 				if(err) {
 					if(err.message == "ERR_USER_EXISTS"){
 						lace.alert.show({type:"error", body: "user name already taken", timeout: 3000});
@@ -50,13 +51,16 @@ $(function(){
 	});*/
 
 	libsb.on("user-dn", function(action, next) {
-                lace.modal.hide();
-                if(signingUp === true) location.reload(); 		
-                libsb.emit('navigate', {
+		lace.modal.hide();
+
+		if(signingUp === true) location.reload();
+
+		libsb.emit('navigate', {
 			view: 'normal',
 			mode: 'normal',
 			tab: 'info'
 		});
+
 		next();
 	}, 500);
 
@@ -68,7 +72,6 @@ $(function(){
 				libsb.emit('navigate', {
 					mode: "user", tab: "create", source: "libsb"
 				});
-
 				lace.modal.show({ body: $("#signup-dialog").html() });
 			}
 		}

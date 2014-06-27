@@ -93,14 +93,14 @@ libsb.on('navigate', function(state, next){
 
 module.exports = function(c){
 	core = c;
-	if(localStorage.user){
+	if(localStorage.libsb){
 		var fakeInit = {
 			user: cache.user,
 			rooms: cache.rooms,
 			occupantOf: cache.occupantOf,
 			memberOf: cache.memberOf
 		};
-		core.emit('init-dn', fakeInit);
+		//core.emit('init-dn', fakeInit);
 	}
 	core.on('getTexts', function(query, next){
 		// getTextsBefore
@@ -176,25 +176,121 @@ module.exports = function(c){
 		next();
 	});
 	
-	core.on("getSession", function(query, callback){
-		try {
-			query.results = [{
-				session: cache.session,
-				user: cache.user.id
-			}];
-			callback();	
-		}catch(e){
-			callback(e);
-		}
-	});
+	core.on('getTexts', getTextsBefore, 400);
+	core.on('getTexts', getTextsAfter, 900);
+	core.on('getThreads', getThreadsBefore, 400);
+	core.on('getThreads', getThreadsAfter, 900);
+	core.on('connected', createInit, 1000);
+	core.on('init-dn', recvInit, 900);
+	core.on('away-up', storeAway, 100); // can be in the end.
+	//core.on('text-up', storeText);
+
+	core.on('logout', logout, 1000);
 	
-	core.on('logout', function(p,n){
-		// delete user session here
-		delete cache.session;
-		delete cache.user;
-		delete libsb.session;
-		delete libsb.user;
-		save();
-		n();
-	});
+	window.addEventListener('storage', load);
 };
+
+function recvInit(init, next){
+	cache.user = init.user;
+	cache.rooms = init.rooms;
+	cache.occupantOf = init.occupantOf;
+	cache.memberOf = init.memberOf;
+	save();
+	next();
+}
+
+function createInit(){
+	var sid;
+	if(!cache) cache = {};
+	if(cache && cache.session) {
+        libsb.session = sid = cache.session;
+    }
+	if(!sid){
+		cache.session = sid = generate.uid();
+		libsb.session = cache.session;
+	} 
+	core.emit('init-up', {session: sid});
+}
+
+function storeAway(away, next){
+	localStorage.libsb.lastAwayAt = away.time;
+	save();
+	next();
+}
+
+function logout(p,n){
+	// delete user session here
+	delete cache.session;
+	delete cache.user;
+	delete libsb.session;
+	delete libsb.user;
+	save();
+	n();
+}
+
+function storeText(text, next){
+	cache.texts.put([text]);
+	save();
+	next();
+}
+
+function getTextsBefore(query, next){
+
+	/*
+		not giving the correct data right now.
+		var results = cache.texts.get(query);
+	if(results) query.results = results;*/
+	next();
+}
+
+function getTextsAfter(query, next){
+	var results = query.results; 
+	if(results){
+		if(query.before) results.push({type: 'result-end', endtype: 'time', time: query.time});
+		if(query.after) results.unshift({type: 'result-start', endtype: 'time', time: query.time});
+
+		if(query.before && results.length === query.before){
+			results.unshift({
+				type: 'result-start', time: results[0].time, endtype: 'limit'
+			});
+		}
+
+		if(query.after && results.length === query.after){
+			results.push({
+				type: 'result-end', time: results[results.length - 1].time, endtype: 'limit'
+			});
+		}
+
+		cache.texts.put(results);
+	}
+	next();
+}
+
+function getThreadsBefore(query, next){
+	/* not giving the correct data right now.
+	var results = cache.labels.get(query);
+	if(results) query.results = results;*/
+	next();
+}
+
+function getThreadsAfter(query, next){
+	var results = query.results;
+	if(results){
+		if(query.before) results.push({type: 'result-end', endtype: 'time', time: query.time});
+		if(query.after) results.unshift({type: 'result-start', endtype: 'time', time: query.time});
+
+		if(query.before && results.length === query.before){
+			results.unshift({
+				type: 'result-start', time: results[0].time, endtype: 'limit'
+			});
+		}
+
+		if(query.after && results.length === query.after){
+			results.push({
+				type: 'result-end', time: results[results.length - 1].time, endtype: 'limit'
+			});
+		}
+		cache.labels.put(results);	
+	} 
+	next();
+}

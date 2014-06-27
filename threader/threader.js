@@ -2,7 +2,8 @@ var log = require("../lib/logger.js");
 var gen = require("../lib/generate.js");
 var config = require('../config.js');
 var net = require('net');
-var redis = require('../lib/redisProxy.js').select(config.threader.database || 0);
+var timeout = 60 * 1000;
+var redis = require('../lib/redisProxy.js').select(config.redisDB.threader);
 var client;
 var pendingCallbacks = {};
 
@@ -14,14 +15,16 @@ module.exports = function(core) {
 		init();
 		core.on('text', function(message, callback) {
 			if(message.type == "text" && client.writable) {//if client connected and text message
+				var threadId = message.threads && message.threads[0] ? message.threads[0].id : undefined;
 				var msg = JSON.stringify({
 					id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
-					text: message.text.replace(/['"]/g, '').replace(/\n/g," "),
-					room: message.to
+					text: message.text/*.replace(/['"]/g, '').replace(/\n/g," ")*/,
+					room: message.to,
+					threadId: threadId
 				});
 				log("Sending msg to scrollback.jar= "+msg);
 				try {
-					client.write(msg+'\n');
+					client.write(msg + ",");
 				} catch(err) {
 					log("--error --"+err);
 					callback();
@@ -56,9 +59,8 @@ function processReply(data){
 		log("data=-:" + data + ":-");
 		data = JSON.parse(data);
 		log("Data returned by scrollback.jar = "+data.threadId, pendingCallbacks[data.id].message.text);
-		var index = data.threadId.indexOf(':');
-		var id = data.threadId.substring(0, index);
-		var title = data.threadId.substring(index + 1);
+		var id = data.threadId;
+		var title = data.title;
 		if (data.bucketStatus === 'end') {
 			redis.get("threader:last:" + id, function(err, d) {
 				d = JSON.parse(d);
@@ -104,6 +106,7 @@ function init(){
 	client = net.connect({port: config.threader.port, host: config.threader.host},
 		function() { //'connect' listener
 		console.log('client connected');
+		client.write("[");//sending array of JSON objects
 	});
 	var d = "";//wait for new line.
 	client.on("data", function(data){
@@ -117,51 +120,19 @@ function init(){
 			processReply(data[i]);
 		}
 	});
-	/**
-	*Process reply from java process and callback based on message.id
-	* message.thread [{
-	* 		id: ..
-	* 		title: ...
-	* 		score: ... //sorted based in this score
-	* }, ... ]
-	*/
-	function processReply(data){
-		var message;
-		try {
-			log("data=-:" + data + ":-");
-			data = JSON.parse(data);
-			log("Data returned by scrollback.jar = "+data.threadId, pendingCallbacks[data.id].message.text);
-			message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
-			if(message) {
-                if(!message.threads) message.threads = [];
-                var index = data.threadId.indexOf(':');
-                var id = data.threadId.substring(0, index);
-                var title = data.threadId.substring(index + 1);
-				message.threads.push({id: id, title: title, score: 1});
-				//message.labels[data.threadId] = 1;
-				pendingCallbacks[data.id].fn();
-				log("called back in ", new Date().getTime() - pendingCallbacks[data.id].time);
-				delete pendingCallbacks[data.id];
-			}
-			else
-				return;
-		} catch(err) {
-			log("error on parsing data="+err);
-			return;
-		}
-	}
 
 	client.on('error', function(error){
 		log("Can not connect to java Process ", error);
 		setTimeout(function(){
 			init();	
-		},1000*60);//try to reconnect after 1 min
+		},timeout);//try to reconnect after 1 min
 	});
+	
 	client.on('end', function() {
 		log('connection terminated');
 		setTimeout(function(){
 			init();	
-		},1000*60);//try to reconnect after 1 min
+		},timeout);//try to reconnect after 1 min
 	});
 }
 
