@@ -40,7 +40,8 @@ $(function() {
 					$dot = $("[data-thread=" + currThread + "]").find($chatdot).add($convdot),
 					left = $container.offset().left,
 					top = $dot.first().offset().top,
-					bottom = $(document).height() - $convdot.offset().top - ($convdot.height() / 2);
+					bottom = $(document).height() - $convdot.offset().top - ($convdot.height() / 2),
+					containertop = $container.offset().top;
 
 				$chatdot.not($dot).velocity("stop")
 								  .velocity({ scale: 1 }, { duration: 150 });
@@ -49,7 +50,7 @@ $(function() {
 					.velocity({ scale: 1 }, { duration: 150 })
 					.velocity({ scale: 1.5 }, { duration: 300 });
 
-				$line.css({ top: ((top > 0) ? top : 0), left: left, bottom: bottom }).appendTo($container);
+				$line.css({ top: ((top < containertop) ? containertop : top), left: left, bottom: bottom }).appendTo("body");
 
 				$line.velocity("stop")
 					 .velocity({ translateY: ( $line.height() / 2 ), scaleY: 0, opacity: 0 }, 0)
@@ -67,6 +68,8 @@ $(function() {
 			drawLine();
 		}, 500));
 	});
+
+	$(window).on("resize", drawLine);
 
 	$.fn.selectMsg = function() {
 		resetConv();
