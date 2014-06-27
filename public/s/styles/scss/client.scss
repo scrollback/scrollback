@@ -1168,6 +1168,7 @@ body {
     position: fixed;
     margin-left: 1.15em;
     z-index: 10;
+    background-color: fade-out(lighten($dark-color, 15%), .5);
 
     @media #{$screenxx} { margin-left: 2.15em; }
 

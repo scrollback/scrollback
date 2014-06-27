@@ -22,12 +22,15 @@ $(function() {
 				$dot = $(".chat-item-dot, .chat-conv-dot");
 
 			$dot.velocity("stop")
-			.velocity({ scale: 1, opacity: 1 }, 150);
+				.velocity({ scale: 1, opacity: 1 }, 150);
 
 			if ($line.length) {
 				$line.velocity("stop")
-					 .velocity({ translateY: ( $line.height() / 2 ), scaleY: 0, opacity: 0 },
-											   300, function() { $(this).remove(); });
+					 .velocity({ translateY: ( $line.height() / 2 ),
+								 scaleY: 0, opacity: 0
+							   }, 300, function() {
+								   $(this).remove();
+							   });
 			}
 		},
 		drawLine = function() {
@@ -44,13 +47,15 @@ $(function() {
 					containertop = $container.offset().top;
 
 				$chatdot.not($dot).velocity("stop")
-								  .velocity({ scale: 1, opacity: 0.3 }, { duration: 150 });
+								  .velocity({ scale: 1, opacity: 0.3 }, 150);
 
 				$dot.velocity("stop")
-					.velocity({ scale: 1 }, { duration: 150 })
-					.velocity({ scale: 1.5, opacity: 1 }, { duration: 300 });
+					.velocity({ scale: 1 }, 150)
+					.velocity({ scale: 1.5, opacity: 1 }, 300);
 
-				$line.css({ top: ((top < containertop) ? containertop : top), left: left, bottom: bottom }).appendTo("body");
+				$line.css({ top: ((top < containertop) ? containertop : top),
+						    left: left, bottom: bottom
+						  }).appendTo("body");
 
 				$line.velocity("stop")
 					 .velocity({ translateY: ( $line.height() / 2 ), scaleY: 0, opacity: 0 }, 0)
