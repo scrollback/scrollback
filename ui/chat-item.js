@@ -34,7 +34,7 @@ $(function() {
 			removeLine();
 
 			if (currThread) {
-				var $line = $("<div>").addClass("chat-conv-line"),
+				var $line = $("<div>").addClass("chat-conv-line").attr("data-mode", "normal"),
 					$chatdot = $(".chat-item-dot"),
 					$convdot = $(".chat-conv-dot"),
 					$dot = $("[data-thread=" + currThread + "]").find($chatdot).add($convdot),
