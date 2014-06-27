@@ -34,18 +34,22 @@
 
 			// Listen to message from child iframe
 			eventListener(messageEvent, function(e) {
-				if (e.origin === host && (e.data === "minimize" || e.data === "maximize")) {
-					var styleClass = "minimized",
-						classString = iframe.className,
-						nameIndex = classString.indexOf(styleClass);
+				if (e.origin === host) {
+					if (e.data === "minimize" || e.data === "maximize") {
+						var styleClass = "minimized",
+							classString = iframe.className,
+							nameIndex = classString.indexOf(styleClass);
 
-					if (e.data === "minimize") {
-						classString += " " + styleClass;
-					} else if (nameIndex !== -1 && e.data === "maximize") {
-						classString = classString.substr(0, nameIndex) + classString.substr(nameIndex + styleClass.length);
+						if (e.data === "minimize") {
+							classString += " " + styleClass;
+						} else if (nameIndex !== -1 && e.data === "maximize") {
+							classString = classString.substr(0, nameIndex) + classString.substr(nameIndex + styleClass.length);
+						}
+
+						iframe.className = classString.trim();
+					} else if (e.data === "getDomain") {
+						iframe.postMessage({ location: window.location }, host);
 					}
-
-					iframe.className = classString.trim();
 				}
 			}, false);
 		}
