@@ -88,21 +88,15 @@ libsb.on('navigate', function (state, next) {
 }, 100);
 
 function setOwnerClass() {
+	var isOwner = false;
 	function check() {
-		libsb.getRooms({hasMember: libsb.user.id}, function(err, data) {
-			var i, l;
-
-			for(i=0,l=data.results.length;i<l;i++) {
-				if(data.results[i].id == currentState.roomName) {
-					if (data.results[i].role === "owner") {
-						$("body").addClass("role-owner");
-						return;
-					}
-				}
+		libsb.memberOf.forEach(function(room){
+			if(room.id === currentState.roomName && room.role === "owner"){
+				$("body").addClass("role-owner");
+				isOwner = true;
 			}
-
-			$("body").removeClass("role-owner");
 		});
+		if(!isOwner) $("body").removeClass("role-owner");
 	}
 
 
