@@ -55,12 +55,9 @@ ArrayCache.prototype.put = function(data) {
 			data.pop();
 		}
 		[].splice.apply(this.messages, [start, end - start].concat(data));
-		this.messages = __.uniq(this.messages, function(item){
-            return item.id;
-        });
 };
 
-ArrayCache.prototype.get = function (query) {
+ArrayCache.prototype.get = function (query, partialsOk) {
         this.messages = __.uniq(this.messages, function(item){
             return item.id;
         });
