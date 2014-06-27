@@ -36,6 +36,7 @@ function saveCache(key){
 function generateLSKey(){
 	var args = Array.prototype.slice.call(arguments, 0); 
     if(!args) return;  
+	console.log("ARgs", args);
 	var argumentsLC = args.map(function(val){
 		return val.toLowerCase();
 	});
@@ -84,10 +85,7 @@ function save(){
 
 libsb.on('navigate', function(state, next) {
 	if(state.roomName && state.roomName != state.old.roomName) {
-		var key = generateLSKey(state.roomName, 'texts'),
-			oldKey = generateLSKey(state.old.roomName, 'texts');
-		
-		delete cache[oldKey];
+		var key = generateLSKey(state.roomName, 'texts');
 		if(localStorage.hasOwnProperty(key)){
 			cache[key] = loadArrayCache(key);
 		}
@@ -178,6 +176,7 @@ module.exports = function(c){
 	core.on('away-up', function(away, next){
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
 		var msg = {type: 'result-end', endtype: 'time', time: away.time};
+		console.log("AWAY IS ", away);
 		var key = generateLSKey(away.to, 'texts');
 		cache[key].put(msg);
 	}, 500);
@@ -185,6 +184,7 @@ module.exports = function(c){
 	core.on('back-up', function(back, next){
 		// store a result-start in ArrayCache, to indicate the beginning of the current stream of messages from the user
 		var msg = {type: 'result-start', endtype: 'time', time: back.time};
+		console.log("BACK IS ", back);
 		var key = generateLSKey(back.to, 'texts');
 		cache[key].put(msg);
 	}, 500);
