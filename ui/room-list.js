@@ -1,8 +1,7 @@
 /* jshint jquery: true */
 /* global libsb, currentState */
 
-var roomEl = require("./room-item.js"),
-	roomName = "";
+var roomEl = require("./room-item.js");
 
 // var roomList = {};
 var $roomlist, rooms = [false, false], listenQueue = [];
@@ -56,6 +55,7 @@ libsb.on("init-dn", function(init, next) {
             enter(r.id);
         });
     }
+	if($roomlist) $roomlist.reset();
     next();
 }, 10);
 

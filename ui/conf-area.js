@@ -72,7 +72,6 @@ function showConfig(room){
 
         currentConfig = tabs;
 		
-		console.log("Tabs is ", tabs);
         data = renderSettings(tabs);
 
         $('.meta-conf').empty().append(data[0]);
