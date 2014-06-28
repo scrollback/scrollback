@@ -256,7 +256,9 @@ function migrateRooms(cb) {
                         };
                         newRoom.params.twitter = twitter;
                     })();
-				}
+				}else{
+                    newRoom.params.twitter = {};
+                }
                 
                 newRoom.params.http = {};
                 if(typeof newRoom.params.allowSeo !== "undefined") {
@@ -272,6 +274,17 @@ function migrateRooms(cb) {
                     newRoom.guides.authorizer.writeLevel = newRoom.params.loginrequired? "follower" : "guest";
                     delete newRoom.params.loginrequired;
                 }
+                
+                newRoom.params.antiAbuse = {};
+                if(typeof newRoom.params.wordban !== "undefined") {
+                    newRoom.params.antiAbuse.wordblock = newRoom.params.wordban;
+                    delete newRoom.params.wordban;
+                }else {
+                    newRoom.params.antiAbuse.wordblock = false;
+                }
+                newRoom.params.antiAbuse.customWords =[];
+                
+                if(typeof newRoom.params.irc !== "object") newRoom.params.irc = {};
                 
 				types.rooms.put(newRoom, function(){
 					if (err) console.log(err);
