@@ -85,7 +85,7 @@ function addMessage(message){
 					multi.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message));//mentioned msg
 					multi.set("email:" + username + ":isMentioned", true);//mentioned indicator for username
 					multi.exec(function(err,replies) {
-						logMail("added mention ", replies);
+						log("added mention ", replies);
 						if (!err) {
 							initMailSending(username);
 						}
