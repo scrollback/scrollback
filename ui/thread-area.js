@@ -200,7 +200,7 @@ var threadEl = require("./thread.js"),
 			if(!$el.length) return;
             libsb.emit('navigate', {source: 'thread-area', time: null, thread: $el.attr("id").split('-')[1] });
 		});
-        
+
 		$(".thread-all-conversations").click(function(event){
 			event.preventDefault();
 			libsb.emit('navigate', {source: 'thread-area', time: null, thread: ""});
@@ -210,16 +210,16 @@ var threadEl = require("./thread.js"),
 	libsb.on('navigate', function(state, next) {
 		if (state.old && state.thread !== state.old.thread) {
 			if (state.thread && state.thread !== thread) {
+				var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
+
+				$("body").attr("class", classes);
+
 				thread = state.thread;
-				
+
 				$(".thread-item.current").removeClass("current");
 				$("#thread-" + state.thread).addClass("current");
 
 				$("body").addClass('conv-' + thread.substr(-1));
-			} else {
-				var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
-
-				$("body").attr("class", classes);
 			}
 		}
 

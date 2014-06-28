@@ -7,7 +7,6 @@ var chatEl = require("./chat.js"),
 $(function () {
 	var $logs = $(".chat-area"),
 		roomName = "",
-		room = null,
 		thread = '',
 		time = null;
 
@@ -40,7 +39,7 @@ $(function () {
 				libsb.getTexts(query, function (err, t) {
 					var texts = t.results;
 					if (err) throw err; // TODO: handle the error properly.
-                    
+
 					if (!index && texts.length === "0") {
 						return callback([false]);
 					}
@@ -49,7 +48,7 @@ $(function () {
 						if (texts.length < before) {
 							texts.unshift(false);
 						}
-                        
+
                         if(t.time && texts.length && texts[texts.length-1].time === t.time) {
                             texts.pop();
                         }
@@ -60,7 +59,7 @@ $(function () {
                         if(texts.length && texts[0].time == t.time) {
                             texts.splice(0, 1);
                         }
-						
+
 					}
 					callback(texts.map(function (text) {
 						return text && chatEl.render(null, text);
@@ -79,17 +78,13 @@ $(function () {
 
 		if (text.to !== window.currentState.roomName) return next();
 
-		if (text.threads && text.threads.length && thread) {
-			for (var i = 0, l = text.threads.length; i < l; i++) {
-				if (text.threads[i].id == thread) {
+		if (text.threads && text.threads.length && window.currentState.thread) {
+			for (var i = 0; i < text.threads.length; i++) {
+				if (text.threads[i].id == window.currentState.thread) {
 					break;
 				}
 			}
-
-			if (i == l) {
-				return next();
-			}
-		} else if (thread) {
+		} else if (window.currentState.thread) {
 			return next();
 		}
 
@@ -125,7 +120,7 @@ $(function () {
 
 	libsb.on("navigate", function (state, next) {
 		var reset = false;
-        
+
 		if (state.source == 'text-area') return next();
 		if (state.source == "init") {
 			roomName = state.roomName || currentState.roomName;
@@ -140,12 +135,12 @@ $(function () {
 				roomName = state.roomName;
 				reset = true;
 			}
-            
+
 			if (state.old && state.time != state.old.time) {
 				time = state.time;
 				reset = true;
 			}
-            
+
 			if (typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
 				thread = state.thread;
                 time = 1;
