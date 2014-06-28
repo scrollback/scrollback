@@ -30,6 +30,7 @@
 		background: $light-color;
 		border-radius: $roundness;
 		padding: 2em;
+		box-shadow: 0 0 10px 0 rgba(0,0,0,.3);
 
 		@media only screen and (max-width: 27em) {
 			@include slidedown(.5s 1);
@@ -41,6 +42,7 @@
 			width: 100%;
 			padding: 1.2em;
 			border-radius: 0;
+			box-shadow: none;
 		}
 	}
 }

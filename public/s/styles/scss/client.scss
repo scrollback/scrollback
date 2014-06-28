@@ -1465,15 +1465,10 @@ body {
 	z-index: 20;
 	height: $bar-height;
 	padding: .5em;
-	background-color: darken($light-color, 5%);
 
 	.search-focus & {
 		@include transform(translate3d(0, 0, 0));
 		@include opacity(1);
-		@extend %nofilter;
-
-		box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
-			        0 3px 2px -1px rgba(0,0,0,.05);
 	}
 
 	.search-entry {
@@ -1485,7 +1480,8 @@ body {
 		background-image: url(../../img/client/icons/search-gray.svg);
 		background-position: .5em center;
 		background-repeat: no-repeat;
-		background-size: 3em 2em;
+        background-size: 3em 2em;
+        box-shadow: 0 0 10px 0 rgba(0,0,0,.3);
 	}
 }
 
