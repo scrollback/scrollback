@@ -157,5 +157,5 @@ module.exports = function(grunt) {
 		grunt.log.writeln(target + ": " + filepath + " has " + action);
 	});
 
-	grunt.registerTask("default", ["browserify", "uglify", "concat", "wrap", "sass", "autoprefixer", "manifest"]);
+	grunt.registerTask("default", ["browserify", "manifest", "uglify", "concat", "wrap", "sass", "autoprefixer"]);
 };
