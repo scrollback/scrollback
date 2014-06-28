@@ -83,7 +83,7 @@ $(function() {
 
         if(!roomName || action.to !== roomName) return next();
 
-		if(action.user.role == "follower") {
+        if(action.user.role == "follower") {
 			lis = 4;
 			lists.people1.push(action.user);
 			action.user.score = 1;
@@ -107,7 +107,7 @@ $(function() {
 		var l,i;
 		if(!roomName || action.to !== roomName || !action.user /*|| action.from == libsb.user.id*/) return next();
 
-		function removeAndInsert(r, n, obj) {
+        function removeAndInsert(r, n, obj) {
 			for(i=0,l=lists["people"+r].length;i<l;i++) {
 				if(lists["people"+r][i] && obj.id == lists["people"+r][i].id) {
 					lists["people"+r][i] = null;
@@ -116,6 +116,7 @@ $(function() {
 			}
 			if(!checkForUser(obj, lists["people"+n])) lists["people"+n].push(obj);
 		}
+        
 		if(action.user.role == "follower") {
 			action.user.status = "online";
 			action.user.score = 4;
@@ -159,7 +160,6 @@ $(function() {
 			count = before || after;
 			if(before) sum = -1;
 			else sum = 1;
-
 			while(l>0 && l<10) {
 				if(sum>0) { i=p; len=lists["people"+l].length; }
 				else{ len=p; i=lists["people"+l].length-1; }
@@ -189,7 +189,6 @@ $(function() {
 				if(e)index = (lists["people"+e.score].indexOf(e)+(e.score/10));
 				res.push(e && personEl.render(null, e, index));
 			});
-
 			callback(res);
 		}
 	});
@@ -211,7 +210,7 @@ $(function() {
 
 		if(state.source == 'people-area') return next();
         if(!state.roomName || state.room === null) return next();
-		if(state.tab == "people") {
+		if(state.tab == "people" && state.old && state.tab != state.old.tab) {
 			roomName = state.roomName || roomName;
             lists = {
 				people1: [],
