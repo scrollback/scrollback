@@ -137,7 +137,7 @@ function saveTextActions(action) {
 		var labels = [];
 		var labelScores = [];
 		for(var l in action.labels) {
-			if (action.labels.hasOwnProperity(l)) {
+			if (action.labels.hasOwnProperty(l)) {
 				labels.push(l);
 				labelScores.push(action.labels[l]);
 			}
