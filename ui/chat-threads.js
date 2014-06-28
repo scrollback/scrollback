@@ -164,6 +164,16 @@ $(function() {
 		}
 	});
 
+	libsb.on('navigate', function(state, next) {
+		if (state.old && state.thread !== state.old.thread) {
+			if (state.thread && state.thread !== currThread) {
+				currThread = state.thread;
+			}
+		}
+
+		next();
+	}, 1);
+
 	libsb.on("text-up", function(text, next) {
 		var $chat = $(".chat-item.current");
 

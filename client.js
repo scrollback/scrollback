@@ -16,7 +16,6 @@ require('./client-entityloader/client-entityloader.js')();
 require('./lib/jquery.setCursorEnd.js');
 require('./lib/jquery.attrchange.js');
 require('./lib/jquery.velocity.min.js');
-require('./lib/velocity.ui.js');
 require('./lib/format.js');
 require('./lib/swipe-events.js');
 
@@ -51,8 +50,8 @@ require('./ui/navigation.js');
 require('./ui/error-notify.js');
 require('./ui/columns.js');
 require('./ui/chat.js');
-require('./ui/chat-item.js');
 require('./ui/chat-area.js');
+require('./ui/chat-threads.js');
 require('./ui/compose.js');
 require('./ui/notify-ticker.js');
 require('./ui/browser-notify.js');

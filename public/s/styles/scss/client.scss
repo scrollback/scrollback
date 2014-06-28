@@ -332,6 +332,7 @@ body {
 
     .tab {
         @include flex-grow(1);
+        @extend %ease;
 
         text-align: center;
         background-color: transparent;
@@ -348,6 +349,16 @@ body {
         &.current {
             fill: lighten($dark-color, 15%);
             background-color: rgba(0,0,0,.1);
+        }
+
+        svg { @extend %ease; }
+
+        &:hover, &:focus {
+            svg { @include transform(scale(0.9)); }
+        }
+
+        &:active {
+            svg { @include transform(scale(0.7)); }
         }
     }
 
@@ -385,7 +396,6 @@ body {
 
         &.current {
             @include fadein;
-            @extend %nofilter;
 
             display: block;
             height: 100%;

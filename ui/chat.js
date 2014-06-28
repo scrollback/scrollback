@@ -16,8 +16,17 @@ $(function () {
 		$el.attr("data-index", text.time);
 		$el.attr("id", "chat-" + text.id);
 
-		if (text.threads && text.threads.length && text.threads[0].id) {
-			$el.attr("data-thread", text.threads[0].id);
+		if (text.threads && text.threads.length) {
+			for (var thread in text.threads) {
+				if (window.currentState.thread && window.currentState.thread === thread.id) {
+					$el.attr("data-thread", thread.id);
+					break;
+				}
+			}
+
+			if (!$el.attr("data-thread") && text.threads[0].id) {
+				$el.attr("data-thread", text.threads[0].id);
+			}
 		}
 
 		if (text.labels) {
