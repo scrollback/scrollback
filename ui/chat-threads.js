@@ -26,8 +26,9 @@ $(function() {
 
 			if ($line.length) {
 				$line.velocity("stop")
-					 .velocity({ translateY: ( $line.height() / 2 ),
-								 scaleY: 0, opacity: 0
+					 .velocity({
+						 		translateY: ( $line.height() / 2 ),
+								scaleY: 0, opacity: 0
 							   }, 300, function() {
 								   $(this).remove();
 							   });
