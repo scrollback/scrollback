@@ -48,7 +48,8 @@ $(function () {
 		}
 
 		timeBefore = text.time;
-
+		
+		if(!text.text) return;
 		if (text.text.length >= 400) {
 			$el.addClass("chat-mark-long");
 		}
