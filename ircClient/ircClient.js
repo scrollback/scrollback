@@ -474,7 +474,7 @@ function say(message) {
  * this will be reply of back message if nick changes.
  */
 function newNick(roomId, nick, sbNick) {
-	log("rooms", roomId, rooms);
+	log("rooms:", roomId);
 	var room = rooms[roomId];
 	if (!room) return;
 	if (!servNick[room.params.irc.server]) {
