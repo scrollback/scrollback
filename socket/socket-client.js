@@ -87,12 +87,14 @@ function disconnected(){
 }
 
 function sendQuery(query, next){
-	if(query.results) return next();
-
+	if(query.results){
+		return next();
+    }
 	if(!query.id) query.id = generate.uid();
 
 	query.session = libsb.session;
 	query.resource = libsb.resource;
+	
 	safeSend(JSON.stringify(query));
 
 	pendingQueries[query.id] = next;

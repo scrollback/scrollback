@@ -100,11 +100,11 @@ $(function () {
 	}, 100);
 
 	libsb.on("text-up", function (text, next) {
-	    function isMention(input) {
+        function isMention(input) {
 			if ((/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)) {
 				input = input.toLowerCase();
 				input = input.replace(/[@:,]/g,"");
-			    text.mentions.push(input);
+                text.mentions.push(input);
 			}
 		}
 
@@ -235,6 +235,10 @@ $(function () {
 			$(this).empty().text(format.friendlyTime(time, new Date().getTime()));
 		});
 	}, 60000);
+
+	$(document).on("click", ".chat-mark-long", function() {
+		$(this).toggleClass("expanded").scrollTop(0);
+	});
 });
 
 module.exports = chatArea;

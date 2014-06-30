@@ -24,6 +24,7 @@
 		background-color: darken($bg, 5%);
 		border-color: darken($bg, 5%);
 		color: $fg;
+		box-shadow: 0 1px 5px 0 rgba(0,0,0,0.15);
 	}
 
 	&:active {
@@ -41,6 +42,8 @@
 			background-color: darken($bg, 10%);
 			border-color: darken($bg, 10%);
 			color: mix($bg, $fg, 30%);
+			cursor: wait;
+			pointer-events: none;
 		}
 	}
 }
@@ -62,28 +65,31 @@
 		@include buttons;
 
 		&.secondary {
-			background-color: darken($light-color, 5%);
-			border: 1px solid darken($light-color, 15%);
-			color: lighten($dark-color, 10%);
+			background-color: transparent;
+			border-color: rgba(0,0,0,0.15);
+			color: currentcolor;
 
 			&:hover, &:focus {
-				background-color: darken($light-color, 3%);
-				border-color: darken($light-color, 30%);
-				color: lighten($dark-color, 5%);
+				background-color: rgba(255,255,255,0.3);
+				border-color: rgba(0,0,0,0.3);
+				color: currentcolor;
 			}
 
 			&:active {
-				background-color: darken($light-color, 7%);
-				border-color: darken($light-color, 20%);
-				color: lighten($dark-color, 15%);
+				background-color: rgba(0,0,0,0.05);;
+				border-color: rgba(0,0,0,0.3);
+				color: currentcolor;
 			}
 		}
 
 		&.disabled {
 			&, &:hover, &:focus, &:active {
-				background-color: darken($light-color, 5%);
-				border-color: darken($light-color, 15%);
-				color: lighten($dark-color, 50%);
+				@include opacity(.5);
+
+				background-color: rgba(0,0,0,0.05);
+				border-color: rgba(0,0,0,0.3);
+				color: currentcolor;
+				cursor: default;
 				pointer-events: none;
 			}
 		}

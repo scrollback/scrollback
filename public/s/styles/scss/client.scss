@@ -71,26 +71,6 @@ $embeds: toast, full;
             box-shadow: inset 0 -1px 0 0 darken($base, 2%),
                         -1px 0 0 darken($base, 2%),
                         0 3px 2px -1px rgba(0,0,0,.05);
-
-            .button {
-                &.secondary {
-                    background-color: lighten($base, 5%);
-                    border: 1px solid darken($base, 2%);
-                    color: darken($text, 10%);
-
-                    &:hover, &:focus {
-                        background-color: lighten($base, 3%);
-                        border-color: darken($base, 3%);
-                        color: darken($text, 5%);
-                    }
-
-                    &:active {
-                        background-color: lighten($base, 7%);
-                        border-color: darken($base, 5%);
-                        color: darken($text, 15%);
-                    }
-                }
-            }
         }
 
         .follow-button {
@@ -354,11 +334,11 @@ body {
         svg { @extend %ease; }
 
         &:hover, &:focus {
-            svg { @include transform(scale(0.9)); }
+            svg { @include transform(scale(1.1)); }
         }
 
         &:active {
-            svg { @include transform(scale(0.7)); }
+            svg { @include transform(scale(0.8)); }
         }
     }
 
@@ -518,6 +498,8 @@ body {
     background-color: fade-out($info-color, .7);
     font-size: 1.2em;
 }
+
+.thread-search-query, .thread-all-conversations { box-shadow: 0 3px 2px -1px rgba(0,0,0,.1); }
 
 .thread-item-container {
     @extend %scroll-elem;
@@ -723,7 +705,7 @@ body {
     background-color: darken($light-color, 5%);
     color: $dark-color;
     box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1),
-				0 3px 2px -1px rgba(0,0,0,.05);
+				0 3px 2px -1px rgba(0,0,0,.1);
 }
 
 .left-area {
@@ -1068,7 +1050,7 @@ body {
 			background-image: linear-gradient(to bottom, fade-out($light-color, 1) 0%, $light-color 100%);
 		}
 
-		&.active {
+		&.expanded {
 			max-height: 20em;
 			overflow: auto;
 
@@ -1220,7 +1202,7 @@ body {
 	bottom: 0;
     padding: 0;
     min-height: $bar-height;
-    box-shadow: 0 -3px 2px -1px rgba(0,0,0,.05);
+    box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);;
 }
 
 .chat-entry-wrap { position: relative; }
@@ -1463,8 +1445,7 @@ body {
 	left: 0;
     right: 0;
 	z-index: 20;
-	height: $bar-height;
-	padding: .5em;
+	padding: 1em;
 
 	.search-focus & {
 		@include transform(translate3d(0, 0, 0));
@@ -1475,12 +1456,14 @@ body {
 		position: relative;
 		display: block;
 		width: 100%;
+        height: 3em;
 		margin: 0;
 		padding-left: 3.5em;
 		background-image: url(../../img/client/icons/search-gray.svg);
-		background-position: .5em center;
+		background-position: 1em center;
 		background-repeat: no-repeat;
         background-size: 3em 2em;
+        border: none;
         box-shadow: 0 0 10px 0 rgba(0,0,0,.3);
 	}
 }
@@ -1515,10 +1498,6 @@ body {
 }
 
 .noroom-container, .offline-container { display: block; }
-
-.offline-area {
-    body:not(.state-offline) & { display: none; }
-}
 
 .infinite-above, .infinite-below {
     height: 100%;

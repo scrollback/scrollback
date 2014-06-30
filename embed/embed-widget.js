@@ -6,7 +6,7 @@
 
 		if (document.readyState === "complete") {
 			// Variables
-			var room = window.scrollback.room || "scrollback",
+			var room = window.scrollback.room || ((window.scrollback.streams && window.scrollback.streams.length) ? window.scrollback.streams[0] : "scrollback"),
 				embed = window.scrollback.embed || "toast",
 				theme = window.scrollback.theme || "dark",
 				minimize = window.scrollback.minimize || false,
