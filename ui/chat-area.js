@@ -7,7 +7,6 @@ var chatEl = require("./chat.js"),
 $(function () {
 	var $logs = $(".chat-area"),
 		roomName = "",
-		room = null,
 		thread = '',
 		time = null;
 
@@ -22,7 +21,6 @@ $(function () {
 				before: before,
 				after: after
 			};
-
 			if (!roomName) return callback([]);
 
 			index = index || time;
@@ -51,17 +49,18 @@ $(function () {
 							texts.unshift(false);
 						}
 
-						if (t.time) {
-							texts.pop();
-						}
+                        if(t.time && texts.length && texts[texts.length-1].time === t.time) {
+                            texts.pop();
+                        }
 					} else if (before === 0) {
 						if (texts.length < after) {
 							texts.push(false);
 						}
+                        if(texts.length && texts[0].time == t.time) {
+                            texts.splice(0, 1);
+                        }
 
-						texts.splice(0, 1);
 					}
-
 					callback(texts.map(function (text) {
 						return text && chatEl.render(null, text);
 					}));
@@ -79,17 +78,13 @@ $(function () {
 
 		if (text.to !== window.currentState.roomName) return next();
 
-		if (text.threads && text.threads.length && thread) {
-			for (var i = 0, l = text.threads.length; i < l; i++) {
-				if (text.threads[i].id == thread) {
+		if (text.threads && text.threads.length && window.currentState.thread) {
+			for (var i = 0; i < text.threads.length; i++) {
+				if (text.threads[i].id == window.currentState.thread) {
 					break;
 				}
 			}
-
-			if (i == l) {
-				return next();
-			}
-		} else if (thread) {
+		} else if (window.currentState.thread) {
 			return next();
 		}
 
@@ -105,11 +100,11 @@ $(function () {
 	}, 100);
 
 	libsb.on("text-up", function (text, next) {
-	    function isMention(input) {
+        function isMention(input) {
 			if ((/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)) {
 				input = input.toLowerCase();
 				input = input.replace(/[@:,]/g,"");
-			    text.mentions.push(input);
+                text.mentions.push(input);
 			}
 		}
 
@@ -130,7 +125,7 @@ $(function () {
 		if (state.source == "init") {
 			roomName = state.roomName || currentState.roomName;
 			thread = state.thread || currentState.thread;
-			time = state.time || time;
+			time = state.time || (state.thread? 1: time);
 			reset = true;
 		}else {
             if(state.roomName && state.room === null) {
@@ -141,17 +136,20 @@ $(function () {
 				reset = true;
 			}
 
-			if (typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
-				thread = state.thread;
-				reset = true;
-			}
-
 			if (state.old && state.time != state.old.time) {
 				time = state.time;
 				reset = true;
 			}
-		}
 
+			if (typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
+				thread = state.thread;
+                time = 1;
+				reset = true;
+			}
+            if(/^conf-/.test(state.source)) {
+                reset = true;
+            }
+		}
 		if (reset) {
 			$logs.reset(time);
 		}
@@ -237,6 +235,10 @@ $(function () {
 			$(this).empty().text(format.friendlyTime(time, new Date().getTime()));
 		});
 	}, 60000);
+
+	$(document).on("click", ".chat-mark-long", function() {
+		$(this).toggleClass("expanded").scrollTop(0);
+	});
 });
 
 module.exports = chatArea;

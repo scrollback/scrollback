@@ -125,7 +125,7 @@
 					</div>
 				</div>
 				<div data-mode="normal search" class="right-area">
-					<a data-embed="none" data-tooltip="Search" class="search-button" role="button">
+					<a data-embed="none" data-mode="normal" data-tooltip="Search" class="search-button" role="button">
 						<svg class="search-icon" width="28" height="28" viewBox="0 0 28 28">
 							<use xlink:href="/s/img/client/icons/search.svg#icon"></use>
 						</svg>
@@ -160,6 +160,7 @@
 				<div class="chat-position"></div>
 				<div class="chat-area hide-scroll">
 					<p class="chat-item">
+						<span class="chat-item-dot"></span>
 						<span class="chat-nick"></span>
 						<span class="chat-message"></span>
 						<span class="chat-timestamp"></span>
@@ -173,7 +174,9 @@
 			</div>
 			<div data-mode="normal search" class="chat-input">
 				<div class="chat-entry-wrap">
-					<div class="chat-conv-dot"></div>
+					<div class="chat-conv-dot-wrap">
+						<span class="chat-conv-dot"></span>
+					</div>
 					<div class="chat-placeholder"></div>
 					<div role="textbox" class="chat-entry" contenteditable></div>
 				</div>
@@ -189,12 +192,18 @@
 		</section>
 		<section data-mode="noroom" class="noroom-area">
 			<div class="noroom-container">
-				<h1>This room does not exist yet :(</h1>
+				<h1>This room does not exist yet ;(</h1>
 				<p data-role="guest">You need to sign in first to create a room</p>
 				<p>
 					<a data-role="user" class="button create-room-button" id="create-room-button">Create room</a>
 					<a data-role="guest" class="button login-and-create-room-button"  id="login-and-create-room-button">Sign in</a>
 				</p>
+			</div>
+		</section>
+		<section data-mode="offline" class="offline-area">
+			<div class="offline-container">
+				<h1>Cannot connect to the internet ;(</h1>
+				<a class="button disconnectTry">Try again</a>
 			</div>
 		</section>
 		<section data-embed="toast" class="minimize-bar">
@@ -213,31 +222,6 @@
 		</section>
 
 		<!-- templates -->
-		<script type="text/template" id="login-menu">
-			<div data-role="guest" class="login-menu">
-				<div class="popover-title popover-section">Sign in to scrollback with</div>
-				<div class="popover-buttons popover-section">
-					<a class="button facebook">Facebook</a>
-					<a class="button persona">Persona</a>
-				</div>
-			</div>
-		</script>
-
-		<script type="text/template" id="user-menu">
-			<ul data-role="user" class="user-menu">
-				<li><a class="userpref">Account settings</a></li>
-				<li><a class="reportissue" target="_blank" href="https://github.com/scrollback/scrollback/issues">Report an issue</a></li>
-				<li><a class="logout">Sign out</a></li>
-			</ul>
-		</script>
-
-		<script type="text/template" id="chat-menu">
-			<ul class="chat-menu">
-				<li><a class="tweetmsg">Tweet message</a></li>
-				<li><a class="hidemsg">Hide message</a></li>
-			</ul>
-		</script>
-
 		<script type="text/template" id="signup-dialog">
 			<div class="signup-dialog">
 				<h1>Choose a username</h1>
@@ -245,14 +229,6 @@
 					<input type="text" id="signup-id" name="username" placeholder="Enter username" autofocus><br/>
 					<input class="signup-save" type="button" value="Create account">
 			</form>
-			</div>
-		</script>
-
-		<script type="text/template" id="signin-dialog">
-			<div data=role="guest" class="signin-dialog">
-				<h1>Sign in to scrollback with</h1>
-				<a class="button facebook modal-remove">Facebook</a>
-				<a class="button persona modal-remove">Persona</a>
 			</div>
 		</script>
 

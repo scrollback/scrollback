@@ -2,7 +2,7 @@
 /* global $, libsb */
 
 var formField = require("../lib/formField.js");
-
+var lace = require('../lib/lace.js');
 libsb.on('config-show', function(tabs, next) {
     var results = tabs.room,
         $div = $('<div>'),
@@ -31,7 +31,8 @@ libsb.on('config-show', function(tabs, next) {
             notify.value = null;
 
             $.get('/r/irc/' + results.id, function(botName) {
-                displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + results.params.irc.channel + " " + results.id + "\" in the irc channel.";
+                displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + results.params.irc.channel + " " +
+				results.id + "\" in the irc channel to complete the process.";
                 $div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
 				next();
 			});
@@ -39,7 +40,7 @@ libsb.on('config-show', function(tabs, next) {
         } else if (results.params.irc.server && results.params.irc.channel) {
             displayString = "Connected to irc channel: " + results.params.irc.channel;
         } else {
-            displayString = "Not connected to any channel";
+            displayString = "Not connected to any channel.";
         }
 
         $div.append(formField("", "", "", displayString));
@@ -72,11 +73,12 @@ libsb.on('config-save', function(room, next){
 }, 500);
 
 libsb.on("room-dn", function(room, next) {
-	if (room.user.id === libsb.user.id && room.params.irc  && room.params.irc.pending) {
-		var r = room.room;
+    var r = room.room;
+	if (room.user.id === libsb.user.id && r.params.irc  && r.params.irc.pending) {
 		$.get('/r/irc/' + r.id, function(botName) {
 			var displayString = "Something went wrong while connecting to IRC server";
-			if(botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel.";
+			if(botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/msg " + botName +
+			" connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel to complete the process.";
 			lace.alert.show({type: "success", body: displayString});
 		});
 	}

@@ -3,17 +3,20 @@ $font-family-normal: "Open Sans", "Myriad Pro", Helvetica, Tahoma, "Nimbus Sans"
 $font-family-headings: "Open Sans", "Open Sans Light", Candara, Calibri, Segoe, "Segoe UI", Optima, Arial, sans-serif !default;
 $font-family-monospace: Consolas, "Andale Mono", "Lucida Console", "Nimbus Mono", "Courier New", monospace !default;
 $font-size: 14px !default;
+$font-size-mobile: 14px !default;
+$font-line-height: 21px !default;
 
 /* colors */
 $accent-color: #3ca !default;
-$dark-color: mix($accent-color, #333, 5%) !default;
+$dark-color: mix($accent-color, #444, 5%) !default;
 $light-color: #fff !default;
 $link-color: #2a5db0 !default;
 $info-color: #638ce8 !default;
 $success-color: #43b43b !default;
 $warning-color: #e77f1b !default;
 $error-color: #ef513d !default;
-$palette: #e360c8 #638ce8 #769f1a #ef513d #b079e7 #5ee43d #f04986 #a1da21 #e77f1b #43b43b !default;
+$palette: #2ba #e48 #3c6 #76f #e63 #5ad #95b #ed0 #e92 #ae3 !default;
 
 /* misc */
 $roundness: 2px !default;
+$mobile-break-point: "only screen and (max-width: 27em)" !default;

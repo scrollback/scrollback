@@ -71,26 +71,6 @@ $embeds: toast, full;
             box-shadow: inset 0 -1px 0 0 darken($base, 2%),
                         -1px 0 0 darken($base, 2%),
                         0 3px 2px -1px rgba(0,0,0,.05);
-
-            .button {
-                &.secondary {
-                    background-color: lighten($base, 5%);
-                    border: 1px solid darken($base, 2%);
-                    color: darken($text, 10%);
-
-                    &:hover, &:focus {
-                        background-color: lighten($base, 3%);
-                        border-color: darken($base, 3%);
-                        color: darken($text, 5%);
-                    }
-
-                    &:active {
-                        background-color: lighten($base, 7%);
-                        border-color: darken($base, 5%);
-                        color: darken($text, 15%);
-                    }
-                }
-            }
         }
 
         .follow-button {
@@ -332,6 +312,7 @@ body {
 
     .tab {
         @include flex-grow(1);
+        @extend %ease;
 
         text-align: center;
         background-color: transparent;
@@ -348,6 +329,16 @@ body {
         &.current {
             fill: lighten($dark-color, 15%);
             background-color: rgba(0,0,0,.1);
+        }
+
+        svg { @extend %ease; }
+
+        &:hover, &:focus {
+            svg { @include transform(scale(1.1)); }
+        }
+
+        &:active {
+            svg { @include transform(scale(0.8)); }
         }
     }
 
@@ -385,7 +376,6 @@ body {
 
         &.current {
             @include fadein;
-            @extend %nofilter;
 
             display: block;
             height: 100%;
@@ -508,6 +498,8 @@ body {
     background-color: fade-out($info-color, .7);
     font-size: 1.2em;
 }
+
+.thread-search-query, .thread-all-conversations { box-shadow: 0 3px 2px -1px rgba(0,0,0,.1); }
 
 .thread-item-container {
     @extend %scroll-elem;
@@ -713,7 +705,7 @@ body {
     background-color: darken($light-color, 5%);
     color: $dark-color;
     box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1),
-				0 3px 2px -1px rgba(0,0,0,.05);
+				0 3px 2px -1px rgba(0,0,0,.1);
 }
 
 .left-area {
@@ -1016,12 +1008,16 @@ body {
 
 	&.current { background-color: darken($light-color, 3%); }
 
-    &.active {
-        .chat-more {
-            @include transform(translate3d(0, 0, 0));
+    &:hover, &:focus, &.active {
+        .chat-more { @include transform(translate3d(0, 0, 0)); }
+    }
 
-            background-color: darken($light-color, 3%);
-        }
+    &:hover, &:focus {
+        .chat-more { background-color: darken($light-color, 1%); }
+    }
+
+    &.active, &.current {
+        .chat-more { background-color: darken($light-color, 3%); }
     }
 
 	&:hover, &:focus, &.active, &.current {
@@ -1029,27 +1025,7 @@ body {
 
 		& + .chat-item { border-top: 1px solid darken($light-color, 10%); }
 
-		.chat-timestamp { color: fade-out($dark-color, .3); }
-	}
-
-	&:before {
-		content: "";
-		float: left;
-		margin: .55em 0 auto -2em;
-		height: .5em;
-		width: .5em;
-		border-radius: 50%;
-        background-color: fade-out(lighten($dark-color, 15%), .5);
-
-		@media #{$screenxx} { margin-left: -10em; }
-	}
-
-	/* set conversations dot colors */
-	@for $i from 1 through length($palette) {
-		$color: nth($palette, $i);
-		$j: $i - 1;
-
-		&.conv-#{$j}:before { background-color: $color; }
+        .chat-timestamp { color: fade-out($dark-color, .3); }
 	}
 
 	&.chat-mark-long {
@@ -1074,7 +1050,7 @@ body {
 			background-image: linear-gradient(to bottom, fade-out($light-color, 1) 0%, $light-color 100%);
 		}
 
-		&.active {
+		&.expanded {
 			max-height: 20em;
 			overflow: auto;
 
@@ -1106,18 +1082,14 @@ body {
         }
     }
 
-	a {
-		&:hover, &:focus, &:active { text-decoration: underline; }
-	}
+    &.chat-label-hidden {
+        color: fade-out($dark-color, .5);
+        font-style: italic;
 
-    iframe, embed {
-        display: block;
-        margin: .5em 0;
-        max-width: 100%;
-        max-height: auto;
+        [data-role]:not([data-role=owner]) { display: none; }
     }
 
-	.chat-timestamp {
+    .chat-timestamp {
         @extend %ease;
 
         display: none;
@@ -1128,8 +1100,38 @@ body {
     }
 
     &:last-of-type, &.chat-mark-timestamp-shown {
-		.chat-timestamp { display: inline-block; }
+        .chat-timestamp { display: inline-block; }
+    }
+
+	a {
+		&:hover, &:focus, &:active { text-decoration: underline; }
 	}
+
+    iframe, embed {
+        display: block;
+        margin: .5em 0;
+        max-width: 100%;
+        max-height: auto;
+    }
+}
+
+.chat-item-dot {
+    content: "";
+    float: left;
+    margin: .55em 0 auto -2em;
+    height: .5em;
+    width: .5em;
+    border-radius: 50%;
+    background-color: fade-out(lighten($dark-color, 15%), .5);
+
+    @media #{$screenxx} { margin-left: -10em; }
+
+    @for $i from 1 through length($palette) {
+        $color: nth($palette, $i);
+        $j: $i - 1;
+
+        .chat-item.conv-#{$j} & { background-color: $color; }
+    }
 }
 
 .chat-nick {
@@ -1153,8 +1155,25 @@ body {
 	}
 }
 
+.chat-conv-line {
+    width: 3px;
+    position: fixed;
+    margin-left: 1.15em;
+    z-index: 10;
+    background-color: fade-out(lighten($dark-color, 15%), .5);
+
+    @media #{$screenxx} { margin-left: 2.15em; }
+
+    @for $i from 1 through length($palette) {
+        $color: nth($palette, $i);
+        $j: $i - 1;
+
+        .conv-#{$j} & { background-color: $color; }
+    }
+}
+
 .chat-more {
-	@include transform(translate3d(-3.5em, 0, 0));
+	@include transform(translate3d(3.5em, 0, 0));
 	@extend %ease;
 
 	position: absolute;
@@ -1167,7 +1186,7 @@ body {
 	width: 3em;
 	height: 3em;
 	top: 0;
-	left: 0;
+	right: 0;
     cursor: pointer;
 
     @media #{$screenxx} {
@@ -1183,12 +1202,12 @@ body {
 	bottom: 0;
     padding: 0;
     min-height: $bar-height;
-    box-shadow: 0 -3px 2px -1px rgba(0,0,0,.05);
+    box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);;
 }
 
 .chat-entry-wrap { position: relative; }
 
-.chat-conv-dot {
+.chat-conv-dot-wrap {
     position: absolute;
     top: 0;
     left: 0;
@@ -1197,7 +1216,7 @@ body {
 
     @media #{$screenxx} { width: 3.5em; }
 
-    &:after {
+    .chat-conv-dot {
         position: absolute;
         content: "";
         top: 1em;
@@ -1426,33 +1445,30 @@ body {
 	left: 0;
     right: 0;
 	z-index: 20;
-	height: $bar-height;
-	padding: .5em;
-	background-color: darken($light-color, 5%);
+	padding: 1em;
 
 	.search-focus & {
 		@include transform(translate3d(0, 0, 0));
 		@include opacity(1);
-		@extend %nofilter;
-
-		box-shadow: inset 0 -1px 0 0 darken($light-color, 20%),
-			        0 3px 2px -1px rgba(0,0,0,.05);
 	}
 
 	.search-entry {
 		position: relative;
 		display: block;
 		width: 100%;
+        height: 3em;
 		margin: 0;
 		padding-left: 3.5em;
 		background-image: url(../../img/client/icons/search-gray.svg);
-		background-position: .5em center;
+		background-position: 1em center;
 		background-repeat: no-repeat;
-		background-size: 3em 2em;
+        background-size: 3em 2em;
+        border: none;
+        box-shadow: 0 0 10px 0 rgba(0,0,0,.3);
 	}
 }
 
-.noroom-area {
+.noroom-area, .offline-area {
     @include flexbox;
     @include flex-direction(column);
     @include flex-wrap(nowrap);
@@ -1481,7 +1497,7 @@ body {
     }
 }
 
-.noroom-container { display: block; }
+.noroom-container, .offline-container { display: block; }
 
 .infinite-above, .infinite-below {
     height: 100%;

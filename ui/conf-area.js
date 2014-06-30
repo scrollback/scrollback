@@ -28,24 +28,22 @@ $(".conf-save").on("click", function () {
                 to: currentState.roomName,
                 room: room
             };
-
+			
             libsb.emit('room-up', roomObj, function (err, room) {
                 self.removeClass("working");
                 self.attr("disabled", false);
-
                 if(err) {
                     // handle the error
                 } else {
                     for(var i in room.room.params) {
                         if(!room.room.params.hasOwnProperty(i)) continue;
                         if(room.room.params[i].error) {
-                            console.log("Error happed when saving the room", room.room);
                             return;
                         }
                     }
                     currentConfig = null;
                     $('.conf-area').empty();
-                    libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
+                    libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" , roomName: room.room.id});
                 }
             });
         });
@@ -73,7 +71,7 @@ function showConfig(room){
         delete tabs.room;
 
         currentConfig = tabs;
-
+		
         data = renderSettings(tabs);
 
         $('.meta-conf').empty().append(data[0]);
@@ -104,19 +102,17 @@ libsb.on('navigate', function (state, next) {
             cancelEdit();
             return next();
         }
-        if(state.roomName != state.old.roomName){
-			libsb.getRooms({ref: currentState.roomName, hasMember: libsb.user.id}, function(err, data) {
-				if(err || !data.results || !data.results.length) {
-					//may be even show error.
-					cancelEdit();
-					return next();
-				}
-				console.log(data.results[0]);
-				if (!currentConfig) {
-					showConfig(data.results[0]);
-				}
-			});
-		}
+		libsb.getRooms({ref: currentState.roomName, hasMember: libsb.user.id}, function(err, data) {
+			if(err || !data.results || !data.results.length) {
+				//may be even show error.
+				cancelEdit();
+				return next();
+			}
+//				console.log(data.results[0]);
+			if (!currentConfig) {
+				showConfig(data.results[0]);
+			}
+		});
     }
 
     next();

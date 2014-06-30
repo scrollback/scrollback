@@ -1,9 +1,12 @@
 /* global localStorage */
-/* global libsb*/
+/* global $, libsb, location, window */
 var ArrayCache = require('./ArrayCache.js');
 var generate = require('../lib/generate');
 var cache = {}, core;
 var LRU = {};
+var messageListener = false;
+var domain = location.host;
+var path = location.pathname;
 
 function loadArrayCache(key){
 	// loads an ArrayCache from LocalStorage.
@@ -110,8 +113,6 @@ module.exports = function(c){
 			query.results = results;
 		}
 		
-		console.log("Results are  --------- ", query.results);
-		
 		next();
 	}, 200); // runs before the socket
 	
@@ -119,7 +120,6 @@ module.exports = function(c){
 		var results = query.results;
 		if(results && results.length > 0){
 			// merging results into the Cache.
-			console.log("Query before after ", query.before, query.after);
 			if(query.before){
 				results.push({type: 'result-end', endtype: 'time', time:query.time});
 			}
@@ -134,7 +134,6 @@ module.exports = function(c){
 			}
 			var lskey = generateLSKey(query.to, 'texts');
 			if(!cache.hasOwnProperty(lskey)) loadArrayCache(lskey);
-			console.log("TO put", results);
 			cache[lskey].put(results);
 			saveCache(lskey);
 		}
@@ -143,8 +142,6 @@ module.exports = function(c){
 	
 	core.on('text-dn', function(text, next){
 		var texts = [text];
-//		texts.unshift({type: 'result-start', endtype: 'time', time: text.time});
-//		texts.push({type: 'result-end', endtype: 'time', time: text.time});
 		var key = generateLSKey(text.to, 'texts');
 		cache[key].put(texts);
 		saveCache(key);
@@ -171,14 +168,12 @@ module.exports = function(c){
 		next();
 	}, 500);
 	
-	// core.on('getThreads', getThreadsBefore, 400);
-	// core.on('getThreads', getThreadsAfter, 900);
 	core.on('away-up', function(away, next){
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
 		var msg = {type: 'result-end', endtype: 'time', time: away.time};
-		console.log("AWAY IS ", away);
 		var key = generateLSKey(away.to, 'texts');
 		cache[key].put(msg);
+		next();
 	}, 500);
 	
 	core.on('back-up', function(back, next){
@@ -187,12 +182,31 @@ module.exports = function(c){
 		console.log("BACK IS ", back);
 		var key = generateLSKey(back.to, 'texts');
 		cache[key].put(msg);
+		next();
 	}, 500);
 	
-	core.on('connected', createInit, 1000);
+	core.on('connected', function() {
+		if (window.parent.location === window.location) {
+			createInit();	
+		} else {
+			if(!messageListener) {
+				$(window).on("message", function(e) {
+					var data = e.originalEvent.data;
+					try { data = JSON.parse(data);} catch(e) {return;}
+					if (typeof data === "object" && data.location) {
+						domain = data.location.host;
+						path = data.location.pathname;
+					}
+					createInit();
+				});
+				window.parent.postMessage("getDomain", "*");
+				messageListener = true;
+			} else createInit();
+		}
+		
+	}, 1000);
 	core.on('init-dn', recvInit, 900);
 	core.on('logout', logout, 1000);
-	
 };
 
 function recvInit(init, next){
@@ -211,10 +225,15 @@ function createInit(){
         libsb.session = sid = cache.session;
     }
 	if(!sid){
-		cache.session = sid = generate.uid();
+        
+		cache.session = sid = "web:"+generate.uid();
 		libsb.session = cache.session;
-	} 
-	core.emit('init-up', {session: sid});
+	}
+	core.emit('init-up', {session: sid, origin: {
+		gateway: "web",
+		domain: domain,
+		path: path
+	}});
 }
 
 function logout(p,n){
@@ -226,34 +245,3 @@ function logout(p,n){
 	save();
 	n();
 }
-
-/*
-function getThreadsBefore(query, next){
-	not giving the correct data right now.
-	var results = cache.labels.get(query);
-	if(results) query.results = results;
-	next();
-}
-
-function getThreadsAfter(query, next){
-	var results = query.results;
-	if(results){
-		if(query.before) results.push({type: 'result-end', endtype: 'time', time: query.time});
-		if(query.after) results.unshift({type: 'result-start', endtype: 'time', time: query.time});
-
-		if(query.before && results.length === query.before){
-			results.unshift({
-				type: 'result-start', time: results[0].time, endtype: 'limit'
-			});
-		}
-
-		if(query.after && results.length === query.after){
-			results.push({
-				type: 'result-end', time: results[results.length - 1].time, endtype: 'limit'
-			});
-		}
-		cache.labels.put(results);	
-	} 
-	next();
-}
-*/

@@ -1,8 +1,7 @@
 /* jshint jquery: true */
 /* global libsb, currentState */
 
-var roomEl = require("./room-item.js"),
-	roomName = "";
+var roomEl = require("./room-item.js");
 
 // var roomList = {};
 var $roomlist, rooms = [false, false], listenQueue = [];
@@ -56,11 +55,24 @@ libsb.on("init-dn", function(init, next) {
             enter(r.id);
         });
     }
+	if($roomlist) $roomlist.reset();
     next();
 }, 10);
 
+libsb.on("navigate", function(state, next){
+    if (state.old && state.room !== state.old.room) {
+        $(".room-item.current").removeClass("current");
+
+        if (state.roomName) {
+            $("#room-item-" + state.roomName).addClass("current");
+        }
+    }
+
+    next();
+}, 100);
+
 $(function() {
-	$roomlist = $(".room-list");    
+	$roomlist = $(".room-list");
 	// Set up infinite scroll here.
 	$roomlist.infinite({
 		scrollSpace: 2000,

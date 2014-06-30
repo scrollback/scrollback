@@ -137,7 +137,7 @@ function saveTextActions(action) {
 		var labels = [];
 		var labelScores = [];
 		for(var l in action.labels) {
-			if (action.labels.hasOwnProperity(l)) {
+			if (action.labels.hasOwnProperty(l)) {
 				labels.push(l);
 				labelScores.push(action.labels[l]);
 			}
@@ -157,8 +157,8 @@ function saveRoomUserActions(action) {
 	var params = pav.params;
 	var values = pav.values;
 	var type = action.type;
-	params.push("creation");
-	if (action.old.id) values.push(true);			
+	params.push("iscreated");
+	if (action.old && action.old.id) values.push(true);			
 	else values.push(false);
 	params.push("description");
 	values.push(action[type].description);
