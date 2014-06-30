@@ -8,6 +8,17 @@ var messageListener = false;
 var domain = location.host;
 var path = location.pathname;
 
+(function clearLS(){
+	console.log("Local storage version check! ");
+	if(!localStorage.hasOwnProperty('version1')){
+		console.log("Old version of LocalStorage present, clearing ...");
+		localStorage.clear();
+		localStorage.version1 = true;
+	}else{
+		console.log("LocalStorage version is current ...");
+	}
+})();
+
 function loadArrayCache(key){
 	// loads an ArrayCache from LocalStorage.
 	var texts;
@@ -34,6 +45,7 @@ function saveCache(key){
 		}
 	}
 	LRU[key] = new Date().getTime();
+	save();
 }
 
 function generateLSKey(){
