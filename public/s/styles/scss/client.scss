@@ -33,7 +33,7 @@ $width-metaxxxx: 30%;
 $bar-height: 3.5em;
 
 $settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification;
-$modes: normal, search, conf, pref, home, noroom;
+$modes: normal, search, conf, pref, home, noroom, profile;
 $roles: guest, user, follower, owner;
 $embeds: toast, full;
 
@@ -1468,7 +1468,7 @@ body {
 	}
 }
 
-.noroom-area, .offline-area {
+.noroom-area, .offline-area, .profile-area {
     @include flexbox;
     @include flex-direction(column);
     @include flex-wrap(nowrap);
@@ -1497,7 +1497,7 @@ body {
     }
 }
 
-.noroom-container, .offline-container { display: block; }
+.noroom-container, .offline-container, .profile-container { display: block; }
 
 .infinite-above, .infinite-below {
     height: 100%;

@@ -11,7 +11,7 @@
  * minimize: {Boolean} (true|false)
  * theme: {String} (dark|light)
  * view: {String} (normal|rooms|meta|signup)
- * mode: {String} (normal|search|conf|pref|home)
+ * mode: {String} (normal|search|conf|pref|home|profile)
  * tab: {String} (info|people|threads|local|global)
  * thread: {String} threadId
  * query: {String} searchQuery
@@ -133,12 +133,11 @@ libsb.on("navigate", function(state, next) {
 				break;
 			case "home":
 				path = "/me";
-				document.title = state.user.id;
+				document.title = currentState.roomName;
 				break;
 			default:
 				path = (state.roomName ? '/' + state.roomName + (
-						state.thread ? '/' + state.thread: "" /*+ '/' + format.sanitize(state.thread): ''*/
-					   ): '');
+						state.thread ? '/' + state.thread: "" /*+ '/' + format.sanitize(state.thread): ''*/): '');
 				document.title = state.roomName ? state.roomName + " on scrollback" : "Scrollback.io";
 		}
 
