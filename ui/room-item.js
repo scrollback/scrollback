@@ -2,7 +2,6 @@
 /* global $ */
 
 var roomEl = {},
-	roomName = "",
 	$template = $(".room-item").eq(0);
 
 roomEl.render = function ($el, room, index) {
@@ -12,7 +11,7 @@ roomEl.render = function ($el, room, index) {
 	$el.attr("id", "room-item-" + room);
 	$el.attr("data-index", index);
 
-	if(roomName === room) {
+	if(window.currentState.roomName === room) {
 		$(".room-item.current").removeClass("current");
 
 		$el.addClass("current");

@@ -59,8 +59,20 @@ libsb.on("init-dn", function(init, next) {
     next();
 }, 10);
 
+libsb.on("navigate", function(state, next){
+    if (state.old && state.room !== state.old.room) {
+        $(".room-item.current").removeClass("current");
+
+        if (state.roomName) {
+            $("#room-item-" + state.roomName).addClass("current");
+        }
+    }
+
+    next();
+}, 100);
+
 $(function() {
-	$roomlist = $(".room-list");    
+	$roomlist = $(".room-list");
 	// Set up infinite scroll here.
 	$roomlist.infinite({
 		scrollSpace: 2000,
