@@ -79,7 +79,7 @@ module.exports = function(grunt) {
 			},
 			embed: {
 				src: ["public/embed.min.js"],
-				dest: "public/embed.min.js"
+				dest: "public/client.min.js"
 			}
 		},
 		sass: {
