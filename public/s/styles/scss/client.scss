@@ -1509,3 +1509,36 @@ body {
 .signedout-dialog, .signin-dialog, .signup-dialog {
     input, .button { width: 100%; }
 }
+
+.room-area, .meta-area, .main-area {
+    @include transition(.3s, ease-out); /* animate css transforms */
+
+    /* fix flicker in some browsers */
+    .view-meta &, .view-rooms & {
+        @include prefix(backface-visibility, hidden);
+        @include prefix(perspective, 1000);
+    }
+
+    /* use 3d transformations for GPU accelerated animations */
+    .view-meta & {
+		@include transform(translate3d($width-meta, 0, 0));
+
+		@media #{$screenx} { @include transform(translate3d($width-metax, 0, 0)); }
+
+		@media #{$screenxx} { @include transform(translate3d($width-metaxx, 0, 0)); }
+
+		@media #{$screenxxx} { @include transform(translate3d(0, 0, 0)); }
+    }
+
+    .view-rooms & {
+		@include transform(translate3d( ( $width-room + $width-meta ), 0, 0));
+
+		@media #{$screenx} { @include transform(translate3d( ( $width-roomxx + $width-metax ), 0, 0)); }
+
+		@media #{$screenxx} { @include transform(translate3d( ( $width-roomxx + $width-metaxx ), 0, 0)); }
+
+		@media #{$screenxxx} { @include transform(translate3d($width-roomxxx, 0, 0)); }
+
+		@media #{$screenxxxx} { @include transform(translate3d(0, 0, 0)); }
+    }
+}

@@ -3,25 +3,6 @@
 
 $(function() {
     // Navigate between columns
-    var adaptLayout = function() {
-        var opts = { duration: 300, easing: "ease-out" },
-            docW = $(document).width(),
-            mainW = $(".main-area").width(),
-            metaW = $(".meta-area").width(),
-            roomW = $(".room-area").width(),
-            $column = $(".column");
-
-        if (window.currentState.view === "meta" && Math.abs(docW - mainW) < 3) {
-            $column.velocity({ translateX: metaW }, opts);
-        } else if (window.currentState.view === "rooms" && !window.currentState.embed && Math.abs(docW - (mainW + metaW)) < 3) {
-            $column.velocity({ translateX: roomW }, opts);
-        } else if (window.currentState.view === "rooms" && !window.currentState.embed && Math.abs(docW - mainW) < 3) {
-            $column.velocity({ translateX: metaW + roomW }, opts);
-        } else {
-            $column.velocity({ translateX: 0 }, opts);
-        }
-    };
-
     $(".rooms-button").on("click", function() {
         if (window.currentState.view === "rooms") {
             libsb.emit("navigate", { view: "meta", source: "rooms-button" });
@@ -58,14 +39,4 @@ $(function() {
             libsb.emit("navigate", { view: "meta", source: "swipe-right" });
         }
     });
-
-    libsb.on("navigate", function(state, next) {
-        if (state.old && state.view !== state.old.view) {
-            adaptLayout();
-        }
-
-        next();
-    }, 500);
-
-    $(window).on("resize", adaptLayout);
 });
