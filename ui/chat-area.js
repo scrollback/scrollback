@@ -37,7 +37,7 @@ $(function () {
 
 			function loadTexts() {
 				libsb.getTexts(query, function (err, t) {
-					var texts = t.results;
+					var texts = t.results.slice(0, t.results.length);
 					if (err) throw err; // TODO: handle the error properly.
 
 					if (!index && texts.length === "0") {

@@ -16,12 +16,10 @@ module.exports = function() {
 					state.room = data.results[0];
                     currentState.room = state.room; // so is this... fix it.
 				}
-                console.log(state);
 				next();
 			});
 		}else {
             state.room = currentState.room;
-            console.log(state);
 			next();
 		}
 	},"loader");

@@ -74,7 +74,7 @@ libsb.on('config-save', function(room, next){
 
 libsb.on("room-dn", function(room, next) {
     var r = room.room;
-	if (room.user.id === libsb.user.id && r.params.irc  && r.params.irc.pending) {
+	if (room.user.id === libsb.user.id && r.params.irc  && r.params.irc.pending && !r.params.irc.error) {
 		$.get('/r/irc/' + r.id, function(botName) {
 			var displayString = "Something went wrong while connecting to IRC server";
 			if(botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/msg " + botName +

@@ -9,7 +9,6 @@ var domain = location.host;
 var path = location.pathname;
 
 (function clearLS(){
-	console.log("Local storage version check! ");
 	if(!localStorage.hasOwnProperty('version1')){
 		console.log("Old version of LocalStorage present, clearing ...");
 		localStorage.clear();
@@ -81,8 +80,8 @@ function save(){
 	localStorage.memberOf = JSON.stringify(cache.memberOf);
 }
 
-(function load(){
-	// loads entries saved by save()
+//(function load(){
+//	// loads entries saved by save()
 	try{
 		cache.user = JSON.parse(localStorage.user);
 		cache.session = localStorage.session;
@@ -93,7 +92,7 @@ function save(){
 		// do nothing, e is thrown when values do not exist in localStorage, 
 		// which is a valid scenario, execution must continue.
 	}
-})();
+//})();
 
 libsb.on('navigate', function(state, next) {
 	if(state.roomName && state.roomName != state.old.roomName) {
@@ -105,6 +104,7 @@ libsb.on('navigate', function(state, next) {
 
 module.exports = function(c){
 	core = c;
+
 	core.on('getTexts', function(query, next){
 		// getTextsBefore
 		var key = generateLSKey(query.to, 'texts');
@@ -112,33 +112,36 @@ module.exports = function(c){
 			cache[key] = loadArrayCache(key);
 		}
 		
+        if(!cache[key].d.length) { console.log('c[k].l', cache[key].d.length); return next(); }
+        
 		var results = cache[key].get(query);
-			
-		if(results && results.length === 1) return next();
+//		if(results && results.length === 1) return next();
 		
-		if(!results || !results.length){
-			next();
-		}else{
+		if(!results || !results.length) {
+			return next();
+		} else {
 			query.results = results;
+            query.resultSource = 'localStorage';
+            return next();
 		}
-		next();
 	}, 200); // runs before the socket
+
 	
 	core.on('getTexts', function(query, next){
-		var results = query.results;
+        if(query.resultSource == 'localStorage') { console.log("own results; skipping push"); return next(); }
+		var results = query.results.map(function(it) { return it; });
 		if(results && results.length > 0){
 			// merging results into the Cache.
 			if(query.before){
+                if(results.length === query.before){
+                    results.unshift({type: 'result-start', time: results[0].time, endtype: 'limit'});
+                }
 				results.push({type: 'result-end', endtype: 'time', time:query.time});
-			}
-			if(query.after){
+			} else if(query.after){
 				results.unshift({type: 'result-start', endtype: 'time', time: query.time});
-			}
-			if(query.before && results.length === query.before){
-				results.unshift({type: 'result-start', time: results[0].time, endtype: 'limit'});
-			}
-			if(query.after && results.length === query.after){
-				results.push({type: 'result-end', time: results[results.length - 1].time, endtype: 'limit'});
+                if(results.length === query.after){
+                    results.push({type: 'result-end', time: results[results.length - 1].time, endtype: 'limit'});
+                }
 			}
 			var lskey = generateLSKey(query.to, 'texts');
 			if(!cache.hasOwnProperty(lskey)) loadArrayCache(lskey);

@@ -183,10 +183,10 @@ exports.init = function(app, coreObject) {
 
     app.get("/*", function(req, res, next){
         if(/^\/t\//.test(req.path)) return next();
-     /*   if(!req.secure) {
+        if(!req.secure) {
             queryString  = req._parsedUrl.search?req._parsedUrl.search:"";
             return res.redirect(307, 'https://'+config.http.host+req.path+queryString);
-        }*/
+        }
         fs.readFile(__dirname + "/../public/client.html", "utf8", function(err, data){
            res.end(data);
         });
