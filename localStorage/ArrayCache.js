@@ -1,5 +1,4 @@
 "use strict";
-var _ = require('underscore');
 function ArrayCache(initData) {
 	this.d = initData || [];
 }
@@ -55,9 +54,6 @@ ArrayCache.prototype.put = function(data) {
 };
 
 ArrayCache.prototype.get = function (query) {
-	this.d = _.uniq(this.d, function(i){
-		return i.id;
-	});
 	var time = query.time, 
 		before = Math.max(0,query.before||0),
 		after = Math.max(0,query.after||0),
@@ -92,18 +88,5 @@ ArrayCache.prototype.get = function (query) {
 	}
 	return null;
 };
-			
-//	while(this.d[pos] && this.d[pos].time === time) pos++;
-//
-//		for(i=Math.min(0, -before+1); i<after; i++) {
-//			c = pos + i;
-//			if(c<0) i-=c;
-//			if(c>=l) break;
-//			m = this.d[c];
-//			if(!m || m.type == 'result-start' || m.type == 'result-end') return null;
-//			if(m.type == "text") res.push(m);
-//		}
-//		return res;
-//};
 
 module.exports = ArrayCache;
