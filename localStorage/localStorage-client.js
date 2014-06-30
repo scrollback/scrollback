@@ -76,7 +76,6 @@ function save(){
 	localStorage.user = JSON.stringify(cache.user);
 	localStorage.session = cache.session;
 	localStorage.LRU = JSON.stringify(LRU);
-	localStorage.rooms = JSON.stringify(cache.rooms);
 	localStorage.occupantOf = JSON.stringify(cache.occupantOf);
 	localStorage.memberOf = JSON.stringify(cache.memberOf);
 }
@@ -87,7 +86,6 @@ function save(){
 		cache.user = JSON.parse(localStorage.user);
 		cache.session = localStorage.session;
 		LRU = JSON.parse(localStorage.LRU);
-		cache.rooms = JSON.parse(localStorage.rooms);
 		cache.occupantOf = JSON.parse(localStorage.occupantOf);
 		cache.memberOf = JSON.parse(localStorage.memberOf);	
 	}catch(e){
@@ -152,6 +150,58 @@ module.exports = function(c){
 		}
 		next();
 	}, 8); // runs after the socket
+	
+	core.on('getRooms', function(query, next){
+	
+		// only getRooms with ref are cached as of now.
+
+		if(!query.ref){
+			return next();
+		}
+
+		var rooms = {};
+		
+		rooms = cache.rooms || {};
+		
+		if(rooms.hasOwnProperty(query.ref)){
+			query.results = [rooms[query.ref]];
+		}
+
+		next();
+	
+	}, 400); // run before socket
+
+	core.on('getRooms', function(query, next){
+
+		if(!query.ref){
+			return next();
+		}
+
+		var rooms = {};
+
+		rooms = cache.rooms? cache.rooms : {};
+		
+		function deleteOnTimeOut(roomId){
+			// have to maintain closure for roomId, in case of multiple room timeouts!
+			(function(){
+				setTimeout(function(){
+					delete rooms[roomId];	
+					cache.rooms = rooms;
+				}, 10*60*1000); // serve room object from cache for 10 minutes
+			})();
+		}
+		
+		if(query.results){
+			query.results.forEach(function(room){
+				rooms[room.id] = room;
+				deleteOnTimeOut(room.id);
+			});
+		}
+
+		cache.rooms = rooms;
+		next();
+
+	}, 8); // run after socket
 	
 	core.on('text-dn', function(text, next){
 		var texts = [text];
