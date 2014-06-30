@@ -186,7 +186,9 @@ $(function() {
 		if (state.old && state.thread !== state.old.thread) {
 			if (state.thread && state.thread !== currThread) {
 				currThread = state.thread;
-			}
+			} else {
+                currThread = null;
+            }
 		}
 
 		next();
