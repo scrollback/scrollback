@@ -2,34 +2,16 @@
 /* global $, libsb, currentState */
 
 var showMenu = require('./showmenu.js');
-var lace = require("../lib/lace.js");
-
-$(document).on("click", ".popover-body a", function () {
-	lace.popover.hide();
-});
-
-//	$(".user-area, .user-menu-button").on("click", function () {
-//		if ($("body").hasClass("role-guest")) {
-//			lace.popover.show({
-//				body: $("#login-menu").html(),
-//				origin: $(this)
-//			});
-//		} else {
-//			lace.popover.show({
-//				body: $("#user-menu").html(),
-//				origin: $(this)
-//			});
-//		}
-//	});
+var lace = require('../lib/lace.js');
 
 $(function(){
 	$(".user-area").on('click', function(){
 	if($('body').hasClass('role-user')){
-		libsb.emit('user-menu', {origin: $('.user-area'), buttons: {}, items: {}}, function(err, menu){
+		libsb.emit('user-menu', {origin: $(this), buttons: {}, items: {}}, function(err, menu){
 			showMenu(menu);
 		});
 	} else if($('body').hasClass('role-guest')){
-		libsb.emit('auth-menu', {origin: $('.user-area'), buttons: {}, title: 'Login to Scrollback with'}, function(err, menu){
+		libsb.emit('auth-menu', {origin: $(this), buttons: {}, title: 'Sign in to Scrollback with'}, function(err, menu){
 			showMenu(menu);
 		});
 	}
@@ -50,17 +32,6 @@ libsb.on('user-menu', function(menu, next){
 	};
 	next();
 }, 1000);
-
-//	$(document).on("click", ".userpref", function () {
-//		libsb.emit("navigate", {
-//			mode: "pref",
-//			view: "meta"
-//		});
-//	});
-
-//	$(document).on("click", ".logout", function () {
-//		libsb.logout();
-//	});
 
 libsb.on("logout", function (p, n) {
 	libsb.emit('navigate', {

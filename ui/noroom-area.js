@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $, libsb, currentState */
 
-var lace = require("../lib/lace.js");
+var showMenu = require('./showmenu.js');
 
 (function(){ // funciton wrapper to maintain the closure of msessageID.
     /*
@@ -50,6 +50,9 @@ $("#create-room-button").click(function(){
 
 $("#login-and-create-room-button").click(function(){
    if($("body").hasClass("role-guest")) {
-       lace.modal.show({ body: $("#signin-dialog").html()});
+		libsb.emit('auth-menu', {origin: $(this), buttons: {}, title: 'Sign in to Scrollback with'}, function(err, menu){
+			showMenu(menu);
+		});
+       // lace.modal.show({ body: $("#signin-dialog").html()});
    }
 });
