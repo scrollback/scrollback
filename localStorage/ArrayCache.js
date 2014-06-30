@@ -1,8 +1,12 @@
 "use strict";
-
+var _ = require('underscore');
 function ArrayCache(initData) {
 	this.d = initData || [];
 }
+
+ArrayCache.prototype.getItems = function(){
+	return this.d;
+};
 
 ArrayCache.prototype.find = function (time, start, end) {
 		var pos;
@@ -51,6 +55,9 @@ ArrayCache.prototype.put = function(data) {
 };
 
 ArrayCache.prototype.get = function (query) {
+	this.d = _.uniq(this.d, function(i){
+		return i.id;
+	});
 	var time = query.time, 
 		before = Math.max(0,query.before||0),
 		after = Math.max(0,query.after||0),
@@ -63,7 +70,7 @@ ArrayCache.prototype.get = function (query) {
 		var res = [], m, i;
 		for(i=start; i>=0 && i<l && res.length<steps; i+=direction) {
 			m = self.d[i];
-			if(typeof m !== 'object') throw Error('ArrayCache contains non-object');
+			if(typeof m !== 'object') throw new Error('ArrayCache contains non-object');
 			if(m.type == 'result-start') {
 				if(!partials) return null;
 			} else if(m.type == 'result-end') {

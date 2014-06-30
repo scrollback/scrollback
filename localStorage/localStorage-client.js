@@ -39,7 +39,6 @@ function saveCache(key){
 function generateLSKey(){
 	var args = Array.prototype.slice.call(arguments, 0); 
     if(!args) return;  
-	console.log("ARgs", args);
 	var argumentsLC = args.map(function(val){
 		return val.toLowerCase();
 	});
@@ -89,9 +88,7 @@ function save(){
 libsb.on('navigate', function(state, next) {
 	if(state.roomName && state.roomName != state.old.roomName) {
 		var key = generateLSKey(state.roomName, 'texts');
-		if(localStorage.hasOwnProperty(key)){
-			cache[key] = loadArrayCache(key);
-		}
+		cache[key] = loadArrayCache(key);
 	}
 	next();
 }, 500);
@@ -106,13 +103,14 @@ module.exports = function(c){
 		}
 		
 		var results = cache[key].get(query);
-				
+			
+		if(results && results.length === 1) return next();
+		
 		if(!results || !results.length){
 			next();
 		}else{
 			query.results = results;
 		}
-		
 		next();
 	}, 200); // runs before the socket
 	
@@ -130,7 +128,7 @@ module.exports = function(c){
 				results.unshift({type: 'result-start', time: results[0].time, endtype: 'limit'});
 			}
 			if(query.after && results.length === query.after){
-				results.unshift({type: 'result-end', time: results[results.length - 1].time, endtype: 'limit'});
+				results.push({type: 'result-end', time: results[results.length - 1].time, endtype: 'limit'});
 			}
 			var lskey = generateLSKey(query.to, 'texts');
 			if(!cache.hasOwnProperty(lskey)) loadArrayCache(lskey);
@@ -172,16 +170,15 @@ module.exports = function(c){
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
 		var msg = {type: 'result-end', endtype: 'time', time: away.time};
 		var key = generateLSKey(away.to, 'texts');
-		cache[key].put(msg);
+		if(cache && cache[key]) cache[key].put(msg);
 		next();
 	}, 500);
 	
 	core.on('back-up', function(back, next){
 		// store a result-start in ArrayCache, to indicate the beginning of the current stream of messages from the user
 		var msg = {type: 'result-start', endtype: 'time', time: back.time};
-		console.log("BACK IS ", back);
 		var key = generateLSKey(back.to, 'texts');
-		cache[key].put(msg);
+		if(cache && cache[key]) cache[key].put(msg);
 		next();
 	}, 500);
 	
