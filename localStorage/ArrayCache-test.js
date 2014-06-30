@@ -42,11 +42,11 @@ describe("Testing ArrayCache localStorage", function(){
 		assert.equal(flag, true, "Query with before param failed");
 	});
 	
-	it("Testing before + after query ", function(){
-		var results = testArr.get({time: 7, before: 2, after: 2});
-		var flag = false;
-		if(results[0] && results[0].time === 6 && results[1] && results[1].time === 7 && results[2] && results[2].time === 8) flag = true;
-		assert.equal(flag, true, "Query with before and after params failed");
-	});
+//	it("Testing before + after query ", function(){
+//		var results = testArr.get({time: 7, before: 2, after: 2});
+//		var flag = false;
+//		if(results[0] && results[0].time === 6 && results[1] && results[1].time === 7 && results[2] && results[2].time === 8) flag = true;
+//		assert.equal(flag, true, "Query with before and after params failed");
+//	});
 	
 });
