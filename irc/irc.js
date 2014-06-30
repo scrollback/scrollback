@@ -294,6 +294,7 @@ function init() {
 			r.params.irc = room.room.params.irc;
 			rr.room = r;
 			rr.to = r.id;
+			rr.room.guides = {};
 			log("emitting room from irc", rr);
 			core.emit("room", rr, function(err, d) {
 				log("reply while saving room ", err, d);
