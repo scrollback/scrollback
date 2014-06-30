@@ -194,9 +194,10 @@ module.exports = function(c){
 		next();
 	}, 500);
 	
-	core.on('connected', function() {
+	core.on('connected', function(data, next) {
 		if (window.parent.location === window.location) {
-			createInit();	
+			createInit();
+            next();
 		} else {
 			if(!messageListener) {
 				$(window).on("message", function(e) {
@@ -207,10 +208,14 @@ module.exports = function(c){
 						path = data.location.pathname;
 					}
 					createInit();
+                    next();
 				});
 				window.parent.postMessage("getDomain", "*");
 				messageListener = true;
-			} else createInit();
+			} else {
+                createInit();
+                next();
+            }
 		}
 		
 	}, 1000);

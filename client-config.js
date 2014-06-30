@@ -1,6 +1,6 @@
 module.exports = {
 	server: {
-		protocol: "http:",
+		protocol: "https:",
 		host: "//local.scrollback.io"
 	}
 };
