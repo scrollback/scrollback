@@ -82,4 +82,7 @@ var showMenu = function(menu) {
     return lace.popover.show({ origin: menu.origin, body: $popover });
 };
 
+showMenu.hide = function(){
+	lace.popover.hide();
+}
 module.exports = showMenu;
