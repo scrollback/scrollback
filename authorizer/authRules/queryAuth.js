@@ -10,12 +10,12 @@ module.exports = function(core){
 		else return callback(new Error('ERR_NOT_ALLOWED'));
 	}, "authorization");
 	core.on('getThreads', function(query, callback) {
+		var readLevel;
 		if(query.q && !query.room) {
 			return callback();
 		}
-		if(!query.room.guides || !query.room.guides.authorizer || !query.room.guides.authorizer.readLevel) return callback();
-		if(query.room.guides.authorizer.readLevel === undefined) query.room.guides.authorizer.readLevel = 'guest';
-		if(permissionLevels[query.room.guides.authorizer.readLevel] <= permissionLevels[query.user.role]) return callback();
+		readLevel = (query.room.guides && query.room.guides.authorizer && query.room.guides.authorizer.readLevel) || 'guest';
+		if(permissionLevels[readLevel] <= permissionLevels[query.user.role]) return callback();
 		else return callback(new Error('ERR_NOT_ALLOWED'));
 	}, "authorization");
     
