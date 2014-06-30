@@ -95,7 +95,7 @@ var defaults = {
 		//consumerSecret: ".." 
 	},
 	irc: {
-		port: 78910,
+		port: 8910,
 		server: "localhost"
 	},
 	leveldb: {
