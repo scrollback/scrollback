@@ -29,6 +29,26 @@ var showMenu = require('./showmenu.js');
 
 })();
 
+libsb.on('error-dn', function(err, next){
+	var user;
+	if(err.message === "NO_ROOM_WITH_GIVEN_ID"){
+		libsb.emit('getUsers', {ref: currentState.roomName}, function(e, d){
+			if(d.results){
+				user = d.results[0];
+				libsb.emit('navigate', {mode: 'profile', source: 'noroom'});
+			}
+		});
+	}
+	next();
+}, 10);
+
+libsb.on('navigate', function(state, next){
+	if(state.mode === 'profile' && state.source === 'noroom'){
+		$('#profileText').text(currentState.roomName);
+	}
+	next();
+}, 100);
+
 $("#create-room-button").click(function(){
     var roomObj = {
         to: currentState.roomName,
