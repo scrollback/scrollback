@@ -36,7 +36,7 @@ $("#create-room-button").click(function(){
             id: currentState.roomName,
             description: '',
             params: {
-                
+
             },
             guides: {}
         }
@@ -53,10 +53,5 @@ $("#login-and-create-room-button").click(function(){
 		libsb.emit('auth-menu', {origin: $(this), buttons: {}, title: 'Sign in to Scrollback with'}, function(err, menu){
 			showMenu(menu);
 		});
-	   	libsb.on('init-dn', function(init, next){
-			showMenu.hide();
-			next();
-		}, 1000)
-       // lace.modal.show({ body: $("#signin-dialog").html()});
    }
 });
