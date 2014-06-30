@@ -22,7 +22,7 @@ $(function() {
                 $dots = $(".chat-item-dot, .chat-conv-dot");
 
             $dots.velocity("stop")
-                .velocity({
+                 .velocity({
                     scale: 1,
                     opacity: 1
                 }, {
@@ -82,15 +82,15 @@ $(function() {
             }
         };
 
-    $container.scroll(function() {
-        clearTimeout($(this).data("scrollTimer"));
-
+    libsb.on("navigate", function(state, next) {
         removeLine();
 
-        $(this).data("scrollTimer", setTimeout(function() {
+        setTimeout(function() {
             drawLine();
-        }, 500));
-    });
+        }, 300);
+
+        next();
+    }, 50);
 
     $(window).on("resize", drawLine);
 

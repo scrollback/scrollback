@@ -5,7 +5,7 @@ var showMenu = require('./showmenu.js');
 var lace = require('../lib/lace.js');
 
 $(function(){
-	$(".user-area").on('click', function(){
+	$(".user-area, .user-menu-button").on('click', function(){
 	if($('body').hasClass('role-user')){
 		libsb.emit('user-menu', {origin: $(this), buttons: {}, items: {}}, function(err, menu){
 			showMenu(menu);
