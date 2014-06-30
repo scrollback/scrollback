@@ -33,7 +33,7 @@ function generateThreaderId(id){
 		h += hashIt(id + "," + i).toString(16);
 		if(h.length >= 32) {
 			h = h.substring(0, 32);
-			break
+			break;
 		}
 	}
 	
@@ -42,7 +42,7 @@ function generateThreaderId(id){
 
 
 function migrateTexts(limit, cb) {
-	var stream, lastIndex = 0;
+	var stream, lastIndex = 0, l;
 	stream = db.query("select * from text_messages where `time` > "+startingTime+" order by `time` limit 1000");
 	stream.on("result", function(text) {
 		db.pause();
@@ -62,7 +62,7 @@ function migrateTexts(limit, cb) {
 			
 			if(l.length) {
 				l.forEach(function(i) {
-					var t = {}, id, title, index;
+					var t = {}, title, index;
 					i = i.replace(/^thread-/, "");
 					index = i.indexOf(":");
 
@@ -95,7 +95,7 @@ function migrateTexts(limit, cb) {
 			recordCount++;
 			console.log(text.time+": record: "+recordCount);
 			startingTime = text.time;
-			lastindex = startingTime;
+			lastIndex = startingTime;
 			if(err) {
 				db.resume();
 			}else{
@@ -114,10 +114,10 @@ function migrateTexts(limit, cb) {
 	});
 //	db.end();
 
-	function done() {
+	function done(cb) {
 		storeIndex(startingTime);
 		setTimeout(function(){
-			cb && cb();
+			if(cb) cb();
 		}, 1000);
 	}
 }
@@ -138,7 +138,7 @@ function migrationStart() {
 			}else {
 				startingTime = 0;
 			}
-			function loop(pos) {
+			function loop() {
 				if(i>8170) return;
 				else {
 					migrateTexts(i++, loop);
@@ -209,6 +209,7 @@ function migrateRooms(cb) {
 
 			try{
 				newRoom.params = JSON.parse(room.params);
+                if(typeof params == "string") newRoom.params = {};
 			}
 			catch(e){
 				newRoom.params = {};
