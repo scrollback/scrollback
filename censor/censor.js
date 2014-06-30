@@ -6,7 +6,7 @@ module.exports = function(core) {
         if(query.session == internalSession) return next();
         
         if(!query.results || !query.results.length) return next();
-        if(query.ref && query.user.role === 'su') return next();
+        if(query.user.role === 'su') return next();
         
         query.results.forEach(function(e) {
             delete e.session;

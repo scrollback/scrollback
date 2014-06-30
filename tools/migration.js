@@ -232,7 +232,7 @@ function migrateRooms(cb) {
             }
 
 			if (newRoom.type == "user") {
-                newRoom.picture = generatePick(newRoom.identities[0]);
+                newRoom.picture = generatePick(newRoom.identities[0].replace(/mailto:/, ""));
 				newRoom.params.email = {
 					frequency : "daily",
 					notifications : true

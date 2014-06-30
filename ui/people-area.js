@@ -210,7 +210,8 @@ $(function() {
 
 		if(state.source == 'people-area') return next();
         if(!state.roomName || state.room === null) return next();
-		if(state.tab == "people" && state.old && state.tab != state.old.tab) {
+        
+		if(state.tab == "people" && state.old && state.roomName !== state.old.roomName) {
 			roomName = state.roomName || roomName;
             lists = {
 				people1: [],
