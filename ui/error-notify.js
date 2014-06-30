@@ -19,13 +19,14 @@ $(function() {
 
         next();
     }, 500);
-    
+
     libsb.on("disconnected", function(payload, next) {
-        $("body").addClass("state-offline");
+        libsb.emit("navigate", { mode: "offline" });
+
         next();
     }, 900);
-    
+
     $(".disconnectTry").click(function() {
         location.reload();
-    })
+    });
 });
