@@ -404,7 +404,11 @@ function addUsers(client, channel, nick) {
 function sendBack(server, channel, nick, bn) {
 	log("server: ", server, " channel:", channel, "nick: ", nick);
 	channel = channel.toLowerCase();
+	if (!servChanProp[server] || !servChanProp[server][channel]) {
+		return;
+	}
 	var room = servChanProp[server][channel].room;
+	
 	//save data.
 	if(nick != bn) servChanProp[server][channel].users.push(nick);//don't add myNick 
 	if(nick != bn && (!servNick[server][nick] || (servNick[server][nick].dir == "in")) && !room.params.irc.pending) {
