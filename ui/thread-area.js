@@ -209,13 +209,14 @@ var threadEl = require("./thread.js"),
 	libsb.on('navigate', function(state, next) {
 		if (state.old && state.thread !== state.old.thread) {
 			var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
+
 			$("body").attr("class", classes);
 			$(".thread-item.current").removeClass("current");
-			if(state.thread){
+
+			if (state.thread) {
 				$("#thread-" + state.thread).addClass("current");
 				$("body").addClass('conv-' + state.thread.substr(-1));
 			} else{
-				$('.thread-item.current').removeClass('current');
 				$('.thread-all-conversations .thread-item').addClass('current');
 			}
 		}

@@ -23,7 +23,7 @@ results
 node_modules
 
 myConfig.js
-client-config.js
+./client-config.js
 
 public/*.bundle.js
 public/*.min.js
