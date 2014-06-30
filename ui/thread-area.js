@@ -2,8 +2,7 @@
 /* global $, libsb, currentState */
 
 var threadEl = require("./thread.js"),
-	threadArea = {},
-	thread = "";
+	threadArea = {};
 
 (function() {
 	var $threads, room = "", time = null,
@@ -216,8 +215,8 @@ var threadEl = require("./thread.js"),
 				$("#thread-" + state.thread).addClass("current");
 				$("body").addClass('conv-' + state.thread.substr(-1));
 			} else{
-				$('.thread-item.current').removeClass('current'); 
-				$('.thread-title').eq(0).closest('.thread-item').addClass('current');
+				$('.thread-item.current').removeClass('current');
+				$('.thread-all-conversations .thread-item').addClass('current');
 			}
 		}
 
