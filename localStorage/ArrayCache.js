@@ -1,21 +1,14 @@
 "use strict";
- var __ = require('underscore');
 
 function ArrayCache(initData) {
-	this.messages = initData || [];
+	this.d = initData || [];
 }
-
-ArrayCache.prototype.messages = [];
-
-ArrayCache.prototype.getItems = function(){
-	return this.messages;
-};
 
 ArrayCache.prototype.find = function (time, start, end) {
 		var pos;
 
 		if (typeof start === 'undefined') {
-			return this.find(time, 0, this.messages.length);
+			return this.find(time, 0, this.d.length);
 		}
 		
 		if (!time) {
@@ -24,9 +17,9 @@ ArrayCache.prototype.find = function (time, start, end) {
 		if (start >= end) return start;
 		pos = ((start + end)/2) | 0;
 		
-		if (this.messages[pos] && this.messages[pos].time < time) {
+		if (this.d[pos] && this.d[pos].time < time) {
 			return this.find(time, pos+1, end);
-		} else if (this.messages[pos-1] && this.messages[pos-1].time >= time) {
+		} else if (this.d[pos-1] && this.d[pos-1].time >= time) {
 			return this.find(time, start, pos-1);
 		} else {
 			return pos;
@@ -39,47 +32,71 @@ ArrayCache.prototype.put = function(data) {
 			start = this.find(startTime),
 			end = this.find(endTime);
 		
-		while (data[0].endtype && data[0].endtype == 'time' && this.messages[start-1] && this.messages[start-1].time == startTime) {
+		while (data[0].endtype && data[0].endtype == 'time' && this.d[start-1] && this.d[start-1].time == startTime) {
 			start--;
 		}
 		
-		while (data[data.length-1].endtype && data[data.length-1].endtype == 'time' && this.messages[end] && this.messages[end].time == endTime) {
+		while (data[data.length-1].endtype && data[data.length-1].endtype == 'time' && this.d[end] && this.d[end].time == endTime) {
 			end++;
 		}
 		
-		if (this.messages[start-1] && this.messages[start-1].type != 'result-end' && data[0].type == 'result-start') {
+		if (this.d[start-1] && this.d[start-1].type != 'result-end' && data[0].type == 'result-start') {
 			data.shift();
 		}
 		
-		if (this.messages[end] && this.messages[end].type != 'result-start' && data[data.length-1].type == 'result-end') {
+		if (this.d[end] && this.d[end].type != 'result-start' && data[data.length-1].type == 'result-end') {
 			data.pop();
 		}
-		[].splice.apply(this.messages, [start, end - start].concat(data));
+		[].splice.apply(this.d, [start, end - start].concat(data));
 };
 
-ArrayCache.prototype.get = function (query, partialsOk) {
-        this.messages = __.uniq(this.messages, function(item){
-            return item.id;
-        });
-		if(query.time === null){
-			return null;	
-		}
-
-		var time = query.time, before = query.before, after = query.after,
-			res = [], pos, i, l = this.messages.length, c, m;
+ArrayCache.prototype.get = function (query) {
+	var time = query.time, 
+		before = Math.max(0,query.before||0),
+		after = Math.max(0,query.after||0),
+		partials = query.partials || false,
+		pos, l = this.d.length, self = this;
 	
-			pos = time?this.find(time): l-1;
-
-
-		for(i=-before; i<after; i++) {
-			c = pos + i;
-			if(c<0) i-=c;
-			if(c>=l) break;
-			m = this.messages[c];
-			if(!m || m.type == 'result-start' || m.type == 'result-end') return null;
-			if(m.type == "text") res.push(m);
+	pos = time? this.find(time): l;
+	
+	function walk(start, steps, direction) {
+		var res = [], m, i;
+		for(i=start; i>=0 && i<l && res.length<steps; i+=direction) {
+			m = self.d[i];
+			if(typeof m !== 'object') throw Error('ArrayCache contains non-object');
+			if(m.type == 'result-start') {
+				if(!partials) return null;
+			} else if(m.type == 'result-end') {
+				if(partials) {
+					res.push({type: 'missing', time: m.time });
+				} else return null;
+			} else res.push(m);
 		}
-		return res;
+		
+		return direction<0? res.reverse(): res;
+	}
+	
+	if(before) {
+		while(this.d[pos] && this.d[pos].time == time) pos++;
+		return walk(pos-1, before, -1);
+	} else if(after) {
+		while(this.d[pos] && this.d[pos].time == time) pos--;
+		return walk(pos+1, after, 1);
+	}
+	return null;
 };
+			
+//	while(this.d[pos] && this.d[pos].time === time) pos++;
+//
+//		for(i=Math.min(0, -before+1); i<after; i++) {
+//			c = pos + i;
+//			if(c<0) i-=c;
+//			if(c>=l) break;
+//			m = this.d[c];
+//			if(!m || m.type == 'result-start' || m.type == 'result-end') return null;
+//			if(m.type == "text") res.push(m);
+//		}
+//		return res;
+//};
 
 module.exports = ArrayCache;

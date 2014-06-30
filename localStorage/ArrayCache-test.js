@@ -2,51 +2,89 @@
 var assert = require('assert');
 var ArrayCache = require('./ArrayCache.js');
 
-var testArr = new ArrayCache([]);
+function mkrec(it) {
+	return { id: 'item-' + it, time: it };
+}
 
-describe("Testing ArrayCache localStorage", function(){
-	it("Inserting elements ", function(){
-		testArr.put([{type: 'result-start', time: 1}, {time:2}, {time:5}, {time:6}, {time:7}, {time:8},{type: 'result-end', time: 9}]);
-		console.log("Put into empty array succeeded! ");
+function mkres(its, opt) {
+	its = its.map(mkrec);
+	its.unshift({
+		type: 'result-start', 
+		endtype: opt.aft? 'time': 'limit',
+		time: opt.aft || its[0].time
 	});
+	its.push({type: 'result-end', 
+		endtype: opt.bef? 'time': 'limit',
+	 	time: opt.bef || its[its.length-1].time
+	 });
 	
-	it("Testing merge ", function(){
-		testArr.put([{type: 'result-start', time: 2}, {time: 3}, {time: 4}, {type: 'result-end', time: 5}]);
-		
-		var items = testArr.getItems();
-		var flag = true;
-		
-		for(var i=0; i<items.length; i++){
-			if(items[i].time !== i+1){
-				flag = false;
-				break;
-			}
+	return its;
+}
+
+function compare (ds, its) {
+	var i;
+	for(i=0; i<its.length; i++) {
+		if(
+			!ds[i] ||
+			(its[i] == '(' && (ds[i].type != 'result-start' || ds[i].endtype != 'limit')) ||
+			(its[i] == ')' && (ds[i].type != 'result-end' || ds[i].endtype != 'limit')) ||
+			(its[i] == '[' && (ds[i].type != 'result-start' || ds[i].endtype != 'time')) ||
+			(its[i] == ']' && (ds[i].type != 'result-end' || ds[i].endtype != 'time')) ||
+			(its[i] == '?' && ds[i].type != 'missing') ||
+			(typeof its[i] === 'number' && its[i] !== ds[i].time)
+		) {
+			return false;
 		}
-		assert.equal(flag, true, "ArrayCache.put failed ");	
-		 
+	}
+	return true;
+}
+
+var ac = new ArrayCache([]);
+
+describe("ArrayCache", function(){
+	it("should insert elements", function(){
+		ac.put(mkres([3, 4, 5], {bef: 5}));
+		assert(compare(ac.d, ['(', 3, 4, 5, ']']), "Wrong state");	
 	});
 	
-	it("Testing after query ", function(){
-		var results = testArr.get({time: 6, after: 2});
-		// check results
-		var flag = false;
-		if(results[0] && results[0].time === 6 && results[1] && results[1].time === 7) flag = true;
-		assert.equal(flag, true, "Query with after param failed");
+	it("should give results with before/null/partialsOk", function() {
+		var res = ac.get({time: null, before: 5, partials: true});
+		assert(compare(res, [3, 4, 5, '?']), 'Wrong results');
+	});
+
+	it("should return null with before/null/partialsNotOk", function() {
+		var res = ac.get({time: null, before: 5});
+		assert(res === null, 'Wrong results');
 	});
 	
-	it("Testing before query ", function(){
-		var results = testArr.get({time: 8, before: 2});
-		// check results
-		var flag = false;
-		if(results[0] && results[0].time === 6 && results[1] && results[1].time === 7) flag = true;
-		assert.equal(flag, true, "Query with before param failed");
+	it("should merge elements 1", function(){
+		ac.put(mkres([1, 2, 3], {bef: 3}));
+		assert(compare(ac.d, ['(', 1, 2, 3, 4, 5, ']']), "Wrong state");	
 	});
 	
-	it("Testing before + after query ", function(){
-		var results = testArr.get({time: 7, before: 2, after: 2});
-		var flag = false;
-		if(results[0] && results[0].time === 6 && results[1] && results[1].time === 7 && results[2] && results[2].time === 8) flag = true;
-		assert.equal(flag, true, "Query with before and after params failed");
+	it("should merge elements 2", function(){
+		ac.put(mkres([7, 8],{aft: 7}));
+		assert(compare(ac.d, ['(', 1, 2, 3, 4, 5, ']', '[', 7, 8, ')']), "Wrong state");	
 	});
 	
+	it("should give results with missing across a gap after/4/partialsOk", function() {
+		var res = ac.get({time: 4, after: 5, partials: true});
+		assert(compare(res, [4, 5, '?', 7, 8]), 'Wrong results');
+	});
+	
+	it("should return null when there is a gap after/4/partialsNotOk", function() {
+		var res = ac.get({time: 4, after: 5});
+		assert(res === null, 'Wrong results');
+	});
+	
+	it("should merge elements 3", function(){
+		ac.put(mkres([5, 6, 7], {bef: 7}));
+		assert(compare(ac.d, ['(', 1, 2, 3, 4, 5, 6, 7, 8, ')']), "ArrayCache.put 3 failed ");	
+	});
+	
+	it("should return results when all elements are available after/4/partialsNotOk", function() {
+		var res = ac.get({time: 4, after: 5});
+		assert(compare(res, [4, 5, 6, 7, 8]), 'Wrong results');
+	});
+
 });
