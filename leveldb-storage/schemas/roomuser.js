@@ -112,7 +112,7 @@ module.exports = function (types) {
 				});
 			}else {
 				room.put(newRoom, function(err/*, res*/) {
-					if(!data.old) {
+					if(!action.old || !action.old.id) {
 						if (internalSessions.indexOf(action.session) !== -1 || su[action.user.id] ) {//if user is a super user do not create links
 							return cb();
 						}
