@@ -38,11 +38,6 @@ var startTimes = {};
 var startingTime = 0;
 var recordCount = 0;
 var fs = require('fs');
-var searchServer = config.search.server + ":" + config.search.port;
-var es = require('elasticsearch');
-var client = new es.Client({
-    host: searchServer
-});
 
 (function() {
 	var path = process.cwd();
@@ -78,8 +73,8 @@ var client = new es.Client({
                     };
                     types.rooms.put(newRoom, function(){
                         types.rooms.link(newRoom.id, 'hasMember', "migrator", {
-                            role: "follower",
-                            time: row.joinedOn
+                            role: "owner",
+                            time: new Date().getTime()
                         });
                         db.resume();
                     });
