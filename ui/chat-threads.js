@@ -2,103 +2,120 @@
 /* global $, libsb, format */
 
 $(function() {
-	var $container = $(".chat-area"),
-		$entry = $(".chat-entry"),
-		lastMsg, currMsg, currThread,
-		resetConv = function() {
-			var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
+    var $container = $(".chat-area"),
+        $entry = $(".chat-entry"),
+        lastMsg, currMsg, currThread,
+        resetConv = function() {
+            var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
 
-			$("body").attr("class", classes);
+            $("body").attr("class", classes);
 
-			currMsg = null;
-			currThread = null;
+            currMsg = null;
+            currThread = null;
 
-			removeLine();
+            removeLine();
 
-			$(".chat-item").removeClass("current active");
-		},
-		removeLine = function() {
-			var $line = $(".chat-conv-line"),
-				$dot = $(".chat-item-dot, .chat-conv-dot");
+            $(".chat-item").removeClass("current active");
+        },
+        removeLine = function() {
+            var $line = $(".chat-conv-line"),
+                $dots = $(".chat-item-dot, .chat-conv-dot");
 
-			$dot.velocity("stop")
-				.velocity({ scale: 1, opacity: 1 }, 150);
+            $dots.velocity("stop")
+                .velocity({
+                    scale: 1,
+                    opacity: 1
+                }, {
+                    duration: 150,
+                    backwards: true
+                });
 
-			if ($line.length) {
-				$line.velocity("stop")
-					 .velocity({
-						 		translateY: ( $line.height() / 2 ),
-								scaleY: 0, opacity: 0
-							   }, 300, function() {
-								   $(this).remove();
-							   });
-			}
-		},
-		drawLine = function() {
-			removeLine();
+            if ($line.length) {
+                $line.velocity("stop")
+                     .velocity({
+                        translateY: ( $line.height() / 2 ),
+                        scaleY: 0, opacity: 0
+                    }, {
+                        duration: 300,
+                        backwards: true
+                    }, function() {
+                        $(this).remove();
+                    });
+            }
+        },
+        drawLine = function() {
+            removeLine();
 
-			if (currThread) {
-				var $line = $("<div>").addClass("chat-conv-line").attr("data-mode", "normal"),
-					$chatdot = $(".chat-item-dot"),
-					$convdot = $(".chat-conv-dot"),
-					$dot = $("[data-thread=" + currThread + "]").find($chatdot).add($convdot),
-					left = $container.offset().left,
-					top = $dot.first().offset().top,
-					bottom = $(document).height() - $convdot.offset().top - ($convdot.height() / 2),
-					containertop = $container.offset().top;
+            if (currThread) {
+                var $line = $(".chat-conv-line"),
+                    $chatdot = $(".chat-item-dot"),
+                    $convdot = $(".chat-conv-dot"),
+                    $dots = $("[data-thread=" + currThread + "]").find($chatdot).add($convdot),
+                    left = $container.offset().left,
+                    top = $dots.first().offset().top,
+                    bottom = $(document).height() - $convdot.offset().top - ($convdot.height() / 2),
+                    containertop = $container.offset().top;
 
-				$chatdot.not($dot).velocity("stop")
-								  .velocity({ scale: 1, opacity: 0.3 }, 150);
+                $chatdot.not($dots).velocity("stop")
+                                  .velocity({ scale: 1, opacity: 0.3 }, { duration: 300, drag: true });
 
-				$dot.velocity("stop")
-					.velocity({ scale: 1 }, 150)
-					.velocity({ scale: 1.5, opacity: 1 }, 300);
+                $dots.velocity("stop")
+                    .velocity({ scale: [ 1.5, 1 ], opacity: 1 }, { duration: 450, drag: true });
 
-				$line.css({ top: ((top < containertop) ? containertop : top),
-						    left: left, bottom: bottom
-						  }).appendTo("body");
+                if (!$line.length) {
+                    $line = $("<div>").addClass("chat-conv-line").attr("data-mode", "normal");
+                    $line.appendTo("body");
+                }
 
-				$line.velocity("stop")
-					 .velocity({ translateY: ( $line.height() / 2 ), scaleY: 0, opacity: 0 }, 0)
-					 .velocity({ translateY: 0, scaleY: 1, opacity: 0.5 }, 300)
-					 .velocity({ opacity: 1 }, 150);
-			}
-		};
+                $line.css({
+                    top: ((top < containertop) ? containertop : top),
+                    left: left,
+                    bottom: bottom
+                });
 
-	$container.scroll(function() {
-		clearTimeout($(this).data("scrollTimer"));
+                $line.velocity("stop")
+                     .velocity({
+                         translateY: [ 0, ($line.height() / 2) ],
+                         scaleY: [ 1, 0 ],
+                         opacity: [ 1, 0 ]
+                     }, 450);
+            }
+        };
 
-		removeLine();
+    $container.scroll(function() {
+        clearTimeout($(this).data("scrollTimer"));
 
-		$(this).data("scrollTimer", setTimeout(function() {
-			drawLine();
-		}, 500));
-	});
+        removeLine();
 
-	$(window).on("resize", drawLine);
+        $(this).data("scrollTimer", setTimeout(function() {
+            drawLine();
+        }, 500));
+    });
 
-	$.fn.selectMsg = function() {
-		resetConv();
+    $(window).on("resize", drawLine);
 
-		currMsg = this.attr("id");
-		currThread = this.attr("data-thread");
+    $.fn.selectMsg = function() {
+        resetConv();
 
-		if (currThread) {
-			$("body").addClass("conv-" + currThread.substr(-1));
-		}
+        currMsg = this.attr("id");
+        currThread = this.attr("data-thread");
 
-		this.addClass("current");
+        if (currThread) {
+            $("body").addClass("conv-" + currThread.substr(-1));
+        }
 
-		if ($.fn.velocity) {
-			if ((this.offset().top - $container.offset().top) < 0 || this.offset().top > $container.height()) {
-				this.velocity("scroll", { duration: 150, container: $container });
-			}
-		} else {
-			this.get(0).scrollIntoView(true);
-		}
+        this.addClass("current");
 
-		var nick = this.find(".chat-nick").text(),
-			msg = format.htmlToText($entry.html()).trim(),
+        if ($.fn.velocity) {
+            if ((this.offset().top - $container.offset().top) < 0 || this.offset().top > $container.height()) {
+                this.velocity("scroll", { duration: 150, container: $container });
+            }
+        } else {
+            this.get(0).scrollIntoView(true);
+        }
+
+        var nick = this.find(".chat-nick").text(),
+            msg = format.htmlToText($entry.html()).trim(),
 			atStart = false;
 
 		if (msg.match(/^@\S+[\s+{1}]?/, "")) {
@@ -200,7 +217,7 @@ $(function() {
 	}, 50);
 
 	$(document).on("click", ".chat-item", function() {
-		$(this).toggleClass("active").scrollTop(0);
+		$(this).toggleClass("active");
 	});
 
 	$(document).on("click", ".chat-conv-dot-wrap", function() {

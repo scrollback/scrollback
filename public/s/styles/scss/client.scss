@@ -1050,7 +1050,7 @@ body {
 			background-image: linear-gradient(to bottom, fade-out($light-color, 1) 0%, $light-color 100%);
 		}
 
-		&.active {
+		&.expanded {
 			max-height: 20em;
 			overflow: auto;
 
