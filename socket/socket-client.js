@@ -76,13 +76,14 @@ function connect(){
 	client.onclose = disconnected;
 }
 
-function disconnect(){
+function disconnect(payload, next){
 	client.close();
+    next();
 }
 
 function disconnected(){
 	libsb.isInited = false;
-	core.emit('disconnected');
+	libsb.emit('disconnected',{});
 }
 
 function sendQuery(query, next){
@@ -107,7 +108,6 @@ function receiveMessage(event){
 	}
 	if(data.type == "error") {
 		if(pendingActions[data.id]) {
-            console.log("calling the errors of actions", data);
 			pendingActions[data.id](data);
 			delete pendingActions[data.id];
 		}
@@ -154,7 +154,6 @@ function makeAction(action, props) {
 
 function sendJoin(join, next) {
 	var action = makeAction(join, {type: 'join', to: join.to, id: join.id});
-    console.log("JOIN:",action);
 	safeSend(JSON.stringify(action));
     pendingActions[action.id] = returnPending(action, next);
 }
@@ -182,7 +181,6 @@ function sendText(text, next){
 	var action = makeAction(text, {to: text.to, type: 'text', text: text.text, from: text.from, threads: text.threads, id: text.id, labels: text.labels || {}, mentions: text.mentions || []});
 
 	safeSend(JSON.stringify(action));
-    console.log("sending text", action);
     pendingActions[action.id] = returnPending(action, next);
 }
 

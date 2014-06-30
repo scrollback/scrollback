@@ -67,9 +67,10 @@ function onConnect(){
 	libsb.isConnected = true;
 }
 
-function onDisconnect(){
+function onDisconnect(payload, next){
 	libsb.isConnected = false;
 	libsb.isInited = false;
+    next();
 }
 function connect(){
 	core.emit('connection-requested');

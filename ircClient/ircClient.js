@@ -402,7 +402,7 @@ function addUsers(client, channel, nick) {
 }
 
 function sendBack(server, channel, nick, bn) {
-	log("server", server, " channel:", channel, "servNick", JSON.stringify(servNick));
+	log("server: ", server, " channel:", channel, "nick: ", nick);
 	channel = channel.toLowerCase();
 	var room = servChanProp[server][channel].room;
 	//save data.

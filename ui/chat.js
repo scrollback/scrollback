@@ -17,15 +17,19 @@ $(function () {
 		$el.attr("id", "chat-" + text.id);
 
 		if (text.threads && text.threads.length) {
-			for (var thread in text.threads) {
-				if (window.currentState.thread && window.currentState.thread === thread.id) {
-					$el.attr("data-thread", thread.id);
+			for (var i in text.threads) {
+				if (window.currentState.thread && window.currentState.thread === text.threads[i].id) {
+					$el.attr("data-thread", text.threads[i].id);
 					break;
 				}
 			}
 
 			if (!$el.attr("data-thread") && text.threads[0].id) {
 				$el.attr("data-thread", text.threads[0].id);
+			}
+
+			if ($el.attr("data-thread")) {
+				$el.addClass("conv-" + $el.attr("data-thread").substr(-1));
 			}
 		}
 
@@ -47,10 +51,6 @@ $(function () {
 
 		if (text.text.length >= 400) {
 			$el.addClass("chat-mark-long");
-		}
-
-		if (text.threads && text.threads.length) {
-			$el.addClass("conv-" + text.threads[0].id.substr(-1));
 		}
 
 		return $el;
