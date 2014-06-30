@@ -153,7 +153,7 @@ module.exports = function(c){
 	core.on('text-dn', function(text, next){
 		var texts = [text];
 		var key = generateLSKey(text.to, 'texts');
-		cache[key].put(texts);
+		if(cache && cache[key]) cache[key].put(texts);
 		saveCache(key);
 		next();
 	}, 500); // storing new texts to cache.
