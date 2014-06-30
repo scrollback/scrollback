@@ -83,8 +83,6 @@ $(function() {
         };
 
     libsb.on("navigate", function(state, next) {
-        removeLine();
-
         setTimeout(function() {
             drawLine();
         }, 300);
