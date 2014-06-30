@@ -1499,10 +1499,6 @@ body {
 
 .noroom-container, .offline-container { display: block; }
 
-.offline-area {
-    body:not(.state-offline) & { display: none; }
-}
-
 .infinite-above, .infinite-below {
     height: 100%;
     width: 100%;
