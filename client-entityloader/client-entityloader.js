@@ -3,7 +3,7 @@ var generate = require('../lib/generate.js');
 
 module.exports = function() {
 	libsb.on("navigate", function(state, next) {
-		if(state.roomName) {
+		if(state.roomName != state.old.roomName) {
 			libsb.getRooms({ref: state.roomName}, function(err, data) {
 				if(err) {
 					throw err; // handle this better
@@ -16,9 +16,12 @@ module.exports = function() {
 					state.room = data.results[0];
                     currentState.room = state.room; // so is this... fix it.
 				}
+                console.log(state);
 				next();
 			});
 		}else {
+            state.room = currentState.room;
+            console.log(state);
 			next();
 		}
 	},"loader");

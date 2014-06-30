@@ -114,7 +114,7 @@ function migrateTexts(limit, cb) {
 	});
 //	db.end();
 
-	function done(cb) {
+	function done() {
 		storeIndex(startingTime);
 		setTimeout(function(){
 			if(cb) cb();

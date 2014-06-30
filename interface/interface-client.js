@@ -63,8 +63,9 @@ module.exports = function(c){
 	}, 10);
 };
 
-function onConnect(){
+function onConnect(data, next){
 	libsb.isConnected = true;
+    next();
 }
 
 function onDisconnect(payload, next){
