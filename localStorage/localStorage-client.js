@@ -7,12 +7,14 @@ var LRU = {};
 var messageListener = false;
 var domain = location.host;
 var path = location.pathname;
+var config = require('../client-config.js');
 
 (function clearLS(){
-	if(!localStorage.hasOwnProperty('version1')){
+	var version = 'version' + config.localStorage.version;
+	if(!localStorage.hasOwnProperty(version)){
 		console.log("Old version of LocalStorage present, clearing ...");
 		localStorage.clear();
-		localStorage.version1 = true;
+		localStorage[version] = true;
 	}else{
 		console.log("LocalStorage version is current ...");
 	}
