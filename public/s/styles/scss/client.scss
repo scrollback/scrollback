@@ -516,6 +516,8 @@ body {
     color: $dark-color;
     border-right: 4px solid lighten($dark-color, 30%);
     cursor: pointer;
+    
+    &:first-letter { text-transform: capitalize; }
 
     &.current { background-color: fade-out(lighten($dark-color, 15%), .7); }
 
