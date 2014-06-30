@@ -209,7 +209,7 @@ function migrateRooms(cb) {
 
 			try{
 				newRoom.params = JSON.parse(room.params);
-                if(typeof params == "string") newRoom.params = {};
+                if(typeof newRoom.params == "string") newRoom.params = {};
 			}
 			catch(e){
 				newRoom.params = {};
