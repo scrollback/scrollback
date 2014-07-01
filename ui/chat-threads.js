@@ -15,7 +15,7 @@ $(function() {
 
             removeLine();
 
-            $(".chat-item").removeClass("current active");
+            $(".chat-item").removeClass("current active").data("selected", false);
         },
         removeLine = function() {
             var $line = $(".chat-conv-line"),
@@ -92,7 +92,19 @@ $(function() {
 
     $(window).on("resize", drawLine);
 
+    $(document).on("keydown", function(e) {
+        if (e.keyCode === 27) {
+            resetConv();
+        }
+    });
+
     $.fn.selectMsg = function() {
+        if (this.data("selected")) {
+            resetConv();
+
+            return this;
+        }
+
         resetConv();
 
         currMsg = this.attr("id");
@@ -102,7 +114,7 @@ $(function() {
             $("body").addClass("conv-" + currThread.substr(-1));
         }
 
-        this.addClass("current");
+        this.addClass("current").data("selected", true);
 
         if ($.fn.velocity) {
             if ((this.offset().top - $container.offset().top) < 0 || this.offset().top > $container.height()) {
