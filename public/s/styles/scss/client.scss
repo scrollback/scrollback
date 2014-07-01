@@ -1088,7 +1088,7 @@ body {
         color: fade-out($dark-color, .5);
         font-style: italic;
 
-        [data-role]:not([data-role=owner]) { display: none; }
+        body:not(.role-owner) & { display: none; }
     }
 
     .chat-timestamp {
