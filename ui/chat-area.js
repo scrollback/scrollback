@@ -89,6 +89,8 @@ $(function () {
 
 		if ($logs.data("lower-limit")) {
 			$logs.addBelow($newEl);
+
+			$newEl.get(0).scrollIntoView(true);
 		}
 
 		next();
