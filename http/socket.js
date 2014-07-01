@@ -242,7 +242,7 @@ function emit(action, callback) {
             if(i == "room" || i == "user") { 
                 outAction[i] = {};
                 for (j in action[i]) {
-                    if(action[i].hasOwnProperty(j) && j !== "params") {
+                    if(outAction[i].hasOwnProperty(i)) {
                         outAction[i][j] = action[i][j];
                     }
                 }
@@ -254,6 +254,9 @@ function emit(action, callback) {
     
     delete outAction.session;
     delete outAction.user.identities;
+    delete outAction.room.identities;
+    delete outAction.room.params;
+    delete outAction.user.params;
     
     if(rConns[action.to]) {
         rConns[action.to].forEach(function(e) {
