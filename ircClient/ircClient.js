@@ -227,7 +227,7 @@ function sendMessage(server, from, to, text, time) {
 	var room = servChanProp[server][to].room;
 	if (!room.pending) {
 		var f;
-		if(servNick[server][from].dir === 'in') {
+		if(servNick[server] && servNick[server][from] && servNick[server][from].dir === 'in') {
 			f = servNick[server][from].nick;
 		} else return;
 		core.emit('data', {
