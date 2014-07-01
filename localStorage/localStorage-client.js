@@ -244,15 +244,16 @@ module.exports = function(c){
 		
 		cache.rooms = cache.rooms ? cache.rooms : {};
 		
+        init.occupantOf.forEach(function(room){
+			cache.rooms[room.id] = room;
+			delRoomTimeOut(room.id);
+		});
+		
 		init.memberOf.forEach(function(room){
 			cache.rooms[room.id] = room;
 			delRoomTimeOut(room.id);
 		});
 		
-		init.occupantOf.forEach(function(room){
-			cache.rooms[room.id] = room;
-			delRoomTimeOut(room.id);
-		});
 		
 		save();
 		next();
