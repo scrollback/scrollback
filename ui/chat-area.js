@@ -121,7 +121,7 @@ $(function () {
 	libsb.on("navigate", function (state, next) {
 		var reset = false;
 
-		if (state.source == 'text-area') return next();
+		if (state.source == 'chat-area') return next();
 		if (state.source == "init") {
 			roomName = state.roomName || currentState.roomName;
 			thread = state.thread || currentState.thread;
@@ -226,7 +226,7 @@ $(function () {
 			time = null;
 		}
 
-        libsb.emit('navigate', { time: time, source: 'text-area' });
+        libsb.emit('navigate', { time: time, source: 'chat-area' });
 	});
 
 	setInterval(function() {
