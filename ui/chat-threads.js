@@ -94,7 +94,13 @@ $(function() {
         next();
     }, 50);
 
-    $(window).on("resize", drawLine);
+    $(window).on("resize", function() {
+        removeLine();
+
+        setTimeout(function() {
+            drawLine();
+        }, 500);
+    });
 
     $(document).on("keydown", function(e) {
         if (e.keyCode === 27) {
