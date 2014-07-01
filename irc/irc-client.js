@@ -79,7 +79,7 @@ libsb.on("room-dn", function(room, next) {
 			var displayString = "Something went wrong while connecting to IRC server";
 			if(botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/msg " + botName +
 			" connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel to complete the process.";
-			lace.alert.show({type: "success", body: displayString});
+			lace.alert.show({type: "info", body: displayString});
 		});
 	}
 	next();
