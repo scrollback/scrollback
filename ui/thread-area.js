@@ -52,7 +52,7 @@ var threadEl = require("./thread.js"),
 				renderSearchResult(res, callback);
 			}
 
-			if(to<searchResult.length ) {
+			if(to<searchResult.length) {
 				return processResults(from, to);
 			}else if(searchResult.length<=1 || searchResult[searchResult.length-1]!== false){
 				query.pos = searchResult.length-1;

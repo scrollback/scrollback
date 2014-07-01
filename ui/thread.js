@@ -8,7 +8,6 @@ $(function() {
 
 	threadEl.render = function ($el, thread, index) {
 		var title = thread.title || "";
-        thread.title = thread.title.substring(80);
 		$el = $el || $template.clone(false);
 
 		$el.find(".thread-title").text(title.replace(/-/g, " ").trim());

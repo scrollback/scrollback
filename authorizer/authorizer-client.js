@@ -1,5 +1,6 @@
 /* global libsb, $ */
 var formField = require("../lib/formField.js");
+var lace = require('../lib/lace.js');
 
 libsb.on('config-show', function(tabs, next){
 	var room = tabs.room;
@@ -63,3 +64,10 @@ libsb.on('config-save', function(room, next){
 	};
 	next();
 }, 500);
+
+libsb.on('error-dn', function(error, next){
+	if(error.message === "ERR_NOT_ALLOWED"){
+		lace.alert.show({type: "error", body: "You are not allowed to perfom this action!"});
+	}
+	next();
+}, 1000);
