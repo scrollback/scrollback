@@ -111,6 +111,7 @@ module.exports = function(c){
 
 	core.on('getTexts', function(query, next){
 		// getTextsBefore
+        if(query.thread) return next();
 		var key = generateLSKey(query.to, 'texts');
 		if(!cache.hasOwnProperty(key)){
 			cache[key] = loadArrayCache(key);
@@ -142,10 +143,10 @@ module.exports = function(c){
                 }
 				results.push({type: 'result-end', endtype: 'time', time:query.time});
 			} else if(query.after){
-				results.unshift({type: 'result-start', endtype: 'time', time: query.time});
                 if(results.length === query.after){
                     results.push({type: 'result-end', time: results[results.length - 1].time, endtype: 'limit'});
                 }
+				results.unshift({type: 'result-start', endtype: 'time', time: query.time});
 			}
 			var lskey = generateLSKey(query.to, 'texts');
 			if(!cache.hasOwnProperty(lskey)) loadArrayCache(lskey);

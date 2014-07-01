@@ -28,11 +28,6 @@ $(function () {
 
 
             if(thread) query.thread = thread;
-            /*console.log(roomName, room);
-            if(roomName && room ===null){
-                // room object no available in the localstorage.
-                return callback([false]);
-            }*/
             if(!index && !before) return callback([false]);
 
 			function loadTexts() {

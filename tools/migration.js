@@ -90,7 +90,15 @@ function migrateTexts(limit, cb) {
 					});
 				});
 			}
-		}
+		}else{
+            text.labels = {};
+        }
+        
+        if(/^\/me /.test(text.text)) {
+            text.text = text.replace(/^\/me /,"");
+            text.labels.action = 1;
+        }
+        
 		texts.put(text, function(err) {
 			recordCount++;
 			console.log(text.time+": record: "+recordCount);

@@ -163,6 +163,7 @@ function loadUser(action, callback) {
 				core.emit("getUsers", {id: uid(), session: action.session, ref: user.id, memberOf: action.to}, function(err, data) {
 					if(err || !data || !data.results || !data.results.length) {
 						action.user = user;
+                        if(!action.user.role) action.user.role = "registered";
 						callback();
 					}else {
 						action.user = data.results[0];
@@ -171,6 +172,7 @@ function loadUser(action, callback) {
 				});
 			}else{
 				action.user = user;
+                action.user.role = "guest";
 				callback();
 			}
 		}

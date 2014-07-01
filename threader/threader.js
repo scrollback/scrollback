@@ -123,7 +123,6 @@ function init(){
 	});
 
 	client.on('error', function(error){
-		log("Can not connect to java Process ", error);
 		setTimeout(function(){
 			init();	
 		},timeout);//try to reconnect after 1 min

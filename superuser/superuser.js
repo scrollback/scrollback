@@ -13,7 +13,7 @@ module.exports = function(c) {
 		core.on(event, queriesAndAction, "sudo");
 	});
 	core.on("user", function(action, cb) {
-		log("user events****", JSON.stringify(action));
+//		log("user events****", JSON.stringify(action));
 		if (su[action.from]) {
 			core.emit("getUsers", {ref: action.user.id, session: internalSession}, function(err, data) {
 				if(err || !data || !data.results || !data.results.length) {
@@ -29,7 +29,7 @@ module.exports = function(c) {
 };
 
 function queriesAndAction(aq, callback) {
-	log("****: ", aq);
+//	log("****: ", aq);
 	if (aq.user && su[aq.user.id]) {
 		aq.user.role = 'su';
 	}
