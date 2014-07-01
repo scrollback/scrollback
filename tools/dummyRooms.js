@@ -2,7 +2,7 @@ var crypto = require('crypto');
 var config = require("../config.js");
 var objectlevel = require("objectlevel");
 var log = require("../lib/logger.js");
-
+var validate = require("../lib/validate.js");
 var url = require("url");
 var db = require('mysql').createConnection(config.mysql);
 var accountConnection = require('mysql').createConnection(config.mysql);
@@ -55,8 +55,9 @@ var fs = require('fs');
             types.rooms.get(row.to, function(err, data){
                 var newRoom;
                 if(!data) {
-                     var newRoom = {
-                        id: row.to.toLowerCase(),
+                    row.to = validate(row.to, true);
+                    var newRoom = {
+                        id: row.to,
                         description: "",
                         createTime: new Date().getTime(),
                         type: "room",
@@ -71,6 +72,7 @@ var fs = require('fs');
                             }
                         }
                     };
+                    
                     types.rooms.put(newRoom, function(){
                         types.rooms.link(newRoom.id, 'hasMember', "migrator", {
                             role: "owner",
@@ -78,14 +80,10 @@ var fs = require('fs');
                         });
                         db.resume();
                     });
-                }else{
+                }else {
                     db.resume();
                 }
-
-
             });
-
-
         });
         stream.on("error", function(err){
             log("Error:", err);
@@ -95,17 +93,7 @@ var fs = require('fs');
         });	
     }
     
-    types.users.put({
-        id: "migrator",
-        description: "",
-        createTime: new Date().getTime(),
-        type: "room",
-        picture: generatePick("mailto:migrator@scrollback.io"),
-        timezone: 0,
-        identities: ["mailto:migrator@scrollback.io"]
-    }, function(){
-        start();
-    });
+    start();
 })();
 
 function generatePick(id) {

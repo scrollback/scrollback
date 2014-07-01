@@ -129,13 +129,13 @@ var threadEl = require("./thread.js"),
 		if(!state.old) {
 			room = state.roomName;
 			reset = true;
-		}else if(state.roomName && state.roomName != room) {
+		} else if(state.roomName && state.roomName != room) {
 			room = state.roomName;
 			reset = true;
-		}else if(state.query) {
+		} else if(state.old && state.old.query != state.query) {
 			reset = true;
 			search = state.query || "";
-		}else if(state.tab != state.old.tab && state.tab == "threads") {
+		} else if(state.tab != state.old.tab && state.tab == "threads") {
 			reset = true;
 		}
 
@@ -217,7 +217,7 @@ var threadEl = require("./thread.js"),
 				$("#thread-" + state.thread).addClass("current");
 				$("body").addClass('conv-' + state.thread.substr(-1));
 			} else{
-				$('.thread-all-conversations .thread-item').addClass('current');
+				$('.thread-all-conversations').addClass('current');
 			}
 		}
 

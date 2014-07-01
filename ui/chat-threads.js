@@ -114,11 +114,9 @@ $(function() {
     });
 
     $(window).on("resize", function() {
-        removeLine();
-
         setTimeout(function() {
             drawLine();
-        }, 500);
+        }, 1000);
     });
 
     $(document).on("keydown", function(e) {
@@ -186,6 +184,8 @@ $(function() {
 	};
 
 	$(document).on("click", ".chat-item", function() {
+        $(".chat-item").not(this).removeClass("active");
+
         $(this).toggleClass("active").selectMsg();
 	});
 

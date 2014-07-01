@@ -92,7 +92,7 @@ sock.on('connection', function (socket) {
 			if(data.type == 'back') {
 				/* this is need because we dont have the connection object
 				of the user in the rconn until storeBack is called*/
-				conn.send(data);
+				conn.send(censorAction(data, "room"));
 				storeBack(conn, data);
 				return;
 			}
@@ -129,11 +129,6 @@ sock.on('connection', function (socket) {
 			if(['getUsers', 'getTexts', 'getRooms', 'getThreads'].indexOf(data.type)>=0){
 				conn.send(data);
 			}
-
-			/* no need to send it back to the connection object when no error,
-                emit function will take care of that.
-				conn.send(data);
-			 */
 		});
 	});
 
@@ -220,8 +215,44 @@ exports.initCore = function(c) {
 	core.on('text', emit,"gateway");
 };
 
-function emit(action, callback) {
+function censorAction(action, filter) {
     var outAction = {}, i, j;
+    
+    for (i in action) {
+        if(action.hasOwnProperty(i)) {
+            if(i == "room" || i == "user") { 
+                outAction[i] = {};
+                for (j in action[i]) {
+                    if(action[i].hasOwnProperty(j)) {
+                        outAction[i][j] = action[i][j];
+                    }
+                }
+            }else {
+                outAction[i] = action[i];
+            }
+        }
+    }
+    
+    if(filter == 'both' || filter == 'user') {
+        outAction.user = {
+            id: action.user.id,
+            picture: action.user.picture,
+            createTime: action.user.createTime,
+            role: action.user.role,
+            type: 'user'
+        }
+    }
+    
+    if(filter == 'both' || filter == 'room') {
+        delete outAction.room.identities;
+        delete outAction.room.params;
+    }
+    
+    return outAction;
+}
+
+function emit(action, callback) {
+    var outAction;
     log("Sending out: ", action);
     function dispatch(conn, a) {conn.send(a); }
     
@@ -240,26 +271,7 @@ function emit(action, callback) {
         return callback();
 	}
     
-    for (i in action) {
-        if(action.hasOwnProperty(i)) {
-            if(i == "room" || i == "user") { 
-                outAction[i] = {};
-                for (j in action[i]) {
-                    if(outAction[i].hasOwnProperty(i)) {
-                        outAction[i][j] = action[i][j];
-                    }
-                }
-            }else {
-                outAction[i] = action[i];
-            }
-        }
-    }
-    
-    delete outAction.session;
-    delete outAction.user.identities;
-    delete outAction.room.identities;
-    delete outAction.room.params;
-    delete outAction.user.params;
+    outAction = censorAction(action, "both");
     
     if(rConns[action.to]) {
         rConns[action.to].forEach(function(e) {
@@ -267,6 +279,7 @@ function emit(action, callback) {
             else dispatch(e, outAction);
         });
     }
+    
 	if(callback) callback();
 }
 

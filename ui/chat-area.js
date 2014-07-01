@@ -89,6 +89,8 @@ $(function () {
 
 		if ($logs.data("lower-limit")) {
 			$logs.addBelow($newEl);
+
+			$newEl.get(0).scrollIntoView(true);
 		}
 
 		next();
@@ -138,7 +140,7 @@ $(function () {
 
 			if (typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
 				thread = state.thread;
-                time = 1;
+                time = thread? 1:null;
 				reset = true;
 			}
             if(/^conf-/.test(state.source)) {

@@ -8,7 +8,7 @@ $(".configure-button").on("click", function () {
     libsb.emit('navigate', {
         mode: "conf",
         source: "configure-button",
-        room: window.currentState.roomName
+        roomName: window.currentState.roomName
     });
 });
 
@@ -108,10 +108,7 @@ libsb.on('navigate', function (state, next) {
 				cancelEdit();
 				return next();
 			}
-//				console.log(data.results[0]);
-			if (!currentConfig) {
-				showConfig(data.results[0]);
-			}
+            showConfig(data.results[0]);
 		});
     }
 
