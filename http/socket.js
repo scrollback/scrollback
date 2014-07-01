@@ -245,7 +245,7 @@ function emit(action, callback) {
             if(i == "room" || i == "user") { 
                 outAction[i] = {};
                 for (j in action[i]) {
-                    if(outAction[i].hasOwnProperty(i)) {
+                    if(action[i].hasOwnProperty(j)) {
                         outAction[i][j] = action[i][j];
                     }
                 }

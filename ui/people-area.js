@@ -60,9 +60,9 @@ $(function() {
 					ppl[r[i].id].status = "online";
 				}
 
-				Object.keys(ppl).forEach(function(e) {
+				for (e in ppl) if(ppl.hasOwnProperty(e)) {
 					sorted.push(ppl[e]);
-				});
+				}
 
 				sorted.sort(function(a,b) {
 					return -(a.score-b.score);
