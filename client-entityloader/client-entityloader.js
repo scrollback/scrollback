@@ -15,6 +15,7 @@ module.exports = function() {
 				}else{
 					state.room = data.results[0];
                     currentState.room = state.room; // so is this... fix it.
+                    
 				}
 				next();
 			});
