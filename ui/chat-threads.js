@@ -21,15 +21,18 @@ $(function() {
             var $line = $(".chat-conv-line"),
                 $dots = $(".chat-item-dot, .chat-conv-dot");
 
-            $dots.velocity("stop")
-                 .velocity({
-                    scale: 1,
-                    opacity: 1,
-                    translateZ: 0
-                }, {
-                    duration: 150,
-                    backwards: true
-                });
+            if ($dots.data("animating")) {
+                $dots.data("animating", false)
+                     .velocity("stop")
+                     .velocity({
+                        scale: 1,
+                        opacity: 1,
+                        translateZ: 0
+                    }, {
+                        duration: 150,
+                        backwards: true
+                    });
+            }
 
             if ($line.length) {
                 $line.velocity("stop")
@@ -60,10 +63,12 @@ $(function() {
                     containertop = $container.offset().top;
 
                 $chatdot.not($dots).velocity("stop")
-                        .velocity({ scale: 1, opacity: 0.3, translateZ: 0 }, { duration: 300, drag: true });
+                        .velocity({ scale: 1, opacity: 0.3, translateZ: 0 }, { duration: 300, drag: true })
+                        .data("animating", true);
 
                 $dots.velocity("stop")
-                     .velocity({ scale: [ 1.5, 1 ], opacity: 1, translateZ: 0 }, { duration: 450, drag: true });
+                     .velocity({ scale: [ 1.5, 1 ], opacity: 1, translateZ: 0 }, { duration: 450, drag: true })
+                     .data("animating", true);
 
                 if (!$line.length) {
                     $line = $("<div>").addClass("chat-conv-line").attr("data-mode", "normal");
