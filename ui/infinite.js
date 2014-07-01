@@ -11,7 +11,8 @@
 			getItems = options.getItems;
 
 		if(typeof getItems !== 'function') console.error("Infinite scroll requires a getItems callback.");
-
+        
+        $(this).data("options", options);
 		$(this).empty();
 		$(this).each(function() {
 			var $logs = $(this),
@@ -209,10 +210,15 @@
 	}; /* end $.fn.infinite */
 
 	$.fn.reset = function(index) {
-		var $logs = $(this);
+		var $logs = $(this),
+            options = $logs.data("options");
+        
 		$logs.find(".infinite-items").empty();
-		$logs.data("lower-limit", false).children(".infinite-above").removeClass("upper-limit");
-		$logs.data("upper-limit", false).children(".infinite-below").removeClass("lower-limit");
+		$logs.data("lower-limit", false).children(".infinite-above").removeClass("upper-limit").height("inherit");
+		$logs.data("upper-limit", false).children(".infinite-below").removeClass("lower-limit").height("inherit");
+        
+        // try '', null instead of inherit, final option is options.scrollSpace;
+        
 		if(typeof index !== undefined) $logs.data("index", index);
 		$logs.scrollTop(($logs.prop('scrollHeight') - $logs.height())/2);
 		$logs.data("update-infinite")();

@@ -45,7 +45,10 @@ sock.on('connection', function (socket) {
 		if (!d.type) return;
 		d.returned = "yes";
 		if(d.type == 'init' && d.session) {
-			if(d.session == internalSession) return;
+//			if(d.session == internalSession) return;
+            if(!/^web:/.test(init.session)) {
+				return conn.send({type: 'error', id: d.id, message: "INVALID_SESSION"});
+            }
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
 			if (!sConns[d.session]) {
