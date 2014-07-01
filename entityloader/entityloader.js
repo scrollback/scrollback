@@ -178,7 +178,7 @@ function loadUser(action, callback) {
 }
 
 function loadRoom(action, callback) {
-	core.emit("getRooms",{id: uid(), ref: action.to, session: action.session}, function(err, rooms) {
+	core.emit("getRooms",{id: uid(), ref: action.to, session: internalSession}, function(err, rooms) {
 		var room;
 		if(err || !rooms ||!rooms.results || !rooms.results.length) {
 			if(action.type != "room") {

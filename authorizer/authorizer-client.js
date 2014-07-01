@@ -1,5 +1,6 @@
 /* global libsb, $ */
 var formField = require("../lib/formField.js");
+var lace = require('../lib/lace.js');
 
 libsb.on('config-show', function(tabs, next){
 	var room = tabs.room;
@@ -35,7 +36,7 @@ libsb.on('config-show', function(tabs, next){
 	}
 
 	var div = $('<div>').append(
-		formField('Who can read messages?', 'radio', "authorizer-read",[['authorizer-read-guest', 'Anyone (Public)', guestPermRead], ['authorizer-read-users', 'Logged in users', registeredPermRead], ['authorizer-read-followers', 'Followers', followerPermRead]]),
+//		formField('Who can read messages?', 'radio', "authorizer-read",[['authorizer-read-guest', 'Anyone (Public)', guestPermRead], ['authorizer-read-users', 'Logged in users', registeredPermRead], ['authorizer-read-followers', 'Followers', followerPermRead]]),
 		formField('Who can post messages?', 'radio', "authorizer-write",[['authorizer-post-guest', 'Anyone (Public)', guestPermWrite], ['authorizer-post-users', 'Logged in users', registeredPermWrite], ['authorizer-post-followers', 'Followers', followerPermWrite]])
 	);
 
@@ -53,7 +54,7 @@ libsb.on('config-save', function(room, next){
 		users: 'registered',
 		followers: 'follower'
 	};
-	var readLevel = mapRoles[$('input:radio[name="authorizer-read"]:checked').attr('id').substring(16)];
+	var readLevel = 'guest';//mapRoles[$('input:radio[name="authorizer-read"]:checked').attr('id').substring(16)];
 	var writeLevel = mapRoles[$('input:radio[name="authorizer-write"]:checked').attr('id').substring(16)];
     if(!room.guides) room.guides = {};
 
@@ -63,3 +64,10 @@ libsb.on('config-save', function(room, next){
 	};
 	next();
 }, 500);
+
+libsb.on('error-dn', function(error, next){
+	if(error.message === "ERR_NOT_ALLOWED"){
+		lace.alert.show({type: "error", body: "You are not allowed to perfom this action!"});
+	}
+	next();
+}, 1000);

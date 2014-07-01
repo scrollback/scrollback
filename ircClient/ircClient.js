@@ -153,7 +153,7 @@ function partBot(roomId, callback) {
         return callback();
     }
 	var users = servChanProp[room.params.irc.server][channel].users;
-	log("users", users, ", servNick", servNick);
+	//log("users", users, ", servNick", servNick);
 	users.forEach(function(user) {
 		if(servNick[server][user].dir === 'out') {
 			var sbNick = servNick[server][user].nick;
@@ -310,20 +310,6 @@ function onLeave(client) {
 }
 
 function left(client, channels, nick) {
-	if (client.nick === nick) {//My nick leaving the channel
-		servChanCount[client.opt.server]--;
-		if (servChanCount[client.opt.server] === 0) {
-			client.disconnect();
-			delete clients[nick][client.opt.server];		
-		}
-		//setTimeout(function() {
-		//	if (client.opt.channels.length === 0) {
-		//		console.log("client disconnected from all channels ****", channels);
-		//		
-		//	}
-		//}, 60 * 1000);
-	}
-	
 	if (connected) {
 		sendAway(client.opt.server, channels, nick, client.nick);
 	} else {
@@ -334,6 +320,13 @@ function left(client, channels, nick) {
 			nick: nick,
 			bn : client.nick
 		});
+	}
+	if (client.nick === nick) {//My nick leaving the channel
+		servChanCount[client.opt.server]--;
+		if (servChanCount[client.opt.server] === 0) {
+			client.disconnect();
+			delete clients[nick][client.opt.server];		
+		}
 	}
 }
 
@@ -405,6 +398,7 @@ function sendBack(server, channel, nick, bn) {
 	log("server: ", server, " channel:", channel, "nick: ", nick);
 	channel = channel.toLowerCase();
 	if (!servChanProp[server] || !servChanProp[server][channel]) {
+		console.log("This should not happen" );
 		return;
 	}
 	var room = servChanProp[server][channel].room;
