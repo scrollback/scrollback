@@ -3,6 +3,7 @@ var config = require("../config.js");
 var objectlevel = require("objectlevel");
 var log = require("../lib/logger.js");
 var generate = require("../lib/generate.js");
+var validate = require("../lib/validate.js");
 var fs = require('fs');
 var url = require("url");
 var db = require('mysql').createConnection(config.mysql);
@@ -47,7 +48,8 @@ function migrateTexts(limit, cb) {
 	stream.on("result", function(text) {
 		db.pause();
 		text.type = "text";
-
+        text.to = validate(text.to, true);
+        text.from = validate(text.from, true);
 		text.threads = [];
 		if(text.labels) {
 			l = fixLabels(text);
@@ -95,7 +97,7 @@ function migrateTexts(limit, cb) {
         }
         
         if(/^\/me /.test(text.text)) {
-            text.text = text.replace(/^\/me /,"");
+            text.text = text.text.replace(/^\/me /,"");
             text.labels.action = 1;
         }
         
@@ -196,11 +198,14 @@ function migrateRooms(cb) {
                 console.log(err);
                 return;
 			}
+            
 			if(!data.length && room.type == "user") {
 				db.resume();
 				console.log("USER WITH NO A/C");
 				return;
 			}
+            
+            room.id = validate(room.id, true);
 			var newRoom = {
 				id: room.id,
 				description: room.description,
@@ -280,7 +285,7 @@ function migrateRooms(cb) {
                 newRoom.guides.authorizer.readLevel = "guest";
                 newRoom.guides.authorizer.openFollow = true;
                 if(typeof newRoom.params.loginrequired !== "undefined") {
-                    newRoom.guides.authorizer.writeLevel = newRoom.params.loginrequired? "follower" : "guest";
+                    newRoom.guides.authorizer.writeLevel = newRoom.params.loginrequired? "registered" : "guest";
                     delete newRoom.params.loginrequired;
                 }
                 
@@ -298,12 +303,22 @@ function migrateRooms(cb) {
 				types.rooms.put(newRoom, function(){
 					if (err) console.log(err);
 					owners[room.id] = room.owner;
-					types.rooms.link(room.id, 'hasMember', room.owner, {
-						role: "owner",
-						time: newRoom.createdOn
-					}, function(){
-						db.resume();
-					});
+                    if(room.id === room.owner) {
+                        types.rooms.link(room.id, 'hasMember', "migrator", {
+                            role: "owner",
+                            time: newRoom.createdOn
+                        }, function(){
+                            db.resume();
+                        });
+                    }else{
+                        types.rooms.link(room.id, 'hasMember', room.owner, {
+                            role: "owner",
+                            time: newRoom.createdOn
+                        }, function(){
+                            db.resume();
+                        });
+                    }
+					
 				});
 			}
 		});
@@ -342,12 +357,23 @@ function migrateMembers(cb){
 	leveldb = new objectlevel(process.cwd()+"/leveldb-storage/"+config.leveldb.path);
 	types = require("../leveldb-storage/types/types.js")(leveldb);
     texts = require("../leveldb-storage/schemas/text.js")(types);
-	migrateRooms(function(){
-		migrateMembers(function(){
-            migrationStart();
+    types.users.put({
+        id: "migrator",
+        description: "",
+        createTime: new Date().getTime(),
+        type: "room",
+        picture: generatePick("mailto:migrator@scrollback.io"),
+        timezone: 0,
+        identities: ["mailto:migrator@scrollback.io"]
+    }, function(){
+        migrateRooms(function() {
+            migrateMembers(function() {
+                migrationStart();
+            });
         });
-	});
+    });
 })();
+
 function generatePick(id) {
 	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=monsterid';
 }
