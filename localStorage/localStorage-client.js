@@ -1,5 +1,5 @@
 /* global localStorage */
-/* global $, libsb, location, window */
+/* global $, libsb, location, window, timeoutMapping */
 var ArrayCache = require('./ArrayCache.js');
 var generate = require('../lib/generate');
 var cache = {}, core;
@@ -8,6 +8,8 @@ var messageListener = false;
 var domain = location.host;
 var path = location.pathname;
 var config = require('../client-config.js');
+
+window.timeoutMapping = {};
 
 (function clearLS(){
 	var version = 'version' + config.localStorage.version;
@@ -173,6 +175,25 @@ module.exports = function(c){
 	
 	}, 400); // run before socket
 
+	function delRoomTimeOut(roomId){
+		
+		/*
+		this function deletes a saved room from the cache every 'n' mintues
+		*/
+		
+		var minutes = 10; // 10 minutes timeout
+		
+		clearTimeout(timeoutMapping[roomId]);
+		
+		(function(){
+			timeoutMapping[roomId] = setTimeout(function(){
+				if(cache && cache.rooms) delete cache.rooms[roomId];	
+			}, minutes*60*1000);
+		})();
+		
+	}
+	
+	
 	core.on('getRooms', function(query, next){
 
 		if(!query.ref){
@@ -183,20 +204,10 @@ module.exports = function(c){
 
 		rooms = cache.rooms? cache.rooms : {};
 		
-		function deleteOnTimeOut(roomId){
-			// have to maintain closure for roomId, in case of multiple room timeouts!
-			(function(){
-				setTimeout(function(){
-					delete rooms[roomId];	
-					cache.rooms = rooms;
-				}, 10*60*1000); // serve room object from cache for 10 minutes
-			})();
-		}
-		
 		if(query.results){
 			query.results.forEach(function(room){
 				rooms[room.id] = room;
-				deleteOnTimeOut(room.id);
+				delRoomTimeOut(room.id);
 			});
 		}
 
@@ -213,6 +224,39 @@ module.exports = function(c){
 		next();
 	}, 500); // storing new texts to cache.
 	
+	core.on('room-dn', function(room, next){
+		var roomObj = room.room;
+		if(cache){
+			cache.rooms = cache.rooms ? cache.rooms : {};
+			cache.rooms[roomObj.id] = roomObj;
+			delRoomTimeOut(roomObj.id);
+		}
+		next();
+	}, 500);
+	
+	core.on('init-dn', function(init, next){
+		cache.user = init.user;
+		cache.occupantOf = init.occupantOf;
+		cache.memberOf = init.memberOf;
+		
+		// caching occupantOf and memberOf to cache.rooms
+		
+		cache.rooms = cache.rooms ? cache.rooms : {};
+		
+		init.memberOf.forEach(function(room){
+			cache.rooms[room.id] = room;
+			delRoomTimeOut(room.id);
+		});
+		
+		init.occupantOf.forEach(function(room){
+			cache.rooms[room.id] = room;
+			delRoomTimeOut(room.id);
+		});
+		
+		save();
+		next();
+	}, 500);
+	
 	core.on('connected', function(){
 		var sid;
 		if(!cache) cache = {};
@@ -222,15 +266,6 @@ module.exports = function(c){
 			libsb.session = cache.session;
 		} 
 		core.emit('init-up', {session: sid});
-	}, 500);
-	
-	core.on('init-dn', function(init, next){
-		cache.user = init.user;
-		cache.rooms = init.rooms;
-		cache.occupantOf = init.occupantOf;
-		cache.memberOf = init.memberOf;
-		save();
-		next();
 	}, 500);
 	
 	core.on('away-up', function(away, next){
@@ -274,18 +309,8 @@ module.exports = function(c){
 		}
 		
 	}, 1000);
-	core.on('init-dn', recvInit, 900);
 	core.on('logout', logout, 1000);
 };
-
-function recvInit(init, next){
-	cache.user = init.user;
-	cache.rooms = init.rooms;
-	cache.occupantOf = init.occupantOf;
-	cache.memberOf = init.memberOf;
-	save();
-	next();
-}
 
 function createInit(){
 	var sid;
@@ -311,6 +336,7 @@ function logout(p,n){
 	delete cache.user;
 	delete libsb.session;
 	delete libsb.user;
+	localStorage.clear(); // clear LocalStorage on logout for security reasons
 	save();
 	n();
 }
