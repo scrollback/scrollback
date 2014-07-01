@@ -35,11 +35,11 @@ ArrayCache.prototype.put = function(data) {
 			start = this.find(startTime),
 			end = this.find(endTime);
 		
-		while (data[0].endtype && data[0].endtype == 'time' && this.d[start-1] && this.d[start-1].time == startTime) {
+		while (/* data[0].endtype && data[0].endtype == 'time' && */this.d[start-1] && this.d[start-1].time == startTime) {
 			start--;
 		}
 		
-		while (data[data.length-1].endtype && data[data.length-1].endtype == 'time' && this.d[end] && this.d[end].time == endTime) {
+		while (/* data[data.length-1].endtype && data[data.length-1].endtype == 'time' && */ this.d[end] && this.d[end].time == endTime) {
 			end++;
 		}
 		
