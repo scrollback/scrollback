@@ -138,7 +138,7 @@ $(function () {
 
 			if (typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
 				thread = state.thread;
-                time = 1;
+                time = thread? 1:null;
 				reset = true;
 			}
             if(/^conf-/.test(state.source)) {
