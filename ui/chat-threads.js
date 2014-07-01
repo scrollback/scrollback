@@ -24,7 +24,8 @@ $(function() {
             $dots.velocity("stop")
                  .velocity({
                     scale: 1,
-                    opacity: 1
+                    opacity: 1,
+                    translateZ: 0
                 }, {
                     duration: 150,
                     backwards: true
@@ -34,7 +35,9 @@ $(function() {
                 $line.velocity("stop")
                      .velocity({
                         translateY: ( $line.height() / 2 ),
-                        scaleY: 0, opacity: 0
+                        translateZ: 0,
+                        scaleY: 0,
+                        opacity: 0
                     }, {
                         duration: 150,
                         backwards: true
@@ -57,10 +60,10 @@ $(function() {
                     containertop = $container.offset().top;
 
                 $chatdot.not($dots).velocity("stop")
-                                  .velocity({ scale: 1, opacity: 0.3 }, { duration: 300, drag: true });
+                        .velocity({ scale: 1, opacity: 0.3, translateZ: 0 }, { duration: 300, drag: true });
 
                 $dots.velocity("stop")
-                    .velocity({ scale: [ 1.5, 1 ], opacity: 1 }, { duration: 450, drag: true });
+                     .velocity({ scale: [ 1.5, 1 ], opacity: 1, translateZ: 0 }, { duration: 450, drag: true });
 
                 if (!$line.length) {
                     $line = $("<div>").addClass("chat-conv-line").attr("data-mode", "normal");
@@ -70,7 +73,8 @@ $(function() {
                 $line.css({
                     top: ((top < containertop) ? containertop : top),
                     left: left,
-                    bottom: bottom
+                    bottom: bottom,
+                    translateZ: 0
                 });
 
                 $line.velocity("stop")
@@ -83,23 +87,19 @@ $(function() {
         };
 
     libsb.on("navigate", function(state, next) {
-        if (state && state.source !== "chat-area") {
-            removeLine();
+        if (state.old && (state.old.time !== state.time || state.old.view !== state.view || state.old.thread !== state.thread)) {
+            setTimeout(function() {
+                drawLine();
+            }, 1000);
         }
-
-        setTimeout(function() {
-            drawLine();
-        }, 500);
 
         next();
     }, 50);
 
     $(window).on("resize", function() {
-        removeLine();
-
         setTimeout(function() {
             drawLine();
-        }, 500);
+        }, 1000);
     });
 
     $(document).on("keydown", function(e) {
