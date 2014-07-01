@@ -211,8 +211,8 @@
 	$.fn.reset = function(index) {
 		var $logs = $(this);
 		$logs.find(".infinite-items").empty();
-		$logs.data("lower-limit", false).removeClass("upper-limit");
-		$logs.data("upper-limit", false).removeClass("lower-limit");
+		$logs.data("lower-limit", false).children(".infinite-above").removeClass("upper-limit");
+		$logs.data("upper-limit", false).children(".infinite-below").removeClass("lower-limit");
 		if(typeof index !== undefined) $logs.data("index", index);
 		$logs.scrollTop(($logs.prop('scrollHeight') - $logs.height())/2);
 		$logs.data("update-infinite")();

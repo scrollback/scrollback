@@ -225,6 +225,7 @@ $(function () {
 		if (chatArea.getPosition.value === 0) {
 			time = null;
 		}
+
         libsb.emit('navigate', { time: time, source: 'text-area' });
 	});
 
