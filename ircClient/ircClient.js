@@ -152,9 +152,9 @@ function partBot(roomId, callback) {
 		delete servChanProp[server][channel];
         return callback();
     }
-	var users = servChanProp[room.params.irc.server][channel].users;
+	var users = servChanProp[server] && servChanProp[server][channel] && servChanProp[room.params.irc.server][channel].users;
 	//log("users", users, ", servNick", servNick);
-	users.forEach(function(user) {
+	if(users) users.forEach(function(user) {
 		if(servNick[server][user].dir === 'out') {
 			var sbNick = servNick[server][user].nick;
 			clients[sbNick][server].part(channel);
