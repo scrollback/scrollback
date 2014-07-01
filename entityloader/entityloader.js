@@ -231,6 +231,7 @@ function initializerUser(action, callback) {
 
 function generateNick(suggestedNick, callback) {
 	if(!suggestedNick) suggestedNick = names(6);
+    suggestedNick = suggestedNick.toLowerCase();
 	function checkUser(suggestedNick, attemptC ,callback) {
 		var trying = suggestedNick;
 		if(attemptC) trying+=attemptC;
