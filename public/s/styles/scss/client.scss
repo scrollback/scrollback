@@ -1030,6 +1030,16 @@ body {
         .chat-timestamp { color: fade-out($dark-color, .3); }
 	}
 
+    &.chat-error-not-sent {
+        &:after {
+            content: "";
+            height: 1.5em;
+            width: 1.5em;
+            float: right;
+            background: url(../../img/client/icons/error-icon.svg) no-repeat center center;
+        }
+    }
+
 	&.chat-mark-long {
 		@extend %ease;
 
