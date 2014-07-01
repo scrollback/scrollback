@@ -15,7 +15,7 @@ $(function() {
 
             removeLine();
 
-            $(".chat-item").removeClass("current active").data("selected", false);
+            $(".chat-item").removeClass("current").data("selected", false);
         },
         removeLine = function() {
             var $line = $(".chat-conv-line"),
@@ -36,7 +36,7 @@ $(function() {
                         translateY: ( $line.height() / 2 ),
                         scaleY: 0, opacity: 0
                     }, {
-                        duration: 300,
+                        duration: 150,
                         backwards: true
                     }, function() {
                         $(this).remove();
@@ -83,9 +83,13 @@ $(function() {
         };
 
     libsb.on("navigate", function(state, next) {
+        if (state && state.source !== "chat-area") {
+            removeLine();
+        }
+
         setTimeout(function() {
             drawLine();
-        }, 300);
+        }, 500);
 
         next();
     }, 50);
@@ -157,7 +161,7 @@ $(function() {
 	};
 
 	$(document).on("click", ".chat-item", function() {
-		$(this).selectMsg();
+        $(this).toggleClass("active").selectMsg();
 	});
 
 	$(document).on("keydown", function(e){
@@ -227,10 +231,6 @@ $(function() {
 
 		next();
 	}, 50);
-
-	$(document).on("click", ".chat-item", function() {
-		$(this).toggleClass("active");
-	});
 
 	$(document).on("click", ".chat-conv-dot-wrap", function() {
 		resetConv();

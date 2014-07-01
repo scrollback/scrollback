@@ -172,7 +172,7 @@ libsb.on("navigate", function(state, next) {
 			state.view = "normal";
 		}
 
-		if (state.source == "init" || state.source == "text-area") {
+		if (state.source == "init" || state.source == "chat-area") {
             history.replaceState(state, null, url);
 			return;
 		}
