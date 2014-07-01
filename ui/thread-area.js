@@ -217,7 +217,7 @@ var threadEl = require("./thread.js"),
 				$("#thread-" + state.thread).addClass("current");
 				$("body").addClass('conv-' + state.thread.substr(-1));
 			} else{
-				$('.thread-all-conversations .thread-item').addClass('current');
+				$('.thread-all-conversations').addClass('current');
 			}
 		}
 

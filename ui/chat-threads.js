@@ -184,6 +184,8 @@ $(function() {
 	};
 
 	$(document).on("click", ".chat-item", function() {
+        $(".chat-item").not(this).removeClass("active");
+
         $(this).toggleClass("active").selectMsg();
 	});
 

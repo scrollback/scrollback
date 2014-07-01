@@ -493,18 +493,30 @@ body {
 	}
 }
 
+.pane-threads-wrap {
+    @include flexbox;
+    @include flex-direction(column);
+    @include flex-wrap(nowrap);
+    @include align-items(stretch);
+    @include align-content(stretch);
+
+    height: 100%;
+}
+
 .thread-search-query {
     padding: 1em 1.5em;
     background-color: fade-out($info-color, .7);
     font-size: 1.2em;
 }
 
-.thread-search-query, .thread-all-conversations { box-shadow: 0 3px 2px -1px rgba(0,0,0,.1); }
+.thread-search-query, .thread-all-conversations {
+    box-shadow: 0 3px 2px -1px rgba(0,0,0,.1);
+}
 
 .thread-item-container {
-    @extend %scroll-elem;
+    @include flex-grow(1);
 
-    padding-bottom: $bar-height * 1.5;
+    @extend %scroll-elem;
 }
 
 .thread-item {
