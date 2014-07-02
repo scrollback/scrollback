@@ -215,8 +215,6 @@ $(function () {
 			}
 		}
 
-		$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
-
 		chatArea.getPosition.value = chatArea.getPosition();
 
 		if (chatArea.getPosition.value === 0) {
@@ -225,6 +223,14 @@ $(function () {
 
         libsb.emit('navigate', { time: time, source: 'chat-area' });
 	});
+
+	libsb.on("navigate", function(state, next) {
+		if (state.old && state.time !== state.old.time) {
+			$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
+		}
+
+		next();
+	}, 50);
 
 	setInterval(function() {
 		$(".chat-timestamp").each(function() {

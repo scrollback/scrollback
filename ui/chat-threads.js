@@ -92,12 +92,18 @@ $(function() {
         };
 
     libsb.on("navigate", function(state, next) {
-        if (state.old && (state.old.view !== state.view || state.old.thread !== state.thread)) {
+        if (state.old && (state.old.view !== state.view ||
+                          state.old.thread !== state.thread ||
+                          state.old.mode !== state.mode ||
+                          state.old.room !== state.room
+                          )) {
             removeLine();
 
-            setTimeout(function() {
-                drawLine();
-            }, 500);
+            if (state.mode === "normal") {
+                setTimeout(function() {
+                    drawLine();
+                }, 500);
+            }
         }
 
         next();

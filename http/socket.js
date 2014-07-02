@@ -155,7 +155,7 @@ function storeInit(conn, init) {
 		uConns[init.user.id].push(c);
 
 		init.occupantOf.forEach(function(room) {
-			if(init.old) {
+			if(init.old && urConns[init.old.id+":"+room.id]) {
 				index = urConns[init.old.id+":"+room.id].indexOf(c);
 				urConns[init.old.id+ ":"+ room.id].splice(index, 1);
 			}

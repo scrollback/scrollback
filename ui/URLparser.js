@@ -1,6 +1,6 @@
 /* jshint browser: true */
 /* global $, libsb */
-
+var validate = require("../lib/validate.js");
 module.exports = function() {
 	$(function(){
 		var path  = window.location.pathname.substr(1),
@@ -36,7 +36,7 @@ module.exports = function() {
 				state.mode = "home";
 			}
 		} else {
-			state.roomName = path[0].toLowerCase();
+			state.roomName =  validate(path[0], true);
 
 			if (path[1] == "edit") {
 				state.mode = "conf";
