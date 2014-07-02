@@ -38,6 +38,7 @@ module.exports = function (core) {
                                 messageCount++;
                                 if(messageCount >=5) {
                                     indexTexts();
+                                    messageCount = 0;
                                 }
                             });
                         }
