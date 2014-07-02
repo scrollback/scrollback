@@ -3,17 +3,33 @@
 (function() {
 	document.onreadystatechange = function() {
 		var config = require("../client-config.js");
-
+        function validate(r, santize){
+            var room;
+            if(!r) r = "";
+            room = r;
+            room = room.toLowerCase();
+            room = room.trim();
+            room = room.replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
+            if(room=='img'||room=='css'||room=='sdk') room = "scrollback";
+            if(!room) { room = "scrollback";}
+            else{
+                if(room.length<3) room=room+Array(4-room.length).join("-");	
+            }
+            room = room.substring(0,32);
+            if(santize) return room;
+            else return room === r;
+        }
 		if (document.readyState === "complete") {
 			// Variables
 			var room = window.scrollback.room || ((window.scrollback.streams && window.scrollback.streams.length) ? window.scrollback.streams[0] : "scrollback"),
 				embed = window.scrollback.embed || "toast",
-				theme = window.scrollback.theme || "dark",
+				theme = /* window.scrollback.theme || */ "dark",
 				minimize = window.scrollback.minimize || false,
 				host = config.server.protocol + config.server.host,
 				style,
 				iframe;
 
+            room = validate(room, true);
 			// Insert required styles
 			style = document.createElement("link");
 			style.rel = "stylesheet";
@@ -24,7 +40,7 @@
 			// Create and append the iframe
 			iframe = document.createElement("iframe");
 			iframe.src = host + "/" + room + "?embed=" + embed + "&theme=" + theme + "&minimize=" + minimize;
-			iframe.className = "scrollback-stream";
+			iframe.className = "scrollback-stream " + (minimize? 'minimized': '');
 			document.body.appendChild(iframe);
 
 			// Add event listeners for post message
@@ -35,18 +51,12 @@
 			// Listen to message from child iframe
 			eventListener(messageEvent, function(e) {
 				if (e.origin === host) {
-					if (e.data === "minimize" || e.data === "maximize") {
-						var styleClass = "minimized",
-							classString = iframe.className,
-							nameIndex = classString.indexOf(styleClass);
-
-						if (e.data === "minimize") {
-							classString += " " + styleClass;
-						} else if (nameIndex !== -1 && e.data === "maximize") {
-							classString = classString.substr(0, nameIndex) + classString.substr(nameIndex + styleClass.length);
-						}
-
-						iframe.className = classString.trim();
+					console.log('Got message', e);
+					var minReg = /\bminimized\b/;
+					if (e.data === "minimize" && !minReg.test(iframe.className)) {
+						iframe.className = iframe.className + ' minimized';
+					} else if(e.data === "maximize") {
+						iframe.className = iframe.className.replace(minReg, '').trim();
 					} else if (e.data === "getDomain") {
 						iframe.contentWindow.postMessage(JSON.stringify({ location: window.location }), host);
 					}
