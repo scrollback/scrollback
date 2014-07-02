@@ -226,7 +226,9 @@ $(function () {
 
 	libsb.on("navigate", function(state, next) {
 		if (state.old && state.time !== state.old.time) {
-			$(".chat-position").text(format.friendlyTime(time, new Date().getTime()));
+			if (state.time) {
+				$(".chat-position").text(format.friendlyTime(state.time, new Date().getTime()));
+			}
 		}
 
 		next();
