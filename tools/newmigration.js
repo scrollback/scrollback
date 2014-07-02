@@ -43,10 +43,15 @@ function generateThreaderId(id){
 
 
 function migrateTexts(limit, cb) {
-	var stream, lastIndex = 0, l;
-	stream = db.query("select * from text_messages where `time` > "+startingTime+" order by `time` limit 1000");
-	stream.on("result", function(text) {
-		db.pause();
+	var l;
+	db.query("select * from text_messages where `time` > "+startingTime+" order by `time` limit 1000", function(err, results) {
+        if(err) throw err;
+        storeIndex(startingTime - 1000);
+        results.forEach(insertText);
+        cb();
+    });
+    
+	function insertText(text) {
 		text.type = "text";
         text.to = validate(text.to, true);
         text.from = validate(text.from, true);
@@ -92,7 +97,7 @@ function migrateTexts(limit, cb) {
 					});
 				});
 			}
-		}else{
+		} else {
             text.labels = {};
         }
         
@@ -100,36 +105,30 @@ function migrateTexts(limit, cb) {
             text.text = text.text.replace(/^\/me /,"");
             text.labels.action = 1;
         }
-        
+        startingTime = text.time;
 		texts.put(text, function(err) {
 			recordCount++;
 			console.log(text.time+": record: "+recordCount);
-			startingTime = text.time;
-			lastIndex = startingTime;
-			if(err) {
-				db.resume();
-			}else{
-				db.resume();
-			}
 		});
-	});
-	stream.on("error", function(err){
-        console.log(err);
-		done();
-	});
-
-	stream.on('end', function() {
-        console.log("ended");
-		done();
-	});
-//	db.end();
-
-	function done() {
-		storeIndex(startingTime);
-		setTimeout(function(){
-			if(cb) cb();
-		}, 1000);
 	}
+    
+//	stream.on("error", function(err){
+//        console.log(err);
+//		done();
+//	});
+//
+//	stream.on('end', function() {
+//        console.log("ended");
+//		done();
+//	});
+////	db.end();
+//
+//	function done() {
+//		storeIndex(startingTime);
+//		setTimeout(function(){
+//			if(cb) cb();
+//		}, 1000);
+//	}
 }
 
 function migrationStart() {
