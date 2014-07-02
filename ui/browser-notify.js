@@ -82,18 +82,25 @@ var browserNotify = (function() {
 }());
 
 libsb.on('text-dn', function(text, next) {
-	if (text.mentions.indexOf(libsb.user.id) > -1) {
-		browserNotify(text, true);
+    if (libsb.user && libsb.user.params && libsb.user.params.notifications &&
+        text.mentions && text.mentions.indexOf(libsb.user.id) > -1) {
+        if (libsb.user.params.notifications.sound) {
+            browserNotify(text, true);
+        } else {
+            browserNotify(text, false);
+        }
 
-		desktopnotify.show({
-			title: "New mention on " + text.to,
-			body: text.from + ": " + text.text,
-			icon: "s/img/scrollback.png",
-			tag: text.id,
-			action: function() {
-				libsb.emit("navigate", { room: text.to, time: text.time });
-			}
-		});
+        if (libsb.user.params.notifications.desktop) {
+            desktopnotify.show({
+                title: "New mention on " + text.to,
+                body: text.from + ": " + text.text,
+                icon: "s/img/scrollback.png",
+                tag: text.id,
+                action: function() {
+                    libsb.emit("navigate", { room: text.to, time: text.time });
+                }
+            });
+        }
 	} else {
 		browserNotify(text, false);
 	}
