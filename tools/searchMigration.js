@@ -43,10 +43,10 @@ var client = new es.Client({
 
     		newThread.id = thread.id;
     		newThread.room = thread.to;
+            
     		texts.forEach(function(t) {
     			newThread[t.id] = t.text;
     		});
-
     		postData.body.push({
                 index: {
                     _index: 'sb',
@@ -55,8 +55,10 @@ var client = new es.Client({
                 }
             });
             postData.body.push(newThread);
+            postData.timeout = 28164102982;
+            console.log();
     		client.bulk(postData, function(err, resp) {
-    			console.log(err, resp);
+                console.log("thread "+newThread.id+ ": with " +texts.length+ " messages Took "+resp.took); //i dont care abt grammer
 	            callback();
 	        });
     		
