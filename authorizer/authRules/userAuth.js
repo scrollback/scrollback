@@ -20,9 +20,11 @@ module.exports = function(core){
 	
 	core.on('user', function(action, callback){
 		if(action.user.role === "none"){
-			if(/^guest-/.test(action.user.id)) action.user.role = 'guest';
-		}else{
-			action.user.role = "registered";	
+			if(/^guest-/.test(action.user.id)){
+				action.user.role = "guest";
+			}else{
+				action.user.role = "registered";
+			}
 		}
 		if(action.user.role === "guest") return callback(new Error('ERR_NOT_ALLOWED'));
 		if(!action.old || !action.old.id) return callback();

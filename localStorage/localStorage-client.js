@@ -98,11 +98,10 @@ function save(){
 	}
 //})();
 
-libsb.on('navigate', function(state, next) {
-	if(state.roomName && state.roomName != state.old.roomName) {
-		var key = generateLSKey(state.roomName, 'texts');
-		cache[key] = loadArrayCache(key);
-	}
+libsb.on('back-dn', function(back, next) {
+	var key = generateLSKey(back.to, 'texts');
+	console.log("Loading room to cahce ", key);
+	cache[key] = loadArrayCache(key);
 	next();
 }, 500);
 

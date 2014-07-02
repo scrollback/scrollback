@@ -1,12 +1,14 @@
 module.exports = function(core){
 	core.on('join', function(action, callback){
+		if(action.user.role === "none"){
+			if(/^guest-/.test(action.user.id)){
+				action.user.role = "guest";
+			}else{
+				action.user.role = "registered";
+			}
+		}
 		if(!action.room.guides) action.room.guides = {openFollow: true};
 		if(!action.room.guides.openFollow) action.room.guides.openFollow = true;
-		if(action.user.role === "none"){
-			if(/^guest-/.test(action.user.id)) action.user.role = 'guest';
-		}else{
-			action.user.role = "registered";	
-		} 
 		if(!action.user.role) action.user.role = "registered";
 		if(!action.user.requestedRole) action.user.requestedRole = "";
 		if(!action.user.invitedRole) action.user.invitedRole = "";
