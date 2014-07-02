@@ -99,7 +99,7 @@ $(function() {
                           )) {
             removeLine();
 
-            if (state.mode === "normal") {
+            if (state.mode === "normal" || state.view === "normal") {
                 setTimeout(function() {
                     drawLine();
                 }, 500);
