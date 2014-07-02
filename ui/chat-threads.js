@@ -4,7 +4,7 @@
 $(function() {
     var $container = $(".chat-area"),
         $entry = $(".chat-entry"),
-        lastMsg, currMsg, currThread,
+        lastMsg, currMsg, currThread, autoText,
         resetConv = function() {
             var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
 
@@ -131,7 +131,7 @@ $(function() {
         }
     });
 
-    $.fn.selectMsg = function() {
+    $.fn.selectMsg = function(autoSel) {
         if (this.data("selected")) {
             resetConv();
 
@@ -158,8 +158,10 @@ $(function() {
         }
 
         var nick = this.find(".chat-nick").text(),
-            msg = format.htmlToText($entry.html()).trim(),
+            msg = format.htmlToText($entry.html()),
 			atStart = false;
+
+        msg = msg ? msg : "";
 
 		if (msg.match(/^@\S+[\s+{1}]?/, "")) {
 			msg = msg.replace(/^@\S+[\s+{1}]?/, "");
@@ -178,11 +180,15 @@ $(function() {
 
 		msg = format.textToHtml(msg);
 
-		$entry.html(msg ? msg + "&nbsp;" : "").focus();
+        if ($entry.text() === "" || (($entry.text().indexOf(autoText) > -1) && !autoSel)) {
+            autoText = format.htmlToText(msg);
 
-		if ($.fn.setCursorEnd) {
-			$entry.setCursorEnd();
-		}
+            $entry.html(msg ? msg + "&nbsp;" : "").focus();
+
+            if ($.fn.setCursorEnd) {
+                $entry.setCursorEnd();
+            }
+        }
 
 		drawLine();
 
@@ -196,19 +202,21 @@ $(function() {
 	});
 
 	$(document).on("keydown", function(e){
+        var $chat, $el;
+
 		if (e.keyCode === 38 || e.keyCode === 40) {
 			if ($(".chat-item.current").length) {
-				var $chat = $(".chat-item.current"),
-					$el;
+				$chat = $(".chat-item.current");
 
-				if (e.keyCode === 38 && $chat.prev().length) {
+                if (e.keyCode === 38 && $chat.prevAll(":visible").first().length) {
 					e.preventDefault();
-					$el = $chat.prev();
+
+                    $el = $chat.prevAll(":visible").first();
 				} else if (e.keyCode === 40) {
 					e.preventDefault();
 
-					if ($chat.next().length) {
-						$el = $chat.next();
+                    if ($chat.nextAll(":visible").first().length) {
+                        $el = $chat.nextAll(":visible").first();
 					} else {
 						resetConv();
 					}
@@ -218,10 +226,12 @@ $(function() {
 					$el.selectMsg();
 				}
 			} else {
-				if (e.target === $entry.get(0) && $(".chat-item").last().length && e.keyCode === 38) {
+                $chat = $(".chat-item:visible").last();
+
+                if (e.target === $entry.get(0) && $chat.length && e.keyCode === 38) {
 					e.preventDefault();
 
-					$(".chat-item").last().selectMsg();
+                    $chat.selectMsg();
 				}
 			}
 		}
@@ -247,17 +257,18 @@ $(function() {
 		}
 
 		lastMsg = text.id;
+        autoText = null;
 
 		next();
 	}, 50);
 
 	libsb.on("text-dn", function(text, next) {
-		if (currThread && (
-			(text.from && lastMsg.mentions && lastMsg.mentions.length && (lastMsg.mentions.indexOf(text.from) > -1)) ||
-			(text.threads && text.threads.length && text.threads[0].id === currThread) ||
-			(text.id && text.id === lastMsg)
-		)) {
-			$("#chat-" + text.id).selectMsg();
+        if ((text.id && text.id === lastMsg) ||
+            (libsb.user && text.mentions && text.mentions.length && (text.mentions.indexOf(libsb.user.id) > -1)) ||
+            (lastMsg && lastMsg.mentions && lastMsg.mentions.length && (lastMsg.mentions.indexOf(text.from) > -1)) ||
+            (currThread && text.threads && text.threads.length && text.threads[0].id === currThread)
+		) {
+			$("#chat-" + text.id).selectMsg(true);
 		}
 
 		next();
