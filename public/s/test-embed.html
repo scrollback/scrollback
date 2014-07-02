@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+	<head><title>Scrollback embed tester</title></head>
+	<body>
+		<script>
+			var opts = {};
+			location.search.substr(1).split('&').forEach(
+				function(v) { v = v.split('='); opts [v[0]] = v[1]; }
+			);
+			
+			opts.room = opts.room || 'scrollback';
+			opts.theme = opts.theme || 'dark';
+			try { 
+				if(opts.minimize) opts.minimize = JSON.parse(opts.minimize);
+			} catch(e) {}
+			
+			window.scrollback = opts;
+			
+			console.log(window.scrollback);
+			
+			(function(d,h,e){e=d.createElement('script');e.async=1;e.src=h+'/client.min.js';
+			scrollback.host=h;d.body.appendChild(e);}(document,location.protocol+"//"+location.hostname));
+		</script>
+	</body>
+</html>
