@@ -501,6 +501,7 @@ body {
     @include align-content(stretch);
 
     height: 100%;
+    padding-bottom: $bar-height;
 }
 
 .thread-search-query {
@@ -515,8 +516,9 @@ body {
 
 .thread-item-container {
     @include flex-grow(1);
-
     @extend %scroll-elem;
+
+    margin-bottom: $bar-height * -1;
 }
 
 .thread-item {
@@ -995,7 +997,7 @@ body {
 	pointer-events: none;
 	z-index: 20;
 
-	.scrolling & {
+    .scrolling &:not(:empty) {
 		@include opacity(1);
 		@extend %nofilter;
 	}
@@ -1006,15 +1008,11 @@ body {
 
 	position: relative;
 	margin: 0;
-	padding: .75em;
-	padding-left: 3em;
+	padding: .75em 3em .75em 3em;
     border-top: 1px solid rgba(0,0,0,0.025);
 	overflow: hidden;
 
-	@media #{$screenxx} {
-        padding: 1em;
-        padding-left: 12em;
-    }
+	@media #{$screenxx} { padding: 1em 3.5em 1em 12em; }
 
 	&:hover, &:focus { background-color: darken($light-color, 1%); }
 

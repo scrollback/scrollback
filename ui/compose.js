@@ -50,16 +50,16 @@ $(function() {
 		$entry.focus();
 	});
 
-	$entry.on("paste", function(e) {
-		e.preventDefault();
+	$entry.on("paste", function() {
+		setTimeout(function() {
+			var text = format.htmlToText($entry.html());
 
-		var text = e.originalEvent.clipboardData.getData("Text");
+			$entry.html(format.textToHtml(text)).scrollTop($entry[0].scrollHeight);
 
-		$entry.html(format.textToHtml(text)).scrollTop($entry[0].scrollHeight);
-
-		if ($.fn.setCursorEnd) {
-			$entry.setCursorEnd();
-		}
+			if ($.fn.setCursorEnd) {
+				$entry.setCursorEnd();
+			}
+		}, 5);
 	});
 
 	$entry.on("DOMSubtreeModified input paste", function() {

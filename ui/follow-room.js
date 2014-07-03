@@ -23,13 +23,15 @@ $(function() {
     $action.on("click", function() {
         if ($("body").hasClass("role-follower")) {
             libsb.part(window.currentState.roomName);
+			$("body").removeClass('role-follower');
         } else {
             libsb.join(window.currentState.roomName);
+			$("body").addClass('role-follower');
         }
 
-        $("body").toggleClass("role-follower");
+//        $("body").toggleClass("role-follower");
 
-        getFollow();
+       // getFollow();
     });
 
     libsb.on("navigate", function(state, next){

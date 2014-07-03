@@ -27,7 +27,7 @@ $(function() {
 					window.parent.postMessage("maximize", "*");
 				}
 			}
-
+			
 			next();
 		}, 500);
 	}

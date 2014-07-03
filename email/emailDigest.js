@@ -7,8 +7,8 @@ var redis = require('../lib/redisProxy.js').select(config.redisDB.email);
 var core;
 var internalSession = Object.keys(config.whitelists)[0];
 var emailConfig = config.email, digestJade;
-var waitingTime1 = emailConfig.mentionEmailTimeout || 3 * 60 * 1000; //mention email timeout
-var waitingTime2 = emailConfig.regularEmailTimeout || 12 * 60 * 1000;//regular email timeout
+var waitingTime1 = emailConfig.mentionEmailTimeout || 3 * 60 * 60 * 1000; //mention email timeout
+var waitingTime2 = emailConfig.regularEmailTimeout || 12 * 60 * 60 *  1000;//regular email timeout
 var timeout = 30 * 1000;//for debuging only
 var debug = emailConfig.debug;
 
