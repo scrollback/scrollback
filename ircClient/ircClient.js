@@ -32,27 +32,6 @@ module.exports.init = function init(coreObj) {
 	core = coreObj;
 };
 /*********************************** Exports ****************************************/
-
-/******************************************
-TODO's 
-rename IRC user.
-handle this error.
-ERROR: { prefix: 'irc.local',
-  server: 'irc.local',
-  command: 'err_erroneusnickname',
-  rawCommand: '432',
-  commandType: 'error',
-  args: 
-   [ 'test2',
-     'long name' ] }
-TODO if room changes b/w restart then discart queuing messages.
-1.//9 char is min max limit if(nick > 9) gen random.
-2.//handle the case if connection is disconnected by other party
-3.{ command: 'ERROR', rawCommand: 'ERROR', commandType: 'normal', args: [ 'Closing Link: 122.166.181.21 (No more connections allowed on that IP)' ] }
-4.Raw message: { command: 'ERROR', rawCommand: 'ERROR', commandType: 'normal', args: [ 'Trying to reconnect too fast.' ] }
-this error caused by throttle_time = some_value;
-******************************************/
-
 /**
  *Server already connected.
  */
@@ -123,7 +102,7 @@ function connectBot(room, options, cb) {
 		joinChannels(server, botNick, ch, cb);
 	} else {
 		client = joinServer(server, botNick, ch, options, cb);
-		onPM(client);
+		onInvite(client);
 		onRaw(client);
 		onMessage(client);
 		onNames(client);
@@ -241,41 +220,25 @@ function sendMessage(server, from, to, text, time) {
 	}	
 }
 
-
-function onPM(client) {
-	client.on('pm', function(to, from, message) {
-		log("pm=," , to, from , message);
-		from = from.toLowerCase();
-		var msg = [];
-		if (message.args && message.args.length >= 2) {
-			msg = message.args[1].split(" ");
-		}
-		if (msg.length >= 3 && msg[0] === 'connect' && servChanProp[client.opt.server][msg[1]]) {//connect #channel room.
-			var r = msg[2];//
-			log("r=", r);
-			client.whois(message.nick, function(reply) {
-			log("whois reply: ", reply);
-				var room = servChanProp[client.opt.server][msg[1]].room;
-				log("room", room);
-				if(room.params.irc.pending && room.id === r && reply.channels) {
-					log("room pending true");
-					reply.channels.forEach(function(channel) {
-						if (channel.substring(0,1) === '@' && channel.substring(1) === room.params.irc.channel) {
-							client.join(room.params.irc.channel);
-							if (connected) {
-								sendRoom(room);
-							} else {
-								queue.push({
-									fn: "sendRoom",
-									room: room
-								});
-							}
-						}
-					});
-				}
-			});
-		}
-	});
+function onInvite(client) {
+    client.on('invite', function(channel, from, message) {
+        channel = channel.toLowerCase();
+        var server = client.opt.server;
+        if(servChanProp[server][channel]) {
+            var room = servChanProp[server][channel].room;
+            if(room && room.params.irc.pending) {
+                client.join(channel);
+                if (connected) {
+                    sendRoom(room);
+                } else {
+                    queue.push({
+                        fn: "sendRoom",
+                            room: room
+                        });
+                    }
+                }
+        }
+    });
 }
 
 function sendRoom(room) {

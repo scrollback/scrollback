@@ -31,8 +31,8 @@ libsb.on('config-show', function(tabs, next) {
             notify.value = null;
 
             $.get('/r/irc/' + results.id, function(botName) {
-                displayString = "The IRC channel operator needs to type \"/msg " + botName + " connect " + results.params.irc.channel + " " +
-				results.id + "\" in the irc channel to complete the process.";
+                displayString = "The IRC channel operator needs to type \"/invite " + botName + " " + results.params.irc.channel +
+				"\" in the irc channel to complete the process.";
                 $div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
 				next();
 			});
@@ -77,8 +77,8 @@ libsb.on("room-dn", function(room, next) {
 	if (room.user.id === libsb.user.id && r.params.irc  && r.params.irc.pending && !r.params.irc.error) {
 		$.get('/r/irc/' + r.id, function(botName) {
 			var displayString = "Something went wrong while connecting to IRC server";
-			if(botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/msg " + botName +
-			" connect " + r.params.irc.channel + " " + r.id + "\" in the irc channel to complete the process.";
+			if(botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/invite " + botName +
+			" " + r.params.irc.channel + "\" in the irc channel to complete the process.";
 			lace.alert.show({type: "info", body: displayString});
 		});
 	}
