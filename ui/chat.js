@@ -41,18 +41,28 @@ $(function () {
 			}
 		}
 
+		if (text.text) {
+			var $container = $(".chat-area"),
+				charsPerLine = $container.width() / (parseInt($container.css("font-size"), 10) * 0.6),
+				lines = text.text.split("\n"),
+				lineCount = 0;
+
+			lines.forEach(function(line) {
+				lineCount += Math.ceil(line.length/charsPerLine);
+			});
+
+			if (lineCount > 4) {
+				$el.addClass("chat-item-long");
+			}
+		}
+
 		if (timeBefore) {
 			if ((text.time - timeBefore) > 180000) {
-				$el.addClass("chat-mark-timestamp-shown");
+				$el.addClass("chat-item-timestamp-shown");
 			}
 		}
 
 		timeBefore = text.time;
-		
-		if(!text.text) return;
-		if (text.text.length >= 400) {
-			$el.addClass("chat-mark-long");
-		}
 
 		return $el;
 	};

@@ -1050,10 +1050,10 @@ body {
         }
     }
 
-	&.chat-mark-long {
+	&.chat-item-long {
 		@extend %ease;
 
-		max-height: 12em;
+		max-height: 9em;
 		cursor: pointer;
 
 		&:hover, &:focus {
@@ -1121,7 +1121,7 @@ body {
         color: fade-out($dark-color, .5);
     }
 
-    &:last-of-type, &.chat-mark-timestamp-shown {
+    &:last-of-type, &.chat-item-timestamp-shown {
         .chat-timestamp { display: inline-block; }
     }
 

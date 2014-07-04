@@ -242,7 +242,7 @@ $(function () {
 		});
 	}, 60000);
 
-	$(document).on("click", ".chat-mark-long", function() {
+	$(document).on("click", ".chat-item-long", function() {
 		$(this).toggleClass("expanded").scrollTop(0);
 	});
 });
