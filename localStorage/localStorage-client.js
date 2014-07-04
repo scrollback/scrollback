@@ -53,7 +53,7 @@ function saveCache(key){
 
 function generateLSKey(){
 	var args = Array.prototype.slice.call(arguments, 0); 
-    if(!args) return;  
+    if(!args){ return;  }
 	var argumentsLC = args.map(function(val){
 		return val.toLowerCase();
 	});
@@ -109,7 +109,7 @@ module.exports = function(c){
 
 	core.on('getTexts', function(query, next){
 		// getTextsBefore
-        if(query.thread) return next();
+        if(query.thread){ return next();}
 		var key = generateLSKey(query.to, 'texts');
 		if(!cache.hasOwnProperty(key)){
 			cache[key] = loadArrayCache(key);
@@ -147,7 +147,7 @@ module.exports = function(c){
 				results.unshift({type: 'result-start', endtype: 'time', time: query.time});
 			}
 			var lskey = generateLSKey(query.to, 'texts');
-			if(!cache.hasOwnProperty(lskey)) loadArrayCache(lskey);
+			if(!cache.hasOwnProperty(lskey)){ loadArrayCache(lskey); }
 			cache[lskey].put(results);
 			saveCache(lskey);
 		}
@@ -186,7 +186,7 @@ module.exports = function(c){
 		
 		(function(){
 			timeoutMapping[roomId] = setTimeout(function(){
-				if(cache && cache.rooms) delete cache.rooms[roomId];	
+				if(cache && cache.rooms){ delete cache.rooms[roomId]; }
 			}, minutes*60*1000);
 		})();
 		
@@ -218,7 +218,7 @@ module.exports = function(c){
 	core.on('text-dn', function(text, next){
 		var texts = [text];
 		var key = generateLSKey(text.to, 'texts');
-		if(cache && cache[key]) cache[key].put(texts);
+		if(cache && cache[key]){ cache[key].put(texts); }
 		saveCache(key);
 		next();
 	}, 500); // storing new texts to cache.
@@ -259,8 +259,8 @@ module.exports = function(c){
 	
 	core.on('connected', function(){
 		var sid;
-		if(!cache) cache = {};
-		if(cache && cache.session) sid = cache.session;
+		if(!cache){ cache = {}; }
+		if(cache && cache.session){ sid = cache.session; }
 		if(!sid){
 			cache.session = sid = generate.uid();
 			libsb.session = cache.session;
@@ -272,7 +272,7 @@ module.exports = function(c){
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
 		var msg = {type: 'result-end', endtype: 'time', time: away.time};
 		var key = generateLSKey(away.to, 'texts');
-		if(cache && cache[key]) cache[key].put(msg);
+		if(cache && cache[key]){ cache[key].put(msg); }
 		next();
 	}, 500);
 	
@@ -280,7 +280,7 @@ module.exports = function(c){
 		// store a result-start in ArrayCache, to indicate the beginning of the current stream of messages from the user
 		var msg = {type: 'result-start', endtype: 'time', time: back.time};
 		var key = generateLSKey(back.to, 'texts');
-		if(cache && cache[key]) cache[key].put(msg);
+		if(cache && cache[key]){ cache[key].put(msg); }
 		next();
 	}, 500);
 	
@@ -314,7 +314,7 @@ module.exports = function(c){
 
 function createInit(){
 	var sid;
-	if(!cache) cache = {};
+	if(!cache){ cache = {}; }
 	if(cache && cache.session) {
         libsb.session = sid = cache.session;
     }
