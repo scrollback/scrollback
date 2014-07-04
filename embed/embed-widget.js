@@ -13,7 +13,7 @@
             if(room=='img'||room=='css'||room=='sdk') room = "scrollback";
             if(!room) { room = "scrollback";}
             else{
-                if(room.length<3) room=room+Array(4-room.length).join("-");	
+                if(room.length<3) room=room+Array(4-room.length).join("-");
             }
             room = room.substring(0,32);
             if(santize) return room;
@@ -40,7 +40,7 @@
 			// Create and append the iframe
 			iframe = document.createElement("iframe");
 			iframe.src = host + "/" + room + "?embed=" + embed + "&theme=" + theme + "&minimize=" + minimize;
-			iframe.className = "scrollback-stream " + (minimize? 'minimized': '');
+			iframe.className = "scrollback-stream " + (minimize? "scrollback-minimized" : "");
 			document.body.appendChild(iframe);
 
 			// Add event listeners for post message
@@ -51,12 +51,12 @@
 			// Listen to message from child iframe
 			eventListener(messageEvent, function(e) {
 				if (e.origin === host) {
-					console.log('Got message', e);
-					var minReg = /\bminimized\b/;
+					var minReg = /\bscrollback-minimized\b/;
+
 					if (e.data === "minimize" && !minReg.test(iframe.className)) {
-						iframe.className = iframe.className + ' minimized';
+						iframe.className = iframe.className + " scrollback-minimized";
 					} else if(e.data === "maximize") {
-						iframe.className = iframe.className.replace(minReg, '').trim();
+						iframe.className = iframe.className.replace(minReg, "").trim();
 					} else if (e.data === "getDomain") {
 						iframe.contentWindow.postMessage(JSON.stringify({ location: window.location }), host);
 					}
