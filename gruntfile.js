@@ -106,8 +106,10 @@ module.exports = function(grunt) {
 			generate: {
 				options: {
 					basePath: "public",
+					cache: ["//fonts.googleapis.com/css?family=Open+Sans:300,400,600",
+							"//themes.googleusercontent.com/font?kit=cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw"],
 					network: ["*"],
-					fallback: ["https://gravatar.com/avatar/ /s/img/client/avatar-fallback.svg", "/ /offline.html"],
+					fallback: ["//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg", "/ /offline.html"],
 					preferOnline: true,
 					timestamp: true
 				},

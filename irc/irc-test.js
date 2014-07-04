@@ -14,6 +14,7 @@ var botName = require('../ircClient/config.js').botNick;
  * All test cases should run in sequence
  * Do not change the order of test cases.
  * config.irc.debug should be true to run test cases
+ * some test cases are based on timeouts so might fail on slow network. 
  */
 var users = [
 	{
@@ -251,7 +252,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		});
 		function go() {
 			if (c === 6) {
-				done();
+				setTimeout(done, 3000);//Bot diconnection will take some time.
 			}
 		}
 		core.emit("room", {

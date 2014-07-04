@@ -1,4 +1,3 @@
-var core;
 var config = require('../config.js');
 var log  = require('../lib/logger.js');
 var pg = require('pg');
@@ -38,6 +37,12 @@ module.exports = function(core) {
 			saveMembersAction(action);
 		}, "watcher");
 	});
+    occupantActions.forEach (function(a) {
+        core.on(a, function(action, cb) {
+            cb();
+            saveOccupantAction(action);
+        }, "watcher");
+    });
 };
 
 function saveOccupantAction(action) {
@@ -97,7 +102,7 @@ function saveMembersAction(action) {
 		}
 	});
 	if (action.transitionTime) {
-		params.push(transitionTime);
+		params.push("transitiontime");
 		values.push(new Date(action.transitionTime));
 	}
 	insert("member_actions", params, values);
