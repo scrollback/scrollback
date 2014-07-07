@@ -97,16 +97,31 @@ $(function () {
 	}, 100);
 
 	libsb.on("text-up", function (text, next) {
-        function isMention(input) {
-			if ((/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)) {
-				input = input.toLowerCase();
-				input = input.replace(/[@:,]/g,"");
-                text.mentions.push(input);
-			}
-		}
+		libsb.getOccupants(window.currentState.roomName, function(err, data) {
+			var occupants = [];
 
-        text.mentions = [];
-		text.text.split(" ").map(isMention);
+			if (data.results && data.results.length) {
+				for (var i in data.results) {
+					occupants.push(data.results[i].id);
+				}
+			}
+
+			function isMention(input) {
+				if ((/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)) {
+					input = input.toLowerCase();
+					input = input.replace(/[@:,]/g,"");
+
+					text.mentions.push(input);
+
+					if (occupants.indexOf("guest-" + input) > -1) {
+						text.mentions.push("guest-" + input);
+					}
+				}
+			}
+
+			text.mentions = [];
+			text.text.split(" ").map(isMention);
+		});
 
         if ($logs.data("lower-limit")) {
 			var $newEl = chatEl.render(null, text);

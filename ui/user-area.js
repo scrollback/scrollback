@@ -106,9 +106,8 @@ libsb.on("init-dn", function (init, next) {
 		$("body").removeClass("role-guest").addClass("role-user");
 	}
 
-	$("#sb-user").text = init.user.id.replace(/^guest-/, '');
 	$("#sb-avatar").attr("src", init.user.picture);
-	$("#sb-user").text(init.user.id.replace(/^guest-/, ''));
+	$("#sb-user").text(init.user.id.replace(/^guest-/, ""));
 
 	next();
 }, 100);
