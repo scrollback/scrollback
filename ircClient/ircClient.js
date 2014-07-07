@@ -8,7 +8,7 @@ var botNick = config.botNick;//part of config of IRC client.
 var clients = {};//for server channel user,server --> client. 
 var servChanProp = {};//object of server channel prop (room, user)
 var rooms = {};//room id to room obj map.
-var servNick = {};//server channel nick -------> sb nick.
+var servNick = {};//server channel nick -> sb nick.
 var renameCallback = {};
 var partBotCallback = {};
 var connected = false;
@@ -74,21 +74,16 @@ function joinServer(server, nick, channels, options, cb) {
  *opt.identId is used for ident.
  */
 function connectBot(room, options, cb) {
-	console.log("****", room, JSON.stringify(servChanProp));
+	console.log("Connect Bot ", room, options);
 	var server = room.params.irc.server;
 	var channel = room.params.irc.channel.toLowerCase();
-	
-	if(!servChanProp[server]) {
-		servChanProp[server] = {};
-	}
+	if(!servChanProp[server]) servChanProp[server] = {};
 	if (servChanProp[server][channel] && servChanProp[server][channel].room) {
 		cb("ERR_CONNECTED_OTHER_ROOM");
 		return;
 	}
-	if (!servChanCount[server]) {
-		servChanCount[server] = 1;
-	} else servChanCount[server]++;
-	
+	if (!servChanCount[server]) servChanCount[server] = 1; 
+    else servChanCount[server]++;
 	rooms[room.id] = room;
 	servChanProp[server][channel] = {};
 	servChanProp[server][channel].users = [];
@@ -115,7 +110,7 @@ function connectBot(room, options, cb) {
 function partBot(roomId, callback) {
 	
 	var room  = rooms[roomId];
-    log("****part bot for room ", roomId, room, servChanCount);
+    log("****part bot for room ", roomId, room);
 	if (!room) return callback(); //should throw an error? not sure... 
 	var client = clients[botNick][room.params.irc.server];
 	var channel = room.params.irc.channel;
@@ -132,7 +127,6 @@ function partBot(roomId, callback) {
         return callback();
     }
 	var users = servChanProp[server] && servChanProp[server][channel] && servChanProp[room.params.irc.server][channel].users;
-	//log("users", users, ", servNick", servNick);
 	if(users) users.forEach(function(user) {
 		if(servNick[server][user].dir === 'out') {
 			var sbNick = servNick[server][user].nick;
@@ -471,7 +465,6 @@ function rename(oldNick, newNick) {
 function partUser(roomId, nick) {
 	log("rooms", rooms, "roomId:", roomId, " nick", nick);
 	var room = rooms[roomId];
-	log(room);
 	var client = clients[nick][room.params.irc.server];
 	client.part(room.params.irc.channel);
 }
