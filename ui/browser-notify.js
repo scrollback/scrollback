@@ -55,7 +55,7 @@ var browserNotify = (function() {
 			originalTitle = document.title;
 		}
 
-		newTitle = text.text;
+		newTitle = text;
 
 		if(!notifyStatus) {
 			clearInterval(titleTimer);
@@ -83,17 +83,17 @@ var browserNotify = (function() {
 
 libsb.on('text-dn', function(text, next) {
     if (libsb.user && libsb.user.params && libsb.user.params.notifications &&
-        text.mentions && text.mentions.indexOf(libsb.user.id) > -1) {
+        text.from && text.mentions && text.mentions.indexOf(libsb.user.id) > -1) {
         if (libsb.user.params.notifications.sound) {
-            browserNotify(text, true);
+            browserNotify(text.text, true);
         } else {
-            browserNotify(text, false);
+            browserNotify(text.text, false);
         }
 
         if (libsb.user.params.notifications.desktop) {
             desktopnotify.show({
                 title: "New mention on " + text.to,
-                body: text.from + ": " + text.text,
+                body: text.from.replace(/^guest-/, "") + ": " + text.text,
                 icon: "s/img/scrollback.png",
                 tag: text.id,
                 action: function() {
@@ -102,7 +102,7 @@ libsb.on('text-dn', function(text, next) {
             });
         }
 	} else {
-		browserNotify(text, false);
+		browserNotify(text.text, false);
 	}
 
 	next();

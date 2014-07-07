@@ -27,10 +27,11 @@ require('./http/seo-client.js');
 require('./http/roomGeneralSettings-client.js');
 require('./http/userProfile-client.js');
 require('./embed/embed-client.js');
+require('./embed/embed-helper.js');
 require('./irc/irc-client.js');
 require('./anti-abuse/anti-abuse-client.js');
 require('./twitter/twitter-client.js');
-//require('./customization/customization-client.js');
+require('./customization/customization-client.js');
 
 // user menus
 require('./http/logout-client.js');
@@ -41,9 +42,7 @@ require('./persona/persona-client.js');
 // components
 require('./ui/quicknotify.js');
 require('./ui/load-indicator.js');
-require('./ui/embed-helper.js');
 require('./ui/appcache.js');
-require('./ui/customization.js');
 require('./ui/infinite.js');
 require('./ui/hide-scroll.js');
 require('./ui/navigation.js');

@@ -39,8 +39,8 @@ $(function() {
 		};
 
 	libsb.on("text-dn", function(text, next) {
-		if (window.currentState.minimize) {
-			msgarr.push(text.from + ": " + text.text);
+		if (window.currentState.minimize && text.from && text.text) {
+			msgarr.push(text.from.replace(/^guest-/, "") + ": " + text.text);
 
 			if (msgarr.length > 3) {
 				msgarr = msgarr.splice(Math.max(msgarr.length - 3, 1));
