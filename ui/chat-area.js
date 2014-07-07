@@ -108,13 +108,12 @@ $(function () {
 
 			function isMention(input) {
 				if ((/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)) {
-					input = input.toLowerCase();
-					input = input.replace(/[@:,]/g,"");
-
-					text.mentions.push(input);
+					input = input.replace(/[@:,]/g,"").toLowerCase();
 
 					if (occupants.indexOf("guest-" + input) > -1) {
 						text.mentions.push("guest-" + input);
+					} else {
+						text.mentions.push(input);
 					}
 				}
 			}

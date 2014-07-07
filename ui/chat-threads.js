@@ -170,7 +170,7 @@ $(function() {
 			msg = msg.replace(/@\S+[\s+{1}]?$/, "");
 		}
 
-		if (msg.indexOf("@" + nick) < 0 && libsb.user.id !== nick) {
+        if (msg.indexOf("@" + nick) < 0 && libsb.user && (libsb.user.id !== nick || libsb.user.id !== "guest-" + nick)) {
 			if (atStart) {
 				msg = "@" + nick + (msg ? " " + msg : "");
 			} else {
