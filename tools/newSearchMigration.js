@@ -4,34 +4,34 @@ var objectlevel = require("objectlevel");
 var levelup = require('levelup');
 var db = levelup('./leveldb-storage/data');
 var stream;
-var leveldb, types, text;
+var leveldb, types;
 var start;
-
 var searchServer = config.search.server + ":" + config.search.port;
 var es = require('elasticsearch');
-var client = new es.Client({
-    host: searchServer
-});
-var threadsToInsert = [], lastKey;
+var client, lastKey;
 var postData = null;
-leveldb = new objectlevel(process.cwd()+"/leveldb-storage/"+config.leveldb.path);
-types = require("../leveldb-storage/types/types.js")(leveldb);
 
+var threadListFile, threadIndexFile, writingList = [];
+var threadMap = {}, count = 0;
 
-var l, insert = [];
+var l;
 function gotThread(thread) {
-    var newThread = {}, dbQuery;
+    var newThread = {}, dbQuery, t;
     stream.pause();
     lastKey = thread.key;
-    if(postData === null){
-        postData = {body: []};
-    }
     t = JSON.parse(thread.value);
-
+    
+    if(threadMap[thread.key]) return stream.resume();
+    
     newThread.id = t.id;
+    writingList.push(thread.key);
     newThread.room = t.to;
     newThread.texts = [];
     newThread.users = [];
+    
+    if(postData === null){
+        postData = {body: []};
+    }
     
     dbQuery = {
         gte: [],
@@ -69,26 +69,26 @@ function gotThread(thread) {
     });
 }
 
-function indexThreads() {
-    client.bulk(postData, function(err, resp) {
+function indexThreads(cb) {
+    client.bulk(postData, function(err) {
         postData = null;
-        if(err) throw(err);
+        if(err) console.log("Error: ", err.message);
         writeProgress();
         stream.resume();
+        if(cb) return cb();
     });
 }
 
 function writeProgress() {
-    fs.writeFileSync(".threadIndex", lastKey);
-    fs.writeFileSync(".threadCount", count);
+    updateStatus(lastKey);
+    console.log(lastKey);
     if(process.stdout.clearLine) {
         process.stdout.clearLine();
         process.stdout.cursorTo(0);
         process.stdout.write("---"+Math.floor((count/l)*100)+"% completed.");
     }else{
         console.log("---"+Math.floor((count/l)*100)+"% completed.");
-    }
-    
+    }   
 }
 
 
@@ -100,28 +100,68 @@ function go(){
 
     if(count) console.log("Starting at: "+start+" with count: "+count);
     
-    stream.on('data', gotThread)
-    stream.on('error', console.log.bind(console))
-    stream.on('end', indexThreads)
+    stream.on('data', gotThread);
+    stream.on('error', console.log.bind(console));
+    stream.on('end', function(){
+        indexThreads(process.exit);
+    });
 }
 
 
-try {
-    start = fs.readFileSync(".threadIndex") + '\0';
-} catch(e) {
-    start = "dthreads\0" ;
-}
-try {
-    count = parseInt(fs.readFileSync(".threadCount", 'utf8'));
-} catch(e) {
-    count = 0;
+function startUp() {
+    var threads, buf = new Buffer(50), bytesRead;
+    client = new es.Client({
+        host: searchServer
+    });
+
+    leveldb = new objectlevel(process.cwd()+"/leveldb-storage/"+config.leveldb.path);
+    types = require("../leveldb-storage/types/types.js")(leveldb);
+    
+    try {
+        threads = fs.readFileSync("./threadLists.txt", "utf8");
+        threads = threads.split("\n");
+        threads.forEach(function(id){
+            threadMap[id] = true;
+        });
+        
+        count = threads.length;
+    }catch(e) {
+        threads = [];
+        console.log("Error: ", e.message);
+        threadMap = {};
+    }
+
+    threadListFile = fs.openSync("./threadLists.txt","a+");
+    
+    if (!threads.length) {
+        start = "dthreads\0" ;
+    } else {
+        console.log(threads[threads.length-2]);
+        start = threads[threads.length-2];
+    }
+    
+    console.log("starting at: ",start);
+    types.threads.get(function(err, data) {
+        l = data.length;
+        console.log("Indexing "+l+" threads.");
+        data = null;
+        go();
+    });
 }
 
-types.threads.get(function(err, data) {
-    var i=0;
-    l = data.length;
-    console.log("Indexing "+l+" threads.");
-    data = null;
-    go();
+function updateStatus(id) {
+    var buf;
+    writingList.forEach(function(id){
+        fs.writeSync(threadListFile, id+"\n");
+    });
+    writingList = [];
+}
+function done() {
+    fs.close(threadListFile);
+}
+
+startUp();
+process.on("exit", function(){
+    console.log("Exiting");
+    done();
 });
-
