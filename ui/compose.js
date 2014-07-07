@@ -27,8 +27,8 @@ $(function() {
 			$("body").attr("class", classes);
 		},
 		setPlaceHolder = function() {
-			if ($entry.text().trim() === "") {
-				$placeholder.text("Reply as " + libsb.user.id );
+			if (libsb.user && libsb.user.id && $entry.text().trim() === "") {
+				$placeholder.text("Reply as " + libsb.user.id.replace(/^guest-/, ""));
 			} else {
 				$placeholder.empty();
 			}
@@ -36,6 +36,7 @@ $(function() {
 
 	// Focus chat entry on pageload
 	$entry.focus();
+	setPlaceHolder();
 
 	libsb.on("init-dn", function(action, next) {
 		setPlaceHolder();
