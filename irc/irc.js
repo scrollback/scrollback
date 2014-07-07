@@ -26,9 +26,7 @@ module.exports = function (coreObj) {
 		};
 		callback(null, payload);
 	}, "setters");
-	
-    
-    
+ 
     function removeIrcIdentity(room) {
         var i,l;
         for(i=0,l=room.identities; i<l; i++) {
@@ -130,9 +128,7 @@ module.exports = function (coreObj) {
 	}, "gateway");
 	
 	core.on('text', function(text, callback) {
-		log("On text:", client.connected());
-		log("text called irc:", JSON.stringify(text));
-		log("online users:", onlineUsers);
+		log("On text:", client.connected(), text.id);
 		if (text.room.params && text.room.params.irc && text.room.params.irc.server &&
 			text.room.params.irc.channel && !text.room.params.irc.pending &&
 			(text.session.indexOf('irc') !== 0 && text.session.indexOf('twitter') !== 0) && client.connected()) {//session of incoming users from irc 
@@ -157,7 +153,7 @@ module.exports = function (coreObj) {
 		log("On away:", client.connected());
 		if (action.room.params && action.room.params.irc && action.room.params.irc.server &&
 			action.room.params.irc.channel && !action.room.params.irc.pending &&
-			(action.session.indexOf('irc') !== 0 && action.session.indexOf('twitter') !== 0) && client.connected()) {//session of incoming users from irc 
+			(action.session.indexOf('web') === 0 ) && client.connected()) {//session of incoming users from irc 
 			if(firstMessage[action.to] && firstMessage[action.to][action.from]) {
 				ircUtils.disconnectUser(action.to, action.from);
 				delete firstMessage[action.to][action.from];
