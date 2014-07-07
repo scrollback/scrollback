@@ -1,6 +1,8 @@
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
+var config = require('../config.js');
 var log = require("../lib/logger.js");
+var debug = config.irc.debug;
 module.exports = function(clientEmitter, client, callbacks) {
 
 	function connectUser(roomId, user) {
@@ -104,6 +106,47 @@ module.exports = function(clientEmitter, client, callbacks) {
 		}
 	}
 	
+	function removeIrcIdentity(room) {
+		var i,l;
+		for(i=0,l=room.identities; i<l; i++) {
+			if(/^irc:/.text(room.identities[i])) {
+				room.identities.splice(i,1);
+				break;
+			}
+		}
+	}
+	
+	/**
+	 *add or copy pending status 
+	 */
+	function changeRoomParams(room) {
+		room.room.params.irc.enabled = true;
+		var or = room.old;
+		if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel) { //this is old room
+			if (room.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel) {
+				room.room.params.irc.pending = debug ? false : true;//if server or channel changes
+			} else room.room.params.irc.pending = or.params.irc.pending;	
+		} else {
+			room.room.params.irc.pending = debug ? false: true;//this is new room.
+		}
+	}
+	
+	function actionRequired(room) {
+		return (room.room.params && room.room.params.irc &&
+				room.room.params.irc.server && room.room.params.irc.channel) ||
+			(room.old && room.old.params && room.old.params.irc && room.old.params.irc.server &&
+			 room.old.params.irc.channel);// old or new 
+	}
+	
+	function isNewRoom(room) {
+		var or = room.old;
+		if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel ) { //this is old room
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
 	return {
 		connectUser: connectUser,
 		say: say,
@@ -112,6 +155,10 @@ module.exports = function(clientEmitter, client, callbacks) {
 		addNewBot: addNewBot,
 		copyRoomOnlyIrc: copyRoomOnlyIrc,
 		getBotNick: getBotNick,
-		getRequest: getRequest
+		getRequest: getRequest,
+		removeIrcIdentity: removeIrcIdentity,
+		changeRoomParams: changeRoomParams,
+		actionRequired: actionRequired,
+		isNewRoom: isNewRoom
 	};
 };

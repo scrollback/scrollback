@@ -14,7 +14,7 @@ var firstMessage = {};//[room][username] = true
 var userExp = 10*60*1000;
 var initCount = 0;
 var ircUtils = new require('./ircUtils.js')(clientEmitter, client,callbacks);
-var debug = config.irc.debug;
+
 module.exports = function (coreObj) {
 	core = coreObj;
 	init();
@@ -26,16 +26,6 @@ module.exports = function (coreObj) {
 		};
 		callback(null, payload);
 	}, "setters");
- 
-    function removeIrcIdentity(room) {
-        var i,l;
-        for(i=0,l=room.identities; i<l; i++) {
-            if(/^irc:/.text(room.identities[i])) {
-                room.identities.splice(i,1);
-                break;
-            }
-        }
-    }
 	core.on ('room', function(action, callback) {
         var room = action.room;
 		log("room irc:", JSON.stringify(action), client.connected());
@@ -45,14 +35,14 @@ module.exports = function (coreObj) {
         function done(err) {
             if(err) {
                 room.params.irc.error = err.message;
-                removeIrcIdentity(room);
+                ircUtils.removeIrcIdentity(room);
                 ircUtils.disconnectBot(room.id,callback);
             } else callback();
         }
 		if (action.session === internalSession) return callback();
-		if (actionRequired(action) && client.connected()) {
-			changeRoomParams(action);
-			if (isNewRoom(action)) {
+		if (ircUtils.actionRequired(action) && client.connected()) {
+			ircUtils.changeRoomParams(action);
+			if (ircUtils.isNewRoom(action)) {
 				room.params.irc.channel = room.params.irc.channel.toLowerCase();
 				return ircUtils.addNewBot(room, done);
 			} else {//room config changed
@@ -61,7 +51,7 @@ module.exports = function (coreObj) {
                 
                 if (oldIrc.server === newIrc.server && oldIrc.channel === newIrc.channel) {
                     room.params.irc = action.old.params.irc;
-                    if(room.params.irc.error) removeIrcIdentity(room);
+                    if(room.params.irc.error) ircUtils.removeIrcIdentity(room);
                     return callback();
                 }else if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel) {
 					if(oldIrc.server && oldIrc.channel) {
@@ -76,10 +66,10 @@ module.exports = function (coreObj) {
                     return callback();
                 }
 			}  
-		} else if(!client.connected() && actionRequired(action)) {
+		} else if(!client.connected() && ircUtils.actionRequired(action)) {
 			log("irc Client is not connected: ");
 			room.params.irc.error = "ERR_IRC_NOT_CONNECTED";
-			removeIrcIdentity(room);
+			ircUtils.removeIrcIdentity(room);
 			return callback();
 		} else return callback();
 	}, "gateway");
@@ -92,7 +82,7 @@ module.exports = function (coreObj) {
 				callback();
 			} else {
 				r.params.irc.error = "ERR_INVALID_IRC_PARAMS";
-                removeIrcIdentity(room);
+                ircUtils.removeIrcIdentity(room);
 				callback();//
 			}
 		} else callback();
@@ -163,36 +153,9 @@ module.exports = function (coreObj) {
 	}, "gateway");	
 };
 
-function actionRequired(room) {
-	return (room.room.params && room.room.params.irc &&
-			room.room.params.irc.server && room.room.params.irc.channel) ||
-			(room.old && room.old.params && room.old.params.irc && room.old.params.irc.server &&
-			room.old.params.irc.channel);// old or new 
-}
 
-/**
- *add or copy pending status 
- */
-function changeRoomParams(room) {
-	room.room.params.irc.enabled = true;
-	var or = room.old;
-	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel) { //this is old room
-		if (room.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel) {
-			room.room.params.irc.pending = debug ? false : true;//if server or channel changes
-		} else room.room.params.irc.pending = or.params.irc.pending;	
-	} else {
-		room.room.params.irc.pending = debug ? false: true;//this is new room.
-	}
-}
 
-function isNewRoom(room) {
-	var or = room.old;
-	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel ) { //this is old room
-		return false;
-	} else {
-		return true;
-	}
-}
+
 
 function init() {
 	var notUsedRooms = {};
