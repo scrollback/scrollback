@@ -20,15 +20,12 @@ $(function() {
 				// show the error that not part of any room yet.
 			}
 
-			setTimeout(function() {
-				chatArea.setPosition($input.outerHeight());
-			}, 0);
+			chatArea.setPosition($input.outerHeight());
 
 			var classes = $("body").attr("class").replace(/conv-\d+/g, "");
 
 			$("body").attr("class", classes);
 		},
-
 		setPlaceHolder = function() {
 			if ($entry.text().trim() === "") {
 				$placeholder.text("Reply as " + libsb.user.id );
@@ -45,6 +42,10 @@ $(function() {
 
 		next();
 	}, 10);
+
+	$(window).on("resize", function() {
+		chatArea.setPosition($input.outerHeight());
+	});
 
 	$input.on("click", function() {
 		$entry.focus();

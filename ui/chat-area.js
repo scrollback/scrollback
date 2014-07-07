@@ -109,7 +109,11 @@ $(function () {
 		text.text.split(" ").map(isMention);
 
         if ($logs.data("lower-limit")) {
-			$logs.addBelow(chatEl.render(null, text));
+			var $newEl = chatEl.render(null, text);
+
+			$logs.addBelow($newEl);
+
+			$newEl.get(0).scrollIntoView(true);
 		}
 
 		next();
