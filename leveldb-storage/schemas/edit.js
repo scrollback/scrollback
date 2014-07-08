@@ -11,28 +11,56 @@ module.exports = function (types) {
 		put: function (data, cb) {
 			var old = data.old;
 			var editAction, editInvs = {}, newText;
+			var threads = {}, index;
+
 			newText = {
 				id:old.id,
 				time: old.time,
 				type:"text",
 				from:old.from,
 				to:old.to,
-				labels:{},
+				threads: [],
+				mentions: old.mentions || [],
+				cookies: old.cookies || [],
+				labels: old.labels,
 				session: old.session || ""
 			};
-			if(old.labels){
-				if(old.labels instanceof Array) {
-					old.labels.forEach(function(label) {
-						newText.labels[label] = 1;
-					});
-				}else{
-					for(i in old.labels) {
-						if(old.labels.hasOwnProperty(i)) newText.labels[i] = old.labels[i];
+			
+			if(old.labels) {
+				for(i in old.labels) {
+					if(old.labels.hasOwnProperty(i)) newText.labels[i] = old.labels[i];
+				}
+			}
+
+			if(data.threads) {
+				old.threads.forEach(function(t) {
+					threads[t.id] = t;
+				});
+				data.threads.forEach(function(t) {
+					threads[t.id] = t;
+				});
+				Object.keys(threads).forEach(function(key) {
+					if(threads.hasOwnProperty(key)) {
+						newText.push(threads[key]);
+					}
+				});
+			}
+
+			if(typeof data.cookie != "undefined") {
+				if(data.cookie) {
+					if(newText.cookies.indexOf(data.from)<0) {
+						newText.cookies.push(data.from);
+					}
+				}else {
+					index = newText.cookies.indexOf(data.from);
+					if(index>=0) {
+						newText.cookies.splice(index, 1);
 					}
 				}
 			}
-			
+
 			if(old.editInverse) newText.editInverse = old.editInverse;
+
 			editAction ={
 				id:data.id,
 				from:data.from,
@@ -61,11 +89,13 @@ module.exports = function (types) {
 				editInvs.text = old.text;
 				editAction.text = data.text;
 				newText.text = data.text;
-			}else{
+			}else {
 				newText.text = old.text;
 			}
+
 			if(!newText.editInverse) newText.editInverse = [];
 			newText.editInverse.push(editInvs);
+
 			textsApi.put(newText);
 			edit.put(editAction);
 			cb(null, editAction);

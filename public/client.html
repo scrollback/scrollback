@@ -1,260 +1,270 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
+<html manifest="/manifest.appcache" lang="en">
+	<head>
+		<meta charset="utf-8">
 
-        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 
-        <title>Scrollback team - Scrollback</title>
+		<meta name="mobile-web-app-capable" content="yes">
 
-        <link rel="shortcut icon" href="./s/img/favicon.png" type="image/x-icon" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
 
-        <link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
-        <link rel="stylesheet" type="text/css" media="screen" href="./s/styles/less/client.css" />
-    </head>
+		<title></title>
 
-    <body>
-        <section class="rooms">
-            <div class="scrollback-header">
-                <img src="./s/img/scrollback-small.svg" alt="scrollback"/>
-            </div>
-            <ul>
-                <li><a href="http://scrollback.io/hasgeek">Hasgeek<span class="unread">2</span></a></li>
-                <li><a href="http://scrollback.io/numix">Numix Project<span class="unread has-replies">12</span></a></li>
-                <li><a href="http://scrollback.io/jsconfasia">JSConf Asia</a></li>
-                <li><a class="current" href="http://scrollback.io/scrollbackteam">Scrollback team</a></li>
-                <li><a href="http://scrollback.io/mozillaindia">Mozilla India<span class="unread">9</span></a></li>
-                <li><a href="http://scrollback.io/jfdiasia">JFDI Asia</a></li>
-            </ul>
-        </section>
-        <section class="meta">
-            <ul class="tabs">
-                <li class="tab-info"><h2>Info</h2></li>
-                <li class="tab-people current"><h2>People</h2></li>
-                <li class="tab-threads"><h2>Threads</h2></li>
-            </ul>
-            <div class="meta-content room-info tab-info">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas tincidunt non nibh id euismod. Donec a facilisis nibh. Proin molestie ante augue, sed elementum ipsum ornare nec.
-            </div>
-            <div class="meta-content people-list tab-people current">
-                <a class="people" href="">
-                    <img alt="" src="./avatars/Adrian.png">
-                    <span class="people-name">adrian</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/banekoma.png">
-                    <span class="people-name">banekoma</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/twavatar.jpg">
-                    <span class="people-name">twavatar</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/Steve.jpg">
-                    <span class="people-name">steve</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/Stanton.jpeg.jpg">
-                    <span class="people-name">stanton</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/space36.png">
-                    <span class="people-name">space36</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/Simon.jpg">
-                    <span class="people-name">hawkeye</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/Simon.png">
-                    <span class="people-name">john</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/Shane.jpg">
-                    <span class="people-name">shane</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/Rik.png">
-                    <span class="people-name">rik</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/Rob.jpg">
-                    <span class="people-name">rob</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/Adam.jpg">
-                    <span class="people-name">adam</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/Andrew.jpg">
-                    <span class="people-name">andrew</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/Anthony.jpg">
-                    <span class="people-name">anthony</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/wolverine.png">
-                    <span class="people-name">wolverine1234hh</span>
-                </a>
-                <a class="people" href="">
-                    <img alt="" src="./avatars/Tomek.jpg">
-                    <span class="people-name">tomek</span>
-                </a>
-                <a class="people offline" href="">
-                    <img alt="" src="./avatars/Steve.jpg">
-                    <span class="people-name">steve</span>
-                </a>
-                <a class="people offline" href="">
-                    <img alt="" src="./avatars/Simon2.jpg">
-                    <span class="people-name">simon</span>
-                </a>
-            </div>
-            <div class="meta-content tab-threads">
-                <a class="thread" href="">
-                    <h3>All threads</h3>
-                    <p>At vero eos et accusamus et iusto dignissimos</p>
-                </a>
-                <a class="thread conv-3" href="">
-                    <h3>Thread title</h3>
-                    <p>At vero eos et accusamus et iusto dignissimos</p>
-                </a>
-                <a class="thread conv-2" href="">
-                    <h3>Thread title</h3>
-                    <p>At vero eos et accusamus et iusto dignissimos</p>
-                </a>
-                <a class="thread current conv-1" href="">
-                    <h3>Thread title</h3>
-                    <p>At vero eos et accusamus et iusto dignissimos</p>
-                </a>
-                <a class="thread conv-0" href="">
-                    <h3>Thread title</h3>
-                    <p>At vero eos et accusamus et iusto dignissimos</p>
-                </a>
-            </div>
-        </section>
-        <section class="mainview">
-            <div class="titlebar">
-                <img alt="" src="./avatars/Reggie.jpg" class="icon" /><h1 class="title">Scrollback team</h1>
-                <a class="user-area" href="">
-                    <span class="username">satya164</span>
-                    <img alt="" src="http://s.gravatar.com/avatar/84d56ea2b15f524765efe80e7fa6be06" />
-                </a>
-            </div>
-            <div class="chat-position">27 April 2014</div>
-            <div class="chat-area">
-                <p class="chat conv-0">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-                </p>
+		<!-- enable HTML5 in IE, we need to place it before body -->
+		<!--[if lt IE 9]>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
+		<script>window.html5 || document.write('<script src="/s/lib/html5shiv.min.js"><\/script>')</script>
+		<![endif]-->
 
-                <p class="chat conv-2">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. Cras lacinia metus sed quam aliquet, non semper magna rutrum. Maecenas sit amet nibh ac justo vestibulum posuere eu a nisl. In et laoreet metus.</span>
-                </p>
+		<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
 
-                <p class="chat conv-4">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Vivamus quis urna in erat faucibus aliquam. Suspendisse consectetur pretium massa quis viverra. Sed nec dui ipsum. In elementum ultricies odio, ut porttitor libero vestibulum quis. Suspendisse potenti. Nulla facilisi.</span>
-                </p>
+		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/gen/client.css">
+	</head>
 
-                <p class="chat conv-8">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Donec ultricies tempus dui eu adipiscing. Vivamus et purus rhoncus lectus varius accumsan sed nec purus. Nulla id tellus dictum, aliquam justo a, elementum metus.</span>
-                </p>
+	<body>
+		<section data-embed="none" class="room-area column">
+			<div class="room-header">
+				<a href="http://scrollback.io" target="_blank"><img src="/s/img/client/scrollback-small.svg" alt="scrollback"></a>
+			</div>
 
-                <p class="chat conv-1">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Integer consectetur venenatis dolor. Nunc varius ullamcorper felis, placerat congue diam lobortis a. Mauris sem turpis, aliquam ac leo rhoncus, viverra placerat leo.</span>
-                </p>
+			<div role="list" class="room-list hide-scroll">
+				<a class="room-item"><span class="room-name"></span><span class="notif-counter unread"></span></a>
+			</div>
+		</section>
+		<section class="meta-area column">
+			<ul role="tablist" class="meta-tabs">
+				<li data-embed="none" role="tab" class="rooms-button">
+					<svg class="rooms-icon" width="28" height="28" viewBox="0 0 28 28">
+						<use xlink:href="/s/img/client/icons/back.svg#icon"></use>
+					</svg>
+				</li>
+				<li role="tab" data-mode="normal" class="tab tab-info">
+					<svg class="info-icon" width="28" height="28" viewBox="0 0 28 28">
+						<path d="M 14 2 C 7.3735792 2 2 7.3735792 2 14 C 2 20.62642 7.3735792 26 14 26 C 20.62642 26 26 20.62642 26 14 C 26 7.3735792 20.62642 2 14 2 z M 14 6.8125 C 15.322726 6.8125 16.40625 7.8647736 16.40625 9.1875 C 16.40625 10.510226 15.322726 11.59375 14 11.59375 C 12.677274 11.59375 11.59375 10.510226 11.59375 9.1875 C 11.59375 7.8647736 12.677274 6.8125 14 6.8125 z M 11.59375 14 L 16.40625 14 L 16.40625 21.1875 L 11.59375 21.1875 L 11.59375 14 z " fill-rule="evenodd"/>
+					</svg>
+				</li>
+				<li role="tab" data-mode="normal" class="tab tab-people">
+					<svg class="people-icon" width="28" height="28" viewBox="0 0 28 28">
+						<g transform="translate(0,-0.99999997)">
+							<path d="M 18 3 C 14.661356 3.1329198 13.876148 4.0872521 12.4375 6.125 C 11.551696 9.2368721 11.544264 13.562326 13.125 15.6875 C 13.789392 16.695566 14.710574 18.012323 14 19.21875 C 13.157772 20.425576 11.936285 21.274758 10.65625 22 C 10.335695 21.729203 10.059232 21.406857 9.8125 21.0625 C 9.3150996 20.239936 9.9411717 19.343567 10.40625 18.65625 C 11.57514 17.07892 11.727449 13.640877 10.875 12.09375 C 10.104763 10.752473 9.3333338 10.051541 7 10 C 4.6629492 10.090627 3.8989522 10.735627 3.125 12.125 C 2.5049358 14.246731 2.4872348 17.207267 3.59375 18.65625 C 4.0588258 19.343567 4.6849022 20.239936 4.1875 21.0625 C 3.2680234 22.345792 1.7393752 23.050843 0.34375 23.75 C -0.1303642 23.79674 0.0317464 24.218801 0 24.53125 C -0.0007616 24.779736 -0.0662 25.085103 0.3125 24.96875 L 6.46875 24.96875 L 7.53125 24.96875 L 8.15625 24.96875 C 8.2220258 24.995069 8.30225 25.011413 8.4375 24.96875 L 13.6875 24.96875 C 13.808684 25.005981 13.892185 25.004871 13.9375 24.96875 L 17.25 24.96875 L 18.75 24.96875 L 27.5625 24.96875 C 28.1035 25.139391 28.001085 24.645697 28 24.28125 C 27.95464 23.822993 28.177318 23.224835 27.5 23.15625 C 25.506249 22.130819 23.313542 21.100911 22 19.21875 C 21.289429 18.012322 22.210603 16.695565 22.875 15.6875 C 24.544842 13.374081 24.749034 8.3316201 23.53125 6.0625 C 22.430912 4.0952942 21.333333 3.075592 18 3 z "/>
+						</g>
+					</svg>
+				</li>
+				<li role="tab" data-mode="normal" class="tab tab-threads">
+					<svg class="threads-icon" width="28" height="28" viewBox="0 0 28 28">
+						<path d="M 5.199999,4.0000001 C 2,4.0000001 2,4.0000001 2,7.3328459 L 2,17.331384 C 2,20.664241 2,21.664 5.199999,21.664 L 10,21.664 c 4.2544,4.447679 4.247999,4.447679 8,0 l 4.8,0 c 3.2,0 3.2,-0.999759 3.2,-4.332616 L 26,7.3328459 C 26,4.0000001 26,4.0000001 22.8,4.0000001 l -17.600001,0 M 6,8 18,8 18,10 6,10 m 4,2 12,0 0,2 -12,-0.0015 M 6,16 l 12,0 0,2 -12,0"/>
+					</svg>
+				</li>
+				<li role="tab" data-mode="search" class="tab tab-search-local"><h3>This room</h3></li>
+				<!-- <li role="tab" data-mode="search" class="tab tab-search-global"><h3>All rooms</h3></li> -->
+				<li data-mode="conf" class="meta-header"><h3>Room settings</h3></li>
+				<li data-mode="pref" class="meta-header"><h3>Account settings</h3></li>
+			</ul>
+			<div data-mode="normal search" class="meta-panes">
+				<div role="tabpanel" class="pane hide-scroll pane-info">
+					<h2 class="info-title"></h2>
+					<p class="info-description"></p>
+					<a data-role="owner" class="button configure-button">Configure room</a>
+				</div>
+				<div role="tabpanel" class="pane hide-scroll pane-people">
+					<a class="person">
+						<img class="person-avatar" src="" alt="">
+						<span class="person-name"></span>
+					</a>
+				</div>
+				<div role="tabpanel" class="pane pane-threads">
+					<div class="pane-threads-wrap">
+						<!-- <div data-mode="search" class="thread-search-query"></div> -->
+						<div data-mode="normal" class="thread-item thread-all-conversations current" href="" id="thread-">
+							<h4 class="thread-title">All conversations</h4>
+							<p class="thread-snippet"></p>
+						</div>
+						<div class="thread-item-container hide-scroll">
+							<div class="thread-item" href="">
+								<h4 class="thread-title"></h4>
+								<p class="thread-snippet"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-                <p class="chat conv-3">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Ut ultrices purus in sagittis accumsan. Donec rhoncus justo in nulla ullamcorper mattis. Aenean at nisi et sem luctus ullamcorper. Aliquam est massa, elementum suscipit turpis in, lobortis lobortis est.</span>
-                </p>
+			<div data-mode="conf" class="meta-conf hide-scroll">
+				<a class="list-item"></a>
+			</div>
+			<div data-mode="pref" class="meta-pref hide-scroll">
+				<a class="list-item"></a>
+			</div>
+		</section>
+		<section role="main" class="main-area column">
+			<div data-mode="normal search conf pref" class="title-bar">
+				<div class="left-area">
+					<a class="meta-button">
+						<span data-embed="toast full" class="meta-button-logo">
+							<svg class="meta-icon sb-icon" width="28" height="28" viewBox="0 0 28 28">
+								<use xlink:href="/s/img/client/icons/scrollback.svg#icon"></use>
+							</svg>
+						</span>
+						<span class="meta-button-back">
+							<svg class="meta-icon" width="28" height="28" viewBox="0 0 28 28">
+								<use xlink:href="/s/img/client/icons/back.svg#icon"></use>
+							</svg>
+						</span>
+					</a>
+					<h2 data-mode="normal search" class="room-title" id="room-title"></h2>
+					<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
+						<svg class="follow-icon" width="28" height="28" viewBox="0 0 28 28">
+							<use xlink:href="/s/img/client/icons/follow.svg#icon"></use>
+						</svg>
+					</a>
+					<div data-mode="conf pref" class="action-buttons">
+						<a class="button conf-save">Done</a>
+						<a class="button secondary conf-cancel">Cancel</a>
+					</div>
+				</div>
+				<div data-mode="normal search" class="right-area">
+					<a style="display:none" data-embed="none" data-mode="normal" data-tooltip="Search" class="search-button" role="button">
+						<svg class="search-icon" width="28" height="28" viewBox="0 0 28 28">
+							<use xlink:href="/s/img/client/icons/search.svg#icon"></use>
+						</svg>
+					</a>
+					<div class="user-area">
+						<div class="user-detail cta-area">
+							<div id="sb-user"></div>
+							<div data-role="guest" class="sign-in cta-action">Sign in</div>
+						</div>
+						<div class="user-avatar">
+							<img alt="" id="sb-avatar" >
+						</div>
+					</div>
+					<div data-embed="toast full" class="embed-area">
+						<div data-role="user" class="follow-room-action cta-area">
+							<div>Stay connected</div>
+							<div class="cta-action">Follow room</div>
+						</div>
+						<div class="full-view-action cta-area">
+							<div>Browse archives</div>
+							<div class="cta-action">Visit room</div>
+						</div>
+						<a data-role="user" class="embed-button user-menu-button" role="button">
+							<svg class="embed-icon user-menu-icon" width="28" height="28" viewBox="0 0 28 28">
+								<use xlink:href="/s/img/client/icons/more.svg#icon"></use>
+							</svg>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div data-mode="normal search" class="content-area">
+				<div class="chat-position"></div>
+				<div class="chat-area hide-scroll">
+					<p class="chat-item">
+						<span class="chat-item-dot"></span>
+						<span class="chat-nick"></span>
+						<span class="chat-message"></span>
+						<span class="chat-timestamp"></span>
+						 <span class="chat-more"></span>
+					</p>
+				</div>
+			</div>
+			<div data-mode="conf" class="conf-area">
+			</div>
+			<div data-mode="pref" class="pref-area">
+			</div>
+			<div data-mode="normal search" class="chat-input">
+				<div class="chat-entry-wrap">
+					<div class="chat-conv-dot-wrap">
+						<span class="chat-conv-dot"></span>
+					</div>
+					<div class="chat-placeholder"></div>
+					<div role="textbox" class="chat-entry" contenteditable></div>
+				</div>
+				<svg version="1.1" class="chat-send">
+					<use xlink:href="/s/img/client/icons/send.svg#icon"></use>
+				</svg>
+			</div>
+		</section>
+		<section class="search-bar">
+			<form>
+				<input class="search-entry" type="search" placeholder="Type to search...">
+			</form>
+		</section>
+		<section data-mode="noroom" class="noroom-area">
+			<div class="noroom-container">
+				<h1>This room does not exist yet :-(</h1>
+				<p data-role="guest">You need to sign in first to create a room</p>
+				<p>
+					<a data-role="user" class="button create-room-button" id="create-room-button">Create room</a>
+					<a data-role="guest" class="button login-and-create-room-button"  id="login-and-create-room-button">Sign in</a>
+				</p>
+			</div>
+		</section>
+		<section data-mode="offline" class="offline-area">
+			<div class="offline-container">
+				<h1>Disconnected :-(</h1>
+				<a class="button disconnectTry">Reconnect</a>
+			</div>
+		</section>
+		<section data-mode="profile" class="profile-area">
+			<div class="profile-container">
+				<h1> Who is <span id="profileText"></span> ?</h1>
+				<p>Profiles coming soon! :-)</p>
+			</div>
+		</section>
+		<section data-embed="toast" class="minimize-bar">
+			<div class="minimize-bar-button minimize-logo">
+				<svg class="minimize-bar-icon sb-icon" width="28" height="28" viewBox="0 0 28 28">
+					<use xlink:href="/s/img/client/icons/scrollback.svg#icon"></use>
+				</svg>
+			</div>
+			<div class="minimize-room-title"></div>
+			<div class="minimize-ticker"></div>
+		</section>
+		<section class="overlay">
+			<h1>Warming up...</h1>
+		</section>
+		<section class="progress loading">
+		</section>
 
-                <p class="chat conv-5">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas tincidunt non nibh id euismod. Donec a facilisis nibh. Proin molestie ante augue, sed elementum ipsum ornare nec.</span>
-                </p>
+		<!-- templates -->
+		<script type="text/template" id="signup-dialog">
+			<div class="signup-dialog">
+				<h1>Choose a username</h1>
+				<form id="signup">
+					<input type="text" id="signup-id" name="username" placeholder="Enter username" autofocus><br/>
+					<input class="signup-save" type="button" value="Create account">
+			</form>
+			</div>
+		</script>
 
-                <p class="chat conv-7">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Vivamus quis urna in erat faucibus aliquam.</span>
-                </p>
+		<script type="text/template" id="signedout-dialog">
+			<div class="signedout-dialog">
+				<h1>You've been signed out!</h1>
+				<a class="button reload-page modal-remove">Go back as guest</a>
+			</div>
+		</script>
 
-                <p class="chat conv-9">
-                    <span class="nick"><a href="">satya164lonnnnnnnnnnng</a></span>
-                    <span class="message">Vivamus quis urna in erat faucibus aliquam. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc.</span>
-                </p>
+		<!-- scripts -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="/s/lib/jquery.min.js"><\/script>');</script>
 
-                <p class="chat conv-0">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-                </p>
+		<!--[if IE]>
+		<script src="/s/lib/selectivizr-min.js"
+		<script src="/s/lib/transformie.min.js"></script>
+		<script src="/s/lib/flexie.min.js"></script>
+		<![endif]-->
 
-                <p class="chat conv-2">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc.</span>
-                </p>
+		<script src="/s/lib/svg4everybody.min.js"></script>
 
-                <p class="chat long conv-4">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc. In pharetra, nunc sit amet gravida imperdiet, libero ligula lobortis massa, eu interdum est sapien et nunc.</span>
-                </p>
-
-                <p class="chat conv-6">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-                </p>
-
-                <p class="chat conv-8">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-                </p>
-
-                <p class="timestamp">5 minutes ago</p>
-
-                <p class="chat conv-1">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Donec ultricies tempus dui eu adipiscing. Vivamus et purus rhoncus lectus varius accumsan sed nec purus. Nulla id tellus dictum, aliquam justo a, elementum metus.</span>
-                </p>
-
-                <p class="chat conv-3">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Integer consectetur venenatis dolor. Nunc varius ullamcorper felis, placerat congue diam lobortis a. Mauris sem turpis, aliquam ac leo rhoncus, viverra placerat leo.</span>
-                </p>
-
-                <p class="chat conv-5">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Ut ultrices purus in sagittis accumsan. Donec rhoncus justo in nulla ullamcorper mattis.</span>
-                </p>
-
-                <p class="chat conv-7">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Donec ultricies tempus dui eu adipiscing. Vivamus et purus rhoncus lectus varius accumsan sed nec purus. Nulla id tellus dictum, aliquam justo a, elementum metus.</span>
-                </p>
-
-                <p class="chat conv-9">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Integer consectetur venenatis dolor.</span>
-                </p>
-
-                <p class="chat conv-0">
-                    <span class="nick"><a href="">satya164</a></span>
-                    <span class="message">Ut ultrices purus in sagittis accumsan.</span>
-                </p>
-            </div>
-            <div class="chat-input">
-                <div contenteditable="true" class="textarea"></div>
-            </div>
-        </section>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script>
-            window.jQuery || document.write('<script src="./s/js/jquery.min.js"><\/script>')
-        </script>
-        <script src="./s/js/widgets.js"></script>
-        <script src="./s/js/client.js"></script>
-    </body>
-
+		<script src="/sdk/sockjs.js"></script>
+		<script src="/client.bundle.js"></script>
+		<script>libsb.connect();</script>
+		<script src="https://login.persona.org/include.js"></script>
+		<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+			ga('create', 'UA-45130412-1', 'scrollback.io');
+			ga('send', 'pageview');
+		</script>
+		<script>document.addEventListener && document.addEventListener("touchstart", function() {}, true);</script>
+	</body>
 </html>

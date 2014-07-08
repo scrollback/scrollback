@@ -43,7 +43,7 @@ var formatText = function format(text) {
 		protocol = protocol || (user? 'mailto:': 'http://');
 		user = user || '';
 		s = u.lastIndex;
-		m += "<a rel='nofollow' href='" + protocol + user + domain + path + "'>" + r[0] + "</a>";
+		m += "<a href='" + protocol + user + domain + path + "'>" + r[0] + "</a>";
 	}
 	m += "<span>" + text.substring(s) + "</span>";
 	return m;
@@ -52,7 +52,7 @@ var formatText = function format(text) {
 
 exports.init = function(app, coreObject) { 
 	core = coreObject;
-	fs.readFile(__dirname + "/views/SEO.html", "utf8", function(err, data){
+/*	fs.readFile(__dirname + "/views/SEO.html", "utf8", function(err, data){
 		if(err)	throw err;
 		core.on("http/init", function(payload, callback) {
             payload.seo = {
@@ -114,57 +114,8 @@ exports.init = function(app, coreObject) {
             res.render("d/main" , responseObject);    
         });
     }
-    app.get("/me", loginHandler);
-	app.get("/me/login", loginHandler);
-    app.get("/dlg/*",function(req,res){
-        var dialog=req.path.substring(1).split("/")[1];
-        if(dialogs[dialog]) {
-            dialogs[dialog](req,res);
-        }
-        else{
-            res.render("error",{error: "dialog missing"});
-        }
-    });
-
-    app.get("/pwn/*",function(req,res){
-        var room = req.path.substring(1).split("/")[1];
-        var url=req.path.replace("/pwn/"+room+"/","");
-        if(url.indexOf("http://")<0){
-            url="http://"+url;
-        }
-        res.render("pwn",{
-            room:room,
-            url:url
-        });
-    });
-
-    app.get('/t/*', function(req, res, next) {
-        var streams = req.path.substring(3);
-
-        streams = streams.split("/+/").map(function(p) {
-            return p.split('/')[0];
-        });
-
-        res.render("room", {
-            streams: JSON.stringify(streams),
-            title: streams.join(', ').replace(/\b[a-z]/g, function(m) {
-                return m.toUpperCase();
-            })
-        });
-    });
-	
-	app.get("/dummy/:page", function (req, res) {
-		res.render("dummy/" + req.params.page, { room: { 
-            id: "roomId", name: "Sample Room 1", 
-            description: "This is a sample room and this is a description for the sample room, this description should be a little larger I presume. Here is the Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis semper lobortis leo accumsan adipiscing. Curabitur eu leo id elit aliquet sagittis ut eu leo. Nulla facilisi. .", picture: "",
-            profile: "http://sampleroom.blogspot.com" 
-        }});
-	});   
-	
-	app.get("/beta/*", function(req, res){
-		return res.redirect(307, 'https://'+config.http.host+ req.path.substring(5));
-	});
-	
+*/
+  
     function roomHandler(req, res, next) {
 		log("path ", req.path);
         var params = req.path.substring(1).split("/"), responseObj={}, 
@@ -222,12 +173,26 @@ exports.init = function(app, coreObject) {
             });
         });
     }
-    app.get("/*", roomHandler);
-    app.get("/*/edit", roomHandler);
 
+    app.get('/t/*', function(req, res, next) {
+        fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data){
+           res.end(data);
+           next();
+        });
+    });
 
-
-
+    app.get("/*", function(req, res, next){
+        if(/^\/t\//.test(req.path)) return next();
+        if(!req.secure) {
+            queryString  = req._parsedUrl.search?req._parsedUrl.search:"";
+            return res.redirect(307, 'https://'+config.http.host+req.path+queryString);
+        }
+        fs.readFile(__dirname + "/../public/client.html", "utf8", function(err, data){
+           res.end(data);
+        });
+    });
+    // app.get("/*/edit", roomHandler);
+/*
     app.get("/old/*", function(req, res, next) {
         var params = req.path.substring(1).split("/"), responseObj={}, query={}, sqlQuery, roomId = params[1],
         user = req.session.user;
@@ -302,101 +267,7 @@ exports.init = function(app, coreObject) {
                 res.render("archive", responseObj);
             });
         });
-    });
-
-	
-
-    // app.get("*/edit/*", function(req, res) {
-    //     var params = req.path.substring(1).split("/"), responseHTML = "";
-    //     if(params[1] != "edit") {
-    //         return next();
-    //     }
-    //     core.room({id:params[0]},function(err,room) {
-    //         if(err) throw err;
-
-    //         if(room.pluginConfig && room.pluginConfig[params[2]]) {
-    //             renderObject.config = room.pluginConfig[params[2]];
-    //         }
-
-    //         console.log(room);
-    //         responseHTML = core.getConfigUi(params[2])(room);
-    //         res.writeHead(200, {"Content-Type": "text/html"});
-    //         res.end(responseHTML);
-    //     });
-    // })
-	
-	
-
-    //commenting out for now. Will not be used.
-//     app.get("*/config",function(req, res, next) {
-//         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user;
-//         if(roomId && !validateRoom(roomId)) return next();
-//         console.log(roomId);
-//         core.emit("rooms",{id: roomId, fields:["accounts"]}, function(err, room) {
-//             if(err) return res.end(err);
-//             console.log(room);
-//             if(room.length==0) {
-//                 room = {
-//                     type: "room",
-//                     id: params[0]
-//                 };  
-//             }
-//             else{
-//                 room = room[0];
-//             }
-//             if(room.type == "user") {
-//                 return res.render("error",{error:"Currently No configuration Available for Users."});
-//             }
-//             if(user.id.indexOf("guest-")!=0) {
-//                 if(typeof room.owner == "undefined" || room.owner == "" || room.owner == user.id) {
-//                     var responseObject = {
-//                         room: room,
-//                         relDate: relDate,
-//                         pluginsUI: {}
-//                     };
-//                     core.emit("config", {},function(err, payload) {
-//                         responseObject.pluginsUI = payload;
-//                         log(responseObject);
-//                         if(err) return res.render("error",{error:err.message});
-//                         console.log(responseObject);
-//                         return res.render("config", responseObject);            
-//                     });
-//                 }else{
-//                     res.render("error", {error:"You are Not the Admin of this room"});    
-//                 }
-//             }
-//             else{
-//                 res.render("error", {error:"Please login..."});   
-//             }
-            
-//         });
-//     });
-//     app.post("*/config", function(req, res, next) {
-//         var params = req.path.substring(1).split("/"), roomId = params[0], user = req.session.user,
-//             renderObject = {}, responseHTML = "", data = {};
-//         data = req.body || {};
-
-//         if(!validateRoom(roomId)) return next();
-
-//         if(typeof data == "string") {
-//             try { data = JSON.parse(data); }
-//             catch (e) { res.end(e); }
-//         }
-//         data.owner = user.id;
-//         if(user.id.indexOf("guest-")==0)
-//             return res.end(JSON.stringify({error:"You are a guest user."}));
-//         if(data.id) {
-//             data.owner = user.id;
-//             core.emit("room", data, function(err,data) {
-//                 if(err) res.end(JSON.stringify({error:err.message}));  
-//                 else res.end(JSON.stringify(data));
-//             });
-//         }
-//         else{
-//             res.end(JSON.stringify({error:"Improper Data"}));
-//         }
-    // });
-	
+    });*/
 };
 
 

@@ -1,0 +1,1566 @@
+@import "global";
+@import "base";
+@import "alert";
+@import "modal";
+@import "popover";
+@import "switch";
+@import "button";
+@import "entry";
+@import "multientry";
+@import "flexbox";
+@import "oembed";
+@import "tooltip";
+@import "progress";
+@import "overlay";
+
+$screenx: "only screen and (min-width: 18em)";
+$screenxx: "only screen and (min-width: 27em)";
+$screenxxx: "only screen and (min-width: 50em)";
+$screenxxxx: "only screen and (min-width: 70em)";
+
+$width-room: 15em;
+$width-roomx: 15em;
+$width-roomxx: 15em;
+$width-roomxxx: 15em;
+$width-roomxxxx: 16%;
+
+$width-meta: 13em;
+$width-metax: 19em;
+$width-metaxx: 25em;
+$width-metaxxx: 26em;
+$width-metaxxxx: 30%;
+
+$bar-height: 3.5em;
+
+$settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification;
+$modes: normal, search, conf, pref, home, noroom, offline, profile;
+$roles: guest, user, follower, owner;
+$embeds: toast, full;
+
+/* themes */
+@mixin theme($name, $base, $text, $icon, $focus) {
+    .theme-#{$name} {
+        .meta-tabs {
+            background-color: $base;
+            color: $text;
+            border-bottom-color: darken($base, 2%);
+
+            .tab {
+                fill: fade-out($icon, .15);
+                border-left-color: darken($base, 2%);
+
+                &:hover, &:focus, &:active {
+                    fill: $icon;
+                    background-color: darken($base, 5%);
+                }
+
+                &.current {
+                    fill: $icon;
+                    background-color: rgba(0,0,0,.15);
+                }
+            }
+
+            .meta-header {
+                @media #{$screenxxxx} { background-image: url(../../img/client/icons/settings-dark.svg); }
+            }
+        }
+
+        .title-bar, .minimize-bar {
+            background-color: $base;
+            color: $text;
+            box-shadow: inset 0 -1px 0 0 darken($base, 2%),
+                        -1px 0 0 darken($base, 2%),
+                        0 3px 2px -1px rgba(0,0,0,.05);
+        }
+
+        .follow-button {
+            fill: none;
+            stroke: $icon;
+
+            &:focus, &:hover, &:active {
+                fill: none;
+                stroke: $focus;
+            }
+        }
+
+        &.role-follower .follow-button, .meta-tabs li.rooms-button, .meta-button, .search-button, .embed-button {
+            fill: $icon;
+
+            &:focus, &:hover, &:active { fill: $focus; }
+        }
+
+        .sb-icon { fill: $light-color; }
+
+        .sb-logotype { fill: $light-color; }
+    }
+}
+
+@include theme($name: dark, $base: $dark-color, $text: $light-color, $icon: fade-out($light-color, .15), $focus: $light-color);
+
+/* widget styles */
+%scroll-elem {
+    max-height: 100%;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling : touch;
+}
+
+%column {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+}
+
+@mixin title-icon($elem) {
+    .#{$elem} {
+        display: block;
+        margin: auto;
+        height: 2em;
+        width: 2em;
+    }
+}
+
+body {
+    word-wrap: break-word;
+    height: 100%;
+
+    &:not(.embed) {
+        [data-embed]:not([data-embed=none]) { display: none; }
+    }
+
+    @each $embed in $embeds {
+        &.embed-#{$embed} {
+            [data-embed]:not([data-embed~=#{$embed}]) { display: none; }
+        }
+    }
+
+    @each $mode in $modes {
+        &.mode-#{$mode} {
+            [data-mode]:not([data-mode~=#{$mode}]) { display: none; }
+        }
+    }
+
+    @each $role in $roles {
+        &:not(.role-#{$role}) {
+            [data-role~=#{$role}] { display: none; }
+        }
+    }
+}
+
+.room-area {
+    @extend %column;
+
+    left: ( $width-room + $width-meta ) * -1;
+    width: $width-room;
+    background-color: $dark-color;
+    color: $light-color;
+
+    @media #{$screenx} {
+        left: ( $width-roomx + $width-metax ) * -1;
+        width: $width-roomx;
+    }
+
+    @media #{$screenxx} {
+        left: ( $width-roomxx + $width-metaxx ) * -1;
+        width: $width-roomxx;
+    }
+
+    @media #{$screenxxx} {
+        left: $width-roomxxx * -1;
+        width: $width-roomxxx;
+    }
+
+    @media #{$screenxxxx} {
+        left: 0;
+        width: $width-roomxxxx;
+    }
+}
+
+.room-header {
+    height: $bar-height;
+    padding: .5em 1em;
+    border-bottom: 1px solid lighten($dark-color, 5%);
+    cursor: pointer;
+
+    img {
+        height: 2.5em;
+        width: auto;
+    }
+}
+
+.room-list {
+    @extend %scroll-elem;
+
+    padding-bottom: $bar-height;
+}
+
+.room-item {
+    @extend %ease;
+
+    display: block;
+    padding: 1em;
+    font-weight: 700;
+    color: $light-color;
+    border-bottom: 1px solid lighten($dark-color, 5%);
+
+    &:hover, &:focus, &.current:hover, &.current:focus {
+        color: $light-color;
+        background-color: rgba(0,0,0,.3);
+    }
+
+    &.current {
+        position: relative;
+        background-color: rgba(0,0,0,.1);
+
+        &:after {
+            content: "";
+            display: block;
+            position: absolute;
+            right: 0;
+            top: 1.2em;
+            border-top: .6em solid transparent;
+            border-bottom: .6em solid transparent;
+            border-right: .6em solid darken($light-color, 5%);
+        }
+    }
+
+    &.search-term { background: url(../../img/client/icons/search-light.svg) no-repeat 90% center; }
+
+    .unread {
+        float: right;
+        min-width: 2em;
+        text-align: center;
+        font-size: .8em;
+        background-color: $accent-color;
+        color: $light-color;
+        border-radius: $roundness;
+
+        &:empty { display: none; }
+
+        &.mentioned { background-color: $error-color; }
+    }
+}
+
+.meta-area {
+    @extend %column;
+
+    left: $width-meta * -1;
+    width: $width-meta;
+    border-right: 1px solid rgba(0,0,0,.1);
+    background-color: darken($light-color, 5%);
+    color: $dark-color;
+
+    @media #{$screenx} {
+        left: $width-metax * -1;
+        width: $width-metax;
+    }
+
+    @media #{$screenxx} {
+        left: $width-metaxx * -1;
+        width: $width-metaxx;
+    }
+
+    @media #{$screenxxx} {
+        left: 0;
+        width: $width-metaxxx;
+    }
+
+    @media #{$screenxxxx} {
+        width: $width-metaxxxx;
+        left: $width-roomxxxx;
+
+        .embed & { left: 0; }
+    }
+}
+
+.meta-tabs {
+    @include flexbox;
+    @include flex-direction(row);
+    @include flex-wrap(nowrap);
+    @include align-items(center);
+    @include align-content(center);
+
+    list-style: none;
+    height: $bar-height;
+    border-bottom: 1px solid darken($light-color, 15%);
+
+    li {
+        @include flexbox;
+        @include flex-direction(row);
+        @include flex-wrap(nowrap);
+        @include justify-content(space-around);
+        @include align-items(center);
+        @include align-content(center);
+        @include transform(rotate(0deg)); /* hack to fix invisible items in android browser */
+        @extend %ease;
+
+        height: 100%;
+        cursor: pointer;
+
+        &.rooms-button {
+            min-width: 3em;
+            width: 3em;
+            fill: lighten($dark-color, 15%);
+
+            .view-rooms & { @include transform(rotate(180deg)); }
+
+            @media #{$screenxxxx} { display: none; }
+        }
+    }
+
+    h3 { margin: 0; }
+
+    .tab {
+        @include flex-grow(1);
+        @extend %ease;
+
+        text-align: center;
+        background-color: transparent;
+        border-left: 1px solid darken($light-color, 15%);
+        fill: lighten($dark-color, 50%);
+
+        &:first-child { border-left: none; }
+
+        &:hover, &:focus, &:active {
+            fill: lighten($dark-color, 5%);
+            background-color: rgba(0,0,0,.05);
+        }
+
+        &.current {
+            fill: lighten($dark-color, 15%);
+            background-color: rgba(0,0,0,.1);
+        }
+
+        svg { @extend %ease; }
+
+        &:hover, &:focus {
+            svg { @include transform(scale(1.1)); }
+        }
+
+        &:active {
+            svg { @include transform(scale(0.8)); }
+        }
+    }
+
+    .meta-header {
+        @include justify-content(flex-start);
+
+        padding-left: .25em;
+        text-transform: uppercase;
+
+        .embed & { padding-left: .75em; }
+
+        @media #{$screenxxxx} {
+            padding-left: 4.25em;
+            background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
+        }
+
+        h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+
+            @media #{$screenxxxx} {
+                font-size: 1.5em;
+                font-weight: 400;
+            }
+        }
+    }
+}
+
+.meta-panes {
+    height: 100%;
+    padding-bottom: $bar-height;
+
+    .pane {
+        display: none;
+
+        &.current {
+            @include fadein;
+
+            display: block;
+            height: 100%;
+        }
+    }
+}
+
+.pane-info {
+    @extend %scroll-elem;
+
+    padding: 1.5em;
+}
+
+.pane-people {
+    @extend %scroll-elem;
+
+    padding: 1.5em .75em;
+
+    .infinite-above, .infinite-below {
+        background-color: transparent;
+        background-image:  linear-gradient(to right, darken($light-color, 5%), darken($light-color, 5%) 15%, transparent 15%, transparent 85%, darken($light-color, 5%) 85%, darken($light-color, 5%)),
+                           linear-gradient(to bottom, transparent, transparent 25%, darken($light-color, 10%) 25%, darken($light-color, 10%) 65%, transparent 65%, transparent 75%, darken($light-color, 10%) 75%, darken($light-color, 10%) 85%, transparent 85%, transparent);
+        background-size: 5.5em 8em;
+		background-position: top left;
+		background-repeat: repeat;
+        background-repeat: round; /* limited browser support */
+
+        .infinite-above.upper-limit, .infinite-below.lower-limit { background: none; }
+	}
+}
+
+.person {
+    @extend %nofilter;
+    @extend %ease;
+
+    position: relative;
+    display: inline-block;
+    padding: .25em;
+    width: 5.5em;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    color: $dark-color;
+
+    &:hover, &:focus, &:active {
+        background-color: $accent-color;
+        color: $light-color;
+        border-radius: $roundness;
+    }
+
+    &.owner, &.admin, &.moderator {
+        &:after {
+            display: block;
+            position: absolute;
+            top: .25em;
+            right: .25em;
+            font-size: .8em;
+            font-weight: 700;
+            padding: 0 .25em;
+            text-transform: uppercase;
+            border-radius: $roundness;
+        }
+    }
+
+    &.owner {
+        &:after {
+            content: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\'><g transform=\'translate(0,-1036.3622)\' fill=\'#fff\'><path d=\'m 2,1050.3622 -2,-8 c 0,-1 1,0 1,0 l 4,3 2,-3 c 1,-1 1,-1 2,0 l 2,3 4,-3 c 0,0 1,-1 1,0 l -2,8 c -1,2 -1,2 -3,2 l -6,0 c -2,0 -2,0 -3,-2 z\'/></g></svg>");
+            background-color: $error-color;
+            color: $light-color;
+        }
+    }
+
+    &.admin {
+        &:after {
+            content: "Admin";
+            background-color: $warning-color;
+            color: $light-color;
+        }
+    }
+
+    &.moderator {
+        &:after {
+            content: "Mod";
+            background-color: $success-color;
+            color: $light-color;
+        }
+    }
+
+    &.offline {
+        @include opacity(.5);
+
+        .person-avatar { @extend %grayscale; }
+    }
+}
+
+.person-avatar {
+    display: block;
+    width: 4em;
+    height: 4em;
+    margin: .25em .5em;
+    border-radius: $roundness;
+}
+
+.pane-threads {
+	.infinite-above, .infinite-below {
+		background-color: transparent;
+		background-image:  linear-gradient(to bottom, transparent, transparent 35%, darken($light-color, 10%) 35%, darken($light-color, 10%) 65%, transparent 65%, transparent),
+						   linear-gradient(to bottom, darken($light-color, 10%), darken($light-color, 10%));
+		background-size: 60% 3em, 4px 100%;
+		background-position: 2em center, center right;
+        background-repeat: repeat-y;
+
+        .infinite-above.upper-limit, .infinite-below.lower-limit { background: none; }
+	}
+}
+
+.pane-threads-wrap {
+    @include flexbox;
+    @include flex-direction(column);
+    @include flex-wrap(nowrap);
+    @include align-items(stretch);
+    @include align-content(stretch);
+
+    height: 100%;
+    padding-bottom: $bar-height;
+}
+
+.thread-search-query {
+    padding: 1em 1.5em;
+    background-color: fade-out($info-color, .7);
+    font-size: 1.2em;
+}
+
+.thread-search-query, .thread-all-conversations {
+    box-shadow: 0 3px 2px -1px rgba(0,0,0,.1);
+}
+
+.thread-item-container {
+    @include flex-grow(1);
+    @extend %scroll-elem;
+
+    margin-bottom: $bar-height * -1;
+}
+
+.thread-item {
+    @extend %nofilter;
+    @extend %ease;
+
+    display: block;
+    padding: 1em 1.5em;
+    color: $dark-color;
+    border-right: 4px solid lighten($dark-color, 30%);
+    cursor: pointer;
+
+    &:first-letter { text-transform: capitalize; }
+
+    &.current { background-color: fade-out(lighten($dark-color, 15%), .7); }
+
+    &:hover, &:focus, &.current:hover, &.current:focus {
+        background-color: lighten($dark-color, 15%);
+        color: $light-color;
+    }
+
+    @for $i from 1 through length($palette) {
+        $color: nth($palette, $i);
+        $j: $i - 1;
+
+        &.conv-#{$j} {
+            border-right-color: $color;
+
+            &.current { background-color: fade-out($color, .7); }
+
+            &:hover, &:focus, &.current:hover, &.current:focus { background-color: $color; }
+        }
+    }
+}
+
+.thread-title { margin: 0; }
+
+.thread-snippet { margin: 0; }
+
+.meta-conf, .meta-pref {
+    @extend %scroll-elem;
+
+    height: 100%;
+    padding-bottom: $bar-height;
+}
+
+.list-item {
+	@extend %ease;
+
+    position: relative;
+	display: block;
+    font-size: 1.2em;
+	padding: .75em;
+	padding-left: 2.75em;
+	background-size: 24px 24px;
+	background-position: .75em center;
+	background-repeat: no-repeat;
+	border-bottom: 1px solid darken($light-color, 10%);
+	color: $dark-color;
+    cursor: pointer;
+
+    @media #{$screenxxxx} { font-size: 1.5em; }
+
+    &.current { background-color: rgba(0,0,0,.05); }
+
+    &:after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 2em;
+        display: block;
+        content: "";
+        background-color: transparent;
+        background-repeat: no-repeat;
+        background-position: center center;
+    }
+
+    $types: info, success, warning, error;
+
+    @for $i from 1 through length($types) {
+        $type: nth($types, $i);
+
+        &.#{$type} {
+            &:after { background-image: url(../../img/client/icons/#{$type}-icon.svg); }
+        }
+    }
+
+    &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active {
+        color: $dark-color;
+        background-color: rgba(0,0,0,.1);
+	}
+
+	@each $setting in $settings {
+		&.list-item-#{$setting}-settings {
+			background-image: url(../../img/client/icons/#{$setting}-settings.svg);
+		}
+	}
+}
+
+.main-area {
+    @extend %column;
+
+    position: fixed;
+    left: 0;
+    right: 0;
+
+    @media #{$screenxxx} { left: $width-metaxxx; }
+
+    @media #{$screenxxxx} {
+        left: $width-roomxxxx + $width-metaxxxx;
+
+        .embed & { left: $width-metaxxxx; }
+    }
+}
+
+.meta-button, .rooms-button {
+    @include transform(rotate(0deg));
+    @include transition(.5s);
+
+    width: 3em;
+    cursor: pointer;
+}
+
+@mixin meta-logo-visible {
+    .meta-button-logo {
+        @include opacity(1);
+        @include transform(translate3d(0, 0, 0));
+    }
+
+    .meta-button-back {
+        @include opacity(0);
+        @include transform(translate3d(0, 0, 0));
+    }
+}
+
+@mixin meta-back-visible {
+    .meta-button-logo {
+        @include opacity(0);
+        @include transform(translate3d(0, -100%, 0));
+    }
+
+    .meta-button-back {
+        @include opacity(1);
+        @include transform(translate3d(0, -100%, 0));
+    }
+}
+
+.meta-button {
+    @include title-icon(meta-icon);
+
+    height: $bar-height;
+    fill: lighten($dark-color, 50%);
+    overflow: hidden;
+
+    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 15%); }
+
+    .view-meta &, .view-rooms & { @include transform(rotate(180deg)); }
+
+    @media #{$screenxxx} { display: none; }
+
+    .meta-button-back, .meta-button-logo {
+        @extend %ease;
+
+        display: block;
+        height: 100%;
+        width: 100%;
+        padding: .75em .5em;
+    }
+}
+
+.embed {
+    .meta-button {
+        @include meta-logo-visible;
+    }
+
+    &:focus, &:hover, &:active {
+        .meta-button { @include meta-back-visible; }
+    }
+
+    &.view-meta {
+        .meta-button { @include meta-back-visible; }
+    }
+}
+
+.sb-icon { fill: $dark-color; }
+
+.title-bar {
+    @include flexbox;
+    @include flex-direction(row);
+    @include flex-wrap(nowrap);
+    @include justify-content(space-between);
+    @include align-items(center);
+    @include align-content(center);
+
+	position: relative;
+	height: $bar-height;
+	width: 100%;
+	z-index: 20;
+    background-color: darken($light-color, 5%);
+    color: $dark-color;
+    box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1),
+				0 3px 2px -1px rgba(0,0,0,.1);
+}
+
+.left-area {
+    @include flexbox;
+    @include flex-direction(row);
+    @include flex-wrap(nowrap);
+    @include justify-content(flex-start);
+    @include align-items(center);
+    @include align-content(center);
+}
+
+.right-area {
+    @include flexbox;
+    @include flex-direction(row);
+    @include flex-wrap(nowrap);
+    @include justify-content(flex-end);
+    @include align-items(center);
+    @include align-content(center);
+}
+
+.room-title {
+    font-size: 1.2em;
+    font-weight: 700;
+    margin: 0;
+
+    @media #{$screenxxx} {
+        padding-left: 1em;
+        font-size: 1.5em;
+        font-weight: 400;
+    }
+}
+
+.follow-button {
+    @include title-icon(follow-icon);
+
+    width: 3.5em;
+    padding: .75em;
+    fill: none;
+    stroke-width: 2px;
+    stroke: lighten($dark-color, 15%);
+
+    .role-follower & { fill: lighten($dark-color, 15%); }
+
+    .role-owner &, .embed & { display: none; }
+
+    &:focus, &:hover, &:active {
+        fill: none;
+        stroke: lighten($dark-color, 5%);
+
+        .role-follower & { fill: lighten($dark-color, 5%); }
+    }
+}
+
+.embed-area, .user-area {
+    @include flexbox;
+    @include flex-direction(row);
+    @include flex-wrap(nowrap);
+    @include justify-content(flex-end);
+    @include align-items(center);
+    @include align-content(center);
+}
+
+.embed-button, .search-button {
+    @include title-icon(search-icon);
+    @include title-icon(embed-icon);
+
+    width: 3em;
+    padding: .75em .5em;
+    cursor: pointer;
+    fill: lighten($dark-color, 15%);
+
+    &:focus, &:hover, &:active { fill: lighten($dark-color, 5%); }
+}
+
+.cta-area {
+    text-align: right;
+    padding: 0 1em;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+
+    .cta-action {
+        text-transform: uppercase;
+
+        .theme-dark & { color: $accent-color; }
+    }
+}
+
+.user-area {
+    .role-user.embed & { display: none; }
+}
+
+.follow-room-action {
+    .role-follower.embed &, .role-owner.embed & { display: none; }
+}
+
+.full-view-action {
+    display: none;
+
+    .role-follower.embed &, .role-owner.embed & { display: block; }
+}
+
+.user-avatar {
+    display: none;
+
+    @media #{$screenxx} {
+        display: block;
+        cursor: pointer;
+
+        img {
+            display: block;
+            height: $bar-height;
+            width: $bar-height;
+        }
+    }
+}
+
+.user-menu-button {
+    @include title-icon(user-menu-icon);
+
+    background-color: rgba(0,0,0,0.15);
+
+    &:focus, &:hover, &:active { background-color: rgba(0,0,0,0.3); }
+}
+
+.action-buttons {
+    padding: .25em;
+
+    .button {
+        display: block;
+        float: left;
+        margin: .25em;
+    }
+}
+
+.minimize-bar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    height: $bar-height;
+    width: 100%;
+    background-color: darken($light-color, 5%);
+    color: $dark-color;
+
+    .minimized & {
+        display: table;
+        table-layout: fixed;
+    }
+}
+
+.minimize-logo {
+    @include title-icon(minimize-bar-icon);
+
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: 3em;
+}
+
+.minimize-room-title {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 1.2em;
+    font-weight: 700;
+
+    .has-messages & { display: none; }
+}
+
+.minimize-ticker {
+    display: none;
+
+    .has-messages & {
+        @include fadein;
+
+        display: table-cell;
+        vertical-align: middle;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0 1em;
+    }
+}
+
+.quick-notification-container {
+    position: absolute;
+    top: $bar-height;
+    left: 0;
+    right: 0;
+    z-index: 200;
+}
+
+.quick-notification-item {
+    @include slidedown;
+
+    padding: 1em;
+    border-bottom: 1px solid rgba(0,0,0,.15);
+
+    &:only-of-type, &:last-of-type { border-bottom: none; }
+
+    @media #{$screenxxxx} { padding: 1em 1.5em; }
+
+    &.info {
+        background-color: $info-color;
+        color: $light-color;
+    }
+
+    &.success {
+        background-color: $success-color;
+        color: $light-color;
+    }
+
+    &.warning {
+        background-color: $warning-color;
+        color: $light-color;
+    }
+
+    &.error {
+        background-color: $error-color;
+        color: $light-color;
+    }
+}
+
+.chat-area {
+    @extend %scroll-elem;
+
+	position: absolute;
+    top: $bar-height;
+    bottom: $bar-height;
+	right: 0;
+    left: 0;
+    background-color: $light-color;
+
+	.infinite-above, .infinite-below {
+		background-color: transparent;
+        background-image: linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+			linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+			linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
+		background-size: .6em 6em, 80% 6em, 60% 6em;
+		background-position: 1em 2em, 3em 2em, 3em 2em;
+		background-repeat: repeat-y;
+        background-attachment: scroll;
+
+		@media #{$screenxx} {
+            background-image: linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+				linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+				linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+				linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
+			background-size: .6em 6em, 6em 6em, 80% 6em, 60% 6em;
+            background-position: 2em 2em, 4em 2em, 12em 2em, 12em 2em;
+        }
+
+        .infinite-above.upper-limit, .infinite-below.lower-limit {
+            background: none;
+
+            @media #{$screenxx} { background: none; }
+        }
+	}
+}
+
+.chat-position {
+	@include opacity(0);
+	@extend %ease;
+
+	position: relative;
+	float: right;
+	margin: 1em;
+	padding: .5em 1em;
+	background-color: $dark-color;
+	color: $light-color;
+	border-radius: $roundness;
+	pointer-events: none;
+	z-index: 20;
+
+    .scrolling &:not(:empty) {
+		@include opacity(1);
+		@extend %nofilter;
+	}
+}
+
+.chat-item {
+	@extend %ease;
+
+	position: relative;
+	margin: 0;
+	padding: .75em 3em .75em 3em;
+    border-top: 1px solid rgba(0,0,0,0.025);
+	overflow: hidden;
+
+	@media #{$screenxx} { padding: 1em 3.5em 1em 12em; }
+
+	&:hover, &:focus { background-color: darken($light-color, 1%); }
+
+    &:last-of-type { border-bottom: 1px solid rgba(0,0,0,0.025); }
+
+	&.current { background-color: darken($light-color, 3%); }
+
+    &:hover, &:focus, &.active {
+        .chat-more { @include transform(translate3d(0, 0, 0)); }
+    }
+
+    &:hover, &:focus {
+        .chat-more { background-color: darken($light-color, 1%); }
+    }
+
+    &.active, &.current {
+        .chat-more { background-color: darken($light-color, 3%); }
+    }
+
+	&:hover, &:focus, &.active, &.current {
+		border-top: 1px solid darken($light-color, 10%);
+
+		& + .chat-item { border-top: 1px solid darken($light-color, 10%); }
+
+        .chat-timestamp { color: fade-out($dark-color, .3); }
+	}
+
+    &.chat-error-not-sent {
+        &:after {
+            content: "";
+            height: 1.5em;
+            width: 1.5em;
+            float: right;
+            background: url(../../img/client/icons/error-icon.svg) no-repeat center center;
+        }
+    }
+
+	&.chat-item-long {
+		@extend %ease;
+
+		max-height: 9em;
+		cursor: pointer;
+
+		&:hover, &:focus {
+			&:after { padding: 1em 0; }
+		}
+
+		&:after {
+			@extend %ease;
+
+			content: "";
+			position: absolute;
+			display: block;
+			bottom: 0;
+			width: 100%;
+			padding: 3em 0;
+			background-image: linear-gradient(to bottom, fade-out($light-color, 1) 0%, $light-color 100%);
+		}
+
+		&.expanded {
+			max-height: 20em;
+			overflow: auto;
+
+			&:after { display: none; }
+		}
+    }
+
+    &.chat-label-action {
+        color: lighten($dark-color, 5%);
+        border-right: 2px solid lighten($dark-color, 30%);
+        font-style: italic;
+
+        @for $i from 1 through length($palette) {
+            $color: nth($palette, $i);
+            $j: $i - 1;
+
+            &.conv-#{$j} { border-right-color: $color; }
+        }
+
+        &:before { display: none; }
+
+        .chat-nick {
+            font-weight: 400;
+            padding-right: .25em;
+
+            &:after { content: " "; }
+
+            @media #{$screenxx} { margin-left: 0; }
+        }
+    }
+
+    &.chat-label-hidden {
+        color: fade-out($dark-color, .5);
+        font-style: italic;
+
+        body:not(.role-owner) & { display: none; }
+    }
+
+    .chat-timestamp {
+        @extend %ease;
+
+        display: none;
+        padding-left: 3em;
+        font-size: .8em;
+        float: right;
+        color: fade-out($dark-color, .5);
+    }
+
+    &:last-of-type, &.chat-item-timestamp-shown {
+        .chat-timestamp { display: inline-block; }
+    }
+
+	a {
+		&:hover, &:focus, &:active { text-decoration: underline; }
+	}
+
+    iframe, embed {
+        display: block;
+        margin: .5em 0;
+        max-width: 100%;
+        max-height: auto;
+    }
+}
+
+.chat-item-dot {
+    content: "";
+    float: left;
+    margin: .55em 0 auto -2em;
+    height: .5em;
+    width: .5em;
+    border-radius: 50%;
+    background-color: fade-out(lighten($dark-color, 15%), .5);
+
+    @media #{$screenxx} { margin-left: -10em; }
+
+    @for $i from 1 through length($palette) {
+        $color: nth($palette, $i);
+        $j: $i - 1;
+
+        .chat-item.conv-#{$j} & { background-color: $color; }
+    }
+}
+
+.chat-nick {
+	float: left;
+	margin-left: 0;
+	padding-right: 1em;
+	font-weight: 700;
+
+	&:after { content: " :" }
+
+	@media #{$screenxx} {
+		margin-left: -8em;
+
+		&:after { content: "" }
+	}
+
+	a {
+		color: $dark-color;
+
+		&:hover, &:focus, &:active { color: darken($dark-color, 10%); }
+	}
+}
+
+.chat-conv-line {
+    width: 3px;
+    position: fixed;
+    margin-left: 1.15em;
+    z-index: 10;
+    background-color: fade-out(lighten($dark-color, 15%), .5);
+
+    @media #{$screenxx} { margin-left: 2.15em; }
+
+    @for $i from 1 through length($palette) {
+        $color: nth($palette, $i);
+        $j: $i - 1;
+
+        .conv-#{$j} & { background-color: $color; }
+    }
+}
+
+.chat-more {
+	@include transform(translate3d(3.5em, 0, 0));
+	@extend %ease;
+
+	position: absolute;
+	display: block;
+	background-color: darken($light-color, 1%);
+	background-image: url(../../img/client/icons/chat-more.svg);
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: 2em 2em;
+	width: 3em;
+	height: 3em;
+	top: 0;
+	right: 0;
+    cursor: pointer;
+
+    @media #{$screenxx} {
+        width: 3.5em;
+        height: 3.5em;
+    }
+}
+
+.chat-input {
+    position: absolute;
+    left: 0;
+    right: 0;
+	bottom: 0;
+    padding: 0;
+    min-height: $bar-height;
+    box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);;
+}
+
+.chat-entry-wrap { position: relative; }
+
+.chat-conv-dot-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 3em;
+
+    @media #{$screenxx} { width: 3.5em; }
+
+    .chat-conv-dot {
+        position: absolute;
+        content: "";
+        top: 1em;
+        left: 1em;
+        margin: .55em 0 auto 0;
+        height: .5em;
+        width: .5em;
+        border-radius: 50%;
+        background-color: fade-out(lighten($dark-color, 15%), .5);
+
+        @for $i from 1 through length($palette) {
+            $color: nth($palette, $i);
+            $j: $i - 1;
+
+            .conv-#{$j} & { background-color: $color; }
+        }
+
+        @media #{$screenxx} { left: 2em; }
+    }
+}
+
+.chat-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: .9em 1em .9em 2.9em;
+    color: fade-out($dark-color, .5);
+    pointer-events: none;
+
+    @media #{$screenxx} { padding-left: 3.9em; }
+}
+
+.chat-entry {
+	@extend .entry;
+
+	word-wrap: break-word;
+	width: 100%;
+	min-height: $bar-height;
+	max-height: 12em;
+	padding: .9em 2.5em .9em 2.9em;
+	overflow: auto;
+    border-radius: 0;
+
+    @media #{$screenxx} { padding-left: 3.9em; }
+
+	&:hover, &:focus, &:active {
+		border-color: $accent-color;
+		outline: none;
+
+		@for $i from 1 through length($palette) {
+			$j: $i - 1;
+
+			.conv-#{$j} & { border-color: nth($palette, $i); }
+		}
+    }
+}
+
+.chat-send {
+	@extend %ease;
+
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	margin: 0;
+	padding: .75em;
+	height: 3.5em;
+	width: 3.5em;
+	border: none;
+	cursor: pointer;
+	fill: lighten($dark-color, 15%); /* inline SVG */
+
+	&:hover, &:focus, &:active { fill: $dark-color; }
+
+	@for $i from 1 through length($palette) {
+		$color: nth($palette, $i);
+		$j: $i - 1;
+
+		.conv-#{$j} & {
+			fill: $color;
+
+			&:hover, &:focus, &:active { fill: darken($color, 10%); }
+		}
+	}
+}
+
+.conf-area, .pref-area {
+    @extend %scroll-elem;
+
+	position: absolute;
+	top: $bar-height;
+	right: 0;
+	bottom: 0;
+	left: 0;
+    background-color: $light-color;
+
+	.list-view {
+		display: none;
+
+		&.current {
+			@include fadein;
+			@extend %nofilter;
+
+			display: block;
+			max-width: 100%;
+
+			@media #{$screenxx} {
+				display: table;
+				border-spacing: 2em;
+			}
+		}
+
+		.request-msg {
+			display: table-row;
+
+			img {
+				max-width: 80px;
+				max-height: 80px;
+				border-radius: $roundness;
+			}
+
+			img, .request-details {
+				display: table-cell;
+				vertical-align: top;
+			}
+
+			.username {
+				a {
+					font-size: 1.2em;
+					color: $dark-color;
+
+					&:hover, &:focus, &:active { color: darken($dark-color, 10%); }
+				}
+			}
+
+			.button, .button-secondary { padding: .5em 1em; }
+		}
+
+		.twitter-account {
+			position: relative;
+			color: $light-color;
+
+			img {
+				height: 80px;
+				width: 80px;
+				border-radius: $roundness;
+			}
+
+			.change {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				width: 80px;
+				padding: .75em;
+				background-color: $accent-color;
+				text-transform: uppercase;
+				border-radius: 0 0 $roundness $roundness;
+			}
+		}
+	}
+}
+
+.settings-item {
+	display: block;
+	padding: 1em;
+
+	@media #{$screenxx} { display: table-row; }
+
+    .check-item, .radio-item {
+        display: block;
+        padding: .5em 0;
+    }
+
+    .embed-code {
+        min-width: 27em;
+        min-height: 16em;
+        background-color: darken($light-color, 5%);
+        font-weight: 700;
+        font-family: $font-family-monospace;
+        line-height: 1.2em;
+    }
+
+    input, textarea, .button, .button-secondary, .multientry {
+        margin: 0 0;
+        max-width: 100%;
+    }
+
+    textarea { resize: vertical; }
+
+    input[type="checkbox"], input[type="radio"] {
+        float: left;
+        margin-right: .5em;
+    }
+}
+
+.settings-label, .settings-action {
+    display: block;
+    padding: .25em;
+
+    @media #{$screenxx} { display: table-cell; }
+}
+
+.settings-label {
+    text-align: left;
+    padding-right: 1em;
+
+    @media #{$screenxx} {
+        text-align: right;
+        vertical-align: top;
+        padding: .5em 0;
+    }
+}
+
+.settings-action {
+    text-align: left;
+    vertical-align: middle;
+}
+
+.search-bar {
+	@include transform(translate3d(0, -100%, 0));
+	@include opacity(0);
+	@extend %ease;
+
+	position: fixed;
+	top: 0;
+	left: 0;
+    right: 0;
+	z-index: 20;
+	padding: 1em;
+
+	.search-focus & {
+		@include transform(translate3d(0, 0, 0));
+		@include opacity(1);
+	}
+
+	.search-entry {
+		position: relative;
+		display: block;
+		width: 100%;
+        height: 3em;
+		margin: 0;
+		padding-left: 3.5em;
+		background-image: url(../../img/client/icons/search-gray.svg);
+		background-position: 1em center;
+		background-repeat: no-repeat;
+        background-size: 3em 2em;
+        border: none;
+        box-shadow: 0 0 10px 0 rgba(0,0,0,.3);
+	}
+}
+
+.noroom-area, .offline-area, .profile-area {
+    @include flexbox;
+    @include flex-direction(column);
+    @include flex-wrap(nowrap);
+    @include justify-content(space-around);
+    @include align-items(center);
+    @include align-content(center);
+    @extend %column;
+
+    left: 0;
+    right: 0;
+    padding: 1em;
+    background-color: $light-color;
+    color: fade-out($dark-color, .3);
+    text-align: center;
+
+    @media #{$screenxxxx} {
+        left: $width-roomxxxx;
+
+        .embed & { left: 0; }
+    }
+
+    h1 {
+        font-size: 1.5em;
+
+        @media #{$screenxxxx} { font-size: 2.4em; }
+    }
+}
+
+.noroom-container, .offline-container, .profile-container { display: block; }
+
+.infinite-above, .infinite-below {
+    height: 100%;
+    width: 100%;
+}
+
+.infinite-items { width: 100%; }
+
+.signedout-dialog, .signin-dialog, .signup-dialog {
+    input, .button { width: 100%; }
+}
+
+.room-area, .meta-area, .main-area {
+    @include transition(.3s, ease-out); /* animate css transforms */
+
+    /* fix flicker in some browsers */
+    .view-meta &, .view-rooms & {
+        @include prefix(backface-visibility, hidden);
+        @include prefix(perspective, 1000);
+    }
+
+    /* use 3d transformations for GPU accelerated animations */
+    .view-meta & {
+		@include transform(translate3d($width-meta, 0, 0));
+
+		@media #{$screenx} { @include transform(translate3d($width-metax, 0, 0)); }
+
+		@media #{$screenxx} { @include transform(translate3d($width-metaxx, 0, 0)); }
+
+		@media #{$screenxxx} { @include transform(translate3d(0, 0, 0)); }
+    }
+
+    .view-rooms & {
+		@include transform(translate3d( ( $width-room + $width-meta ), 0, 0));
+
+		@media #{$screenx} { @include transform(translate3d( ( $width-roomxx + $width-metax ), 0, 0)); }
+
+		@media #{$screenxx} { @include transform(translate3d( ( $width-roomxx + $width-metaxx ), 0, 0)); }
+
+		@media #{$screenxxx} { @include transform(translate3d($width-roomxxx, 0, 0)); }
+
+		@media #{$screenxxxx} { @include transform(translate3d(0, 0, 0)); }
+    }
+}

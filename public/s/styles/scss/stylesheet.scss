@@ -1,0 +1,469 @@
+@import "base";
+@import "grid";
+
+@include keyframes(bounce) {
+    0%, 10%, 30%, 50%, 100% { @include transform(translate3d(0, 0, 0)); }
+    20% { @include transform(translate3d(0, -15px, 0)); }
+    40% { @include transform(translate3d(0, -10px, 0)); }
+}
+
+@mixin bounce($args: 5s infinite) {
+    -webkit-animation: bounce $args;
+    -moz-animation: bounce $args;
+    -ms-animation: bounce $args;
+    animation: bounce $args;
+}
+
+/* we need this to make text vertically centered in a page */
+html, body { height: 100%; }
+
+h1, h2, h3, h4 {
+    font-weight: 300;
+    margin: .5em 0;
+}
+
+section {
+    padding: 1em;
+
+    @media only screen and (min-width: 700px) { padding: 2em; }
+}
+
+footer {
+    border-top: 1px solid darken($dark-color, 10%);
+    background-color: $dark-color;
+    color: darken($light-color, 20%);
+    text-align: center;
+    font-size: .9em;
+
+    padding: 1em;
+
+    @media only screen and (min-width: 700px) { padding: 2em; }
+
+    a { color: darken($light-color, 20%); }
+}
+
+%cover {
+    width: 100%;
+    height: 100%;
+    background-attachment: scroll;
+    background-position: center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: $dark-color;
+    color: $light-color;
+}
+
+@mixin bg-slide($slide) {
+    background-image: url(../../img/covers/bg-#{$slide}-320.jpg);
+
+    @media only screen and (min-device-width: 320px) { background-image: url(../../img/covers/bg-#{$slide}-700.jpg); }
+
+    @media only screen and (min-device-width: 700px),
+        only screen and (-webkit-min-device-pixel-ratio: 2) and (min-device-width: 320px),
+        only screen and (min--moz-device-pixel-ratio: 2) and (min-device-width: 320px),
+        only screen and (-o-min-device-pixel-ratio: 2/1) and (min-device-width: 320px),
+        only screen and (min-device-pixel-ratio: 2) and (min-device-width: 320px),
+        only screen and (min-resolution: 192dpi) and (min-device-width: 320px),
+        only screen and (min-resolution: 2dppx) and (min-device-width: 320px) { background-image: url(../../img/covers/bg-#{$slide}-1300.jpg); }
+
+    @media only screen and (min-width: 1300px),
+        only screen and (-webkit-min-device-pixel-ratio: 2) and (min-device-width: 700px),
+        only screen and (min--moz-device-pixel-ratio: 2) and (min-device-width: 700px),
+        only screen and (-o-min-device-pixel-ratio: 2/1) and (min-device-width: 700px),
+        only screen and (min-device-pixel-ratio: 2) and (min-device-width: 700px),
+        only screen and (min-resolution: 192dpi) and (min-device-width: 700px),
+        only screen and (min-resolution: 2dppx) and (min-device-width: 700px) { background-image: url(../../img/covers/bg-#{$slide}-1600.jpg); }
+}
+
+@mixin cover-slide($slide, $index) {
+    @extend %cover;
+
+    position: relative;
+    display: table;
+
+    .cover-bg {
+        .bg-#{$slide} { @include opacity(1); }
+    }
+
+    .cover-content {
+        .slides {
+            .slider {
+                margin-left: ( $index - 1 ) * ( -100% );
+
+                li:nth-child(#{$index}) {
+                    @include opacity(1);
+
+                    pointer-events: auto;
+                }
+            }
+        }
+
+        .link-#{$slide} {
+            color: $light-color;
+            border-color: fade-out($light-color, .4);
+        }
+    }
+}
+
+.container {
+    max-width: 68em;
+    margin: auto;
+    padding: 1em;
+}
+
+#cover { position: relative; }
+
+.cover-content {
+    @include transition(.5s);
+
+    position: relative;
+    display: table-cell;
+    height: 100%;
+    vertical-align: middle;
+
+    .container {
+        a {
+            color: $light-color;
+            border-bottom: 1px solid fade-out($light-color, .6);
+
+            &:hover, &:focus {
+                color: $light-color;
+                border-color: fade-out($light-color, .4);
+            }
+
+            &:active {
+                color: fade-out($light-color, .8);
+                border-color: fade-out($light-color, .8);
+            }
+        }
+
+        .try {
+            margin-left: 1em;
+
+            a {
+                margin-left: 1em;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .slides {
+        overflow-x: hidden;
+
+        .slider {
+            @include transition(.5s);
+
+            position: relative;
+            left: 0;
+            margin: 0;
+            padding: 0;
+            width: 400%;
+            height: 100%;
+            list-style: none;
+
+            @extend %clearfix;
+
+            & > li {
+                @include opacity(0);
+                @include transition(.5s);
+
+                float: left;
+                width: 25%;
+                height: 100%;
+                pointer-events: none;
+
+                h1 { font-size: 3em; }
+            }
+        }
+    }
+
+    .links {
+        ul {
+            list-style: none;
+
+            li {
+                display: inline-block;
+                text-transform: uppercase;
+                word-break: keep-all;
+                line-height: 3em;
+                font-weight: 700;
+                letter-spacing: .0714em;
+
+                &:after {
+                    content: " / ";
+                    font-weight: 400;
+                    color: fade-out($light-color, .4);
+                }
+
+                &:last-child {
+                    &:after { content: none; }
+                }
+
+                a {
+                    color: fade-out($light-color, .4);
+                    border-bottom: 1px solid fade-out($light-color, .8);
+                    cursor: pointer;
+
+                    &:hover, &:focus {
+                        color: $light-color;
+                        border-color: fade-out($light-color, .4);
+                    }
+
+                    &:active {
+                        color: fade-out($light-color, .8);
+                        border-color: fade-out($light-color, .6);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.cover-bg {
+    div {
+        @include opacity(0);
+        @include transition(.5s);
+
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .bg-home {
+        @include bg-slide(home);
+        @extend %cover;
+    }
+
+    .bg-websites {
+        @include bg-slide(websites);
+        @extend %cover;
+    }
+
+    .bg-conferences {
+        @include bg-slide(conferences);
+        @extend %cover;
+    }
+
+    .bg-geeks {
+        @include bg-slide(geeks);
+        @extend %cover;
+    }
+}
+
+.cover-home { @include cover-slide(home, 1); }
+
+.cover-websites { @include cover-slide(websites, 2); }
+
+.cover-conferences { @include cover-slide(conferences, 3); }
+
+.cover-geeks { @include cover-slide(geeks, 4); }
+
+.features {
+    background-color: $light-color;
+
+    img {
+        padding: 5px;
+        background-color: darken($light-color, 5%);
+        border: 1px solid darken($light-color, 10%);
+        border-radius: $roundness;
+        margin: .5em 0;
+    }
+}
+
+.testimonials { background-color: darken($light-color, 5%); }
+
+.pricing {
+    background-color: $light-color;
+
+    .heading {
+        padding: 1.2em 0 .5em 0;
+        width: 100%;
+        border-bottom: 1px solid darken($light-color, 5%);
+
+        h2 { display: inline; }
+
+        .price {
+            @extend %clearfix;
+
+            float: right;
+            color: $accent-color;
+            font-weight: 300;
+            position: relative;
+            font-size: 1.5em;
+
+            .sub {
+                display: block;
+                position: absolute;
+                right: 0;
+                white-space: nowrap;
+                text-transform: uppercase;
+                font-weight: 700;
+                font-size: 0.6em;
+                color: lighten($dark-color, 40%);
+            }
+        }
+    }
+
+    .signup { text-align: center; }
+}
+
+.poweredby {
+    img {
+        display: inline-block;
+        padding: 10px 10px 0 10px;
+    }
+}
+
+.arrow {
+    @include opacity(1);
+    @include bounce(5s infinite);
+    @include transition(.5s);
+
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    margin-left: -20px;
+    width: 40px;
+    height: 40px;
+    pointer-events: auto;
+
+    @media only screen and (min-width: 700px) { display: block; }
+}
+
+.scrolled {
+    .arrow {
+        @include opacity(0);
+
+        pointer-events: none;
+    }
+}
+
+.fork {
+    @include transition(.5s);
+
+    display: none;
+    position: fixed;
+    top: -15px;
+    right: 30px;
+    z-index: 1;
+
+    &:hover, &:focus, &:active { top: 0; }
+
+    @media only screen and (min-width: 480px) { display: block; }
+}
+
+.scrollback-stream { display: none; }
+
+.scrollback-open {
+    .scrollback-stream { display: block; }
+
+    .room {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.close {
+    color: lighten($dark-color, 20%);
+    font-size: 3em;
+    text-decoration: none;
+    position: absolute;
+    padding: .4em;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+
+    &:hover, &:focus { color: $dark-color; }
+
+    &:active { color: darken($dark-color, 10%); }
+}
+
+.dim, .login-modal { display: none; }
+
+.login-open {
+    overflow: hidden;
+
+    @media only screen and (min-width: 480px) {
+        overflow: auto;
+
+        .dim {
+            @include fadein(.5s 1);
+
+            display: block;
+            background: rgba(0,0,0,0.7);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2;
+        }
+    }
+
+    .login-modal {
+        @include appear(.5s 1);
+
+        background: $light-color;
+        border-style: none;
+        position: fixed;
+        z-index: 5;
+        border-radius: 0;
+        left: 0;
+        top: 0;
+        margin-left: 0;
+        margin-top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        display: block;
+
+        .button {
+            width: 100%;
+            margin: .3em .3em .3em 0;
+
+            @media only screen and (min-width: 480px) { width: 8em; }
+        }
+
+        @media only screen and (min-width: 480px) {
+            border-radius: $roundness;
+            left: 50%;
+            top: 50%;
+            margin-left: -15em;
+            margin-top: -9em;
+            padding: 1.3em;
+            width: 30em;
+            height: 18em;
+        }
+    }
+
+    .arrow {
+        @include opacity(0);
+
+        pointer-events: none;
+    }
+}
+
+#create-field {
+    position: relative;
+
+    input[type=text] {
+        width: 100%;
+        padding-left: 8em;
+    }
+
+    label {
+        margin: .5em 0;
+        padding: .4em 1.2em;
+        font-size: 1em;
+        width: 8em;
+        text-align: left;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border: 1px solid transparent;
+        color: lighten($dark-color, 20%);
+    }
+}

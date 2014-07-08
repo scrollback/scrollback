@@ -1,0 +1,38 @@
+@import "functions";
+@import "global";
+@import "animations";
+
+@include exports("entry") {
+	.entry {
+		@include transition;
+
+		border: 1px solid darken($light-color, 20%);
+		border-top-color: darken($light-color, 30%);
+		border-radius: $roundness;
+		background-color: $light-color;
+		color: $dark-color;
+
+		&:hover, &:focus, &:active {
+			border-color: $accent-color;
+			border-top-color: darken($accent-color, 5%);
+			outline: none;
+		}
+
+		&.disabled { background-color: darken($light-color, 10%); }
+
+		&.error { border-color: $error-color; }
+
+		&.linked { @extend .linked; }
+	}
+
+	input, textarea {
+		@extend .entry;
+
+		margin: .5em 0;
+		padding: .5em;
+		font-size: 1em;
+		outline: none;
+
+		&:disabled { @extend .entry.disabled; }
+	}
+}

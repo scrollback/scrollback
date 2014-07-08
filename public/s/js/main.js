@@ -1,23 +1,20 @@
 /*jslint browser: true, indent: 4, regexp: true*/
 /*global $*/
 
-(function () {
+(function() {
     'use strict';
 
     // Detect scroll position
-    function detectScroll() {
+    $(window).on("load scroll", function() {
         if ($(window).scrollTop() >= 1) {
             $(document.body).addClass("scrolled");
         } else {
             $(document.body).removeClass("scrolled");
         }
-    }
-
-    detectScroll();
-    $(window).scroll(detectScroll);
+    });
 
     // Show scrollback embed widget
-    $(".trial-room").on("click", function () {
+    $(".trial-room").on("click", function() {
         $("body").addClass("scrollback-open");
     });
 
@@ -41,7 +38,7 @@
         }
     }
 
-    $(window).on('popstate', function () {
+    $(window).on('popstate', function() {
         hideDialog();
     });
 
@@ -52,7 +49,7 @@
     $(".modal").find("input").keyup(handleKey);
 
     // Check if the array contains a value
-    Array.prototype.contains = function (value) {
+    Array.prototype.contains = function(value) {
         var i;
 
         for (i in this) {
@@ -84,7 +81,7 @@
 
     startSlideshow();
 
-    $(".links > ul > li > a").click(function () {
+    $(".links > ul > li > a").click(function() {
         var slide = $(this).attr("class").substr(5);
 
         clearTimeout(timeout);
@@ -98,7 +95,7 @@
     });
 
     // Smooth scroll for in page links
-    $("a[href*=#]:not([href=#])").click(function () {
+    $("a[href*=#]:not([href=#])").click(function() {
         if (location.pathname.replace(/^\//, "") === this.pathname.replace(/^\//, "") && location.hostname === this.hostname) {
             var target = $(this.hash);
             target = target.length ? target : $("[name=" + this.hash.slice(1) + "]");
@@ -133,7 +130,7 @@
     }
 
     // Handle submit button click
-    $("#create-field > input[type=submit]").click(function () {
+    $("#create-field > input[type=submit]").click(function() {
         location.href = location.protocol + "//" + location.host + "/" + $("#create-text").val();
         $("#create-text").val('');
         $(this).attr('disabled', true);
@@ -141,7 +138,7 @@
 
     // Prevent form submission if input not valid
     $("#create-text").focus(validate).keyup(validate).change(validate);
-    $("#create-field").submit(function (e) {
+    $("#create-field").submit(function(e) {
         e.preventDefault();
         return false;
     });

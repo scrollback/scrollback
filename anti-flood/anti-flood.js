@@ -2,9 +2,27 @@ var log = require("../lib/logger.js");
 var users={};
 var config = require('../config.js');
 
+
+var RateLimiter = function(a,b){
+	return {
+		limit:a,
+		time:b,
+		removeTokens: function(count,callback){
+			if(this.limit>=0){
+				this.limit-=count;
+				setTimeout(function(object,count){
+					object.limit+=count;
+				},this.time,this,count);
+			}
+			callback(null, this.limit);
+		}
+    };
+};
+
 module.exports = function(core) {
 	core.on('message', function(message, callback) {
 		var limiter;
+		log("Heard \"message\" event");
 		if (!users[message.from])
 			users[message.from]=new RateLimiter(config.http.limit, config.http.time);
 		limiter = users[message.from];
@@ -25,7 +43,6 @@ module.exports = function(core) {
 		}
 
 		limiter.removeTokens(1, function(err, remaining) {
-			var room;
 			if (remaining < 0) {
 				return callback(new Error("API Limit exceeded"));
 			}
@@ -34,18 +51,3 @@ module.exports = function(core) {
 	}, "antiabuse");
 };
 
-RateLimiter =function(a,b,c){
-	return {
-		limit:a,
-		time:b,
-		removeTokens: function(count,callback){
-			if(this.limit>=0){
-				this.limit-=count;
-				setTimeout(function(object,count){
-					object.limit+=count;
-				},this.time,this,count);
-			}
-			callback(null, this.limit);
-		}
-    };
-};

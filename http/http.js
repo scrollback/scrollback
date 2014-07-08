@@ -1,13 +1,13 @@
 /*
-	Scrollback: Beautiful text chat for your community. 
+	Scrollback: Beautiful text chat for your community.
 	Copyright (c) 2014 Askabt Pte. Ltd.
-	
-This program is free software: you can redistribute it and/or modify it 
+
+This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any 
+the Free Software Foundation, either version 3 of the License, or any
 later version.
 
-This program is distributed in the hope that it will be useful, but 
+This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
 License for more details.
@@ -22,30 +22,34 @@ var express = require("./express.js"),
 	socket = require("./socket.js"),
 	log = require("../lib/logger.js"),
 	plugins = require('./plugins.js'),
-	page=require("./page.js");
+	page=require("./page.js"),
 	app = express.init();
 
 var init = function(core) {
-	socket.init(app.httpServer, core);
-	if(app.httpsServer) socket.init(app.httpsServer, core);
+	socket.initCore(core);
+	socket.initServer(app.httpServer);
+	if(app.httpsServer) socket.initServer(app.httpsServer, core);
 	plugins.init(app, core);
 	page.init(app, core);
-	
+
 };
 
 module.exports = function(core){
 	init(core);
-	core.on("message" , function(message, callback) {
-		if(typeof message.to == "string")
-			send(message, [message.to]);
-		else if(typeof message.to == "object")
-			send(message, message.to);
-		callback();
-	}, "gateway");
-	core.on("edit", function(edit, callback) {
-		emit("edit", edit, edit.to);
-		callback();
-	},"gateway");
 	var send = socket.send;
 	var emit = socket.emit;
+
+
+	core.on("room", function(action, callback) {
+
+		if(action.room.params.http && typeof action.room.params.http.seo !== "boolean") return callback(new Error("ERR_INVAILD_PARAMS"));
+		callback();
+	}, 'appLevelValidation');
+
+	core.on("user", function(action, callback) {
+		if(!action.user.params.notifications) return callback();
+		if(typeof action.user.params.notifications.sound !== "boolean") return callback(new Error("ERR_INVAILD_PARAMS"));
+		if(typeof action.user.params.notifications.desktop !== "boolean") return callback(new Error("ERR_INVAILD_PARAMS"));
+		callback();
+	}, 'appLevelValidation');
 };

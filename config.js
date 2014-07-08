@@ -33,7 +33,10 @@ function merge(d, c) {
 	for(var i in c) {
 		if (typeof d[i] === 'object' && typeof c[i] === 'object' && d[i] !== null && c[i] !== null) {
 			if (d[i] instanceof Array && c[i] instanceof Array) {
-				d[i] = d[i].concat(c[i]);
+				// d[i] = d[i].concat(c[i]);
+				/*Concatinating the plugins array from the default ones and the ones in 
+				myConfig is probably not something that we might be interested in.*/
+				d[i] = c[i];	
 			} else {
 				merge(d[i], c[i]);
 			}
@@ -48,6 +51,7 @@ var defaults = {
 		name: "scrollback",
 		newrelic: { name: 'Scrollback Local' }
 	},
+	
 	mysql: {
 		host     : 'localhost',
 		user     : 'scrollback',
@@ -55,6 +59,13 @@ var defaults = {
 		connectionLimit: 100,
 		//debug    :true         ,
 		database : 'scrollback' 
+	},
+	pg: {//post gre config
+		server: "localhost",//server:port
+		db: "logs",
+		username: "username",
+		password: "password"
+		//port: 
 	},
 	http: {
 		host: "local.scrollback.io",
@@ -82,19 +93,33 @@ var defaults = {
 	twitter: {
 		//consumerKey: ".."
 		//consumerSecret: ".." 
-		callbackURL: "https://scrollback.io/r/twitter/auth/callback"
 	},
 	irc: {
-		nick: 'sbtestbot',		// nickname of the bot
-		hangTime: 60000     // timeout before disconnecting (ms)
+		port: 8910,
+		server: "localhost"
 	},
 	leveldb: {
 		path: "/data"
 	},
+	redisDB:{
+		twitter: 6,
+		email: 7,
+		session: 8,
+		user: 9,
+		room: 9,
+		occupants: 10,
+		threader: 11,
+		search: 14
+	},
+	su: {
+		
+	},
+	plugins: ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
+	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",
+	"admin-notifier", "custom-emitter","entityloader", "twitter"],
 	facebook: {
-		callbackURL: "https://scrollback.io/t/facebook/auth/callback"
 	}
-}
+};
 
 
 merge(defaults, changes);

@@ -1,0 +1,150 @@
+/*
+ * CSS reset based on:
+ * Eric Meyer's Reset CSS v2.0 (http://meyerweb.com/eric/tools/css/reset/)
+ * Normalize.css (http://necolas.github.io/normalize.css/)
+ */
+
+/* set the viewport properties (limited browser support) */
+@viewport {
+    width: device-width;
+    user-zoom: fixed;
+    zoom: 1;
+    min-zoom: 1;
+    max-zoom: 1;
+}
+
+/* set box sizing to a more natural layout */
+*, *:before, *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/* remove tap highlight in webkit */
+* { -webkit-tap-highlight-color: transparent; }
+
+html {
+    /* set default font family to sans-serif */
+    font-family: sans-serif;
+    /* remove iOS text size adjust without disabling user zoom */
+    -webkit-text-size-adjust:100%;
+    -ms-text-size-adjust:100%;
+    /* eliminate 300ms click delay */
+    -ms-touch-action: manipulation; /* IE10 */
+    touch-action: manipulation; /* IE11 */
+}
+
+/* reset default properties */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display styles for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section { display: block; }
+
+audio, canvas, progress, video {
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+ /* address "[hidden]"" styling not present in IE */
+[hidden] { display: none; }
+
+body { line-height: 1; }
+
+/* remove the gray background color from active links in IE */
+a {
+    background: transparent;
+    cursor: pointer;
+}
+
+/* remove outlines on links */
+a:focus, a:hover, a:active { outline: 0; }
+
+/* address style set to "bolder" in Firefox, Safari, and Chrome */
+b, strong { font-weight: bold; }
+
+i, em { font-style: italic; }
+
+/* remove border when inside "a" element in IE */
+img { border: 0; }
+
+/* correct overflow not hidden in IE */
+svg:not(:root) { overflow: hidden; }
+
+/* cascade SVG fill color */
+svg:not[class] { fill: currentColor; }
+
+/* contain overflow in all browsers. */
+pre { overflow: auto; }
+
+/* fix inheritance in form elements */
+button, input, optgroup, select, textarea {
+    color: inherit;
+    font: inherit;
+    margin: 0;
+}
+
+/* address "overflow" set to "hidden" in IE */
+button { overflow: visible; }
+
+button, select { text-transform: none; }
+
+button, input[type="button"], input[type="reset"], input[type="submit"] {
+    -webkit-appearance: button;
+    cursor: pointer;
+}
+
+/* re-set default cursor for disabled elements */
+button[disabled], input[disabled] { cursor: default; }
+
+/* remove inner padding and border in Firefox */
+button::-moz-focus-inner, input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+input { line-height: normal; }
+
+input[type="checkbox"], input[type="radio"] {
+    box-sizing: border-box;
+    padding: 0;
+}
+
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { height: auto; }
+
+textarea { overflow: auto; }
+
+blockquote, q { quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: "";
+    content: none;
+}
+
+/* remove most spacing between table cells */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+td, th { padding: 0; }

@@ -7,9 +7,8 @@ var factoryObject = Object.create(emitter), requests = {};
 var listening = {};
 var pendingCallbacks = {}, backed=false;
 var backOff = 1;
-var sentInit = false;
 var factory=function() {
-	socket.onclose = function() {
+	socket.onclose = function(){
 		factoryObject.emit("disconnected");
 		listening = {};
 		backOff+=backOff;
@@ -85,7 +84,6 @@ function send(message, callback) {
 	};
 	if(callback) pendingCallbacks[message.id] = callback;
 	socket.emit("message", message);
-	
 }
 
 
@@ -111,7 +109,7 @@ function newSocket() {
 function init(){
 	function init(sid) {
 		var initData={ sid: sid, clientTime: new Date().getTime() };
-		sentInit = true;
+		
 		if (scrollback.nick) {
 			initData.nick=scrollback.nick;
 		}
@@ -141,9 +139,6 @@ onMessage = function(data){
 		if(data.from == factoryObject.nick) {
 			factoryObject.emit('nick', data.ref);
 			factoryObject.nick = data.ref;
-			if(!sentInit){
-				init();
-			}
 		}
 	}
 	factoryObject.emit("message", data);
@@ -178,7 +173,6 @@ onInit = function(data) {
 	factoryObject.emit("nick", data.user.id);
 	factoryObject.isActive = true;
 	factoryObject.nick = data.user.id;
-	sentInit = false;
 };
 
 handler=function(type, data){

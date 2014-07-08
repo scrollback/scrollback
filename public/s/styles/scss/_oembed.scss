@@ -1,0 +1,110 @@
+@import "base";
+
+img[src=null] { display: none; }
+
+.oembedall-content {
+    max-width: 100%;
+    max-height: auto;
+    font-size: .9em;
+    color: lighten($dark-color, 10%);
+
+    a:link, a:focus, a:hover, a:active { color: $dark-color; }
+
+    h3 {
+        font-size: 1.2em;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    p { margin: .25em 0; }
+}
+
+.oembedall-toggle {
+    cursor: pointer;
+    padding: 0 .25em;
+    margin-right: .5em;
+    background-color: darken($light-color, 5%);
+    border: 1px solid darken($light-color, 10%);
+    border-radius: $roundness;
+}
+
+.oembedall-githubrepos  {
+    margin: .5em 0;
+    padding: 0;
+    width : 30em;
+    max-width: 100%;
+    background-color: $light-color;
+    border: 1px solid darken($light-color, 20%);
+    border-radius: $roundness;
+
+    h3 {
+        padding: .5em;
+        white-space: nowrap;
+    }
+
+    .oembedall-body {
+        background-color: darken($light-color, 5%);
+        border-top: 1px solid darken($light-color, 10%);
+        padding: .5em;
+        width: 100%;
+    }
+
+    .oembedall-description { margin: 0; }
+
+    .oembedall-updated-at {
+        color: lighten($dark-color, 30%);
+        font-size: .9em;
+    }
+
+    .oembedall-repo-stats {
+        list-style: none;
+        border-bottom: 1px solid darken($light-color, 10%);
+        padding: .25em .5em;
+        text-align: right;
+        margin:0;
+
+        li {
+            display: inline-block;
+            font-size: .9em;
+            padding: 0 .25em;
+            margin:0;
+
+            &:first-child { padding-left: 0; }
+
+            &:last-child { padding-right: 0; }
+        }
+    }
+}
+
+.oembedall-facebook {
+    padding: 0;
+    margin: .5em 0;
+    width: 30em;
+    max-width: 100%;
+    border: 1px solid darken($light-color, 10%);
+}
+
+.oembedall-facebook-head {
+    padding: .25em;
+    background-color: #3b5998;
+
+    a:link, a:focus, a:hover, a:active {
+        font-weight: 700;
+        color: $light-color;
+        padding: 0 .25em;
+    }
+}
+
+.oembedall-facebook-body {
+    padding: .5em;
+
+    .contents {
+        display: inline-block;
+        width: 100%;
+    }
+
+    img {
+        float: left;
+        margin-right: 1em;
+    }
+}

@@ -1,7 +1,7 @@
 *~
 .DS_Store
+.sass-cache
 
-lib-cov
 *.seed
 *.log
 *.csv
@@ -9,9 +9,11 @@ lib-cov
 *.out
 *.pid
 *.gz
-
 *.komodoproject
+*.map
+*.appcache
 
+lib-cov
 pids
 logs
 dump
@@ -19,17 +21,12 @@ data
 results
 
 node_modules
-npm-debug.log
 
 myConfig.js
+./client-config.js
 
-/scrollback.komodoproject
-
-public/client.min.js
-public/core.min.js
-public/core.uw.min.js
-public/embed.uw.min.js
-public/dummy.css
-public/style.css
-
-public/s/styles/less/*.css
+public/*.bundle.js
+public/*.min.js
+public/embed.js
+public/s/styles/gen
+/client-config.js
