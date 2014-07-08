@@ -9,20 +9,20 @@ $(function() {
 		$("body").attrchange(function() {
 
 			if ($overlay.length && $("body").attr("class") && $("body").attr("class").match(/mode-/)) {
-				lace.animate.fadeout($overlay, function() {
-					$(this).remove();
+//				lace.animate.fadeout($overlay, function() {
+					$overlay.remove();
 
 					lace.progress.hide();
-				});
+//				});
 			}
 		});
 	} else {
 		setTimeout(function() {
-			lace.animate.fadeout($overlay, function() {
-				$(this).remove();
+//			lace.animate.fadeout($overlay, function() {
+				$overlay.remove();
 
 				lace.progress.hide();
-			});
+//			});
 		}, 300);
 	}
 });

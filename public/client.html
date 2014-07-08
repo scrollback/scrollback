@@ -113,7 +113,7 @@
 							</svg>
 						</span>
 					</a>
-					<h2 data-mode="normal search" class="room-title" id="room-title"></h2>
+					<h2 data-mode="normal search" data-embed="none" class="room-title" id="room-title"></h2>
 					<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
 						<svg class="follow-icon" width="28" height="28" viewBox="0 0 28 28">
 							<use xlink:href="/s/img/client/icons/follow.svg#icon"></use>
@@ -125,21 +125,13 @@
 					</div>
 				</div>
 				<div data-mode="normal search" class="right-area">
-					<a style="display:none" data-embed="none" data-mode="normal" data-tooltip="Search" class="search-button" role="button">
+<!--
+					<a data-embed="none" data-mode="normal" data-tooltip="Search" class="search-button" role="button">
 						<svg class="search-icon" width="28" height="28" viewBox="0 0 28 28">
 							<use xlink:href="/s/img/client/icons/search.svg#icon"></use>
 						</svg>
 					</a>
-					<div class="user-area">
-						<div class="user-detail cta-area">
-							<div id="sb-user"></div>
-							<div data-role="guest" class="sign-in cta-action">Sign in</div>
-						</div>
-						<div class="user-avatar">
-							<img alt="" id="sb-avatar" >
-						</div>
-					</div>
-					<div data-embed="toast full" class="embed-area">
+					<div class="embed-area">
 						<div data-role="user" class="follow-room-action cta-area">
 							<div>Stay connected</div>
 							<div class="cta-action">Follow room</div>
@@ -148,11 +140,28 @@
 							<div>Browse archives</div>
 							<div class="cta-action">Visit room</div>
 						</div>
-						<a data-role="user" class="embed-button user-menu-button" role="button">
-							<svg class="embed-icon user-menu-icon" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="/s/img/client/icons/more.svg#icon"></use>
+					</div>
+-->
+					<div data-embed="toast full" class="embed-area">
+						<div data-embed="toast" class="embed-action-minimize embed-button">
+							<svg class="minimize-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
+								<use xlink:href="/s/img/client/icons/minimize.svg#icon"></use>
 							</svg>
-						</a>
+						</div>
+						<div class="embed-action-fullview embed-button">
+							<svg class="fullview-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
+								<use xlink:href="/s/img/client/icons/fullview.svg#icon"></use>
+							</svg>
+						</div>
+					</div>
+					<div class="user-area">
+						<div data-embed="none" class="user-detail cta-area">
+							<div id="sb-user"></div>
+							<div data-role="guest" class="sign-in cta-action">Sign in</div>
+						</div>
+						<div class="user-avatar">
+							<img alt="" id="sb-avatar" >
+						</div>
 					</div>
 				</div>
 			</div>
