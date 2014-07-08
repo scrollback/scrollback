@@ -1,43 +1,43 @@
 /* jslint browser: true, indent: 4, regexp: true */
 
 (function() {
-    var config = require("../client-config.js");
+	var config = require("../client-config.js");
 
-    function validate(r, santize){
-        var room;
+	function validate(r, sanitize){
+		var room;
 
-        if (!r) { r = ""; }
+		if (!r) { r = ""; }
 
-        room = r.toLowerCase().trim()
-                .replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
+		room = r.toLowerCase().trim()
+				.replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
 
-        if (!room || room === "img" || room === "css" || room === "sdk") {
-            room = "scrollback";
-        } else if (room.length < 3) {
-            room = room + Array(4 - room.length).join("-");
-        }
+		if (!room || room === "img" || room === "css" || room === "sdk") {
+			room = "scrollback";
+		} else if (room.length < 3) {
+			room = room + Array(4 - room.length).join("-");
+		}
 
-        room = room.substring(0,32);
+		room = room.substring(0,32);
 
-        if (santize) {
-            return room;
-        } else {
-            return room === r;
-        }
-    }
+		if (sanitize) {
+			return room;
+		} else {
+			return room === r;
+		}
+	}
 
 	document.onreadystatechange = function() {
 		if (document.readyState === "complete") {
 			// Variables
 			var sb = window.scrollback || {},
-                room = sb.room || ((sb.streams && sb.streams.length) ? sb.streams[0] : "scrollback"),
+				room = sb.room || ((sb.streams && sb.streams.length) ? sb.streams[0] : "scrollback"),
 				embed = sb.embed || "toast",
 				theme = /* sb.theme || */ "dark",
-                minimize = (typeof sb.minimize === "boolean") ? sb.minimize : true,
+				minimize = (typeof sb.minimize === "boolean") ? sb.minimize : true,
 				host = config.server.protocol + config.server.host,
 				style, iframe;
 
-            room = validate(room, true);
+			room = validate(room, true);
 
 			// Insert required styles
 			style = document.createElement("link");
@@ -54,8 +54,8 @@
 
 			// Add event listeners for post message
 			var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent",
-                eventListener = window[eventMethod],
-                messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+				eventListener = window[eventMethod],
+				messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
 
 			// Listen to message from child iframe
 			eventListener(messageEvent, function(e) {
