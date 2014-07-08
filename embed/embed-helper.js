@@ -4,11 +4,11 @@
 $(function() {
     // Handle fullview button click
     $(".embed-action-fullview").on("click", function() {
-        window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, "").replace(/[&,?]theme=[^&,?]+/g, "").replace(/[&,?]minimize=[^&,?]+/g, ""), "_blank");
+        window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, ""), "_blank");
     });
 
     // Handle minimize
-    $(".embed-action-minimize").on("click", function(e) {
+    $(".embed-action-minimize").on("click", function() {
         libsb.emit("navigate", { minimize: true });
     });
 
@@ -24,7 +24,7 @@ $(function() {
 
     if (window.parent.postMessage) {
         libsb.on("navigate", function(state, next) {
-            if (state.embed === "toast" && state.old && state.minimize !== state.old.minimize) {
+            if (state.old && state.embed && state.embed.form === "toast" && state.minimize !== state.old.minimize) {
                 if (state.minimize) {
                     window.parent.postMessage("minimize", "*");
                 } else {

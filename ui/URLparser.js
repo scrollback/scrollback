@@ -49,15 +49,15 @@ module.exports = function() {
 			}
 		}
 
-		if (state.embed === "toast" && state.minimize === "true") {
-			state.minimize = true;
-		} else {
-			state.minimize = false;
+		if (state.embed) {
+			state.embed = JSON.parse(decodeURIComponent(state.embed));
+
+			state.minimize = state.embed.minimize || false;
+			state.theme = state.embed.theme || "light";
 		}
 
 		if (!state.mode) state.mode = "normal";
 		if (!state.tab) state.tab = "people";
-		if (!state.theme) state.theme = "light";
 
 		libsb.emit("navigate", state);
 	});

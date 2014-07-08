@@ -28,34 +28,39 @@
 
 	document.onreadystatechange = function() {
 		if (document.readyState === "complete") {
-			// Variables
-			var sb = window.scrollback || {},
-				room = sb.room || ((sb.streams && sb.streams.length) ? sb.streams[0] : "scrollback"),
-				embed = sb.embed || "toast",
-				theme = /* sb.theme || */ "dark",
-				minimize = (typeof sb.minimize === "boolean") ? sb.minimize : true,
-				host = config.server.protocol + config.server.host,
-				style, iframe;
+			var sb, style, iframe,
+				host = config.server.protocol + config.server.host;
 
-			room = validate(room, true);
+			window.scrollback = window.scrollback || {};
+
+			sb = window.scrollback;
+
+			sb.room = sb.room || ((sb.streams && sb.streams.length) ? sb.streams[0] : "scrollback");
+			sb.form = sb.form || "toast";
+			sb.theme = /* sb.theme || */ "dark";
+			sb.minimize = (typeof sb.minimize === "boolean") ? sb.minimize : true;
+
+			sb.room = validate(sb.room, true);
 
 			// Insert required styles
 			style = document.createElement("link");
 			style.rel = "stylesheet";
 			style.type = "text/css";
 			style.href = host + "/s/styles/gen/embed.css";
+
 			document.head.appendChild(style);
 
 			// Create and append the iframe
 			iframe = document.createElement("iframe");
-			iframe.src = host + "/" + room + "?embed=" + embed + "&theme=" + theme + "&minimize=" + minimize;
-			iframe.className = "scrollback-stream " + (minimize? "scrollback-minimized" : "");
+			iframe.src = host + "/" + sb.room + "?embed=" + encodeURIComponent(JSON.stringify(sb));
+			iframe.className = "scrollback-stream" + (sb.minimize ? " scrollback-minimized" : "");
+
 			document.body.appendChild(iframe);
 
 			// Add event listeners for post message
 			var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent",
 				eventListener = window[eventMethod],
-				messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+				messageEvent = (eventMethod === "attachEvent") ? "onmessage" : "message";
 
 			// Listen to message from child iframe
 			eventListener(messageEvent, function(e) {

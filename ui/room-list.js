@@ -24,7 +24,7 @@ function enter(room) {
     }
 }
 libsb.on("inited", function(d, n) {
-    if(currentState.embed == "toast") return n();
+    if(currentState.embed && currentState.embed.from) return n();
 
     listenQueue.forEach(function(e) {
         enter(e);
@@ -37,14 +37,14 @@ libsb.on("inited", function(d, n) {
 
 libsb.on("navigate", function(state, next) {
     var room = state.roomName;
-    if(currentState.embed == "toast") return next();
+    if(currentState.embed && currentState.embed.from) return next();
     enter(room);
     if(state.old && state.old.roomName === state.roomName) return next();
     next();
 }, 10);
 
 libsb.on("init-dn", function(init, next) {
-    if(currentState.embed == "toast") return next();
+    if(currentState.embed && currentState.embed.from) return next();
 /*	if(init.occupantOf){
         init.occupantOf.forEach(function(r) {
             enter(r.id);
