@@ -8,8 +8,12 @@ $(function() {
     });
 
     // Handle minimize
+    $(".embed-action-minimize").on("click", function(e) {
+        libsb.emit("navigate", { minimize: true });
+    });
+
     $(".title-bar").on("click", function(e) {
-        if (e.target === e.currentTarget || e.target === $(".embed-action-minimize")[0]) {
+        if (e.target === e.currentTarget) {
             libsb.emit("navigate", { minimize: true });
         }
     });
