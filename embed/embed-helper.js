@@ -3,13 +3,13 @@
 
 $(function() {
     // Handle fullview button click
-    $(".full-view-action").on("click", function() {
+    $(".embed-action-fullview").on("click", function() {
         window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, "").replace(/[&,?]theme=[^&,?]+/g, "").replace(/[&,?]minimize=[^&,?]+/g, ""), "_blank");
     });
 
     // Handle minimize
     $(".title-bar").on("click", function(e) {
-        if (e.target === e.currentTarget || e.target === $("#room-title")[0]) {
+        if (e.target === e.currentTarget || e.target === $(".embed-action-minimize")[0]) {
             libsb.emit("navigate", { minimize: true });
         }
     });
