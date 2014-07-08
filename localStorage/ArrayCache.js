@@ -42,14 +42,23 @@ ArrayCache.prototype.put = function(data) {
 		while (/* data[data.length-1].endtype && data[data.length-1].endtype == 'time' && */ this.d[end] && this.d[end].time == endTime) {
 			end++;
 		}
-		
-		if (this.d[start-1] && this.d[start-1].type != 'result-end' && data[0].type == 'result-start') {
+	
+		if ((
+			!this.d[start-1] && this.d[start] && this.d[start].type != 'result-start'
+		) || (
+			this.d[start-1] && this.d[start-1].type != 'result-end' && data[0].type == 'result-start'
+		)) {
 			data.shift();
 		}
-		
-		if (this.d[end] && this.d[end].type != 'result-start' && data[data.length-1].type == 'result-end') {
+		if ((
+			!this.d[end] && this.d[end-1] && this.d[end-1].type != 'result-end'
+		) || (
+			this.d[end] && this.d[end].type != 'result-start' && data[data.length-1].type == 'result-end'
+		)) {
 			data.pop();
 		}
+	
+		
 		[].splice.apply(this.d, [start, end - start].concat(data));
 };
 
