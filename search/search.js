@@ -10,46 +10,38 @@ var messageCount = 0;
 var updateThreads = [];
 
 
+
 /*
-    Arguments, Object and a callback.
-    
-    Object = {
-        id: threadId,
-        texts: [,], new messages that have come in the thread.
-        users: [,], new users that participated in the thread.
-        room: ".", roomname
-    }
-    
-    
-    this function will query the elastic search.
-    get the old thread object for the given threadId.
-    Merge the new texts and users to the old threadObject from elastice search.
-    And call the callback function with that new merged thread objext.
+    this function takes a list of ids and gets the thread objects from the elastic search.
 */
-function constructNewThread(obj, callback) {
-    var data= {}, query = {};
+function getOldThreads(ids, callback) {
+    var data = {}, response = {}, query;
+    ids = ids.slice(0, ids.length);
     data.index = indexName;
     data.type = 'threads';
-    query = {query: { match: {id: obj.id}}};
+    query = {query: { match_all: {}}};
 
     data.body = query;
-//    data.qu = obj.id;
-    client.search(data, function(err, response) {
+    
+    data.body.filter = {
+        "ids" : {
+            "type" : "threads",
+            "values" : ids
+        }
+    };
+ 
+    client.search(data, function(err, resp) {
         var oldThread = {};
         if(err || !response.hits || !response.hits.hits ||!response.hits.hits.length) {
-            oldThread = {room: obj.room, texts:[], users:[], id:obj.id};
+            response = {};
         }else {
-            oldThread = response.hits.hits[0]._source;
+            oldThread = resp.hits.hits;
+            oldThread.forEach(function(result){
+                response[result._source.id] = result._source;
+            });
         }
-        
-        obj.texts.forEach(function(e) {
-            oldThread.texts.push(e);
-        });
-        
-        obj.users.forEach(function(e) {
-            if(oldThread.users.indexOf(e) <0) oldThread.users.push(e);
-        });
-        callback(oldThread);
+
+        return callback(response);
     });
 }
 
@@ -78,7 +70,7 @@ function generateNewThread(threadID, callback) {
 
             texts.forEach(function(e) {
                 var index = e.indexOf(':');
-                var id = e.substring(0, index);
+                /* not needed right now. var id = e.substring(0, index); */
                 var text = e.substring(index + 1);
                 index = text.indexOf(':');
                 var from = text.substring(0, index);
@@ -92,36 +84,45 @@ function generateNewThread(threadID, callback) {
     });
 }
 
-/*gets the list of thread ids and constructs the postdata for elastic search to index threads.*/
-function constructPostData(ids, callback) {
-    var toIndex = [], postData = {body: []};
-    // name it better pls.
-    function temp(ids, callback) {
-        var id;
-        if(!ids.length) return callback();
+function getNewThreads(ids, callback) {
+    function asyncForEach(list, resp, callback) {
+        if(!list.length) return callback(resp);
         
-        id = ids.splice(0,1);
-        generateNewThread(id[0], function(t) {
-            constructNewThread(t, function(t){
-                toIndex.push(t);
-                return temp(ids, callback);
-            })
+        generateNewThread(list.splice(0,1)[0], function(t) {
+            resp[t.id] = t;
+            asyncForEach(list, resp, callback);
         });
     }
-    
-    temp(ids, function() {
-        toIndex.forEach(function(e) {
-             if(!e) return;
-            postData.body.push({
-                index: {
-                    _index: indexName,
-                    _type: 'threads',
-                    _id: e.id
-                }
+    return asyncForEach(ids.slice(0, ids.length), {}, callback);
+}
+
+function constructPostData(ids, callback) {
+    getOldThreads(ids, function(oldThreads) {
+        getNewThreads(ids, function(newThreads) {
+            var  postData = {body: []};
+            
+            Object.keys(newThreads).forEach(function(id) {
+                newThreads[id].texts.forEach(function(e) {
+                    oldThreads[id].texts.push(e);
+                });
+
+                newThreads[id].users.forEach(function(e) {
+                    if(oldThreads[id].users.indexOf(e) <0) oldThreads[id].users.push(e);
+                });
             });
-            postData.body.push(e);
-        });
-        callback(postData);
+            
+            Object.keys(oldThreads).forEach(function(id) {
+                postData.body.push({
+                    index: {
+                        _index: indexName,
+                        _type: 'threads',
+                        _id: id
+                    }
+                });
+                postData.body.push(oldThreads[id]);
+                return callback(postData);
+            });
+        });    
     });
 }
 
@@ -130,6 +131,7 @@ function indexTexts() {
     updateThreads = [];
     
     constructPostData(ids, function(postData) {
+        console.log(postData);
         client.bulk(postData, function(err, resp) {
             searchDB.flushdb();
             console.log(err, resp);
@@ -293,10 +295,6 @@ function search(data, callback){
     });
 }
 
-
-
-
-
 function searchThreads(data, callback){
     var searchParams = {
         index: indexName,
@@ -304,7 +302,7 @@ function searchThreads(data, callback){
         timeout: searchTimeout,
         body:data.body
     };
-    //log(JSON.stringify(searchParams));
+
     client.search(searchParams).then (function (response) {
         var threads = [];
         
