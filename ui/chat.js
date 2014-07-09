@@ -10,7 +10,7 @@ $(function () {
 	chatEl.render = function ($el, text) {
 		$el = $el || $template.clone(false);
 
-		$el.find(".chat-nick").text(text.from);
+		$el.find(".chat-nick").text(text.from.replace(/^guest-/, ""));
 		$el.find(".chat-message").html(format.linkify(format.textToHtml(text.text || "")));
 		$el.find(".chat-timestamp").text(format.friendlyTime(text.time, new Date().getTime()));
 		$el.attr("data-index", text.time);
@@ -41,18 +41,28 @@ $(function () {
 			}
 		}
 
+		if (text.text) {
+			var $container = $(".chat-area"),
+				charsPerLine = $container.width() / (parseInt($container.css("font-size"), 10) * 0.6),
+				lines = text.text.split("\n"),
+				lineCount = 0;
+
+			lines.forEach(function(line) {
+				lineCount += Math.ceil(line.length/charsPerLine);
+			});
+
+			if (lineCount > 4) {
+				$el.addClass("chat-item-long");
+			}
+		}
+
 		if (timeBefore) {
 			if ((text.time - timeBefore) > 180000) {
-				$el.addClass("chat-mark-timestamp-shown");
+				$el.addClass("chat-item-timestamp-shown");
 			}
 		}
 
 		timeBefore = text.time;
-		
-		if(!text.text) return;
-		if (text.text.length >= 400) {
-			$el.addClass("chat-mark-long");
-		}
 
 		return $el;
 	};

@@ -43,20 +43,7 @@
             document.getElementsByTagName("head")[0].appendChild(css);
         </script>
 
-        <script>
-             window.scrollback = {
-                streams:["scrollback"],
-                theme: 'light',
-                ticker: true,
-                minimized: false
-             };
-
-             /***** don't edit below *****/
-             (function(d,s,h,e){e=d.createElement(s);e.async=1;
-             e.src=h+'/client.min.js';scrollback.host=h;
-             d.getElementsByTagName(s)[0].parentNode.appendChild(e);}
-             (document,'script',(location.protocol=="https:"?"https:":"http:")+'//scrollback.io'));
-        </script>
+        <script>window.scrollback = {room:"scrollback",embed:"toast",theme:"dark",minimize:false};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//" + location.host + "/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>
     </head>
 
     <body>
@@ -208,7 +195,7 @@
             <p>Type the name of the room you want</p>
             <form id="create-field">
                 <label for="create-text">scrollback.io/</label>
-                <input type="text" id="create-text" placeholder="my-community" pattern="[a-z][a-z0-9-]{2,31}" oninvalid="setCustomValidity('Please enter a valid room name')" onchange="try{setCustomValidity('')}catch(e){}" /><input type="submit" disabled="true" value="Go" />
+                <input type="text" id="create-text" placeholder="my-community" pattern="[a-z][a-z0-9-]{2,31}" oninvalid="setCustomValidity('Please enter a valid room name')" onchange="try{setCustomValidity('')}catch(e){}" /><input type="submit" value="Go" disabled />
                 <p class="error"></p>
             </form>
         </section>

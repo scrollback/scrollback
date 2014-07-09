@@ -788,7 +788,7 @@ body {
     @include title-icon(search-icon);
     @include title-icon(embed-icon);
 
-    width: 3em;
+    width: 3.5em;
     padding: .75em .5em;
     cursor: pointer;
     fill: lighten($dark-color, 15%);
@@ -810,10 +810,6 @@ body {
     }
 }
 
-.user-area {
-    .role-user.embed & { display: none; }
-}
-
 .follow-room-action {
     .role-follower.embed &, .role-owner.embed & { display: none; }
 }
@@ -826,25 +822,19 @@ body {
 
 .user-avatar {
     display: none;
+    cursor: pointer;
 
-    @media #{$screenxx} {
+    img {
         display: block;
-        cursor: pointer;
-
-        img {
-            display: block;
-            height: $bar-height;
-            width: $bar-height;
-        }
+        height: $bar-height;
+        width: $bar-height;
     }
-}
 
-.user-menu-button {
-    @include title-icon(user-menu-icon);
+    @media #{$screenxx} { display: block; }
 
-    background-color: rgba(0,0,0,0.15);
-
-    &:focus, &:hover, &:active { background-color: rgba(0,0,0,0.3); }
+    .embed & {
+        @media #{$screenx} { display: block; }
+    }
 }
 
 .action-buttons {
@@ -1050,10 +1040,10 @@ body {
         }
     }
 
-	&.chat-mark-long {
+	&.chat-item-long {
 		@extend %ease;
 
-		max-height: 12em;
+		max-height: 9em;
 		cursor: pointer;
 
 		&:hover, &:focus {
@@ -1121,7 +1111,7 @@ body {
         color: fade-out($dark-color, .5);
     }
 
-    &:last-of-type, &.chat-mark-timestamp-shown {
+    &:last-of-type, &.chat-item-timestamp-shown {
         .chat-timestamp { display: inline-block; }
     }
 

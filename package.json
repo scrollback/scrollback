@@ -44,7 +44,7 @@
     "node": ">=0.8"
   },
   "dependencies": {
-    "irc": "git://github.com/scrollback/node-irc.git#6cdabf9a66a15cbb7ec57e0681c924bff3861239",
+    "irc": "git://github.com/scrollback/node-irc.git",
     "express": "3.0.x",
     "sockjs": "0.3.x",
     "sockjs-client": "latest",

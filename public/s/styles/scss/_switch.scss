@@ -7,11 +7,15 @@
 	$switch-trough-size: ( 2em / $switch-font-size ) * 1em;
 	$switch-slider-size: ( 1.6em / $switch-font-size ) * 1em;
 
+	.switch-container {
+		position: relative;
+		margin: .25em 0;
+	}
+
 	.switch {
 		display: none;
 
 		& ~ label {
-			position: relative;
 			cursor: pointer;
 
 			&:before, &:after {
