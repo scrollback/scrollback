@@ -43,7 +43,6 @@ sock.on('connection', function (socket) {
 		catch(e) { log("ERROR: Non-JSON data", d); return; }
 
 		if (!d.type) return;
-		d.returned = "yes";
 		if(d.type == 'init' && d.session) {
 //			if(d.session == internalSession) return;
             if(!/^web:/.test(d.session)) {
@@ -252,7 +251,7 @@ function censorAction(action, filter) {
 }
 
 function emit(action, callback) {
-    var outAction;
+    var outAction, myAction;
     log("Sending out: ", action);
     function dispatch(conn, a) {conn.send(a); }
     
@@ -272,11 +271,16 @@ function emit(action, callback) {
 	}
     
     outAction = censorAction(action, "both");
+    myAction = censorAction(action, "both");
+    delete outAction.session;
     
     if(rConns[action.to]) {
         rConns[action.to].forEach(function(e) {
-            if(e.session == action.session && action.type == "room") dispatch(e, action);
-            else dispatch(e, outAction);
+            if(e.session == action.session) {
+                if(action.type == "room") dispatch(e, action);
+                else dispatch(e, myAction);
+            }
+            else {dispatch(e, outAction);}
         });
     }
     
