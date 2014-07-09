@@ -165,7 +165,7 @@ module.exports = function (core) {
                         function insertText() {
                             searchDB.sadd("thread:{{"+e.id+"}}:texts", message.id+":"+message.from+":"+message.text, function() {
                                 messageCount++;
-                                if(messageCount >=10) {
+                                if(messageCount >=200) {
                                    indexTexts();
                                     messageCount = 0;
                                 }

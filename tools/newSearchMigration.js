@@ -10,7 +10,7 @@ var searchServer = config.search.server + ":" + config.search.port;
 var es = require('elasticsearch');
 var client, lastKey;
 var postData = null;
-
+var forceStart = false;
 var threadListFile, threadIndexFile, writingList = [];
 var threadMap = {}, count = 0;
 
@@ -21,7 +21,10 @@ function gotThread(thread) {
     lastKey = thread.key;
     t = JSON.parse(thread.value);
     
-    if(threadMap[thread.key]) return stream.resume();
+    if(threadMap[thread.key] || lastKey.indexOf("dthread")<0) {
+        console.log("skipping",lastKey);
+        return stream.resume();
+    }
     
     newThread.id = t.id;
     writingList.push(thread.key);
@@ -45,6 +48,11 @@ function gotThread(thread) {
     dbQuery.lte.push(t.id);
     
     types.texts.get(dbQuery, function(err, texts) {
+      if(err) {
+               console.log("Error:", err);
+               return stream.resume();
+       }
+
         texts.forEach(function(t) {
             newThread.texts.push(t.text);
             if(newThread.users.indexOf(t.from) <0) newThread.users.push(t.from);
@@ -81,7 +89,7 @@ function indexThreads(cb) {
 
 function writeProgress() {
     updateStatus(lastKey);
-    console.log(lastKey);
+//    console.log(lastKey);
     if(process.stdout.clearLine) {
         process.stdout.clearLine();
         process.stdout.cursorTo(0);
@@ -103,7 +111,7 @@ function go(){
     stream.on('data', gotThread);
     stream.on('error', console.log.bind(console));
     stream.on('end', function(){
-        indexThreads(process.exit);
+        if(postData) indexThreads(process.exit);
     });
 }
 
@@ -114,6 +122,9 @@ function startUp() {
         host: searchServer
     });
 
+    if(process.argv[2] == "--fs") {
+        forceStart = true;
+    }
     leveldb = new objectlevel(process.cwd()+"/leveldb-storage/"+config.leveldb.path);
     types = require("../leveldb-storage/types/types.js")(leveldb);
     
@@ -133,12 +144,14 @@ function startUp() {
 
     threadListFile = fs.openSync("./threadLists.txt","a+");
     
-    if (!threads.length) {
+    if (!threads.length || !threads[threads.length-2]) {
         start = "dthreads\0" ;
     } else {
         console.log(threads[threads.length-2]);
         start = threads[threads.length-2];
     }
+    
+    if(forceStart) start = "dthreads\0" ;
     
     console.log("starting at: ",start);
     types.threads.get(function(err, data) {
