@@ -245,9 +245,12 @@ module.exports = function(c){
 		
 		clearTimeout(timeoutMapping[roomId]);
 		
-		timeoutMapping[roomId] = setTimeout(function(){
-			if(cache && cache.rooms){ delete cache.rooms[roomId]; }
-		}, minutes*60*1000);
+		(function(){ // preserving the closure of roomId
+			timeoutMapping[roomId] = setTimeout(function(){
+				if(cache && cache.rooms){ delete cache.rooms[roomId]; }
+			}, minutes*60*1000);	
+		})();
+		
 	}
 
 	core.on('getRooms', function(query, next){
