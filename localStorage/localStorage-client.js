@@ -99,8 +99,8 @@ try{
 
 
 libsb.on('back-dn', function(back, next) {
-	console.log("Back dn 1");
 	// loading ArrayCache from LocalStorage when user has navigated to the room.
+	if(back.from !== libsb.user.id) return next();
 	var key = generateLSKey(back.to, 'texts');
 	cache[key] = loadArrayCache(key);
 	var items = cache[key].d;
@@ -117,7 +117,7 @@ module.exports = function(c){
 	
 	core.on('back-dn', function(back, next){
 		// store a result-start in ArrayCache, to indicate the beginning of the current stream of messages from the user
-		console.log("Back dn 2");
+		if(back.from !== libsb.user.id) return next();
 		var msg = {type: 'result-start', endtype: 'time', time: back.time};
 		var key = generateLSKey(back.to, 'texts');
 		if(cache && cache.hasOwnProperty(key)){
@@ -330,6 +330,7 @@ module.exports = function(c){
 	
 	core.on('away-dn', function(away, next){
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
+		if(back.from !== libsb.user.id) return next();
 		var msg = {type: 'result-end', endtype: 'time', time: away.time};
 		var key = generateLSKey(away.to, 'texts');
 		if(cache && cache[key]){ cache[key].put(msg); }
@@ -371,7 +372,7 @@ function createInit(){
         libsb.session = sid = cache.session;
     }
 	if(!sid){
-		cache.session = sid = "web:"+generate.uid();
+		cache.session = sid = "web://"+generate.uid();
 		libsb.session = cache.session;
 	}
 	core.emit('init-up', {session: sid, origin: {
