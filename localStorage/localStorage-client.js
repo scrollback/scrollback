@@ -25,6 +25,7 @@ window.timeoutMapping = {};
 function loadArrayCache(key){
 	// loads an ArrayCache from LocalStorage.
 	var texts;
+	console.log("---- loading arrayCache for ", key);
 	if(localStorage.hasOwnProperty(key)){
 		try{
 			texts = JSON.parse(localStorage[key]);
@@ -40,7 +41,7 @@ function loadArrayCache(key){
 function saveCache(key){
 	// saves an ArrayCache to LocalStorage
 	try{
-		localStorage[key] = JSON.stringify(cache[key].getItems());
+		localStorage[key] = JSON.stringify(cache[key].d);
 	} catch(e){
 		if(e.name == 'QuotaExceededError' || e.code == 22){ // localStorage is full!
 			deleteLRU();
@@ -98,10 +99,11 @@ try{
 
 
 libsb.on('back-dn', function(back, next) {
+	console.log("Back dn 1");
 	// loading ArrayCache from LocalStorage when user has navigated to the room.
 	var key = generateLSKey(back.to, 'texts');
 	cache[key] = loadArrayCache(key);
-	var items = cache[key].getItems();
+	var items = cache[key].d;
 	var lastMsg = items[items.length -1];
 	if(lastMsg && lastMsg.type !== "result-end"){
 		cache[key].d.push({type: 'result-end', endtype: 'time', time: lastMsg.time });
@@ -112,7 +114,20 @@ libsb.on('back-dn', function(back, next) {
 
 module.exports = function(c){
 	core = c;
-
+	
+	core.on('back-dn', function(back, next){
+		// store a result-start in ArrayCache, to indicate the beginning of the current stream of messages from the user
+		console.log("Back dn 2");
+		var msg = {type: 'result-start', endtype: 'time', time: back.time};
+		var key = generateLSKey(back.to, 'texts');
+		if(cache && cache.hasOwnProperty(key)){
+			cache[key].d.push(msg);
+		}
+		console.log(cache[key].d);
+		saveCache(key);
+		next();
+	}, 500);
+	
 	core.on('getTexts', function(query, next){
 		// getTextsBefore
         if(query.thread){
@@ -318,15 +333,6 @@ module.exports = function(c){
 		var msg = {type: 'result-end', endtype: 'time', time: away.time};
 		var key = generateLSKey(away.to, 'texts');
 		if(cache && cache[key]){ cache[key].put(msg); }
-		next();
-	}, 500);
-	
-	core.on('back-dn', function(back, next){
-		// store a result-start in ArrayCache, to indicate the beginning of the current stream of messages from the user
-		var msg = {type: 'result-start', endtype: 'time', time: back.time};
-		var key = generateLSKey(back.to, 'texts');
-		if(cache && cache[key]){ cache[key].d.push(msg);}
-		saveCache(key);
 		next();
 	}, 500);
 	
