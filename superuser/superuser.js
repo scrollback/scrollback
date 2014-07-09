@@ -1,7 +1,5 @@
 var core;
 var config = require('../config.js');
-var log  = require('../lib/logger.js');
-var crypto = require('crypto');
 var internalSession = Object.keys(config.whitelists)[0];
 var core, events = ['text', 'edit', 'admit', 'expel',
 							'room', 'getRooms', "getUsers", "getTexts", "getThreads"];

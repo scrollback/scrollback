@@ -3,10 +3,6 @@ function ArrayCache(initData) {
 	this.d = initData || [];
 }
 
-ArrayCache.prototype.getItems = function(){
-	return this.d;
-};
-
 ArrayCache.prototype.find = function (time, start, end) {
 		var pos;
 
