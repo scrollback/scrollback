@@ -497,7 +497,9 @@ function getCurrentState() {
 function getBotNick(roomId) {
 	var room = rooms[roomId];
 	var nick = "NO_ROOM";
-	if(room) nick = clients[botNick][room.params.irc.server].nick;
+	if(room && clients[botNick][room.params.irc.server]) {
+		nick = clients[botNick][room.params.irc.server].nick;
+	}
 	return nick;
 }
 

@@ -21,16 +21,17 @@ libsb.on('config-show', function (tabs, next) {
 	$div.append(formField("Enable irc", "toggle", "ircenabled", enabled));
 	var isNext = false;
 	if (results.params.irc) {
-		if (results.params.irc.error) {
+		var ircParams = results.params.irc;
+		if (ircParams.error) {
 			notify.type = "error";
 			notify.value = null;
 			if (results.params.irc.error === "ERR_CONNECTED_OTHER_ROOM") {
-				displayString = "This IRC account is already linked with another room. Try a different server.";
+				displayString = "This IRC account is already linked with another scrollback room. You can't use it until they unlink.";
 			} else {
 				displayString = "Error in saving, please try again after some time";
 			}
 
-		} else if (results.params.irc.server && results.params.irc.channel && results.params.irc.pending) {
+		} else if (ircParams.server && ircParams.channel && ircParams.pending && ircParams.enabled) {
 			notify.type = "info";
 			notify.value = null;
 
@@ -41,10 +42,10 @@ libsb.on('config-show', function (tabs, next) {
 				next();
 			});
 
-		} else if (results.params.irc.server && results.params.irc.channel) {
+		} else if (results.params.irc.server && results.params.irc.channel && results.params.irc.enabled) {
 			displayString = "Connected to irc channel: " + results.params.irc.channel;
 		} else {
-			displayString = "Not connected to any channel.";
+			displayString = "Not connected.";
 		}
 
 		$div.append(formField("", "", "", displayString));
@@ -80,7 +81,7 @@ libsb.on('config-save', function (room, next) {
 libsb.on("room-dn", function (room, next) {
 	var r = room.room;
 	var irc = r.params.irc;
-	if (room.user.id === libsb.user.id && irc && irc.pending && !irc.error && irc.channel && irc.server) {
+	if (room.user.id === libsb.user.id && irc && irc.pending && !irc.error && irc.channel && irc.server && irc.enabled) {
 		$.get('/r/irc/' + r.id, function (botName) {
 			var displayString = "Something went wrong while connecting to IRC server";
 			if (botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/invite " + botName +

@@ -17,6 +17,7 @@ var ircUtils = new require('./ircUtils.js')(clientEmitter, client,callbacks);
 
 module.exports = function (coreObj) {
 	core = coreObj;
+	require('./roomEvent.js')(core, client, ircUtils, firstMessage);
 	init();
 	core.on("http/init", function(payload, callback) {
 		payload.irc = {
@@ -26,67 +27,7 @@ module.exports = function (coreObj) {
 		};
 		callback(null, payload);
 	}, "setters");
-	core.on ('room', function(action, callback) {
-        var room = action.room;
-		log("room irc:", JSON.stringify(action), client.connected());
-        
-        if(!room.params.irc || room.params.irc.error) return callback();
-        
-        function done(err) {
-            if(err) {
-                room.params.irc.error = err.message;
-                ircUtils.removeIrcIdentity(room);
-                ircUtils.disconnectBot(room.id,callback);
-            } else callback();
-        }
-		if (action.session === internalSession) return callback();
-		if (ircUtils.actionRequired(action) && client.connected()) {
-			ircUtils.changeRoomParams(action);
-			if (ircUtils.isNewRoom(action)) {
-				room.params.irc.channel = room.params.irc.channel.toLowerCase();
-				return ircUtils.addNewBot(room, done);
-			} else {//room config changed
-				var oldIrc = action.old.params.irc;
-				var newIrc = room.params.irc;
-                
-                if (oldIrc.server === newIrc.server && oldIrc.channel === newIrc.channel) {
-                    room.params.irc = action.old.params.irc;
-                    if(room.params.irc.error) ircUtils.removeIrcIdentity(room);
-                    return callback();
-                }else if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel) {
-					if(oldIrc.server && oldIrc.channel) {
-						delete firstMessage[room.id];
-						ircUtils.disconnectBot(room.id, function() {
-							if(room.params.irc.server && room.params.irc.channel) return ircUtils.addNewBot(room, done);	
-							else return callback();
-						});
-					} else if(room.params.irc.server && room.params.irc.channel) return ircUtils.addNewBot(room, done);
-					else return callback();
-				} else{
-                    return callback();
-                }
-			}  
-		} else if(!client.connected() && ircUtils.actionRequired(action)) {
-			log("irc Client is not connected: ");
-			room.params.irc.error = "ERR_IRC_NOT_CONNECTED";
-			ircUtils.removeIrcIdentity(room);
-			return callback();
-		} else return callback();
-	}, "gateway");
 
-	core.on("room", function(room, callback) {
-		var r = room.room;
-		if (r.params.irc && Object.keys(r.params.irc).length >0) {
-			var v = (typeof r.params.irc.server === 'string') && (typeof r.params.irc.channel === 'string');
-			if (v) {
-				callback();
-			} else {
-				r.params.irc.error = "ERR_INVALID_IRC_PARAMS";
-                ircUtils.removeIrcIdentity(room);
-				callback();//
-			}
-		} else callback();
-	}, "appLevelValidation");
 	core.on("init", function(init, callback) {
 		log("init irc:", init);
 		var oldUser = {id: init.from};
@@ -101,12 +42,6 @@ module.exports = function (coreObj) {
 			});
 			callbacks[uid] = function(isConn) {
 				if (isConn) {
-					uid = guid();
-					clientEmitter.emit("write", {
-						type: "isUserConnected",
-						sbNick: newUser.id,
-						uid: uid
-					});
 					clientEmitter.emit('write', {
 						type: "disconnectUser",
 						sbNick: oldUser.id
@@ -121,7 +56,7 @@ module.exports = function (coreObj) {
 		log("On text:", client.connected(), text.id);
 		if (text.room.params && text.room.params.irc && text.room.params.irc.server &&
 			text.room.params.irc.channel && !text.room.params.irc.pending &&
-			(text.session.indexOf('irc') !== 0 && text.session.indexOf('twitter') !== 0) && client.connected()) {//session of incoming users from irc 
+			(text.session.indexOf('web') === 0) && client.connected()) {//session of incoming users from irc 
 			if(!(firstMessage[text.to] && firstMessage[text.to][text.from])) {
 				if (!firstMessage[text.to]) {
 					firstMessage[text.to] = {};
@@ -154,9 +89,6 @@ module.exports = function (coreObj) {
 };
 
 
-
-
-
 function init() {
 	var notUsedRooms = {};
 	clientEmitter.on('init', function(st) {
@@ -180,6 +112,7 @@ function init() {
 				return;
 			}
 			rooms.forEach(function(room) {
+				if(!room.params.irc.enabled) return;
 				if (state.rooms[room.id]) {
 					var r1 = room.params.irc;
 					var r2 = state.rooms[room.id].params.irc;
