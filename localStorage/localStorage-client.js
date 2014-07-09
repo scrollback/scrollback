@@ -25,7 +25,6 @@ window.timeoutMapping = {};
 function loadArrayCache(key){
 	// loads an ArrayCache from LocalStorage.
 	var texts;
-	console.log("---- loading arrayCache for ", key);
 	if(localStorage.hasOwnProperty(key)){
 		try{
 			texts = JSON.parse(localStorage[key]);
@@ -123,7 +122,6 @@ module.exports = function(c){
 		if(cache && cache.hasOwnProperty(key)){
 			cache[key].d.push(msg);
 		}
-		console.log(cache[key].d);
 		saveCache(key);
 		next();
 	}, 500);
@@ -139,7 +137,7 @@ module.exports = function(c){
 			cache[key] = loadArrayCache(key);
 		}
 		
-        if(!cache[key].d.length) { console.log('c[k].l', cache[key].d.length); return next(); }
+        if(!cache[key].d.length) { return next(); }
         
 		var results = cache[key].get(query);
 		
@@ -153,7 +151,7 @@ module.exports = function(c){
 	}, 200); // runs before the socket
 
 	core.on('getTexts', function(query, next){
-        if(query.resultSource == 'localStorage') { console.log("own results; skipping push"); return next(); }
+        if(query.resultSource == 'localStorage') { return next(); }
 		var results = query.results.slice(0); // copying by value
 		if(results && results.length > 0){
 			// merging results into the Cache.
@@ -176,13 +174,13 @@ module.exports = function(c){
 		next();
 	}, 8); // runs after the socket
 	
-	core.on('getThreads', function(query, next){
+	/* core.on('getThreads', function(query, next){
 		var key = generateLSKey(query.to, 'threads');
 		if(!cache.hasOwnProperty(key)){
 			cache[key] = loadArrayCache(key);
 		}
 
-		if(!cache[key].d.length) { console.log('c[k].l', cache[key].d.length); return next(); }
+		if(!cache[key].d.length) { return next(); }
 
 		var results = cache[key].get(query);
 
@@ -217,7 +215,7 @@ module.exports = function(c){
 			saveCache(lskey);
 		}
 		next();
-	}, 8); // runs after socket
+	}, 8); // runs after socket */
 
 	core.on('getRooms', function(query, next){
 	
