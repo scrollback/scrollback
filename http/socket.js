@@ -25,12 +25,8 @@ Boston, MA 02111-1307 USA.
 /* global require, exports, setTimeout */
 
 var sockjs = require("sockjs"), core,
-	// api = require("./api.js"),
 	log = require("../lib/logger.js"),
-	config = require("../config.js"),
 	generate = require("../lib/generate.js");
-
-var internalSession = Object.keys(config.whitelists)[0];
 
 var rConns = {}, uConns = {}, sConns = {}, urConns = {};
 var sock = sockjs.createServer();
@@ -44,7 +40,6 @@ sock.on('connection', function (socket) {
 
 		if (!d.type) return;
 		if(d.type == 'init' && d.session) {
-//			if(d.session == internalSession) return;
             if(!/^web:/.test(d.session)) {
 				return conn.send({type: 'error', id: d.id, message: "INVALID_SESSION"});
             }
@@ -239,7 +234,8 @@ function censorAction(action, filter) {
             createTime: action.user.createTime,
             role: action.user.role,
             type: 'user'
-        }
+        };
+		delete outAction.session;
     }
     
     if(filter == 'both' || filter == 'room') {
@@ -250,7 +246,7 @@ function censorAction(action, filter) {
     return outAction;
 }
 
-function emit(action, callback) {
+function emit (action, callback) {
     var outAction, myAction;
     log("Sending out: ", action);
     function dispatch(conn, a) {conn.send(a); }
@@ -271,8 +267,7 @@ function emit(action, callback) {
 	}
     
     outAction = censorAction(action, "both");
-    myAction = censorAction(action, "both");
-    delete outAction.session;
+    myAction = censorAction(action, "room");
     
     if(rConns[action.to]) {
         rConns[action.to].forEach(function(e) {
