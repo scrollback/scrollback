@@ -43,9 +43,13 @@ $(function () {
 
 		if (text.text) {
 			var $container = $(".chat-area"),
-				charsPerLine = $container.width() / (parseInt($container.css("font-size"), 10) * 0.6),
+				width = $container.width(),
 				lines = text.text.split("\n"),
-				lineCount = 0;
+				lineCount = 0,
+				charsPerLine;
+
+			width = (width > 360) ? width : 360;
+			charsPerLine = width / (parseInt($container.css("font-size"), 10) * 0.6);
 
 			lines.forEach(function(line) {
 				lineCount += Math.ceil(line.length/charsPerLine);
