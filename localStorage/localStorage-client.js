@@ -328,18 +328,37 @@ module.exports = function (c) {
 		var texts = [text];
 		var key = generateLSKey(text.to, 'texts');
 		var lastItem = cache[key].d[cache[key].length - 1];
-		
-		if (lastItem.type === 'result-end') texts.unshift({
+
+		if (lastItem && lastItem.type === 'result-end') texts.unshift({
 			type: 'result-start',
 			endtype: 'time',
 			time: window.backTimes[text.to]
 		});
-		
+
 		if (cache && cache[key]) {
 			cache[key].put(texts);
 		}
-		
+
 		saveCache(key);
+
+		// putting the incoming text into each threadId cache it is a part of
+
+		text.threads.forEach(function (threadObj) {
+			texts = [text];
+			key = generateLSKey(text.to, threadObj.id, 'texts');
+
+			cache[key] = loadArrayCache(key);
+			lastItem = cache[key].d[cache[key].length - 1];
+
+			if (!lastItem || lastItem.type === 'result-end') texts.unshift({
+				type: 'result-start',
+				endtype: 'time',
+				time: window.backTimes[text.to]
+			});
+
+			cache[key].put(texts);
+		});
+
 		next();
 	}, 500); // storing new texts to cache.
 
@@ -371,7 +390,6 @@ module.exports = function (c) {
 			cache.rooms[room.id] = room;
 			delRoomTimeOut(room.id);
 		});
-
 
 		save();
 		next();
