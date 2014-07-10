@@ -186,13 +186,17 @@ var threadEl = require("./thread.js"),
 			startIndex: index,
 			getItems: function (index, before, after, recycle, callback) {
 				if(currentState.mode == "search") {
+                    $(".search-caption").text("Results for \"" + currentState.query + "\"");
                     loadSearchResult(index, before, after, callback);
 				}else if(currentState.tab == "threads") {
                     loadThread(index, before, after, callback);
 				}
 			}
 		});
-
+        $(".search-back").click(function(e) {
+            libsb.emit("navigate", {mode: "normal", tab: "threads", thread: "", q:"", time: null});
+            e.stopImmediatePropagation();
+        });
 		$threads.click(function(event) {
 			event.preventDefault();
 			var $el = $(event.target).closest('.thread-item');
