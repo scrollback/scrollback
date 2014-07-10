@@ -187,6 +187,8 @@ var threadEl = require("./thread.js"),
 			getItems: function (index, before, after, recycle, callback) {
 				if(currentState.mode == "search") {
                     $(".search-caption").text("Results for \"" + currentState.query + "\"");
+                    $(".search-back").text("Back to " + currentState.roomName);
+                    
                     loadSearchResult(index, before, after, callback);
 				}else if(currentState.tab == "threads") {
                     loadThread(index, before, after, callback);
