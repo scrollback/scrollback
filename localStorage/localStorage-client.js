@@ -357,6 +357,7 @@ module.exports = function (c) {
 			});
 
 			cache[key].put(texts);
+			saveCache(key);
 		});
 
 		next();
