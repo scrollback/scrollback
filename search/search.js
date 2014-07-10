@@ -29,10 +29,10 @@ function getOldThreads(ids, callback) {
             "values" : ids
         }
     };
- 
+    
     client.search(data, function(err, resp) {
         var oldThread = {};
-        if(err || !response.hits || !response.hits.hits ||!response.hits.hits.length) {
+        if(err || !resp.hits || !resp.hits.hits ||!resp.hits.hits.length) {
             response = {};
         }else {
             oldThread = resp.hits.hits;
@@ -99,29 +99,37 @@ function getNewThreads(ids, callback) {
 function constructPostData(ids, callback) {
     getOldThreads(ids, function(oldThreads) {
         getNewThreads(ids, function(newThreads) {
-            var  postData = {body: []};
-            
-            Object.keys(newThreads).forEach(function(id) {
-                newThreads[id].texts.forEach(function(e) {
-                    oldThreads[id].texts.push(e);
-                });
-
-                newThreads[id].users.forEach(function(e) {
-                    if(oldThreads[id].users.indexOf(e) <0) oldThreads[id].users.push(e);
-                });
+            var  postData = {body: []}, newKeys = Object.keys(newThreads);
+            newKeys.forEach(function(id) {
+                if(oldThreads[id] && oldThreads[id].texts) {
+                    oldThreads[id].texts.forEach(function(e) {
+                        if(newThreads[id] && newThreads[id].texts) newThreads[id].texts.push(e);
+                    });
+                }
+                if(oldThreads[id] && oldThreads[id].users) {
+                    oldThreads[id].users.forEach(function(e) {
+                        if(newThreads[id] && newThreads[id].users) newThreads[id].users.push(e);
+                    });
+                }
             });
             
-            Object.keys(oldThreads).forEach(function(id) {
-                postData.body.push({
-                    index: {
-                        _index: indexName,
-                        _type: 'threads',
-                        _id: id
-                    }
+            if(newKeys.length) {
+                newKeys.forEach(function(id) {
+                    postData.body.push({
+                        index: {
+                            _index: indexName,
+                            _type: 'threads',
+                            _id: id
+                        }
+                    });
+                    postData.body.push(newThreads[id]);
+                    return callback(postData);
                 });
-                postData.body.push(oldThreads[id]);
+            }else{
                 return callback(postData);
-            });
+            }
+            
+            
         });    
     });
 }
@@ -129,12 +137,10 @@ function constructPostData(ids, callback) {
 function indexTexts() {
     var ids = updateThreads;
     updateThreads = [];
-    
     constructPostData(ids, function(postData) {
-        console.log(postData);
         client.bulk(postData, function(err, resp) {
+            if(err) log(err, resp);
             searchDB.flushdb();
-            console.log(err, resp);
         });
     });
 }
@@ -167,7 +173,7 @@ module.exports = function (core) {
                         function insertText() {
                             searchDB.sadd("thread:{{"+e.id+"}}:texts", message.id+":"+message.from+":"+message.text, function() {
                                 messageCount++;
-                                if(messageCount >=200) {
+                                if(messageCount >=10) {
                                    indexTexts();
                                     messageCount = 0;
                                 }
@@ -182,17 +188,15 @@ module.exports = function (core) {
         
         /*Index rooms*/
         core.on('room', function (room, callback) {
-            if (room.type === "room") {
-                callback();
-                var data = {};
-                data.type = 'room';
-                data.id = room.id;
-                data.body = {
-                    "description": room.description,
-                    "type": room.type
-                };
+            callback();
+            var data = {};
+            data.type = 'room';
+            data.id = room.id;
+            data.body = {
+                "description": room.description,
+                "type": room.type
+            };
                 index(data);
-            }
         }, "watchers");
         
 /*        Search text by a phrase/keyword 
@@ -219,7 +223,6 @@ module.exports = function (core) {
                 return callback();
             }
 
-//            console.log("query string getThre: " + qu.q);
             data.type = 'room';
             query = { query: { match: { description: qu.q}}};
             data.body = query;
@@ -327,7 +330,11 @@ function init() {
     client = new es.Client({
         host: searchServer
     });
+    
+    searchDB.smembers("updateThread", function(err, threads) {
+        if(threads) {
+            updateThreads = updateThreads.concat(threads);
+            messageCount = updateThreads.length;
+        }
+    });
 }
-
-
-
