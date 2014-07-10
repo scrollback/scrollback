@@ -39,6 +39,7 @@
 			sb.form = sb.form || "toast";
 			sb.theme = /* sb.theme || */ "dark";
 			sb.minimize = (typeof sb.minimize === "boolean") ? sb.minimize : true;
+			sb.location = { host: location.host, path: location.pathname + location.search + location.hash };
 
 			sb.room = validate(sb.room, true);
 
@@ -52,6 +53,7 @@
 
 			// Create and append the iframe
 			iframe = document.createElement("iframe");
+			// TODO: change "embed" to "context"
 			iframe.src = host + "/" + sb.room + "?embed=" + encodeURIComponent(JSON.stringify(sb));
 			iframe.className = "scrollback-stream" + (sb.minimize ? " scrollback-minimized" : "");
 
@@ -72,6 +74,7 @@
 					} else if(e.data === "maximize") {
 						iframe.className = iframe.className.replace(minReg, "").trim();
 					} else if (e.data === "getDomain") {
+						// TODO: remove this and use the location object in the embed
 						iframe.contentWindow.postMessage(JSON.stringify({ location: window.location }), host);
 					}
 				}
