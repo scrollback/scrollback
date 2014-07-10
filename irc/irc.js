@@ -10,15 +10,15 @@ client.init(clientEmitter);
 var core;
 var callbacks = {};
 var onlineUsers = {};//scrollback users that are already online 
-var firstMessage = {};//[room][username] = true
+var firstMessage = {};//[room][username] = true //it is shared b/w roomEvent and irc
 var userExp = 10*60*1000;
 var initCount = 0;
 var ircUtils = new require('./ircUtils.js')(clientEmitter, client,callbacks);
 
 module.exports = function (coreObj) {
 	core = coreObj;
-	require('./roomEvent.js')(core, client, ircUtils, firstMessage);
 	init();
+	require('./roomEvent.js')(core, client, ircUtils, firstMessage);
 	core.on("http/init", function(payload, callback) {
 		payload.irc = {
 			get: function(req,res,next) {	
@@ -54,9 +54,9 @@ module.exports = function (coreObj) {
 	
 	core.on('text', function(text, callback) {
 		log("On text:", client.connected(), text.id);
-		if (text.room.params && text.room.params.irc && text.room.params.irc.server &&
-			text.room.params.irc.channel && !text.room.params.irc.pending &&
-			(text.session.indexOf('web') === 0) && client.connected()) {//session of incoming users from irc 
+		var rp = text.room.params;
+		if (rp && rp.irc && rp.irc.server && rp.irc.channel && !rp.irc.pending &&
+			(/^web/).test(text.session) && client.connected() && rp.irc.enabled) {
 			if(!(firstMessage[text.to] && firstMessage[text.to][text.from])) {
 				if (!firstMessage[text.to]) {
 					firstMessage[text.to] = {};
@@ -76,9 +76,9 @@ module.exports = function (coreObj) {
 	
 	core.on('away', function(action, callback) {
 		log("On away:", client.connected());
-		if (action.room.params && action.room.params.irc && action.room.params.irc.server &&
-			action.room.params.irc.channel && !action.room.params.irc.pending &&
-			(action.session.indexOf('web') === 0 ) && client.connected()) {//session of incoming users from irc 
+		var rp = action.room.params;
+		if (rp && rp.irc && rp.irc.server && rp.irc.channel && !rp.irc.pending &&
+			(/^web/).test(action.session) && client.connected() && rp.irc.enabled) {
 			if(firstMessage[action.to] && firstMessage[action.to][action.from]) {
 				ircUtils.disconnectUser(action.to, action.from);
 				delete firstMessage[action.to][action.from];
@@ -93,7 +93,8 @@ function init() {
 	var notUsedRooms = {};
 	clientEmitter.on('init', function(st) {
 		initCount = 0;
-		firstMessage = {};
+		//delete all keys. don't change the ref.(roomEvent.js is also using same ref.)
+		Object.keys(firstMessage).forEach(function(k) { delete firstMessage[k];});
 		onlineUsers = {};
 		var state = st.state;
 		for(var roomId in state.rooms) {

@@ -56,6 +56,7 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 				if (oldIrc.server === newIrc.server && oldIrc.channel === newIrc.channel) { //server channel same.
 					if (oldIrc.enabled !== newIrc.enabled) {
 						if (newIrc.enabled) {
+							delete firstMessage[room.id];
 							ircUtils.addNewBot(room, done);
 						} else {
 							delete firstMessage[room.id];
