@@ -195,7 +195,7 @@ body {
 }
 
 .room-item {
-    @extend %ease;
+    @extend %transition;
 
     display: block;
     padding: 1em;
@@ -227,10 +227,13 @@ body {
     &.search-term { background: url(../../img/client/icons/search-light.svg) no-repeat 90% center; }
 
     .unread {
+        @extend %appear;
+
         float: right;
         min-width: 2em;
         text-align: center;
         font-size: .8em;
+        font-weight: 700;
         background-color: $accent-color;
         color: $light-color;
         border-radius: $roundness;
@@ -291,8 +294,6 @@ body {
         @include justify-content(space-around);
         @include align-items(center);
         @include align-content(center);
-        @include transform(rotate(0deg)); /* hack to fix invisible items in android browser */
-        @extend %ease;
 
         height: 100%;
         cursor: pointer;
@@ -302,9 +303,11 @@ body {
             width: 3em;
             fill: lighten($dark-color, 15%);
 
-            .view-rooms & { @include transform(rotate(180deg)); }
-
             @media #{$screenxxxx} { display: none; }
+
+            .rooms-icon {
+                .view-rooms & { @include transform(rotate(180deg)); }
+            }
         }
     }
 
@@ -312,7 +315,7 @@ body {
 
     .tab {
         @include flex-grow(1);
-        @extend %ease;
+        @extend %transition;
 
         text-align: center;
         background-color: transparent;
@@ -331,7 +334,7 @@ body {
             background-color: rgba(0,0,0,.1);
         }
 
-        svg { @extend %ease; }
+        svg { @extend %transition; }
 
         &:hover, &:focus {
             svg { @include transform(scale(1.1)); }
@@ -375,7 +378,7 @@ body {
         display: none;
 
         &.current {
-            @include fadein;
+            @extend %fadein;
 
             display: block;
             height: 100%;
@@ -409,7 +412,7 @@ body {
 
 .person {
     @extend %nofilter;
-    @extend %ease;
+    @extend %transition;
 
     position: relative;
     display: inline-block;
@@ -523,7 +526,7 @@ body {
 
 .thread-item {
     @extend %nofilter;
-    @extend %ease;
+    @extend %transition;
 
     display: block;
     padding: 1em 1.5em;
@@ -566,7 +569,7 @@ body {
 }
 
 .list-item {
-	@extend %ease;
+	@extend %transition;
 
     position: relative;
 	display: block;
@@ -636,11 +639,13 @@ body {
 }
 
 .meta-button, .rooms-button {
-    @include transform(rotate(0deg));
-    @include transition(.5s);
-
     width: 3em;
     cursor: pointer;
+}
+
+.meta-icon, .rooms-icon {
+    @include transform(rotate(0deg));
+    @include transition(.5s);
 }
 
 @mixin meta-logo-visible {
@@ -676,17 +681,19 @@ body {
 
     &, &:focus, &:hover, &:active { fill: lighten($dark-color, 15%); }
 
-    .view-meta &, .view-rooms & { @include transform(rotate(180deg)); }
-
     @media #{$screenxxx} { display: none; }
 
     .meta-button-back, .meta-button-logo {
-        @extend %ease;
+        @extend %transition;
 
         display: block;
         height: 100%;
         width: 100%;
         padding: .75em .5em;
+
+        .meta-icon {
+            .view-meta &, .view-rooms & { @include transform(rotate(180deg)); }
+        }
     }
 }
 
@@ -886,7 +893,7 @@ body {
     display: none;
 
     .has-messages & {
-        @include fadein;
+        @extend %fadein;
 
         display: table-cell;
         vertical-align: middle;
@@ -906,7 +913,7 @@ body {
 }
 
 .quick-notification-item {
-    @include slidedown;
+    @extend %slidedown;
 
     padding: 1em;
     border-bottom: 1px solid rgba(0,0,0,.15);
@@ -975,7 +982,7 @@ body {
 
 .chat-position {
 	@include opacity(0);
-	@extend %ease;
+	@extend %transition;
 
 	position: relative;
 	float: right;
@@ -994,7 +1001,7 @@ body {
 }
 
 .chat-item {
-	@extend %ease;
+	@extend %transition;
 
 	position: relative;
 	margin: 0;
@@ -1041,7 +1048,7 @@ body {
     }
 
 	&.chat-item-long {
-		@extend %ease;
+		@extend %transition;
 
 		max-height: 12em;
 		cursor: pointer;
@@ -1051,7 +1058,7 @@ body {
 		}
 
 		&:after {
-			@extend %ease;
+			@extend %transition;
 
 			content: "";
 			position: absolute;
@@ -1102,7 +1109,7 @@ body {
     }
 
     .chat-timestamp {
-        @extend %ease;
+        @extend %transition;
 
         display: none;
         padding-left: 3em;
@@ -1186,7 +1193,7 @@ body {
 
 .chat-more {
 	@include transform(translate3d(3.5em, 0, 0));
-	@extend %ease;
+	@extend %transition;
 
 	position: absolute;
 	display: block;
@@ -1287,7 +1294,7 @@ body {
 }
 
 .chat-send {
-	@extend %ease;
+	@extend %transition;
 
 	position: absolute;
 	right: 0;
@@ -1328,7 +1335,7 @@ body {
 		display: none;
 
 		&.current {
-			@include fadein;
+			@extend %fadein;
 			@extend %nofilter;
 
 			display: block;
@@ -1450,7 +1457,7 @@ body {
 .search-bar {
 	@include transform(translate3d(0, -100%, 0));
 	@include opacity(0);
-	@extend %ease;
+	@extend %transition;
 
 	position: fixed;
 	top: 0;

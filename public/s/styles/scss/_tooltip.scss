@@ -29,7 +29,7 @@
 		&:before, &:after {
 			@include opacity(0);
 			@include transform(translate3d(0, -.5em, 0));
-			@include transition;
+			@extend %transition;
 
 			position: absolute;
 			z-index: 300;
