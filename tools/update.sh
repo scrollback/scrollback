@@ -11,8 +11,11 @@ return 1
 }
 
 on_err() {
-show_err "An error occured while ${1}. Aborting"
-exit 1
+show_err "An error occured while ${1}. Abort?"
+read ans
+if [[ "$ans" == [Yy] ]]; then
+    exit 1
+fi
 }
 
 # Exit script on Ctrl+C
