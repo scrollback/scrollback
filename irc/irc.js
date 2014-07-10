@@ -9,30 +9,32 @@ var internalSession = Object.keys(config.whitelists)[0];
 client.init(clientEmitter);
 var core;
 var callbacks = {};
-var onlineUsers = {};//scrollback users that are already online 
-var firstMessage = {};//[room][username] = true //it is shared b/w roomEvent and irc
-var userExp = 10*60*1000;
+var onlineUsers = {}; //scrollback users that are already online 
+var firstMessage = {}; //[room][username] = true //it is shared b/w roomEvent and irc
+var userExp = 10 * 60 * 1000;
 var initCount = 0;
-var ircUtils = new require('./ircUtils.js')(clientEmitter, client,callbacks);
+var ircUtils = new require('./ircUtils.js')(clientEmitter, client, callbacks);
 
 module.exports = function (coreObj) {
 	core = coreObj;
 	init();
 	require('./roomEvent.js')(core, client, ircUtils, firstMessage);
-	core.on("http/init", function(payload, callback) {
+	core.on("http/init", function (payload, callback) {
 		payload.irc = {
-			get: function(req,res,next) {	
-				ircUtils.getRequest(req,res,next);
+			get: function (req, res, next) {
+				ircUtils.getRequest(req, res, next);
 			}
 		};
 		callback(null, payload);
 	}, "setters");
 
-	core.on("init", function(init, callback) {
+	core.on("init", function (init, callback) {
 		log("init irc:", init);
-		var oldUser = {id: init.from};
+		var oldUser = {
+			id: init.from
+		};
 		var newUser = init.user;
-		
+
 		if (oldUser && newUser && oldUser.id !== newUser.id) {
 			var uid = guid();
 			clientEmitter.emit("write", {
@@ -40,24 +42,24 @@ module.exports = function (coreObj) {
 				sbNick: oldUser.id,
 				uid: uid
 			});
-			callbacks[uid] = function(isConn) {
+			callbacks[uid] = function (isConn) {
 				if (isConn) {
 					clientEmitter.emit('write', {
 						type: "disconnectUser",
 						sbNick: oldUser.id
-					});	
+					});
 				}
-			};	
+			};
 		}
 		callback();
 	}, "gateway");
-	
-	core.on('text', function(text, callback) {
+
+	core.on('text', function (text, callback) {
 		log("On text:", client.connected(), text.id);
 		var rp = text.room.params;
 		if (rp && rp.irc && rp.irc.server && rp.irc.channel && !rp.irc.pending &&
 			(/^web/).test(text.session) && client.connected() && rp.irc.enabled) {
-			if(!(firstMessage[text.to] && firstMessage[text.to][text.from])) {
+			if (!(firstMessage[text.to] && firstMessage[text.to][text.from])) {
 				if (!firstMessage[text.to]) {
 					firstMessage[text.to] = {};
 				}
@@ -67,44 +69,49 @@ module.exports = function (coreObj) {
 				} else ircUtils.connectUser(text.to, text.from);
 			}
 			if (text.labels) {
-				if(text.labels.action) text.text += '/me ' + text.text;
+				if (text.labels.action) text.text += '/me ' + text.text;
 			}
 			ircUtils.say(text.to, text.from, text.text);
 		}
 		callback();
 	}, "gateway");
-	
-	core.on('away', function(action, callback) {
+
+	core.on('away', function (action, callback) {
 		log("On away:", client.connected());
 		var rp = action.room.params;
 		if (rp && rp.irc && rp.irc.server && rp.irc.channel && !rp.irc.pending &&
 			(/^web/).test(action.session) && client.connected() && rp.irc.enabled) {
-			if(firstMessage[action.to] && firstMessage[action.to][action.from]) {
+			if (firstMessage[action.to] && firstMessage[action.to][action.from]) {
 				ircUtils.disconnectUser(action.to, action.from);
 				delete firstMessage[action.to][action.from];
 			}
 		}
 		callback();
-	}, "gateway");	
+	}, "gateway");
 };
 
 
 function init() {
 	var notUsedRooms = {};
-	clientEmitter.on('init', function(st) {
+	clientEmitter.on('init', function (st) {
 		initCount = 0;
 		//delete all keys. don't change the ref.(roomEvent.js is also using same ref.)
-		Object.keys(firstMessage).forEach(function(k) { delete firstMessage[k];});
+		Object.keys(firstMessage).forEach(function (k) {
+			delete firstMessage[k];
+		});
 		onlineUsers = {};
 		var state = st.state;
-		for(var roomId in state.rooms) {
-			if(state.rooms.hasOwnProperty(roomId)) {
+		for (var roomId in state.rooms) {
+			if (state.rooms.hasOwnProperty(roomId)) {
 				notUsedRooms[roomId] = true;
 			}
 		}
 		log("init from ircClient", state);
 
-		core.emit("getRooms", {identity: "irc", session: internalSession}, function(err, data) {
+		core.emit("getRooms", {
+			identity: "irc",
+			session: internalSession
+		}, function (err, data) {
 			var rooms = data.results;
 			log("returned state from IRC:", JSON.stringify(state));
 			log("results of getRooms: ", rooms);
@@ -112,15 +119,15 @@ function init() {
 				log("Get room query :", err);
 				return;
 			}
-			rooms.forEach(function(room) {
-				if(!room.params.irc.enabled) return;
+			rooms.forEach(function (room) {
+				if (!room.params.irc.enabled) return;
 				if (state.rooms[room.id]) {
 					var r1 = room.params.irc;
 					var r2 = state.rooms[room.id].params.irc;
 					if (!(r1.server === r2.server && r1.channel === r2.channel && r1.pending === r2.pending)) {
 						log("reconnecting bot with new values:", room.id);
-						ircUtils.disconnectBot(state.rooms[room.id].id, function() {
-							ircUtils.addNewBot(room); 
+						ircUtils.disconnectBot(state.rooms[room.id].id, function () {
+							ircUtils.addNewBot(room);
 						});
 					}
 					delete notUsedRooms[room.id];
@@ -135,28 +142,28 @@ function init() {
 				if (servChanProp[room.params.irc.server] &&
 					servChanProp[room.params.irc.server][room.params.irc.channel]) {
 					var users = servChanProp[room.params.irc.server][room.params.irc.channel].users;
-					users.forEach(function(user) {
-						if(servNick[room.params.irc.server] &&
+					users.forEach(function (user) {
+						if (servNick[room.params.irc.server] &&
 							servNick[room.params.irc.server][user].dir === "in") {
 							sendInitAndBack(user, "irc://" + room.params.irc.server + ":" + user, room);
 							initCount++;
 						}
-						if(servNick[room.params.irc.server] &&
-								servNick[room.params.irc.server][user].dir === "out") {
+						if (servNick[room.params.irc.server] &&
+							servNick[room.params.irc.server][user].dir === "out") {
 							log("room:", room.id, " nick", servNick[room.params.irc.server][user].nick);
-							if (!onlineUsers[room.id]) onlineUsers[room.id] = {}; 
+							if (!onlineUsers[room.id]) onlineUsers[room.id] = {};
 							onlineUsers[room.id][servNick[room.params.irc.server][user].nick] = user;
-							setTimeout(function() {
-								if(	onlineUsers[room.id] && onlineUsers[room.id][servNick[room.params.irc.server][user].nick]) {
+							setTimeout(function () {
+								if (onlineUsers[room.id] && onlineUsers[room.id][servNick[room.params.irc.server][user].nick]) {
 									log("disconnecting user ", servNick[room.params.irc.server][user].nick, " from ", room.id);
 									ircUtils.disconnectUser(room.id, servNick[room.params.irc.server][user].nick);
 									delete onlineUsers[room.id][servNick[room.params.irc.server][user].nick];
 								}
-							}, userExp);				
+							}, userExp);
 						}
 					});
 				}
-				
+
 			});
 			for (var ri in notUsedRooms) {
 				if (notUsedRooms.hasOwnProperty(ri)) {
@@ -167,41 +174,48 @@ function init() {
 		});
 		isInitDone();
 	});
-	
-	clientEmitter.on('callback', function(data) {
-		console.log("callback =", data);//each callback have 1 parameter as input.
-		if(data.uid && callbacks[data.uid]) {
+
+	clientEmitter.on('callback', function (data) {
+		console.log("callback =", data); //each callback have 1 parameter as input.
+		if (data.uid && callbacks[data.uid]) {
 			console.log("callbacks calling..");
-			callbacks[data.uid](data.data);//other information of callback should be inside data.
+			callbacks[data.uid](data.data); //other information of callback should be inside data.
 		}
 	});
-	
-	clientEmitter.on('room', function(room) {
+
+	clientEmitter.on('room', function (room) {
 		log("room event:", room);
-		core.emit("getRooms", {ref: room.room.id, session: internalSession}, function(err, reply) {
+		core.emit("getRooms", {
+			ref: room.room.id,
+			session: internalSession
+		}, function (err, reply) {
 			log("results of getRooms", err, reply);
 			if (err || !reply.results) return;
 			var r = reply.results[0];
-			var rr = {type: "room", session: internalSession, room: {}};
-			
+			var rr = {
+				type: "room",
+				session: internalSession,
+				room: {}
+			};
+
 			r.params.irc = room.room.params.irc;
 			rr.room = r;
 			rr.to = r.id;
 			rr.room.guides = {};
 			log("emitting room from irc", rr);
-			core.emit("room", rr, function(err, d) {
+			core.emit("room", rr, function (err, d) {
 				log("reply while saving room ", err, d);
 			});
 			//clear the first msg list
 			delete firstMessage[rr.room.id];
 		});
 	});
-	clientEmitter.on("back", function(data) {
+	clientEmitter.on("back", function (data) {
 		console.log("back", data);
 		sendInitAndBack(data.from, data.session, data.room);
 	});
-	
-	clientEmitter.on("away", function(data) {
+
+	clientEmitter.on("away", function (data) {
 		core.emit('away', {
 			id: guid(),
 			type: 'away',
@@ -210,8 +224,8 @@ function init() {
 			session: data.session
 		});
 	});
-	
-	clientEmitter.on('message', function(data) {
+
+	clientEmitter.on('message', function (data) {
 		log("message from :", data);
 		var labels = {};
 		if (data.text.indexOf('/me ') === 0) {
@@ -227,55 +241,54 @@ function init() {
 			labels: labels,
 			time: data.time ? data.time : new Date().getTime(),
 			session: data.session
-		}, function(err, message) {
-			log("message",  err, message);
+		}, function (err, message) {
+			log("message", err, message);
 		});
-	});	
+	});
 }
 
-function  isInitDone() {
+function isInitDone() {
 	if (initCount === 0) {
 		//send back init.
 		log("init Done");
 		clientEmitter.emit('write', {
-			type: 'init'//notify ircClient about comp.
+			type: 'init' //notify ircClient about comp.
 		});
 	}
 }
 
-function sendInitAndBack(suggestedNick, session ,room) {
+function sendInitAndBack(suggestedNick, session, room) {
 	log("sending init values: ", suggestedNick, session, room);
 	core.emit('init', {
-			suggestedNick: suggestedNick,
-			session: session,
-			to: "me",
-			type: "init",
-			origin: {
-				gateway: "irc",
-				server: room.params.irc.server
-			}
-		}, function(err, init) {
-			log("init back", init);
-			
-			if (init.user.id !== suggestedNick) 
+		suggestedNick: suggestedNick,
+		session: session,
+		to: "me",
+		type: "init",
+		origin: {
+			gateway: "irc",
+			server: room.params.irc.server
+		}
+	}, function (err, init) {
+		log("init back", init);
+
+		if (init.user.id !== suggestedNick)
 			clientEmitter.emit('write', {
-				type: "newNick",//change mapping only.
-				nick: suggestedNick,//from,
-				sbNick: init.user.id ,//init.from,
+				type: "newNick", //change mapping only.
+				nick: suggestedNick, //from,
+				sbNick: init.user.id, //init.from,
 				roomId: room.id
 			});
-			//gen back messages.
-			core.emit('back', {
-					id: guid(),
-					type: 'back',
-					to: room.id,
-					session: session,
-					from: init.user.id//nick returned from init.
-				}, function(err/*, back*/) {
-                    if(err) log("Error:", err.message);
-			});
-			initCount--;
-			isInitDone();
+		//gen back messages.
+		core.emit('back', {
+			id: guid(),
+			type: 'back',
+			to: room.id,
+			session: session,
+			from: init.user.id //nick returned from init.
+		}, function (err /*, back*/ ) {
+			if (err) log("Error:", err.message);
+		});
+		initCount--;
+		isInitDone();
 	});
 }
-
