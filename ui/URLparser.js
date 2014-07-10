@@ -7,7 +7,7 @@ module.exports = function() {
 			search = window.location.search.substr(1),
 			state = {};
 
-		path = path.split("/");
+        path = path.split("/");
 		state.source = "init";
 
 		search.split("&").map(function(i) {
@@ -21,9 +21,7 @@ module.exports = function() {
 			}
 		});
 
-		if (state.query) {
-			state.mode = "search";
-		}
+		
 
 		if (state.time) {
 			state.time = new Date(state.time).getTime();
@@ -47,6 +45,10 @@ module.exports = function() {
 					state.thread = path[1] || "";
 				}
 			}
+		}
+        
+        if (state.query) {
+			state.mode = "search";
 		}
 
 		if (state.embed === "toast" && state.minimize === "true") {
