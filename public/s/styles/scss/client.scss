@@ -355,7 +355,10 @@ body {
 
         @media #{$screenxxxx} {
             padding-left: 4.25em;
-            background: url(../../img/client/icons/settings.svg) 1em center no-repeat;
+            
+            .mode-conf &, .mode-pref & { background: url(../../img/client/icons/settings.svg) 1em center no-repeat; }
+            
+            .mode-search & { background: url(../../img/client/icons/search-header.svg) 1em center no-repeat; }
         }
 
         h3 {
