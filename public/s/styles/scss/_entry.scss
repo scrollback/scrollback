@@ -4,7 +4,7 @@
 
 @include exports("entry") {
 	.entry {
-		@include transition;
+		@extend %transition;
 
 		border: 1px solid darken($light-color, 20%);
 		border-top-color: darken($light-color, 30%);

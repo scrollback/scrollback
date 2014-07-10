@@ -4,7 +4,7 @@
 
 @mixin spinner($size: 1em) {
 	&:before {
-		@include spin;
+		@extend %spin;
 
 		content: "";
 		display: inline-block;

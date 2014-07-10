@@ -14,7 +14,7 @@
 		z-index: 500;
 		background-color: $accent-color;
 
-		&.loading { @include progress; }
+		&.loading { @extend %progress; }
 
 		&.complete { width: 100%; }
 	}

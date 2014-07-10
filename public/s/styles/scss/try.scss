@@ -88,7 +88,7 @@ ul {
 }
 
 li {
-    @extend %ease;
+    @extend %transition;
 
     border-bottom: 1px solid rgba(0,0,0,0.1);
     background-color: darken($light-color, 10%);
@@ -146,14 +146,14 @@ li {
 }
 
 .form-inner {
-    @extend %ease;
+    @extend %transition;
     @extend %clearfix;
 
     width: 200%;
 }
 
 .step {
-    @extend %ease;
+    @extend %transition;
 
     float: left;
     width: 50%;

@@ -19,7 +19,7 @@
 			cursor: pointer;
 
 			&:before, &:after {
-				@include transition;
+				@extend %transition;
 
 				position: absolute;
 				display: block;

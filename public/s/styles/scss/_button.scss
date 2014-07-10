@@ -4,7 +4,7 @@
 @import "spinner";
 
 @mixin buttons($bg: $accent-color, $fg: $light-color) {
-	@include transition;
+	@extend %transition;
 
 	display: inline-block;
 	margin: .5em 0;
