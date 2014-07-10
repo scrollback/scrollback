@@ -67,9 +67,6 @@ libsb.on("navigate", function(state, next){
             $("#room-item-" + state.roomName).addClass("current");
         }
     }
-    if((!state.old || state.old.mode != state.mode) && (state.mode == "search" || state.old.mode == "search")) {
-        $roomlist.reset();
-    }
     next();
 }, 100);
 
@@ -110,11 +107,7 @@ $(function() {
 			}
 
 			callback(res.map(function(r) {
-                if(currentState.mode == "search" && currentState.roomName == r) {
-                    return r && roomEl.render(null, r, "search results for \"" + currentState.query + "\" in " + r + " room", rooms.indexOf(r));
-                } else {
-                    return r && roomEl.render(null, r, r, rooms.indexOf(r));
-                }
+                return r && roomEl.render(null, r, rooms.indexOf(r));
 			}));
 		}
 	});
