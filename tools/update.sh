@@ -1,38 +1,60 @@
 #!/bin/sh
 
+show_info() {
+echo -e "\033[1;34m$@\033[0m" 1>&2 2>&1
+return 0
+}
+
+show_err() {
+echo -e "\033[1;31m$@\033[0m" 1>&2
+return 1
+}
+
+on_err() {
+show_err "An error occured while ${1}. Aborting"
+exit 1
+}
+
 # Exit script on Ctrl+C
 trap exit 1 INT
 
-# Get the current directory for the repo
-currdir=$(cd .. $(dirname "${BASH_SOURCE[0]}") && pwd)
-
 # The script is irrevelant if not inside the GIT repository
-grep "\"name\": \"Scrollback\"" "$currdir/package.json" > /dev/null 2>&1
-if [[ ! $? -eq 0 || ! -f "$currdir/.git/config" ]]; then
-    echo "Not inside the GIT repository"
-    echo "Aborting"
-    exit 1
+grep "\"name\": \"Scrollback\"" "package.json" > /dev/null 2>&1
+if [[ ! $? -eq 0 || ! -f ".git/config" ]]; then
+    show_err "Not inside the GIT repository"
+    on_err "checking repository"
 fi
 
-# We need to stop scrollback if there are changes to the socket API
-echo "Does the release have changes to the socket API [y/n]?"
-read ans
-[[ ans == [Yy] ]] && forever stop "$currdir/index.js"
-
 # Clean up the GIT repository
-echo "Cleaning up the GIT repository"
-git reset --hard
-git pull
+show_info "Cleaning up the GIT repository"
+git checkout master || on_err "switching to master"
+git reset --hard || on_err "resetting changes"
+git pull || on_err "pulling latest changes"
 
-# Check new dependencies
-echo "Checking new dependencies"
-npm install
+# Create a new branch
+curr=$(git branch 2>&1 | grep -o "r[0-9]*\.[0-9]*\.[0-9]*" | sort -u | tail -n 1 | grep -o "[0-9]*$")
+year=$(date +%y)
+release=$(( curr + 1 ))
+branch=$(echo "r${year: -1}.$(date +%m | sed 's/^0*//').${release}")
+
+show_info "Creating release branch ${branch}"
+git checkout -b "${branch}"
+
+# Do "npm install" if there are new dependencies
+show_info "Are there any new dependencies [y/n]?"
+read ans
+if [[ "$ans" == [Yy] ]]; then
+    npm install || on_err "doing 'npm install'"
+fi
 
 # Generate files
-echo "Running grunt"
-grunt
+show_info "Running grunt"
+grunt || on_err "running 'grunt'"
 
-# Restart scrollback
-echo "Restarting scrollback"
-forever stop "$currdir/index.js"
-forever start "$currdir/index.js"
+# Restart server
+show_info "Restart server [y/n]?"
+read ans
+if [[ "$ans" == [Yy] ]]; then
+    sudo service scrollback stop
+    sudo service scrollback start
+fi
