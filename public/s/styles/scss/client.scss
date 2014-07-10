@@ -1043,7 +1043,7 @@ body {
 	&.chat-item-long {
 		@extend %ease;
 
-		max-height: 9em;
+		max-height: 12em;
 		cursor: pointer;
 
 		&:hover, &:focus {
