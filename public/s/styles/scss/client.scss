@@ -375,17 +375,23 @@ body {
 }
 
 .meta-panes {
+    position: relative;
     height: 100%;
     padding-bottom: $bar-height;
 
     .pane {
-        display: none;
+        @include opacity(0);
+        @extend %transition;
+
+        position: absolute;
+        z-index: 10;
+        height: 100%;
 
         &.current {
-            @extend %fadein;
+            @include opacity(1);
+            @extend %nofilter;
 
-            display: block;
-            height: 100%;
+            z-index: 20;
         }
     }
 }
