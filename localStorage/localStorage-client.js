@@ -329,7 +329,7 @@ module.exports = function(c){
 	
 	core.on('away-dn', function(away, next){
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
-		if(back.from !== libsb.user.id) return next();
+		if(away.from !== libsb.user.id) return next();
 		var msg = {type: 'result-end', endtype: 'time', time: away.time};
 		var key = generateLSKey(away.to, 'texts');
 		if(cache && cache[key]){ cache[key].put(msg); }

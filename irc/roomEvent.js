@@ -96,11 +96,7 @@ module.exports = function (core, client, ircUtils, firstMessage) {
  *add or copy pending status
  */
 function changeRoomParams(room) {
-
 	var or = room.old;
-	//TODO add ERR_IRC_NOT_CONNECTED
-	var newIrc = room.room.params.irc;
-
 	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel) { //this is old room
 		if (room.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel) {
 			room.room.params.irc.pending = debug ? false : true; //if server or channel changes
