@@ -12,6 +12,7 @@
 @import "tooltip";
 @import "progress";
 @import "overlay";
+@import "tip";
 
 $screenx: "only screen and (min-width: 18em)";
 $screenxx: "only screen and (min-width: 27em)";
@@ -355,9 +356,9 @@ body {
 
         @media #{$screenxxxx} {
             padding-left: 4.25em;
-            
+
             .mode-conf &, .mode-pref & { background: url(../../img/client/icons/settings.svg) 1em center no-repeat; }
-            
+
             .mode-search & { background: url(../../img/client/icons/search-header.svg) 1em center no-repeat; }
         }
 
