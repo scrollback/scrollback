@@ -6,7 +6,6 @@ var lace = require('../lib/lace.js');
 libsb.on('config-show', function (tabs, next) {
 	var results = tabs.room,
 		$div = $('<div>'),
-		displayString = "",
 		ircServer = "",
 		ircChannel = "",
 		notify = {},
@@ -18,41 +17,53 @@ libsb.on('config-show', function (tabs, next) {
 		enabled = results.params.irc.enabled;
 	}
 
+	var $displayMsg = formField("", "", "irc-message-text", ""),
+		$infoMsg = formField("", "info", "irc-message-text", ""),
+		$infoString = $infoMsg.find("#irc-message-text"),
+		$errMsg = formField("", "error", "irc-message-text", ""),
+		$errString = $errMsg.find("#irc-message-text");
+
 	$div.append(formField("Enable IRC", "check", "irc-enable-check", [
-		["irc-enable", "", enabled]
-	]));
-	$div.append(formField("IRC Server", "text", "irc-server", ircServer), formField("IRC Channel", "text", "irc-channel", ircChannel));
-	
-	var isNext = false;
+					["irc-enable", "", enabled]
+				]),
+				formField("IRC server", "text", "irc-server", ircServer),
+				formField("IRC channel", "text", "irc-channel", ircChannel),
+				$displayMsg
+				);
+
 	if (results.params.irc) {
 		var ircParams = results.params.irc;
 		if (ircParams.error) {
 			notify.type = "error";
 			notify.value = null;
 			if (results.params.irc.error === "ERR_CONNECTED_OTHER_ROOM") {
-				displayString = "This IRC account is already linked with another scrollback room. You can't use it until they unlink.";
+				$errString.text("This IRC account is already linked with another scrollback room. You can't use it until they unlink.");
 			} else {
-				displayString = "Error in saving, please try again after some time";
+				$errString.text("Error in saving, please try again after some time");
 			}
+
+			$displayMsg.replaceWith($errMsg);
+			$displayMsg = $errMsg;
 
 		} else if (ircParams.server && ircParams.channel && ircParams.pending && ircParams.enabled) {
 			notify.type = "info";
 			notify.value = null;
 
 			$.get('/r/irc/' + results.id, function (botName) {
-				displayString = "The IRC channel operator needs to type \"/invite " + botName + " " + results.params.irc.channel +
-					"\" in the IRC channel to complete the process.";
-				$div.append($('<div class="settings-item"><div class="settings-label"></div><div class="settings-action" id="roomAllowed">' + displayString + '</div></div>'));
-				next();
+				$infoString.text("The IRC channel operator needs to type \"/invite " + botName + " " + results.params.irc.channel + "\" in the IRC channel to complete the process.");
+				$displayMsg.replaceWith($infoMsg);
+				$displayMsg = $infoMsg;
 			});
 
 		} else if (results.params.irc.server && results.params.irc.channel && results.params.irc.enabled) {
-			displayString = "Connected to IRC channel: " + results.params.irc.channel;
+			$infoString.text("Connected to IRC channel: " + results.params.irc.channel);
+			$displayMsg.replaceWith($infoMsg);
+			$displayMsg = $infoMsg;
 		} else {
-			displayString = "Not connected :-(";
+			$infoString.text("Not connected :-(");
+			$displayMsg.replaceWith($infoMsg);
+			$displayMsg = $infoMsg;
 		}
-
-		$div.append(formField("", "", "", displayString));
 	}
 
 	tabs.irc = {
@@ -62,7 +73,7 @@ libsb.on('config-show', function (tabs, next) {
 		notify: notify
 	};
 
-	if (!isNext) next();
+	next();
 }, 500);
 
 
@@ -91,6 +102,7 @@ libsb.on("room-dn", function (room, next) {
 			if (botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/invite " + botName +
 				" " + r.params.irc.channel + "\" in the IRC channel to complete the process.";
 			lace.alert.show({
+				id: "irc-info-message",
 				type: "info",
 				body: displayString
 			});
