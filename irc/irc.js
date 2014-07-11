@@ -207,6 +207,7 @@ function init() {
 				log("reply while saving room ", err, d);
 			});
 			//clear the first msg list
+			delete onlineUsers[rr.room.id];
 			delete firstMessage[rr.room.id];
 		});
 	});
