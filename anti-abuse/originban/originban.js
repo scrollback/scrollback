@@ -1,20 +1,19 @@
 var log = require("../../lib/logger.js");
-var fs=require("fs"), jade = require("jade");
+var fs=require("fs");
 var blockOrigins={};
 
 module.exports = function(core) {
-	var pluginContent = "";
 	init();
-	fs.readFile(__dirname + "/originban.jade", "utf8", function(err, data){
-		if(err)	throw err;
-		//this is a function object.
-		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/' });
-		// core.on("config", function(payload, callback) {
-		// 	log("Heard \"config event\"");
-  //           payload.originban = pluginContent;
-  //           callback(null, payload);
-  //       });
-	});
+//	fs.readFile(__dirname + "/originban.jade", "utf8", function(err, data){
+//		if(err)	throw err;
+//		//this is a function object.
+//		pluginContent = jade.compile(data,  {basedir: process.cwd()+'/http/views/' });
+//		// core.on("config", function(payload, callback) {
+//		// 	log("Heard \"config event\"");
+//  //           payload.originban = pluginContent;
+//  //           callback(null, payload);
+//  //       });
+//	});
 	core.on('text', function(message, callback) {
 		log("Heard \"text event\"");
 		if (message.origin && message.origin.gateway == "irc") return callback();
