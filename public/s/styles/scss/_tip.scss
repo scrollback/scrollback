@@ -1,0 +1,26 @@
+@import "functions";
+@import "global";
+
+@include exports("tip") {
+    .tip {
+        padding: 1em;
+        padding-left: 3.25em;
+        border-radius: $roundness;
+        background-repeat: no-repeat;
+        background-position: 1em 1em;
+
+        $types: info, success, warning, error;
+        $colors: $info-color, $success-color, $warning-color, $error-color;
+
+        @for $i from 1 through length($types) {
+            $type: nth($types, $i);
+            $color: nth($colors, $i);
+
+            &.#{$type} {
+                background-image: url(../../img/client/icons/#{$type}-icon.svg);
+                background-color: mix($color, $light-color, 20%);
+                color: darken($color, 20%);
+            }
+        }
+    }
+}
