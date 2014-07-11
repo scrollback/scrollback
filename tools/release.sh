@@ -11,8 +11,8 @@ return 1
 }
 
 on_err() {
-show_err "An error occured while ${1}. Abort?"
-read ans
+show_err "An error occured while ${1}. Abort [y/n]?"
+read -n 1 ans
 if [[ "$ans" == [Yy] ]]; then
     exit 1
 fi
@@ -35,7 +35,7 @@ git reset --hard || on_err "resetting changes"
 git pull || on_err "pulling latest changes"
 
 # Create a new branch
-curr=$(git branch 2>&1 | grep -o "r[0-9]*\.[0-9]*\.[0-9]*" | sort -u | tail -n 1)
+curr=$(git branch 2>&1 | grep -o "r[0-9]*\.[0-9]*\.[0-9]*" | sort -uV | tail -n 1)
 currmonth=$(echo "$curr" | cut -f2 -d\.)
 currrel=$(echo "$curr" | cut -f3 -d\.)
 month=$(date +%m | sed 's/^0*//')
@@ -49,12 +49,16 @@ fi
 
 branch=$(echo "r${year: -1}.${month}.${release}")
 
-show_info "Creating release branch ${branch}"
-git checkout -b "${branch}"
+# Create new release branch
+show_info "Create new release branch '${branch}' [y/n]?"
+read -n 1 ans
+if [[ "$ans" == [Yy] ]]; then
+    git checkout -b "${branch}" || on_err "creating release branch"
+fi
 
 # Do "npm install" if there are new dependencies
 show_info "Are there any new dependencies [y/n]?"
-read ans
+read -n 1 ans
 if [[ "$ans" == [Yy] ]]; then
     npm install || on_err "doing 'npm install'"
 fi
@@ -65,7 +69,7 @@ grunt || on_err "running 'grunt'"
 
 # Restart server
 show_info "Restart server [y/n]?"
-read ans
+read -n 1 ans
 if [[ "$ans" == [Yy] ]]; then
     sudo service scrollback stop
     sudo service scrollback start
