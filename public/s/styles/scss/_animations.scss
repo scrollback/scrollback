@@ -19,19 +19,19 @@
     @include prefix(animation, spin $args);
 }
 
-@mixin slidedown($args: .3s) {
+@mixin slidedown($args: .3s 1) {
     @include prefix(animation, slidedown $args);
 }
 
-@mixin slideup($args: .3s) {
+@mixin slideup($args: .3s 1) {
     @include prefix(animation, slideup $args);
 }
 
-@mixin appear($args: .5s) {
+@mixin appear($args: .5s 1) {
     @include prefix(animation, appear $args);
 }
 
-@mixin fadein($args: .5s) {
+@mixin fadein($args: .5s 1) {
     @include prefix(animation, fadein $args);
 }
 
@@ -99,4 +99,18 @@
 
         100% { width: 80%; }
     }
+
+    %spin { @include spin; }
+
+    %slidedown { @include slidedown; }
+
+    %slideup { @include slideup; }
+
+    %appear { @include appear; }
+
+    %fadein { @include fadein; }
+
+    %progress { @include progress; }
+
+    %transition { @include transition; }
 }

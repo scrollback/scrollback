@@ -15,7 +15,7 @@ body {
 }
 
 a {
-    @extend %ease;
+    @extend %transition;
 
     color: $link-color;
     text-decoration: none;
@@ -78,10 +78,8 @@ code {
 
 .fadeout {
     @include opacity(0);
-    @extend %ease;
+    @extend %transition;
 }
-
-%ease { @include transition; }
 
 /* browser specific styles */
 ::selection {
