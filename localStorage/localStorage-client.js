@@ -425,6 +425,7 @@ module.exports = function (c) {
 		var key = generateLSKey(away.to, 'texts');
 		if (cache && cache[key]) {
 			cache[key].put(msg);
+			saveCache(key);
 		}
 		next();
 	}, 500);
