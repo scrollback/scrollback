@@ -108,7 +108,9 @@ libsb.on('back-dn', function (back, next) {
 	// loading ArrayCache from LocalStorage when user has navigated to the room.
 	window.backTimes[back.to] = back.time;
 	var key = generateLSKey(back.to, 'texts');
+	var thKey = generateLSKey(back.to, 'threads');
 	cache[key] = loadArrayCache(key);
+	cache[thKey] = loadArrayCache(thKey);
 	var items = cache[key].d;
 	var lastMsg = items[items.length - 1];
 	if (lastMsg && lastMsg.type !== "result-end") {
@@ -223,44 +225,65 @@ module.exports = function (c) {
 		}
 		next();
 	}, 8); // runs after the socket
-
 	/* core.on('getThreads', function(query, next){
 		var key = generateLSKey(query.to, 'threads');
-		if(!cache.hasOwnProperty(key)){
+		if (!cache.hasOwnProperty(key)) {
 			cache[key] = loadArrayCache(key);
 		}
 
-		if(!cache[key].d.length) { return next(); }
+		if (!cache[key].d.length) {
+			return next();
+		}
 
 		var results = cache[key].get(query);
 
-		if(!results || !results.length){
+		if (!results || !results.length) {
 			return next();
-		}else{
+		} else {
 			query.results = results;
 			query.resultSource = 'localStorage';
 			return next();
 		}
 	}, 200); // runs before the socket
 
-	core.on('getThreads', function(query, next){
-		if(query.resultSource === 'localStorage') { return next(); }
+	core.on('getThreads', function (query, next) {
+		if (query.resultSource === 'localStorage') {
+			return next();
+		}
 		var results = query.results.slice(0); // copy by value
-		if(results && results.length > 0){
+		if (results && results.length > 0) {
 			// merge results to cache
-			if(query.before){
-				if(results.length === query.before){
-					results.unshift({type: 'result-start', time: results[0].time, endtype: 'limit'});
+			if (query.before) {
+				if (results.length === query.before) {
+					results.unshift({
+						type: 'result-start',
+						time: results[0].time,
+						endtype: 'limit'
+					});
 				}
-				results.push({type: 'result-end', endtype: 'time', time: query.time});
-			} else if(query.after){
-				if(results.length === query.after){
-					results.push({type: 'result-end', time: results[results.length -1].time, endtype: 'limit'});
+				results.push({
+					type: 'result-end',
+					endtype: 'time',
+					time: query.time
+				});
+			} else if (query.after) {
+				if (results.length === query.after) {
+					results.push({
+						type: 'result-end',
+						time: results[results.length - 1].time,
+						endtype: 'limit'
+					});
 				}
-				results.unshift({type: 'result-start', endtype: 'time', time: query.time});
+				results.unshift({
+					type: 'result-start',
+					endtype: 'time',
+					time: query.time
+				});
 			}
 			var lskey = generateLSKey(query.to, 'threads');
-			if(!cache.hasOwnProperty(lskey)){ loadArrayCache(lskey); }
+			if (!cache.hasOwnProperty(lskey)) {
+				loadArrayCache(lskey);
+			}
 			cache[lskey].put(results);
 			saveCache(lskey);
 		}
