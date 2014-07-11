@@ -36,7 +36,7 @@ git reset --hard || on_err "resetting changes"
 git pull || on_err "pulling latest changes"
 
 # Create a new branch
-curr=$(git branch 2>&1 | grep -o "r[0-9]*\.[0-9]*\.[0-9]*" | sort -uV | tail -n 1)
+curr=$(git branch 2>&1 | sed -e 's/^[\* \t]*//' | grep -e "^r[0-9]*\.[0-9]*\.[0-9]*$" | sort -uV | tail -n 1)
 currmonth=$(echo "$curr" | cut -f2 -d\.)
 currrel=$(echo "$curr" | cut -f3 -d\.)
 month=$(date +%m | sed 's/^0*//')
