@@ -9,6 +9,8 @@
         background-repeat: no-repeat;
         background-position: 1em 1em;
 
+        &:empty { display: none; }
+
         $types: info, success, warning, error;
         $colors: $info-color, $success-color, $warning-color, $error-color;
 
