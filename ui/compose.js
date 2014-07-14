@@ -8,7 +8,7 @@ $(function() {
 		$placeholder = $(".chat-placeholder"),
 		$input = $(".chat-input"),
 		sendMsg = function(){
-			var text = format.htmlToText($entry.html());
+			var text = format.htmlToText($entry.html()).trim();
 
 			$entry.text("");
 
