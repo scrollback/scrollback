@@ -10,7 +10,7 @@ libsb.on('config-show', function (tabs, next) {
 		ircChannel = "",
 		notify = {},
 		enabled = true;
-	
+
 	if (results.params.irc && results.params.irc.server && results.params.irc.channel) {
 		ircServer = results.params.irc.server;
 		ircChannel = results.params.irc.channel;
@@ -50,9 +50,15 @@ libsb.on('config-show', function (tabs, next) {
 			notify.value = null;
 
 			$.get('/r/irc/' + results.id, function (botName) {
-				$infoString.text("The IRC channel operator needs to type \"/invite " + botName + " " + results.params.irc.channel + "\" in the IRC channel to complete the process.");
-				$displayMsg.replaceWith($infoMsg);
-				$displayMsg = $infoMsg;
+				if (botName !== "ERR_NOT_CONNECTED") {
+					$infoString.text("The IRC channel operator needs to type \"/invite " + botName + " " + results.params.irc.channel + "\" in the IRC channel to complete the process.");
+					$displayMsg.replaceWith($infoMsg);
+					$displayMsg = $infoMsg;
+				} else {
+					$errString.text("An error occured while connecting to the IRC channel. Please try again later.");
+					$displayMsg.replaceWith($errMsg);
+					$displayMsg = $errMsg;
+				}
 			});
 
 		} else if (results.params.irc.server && results.params.irc.channel && results.params.irc.enabled) {

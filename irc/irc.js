@@ -30,7 +30,7 @@ module.exports = function (coreObj) {
 
 	core.on("init", function (init, callback) {
 		log("init irc:", init);
-		if ((/^irc/).test(init.session)) return;
+		if ((/^irc/).test(init.session)) return callback();
 		var oldUser = {
 			id: init.from
 		};

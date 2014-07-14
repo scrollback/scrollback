@@ -51,6 +51,7 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 			if (isNewRoom(action)) {
 				newIrc.channel = room.params.irc.channel.toLowerCase();
 				if (newIrc.enabled) return ircUtils.addNewBot(room, done);
+				else return callback();
 			} else { //room config changed
 				var oldIrc = action.old.params.irc;
 				if (oldIrc.server === newIrc.server && oldIrc.channel === newIrc.channel) { //server channel same.
@@ -124,9 +125,9 @@ function isNewRoom(room) {
 }
 
 function removeIrcIdentity(room) {
-	var i, l;
-	for (i = 0, l = room.identities; i < l; i++) {
-		if (/^irc:/.text(room.identities[i])) {
+	var i;
+	for (i = 0; i < room.identities.length; i++) {
+		if (/^irc:/.test(room.identities[i])) {
 			room.identities.splice(i, 1);
 			break;
 		}
