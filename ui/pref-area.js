@@ -67,7 +67,7 @@ function getUsers() {
 }
 
 libsb.on('navigate', function (state, next) {
-    if (state.mode === "pref") {
+    if (state.old && state.old.mode !== state.mode && state.mode === "pref") {
         if (!currentConfig) {
             if (libsb.user.id.indexOf('guest-') === 0) {
                 libsb.emit('navigate', {

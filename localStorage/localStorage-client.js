@@ -218,9 +218,12 @@ module.exports = function(c){
 	}, 8); // runs after socket */
 
 	core.on('getRooms', function(query, next){
-	
 		// only getRooms with ref are cached as of now.
 
+		if(query.cachedRoom === false){//don't change it to !query.cachedRoom
+			return next(); 
+		}
+		
 		if(!query.ref){
 			return next();
 		}
@@ -232,7 +235,8 @@ module.exports = function(c){
 		if(rooms.hasOwnProperty(query.ref)){
 			query.results = [rooms[query.ref]];
 		}
-
+		
+		
 		next();
 	
 	}, 400); // run before socket
