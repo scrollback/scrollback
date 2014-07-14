@@ -160,7 +160,7 @@ module.exports = function (c) {
 			return next();
 		}
 
-		var results = cache[key].get(query);
+		var results = cache[key].get('time', query);
 
 		if (!results || !results.length) {
 			return next();
@@ -209,7 +209,7 @@ module.exports = function (c) {
 			if (!cache.hasOwnProperty(lskey)) {
 				loadArrayCache(lskey);
 			}
-			cache[lskey].put(results);
+			cache[lskey].put('time', results);
 
 			if (query.thread) {
 				// save into thread cache as well 
@@ -217,7 +217,7 @@ module.exports = function (c) {
 				if (!cache.hasOwnProperty(lsThreadKey)) {
 					loadArrayCache(lsThreadKey);
 				}
-				cache[lsThreadKey].put(results);
+				cache[lsThreadKey].put('time', results);
 				saveCache(lsThreadKey);
 			}
 
@@ -225,7 +225,7 @@ module.exports = function (c) {
 		}
 		next();
 	}, 8); // runs after the socket
-	/* core.on('getThreads', function(query, next){
+	core.on('getThreads', function (query, next) {
 		var key = generateLSKey(query.to, 'threads');
 		if (!cache.hasOwnProperty(key)) {
 			cache[key] = loadArrayCache(key);
@@ -235,7 +235,7 @@ module.exports = function (c) {
 			return next();
 		}
 
-		var results = cache[key].get(query);
+		var results = cache[key].get('startTime', query);
 
 		if (!results || !results.length) {
 			return next();
@@ -257,38 +257,38 @@ module.exports = function (c) {
 				if (results.length === query.before) {
 					results.unshift({
 						type: 'result-start',
-						time: results[0].time,
+						startTime: results[0].startTime,
 						endtype: 'limit'
 					});
 				}
 				results.push({
 					type: 'result-end',
 					endtype: 'time',
-					time: query.time
+					startTime: query.time
 				});
 			} else if (query.after) {
 				if (results.length === query.after) {
 					results.push({
 						type: 'result-end',
-						time: results[results.length - 1].time,
+						startTime: results[results.length - 1].startTime,
 						endtype: 'limit'
 					});
 				}
 				results.unshift({
 					type: 'result-start',
 					endtype: 'time',
-					time: query.time
+					startTime: query.time
 				});
 			}
 			var lskey = generateLSKey(query.to, 'threads');
 			if (!cache.hasOwnProperty(lskey)) {
 				loadArrayCache(lskey);
 			}
-			cache[lskey].put(results);
+			cache[lskey].put('startTime', results);
 			saveCache(lskey);
 		}
 		next();
-	}, 8); // runs after socket */
+	}, 8); // runs after socket 
 
 	core.on('getRooms', function (query, next) {
 
@@ -359,7 +359,7 @@ module.exports = function (c) {
 		});
 
 		if (cache && cache[key]) {
-			cache[key].put(texts);
+			cache[key].put('time', texts);
 		}
 
 		saveCache(key);
@@ -379,7 +379,7 @@ module.exports = function (c) {
 				time: window.backTimes[text.to]
 			});
 
-			cache[key].put(texts);
+			cache[key].put('time', texts);
 			saveCache(key);
 		});
 
@@ -447,7 +447,7 @@ module.exports = function (c) {
 		};
 		var key = generateLSKey(away.to, 'texts');
 		if (cache && cache[key]) {
-			cache[key].put(msg);
+			cache[key].put('time', msg);
 			saveCache(key);
 		}
 		next();
