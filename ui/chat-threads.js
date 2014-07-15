@@ -44,11 +44,11 @@ $(function() {
                     containertop = $container.offset().top;
 
                 $chatdot.not($dots).velocity("stop")
-                        .velocity({ scale: 1, opacity: 0.3 }, { duration: 300, drag: true })
+                        .velocity({ scale: 1, opacity: 0.3 }, { duration: 150, drag: true })
                         .data("animating", true);
 
                 $dots.velocity("stop")
-                     .velocity({ scale: [ 1.5, 1 ], opacity: 1 }, { duration: 450, drag: true })
+                     .velocity({ scale: [ 1.5, 1 ], opacity: 1 }, { duration: 300, drag: true })
                      .data("animating", true);
 
                 if (!$line.length) {
@@ -65,7 +65,7 @@ $(function() {
                     .velocity({
                         top: ((top < containertop) ? containertop : top),
                         opacity: 1
-                     }, 450);
+                     }, 300);
             }
         },
         resetConv = function(soft) {
