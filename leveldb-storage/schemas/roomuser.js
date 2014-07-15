@@ -98,8 +98,8 @@ module.exports = function (types) {
 			
             for(i in data.params) {
                 if(data.params.hasOwnProperty(i)) {
-                    if(data.params[i].error) newRoom.params[i] = action.old.params[i];
-                    else newRoom.params[i] = data.params[i];
+                    // if(data.params[i].error) newRoom.params[i] = action.old.params[i];
+                    newRoom.params[i] = data.params[i];
                 }
             }
 			if (data.identities) {
