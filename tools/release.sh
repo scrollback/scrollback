@@ -33,6 +33,7 @@ fi
 show_info "Cleaning up the GIT repository"
 git checkout master || on_err "switching to master"
 git reset --hard || on_err "resetting changes"
+git clean -f -d || on_err "cleaning up"
 git pull || on_err "pulling latest changes"
 
 # Create a new branch
@@ -59,7 +60,7 @@ if [[ "$ans" == [Yy] ]]; then
 fi
 
 # Do "npm install" if there are new dependencies
-show_info "Are there any new dependencies [y/n]?"
+show_info "Run 'npm install' [y/n]?"
 read -n 1 ans
 printf "\n"
 if [[ "$ans" == [Yy] ]]; then
@@ -70,11 +71,28 @@ fi
 show_info "Running grunt"
 grunt || on_err "running 'grunt'"
 
-# Restart server
-show_info "Restart server [y/n]?"
+# Restart IRC
+show_info "Restart IRC server [y/n]?"
 read -n 1 ans
 printf "\n"
 if [[ "$ans" == [Yy] ]]; then
-    sudo service scrollback stop
-    sudo service scrollback start
+    sudo service irc stop || on_err "stopping irc"
+    sudo service irc start || on_err "starting irc"
+fi
+
+# Restart scrollback
+show_info "Restart scrollback server [y/n]?"
+read -n 1 ans
+printf "\n"
+if [[ "$ans" == [Yy] ]]; then
+    sudo service scrollback stop || on_err "stopping scrollback"
+    sudo service scrollback start || on_err "starting scrollback"
+fi
+
+# Push the branch to GitHub
+show_info "Push the branch to GitHub [y/n]?"
+read -n 1 ans
+printf "\n"
+if [[ "$ans" == [Yy] ]]; then
+    git push --set-upstream origin "${branch}" || on_err "pushing to GitHub"
 fi
