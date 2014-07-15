@@ -32,16 +32,16 @@ module.exports = function(coreObject) {
 		}
 		core.on("user", function(data, callback) {
 			console.log("email user validation...");
-			var user = data.user; 
-			if (user.params.email && user.params.email.frequency && user.params.email.notifications) {
+			var user = data.user;
+			if (user.params.email && user.params.email.frequency && typeof user.params.email.notifications === 'boolean') {
 				var fq = user.params.email.frequency === 'daily' || user.params.email.frequency === 'never' || user.params.email.frequency === 'weekly';
-				if(fq && typeof user.params.email.notifications === 'boolean') {
+				if(fq) {
 					return callback();
 				}
 			}
-			log("Err email params in user object"); 
+			log("Err email params in user object");
 			return callback(new Error("ERR_EMAIL_PARAMS"));
-			
+
 		}, "appLevelValidation");
 	}
 	else {
@@ -93,6 +93,6 @@ function addMessage(message){
 				});
 			});
         }
-    }   
-    
+    }
+
 }
