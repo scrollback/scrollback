@@ -79,6 +79,8 @@
     "grunt-contrib-sass": "latest",
     "grunt-autoprefixer": "latest",
     "grunt-manifest": "latest",
-    "grunt-browserify": "latest"
+    "grunt-browserify": "latest",
+    "grunt-contrib-jshint": "latest",
+    "jshint-stylish": "latest"
   }
 }

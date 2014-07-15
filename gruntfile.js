@@ -124,6 +124,17 @@ module.exports = function(grunt) {
 				dest: "public/manifest.appcache"
 			}
 		},
+		jshint: {
+			all: [ "*/*.js", "*/*/*.js"],
+			options: {
+				node: true,
+				unused: true,
+				undef: true,
+				curly: false,
+				globals: { jQuery: true },
+				reporter: require("jshint-stylish")
+			}
+		},
 		watch: {
 			options: {
 				livereload: true,
@@ -153,11 +164,12 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-sass");
 	grunt.loadNpmTasks("grunt-autoprefixer");
 	grunt.loadNpmTasks("grunt-manifest");
+	grunt.loadNpmTasks("grunt-contrib-jshint");
 
 	// Default task(s).
 	grunt.event.on("watch", function(action, filepath, target) {
 		grunt.log.writeln(target + ": " + filepath + " has " + action);
 	});
 
-	grunt.registerTask("default", ["browserify", "manifest", "uglify", "concat", "wrap", "sass", "autoprefixer"]);
+	grunt.registerTask("default", ["browserify", "manifest", "uglify", "concat", "wrap", "sass", "autoprefixer", "jshint"]);
 };
