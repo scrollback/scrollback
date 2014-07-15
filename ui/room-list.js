@@ -67,7 +67,6 @@ libsb.on("navigate", function(state, next){
             $("#room-item-" + state.roomName).addClass("current");
         }
     }
-
     next();
 }, 100);
 
@@ -108,7 +107,7 @@ $(function() {
 			}
 
 			callback(res.map(function(r) {
-				return r && roomEl.render(null, r, rooms.indexOf(r));
+                return r && roomEl.render(null, r, rooms.indexOf(r));
 			}));
 		}
 	});

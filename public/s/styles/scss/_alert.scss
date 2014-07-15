@@ -62,7 +62,7 @@
 		@include flex-wrap(nowrap);
 		@include align-items(center);
 		@include align-content(center);
-		@include transition;
+		@extend %transition;
 
 		padding: 1em 1.25em;
 		cursor: pointer;

@@ -79,6 +79,8 @@ $(function () {
 					break;
 				}
 			}
+            
+            if(i >= text.threads.length) return next();
 		} else if (window.currentState.thread) {
 			return next();
 		}

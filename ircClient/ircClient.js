@@ -376,6 +376,12 @@ function sendBack(server, channel, nick, bn) {
 
 function onNick(client) {
 	client.addListener('nick', function (oldNick, newNick, channels, message)  {
+		log("Nick event", oldNick, newNick, channels, message);
+		if (servNick[client.opt.server][oldNick] && servNick[client.opt.server][oldNick].dir === "out") {
+			servNick[client.opt.server][newNick] = {nick: servNick[client.opt.server][oldNick].nick, dir: "out"};
+			delete servNick[client.opt.server][oldNick];
+			return;
+		}
 		if (!(renameCallback[oldNick] && renameCallback[oldNick][client.opt.server])) {
 			channels.forEach(function(channel) {
 				addUsers(client, channel, newNick);
