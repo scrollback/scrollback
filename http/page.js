@@ -310,8 +310,8 @@ var relDate= function (input, reference){
     for(i = -1, len=formats.length; ++i < len; ){
         format = formats[i];
         if(delta < format[0]){
-            return format[2] == undefined ? format[1] : Math.round(delta/format[2]) + ' ' + format[1];
+            return format[2] === undefined ? format[1] : Math.round(delta/format[2]) + ' ' + format[1];
         }
-    };
+    }
     return "Long, long";
-}
+};

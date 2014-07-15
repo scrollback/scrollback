@@ -218,9 +218,12 @@ module.exports = function(c){
 	}, 8); // runs after socket */
 
 	core.on('getRooms', function(query, next){
-	
 		// only getRooms with ref are cached as of now.
 
+		if(query.cachedRoom === false){//don't change it to !query.cachedRoom
+			return next(); 
+		}
+		
 		if(!query.ref){
 			return next();
 		}
@@ -232,7 +235,8 @@ module.exports = function(c){
 		if(rooms.hasOwnProperty(query.ref)){
 			query.results = [rooms[query.ref]];
 		}
-
+		
+		
 		next();
 	
 	}, 400); // run before socket
@@ -329,7 +333,7 @@ module.exports = function(c){
 	
 	core.on('away-dn', function(away, next){
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
-		if(back.from !== libsb.user.id) return next();
+		if(away.from !== libsb.user.id) return next();
 		var msg = {type: 'result-end', endtype: 'time', time: away.time};
 		var key = generateLSKey(away.to, 'texts');
 		if(cache && cache[key]){ cache[key].put(msg); }

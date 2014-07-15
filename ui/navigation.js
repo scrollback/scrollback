@@ -98,7 +98,7 @@ libsb.on("navigate", function(state, next) {
 			$("body").addClass("view-" + state.view);
 		}
 	}
-$
+
 	if (state.old && state.tab !== state.old.tab) {
 		if (state.tab) {
 			$(".tab.current").removeClass("current");
