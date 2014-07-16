@@ -102,9 +102,9 @@ fi
 
 # Install various dependencies for scrollback
 echo "Installing dependencies..."
-sudo npm install
-sudo npm install -g grunt-cli
-sudo npm install -g forever
+sudo npm install -g grunt grunt-cli bower forever
+npm install
+bower install
 
 # Start the MySQL and Redis daemons
 echo "Starting MySQL and Redis"
@@ -120,6 +120,15 @@ read ans
 echo "MySQL root password is required to create the scrollback user and database. Please enter when prompted."
 mysql -uroot -p < ./sql/database.sql
 mysql -uscrollback -pscrollback scrollback < ./sql/tables.8.sql
+
+# Add local.scrollback.io to /etc/hosts
+echo "Add 'local.scrollback.io' to /etc/hosts [y/n]?"
+read ans
+[[ "$ans" = [Yy] ]] && echo "127.0.0.1	local.scrollback.io" >> "/etc/hosts"
+
+# Copy sample myConfig.js and client-config.js files
+[[ ! -f "myConfig.js" ]] && cp "myConfig.sample.js" "myConfig.js"
+[[ ! -f "client-config.js" ]] && cp "client-config.sample.js" "client-config.js"
 
 # Run Grunt to generate misc files
 echo "Running Grunt"
