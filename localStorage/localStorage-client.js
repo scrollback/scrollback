@@ -59,7 +59,7 @@ function generateLSKey() {
 		return;
 	}
 	var argumentsLC = args.map(function (val) {
-		return val.toLowerCase();
+		if(typeof val == "string") return val.toLowerCase();
 	});
 	return argumentsLC.join('_');
 }
@@ -107,20 +107,42 @@ libsb.on('back-dn', function (back, next) {
 
 	// loading ArrayCache from LocalStorage when user has navigated to the room.
 	window.backTimes[back.to] = back.time;
+	var o;
 	var key = generateLSKey(back.to, 'texts');
 	var thKey = generateLSKey(back.to, 'threads');
-	cache[key] = loadArrayCache(key);
+	var roomName = back.to;
+	var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
+	
+	// load all ArrayCaches with <roomName>*_texts
+	for (o in localStorage){
+		if(regex.test(o)){
+			cache[o] = loadArrayCache(o);
+			console.log("Loading from LocalStorage ....", o);
+		}	
+	}
+	// loading <roomName>_threads
 	cache[thKey] = loadArrayCache(thKey);
+
 	var items = cache[key].d;
 	var lastMsg = items[items.length - 1];
-	if (lastMsg && lastMsg.type !== "result-end") {
-		cache[key].d.push({
+	var msg = {
 			type: 'result-end',
 			endtype: 'time',
-			time: lastMsg.time
-		});
+			time: lastMsg ? lastMsg.time : null
+	};
+	if (lastMsg && lastMsg.type !== "result-end") {
+		cache[key].d.push(msg);
 	}
 	saveCache(key);
+
+	for (o in cache) {
+		if (regex.test(o)) {
+			var lastItem = cache[o][cache[o].length - 1];
+			if (lastItem && lastItem.type !== 'result-end') cache[o].d.push('time', msg);
+			saveCache(o);
+		}
+	}
+
 	next();
 }, 1000);
 
@@ -140,6 +162,17 @@ module.exports = function (c) {
 			cache[key].d.push(msg);
 		}
 		saveCache(key);
+
+		var roomName = back.to;
+		var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
+		for (var o in cache) {
+			if (regex.test(o)) {
+				var lastItem = cache[o][cache[o].length - 1];
+				if (lastItem && lastItem.type !== 'result-start') cache[o].d.push('time', msg);
+				saveCache(o);
+			}
+		}
+
 		next();
 	}, 500);
 
@@ -217,7 +250,9 @@ module.exports = function (c) {
 				if (!cache.hasOwnProperty(lsThreadKey)) {
 					loadArrayCache(lsThreadKey);
 				}
+//				console.log("Putting into thread id ", query.thread, lsThreadKey);
 				cache[lsThreadKey].put('time', results);
+//				console.log("Cache is now ", cache[lsThreadKey]);
 				saveCache(lsThreadKey);
 			}
 
@@ -378,8 +413,9 @@ module.exports = function (c) {
 				endtype: 'time',
 				time: window.backTimes[text.to]
 			});
-
+			//console.log("got text-dn putting to ", cache[key]);
 			cache[key].put('time', texts);
+			//console.log("Cache[key] is now ", cache[key]);
 			saveCache(key);
 		});
 
@@ -447,9 +483,21 @@ module.exports = function (c) {
 		};
 		var key = generateLSKey(away.to, 'texts');
 		if (cache && cache[key]) {
-			cache[key].put('time', msg);
+			cache[key].d.push('time', msg);
 			saveCache(key);
 		}
+		// soln below is generic for all subthreads in a room.
+
+		var roomName = away.to;
+		var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
+		for (var o in cache) {
+			if (regex.test(o)) {
+				var lastItem = cache[o][cache[o].length - 1];
+				if (lastItem && lastItem.type !== 'result-end') cache[o].d.push('time', msg);
+				saveCache(o);
+			}
+		}
+
 		next();
 	}, 500);
 
