@@ -69,7 +69,7 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
 else
     # We only install packages for Ubuntu and Fedora
     echo "Unsupported distro. You will need to install the dependencies manually. Continue anyway [y/n]?"
-    read ans
+    read -n 1 ans
     [[ "$ans" = [Yy] ]] || exit 1
 fi
 
@@ -113,7 +113,7 @@ sudo service redis start
 
 # Give option to set root password for MySQL in case it has not been set
 echo "Do you want to set/change MySQL root password [y/n]?"
-read ans
+read -n 1 ans
 [[ "$ans" = [Yy] ]] && mysqladmin -u root password -p
 
 # Add scrollback databases
@@ -125,7 +125,7 @@ mysql -uscrollback -pscrollback scrollback < ./sql/tables.8.sql
 grep -e "^[0-9]*\.[0-9]*.[0-9]*\.[0-9]*.*local\.scrollback\.io" "/etc/hosts" > /dev/null 2>&1
 if [[ ! $? -eq 0 ]]; then
     echo "Add 'local.scrollback.io' to /etc/hosts [y/n]?"
-    read ans
+    read -n 1 ans
     [[ "$ans" = [Yy] ]] && echo "127.0.0.1	local.scrollback.io" >> "/etc/hosts"
 fi
 
