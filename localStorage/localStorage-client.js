@@ -122,7 +122,8 @@ libsb.on('back-dn', function (back, next) {
 	}
 	// loading <roomName>_threads
 	cache[thKey] = loadArrayCache(thKey);
-
+	
+	console.log("key is ", key);
 	var items = cache[key].d;
 	var lastMsg = items[items.length - 1];
 	var msg = {

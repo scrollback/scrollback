@@ -8,7 +8,8 @@ $(function () {
 	var $logs = $(".chat-area"),
 		roomName = "",
 		thread = '',
-		time = null;
+		time = null,
+		resetting = false;
 
 	$logs.infinite({
 		scrollSpace: 2000,
@@ -166,6 +167,7 @@ $(function () {
             }
 		}
 		if (reset) {
+			resetting = true;
 			$logs.reset(time);
 		}
 
@@ -203,8 +205,13 @@ $(function () {
 		top = $(this).scrollTop();
 
 	$logs.on("scroll", function () {
+		if(resetting) {
+			resetting = false;
+			return;
+		}
+		
 		var cur_top = $logs.scrollTop();
-
+		
 		if (top < cur_top) {
 			$("body").removeClass("scroll-up").addClass("scroll-down");
 		} else {
