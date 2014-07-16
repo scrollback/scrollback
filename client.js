@@ -5,6 +5,10 @@ var core = Object.create(require("./lib/emitter.js"));
 window.validate = require('./lib/validate.js');
 window.generate = require('./lib/generate');
 
+// third party libraries
+require('./public/s/lib/jquery.velocity.min.js');
+require('./public/s/lib/svg4everybody.min.js');
+
 // libsb files
 require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(core);
@@ -15,7 +19,6 @@ require('./client-entityloader/client-entityloader.js')();
 
 require('./lib/jquery.setCursorEnd.js');
 require('./lib/jquery.attrchange.js');
-require('./lib/jquery.velocity.min.js');
 require('./lib/format.js');
 require('./lib/swipe-events.js');
 
