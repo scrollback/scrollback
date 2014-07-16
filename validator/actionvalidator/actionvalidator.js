@@ -176,6 +176,13 @@ function basicValidation(action, callback) {
 	if (action.from) action.from = action.from.toLowerCase();
 	action.to = action.to.toLowerCase();
 	if(!action.session) return callback(new Error("NO_SESSION_ID"));
-	action.time = new Date().getTime();
+
+	if(/^web/.test(action.session) || !action.time) {
+		action.time = new Date().getTime();
+	}
+	
 	return callback();
 }
+
+
+
