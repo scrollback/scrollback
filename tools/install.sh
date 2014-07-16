@@ -102,9 +102,9 @@ fi
 
 # Install various dependencies for scrollback
 echo "Installing dependencies..."
-sudo npm install
-sudo npm install -g grunt-cli
-sudo npm install -g forever
+sudo npm install -g grunt grunt-cli forever
+npm install
+bower install
 
 # Start the MySQL and Redis daemons
 echo "Starting MySQL and Redis"

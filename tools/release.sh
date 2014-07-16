@@ -67,6 +67,14 @@ if [[ "$ans" == [Yy] ]]; then
     npm install || on_err "doing 'npm install'"
 fi
 
+# Do "bower install" if there are new external libraries
+show_info "Run 'bower install' [y/n]?"
+read -n 1 ans
+printf "\n"
+if [[ "$ans" == [Yy] ]]; then
+    bower install || on_err "doing 'bower install'"
+fi
+
 # Generate files
 show_info "Running grunt"
 grunt || on_err "running 'grunt'"
