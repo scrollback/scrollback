@@ -1,6 +1,6 @@
 @import "functions";
 
-$bar-height: 49px;
+$bar-height: 49px !default;
 
 .scrollback-stream {
 	@include prefix(box-shadow, 0 0 5px 1px rgba(0,0,0,.1));
@@ -20,4 +20,9 @@ $bar-height: 49px;
 	z-index: 999;
 
 	&.scrollback-minimized { height: $bar-height }
+
+	@media only screen and (max-width: 420px) {
+		left: 0;
+		right: 0;
+	}
 }
