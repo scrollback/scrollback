@@ -89,7 +89,7 @@ function getNewThreads(ids, callback) {
         if(!list.length) return callback(resp);
         
         generateNewThread(list.splice(0,1)[0], function(t) {
-            resp[t.id] = t;
+            if(t && t.id) resp[t.id] = t;
             asyncForEach(list, resp, callback);
         });
     }
@@ -173,7 +173,7 @@ module.exports = function (core) {
                         function insertText() {
                             searchDB.sadd("thread:{{"+e.id+"}}:texts", message.id+":"+message.from+":"+message.text, function() {
                                 messageCount++;
-                                if(messageCount >=10) {
+                                if(messageCount >=100) {
                                    indexTexts();
                                     messageCount = 0;
                                 }
