@@ -6,6 +6,7 @@ window.validate = require('./lib/validate.js');
 window.generate = require('./lib/generate');
 
 // third party libraries
+require('./public/s/lib/sockjs.min.js');
 require('./public/s/lib/jquery.velocity.min.js');
 require('./public/s/lib/svg4everybody.min.js');
 

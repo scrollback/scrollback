@@ -76,13 +76,9 @@ module.exports = function(grunt) {
 			options: {
 				separator: ";\n\n"
 			},
-			client: {
-				src: ["public/sdk/sockjs.js", "public/core.uw.min.js", "public/embed.uw.min.js"],
-				dest: "public/client.min.js",
-			},
-			core: {
-				src: ["public/sdk/sockjs.js", "public/core.uw.min.js"],
-				dest: "public/core.min.js",
+			polyfills: {
+				src: ["public/s/lib/selectivizr.js", "public/s/lib/flexie.min.js", "public/s/lib/transformie.js"],
+				dest: "public/s/lib/polyfills.js",
 			}
 		},
 		wrap: {
