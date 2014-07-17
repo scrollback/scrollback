@@ -24,7 +24,8 @@ $(function(){
 						sound: true,
 						desktop: true
                     }
-                }
+                },
+				guides: {}
             }
 		}, function(err) {
                 signingUp = true;
