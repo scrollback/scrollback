@@ -8,5 +8,5 @@ function generateID(action, next){
 var events = ['join-up','part-up','away-up','back-up','text-up','init-up','admit-up','expel-up','user-up','room-up'];
 
 module.exports = function() {
-	events.forEach(function(e) { libsb.on(e, generateID, 900); });
+	events.forEach(function(e) { libsb.on(e, generateID, "validation"); });
 };

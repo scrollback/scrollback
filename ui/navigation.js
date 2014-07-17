@@ -51,7 +51,7 @@ libsb.on("navigate", function(state, next) {
 	next();
 }, 1000);
 
-// On navigation, set the body classes.
+/*// On navigation, set the body classes.
 libsb.on("navigate", function(state, next) {
 	if (!state.time && !state.roomName && !state.thread) {
 		if(!state.time && state.old.time) {
@@ -115,7 +115,7 @@ $
 	}
 
 	next();
-}, 999);
+}, 999);*/
 
 // On navigation, add history and change URLs and title
 libsb.on("navigate", function(state, next) {

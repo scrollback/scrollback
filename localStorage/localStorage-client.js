@@ -96,6 +96,16 @@ try{
 	// which is a valid scenario, execution must continue.
 }
 
+libsb.on('init-up', function(init, next) {
+    if(cache && cache.session) {
+        libsb.session = sid = cache.session;
+    }
+    if(!sid) {
+		cache.session = sid = "web://"+generate.uid();
+		libsb.session = cache.session;
+	}
+    return next();
+}, "validation");
 
 libsb.on('back-dn', function(back, next) {
 	// loading ArrayCache from LocalStorage when user has navigated to the room.
@@ -323,20 +333,20 @@ module.exports = function(c){
 			cache.session = sid = generate.uid();
 			libsb.session = cache.session;
 		} 
-		core.emit('init-up', {session: sid});
+//		core.emit('init-up', {session: sid});
 		n();
 	}, 500);
 	
 	core.on('away-dn', function(away, next){
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
-		if(back.from !== libsb.user.id) return next();
+		if(away.from !== libsb.user.id) return next();
 		var msg = {type: 'result-end', endtype: 'time', time: away.time};
 		var key = generateLSKey(away.to, 'texts');
 		if(cache && cache[key]){ cache[key].put(msg); }
 		next();
 	}, 500);
 	
-	core.on('connected', function(data, next) {
+/*	core.on('connected', function(data, next) {
 		if (window.parent.location === window.location) {
 			createInit();
             next();
@@ -360,13 +370,13 @@ module.exports = function(c){
             }
 		}
 		
-	}, 1000);
+	}, 1000);*/
 	core.on('logout', logout, 1000);
 };
 
 function createInit(){
 	var sid;
-	if(!cache){ cache = {}; }
+	/*if(!cache){ cache = {}; }
 	if(cache && cache.session) {
         libsb.session = sid = cache.session;
     }
@@ -378,7 +388,7 @@ function createInit(){
 		gateway: "web",
 		domain: domain,
 		path: path
-	}});
+	}});*/
 }
 
 function logout(p,n){
