@@ -10,7 +10,8 @@ $(".conf-save").on("click", function () {
             id: libsb.user.id,
             description: '',
             identities: [],
-            params: {}
+            params: {},
+            guides: {}
         };
 
         libsb.emit('pref-save', userObj, function (err, user) {
@@ -48,6 +49,7 @@ function getUsers() {
         var user = data.results[0];
 
         if (!user.params) user.params = {};
+        if (!user.guides) user.guides = {};
 
         var userObj = {
             user: user
