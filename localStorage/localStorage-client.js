@@ -318,19 +318,7 @@ module.exports = function(c){
 		save();
 		next();
 	}, 500);
-	
-	core.on('connected', function(d,n){
-		var sid;
-		if(!cache){ cache = {}; }
-		if(cache && cache.session){ sid = cache.session; }
-		if(!sid){
-			cache.session = sid = generate.uid();
-			libsb.session = cache.session;
-		} 
-		core.emit('init-up', {session: sid});
-		n();
-	}, 500);
-	
+    
 	core.on('away-dn', function(away, next){
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
 		if(away.from !== libsb.user.id) return next();
