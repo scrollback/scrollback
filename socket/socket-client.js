@@ -70,6 +70,9 @@ function connect(){
 
 	client.onopen = function(){
 		core.emit('connected');
+        core.emit('init-up', {}, function(err, init) {
+            
+        });
 	};
 
 	client.onmessage = receiveMessage;

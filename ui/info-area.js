@@ -10,9 +10,10 @@ $(function() {
 		$template.find('.info-description').html(format.textToHtml(room.description || "This room has no description."));
 	};
 	libsb.on("inited", function(q, n) {
-		if(currentState.embed == "toast") {
+		if(currentState.embed && currentState.embed.from) {
 			libsb.enter(window.location.pathname.split("/")[1]);
 		}
+
 		n();
 	}, 600);
 });

@@ -1,23 +1,44 @@
-/* jslint browser: true, indent: 4, regexp: true */
+/* jshint browser: true */
 /* global $, libsb */
 
-libsb.on("config-show", function (conf, next) {
-    var code = '<script>window.scrollback = {room:"' + window.currentState.roomName + '",embed:"toast",theme:"dark",minimize:true};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>',
-        $textarea = $("<textarea>").addClass("embed-code").attr("readonly", true).text(code),
-        $div = $("<div>").append($("<div>").addClass("settings-item").append(
-            $("<p>").text("Place the following code just before the closing </body> tag "),
-            $textarea
-        ));
-
-    $textarea.click(function() {
-        this.select();
+$(function() {
+    // Handle fullview button click
+    $(".embed-action-fullview").on("click", function() {
+        window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, ""), "_blank");
     });
 
-    conf.embed = {
-        text: "Embed",
-        html: $div,
-        prio: 400
-    };
+    // Handle minimize
+    $(".embed-action-minimize").on("click", function() {
+        libsb.emit("navigate", { minimize: true });
+    });
 
-    next();
-}, 500);
+    $(".title-bar").on("click", function(e) {
+        if (e.target === e.currentTarget) {
+            libsb.emit("navigate", { minimize: true });
+        }
+    });
+
+    $(".minimize-bar").on("click", function() {
+        libsb.emit("navigate", { minimize: false });
+    });
+
+    if (window.parent.postMessage) {
+        libsb.on("navigate", function(state, next) {
+            if (state.old && state.embed && state.embed.form === "toast" && state.minimize !== state.old.minimize) {
+                if (state.minimize) {
+                    window.parent.postMessage("minimize", "*");
+                } else {
+                    window.parent.postMessage("maximize", "*");
+                }
+            }
+
+            next();
+        }, 500);
+    }
+});
+
+
+
+function getVerifiedOrigin() {
+        
+}

@@ -7,7 +7,7 @@
  * Properties of naviagtion state object
  *
  * room: {String} roomId
- * embed: {String} (toast|full)
+ * embed: {Object} { form: (toast|full), nick: {String} }
  * minimize: {Boolean} (true|false)
  * theme: {String} (dark|light)
  * view: {String} (normal|rooms|meta|signup)
@@ -51,7 +51,7 @@ libsb.on("navigate", function(state, next) {
 	next();
 }, 1000);
 
-// On navigation, set the body classes.
+/*// On navigation, set the body classes.
 libsb.on("navigate", function(state, next) {
 	if (!state.time && !state.roomName && !state.thread) {
 		if(!state.time && state.old.time) {
@@ -68,15 +68,23 @@ libsb.on("navigate", function(state, next) {
 	}
 
 	if (state.old && state.embed !== state.old.embed) {
-		$("body").removeClass("embed embed-" + state.old.theme);
+		if (state.old.embed && state.old.embed.form) {
+			$("body").removeClass("embed-" + state.old.embed.form);
+		}
 
 		if (state.embed) {
-			$("body").addClass("embed embed-" + state.embed);
+			$("body").addClass("embed");
+
+			if (state.embed.form) {
+				$("body").addClass("embed-" + state.embed.form);
+			}
+		} else {
+			$("body").removeClass("embed");
 		}
 	}
 
 	if (state.old && state.minimize !== state.old.minimize) {
-		if (state.minimize && state.embed === "toast") {
+		if (state.embed && state.embed.form === "toast" && state.minimize) {
 			$("body").addClass("minimized");
 		} else {
 			$("body").removeClass("minimized");
@@ -107,7 +115,7 @@ libsb.on("navigate", function(state, next) {
 	}
 
 	next();
-}, 999);
+}, 999);*/
 
 // On navigation, add history and change URLs and title
 libsb.on("navigate", function(state, next) {
@@ -150,15 +158,7 @@ libsb.on("navigate", function(state, next) {
 		}
 
 		if (state.embed) {
-			params.push("embed=" + state.embed);
-		}
-
-		if (state.embed === "toast" && state.minimize) {
-			params.push("minimize=true");
-		}
-
-		if (state.theme && state.theme !== "light") {
-			params.push("theme=" + state.theme);
+			params.push("embed=" + encodeURIComponent(JSON.stringify(state.embed)));
 		}
 		return path + (params.length ? "?" + params.join("&"): "");
 	}

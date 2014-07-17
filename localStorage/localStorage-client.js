@@ -96,6 +96,16 @@ try{
 	// which is a valid scenario, execution must continue.
 }
 
+libsb.on('init-up', function(init, next) {
+    if(cache && cache.session) {
+        libsb.session = sid = cache.session;
+    }
+    if(!sid) {
+		cache.session = sid = "web://"+generate.uid();
+		libsb.session = cache.session;
+	}
+    return next();
+}, "validation");
 
 libsb.on('back-dn', function(back, next) {
 	// loading ArrayCache from LocalStorage when user has navigated to the room.
@@ -327,7 +337,7 @@ module.exports = function(c){
 			cache.session = sid = generate.uid();
 			libsb.session = cache.session;
 		} 
-		core.emit('init-up', {session: sid});
+//		core.emit('init-up', {session: sid});
 		n();
 	}, 500);
 	
@@ -340,7 +350,7 @@ module.exports = function(c){
 		next();
 	}, 500);
 	
-	core.on('connected', function(data, next) {
+/*	core.on('connected', function(data, next) {
 		if (window.parent.location === window.location) {
 			createInit();
             next();
@@ -364,13 +374,13 @@ module.exports = function(c){
             }
 		}
 		
-	}, 1000);
+	}, 1000);*/
 	core.on('logout', logout, 1000);
 };
 
 function createInit(){
 	var sid;
-	if(!cache){ cache = {}; }
+	/*if(!cache){ cache = {}; }
 	if(cache && cache.session) {
         libsb.session = sid = cache.session;
     }
@@ -382,7 +392,7 @@ function createInit(){
 		gateway: "web",
 		domain: domain,
 		path: path
-	}});
+	}});*/
 }
 
 function logout(p,n){
