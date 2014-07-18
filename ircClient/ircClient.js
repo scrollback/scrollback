@@ -434,6 +434,7 @@ function onNick(client) {
 			channels.forEach(function(channel) {
 				var index = servChanProp[client.opt.server][channel].users.indexOf(oldNick);
 				if (index > -1) servChanProp[client.opt.server][channel].users.splice(index, 1);
+				servChanProp[client.opt.server][channel].users.push(newNick);
 			});
 			delete servNick[client.opt.server][oldNick];
 			return;
