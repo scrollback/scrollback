@@ -48,7 +48,7 @@ $(function() {
                         .data("animating", true);
 
                 $dots.velocity("stop")
-                     .velocity({ scale: [ 1.5, 1 ], opacity: 1 }, { duration: 300, drag: true })
+                     .velocity({ scale: 1.5, opacity: 1 }, { duration: 300, drag: true })
                      .data("animating", true);
 
                 if (!$line.length) {
@@ -102,13 +102,11 @@ $(function() {
     }, 50);
 
     $container.on("scroll", function() {
-        removeLine();
-
         clearTimeout($(this).data("lineTimer"));
 
         $(this).data("lineTimer", setTimeout(function() {
             drawLine();
-        }, 1000));
+        }, 300));
     });
 
     $(window).on("resize", function() {
