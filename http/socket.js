@@ -260,9 +260,11 @@ function emit (action, callback) {
         }
         return callback();
 	} else if(action.type == 'user') {
-		uConns[action.from].forEach(function(e) {
-            dispatch(e, action);
-        });
+        if(uConns[action.from].length) {
+            uConns[action.from].forEach(function(e) {
+                dispatch(e, action);
+            });
+        }
         return callback();
 	}
     
