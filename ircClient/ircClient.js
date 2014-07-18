@@ -5,7 +5,7 @@ var log = require('../lib/logger.js');
 var config = require('./config.js');
 var core;
 var botNick = config.botNick; //part of config of IRC client.
-var clients = {}; //for server channel user,server --> client. 
+var clients = {}; //for server channel user,server --> client.
 var servChanProp = {}; //object of server channel prop (room, user)
 var rooms = {}; //room id to room obj map.
 var servNick = {}; //server channel nick -> sb nick.
@@ -112,7 +112,7 @@ function partBot(roomId, callback) {
 
 	var room = rooms[roomId];
 	log("****part bot for room ", roomId, room);
-	if (!room) return callback(); //should throw an error? not sure... 
+	if (!room) return callback(); //should throw an error? not sure...
 	var client = clients[botNick][room.params.irc.server];
 	var channel = room.params.irc.channel;
 	var server = room.params.irc.server;
@@ -171,7 +171,7 @@ function connectUser(roomId, nick, options, cb) {
 			if (client.opt.channels.length === 0) {
 				log("part channel", nick, arguments);
 				client.disconnect();
-				delete clients[nick][client.opt.server]; //TODO some cleanup needed?	
+				delete clients[nick][client.opt.server]; //TODO some cleanup needed?
 			}
 		});
 	}
@@ -368,7 +368,7 @@ function sendAway(server, channels, nick, bn) {
 			});
 		}
 	});
-	for (var channel in servChanProp[server]) { //if user left from all channel 
+	for (var channel in servChanProp[server]) { //if user left from all channel
 		if (servChanProp[server].hasOwnProperty(channel)) {
 			if (servChanProp[server][channel].users.indexOf(nick) != -1) {
 				return;
@@ -410,7 +410,7 @@ function sendBack(server, channel, nick, bn) {
 	var room = servChanProp[server][channel].room;
 
 	//save data.
-	if (nick != bn) servChanProp[server][channel].users.push(nick); //don't add myNick 
+	if (nick != bn) servChanProp[server][channel].users.push(nick); //don't add myNick
 	if (nick != bn && (!servNick[server][nick] || (servNick[server][nick].dir == "in")) && !room.params.irc.pending) {
 		servNick[server][nick] = {
 			nick: nick,
@@ -431,6 +431,11 @@ function onNick(client) {
 		log("Nick event", oldNick, newNick, channels, message);
 		if (servNick[client.opt.server][oldNick] && servNick[client.opt.server][oldNick].dir === "out") {
 			servNick[client.opt.server][newNick] = {nick: servNick[client.opt.server][oldNick].nick, dir: "out"};
+			channels.forEach(function(channel) {
+				var index = servChanProp[client.opt.server][channel].users.indexOf(oldNick);
+				if (index > -1) servChanProp[client.opt.server][channel].users.splice(index, 1);
+				servChanProp[client.opt.server][channel].users.push(newNick);
+			});
 			delete servNick[client.opt.server][oldNick];
 			return;
 		}
@@ -467,7 +472,7 @@ function onNames(client) {
 		log("server names", nicks);
 		for (var nick in nicks) {
 			if (nicks.hasOwnProperty(nick)) {
-				if (client.nick === nick) continue; //my 
+				if (client.nick === nick) continue; //my
 				addUsers(client, channel, nick);
 			}
 		}

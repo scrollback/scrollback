@@ -9,7 +9,7 @@ var internalSession = Object.keys(config.whitelists)[0];
 client.init(clientEmitter);
 var core;
 var callbacks = {};
-var onlineUsers = {}; //scrollback users that are already online 
+var onlineUsers = {}; //scrollback users that are already online
 var firstMessage = {}; //[room][username] = true //it is shared b/w roomEvent and irc
 var userExp = 10 * 60 * 1000;
 var initCount = 0;
@@ -69,10 +69,11 @@ module.exports = function (coreObj) {
 					delete onlineUsers[text.to][text.from];
 				} else ircUtils.connectUser(text.to, text.from);
 			}
+			var t = text.text;
 			if (text.labels) {
-				if (text.labels.action) text.text += '/me ' + text.text;
+				if (text.labels.action) t =  "/me " + text.text;
 			}
-			ircUtils.say(text.to, text.from, text.text);
+			ircUtils.say(text.to, text.from, t);
 		}
 		callback();
 	}, "gateway");
@@ -107,7 +108,6 @@ function init() {
 				notUsedRooms[roomId] = true;
 			}
 		}
-		log("init from ircClient", state);
 
 		core.emit("getRooms", {
 			identity: "irc",
@@ -144,12 +144,12 @@ function init() {
 					servChanProp[room.params.irc.server][room.params.irc.channel]) {
 					var users = servChanProp[room.params.irc.server][room.params.irc.channel].users;
 					users.forEach(function (user) {
-						if (servNick[room.params.irc.server] &&
+						if (servNick[room.params.irc.server] && servNick[room.params.irc.server][user] &&
 							servNick[room.params.irc.server][user].dir === "in") {
 							sendInitAndBack(user, "irc://" + room.params.irc.server + ":" + user, room);
 							initCount++;
 						}
-						if (servNick[room.params.irc.server] &&
+						if (servNick[room.params.irc.server] && servNick[room.params.irc.server][user] &&
 							servNick[room.params.irc.server][user].dir === "out") {
 							log("room:", room.id, " nick", servNick[room.params.irc.server][user].nick);
 							if (!onlineUsers[room.id]) onlineUsers[room.id] = {};

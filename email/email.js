@@ -1,8 +1,5 @@
 var config = require('../config.js');
 var log = require("../lib/logger.js");
-var db = require('../lib/mysql.js');
-var send = require('./sendEmail.js');
-var fs=require("fs"),jade = require("jade");
 var redis = require('../lib/redisProxy.js').select(config.redisDB.email);
 var emailDigest = require('./emailDigest.js');
 var initMailSending = emailDigest.initMailSending;//function
@@ -10,7 +7,6 @@ var sendPeriodicMails = emailDigest.sendPeriodicMails;//function
 var trySendingToUsers = emailDigest.trySendingToUsers;//function.
 var emailConfig = config.email;
 var core;
-var debug = emailConfig.debug;
 var timeout = 30*1000;//for debuging only
 
 module.exports = function(coreObject) {
