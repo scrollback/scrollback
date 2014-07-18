@@ -69,10 +69,11 @@ module.exports = function (coreObj) {
 					delete onlineUsers[text.to][text.from];
 				} else ircUtils.connectUser(text.to, text.from);
 			}
+			var t = text.text;
 			if (text.labels) {
-				if (text.labels.action) text.text += '/me ' + text.text;
+				if (text.labels.action) t =  "/me " + text.text;
 			}
-			ircUtils.say(text.to, text.from, text.text);
+			ircUtils.say(text.to, text.from, t);
 		}
 		callback();
 	}, "gateway");
