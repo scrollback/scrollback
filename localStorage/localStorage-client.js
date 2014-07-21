@@ -177,6 +177,7 @@ module.exports = function (c) {
 	core.on('getTexts', function (query, next) {
 		// getTextsBefore
 		var key;
+		
 		if (query.thread) {
 			// creating individual cache entries for queries with the thread property
 			key = generateLSKey(query.to, query.thread, 'texts');
@@ -195,6 +196,9 @@ module.exports = function (c) {
 			// query.time is null, have to decide how LS will handle this.
 			return next();
 		}
+		
+		if(query.thread) return next();
+		
 		var results = cache[key].get('time', query);
 
 		if (!results || !results.length) {
