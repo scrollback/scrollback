@@ -26,7 +26,7 @@
 			&:only-child { width: 100%; }
 
 			&.done {
-				@include fadein;
+				@extend %fadein;
 
 				border-radius: $roundness;
 				background-color: $accent-color;
@@ -39,7 +39,7 @@
 			}
 
 			.item-remove {
-				@include transition;
+				@extend %transition;
 
 				float: right;
 				cursor: pointer;

@@ -30,3 +30,4 @@ public/*.min.js
 public/embed.js
 public/s/styles/gen
 /client-config.js
+/ircClient/Data/

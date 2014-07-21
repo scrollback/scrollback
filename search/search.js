@@ -8,6 +8,143 @@ var client;
 var searchTimeout = 10000;
 var messageCount = 0;
 var updateThreads = [];
+
+
+
+/*
+    this function takes a list of ids and gets the thread objects from the elastic search.
+*/
+function getOldThreads(ids, callback) {
+    var data = {}, response = {}, query;
+    ids = ids.slice(0, ids.length);
+    data.index = indexName;
+    data.type = 'threads';
+    query = {query: { match_all: {}}};
+
+    data.body = query;
+    
+    data.body.filter = {
+        "ids" : {
+            "type" : "threads",
+            "values" : ids
+        }
+    };
+    
+    client.search(data, function(err, resp) {
+        var oldThread = {};
+        if(err || !resp.hits || !resp.hits.hits ||!resp.hits.hits.length) {
+            response = {};
+        }else {
+            oldThread = resp.hits.hits;
+            oldThread.forEach(function(result){
+                response[result._source.id] = result._source;
+            });
+        }
+
+        return callback(response);
+    });
+}
+
+/* couldnt think of a better name here. please feel free to change.
+    this function takes a threadID, gets the new texts in that thread from redis.
+    uses this new texts to construct the thread object.
+    and fires the callback with the new texts and participants.
+*/
+function generateNewThread(threadID, callback) {
+    var newThread = {};
+    newThread.id = threadID;
+
+    searchDB.get("thread:{{"+threadID+"}}", function(err, t) {
+        if(err || !t) return callback(null);
+
+        try{ t = JSON.parse(t); }
+        catch(e) { return callback(null); }
+
+        newThread.room = t.room;
+        newThread.texts = [];
+        newThread.users = [];
+
+        searchDB.smembers("thread:{{"+threadID+"}}:texts", function(err, texts) {
+
+            if(err || !texts) return callback(null);
+
+            texts.forEach(function(e) {
+                var index = e.indexOf(':');
+                /* not needed right now. var id = e.substring(0, index); */
+                var text = e.substring(index + 1);
+                index = text.indexOf(':');
+                var from = text.substring(0, index);
+                text = text.substring(index + 1);
+                newThread.texts.push(text);
+                if(newThread.users.indexOf(from)<0) newThread.users.push(from);
+            });
+
+            callback(newThread);
+        });
+    });
+}
+
+function getNewThreads(ids, callback) {
+    function asyncForEach(list, resp, callback) {
+        if(!list.length) return callback(resp);
+        
+        generateNewThread(list.splice(0,1)[0], function(t) {
+            if(t && t.id) resp[t.id] = t;
+            asyncForEach(list, resp, callback);
+        });
+    }
+    return asyncForEach(ids.slice(0, ids.length), {}, callback);
+}
+
+function constructPostData(ids, callback) {
+    getOldThreads(ids, function(oldThreads) {
+        getNewThreads(ids, function(newThreads) {
+            var  postData = {body: []}, newKeys = Object.keys(newThreads);
+            newKeys.forEach(function(id) {
+                if(oldThreads[id] && oldThreads[id].texts) {
+                    oldThreads[id].texts.forEach(function(e) {
+                        if(newThreads[id] && newThreads[id].texts) newThreads[id].texts.push(e);
+                    });
+                }
+                if(oldThreads[id] && oldThreads[id].users) {
+                    oldThreads[id].users.forEach(function(e) {
+                        if(newThreads[id] && newThreads[id].users) newThreads[id].users.push(e);
+                    });
+                }
+            });
+            
+            if(newKeys.length) {
+                newKeys.forEach(function(id) {
+                    postData.body.push({
+                        index: {
+                            _index: indexName,
+                            _type: 'threads',
+                            _id: id
+                        }
+                    });
+                    postData.body.push(newThreads[id]);
+                    return callback(postData);
+                });
+            }else{
+                return callback(postData);
+            }
+            
+            
+        });    
+    });
+}
+
+function indexTexts() {
+    var ids = updateThreads;
+    updateThreads = [];
+    constructPostData(ids, function(postData) {
+        client.bulk(postData, function(err, resp) {
+            if(err) log(err, resp);
+            searchDB.flushdb();
+        });
+    });
+}
+
 module.exports = function (core) {
     if(!client) {
         init();
@@ -34,10 +171,10 @@ module.exports = function (core) {
                         }
 
                         function insertText() {
-                            searchDB.sadd("thread:{{"+e.id+"}}:texts", message.id+":"+message.text, function() {
+                            searchDB.sadd("thread:{{"+e.id+"}}:texts", message.id+":"+message.from+":"+message.text, function() {
                                 messageCount++;
-                                if(messageCount >=5) {
-                                    indexTexts();
+                                if(messageCount >=100) {
+                                   indexTexts();
                                     messageCount = 0;
                                 }
                             });
@@ -51,20 +188,18 @@ module.exports = function (core) {
         
         /*Index rooms*/
         core.on('room', function (room, callback) {
-            if (room.type === "room") {
-                callback();
-                var data = {};
-                data.type = 'room';
-                data.id = room.id;
-                data.body = {
-                    "description": room.description,
-                    "type": room.type
-                };
+            callback();
+            var data = {};
+            data.type = 'room';
+            data.id = room.id;
+            data.body = {
+                "description": room.description,
+                "type": room.type
+            };
                 index(data);
-            }
         }, "watchers");
         
-        /*Search text by a phrase/keyword */
+/*        Search text by a phrase/keyword 
         core.on('getTexts', function (qu, callback) {
             var data = {};
             var query = {};
@@ -79,7 +214,7 @@ module.exports = function (core) {
             data.qu = qu;
             search(data,callback);
         }, "watchers");
-        
+        */
         /*Search rooms by description */
         core.on('getRooms', function (qu, callback) {
             var data = {};
@@ -88,7 +223,6 @@ module.exports = function (core) {
                 return callback();
             }
 
-            console.log("query string getThre: " + qu.q);
             data.type = 'room';
             query = { query: { match: { description: qu.q}}};
             data.body = query;
@@ -130,7 +264,6 @@ module.exports = function (core) {
             
             data.body = query;
             data.qu = qu;
-            console.log(query);
             searchThreads(data,callback); 
         }, "cache");
     } else {
@@ -172,7 +305,7 @@ function searchThreads(data, callback){
         timeout: searchTimeout,
         body:data.body
     };
-    //log(JSON.stringify(searchParams));
+
     client.search(searchParams).then (function (response) {
         var threads = [];
         
@@ -197,78 +330,11 @@ function init() {
     client = new es.Client({
         host: searchServer
     });
-}
-
-
-
-function indexTexts() {
-    var ids = updateThreads;
-            
-    updateThreads = [];
-
-    constructBulk(ids, function(postData) {
-        client.bulk(postData, function(err, resp) {
-            console.log(err, resp);
-        });
+    
+    searchDB.smembers("updateThread", function(err, threads) {
+        if(threads) {
+            updateThreads = updateThreads.concat(threads);
+            messageCount = updateThreads.length;
+        }
     });
-}
-
-
-/* couldnt think of a better name here. please feel free to change*/
-function generateNewThread(threadID, callback) {
-    var newThread = {};
-    newThread.id = threadID;
-
-    searchDB.get("thread:{{"+threadID+"}}", function(err, t) {
-        if(err || !t) return callback(null);
-
-        try{ t = JSON.parse(t); }
-        catch(e) { return callback(null); }
-
-        newThread.room = t.room;
-
-        searchDB.smembers("thread:{{"+threadID+"}}:texts", function(err, texts) {
-
-            if(err || !texts) return callback(null);
-
-            texts.forEach(function(e) {
-                var index = e.indexOf(':');
-                var id = e.substring(0, index);
-                var text = e.substring(index + 1);
-                newThread[id] = text;
-            });
-
-            callback(newThread);
-        });
-    });
-}
-
-
-
-function constructBulk(threadIds, callback) {
-    var threads={}, i=0, postData = {body: []}, l = threadIds.length;
-
-    threadIds.forEach(function(e) {
-        generateNewThread(e, function(t) {
-            i++;
-            if(t) threads[t.id] = t;
-            if(i>=l) processThreads();
-        });
-    });
-
-    function processThreads() {
-         Object.keys(threads).forEach(function(e) {
-            e = threads[e];
-
-            postData.body.push({
-                index: {
-                    _index: indexName,
-                    _type: 'threads',
-                    _id: e.id
-                }
-            });
-            postData.body.push(e);
-        });
-        callback(postData);
-    }
 }

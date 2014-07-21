@@ -5,7 +5,7 @@ var events = require('events');
 var core = new events.EventEmitter();
 var ObjectReader = require('../lib/ObjectReader.js');
 var or = new ObjectReader(core);
-//var dataQueue = require("./queue.js");
+var log = require('../lib/logger.js');
 var port = config.port;
 var client;
 var isConnected = false;
@@ -26,9 +26,9 @@ var server = net.createServer(function(c) { //'connection' listener
 		type: "init",
 		state: ircClient.getCurrentState()
 	});
-	
-	c.on('data', function(data) { 
-		handleIncomingData(data);	
+
+	c.on('data', function(data) {
+		handleIncomingData(data);
 	});
 	c.on('end', function() {
 		console.log("End Event");
@@ -103,17 +103,17 @@ core.on('object', function(obj) {
 			break;
 		case 'disconnectUser':
 			ircClient.disconnectUser(obj.sbNick);
-			
+
 	}
-	
+
 });
 
 
-function writeObject(obj) {//move this inside objectWriter 
+function writeObject(obj) {//move this inside objectWriter
 	var v = JSON.stringify(obj);
 	var r = v.length + " ";
 	r += v;
-	console.log("sending :", r);
+	log("sending :", r.substring(0, 50), "length", r.length);
 	client.write(r);
 }
 

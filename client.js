@@ -17,7 +17,7 @@ require('./lib/jquery.setCursorEnd.js');
 require('./lib/jquery.attrchange.js');
 require('./lib/jquery.velocity.min.js');
 require('./lib/format.js');
-require('./lib/swipe-events.js');
+//require('./lib/swipe-events.js');
 
 // client uis
 require('./email/email-client.js');
@@ -74,5 +74,6 @@ require('./ui/persona.js');
 require('./ui/message-menu.js');
 require('./ui/room-notifications.js');
 require('./ui/URLparser.js')();
+require('./ui/google-analytics.js');
 
 //# sourceMappingURL=libsb.js.map

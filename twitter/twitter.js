@@ -15,7 +15,6 @@ var core;
 var expireTime = 15 * 60;//expireTime for twitter API key...
 var timeout  = 1000 * 60 ;//search Interval
 var maxTweets = 1;//max tweets to search in timeout inteval
-var currentConnections = {};
 var pendingOauths = {};
 var oauthTimeout = 15 * 60 * 60;//15 min
 module.exports = function(coreObj) {
@@ -48,9 +47,15 @@ module.exports = function(coreObj) {
 
 function twitterParamsValidation(action, callback) {
     var room = action.room;
+	if(!action.room.identities) action.room.identities = [];
+	for (var i = 0;i < action.room.identities.length;) { //remove all twitter identities
+		if(/^twitter/.test(action.room.identities[i])) {
+			action.room.identities.splice(i, 1);
+		} else i++;
+	}
 	if (room.params.twitter) {
 		var t = room.params.twitter;
-        if(Object.keys(t).length === 0) return callback(); 
+        if(Object.keys(t).length === 0) return callback();
 		var b = typeof t.username === 'string' && typeof t.tags === 'string';
 		if (t.token) {
 			b = b && (typeof t.token === 'string');
@@ -126,12 +131,6 @@ function addTwitterTokens(room, callback) {
 	});
 }
 function addIdentity(room, username) {
-	if(!room.room.identities) room.room.identities = [];
-	for (var i = 0;i < room.room.identities;i++) {
-		if (room.room.identities[i].indexOf("twitter") === 0) {
-			return;
-		}
-	}
 	room.room.identities.push("twitter://" + room.room.id + ":" + username);
 }
 

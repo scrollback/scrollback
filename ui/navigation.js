@@ -160,7 +160,6 @@ libsb.on("navigate", function(state, next) {
 		if (state.theme && state.theme !== "light") {
 			params.push("theme=" + state.theme);
 		}
-
 		return path + (params.length ? "?" + params.join("&"): "");
 	}
 

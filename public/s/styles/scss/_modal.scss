@@ -4,7 +4,7 @@
 
 @include exports("modal") {
 	.backdrop {
-		@include fadein(.5s 1);
+		@extend %fadein;
 
 		display: block;
 		position: fixed;
@@ -17,7 +17,7 @@
 	}
 
 	.modal {
-		@include appear(.5s 1);
+		@extend %appear;
 
 		display: block;
 		position: fixed;
@@ -33,7 +33,7 @@
 		box-shadow: 0 0 10px 0 rgba(0,0,0,.3);
 
 		@media #{$mobile-break-point} {
-			@include slideup(.5s 1);
+			@include slideup;
 
 			bottom: 0;
 			left: 0;
