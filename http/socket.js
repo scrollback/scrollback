@@ -186,7 +186,6 @@ function storeAway(conn, away) {
         index = conn.listeningTo.indexOf(away.to);
         if(index>=0)conn.listeningTo.splice(index, 1);
     }
-//    console.log("LOG: "+ away.from +"sending away to :"+away.to);
 }
 
 exports.initServer = function (server) {
@@ -260,10 +259,12 @@ function emit (action, callback) {
         }
         return callback();
 	} else if(action.type == 'user') {
-		uConns[action.from].forEach(function(e) {
-            dispatch(e, action);
-        });
-        return callback();
+        if(uConns[action.from] && uConns[action.from].length) {
+            uConns[action.from].forEach(function(e) {
+                dispatch(e, action);
+            });
+        }
+		return callback();
 	}
     
     outAction = censorAction(action, "both");

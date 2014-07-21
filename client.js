@@ -5,10 +5,21 @@ var core = Object.create(require("./lib/emitter.js"));
 window.validate = require('./lib/validate.js');
 window.generate = require('./lib/generate');
 
+
+
 // libsb files
-require('./interface/interface-client')(core);
+var libsb = require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(core);
 require('./socket/socket-client')(core);
+
+//remove these. out of order
+require('./ui/appcache.js');
+require('./embed/embed-client.js')(libsb);
+require('./embed/embed-config.js');
+require('./ui/boot-manager.js')(libsb);
+
+
+/*
 
 require('./id-generator/id-generator-client.js')();
 require('./client-entityloader/client-entityloader.js')();
@@ -73,6 +84,11 @@ require('./ui/signup-area.js');
 require('./ui/persona.js');
 require('./ui/message-menu.js');
 require('./ui/room-notifications.js');
-require('./ui/URLparser.js')();
+//require('./ui/URLparser.js')();
+*/
+
+
+//Bootup related
+//require('./ui/boot-manager.js')(libsb);
 
 //# sourceMappingURL=libsb.js.map

@@ -12,6 +12,7 @@ $(function() {
 	});
 
 	$(document).on("click", ".reload-page", function() {
+        window.applicationCache.swapCache();
 		location.reload();
 	});
 });

@@ -1,8 +1,7 @@
 /* global window, generate */
 
 var underscore = require('underscore'),
-	core,
-	events = [ 'init-dn', 'back-dn', 'away-dn', 'join-dn', 'part-dn', 'admit-dn', 'expel-dn', 'text-up'];
+	core;
 
 var libsb = {
 		user: "",
@@ -10,7 +9,8 @@ var libsb = {
 		occupantOf: [],
 		memberOf: [],
 		isConnected: false,
-		isInited: false,
+		hasBooted: false,
+        
 		connect: connect,
 		disconnect: disconnect,
 		resource: generate.uid(),
@@ -61,6 +61,8 @@ module.exports = function(c){
 		}
 		next();
 	}, 10);
+    
+    return libsb;
 };
 
 function onConnect(data, next){

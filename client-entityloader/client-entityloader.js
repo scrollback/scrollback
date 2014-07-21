@@ -2,10 +2,17 @@
 var generate = require('../lib/generate.js');
 
 module.exports = function() {
-	libsb.on("navigate", function(state, next) {
+	libsb.on("navigate", function(state, n) {
+        function next() {
+            console.log("Calling next: ");
+            n();
+        }
 		if(state.roomName != state.old.roomName) {
+            console.log("-----getRooms");
 			libsb.getRooms({ref: state.roomName}, function(err, data) {
+                console.log("-----getRooms----- came back");
 				if(err) {
+                    console.log("ERROR: ", err, data);
 					throw err; // handle this better
 					return;
 				}
