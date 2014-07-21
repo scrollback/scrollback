@@ -117,7 +117,6 @@ libsb.on('back-dn', function (back, next) {
 	for (o in localStorage){
 		if(regex.test(o)){
 			cache[o] = loadArrayCache(o);
-			console.log("Loading from LocalStorage ....", o);
 		}	
 	}
 	// loading <roomName>_threads
@@ -191,7 +190,11 @@ module.exports = function (c) {
 		if (!cache[key].d.length) {
 			return next();
 		}
-
+		
+		if(query.time === null){
+			// query.time is null, have to decide how LS will handle this.
+			return next();
+		}
 		var results = cache[key].get('time', query);
 
 		if (!results || !results.length) {
@@ -249,9 +252,7 @@ module.exports = function (c) {
 				if (!cache.hasOwnProperty(lsThreadKey)) {
 					loadArrayCache(lsThreadKey);
 				}
-//				console.log("Putting into thread id ", query.thread, lsThreadKey);
 				cache[lsThreadKey].put('time', results);
-//				console.log("Cache is now ", cache[lsThreadKey]);
 				saveCache(lsThreadKey);
 			}
 
@@ -266,6 +267,11 @@ module.exports = function (c) {
 		}
 
 		if (!cache[key].d.length) {
+			return next();
+		}
+		
+		if(query.time === null){
+			// query.time is null, have to decide how LS will handle this.
 			return next();
 		}
 
@@ -394,9 +400,8 @@ module.exports = function (c) {
 
 		if (cache && cache[key]) {
 			cache[key].put('time', texts);
+			saveCache(key);
 		}
-
-		saveCache(key);
 
 		// putting the incoming text into each threadId cache it is a part of
 
@@ -412,9 +417,7 @@ module.exports = function (c) {
 				endtype: 'time',
 				time: window.backTimes[text.to]
 			});
-			//console.log("got text-dn putting to ", cache[key]);
 			cache[key].put('time', texts);
-			//console.log("Cache[key] is now ", cache[key]);
 			saveCache(key);
 		});
 
