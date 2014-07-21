@@ -1,5 +1,5 @@
-/* global libsb*/
-var generate = require('../lib/generate.js');
+/* global libsb, currentState*/
+// var generate = require('../lib/generate.js');
 
 module.exports = function() {
 	libsb.on("navigate", function(state, next) {
@@ -7,7 +7,6 @@ module.exports = function() {
 			libsb.getRooms({ref: state.roomName}, function(err, data) {
 				if(err) {
 					throw err; // handle this better
-					return;
 				}
 				if(!data || !data.results || !data.results.length) {
 					state.room = null;

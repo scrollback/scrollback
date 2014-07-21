@@ -124,6 +124,7 @@ module.exports = function(core) {
 		if (!(action.to || action.q)) {
 			return callback(new Error("INVALID_ROOM"));
 		}
+		if(!action.time) action.time = new Date().getTime();
 		return sessionValidation(action, callback);
 	}, "validation");
 	core.on("getTexts", function(action, callback) {
