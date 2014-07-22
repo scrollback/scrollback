@@ -20,16 +20,17 @@ libsb.on("config-show", function(tabs, next) {
     var $twitterTags = formField("Hashtags", "multientry", "twitter-hashtags", twitter.tags),
         $twitterButton = $("<a>").addClass("button twitter").attr("id", "twitter-account"),
         $twitterAccount = formField("", "", "twitter-text", $twitterButton),
-        $twitterMessage = formField("", "", "twitter-message", $("<div>").attr("id", "twitter-message")),
+        $twitterMsg = formField("", "info", "twitter-message-text", ""),
+        $twitterString = $twitterMsg.find("#twitter-message-text"),
         updateFields = function() {
             if (twitterUsername) {
                 $twitterButton.text("Change account");
                 $twitterAccount.find(".settings-label").text("Signed in as " + twitterUsername);
-                $twitterMessage.find(".settings-action").empty();
+                $twitterString.empty();
             } else {
                 $twitterButton.text("Sign in to Twitter");
                 $twitterAccount.find(".settings-label").text("Not signed in");
-                $twitterMessage.find(".settings-action").text("Please sign in to Twitter to watch hashtags");
+                $twitterString.text("Please sign in to Twitter to watch hashtags");
             }
         };
 
@@ -59,7 +60,7 @@ libsb.on("config-show", function(tabs, next) {
 	$div.append(
         $twitterTags,
         $twitterAccount,
-        $twitterMessage
+        $twitterMsg
 	);
 
 	tabs.twitter = {

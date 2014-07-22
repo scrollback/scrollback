@@ -1439,7 +1439,11 @@ body {
     display: block;
     padding: .25em;
 
-    @media #{$screenxx} { display: table-cell; }
+    @media #{$screenxx} {
+        display: table-cell;
+        min-width: 30%;
+        max-width: 50%;
+    }
 }
 
 .settings-label {

@@ -1,6 +1,5 @@
 var config = require('../config.js');
 var log = require("../lib/logger.js");
-var db = require('../lib/mysql.js');
 var send = require('./sendEmail.js');
 var fs=require("fs"),jade = require("jade");
 var redis = require('../lib/redisProxy.js').select(config.redisDB.email);
@@ -96,7 +95,7 @@ function trySendingToUsers() {
 						return;
 					}
 					if(!following.results || !following.results.length) {
-						log("username ", username ," is not following any rooms ");	
+						log("username ", username ," is not following any rooms ");
 						return;
 					}
 					rooms = [];
@@ -165,7 +164,7 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 				});
 				log("mentions returned from redis ", room ,mentions, lastSent);
 				var l = "email:label:" + room + ":labels";
-	
+
 				redis.zrangebyscore(l, lastSent, "+inf",  function(err,labels) {
 					if(emailConfig.debug) log("labels returned from redis" , labels);
 					roomsObj.labels = [];
@@ -500,7 +499,7 @@ function sendPeriodicMails(){
 	core.emit("getUsers", {timezone: {gte: start2, lte: end2}, session: internalSession}, function(err, data) {
 		processResults(err, data);
 	});
-	
-	
-	
+
+
+
 }

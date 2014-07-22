@@ -86,20 +86,27 @@ module.exports = function(c) {
 
 function userHandler(action, callback) {
 	core.emit("getUsers", {ref: "me", session: action.session}, function(err, data){
+		function done() {
+			if(action.user.identities) action.user.picture = 'https://gravatar.com/avatar/' +	crypto.createHash('md5').update(action.user.identities[0].substring(7)).digest('hex') + '/?d=monsterid';
+			else action.user.picture = 'https://gravatar.com/avatar/default';
+			action.user.description = action.user.description || "";
+			callback();
+		}
 		if(err || !data || !data.results || !data.results.length) {
 			return callback(new Error("USER_NOT_INITED"));
 		}else {
 			action.from = data.results[0].id;
+			if(/^guest-/.test(action.from)) {
+				action.old = {};
+				return done();
+			}
 			core.emit("getUsers", {ref: action.from, session: internalSession}, function(err, data){
 				if(err || !data || !data.results || !data.results.length) {
 					action.old = {};
 				}else {
 					action.old = data.results[0];
 				}
-				if(action.user.identities) action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0].substring(7)).digest('hex') + '/?d=monsterid';
-				else action.user.picture = 'https://gravatar.com/avatar/default';
-				action.user.description = action.user.description || "";
-				callback();
+				done();
 			});
 		}
 	});

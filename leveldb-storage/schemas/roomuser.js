@@ -49,7 +49,7 @@ module.exports = function (types) {
 			req.eq = [];
 			if(query.hasMember) {
 				req.by = "hasMember";
-				
+
 				req.eq.push(query.hasMember);
 				req.map = function(element, push) {
 					if(element.role == "none") return false;
@@ -95,11 +95,10 @@ module.exports = function (types) {
 				identities: [],
 				params: {}
 			};
-			
+
             for(i in data.params) {
                 if(data.params.hasOwnProperty(i)) {
-                    if(data.params[i].error) newRoom.params[i] = action.old.params[i];
-                    else newRoom.params[i] = data.params[i];
+                    newRoom.params[i] = data.params[i];
                 }
             }
 			if (data.identities) {
@@ -122,7 +121,7 @@ module.exports = function (types) {
 						}, function(err) {
 							cb(err);
 						});
-						
+
 					}else {
                         log(err);
 						cb(err);

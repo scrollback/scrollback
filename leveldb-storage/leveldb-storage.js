@@ -8,7 +8,6 @@ module.exports = function(core) {
 	var roomuser = require("./schemas/roomuser.js")(types);
 	var joinpart = require("./schemas/joinpart.js")(types);
 	var admitexpel = require("./schemas/admitexpel.js")(types);
-	var awayback = require("./schemas/awayback.js")(types);
 	var edit = require("./schemas/edit.js")(types);
 	var threads = require("./schemas/thread.js")(types);
        
@@ -25,9 +24,6 @@ module.exports = function(core) {
 			return callback();
 		});
 	}, "modifier");
-
-	core.on('away', awayback.put, "storage");
-	core.on('back', awayback.put, "storage");
 
 	core.on('text', texts.put, 'storage');
 
@@ -60,7 +56,6 @@ module.exports = function(core) {
 	}, 'storage');
 
 	core.on('edit', edit.put,'storage');
-	core.on('messages', texts.get, 'leveldb');
 	core.on('getUsers', roomuser.getUsers, 'storage');
 	core.on('getRooms', roomuser.getRooms, 'storage');
 	core.on('getThreads',threads.get, 'storage');

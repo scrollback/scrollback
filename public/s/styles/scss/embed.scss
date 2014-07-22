@@ -1,16 +1,20 @@
 @import "functions";
 
-$bar-height: 49px;
+$widget-height: 400px !default;
+$widget-width: 380px !default;
+$offset-right: 30px !default;
+$bar-height: 49px !default;
 
 .scrollback-stream {
 	@include prefix(box-shadow, 0 0 5px 1px rgba(0,0,0,.1));
 	@include prefix(transition, .15s ease);
+	@include prefix(transform, translate3d(0,0,0));
 
 	position: fixed;
 	bottom: 0;
-	right: 30px;
-	height: 400px;
-	width: 380px;
+	right: $offset-right;
+	height: $widget-height;
+	width: $widget-width;
 	max-height: 100%;
 	max-width: 100%;
 	background: transparent;
@@ -19,5 +23,7 @@ $bar-height: 49px;
 	border-bottom: none;
 	z-index: 999;
 
-	&.scrollback-minimized { height: $bar-height }
+	&.scrollback-minimized { bottom: -($widget-height - $bar-height); }
+
+	@media only screen and (max-width: $widget-width + ($offset-right * 2)) { right: 0; }
 }

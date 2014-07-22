@@ -1,6 +1,7 @@
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
 var log = require("../lib/logger.js");
+
 module.exports = function(clientEmitter, client, callbacks) {
 
 	function connectUser(roomId, user) {
@@ -85,7 +86,6 @@ module.exports = function(clientEmitter, client, callbacks) {
 			};
 		} else callback("ERR_NOT_CONNECTED");
 	}
-	
 	
 	function getRequest(req, res, next) {
 		var path = req.path.substring(7);// "/r/irc/"

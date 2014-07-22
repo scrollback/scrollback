@@ -264,7 +264,7 @@ function emit (action, callback) {
                 dispatch(e, action);
             });
         }
-		return callback();
+        return callback();
 	}
     
     outAction = censorAction(action, "both");

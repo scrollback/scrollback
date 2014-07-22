@@ -23,6 +23,15 @@ require('./client-init/client-init.js')(libsb);
 require('./id-generator/id-generator-client.js')();
 require('./client-entityloader/client-entityloader.js')();
 
+<<<<<<< HEAD
+=======
+require('./lib/jquery.setCursorEnd.js');
+require('./lib/jquery.attrchange.js');
+require('./lib/jquery.velocity.min.js');
+require('./lib/format.js');
+//require('./lib/swipe-events.js');
+
+>>>>>>> master
 // client uis
 require('./email/email-client.js');
 require('./http/notifications-client.js');
@@ -76,5 +85,10 @@ require('./ui/signup-area.js');
 require('./ui/persona.js');
 require('./ui/message-menu.js');
 require('./ui/room-notifications.js');
+<<<<<<< HEAD
+=======
+require('./ui/URLparser.js')();
+require('./ui/google-analytics.js');
+>>>>>>> master
 
 //# sourceMappingURL=libsb.js.map
