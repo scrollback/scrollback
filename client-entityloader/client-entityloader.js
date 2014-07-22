@@ -1,7 +1,10 @@
-/* global libsb*/
-var generate = require('../lib/generate.js');
+/* jshint browser: true */
+/* global window*/
 
-module.exports = function() {
+
+var currentState =  window.currentState;
+
+module.exports = function(libsb) {
 	libsb.on("navigate", function(state, n) {
         
         function next() {
@@ -15,7 +18,6 @@ module.exports = function() {
 				if(err) {
                     console.log("ERROR: ", err, data);
 					throw err; // handle this better
-					return;
 				}
 				if(!data || !data.results || !data.results.length) {
 					state.room = null;
@@ -31,5 +33,5 @@ module.exports = function() {
             state.room = currentState.room;
 			next();
 		}
-	},"loader");
+	}, 999);
 };

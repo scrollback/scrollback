@@ -118,19 +118,16 @@ module.exports = function (libsb) {
             next();
         }
 
-        if (state.source !== "boot") {
-            if (!libsb.hasBooted) return next(new Error("BOOT_NOT_COMPLETE"));
-            else processNavigate();
-        } else {
+        if (state.source == "boot") {
             if (verificationStatus) {
-                processNavigate();
-            } else {
                 queue.push(function () {
                     processNavigate();
                 });
             }
+        } else {
+            processNavigate();
         }
-    }, 500);
+    }, 997);
 
 
     libsb.on("init-up", function (init, next) {
@@ -142,7 +139,7 @@ module.exports = function (libsb) {
             };
             next();
         }
-        if (verificationStatus) processInit();
+        if (libsb.hasBooted) processInit();
         else queue.push(processInit);
     }, 500);
 };

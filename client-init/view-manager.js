@@ -6,14 +6,6 @@ var currentState = window.currentState;
 
 // On navigation, set the body classes.
 function addBodyClass(state, next) {
-   /* Not sure this was added.
-        if (!state.time && !state.roomName && !state.thread) {
-            if (!state.time && state.old.time) {
-                state.time = state.old.time;
-            }
-        }
-    */
-
     if (state.old && state.theme !== state.old.theme) {
         if (state.theme) {
             if(state.old.theme) $("body").removeClass("theme-" + state.old.theme);

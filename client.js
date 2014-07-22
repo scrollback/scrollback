@@ -2,33 +2,26 @@
 
 var core = Object.create(require("./lib/emitter.js"));
 
-window.validate = require('./lib/validate.js');
-window.generate = require('./lib/generate');
-
-
+//JS libraries
+require('./lib/jquery.setCursorEnd.js');
+require('./lib/jquery.attrchange.js');
+require('./lib/jquery.velocity.min.js');
+require('./lib/format.js');
+require('./lib/swipe-events.js');
 
 // libsb files
 var libsb = require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(core);
 require('./socket/socket-client')(core);
 
-//remove these. out of order
-require('./ui/appcache.js');
-require('./embed/embed-client.js')(libsb);
-require('./embed/embed-config.js');
-require('./ui/boot-manager.js')(libsb);
 
 
-/*
+
+//Bootup related
+require('./client-init/client-init.js')(libsb);
 
 require('./id-generator/id-generator-client.js')();
 require('./client-entityloader/client-entityloader.js')();
-
-require('./lib/jquery.setCursorEnd.js');
-require('./lib/jquery.attrchange.js');
-require('./lib/jquery.velocity.min.js');
-require('./lib/format.js');
-require('./lib/swipe-events.js');
 
 // client uis
 require('./email/email-client.js');
@@ -56,7 +49,6 @@ require('./ui/load-indicator.js');
 require('./ui/appcache.js');
 require('./ui/infinite.js');
 require('./ui/hide-scroll.js');
-require('./ui/navigation.js');
 require('./ui/error-notify.js');
 require('./ui/columns.js');
 require('./ui/chat.js');
@@ -84,11 +76,5 @@ require('./ui/signup-area.js');
 require('./ui/persona.js');
 require('./ui/message-menu.js');
 require('./ui/room-notifications.js');
-//require('./ui/URLparser.js')();
-*/
-
-
-//Bootup related
-//require('./ui/boot-manager.js')(libsb);
 
 //# sourceMappingURL=libsb.js.map
