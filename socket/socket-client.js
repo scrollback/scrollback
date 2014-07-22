@@ -94,7 +94,7 @@ function sendQuery(query, next){
 
 	query.session = libsb.session;
 	query.resource = libsb.resource;
-	
+
 	safeSend(JSON.stringify(query));
 
 	pendingQueries[query.id] = next;
@@ -134,7 +134,7 @@ function returnPending(action, next) {
     return function(newAction) {
         var i;
         if(newAction.type === "error") return next(newAction);
-        
+
         for(i in action) delete action[i];
         for(i in newAction) {
             if(newAction.hasOwnProperty(i)) action[i] = newAction[i];
@@ -193,7 +193,7 @@ function sendEdit(edit, next){
 }
 
 function sendInit(init, next) {
-    var action, newAction = {type: 'init', to: 'me', id: init.id};
+    var action, newAction = {type: 'init', to: 'me', id: init.id, origin: init.origin};
     newAction.session = init.session;
 
     if(init.auth) newAction.auth = init.auth;
