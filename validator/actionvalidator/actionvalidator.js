@@ -33,6 +33,7 @@ module.exports = function(core) {
 		},
 		text: function(action, callback) {
 			var mentionMap = {};
+			action.text = action.text.trim();
 			if(!action.text) return callback(new Error("TEXT_MISSING"));
 
 			if(/^\//.test(action.text)) {

@@ -86,8 +86,8 @@ module.exports = function(c) {
 
 function userHandler(action, callback) {
 	core.emit("getUsers", {ref: "me", session: action.session}, function(err, data){
-		function cb() {
-			if(action.user.identities) action.user.picture = 'https://gravatr.com/avatar/' + 				crypto.createHash('md5').update(action.user.identities[0].substring(7)).digest('hex') + '/?d=monsterid';
+		function done() {
+			if(action.user.identities) action.user.picture = 'https://gravatar.com/avatar/' +	crypto.createHash('md5').update(action.user.identities[0].substring(7)).digest('hex') + '/?d=monsterid';
 			else action.user.picture = 'https://gravatar.com/avatar/default';
 			action.user.description = action.user.description || "";
 			callback();
@@ -98,7 +98,7 @@ function userHandler(action, callback) {
 			action.from = data.results[0].id;
 			if(/^guest-/.test(action.from)) {
 				action.old = {};
-				return cb();
+				return done();
 			}
 			core.emit("getUsers", {ref: action.from, session: internalSession}, function(err, data){
 				if(err || !data || !data.results || !data.results.length) {
@@ -106,7 +106,7 @@ function userHandler(action, callback) {
 				}else {
 					action.old = data.results[0];
 				}
-				cb();
+				done();
 			});
 		}
 	});
