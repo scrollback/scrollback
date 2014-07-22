@@ -134,6 +134,7 @@ function receiveMessage(event) {
 }
 
 function returnPending(action, next) {
+
 	return function (newAction) {
 		var i;
 		if (newAction.type === "error") return next(newAction);
@@ -236,9 +237,11 @@ function sendInit(init, next) {
 	var action, newAction = {
 		type: 'init',
 		to: 'me',
-		id: init.id
+		id: init.id,
+		origin: init.origin
 	};
 	newAction.session = init.session;
+
 
 	if (init.auth) newAction.auth = init.auth;
 	if (init.suggestedNick) newAction.suggestedNick = init.suggestedNick;

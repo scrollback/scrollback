@@ -55,10 +55,12 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 			} else { //room config changed
 				var oldIrc = action.old.params.irc;
 				if (oldIrc.server === newIrc.server && oldIrc.channel === newIrc.channel) { //server channel same.
+					newIrc.error = oldIrc.error;
+					if (newIrc.error) removeIrcIdentity(room);
 					if (oldIrc.enabled !== newIrc.enabled) {
 						if (newIrc.enabled) {
 							delete firstMessage[room.id];
-							ircUtils.addNewBot(room, done);
+							return ircUtils.addNewBot(room, done);
 						} else {
 							delete firstMessage[room.id];
 							ircUtils.disconnectBot(room.id, function () {
@@ -66,8 +68,6 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 							});
 						}
 					}
-					newIrc.error = oldIrc.error;
-					if (newIrc.error) removeIrcIdentity(room);
 					return callback();
 
 				} else if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel) {

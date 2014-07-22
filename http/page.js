@@ -1,13 +1,13 @@
 /*
-	Scrollback: Beautiful text chat for your community. 
+	Scrollback: Beautiful text chat for your community.
 	Copyright (c) 2014 Askabt Pte. Ltd.
-	
-This program is free software: you can redistribute it and/or modify it 
+
+This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any 
+the Free Software Foundation, either version 3 of the License, or any
 later version.
 
-This program is distributed in the hope that it will be useful, but 
+This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
 License for more details.
@@ -19,36 +19,29 @@ Boston, MA 02111-1307 USA.
 */
 
 var config = require('../config.js'), core,
-log = require("../lib/logger.js"),
-fs = require("fs"),core,
-code = fs.readFileSync(__dirname + "/../public/client.min.js",'utf8');
-var validateRoom = require('../lib/validate.js');
-var crypto = require('crypto');
-var db = require("../lib/mysql.js");
-var httpConfigResponseObject;
-var scriptResponseObject;
-var configHttp;
+	fs = require("fs"),core;
 
-exports.init = function(app, coreObject) { 
+
+exports.init = function(app, coreObject) {
 	core = coreObject;
 
-    app.get('/t/*', function(req, res, next) {
-        fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data){
-           res.end(data);
-           next();
-        });
-    });
+	app.get('/t/*', function(req, res, next) {
+		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data){
+			res.end(data);
+			next();
+		});
+	});
 
-    app.get("/*", function(req, res, next){
-        if(/^\/t\//.test(req.path)) return next();
-        if(/^\/s\//.test(req.path)) {console.log("static"); return next();}
-        
-        if(!req.secure) {
-            queryString  = req._parsedUrl.search?req._parsedUrl.search:"";
-            return res.redirect(307, 'https://'+config.http.host+req.path+queryString);
-        }
-        fs.readFile(__dirname + "/../public/client.html", "utf8", function(err, data){
-           res.end(data);
-        });
-    });
+	app.get("/*", function(req, res, next){
+		if(/^\/t\//.test(req.path)) return next();
+		if(/^\/s\//.test(req.path)) {console.log("static"); return next();}
+
+		if(!req.secure) {
+			var queryString  = req._parsedUrl.search ? req._parsedUrl.search : "";
+			return res.redirect(307, 'https://' + config.http.host + req.path + queryString);
+		}
+		fs.readFile(__dirname + "/../public/client.html", "utf8", function(err, data){
+			res.end(data);
+		});
+	});
 };
