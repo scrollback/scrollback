@@ -9,7 +9,7 @@ $(function () {
 		roomName = "",
 		thread = '',
 		time = null;
-
+	
 	$logs.infinite({
 		scrollSpace: 2000,
 		fillSpace: 500,
@@ -205,8 +205,9 @@ $(function () {
 		top = $(this).scrollTop();
 
 	$logs.on("scroll", function () {
+		
 		var cur_top = $logs.scrollTop();
-
+		
 		if (top < cur_top) {
 			$("body").removeClass("scroll-up").addClass("scroll-down");
 		} else {
