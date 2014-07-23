@@ -47,7 +47,6 @@ module.exports = function(coreObj) {
 
 function twitterParamsValidation(action, callback) {
     var room = action.room;
-	if(!action.room.identities) action.room.identities = [];
 	for (var i = 0;i < action.room.identities.length;) { //remove all twitter identities
 		if(/^twitter/.test(action.room.identities[i])) {
 			action.room.identities.splice(i, 1);
