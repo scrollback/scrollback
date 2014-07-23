@@ -112,12 +112,12 @@ libsb.on('back-dn', function (back, next) {
 	var thKey = generateLSKey(back.to, 'threads');
 	var roomName = back.to;
 	var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
-	
+
 	// load all ArrayCaches with <roomName>*_texts
 	for (o in localStorage){
 		if(regex.test(o)){
 			cache[o] = loadArrayCache(o);
-		}	
+		}
 	}
 	// loading <roomName>_threads
 	cache[thKey] = loadArrayCache(thKey);
@@ -177,7 +177,7 @@ module.exports = function (c) {
 	core.on('getTexts', function (query, next) {
 		// getTextsBefore
 		var key;
-		
+
 		if (query.thread) {
 			// creating individual cache entries for queries with the thread property
 			key = generateLSKey(query.to, query.thread, 'texts');
@@ -191,14 +191,14 @@ module.exports = function (c) {
 		if (!cache[key].d.length) {
 			return next();
 		}
-		
+
 		if(query.time === null){
 			// query.time is null, have to decide how LS will handle this.
 			return next();
 		}
-		
+
 		if(query.thread) return next();
-		
+
 		var results = cache[key].get('time', query);
 
 		if (!results || !results.length) {
@@ -251,7 +251,7 @@ module.exports = function (c) {
 			cache[lskey].put('time', results);
 
 			if (query.thread) {
-				// save into thread cache as well 
+				// save into thread cache as well
 				var lsThreadKey = generateLSKey(query.to, query.thread, 'texts');
 				if (!cache.hasOwnProperty(lsThreadKey)) {
 					loadArrayCache(lsThreadKey);
@@ -273,7 +273,7 @@ module.exports = function (c) {
 		if (!cache[key].d.length) {
 			return next();
 		}
-		
+
 		if(query.time === null){
 			// query.time is null, have to decide how LS will handle this.
 			return next();
@@ -332,7 +332,7 @@ module.exports = function (c) {
 			saveCache(lskey);
 		}
 		next();
-	}, 8); // runs after socket 
+	}, 8); // runs after socket
 
 	core.on('getRooms', function (query, next) {
 
@@ -409,7 +409,7 @@ module.exports = function (c) {
 
 		// putting the incoming text into each threadId cache it is a part of
 
-		text.threads.forEach(function (threadObj) {
+		if(text.threads) text.threads.forEach(function (threadObj) {
 			texts = [text];
 			key = generateLSKey(text.to, threadObj.id, 'texts');
 
