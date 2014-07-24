@@ -1,5 +1,5 @@
 /* global localStorage */
-/* global $, libsb, location, window, timeoutMapping */
+/* global $, libsb, location, window */
 var generate = require('../lib/generate');
 var core;
 var messageListener = false;
@@ -8,7 +8,7 @@ var path = location.pathname;
 
 var cacheOp = Object.create(require('./cacheOperations'));
 
-cacheOp.updateLS(); // updates client's LS version to current
+cacheOp.update(); // updates client's LS version to current
 cacheOp.load(); // initial load of all LS entries apart from ArrayCaches
 
 module.exports = function (c) {
@@ -29,28 +29,33 @@ module.exports = function (c) {
 		// load all ArrayCaches with <roomName>*_texts
 		for (o in localStorage) {
 			if (regex.test(o)) {
-				cacheOp.cache[o] = cacheOp.loadArrayCache(o);
+				cacheOp.loadArrayCache(o);
 			}
 		}
 		// loading <roomName>_threads
-		cacheOp.cache[thKey] = cacheOp.loadArrayCache(thKey);
+		cacheOp.loadArrayCache(thKey);
+		
 		var items = cacheOp.cache[key].d;
 		var lastMsg = items[items.length - 1];
-		var msg = {
-			type: 'result-end',
-			endtype: 'time',
-			time: lastMsg ? lastMsg.time : null
-		};
-		if (lastMsg && lastMsg.type !== "result-end") {
-			cacheOp.cache[key].d.push(msg);
-		}
-		cacheOp.saveCache(key);
+		var time = lastMsg ? lastMsg.time : null;
+//		var msg = {
+//			type: 'result-end',
+//			endtype: 'time',
+//			time: lastMsg ? lastMsg.time : null
+//		};
+//		if (lastMsg && lastMsg.type !== "result-end") {
+//			cacheOp.cache[key].d.push(msg);
+//		}
+//		cacheOp.saveCache(key);
+		
+		cacheOp.end('time', key, time);
 
 		for (o in cacheOp.cache) {
 			if (regex.test(o)) {
-				var lastItem = cacheOp.cache[o][cacheOp.cache[o].length - 1];
-				if (lastItem && lastItem.type !== 'result-end') cacheOp.cache[o].d.push('time', msg);
-				cacheOp.saveCache(o);
+				cacheOp.end('time', o, time);
+//				var lastItem = cacheOp.cache[o][cacheOp.cache[o].length - 1];
+//				if (lastItem && lastItem.type !== 'result-end') cacheOp.cache[o].d.push('time', msg);
+//				cacheOp.saveCache(o);
 			}
 		}
 		next();
@@ -59,24 +64,27 @@ module.exports = function (c) {
 	core.on('back-dn', function (back, next) {
 		// store a result-start in ArrayCache, to indicate the beginning of the current stream of messages from the user
 		if (back.from !== libsb.user.id) return next();
-		var msg = {
-			type: 'result-start',
-			endtype: 'time',
-			time: back.time
-		};
+//		var msg = {
+//			type: 'result-start',
+//			endtype: 'time',
+//			time: back.time
+//		};
 		var key = cacheOp.generateLSKey(back.to, 'texts');
-		if (cacheOp.cache && cacheOp.cache.hasOwnProperty(key)) {
-			cacheOp.cache[key].d.push(msg);
-		}
-		cacheOp.saveCache(key);
-
+//		if (cacheOp.cache && cacheOp.cache.hasOwnProperty(key)) {
+//			cacheOp.cache[key].d.push(msg);
+//		}
+//		cacheOp.saveCache(key);
+		
+		cacheOp.start('time', key, back.time);
+		
 		var roomName = back.to;
 		var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
 		for (var o in cacheOp.cache) {
 			if (regex.test(o)) {
-				var lastItem = cacheOp.cache[o][cacheOp.cache[o].length - 1];
-				if (lastItem && lastItem.type !== 'result-start') cacheOp.cache[o].d.push('time', msg);
-				cacheOp.saveCache(o);
+//				var lastItem = cacheOp.cache[o][cacheOp.cache[o].length - 1];
+//				if (lastItem && lastItem.type !== 'result-start') cacheOp.cache[o].d.push('time', msg);
+//				cacheOp.saveCache(o);
+				cacheOp.start('time', o, back.time);
 			}
 		}
 
@@ -94,7 +102,7 @@ module.exports = function (c) {
 			key = cacheOp.generateLSKey(query.to, 'texts');
 		}
 		if (!cacheOp.cache.hasOwnProperty(key)) {
-			cacheOp.cache[key] = cacheOp.loadArrayCache(key);
+			cacheOp.loadArrayCache(key);
 		}
 
 		if (!cacheOp.cache[key].d.length) {
@@ -176,7 +184,7 @@ module.exports = function (c) {
 	core.on('getThreads', function (query, next) {
 		var key = cacheOp.generateLSKey(query.to, 'threads');
 		if (!cacheOp.cache.hasOwnProperty(key)) {
-			cacheOp.cache[key] = cacheOp.loadArrayCache(key);
+			cacheOp.loadArrayCache(key);
 		}
 
 		if (!cacheOp.cache[key].d.length) {
@@ -263,21 +271,6 @@ module.exports = function (c) {
 
 	}, 400); // run before socket
 
-	function delRoomTimeOut(roomId) {
-		/*
-		this function deletes a saved room object from the cache every 'n' mintues
-		*/
-		var minutes = 10; // 10 minutes timeout
-
-		clearTimeout(timeoutMapping[roomId]);
-
-		timeoutMapping[roomId] = setTimeout(function () {
-			if (cacheOp.cache && cacheOp.cache.rooms) {
-				delete cacheOp.cache.rooms[roomId];
-			}
-		}, minutes * 60 * 1000);
-	}
-
 	core.on('getRooms', function (query, next) {
 
 		if (!query.ref) {
@@ -291,7 +284,7 @@ module.exports = function (c) {
 		if (query.results) {
 			query.results.forEach(function (room) {
 				rooms[room.id] = room;
-				delRoomTimeOut(room.id);
+				cacheOp.delRoomTimeOut(room.id);
 			});
 		}
 
@@ -322,7 +315,7 @@ module.exports = function (c) {
 			texts = [text];
 			key = cacheOp.generateLSKey(text.to, threadObj.id, 'texts');
 
-			cacheOp.cache[key] = cacheOp.loadArrayCache(key);
+			cacheOp.loadArrayCache(key);
 			lastItem = cacheOp.cache[key].d[cacheOp.cache[key].length - 1];
 
 			if (!lastItem || lastItem.type === 'result-end') texts.unshift({
@@ -342,7 +335,7 @@ module.exports = function (c) {
 		if (cacheOp.cache) {
 			cacheOp.cache.rooms = cacheOp.cache.rooms ? cacheOp.cache.rooms : {};
 			cacheOp.cache.rooms[roomObj.id] = roomObj;
-			delRoomTimeOut(roomObj.id);
+			cacheOp.delRoomTimeOut(roomObj.id);
 		}
 		next();
 	}, 500);
@@ -358,12 +351,12 @@ module.exports = function (c) {
 
 		init.occupantOf.forEach(function (room) {
 			cacheOp.cache.rooms[room.id] = room;
-			delRoomTimeOut(room.id);
+			cacheOp.delRoomTimeOut(room.id);
 		});
 
 		init.memberOf.forEach(function (room) {
 			cacheOp.cache.rooms[room.id] = room;
-			delRoomTimeOut(room.id);
+			cacheOp.delRoomTimeOut(room.id);
 		});
 
 		cacheOp.save();
@@ -373,25 +366,27 @@ module.exports = function (c) {
 	core.on('away-dn', function (away, next) {
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
 		if (away.from !== libsb.user.id) return next();
-		var msg = {
-			type: 'result-end',
-			endtype: 'time',
-			time: away.time
-		};
+//		var msg = {
+//			type: 'result-end',
+//			endtype: 'time',
+//			time: away.time
+//		};
 		var key = cacheOp.generateLSKey(away.to, 'texts');
-		if (cacheOp.cache && cacheOp.cache[key]) {
-			cacheOp.cache[key].d.push('time', msg);
-			cacheOp.saveCache(key);
-		}
+//		if (cacheOp.cache && cacheOp.cache[key]) {
+//			cacheOp.cache[key].d.push('time', msg);
+//			cacheOp.saveCache(key);
+//		}
+		cacheOp.end('time', key, away.time);
 		// soln below is generic for all subthreads in a room.
 
 		var roomName = away.to;
 		var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
 		for (var o in cacheOp.cache) {
 			if (regex.test(o)) {
-				var lastItem = cacheOp.cache[o][cacheOp.cache[o].length - 1];
-				if (lastItem && lastItem.type !== 'result-end') cacheOp.cache[o].d.push('time', msg);
-				cacheOp.saveCache(o);
+//				var lastItem = cacheOp.cache[o][cacheOp.cache[o].length - 1];
+//				if (lastItem && lastItem.type !== 'result-end') cacheOp.cache[o].d.push('time', msg);
+//				cacheOp.saveCache(o);
+				cacheOp.end('time', o, away.time);
 			}
 		}
 

@@ -1,10 +1,8 @@
 /* jshint browser: true */
 
 /*
-	Abstracts out the standard operations on the cache.
+	Abstracts out the cache & standard operations on it.
 */
-
-var LRU = {};
 
 window.timeoutMapping = {};
 window.backTimes = {};
@@ -14,18 +12,19 @@ var config = require('../client-config.js');
 
 module.exports = {
 	cache: {},
+	LRU: {},
 	deleteLRU: function deleteLRU() {
 		// deletes the least recently used entry from LocalStorage
 		var leastTime = Infinity,
 			leastEntry;
-		for (var i in LRU) {
-			if (LRU[i] < leastTime) {
-				leastTime = LRU[i];
+		for (var i in this.LRU) {
+			if (this.LRU[i] < leastTime) {
+				leastTime = this.LRU[i];
 				leastEntry = i;
 			}
 		}
 		if (leastTime != Infinity) {
-			delete LRU[leastEntry];
+			delete this.LRU[leastEntry];
 			delete localStorage[leastEntry];
 		}
 	},
@@ -39,11 +38,13 @@ module.exports = {
 				this.saveCache(key);
 			}
 		}
-		LRU[key] = new Date().getTime();
+		this.LRU[key] = new Date().getTime();
 		this.save();
 	},
 	loadArrayCache: function (key) {
 		// loads an ArrayCache from LocalStorage.
+		if (this.cache.hasOwnProperty(key)) return;
+
 		var texts;
 		if (localStorage.hasOwnProperty(key)) {
 			try {
@@ -51,9 +52,9 @@ module.exports = {
 			} catch (e) {
 				texts = [];
 			}
-			return (new ArrayCache(texts));
+			this.cache[key] = new ArrayCache(texts);
 		} else {
-			return (new ArrayCache([]));
+			this.cache[key] = new ArrayCache([]);
 		}
 	},
 	generateLSKey: function () {
@@ -70,7 +71,7 @@ module.exports = {
 		//saves user, session, LRU, rooms, occupantOf, memberOf to LocalStorage
 		localStorage.user = JSON.stringify(this.cache.user);
 		localStorage.session = this.cache.session;
-		localStorage.LRU = JSON.stringify(LRU);
+		localStorage.LRU = JSON.stringify(this.LRU);
 		localStorage.occupantOf = JSON.stringify(this.cache.occupantOf);
 		localStorage.memberOf = JSON.stringify(this.cache.memberOf);
 		this.load();
@@ -79,7 +80,7 @@ module.exports = {
 		try {
 			this.cache.user = JSON.parse(localStorage.user);
 			this.cache.session = localStorage.session;
-			LRU = JSON.parse(localStorage.LRU);
+			this.LRU = JSON.parse(localStorage.LRU);
 			this.cache.occupantOf = JSON.parse(localStorage.occupantOf);
 			this.cache.memberOf = JSON.parse(localStorage.memberOf);
 		} catch (e) {
@@ -87,7 +88,7 @@ module.exports = {
 			// which is a valid scenario, execution must continue.
 		}
 	},
-	updateLS: function () {
+	update: function () {
 		var version = 'version' + config.localStorage.version;
 		if (!localStorage.hasOwnProperty(version)) {
 			console.log("Old version of LocalStorage present, clearing ...");
@@ -110,5 +111,46 @@ module.exports = {
 				delete this.cache.rooms[roomId];
 			}
 		}, minutes * 60 * 1000);
+	},
+	start: function (endType, key, time, pos) {
+		var rs = {
+			type: 'result-start',
+			time: time,
+			endType: endType
+		};
+		this.loadArrayCache(key);
+		if (pos === 'begin') {
+			this.cache[key].unshift(rs);
+		} else {
+			try {
+				if (this.cache[key][this.cache[key].length - 1].type !== 'result-start') {
+					this.cache[key].push(rs);
+				}
+			} catch (e) {
+				// in case of empty ArrayCache.
+				this.cache[key].push(rs);
+			}
+		}
+		this.saveCache(key);
+	},
+	end: function (endType, key, time, pos) {
+		var re = {
+			type: 'result-end',
+			time: time,
+			endType: endType
+		};
+		this.loadArrayCache(key);
+		if (pos === 'begin') {
+			this.cache[key].unshift(re);
+		} else {
+			try {
+				if (this.cache[key][this.cache[key].length - 1].type !== 'result-end') {
+					this.cache[key].push(re);
+				}
+			} catch (e) {
+				this.cache[key].push(re);
+			}
+		}
+		this.saveCache(key);
 	}
 };
