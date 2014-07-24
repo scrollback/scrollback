@@ -18,8 +18,8 @@
  */
 
 module.exports = function(libsb) {
-    require("./state-manager/boot-manager.js")(libsb);
-    require("./state-manager/state-manager.js")(libsb);
-    require("./state-manager/history-manager.js")(libsb);
-    require("./state-manager/view-manager.js")(libsb);
+    require("./boot-manager.js")(libsb);
+    require("./state-manager.js")(libsb);
+    require("./history-manager.js")(libsb);
+    require("./view-manager.js")(libsb);
 };

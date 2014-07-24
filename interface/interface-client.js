@@ -1,5 +1,5 @@
 var underscore = require('underscore'),
-    generate = require('./lib/generate'),
+    generate = require('../lib/generate.js'),
     libsb;
 
 
