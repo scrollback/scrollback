@@ -120,15 +120,15 @@ module.exports = {
 		};
 		this.loadArrayCache(key);
 		if (pos === 'begin') {
-			this.cache[key].unshift(rs);
+			this.cache[key].d.unshift(rs);
 		} else {
 			try {
 				if (this.cache[key][this.cache[key].length - 1].type !== 'result-start') {
-					this.cache[key].push(rs);
+					this.cache[key].d.push(rs);
 				}
 			} catch (e) {
 				// in case of empty ArrayCache.
-				this.cache[key].push(rs);
+				this.cache[key].d.push(rs);
 			}
 		}
 		this.saveCache(key);
@@ -141,14 +141,14 @@ module.exports = {
 		};
 		this.loadArrayCache(key);
 		if (pos === 'begin') {
-			this.cache[key].unshift(re);
+			this.cache[key].d.unshift(re);
 		} else {
 			try {
 				if (this.cache[key][this.cache[key].length - 1].type !== 'result-end') {
-					this.cache[key].push(re);
+					this.cache[key].d.push(re);
 				}
 			} catch (e) {
-				this.cache[key].push(re);
+				this.cache[key].d.push(re);
 			}
 		}
 		this.saveCache(key);

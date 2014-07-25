@@ -33,29 +33,19 @@ module.exports = function (c) {
 			}
 		}
 		// loading <roomName>_threads
+
 		cacheOp.loadArrayCache(thKey);
-		
+		cacheOp.loadArrayCache(key);
+
 		var items = cacheOp.cache[key].d;
 		var lastMsg = items[items.length - 1];
 		var time = lastMsg ? lastMsg.time : null;
-//		var msg = {
-//			type: 'result-end',
-//			endtype: 'time',
-//			time: lastMsg ? lastMsg.time : null
-//		};
-//		if (lastMsg && lastMsg.type !== "result-end") {
-//			cacheOp.cache[key].d.push(msg);
-//		}
-//		cacheOp.saveCache(key);
-		
+
 		cacheOp.end('time', key, time);
 
 		for (o in cacheOp.cache) {
 			if (regex.test(o)) {
 				cacheOp.end('time', o, time);
-//				var lastItem = cacheOp.cache[o][cacheOp.cache[o].length - 1];
-//				if (lastItem && lastItem.type !== 'result-end') cacheOp.cache[o].d.push('time', msg);
-//				cacheOp.saveCache(o);
 			}
 		}
 		next();
@@ -64,26 +54,14 @@ module.exports = function (c) {
 	core.on('back-dn', function (back, next) {
 		// store a result-start in ArrayCache, to indicate the beginning of the current stream of messages from the user
 		if (back.from !== libsb.user.id) return next();
-//		var msg = {
-//			type: 'result-start',
-//			endtype: 'time',
-//			time: back.time
-//		};
 		var key = cacheOp.generateLSKey(back.to, 'texts');
-//		if (cacheOp.cache && cacheOp.cache.hasOwnProperty(key)) {
-//			cacheOp.cache[key].d.push(msg);
-//		}
-//		cacheOp.saveCache(key);
-		
+
 		cacheOp.start('time', key, back.time);
-		
+
 		var roomName = back.to;
 		var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
 		for (var o in cacheOp.cache) {
-			if (regex.test(o)) {
-//				var lastItem = cacheOp.cache[o][cacheOp.cache[o].length - 1];
-//				if (lastItem && lastItem.type !== 'result-start') cacheOp.cache[o].d.push('time', msg);
-//				cacheOp.saveCache(o);
+			if (regex.test(o)) {;
 				cacheOp.start('time', o, back.time);
 			}
 		}
@@ -294,38 +272,32 @@ module.exports = function (c) {
 	}, 8); // run after socket
 
 	core.on('text-dn', function (text, next) {
-		var texts = [text];
 		var key = cacheOp.generateLSKey(text.to, 'texts');
+		cacheOp.loadArrayCache(key);
 		var lastItem = cacheOp.cache[key].d[cacheOp.cache[key].length - 1];
 
-		if (lastItem && lastItem.type === 'result-end') texts.unshift({
-			type: 'result-start',
-			endtype: 'time',
-			time: window.backTimes[text.to]
-		});
-
-		if (cacheOp.cache && cacheOp.cache[key]) {
-			cacheOp.cache[key].put('time', texts);
-			cacheOp.saveCache(key);
+		if (lastItem && lastItem.type === 'result-end') {
+			cacheOp.start('time', key, window.backTimes[text.to]);
 		}
-
+		
+		cacheOp.cache[key].d.push(text);
+		cacheOp.saveCache(key);
 		// putting the incoming text into each threadId cache it is a part of
 
-		text.threads.forEach(function (threadObj) {
-			texts = [text];
-			key = cacheOp.generateLSKey(text.to, threadObj.id, 'texts');
+		if (text.threads) {
+			text.threads.forEach(function (threadObj) {
+				key = cacheOp.generateLSKey(text.to, threadObj.id, 'texts');
 
-			cacheOp.loadArrayCache(key);
-			lastItem = cacheOp.cache[key].d[cacheOp.cache[key].length - 1];
+				cacheOp.loadArrayCache(key);
+				lastItem = cacheOp.cache[key].d[cacheOp.cache[key].length - 1];
 
-			if (!lastItem || lastItem.type === 'result-end') texts.unshift({
-				type: 'result-start',
-				endtype: 'time',
-				time: window.backTimes[text.to]
+				if (!lastItem || lastItem.type === 'result-end') {
+					cacheOp.start('time', key, window.backTimes[text.to]);
+				}
+				cacheOp.cache[key].d.push(text);
+				cacheOp.saveCache(key);
 			});
-			cacheOp.cache[key].put('time', texts);
-			cacheOp.saveCache(key);
-		});
+		}
 
 		next();
 	}, 500); // storing new texts to cache.
@@ -366,16 +338,7 @@ module.exports = function (c) {
 	core.on('away-dn', function (away, next) {
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
 		if (away.from !== libsb.user.id) return next();
-//		var msg = {
-//			type: 'result-end',
-//			endtype: 'time',
-//			time: away.time
-//		};
 		var key = cacheOp.generateLSKey(away.to, 'texts');
-//		if (cacheOp.cache && cacheOp.cache[key]) {
-//			cacheOp.cache[key].d.push('time', msg);
-//			cacheOp.saveCache(key);
-//		}
 		cacheOp.end('time', key, away.time);
 		// soln below is generic for all subthreads in a room.
 
@@ -383,9 +346,6 @@ module.exports = function (c) {
 		var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
 		for (var o in cacheOp.cache) {
 			if (regex.test(o)) {
-//				var lastItem = cacheOp.cache[o][cacheOp.cache[o].length - 1];
-//				if (lastItem && lastItem.type !== 'result-end') cacheOp.cache[o].d.push('time', msg);
-//				cacheOp.saveCache(o);
 				cacheOp.end('time', o, away.time);
 			}
 		}
