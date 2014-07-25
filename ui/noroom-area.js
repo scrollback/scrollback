@@ -6,7 +6,7 @@ var showMenu = require('./showmenu.js');
 (function(){ // funciton wrapper to maintain the closure of msessageID.
     libsb.on("navigate", function(state, next) {
         if(state.source == "noroom") return next();
-        if(state.room === null && libsb.isInited) libsb.emit("navigate", {mode:'noroom', source: "noroom"});
+        if(!state.room && !libsb.hasBooted) libsb.emit("navigate", {mode:'noroom', source: "noroom"});
         next();
     }, 500);
 })();

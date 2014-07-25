@@ -70,7 +70,7 @@ function safeSend(data) {
 }
 
 function connect(){
-	/*client = new SockJS(config.server.host + "/socket");
+	client = new SockJS(config.server.host + "/socket");
 
 	client.onopen = function(){
 		core.emit("connected");
@@ -80,7 +80,7 @@ function connect(){
 	};
 
 	client.onmessage = receiveMessage;
-	client.onclose = disconnected;*/
+	client.onclose = disconnected;
 }
 
 function disconnect(payload, next) {
@@ -94,6 +94,8 @@ function disconnected() {
 }
 
 function sendQuery(query, next){
+    if(!currentState.connectionStatus) return next();
+    
 	if(query.results || !currentState.connectionStatus){
 		return next();
 	}

@@ -1,5 +1,6 @@
 
 var queue = [];
+
 module.exports = function() {
     return {
         enQueue: function(foo) {

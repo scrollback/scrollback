@@ -13,7 +13,7 @@ function loadOld(state, next) {
     state.old = $.extend(true, {}, currentState); // copying object by value
     state.changes = {};
 
-    ["roomName", "room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time"].forEach(function (prop) {
+    ["roomName", "room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time", "roomStatus", "connectionStatus"].forEach(function (prop) {
         if (typeof state[prop] === "undefined") {
             if (typeof state.old[prop] !== "undefined") {
                 state[prop] = state.old[prop];
@@ -29,7 +29,7 @@ function loadOld(state, next) {
 }
 
 function saveCurrentState(state, next) {
-    ["roomName", "room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time"].forEach(function (prop) {
+    ["roomName", "room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time","roomStatus", "connectionStatus"].forEach(function (prop) {
         if (typeof state[prop] === "undefined") {
             if (typeof state.old[prop] !== "undefined") {
                 currentState[prop] = state.old[prop];

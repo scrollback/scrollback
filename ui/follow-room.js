@@ -18,11 +18,15 @@ $(function() {
 
     function getFollow(x, n) {
         libsb.emit("getUsers", { memberOf: window.currentState.roomName, ref: libsb.user.id }, function(err, data){
-            var user = data.results[0];
-
-            if (user && (user.role === "follower" || user.role === "member")) {
-                setFollow(true);
-            } else {
+            var results = data.results, user;
+            if(results && results.length) {
+                user = data.results[0]
+                if (user && (user.role === "follower" || user.role === "member")) {
+                    setFollow(true);
+                } else {
+                    setFollow(false);
+                }    
+            }else{
                 setFollow(false);
             }
         });
@@ -43,12 +47,8 @@ $(function() {
     libsb.on("navigate", function(state, next){
         if(state.roomName && state.room === null){ return next();}
 
-        if(state.mode === "normal" && state.roomName !== state.old.roomName){
-            if (libsb.isInited) {
-                getFollow();
-            } else {
-                libsb.on("inited", getFollow, 100);
-            }
+        if(state.mode === "normal" && state.roomName !== state.old.roomName && typeof state.room == "object"){
+            getFollow();
         }
 
         next();
@@ -70,6 +70,7 @@ $(function() {
         next();
     }, 100);
 
+/*  looks pointless. where is need is achieved using the back-dn listener. why do it multiple times.
     libsb.on("init-dn", function(state, next) {
         if (libsb.isInited) {
             getFollow();
@@ -79,6 +80,7 @@ $(function() {
 
         next();
     }, 100);
+*/
 
     libsb.on("back-dn", function(state, next){
         if (libsb.isInited) {

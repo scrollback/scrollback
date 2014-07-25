@@ -1,3 +1,6 @@
+/* jshint browser: true */
+/* global window*/
+
 var underscore = require('underscore'),
     generate = require('../lib/generate.js'),
     libsb;
@@ -46,6 +49,7 @@ function addProperties(l) {
 
 module.exports = function (l) {
     libsb = l;
+    window.libsb = libsb; // still being used.
     addProperties(libsb);
     
     libsb.on('init-dn', recvInit, 1000);

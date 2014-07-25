@@ -10,8 +10,9 @@ function init(libsb) {
     });
 
     libsb.on("navigate", function (state, next) {
+        console.log(state);
         if (state.source == "boot") return next();
-        if (libsb.hasBooted) return next(new Error("BOOT_NOT_COMPLETE"));
+        if (!libsb.hasBooted) return next(new Error("BOOT_NOT_COMPLETE"));
         else next();
     }, 1000);
 }

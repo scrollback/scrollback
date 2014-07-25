@@ -11,14 +11,14 @@ require('./lib/swipe-events.js');
 
 // libsb files
 var libsb = require('./interface/interface-client')(core);
-require('./localStorage/localStorage-client')(core);
-require('./socket/socket-client')(core);
+require('./localStorage/localStorage-client')(libsb);
+require('./socket/socket-client')(libsb);
 
 //Bootup related
 require('./client-init/client-init.js')(libsb);
 
-require('./id-generator/id-generator-client.js')();
-require('./client-entityloader/client-entityloader.js')();
+require('./id-generator/id-generator-client.js')(libsb);
+require('./client-entityloader/client-entityloader.js')(libsb);
 
 // client uis
 require('./email/email-client.js');

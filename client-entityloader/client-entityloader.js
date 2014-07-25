@@ -2,36 +2,38 @@
 /* global window*/
 
 
-var currentState =  window.currentState;
+var currentState = window.currentState;
 
-module.exports = function(libsb) {
-	libsb.on("navigate", function(state, n) {
-        
+module.exports = function (libsb) {
+    libsb.on("navigate", function (state, n) {
+
         function next() {
             console.log("Calling next: ");
             n();
         }
-        
-		if(!state.old || state.roomName != state.old.roomName) {
-			libsb.getRooms({ref: state.roomName}, function(err, data) {
-                console.log("-----getRooms----- came back");
-				if(err) {
+        console.log("+++++++++++rooms");
+        if (!state.old || state.roomName != state.old.roomName) {
+            console.log("+++++++++++rooms");
+            libsb.getRooms({
+                ref: state.roomName
+            }, function (err, data) {
+                console.log("-----getRooms----- came back", err, data);
+                if (err) {
                     console.log("ERROR: ", err, data);
-					throw err; // handle this better
-				}
-				if(!data || !data.results || !data.results.length) {
-					state.room = null;
-                    currentState.room = null; // this is a bad thing to do..     
-				}else{
-					state.room = data.results[0];
-                    currentState.room = state.room; // so is this... fix it.
-                    
-				}
-				next();
-			});
-		}else {
+                    throw err; // handle this better
+                }
+                if (!data || !data.results || !data.results.length) {
+                    state.room = null;
+                    if (libsb.isConnected) roomStatus = "pending";
+                    else roomStatus = "noroom";
+                } else {
+                    state.room = data.results[0];
+                }
+                next();
+            });
+        } else {
             state.room = currentState.room;
-			next();
-		}
-	}, 999);
+            next();
+        }
+    }, 999);
 };

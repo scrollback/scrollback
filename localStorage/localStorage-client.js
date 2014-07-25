@@ -112,7 +112,7 @@ libsb.on('init-up', function(init, next) {
 	}
     return next();
 }, "validation");
-
+/*
 libsb.on('back-dn', function (back, next) {
 	if (back.from !== libsb.user.id) return next();
 
@@ -154,10 +154,10 @@ libsb.on('back-dn', function (back, next) {
 
 	next();
 }, 1000);
-
+*/
 module.exports = function (c) {
 	core = c;
-
+    /*
 	core.on('back-dn', function (back, next) {
 		// store a result-start in ArrayCache, to indicate the beginning of the current stream of messages from the user
 		if (back.from !== libsb.user.id) return next();
@@ -222,10 +222,12 @@ module.exports = function (c) {
 	}, 200); // runs before the socket
 
 	core.on('getTexts', function (query, next) {
-		if (query.resultSource == 'localStorage') {
+        var results = query.results;
+        
+		if (!query.results || !query.results.length || query.resultSource == 'localStorage') {
 			return next();
 		}
-		var results = query.results.slice(0); // copying by value
+        results = query.results.slice(0); // copying by value
 		if (results && results.length > 0) {
 			// merging results into the Cache.
 			if (query.before) {
@@ -366,9 +368,7 @@ module.exports = function (c) {
 	}, 400); // run before socket
 
 	function delRoomTimeOut(roomId) {
-		/*
-		this function deletes a saved room object from the cache every 'n' mintues
-		*/
+		// this function deletes a saved room object from the cache every 'n' mintues
 		var minutes = 10; // 10 minutes timeout
 
 		clearTimeout(timeoutMapping[roomId]);
@@ -419,23 +419,23 @@ module.exports = function (c) {
 		}
 
 		// putting the incoming text into each threadId cache it is a part of
+        if (text.threads) {
+            text.threads.forEach(function (threadObj) {
+                texts = [text];
+                key = generateLSKey(text.to, threadObj.id, 'texts');
 
-		text.threads.forEach(function (threadObj) {
-			texts = [text];
-			key = generateLSKey(text.to, threadObj.id, 'texts');
+                cache[key] = loadArrayCache(key);
+                lastItem = cache[key].d[cache[key].length - 1];
 
-			cache[key] = loadArrayCache(key);
-			lastItem = cache[key].d[cache[key].length - 1];
-
-			if (!lastItem || lastItem.type === 'result-end') texts.unshift({
-				type: 'result-start',
-				endtype: 'time',
-				time: window.backTimes[text.to]
-			});
-			cache[key].put('time', texts);
-			saveCache(key);
-		});
-
+                if (!lastItem || lastItem.type === 'result-end') texts.unshift({
+                    type: 'result-start',
+                    endtype: 'time',
+                    time: window.backTimes[text.to]
+                });
+                cache[key].put('time', texts);
+                saveCache(key);
+            });
+        }
 		next();
 	}, 500); // storing new texts to cache.
 
@@ -495,53 +495,11 @@ module.exports = function (c) {
 
 		next();
 	}, 500);
-/*	core.on('connected', function(data, next) {
-		if (window.parent.location === window.location) {
-			createInit();
-			next();
-		} else {
-			if (!messageListener) {
-				$(window).on("message", function (e) {
-					var data = e.originalEvent.data;
-					try {
-						data = JSON.parse(data);
-					} catch (e) {
-						return;
-					}
-					if (typeof data === "object" && data.location) {
-						domain = data.location.host;
-						path = data.location.pathname;
-					}
-					createInit();
-					next();
-				});
-				window.parent.postMessage("getDomain", "*");
-				messageListener = true;
-			} else {
-				createInit();
-				next();
-			}
-		}
-	}, 1000);*/
+
 	core.on('logout', logout, 1000);
+    */
 };
 
-function createInit() {
-	var sid;
-	/*if(!cache){ cache = {}; }
-	if(cache && cache.session) {
-        libsb.session = sid = cache.session;
-    }
-	if(!sid){
-		cache.session = sid = "web://"+generate.uid();
-		libsb.session = cache.session;
-	}
-	core.emit('init-up', {session: sid, origin: {
-		gateway: "web",
-		domain: domain,
-		path: path
-	}});*/
-}
 
 function logout(p, n) {
 	// delete user session here
