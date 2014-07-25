@@ -20,8 +20,8 @@ Boston, MA 02111-1307 USA.
 
 var config = require('../config.js'), core,
 	fs = require("fs"),core;
-
-
+var seo = require('./seo.js');
+var log = require('../lib/logger.js');
 exports.init = function(app, coreObject) {
 	core = coreObject;
 
@@ -41,7 +41,17 @@ exports.init = function(app, coreObject) {
 			return res.redirect(307, 'https://' + config.http.host + req.path + queryString);
 		}
 		fs.readFile(__dirname + "/../public/client.html", "utf8", function(err, data){
-			res.end(data);
+			//add static content
+			seo(core, req, function(err, r) {
+				var ids = "<!-- Messages starts here.";
+				var ide = "Messages end here-->";
+				var d1 = data.substring(0, data.indexOf(ids)) + "\n";
+				var d2 = r + "\n";
+				log("r", r);
+				var d3 = data.substring(data.indexOf(ide) + ide.length);
+				res.end(d1 + d2 + d3);
+			});
+
 		});
 	});
 };
