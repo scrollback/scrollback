@@ -61,7 +61,7 @@ module.exports = function (c) {
 		var roomName = back.to;
 		var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
 		for (var o in cacheOp.cache) {
-			if (regex.test(o)) {;
+			if (regex.test(o)) {
 				cacheOp.start('time', o, back.time);
 			}
 		}
