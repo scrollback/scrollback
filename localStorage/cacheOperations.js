@@ -13,6 +13,7 @@ var config = require('../client-config.js');
 module.exports = {
 	cache: {},
 	LRU: {},
+	rooms: {},
 	deleteLRU: function deleteLRU() {
 		// deletes the least recently used entry from LocalStorage
 		var leastTime = Infinity,
@@ -74,6 +75,7 @@ module.exports = {
 		localStorage.LRU = JSON.stringify(this.LRU);
 		localStorage.occupantOf = JSON.stringify(this.cache.occupantOf);
 		localStorage.memberOf = JSON.stringify(this.cache.memberOf);
+		localStorage.rooms = JSON.stringify(this.rooms);
 		this.load();
 	},
 	load: function () {
@@ -83,6 +85,7 @@ module.exports = {
 			this.LRU = JSON.parse(localStorage.LRU);
 			this.cache.occupantOf = JSON.parse(localStorage.occupantOf);
 			this.cache.memberOf = JSON.parse(localStorage.memberOf);
+			this.rooms = JSON.parse(localStorage.rooms);
 		} catch (e) {
 			// do nothing, e is thrown when values do not exist in localStorage,
 			// which is a valid scenario, execution must continue.
@@ -109,6 +112,7 @@ module.exports = {
 		window.timeoutMapping[roomId] = setTimeout(function () {
 			if (this.cache && this.cache.rooms) {
 				delete this.cache.rooms[roomId];
+				this.save();
 			}
 		}, minutes * 60 * 1000);
 	},

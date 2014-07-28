@@ -46,7 +46,7 @@ libsb.on('navigate', function(state, next) {
 					infoArea.render({id: state.roomName, description: "Loading room description."});
 				loadRooms(state);
 				n();
-			});
+			}, 500);
 		}
 	}
 	next();

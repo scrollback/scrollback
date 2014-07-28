@@ -232,14 +232,16 @@ module.exports = function (c) {
 	core.on('getRooms', function (query, next) {
 
 		// only getRooms with ref are cached as of now.
+		
+		if (query.cachedRoom === false) {
+			return next();
+		}
 
 		if (!query.ref) {
 			return next();
 		}
 
-		var rooms = {};
-
-		rooms = cacheOp.cache.rooms || {};
+		var rooms = cacheOp.rooms || {};
 
 		if (rooms.hasOwnProperty(query.ref)) {
 			query.results = [rooms[query.ref]];
@@ -257,7 +259,7 @@ module.exports = function (c) {
 
 		var rooms = {};
 
-		rooms = cacheOp.cache.rooms ? cacheOp.cache.rooms : {};
+		rooms = cacheOp.rooms ? cacheOp.rooms : {};
 
 		if (query.results) {
 			query.results.forEach(function (room) {
@@ -266,7 +268,9 @@ module.exports = function (c) {
 			});
 		}
 
-		cacheOp.cache.rooms = rooms;
+		cacheOp.rooms = rooms;
+		cacheOp.save();
+		
 		next();
 
 	}, 8); // run after socket
@@ -305,8 +309,9 @@ module.exports = function (c) {
 	core.on('room-dn', function (room, next) {
 		var roomObj = room.room;
 		if (cacheOp.cache) {
-			cacheOp.cache.rooms = cacheOp.cache.rooms ? cacheOp.cache.rooms : {};
-			cacheOp.cache.rooms[roomObj.id] = roomObj;
+			cacheOp.rooms = cacheOp.rooms ? cacheOp.cache.rooms : {};
+			cacheOp.rooms[roomObj.id] = roomObj;
+			cacheOp.save();
 			cacheOp.delRoomTimeOut(roomObj.id);
 		}
 		next();
@@ -319,15 +324,15 @@ module.exports = function (c) {
 
 		// caching occupantOf and memberOf to cache.rooms
 
-		cacheOp.cache.rooms = cacheOp.cache.rooms ? cacheOp.cache.rooms : {};
+		cacheOp.rooms = cacheOp.rooms ? cacheOp.rooms : {};
 
 		init.occupantOf.forEach(function (room) {
-			cacheOp.cache.rooms[room.id] = room;
+			cacheOp.rooms[room.id] = room;
 			cacheOp.delRoomTimeOut(room.id);
 		});
 
 		init.memberOf.forEach(function (room) {
-			cacheOp.cache.rooms[room.id] = room;
+			cacheOp.rooms[room.id] = room;
 			cacheOp.delRoomTimeOut(room.id);
 		});
 
