@@ -55,10 +55,12 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 			} else { //room config changed
 				var oldIrc = action.old.params.irc;
 				if (oldIrc.server === newIrc.server && oldIrc.channel === newIrc.channel) { //server channel same.
+					newIrc.error = oldIrc.error;
+					if (newIrc.error) removeIrcIdentity(room);
 					if (oldIrc.enabled !== newIrc.enabled) {
 						if (newIrc.enabled) {
 							delete firstMessage[room.id];
-							ircUtils.addNewBot(room, done);
+							return ircUtils.addNewBot(room, done);
 						} else {
 							delete firstMessage[room.id];
 							ircUtils.disconnectBot(room.id, function () {
@@ -66,8 +68,6 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 							});
 						}
 					}
-					newIrc.error = oldIrc.error;
-					if (newIrc.error) removeIrcIdentity(room);
 					return callback();
 
 				} else if (oldIrc.server !== newIrc.server || oldIrc.channel !== newIrc.channel) {
@@ -83,7 +83,7 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 					return callback();
 				}
 			}
-		} else if (!client.connected() && actionRequired(action)) {
+		} else if (!client.connected() && isIrcChanged(action)) {
 			log("irc Client is not connected: ");
 			room.params.irc.error = "ERR_IRC_NOT_CONNECTED";
 			removeIrcIdentity(room);
@@ -112,7 +112,7 @@ function actionRequired(room) {
 	return (room.room.params && room.room.params.irc &&
 			room.room.params.irc.server && room.room.params.irc.channel) ||
 		(room.old && room.old.params && room.old.params.irc && room.old.params.irc.server &&
-			room.old.params.irc.channel); // old or new 
+			room.old.params.irc.channel); // old or new
 }
 
 function isNewRoom(room) {
@@ -122,6 +122,12 @@ function isNewRoom(room) {
 	} else {
 		return true;
 	}
+}
+
+function isIrcChanged(action) {
+	var or = action.old && action.old.params && action.old.params.irc;
+	var nr = action.room && action.room.params && action.room.params.irc; ;
+	return or && nr && (nr.server !== or.server || or.channel !== nr.channel);
 }
 
 function removeIrcIdentity(room) {

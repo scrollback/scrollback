@@ -21,13 +21,14 @@ data
 results
 
 node_modules
+bower_components
 
 myConfig.js
-./client-config.js
+client-config.js
 
 public/*.bundle.js
 public/*.min.js
 public/embed.js
 public/s/styles/gen
-/client-config.js
-/ircClient/Data/
+public/s/lib
+ircClient/Data

@@ -23,6 +23,26 @@ module.exports = function(grunt) {
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON("package.json"),
+		bowercopy: {
+			options: {
+				srcPrefix: "bower_components"
+			},
+			scripts: {
+				options: {
+					destPrefix: "public/s/lib"
+				},
+				files: {
+					"flexie.min.js": "flexie/dist/flexie.min.js",
+					"html5shiv.min.js": "html5shiv/dist/html5shiv.min.js",
+					"jquery.min.js": "jquery/dist/jquery.min.js",
+					"selectivizr.js": "selectivizr/selectivizr.js",
+					"sockjs.min.js": "sockjs/sockjs.min.js",
+					"svg4everybody.min.js": "svg4everybody/svg4everybody.min.js",
+					"transformie.js": "transformie/transformie.js",
+					"jquery.velocity.min.js": "velocity/jquery.velocity.min.js"
+				}
+			}
+		},
 		browserify: {
 			dist: {
 				files: {
@@ -56,13 +76,9 @@ module.exports = function(grunt) {
 			options: {
 				separator: ";\n\n"
 			},
-			client: {
-				src: ["public/sdk/sockjs.js", "public/core.uw.min.js", "public/embed.uw.min.js"],
-				dest: "public/client.min.js",
-			},
-			core: {
-				src: ["public/sdk/sockjs.js", "public/core.uw.min.js"],
-				dest: "public/core.min.js",
+			polyfills: {
+				src: ["public/s/lib/selectivizr.js", "public/s/lib/flexie.min.js", "public/s/lib/transformie.js"],
+				dest: "public/s/lib/polyfills.js",
 			}
 		},
 		wrap: {
@@ -146,6 +162,7 @@ module.exports = function(grunt) {
 	});
 
 	grunt.loadNpmTasks("grunt-contrib-watch");
+	grunt.loadNpmTasks("grunt-bowercopy");
 	grunt.loadNpmTasks("grunt-browserify");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-wrap");
@@ -159,5 +176,5 @@ module.exports = function(grunt) {
 		grunt.log.writeln(target + ": " + filepath + " has " + action);
 	});
 
-	grunt.registerTask("default", ["browserify", "manifest", "uglify", "concat", "wrap", "sass", "autoprefixer"]);
+	grunt.registerTask("default", ["bowercopy", "browserify", "uglify", "concat", "wrap", "sass", "autoprefixer", "manifest"]);
 };
