@@ -116,7 +116,7 @@ $(function() {
 			}
 			if(!checkForUser(obj, lists["people"+n])) lists["people"+n].push(obj);
 		}
-        
+
 		if(action.user.role == "follower") {
 			action.user.status = "online";
 			action.user.score = 4;
@@ -140,7 +140,7 @@ $(function() {
 	// Set up infinite scroll here.
 	$people.infinite({
 		scrollSpace: 2000,
-		fillSpace: 500,
+		fillSpace: 1000,
 		itemHeight: 100,
 		startIndex: 0,
 		getItems: function (index, before, after, recycle, callback) {
@@ -210,7 +210,7 @@ $(function() {
 
 		if(state.source == 'people-area') return next();
         if(!state.roomName || state.room === null) return next();
-        
+
 		if(state.tab == "people" && state.old && state.roomName !== state.old.roomName) {
 			roomName = state.roomName || roomName;
             lists = {

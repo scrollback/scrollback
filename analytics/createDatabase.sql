@@ -9,14 +9,14 @@ SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
@@ -29,7 +29,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: member_actions; Type: TABLE; Schema: public; Owner: scrollback; Tablespace: 
+-- Name: member_actions; Type: TABLE; Schema: public; Owner: scrollback; Tablespace:
 --
 
 CREATE TABLE member_actions (
@@ -46,14 +46,15 @@ CREATE TABLE member_actions (
     transitionrole text,
     transitiontype text,
     transitiontime timestamp without time zone,
-    success boolean
+    success boolean,
+    primary key (id)
 );
 
 
 ALTER TABLE public.member_actions OWNER TO scrollback;
 
 --
--- Name: occupant_actions; Type: TABLE; Schema: public; Owner: scrollback; Tablespace: 
+-- Name: occupant_actions; Type: TABLE; Schema: public; Owner: scrollback; Tablespace:
 --
 
 CREATE TABLE occupant_actions (
@@ -65,14 +66,15 @@ CREATE TABLE occupant_actions (
     session text,
     resource text,
     text text,
-    success boolean
+    success boolean,
+    primary key (id)
 );
 
 
 ALTER TABLE public.occupant_actions OWNER TO scrollback;
 
 --
--- Name: session_actions; Type: TABLE; Schema: public; Owner: scrollback; Tablespace: 
+-- Name: session_actions; Type: TABLE; Schema: public; Owner: scrollback; Tablespace:
 --
 
 CREATE TABLE session_actions (
@@ -90,14 +92,15 @@ CREATE TABLE session_actions (
     server text,
     domain text,
     path text,
-    success boolean
+    success boolean,
+    primary key (id)
 );
 
 
 ALTER TABLE public.session_actions OWNER TO scrollback;
 
 --
--- Name: text_actions; Type: TABLE; Schema: public; Owner: scrollback; Tablespace: 
+-- Name: text_actions; Type: TABLE; Schema: public; Owner: scrollback; Tablespace:
 --
 
 CREATE TABLE text_actions (
@@ -116,14 +119,15 @@ CREATE TABLE text_actions (
     threads text[],
     threadtitles text[],
     threadscores real[],
-    success boolean
+    success boolean,
+    primary key (id)
 );
 
 
 ALTER TABLE public.text_actions OWNER TO scrollback;
 
 --
--- Name: user_room_actions; Type: TABLE; Schema: public; Owner: scrollback; Tablespace: 
+-- Name: user_room_actions; Type: TABLE; Schema: public; Owner: scrollback; Tablespace:
 --
 
 CREATE TABLE user_room_actions (
@@ -134,14 +138,15 @@ CREATE TABLE user_room_actions (
     "time" timestamp without time zone,
     session text,
     resource text,
-    iscreated boolean,
+    creation boolean,
     description text,
     picture text,
     identities text[],
     timezone integer,
     params text,
     guides text,
-    success boolean
+    success boolean,
+    primary key (id)
 );
 
 
@@ -188,7 +193,7 @@ COPY user_room_actions (id, type, "from", "to", "time", session, resource, iscre
 
 
 --
--- Name: text_actions_pkey; Type: CONSTRAINT; Schema: public; Owner: scrollback; Tablespace: 
+-- Name: text_actions_pkey; Type: CONSTRAINT; Schema: public; Owner: scrollback; Tablespace:
 --
 
 ALTER TABLE ONLY text_actions

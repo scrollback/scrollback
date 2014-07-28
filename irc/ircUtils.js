@@ -15,8 +15,8 @@ module.exports = function(clientEmitter, client, callbacks) {
 			options: {identId: user + "@scrollback.io"}
 		});
 	}
-	
-	
+
+
 	function say(roomId, from, text) {
 		clientEmitter.emit('write', {
 			type: 'say',
@@ -27,7 +27,7 @@ module.exports = function(clientEmitter, client, callbacks) {
 			}
 		});
 	}
-	
+
 	function disconnectBot(roomId, callback) {
 		var uid = guid();
 		clientEmitter.emit('write', {
@@ -37,7 +37,7 @@ module.exports = function(clientEmitter, client, callbacks) {
 		});
 		if(callback) callbacks[uid] = callback;
 	}
-	
+
 	function disconnectUser(roomId, user) {
 		var uid = guid();
 		clientEmitter.emit('write', {
@@ -47,7 +47,7 @@ module.exports = function(clientEmitter, client, callbacks) {
 			nick: user
 		});
 	}
-	
+
 	/*new Request.*/
 	function addNewBot(r, callback) {
 		console.log("room irc Adding new bot for room :", r.id);
@@ -72,7 +72,7 @@ module.exports = function(clientEmitter, client, callbacks) {
 	function copyRoomOnlyIrc(room) {
 		return {id: room.id, params: {irc: room.params.irc}};
 	}
-	
+
 	function getBotNick(roomId, callback) {
 		var uid = guid();
 		if(client.connected()) {
@@ -86,7 +86,7 @@ module.exports = function(clientEmitter, client, callbacks) {
 			};
 		} else callback("ERR_NOT_CONNECTED");
 	}
-	
+
 	function getRequest(req, res, next) {
 		var path = req.path.substring(7);// "/r/irc/"
 		log("path " , path , req.url );
@@ -94,7 +94,7 @@ module.exports = function(clientEmitter, client, callbacks) {
 		if (ps[0]) {//room name
 			getBotNick(ps[0], function(nick) {
 				log("nick for room :", ps[0], nick);
-				if (nick === "NO_ROOM") {//error 
+				if (nick && nick === "NO_ROOM") {//error
 					next();//say invalid req(404)
 				} else {
 					res.write(nick);
@@ -103,7 +103,7 @@ module.exports = function(clientEmitter, client, callbacks) {
 			});
 		}
 	}
-	
+
 	return {
 		connectUser: connectUser,
 		say: say,
