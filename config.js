@@ -102,7 +102,6 @@ var defaults = {
 		path: "/data"
 	},
 	redisDB:{
-		seo: 5,
 		twitter: 6,
 		email: 7,
 		session: 8,
