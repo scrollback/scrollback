@@ -1,4 +1,4 @@
-/* global module, require, exports */
+/* global module, require*/
 var log = require("../../lib/logger.js");
 
 module.exports = function (types) {
@@ -7,13 +7,21 @@ module.exports = function (types) {
 	
 	return {
 		put: function (message, cb) {
-			var newLabels = {}, room = message.room, user = message.user;
+			var newLabels = {};
 			if(message.labels) {
 				newLabels = message.labels;
 			} else {
 				newLabels = {};
 			}
-
+            
+            if (message.threads instanceof Array) {
+                message.threads.sort(function (a, b) {
+                    return -(a.score - b.score);
+                });
+            } else {
+                message.threads = [];
+            }
+            
 			texts.put({
 				id:message.id,
 				type:"text",
@@ -26,12 +34,14 @@ module.exports = function (types) {
 				editInverse:message.editInverse || [],
 				mentions: message.mentions || [],
 				cookies: message.cookies || [],
-				session: message.session || ""
+				session: message.session || "",
+                updateTime: message.updateTime
 			}, function(err, res) {
+                
 				function insertThread(threads, i, callback) {
 					var thread, e;
 					if(i>=threads.length) return callback();
-					e = threads[i]
+					e = threads[i];
 					if(e.title) {
 						thread = {
 							id: e.id,
@@ -63,9 +73,8 @@ module.exports = function (types) {
 		},
 		
 		get: function (query, cb) {
-			var qStart = new Date().getTime(), qEnd;
-			var reversed, start, end, startTime = new Date().getTime();
-			var dbQuery = {};
+			var qStart = new Date().getTime();
+			var dbQuery = {}, position;
 			if(query.ref) {
 				return texts.get(query.ref, function(err, data){
 					if(!data) return cb();
@@ -84,17 +93,25 @@ module.exports = function (types) {
 				dbQuery.by = "tothreadtime";
 				dbQuery.gte.push(query.thread);
 				dbQuery.lte.push(query.thread);
+                if (query.updateTime) {
+                    dbQuery.by = "tothreadupdateTime";
+                    position = query.updateTime;
+                }
+			} else if (query.updateTime) {
+			    dbQuery.by = "toupdateTime";
+                position = query.updateTime;
 			} else {
-				dbQuery.by = "totime";
+			    dbQuery.by = "totime";
+                position = query.time;
 			}
-
-			if(query.time!=0 && query.time) {
+            
+			if(position) {
 				if(query.after) {
-					dbQuery.gte.push(query.time);
+                    dbQuery.gte.push(position);
 					if(query.after <= dbQuery.limit) dbQuery.limit = query.after;
 				}else if(query.before) {
-					dbQuery.lte.push(query.time);
-					dbQuery.reverse = true;
+                    dbQuery.lte.push(position);
+                    dbQuery.reverse = true;
 					if(query.before <= dbQuery.limit) dbQuery.limit = query.before;
 				}
 			}else{
@@ -106,9 +123,11 @@ module.exports = function (types) {
 					if(query.before <= dbQuery.limit) dbQuery.limit = query.before;
 				}
 			}
+            
 			if(query.before) {
 				dbQuery.reverse = true;	
 			}
+            
 			texts.get(dbQuery, function(err, data) {
 				if(err) return cb(err);
 				if(dbQuery.reverse) data = data.reverse();

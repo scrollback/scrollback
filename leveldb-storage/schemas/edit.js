@@ -1,17 +1,16 @@
-/* global module, require, exports */
-var log = require("../../lib/logger.js");
+/* global module, require*/
+//var log = require("../../lib/logger.js");
 
 module.exports = function (types) {
 
 	var edit = types.edit;
-	var texts = types.texts;
 	var textsApi = require("./text.js")(types);
 	
 	return {
 		put: function (data, cb) {
 			var old = data.old;
 			var editAction, editInvs = {}, newText;
-			var threads = {}, index;
+			var threads = {}, index, i;
 
 			newText = {
 				id:old.id,
@@ -23,7 +22,8 @@ module.exports = function (types) {
 				mentions: old.mentions || [],
 				cookies: old.cookies || [],
 				labels: old.labels,
-				session: old.session || ""
+				session: old.session || "",
+                updateTime: data.time
 			};
 			
 			if(old.labels) {
@@ -32,19 +32,23 @@ module.exports = function (types) {
 				}
 			}
 
-			if(data.threads) {
+			if(old.threads) {
 				old.threads.forEach(function(t) {
 					threads[t.id] = t;
 				});
+            }
+            
+            if(data.threads){
 				data.threads.forEach(function(t) {
 					threads[t.id] = t;
 				});
-				Object.keys(threads).forEach(function(key) {
-					if(threads.hasOwnProperty(key)) {
-						newText.push(threads[key]);
-					}
-				});
-			}
+            }
+            
+            Object.keys(threads).forEach(function(key) {
+                if(threads.hasOwnProperty(key)) {
+                    newText.threads.push(threads[key]);
+                }
+            });
 
 			if(typeof data.cookie != "undefined") {
 				if(data.cookie) {
@@ -61,12 +65,13 @@ module.exports = function (types) {
 
 			if(old.editInverse) newText.editInverse = old.editInverse;
 
-			editAction ={
+			editAction = {
 				id:data.id,
 				from:data.from,
 				ref: data.ref,
 				to: old.to,
-				session: data.session
+				session: data.session,
+                time: data.time
 			};
 
 			if(data.labels) {
@@ -99,6 +104,10 @@ module.exports = function (types) {
 			textsApi.put(newText);
 			edit.put(editAction);
 			cb(null, editAction);
-		}
+		},
+        get: function(query, next) {
+            
+            next();
+        }
 	};
 };

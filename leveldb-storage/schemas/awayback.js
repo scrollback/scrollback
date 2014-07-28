@@ -1,5 +1,3 @@
-var log = require("../../lib/logger.js");
-
 module.exports = function(types) {
 	return {
 		put : function(data, cb) {
@@ -14,5 +12,5 @@ module.exports = function(types) {
 				text: data.text || ""
 			},cb);
 		}
-	}
+	};
 };

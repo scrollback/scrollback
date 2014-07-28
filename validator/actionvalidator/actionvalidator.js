@@ -53,6 +53,8 @@ module.exports = function(core) {
 			}else{
 				action.mentions = [];
 			}
+            
+            action.updateTime = action.time;
 			callback();
 		},
 		admit: function(action, callback) {
@@ -132,7 +134,12 @@ module.exports = function(core) {
 		if (!action.to) {
 			return callback(new Error("INVALID_ROOM"));
 		}
-		return sessionValidation(action, callback);
+        
+        if(action.hasOwnProperty("updateTime")) {
+            if(action.updateTime === null) action.updateTime = new Date().getTime();
+        }
+		
+        return sessionValidation(action, callback);
 	}, "validation");
 	core.on("getRooms", function(action, callback) {
 		if (!(action.ref || action.hasOccupant || action.hasMember || action.identity)) {
@@ -161,7 +168,7 @@ function basicValidation(action, callback) {
 	if(!action.type) return callback(new Error("INVALID_ACTION_TYPE"));
 
 	/*
-		validation on action.from is not need because we add the from ignore the from sent be the client.
+		validation on action.from is not need because we ignore the from sent be the client.
 		from and user is loaded by the entity loader using the session property.
 	*/
 
