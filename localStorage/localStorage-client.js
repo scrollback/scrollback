@@ -1,173 +1,68 @@
 /* global localStorage */
-/* global $, libsb, location, window, timeoutMapping */
-var ArrayCache = require('./ArrayCache.js');
+/* global $, libsb, location, window */
 var generate = require('../lib/generate');
-var cache = {},
-	core;
-var LRU = {};
+var core;
 var messageListener = false;
 var domain = location.host;
 var path = location.pathname;
-var config = require('../client-config.js');
 
-window.timeoutMapping = {};
-window.backTimes = {};
+var cacheOp = Object.create(require('./cacheOperations'));
 
-(function updateLS() {
-	var version = 'version' + config.localStorage.version;
-	if (!localStorage.hasOwnProperty(version)) {
-		console.log("Old version of LocalStorage present, clearing ...");
-		localStorage.clear();
-		localStorage[version] = true;
-	} else {
-		console.log("LocalStorage version is current ...");
-	}
-})();
-
-function loadArrayCache(key) {
-	// loads an ArrayCache from LocalStorage.
-	var texts;
-	if (localStorage.hasOwnProperty(key)) {
-		try {
-			texts = JSON.parse(localStorage[key]);
-		} catch (e) {
-			texts = [];
-		}
-		return (new ArrayCache(texts));
-	} else {
-		return (new ArrayCache([]));
-	}
-}
-
-function saveCache(key) {
-	// saves an ArrayCache to LocalStorage
-	try {
-		localStorage[key] = JSON.stringify(cache[key].d);
-	} catch (e) {
-		if (e.name == 'QuotaExceededError' || e.code == 22) { // localStorage is full!
-			deleteLRU();
-			saveCache(key);
-		}
-	}
-	LRU[key] = new Date().getTime();
-	save();
-}
-
-function generateLSKey() {
-	var args = Array.prototype.slice.call(arguments, 0);
-	if (!args) {
-		return;
-	}
-	var argumentsLC = args.map(function (val) {
-		if(typeof val == "string") return val.toLowerCase();
-	});
-	return argumentsLC.join('_');
-}
-
-function deleteLRU() {
-	// deletes the least recently used entry from LocalStorage
-	var leastTime = Infinity,
-		leastEntry;
-	for (var i in LRU) {
-		if (LRU[i] < leastTime) {
-			leastTime = LRU[i];
-			leastEntry = i;
-		}
-	}
-	if (leastTime != Infinity) {
-		delete LRU[leastEntry];
-		delete localStorage[leastEntry];
-	}
-}
-
-function save() {
-	//saves user, session, LRU, rooms, occupantOf, memberOf to LocalStorage
-	localStorage.user = JSON.stringify(cache.user);
-	localStorage.session = cache.session;
-	localStorage.LRU = JSON.stringify(LRU);
-	localStorage.occupantOf = JSON.stringify(cache.occupantOf);
-	localStorage.memberOf = JSON.stringify(cache.memberOf);
-}
-
-
-try {
-	cache.user = JSON.parse(localStorage.user);
-	cache.session = localStorage.session;
-	LRU = JSON.parse(localStorage.LRU);
-	cache.occupantOf = JSON.parse(localStorage.occupantOf);
-	cache.memberOf = JSON.parse(localStorage.memberOf);
-} catch (e) {
-	// do nothing, e is thrown when values do not exist in localStorage,
-	// which is a valid scenario, execution must continue.
-}
-
-
-libsb.on('back-dn', function (back, next) {
-	if (back.from !== libsb.user.id) return next();
-
-	// loading ArrayCache from LocalStorage when user has navigated to the room.
-	window.backTimes[back.to] = back.time;
-	var o;
-	var key = generateLSKey(back.to, 'texts');
-	var thKey = generateLSKey(back.to, 'threads');
-	var roomName = back.to;
-	var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
-
-	// load all ArrayCaches with <roomName>*_texts
-	for (o in localStorage){
-		if(regex.test(o)){
-			cache[o] = loadArrayCache(o);
-		}
-	}
-	// loading <roomName>_threads
-	cache[thKey] = loadArrayCache(thKey);
-	var items = cache[key].d;
-	var lastMsg = items[items.length - 1];
-	var msg = {
-			type: 'result-end',
-			endtype: 'time',
-			time: lastMsg ? lastMsg.time : null
-	};
-	if (lastMsg && lastMsg.type !== "result-end") {
-		cache[key].d.push(msg);
-	}
-	saveCache(key);
-
-	for (o in cache) {
-		if (regex.test(o)) {
-			var lastItem = cache[o][cache[o].length - 1];
-			if (lastItem && lastItem.type !== 'result-end') cache[o].d.push('time', msg);
-			saveCache(o);
-		}
-	}
-
-	next();
-}, 1000);
+cacheOp.update(); // updates client's LS version to current
+cacheOp.load(); // initial load of all LS entries apart from ArrayCaches
 
 module.exports = function (c) {
 	core = c;
 
 	core.on('back-dn', function (back, next) {
+		if (back.from !== libsb.user.id) return next();
+
+		// loading ArrayCache from LocalStorage when user has navigated to the room.
+		window.backTimes[back.to] = back.time;
+
+		var o;
+		var key = cacheOp.generateLSKey(back.to, 'texts');
+		var thKey = cacheOp.generateLSKey(back.to, 'threads');
+		var roomName = back.to;
+		var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
+
+		// load all ArrayCaches with <roomName>*_texts
+		for (o in localStorage) {
+			if (regex.test(o)) {
+				cacheOp.loadArrayCache(o);
+			}
+		}
+		// loading <roomName>_threads
+
+		cacheOp.loadArrayCache(thKey);
+		cacheOp.loadArrayCache(key);
+
+		var items = cacheOp.cache[key].d;
+		var lastMsg = items[items.length - 1];
+		var time = lastMsg ? lastMsg.time : null;
+
+		cacheOp.end('time', key, time);
+
+		for (o in cacheOp.cache) {
+			if (regex.test(o)) {
+				cacheOp.end('time', o, time);
+			}
+		}
+		next();
+	}, 1000);
+
+	core.on('back-dn', function (back, next) {
 		// store a result-start in ArrayCache, to indicate the beginning of the current stream of messages from the user
 		if (back.from !== libsb.user.id) return next();
-		var msg = {
-			type: 'result-start',
-			endtype: 'time',
-			time: back.time
-		};
-		var key = generateLSKey(back.to, 'texts');
-		if (cache && cache.hasOwnProperty(key)) {
-			cache[key].d.push(msg);
-		}
-		saveCache(key);
+		var key = cacheOp.generateLSKey(back.to, 'texts');
+
+		cacheOp.start('time', key, back.time);
 
 		var roomName = back.to;
 		var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
-		for (var o in cache) {
+		for (var o in cacheOp.cache) {
 			if (regex.test(o)) {
-				var lastItem = cache[o][cache[o].length - 1];
-				if (lastItem && lastItem.type !== 'result-start') cache[o].d.push('time', msg);
-				saveCache(o);
+				cacheOp.start('time', o, back.time);
 			}
 		}
 
@@ -180,26 +75,26 @@ module.exports = function (c) {
 
 		if (query.thread) {
 			// creating individual cache entries for queries with the thread property
-			key = generateLSKey(query.to, query.thread, 'texts');
+			key = cacheOp.generateLSKey(query.to, query.thread, 'texts');
 		} else {
-			key = generateLSKey(query.to, 'texts');
+			key = cacheOp.generateLSKey(query.to, 'texts');
 		}
-		if (!cache.hasOwnProperty(key)) {
-			cache[key] = loadArrayCache(key);
+		if (!cacheOp.cache.hasOwnProperty(key)) {
+			cacheOp.loadArrayCache(key);
 		}
 
-		if (!cache[key].d.length) {
+		if (!cacheOp.cache[key].d.length) {
 			return next();
 		}
 
-		if(query.time === null){
+		if (query.time === null) {
 			// query.time is null, have to decide how LS will handle this.
 			return next();
 		}
 
-		if(query.thread) return next();
+		if (query.thread) return next();
 
-		var results = cache[key].get('time', query);
+		var results = cacheOp.cache[key].get('time', query);
 
 		if (!results || !results.length) {
 			return next();
@@ -244,42 +139,42 @@ module.exports = function (c) {
 					time: query.time
 				});
 			}
-			var lskey = generateLSKey(query.to, 'texts');
-			if (!cache.hasOwnProperty(lskey)) {
-				loadArrayCache(lskey);
+			var lskey = cacheOp.generateLSKey(query.to, 'texts');
+			if (!cacheOp.cache.hasOwnProperty(lskey)) {
+				cacheOp.loadArrayCache(lskey);
 			}
-			cache[lskey].put('time', results);
+			cacheOp.cache[lskey].put('time', results);
 
 			if (query.thread) {
-				// save into thread cache as well
-				var lsThreadKey = generateLSKey(query.to, query.thread, 'texts');
-				if (!cache.hasOwnProperty(lsThreadKey)) {
-					loadArrayCache(lsThreadKey);
+				// save into thread cache as well 
+				var lsThreadKey = cacheOp.generateLSKey(query.to, query.thread, 'texts');
+				if (!cacheOp.cache.hasOwnProperty(lsThreadKey)) {
+					cacheOp.loadArrayCache(lsThreadKey);
 				}
-				cache[lsThreadKey].put('time', results);
-				saveCache(lsThreadKey);
+				cacheOp.cache[lsThreadKey].put('time', results);
+				cacheOp.saveCache(lsThreadKey);
 			}
 
-			saveCache(lskey);
+			cacheOp.saveCache(lskey);
 		}
 		next();
 	}, 8); // runs after the socket
 	core.on('getThreads', function (query, next) {
-		var key = generateLSKey(query.to, 'threads');
-		if (!cache.hasOwnProperty(key)) {
-			cache[key] = loadArrayCache(key);
+		var key = cacheOp.generateLSKey(query.to, 'threads');
+		if (!cacheOp.cache.hasOwnProperty(key)) {
+			cacheOp.loadArrayCache(key);
 		}
 
-		if (!cache[key].d.length) {
+		if (!cacheOp.cache[key].d.length) {
 			return next();
 		}
 
-		if(query.time === null){
+		if (query.time === null) {
 			// query.time is null, have to decide how LS will handle this.
 			return next();
 		}
 
-		var results = cache[key].get('startTime', query);
+		var results = cacheOp.cache[key].get('startTime', query);
 
 		if (!results || !results.length) {
 			return next();
@@ -324,15 +219,15 @@ module.exports = function (c) {
 					startTime: query.time
 				});
 			}
-			var lskey = generateLSKey(query.to, 'threads');
-			if (!cache.hasOwnProperty(lskey)) {
-				loadArrayCache(lskey);
+			var lskey = cacheOp.generateLSKey(query.to, 'threads');
+			if (!cacheOp.cache.hasOwnProperty(lskey)) {
+				cacheOp.loadArrayCache(lskey);
 			}
-			cache[lskey].put('startTime', results);
-			saveCache(lskey);
+			cacheOp.cache[lskey].put('startTime', results);
+			cacheOp.saveCache(lskey);
 		}
 		next();
-	}, 8); // runs after socket
+	}, 8); // runs after socket 
 
 	core.on('getRooms', function (query, next) {
 
@@ -344,7 +239,7 @@ module.exports = function (c) {
 
 		var rooms = {};
 
-		rooms = cache.rooms || {};
+		rooms = cacheOp.cache.rooms || {};
 
 		if (rooms.hasOwnProperty(query.ref)) {
 			query.results = [rooms[query.ref]];
@@ -354,21 +249,6 @@ module.exports = function (c) {
 
 	}, 400); // run before socket
 
-	function delRoomTimeOut(roomId) {
-		/*
-		this function deletes a saved room object from the cache every 'n' mintues
-		*/
-		var minutes = 10; // 10 minutes timeout
-
-		clearTimeout(timeoutMapping[roomId]);
-
-		timeoutMapping[roomId] = setTimeout(function () {
-			if (cache && cache.rooms) {
-				delete cache.rooms[roomId];
-			}
-		}, minutes * 60 * 1000);
-	}
-
 	core.on('getRooms', function (query, next) {
 
 		if (!query.ref) {
@@ -377,130 +257,96 @@ module.exports = function (c) {
 
 		var rooms = {};
 
-		rooms = cache.rooms ? cache.rooms : {};
+		rooms = cacheOp.cache.rooms ? cacheOp.cache.rooms : {};
 
 		if (query.results) {
 			query.results.forEach(function (room) {
 				rooms[room.id] = room;
-				delRoomTimeOut(room.id);
+				cacheOp.delRoomTimeOut(room.id);
 			});
 		}
 
-		cache.rooms = rooms;
+		cacheOp.cache.rooms = rooms;
 		next();
 
 	}, 8); // run after socket
 
 	core.on('text-dn', function (text, next) {
-		var texts = [text];
-		var key = generateLSKey(text.to, 'texts');
-		var lastItem = cache[key].d[cache[key].length - 1];
+		var key = cacheOp.generateLSKey(text.to, 'texts');
+		cacheOp.loadArrayCache(key);
+		var lastItem = cacheOp.cache[key].d[cacheOp.cache[key].length - 1];
 
-		if (lastItem && lastItem.type === 'result-end') texts.unshift({
-			type: 'result-start',
-			endtype: 'time',
-			time: window.backTimes[text.to]
-		});
-
-		if (cache && cache[key]) {
-			cache[key].put('time', texts);
-			saveCache(key);
+		if (lastItem && lastItem.type === 'result-end') {
+			cacheOp.start('time', key, window.backTimes[text.to]);
 		}
-
+		
+		cacheOp.cache[key].d.push(text);
+		cacheOp.saveCache(key);
 		// putting the incoming text into each threadId cache it is a part of
 
-		if(text.threads) text.threads.forEach(function (threadObj) {
-			texts = [text];
-			key = generateLSKey(text.to, threadObj.id, 'texts');
+		if (text.threads) {
+			text.threads.forEach(function (threadObj) {
+				key = cacheOp.generateLSKey(text.to, threadObj.id, 'texts');
 
-			cache[key] = loadArrayCache(key);
-			lastItem = cache[key].d[cache[key].length - 1];
+				cacheOp.loadArrayCache(key);
+				lastItem = cacheOp.cache[key].d[cacheOp.cache[key].length - 1];
 
-			if (!lastItem || lastItem.type === 'result-end') texts.unshift({
-				type: 'result-start',
-				endtype: 'time',
-				time: window.backTimes[text.to]
+				if (!lastItem || lastItem.type === 'result-end') {
+					cacheOp.start('time', key, window.backTimes[text.to]);
+				}
+				cacheOp.cache[key].d.push(text);
+				cacheOp.saveCache(key);
 			});
-			cache[key].put('time', texts);
-			saveCache(key);
-		});
+		}
 
 		next();
 	}, 500); // storing new texts to cache.
 
 	core.on('room-dn', function (room, next) {
 		var roomObj = room.room;
-		if (cache) {
-			cache.rooms = cache.rooms ? cache.rooms : {};
-			cache.rooms[roomObj.id] = roomObj;
-			delRoomTimeOut(roomObj.id);
+		if (cacheOp.cache) {
+			cacheOp.cache.rooms = cacheOp.cache.rooms ? cacheOp.cache.rooms : {};
+			cacheOp.cache.rooms[roomObj.id] = roomObj;
+			cacheOp.delRoomTimeOut(roomObj.id);
 		}
 		next();
 	}, 500);
 
 	core.on('init-dn', function (init, next) {
-		cache.user = init.user;
-		cache.occupantOf = init.occupantOf;
-		cache.memberOf = init.memberOf;
+		cacheOp.cache.user = init.user;
+		cacheOp.cache.occupantOf = init.occupantOf;
+		cacheOp.cache.memberOf = init.memberOf;
 
 		// caching occupantOf and memberOf to cache.rooms
 
-		cache.rooms = cache.rooms ? cache.rooms : {};
+		cacheOp.cache.rooms = cacheOp.cache.rooms ? cacheOp.cache.rooms : {};
 
 		init.occupantOf.forEach(function (room) {
-			cache.rooms[room.id] = room;
-			delRoomTimeOut(room.id);
+			cacheOp.cache.rooms[room.id] = room;
+			cacheOp.delRoomTimeOut(room.id);
 		});
 
 		init.memberOf.forEach(function (room) {
-			cache.rooms[room.id] = room;
-			delRoomTimeOut(room.id);
+			cacheOp.cache.rooms[room.id] = room;
+			cacheOp.delRoomTimeOut(room.id);
 		});
 
-		save();
+		cacheOp.save();
 		next();
-	}, 500);
-
-	core.on('connected', function (d, n) {
-		var sid;
-		if (!cache) {
-			cache = {};
-		}
-		if (cache && cache.session) {
-			sid = cache.session;
-		}
-		if (!sid) {
-			cache.session = sid = generate.uid();
-			libsb.session = cache.session;
-		}
-		core.emit('init-up', {
-			session: sid
-		});
-		n();
 	}, 500);
 
 	core.on('away-dn', function (away, next) {
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
 		if (away.from !== libsb.user.id) return next();
-		var msg = {
-			type: 'result-end',
-			endtype: 'time',
-			time: away.time
-		};
-		var key = generateLSKey(away.to, 'texts');
-		if (cache && cache[key]) {
-			cache[key].d.push('time', msg);
-			saveCache(key);
-		}
+		var key = cacheOp.generateLSKey(away.to, 'texts');
+		cacheOp.end('time', key, away.time);
 		// soln below is generic for all subthreads in a room.
 
 		var roomName = away.to;
 		var regex = new RegExp(roomName + '(_.+)?_' + 'texts');
-		for (var o in cache) {
+		for (var o in cacheOp.cache) {
 			if (regex.test(o)) {
-				var lastItem = cache[o][cache[o].length - 1];
-				if (lastItem && lastItem.type !== 'result-end') cache[o].d.push('time', msg);
-				saveCache(o);
+				cacheOp.end('time', o, away.time);
 			}
 		}
 
@@ -541,15 +387,15 @@ module.exports = function (c) {
 
 function createInit() {
 	var sid;
-	if (!cache) {
-		cache = {};
+	if (!cacheOp.cache) {
+		cacheOp.cache = {};
 	}
-	if (cache && cache.session) {
-		libsb.session = sid = cache.session;
+	if (cacheOp.cache && cacheOp.cache.session) {
+		libsb.session = sid = cacheOp.cache.session;
 	}
 	if (!sid) {
-		cache.session = sid = "web://" + generate.uid();
-		libsb.session = cache.session;
+		cacheOp.cache.session = sid = "web://" + generate.uid();
+		libsb.session = cacheOp.cache.session;
 	}
 	core.emit('init-up', {
 		session: sid,
@@ -563,11 +409,11 @@ function createInit() {
 
 function logout(p, n) {
 	// delete user session here
-	delete cache.session;
-	delete cache.user;
+	delete cacheOp.cache.session;
+	delete cacheOp.cache.user;
 	delete libsb.session;
 	delete libsb.user;
 	localStorage.clear(); // clear LocalStorage on logout for security reasons
-	save();
+	cacheOp.save();
 	n();
 }
