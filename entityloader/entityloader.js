@@ -3,6 +3,7 @@ var names = require('../lib/generate.js').names;
 var uid = require('../lib/generate.js').uid;
 var config = require("../config.js");
 var internalSession = Object.keys(config.whitelists)[0];
+var _ = require('underscore');
 
 /* list of event that the basic validation function is called for.*/
 var core, events = ['text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'expel', 'room'];
@@ -33,6 +34,41 @@ var handlers = {
 			if(wait) wait = false;
 			else callback();
 		});
+	},
+	text: function(action, callback) {
+		var text = action.text;
+		var mentions = [], users;
+		
+		action.mentions = action.mentions || [];
+		
+		core.emit('getUsers', {session: internalSession, memberOf: action.to}, function(err, members){
+			core.emit('getUsers', {session: internalSession, occupantOf: action.to}, function(err, occupants){
+				members = members.results;
+				occupants = occupants.results;
+				users = members.concat(occupants);
+				
+				users = users.map(function(u){
+					if(/guest-/.test(u.id)) u.id = u.id.replace('guest-', '');
+					return u.id;
+				});
+				
+				users = _.uniq(users, function(item){
+					return item;
+				}); // unique memeber + occupant ids
+				
+				mentions = text.split(" ").map(function(word){
+					if (((/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(word) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(word)) && _.contains(users, word.replace(/[@:]/, ''))){
+						return word.replace(/[@:]/, '');
+					}
+				});
+				mentions.concat(action.mentions);
+				mentions = _.uniq(mentions, function(m){
+					return m;
+				});
+				action.mentions = _.compact(mentions);
+			});
+		});
+		callback();
 	},
 	edit: function(action, callback) {
 		core.emit("getTexts", {id: uid(),ref: action.ref, to: action.room.id, session: internalSession}, function(err, actions) {
