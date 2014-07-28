@@ -103,7 +103,7 @@ module.exports = function (core) {
             action.room.id = action.room.id.toLowerCase();
             if (!action.room.params) return callback(new Error("ERR_NO_PARAMS"));
             if (!action.room.guides) return callback(new Error("ERR_NO_GUIDES"));
-            //			if(!action.room.params.http) return callback(new Error("ERR_NO_PARAMS"));
+            if (!action.room.identities) action.room.identities = [];
             callback();
         }
     };

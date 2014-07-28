@@ -89,13 +89,6 @@ libsb.on('config-save', function (room, next) {
 		channel: $('#irc-channel').val(),
 		enabled: $('#irc-enable').is(':checked')
 	};
-
-	if (room.params.irc && room.params.irc.channel && room.params.irc.server) {
-		var ircIdentity = "irc://" + room.params.irc.server + "/" + room.params.irc.channel;
-		if (!room.identities) room.identities = [];
-		room.identities.push(ircIdentity);
-	}
-
 	next();
 }, 500);
 
