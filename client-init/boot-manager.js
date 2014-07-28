@@ -10,10 +10,13 @@ function init(libsb) {
     });
 
     libsb.on("navigate", function (state, next) {
-        console.log(state);
         if (state.source == "boot") return next();
-        if (!libsb.hasBooted) return next(new Error("BOOT_NOT_COMPLETE"));
-        else next();
+        if (!libsb.hasBooted) {
+            // add more sources if the navigate has to be queued up.
+            if (["socket"].indexOf(state.source) >= 0) return actionQueue.enQueue(next);
+            return next(new Error("BOOT_NOT_COMPLETE"));
+        }
+        next();
     }, 1000);
 }
 

@@ -163,7 +163,7 @@ $(function () {
                 i, ppl = [],
                 l, len, p, sum, isDone = false,
                 count;
-            console.log("RESET", index, before, after);
+//            console.log("RESET", index, before, after);
             if (!roomName) return callback([]);
             if (!index) {
                 if (before) {
@@ -242,14 +242,12 @@ $(function () {
     function loadMembers() {
         resetMembers();
         getPeople(function (sortedList) {
-            console.log("____________sortedList", lists);
             $people.reset();
         });
     }
 
     libsb.on('navigate', function (state, next) {
         if (state.source == 'people-area') return next();
-        console.log("people area -> state:", state);
         if (!state.roomName) {
             emptyList();
             return next();

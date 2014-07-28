@@ -5,6 +5,7 @@ var generate = require("../lib/generate.js"),
 	config = require("../client-config.js"),
 	core;
 
+var connectionState = false;
 module.exports = function (c) {
 	core = c;
 	core.on("connection-requested", connect, 1000);
@@ -70,17 +71,22 @@ function safeSend(data) {
 }
 
 function connect(){
-	client = new SockJS(config.server.host + "/socket");
+	/*client = new SockJS(config.server.host + "/socket");
 
 	client.onopen = function(){
-		core.emit("connected");
+		connectionState = true;
+        console.log("Emitting the connectionState navigate");
+        core.emit("navigate", {connectionStatus: true, source: "socket"}, function(err, state) {
+            console.log("Connection state navigate returned: ", err, state);
+        });
+        
         core.emit("init-up", {}, function(err, init) {
-            
+            console.log("Init send.", err, init);
         });
 	};
 
 	client.onmessage = receiveMessage;
-	client.onclose = disconnected;
+	client.onclose = disconnected;*/
 }
 
 function disconnect(payload, next) {
@@ -89,13 +95,13 @@ function disconnect(payload, next) {
 }
 
 function disconnected() {
-	libsb.isInited = false;
-	libsb.emit("disconnected",{});
+    core.emit("navigate", {connectionState: false, source: "connection"}, function(err, state) {
+        console.log("Connection state navigate returned: ", err, state);
+    });
+//	libsb.emit("disconnected",{});
 }
 
 function sendQuery(query, next){
-    if(!currentState.connectionStatus) return next();
-    
 	if(query.results || !currentState.connectionStatus){
 		return next();
 	}

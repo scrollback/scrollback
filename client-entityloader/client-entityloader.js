@@ -8,16 +8,12 @@ module.exports = function (libsb) {
     libsb.on("navigate", function (state, n) {
 
         function next() {
-            console.log("Calling next: ");
             n();
         }
-        console.log("+++++++++++rooms");
         if (!state.old || state.roomName != state.old.roomName) {
-            console.log("+++++++++++rooms");
             libsb.getRooms({
                 ref: state.roomName
             }, function (err, data) {
-                console.log("-----getRooms----- came back", err, data);
                 if (err) {
                     console.log("ERROR: ", err, data);
                     throw err; // handle this better
