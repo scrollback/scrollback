@@ -11,15 +11,26 @@ var showMenu = require('./showmenu.js');
     }, 500);
 })();
 
+function checkIfUser(){
+	libsb.emit('getUsers', {ref: currentState.roomName}, function(e, d){
+		if(d.results){
+			user = d.results[0];
+			libsb.emit('navigate', {mode: 'profile', source: 'noroom'});
+		}
+	});
+}
+
+libsb.on('navigate', function(state, next){
+	if(state.roomName !== state.old.roomName){
+		checkIfUser();
+	}
+	next();
+}, 500);
+
 libsb.on('error-dn', function(err, next){
 	var user;
 	if(err.message === "NO_ROOM_WITH_GIVEN_ID"){
-		libsb.emit('getUsers', {ref: currentState.roomName}, function(e, d){
-			if(d.results){
-				user = d.results[0];
-				libsb.emit('navigate', {mode: 'profile', source: 'noroom'});
-			}
-		});
+		checkIfUser();
 	}
 	next();
 }, 10);
