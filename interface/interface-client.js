@@ -5,7 +5,6 @@ var underscore = require('underscore'),
     generate = require('../lib/generate.js'),
     libsb;
 
-
 function addProperties(l) {
     var libsb = {
         user: "",
@@ -186,7 +185,6 @@ function expel(roomId, ref, callback) {
 }
 
 function recvInit(init, next) {
-
     libsb.session = init.session;
     libsb.memberOf = init.memberOf;
     libsb.occupantOf = init.occupantOf;

@@ -245,7 +245,6 @@ $(function () {
             $people.reset();
         });
     }
-
     libsb.on('navigate', function (state, next) {
         if (state.source == 'people-area') return next();
         if (!state.roomName) {

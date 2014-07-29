@@ -108,14 +108,14 @@ sock.on('connection', function (socket) {
 								break;
 							}
 						}
-						
+
 						data.user.role = role;
                         action = {id: generate.uid(), type: "back",to: e.id, from: data.user.id, session: data.session,user: data.user, room: e};
 						emit({id: generate.uid(), type: "away", to: e.id, from: data.old.id, user: data.old, room: e});
-                        
+
                         if(verifyBack(conn, action)) emit(action);
                         storeBack(conn, action);
-					});	
+					});
 				}
 				storeInit(conn, data);
 			}
@@ -210,10 +210,10 @@ exports.initCore = function(c) {
 
 function censorAction(action, filter) {
     var outAction = {}, i, j;
-    
+
     for (i in action) {
         if(action.hasOwnProperty(i)) {
-            if(i == "room" || i == "user") { 
+            if(i == "room" || i == "user") {
                 outAction[i] = {};
                 for (j in action[i]) {
                     if(action[i].hasOwnProperty(j)) {
@@ -225,7 +225,7 @@ function censorAction(action, filter) {
             }
         }
     }
-    
+
     if(filter == 'both' || filter == 'user') {
         outAction.user = {
             id: action.user.id,
@@ -236,12 +236,12 @@ function censorAction(action, filter) {
         };
 		delete outAction.session;
     }
-    
+
     if(filter == 'both' || filter == 'room') {
         delete outAction.room.identities;
         delete outAction.room.params;
     }
-    
+
     return outAction;
 }
 
@@ -249,8 +249,8 @@ function emit (action, callback) {
     var outAction, myAction;
     log("Sending out: ", action);
     function dispatch(conn, a) {conn.send(a); }
-    
-    if(action.type == 'init') {		
+
+    if(action.type == 'init') {
 		if(sConns[action.session]) {
             sConns[action.session].forEach(function(conn) {
                 conn.user = action.user;
@@ -266,10 +266,10 @@ function emit (action, callback) {
         }
         return callback();
 	}
-    
+
     outAction = censorAction(action, "both");
     myAction = censorAction(action, "room");
-    
+
     if(rConns[action.to]) {
         rConns[action.to].forEach(function(e) {
             if(e.session == action.session) {
@@ -279,14 +279,14 @@ function emit (action, callback) {
             else {dispatch(e, outAction);}
         });
     }
-    
+
 	if(callback) callback();
 }
 
 function handleClose(conn) {
 	if(!conn.session) return;
 	core.emit('getUsers', {ref: "me", session: conn.session}, function(err, sess) {
-        
+
 		if(err || !sess || !sess.results) {
 			log("Couldn't find session to close.", err, sess);
 			return;
@@ -296,7 +296,7 @@ function handleClose(conn) {
 		setTimeout(function() {
             // console.log("LOG: "+ user.id +"30 seconds lated");
             if(!conn.listeningTo || !conn.listeningTo.length) return;
-            
+
             conn.listeningTo.forEach(function(room) {
                 var awayAction = {
                     from: user.id,
@@ -312,7 +312,7 @@ function handleClose(conn) {
                     if(err) return;
                     storeAway(conn, action);
                 });
-                
+
             });
 		}, 30*1000);
 	});

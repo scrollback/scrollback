@@ -3,15 +3,13 @@ var config = require('../config.js');
 var debug = config.irc.debug;
 var internalSession = Object.keys(config.whitelists)[0];
 module.exports = function (core, client, ircUtils, firstMessage) {
-	core.on("room", function (room, callback) {
-		var r = room.room;
-		var or = room.old;
+	core.on("room", function (action, callback) {
+		var r = action.room;
+		var or = action.old;
 		if (r.params.irc && Object.keys(r.params.irc).length > 0) {
 			var v = (typeof r.params.irc.server === 'string') && (typeof r.params.irc.channel === 'string');
-			if (!v) {
-				r.params.irc.error = "ERR_INVALID_IRC_PARAMS";
-				ircUtils.removeIrcIdentity(room);
-			}
+			if (!v) return callback(new Error("ERR_INVALID_IRC_PARAMS"));
+			if(r.params.irc.server && r.params.irc.channel) r.identities.push("irc://" + r.params.irc.server + "/" + r.params.irc.channel);
 			if (or && or.id && or.params.irc && or.params.irc.error === "ERR_IRC_NOT_CONNECTED" &&
 				client.connected()) { //if client is connected then remove not connected error
 				delete or.params.irc;
@@ -25,6 +23,7 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 				else if (room[0].id === r.id) callback();
 				else {
 					if (!debug) r.params.irc.error = "ERR_CONNECTED_OTHER_ROOM"; //testing mode will not add the error.
+					removeIrcIdentity(room);
 					callback();
 				}
 			});
@@ -34,8 +33,7 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 	core.on('room', function (action, callback) {
 		var room = action.room;
 		log("room irc:", JSON.stringify(action), client.connected());
-
-		if (!room.params.irc || room.params.irc.error) return callback();
+		if (!room.params.irc || room.params.irc.error || action.session === internalSession) return callback();
 
 		function done(err) {
 			if (err) {
@@ -44,12 +42,11 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 				ircUtils.disconnectBot(room.id, callback);
 			} else callback();
 		}
-		if (action.session === internalSession) return callback();
 		if (actionRequired(action) && client.connected()) {
-			changeRoomParams(action);
+			addPending(action);
 			var newIrc = room.params.irc;
 			if (isNewRoom(action)) {
-				newIrc.channel = room.params.irc.channel.toLowerCase();
+				newIrc.channel = newIrc.channel.toLowerCase();
 				if (newIrc.enabled) return ircUtils.addNewBot(room, done);
 				else return callback();
 			} else { //room config changed
@@ -96,7 +93,7 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 /**
  *add or copy pending status
  */
-function changeRoomParams(room) {
+function addPending(room) {
 	var or = room.old;
 	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel) { //this is old room
 		if (room.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel) {

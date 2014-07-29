@@ -69,7 +69,7 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
 else
     # We only install packages for Ubuntu and Fedora
     echo "Unsupported distro. You will need to install the dependencies manually. Continue anyway [y/n]?"
-    read ans
+    read -n 1 ans
     [[ "$ans" = [Yy] ]] || exit 1
 fi
 
@@ -102,9 +102,9 @@ fi
 
 # Install various dependencies for scrollback
 echo "Installing dependencies..."
-sudo npm install
-sudo npm install -g grunt-cli
-sudo npm install -g forever
+sudo npm install -g grunt grunt-cli bower forever
+npm install
+bower install
 
 # Start the MySQL and Redis daemons
 echo "Starting MySQL and Redis"
@@ -113,13 +113,25 @@ sudo service redis start
 
 # Give option to set root password for MySQL in case it has not been set
 echo "Do you want to set/change MySQL root password [y/n]?"
-read ans
+read -n 1 ans
 [[ "$ans" = [Yy] ]] && mysqladmin -u root password -p
 
 # Add scrollback databases
 echo "MySQL root password is required to create the scrollback user and database. Please enter when prompted."
 mysql -uroot -p < ./sql/database.sql
 mysql -uscrollback -pscrollback scrollback < ./sql/tables.8.sql
+
+# Add local.scrollback.io to /etc/hosts
+grep -e "^[0-9]*\.[0-9]*.[0-9]*\.[0-9]*.*local\.scrollback\.io" "/etc/hosts" > /dev/null 2>&1
+if [[ ! $? -eq 0 ]]; then
+    echo "Add 'local.scrollback.io' to /etc/hosts [y/n]?"
+    read -n 1 ans
+    [[ "$ans" = [Yy] ]] && echo "127.0.0.1	local.scrollback.io" >> "/etc/hosts"
+fi
+
+# Copy sample myConfig.js and client-config.js files
+[[ ! -f "myConfig.js" ]] && cp "myConfig.sample.js" "myConfig.js"
+[[ ! -f "client-config.js" ]] && cp "client-config.sample.js" "client-config.js"
 
 # Run Grunt to generate misc files
 echo "Running Grunt"

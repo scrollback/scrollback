@@ -75,7 +75,7 @@ $(function() {
 	// Set up infinite scroll here.
 	$roomlist.infinite({
 		scrollSpace: 2000,
-		fillSpace: 500,
+		fillSpace: 1000,
 		itemHeight: 100,
 		startIndex: 0,
 		getItems: function (index, before, after, recycle, callback) {
