@@ -3,36 +3,33 @@
 
 var showMenu = require('./showmenu.js');
 
-(function(){ // funciton wrapper to maintain the closure of msessageID.
-    libsb.on("navigate", function(state, next) {
-        if(state.source == "noroom") return next();
-        if(state.room === null && libsb.isInited) libsb.emit("navigate", {mode:'noroom', source: "noroom"});
-        next();
-    }, 500);
-})();
-
-function checkIfUser(){
+function showError(cb){
 	libsb.emit('getUsers', {ref: currentState.roomName}, function(e, d){
 		if(d.results){
 			user = d.results[0];
 			libsb.emit('navigate', {mode: 'profile', source: 'noroom'});
-		}
+		}else{
+            libsb.emit("navigate", {mode:'noroom', source: "noroom"});
+        }
+        if(cb) cb();
 	});
 }
 
-libsb.on('navigate', function(state, next){
-	if(state.roomName !== state.old.roomName){
-		checkIfUser();
-	}
-	next();
+libsb.on("navigate", function(state, next) {
+    if(state.source == "noroom") return next();
+    if(state.roomName !== state.old.roomName) {
+        if(state.room) return next();
+        showError(next);
+    }
 }, 500);
 
 libsb.on('error-dn', function(err, next){
 	var user;
 	if(err.message === "NO_ROOM_WITH_GIVEN_ID"){
-		checkIfUser();
-	}
-	next();
+		showError(next);
+	}else{
+        next();
+    }
 }, 10);
 
 libsb.on('navigate', function(state, next){
