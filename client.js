@@ -2,26 +2,11 @@
 
 var core = Object.create(require("./lib/emitter.js"));
 
-<<<<<<< HEAD
-//JS libraries
-=======
-window.validate = require('./lib/validate.js');
-window.generate = require('./lib/generate');
-
 // third party libraries
 require('./public/s/lib/sockjs.min.js');
 require('./public/s/lib/jquery.velocity.min.js');
 require('./public/s/lib/svg4everybody.min.js');
 
-// libsb files
-require('./interface/interface-client')(core);
-require('./localStorage/localStorage-client')(core);
-require('./socket/socket-client')(core);
-
-require('./id-generator/id-generator-client.js')();
-require('./client-entityloader/client-entityloader.js')();
-
->>>>>>> master
 require('./lib/jquery.setCursorEnd.js');
 require('./lib/jquery.attrchange.js');
 require('./lib/format.js');
