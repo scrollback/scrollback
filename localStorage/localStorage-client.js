@@ -112,7 +112,7 @@ libsb.on('init-up', function(init, next) {
 	}
     return next();
 }, "validation");
-/*
+
 libsb.on('back-dn', function (back, next) {
 	if (back.from !== libsb.user.id) return next();
 
@@ -154,11 +154,10 @@ libsb.on('back-dn', function (back, next) {
 
 	next();
 }, 1000);
-*/
 module.exports = function (c) {
 	core = c;
-    /*
-	core.on('back-dn', function (back, next) {
+
+    core.on('back-dn', function (back, next) {
 		// store a result-start in ArrayCache, to indicate the beginning of the current stream of messages from the user
 		if (back.from !== libsb.user.id) return next();
 		var msg = {
@@ -497,9 +496,7 @@ module.exports = function (c) {
 	}, 500);
 
 	core.on('logout', logout, 1000);
-    */
 };
-
 
 function logout(p, n) {
 	// delete user session here
