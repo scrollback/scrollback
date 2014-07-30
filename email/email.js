@@ -5,6 +5,7 @@ var emailDigest = require('./emailDigest.js');
 var initMailSending = emailDigest.initMailSending;//function
 var sendPeriodicMails = emailDigest.sendPeriodicMails;//function
 var trySendingToUsers = emailDigest.trySendingToUsers;//function.
+var internalSession = Object.keys(config.whitelists)[0];
 var emailConfig = config.email;
 var core;
 var timeout = 30*1000;//for debuging only
@@ -83,7 +84,16 @@ function addMessage(message){
 					multi.exec(function(err,replies) {
 						log("added mention ", replies);
 						if (!err) {
-							initMailSending(username);
+                            core.emit("getUsers", {ref: username, session: internalSession}, function(err, r) {
+                                if(!err && r.results && r.results[0]) {
+                                    var user = r.results[0];
+                                    if(user.params.email && user.params.email.notifications) {
+                                        log("sending mention email to user", username);
+                                        initMailSending(username);    
+                                    } else log("Not sending email to user ", username);
+                                }
+                            });
+							
 						}
 					});//mention is a set)
 				});
