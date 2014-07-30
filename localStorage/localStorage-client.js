@@ -322,7 +322,7 @@ module.exports = function (c) {
 	core.on('room-dn', function (room, next) {
 		var roomObj = room.room;
 		if (cacheOp.cache) {
-			cacheOp.rooms = cacheOp.rooms ? cacheOp.cache.rooms : {};
+			cacheOp.rooms = cacheOp.rooms ? cacheOp.rooms : {};
 			cacheOp.rooms[roomObj.id] = roomObj;
 			cacheOp.save();
 			cacheOp.delRoomTimeOut(roomObj.id);
