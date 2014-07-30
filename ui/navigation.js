@@ -7,7 +7,7 @@
  * Properties of naviagtion state object
  *
  * room: {String} roomId
- * embed: {String} (toast|full)
+ * embed: {String} (toast|canvas)
  * minimize: {Boolean} (true|false)
  * theme: {String} (dark|light)
  * view: {String} (normal|rooms|meta|signup)
@@ -26,7 +26,7 @@ var currentState = window.currentState = {};
 libsb.on("navigate", function(state, next) {
 	state.old = $.extend(true, {}, currentState); // copying object by value
 	state.changes = {};
-	
+
 	["roomName", "room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
 		if (typeof state[prop] === "undefined") {
 			if (typeof state.old[prop] !== "undefined") {
