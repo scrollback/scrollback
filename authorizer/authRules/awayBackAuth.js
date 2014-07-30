@@ -16,14 +16,11 @@ module.exports = function (core) {
 		if (!/^web:/.test(action.session)) return callback();
 
 		if (permissionLevels[action.room.guides.authorizer.readLevel] <= permissionLevels[action.user.role]) return callback();
-		else return callback(new SbError({
-			message: 'ERR_NOT_ALLOWED',
-			info: {
-				origin: "Authorizer",
-				action: 'back',
-				requiredRole: 'follower',
-				currentRole: 'guest'
-			}
+		else return callback(new SbError('ERR_NOT_ALLOWED', {
+			source: 'authorizer',
+			action: 'back',
+			requiredRole: action.room.guides.authorizer.readLevel,
+			currentRole: action.user.role
 		}));
 	}, "authorization");
 };

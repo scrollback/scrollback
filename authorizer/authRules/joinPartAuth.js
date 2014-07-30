@@ -15,14 +15,11 @@ module.exports = function (core) {
 		if (!action.user.role) action.user.role = "registered";
 		if (!action.user.requestedRole) action.user.requestedRole = "";
 		if (!action.user.invitedRole) action.user.invitedRole = "";
-		if (action.user.role === "guest") return callback(new SbError({
-			message: 'ERR_NOT_ALLOWED',
-			info: {
-				origin: "Authorizer",
-				action: 'join',
-				requiredRole: 'follower',
-				currentRole: 'guest'
-			}
+		if (action.user.role === "guest") return callback(new SbError('ERR_NOT_ALLOWED', {
+			source: 'authorizer',
+			action: 'join',
+			requiredRole: 'registered',
+			currentRole: action.user.role
 		}));
 		if (action.user.role === "owner") return callback(); // owner can switch to any role
 		else if (action.user.role === "moderator" && action.user.requestedRole !== "owner") return callback();
@@ -36,14 +33,11 @@ module.exports = function (core) {
 			}
 		} else {
 			if (action.user.role === action.user.invitedRole) return callback();
-			else return callback(new SbError({
-				message: 'ERR_NOT_ALLOWED',
-				info: {
-					origin: "Authorizer",
-					action: 'join',
-					requiredRole: 'follower',
-					currentRole: 'guest'
-				}
+			else return callback(new SbError('ERR_NOT_ALLOWED', {
+				source: 'authorizer',
+				action: 'join',
+				requiredRole: action.user.invitedRole,
+				currentRole: action.user.role
 			}));
 		}
 	}, "authorization");

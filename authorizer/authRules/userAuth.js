@@ -28,40 +28,31 @@ module.exports = function (core) {
 				action.user.role = "registered";
 			}
 		}
-		if (action.user.role === "guest") return callback(new SbError({
-			message: 'ERR_NOT_ALLOWED',
-			info: {
-				origin: "Authorizer",
-				action: 'user',
-				requiredRole: 'follower',
-				currentRole: 'guest'
-			}
+		if (action.user.role === "guest") return callback(new SbError('ERR_NOT_ALLOWED', {
+			source: 'authorizer',
+			action: 'user',
+			requiredRole: 'registered',
+			currentRole: action.user.role
 		}));
 		if (!action.old || !action.old.id) return callback();
 		else if (!action.old.identities) {
 			return callback();
 		} else if (emailValidation(action.old.identities, action.user.identities)) {
-			return callback(new SbError({
-				message: 'ERR_NOT_ALLOWED',
-				info: {
-					origin: "Authorizer",
-					action: 'user',
-					requiredRole: 'follower',
-					currentRole: 'guest'
-				}
+			return callback(new SbError('ERR_NOT_ALLOWED', {
+				source: 'authorizer',
+				action: 'user',
+				requiredRole: 'registered',
+				currentRole: action.user.role
 			}));
 		} else if (action.role === 'su') {
 			delete action.role;
 			return callback();
 		} else if (action.from === action.old.id) return callback();
-		else return callback(new SbError({
-			message: 'ERR_NOT_ALLOWED',
-			info: {
-				origin: "Authorizer",
-				action: 'user',
-				requiredRole: 'follower',
-				currentRole: 'guest'
-			}
+		else return callback(new SbError('ERR_NOT_ALLOWED', {
+			source: 'authorizer',
+			action: 'user',
+			requiredRole: 'registered',
+			currentRole: action.user.role
 		}));
 
 	}, "authorization");

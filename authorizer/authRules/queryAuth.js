@@ -14,14 +14,11 @@ module.exports = function (core) {
 		if (!query.room.guides || !query.room.guides.authorizer || !query.room.guides.authorizer.readLevel) return callback();
 		if (query.room.guides || typeof query.room.guides.authorizer.readLevel === 'undefined') query.room.guides.authorizer.readLevel = 'guest';
 		if (permissionLevels[query.room.guides.authorizer.readLevel] <= permissionLevels[query.user.role]) return callback();
-		else return callback(new SbError({
-			message: 'ERR_NOT_ALLOWED',
-			info: {
-				origin: "Authorizer",
-				action: 'getTexts',
-				requiredRole: 'follower',
-				currentRole: 'guest'
-			}
+		else return callback(new SbError('ERR_NOT_ALLOWED', {
+			source: 'authorizer',
+			action: 'getTexts',
+			requiredRole: query.room.guides.authorizer.readLevel,
+			currentRole: query.user.role
 		}));
 	}, "authorization");
 	core.on('getThreads', function (query, callback) {
@@ -38,14 +35,11 @@ module.exports = function (core) {
 		}
 		readLevel = (query.room.guides && query.room.guides.authorizer && query.room.guides.authorizer.readLevel) || 'guest';
 		if (permissionLevels[readLevel] <= permissionLevels[query.user.role]) return callback();
-		else return callback(new SbError({
-			message: 'ERR_NOT_ALLOWED',
-			info: {
-				origin: "Authorizer",
-				action: 'getThreads',
-				requiredRole: 'follower',
-				currentRole: 'guest'
-			}
+		else return callback(new SbError('ERR_NOT_ALLOWED', {
+			source: 'authorizer',
+			action: 'getThreads',
+			requiredRole: query.room.guides.authorizer.readLevel,
+			currentRole: query.user.role
 		}));
 	}, "authorization");
 
@@ -54,25 +48,19 @@ module.exports = function (core) {
 			if (query.identity && query.user.role !== 'su' && query.session !== internalSession) {
 				switch (e) {
 				case 'getRooms':
-					next(new SbError({
-						message: 'ERR_NOT_ALLOWED',
-						info: {
-							origin: "Authorizer",
-							action: 'getRooms',
-							requiredRole: 'follower',
-							currentRole: 'guest'
-						}
+					next(new SbError('ERR_NOT_ALLOWED', {
+						source: 'authorizer',
+						action: 'getRooms',
+						requiredRole: 'superuser',
+						currentRole: query.user.role
 					}));
 					break;
 				case 'getUsers':
-					next(new SbError({
-						message: 'ERR_NOT_ALLOWED',
-						info: {
-							origin: "Authorizer",
-							action: 'getUsers',
-							requiredRole: 'follower',
-							currentRole: 'guest'
-						}
+					next(new SbError('ERR_NOT_ALLOWED', {
+						source: 'authorizer',
+						action: 'getUsers',
+						requiredRole: 'superuser',
+						currentRole: query.user.role
 					}));
 				}
 			} else next();

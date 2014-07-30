@@ -79,7 +79,11 @@ sock.on('connection', function (socket) {
 		core.emit(d.type, d, function(err, data) {
 			var e, action;
 			if(err) {
-				e = {type: 'error', id: d.id, message: err.message, info: err.info};
+				e = err;
+				e.id = d.id;
+				e.type = 'error';
+				e.message = err.message;
+//				e = {type: 'error', id: d.id, message: err.message};
 				log("Sending Error: ", e);
 				return conn.send(e);
 			}

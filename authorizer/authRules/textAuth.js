@@ -14,14 +14,11 @@ module.exports = function (core) {
 		if (typeof action.room.guides.authorizer.writeLevel === 'undefined') action.room.guides.authorizer.writeLevel = 'guest';
 		if (permissionLevels[action.room.guides.authorizer.writeLevel] <= permissionLevels[action.user.role]) return callback();
 		//		else return callback(new Error('ERR_NOT_ALLOWED'));
-		else return callback(new SbError({
-			message: 'ERR_NOT_ALLOWED',
-			info: {
-				origin: "Authorizer",
-				action: 'text',
-				requiredRole: 'follower',
-				currentRole: 'guest'
-			}
+		else return callback(new SbError('ERR_NOT_ALLOWED', {
+			source: 'authorizer',
+			action: 'text',
+			requiredRole: action.room.guides.authorizer.writeLevel,
+			currentRole: action.user.role
 		}));
 	}, "authorization");
 };

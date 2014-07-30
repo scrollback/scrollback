@@ -8,27 +8,21 @@ module.exports = function (core) {
 				action.user.role = "registered";
 			}
 		}
-		if (action.user.role === "guest") return callback(new SbError({
-			message: 'ERR_NOT_ALLOWED',
-			info: {
-				origin: "Authorizer",
-				action: 'edit',
-				requiredRole: 'follower',
-				currentRole: 'guest'
-			}
+		if (action.user.role === "guest") return callback(new SbError('ERR_NOT_ALLOWED', {
+			source: 'authorizer',
+			action: 'edit',
+			requiredRole: 'moderator',
+			currentRole: action.user.role
 		}));
 		if (action.user.role === "moderator" || action.user.role === "owner" || action.user.role === "su") return callback();
 		else if (action.user.role === "follower" || action.user.role === "registered") {
 			if (action.from === action.old.from && action.from === action.old.editInverse[action.old.editInverse.length - 1].from) return callback();
 		}
-		return callback(new SbError({
-			message: 'ERR_NOT_ALLOWED',
-			info: {
-				origin: "Authorizer",
-				action: 'edit',
-				requiredRole: 'follower',
-				currentRole: 'guest'
-			}
+		return callback(new SbError('ERR_NOT_ALLOWED', {
+			source: 'authorizer',
+			action: 'edit',
+			requiredRole: 'moderator',
+			currentRole: action.user.role
 		}));
 	}, "authorization");
 };
