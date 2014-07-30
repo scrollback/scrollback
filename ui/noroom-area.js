@@ -19,8 +19,9 @@ libsb.on("navigate", function(state, next) {
     if(state.source == "noroom") return next();
     if(state.roomName !== state.old.roomName) {
         if(state.room) return next();
-        showError(next);
+        return showError(next);
     }
+    return next();
 }, 500);
 
 libsb.on('error-dn', function(err, next){
