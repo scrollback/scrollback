@@ -89,11 +89,11 @@ $(function() {
 
 			customization = room.guides.customization;
 
-			$("#custom-style").remove();
+			$("#scrollback-custom-style").remove();
 
 			if (customization && customization.css) {
 				$("<style>").text(customization.css)
-				.attr("id", "custom-style").appendTo("head");
+				.attr("id", "scrollback-custom-style").appendTo("head");
 			}
 		}
 	};
