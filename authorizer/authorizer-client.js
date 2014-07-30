@@ -66,6 +66,7 @@ libsb.on('config-save', function(room, next){
 }, 500);
 
 libsb.on('error-dn', function(error, next){
+	console.log("ERROR Recieved ", error);
 	if(error.message === "ERR_NOT_ALLOWED"){
 		lace.alert.show({type: "error", body: "You are not allowed to perfom this action!"});
 	}

@@ -58,6 +58,12 @@ sock.on('connection', function (socket) {
 			d.session = conn.session;
 			d.resource  = conn.resource;
 		}
+		
+//		if(d.type === 'sberror'){
+//			e = {type: 'error', id: d.id, message: d.message, info: d.info};
+//			conn.send(e);
+//			return;
+//		}
 
 		if(d.type == 'back') {
 			//just need for back as storeBack will be called before actionValidator
@@ -79,7 +85,7 @@ sock.on('connection', function (socket) {
 		core.emit(d.type, d, function(err, data) {
 			var e, action;
 			if(err) {
-				e = {type: 'error', id: d.id, message: err.message};
+				e = {type: 'error', id: d.id, message: err.message, info: err.info};
 				log("Sending Error: ", e);
 				return conn.send(e);
 			}
