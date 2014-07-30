@@ -7,15 +7,19 @@ $(function() {
 //	libsb.on("config-show", function(tabs, next) {
 //		var results = tabs.room;
 //
-//		if (!results.params.customization) {
-//			results.params.customization = {};
+//		if (!results.guides) {
+//			results.guides = {};
 //		}
 //
-//		if (!results.params.customization.css) {
-//			results.params.customization.css = "";
+//		if (!results.guides.customization) {
+//			results.guides.customization = {};
 //		}
 //
-//		var $div = $("<div>").append(formField("Custom CSS", "area", "custom-css", results.params.customization.css));
+//		if (!results.guides.customization.css) {
+//			results.guides.customization.css = "";
+//		}
+//
+//		var $div = $("<div>").append(formField("Custom CSS", "area", "custom-css", results.guides.customization.css));
 //
 //		tabs.customization = {
 //			text: "Customization",
@@ -27,44 +31,48 @@ $(function() {
 //	}, 500);
 //
 //	libsb.on("config-save", function(room, next){
-//		if (!room.params.customization) {
-//			room.params.customization = {};
+//		if (!room.guides.customization) {
+//			room.guides.customization = {};
 //		}
 //
-//		room.params.customization.css = $("#custom-css").val().replace("<", "\\3c").replace(">", "\\3e");
+//		room.guides.customization.css = $("#custom-css").val().replace("<", "\\3c").replace(">", "\\3e");
 //
 //		next();
 //	}, 500);
+//
+//	libsb.on("navigate", function(state, next) {
+//		if (state.old && state.room !== state.old.room) {
+//			customStyle.applyCss();
+//		}
+//
+//		next();
+//	}, 700);
+//
+//	libsb.on("room-dn", function(room, next) {
+//		customStyle.applyCss();
+//
+//		next();
+//	}, 100);
 
-	libsb.on("navigate", function(state, next) {
-		if (state.old && state.room !== state.old.room) {
-			customStyle.applyCss();
-		}
-
-		next();
-	}, 700);
-
-	libsb.on("room-dn", function(room, next) {
-		customStyle.applyCss();
-
-		next();
-	}, 100);
-
-	// Customization API
+	// Customization API (temporary)
 	var customStyle = {
 		setCss: function(customCss) {
 			var room = window.currentState.room,
 				roomObj;
 
-			if (!room || !room.params) {
+			if (!room) {
 				return;
 			}
 
-			if (!room.params.customization) {
-				room.params.customization = {};
+			if (!room.guides) {
+				room.guides = {};
 			}
 
-			room.params.customization.css = customCss;
+			if (!room.guides.customization) {
+				room.guides.customization = {};
+			}
+
+			room.guides.customization.css = customCss;
 
 			roomObj = { to: window.currentState.roomName, room: room };
 
@@ -75,11 +83,11 @@ $(function() {
 			var room = window.currentState.room,
 				customization;
 
-			if (!room || !room.params || !room.params.customization) {
+			if (!room || !room.guides || !room.guides.customization) {
 				return;
 			}
 
-			customization = room.params.customization;
+			customization = room.guides.customization;
 
 			$("#custom-style").remove();
 
