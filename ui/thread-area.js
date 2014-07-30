@@ -181,14 +181,14 @@ var threadEl = require("./thread.js"),
 
 		$threads.infinite({
 			scrollSpace: 2000,
-			fillSpace: 500,
+			fillSpace: 1000,
 			itemHeight: 100,
 			startIndex: index,
 			getItems: function (index, before, after, recycle, callback) {
 				if(currentState.mode == "search") {
                     $(".search-caption").text("Results for \"" + currentState.query + "\"");
                     $(".search-back").text("Back to " + currentState.roomName);
-                    
+
                     loadSearchResult(index, before, after, callback);
 				}else if(currentState.tab == "threads") {
                     loadThread(index, before, after, callback);
