@@ -1,12 +1,14 @@
+var SbError = require('../../lib/SbError.js');
+
 function emailValidation(old, user) {
 	var oldEmail, newEmail;
-	for (var i = 0;i < old.length;i++) {
+	for (var i = 0; i < old.length; i++) {
 		if (/mailto:/.test(old[i])) {
 			oldEmail = old[i];
 			break;
 		}
 	}
-	for (i =0; i < user.length; i++) {
+	for (i = 0; i < user.length; i++) {
 		if (/mailto:/.test(user[i])) {
 			newEmail = user[i];
 		}
@@ -16,30 +18,54 @@ function emailValidation(old, user) {
 	}
 	return false;
 }
-module.exports = function(core){
-	
-	core.on('user', function(action, callback){
-		if(action.user.role === "none"){
-			if(/^guest-/.test(action.user.id)){
+module.exports = function (core) {
+
+	core.on('user', function (action, callback) {
+		if (action.user.role === "none") {
+			if (/^guest-/.test(action.user.id)) {
 				action.user.role = "guest";
-			}else{
+			} else {
 				action.user.role = "registered";
 			}
 		}
-		if(action.user.role === "guest") return callback(new Error('ERR_NOT_ALLOWED'));
-		if(!action.old || !action.old.id) return callback();
+		if (action.user.role === "guest") return callback(new SbError({
+			message: 'ERR_NOT_ALLOWED',
+			info: {
+				origin: "Authorizer",
+				action: 'user',
+				requiredRole: 'follower',
+				currentRole: 'guest'
+			}
+		}));
+		if (!action.old || !action.old.id) return callback();
 		else if (!action.old.identities) {
 			return callback();
 		} else if (emailValidation(action.old.identities, action.user.identities)) {
-			return callback(new Error("ERR_USER_EXISTS"));
+			return callback(new SbError({
+				message: 'ERR_NOT_ALLOWED',
+				info: {
+					origin: "Authorizer",
+					action: 'user',
+					requiredRole: 'follower',
+					currentRole: 'guest'
+				}
+			}));
 		} else if (action.role === 'su') {
 			delete action.role;
 			return callback();
 		} else if (action.from === action.old.id) return callback();
-		else return callback(new Error('ERR_NOT_ALLOWED'));
-		
+		else return callback(new SbError({
+			message: 'ERR_NOT_ALLOWED',
+			info: {
+				origin: "Authorizer",
+				action: 'user',
+				requiredRole: 'follower',
+				currentRole: 'guest'
+			}
+		}));
+
 	}, "authorization");
-	
-	
-	
+
+
+
 };

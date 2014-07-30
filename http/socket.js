@@ -59,12 +59,6 @@ sock.on('connection', function (socket) {
 			d.resource  = conn.resource;
 		}
 		
-//		if(d.type === 'sberror'){
-//			e = {type: 'error', id: d.id, message: d.message, info: d.info};
-//			conn.send(e);
-//			return;
-//		}
-
 		if(d.type == 'back') {
 			//just need for back as storeBack will be called before actionValidator
 			if(!d.to) {
