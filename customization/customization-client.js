@@ -39,28 +39,28 @@ $(function() {
 //
 //		next();
 //	}, 500);
-//
-//	libsb.on("navigate", function(state, next) {
-//		if (state.old && state.room !== state.old.room) {
-//			customStyle.applyCss();
-//		}
-//
-//		next();
-//	}, 700);
-//
-//	libsb.on("room-dn", function(room, next) {
-//		customStyle.applyCss();
-//
-//		next();
-//	}, 100);
+
+	libsb.on("navigate", function(state, next) {
+		if (state.old && state.room !== state.old.room) {
+			customStyle.applyCss();
+		}
+
+		next();
+	}, 700);
+
+	libsb.on("room-dn", function(room, next) {
+		customStyle.applyCss();
+
+		next();
+	}, 100);
 
 	// Customization API (temporary)
 	var customStyle = {
 		setCss: function(customCss) {
-			var room = window.currentState.room,
+			var room = $.extend({}, window.currentState.room),
 				roomObj;
 
-			if (!room) {
+			if (!(room && typeof customCss === "string")) {
 				return;
 			}
 
@@ -72,7 +72,7 @@ $(function() {
 				room.guides.customization = {};
 			}
 
-			room.guides.customization.css = customCss;
+			room.guides.customization.css = customCss.replace("<", "\\3c").replace(">", "\\3e");
 
 			roomObj = { to: window.currentState.roomName, room: room };
 
@@ -92,7 +92,7 @@ $(function() {
 			$("#custom-style").remove();
 
 			if (customization && customization.css) {
-				$("<style>").text(customization.css.replace("<", "\\3c").replace(">", "\\3e"))
+				$("<style>").text(customization.css)
 				.attr("id", "custom-style").appendTo("head");
 			}
 		}
