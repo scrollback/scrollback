@@ -27,19 +27,6 @@ module.exports = function(coreObject) {
 			setInterval(sendPeriodicMails, timeout);
 			setInterval(trySendingToUsers,timeout/8);
 		}
-		core.on("user", function(data, callback) {
-			console.log("email user validation...");
-			var user = data.user;
-			if (user.params.email && user.params.email.frequency && typeof user.params.email.notifications === 'boolean') {
-				var fq = user.params.email.frequency === 'daily' || user.params.email.frequency === 'never' || user.params.email.frequency === 'weekly';
-				if(fq) {
-					return callback();
-				}
-			}
-			log("Err email params in user object");
-			return callback(new Error("ERR_EMAIL_PARAMS"));
-
-		}, "appLevelValidation");
 	}
 	else {
 		log("email module is not enabled");
@@ -87,7 +74,7 @@ function addMessage(message){
                             core.emit("getUsers", {ref: username, session: internalSession}, function(err, r) {
                                 if(!err && r.results && r.results[0]) {
                                     var user = r.results[0];
-                                    if(user.params.email && user.params.email.notifications) {
+                                    if(!user.params.email || (user.params.email && user.params.email.notifications)) {
                                         log("sending mention email to user", username);
                                         initMailSending(username);    
                                     } else log("Not sending email to user ", username);
