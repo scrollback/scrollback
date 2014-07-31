@@ -33,9 +33,7 @@ module.exports = function(grunt) {
 				},
 				files: {
 					"flexie.min.js": "flexie/dist/flexie.min.js",
-					"html5shiv.min.js": "html5shiv/dist/html5shiv.min.js",
 					"jquery.min.js": "jquery/dist/jquery.min.js",
-					"selectivizr.js": "selectivizr/selectivizr.js",
 					"sockjs.min.js": "sockjs/sockjs.min.js",
 					"svg4everybody.min.js": "svg4everybody/svg4everybody.min.js",
 					"transformie.js": "transformie/transformie.js",
@@ -77,7 +75,7 @@ module.exports = function(grunt) {
 				separator: ";\n\n"
 			},
 			polyfills: {
-				src: ["public/s/lib/selectivizr.js", "public/s/lib/flexie.min.js", "public/s/lib/transformie.js"],
+				src: ["public/s/lib/flexie.min.js", "public/s/lib/transformie.js"],
 				dest: "public/s/lib/polyfills.js",
 			}
 		},
@@ -131,7 +129,6 @@ module.exports = function(grunt) {
 				},
 				src: [
 					"client.bundle.js",
-					"sdk/sockjs.js",
 					"s/lib/jquery.min.js",
 					"s/styles/gen/*.css",
 					"s/img/client/*.*",

@@ -1537,6 +1537,29 @@ body {
     input, .button { width: 100%; }
 }
 
+.ie-warning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99999;
+    color: $light-color;
+    background-color: $warning-color;
+    border-bottom: 1px solid darken($warning-color, 10%);
+    font-size: 1.2em;
+    padding: .5em 1em;
+    text-align: center;
+    box-shadow: 0 3px 2px -1px rgba(0,0,0,.05);
+
+    h2 { font-size: 2em; }
+
+    a {
+        font-weight: 700;
+        color: $light-color;
+        text-decoration: underline
+    }
+}
+
 .room-area, .meta-area, .main-area {
     @include transition(.3s, ease-out); /* animate css transforms */
 
