@@ -46,12 +46,7 @@ module.exports = function (core) {
     ['getRooms', 'getUsers'].forEach(function (e) {
 		core.on(e, function (query, next) {
 			if (query.identity && query.user.role !== 'su' && query.session !== internalSession) {
-				next(new SbError('ERR_NOT_ALLOWED', {
-					source: 'authorizer',
-					action: e,
-					requiredRole: 'superuser',
-					currentRole: query.user.role
-				}));
+				next(new SbError('ERR_NOT_ALLOWED')); // prob not a good idea to send requiredRole as superuser to client :)
 			} else next();
 		}, "authorization");
 	});
