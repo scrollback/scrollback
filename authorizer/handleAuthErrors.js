@@ -9,23 +9,23 @@ module.exports = function (error) {
 	
 	switch (action) {
 		case 'admit':
-			errorMessage = 'You are not authorized to admit a user to this room. Your role needs to be: ' + requiredRole + ' to perform this \
-			action. ' + 'Your current role is: ' + currentRole;
+			errorMessage = 'You are not authorized to admit a user to this room. Your role needs to be: <b>' + requiredRole + '</b> to perform this \
+			action. ' + 'Your current role is: <b>' + currentRole + '</b>';
 			break;
 			
 		case 'expel':
-			errorMessage = 'You are not authorized to expel a user from this room. Your role needs to be: ' + requiredRole + ' to perform this \
-			action. ' + 'Your current role is: ' + currentRole;
+			errorMessage = 'You are not authorized to expel a user from this room. Your role needs to be: <b>' + requiredRole + '</b> to \
+			perform this action. ' + 'Your current role is: <b>' + currentRole + '</b>';
 			break;
 			
 		case 'back':
-			errorMessage = 'You are not authorized to read messages in this room. Your role needs to be: ' + requiredRole + ' to perform this \
-			action.	' + 'Your current role is: ' + currentRole;
+			errorMessage = 'You are not authorized to read messages in this room. Your role needs to be: <b>' + requiredRole + '</b> to perform this \
+			action.	' + 'Your current role is: <b>' + currentRole + '</b>';
 			break;
 			
 		case 'edit':
-			errorMessage = 'You are not authorized to edit messages in this room. Your role needs to be: ' + requiredRole + ' to perform this \
-			action.	' + 'Your current role is: ' + currentRole;
+			errorMessage = 'You are not authorized to edit messages in this room. Your role needs to be: <b>' + requiredRole + '</b> to perform this \
+			action.	' + 'Your current role is: <b>' + currentRole + '</b>';
 			break;
 			
 		case 'join':
@@ -33,38 +33,38 @@ module.exports = function (error) {
 			break;
 			
 		case 'getTexts':
-			errorMessage = 'You are not authorized to view messages in this room. Your role needs to be: ' + requiredRole + ' to perform this \
-			action. ' + 'Your current role is: ' + currentRole;
+			errorMessage = 'You are not authorized to view messages in this room. Your role needs to be: <b>' + requiredRole + '</b> to \
+			perform this action. ' + 'Your current role is: <b>' + currentRole + '</b>';
 			break;
 			
 		case 'getThreads':
-			errorMessage = 'You are not authorized to view message threads in this room. Your role needs to be: ' + requiredRole + ' to perform \
-			this action. ' + 'Your current role is: ' + currentRole;
+			errorMessage = 'You are not authorized to view message threads in this room. Your role needs to be: <b>' + requiredRole + '</b> \
+			to perform this action. ' + 'Your current role is: <b>' + currentRole + '</b>';
 			break;
 			
 		case 'getRooms':
-			errorMessage = 'You are not authorized to view the room(s) info you requested. ' + 'Your role is: ' + currentRole + ' You need \
-			to be a: ' + requiredRole + ' to perform this action'; 
+			errorMessage = 'You are not authorized to view the room(s) info you requested. ' + 'Your role is: <b>' + currentRole + '</b>, You need \
+			to be a: <b>' + requiredRole + '</b> to perform this action'; 
 			break;
 			
 		case 'getUsers':
-			errorMessage = 'You are not authorized to view the user(s) info you requested. ' + 'Your role is: ' + currentRole + ' You need \
-			to be a: ' + requiredRole + ' to perform this action'; 
+			errorMessage = 'You are not authorized to view the user(s) info you requested. ' + 'Your role is: <b>' + currentRole + '</b>, You need \
+			to be a: <b>' + requiredRole + '</b> to perform this action'; 
 			break;
 			
 		case 'room':
-			errorMessage = 'You are not authorized to save this room! ' + 'Your role is: ' + currentRole + ' You need \
-			to be a: ' + requiredRole + ' to perform this action';
+			errorMessage = 'You are not authorized to save this room! ' + 'Your role is: <b>' + currentRole + '</b>, You need \
+			to be a: <b>' + requiredRole + '</b> to perform this action';
 			break;
 			
 		case 'text':
-			errorMessage = 'You are not authorized to chat in this room. Your role needs to be: ' + requiredRole + ' to perform this action. \
-			' + 'Your current role is: ' + currentRole;
+			errorMessage = 'Message not sent . Your role needs to be: <b>' + requiredRole + '</b> to chat in this room. \
+			' + 'Your current role is: <b>' + currentRole + '</b>';
 			break;
 			
 		case 'user':
-			errorMessage = 'You are not authorized to save this user account! ' + 'Your role is: ' + currentRole + ' Your role needs \
-			to be: ' + requiredRole + ' to perform this action';
+			errorMessage = 'You are not authorized to save this user account! ' + 'Your role is: <b>' + currentRole + '</b>, Your role needs \
+			to be: <p>' + requiredRole + '</b> to perform this action';
 			break;
 			
 		default: 
