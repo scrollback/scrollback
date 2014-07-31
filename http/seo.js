@@ -4,8 +4,6 @@ var internalSession = Object.keys(config.whitelists)[0];
 var noOfThreads = 50;
 var noOfText = 255;
 
-//https://local.scrollback.io/scrollback/srzko2ro9m4yobrdfkuhg3uxva8oz6og0?time=2014-07-24T09:44:22.973Z&tab=threads
-//https://local.scrollback.io/scrollback?time=2014-07-24T09:46:25.026Z&tab=threads
 module.exports = function(core) { 
     return {
         getSEOHtml: getSEOHtml 
@@ -48,7 +46,7 @@ module.exports = function(core) {
             }); 
         } else if(a[0]){//threads.
             if(!query.time) {
-                callback("<a style=\"display:none\" href=" + getURL(1, a[0]) + ">Go to Top</a>"); 
+                callback("<a href=" + getURL(1, a[0]) + ">Discussions in " + a[0] + "</a>"); 
             } else {
                 core.emit("getThreads", {to: a[0], time: new Date(query.time).getTime(), 
                     after: noOfThreads + 1, session: internalSession}, function (err, data) {
@@ -67,9 +65,9 @@ module.exports = function(core) {
 
 function getTextHtml(r, roomid, threadid) {        
     var a = r.map(function(text){
-        var t = "[ " + text.from.replace("guest-", "") + " ] " + text.text;
+        var t = text.from.replace("guest-", "") + ": " + text.text;
         t = htmlEscape(t);
-        return ("<div style=\"display:none\">" + t + "</div>"); 
+        return ("<div>" + t + "</div>"); 
     });
     
     if(a.length > noOfText) {
@@ -79,8 +77,9 @@ function getTextHtml(r, roomid, threadid) {
                "&amp;tab=threads\">Next</a>");
     }
     
-    a.push("<a style=\"display:none\" href=\"/" + roomid + "/" + threadid + "\">Go to Top</a>");
-    return a.join(" ");
+    a.push("<a href=\"/" + roomid + "/" + threadid + "\">Discussion</a>");
+    a.push("<a href=" + getURL(1, roomid) + ">Discussions in " + roomid + "</a>");
+    return a.join("\n");
     
 }
 
@@ -93,16 +92,16 @@ function getThreadsHtml(r, roomid) {
     var a = [];
 	for (var i = 0; i < Math.min(r.length, noOfThreads);i++ ){
 		var thread = r[i];
-		a.push("<a style=\"display:none\" href='/" + roomid + "/" + 
+		a.push("<a href='/" + roomid + "/" + 
                thread.id + "?time=" + new Date(thread.startTime).toISOString() +  
                "&amp;tab=threads'>" + htmlEscape(thread.title) + "</a>");
 	}
 	if(r.length > noOfThreads) {
-		a.push("<a style=\"display:none\" href=" + getURL(r[r.length - 1].startTime, roomid) + ">Next</a>");
+		a.push("<a href=" + getURL(r[r.length - 1].startTime, roomid) + ">Next</a>");
 	}
-    a.push("<a style=\"display:none\" href=" + getURL(1, roomid) + ">Go to Top</a>");
+    a.push("<a href=" + getURL(1, roomid) + ">Discussions in " + roomid + "</a>");
 	
-	return a.join(" ");
+	return a.join("\n");
 }
 
 function htmlEscape(str) {
