@@ -67,7 +67,7 @@ function getTextHtml(r, roomid, threadid) {
     var a = r.map(function(text){
         var t = text.from.replace("guest-", "") + ": " + text.text;
         t = htmlEscape(t);
-        return ("<div>" + t + "</div>"); 
+        return ("<p>" + t + "</p>"); 
     });
     
     if(a.length > noOfText) {
