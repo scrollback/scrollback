@@ -15,12 +15,12 @@ module.exports = function (c) {
 	core = c;
     libsb.on('init-up', function(init, next) {
         var sid;
-        if(cache && cache.session) {
-            libsb.session = sid = cache.session;
+        if(cacheOp && cacheOp.session) {
+            libsb.session = sid = cacheOp.session;
         }
         if(!sid) {
-            cache.session = sid = "web://"+generate.uid();
-            libsb.session = cache.session;
+            cacheOp.session = sid = "web://"+generate.uid();
+            libsb.session = cacheOp.session;
         }
         return next();
     }, "validation");
@@ -83,7 +83,7 @@ module.exports = function (c) {
 	core.on('getTexts', function (query, next) {
 		// getTextsBefore
 		var key;
-
+        console.log("++++++", query);
 		if (query.thread) {
 			// creating individual cache entries for queries with the thread property
 			key = cacheOp.generateLSKey(query.to, query.thread, 'texts');
@@ -97,31 +97,33 @@ module.exports = function (c) {
 		if (!cacheOp.cache[key].d.length) {
 			return next();
 		}
-
-		if (query.time === null) {
+        
+		if (query.time === null && currentState.connectionStatus) {
 			// query.time is null, have to decide how LS will handle this.
 			return next();
 		}
-
+		if(!currentState.connectionStatus) query.partials = true;
 		if (query.thread) return next();
 
 		var results = cacheOp.cache[key].get('time', query);
-
 		if (!results || !results.length) {
+            
 			return next();
 		} else {
 			query.results = results;
 			query.resultSource = 'localStorage';
+            
 			return next();
 		}
 	}, 200); // runs before the socket
 
 	core.on('getTexts', function (query, next) {
         var results = query.results;
-        
+        console.log("++++++", query);
 		if (!query.results || !query.results.length || query.resultSource == 'localStorage') {
 			return next();
 		}
+        
         results = query.results.slice(0); // copying by value
 		if (results && results.length > 0) {
 			// merging results into the Cache.
@@ -173,20 +175,24 @@ module.exports = function (c) {
 		next();
 	}, 8); // runs after the socket
 	core.on('getThreads', function (query, next) {
+        console.log("++++++", query);
 		var key = cacheOp.generateLSKey(query.to, 'threads');
+        console.log("++++++", query);
 		if (!cacheOp.cache.hasOwnProperty(key)) {
 			cacheOp.loadArrayCache(key);
 		}
-
+        console.log("++++++", query);
 		if (!cacheOp.cache[key].d.length) {
 			return next();
 		}
 
-		if (query.time === null) {
+		if (query.time === null && currentState.connectionStatus) {
 			// query.time is null, have to decide how LS will handle this.
 			return next();
 		}
-
+		if(!currentState.connectionStatus) query.partials = true;
+        
+        console.log("++++++", query);
 		var results = cacheOp.cache[key].get('startTime', query);
 
 		if (!results || !results.length) {
@@ -194,12 +200,13 @@ module.exports = function (c) {
 		} else {
 			query.results = results;
 			query.resultSource = 'localStorage';
+            console.log("Result from local storage.",query);
 			return next();
 		}
 	}, 200); // runs before the socket
 
 	core.on('getThreads', function (query, next) {
-		if (query.resultSource === 'localStorage') {
+		if (!query.results || query.resultSource === 'localStorage') {
 			return next();
 		}
 		var results = query.results.slice(0); // copy by value
@@ -239,6 +246,7 @@ module.exports = function (c) {
 			cacheOp.cache[lskey].put('startTime', results);
 			cacheOp.saveCache(lskey);
 		}
+        console.log("Threads::::", query);
 		next();
 	}, 8); // runs after socket 
 

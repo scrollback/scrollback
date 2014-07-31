@@ -90,7 +90,13 @@ $(function () {
         });
     }
 
-
+	libsb.on("init-dn", function(init, next) {
+		getPeople(function(){
+			$people.reset();
+		});
+		
+		next();
+	}, 100);
     libsb.on("away-dn", function (action, next) {
         var i, l, lis;
 
@@ -220,21 +226,21 @@ $(function () {
 
     function resetMembers() {
         lists = {
-            people1: [],
+            people1: [false],
             people3: [],
             people4: [],
             people6: [],
-            people9: []
+            people9: [false]
         };
     }
     
     function emptyList(){
         lists = {
-            people1: [],
+            people1: [false],
             people3: [],
             people4: [],
             people6: [],
-            people9: []
+            people9: [false]
         };
         $people.reset();
     }

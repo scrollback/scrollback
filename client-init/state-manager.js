@@ -4,7 +4,7 @@
 
 var currentState = window.currentState = {}; // think of a way to remove this from window.(if need)
 module.exports = function (libsb) {
-    libsb.on("navigate", loadOld, 998);
+    libsb.on("navigate", loadOld, 999);
     libsb.on("navigate", saveCurrentState, 700);
 };
 

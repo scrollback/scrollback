@@ -7,20 +7,26 @@ $(function() {
 	var $template = $(".thread-item-container .thread-item").eq(0);
 
 	threadEl.render = function ($el, thread, index) {
+        console.log("rendering element", thread);
 		var title = thread.title || "";
-		$el = $el || $template.clone(false);
+        $el = $el || $template.clone(false);
+        if(thread.type == "missing") {
+            $el.attr("id", "thread-missing");
+            $el.attr("data-index", index);
+        }else{
+            $el.find(".thread-title").text(title.replace(/-/g, " ").trim());
+            $el.find(".thread-snippet").html("");
+            $el.find(".timestamp").html(format.friendlyTime(thread.startTime, new Date().getTime()));
+            $el.attr("id", "thread-" + thread.id);
+            $el.attr("data-index", index);
+            $el.addClass("conv-" + thread.id.substr(-1));
 
-		$el.find(".thread-title").text(title.replace(/-/g, " ").trim());
-		$el.find(".thread-snippet").html("");
-		$el.find(".timestamp").html(format.friendlyTime(thread.startTime, new Date().getTime()));
-		$el.attr("id", "thread-" + thread.id);
-		$el.attr("data-index", index);
-		$el.addClass("conv-" + thread.id.substr(-1));
+            if (thread.id === window.currentState.thread) {
+                $el.addClass("current");
+            }
 
-		if (thread.id === window.currentState.thread) {
-			$el.addClass("current");
-		}
-
+        }
+		
 		return $el;
 	};
 });

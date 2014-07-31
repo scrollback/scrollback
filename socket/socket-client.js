@@ -5,11 +5,15 @@ var generate = require("../lib/generate.js"),
 	config = require("../client-config.js"),
 	core;
 
-var connectionState = false;
+var connectionState = false, backOff = 1, 
+    client, pendingQueries = {},
+	pendingActions = {},
+	queue = [];
+
 module.exports = function (c) {
 	core = c;
-	core.on("connection-requested", connect, 1000);
-	core.on("disconnect", disconnect, 1000);
+//    connect();
+    core.on("disconnect", disconnect, 1000);
 
 	core.on("init-up", sendInit, 10);
 	core.on("text-up", sendText, 10);
@@ -45,10 +49,6 @@ module.exports = function (c) {
     }, 10);
 };
 
-var client;
-var pendingQueries = {},
-	pendingActions = {},
-	queue = [];
 
 libsb.on("inited", function (undef, next) {
 	while (queue.length) {
@@ -61,7 +61,7 @@ function safeSend(data) {
 	// safeSends sends the data over the socket only after the socket has
 	// been initialised
 
-	if (libsb.isInited) {
+	if (currentState.connectionStatus) {
 		client.send(data);
 	} else {
 		queue.push(function () {
@@ -70,11 +70,15 @@ function safeSend(data) {
 	}
 }
 
-function connect(){
-	/*client = new SockJS(config.server.host + "/socket");
-
+function connect() {
+    console.log("connection:new connection is created");
+	client = new SockJS(config.server.host + "/socket");
+    console.log("connection:disconnceted listener");
+    client.onclose = disconnected;
+    
 	client.onopen = function(){
 		connectionState = true;
+        backOff = 1;
         console.log("Emitting the connectionState navigate");
         core.emit("navigate", {connectionStatus: true, source: "socket"}, function(err, state) {
             console.log("Connection state navigate returned: ", err, state);
@@ -86,19 +90,20 @@ function connect(){
 	};
 
 	client.onmessage = receiveMessage;
-	client.onclose = disconnected;*/
 }
-
+window.connect = connect;
 function disconnect(payload, next) {
 	client.close();
 	next();
 }
 
 function disconnected() {
+    backOff = 1;
+    console.log("connection closed retrying in "+backOff);
+//    setTimeout(connect, backOff*1000);
     core.emit("navigate", {connectionState: false, source: "connection"}, function(err, state) {
         console.log("Connection state navigate returned: ", err, state);
     });
-//	libsb.emit("disconnected",{});
 }
 
 function sendQuery(query, next){

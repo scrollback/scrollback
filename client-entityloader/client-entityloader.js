@@ -6,8 +6,9 @@ var currentState = window.currentState;
 
 module.exports = function (libsb) {
     libsb.on("navigate", function (state, n) {
-
+        console.log("ol navigate:", state);
         function next() {
+            console.log("New navigate:", state);
             n();
         }
         if (!state.old || state.roomName != state.old.roomName) {
@@ -31,5 +32,5 @@ module.exports = function (libsb) {
             state.room = currentState.room;
             next();
         }
-    }, 999);
+    }, 998);
 };

@@ -125,7 +125,7 @@ module.exports = function(grunt) {
 					cache: ["//fonts.googleapis.com/css?family=Open+Sans:300,400,600",
 							"//themes.googleusercontent.com/font?kit=cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw"],
 					network: ["*"],
-					fallback: ["//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg", "/ /offline.html"],
+					fallback: ["//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg", "/ /offline.html", "/socket /s/socket-fallback"],
 					preferOnline: true,
 					timestamp: true
 				},
@@ -136,6 +136,7 @@ module.exports = function(grunt) {
 					"s/styles/gen/*.css",
 					"s/img/client/*.*",
 					"s/img/client/*/*.*",
+                    "s/socket-fallback"
 				],
 				dest: "public/manifest.appcache"
 			}
@@ -147,7 +148,7 @@ module.exports = function(grunt) {
 			scripts: {
 				files: ["gruntfile.js", "*/*-client.js",
 						"public/client.js", "public/libsb.js",
-						"lib/*.js", "ui/*.js"],
+						"lib/*.js", "ui/*.js",'client-entityloader/*.js', 'client-init/*.js', 'localStorage-client/*.js'],
 				tasks: ["browserify", "uglify", "manifest"],
 			},
 			styles: {
