@@ -46,23 +46,12 @@ module.exports = function (core) {
     ['getRooms', 'getUsers'].forEach(function (e) {
 		core.on(e, function (query, next) {
 			if (query.identity && query.user.role !== 'su' && query.session !== internalSession) {
-				switch (e) {
-				case 'getRooms':
-					next(new SbError('ERR_NOT_ALLOWED', {
-						source: 'authorizer',
-						action: 'getRooms',
-						requiredRole: 'superuser',
-						currentRole: query.user.role
-					}));
-					break;
-				case 'getUsers':
-					next(new SbError('ERR_NOT_ALLOWED', {
-						source: 'authorizer',
-						action: 'getUsers',
-						requiredRole: 'superuser',
-						currentRole: query.user.role
-					}));
-				}
+				next(new SbError('ERR_NOT_ALLOWED', {
+					source: 'authorizer',
+					action: e,
+					requiredRole: 'superuser',
+					currentRole: query.user.role
+				}));
 			} else next();
 		}, "authorization");
 	});
