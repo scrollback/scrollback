@@ -20,11 +20,11 @@ Boston, MA 02111-1307 USA.
 
 var config = require('../config.js'), core,
 	fs = require("fs"),core;
-
-
+var seo;
+//var log = require('../lib/logger.js');
 exports.init = function(app, coreObject) {
 	core = coreObject;
-
+    seo = require('./seo.js')(core);
 	app.get('/t/*', function(req, res, next) {
 		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data){
 			res.end(data);
@@ -41,7 +41,21 @@ exports.init = function(app, coreObject) {
 			return res.redirect(307, 'https://' + config.http.host + req.path + queryString);
 		}
 		fs.readFile(__dirname + "/../public/client.html", "utf8", function(err, data){
-			res.end(data);
+			//add generated content
+			seo.getSEOHtml(req, function(r) {
+                var idhs = "<!-- gen Head Start -->";
+				var idbs = "<!-- Messages starts here. -->";
+				var index1 = data.indexOf(idhs);
+                var index2 = data.indexOf(idbs);
+                var d = [];
+                d.push(data.substring(0, index1 + idhs.length)) ;
+				d.push(r.head);
+                d.push(data.substring(index1 + idhs.length, index2 + idbs.length));
+				d.push(r.body);
+                d.push(data.substring(index2 + idbs.length));
+				res.end(d.join("\n"));
+			});
+
 		});
 	});
 };

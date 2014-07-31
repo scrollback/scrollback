@@ -1,13 +1,13 @@
 /*
-	Scrollback: Beautiful text chat for your community. 
+	Scrollback: Beautiful text chat for your community.
 	Copyright (c) 2014 Askabt Pte. Ltd.
-	
-This program is free software: you can redistribute it and/or modify it 
+
+This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any 
+the Free Software Foundation, either version 3 of the License, or any
 later version.
 
-This program is distributed in the hope that it will be useful, but 
+This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
 License for more details.
@@ -27,21 +27,21 @@ if (fs.existsSync('./myConfig.js')) {
 /**
  *It merge c into d
  *@param {object} d default Object
- *@param {object} c this object will be merged into d. 
+ *@param {object} c this object will be merged into d.
  */
 function merge(d, c) {
 	for(var i in c) {
 		if (typeof d[i] === 'object' && typeof c[i] === 'object' && d[i] !== null && c[i] !== null) {
 			if (d[i] instanceof Array && c[i] instanceof Array) {
 				// d[i] = d[i].concat(c[i]);
-				/*Concatinating the plugins array from the default ones and the ones in 
+				/*Concatinating the plugins array from the default ones and the ones in
 				myConfig is probably not something that we might be interested in.*/
-				d[i] = c[i];	
+				d[i] = c[i];
 			} else {
 				merge(d[i], c[i]);
 			}
 		} else {
-			d[i] = c[i];	
+			d[i] = c[i];
 		}
 	}
 }
@@ -51,21 +51,21 @@ var defaults = {
 		name: "scrollback",
 		newrelic: { name: 'Scrollback Local' }
 	},
-	
+
 	mysql: {
 		host     : 'localhost',
 		user     : 'scrollback',
 		password : 'scrollback',
 		connectionLimit: 100,
 		//debug    :true         ,
-		database : 'scrollback' 
+		database : 'scrollback'
 	},
 	pg: {//post gre config
 		server: "localhost",//server:port
 		db: "logs",
 		username: "username",
 		password: "password"
-		//port: 
+		//port:
 	},
 	http: {
 		host: "local.scrollback.io",
@@ -92,7 +92,7 @@ var defaults = {
 	},
 	twitter: {
 		//consumerKey: ".."
-		//consumerSecret: ".." 
+		//consumerSecret: ".."
 	},
 	irc: {
 		port: 8910,
@@ -112,7 +112,7 @@ var defaults = {
 		search: 14
 	},
 	su: {
-		
+
 	},
 	plugins: ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
 	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",
