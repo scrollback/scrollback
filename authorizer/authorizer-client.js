@@ -1,6 +1,6 @@
 /* global libsb, $ */
 var formField = require("../lib/formField.js");
-var lace = require('../lib/lace.js');
+var handleAuthErrors = require('./handleAuthErrors.js');
 
 libsb.on('config-show', function (tabs, next) {
 	var room = tabs.room;
@@ -76,33 +76,7 @@ libsb.on('config-save', function (room, next) {
 
 libsb.on('error-dn', function (error, next) {
 	if (error.message === "ERR_NOT_ALLOWED") {
-		//		lace.alert.show({type: "error", body: "You are not allowed to perfom this action!"});
-		switch (error.info.action) {
-			case 'admit':
-				break;
-			case 'expel':
-				break;
-			case 'back':
-				break;
-			case 'edit':
-				break;
-			case 'join':
-				break;
-			case 'getTexts':
-				break;
-			case 'getThreads':
-				break;
-			case 'getRooms':
-				break;
-			case 'getUsers':
-				break;
-			case 'room':
-				break;
-			case 'text':
-				break;
-			case 'user':
-				break;
-		}
+		handleAuthErrors(error);
 	}
 	next();
 }, 1000);
