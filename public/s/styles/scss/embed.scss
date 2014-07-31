@@ -6,6 +6,8 @@ $offset-right: 30px !default;
 $bar-height: 49px !default;
 
 .scrollback-stream {
+	background: transparent;
+
 	&.scrollback-toast {
 		@include prefix(box-shadow, 0 0 5px 1px rgba(0,0,0,.1));
 		@include prefix(transition, .15s ease);
@@ -18,7 +20,6 @@ $bar-height: 49px !default;
 		width: $widget-width;
 		max-height: 100%;
 		max-width: 100%;
-		background: transparent;
 		border: 1px solid #ccc;
 		border: 1px solid rgba(0,0,0,.2);
 		border-bottom: none;
@@ -32,5 +33,6 @@ $bar-height: 49px !default;
 	&.scrollback-canvas {
 		height: 100%;
 		width: 100%;
+		border: none;
 	}
 }
