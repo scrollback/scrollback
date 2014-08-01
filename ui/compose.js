@@ -44,6 +44,14 @@ $(function() {
 		next();
 	}, 10);
 
+	libsb.on("navigate", function(state, next) {
+		if (state.old && state.old.room !== state.room) {
+			$entry.empty();
+		}
+
+		next();
+	}, 50);
+
 	$(window).on("resize", function() {
 		chatArea.setPosition($input.outerHeight());
 	});
