@@ -72,16 +72,17 @@
     "mocha": "latest",
     "bower": "latest",
     "browserify": "latest",
-    "grunt": "latest",
-    "grunt-contrib-uglify": "latest",
-    "grunt-wrap": "latest",
-    "grunt-contrib-concat": "latest",
-    "grunt-contrib-watch": "latest",
-    "grunt-contrib-less": "latest",
-    "grunt-contrib-sass": "latest",
-    "grunt-autoprefixer": "latest",
-    "grunt-manifest": "latest",
-    "grunt-browserify": "latest",
-    "grunt-bowercopy": "latest"
+    "gulp": "latest",
+    "gulp-autoprefixer": "latest",
+    "gulp-browserify": "latest",
+    "gulp-clean": "latest",
+    "gulp-concat": "latest",
+    "gulp-jshint": "latest",
+    "gulp-manifest": "latest",
+    "gulp-rename": "latest",
+    "gulp-ruby-sass": "~0.7.1",
+    "gulp-uglify": "latest",
+    "jshint-stylish": "latest",
+    "main-bower-files": "latest"
   }
 }

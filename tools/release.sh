@@ -76,8 +76,8 @@ if [[ "$ans" == [Yy] ]]; then
 fi
 
 # Generate files
-show_info "Running grunt"
-grunt || on_err "running 'grunt'"
+show_info "Running gulp"
+gulp || on_err "running 'gulp'"
 
 # Restart IRC
 show_info "Restart IRC server [y/n]?"

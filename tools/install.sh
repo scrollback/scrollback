@@ -102,7 +102,7 @@ fi
 
 # Install various dependencies for scrollback
 echo "Installing dependencies..."
-sudo npm install -g grunt grunt-cli bower forever
+sudo npm install -g gulp bower forever
 npm install
 bower install
 
@@ -133,6 +133,6 @@ fi
 [[ ! -f "myConfig.js" ]] && cp "myConfig.sample.js" "myConfig.js"
 [[ ! -f "client-config.js" ]] && cp "client-config.sample.js" "client-config.js"
 
-# Run Grunt to generate misc files
-echo "Running Grunt"
-grunt
+# Run Gulp to generate misc files
+echo "Running Gulp"
+gulp
