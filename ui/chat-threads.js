@@ -88,8 +88,15 @@ $(function() {
                           state.old.thread !== state.thread ||
                           state.old.mode !== state.mode ||
                           state.old.room !== state.room
-                          )) {
+                         )) {
+
             removeLine();
+
+            if (state.thread && state.thread !== currThread) {
+                currThread = state.thread;
+            } else {
+                currThread = null;
+            }
 
             if (state.mode === "normal" && state.view === "normal") {
                 setTimeout(function() {
@@ -235,18 +242,6 @@ $(function() {
 			}
 		}
 	});
-
-	libsb.on('navigate', function(state, next) {
-		if (state.old && state.thread !== state.old.thread) {
-			if (state.thread && state.thread !== currThread) {
-				currThread = state.thread;
-			} else {
-                currThread = null;
-            }
-		}
-
-		next();
-	}, 1);
 
 	libsb.on("text-up", function(text, next) {
 		var $chat = $(".chat-item.current");
