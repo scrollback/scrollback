@@ -95,8 +95,15 @@ module.exports = function (types) {
                 type: data.type,
                 picture: data.picture,
                 identities: [],
-                params: {}
+                params: {},
+                guides: {}
             };
+
+            for (i in data.guides) {
+                if (data.guides.hasOwnProperty(i)) {
+                    newRoom.guides[i] = data.guides[i];
+                }
+            }
 
             for (i in data.params) {
                 if (data.params.hasOwnProperty(i)) {

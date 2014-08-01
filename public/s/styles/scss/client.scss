@@ -36,7 +36,7 @@ $bar-height: 3.5em;
 $settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification;
 $modes: normal, search, conf, pref, home, noroom, offline, profile;
 $roles: guest, user, follower, owner;
-$embeds: toast, full;
+$embeds: toast, canvas;
 
 /* themes */
 @mixin theme($name, $base, $text, $icon, $focus) {

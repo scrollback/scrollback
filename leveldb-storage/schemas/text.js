@@ -77,7 +77,7 @@ module.exports = function (types) {
         get: function (query, cb) {
             var qStart = new Date().getTime();
             var dbQuery = {},
-                position;
+                position = query.time || null;
             if (query.ref) {
                 return texts.get(query.ref, function (err, data) {
                     if (!data) return cb();
@@ -105,7 +105,6 @@ module.exports = function (types) {
                 position = query.updateTime;
             } else {
                 dbQuery.by = "totime";
-                position = query.time;
             }
 
             if (position) {
