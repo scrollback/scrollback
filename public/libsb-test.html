@@ -9,7 +9,7 @@
 	<script src="/t/mocha.js"></script>
 	<script src="/t/chai.js"></script>
 	<script src="//cdn.sockjs.org/sockjs-0.3.min.js"></script>
-	<script type="text/javascript" src="libsb.bundle.js"></script>
+	<script type="text/javascript" src="libsb.bundle.min.js"></script>
 	<script src="./sdk/generate.js"></script>
 	<script>
 		var assert = chai.assert;
@@ -26,7 +26,7 @@
 					libsb.connect();
 					libsb.on('init-dn', function(){
 						done();
-					}); 
+					});
 				});
 				it("Testing for libsb.disconnect", function(done){
 					libsb.disconnect();

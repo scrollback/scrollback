@@ -128,7 +128,7 @@ module.exports = function(grunt) {
 					timestamp: true
 				},
 				src: [
-					"client.bundle.js",
+					"client.bundle.min.js",
 					"s/lib/jquery.min.js",
 					"s/styles/gen/*.css",
 					"s/img/client/*.*",
