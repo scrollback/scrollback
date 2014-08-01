@@ -1538,26 +1538,30 @@ body {
 }
 
 .ie-warning {
+    display: table;
     position: fixed;
     top: 0;
     left: 0;
+    height: 100%;
     width: 100%;
-    z-index: 99999;
-    color: $light-color;
     background-color: $warning-color;
-    border-bottom: 1px solid darken($warning-color, 10%);
-    font-size: 1.2em;
-    padding: .5em 1em;
-    text-align: center;
-    box-shadow: 0 3px 2px -1px rgba(0,0,0,.05);
-
-    h2 { font-size: 2em; }
+    color: $light-color;
+    font-size: 16px;
+    z-index: 99999;
 
     a {
         font-weight: 700;
         color: $light-color;
-        text-decoration: underline
+        border-bottom: 1px dotted $light-color;
+
+        &:focus, &:hover { border-bottom-style: solid;}
     }
+}
+
+.ie-warning-content {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
 }
 
 .room-area, .meta-area, .main-area {
