@@ -36,7 +36,7 @@ $bar-height: 3.5em;
 $settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification;
 $modes: normal, search, conf, pref, home, noroom, offline, profile;
 $roles: guest, user, follower, owner;
-$embeds: toast, full;
+$embeds: toast, canvas;
 
 /* themes */
 @mixin theme($name, $base, $text, $icon, $focus) {
@@ -1105,7 +1105,7 @@ body {
         }
     }
 
-    &.chat-label-hidden {
+    &.chat-label-hidden, &.chat-label-abusive {
         color: fade-out($dark-color, .5);
         font-style: italic;
 
@@ -1535,6 +1535,33 @@ body {
 
 .signedout-dialog, .signin-dialog, .signup-dialog {
     input, .button { width: 100%; }
+}
+
+.ie-warning {
+    display: table;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: $warning-color;
+    color: $light-color;
+    font-size: 16px;
+    z-index: 99999;
+
+    a {
+        font-weight: 700;
+        color: $light-color;
+        border-bottom: 1px dotted $light-color;
+
+        &:focus, &:hover { border-bottom-style: solid;}
+    }
+}
+
+.ie-warning-content {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
 }
 
 .room-area, .meta-area, .main-area {

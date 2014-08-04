@@ -28,9 +28,8 @@
         }
     }
 
-
-
     document.onreadystatechange = function () {
+		var container;
         if (document.readyState === "complete") {
             //            Add to iframe url: embed={minimize,path}
             var embed = {};
@@ -61,12 +60,22 @@
             style.href = host + "/s/styles/gen/embed.css";
 
             document.head.appendChild(style);
-
             // Create and append the iframe
             iframe = document.createElement("iframe");
+
+			if (embed.form === "canvas") {
+				container = document.getElementById("scrollback-container");
+			}
+			if (!container) {
+				embed = sb.embed = "toast";
+
+				document.body.appendChild(iframe);
+			} else {
+				container.appendChild(iframe);
+			}
             // TODO: change "embed" to "context"
             iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
-            iframe.className = "scrollback-stream" + (sb.minimize ? " scrollback-minimized" : "");
+            iframe.className = "scrollback-stream scrollback-" + embed.form+ " " + ((sb.minimize && embed.form =="toast") ? " scrollback-minimized" : "");
 
             document.body.appendChild(iframe);
 

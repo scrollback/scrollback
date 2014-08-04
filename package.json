@@ -82,6 +82,9 @@
     "grunt-autoprefixer": "latest",
     "grunt-manifest": "latest",
     "grunt-browserify": "latest",
-    "grunt-bowercopy": "latest"
+    "grunt-bowercopy": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-jscs": "latest",
+    "jshint-stylish": "latest"
   }
 }

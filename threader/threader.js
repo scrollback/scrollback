@@ -1,16 +1,17 @@
 var log = require("../lib/logger.js");
-var gen = require("../lib/generate.js");
 var config = require('../config.js');
 var net = require('net');
 var timeout = 60 * 1000;
 var redis = require('../lib/redisProxy.js').select(config.redisDB.threader);
 var client;
 var pendingCallbacks = {};
+var core;
 
 /**
 Communicate with scrollback java Process through TCP and set message.threads.
 */
-module.exports = function(core) {
+module.exports = function(coreObj) {
+	core = coreObj;
 	if (config.threader) {
 		init();
 		core.on('text', function(message, callback) {
@@ -31,7 +32,7 @@ module.exports = function(core) {
 					return;
 				}
 				pendingCallbacks[message.id] = { message: message, fn: callback ,time:new Date().getTime()};
-				setTimeout(function() { 
+				setTimeout(function() {
 					if(pendingCallbacks[message.id] ){
 						pendingCallbacks[message.id].fn();
 						delete pendingCallbacks[message.id];
@@ -61,10 +62,11 @@ function processReply(data){
 		log("Data returned by scrollback.jar = "+data.threadId, pendingCallbacks[data.id].message.text);
 		var id = data.threadId;
 		var title = data.title;
-		if (data.bucketStatus === 'end') {
+	   	var bucketStatus = data.bucketStatus;
+		if (bucketStatus === 'end') {
 			redis.get("threader:last:" + id, function(err, d) {
 				d = JSON.parse(d);
-				if (data) {
+				if (d) {
 					core.emit("text", {
 						type: 'edit',
 						ref: d.id,
@@ -76,23 +78,24 @@ function processReply(data){
 		} else {
 			var message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 			if(message) {
-				
+
 				redis.get("threader:last:" + id, function(err, d) {
 					message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
-					if (!message) return; 
+					if (!message) return;
 					d = JSON.parse(d);
 					var tt = title;
 					if(!message.threads) message.threads = [];
-					if(d && d.title === title) title = undefined;	
+					if(d && d.title === title) title = undefined;
 					if(!title) message.threads.push({id: id, score: 1});
 					else message.threads.push({id: id, title: title, score: 1});
+					if(bucketStatus === "New") message.labels.threadStart = 1;
 					redis.set("threader:last:" + id, JSON.stringify({id: message.id, title: tt}));
 					pendingCallbacks[data.id].fn();
 					log("called back in ", new Date().getTime() - pendingCallbacks[data.id].time);
 					delete pendingCallbacks[data.id];
-					
+
 				});
-				
+
 			}
 		}
 	} catch(err) {
@@ -112,7 +115,7 @@ function init(){
 	var d = "";//wait for new line.
 	client.on("data", function(data){
 		var i;
-		
+
 		data = data.toString('utf8');
 		data = data.split("\n");
 		data[0] = d + data[0];//append previous data
@@ -124,14 +127,14 @@ function init(){
 
 	client.on('error', function(error){
 		setTimeout(function(){
-			init();	
-		},timeout);//try to reconnect after 1 min
+			init();
+		}, timeout);//try to reconnect after 1 min
 	});
-	
+
 	client.on('end', function() {
 		log('connection terminated');
 		setTimeout(function(){
-			init();	
+			init();
 		},timeout);//try to reconnect after 1 min
 	});
 }

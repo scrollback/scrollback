@@ -33,9 +33,7 @@ module.exports = function(grunt) {
 				},
 				files: {
 					"flexie.min.js": "flexie/dist/flexie.min.js",
-					"html5shiv.min.js": "html5shiv/dist/html5shiv.min.js",
 					"jquery.min.js": "jquery/dist/jquery.min.js",
-					"selectivizr.js": "selectivizr/selectivizr.js",
 					"sockjs.min.js": "sockjs/sockjs.min.js",
 					"svg4everybody.min.js": "svg4everybody/svg4everybody.min.js",
 					"transformie.js": "transformie/transformie.js",
@@ -46,9 +44,9 @@ module.exports = function(grunt) {
 		browserify: {
 			dist: {
 				files: {
-					"public/libsb.bundle.js": ["libsb.js"],
-					"public/client.bundle.js": ["client.js"],
-					"public/embed.js": ["embed/embed-parent.js"]
+					"public/libsb.bundle.js": [ "libsb.js" ],
+					"public/client.bundle.js": [ "client.js" ],
+					"public/embed.js": [ "embed/embed-widget.js" ]
 				},
 				options: {
 					bundleOptions: { debug: true }
@@ -60,15 +58,15 @@ module.exports = function(grunt) {
 				report: "min"
 			},
 			core: {
-				src: ["public/libsb.bundle.js"],
+				src: [ "public/libsb.bundle.js" ],
 				dest: "public/libsb.bundle.min.js"
 			},
 			client: {
-				src: ["public/client.bundle.js"],
+				src: [ "public/client.bundle.js" ],
 				dest: "public/client.bundle.min.js"
 			},
 			embed: {
-				src: ["public/embed.js"],
+				src: [ "public/embed.js" ],
 				dest: "public/embed.min.js"
 			}
 		},
@@ -77,24 +75,24 @@ module.exports = function(grunt) {
 				separator: ";\n\n"
 			},
 			polyfills: {
-				src: ["public/s/lib/selectivizr.js", "public/s/lib/flexie.min.js", "public/s/lib/transformie.js"],
-				dest: "public/s/lib/polyfills.js",
+				src: [ "public/s/lib/flexie.min.js", "public/s/lib/transformie.js" ],
+				dest: "public/s/lib/polyfills.js"
 			}
 		},
 		wrap: {
 			options: {
-				wrapper: ["(function() {", "}())"]
+				wrapper: [ "(function() {", "}())" ]
 			},
 			core: {
-				src: ["public/libsb.bundle.min.js"],
+				src: [ "public/libsb.bundle.min.js" ],
 				dest: "public/libsb.bundle.min.js"
 			},
 			client: {
-				src: ["public/client.bundle.min.js"],
+				src: [ "public/client.bundle.min.js" ],
 				dest: "public/client.bundle.min.js"
 			},
 			embed: {
-				src: ["public/embed.min.js"],
+				src: [ "public/embed.min.js" ],
 				dest: "public/client.min.js"
 			}
 		},
@@ -104,13 +102,13 @@ module.exports = function(grunt) {
 					style: "compressed",
 					sourcemap: true
 				},
-				files: [{
+				files: [ {
 					expand: true,
 					cwd: "public/s/styles/scss",
-					src: ["*.scss"],
+					src: [ "*.scss" ],
 					dest: "public/s/styles/gen",
 					ext: ".css"
-				}]
+				} ]
 			}
 		},
 		autoprefixer: {
@@ -130,8 +128,7 @@ module.exports = function(grunt) {
 					timestamp: true
 				},
 				src: [
-					"client.bundle.js",
-					"sdk/sockjs.js",
+					"client.bundle.min.js",
 					"s/lib/jquery.min.js",
 					"s/styles/gen/*.css",
 					"s/img/client/*.*",
@@ -141,23 +138,38 @@ module.exports = function(grunt) {
 				dest: "public/manifest.appcache"
 			}
 		},
+		jshint: {
+			all: [ "*/*.js", "*/*/*.js" ],
+			options: {
+				force: true,
+				node: true,
+				unused: true,
+				undef: true,
+				curly: false,
+				globals: { jQuery: true },
+				reporter: require("jshint-stylish")
+			}
+		},
+		jscs: {
+			main: [ "*/*.js", "*/*/*.js" ]
+		},
 		watch: {
 			options: {
-				livereload: true,
+				livereload: true
 			},
 			scripts: {
-				files: ["gruntfile.js", "*/*-client.js",
+				files: [ "gruntfile.js", "*/*-client.js",
 						"public/client.js", "public/libsb.js",
 						"lib/*.js", "ui/*.js",'client-entityloader/*.js', 'client-init/*.js', 'localStorage-client/*.js'],
 				tasks: ["browserify", "uglify", "manifest"],
 			},
 			styles: {
-				files: ["gruntfile.js", "public/s/styles/scss/*.scss"],
-				tasks: ["sass", "autoprefixer", "manifest"],
+				files: [ "gruntfile.js", "public/s/styles/scss/*.scss" ],
+				tasks: [ "sass", "autoprefixer", "manifest" ]
 			},
 			misc: {
-				files: ["public/client.html", "public/s/img/client/*.*", "public/s/img/client/*/*.*"],
-				tasks: ["manifest"],
+				files: [ "public/client.html", "public/s/img/client/*.*", "public/s/img/client/*/*.*" ],
+				tasks: [ "manifest" ]
 			}
 		}
 	});
@@ -171,11 +183,13 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-sass");
 	grunt.loadNpmTasks("grunt-autoprefixer");
 	grunt.loadNpmTasks("grunt-manifest");
+	grunt.loadNpmTasks("grunt-contrib-jshint");
+	grunt.loadNpmTasks("grunt-jscs");
 
 	// Default task(s).
 	grunt.event.on("watch", function(action, filepath, target) {
 		grunt.log.writeln(target + ": " + filepath + " has " + action);
 	});
 
-	grunt.registerTask("default", ["bowercopy", "browserify", "uglify", "concat", "wrap", "sass", "autoprefixer", "manifest"]);
+grunt.registerTask("default", [ "bowercopy", "browserify", "uglify", "concat", "wrap", "sass", "autoprefixer", "manifest", "jshint" ]);
 };
