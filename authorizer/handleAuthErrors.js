@@ -29,7 +29,7 @@ module.exports = function (error) {
 			break;
 			
 		case 'join':
-			errorMessage = 'You are not authorized to follow this room. Following is invite only!';
+			errorMessage = 'Guests cannot follow rooms! Please sign in.';
 			break;
 			
 		case 'getTexts':
