@@ -1537,6 +1537,33 @@ body {
     input, .button { width: 100%; }
 }
 
+.ie-warning {
+    display: table;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: $warning-color;
+    color: $light-color;
+    font-size: 16px;
+    z-index: 99999;
+
+    a {
+        font-weight: 700;
+        color: $light-color;
+        border-bottom: 1px dotted $light-color;
+
+        &:focus, &:hover { border-bottom-style: solid;}
+    }
+}
+
+.ie-warning-content {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
 .room-area, .meta-area, .main-area {
     @include transition(.3s, ease-out); /* animate css transforms */
 
