@@ -1,35 +1,50 @@
 /* jshint node: true */
 
+// Load plugins and declare variables
 var gulp = require("gulp"),
+	browserify = require("browserify"),
+	source = require("vinyl-source-stream"),
+	eventstream = require("event-stream"),
+	gutil = require("gulp-util"),
+	streamify = require("gulp-streamify"),
 	jshint = require("gulp-jshint"),
-	browserify = require("gulp-browserify"),
 	concat = require("gulp-concat"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
 	sass = require("gulp-ruby-sass"),
 	prefix = require("gulp-autoprefixer"),
-	manifest =  require("gulp-manifest"),
+	minify = require("gulp-minify-css"),
+	manifest = require("gulp-manifest"),
 	clean = require("gulp-clean"),
 	bowerDir = "bower_components",
-    libDir = "public/s/lib",
-    cssDir = "public/s/styles/gen",
+	libDir = "public/s/lib",
+	cssDir = "public/s/styles/gen",
 	jsFiles = [
 		"*/*-client.js",
 		"lib/*.js", "ui/*.js",
 		"public/client.js", "public/libsb.js"
 	],
-    cssFiles = [
-        "public/s/styles/scss/*.scss"
-    ];
+	cssFiles = [ "public/s/styles/scss/*.scss" ];
 
-function prefixArray(prefix, array) {
-    var prefixed = [];
+// Make browserify bundle
+function bundle(files) {
+	var streams = [],
+		bundler = function(file) {
+			return browserify("./" + file)
+			.bundle({ debug: true })
+			.pipe(source(file))
+			.on("error", gutil.log);
+		};
 
-    for (var i = 0, l = array.length; i < l; i++) {
-        prefixed.push(prefix + array[i]);
-    }
+	if (files instanceof Array) {
+		for (var i = 0, l = files.length; i < l; i++) {
+			streams.push(bundler(files[i]));
+		}
+	} else if (typeof files === "string") {
+		streams.push(bundler(files));
+	}
 
-    return prefixed;
+	return eventstream.merge.apply(null, streams);
 }
 
 // Lint JavaScript files
@@ -41,99 +56,112 @@ gulp.task("lint", function() {
 
 // Copy and minify polyfills
 gulp.task("polyfills", function() {
-	return gulp.src(prefixArray(bowerDir, [
-        "/flexie/dist/flexie.min.js",
-        "/transformie/transformie.js"
-	]))
+	return gulp.src([
+		bowerDir + "/flexie/dist/flexie.min.js",
+		bowerDir + "/transformie/transformie.js"
+	])
 	.pipe(concat("polyfills.js"))
-	.pipe(uglify())
+	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
+	.pipe(gulp.dest(libDir))
 	.pipe(rename({ suffix: ".min" }))
-	.pipe(gulp.dest(libDir));
+	.pipe(gulp.dest(libDir))
+	.on("error", gutil.log);
 });
 
 // Copy libs and build browserify bundles
 gulp.task("libs", function() {
-    return gulp.src(prefixArray(bowerDir, [
-		"/jquery/dist/jquery.min.js",
-		"/sockjs/sockjs.min.js",
-		"/svg4everybody/svg4everybody.min.js",
-		"/velocity/jquery.velocity.min.js",
-		"/velocity/velocity.ui.min.js"
-	]))
-	.pipe(gulp.dest(libDir));
+	return gulp.src([
+		bowerDir + "/jquery/dist/jquery.min.js",
+		bowerDir + "/sockjs/sockjs.min.js",
+		bowerDir + "/svg4everybody/svg4everybody.min.js",
+		bowerDir + "/velocity/jquery.velocity.min.js",
+		bowerDir + "/velocity/velocity.ui.min.js"
+	])
+	.pipe(gulp.dest(libDir))
+	.on("error", gutil.log);
 });
 
-gulp.task("browserify", [ "libs" ], function() {
-	return gulp.src([ "client.js", "libsb.js" ])
-	.pipe(browserify({
-		bundleOptions: { debug: true }
-	}))
-	.pipe(uglify({ sourceMap: true }))
+gulp.task("bundle", [ "libs" ], function() {
+	return bundle([ "libsb.js", "client.js" ])
+	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
 	.pipe(rename({ suffix: ".bundle.min" }))
-	.pipe(gulp.dest("public"));
+	.pipe(gulp.dest("public"))
+	.on("error", gutil.log);
 });
 
 // Generate embed widget script
 gulp.task("embed", function() {
-	return gulp.src("embed/embed-widget.js")
-	.pipe(browserify({
-		bundleOptions: { debug: true }
-	}))
-	.pipe(uglify({ sourceMap: true }))
+	return bundle("embed/embed-widget.js")
+	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
 	.pipe(rename("embed.min.js"))
 	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
-	.pipe(gulp.dest("public"));
+	.pipe(gulp.dest("public"))
+	.on("error", gutil.log);
 });
+
+// Generate scripts
+gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 
 // Generate appcache manifest file
 gulp.task("manifest", function() {
-    return gulp.src(prefixArray("public", [
-		"/client.bundle.min.js",
-		"/s/lib/jquery.min.js",
-		"/s/styles/gen/*.css",
-		"/s/img/client/*.*",
-		"/s/img/client/*/*.*"
-	]))
+	return gulp.src([
+		"public/client.bundle.min.js",
+		"public/s/lib/jquery.min.js",
+		"public/s/styles/gen/*.css",
+		"public/s/img/client/*.*",
+		"public/s/img/client/*/*.*"
+	])
 	.pipe(manifest({
 		basePath: "public",
 		cache: [
-            "//fonts.googleapis.com/css?family=Open+Sans:300,400,600",
-            "//themes.googleusercontent.com/font?kit=cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw"
-        ],
+			"//fonts.googleapis.com/css?family=Open+Sans:300,400,600",
+			"//themes.googleusercontent.com/font?kit=cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw"
+		],
 		network: [ "*" ],
-		fallback: [ "//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",  "/ /offline.html" ],
+		fallback: [
+			"//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
+			"/ /offline.html"
+		],
 		preferOnline: true,
+		hash: true,
 		timestamp: true,
 		filename: "manifest.appcache"
 	}))
-	.pipe(gulp.dest("public"));
+	.pipe(gulp.dest("public"))
+	.on("error", gutil.log);
 });
 
+// Generate styles
 gulp.task("styles", function() {
-    return gulp.src(cssFiles)
+	return gulp.src(cssFiles)
 	.pipe(sass({
-		style: "compressed",
-		sourcemap: true
+		style: "expanded",
+		sourcemap: true,
+		sourcemapPath: "../scss"
 	}))
-	.on("error", function(e) { console.log(e.message); })
-	.pipe(prefix())
-	.pipe(gulp.dest(cssDir));
+	.on("error", function(e) { gutil.log(e.message); })
+	.pipe(gutil.env.production ? (prefix() && minify()) : gutil.noop())
+	.pipe(gulp.dest(cssDir))
+	.on("error", gutil.log);
 });
 
 gulp.task("clean", function() {
 	return gulp.src([
-        "public/*.min.js",
-        "public/manifest.appcache",
-        libDir, cssDir
-    ], { read: false })
-	.pipe(clean());
+		"public/*.map",
+		"public/*.min.js",
+		"public/*.bundle.js",
+		"public/manifest.appcache",
+		libDir, cssDir
+	], { read: false })
+	.pipe(clean())
+	.on("error", gutil.log);
 });
 
 gulp.task("watch", function() {
-	gulp.watch(jsFiles, [ "lint", "browserify", "embed", "manifest" ]);
-    gulp.watch(cssFiles, [ "styles", "manifest" ]);
+	gulp.watch(jsFiles, [ "lint", "scripts", "manifest" ]);
+	gulp.watch(cssFiles, [ "styles", "manifest" ]);
 });
 
 // Default Task
-gulp.task("default", [ "lint", "polyfills", "browserify", "embed", "styles", "manifest" ]);
+gulp.task("default", [ "lint", "scripts", "styles", "manifest" ]);

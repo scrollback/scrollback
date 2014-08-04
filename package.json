@@ -80,9 +80,15 @@
     "gulp-jshint": "latest",
     "gulp-manifest": "latest",
     "gulp-rename": "latest",
-    "gulp-ruby-sass": "~0.7.1",
+    "gulp-ruby-sass": "latest",
+    "gulp-sourcemaps": "latest",
     "gulp-uglify": "latest",
+    "gulp-util": "latest",
     "jshint-stylish": "latest",
-    "main-bower-files": "latest"
+    "main-bower-files": "latest",
+    "vinyl-source-stream": "latest",
+    "gulp-minify-css": "latest",
+    "gulp-streamify": "latest",
+    "event-stream": "latest"
   }
 }
