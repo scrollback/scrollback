@@ -1105,7 +1105,7 @@ body {
         }
     }
 
-    &.chat-label-hidden {
+    &.chat-label-hidden, &.chat-label-abusive {
         color: fade-out($dark-color, .5);
         font-style: italic;
 
