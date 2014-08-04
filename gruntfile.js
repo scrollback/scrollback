@@ -79,23 +79,6 @@ module.exports = function(grunt) {
 				dest: "public/s/lib/polyfills.js"
 			}
 		},
-		wrap: {
-			options: {
-				wrapper: [ "(function() {", "}())" ]
-			},
-			core: {
-				src: [ "public/libsb.bundle.min.js" ],
-				dest: "public/libsb.bundle.min.js"
-			},
-			client: {
-				src: [ "public/client.bundle.min.js" ],
-				dest: "public/client.bundle.min.js"
-			},
-			embed: {
-				src: [ "public/embed.min.js" ],
-				dest: "public/client.min.js"
-			}
-		},
 		sass: {
 			dist: {
 				options: {
@@ -120,10 +103,15 @@ module.exports = function(grunt) {
 			generate: {
 				options: {
 					basePath: "public",
-					cache: [ "//fonts.googleapis.com/css?family=Open+Sans:300,400,600",
-							"//themes.googleusercontent.com/font?kit=cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw" ],
+					cache: [
+						"//fonts.googleapis.com/css?family=Open+Sans:300,400,600",
+						"//themes.googleusercontent.com/font?kit=cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw"
+					],
 					network: [ "*" ],
-					fallback: [ "//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg", "/ /offline.html" ],
+					fallback: [
+						"//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
+						"/ /offline.html"
+					],
 					preferOnline: true,
 					timestamp: true
 				},
@@ -157,9 +145,11 @@ module.exports = function(grunt) {
 				livereload: true
 			},
 			scripts: {
-				files: [ "gruntfile.js", "*/*-client.js",
-						"public/client.js", "public/libsb.js",
-						"lib/*.js", "ui/*.js" ],
+				files: [
+					"gruntfile.js", "*/*-client.js",
+					"public/client.js", "public/libsb.js",
+					"lib/*.js", "ui/*.js"
+				],
 				tasks: [ "browserify", "uglify", "manifest" ]
 			},
 			styles: {
@@ -177,7 +167,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-bowercopy");
 	grunt.loadNpmTasks("grunt-browserify");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
-	grunt.loadNpmTasks("grunt-wrap");
 	grunt.loadNpmTasks("grunt-contrib-concat");
 	grunt.loadNpmTasks("grunt-contrib-sass");
 	grunt.loadNpmTasks("grunt-autoprefixer");
@@ -190,5 +179,8 @@ module.exports = function(grunt) {
 		grunt.log.writeln(target + ": " + filepath + " has " + action);
 	});
 
-grunt.registerTask("default", [ "bowercopy", "browserify", "uglify", "concat", "wrap", "sass", "autoprefixer", "manifest", "jshint" ]);
+	grunt.registerTask("default", [
+		"bowercopy", "browserify", "uglify", "concat",
+		"sass", "autoprefixer", "manifest", "jshint"
+	]);
 };
