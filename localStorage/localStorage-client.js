@@ -1,31 +1,29 @@
 /* global localStorage */
-/* global $, libsb, location, window */
+/* global window, currentState */
 var generate = require('../lib/generate');
-var core;
-var messageListener = false;
-var domain = location.host;
-var path = location.pathname;
-
+var libsb;
 var cacheOp = Object.create(require('./cacheOperations'));
 
 cacheOp.update(); // updates client's LS version to current
 cacheOp.load(); // initial load of all LS entries apart from ArrayCaches
 
 module.exports = function (c) {
-	core = c;
+	libsb = c;
     libsb.on('init-up', function(init, next) {
         var sid;
-        if(cacheOp && cacheOp.session) {
-            libsb.session = sid = cacheOp.session;
+        if(cacheOp.cache && cacheOp.cache.session) {
+            libsb.session = sid = cacheOp.cache.session;
         }
         if(!sid) {
-            cacheOp.session = sid = "web://"+generate.uid();
-            libsb.session = cacheOp.session;
+            cacheOp.cache.session = sid = "web://"+generate.uid();
+            libsb.session = cacheOp.cache.session;
+			cacheOp.save();
         }
+		init.session = sid;
         return next();
     }, "validation");
 
-	core.on('back-dn', function (back, next) {
+	libsb.on('back-dn', function (back, next) {
 		if (back.from !== libsb.user.id) return next();
 
 		// loading ArrayCache from LocalStorage when user has navigated to the room.
@@ -62,7 +60,7 @@ module.exports = function (c) {
 		next();
 	}, 1000);
 
-    core.on('back-dn', function (back, next) {
+    libsb.on('back-dn', function (back, next) {
 		// store a result-start in ArrayCache, to indicate the beginning of the current stream of messages from the user
 		if (back.from !== libsb.user.id) return next();
 		var key = cacheOp.generateLSKey(back.to, 'texts');
@@ -80,10 +78,9 @@ module.exports = function (c) {
 		next();
 	}, 500);
 
-	core.on('getTexts', function (query, next) {
+	libsb.on('getTexts', function (query, next) {
 		// getTextsBefore
 		var key;
-        console.log("++++++", query);
 		if (query.thread) {
 			// creating individual cache entries for queries with the thread property
 			key = cacheOp.generateLSKey(query.to, query.thread, 'texts');
@@ -117,9 +114,8 @@ module.exports = function (c) {
 		}
 	}, 200); // runs before the socket
 
-	core.on('getTexts', function (query, next) {
+	libsb.on('getTexts', function (query, next) {
         var results = query.results;
-        console.log("++++++", query);
 		if (!query.results || !query.results.length || query.resultSource == 'localStorage') {
 			return next();
 		}
@@ -174,14 +170,11 @@ module.exports = function (c) {
 		}
 		next();
 	}, 8); // runs after the socket
-	core.on('getThreads', function (query, next) {
-        console.log("++++++", query);
+	libsb.on('getThreads', function (query, next) {
 		var key = cacheOp.generateLSKey(query.to, 'threads');
-        console.log("++++++", query);
 		if (!cacheOp.cache.hasOwnProperty(key)) {
 			cacheOp.loadArrayCache(key);
 		}
-        console.log("++++++", query);
 		if (!cacheOp.cache[key].d.length) {
 			return next();
 		}
@@ -192,7 +185,6 @@ module.exports = function (c) {
 		}
 		if(!currentState.connectionStatus) query.partials = true;
         
-        console.log("++++++", query);
 		var results = cacheOp.cache[key].get('startTime', query);
 
 		if (!results || !results.length) {
@@ -200,12 +192,11 @@ module.exports = function (c) {
 		} else {
 			query.results = results;
 			query.resultSource = 'localStorage';
-            console.log("Result from local storage.",query);
 			return next();
 		}
 	}, 200); // runs before the socket
 
-	core.on('getThreads', function (query, next) {
+	libsb.on('getThreads', function (query, next) {
 		if (!query.results || query.resultSource === 'localStorage') {
 			return next();
 		}
@@ -246,11 +237,10 @@ module.exports = function (c) {
 			cacheOp.cache[lskey].put('startTime', results);
 			cacheOp.saveCache(lskey);
 		}
-        console.log("Threads::::", query);
 		next();
 	}, 8); // runs after socket 
 
-	core.on('getRooms', function (query, next) {
+	libsb.on('getRooms', function (query, next) {
 
 		// only getRooms with ref are cached as of now.
 		
@@ -272,7 +262,7 @@ module.exports = function (c) {
 
 	}, 400); // run before socket
 
-	core.on('getRooms', function (query, next) {
+	libsb.on('getRooms', function (query, next) {
 
 		if (!query.ref) {
 			return next();
@@ -296,7 +286,7 @@ module.exports = function (c) {
 
 	}, 8); // run after socket
 
-	core.on('text-dn', function (text, next) {
+	libsb.on('text-dn', function (text, next) {
 		var key = cacheOp.generateLSKey(text.to, 'texts');
 		cacheOp.loadArrayCache(key);
 		var lastItem = cacheOp.cache[key].d[cacheOp.cache[key].length - 1];
@@ -327,7 +317,7 @@ module.exports = function (c) {
 		next();
 	}, 500); // storing new texts to cache.
 
-	core.on('room-dn', function (room, next) {
+	libsb.on('room-dn', function (room, next) {
 		var roomObj = room.room;
 		if (cacheOp.cache) {
 			cacheOp.rooms = cacheOp.rooms ? cacheOp.rooms : {};
@@ -338,7 +328,7 @@ module.exports = function (c) {
 		next();
 	}, 500);
 
-	core.on('init-dn', function (init, next) {
+	libsb.on('init-dn', function (init, next) {
 		cacheOp.cache.user = init.user;
 		cacheOp.cache.occupantOf = init.occupantOf;
 		cacheOp.cache.memberOf = init.memberOf;
@@ -361,7 +351,7 @@ module.exports = function (c) {
 		next();
 	}, 500);
 
-	core.on('away-dn', function (away, next) {
+	libsb.on('away-dn', function (away, next) {
 		// store a result-end to the end of ArrayCache to show that the text stream is over for the current user
 		if (away.from !== libsb.user.id) return next();
 		var key = cacheOp.generateLSKey(away.to, 'texts');
@@ -379,7 +369,7 @@ module.exports = function (c) {
 		next();
 	}, 500);
 
-	core.on('logout', logout, 1000);
+	libsb.on('logout', logout, 1000);
 };
 
 function logout(p, n) {

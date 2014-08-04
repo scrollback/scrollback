@@ -38,14 +38,14 @@
                 host = config.server.protocol + config.server.host;
 
             window.scrollback = window.scrollback || {};
-
             sb = window.scrollback;
 
             sb.room = sb.room || ((sb.streams && sb.streams.length) ? sb.streams[0] : "scrollback");
-
+			
 
             embed.form = sb.form || "toast";
             embed.theme = /* sb.theme || */ "dark";
+			embed.suggestedNick = sb.suggestedNick;
             embed.origin = {
                 protocol: location.protocol,
                 host: location.host,
@@ -54,7 +54,6 @@
             embed.minimize = (typeof sb.minimize === "boolean") ? sb.minimize : true;
 
             sb.room = validate(sb.room, true);
-
             // Insert required styles
             style = document.createElement("link");
             style.rel = "stylesheet";
@@ -88,7 +87,6 @@
                         iframe.className = iframe.className.replace(minReg, "").trim();
                     } else {
                         data = JSON.parse(e.data);
-                        console.log("++++++++++ embd parent", data);
                         if (data.type === "domain-challenge") {
                             iframe.contentWindow.postMessage(JSON.stringify({
                                 type: "domain-response",

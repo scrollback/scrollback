@@ -30,7 +30,7 @@ require('./authorizer/authorizer-client.js');
 require('./http/seo-client.js');
 require('./http/roomGeneralSettings-client.js');
 require('./http/userProfile-client.js');
-require('./embed/embed-client.js');
+require('./embed/embed-client.js')(libsb);
 require('./embed/embed-config.js');
 require('./irc/irc-client.js');
 require('./anti-abuse/anti-abuse-client.js');

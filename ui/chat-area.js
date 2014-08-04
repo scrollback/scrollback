@@ -21,21 +21,17 @@ $(function () {
 				before: before,
 				after: after
 			};
-			console.log("CHAT-AREAGetItems fired.", index, before, after);
 			if (!roomName) return callback([]);
 
 			index = index || time;
 			query.time = index;
-			console.log("GetItems fired.", index, before, after);
 
             if(thread) query.thread = thread;
             if(!index && !before) return callback([false]);
-			console.log("GetItems fired.", index, before, after);
 			
 			function loadTexts() {
 				libsb.getTexts(query, function (err, t) {
                     var texts = t.results || [];
-					console.log("GetItems fired.", index, before, after, t);
 					texts = texts.slice(0, texts.length, currentState);
                     
 					if (err) throw err; // TODO: handle the error properly.
@@ -146,7 +142,6 @@ $(function () {
 	}, 100);
 	libsb.on("navigate", function (state, next) {
 		var reset = false;
-		console.log("CHAT-AREA", state);
 
 		if (state.source == 'chat-area') return next();
 		if (state.source == "init") {

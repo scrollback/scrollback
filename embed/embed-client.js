@@ -5,7 +5,7 @@ var parseURL = require("../lib/parseURL.js");
 /*  status flags.*/
 var verificationStatus = false,
     bootingDone = false,
-    verified = false;
+    verified = false, suggestedNick;
 
 /*  lasting objects*/
 var embed, token, domain, path, preBootQueue = [],
@@ -76,9 +76,10 @@ module.exports = function (libsb) {
 
     var url = parseURL(window.location.pathname, window.location.search);
     embed = url.embed;
-
-    if (embed && window.parent !== window) {
+	
+	if (embed && window.parent !== window) {
         embed = JSON.parse(decodeURIComponent(url.embed));
+		suggestedNick = embed.suggestedNick;
         window.onmessage = function (e) {
             var data = e.data;
             data = parseResponse(data);
@@ -99,7 +100,7 @@ module.exports = function (libsb) {
             var guides;
             if (state.source == "boot") bootingDone = true;
 
-            if (typeof state.room === "object") {
+            if (state.room &&  state.room === "object") {
                 guides = state.room.guides;
                 if (!state.old || !state.old.roomName || state.roomName != state.old.roomName) {
                     if (guides && guides.http && guides.http.allowedDomains && guides.http.allowedDomains.length) {
@@ -117,18 +118,19 @@ module.exports = function (libsb) {
             }
             next();
         }
-
+		
         if (state.source == "boot") {
-            if (verificationStatus) {
-                queue.push(function () {
+            if (!verificationStatus) {
+                preBootQueue.push(function () {
                     processNavigate();
                 });
-            }
+            }else{
+				processNavigate();	
+			}
         } else {
             processNavigate();
         }
     }, 997);
-
 
     libsb.on("init-up", function (init, next) {
         function processInit() {
@@ -137,6 +139,11 @@ module.exports = function (libsb) {
                 path: path,
                 verified: verified
             };
+
+			if (url) {
+				init.suggestedNick = suggestedNick || "";
+			}
+			
             next();
         }
         if (libsb.hasBooted) processInit();

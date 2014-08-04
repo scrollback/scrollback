@@ -14,6 +14,7 @@ function init(libsb) {
         if (!libsb.hasBooted) {
             // add more sources if the navigate has to be queued up.
             if (["socket"].indexOf(state.source) >= 0) return actionQueue.enQueue(next);
+			console.log("Throwing not booted error",state);
             return next(new Error("BOOT_NOT_COMPLETE"));
         }
         next();

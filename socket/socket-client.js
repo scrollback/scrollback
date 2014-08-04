@@ -1,5 +1,5 @@
 "use strict";
-/* global libsb, currentState*/
+/* global libsb, currentState, SockJS*/
 
 var generate = require("../lib/generate.js"),
 	config = require("../client-config.js"),
@@ -12,7 +12,7 @@ var connectionState = false, backOff = 1,
 
 module.exports = function (c) {
 	core = c;
-//    connect();
+    connect();
     core.on("disconnect", disconnect, 1000);
 
 	core.on("init-up", sendInit, 10);
@@ -71,39 +71,38 @@ function safeSend(data) {
 }
 
 function connect() {
-    console.log("connection:new connection is created");
 	client = new SockJS(config.server.host + "/socket");
-    console.log("connection:disconnceted listener");
     client.onclose = disconnected;
     
 	client.onopen = function(){
 		connectionState = true;
         backOff = 1;
-        console.log("Emitting the connectionState navigate");
-        core.emit("navigate", {connectionStatus: true, source: "socket"}, function(err, state) {
-            console.log("Connection state navigate returned: ", err, state);
+        core.emit("navigate", {connectionStatus: true, source: "socket"}, function(err) {
+			if(err) console.log(err.message);
         });
         
-        core.emit("init-up", {}, function(err, init) {
-            console.log("Init send.", err, init);
+        core.emit("init-up", {}, function(err) {
+			if(err) console.log(err.message);
+			//TODO: handle errors.
         });
 	};
 
 	client.onmessage = receiveMessage;
 }
-window.connect = connect;
+
 function disconnect(payload, next) {
 	client.close();
 	next();
 }
 
 function disconnected() {
-    backOff = 1;
-    console.log("connection closed retrying in "+backOff);
-//    setTimeout(connect, backOff*1000);
-    core.emit("navigate", {connectionState: false, source: "connection"}, function(err, state) {
-        console.log("Connection state navigate returned: ", err, state);
-    });
+	if(backOff === 1) {
+		core.emit("navigate", {connectionState: false, source: "connection"}, function(err) {
+			if(err) console.log(err.message);
+		});
+	}
+    backOff *= 2;
+    setTimeout(connect, backOff*1000);
 }
 
 function sendQuery(query, next){

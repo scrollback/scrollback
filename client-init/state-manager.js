@@ -29,7 +29,6 @@ function loadOld(state, next) {
 }
 
 function saveCurrentState(state, next) {
-    console.log("Saving the state", state);
     ["roomName", "room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time","roomStatus", "connectionStatus"].forEach(function (prop) {
         if (typeof state[prop] === "undefined") {
             if (typeof state.old[prop] !== "undefined") {
