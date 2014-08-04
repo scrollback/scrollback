@@ -44,7 +44,7 @@ exports.init = function(app, coreObject) {
 			//add generated content
 			seo.getSEOHtml(req, function(r) {
                 var idhs = "<!-- gen Head Start -->";
-				var idbs = "<!-- Messages starts here. -->";
+				var idbs = "<!-- Messages start here. -->";
 				var index1 = data.indexOf(idhs);
                 var index2 = data.indexOf(idbs);
                 var d = [];
