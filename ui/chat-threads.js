@@ -92,7 +92,7 @@ $(function() {
 
             removeLine();
 
-            if (state.thread && state.thread !== currThread) {
+            if (state.old.thread !== state.thread) {
                 currThread = state.thread;
             } else {
                 currThread = null;
