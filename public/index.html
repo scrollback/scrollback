@@ -30,12 +30,6 @@
 
         <link rel="stylesheet" type="text/css"  media="print" href="s/styles/css/print.css" />
 
-		<!-- enable HTML5 in IE, we need to place it before body -->
-		<!--[if lt IE 9]>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
-		<script>window.html5 || document.write('<script src="s/lib/html5shiv.min.js"><\/script>')</script>
-		<![endif]-->
-
         <script>
             var css = document.createElement("style");
             css.type = "text/css";
@@ -47,10 +41,10 @@
     </head>
 
     <body>
-        <!--[if IE]>
+        <!--[if lt IE 9]>
         <div class="ie warning">
-        <h2>You are using an outdated browser!</h2>
-        <p>Please <a href="http://browsehappy.com">upgrade</a> to a modern browser.</p>
+            <h2>Your browser isn’t supported :-(</h2>
+            <p>Please <a href="http://browsehappy.com">upgrade</a> to a modern browser.</p>
         </div>
         <![endif]-->
         <div class="nojs warning">

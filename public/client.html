@@ -8,14 +8,12 @@
 		<meta name="mobile-web-app-capable" content="yes">
 
 		<meta name="apple-mobile-web-app-capable" content="yes">
+
+		<title></title>
+
         <!-- gen Head Start -->
- 
+
         <!-- gen Head End -->
-		<!-- enable HTML5 in IE, we need to place it before body -->
-		<!--[if lt IE 9]>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
-		<script>window.html5 || document.write('<script src="/s/lib/html5shiv.min.js"><\/script>')</script>
-		<![endif]-->
 
 		<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
 
@@ -38,6 +36,14 @@
 	</head>
 
 	<body>
+		<!-- [if lt IE 9]>
+		<div class="ie-warning">
+			<div class="ie-warning-content">
+				<h1>Your browser isn’t supported :-(</h1>
+				<p>Please <a href="http://browsehappy.com">upgrade</a> to a modern browser.</p>
+			</div>
+		</div>
+		<![endif]-->
 		<section data-embed="none" class="room-area column">
 			<div class="room-header">
 				<a href="http://scrollback.io" target="_blank"><img src="/s/img/client/scrollback-small.svg" alt="scrollback"></a>
@@ -146,8 +152,8 @@
 							<use xlink:href="/s/img/client/icons/search.svg#icon"></use>
 						</svg>
 					</a>
-                    
-<!--        
+
+<!--
 					<div class="embed-area">
 						<div data-role="user" class="follow-room-action cta-area">
 							<div>Stay connected</div>
@@ -272,20 +278,20 @@
 		</script>
 
 		<!-- scripts -->
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script>window.jQuery || document.write('<script src="/s/lib/jquery.min.js"><\/script>');</script>
 
 		<!--[if IE]>
 		<script src="/s/lib/polyfills.js"></script>
 		<![endif]-->
 
-		<script src="/client.bundle.js"></script>
+		<script src="/client.bundle.min.js"></script>
 		<script>libsb.connect();</script>
 		<script src="https://login.persona.org/include.js"></script>
-        
+
         <!-- SEO -->
         <div style="margin-left: -99999px; text-indent: -99999px;" >
-            <!-- Messages starts here. -->                    
+            <!-- Messages starts here. -->
             <!--Messages end here-->
         </div>
 	</body>
