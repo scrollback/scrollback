@@ -93,9 +93,11 @@ $(function() {
             removeLine();
 
             if (state.old.thread !== state.thread) {
-                currThread = state.thread;
-            } else {
-                currThread = null;
+                if (state.thread) {
+                    currThread = state.thread;
+                } else {
+                    currThread = null;
+                }
             }
 
             if (state.mode === "normal" && state.view === "normal") {
