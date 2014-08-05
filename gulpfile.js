@@ -27,11 +27,12 @@ var gulp = require("gulp"),
 	cssFiles = [ "public/s/styles/scss/*.scss" ];
 
 // Make browserify bundle
-function bundle(files) {
+function bundle(files, opts) {
 	var streams = [],
 		bundler = function(file) {
-			return browserify("./" + file)
-			.bundle({ debug: true })
+			opts.entries = "./" + file;
+
+			return browserify(opts).bundle()
 			.pipe(source(file))
 			.on("error", gutil.log);
 		};
@@ -82,7 +83,7 @@ gulp.task("libs", function() {
 });
 
 gulp.task("bundle", [ "libs" ], function() {
-	return bundle([ "libsb.js", "client.js" ])
+	return bundle([ "libsb.js", "client.js" ], { debug: !gutil.env.production })
 	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
 	.pipe(rename({ suffix: ".bundle.min" }))
 	.pipe(gulp.dest("public"))
@@ -91,7 +92,7 @@ gulp.task("bundle", [ "libs" ], function() {
 
 // Generate embed widget script
 gulp.task("embed", function() {
-	return bundle("embed/embed-widget.js")
+	return bundle("embed/embed-widget.js", { debug: !gutil.env.production })
 	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
 	.pipe(rename("embed.min.js"))
 	.pipe(gulp.dest("public"))

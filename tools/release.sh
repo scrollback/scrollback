@@ -77,7 +77,7 @@ fi
 
 # Generate files
 show_info "Running gulp"
-gulp || on_err "running 'gulp'"
+gulp --production || on_err "running 'gulp'"
 
 # Restart IRC
 show_info "Restart IRC server [y/n]?"
