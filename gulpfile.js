@@ -50,7 +50,11 @@ function bundle(files, opts) {
 
 // Lint JavaScript files
 gulp.task("lint", function() {
-	return gulp.src([ "*/*.js", "*/*/*.js", "*/*/*/*.js" ])
+	return gulp.src([
+		"*/*{.js,/*.js,/*/*.js}",
+		"!*/*{.min.js,/*.min.js,/*/*.min.js}",
+		"!node_modules{,/**}", "!bower_components{,/**}"
+	])
 	.pipe(jshint())
 	.pipe(jshint.reporter("jshint-stylish"));
 });
@@ -160,7 +164,7 @@ gulp.task("clean", function() {
 });
 
 gulp.task("watch", function() {
-	gulp.watch(jsFiles, [ "lint", "scripts", "manifest" ]);
+	gulp.watch(jsFiles, [ "scripts", "manifest" ]);
 	gulp.watch(cssFiles, [ "styles", "manifest" ]);
 });
 
