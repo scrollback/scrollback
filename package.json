@@ -74,7 +74,6 @@
     "browserify": "latest",
     "grunt": "latest",
     "grunt-contrib-uglify": "latest",
-    "grunt-wrap": "latest",
     "grunt-contrib-concat": "latest",
     "grunt-contrib-watch": "latest",
     "grunt-contrib-less": "latest",

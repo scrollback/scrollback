@@ -9,9 +9,9 @@ var myConfig = {
 		password: "scrollback",
 		database: "scrollback"
 	},
-	originnotify:{
-		from:"scrollback@scrollback.io" ,
-		to : "local@scrollback.io"
+	originnotify: {
+		from: "scrollback@scrollback.io",
+		to: "local@scrollback.io"
 	},
 	http: {
 		https: {
@@ -29,17 +29,17 @@ var myConfig = {
 	auth: {
 		audience: "local.scrollback.io"
 	},
-	redis:{
+	redis: {
 		host: "local.scrollback.io",
 		port: 6379,
-		db:0
+		db: 0
 	},
-	whitelists:{
+	whitelists: {
 		internalSession: true
 	},
 	threader: {
-		host : "local.scrollback.io",
-		port : 55555
+		host: "local.scrollback.io",
+		port: 55555
 	},
 	irc: {
 		nick: "scrollback", // name of the irc bot
