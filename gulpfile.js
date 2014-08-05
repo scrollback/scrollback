@@ -165,4 +165,4 @@ gulp.task("watch", function() {
 });
 
 // Default Task
-gulp.task("default", [ "lint", "scripts", "styles", "manifest" ]);
+gulp.task("default", [ "scripts", "styles", "manifest" ]);
