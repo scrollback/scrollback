@@ -15,7 +15,7 @@ var gulp = require("gulp"),
 	prefix = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
-	clean = require("gulp-clean"),
+	rimraf = require("gulp-rimraf"),
 	bowerDir = "bower_components",
 	libDir = "public/s/lib",
 	cssDir = "public/s/styles/gen",
@@ -50,7 +50,11 @@ function bundle(files, opts) {
 
 // Lint JavaScript files
 gulp.task("lint", function() {
-	return gulp.src([ "*/*.js", "*/*/*.js", "*/*/*/*.js" ])
+	return gulp.src([
+		"*/*{.js,/*.js,/*/*.js}",
+		"!*/*{.min.js,/*.min.js,/*/*.min.js}",
+		"!node_modules{,/**}", "!bower_components{,/**}"
+	])
 	.pipe(jshint())
 	.pipe(jshint.reporter("jshint-stylish"));
 });
@@ -155,14 +159,14 @@ gulp.task("clean", function() {
 		"public/manifest.appcache",
 		libDir, cssDir
 	], { read: false })
-	.pipe(clean())
+	.pipe(rimraf())
 	.on("error", gutil.log);
 });
 
 gulp.task("watch", function() {
-	gulp.watch(jsFiles, [ "lint", "scripts", "manifest" ]);
+	gulp.watch(jsFiles, [ "scripts", "manifest" ]);
 	gulp.watch(cssFiles, [ "styles", "manifest" ]);
 });
 
 // Default Task
-gulp.task("default", [ "lint", "scripts", "styles", "manifest" ]);
+gulp.task("default", [ "scripts", "styles", "manifest" ]);
