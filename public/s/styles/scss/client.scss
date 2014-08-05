@@ -1145,7 +1145,8 @@ body {
     height: .5em;
     width: .5em;
     border-radius: 50%;
-    background-color: fade-out(lighten($dark-color, 15%), .5);
+    color: fade-out(lighten($dark-color, 15%), .5);
+    background-color: currentColor;
 
     @media #{$screenxx} { margin-left: -10em; }
 
@@ -1153,7 +1154,7 @@ body {
         $color: nth($palette, $i);
         $j: $i - 1;
 
-        .chat-item.conv-#{$j} & { background-color: $color; }
+        .chat-item.conv-#{$j} & { color: $color; }
     }
 }
 
