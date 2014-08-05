@@ -12,7 +12,7 @@ var connectionState = false, backOff = 1,
 
 module.exports = function (c) {
 	core = c;
-//    connect();
+    connect();
     core.on("disconnect", disconnect, 1000);
 
 	core.on("init-up", sendInit, 10);
