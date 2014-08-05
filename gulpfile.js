@@ -15,7 +15,7 @@ var gulp = require("gulp"),
 	prefix = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
-	clean = require("gulp-clean"),
+	rimraf = require("gulp-rimraf"),
 	bowerDir = "bower_components",
 	libDir = "public/s/lib",
 	cssDir = "public/s/styles/gen",
@@ -155,7 +155,7 @@ gulp.task("clean", function() {
 		"public/manifest.appcache",
 		libDir, cssDir
 	], { read: false })
-	.pipe(clean())
+	.pipe(rimraf())
 	.on("error", gutil.log);
 });
 
@@ -165,4 +165,4 @@ gulp.task("watch", function() {
 });
 
 // Default Task
-gulp.task("default", [ "lint", "scripts", "styles", "manifest" ]);
+gulp.task("default", [ "scripts", "styles", "manifest" ]);
