@@ -69,9 +69,9 @@
   },
   "optionalDependencies": {},
   "devDependencies": {
-    "mocha": "latest",
     "bower": "latest",
     "browserify": "latest",
+    "event-stream": "latest",
     "gulp": "latest",
     "gulp-autoprefixer": "latest",
     "gulp-browserify": "latest",
@@ -79,16 +79,16 @@
     "gulp-concat": "latest",
     "gulp-jshint": "latest",
     "gulp-manifest": "latest",
+    "gulp-minify-css": "latest",
     "gulp-rename": "latest",
     "gulp-ruby-sass": "latest",
     "gulp-sourcemaps": "latest",
+    "gulp-streamify": "latest",
     "gulp-uglify": "latest",
     "gulp-util": "latest",
     "jshint-stylish": "latest",
     "main-bower-files": "latest",
-    "vinyl-source-stream": "latest",
-    "gulp-minify-css": "latest",
-    "gulp-streamify": "latest",
-    "event-stream": "latest"
+    "mocha": "latest",
+    "vinyl-source-stream": "latest"
   }
 }
