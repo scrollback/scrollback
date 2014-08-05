@@ -50,7 +50,7 @@ function bundle(files, opts) {
 
 // Lint JavaScript files
 gulp.task("lint", function() {
-	return gulp.src(jsFiles)
+	return gulp.src([ "*/*.js", "*/*/*.js", "*/*/*/*.js" ])
 	.pipe(jshint())
 	.pipe(jshint.reporter("jshint-stylish"));
 });
