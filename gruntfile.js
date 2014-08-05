@@ -46,7 +46,7 @@ module.exports = function(grunt) {
 				files: {
 					"public/libsb.bundle.js": [ "libsb.js" ],
 					"public/client.bundle.js": [ "client.js" ],
-					"public/embed.js": [ "embed/embed-widget.js" ]
+					"public/embed.js": [ "embed/embed-parent.js" ]
 				},
 				options: {
 					bundleOptions: { debug: true }

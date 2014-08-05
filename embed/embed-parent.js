@@ -50,7 +50,7 @@
                 host: location.host,
                 path: location.pathname + location.search + location.hash
             };
-            embed.minimize = (typeof sb.minimize === "boolean") ? sb.minimize : true;
+            embed.minimize = (typeof sb.minimize === "boolean") ? sb.minimize : false;
 
             sb.room = validate(sb.room, true);
             // Insert required styles
@@ -67,18 +67,21 @@
 				container = document.getElementById("scrollback-container");
 			}
 			if (!container) {
-				embed = sb.embed = "toast";
-
+				console.log("Toast");
+				embed.form = sb.embed = "toast";
 				document.body.appendChild(iframe);
 			} else {
+				console.log("canvas");
 				container.appendChild(iframe);
+				document.body.appendChild(container);
 			}
+			
+			console.log(embed.form);
+			
             // TODO: change "embed" to "context"
             iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
             iframe.className = "scrollback-stream scrollback-" + embed.form+ " " + ((sb.minimize && embed.form =="toast") ? " scrollback-minimized" : "");
-
-            document.body.appendChild(iframe);
-
+			
             // Add event listeners for post message
             var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent",
                 eventListener = window[eventMethod],

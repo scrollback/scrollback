@@ -51,8 +51,8 @@ $(document).on("click", ".reload-page", function () {
 });
 
 libsb.on('navigate', function (state, next) {
+	var room = currentState.roomName;
 	if (state && (!state.old || state.roomName != state.old.roomName)) {
-		var room = state.roomName;
 		$("#room-title").text(room);
 	}
 	next();
@@ -69,15 +69,7 @@ function setOwnerClass() {
 		});
 		if(!isOwner) $("body").removeClass("role-owner");
 	}
-
-
-	if(libsb.isInited) {check();}
-	else {
-		libsb.on('inited', function(d, next) {
-			check();
-			next();
-		}, 100);
-	}
+	check();
 }
 
 libsb.on('init-dn', function(init, next){
@@ -91,11 +83,20 @@ libsb.on('back-dn', function(init, next){
 }, 100);
 
 libsb.on('navigate', function(state, next) {
-		if(state.mode == 'normal' && state.roomName) {
-			setOwnerClass();
-		}
-		next();
+	if(state.mode == 'normal' && state.roomName) {
+		setOwnerClass();
+	}
+	if(state.source == "boot") {
+		setUser();
+	}
+	next();
 }, 100);
+
+function setUser() {
+	if (!libsb || !libsb.user) return;
+	$("#sb-avatar").attr("src", libsb.user.picture);
+	$("#sb-user").text(libsb.user.id.replace(/^guest-/, ""));
+}
 
 libsb.on("init-dn", function (init, next) {
 	if (init.auth && !init.user.id) return next();
@@ -105,9 +106,7 @@ libsb.on("init-dn", function (init, next) {
 	} else {
 		$("body").removeClass("role-guest").addClass("role-user");
 	}
-
-	$("#sb-avatar").attr("src", init.user.picture);
-	$("#sb-user").text(init.user.id.replace(/^guest-/, ""));
-
+	
+	setUser();
 	next();
 }, 100);

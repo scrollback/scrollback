@@ -10,7 +10,7 @@ var verificationStatus = false,
 /*  lasting objects*/
 var embed, token, domain, path, preBootQueue = [],
     queue = [],
-    parentHost;
+    parentHost, minimized = false;
 
 function sendDomainChallenge() {
     token = Math.random() * Math.random();
@@ -44,6 +44,34 @@ function parseResponse(data) {
     }
     return data;
 }
+function classesOnLoad(embed){
+	$("body").addClass("embed");
+	if (embed.theme) {
+		if(embed.theme == "dark"){
+			$("body").addClass("theme-" + embed.theme);
+		}else {
+			$("body").removeClass("theme-dark");
+			$("body").addClass("theme-" + embed.theme);
+		}
+	}
+	if (embed && embed.form) {
+		$("body").addClass("embed-" + embed.form);
+	}
+}
+function toastChange(state, next) {
+	if(state.source =="embed" && state.hasOwnProperty("minimize")){
+		if (state.minimize) {
+			minimized = true;
+			$("body").addClass("minimized");
+			window.parent.postMessage("minimize", parentHost);
+		} else {
+			$("body").removeClass("minimized");
+			minimized = false;
+			window.parent.postMessage("maximize", parentHost);
+		}	
+	}
+	next();
+}
 
 module.exports = function (libsb) {
     $(function () {
@@ -55,21 +83,27 @@ module.exports = function (libsb) {
         // Handle minimize
         $(".embed-action-minimize").on("click", function () {
             libsb.emit("navigate", {
-                minimize: true
+                minimize: true,
+				source: "embed",
+				event: "action-minimize"
             });
         });
 
         $(".title-bar").on("click", function (e) {
             if (e.target === e.currentTarget) {
                 libsb.emit("navigate", {
-                    minimize: true
+                    minimize: true,
+					source: "embed",
+					event: "title-bar"
                 });
             }
         });
 
         $(".minimize-bar").on("click", function () {
             libsb.emit("navigate", {
-                minimize: false
+                minimize: false,
+				source: "embed",
+				event: "minimize-bar"
             });
         });
     });
@@ -80,6 +114,7 @@ module.exports = function (libsb) {
 	if (embed && window.parent !== window) {
         embed = JSON.parse(decodeURIComponent(url.embed));
 		suggestedNick = embed.suggestedNick;
+		classesOnLoad(embed);
         window.onmessage = function (e) {
             var data = e.data;
             data = parseResponse(data);
@@ -106,14 +141,6 @@ module.exports = function (libsb) {
                     if (guides && guides.http && guides.http.allowedDomains && guides.http.allowedDomains.length) {
                         if (!verified || guides.http.allowedDomains.indexOf(domain) == -1) state.room = 'embed-disallowed';
                     }
-                }
-            }
-
-            if (window.parent !== window && state.old && state.embed && state.embed.form === "toast" && state.minimize !== state.old.minimize) {
-                if (state.minimize) {
-                    window.parent.postMessage("minimize", parentHost);
-                } else {
-                    window.parent.postMessage("maximize", parentHost);
                 }
             }
             next();
@@ -149,4 +176,5 @@ module.exports = function (libsb) {
         if (libsb.hasBooted) processInit();
         else queue.push(processInit);
     }, 500);
+	libsb.on("navigate", toastChange, 500);
 };
