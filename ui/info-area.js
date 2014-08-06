@@ -9,8 +9,8 @@ $(function() {
 		$template.find('.info-title').text(room.id);
 		$template.find('.info-description').html(format.textToHtml(room.description || "This room has no description."));
 	};
-	libsb.on("inited", function(q, n) {
-		if(currentState.embed && currentState.embed.from) {
+	libsb.on("init-dn", function(q, n) {
+		if(currentState.embed && currentState.embed.form) {
 			libsb.enter(window.location.pathname.split("/")[1]);
 		}
 		n();

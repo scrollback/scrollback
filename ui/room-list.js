@@ -10,7 +10,7 @@ function enter(room) {
     if(!room) return;
     room = room.toLowerCase();
     if(rooms.indexOf(room)<0) {
-        if(libsb.isInited) {
+        if(currentState.connectionStatus) {
             libsb.enter(room);
             rooms.pop();
             rooms.push(room);
@@ -23,8 +23,8 @@ function enter(room) {
         if($roomlist) $roomlist.reset();
     }
 }
-libsb.on("inited", function(d, n) {
-    if(currentState.embed && currentState.embed.from) return n();
+libsb.on("init-dn", function(d, n) {
+    if(currentState.embed && currentState.embed.form) return n();
 
     listenQueue.forEach(function(e) {
         enter(e);
@@ -37,14 +37,14 @@ libsb.on("inited", function(d, n) {
 
 libsb.on("navigate", function(state, next) {
     var room = state.roomName;
-    if(currentState.embed && currentState.embed.from) return next();
+    if(currentState.embed && currentState.embed.form) return next();
     enter(room);
     if(state.old && state.old.roomName === state.roomName) return next();
     next();
 }, 10);
 
 libsb.on("init-dn", function(init, next) {
-    if(currentState.embed && currentState.embed.from) return next();
+    if(currentState.embed && currentState.embed.form) return next();
 /*	if(init.occupantOf){
         init.occupantOf.forEach(function(r) {
             enter(r.id);

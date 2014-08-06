@@ -70,25 +70,8 @@ $(function() {
         next();
     }, 100);
 
-/*  looks pointless. where is need is achieved using the back-dn listener. why do it multiple times.
-    libsb.on("init-dn", function(state, next) {
-        if (libsb.isInited) {
-            getFollow();
-        } else {
-            libsb.on("inited", getFollow, 100);
-        }
-
-        next();
-    }, 100);
-*/
-
     libsb.on("back-dn", function(state, next){
-        if (libsb.isInited) {
-            getFollow();
-        } else {
-            libsb.on("inited", getFollow, 100);
-        }
-
+		getFollow();
         next();
     }, 100);
 });

@@ -112,7 +112,12 @@ module.exports = function (libsb) {
     embed = url.embed;
 	
 	if (embed && window.parent !== window) {
-        embed = JSON.parse(decodeURIComponent(url.embed));
+		
+		try{
+        	embed = JSON.parse(decodeURIComponent(url.embed));
+		}catch(e) {
+			embed = {};
+		}
 		suggestedNick = embed.suggestedNick;
 		classesOnLoad(embed);
         window.onmessage = function (e) {
@@ -133,7 +138,11 @@ module.exports = function (libsb) {
     libsb.on("navigate", function (state, next) {
         function processNavigate() {
             var guides;
-            if (state.source == "boot") bootingDone = true;
+            if (state.source == "boot") {
+				bootingDone = true;
+				console.log("Adding embed to state.", embed);
+				state.embed = embed;
+			}
 
             if (state.room &&  state.room === "object") {
                 guides = state.room.guides;
