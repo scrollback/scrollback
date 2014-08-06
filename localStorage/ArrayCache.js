@@ -67,23 +67,42 @@ ArrayCache.prototype.get = function (cacheType, query) {
 
 	function walk(start, steps, direction) {
 		var res = [],
-			m, i, obj;
+			m, n, i, obj;
 		for (i = start; i >= 0 && i < l && res.length < steps; i += direction) {
 			m = self.d[i];
+			n = self.d[i + 1];
 			if (typeof m !== 'object') throw new Error('ArrayCache contains non-object');
-			if (m.type == 'result-start') {
-				if (!partials) return null;
-			} else if (m.type == 'result-end') {
-				if (partials) {
-					obj = {
-						type: 'missing'
-					};
-					obj[cacheType] = m[cacheType];
-					res.push(obj);
-				} else return null;
+			if (m.type === "result-start") {
+				if (!partials) {
+					return null;
+				} else {
+					res.push({
+						type: 'missing',
+						cacheType: m[cacheType],
+						endTime: m.time
+					});
+				}
+			} else if (m.type === "result-end") {
+				if (!partials) {
+					return null;
+				} else {
+					if (n && n.type === "result-start") {
+						res.push({
+							type: 'missing',
+							cacheType: m[cacheType],
+							startTime: m.time,
+							endTime: n.time
+						});
+					} else {
+						res.push({
+							type: 'missing',
+							cacheType: m[cacheType],
+							startTime: m.time
+						});
+					}
+				}
 			} else res.push(m);
 		}
-
 		return direction < 0 ? res.reverse() : res;
 	}
 
