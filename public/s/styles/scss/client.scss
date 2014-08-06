@@ -11,7 +11,6 @@
 @import "oembed";
 @import "tooltip";
 @import "progress";
-@import "overlay";
 @import "tip";
 
 $screenx: "only screen and (min-width: 18em)";
@@ -1496,7 +1495,7 @@ body {
 	}
 }
 
-.noroom-area, .offline-area, .profile-area {
+.content-view-wrapper {
     @include flexbox;
     @include flex-direction(column);
     @include flex-wrap(nowrap);
@@ -1525,7 +1524,7 @@ body {
     }
 }
 
-.noroom-container, .offline-container, .profile-container { display: block; }
+.content-view-area { display: block; }
 
 .infinite-above, .infinite-below {
     height: 100%;
