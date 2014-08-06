@@ -10,77 +10,82 @@ $(function() {
                 $dots = $(".chat-item-dot, .chat-conv-dot");
 
             if ($dots.data("animating")) {
-                $dots.data("animating", false)
-                     .velocity("stop")
-                     .velocity({
-                        scale: 1,
-                        opacity: 1
-                    }, {
-                        duration: 150,
-                        backwards: true
-                    });
+                $dots.data("animating", false).velocity("stop").velocity({
+                    scale: 1,
+                    opacity: 1
+                }, 150);
             }
 
             if ($line.length) {
-                $line.velocity("stop")
-                    .velocity({
-                        top: $line.offset().top + $line.height(),
-                        opacity: 0
-                    }, {
-                        duration: 150,
-                        backwards: true
-                    });
+                $line.velocity("stop").velocity({
+                    top: $line.offset().top + $line.height(),
+                    opacity: 0
+                }, 150);
             }
         },
         drawLine = function() {
+            var $line = $(".chat-conv-line"),
+                $chatdot = $(".chat-item-dot"),
+                $convdot = $(".chat-conv-dot"),
+                $dots = $("[data-thread=" + currThread + "]").find($chatdot).add($convdot),
+                left = $container.offset().left,
+                top = $dots.first().offset().top,
+                bottom = $(document).height() - $convdot.offset().top - ($convdot.height() / 2),
+                containertop = $container.offset().top;
+
+            $chatdot.not($dots).velocity("stop").velocity({
+                scale: 1,
+                opacity: 0.3
+            }, 150).data("animating", true);
+
+            $dots.velocity("stop").velocity({
+                scale: 1.5,
+                opacity: 1
+            }, 300).data("animating", true);
+
+            if (!$line.length) {
+                $line = $("<div>").addClass("chat-conv-line").attr("data-mode", "normal").css({ opacity: 0 });
+                $line.appendTo("body");
+            }
+
+            $line.css({
+                left: left,
+                bottom: bottom
+            }).velocity("stop").velocity({
+                top: ((top < containertop) ? containertop : top),
+                opacity: 1
+            }, 300);
+        },
+        updateLine = function() {
             if (currThread) {
-                var $line = $(".chat-conv-line"),
-                    $chatdot = $(".chat-item-dot"),
-                    $convdot = $(".chat-conv-dot"),
-                    $dots = $("[data-thread=" + currThread + "]").find($chatdot).add($convdot),
-                    left = $container.offset().left,
-                    top = $dots.first().offset().top,
-                    bottom = $(document).height() - $convdot.offset().top - ($convdot.height() / 2),
-                    containertop = $container.offset().top;
-
-                $chatdot.not($dots).velocity("stop")
-                        .velocity({ scale: 1, opacity: 0.3 }, { duration: 150, drag: true })
-                        .data("animating", true);
-
-                $dots.velocity("stop")
-                     .velocity({ scale: 1.5, opacity: 1 }, { duration: 300, drag: true })
-                     .data("animating", true);
-
-                if (!$line.length) {
-                    $line = $("<div>").addClass("chat-conv-line").attr("data-mode", "normal").css({ opacity: 0 });
-                    $line.appendTo("body");
-                }
-
-                $line.css({
-                    left: left,
-                    bottom: bottom
-                });
-
-                $line.velocity("stop")
-                    .velocity({
-                        top: ((top < containertop) ? containertop : top),
-                        opacity: 1
-                     }, 300);
+                drawLine();
+            } else {
+                removeLine();
             }
         },
-        resetConv = function(soft) {
+        selectConv = function(threadId) {
             var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
 
             $("body").attr("class", classes);
 
+            if (threadId && typeof threadId === "string") {
+                currThread = threadId;
+
+                $("body").addClass('conv-' + threadId.substr(-1));
+            } else {
+                currThread = null;
+            }
+        },
+        resetConv = function(soft) {
             currMsg = null;
-            currThread = null;
 
             $(".chat-item").removeClass("current").data("selected", false);
 
             if (!soft) {
                 removeLine();
             }
+
+            selectConv();
         };
 
     libsb.on("navigate", function(state, next) {
@@ -93,16 +98,12 @@ $(function() {
             removeLine();
 
             if (state.old.thread !== state.thread) {
-                if (state.thread) {
-                    currThread = state.thread;
-                } else {
-                    currThread = null;
-                }
+                selectConv(state.thread);
             }
 
             if (state.mode === "normal" && state.view === "normal") {
                 setTimeout(function() {
-                    drawLine();
+                    updateLine();
                 }, 1000);
             }
         }
@@ -114,7 +115,7 @@ $(function() {
         clearTimeout($(this).data("lineTimer"));
 
         $(this).data("lineTimer", setTimeout(function() {
-            drawLine();
+            updateLine();
         }, 300));
     });
 
@@ -124,7 +125,7 @@ $(function() {
         clearTimeout($(this).data("lineTimer"));
 
         $(this).data("lineTimer", setTimeout(function() {
-            drawLine();
+            updateLine();
         }, 1000));
     });
 
@@ -146,11 +147,8 @@ $(function() {
         resetConv(true);
 
         currMsg = this.attr("id");
-        currThread = this.attr("data-thread");
 
-        if (currThread) {
-            $("body").addClass("conv-" + currThread.substr(-1));
-        }
+        selectConv(this.attr("data-thread"));
 
         this.addClass("current").data("selected", true);
 
@@ -196,8 +194,7 @@ $(function() {
         }
 
         if (!currThread || lastThread !== currThread) {
-            removeLine();
-            drawLine();
+            updateLine();
         }
 
 		return this;
@@ -209,7 +206,7 @@ $(function() {
         $(this).toggleClass("active").selectMsg();
 	});
 
-	$(document).on("keydown", function(e){
+	$(document).on("keydown", function(e) {
         var $chat, $el;
 
 		if (e.keyCode === 38 || e.keyCode === 40) {
