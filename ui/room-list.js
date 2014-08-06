@@ -2,80 +2,80 @@
 /* global libsb, currentState */
 
 var roomEl = require("./room-item.js"),
-    $roomlist, rooms = [ false, false ], listenQueue = [];
+	$roomlist, rooms = [ false, false ], listenQueue = [];
 
 function enter(room) {
-    if (!room) { return; }
+	if (!room) { return; }
 
-    room = room.toLowerCase();
+	room = room.toLowerCase();
 
-    if (rooms.indexOf(room) < 0) {
-        if (libsb.isInited) {
-            libsb.enter(room);
-            rooms.pop();
-            rooms.push(room);
-            rooms.push(false);
-        }else {
-            if (listenQueue.indexOf(room) < 0){
-                listenQueue.push(room);
-            }
-        }
+	if (rooms.indexOf(room) < 0) {
+		if (libsb.isInited) {
+			libsb.enter(room);
+			rooms.pop();
+			rooms.push(room);
+			rooms.push(false);
+		} else {
+			if (listenQueue.indexOf(room) < 0){
+				listenQueue.push(room);
+			}
+		}
 
-        if ($roomlist) { $roomlist.reset(); }
-    }
+		if ($roomlist) { $roomlist.reset(); }
+	}
 }
 
 libsb.on("inited", function(d, n) {
-    if (currentState.embed == "toast") { return n(); }
+	if (currentState.embed == "toast") { return n(); }
 
-    listenQueue.forEach(function(e) {
-        enter(e);
-    });
+	listenQueue.forEach(function(e) {
+		enter(e);
+	});
 
-    listenQueue = [];
-    n();
+	listenQueue = [];
+	n();
 }, 100);
 
 libsb.on("navigate", function(state, next) {
-    var room = state.roomName;
+	var room = state.roomName;
 
-    if (currentState.embed == "toast") { return next(); }
+	if (currentState.embed == "toast") { return next(); }
 
-    enter(room);
+	enter(room);
 
-    if (state.old && state.old.roomName === state.roomName) { return next(); }
-    next();
+	if (state.old && state.old.roomName === state.roomName) { return next(); }
+	next();
 }, 10);
 
 libsb.on("init-dn", function(init, next) {
-    if (currentState.embed == "toast") { return next(); }
+	if (currentState.embed == "toast") { return next(); }
 
-/*	if(init.occupantOf){
+	/*	if(init.occupantOf){
         init.occupantOf.forEach(function(r) {
             enter(r.id);
         });
     }*/
 
-    if (init.memberOf) {
-        init.memberOf.forEach(function(r) {
-            enter(r.id);
-        });
-    }
+	if (init.memberOf) {
+		init.memberOf.forEach(function(r) {
+			enter(r.id);
+		});
+	}
 
 	if ($roomlist) { $roomlist.reset(); }
 
-    next();
+	next();
 }, 10);
 
 libsb.on("navigate", function(state, next) {
-    if (state.old && state.room !== state.old.room) {
-        $(".room-item.current").removeClass("current");
+	if (state.old && state.room !== state.old.room) {
+		$(".room-item.current").removeClass("current");
 
-        if (state.roomName) {
-            $("#room-item-" + state.roomName).addClass("current");
-        }
-    }
-    next();
+		if (state.roomName) {
+			$("#room-item-" + state.roomName).addClass("current");
+		}
+	}
+	next();
 }, 100);
 
 $(function() {
@@ -116,7 +116,7 @@ $(function() {
 			}
 
 			callback(res.map(function(r) {
-                return r && roomEl.render(null, r, rooms.indexOf(r));
+				return r && roomEl.render(null, r, rooms.indexOf(r));
 			}));
 		}
 	});
@@ -129,12 +129,12 @@ $(function() {
 
 		libsb.emit("navigate", {
 			roomName: $el.attr("id").replace(/^room-item-/, ""),
-            mode: "normal",
+			mode: "normal",
 			view: "normal",
-            source: "room-list",
+			source: "room-list",
 			query: null,
 			thread: null,
-            time: null
+			time: null
 		});
 	});
 
