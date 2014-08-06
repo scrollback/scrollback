@@ -35,7 +35,7 @@
 		</script>
 	</head>
 
-	<body>
+	<body class="role-guest mode-normal">
 		<!-- [if lt IE 9]>
 		<div class="ie-warning">
 			<div class="ie-warning-content">
@@ -118,7 +118,7 @@
 				<a class="list-item"></a>
 			</div>
 		</section>
-		<section role="main" class="main-area column">
+		<main role="main" class="main-area column">
 			<div data-mode="normal search conf pref" class="title-bar">
 				<div class="left-area">
 					<a class="meta-button">
@@ -216,7 +216,7 @@
 					<use xlink:href="/s/img/client/icons/send.svg#icon"></use>
 				</svg>
 			</div>
-		</section>
+		</main>
 		<section class="search-bar">
 			<form>
 				<input class="search-entry" type="search" placeholder="Type to search...">
@@ -249,11 +249,7 @@
 			<div class="minimize-room-title"></div>
 			<div class="minimize-ticker"></div>
 		</section>
-		<section class="overlay">
-			<h1>Warming up...</h1>
-		</section>
-		<section class="progress loading">
-		</section>
+		<aside class="progress loading"></aside>
 
 		<!-- templates -->
 		<script type="text/template" id="signup-dialog">
