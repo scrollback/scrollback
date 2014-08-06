@@ -1,13 +1,11 @@
-var assert = require("assert");
-var config  = require('../config.js');
+var config = require('../config.js');
 var core = require("../lib/emitter.js");
 var ircSb = require("./irc.js");
 var gen = require("../lib/generate.js");
 var irc = require('irc');
 var guid = gen.uid;
-var names = gen.names;
 var client;
-var testingServer = "localhost";
+var testingServer = "dev.scrollback.io";
 var botName = require('../ircClient/config.js').botNick;
 
 /**
@@ -29,7 +27,8 @@ var users = [
 var rooms = [{
 	id: "scrollback",
 	type: "room",
-	params: {
+	identities: [],
+    params: {
 		irc: {
 			server: testingServer,
 			channel: "#scrollback",
@@ -40,6 +39,7 @@ var rooms = [{
 } ,{
 	id: "testingroom",
 	type: "room",
+    identities: [],
 	params: {
 		irc: {
 			server: testingServer,
@@ -52,7 +52,8 @@ var rooms = [{
 describe('IRC test: ', function() {//this will connect 2 rooms scrollback and testingroom
 	before( function(done) {
 		this.timeout(5*40000);
-		core.on('getUsers', function(v, callback) {
+		if (!config.irc.debug) throw new Error("config.irc.debug should be true to run test. Edit myConfig.js and try again");
+        core.on('getUsers', function(v, callback) {
 			v.results = users;
 			callback(null, v);
 		}, 500);
@@ -170,6 +171,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 			type: "room",
 			session: "web://somesession",
 			room: {
+                identities: [],
 				id: "testingroom2",
 				params: {
 					irc: {
@@ -202,9 +204,9 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 			go();
 		});
 		core.emit("room", {
-			
 			type: "room",
 			room: {
+                identities: [],
 				id: "testingroom2",
 				params: {
 					irc: {
@@ -243,11 +245,11 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		this.timeout(60 * 1000);
 		var c = 0;
 		client.on("part", function(channel, nick, reason, message) {
-			if(nick === "scrollback") c++;
+			if(nick.indexOf(botName) != -1) c++;
 			go();
 		});
 		client.on("quit", function(channel, nick, reason, message) {
-			if(nick === "scrollback") c++;
+			if(nick.indexOf(botName) !== -1) c++;
 			go();
 		});
 		function go() {
@@ -269,6 +271,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 				}
 			},
 			room: {
+                identities: [],
 				id: "testingroom2",
 				type: "room",
 				params: {
@@ -302,6 +305,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 				}
 			},
 			room: {
+                identities: [],
 				id: "scrollback",
 				type: "room",
 				params: {
@@ -336,6 +340,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 			room: {
 				id: "testingroom",
 				type: "room",
+                identities: [],
 				params: {
 					irc: {
 						server: "",
@@ -360,7 +365,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 	it("Bot left the server", function(done) {
 		this.timeout(15 * 1000);
 		client.on("error", function(err) {
-			if (err.command === 'err_nosuchnick') {
+			if (err.command === 'err_nosuchnick' && err.args[1] === botName) {
 				done();
 			}
 			console.log("error:", err);
@@ -370,5 +375,20 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		});
 
 	});
+    
+    it("User left the server", function(done) {
+		this.timeout(15 * 1000);
+		client.on("error", function(err) {
+			if (err.command === 'err_nosuchnick' && err.args[1] === "outuser0") {
+				done();
+			}
+			console.log("error:", err);
+		});
+		client.whois("outuser0", function(info) {
+			console.log("whois", info);
+		});
+
+	});
+    
 
 });
