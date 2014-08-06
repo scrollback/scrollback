@@ -96,7 +96,7 @@ gulp.task("bundle", [ "libs" ], function() {
 
 // Generate embed widget script
 gulp.task("embed", function() {
-	return bundle("embed/embed-widget.js", { debug: !gutil.env.production })
+	return bundle("embed/embed-parent.js", { debug: !gutil.env.production })
 	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
 	.pipe(rename("embed.min.js"))
 	.pipe(gulp.dest("public"))
@@ -126,6 +126,7 @@ gulp.task("manifest", function() {
 		network: [ "*" ],
 		fallback: [
 			"//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
+			"/socket socket-fallback",
 			"/ /offline.html"
 		],
 		preferOnline: true,
