@@ -172,7 +172,7 @@ function makeAction(action, props) {
 		if (props.hasOwnProperty(i)) action[i] = props[i];
 	}
 
-	action.from = libsb.user.id;
+//	action.from = libsb.user.id;
 	action.time = new Date().getTime();
 	action.session = libsb.session;
 	action.resource = libsb.resource;

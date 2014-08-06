@@ -19,9 +19,14 @@ require('./socket/socket-client')(libsb);
 
 //Bootup related
 require('./client-init/client-init.js')(libsb);
-
 require('./id-generator/id-generator-client.js')(libsb);
 require('./client-entityloader/client-entityloader.js')(libsb);
+
+require('./ui/user-area.js');
+require('./ui/infinite.js');
+require('./ui/hide-scroll.js');
+require('./ui/chat.js');
+require('./ui/chat-area.js');
 
 // client uis
 require('./email/email-client.js');
@@ -47,12 +52,8 @@ require('./persona/persona-client.js');
 require('./ui/quicknotify.js');
 require('./ui/load-indicator.js');
 require('./ui/appcache.js');
-require('./ui/infinite.js');
-require('./ui/hide-scroll.js');
 require('./ui/error-notify.js');
 require('./ui/columns.js');
-require('./ui/chat.js');
-require('./ui/chat-area.js');
 require('./ui/chat-threads.js');
 require('./ui/compose.js');
 require('./ui/notify-ticker.js');
@@ -70,7 +71,6 @@ require('./ui/follow-room.js');
 require('./ui/facebook.js');
 require('./ui/conf-area.js');
 require('./ui/pref-area.js');
-require('./ui/user-area.js');
 require('./ui/noroom-area.js');
 require('./ui/signup-area.js');
 require('./ui/persona.js');
