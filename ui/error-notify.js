@@ -26,7 +26,7 @@ $(function() {
         next();
     }, 900);
 
-    $(".disconnectTry").click(function() {
+    $(".offline-view-reconnect").on("click", function() {
         location.reload();
     });
 });
