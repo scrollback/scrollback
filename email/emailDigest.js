@@ -98,7 +98,7 @@ function trySendingToUsers() {
 						log("username ", username ," is not following any rooms ");
 						return;
 					}
-					rooms = [];
+					var rooms = [];
 					following.results.forEach(function(r) {
 						rooms.push(r.id);
 					});
@@ -478,7 +478,7 @@ function sendPeriodicMails(){
 		var users = data.results;
 		users.forEach(function(user) {
 			log("trying for user", user);
-			if (user.params && user.params.email && user.params.email.frequency !== "never") {//TODO write a query based on freq
+			if (user.params && (!user.params.email || user.params.email.frequency !== "never")) {//TODO write a query based on freq
 				initMailSending(user.id);
 			}
 		});

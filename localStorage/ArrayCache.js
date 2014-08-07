@@ -67,23 +67,96 @@ ArrayCache.prototype.get = function (cacheType, query) {
 
 	function walk(start, steps, direction) {
 		var res = [],
-			m, i, obj;
-		for (i = start; i >= 0 && i < l && res.length < steps; i += direction) {
-			m = self.d[i];
-			if (typeof m !== 'object') throw new Error('ArrayCache contains non-object');
-			if (m.type == 'result-start') {
-				if (!partials) return null;
-			} else if (m.type == 'result-end') {
-				if (partials) {
-					obj = {
-						type: 'missing'
-					};
-					obj[cacheType] = m[cacheType];
-					res.push(obj);
-				} else return null;
-			} else res.push(m);
+			m, n, p, i, getIcr;
+
+		function stepForward() {
+			if (m.type === "result-start") {
+				if (!partials) {
+					return null;
+				} else {
+					res.push({
+						type: 'missing',
+						endTime: m.time
+					});
+					return 0;
+				}
+			} else if (m.type === "result-end") {
+				if (!partials) {
+					return null;
+				} else {
+					if (n && n.type === "result-start") {
+						res.push({
+							type: 'missing',
+							startTime: m.time,
+							endTime: n.time
+						});
+						return 1;
+					} else {
+						res.push({
+							type: 'missing',
+							startTime: m.time
+						});
+						return 0;
+					}
+					return 1;
+				}
+			} else {
+				res.push(m);
+				return 0;
+			}
 		}
 
+		function stepBackward() {
+			if (m.type === "result-start"){
+				if (!partials) {
+					return null;
+				} else {
+					if (p && p.type === "result-end") {
+						res.push({
+							type: "missing",
+							startTime: p.time,
+							endTime: m.time,
+						});
+						return -1;
+					} else {
+						// not sure if this branch will ever fire!
+						// cant think of a situation, where an isolated result-end will be found on a walk
+						res.push({
+							type: "missing",
+							startTime: m.time,
+						});
+						return 0;
+					}
+				}
+			} else if (m.type === "result-end") {
+				// same as above, there will prob never be an isolated result-end in the cache during a walk.
+				res.push({
+					type: "missing",
+					startTime: m.time,
+				});
+				return 0;
+			} else {
+				res.push(m);
+				return 0;
+			}
+		}
+
+		for (i = start; i >= 0 && i < l && res.length < steps; i += direction) {
+			m = self.d[i];
+			n = self.d[i + 1];
+			p = self.d[i - 1];
+			getIcr = 0;
+			if (typeof m !== 'object') throw new Error('ArrayCache contains non-object');
+			if (direction > 0) {
+				getIcr = stepForward();
+			} else {
+				getIcr = stepBackward();
+			}
+			if (getIcr === null) {
+				return null;
+			}
+			i += getIcr;
+		}
 		return direction < 0 ? res.reverse() : res;
 	}
 
