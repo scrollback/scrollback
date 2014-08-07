@@ -56,7 +56,7 @@ function joinServer(server, nick, channels, options, cb) {
 		realName: nick + '@scrollback.io',
 		channels: channels,
 		debug: false,
-		autoRejoin: false,
+		autoRejoin: options.autoRejoin,
 		stripColors: true,
 		floodProtection: true,
 		identId: options.identId,
@@ -76,7 +76,8 @@ function joinServer(server, nick, channels, options, cb) {
  */
 function connectBot(room, options, cb) {
 	console.log("Connect Bot ", room, options);
-	var server = room.params.irc.server;
+	options.autoRejoin = false;
+    var server = room.params.irc.server;
 	var channel = room.params.irc.channel.toLowerCase();
 	if (!servChanProp[server]) servChanProp[server] = {};
 	if (servChanProp[server][channel] && servChanProp[server][channel].room) {
@@ -90,6 +91,7 @@ function connectBot(room, options, cb) {
 	servChanProp[server][channel].users = [];
 	rooms[room.id] = room;
 	servChanProp[server][channel].room = room;
+    
 	var ch = room.params.irc.pending ? [] : [channel]; //after varification connect to channel
 	if (!servNick[server]) servNick[server] = {};
 	var client;
@@ -148,7 +150,8 @@ function partBot(roomId, callback) {
 }
 
 function connectUser(roomId, nick, options, cb) {
-	var room = rooms[roomId];
+	options.autoRejoin = true;
+    var room = rooms[roomId];
 	log("room=", room);
 	var server = room.params.irc.server;
 	var channel = room.params.irc.channel;
@@ -159,7 +162,8 @@ function connectUser(roomId, nick, options, cb) {
 	} else {
 		log("connecting user", nick);
 		client = joinServer(server, nick, [channel], options, cb);
-		client.sbNick = nick;
+		client.channels = [];
+        client.sbNick = nick;
 		client.once('registered', function (message) {
 			if (!servNick[client.opt.server]) servNick[client.opt.server] = {};
 			servNick[client.opt.server][client.nick] = {
@@ -167,12 +171,36 @@ function connectUser(roomId, nick, options, cb) {
 				dir: "out"
 			};
 		});
-		client.on('part', function (channel, nk, reason, message) {
-			if (client.opt.channels.length === 0) {
+        
+        function userLeft(channel, nick) {
+            log("connect bot", arguments);
+            channel = channel.toLowerCase();
+            log("got user left", arguments, client.nick, client.channels);
+            if ( client.nick === nick) {
+                 client.channels.splice(client.channels.indexOf(channel), 1);
+            }
+            if (client.channels.length === 0) {
 				log("part channel", nick, arguments);
 				client.disconnect();
-				delete clients[nick][client.opt.server]; //TODO some cleanup needed?
+                log("disconnecting user", client.nick);
+				delete clients[nick][client.opt.server];
 			}
+        }
+        client.on("part", function (channel, nick) {
+            log("connect bot", arguments);
+            userLeft(channel, nick);
+        });
+        client.addListener('quit', function (nick, reason, channels) {
+            log("connect bot", arguments);
+            channels.forEach(function(channel) {
+                userLeft(channel, nick);
+            });
+        });
+		client.on('join', function (channel, nk) {
+            log("connect bot Join: " , arguments);
+            if ( client.nick === nk) {
+                client.channels.push(channel);
+            }
 		});
 	}
 }
@@ -328,10 +356,10 @@ function left(client, channels, nick) {
 		});
 	}
 	if (client.nick === nick) { //My nick leaving the channel
-		servChanCount[client.opt.server]--;
+		servChanCount[client.opt.server] -= channels.length;
 		if (servChanCount[client.opt.server] === 0) {
 			client.disconnect();
-			delete clients[nick][client.opt.server];
+			delete clients[botNick][client.opt.server];
 		}
 	}
 }
@@ -342,14 +370,12 @@ function sendAway(server, channels, nick, bn) {
 	channels.forEach(function (channel) {
 		channel = channel.toLowerCase();
 		if (bn === nick) { //bot left the channel
-
 			var roomId = servChanProp[server][channel].room.id;
 			console.log("deleting data:****", roomId);
 			delete servChanProp[server][channel];
 			delete rooms[roomId];
 			partBotCallback[roomId]();
 			delete partBotCallback[roomId];
-
 			return;
 		}
 		if (!servChanProp[server][channel]) {
