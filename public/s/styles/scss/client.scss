@@ -1073,8 +1073,8 @@ body {
 		}
 
 		&.expanded {
-			max-height: 20em;
-			overflow: auto;
+            max-height: 20em;
+            overflow-y: scroll;
 
 			&:after { display: none; }
 		}
