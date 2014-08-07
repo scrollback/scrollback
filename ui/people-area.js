@@ -12,11 +12,11 @@ $(function () {
         roomName = "",
         people = [],
         lists = {
-            people1: [],
+            people1: [false],
             people3: [],
             people4: [],
             people6: [],
-            people9: []
+            people9: [false]
         };
 
     function getNextArray(l) {
@@ -169,7 +169,7 @@ $(function () {
                 i, ppl = [],
                 l, len, p, sum, isDone = false,
                 count;
-//            console.log("RESET", index, before, after);
+            console.log("PEOPLE RESET", index, before, after);
             if (!roomName) return callback([]);
             if (!index) {
                 if (before) {

@@ -10,6 +10,7 @@ cacheOp.load(); // initial load of all LS entries apart from ArrayCaches
 module.exports = function (c) {
 	libsb = c;
 	libsb.user = cacheOp.cache.user;
+	libsb.memberOf = cacheOp.cache.memberOf;
     libsb.on('init-up', function(init, next) {
         var sid;
         if(cacheOp.cache && cacheOp.cache.session) {
