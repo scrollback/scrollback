@@ -34,12 +34,12 @@ libsb.on('error-dn', function(err, next){
 
 libsb.on('navigate', function(state, next){
 	if(state.mode === 'profile' && state.source === 'noroom'){
-		$('#profileText').text(currentState.roomName);
+		$('#profile-view-name').text(currentState.roomName);
 	}
 	next();
 }, 100);
 
-$("#create-room-button").click(function(){
+$("#noroom-view-create").on("click", function() {
     var roomObj = {
         to: currentState.roomName,
         room: {
@@ -58,7 +58,7 @@ $("#create-room-button").click(function(){
     });
 });
 
-$("#login-and-create-room-button").click(function(){
+$("#noroom-view-login").on("click", function() {
    if($("body").hasClass("role-guest")) {
 		libsb.emit('auth-menu', {origin: $(this), buttons: {}, title: 'Sign in to Scrollback with'}, function(err, menu){
 			showMenu(menu);
