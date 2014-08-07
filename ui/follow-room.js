@@ -53,7 +53,10 @@ $(function() {
 
         next();
     }, 600);
-
+	libsb.on("init-dn", function(init, next){
+		getFollow();
+		next();
+	}, 100);
     libsb.on("join-dn", function(state, next) {
         if (state.type === "join" && state.to === window.currentState.roomName && state.from === libsb.user.id) {
             setFollow(true);

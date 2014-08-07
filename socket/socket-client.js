@@ -101,7 +101,8 @@ function disconnected() {
 			if(err) console.log(err.message);
 		});
 	}
-    backOff *= 2;
+	if(backOff < 180) backOff *= 2;
+	else backOff = 180;
     setTimeout(connect, backOff*1000);
 }
 
