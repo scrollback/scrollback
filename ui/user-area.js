@@ -34,6 +34,7 @@ libsb.on('user-menu', function(menu, next){
 }, 1000);
 
 libsb.on("logout", function (p, n) {
+	console.log(new Error().stack);
 	libsb.emit('navigate', {
 		view: 'loggedout',
 	});
@@ -61,12 +62,15 @@ libsb.on('navigate', function (state, next) {
 function setOwnerClass() {
 	var isOwner = false;
 	function check() {
-		libsb.memberOf.forEach(function(room){
-			if(room.id === currentState.roomName && room.role === "owner"){
-				$("body").addClass("role-owner");
-				isOwner = true;
-			}
-		});
+		if(libsb.memberOf){
+			libsb.memberOf.forEach(function(room){
+				if(room.id === currentState.roomName && room.role === "owner"){
+					$("body").addClass("role-owner");
+					isOwner = true;
+				}
+			});
+		}
+		
 		if(!isOwner) $("body").removeClass("role-owner");
 	}
 	check();

@@ -5,6 +5,9 @@ var underscore = require('underscore'),
     generate = require('../lib/generate.js'),
     libsb;
 
+function logout() {
+	 libsb.emit("logout");
+}
 function addProperties(l) {
     var libsb = {
         user: "",
@@ -32,11 +35,7 @@ function addProperties(l) {
         say: say,
         admit: admit,
         expel: expel,
-
-        logout: function () {
-            libsb.emit("logout");
-            libsb.emit("disconnect");
-        }
+        logout: logout
     };
     for(var i in libsb){
         if(libsb.hasOwnProperty(i)){
