@@ -81,7 +81,7 @@ var threadEl = require("./thread.js"),
 		if(before) query.before = index?before+1: before;
 
 		query.to =  room;
-		query.time = index;
+		query.time = index || null;
 		libsb.getThreads(query, function(err, t) {
 			var threads = t.results;
             console.log("Thread-area", err, t, index);

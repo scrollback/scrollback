@@ -107,7 +107,7 @@ ArrayCache.prototype.get = function (cacheType, query) {
 		}
 
 		function stepBackward() {
-			if (m.type === "result-start"){
+			if (m.type === "result-start") {
 				if (!partials) {
 					return null;
 				} else {
@@ -129,12 +129,16 @@ ArrayCache.prototype.get = function (cacheType, query) {
 					}
 				}
 			} else if (m.type === "result-end") {
+				if (!partials) {
+					return null;
+				} else {
+					res.push({
+						type: "missing",
+						startTime: m.time,
+					});
+					return 0;
+				}
 				// same as above, there will prob never be an isolated result-end in the cache during a walk.
-				res.push({
-					type: "missing",
-					startTime: m.time,
-				});
-				return 0;
 			} else {
 				res.push(m);
 				return 0;
