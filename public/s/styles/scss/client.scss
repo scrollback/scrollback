@@ -1051,10 +1051,10 @@ body {
     }
 
 	&.chat-item-long {
-		@extend %transition;
+        @extend %transition;
 
-		max-height: 12em;
-		cursor: pointer;
+        max-height: 12em;
+        cursor: pointer;
 
 		&:hover, &:focus {
 			&:after { padding: 1em 0; }
@@ -1073,8 +1073,8 @@ body {
 		}
 
 		&.expanded {
-			max-height: 20em;
-			overflow: auto;
+            max-height: 20em;
+            overflow-y: scroll;
 
 			&:after { display: none; }
 		}
