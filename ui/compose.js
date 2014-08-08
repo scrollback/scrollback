@@ -7,12 +7,12 @@ $(function() {
 	var $entry = $(".chat-entry"),
 		$placeholder = $(".chat-placeholder"),
 		$input = $(".chat-input"),
-		sendMsg = function(){
+		sendMsg = function() {
 			var text = format.htmlToText($entry.html()).trim();
 
 			$entry.text("");
 
-			if (!text) return;
+			if (!text) { return; }
 
 			if (window.currentState && window.currentState.roomName) {
 				libsb.say(window.currentState.roomName, text, window.currentState.thread);
@@ -79,7 +79,7 @@ $(function() {
 	});
 
 	$entry.on("keypress", function(e) {
-		if(e.which === 13 && !e.shiftKey) {
+		if (e.which === 13 && !e.shiftKey) {
 			e.preventDefault();
 			sendMsg();
 		}
