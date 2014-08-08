@@ -1,6 +1,6 @@
 var utils = function(){};
 
-utils.prototype.makeAction = function (action, role, userRole) {
+utils.prototype.makeAction = function (action, role, userRole, victimRole) {
 	return {
 		id: 'asfsaf',
 		type: action,
@@ -9,6 +9,7 @@ utils.prototype.makeAction = function (action, role, userRole) {
 			role: userRole
 		},
 		victim: {
+			role: victimRole
 		},
 		room: {
 			guides: {
