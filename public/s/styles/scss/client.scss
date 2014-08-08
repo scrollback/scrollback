@@ -1137,6 +1137,38 @@ body {
     }
 }
 
+.chat-item-missing {
+    padding: 0;
+    margin: 0;
+    border-top: none;
+    text-align: center;
+    font-style: italic;
+    color: lighten($dark-color, 5%);
+    background-color: darken($light-color, 5%);
+
+    & + .chat-item { border-top: none; }
+
+    &:before {
+        background: linear-gradient(-45deg, darken($light-color, 5%) 50%, transparent 50%),
+                    linear-gradient(-135deg, $light-color 50%, transparent 50%) 0 50%;
+    }
+
+    &:after {
+        background: linear-gradient(-135deg, darken($light-color, 5%) 50%, transparent 50%),
+                    linear-gradient(-45deg, $light-color 50%, transparent 50%) 0 50%;
+    }
+
+    &:before, &:after {
+        content: "";
+        display: block;
+        height: 16px;
+        width: 100%;
+        background-color: darken($light-color, 5%);
+        background-size: 16px 16px;
+        background-repeat: repeat-x;
+    }
+}
+
 .chat-item-dot {
     content: "";
     float: left;
