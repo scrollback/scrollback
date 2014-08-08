@@ -1137,25 +1137,22 @@ body {
     }
 }
 
-.chat-item-missing {
+@mixin missing($bg) {
     padding: 0;
     margin: 0;
     border-top: none;
     text-align: center;
     font-style: italic;
-    color: lighten($dark-color, 5%);
-    background-color: darken($light-color, 5%);
-
-    & + .chat-item { border-top: none; }
+    background-color: darken($bg, 5%);
 
     &:before {
-        background: linear-gradient(-45deg, darken($light-color, 5%) 50%, transparent 50%),
-                    linear-gradient(-135deg, $light-color 50%, transparent 50%) 0 50%;
+        background: linear-gradient(45deg, darken($bg, 5%) 50%, transparent 50%),
+                    linear-gradient(135deg, $bg 50%, transparent 50%) 0 50%;
     }
 
     &:after {
-        background: linear-gradient(-135deg, darken($light-color, 5%) 50%, transparent 50%),
-                    linear-gradient(-45deg, $light-color 50%, transparent 50%) 0 50%;
+        background: linear-gradient(135deg, darken($bg, 5%) 50%, transparent 50%),
+                    linear-gradient(45deg, $bg 50%, transparent 50%) 0 50%;
     }
 
     &:before, &:after {
@@ -1163,11 +1160,19 @@ body {
         display: block;
         height: 16px;
         width: 100%;
-        background-color: darken($light-color, 5%);
+        background-color: darken($bg, 5%);
         background-size: 16px 16px;
         background-repeat: repeat-x;
     }
 }
+
+.chat-item-missing {
+    @include missing($light-color);
+
+    & + .chat-item { border-top: none; }
+}
+
+.thread-item-missing { @include missing(darken($light-color, 5%)); }
 
 .chat-item-dot {
     content: "";
