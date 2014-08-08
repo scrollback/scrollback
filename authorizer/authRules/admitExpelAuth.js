@@ -1,65 +1,66 @@
+/* jshint node:true */
 var permissionWeights = require('../permissionWeights.js');
 var SbError = require('../../lib/SbError.js');
 
-module.exports = function (core) {
-	
-	core.on('admit', function (action, callback) {
-		if (action.room.guides.authorizer && action.room.guides.authorizer.openFollow === undefined) {
-			action.room.guides.authorizer.openFollow = true;
-		}
-		if (action.user.role === "guest") return callback(new SbError('ERR_NOT_ALLOWED', {
-			source: 'authorizer',
-			action: 'admit',
-			requiredRole: 'moderator',
-			currentRole: action.user.role
+function checkAuthority(action, callback) {
+	var openFollow = action.room.guides.authorizer && action.user.guides.authorizer.openFollow;
+	if (typeof openFollow === "undefined") {
+		openFollow = true;
+	}
+
+	// prevent people from manipulating roles above them
+
+	if (permissionWeights[action.victim.role] >= permissionWeights[action.user.role]) {
+		callback(new SbError('ERR_NOT_ALLOWED', {
+			id: action.id, 
+			currentRole: action.user.role,
+			action: action.type
 		}));
-		else if (action.user.role === "owner" || action.user.role === "su") return callback();
-		
-		else if (action.role !== "owner" && action.role !== "moderator" && action.user.role === "moderator") {
-			return callback();
+		return false;
+	}
+}
+
+function checkConsent(action) {
+	if (permissionWeights[action.role] < permissionWeights[action.victim.role]) {
+		return true;
+	} else if (action.role === action.victim.transitionRole && action.user.transitionType === "request") {
+		return true;
+	} else {
+		action.transitionRole = action.role;
+		action.transitionType = "invite";
+		delete action.role;
+		return true;
+	}
+}
+
+function admitExpel(action, callback) {
+
+	if (action.transitionTime) {
+		action.transitionType = 'timeout';
+		if (!action.transitionRole) {
+			action.transitionRole = action.user.role;
 		}
-		
-		else if (action.role === "follower" && action.user.role === "follower" && action.victim.role === "registered" && action.room.guides.authorizer.openFollow) {
-			return callback();
+	}
+
+	if (checkAuthority(action, callback) && checkConsent(action)) {
+		return callback();
+	}
+}
+
+module.exports = function (core) {
+
+	core.on('admit', function (admit, callback) {
+		if (!admit.role) {
+			admit.role = "follower";
 		}
-		
-		else if (action.user.role === "moderator" || action.user.role === "owner") {
-			if (permissionWeights[action.role] > permissionWeights[action.user.role]) {
-				return callback();
-			} else {
-				action.user.transitionRole = action.user.role;
-				action.user.transitionType = 'timeout';
-				action.user.transitionTime = 60 * 60 * 1000; // 1 hour timeout for demotion ??
-				return callback();
-			}
-		} else {
-			return callback(new SbError('ERR_NOT_ALLOWED', {
-				source: 'authorizer',
-				action: 'admit',
-				requiredRole: 'moderator',
-				currentRole: action.user.role
-			}));
-		}
+		return admitExpel(admit, callback);
 	}, "authorization");
 
-	
-	core.on('expel', function (action, callback) {
-		if (action.user.role === "guest") return callback(new SbError('ERR_NOT_ALLOWED', {
-			source: 'authorizer',
-			action: 'expel',
-			requiredRole: 'moderator',
-			currentRole: action.user.role
-		}));
-		if (action.user.role === "owner" || action.user.role === "su") return callback();
-		else if (action.user.role === "moderator" && action.victim.role !== "moderator" && action.victim.role !== "owner" && 
-				 action.role === "registered") {
-			return callback();
+	core.on('expel', function (expel, callback) {
+		if (!expel.role) {
+			expel.role = "none";
 		}
-		return callback(new SbError('ERR_NOT_ALLOWED', {
-			source: 'authorizer',
-			action: 'expel',
-			requiredRole: 'moderator',
-			currentRole: action.user.role
-		}));
+		return admitExpel(expel, callback);
 	}, "authorization");
+
 };

@@ -1,6 +1,6 @@
 var SbError = require('../../lib/SbError.js');
 var permissionLevels = require('../permissionWeights.js');
-var config = require('../../config.js');
+var config = require('../../myConfig.js');
 var internalSession = Object.keys(config.whitelists)[0];
 module.exports = function (core) {
 	core.on('getTexts', function (query, callback) {
