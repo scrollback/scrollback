@@ -186,10 +186,14 @@ $(function() {
         if ($entry.text() === "" || (($entry.text().indexOf(autoText) > -1) && !autoSel)) {
             autoText = format.htmlToText(msg);
 
-            $entry.html(msg ? msg + "&nbsp;" : "").focus();
+            $entry.html(msg ? msg + "&nbsp;" : "");
 
-            if ($.fn.setCursorEnd) {
-                $entry.setCursorEnd();
+            if (!("ontouchstart" in document)) {
+                $entry.focus();
+
+                if ($.fn.setCursorEnd) {
+                    $entry.setCursorEnd();
+                }
             }
         }
 
