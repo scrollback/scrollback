@@ -262,10 +262,6 @@ $(function () {
 			$(this).empty().text(format.friendlyTime(time, new Date().getTime()));
 		});
 	}, 60000);
-
-	$(document).on("click", ".chat-item-long", function() {
-		$(this).toggleClass("expanded").scrollTop(0);
-	});
 });
 
 module.exports = chatArea;

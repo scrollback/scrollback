@@ -1072,7 +1072,7 @@ body {
             background-image: linear-gradient(to bottom, fade-out($light-color, 1) 0%, $light-color 100%);
         }
 
-        &.expanded {
+        &.current {
             max-height: 20em;
             overflow-y: scroll;
 
