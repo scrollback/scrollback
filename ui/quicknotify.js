@@ -1,9 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
-var lace = require("../lib/lace.js");
-
-var quicknotify = {
+var lace = require("../lib/lace.js"),
+    quicknotify = {
     /**
      * Show an notify message.
      * @constructor
@@ -68,7 +67,7 @@ var quicknotify = {
             return;
         }
 
-        lace.animate.fadeout($element, function() {
+        lace.animate("fadeOut", $element, function() {
             $(this).remove();
 
             if (!$container.children().length) {

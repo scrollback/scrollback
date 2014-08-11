@@ -1504,21 +1504,15 @@ body {
 }
 
 .search-bar {
-    @include transform(translate3d(0, -100%, 0));
-    @include opacity(0);
-    @extend %transition;
-
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 20;
     padding: 1em;
+    display: none;
 
-    .search-focus & {
-        @include transform(translate3d(0, 0, 0));
-        @include opacity(1);
-    }
+    .search-focus & { display: block; }
 
     .search-entry {
         position: relative;
