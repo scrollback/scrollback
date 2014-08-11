@@ -2,82 +2,89 @@
 /* global $, libsb, currentState */
 
 var currentConfig,
-    renderSettings = require("./render-settings.js");
+	renderSettings = require("./render-settings.js");
 
 $(".conf-save").on("click", function () {
-    if (currentState.mode == 'pref') {
-        var userObj = {
-            id: libsb.user.id,
-            description: '',
-            identities: [],
-            params: {},
-            guides: {}
-        };
+	if (currentState.mode == 'pref') {
+		var userObj = {
+			id: libsb.user.id,
+			description: '',
+			identities: [],
+			params: {},
+			guides: {}
+		};
 
-        libsb.emit('pref-save', userObj, function (err, user) {
-            libsb.emit('user-up', {
-                user: user
-            }, function () {
-                currentConfig = null;
+		libsb.emit('pref-save', userObj, function (err, user) {
+			libsb.emit('user-up', {
+				user: user
+			}, function () {
+				currentConfig = null;
 
-                libsb.emit('navigate', {
-                    mode: "normal",
-                    tab: "info",
-                    source: "conf-save"
-                });
-            });
-        });
-    }
+				libsb.emit('navigate', {
+					mode: "normal",
+					tab: "info",
+					source: "conf-save"
+				});
+			});
+		});
+	}
 });
 
 $(".conf-cancel").on("click", function () {
-    currentConfig = null;
+	currentConfig = null;
 
-    $('.pref-area').empty();
+	$('.pref-area').empty();
 
-    libsb.emit('navigate', {
-        mode: "normal",
-        tab: "info",
-        source: "conf-cancel"
-    });
+	libsb.emit('navigate', {
+		mode: "normal",
+		tab: "info",
+		source: "conf-cancel"
+	});
 });
 
 function getUsers() {
-    libsb.emit('getUsers', {
-        ref: "me"
-    }, function (err, data) {
-        var user = data.results[0];
+	libsb.emit('getUsers', {
+		ref: "me"
+	}, function (err, data) {
+		var user = data.results[0];
 
-        if (!user.params) user.params = {};
-        if (!user.guides) user.guides = {};
+		if (!user.params) user.params = {};
+		if (!user.guides) user.guides = {};
 
-        var userObj = {
-            user: user
-        };
+		var userObj = {
+			user: user
+		};
 
-        libsb.emit('pref-show', userObj, function (err, tabs) {
-            delete tabs.user;
+		libsb.emit('pref-show', userObj, function (err, tabs) {
+			delete tabs.user;
 
-            currentConfig = tabs;
+			currentConfig = tabs;
 
-            var data = renderSettings(tabs, user);
+			var data = renderSettings(tabs, user);
 
-            $('.meta-pref').empty().append(data[0]);
-            $('.pref-area').empty().append(data[1]);
-        });
-    });
+			if (data) {
+				$('.meta-pref').empty().append(data[0]);
+				$('.pref-area').empty().append(data[1]);
+
+				libsb.emit("navigate", {
+					tab: data[2]
+				});
+			}
+			
+		});
+	});
 }
 
 libsb.on('navigate', function (state, next) {
-    if (state.old && state.old.mode !== state.mode && state.mode === "pref") {
-        if (!currentConfig) {
-            if (libsb.user.id.indexOf('guest-') === 0) {
-                libsb.emit('navigate', {
-                    mode: 'normal'
-                });
-            }
-            getUsers();
-        }
-    }
-    next();
+	if (state.old && state.old.mode !== state.mode && state.mode === "pref") {
+		if (!currentConfig) {
+			if (libsb.user.id.indexOf('guest-') === 0) {
+				libsb.emit('navigate', {
+					mode: 'normal'
+				});
+			}
+			getUsers();
+		}
+	}
+	next();
 }, 500);

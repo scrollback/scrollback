@@ -8,7 +8,7 @@ $(".configure-button").on("click", function () {
     libsb.emit('navigate', {
         mode: "conf",
         source: "configure-button",
-        roomName: window.currentState.roomName
+        roomName: window.currentState.roomName,
     });
 });
 
@@ -73,11 +73,43 @@ function showConfig(room){
         currentConfig = tabs;
 
         data = renderSettings(tabs);
-
-        $('.meta-conf').empty().append(data[0]);
-        $('.conf-area').empty().append(data[1]);
+		if (data) {
+			$('.meta-conf').empty().append(data[0]);
+			$('.conf-area').empty().append(data[1]);	
+			
+			libsb.emit("navigate", {tab: data[2]});
+		}
      });
 }
+
+function addErrors(room) {
+	var flag = false;
+	var errorView;
+	var errorPlugins = [];
+    Object.keys(room.params).forEach(function(e) {
+        if (room.params[e] && room.params[e].error) {
+			errorPlugins.push(e);
+			if (flag === false) errorView = e;
+			flag = true;
+        }
+    });
+	
+	showConfig(room);
+	errorPlugins.forEach(function(e) {
+		$(".list-item-" + e + "-settings").addClass("error");
+	});
+	
+	if(flag === true) {
+		libsb.emit("navigate", {tab: errorView});
+	}
+}
+
+libsb.on("room-dn", function(action, next) {
+	var room = action.room;
+	if(!room.params) return next();
+	addErrors(room);
+	next();
+}, 200);
 
 libsb.on('navigate', function (state, next) {
     var isOwner = false;

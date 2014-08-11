@@ -23,11 +23,11 @@
 
 var currentState = window.currentState = {};
 
-libsb.on("navigate", function(state, next) {
+libsb.on("navigate", function (state, next) {
 	state.old = $.extend(true, {}, currentState); // copying object by value
 	state.changes = {};
 
-	["roomName", "room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time"].forEach(function(prop) {
+	["roomName", "room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time"].forEach(function (prop) {
 		if (typeof state[prop] === "undefined") {
 			if (typeof state.old[prop] !== "undefined") {
 				currentState[prop] = state[prop] = state.old[prop];
@@ -36,7 +36,7 @@ libsb.on("navigate", function(state, next) {
 		}
 
 		if (state[prop] != state.old[prop]) {
-			if(state[prop] === null) {
+			if (state[prop] === null) {
 				delete state[prop];
 				delete currentState[prop];
 				state.changes[prop] = null;
@@ -52,9 +52,9 @@ libsb.on("navigate", function(state, next) {
 }, 1000);
 
 // On navigation, set the body classes.
-libsb.on("navigate", function(state, next) {
+libsb.on("navigate", function (state, next) {
 	if (!state.time && !state.roomName && !state.thread) {
-		if(!state.time && state.old.time) {
+		if (!state.time && state.old.time) {
 			state.time = state.old.time;
 		}
 	}
@@ -101,8 +101,13 @@ libsb.on("navigate", function(state, next) {
 
 	if (state.old && state.tab !== state.old.tab) {
 		if (state.tab) {
-			$(".tab.current").removeClass("current");
-			$(".tab-" + state.tab).addClass("current");
+			if (state.mode === "pref" || state.mode === "conf") {
+				$(".list-item.current, .list-view.current").removeClass("current");
+				$(".list-item-" + state.tab + "-settings, .list-view-" + state.tab + "-settings").addClass("current");
+			} else {
+				$(".tab.current").removeClass("current");
+				$(".tab-" + state.tab).addClass("current");
+			}
 		}
 	}
 
@@ -110,35 +115,36 @@ libsb.on("navigate", function(state, next) {
 }, 999);
 
 // On navigation, add history and change URLs and title
-libsb.on("navigate", function(state, next) {
-	if (state.source == "history"){
+libsb.on("navigate", function (state, next) {
+	if (state.source == "history") {
 		return;
 	}
+
 	function buildurl() {
 		var path, params = [];
 
-		switch(state.mode) {
-			case 'conf':
-				path = '/' + (state.roomName ? state.roomName + '/edit': 'me');
-				document.title = "Room settings - " + state.roomName;
-				break;
-			case 'pref':
-				path = '/me/edit';
-				document.title = "Account settings - " + libsb.user.id;
-				break;
-			case 'search':
-				path = state.roomName ? '/' + state.roomName: '';
-				document.title = "Results for " + state.query;
-				params.push('q=' + encodeURIComponent(state.query));
-				break;
-			case "home":
-				path = "/me";
-				document.title = currentState.roomName;
-				break;
-			default:
-				path = (state.roomName ? '/' + state.roomName + (
-						state.thread ? '/' + state.thread: "" /*+ '/' + format.sanitize(state.thread): ''*/): '');
-				document.title = state.roomName ? state.roomName + " on scrollback" : "Scrollback.io";
+		switch (state.mode) {
+		case 'conf':
+			path = '/' + (state.roomName ? state.roomName + '/edit' : 'me');
+			document.title = "Room settings - " + state.roomName;
+			break;
+		case 'pref':
+			path = '/me/edit';
+			document.title = "Account settings - " + libsb.user.id;
+			break;
+		case 'search':
+			path = state.roomName ? '/' + state.roomName : '';
+			document.title = "Results for " + state.query;
+			params.push('q=' + encodeURIComponent(state.query));
+			break;
+		case "home":
+			path = "/me";
+			document.title = currentState.roomName;
+			break;
+		default:
+			path = (state.roomName ? '/' + state.roomName + (
+				state.thread ? '/' + state.thread : "" /*+ '/' + format.sanitize(state.thread): ''*/ ) : '');
+			document.title = state.roomName ? state.roomName + " on scrollback" : "Scrollback.io";
 		}
 
 		if (state.time) {
@@ -160,23 +166,23 @@ libsb.on("navigate", function(state, next) {
 		if (state.theme && state.theme !== "light") {
 			params.push("theme=" + state.theme);
 		}
-		return path + (params.length ? "?" + params.join("&"): "");
+		return path + (params.length ? "?" + params.join("&") : "");
 	}
 
 	function pushState() {
 		var url = buildurl();
-        /*state.old && delete state.old;
+		/*state.old && delete state.old;
         state.changes && delete state.changes;*/
 		if (Object.keys(state.changes).length === "") {
 			state.view = "normal";
 		}
 
 		if (state.source == "init" || state.source == "chat-area") {
-            history.replaceState(state, null, url);
+			history.replaceState(state, null, url);
 			return;
 		}
 
-		if ((state.changes.view == "rooms" || state.changes.view == "meta" || state.changes.view =="normal") && Object.keys(state.changes).length == 1) {
+		if ((state.changes.view == "rooms" || state.changes.view == "meta" || state.changes.view == "normal") && Object.keys(state.changes).length == 1) {
 			history.pushState(state, null, url);
 			return;
 		} else if (Object.keys(state.changes).length === 0) {
@@ -199,7 +205,7 @@ libsb.on("navigate", function(state, next) {
 }, 200);
 
 // On history change, load the appropriate state
-$(window).on("popstate", function() {
+$(window).on("popstate", function () {
 
 	if (("state" in history && history.state !== null)) {
 		var state = {},
@@ -207,7 +213,7 @@ $(window).on("popstate", function() {
 
 		for (prop in history.state) {
 			if (history.state.hasOwnProperty(prop)) {
-				if(prop !== "old" && prop !== "changes") {
+				if (prop !== "old" && prop !== "changes") {
 					state[prop] = history.state[prop];
 				}
 			}
