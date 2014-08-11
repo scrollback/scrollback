@@ -1138,11 +1138,6 @@ body {
 }
 
 @mixin missing($bg) {
-    padding: 0;
-    margin: 0;
-    border-top: none;
-    text-align: center;
-    font-style: italic;
     background-color: darken($bg, 5%);
 
     &:before {
@@ -1155,15 +1150,7 @@ body {
                     linear-gradient(45deg, $bg 50%, transparent 50%) 0 50%;
     }
 
-    &:before, &:after {
-        content: "";
-        display: block;
-        height: 16px;
-        width: 100%;
-        background-color: darken($bg, 5%);
-        background-size: 16px 16px;
-        background-repeat: repeat-x;
-    }
+    &:before, &:after { background-color: darken($bg, 5%); }
 }
 
 .chat-item-missing {
@@ -1173,6 +1160,23 @@ body {
 }
 
 .thread-item-missing { @include missing(darken($light-color, 5%)); }
+
+.chat-item-missing, .thread-item-missing {
+    padding: 0;
+    margin: 0;
+    border-top: none;
+    text-align: center;
+    font-style: italic;
+
+    &:before, &:after {
+        content: "";
+        display: block;
+        height: 16px;
+        width: 100%;
+        background-size: 16px 16px;
+        background-repeat: repeat-x;
+    }
+}
 
 .chat-item-dot {
     content: "";
