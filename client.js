@@ -79,3 +79,4 @@ require('./ui/message-menu.js');
 require('./ui/room-notifications.js');
 require('./ui/URLparser.js')();
 require('./ui/google-analytics.js');
+require('./ui/workarounds.js');

@@ -35,7 +35,10 @@ $(function() {
 		};
 
 	// Focus chat entry on pageload
-	$entry.focus();
+	if (document.hasFocus()) {
+		$entry.focus();
+	}
+
 	setPlaceHolder();
 
 	libsb.on("init-dn", function(action, next) {
