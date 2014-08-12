@@ -18,7 +18,13 @@
 			outline: none;
 		}
 
-		&.disabled { background-color: darken($light-color, 10%); }
+		&.disabled {
+			&, &:hover, &:focus, &:active {
+				border-color: darken($light-color, 20%);
+				background-color: darken($light-color, 10%);
+				pointer-events: none;
+			}
+		}
 
 		&.error { border-color: $error-color; }
 

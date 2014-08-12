@@ -1337,6 +1337,8 @@ body {
             .conv-#{$j} & { border-color: nth($palette, $i); }
         }
     }
+
+    .state-offline & { @extend .entry.disabled; }
 }
 
 .chat-send {
