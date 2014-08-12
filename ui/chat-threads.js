@@ -160,6 +160,10 @@ $(function() {
             this.get(0).scrollIntoView(true);
         }
 
+        if (this.hasClass("chat-item-long")) {
+            this.scrollTop(0);
+        }
+
         var nick = this.find(".chat-nick").text(),
             msg = format.htmlToText($entry.html()),
 			atStart = false;
