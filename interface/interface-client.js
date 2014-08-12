@@ -35,11 +35,14 @@ var libsb = {
 };
 module.exports = function (c) {
 	core = c;
-
-	libsb.on = core.on;
-	libsb.emit = core.emit;
+    
+    for (var i in libsb) {
+        if (libsb.hasOwnProperty(i)) core[i] = libsb[i];
+    }
+    libsb = core;
+    
 	window.libsb = libsb;
-
+    
 	core.on('init-dn', recvInit, 1000);
 	core.on('back-dn', recvBack, 1000);
 	core.on('away-dn', recvAway, 1000);
