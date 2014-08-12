@@ -51,6 +51,14 @@ libsb.on("navigate", function (state, next) {
 	next();
 }, 1000);
 
+
+libsb.on('room-dn', function(room, next){
+	if (room.room.id === currentState.roomName){
+		currentState.room = room.room;
+	}
+	next();
+}, 100);
+
 // On navigation, set the body classes.
 libsb.on("navigate", function (state, next) {
 	if (!state.time && !state.roomName && !state.thread) {

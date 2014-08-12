@@ -43,10 +43,12 @@ $(".conf-save").on("click", function () {
                     }
                     currentConfig = null;
                     $('.conf-area').empty();
-                    libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" , roomName: room.room.id});
+					
+        			libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
                 }
             });
         });
+		
     }
 });
 
@@ -77,7 +79,9 @@ function showConfig(room){
 			$('.meta-conf').empty().append(data[0]);
 			$('.conf-area').empty().append(data[1]);	
 			
-			libsb.emit("navigate", {tab: data[2]});
+			if(currentState.mode === "conf") {
+				libsb.emit("navigate", {tab: data[2]});
+			}
 		}
      });
 }
@@ -103,6 +107,20 @@ function addErrors(room) {
 		libsb.emit("navigate", {tab: errorView});
 	}
 }
+
+libsb.on("navigate", function(state, next){
+	if (state.mode === "conf") {
+		var room = currentState.room;
+		if (room && room.params) {
+			Object.keys(room.params).forEach(function(e){
+				if(room.params[e] && room.params[e].error) {
+					$(".list-item-" + e + "-settings").addClass("error");
+				}
+			});	
+		}
+	}
+	next();
+}, 200);
 
 libsb.on("room-dn", function(action, next) {
 	var room = action.room;
