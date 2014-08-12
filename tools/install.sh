@@ -39,9 +39,14 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
             nodejs)
                 case "$distro" in
                     Ubuntu)
-                        sudo add-apt-repository ppa:chris-lea/node.js
-                        sudo apt-get update
-                        sudo apt-get install -y nodejs;;
+                        if [[ "$(lsb_release -sr)" < "14.04" ]]; then
+                            sudo add-apt-repository ppa:chris-lea/node.js
+                            sudo apt-get update
+                            sudo apt-get install -y nodejs
+                        else
+                            sudo apt-get update
+                            sudo apt-get install -y nodejs-legacy npm
+                        fi;;
                     Fedora)
                         sudo yum install -y nodejs npm;;
                 esac;;
