@@ -120,9 +120,10 @@ $embeds: toast, canvas;
     }
 }
 
+html, body { height: 100%; }
+
 body {
     word-wrap: break-word;
-    height: 100%;
 
     &:not(.embed) {
         [data-embed]:not([data-embed=none]) { display: none; }
