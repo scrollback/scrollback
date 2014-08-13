@@ -57,20 +57,8 @@ function getUsers() {
 
 		libsb.emit('pref-show', userObj, function (err, tabs) {
 			delete tabs.user;
-
 			currentConfig = tabs;
-
 			renderSettings(tabs, user);
-
-//			if (data) {
-//				$('.meta-pref').empty().append(data[0]);
-//				$('.pref-area').empty().append(data[1]);
-//
-//				libsb.emit("navigate", {
-//					tab: data[2]
-//				});
-//			}
-			
 		});
 	});
 }
