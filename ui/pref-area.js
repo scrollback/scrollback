@@ -60,16 +60,16 @@ function getUsers() {
 
 			currentConfig = tabs;
 
-			var data = renderSettings(tabs, user);
+			renderSettings(tabs, user);
 
-			if (data) {
-				$('.meta-pref').empty().append(data[0]);
-				$('.pref-area').empty().append(data[1]);
-
-				libsb.emit("navigate", {
-					tab: data[2]
-				});
-			}
+//			if (data) {
+//				$('.meta-pref').empty().append(data[0]);
+//				$('.pref-area').empty().append(data[1]);
+//
+//				libsb.emit("navigate", {
+//					tab: data[2]
+//				});
+//			}
 			
 		});
 	});

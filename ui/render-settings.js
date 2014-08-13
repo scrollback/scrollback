@@ -1,7 +1,7 @@
 /* jshint browser: true */
-/* global libsb, $ */
-
-module.exports = function (tabs) {
+/* global currentState, libsb, $ */
+function renderSettings(tabs) {
+	
 	var $items = $("<div>"),
 		$views = $("<div>"),
 		data = [];
@@ -26,6 +26,56 @@ module.exports = function (tabs) {
 		$(data[i][2].html).addClass("list-view list-view-" + data[i][1] + "-settings ")
 			.appendTo($views);
 	}
+	
+	
+	switch(currentState.mode) {
+		case "pref":
+			$('.meta-pref').empty().append($items);
+			$('.pref-area').empty().append($views);
+			break;
+			
+		case "conf":
+			$('.meta-conf').empty().append($items);
+			$('.conf-area').empty().append($views);
+			break;
+	}
+	
+	libsb.emit("navigate", {tab: data[0][1]});
+	
+	addErrors(currentState.room);
 
-	return [$items, $views, data[0][1]];
-};
+}
+
+libsb.on("room-dn", function(action, next) {
+	var room = action.room;
+	var error = false, errorTab;
+	if (!room.params) return next();
+	for (var i in room.params) {
+		if (room.params[i].error) {
+			error = true;
+			errorTab = i;
+		}
+	}
+	if(error){ 
+		libsb.emit("config-show", {room: action.room}, function(err, tabs){
+			delete tabs.room;
+			renderSettings(tabs);
+			$(".list-item-" + errorTab + "-settings").addClass("error");
+			libsb.emit("navigate", {tab: errorTab});
+		});
+	}
+	next();
+}, 500);
+
+function addErrors(room) {
+	var pluginErr;
+	Object.keys(room.params).forEach(function(p) {
+		if (room.params[p] && room.params[p].error) {
+			pluginErr = p;
+			$(".list-item-" + p + "-settings").addClass("error");
+		}
+	});
+	return pluginErr;
+}
+
+module.exports = renderSettings;

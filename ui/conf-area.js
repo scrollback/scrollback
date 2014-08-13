@@ -65,69 +65,14 @@ $(".conf-cancel").on("click", function () {
 });
 
 
-function showConfig(room){
+function showConfig(room) {
     var roomObj = {room: room};
     libsb.emit('config-show', roomObj, function(err, tabs) {
-        var data;
-
-        delete tabs.room;
-
+		delete tabs.room;
         currentConfig = tabs;
-
-        data = renderSettings(tabs);
-		if (data) {
-			$('.meta-conf').empty().append(data[0]);
-			$('.conf-area').empty().append(data[1]);	
-			
-			if(currentState.mode === "conf") {
-				libsb.emit("navigate", {tab: data[2]});
-			}
-		}
+        renderSettings(tabs);
      });
 }
-
-function addErrors(room) {
-	var flag = false;
-	var errorView;
-	var errorPlugins = [];
-    Object.keys(room.params).forEach(function(e) {
-        if (room.params[e] && room.params[e].error) {
-			errorPlugins.push(e);
-			if (flag === false) errorView = e;
-			flag = true;
-        }
-    });
-	
-	showConfig(room);
-	errorPlugins.forEach(function(e) {
-		$(".list-item-" + e + "-settings").addClass("error");
-	});
-	
-	if(flag === true) {
-		libsb.emit("navigate", {tab: errorView});
-	}
-}
-
-libsb.on("navigate", function(state, next){
-	if (state.mode === "conf") {
-		var room = currentState.room;
-		if (room && room.params) {
-			Object.keys(room.params).forEach(function(e){
-				if(room.params[e] && room.params[e].error) {
-					$(".list-item-" + e + "-settings").addClass("error");
-				}
-			});	
-		}
-	}
-	next();
-}, 200);
-
-libsb.on("room-dn", function(action, next) {
-	var room = action.room;
-	if(!room.params) return next();
-	addErrors(room);
-	next();
-}, 200);
 
 libsb.on('navigate', function (state, next) {
     var isOwner = false;
