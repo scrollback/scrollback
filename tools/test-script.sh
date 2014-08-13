@@ -1,17 +1,15 @@
 #!/bin/bash
-
 # Get user's home directory
 currdir=`cd $(dirname "${BASH_SOURCE[0]}") && pwd`
 scrollbackdir="${currdir%/*}"
-logfile="/var/log/scrollback-test-$(date +%y%m%d%H)"
+logfile="{scrollbackdir}-$(date +%y%m%d%H)"
 
 # Create logfile
 touch "$logfile"
 
 # Show error messages
 show_err() {
-echo -e "[ERR  $(date +"%H:%M:%S")] ${1}" > "$logfile"
-exit 1
+    echo -e "[ERR  $(date +"%H:%M:%S")] ${1}" > "$logfile"
 }
 
 # Go to the scrollback directory
@@ -25,18 +23,19 @@ fi
 git reset --hard
 git checkout master || show_err "Failed to checkout master branch"
 git pull
-
-# Setup
-npm install
-bower install
-gulp
-
 # Stop the server
-forever stop index.js
+forever stop index.js 
+# Setup
+#sudo npm install
+#bower install
+#gulp
 
 # Restart IRC
-forever restart ircClient/server.js || show_err "Failed to restart IRC"
+forever stop ircClient/server.js 
+forever start ircClient/server.js
 mocha test/test.js -R xunit-file
+forever start index.js
+
 
 
 
