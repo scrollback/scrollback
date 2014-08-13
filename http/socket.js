@@ -171,7 +171,10 @@ function storeBack(conn, back) {
 	if(rConns[back.to].indexOf(conn)<0) rConns[back.to].push(conn);
 	if(urConns[back.from+":"+back.to].indexOf(conn)<0) urConns[back.from+":"+back.to].push(conn);
     if(!conn.listeningTo) conn.listeningTo = [];
-    conn.listeningTo.push(back.to);
+	if(conn.listeningTo.indexOf(back.to)<0) {
+		conn.listeningTo.push(back.to);	
+	}
+    
 //    console.log("LOG:"+ back.from +" got back from :"+back.to);
 }
 
@@ -296,7 +299,7 @@ function handleClose(conn) {
 			return;
 		}
 		var user = sess.results[0];
-        // console.log("LOG: "+ user.id +" closed tab which had", conn.listeningTo.join(","), "open");
+//         console.log("LOG: "+ user.id +" closed tab which had", conn.listeningTo.join(","), "open");
 		setTimeout(function() {
             // console.log("LOG: "+ user.id +"30 seconds lated");
             if(!conn.listeningTo || !conn.listeningTo.length) return;
@@ -311,7 +314,7 @@ function handleClose(conn) {
                 };
                 // console.log("LOG: "+user.id +"verifing away for", room);
                 if(!verifyAway(conn, awayAction)) return;
-                // console.log("LOG: "+ user.id +"sending away for", room);
+//                 console.log("LOG: "+ user.id +"sending away for", room);
                 core.emit('away',awayAction , function(err, action) {
                     if(err) return;
                     storeAway(conn, action);
