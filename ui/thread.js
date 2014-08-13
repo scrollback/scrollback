@@ -7,7 +7,6 @@ $(function() {
 	var $template = $(".thread-item-container .thread-item").eq(0);
 
 	threadEl.render = function ($el, thread, index) {
-        console.log("rendering element", thread);
 		var title = thread.title || "";
         $el = $el || $template.clone(false);
         if(thread.type == "missing") {

@@ -11,7 +11,6 @@ $(function () {
 		$el = $el || $template.clone(false);
 		
 		if(text.type == "missing") {
-			console.log("Missing", text);
 			$el.find(".chat-message").html("Missing text");
 			$el.addClass("chat-item-missing");
 			$el.attr("data-index", text.endTime || text.startTime || 0);
