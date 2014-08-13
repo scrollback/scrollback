@@ -44,7 +44,7 @@ $(function() {
             }, 300).data("animating", true);
 
             if (!$line.length) {
-                $line = $("<div>").addClass("chat-conv-line").attr("data-mode", "normal").css({ opacity: 0 });
+                $line = $("<div>").addClass("chat-conv-line").attr("data-mode", "normal search").css({ opacity: 0 });
                 $line.appendTo("body");
             }
 
@@ -57,7 +57,9 @@ $(function() {
             }, 300);
         },
         updateLine = function() {
-            if (currThread) {
+            if (currThread &&
+                (window.currentState.view === "normal" || !window.currentState.view) &&
+                (window.currentState.mode === "normal" || window.currentState.mode === "search")) {
                 drawLine();
             } else {
                 removeLine();
@@ -101,11 +103,9 @@ $(function() {
                 selectConv(state.thread);
             }
 
-            if (state.mode === "normal" && state.view === "normal") {
-                setTimeout(function() {
-                    updateLine();
-                }, 1000);
-            }
+            setTimeout(function() {
+                updateLine();
+            }, 1000);
         }
 
         next();
@@ -160,6 +160,10 @@ $(function() {
             this.get(0).scrollIntoView(true);
         }
 
+        if (this.hasClass("chat-item-long")) {
+            this.scrollTop(0);
+        }
+
         var nick = this.find(".chat-nick").text(),
             msg = format.htmlToText($entry.html()),
 			atStart = false;
@@ -186,10 +190,14 @@ $(function() {
         if ($entry.text() === "" || (($entry.text().indexOf(autoText) > -1) && !autoSel)) {
             autoText = format.htmlToText(msg);
 
-            $entry.html(msg ? msg + "&nbsp;" : "").focus();
+            $entry.html(msg ? msg + "&nbsp;" : "");
 
-            if ($.fn.setCursorEnd) {
-                $entry.setCursorEnd();
+            if (!("ontouchstart" in document)) {
+                $entry.focus();
+
+                if ($.fn.setCursorEnd) {
+                    $entry.setCursorEnd();
+                }
             }
         }
 

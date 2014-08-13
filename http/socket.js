@@ -58,7 +58,7 @@ sock.on('connection', function (socket) {
 			d.session = conn.session;
 			d.resource  = conn.resource;
 		}
-
+		
 		if(d.type == 'back') {
 			//just need for back as storeBack will be called before actionValidator
 			if(!d.to) {
@@ -79,7 +79,11 @@ sock.on('connection', function (socket) {
 		core.emit(d.type, d, function(err, data) {
 			var e, action;
 			if(err) {
-				e = {type: 'error', id: d.id, message: err.message};
+				e = err;
+				e.id = d.id;
+				e.type = 'error';
+				e.message = err.message;
+//				e = {type: 'error', id: d.id, message: err.message};
 				log("Sending Error: ", e);
 				return conn.send(e);
 			}

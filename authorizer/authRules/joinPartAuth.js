@@ -1,32 +1,43 @@
-module.exports = function(core){
-	core.on('join', function(action, callback){
-		if(action.user.role === "none"){
-			if(/^guest-/.test(action.user.id)){
-				action.user.role = "guest";
-			}else{
-				action.user.role = "registered";
-			}
+var permissionWeights = require('../permissionWeights.js');
+var SbError = require('../../lib/SbError.js');
+function joinPart(action, callback) {
+	var openFollow = action.room.guides.authorizer && action.room.guides.authorizer.openFollow;
+	if (typeof openFollow === "undefined") {
+		openFollow = true;
+	}
+	
+	if(permissionWeights[action.user.role] <= permissionWeights.guest) {
+		// guest or below cannot follow rooms!
+		return callback(new SbError("ERR_NOT_ALLOWED"));
+	}
+	
+	if (permissionWeights[action.role] <= permissionWeights[action.user.role]) {
+		// should moderators be allowed to downgrade by clicking on "follow" button ?
+		return callback();
+	} else if (action.role === "follower" && openFollow) {
+		return callback();
+	} else if (action.role === action.user.transitionRole && action.user.transitionType === "invite") {
+		return callback();
+	} else {
+		action.transitionRole = action.role;
+		action.transitionType = "request";
+		delete action.role;
+		return callback();
+	}
+}
+
+module.exports = function (core) {
+	core.on('join', function (join, callback) {
+		if (!join.role) {
+			join.role = "follower";
 		}
-		if(!action.room.guides) action.room.guides = {openFollow: true};
-		if(!action.room.guides.openFollow) action.room.guides.openFollow = true;
-		if(!action.user.role) action.user.role = "registered";
-		if(!action.user.requestedRole) action.user.requestedRole = "";
-		if(!action.user.invitedRole) action.user.invitedRole = "";
-		if(action.user.role === "guest") return callback(new Error('ERR_NOT_ALLOWED'));
-		if(action.user.role === "owner") return callback(); // owner can switch to any role
-		else if(action.user.role === "moderator" && action.user.requestedRole !== "owner") return callback();
-		else if(action.user.role === "registered" && action.room.guides.openFollow) return callback();
-		else if(action.user.role === "registered" && action.user.requestedRole === "follower"){
-			if(action.room.guides.openFollow){
-				return callback();
-			} else {
-				action.user.requestedRole = "follow_requested";
-				return callback();
-			}
+		return joinPart(join, callback);
+	}, "authorization");
+	
+	core.on('part', function (part, callback) {
+		if (!part.role) {
+			part.role = "none";
 		}
-		else {
-			if(action.user.role === action.user.invitedRole) return callback();
-			else return callback(new Error("ERR_NOT_ALLOWED"));
-		}
+		return joinPart(part, callback);
 	}, "authorization");
 };

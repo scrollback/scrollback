@@ -22,9 +22,9 @@ require('./client-init/client-init.js')(libsb);
 require('./id-generator/id-generator-client.js')(libsb);
 require('./client-entityloader/client-entityloader.js')(libsb);
 
-require('./ui/user-area.js');
 require('./ui/infinite.js');
 require('./ui/hide-scroll.js');
+require('./ui/user-area.js');
 require('./ui/chat.js');
 require('./ui/chat-area.js');
 
@@ -79,4 +79,5 @@ require('./ui/room-notifications.js');
 require('./ui/google-analytics.js');
 
 require('./client-init/boot.js')(libsb);
+require('./ui/workarounds.js');
 //# sourceMappingURL=libsb.js.map
