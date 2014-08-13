@@ -11,8 +11,9 @@ $(function() {
 		var title = thread.title || "";
         $el = $el || $template.clone(false);
         if(thread.type == "missing") {
-            $el.attr("id", "thread-missing");
+            $el.addClass("thread-item-missing");
             $el.attr("data-index", index);
+			$el.text("missing threads");
         }else{
             $el.find(".thread-title").text(title.replace(/-/g, " ").trim());
             $el.find(".thread-snippet").html("");

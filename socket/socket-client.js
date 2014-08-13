@@ -96,7 +96,6 @@ function disconnect(payload, next) {
 }
 
 function disconnected() {
-	console.log("backoff", backOff);
 	if(backOff === 1) {
 		core.emit("navigate", {connectionStatus: false, source: "connection"}, function(err) {
 			if(err) console.log(err.message);

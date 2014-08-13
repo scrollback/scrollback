@@ -9,9 +9,12 @@ $(function () {
 
 	chatEl.render = function ($el, text) {
 		$el = $el || $template.clone(false);
+		
 		if(text.type == "missing") {
+			console.log("Missing", text);
 			$el.find(".chat-message").html("Missing text");
-			$el.attr("data-index", text.time || 0);
+			$el.addClass("chat-item-missing");
+			$el.attr("data-index", text.endTime || text.startTime || 0);
 		}else {
 			$el.find(".chat-nick").text(text.from.replace(/^guest-/, ""));
 			$el.find(".chat-message").html(format.linkify(format.textToHtml(text.id+" : "+text.text || "")));
