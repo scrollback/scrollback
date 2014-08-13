@@ -17,10 +17,14 @@ function enter(room) {
 	}
 
 	if (currentState.connectionStatus) {
-		libsb.enter(room, function (err, action) {
-			if (err) listening[room] = false;
-			else listening[room] = true;
-		});
+		if(!listening[room]){
+			console.log("Entering", room);
+			listening[room] = true;
+			libsb.enter(room, function (err, action) {
+				if (err) listening[room] = false;
+				else listening[room] = true;
+			});
+		}
 	} else {
 		if (listenQueue.indexOf(room) < 0) {
 			listenQueue.push(room);

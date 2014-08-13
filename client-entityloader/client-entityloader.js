@@ -19,7 +19,7 @@ module.exports = function (libsb) {
                 }
                 if (!data || !data.results || !data.results.length) {
                     state.room = null;
-                    if (libsb.isConnected) roomStatus = "pending";
+                    if (!currentState.connectionStatus) roomStatus = "pending";
                     else {roomStatus = "noroom"; state.mode = "noroom"};
                 } else {
                     state.room = data.results[0];
