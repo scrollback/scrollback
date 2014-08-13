@@ -169,7 +169,6 @@ $(function () {
                 i, ppl = [],
                 l, len, p, sum, isDone = false,
                 count;
-            console.log("PEOPLE RESET", index, before, after);
             if (!roomName) return callback([]);
             if (!index) {
                 if (before) {

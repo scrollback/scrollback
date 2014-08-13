@@ -8,9 +8,10 @@ var currentState = window.currentState;
 function addBodyClass(state, next) {
 	if(!state.connectionStatus) $("body").addClass("state-offline");
 	else $("body").removeClass("state-offline");
-	
+
     if (state.old && state.mode !== state.old.mode) {
-        $("body").removeClass("mode-" + state.old.mode);
+		if(state.old && !state.old.mode) $("body").removeClass("mode-normal");
+		else $("body").removeClass("mode-" + state.old.mode);
         if (state.mode) {
             $("body").addClass("mode-" + state.mode);
         }

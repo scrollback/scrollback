@@ -15,12 +15,12 @@ module.exports = function (libsb) {
             }, function (err, data) {
                 if (err) {
                     console.log("ERROR: ", err, data);
-                    throw err; // handle this better
+					throw err; // handle this better
                 }
                 if (!data || !data.results || !data.results.length) {
                     state.room = null;
                     if (libsb.isConnected) roomStatus = "pending";
-                    else roomStatus = "noroom";
+                    else {roomStatus = "noroom"; state.mode = "noroom"};
                 } else {
                     state.room = data.results[0];
                 }

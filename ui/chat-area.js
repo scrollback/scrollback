@@ -21,6 +21,7 @@ $(function () {
 				before: before,
 				after: after
 			};
+			console.log("Loading text", index, before, after);
 			if (!roomName) return callback([]);
 
 			index = index || time;
@@ -31,6 +32,7 @@ $(function () {
 			
 			function loadTexts() {
 				libsb.getTexts(query, function (err, t) {
+					console.log("making query", t);
                     var texts = t.results || [];
 					texts = texts.slice(0, texts.length, currentState);
                     
@@ -44,19 +46,27 @@ $(function () {
 						if (texts.length < before) {
 							texts.unshift(false);
 						}
-
                         if(t.time && texts.length && texts[texts.length-1].time === t.time) {
                             texts.pop();
                         }
 					} else if (before === 0) {
+						if(texts[0] && texts[0].type == "missing") texts.splice(0,1);
 						if (texts.length < after) {
 							texts.push(false);
 						}
                         if(texts.length && texts[0].time == t.time) {
                             texts.splice(0, 1);
                         }
-
+						
 					}
+					
+					// this is a hacky fix. look for alternatives. handling missing should be different because the the missing will be rendered once by before and once by after query.
+					/*if(t.time === null){
+						if(texts[texts.length-1].type == "missing") texts.push(false);
+						if(texts[0].type == "missing")texts.unshift(false);
+					}
+					*/
+
 					callback(texts.map(function (text) {
 						return text && chatEl.render(null, text);
 					}));
@@ -136,7 +146,7 @@ $(function () {
 		next();
 	}, 90);
 	libsb.on("init-dn", function(init, next) {
-		if(time === null) $logs.reset();
+		$logs.reset(time|| null);
 		
 		next();
 	}, 100);
@@ -144,7 +154,7 @@ $(function () {
 		var reset = false;
 
 		if (state.source == 'chat-area') return next();
-		if (state.source == "init") {
+		if (state.source == "boot") {
 			roomName = state.roomName || currentState.roomName;
 			thread = state.thread || currentState.thread;
 			time = state.time || (state.thread? 1: time);
