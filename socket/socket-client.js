@@ -96,8 +96,9 @@ function disconnect(payload, next) {
 }
 
 function disconnected() {
+	console.log("backoff", backOff);
 	if(backOff === 1) {
-		core.emit("navigate", {connectionState: false, source: "connection"}, function(err) {
+		core.emit("navigate", {connectionStatus: false, source: "connection"}, function(err) {
 			if(err) console.log(err.message);
 		});
 	}
@@ -107,7 +108,10 @@ function disconnected() {
 }
 
 function sendQuery(query, next){
-	if(query.results || !currentState.connectionStatus){
+	if(query.results) return next();
+	
+	if(!currentState.connectionStatus){
+		query.results = [];
 		return next();
 	}
 	if (!query.id) query.id = generate.uid();
