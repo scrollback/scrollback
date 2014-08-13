@@ -34,6 +34,7 @@ forever stop index.js
 forever stop ircClient/server.js 
 forever start ircClient/server.js
 mocha test/test.js -R xunit-file
+node test/sendTestResults.js
 forever start index.js
 
 
