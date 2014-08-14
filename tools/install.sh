@@ -70,7 +70,7 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
             sudo yum install -y libcap rubygems;;
     esac
     # Set caps
-    sudo setcap "cap_net_bind_service=+ep" /usr/bin/node
+    sudo setcap "cap_net_bind_service=+ep" "$(readlink -f /usr/bin/node)"
     # Install sass
     sudo gem install sass
 else
