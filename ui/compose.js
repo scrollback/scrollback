@@ -7,12 +7,12 @@ $(function() {
 	var $entry = $(".chat-entry"),
 		$placeholder = $(".chat-placeholder"),
 		$input = $(".chat-input"),
-		sendMsg = function(){
+		sendMsg = function() {
 			var text = format.htmlToText($entry.html()).trim();
 
 			$entry.text("");
 
-			if (!text) return;
+			if (!text) { return; }
 
 			if (window.currentState && window.currentState.roomName) {
 				libsb.say(window.currentState.roomName, text, window.currentState.thread);
@@ -35,7 +35,10 @@ $(function() {
 		};
 
 	// Focus chat entry on pageload
-	$entry.focus();
+	if (document.hasFocus()) {
+		$entry.focus();
+	}
+
 	setPlaceHolder();
 
 	libsb.on("init-dn", function(action, next) {
@@ -43,6 +46,14 @@ $(function() {
 
 		next();
 	}, 10);
+
+	libsb.on("navigate", function(state, next) {
+		if (state.old && state.old.room !== state.room) {
+			$entry.empty();
+		}
+
+		next();
+	}, 50);
 
 	$(window).on("resize", function() {
 		chatArea.setPosition($input.outerHeight());
@@ -71,7 +82,7 @@ $(function() {
 	});
 
 	$entry.on("keypress", function(e) {
-		if(e.which === 13 && !e.shiftKey) {
+		if (e.which === 13 && !e.shiftKey) {
 			e.preventDefault();
 			sendMsg();
 		}

@@ -11,7 +11,6 @@
 @import "oembed";
 @import "tooltip";
 @import "progress";
-@import "overlay";
 @import "tip";
 
 $screenx: "only screen and (min-width: 18em)";
@@ -121,9 +120,10 @@ $embeds: toast, canvas;
     }
 }
 
+html, body { height: 100%; }
+
 body {
     word-wrap: break-word;
-    height: 100%;
 
     &:not(.embed) {
         [data-embed]:not([data-embed=none]) { display: none; }
@@ -406,12 +406,12 @@ body {
         background-image:  linear-gradient(to right, darken($light-color, 5%), darken($light-color, 5%) 15%, transparent 15%, transparent 85%, darken($light-color, 5%) 85%, darken($light-color, 5%)),
                            linear-gradient(to bottom, transparent, transparent 25%, darken($light-color, 10%) 25%, darken($light-color, 10%) 65%, transparent 65%, transparent 75%, darken($light-color, 10%) 75%, darken($light-color, 10%) 85%, transparent 85%, transparent);
         background-size: 5.5em 8em;
-		background-position: top left;
-		background-repeat: repeat;
+        background-position: top left;
+        background-repeat: repeat;
         background-repeat: round; /* limited browser support */
 
         .infinite-above.upper-limit, .infinite-below.lower-limit { background: none; }
-	}
+    }
 }
 
 .person {
@@ -488,16 +488,16 @@ body {
 }
 
 .pane-threads {
-	.infinite-above, .infinite-below {
-		background-color: transparent;
-		background-image:  linear-gradient(to bottom, transparent, transparent 35%, darken($light-color, 10%) 35%, darken($light-color, 10%) 65%, transparent 65%, transparent),
-						   linear-gradient(to bottom, darken($light-color, 10%), darken($light-color, 10%));
-		background-size: 60% 3em, 4px 100%;
-		background-position: 2em center, center right;
+    .infinite-above, .infinite-below {
+        background-color: transparent;
+        background-image:  linear-gradient(to bottom, transparent, transparent 35%, darken($light-color, 10%) 35%, darken($light-color, 10%) 65%, transparent 65%, transparent),
+                           linear-gradient(to bottom, darken($light-color, 10%), darken($light-color, 10%));
+        background-size: 60% 3em, 4px 100%;
+        background-position: 2em center, center right;
         background-repeat: repeat-y;
 
         .infinite-above.upper-limit, .infinite-below.lower-limit { background: none; }
-	}
+    }
 }
 
 .pane-threads-wrap {
@@ -573,18 +573,18 @@ body {
 }
 
 .list-item {
-	@extend %transition;
+    @extend %transition;
 
     position: relative;
-	display: block;
+    display: block;
     font-size: 1.2em;
-	padding: .75em;
-	padding-left: 2.75em;
-	background-size: 24px 24px;
-	background-position: .75em center;
-	background-repeat: no-repeat;
-	border-bottom: 1px solid darken($light-color, 10%);
-	color: $dark-color;
+    padding: .75em;
+    padding-left: 2.75em;
+    background-size: 24px 24px;
+    background-position: .75em center;
+    background-repeat: no-repeat;
+    border-bottom: 1px solid darken($light-color, 10%);
+    color: $dark-color;
     cursor: pointer;
 
     @media #{$screenxxxx} { font-size: 1.5em; }
@@ -617,13 +617,13 @@ body {
     &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active {
         color: $dark-color;
         background-color: rgba(0,0,0,.1);
-	}
+    }
 
-	@each $setting in $settings {
-		&.list-item-#{$setting}-settings {
-			background-image: url(../../img/client/icons/#{$setting}-settings.svg);
-		}
-	}
+    @each $setting in $settings {
+        &.list-item-#{$setting}-settings {
+            background-image: url(../../img/client/icons/#{$setting}-settings.svg);
+        }
+    }
 }
 
 .main-area {
@@ -725,14 +725,14 @@ body {
     @include align-items(center);
     @include align-content(center);
 
-	position: relative;
-	height: $bar-height;
-	width: 100%;
-	z-index: 20;
+    position: relative;
+    height: $bar-height;
+    width: 100%;
+    z-index: 20;
     background-color: darken($light-color, 5%);
     color: $dark-color;
     box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1),
-				0 3px 2px -1px rgba(0,0,0,.1);
+                0 3px 2px -1px rgba(0,0,0,.1);
 }
 
 .left-area {
@@ -950,29 +950,29 @@ body {
 .chat-area {
     @extend %scroll-elem;
 
-	position: absolute;
+    position: absolute;
     top: $bar-height;
     bottom: $bar-height;
-	right: 0;
+    right: 0;
     left: 0;
     background-color: $light-color;
 
-	.infinite-above, .infinite-below {
-		background-color: transparent;
+    .infinite-above, .infinite-below {
+        background-color: transparent;
         background-image: linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-			linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-			linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
-		background-size: .6em 6em, 80% 6em, 60% 6em;
-		background-position: 1em 2em, 3em 2em, 3em 2em;
-		background-repeat: repeat-y;
+            linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+            linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
+        background-size: .6em 6em, 80% 6em, 60% 6em;
+        background-position: 1em 2em, 3em 2em, 3em 2em;
+        background-repeat: repeat-y;
         background-attachment: scroll;
 
-		@media #{$screenxx} {
+        @media #{$screenxx} {
             background-image: linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-				linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-				linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-				linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
-			background-size: .6em 6em, 6em 6em, 80% 6em, 60% 6em;
+                linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+                linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+                linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
+            background-size: .6em 6em, 6em 6em, 80% 6em, 60% 6em;
             background-position: 2em 2em, 4em 2em, 12em 2em, 12em 2em;
         }
 
@@ -981,45 +981,45 @@ body {
 
             @media #{$screenxx} { background: none; }
         }
-	}
+    }
 }
 
 .chat-position {
-	@include opacity(0);
-	@extend %transition;
+    @include opacity(0);
+    @extend %transition;
 
-	position: relative;
-	float: right;
-	margin: 1em;
-	padding: .5em 1em;
-	background-color: $dark-color;
-	color: $light-color;
-	border-radius: $roundness;
-	pointer-events: none;
-	z-index: 20;
+    position: relative;
+    float: right;
+    margin: 1em;
+    padding: .5em 1em;
+    background-color: $dark-color;
+    color: $light-color;
+    border-radius: $roundness;
+    pointer-events: none;
+    z-index: 20;
 
     .scrolling &:not(:empty) {
-		@include opacity(1);
-		@extend %nofilter;
-	}
+        @include opacity(1);
+        @extend %nofilter;
+    }
 }
 
 .chat-item {
-	@extend %transition;
+    @extend %transition;
 
-	position: relative;
-	margin: 0;
-	padding: .75em 3em .75em 3em;
+    position: relative;
+    margin: 0;
+    padding: .75em 3em .75em 3em;
     border-top: 1px solid rgba(0,0,0,0.025);
-	overflow: hidden;
+    overflow: hidden;
 
-	@media #{$screenxx} { padding: 1em 3.5em 1em 12em; }
+    @media #{$screenxx} { padding: 1em 3.5em 1em 12em; }
 
-	&:hover, &:focus { background-color: darken($light-color, 1%); }
+    &:hover, &:focus { background-color: darken($light-color, 1%); }
 
     &:last-of-type { border-bottom: 1px solid rgba(0,0,0,0.025); }
 
-	&.current { background-color: darken($light-color, 3%); }
+    &.current { background-color: darken($light-color, 3%); }
 
     &:hover, &:focus, &.active {
         .chat-more { @include transform(translate3d(0, 0, 0)); }
@@ -1033,13 +1033,13 @@ body {
         .chat-more { background-color: darken($light-color, 3%); }
     }
 
-	&:hover, &:focus, &.active, &.current {
-		border-top: 1px solid darken($light-color, 10%);
+    &:hover, &:focus, &.active, &.current {
+        border-top: 1px solid darken($light-color, 10%);
 
-		& + .chat-item { border-top: 1px solid darken($light-color, 10%); }
+        & + .chat-item { border-top: 1px solid darken($light-color, 10%); }
 
         .chat-timestamp { color: fade-out($dark-color, .3); }
-	}
+    }
 
     &.chat-error-not-sent {
         &:after {
@@ -1051,34 +1051,34 @@ body {
         }
     }
 
-	&.chat-item-long {
-		@extend %transition;
+    &.chat-item-long {
+        @extend %transition;
 
-		max-height: 12em;
-		cursor: pointer;
+        max-height: 12em;
+        cursor: pointer;
 
-		&:hover, &:focus {
-			&:after { padding: 1em 0; }
-		}
+        &:hover, &:focus {
+            &:after { padding: 1em 0; }
+        }
 
-		&:after {
-			@extend %transition;
+        &:after {
+            @extend %transition;
 
-			content: "";
-			position: absolute;
-			display: block;
-			bottom: 0;
-			width: 100%;
-			padding: 3em 0;
-			background-image: linear-gradient(to bottom, fade-out($light-color, 1) 0%, $light-color 100%);
-		}
+            content: "";
+            position: absolute;
+            display: block;
+            bottom: 0;
+            width: 100%;
+            padding: 3em 0;
+            background-image: linear-gradient(to bottom, fade-out($light-color, 1) 0%, $light-color 100%);
+        }
 
-		&.expanded {
-			max-height: 20em;
-			overflow: auto;
+        &.current {
+            max-height: 20em;
+            overflow-y: scroll;
 
-			&:after { display: none; }
-		}
+            &:after { display: none; }
+        }
     }
 
     &.chat-label-action {
@@ -1105,7 +1105,7 @@ body {
         }
     }
 
-    &.chat-label-hidden {
+    &.chat-label-hidden, &.chat-label-abusive {
         color: fade-out($dark-color, .5);
         font-style: italic;
 
@@ -1126,15 +1126,56 @@ body {
         .chat-timestamp { display: inline-block; }
     }
 
-	a {
-		&:hover, &:focus, &:active { text-decoration: underline; }
-	}
+    a {
+        &:hover, &:focus, &:active { text-decoration: underline; }
+    }
 
     iframe, embed {
         display: block;
         margin: .5em 0;
         max-width: 100%;
         max-height: auto;
+    }
+}
+
+@mixin missing($bg) {
+    background-color: darken($bg, 5%);
+
+    &:before {
+        background: linear-gradient(45deg, darken($bg, 5%) 50%, transparent 50%),
+                    linear-gradient(135deg, $bg 50%, transparent 50%) 0 50%;
+    }
+
+    &:after {
+        background: linear-gradient(135deg, darken($bg, 5%) 50%, transparent 50%),
+                    linear-gradient(45deg, $bg 50%, transparent 50%) 0 50%;
+    }
+
+    &:before, &:after { background-color: darken($bg, 5%); }
+}
+
+.chat-item-missing {
+    @include missing($light-color);
+
+    & + .chat-item { border-top: none; }
+}
+
+.thread-item-missing { @include missing(darken($light-color, 5%)); }
+
+.chat-item-missing, .thread-item-missing {
+    padding: 0;
+    margin: 0;
+    border-top: none;
+    text-align: center;
+    font-style: italic;
+
+    &:before, &:after {
+        content: "";
+        display: block;
+        height: 16px;
+        width: 100%;
+        background-size: 16px 16px;
+        background-repeat: repeat-x;
     }
 }
 
@@ -1145,7 +1186,8 @@ body {
     height: .5em;
     width: .5em;
     border-radius: 50%;
-    background-color: fade-out(lighten($dark-color, 15%), .5);
+    color: fade-out(lighten($dark-color, 15%), .5);
+    background-color: currentColor;
 
     @media #{$screenxx} { margin-left: -10em; }
 
@@ -1153,29 +1195,29 @@ body {
         $color: nth($palette, $i);
         $j: $i - 1;
 
-        .chat-item.conv-#{$j} & { background-color: $color; }
+        .chat-item.conv-#{$j} & { color: $color; }
     }
 }
 
 .chat-nick {
-	float: left;
-	margin-left: 0;
-	padding-right: 1em;
-	font-weight: 700;
+    float: left;
+    margin-left: 0;
+    padding-right: 1em;
+    font-weight: 700;
 
-	&:after { content: " :" }
+    &:after { content: " :" }
 
-	@media #{$screenxx} {
-		margin-left: -8em;
+    @media #{$screenxx} {
+        margin-left: -8em;
 
-		&:after { content: "" }
-	}
+        &:after { content: "" }
+    }
 
-	a {
-		color: $dark-color;
+    a {
+        color: $dark-color;
 
-		&:hover, &:focus, &:active { color: darken($dark-color, 10%); }
-	}
+        &:hover, &:focus, &:active { color: darken($dark-color, 10%); }
+    }
 }
 
 .chat-conv-line {
@@ -1196,20 +1238,20 @@ body {
 }
 
 .chat-more {
-	@include transform(translate3d(3.5em, 0, 0));
-	@extend %transition;
+    @include transform(translate3d(3.5em, 0, 0));
+    @extend %transition;
 
-	position: absolute;
-	display: block;
-	background-color: darken($light-color, 1%);
-	background-image: url(../../img/client/icons/chat-more.svg);
-	background-repeat: no-repeat;
-	background-position: center center;
-	background-size: 2em 2em;
-	width: 3em;
-	height: 3em;
-	top: 0;
-	right: 0;
+    position: absolute;
+    display: block;
+    background-color: darken($light-color, 1%);
+    background-image: url(../../img/client/icons/chat-more.svg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 2em 2em;
+    width: 3em;
+    height: 3em;
+    top: 0;
+    right: 0;
     cursor: pointer;
 
     @media #{$screenxx} {
@@ -1222,7 +1264,7 @@ body {
     position: absolute;
     left: 0;
     right: 0;
-	bottom: 0;
+    bottom: 0;
     padding: 0;
     min-height: $bar-height;
     box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);;
@@ -1273,140 +1315,142 @@ body {
 }
 
 .chat-entry {
-	@extend .entry;
+    @extend .entry;
 
-	word-wrap: break-word;
-	width: 100%;
-	min-height: $bar-height;
-	max-height: 12em;
-	padding: .9em 2.5em .9em 2.9em;
-	overflow: auto;
+    word-wrap: break-word;
+    width: 100%;
+    min-height: $bar-height;
+    max-height: 12em;
+    padding: .9em 2.5em .9em 2.9em;
+    overflow: auto;
     border-radius: 0;
 
     @media #{$screenxx} { padding-left: 3.9em; }
 
-	&:hover, &:focus, &:active {
-		border-color: $accent-color;
-		outline: none;
+    &:hover, &:focus, &:active {
+        border-color: $accent-color;
+        outline: none;
 
-		@for $i from 1 through length($palette) {
-			$j: $i - 1;
+        @for $i from 1 through length($palette) {
+            $j: $i - 1;
 
-			.conv-#{$j} & { border-color: nth($palette, $i); }
-		}
+            .conv-#{$j} & { border-color: nth($palette, $i); }
+        }
     }
+
+    .state-offline & { @extend .entry.disabled; }
 }
 
 .chat-send {
-	@extend %transition;
+    @extend %transition;
 
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	margin: 0;
-	padding: .75em;
-	height: 3.5em;
-	width: 3.5em;
-	border: none;
-	cursor: pointer;
-	fill: lighten($dark-color, 15%); /* inline SVG */
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: .75em;
+    height: 3.5em;
+    width: 3.5em;
+    border: none;
+    cursor: pointer;
+    fill: lighten($dark-color, 15%); /* inline SVG */
 
-	&:hover, &:focus, &:active { fill: $dark-color; }
+    &:hover, &:focus, &:active { fill: $dark-color; }
 
-	@for $i from 1 through length($palette) {
-		$color: nth($palette, $i);
-		$j: $i - 1;
+    @for $i from 1 through length($palette) {
+        $color: nth($palette, $i);
+        $j: $i - 1;
 
-		.conv-#{$j} & {
-			fill: $color;
+        .conv-#{$j} & {
+            fill: $color;
 
-			&:hover, &:focus, &:active { fill: darken($color, 10%); }
-		}
-	}
+            &:hover, &:focus, &:active { fill: darken($color, 10%); }
+        }
+    }
 }
 
 .conf-area, .pref-area {
     @extend %scroll-elem;
 
-	position: absolute;
-	top: $bar-height;
-	right: 0;
-	bottom: 0;
-	left: 0;
+    position: absolute;
+    top: $bar-height;
+    right: 0;
+    bottom: 0;
+    left: 0;
     background-color: $light-color;
 
-	.list-view {
-		display: none;
+    .list-view {
+        display: none;
 
-		&.current {
-			@extend %fadein;
-			@extend %nofilter;
+        &.current {
+            @extend %fadein;
+            @extend %nofilter;
 
-			display: block;
-			max-width: 100%;
+            display: block;
+            max-width: 100%;
 
-			@media #{$screenxx} {
-				display: table;
-				border-spacing: 2em;
-			}
-		}
+            @media #{$screenxx} {
+                display: table;
+                border-spacing: 2em;
+            }
+        }
 
-		.request-msg {
-			display: table-row;
+        .request-msg {
+            display: table-row;
 
-			img {
-				max-width: 80px;
-				max-height: 80px;
-				border-radius: $roundness;
-			}
+            img {
+                max-width: 80px;
+                max-height: 80px;
+                border-radius: $roundness;
+            }
 
-			img, .request-details {
-				display: table-cell;
-				vertical-align: top;
-			}
+            img, .request-details {
+                display: table-cell;
+                vertical-align: top;
+            }
 
-			.username {
-				a {
-					font-size: 1.2em;
-					color: $dark-color;
+            .username {
+                a {
+                    font-size: 1.2em;
+                    color: $dark-color;
 
-					&:hover, &:focus, &:active { color: darken($dark-color, 10%); }
-				}
-			}
+                    &:hover, &:focus, &:active { color: darken($dark-color, 10%); }
+                }
+            }
 
-			.button, .button-secondary { padding: .5em 1em; }
-		}
+            .button, .button-secondary { padding: .5em 1em; }
+        }
 
-		.twitter-account {
-			position: relative;
-			color: $light-color;
+        .twitter-account {
+            position: relative;
+            color: $light-color;
 
-			img {
-				height: 80px;
-				width: 80px;
-				border-radius: $roundness;
-			}
+            img {
+                height: 80px;
+                width: 80px;
+                border-radius: $roundness;
+            }
 
-			.change {
-				position: absolute;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				width: 80px;
-				padding: .75em;
-				background-color: $accent-color;
-				text-transform: uppercase;
-				border-radius: 0 0 $roundness $roundness;
-			}
-		}
-	}
+            .change {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 80px;
+                padding: .75em;
+                background-color: $accent-color;
+                text-transform: uppercase;
+                border-radius: 0 0 $roundness $roundness;
+            }
+        }
+    }
 }
 
 .settings-item {
-	display: block;
-	padding: 1em;
+    display: block;
+    padding: 1em;
 
-	@media #{$screenxx} { display: table-row; }
+    @media #{$screenxx} { display: table-row; }
 
     .check-item, .radio-item {
         display: block;
@@ -1463,39 +1507,33 @@ body {
 }
 
 .search-bar {
-	@include transform(translate3d(0, -100%, 0));
-	@include opacity(0);
-	@extend %transition;
-
-	position: fixed;
-	top: 0;
-	left: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
     right: 0;
-	z-index: 20;
-	padding: 1em;
+    z-index: 20;
+    padding: 1em;
+    display: none;
 
-	.search-focus & {
-		@include transform(translate3d(0, 0, 0));
-		@include opacity(1);
-	}
+    .search-focus & { display: block; }
 
-	.search-entry {
-		position: relative;
-		display: block;
-		width: 100%;
+    .search-entry {
+        position: relative;
+        display: block;
+        width: 100%;
         height: 3em;
-		margin: 0;
-		padding-left: 3.5em;
-		background-image: url(../../img/client/icons/search-gray.svg);
-		background-position: 1em center;
-		background-repeat: no-repeat;
+        margin: 0;
+        padding-left: 3.5em;
+        background-image: url(../../img/client/icons/search-gray.svg);
+        background-position: 1em center;
+        background-repeat: no-repeat;
         background-size: 3em 2em;
         border: none;
         box-shadow: 0 0 10px 0 rgba(0,0,0,.3);
-	}
+    }
 }
 
-.noroom-area, .offline-area, .profile-area {
+.content-view-wrapper {
     @include flexbox;
     @include flex-direction(column);
     @include flex-wrap(nowrap);
@@ -1524,7 +1562,7 @@ body {
     }
 }
 
-.noroom-container, .offline-container, .profile-container { display: block; }
+.content-view-area { display: block; }
 
 .infinite-above, .infinite-below {
     height: 100%;
@@ -1535,6 +1573,33 @@ body {
 
 .signedout-dialog, .signin-dialog, .signup-dialog {
     input, .button { width: 100%; }
+}
+
+.ie-warning {
+    display: table;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: $warning-color;
+    color: $light-color;
+    font-size: 16px;
+    z-index: 99999;
+
+    a {
+        font-weight: 700;
+        color: $light-color;
+        border-bottom: 1px dotted $light-color;
+
+        &:focus, &:hover { border-bottom-style: solid;}
+    }
+}
+
+.ie-warning-content {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
 }
 
 .room-area, .meta-area, .main-area {
@@ -1548,24 +1613,24 @@ body {
 
     /* use 3d transformations for GPU accelerated animations */
     .view-meta & {
-		@include transform(translate3d($width-meta, 0, 0));
+        @include transform(translate3d($width-meta, 0, 0));
 
-		@media #{$screenx} { @include transform(translate3d($width-metax, 0, 0)); }
+        @media #{$screenx} { @include transform(translate3d($width-metax, 0, 0)); }
 
-		@media #{$screenxx} { @include transform(translate3d($width-metaxx, 0, 0)); }
+        @media #{$screenxx} { @include transform(translate3d($width-metaxx, 0, 0)); }
 
-		@media #{$screenxxx} { @include transform(translate3d(0, 0, 0)); }
+        @media #{$screenxxx} { @include transform(translate3d(0, 0, 0)); }
     }
 
     .view-rooms & {
-		@include transform(translate3d( ( $width-room + $width-meta ), 0, 0));
+        @include transform(translate3d( ( $width-room + $width-meta ), 0, 0));
 
-		@media #{$screenx} { @include transform(translate3d( ( $width-roomxx + $width-metax ), 0, 0)); }
+        @media #{$screenx} { @include transform(translate3d( ( $width-roomxx + $width-metax ), 0, 0)); }
 
-		@media #{$screenxx} { @include transform(translate3d( ( $width-roomxx + $width-metaxx ), 0, 0)); }
+        @media #{$screenxx} { @include transform(translate3d( ( $width-roomxx + $width-metaxx ), 0, 0)); }
 
-		@media #{$screenxxx} { @include transform(translate3d($width-roomxxx, 0, 0)); }
+        @media #{$screenxxx} { @include transform(translate3d($width-roomxxx, 0, 0)); }
 
-		@media #{$screenxxxx} { @include transform(translate3d(0, 0, 0)); }
+        @media #{$screenxxxx} { @include transform(translate3d(0, 0, 0)); }
     }
 }

@@ -124,10 +124,16 @@ module.exports = {
 		};
 		this.loadArrayCache(key);
 		if (pos === 'begin') {
-			this.cache[key].d.unshift(rs);
+			try {
+				if (this.cache[key][0].type !== 'result-start') {
+					this.cache.d.unshift(rs);
+				}
+			} catch (e) {
+				this.cache[key].d.unshift(rs);
+			}
 		} else {
 			try {
-				if (this.cache[key][this.cache[key].length - 1].type !== 'result-start') {
+				if (this.cache[key].d[this.cache[key].d.length - 1].type !== 'result-start') {
 					this.cache[key].d.push(rs);
 				}
 			} catch (e) {
@@ -143,16 +149,33 @@ module.exports = {
 			time: time,
 			endType: endType
 		};
+		var rs = {
+			type: 'result-start',
+			time: time,
+			endType: endType
+		};
 		this.loadArrayCache(key);
 		if (pos === 'begin') {
-			this.cache[key].d.unshift(re);
-		} else {
 			try {
-				if (this.cache[key][this.cache[key].length - 1].type !== 'result-end') {
-					this.cache[key].d.push(re);
+				if (this.cache[key][0].type !== 'result-end') {
+					this.cache[key].d.unshift(re);
 				}
 			} catch (e) {
-				this.cache[key].d.push(re);
+				this.cache[key].d.unshift(re);
+			}
+		} else {
+			try {
+				var lastItem = this.cache[key].d[this.cache[key].d.length - 1];
+
+				if (lastItem.type === 'result-start') {
+					this.cache[key].d.pop();
+					this.cache[key].push(rs); // push a new result start, replacing older one
+				} else if (lastItem.type !== 'result-end') {
+					this.cache[key].d.push(re);
+				}
+
+			} catch (e) {
+				// if the cache is empty, there is no need to push result end 
 			}
 		}
 		this.saveCache(key);

@@ -84,9 +84,17 @@ libsb.on('config-show', function (tabs, next) {
 
 
 libsb.on('config-save', function (room, next) {
+	var server = $('#irc-server').val();
+	var channel = $('#irc-channel').val();
+	
+	if (!server || !channel ) {
+		server = "";
+		channel = "";
+	}
+	
 	room.params.irc = {
-		server: $('#irc-server').val(),
-		channel: $('#irc-channel').val(),
+		server: server,
+		channel: channel,
 		enabled: $('#irc-enable').is(':checked')
 	};
 	next();

@@ -15,16 +15,7 @@ $(function(){
 			user: {
 				id: userId,
 				identities: signingUser.identities,
-				params: {
-					email: {
-						frequency: "daily",
-						notifications: true
-					},
-					notifications: {
-						sound: true,
-						desktop: true
-                    }
-                },
+				params: {},
 				guides: {}
             }
 		}, function(err) {

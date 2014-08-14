@@ -81,7 +81,7 @@ var threadEl = require("./thread.js"),
 		if(before) query.before = index?before+1: before;
 
 		query.to =  room;
-		query.time = index;
+		query.time = index || null;
 		libsb.getThreads(query, function(err, t) {
 			var threads = t.results;
 
@@ -214,14 +214,10 @@ var threadEl = require("./thread.js"),
 
 	libsb.on('navigate', function(state, next) {
 		if (state.old && state.thread !== state.old.thread) {
-			var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
-
-			$("body").attr("class", classes);
 			$(".thread-item.current").removeClass("current");
 
 			if (state.thread) {
 				$("#thread-" + state.thread).addClass("current");
-				$("body").addClass('conv-' + state.thread.substr(-1));
 			} else{
 				$('.thread-all-conversations').addClass('current');
 			}

@@ -43,7 +43,7 @@ module.exports = function(core) {
             core.emit("getTexts", {to: a[0], thread: a[1], time: query.time ? new Date(query.time).getTime() : 1, 
                                    after: noOfText + 1, session: internalSession}, function(err, data) {
                 var room = data.room;
-                if (!err && data.results && (!room.params.http || room.params.http.seo)) {
+                if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
                        callback(getTextHtml(data.results, a[0], a[1]));
                 } else callback("");
             }); 
@@ -54,7 +54,7 @@ module.exports = function(core) {
                 core.emit("getThreads", {to: a[0], time: new Date(query.time).getTime(), 
                     after: noOfThreads + 1, session: internalSession}, function (err, data) {
                     var room = data.room;
-                    if (!err && data.results && (!room.params.http || room.params.http.seo)) {
+                    if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
                         var r = getThreadsHtml(data.results, a[0]);
                         callback(r);
                     } else callback("");

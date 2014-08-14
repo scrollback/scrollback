@@ -14,9 +14,7 @@
   ],
   "dependencies": {
     "flexie": "~1.0.3",
-    "html5shiv": "~3.7.2",
     "jquery": "1",
-    "selectivizr": "~1.0.2",
     "sockjs": "~0.3.4",
     "svg4everybody": "*",
     "transformie": "*",
