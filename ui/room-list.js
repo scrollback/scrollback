@@ -16,9 +16,8 @@ function enter(room) {
 		rooms.push(false);
 	}
 
-	if (currentState.connectionStatus) {
+	if (libsb.isInited) {
 		if(!listening[room]){
-			console.log("Entering", room);
 			listening[room] = true;
 			libsb.enter(room, function (err, action) {
 				if (err) listening[room] = false;

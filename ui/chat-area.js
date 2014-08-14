@@ -21,7 +21,6 @@ $(function () {
 				before: before,
 				after: after
 			};
-			console.log("Loading text", index, before, after);
 			if (!roomName) return callback([]);
 
 			index = index || time;
@@ -32,7 +31,6 @@ $(function () {
 			
 			function loadTexts() {
 				libsb.getTexts(query, function (err, t) {
-					console.log("making query", t);
                     var texts = t.results || [];
 					texts = texts.slice(0, texts.length, currentState);
                     

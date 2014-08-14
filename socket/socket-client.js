@@ -61,7 +61,7 @@ function safeSend(data) {
 	// safeSends sends the data over the socket only after the socket has
 	// been initialised
 
-	if (currentState.connectionStatus) {
+	if (libsb.isInited) {
 		client.send(data);
 	} else {
 		queue.push(function () {
@@ -77,12 +77,15 @@ function connect() {
 	client.onopen = function(){
 		connectionState = true;
         backOff = 1;
-        core.emit("navigate", {connectionStatus: true, source: "socket"}, function(err) {
-			if(err) console.log(err.message);
-        });
+       
         
         core.emit("init-up", {}, function(err) {
 			if(err) console.log(err.message);
+			else libsb.isInited = true;
+			
+			core.emit("navigate", {connectionStatus: true, source: "socket"}, function(err) {
+				if(err) console.log(err.message);
+			});
 			//TODO: handle errors.
         });
 	};
@@ -109,7 +112,7 @@ function disconnected() {
 function sendQuery(query, next){
 	if(query.results) return next();
 	
-	if(!currentState.connectionStatus){
+	if(!libsb.isInited){
 		query.results = [];
 		return next();
 	}

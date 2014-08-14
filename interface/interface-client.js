@@ -62,14 +62,6 @@ module.exports = function (l) {
     libsb.on('connected', onConnect, 1000);
     libsb.on('disconnected', onDisconnect, 1000);
 
-    libsb.on("init-dn", function (init, next) {
-        if (!libsb.isInited) {
-            libsb.isInited = true;
-            libsb.emit("inited");
-        }
-        next();
-    }, 10);
-
     return libsb;
 };
 
@@ -187,7 +179,7 @@ function recvInit(init, next) {
     libsb.session = init.session;
     libsb.memberOf = init.memberOf;
     libsb.occupantOf = init.occupantOf;
-
+	libsb.isInited = true;
     if (init.auth && !init.user.id) {
         libsb.emit("navigate", {});
     }

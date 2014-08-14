@@ -3,6 +3,7 @@
 
 var showMenu = require('./showmenu.js');
 function showError(cb){
+	// to check if the entered room name is actually a user.
 	libsb.emit('getUsers', {ref: currentState.roomName}, function(e, d){
 		if(d.results){
 			user = d.results[0];
@@ -23,14 +24,14 @@ libsb.on("navigate", function(state, next) {
     return next();
 }, 500);
 
-libsb.on('error-dn', function(err, next){
+/*libsb.on('error-dn', function(err, next){
 	var user;
 	if(err.message === "NO_ROOM_WITH_GIVEN_ID"){
 		showError(next);
 	}else{
         next();
     }
-}, 10);
+}, 10);*/
 
 libsb.on('navigate', function(state, next){
 	if(state.mode === 'profile' && state.source === 'noroom'){

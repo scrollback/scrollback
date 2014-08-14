@@ -245,7 +245,6 @@ module.exports = function (c) {
 	libsb.on('getRooms', function (query, next) {
 
 		// only getRooms with ref are cached as of now.
-		
 		if (query.cachedRoom === false) {
 			return next();
 		}
