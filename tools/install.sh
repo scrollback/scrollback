@@ -19,6 +19,9 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
             nodejs "Node.js" on \
             redis "Redis Server" on 3>&1 1>&2 2>&3))
 
+    # Update the sources list in Ubuntu
+    [[ "$distro" = "Ubuntu" ]] && sudo apt-get update
+
     # Iterate over all the items in the array and perform operations accordingly
     for (( i = 0; i < ${#pkgs[@]} ; i++ )); do
         case "${pkgs[$i]}" in
@@ -44,7 +47,6 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
                             sudo apt-get update
                             sudo apt-get install -y nodejs
                         else
-                            sudo apt-get update
                             sudo apt-get install -y nodejs-legacy npm
                         fi;;
                     Fedora)
@@ -63,7 +65,7 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
     done
     case "$distro" in
         Ubuntu)
-            sudo apt-get install -y libcap2-bin rubygems;;
+            sudo apt-get install -y libcap2-bin ruby;;
         Fedora)
             sudo yum install -y libcap rubygems;;
     esac
