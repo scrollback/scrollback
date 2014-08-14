@@ -128,7 +128,7 @@ mysql -uroot -p < ./tools/sql/database.sql
 mysql -uscrollback -pscrollback scrollback < ./tools/sql/tables.8.sql
 
 # Add local.scrollback.io to /etc/hosts
-grep -e "^[0-9]*\.[0-9]*.[0-9]*\.[0-9]*.*local\.scrollback\.io" "/etc/hosts" > /dev/null 2>&1
+grep "local.scrollback.io" "/etc/hosts" > /dev/null 2>&1
 if [[ ! $? -eq 0 ]]; then
     echo "Add 'local.scrollback.io' to /etc/hosts [y/n]?"
     read -n 1 ans
