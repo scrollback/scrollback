@@ -14,7 +14,6 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
             --ok-button "Install" \
             --cancel-button "Skip" \
             --notags 15 40 5 \
-            mysql "MySQL Server" on \
             git "GIT Version Control" on \
             nodejs "Node.js" on \
             redis "Redis Server" on 3>&1 1>&2 2>&3))
@@ -25,13 +24,6 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
     # Iterate over all the items in the array and perform operations accordingly
     for (( i = 0; i < ${#pkgs[@]} ; i++ )); do
         case "${pkgs[$i]}" in
-            mysql)
-                case "$distro" in
-                    Ubuntu)
-                        sudo apt-get install -y mysql-client mysql-server;;
-                    Fedora)
-                        sudo yum install -y mysql mysql-server;;
-                esac;;
             git)
                 case "$distro" in
                     Ubuntu)
@@ -112,20 +104,9 @@ sudo npm install -g gulp bower forever
 npm install
 bower install
 
-# Start the MySQL and Redis daemons
-echo "Starting MySQL and Redis"
-sudo service mysqld start
+# Start the Redis daemon
+echo "Starting Redis"
 sudo service redis start
-
-# Give option to set root password for MySQL in case it has not been set
-echo "Do you want to set/change MySQL root password [y/n]?"
-read -n 1 ans
-[[ "$ans" = [Yy] ]] && mysqladmin -u root password -p
-
-# Add scrollback databases
-echo "MySQL root password is required to create the scrollback user and database. Please enter when prompted."
-mysql -uroot -p < ./tools/sql/database.sql
-mysql -uscrollback -pscrollback scrollback < ./tools/sql/tables.8.sql
 
 # Add local.scrollback.io to /etc/hosts
 grep "local.scrollback.io" "/etc/hosts" > /dev/null 2>&1
