@@ -14,10 +14,10 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
             --ok-button "Install" \
             --cancel-button "Skip" \
             --notags 15 40 5 \
-            git "GIT Version Control" on \
+            git "GIT version control" on \
             sass "Sass preprocessor" on \
             nodejs "Node.js" on \
-            redis "Redis Server" on \
+            redis "Redis server" on \
             libcap "Constrain capability" on 3>&1 1>&2 2>&3))
 
     # Update the sources list in Ubuntu
@@ -103,7 +103,7 @@ grep "\"name\": \"Scrollback\"" "package.json" > /dev/null 2>&1
 if [[ ! $? -eq 0 ]]; then
     # Allow cloning from a forked repository
     echo "Scrollback will be installed from the upstream repo. Enter the Github username to to change, otherwise press enter:"
-    read ghuser
+    read -t 10 ghuser
     [[ -z "$ghuser" ]] && ghuser="scrollback"
     git clone "https://github.com/$ghuser/scrollback.git" && cd "scrollback"
 fi
@@ -122,8 +122,8 @@ sudo service redis start
 grep "local.scrollback.io" "/etc/hosts" > /dev/null 2>&1
 if [[ ! $? -eq 0 ]]; then
     echo "Add 'local.scrollback.io' to /etc/hosts [y/n]?"
-    read -n 1 ans
-    [[ "$ans" = [Yy] ]] && echo "127.0.0.1	local.scrollback.io" | sudo tee --append "/etc/hosts"
+    read -t 5 -n 1 ans
+    [[ -z "$ans" || "$ans" = [Yy] ]] && echo "127.0.0.1	local.scrollback.io" | sudo tee --append "/etc/hosts"
 fi
 
 # Copy sample myConfig.js and client-config.js files
