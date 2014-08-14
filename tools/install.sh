@@ -97,14 +97,13 @@ EOF
 fi
 
 # Are we inside the cloned repository?
-grep "\"name\": \"Scrollback\"" "../package.json" > /dev/null 2>&1
+grep "\"name\": \"Scrollback\"" "package.json" > /dev/null 2>&1
 if [[ ! $? -eq 0 ]]; then
     # Allow cloning from a forked repository
     echo "Scrollback will be installed from the upstream repo. Enter the Github username to to change, otherwise press enter:"
     read ghuser
     [[ -z "$ghuser" ]] && ghuser="scrollback"
-    git clone "https://github.com/$ghuser/scrollback.git"
-    cd "scrollback/tools"
+    git clone "https://github.com/$ghuser/scrollback.git" && cd "scrollback"
 fi
 
 # Install various dependencies for scrollback
@@ -125,8 +124,8 @@ read -n 1 ans
 
 # Add scrollback databases
 echo "MySQL root password is required to create the scrollback user and database. Please enter when prompted."
-mysql -uroot -p < ./sql/database.sql
-mysql -uscrollback -pscrollback scrollback < ./sql/tables.8.sql
+mysql -uroot -p < ./tools/sql/database.sql
+mysql -uscrollback -pscrollback scrollback < ./tools/sql/tables.8.sql
 
 # Add local.scrollback.io to /etc/hosts
 grep -e "^[0-9]*\.[0-9]*.[0-9]*\.[0-9]*.*local\.scrollback\.io" "/etc/hosts" > /dev/null 2>&1
