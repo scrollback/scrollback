@@ -15,8 +15,10 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
             --cancel-button "Skip" \
             --notags 15 40 5 \
             git "GIT Version Control" on \
+            sass "Sass preprocessor" on \
             nodejs "Node.js" on \
-            redis "Redis Server" on 3>&1 1>&2 2>&3))
+            redis "Redis Server" on \
+            libcap "Constrain capability" on 3>&1 1>&2 2>&3))
 
     # Update the sources list in Ubuntu
     [[ "$distro" = "Ubuntu" ]] && sudo apt-get update
@@ -31,6 +33,15 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
                     Fedora)
                         sudo yum install -y git;;
                 esac;;
+            sass)
+                case "$distro" in
+                    Ubuntu)
+                        sudo apt-get install -y ruby;;
+                    Fedora)
+                        sudo yum install -y rubygems;;
+                esac
+                # Install sass
+                sudo gem install sass;;
             nodejs)
                 case "$distro" in
                     Ubuntu)
@@ -53,18 +64,17 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
                     Fedora)
                         sudo yum install -y redis;;
                 esac;;
+            libcap)
+                case "$distro" in
+                    Ubuntu)
+                        sudo apt-get install -y libcap2-bin;;
+                    Fedora)
+                        sudo yum install -y libcap;;
+                esac
+                # Set caps
+                sudo setcap "cap_net_bind_service=+ep" "$(readlink -f /usr/bin/node)";;
         esac
     done
-    case "$distro" in
-        Ubuntu)
-            sudo apt-get install -y libcap2-bin ruby;;
-        Fedora)
-            sudo yum install -y libcap rubygems;;
-    esac
-    # Set caps
-    sudo setcap "cap_net_bind_service=+ep" "$(readlink -f /usr/bin/node)"
-    # Install sass
-    sudo gem install sass
 else
     # We only install packages for Ubuntu and Fedora
     echo "Unsupported distro. You will need to install the dependencies manually. Continue anyway [y/n]?"
@@ -123,3 +133,6 @@ fi
 # Run Gulp to generate misc files
 echo "Running Gulp"
 gulp
+
+# Show notification when installation finishes
+[[ `command -v notify-send` ]] && notify-send "Scrollback installation finished." "Start scrollback with 'sudo npm start'."
