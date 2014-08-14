@@ -111,14 +111,11 @@ gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 // Generate appcache manifest file
 gulp.task("manifest", function() {
 	return gulp.src([
-		"public/client.bundle.min.js",
-		"public/s/lib/jquery.min.js",
-		"public/s/styles/gen/*.css",
-		"public/s/img/client/*.*",
-		"public/s/img/client/*/*.*"
+		"public/**/*",
+		"!public/{**/*.html,t/**}",
+		"!public/s/{*,js/*,img/*,img/covers/*,styles/scss/*}"
 	])
 	.pipe(manifest({
-		basePath: "public",
 		cache: [
 			"//fonts.googleapis.com/css?family=Open+Sans:300,400,600",
 			"//themes.googleusercontent.com/font?kit=cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw"
@@ -126,11 +123,11 @@ gulp.task("manifest", function() {
 		network: [ "*" ],
 		fallback: [
 			"//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
-			"/ /offline.html"
+			"/ /offline.html",
+			"/socket /s/socket-fallback"
 		],
 		preferOnline: true,
 		hash: true,
-		timestamp: true,
 		filename: "manifest.appcache"
 	}))
 	.pipe(gulp.dest("public"))

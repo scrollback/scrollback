@@ -14,21 +14,18 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
             --ok-button "Install" \
             --cancel-button "Skip" \
             --notags 15 40 5 \
-            mysql "MySQL Server" on \
-            git "GIT Version Control" on \
+            git "GIT version control" on \
+            sass "Sass preprocessor" on \
             nodejs "Node.js" on \
-            redis "Redis Server" on 3>&1 1>&2 2>&3))
+            redis "Redis server" on \
+            libcap "Constrain capability" on 3>&1 1>&2 2>&3))
+
+    # Update the sources list in Ubuntu
+    [[ "$distro" = "Ubuntu" ]] && sudo apt-get update
 
     # Iterate over all the items in the array and perform operations accordingly
     for (( i = 0; i < ${#pkgs[@]} ; i++ )); do
         case "${pkgs[$i]}" in
-            mysql)
-                case "$distro" in
-                    Ubuntu)
-                        sudo apt-get install -y mysql-client mysql-server;;
-                    Fedora)
-                        sudo yum install -y mysql mysql-server;;
-                esac;;
             git)
                 case "$distro" in
                     Ubuntu)
@@ -36,36 +33,48 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" ]]; then
                     Fedora)
                         sudo yum install -y git;;
                 esac;;
+            sass)
+                case "$distro" in
+                    Ubuntu)
+                        sudo apt-get install -y ruby;;
+                    Fedora)
+                        sudo yum install -y rubygems;;
+                esac
+                # Install sass
+                sudo gem install sass;;
             nodejs)
                 case "$distro" in
                     Ubuntu)
-                        sudo add-apt-repository ppa:chris-lea/node.js
-                        sudo apt-get update
-                        sudo apt-get install -y nodejs;;
+                        if [[ "$(lsb_release -sr)" < "14.04" ]]; then
+                            sudo add-apt-repository -y ppa:chris-lea/node.js
+                            sudo apt-get update
+                            sudo apt-get install -y nodejs
+                        else
+                            sudo apt-get install -y nodejs-legacy npm
+                        fi;;
                     Fedora)
                         sudo yum install -y nodejs npm;;
                 esac;;
             redis)
                 case "$distro" in
                     Ubuntu)
-                        sudo add-apt-repository ppa:rwky/redis
+                        sudo add-apt-repository -y ppa:rwky/redis
                         sudo apt-get update
                         sudo apt-get install -y redis-server;;
                     Fedora)
                         sudo yum install -y redis;;
                 esac;;
+            libcap)
+                case "$distro" in
+                    Ubuntu)
+                        sudo apt-get install -y libcap2-bin;;
+                    Fedora)
+                        sudo yum install -y libcap;;
+                esac
+                # Set caps
+                sudo setcap "cap_net_bind_service=+ep" "$(readlink -f /usr/bin/node)";;
         esac
     done
-    case "$distro" in
-        Ubuntu)
-            sudo apt-get install -y libcap2-bin rubygems;;
-        Fedora)
-            sudo yum install -y libcap rubygems;;
-    esac
-    # Set caps
-    sudo setcap "cap_net_bind_service=+ep" /usr/bin/node
-    # Install sass
-    sudo gem install sass
 else
     # We only install packages for Ubuntu and Fedora
     echo "Unsupported distro. You will need to install the dependencies manually. Continue anyway [y/n]?"
@@ -90,14 +99,13 @@ EOF
 fi
 
 # Are we inside the cloned repository?
-grep "\"name\": \"Scrollback\"" "../package.json" > /dev/null 2>&1
+grep "\"name\": \"Scrollback\"" "package.json" > /dev/null 2>&1
 if [[ ! $? -eq 0 ]]; then
     # Allow cloning from a forked repository
     echo "Scrollback will be installed from the upstream repo. Enter the Github username to to change, otherwise press enter:"
-    read ghuser
+    read -t 10 ghuser
     [[ -z "$ghuser" ]] && ghuser="scrollback"
-    git clone "https://github.com/$ghuser/scrollback.git"
-    cd "scrollback/tools"
+    git clone "https://github.com/$ghuser/scrollback.git" && cd "scrollback"
 fi
 
 # Install various dependencies for scrollback
@@ -106,27 +114,16 @@ sudo npm install -g gulp bower forever
 npm install
 bower install
 
-# Start the MySQL and Redis daemons
-echo "Starting MySQL and Redis"
-sudo service mysqld start
+# Start the Redis daemon
+echo "Starting Redis"
 sudo service redis start
 
-# Give option to set root password for MySQL in case it has not been set
-echo "Do you want to set/change MySQL root password [y/n]?"
-read -n 1 ans
-[[ "$ans" = [Yy] ]] && mysqladmin -u root password -p
-
-# Add scrollback databases
-echo "MySQL root password is required to create the scrollback user and database. Please enter when prompted."
-mysql -uroot -p < ./sql/database.sql
-mysql -uscrollback -pscrollback scrollback < ./sql/tables.8.sql
-
 # Add local.scrollback.io to /etc/hosts
-grep -e "^[0-9]*\.[0-9]*.[0-9]*\.[0-9]*.*local\.scrollback\.io" "/etc/hosts" > /dev/null 2>&1
+grep "local.scrollback.io" "/etc/hosts" > /dev/null 2>&1
 if [[ ! $? -eq 0 ]]; then
     echo "Add 'local.scrollback.io' to /etc/hosts [y/n]?"
-    read -n 1 ans
-    [[ "$ans" = [Yy] ]] && echo "127.0.0.1	local.scrollback.io" >> "/etc/hosts"
+    read -t 5 -n 1 ans
+    [[ -z "$ans" || "$ans" = [Yy] ]] && echo "127.0.0.1	local.scrollback.io" | sudo tee --append "/etc/hosts"
 fi
 
 # Copy sample myConfig.js and client-config.js files
@@ -136,3 +133,6 @@ fi
 # Run Gulp to generate misc files
 echo "Running Gulp"
 gulp
+
+# Show notification when installation finishes
+[[ `command -v notify-send` ]] && notify-send "Scrollback installation finished." "Start scrollback with 'sudo npm start'."

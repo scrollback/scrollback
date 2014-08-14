@@ -120,9 +120,10 @@ $embeds: toast, canvas;
     }
 }
 
+html, body { height: 100%; }
+
 body {
     word-wrap: break-word;
-    height: 100%;
 
     &:not(.embed) {
         [data-embed]:not([data-embed=none]) { display: none; }
@@ -1072,7 +1073,7 @@ body {
             background-image: linear-gradient(to bottom, fade-out($light-color, 1) 0%, $light-color 100%);
         }
 
-        &.expanded {
+        &.current {
             max-height: 20em;
             overflow-y: scroll;
 
@@ -1134,6 +1135,47 @@ body {
         margin: .5em 0;
         max-width: 100%;
         max-height: auto;
+    }
+}
+
+@mixin missing($bg) {
+    background-color: darken($bg, 5%);
+
+    &:before {
+        background: linear-gradient(45deg, darken($bg, 5%) 50%, transparent 50%),
+                    linear-gradient(135deg, $bg 50%, transparent 50%) 0 50%;
+    }
+
+    &:after {
+        background: linear-gradient(135deg, darken($bg, 5%) 50%, transparent 50%),
+                    linear-gradient(45deg, $bg 50%, transparent 50%) 0 50%;
+    }
+
+    &:before, &:after { background-color: darken($bg, 5%); }
+}
+
+.chat-item-missing {
+    @include missing($light-color);
+
+    & + .chat-item { border-top: none; }
+}
+
+.thread-item-missing { @include missing(darken($light-color, 5%)); }
+
+.chat-item-missing, .thread-item-missing {
+    padding: 0;
+    margin: 0;
+    border-top: none;
+    text-align: center;
+    font-style: italic;
+
+    &:before, &:after {
+        content: "";
+        display: block;
+        height: 16px;
+        width: 100%;
+        background-size: 16px 16px;
+        background-repeat: repeat-x;
     }
 }
 
@@ -1295,6 +1337,8 @@ body {
             .conv-#{$j} & { border-color: nth($palette, $i); }
         }
     }
+
+    .state-offline & { @extend .entry.disabled; }
 }
 
 .chat-send {
@@ -1463,21 +1507,15 @@ body {
 }
 
 .search-bar {
-    @include transform(translate3d(0, -100%, 0));
-    @include opacity(0);
-    @extend %transition;
-
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 20;
     padding: 1em;
+    display: none;
 
-    .search-focus & {
-        @include transform(translate3d(0, 0, 0));
-        @include opacity(1);
-    }
+    .search-focus & { display: block; }
 
     .search-entry {
         position: relative;

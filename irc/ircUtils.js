@@ -94,7 +94,7 @@ module.exports = function(clientEmitter, client, callbacks) {
 		if (ps[0]) {//room name
 			getBotNick(ps[0], function(nick) {
 				log("nick for room :", ps[0], nick);
-				if (nick && nick === "NO_ROOM") {//error
+				if (!nick || typeof nick !== 'string' || nick === "NO_ROOM") {//error
 					next();//say invalid req(404)
 				} else {
 					res.write(nick);
