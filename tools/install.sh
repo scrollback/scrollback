@@ -132,7 +132,7 @@ grep "local.scrollback.io" "/etc/hosts" > /dev/null 2>&1
 if [[ ! $? -eq 0 ]]; then
     echo "Add 'local.scrollback.io' to /etc/hosts [y/n]?"
     read -n 1 ans
-    [[ "$ans" = [Yy] ]] && echo "127.0.0.1	local.scrollback.io" >> "/etc/hosts"
+    [[ "$ans" = [Yy] ]] && echo "127.0.0.1	local.scrollback.io" | sudo tee --append "/etc/hosts"
 fi
 
 # Copy sample myConfig.js and client-config.js files
