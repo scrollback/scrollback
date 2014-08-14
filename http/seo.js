@@ -19,7 +19,7 @@ module.exports = function(core) {
                     callback({ head: head, body: body}); 
                 });
             });
-        } else { callback(""); }
+        } else { callback({head: "", body: ""}); }
     }
     
     function getHeadHtml(req, callback) {

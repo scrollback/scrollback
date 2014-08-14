@@ -20,18 +20,19 @@ Boston, MA 02111-1307 USA.
 
 var config = require('../config.js'), core,
 	fs = require("fs"),core;
+var clientSubstrings = [];
 var seo;
 //var log = require('../lib/logger.js');
 exports.init = function(app, coreObject) {
 	core = coreObject;
-    seo = require('./seo.js')(core);
+    init();
 	app.get('/t/*', function(req, res, next) {
 		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data){
 			res.end(data);
 			next();
 		});
 	});
-
+    
 	app.get("/*", function(req, res, next){
 		if(/^\/t\//.test(req.path)) return next();
 		if(/^\/s\//.test(req.path)) {console.log("static"); return next();}
@@ -40,22 +41,29 @@ exports.init = function(app, coreObject) {
 			var queryString  = req._parsedUrl.search ? req._parsedUrl.search : "";
 			return res.redirect(307, 'https://' + config.http.host + req.path + queryString);
 		}
-		fs.readFile(__dirname + "/../public/client.html", "utf8", function(err, data){
-			//add generated content
-			seo.getSEOHtml(req, function(r) {
-                var idhs = "<!-- gen Head Start -->";
-				var idbs = "<!-- Messages start here. -->";
-				var index1 = data.indexOf(idhs);
-                var index2 = data.indexOf(idbs);
-                var d = [];
-                d.push(data.substring(0, index1 + idhs.length)) ;
-				d.push(r.head);
-                d.push(data.substring(index1 + idhs.length, index2 + idbs.length));
-				d.push(r.body);
-                d.push(data.substring(index2 + idbs.length));
-				res.end(d.join("\n"));
-			});
+		
+        seo.getSEOHtml(req, function(r) {
+            var d = [];
+            d.push(clientSubstrings[0]) ;
+            d.push(r.head);
+            d.push(clientSubstrings[1]);
+            d.push(r.body);
+            d.push(clientSubstrings[2]);
+            res.end(d.join("\n"));
+        });
 
-		});
+		
 	});
 };
+
+function init() {
+    var clientHTML = fs.readFileSync(__dirname + "/../public/client.html", "utf8");
+    seo = require('./seo.js')(core); 
+    var idhs = "<!-- gen Head Start -->";
+    var idbs = "<!-- Messages start here. -->";
+    var index1 = clientHTML.indexOf(idhs);
+    var index2 = clientHTML.indexOf(idbs);
+    clientSubstrings.push(clientHTML.substring(0, index1 + idhs.length));
+    clientSubstrings.push(clientHTML.substring(index1 + idhs.length, index2 + idbs.length));
+    clientSubstrings.push(clientHTML.substring(index2 + idbs.length));
+}
