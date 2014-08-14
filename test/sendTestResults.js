@@ -15,5 +15,26 @@ function sendResults() {
 sendResults();
 
 function formatResults(r) {
-    return '<HTML><BODY><P>' + htmlEncode.htmlEncode(r) + '</P></BODY></HTML>';
+    return '<html><body>' +
+        getCoverage() + "<p>" + 
+        htmlEncode.htmlEncode(r) + 
+        '</p></body></html>';
 }
+
+function getCoverage() {
+    return "<a href='"  + config.http.host + "/t/coverage-" + getDateString() + ".html'>Coverage Results</a></br>";
+}
+
+function getDateString() {
+    var y = new Date().getYear() + "";
+    y = y.substring(1);
+    var m = "" + (new Date().getMonth() + 1);
+    if (m.length === 1) m += "0" + m; 
+    var d = "" + new Date().getDate();
+    if (m.length === 1) m += "0" + d;  
+    
+    return  y + m + d;
+    
+}
+
+

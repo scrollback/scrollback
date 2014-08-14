@@ -26,7 +26,7 @@ git pull
 # Stop the server
 forever stop index.js 
 # Setup
-#sudo npm install
+npm install
 #bower install
 #gulp
 
@@ -34,6 +34,7 @@ forever stop index.js
 forever stop ircClient/server.js 
 forever start ircClient/server.js
 mocha test/test.js -R xunit-file
+mocha test/test.js -R html-cov > "public/t/coverage-$(date +%y%m%d).html"
 node test/sendTestResults.js
 forever start index.js
 
