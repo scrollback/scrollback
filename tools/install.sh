@@ -130,11 +130,12 @@ sudo npm install -g gulp bower forever
 npm install
 bower install
 
-# Start the Redis daemon
+# Enable and start the Redis daemon
 echo "Starting Redis"
 if [[ `command -v service` ]]; then
     sudo service redis start
 else if [[ `command -v systemctl` ]]; then
+    sudo systemctl enable redis
     sudo systemctl start redis
 fi
 
