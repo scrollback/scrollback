@@ -2,7 +2,7 @@
 # Get user's home directory
 currdir=`cd $(dirname "${BASH_SOURCE[0]}") && pwd`
 scrollbackdir="${currdir%/*}"
-logfile="{scrollbackdir}-$(date +%y%m%d%H)"
+logfile="${scrollbackdir}/logs/test-$(date +%y%m%d%H).log"
 
 # Create logfile
 touch "$logfile"
@@ -10,6 +10,7 @@ touch "$logfile"
 # Show error messages
 show_err() {
     echo -e "[ERR  $(date +"%H:%M:%S")] ${1}" > "$logfile"
+    exit 1
 }
 
 # Go to the scrollback directory
@@ -24,19 +25,19 @@ git reset --hard
 git checkout master || show_err "Failed to checkout master branch"
 git pull
 # Stop the server
-forever stop index.js 
+sudo forever stop index.js 
 # Setup
 npm install
 #bower install
 #gulp
 
 # Restart IRC
-forever stop ircClient/server.js 
-forever start ircClient/server.js
+sudo forever stop ircClient/server.js 
+sudo forever start ircClient/server.js
 mocha test/test.js -R xunit-file
-mocha test/test.js -R html-cov > "public/t/coverage-$(date +%y%m%d).html"
+mocha test/test.js -R html-cov > "public/s/tmp/coverage-$(date +%y%m%d).html"
 node test/sendTestResults.js
-forever start index.js
+sudo forever start index.js
 
 
 
