@@ -54,7 +54,7 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" || "$distro" = "Arch" ]]; the
                 esac
                 # Add the gem installation directory to path
                 grep ".gem/ruby" "${HOME}/.bashrc" > /dev/null 2>&1
-                [[ $? -eq 0 ]] || echo PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:$PATH" >> "${HOME}/.bashrc"
+                [[ $? -eq 0 ]] || echo PATH="\"\$(ruby -rubygems -e 'puts Gem.user_dir')/bin:\${PATH}\"" >> "${HOME}/.bashrc"
                 # Install sass
                 gem install sass;;
             nodejs)
