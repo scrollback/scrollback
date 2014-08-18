@@ -1,4 +1,5 @@
-@import "global";
+@import "client-global";
+@import "client-themes";
 @import "base";
 @import "alert";
 @import "modal";
@@ -12,90 +13,6 @@
 @import "tooltip";
 @import "progress";
 @import "tip";
-
-$screenx: "only screen and (min-width: 18em)";
-$screenxx: "only screen and (min-width: 27em)";
-$screenxxx: "only screen and (min-width: 50em)";
-$screenxxxx: "only screen and (min-width: 70em)";
-
-$width-room: 15em;
-$width-roomx: 15em;
-$width-roomxx: 15em;
-$width-roomxxx: 15em;
-$width-roomxxxx: 16%;
-
-$width-meta: 13em;
-$width-metax: 19em;
-$width-metaxx: 25em;
-$width-metaxxx: 26em;
-$width-metaxxxx: 30%;
-
-$bar-height: 3.5em;
-
-$settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification;
-$modes: normal, search, conf, pref, home, noroom, offline, profile;
-$roles: guest, user, follower, owner;
-$embeds: toast, canvas;
-
-/* themes */
-@mixin theme($name, $base, $text, $icon, $focus) {
-    .theme-#{$name} {
-        .meta-tabs {
-            background-color: $base;
-            color: $text;
-            border-bottom-color: darken($base, 2%);
-
-            .tab {
-                fill: fade-out($icon, .15);
-                border-left-color: darken($base, 2%);
-
-                &:hover, &:focus, &:active {
-                    fill: $icon;
-                    background-color: darken($base, 5%);
-                }
-
-                &.current {
-                    fill: $icon;
-                    background-color: rgba(0,0,0,.15);
-                }
-            }
-
-            .meta-header {
-                @media #{$screenxxxx} { background-image: url(../../img/client/icons/settings-dark.svg); }
-            }
-        }
-
-        .title-bar, .minimize-bar {
-            background-color: $base;
-            color: $text;
-            box-shadow: inset 0 -1px 0 0 darken($base, 2%),
-                        -1px 0 0 darken($base, 2%),
-                        0 3px 2px -1px rgba(0,0,0,.05);
-        }
-
-        .follow-button {
-            fill: none;
-            stroke: $icon;
-
-            &:focus, &:hover, &:active {
-                fill: none;
-                stroke: $focus;
-            }
-        }
-
-        &.role-follower .follow-button, .meta-tabs li.rooms-button, .meta-button, .search-button, .embed-button {
-            fill: $icon;
-
-            &:focus, &:hover, &:active { fill: $focus; }
-        }
-
-        .sb-icon { fill: $light-color; }
-
-        .sb-logotype { fill: $light-color; }
-    }
-}
-
-@include theme($name: dark, $base: $dark-color, $text: $light-color, $icon: fade-out($light-color, .15), $focus: $light-color);
 
 /* widget styles */
 %scroll-elem {
@@ -715,7 +632,9 @@ body {
     }
 }
 
-.sb-icon { fill: $dark-color; }
+.sb-icon-top { fill: $accent-color; }
+
+.sb-icon-bottom { fill: $dark-color; }
 
 .title-bar {
     @include flexbox;

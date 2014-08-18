@@ -1,0 +1,25 @@
+@import "global";
+
+$screenx: "only screen and (min-width: 18em)";
+$screenxx: "only screen and (min-width: 27em)";
+$screenxxx: "only screen and (min-width: 50em)";
+$screenxxxx: "only screen and (min-width: 70em)";
+
+$width-room: 15em;
+$width-roomx: 15em;
+$width-roomxx: 15em;
+$width-roomxxx: 15em;
+$width-roomxxxx: 16%;
+
+$width-meta: 13em;
+$width-metax: 19em;
+$width-metaxx: 25em;
+$width-metaxxx: 26em;
+$width-metaxxxx: 30%;
+
+$bar-height: 3.5em;
+
+$settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification;
+$modes: normal, search, conf, pref, home, noroom, offline, profile;
+$roles: guest, user, follower, owner;
+$embeds: toast, canvas;
