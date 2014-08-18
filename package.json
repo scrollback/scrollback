@@ -54,7 +54,6 @@
     "irc": "git://github.com/scrollback/node-irc.git",
     "jade": "0.x",
     "limiter": "latest",
-    "mysql": "2.x",
     "newrelic": "latest",
     "nodemailer": "0.7",
     "oauth": "~0.9.12",
@@ -69,6 +68,8 @@
   },
   "optionalDependencies": {},
   "devDependencies": {
+    "blanket": "^1.1.6",
+    "selenium-webdriver": "^2.42.1",
     "bower": "latest",
     "browserify": "latest",
     "event-stream": "latest",
@@ -89,6 +90,7 @@
     "jshint-stylish": "latest",
     "main-bower-files": "latest",
     "mocha": "latest",
-    "vinyl-source-stream": "latest"
+    "vinyl-source-stream": "latest",
+    "xunit-file": "0.0.5"
   }
 }

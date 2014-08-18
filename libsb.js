@@ -1,6 +1,6 @@
 /* jslint browser: true */
 
-var core = Object.create(require("./lib/emitter.js"));
+var core = new (require("./lib/emitter.js"))();
 window.validate = require('./lib/validate.js');
 window.generate = require('./lib/generate');
 

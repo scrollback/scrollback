@@ -12,11 +12,14 @@ module.exports = function(core) {
     callback with object {head: {string}, body: {string}}
     */
     function getSEOHtml(req, callback) {
-        getHeadHtml(req, function(head) {
-            getBodyHtml(req, function(body) {
-                callback({ head: head, body: body}); 
+        var query = req.query;
+        if (!query.embed) {
+            getHeadHtml(req, function(head) {
+                getBodyHtml(req, function(body) {
+                    callback({ head: head, body: body}); 
+                });
             });
-        });
+        } else { callback({head: "", body: ""}); }
     }
     
     function getHeadHtml(req, callback) {
@@ -44,7 +47,7 @@ module.exports = function(core) {
                        callback(getTextHtml(data.results, a[0], a[1]));
                 } else callback("");
             }); 
-        } else if(a[0]){//threads.
+        } else if (a[0]) {//threads.
             if(!query.time) {
                 callback("<a href=" + getURL(1, a[0]) + ">Discussions in " + a[0] + "</a>"); 
             } else {

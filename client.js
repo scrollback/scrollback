@@ -1,6 +1,6 @@
 /* jslint browser: true */
 
-var core = Object.create(require("./lib/emitter.js"));
+var core = new (require("./lib/emitter.js"))();
 
 // third party libraries
 require('./public/s/lib/sockjs.min.js');
