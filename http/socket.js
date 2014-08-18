@@ -117,8 +117,11 @@ sock.on('connection', function (socket) {
                         action = {id: generate.uid(), type: "back",to: e.id, from: data.user.id, session: data.session,user: data.user, room: e};
 						emit({id: generate.uid(), type: "away", to: e.id, from: data.old.id, user: data.old, room: e});
 
-                        if(verifyBack(conn, action)) emit(action);
-                        storeBack(conn, action);
+						if(conn.listeningTo && conn.listeningTo.indexOf(e.id)>=0) {
+							if(verifyBack(conn, action)) emit(action);
+                        	storeBack(conn, action);
+						}
+                        
 					});
 				}
 				storeInit(conn, data);
@@ -143,29 +146,34 @@ function processUser(conn, user) {
 }
 function storeInit(conn, init) {
 	if(!uConns[init.user.id]) uConns[init.user.id] = [];
-	sConns[init.session].forEach(function(c) {
-		var index;
-		if(init.old && init.old.id && uConns[init.old.id]) {
-			index = uConns[init.old.id].indexOf(c);
-			uConns[init.old.id].splice(index, 1);
-		}
+	if(uConns[init.user.id].indexOf(conn)<0) uConns[init.user.id].push(conn);
+	
+	if(init.old && init.old.id) {
+		sConns[init.session].forEach(function(c) {
+			var index;
 
-		uConns[init.user.id].push(c);
+				if(uConns[init.old.id]) {
+					index = uConns[init.old.id].indexOf(c);
+					uConns[init.old.id].splice(index, 1);
+				}
+				init.occupantOf.forEach(function(room) {
+					if(urConns[init.old.id+":"+room.id]) {
+						index = urConns[init.old.id+":"+room.id].indexOf(c);
+						urConns[init.old.id+ ":"+ room.id].splice(index, 1);
+						if(c.listeningTo.indexOf(room)>=0) {
+							if(!urConns[init.user.id+":"+room.id]) urConns[init.user.id+":"+room.id] = [];
+							if(urConns[init.user.id+":"+room.id].indexOf(c)<0) urConns[init.user.id+":"+room.id].push(c);
+						}
 
-		init.occupantOf.forEach(function(room) {
-			if(init.old && urConns[init.old.id+":"+room.id]) {
-				index = urConns[init.old.id+":"+room.id].indexOf(c);
-				urConns[init.old.id+ ":"+ room.id].splice(index, 1);
-			}
-			if(!urConns[init.user.id+":"+room.id]) urConns[init.user.id+":"+room.id] = [];
-			if(urConns[init.user.id+":"+room.id].indexOf(c)<0) urConns[init.user.id+":"+room.id].push(c);
+					}
+				});
 		});
-	});
+	}
+
 }
 
 function storeBack(conn, back) {
 	if(!rConns[back.to]) rConns[back.to] = [];
-	if(!sConns[back.session]) sConns[back.session] = [];
 	if(!urConns[back.from+":"+back.to]) urConns[back.from+":"+back.to] = [];
 	if(!uConns[back.from]) uConns[back.from] = [];
 	if(rConns[back.to].indexOf(conn)<0) rConns[back.to].push(conn);
@@ -293,15 +301,13 @@ function emit (action, callback) {
 function handleClose(conn) {
 	if(!conn.session) return;
 	core.emit('getUsers', {ref: "me", session: conn.session}, function(err, sess) {
-
+		var user = sess.results[0];
 		if(err || !sess || !sess.results) {
 			log("Couldn't find session to close.", err, sess);
 			return;
 		}
-		var user = sess.results[0];
-//         console.log("LOG: "+ user.id +" closed tab which had", conn.listeningTo.join(","), "open");
+		
 		setTimeout(function() {
-            // console.log("LOG: "+ user.id +"30 seconds lated");
             if(!conn.listeningTo || !conn.listeningTo.length) return;
 
             conn.listeningTo.forEach(function(room) {
@@ -312,16 +318,15 @@ function handleClose(conn) {
                     to: room,
                     time: new Date().getTime()
                 };
-                // console.log("LOG: "+user.id +"verifing away for", room);
+				
                 if(!verifyAway(conn, awayAction)) return;
-//                 console.log("LOG: "+ user.id +"sending away for", room);
                 core.emit('away',awayAction , function(err, action) {
                     if(err) return;
                     storeAway(conn, action);
                 });
 
             });
-		}, 30*1000);
+		}, 3*1000);
 	});
 }
 

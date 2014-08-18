@@ -330,6 +330,9 @@ module.exports = function (c) {
 	}, 500);
 
 	libsb.on('init-dn', function (init, next) {
+		// on signup.
+		if (init.auth && !init.user.id) return next();
+		
 		cacheOp.cache.user = init.user;
 		cacheOp.cache.occupantOf = init.occupantOf;
 		cacheOp.cache.memberOf = init.memberOf;

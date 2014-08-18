@@ -84,12 +84,9 @@ var threadEl = require("./thread.js"),
 		query.time = index || null;
 		libsb.getThreads(query, function(err, t) {
 			var threads = t.results;
-            console.log("Thread-area", err, t, index);
 			if(err) throw err; // TODO: handle the error properly.
             
-            console.log("No error++");
 			if(!index && threads.length === "0") {
-                console.log("Brrrrr");
 				return callback([false]);
 			}
             console.log("Brrrrr");
@@ -109,7 +106,6 @@ var threadEl = require("./thread.js"),
 					threads.push(false);
 				}
 			}
-            console.log("++++++++++ rendering", threads);
 			renderThreads(threads, callback);
 		});
 	}
