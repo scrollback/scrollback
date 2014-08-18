@@ -1,11 +1,11 @@
 "use strict";
-/* global libsb, currentState, SockJS*/
+/* global libsb, SockJS*/
 
 var generate = require("../lib/generate.js"),
 	config = require("../client-config.js"),
 	core;
 
-var connectionState = false, backOff = 1, 
+var backOff = 1, 
     client, pendingQueries = {},
 	pendingActions = {},
 	queue = [];
@@ -75,10 +75,7 @@ function connect() {
     client.onclose = disconnected;
     
 	client.onopen = function(){
-		connectionState = true;
         backOff = 1;
-       
-        
         core.emit("init-up", {}, function(err) {
 			if(err) console.log(err.message);
 			else libsb.isInited = true;

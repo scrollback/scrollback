@@ -19,7 +19,7 @@ function enter(room) {
 	if (libsb.isInited) {
 		if(!listening[room]){
 			listening[room] = true;
-			libsb.enter(room, function (err, action) {
+			libsb.enter(room, function (err) {
 				if (err) listening[room] = false;
 				else listening[room] = true;
 			});
