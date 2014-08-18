@@ -1,5 +1,5 @@
 var config = require('../config.js');
-var core = require("../lib/emitter.js");
+var core = new (require('../lib/emitter.js'))();
 var ircSb = require("./irc.js");
 var gen = require("../lib/generate.js");
 var irc = require('irc');
