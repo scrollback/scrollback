@@ -8,7 +8,7 @@ $(".configure-button").on("click", function () {
     libsb.emit('navigate', {
         mode: "conf",
         source: "configure-button",
-        roomName: window.currentState.roomName
+        roomName: window.currentState.roomName,
     });
 });
 
@@ -43,10 +43,12 @@ $(".conf-save").on("click", function () {
                     }
                     currentConfig = null;
                     $('.conf-area').empty();
-                    libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" , roomName: room.room.id});
+					
+        			libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
                 }
             });
         });
+		
     }
 });
 
@@ -63,19 +65,12 @@ $(".conf-cancel").on("click", function () {
 });
 
 
-function showConfig(room){
+function showConfig(room) {
     var roomObj = {room: room};
     libsb.emit('config-show', roomObj, function(err, tabs) {
-        var data;
-
-        delete tabs.room;
-
+		delete tabs.room;
         currentConfig = tabs;
-
-        data = renderSettings(tabs);
-
-        $('.meta-conf').empty().append(data[0]);
-        $('.conf-area').empty().append(data[1]);
+        renderSettings(tabs);
      });
 }
 

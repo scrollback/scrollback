@@ -2,10 +2,18 @@
 /* global $, window*/
 /* exported currentState */
 
-var currentState = window.currentState = {}; // think of a way to remove this from window.(if need)
-module.exports = function (libsb) {
+var currentState = window.currentState = {}, libsb; // think of a way to remove this from window.(if need)
+module.exports = function (l) {
+	libsb = l;
     libsb.on("navigate", loadOld, 999);
     libsb.on("navigate", saveCurrentState, 700);
+	
+	libsb.on('room-dn', function(room, next){
+		if (room.room.id === currentState.roomName){
+			currentState.room = room.room;
+		}
+		next();
+	}, 100);
 };
 
 function loadOld(state, next) {

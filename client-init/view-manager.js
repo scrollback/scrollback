@@ -23,11 +23,15 @@ function addBodyClass(state, next) {
             $("body").addClass("view-" + state.view);
         }
     }
-
     if (state.old && state.tab !== state.old.tab) {
         if (state.tab) {
-            $(".tab.current").removeClass("current");
-            $(".tab-" + state.tab).addClass("current");
+			if (state.mode === "pref" || state.mode === "conf") {
+				$(".list-item.current, .list-view.current").removeClass("current");
+				$(".list-item-" + state.tab + "-settings, .list-view-" + state.tab + "-settings").addClass("current");
+			}else{
+				$(".tab.current").removeClass("current");
+            	$(".tab-" + state.tab).addClass("current");
+			}
         }
     }
 
