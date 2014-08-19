@@ -1,4 +1,5 @@
-@import "global";
+@import "client-global";
+@import "client-themes";
 @import "base";
 @import "alert";
 @import "modal";
@@ -12,90 +13,6 @@
 @import "tooltip";
 @import "progress";
 @import "tip";
-
-$screenx: "only screen and (min-width: 18em)";
-$screenxx: "only screen and (min-width: 27em)";
-$screenxxx: "only screen and (min-width: 50em)";
-$screenxxxx: "only screen and (min-width: 70em)";
-
-$width-room: 15em;
-$width-roomx: 15em;
-$width-roomxx: 15em;
-$width-roomxxx: 15em;
-$width-roomxxxx: 16%;
-
-$width-meta: 13em;
-$width-metax: 19em;
-$width-metaxx: 25em;
-$width-metaxxx: 26em;
-$width-metaxxxx: 30%;
-
-$bar-height: 3.5em;
-
-$settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification;
-$modes: normal, search, conf, pref, home, noroom, offline, profile;
-$roles: guest, user, follower, owner;
-$embeds: toast, canvas;
-
-/* themes */
-@mixin theme($name, $base, $text, $icon, $focus) {
-    .theme-#{$name} {
-        .meta-tabs {
-            background-color: $base;
-            color: $text;
-            border-bottom-color: darken($base, 2%);
-
-            .tab {
-                fill: fade-out($icon, .15);
-                border-left-color: darken($base, 2%);
-
-                &:hover, &:focus, &:active {
-                    fill: $icon;
-                    background-color: darken($base, 5%);
-                }
-
-                &.current {
-                    fill: $icon;
-                    background-color: rgba(0,0,0,.15);
-                }
-            }
-
-            .meta-header {
-                @media #{$screenxxxx} { background-image: url(../../img/client/icons/settings-dark.svg); }
-            }
-        }
-
-        .title-bar, .minimize-bar {
-            background-color: $base;
-            color: $text;
-            box-shadow: inset 0 -1px 0 0 darken($base, 2%),
-                        -1px 0 0 darken($base, 2%),
-                        0 3px 2px -1px rgba(0,0,0,.05);
-        }
-
-        .follow-button {
-            fill: none;
-            stroke: $icon;
-
-            &:focus, &:hover, &:active {
-                fill: none;
-                stroke: $focus;
-            }
-        }
-
-        &.role-follower .follow-button, .meta-tabs li.rooms-button, .meta-button, .search-button, .embed-button {
-            fill: $icon;
-
-            &:focus, &:hover, &:active { fill: $focus; }
-        }
-
-        .sb-icon { fill: $light-color; }
-
-        .sb-logotype { fill: $light-color; }
-    }
-}
-
-@include theme($name: dark, $base: $dark-color, $text: $light-color, $icon: fade-out($light-color, .15), $focus: $light-color);
 
 /* widget styles */
 %scroll-elem {
@@ -196,8 +113,6 @@ body {
 }
 
 .room-item {
-    @extend %transition;
-
     display: block;
     padding: 1em;
     font-weight: 700;
@@ -205,8 +120,15 @@ body {
     border-bottom: 1px solid lighten($dark-color, 5%);
 
     &:hover, &:focus, &.current:hover, &.current:focus {
+        @extend %transition;
+
         color: $light-color;
         background-color: rgba(0,0,0,.3);
+    }
+
+    &:active, &.current:active {
+        color: $light-color;
+        background-color: rgba(0,0,0,.5);
     }
 
     &.current {
@@ -316,7 +238,6 @@ body {
 
     .tab {
         @include flex-grow(1);
-        @extend %transition;
 
         text-align: center;
         background-color: transparent;
@@ -325,24 +246,21 @@ body {
 
         &:first-child { border-left: none; }
 
-        &:hover, &:focus, &:active {
+        &:hover, &:focus {
+            @extend %transition;
+
             fill: lighten($dark-color, 5%);
+            background-color: rgba(0,0,0,.05);
+        }
+
+        &:active {
+            fill: $dark-color;
             background-color: rgba(0,0,0,.05);
         }
 
         &.current {
             fill: lighten($dark-color, 15%);
             background-color: rgba(0,0,0,.1);
-        }
-
-        svg { @extend %transition; }
-
-        &:hover, &:focus {
-            svg { @include transform(scale(1.1)); }
-        }
-
-        &:active {
-            svg { @include transform(scale(0.8)); }
         }
     }
 
@@ -416,7 +334,6 @@ body {
 
 .person {
     @extend %nofilter;
-    @extend %transition;
 
     position: relative;
     display: inline-block;
@@ -427,6 +344,8 @@ body {
     white-space: nowrap;
     overflow: hidden;
     color: $dark-color;
+
+    &:hover, &:focus { @extend %transition; }
 
     &:hover, &:focus, &:active {
         background-color: $accent-color;
@@ -518,7 +437,9 @@ body {
 }
 
 .thread-search-query, .thread-all-conversations {
-    box-shadow: 0 3px 2px -1px rgba(0,0,0,.1);
+    box-shadow: inset 0 1px 0 0 rgba(0,0,0,.1),
+                inset 0 -1px 0 0 rgba(0,0,0,.1),
+                0 3px 2px -1px rgba(0,0,0,.1);
 }
 
 .thread-item-container {
@@ -530,12 +451,11 @@ body {
 
 .thread-item {
     @extend %nofilter;
-    @extend %transition;
 
     display: block;
     padding: 1em 1.5em;
     color: $dark-color;
-    border-right: 4px solid lighten($dark-color, 30%);
+    border-right: 4px solid lighten($dark-color, 15%);
     cursor: pointer;
 
     &:first-letter { text-transform: capitalize; }
@@ -543,6 +463,8 @@ body {
     &.current { background-color: fade-out(lighten($dark-color, 15%), .7); }
 
     &:hover, &:focus, &.current:hover, &.current:focus {
+        @extend %transition;
+
         background-color: lighten($dark-color, 15%);
         color: $light-color;
     }
@@ -573,8 +495,6 @@ body {
 }
 
 .list-item {
-    @extend %transition;
-
     position: relative;
     display: block;
     font-size: 1.2em;
@@ -614,10 +534,13 @@ body {
         }
     }
 
-    &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active {
-        color: $dark-color;
+    &:hover, &:focus, &.current:hover, &.current:focus {
+        @extend %transition;
+
         background-color: rgba(0,0,0,.1);
     }
+
+    &:active, &.current:active { background-color: rgba(0,0,0,.2); }
 
     @each $setting in $settings {
         &.list-item-#{$setting}-settings {
@@ -715,7 +638,9 @@ body {
     }
 }
 
-.sb-icon { fill: $dark-color; }
+.sb-icon-top { fill: $accent-color; }
+
+.sb-icon-bottom { fill: $dark-color; }
 
 .title-bar {
     @include flexbox;
@@ -1005,7 +930,7 @@ body {
 }
 
 .chat-item {
-    @extend %transition;
+    @extend %fadein;
 
     position: relative;
     margin: 0;
@@ -1015,7 +940,11 @@ body {
 
     @media #{$screenxx} { padding: 1em 3.5em 1em 12em; }
 
-    &:hover, &:focus { background-color: darken($light-color, 1%); }
+    &:hover, &:focus {
+        @extend %transition;
+
+        background-color: darken($light-color, 1%);
+    }
 
     &:last-of-type { border-bottom: 1px solid rgba(0,0,0,0.025); }
 
@@ -1113,8 +1042,6 @@ body {
     }
 
     .chat-timestamp {
-        @extend %transition;
-
         display: none;
         padding-left: 3em;
         font-size: .8em;
@@ -1342,8 +1269,6 @@ body {
 }
 
 .chat-send {
-    @extend %transition;
-
     position: absolute;
     right: 0;
     bottom: 0;
@@ -1354,6 +1279,8 @@ body {
     border: none;
     cursor: pointer;
     fill: lighten($dark-color, 15%); /* inline SVG */
+
+    &:hover, &:focus { @extend %transition; }
 
     &:hover, &:focus, &:active { fill: $dark-color; }
 

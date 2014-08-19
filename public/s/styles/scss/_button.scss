@@ -4,8 +4,6 @@
 @import "spinner";
 
 @mixin buttons($bg: $accent-color, $fg: $light-color) {
-	@extend %transition;
-
 	display: inline-block;
 	margin: .5em 0;
 	padding: .5em 1em;
@@ -21,6 +19,8 @@
 	text-transform: uppercase;
 
 	&:hover, &:focus {
+		@extend %transition;
+
 		background-color: darken($bg, 5%);
 		border-color: darken($bg, 5%);
 		color: $fg;
