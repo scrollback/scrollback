@@ -97,7 +97,7 @@ libsb.on('navigate', function(state, next) {
 }, 100);
 
 function setUser() {
-	if (!libsb || !libsb.user || libsb.user.id) return;
+	if (!libsb || !libsb.user || !libsb.user.id) return;
 	$("#sb-avatar").attr("src", libsb.user.picture);
 	$("#sb-user").text(libsb.user.id.replace(/^guest-/, ""));
 }

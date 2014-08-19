@@ -1,5 +1,5 @@
 /* jshit browser: true */
-/* global $, format, libsb, currentState */
+/* global $, format, libsb, currentState, window */
 
 var infoArea = {};
 
@@ -9,6 +9,7 @@ $(function() {
 		$template.find('.info-title').text(room.id);
 		$template.find('.info-description').html(format.textToHtml(room.description || "This room has no description."));
 	};
+	// change this. Probably a single app should make a decisions on room to which it should send a back message to.
 	libsb.on("init-dn", function(q, n) {
 		if(currentState.embed && currentState.embed.form) {
 			libsb.enter(window.location.pathname.split("/")[1]);
@@ -25,7 +26,7 @@ libsb.on('room-dn', function (action, next) {
 }, 600);
 
 libsb.on('navigate', function(state, next) {
-    if (!state.old || state.roomName != state.old.roomName) {
+    if (!state.old || state.roomName != state.old.roomName || state.old.connectionStatus != state.connectionStatus) {
         
         if (state.room && typeof state.room !== "string") {
             infoArea.render(state.room);

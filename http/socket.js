@@ -301,12 +301,12 @@ function emit (action, callback) {
 function handleClose(conn) {
 	if(!conn.session) return;
 	core.emit('getUsers', {ref: "me", session: conn.session}, function(err, sess) {
-		var user = sess.results[0];
+		var user;
 		if(err || !sess || !sess.results) {
 			log("Couldn't find session to close.", err, sess);
 			return;
 		}
-		
+		user = sess.results[0];
 		setTimeout(function() {
             if(!conn.listeningTo || !conn.listeningTo.length) return;
 
