@@ -139,7 +139,6 @@ gulp.task("styles", function() {
 	return gulp.src(cssFiles)
 	.pipe(sass({
 		style: "expanded",
-		sourcemap: true,
 		sourcemapPath: "../scss"
 	}))
 	.on("error", function(e) { gutil.log(e.message); })
