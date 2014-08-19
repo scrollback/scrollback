@@ -113,8 +113,6 @@ body {
 }
 
 .room-item {
-    @extend %transition;
-
     display: block;
     padding: 1em;
     font-weight: 700;
@@ -122,8 +120,15 @@ body {
     border-bottom: 1px solid lighten($dark-color, 5%);
 
     &:hover, &:focus, &.current:hover, &.current:focus {
+        @extend %transition;
+
         color: $light-color;
         background-color: rgba(0,0,0,.3);
+    }
+
+    &:active, &.current:active {
+        color: $light-color;
+        background-color: rgba(0,0,0,.5);
     }
 
     &.current {
@@ -233,7 +238,6 @@ body {
 
     .tab {
         @include flex-grow(1);
-        @extend %transition;
 
         text-align: center;
         background-color: transparent;
@@ -242,24 +246,21 @@ body {
 
         &:first-child { border-left: none; }
 
-        &:hover, &:focus, &:active {
+        &:hover, &:focus {
+            @extend %transition;
+
             fill: lighten($dark-color, 5%);
+            background-color: rgba(0,0,0,.05);
+        }
+
+        &:active {
+            fill: $dark-color;
             background-color: rgba(0,0,0,.05);
         }
 
         &.current {
             fill: lighten($dark-color, 15%);
             background-color: rgba(0,0,0,.1);
-        }
-
-        svg { @extend %transition; }
-
-        &:hover, &:focus {
-            svg { @include transform(scale(1.1)); }
-        }
-
-        &:active {
-            svg { @include transform(scale(0.8)); }
         }
     }
 
@@ -333,7 +334,6 @@ body {
 
 .person {
     @extend %nofilter;
-    @extend %transition;
 
     position: relative;
     display: inline-block;
@@ -344,6 +344,8 @@ body {
     white-space: nowrap;
     overflow: hidden;
     color: $dark-color;
+
+    &:hover, &:focus { @extend %transition; }
 
     &:hover, &:focus, &:active {
         background-color: $accent-color;
@@ -447,7 +449,6 @@ body {
 
 .thread-item {
     @extend %nofilter;
-    @extend %transition;
 
     display: block;
     padding: 1em 1.5em;
@@ -460,6 +461,8 @@ body {
     &.current { background-color: fade-out(lighten($dark-color, 15%), .7); }
 
     &:hover, &:focus, &.current:hover, &.current:focus {
+        @extend %transition;
+
         background-color: lighten($dark-color, 15%);
         color: $light-color;
     }
@@ -490,8 +493,6 @@ body {
 }
 
 .list-item {
-    @extend %transition;
-
     position: relative;
     display: block;
     font-size: 1.2em;
@@ -531,10 +532,13 @@ body {
         }
     }
 
-    &:hover, &:focus, &:active, &.current:hover, &.current:focus, &.current:active {
-        color: $dark-color;
+    &:hover, &:focus, &.current:hover, &.current:focus {
+        @extend %transition;
+
         background-color: rgba(0,0,0,.1);
     }
+
+    &:active, &.current:active { background-color: rgba(0,0,0,.2); }
 
     @each $setting in $settings {
         &.list-item-#{$setting}-settings {
@@ -924,7 +928,7 @@ body {
 }
 
 .chat-item {
-    @extend %transition;
+    @extend %fadein;
 
     position: relative;
     margin: 0;
@@ -934,7 +938,11 @@ body {
 
     @media #{$screenxx} { padding: 1em 3.5em 1em 12em; }
 
-    &:hover, &:focus { background-color: darken($light-color, 1%); }
+    &:hover, &:focus {
+        @extend %transition;
+
+        background-color: darken($light-color, 1%);
+    }
 
     &:last-of-type { border-bottom: 1px solid rgba(0,0,0,0.025); }
 
@@ -1032,8 +1040,6 @@ body {
     }
 
     .chat-timestamp {
-        @extend %transition;
-
         display: none;
         padding-left: 3em;
         font-size: .8em;
@@ -1261,8 +1267,6 @@ body {
 }
 
 .chat-send {
-    @extend %transition;
-
     position: absolute;
     right: 0;
     bottom: 0;
@@ -1273,6 +1277,8 @@ body {
     border: none;
     cursor: pointer;
     fill: lighten($dark-color, 15%); /* inline SVG */
+
+    &:hover, &:focus { @extend %transition; }
 
     &:hover, &:focus, &:active { fill: $dark-color; }
 
