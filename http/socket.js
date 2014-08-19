@@ -326,7 +326,7 @@ function handleClose(conn) {
                 });
 
             });
-		}, 3*1000);
+		}, 30*1000);
 	});
 }
 
