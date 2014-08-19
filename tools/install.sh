@@ -118,7 +118,8 @@ if [[ ! $? -eq 0 ]]; then
     echo "Scrollback will be installed from the upstream repo. Enter the Github username to to change, otherwise press enter:"
     read -t 10 ghuser
     [[ -z "$ghuser" ]] && ghuser="scrollback"
-    git clone "https://github.com/$ghuser/scrollback.git" && cd "scrollback"
+    git clone "https://github.com/$ghuser/scrollback.git"
+    cd "scrollback"
 fi
 
 # Temporarily set python version (needed by leveldb)
@@ -132,11 +133,11 @@ bower install
 
 # Enable and start the Redis daemon
 echo "Starting Redis"
-if [[ `command -v service` ]]; then
-    sudo service redis start
-else if [[ `command -v systemctl` ]]; then
+if [[ `command -v systemctl` ]]; then
     sudo systemctl enable redis
     sudo systemctl start redis
+elif [[ `command -v service` ]]; then
+    sudo service redis start
 fi
 
 # Add local.scrollback.io to /etc/hosts
@@ -157,3 +158,5 @@ gulp
 
 # Show notification when installation finishes
 [[ `command -v notify-send` ]] && notify-send "Scrollback installation finished." "Start scrollback with 'sudo npm start'."
+
+# EOF
