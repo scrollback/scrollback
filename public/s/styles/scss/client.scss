@@ -437,7 +437,9 @@ body {
 }
 
 .thread-search-query, .thread-all-conversations {
-    box-shadow: 0 3px 2px -1px rgba(0,0,0,.1);
+    box-shadow: inset 0 1px 0 0 rgba(0,0,0,.1),
+                inset 0 -1px 0 0 rgba(0,0,0,.1),
+                0 3px 2px -1px rgba(0,0,0,.1);
 }
 
 .thread-item-container {
@@ -453,7 +455,7 @@ body {
     display: block;
     padding: 1em 1.5em;
     color: $dark-color;
-    border-right: 4px solid lighten($dark-color, 30%);
+    border-right: 4px solid lighten($dark-color, 15%);
     cursor: pointer;
 
     &:first-letter { text-transform: capitalize; }
