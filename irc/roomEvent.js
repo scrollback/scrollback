@@ -3,7 +3,8 @@ var config = require('../config.js');
 var debug = config.irc.debug;
 var internalSession = Object.keys(config.whitelists)[0];
 module.exports = function (core, client, ircUtils, firstMessage) {
-	core.on("room", function (action, callback) {
+	core.on("room", function (action, cb) {
+		var callback = ircUtils.channelLowerCase(action, cb);
 		var r = action.room;
 		var or = action.old;
 		if (r.params.irc && Object.keys(r.params.irc).length > 0) {
@@ -29,8 +30,9 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 			});
 		} else callback();
 	}, "appLevelValidation");
-
-	core.on('room', function (action, callback) {
+	
+	core.on('room', function (action, cb) {
+		var callback = ircUtils.channelLowerCase(action, cb);
 		var room = action.room;
 		log("room irc:", JSON.stringify(action), client.connected());
 		if (!room.params.irc || room.params.irc.error || action.session === internalSession) return callback();

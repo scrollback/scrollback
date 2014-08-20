@@ -103,6 +103,43 @@ module.exports = function(clientEmitter, client, callbacks) {
 			});
 		}
 	}
+    
+	function copyChannel(action) {
+		[action.room, action.old].forEach(function (r) {
+			if (r && r.params && r.params.irc && r.params.irc.channel) {
+				r.params.irc.tmpChannel = r.params.irc.channel;
+				r.params.irc.channel = r.params.irc.channel.toLowerCase();
+			}
+		});
+	}
+
+	function revertCopyChannel(action) {
+			[action.room, action.old].forEach(function (r) {
+			if (r && r.params && r.params.irc && r.params.irc.channel) {
+				r.params.irc.channel = r.params.irc.tmpChannel;
+				delete r.params.irc.tmpChannel;
+			}
+		});
+	}
+
+
+	/**
+	channel to lower case for both room and old
+	@returns {function}. to revert the changes
+	*/
+	function channelLowerCase(action, cb) {
+		copyChannel(action);
+		return function () {
+			revertCopyChannel(action);
+			var args = [];
+			for (var k in arguments) {
+				if (arguments.hasOwnProperty(k)) {
+					args.push(arguments[k]);
+				}
+			}
+			cb.apply(null, args);
+		};
+	}
 
 	return {
 		connectUser: connectUser,
@@ -112,6 +149,7 @@ module.exports = function(clientEmitter, client, callbacks) {
 		addNewBot: addNewBot,
 		copyRoomOnlyIrc: copyRoomOnlyIrc,
 		getBotNick: getBotNick,
-		getRequest: getRequest
+		getRequest: getRequest,
+		channelLowerCase: channelLowerCase
 	};
 };

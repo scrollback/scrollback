@@ -124,6 +124,7 @@ function init() {
 				if (!room.params.irc.enabled) return;
 				if (state.rooms[room.id]) {
 					var r1 = room.params.irc;
+					if (r1.params.irc.channel) r1.params.irc.channel = r1.params.irc.channel.toLowerCase();
 					var r2 = state.rooms[room.id].params.irc;
 					if (!(r1.server === r2.server && r1.channel === r2.channel && r1.pending === r2.pending)) {
 						log("reconnecting bot with new values:", room.id);
@@ -199,7 +200,7 @@ function init() {
 				room: {}
 			};
 
-			r.params.irc = room.room.params.irc;
+			r.params.irc.pending = room.room.params.irc.pending;
 			rr.room = r;
 			rr.to = r.id;
 			rr.room.guides = {};
