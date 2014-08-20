@@ -93,17 +93,17 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 /**
  *add or copy pending status
  */
-function addPending(room) {
-	var or = room.old;
-	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel) { //this is old room
-		if (room.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel) {
-			room.room.params.irc.pending = debug ? false : true; //if server or channel changes
-		} else room.room.params.irc.pending = or.params.irc.pending;
-	} else {
-		room.room.params.irc.pending = debug ? false : true; //this is new room.
-	}
+function addPending(action) {
+    var or = action.old;
+    var p = debug || (action.user.role === 'su');
+    if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel) { //this is old room
+        if (action.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== action.room.params.irc.channel) {
+            action.room.params.irc.pending = p ? false : true; //if server or channel changes
+        } else action.room.params.irc.pending = or.params.irc.pending;
+    } else {
+        action.room.params.irc.pending = p ? false : true; //this is new room.
+    }
 }
-
 
 function actionRequired(room) {
 	return (room.room.params && room.room.params.irc &&
