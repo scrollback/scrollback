@@ -10,7 +10,6 @@ $(function () {
 
     var $people = $(".pane-people"),
         roomName = "",
-        people = [],
         lists = {
             people1: [false],
             people3: [],
@@ -58,7 +57,7 @@ $(function () {
             libsb.getUsers({
                 occupantOf: roomName
             }, function (err, res) {
-                var r = res.results,
+                var r = res.results, e,
                     i, l;
                 if(r) {
                     for (i = 0, l = r.length; i < l; i++) {
@@ -85,7 +84,7 @@ $(function () {
                     if (!checkForUser(e, lists["people" + e.score])) lists["people" + e.score].push(e);
                 });
 
-                callback(lists);
+                callback();
             });
         });
     }
@@ -246,24 +245,38 @@ $(function () {
 
     function loadMembers() {
         resetMembers();
-        getPeople(function (sortedList) {
+        getPeople(function () {
             $people.reset();
         });
     }
     libsb.on('navigate', function (state, next) {
-        if (state.source == 'people-area') return next();
-        if (!state.roomName) {
-            emptyList();
-            return next();
-        }
-        roomName = state.roomName;
-        if (!state.old || state.roomName !== state.old.roomName) loadMembers();    
-        
-        if (state.tab == "people") {
+		var reloadMembers = false, reset = false;
+		
+		if (state.source == 'people-area') return next();
+		roomName = state.roomName;
+		
+		if (state.tab == "people") {
             $(".pane-people").addClass("current");
+			reset = true;
         } else {
             $(".pane-people").removeClass("current");
         }
+		
+		if(!state.connectionStatus  && state.source == "boot") {
+			emptyList();
+			return next();
+		}
+        
+		if(!state.old || state.roomName != state.roomName || state.old.connectionStatus != state.connectionStatus){
+			reloadMembers = true;
+		}
+		
+		if(reloadMembers) {
+			loadMembers();
+		}else if(reset) {
+			$people.reset();
+		}
+		
         next();
     }, 600);
 

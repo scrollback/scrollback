@@ -43,6 +43,7 @@ sock.on('connection', function (socket) {
             if(!/^web:/.test(d.session)) {
 				return conn.send({type: 'error', id: d.id, message: "INVALID_SESSION"});
             }
+			conn.listeningTo = [];
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
 			if (!sConns[d.session]) {
