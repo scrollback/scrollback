@@ -4,17 +4,16 @@
 var chatEl = {},
 	timeBefore;
 
-$(function () {
+$(function() {
 	var $template = $(".chat-item").eq(0);
 
-	chatEl.render = function ($el, text) {
+	chatEl.render = function($el, text) {
 		$el = $el || $template.clone(false);
-		
-		if(text.type == "missing") {
-			$el.find(".chat-message").html("Missing text");
-			$el.addClass("chat-item-missing");
+
+		if (text.type === "missing") {
+			$el = $("<div>").addClass("chat-item-missing");
 			$el.attr("data-index", text.endTime || text.startTime || 0);
-		}else {
+		} else {
 			$el.find(".chat-nick").text(text.from.replace(/^guest-/, ""));
 			$el.find(".chat-message").html(format.linkify(format.textToHtml(	text.text || "")));
 			$el.find(".chat-timestamp").text(format.friendlyTime(text.time, new Date().getTime()));
@@ -57,7 +56,7 @@ $(function () {
 				charsPerLine = width / (parseInt($container.css("font-size"), 10) * 0.6);
 
 				lines.forEach(function(line) {
-					lineCount += Math.ceil(line.length/charsPerLine);
+					lineCount += Math.ceil(line.length / charsPerLine);
 				});
 
 				if (lineCount > 4) {
@@ -71,9 +70,8 @@ $(function () {
 				}
 			}
 
-			timeBefore = text.time;	
+			timeBefore = text.time;
 		}
-		
 
 		return $el;
 	};
