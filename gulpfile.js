@@ -131,7 +131,7 @@ gulp.task("manifest", function() {
 		hash: true,
 		filename: "manifest.appcache"
 	}))
-	.pipe(gulp.dest("public/s"))
+	.pipe(gulp.dest("public"))
 	.on("error", gutil.log);
 });
 
@@ -156,10 +156,10 @@ gulp.task("styles", [ "lace" ], function() {
 
 gulp.task("clean", function() {
 	return gulp.src([
-		"public/s/*.map",
-		"public/s/*.min.js",
-		"public/s/*.bundle.js",
-		"public/s/*.appcache",
+		"public/{*.map,**/*.map}",
+		"public/{*.min.js,**/*.min.js}",
+		"public/{*.bundle.js,**/*.bundle.js}",
+		"public/{*.appcache,**/*.appcache}",
 		libDir, cssDir, laceDir
 	], { read: false })
 	.pipe(rimraf())
