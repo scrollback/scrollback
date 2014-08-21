@@ -14,11 +14,15 @@ var myConfig = {
 		to: "local@scrollback.io"
 	},
 	http: {
+		/**
+		 * Edit this to enable https
+
 		https: {
 			key: "../scrollback-ssl/scrollback.io.key",
 			cert: "../scrollback-ssl/scrollback.io.crt",
 			port: 443
 		},
+		*/
 		host: "local.scrollback.io",
 		cookieDomain: ".scrollback.io",
 		port: 80,
