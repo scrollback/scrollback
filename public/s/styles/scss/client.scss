@@ -1,18 +1,18 @@
-@import "client-global";
-@import "client-themes";
-@import "base";
-@import "animations";
-@import "alert";
-@import "modal";
-@import "popover";
-@import "switch";
-@import "button";
-@import "entry";
-@import "multientry";
-@import "flexbox";
-@import "oembed";
-@import "tooltip";
-@import "progress";
+@import "../lace/base";
+@import "../lace/animations";
+@import "../lace/alert";
+@import "../lace/modal";
+@import "../lace/popover";
+@import "../lace/switch";
+@import "../lace/button";
+@import "../lace/entry";
+@import "../lace/multientry";
+@import "../lace/flexbox";
+@import "../lace/tooltip";
+@import "../lace/progress";
+
+@import "global";
+@import "themes";
 @import "tip";
 
 /* widget styles */

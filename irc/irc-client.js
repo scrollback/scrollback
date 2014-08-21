@@ -1,9 +1,9 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, lace */
 
 var formField = require("../lib/formField.js");
-var lace = require('../lib/lace.js');
-libsb.on('config-show', function (tabs, next) {
+
+libsb.on('config-show', function(tabs, next) {
 	var results = tabs.room,
 		$div = $('<div>'),
 		ircServer = "",
@@ -24,7 +24,7 @@ libsb.on('config-show', function (tabs, next) {
 		$errString = $errMsg.find("#irc-message-text");
 
 	$div.append(formField("Enable IRC", "check", "irc-enable-check", [
-					["irc-enable", "", enabled]
+					[ "irc-enable", "", enabled ]
 				]),
 				formField("IRC server", "text", "irc-server", ircServer),
 				formField("IRC channel", "text", "irc-channel", ircChannel),
@@ -49,7 +49,7 @@ libsb.on('config-show', function (tabs, next) {
 			notify.type = "info";
 			notify.value = null;
 
-			$.get('/r/irc/' + results.id, function (botName) {
+			$.get('/r/irc/' + results.id, function(botName) {
 				if (botName !== "ERR_NOT_CONNECTED") {
 					$infoString.text("The IRC channel operator needs to type \"/invite " + botName + " " + results.params.irc.channel + "\" in the IRC channel to complete the process.");
 					$displayMsg.replaceWith($infoMsg);
@@ -82,16 +82,15 @@ libsb.on('config-show', function (tabs, next) {
 	next();
 }, 500);
 
+libsb.on('config-save', function(room, next) {
+	var server = $('#irc-server').val(),
+		channel = $('#irc-channel').val();
 
-libsb.on('config-save', function (room, next) {
-	var server = $('#irc-server').val();
-	var channel = $('#irc-channel').val();
-	
 	if (!server || !channel ) {
 		server = "";
 		channel = "";
 	}
-	
+
 	room.params.irc = {
 		server: server,
 		channel: channel,
@@ -100,14 +99,19 @@ libsb.on('config-save', function (room, next) {
 	next();
 }, 500);
 
-libsb.on("room-dn", function (room, next) {
-	var r = room.room;
-	var irc = r.params && r.params.irc;
+libsb.on("room-dn", function(room, next) {
+	var r = room.room,
+		irc = r.params && r.params.irc;
+
 	if (room.user.id === libsb.user.id && irc && irc.pending && !irc.error && irc.channel && irc.server && irc.enabled) {
-		$.get('/r/irc/' + r.id, function (botName) {
+		$.get('/r/irc/' + r.id, function(botName) {
 			var displayString = "Something went wrong while connecting to IRC server";
-			if (botName !== 'ERR_NOT_CONNECTED') displayString = "The IRC channel operator needs to type \"/invite " + botName +
+
+			if (botName !== 'ERR_NOT_CONNECTED') {
+				displayString = "The IRC channel operator needs to type \"/invite " + botName +
 				" " + r.params.irc.channel + "\" in the IRC channel to complete the process.";
+			}
+
 			lace.alert.show({
 				id: "irc-info-message",
 				type: "info",

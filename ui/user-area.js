@@ -1,8 +1,7 @@
 /* jshint browser: true */
-/* global $, libsb, currentState */
+/* global $, libsb, lace, currentState */
 
 var showMenu = require('./showmenu.js');
-var lace = require('../lib/lace.js');
 
 $(function(){
 	$(".user-area, .user-menu-button").on('click', function(){

@@ -1,5 +1,5 @@
-@import "functions";
-@import "global";
+@import "../lace/functions";
+@import "../lace/global";
 
 @include exports("tip") {
     .tip {

@@ -9,7 +9,7 @@
 		if (!r) { r = ""; }
 
 		room = r.toLowerCase().trim()
-				.replace(/[^a-zA-Z0-9]/g,"-").replace(/^-+|-+$/,"");
+				.replace(/[^a-zA-Z0-9]/g, "-").replace(/^-+|-+$/, "");
 
 		if (!room || room === "img" || room === "css" || room === "sdk") {
 			room = "scrollback";
@@ -17,7 +17,7 @@
 			room = room + Array(4 - room.length).join("-");
 		}
 
-		room = room.substring(0,32);
+		room = room.substring(0, 32);
 
 		if (sanitize) {
 			return room;
@@ -44,7 +44,7 @@
 			style = document.createElement("link");
 			style.rel = "stylesheet";
 			style.type = "text/css";
-			style.href = host + "/s/styles/gen/embed.css";
+			style.href = host + "/s/styles/dist/embed.css";
 
 			document.head.appendChild(style);
 
@@ -79,7 +79,7 @@
 
 					if (e.data === "minimize" && !minReg.test(iframe.className)) {
 						iframe.className = iframe.className + " scrollback-minimized";
-					} else if(e.data === "maximize") {
+					} else if (e.data === "maximize") {
 						iframe.className = iframe.className.replace(minReg, "").trim();
 					} else if (e.data === "getDomain") {
 						iframe.contentWindow.postMessage(JSON.stringify({ location: window.location }), host);

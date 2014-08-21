@@ -18,7 +18,8 @@ var gulp = require("gulp"),
 	rimraf = require("gulp-rimraf"),
 	bowerDir = "bower_components",
 	libDir = "public/s/lib",
-	cssDir = "public/s/styles/gen",
+	laceDir = "public/s/styles/lace",
+	cssDir = "public/s/styles/dist",
 	jsFiles = [
 		"*/*-client.js",
 		"lib/*.js", "ui/*.js",
@@ -77,6 +78,7 @@ gulp.task("polyfills", function() {
 gulp.task("libs", function() {
 	return gulp.src([
 		bowerDir + "/jquery/dist/jquery.min.js",
+		bowerDir + "/lace/src/js/lace.js",
 		bowerDir + "/sockjs/sockjs.min.js",
 		bowerDir + "/svg4everybody/svg4everybody.min.js",
 		bowerDir + "/velocity/jquery.velocity.min.js",
@@ -90,7 +92,7 @@ gulp.task("bundle", [ "libs" ], function() {
 	return bundle([ "libsb.js", "client.js" ], { debug: !gutil.env.production })
 	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
 	.pipe(rename({ suffix: ".bundle.min" }))
-	.pipe(gulp.dest("public"))
+	.pipe(gulp.dest("public/s"))
 	.on("error", gutil.log);
 });
 
@@ -123,19 +125,24 @@ gulp.task("manifest", function() {
 		network: [ "*" ],
 		fallback: [
 			"//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
-			"/ /offline.html",
-			"/socket /s/socket-fallback"
+			"/ /offline.html"
 		],
 		preferOnline: true,
 		hash: true,
 		filename: "manifest.appcache"
 	}))
-	.pipe(gulp.dest("public"))
+	.pipe(gulp.dest("public/s"))
 	.on("error", gutil.log);
 });
 
 // Generate styles
-gulp.task("styles", function() {
+gulp.task("lace", function() {
+	return gulp.src(bowerDir + "/lace/src/scss/*.scss")
+	.pipe(gulp.dest(laceDir))
+	.on("error", gutil.log);
+});
+
+gulp.task("styles", [ "lace" ], function() {
 	return gulp.src(cssFiles)
 	.pipe(sass({
 		style: "expanded",
@@ -149,11 +156,11 @@ gulp.task("styles", function() {
 
 gulp.task("clean", function() {
 	return gulp.src([
-		"public/*.map",
-		"public/*.min.js",
-		"public/*.bundle.js",
-		"public/manifest.appcache",
-		libDir, cssDir
+		"public/s/*.map",
+		"public/s/*.min.js",
+		"public/s/*.bundle.js",
+		"public/s/*.appcache",
+		libDir, cssDir, laceDir
 	], { read: false })
 	.pipe(rimraf())
 	.on("error", gutil.log);

@@ -1,5 +1,6 @@
-@import "base";
-@import "grid";
+@import "../lace/global";
+@import "../lace/base";
+@import "../lace/grid";
 
 @include keyframes(bounce) {
     0%, 10%, 30%, 50%, 100% { @include transform(translate3d(0, 0, 0)); }

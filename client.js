@@ -9,6 +9,7 @@ window.generate = require('./lib/generate');
 require('./public/s/lib/sockjs.min.js');
 require('./public/s/lib/jquery.velocity.min.js');
 require('./public/s/lib/svg4everybody.min.js');
+require('./public/s/lib/lace.js');
 
 // libsb files
 require('./interface/interface-client')(core);

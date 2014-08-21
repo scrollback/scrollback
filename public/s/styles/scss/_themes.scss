@@ -1,6 +1,4 @@
-@import "functions";
 @import "global";
-@import "client-global";
 
 @mixin theme($name, $base, $text) {
     .theme-#{$name} {
