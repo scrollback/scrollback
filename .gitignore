@@ -32,3 +32,5 @@ public/embed.js
 public/s/styles/gen
 public/s/lib
 ircClient/Data
+xunit.xml
+public/t/coverage-*.html

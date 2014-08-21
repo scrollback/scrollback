@@ -4,7 +4,7 @@
 */
 
 /* global describe */
-var core = require('../../lib/emitter.js');
+var core = new (require('../../lib/emitter.js'))();
 var auth = require('../authorizer.js');
 auth(core);
 //var join = {id: 'asfsaf', type: 'join', to:'testroom', user: {role: "registered"}, room: {guides: { authorizer: {openFollow: true}}}};

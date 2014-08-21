@@ -1,0 +1,71 @@
+@import "functions";
+@import "global";
+@import "client-global";
+
+@mixin theme($name, $base, $text) {
+    .theme-#{$name} {
+        .meta-tabs {
+            background-color: $base;
+            color: $text;
+            border-bottom-color: darken($base, 3%);
+
+            .tab {
+                fill: fade-out($text, .3);
+                border-left-color: darken($base, 3%);
+
+                &:hover, &:focus, &:active {
+                    fill: fade-out($text, .15);
+                    background-color: darken($base, 5%);
+                }
+
+                &.current {
+                    fill: fade-out($text, .15);
+                    background-color: rgba(0,0,0,.15);
+                }
+            }
+
+            .meta-header {
+                @media #{$screenxxxx} { background-image: url(../../img/client/icons/settings-dark.svg); }
+            }
+        }
+
+        .title-bar, .minimize-bar {
+            background-color: $base;
+            color: $text;
+            box-shadow: inset 0 -1px 0 0 darken($base, 2%),
+                        -1px 0 0 darken($base, 2%),
+                        0 3px 2px -1px rgba(0,0,0,.05);
+        }
+
+        .follow-button {
+            fill: none;
+            stroke: fade-out($text, .15);
+
+            &:focus, &:hover, &:active {
+                fill: none;
+                stroke: $text;
+            }
+        }
+
+        &.role-follower .follow-button, .meta-tabs li.rooms-button, .meta-button, .search-button, .embed-button {
+            fill: fade-out($text, .15);
+
+            &:focus, &:hover, &:active { fill: $text; }
+        }
+
+        $icon-color-top: $text;
+        $icon-color-bottom: $text;
+
+        @if ($base == $light-color) or ($base == $dark-color) {
+            $icon-color-top: $accent-color;
+        }
+
+        .sb-icon-top { fill: $icon-color-top; }
+
+        .sb-icon-bottom { fill: $icon-color-bottom; }
+    }
+}
+
+@include exports("themes") {
+    @include theme($name: dark, $base: $dark-color, $text: $light-color);
+}
