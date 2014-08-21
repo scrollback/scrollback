@@ -6,13 +6,13 @@
 }
 
 @mixin keyframes($animation) {
-    @-webkit-keyframes $animation { @content; }
+    @-webkit-keyframes #{$animation} { @content; }
 
-    @-moz-keyframes $animation { @content; }
+    @-moz-keyframes #{$animation} { @content; }
 
-    @-ms-keyframes $animation { @content; }
+    @-ms-keyframes #{$animation} { @content; }
 
-    @keyframes $animation { @content; }
+    @keyframes #{$animation} { @content; }
 }
 
 @mixin spin($args: 1s ease infinite) {
