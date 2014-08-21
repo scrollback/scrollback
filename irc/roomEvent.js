@@ -23,7 +23,7 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 				if (!room[0]) callback();
 				else if (room[0].id === r.id) callback();
 				else {
-					if (!debug) r.params.irc.error = "ERR_CONNECTED_OTHER_ROOM"; //testing mode will not add the error.
+					r.params.irc.error = "ERR_CONNECTED_OTHER_ROOM";
                     removeIrcIdentity(room[0]);
 					callback();
 				}

@@ -70,7 +70,14 @@ module.exports = function(clientEmitter, client, callbacks) {
 	 * Copy only roomId and IRC params.
 	 */
 	function copyRoomOnlyIrc(room) {
-		return {id: room.id, params: {irc: room.params.irc}};
+		return {id: room.id, params: {
+			irc: {
+				server: room.params.irc.server,
+				channel: room.params.irc.channel,
+				pending: room.params.irc.pending,
+				enabled: room.params.irc.enabled
+			}
+		}};
 	}
 
 	function getBotNick(roomId, callback) {
@@ -141,6 +148,12 @@ module.exports = function(clientEmitter, client, callbacks) {
 		};
 	}
 
+	function isActionReq(action) {
+		var rp = action.room.params;
+		return (rp && rp.irc && rp.irc.server && rp.irc.channel && !rp.irc.pending &&
+			(/^web/).test(action.session) && client.connected() && rp.irc.enabled && !rp.irc.error);	
+	}
+	
 	return {
 		connectUser: connectUser,
 		say: say,
@@ -150,6 +163,7 @@ module.exports = function(clientEmitter, client, callbacks) {
 		copyRoomOnlyIrc: copyRoomOnlyIrc,
 		getBotNick: getBotNick,
 		getRequest: getRequest,
-		channelLowerCase: channelLowerCase
+		channelLowerCase: channelLowerCase,
+		isActionReq: isActionReq
 	};
 };

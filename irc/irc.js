@@ -57,9 +57,7 @@ module.exports = function (coreObj) {
 
 	core.on('text', function (text, callback) {
 		log("On text:", client.connected(), text.id);
-		var rp = text.room.params;
-		if (rp && rp.irc && rp.irc.server && rp.irc.channel && !rp.irc.pending &&
-			(/^web/).test(text.session) && client.connected() && rp.irc.enabled) {
+		if(ircUtils.isActionReq(text)) {
 			if (!(firstMessage[text.to] && firstMessage[text.to][text.from])) {
 				if (!firstMessage[text.to]) {
 					firstMessage[text.to] = {};
@@ -80,9 +78,7 @@ module.exports = function (coreObj) {
 
 	core.on('away', function (action, callback) {
 		log("On away:", client.connected());
-		var rp = action.room.params;
-		if (rp && rp.irc && rp.irc.server && rp.irc.channel && !rp.irc.pending &&
-			(/^web/).test(action.session) && client.connected() && rp.irc.enabled) {
+		if (ircUtils.isActionReq(action)) {
 			if (firstMessage[action.to] && firstMessage[action.to][action.from]) {
 				ircUtils.disconnectUser(action.to, action.from);
 				delete firstMessage[action.to][action.from];
@@ -91,7 +87,6 @@ module.exports = function (coreObj) {
 		callback();
 	}, "gateway");
 };
-
 
 function init() {
 	var notUsedRooms = {};
@@ -124,7 +119,7 @@ function init() {
 				if (!room.params.irc.enabled) return;
 				if (state.rooms[room.id]) {
 					var r1 = room.params.irc;
-					if (r1.params.irc.channel) r1.params.irc.channel = r1.params.irc.channel.toLowerCase();
+					if (r1.channel) r1.channel = r1.channel.toLowerCase();
 					var r2 = state.rooms[room.id].params.irc;
 					if (!(r1.server === r2.server && r1.channel === r2.channel && r1.pending === r2.pending)) {
 						log("reconnecting bot with new values:", room.id);
