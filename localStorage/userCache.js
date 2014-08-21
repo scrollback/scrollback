@@ -11,28 +11,38 @@ var roomOccupantList = {};
 var globalOccupantList = {};
 
 var roomMemberList = {};
+var _this;
 
 module.exports = {
 	populateMembers: function (room) {
 		// populate memebers of room into our structures.
 		var members;
+		_this = this;
 		libsb.emit("getUsers", {
-			memberOf: room
+			memberOf: room,
+			noCache: true
 		}, function (err, data) {
 			members = data.results;
-			this.putMembers(room, members);
+			_this.putMembers(room, members);
+			_this.deletePersistence();
+			_this.saveUsers();
 		});
 	},
 	populateOccupants: function (room) {
 		var occupants;
 		libsb.emit("getUsers", {
-			occupantOf: room
+			occupantOf: room,
+			noCache: true
 		}, function (err, data) {
 			occupants = data.results;
-			this.putOccupants(room, occupants);
+			_this.putOccupants(room, occupants);
+			_this.deletePersistence();
+			_this.saveUsers();
 		});
 	},
 	getMembers: function (room, memberId) {
+		this.loadUsers();
+		
 		if (typeof memberId !== "undefined") {
 			if (/^guest-/.test(memberId)) {
 				return []; // guest cannot be a member
@@ -53,6 +63,8 @@ module.exports = {
 		}
 	},
 	getOccupants: function (room, occupantId) {
+		this.loadUsers();
+		
 		if (typeof occupantId !== "undefined") {
 			// return the singe occupant of this room 
 
@@ -73,6 +85,9 @@ module.exports = {
 		}
 	},
 	putMembers: function (room, memberList) {
+		if (typeof room !== "string") {
+			return;
+		}
 		if (!(memberList instanceof Array)) {
 			memberList = [memberList];
 		}
@@ -85,11 +100,15 @@ module.exports = {
 				roomMemberList[room][member.id] = member;
 			}
 		});
-
+		this.saveUsers();
 	},
 	putOccupants: function (room, occupantList) {
+		if (typeof room !== "string") {
+			return;
+		}
 		if (!(occupantList instanceof Array)) {
-			occupantList = [occupantList];
+			if(typeof occupantList !== "undefined") occupantList = [occupantList];
+			else occupantList = [];
 		}
 
 		// add each user to globalOccupantList if he is not there already
@@ -103,7 +122,7 @@ module.exports = {
 			}
 			roomOccupantList[room][occupant.id] = true;
 		});
-
+		this.saveUsers();
 	},
 	removeMembers: function (room, memberList) {
 		if (!(memberList instanceof Array)) {
@@ -112,6 +131,7 @@ module.exports = {
 		memberList.forEach(function (m) {
 			delete roomMemberList[room][m];
 		});
+		this.saveUsers();
 	},
 	removeOccupants: function (room, occupantList) {
 		if (!(occupantList instanceof Array)) {
@@ -120,11 +140,18 @@ module.exports = {
 		occupantList.forEach(function (o) {
 			delete roomOccupantList[room][o];
 		});
+		this.saveUsers();
 	},
 	loadUsers: function () {
-		roomOccupantList = JSON.parse(localStorage.roomOccupantList);
-		roomMemberList = JSON.parse(localStorage.roomMemberList);
-		globalOccupantList = JSON.parse(localStorage.globalOccupantList);
+		if (localStorage.hasOwnProperty("roomOccupantList")) {
+			roomOccupantList = JSON.parse(localStorage.roomOccupantList);
+		}
+		if (localStorage.hasOwnProperty("roomMemberList")) {
+			roomMemberList = JSON.parse(localStorage.roomMemberList);
+		}
+		if (localStorage.hasOwnProperty("globalOccupantList")) {
+			globalOccupantList = JSON.parse(localStorage.globalOccupantList);
+		}
 	},
 	saveUsers: function () {
 		localStorage.roomOccupantList = JSON.stringify(roomOccupantList);

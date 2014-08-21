@@ -387,6 +387,7 @@ module.exports = function (c) {
 		}
 
 	}, 1000);
+	 require('./membersCaching.js')(core);
 	core.on('logout', logout, 1000);
 };
 
