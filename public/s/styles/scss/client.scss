@@ -1,6 +1,7 @@
 @import "client-global";
 @import "client-themes";
 @import "base";
+@import "animations";
 @import "alert";
 @import "modal";
 @import "popover";
@@ -72,6 +73,7 @@ body {
     width: $width-room;
     background-color: $dark-color;
     color: $light-color;
+    z-index: 10;
 
     @media #{$screenx} {
         left: ( $width-roomx + $width-metax ) * -1;
@@ -175,6 +177,7 @@ body {
     border-right: 1px solid rgba(0,0,0,.1);
     background-color: darken($light-color, 5%);
     color: $dark-color;
+    z-index: 20;
 
     @media #{$screenx} {
         left: $width-metax * -1;
@@ -293,17 +296,28 @@ body {
 }
 
 .meta-panes {
+    position: relative;
     height: 100%;
-    padding-bottom: $bar-height;
+    width: 100%;
 
     .pane {
-        display: none;
+        @include opacity(0);
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 0;
+        pointer-events: none;
+        padding-bottom: $bar-height;
 
         &.current {
+            @include opacity(1);
             @extend %fadein;
 
-            display: block;
-            height: 100%;
+            z-index: 10;
+            pointer-events: auto;
         }
     }
 }
@@ -555,6 +569,7 @@ body {
     position: fixed;
     left: 0;
     right: 0;
+    z-index: 30;
 
     @media #{$screenxxx} { left: $width-metaxxx; }
 
@@ -1438,7 +1453,7 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 20;
+    z-index: 90;
     padding: 1em;
     display: none;
 
