@@ -11,7 +11,7 @@ describe("User cache ", function () {
     it("should add new members to a room that does not exist ", function () {
 		userCache.putMembers("testroom1", members);
 		var res = userCache.getMembers("testroom1");
-		assert.equal(_.isEqual(members, res), true, "Assertion error!");
+		assert.equal(_.isEqual(members, res), true, "Assertion Error!");
     });
 
     it("should add a new member to a room that already exists ", function () {
@@ -21,16 +21,20 @@ describe("User cache ", function () {
 		userCache.putMembers("testroom1", newMember);
 		
 		var res = userCache.getMembers("testroom1");
-		assert.equal(_.isEqual(members, res), true, "Assertion error!");
+		assert.equal(_.isEqual(members, res), true, "Assertion Error!");
     });
 
     it("should add occupants to a room that does not exist", function () {
 		userCache.putOccupants("testroom1", occupants);
 		var res = userCache.getOccupants("testroom1");
-		assert.equal(_.isEqual(occupants, res), true, "Assertion error!");
+		assert.equal(_.isEqual(occupants, res), true, "Assertion Error!");
     });
 	
-	// get single occupant, member (testing ref query)
+	it("should return a member object with ref query ", function () {
+		var mem2 = [members[1]];
+		var res = userCache.getMembers("testroom1", "member2");
+		assert.equal(_.isEqual(mem2, res), true, "Assertion Error!");
+	});
 	
     it("should add an occupant to a room that already exists", function () {
 		var newOccupant = {id: 'occupant3', description: "testoccupant3"};

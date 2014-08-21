@@ -33,7 +33,7 @@ module.exports = {
 		});
 	},
 	getMembers: function (room, memberId) {
-		if (typeof member !== "undefined") {
+		if (typeof memberId !== "undefined") {
 			if (/^guest-/.test(memberId)) {
 				return []; // guest cannot be a member
 			}
