@@ -1546,6 +1546,9 @@ body {
 
 .room-area, .meta-area, .main-area {
     @include transition(.3s, ease-out); /* animate css transforms */
+    @include transform(translate3d(0, 0, 0)); /* enable hardware acceleration in small screen */
+
+    @media #{$screenxx} { @include transform(none); }
 
     /* fix flicker in some browsers */
     .view-meta &, .view-rooms & {
