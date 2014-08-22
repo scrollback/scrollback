@@ -17,12 +17,12 @@ var gulp = require("gulp"),
 	manifest = require("gulp-manifest"),
 	rimraf = require("gulp-rimraf"),
 	bowerDir = "bower_components",
-	libDir = "public/s/lib",
+	libDir = "public/s/scripts/lib",
 	laceDir = "public/s/styles/lace",
 	cssDir = "public/s/styles/dist",
 	jsFiles = [
 		"*/*-client.js",
-		"lib/*.js", "ui/*.js",
+		"/lib/*.js", "ui/*.js",
 		"public/client.js", "public/libsb.js"
 	],
 	cssFiles = [ "public/s/styles/scss/*.scss" ];
@@ -92,7 +92,7 @@ gulp.task("bundle", [ "libs" ], function() {
 	return bundle([ "libsb.js", "client.js" ], { debug: !gutil.env.production })
 	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
 	.pipe(rename({ suffix: ".bundle.min" }))
-	.pipe(gulp.dest("public/s"))
+	.pipe(gulp.dest("public/s/scripts"))
 	.on("error", gutil.log);
 });
 

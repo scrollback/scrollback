@@ -28,10 +28,9 @@ bower_components
 myConfig.js
 client-config.js
 
-public/embed.js
 public/s/styles/lace
 public/s/styles/dist
-public/s/lib
+public/s/scripts/lib
 ircClient/Data
 xunit.xml
 public/t/coverage-*.html

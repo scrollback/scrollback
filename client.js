@@ -6,10 +6,10 @@ window.validate = require('./lib/validate.js');
 window.generate = require('./lib/generate');
 
 // third party libraries
-require('./public/s/lib/sockjs.min.js');
-require('./public/s/lib/jquery.velocity.min.js');
-require('./public/s/lib/svg4everybody.min.js');
-require('./public/s/lib/lace.js');
+require('./public/s/scripts/lib/sockjs.min.js');
+require('./public/s/scripts/lib/jquery.velocity.min.js');
+require('./public/s/scripts/lib/svg4everybody.min.js');
+require('./public/s/scripts/lib/lace.js');
 
 // libsb files
 require('./interface/interface-client')(core);

@@ -1,7 +1,7 @@
 /*jslint browser: true, indent: 4, regexp: true*/
 /*global $*/
 
-(function() {
+$(function() {
     'use strict';
 
     // Detect scroll position
@@ -62,7 +62,7 @@
     };
 
     // Show a slideshow
-    var slides = ["websites", "conferences", "geeks", "home"],
+    var slides = [ "websites", "conferences", "geeks", "home" ],
         current = 0,
         timeout;
 
@@ -137,10 +137,10 @@
     });
 
     // Prevent form submission if input not valid
-    $("#create-text").focus(validate).keyup(validate).change(validate);
+    $("#create-text").on("focus keyup change", validate);
     $("#create-field").submit(function(e) {
         e.preventDefault();
         return false;
     });
 
-}());
+});
