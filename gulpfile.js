@@ -22,7 +22,7 @@ var gulp = require("gulp"),
 	cssDir = "public/s/styles/dist",
 	jsFiles = [
 		"*/*-client.js",
-		"/lib/*.js", "ui/*.js",
+		"lib/*.js", "ui/*.js",
 		"public/client.js", "public/libsb.js"
 	],
 	cssFiles = [ "public/s/styles/scss/*.scss" ];
