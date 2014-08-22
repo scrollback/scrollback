@@ -13,6 +13,11 @@ var globalOccupantList = {};
 var roomMemberList = {};
 var _this;
 
+var membersPopulated = false;
+var occupantsPopulated = false;
+
+var emitter = new (require("../lib/emitter.js"))();
+
 module.exports = {
 	populateMembers: function (room) {
 		// populate memebers of room into our structures.
@@ -26,6 +31,8 @@ module.exports = {
 			_this.putMembers(room, members);
 			_this.deletePersistence();
 			_this.saveUsers();
+			membersPopulated = true;
+			emitter.emit("members-populated");
 		});
 	},
 	populateOccupants: function (room) {
@@ -38,50 +45,65 @@ module.exports = {
 			_this.putOccupants(room, occupants);
 			_this.deletePersistence();
 			_this.saveUsers();
+			occupantsPopulated = true;
+			emitter.emit("occupants-populated");
 		});
 	},
-	getMembers: function (room, memberId) {
+	getMembers: function (room, memberId, callback) {
+		var res = [];
 		this.loadUsers();
 		
-		if (typeof memberId !== "undefined") {
+		if (memberId !== null) {
 			if (/^guest-/.test(memberId)) {
-				return []; // guest cannot be a member
+				res = []; // guest cannot be a member
 			}
 			// return the single member as an Array
 			if (!roomMemberList[room].hasOwnProperty(memberId)) {
-				return [];
+				res = [];
 			}
 			return [roomMemberList[room][memberId]];
 		} else {
 			// return all members of the room
 			var mList = roomMemberList[room];
-			var res = [];
 			for (var m in mList) {
 				res.push(roomMemberList[room][m]);
 			}
-			return res;
+		}
+		if (membersPopulated === true) {
+			callback(res);
+		} else {
+			emitter.on("members-populated", function() {
+				callback(res);
+			}, 500);
 		}
 	},
-	getOccupants: function (room, occupantId) {
+	getOccupants: function (room, occupantId, callback) {
+		var res = [];
 		this.loadUsers();
 		
-		if (typeof occupantId !== "undefined") {
+		if (occupantId !== null) {
 			// return the singe occupant of this room 
 
 			if (!roomOccupantList[room].hasOwnProperty(occupantId)) {
 				// the room does not have this occupant
-				return [];
+				res = [];
 			} else {
 				// return occupant object 
-				return [globalOccupantList[occupantId.id]];
+				res = [globalOccupantList[occupantId.id]];
 			}
 		} else {
 			// return all occupants of this room as Array.
-			var res = [];
 			for (var r in roomOccupantList[room]) {
 				res.push(globalOccupantList[r]);
 			}
-			return res;
+		}
+		
+		if (occupantsPopulated === true) {
+			callback(res);
+		} else {
+			emitter.on("occupants-populated", function (){
+				callback(res);
+			}, 500);
 		}
 	},
 	putMembers: function (room, memberList) {

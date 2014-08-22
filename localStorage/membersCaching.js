@@ -10,16 +10,25 @@ module.exports = function (core) {
 		if (query.hasOwnProperty("memberOf")) {
 			// fetching member info
 			if (query.hasOwnProperty("ref")) { // info for a single member
-				query.results = userCache.getMembers(query.to, query.ref);
-				query.resultSource = "localStorage";
+				userCache.getMembers(query.to, query.ref, function (data) {
+					query.results = data;
+					query.resultSource = "localStorage";
+					next();
+				});
 			} else { // return all members of requested room.
-				query.results = userCache.getMembers(query.to);
-				query.resultSource = "localStorage";
+				userCache.getMembers(query.to, null, function(data) {
+					query.results = data;
+					query.resultSource = "localStorage";
+					next();
+				});
 			}
 		} else if (query.hasOwnProperty("occupantOf")) {
 			// fetch occupant info
-			query.results = userCache.getOccupants(query.to);
-			query.resultSource = "localStorage";
+			userCache.getOccupants(query.to, null, function(results) {
+				query.results = results;
+				query.resultSource = "localStorage";
+				next();
+			});
 		} else if (query.hasOwnProperty("ref")) {
 			// ref alone without memberOf and occupantOf
 			// decide how to handle this. Have to return the user object.
