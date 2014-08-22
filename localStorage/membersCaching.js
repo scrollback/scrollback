@@ -32,8 +32,10 @@ module.exports = function (core) {
 		} else if (query.hasOwnProperty("ref")) {
 			// ref alone without memberOf and occupantOf
 			// decide how to handle this. Have to return the user object.
+			next();
+		} else {
+			next();
 		}
-		next();
 	}, 100);
 
 	core.on("getUsers", function (query, next) {
