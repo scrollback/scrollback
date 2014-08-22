@@ -25,6 +25,7 @@ var seo;
 //var log = require('../lib/logger.js');
 exports.init = function(app, coreObject) {
 	core = coreObject;
+    if (!config.http.https) console.warn("Insecure connection. Specify https options in your config file.");
     init();
 	app.get('/t/*', function(req, res, next) {
 		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data){
@@ -37,7 +38,7 @@ exports.init = function(app, coreObject) {
 		if(/^\/t\//.test(req.path)) return next();
 		if(/^\/s\//.test(req.path)) {console.log("static"); return next();}
 
-		if(!req.secure) {
+		if(!req.secure && config.http.https) {
 			var queryString  = req._parsedUrl.search ? req._parsedUrl.search : "";
 			return res.redirect(307, 'https://' + config.http.host + req.path + queryString);
 		}
