@@ -55,7 +55,7 @@ function joinServer(server, nick, channels, options, cb) {
 		userName: displayNick,
 		realName: nick + '@scrollback.io',
 		channels: channels,
-		debug: false,
+		debug: config.debug,
 		autoRejoin: options.autoRejoin,
 		stripColors: true,
 		floodProtection: true,
