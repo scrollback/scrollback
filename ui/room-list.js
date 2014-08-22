@@ -4,7 +4,7 @@
 var roomEl = require("./room-item.js"),
 	$roomlist, rooms = [false, false],
 	listenQueue = [];
-
+var BACK_SENT = 1, BACK_RECEIVED = 2, NOT_LISTENING = 0;
 var listening = {};
 
 function enter(room) {
@@ -18,10 +18,11 @@ function enter(room) {
 
 	if (libsb.isInited) {
 		if(!listening[room]){
-			listening[room] = true;
+			listening[room] = BACK_SENT;
+			console.log("trying to send back.", room);
 			libsb.enter(room, function (err) {
-				if (err) listening[room] = false;
-				else listening[room] = true;
+				if (err) listening[room] = NOT_LISTENING;
+				else listening[room] = BACK_RECEIVED;
 			});
 		}
 	} else {
@@ -145,9 +146,9 @@ module.exports = function (libsb) {
 			}
 		}
 
-		if (!state.connectionStatus) {
+		if (!state.connectionStatus && (!state.old || state.old.connectionStatus)) {
 			Object.keys(listening).forEach(function (e) {
-				listening[e] = false;
+				listening[e] = NOT_LISTENING;
 			});
 		}
 		next();

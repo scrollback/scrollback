@@ -43,7 +43,7 @@ sock.on('connection', function (socket) {
             if(!/^web:/.test(d.session)) {
 				return conn.send({type: 'error', id: d.id, message: "INVALID_SESSION"});
             }
-			conn.listeningTo = [];
+			if(!conn.session) conn.listeningTo = [];
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
 			if (!sConns[d.session]) {
@@ -89,7 +89,7 @@ sock.on('connection', function (socket) {
 				return conn.send(e);
 			}
 			if(data.type == 'back') {
-				/* this is need because we dont have the connection object
+				/* this is needed because we dont have the connection object
 				of the user in the rconn until storeBack is called*/
 				conn.send(censorAction(data, "room"));
 				storeBack(conn, data);
