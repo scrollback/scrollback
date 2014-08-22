@@ -183,7 +183,7 @@ function connectUser(roomId, nick, options, cb) {
 				log("part channel", nick, arguments);
 				client.disconnect();
                 log("disconnecting user", client.nick);
-				delete clients[nick][client.opt.server];
+				delete clients[client.sbNick][client.opt.server];
 			}
         }
         client.on("part", function (channel, nick) {
