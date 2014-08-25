@@ -49,7 +49,6 @@ function returnArray(query, index) {
 					break;
 				}
 				if (texts[i].time != index.time) break;
-
 			}
 			i+=inc;
 		}
@@ -84,7 +83,7 @@ $(function () {
 			query.time = index.time;
 			if (index.id && index.id !== "missing") {
 				if (query.before) query.before++;
-				else if (query.before) query.after++;
+				else if (query.after) query.after++;
 			}
 
 			if (thread) query.thread = thread;
@@ -100,11 +99,14 @@ $(function () {
 					}
 
 					texts = returnArray(query, index);
+					
 					if (after === 0) {
+						console.log(texts.length, before, texts );
 						if (texts.length < before) {
 							texts.unshift(false);
 						}
 					} else if (before === 0) {
+						console.log(texts.length, after, texts );
 						if (texts.length < after) {
 							texts.push(false);
 						}
