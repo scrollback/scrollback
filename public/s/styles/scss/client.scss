@@ -1,3 +1,8 @@
+/**
+ * Stylesheet for the client
+ */
+
+// Import components from lace
 @import "../lace/base";
 @import "../lace/animations";
 @import "../lace/alert";
@@ -11,15 +16,16 @@
 @import "../lace/tooltip";
 @import "../lace/progress";
 
+// Import global variables and mixins
 @import "global";
 @import "themes";
 @import "tip";
 
-/* widget styles */
+// Widget styles
 %scroll-elem {
     max-height: 100%;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling : touch;
+    overflow-y: scroll; /* should be scroll, not auto for momentum scrolling */
+    -webkit-overflow-scrolling : touch; /* momentum scrolling in webkit */
 }
 
 %column {
@@ -41,7 +47,7 @@
 html, body { height: 100%; }
 
 body {
-    word-wrap: break-word;
+    word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
 
     &:not(.embed) {
         [data-embed]:not([data-embed=none]) { display: none; }
@@ -111,7 +117,7 @@ body {
 .room-list {
     @extend %scroll-elem;
 
-    padding-bottom: $bar-height;
+    padding-bottom: $bar-height; /* adjust to accomodate the logo */
 }
 
 .room-item {
@@ -137,6 +143,7 @@ body {
         position: relative;
         background-color: rgba(0,0,0,.1);
 
+        /* show a little triangle next to the current room */
         &:after {
             content: "";
             display: block;
@@ -240,7 +247,7 @@ body {
     h3 { margin: 0; }
 
     .tab {
-        @include flex-grow(1);
+        @include flex-grow(1); /* grow to use all available space */
 
         text-align: center;
         background-color: transparent;
@@ -310,7 +317,7 @@ body {
         width: 100%;
         z-index: 0;
         pointer-events: none;
-        padding-bottom: $bar-height;
+        padding-bottom: $bar-height; /* adjust to accomodate tabs */
 
         &.current {
             @include opacity(1);
@@ -335,8 +342,8 @@ body {
 
     .infinite-above, .infinite-below {
         background-color: transparent;
-        background-image:  linear-gradient(to right, darken($light-color, 5%), darken($light-color, 5%) 15%, transparent 15%, transparent 85%, darken($light-color, 5%) 85%, darken($light-color, 5%)),
-                           linear-gradient(to bottom, transparent, transparent 25%, darken($light-color, 10%) 25%, darken($light-color, 10%) 65%, transparent 65%, transparent 75%, darken($light-color, 10%) 75%, darken($light-color, 10%) 85%, transparent 85%, transparent);
+        background-image: linear-gradient(to right, darken($light-color, 5%), darken($light-color, 5%) 15%, transparent 15%, transparent 85%, darken($light-color, 5%) 85%, darken($light-color, 5%)),
+                          linear-gradient(to bottom, transparent, transparent 25%, darken($light-color, 10%) 25%, darken($light-color, 10%) 65%, transparent 65%, transparent 75%, darken($light-color, 10%) 75%, darken($light-color, 10%) 85%, transparent 85%, transparent);
         background-size: 5.5em 8em;
         background-position: top left;
         background-repeat: repeat;
@@ -347,7 +354,7 @@ body {
 }
 
 .person {
-    @extend %nofilter;
+    @extend %nofilter; /* fix non-antialiased text in IE */
 
     position: relative;
     display: inline-block;
@@ -472,7 +479,7 @@ body {
     border-right: 4px solid lighten($dark-color, 15%);
     cursor: pointer;
 
-    &:first-letter { text-transform: capitalize; }
+    &:first-letter { text-transform: uppercase; } /* make the first letter uppercase, only works in webkit */
 
     &.current { background-color: fade-out(lighten($dark-color, 15%), .7); }
 
@@ -640,9 +647,7 @@ body {
 }
 
 .embed {
-    .meta-button {
-        @include meta-logo-visible;
-    }
+    .meta-button { @include meta-logo-visible; }
 
     &:focus, &:hover, &:active {
         .meta-button { @include meta-back-visible; }
@@ -795,6 +800,9 @@ body {
         display: block;
         float: left;
         margin: .25em;
+        word-wrap: normal;
+        overflow: hidden; /* fix unusual button size when not enough horizontal space */
+        text-overflow: ellipsis;
     }
 }
 
@@ -811,7 +819,7 @@ body {
 
     .minimized & {
         display: table;
-        table-layout: fixed;
+        table-layout: fixed; /* make tables responsive */
     }
 }
 
@@ -900,8 +908,8 @@ body {
     .infinite-above, .infinite-below {
         background-color: transparent;
         background-image: linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-            linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-            linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
+                          linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+                          linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
         background-size: .6em 6em, 80% 6em, 60% 6em;
         background-position: 1em 2em, 3em 2em, 3em 2em;
         background-repeat: repeat-y;
@@ -909,9 +917,9 @@ body {
 
         @media #{$screenxx} {
             background-image: linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-                linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-                linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-                linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
+                              linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+                              linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+                              linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
             background-size: .6em 6em, 6em 6em, 80% 6em, 60% 6em;
             background-position: 2em 2em, 4em 2em, 12em 2em, 12em 2em;
         }
@@ -1043,7 +1051,7 @@ body {
             font-weight: 400;
             padding-right: .25em;
 
-            &:after { content: " "; }
+            &:after { content: ""; }
 
             @media #{$screenxx} { margin-left: 0; }
         }
@@ -1128,8 +1136,8 @@ body {
     height: .5em;
     width: .5em;
     border-radius: 50%;
-    color: fade-out(lighten($dark-color, 15%), .5);
-    background-color: currentColor;
+    color: fade-out(lighten($dark-color, 15%), .5); /* only for enabling use of currentColor */
+    background-color: currentColor; /* use the same color as text */
 
     @media #{$screenxx} { margin-left: -10em; }
 
@@ -1293,7 +1301,7 @@ body {
     width: 3.5em;
     border: none;
     cursor: pointer;
-    fill: lighten($dark-color, 15%); /* inline SVG */
+    fill: lighten($dark-color, 15%); /* inline SVG styling */
 
     &:hover, &:focus { @extend %transition; }
 
@@ -1333,6 +1341,7 @@ body {
 
             @media #{$screenxx} {
                 display: table;
+                table-layout: fixed;
                 border-spacing: 2em;
             }
         }
