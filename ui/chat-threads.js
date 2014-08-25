@@ -103,6 +103,10 @@ $(function() {
                 selectConv(state.thread);
             }
 
+            if (state.old.roomName !== state.roomName) {
+                currThread = null;
+            }
+
             setTimeout(function() {
                 updateLine();
             }, 1000);

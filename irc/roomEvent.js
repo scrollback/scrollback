@@ -3,7 +3,8 @@ var config = require('../config.js');
 var debug = config.irc.debug;
 var internalSession = Object.keys(config.whitelists)[0];
 module.exports = function (core, client, ircUtils, firstMessage) {
-	core.on("room", function (action, callback) {
+	core.on("room", function (action, cb) {
+		var callback = ircUtils.channelLowerCase(action, cb);
 		var r = action.room;
 		var or = action.old;
 		if (r.params.irc && Object.keys(r.params.irc).length > 0) {
@@ -22,15 +23,16 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 				if (!room[0]) callback();
 				else if (room[0].id === r.id) callback();
 				else {
-					if (!debug) r.params.irc.error = "ERR_CONNECTED_OTHER_ROOM"; //testing mode will not add the error.
+					r.params.irc.error = "ERR_CONNECTED_OTHER_ROOM";
                     removeIrcIdentity(room[0]);
 					callback();
 				}
 			});
 		} else callback();
 	}, "appLevelValidation");
-
-	core.on('room', function (action, callback) {
+	
+	core.on('room', function (action, cb) {
+		var callback = ircUtils.channelLowerCase(action, cb);
 		var room = action.room;
 		log("room irc:", JSON.stringify(action), client.connected());
 		if (!room.params.irc || room.params.irc.error || action.session === internalSession) return callback();
@@ -93,17 +95,17 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 /**
  *add or copy pending status
  */
-function addPending(room) {
-	var or = room.old;
-	if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel) { //this is old room
-		if (room.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== room.room.params.irc.channel) {
-			room.room.params.irc.pending = debug ? false : true; //if server or channel changes
-		} else room.room.params.irc.pending = or.params.irc.pending;
-	} else {
-		room.room.params.irc.pending = debug ? false : true; //this is new room.
-	}
+function addPending(action) {
+    var or = action.old;
+    var p = debug || (action.user.role === 'su');
+    if (or && or.id && or.params.irc && or.params.irc.server && or.params.irc.channel) { //this is old room
+        if (action.room.params.irc.server !== or.params.irc.server || or.params.irc.channel !== action.room.params.irc.channel) {
+            action.room.params.irc.pending = p ? false : true; //if server or channel changes
+        } else action.room.params.irc.pending = or.params.irc.pending;
+    } else {
+        action.room.params.irc.pending = p ? false : true; //this is new room.
+    }
 }
-
 
 function actionRequired(room) {
 	return (room.room.params && room.room.params.irc &&
