@@ -124,7 +124,8 @@ gulp.task("manifest", function() {
 		network: [ "*" ],
 		fallback: [
 			"//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
-			"/ /offline.html"
+			"/ /offline.html",
+			"/socket /s/socket-fallback"
 		],
 		preferOnline: true,
 		hash: true,
