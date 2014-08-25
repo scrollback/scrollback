@@ -12,7 +12,7 @@
 		left: 0;
 		height: 100%;
 		width: 100%;
-		z-index: 40;
+		z-index: 400;
 		background: rgba(0,0,0,.7);
 	}
 
@@ -25,7 +25,7 @@
 		left: 50%;
 		min-width: 27em;
 		max-width: 100%;
-		z-index: 50;
+		z-index: 500;
 		overflow: auto;
 		background: $light-color;
 		border-radius: $roundness;

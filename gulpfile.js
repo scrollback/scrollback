@@ -124,8 +124,7 @@ gulp.task("manifest", function() {
 		network: [ "*" ],
 		fallback: [
 			"//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
-			"/ /offline.html",
-			"/socket /s/socket-fallback"
+			"/ /offline.html"
 		],
 		preferOnline: true,
 		hash: true,
@@ -140,7 +139,6 @@ gulp.task("styles", function() {
 	return gulp.src(cssFiles)
 	.pipe(sass({
 		style: "expanded",
-		sourcemap: true,
 		sourcemapPath: "../scss"
 	}))
 	.on("error", function(e) { gutil.log(e.message); })

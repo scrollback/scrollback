@@ -68,5 +68,4 @@
 
 @include exports("themes") {
     @include theme($name: dark, $base: $dark-color, $text: $light-color);
-    @include theme($name: green, $base: darken($accent-color, 10%), $text: $light-color);
 }
