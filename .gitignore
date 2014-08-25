@@ -34,3 +34,4 @@ public/s/lib
 ircClient/Data
 xunit.xml
 public/t/coverage-*.html
+/ircClient/myConfig.js
