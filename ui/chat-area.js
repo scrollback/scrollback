@@ -16,10 +16,6 @@ function getIdAndTime(index) {
 	id = index[1];
 
 	time = parseInt(time) || null;
-	console.log(index, {
-		time: time,
-		id: id
-	});
 	return {
 		time: time,
 		id: id
@@ -55,7 +51,7 @@ function returnArray(query, index) {
 				if (texts[i].time != index.time) break;
 
 			}
-			i = +inc;
+			i+=inc;
 		}
 	}
 	if (rIndex >= 0) texts.splice(rIndex, 1);
@@ -67,7 +63,9 @@ $(function () {
 		roomName = "",
 		thread = '',
 		time = null;
-	window.logs = $logs;
+	function resetLog(time){
+		$logs.reset(time+"-" || null);
+	}
 	$logs.infinite({
 		scrollSpace: 2000,
 		fillSpace: 1000,
@@ -191,8 +189,7 @@ $(function () {
 		next();
 	}, 90);
 	libsb.on("init-dn", function (init, next) {
-		$logs.reset(time || null);
-
+		resetLog(time || null);
 		next();
 	}, 100);
 	libsb.on("navigate", function (state, next) {
@@ -228,7 +225,7 @@ $(function () {
 			}
 		}
 		if (reset) {
-			$logs.reset(time);
+			resetLog(time);
 		}
 
 		next();

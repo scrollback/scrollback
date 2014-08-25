@@ -31,7 +31,7 @@
 				atTop = $logs.data("upper-limit");
 				atBottom = $logs.data("lower-limit");
 				scrollHeight = $logs.prop('scrollHeight');
-				startIndex = $logs.prop('index');
+				startIndex = $logs.data('index');
 			}
 
 			// Extend and contract the empty space as needed when scrolling.
