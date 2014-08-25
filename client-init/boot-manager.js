@@ -24,11 +24,11 @@ function init(libsb) {
 		}
 		return next();
 	}, 1000);
-	
+
 	libsb.on("navigate", function (state, next) {
 		if (state.source == "boot") return next();
-		if(state.connectionStatus === false) isInited = false;
-		
+		if (state.connectionStatus === false) isInited = false;
+
 		if (!libsb.hasBooted) {
 			// add more sources if the navigate has to be queued up.
 			if (["socket"].indexOf(state.source) >= 0) return actionQueue.enQueue(next);

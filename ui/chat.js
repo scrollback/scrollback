@@ -12,12 +12,12 @@ $(function() {
 
 		if (text.type === "missing") {
 			$el = $("<div>").addClass("chat-item-missing");
-			$el.attr("data-index", text.endTime || text.startTime || 0);
+			$el.attr("data-index", (text.endTime || text.startTime || 0) + "-missing");
 		} else {
 			$el.find(".chat-nick").text(text.from.replace(/^guest-/, ""));
 			$el.find(".chat-message").html(format.linkify(format.textToHtml(	text.text || "")));
 			$el.find(".chat-timestamp").text(format.friendlyTime(text.time, new Date().getTime()));
-			$el.attr("data-index", text.time);
+			$el.attr("data-index", text.time+"-"+text.id);
 			$el.attr("id", "chat-" + text.id);
 
 			if (text.threads && text.threads.length) {

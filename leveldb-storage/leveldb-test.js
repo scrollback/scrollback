@@ -1,5 +1,5 @@
 var assert = require('assert');
-var core = require('../lib/emitter.js');
+var core =new( require('../lib/emitter.js'))();
 var generate = require("../lib/generate.js");
 require("./leveldb-storage.js")(core);
 var time = 1398139968009, id;
@@ -399,6 +399,7 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 			if(i>count/1.5) to = "scrollbackteam";
 			else if(i>count/3) to = "nodejs";
 			else to = "scrollback";
+			x +=2000;
 			
 			core.emit("text", {
 				id: (id = generate.uid()),
@@ -406,7 +407,7 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 				to: to,
 				text: generate.sentence(10),
 				threads: [{id:"thread"+to+(i%10), title: "thread"+to+(i%10)}],
-				time: (x+=2000)
+				time: x
 			}, function(){
 				insertMessages(count, callback);
 			});

@@ -1,4 +1,3 @@
-
 /**
  * Properties of naviagtion state object
  *
@@ -11,15 +10,16 @@
  * tab: {String} (info|people|threads|local|global)
  * thread: {String} threadId
  * query: {String} searchQuery
+ * connectionStatus: (Boolean)
  * text: {String} textId
  * time: {String} - Timestamp of chat message
  * old: {Object} - Old state object
  * changes: {Object} - New values of changed properties
  */
 
-module.exports = function(libsb) {
-    require("./boot-manager.js")(libsb);
-    require("./state-manager.js")(libsb);
-    require("./history-manager.js")(libsb);
-    require("./view-manager.js")(libsb);
+module.exports = function (libsb) {
+	require("./boot-manager.js")(libsb);
+	require("./state-manager.js")(libsb);
+	require("./history-manager.js")(libsb);
+	require("./view-manager.js")(libsb);
 };
