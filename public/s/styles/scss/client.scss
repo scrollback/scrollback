@@ -1111,9 +1111,9 @@ body {
     &:before, &:after {
         content: "";
         display: block;
-        height: 16px;
+        height: 12px;
         width: 100%;
-        background-size: 16px 16px;
+        background-size: 12px 12px;
         background-repeat: repeat-x;
     }
 }

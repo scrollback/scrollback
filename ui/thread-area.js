@@ -84,13 +84,12 @@ var threadEl = require("./thread.js"),
 		query.time = index || null;
 		libsb.getThreads(query, function(err, t) {
 			var threads = t.results;
-
 			if(err) throw err; // TODO: handle the error properly.
-
-
+            
 			if(!index && threads.length === "0") {
 				return callback([false]);
 			}
+            console.log("Brrrrr");
 			if(!after) {
 				if(!t.time) {
 					threads.push(false);
@@ -107,12 +106,9 @@ var threadEl = require("./thread.js"),
 					threads.push(false);
 				}
 			}
-
 			renderThreads(threads, callback);
 		});
 	}
-
-
 
 	libsb.on('navigate', function(state, next) {
 		var reset = false;
@@ -195,6 +191,11 @@ var threadEl = require("./thread.js"),
 				}
 			}
 		});
+		libsb.on("init-dn", function(init, next) {
+			$threads.reset();
+			next();
+		}, 100);
+
         $(".search-back").click(function(e) {
             libsb.emit("navigate", {mode: "normal", tab: "threads", thread: "", q:"", time: null});
             e.stopImmediatePropagation();

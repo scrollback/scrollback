@@ -1,6 +1,6 @@
 /* jshint browser: true */
-/* global $, libsb, validate */
-
+/* global $, libsb*/
+var validate = require("../lib/validate.js");
 $(function(){
 	var lace = require("../lib/lace.js"),
 		signingUser, signingUp = false;

@@ -34,7 +34,7 @@ function browserAuth(action, callback) {
 			if(!user.results || user.results.length === 0) {
 				action.user = {};
 				action.user.identities = [identity];
-                action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=monsterid';;
+                action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=monsterid';
 				return callback();
 			}
 			action.old = action.user;

@@ -22,7 +22,8 @@ var gulp = require("gulp"),
 	jsFiles = [
 		"*/*-client.js",
 		"lib/*.js", "ui/*.js",
-		"public/client.js", "public/libsb.js"
+		"public/client.js", "public/libsb.js", "client-init/*.js",
+		"client-entityloader/*.js"
 	],
 	cssFiles = [ "public/s/styles/scss/*.scss" ];
 
@@ -96,7 +97,7 @@ gulp.task("bundle", [ "libs" ], function() {
 
 // Generate embed widget script
 gulp.task("embed", function() {
-	return bundle("embed/embed-widget.js", { debug: !gutil.env.production })
+	return bundle("embed/embed-parent.js", { debug: !gutil.env.production })
 	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
 	.pipe(rename("embed.min.js"))
 	.pipe(gulp.dest("public"))
@@ -123,7 +124,8 @@ gulp.task("manifest", function() {
 		network: [ "*" ],
 		fallback: [
 			"//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
-			"/ /offline.html"
+			"/ /offline.html",
+			"/socket /s/socket-fallback"
 		],
 		preferOnline: true,
 		hash: true,
