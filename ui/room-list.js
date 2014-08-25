@@ -19,7 +19,6 @@ function enter(room) {
 	if (libsb.isInited) {
 		if(!listening[room]){
 			listening[room] = BACK_SENT;
-			console.log("trying to send back.", room);
 			libsb.enter(room, function (err) {
 				if (err) listening[room] = NOT_LISTENING;
 				else listening[room] = BACK_RECEIVED;
