@@ -89,7 +89,6 @@ var threadEl = require("./thread.js"),
 			if(!index && threads.length === "0") {
 				return callback([false]);
 			}
-            console.log("Brrrrr");
 			if(!after) {
 				if(!t.time) {
 					threads.push(false);

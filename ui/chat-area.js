@@ -27,6 +27,7 @@ function returnArray(query, index) {
 		rIndex = -1,
 		i, inc, end;
 	texts = texts.slice(0, texts.length);
+	if(!texts.length) return [];
 	if (query.time) {
 		if (query.before) {
 			i = texts.length - 1;
@@ -101,12 +102,10 @@ $(function () {
 					texts = returnArray(query, index);
 					
 					if (after === 0) {
-						console.log(texts.length, before, texts );
 						if (texts.length < before) {
 							texts.unshift(false);
 						}
 					} else if (before === 0) {
-						console.log(texts.length, after, texts );
 						if (texts.length < after) {
 							texts.push(false);
 						}
