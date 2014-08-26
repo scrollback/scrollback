@@ -103,6 +103,10 @@ $(function() {
                 selectConv(state.thread);
             }
 
+            if (state.old.roomName !== state.roomName) {
+                currThread = null;
+            }
+
             setTimeout(function() {
                 updateLine();
             }, 1000);
@@ -164,6 +168,14 @@ $(function() {
             this.scrollTop(0);
         }
 
+        if (!currThread || lastThread !== currThread) {
+            updateLine();
+        }
+
+        if (!window.currentState.connectionStatus) {
+            return this;
+        }
+
         var nick = this.find(".chat-nick").text(),
             msg = format.htmlToText($entry.html()),
 			atStart = false;
@@ -199,10 +211,6 @@ $(function() {
                     $entry.setCursorEnd();
                 }
             }
-        }
-
-        if (!currThread || lastThread !== currThread) {
-            updateLine();
         }
 
 		return this;

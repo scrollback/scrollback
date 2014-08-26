@@ -55,7 +55,7 @@ function joinServer(server, nick, channels, options, cb) {
 		userName: displayNick,
 		realName: nick + '@scrollback.io',
 		channels: channels,
-		debug: false,
+		debug: config.debug,
 		autoRejoin: options.autoRejoin,
 		stripColors: true,
 		floodProtection: true,
@@ -183,7 +183,7 @@ function connectUser(roomId, nick, options, cb) {
 				log("part channel", nick, arguments);
 				client.disconnect();
                 log("disconnecting user", client.nick);
-				delete clients[nick][client.opt.server];
+				delete clients[client.sbNick][client.opt.server];
 			}
         }
         client.on("part", function (channel, nick) {

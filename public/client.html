@@ -11,14 +11,14 @@
 
 		<title></title>
 
-        <!-- gen Head Start -->
+		<!-- gen Head Start -->
 
-        <!-- gen Head End -->
+		<!-- gen Head End -->
 
 		<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
 
 		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600">
-		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/gen/client.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/dist/client.css">
 
 		<script type="text/javascript">
 
@@ -235,10 +235,6 @@
 					<a data-role="guest" class="button"  id="noroom-view-login">Sign in</a>
 				</p>
 			</div>
-			<div data-mode="offline" class="content-view-area">
-				<h1>Disconnected :-(</h1>
-				<a class="button offline-view-reconnect">Reconnect</a>
-			</div>
 			<div data-mode="profile" class="content-view-area">
 				<h1>Who is <span id="profile-view-name"></span>?</h1>
 				<p>Profiles are coming soon!</p>
@@ -279,13 +275,13 @@
 
 		<!-- scripts -->
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="/s/lib/jquery.min.js"><\/script>');</script>
+		<script>window.jQuery || document.write('<script src="/s/scripts/lib/jquery.min.js"><\/script>');</script>
 
 		<!--[if IE]>
-		<script src="/s/lib/polyfills.js"></script>
+		<script src="/s/scripts/lib/polyfills.min.js"></script>
 		<![endif]-->
 
-		<script src="/client.bundle.min.js"></script>
+		<script src="/s/scripts/client.bundle.min.js"></script>
 		<script>libsb.connect();</script>
 		<script src="https://login.persona.org/include.js"></script>
 

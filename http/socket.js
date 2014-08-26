@@ -43,6 +43,7 @@ sock.on('connection', function (socket) {
             if(!/^web:/.test(d.session)) {
 				return conn.send({type: 'error', id: d.id, message: "INVALID_SESSION"});
             }
+			if(!conn.session) conn.listeningTo = [];
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
 			if (!sConns[d.session]) {
@@ -88,7 +89,7 @@ sock.on('connection', function (socket) {
 				return conn.send(e);
 			}
 			if(data.type == 'back') {
-				/* this is need because we dont have the connection object
+				/* this is needed because we dont have the connection object
 				of the user in the rconn until storeBack is called*/
 				conn.send(censorAction(data, "room"));
 				storeBack(conn, data);
@@ -117,8 +118,11 @@ sock.on('connection', function (socket) {
                         action = {id: generate.uid(), type: "back",to: e.id, from: data.user.id, session: data.session,user: data.user, room: e};
 						emit({id: generate.uid(), type: "away", to: e.id, from: data.old.id, user: data.old, room: e});
 
-                        if(verifyBack(conn, action)) emit(action);
-                        storeBack(conn, action);
+						if(conn.listeningTo && conn.listeningTo.indexOf(e.id)>=0) {
+							if(verifyBack(conn, action)) emit(action);
+                        	storeBack(conn, action);
+						}
+
 					});
 				}
 				storeInit(conn, data);
@@ -143,35 +147,43 @@ function processUser(conn, user) {
 }
 function storeInit(conn, init) {
 	if(!uConns[init.user.id]) uConns[init.user.id] = [];
-	sConns[init.session].forEach(function(c) {
-		var index;
-		if(init.old && init.old.id && uConns[init.old.id]) {
-			index = uConns[init.old.id].indexOf(c);
-			uConns[init.old.id].splice(index, 1);
-		}
+	if(uConns[init.user.id].indexOf(conn)<0) uConns[init.user.id].push(conn);
 
-		uConns[init.user.id].push(c);
+	if(init.old && init.old.id) {
+		sConns[init.session].forEach(function(c) {
+			var index;
 
-		init.occupantOf.forEach(function(room) {
-			if(init.old && urConns[init.old.id+":"+room.id]) {
-				index = urConns[init.old.id+":"+room.id].indexOf(c);
-				urConns[init.old.id+ ":"+ room.id].splice(index, 1);
-			}
-			if(!urConns[init.user.id+":"+room.id]) urConns[init.user.id+":"+room.id] = [];
-			if(urConns[init.user.id+":"+room.id].indexOf(c)<0) urConns[init.user.id+":"+room.id].push(c);
+				if(uConns[init.old.id]) {
+					index = uConns[init.old.id].indexOf(c);
+					uConns[init.old.id].splice(index, 1);
+				}
+				init.occupantOf.forEach(function(room) {
+					if(urConns[init.old.id+":"+room.id]) {
+						index = urConns[init.old.id+":"+room.id].indexOf(c);
+						urConns[init.old.id+ ":"+ room.id].splice(index, 1);
+						if(c.listeningTo.indexOf(room)>=0) {
+							if(!urConns[init.user.id+":"+room.id]) urConns[init.user.id+":"+room.id] = [];
+							if(urConns[init.user.id+":"+room.id].indexOf(c)<0) urConns[init.user.id+":"+room.id].push(c);
+						}
+
+					}
+				});
 		});
-	});
+	}
+
 }
 
 function storeBack(conn, back) {
 	if(!rConns[back.to]) rConns[back.to] = [];
-	if(!sConns[back.session]) sConns[back.session] = [];
 	if(!urConns[back.from+":"+back.to]) urConns[back.from+":"+back.to] = [];
 	if(!uConns[back.from]) uConns[back.from] = [];
 	if(rConns[back.to].indexOf(conn)<0) rConns[back.to].push(conn);
 	if(urConns[back.from+":"+back.to].indexOf(conn)<0) urConns[back.from+":"+back.to].push(conn);
     if(!conn.listeningTo) conn.listeningTo = [];
-    conn.listeningTo.push(back.to);
+	if(conn.listeningTo.indexOf(back.to)<0) {
+		conn.listeningTo.push(back.to);
+	}
+
 //    console.log("LOG:"+ back.from +" got back from :"+back.to);
 }
 
@@ -190,7 +202,6 @@ function storeAway(conn, away) {
         index = conn.listeningTo.indexOf(away.to);
         if(index>=0)conn.listeningTo.splice(index, 1);
     }
-//    console.log("LOG: "+ away.from +"sending away to :"+away.to);
 }
 
 exports.initServer = function (server) {
@@ -264,7 +275,7 @@ function emit (action, callback) {
         }
         return callback();
 	} else if(action.type == 'user') {
-		if(uConns[action.from]) {
+        if(uConns[action.from] && uConns[action.from].length) {
             uConns[action.from].forEach(function(e) {
                 dispatch(e, action);
             });
@@ -291,15 +302,13 @@ function emit (action, callback) {
 function handleClose(conn) {
 	if(!conn.session) return;
 	core.emit('getUsers', {ref: "me", session: conn.session}, function(err, sess) {
-
+		var user;
 		if(err || !sess || !sess.results) {
 			log("Couldn't find session to close.", err, sess);
 			return;
 		}
-		var user = sess.results[0];
-        // console.log("LOG: "+ user.id +" closed tab which had", conn.listeningTo.join(","), "open");
+		user = sess.results[0];
 		setTimeout(function() {
-            // console.log("LOG: "+ user.id +"30 seconds lated");
             if(!conn.listeningTo || !conn.listeningTo.length) return;
 
             conn.listeningTo.forEach(function(room) {
@@ -310,9 +319,8 @@ function handleClose(conn) {
                     to: room,
                     time: new Date().getTime()
                 };
-                // console.log("LOG: "+user.id +"verifing away for", room);
+
                 if(!verifyAway(conn, awayAction)) return;
-                // console.log("LOG: "+ user.id +"sending away for", room);
                 core.emit('away',awayAction , function(err, action) {
                     if(err) return;
                     storeAway(conn, action);

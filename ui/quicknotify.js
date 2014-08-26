@@ -1,8 +1,7 @@
 /* jshint browser: true */
-/* global $ */
+/* global $, lace */
 
-var lace = require("../lib/lace.js"),
-    quicknotify = {
+var quicknotify = {
     /**
      * Show an notify message.
      * @constructor

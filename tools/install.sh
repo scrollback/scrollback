@@ -150,6 +150,7 @@ fi
 
 # Copy sample myConfig.js and client-config.js files
 [[ -f "myConfig.js" ]] || cp "myConfig.sample.js" "myConfig.js"
+[[ -f "ircClient/myConfig.js" ]] || cp "ircClient/myConfig.sample.js" "ircClient/myConfig.js"
 [[ -f "client-config.js" ]] || cp "client-config.sample.js" "client-config.js"
 
 # Run Gulp to generate misc files

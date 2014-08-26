@@ -70,7 +70,14 @@ module.exports = function(clientEmitter, client, callbacks) {
 	 * Copy only roomId and IRC params.
 	 */
 	function copyRoomOnlyIrc(room) {
-		return {id: room.id, params: {irc: room.params.irc}};
+		return {id: room.id, params: {
+			irc: {
+				server: room.params.irc.server,
+				channel: room.params.irc.channel,
+				pending: room.params.irc.pending,
+				enabled: room.params.irc.enabled
+			}
+		}};
 	}
 
 	function getBotNick(roomId, callback) {
@@ -103,7 +110,50 @@ module.exports = function(clientEmitter, client, callbacks) {
 			});
 		}
 	}
+    
+	function copyChannel(action) {
+		[action.room, action.old].forEach(function (r) {
+			if (r && r.params && r.params.irc && r.params.irc.channel) {
+				r.params.irc.tmpChannel = r.params.irc.channel;
+				r.params.irc.channel = r.params.irc.channel.toLowerCase();
+			}
+		});
+	}
 
+	function revertCopyChannel(action) {
+			[action.room, action.old].forEach(function (r) {
+			if (r && r.params && r.params.irc && r.params.irc.channel) {
+				r.params.irc.channel = r.params.irc.tmpChannel;
+				delete r.params.irc.tmpChannel;
+			}
+		});
+	}
+
+
+	/**
+	channel to lower case for both room and old
+	@returns {function}. to revert the changes
+	*/
+	function channelLowerCase(action, cb) {
+		copyChannel(action);
+		return function () {
+			revertCopyChannel(action);
+			var args = [];
+			for (var k in arguments) {
+				if (arguments.hasOwnProperty(k)) {
+					args.push(arguments[k]);
+				}
+			}
+			cb.apply(null, args);
+		};
+	}
+
+	function isActionReq(action) {
+		var rp = action.room.params;
+		return (rp && rp.irc && rp.irc.server && rp.irc.channel && !rp.irc.pending &&
+			(/^web/).test(action.session) && client.connected() && rp.irc.enabled && !rp.irc.error);	
+	}
+	
 	return {
 		connectUser: connectUser,
 		say: say,
@@ -112,6 +162,8 @@ module.exports = function(clientEmitter, client, callbacks) {
 		addNewBot: addNewBot,
 		copyRoomOnlyIrc: copyRoomOnlyIrc,
 		getBotNick: getBotNick,
-		getRequest: getRequest
+		getRequest: getRequest,
+		channelLowerCase: channelLowerCase,
+		isActionReq: isActionReq
 	};
 };

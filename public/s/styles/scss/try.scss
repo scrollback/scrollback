@@ -1,6 +1,7 @@
-@import "base";
-@import "animations";
-@import "grid";
+@import "../lace/global";
+@import "../lace/base";
+@import "../lace/animations";
+@import "../lace/grid";
 
 /* we need this to make text vertically centered in a page */
 html, body { height: 100%; }

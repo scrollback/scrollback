@@ -1,9 +1,7 @@
 /* jshint browser: true */
-/* global $ */
+/* global $, lace */
 
 $(function() {
-	var lace = require("../lib/lace.js");
-
 	if ($.fn.attrchange) {
 		$("body").attrchange(function() {
 			if ($("body").attr("class") && $("body").attr("class").match(/mode-/)) {

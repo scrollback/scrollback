@@ -1,52 +1,54 @@
-/* global libsb, SockJS */
+"use strict";
+/* global libsb, SockJS*/
 
-var generate = require('../lib/generate.js'),
-	config = require('../client-config.js'),
+var generate = require("../lib/generate.js"),
+	config = require("../client-config.js"),
 	core;
+
+var backOff = 1,
+    client, pendingQueries = {},
+	pendingActions = {},
+	queue = [];
 
 module.exports = function (c) {
 	core = c;
-	core.on('connection-requested', connect, 1000);
-	core.on('disconnect', disconnect, 1000);
+    connect();
+    core.on("disconnect", disconnect, 1000);
 
-	core.on('init-up', sendInit, 10);
-	core.on('text-up', sendText, 10);
-	core.on('edit-up', sendEdit, 10);
-	core.on('back-up', sendBack, 10);
-	core.on('away-up', sendAway, 10);
-	core.on('nick-up', sendInit, 10);
-	core.on('join-up', sendJoin, 10);
-	core.on('part-up', sendPart, 10);
-	core.on('admit-up', sendAdmit, 10);
-	core.on('expel-up', sendExpel, 10);
-	core.on('user-up', sendUser, 10);
-	core.on('room-up', sendRoom, 10);
+	core.on("init-up", sendInit, 10);
+	core.on("text-up", sendText, 10);
+	core.on("edit-up", sendEdit, 10);
+	core.on("back-up", sendBack, 10);
+	core.on("away-up", sendAway, 10);
+	core.on("nick-up", sendInit, 10);
+	core.on("join-up", sendJoin, 10);
+	core.on("part-up", sendPart, 10);
+	core.on("admit-up", sendAdmit, 10);
+	core.on("expel-up", sendExpel, 10);
+	core.on("user-up", sendUser, 10);
+	core.on("room-up", sendRoom, 10);
 
-	core.on('getTexts', function (query, callback) {
-		query.type = "getTexts";
+    core.on("getTexts", function(query, callback){
+		query.type="getTexts";
 		sendQuery(query, callback);
 	}, 10);
 
-	core.on('getThreads', function (query, callback) {
-		query.type = "getThreads";
+    core.on("getThreads",  function(query, callback){
+		query.type="getThreads";
 		sendQuery(query, callback);
 	}, 10);
 
-	core.on('getUsers', function (query, callback) {
-		query.type = "getUsers";
+    core.on("getUsers",  function(query, callback){
+		query.type="getUsers";
 		sendQuery(query, callback);
 	}, 10);
 
-	core.on('getRooms', function (query, callback) {
-		query.type = "getRooms";
+    core.on("getRooms",  function(query, callback){
+		query.type="getRooms";
 		sendQuery(query, callback);
-	}, 10);
+    }, 10);
 };
 
-var client;
-var pendingQueries = {},
-	pendingActions = {},
-	queue = [];
 
 libsb.on("inited", function (undef, next) {
 	while (queue.length) {
@@ -70,13 +72,22 @@ function safeSend(data) {
 
 function connect() {
 	client = new SockJS(config.server.host + "/socket");
+    client.onclose = disconnected;
 
-	client.onopen = function () {
-		core.emit('connected');
+	client.onopen = function(){
+        backOff = 1;
+        core.emit("init-up", {}, function(err) {
+			if(err) console.log(err.message);
+			else libsb.isInited = true;
+
+			core.emit("navigate", {connectionStatus: true, source: "socket"}, function(err) {
+				if(err) console.log(err.message);
+			});
+			//TODO: handle errors.
+        });
 	};
 
 	client.onmessage = receiveMessage;
-	client.onclose = disconnected;
 }
 
 function disconnect(payload, next) {
@@ -85,12 +96,21 @@ function disconnect(payload, next) {
 }
 
 function disconnected() {
-	libsb.isInited = false;
-	libsb.emit('disconnected', {});
+	if(backOff === 1) {
+		core.emit("navigate", {connectionStatus: false, source: "connection"}, function(err) {
+			if(err) console.log(err.message);
+		});
+	}
+	if(backOff < 180) backOff *= 2;
+	else backOff = 180;
+    setTimeout(connect, backOff*1000);
 }
 
-function sendQuery(query, next) {
-	if (query.results) {
+function sendQuery(query, next){
+	if(query.results) return next();
+
+	if(!libsb.isInited){
+		query.results = [];
 		return next();
 	}
 	if (!query.id) query.id = generate.uid();
@@ -129,7 +149,7 @@ function receiveMessage(event) {
 			pendingActions[data.id](data);
 			delete pendingActions[data.id];
 		}
-		core.emit(data.type + '-dn', data);
+		core.emit(data.type + "-dn", data);
 	}
 }
 
@@ -156,7 +176,10 @@ function makeAction(action, props) {
 		if (props.hasOwnProperty(i)) action[i] = props[i];
 	}
 
-	action.from = libsb.user.id;
+	if(libsb.user && libsb.user.id) {
+		action.from = libsb.user.id;
+	}
+
 	action.time = new Date().getTime();
 	action.session = libsb.session;
 	action.resource = libsb.resource;
@@ -213,7 +236,8 @@ function sendText(text, next) {
 		threads: text.threads,
 		id: text.id,
 		labels: text.labels || {},
-		mentions: text.mentions || []
+		mentions: text.mentions || [],
+        origin: text.origin
 	});
 
 	safeSend(JSON.stringify(action));
@@ -241,7 +265,6 @@ function sendInit(init, next) {
 		origin: init.origin
 	};
 	newAction.session = init.session;
-
 
 	if (init.auth) newAction.auth = init.auth;
 	if (init.suggestedNick) newAction.suggestedNick = init.suggestedNick;
@@ -291,6 +314,6 @@ function sendRoom(room, next) {
 		room: room.room,
 		id: room.id
 	});
-	safeSend(JSON.stringify(action));
+    safeSend(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);
 }

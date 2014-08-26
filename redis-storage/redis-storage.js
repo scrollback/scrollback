@@ -25,13 +25,13 @@ function onBack(data, cb) {
 
 function onAway(action, callback) {
     occupantDB.srem("room:{{"+action.to+"}}:hasOccupants", action.from, function() {
-        if(/^guest-/.test(action.from)) return;
+        if(!/^guest-/.test(action.from)) return;
         occupantDB.scard("room:{{"+action.to+"}}:hasOccupants", function(err, data) {
             if(!data) userDB.del("room:{{"+action.to+"}}");
         });
     });
     occupantDB.srem("user:{{"+action.from+"}}:occupantOf", action.to, function() {
-        if(/^guest-/.test(action.from)) return;
+        if(!/^guest-/.test(action.from)) return;
         occupantDB.scard("user:{{"+action.from+"}}:occupantOf", function(err, data) {
             if(!data) userDB.del("user:{{"+action.from+"}}");
         });
