@@ -94,7 +94,7 @@ $(function() {
         if (state.old && (state.old.view !== state.view ||
                           state.old.thread !== state.thread ||
                           state.old.mode !== state.mode ||
-                          state.old.room !== state.room
+                          state.old.roomName !== state.roomName
                          )) {
 
             removeLine();
