@@ -187,6 +187,8 @@ var threadEl = require("./thread.js"),
                     loadSearchResult(index, before, after, callback);
 				}else if(currentState.tab == "threads") {
                     loadThread(index, before, after, callback);
+				}else{
+					callback([]);
 				}
 			}
 		});
