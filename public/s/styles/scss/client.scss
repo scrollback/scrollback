@@ -962,16 +962,8 @@ body {
 
     &.current { background-color: darken($light-color, 3%); }
 
-    &:hover, &:focus, &.active {
+    &:hover, &:focus, &:active, &.active {
         .chat-more { @include transform(translate3d(0, 0, 0)); }
-    }
-
-    &:hover, &:focus {
-        .chat-more { background-color: darken($light-color, 1%); }
-    }
-
-    &.active, &.current {
-        .chat-more { background-color: darken($light-color, 3%); }
     }
 
     &:hover, &:focus, &.active, &.current {
@@ -1182,7 +1174,6 @@ body {
 
     position: absolute;
     display: block;
-    background-color: darken($light-color, 1%);
     background-image: url(../../img/client/icons/chat-more.svg);
     background-repeat: no-repeat;
     background-position: center center;
