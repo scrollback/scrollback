@@ -251,7 +251,6 @@ $(function () {
     }
     libsb.on('navigate', function (state, next) {
 		var reloadMembers = false, reset = false;
-		
 		if (state.source == 'people-area') return next();
 		roomName = state.roomName;
 		
@@ -267,7 +266,7 @@ $(function () {
 			return next();
 		}
         
-		if(!state.old || state.roomName != state.roomName || state.old.connectionStatus != state.connectionStatus){
+		if(!state.old || state.roomName != state.old.roomName || state.old.connectionStatus != state.connectionStatus){
 			reloadMembers = true;
 		}
 		
