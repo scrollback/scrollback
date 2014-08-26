@@ -942,8 +942,6 @@ body {
 }
 
 .chat-item {
-    @extend %fadein;
-
     position: relative;
     margin: 0;
     padding: .75em 3em .75em 3em;
