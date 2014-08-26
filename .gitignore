@@ -12,6 +12,8 @@
 *.komodoproject
 *.map
 *.appcache
+*.bundle.js
+*.min.js
 
 lib-cov
 pids
@@ -26,11 +28,9 @@ bower_components
 myConfig.js
 client-config.js
 
-public/*.bundle.js
-public/*.min.js
-public/embed.js
-public/s/styles/gen
-public/s/lib
+public/s/styles/lace
+public/s/styles/dist
+public/s/scripts/lib
 ircClient/Data
 xunit.xml
 public/t/coverage-*.html

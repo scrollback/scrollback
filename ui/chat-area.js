@@ -100,7 +100,7 @@ $(function () {
 					}
 
 					texts = returnArray(query, index);
-					
+
 					if (after === 0) {
 						if (texts.length < before) {
 							texts.unshift(false);
@@ -286,7 +286,7 @@ $(function () {
 		var chats = $logs.find(".chat-item"),
 			time = getIdAndTime(chats.eq(0).data("index")).time,
 			parentOffset = $logs.offset().top;
-		
+
 		for (var i = 0; i < chats.length; i++) {
 			if (chats.eq(i).offset().top - parentOffset > 0) {
 				time = getIdAndTime(chats.eq(i).data("index")).time;

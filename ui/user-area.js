@@ -1,8 +1,7 @@
 /* jshint browser: true */
-/* global $, libsb, currentState */
+/* global $, libsb, lace, currentState */
 
 var showMenu = require('./showmenu.js');
-var lace = require('../lib/lace.js');
 
 $(function(){
 	$(".user-area, .user-menu-button").on('click', function(){
@@ -70,7 +69,7 @@ function setOwnerClass() {
 				}
 			});
 		}
-		
+
 		if(!isOwner) $("body").removeClass("role-owner");
 	}
 	check();
@@ -110,7 +109,7 @@ libsb.on("init-dn", function (init, next) {
 	} else {
 		$("body").removeClass("role-guest").addClass("role-user");
 	}
-	
+
 	setUser();
 	next();
 }, 100);

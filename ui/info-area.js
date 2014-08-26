@@ -27,7 +27,7 @@ libsb.on('room-dn', function (action, next) {
 
 libsb.on('navigate', function(state, next) {
     if (!state.old || state.roomName != state.old.roomName || state.old.connectionStatus != state.connectionStatus) {
-        
+
         if (state.room && typeof state.room !== "string") {
             infoArea.render(state.room);
         } else {
@@ -37,12 +37,12 @@ libsb.on('navigate', function(state, next) {
             });
         }
     }
-    
+
     if (state.tab == "info") {
 	    $(".pane-info").addClass("current");
 	} else {
 	    $(".pane-info").removeClass("current");
 	}
-    
+
     next();
 }, 600);

@@ -1,9 +1,10 @@
 /* jshint browser: true */
-/* global $, libsb*/
+/* global $, libsb, lace */
+
 var validate = require("../lib/validate.js");
+
 $(function(){
-	var lace = require("../lib/lace.js"),
-		signingUser, signingUp = false;
+	var signingUser, signingUp = false;
 
 	function submitUser() {
 		var userId = $("#signup-id").val();
