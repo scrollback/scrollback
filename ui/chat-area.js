@@ -92,6 +92,7 @@ $(function () {
 			if (!index.time && !before) return callback([false]);
 
 			function loadTexts() {
+				if (typeof libsb.user === "undefined") return;
 				libsb.emit("getUsers", {memberOf: currentState.roomName, ref: libsb.user.id}, function (e, d) {
 					var isOwner = (d.results[0] && d.results[0].role === "owner") ? true : false ;
 					libsb.getTexts(query, function (err, t) {
