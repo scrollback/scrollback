@@ -127,6 +127,7 @@ $(function () {
 					if (state.connectionStatus === true && state.old.connectionStatus === false) {
 						loadTexts();
 					}
+					next();
 				}, 700);
 			} else {
 				loadTexts();	
