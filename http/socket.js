@@ -122,7 +122,7 @@ sock.on('connection', function (socket) {
 							if(verifyBack(conn, action)) emit(action);
                         	storeBack(conn, action);
 						}
-                        
+
 					});
 				}
 				storeInit(conn, data);
@@ -148,7 +148,7 @@ function processUser(conn, user) {
 function storeInit(conn, init) {
 	if(!uConns[init.user.id]) uConns[init.user.id] = [];
 	if(uConns[init.user.id].indexOf(conn)<0) uConns[init.user.id].push(conn);
-	
+
 	if(init.old && init.old.id) {
 		sConns[init.session].forEach(function(c) {
 			var index;
@@ -181,9 +181,9 @@ function storeBack(conn, back) {
 	if(urConns[back.from+":"+back.to].indexOf(conn)<0) urConns[back.from+":"+back.to].push(conn);
     if(!conn.listeningTo) conn.listeningTo = [];
 	if(conn.listeningTo.indexOf(back.to)<0) {
-		conn.listeningTo.push(back.to);	
+		conn.listeningTo.push(back.to);
 	}
-    
+
 //    console.log("LOG:"+ back.from +" got back from :"+back.to);
 }
 
@@ -319,7 +319,7 @@ function handleClose(conn) {
                     to: room,
                     time: new Date().getTime()
                 };
-				
+
                 if(!verifyAway(conn, awayAction)) return;
                 core.emit('away',awayAction , function(err, action) {
                     if(err) return;

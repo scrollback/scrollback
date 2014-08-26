@@ -70,7 +70,7 @@ $(function () {
                         ppl[r[i].id].status = "online";
                     }
                 }
-                
+
                 for (e in ppl)
                     if (ppl.hasOwnProperty(e)) {
                         sorted.push(ppl[e]);
@@ -93,7 +93,7 @@ $(function () {
 		getPeople(function(){
 			$people.reset();
 		});
-		
+
 		next();
 	}, 100);
     libsb.on("away-dn", function (action, next) {
@@ -231,7 +231,7 @@ $(function () {
             people9: [false]
         };
     }
-    
+
     function emptyList(){
         lists = {
             people1: [false],
@@ -251,32 +251,31 @@ $(function () {
     }
     libsb.on('navigate', function (state, next) {
 		var reloadMembers = false, reset = false;
-		
 		if (state.source == 'people-area') return next();
 		roomName = state.roomName;
-		
+
 		if (state.tab == "people") {
             $(".pane-people").addClass("current");
 			reset = true;
         } else {
             $(".pane-people").removeClass("current");
         }
-		
+
 		if(!state.connectionStatus  && state.source == "boot") {
 			emptyList();
 			return next();
 		}
-        
-		if(!state.old || state.roomName != state.roomName || state.old.connectionStatus != state.connectionStatus){
+
+		if(!state.old || state.roomName != state.old.roomName || state.old.connectionStatus != state.connectionStatus){
 			reloadMembers = true;
 		}
-		
+
 		if(reloadMembers) {
 			loadMembers();
 		}else if(reset) {
 			$people.reset();
 		}
-		
+
         next();
     }, 600);
 

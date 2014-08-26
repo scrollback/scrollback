@@ -1,22 +1,31 @@
-/* font settings */
-$font-family-normal: "Open Sans", "Myriad Pro", Helvetica, Tahoma, "Nimbus Sans", Arial, sans-serif !default;
-$font-family-headings: "Open Sans", "Open Sans Light", Candara, Calibri, Segoe, "Segoe UI", Optima, Arial, sans-serif !default;
-$font-family-monospace: Consolas, "Andale Mono", "Lucida Console", "Nimbus Mono", "Courier New", monospace !default;
-$font-size: 14px !default;
-$font-size-mobile: 14px !default;
-$font-line-height: 21px !default;
+/**
+ * Global definitions for the client
+ * Fonts and colors are defined in lace
+ */
 
-/* colors */
-$accent-color: #3ca !default;
-$dark-color: mix($accent-color, #444, 5%) !default;
-$light-color: #fff !default;
-$link-color: #2a5db0 !default;
-$info-color: #638ce8 !default;
-$success-color: #43b43b !default;
-$warning-color: #e77f1b !default;
-$error-color: #ef513d !default;
-$palette: #2ba #e48 #3c6 #76f #e63 #5ad #95b #ed0 #e92 #ae3 !default;
+@import "../lace/functions";
+@import "../lace/global";
 
-/* misc */
-$roundness: 2px !default;
-$mobile-break-point: "only screen and (max-width: 27em)" !default;
+$screenx: "only screen and (min-width: 18em)";
+$screenxx: "only screen and (min-width: 27em)";
+$screenxxx: "only screen and (min-width: 50em)";
+$screenxxxx: "only screen and (min-width: 70em)";
+
+$width-room: 15em;
+$width-roomx: 15em;
+$width-roomxx: 15em;
+$width-roomxxx: 15em;
+$width-roomxxxx: 16%;
+
+$width-meta: 13em;
+$width-metax: 19em;
+$width-metaxx: 25em;
+$width-metaxxx: 26em;
+$width-metaxxxx: 30%;
+
+$bar-height: 3.5em;
+
+$settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification;
+$modes: normal, search, conf, pref, home, noroom, offline, profile;
+$roles: guest, user, follower, owner;
+$embeds: toast, canvas;

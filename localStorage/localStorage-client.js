@@ -96,7 +96,7 @@ module.exports = function (c) {
 		if (!cacheOp.cache[key].d.length) {
 			return next();
 		}
-        
+
 		if (query.time === null && currentState.connectionStatus) {
 			// query.time is null, have to decide how LS will handle this.
 			return next();
@@ -106,12 +106,12 @@ module.exports = function (c) {
 
 		var results = cacheOp.cache[key].get('time', query);
 		if (!results || !results.length) {
-            
+
 			return next();
 		} else {
 			query.results = results;
 			query.resultSource = 'localStorage';
-            
+
 			return next();
 		}
 	}, 200); // runs before the socket
@@ -121,7 +121,7 @@ module.exports = function (c) {
 		if (!query.results || !query.results.length || query.resultSource == 'localStorage') {
 			return next();
 		}
-        
+
         results = query.results.slice(0); // copying by value
 		if (results && results.length > 0) {
 			// merging results into the Cache.
@@ -186,7 +186,7 @@ module.exports = function (c) {
 			return next();
 		}
 		if(!currentState.connectionStatus) query.partials = true;
-        
+
 		var results = cacheOp.cache[key].get('startTime', query);
 
 		if (!results || !results.length) {
@@ -332,7 +332,7 @@ module.exports = function (c) {
 	libsb.on('init-dn', function (init, next) {
 		// on signup.
 		if (init.auth && !init.user.id) return next();
-		
+
 		cacheOp.cache.user = init.user;
 		cacheOp.cache.occupantOf = init.occupantOf;
 		cacheOp.cache.memberOf = init.memberOf;

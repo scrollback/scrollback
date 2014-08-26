@@ -5,7 +5,7 @@ var generate = require("../lib/generate.js"),
 	config = require("../client-config.js"),
 	core;
 
-var backOff = 1, 
+var backOff = 1,
     client, pendingQueries = {},
 	pendingActions = {},
 	queue = [];
@@ -73,13 +73,13 @@ function safeSend(data) {
 function connect() {
 	client = new SockJS(config.server.host + "/socket");
     client.onclose = disconnected;
-    
+
 	client.onopen = function(){
         backOff = 1;
         core.emit("init-up", {}, function(err) {
 			if(err) console.log(err.message);
 			else libsb.isInited = true;
-			
+
 			core.emit("navigate", {connectionStatus: true, source: "socket"}, function(err) {
 				if(err) console.log(err.message);
 			});
@@ -108,7 +108,7 @@ function disconnected() {
 
 function sendQuery(query, next){
 	if(query.results) return next();
-	
+
 	if(!libsb.isInited){
 		query.results = [];
 		return next();
@@ -179,7 +179,7 @@ function makeAction(action, props) {
 	if(libsb.user && libsb.user.id) {
 		action.from = libsb.user.id;
 	}
-	
+
 	action.time = new Date().getTime();
 	action.session = libsb.session;
 	action.resource = libsb.resource;

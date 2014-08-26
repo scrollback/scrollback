@@ -1,7 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
-
-var lace = require("../lib/lace.js");
+/* global $, libsb, lace */
 
 $(function() {
     var $entry = $(".search-entry"),
