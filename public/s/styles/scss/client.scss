@@ -970,16 +970,8 @@ body {
 
     &.current { background-color: darken($light-color, 3%); }
 
-    &:hover, &:focus, &.active {
+    &:hover, &:focus, &:active, &.active {
         .chat-more { @include transform(translate3d(0, 0, 0)); }
-    }
-
-    &:hover, &:focus {
-        .chat-more { background-color: darken($light-color, 1%); }
-    }
-
-    &.active, &.current {
-        .chat-more { background-color: darken($light-color, 3%); }
     }
 
     &:hover, &:focus, &.active, &.current {
@@ -1119,9 +1111,9 @@ body {
     &:before, &:after {
         content: "";
         display: block;
-        height: 16px;
+        height: 12px;
         width: 100%;
-        background-size: 16px 16px;
+        background-size: 12px 12px;
         background-repeat: repeat-x;
     }
 }
@@ -1190,7 +1182,6 @@ body {
 
     position: absolute;
     display: block;
-    background-color: darken($light-color, 1%);
     background-image: url(../../img/client/icons/chat-more.svg);
     background-repeat: no-repeat;
     background-position: center center;

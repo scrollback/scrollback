@@ -168,6 +168,14 @@ $(function() {
             this.scrollTop(0);
         }
 
+        if (!currThread || lastThread !== currThread) {
+            updateLine();
+        }
+
+        if (!window.currentState.connectionStatus) {
+            return this;
+        }
+
         var nick = this.find(".chat-nick").text(),
             msg = format.htmlToText($entry.html()),
 			atStart = false;
@@ -203,10 +211,6 @@ $(function() {
                     $entry.setCursorEnd();
                 }
             }
-        }
-
-        if (!currThread || lastThread !== currThread) {
-            updateLine();
         }
 
 		return this;

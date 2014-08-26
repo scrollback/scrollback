@@ -51,31 +51,3 @@ module.exports = function(core) {
 		});
 	},"storage");
 };
-
-
-/* delete when the time is right. ;)
-	sample objects
-	{
-		id: "web:192.168.0.1:scrollback_SID:aocjsncaosmca;lsdmfnasjdvknasd;lfkm",
-		user: "guest-harish",
-		origin:{
-			gateway: "web",
-			client: "192.168.0.1",
-			locations: {
-				"resourceID1" : "https://mozillaindia.org/home.html",
-				"resourceID2" : "https://jfdi.org"
-			}
-		}
-	}
-
-	{
-		id: "irc://irc.freenode.net/xzntric",
-		user: "guest-xzntric",
-		origin:{
-			gateway: "irc",
-			server: "irc.freenode.net",
-			client: "192.168.0.1"
-		}
-	}
-
-*/

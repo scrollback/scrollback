@@ -13,6 +13,7 @@ $(function() {
 		}
 	});
 
+
 	$(document).on("click", ".appcache-reload-page", function() {
 		location.reload();
 	});
