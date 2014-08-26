@@ -2,6 +2,7 @@
 /* global $, libsb, currentState, format */
 
 var chatEl = require("./chat.js"),
+	_ = require('underscore'),
 	chatArea = {};
 
 $(function () {
@@ -31,34 +32,39 @@ $(function () {
             if(!index && !before) return callback([false]);
 
 			function loadTexts() {
-				libsb.getTexts(query, function (err, t) {
-					var texts = t.results.slice(0, t.results.length);
-					if (err) throw err; // TODO: handle the error properly.
+				libsb.emit("getUsers", {memberOf: currentState.roomName, ref: libsb.user.id}, function (e, d) {
+					var isOwner = (d.results[0] && d.results[0].role === "owner") ? true : false ;
+					libsb.getTexts(query, function (err, t) {
+						var texts = t.results.slice(0, t.results.length);
+						if (err) throw err; // TODO: handle the error properly.
 
-					if (!index && texts.length === "0") {
-						return callback([false]);
-					}
-
-					if (after === 0) {
-						if (texts.length < before) {
-							texts.unshift(false);
+						if (!index && texts.length === "0") {
+							return callback([false]);
 						}
 
-                        if(t.time && texts.length && texts[texts.length-1].time === t.time) {
-                            texts.pop();
-                        }
-					} else if (before === 0) {
-						if (texts.length < after) {
-							texts.push(false);
-						}
-                        if(texts.length && texts[0].time == t.time) {
-                            texts.splice(0, 1);
-                        }
+						if (after === 0) {
+							if (texts.length < before) {
+								texts.unshift(false);
+							}
 
-					}
-					callback(texts.map(function (text) {
-						return text && chatEl.render(null, text);
-					}));
+							if(t.time && texts.length && texts[texts.length-1].time === t.time) {
+								texts.pop();
+							}
+						} else if (before === 0) {
+							if (texts.length < after) {
+								texts.push(false);
+							}
+							if(texts.length && texts[0].time == t.time) {
+								texts.splice(0, 1);
+							}
+
+						}
+						callback(_.filter(texts.map(function (text) {
+							return text && chatEl.render(null, text, isOwner);
+						}), function(m) {
+							return typeof m !== "undefined";
+						}));
+					});
 				});
 			}
 

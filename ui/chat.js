@@ -1,13 +1,16 @@
 /* jshint browser: true */
-/* global $, format */
+/* global $, format, libsb, currentState */
 
 var chatEl = {},
-	timeBefore;
+	timeBefore, flag = false;
 
 $(function () {
 	var $template = $(".chat-item").eq(0);
 
-	chatEl.render = function ($el, text) {
+	chatEl.render = function ($el, text, isOwner) {
+		
+		isOwner = isOwner ? true: false;
+		
 		$el = $el || $template.clone(false);
 
 		$el.find(".chat-nick").text(text.from.replace(/^guest-/, ""));
@@ -36,6 +39,10 @@ $(function () {
 		if (text.labels) {
 			for (var label in text.labels) {
 				if (text.labels[label] === 1) {
+					// this has to be done only for non-owners!
+					if (label === "hidden" && !isOwner) {
+						return;
+					}
 					$el.addClass("chat-label-" + label);
 				}
 			}

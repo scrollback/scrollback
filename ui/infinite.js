@@ -121,7 +121,9 @@
 				if(where == "above") {
 					oldTerm = $items.children().eq(0);
 					$items.prepend(els);
-
+					
+					if (oldTerm === null) return;
+					
 					if(oldTerm.size()) {
 						height = oldTerm.offset().top - els[0].offset().top;
 					} else {
