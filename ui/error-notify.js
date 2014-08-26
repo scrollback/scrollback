@@ -1,13 +1,12 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, lace */
 
 $(function() {
-    var lace = require("../lib/lace.js"),
-        errmsg;
+    var errmsg;
 
     libsb.on("error-dn", function(err, next) {
 
-        switch(err.message) {
+        switch (err.message) {
             case "ERR_IRC_NOT_CONNECTED":
                 errmsg = "We are having some issues with irc. Please try again after some time";
                 break;

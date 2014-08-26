@@ -21,7 +21,7 @@ function sendDomainChallenge() {
 		type: "domain-challenge",
 		token: token
 	}), parentHost);
-	
+
 	setTimeout(function () {
 		if (!verificationStatus) {
 			verificationStatus = true;

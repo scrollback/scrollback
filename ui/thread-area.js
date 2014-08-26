@@ -85,11 +85,10 @@ var threadEl = require("./thread.js"),
 		libsb.getThreads(query, function(err, t) {
 			var threads = t.results;
 			if(err) throw err; // TODO: handle the error properly.
-            
+
 			if(!index && threads.length === "0") {
 				return callback([false]);
 			}
-            console.log("Brrrrr");
 			if(!after) {
 				if(!t.time) {
 					threads.push(false);
@@ -188,6 +187,8 @@ var threadEl = require("./thread.js"),
                     loadSearchResult(index, before, after, callback);
 				}else if(currentState.tab == "threads") {
                     loadThread(index, before, after, callback);
+				}else{
+					callback([]);
 				}
 			}
 		});

@@ -45,7 +45,7 @@ $(function() {
 	function openWeb() {
 		var web = $("#web-address").val();
 
-		if(!/^(https?):\/\//i.test(web)) {
+		if (!/^(https?):\/\//i.test(web)) {
 			web = web;
 		}
 
@@ -67,7 +67,7 @@ $(function() {
 	});
 
     // Show scrollback embed widget
-    $(".trial-room").on("click", function () {
+    $(".trial-room").on("click", function() {
         $("body").addClass("scrollback-open");
     });
 });

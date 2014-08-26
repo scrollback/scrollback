@@ -3,9 +3,10 @@
 var core = new (require("./lib/emitter.js"))();
 
 // third party libraries
-require('./public/s/lib/sockjs.min.js');
-require('./public/s/lib/jquery.velocity.min.js');
-require('./public/s/lib/svg4everybody.min.js');
+require('./public/s/scripts/lib/sockjs.min.js');
+require('./public/s/scripts/lib/jquery.velocity.min.js');
+require('./public/s/scripts/lib/svg4everybody.min.js');
+require('./public/s/scripts/lib/lace.js');
 
 require('./lib/jquery.setCursorEnd.js');
 require('./lib/jquery.attrchange.js');

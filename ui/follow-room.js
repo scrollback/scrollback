@@ -25,7 +25,7 @@ $(function() {
                     setFollow(true);
                 } else {
                     setFollow(false);
-                }    
+                }
             }else{
                 setFollow(false);
             }

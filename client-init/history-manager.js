@@ -115,11 +115,10 @@ function pushState(state) {
 }
 
 function updateHistory(state, next) {
+	updateTitle(state);
 	if (state.source == "history") {
-		updateTitle();
 		return next();
 	}
-
 	pushState(state);
 	next();
 }
