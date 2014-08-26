@@ -92,7 +92,6 @@ $(function () {
 			if (!index.time && !before) return callback([false]);
 
 			function loadTexts() {
-				if (typeof libsb.user === "undefined") return;
 				libsb.emit("getUsers", {memberOf: currentState.roomName, ref: libsb.user.id}, function (e, d) {
 					var isOwner = (d.results[0] && d.results[0].role === "owner") ? true : false ;
 					libsb.getTexts(query, function (err, t) {
@@ -123,7 +122,16 @@ $(function () {
 				});
 			}
 
-			loadTexts();
+			if (typeof libsb.user === "undefined") {
+				libsb.on("navigate", function (state, next) {
+					if (state.connectionStatus === true && state.old.connectionStatus === false) {
+						loadTexts();
+					}
+				}, 700);
+			} else {
+				loadTexts();	
+			}
+			
 		}
 	});
 
