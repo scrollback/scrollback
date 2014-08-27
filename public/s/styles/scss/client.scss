@@ -1,24 +1,31 @@
-@import "client-global";
-@import "client-themes";
-@import "base";
-@import "alert";
-@import "modal";
-@import "popover";
-@import "switch";
-@import "button";
-@import "entry";
-@import "multientry";
-@import "flexbox";
-@import "oembed";
-@import "tooltip";
-@import "progress";
+/**
+ * Stylesheet for the client
+ */
+
+// Import components from lace
+@import "../lace/base";
+@import "../lace/animations";
+@import "../lace/alert";
+@import "../lace/modal";
+@import "../lace/popover";
+@import "../lace/switch";
+@import "../lace/button";
+@import "../lace/entry";
+@import "../lace/multientry";
+@import "../lace/flexbox";
+@import "../lace/tooltip";
+@import "../lace/progress";
+
+// Import global variables and mixins
+@import "global";
+@import "themes";
 @import "tip";
 
-/* widget styles */
+// Widget styles
 %scroll-elem {
     max-height: 100%;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling : touch;
+    overflow-y: scroll; /* should be scroll, not auto for momentum scrolling */
+    -webkit-overflow-scrolling : touch; /* momentum scrolling in webkit */
 }
 
 %column {
@@ -40,7 +47,7 @@
 html, body { height: 100%; }
 
 body {
-    word-wrap: break-word;
+    word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
 
     &:not(.embed) {
         [data-embed]:not([data-embed=none]) { display: none; }
@@ -72,6 +79,8 @@ body {
     width: $width-room;
     background-color: $dark-color;
     color: $light-color;
+    z-index: 10;
+    padding-bottom: $bar-height; /* adjust to accomodate the logo */
 
     @media #{$screenx} {
         left: ( $width-roomx + $width-metax ) * -1;
@@ -106,11 +115,7 @@ body {
     }
 }
 
-.room-list {
-    @extend %scroll-elem;
-
-    padding-bottom: $bar-height;
-}
+.room-list { @extend %scroll-elem; }
 
 .room-item {
     display: block;
@@ -135,6 +140,7 @@ body {
         position: relative;
         background-color: rgba(0,0,0,.1);
 
+        /* show a little triangle next to the current room */
         &:after {
             content: "";
             display: block;
@@ -175,6 +181,7 @@ body {
     border-right: 1px solid rgba(0,0,0,.1);
     background-color: darken($light-color, 5%);
     color: $dark-color;
+    z-index: 20;
 
     @media #{$screenx} {
         left: $width-metax * -1;
@@ -237,7 +244,7 @@ body {
     h3 { margin: 0; }
 
     .tab {
-        @include flex-grow(1);
+        @include flex-grow(1); /* grow to use all available space */
 
         text-align: center;
         background-color: transparent;
@@ -293,17 +300,28 @@ body {
 }
 
 .meta-panes {
+    position: relative;
     height: 100%;
-    padding-bottom: $bar-height;
+    width: 100%;
 
     .pane {
-        display: none;
+        @include opacity(0);
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 0;
+        pointer-events: none;
+        padding-bottom: $bar-height; /* adjust to accomodate tabs */
 
         &.current {
+            @include opacity(1);
             @extend %fadein;
 
-            display: block;
-            height: 100%;
+            z-index: 10;
+            pointer-events: auto;
         }
     }
 }
@@ -321,8 +339,8 @@ body {
 
     .infinite-above, .infinite-below {
         background-color: transparent;
-        background-image:  linear-gradient(to right, darken($light-color, 5%), darken($light-color, 5%) 15%, transparent 15%, transparent 85%, darken($light-color, 5%) 85%, darken($light-color, 5%)),
-                           linear-gradient(to bottom, transparent, transparent 25%, darken($light-color, 10%) 25%, darken($light-color, 10%) 65%, transparent 65%, transparent 75%, darken($light-color, 10%) 75%, darken($light-color, 10%) 85%, transparent 85%, transparent);
+        background-image: linear-gradient(to right, darken($light-color, 5%), darken($light-color, 5%) 15%, transparent 15%, transparent 85%, darken($light-color, 5%) 85%, darken($light-color, 5%)),
+                          linear-gradient(to bottom, transparent, transparent 25%, darken($light-color, 10%) 25%, darken($light-color, 10%) 65%, transparent 65%, transparent 75%, darken($light-color, 10%) 75%, darken($light-color, 10%) 85%, transparent 85%, transparent);
         background-size: 5.5em 8em;
         background-position: top left;
         background-repeat: repeat;
@@ -333,7 +351,7 @@ body {
 }
 
 .person {
-    @extend %nofilter;
+    @extend %nofilter; /* fix non-antialiased text in IE */
 
     position: relative;
     display: inline-block;
@@ -458,7 +476,7 @@ body {
     border-right: 4px solid lighten($dark-color, 15%);
     cursor: pointer;
 
-    &:first-letter { text-transform: capitalize; }
+    &:first-letter { text-transform: uppercase; } /* make the first letter uppercase, only works in webkit */
 
     &.current { background-color: fade-out(lighten($dark-color, 15%), .7); }
 
@@ -555,6 +573,7 @@ body {
     position: fixed;
     left: 0;
     right: 0;
+    z-index: 30;
 
     @media #{$screenxxx} { left: $width-metaxxx; }
 
@@ -625,9 +644,7 @@ body {
 }
 
 .embed {
-    .meta-button {
-        @include meta-logo-visible;
-    }
+    .meta-button { @include meta-logo-visible; }
 
     &:focus, &:hover, &:active {
         .meta-button { @include meta-back-visible; }
@@ -780,6 +797,9 @@ body {
         display: block;
         float: left;
         margin: .25em;
+        word-wrap: normal;
+        overflow: hidden; /* fix unusual button size when not enough horizontal space */
+        text-overflow: ellipsis;
     }
 }
 
@@ -796,7 +816,7 @@ body {
 
     .minimized & {
         display: table;
-        table-layout: fixed;
+        table-layout: fixed; /* make tables responsive */
     }
 }
 
@@ -885,8 +905,8 @@ body {
     .infinite-above, .infinite-below {
         background-color: transparent;
         background-image: linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-            linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-            linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
+                          linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+                          linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
         background-size: .6em 6em, 80% 6em, 60% 6em;
         background-position: 1em 2em, 3em 2em, 3em 2em;
         background-repeat: repeat-y;
@@ -894,9 +914,9 @@ body {
 
         @media #{$screenxx} {
             background-image: linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-                linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-                linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
-                linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
+                              linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+                              linear-gradient(to bottom, transparent, transparent 30%, darken($light-color, 3%) 30%, darken($light-color, 3%) 40%, transparent 40%, transparent),
+                              linear-gradient(to bottom, transparent, transparent 60%, darken($light-color, 3%) 60%, darken($light-color, 3%) 70%, transparent 70%, transparent);
             background-size: .6em 6em, 6em 6em, 80% 6em, 60% 6em;
             background-position: 2em 2em, 4em 2em, 12em 2em, 12em 2em;
         }
@@ -930,8 +950,6 @@ body {
 }
 
 .chat-item {
-    @extend %fadein;
-
     position: relative;
     margin: 0;
     padding: .75em 3em .75em 3em;
@@ -950,16 +968,8 @@ body {
 
     &.current { background-color: darken($light-color, 3%); }
 
-    &:hover, &:focus, &.active {
+    &:hover, &:focus, &:active, &.active {
         .chat-more { @include transform(translate3d(0, 0, 0)); }
-    }
-
-    &:hover, &:focus {
-        .chat-more { background-color: darken($light-color, 1%); }
-    }
-
-    &.active, &.current {
-        .chat-more { background-color: darken($light-color, 3%); }
     }
 
     &:hover, &:focus, &.active, &.current {
@@ -1028,7 +1038,7 @@ body {
             font-weight: 400;
             padding-right: .25em;
 
-            &:after { content: " "; }
+            &:after { content: ""; }
 
             @media #{$screenxx} { margin-left: 0; }
         }
@@ -1099,9 +1109,9 @@ body {
     &:before, &:after {
         content: "";
         display: block;
-        height: 16px;
+        height: 12px;
         width: 100%;
-        background-size: 16px 16px;
+        background-size: 12px 12px;
         background-repeat: repeat-x;
     }
 }
@@ -1113,8 +1123,8 @@ body {
     height: .5em;
     width: .5em;
     border-radius: 50%;
-    color: fade-out(lighten($dark-color, 15%), .5);
-    background-color: currentColor;
+    color: fade-out(lighten($dark-color, 15%), .5); /* only for enabling use of currentColor */
+    background-color: currentColor; /* use the same color as text */
 
     @media #{$screenxx} { margin-left: -10em; }
 
@@ -1151,7 +1161,7 @@ body {
     width: 3px;
     position: fixed;
     margin-left: 1.15em;
-    z-index: 10;
+    z-index: 50;
     background-color: fade-out(lighten($dark-color, 15%), .5);
 
     @media #{$screenxx} { margin-left: 2.15em; }
@@ -1170,7 +1180,6 @@ body {
 
     position: absolute;
     display: block;
-    background-color: darken($light-color, 1%);
     background-image: url(../../img/client/icons/chat-more.svg);
     background-repeat: no-repeat;
     background-position: center center;
@@ -1278,7 +1287,7 @@ body {
     width: 3.5em;
     border: none;
     cursor: pointer;
-    fill: lighten($dark-color, 15%); /* inline SVG */
+    fill: lighten($dark-color, 15%); /* inline SVG styling */
 
     &:hover, &:focus { @extend %transition; }
 
@@ -1318,6 +1327,7 @@ body {
 
             @media #{$screenxx} {
                 display: table;
+                table-layout: fixed;
                 border-spacing: 2em;
             }
         }
@@ -1438,7 +1448,7 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 20;
+    z-index: 90;
     padding: 1em;
     display: none;
 
@@ -1475,6 +1485,7 @@ body {
     background-color: $light-color;
     color: fade-out($dark-color, .3);
     text-align: center;
+    z-index: 70;
 
     @media #{$screenxxxx} {
         left: $width-roomxxxx;
@@ -1531,6 +1542,9 @@ body {
 
 .room-area, .meta-area, .main-area {
     @include transition(.3s, ease-out); /* animate css transforms */
+    @include transform(translate3d(0, 0, 0)); /* enable hardware acceleration in small screen */
+
+    @media #{$screenxx} { @include transform(none); }
 
     /* fix flicker in some browsers */
     .view-meta &, .view-rooms & {

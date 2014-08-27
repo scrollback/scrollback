@@ -1,9 +1,7 @@
 /* jslint browser: true, indent: 4, regexp: true*/
-/* global $ */
+/* global $, lace */
 
 $(function() {
-	var lace = require("../lib/lace.js");
-
 	// Check if a new cache is available on page load.
 	$(applicationCache).on("updateready", function() {
 		if (applicationCache.status === applicationCache.UPDATEREADY) {
@@ -14,6 +12,7 @@ $(function() {
 			});
 		}
 	});
+
 
 	$(document).on("click", ".appcache-reload-page", function() {
 		location.reload();

@@ -11,7 +11,6 @@ var botName = require('../ircClient/config.js').botNick;
 /**
  * All test cases should run in sequence
  * Do not change the order of test cases.
- * config.irc.debug should be true to run test cases
  * some test cases are based on timeouts so might fail on slow network. 
  */
 var users = [
@@ -43,7 +42,7 @@ var rooms = [{
 	params: {
 		irc: {
 			server: testingServer,
-			channel: "#testingroom",
+			channel: "#TEstingroom",
 			enabled: true,
 			pending: false
 		}
@@ -52,13 +51,14 @@ var rooms = [{
 describe('IRC test: ', function() {//this will connect 2 rooms scrollback and testingroom
 	before( function(done) {
 		this.timeout(5*40000);
-		if (!config.irc.debug) throw new Error("config.irc.debug should be true to run test. Edit myConfig.js and try again");
         core.on('getUsers', function(v, callback) {
 			v.results = users;
 			callback(null, v);
 		}, 500);
 		core.on("getRooms", function(q, callback) {
-			q.results = rooms;
+			console.log("query", q);
+			if(q.identity && q.identity.length === 3) q.results = rooms;
+			else q.results = [];
 			callback(null, q);
 		}, 500);
 		core.on('init', function(init, callback) {
@@ -135,7 +135,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		this.timeout(1000*60);//1 min
 		var msg = guid();
 		core.on('text', function(text, callback) {
-			if (text.type === 'text' && text.from == "c" + client.nick && text.to === "scrollback" && text.text === "this is testing message id=" + msg) {
+			if (text.from == "c" + client.nick && text.to === "scrollback" && text.text === "this is testing message id=" + msg) {
 				done();
 			}
 			callback();
@@ -170,13 +170,14 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		core.emit("room", {
 			type: "room",
 			session: "web://somesession",
+			user: {id: "superuser", role: 'su'},//run test as superuser
 			room: {
                 identities: [],
 				id: "testingroom2",
 				params: {
 					irc: {
 						server: testingServer,
-						channel: "#testingroom2",
+						channel: "#Testingroom2",
 						pending: false,
 						enabled: true
 					}
@@ -205,6 +206,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		});
 		core.emit("room", {
 			type: "room",
+			user: {id: "superuser", role: 'su'},//run test as superuser
 			room: {
                 identities: [],
 				id: "testingroom2",
@@ -259,6 +261,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		}
 		core.emit("room", {
 			type: "room",
+			user: {id: "superuser", role: 'su'},//run test as superuser
 			old: {
 				id: "testingroom2",
 				params: {
@@ -293,6 +296,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		
 		core.emit("room", {
 			type: "room",
+			user: {id: "superuser", role: 'su'},//run test as superuser
 			old: {
 				id: "scrollback",
 				params: {
@@ -326,6 +330,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		});
 		core.emit("room", {
 			type: "room",
+			user: {id: "superuser", role: 'su'},//run test as superuser
 			old: {
 				id: "testingroom",
 				params: {

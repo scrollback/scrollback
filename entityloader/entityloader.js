@@ -163,13 +163,14 @@ function initHandler(action, callback) {
 	core.emit("getUsers",{id: uid(), ref: "me", session: action.session}, function(err, data) {
 		if(err || !data || !data.results || !data.results.length) {
 			return initializerUser(action, function() {
-				if(action.suggestedNick) action.user.nickAssigned = true;
+				if(action.suggestedNick) action.user.isSuggested = true;
 				return done();
 			});
 		}else {
 			action.user = data.results[0];
 		}
-		if(action.suggestedNick && /^guest-/.test(action.user.id) && !data.results[0].nickAssigned) {
+		console.log("INIT so far", action.user);
+		if(action.suggestedNick && /^guest-/.test(action.user.id) && !data.results[0].isSuggested) {
 			return initializerUser(action, function() {
 				action.user.isSuggested = true;
 				return done();

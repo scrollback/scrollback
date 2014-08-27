@@ -48,7 +48,7 @@ $(function() {
 	}, 10);
 
 	libsb.on("navigate", function(state, next) {
-		if (state.old && state.old.room !== state.room) {
+		if (state.old && state.old.roomName !== state.roomName) {
 			$entry.empty();
 		}
 
@@ -87,6 +87,35 @@ $(function() {
 			sendMsg();
 		}
 	});
+
+	libsb.on('navigate', function(state, next) {
+		var chatText = "";
+
+		if (state.old && state.old.connectionStatus != state.connectionStatus) {
+			if (state.connectionStatus) {
+				setPlaceHolder();
+
+				$entry.attr("contenteditable", true);
+
+				if ($entry.data("text") && $entry.data("text").room === window.currentState.roomName) {
+					chatText = $entry.data("text").content || "";
+
+					$entry.text(chatText).data("text", null);
+				}
+			} else {
+				chatText = $entry.text();
+
+				$entry.data("text", {
+					room: window.currentState.roomName,
+					content: chatText
+				}).attr("contenteditable", false).empty();
+
+				$placeholder.text("Cannot send messages while offline.");
+			}
+		}
+
+		next();
+	}, 600);
 
 	$(".chat-send").on("click", sendMsg);
 });

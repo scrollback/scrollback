@@ -1,8 +1,7 @@
 /* jshint browser: true */
-/* global $, libsb, currentState */
+/* global $, libsb, lace, currentState */
 
-var lace = require("../lib/lace.js"),
-	formField = require("../lib/formField.js"),
+var formField = require("../lib/formField.js"),
 	twitterUsername;
 
 // Twitter integration

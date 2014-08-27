@@ -1,5 +1,5 @@
 /* jslint browser: true, indent: 4, regexp: true */
-/* global $ */
+/* global $, lace */
 
 /**
  * @example
@@ -17,8 +17,6 @@
  *     }
  * });
  */
-
-var lace = require("../lib/lace.js");
 
 var showMenu = function(menu) {
     var $popover = $("<div>"),

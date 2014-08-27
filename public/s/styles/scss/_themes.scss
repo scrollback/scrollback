@@ -1,6 +1,8 @@
-@import "functions";
+/**
+ * Mixin for themes support in the client
+ */
+
 @import "global";
-@import "client-global";
 
 @mixin theme($name, $base, $text) {
     .theme-#{$name} {

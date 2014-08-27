@@ -4,12 +4,68 @@
 var chatEl = require("./chat.js"),
 	chatArea = {};
 
+function getIdAndTime(index) {
+	var time, id;
+	if (!index) return {
+		time: null,
+		id: ""
+	};
+
+	index = index.split("-");
+	time = index[0];
+	id = index[1];
+
+	time = parseInt(time) || null;
+	return {
+		time: time,
+		id: id
+	};
+}
+
+function returnArray(query, index) {
+	var texts = query.results,
+		rIndex = -1,
+		i, inc, end;
+	texts = texts.slice(0, texts.length);
+	if(!texts.length) return [];
+	if (query.time) {
+		if (query.before) {
+			i = texts.length - 1;
+			inc = -1;
+			end = 0;
+		} else if (query.after) {
+			end = texts.length - 1;
+			inc = 1;
+			i = 0;
+		}
+		while (i != end) {
+			if (texts[i].type == "missing") {
+				if (texts[i].endTime == index.time || texts[i].startTime == index.time) {
+					rIndex = i;
+					break;
+				}
+			} else if (texts[i].type == "text") {
+				if (texts[i].id == index.id) {
+					rIndex = i;
+					break;
+				}
+				if (texts[i].time != index.time) break;
+			}
+			i+=inc;
+		}
+	}
+	if (rIndex >= 0) texts.splice(rIndex, 1);
+	return texts;
+}
+
 $(function () {
 	var $logs = $(".chat-area"),
 		roomName = "",
 		thread = '',
 		time = null;
-
+	function resetLog(time){
+		$logs.reset(time+"-" || null);
+	}
 	$logs.infinite({
 		scrollSpace: 2000,
 		fillSpace: 1000,
@@ -23,39 +79,38 @@ $(function () {
 			};
 			if (!roomName) return callback([]);
 
-			index = index || time;
-			query.time = index;
+			index = getIdAndTime(index);
 
+			query.time = index.time;
+			if (index.id && index.id !== "missing") {
+				if (query.before) query.before++;
+				else if (query.after) query.after++;
+			}
 
-            if(thread) query.thread = thread;
-            if(!index && !before) return callback([false]);
+			if (thread) query.thread = thread;
+			if (!index.time && !before) return callback([false]);
 
 			function loadTexts() {
 				libsb.getTexts(query, function (err, t) {
-					var texts = t.results.slice(0, t.results.length);
+					var texts = t.results || [];
 					if (err) throw err; // TODO: handle the error properly.
 
-					if (!index && texts.length === "0") {
+					if (!index && t.results.length === 0) {
 						return callback([false]);
 					}
+
+					texts = returnArray(query, index);
 
 					if (after === 0) {
 						if (texts.length < before) {
 							texts.unshift(false);
 						}
-
-                        if(t.time && texts.length && texts[texts.length-1].time === t.time) {
-                            texts.pop();
-                        }
 					} else if (before === 0) {
 						if (texts.length < after) {
 							texts.push(false);
 						}
-                        if(texts.length && texts[0].time == t.time) {
-                            texts.splice(0, 1);
-                        }
-
 					}
+
 					callback(texts.map(function (text) {
 						return text && chatEl.render(null, text);
 					}));
@@ -66,7 +121,7 @@ $(function () {
 		}
 	});
 
-// Insert incoming text messages.
+	// Insert incoming text messages.
 	libsb.on("text-dn", function (text, next) {
 		var $oldEl = $("#chat-" + text.id),
 			$newEl = chatEl.render(null, text);
@@ -80,7 +135,7 @@ $(function () {
 				}
 			}
 
-            if(i >= text.threads.length) return next();
+			if (i >= text.threads.length) return next();
 		} else if (window.currentState.thread) {
 			return next();
 		}
@@ -99,7 +154,7 @@ $(function () {
 	}, 100);
 
 	libsb.on("text-up", function (text, next) {
-		libsb.getOccupants(window.currentState.roomName, function(err, data) {
+		libsb.getOccupants(window.currentState.roomName, function (err, data) {
 			var occupants = [];
 
 			if (data.results && data.results.length) {
@@ -110,7 +165,7 @@ $(function () {
 
 			function isMention(input) {
 				if ((/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(input) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(input)) {
-					input = input.replace(/[@:,]/g,"").toLowerCase();
+					input = input.replace(/[@:,]/g, "").toLowerCase();
 
 					if (occupants.indexOf("guest-" + input) > -1) {
 						text.mentions.push("guest-" + input);
@@ -124,7 +179,7 @@ $(function () {
 			text.text.split(" ").map(isMention);
 		});
 
-        if ($logs.data("lower-limit")) {
+		if ($logs.data("lower-limit")) {
 			var $newEl = chatEl.render(null, text);
 
 			$logs.addBelow($newEl);
@@ -134,21 +189,24 @@ $(function () {
 
 		next();
 	}, 90);
-
+	libsb.on("init-dn", function (init, next) {
+		resetLog(time || null);
+		next();
+	}, 100);
 	libsb.on("navigate", function (state, next) {
 		var reset = false;
 
 		if (state.source == 'chat-area') return next();
-		if (state.source == "init") {
+		if (state.source == "boot") {
 			roomName = state.roomName || currentState.roomName;
 			thread = state.thread || currentState.thread;
-			time = state.time || (state.thread? 1: time);
+			time = state.time || (state.thread ? 1 : time);
 			reset = true;
-		}else {
-            if(state.roomName && state.room === null) {
-                reset = true;
-                roomName = currentState.roomName;
-            }else if(state.roomName && state.roomName !== state.old.roomName) {
+		} else {
+			if (state.roomName && state.room === null) {
+				reset = true;
+				roomName = currentState.roomName;
+			} else if (state.roomName && state.roomName !== state.old.roomName) {
 				roomName = state.roomName;
 				reset = true;
 			}
@@ -160,15 +218,15 @@ $(function () {
 
 			if (typeof state.thread != "undefined" && state.old && state.thread != state.old.thread) {
 				thread = state.thread;
-                time = thread? 1:null;
+				time = thread ? 1 : null;
 				reset = true;
 			}
-            if(/^conf-/.test(state.source)) {
-                reset = true;
-            }
+			if (/^conf-/.test(state.source)) {
+				reset = true;
+			}
 		}
 		if (reset) {
-			$logs.reset(time);
+			resetLog(time);
 		}
 
 		next();
@@ -226,12 +284,12 @@ $(function () {
 		}, 1000);
 
 		var chats = $logs.find(".chat-item"),
-			time = chats.eq(0).data("index"),
+			time = getIdAndTime(chats.eq(0).data("index")).time,
 			parentOffset = $logs.offset().top;
 
 		for (var i = 0; i < chats.length; i++) {
 			if (chats.eq(i).offset().top - parentOffset > 0) {
-				time = chats.eq(i).data("index");
+				time = getIdAndTime(chats.eq(i).data("index")).time;
 				break;
 			}
 		}
@@ -242,10 +300,13 @@ $(function () {
 			time = null;
 		}
 
-        libsb.emit('navigate', { time: time, source: 'chat-area' });
+		libsb.emit('navigate', {
+			time: time,
+			source: 'chat-area'
+		});
 	});
 
-	libsb.on("navigate", function(state, next) {
+	libsb.on("navigate", function (state, next) {
 		if (state.old && state.time !== state.old.time) {
 			if (state.time) {
 				$(".chat-position").text(format.friendlyTime(state.time, new Date().getTime()));
@@ -255,9 +316,9 @@ $(function () {
 		next();
 	}, 50);
 
-	setInterval(function() {
-		$(".chat-timestamp").each(function() {
-			var time = $(this).parent().data("index");
+	setInterval(function () {
+		$(".chat-timestamp").each(function () {
+			var time = getIdAndTime($(this).parent().data("index")).time;
 
 			$(this).empty().text(format.friendlyTime(time, new Date().getTime()));
 		});

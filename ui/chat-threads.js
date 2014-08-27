@@ -94,13 +94,17 @@ $(function() {
         if (state.old && (state.old.view !== state.view ||
                           state.old.thread !== state.thread ||
                           state.old.mode !== state.mode ||
-                          state.old.room !== state.room
+                          state.old.roomName !== state.roomName
                          )) {
 
             removeLine();
 
             if (state.old.thread !== state.thread) {
                 selectConv(state.thread);
+            }
+
+            if (state.old.roomName !== state.roomName) {
+                currThread = null;
             }
 
             setTimeout(function() {
@@ -164,6 +168,14 @@ $(function() {
             this.scrollTop(0);
         }
 
+        if (!currThread || lastThread !== currThread) {
+            updateLine();
+        }
+
+        if (!window.currentState.connectionStatus) {
+            return this;
+        }
+
         var nick = this.find(".chat-nick").text(),
             msg = format.htmlToText($entry.html()),
 			atStart = false;
@@ -199,10 +211,6 @@ $(function() {
                     $entry.setCursorEnd();
                 }
             }
-        }
-
-        if (!currThread || lastThread !== currThread) {
-            updateLine();
         }
 
 		return this;

@@ -41,10 +41,9 @@ $(function() {
 //	}, 500);
 
 	libsb.on("navigate", function(state, next) {
-		if (state.old && state.room !== state.old.room) {
+		if (state.old && state.roomName !== state.old.roomName && typeof state.room == "object") {
 			customStyle.applyCss();
 		}
-
 		next();
 	}, 700);
 

@@ -1,11 +1,10 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, lace */
 
 var desktopnotify = require("../ui/desktopnotify.js"),
-    lace = require("../lib/lace.js"),
     formField = require("../lib/formField.js");
 
-libsb.on("pref-show", function(tabs, next){
+libsb.on("pref-show", function(tabs, next) {
     var user = tabs.user,
         $div = $("<div>"),
         notifications = user.params.notifications;
@@ -57,7 +56,7 @@ libsb.on("pref-show", function(tabs, next){
     next();
 }, 500);
 
-libsb.on("pref-save", function(user, next){
+libsb.on("pref-save", function(user, next) {
     user.params.notifications = {
         sound: $("#sound-notification").is(":checked"),
         desktop: $("#desktop-notification").is(":checked")

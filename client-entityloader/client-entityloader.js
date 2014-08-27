@@ -1,26 +1,48 @@
-/* global libsb, currentState*/
-// var generate = require('../lib/generate.js');
+/* jshint browser: true */
+/* global window*/
 
-module.exports = function() {
-	libsb.on("navigate", function(state, next) {
-		if(state.roomName != state.old.roomName) {
-			libsb.getRooms({ref: state.roomName}, function(err, data) {
-				if(err) {
-					throw err; // handle this better
+var currentState = window.currentState;
+
+module.exports = function (libsb) {
+	libsb.on("navigate", function (state, n) {
+		function next() {
+			n();
+		}
+		if (!state.old || state.roomName != state.old.roomName || (state.old.connectionStatus === false && state.connectionStatus)) {
+			libsb.getRooms({
+				ref: state.roomName
+			}, function (err, data) {
+				if (err) {
+					console.log("ERROR: ", err, data);
+					return next(err);
 				}
-				if(!data || !data.results || !data.results.length) {
-					state.room = null;
-                    currentState.room = null; // this is a bad thing to do..     
-				}else{
+
+				if (!data || !data.results || !data.results.length) {
+					libsb.emit('getUsers', {
+						ref: state.roomName,
+						source: "loader"
+					}, function (e, d) {
+						if (d.results && d.results.length) {
+							state.mode = 'profile';
+						} else {
+							state.room = null;
+							if (!libsb.isInited) {
+								roomStatus = "pending";
+							} else {
+								roomStatus = "noroom";
+								state.mode = "noroom";
+							};
+						}
+						return next();
+					});
+				} else {
 					state.room = data.results[0];
-                    currentState.room = state.room; // so is this... fix it.
-                    
+					return next();
 				}
-				next();
 			});
-		}else {
-            state.room = currentState.room;
+		} else {
+			state.room = currentState.room;
 			next();
 		}
-	},"loader");
+	}, 998);
 };
