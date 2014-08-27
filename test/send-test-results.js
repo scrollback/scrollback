@@ -7,8 +7,9 @@ var parser = new xml2js.Parser();
 var to = config.test.to;
 
 function sendResults() {
-    var r = fs.readFileSync('./xunit.xml', 'utf8');
-    formatResults(r, function(email) {
+    var r1 = fs.readFileSync('./xunit-mocha.xml', 'utf8');
+    var r2 = fs.readFileSync('./xunit.xml', 'utf8');
+    formatResults(r1, r2, function(email) {
         to.forEach(function(t) {
             send('askabt@scrollback.io', t, email.subject, email.body);
         });    
@@ -17,12 +18,31 @@ function sendResults() {
 
 sendResults();
 
-function formatResults(r, callback) {
+function formatResults(r1, r2, callback) {
+    xmlToJson(r1, function(email1) {
+        xmlToJson(r2, function(email2) {
+            var email = {};
+            var subject = "Test Results Failures: " + (email1.failures + email2.failures) + " Total: " + (email1.total + email2.total) + " Errors: " + (email1.errors + email2.errors);
+            email.subject = subject;
+            email.body = '<html><body>' + getCoverage() + 
+                "<H2>Unit Test Results</H2>" + 
+                email1.body + 
+                "<H2>Selenium Test Results</H2>" + 
+                email2.body + 
+                '</body></html>';
+            callback(email);
+        });
+    });
+
+}
+
+function xmlToJson(r, callback) {
     parser.parseString(r, function(err, data) {
         console.log("data=", JSON.stringify(data)); 
         var ret = {};
-        var subject = "Test Results Failures: " + data.testsuite.$.failures + " Total: " + data.testsuite.$.tests + " Errors: " + data.testsuite.$.errors;
-        ret.subject = subject;
+        ret.failures = parseInt(data.testsuite.$.failures);
+        ret.errors = parseInt(data.testsuite.$.errors);
+        ret.total = parseInt(data.testsuite.$.tests);
         var s = [];
         data.testsuite.testcase.forEach(function(test) {
             var style = "font-size: 14px;";
@@ -33,10 +53,10 @@ function formatResults(r, callback) {
             }
             s.push("<pre style='" + style + "'>" + htmlEncode.htmlEncode(JSON.stringify(test, null, 4)).replace(/\\n/g, "<br/>") + "</pre>");
         });
-        ret.body = '<html><body>' +
-            getCoverage() + "<p>" + 
+        
+        ret.body =  "<p>" + 
             s.join("\n") + 
-            '</p></body></html>';
+            '</p>';
         callback(ret);
     });
 }

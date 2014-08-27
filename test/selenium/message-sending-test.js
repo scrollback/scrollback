@@ -24,7 +24,6 @@ test.describe('Scrollback test', function() {
 		driver.get(server + '/scrollback');
 		var time = new Date().getTime();
 		driver.wait(function() {//wait for page load
-			console.log("time=", (new Date().getTime() - time));
 			return new Date().getTime() - time >= 1.5 * timeout;
 		}, 2 * timeout);
 	});

@@ -36,8 +36,11 @@ sudo forever stop ircClient/server.js
 sudo forever start ircClient/server.js
 mocha test/test.js -R xunit-file
 mocha test/test.js -R html-cov > "public/s/tmp/coverage-$(date +%y%m%d).html"
-node test/send-test-results.js
 sudo forever start index.js
+cp xunit.xml xunit-mocha.xml
+mocha test/selenium/test.js -R xunit-file
+node test/send-test-results.js
+#//run selenium...
 
 
 
