@@ -2,6 +2,7 @@
 /* global $, libsb, currentState, format */
 
 var chatEl = require("./chat.js"),
+	_ = require('underscore'),
 	chatArea = {};
 
 function getIdAndTime(index) {
@@ -91,33 +92,47 @@ $(function () {
 			if (!index.time && !before) return callback([false]);
 
 			function loadTexts() {
-				libsb.getTexts(query, function (err, t) {
-					var texts = t.results || [];
-					if (err) throw err; // TODO: handle the error properly.
+				libsb.emit("getUsers", {memberOf: currentState.roomName, ref: libsb.user.id}, function (e, d) {
+					var isOwner = (d.results[0] && d.results[0].role === "owner") ? true : false ;
+					libsb.getTexts(query, function (err, t) {
+						var texts = t.results || [];
+						if (err) throw err; // TODO: handle the error properly.
 
-					if (!index && t.results.length === 0) {
-						return callback([false]);
-					}
-
-					texts = returnArray(query, index);
-
-					if (after === 0) {
-						if (texts.length < before) {
-							texts.unshift(false);
+						if (!index && t.results.length === 0) {
+							return callback([false]);
 						}
-					} else if (before === 0) {
-						if (texts.length < after) {
-							texts.push(false);
-						}
-					}
 
-					callback(texts.map(function (text) {
-						return text && chatEl.render(null, text);
-					}));
+						texts = returnArray(query, index);
+
+						if (after === 0) {
+							if (texts.length < before) {
+								texts.unshift(false);
+							}
+						} else if (before === 0) {
+							if (texts.length < after) {
+								texts.push(false);
+							}
+						}
+						callback(_.filter(texts.map(function (text) {
+								return text && chatEl.render(null, text, isOwner);
+							}), function(m) {
+								return typeof m !== "undefined";
+						}));
+					});
 				});
 			}
 
-			loadTexts();
+			if (typeof libsb.user === "undefined") {
+				libsb.on("navigate", function (state, next) {
+					if (state.connectionStatus === true && state.old.connectionStatus === false) {
+						loadTexts();
+					}
+					next();
+				}, 700);
+			} else {
+				loadTexts();	
+			}
+			
 		}
 	});
 
