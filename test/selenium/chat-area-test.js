@@ -24,9 +24,15 @@ test.describe('Scrollback test', function() {
 		driver.get(server + '/scrollback');
 		var time = new Date().getTime();
 		driver.wait(function() {//wait for page load
-			console.log("time=", (new Date().getTime() - time));
 			return new Date().getTime() - time >= 1.5 * timeout;
 		}, 2 * timeout);
+	});
+	test.it("Message Load test", function() {
+		this.timeout(timeout);
+		driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
+			console.log("Number of messages: ", e.length);
+			assert.equal(true, e.length > 1, "No Messages displayed on load");
+		});
 	});
 	
 	test.it('Messages sending test', function() {
@@ -44,6 +50,19 @@ test.describe('Scrollback test', function() {
 			});
 		}, 2000);
 	});
+	
+	test.it("thread id test", function() {
+		this.timeout(timeout);
+		driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
+			console.log("Number of messages: ", e.length);
+			//check last message got thread-id
+			e[e.length - 1].getAttribute("data-thread").then(function(threadId) {
+				console.log("thread Id", threadId);
+				assert.equal(33, threadId.length, "Last message did not got threadId");	
+			});
+		});	
+	});
+	
 	
 	
 	
