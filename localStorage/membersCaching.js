@@ -84,10 +84,26 @@ module.exports = function () {
 			*/
 			if (typeof back.user === "undefined") {
 				back.user = libsb.user;
+				libsb.emit("getUsers", {memberOf: back.to, ref: back.from}, function (e, d) {
+					var role;
+					
+					if (d.results && d.results[0]) {
+						role = d.results[0].role;
+					}
+					
+					back.user.role = role;
+					userCache.putOccupants(back.to, back.user);
+					next();
+				});
 			}
+			else {
+				userCache.putOccupants(back.to, back.user);
+				next();
+			}
+		} else {
+			userCache.putOccupants(back.to, back.user);
+			next();
 		}
-		userCache.putOccupants(back.to, back.user);
-		next();
 	}, 900);
 
 	libsb.on("init-dn", function (init, next) {
