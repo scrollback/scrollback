@@ -6,7 +6,7 @@ var test = require('browserstack-webdriver/testing');
 var config = require("../config.js");
 var timeout = 30000;
 test.describe('Scrollback test', function() {
-	this.timeout(timeout);
+	this.timeout(4 * timeout);
 	var driver, server = "http://dev.scrollback.io";
 
 	test.before(function() {
