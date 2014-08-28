@@ -26,7 +26,7 @@ module.exports = {
 			noCache: true
 		}, function (err, data) {
 			members = data.results;
-			_this.putMembers(room, members);
+			_this.putMembers(room, members, true);
 			_this.deletePersistence();
 			_this.saveUsers();
 			membersPopulated = true;
@@ -39,7 +39,7 @@ module.exports = {
 			noCache: true
 		}, function (err, data) {
 			occupants = data.results;
-			_this.putOccupants(room, occupants);
+			_this.putOccupants(room, occupants, true);
 			_this.deletePersistence();
 			_this.saveUsers();
 			occupantsPopulated = true;
@@ -103,9 +103,12 @@ module.exports = {
 			callback(null);
 		}
 	},
-	putMembers: function (room, memberList) {
+	putMembers: function (room, memberList, override) {
 		if (typeof room !== "string") {
 			return;
+		}
+		if (override === true) {
+			delete roomMemberList[room];
 		}
 		if (!(memberList instanceof Array)) {
 			memberList = [memberList];
@@ -121,9 +124,13 @@ module.exports = {
 		});
 		this.saveUsers();
 	},
-	putOccupants: function (room, occupantList) {
+	putOccupants: function (room, occupantList, override) {
 		if (typeof room !== "string") {
 			return;
+		}
+		if (override === true) {
+			// clear old data
+			delete roomOccupantList[room];
 		}
 		if (!(occupantList instanceof Array)) {
 			if(typeof occupantList !== "undefined") occupantList = [occupantList];

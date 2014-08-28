@@ -96,7 +96,7 @@ module.exports = function () {
 			This code was tested by hardcoding this value.
 			Apparently, after Harish's navigation, boot manager etc is pushed, this should be resolved.
 		*/
-		
+		userCache.deletePersistence();
 		userCache.populateMembers(currentState.roomName);
 		userCache.populateOccupants(currentState.roomName);
 
