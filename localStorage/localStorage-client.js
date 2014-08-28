@@ -377,7 +377,7 @@ module.exports = function (c) {
 		next();
 	}, 500);
 
-	require('./membersCaching.js')(c);
+	require('./membersCaching.js')();
 	libsb.on('logout', logout, 1000);
 };
 

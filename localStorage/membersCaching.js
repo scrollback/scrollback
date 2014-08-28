@@ -1,8 +1,8 @@
 /* global libsb, currentState */
 var userCache = require('./userCache.js');
 
-module.exports = function (core) {
-	core.on("getUsers", function (query, next) {
+module.exports = function () {
+	libsb.on("getUsers", function (query, next) {
 		if (query.noCache && query.noCache === true) {
 			return next();
 		}
@@ -10,13 +10,15 @@ module.exports = function (core) {
 		if (query.hasOwnProperty("memberOf")) {
 			// fetching member info
 			if (query.hasOwnProperty("ref")) { // info for a single member
-				userCache.getMembers(query.to, query.ref, function (data) {
+				userCache.getMembers(query.memberOf, query.ref, function (data) {
+					if (data === null) return next();
 					query.results = data;
 					query.resultSource = "localStorage";
 					next();
 				});
 			} else { // return all members of requested room.
-				userCache.getMembers(query.to, null, function(data) {
+				userCache.getMembers(query.memberOf, null, function(data) {
+					if (data === null) return next();
 					query.results = data;
 					query.resultSource = "localStorage";
 					next();
@@ -24,7 +26,8 @@ module.exports = function (core) {
 			}
 		} else if (query.hasOwnProperty("occupantOf")) {
 			// fetch occupant info
-			userCache.getOccupants(query.to, null, function(results) {
+			userCache.getOccupants(query.occupantOf, null, function(results) {
+				if (results === null) return next();
 				query.results = results;
 				query.resultSource = "localStorage";
 				next();
@@ -38,30 +41,30 @@ module.exports = function (core) {
 		}
 	}, 100);
 
-	core.on("getUsers", function (query, next) {
+	libsb.on("getUsers", function (query, next) {
 		// run after socket, do result caching here
 		if (query.resultSource && query.resultSource === "localStorage") {
 			return next();
 		}
 		if (query.hasOwnProperty("memberOf")) {
-			userCache.putMembers(query.to, query.results);
+			userCache.putMembers(query.memberOf, query.results);
 		} else if (query.hasOwnProperty("occupantOf")) {
-			userCache.putOccupants(query.to, query.results);
+			userCache.putOccupants(query.occupantOf, query.results);
 		}
 		next();
 	}, 8);
 
-	core.on("join-dn", function (join, next) {
+	libsb.on("join-dn", function (join, next) {
 		userCache.putMembers(join.to, join.user);
 		next();
 	}, 900);
 
-	core.on("part-dn", function (part, next) {
+	libsb.on("part-dn", function (part, next) {
 		userCache.removeMembers(part.to, part.user);
 		next();
 	}, 900);
 
-	core.on("away-dn", function (away, next) {
+	libsb.on("away-dn", function (away, next) {
 		if (away.from === libsb.user.id) {
 			userCache.saveUsers();
 		}
@@ -69,7 +72,7 @@ module.exports = function (core) {
 		next();
 	}, 900);
 
-	core.on("back-dn", function (back, next) {
+	libsb.on("back-dn", function (back, next) {
 		if (back.from === libsb.user.id) {
 			userCache.populateMembers(back.to);
 			userCache.populateOccupants(back.to);
@@ -87,7 +90,7 @@ module.exports = function (core) {
 		next();
 	}, 900);
 
-	core.on("init-dn", function (init, next) {
+	libsb.on("init-dn", function (init, next) {
 		/*
 			CurrentState.roomName is undefined here, which should not happen.
 			This code was tested by hardcoding this value.

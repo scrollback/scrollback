@@ -16,8 +16,6 @@ var _this;
 var membersPopulated = false;
 var occupantsPopulated = false;
 
-var emitter = new (require("../lib/emitter.js"))();
-
 module.exports = {
 	populateMembers: function (room) {
 		// populate memebers of room into our structures.
@@ -32,7 +30,6 @@ module.exports = {
 			_this.deletePersistence();
 			_this.saveUsers();
 			membersPopulated = true;
-			emitter.emit("members-populated");
 		});
 	},
 	populateOccupants: function (room) {
@@ -46,22 +43,26 @@ module.exports = {
 			_this.deletePersistence();
 			_this.saveUsers();
 			occupantsPopulated = true;
-			emitter.emit("occupants-populated");
 		});
 	},
 	getMembers: function (room, memberId, callback) {
 		var res = [];
 		this.loadUsers();
 		
+		if (typeof room ===  "undefined") return;
+		
 		if (memberId !== null) {
 			if (/^guest-/.test(memberId)) {
 				res = []; // guest cannot be a member
 			}
 			// return the single member as an Array
-			if (!roomMemberList[room].hasOwnProperty(memberId)) {
+			if (!roomMemberList.hasOwnProperty(room)) {
 				res = [];
 			}
-			return [roomMemberList[room][memberId]];
+			else if (!roomMemberList[room].hasOwnProperty(memberId)) {
+				res = [];
+			}
+			else res = [roomMemberList[room][memberId]];
 		} else {
 			// return all members of the room
 			var mList = roomMemberList[room];
@@ -72,9 +73,7 @@ module.exports = {
 		if (membersPopulated === true) {
 			callback(res);
 		} else {
-			emitter.on("members-populated", function() {
-				callback(res);
-			}, 500);
+			callback(null);
 		}
 	},
 	getOccupants: function (room, occupantId, callback) {
@@ -101,9 +100,7 @@ module.exports = {
 		if (occupantsPopulated === true) {
 			callback(res);
 		} else {
-			emitter.on("occupants-populated", function (){
-				callback(res);
-			}, 500);
+			callback(null);
 		}
 	},
 	putMembers: function (room, memberList) {
