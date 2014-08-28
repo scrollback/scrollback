@@ -32,7 +32,7 @@ module.exports = function (l) {
 function updateTitle(state) {
 	switch (state.mode) {
 	case 'conf':
-		document.title = "Room settings - " + currentState;
+		document.title = "Room settings - " + currentState.tab || "";
 		break;
 	case 'pref':
 		document.title = "Account settings - " + libsb.user.id;

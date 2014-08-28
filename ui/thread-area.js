@@ -133,7 +133,6 @@ var threadEl = require("./thread.js"),
 		} else if(state.tab != state.old.tab && state.tab == "threads") {
 			reset = true;
 		}
-
         if(['search-local', 'search-global', 'threads'].indexOf(state.tab)>=0) {
 			$(".pane-threads").addClass("current");
 		}else {
@@ -141,9 +140,11 @@ var threadEl = require("./thread.js"),
 			$(".pane-threads").removeClass("current");
 			return next();
 		}
-
+	
         if(reset) {
 			if(currentState.mode == "search") {
+				searchResult.splice(0, searchResult.length);
+				searchResult[0] = false;
 				$threads.reset(0);
 			}else {
 				$threads.reset(time);
