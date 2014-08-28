@@ -7,6 +7,8 @@ logfile="${scrollbackdir}/logs/test-$(date +%y%m%d%H).log"
 # Create logfile
 touch "$logfile"
 
+exec &>> "$logfile"
+
 # Show error messages
 show_err() {
     echo -e "[ERR  $(date +"%H:%M:%S")] ${1}" > "$logfile"
@@ -38,10 +40,12 @@ mocha test/test.js -R xunit-file
 mocha test/test.js -R html-cov > "public/s/tmp/coverage-$(date +%y%m%d).html"
 sudo forever start index.js
 cp xunit.xml xunit-mocha.xml
+
+#run selenium...
 mocha test/selenium/test.js -R xunit-file
 node test/send-test-results.js
-#//run selenium...
 
+exit 0
 
 
 
