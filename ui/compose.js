@@ -48,7 +48,7 @@ $(function() {
 	}, 10);
 
 	libsb.on("navigate", function(state, next) {
-		if (state.old && state.old.room && state.room && state.old.room.roomName !== state.room.roomName) {
+		if (state.old && state.old.roomName !== state.roomName) {
 			$entry.empty();
 		}
 

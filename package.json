@@ -64,7 +64,8 @@
     "sockjs": "0.3.x",
     "sockjs-client": "latest",
     "twit": "~1.1.12",
-    "underscore": "latest"
+    "underscore": "latest",
+    "xml2js": "^0.4.4"
   },
   "optionalDependencies": {},
   "devDependencies": {

@@ -19,7 +19,7 @@ Boston, MA 02111-1307 USA.
 */
 
 var config = require('../config.js'), core,
-	fs = require("fs"),core;
+	fs = require("fs"),core, clientHTML;
 var clientSubstrings = [];
 var seo;
 //var log = require('../lib/logger.js');
@@ -34,6 +34,10 @@ exports.init = function(app, coreObject) {
 		});
 	});
     
+	app.get("/s/offline.html", function(req, res, next) {
+		res.end(clientHTML);
+	});
+	
 	app.get("/*", function(req, res, next){
 		if(/^\/t\//.test(req.path)) return next();
 		if(/^\/s\//.test(req.path)) {console.log("static"); return next();}
@@ -58,7 +62,7 @@ exports.init = function(app, coreObject) {
 };
 
 function init() {
-    var clientHTML = fs.readFileSync(__dirname + "/../public/client.html", "utf8");
+    clientHTML = fs.readFileSync(__dirname + "/../public/client.html", "utf8");
     seo = require('./seo.js')(core); 
     var idhs = "<!-- gen Head Start -->";
     var idbs = "<!-- Messages start here. -->";
