@@ -16,6 +16,13 @@ var _this;
 var membersPopulated = false;
 var occupantsPopulated = false;
 
+if (typeof window === "undefined") {
+    // for mocha tests
+    localStorage = {};
+    membersPopulated = true;
+    occupantsPopulated = true;
+}
+
 module.exports = {
 	populateMembers: function (room) {
 		// populate memebers of room into our structures.
