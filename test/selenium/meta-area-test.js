@@ -4,23 +4,14 @@ var webdriver = require('browserstack-webdriver');
 var test = require('browserstack-webdriver/testing');
 var config = require("../config.js");
 var timeout = 30000;
-module.exports = function(options) {
-	test.describe('Meta area test: ' + JSON.stringify(options), function () {
+module.exports = function(capabilities, options) {
+	test.describe('Meta area test: ' + options.id, function () {
 		this.timeout(timeout);
 		var driver, server = "http://dev.scrollback.io";
 
 		test.before(function () {
 			this.timeout(3 * timeout);
-			var capabilities = {
-				'browserstack.debug': config.selenium.debug,
-				'browser' : options.browser,
-				'browser_version' : options.browser_version,
-				'os' : options.os,
-				'os_version' : options.os_version,
-				'resolution' : options.resolution,
-				'browserstack.user': config.selenium.username,
-				'browserstack.key': config.selenium.accessKey
-			};
+
 			driver = new webdriver.Builder().
 				usingServer('http://hub.browserstack.com/wd/hub').
 				withCapabilities(capabilities).
@@ -30,9 +21,29 @@ module.exports = function(options) {
 			driver.wait(function () {//wait for page load
 				return new Date().getTime() - time >= 1.5 * timeout;
 			}, 2 * timeout);
-			driver.executeScript("window.resizeTo(" + capabilities.resolution.split('x')[0] +
-				"," +  capabilities.resolution.split('x')[1] + ");");
 		});
+		test.it("meta button test", function() {
+			this.timeout(timeout);
+			driver.findElement(webdriver.By.css('.meta-button-back')).
+			then(function(mb) {
+				mb.isDisplayed().
+				then(function(v) {
+					if(v) {
+						mb.click().
+						then(function() {
+							driver.findElement(webdriver.By.css('.meta-area')).
+							then(function(ma) {
+								ma.isDisplayed().
+								then(function(v) {
+									assert.equal(true, v, "Meta-button-back is not working");
+								});
+							});
+						});
+					}
+				});
+			});
+		});
+
 		test.it("People area test1", function () {
 			this.timeout(timeout);
 			driver.findElement(webdriver.By.css('.pane-people')).

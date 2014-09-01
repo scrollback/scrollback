@@ -4,24 +4,14 @@ var assert = require('assert'),
 var webdriver = require('browserstack-webdriver');
 var test = require('browserstack-webdriver/testing');
 var config = require("../config.js");
-var timeout = 30000;
-module.exports = function(options) {
-	test.describe('Chat Area Test: ' + JSON.stringify(options), function () {
+var timeout = 25000;
+module.exports = function(capabilities, options) {
+	test.describe('Chat Area Test: ' + options.id, function () {
 		this.timeout(4 * timeout);
 		var driver, server = "https://dev.scrollback.io";
 
 		test.before(function () {
 			this.timeout(3 * timeout);
-			var capabilities = {
-				'browserstack.debug': config.selenium.debug,
-				'browser' : options.browser,
-				'browser_version' : options.browser_version,
-				'os' : options.os,
-				'os_version' : options.os_version,
-				'resolution' : options.resolution,
-				'browserstack.user': config.selenium.username,
-				'browserstack.key': config.selenium.accessKey
-			};
 			driver = new webdriver.Builder().
 				usingServer('http://hub.browserstack.com/wd/hub').
 				withCapabilities(capabilities).
