@@ -249,21 +249,30 @@ module.exports = function (c) {
 	libsb.on('getRooms', function (query, next) {
 
 		// only getRooms with ref are cached as of now.
-		if (query.cachedRoom === false) {
-			return next();
-		}
+		 if (query.cachedRoom === false && query.hasOwnProperty("hasMember")) {
+             if (libsb.isInited !== true) {
+                 libsb.on('init-dn', function (init, n) {
+                     setTimeout(function () {
+                         return next();
+                     }, 0);
+                     n();
+                 }, 100);
+             } else {
+                 return next();
+             }
+		} else {
+             if (!query.ref) {
+                 return next();
+             }
 
-		if (!query.ref) {
-			return next();
-		}
+             var rooms = cacheOp.rooms || {};
 
-		var rooms = cacheOp.rooms || {};
+             if (rooms.hasOwnProperty(query.ref)) {
+                 query.results = [rooms[query.ref]];
+             }
 
-		if (rooms.hasOwnProperty(query.ref)) {
-			query.results = [rooms[query.ref]];
-		}
-
-		next();
+             return next();
+         }
 
 	}, 400); // run before socket
 

@@ -74,25 +74,27 @@ function showConfig(room) {
      });
 }
 
-libsb.on('navigate', function (state, next) {
-    var isOwner = false;
-
-    function cancelEdit() {
+function cancelEdit() {
+    setTimeout(function () {
         libsb.emit('navigate', {
             mode: 'normal',
             source: "conf-cancel"
         });
+    }, 0);
+}
+
+function checkOwnerShip() {
+    var isOwner = false;
+    if(libsb.memberOf) {
+        libsb.memberOf.forEach(function (room) {
+            if (room.id == currentState.roomName && room.role == "owner") isOwner = true;
+        });
     }
 
-    function checkOwnerShip() {
-        if(libsb.memberOf) {
-            libsb.memberOf.forEach(function (room) {
-                if (room.id == currentState.roomName && room.role == "owner") isOwner = true;
-            });
-        }
+    return isOwner;
+}
 
-        return isOwner;
-    }
+libsb.on('navigate', function (state, next) {
 
     if (state.old && state.old.mode !== state.mode && state.mode === "conf") {
         if (!checkOwnerShip()) {
