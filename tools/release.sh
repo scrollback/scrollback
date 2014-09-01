@@ -22,6 +22,14 @@ fi
 # Exit script on Ctrl+C
 trap exit 1 INT
 
+# Show warning
+show_info "This script can kill your kitten, set your house on fire, or send you to a parallel universe for exile. Continue anyways [y/n]?"
+read -n 1 ans
+printf "\n"
+if [[ ! "$ans" == [Yy] ]]; then
+    exit 1
+fi
+
 # The script is irrevelant if not inside the GIT repository
 grep "\"name\": \"Scrollback\"" "package.json" > /dev/null 2>&1
 if [[ ! $? -eq 0 || ! -f ".git/config" ]]; then
