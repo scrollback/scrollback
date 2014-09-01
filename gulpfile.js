@@ -116,7 +116,9 @@ gulp.task("manifest", function() {
 	return gulp.src([
 		"public/**/*",
 		"!public/{**/*.html,t/**}",
-		"!public/s/{*,js/*,img/*,img/covers/*,styles/scss/*}"
+		"!public/s/{*,img/*,img/covers/*,styles/scss/*}",
+		"!public/s/scripts/{*/*.map,js/*,lib/*}",
+		"!public/s/styles/{*/*.map,css/*,lace/*,scss/*}"
 	])
 	.pipe(manifest({
 		cache: [
