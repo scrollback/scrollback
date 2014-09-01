@@ -66,7 +66,7 @@ describe("User cache ", function () {
 
     it("should remove an occupant from a room", function (done) {
 		userCache.removeOccupants("testroom1", "occupant1");
-		var res = userCache.getOccupants("testroom1", null, function (res) {
+		userCache.getOccupants("testroom1", null, function (res) {
             occupants.splice(0, 1);
             assert.equal(_.isEqual(occupants, res), true, "Assertion Error!");
             done();
