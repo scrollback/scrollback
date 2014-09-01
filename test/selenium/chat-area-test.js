@@ -31,11 +31,8 @@ module.exports = function(options) {
 			driver.wait(function () {//wait for page load
 				return new Date().getTime() - time >= 1.5 * timeout;
 			}, 2 * timeout);
-			driver.executeScript("window.resizeTo(" + capabilities.resolution.split('x')[0] +
-				"," +  capabilities.resolution.split('x')[1] + ");");
 		});
 		test.it("Message Load test", function () {
-
 			this.timeout(timeout);
 			driver.findElements(webdriver.By.css('.chat-item')).then(function (e) {
 				console.log("Number of messages: ", e.length);

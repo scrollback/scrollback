@@ -11,20 +11,26 @@ var capabilities = [
 		'browser' : 'IE',
 		'browser_version' : '10.0',
 		'os' : 'Windows',
-		'os_version' : '7',
-		'resolution' : '1024x768'
+		'os_version' : '8',
+		'resolution' : '1280x1024'
+	}, {
+		'browser' : 'IE',
+		'browser_version' : '11.0',
+		'os' : 'Windows',
+		'os_version' : '8.1',
+		'resolution' : '1366x768'
 	}, {
 		'browser' : 'Chrome',
 		'browser_version' : '36.0',
 		'os' : 'Windows',
-		'os_version' : '7',
-		'resolution' : '1024x768'
+		'os_version' : '8.1',
+		'resolution' : '1366x768'
 	}, {
 		'browser' : 'Firefox',
 		'browser_version' : '31.0',
 		'os' : 'Windows',
-		'os_version' : '7',
-		'resolution' : '1024x768'
+		'os_version' : '8.1',
+		'resolution' : '1366x768'
 	}
 
 ];
