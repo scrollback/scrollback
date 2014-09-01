@@ -68,6 +68,9 @@ function classesOnLoad(embed) {
 			$("body").addClass("theme-" + embed.theme);
 		}
 	}
+	if (embed.minimize) {
+		$("body").addClass("minimized");
+	}
 	if (embed && embed.form) {
 		$("body").addClass("embed-" + embed.form);
 	}

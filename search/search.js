@@ -8,7 +8,7 @@ var client;
 var searchTimeout = 10000;
 var messageCount = 0;
 var updateThreads = [];
-
+var indexAtCount = 10;
 
 
 /*
@@ -173,7 +173,7 @@ module.exports = function (core) {
                         function insertText() {
                             searchDB.sadd("thread:{{"+e.id+"}}:texts", message.id+":"+message.from+":"+message.text, function() {
                                 messageCount++;
-                                if(messageCount >=100) {
+                                if(messageCount >=indexAtCount) {
                                    indexTexts();
                                     messageCount = 0;
                                 }
@@ -238,15 +238,30 @@ module.exports = function (core) {
                 return callback();
             }
             data.type = 'threads';
-            query = {query: { match: {"_all": qu.q}}};
+//			curl -XGET 'http://10.88.85.212:9200/sb/threads/_search?pretty=true' -d '{"query":{"bool":{"must":{"match":{"texts":"firefox"}},"must":{"match":{"room":"mozilla-india"}}}}}'
 
-            if(qu.to){
-                query.filter = {
-                    term: {
-                        room: qu.to
-                    }
-                };
-            }
+			query = {
+				"query": {
+					"bool": {
+						"must": []
+					}
+				}
+			};
+			
+			if (qu.q) {
+				query.query.bool.must.push({
+					"match": {
+						"texts": qu.q
+					}
+				});
+			}
+			if (qu.to) {
+				query.query.bool.must.push({
+					"match": {
+						"room": qu.to
+					}
+				});
+			}
             
             position = query.from = qu.pos || 0;
 
