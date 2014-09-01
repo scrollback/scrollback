@@ -64,9 +64,23 @@ $(function () {
 		roomName = "",
 		thread = '',
 		time = null;
+
+	function scrollToBottom($el) {
+		if (!($el && $el.length)) {
+			return;
+		}
+
+		if ($.fn.velocity) {
+			$el.children().last().velocity("scroll", { duration: 150, container: $el });
+		} else {
+			$el.get(0).scrollTop = $logs.get(0).scrollHeight;
+		}
+	}
+
 	function resetLog(time){
 		$logs.reset(time+"-" || null);
 	}
+
 	$logs.infinite({
 		scrollSpace: 2000,
 		fillSpace: 1000,
@@ -130,9 +144,9 @@ $(function () {
 					next();
 				}, 700);
 			} else {
-				loadTexts();	
+				loadTexts();
 			}
-			
+
 		}
 	});
 
@@ -162,7 +176,7 @@ $(function () {
 		if ($logs.data("lower-limit")) {
 			$logs.addBelow($newEl);
 
-			$newEl.get(0).scrollIntoView(true);
+			scrollToBottom($logs);
 		}
 
 		next();
@@ -199,7 +213,7 @@ $(function () {
 
 			$logs.addBelow($newEl);
 
-			$newEl.get(0).scrollIntoView(true);
+			scrollToBottom($logs);
 		}
 
 		next();
