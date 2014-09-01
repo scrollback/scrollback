@@ -133,8 +133,14 @@ module.exports = function (libsb) {
 			} catch (e) {
 				embed = {};
 			}
+
 			suggestedNick = embed.suggestedNick;
 			classesOnLoad(embed);
+
+			if (embed.minimize) {
+				$("body").addClass("minimized");
+			}
+
 			if (embed.origin) {
 				window.onmessage = function (e) {
 					var data = e.data;
