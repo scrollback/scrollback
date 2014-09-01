@@ -162,7 +162,7 @@ module.exports = {
 			memberList = [memberList];
 		}
 		memberList.forEach(function (m) {
-			delete roomMemberList[room][m];
+			delete roomMemberList[room][m.id];
 		});
 		this.saveUsers();
 	},
@@ -171,7 +171,7 @@ module.exports = {
 			occupantList = [occupantList];
 		}
 		occupantList.forEach(function (o) {
-			delete roomOccupantList[room][o];
+			delete roomOccupantList[room][o.id];
 		});
 		this.saveUsers();
 	},
