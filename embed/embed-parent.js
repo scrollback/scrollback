@@ -33,7 +33,7 @@
 			style = document.createElement("link");
 			style.rel = "stylesheet";
 			style.type = "text/css";
-			style.href = host + "/s/styles/gen/embed.css";
+			style.href = host + "/s/styles/dist/embed.css";
 
 			document.head.appendChild(style);
 			// Create and append the iframe
