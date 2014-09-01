@@ -42,7 +42,7 @@ $(".conf-cancel").on("click", function () {
 	});
 });
 
-function getUsers() {
+function renderUserPref() {
 	libsb.emit('getUsers', {
 		ref: "me"
 	}, function (err, data) {
@@ -71,7 +71,14 @@ libsb.on('navigate', function (state, next) {
 					mode: 'normal'
 				});
 			}
-			getUsers();
+            if (libsb.isInited === true) {
+               renderUserPref();
+            } else {
+                libsb.on('init-dn', function (i, n) {
+                    renderUserPref();
+                    n();
+                }, 100);
+            }
 		}
 	}
 	next();

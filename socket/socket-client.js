@@ -106,7 +106,7 @@ function disconnected() {
     setTimeout(connect, backOff*1000);
 }
 
-function sendQuery(query, next){
+function sendQuery(query, next) {
 	if(query.results) return next();
 
 	if(!libsb.isInited){
