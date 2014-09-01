@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "browserify": "x",
+    "browserstack-webdriver": "^2.41.1",
     "connect-redis": "1.4.6",
     "cookie": "latest",
     "elasticsearch": "^2.3.0",
