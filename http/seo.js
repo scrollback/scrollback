@@ -44,29 +44,35 @@ module.exports = function(core) {
                                    after: noOfText + 1, session: internalSession}, function(err, data) {
                 var room = data.room;
                 if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
-                       callback(getTextHtml(data.results, a[0], a[1]));
+                    var r = getRoomHtml(room) + "\n" + getTextHtml(data.results, a[0], a[1]);
+                    callback(r);
                 } else callback("");
             }); 
         } else if (a[0]) {//threads.
-            if(!query.time) {
-                callback("<a href=" + getURL(1, a[0]) + ">Discussions in " + a[0] + "</a>"); 
-            } else {
-                core.emit("getThreads", {to: a[0], time: new Date(query.time).getTime(), 
-                    after: noOfThreads + 1, session: internalSession}, function (err, data) {
-                    var room = data.room;
-                    if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
-                        var r = getThreadsHtml(data.results, a[0]);
-                        callback(r);
-                    } else callback("");
-                });
-            }
+            if (!query.time) query.time = new Date(1).toISOString();
+            core.emit("getThreads", {to: a[0], time: new Date(query.time).getTime(), 
+                after: noOfThreads + 1, session: internalSession}, function (err, data) {
+                var room = data.room;
+                if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
+                    var r = getRoomHtml(room) + "\n" + getThreadsHtml(data.results, a[0]);
+                    callback(r);
+                } else callback("");
+            });
+
         } else callback("");
     }
 
 };
 
 
-function getTextHtml(r, roomid, threadid) {        
+function getRoomHtml(room) {
+    var r = "";
+    r += "<h1 itemprop=\"name\">" + room.id + "</h1>";
+    r += "<p itemprop=\"description\">" + room.description + "</p>";
+    return r;
+}
+
+function getTextHtml(r, roomid, threadid) {
     var a = r.map(function(text){
         var t = text.from.replace("guest-", "") + ": " + text.text;
         t = htmlEscape(t);

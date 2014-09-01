@@ -4,10 +4,13 @@
 var chatEl = {},
 	timeBefore;
 
-$(function() {
+$(function () {
 	var $template = $(".chat-item").eq(0);
 
-	chatEl.render = function($el, text) {
+	chatEl.render = function ($el, text, isOwner) {
+
+		isOwner = isOwner ? true : false;
+
 		$el = $el || $template.clone(false);
 
 		if (text.type === "missing") {
@@ -15,9 +18,9 @@ $(function() {
 			$el.attr("data-index", (text.endTime || text.startTime || 0) + "-missing");
 		} else {
 			$el.find(".chat-nick").text(text.from.replace(/^guest-/, ""));
-			$el.find(".chat-message").html(format.linkify(format.textToHtml(	text.text || "")));
+			$el.find(".chat-message").html(format.linkify(format.textToHtml(text.text || "")));
 			$el.find(".chat-timestamp").text(format.friendlyTime(text.time, new Date().getTime()));
-			$el.attr("data-index", text.time+"-"+text.id);
+			$el.attr("data-index", text.time + "-" + text.id);
 			$el.attr("id", "chat-" + text.id);
 
 			if (text.threads && text.threads.length) {
@@ -40,40 +43,44 @@ $(function() {
 			if (text.labels) {
 				for (var label in text.labels) {
 					if (text.labels[label] === 1) {
+						// this has to be done only for non-owners!
+						if (label === "hidden" && !isOwner) {
+							return;
+						}
 						$el.addClass("chat-label-" + label);
 					}
 				}
-			}
 
-			if (text.text) {
-				var $container = $(".chat-area"),
-					width = $container.width(),
-					lines = text.text.split("\n"),
-					lineCount = 0,
-					charsPerLine;
+				if (text.text) {
+					var $container = $(".chat-area"),
+						width = $container.width(),
+						lines = text.text.split("\n"),
+						lineCount = 0,
+						charsPerLine;
 
-				width = (width > 360) ? width : 360;
-				charsPerLine = width / (parseInt($container.css("font-size"), 10) * 0.6);
+					width = (width > 360) ? width : 360;
+					charsPerLine = width / (parseInt($container.css("font-size"), 10) * 0.6);
 
-				lines.forEach(function(line) {
-					lineCount += Math.ceil(line.length / charsPerLine);
-				});
+					lines.forEach(function (line) {
+						lineCount += Math.ceil(line.length / charsPerLine);
+					});
 
-				if (lineCount > 4) {
-					$el.addClass("chat-item-long");
+					if (lineCount > 4) {
+						$el.addClass("chat-item-long");
+					}
 				}
-			}
 
-			if (timeBefore) {
-				if ((text.time - timeBefore) > 180000) {
-					$el.addClass("chat-item-timestamp-shown");
+				if (timeBefore) {
+					if ((text.time - timeBefore) > 180000) {
+						$el.addClass("chat-item-timestamp-shown");
+					}
 				}
+
+				timeBefore = text.time;
 			}
 
-			timeBefore = text.time;
+			return $el;
 		}
-
-		return $el;
 	};
 });
 

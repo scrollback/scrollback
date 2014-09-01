@@ -76,7 +76,11 @@ module.exports = function (c) {
 				cacheOp.start('time', o, back.time);
 			}
 		}
-
+		
+		// updating cache with edits etc ..
+		
+		cacheOp.updateArrayCache(key, back.to, 'time');
+		
 		next();
 	}, 500);
 
@@ -373,6 +377,7 @@ module.exports = function (c) {
 		next();
 	}, 500);
 
+	require('./membersCaching.js')();
 	libsb.on('logout', logout, 1000);
 };
 

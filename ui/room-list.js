@@ -109,8 +109,8 @@ module.exports = function (libsb) {
 					enter(e.id);
 				});
 			}
+			enter(room);
 		}
-		enter(room);
 		next();
 	}, 100);
 

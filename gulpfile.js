@@ -116,7 +116,9 @@ gulp.task("manifest", function() {
 	return gulp.src([
 		"public/**/*",
 		"!public/{**/*.html,t/**}",
-		"!public/s/{*,js/*,img/*,img/covers/*,styles/scss/*}"
+		"!public/s/{*,img/*,img/covers/*,styles/scss/*}",
+		"!public/s/scripts/{*/*.map,js/*,lib/*}",
+		"!public/s/styles/{*/*.map,css/*,lace/*,scss/*}"
 	])
 	.pipe(manifest({
 		cache: [
@@ -126,7 +128,7 @@ gulp.task("manifest", function() {
 		network: [ "*" ],
 		fallback: [
 			"//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
-			"/ /offline.html",
+			"/ /s/offline.html",
 			"/socket /s/socket-fallback"
 		],
 		preferOnline: true,
