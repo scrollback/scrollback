@@ -8,7 +8,7 @@ $(".configure-button").on("click", function () {
     libsb.emit('navigate', {
         mode: "conf",
         source: "configure-button",
-        roomName: window.currentState.roomName,
+        roomName: window.currentState.roomName
     });
 });
 
@@ -74,25 +74,27 @@ function showConfig(room) {
      });
 }
 
-libsb.on('navigate', function (state, next) {
-    var isOwner = false;
-
-    function cancelEdit() {
+function cancelEdit() {
+    setTimeout(function () {
         libsb.emit('navigate', {
             mode: 'normal',
             source: "conf-cancel"
         });
+    }, 0);
+}
+
+function checkOwnerShip() {
+    var isOwner = false;
+    if(libsb.memberOf) {
+        libsb.memberOf.forEach(function (room) {
+            if (room.id == currentState.roomName && room.role == "owner") isOwner = true;
+        });
     }
 
-    function checkOwnerShip() {
-        if(libsb.memberOf) {
-            libsb.memberOf.forEach(function (room) {
-                if (room.id == currentState.roomName && room.role == "owner") isOwner = true;
-            });
-        }
+    return isOwner;
+}
 
-        return isOwner;
-    }
+libsb.on('navigate', function (state, next) {
 
     if (state.old && state.old.mode !== state.mode && state.mode === "conf") {
         if (!checkOwnerShip()) {
@@ -107,9 +109,9 @@ libsb.on('navigate', function (state, next) {
                 return next();
             }
 
-            showConfig(data.results[0]);
+            return showConfig(data.results[0]);
         });
     }
 
-    next();
+    return next();
 }, 500);
