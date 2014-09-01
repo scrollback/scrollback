@@ -24,7 +24,7 @@ var gulp = require("gulp"),
 		"*/*-client.js",
 		"lib/*.js", "ui/*.js",
 		"public/client.js", "public/libsb.js", "client-init/*.js",
-		"client-entityloader/*.js"
+		"client-entityloader/*.js", "localStorage/*.js", "socket/*.js", "interface/*.js"
 	],
 	cssFiles = [ "public/s/styles/scss/*.scss" ];
 
