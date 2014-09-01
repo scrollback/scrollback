@@ -8,7 +8,7 @@ var client;
 var searchTimeout = 10000;
 var messageCount = 0;
 var updateThreads = [];
-var indexAtCount = 10;
+var indexAtCount = 200;
 
 
 /*
