@@ -56,7 +56,7 @@ describe("User cache ", function () {
     });
 
     it("should remove a member from a room", function (done) {
-		userCache.removeMembers("testroom1", "member1");
+		userCache.removeMembers("testroom1", {id: 'member1', description: "testmember1"});
 		userCache.getMembers("testroom1", null, function (res) {
             members.splice(0, 1);
             assert.equal(_.isEqual(members, res), true, "Assertion Error!");
@@ -65,7 +65,7 @@ describe("User cache ", function () {
     });
 
     it("should remove an occupant from a room", function (done) {
-		userCache.removeOccupants("testroom1", "occupant1");
+		userCache.removeOccupants("testroom1", {id: 'occupant1', description: "testoccupant1"});
 		userCache.getOccupants("testroom1", null, function (res) {
             occupants.splice(0, 1);
             assert.equal(_.isEqual(occupants, res), true, "Assertion Error!");
