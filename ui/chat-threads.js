@@ -140,6 +140,10 @@ $(function() {
     });
 
     $.fn.selectMsg = function(autoSel) {
+        if (!this.length) {
+            return;
+        }
+
         if (this.data("selected")) {
             resetConv();
 
@@ -160,8 +164,6 @@ $(function() {
             if ((this.offset().top - $container.offset().top) < 0 || this.offset().top > $container.height()) {
                 this.velocity("scroll", { duration: 150, container: $container });
             }
-        } else {
-            this.get(0).scrollIntoView(true);
         }
 
         if (this.hasClass("chat-item-long")) {
