@@ -82,7 +82,6 @@ sock.on('connection', function (socket) {
 			var e, action;
 			if(err) {
                 e = {type: 'error', id: d.id, message: err.message};
-                console.log(" SB error instace ", err instanceof SbError);
                 if (err instanceof SbError) {
                     for (var i in err) {
                         e[i] = err[i];
