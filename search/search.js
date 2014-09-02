@@ -262,7 +262,9 @@ module.exports = function (core) {
 					}
 				});
 			}
-            
+            if(query.query.bool.must.length) {
+				return callback();
+			}
             position = query.from = qu.pos || 0;
 
             if(qu.before) {
