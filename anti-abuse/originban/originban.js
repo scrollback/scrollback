@@ -1,4 +1,5 @@
 var log = require("../../lib/logger.js");
+var SbError = require("../../lib/SbError.js");
 var fs=require("fs");
 var blockOrigins={};
 
@@ -17,7 +18,7 @@ module.exports = function(core) {
 	core.on('text', function(message, callback) {
 		log("Heard \"text event\"");
 		if (message.origin && message.origin.gateway == "irc") return callback();
-		if(rejectable(message)) callback(new Error("BANNED_WORD"));
+		if(rejectable(message)) callback(new SbError("BANNED_WORD"));
 		else callback();
 	}, "antiflood");
 };

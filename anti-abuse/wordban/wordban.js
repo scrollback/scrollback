@@ -1,4 +1,5 @@
 var log = require("../../lib/logger.js"),
+    SbError = require("../../lib/SbError.js"),
 	fs = require("fs"),
 	blockWords={},
 	longest = 0;
@@ -54,7 +55,7 @@ module.exports = function(core) {
 	core.on("room", function(action, callback){
 		var room  = action.room;
         var text = room.id+(room.name?(" "+room.name):"")+" "+(room.description?(" "+room.description):"");
-		if(rejectable(text)) return callback(new Error("Abusive_room_name"));
+		if(rejectable(text)) return callback(new SbError("Abusive_room_name"));
 		callback();
 	}, "antiabuse");
 };

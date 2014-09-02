@@ -1,4 +1,5 @@
 var log = require("../../lib/logger.js");
+var SbError = require("../../lib/SbError.js");
 var users={};
 
 module.exports = function(core) {
@@ -8,7 +9,7 @@ module.exports = function(core) {
 			var gateway = message.session.substring(0, message.session.indexOf(":"));
 			if(gateway != "web") return callback();
 		}
-		if(rejectable(message)) return callback(new Error("REPEATATIVE"));
+		if(rejectable(message)) return callback(new SbError("REPEATATIVE"));
 		else callback();
 	}, "antiabuse");
 };
