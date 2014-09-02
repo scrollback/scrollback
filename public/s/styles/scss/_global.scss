@@ -23,9 +23,11 @@ $width-metaxx: 25em;
 $width-metaxxx: 26em;
 $width-metaxxxx: 30%;
 
+$width-home: 70em;
+
 $bar-height: 3.5em;
 
 $settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification;
-$modes: normal, search, conf, pref, home, noroom, offline, profile;
+$modes: normal, search, conf, pref, home, noroom, profile;
 $roles: guest, user, follower, owner;
 $embeds: toast, canvas;

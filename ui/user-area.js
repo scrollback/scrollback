@@ -97,8 +97,8 @@ libsb.on('navigate', function(state, next) {
 
 function setUser() {
 	if (!libsb || !libsb.user || !libsb.user.id) return;
-	$("#sb-avatar").attr("src", libsb.user.picture);
-	$("#sb-user").text(libsb.user.id.replace(/^guest-/, ""));
+	$(".sb-avatar").attr("src", libsb.user.picture);
+	$(".sb-user").text(libsb.user.id.replace(/^guest-/, ""));
 }
 
 libsb.on("init-dn", function (init, next) {

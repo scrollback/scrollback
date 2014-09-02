@@ -1,0 +1,131 @@
+@import "../lace/grid";
+
+.card-item-wrap {
+	display: inline-block;
+	width: 100%;
+	padding: .5em;
+
+	@media only screen and (min-width: 50em) {
+		width: 50%;
+		padding: 1em;
+	}
+}
+
+.card-item {
+	@extend %transition;
+
+	background-color: $light-color;
+	border-radius: $roundness;
+	overflow: hidden;
+	cursor: pointer;
+	box-shadow: inset 0 0 0 1px rgba(0,0,0,.1);
+
+	&:focus, &:hover {
+		box-shadow: inset 0 0 0 1px rgba(0,0,0,.1),
+					0 0 10px 0 rgba(0,0,0,.1);
+	}
+
+	&:active {
+		box-shadow: inset 0 0 0 1px rgba(0,0,0,.1),
+					0 0 10px 0 rgba(0,0,0,.3);
+	}
+}
+
+.card-segment {
+	padding: 1em;
+	border-bottom: 1px solid fade-out($dark-color, .9);
+
+	&:last-child { border-bottom: none; }
+}
+
+.card-header {
+	background-color: lighten($dark-color, 20%);
+	color: $light-color;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: center;
+	padding-top: .75em;
+	padding-bottom: .75em;
+	border-bottom: none;
+
+	@for $i from 1 through length($palette) {
+		$color: nth($palette, $i);
+		$j: $i - 1;
+
+		.card-item.conv-#{$j} & { background-color: $color; }
+	}
+}
+
+.card-header-title {
+	flex-grow: 1;
+	font-weight: 400;
+	font-size: 1.5em;
+}
+
+.card-header-badge {
+	background-color: fade-out($light-color, .2);
+	color: lighten($dark-color, 20%);
+	font-weight: 700;
+	font-size: .9em;
+	padding: .2em .5em;
+	margin: .2em 0;
+	border-radius: $roundness;
+
+	@for $i from 1 through length($palette) {
+		$color: nth($palette, $i);
+		$j: $i - 1;
+
+		.card-item.conv-#{$j} & { color: $color; }
+	}
+}
+
+.card-content-title {
+	font-weight: 400;
+	font-size: 1.2em;
+	margin-bottom: .25em;
+}
+
+.card-content-summary {
+	color: lighten($dark-color, 20%);
+}
+
+.card-actions {
+	@include flexbox;
+	@include flex-direction(row);
+	@include flex-wrap(nowrap);
+	@include align-items(center);
+	@include align-content(center);
+
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.card-actions-view {
+	@include flex-grow(1);
+
+	font-weight: 700;
+	text-transform: uppercase;
+	color: lighten($dark-color, 20%);
+	padding: 1em 0;
+
+	@for $i from 1 through length($palette) {
+		$color: nth($palette, $i);
+		$j: $i - 1;
+
+		.card-item.conv-#{$j} & { color: $color; }
+	}
+}
+
+.card-actions-online {
+	color: lighten($dark-color, 20%);
+	text-align: right;
+	text-transform: uppercase;
+	padding: .75em 0;
+	cursor: pointer;
+}
+
+.card-action-online-number {
+	color: $accent-color;
+	font-weight: 700;
+}

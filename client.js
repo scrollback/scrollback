@@ -18,7 +18,7 @@ var libsb = require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(libsb);
 require('./socket/socket-client')(libsb);
 
-//Bootup related
+// bootup related
 require('./client-init/client-init.js')(libsb);
 require('./id-generator/id-generator-client.js')(libsb);
 require('./client-entityloader/client-entityloader.js')(libsb);
@@ -78,7 +78,7 @@ require('./ui/persona.js');
 require('./ui/message-menu.js');
 require('./ui/room-notifications.js');
 require('./ui/google-analytics.js');
+require('./ui/cards.js');
+require('./ui/workarounds.js');
 
 require('./client-init/boot.js')(libsb);
-require('./ui/workarounds.js');
-//# sourceMappingURL=libsb.js.map

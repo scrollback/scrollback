@@ -44,14 +44,14 @@
 			</div>
 		</div>
 		<![endif]-->
-		
+
 		<!-- SEO -->
 		<main itemscope style="position: absolute; top: -9999em; left: -9999em;">
 			<!-- Messages start here. -->
 			<!--Messages end here-->
 		</main>
-		
-		<section data-embed="none" class="room-area column">
+
+		<section data-embed="none" data-mode="normal search conf pref noroom profile" class="room-area column">
 			<div class="room-header">
 				<a href="http://scrollback.io" target="_blank"><img src="/s/img/client/scrollback-small.svg" alt="scrollback"></a>
 			</div>
@@ -60,7 +60,8 @@
 				<a class="room-item"><span class="room-name"></span><span class="notif-counter unread"></span></a>
 			</div>
 		</section>
-		<section class="meta-area column">
+
+		<section class="meta-area column" data-mode="normal search conf pref">
 			<ul role="tablist" class="meta-tabs">
 				<li data-embed="none" role="tab" class="rooms-button">
 					<svg class="rooms-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -125,7 +126,8 @@
 				<a class="list-item"></a>
 			</div>
 		</section>
-		<section role="main" class="main-area column">
+
+		<section role="main" data-mode="normal search conf pref" class="main-area column">
 			<div data-mode="normal search conf pref" class="title-bar">
 				<div class="left-area">
 					<a class="meta-button">
@@ -163,19 +165,6 @@
 							<use xlink:href="/s/img/client/icons/search.svg#icon"></use>
 						</svg>
 					</a>
-
-<!--
-					<div class="embed-area">
-						<div data-role="user" class="follow-room-action cta-area">
-							<div>Stay connected</div>
-							<div class="cta-action">Follow room</div>
-						</div>
-						<div class="full-view-action cta-area">
-							<div>Browse archives</div>
-							<div class="cta-action">Visit room</div>
-						</div>
-					</div>
--->
 					<div data-embed="toast canvas" class="embed-area">
 						<div data-embed="toast" class="embed-action-minimize embed-button">
 							<svg class="minimize-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -228,12 +217,52 @@
 				</svg>
 			</div>
 		</section>
+
 		<section class="search-bar">
 			<form>
 				<input class="search-entry" type="search" placeholder="Type to search...">
 			</form>
 		</section>
-		<section data-mode="noroom offline profile" class="content-view-wrapper">
+
+		<section data-mode="home" class="home-area">
+			<div class="title-bar">
+				<div class="left-area">
+					<a href="http://scrollback.io" target="_blank" class="header-image"><img src="/s/img/client/scrollback-small.svg" alt="scrollback"></a>
+				</div>
+				<div class="right-area">
+					<div data-embed="toast canvas" class="embed-area">
+						<div data-embed="toast" class="embed-action-minimize embed-button">
+							<svg class="minimize-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
+								<use xlink:href="/s/img/client/icons/minimize.svg#icon"></use>
+							</svg>
+						</div>
+						<div class="embed-action-fullview embed-button">
+							<svg class="fullview-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
+								<use xlink:href="/s/img/client/icons/fullview.svg#icon"></use>
+							</svg>
+						</div>
+					</div>
+					<div class="user-area">
+						<div data-embed="none" class="user-detail cta-area">
+							<div class="sb-user"></div>
+							<div data-role="guest" class="sign-in cta-action">Sign in</div>
+						</div>
+						<div class="user-avatar">
+							<img alt="" class="sb-avatar" >
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="home-area-container-wrap">
+				<div class="home-area-container">
+					<div class="home-area-cover">
+					</div>
+					<div class="card-container"></div>
+				</div>
+			</div>
+		</section>
+
+		<section data-mode="noroom profile" class="content-view-wrapper">
 			<div data-mode="noroom" class="content-view-area">
 				<h1>This room does not exist yet :-(</h1>
 				<p data-role="guest">You need to sign in first to create a room</p>
@@ -247,6 +276,7 @@
 				<p>Profiles are coming soon!</p>
 			</div>
 		</section>
+
 		<section data-embed="toast" class="minimize-bar">
 			<div class="minimize-bar-button minimize-logo">
 				<svg class="minimize-bar-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -260,6 +290,7 @@
 			<div class="minimize-room-title"></div>
 			<div class="minimize-ticker"></div>
 		</section>
+
 		<aside class="progress loading"></aside>
 
 		<!-- templates -->
