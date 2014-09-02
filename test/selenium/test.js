@@ -3,6 +3,10 @@
 var config = require("../config.js");
 var capabilities = [
 	{
+		'browserName' : 'iPhone',
+		'platform' : 'MAC',
+		'device' : 'iPhone 5'
+	}, {
 		'browserName' : 'android',
 		'platform' : 'ANDROID',
 		'device' : 'LG Nexus 4'
@@ -37,7 +41,6 @@ var capabilities = [
 		'os_version' : '8.1',
 		'resolution' : '1366x768'
 	}
-
 ];
 
 capabilities.forEach(function(c) {

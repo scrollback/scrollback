@@ -71,7 +71,7 @@ function getDateString() {
     var m = "" + (new Date().getMonth() + 1);
     if (m.length === 1) m = "0" + m; 
     var d = "" + new Date().getDate();
-    if (m.length === 1) d = "0" + d;  
+    if (d.length === 1) d = "0" + d;
     
     return  y + m + d;
     
