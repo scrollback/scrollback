@@ -1,6 +1,9 @@
 *~
-.DS_Store
-.sass-cache
+
+.*
+!/.gitignore
+!/.jscs.json
+!/.jshintrc
 
 *.seed
 *.log
