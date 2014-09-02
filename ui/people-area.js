@@ -97,7 +97,6 @@ $(function () {
 		getItems: function (index, before, after, recycle, callback) {
 			var res = [],
 				from, to, i, ppl = [];
-			console.log("Reset: ",index, before, after);
 			if (!roomName) return callback([false]);
 			if (!index) {
 				if (before) return callback([false]);
@@ -117,13 +116,10 @@ $(function () {
 			}
 
 			if (to > people.length - 1) to = people.length - 1
-			console.log("From, to",{from: from, to:to});
 			
 			for (i = from; i <= to; i++) {
-				console.log("Rendering: ", people[i]);
 				res.push(people[i] && personEl.render(null, people[i], i));
 			}
-			console.log("Res: ", res);
 			callback(res);
 		}
 	});
