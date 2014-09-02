@@ -26,6 +26,7 @@ Boston, MA 02111-1307 USA.
 
 var sockjs = require("sockjs"), core,
 	log = require("../lib/logger.js"),
+    SbError = require("../lib/SbError.js"),
 	generate = require("../lib/generate.js");
 
 var rConns = {}, uConns = {}, sConns = {}, urConns = {};
@@ -80,11 +81,17 @@ sock.on('connection', function (socket) {
 		core.emit(d.type, d, function(err, data) {
 			var e, action;
 			if(err) {
-				e = err;
+                e = {type: 'error', id: d.id, message: err.message};
+                console.log(" SB error instace ", err instanceof SbError);
+                if (err instanceof SbError) {
+                    for (var i in err) {
+                        e[i] = err[i];
+                    }
+                }
+				/* e = err;
 				e.id = d.id;
 				e.type = 'error';
-				e.message = err.message;
-//				e = {type: 'error', id: d.id, message: err.message};
+				e.message = err.message; */
 				log("Sending Error: ", e);
 				return conn.send(e);
 			}

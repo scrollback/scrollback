@@ -1,4 +1,5 @@
 var log = require("../lib/logger.js");
+var SbError = require("../lib/SbError.js");
 var users={};
 var config = require('../config.js');
 
@@ -44,7 +45,7 @@ module.exports = function(core) {
 
 		limiter.removeTokens(1, function(err, remaining) {
 			if (remaining < 0) {
-				return callback(new Error("API Limit exceeded"));
+				return callback(new SbError("API Limit exceeded"));
 			}
 			return callback();
 		});
