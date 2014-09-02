@@ -10,4 +10,4 @@ require("../localStorage/ArrayCache-test.js");
 require("../lib/redisProxy-test.js");
 require("../localStorage/userCache-test.js");
 require("../threader/threader-test.js");
-
+require("../lib/emitter-test.js");
