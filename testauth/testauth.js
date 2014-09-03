@@ -2,6 +2,7 @@ var config = require("../config.js"),
 	name = require("../lib/generate.js").word,
 	log = require("../lib/logger.js"),
 	request = require("request");
+var SbError = require("../../lib/SbError.js");
 
 module.exports = function(core) {
 	core.on('init', function(action, callback) {
@@ -20,7 +21,7 @@ module.exports = function(core) {
 			}
 			callback();
 		}else {
-			callback(new Error("AUTH_UNREGISTERED"));
+			callback(new SbError("AUTH_UNREGISTERED"));
 		}
 	}, "authentication");
 };

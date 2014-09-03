@@ -1,5 +1,7 @@
 var generate = require("../../lib/generate.js");
 var validateRoom = require('../../lib/validate.js');
+var SbError = require("../../lib/SbError.js");
+
 module.exports = function (core) {
 
     /* list of event that the basic validation function is called for.*/
@@ -22,22 +24,22 @@ module.exports = function (core) {
             callback();
         },
         join: function (action, callback) {
-            if (/^guest-/.test(action.from)) return callback(new Error("GUEST_CANNOT_JOIN"));
+            if (/^guest-/.test(action.from)) return callback(new SbError("GUEST_CANNOT_JOIN"));
             if (!action.role) action.role = "follower";
             callback();
         },
         part: function (action, callback) {
-            if (/^guest-/.test(action.from)) return callback(new Error("GUEST_CANNOT_PART"));
+            if (/^guest-/.test(action.from)) return callback(new SbError("GUEST_CANNOT_PART"));
             if (!action.role) action.role = "none";
             callback();
         },
         text: function (action, callback) {
             var mentionMap = {};
-            if (!(action.text && action.text.trim())) return callback(new Error("TEXT_MISSING"));
+            if (!(action.text && action.text.trim())) return callback(new SbError("TEXT_MISSING"));
 
             if (/^\//.test(action.text)) {
                 if (!/^\/me/.test(action.text)) {
-                    return callback(new Error("UNRECOGNIZED_SLASH_COMMNAD"));
+                    return callback(new SbError("UNRECOGNIZED_SLASH_COMMNAD"));
                 }
             }
 
@@ -57,51 +59,51 @@ module.exports = function (core) {
             callback();
         },
         admit: function (action, callback) {
-            if (!action.ref) return callback(new Error("REF_NOT_SPECIFIED"));
+            if (!action.ref) return callback(new SbError("REF_NOT_SPECIFIED"));
             if (!validateRoom(action.ref)) {
-                return callback(new Error("INVALID_REF"));
+                return callback(new SbError("INVALID_REF"));
             }
             if (!action.role) action.role = "follow_invited";
             callback();
         },
         expel: function (action, callback) {
-            if (!action.ref) return callback(new Error("REF_NOT_SPECIFIED"));
+            if (!action.ref) return callback(new SbError("REF_NOT_SPECIFIED"));
             if (!validateRoom(action.ref)) {
-                return callback(new Error("INVALID_REF"));
+                return callback(new SbError("INVALID_REF"));
             }
             if (!action.role) action.role = "banned";
             callback();
         },
         edit: function (action, callback) {
-            if (!action.ref) return callback(new Error("REF_NOT_SPECIFIED"));
-            if (!action.text && !action.labels) return callback(new Error("NO_OPTION_TO_EDIT"));
-            if (action.labels && typeof action.labels != "object") return callback(new Error("INVALID_EDIT_OPTION_LABEL"));
-            if (action.text && typeof action.text != "string") return callback(new Error("INVALID_EDIT_OPTION_TEXT"));
+            if (!action.ref) return callback(new SbError("REF_NOT_SPECIFIED"));
+            if (!action.text && !action.labels) return callback(new SbError("NO_OPTION_TO_EDIT"));
+            if (action.labels && typeof action.labels != "object") return callback(new SbError("INVALID_EDIT_OPTION_LABEL"));
+            if (action.text && typeof action.text != "string") return callback(new SbError("INVALID_EDIT_OPTION_TEXT"));
             callback();
         },
         user: function (action, callback) {
-            if (!action.user && !action.user.id) return callback(new Error("INVALID_USER"));
+            if (!action.user && !action.user.id) return callback(new SbError("INVALID_USER"));
             action.user.id = action.user.id.toLowerCase();
-            if (!action.user.identities) return callback(new Error("INVALID_USER"));
+            if (!action.user.identities) return callback(new SbError("INVALID_USER"));
             else {
                 if (!action.user.identities instanceof Array) {
-                    return callback(new Error("INVALID_USER"));
+                    return callback(new SbError("INVALID_USER"));
                 } else {
                     action.user.identities.forEach(function (identity) {
-                        if (typeof identity !== "string") return callback(new Error("INVALID_USER"));
+                        if (typeof identity !== "string") return callback(new SbError("INVALID_USER"));
                     });
                 }
             }
-            if (!action.user.params) return callback(new Error("ERR_NO_PARAMS"));
-            if (!action.user.guides) return callback(new Error("ERR_NO_GUIDES"));
+            if (!action.user.params) return callback(new SbError("ERR_NO_PARAMS"));
+            if (!action.user.guides) return callback(new SbError("ERR_NO_GUIDES"));
             if (action.role) delete action.role;
             callback();
         },
         room: function (action, callback) {
-            if (!action.room && !action.room.id) return callback(new Error("INVALID_ROOM"));
+            if (!action.room && !action.room.id) return callback(new SbError("INVALID_ROOM"));
             action.room.id = action.room.id.toLowerCase();
-            if (!action.room.params) return callback(new Error("ERR_NO_PARAMS"));
-            if (!action.room.guides) return callback(new Error("ERR_NO_GUIDES"));
+            if (!action.room.params) return callback(new SbError("ERR_NO_PARAMS"));
+            if (!action.room.guides) return callback(new SbError("ERR_NO_GUIDES"));
             if (!action.room.identities) action.room.identities = [];
             callback();
         }
@@ -123,14 +125,14 @@ module.exports = function (core) {
 
     core.on("getThreads", function (action, callback) {
         if (!(action.to || action.q)) {
-            return callback(new Error("INVALID_ROOM"));
+            return callback(new SbError("INVALID_ROOM"));
         }
         if (!action.time) action.time = new Date().getTime();
         return sessionValidation(action, callback);
     }, "validation");
     core.on("getTexts", function (action, callback) {
         if (!action.to) {
-            return callback(new Error("INVALID_ROOM"));
+            return callback(new SbError("INVALID_ROOM"));
         }
 
         if (action.hasOwnProperty("updateTime")) {
@@ -141,13 +143,13 @@ module.exports = function (core) {
     }, "validation");
     core.on("getRooms", function (action, callback) {
         if (!(action.ref || action.hasOccupant || action.hasMember || action.identity)) {
-            return callback(new Error("INVALID_QUERY"));
+            return callback(new SbError("INVALID_QUERY"));
         }
         return sessionValidation(action, callback);
     }, "validation");
     core.on("getUsers", function (action, callback) {
         if (!(action.ref || action.occupantOf || action.memberOf || action.identity || action.timezone)) {
-            return callback(new Error("INVALID_QUERY"));
+            return callback(new SbError("INVALID_QUERY"));
         }
         return sessionValidation(action, callback);
     }, "validation");
@@ -155,7 +157,7 @@ module.exports = function (core) {
 
 function sessionValidation(action, callback) {
     if (!action.session) {
-        callback(new Error("NO_SESSION_ID"));
+        callback(new SbError("NO_SESSION_ID"));
     } else {
         callback();
     }
@@ -163,7 +165,7 @@ function sessionValidation(action, callback) {
 
 function basicValidation(action, callback) {
     if (!action.id) action.id = generate.uid();
-    if (!action.type) return callback(new Error("INVALID_ACTION_TYPE"));
+    if (!action.type) return callback(new SbError("INVALID_ACTION_TYPE"));
 
     /*
 		validation on action.from is not need because we ignore the from sent be the client.
@@ -175,14 +177,14 @@ function basicValidation(action, callback) {
         action.to = "me";
     } else {
         if (typeof action.to != "string" && action.to) {
-            return callback(new Error("INVALID_ROOM"));
+            return callback(new SbError("INVALID_ROOM"));
         } else if (!validateRoom(action.to)) {
-            return callback(new Error("INVALID_ROOM"));
+            return callback(new SbError("INVALID_ROOM"));
         }
     }
     if (action.from) action.from = action.from.toLowerCase();
     action.to = action.to.toLowerCase();
-    if (!action.session) return callback(new Error("NO_SESSION_ID"));
+    if (!action.session) return callback(new SbError("NO_SESSION_ID"));
 
     if (/^web/.test(action.session) || !action.time) {
         action.time = new Date().getTime();

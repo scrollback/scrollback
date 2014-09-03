@@ -8,7 +8,7 @@ var client;
 var searchTimeout = 10000;
 var messageCount = 0;
 var updateThreads = [];
-var indexAtCount = 10;
+var indexAtCount = 200;
 
 
 /*
@@ -262,7 +262,9 @@ module.exports = function (core) {
 					}
 				});
 			}
-            
+            if(query.query.bool.must.length) {
+				return callback();
+			}
             position = query.from = qu.pos || 0;
 
             if(qu.before) {

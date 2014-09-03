@@ -1,4 +1,5 @@
 var log = require("../../lib/logger.js");
+var SbError = require("../../lib/SbError.js");
 var jade = require("jade"), fs = require("fs");
 var blockedUsernames={};
 var longest = 0;
@@ -11,7 +12,7 @@ module.exports = function(core) {
 			var gateway = message.session.substring(0, message.session.indexOf(":"));
 			if(gateway != "web") return callback();
 		}
-		if(rejectable(message)) callback(new Error("BANNED_USERNAME"));
+		if(rejectable(message)) callback(new SbError("BANNED_USERNAME"));
 		else callback();
 	}, "antiabuse");
 };
