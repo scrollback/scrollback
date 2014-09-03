@@ -147,14 +147,20 @@ module.exports = function(capabilities, options) {
 					then(function() {
 						driver.findElements(webdriver.By.css('.chat-item')).
 						then(function(messages) {
-							messages.forEach(function(message) {
-								message.getAttribute("data-thread").
-								then(function(threadid) {
-									console.log("threadID", threadid);
-									assert.equal(threadid, id, "Thread Not loading");
-									done();
+							var c = 0;
+							function d() {
+								if (++c == messages.length) done();
+							}
+							setTimeout(function() {
+								messages.forEach(function(message) {
+									message.getAttribute("data-thread").
+									then(function(threadid) {
+										console.log("threadID", threadid);
+										assert.equal(threadid, id, "Thread Not loading");
+										d();
+									});
 								});
-							});
+							}, 5000);
 						});
 					});
 				});
