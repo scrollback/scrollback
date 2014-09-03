@@ -326,13 +326,13 @@ body {
     }
 }
 
-.pane-info {
+.pane-info-wrap {
     @extend %scroll-elem;
 
     padding: 1.5em;
 }
 
-.pane-people {
+.pane-people-wrap {
     @extend %scroll-elem;
 
     padding: 1.5em .75em;
