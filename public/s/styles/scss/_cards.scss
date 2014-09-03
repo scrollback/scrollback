@@ -1,5 +1,11 @@
 @import "../lace/grid";
 
+%nowrap {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .card-item-wrap {
 	display: inline-block;
 	width: 100%;
@@ -33,21 +39,19 @@
 
 .card-segment {
 	padding: 1em;
-	border-bottom: 1px solid fade-out($dark-color, .9);
+	border-bottom: 1px solid rgba(0,0,0,.05);
 
 	&:last-child { border-bottom: none; }
 }
 
 .card-header {
-	background-color: lighten($dark-color, 20%);
-	color: $light-color;
+	background-color: rgba(0,0,0,.025);
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
 	align-items: center;
 	padding-top: .75em;
 	padding-bottom: .75em;
-	border-bottom: none;
 
 	@for $i from 1 through length($palette) {
 		$color: nth($palette, $i);
@@ -58,14 +62,18 @@
 }
 
 .card-header-title {
+	@extend %nowrap;
+
 	flex-grow: 1;
 	font-weight: 400;
 	font-size: 1.5em;
 }
 
 .card-header-badge {
-	background-color: fade-out($light-color, .2);
-	color: lighten($dark-color, 20%);
+	@extend %nowrap;
+
+	background-color: $accent-color;
+	color: $light-color;
 	font-weight: 700;
 	font-size: .9em;
 	padding: .2em .5em;
@@ -76,17 +84,26 @@
 		$color: nth($palette, $i);
 		$j: $i - 1;
 
-		.card-item.conv-#{$j} & { color: $color; }
+		.card-item.conv-#{$j} & {
+			background-color: fade-out($light-color, .2);
+			color: $color;
+		}
 	}
 }
 
+.card-content { height: 5em; }
+
 .card-content-title {
+	@extend %nowrap;
+
 	font-weight: 400;
 	font-size: 1.2em;
 	margin-bottom: .25em;
 }
 
 .card-content-summary {
+	@extend %nowrap;
+
 	color: lighten($dark-color, 20%);
 }
 

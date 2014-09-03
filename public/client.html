@@ -57,7 +57,7 @@
 			</div>
 
 			<div role="list" class="room-list hide-scroll">
-				<a class="room-item"><span class="room-name"></span><span class="notif-counter unread"></span></a>
+				<a class="room-item"><span class="room-name"></span><span class="room-notifications-counter unread"></span></a>
 			</div>
 		</section>
 
@@ -105,12 +105,12 @@
 				<div role="tabpanel" class="pane pane-threads">
 					<div class="pane-threads-wrap">
 						<!-- <div data-mode="search" class="thread-search-query"></div> -->
-						<div data-mode="normal" class="thread-item thread-all-conversations current" href="" id="thread-">
+						<div data-mode="normal" class="thread-item thread-all-conversations current" id="thread-">
 							<h4 class="thread-title">All conversations</h4>
 							<p class="thread-snippet"></p>
 						</div>
 						<div class="thread-item-container hide-scroll">
-							<div class="thread-item" href="">
+							<div class="thread-item">
 								<h4 class="thread-title"></h4>
 								<p class="thread-snippet"></p>
 							</div>
@@ -179,11 +179,11 @@
 					</div>
 					<div class="user-area">
 						<div data-embed="none" class="user-detail cta-area">
-							<div id="sb-user"></div>
+							<div class="sb-user"></div>
 							<div data-role="guest" class="sign-in cta-action">Sign in</div>
 						</div>
 						<div class="user-avatar">
-							<img alt="" id="sb-avatar" >
+							<img alt="" class="sb-avatar" >
 						</div>
 					</div>
 				</div>
@@ -227,7 +227,7 @@
 		<section data-mode="home" class="home-area">
 			<div class="title-bar">
 				<div class="left-area">
-					<a href="http://scrollback.io" target="_blank" class="header-image"><img src="/s/img/client/scrollback-small.svg" alt="scrollback"></a>
+					<a href="http://scrollback.io" target="_blank" class="header-image"><img src="/s/img/client/scrollback-small-dark.svg" alt="scrollback"></a>
 				</div>
 				<div class="right-area">
 					<div data-embed="toast canvas" class="embed-area">
@@ -256,6 +256,9 @@
 			<div class="home-area-container-wrap">
 				<div class="home-area-container">
 					<div class="home-area-cover">
+						<form id="home-go-to-room-form" class="home-area-cover-content">
+							<input id="home-go-to-room-entry" type="text" placeholder="Enter a room name" autofocus><input id="home-go-to-room-button" type="submit" value="Go to room">
+						</form>
 					</div>
 					<div class="card-container"></div>
 				</div>

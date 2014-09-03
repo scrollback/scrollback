@@ -77,8 +77,8 @@ require('./ui/signup-area.js');
 require('./ui/persona.js');
 require('./ui/message-menu.js');
 require('./ui/room-notifications.js');
+require('./ui/home-feed.js');
 require('./ui/google-analytics.js');
-require('./ui/cards.js');
 require('./ui/workarounds.js');
 
 require('./client-init/boot.js')(libsb);

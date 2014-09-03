@@ -15,6 +15,7 @@
 @import "../lace/flexbox";
 @import "../lace/tooltip";
 @import "../lace/progress";
+@import "../lace/linked";
 
 // Import global variables and mixins
 @import "global";
@@ -591,11 +592,7 @@ body {
     height: 100%;
     background-color: darken($light-color, 5%);
 
-    .title-bar {
-        position: fixed;
-        background-color: $dark-color;
-        color: $light-color;
-    }
+    .title-bar { position: fixed; }
 
     .header-image { padding: 0 1em; }
 }
@@ -604,14 +601,31 @@ body {
     margin-top: $bar-height;
     min-height: $bar-height * 2;
     width: 100%;
-    background-color: $dark-color;
-    background-image: url(../../img/client/cover.jpg);
-    background-size: 100%;
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    color: $light-color;
+    background-color: $light-color;
+    border-bottom: 1px solid darken($light-color, 10%);
+    color: $dark-color;
     text-align: center;
+}
+
+.home-area-cover-content {
+    margin: 0 auto;
+    padding: 2em .75em;
+
+    input[type="text"], input[type="submit"] {
+        width: 100%;
+        margin: .25em;
+
+        @media #{$screenxx} {
+            @include linked;
+
+            width: auto;
+            margin: 0;
+        }
+    }
+
+    input[type="text"] {
+        @media #{$screenxxx} { min-width: 27em; }
+    }
 }
 
 .home-area-container-wrap { height: 100%; }

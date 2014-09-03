@@ -1,8 +1,26 @@
 /* jslint browser: true, indent: 4, regexp: true */
-/* global $ */
+/* global $, libsb */
 
 $(function() {
-	var $cardContainer = $(".card-container");
+	var $cardContainer = $(".card-container"),
+		$gotoform = $("#home-go-to-room-form"),
+		$gotoentry = $("#home-go-to-room-entry");
+
+	function goToRoom(roomName) {
+		if (!roomName) {
+			return;
+		}
+
+		libsb.emit("navigate", {
+			roomName: roomName,
+			mode: "normal",
+			view: "normal",
+			source: "home-feed",
+			query: null,
+			thread: null,
+			time: null
+		});
+	}
 
 	function setCard(cardObj) {
 		var attrs = [],
@@ -30,11 +48,13 @@ $(function() {
 
 		attrs.forEach(function(attr) {
 			if (attr === "className") {
-				$card.removeClass().addClass("card-item " + cardObj[attr]);
+				$card.removeClass().addClass(cardObj[attr]);
 			} else {
 				$card.attr(attr, cardObj[attr]);
 			}
 		});
+
+		$card.addClass("card-item");
 
 		events.forEach(function(event) {
 			$card.on(event.replace(/^on/, ""), cardObj[event]);
@@ -99,7 +119,6 @@ $(function() {
 	for (var i = 0; i < 20; i++) {
 		updateCard({
 			id: randomStr(5),
-			className: "conv-" + Math.floor(Math.random() * 10),
 			onclick: function() { console.log("hi"); },
 			header: {
 				title: randomStr(7),
@@ -115,4 +134,20 @@ $(function() {
 			}
 		});
 	}
+
+	$gotoform.on("submit", function(e) {
+		var roomName = $gotoentry.val();
+
+		e.preventDefault();
+
+		if (roomName) {
+			goToRoom(roomName);
+		} else {
+			$gotoentry.addClass("error").focus();
+		}
+	});
+
+	$gotoentry.on("keydown paste", function() {
+		$(this).removeClass("error");
+	});
 });
