@@ -7,7 +7,6 @@ capabilities.forEach(function(c) {
 	c['browserstack.debug'] = config.selenium.debug;
 	c['browserstack.user'] =  config.selenium.username;
 	c['browserstack.key'] = config.selenium.accessKey;
-	var id = "";
 	var options = {};
 	if (c.browserName) {
 		options.id = c.browserName;

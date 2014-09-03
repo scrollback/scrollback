@@ -4,6 +4,7 @@
 !/.gitignore
 !/.jscs.json
 !/.jshintrc
+!test/.jshintrc
 
 *.seed
 *.log
