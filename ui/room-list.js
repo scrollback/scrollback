@@ -2,19 +2,19 @@
 /* global libsb, currentState */
 
 var roomEl = require("./room-item.js"),
-	$roomlist, rooms = [false, false],
+	$roomlist, rooms = [],
 	listenQueue = [];
 var BACK_SENT = 1, BACK_RECEIVED = 2, NOT_LISTENING = 0;
 var listening = {};
 
+for(i=0;i<100;i++){
+	rooms.push(i+"");
+}
+console.log(rooms);
 function enter(room) {
 	if (!room) return;
 	room = room.toLowerCase();
-	if (rooms.indexOf(room) < 0) {
-		rooms.pop();
-		rooms.push(room);
-		rooms.push(false);
-	}
+	if (rooms.indexOf(room) < 0) rooms.push(room);
 
 	if (libsb.isInited) {
 		if(!listening[room]){
@@ -29,9 +29,10 @@ function enter(room) {
 			listenQueue.push(room);
 		}
 	}
+	console.log(rooms);
 	if ($roomlist) $roomlist.reset();
 }
-
+window.enter = enter;
 module.exports = function (libsb) {
 	$(function () {
 		$roomlist = $(".room-list");
@@ -43,36 +44,30 @@ module.exports = function (libsb) {
 			startIndex: 0,
 			getItems: function (index, before, after, recycle, callback) {
 				var res = [],
-					i, from, to;
-				if (!index) {
-					index = 0;
-				}
+					i, from, to, reqCount;
 				if (before) {
-					if (index === 0) {
-						return callback([false]);
-					}
-					index--;
+					if (typeof index === "undefined") return callback([false]);
 					from = index - before;
-					if (from < 0) {
-						to = from + before;
-						from = 0;
-					} else {
-						to = index;
-					}
+					to = index;
 				} else {
-					if (index) {
-						index++;
-					} else {
-						after++;
-					}
-
+					if (typeof index === "undefined" || index < 0) index = 0;
 					from = index;
 					to = index + after;
 				}
+				
+				if(from < 0) from = 0;
+				if(to >= rooms.length) to = rooms.length - 1;
+				
 				for (i = from; i <= to; i++) {
 					if (typeof rooms[i] !== "undefined") {
 						res.push(rooms[i]);
 					}
+				}
+				if(before){
+					if(res.length < before) res.unshift(false);
+				}
+				else if(after){
+					if(res.length < after) res.push(false);
 				}
 
 				callback(res.map(function (r) {
