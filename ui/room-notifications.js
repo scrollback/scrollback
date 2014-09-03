@@ -24,17 +24,10 @@ function updateNotifier(roomName, type){
 }
 
 libsb.on("text-dn", function(text, next) {
-	var flag = false;
-
-	if (text.to !== window.currentState.roomName){
-		text.mentions.forEach(function(user) {
-			if (user === libsb.user.id){
-				updateNotifier(text.to, "mentioned");
-				flag = true;
-			}
-		});
-
-		if (!flag) {
+	if (text.to !== window.currentState.roomName) {
+		if (libsb.user && text.mentions && (text.mentions.indexOf(libsb.user.id) > -1)) {
+			updateNotifier(text.to, "mentioned");
+		} else {
 			updateNotifier(text.to);
 		}
 	}
