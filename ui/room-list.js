@@ -7,10 +7,6 @@ var roomEl = require("./room-item.js"),
 var BACK_SENT = 1, BACK_RECEIVED = 2, NOT_LISTENING = 0;
 var listening = {};
 
-for(i=0;i<100;i++){
-	rooms.push(i+"");
-}
-console.log(rooms);
 function enter(room) {
 	if (!room) return;
 	room = room.toLowerCase();
@@ -29,10 +25,10 @@ function enter(room) {
 			listenQueue.push(room);
 		}
 	}
-	console.log(rooms);
+	
 	if ($roomlist) $roomlist.reset();
 }
-window.enter = enter;
+
 module.exports = function (libsb) {
 	$(function () {
 		$roomlist = $(".room-list");
@@ -44,7 +40,7 @@ module.exports = function (libsb) {
 			startIndex: 0,
 			getItems: function (index, before, after, recycle, callback) {
 				var res = [],
-					i, from, to, reqCount;
+					i, from, to;
 				if (before) {
 					if (typeof index === "undefined") return callback([false]);
 					from = index - before;
@@ -80,7 +76,7 @@ module.exports = function (libsb) {
 		$roomlist.click(function (event) {
 			var $el = $(event.target).closest(".room-item");
 
-			if (!$el.size()) {
+			if (!$el.length) {
 				return;
 			}
 

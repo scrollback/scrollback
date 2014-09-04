@@ -125,6 +125,7 @@
 					els.shift();
 				}
 				
+				if(els.length === 0) return;
 				// Add elements to the DOM before measuring height.
 				if(where == "above") {
 					oldTerm = $items.children().eq(0);
