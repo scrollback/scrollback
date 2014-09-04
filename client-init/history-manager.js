@@ -11,6 +11,7 @@ module.exports = function (l) {
 
 	// On history change, load the appropriate state
 	$(window).on("popstate", function () {
+		if(!currentState || currentState.embed) return;
 		if (("state" in history && history.state !== null)) {
 			var state = {},
 				prop;
@@ -115,6 +116,7 @@ function pushState(state) {
 }
 
 function updateHistory(state, next) {
+	if(currentState.embed) return next();
 	updateTitle(state);
 	if (state.source == "history") {
 		return next();
