@@ -17,7 +17,10 @@ module.exports = function (types) {
                 req.by = "memberOf";
                 req.eq = [];
                 req.eq.push(query.memberOf);
-
+				req.map = function (element, push) {
+					if (element.role == "none") return false;
+					else push(element);
+				};
                 if (query.ref) req.eq.push(query.ref);
 
             } else if (query.ref) {
