@@ -6,7 +6,7 @@ var threadEl = require("./thread.js"),
 
 (function() {
 	var $threads, room = "", time = null,
-	search = "", mode = "", searchResult = [false], index = null;
+	search = "", mode = "", searchResult = [], index = null;
 
 	function renderSearchResult(threads, callback) {
 		callback(threads.map(function(thread) {
@@ -25,26 +25,16 @@ var threadEl = require("./thread.js"),
 
 			if(!index) index = 0;
 			if(before) {
-				if(index === 0){
-					return callback([false]);
-				}
-				index--;
+				if(index === 0) return callback([false]);
 				from = index - before;
-				if(from <0) {
-					to = from+before;
-					from = 0;
-				}else {
-					to = index;
-				}
+				if(from <0) from = 0;
+				to = index;
 			}else {
-				if(index){
-					index++;
-				}else{
-					after++;
-				}
 				from = index;
+				if(from ==0) from = 1;
 				to = index+after;
 			}
+			
 			function processResults(from, to){
 				for(i=from;i<=to;i++) {
 					if(typeof searchResult[i] !== "undefined") res.push(searchResult[i]);
@@ -66,41 +56,30 @@ var threadEl = require("./thread.js"),
 			libsb.getThreads(query, function(err, t) {
 				var threads = t.results;
 				searchResult = searchResult.concat(threads);
-				if(t.results.length < query.after) {
+				if(t.results.length < query.after && searchResult[searchResult.length-1]!== false) {
 					searchResult.push(false);
 				}
 				processResults(from, to);
-
 			});
 	}
 	function loadThread(index, before, after, callback) {
 		var query  = { before: before, after: after};
 
 		if(!index && after) return callback([false]);
-		if(after) query.after = index?after+1: after;
-		if(before) query.before = index?before+1: before;
-
+		
 		query.to =  room;
 		query.time = index || null;
 		libsb.getThreads(query, function(err, t) {
 			var threads = t.results;
 			if(err) throw err; // TODO: handle the error properly.
 
-			if(!index && threads.length === "0") {
-				return callback([false]);
-			}
-			if(!after) {
-				if(!t.time) {
-					threads.push(false);
-
-				}else {
-					threads.pop();
-				}
+			if(!index && threads.length === 0)	return callback([false]);
+			
+			if(before) {
 				if(threads.length < before) {
 					threads.unshift(false);
 				}
-			}else if(before === 0) {
-				if(threads.length) threads.splice(0,1);
+			} else if(after) {
 				if(threads.length < after) {
 					threads.push(false);
 				}

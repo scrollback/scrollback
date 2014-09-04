@@ -1,12 +1,10 @@
 /* jshint jquery: true */
-/* global libsb, window, $ */
+/* global libsb, $ */
 
 var personEl = require("./person.js"),
 	peopleArea = {};
-window.peopleAreaLoaded = false;
-
 $(function () {
-	var $people = $(".pane-people"),
+	var $people = $(".pane-people-wrap"),
 		people = [],
 		roomName = "";
 
@@ -71,14 +69,12 @@ $(function () {
 					return -(a.score - b.score);
 				});
 
-				sorted.unshift(false);
-				sorted.push(false);
 				people = sorted;
 				callback();
 			});
 		});
 	}
-	
+
 	function listener(event){
 		libsb.on(event, function (action, next) {
 //			console.log(action.type+": ", action);
@@ -95,48 +91,53 @@ $(function () {
 		itemHeight: 100,
 		startIndex: 0,
 		getItems: function (index, before, after, recycle, callback) {
-			var res = [],
-				from, to, i, ppl = [];
-			if (!roomName) return callback([false]);
-			if (!index) {
-				if (before) return callback([false]);
-				from = 0;
-				to = after;
+			var res = [], from, to, i;
+			
+			if (before) {
+				if (typeof index === "undefined") return callback([false]);
+				from = index - before;
+				to = index;
 			} else {
-				if (before) {
-					to = index-1;
-					from = to - before;
-					if (from < 0) from = 0;
-				} else if (after) {
-					from = index+1;
-					to = from+after;
-				} else {
-					return callback([false]);
-				}
+				if (typeof index === "undefined" || index < 0) index = 0;
+				from = index;
+				to = index + after;
 			}
 
-			if (to > people.length - 1) to = people.length - 1
-			
+			if(from < 0) from = 0;
+			if(to >= people.length) to = people.length - 1;
+
 			for (i = from; i <= to; i++) {
-				res.push(people[i] && personEl.render(null, people[i], i));
+				if (typeof people[i] !== "undefined") {
+					res.push(personEl.render(null, people[i], i));
+				}
+			}
+			if(before){
+				if(res.length < before) res.unshift(false);
+			}
+			else if(after){
+				if(res.length < after) res.push(false);
 			}
 			callback(res);
 		}
 	});
-	
+
 	libsb.on('navigate', function (state, next) {
-		var reset = false;
+		var reset = false,
+			$people;
+
 		if (state.source == 'people-area') return next();
 		roomName = state.roomName;
-		
+
 		if(state.old){
-			if(state.tab == "people"){
-				$(".pane-people").addClass("current");
+			$people = $(".pane-people");
+
+			if(state.tab === "people"){
+				$people.addClass("current");
 				if(state.tab != state.old.tab) reset = true;
 			}else{
-				$(".pane-people").removeClass("current");
+				$people.removeClass("current");
 			}
-			
+
 			if(state.source == "boot") reset = true;
 			if(state.old.connectionStatus != state.connectionStatus) reset = true;
 			if(state.roomName != state.old.roomName) reset = true;
