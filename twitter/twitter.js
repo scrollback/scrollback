@@ -180,7 +180,7 @@ function fetchTweets(room) {
 			access_token_secret: room.params.twitter.tokenSecret
 		});
 		logTwitter("calling room,", room);
-		redis.get("twitter:lastTweetId:" + room.id, function(err, data) {
+		redis.get("twitter:lastTweetTime:" + room.id, function(err, data) {
 
 			twit.get(
 				'search/tweets', {
@@ -193,8 +193,9 @@ function fetchTweets(room) {
 					}
 					else {
 						//logTwitter("var reply= ", JSON.stringify(reply));
-						if (reply.statuses && reply.statuses[0] && !reply.statuses[0].retweeted && (reply.statuses[0].id + "") !== data) {
-							redis.set("twitter:lastTweetId:" + room.id, reply.statuses[0].id, function(err, data) {
+						if (reply.statuses && reply.statuses[0] && !reply.statuses[0].retweeted && 
+							(new Date(reply.statuses[0].created_at).getTime()) > (data ? parseInt(data, 10) : 1)) {
+							redis.set("twitter:lastTweetTime:" + room.id, (new Date(reply.statuses[0].created_at).getTime()), function(err, data) {
 								logTwitter("added data to room...", err, data);
 								sendMessages(reply, room);
 							});
