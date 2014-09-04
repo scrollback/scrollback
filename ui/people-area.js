@@ -6,7 +6,7 @@ var personEl = require("./person.js"),
 window.peopleAreaLoaded = false;
 
 $(function () {
-	var $people = $(".pane-people"),
+	var $people = $(".pane-people-wrap"),
 		people = [],
 		roomName = "";
 
@@ -78,7 +78,7 @@ $(function () {
 			});
 		});
 	}
-	
+
 	function listener(event){
 		libsb.on(event, function (action, next) {
 //			console.log(action.type+": ", action);
@@ -116,27 +116,31 @@ $(function () {
 			}
 
 			if (to > people.length - 1) to = people.length - 1
-			
+
 			for (i = from; i <= to; i++) {
 				res.push(people[i] && personEl.render(null, people[i], i));
 			}
 			callback(res);
 		}
 	});
-	
+
 	libsb.on('navigate', function (state, next) {
-		var reset = false;
+		var reset = false,
+			$people;
+
 		if (state.source == 'people-area') return next();
 		roomName = state.roomName;
-		
+
 		if(state.old){
-			if(state.tab == "people"){
-				$(".pane-people").addClass("current");
+			$people = $(".pane-people");
+
+			if(state.tab === "people"){
+				$people.addClass("current");
 				if(state.tab != state.old.tab) reset = true;
 			}else{
-				$(".pane-people").removeClass("current");
+				$people.removeClass("current");
 			}
-			
+
 			if(state.source == "boot") reset = true;
 			if(state.old.connectionStatus != state.connectionStatus) reset = true;
 			if(state.roomName != state.old.roomName) reset = true;
