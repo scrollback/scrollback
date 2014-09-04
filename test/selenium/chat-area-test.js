@@ -1,69 +1,146 @@
 var assert = require('assert'),
-	fs = require('fs');
 //npm install -g browserstack
-var webdriver = require('browserstack-webdriver');
-var test = require('browserstack-webdriver/testing');
-var config = require("../config.js");
-var timeout = 25000;
+	webdriver = require('browserstack-webdriver'),
+	timeout = 25000;
 module.exports = function(capabilities, options) {
-	test.describe('Chat Area Test: ' + options.id, function () {
+	describe('Chat Area Test: ' + options.id, function() {
 		this.timeout(4 * timeout);
 		var driver, server = "https://dev.scrollback.io";
 
-		test.before(function () {
+		before(function(done) {
 			this.timeout(3 * timeout);
 			driver = new webdriver.Builder().
 				usingServer('http://hub.browserstack.com/wd/hub').
 				withCapabilities(capabilities).
 				build();
 			driver.get(server + '/scrollback');
-			var time = new Date().getTime();
-			driver.wait(function () {//wait for page load
-				return new Date().getTime() - time >= 1.5 * timeout;
-			}, 2 * timeout);
+			setTimeout(done, 1.5 * timeout);
 		});
-		test.it("Message Load test", function () {
+
+		it("Message Load test", function(done) {
 			this.timeout(timeout);
-			driver.findElements(webdriver.By.css('.chat-item')).then(function (e) {
+			driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
+				var c = 0;
+				function d() {
+					if (e.length === ++c) {
+						done();
+					}
+				}
+				e.forEach(function(el) {
+					el.getAttribute("id").
+					then(function(id) {
+						d();
+						assert.equal(true, id.length > 0, "ID Not added");
+					});
+				});
 				console.log("Number of messages: ", e.length);
 				assert.equal(true, e.length > 1, "No Messages displayed on load");
 			});
 		});
 
-		test.it('Messages sending test', function () {
+		it('Messages sending test( click chat-send button)', function(done) {
 			this.timeout(timeout);
 			driver.findElement(webdriver.By.css('.chat-entry')).
 			then(function(searchBox) {
 				var random = Math.random();
 				searchBox.sendKeys('hello Testing message from script: ' + random);
-				driver.findElement(webdriver.By.css('.chat-send')).click();
-
-				driver.wait(function () {
-					return driver.findElement(webdriver.By.css('.chat-area')).getText().then(function (text) {
+				driver.findElement(webdriver.By.css('.chat-send')).click().
+				then(function() {
+					driver.findElement(webdriver.By.css('.chat-area')).getText().
+					then(function(text) {
 						console.log("text", text);
 						console.log("index=", text.indexOf("" + random));
-						return text.indexOf("" + random) !== -1;
+						assert.notEqual(-1, text.indexOf("" + random), "Message sending failed");
+						done();
 					});
-				}, 2000);
-			});
-		});
-
-		test.it("thread id test", function () {
-			this.timeout(timeout);
-			driver.findElements(webdriver.By.css('.chat-item')).then(function (e) {
-				console.log("Number of messages: ", e.length);
-				//check last message got thread-id
-				e[e.length - 1].getAttribute("data-thread").then(function (threadId) {
-					console.log("thread Id", threadId);
-					assert.equal(33, threadId.length, "Last message did not got threadId");
 				});
 			});
 		});
 
-
-		test.after(function () {
+		it('Messages sending test(Press Enter Key)', function(done) {
 			this.timeout(timeout);
-			driver.quit();
+			driver.findElement(webdriver.By.css('.chat-entry')).
+			then(function(searchBox) {
+				var random = Math.random();
+				searchBox.sendKeys('hello Testing message from script: ' + random);
+				searchBox.sendKeys(webdriver.Key.RETURN). then(function() {
+					driver.findElement(webdriver.By.css('.chat-area')).getText().then(function(text) {
+						console.log("text", text);
+						console.log("index=", text.indexOf("" + random));
+						assert.notEqual(-1, text.indexOf("" + random), "Message sending failed");
+						done();
+					});
+				});
+			});
+		});
+
+		it("thread id test", function(done) {
+			this.timeout(timeout);
+			driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
+				console.log("Number of messages: ", e.length);
+				//check last message got thread-id
+				e[e.length - 1].getAttribute("data-thread").then(function(threadId) {
+					console.log("thread Id", threadId);
+					assert.equal(33, threadId.length, "Last message did not got threadId");
+					done();
+				});
+			});
+		});
+
+		it("Scrolling test", function(done) {
+			this.timeout(2 * timeout);
+			var ids = [];
+			driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
+				e.forEach(function(el) {
+					el.getAttribute("id").
+					then(function(id) {
+						ids.push(id);
+						console.log("id..", id);
+					});
+				});
+				console.log("Number of messages: ", e.length);
+				assert.equal(true, e.length > 1, "No Messages displayed on load");
+			});
+			driver.executeScript("$(\".chat-item\")[0].scrollIntoView();");
+			setTimeout(function() {
+				driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
+					var c = 0;
+					function d() {
+						if (e.length === ++c) {
+							done();
+						}
+					}
+					e.forEach(function(el) {
+						el.getAttribute("id").
+						then(function(id) {
+							console.log("ID: ", id + "," + ids[c]);
+							assert.equal(true, id.length > 0, "ID Not added");
+							assert.notEqual(id, ids[c], "Not scrolling..");
+							d();
+						});
+					});
+					console.log("Number of messages: ", e.length);
+					assert.equal(true, e.length > 1, "No Messages displayed on load");
+				});
+			}, 15000);
+		});
+		
+		it("login Menu test", function(done) {
+			this.timeout(timeout);
+			driver.findElement(webdriver.By.css('.user-area')).click().
+			then(function() {
+				driver.findElement(webdriver.By.css('.popover-body')).isDisplayed().
+				then(function(d) {
+					assert(true, d, "sign in options not visible");
+					done();
+				});
+			});
+		});
+		
+		
+		after(function(done) {
+			this.timeout(timeout);
+			driver.quit().then(done);
 		});
 	});
-}
+};
