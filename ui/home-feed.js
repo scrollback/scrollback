@@ -1,12 +1,30 @@
 /* jslint browser: true, indent: 4, regexp: true */
 /* global $, libsb */
 
+// Add entry to user menu
+libsb.on("user-menu", function(menu, next) {
+	if (window.currentState.mode !== "home") {
+		menu.items.homefeed = {
+			text: "Home feed",
+			prio: 100,
+			action: function() {
+				libsb.emit("navigate", {
+					mode: "home",
+					view: "normal",
+					source: "user-menu"
+				});
+			}
+		};
+	}
+
+	next();
+}, 1000);
+
 $(function() {
-	var $cardContainer = $(".card-container"),
+	var $roomHeader = $(".room-header"),
+		$cardContainer = $(".card-container"),
 		$gotoform = $("#home-go-to-room-form"),
 		$gotoentry = $("#home-go-to-room-entry"),
-		$template = $(".card-item-wrap").eq(0),
-		roomCard = {},
 		goToRoom = function(roomName) {
 			if (!roomName) {
 				return;
@@ -23,27 +41,9 @@ $(function() {
 			});
 		};
 
-	roomCard.render = function($el, room, online, index) {
-		var $card;
-
-		if (!room) {
-			return;
-		}
-
-		$el = $el || $template.clone(false);
-
-		$card = $el.find(".card-item");
-
-		$card.attr("id", "room-card-" + room.id);
-		$card.attr("data-room", room.id);
-		$card.attr("data-index", index);
-
-		$card.find(".card-header").text(room.id);
-		$card.find(".card-content-summary").text(room.description || "This room has no description.");
-		$card.find(".card-actions-online").text(online);
-
-		return $el;
-	};
+	$gotoentry.on("keydown paste", function() {
+		$(this).removeClass("error");
+	});
 
 	$cardContainer.on("click", function(e) {
 		var $card = $(e.target).closest(".card-item");
@@ -52,20 +52,8 @@ $(function() {
 			return;
 		}
 
-		goToRoom($card.data("room-name"));
+		goToRoom($card.data("room"));
 	});
-
-	libsb.on("navigate", function(state, next) {
-		if (state.old && state.mode !== state.old.mode) {
-			if (state.mode === "home") {
-				// render rooms
-			} else {
-//				$cardContainer.empty();
-			}
-		}
-
-		next();
-	}, 500);
 
 	$gotoform.on("submit", function(e) {
 		var roomName = $gotoentry.val();
@@ -79,7 +67,11 @@ $(function() {
 		}
 	});
 
-	$gotoentry.on("keydown paste", function() {
-		$(this).removeClass("error");
+	$roomHeader.on("click", function() {
+		libsb.emit("navigate", {
+			mode: "home",
+			view: "normal",
+			source: "room-header"
+		});
 	});
 });

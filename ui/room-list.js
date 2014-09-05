@@ -1,79 +1,121 @@
-/* jshint jquery: true */
-/* global libsb, currentState */
+/* jshint browser: true */
+/* global $, libsb */
 
-var roomEl = require("./room-item.js"),
-	$roomlist, rooms = [],
-	listenQueue = [];
-var BACK_SENT = 1, BACK_RECEIVED = 2, NOT_LISTENING = 0;
-var listening = {};
+var roomCard = require("./room-card.js"),
+	roomEl = require("./room-item.js"),
+	$roomarea, $homefeed,
+	rooms = [],
+	roomObjs = {},
+	listenQueue = [],
+	listening = {},
+	BACK_SENT = 1, BACK_RECEIVED = 2, NOT_LISTENING = 0;
 
 function enter(room) {
-	if (!room) return;
-	room = room.toLowerCase();
-	if (rooms.indexOf(room) < 0) rooms.push(room);
+	var roomName;
+
+	if (!(room && room.id)) {
+		return;
+	}
+
+	roomName = room.id.toLowerCase();
+
+	if (rooms.indexOf(roomName) < 0) {
+		rooms.push(roomName);
+		roomObjs[roomName] = room;
+	}
 
 	if (libsb.isInited) {
-		if(!listening[room]){
+		if (!listening[roomName]){
 			listening[room] = BACK_SENT;
-			libsb.enter(room, function (err) {
-				if (err) listening[room] = NOT_LISTENING;
-				else listening[room] = BACK_RECEIVED;
+			libsb.enter(roomName, function(err) {
+				if (err) {
+					listening[roomName] = NOT_LISTENING;
+				} else {
+					listening[roomName] = BACK_RECEIVED;
+				}
 			});
 		}
 	} else {
-		if (listenQueue.indexOf(room) < 0) {
-			listenQueue.push(room);
+		if (listenQueue.indexOf(roomName) < 0) {
+			listenQueue.push(roomName);
 		}
 	}
-	
-	if ($roomlist) $roomlist.reset();
+
+	if (window.currentState.mode !== "home" && $roomarea) {
+		$roomarea.reset();
+	}
+
+	if (window.currentState.mode === "home" && $homefeed) {
+		$homefeed.reset(0);
+	}
 }
 
-module.exports = function (libsb) {
-	$(function () {
-		$roomlist = $(".room-list");
-		// Set up infinite scroll here.
-		$roomlist.infinite({
+module.exports = function(libsb) {
+	$(function() {
+		var scrollOpts = {
 			scrollSpace: 2000,
 			fillSpace: 1000,
 			itemHeight: 100,
 			startIndex: 0,
-			getItems: function (index, before, after, recycle, callback) {
+			getItems: function(index, before, after, recycle, callback) {
 				var res = [],
 					i, from, to;
+
 				if (before) {
-					if (typeof index === "undefined") return callback([false]);
+					if (typeof index === "undefined") {
+						return callback([ false ]);
+					}
+
 					from = index - before;
 					to = index;
 				} else {
-					if (typeof index === "undefined" || index < 0) index = 0;
+					if (typeof index === "undefined" || index < 0) {
+						index = 0;
+					}
+
 					from = index;
 					to = index + after;
 				}
-				
-				if(from < 0) from = 0;
-				if(to >= rooms.length) to = rooms.length - 1;
-				
+
+				from = (from < 0) ? 0 : 0;
+
+				to = (to >= rooms.length) ? rooms.length - 1 : to;
+
 				for (i = from; i <= to; i++) {
 					if (typeof rooms[i] !== "undefined") {
 						res.push(rooms[i]);
 					}
 				}
-				if(before){
-					if(res.length < before) res.unshift(false);
-				}
-				else if(after){
-					if(res.length < after) res.push(false);
+
+				if (before) {
+					if (res.length < before) {
+						res.unshift(false);
+					}
+				} else if (after) {
+					if (res.length < after) {
+						res.push(false);
+					}
 				}
 
-				callback(res.map(function (r) {
-					return r && roomEl.render(null, r, rooms.indexOf(r));
+				callback(res.map(function(room) {
+					if (window.currentState.mode === "home") {
+						return room && roomObjs[room] && roomCard.render(null, roomObjs[room], null, rooms.indexOf(room));
+					} else {
+						return room && roomEl.render(null, room, rooms.indexOf(room));
+					}
 				}));
 			}
-		});
+		};
+
+		$roomarea = $(".js-area-rooms");
+		$homefeed = $(".js-area-home-feed");
+
+		// Set up infinite scroll here.
+		$roomarea.infinite(scrollOpts);
+		$homefeed.infinite(scrollOpts);
 
 		// Set up a click listener.,
-		$roomlist.click(function (event) {
+		$roomarea.click(function(event) {
 			var $el = $(event.target).closest(".room-item");
 
 			if (!$el.length) {
@@ -91,43 +133,57 @@ module.exports = function (libsb) {
 			});
 		});
 	});
-	libsb.on("navigate", function (state, next) {
-		var room = state.roomName;
-		if (currentState.embed && currentState.embed.form) return next();
-		if (state.source == "boot") {
+
+	libsb.on("navigate", function(state, next) {
+		var room = state.roomName || "";
+
+		if (window.currentState.embed && window.currentState.embed.form && window.currentState.mode !== "home") {
+			return next();
+		}
+
+		if ((state.mode == "home" && (!state.old || state.old.mode != "home")) || state.source == "boot") {
 			if (libsb.memberOf) {
-				libsb.memberOf.forEach(function (e) {
-					enter(e.id);
+				libsb.memberOf.forEach(function(e) {
+					enter(e);
 				});
 			}
-			enter(room);
+
+			if (room) {
+				enter({ id: room });
+			}
 		}
 		next();
 	}, 100);
 
-	libsb.on("init-dn", function (init, next) {
-		if (currentState.embed && currentState.embed.form) return next();
+	libsb.on("init-dn", function(init, next) {
+		if (window.currentState.embed && window.currentState.embed.form && window.currentState !== "home") {
+			return next();
+		}
 
 		if (init.memberOf) {
-			init.memberOf.forEach(function (r) {
-				enter(r.id);
+			init.memberOf.forEach(function(r) {
+				enter(r);
 			});
 		}
 
-		listenQueue.forEach(function (e) {
-			enter(e);
+		listenQueue.forEach(function(e) {
+			enter({ id: e });
 		});
 
 		listenQueue = [];
 
-		if ($roomlist) {
-			$roomlist.reset();
+		if (window.currentState.mode !== "home" && $roomarea) {
+			$roomarea.reset();
+		}
+
+		if (window.currentState.mode === "home" && $homefeed) {
+			$homefeed.reset(0);
 		}
 
 		next();
 	}, 10);
 
-	libsb.on("navigate", function (state, next) {
+	libsb.on("navigate", function(state, next) {
 		if (state.old && state.room !== state.old.room) {
 			$(".room-item.current").removeClass("current");
 
@@ -137,7 +193,7 @@ module.exports = function (libsb) {
 		}
 
 		if (!state.connectionStatus && (!state.old || state.old.connectionStatus)) {
-			Object.keys(listening).forEach(function (e) {
+			Object.keys(listening).forEach(function(e) {
 				listening[e] = NOT_LISTENING;
 			});
 		}
