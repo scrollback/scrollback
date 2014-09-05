@@ -1,24 +1,20 @@
 var assert = require('assert'),
 //npm install -g browserstack
 	webdriver = require('browserstack-webdriver'),
+	testUtils = require('./testUtils.js'),
 	timeout = 25000;
 module.exports = function(capabilities, options) {
 	describe('Chat Area Test: ' + options.id, function() {
-		this.timeout(4 * timeout);
+		this.timeout(timeout);
 		var driver, server = "https://dev.scrollback.io";
 
 		before(function(done) {
 			this.timeout(3 * timeout);
-			driver = new webdriver.Builder().
-				usingServer('http://hub.browserstack.com/wd/hub').
-				withCapabilities(capabilities).
-				build();
-			driver.get(server + '/scrollback');
+			driver = testUtils.openUrl(capabilities, server, "scrollback");
 			setTimeout(done, 1.5 * timeout);
 		});
 
 		it("Message Load test", function(done) {
-			this.timeout(timeout);
 			driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
 				var c = 0;
 				function d() {
@@ -39,7 +35,6 @@ module.exports = function(capabilities, options) {
 		});
 
 		it('Messages sending test( click chat-send button)', function(done) {
-			this.timeout(timeout);
 			driver.findElement(webdriver.By.css('.chat-entry')).
 			then(function(searchBox) {
 				var random = Math.random();
@@ -58,7 +53,6 @@ module.exports = function(capabilities, options) {
 		});
 
 		it('Messages sending test(Press Enter Key)', function(done) {
-			this.timeout(timeout);
 			driver.findElement(webdriver.By.css('.chat-entry')).
 			then(function(searchBox) {
 				var random = Math.random();
@@ -75,7 +69,6 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("thread id test", function(done) {
-			this.timeout(timeout);
 			driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
 				console.log("Number of messages: ", e.length);
 				//check last message got thread-id
@@ -88,7 +81,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("Scrolling test", function(done) {
-			this.timeout(2 * timeout);
+			this.timeout(1.5 * timeout);
 			var ids = [];
 			driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
 				e.forEach(function(el) {
