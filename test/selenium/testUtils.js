@@ -15,23 +15,26 @@ function loginPersona(driver, id, password, callback) {
 	then(function() {
 		driver.findElement(webdriver.By.css('.persona')).click().then(function() {
 			driver.getAllWindowHandles().then(function(win) {
+				console.log("win", win);
 				driver.switchTo().window(win[1]).then(function(){
-					driver.findElement(webdriver.By.css(".isDesktopOrStart")).
-					sendKeys(id).
-					then(function() {
+					setTimeout(function() {
 						driver.findElement(webdriver.By.css(".isDesktopOrStart")).
-						sendKeys(webdriver.Key.RETURN).then(function() {
-							setTimeout(function() {
-								driver.findElement(webdriver.By.id("authentication_password")).
-								sendKeys(password).then(function() { 
+						sendKeys(id).
+						then(function() {
+							driver.findElement(webdriver.By.css(".isDesktopOrStart")).
+							sendKeys(webdriver.Key.RETURN).then(function() {
+								setTimeout(function() {
 									driver.findElement(webdriver.By.id("authentication_password")).
-									sendKeys(webdriver.Key.RETURN).then(function() {
-										driver.switchTo().window(win[0]).then(callback);
+									sendKeys(password).then(function() { 
+										driver.findElement(webdriver.By.id("authentication_password")).
+										sendKeys(webdriver.Key.RETURN).then(function() {
+											driver.switchTo().window(win[0]).then(callback);
+										});
 									});
-								});
-							}, 7000);	
+								}, 7000);
+							});
 						});
-					});							
+					}, 4000);
 				});
 			});	
 		});

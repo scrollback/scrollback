@@ -48,6 +48,12 @@ module.exports = {
 				'os_version' : '8.1',
 				'resolution' : '1366x768'
 			}
+		],
+		tests: [//list of test
+		"chat-area-test.js",
+		"meta-area-test.js",
+		"login-test.js"
 		]
 	}
+	
 };

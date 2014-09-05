@@ -1,5 +1,4 @@
 //http://www.browserstack.com/automate/node 
-//npm install -g browserstack-webdriver
 var config = require("../config.js");
 var capabilities = config.selenium.capabilities;
 
@@ -13,7 +12,7 @@ capabilities.forEach(function(c) {
 	} else {
 		options.id = c.browser + " " + c.browser_version;
 	}
-	//require("./chat-area-test.js")(c, options);
-	//require("./meta-area-test.js")(c, options);
-	require("./login-test.js")(c, options);
+	config.selenium.tests.forEach(function(test) {
+		require("./" + test)(c, options);
+	});
 });
