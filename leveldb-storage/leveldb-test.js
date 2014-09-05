@@ -1,19 +1,10 @@
+/* global describe, it*/
 var assert = require('assert');
 var core =new( require('../lib/emitter.js'))();
 var generate = require("../lib/generate.js");
 require("./leveldb-storage.js")(core);
 var time = 1398139968009, id;
-var crypto = require('crypto'), log = require("../lib/logger.js");
-
-// describe("Just to try something out quick.",function(){
-// 	it("Checking join:", function(done) {
-// 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
-// 			console.log(data);			
-// 			done();			
-// 		});
-// 	});
-// });
-
+var crypto = require('crypto');
 
 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
 console.log("+++++Text should be run after clearing the DB+++++");
@@ -39,7 +30,7 @@ describe("user and room action", function(){
 		});
 	});
 	it("storing user arvind", function(done) {
-		var email = "arvind@scrollback.io"
+		var email = "arvind@scrollback.io";
 		core.emit("user", {
 			id: generate.uid(),
 			type:"user",
@@ -110,7 +101,7 @@ describe("user and room action", function(){
 			done();
 		});
 	});
-	it("storing room scrollbackteam", function(done) {
+	it.skip("storing room scrollbackteam", function(done) {
 		core.emit("room", {
 			id: generate.uid(),
 			type:"room",
@@ -162,6 +153,7 @@ describe("get queries: ", function(){
 			done();			
 		});
 	});
+	
 	it("getting room that doesnt exist:", function(done) {
 		core.emit("getRooms", {ref:"scrollback1"}, function(err, data){
 			assert(!err, "Error thrown");
@@ -169,6 +161,41 @@ describe("get queries: ", function(){
 			done();			
 		});
 	});
+	it("getting user with multiple ids", function(done) {
+		core.emit("getUsers", {ref:["harish","arvind"]}, function(err, data){
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "why did it not give results?");
+			assert(data.results.length == 2, "incorrect data");
+			data.results.forEach(function(user) {
+				assert(user, "some users missing");
+			});
+			done();			
+		});
+	});
+	it("getting user with multiple ids and some missing", function(done) {
+		core.emit("getUsers", {ref:["harish1","arvind"]}, function(err, data){
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "why did it not give results?");
+			assert(data.results.length == 2, "incorrect data");
+			assert(data.results[0] === null, "incorrect data");
+			assert(data.results[1].id === "arvind", "incorrect data");
+			done();			
+		});
+	});
+	it("getting user with multiple ids and all missing", function(done) {
+		core.emit("getUsers", {ref:["harish1","arvind2"]}, function(err, data){
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "why did it not give results?");
+			assert(data.results.length == 2, "incorrect data");
+			assert(data.results[0] === null, "incorrect data");
+			assert(data.results[1] === null, "incorrect data");
+			done();			
+		});
+	});
+	
 	it("getting user that doesnt exist:", function(done) {
 		core.emit("getUsers", {ref:"harish1"}, function(err, data){
 			assert(!err, "Error thrown");
@@ -176,18 +203,17 @@ describe("get queries: ", function(){
 			done();			
 		});
 	});
-	it("hasMember query:", function(done) {
+	it.skip("hasMember query:", function(done) {
 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
 			assert(!err, "Error thrown");
 			assert(data, "no response");
 			assert(data.results[0], "empty results");
 			assert.equal(data.results[0].id, "scrollback", "empty results");
-			console.log("154: ",data);
 			assert.equal(data.results.length, 1, "extra results returned");
 			done();			
 		});
 	});
-	it("storing room scrollbackteam2", function(done) {
+	it.skip("storing room scrollbackteam2", function(done) {
 		core.emit("room", {
 			id: generate.uid(),
 			type:"room",
@@ -205,7 +231,7 @@ describe("get queries: ", function(){
 			done();
 		});
 	});
-	it("hasMember query:", function(done) {
+	it.skip("hasMember query:", function(done) {
 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
 			var ids = [];
 			assert(!err, "Error thrown");
@@ -220,7 +246,7 @@ describe("get queries: ", function(){
 			done();			
 		});
 	});
-	it("hasMember query with ref:", function(done) {
+	it.skip("hasMember query with ref:", function(done) {
 		core.emit("getRooms", {hasMember:"harish", ref:"scrollback"}, function(err, data){
 			var ids = [];
 			assert(!err, "Error thrown");
@@ -232,8 +258,8 @@ describe("get queries: ", function(){
 		});
 	});
 });
-describe("storing actions", function() {
-	it("storing back message", function(done) {
+describe.skip("storing actions", function() {
+	it.skip("storing back message", function(done) {
 		core.emit("back", {
 			id: generate.uid(),
 			to: "scrollback",
@@ -245,7 +271,7 @@ describe("storing actions", function() {
 			else done();
 		});
 	});
-	it("storing away message", function(done) {
+	it.skip("storing away message", function(done) {
 		core.emit("away", {
 			id: generate.uid(),
 			to: "scrollback",
@@ -257,7 +283,7 @@ describe("storing actions", function() {
 			else done();
 		});
 	});
-	it("storing join message", function(done) {
+	it.skip("storing join message", function(done) {
 		core.emit("join", {
 			id: generate.uid(),
 			role:"follower",
@@ -273,7 +299,7 @@ describe("storing actions", function() {
 			else done();
 		});
 	});
-	it("Checking join:", function(done) {
+	it.skip("Checking join:", function(done) {
 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
 			var idRole = [];
 			assert(!err, "Error thrown");
@@ -287,7 +313,7 @@ describe("storing actions", function() {
 			done();			
 		});
 	});
-	it("storing part message", function(done) {
+	it.skip("storing part message", function(done) {
 		core.emit("part", {
 			id: generate.uid(),
 			to: "scrollbackteam",
@@ -302,7 +328,7 @@ describe("storing actions", function() {
 			else done();
 		});
 	});
-	it("Checking part:", function(done) {
+	it.skip("Checking part:", function(done) {
 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
 			var ids = [];
 			assert(!err, "Error thrown");
@@ -315,7 +341,7 @@ describe("storing actions", function() {
 			done();			
 		});
 	});
-	it("storing admit message", function(done) {
+	it.skip("storing admit message", function(done) {
 		core.emit("admit", {
 			id: generate.uid(),
 			to: "scrollbackteam",
@@ -333,7 +359,7 @@ describe("storing actions", function() {
 			else done();
 		});
 	});
-	it("Checking admit:", function(done) {
+	it.skip("Checking admit:", function(done) {
 		core.emit("getRooms", {hasMember:"amal"}, function(err, data){
 			var idRole = {};
 			assert(!err, "Error thrown");
@@ -347,7 +373,7 @@ describe("storing actions", function() {
 			done();			
 		});
 	});
-	it("storing expel message", function(done) {
+	it.skip("storing expel message", function(done) {
 		core.emit("expel", {
 			id: generate.uid(),
 			to: "scrollbackteam",
@@ -366,7 +392,7 @@ describe("storing actions", function() {
 			else done();
 		});
 	});
-	it("Checking admit:", function(done) {
+	it.skip("Checking admit:", function(done) {
 		core.emit("getRooms", {hasMember:"amal"}, function(err, data){
 			var idRole = {};
 			assert(!err, "Error thrown");
@@ -385,7 +411,7 @@ describe("storing actions", function() {
 });
 
 describe("Threads: Add assertions to the validity of the data: ", function() {
-	it("insert few text", function(done) {
+	it.skip("insert few text", function(done) {
 		var i=0, x = time;
 		this.timeout(10000);
 		function insertMessages(count, callback) {
@@ -417,7 +443,7 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 		});
 	});
 
-	it("query using id: ", function(done) {
+	it.skip("query using id: ", function(done) {
 		core.emit("getThreads", {ref: "thread48"}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -426,7 +452,7 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 			done();
 		});
 	});
-	it("query using to and only before: no time", function(done) {
+	it.skip("query using to and only before: no time", function(done) {
 		core.emit("getThreads", {to:"scrollback", before: 15}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -435,7 +461,7 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 			done();
 		});
 	});
-	it("query with after but no time", function(done) {
+	it.skip("query with after but no time", function(done) {
 		core.emit("getThreads", {to:"scrollback", after: 5}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -444,7 +470,7 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 			done();
 		});
 	});
-	it("query with after", function(done) {
+	it.skip("query with after", function(done) {
 		core.emit("getThreads", {time: time, to:"scrollback", after: 5}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -453,7 +479,7 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 			done();
 		});
 	});
-	it("query with after", function(done) {
+	it.skip("query with after", function(done) {
 		core.emit("getThreads", {time: time+(2000*50), to:"scrollback", before: 5}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -466,7 +492,7 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 
 
 describe("Text: Add assertions to the validity of the data: ", function() {
-	it("query using id: ", function(done) {
+	it.skip("query using id: ", function(done) {
 		core.emit("getTexts", {ref: id}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -475,7 +501,7 @@ describe("Text: Add assertions to the validity of the data: ", function() {
 			done();
 		});
 	});
-	it("query using to and only before: no time", function(done) {
+	it.skip("query using to and only before: no time", function(done) {
 		core.emit("getTexts", {to:"scrollback", before: 15}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -484,7 +510,7 @@ describe("Text: Add assertions to the validity of the data: ", function() {
 			done();
 		});
 	});
-	it("query with after but no time", function(done) {
+	it.skip("query with after but no time", function(done) {
 		core.emit("getTexts", {to:"scrollback", after: 5}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -493,7 +519,7 @@ describe("Text: Add assertions to the validity of the data: ", function() {
 			done();
 		});
 	});
-	it("query with after", function(done) {
+	it.skip("query with after", function(done) {
 		core.emit("getTexts", {time: time, to:"scrollback", after: 5}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -502,7 +528,7 @@ describe("Text: Add assertions to the validity of the data: ", function() {
 			done();
 		});
 	});
-	it("query with after", function(done) {
+	it.skip("query with after", function(done) {
 		core.emit("getTexts", {time: time+(2000*50), to:"scrollback", before: 5}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");

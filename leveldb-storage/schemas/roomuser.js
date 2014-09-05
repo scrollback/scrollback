@@ -3,10 +3,11 @@ var log = require("../../lib/logger.js");
 var config = require('../../config.js');
 var internalSessions = Object.keys(config.whitelists);
 var su = config.su;
-
-module.exports = function (types) {
-    var room = types.rooms;
-    var user = types.users;
+var user, room, types;
+module.exports = function (t) {
+	types = t;
+    room = types.rooms;
+    user = types.users;
 
     return {
         getUsers: function (query, cb) {
@@ -24,12 +25,7 @@ module.exports = function (types) {
                 if (query.ref) req.eq.push(query.ref);
 
             } else if (query.ref) {
-                //getting use by ids
-                return user.get(query.ref, function (err, res) {
-                    if (err || !res) return cb();
-                    query.results = [res];
-                    cb();
-                });
+				return getByIds("users", query, cb);
             } else if (query.identity) {
                 req.by = "gatewayIdentity";
                 req.eq = [];
@@ -60,12 +56,7 @@ module.exports = function (types) {
                 };
                 if (query.ref) req.eq.push(query.ref);
             } else if (query.ref) {
-                return room.get(query.ref, function (err, res) {
-                    if (err || !res) return cb();
-                    query.results = [res];
-                    cb();
-                });
-
+				return getByIds("rooms", query, cb);
             } else if (query.identity) {
                 req.by = "gatewayIdentity";
                 gateway = query.identity.split(":");
@@ -143,3 +134,49 @@ module.exports = function (types) {
         }
     };
 };
+
+function getByIds(type, query, cb) {
+	var ids;
+	
+	ids = (typeof query.ref == "string") ? [query.ref] : query.ref;
+
+	function done(err, data) {
+		if (err) return cb();
+		query.results = data;
+		cb();
+	}
+	multiGet(type, ids, done);
+}
+
+function multiGet(type, ids, callback) {
+	var count = 0,
+		length = ids.length,
+		results = {},
+		resp = [],
+		i, errorThrown = false;
+
+	function done(err, data) {
+		var i;
+		if (errorThrown) return;
+		count++;
+		if (err) {
+			errorThrown = true;
+			return callback(err);
+		}
+
+		if (!err && data) {
+			results[data.id] = data;
+		}
+		if (count == length) {
+			ids.forEach(function(id) {
+				if(results[id]) resp.push(results[id]);
+				else resp.push(null);
+			});
+			return callback(null, resp);
+		}
+	}
+
+	for (i = 0; i < length; i++) {
+		types[type].get(ids[i], done);
+	}
+}
