@@ -1,19 +1,31 @@
+var core;
 var config = require("../config.js");
 var userDB = require('../lib/redisProxy.js').select(config.redisDB.user);
-var roomDB = require('../lib/redisProxy.js').select(config.redisDB.room);
 var occupantDB = require('../lib/redisProxy.js').select(config.redisDB.occupants);
 
 var get = require("./get.js");
 var put = require("./put.js");
-
-
-var core;
 
 function getUserById(id, callback) {
 	return get("user", id, function(err, data) {
         if(err || !data) return callback();
         return callback(null, data);
     });    
+}
+
+function getUsersById(ids, callback) {
+	var rids = [];
+	rids = ids.map(function(id){
+		return "user:{{"+id+"}}";
+	});
+	return userDB.mget(rids, function (err, data) {
+		var i, l;
+		if (err || !data) return callback();
+		for (i = 0, l = data.length; i < l; i++) {
+			if (!data[i]) return callback();
+		}
+		callback(null, data);
+	});
 }
 
 function onGetUsers(query, callback) {
@@ -29,29 +41,39 @@ function onGetUsers(query, callback) {
 	            			return callback();
 	            		}
 
-	            		query.results = [data]
+	            		query.results = [data];
 	            		callback();
 	            	});	
             	}else{
             		callback();
             	}
             	
-            })
+            });
         } else{
-        	getUserById(query.ref, function(err, data){
-
-        		if(err || !data){
-        			return callback();
-        		}
-        		query.results = [data]
-        		callback();
-        	});
+			if(typeof query.ref == "string") {
+				getUserById(query.ref, function(err, data){
+					if(err || !data){
+						return callback();
+					}
+					query.results = [data];
+					callback();
+				});	
+			}else{
+				getUsersById(query.ref, function(err, data){
+					if(err || !data){
+						return callback();
+					}
+					query.results = data;
+					callback();
+				});	
+			}
+        	
         }
     } else if(query.occupantOf) {
         return occupantDB.smembers("room:{{"+query.occupantOf+"}}:hasOccupants", function(err, data) {
             var res = [];
             if(err) return callback(err);
-            if(!data || data.length==0) {
+            if(!data || data.length===0) {
                 query.results = [];
                 return callback();
             }
