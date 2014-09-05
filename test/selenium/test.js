@@ -13,6 +13,7 @@ capabilities.forEach(function(c) {
 	} else {
 		options.id = c.browser + " " + c.browser_version;
 	}
-	require("./chat-area-test.js")(c, options);
-	require("./meta-area-test.js")(c, options);
+	//require("./chat-area-test.js")(c, options);
+	//require("./meta-area-test.js")(c, options);
+	require("./login-test.js")(c, options);
 });

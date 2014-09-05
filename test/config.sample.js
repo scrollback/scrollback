@@ -1,4 +1,9 @@
 module.exports = {
+	personaUser: {
+		email: "email",
+		password: "jdalk",
+		username: "testinguser"//username in scrollback
+	},
 	selenium: {
 		username: "username",//browserstack keys
 		accessKey: "access_key",
