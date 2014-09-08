@@ -16,6 +16,26 @@ module.exports = function(c) {
     core.on("getRooms", onGetRooms, "cache");
 };
 
+function getRoomsById(ids, callback) {
+	var rids = [];
+	rids = ids.map(function(id){
+		return "room:{{"+id+"}}";
+	});
+	return roomDB.mget(rids, function (err, data) {
+		var i, l;
+		if (err || !data) return callback();
+		for (i = 0, l = data.length; i < l; i++) {
+			if (!data[i]) return callback();
+			try{
+				data[i] = JSON.parse(data[i]);
+			}catch(e) {
+				return callback();
+			}
+		}
+		callback(null, data);
+	});
+}
+
 function onBack(data, cb) {
     roomDB.set("room:{{"+data.room.id+"}}", JSON.stringify(data.room));
     occupantDB.sadd("room:{{"+data.to+"}}:hasOccupants", data.from);
@@ -46,17 +66,27 @@ function onRoom(action, callback) {
 
 function onGetRooms(query, callback) {
     if(query.ref && !query.hasMember) {
-        return roomDB.get("room:{{"+query.ref+"}}", function(err, data) {
-            var res;
-            if(err || !data) return callback();
-            if(data){
-                try{
-                    res  = JSON.parse(data);
-                    query.results = [res];
-                }catch(e){}
-            }
-            callback();
-        });
+		if(typeof query.ref == "string") {
+			return roomDB.get("room:{{"+query.ref+"}}", function(err, data) {
+				var res;
+				if(err || !data) return callback();
+				if(data){
+					try{
+						res  = JSON.parse(data);
+						query.results = [res];
+					}catch(e){}
+				}
+				callback();
+			});
+		}else{
+			getRoomsById(query.ref, function(err, data){
+				if(err || !data){
+					return callback();
+				}
+				query.results = data;
+				callback();
+			});	
+		}
     } else if(query.hasOccupant) {
         return occupantDB.smembers("user:{{"+query.hasOccupant+"}}:occupantOf", function(err, data) {
             if(err) return callback(err);
