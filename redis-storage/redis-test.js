@@ -157,8 +157,19 @@ describe("get queries: ", function(){
 			done();			
 		});
 	});
-	it("getting user with multiple ids with all missing", function(done) {
-		core.emit("getUsers", {ref:["harishnew","arvind1"]}, function(err, data){
+	it("getting rooms with multiple ids", function(done) {
+		core.emit("getRooms", {ref:["scrollback","node"]}, function(err, data){
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "why did it not give results?");
+			data.results.forEach(function(room) {
+				assert(room, "some rooms missing");
+			});
+			done();			
+		});
+	});
+	it("getting room with multiple ids with some missing", function(done) {
+		core.emit("getRooms", {ref:["scrollback","harish"]}, function(err, data){
 			assert(!err, "Error thrown");
 			assert(data, "no response");
 			assert(!data.results, "why did it give results?");
