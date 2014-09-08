@@ -14,5 +14,9 @@ html
 					}
 				}
 			};
-			window.opener.postMessage(auth,"*")
-			window.close();
+			if (window && window.opener) {
+				window.opener.postMessage(auth,"*");
+				window.close();
+			} else {
+				localStorage.authValue = JSON.stringify(auth);
+			}
