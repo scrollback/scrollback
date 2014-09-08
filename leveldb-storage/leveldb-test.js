@@ -1,10 +1,26 @@
 var assert = require('assert');
+var fs = require('fs');
 var core =new( require('../lib/emitter.js'))();
+var config = require("../config.js");
 var generate = require("../lib/generate.js");
-require("./leveldb-storage.js")(core);
 var time = 1398139968009, id;
 var crypto = require('crypto'), log = require("../lib/logger.js");
-
+var path = __dirname + "/" + "data-test";
+var deleteFolderRecursive = function(path) {
+	if( fs.existsSync(path) ) {
+		fs.readdirSync(path).forEach(function(file,index){
+			var curPath = path + "/" + file;
+			if(fs.lstatSync(curPath).isDirectory()) { // recurse
+				deleteFolderRecursive(curPath);
+			} else { // delete file
+				fs.unlinkSync(curPath);
+			}
+		});
+		fs.rmdirSync(path);
+	}
+};
+deleteFolderRecursive(path);
+config.leveldb.path = "data-test";
 // describe("Just to try something out quick.",function(){
 // 	it("Checking join:", function(done) {
 // 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
@@ -19,6 +35,12 @@ console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
 console.log("+++++Text should be run after clearing the DB+++++");
 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
 describe("user and room action", function(){
+	before(function(done) {
+		this.timeout(10000);
+		setTimeout(done, 7000);
+		require("./leveldb-storage.js")(core);
+	});
+
 	it("storing user harish", function(done) {
 		var email = "harish@scrollback.io";
 
@@ -38,6 +60,7 @@ describe("user and room action", function(){
 			done();
 		});
 	});
+	
 	it("storing user arvind", function(done) {
 		var email = "arvind@scrollback.io"
 		core.emit("user", {
