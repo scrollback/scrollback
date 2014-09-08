@@ -56,7 +56,7 @@ $(".conf-save").on("click", function () {
 $(".conf-cancel").on("click", function () {
     var toState;
 
-    if (window.currentState.mode = "conf") {
+    if (window.currentState.mode === "conf") {
         currentConfig = null;
 
         $(".conf-area").empty();

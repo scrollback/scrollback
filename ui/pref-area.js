@@ -34,7 +34,7 @@ $(".conf-save").on("click", function () {
 $(".conf-cancel").on("click", function () {
 	var toState;
 
-	if (window.currentState.mode = "pref") {
+	if (window.currentState.mode === "pref") {
 		currentConfig = null;
 
 		$(".pref-area").empty();
