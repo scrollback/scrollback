@@ -107,8 +107,6 @@ function checkOwnerShip() {
 
 libsb.on('navigate', function (state, next) {
 
-    console.log(state);
-
     if (state.old && state.old.mode !== state.mode && state.mode === "conf") {
         if (!checkOwnerShip()) {
             cancelEdit();

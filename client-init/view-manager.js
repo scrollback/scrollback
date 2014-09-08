@@ -4,42 +4,55 @@
 
 var currentState = window.currentState;
 
-var body = $("body");
-
 // On navigation, set the body classes.
-function addBodyClass(state, next) {
-	if (!state.connectionStatus) body.addClass("state-offline");
-	else body.removeClass("state-offline");
-	if (state.old && state.mode !== state.old.mode) {
-		if (state.old && !state.old.mode) body.removeClass("mode-normal");
-		else body.removeClass("mode-" + state.old.mode);
-		if (state.mode) {
-			body.addClass("mode-" + state.mode);
-		}
-	}
+function updateClass(state, next) {
+	var classList;
 
-	if (state.old && state.view !== state.old.view) {
-		body.removeClass("view-" + state.old.view);
+	if (state.old) {
+		classList = $("body").attr("class").trim() || "";
 
-		if (state.view) {
-			body.addClass("view-" + state.view);
-		}
-	}
-	if (state.old && state.tab !== state.old.tab) {
-		if (state.tab) {
-			if (state.mode === "pref" || state.mode === "conf") {
-				$(".list-item.current, .list-view.current").removeClass("current");
-				$(".list-item-" + state.tab + "-settings, .list-view-" + state.tab + "-settings").addClass("current");
-			} else {
-				$(".tab.current").removeClass("current");
-				$(".tab-" + state.tab).addClass("current");
+		if (state.connectionStatus !== state.old.connectionStatus) {
+			classList = classList.replace(/state-\S+/g, "");
+
+			if (!state.connectionStatus) {
+				classList += " state-offline";
 			}
 		}
+
+		if (state.mode !== state.old.mode) {
+			classList = classList.replace(/mode-\S+/g, "");
+
+			if (state.mode) {
+				classList += " mode-" + state.mode;
+			}
+		}
+
+		if (state.view !== state.old.view) {
+			classList = classList.replace(/view-\S+/g, "");
+
+			if (state.view) {
+				classList += " view-" + state.view;
+			}
+		}
+
+		if (state.tab !== state.old.tab) {
+			if (state.tab) {
+				if (state.mode === "pref" || state.mode === "conf") {
+					$(".list-item.current, .list-view.current").removeClass("current");
+					$(".list-item-" + state.tab + "-settings, .list-view-" + state.tab + "-settings").addClass("current");
+				} else {
+					$(".tab.current").removeClass("current");
+					$(".tab-" + state.tab).addClass("current");
+				}
+			}
+		}
+
+		$("body").attr("class", classList);
 	}
 
 	next();
 }
 
-module.exports = function () {
-	libsb.on("navigate", addBodyClass, 500); // earlier it was 999.
+module.exports = function() {
+	libsb.on("navigate", updateClass, 500); // earlier it was 999.
 };
