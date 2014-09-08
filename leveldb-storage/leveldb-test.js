@@ -1,3 +1,4 @@
+/* global describe, it*/
 var assert = require('assert');
 var fs = require('fs');
 var core =new( require('../lib/emitter.js'))();
@@ -62,7 +63,7 @@ describe("user and room action", function(){
 	});
 	
 	it("storing user arvind", function(done) {
-		var email = "arvind@scrollback.io"
+		var email = "arvind@scrollback.io";
 		core.emit("user", {
 			id: generate.uid(),
 			type:"user",
@@ -185,6 +186,7 @@ describe("get queries: ", function(){
 			done();			
 		});
 	});
+	
 	it("getting room that doesnt exist:", function(done) {
 		core.emit("getRooms", {ref:"scrollback1"}, function(err, data){
 			assert(!err, "Error thrown");
@@ -192,6 +194,41 @@ describe("get queries: ", function(){
 			done();			
 		});
 	});
+	it("getting user with multiple ids", function(done) {
+		core.emit("getUsers", {ref:["harish","arvind"]}, function(err, data){
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "why did it not give results?");
+			assert(data.results.length == 2, "incorrect data");
+			data.results.forEach(function(user) {
+				assert(user, "some users missing");
+			});
+			done();			
+		});
+	});
+	it("getting user with multiple ids and some missing", function(done) {
+		core.emit("getUsers", {ref:["harish1","arvind"]}, function(err, data){
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "why did it not give results?");
+			assert(data.results.length == 2, "incorrect data");
+			assert(data.results[0] === null, "incorrect data");
+			assert(data.results[1].id === "arvind", "incorrect data");
+			done();			
+		});
+	});
+	it("getting user with multiple ids and all missing", function(done) {
+		core.emit("getUsers", {ref:["harish1","arvind2"]}, function(err, data){
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "why did it not give results?");
+			assert(data.results.length == 2, "incorrect data");
+			assert(data.results[0] === null, "incorrect data");
+			assert(data.results[1] === null, "incorrect data");
+			done();			
+		});
+	});
+	
 	it("getting user that doesnt exist:", function(done) {
 		core.emit("getUsers", {ref:"harish1"}, function(err, data){
 			assert(!err, "Error thrown");
@@ -205,7 +242,6 @@ describe("get queries: ", function(){
 			assert(data, "no response");
 			assert(data.results[0], "empty results");
 			assert.equal(data.results[0].id, "scrollback", "empty results");
-			console.log("154: ",data);
 			assert.equal(data.results.length, 1, "extra results returned");
 			done();			
 		});
