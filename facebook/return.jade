@@ -16,7 +16,7 @@ html
 			};
 			if (window && window.opener) {
 				window.opener.postMessage(auth,"*");
-				window.close();
 			} else {
 				localStorage.authValue = JSON.stringify(auth);
 			}
+			window.close();
