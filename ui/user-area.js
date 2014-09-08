@@ -33,7 +33,6 @@ libsb.on('user-menu', function(menu, next){
 }, 1000);
 
 libsb.on("logout", function (p, n) {
-	console.log(new Error().stack);
 	libsb.emit('navigate', {
 		view: 'loggedout',
 	});

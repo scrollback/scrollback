@@ -1,8 +1,9 @@
 /* jshint browser: true */
 /* global $, libsb, currentState */
 
-var currentConfig,
-	renderSettings = require("./render-settings.js");
+var renderSettings = require("./render-settings.js"),
+	currentConfig,
+	oldState;
 
 $(".conf-save").on("click", function () {
 	if (currentState.mode == 'pref') {
@@ -31,15 +32,25 @@ $(".conf-save").on("click", function () {
 });
 
 $(".conf-cancel").on("click", function () {
-	currentConfig = null;
+	var toState;
 
-	$('.pref-area').empty();
+	if (window.currentState.mode = "pref") {
+		currentConfig = null;
 
-	libsb.emit('navigate', {
-		mode: "normal",
-		tab: "info",
-		source: "conf-cancel"
-	});
+		$(".pref-area").empty();
+
+		oldState = oldState || {};
+
+		toState = {
+			mode: oldState.mode || "home",
+			tab: oldState.tab || "info",
+			source: "conf-cancel"
+		};
+
+		libsb.emit("navigate", toState);
+
+		oldState = null;
+	}
 });
 
 function renderUserPref() {
@@ -65,6 +76,9 @@ function renderUserPref() {
 
 libsb.on('navigate', function (state, next) {
 	if (state.old && state.old.mode !== state.mode && state.mode === "pref") {
+
+		oldState = state.old;
+
 		if (!currentConfig) {
 			if (libsb.user.id.indexOf('guest-') === 0) {
 				libsb.emit('navigate', {

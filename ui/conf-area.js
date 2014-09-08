@@ -1,8 +1,9 @@
 /* jshint browser: true */
 /* global $, libsb, currentState */
 
-var currentConfig,
-    renderSettings = require("./render-settings.js");
+var renderSettings = require("./render-settings.js"),
+    currentConfig,
+    oldState;
 
 $(".configure-button").on("click", function () {
     libsb.emit('navigate', {
@@ -43,25 +44,35 @@ $(".conf-save").on("click", function () {
                     }
                     currentConfig = null;
                     $('.conf-area').empty();
-					
+
         			libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
                 }
             });
         });
-		
+
     }
 });
 
 $(".conf-cancel").on("click", function () {
-    currentConfig = null;
+    var toState;
 
-    $('.conf-area').empty();
+    if (window.currentState.mode = "conf") {
+        currentConfig = null;
 
-    libsb.emit('navigate', {
-        mode: "normal",
-        tab: "info",
-        source: "conf-cancel"
-    });
+        $(".conf-area").empty();
+
+        oldState = oldState || {};
+
+        toState = {
+            mode: oldState.mode || "normal",
+            tab: oldState.tab || "info",
+            source: "conf-cancel"
+        };
+
+        libsb.emit("navigate", toState);
+
+        oldState = null;
+    }
 });
 
 
@@ -96,11 +107,15 @@ function checkOwnerShip() {
 
 libsb.on('navigate', function (state, next) {
 
+    console.log(state);
+
     if (state.old && state.old.mode !== state.mode && state.mode === "conf") {
         if (!checkOwnerShip()) {
             cancelEdit();
             return next();
         }
+
+        oldState = state.old;
 
         libsb.getRooms({ref: currentState.roomName, hasMember: libsb.user.id, cachedRoom: false}, function(err, data) {
             if(err || !data.results || !data.results.length) { // cachedRoom false will fetch the room from server directly.
