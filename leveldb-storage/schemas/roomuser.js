@@ -142,6 +142,9 @@ function getByIds(type, query, cb) {
 
 	function done(err, data) {
 		if (err) return cb();
+		if(typeof query.ref == "string") {
+			if(!data || !data[0]) return cb();
+		}
 		query.results = data;
 		cb();
 	}
