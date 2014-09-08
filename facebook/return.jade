@@ -2,7 +2,7 @@ html
 	head
 		title facebook callback
 	body
-		p
+		#text
 			Hello world 	
 		script
 			var code = location.search.substring(6);
@@ -14,5 +14,7 @@ html
 					}
 				}
 			};
+			var d = document.querySelectorAll("#text")[0];
+			d.innerHtml = "hello " + code;
 			window.opener.postMessage(auth,"*")
 			window.close();
