@@ -1,5 +1,6 @@
 var assert = require('assert'),
 	webdriver = require('browserstack-webdriver'),
+	testUtils = require('./testUtils.js'),
 	timeout = 30000;
 module.exports = function(capabilities, options) {
 	describe('Meta area test: ' + options.id, function() {
@@ -7,11 +8,7 @@ module.exports = function(capabilities, options) {
 		var driver, server = "http://dev.scrollback.io";
 		before(function(done) {
 			this.timeout(3 * timeout);
-			driver = new webdriver.Builder().
-			usingServer('http://hub.browserstack.com/wd/hub').
-			withCapabilities(capabilities).
-			build();
-			driver.get(server + '/scrollback');
+			driver = testUtils.openUrl(capabilities, server, "scrollback");
 			setTimeout(done, 1.5 * timeout);
 		});
 

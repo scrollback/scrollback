@@ -1,4 +1,9 @@
 module.exports = {
+	personaUser: {
+		email: "email",
+		password: "jdalk",
+		username: "testinguser"//username in scrollback
+	},
 	selenium: {
 		username: "username",//browserstack keys
 		accessKey: "access_key",
@@ -43,6 +48,12 @@ module.exports = {
 				'os_version' : '8.1',
 				'resolution' : '1366x768'
 			}
+		],
+		tests: [//list of test
+		"chat-area-test.js",
+		"meta-area-test.js",
+		"login-test.js"
 		]
 	}
+	
 };
