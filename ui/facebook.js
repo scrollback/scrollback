@@ -1,8 +1,9 @@
 window.addEventListener("storage", function (event) {
 	if (event.key === "authValue") {
-		var data = event.newValue;
+		var data = JSON.parse(event.newValue);
+		delete localStorage.authValue;
 		var action;
-		if(event.originalEvent.origin !== "https://"+location.host) return;
+		// if(event.originalEvent.origin !== "https://"+location.host) return;
 
 		if(typeof data === 'string') {
 			try { action = JSON.parse(data); }
@@ -18,7 +19,6 @@ window.addEventListener("storage", function (event) {
 	}
 });
 
-//
 //$(window).on("message", function(event) {
 //	var data = event.originalEvent.data;
 //	var action;

@@ -1,9 +1,7 @@
 html
 	head
 		title facebook callback
-	body
-		#text
-			Hello world 	
+	body 	
 		script
 			var code = location.search.substring(6);
 			var auth = {
@@ -14,9 +12,5 @@ html
 					}
 				}
 			};
-			if (window && window.opener) {
-				window.opener.postMessage(auth,"*");
-			} else {
-				localStorage.authValue = JSON.stringify(auth);
-			}
+			localStorage.authValue = JSON.stringify(auth);
 			window.close();
