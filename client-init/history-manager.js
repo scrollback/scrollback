@@ -2,16 +2,20 @@
 /* global $, window*/
 /* exported currentState */
 
-var currentState = window.currentState;
-var libsb;
-module.exports = function (l) {
+var currentState = window.currentState,
+	libsb;
+
+module.exports = function(l) {
 	libsb = l;
 	// On navigation, add history and change URLs and title
 	libsb.on("navigate", updateHistory, 200);
 
 	// On history change, load the appropriate state
-	$(window).on("popstate", function () {
-		if(!currentState || currentState.embed) return;
+	$(window).on("popstate", function() {
+		if (!currentState || currentState.embed) {
+			return;
+		}
+
 		if (("state" in history && history.state !== null)) {
 			var state = {},
 				prop;
@@ -42,7 +46,7 @@ function updateTitle(state) {
 		document.title = "Results for " + state.query;
 		break;
 	case "home":
-		document.title = currentState.roomName;
+		document.title = "Home - " + libsb.user.id;
 		break;
 	default:
 		document.title = state.roomName ? state.roomName + " on scrollback" : "Scrollback.io";
@@ -116,11 +120,16 @@ function pushState(state) {
 }
 
 function updateHistory(state, next) {
-	if(currentState.embed) return next();
+	if (currentState.embed) {
+		return next();
+	}
+
 	updateTitle(state);
+
 	if (state.source == "history") {
 		return next();
 	}
+
 	pushState(state);
 	next();
 }
