@@ -5,8 +5,28 @@ var renderSettings = require("./render-settings.js"),
 	currentConfig,
 	oldState;
 
-$(".conf-save").on("click", function () {
-	if (currentState.mode == 'pref') {
+function onComplete(source) {
+	var toState;
+
+	currentConfig = null;
+
+	$(".pref-area").empty();
+
+	oldState = oldState || {};
+
+	toState = {
+		mode: oldState.mode || "home",
+		tab: oldState.tab || "info",
+		source: source
+	};
+
+	libsb.emit("navigate", toState);
+
+	oldState = null;
+}
+
+$(".conf-save").on("click", function() {
+	if (currentState.mode === 'pref') {
 		var userObj = {
 			id: libsb.user.id,
 			description: '',
@@ -18,38 +38,16 @@ $(".conf-save").on("click", function () {
 		libsb.emit('pref-save', userObj, function (err, user) {
 			libsb.emit('user-up', {
 				user: user
-			}, function () {
-				currentConfig = null;
-
-				libsb.emit('navigate', {
-					mode: "normal",
-					tab: "info",
-					source: "conf-save"
-				});
+			}, function() {
+				onComplete("conf-save");
 			});
 		});
 	}
 });
 
-$(".conf-cancel").on("click", function () {
-	var toState;
-
+$(".conf-cancel").on("click", function() {
 	if (window.currentState.mode === "pref") {
-		currentConfig = null;
-
-		$(".pref-area").empty();
-
-		oldState = oldState || {};
-
-		toState = {
-			mode: oldState.mode || "home",
-			tab: oldState.tab || "info",
-			source: "conf-cancel"
-		};
-
-		libsb.emit("navigate", toState);
-
-		oldState = null;
+		onComplete("conf-cancel");
 	}
 });
 

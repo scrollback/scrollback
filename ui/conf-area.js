@@ -5,6 +5,26 @@ var renderSettings = require("./render-settings.js"),
     currentConfig,
     oldState;
 
+function onComplete(source) {
+    var toState;
+
+    currentConfig = null;
+
+    $(".conf-area").empty();
+
+    oldState = oldState || {};
+
+    toState = {
+        mode: oldState.mode || "normal",
+        tab: oldState.tab || "info",
+        source: source
+    };
+
+    libsb.emit("navigate", toState);
+
+    oldState = null;
+}
+
 $(".configure-button").on("click", function () {
     libsb.emit('navigate', {
         mode: "conf",
@@ -15,9 +35,11 @@ $(".configure-button").on("click", function () {
 
 $(".conf-save").on("click", function () {
     var self = $(this);
-    if (currentState.mode == 'conf') {
+
+    if (currentState.mode === 'conf') {
         self.addClass("working");
         self.attr("disabled", true);
+
         libsb.emit('config-save', {
             id: window.currentState.roomName,
             description: '',
@@ -36,16 +58,14 @@ $(".conf-save").on("click", function () {
                 if(err) {
                     // handle the error
                 } else {
-                    for(var i in room.room.params) {
+                    for (var i in room.room.params) {
                         if(!room.room.params.hasOwnProperty(i)) continue;
                         if(room.room.params[i].error) {
                             return;
                         }
                     }
-                    currentConfig = null;
-                    $('.conf-area').empty();
 
-        			libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
+                    onComplete("conf-save");
                 }
             });
         });
@@ -53,25 +73,9 @@ $(".conf-save").on("click", function () {
     }
 });
 
-$(".conf-cancel").on("click", function () {
-    var toState;
-
+$(".conf-cancel").on("click", function() {
     if (window.currentState.mode === "conf") {
-        currentConfig = null;
-
-        $(".conf-area").empty();
-
-        oldState = oldState || {};
-
-        toState = {
-            mode: oldState.mode || "normal",
-            tab: oldState.tab || "info",
-            source: "conf-cancel"
-        };
-
-        libsb.emit("navigate", toState);
-
-        oldState = null;
+        onComplete("conf-cancel");
     }
 });
 
@@ -108,12 +112,13 @@ function checkOwnerShip() {
 libsb.on('navigate', function (state, next) {
 
     if (state.old && state.old.mode !== state.mode && state.mode === "conf") {
+
+        oldState = state.old;
+
         if (!checkOwnerShip()) {
             cancelEdit();
             return next();
         }
-
-        oldState = state.old;
 
         libsb.getRooms({ref: currentState.roomName, hasMember: libsb.user.id, cachedRoom: false}, function(err, data) {
             if(err || !data.results || !data.results.length) { // cachedRoom false will fetch the room from server directly.
