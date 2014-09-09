@@ -108,7 +108,6 @@ var defaults = {
 		user: 9,
 		room: 9,
 		occupants: 10,
-		threader: 11,
 		search: 14
 	},
 	su: {
