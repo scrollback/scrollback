@@ -37,19 +37,19 @@ module.exports = function(l) {
 function updateTitle(state) {
 	switch (state.mode) {
 	case 'conf':
-		document.title = "Room settings - " + currentState.tab || "";
+		document.title = "Room settings - " + (currentState.tab || "") + (currentState.room || "Scrollback");
 		break;
 	case 'pref':
-		document.title = "Account settings - " + libsb.user.id;
+		document.title = "Account settings - " + ((libsb.user) ? libsb.user.id : "Scrollback");
 		break;
 	case 'search':
 		document.title = "Results for " + state.query;
 		break;
 	case "home":
-		document.title = "Home - " + libsb.user.id;
+		document.title = "Home - " + ((libsb.user) ? libsb.user.id : "Scrollback");
 		break;
 	default:
-		document.title = state.roomName ? state.roomName + " on scrollback" : "Scrollback.io";
+		document.title = state.roomName ? state.roomName + " on Scrollback" : "Scrollback.io";
 	}
 }
 
