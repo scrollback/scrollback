@@ -1,10 +1,27 @@
+/* global describe, it*/
 var assert = require('assert');
+var fs = require('fs');
 var core =new( require('../lib/emitter.js'))();
+var config = require("../config.js");
 var generate = require("../lib/generate.js");
-require("./leveldb-storage.js")(core);
 var time = 1398139968009, id;
 var crypto = require('crypto'), log = require("../lib/logger.js");
-
+var path = __dirname + "/" + "data-test";
+var deleteFolderRecursive = function(path) {
+	if( fs.existsSync(path) ) {
+		fs.readdirSync(path).forEach(function(file,index){
+			var curPath = path + "/" + file;
+			if(fs.lstatSync(curPath).isDirectory()) { // recurse
+				deleteFolderRecursive(curPath);
+			} else { // delete file
+				fs.unlinkSync(curPath);
+			}
+		});
+		fs.rmdirSync(path);
+	}
+};
+deleteFolderRecursive(path);
+config.leveldb.path = "data-test";
 // describe("Just to try something out quick.",function(){
 // 	it("Checking join:", function(done) {
 // 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
@@ -19,6 +36,12 @@ console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
 console.log("+++++Text should be run after clearing the DB+++++");
 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
 describe("user and room action", function(){
+	before(function(done) {
+		this.timeout(10000);
+		setTimeout(done, 7000);
+		require("./leveldb-storage.js")(core);
+	});
+
 	it("storing user harish", function(done) {
 		var email = "harish@scrollback.io";
 
@@ -38,8 +61,9 @@ describe("user and room action", function(){
 			done();
 		});
 	});
+	
 	it("storing user arvind", function(done) {
-		var email = "arvind@scrollback.io"
+		var email = "arvind@scrollback.io";
 		core.emit("user", {
 			id: generate.uid(),
 			type:"user",
@@ -162,6 +186,7 @@ describe("get queries: ", function(){
 			done();			
 		});
 	});
+	
 	it("getting room that doesnt exist:", function(done) {
 		core.emit("getRooms", {ref:"scrollback1"}, function(err, data){
 			assert(!err, "Error thrown");
@@ -169,6 +194,41 @@ describe("get queries: ", function(){
 			done();			
 		});
 	});
+	it("getting user with multiple ids", function(done) {
+		core.emit("getUsers", {ref:["harish","arvind"]}, function(err, data){
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "why did it not give results?");
+			assert(data.results.length == 2, "incorrect data");
+			data.results.forEach(function(user) {
+				assert(user, "some users missing");
+			});
+			done();			
+		});
+	});
+	it("getting user with multiple ids and some missing", function(done) {
+		core.emit("getUsers", {ref:["harish1","arvind"]}, function(err, data){
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "why did it not give results?");
+			assert(data.results.length == 2, "incorrect data");
+			assert(data.results[0] === null, "incorrect data");
+			assert(data.results[1].id === "arvind", "incorrect data");
+			done();			
+		});
+	});
+	it("getting user with multiple ids and all missing", function(done) {
+		core.emit("getUsers", {ref:["harish1","arvind2"]}, function(err, data){
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "why did it not give results?");
+			assert(data.results.length == 2, "incorrect data");
+			assert(data.results[0] === null, "incorrect data");
+			assert(data.results[1] === null, "incorrect data");
+			done();			
+		});
+	});
+	
 	it("getting user that doesnt exist:", function(done) {
 		core.emit("getUsers", {ref:"harish1"}, function(err, data){
 			assert(!err, "Error thrown");
@@ -182,7 +242,6 @@ describe("get queries: ", function(){
 			assert(data, "no response");
 			assert(data.results[0], "empty results");
 			assert.equal(data.results[0].id, "scrollback", "empty results");
-			console.log("154: ",data);
 			assert.equal(data.results.length, 1, "extra results returned");
 			done();			
 		});
