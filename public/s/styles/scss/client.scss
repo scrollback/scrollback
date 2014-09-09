@@ -157,7 +157,7 @@ body {
 
     &.search-term { background: url(../../img/client/icons/search-light.svg) no-repeat 90% center; }
 
-    .unread {
+    .room-item-unread-count {
         @extend %appear;
 
         float: right;

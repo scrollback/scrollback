@@ -91,6 +91,9 @@
 		}
 	}
 
+	// TODO: rethink when the card color represents conversation
+	&.mentioned { background-color: $error-color; }
+
 	&:empty { display: none; }
 }
 

@@ -3,7 +3,7 @@
 
 function updateNotifier(roomName, type){
 	var $roomItem = $("[data-room='" + roomName + "']"),
-		$badge = $roomItem.find(".room-notifications-counter"),
+		$badge = $roomItem.find(".js-room-notifications-counter"),
 		counter;
 
 	if (type === "remove"){
