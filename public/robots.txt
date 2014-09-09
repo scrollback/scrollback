@@ -1,10 +1,6 @@
 # If you operate a search engine and would like to crawl scrollback, please
 # email scrollback@scrollback.io. Thanks.
 
-User-agent: *
-
-Disallow: /r/*
 
 
-
-Sitemap: http://scrollback.io/r/sitemap
+Sitemap: http://scrollback.io/r/sitemap/sitemap.html
