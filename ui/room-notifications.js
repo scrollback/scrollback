@@ -16,11 +16,22 @@ function updateNotifier(roomName, type){
 		return;
 	}
 
-	counter = parseInt($badge.text()) || 0;
+	// There might be multiple badges in the DOM
+	// We need to find the counter from the correct badge
+
+	for (var i = 0, l = $badge.length; i < l; i++) {
+		counter = parseInt($badge.eq(i).text(), 10) || 0;
+
+		if (counter) {
+			break;
+		}
+	}
 
 	counter++;
 
-	$badge.text(counter);
+	if (counter) {
+		$badge.text(counter);
+	}
 
 	if (type) {
 		$badge.addClass(type);
