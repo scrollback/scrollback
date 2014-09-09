@@ -6,6 +6,10 @@ function updateNotifier(roomName, type){
 		$badge = $roomItem.find(".js-room-notifications-counter"),
 		counter;
 
+	if (!($roomItem.length && $badge.length)) {
+		return;
+	}
+
 	if (type === "remove"){
 		$badge.removeClass("mentioned").text("");
 
