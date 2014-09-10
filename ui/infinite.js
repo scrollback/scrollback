@@ -115,7 +115,16 @@
 					$logs.data("lower-limit", true).children(".infinite-below").addClass("lower-limit");
 					els.pop();
 				}
-
+				
+				if(els.length === 0) return;
+				
+				// Remove repeated elements
+				if(where == "above" && $items.children().eq(0).data("index") === els[els.length-1].data("index")) {
+					els.pop();
+				} else if(where == "below" && $items.children().eq(-1).data("index") === els[0].data("index")) {
+					els.shift();
+				}
+				
 				if(els.length === 0) return;
 				// Add elements to the DOM before measuring height.
 				if(where == "above") {
@@ -212,8 +221,8 @@
 	}; /* end $.fn.infinite */
 
 	$.fn.reset = function(index) {
-		var $logs = $(this),
-            options = $logs.data("options");
+		var $logs = $(this);
+//		var	options = $logs.data("options"); 
         
 		$logs.find(".infinite-items").empty();
 		$logs.data("lower-limit", false).children(".infinite-above").removeClass("upper-limit").height("inherit");

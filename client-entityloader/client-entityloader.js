@@ -26,7 +26,7 @@ module.exports = function (libsb) {
 							state.mode = 'profile';
 						} else {
 							state.room = null;
-							if (!libsb.isInited) {
+							if (!state.connectionStatus) {
 								roomStatus = "pending";
 							} else {
 								roomStatus = "noroom";
