@@ -1,9 +1,10 @@
 html
 	head
 		title facebook callback
-	body 	
+	body
 		script
 			var code = location.search.substring(6);
+			var postedMessages = [];
 			var auth = {
 				command:"signin",
 				auth: {
@@ -12,5 +13,5 @@ html
 					}
 				}
 			};
-			localStorage.authValue = JSON.stringify(auth);
+			window.opener.postMessage(auth,"*")
 			window.close();
