@@ -28,11 +28,3 @@ $("#noroom-view-create").on("click", function() {
          });
     });
 });
-
-$("#noroom-view-login").on("click", function() {
-   if($("body").hasClass("role-guest")) {
-		libsb.emit('auth-menu', {origin: $(this), buttons: {}, title: 'Sign in to Scrollback with'}, function(err, menu){
-			showMenu(menu);
-		});
-   }
-});

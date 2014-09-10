@@ -4,16 +4,20 @@
 var showMenu = require('./showmenu.js');
 
 $(function(){
-	$(".user-area, .user-menu-button").on('click', function(){
-	if($('body').hasClass('role-user')){
-		libsb.emit('user-menu', {origin: $(this), buttons: {}, items: {}}, function(err, menu){
-			showMenu(menu);
-		});
-	} else if($('body').hasClass('role-guest')){
-		libsb.emit('auth-menu', {origin: $(this), buttons: {}, title: 'Sign in to Scrollback with'}, function(err, menu){
-			showMenu(menu);
-		});
-	}
+	$(".js-has-user-menu").on('click', function(){
+		if ($('body').hasClass('role-user')){
+			libsb.emit('user-menu', {origin: $(this), buttons: {}, items: {}}, function(err, menu){
+				showMenu(menu);
+			});
+		}
+	});
+		
+	$(".js-has-auth-menu").on("click", function() {
+		if($('body').hasClass('role-guest')) {
+			libsb.emit('auth-menu', {origin: $(this), buttons: {}, title: 'Sign in to Scrollback with'}, function(err, menu){
+				showMenu(menu);
+			});
+		}
 	});
 });
 
