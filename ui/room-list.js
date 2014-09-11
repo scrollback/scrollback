@@ -24,7 +24,7 @@ function enter(room) {
 		roomObjs[roomName] = room;
 	}
 
-	if (libsb.isInited) {
+	if (currentState.connectionStatus) {
 		if (!listening[roomName]){
 			listening[room] = BACK_SENT;
 			libsb.enter(roomName, function(err) {
@@ -40,7 +40,8 @@ function enter(room) {
 			listenQueue.push(roomName);
 		}
 	}
-
+}
+function resetRooms(){
 	if (window.currentState.mode !== "home" && $roomarea) {
 		$roomarea.reset();
 	}
@@ -49,7 +50,6 @@ function enter(room) {
 		$homefeed.reset(0);
 	}
 }
-
 module.exports = function(libsb) {
 	$(function() {
 		var scrollOpts = {
@@ -140,8 +140,8 @@ module.exports = function(libsb) {
 		if (window.currentState.embed && window.currentState.embed.form && window.currentState.mode !== "home") {
 			return next();
 		}
-
-		if ((state.mode == "home" && (!state.old || state.old.mode != "home")) || state.source == "boot") {
+		
+		if(state.source == "boot" || !state.old) {
 			if (libsb.memberOf) {
 				libsb.memberOf.forEach(function(e) {
 					enter(e);
@@ -151,6 +151,9 @@ module.exports = function(libsb) {
 			if (room) {
 				enter({ id: room });
 			}
+			resetRooms();
+		}else if(["home","normal"].indexOf(state.mode)>=0 && state.mode!= state.old.mode){
+			resetRooms();
 		}
 		next();
 	}, 100);
