@@ -26,7 +26,7 @@ function enter(room) {
 
 	if (currentState.connectionStatus) {
 		if (!listening[roomName]){
-			listening[room] = BACK_SENT;
+			listening[roomName] = BACK_SENT;
 			libsb.enter(roomName, function(err) {
 				if (err) {
 					listening[roomName] = NOT_LISTENING;
@@ -47,7 +47,7 @@ function resetRooms(){
 	}
 
 	if (window.currentState.mode === "home" && $homefeed) {
-		$homefeed.reset(0);
+		$homefeed.reset();
 	}
 }
 module.exports = function(libsb) {
@@ -77,7 +77,7 @@ module.exports = function(libsb) {
 					to = index + after;
 				}
 
-				from = (from < 0) ? 0 : 0;
+				from = (from < 0) ? 0 : from;
 
 				to = (to >= rooms.length) ? rooms.length - 1 : to;
 
