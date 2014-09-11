@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title></title>
+    </head>
+
+    <body>
+
+        <script>
+            var req = new XMLHttpRequest(),
+                text = document.getElementById("test");
+
+            req.onreadystatechange = function() {
+                if (req.readyState === 4) {
+                    if (req.status === 200) {
+                        document.documentElement.innerHTML = req.response;
+                    }
+                }
+            };
+
+            req.open("GET", "http://local.scrollback.io/s/client.phonegap.html", true);
+            req.send();
+        </script>
+
+    </body>
+
+</html>
