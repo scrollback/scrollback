@@ -14,6 +14,7 @@ var gulp = require("gulp"),
 	sass = require("gulp-ruby-sass"),
 	prefix = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
+    handlebars = require("gulp-compile-handlebars"),
 	manifest = require("gulp-manifest"),
 	rimraf = require("gulp-rimraf"),
 	bowerDir = "bower_components",
@@ -111,34 +112,6 @@ gulp.task("embed", function() {
 // Generate scripts
 gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 
-// Generate appcache manifest file
-gulp.task("manifest", function() {
-	return gulp.src([
-		"public/**/*",
-		"!public/{**/*.html,t/**}",
-		"!public/s/{*,img/*,img/covers/*,styles/scss/*}",
-		"!public/s/scripts/{*/*.map,js/*,lib/*}",
-		"!public/s/styles/{*/*.map,css/*,lace/*,scss/*}"
-	])
-	.pipe(manifest({
-		cache: [
-			"//fonts.googleapis.com/css?family=Open+Sans:300,400,600",
-			"//themes.googleusercontent.com/font?kit=cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw"
-		],
-		network: [ "*" ],
-		fallback: [
-			"//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
-			"/ /s/offline.html",
-			"/socket /s/socket-fallback"
-		],
-		preferOnline: true,
-		hash: true,
-		filename: "manifest.appcache"
-	}))
-	.pipe(gulp.dest("public"))
-	.on("error", gutil.log);
-});
-
 // Generate styles
 gulp.task("lace", function() {
 	return gulp.src(bowerDir + "/lace/src/scss/*.scss")
@@ -158,12 +131,70 @@ gulp.task("styles", [ "lace" ], function() {
 	.on("error", gutil.log);
 });
 
+// Generate client.html
+gulp.task("client", function() {
+    var data = require("./client-config.js").client;
+
+    return gulp.src("public/client.hbs")
+    .pipe(handlebars(data))
+    .pipe(rename({ extname: ".html" }))
+    .pipe(gulp.dest("public"))
+    .on("error", gutil.log);
+});
+
+// Generate client.html for phonegap
+gulp.task("phonegap", function() {
+    var data = require("./client-config.js").phonegap;
+
+    return gulp.src("public/client.hbs")
+    .pipe(handlebars(data))
+    .pipe(rename({
+        suffix: ".phonegap",
+        extname: ".html"
+    }))
+    .pipe(gulp.dest("public/s"))
+    .on("error", gutil.log);
+});
+
+// Compile handlebars templates
+gulp.task("handlebars", [ "client", "phonegap" ]);
+
+// Generate appcache manifest file
+gulp.task("manifest", function() {
+    return gulp.src([
+        "public/**/*",
+        "!public/{**/*.html,t/**}",
+        "!public/s/{*,img/*,img/covers/*,styles/scss/*}",
+        "!public/s/scripts/{*/*.map,js/*,lib/*}",
+        "!public/s/styles/{*/*.map,css/*,lace/*,scss/*}"
+    ])
+    .pipe(manifest({
+        cache: [
+            "//fonts.googleapis.com/css?family=Open+Sans:300,400,600",
+            "//themes.googleusercontent.com/font?kit=cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw"
+        ],
+        network: [ "*" ],
+        fallback: [
+            "//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
+            "/ /s/offline.html",
+            "/socket /s/socket-fallback"
+        ],
+        preferOnline: true,
+        hash: true,
+        filename: "manifest.appcache"
+    }))
+    .pipe(gulp.dest("public"))
+    .on("error", gutil.log);
+});
+
+// Clean up generated files
 gulp.task("clean", function() {
 	return gulp.src([
 		"public/{*.map,**/*.map}",
 		"public/{*.min.js,**/*.min.js}",
 		"public/{*.bundle.js,**/*.bundle.js}",
 		"public/{*.appcache,**/*.appcache}",
+		"public/{client.html,s/client.phonegap.html}",
 		libDir, cssDir, laceDir
 	], { read: false })
 	.pipe(rimraf())
@@ -176,4 +207,4 @@ gulp.task("watch", function() {
 });
 
 // Default Task
-gulp.task("default", [ "scripts", "styles", "manifest" ]);
+gulp.task("default", [ "scripts", "styles", "handlebars", "manifest" ]);

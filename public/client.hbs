@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="/manifest.appcache" lang="en">
+<html manifest="{{scrollback-root}}manifest.appcache" lang="en">
 	<head>
 		<meta charset="utf-8">
 
@@ -15,22 +15,22 @@
 
 		<!-- gen Head End -->
 
-		<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
+		<link rel="shortcut icon" href="{{scrollback-root}}s/img/favicon.png" type="image/x-icon">
 
-		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600">
-		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/dist/client.css">
+		<link rel="stylesheet" type="text/css"  media="screen" href="{{thirdparty-root}}fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+		<link rel="stylesheet" type="text/css" media="screen" href="{{scrollback-root}}s/styles/dist/client.css">
 
 		<script type="text/javascript">
 
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-45130412-1']);
-		_gaq.push(['_trackPageview']);
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', '{{analytics-id}}']);
+			_gaq.push(['_trackPageview']);
 
-		(function() {
-			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		})();
+			(function() {
+				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			})();
 
 		</script>
 	</head>
@@ -53,7 +53,7 @@
 
 		<section data-embed="none" class="room-area column">
 			<div class="room-header">
-				<a href="http://scrollback.io" target="_blank"><img src="/s/img/client/scrollback-small.svg" alt="scrollback"></a>
+				<a href="http://scrollback.io" target="_blank"><img src="{{scrollback-root}}s/img/client/scrollback-small.svg" alt="scrollback"></a>
 			</div>
 
 			<div role="list" class="room-list hide-scroll">
@@ -64,7 +64,7 @@
 			<ul role="tablist" class="meta-tabs">
 				<li data-embed="none" role="tab" class="rooms-button">
 					<svg class="rooms-icon" width="28" height="28" viewBox="0 0 28 28">
-						<use xlink:href="/s/img/client/icons/back.svg#icon"></use>
+						<use xlink:href="{{scrollback-root}}s/img/client/icons/back.svg#icon"></use>
 					</svg>
 				</li>
 				<li role="tab" data-mode="normal" class="tab tab-info">
@@ -144,14 +144,14 @@
 						</span>
 						<span class="meta-button-back">
 							<svg class="meta-icon" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="/s/img/client/icons/back.svg#icon"></use>
+								<use xlink:href="{{scrollback-root}}s/img/client/icons/back.svg#icon"></use>
 							</svg>
 						</span>
 					</a>
 					<h2 data-mode="normal" data-embed="none" class="room-title" id="room-title"></h2>
 					<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
 						<svg class="follow-icon" width="28" height="28" viewBox="0 0 28 28">
-							<use xlink:href="/s/img/client/icons/follow.svg#icon"></use>
+							<use xlink:href="{{scrollback-root}}s/img/client/icons/follow.svg#icon"></use>
 						</svg>
 					</a>
 					<div data-mode="conf pref search" class="action-buttons">
@@ -164,31 +164,31 @@
 
 					<a data-mode="normal" data-tooltip="Search" class="search-button" role="button">
 						<svg class="search-icon" width="28" height="28" viewBox="0 0 28 28">
-							<use xlink:href="/s/img/client/icons/search.svg#icon"></use>
+							<use xlink:href="{{scrollback-root}}s/img/client/icons/search.svg#icon"></use>
 						</svg>
 					</a>
 
-<!--
-					<div class="embed-area">
-						<div data-role="user" class="follow-room-action cta-area">
-							<div>Stay connected</div>
-							<div class="cta-action">Follow room</div>
-						</div>
-						<div class="full-view-action cta-area">
-							<div>Browse archives</div>
-							<div class="cta-action">Visit room</div>
-						</div>
-					</div>
+					<!--
+<div class="embed-area">
+<div data-role="user" class="follow-room-action cta-area">
+<div>Stay connected</div>
+<div class="cta-action">Follow room</div>
+</div>
+<div class="full-view-action cta-area">
+<div>Browse archives</div>
+<div class="cta-action">Visit room</div>
+</div>
+</div>
 -->
 					<div data-embed="toast canvas" class="embed-area">
 						<div data-embed="toast" class="embed-action-minimize embed-button">
 							<svg class="minimize-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="/s/img/client/icons/minimize.svg#icon"></use>
+								<use xlink:href="{{scrollback-root}}s/img/client/icons/minimize.svg#icon"></use>
 							</svg>
 						</div>
 						<div class="embed-action-fullview embed-button">
 							<svg class="fullview-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="/s/img/client/icons/fullview.svg#icon"></use>
+								<use xlink:href="{{scrollback-root}}s/img/client/icons/fullview.svg#icon"></use>
 							</svg>
 						</div>
 					</div>
@@ -211,7 +211,7 @@
 						<span class="chat-nick"></span>
 						<span class="chat-message"></span>
 						<span class="chat-timestamp"></span>
-						 <span class="chat-more"></span>
+						<span class="chat-more"></span>
 					</p>
 				</div>
 			</div>
@@ -228,7 +228,7 @@
 					<div role="textbox" class="chat-entry" contenteditable></div>
 				</div>
 				<svg version="1.1" class="chat-send">
-					<use xlink:href="/s/img/client/icons/send.svg#icon"></use>
+					<use xlink:href="{{scrollback-root}}s/img/client/icons/send.svg#icon"></use>
 				</svg>
 			</div>
 		</section>
@@ -285,15 +285,16 @@
 		</script>
 
 		<!-- scripts -->
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="/s/scripts/lib/jquery.min.js"><\/script>');</script>
+		<script src="{{thirdparty-root}}ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="{{scrollback-root}}s/scripts/lib/jquery.min.js"><\/script>');</script>
+
+		<script src="https://login.persona.org/include.js"></script>
 
 		<!--[if IE]>
-		<script src="/s/scripts/lib/polyfills.min.js"></script>
+		<script src="{{scrollback-root}}s/scripts/lib/polyfills.min.js"></script>
 		<![endif]-->
 
-		<script src="/s/scripts/client.bundle.min.js"></script>
+		<script src="{{scrollback-root}}s/scripts/client.bundle.min.js"></script>
 		<script>libsb.connect();</script>
-		<script src="https://login.persona.org/include.js"></script>
 	</body>
 </html>

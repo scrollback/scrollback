@@ -1,10 +1,9 @@
 *~
 
 .*
-!/.gitignore
-!/.jscs.json
-!/.jshintrc
-!test/.jshintrc
+!.gitignore
+!.jscs.json
+!.jshintrc
 
 *.seed
 *.log
@@ -32,12 +31,15 @@ bower_components
 myConfig.js
 client-config.js
 
-public/s/styles/lace
-public/s/styles/dist
-public/s/scripts/lib
-ircClient/Data
-xunit.xml
-public/t/coverage-*.html
 /ircClient/myConfig.js
+/ircClient/Data
 /test/config.js
 /xunit-mocha.xml
+/xunit.xml
+
+/public/client.html
+/public/s/client.phonegap.html
+/public/s/styles/lace
+/public/s/styles/dist
+/public/s/scripts/lib
+/public/t/coverage-*.html

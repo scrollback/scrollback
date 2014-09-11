@@ -71,13 +71,13 @@
   "optionalDependencies": {},
   "devDependencies": {
     "blanket": "^1.1.6",
-    "selenium-webdriver": "^2.42.1",
     "bower": "latest",
     "browserify": "latest",
     "event-stream": "latest",
     "gulp": "latest",
     "gulp-autoprefixer": "latest",
     "gulp-browserify": "latest",
+    "gulp-compile-handlebars": "latest",
     "gulp-concat": "latest",
     "gulp-jshint": "latest",
     "gulp-manifest": "latest",
@@ -92,6 +92,7 @@
     "jshint-stylish": "latest",
     "main-bower-files": "latest",
     "mocha": "latest",
+    "selenium-webdriver": "^2.42.1",
     "vinyl-source-stream": "latest",
     "xunit-file": "0.0.5"
   }
