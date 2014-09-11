@@ -248,6 +248,7 @@ function sendMessages(replies, room) {
 					from: init.user.id,
 					to: room.id,
 					time: new Date().getTime(),
+					labels: {twitter: 1},
 					session: "twitter://" + r.user.screen_name
 				};
 				core.emit("text", message, function(err) {
