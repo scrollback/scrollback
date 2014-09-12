@@ -43,7 +43,7 @@ var desktopnotify = require("../ui/desktopnotify.js"),
 
 		hasFocus = document.hasFocus();
 
-	return function(text, important) {
+	return function(text, important, sound) {
 		if (hasFocus) {
 			return;
 		}
@@ -68,7 +68,7 @@ var desktopnotify = require("../ui/desktopnotify.js"),
 			soundTimer = null;
 		}
 
-		if (!soundTimer) {
+		if (sound && !soundTimer) {
 			play();
 
 			soundTimer = setTimeout(function() {
@@ -79,18 +79,15 @@ var desktopnotify = require("../ui/desktopnotify.js"),
 }());
 
 libsb.on('text-dn', function(text, next) {
-	if (libsb.user && libsb.user.params && libsb.user.params.notifications &&
-		text.from && text.mentions && text.mentions.indexOf(libsb.user.id) > -1) {
-		if (libsb.user.params.notifications.sound) {
-			browserNotify(text.text, true);
-		} else {
-			browserNotify(text.text, false);
-		}
+    var sound = (libsb.user && libsb.user.params && libsb.user.params.notifications && libsb.user.params.notifications.sound);
+
+    if (libsb.user && text.mentions && text.mentions.indexOf(libsb.user.id) > -1) {
+			browserNotify(text.text, true, sound);
 
 		if (libsb.user.params.notifications.desktop) {
 			desktopnotify.show({
 				title: "New mention on " + text.to,
-				body: text.from.replace(/^guest-/, "") + ": " + text.text,
+                body: (text.from ? text.from.replace(/^guest-/, "") + ": " : "") + text.text,
 				icon: "/s/img/scrollback.png",
 				tag: text.id,
 				action: function() {
@@ -98,8 +95,8 @@ libsb.on('text-dn', function(text, next) {
 				}
 			});
 		}
-	} else {
-		browserNotify(text.text, false);
+    } else {
+		browserNotify(text.text, false, sound);
 	}
 
 	next();
