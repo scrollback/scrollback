@@ -39,7 +39,7 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
-		alert("device ready.");
+		alert("device ready!!!.");
 		pushNotification = window.plugins && window.plugins.pushNotification;
 		if(!pushNotification) {alert("pushNotification isn't ready."); return; }
 		
