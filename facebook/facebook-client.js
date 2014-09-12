@@ -6,7 +6,8 @@ libsb.on('auth-menu', function(menu, next){
 		text: 'Facebook',
 		prio: 100,
 		action: function(){
-			window.facebookRef = window.open(location.protocol + "//" + location.host + "/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');	
+			var facebookRef = window.open(location.protocol + "//" + location.host + "/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');	
+			facebookRef.close();
 		}
 	};
 	next();
