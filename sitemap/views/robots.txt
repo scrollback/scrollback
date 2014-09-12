@@ -4,4 +4,4 @@
 User-agent: *
 Disallow: /t/*
 
-Sitemap: http://scrollback.io/r/sitemap/sitemap.html
+Sitemap: http://scrollback.io/r/sitemap

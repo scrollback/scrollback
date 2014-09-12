@@ -10,7 +10,7 @@ module.exports = function(coreObject) {
 	core.on("http/init", function(payload, callback) {
 		payload.push({
 			get: {
-				"/r/sitemap.html": genSitemap,
+				"/r/sitemap": genSitemap,
 				"/robots.txt": genRobots,
 				"/r/featured-rooms": genFeaturedRoom
 			}
@@ -26,6 +26,7 @@ function init() {
 }
 
 function genRobots(req, res, next) {
+	res.type('text/plain');
 	fs.readFile(__dirname + "/views/robots.txt", "utf8", function(err, data) {
 		if (!err && data) {
 			res.end(data);
@@ -41,7 +42,6 @@ function genSitemap(req, res/*, next*/) {
 
 function genFeaturedRoom(req, res, next) {
 	fs.readFile(__dirname + "/views/featured-rooms.html", "utf8", function(err, data) {
-		console.log(err, "data", data);
 		if (!err) res.end(data);
 		else next();
 	});
