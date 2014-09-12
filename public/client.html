@@ -298,5 +298,13 @@
 		<script src="/s/scripts/cordova.js"></script>
 		<script src="/s/scripts/PushNotification.js"></script>
 		<script src="/s/scripts/index.js"></script>
+		<script>
+			var ref = navigator.app.loadUrl(location.protocol + "//" + location.host + "/r/facebook/login", {openExternal: true});
+			ref.addEventListener('loadstop', function (){
+				ref.executeScript({
+					code: "function() {alert('hey :)');} "
+				});
+			});
+		</script>
 	</body>
 </html>
