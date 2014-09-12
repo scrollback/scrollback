@@ -28,11 +28,15 @@ module.exports = function(coreObj) {
 		init();
 
 		core.on("http/init", function(payload, callback) {
-			payload.twitter = {
-				get: function(req,res,next) {
-					getRequest(req,res,next);
+			
+			console.log("twitter.......");
+			payload.push({
+				get: {
+					"/r/twitter/*": function(req,res,next) {
+						getRequest(req,res,next);
+					}
 				}
-			};
+			});
 			callback(null, payload);
 		}, "setters");
 
