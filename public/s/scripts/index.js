@@ -84,7 +84,7 @@ var app = {
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-       alert('Received Event: ' + id);
+       alert('Neien Received Event: ' + id);
     }
 };
 
