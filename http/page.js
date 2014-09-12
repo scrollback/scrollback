@@ -38,19 +38,6 @@ exports.init = function(app, coreObject) {
 		res.end(clientHTML);
 	});
 	
-	app.use(function (req, res, next) {
-		if ('/robots.txt' === req.url) {//before all
-			res.type('text/plain');
-			fs.readFile(__dirname + "/../public/robots.txt", "utf8", function(err, data) {
-				if (!err) {
-					res.end(data);
-				} else next();
-			});
-		} else {
-			next();
-		}
-	});
-
 	app.get("/*", function(req, res, next){
 		if(/^\/t\//.test(req.path)) return next();
 		if(/^\/s\//.test(req.path)) {console.log("static"); return next();}
