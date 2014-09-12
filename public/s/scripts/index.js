@@ -84,7 +84,7 @@ var app = {
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-       alert('Neien Received Event: ' + id);
+       // alert('Neien Received Event: ' + id);
     }
 };
 
@@ -92,7 +92,7 @@ var app = {
 function onNotificationAPN (event) {
 	if ( event.alert )
 	{
-		alert(event.alert);
+		// alert(event.alert);
 	}
 
 	if ( event.sound )
