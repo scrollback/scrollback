@@ -3,7 +3,7 @@
 
 var chatEl = require("./chat.js"),
 	_ = require('underscore'),
-	chatArea = {};
+	chatArea = {}, scrollTimer = null;;
 
 function getIdAndTime(index) {
 	var time, id;
@@ -312,9 +312,10 @@ $(function () {
 		}, 1000);
 
 		
-		var scrollTimer = null; // move up;
+		
 		
 		if(scrollTimer) clearTimeout(scrollTimer);
+		
 		scrollTimer = setTimeout(function() {
 			var chats = $logs.find(".chat-item"),
 				time = getIdAndTime(chats.eq(0).data("index")).time,
@@ -336,7 +337,7 @@ $(function () {
 				time: time,
 				source: 'chat-area'
 			});
-		}, 100);		
+		}, 300);		
 	});
 
 	libsb.on("navigate", function (state, next) {
