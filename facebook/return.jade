@@ -2,11 +2,8 @@ html
 	head
 		title facebook callback
 	body
-		b
-			Hello world this is some test
 		script
 			var code = location.search.substring(6);
-			var postedMessages = [];
 			var auth = {
 				command:"signin",
 				auth: {
@@ -16,5 +13,4 @@ html
 				}
 			};
 			window.opener.postMessage(auth,"*")
-			postedMessages.push(auth);
 			window.close();
