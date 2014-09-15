@@ -5,8 +5,15 @@ var actionQueue = require("./actionQueue.js")();
 
 function init(libsb) {
 	$(function () {
-		var state = parseURL(window.location.pathname, window.location.search);
-		delete state.embed;
+		var state;
+		if (window.phonegap || window.cordova) {
+			state.phonegap = true;
+			state.mode = "home";
+		} else {
+			state = parseURL(window.location.pathname, window.location.search);
+			delete state.embed;
+		}
+		
 		state.source = "boot";
 		state.connectionStatus = false;
 		libsb.emit("navigate", state, function (err) {
