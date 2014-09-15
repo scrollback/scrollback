@@ -5,13 +5,13 @@ var actionQueue = require("./actionQueue.js")();
 
 function init(libsb) {
 	$(function () {
-		var state;
+		var state = {};
 		if (window.phonegap || window.cordova) {
 			state.phonegap = true;
 			state.mode = "home";
 		} else {
 			state = parseURL(window.location.pathname, window.location.search);
-			delete state.embed;
+			if(state.embed) delete state.embed;
 		}
 		
 		state.source = "boot";
