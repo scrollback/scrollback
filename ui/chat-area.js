@@ -3,7 +3,7 @@
 
 var chatEl = require("./chat.js"),
 	_ = require('underscore'),
-	chatArea = {}, scrollEmitted = false;
+	chatArea = {};
 
 function getIdAndTime(index) {
 	var time, id;
@@ -311,33 +311,32 @@ $(function () {
 			timeout = 0;
 		}, 1000);
 
-		var chats = $logs.find(".chat-item"),
-			time = getIdAndTime(chats.eq(0).data("index")).time,
-			parentOffset = $logs.offset().top;
-
-		for (var i = 0; i < chats.length; i++) {
-			if (chats.eq(i).offset().top - parentOffset > 0) {
-				time = getIdAndTime(chats.eq(i).data("index")).time;
-				break;
-			}
-		}
-
 		
+		var scrollTimer = null; // move up;
 		
-		if(!scrollEmitted) {
-			scrollEmitted = true;
-			setTimeout(function() {
-				chatArea.getPosition.value = chatArea.getPosition();
-				if (chatArea.getPosition.value === 0) {
-					time = null;
+		if(scrollTimer) clearTimeout(scrollTimer);
+		scrollTimer = setTimeout(function() {
+			var chats = $logs.find(".chat-item"),
+				time = getIdAndTime(chats.eq(0).data("index")).time,
+				parentOffset = $logs.offset().top;
+
+			for (var i = 0; i < chats.length; i++) {
+				if (chats.eq(i).offset().top - parentOffset > 0) {
+					time = getIdAndTime(chats.eq(i).data("index")).time;
+					break;
 				}
-				scrollEmitted = false;
-				libsb.emit('navigate', {
-					time: time,
-					source: 'chat-area'
-				});
-			}, 500);
-		}
+			}
+
+			chatArea.getPosition.value = chatArea.getPosition();
+			if (chatArea.getPosition.value === 0) {
+				time = null;
+			}
+			scrollTimer = null;
+			libsb.emit('navigate', {
+				time: time,
+				source: 'chat-area'
+			});
+		}, 100);		
 	});
 
 	libsb.on("navigate", function (state, next) {
