@@ -3,7 +3,7 @@
 
 var chatEl = require("./chat.js"),
 	_ = require('underscore'),
-	chatArea = {};
+	chatArea = {}, scrollEmitted = false;
 
 function getIdAndTime(index) {
 	var time, id;
@@ -323,15 +323,24 @@ $(function () {
 		}
 
 		chatArea.getPosition.value = chatArea.getPosition();
-
 		if (chatArea.getPosition.value === 0) {
 			time = null;
+			libsb.emit('navigate', {
+				time: time,
+				source: 'chat-area'
+			});
+		}else if(!scrollEmitted) {
+			scrollEmitted = true;
+			setTimeout(function() {
+				scrollEmitted = false;
+				libsb.emit('navigate', {
+					time: time,
+					source: 'chat-area'
+				});
+			}, 300);
 		}
 
-		libsb.emit('navigate', {
-			time: time,
-			source: 'chat-area'
-		});
+	
 	});
 
 	libsb.on("navigate", function (state, next) {
