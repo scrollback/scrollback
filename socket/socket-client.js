@@ -1,4 +1,5 @@
 "use strict";
+/* jshint browser:true */
 /* global libsb, SockJS*/
 
 var generate = require("../lib/generate.js"),
@@ -181,7 +182,11 @@ function makeAction(action, props) {
 	}
 
 	action.time = new Date().getTime();
-	action.session = libsb.session;
+	if (localStorage.hasOwnProperty("session")) {
+		action.session = localStorage.session;
+	} else {
+		action.session = libsb.session;
+	}
 	action.resource = libsb.resource;
 	return action;
 }
@@ -269,7 +274,7 @@ function sendInit(init, next) {
 	if (init.auth) newAction.auth = init.auth;
 	if (init.suggestedNick) newAction.suggestedNick = init.suggestedNick;
 	action = makeAction(init, newAction);
-
+	
 	client.send(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);
 }

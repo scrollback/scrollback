@@ -114,7 +114,13 @@ module.exports = {
 	save: function () {
 		//saves user, session, LRU, rooms, occupantOf, memberOf to LocalStorage
 		localStorage.user = JSON.stringify(this.cache.user);
-		localStorage.session = this.cache.session;
+		if (typeof this.cache.session !== "undefined") {
+			if (localStorage.hasOwnProperty("session")) {
+				this.cache.session = localStorage.session;
+			} else {
+				localStorage.session = this.cache.session;
+			}
+		}
 		localStorage.LRU = JSON.stringify(this.LRU);
 		localStorage.occupantOf = JSON.stringify(this.cache.occupantOf);
 		localStorage.memberOf = JSON.stringify(this.cache.memberOf);
@@ -138,7 +144,11 @@ module.exports = {
 		var version = 'version' + config.localStorage.version;
 		if (!localStorage.hasOwnProperty(version)) {
 			console.log("Old version of LocalStorage present, clearing ...");
-			localStorage.clear();
+			for (var k in localStorage) {
+				if (k !== "session") { // session should not be cleared on LS update
+					delete localStorage[k];
+				}
+			}
 			localStorage[version] = true;
 		} else {
 			console.log("LocalStorage version is current ...");
