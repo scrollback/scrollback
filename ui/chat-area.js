@@ -322,25 +322,22 @@ $(function () {
 			}
 		}
 
-		chatArea.getPosition.value = chatArea.getPosition();
-		if (chatArea.getPosition.value === 0) {
-			time = null;
-			libsb.emit('navigate', {
-				time: time,
-				source: 'chat-area'
-			});
-		}else if(!scrollEmitted) {
+		
+		
+		if(!scrollEmitted) {
 			scrollEmitted = true;
 			setTimeout(function() {
+				chatArea.getPosition.value = chatArea.getPosition();
+				if (chatArea.getPosition.value === 0) {
+					time = null;
+				}
 				scrollEmitted = false;
 				libsb.emit('navigate', {
 					time: time,
 					source: 'chat-area'
 				});
-			}, 300);
+			}, 500);
 		}
-
-	
 	});
 
 	libsb.on("navigate", function (state, next) {
