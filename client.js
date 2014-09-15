@@ -81,4 +81,3 @@ require('./ui/google-analytics.js');
 
 require('./client-init/boot.js')(libsb);
 require('./ui/workarounds.js');
-//# sourceMappingURL=libsb.js.map
