@@ -3,7 +3,7 @@
 
 var chatEl = require("./chat.js"),
 	_ = require('underscore'),
-	chatArea = {}, scrollTimer = null;;
+	chatArea = {}, scrollTimer = null;
 
 function getIdAndTime(index) {
 	var time, id;
@@ -336,19 +336,16 @@ $(function () {
 			libsb.emit('navigate', {
 				time: time,
 				source: 'chat-area'
+			}, function(err, state){
+				if (state.old && state.time !== state.old.time) {
+					if (state.time) {
+						$(".chat-position").text(format.friendlyTime(state.time, new Date().getTime()));
+						setTimeout(function(){$(".chat-position").text("");}, 1000);
+					}
+				}
 			});
-		}, 300);		
+		}, 500);		
 	});
-
-	libsb.on("navigate", function (state, next) {
-		if (state.old && state.time !== state.old.time) {
-			if (state.time) {
-				$(".chat-position").text(format.friendlyTime(state.time, new Date().getTime()));
-			}
-		}
-
-		next();
-	}, 50);
 
 	setInterval(function () {
 		$(".chat-timestamp").each(function () {
