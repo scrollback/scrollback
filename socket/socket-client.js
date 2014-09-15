@@ -71,7 +71,7 @@ function safeSend(data) {
 }
 
 function connect() {
-	client = new SockJS(config.server.host + "/socket");
+	client = new SockJS(config.server.protocol + config.server.host + "/socket");
     client.onclose = disconnected;
 
 	client.onopen = function(){
