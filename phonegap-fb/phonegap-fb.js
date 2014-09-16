@@ -2,6 +2,7 @@
 /* global currentState, fbRef, $ */
 
 console.log("phonegap fb is called! ");
+currentState.phonegap = false;
 if (currentState.phonegap) {
 	console.log("Phonegap FB called, condition is happy :)");
 	setInterval(function () {
