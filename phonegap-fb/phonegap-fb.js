@@ -1,6 +1,7 @@
 /* jshint browser:true */
 /* global currentState, fbRef, $ */
 
+console.log("phonegap fb is called! ");
 if (currentState.phonegap) {
 	console.log("Phonegap FB called, condition is happy :)");
 	setInterval(function () {
