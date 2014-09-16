@@ -64,9 +64,9 @@ $(function () {
 					}
 
 				}
-
 				sorted.sort(function (a, b) {
-					return -(a.score - b.score);
+					if(a.score!==b.score) return -(a.score - b.score);
+					else return(a.id<b.id?-1:1);
 				});
 
 				people = sorted;
@@ -161,3 +161,4 @@ $(function () {
 		$people.reset();
 	};
 });
+
