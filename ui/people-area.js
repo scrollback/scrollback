@@ -64,12 +64,10 @@ $(function () {
 					}
 
 				}
-				console.log("unsorted:",sorted);
 				sorted.sort(function (a, b) {
 					if(a.score!==b.score) return -(a.score - b.score);
 					else return(a.id<b.id?-1:1);
 				});
-				console.log("sorted:",sorted);
 
 				people = sorted;
 				callback();
