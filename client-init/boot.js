@@ -6,13 +6,16 @@ var actionQueue = require("./actionQueue.js")();
 function init(libsb) {
 	$(function () {
 		var state = {};
-		if (window.phonegap || window.cordova) {
+        state.roomName = "scrollback";
+        state.mode = "normal";
+        state.tab = "people";
+		/* if (window.phonegap || window.cordova) {
 			state.phonegap = true;
 			state.mode = "home";
 		} else {
 			state = parseURL(window.location.pathname, window.location.search);
 			if(state.embed) delete state.embed;
-		}
+		}*/
 		
 		state.source = "boot";
 		state.connectionStatus = false;

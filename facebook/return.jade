@@ -4,6 +4,7 @@ html
 	body
 		script
 			var code = location.search.substring(6);
+			window.postedMessages = [];
 			var auth = {
 				command:"signin",
 				auth: {
@@ -12,5 +13,7 @@ html
 					}
 				}
 			};
-			window.opener.postMessage(auth,"*")
+			window.postedMessages.push(auth);
+			console.log("postedMessages ", window.postedMessages);
+			window.opener.postMessage(auth,"*");
 			window.close();
