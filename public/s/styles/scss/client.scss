@@ -50,26 +50,31 @@ html, body { height: 100%; }
 
 body {
     word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
+    overflow: hidden; /* fix overflow in firefox */
 
-    &:not(.embed) {
-        [data-embed]:not([data-embed=none]) { display: none; }
-    }
+    /* logic to decide when to show or hide an element based on filters on body */
+    $map: (role: $roles, embed: $embeds, mode: $modes, media: $medialist); /* sass map */
+    $multi: role; /* can be multiple filters in the body */
 
-    @each $embed in $embeds {
-        &.embed-#{$embed} {
-            [data-embed]:not([data-embed~=#{$embed}]) { display: none; }
-        }
-    }
+    @each $filter, $states in $map {
+        @each $state in $states {
+            @if (index($multi, $filter) != null) {
+                &:not(.#{$filter}-#{$state}) {
+                    [data-#{$filter}~=#{$state}] { display: none; }
+                }
+            } @else {
+                &.#{$filter}-#{$state} {
+                    [data-#{$filter}]:not([data-#{$filter}~=#{$state}]) { display: none; }
+                }
+            }
 
-    @each $mode in $modes {
-        &.mode-#{$mode} {
-            [data-mode]:not([data-mode~=#{$mode}]) { display: none; }
-        }
-    }
+            &[class*=#{$filter}-] {
+                [data-#{$filter}~=none] { display: none; }
+            }
 
-    @each $role in $roles {
-        &:not(.role-#{$role}) {
-            [data-role~=#{$role}] { display: none; }
+            &:not([class*=#{$filter}-]) {
+                [data-#{$filter}]:not([data-#{$filter}~=none]) { display: none; }
+            }
         }
     }
 }
@@ -588,8 +593,6 @@ body {
 }
 
 .home-area {
-    width: 100%;
-    height: 100%;
     background-color: darken($light-color, 5%);
 
     .title-bar { position: fixed; }
@@ -1527,21 +1530,11 @@ body {
     }
 }
 
-.content-view-wrapper {
-    @include flexbox;
-    @include flex-direction(column);
-    @include flex-wrap(nowrap);
-    @include justify-content(space-around);
-    @include align-items(center);
-    @include align-content(center);
+.content-area-right {
     @extend %column;
 
     left: 0;
     right: 0;
-    padding: 1em;
-    background-color: $light-color;
-    color: fade-out($dark-color, .3);
-    text-align: center;
     z-index: 70;
 
     @media #{$screenxxxx} {
@@ -1549,6 +1542,28 @@ body {
 
         .embed & { left: 0; }
     }
+}
+
+.content-area-full {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.content-view-wrapper {
+    @include flexbox;
+    @include flex-direction(column);
+    @include flex-wrap(nowrap);
+    @include justify-content(space-around);
+    @include align-items(center);
+    @include align-content(center);
+
+    padding: 1em;
+    background-color: $light-color;
+    color: fade-out($dark-color, .3);
+    text-align: center;
 
     h1 {
         font-size: 1.5em;
