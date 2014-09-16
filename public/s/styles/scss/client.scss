@@ -46,37 +46,46 @@
     }
 }
 
-html, body { height: 100%; }
-
-body {
-    word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
-    overflow: hidden; /* fix overflow in firefox */
-
-    /* logic to decide when to show or hide an element based on filters on body */
-    $map: (role: $roles, embed: $embeds, mode: $modes, media: $medialist); /* sass map */
-    $multi: role; /* can be multiple filters in the body */
-
+@mixin filter($map, $multi) {
     @each $filter, $states in $map {
         @each $state in $states {
             @if (index($multi, $filter) != null) {
                 &:not(.#{$filter}-#{$state}) {
-                    [data-#{$filter}~=#{$state}] { display: none; }
+                    [data-#{$filter}=#{$state}] { display: none; }
                 }
             } @else {
                 &.#{$filter}-#{$state} {
                     [data-#{$filter}]:not([data-#{$filter}~=#{$state}]) { display: none; }
                 }
             }
+        }
 
-            &[class*=#{$filter}-] {
-                [data-#{$filter}~=none] { display: none; }
-            }
+        &[class*=#{$filter}-] {
+            [data-#{$filter}=none] { display: none; }
+        }
 
-            &:not([class*=#{$filter}-]) {
-                [data-#{$filter}]:not([data-#{$filter}~=none]) { display: none; }
-            }
+        &:not([class*=#{$filter}-]) {
+            [data-#{$filter}]:not([data-#{$filter}=none]) { display: none; }
         }
     }
+}
+
+html, body { height: 100%; }
+
+body {
+    $map: (
+        role: $roles,
+        embed: $embeds,
+        mode: $modes,
+        media: $medialist
+    );
+
+    $multi: ( role );
+
+    @include filter($map, $multi); /* show hide elements based on filter */
+
+    word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
+    overflow: hidden; /* fix overflow in firefox */
 }
 
 .room-area {
