@@ -68,6 +68,17 @@ function processReply(data){
 			if(!message.threads) message.threads = [];
 			if(!title) message.threads.push({id: id, score: 1});
 			else message.threads.push({id: id, title: title, score: 1});
+			if (data.spamIndex) {
+				for (var index in data.spamIndex) {
+					if (data.spamIndex.hasOwnProperty(index)) {
+						var a = data.spamIndex[index];
+						if (typeof a === 'string') {
+							a = parseFloat(a);
+						}
+						message.labels[index] = a;
+					}
+				}
+			}
 			pendingCallbacks[data.id].fn();
 			log("called back in ", new Date().getTime() - pendingCallbacks[data.id].time);
 			delete pendingCallbacks[data.id];
