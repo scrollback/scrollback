@@ -35,7 +35,7 @@ function enter(room) {
 					listening[roomName] = BACK_RECEIVED;
 				}
 				x=listenQueue.indexOf(roomName);
-				if(x>=0)listenQueue.splice(0,1);
+				if(x>=0)listenQueue.splice(x,1);
 			});
 		}
 	} else {
