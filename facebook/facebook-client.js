@@ -29,7 +29,7 @@ libsb.on('auth-menu', function(menu, next){
 						}
 					};
 					console.log("loadstop occured the AUTH is : ", auth);
-					$(window).trigger("message", auth);
+					$(window).trigger("phonegapmsg", [auth]);
 					window.fbRef.close();
 				}
 			});
