@@ -10,11 +10,6 @@ var roomCard = require("./room-card.js"),
 	listening = {},
 	BACK_SENT = 1, BACK_RECEIVED = 2, NOT_LISTENING = 0;
 
-
-
-function clearQueue() {
-	
-}
 function enter(room) {
 	var roomName;
 
@@ -51,11 +46,11 @@ function enter(room) {
 }
 function resetRooms(){
 	if (window.currentState.mode !== "home" && $roomarea) {
-		$roomarea.reset();
+		$roomarea.reset(0);
 	}
 
 	if (window.currentState.mode === "home" && $homefeed) {
-		$homefeed.reset();
+		$homefeed.reset(0);
 	}
 }
 module.exports = function(libsb) {
@@ -193,7 +188,7 @@ module.exports = function(libsb) {
 		});
 
 		if (window.currentState.mode !== "home" && $roomarea) {
-			$roomarea.reset();
+			$roomarea.reset(0);
 		}
 
 		if (window.currentState.mode === "home" && $homefeed) {
