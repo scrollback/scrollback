@@ -292,7 +292,7 @@ body {
 
         padding-left: .25em;
         text-transform: uppercase;
-        cursor: pointer;
+        cursor: default;
 
         .embed & { padding-left: .75em; }
 
@@ -573,6 +573,7 @@ body {
         @extend %transition;
 
         background-color: rgba(0,0,0,.1);
+        color: $dark-color;
     }
 
     &:active, &.current:active { background-color: rgba(0,0,0,.2); }
@@ -1544,7 +1545,6 @@ body {
 
     left: 0;
     right: 0;
-    z-index: 70;
 
     @media #{$screenxxxx} {
         left: $width-roomxxxx;
