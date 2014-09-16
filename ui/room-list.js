@@ -10,6 +10,11 @@ var roomCard = require("./room-card.js"),
 	listening = {},
 	BACK_SENT = 1, BACK_RECEIVED = 2, NOT_LISTENING = 0;
 
+
+
+function clearQueue() {
+	
+}
 function enter(room) {
 	var roomName;
 
@@ -28,11 +33,14 @@ function enter(room) {
 		if (!listening[roomName]){
 			listening[roomName] = BACK_SENT;
 			libsb.enter(roomName, function(err) {
+				var x;
 				if (err) {
 					listening[roomName] = NOT_LISTENING;
 				} else {
 					listening[roomName] = BACK_RECEIVED;
 				}
+				x=listenQueue.indexOf(roomName);
+				if(x>=0)listenQueue.splice(0,1);
 			});
 		}
 	} else {
@@ -153,6 +161,7 @@ module.exports = function(libsb) {
 				});
 			}
 			if (room) {
+				console.log("entering", room);
 				enter({ id: room });
 			}
 			resetRooms();
@@ -179,12 +188,9 @@ module.exports = function(libsb) {
 			});
 		}
 
-
 		listenQueue.forEach(function(e) {
 			enter({ id: e });
 		});
-
-		listenQueue = [];
 
 		if (window.currentState.mode !== "home" && $roomarea) {
 			$roomarea.reset();
@@ -209,6 +215,10 @@ module.exports = function(libsb) {
 		if (!state.connectionStatus && (!state.old || state.old.connectionStatus)) {
 			Object.keys(listening).forEach(function(e) {
 				listening[e] = NOT_LISTENING;
+			});
+		}else if(state.connectionStatus && (!state.old || !state.old.connectionStatus)) {
+			listenQueue.forEach(function(e) {
+				enter({ id: e });
 			});
 		}
 		next();
