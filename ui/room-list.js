@@ -147,7 +147,11 @@ module.exports = function(libsb) {
 					enter(e);
 				});
 			}
-
+			if (libsb.occupantOf) {
+				libsb.occupantOf.forEach(function(r) {
+					enter(r);
+				});
+			}
 			if (room) {
 				enter({ id: room });
 			}
@@ -168,6 +172,13 @@ module.exports = function(libsb) {
 				enter(r);
 			});
 		}
+		
+		if (init.occupantOf) {
+			init.occupantOf.forEach(function(r) {
+				enter(r);
+			});
+		}
+
 
 		listenQueue.forEach(function(e) {
 			enter({ id: e });
