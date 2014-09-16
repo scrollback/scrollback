@@ -1012,7 +1012,7 @@ body {
     pointer-events: none;
     z-index: 20;
 
-    .scrolling &:not(:empty) {
+    &:not(:empty) {
         @include opacity(1);
         @extend %nofilter;
     }
