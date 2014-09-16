@@ -8,6 +8,14 @@ var currentState = window.currentState;
 function updateClass(state, next) {
 	var classList;
 
+	if (state.source === "boot") {
+		if (state.phonegap) {
+			$("body").addClass("media-phonegap");
+		} else {
+			$("body").addClass("media-normal");
+		}
+	}
+
 	if (state.old) {
 		classList = $("body").attr("class").trim() || "";
 

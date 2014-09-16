@@ -228,7 +228,7 @@
 			</form>
 		</section>
 
-		<section data-mode="home" class="home-area">
+		<section data-mode="home" class="home-area content-area-full">
 			<div class="title-bar">
 				<div class="left-area">
 					<a href="http://scrollback.io" target="_blank" class="header-image"><img src="/s/img/client/scrollback-small-dark.svg" alt="scrollback"></a>
@@ -257,7 +257,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="home-area-container-wrap">
+			<div class="home-area-container-wrap content-area-full">
 				<div class="home-area-container">
 					<div class="home-area-cover">
 						<form id="home-go-to-room-form" class="home-area-cover-content">
@@ -284,9 +284,17 @@
 					</div>
 				</div>
 			</div>
+			<div data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full">
+				<div class="content-view-area">
+					<h1>Sign in to get started.</h1>
+					<p>
+						<a class="button" id="noroom-view-login">Sign in</a>
+					</p>
+				</div>
+			</div>
 		</section>
 
-		<section data-mode="noroom profile" class="content-view-wrapper">
+		<section data-mode="noroom profile" class="content-view-wrapper content-area-right">
 			<div data-mode="noroom" class="content-view-area">
 				<h1>This room does not exist yet :-(</h1>
 				<p data-role="guest">You need to sign in first to create a room</p>
