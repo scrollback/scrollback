@@ -1,3 +1,5 @@
+/* jshint browser:true */
+/* global $, libsb */
 $(window).on("message", function(event) {
 	var data = event.originalEvent.data;
 	var action;
@@ -14,4 +16,10 @@ $(window).on("message", function(event) {
 	if(!data.command || data.command != "signin") return;
 	delete data.command;
 	libsb.emit("init-up", action, function(err, data) {});	
+});
+
+$(window).on("phonegapmsg", function (e, p) {
+	delete p.command;
+	console.log("got phonegapmsg data is ", p);
+	libsb.emit('init-up', p);
 });
