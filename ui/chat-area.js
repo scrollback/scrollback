@@ -287,33 +287,10 @@ $(function () {
 		$logs.scroll();
 	};
 
-	var timeout,
-		top = $(this).scrollTop();
+	var timeout;
 
 	$logs.on("scroll", function () {
 
-		var cur_top = $logs.scrollTop();
-
-		if (top < cur_top) {
-			$("body").removeClass("scroll-up").addClass("scroll-down");
-		} else {
-			$("body").removeClass("scroll-down").addClass("scroll-up");
-		}
-
-		top = cur_top;
-
-		$("body").addClass("scrolling");
-
-		if (timeout) clearTimeout(timeout);
-
-		timeout = setTimeout(function () {
-			$("body").removeClass("scrolling").removeClass("scroll-up").removeClass("scroll-down");
-			timeout = 0;
-		}, 1000);
-
-		
-		
-		
 		if(scrollTimer) clearTimeout(scrollTimer);
 		
 		scrollTimer = setTimeout(function() {
