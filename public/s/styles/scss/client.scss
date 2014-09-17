@@ -613,10 +613,17 @@ body {
 .home-area-cover {
     margin-top: $bar-height;
     width: 100%;
+    min-height: $bar-height * 3;
+    max-height: $bar-height * 3;
     background-color: $light-color;
     border-bottom: 1px solid darken($light-color, 10%);
     color: $dark-color;
     text-align: center;
+
+    @media #{$screenxx} {
+        min-height: $bar-height * 2;
+        max-height: $bar-height * 2;
+    }
 }
 
 .home-area-cover-content {
@@ -640,18 +647,21 @@ body {
     }
 }
 
-.home-area-container-wrap { height: 100%; }
+.home-area-container {
+    @include flexbox;
+    @include flex-direction(column);
+    @include flex-wrap(nowrap);
 
-.home-area-container { @extend %scroll-elem; }
+    height: 100%;
+    overflow-x: hidden;
+}
 
-.card-container {
-    width: $width-home;
-    max-width: 100%;
-    min-height: 100%;
-    margin: auto;
-    padding: .5em;
+.card-container-wrap {
+    @include flex-grow(1);
+    @extend %scroll-elem;
 
-    @media #{$screenxxx} { padding: 1em; }
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .meta-button, .rooms-button {

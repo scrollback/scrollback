@@ -15,6 +15,10 @@
 		width: 50%;
 		padding: 1em;
 	}
+
+	@media only screen and (min-width: 70em) { width: 33.33%; }
+
+	@media only screen and (min-width: 130em) { width: 20%; }
 }
 
 .card-item {

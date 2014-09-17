@@ -2,9 +2,8 @@
 /*global $*/
 
 $(function() {
-	var outer,
-		inner,
-		swy;
+	var outer, inner, swy, css,
+		$el = $(".hide-scroll");
 
 	outer = $("<div></div>").css({
 			width: "100px",
@@ -18,8 +17,20 @@ $(function() {
 
 	outer.remove();
 
-	$(".hide-scroll").css({
-		"overflow-y" : "scroll",
-		"margin-right" : "-=" + swy
+	css = {
+		"overflow-y": "scroll",
+		"margin-right": "-=" + swy
+	};
+
+	$el.css(css);
+
+	$(window).on("resize", function() {
+		$el.css(css);
+
+		clearTimeout($(this).data("scrollbarTimer"));
+
+		$(this).data("scrollbarTimer", setTimeout(function() {
+			$el.css(css);
+		}, 1000));
 	});
 });
