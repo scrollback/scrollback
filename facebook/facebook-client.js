@@ -19,7 +19,6 @@ libsb.on('auth-menu', function(menu, next){
 			window.fbRef.addEventListener('loadstop', function (event) {
 				var url = event.url;
 				var code = getParameterByName('code', url);
-				console.log("loadstop occured the code is : ", code, url);
 				if (code !== null) {
 					var auth = {
 						command:"signin",
@@ -29,7 +28,6 @@ libsb.on('auth-menu', function(menu, next){
 							}
 						}
 					};
-					console.log("loadstop occured the AUTH is : ", auth);
 					$(window).trigger("phonegapmsg", [auth]);
 					window.fbRef.close();
 				}
