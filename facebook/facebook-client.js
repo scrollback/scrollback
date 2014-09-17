@@ -15,13 +15,13 @@ libsb.on('auth-menu', function(menu, next){
 		prio: 100,
 		action: function(){
 		//window.open(location.protocol + "//" + location.host + "/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');	
-            window.fbRef = window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "toolbar=0,location=0,menubar=0");
-			window.fbRef.addEventListener('loadstop', function (event) {
+            var fbRef = window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=yes");
+			fbRef.addEventListener('loadstop', function (event) {
 				var url = event.url;
 				var code = getParameterByName('code', url);
 				if (code !== null) {
 					var auth = {
-						command:"signin",
+						command: "signin",
 						auth: {
 							facebook:{
 								code: code
@@ -29,9 +29,12 @@ libsb.on('auth-menu', function(menu, next){
 						}
 					};
 					$(window).trigger("phonegapmsg", [auth]);
-					window.fbRef.close();
+					fbRef.close();
 				}
 			});
+			fbRef.executeScript({code: "return window.location"}, function(ret) {
+				console.log(ret);
+			})
 		}
 	};
 	next();
