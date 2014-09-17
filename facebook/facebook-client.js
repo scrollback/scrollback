@@ -32,9 +32,12 @@ libsb.on('auth-menu', function(menu, next){
 					fbRef.close();
 				}
 			});
+			fbRef.addEventListener('loaderror', function (event){
+				console.log("got load error ", event);
+			});
 			fbRef.executeScript({code: "return window.location"}, function(ret) {
 				console.log(ret);
-			})
+			});
 		}
 	};
 	next();
