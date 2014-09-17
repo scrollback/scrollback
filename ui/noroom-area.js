@@ -1,8 +1,6 @@
 /* jshint browser: true */
 /* global $, libsb, currentState */
 
-var showMenu = require('./showmenu.js');
-
 libsb.on('navigate', function(state, next){
 	if(state.mode === 'profile' && state.source === 'noroom'){
 		$('#profile-view-name').text(currentState.roomName);
@@ -27,12 +25,4 @@ $("#noroom-view-create").on("click", function() {
              location.reload();
          });
     });
-});
-
-$("#noroom-view-login").on("click", function() {
-   if($("body").hasClass("role-guest")) {
-		libsb.emit('auth-menu', {origin: $(this), buttons: {}, title: 'Sign in to Scrollback with'}, function(err, menu){
-			showMenu(menu);
-		});
-   }
 });
