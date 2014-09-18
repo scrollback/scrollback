@@ -66,7 +66,8 @@
     "sockjs-client": "latest",
     "twit": "~1.1.12",
     "underscore": "latest",
-    "xml2js": "^0.4.4"
+    "xml2js": "^0.4.4",
+    "valid": "git://github.com/scrollback/valid.git"
   },
   "optionalDependencies": {},
   "devDependencies": {

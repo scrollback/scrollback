@@ -1,7 +1,8 @@
 var generate = require("../../lib/generate.js");
 var validateRoom = require('../../lib/validate.js');
 var SbError = require("../../lib/SbError.js");
-
+var validator = new (require('valid'))();
+var log = require('../../lib/logger.js');
 module.exports = function (core) {
 
     /* list of event that the basic validation function is called for.*/
@@ -14,9 +15,35 @@ module.exports = function (core) {
 			}
 		};
 	*/
+    var actionValidator = {
+        id: ['undefined', 'string'],
+        type: ['string'],
+        to: ['string'],
+        time: ['undefined', 'number'],
+        session: ['string'],
+        resource: ['undefined', 'string']
+    };
+ 
+    var initValidator = {
+        suggestedNick: ['undefined', 'string'],
+        origin: ['undefined', 'object']
+    };
+
+    var textValidator = {
+        text: ['string'],
+        labels: ['undefined', 'object'],
+        mentions: ['array', 'undefined'],
+        threads: ['array', 'undefined']
+    };
+
     var handlers = {
         init: function (action, callback) {
             var n;
+            var result = validator.validate(action, initValidator);
+            if (!result.status) {
+                log("Error: invalid init params", result); 
+                return callback(new Error("INVALID_INIT_PARAMS"));    
+            }
             if (action.suggestedNick) {
                 n = validateRoom(action.suggestedNick, true);
                 if (n != action.suggestedNick) action.suggestedNick = n;
@@ -35,6 +62,11 @@ module.exports = function (core) {
         },
         text: function (action, callback) {
             var mentionMap = {};
+            var result = validator.validate(action, textValidator);
+            if (!result.status) {
+                log("Error: invalid init params", result); 
+                return callback(new Error("INVALID_TEXT_PARAMS"));    
+            }
             if (!(action.text && action.text.trim())) return callback(new SbError("TEXT_MISSING"));
 
             if (/^\//.test(action.text)) {
@@ -111,6 +143,12 @@ module.exports = function (core) {
 
     events.forEach(function (event) {
         core.on(event, function (action, callback) {
+            var result = validator.validate(action, actionValidator);
+            log("result:", result);
+            if(!result.status) {
+                log("Error action validation failed", result.info);    
+                return callback(new Error("INVALID_ACTION_PARAMS"));
+            }
             basicValidation(action, function (err) {
                 if (err) return callback(err);
                 if (handlers[event]) {
