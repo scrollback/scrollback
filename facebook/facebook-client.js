@@ -16,33 +16,34 @@ libsb.on('auth-menu', function(menu, next){
 		action: function(){
 		//window.open(location.protocol + "//" + location.host + "/r/facebook/login", '_blank', 'toolbar=0,location=0,menubar=0');	
             var fbRef = window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=yes");
-			fbRef.addEventListener('loadstart', function(event) {
-				alert("got load start ", event.url);	
-			});
-			fbRef.addEventListener('loadstop', function (event) {
-				var url = event.url;
-				var code = getParameterByName('code', url);
-				if (code !== null) {
-					var auth = {
-						command: "signin",
-						auth: {
-							facebook:{
-								code: code
-							}
-						}
-					};
-					$(window).trigger("phonegapmsg", [auth]);
-					fbRef.close();
-				}
-			});
-			
-			fbRef.addEventListener('loaderror', function (event){
-				console.log("got load error ", event);
-			});
-			
-			fbRef.executeScript({code: "return window.location"}, function(ret) {
-				console.log(ret);
-			});
+//			fbRef.addEventListener('loadstop', function (event) {
+//				var url = event.url;
+//				var code = getParameterByName('code', url);
+//				if (code !== null) {
+//					var auth = {
+//						command: "signin",
+//						auth: {
+//							facebook:{
+//								code: code
+//							}
+//						}
+//					};
+//					$(window).trigger("phonegapmsg", [auth]);
+//					fbRef.close();
+//				}
+//			});
+//			
+//			fbRef.addEventListener('loaderror', function (event){
+//				console.log("got load error ", event);
+//			});
+			console.log("fbreaf is ", fbRef);
+			var interval = setInterval(function () {
+				console.log("*****************");
+				fbRef.executeScript({code: "console.log(window.location.href); return window.location.pathname;"}, function(ret) {
+					console.log("return value", ret[0]);
+					console.log("--------------");
+				});
+			}, 100);
 		}
 	};
 	next();
