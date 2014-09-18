@@ -2,16 +2,20 @@
 /* global $, window*/
 /* exported currentState */
 
-var currentState = window.currentState;
-var libsb;
-module.exports = function (l) {
+var currentState = window.currentState,
+	libsb;
+
+module.exports = function(l) {
 	libsb = l;
 	// On navigation, add history and change URLs and title
 	libsb.on("navigate", updateHistory, 200);
 
 	// On history change, load the appropriate state
-	$(window).on("popstate", function () {
-		if(!currentState || currentState.embed) return;
+	$(window).on("popstate", function() {
+		if (!currentState || currentState.embed) {
+			return;
+		}
+
 		if (("state" in history && history.state !== null)) {
 			var state = {},
 				prop;
@@ -32,20 +36,20 @@ module.exports = function (l) {
 
 function updateTitle(state) {
 	switch (state.mode) {
-	case 'conf':
-		document.title = "Room settings - " + currentState.tab || "";
+	case "conf":
+		document.title = (currentState.tab ? (currentState.tab.charAt(0).toUpperCase() + currentState.tab.slice(1)) : "Room") + " settings" + (currentState.roomName ? ( " - "  + currentState.roomName) : "");
 		break;
-	case 'pref':
-		document.title = "Account settings - " + libsb.user.id;
+	case "pref":
+		document.title = "Account settings - " + (libsb.user ? libsb.user.id : "Scrollback");
 		break;
-	case 'search':
-		document.title = "Results for " + state.query;
+	case "search":
+		document.title = "Results for " + state.query + " - Scrollback";
 		break;
 	case "home":
-		document.title = currentState.roomName;
+		document.title = "My rooms on Scrollback";
 		break;
 	default:
-		document.title = state.roomName ? state.roomName + " on scrollback" : "Scrollback.io";
+		document.title = state.roomName ? state.roomName + " on Scrollback" : "Scrollback.io";
 	}
 }
 
@@ -117,11 +121,16 @@ function pushState(state) {
 }
 
 function updateHistory(state, next) {
-	if(currentState.embed) return next();
+	if (currentState.embed) {
+		return next();
+	}
+
 	updateTitle(state);
+
 	if (state.source == "history") {
 		return next();
 	}
+
 	pushState(state);
 	next();
 }

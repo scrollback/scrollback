@@ -12,11 +12,12 @@ var twitterConsumerKey = config.twitter.consumerKey;
 var twitterConsumerSecret = config.twitter.consumerSecret;
 var debug = config.twitter.debug;
 var core;
-var expireTime = 15 * 60;//expireTime for twitter API key...
-var timeout  = 1000 * 60 ;//search Interval
-var maxTweets = 1;//max tweets to search in timeout inteval
+var expireTime = 15 * 60; // expireTime for twitter API key...
+var timeout  = config.twitter.timeout; // search Interval
+var maxTweets = 1; // max tweets to search in timeout inteval
 var pendingOauths = {};
-var oauthTimeout = 15 * 60 * 60;//15 min
+var oauthTimeout = 15 * 60 * 1000; // 15 min
+var silentTimeout = config.twitter.silentTimeout;
 module.exports = function(coreObj) {
 
 	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
@@ -35,7 +36,7 @@ module.exports = function(coreObj) {
 			};
 			callback(null, payload);
 		}, "setters");
-
+		core.on('text', onText, "watcher");
 		core.on("room", twitterRoomHandler, "gateway");
 		core.on("room", twitterParamsValidation, "appLevelValidation");
 	}
@@ -44,6 +45,13 @@ module.exports = function(coreObj) {
 	}
 };
 
+function onText(action, callback) {
+	callback();//callback before processing it.
+	var room = action.room;
+	if (room.params.twitter && room.params.twitter.tags && !(/^twitter/.test(action.session))) {
+		redis.set("twitter:lastMessageTime:" + room.id, action.time);
+	}
+}
 
 function twitterParamsValidation(action, callback) {
 	for (var i = 0;i < action.room.identities.length;) { //remove all twitter identities
@@ -91,7 +99,7 @@ function addTwitterTokens(room, callback) {
 					room.room.params.twitter.tags = room.room.params.twitter.tags || "";
 					room.room.params.twitter.tags = formatString(room.room.params.twitter.tags);
 					log("added values from redis");
-					addIdentity(room, key);
+					if (room.room.params.twitter.tags) addIdentity(room, key);
 					callback();
 					redis.multi(function(multi) {
 						multi.del("twitter:userData:token:" + key);
@@ -127,7 +135,7 @@ function copyOld(room, callback) {
 		newParams.profile = old.profile;
 		if(!newParams.tags) newParams.tags = "";
 		newParams.tags = formatString(newParams.tags);
-		addIdentity(room, old.profile.screen_name);
+		if (newParams.tags) addIdentity(room, old.profile.screen_name);
 		callback();
 	}
 	else {
@@ -156,10 +164,15 @@ function initTwitterSearch() {
 	log("getting room data....");
 	core.emit("getRooms",{identity: "twitter", session: internalSession }, function(err, data) {
 		if (!err) {
-			if(debug) logTwitter("data returned from labelDB: ", JSON.stringify(data));
+			if (debug) logTwitter("data returned from labelDB: ", JSON.stringify(data));
 			var rooms = data.results;
 			rooms.forEach(function(room) {
-				fetchTweets(room);
+				redis.get("twitter:lastMessageTime:" + room.id, function(err, data) {
+					log("last Message Time: ", data, new Date().getTime() - parseInt(data), silentTimeout);
+					if (err || !data || (new Date().getTime() - parseInt(data) > silentTimeout)) {
+						fetchTweets(room);
+					}
+				});
 			});
 		}
 	});
@@ -235,6 +248,7 @@ function sendMessages(replies, room) {
 					from: init.user.id,
 					to: room.id,
 					time: new Date().getTime(),
+					labels: {twitter: 1},
 					session: "twitter://" + r.user.screen_name
 				};
 				core.emit("text", message, function(err) {
