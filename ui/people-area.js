@@ -64,9 +64,9 @@ $(function () {
 					}
 
 				}
-
 				sorted.sort(function (a, b) {
-					return -(a.score - b.score);
+					if(a.score!==b.score) return -(a.score - b.score);
+					else return(a.id<b.id?-1:1);
 				});
 
 				people = sorted;
@@ -77,7 +77,6 @@ $(function () {
 
 	function listener(event){
 		libsb.on(event, function (action, next) {
-//			console.log(action.type+": ", action);
 			if(action.to === roomName) resetList();
 			next();
 		}, 100);
@@ -124,7 +123,6 @@ $(function () {
 	libsb.on('navigate', function (state, next) {
 		var reset = false,
 			$people;
-
 		if (state.source == 'people-area') return next();
 		roomName = state.roomName;
 
@@ -147,7 +145,7 @@ $(function () {
 
 		if (reset) resetList();
 		next();
-	}, 600);
+	}, 400);
 
 	peopleArea.setBottom = function (bottom) {
 		var atBottom = ($people.scrollTop() + $people.height() == $people[0].scrollHeight);
@@ -163,3 +161,4 @@ $(function () {
 		$people.reset();
 	};
 });
+

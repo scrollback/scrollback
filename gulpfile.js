@@ -131,19 +131,8 @@ gulp.task("styles", [ "lace" ], function() {
 	.on("error", gutil.log);
 });
 
-// Generate client.html
-gulp.task("client", function() {
-    var data = require("./client-config.js").client;
-
-    return gulp.src("public/client.hbs")
-    .pipe(handlebars(data))
-    .pipe(rename({ extname: ".html" }))
-    .pipe(gulp.dest("public"))
-    .on("error", gutil.log);
-});
-
 // Generate client.html for phonegap
-gulp.task("phonegap", function() {
+gulp.task("handlebars", function() {
     var data = require("./client-config.js").phonegap;
 
     return gulp.src("public/client.hbs")
@@ -155,9 +144,6 @@ gulp.task("phonegap", function() {
     .pipe(gulp.dest("public/s"))
     .on("error", gutil.log);
 });
-
-// Compile handlebars templates
-gulp.task("handlebars", [ "client", "phonegap" ]);
 
 // Generate appcache manifest file
 gulp.task("manifest", function() {

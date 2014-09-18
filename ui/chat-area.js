@@ -3,7 +3,7 @@
 
 var chatEl = require("./chat.js"),
 	_ = require('underscore'),
-	chatArea = {};
+	chatArea = {}, scrollTimer = null;
 
 function getIdAndTime(index) {
 	var time, id;
@@ -287,62 +287,42 @@ $(function () {
 		$logs.scroll();
 	};
 
-	var timeout,
-		top = $(this).scrollTop();
+	var timeout;
 
 	$logs.on("scroll", function () {
 
-		var cur_top = $logs.scrollTop();
+		if(scrollTimer) clearTimeout(scrollTimer);
 
-		if (top < cur_top) {
-			$("body").removeClass("scroll-up").addClass("scroll-down");
-		} else {
-			$("body").removeClass("scroll-down").addClass("scroll-up");
-		}
+		scrollTimer = setTimeout(function() {
+			var chats = $logs.find(".chat-item"),
+				time = getIdAndTime(chats.eq(0).data("index")).time,
+				parentOffset = $logs.offset().top;
 
-		top = cur_top;
-
-		$("body").addClass("scrolling");
-
-		if (timeout) clearTimeout(timeout);
-
-		timeout = setTimeout(function () {
-			$("body").removeClass("scrolling").removeClass("scroll-up").removeClass("scroll-down");
-			timeout = 0;
-		}, 1000);
-
-		var chats = $logs.find(".chat-item"),
-			time = getIdAndTime(chats.eq(0).data("index")).time,
-			parentOffset = $logs.offset().top;
-
-		for (var i = 0; i < chats.length; i++) {
-			if (chats.eq(i).offset().top - parentOffset > 0) {
-				time = getIdAndTime(chats.eq(i).data("index")).time;
-				break;
+			for (var i = 0; i < chats.length; i++) {
+				if (chats.eq(i).offset().top - parentOffset > 0) {
+					time = getIdAndTime(chats.eq(i).data("index")).time;
+					break;
+				}
 			}
-		}
 
-		chatArea.getPosition.value = chatArea.getPosition();
-
-		if (chatArea.getPosition.value === 0) {
-			time = null;
-		}
-
-		libsb.emit('navigate', {
-			time: time,
-			source: 'chat-area'
-		});
+			chatArea.getPosition.value = chatArea.getPosition();
+			if (chatArea.getPosition.value === 0) {
+				time = null;
+			}
+			scrollTimer = null;
+			libsb.emit('navigate', {
+				time: time,
+				source: 'chat-area'
+			}, function(err, state){
+				if (state.old && state.time !== state.old.time) {
+					if (state.time) {
+						$(".chat-position").text(format.friendlyTime(state.time, new Date().getTime()));
+						setTimeout(function(){$(".chat-position").text("");}, 1000);
+					}
+				}
+			});
+		}, 500);
 	});
-
-	libsb.on("navigate", function (state, next) {
-		if (state.old && state.time !== state.old.time) {
-			if (state.time) {
-				$(".chat-position").text(format.friendlyTime(state.time, new Date().getTime()));
-			}
-		}
-
-		next();
-	}, 50);
 
 	setInterval(function () {
 		$(".chat-timestamp").each(function () {

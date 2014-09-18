@@ -15,10 +15,11 @@ $(window).on("message", function(event) {
 
 	if(!data.command || data.command != "signin") return;
 	delete data.command;
-	libsb.emit("init-up", action, function(err, data) {});	
+	libsb.emit("init-up", action, function(err, data) {});
 });
 
 $(window).on("phonegapmsg", function (e, p) {
 	delete p.command;
 	libsb.emit('init-up', p);
 });
+

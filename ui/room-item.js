@@ -9,6 +9,7 @@ roomEl.render = function($el, id, index) {
 
 	$el.find(".room-name").text(id);
 	$el.attr("id", "room-item-" + id);
+	$el.attr("data-room", id);
 	$el.attr("data-index", index);
 
 	if (window.currentState.roomName === id) {

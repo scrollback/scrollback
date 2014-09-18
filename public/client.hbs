@@ -9,11 +9,7 @@
 
 		<meta name="apple-mobile-web-app-capable" content="yes">
 
-		<title></title>
-
-		<!-- gen Head Start -->
-
-		<!-- gen Head End -->
+		{{{seo.head}}}
 
 		<link rel="shortcut icon" href="{{scrollback-root}}s/img/favicon.png" type="image/x-icon">
 
@@ -47,20 +43,20 @@
 
 		<!-- SEO -->
 		<main itemscope style="position: absolute; top: -9999em; left: -9999em;">
-			<!-- Messages start here. -->
-			<!--Messages end here-->
+			{{{seo.body}}}
 		</main>
 
-		<section data-embed="none" class="room-area column">
+		<section data-embed="none" data-mode="normal search conf pref noroom profile" class="room-area column">
 			<div class="room-header">
-				<a href="http://scrollback.io" target="_blank"><img src="{{scrollback-root}}s/img/client/scrollback-small.svg" alt="scrollback"></a>
+				<img src="{{scrollback-root}}s/img/client/scrollback-small.svg" alt="scrollback"></a>
 			</div>
 
-			<div role="list" class="room-list hide-scroll">
-				<a class="room-item"><span class="room-name"></span><span class="notif-counter unread"></span></a>
+			<div role="list" class="room-list hide-scroll js-area-rooms">
+				<a class="room-item"><span class="room-name"></span><span class="js-room-notifications-counter room-item-unread-count"></span></a>
 			</div>
 		</section>
-		<section class="meta-area column">
+
+		<section class="meta-area column" data-mode="normal search conf pref">
 			<ul role="tablist" class="meta-tabs">
 				<li data-embed="none" role="tab" class="rooms-button">
 					<svg class="rooms-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -108,12 +104,12 @@
 				<div role="tabpanel" class="pane pane-threads">
 					<div class="pane-threads-wrap">
 						<!-- <div data-mode="search" class="thread-search-query"></div> -->
-						<div data-mode="normal" class="thread-item thread-all-conversations current" href="" id="thread-">
+						<div data-mode="normal" class="thread-item thread-all-conversations current" id="thread-">
 							<h4 class="thread-title">All conversations</h4>
 							<p class="thread-snippet"></p>
 						</div>
 						<div class="thread-item-container hide-scroll">
-							<div class="thread-item" href="">
+							<div class="thread-item">
 								<h4 class="thread-title"></h4>
 								<p class="thread-snippet"></p>
 							</div>
@@ -129,7 +125,8 @@
 				<a class="list-item"></a>
 			</div>
 		</section>
-		<section role="main" class="main-area column">
+
+		<section role="main" data-mode="normal search conf pref" class="main-area column">
 			<div data-mode="normal search conf pref" class="title-bar">
 				<div class="left-area">
 					<a class="meta-button">
@@ -168,18 +165,6 @@
 						</svg>
 					</a>
 
-					<!--
-<div class="embed-area">
-<div data-role="user" class="follow-room-action cta-area">
-<div>Stay connected</div>
-<div class="cta-action">Follow room</div>
-</div>
-<div class="full-view-action cta-area">
-<div>Browse archives</div>
-<div class="cta-action">Visit room</div>
-</div>
-</div>
--->
 					<div data-embed="toast canvas" class="embed-area">
 						<div data-embed="toast" class="embed-action-minimize embed-button">
 							<svg class="minimize-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -192,13 +177,13 @@
 							</svg>
 						</div>
 					</div>
-					<div class="user-area">
+					<div class="user-area js-has-user-menu js-has-auth-menu">
 						<div data-embed="none" class="user-detail cta-area">
-							<div id="sb-user"></div>
+							<div class="sb-user"></div>
 							<div data-role="guest" class="sign-in cta-action">Sign in</div>
 						</div>
 						<div class="user-avatar">
-							<img alt="" id="sb-avatar" >
+							<img alt="" class="sb-avatar" >
 						</div>
 					</div>
 				</div>
@@ -232,18 +217,86 @@
 				</svg>
 			</div>
 		</section>
+
 		<section class="search-bar">
 			<form>
 				<input class="search-entry" type="search" placeholder="Type to search...">
 			</form>
 		</section>
-		<section data-mode="noroom offline profile" class="content-view-wrapper">
+
+		<section data-mode="home" class="home-area content-area-full">
+			<div class="title-bar">
+				<div class="left-area">
+					<a href="http://scrollback.io" target="_blank" class="header-image"><img src="{{scrollback-root}}s/img/client/scrollback-small-dark.svg" alt="scrollback"></a>
+				</div>
+				<div class="right-area">
+					<div data-embed="toast canvas" class="embed-area">
+						<div data-embed="toast" class="embed-action-minimize embed-button">
+							<svg class="minimize-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
+								<use xlink:href="{{scrollback-root}}s/img/client/icons/minimize.svg#icon"></use>
+							</svg>
+						</div>
+						<div class="embed-action-fullview embed-button">
+							<svg class="fullview-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
+								<use xlink:href="{{scrollback-root}}s/img/client/icons/fullview.svg#icon"></use>
+							</svg>
+						</div>
+					</div>
+					<div class="user-area js-has-user-menu js-has-auth-menu">
+						<div data-embed="none" class="user-detail cta-area">
+							<div class="sb-user"></div>
+							<div data-role="guest" class="sign-in cta-action">Sign in</div>
+						</div>
+						<div class="user-avatar">
+							<img alt="" class="sb-avatar" >
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="home-area-container content-area-full">
+				<div class="home-area-cover">
+					<form id="home-go-to-room-form" class="home-area-cover-content">
+						<input id="home-go-to-room-entry" type="text" placeholder="Enter a room name" autofocus><input id="home-go-to-room-button" type="submit" value="Go to room">
+					</form>
+				</div>
+				<div class="card-container-wrap hide-scroll">
+					<div class="card-container hide-scroll js-area-home-feed">
+						<div class="card-item-wrap">
+							<div class="card-item">
+								<div class="card-segment card-header">
+									<div class="card-header-title"></div>
+									<div class="card-header-badge js-room-notifications-counter"></div>
+								</div>
+								<div class="card-segment card-content">
+									<div class="card-content-title"></div>
+									<div class="card-content-summary"></div>
+								</div>
+								<div class="card-segment card-actions">
+									<div class="card-actions-view">View room</div>
+<!--									<div class="card-actions-online"><span class="card-actions-online-number">0</span> people talking</div>-->
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full">
+				<div class="content-view-area">
+					<h1>Sign in to get started.</h1>
+					<p>
+						<a class="button js-has-auth-menu">Sign in</a>
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<section data-mode="noroom profile" class="content-view-wrapper content-area-right">
 			<div data-mode="noroom" class="content-view-area">
 				<h1>This room does not exist yet :-(</h1>
 				<p data-role="guest">You need to sign in first to create a room</p>
 				<p>
 					<a data-role="user" class="button" id="noroom-view-create">Create room</a>
-					<a data-role="guest" class="button"  id="noroom-view-login">Sign in</a>
+					<a data-role="guest" class="button js-has-auth-menu"  id="noroom-view-login">Sign in</a>
 				</p>
 			</div>
 			<div data-mode="profile" class="content-view-area">
@@ -251,6 +304,7 @@
 				<p>Profiles are coming soon!</p>
 			</div>
 		</section>
+
 		<section data-embed="toast" class="minimize-bar">
 			<div class="minimize-bar-button minimize-logo">
 				<svg class="minimize-bar-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -264,6 +318,7 @@
 			<div class="minimize-room-title"></div>
 			<div class="minimize-ticker"></div>
 		</section>
+
 		<aside class="progress loading"></aside>
 
 		<!-- templates -->
