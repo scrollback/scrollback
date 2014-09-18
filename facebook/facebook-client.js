@@ -1,5 +1,5 @@
-/*jshint browser:true*/
-/*global libsb, $*/
+/* jshint browser:true */
+/* global libsb, $, currentState */
 var config = require("../client-config.js");
 
 function getParameterByName(name, url) {
@@ -11,7 +11,7 @@ function getParameterByName(name, url) {
 
 function loginWithFb() {
 	var fbRef = window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
-	if (window.phonegap) {
+	if (currentState.phonegap) {
 		var interval = setInterval(function () {
 			fbRef.executeScript({
 				code: "window.location.href;"
