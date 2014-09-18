@@ -125,7 +125,7 @@ footer {
     vertical-align: middle;
 
     .container {
-        a:not(.button) {
+        a {
             color: $light-color;
             border-bottom: 1px solid fade-out($light-color, .6);
 
@@ -139,6 +139,8 @@ footer {
                 border-color: fade-out($light-color, .8);
             }
         }
+
+        .button { border: none; }
 
         .try {
             margin-left: 1em;
