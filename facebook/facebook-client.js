@@ -36,12 +36,9 @@ libsb.on('auth-menu', function(menu, next){
 //			fbRef.addEventListener('loaderror', function (event){
 //				console.log("got load error ", event);
 //			});
-			console.log("fbreaf is ", fbRef);
 			var interval = setInterval(function () {
-				console.log("*****************");
 				fbRef.executeScript({code: "window.location.href;"}, function(ret) {
 					var url = ret[0];
-					console.log("return value", ret[0]);
 					var code = getParameterByName('code', url);
 					if (code !== null) {
 						var auth = {
@@ -52,7 +49,6 @@ libsb.on('auth-menu', function(menu, next){
 								}
 							}
 						};
-						console.log("got auth ", auth);
 						$(window).trigger("phonegapmsg", [auth]);
 						clearInterval(interval);
 						fbRef.close();
