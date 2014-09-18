@@ -5,7 +5,7 @@
 libsb.on("user-menu", function(menu, next) {
 	if (window.currentState.mode !== "home") {
 		menu.items.homefeed = {
-			text: "Home feed",
+			text: "My rooms",
 			prio: 100,
 			action: function() {
 				libsb.emit("navigate", {

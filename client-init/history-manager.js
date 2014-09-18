@@ -40,13 +40,13 @@ function updateTitle(state) {
 		document.title = (currentState.tab ? (currentState.tab.charAt(0).toUpperCase() + currentState.tab.slice(1)) : "Room") + " settings" + (currentState.roomName ? ( " - "  + currentState.roomName) : "");
 		break;
 	case "pref":
-		document.title = "Account settings - " + ((libsb.user) ? libsb.user.id : "Scrollback");
+		document.title = "Account settings - " + (libsb.user ? libsb.user.id : "Scrollback");
 		break;
 	case "search":
 		document.title = "Results for " + state.query + " - Scrollback";
 		break;
 	case "home":
-		document.title = "Scrollback home - " + ((libsb.user) ? libsb.user.id : "Scrollback");
+		document.title = "My rooms on Scrollback";
 		break;
 	default:
 		document.title = state.roomName ? state.roomName + " on Scrollback" : "Scrollback.io";
