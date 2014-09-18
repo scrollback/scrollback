@@ -53,7 +53,7 @@ libsb.on('auth-menu', function(menu, next){
 							}
 						};
 						console.log("got auth ", auth);
-						$(window).trigger("phonegapmasg", [auth]);
+						$(window).trigger("phonegapmsg", [auth]);
 						clearInterval(interval);
 						fbRef.close();
 					}

@@ -19,6 +19,7 @@ $(window).on("message", function(event) {
 });
 
 $(window).on("phonegapmsg", function (e, p) {
+	console.log
 	delete p.command;
 	console.log("got phonegapmsg data is ", p);
 	libsb.emit('init-up', p);
