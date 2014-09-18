@@ -39,7 +39,7 @@ libsb.on('auth-menu', function(menu, next){
 			console.log("fbreaf is ", fbRef);
 			var interval = setInterval(function () {
 				console.log("*****************");
-				fbRef.executeScript({code: "window.location.pathname;"}, function(ret) {
+				fbRef.executeScript({code: "window.location.href;"}, function(ret) {
 					var url = ret[0];
 					console.log("return value", ret[0]);
 					var code = getParameterByName('code', url);
