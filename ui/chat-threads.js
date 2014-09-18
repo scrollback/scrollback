@@ -271,7 +271,7 @@ $(function() {
         autoText = null;
 
 		next();
-	}, 50);
+	}, 500);
 
 	libsb.on("text-dn", function(text, next) {
         if ((text.id && text.id === lastMsg) ||
