@@ -2,9 +2,10 @@
 
 // Load plugins and declare variables
 var gulp = require("gulp"),
+    bower = require("bower"),
 	browserify = require("browserify"),
 	source = require("vinyl-source-stream"),
-	eventstream = require("event-stream"),
+    eventstream = require("event-stream"),
 	gutil = require("gulp-util"),
 	streamify = require("gulp-streamify"),
 	jshint = require("gulp-jshint"),
@@ -62,34 +63,40 @@ gulp.task("lint", function() {
 	.pipe(jshint.reporter("jshint-stylish"));
 });
 
+// Install and copy third-party libraries
+gulp.task("bower", function() {
+    return bower.commands.install([], { save: true }, {})
+    .on("error", gutil.log);
+});
+
+gulp.task("libs", [ "bower" ], function() {
+    return gulp.src([
+        bowerDir + "/jquery/dist/jquery.min.js",
+        bowerDir + "/lace/src/js/lace.js",
+        bowerDir + "/sockjs/sockjs.min.js",
+        bowerDir + "/svg4everybody/svg4everybody.min.js",
+        bowerDir + "/velocity/jquery.velocity.min.js",
+        bowerDir + "/velocity/velocity.ui.min.js"
+    ])
+    .pipe(gulp.dest(libDir))
+    .on("error", gutil.log);
+});
+
 // Copy and minify polyfills
 gulp.task("polyfills", function() {
-	return gulp.src([
-		bowerDir + "/flexie/dist/flexie.min.js",
-		bowerDir + "/transformie/transformie.js"
-	])
-	.pipe(concat("polyfills.js"))
-	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
-	.pipe(gulp.dest(libDir))
-	.pipe(rename({ suffix: ".min" }))
-	.pipe(gulp.dest(libDir))
-	.on("error", gutil.log);
+    return gulp.src([
+        bowerDir + "/flexie/dist/flexie.min.js",
+        bowerDir + "/transformie/transformie.js"
+    ])
+    .pipe(concat("polyfills.js"))
+    .pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
+    .pipe(gulp.dest(libDir))
+    .pipe(rename({ suffix: ".min" }))
+    .pipe(gulp.dest(libDir))
+    .on("error", gutil.log);
 });
 
-// Copy libs and build browserify bundles
-gulp.task("libs", function() {
-	return gulp.src([
-		bowerDir + "/jquery/dist/jquery.min.js",
-		bowerDir + "/lace/src/js/lace.js",
-		bowerDir + "/sockjs/sockjs.min.js",
-		bowerDir + "/svg4everybody/svg4everybody.min.js",
-		bowerDir + "/velocity/jquery.velocity.min.js",
-		bowerDir + "/velocity/velocity.ui.min.js"
-	])
-	.pipe(gulp.dest(libDir))
-	.on("error", gutil.log);
-});
-
+// Build browserify bundles
 gulp.task("bundle", [ "libs" ], function() {
 	return bundle([ "libsb.js", "client.js" ], { debug: !gutil.env.production })
 	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
@@ -113,7 +120,7 @@ gulp.task("embed", function() {
 gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 
 // Generate styles
-gulp.task("lace", function() {
+gulp.task("lace", [ "bower" ], function() {
 	return gulp.src(bowerDir + "/lace/src/scss/*.scss")
 	.pipe(gulp.dest(laceDir))
 	.on("error", gutil.log);

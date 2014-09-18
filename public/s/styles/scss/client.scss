@@ -134,6 +134,8 @@ body {
 .room-list { @extend %scroll-elem; }
 
 .room-item {
+    @extend %snappy;
+
     display: block;
     padding: 1em;
     font-weight: 700;
@@ -141,8 +143,6 @@ body {
     border-bottom: 1px solid lighten($dark-color, 5%);
 
     &:hover, &:focus, &.current:hover, &.current:focus {
-        @extend %transition;
-
         color: $light-color;
         background-color: rgba(0,0,0,.3);
     }
@@ -261,6 +261,7 @@ body {
 
     .tab {
         @include flex-grow(1); /* grow to use all available space */
+        @extend %snappy;
 
         text-align: center;
         background-color: transparent;
@@ -270,8 +271,6 @@ body {
         &:first-child { border-left: none; }
 
         &:hover, &:focus {
-            @extend %transition;
-
             fill: lighten($dark-color, 5%);
             background-color: rgba(0,0,0,.05);
         }
@@ -369,6 +368,7 @@ body {
 
 .person {
     @extend %nofilter; /* fix non-antialiased text in IE */
+    @extend %snappy;
 
     position: relative;
     display: inline-block;
@@ -379,8 +379,6 @@ body {
     white-space: nowrap;
     overflow: hidden;
     color: $dark-color;
-
-    &:hover, &:focus { @extend %transition; }
 
     &:hover, &:focus, &:active {
         background-color: $accent-color;
@@ -485,6 +483,7 @@ body {
 }
 
 .thread-item {
+    @extend %snappy;
     @extend %nofilter;
 
     display: block;
@@ -498,8 +497,6 @@ body {
     &.current { background-color: fade-out(lighten($dark-color, 15%), .7); }
 
     &:hover, &:focus, &.current:hover, &.current:focus {
-        @extend %transition;
-
         background-color: lighten($dark-color, 15%);
         color: $light-color;
     }
@@ -530,6 +527,8 @@ body {
 }
 
 .list-item {
+    @extend %snappy;
+
     position: relative;
     display: block;
     font-size: 1.2em;
@@ -570,8 +569,6 @@ body {
     }
 
     &:hover, &:focus, &.current:hover, &.current:focus {
-        @extend %transition;
-
         background-color: rgba(0,0,0,.1);
         color: $dark-color;
     }
@@ -1030,6 +1027,8 @@ body {
 }
 
 .chat-item {
+    @extend %snappy;
+
     position: relative;
     margin: 0;
     padding: .75em 3em .75em 3em;
@@ -1038,11 +1037,7 @@ body {
 
     @media #{$screenxx} { padding: 1em 3.5em 1em 12em; }
 
-    &:hover, &:focus {
-        @extend %transition;
-
-        background-color: darken($light-color, 1%);
-    }
+    &:hover, &:focus { background-color: darken($light-color, 1%); }
 
     &:last-of-type { border-bottom: 1px solid rgba(0,0,0,0.025); }
 
@@ -1358,6 +1353,8 @@ body {
 }
 
 .chat-send {
+    @extend %snappy;
+
     position: absolute;
     right: 0;
     bottom: 0;
@@ -1368,8 +1365,6 @@ body {
     border: none;
     cursor: pointer;
     fill: lighten($dark-color, 15%); /* inline SVG styling */
-
-    &:hover, &:focus { @extend %transition; }
 
     &:hover, &:focus, &:active { fill: $dark-color; }
 
@@ -1569,6 +1564,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 999;
 }
 
 .content-view-wrapper {
