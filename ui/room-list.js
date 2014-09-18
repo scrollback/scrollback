@@ -156,7 +156,6 @@ module.exports = function(libsb) {
 				});
 			}
 			if (room) {
-				console.log("entering", room);
 				enter({ id: room });
 			}
 			resetRooms();
