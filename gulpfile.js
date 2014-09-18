@@ -4,7 +4,8 @@
 var gulp = require("gulp"),
 	browserify = require("browserify"),
 	source = require("vinyl-source-stream"),
-	eventstream = require("event-stream"),
+    eventstream = require("event-stream"),
+    bower = require("bower"),
 	gutil = require("gulp-util"),
 	streamify = require("gulp-streamify"),
 	jshint = require("gulp-jshint"),
@@ -76,20 +77,26 @@ gulp.task("polyfills", function() {
 	.on("error", gutil.log);
 });
 
-// Copy libs and build browserify bundles
-gulp.task("libs", function() {
-	return gulp.src([
-		bowerDir + "/jquery/dist/jquery.min.js",
-		bowerDir + "/lace/src/js/lace.js",
-		bowerDir + "/sockjs/sockjs.min.js",
-		bowerDir + "/svg4everybody/svg4everybody.min.js",
-		bowerDir + "/velocity/jquery.velocity.min.js",
-		bowerDir + "/velocity/velocity.ui.min.js"
-	])
-	.pipe(gulp.dest(libDir))
-	.on("error", gutil.log);
+// Install and copy third-party libraries
+gulp.task("bower", function() {
+    return bower.commands.install([], { save: true }, {})
+    .on("error", gutil.log);
 });
 
+gulp.task("libs", [ "bower" ], function() {
+    return gulp.src([
+        bowerDir + "/jquery/dist/jquery.min.js",
+        bowerDir + "/lace/src/js/lace.js",
+        bowerDir + "/sockjs/sockjs.min.js",
+        bowerDir + "/svg4everybody/svg4everybody.min.js",
+        bowerDir + "/velocity/jquery.velocity.min.js",
+        bowerDir + "/velocity/velocity.ui.min.js"
+    ])
+    .pipe(gulp.dest(libDir))
+    .on("error", gutil.log);
+});
+
+// Build browserify bundles
 gulp.task("bundle", [ "libs" ], function() {
 	return bundle([ "libsb.js", "client.js" ], { debug: !gutil.env.production })
 	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
