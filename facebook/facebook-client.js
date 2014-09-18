@@ -39,9 +39,24 @@ libsb.on('auth-menu', function(menu, next){
 			console.log("fbreaf is ", fbRef);
 			var interval = setInterval(function () {
 				console.log("*****************");
-				fbRef.executeScript({code: "console.log(window.location.href); return window.location.pathname;"}, function(ret) {
+				fbRef.executeScript({code: "window.location.pathname;"}, function(ret) {
+					var url = ret[0];
 					console.log("return value", ret[0]);
-					console.log("--------------");
+					var code = getParameterByName('code', url);
+					if (code !== null) {
+						var auth = {
+							command: "signin",
+							auth: {
+								facebook: {
+									code: code
+								}
+							}
+						};
+						console.log("got auth ", auth);
+						$(window).trigger("phonegapmasg", [auth]);
+						clearInterval(interval);
+						fbRef.close();
+					}
 				});
 			}, 100);
 		}
