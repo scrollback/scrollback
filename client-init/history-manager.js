@@ -36,17 +36,17 @@ module.exports = function(l) {
 
 function updateTitle(state) {
 	switch (state.mode) {
-	case 'conf':
-		document.title = "Room settings - " + (currentState.tab || "") + (currentState.room || "Scrollback");
+	case "conf":
+		document.title = (currentState.tab ? (currentState.tab.charAt(0).toUpperCase() + currentState.tab.slice(1)) : "Room") + " settings" + (currentState.roomName ? ( " - "  + currentState.roomName) : "");
 		break;
-	case 'pref':
+	case "pref":
 		document.title = "Account settings - " + ((libsb.user) ? libsb.user.id : "Scrollback");
 		break;
-	case 'search':
-		document.title = "Results for " + state.query;
+	case "search":
+		document.title = "Results for " + state.query + " - Scrollback";
 		break;
 	case "home":
-		document.title = "Home - " + ((libsb.user) ? libsb.user.id : "Scrollback");
+		document.title = "Scrollback home - " + ((libsb.user) ? libsb.user.id : "Scrollback");
 		break;
 	default:
 		document.title = state.roomName ? state.roomName + " on Scrollback" : "Scrollback.io";
