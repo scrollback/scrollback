@@ -80,10 +80,11 @@
 	background-color: $accent-color;
 	color: $light-color;
 	font-weight: 700;
-	font-size: .9em;
-	padding: .2em .5em;
-	margin: .2em 0;
+	font-size: .8em;
+	padding: 0 .5em;
+	min-width: 2em;
 	border-radius: $roundness;
+	text-align: center;
 
 	@for $i from 1 through length($palette) {
 		$color: nth($palette, $i);
