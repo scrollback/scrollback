@@ -34,8 +34,11 @@ var sock = sockjs.createServer();
 
 sock.on('connection', function (socket) {
 	var conn = { socket: socket };
-	var ip = socket.address.address;
-	log("socket:", socket, socket.address.address);
+	var ip = socket.remoteAddress;
+	if (socket.headers && socket.headers["x-forwarded-for"]) {
+		ip = socket.headers["x-forwarded-for"];
+	}
+	log("socket:", ip);
 	socket.on('data', function(d) {
 		var e;
 		try { d = JSON.parse(d); log ("Socket received ", d); }
