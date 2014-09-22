@@ -1,11 +1,9 @@
-/* jshint node: true */
-
 // Load plugins and declare variables
 var gulp = require("gulp"),
     bower = require("bower"),
 	browserify = require("browserify"),
 	source = require("vinyl-source-stream"),
-    eventstream = require("event-stream"),
+    es = require("event-stream"),
     plumber = require("gulp-plumber"),
 	gutil = require("gulp-util"),
 	streamify = require("gulp-streamify"),
@@ -19,6 +17,7 @@ var gulp = require("gulp"),
     handlebars = require("gulp-compile-handlebars"),
 	manifest = require("gulp-manifest"),
 	rimraf = require("gulp-rimraf"),
+    clientConfig = require("./client-config.js"),
 	bowerDir = "bower_components",
 	libDir = "public/s/scripts/lib",
 	laceDir = "public/s/styles/lace",
@@ -52,7 +51,7 @@ function bundle(files, opts) {
 		streams.push(bundler(files));
 	}
 
-	return eventstream.merge.apply(null, streams);
+	return es.merge.apply(null, streams);
 }
 
 // Lint JavaScript files
@@ -151,7 +150,7 @@ gulp.task("styles", [ "lace" ], function() {
 
 // Generate client.html for phonegap
 gulp.task("handlebars", function() {
-    var data = require("./client-config.js").phonegap;
+    var data = clientConfig.phonegap;
 
     return gulp.src("public/client.hbs")
     .pipe(plumber())
@@ -166,6 +165,10 @@ gulp.task("handlebars", function() {
 
 // Generate appcache manifest file
 gulp.task("manifest", function() {
+    var protocol = clientConfig.server.protocol,
+        host = clientConfig.server.host,
+        baseUrl = protocol + host + "/";
+
     return gulp.src([
         "public/**/*",
         "!public/{**/*.html,t/**}",
@@ -175,15 +178,16 @@ gulp.task("manifest", function() {
     ])
     .pipe(plumber())
     .pipe(manifest({
+        baseUrl: protocol + host + "/",
         cache: [
-            "//fonts.googleapis.com/css?family=Open+Sans:300,400,600",
-            "//themes.googleusercontent.com/font?kit=cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw"
+            protocol + "//fonts.googleapis.com/css?family=Open+Sans:300,400,600",
+            protocol + "//themes.googleusercontent.com/font?kit=cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw"
         ],
         network: [ "*" ],
         fallback: [
-            "//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
-            "/socket /s/socket-fallback",
-            "/ /s/offline.html"
+            "//gravatar.com/avatar/ " + baseUrl + "s/img/client/avatar-fallback.svg",
+            "/socket " + baseUrl + "s/socket-fallback",
+            "/ " + baseUrl + "s/offline.html"
         ],
         preferOnline: true,
         hash: true,
