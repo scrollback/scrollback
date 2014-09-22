@@ -93,6 +93,8 @@ var defaults = {
 	twitter: {
 		//consumerKey: ".."
 		//consumerSecret: ".."
+		timeout: 1000 * 60,
+		silentTimeout: 1000 * 60 * 10
 	},
 	irc: {
 		port: 8910,

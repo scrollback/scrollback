@@ -72,7 +72,7 @@ var fs = require('fs');
                             }
                         }
                     };
-                    
+
                     types.rooms.put(newRoom, function(){
                         types.rooms.link(newRoom.id, 'hasMember', "migrator", {
                             role: "owner",
@@ -90,12 +90,12 @@ var fs = require('fs');
         });
         stream.on("end", function(){
             console.log("done");
-        });	
+        });
     }
-    
+
     start();
 })();
 
 function generatePick(id) {
-	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=monsterid';
+	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=retro';
 }
