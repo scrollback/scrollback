@@ -1,8 +1,29 @@
 /* jshint browser: true */
 /* global $, libsb, currentState */
 
-var currentConfig,
-    renderSettings = require("./render-settings.js");
+var renderSettings = require("./render-settings.js"),
+    currentConfig,
+    oldState;
+
+function onComplete(source) {
+    var toState;
+
+    currentConfig = null;
+
+    $(".conf-area").empty();
+
+    oldState = oldState || {};
+
+    toState = {
+        mode: oldState.mode || "normal",
+        tab: oldState.tab || "info",
+        source: source
+    };
+
+    libsb.emit("navigate", toState);
+
+    oldState = null;
+}
 
 $(".configure-button").on("click", function () {
     libsb.emit('navigate', {
@@ -14,9 +35,11 @@ $(".configure-button").on("click", function () {
 
 $(".conf-save").on("click", function () {
     var self = $(this);
-    if (currentState.mode == 'conf') {
+
+    if (currentState.mode === 'conf') {
         self.addClass("working");
         self.attr("disabled", true);
+
         libsb.emit('config-save', {
             id: window.currentState.roomName,
             description: '',
@@ -35,33 +58,25 @@ $(".conf-save").on("click", function () {
                 if(err) {
                     // handle the error
                 } else {
-                    for(var i in room.room.params) {
+                    for (var i in room.room.params) {
                         if(!room.room.params.hasOwnProperty(i)) continue;
                         if(room.room.params[i].error) {
                             return;
                         }
                     }
-                    currentConfig = null;
-                    $('.conf-area').empty();
-					
-        			libsb.emit('navigate', { mode: "normal", tab: "info", source: "conf-save" });
+
+                    onComplete("conf-save");
                 }
             });
         });
-		
+
     }
 });
 
-$(".conf-cancel").on("click", function () {
-    currentConfig = null;
-
-    $('.conf-area').empty();
-
-    libsb.emit('navigate', {
-        mode: "normal",
-        tab: "info",
-        source: "conf-cancel"
-    });
+$(".conf-cancel").on("click", function() {
+    if (window.currentState.mode === "conf") {
+        onComplete("conf-cancel");
+    }
 });
 
 
@@ -97,6 +112,9 @@ function checkOwnerShip() {
 libsb.on('navigate', function (state, next) {
 
     if (state.old && state.old.mode !== state.mode && state.mode === "conf") {
+
+        oldState = state.old;
+
         if (!checkOwnerShip()) {
             cancelEdit();
             return next();

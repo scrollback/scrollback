@@ -15,11 +15,13 @@
 @import "../lace/flexbox";
 @import "../lace/tooltip";
 @import "../lace/progress";
+@import "../lace/linked";
 
 // Import global variables and mixins
 @import "global";
 @import "themes";
 @import "tip";
+@import "cards";
 
 // Widget styles
 %scroll-elem {
@@ -44,32 +46,46 @@
     }
 }
 
+@mixin filter($map, $multi) {
+    @each $filter, $states in $map {
+        @each $state in $states {
+            @if (index($multi, $filter) != null) {
+                &:not(.#{$filter}-#{$state}) {
+                    [data-#{$filter}=#{$state}] { display: none; }
+                }
+            } @else {
+                &.#{$filter}-#{$state} {
+                    [data-#{$filter}]:not([data-#{$filter}~=#{$state}]) { display: none; }
+                }
+            }
+        }
+
+        &[class*=#{$filter}-] {
+            [data-#{$filter}=none] { display: none; }
+        }
+
+        &:not([class*=#{$filter}-]) {
+            [data-#{$filter}]:not([data-#{$filter}=none]) { display: none; }
+        }
+    }
+}
+
 html, body { height: 100%; }
 
 body {
+    $map: (
+        role: $roles,
+        embed: $embeds,
+        mode: $modes,
+        media: $medialist
+    );
+
+    $multi: ( role );
+
+    @include filter($map, $multi); /* show hide elements based on filter */
+
     word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
-
-    &:not(.embed) {
-        [data-embed]:not([data-embed=none]) { display: none; }
-    }
-
-    @each $embed in $embeds {
-        &.embed-#{$embed} {
-            [data-embed]:not([data-embed~=#{$embed}]) { display: none; }
-        }
-    }
-
-    @each $mode in $modes {
-        &.mode-#{$mode} {
-            [data-mode]:not([data-mode~=#{$mode}]) { display: none; }
-        }
-    }
-
-    @each $role in $roles {
-        &:not(.role-#{$role}) {
-            [data-role~=#{$role}] { display: none; }
-        }
-    }
+    overflow: hidden; /* fix overflow in firefox */
 }
 
 .room-area {
@@ -155,7 +171,7 @@ body {
 
     &.search-term { background: url(../../img/client/icons/search-light.svg) no-repeat 90% center; }
 
-    .unread {
+    .room-item-unread-count {
         @extend %appear;
 
         float: right;
@@ -276,6 +292,7 @@ body {
 
         padding-left: .25em;
         text-transform: uppercase;
+        cursor: default;
 
         .embed & { padding-left: .75em; }
 
@@ -556,6 +573,7 @@ body {
         @extend %transition;
 
         background-color: rgba(0,0,0,.1);
+        color: $dark-color;
     }
 
     &:active, &.current:active { background-color: rgba(0,0,0,.2); }
@@ -582,6 +600,68 @@ body {
 
         .embed & { left: $width-metaxxxx; }
     }
+}
+
+.home-area {
+    background-color: darken($light-color, 5%);
+
+    .title-bar { position: fixed; }
+
+    .header-image { padding: 0 1em; }
+}
+
+.home-area-cover {
+    margin-top: $bar-height;
+    width: 100%;
+    min-height: $bar-height * 3;
+    max-height: $bar-height * 3;
+    background-color: $light-color;
+    border-bottom: 1px solid darken($light-color, 10%);
+    color: $dark-color;
+    text-align: center;
+
+    @media #{$screenxx} {
+        min-height: $bar-height * 2;
+        max-height: $bar-height * 2;
+    }
+}
+
+.home-area-cover-content {
+    margin: 0 auto;
+    padding: 2em .75em;
+
+    input[type="text"], input[type="submit"] {
+        width: 100%;
+        margin: .25em;
+
+        @media #{$screenxx} {
+            @include linked;
+
+            width: auto;
+            margin: 0;
+        }
+    }
+
+    input[type="text"] {
+        @media #{$screenxxx} { min-width: 27em; }
+    }
+}
+
+.home-area-container {
+    @include flexbox;
+    @include flex-direction(column);
+    @include flex-wrap(nowrap);
+
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.card-container-wrap {
+    @include flex-grow(1);
+    @extend %scroll-elem;
+
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .meta-button, .rooms-button {
@@ -1470,6 +1550,27 @@ body {
     }
 }
 
+.content-area-right {
+    @extend %column;
+
+    left: 0;
+    right: 0;
+
+    @media #{$screenxxxx} {
+        left: $width-roomxxxx;
+
+        .embed & { left: 0; }
+    }
+}
+
+.content-area-full {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 .content-view-wrapper {
     @include flexbox;
     @include flex-direction(column);
@@ -1477,21 +1578,11 @@ body {
     @include justify-content(space-around);
     @include align-items(center);
     @include align-content(center);
-    @extend %column;
 
-    left: 0;
-    right: 0;
     padding: 1em;
     background-color: $light-color;
     color: fade-out($dark-color, .3);
     text-align: center;
-    z-index: 70;
-
-    @media #{$screenxxxx} {
-        left: $width-roomxxxx;
-
-        .embed & { left: 0; }
-    }
 
     h1 {
         font-size: 1.5em;

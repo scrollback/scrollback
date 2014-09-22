@@ -274,7 +274,7 @@ function sendInit(init, next) {
 	if (init.auth) newAction.auth = init.auth;
 	if (init.suggestedNick) newAction.suggestedNick = init.suggestedNick;
 	action = makeAction(init, newAction);
-	
+
 	client.send(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);
 }

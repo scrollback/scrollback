@@ -50,7 +50,7 @@ function migrateRooms(cb) {
 			catch(e){
 				newRoom.params = {};
 			}
-            
+
 			if(data) {
                 data.forEach(function(account) {
                     var u;
@@ -77,8 +77,8 @@ function migrateRooms(cb) {
 					if(err) console.log(err);
 
 					db.resume();
-				});	
-			} 
+				});
+			}
 			if (newRoom.type == "room") {
 				if (newRoom.params.twitter && newRoom.params.twitter.profile && newRoom.params.twitter.profile.username) {
 					newRoom.identities.push("twitter://" + newRoom.id + ":" + newRoom.params.twitter.profile.username);
@@ -94,7 +94,7 @@ function migrateRooms(cb) {
                         newRoom.params.twitter = twitter;
                     })();
 				}
-                
+
                 newRoom.params.http = {};
                 if(typeof newRoom.params.allowSeo !== "undefined") {
                     newRoom.params.http.seo = newRoom.params.allowSeo;
@@ -102,14 +102,14 @@ function migrateRooms(cb) {
                 }else{
                     newRoom.params.http.seo = true;
                 }
-                
+
                 newRoom.guides.authorizer.readLevel = "guest";
                 newRoom.guides.authorizer.openFollow = true;
                 if(typeof newRoom.params.loginrequired !== "undefined") {
                     newRoom.guides.authorizer.writeLevel = newRoom.params.loginrequired? "follower" : "guest";
                     delete newRoom.params.loginrequired;
                 }
-                
+
 				types.rooms.put(newRoom, function(){
 					if (err) console.log(err);
 					owners[room.id] = room.owner;
@@ -146,7 +146,7 @@ function migrateMembers(cb){
 	});
 	stream.on("end", function(){
 		cb();
-	});	
+	});
 }
 
 (function(){
@@ -161,5 +161,5 @@ function migrateMembers(cb){
 	});
 })();
 function generatePick(id) {
-	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=monsterid';
+	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=retro';
 }
