@@ -18,7 +18,7 @@ function closeConnection(){
 }
 
 function hashIt(name) {
-	function hash(s) {		
+	function hash(s) {
 		var h=7, i, l;
 		for (i=0, l=s.length; i<l; i++) {
 			h = (h*31+s.charCodeAt(i)*795028841)%(1e9+9);
@@ -37,7 +37,7 @@ function generateThreaderId(id){
 			break;
 		}
 	}
-	
+
 	return h;
 }
 
@@ -61,7 +61,7 @@ function migrateTexts(limit, cb) {
 			}else{
 				text.labels = {};
 			}
-			
+
 			if(l.length) {
 				l.forEach(function(i) {
 					var t = {}, title, index;
@@ -76,7 +76,7 @@ function migrateTexts(limit, cb) {
 					}
 
 					if(i.length<32) {
-						i = generateThreaderId(i);	
+						i = generateThreaderId(i);
 					}
 
 					if(i.length == 32){
@@ -95,12 +95,12 @@ function migrateTexts(limit, cb) {
 		}else{
             text.labels = {};
         }
-        
+
         if(/^\/me /.test(text.text)) {
             text.text = text.text.replace(/^\/me /,"");
             text.labels.action = 1;
         }
-        
+
 		texts.put(text, function(err) {
 			recordCount++;
 			console.log(text.time+": record: "+recordCount);
@@ -133,14 +133,14 @@ function migrateTexts(limit, cb) {
 }
 
 function migrationStart() {
-	
+
 	fs.readFile('./.recordCount', 'utf8', function (err,data) {
 		if(data) {
 			recordCount = parseInt(data);
 		}else{
 			recordCount = 0;
 		}
-		
+
 		fs.readFile('./.index', 'utf8', function (err,data) {
 			var i = 0;
 			if(data) {
@@ -157,7 +157,7 @@ function migrationStart() {
 			loop();
 		});
 	});
-	
+
 }
 
 
@@ -198,13 +198,13 @@ function migrateRooms(cb) {
                 console.log(err);
                 return;
 			}
-            
+
 			if(!data.length && room.type == "user") {
 				db.resume();
 				console.log("USER WITH NO A/C");
 				return;
 			}
-            
+
             room.id = validate(room.id, true);
 			var newRoom = {
 				id: room.id,
@@ -227,7 +227,7 @@ function migrateRooms(cb) {
 			catch(e){
 				newRoom.params = {};
 			}
-            
+
 			if(data) {
                 data.forEach(function(account) {
                     var u;
@@ -254,8 +254,8 @@ function migrateRooms(cb) {
 					if(err) console.log(err);
 
 					db.resume();
-				});	
-			} 
+				});
+			}
 			if (newRoom.type == "room") {
 				if (newRoom.params.twitter && newRoom.params.twitter.profile && newRoom.params.twitter.profile.username) {
 					newRoom.identities.push("twitter://" + newRoom.id + ":" + newRoom.params.twitter.profile.username);
@@ -273,7 +273,7 @@ function migrateRooms(cb) {
 				}else{
                     newRoom.params.twitter = {};
                 }
-                
+
                 newRoom.params.http = {};
                 if(typeof newRoom.params.allowSeo !== "undefined") {
                     newRoom.params.http.seo = newRoom.params.allowSeo;
@@ -281,14 +281,14 @@ function migrateRooms(cb) {
                 }else{
                     newRoom.params.http.seo = true;
                 }
-                
+
                 newRoom.guides.authorizer.readLevel = "guest";
                 newRoom.guides.authorizer.openFollow = true;
                 if(typeof newRoom.params.loginrequired !== "undefined") {
                     newRoom.guides.authorizer.writeLevel = newRoom.params.loginrequired? "registered" : "guest";
                     delete newRoom.params.loginrequired;
                 }
-                
+
                 newRoom.params.antiAbuse = {};
                 if(typeof newRoom.params.wordban !== "undefined") {
                     newRoom.params.antiAbuse.wordblock = newRoom.params.wordban;
@@ -297,9 +297,9 @@ function migrateRooms(cb) {
                     newRoom.params.antiAbuse.wordblock = false;
                 }
                 newRoom.params.antiAbuse.customWords =[];
-                
+
                 if(typeof newRoom.params.irc !== "object") newRoom.params.irc = {};
-                
+
 				types.rooms.put(newRoom, function(){
 					if (err) console.log(err);
 					owners[room.id] = room.owner;
@@ -318,7 +318,7 @@ function migrateRooms(cb) {
                             db.resume();
                         });
                     }
-					
+
 				});
 			}
 		});
@@ -346,7 +346,7 @@ function migrateMembers(cb){
 	});
 	stream.on("end", function(){
 		cb();
-	});	
+	});
 }
 
 (function(){
@@ -375,6 +375,6 @@ function migrateMembers(cb){
 })();
 
 function generatePick(id) {
-	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=monsterid';
+	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=retro';
 }
 

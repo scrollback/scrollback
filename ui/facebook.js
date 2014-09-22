@@ -1,3 +1,5 @@
+/* jshint browser:true */
+/* global $, libsb */
 $(window).on("message", function(event) {
 	var data = event.originalEvent.data;
 	var action;
