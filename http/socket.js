@@ -34,6 +34,8 @@ var sock = sockjs.createServer();
 
 sock.on('connection', function (socket) {
 	var conn = { socket: socket };
+	var ip = socket.address.address;
+	log("socket:", socket, socket.address.address);
 	socket.on('data', function(d) {
 		var e;
 		try { d = JSON.parse(d); log ("Socket received ", d); }
@@ -47,6 +49,8 @@ sock.on('connection', function (socket) {
 			if(!conn.session) conn.listeningTo = [];
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
+			conn.origin = d.origin;
+			conn.origin.client = ip;
 			if (!sConns[d.session]) {
 				sConns[d.session] = [];
 				sConns[d.session].push(conn);
@@ -55,10 +59,10 @@ sock.on('connection', function (socket) {
 					sConns[d.session].push(conn);
 				}
 			}
-		}
-		else if (conn.session) {
+		} else if (conn.session) {
 			d.session = conn.session;
 			d.resource  = conn.resource;
+			d.origin = conn.origin;
 		}
 		
 		if(d.type == 'back') {
