@@ -20,7 +20,7 @@
 
 			embed.form = sb.form || "toast";
 			embed.theme = /* sb.theme || */ "dark";
-			embed.suggestedNick = sb.suggestedNick;
+			embed.nick = sb.nick || sb.suggestedNick;
 			embed.origin = {
 				protocol: location.protocol,
 				host: location.host,
