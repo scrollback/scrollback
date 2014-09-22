@@ -49,7 +49,7 @@ function onText(action, callback) {
 	callback();//callback before processing it.
 	var room = action.room;
 	if (room.params.twitter && room.params.twitter.tags && !(/^twitter/.test(action.session))) {
-		redis.set("twitter:lastMessageTime:" + room.id, action.time);  
+		redis.set("twitter:lastMessageTime:" + room.id, action.time);
 	}
 }
 

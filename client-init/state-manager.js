@@ -3,6 +3,7 @@
 /* exported currentState */
 
 var currentState = window.currentState = {},
+	props = [ "roomName", "room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time", "roomStatus", "connectionStatus", "phonegap" ],
 	libsb; // think of a way to remove this from window.(if need)
 module.exports = function (l) {
 	libsb = l;
@@ -22,7 +23,7 @@ function loadOld(state, next) {
 	state.old = $.extend(true, {}, currentState); // copying object by value
 	state.changes = {};
 
-    ["roomName", "room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time", "roomStatus", "connectionStatus"].forEach(function (prop) {
+    props.forEach(function (prop) {
 		if (typeof state[prop] === "undefined") {
 			if (typeof state.old[prop] !== "undefined") {
 				state[prop] = state.old[prop];
@@ -38,7 +39,7 @@ function loadOld(state, next) {
 }
 
 function saveCurrentState(state, next) {
-    ["roomName", "room", "view", "theme", "embed", "minimize", "mode", "tab", "thread", "query", "text", "time", "roomStatus", "connectionStatus"].forEach(function (prop) {
+    props.forEach(function (prop) {
 		if (typeof state[prop] === "undefined") {
 			if (typeof state.old[prop] !== "undefined") {
 				currentState[prop] = state.old[prop];
