@@ -6,6 +6,7 @@ var gulp = require("gulp"),
 	browserify = require("browserify"),
 	source = require("vinyl-source-stream"),
     eventstream = require("event-stream"),
+    plumber = require("gulp-plumber"),
 	gutil = require("gulp-util"),
 	streamify = require("gulp-streamify"),
 	jshint = require("gulp-jshint"),
@@ -41,9 +42,11 @@ function bundle(files, opts) {
 			.on("error", gutil.log);
 		};
 
-	if (files instanceof Array) {
+	if (files && files instanceof Array) {
 		for (var i = 0, l = files.length; i < l; i++) {
-			streams.push(bundler(files[i]));
+            if (typeof files[i] === "string") {
+                streams.push(bundler(files[i]));
+            }
 		}
 	} else if (typeof files === "string") {
 		streams.push(bundler(files));
@@ -58,9 +61,11 @@ gulp.task("lint", function() {
 		"*/*{.js,/*.js,/*/*.js}",
 		"!*/*{.min.js,/*.min.js,/*/*.min.js}",
 		"!node_modules{,/**}", "!bower_components{,/**}"
-	])
+    ])
+    .pipe(plumber())
 	.pipe(jshint())
-	.pipe(jshint.reporter("jshint-stylish"));
+    .pipe(jshint.reporter("jshint-stylish"))
+    .on("error", gutil.log);
 });
 
 // Install and copy third-party libraries
@@ -78,6 +83,7 @@ gulp.task("libs", [ "bower" ], function() {
         bowerDir + "/velocity/jquery.velocity.min.js",
         bowerDir + "/velocity/velocity.ui.min.js"
     ])
+    .pipe(plumber())
     .pipe(gulp.dest(libDir))
     .on("error", gutil.log);
 });
@@ -88,6 +94,7 @@ gulp.task("polyfills", function() {
         bowerDir + "/flexie/dist/flexie.min.js",
         bowerDir + "/transformie/transformie.js"
     ])
+    .pipe(plumber())
     .pipe(concat("polyfills.js"))
     .pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
     .pipe(gulp.dest(libDir))
@@ -98,7 +105,8 @@ gulp.task("polyfills", function() {
 
 // Build browserify bundles
 gulp.task("bundle", [ "libs" ], function() {
-	return bundle([ "libsb.js", "client.js" ], { debug: !gutil.env.production })
+    return bundle([ "libsb.js", "client.js" ], { debug: !gutil.env.production })
+    .pipe(plumber())
 	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
 	.pipe(rename({ suffix: ".bundle.min" }))
 	.pipe(gulp.dest("public/s/scripts"))
@@ -107,7 +115,8 @@ gulp.task("bundle", [ "libs" ], function() {
 
 // Generate embed widget script
 gulp.task("embed", function() {
-	return bundle("embed/embed-parent.js", { debug: !gutil.env.production })
+    return bundle("embed/embed-parent.js", { debug: !gutil.env.production })
+    .pipe(plumber())
 	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
 	.pipe(rename("embed.min.js"))
 	.pipe(gulp.dest("public"))
@@ -121,7 +130,8 @@ gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 
 // Generate styles
 gulp.task("lace", [ "bower" ], function() {
-	return gulp.src(bowerDir + "/lace/src/scss/*.scss")
+    return gulp.src(bowerDir + "/lace/src/scss/*.scss")
+    .pipe(plumber())
 	.pipe(gulp.dest(laceDir))
 	.on("error", gutil.log);
 });
@@ -131,7 +141,8 @@ gulp.task("styles", [ "lace" ], function() {
 	.pipe(sass({
 		style: "expanded",
 		sourcemapPath: "../scss"
-	}))
+    }))
+    .pipe(plumber())
 	.on("error", function(e) { gutil.log(e.message); })
 	.pipe(gutil.env.production ? (prefix() && minify()) : gutil.noop())
 	.pipe(gulp.dest(cssDir))
@@ -143,6 +154,7 @@ gulp.task("handlebars", function() {
     var data = require("./client-config.js").phonegap;
 
     return gulp.src("public/client.hbs")
+    .pipe(plumber())
     .pipe(handlebars(data))
     .pipe(rename({
         suffix: ".phonegap",
@@ -161,6 +173,7 @@ gulp.task("manifest", function() {
         "!public/s/scripts/{*/*.map,js/*,lib/*}",
         "!public/s/styles/{*/*.map,css/*,lace/*,scss/*}"
     ])
+    .pipe(plumber())
     .pipe(manifest({
         cache: [
             "//fonts.googleapis.com/css?family=Open+Sans:300,400,600",
@@ -169,8 +182,8 @@ gulp.task("manifest", function() {
         network: [ "*" ],
         fallback: [
             "//gravatar.com/avatar/ /s/img/client/avatar-fallback.svg",
-            "/ /s/offline.html",
-            "/socket /s/socket-fallback"
+            "/socket /s/socket-fallback",
+            "/ /s/offline.html"
         ],
         preferOnline: true,
         hash: true,
@@ -189,7 +202,8 @@ gulp.task("clean", function() {
 		"public/{*.appcache,**/*.appcache}",
 		"public/{client.html,s/client.phonegap.html}",
 		libDir, cssDir, laceDir
-	], { read: false })
+    ], { read: false })
+    .pipe(plumber())
 	.pipe(rimraf())
 	.on("error", gutil.log);
 });
