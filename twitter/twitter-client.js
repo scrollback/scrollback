@@ -97,7 +97,7 @@ libsb.on("config-save", function(room, next) {
 
 libsb.on('text-menu', function(menu, next) {
 	var chatMessage = $(menu.target).find('.chat-message').text(),
-        tweetUrl = encodeURI("https://twitter.com/home/?status=" + chatMessage  + " via https://scrollback.io/" + currentState.roomName);
+        tweetUrl = "https://twitter.com/home/?status=" + encodeURIComponent(chatMessage)  + " via https://scrollback.io/" + encodeURIComponent(currentState.roomName);
 
 	menu.items.tweetmessage = {
 		text: 'Tweet this message',

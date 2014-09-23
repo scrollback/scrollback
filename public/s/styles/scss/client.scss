@@ -1407,7 +1407,7 @@ body {
             }
         }
 
-        .request-msg {
+        .conf-request-msg {
             display: table-row;
 
             img {
@@ -1433,25 +1433,31 @@ body {
             .button, .button-secondary { padding: .5em 1em; }
         }
 
-        .twitter-account {
+        .conf-twitter-account, .pref-user-avatar {
             position: relative;
-            color: $light-color;
+            display: block;
+            height: 80px;
+            width: 80px;
+            background: url(../../img/client/avatar-fallback.svg) center center no-repeat;
+            background-size: contain;
 
             img {
-                height: 80px;
-                width: 80px;
                 border-radius: $roundness;
+                height: 100%;
+                width: 100%;
             }
 
-            .change {
+            .label {
                 position: absolute;
                 left: 0;
-                right: 0;
                 bottom: 0;
-                width: 80px;
-                padding: .75em;
-                background-color: $accent-color;
+                width: 100%;
+                padding: .5em;
+                background-color: rgba(0,0,0,0.5);
+                font-weight: 700;
                 text-transform: uppercase;
+                text-align: center;
+                color: $light-color;
                 border-radius: 0 0 $roundness $roundness;
             }
         }

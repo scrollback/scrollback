@@ -20,16 +20,15 @@ Boston, MA 02111-1307 USA.
 
 var config = require('../config.js'), core,
     clientData = require('../client-config.js').client,
-	fs = require("fs"),core,
-    handlebars = require("handlebars");
-
-var seo, clientTemp, clientHbs;
+	fs = require("fs"), core,
+    handlebars = require("handlebars"),
+	seo, clientTemp, clientHbs;
 
 //var log = require('../lib/logger.js');
 
 exports.init = function(app, coreObject) {
 	core = coreObject;
-    if (!config.http.https) console.warn("Insecure connection. Specify https options in your config file.");
+    if (!config.http.https) log.w("Insecure connection. Specify https options in your config file.");
     init();
 	app.get('/t/*', function(req, res, next) {
 		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data){
