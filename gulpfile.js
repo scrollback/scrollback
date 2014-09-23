@@ -89,7 +89,7 @@ gulp.task("libs", [ "bower" ], function() {
 });
 
 // Copy and minify polyfills
-gulp.task("polyfills", function() {
+gulp.task("polyfills", [ "bower" ], function() {
 	return gulp.src([
 		bowerDir + "/flexie/dist/flexie.min.js",
 		bowerDir + "/transformie/transformie.js"
