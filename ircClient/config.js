@@ -29,7 +29,10 @@ var defaults = {
 	port: 8910,
 	debug: false,
 	webirc: {
-		
+	},
+	env: "production",
+	email: {
+		from: "scrollback@scrollback.io"
 	}
 };
 merge(defaults, changes);

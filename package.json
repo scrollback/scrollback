@@ -66,6 +66,7 @@
     "sockjs-client": "latest",
     "twit": "~1.1.12",
     "underscore": "latest",
+    "winston": "^0.7.3",
     "xml2js": "^0.4.4"
   },
   "optionalDependencies": {},
