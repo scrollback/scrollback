@@ -38,7 +38,8 @@
   "license": "AGPL",
   "main": "./index.js",
   "scripts": {
-    "start": "node index"
+    "start": "node index",
+    "test": "node_modules/.bin/mocha test/test.js"
   },
   "engines": {
     "node": ">=0.8"
