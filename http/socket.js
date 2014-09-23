@@ -239,8 +239,8 @@ exports.initCore = function(c) {
 
 function censorAction(action, filter) {
     var outAction = {}, i, j;
-
-    for (i in action) {
+	if (action.origin) delete action.origin;
+	for (i in action) {
         if(action.hasOwnProperty(i)) {
             if(i == "room" || i == "user") {
                 outAction[i] = {};
