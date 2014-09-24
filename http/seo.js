@@ -4,9 +4,9 @@ var internalSession = Object.keys(config.whitelists)[0];
 var noOfThreads = 50;
 var noOfText = 255;
 
-module.exports = function(core) { 
+module.exports = function(core) {
     return {
-        getSEOHtml: getSEOHtml 
+        getSEOHtml: getSEOHtml
     };
     /**
     callback with object {head: {string}, body: {string}}
@@ -16,41 +16,63 @@ module.exports = function(core) {
         if (!query.embed) {
             getHeadHtml(req, function(head) {
                 getBodyHtml(req, function(body) {
-                    callback({ head: head, body: body}); 
+                    callback({ head: head, body: body});
                 });
             });
         } else { callback({head: "", body: ""}); }
     }
-    
+
     function getHeadHtml(req, callback) {
         var path = req.path;
         var a = path.substring(1).split("/");
         if(a[0]) {
+            var ct = 0;
+            var thread;
+            var room;
+            function done() {
+                if (++ct == 2) {
+                    if (room) callback(genHeadHtml(room, thread));
+                    else callback("");
+                }
+            }
+            if (a[1]) {
+                core.emit("getThreads", {to: a[0], ref: a[1], session: internalSession}, function(err, data) {
+                    log.d("Results:", data);
+                    if (!err && data && data.results && data.results.length) {
+                        thread = data.results[0];
+                        done();
+                    } else done();
+
+                });
+
+            } else done();
+
             core.emit("getRooms", {ref: a[0], session: internalSession}, function(err, data) {
                 if(!err && data.results && data.results[0]) {
-                    callback(genHeadHtml(data.results[0]));
-                } else callback("");
+                    room = data.results[0];
+                    done();
+                } else done();
             });
         } else callback("");
     }
-    
+
     function getBodyHtml(req, callback) {
         var path = req.path;
         var query = req.query;
         var a = path.substring(1).split("/");
-        
+
         if (a[1]) {
-            core.emit("getTexts", {to: a[0], thread: a[1], time: query.time ? new Date(query.time).getTime() : 1, 
+            core.emit("getTexts", {to: a[0], thread: a[1], time: query.time ? new Date(query.time).getTime() : 1,
                                    after: noOfText + 1, session: internalSession}, function(err, data) {
                 var room = data.room;
                 if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
                     var r = getRoomHtml(room) + "\n" + getTextHtml(data.results, a[0], a[1]);
                     callback(r);
                 } else callback("");
-            }); 
+            });
         } else if (a[0]) {//threads.
             if (!query.time) query.time = new Date(1).toISOString();
-            core.emit("getThreads", {to: a[0], time: new Date(query.time).getTime(), 
+            core.emit("getThreads", {to: a[0], time: new Date(query.time).getTime(),
                 after: noOfThreads + 1, session: internalSession}, function (err, data) {
                 var room = data.room;
                 if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
@@ -76,41 +98,41 @@ function getTextHtml(r, roomid, threadid) {
     var a = r.map(function(text){
         var t = text.from.replace("guest-", "") + ": " + text.text;
         t = htmlEscape(t);
-        return ("<p>" + t + "</p>"); 
+        return ("<p>" + t + "</p>");
     });
-    
+
     if(a.length > noOfText) {
         a.pop();
-        a.push("<a href=\"/" + roomid +"/" +threadid + "?time=" + 
-               new Date(r[r.length - 1].time).toISOString() + 
+        a.push("<a href=\"/" + roomid +"/" +threadid + "?time=" +
+               new Date(r[r.length - 1].time).toISOString() +
                "&amp;tab=threads\">Next</a>");
     }
-    
+
     a.push("<a href=\"/" + roomid + "/" + threadid + "\">Discussion</a>");
     a.push("<a href=" + getURL(1, roomid) + ">Discussions in " + roomid + "</a>");
     return a.join("\n");
-    
+
 }
 
 function getURL(time, roomid) {
-	log("time", time, "roomId", roomid);
-	return "\"/" + roomid + "?time=" + new Date(time).toISOString() + "&amp;tab=threads\"";
+    log("time", time, "roomId", roomid);
+    return "\"/" + roomid + "?time=" + new Date(time).toISOString() + "&amp;tab=threads\"";
 }
 
 function getThreadsHtml(r, roomid) {
     var a = [];
-	for (var i = 0; i < Math.min(r.length, noOfThreads);i++ ){
-		var thread = r[i];
-		a.push("<a href='/" + roomid + "/" + 
-               thread.id + "?time=" + new Date(thread.startTime).toISOString() +  
+    for (var i = 0; i < Math.min(r.length, noOfThreads);i++ ){
+        var thread = r[i];
+        a.push("<a href='/" + roomid + "/" +
+               thread.id + "?time=" + new Date(thread.startTime).toISOString() +
                "&amp;tab=threads'>" + htmlEscape(thread.title) + "</a>");
-	}
-	if(r.length > noOfThreads) {
-		a.push("<a href=" + getURL(r[r.length - 1].startTime, roomid) + ">Next</a>");
-	}
+    }
+    if(r.length > noOfThreads) {
+        a.push("<a href=" + getURL(r[r.length - 1].startTime, roomid) + ">Next</a>");
+    }
     a.push("<a href=" + getURL(1, roomid) + ">Discussions in " + roomid + "</a>");
-	
-	return a.join("\n");
+
+    return a.join("\n");
 }
 
 function htmlEscape(str) {
@@ -122,9 +144,9 @@ function htmlEscape(str) {
             .replace(/>/g, '&gt;');
 }
 
-function genHeadHtml(room) {
+function genHeadHtml(room, thread) {
     var r = [];
-    var roomIcon = "https://" + config.http.host + "/s/img/scrollback.png"; 
+    var roomIcon = "https://" + config.http.host + "/s/img/scrollback.png";
     r.push("<meta name=\"description\" content=\"" + htmlEscape(room.description) + "\">");
     r.push("<meta name=\"twitter:card\" content=\"summary\" />");
     r.push("<meta name=\"twitter:title\" content=\"" + htmlEscape(room.id) + " on scrollback\">");
@@ -135,8 +157,8 @@ function genHeadHtml(room) {
     r.push("<meta property=\"og:title\" content=\"" + htmlEscape(room.id) + " on scrollback\">");
     r.push("<meta property=\"og:description\" content=\"" + htmlEscape(room.description) + "\">");
     r.push("<meta property=\"og:image\" content=\"" + roomIcon + "\">"); //just a placeholder for now
-    r.push("<title>" + room.id + " on scrollback</title>");
-    r.push("<link rel=\"image_src\" href=\"" + roomIcon + "\">"); 
+    r.push("<title>" + ((thread && thread.title) ? htmlEscape(thread.title) : (room.id  + " on Scrollback")) + "</title>");
+    r.push("<link rel=\"image_src\" href=\"" + roomIcon + "\">");
     return r.join("\n");
 }
 
