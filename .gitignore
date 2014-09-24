@@ -41,3 +41,5 @@ public/t/coverage-*.html
 /ircClient/myConfig.js
 /test/config.js
 /xunit-mocha.xml
+/public/s/client.phonegap.html
+/patchup-room
