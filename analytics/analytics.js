@@ -113,6 +113,8 @@ function saveTextActions(action) {
 	var values = pav.values;
 	params.push('text');
 	values.push(action.text);
+	params.push('gateway');
+	values.push(action.session.split(":")[0]);
 	params.push('to');
 	values.push(action.to);
 	if (action.ref) {
