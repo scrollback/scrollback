@@ -28,6 +28,8 @@ var defaults = {
 	botNick: "scrollback",//default bot nick,
 	port: 8910,
 	debug: false,
+	webirc: {
+	},
 	env: "production",
 	email: {
 		from: "scrollback@scrollback.io"
