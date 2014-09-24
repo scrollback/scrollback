@@ -1,3 +1,12 @@
+# This bash script is used to automate the analytics queries. 
+
+# The query is run and the output is written to csv files at the specified location (or the current directory by default).
+# These csv files can be used to create pivot tables for data visualization.
+
+
+# Usage: ./analyticsQueries.sh [/path/to/output/folder]
+
+
 #!/bin/bash
 
 # Timeline Queries
@@ -32,8 +41,6 @@ query[7]="select text_actions.to, count(*) as c from text_actions where gateway=
 desc[8]="Top N rooms with max visitors in a time interval T"
 query[8]="select occupant_actions.to, count(distinct session) as c from occupant_actions where time > timestamp '2014-09-05 20:00' and time < timestamp '2014-09-05 21:00' group by occupant_actions.to order by c desc limit 10;"
 
-
-# psql -U scrollback -h 23.246.213.162 -d logs -t -A -F "," -c "<QUERY>" > abc.csv
 
 echo "Please enter the Postgresql password to continue: "
 read pgpwd
