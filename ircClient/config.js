@@ -27,7 +27,13 @@ function merge(d, c) {
 var defaults = {
 	botNick: "scrollback",//default bot nick,
 	port: 8910,
-	debug: false
+	debug: false,
+	webirc: {
+	},
+	env: "production",
+	email: {
+		from: "scrollback@scrollback.io"
+	}
 };
 merge(defaults, changes);
 module.exports = defaults;

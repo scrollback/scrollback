@@ -2,9 +2,7 @@
 /*global $*/
 
 $(function() {
-	var outer,
-		inner,
-		swy;
+	var outer, inner, swy;
 
 	outer = $("<div></div>").css({
 			width: "100px",
@@ -18,8 +16,7 @@ $(function() {
 
 	outer.remove();
 
-	$(".hide-scroll").css({
-		"overflow-y" : "scroll",
-		"margin-right" : "-=" + swy
-	});
+	$("<style>").attr("type", "text/css")
+				.html(".hide-scroll { overflow-y: scroll; margin-right: -" + swy + "px; }")
+				.appendTo("head");
 });

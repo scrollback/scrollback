@@ -11,6 +11,8 @@ $screenxx: "only screen and (min-width: 27em)";
 $screenxxx: "only screen and (min-width: 50em)";
 $screenxxxx: "only screen and (min-width: 70em)";
 
+$palette: #2ba #e48 #3c6 #76f #e63 #5ad #95b #ed0 #e92 #ae3;
+
 $width-room: 15em;
 $width-roomx: 15em;
 $width-roomxx: 15em;
@@ -23,9 +25,12 @@ $width-metaxx: 25em;
 $width-metaxxx: 26em;
 $width-metaxxxx: 30%;
 
+$width-home: 70em;
+
 $bar-height: 3.5em;
 
 $settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification;
-$modes: normal, search, conf, pref, home, noroom, offline, profile;
+$modes: normal, search, conf, pref, home, noroom, profile;
 $roles: guest, user, follower, owner;
 $embeds: toast, canvas;
+$medialist: normal, phonegap;

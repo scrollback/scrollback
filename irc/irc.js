@@ -67,7 +67,7 @@ module.exports = function (coreObj) {
 				firstMessage[text.to][text.from] = true;
 				if (onlineUsers[text.to] && onlineUsers[text.to][text.from]) {
 					delete onlineUsers[text.to][text.from];
-				} else ircUtils.connectUser(text.to, text.from);
+				} else ircUtils.connectUser(text.to, text.from, text.origin);
 			}
 			var t = text.text;
 			if (text.labels) {

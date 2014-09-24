@@ -21,12 +21,16 @@ var plugins = [ "analytics", "validator","browserid-auth", "facebook",
 			   "threader", "authorizer", "redis-storage",  "leveldb-storage",
 			   "admin-notifier", "entityloader", "irc", "twitter",  "censor", "email", "superuser", "search", "sitemap"]
 require('newrelic');
-
+var log = require('./lib/logger.js');
 var core = new (require("./lib/emitter.js"))(), config = require("./config.js");
+log.setEmailConfig(config.email);
 
 process.title = config.core.name;
+process.env.NODE_ENV = config.env;
+log.w("This is \"" +  process.env.NODE_ENV + "\" server");
 
 function start(name) {
+	log.i("starting ", name);
 	var plugin = require("./"+name+"/"+name+".js");
 	plugin(core);
 }

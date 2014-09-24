@@ -1,39 +1,59 @@
-/* global libsb, currentState, $ */
+/* jshint browser: true */
+/* global $, libsb */
 
-function upDateNotifier(roomName, type){
-	// updates the room notifer
-	var className = '#room-item-' + roomName;
-	if(type === 'remove'){
-		$(className).find('.notif-counter').text("");
-		$(className).find('.notif-counter').removeClass('mentioned unread');
+function updateNotifier(roomName, type){
+	var $roomItem = $("[data-room='" + roomName + "']"),
+		$badge = $roomItem.find(".js-room-notifications-counter"),
+		counter;
+
+	if (!($roomItem.length && $badge.length)) {
 		return;
 	}
-	var counter = $(className).find('.notif-counter').text();
-	
-	if(counter === "") counter = 0;
-	else counter = parseInt(counter);
+
+	if (type === "remove"){
+		$badge.removeClass("mentioned").text("");
+
+		return;
+	}
+
+	// There might be multiple badges in the DOM
+	// We need to find the counter from the correct badge
+
+	for (var i = 0, l = $badge.length; i < l; i++) {
+		counter = parseInt($badge.eq(i).text(), 10) || 0;
+
+		if (counter) {
+			break;
+		}
+	}
+
 	counter++;
-	$(className).find('.notif-counter').removeClass('hidden').addClass(type).text(counter);
+
+	if (counter) {
+		$badge.text(counter);
+	}
+
+	if (type) {
+		$badge.addClass(type);
+	}
 }
 
-libsb.on('text-dn', function(text, next){
-	var flag = 0;
-	if(text.to !== currentState.roomName){
-		text.mentions.forEach(function(user){
-			if(user === libsb.user.id){
-				upDateNotifier(text.to, 'mentioned');
-				flag = 1;
-			}
-		});
-		
-		if(flag === 0) upDateNotifier(text.to, 'unread');
+libsb.on("text-dn", function(text, next) {
+	if (text.to !== window.currentState.roomName) {
+		if (libsb.user && text.mentions && (text.mentions.indexOf(libsb.user.id) > -1)) {
+			updateNotifier(text.to, "mentioned");
+		} else {
+			updateNotifier(text.to);
+		}
 	}
+
 	next();
 }, 1000);
 
-libsb.on('navigate', function(state, next){
-	if(state.roomName !== state.old.roomName){
-		upDateNotifier(state.roomName, 'remove');
+libsb.on("navigate", function(state, next) {
+	if (state.roomName !== state.old.roomName){
+		updateNotifier(state.roomName, "remove");
 	}
+
 	next();
 }, 500);

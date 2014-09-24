@@ -51,7 +51,7 @@ var defaults = {
 		name: "scrollback",
 		newrelic: { name: 'Scrollback Local' }
 	},
-
+	env: "production",
 	mysql: {
 		host     : 'localhost',
 		user     : 'scrollback',
@@ -93,6 +93,8 @@ var defaults = {
 	twitter: {
 		//consumerKey: ".."
 		//consumerSecret: ".."
+		timeout: 1000 * 60,
+		silentTimeout: 1000 * 60 * 10
 	},
 	irc: {
 		port: 8910,
@@ -108,7 +110,6 @@ var defaults = {
 		user: 9,
 		room: 9,
 		occupants: 10,
-		threader: 11,
 		sitemap: 12,
 		search: 14
 	},

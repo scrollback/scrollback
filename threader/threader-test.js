@@ -5,7 +5,7 @@ var threader = require("./threader.js");
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
 var names = gen.names;
-var msg = {id:guid(), text: "values : " + Math.random(), from : "guest-" + names(6), to: "scrollback", type: 'text', time: new Date().getTime()};
+var msg = {id:guid(), text: "values : " + Math.random(), from : "guest-" + names(6), to: "scrollback", type: 'text', time: new Date().getTime(), labels: {}};
 
 describe('threader', function() {
 	before( function(done) {
@@ -24,7 +24,17 @@ describe('threader', function() {
 			done();
 		});
 	});
-
+	
+	it('should get a thread with lables', function(done) {
+		core.emit("text", msg, function(err, msg) {
+			console.log("message= ", msg);
+			var m = (msg.labels && msg.labels.normal && msg.labels.nonsense && msg.labels.spam) ? true : false;
+			assert.equal(m, true, "Unable to get a labels");
+			done();
+		});
+	});
+	
+		
 	it('should not take more then 1 sec', function(done) {
 		this.timeout(1100);
 		delete msg.threads;

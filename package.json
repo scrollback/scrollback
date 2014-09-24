@@ -38,7 +38,8 @@
   "license": "AGPL",
   "main": "./index.js",
   "scripts": {
-    "start": "node index"
+    "start": "node index",
+    "test": "node_modules/.bin/mocha test/test.js"
   },
   "engines": {
     "node": ">=0.8"
@@ -66,12 +67,12 @@
     "sockjs-client": "latest",
     "twit": "~1.1.12",
     "underscore": "latest",
+    "winston": "^0.7.3",
     "xml2js": "^0.4.4"
   },
   "optionalDependencies": {},
   "devDependencies": {
     "blanket": "^1.1.6",
-    "selenium-webdriver": "^2.42.1",
     "bower": "latest",
     "browserify": "latest",
     "event-stream": "latest",
@@ -80,8 +81,9 @@
     "gulp-browserify": "latest",
     "gulp-concat": "latest",
     "gulp-jshint": "latest",
-    "gulp-manifest": "latest",
+    "gulp-manifest": "git://github.com/satya164/gulp-manifest.git#856b8ceeb6",
     "gulp-minify-css": "latest",
+    "gulp-plumber": "latest",
     "gulp-rename": "latest",
     "gulp-rimraf": "latest",
     "gulp-ruby-sass": "latest",
@@ -92,6 +94,7 @@
     "jshint-stylish": "latest",
     "main-bower-files": "latest",
     "mocha": "latest",
+    "selenium-webdriver": "^2.42.1",
     "vinyl-source-stream": "latest",
     "xunit-file": "0.0.5"
   }

@@ -9,6 +9,11 @@ var log = require('../lib/logger.js');
 var port = config.port;
 var client;
 var isConnected = false;
+process.env.NODE_ENV = config.env;
+log.w("Your current Env is " + config.env);
+if (config.email.auth) {
+	log.setEmailConfig(config.email);
+}
 core.on('data', function(data) {
 	writeObject(data);
 });
@@ -21,7 +26,7 @@ var server = net.createServer(function(c) { //'connection' listener
 	}
 	isConnected = true;
 	client = c;
-	console.log("new Connection Request");
+	log("new Connection Request");
 	writeObject({
 		type: "init",
 		state: ircClient.getCurrentState()
@@ -31,19 +36,19 @@ var server = net.createServer(function(c) { //'connection' listener
 		handleIncomingData(data);
 	});
 	c.on('end', function() {
-		console.log("End Event");
+		log("End Event");
 		ircClient.setConnected(false);
 		isConnected = false;
 	});
 	c.on('error', function(err) {
 		//TODO handle error conditions properily
-		console.log("error event", err);
+		log.e("Error event ", err);
 		ircClient.setConnected(false);
 		isConnected = false;
 	});
 });
 server.listen(port, function() { //'listening' listener
-  console.log('server bound');
+	log('server bound');
 });
 
 
@@ -114,6 +119,7 @@ function writeObject(obj) {//move this inside objectWriter
 	var r = v.length + " ";
 	r += v;
 	log("sending :", r.substring(0, 50), "length", r.length);
+	log.d("Sending :", r);
 	client.write(r);
 }
 

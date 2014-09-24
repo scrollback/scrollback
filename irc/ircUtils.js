@@ -4,7 +4,7 @@ var log = require("../lib/logger.js");
 
 module.exports = function(clientEmitter, client, callbacks) {
 
-	function connectUser(roomId, user) {
+	function connectUser(roomId, user, origin) {
 		var uid = guid();
 		console.log("connecting user:", user, uid);
 		clientEmitter.emit('write', {
@@ -12,7 +12,12 @@ module.exports = function(clientEmitter, client, callbacks) {
 			type: "connectUser",
 			roomId: roomId,
 			nick: user,
-			options: {identId: user + "@scrollback.io"}
+			options: {
+				identId: user + "@scrollback.io", 
+				userIp: origin.client, 
+				userHostName: origin.client,
+				userName: user
+			}
 		});
 	}
 
