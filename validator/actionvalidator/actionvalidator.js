@@ -15,27 +15,60 @@ module.exports = function (core) {
 			}
 		};
 	*/
+    validator.registerType('identities', function(is) {
+        var r = is instanceof Array;
+        if (r) {
+            is.forEach(function(i)  {
+                r = r && (typeof i === 'string');
+            });
+        }
+        return r;
+    });
     var actionValidator = {
+        ref: ['string', 'undefined'],
         id: ['undefined', 'string'],
-        type: ['string'],
+        type: ['nonEmptyString'],
         to: ['string'],
         time: ['undefined', 'number'],
         session: ['string'],
-        resource: ['undefined', 'string']
+        resource: ['undefined', 'string'],
+        origin: ['strictObject', 'undefined']
     };
  
     var initValidator = {
         suggestedNick: ['undefined', 'string'],
-        origin: ['undefined', 'object']
+        origin: ['undefined', 'strictObject']
     };
 
     var textValidator = {
-        text: ['string'],
-        labels: ['undefined', 'object'],
+        text: ['nonEmptyString'],
+        labels: ['undefined', 'strictObject'],
         mentions: ['array', 'undefined'],
         threads: ['array', 'undefined']
     };
-
+     
+    var userValidator = {
+        user: [
+            {
+                id: ['string'],
+                identities: ['identities'],
+                params: ['strictObject'],
+                guides: ['strictObject']
+            }
+        ],    
+    };
+    
+    var roomValidator = {
+        room: [
+            {
+                id: ['string'],
+                identities: ['undefined', 'identities'],
+                params: ['strictObject'],
+                guides: ['strictObject']
+            }
+        ],    
+    };
+    
     var handlers = {
         init: function (action, callback) {
             var n;
@@ -49,8 +82,8 @@ module.exports = function (core) {
                 if (n != action.suggestedNick) action.suggestedNick = n;
             }
             callback();
-        },
-        join: function (action, callback) {
+        },/*,
+        join: function (action, callback) {//move this to autharizer...
             if (/^guest-/.test(action.from)) return callback(new SbError("GUEST_CANNOT_JOIN"));
             if (!action.role) action.role = "follower";
             callback();
@@ -59,12 +92,12 @@ module.exports = function (core) {
             if (/^guest-/.test(action.from)) return callback(new SbError("GUEST_CANNOT_PART"));
             if (!action.role) action.role = "none";
             callback();
-        },
+        },*/
         text: function (action, callback) {
             var mentionMap = {};
             var result = validator.validate(action, textValidator);
             if (!result.status) {
-                log("Error: invalid init params", result); 
+                log.e("Error: invalid init params", result); 
                 return callback(new Error("INVALID_TEXT_PARAMS"));    
             }
             if (!(action.text && action.text.trim())) return callback(new SbError("TEXT_MISSING"));
@@ -114,28 +147,22 @@ module.exports = function (core) {
             callback();
         },
         user: function (action, callback) {
-            if (!action.user && !action.user.id) return callback(new SbError("INVALID_USER"));
-            action.user.id = action.user.id.toLowerCase();
-            if (!action.user.identities) return callback(new SbError("INVALID_USER"));
-            else {
-                if (!action.user.identities instanceof Array) {
-                    return callback(new SbError("INVALID_USER"));
-                } else {
-                    action.user.identities.forEach(function (identity) {
-                        if (typeof identity !== "string") return callback(new SbError("INVALID_USER"));
-                    });
-                }
+            var result = validator.validate(action, userValidator);
+            if (!result.status) {
+                log.e("Error: invalid init params", result); 
+                return callback(new Error("INVALID_USER"));    
             }
-            if (!action.user.params) return callback(new SbError("ERR_NO_PARAMS"));
-            if (!action.user.guides) return callback(new SbError("ERR_NO_GUIDES"));
+            action.user.id = action.user.id.toLowerCase();   
             if (action.role) delete action.role;
             callback();
         },
         room: function (action, callback) {
-            if (!action.room && !action.room.id) return callback(new SbError("INVALID_ROOM"));
+            var result = validator.validate(action, roomValidator);
+            if (!result.status) {
+                log.e("Error: invalid init params", result); 
+                return callback(new Error("INVALID_ROOM"));    
+            }
             action.room.id = action.room.id.toLowerCase();
-            if (!action.room.params) return callback(new SbError("ERR_NO_PARAMS"));
-            if (!action.room.guides) return callback(new SbError("ERR_NO_GUIDES"));
             if (!action.room.identities) action.room.identities = [];
             callback();
         }
@@ -146,7 +173,7 @@ module.exports = function (core) {
             var result = validator.validate(action, actionValidator);
             log("result:", result);
             if(!result.status) {
-                log("Error action validation failed", result.info);    
+                log.e("Error action validation failed", result.info);    
                 return callback(new Error("INVALID_ACTION_PARAMS"));
             }
             basicValidation(action, function (err) {
@@ -191,6 +218,7 @@ module.exports = function (core) {
         }
         return sessionValidation(action, callback);
     }, "validation");
+
 };
 
 function sessionValidation(action, callback) {
@@ -203,8 +231,6 @@ function sessionValidation(action, callback) {
 
 function basicValidation(action, callback) {
     if (!action.id) action.id = generate.uid();
-    if (!action.type) return callback(new SbError("INVALID_ACTION_TYPE"));
-
     /*
 		validation on action.from is not need because we ignore the from sent be the client.
 		from and user is loaded by the entity loader using the session property.
@@ -214,9 +240,7 @@ function basicValidation(action, callback) {
         if (action.suggestedNick) action.suggestedNick = action.suggestedNick.toLowerCase();
         action.to = "me";
     } else {
-        if (typeof action.to != "string" && action.to) {
-            return callback(new SbError("INVALID_ROOM"));
-        } else if (!validateRoom(action.to)) {
+         if (!validateRoom(action.to)) {
             return callback(new SbError("INVALID_ROOM"));
         }
     }
