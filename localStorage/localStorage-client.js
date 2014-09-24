@@ -177,6 +177,9 @@ module.exports = function (c) {
 		next();
 	}, 8); // runs after the socket
 	libsb.on('getThreads', function (query, next) {
+		if (query.hasOwnProperty('q')) { // search queries should always be served from the server.
+			return next();
+		}
 		var key = cacheOp.generateLSKey(query.to, 'threads');
 		if (!cacheOp.cache.hasOwnProperty(key)) {
 			cacheOp.loadArrayCache(key);
