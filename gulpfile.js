@@ -18,7 +18,9 @@ var gulp = require("gulp"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
 	rimraf = require("gulp-rimraf"),
+	config = require("./config.js"),
 	clientConfig = require("./client-config.js"),
+	debug = !(gutil.env.production || config.env === "production"),
 	bowerDir = "bower_components",
 	libDir = "public/s/scripts/lib",
 	laceDir = "public/s/styles/lace",
@@ -96,7 +98,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 	])
 	.pipe(plumber())
 	.pipe(concat("polyfills.js"))
-	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(uglify()) : gutil.noop())
 	.pipe(gulp.dest(libDir))
 	.pipe(rename({ suffix: ".min" }))
 	.pipe(gulp.dest(libDir))
@@ -105,9 +107,9 @@ gulp.task("polyfills", [ "bower" ], function() {
 
 // Build browserify bundles
 gulp.task("bundle", [ "libs" ], function() {
-	return bundle([ "libsb.js", "client.js" ], { debug: !gutil.env.production })
+	return bundle([ "libsb.js", "client.js" ], { debug: debug })
 	.pipe(plumber())
-	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(uglify()) : gutil.noop())
 	.pipe(rename({ suffix: ".bundle.min" }))
 	.pipe(gulp.dest("public/s/scripts"))
 	.on("error", gutil.log);
@@ -115,9 +117,9 @@ gulp.task("bundle", [ "libs" ], function() {
 
 // Generate embed widget script
 gulp.task("embed", function() {
-	return bundle("embed/embed-parent.js", { debug: !gutil.env.production })
+	return bundle("embed/embed-parent.js", { debug: debug })
 	.pipe(plumber())
-	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(uglify()) : gutil.noop())
 	.pipe(rename("embed.min.js"))
 	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
@@ -178,7 +180,7 @@ gulp.task("styles", [ "lace" ], function() {
 	}))
 	.pipe(plumber())
 	.on("error", function(e) { gutil.log(e.message); })
-	.pipe(gutil.env.production ? (prefix() && minify()) : gutil.noop())
+	.pipe(!debug ? (prefix() && minify()) : gutil.noop())
 	.pipe(gulp.dest(cssDir))
 	.on("error", gutil.log);
 });
