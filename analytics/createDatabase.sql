@@ -111,6 +111,7 @@ CREATE TABLE text_actions (
     "time" timestamp without time zone,
     session text,
     resource text,
+	gateway character varying(50),
     text text,
     ref text,
     mentions text[],
