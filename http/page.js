@@ -22,9 +22,8 @@ var config = require('../config.js'), core,
     clientData = require('../client-config.js').client,
 	fs = require("fs"), core,
     handlebars = require("handlebars"),
-	seo, clientTemp, clientHbs;
-
-//var log = require('../lib/logger.js');
+	seo, clientTemp, clientHbs,
+	log = require('../lib/logger.js');
 
 exports.init = function(app, coreObject) {
 	core = coreObject;
@@ -55,7 +54,6 @@ exports.init = function(app, coreObject) {
             clientData.seo = r;
             res.end(clientTemp(clientData));
         });
-
 
 	});
 };

@@ -77,7 +77,8 @@ body {
         role: $roles,
         embed: $embeds,
         mode: $modes,
-        media: $medialist
+        media: $medialist,
+        state: $states
     );
 
     $multi: ( role );
@@ -885,7 +886,7 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 999;
+    z-index: 300;
     height: $bar-height;
     width: 100%;
     background-color: darken($light-color, 5%);
@@ -1594,7 +1595,7 @@ body {
 
 .content-view-area { display: block; }
 
-.content-view-phonegap-startpage { z-index: 999; }
+.content-view-phonegap-startpage { z-index: 400; }
 
 .infinite-above, .infinite-below {
     height: 100%;
