@@ -12,7 +12,6 @@ var isConnected = false;
 process.env.NODE_ENV = config.env;
 log.w("Your current Env is " + config.env);
 if (config.email.auth) {
-	log("setting email config", config);
 	log.setEmailConfig(config.email);
 }
 core.on('data', function(data) {
@@ -120,6 +119,7 @@ function writeObject(obj) {//move this inside objectWriter
 	var r = v.length + " ";
 	r += v;
 	log("sending :", r.substring(0, 50), "length", r.length);
+	log.d("Sending :", r);
 	client.write(r);
 }
 
