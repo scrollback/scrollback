@@ -51,7 +51,7 @@ var defaults = {
 		name: "scrollback",
 		newrelic: { name: 'Scrollback Local' }
 	},
-
+	env: "production",
 	mysql: {
 		host     : 'localhost',
 		user     : 'scrollback',
@@ -110,7 +110,6 @@ var defaults = {
 		user: 9,
 		room: 9,
 		occupants: 10,
-		threader: 11,
 		search: 14
 	},
 	su: {
