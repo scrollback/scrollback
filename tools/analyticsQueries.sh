@@ -69,5 +69,3 @@ do
 done
 echo "Completed running queries ... "
 echo
-
-# exec $command
