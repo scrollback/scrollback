@@ -58,7 +58,7 @@ for i in "${query[@]}"
 do 
 	(( cnt++ ))
 	echo
-	echo "Running Query: "${desc[$cnt-1]}"-->"" Writing query output to: ""$cnt"".csv"
+	echo "Running Query: "${desc[$cnt]}"-->"" Writing query output to: ""$cnt"".csv"
 	echo "----------------------------------------------------------------------------------------------------"
 	echo
 	querystr=PGPASSWORD=$pgpwd" ""psql -U scrollback -h 23.246.213.162 -d logs -t -A -F "" \",\" "" -c ""\""$i"\""" > "$path"/"$cnt".csv"
