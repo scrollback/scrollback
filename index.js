@@ -19,16 +19,20 @@ Boston, MA 02111-1307 USA.
 */
 
 require('newrelic');
-
+var log = require('./lib/logger.js');
 var core = new (require("./lib/emitter.js"))(), config = require("./config.js");
+log.setEmailConfig(config.email);
 
 process.nextTick(function(){
 	// The ident server binds to port 113 after a while.
 	// if(config.core.uid) process.setuid(config.core.uid);
 });
 process.title = config.core.name;
+process.env.NODE_ENV = config.env;
+log.w("This is \"" +  process.env.NODE_ENV + "\" server");
 
 function start(name) {
+	log.i("starting ", name);
 	var plugin = require("./"+name+"/"+name+".js");
 	plugin(core);
 }

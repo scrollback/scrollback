@@ -137,7 +137,7 @@ module.exports = function (libsb) {
 				embed = {};
 			}
 
-			suggestedNick = embed.suggestedNick;
+			suggestedNick = embed.nick;
 			classesOnLoad(embed);
 
 			if (embed.minimize) {

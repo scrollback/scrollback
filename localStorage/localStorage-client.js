@@ -247,9 +247,9 @@ module.exports = function (c) {
 	}, 8); // runs after socket 
 
 	libsb.on('getRooms', function (query, next) {
-
 		// only getRooms with ref are cached as of now.
-		 if (query.cachedRoom === false && query.hasOwnProperty("hasMember")) {
+		if (query.cachedRoom === false) return next();
+		 if (query.hasOwnProperty("hasMember")) {
              if (libsb.isInited !== true) {
                  libsb.on('init-dn', function (init, n) {
                      setTimeout(function () {

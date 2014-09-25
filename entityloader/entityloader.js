@@ -38,24 +38,24 @@ var handlers = {
 	text: function(action, callback) {
 		var text = action.text;
 		var mentions = [], users;
-		
+
 		action.mentions = action.mentions || [];
-		
+
 		core.emit('getUsers', {session: internalSession, memberOf: action.to}, function(err, members){
 			core.emit('getUsers', {session: internalSession, occupantOf: action.to}, function(err, occupants){
 				members = members.results;
 				occupants = occupants.results;
 				users = members.concat(occupants);
-				
+
 				users = users.map(function(u){
 					if(/guest-/.test(u.id)) u.id = u.id.replace('guest-', '');
 					return u.id;
 				});
-				
+
 				users = _.uniq(users, function(item){
 					return item;
 				}); // unique memeber + occupant ids
-				
+
 				mentions = text.split(" ").map(function(word){
 					if (((/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(word) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(word)) && _.contains(users, word.replace(/[@:]/, ''))){
 						return word.replace(/[@:]/, '');
@@ -123,7 +123,7 @@ module.exports = function(c) {
 function userHandler(action, callback) {
 	core.emit("getUsers", {ref: "me", session: action.session}, function(err, data){
 		function done() {
-			if(action.user.identities) action.user.picture = 'https://gravatar.com/avatar/' +	crypto.createHash('md5').update(action.user.identities[0].substring(7)).digest('hex') + '/?d=monsterid';
+			if(action.user.identities) action.user.picture = 'https://gravatar.com/avatar/' +	crypto.createHash('md5').update(action.user.identities[0].substring(7)).digest('hex') + '/?d=retro';
 			else action.user.picture = 'https://gravatar.com/avatar/default';
 			action.user.description = action.user.description || "";
 			callback();
@@ -138,7 +138,7 @@ function userHandler(action, callback) {
                         return callback(new Error("ERR_USER_EXISTS"));
                     }
                 }else {
-                    if(!data || !data.results || !data.results.length) return callback(new Error("ERR_SAVING")); 
+                    if(!data || !data.results || !data.results.length) return callback(new Error("ERR_SAVING"));
                     action.old = data.results[0]; // letting the authorized take care of things.
                     return done();
                 }
@@ -149,7 +149,7 @@ function userHandler(action, callback) {
                     action.old = {};
                     done();
                 });
-					
+
 			});
 		}
 	});
@@ -201,7 +201,7 @@ function loadUser(action, callback) {
 		};
 		return callback();
 	}
-    
+
 	core.emit("getUsers", {
 	    id: uid(),
 	    ref: "me",
@@ -329,7 +329,7 @@ function generateNick(suggestedNick, callback) {
 }
 
 function generatePick(id) {
-	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=wavatar';
+	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=retro';
 }
 
 

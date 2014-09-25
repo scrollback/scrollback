@@ -34,6 +34,11 @@ var sock = sockjs.createServer();
 
 sock.on('connection', function (socket) {
 	var conn = { socket: socket };
+	var ip = socket.remoteAddress;
+	if (socket.headers && socket.headers["x-forwarded-for"]) {
+		ip = socket.headers["x-forwarded-for"];
+	}
+	log("socket:", ip);
 	socket.on('data', function(d) {
 		var e;
 		try { d = JSON.parse(d); log ("Socket received ", d); }
@@ -47,6 +52,8 @@ sock.on('connection', function (socket) {
 			if(!conn.session) conn.listeningTo = [];
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
+			conn.origin = d.origin;
+			conn.origin.client = ip;
 			if (!sConns[d.session]) {
 				sConns[d.session] = [];
 				sConns[d.session].push(conn);
@@ -55,10 +62,10 @@ sock.on('connection', function (socket) {
 					sConns[d.session].push(conn);
 				}
 			}
-		}
-		else if (conn.session) {
+		} else if (conn.session) {
 			d.session = conn.session;
 			d.resource  = conn.resource;
+			d.origin = conn.origin;
 		}
 		
 		if(d.type == 'back') {
@@ -232,8 +239,8 @@ exports.initCore = function(c) {
 
 function censorAction(action, filter) {
     var outAction = {}, i, j;
-
-    for (i in action) {
+	if (action.origin) delete action.origin;
+	for (i in action) {
         if(action.hasOwnProperty(i)) {
             if(i == "room" || i == "user") {
                 outAction[i] = {};
