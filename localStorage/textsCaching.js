@@ -37,15 +37,41 @@ module.exports = function (cacheOp) {
 			return next();
 		}
 	}, 200); // runs before the socket
-
+	
+	function applyUpdates(data, cacheName, endType) {
+		// applies edits till no more messages are left.
+		var pos;
+		data.forEach(function (msg) {
+			pos = cacheOp.cache[cacheName].find(endType, msg.time);
+			if (msg && cacheOp.cache[cacheName].d[pos] && (msg.id === cacheOp.cache[cacheName].d[pos].id)) {
+				cacheOp.cache[cacheName].d[pos] = msg;
+			}
+		});
+	}
+	
 	libsb.on('getTexts', function (query, next) {
 		var results = query.results;
+		var key = cacheOp.generateLSKey(query.to, 'texts');
+		var lsThreadKey;
+		
 		if (!query.results || !query.results.length || query.resultSource == 'localStorage') {
 			return next();
 		}
 
 		results = query.results.slice(0); // copying by value
+		
+		if (query.thread) {
+			lsThreadKey = cacheOp.generateLSKey(query.to, query.thread, 'texts');
+		}
+		
 		if (results && results.length > 0) {
+			
+			//updating messages, for updateTime queries:
+			if (query.hasOwnProperty("updateTime")) {
+				applyUpdates(results, key, 'time');
+				applyUpdates(results, lsThreadKey, 'time');
+			}
+			
 			// merging results into the Cache.
 			if (query.before) {
 				if (results.length === query.before) {
@@ -81,8 +107,7 @@ module.exports = function (cacheOp) {
 			cacheOp.cache[lskey].put('time', results);
 
 			if (query.thread) {
-				// save into thread cache as well 
-				var lsThreadKey = cacheOp.generateLSKey(query.to, query.thread, 'texts');
+				// save into thread cache as well.
 				if (!cacheOp.cache.hasOwnProperty(lsThreadKey)) {
 					cacheOp.loadArrayCache(lsThreadKey);
 				}
