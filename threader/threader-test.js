@@ -24,7 +24,7 @@ describe('threader', function() {
 			done();
 		});
 	});
-	
+
 	it('should get a thread with lables', function(done) {
 		core.emit("text", msg, function(err, msg) {
 			console.log("message= ", msg);
@@ -33,8 +33,8 @@ describe('threader', function() {
 			done();
 		});
 	});
-	
-		
+
+
 	it('should not take more then 1 sec', function(done) {
 		this.timeout(1100);
 		delete msg.threads;
