@@ -69,7 +69,7 @@ module.exports = function (cacheOp) {
 			//updating messages, for updateTime queries:
 			if (query.hasOwnProperty("updateTime")) {
 				applyUpdates(results, key, 'time');
-				applyUpdates(results, lsThreadKey, 'time');
+				if (query.thread) applyUpdates(results, lsThreadKey, 'time');
 			}
 			
 			// merging results into the Cache.
