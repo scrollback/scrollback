@@ -143,7 +143,7 @@ module.exports = function(libsb) {
 		if (window.currentState.embed && window.currentState.embed.form && window.currentState.mode !== "home") {
 			return next();
 		}
-		
+
 		if(state.source == "boot" || !state.old) {
 			if (libsb.memberOf) {
 				libsb.memberOf.forEach(function(e) {
@@ -156,7 +156,6 @@ module.exports = function(libsb) {
 				});
 			}
 			if (room) {
-				console.log("entering", room);
 				enter({ id: room });
 			}
 			resetRooms();
@@ -176,7 +175,7 @@ module.exports = function(libsb) {
 				enter(r);
 			});
 		}
-		
+
 		if (init.occupantOf) {
 			init.occupantOf.forEach(function(r) {
 				enter(r);

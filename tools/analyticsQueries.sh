@@ -1,4 +1,4 @@
-# This bash script is used to automate the analytics queries. 
+# This bash script is used to automate the analytics queries.
 
 # The query is run and the output is written to csv files at the specified location (or the current directory by default).
 # These csv files can be used to create pivot tables for data visualization.
@@ -14,10 +14,10 @@
 desc[0]="No of all texts sent, every day of the previous month ordered by gateway:"
 query[0]="select date_trunc('day', time) as day, temp_msgs.gateway as gateway, count(*) from (select time, gateway from text_actions where time > now() - interval '1 month') as temp_msgs group by day, gateway order by day;"
 
-desc[1]="User creations each day of the previous month:" 
+desc[1]="User creations each day of the previous month:"
 query[1]="select date_trunc('day', time) as d, count(*) from user_room_actions where time > date_trunc('month', now()) - interval '1 month' and type = 'user' group by date_trunc('day', time) order by d;"
 
-desc[2]="Room Creations each day of the previous month:" 
+desc[2]="Room Creations each day of the previous month:"
 query[2]="select date_trunc('day', time) as d, count(*) from user_room_actions where time > date_trunc('month', now()) - interval '1 month' and type = 'room' group by date_trunc('day', time) order by d;"
 
 desc[3]="Unique total visitors each day of the previous month:"
@@ -55,7 +55,7 @@ fi
 cnt=-1
 
 for i in "${query[@]}"
-do 
+do
 	(( cnt++ ))
 	echo
 	echo "Running Query: "${desc[$cnt]}"-->"" Writing query output to: ""$cnt"".csv"
