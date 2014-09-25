@@ -85,17 +85,17 @@
 						<path d="M 5.199999,4.0000001 C 2,4.0000001 2,4.0000001 2,7.3328459 L 2,17.331384 C 2,20.664241 2,21.664 5.199999,21.664 L 10,21.664 c 4.2544,4.447679 4.247999,4.447679 8,0 l 4.8,0 c 3.2,0 3.2,-0.999759 3.2,-4.332616 L 26,7.3328459 C 26,4.0000001 26,4.0000001 22.8,4.0000001 l -17.600001,0 M 6,8 18,8 18,10 6,10 m 4,2 12,0 0,2 -12,-0.0015 M 6,16 l 12,0 0,2 -12,0"/>
 					</svg>
 				</li>
-				<li data-mode="search" class="meta-header"><h3 class="search-caption">This room</h3></li>
-				<!-- <li role="tab" data-mode="search" class="tab tab-search-global"><h3>All rooms</h3></li> -->
-				<li data-mode="conf" class="meta-header"><h3>Room settings</h3></li>
-				<li data-mode="pref" class="meta-header"><h3>Account settings</h3></li>
+				<li data-mode="search" class="meta-header"><h3 class="search-caption" data-string="This room"></h3></li>
+				<!-- <li role="tab" data-mode="search" class="tab tab-search-global"><h3 data-string="All rooms"></h3></li> -->
+				<li data-mode="conf" class="meta-header"><h3 data-string="Room settings"></h3></li>
+				<li data-mode="pref" class="meta-header"><h3 data-string="Account settings"></h3></li>
 			</ul>
 			<div data-mode="normal search" class="meta-panes">
 				<div role="tabpanel" class="pane pane-info">
 					<div class="pane-info-wrap hide-scroll">
 						<h2 class="info-title"></h2>
 						<p class="info-description"></p>
-						<a data-role="owner" class="button configure-button">Configure room</a>
+						<a data-role="owner" class="button configure-button" data-string="Configure room"></a>
 					</div>
 				</div>
 				<div role="tabpanel" class="pane pane-people">
@@ -110,7 +110,7 @@
 					<div class="pane-threads-wrap">
 						<!-- <div data-mode="search" class="thread-search-query"></div> -->
 						<div data-mode="normal" class="thread-item thread-all-conversations current" id="thread-">
-							<h4 class="thread-title">All conversations</h4>
+							<h4 class="thread-title" data-string="All conversations"></h4>
 							<p class="thread-snippet"></p>
 						</div>
 						<div class="thread-item-container hide-scroll">
@@ -158,13 +158,13 @@
 					</a>
 					<div data-mode="conf pref search" class="action-buttons">
 						<a data-mode="search" class="button search-back"></a>
-						<a data-mode="conf pref" class="button conf-save">Done</a>
-						<a data-mode="conf pref" class="button secondary conf-cancel">Cancel</a>
+						<a data-mode="conf pref" class="button conf-save" data-string="Done"></a>
+						<a data-mode="conf pref" class="button secondary conf-cancel" data-string="Cancel"></a>
 					</div>
 				</div>
 				<div data-mode="normal search" class="right-area">
 
-					<a data-mode="normal" data-tooltip="Search" class="search-button" role="button">
+					<a data-mode="normal" data-string="data-tooltip::Search" class="search-button" role="button">
 						<svg class="search-icon" width="28" height="28" viewBox="0 0 28 28">
 							<use xlink:href="/s/img/client/icons/search.svg#icon"></use>
 						</svg>
@@ -184,7 +184,7 @@
 					<div class="user-area js-has-user-menu js-has-auth-menu">
 						<div data-embed="none" class="user-detail cta-area">
 							<div class="sb-user"></div>
-							<div data-role="guest" class="sign-in cta-action">Sign in</div>
+							<div data-role="guest" class="sign-in cta-action" data-string="Sign in"></div>
 						</div>
 						<div class="user-avatar">
 							<img alt="" class="sb-avatar" >
@@ -224,7 +224,7 @@
 
 		<section class="search-bar">
 			<form>
-				<input class="search-entry" type="search" placeholder="Type to search...">
+				<input class="search-entry" type="search" data-string="placeholder::Type to search...">
 			</form>
 		</section>
 
@@ -249,7 +249,7 @@
 					<div class="user-area js-has-user-menu js-has-auth-menu">
 						<div data-embed="none" class="user-detail cta-area">
 							<div class="sb-user"></div>
-							<div data-role="guest" class="sign-in cta-action">Sign in</div>
+							<div data-role="guest" class="sign-in cta-action" data-string="Sign in"></div>
 						</div>
 						<div class="user-avatar">
 							<img alt="" class="sb-avatar" >
@@ -260,7 +260,7 @@
 			<div class="home-area-container content-area-full">
 				<div class="home-area-cover">
 					<form id="home-go-to-room-form" class="home-area-cover-content">
-						<input id="home-go-to-room-entry" type="text" placeholder="Enter a room name" autofocus><input id="home-go-to-room-button" type="submit" value="Go to room">
+						<input id="home-go-to-room-entry" type="text" data-string="placeholder::Enter a room name" autofocus><input id="home-go-to-room-button" type="submit" value="Go to room">
 					</form>
 				</div>
 				<div class="card-container-wrap hide-scroll">
@@ -276,8 +276,8 @@
 									<div class="card-content-summary"></div>
 								</div>
 								<div class="card-segment card-actions">
-									<div class="card-actions-view">View room</div>
-	<!--									<div class="card-actions-online"><span class="card-actions-online-number">0</span> people talking</div>-->
+									<div class="card-actions-view" data-string="View room"></div>
+<!--									<div class="card-actions-online"><span class="card-actions-online-number">0</span> people talking</div>-->
 								</div>
 							</div>
 						</div>
@@ -286,9 +286,9 @@
 			</div>
 			<div data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full">
 				<div class="content-view-area">
-					<h1>Sign in to get started.</h1>
+					<h1 data-string="Sign in to get started"></h1>
 					<p>
-						<a class="button js-has-auth-menu">Sign in</a>
+						<a class="button js-has-auth-menu" data-string="Sign in"></a>
 					</p>
 				</div>
 			</div>
@@ -296,16 +296,16 @@
 
 		<section data-mode="noroom profile" class="content-view-wrapper content-area-right">
 			<div data-mode="noroom" class="content-view-area">
-				<h1>This room does not exist yet :-(</h1>
-				<p data-role="guest">You need to sign in first to create a room</p>
+				<h1 data-string="This room doesn't exist yet :-("></h1>
+				<p data-role="guest" data-string="You need to sign in first to create a room"></p>
 				<p>
-					<a data-role="user" class="button" id="noroom-view-create">Create room</a>
-					<a data-role="guest" class="button js-has-auth-menu"  id="noroom-view-login">Sign in</a>
+					<a data-role="user" class="button" id="noroom-view-create" data-string="Create room"></a>
+					<a data-role="guest" class="button js-has-auth-menu" id="noroom-view-login" data-string="Sign in"></a>
 				</p>
 			</div>
 			<div data-mode="profile" class="content-view-area">
-				<h1>Who is <span id="profile-view-name"></span>?</h1>
-				<p>Profiles are coming soon!</p>
+				<h1><span data-string="Who is"></span>&nbsp;<span id="profile-view-name"></span>?</h1>
+				<p data-string="Profiles are coming soon!"></p>
 			</div>
 		</section>
 
