@@ -29,7 +29,8 @@ var gulp = require("gulp"),
 		"*/*-client.js",
 		"lib/*.js", "ui/*.js",
 		"public/client.js", "public/libsb.js", "client-init/*.js",
-		"client-entityloader/*.js", "localStorage/*.js", "socket/*.js", "interface/*.js"
+		"client-entityloader/*.js", "localStorage/*.js", "socket/*.js", "interface/*.js",
+		"embed/**/*.js"
 	],
 	cssFiles = [ "public/s/styles/scss/*.scss" ];
 
@@ -131,7 +132,7 @@ gulp.task("bundle", [ "libs" ], function() {
 });
 
 // Generate embed widget script
-gulp.task("embed", function() {
+gulp.task("embed-legacy", function() {
 	return bundle("embed/embed-parent.js", { debug: debug })
 	.pipe(plumber())
 	.pipe(!debug ? streamify(uglify()) : gutil.noop())
@@ -141,6 +142,17 @@ gulp.task("embed", function() {
 	.pipe(gulp.dest("public"))
 	.on("error", gutil.log);
 });
+
+gulp.task("embed-apis", function() {
+	return bundle("embed/index.js", { debug: debug })
+	.pipe(plumber())
+	.pipe(!debug ? streamify(uglify()) : gutil.noop())
+	.pipe(rename("sb.js"))
+	.pipe(gulp.dest("public"))
+	.on("error", gutil.log);
+});
+
+gulp.task("embed", [ "embed-legacy", "embed-apis" ]);
 
 // Generate scripts
 gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
