@@ -1,6 +1,6 @@
 var data = {
 	"Account settings": "Account settings",
-	"All conversations": "All conversations",
+	"All discussions": "All discussions",
 	"All rooms": "All rooms",
 	"Cancel": "Cancel",
 	"Choose a username": "Choose a username",

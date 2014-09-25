@@ -34,7 +34,7 @@ var threadEl = require("./thread.js"),
 				if(from ==0) from = 1;
 				to = index+after;
 			}
-			
+
 			function processResults(from, to){
 				for(i=from;i<=to;i++) {
 					if(typeof searchResult[i] !== "undefined") res.push(searchResult[i]);
@@ -66,7 +66,7 @@ var threadEl = require("./thread.js"),
 		var query  = { before: before, after: after};
 
 		if(!index && after) return callback([false]);
-		
+
 		query.to =  room;
 		query.time = index || null;
 		libsb.getThreads(query, function(err, t) {
@@ -74,7 +74,7 @@ var threadEl = require("./thread.js"),
 			if(err) throw err; // TODO: handle the error properly.
 
 			if(!index && threads.length === 0)	return callback([false]);
-			
+
 			if(before) {
 				if(threads.length < before) {
 					threads.unshift(false);
@@ -119,7 +119,7 @@ var threadEl = require("./thread.js"),
 			$(".pane-threads").removeClass("current");
 			return next();
 		}
-	
+
         if(reset) {
 			if(currentState.mode == "search") {
 				searchResult.splice(0, searchResult.length);
@@ -188,7 +188,7 @@ var threadEl = require("./thread.js"),
             libsb.emit('navigate', {source: 'thread-area', time: null, thread: $el.attr("id").split('-')[1] });
 		});
 
-		$(".thread-all-conversations").click(function(event){
+		$(".thread-all-discussions").click(function(event){
 			event.preventDefault();
 			libsb.emit('navigate', {source: 'thread-area', time: null, thread: ""});
 		});
@@ -201,7 +201,7 @@ var threadEl = require("./thread.js"),
 			if (state.thread) {
 				$("#thread-" + state.thread).addClass("current");
 			} else{
-				$('.thread-all-conversations').addClass('current');
+				$('.thread-all-discussions').addClass('current');
 			}
 		}
 
