@@ -1,3 +1,5 @@
+/* Never have :: in the keys. */
+
 var data = {
 	"Account settings": "Account settings",
 	"All discussions": "All discussions",
