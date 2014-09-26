@@ -13,10 +13,12 @@ require('./lib/jquery.attrchange.js');
 require('./lib/format.js');
 require('./lib/swipe-events.js');
 
-// libsb files
+// client side apps
 var libsb = require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(libsb);
 require('./socket/socket-client')(libsb);
+require('./calls-to-action/calls-to-action.js');
+
 
 // bootup related
 require('./client-init/client-init.js')(libsb);
