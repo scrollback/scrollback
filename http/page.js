@@ -19,43 +19,43 @@ Boston, MA 02111-1307 USA.
 */
 
 var config = require('../config.js'), core,
-    clientData = require('../client-config.js'),
+	clientData = require('../client-config.js'),
 	fs = require("fs"), core,
-    handlebars = require("handlebars"),
+	handlebars = require("handlebars"),
 	seo, clientTemp, clientHbs,
 	log = require('../lib/logger.js');
 
 exports.init = function(app, coreObject) {
 	core = coreObject;
-    if (!config.http.https) log.w("Insecure connection. Specify https options in your config file.");
-    init();
+	if (!config.http.https) log.w("Insecure connection. Specify https options in your config file.");
+	init();
 	app.get('/t/*', function(req, res, next) {
-		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data){
+		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data) {
 			res.end(data);
 			next();
 		});
 	});
 
-	app.get("/*", function(req, res, next){
-		if(/^\/t\//.test(req.path)) return next();
-		if(/^\/s\//.test(req.path)) {console.log("static"); return next();}
+	app.get("/*", function(req, res, next) {
+		if (/^\/t\//.test(req.path)) return next();
+		if (/^\/s\//.test(req.path)) {console.log("static"); return next();}
 
-		if(!req.secure && config.http.https) {
+		if (!req.secure && config.http.https) {
 			var queryString  = req._parsedUrl.search ? req._parsedUrl.search : "";
 			return res.redirect(307, 'https://' + config.http.host + req.path + queryString);
 		}
 
-        seo.getSEOHtml(req, function(r) {
-            clientData.seo = r;
+		seo.getSEOHtml(req, function(r) {
+			clientData.seo = r;
 
-            res.end(clientTemp(clientData));
-        });
+			res.end(clientTemp(clientData));
+		});
 
 	});
 };
 
 function init() {
-    clientHbs = fs.readFileSync(__dirname + "/../public/client.hbs", "utf8");
-    seo = require('./seo.js')(core);
-    clientTemp = handlebars.compile(clientHbs);
+	clientHbs = fs.readFileSync(__dirname + "/../public/client.hbs", "utf8");
+	seo = require('./seo.js')(core);
+	clientTemp = handlebars.compile(clientHbs);
 }
