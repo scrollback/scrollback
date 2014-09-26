@@ -1586,7 +1586,7 @@ body {
     color: fade-out($dark-color, .3);
     text-align: center;
 
-    h1 {
+    h3 {
         font-size: 1.5em;
 
         @media #{$screenxxxx} { font-size: 2.4em; }
