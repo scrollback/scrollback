@@ -36,12 +36,6 @@ exports.init = function(app, coreObject) {
 		});
 	});
 
-	app.get("/s/offline.html", function(req, res, next) {
-        clientData.seo = { head: "", body: "" };
-
-		res.end(clientTemp(clientData));
-	});
-
 	app.get("/*", function(req, res, next){
 		if(/^\/t\//.test(req.path)) return next();
 		if(/^\/s\//.test(req.path)) {console.log("static"); return next();}
