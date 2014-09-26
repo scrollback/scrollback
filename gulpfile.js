@@ -12,11 +12,13 @@ var gulp = require("gulp"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
 	sass = require("gulp-ruby-sass"),
-	prefix = require("gulp-autoprefixer"),
+	autoprefixer = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
 	rimraf = require("gulp-rimraf"),
+	config = require("./config.js"),
 	clientConfig = require("./client-config.js"),
+	debug = !(gutil.env.production || config.env === "production"),
 	bowerDir = "bower_components",
 	libDir = "public/s/scripts/lib",
 	laceDir = "public/s/styles/lace",
@@ -53,6 +55,21 @@ function bundle(files, opts) {
 	return es.merge.apply(null, streams);
 }
 
+// Add prefix in an array
+function prefix(str, arr) {
+	var prefixed = [];
+
+	if (!(arr && arr instanceof Array)) {
+		return arr;
+	}
+
+	for (var i = 0, l = arr.length; i < l; i++) {
+		prefixed.push(str + arr[i]);
+	}
+
+	return prefixed;
+}
+
 // Lint JavaScript files
 gulp.task("lint", function() {
 	return gulp.src([
@@ -73,14 +90,14 @@ gulp.task("bower", function() {
 });
 
 gulp.task("libs", [ "bower" ], function() {
-	return gulp.src([
-		bowerDir + "/jquery/dist/jquery.min.js",
-		bowerDir + "/lace/src/js/lace.js",
-		bowerDir + "/sockjs/sockjs.min.js",
-		bowerDir + "/svg4everybody/svg4everybody.min.js",
-		bowerDir + "/velocity/jquery.velocity.min.js",
-		bowerDir + "/velocity/velocity.ui.min.js"
-	])
+	return gulp.src(prefix(bowerDir + "/", [
+		"jquery/dist/jquery.min.js",
+		"lace/src/js/lace.js",
+		"sockjs/sockjs.min.js",
+		"svg4everybody/svg4everybody.min.js",
+		"velocity/jquery.velocity.min.js",
+		"velocity/velocity.ui.min.js"
+	]))
 	.pipe(plumber())
 	.pipe(gulp.dest(libDir))
 	.on("error", gutil.log);
@@ -88,13 +105,13 @@ gulp.task("libs", [ "bower" ], function() {
 
 // Copy and minify polyfills
 gulp.task("polyfills", [ "bower" ], function() {
-	return gulp.src([
-		bowerDir + "/flexie/dist/flexie.min.js",
-		bowerDir + "/transformie/transformie.js"
-	])
+	return gulp.src(prefix(bowerDir + "/", [
+		"flexie/dist/flexie.min.js",
+		"transformie/transformie.js"
+	]))
 	.pipe(plumber())
 	.pipe(concat("polyfills.js"))
-	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(uglify()) : gutil.noop())
 	.pipe(gulp.dest(libDir))
 	.pipe(rename({ suffix: ".min" }))
 	.pipe(gulp.dest(libDir))
@@ -103,9 +120,9 @@ gulp.task("polyfills", [ "bower" ], function() {
 
 // Build browserify bundles
 gulp.task("bundle", [ "libs" ], function() {
-	return bundle([ "libsb.js", "client.js" ], { debug: !gutil.env.production })
+	return bundle([ "libsb.js", "client.js" ], { debug: debug })
 	.pipe(plumber())
-	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(uglify()) : gutil.noop())
 	.pipe(rename({ suffix: ".bundle.min" }))
 	.pipe(gulp.dest("public/s/scripts"))
 	.on("error", gutil.log);
@@ -113,9 +130,9 @@ gulp.task("bundle", [ "libs" ], function() {
 
 // Generate embed widget script
 gulp.task("embed", function() {
-	return bundle("embed/embed-parent.js", { debug: !gutil.env.production })
+	return bundle("embed/embed-parent.js", { debug: debug })
 	.pipe(plumber())
-	.pipe(gutil.env.production ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(uglify()) : gutil.noop())
 	.pipe(rename("embed.min.js"))
 	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
@@ -142,7 +159,7 @@ gulp.task("styles", [ "lace" ], function() {
 	}))
 	.pipe(plumber())
 	.on("error", function(e) { gutil.log(e.message); })
-	.pipe(gutil.env.production ? (prefix() && minify()) : gutil.noop())
+	.pipe(gutil.env.production ? (autoprefixer() && minify()) : gutil.noop())
 	.pipe(gulp.dest(cssDir))
 	.on("error", gutil.log);
 });
@@ -151,17 +168,17 @@ gulp.task("styles", [ "lace" ], function() {
 gulp.task("manifest", function() {
 	var protocol = clientConfig.server.protocol,
 		host = clientConfig.server.host,
-		prefix = protocol + host;
+		domain = protocol + host;
 
-	return gulp.src([
-		"public/s/scripts/lib/jquery.min.js",
-		"public/s/scripts/client.bundle.min.js",
-		"public/s/styles/dist/client.css",
-		"public/s/img/client/**/*"
-	])
+	return gulp.src(prefix("public/s/", [
+		"lib/jquery.min.js",
+		"scripts/client.bundle.min.js",
+		"styles/dist/client.css",
+		"img/client/**/*"
+	]))
 	.pipe(manifest({
 		basePath: "public",
-		prefix: prefix,
+		prefix: domain,
 		cache: [
 			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
@@ -169,9 +186,9 @@ gulp.task("manifest", function() {
 		],
 		network: [ "*" ],
 		fallback: [
-			protocol + "//gravatar.com/avatar/ " + prefix + "/s/img/client/avatar-fallback.svg",
-			prefix + "/socket " + prefix + "/s/socket-fallback",
-			prefix + "/ " + prefix + "/client.html"
+			protocol + "//gravatar.com/avatar/ " + domain + "/s/img/client/avatar-fallback.svg",
+			domain + "/socket " + domain + "/s/socket-fallback",
+			domain + "/ " + domain + "/client.html"
 		],
 		preferOnline: true,
 		hash: true,

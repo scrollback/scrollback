@@ -43,13 +43,10 @@
 				container = document.getElementById("scrollback-container");
 			}
 			if (!container) {
-				console.log("Toast");
 				embed.form = sb.embed = "toast";
 				document.body.appendChild(iframe);
 			} else {
-				console.log("canvas");
 				container.appendChild(iframe);
-				document.body.appendChild(container);
 			}
 
 			// TODO: change "embed" to "context"
