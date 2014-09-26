@@ -37,8 +37,7 @@ client-config.js
 /xunit-mocha.xml
 /xunit.xml
 
-/public/client.html
-/public/s/client.phonegap.html
+
 /public/s/styles/lace
 /public/s/styles/dist
 /public/s/scripts/lib

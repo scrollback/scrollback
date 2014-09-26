@@ -14,7 +14,6 @@ var gulp = require("gulp"),
 	sass = require("gulp-ruby-sass"),
 	prefix = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
-	handlebars = require("gulp-compile-handlebars"),
 	manifest = require("gulp-manifest"),
 	rimraf = require("gulp-rimraf"),
 	clientConfig = require("./client-config.js"),
@@ -148,21 +147,6 @@ gulp.task("styles", [ "lace" ], function() {
 	.on("error", gutil.log);
 });
 
-// Generate client.html for phonegap
-gulp.task("handlebars", function() {
-	var data = clientConfig.phonegap;
-
-	return gulp.src("public/client.hbs")
-	.pipe(plumber())
-	.pipe(handlebars(data))
-	.pipe(rename({
-		suffix: ".phonegap",
-		extname: ".html"
-	}))
-	.pipe(gulp.dest("public/s"))
-	.on("error", gutil.log);
-});
-
 // Generate appcache manifest file
 gulp.task("manifest", function() {
 	var protocol = clientConfig.server.protocol,
@@ -187,7 +171,7 @@ gulp.task("manifest", function() {
 		fallback: [
 			protocol + "//gravatar.com/avatar/ " + prefix + "/s/img/client/avatar-fallback.svg",
 			prefix + "/socket " + prefix + "/s/socket-fallback",
-			prefix + "/ " + prefix + "/offline.html"
+			prefix + "/ " + prefix + "/client.html"
 		],
 		preferOnline: true,
 		hash: true,
@@ -218,4 +202,4 @@ gulp.task("watch", function() {
 });
 
 // Default Task
-gulp.task("default", [ "scripts", "styles", "handlebars", "manifest" ]);
+gulp.task("default", [ "scripts", "styles", "manifest" ]);

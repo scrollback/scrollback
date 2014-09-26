@@ -19,7 +19,7 @@ Boston, MA 02111-1307 USA.
 */
 
 var config = require('../config.js'), core,
-    clientData = require('../client-config.js').client,
+    clientData = require('../client-config.js'),
 	fs = require("fs"), core,
     handlebars = require("handlebars"),
 	seo, clientTemp, clientHbs,
@@ -38,6 +38,7 @@ exports.init = function(app, coreObject) {
 
 	app.get("/s/offline.html", function(req, res, next) {
         clientData.seo = { head: "", body: "" };
+
 		res.end(clientTemp(clientData));
 	});
 
@@ -52,6 +53,7 @@ exports.init = function(app, coreObject) {
 
         seo.getSEOHtml(req, function(r) {
             clientData.seo = r;
+
             res.end(clientTemp(clientData));
         });
 
