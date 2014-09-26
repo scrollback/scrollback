@@ -27,14 +27,14 @@ git reset --hard
 git checkout master || show_err "Failed to checkout master branch"
 git pull
 # Stop the server
-sudo forever stop index.js 
+sudo forever stop index.js
 # Setup
 npm install
-#bower install
-#gulp
+
+gulp
 
 # Restart IRC
-sudo forever stop ircClient/server.js 
+sudo forever stop ircClient/server.js
 sudo forever start ircClient/server.js
 mocha test/test.js -R xunit-file
 mocha test/test.js -R html-cov > "public/s/tmp/coverage-$(date +%y%m%d).html"

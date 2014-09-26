@@ -90,7 +90,8 @@ function buildUrl(state) {
 }
 
 function pushState(state) {
-	var url = buildUrl(state);
+	var url = state.phonegap ? null : buildUrl(state);
+
 	/*state.old && delete state.old;
         state.changes && delete state.changes;*/
 	if (Object.keys(state.changes).length === "") {

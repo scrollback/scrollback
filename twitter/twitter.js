@@ -52,8 +52,9 @@ module.exports = function(coreObj) {
 function onText(action, callback) {
 	callback();//callback before processing it.
 	var room = action.room;
+
 	if (room.params && room.params.twitter && room.params.twitter.tags && !(/^twitter/.test(action.session))) {
-		redis.set("twitter:lastMessageTime:" + room.id, action.time);  
+		redis.set("twitter:lastMessageTime:" + room.id, action.time);
 	}
 }
 
@@ -210,7 +211,7 @@ function fetchTweets(room) {
 					}
 					else {
 						//logTwitter("var reply= ", JSON.stringify(reply));
-						if (reply.statuses && reply.statuses[0] && !reply.statuses[0].retweeted && 
+						if (reply.statuses && reply.statuses[0] && !reply.statuses[0].retweeted &&
 							(new Date(reply.statuses[0].created_at).getTime()) > (data ? parseInt(data, 10) : 1)) {
 							redis.set("twitter:lastTweetTime:" + room.id, (new Date(reply.statuses[0].created_at).getTime()), function(err, data) {
 								logTwitter("added data to room...", err, data);

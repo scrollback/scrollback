@@ -1,4 +1,3 @@
-var send = require('../email/sendEmail.js');//TODO remove this dependency
 var htmlEncode = require('htmlencode');
 var fs = require('fs');
 var config = require('../config.js');
@@ -6,12 +5,14 @@ var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 var to = config.test.to;
 
+var Email = require('../lib/email.js');
+var emailObj = new Email(config.email.auth);
 function sendResults() {
     var r1 = fs.readFileSync('./xunit-mocha.xml', 'utf8');
     var r2 = fs.readFileSync('./xunit.xml', 'utf8');
     formatResults(r1, r2, function(email) {
         to.forEach(function(t) {
-            send('askabt@scrollback.io', t, email.subject, email.body);
+            emailObj.send('askabt@scrollback.io', t, email.subject, email.body);
         });    
     });
 }
