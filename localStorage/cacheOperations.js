@@ -13,18 +13,7 @@ var ArrayCache = require('./ArrayCache.js');
 var config = require('../client-config.js');
 var _this;
 
-function findLastTime(messages) {
-	// finds the last message time in the array of messages.
-	var len = messages.length;
-	var lastMsgTime = messages[len - 1].time;
-	for (var i=len-1; i > 0; i--) {
-		if (messages[i].type === "text") {
-			lastMsgTime = messages[i].time;
-			break;
-		}
-	}
-	return lastMsgTime;
-}
+
 
 
 function applyUpdates(data, cacheName, endType) {
@@ -89,11 +78,11 @@ module.exports = {
 	updateArrayCache: function (key, roomName, endType) {
 		var msgs = this.cache[key].d;
 		//var msgs = JSON.parse(localStorage[key]);
-		var lastTime = findLastTime(msgs);
+		var lastTime = this.findLastTime(msgs);
 		_this = this;
 		
 		if (typeof lastTime === "undefined") return;
-		libsb.emit("getTexts", {
+		libsb.emit("getTexts", { // remove this.
 			to: roomName,
 			updateTime: lastTime,
 			after: 256
@@ -232,5 +221,19 @@ module.exports = {
 			}
 		}
 		this.saveCache(key);
+	},
+	findLastTime : function (key) {
+		// finds the last message time in the array of messages.
+		var messages = this.cache[key].d;
+		var len = messages.length;
+		var lastMsgTime = messages[len - 1].time;
+		for (var i=len-1; i > 0; i--) {
+			if (messages[i].type === "text") {
+				lastMsgTime = messages[i].time;
+				break;
+			}
+		}
+		
+		return lastMsgTime;
 	}
 };

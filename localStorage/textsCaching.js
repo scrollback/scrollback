@@ -18,6 +18,12 @@ module.exports = function (cacheOp) {
 		if (!cacheOp.cache[key].d.length) {
 			return next();
 		}
+		
+		
+		if(query.hasOwnProperty("updateTime")){
+			if(query.updateTime === null) query.updateTime = cacheOp.findLastTime(key);
+			return next();
+		}
 
 		if (query.time === null && currentState.connectionStatus) {
 			// query.time is null, have to decide how LS will handle this.
