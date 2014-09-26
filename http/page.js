@@ -35,7 +35,7 @@ exports.init = function(app, coreObject) {
 		});
 	});
     
-	app.get("/s/offline.html", function(req, res, next) {
+	app.get("/offline.html", function(req, res, next) {
 		res.end(clientHTML);
 	});
 	
