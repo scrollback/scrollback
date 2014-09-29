@@ -35,7 +35,7 @@ module.exports = function (core) {
         //for now the user cannot part a room.
         // if(data.room.owner == data.user.id) data.role = "owner";
         if (data.user.role == "owner") data.role = "owner";
-        else data.role = "follower";
+
         joinpart.put(data, cb);
     }, 'storage');
     core.on('part', function (data, cb) {
@@ -50,11 +50,10 @@ module.exports = function (core) {
 
     /* Should improve this to support follow_requested*/
     core.on('admit', function (data, cb) {
-        data.role = "member";
         admitexpel.put(data, cb);
     }, 'storage');
     core.on('expel', function (data, cb) {
-        data.role = "banned";
+        data.role = data.role || "banned";
         admitexpel.put(data, cb);
     }, 'storage');
 
