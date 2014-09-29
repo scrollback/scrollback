@@ -1,5 +1,5 @@
 /* jshint browser:true */
-/* global libsb, lace, $ */
+/* global libsb, lace, $, currentState */
 
 // var timeOnline;
 
@@ -11,9 +11,9 @@ if (localStorage.hasOwnProperty('shownActions')) {
 
 var userActions = {
 	signIn: "Sign into Scrollback to pick a nickname.",
-	choosePic: "Choose a picture and set your preferences in Account Settings",
+	choosePic: "Choose a picture and set your preferences in Account Settings.",
 	enableNotifications: "Turn on Desktop notifications in your account settings to get notified when people address you.",
-	followRoom: "Follow this room to stay in the loop even when you are offline",
+	followRoom: "Follow this room to stay in the loop even when you are offline.",
 	viewDiscussions: "Did you know that you can browse archives by discussion?",
 	searchArchives: "Did you know that you can search the chat archives?"
 };
@@ -32,8 +32,11 @@ function showNotification(origin, notifcationName) {
 }
 
 libsb.on('text-up', function (text, next) {
-	if (!/^guest-/.test(libsb.user.id)) return next(); // action does not apply to non guests
-	showNotification($('.user-area'), 'signIn');
+	if (!/^guest-/.test(libsb.user.id)) {
+		showNotification($('.follow-button'), 'followRoom');
+	} else {
+		showNotification($('.user-area'), 'signIn');
+	}
 	next();
 }, 800);
 
@@ -48,20 +51,34 @@ libsb.on('user-dn', function (user, next) {
 	next();
 }, 800);
 
-function showPrefNotification(user) {
+function prefNotify(user) {
 	if (user.params.notifications.desktop === false) {
 		showNotification($('.user-area'), 'enableNotifications');
 	}
 }
 
 libsb.on('pref-save', function (user, next) {
-	console.log("GOT pref save, user is", user);
-	showPrefNotification(user);
+	prefNotify(user);
 	next();
 }, 100);
 
 $(".conf-cancel").on("click", function () {
 	if (window.currentState.mode === "pref") {
-		showPrefNotification(libsb.user);
+		prefNotify(libsb.user);
 	}
 });
+
+libsb.on('init-dn', function (init, next) {
+	if (init.user && !/^guest-/.test(init.user.id)) { // user has signed in.
+		// if user is signed in, but not a follower, show the notification.
+		libsb.emit("getUsers", {
+			memberOf: currentState.roomName,
+			ref: libsb.user.id
+		}, function (e, user) {
+			if (user.results && user.results.length === 0) {
+				showNotification($('.follow-button'), 'followRoom');
+			}
+		});
+	}
+	next();
+}, 500);
