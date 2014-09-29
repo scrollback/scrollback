@@ -1,35 +1,7 @@
 /* jshint browser:true */
-/* global libsb, lace, $, currentState */
+/* global libsb, $, currentState */
 
-// var timeOnline;
-
-var shownActions = {};
-
-if (localStorage.hasOwnProperty('shownActions')) {
-	// shownActions = JSON.parse(localStorage.shownActions);
-}
-
-var userActions = {
-	signIn: "Sign into Scrollback to pick a nickname.",
-	choosePic: "Choose a picture and set your preferences in Account Settings.",
-	enableNotifications: "Turn on Desktop notifications in your account settings to get notified when people address you.",
-	followRoom: "Follow this room to stay in the loop even when you are offline.",
-	viewDiscussions: "Did you know that you can browse archives by discussion?",
-	searchArchives: "Did you know that you can search the chat archives?"
-};
-
-function showNotification(origin, notifcationName) {
-	setTimeout(function () {
-		if (shownActions[notifcationName] !== true) {
-			lace.popover.show({
-				origin: origin,
-				body: userActions[notifcationName]
-			});
-			shownActions[notifcationName] = true;
-			localStorage.shownActions = JSON.stringify(shownActions);
-		}
-	}, 2000);
-}
+var showNotification = require('./showNotification.js');
 
 libsb.on('text-up', function (text, next) {
 	if (!/^guest-/.test(libsb.user.id)) {
@@ -82,3 +54,11 @@ libsb.on('init-dn', function (init, next) {
 	}
 	next();
 }, 500);
+
+libsb.on("getTexts", function (query, next) {
+	if (query.hasOwnProperty('before') && query.before > 0 && query.time !== null) { // user has scrolled up.
+		showNotification($('.tab-threads'), 'browseArchives');
+		showNotification($('.search-button'), 'searchArchives');
+	}
+	next();
+}, 100);
