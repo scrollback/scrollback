@@ -20,7 +20,7 @@ module.exports = function(capabilities, options) {
 			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function() {
 				setTimeout(function() {
 					console.log("set Element");
-					driver.findElement(webdriver.By.id("sb-user")).getText().then(function(t) {
+					driver.findElement(webdriver.By.css(".sb-user")).getText().then(function(t) {
 						console.log("text: ", t);
 						assert.equal(config.personaUser.username, t, "Login unsuccessful");
 						done();

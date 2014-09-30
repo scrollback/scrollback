@@ -110,14 +110,12 @@ var defaults = {
 		user: 9,
 		room: 9,
 		occupants: 10,
+		sitemap: 12,
 		search: 14
 	},
 	su: {
 
 	},
-	plugins: ["anti-flood", "validator", "authorizer", "browserid-auth", "anti-abuse",
-	"threader", "http", "irc" , "email", "redis-storage",  "leveldb-storage", "mysql-storage",
-	"admin-notifier", "custom-emitter","entityloader", "twitter"],
 	facebook: {
 	}
 };

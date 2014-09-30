@@ -1,5 +1,3 @@
-/* jshint node: true */
-
 // Load plugins and declare variables
 var gulp = require("gulp"),
 	bower = require("bower"),
@@ -157,6 +155,27 @@ gulp.task("embed", [ "embed-legacy", "embed-apis" ]);
 // Generate scripts
 gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 
+// Generate styles
+gulp.task("lace", [ "bower" ], function() {
+	return gulp.src(bowerDir + "/lace/src/scss/*.scss")
+	.pipe(plumber())
+	.pipe(gulp.dest(laceDir))
+	.on("error", gutil.log);
+});
+
+gulp.task("styles", [ "lace" ], function() {
+	return gulp.src(cssFiles)
+	.pipe(sass({
+		style: "expanded",
+		sourcemapPath: "../scss"
+	}))
+	.pipe(plumber())
+	.on("error", function(e) { gutil.log(e.message); })
+	.pipe(gutil.env.production ? (autoprefixer() && minify()) : gutil.noop())
+	.pipe(gulp.dest(cssDir))
+	.on("error", gutil.log);
+});
+
 // Generate appcache manifest file
 gulp.task("manifest", function() {
 	var protocol = clientConfig.server.protocol,
@@ -181,7 +200,7 @@ gulp.task("manifest", function() {
 		fallback: [
 			protocol + "//gravatar.com/avatar/ " + domain + "/s/img/client/avatar-fallback.svg",
 			domain + "/socket " + domain + "/s/socket-fallback",
-			domain + "/ " + domain + "/offline.html"
+			domain + "/ " + domain + "/client.html"
 		],
 		preferOnline: true,
 		hash: true,
@@ -191,33 +210,14 @@ gulp.task("manifest", function() {
 	.on("error", gutil.log);
 });
 
-// Generate styles
-gulp.task("lace", [ "bower" ], function() {
-	return gulp.src(bowerDir + "/lace/src/scss/*.scss")
-	.pipe(plumber())
-	.pipe(gulp.dest(laceDir))
-	.on("error", gutil.log);
-});
-
-gulp.task("styles", [ "lace" ], function() {
-	return gulp.src(cssFiles)
-	.pipe(sass({
-		style: "expanded",
-		sourcemapPath: "../scss"
-	}))
-	.pipe(plumber())
-	.on("error", function(e) { gutil.log(e.message); })
-	.pipe(!debug ? (autoprefixer() && minify()) : gutil.noop())
-	.pipe(gulp.dest(cssDir))
-	.on("error", gutil.log);
-});
-
+// Clean up generated files
 gulp.task("clean", function() {
 	return gulp.src([
 		"public/{*.map,**/*.map}",
 		"public/{*.min.js,**/*.min.js}",
 		"public/{*.bundle.js,**/*.bundle.js}",
 		"public/{*.appcache,**/*.appcache}",
+		"public/{client.html,s/client.phonegap.html}",
 		libDir, cssDir, laceDir
 	], { read: false })
 	.pipe(plumber())

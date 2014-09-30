@@ -146,11 +146,10 @@ function indexTexts() {
 }
 
 module.exports = function (core) {
-    if(!client) {
-        init();
-    }
     if (config.search) {
-        
+        if(!client) {
+            init();
+        }
         /*Index text*/
         core.on('text', function (message, callback) {
             if (message.type === "text") {
@@ -343,15 +342,20 @@ function searchThreads(data, callback){
  
 function init() {
     log("Connecting to Elasticsearch server .... ");
-    var searchServer = config.search.server + ":" + config.search.port;
-    client = new es.Client({
-        host: searchServer
-    });
-    
-    searchDB.smembers("updateThread", function(err, threads) {
-        if(threads) {
-            updateThreads = updateThreads.concat(threads);
-            messageCount = updateThreads.length;
-        }
-    });
+    if (config.search.server && config.search.port) {
+        var searchServer = config.search.server + ":" + config.search.port;
+        client = new es.Client({
+            host: searchServer
+        });
+
+        searchDB.smembers("updateThread", function(err, threads) {
+            if(threads) {
+                updateThreads = updateThreads.concat(threads);
+                messageCount = updateThreads.length;
+            }
+        });
+    } else {
+        log("search server configaration are not present.");
+    }
+
 }

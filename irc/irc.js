@@ -20,11 +20,13 @@ module.exports = function (coreObj) {
 	init();
 	require('./roomEvent.js')(core, client, ircUtils, firstMessage);
 	core.on("http/init", function (payload, callback) {
-		payload.irc = {
-			get: function (req, res, next) {
-				ircUtils.getRequest(req, res, next);
+		payload.push({
+			get: {
+				"/r/irc/*": function (req, res, next) {
+					ircUtils.getRequest(req, res, next);
+				}
 			}
-		};
+		});
 		callback(null, payload);
 	}, "setters");
 

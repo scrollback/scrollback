@@ -224,22 +224,14 @@ exports.initServer = function (server) {
 exports.initCore = function(c) {
     core = c;
 	// api(core);
-	core.on('init', emit,"gateway");
-	core.on('away', emit,"gateway");
-	core.on('back', emit,"gateway");
-	core.on('join', emit,"gateway");
-	core.on('part', emit,"gateway");
-	core.on('room', emit,"gateway");
-	core.on('user', emit,"gateway");
-	core.on('admit', emit,"gateway");
-	core.on('expel', emit,"gateway");
-	core.on('edit', emit,"gateway");
-	core.on('text', emit,"gateway");
+	["init", 'away', 'back', 'join', 'part', 'room', 'user', 'admit', 'expel', 'edit', 'text'].
+	forEach(function(e) {
+		core.on(e, emit, "webGateway");
+	});
 };
 
 function censorAction(action, filter) {
     var outAction = {}, i, j;
-	if (action.origin) delete action.origin;
 	for (i in action) {
         if(action.hasOwnProperty(i)) {
             if(i == "room" || i == "user") {
@@ -254,7 +246,7 @@ function censorAction(action, filter) {
             }
         }
     }
-
+	if (outAction.origin) delete outAction.origin;
     if(filter == 'both' || filter == 'user') {
         outAction.user = {
             id: action.user.id,
