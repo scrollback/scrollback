@@ -312,6 +312,7 @@ function onLeave(client) {
 		var server = client.opt.server;
 		if (nick === client.nick) {
 			var room = servChanProp[server][channel].room;
+			if (!room) return;
 			var users = servChanProp[server] && servChanProp[server][channel] && servChanProp[room.params.irc.server][channel].users;
 			if (users) users.forEach(function (user) {
 				if (servNick[server][user].dir === 'out') {

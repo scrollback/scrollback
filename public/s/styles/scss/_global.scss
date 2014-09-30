@@ -6,31 +6,32 @@
 @import "../lace/functions";
 @import "../lace/global";
 
-$screenx: "only screen and (min-width: 18em)";
-$screenxx: "only screen and (min-width: 27em)";
-$screenxxx: "only screen and (min-width: 50em)";
-$screenxxxx: "only screen and (min-width: 70em)";
+$palette: #2ba #e48 #3c6 #76f #e63 #5ad #95b #ed0 #e92 #ae3 !default;
 
-$palette: #2ba #e48 #3c6 #76f #e63 #5ad #95b #ed0 #e92 #ae3;
+$screenx: "only screen and (min-width: 18em)" !default;
+$screenxx: "only screen and (min-width: 27em)" !default;
+$screenxxx: "only screen and (min-width: 50em)" !default;
+$screenxxxx: "only screen and (min-width: 70em)" !default;
 
-$width-room: 15em;
-$width-roomx: 15em;
-$width-roomxx: 15em;
-$width-roomxxx: 15em;
-$width-roomxxxx: 16%;
+$width-room: 15em !default;
+$width-roomx: 15em !default;
+$width-roomxx: 15em !default;
+$width-roomxxx: 15em !default;
+$width-roomxxxx: 16% !default;
 
-$width-meta: 13em;
-$width-metax: 19em;
-$width-metaxx: 25em;
-$width-metaxxx: 26em;
-$width-metaxxxx: 30%;
+$width-meta: 13em !default;
+$width-metax: 19em !default;
+$width-metaxx: 25em !default;
+$width-metaxxx: 26em !default;
+$width-metaxxxx: 30% !default;
 
-$width-home: 70em;
+$width-home: 70em !default;
 
-$bar-height: 3.5em;
+$bar-height: 3.5em !default;
 
-$settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification;
-$modes: normal, search, conf, pref, home, noroom, profile;
-$roles: guest, user, follower, owner;
-$embeds: toast, canvas;
-$medialist: normal, phonegap;
+$settings: general, irc, twitter, thread, authorizer, requests, spam, seo, customization, embed, profile, email, notification !default;
+$modes: normal, search, conf, pref, home, noroom, profile !default;
+$roles: guest, user, follower, owner !default;
+$embeds: toast, canvas !default;
+$medialist: normal, phonegap !default;
+$states: online offline !default;
