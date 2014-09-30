@@ -77,16 +77,21 @@ function classesOnLoad(embed) {
 }
 
 function toastChange(state, next) {
+	var activity = {
+		minimize: false
+	}
 	if (state.source == "embed" && state.hasOwnProperty("minimize")) {
 		if (state.minimize) {
 			minimized = true;
+			activity.minimize = true;
 			$("body").addClass("minimized");
-			window.parent.postMessage("minimize", parentHost);
 		} else {
 			$("body").removeClass("minimized");
 			minimized = false;
-			window.parent.postMessage("maximize", parentHost);
+			activity.minimize = false;
 		}
+		console.log("Sending activity", activity);
+		window.parent.postMessage(JSON.stringify(activity), parentHost);
 	}
 	next();
 }
