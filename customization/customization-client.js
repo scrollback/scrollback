@@ -41,9 +41,10 @@ $(function() {
 //	}, 500);
 
 	libsb.on("navigate", function(state, next) {
-		if (state.old && state.roomName !== state.old.roomName && typeof state.room == "object") {
+		if (state.old && state.roomName !== state.old.roomName) {
 			customStyle.applyCss();
 		}
+
 		next();
 	}, 700);
 
@@ -82,13 +83,13 @@ $(function() {
 			var room = window.currentState.room,
 				customization;
 
+			$("#scrollback-custom-style").remove();
+
 			if (!room || !room.guides || !room.guides.customization) {
 				return;
 			}
 
 			customization = room.guides.customization;
-
-			$("#scrollback-custom-style").remove();
 
 			if (customization && customization.css) {
 				$("<style>").text(customization.css)

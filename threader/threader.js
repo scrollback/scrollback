@@ -58,7 +58,7 @@ function processReply(data){
    try {
 		log("data=-:" + data + ":-");
 		data = JSON.parse(data);
-		log("Data returned by scrollback.jar = "+data.threadId, pendingCallbacks[data.id].message.text);
+		log("Data returned by scrollback.jar = "+data.threadId, pendingCallbacks[data.id].message);
 		var id = data.threadId;
 		var title = data.title;
 		var message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
@@ -66,8 +66,16 @@ function processReply(data){
 			message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 			if (!message) return;
 			if(!message.threads) message.threads = [];
-			if(!title) message.threads.push({id: id, score: 1});
-			else message.threads.push({id: id, title: title, score: 1});
+			var update = false;
+			message.threads.forEach(function(th) {
+				if (th.id === id) {
+					th.title = title;
+					update = true;
+				}
+			});
+			if (!update) {
+				message.threads.push({id: id, title: title, score: 1});
+			}
 			if (data.spamIndex) {
 				for (var index in data.spamIndex) {
 					if (data.spamIndex.hasOwnProperty(index)) {

@@ -34,6 +34,11 @@ var sock = sockjs.createServer();
 
 sock.on('connection', function (socket) {
 	var conn = { socket: socket };
+	var ip = socket.remoteAddress;
+	if (socket.headers && socket.headers["x-forwarded-for"]) {
+		ip = socket.headers["x-forwarded-for"];
+	}
+	log("socket:", ip);
 	socket.on('data', function(d) {
 		var e;
 		try { d = JSON.parse(d); log ("Socket received ", d); }
@@ -47,6 +52,8 @@ sock.on('connection', function (socket) {
 			if(!conn.session) conn.listeningTo = [];
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource  = d.resource;
+			conn.origin = d.origin;
+			conn.origin.client = ip;
 			if (!sConns[d.session]) {
 				sConns[d.session] = [];
 				sConns[d.session].push(conn);
@@ -55,10 +62,10 @@ sock.on('connection', function (socket) {
 					sConns[d.session].push(conn);
 				}
 			}
-		}
-		else if (conn.session) {
+		} else if (conn.session) {
 			d.session = conn.session;
 			d.resource  = conn.resource;
+			d.origin = conn.origin;
 		}
 		
 		if(d.type == 'back') {
@@ -217,23 +224,15 @@ exports.initServer = function (server) {
 exports.initCore = function(c) {
     core = c;
 	// api(core);
-	core.on('init', emit,"gateway");
-	core.on('away', emit,"gateway");
-	core.on('back', emit,"gateway");
-	core.on('join', emit,"gateway");
-	core.on('part', emit,"gateway");
-	core.on('room', emit,"gateway");
-	core.on('user', emit,"gateway");
-	core.on('admit', emit,"gateway");
-	core.on('expel', emit,"gateway");
-	core.on('edit', emit,"gateway");
-	core.on('text', emit,"gateway");
+	["init", 'away', 'back', 'join', 'part', 'room', 'user', 'admit', 'expel', 'edit', 'text'].
+	forEach(function(e) {
+		core.on(e, emit, "webGateway");
+	});
 };
 
 function censorAction(action, filter) {
     var outAction = {}, i, j;
-
-    for (i in action) {
+	for (i in action) {
         if(action.hasOwnProperty(i)) {
             if(i == "room" || i == "user") {
                 outAction[i] = {};
@@ -247,7 +246,7 @@ function censorAction(action, filter) {
             }
         }
     }
-
+	if (outAction.origin) delete outAction.origin;
     if(filter == 'both' || filter == 'user') {
         outAction.user = {
             id: action.user.id,

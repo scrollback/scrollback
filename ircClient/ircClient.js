@@ -51,6 +51,8 @@ function joinChannels(server, nick, channels, cb) {
 function joinServer(server, nick, channels, options, cb) {
 	if (!clients[nick]) clients[nick] = {};
 	var displayNick = nick.indexOf('guest-') === 0 ? nick.substring(6) : nick;
+	var webIrcPassword = config.webirc[server];
+	log("password=", webIrcPassword);
 	var client = new irc.Client(server, displayNick, {
 		userName: displayNick,
 		realName: nick + '@scrollback.io',
@@ -61,7 +63,7 @@ function joinServer(server, nick, channels, options, cb) {
 		floodProtection: true,
 		identId: options.identId,
 		//showErrors: true,
-		webircPassword: options.webircPassword,
+		webircPassword: webIrcPassword,
 		userIp: options.userIp,
 		userHostName: options.userHostName
 	});
@@ -75,6 +77,8 @@ function joinServer(server, nick, channels, options, cb) {
  *opt.identId is used for ident.
  */
 function connectBot(room, options, cb) {
+	options.userIp = config.myIP; // send it as webIRC header.
+	options.userHostName = config.host;
 	console.log("Connect Bot ", room, options);
 	options.autoRejoin = false;
     var server = room.params.irc.server;
@@ -308,6 +312,7 @@ function onLeave(client) {
 		var server = client.opt.server;
 		if (nick === client.nick) {
 			var room = servChanProp[server][channel].room;
+			if (!room) return;
 			var users = servChanProp[server] && servChanProp[server][channel] && servChanProp[room.params.irc.server][channel].users;
 			if (users) users.forEach(function (user) {
 				if (servNick[server][user].dir === 'out') {
