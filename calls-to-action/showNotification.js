@@ -39,7 +39,7 @@ function fireNotification() {
 			// fire the first notification in the queue
 			notify(notificationQueue.shift());
 		}
-	}, 3000);
+	}, 2000);
 }
 
 
