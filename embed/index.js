@@ -3,7 +3,6 @@ var host = config.server.protocol + config.server.host;
 var validate = require("../lib/validate.js");
 var iframeCount = 0, widgets = {};
 
-
 var domReady = (function(){
 	var ready = document.readyState === "complete", listeners = [], fun;
 
@@ -39,8 +38,6 @@ function onMessage(e){
 	    }
 	}
 	if(i==l) return;
-	console.log("Message for widget: ", widgetID, e.data);
-	console.log(widgets[widgetID]);
 	try{
 		data = JSON.parse(e.data);
 	}catch(e) {
@@ -123,21 +120,28 @@ function scrollback(opts) {
 
 	self.embed = constructEmbed(opts);
 	self.message = function (message) {
-		if(message.hasOwnProperty("minimize")) {
-			var minReg = /\bscrollback-minimized\b/;
+		switch(message.type){
+			case "activity":
+				if(message.hasOwnProperty("minimize")) {
+					var minReg = /\bscrollback-minimized\b/;
 
-			if (message.minimize && !minReg.test(this.iframe.className)) {
-				this.iframe.className = this.iframe.className + " scrollback-minimized";
-			} else {
-				this.iframe.className = this.iframe.className.replace(minReg, "").trim();
-			}
-		}else{
-			if (message.type === "domain-challenge") {
+					if (message.minimize && !minReg.test(this.iframe.className)) {
+						this.iframe.className = this.iframe.className + " scrollback-minimized";
+					} else {
+						this.iframe.className = this.iframe.className.replace(minReg, "").trim();
+					}
+				}
+			break;
+			case "domain-challenge":
 				this.iframe.contentWindow.postMessage(JSON.stringify({
 					type: "domain-response",
 					token: message.token
 				}), host);
-			}
+			break;
+			case "navigate":
+				console.log("navigate", message.state);
+				self.state = message.state;
+			break;
 		}
 	};
 

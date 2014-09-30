@@ -7,17 +7,17 @@ var verificationStatus = false,
 	bootingDone = false,
 	verified = false,
 	verificationTimeout = false,
-	suggestedNick;
+	suggestedNick, parent;
 
 /*  lasting objects*/
 var embed, token, domain, path, preBootQueue = [],
 	queue = [],
-	parentHost, minimized = false;
+	parentHost;
 
 function sendDomainChallenge() {
 	token = Math.random() * Math.random();
 	parentHost = embed.origin.protocol + "//" + embed.origin.host;
-	window.parent.postMessage(JSON.stringify({
+	parent.postMessage(JSON.stringify({
 		type: "domain-challenge",
 		token: token
 	}), parentHost);
@@ -77,22 +77,23 @@ function classesOnLoad(embed) {
 }
 
 function toastChange(state, next) {
-	var activity = {
-		minimize: false
-	}
+	var activity;
 	if (state.source == "embed" && state.hasOwnProperty("minimize")) {
+		activity = {
+			type: "activity",
+			minimize: false
+		}
+		activity.minimize = state.minimize;
 		if (state.minimize) {
-			minimized = true;
-			activity.minimize = true;
 			$("body").addClass("minimized");
 		} else {
 			$("body").removeClass("minimized");
-			minimized = false;
-			activity.minimize = false;
 		}
-		console.log("Sending activity", activity);
-		window.parent.postMessage(JSON.stringify(activity), parentHost);
+		parent.postMessage(JSON.stringify(activity), parentHost);
+	}else if(parent){
+		parent.postMessage(JSON.stringify({type:"navigate",state:state}), parentHost);	
 	}
+	
 	next();
 }
 
@@ -135,6 +136,7 @@ module.exports = function (libsb) {
 	embed = url.embed;
 
 	if (window.parent !== window) {
+		parent = window.parent;
 		if (embed) {
 			try {
 				embed = JSON.parse(decodeURIComponent(url.embed));
@@ -204,6 +206,7 @@ module.exports = function (libsb) {
 		} else {
 			processNavigate();
 		}
+
 	}, 997);
 
 	libsb.on("init-up", function (init, next) {
