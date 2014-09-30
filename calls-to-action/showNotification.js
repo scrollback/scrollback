@@ -8,7 +8,7 @@ var notificationQueue = [];
 var intervalSet = false;
 
 if (localStorage.hasOwnProperty('shownActions')) {
-	// shownActions = JSON.parse(localStorage.shownActions);
+	 shownActions = JSON.parse(localStorage.shownActions);
 }
 
 function notify(action) {
