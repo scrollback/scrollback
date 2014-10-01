@@ -92,7 +92,7 @@ gulp.task("bower", function() {
 gulp.task("libs", [ "bower" ], function() {
 	return gulp.src(prefix(bowerDir + "/", [
 		"jquery/dist/jquery.min.js",
-		"lace/src/js/lace.js",
+		"lace/src/js/*.js",
 		"sockjs/sockjs.min.js",
 		"svg4everybody/svg4everybody.min.js",
 		"velocity/jquery.velocity.min.js",

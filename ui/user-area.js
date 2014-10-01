@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, lace, currentState */
+/* global $, libsb, currentState */
 
 var showMenu = require('./showmenu.js');
 
@@ -49,10 +49,7 @@ libsb.on("logout", function (p, n) {
 		view: 'loggedout',
 	});
 
-	lace.modal.show({
-		body: $("#signedout-dialog").html(),
-		dismiss: false
-	});
+	$("<div>").html($("#signedout-dialog").html()).modal({ dismiss: false });
 
 	n();
 }, 1000);
