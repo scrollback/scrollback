@@ -1608,6 +1608,19 @@ body {
     input, .button { width: 100%; }
 }
 
+.popover-calls-to-action {
+    width: 12em;
+    padding: 1em;
+    background-color: $dark-color;
+    color: $light-color;
+    border-color: $dark-color;
+
+    &.popover-body:before {
+        background-image: linear-gradient(135deg, $dark-color 60%, $dark-color 60%, transparent 60%);
+        border-color: $dark-color;
+    }
+}
+
 .ie-warning {
     display: table;
     position: fixed;

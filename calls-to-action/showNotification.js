@@ -1,32 +1,32 @@
 /* jshint browser:true */
 /* global $ */
 
-var userActions = require('./notification-strings-en.js');
-
-var shownActions = {};
-var notificationQueue = [];
-var intervalSet = false;
+var userActions = require('./notification-strings-en.js'),
+	shownActions = {},
+	notificationQueue = [],
+	intervalSet = false;
 
 if (localStorage.hasOwnProperty('shownActions')) {
-	 shownActions = JSON.parse(localStorage.shownActions);
+	shownActions = JSON.parse(localStorage.shownActions);
 }
 
 function notify(action) {
 	if (shownActions[action.notificationName] !== true) {
-		$("<div>").text(userActions[action.notificationName]).popover({origin: action.origin, theme: "dark"});
+		$("<div>").addClass("popover-calls-to-action").text(userActions[action.notificationName]).popover({ origin: action.origin });
+
 		shownActions[action.notificationName] = true;
 		localStorage.shownActions = JSON.stringify(shownActions);
 	}
 }
 
 function isNotifyOn() {
-	if ($('.popover-body').length > 0) return true;
-	else return false;
+	return ($('.popover-body').length > 0);
 }
 
 function fireNotification() {
 	intervalSet = true;
-	var intervalId = setInterval(function () {
+
+	var intervalId = setInterval(function() {
 		if (isNotifyOn()) {
 			return;
 		} else if (notificationQueue.length === 0) {
@@ -39,13 +39,15 @@ function fireNotification() {
 	}, 2000);
 }
 
-
 function showNotification(origin, notificationName) {
 	notificationQueue.push({
 		origin: origin,
 		notificationName: notificationName
 	});
-	if (intervalSet === false) fireNotification();
+
+	if (intervalSet === false) {
+		fireNotification();
+	}
 }
 
 module.exports = showNotification;
