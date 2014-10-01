@@ -1,16 +1,16 @@
 /* jshint browser: true */
-/* global $, lace */
+/* global $ */
 
 $(function() {
 	if ($.fn.attrchange) {
 		$("body").attrchange(function() {
 			if ($("body").attr("class") && $("body").attr("class").match(/mode-/)) {
-				lace.progress.hide();
+				$.progressbar("dismiss");
 			}
 		});
 	} else {
 		setTimeout(function() {
-			lace.progress.hide();
+			$.progressbar("dismiss");
 		}, 300);
 	}
 });

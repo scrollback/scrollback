@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb */
 
 $(function() {
     var $entry = $(".search-entry"),
@@ -7,15 +7,21 @@ $(function() {
         showSearchBar = function() {
             $("body").addClass("search-focus");
 
-            lace.animate("slideDownIn", $bar, function() {
+            $bar.velocity({
+                opacity: [ 1, 0 ],
+                translateY: [ 0, "-100%" ]
+            }, 300, function() {
                 $entry.focus().data("search-ready", true);
-            }, 300);
+            });
         },
         hideSearchBar = function() {
-            lace.animate("slideUpOut", $bar, function() {
+            $bar.velocity({
+                opacity: [ 0, 1 ],
+                translateY: [ "-100%", 0 ]
+            }, 300, function() {
                 $("body").removeClass("search-focus");
                 $entry.data("search-ready", false);
-            }, 300);
+            });
         };
 
     // Show and hide search bar

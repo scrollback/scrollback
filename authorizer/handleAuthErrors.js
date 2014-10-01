@@ -1,7 +1,7 @@
 /* jshint multistr: true */
+/* global $ */
 
 module.exports = function (error) {
-
 	var action = error.action,
 		requiredRole = error.requiredRole,
 		currentRole = error.currentRole,
@@ -70,5 +70,6 @@ module.exports = function (error) {
 		default:
 			errorMessage = 'Unknown Authorization Error! You are not allowed to perfom this action :( ';
 	}
-	lace.alert.show({type: "error", body: errorMessage});
+
+	$("<div>").text(errorMessage).alertbar({ type: "error" });
 };

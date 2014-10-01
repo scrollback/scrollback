@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, lace, currentState */
+/* global $, libsb, currentState */
 
 var formField = require("../lib/formField.js"),
 	twitterUsername;
@@ -81,7 +81,7 @@ libsb.on("config-show", function(tabs, next) {
 }, 500);
 
 libsb.on("config-save", function(room, next) {
-    var tags = lace.multientry.items($("#twitter-hashtags")).join(" ");
+    var tags = $("#twitter-hashtags").multientry("items").join(" ");
 
     room.params.twitter = {};
 

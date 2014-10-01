@@ -6,12 +6,18 @@ var core = new (require("./lib/emitter.js"))();
 require('./public/s/scripts/lib/sockjs.min.js');
 require('./public/s/scripts/lib/jquery.velocity.min.js');
 require('./public/s/scripts/lib/svg4everybody.min.js');
-require('./public/s/scripts/lib/lace.js');
 
 require('./lib/jquery.setCursorEnd.js');
 require('./lib/jquery.attrchange.js');
 require('./lib/format.js');
 require('./lib/swipe-events.js');
+
+// ui widgets
+require('./public/s/scripts/lib/jquery.alertbar.js');
+require('./public/s/scripts/lib/jquery.modal.js');
+require('./public/s/scripts/lib/jquery.multientry.js');
+require('./public/s/scripts/lib/jquery.popover.js');
+require('./public/s/scripts/lib/jquery.progressbar.js');
 
 // libsb files
 var libsb = require('./interface/interface-client')(core);
