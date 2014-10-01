@@ -1,5 +1,5 @@
 /* jshint browser:true */
-/* global $, lace */
+/* global $ */
 
 var userActions = require('./notification-strings-en.js');
 
@@ -13,10 +13,7 @@ if (localStorage.hasOwnProperty('shownActions')) {
 
 function notify(action) {
 	if (shownActions[action.notificationName] !== true) {
-		lace.popover.show({
-			origin: action.origin,
-			body: userActions[action.notificationName]
-		});
+		$("<div>").text(userActions[action.notificationName]).popover({origin: action.origin, theme: "dark"});
 		shownActions[action.notificationName] = true;
 		localStorage.shownActions = JSON.stringify(shownActions);
 	}
