@@ -49,6 +49,7 @@ require('./http/logout-client.js');
 require('./facebook/facebook-client.js');
 require('./github/github-client.js');
 require('./persona/persona-client.js');
+require('./push-notification/push-notification-client.js');
 
 // components
 require('./ui/quicknotify.js');
