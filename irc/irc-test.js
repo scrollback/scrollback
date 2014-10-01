@@ -50,7 +50,7 @@ var rooms = [{
 ];
 describe('IRC test: ', function() {//this will connect 2 rooms scrollback and testingroom
 	before( function(done) {
-		this.timeout(5*40000);
+		this.timeout(5 * 40000);
         core.on('getUsers', function(v, callback) {
 			v.results = users;
 			callback(null, v);
@@ -71,6 +71,9 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		core.on('text', function(text, callback) {
 			console.log("text called irc test:", text);
 			text.room = rooms[0];
+			text.origin = {
+				client: "127.0.0.1"
+			};
 			if(!text.session) text.session = "irc://" + rooms[0].params.irc.server + ":" + "test";
 			callback();
 		}, "modifier");
@@ -96,7 +99,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		}, 15000);
 	});
 	it('IRC message sending and receiving test.', function(done) {
-		this.timeout(1000*60);
+		this.timeout(1000 * 60 * 2);
 		var qu = [];
 		client.on("message#", function(from, to, message) {
 			console.log("get message from irc:", to, from, message);
@@ -110,7 +113,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		});
 		console.log("running Test");
 		
-		for(var i = 0;i < 8;i++) {
+		for(var i = 0;i < 5;i++) {
 			var text = guid();
 			qu.push(text);
 			core.emit("back", {
@@ -193,7 +196,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 	it("Update Old room", function(done) {
 		console.log("Running new room should disconnect from #testingroom2 and connect to #testingroom3");
 		//client.
-		this.timeout(60 * 1000);
+		this.timeout(60 * 1000 * 2);
 		var c = 0;
 		function go() {
 			if (c == 2) {
@@ -244,7 +247,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 	});
 	
 	it("Disconnect All rooms", function(done) {
-		this.timeout(60 * 1000);
+		this.timeout(60 * 1000 * 2);
 		var c = 0;
 		client.on("part", function(channel, nick, reason, message) {
 			if(nick.indexOf(botName) != -1) c++;
