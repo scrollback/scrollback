@@ -4,7 +4,7 @@ var uid = require('../lib/generate.js').uid;
 var config = require("../config.js");
 var internalSession = Object.keys(config.whitelists)[0];
 var _ = require('underscore');
-
+var log = require('../lib/logger.js');
 /* list of event that the basic validation function is called for.*/
 var core, events = ['text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'expel', 'room'];
 
@@ -82,12 +82,14 @@ var handlers = {
 };
 
 function loadVictim(action, callback) {
+	log.d("Entity Loader:", JSON.stringify(action));
 	if(action.ref) {
 		core.emit("getUsers", {ref: action.ref, session: action.session}, function(err, data) {
-			if(err || !data || !data.resulats || !data.results.length) {
+			if(err || !data || !data.results || !data.results.length) {
 				return callback(new Error("user "+action.ref+ " not found"));
 			}
 			action.victim = data.results[0];
+			callback();
 		});
 	}else{
 		callback();

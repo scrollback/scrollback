@@ -72,7 +72,7 @@ function safeSend(data) {
 }
 
 function connect() {
-	client = new SockJS(config.server.host + "/socket");
+	client = new SockJS(config.server.protocol + config.server.host + "/socket");
     client.onclose = disconnected;
 
 	client.onopen = function(){
@@ -195,7 +195,8 @@ function sendJoin(join, next) {
 	var action = makeAction(join, {
 		type: 'join',
 		to: join.to,
-		id: join.id
+		id: join.id,
+		role: join.role
 	});
 	safeSend(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);
@@ -284,7 +285,8 @@ function sendAdmit(admit, next) {
 		type: 'admit',
 		to: admit.to,
 		ref: admit.ref,
-		id: admit.id
+		id: admit.id,
+		role: admit.role
 	});
 	safeSend(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);

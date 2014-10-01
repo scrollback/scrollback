@@ -1,20 +1,20 @@
 /* jslint browser: true, indent: 4, regexp: true*/
-/* global $, lace */
+/* global $ */
 
 $(function() {
+	var $alert = $("<div>").html("Scrollback has been updated. <a class='appcache-reload-page'>Reload to start using the new version</a>.");
+
 	// Check if a new cache is available on page load.
 	$(applicationCache).on("updateready", function() {
 		if (applicationCache.status === applicationCache.UPDATEREADY) {
-			lace.alert.show({
+			$alert.alertbar({
 				type: "info",
-				body: "Scrollback has been updated. <a class='appcache-reload-page'>Reload to start using the new version</a>.",
 				id: "appcache-updateready-notify"
 			});
 		}
 	});
 
-
-	$(document).on("click", ".appcache-reload-page", function() {
+	$alert.on("click", ".appcache-reload-page", function() {
 		location.reload();
 	});
 });

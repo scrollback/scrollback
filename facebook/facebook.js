@@ -10,9 +10,11 @@ module.exports = function(c) {
 };
 
 function onInit(payload, callback) {
-	payload.facebook = {
-		get: handlerRequest
-	};
+	payload.push({
+		get: {
+			"/r/facebook/*": handlerRequest
+		}
+	});
 	callback(null, payload);
 }
 

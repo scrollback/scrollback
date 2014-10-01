@@ -19,57 +19,43 @@ Boston, MA 02111-1307 USA.
 */
 
 var config = require('../config.js'), core,
-	fs = require("fs"),core, clientHTML;
-var clientSubstrings = [];
-var log = require("../lib/logger.js");
-var seo;
-//var log = require('../lib/logger.js');
+	clientData = require('../client-config.js'),
+	fs = require("fs"), core,
+	handlebars = require("handlebars"),
+	seo, clientTemp, clientHbs,
+	log = require('../lib/logger.js');
+
 exports.init = function(app, coreObject) {
 	core = coreObject;
-    if (!config.http.https) log.w("Insecure connection. Specify https options in your config file.");
-    init();
+	if (!config.http.https) log.w("Insecure connection. Specify https options in your config file.");
+	init();
 	app.get('/t/*', function(req, res, next) {
-		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data){
+		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data) {
 			res.end(data);
 			next();
 		});
 	});
-    
-	app.get("/s/offline.html", function(req, res, next) {
-		res.end(clientHTML);
-	});
-	
-	app.get("/*", function(req, res, next){
-		if(/^\/t\//.test(req.path)) return next();
-		if(/^\/s\//.test(req.path)) {console.log("static"); return next();}
 
-		if(!req.secure && config.http.https) {
+	app.get("/*", function(req, res, next) {
+		if (/^\/t\//.test(req.path)) return next();
+		if (/^\/s\//.test(req.path)) {console.log("static"); return next();}
+
+		if (!req.secure && config.http.https) {
 			var queryString  = req._parsedUrl.search ? req._parsedUrl.search : "";
 			return res.redirect(307, 'https://' + config.http.host + req.path + queryString);
 		}
-		
-        seo.getSEOHtml(req, function(r) {
-            var d = [];
-            d.push(clientSubstrings[0]) ;
-            d.push(r.head);
-            d.push(clientSubstrings[1]);
-            d.push(r.body);
-            d.push(clientSubstrings[2]);
-            res.end(d.join("\n"));
-        });
 
-		
+		seo.getSEOHtml(req, function(r) {
+			clientData.seo = r;
+
+			res.end(clientTemp(clientData));
+		});
+
 	});
 };
 
 function init() {
-    clientHTML = fs.readFileSync(__dirname + "/../public/client.html", "utf8");
-    seo = require('./seo.js')(core); 
-    var idhs = "<!-- gen Head Start -->";
-    var idbs = "<!-- Messages start here. -->";
-    var index1 = clientHTML.indexOf(idhs);
-    var index2 = clientHTML.indexOf(idbs);
-    clientSubstrings.push(clientHTML.substring(0, index1 + idhs.length));
-    clientSubstrings.push(clientHTML.substring(index1 + idhs.length, index2 + idbs.length));
-    clientSubstrings.push(clientHTML.substring(index2 + idbs.length));
+	clientHbs = fs.readFileSync(__dirname + "/../public/client.hbs", "utf8");
+	seo = require('./seo.js')(core);
+	clientTemp = handlebars.compile(clientHbs);
 }

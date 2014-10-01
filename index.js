@@ -17,16 +17,14 @@ along with this program. If not, see http://www.gnu.org/licenses/agpl.txt
 or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
-
+var plugins = [ "analytics", "validator","browserid-auth", "facebook",
+			   "threader", "authorizer", "redis-storage",  "leveldb-storage",
+			   "admin-notifier", "entityloader", "irc", "twitter",  "censor", "email", "superuser", "search", "sitemap"]
 require('newrelic');
 var log = require('./lib/logger.js');
 var core = new (require("./lib/emitter.js"))(), config = require("./config.js");
 log.setEmailConfig(config.email);
 
-process.nextTick(function(){
-	// The ident server binds to port 113 after a while.
-	// if(config.core.uid) process.setuid(config.core.uid);
-});
 process.title = config.core.name;
 process.env.NODE_ENV = config.env;
 log.w("This is \"" +  process.env.NODE_ENV + "\" server");
@@ -37,6 +35,7 @@ function start(name) {
 	plugin(core);
 }
 
-config.plugins.forEach(function(name) {
+plugins.forEach(function(name) {
 	start(name);
 });
+start("http"); // start http app at last 
