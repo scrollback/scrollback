@@ -62,6 +62,7 @@
     "oauth": "~0.9.12",
     "objectlevel": "git://github.com/scrollback/objectlevel.git",
     "pg": "~3.3.0",
+    "q": "^1.0.1",
     "redis": "latest",
     "request": "x.x",
     "sockjs": "0.3.x",
