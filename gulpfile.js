@@ -9,6 +9,7 @@ var gulp = require("gulp"),
 	streamify = require("gulp-streamify"),
 	jshint = require("gulp-jshint"),
 	concat = require("gulp-concat"),
+	striplog = require("gulp-strip-debug"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
 	sass = require("gulp-ruby-sass"),
@@ -38,9 +39,11 @@ function bundle(files, opts) {
 			opts.entries = "./" + file;
 
 			return browserify(opts).bundle()
-			.pipe(source(file))
+			.pipe(source(file.split(/[\\/]/).pop()))
 			.on("error", gutil.log);
 		};
+
+	opts = opts || {};
 
 	if (files && files instanceof Array) {
 		for (var i = 0, l = files.length; i < l; i++) {
@@ -122,7 +125,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 gulp.task("bundle", [ "libs" ], function() {
 	return bundle([ "libsb.js", "client.js" ], { debug: debug })
 	.pipe(plumber())
-	.pipe(!debug ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(uglify() && striplog()) : gutil.noop())
 	.pipe(rename({ suffix: ".bundle.min" }))
 	.pipe(gulp.dest("public/s/scripts"))
 	.on("error", gutil.log);
@@ -154,7 +157,7 @@ gulp.task("lace", [ "bower" ], function() {
 gulp.task("styles", [ "lace" ], function() {
 	return gulp.src(cssFiles)
 	.pipe(sass({
-		style: "expanded",
+		style: gutil.env.production ? "compressed" : "expanded",
 		sourcemapPath: "../scss"
 	}))
 	.pipe(plumber())
