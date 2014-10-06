@@ -39,8 +39,10 @@ function loginPersona(driver, id, password, callback) {
 			return driver.findElement(webdriver.By.id("authentication_password")).
 			sendKeys(webdriver.Key.RETURN);
 		}).then(function () {
-			driver.switchTo().window(win[0]).then(callback);
-		});
+			driver.switchTo().window(win[0])
+		}).then(function() {
+			return q.delay(5000)
+		}).then(callback);
 	});
 }
 
