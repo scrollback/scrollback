@@ -2,7 +2,8 @@ var assert = require('assert'),
 	timeout = 35000,
 	config = require('../config.js'),
 	webdriver = require('browserstack-webdriver'),
-	testUtils = require('./testUtils.js');
+	testUtils = require('./testUtils.js'),
+	q = require('q');
 
 module.exports = function(capabilities, options) {
 	describe('Create Room Test ' + options.id, function() {
@@ -20,17 +21,15 @@ module.exports = function(capabilities, options) {
 		it("login persona on create room view", function(done) { 
 			console.log("login test");
 			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function() {
-				setTimeout(function() {
-					console.log("set Element");
-					driver.findElement(webdriver.By.id("noroom-view-create")).click().then(function() {
-						setTimeout(function() {
-							driver.findElement(webdriver.By.css(".info-title")).getText().then(function(t) {
-								assert.equal(t, roomName, "Room creation unseccessful");
-								done();
-							});
-						}, 4000);
-					});	
-				}, 5000);
+				driver.findElement(webdriver.By.id("noroom-view-create")).click()
+				.then(function() {
+					return q.delay(4000);
+				}).then(function() {
+					driver.findElement(webdriver.By.css(".info-title")).getText().then(function(t) {
+						assert.equal(t, roomName, "Room creation unseccessful");
+						done();
+					});
+				});					
 			});
 		});
 
