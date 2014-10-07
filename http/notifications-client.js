@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb */
 
 var desktopnotify = require("../ui/desktopnotify.js"),
     formField = require("../lib/formField.js");
@@ -38,9 +38,8 @@ libsb.on("pref-show", function(tabs, next) {
             if (desktopnotify.supported().permission === "denied") {
                 $(this).attr("checked", false);
 
-                lace.alert.show({
+                $("<div>").text("Permission for desktop notifications denied!").alertbar({
                     type: "error",
-                    body: "Permission for desktop notifications denied!",
                     id: "desktopnotify-err-perm-denied"
                 });
             }

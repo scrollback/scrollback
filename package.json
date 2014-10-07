@@ -52,6 +52,7 @@
     "elasticsearch": "^2.3.0",
     "express": "3.0.x",
     "generic-pool": "latest",
+    "handlebars": "latest",
     "htmlencode": "0.0.3",
     "irc": "git://github.com/scrollback/node-irc.git",
     "jade": "0.x",
@@ -89,13 +90,14 @@
     "gulp-ruby-sass": "latest",
     "gulp-sourcemaps": "latest",
     "gulp-streamify": "latest",
+    "gulp-strip-debug": "latest",
     "gulp-uglify": "latest",
     "gulp-util": "latest",
     "jshint-stylish": "latest",
     "main-bower-files": "latest",
     "mocha": "latest",
-    "selenium-webdriver": "^2.42.1",
+    "selenium-webdriver": "latest",
     "vinyl-source-stream": "latest",
-    "xunit-file": "0.0.5"
+    "xunit-file": "latest"
   }
 }

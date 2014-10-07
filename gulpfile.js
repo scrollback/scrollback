@@ -1,5 +1,3 @@
-/* jshint node: true */
-
 // Load plugins and declare variables
 var gulp = require("gulp"),
 	bower = require("bower"),
@@ -11,6 +9,7 @@ var gulp = require("gulp"),
 	streamify = require("gulp-streamify"),
 	jshint = require("gulp-jshint"),
 	concat = require("gulp-concat"),
+	striplog = require("gulp-strip-debug"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
 	sass = require("gulp-ruby-sass"),
@@ -40,9 +39,11 @@ function bundle(files, opts) {
 			opts.entries = "./" + file;
 
 			return browserify(opts).bundle()
-			.pipe(source(file))
+			.pipe(source(file.split(/[\\/]/).pop()))
 			.on("error", gutil.log);
 		};
+
+	opts = opts || {};
 
 	if (files && files instanceof Array) {
 		for (var i = 0, l = files.length; i < l; i++) {
@@ -94,7 +95,7 @@ gulp.task("bower", function() {
 gulp.task("libs", [ "bower" ], function() {
 	return gulp.src(prefix(bowerDir + "/", [
 		"jquery/dist/jquery.min.js",
-		"lace/src/js/lace.js",
+		"lace/src/js/*.js",
 		"sockjs/sockjs.min.js",
 		"svg4everybody/svg4everybody.min.js",
 		"velocity/jquery.velocity.min.js",
@@ -124,7 +125,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 gulp.task("bundle", [ "libs" ], function() {
 	return bundle([ "libsb.js", "client.js" ], { debug: debug })
 	.pipe(plumber())
-	.pipe(!debug ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(uglify() && striplog()) : gutil.noop())
 	.pipe(rename({ suffix: ".bundle.min" }))
 	.pipe(gulp.dest("public/s/scripts"))
 	.on("error", gutil.log);
@@ -144,6 +145,27 @@ gulp.task("embed", function() {
 
 // Generate scripts
 gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
+
+// Generate styles
+gulp.task("lace", [ "bower" ], function() {
+	return gulp.src(bowerDir + "/lace/src/scss/*.scss")
+	.pipe(plumber())
+	.pipe(gulp.dest(laceDir))
+	.on("error", gutil.log);
+});
+
+gulp.task("styles", [ "lace" ], function() {
+	return gulp.src(cssFiles)
+	.pipe(sass({
+		style: gutil.env.production ? "compressed" : "expanded",
+		sourcemapPath: "../scss"
+	}))
+	.pipe(plumber())
+	.on("error", function(e) { gutil.log(e.message); })
+	.pipe(gutil.env.production ? (autoprefixer() && minify()) : gutil.noop())
+	.pipe(gulp.dest(cssDir))
+	.on("error", gutil.log);
+});
 
 // Generate appcache manifest file
 gulp.task("manifest", function() {
@@ -169,7 +191,7 @@ gulp.task("manifest", function() {
 		fallback: [
 			protocol + "//gravatar.com/avatar/ " + domain + "/s/img/client/avatar-fallback.svg",
 			domain + "/socket " + domain + "/s/socket-fallback",
-			domain + "/ " + domain + "/offline.html"
+			domain + "/ " + domain + "/client.html"
 		],
 		preferOnline: true,
 		hash: true,
@@ -179,33 +201,14 @@ gulp.task("manifest", function() {
 	.on("error", gutil.log);
 });
 
-// Generate styles
-gulp.task("lace", [ "bower" ], function() {
-	return gulp.src(bowerDir + "/lace/src/scss/*.scss")
-	.pipe(plumber())
-	.pipe(gulp.dest(laceDir))
-	.on("error", gutil.log);
-});
-
-gulp.task("styles", [ "lace" ], function() {
-	return gulp.src(cssFiles)
-	.pipe(sass({
-		style: "expanded",
-		sourcemapPath: "../scss"
-	}))
-	.pipe(plumber())
-	.on("error", function(e) { gutil.log(e.message); })
-	.pipe(!debug ? (autoprefixer() && minify()) : gutil.noop())
-	.pipe(gulp.dest(cssDir))
-	.on("error", gutil.log);
-});
-
+// Clean up generated files
 gulp.task("clean", function() {
 	return gulp.src([
 		"public/{*.map,**/*.map}",
 		"public/{*.min.js,**/*.min.js}",
 		"public/{*.bundle.js,**/*.bundle.js}",
 		"public/{*.appcache,**/*.appcache}",
+		"public/{client.html,s/client.phonegap.html}",
 		libDir, cssDir, laceDir
 	], { read: false })
 	.pipe(plumber())

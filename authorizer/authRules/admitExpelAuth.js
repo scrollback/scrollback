@@ -1,7 +1,7 @@
 /* jshint node:true */
 var permissionWeights = require('../permissionWeights.js');
 var SbError = require('../../lib/SbError.js');
-
+var log = require('../../lib/logger.js');
 function checkAuthority(action) {
 	var openFollow = action.room.guides.authorizer && action.room.guides.authorizer.openFollow;
 	if (typeof openFollow === "undefined") {
@@ -65,10 +65,17 @@ function admitExpel(action, callback) {
 module.exports = function (core) {
 
 	core.on('admit', function (admit, callback) {
+		/*This is hacky code, rewite it.*/
+		if (admit.user.role == 'owner' || admit.user.role == 'su') {
+			 return callback();
+		} else {
+			return callback(new Error("ERR_NOT_ALLOWED"));
+		}
+		/*log.d("Admit: ", JSON.stringify(admit));
 		if (!admit.role) {
 			admit.role = "follower";
 		}
-		return admitExpel(admit, callback);
+		return admitExpel(admit, callback);*/
 	}, "authorization");
 
 	core.on('expel', function (expel, callback) {

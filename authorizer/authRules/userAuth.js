@@ -13,7 +13,7 @@ function emailValidation(old, user) {
 			newEmail = user[i];
 		}
 	}
-	if (oldEmail && newEmail && oldEmail !== newEmail) {
+	if (oldEmail && oldEmail !== newEmail) {
 		return true;
 	}
 	return false;
@@ -21,7 +21,10 @@ function emailValidation(old, user) {
 module.exports = function (core) {
 
 	core.on('user', function (action, callback) {
-		if (action.user.role === "none") {
+		if (action.role === 'su') {
+			delete action.role;
+			return callback();
+		} else if (action.user.role === "none") {
 			if (/^guest-/.test(action.user.id)) {
 				action.user.role = "guest";
 			} else {
@@ -44,9 +47,6 @@ module.exports = function (core) {
 				requiredRole: 'registered',
 				currentRole: action.user.role
 			}));
-		} else if (action.role === 'su') {
-			delete action.role;
-			return callback();
 		} else if (action.from === action.old.id) return callback();
 		else return callback(new SbError('ERR_NOT_ALLOWED', {
 			source: 'authorizer',

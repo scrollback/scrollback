@@ -1,20 +1,28 @@
 /* jshint browser: true */
-/* global $, libsb, lace, currentState */
+/* global $, libsb, currentState */
 
 var showMenu = require('./showmenu.js');
 
-$(function(){
-	$(".js-has-auth-menu").on('click', function(){
-		if ($('body').hasClass('role-guest')){
-			libsb.emit('auth-menu', {origin: $(this), buttons: {}, title: 'Sign in to Scrollback with'}, function(err, menu){
+$(function () {
+	$(".js-has-auth-menu").on('click', function () {
+		if ($('body').hasClass('role-guest')) {
+			libsb.emit('auth-menu', {
+				origin: $(this),
+				buttons: {},
+				title: 'Sign in to Scrollback with'
+			}, function (err, menu) {
 				showMenu(menu);
 			});
 		}
 	});
 
-	$(".js-has-user-menu").on('click', function(){
+	$(".js-has-user-menu").on('click', function () {
 		if ($('body').hasClass('role-user')) {
-			libsb.emit('user-menu', {origin: $(this), buttons: {}, items: {}}, function(err, menu){
+			libsb.emit('user-menu', {
+				origin: $(this),
+				buttons: {},
+				items: {}
+			}, function (err, menu) {
 				showMenu(menu);
 			});
 		}
@@ -22,12 +30,12 @@ $(function(){
 });
 
 
-libsb.on('user-menu', function(menu, next){
+libsb.on('user-menu', function (menu, next) {
 	menu.items.userpref = {
 		text: 'My Account',
 		prio: 300,
-		action: function(){
-			libsb.emit("navigate",{
+		action: function () {
+			libsb.emit("navigate", {
 				mode: "pref",
 				view: "meta"
 			});
@@ -41,10 +49,7 @@ libsb.on("logout", function (p, n) {
 		view: 'loggedout',
 	});
 
-	lace.modal.show({
-		body: $("#signedout-dialog").html(),
-		dismiss: false
-	});
+	$("<div>").html($("#signedout-dialog").html()).modal({ dismiss: false });
 
 	n();
 }, 1000);
@@ -63,36 +68,37 @@ libsb.on('navigate', function (state, next) {
 
 function setOwnerClass() {
 	var isOwner = false;
+
 	function check() {
-		if(libsb.memberOf){
-			libsb.memberOf.forEach(function(room){
-				if(room.id === currentState.roomName && room.role === "owner"){
+		if (libsb.memberOf) {
+			libsb.memberOf.forEach(function (room) {
+				if (room.id === currentState.roomName && room.role === "owner") {
 					$("body").addClass("role-owner");
 					isOwner = true;
 				}
 			});
 		}
 
-		if(!isOwner) $("body").removeClass("role-owner");
+		if (!isOwner) $("body").removeClass("role-owner");
 	}
 	check();
 }
 
-libsb.on('init-dn', function(init, next){
+libsb.on('init-dn', function (init, next) {
 	setOwnerClass();
 	next();
 }, 100);
 
-libsb.on('back-dn', function(init, next){
+libsb.on('back-dn', function (init, next) {
 	setOwnerClass();
 	next();
 }, 100);
 
-libsb.on('navigate', function(state, next) {
-	if(state.mode == 'normal' && state.roomName) {
+libsb.on('navigate', function (state, next) {
+	if (state.mode == 'normal' && state.roomName) {
 		setOwnerClass();
 	}
-	if(state.source == "boot") {
+	if (state.source == "boot") {
 		setUser();
 	}
 	next();

@@ -21,8 +21,7 @@ Boston, MA 02111-1307 USA.
 var express = require("express"),
 	http = require("http"), https = require("https"),
 	fs = require("fs"),
-	config = require("../config.js"),
-	session = require("./session.js");
+	config = require("../config.js");
 
 exports.init = function() {
 	var app = express(), srv, srvs;

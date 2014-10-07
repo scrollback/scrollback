@@ -4,7 +4,7 @@ module.exports = function (types) {
             types.admitexpel.put(action, function () {
                 var linkData = {};
 
-                if (!action.victim.role || action.victim.role != "none") {
+/*                if (!action.victim.role || action.victim.role != "none") {
                     linkData.roleSince = action.victim.roleSince || new Date().getTime();
                 } else {
                     linkData.roleSince = new Date().getTime();
@@ -18,14 +18,16 @@ module.exports = function (types) {
                         linkData.role = "none";
                     }
                     linkData.transitionType = "invite";
-                    linkData.transitionRole = action.invitedRole;
+                    linkData.transitionRole = action.transitionRole;
                 } else if (action.type == "expel") {
                     linkData.role = "banned";
                     linkData.transitionType = "timeout";
                     linkData.transitionRole = action.victim.role;
                     linkData.transitionMessage = action.transitionMessage;
                     linkData.roleUntil = action.transitionAt || (new Date().getTime() + 300000);
-                }
+                }*/
+                linkData.role = action.role;
+                console.log("link data++++++", linkData);
                 types.rooms.link(action.room.id, 'hasMember', action.victim.id, linkData, function () {
                     cb();
                 });

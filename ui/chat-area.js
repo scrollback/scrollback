@@ -301,7 +301,7 @@ $(function () {
 	$logs.on("scroll", function () {
 
 		if(scrollTimer) clearTimeout(scrollTimer);
-		
+
 		scrollTimer = setTimeout(function() {
 			var chats = $logs.find(".chat-item"),
 				time = getIdAndTime(chats.eq(0).data("index")).time,
@@ -331,7 +331,7 @@ $(function () {
 					}
 				}
 			});
-		}, 500);		
+		}, 500);
 	});
 
 	setInterval(function () {
