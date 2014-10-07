@@ -3,6 +3,13 @@ var host = config.server.protocol + config.server.host;
 var validate = require("../lib/validate.js");
 var iframeCount = 0, widgets = {};
 
+function guid(n) {
+    var str="", i;
+	n = n || 32;
+	for(i=0; i<n; i++) str += (Math.random()*36|0).toString(36);
+	return str;
+}
+
 var domReady = (function(){
 	var ready = document.readyState === "complete", listeners = [], fun;
 
@@ -119,6 +126,19 @@ function scrollback(opts) {
 	};
 
 	self.embed = constructEmbed(opts);
+
+	self.emit = function(type, data, cb) {
+		var post = {};
+		console.log("Emit called");
+		post.id = guid();
+		post.type = type;
+		post.data = data;
+		console.log(this);
+		this.iframe.contentWindow.postMessage(JSON.stringify(post), host);
+		console.log("Posted message", post);
+		self.pendingCallbacks[post.id] = cb;
+	};
+
 	self.message = function (message) {
 		switch(message.type){
 			case "activity":
@@ -142,6 +162,13 @@ function scrollback(opts) {
 				console.log("navigate", message.state);
 				self.state = message.state;
 			break;
+			case "following":
+			
+			break;
+		}
+		if(this.pendingCallbacks[message.id]) {
+			if(message.type === "error") return this.pendingCallbacks[message.id](message);
+			else this.pendingCallbacks[message.id](null, message);
 		}
 	};
 

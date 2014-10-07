@@ -77,24 +77,53 @@ function classesOnLoad(embed) {
 }
 
 function toastChange(state, next) {
-	var activity;
-	if (state.source == "embed" && state.hasOwnProperty("minimize")) {
+	var activity, stateClone = $.extend(true, {}, state)
+	if (stateClone.source == "embed" && stateClone.hasOwnProperty("minimize")) {
 		activity = {
 			type: "activity",
 			minimize: false
 		}
 		activity.minimize = state.minimize;
-		if (state.minimize) {
+		if (stateClone.minimize) {
 			$("body").addClass("minimized");
 		} else {
 			$("body").removeClass("minimized");
 		}
 		parent.postMessage(JSON.stringify(activity), parentHost);
 	}else if(parent){
-		parent.postMessage(JSON.stringify({type:"navigate",state:state}), parentHost);	
+		if(stateClone.room && stateClone.room.params) delete stateClone.room.params;
+		parent.postMessage(JSON.stringify({type:"navigate",state:stateClone}), parentHost);	
 	}
 	
 	next();
+}
+
+function onMessage(e) {
+	var data = e.data;
+	console.log("GOT: data",data);
+	data = parseResponse(data);
+	console.log("GOT: data",data);
+	switch(data.type){
+		case "domain-response":
+			verifyDomainResponse(data);
+		break;
+		case "navigate":
+			console.log("Got Navigate event", data);
+			data.data.source = "parent";
+			libsb.emit("navigate", data.data, function(err, state){
+				var obj;
+				if(err) {
+					err.type = "error";
+					err.id = data.id;
+					parent.postMessage(JSON.stringify(err), parentHost);
+				}else {
+					obj = {type:"navigate", id: data.id, state: state};
+					parent.postMessage(JSON.stringify(obj), parentHost);
+				}
+
+			});
+		break;
+	}
 }
 
 module.exports = function (libsb) {
@@ -152,13 +181,7 @@ module.exports = function (libsb) {
 			}
 
 			if (embed.origin) {
-				window.onmessage = function (e) {
-					var data = e.data;
-					data = parseResponse(data);
-					if (data.type == "domain-response") {
-						verifyDomainResponse(data);
-					}
-				};
+				window.onmessage = onMessage;
 				sendDomainChallenge(embed.origin);
 			} else {
 				verificationStatus = true;
