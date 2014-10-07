@@ -5,7 +5,8 @@ libsb.on('pref-show', function(tabs, next) {
 	var $div = $('<div>');
 	var user = tabs.user;
 	
-	var devices = user.params.pushNotifications && user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
+	var devices = user.params.pushNotifications && 
+        user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
 	/*
 		Structure of user.params.pushNotifications
 		
