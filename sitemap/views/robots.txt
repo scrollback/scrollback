@@ -3,5 +3,9 @@
 
 User-agent: *
 Disallow: /t/*
+Disallow: /socket/*
+Disallow: /me/*
+Disallow: /*/until/*
+Disallow: /*/since/*
 
 Sitemap: http://scrollback.io/r/sitemap
