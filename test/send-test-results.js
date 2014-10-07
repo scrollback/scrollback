@@ -1,10 +1,6 @@
-var htmlEncode = require('htmlencode');
 var fs = require('fs');
 var config = require('../config.js');
-var Handlebars = require("handlebars");
 var host = config.http.host;
-var to = config.test.to;
-var eCompiled = Handlebars.compile(fs.readFileSync('./test/views/test-results-email.hbs', 'utf8'));
 var Email = require('../lib/email.js');
 var emailObj = new Email(config.email.auth);
 var r1 = JSON.parse(fs.readFileSync('./mocha-output-unit.json', 'utf8'));
@@ -24,7 +20,6 @@ function processTestResults(testResults) {
 	r.selenium = r2;
 	var cp = 0, cf = 0;
     ['unit', 'selenium'].forEach(function (v) {
-		
 		for (var test in r[v]) {
 			if (r[v].hasOwnProperty(test) && typeof r[v][test] == 'object') {
 				cp = 0;
@@ -38,9 +33,7 @@ function processTestResults(testResults) {
 							cf++;
 						}
 					}
-					
-					
-				}	
+				}
 				r[v][test].passed = cp;
 				r[v][test].failed = cf;
 			}
@@ -70,7 +63,7 @@ function sendEmail() {
 	var yesterday = getDateString(dateYesterday);
 	var out = [];
 	out.push("<html><body>");
-	var tempUrl = "http://" + host + "/s/tmp/%s-%s.html"
+	var tempUrl = "http://" + host + "/s/tmp/%s-%s.html";
 	out.push("<a href='" + parse(tempUrl, "coverage", today) + "'>Coverage Results</a>");
 	var url = "http://" + host + "/s/tmp/%s-test-results-" + today + ".html#%s";
 	var style = "style=\"color: %s; text-decoration: initial; \"";
@@ -78,7 +71,8 @@ function sendEmail() {
 	var colorPassed = "#5cb85c";
 	var spanStyle = "style=\" color:%s;\" ";
 	['unit', 'selenium'].forEach(function (v) { 
-		out.push("<a  style=\"display: block;color: black;font-size: 20;text-decoration: blink;margin-top: 5px;\" href='" + parse(tempUrl, v + "-test-results", today) + "'>" + v + " Tests</h2>");
+		out.push("<a  style=\"display: block;color: black;font-size: 20;text-decoration: blink;margin-top: 5px;\" href='" +
+				 parse(tempUrl, v + "-test-results", today) + "'>" + v + " Tests</h2>");
 		for (var test in r[v]) {
 			if (r[v].hasOwnProperty(test) && typeof r[v][test] == 'object') {
 				var cp = r[v][test].passed, cf = r[v][test].failed;
@@ -92,7 +86,7 @@ function sendEmail() {
 						if (r[v][test].hasOwnProperty(t) && typeof r[v][test][t] === 'object') {
 							var tt = r[v][test][t];
 							if (tt.status === 'FAILED')  {
-								out.push("<li style=\"color:" + colorFailed + "\"><a " + parse(style, color) + " href='" +  parse(url, v, r[v][test][t].id) + "'>" + t + "</a></li>");	
+								out.push("<li style=\"color:" + colorFailed + "\"><a " + parse(style, color) + " href='" +  parse(url, v, r[v][test][t].id) + "'>" + t + "</a></li>");
 							}
 						}
 					}	
@@ -104,7 +98,7 @@ function sendEmail() {
 	});
 	out.push("<a href='" + parse(tempUrl, "email", yesterday) + "'>Previous day test results</a>");
 	out.push("<a href='" + parse(tempUrl, "email", today) + "'>See this email on browser</a>");
-	out.push("</body></html>")
+	out.push("</body></html>");
 	var m = out.join("\n");
 	fs.writeFileSync("public/s/tmp/email-" + today + ".html", m);
 	config.test.to.forEach(function(to) {
@@ -116,10 +110,6 @@ function sendEmail() {
 	
 }
 
-
-
-sendEmail()
-
 function getDateString(date) {
 	var y = date.getYear() + "";
 	y = y.substring(1);
@@ -127,7 +117,7 @@ function getDateString(date) {
 	if (m.length === 1) m = "0" + m;
 	var d = "" + date.getDate();
 	if (d.length === 1) d = "0" + d;
-
 	return y + m + d;
-
 }
+
+sendEmail();
