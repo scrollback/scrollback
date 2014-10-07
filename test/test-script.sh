@@ -36,13 +36,14 @@ gulp
 # Restart IRC
 sudo forever stop ircClient/server.js
 sudo forever start ircClient/server.js
-mocha test/test.js -R xunit-file
+mocha test/test.js -R mocha-html-reporter > "public/s/tmp/unit-test-results-$(date +%y%m%d).html"
 mocha test/test.js -R html-cov > "public/s/tmp/coverage-$(date +%y%m%d).html"
 sudo forever start index.js
-cp xunit.xml xunit-mocha.xml
+mv mocha-output.json mocha-output-unit.json
 
 #run selenium...
-mocha test/selenium/test.js -R xunit-file
+mocha test/selenium/test.js -R mocha-html-reporter > "public/s/tmp/selenium-test-results-$(date +%y%m%d).html"
+mv mocha-output.json mocha-output-selenium.json
 node test/send-test-results.js
 
 exit 0
