@@ -125,7 +125,7 @@ module.exports = {
                 this.safeSaveLS('session', this.cache.session);
 			}
 		}
-		localStorage.LRU = JSON.stringify(this.LRU);
+		this.safeSaveLS('LRU', this.LRU);
 		
         this.safeSaveLS('occupantOf', this.cache.occupantOf);
 		
