@@ -27,18 +27,17 @@ git reset --hard
 git checkout master || show_err "Failed to checkout master branch"
 git pull
 # Stop the server
-sudo forever stop index.js
+sudo stop scrollback
 # Setup
 npm install
 
 gulp
 
 # Restart IRC
-sudo forever stop ircClient/server.js
-sudo forever start ircClient/server.js
+sudo restart sbirc
 mocha test/test.js -R mocha-html-reporter > "public/s/tmp/unit-test-results-$(date +%y%m%d).html"
 mocha test/test.js -R html-cov > "public/s/tmp/coverage-$(date +%y%m%d).html"
-sudo forever start index.js
+sudo start scrollback
 mv mocha-output.json mocha-output-unit.json
 
 #run selenium...
