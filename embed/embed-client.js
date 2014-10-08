@@ -76,7 +76,7 @@ function classesOnLoad(embed) {
 	}
 }
 
-function toastChange(state, next) {
+function postNavigation(state, next) {
 	var activity, stateClone = $.extend(true, {}, state)
 	if (stateClone.source == "embed" && stateClone.hasOwnProperty("minimize")) {
 		activity = {
@@ -100,28 +100,34 @@ function toastChange(state, next) {
 
 function onMessage(e) {
 	var data = e.data;
-	console.log("GOT: data",data);
 	data = parseResponse(data);
-	console.log("GOT: data",data);
-	switch(data.type){
-		case "domain-response":
-			verifyDomainResponse(data);
+	switch (data.type) {
+	case "domain-response":
+		verifyDomainResponse(data);
 		break;
-		case "navigate":
-			console.log("Got Navigate event", data);
-			data.data.source = "parent";
-			libsb.emit("navigate", data.data, function(err, state){
-				var obj;
-				if(err) {
-					err.type = "error";
-					err.id = data.id;
-					parent.postMessage(JSON.stringify(err), parentHost);
-				}else {
-					obj = {type:"navigate", id: data.id, state: state};
-					parent.postMessage(JSON.stringify(obj), parentHost);
-				}
+	case "navigate":
+			
+		console.log("Got Navigate event", data);
+		data.data.source = "parent";
+		libsb.emit("navigate", data.data, function (err, state) {
+			var obj;
+			if (err) {
+				err.type = "error";
+				err.id = data.id;
+				parent.postMessage(JSON.stringify(err), parentHost);
+			} else {
+				obj = {
+					type: "navigate",
+					id: data.id,
+					state: state
+				};
+				parent.postMessage(JSON.stringify(obj), parentHost);
+			}
 
-			});
+		});
+		break;
+	case "following":
+		
 		break;
 	}
 }
@@ -249,5 +255,5 @@ module.exports = function (libsb) {
 		if (libsb.hasBooted) processInit();
 		else queue.push(processInit);
 	}, 500);
-	libsb.on("navigate", toastChange, 500);
+	libsb.on("navigate", postNavigation, 500);
 };
