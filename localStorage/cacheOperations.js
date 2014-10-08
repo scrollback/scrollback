@@ -42,7 +42,18 @@ module.exports = {
 	cache: {},
 	LRU: {},
 	rooms: {},
-	deleteLRU: function deleteLRU() {
+    safeSaveLS: function safeSaveLS (ls_key, data) {
+        // saves data to localStorage[ls_key] safely
+        try {
+            localStorage[ls_key] = (typeof data !== "string") ? JSON.stringify(data) : data;
+        } catch (e) {
+            if (e.name === 'QuotaExceededError' || e.code === 22) {
+                this.deleteLRU();
+                this.safeSaveLS(ls_key, data);
+            }
+        }
+    },  
+	deleteLRU: function () {
 		// deletes the least recently used entry from LocalStorage
 		var leastTime = Infinity,
 			leastEntry;
@@ -58,15 +69,7 @@ module.exports = {
 		}
 	},
 	saveCache: function (key) {
-		// saves an ArrayCache to LocalStorage
-		try {
-			localStorage[key] = JSON.stringify(this.cache[key].d);
-		} catch (e) {
-			if (e.name == 'QuotaExceededError' || e.code == 22) { // localStorage is full!
-				this.deleteLRU();
-				this.saveCache(key);
-			}
-		}
+        this.safeSaveLS(key, this.cache[key].d);
 		this.LRU[key] = new Date().getTime();
 		this.save();
 	},
@@ -113,19 +116,29 @@ module.exports = {
 	},
 	save: function () {
 		//saves user, session, LRU, rooms, occupantOf, memberOf to LocalStorage
-		localStorage.user = JSON.stringify(this.cache.user);
-		if (typeof this.cache.session !== "undefined") {
+		this.safeSaveLS('user', this.cache.user);
+//        localStorage.user = JSON.stringify(this.cache.user);
+		
+        if (typeof this.cache.session !== "undefined") {
 			if (localStorage.hasOwnProperty("session")) {
 				this.cache.session = localStorage.session;
 			} else {
-				localStorage.session = this.cache.session;
+                this.safeSaveLS('session', this.cache.session);
+//				localStorage.session = this.cache.session;
 			}
 		}
 		localStorage.LRU = JSON.stringify(this.LRU);
-		localStorage.occupantOf = JSON.stringify(this.cache.occupantOf);
-		localStorage.memberOf = JSON.stringify(this.cache.memberOf);
-		localStorage.rooms = JSON.stringify(this.rooms);
-		this.load();
+		
+        this.safeSaveLS('occupantOf', this.cache.occupantOf);
+//        localStorage.occupantOf = JSON.stringify(this.cache.occupantOf);
+		
+        this.safeSaveLS('memberOf', this.cache.memberOf);
+//        localStorage.memberOf = JSON.stringify(this.cache.memberOf);
+		
+        this.safeSaveLS('rooms', this.rooms);
+//        localStorage.rooms = JSON.stringify(this.rooms);
+		
+        this.load();
 	},
 	load: function () {
 		try {

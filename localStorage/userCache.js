@@ -17,10 +17,10 @@ var membersPopulated = false;
 var occupantsPopulated = false;
 
 if (typeof window === "undefined") {
-    // for mocha tests
-    localStorage = {};
-    membersPopulated = true;
-    occupantsPopulated = true;
+	// for mocha tests
+	localStorage = {};
+	membersPopulated = true;
+	occupantsPopulated = true;
 }
 
 module.exports = {
@@ -55,9 +55,9 @@ module.exports = {
 	getMembers: function (room, memberId, callback) {
 		var res = [];
 		this.loadUsers();
-		
-		if (typeof room ===  "undefined") return;
-		
+
+		if (typeof room === "undefined") return;
+
 		if (memberId !== null) {
 			if (/^guest-/.test(memberId)) {
 				res = []; // guest cannot be a member
@@ -65,11 +65,9 @@ module.exports = {
 			// return the single member as an Array
 			if (!roomMemberList.hasOwnProperty(room)) {
 				res = [];
-			}
-			else if (!roomMemberList[room].hasOwnProperty(memberId)) {
+			} else if (!roomMemberList[room].hasOwnProperty(memberId)) {
 				res = [];
-			}
-			else res = [roomMemberList[room][memberId]];
+			} else res = [roomMemberList[room][memberId]];
 		} else {
 			// return all members of the room
 			var mList = roomMemberList[room];
@@ -86,7 +84,7 @@ module.exports = {
 	getOccupants: function (room, occupantId, callback) {
 		var res = [];
 		this.loadUsers();
-		
+
 		if (occupantId !== null) {
 			// return the singe occupant of this room 
 
@@ -103,7 +101,7 @@ module.exports = {
 				res.push(globalOccupantList[r]);
 			}
 		}
-		
+
 		if (occupantsPopulated === true) {
 			callback(res);
 		} else {
@@ -140,7 +138,7 @@ module.exports = {
 			delete roomOccupantList[room];
 		}
 		if (!(occupantList instanceof Array)) {
-			if(typeof occupantList !== "undefined") occupantList = [occupantList];
+			if (typeof occupantList !== "undefined") occupantList = [occupantList];
 			else occupantList = [];
 		}
 
@@ -187,9 +185,27 @@ module.exports = {
 		}
 	},
 	saveUsers: function () {
-		localStorage.roomOccupantList = JSON.stringify(roomOccupantList);
-		localStorage.roomMemberList = JSON.stringify(roomMemberList);
-		localStorage.globalOccupantList = JSON.stringify(globalOccupantList);
+		try {
+			localStorage.roomOccupantList = JSON.stringify(roomOccupantList);
+			localStorage.roomMemberList = JSON.stringify(roomMemberList);
+			localStorage.globalOccupantList = JSON.stringify(globalOccupantList);
+		} catch (e) {
+			var LRU = JSON.parse(localStorage.LRU);
+			if (e.name === 'QuotaExceededError' || e.code === 22) {
+				var leastTime = Infinity,
+					leastEntry;
+				for (var i in LRU) {
+					if (LRU[i] < leastTime) {
+						leastTime = LRU[i];
+						leastEntry = i;
+					}
+				}
+				if (leastTime != Infinity) {
+					delete localStorage[leastEntry];
+				}
+			}
+			this.saveUsers();
+		}
 	},
 	deletePersistence: function () {
 		// delete LS entry for users.
