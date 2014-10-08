@@ -1,11 +1,12 @@
 var assert = require('assert'),
 	webdriver = require('browserstack-webdriver'),
 	testUtils = require('./testUtils.js'),
-	timeout = 30000;
+	timeout = 30000,
+	q = require('q');
 module.exports = function(capabilities, options) {
 	describe('Meta area test: ' + options.id, function() {
 		this.timeout(timeout);
-		var driver, server = "http://dev.scrollback.io";
+		var driver, server = options.server;
 		before(function(done) {
 			this.timeout(3 * timeout);
 			driver = testUtils.openUrl(capabilities, server, "scrollback");
@@ -14,39 +15,37 @@ module.exports = function(capabilities, options) {
 
 		it("meta button test", function(done) {
 			this.timeout(timeout);
-			driver.findElement(webdriver.By.css('.meta-button-back')).
-			then(function(mb) {
-				mb.isDisplayed().
-				then(function(v) {
-					if (v) {
-						mb.click().
-						then(function() {
-							driver.findElement(webdriver.By.css('.meta-area')).
-							then(function(ma) {
-								ma.isDisplayed().
-								then(function(v) {
-									assert.equal(true, v, "Meta-button-back is not working");
-									done();
-								});
-							});
-						});
-					} else done();
-				});
+			var mb;
+			driver.findElement(webdriver.By.css('.meta-button-back'))
+			.then(function(m) {
+				mb = m;
+				return mb.isDisplayed();
+			})
+			.then(function(v) {
+				if (v) {
+					mb.click()
+					.then(function() {
+						return driver.findElement(webdriver.By.css('.meta-area'));
+					})
+					.then(function(ma) {
+						return ma.isDisplayed();
+					})
+					.then(function(v) {
+						assert.equal(true, v, "Meta-button-back is not working");
+						done();
+					});
+				} else done();
 			});
 		});
 
 		it("People area test1", function(done) {
 			this.timeout(timeout);
-			driver.findElement(webdriver.By.css('.pane-people')).
-				isDisplayed().
-				then(function(v) {
-					assert.equal(true, v, "people pane is not visible");
-					done();
-				});
-			/*driver.findElement(webdriver.By.css('.pane-people')).getAttribute("class").then(function(cl) {
-			 console.log("class: ", cl);
-			 assert.equal(true, cl.indexOf("current") !== -1, "people pane is not visible");
-			 });*/
+			driver.findElement(webdriver.By.css('.pane-people'))
+			.isDisplayed()
+			.then(function(v) {
+				assert.equal(true, v, "people pane is not visible");
+				done();
+			});
 		});
 
 		it("People area test2", function(done) {
@@ -60,20 +59,17 @@ module.exports = function(capabilities, options) {
 
 		it("config area test1", function(done) {
 			this.timeout(timeout);
-			driver.findElement(webdriver.By.css('.tab-info')).
-				then(function(tab) {
-					tab.click().
-						then(function() {
-							driver.findElement(webdriver.By.css('.pane-info')).
-								then(function(el) {
-									el.isDisplayed().
-										then(function(v) {
-											assert.equal(true, v, "Info area not visible after clicking info tab");
-											done();
-										});
-								});
-						});
-				});
+			driver.findElement(webdriver.By.css('.tab-info'))
+			.then(function(tab) {
+				return tab.click();
+			}).then(function() {
+				return driver.findElement(webdriver.By.css('.pane-info'));
+			}).then(function(el) {
+				return el.isDisplayed();
+			}).then(function(v) {
+				assert.equal(true, v, "Info area not visible after clicking info tab");
+				done();
+			});
 		});
 
 		it("config area test2", function(done) {
@@ -109,17 +105,14 @@ module.exports = function(capabilities, options) {
 			this.timeout(timeout);
 			driver.findElement(webdriver.By.css('.tab-threads')).
 			then(function(tab) {
-				tab.click().
-				then(function() {
-					driver.findElement(webdriver.By.css('.pane-threads')).
-					then(function(el) {
-						el.isDisplayed().
-						then(function(v) {
-							assert.equal(true, v, "Thread area not visible after clicking threads tab");
-							done();
-						});
-					});
-				});
+				return tab.click();
+			}).then(function() {
+				return driver.findElement(webdriver.By.css('.pane-threads'))
+			}).then(function(el) {
+				return el.isDisplayed();
+			}).then(function(v) {
+				assert.equal(true, v, "Thread area not visible after clicking threads tab");
+				done();
 			});
 		});
 
@@ -134,31 +127,34 @@ module.exports = function(capabilities, options) {
 
 		it("select Thread", function(done) {
 			this.timeout(timeout);
+			var threads;
+			var index;
+			var messages;
+			var id;
 			driver.findElements(webdriver.By.css('.thread-item')).
-			then(function(threads) {
-				var index = Math.floor(Math.random() * threads.length - 1) + 1;
-				threads[index].getAttribute('id').
-				then(function(id) {
-					id = id.substring(7);
-					threads[index].click().
-					then(function() {
-						driver.findElements(webdriver.By.css('.chat-item')).
-						then(function(messages) {
-							var c = 0;
-							function d() {
-								if (++c == messages.length) done();
-							}
-							setTimeout(function() {
-								messages.forEach(function(message) {
-									message.getAttribute("data-thread").
-									then(function(threadid) {
-										console.log("threadID", threadid);
-										assert.equal(threadid, id, "Thread Not loading");
-										d();
-									});
-								});
-							}, 5000);
-						});
+			then(function(t) {
+				threads = t;
+				index = Math.floor(Math.random() * threads.length - 1) + 1;
+				return threads[index].getAttribute('id');
+			}).then(function(idd) {
+				id = idd.substring(7);
+				return threads[index].click();
+			}).then(function() {
+				return driver.findElements(webdriver.By.css('.chat-item'));
+			}).then(function(msgs) {
+				messages = msgs;
+				return q.delay(5000);
+			}).then(function() {
+				var c = 0;
+				function d() {
+					if (++c == messages.length) done();
+				}
+				messages.forEach(function(message) {
+					message.getAttribute("data-thread").
+					then(function(threadid) {
+						console.log("threadID", threadid);
+						assert.equal(threadid, id, "Thread Not loading");
+						d();
 					});
 				});
 			});

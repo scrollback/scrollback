@@ -8,7 +8,7 @@ var assert = require('assert'),
 module.exports = function(capabilities, options) {
 	describe('Create Room Test ' + options.id, function() {
 		this.timeout(timeout);
-		var driver, server = "https://dev.scrollback.io";
+		var driver, server = options.server;
 		var time = new Date().getTime();
 		var roomName = "scrollback" + time;
 		before(function(done) {
@@ -19,21 +19,18 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("login persona on create room view", function(done) { 
-			console.log("login test");
 			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function() {
 				driver.findElement(webdriver.By.id("noroom-view-create")).click()
 				.then(function() {
-					return q.delay(4000);
+					return q.delay(5000);
 				}).then(function() {
 					driver.findElement(webdriver.By.css(".info-title")).getText().then(function(t) {
-						assert.equal(t, roomName, "Room creation unseccessful");
+						assert.equal(t, roomName, "Room creation unsuccessful");
 						done();
 					});
 				});					
 			});
 		});
-
-
 
 		after(function(done) {
 			driver.quit().then(done);
