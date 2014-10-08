@@ -117,26 +117,21 @@ module.exports = {
 	save: function () {
 		//saves user, session, LRU, rooms, occupantOf, memberOf to LocalStorage
 		this.safeSaveLS('user', this.cache.user);
-//        localStorage.user = JSON.stringify(this.cache.user);
 		
         if (typeof this.cache.session !== "undefined") {
 			if (localStorage.hasOwnProperty("session")) {
 				this.cache.session = localStorage.session;
 			} else {
                 this.safeSaveLS('session', this.cache.session);
-//				localStorage.session = this.cache.session;
 			}
 		}
 		localStorage.LRU = JSON.stringify(this.LRU);
 		
         this.safeSaveLS('occupantOf', this.cache.occupantOf);
-//        localStorage.occupantOf = JSON.stringify(this.cache.occupantOf);
 		
         this.safeSaveLS('memberOf', this.cache.memberOf);
-//        localStorage.memberOf = JSON.stringify(this.cache.memberOf);
 		
         this.safeSaveLS('rooms', this.rooms);
-//        localStorage.rooms = JSON.stringify(this.rooms);
 		
         this.load();
 	},
