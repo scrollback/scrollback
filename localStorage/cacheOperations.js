@@ -17,7 +17,7 @@ function findLastTime(messages) {
 	// finds the last message time in the array of messages.
 	var len = messages.length;
 	var lastMsgTime = messages[len - 1].time;
-	for (var i=len-1; i > 0; i--) {
+	for (var i = len - 1; i > 0; i--) {
 		if (messages[i].type === "text") {
 			lastMsgTime = messages[i].time;
 			break;
@@ -33,7 +33,7 @@ function applyUpdates(data, cacheName, endType) {
 	data.forEach(function (msg) {
 		pos = _this.cache[cacheName].find(endType, msg.time);
 		if (msg && _this.cache[cacheName].d[pos] && (msg.id === _this.cache[cacheName].d[pos].id)) {
-			 _this.cache[cacheName].d[pos] = msg;
+			_this.cache[cacheName].d[pos] = msg;
 		}
 	});
 }
@@ -42,17 +42,17 @@ module.exports = {
 	cache: {},
 	LRU: {},
 	rooms: {},
-    safeSaveLS: function safeSaveLS (ls_key, data) {
-        // saves data to localStorage[ls_key] safely
-        try {
-            localStorage[ls_key] = (typeof data !== "string") ? JSON.stringify(data) : data;
-        } catch (e) {
-            if (e.name === 'QuotaExceededError' || e.code === 22) {
-                this.deleteLRU();
-                this.safeSaveLS(ls_key, data);
-            }
-        }
-    },  
+	safeSaveLS: function safeSaveLS(ls_key, data) {
+		// saves data to localStorage[ls_key] safely
+		try {
+			localStorage[ls_key] = (typeof data !== "string") ? JSON.stringify(data) : data;
+		} catch (e) {
+			if (e.name === 'QuotaExceededError' || e.code === 22) {
+				this.deleteLRU();
+				this.safeSaveLS(ls_key, data);
+			}
+		}
+	},
 	deleteLRU: function () {
 		// deletes the least recently used entry from LocalStorage
 		var leastTime = Infinity,
@@ -69,7 +69,7 @@ module.exports = {
 		}
 	},
 	saveCache: function (key) {
-        this.safeSaveLS(key, this.cache[key].d);
+		this.safeSaveLS(key, this.cache[key].d);
 		this.LRU[key] = new Date().getTime();
 		this.save();
 	},
@@ -94,7 +94,7 @@ module.exports = {
 		//var msgs = JSON.parse(localStorage[key]);
 		var lastTime = findLastTime(msgs);
 		_this = this;
-		
+
 		if (typeof lastTime === "undefined") return;
 		libsb.emit("getTexts", {
 			to: roomName,
@@ -117,23 +117,23 @@ module.exports = {
 	save: function () {
 		//saves user, session, LRU, rooms, occupantOf, memberOf to LocalStorage
 		this.safeSaveLS('user', this.cache.user);
-		
-        if (typeof this.cache.session !== "undefined") {
+
+		if (typeof this.cache.session !== "undefined") {
 			if (localStorage.hasOwnProperty("session")) {
 				this.cache.session = localStorage.session;
 			} else {
-                this.safeSaveLS('session', this.cache.session);
+				this.safeSaveLS('session', this.cache.session);
 			}
 		}
 		this.safeSaveLS('LRU', this.LRU);
-		
-        this.safeSaveLS('occupantOf', this.cache.occupantOf);
-		
-        this.safeSaveLS('memberOf', this.cache.memberOf);
-		
-        this.safeSaveLS('rooms', this.rooms);
-		
-        this.load();
+
+		this.safeSaveLS('occupantOf', this.cache.occupantOf);
+
+		this.safeSaveLS('memberOf', this.cache.memberOf);
+
+		this.safeSaveLS('rooms', this.rooms);
+
+		this.load();
 	},
 	load: function () {
 		try {
