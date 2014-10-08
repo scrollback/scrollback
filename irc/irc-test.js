@@ -5,7 +5,7 @@ var gen = require("../lib/generate.js");
 var irc = require('irc');
 var guid = gen.uid;
 var client;
-var testingServer = "dev.scrollback.io";
+var testingServer = "stage.scrollback.io";
 var botName = require('../ircClient/config.js').botNick;
 
 /**
@@ -96,7 +96,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 		ircSb(core);
 		setTimeout(function(){
 			done();		
-		}, 15000);
+		}, 20000);
 	});
 	it('IRC message sending and receiving test.', function(done) {
 		this.timeout(1000 * 60 * 2);
