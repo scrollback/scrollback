@@ -15,6 +15,7 @@ var data = {
 	"Room settings": "Room settings",
 	"Search": "Search",
 	"Sign in to get started": "Sign in to get started",
+	"Sign in with Facebook": "Sign in with Facebook",
 	"Sign in": "Sign in",
 	"This room doesn't exist yet :-(": "This room doesn't exist yet :-(",
 	"This room": "This room",
