@@ -71,5 +71,5 @@ module.exports = function (error) {
 			errorMessage = 'Unknown Authorization Error! You are not allowed to perfom this action :( ';
 	}
 
-	$("<div>").text(errorMessage).alertbar({ type: "error" });
+	$("<div>").html(errorMessage).alertbar({ type: "error" });
 };
