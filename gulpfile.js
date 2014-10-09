@@ -115,6 +115,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 	.pipe(plumber())
 	.pipe(concat("polyfills.js"))
 	.pipe(!debug ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(striplog()) : gutil.noop())
 	.pipe(gulp.dest(libDir))
 	.pipe(rename({ suffix: ".min" }))
 	.pipe(gulp.dest(libDir))
@@ -125,7 +126,8 @@ gulp.task("polyfills", [ "bower" ], function() {
 gulp.task("bundle", [ "libs" ], function() {
 	return bundle([ "libsb.js", "client.js" ], { debug: debug })
 	.pipe(plumber())
-	.pipe(!debug ? streamify(uglify() && striplog()) : gutil.noop())
+	.pipe(!debug ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(striplog()) : gutil.noop())
 	.pipe(rename({ suffix: ".bundle.min" }))
 	.pipe(gulp.dest("public/s/scripts"))
 	.on("error", gutil.log);
@@ -136,6 +138,7 @@ gulp.task("embed", function() {
 	return bundle("embed/embed-parent.js", { debug: debug })
 	.pipe(plumber())
 	.pipe(!debug ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(striplog()) : gutil.noop())
 	.pipe(rename("embed.min.js"))
 	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
