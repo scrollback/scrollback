@@ -24,6 +24,7 @@ module.exports = function (core) {
         }
         return r;
     });
+    validator.registerType('roomid', validateRoom);
     var actionValidator = {
         ref: ['string', 'undefined'],
         id: ['undefined', 'string'],
@@ -38,13 +39,15 @@ module.exports = function (core) {
     var initValidator = {
         suggestedNick: ['undefined', 'string'],
         origin: ['undefined', 'strictObject']
+
     };
 
     var textValidator = {
         text: ['nonEmptyString'],
         labels: ['undefined', 'strictObject'],
         mentions: ['array', 'undefined'],
-        threads: ['array', 'undefined']
+        threads: ['array', 'undefined'],
+        to: ['roomid']
     };
      
     var userValidator = {
@@ -55,7 +58,7 @@ module.exports = function (core) {
                 params: ['strictObject'],
                 guides: ['strictObject']
             }
-        ],    
+        ]
     };
     
     var roomValidator = {
@@ -66,21 +69,30 @@ module.exports = function (core) {
                 params: ['strictObject'],
                 guides: ['strictObject']
             }
-        ],    
+        ],
+        to: ['roomid']
     };
     
+
+    function validate(action, valid, callback) {
+        log.d("Action:", action, valid);
+        var result = validator.validate(action, valid);
+        log.d("validation results", result);
+        if (!result.status) {
+            log.e("Error: invalid init params", JSON.stringify(result));
+            if (!(action.type && typeof action.type === 'string')) action.type = '';
+            callback(new Error("INVALID_" + action.type.toUpperCase() + "_PARAMS"));
+            return false;
+        }
+        return true;
+    }
+
+
     var handlers = {
         init: function (action, callback) {
-            var n;
-            var result = validator.validate(action, initValidator);
-            if (!result.status) {
-                log("Error: invalid init params", result); 
-                return callback(new Error("INVALID_INIT_PARAMS"));    
-            }
-            if (action.suggestedNick) {
-                n = validateRoom(action.suggestedNick, true);
-                if (n != action.suggestedNick) action.suggestedNick = n;
-            }
+            if (!validate(action, initValidator, callback)) return;
+            action.to = "me";
+            if (action.suggestedNick) action.suggestedNick = validateRoom(action.suggestedNick, true);
             callback();
         },/*,
         join: function (action, callback) {//move this to autharizer...
@@ -94,22 +106,15 @@ module.exports = function (core) {
             callback();
         },*/
         text: function (action, callback) {
+            if (!validate(action, textValidator, callback)) return;
             var mentionMap = {};
-            var result = validator.validate(action, textValidator);
-            if (!result.status) {
-                log.e("Error: invalid init params", result); 
-                return callback(new Error("INVALID_TEXT_PARAMS"));    
-            }
             if (!(action.text && action.text.trim())) return callback(new SbError("TEXT_MISSING"));
-
             if (/^\//.test(action.text)) {
                 if (!/^\/me/.test(action.text)) {
                     return callback(new SbError("UNRECOGNIZED_SLASH_COMMNAD"));
                 }
             }
-
             if (!action.labels) action.labels = {};
-
             if (action.mentions && action.mentions.length > 0) {
                 //checking for multiple mentions for the same user
                 action.mentions.forEach(function (i) {
@@ -119,7 +124,6 @@ module.exports = function (core) {
             } else {
                 action.mentions = [];
             }
-
             action.updateTime = action.time;
             callback();
         },
@@ -147,21 +151,13 @@ module.exports = function (core) {
             callback();
         },
         user: function (action, callback) {
-            var result = validator.validate(action, userValidator);
-            if (!result.status) {
-                log.e("Error: invalid init params", result); 
-                return callback(new Error("INVALID_USER"));    
-            }
+           if (!validate(action, userValidator, callback)) return;
             action.user.id = action.user.id.toLowerCase();   
             if (action.role) delete action.role;
             callback();
         },
         room: function (action, callback) {
-            var result = validator.validate(action, roomValidator);
-            if (!result.status) {
-                log.e("Error: invalid init params", result); 
-                return callback(new Error("INVALID_ROOM"));    
-            }
+            if (!validate(action, roomValidator, callback)) return;
             action.room.id = action.room.id.toLowerCase();
             if (!action.room.identities) action.room.identities = [];
             callback();
@@ -170,12 +166,8 @@ module.exports = function (core) {
 
     events.forEach(function (event) {
         core.on(event, function (action, callback) {
-            var result = validator.validate(action, actionValidator);
-            log("result:", result);
-            if(!result.status) {
-                log.e("Error action validation failed", result.info);    
-                return callback(new Error("INVALID_ACTION_PARAMS"));
-            }
+            log.d("Action", action);
+            if (!validate(action, actionValidator, callback)) return;
             basicValidation(action, function (err) {
                 if (err) return callback(err);
                 if (handlers[event]) {
@@ -235,14 +227,9 @@ function basicValidation(action, callback) {
 		validation on action.from is not need because we ignore the from sent be the client.
 		from and user is loaded by the entity loader using the session property.
 	*/
-
-    if (action.type === "init" || action.type === "user") {
-        if (action.suggestedNick) action.suggestedNick = action.suggestedNick.toLowerCase();
-        action.to = "me";
-    } else {
-         if (!validateRoom(action.to)) {
-            return callback(new SbError("INVALID_ROOM"));
-        }
+    log.d("Basic validation:", action);
+    if (!(action.type === "init" || action.type === "user") && (!validateRoom(action.to)))  {
+        return callback(new SbError("INVALID_ROOM"));
     }
     if (action.from) action.from = action.from.toLowerCase();
     action.to = action.to.toLowerCase();
