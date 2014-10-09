@@ -45,7 +45,6 @@ libsb.on('init-dn', function (init, next) {
 	var occupantOf = init.occupantOf;
 	var memberOf = init.memberOf;
 
-	// caching occupantOf and memberOf to cache.rooms
 	var rooms = {};
 	if (localStorage.hasOwnProperty('rooms')) {
 		rooms = JSON.parse(localStorage.rooms);
