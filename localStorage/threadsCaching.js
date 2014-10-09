@@ -1,15 +1,15 @@
 /* global libsb, currentState */
 
-module.exports = function (cacheOp) {
+module.exports = function (ArrayCacheOp) {
 	libsb.on('getThreads', function (query, next) {
 		if (query.hasOwnProperty('q')) { // search queries should always be served from the server.
 			return next();
 		}
-		var key = cacheOp.generateLSKey(query.to, 'threads');
-		if (!cacheOp.cache.hasOwnProperty(key)) {
-			cacheOp.loadArrayCache(key);
+		var key = ArrayCacheOp.generateLSKey(query.to, 'threads');
+		if (!ArrayCacheOp.cache.hasOwnProperty(key)) {
+			ArrayCacheOp.loadArrayCache(key);
 		}
-		if (!cacheOp.cache[key].d.length) {
+		if (!ArrayCacheOp.cache[key].d.length) {
 			return next();
 		}
 
@@ -19,7 +19,7 @@ module.exports = function (cacheOp) {
 		}
 		if (!currentState.connectionStatus) query.partials = true;
 
-		var results = cacheOp.cache[key].get('startTime', query);
+		var results = ArrayCacheOp.cache[key].get('startTime', query);
 
 		if (!results || !results.length) {
 			return next();
@@ -64,12 +64,12 @@ module.exports = function (cacheOp) {
 					startTime: query.time
 				});
 			}
-			var lskey = cacheOp.generateLSKey(query.to, 'threads');
-			if (!cacheOp.cache.hasOwnProperty(lskey)) {
-				cacheOp.loadArrayCache(lskey);
+			var lskey = ArrayCacheOp.generateLSKey(query.to, 'threads');
+			if (!ArrayCacheOp.cache.hasOwnProperty(lskey)) {
+				ArrayCacheOp.loadArrayCache(lskey);
 			}
-			cacheOp.cache[lskey].put('startTime', results);
-			cacheOp.saveCache(lskey);
+			ArrayCacheOp.cache[lskey].put('startTime', results);
+			ArrayCacheOp.saveArrayCache(lskey);
 		}
 		next();
 	}, 8); // runs after socket 	
