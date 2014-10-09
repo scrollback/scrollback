@@ -2,7 +2,7 @@
 
 var LRU = {};
 
-if(localStorage.hasOwnProperty('LRU')) {
+if (localStorage.hasOwnProperty('LRU')) {
 	LRU = JSON.parse(localStorage.LRU);
 }
 
@@ -13,6 +13,8 @@ module.exports = {
 			localStorage[key] = value;
 		} catch (e) {
 			// handle space exceeds error.
+			this.clear();
+			this.set(key, value);
 		}
 		this.touch(key);
 	},
@@ -22,9 +24,27 @@ module.exports = {
 	},
 	touch: function (key) {
 		LRU[key] = new Date().getTime();
-		localStorage[LRU] = JSON.stringify(LRU);
+		try {
+			localStorage.LRU = JSON.stringify(LRU);
+		} catch (e) {
+			this.clear();
+			this.touch(key);
+		}
 	},
 	clear: function () {
 		// clears elements in LocalStorage based on Least Recently Used strategy.
+		// deletes the least recently used entry from LocalStorage
+		var leastTime = Infinity,
+			leastEntry;
+		for (var i in LRU) {
+			if (LRU[i] < leastTime) {
+				leastTime = LRU[i];
+				leastEntry = i;
+			}
+		}
+		if (leastTime != Infinity) {
+			delete LRU[leastEntry];
+			delete localStorage[leastEntry];
+		}
 	}
 };
