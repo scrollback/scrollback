@@ -1,9 +1,37 @@
 /* jshint browser:true */
+/* global libsb */
 
 var spaceManager = require('./spaceManager.js');
 var ArrayCache = require('./ArrayCache.js');
 
 window.backTimes = {};
+
+var _this;
+
+function findLastTime(messages) {
+	// finds the last message time in the array of messages.
+	var len = messages.length;
+	var lastMsgTime = messages[len - 1].time;
+	for (var i = len - 1; i > 0; i--) {
+		if (messages[i].type === "text") {
+			lastMsgTime = messages[i].time;
+			break;
+		}
+	}
+	return lastMsgTime;
+}
+
+
+function applyUpdates(data, cacheName, endType) {
+	// applies edits till no more messages are left.
+	var pos;
+	data.forEach(function (msg) {
+		pos = _this.cache[cacheName].find(endType, msg.time);
+		if (msg && _this.cache[cacheName].d[pos] && (msg.id === _this.cache[cacheName].d[pos].id)) {
+			_this.cache[cacheName].d[pos] = msg;
+		}
+	});
+}
 
 module.exports = {
 	cache: {},
@@ -90,6 +118,21 @@ module.exports = {
 			if (typeof val == "string") return val.toLowerCase();
 		});
 		return argumentsLC.join('_');
+	},
+	updateArrayCache: function (key, roomName, endType) {
+		var msgs = this.cache[key].d;
+		//var msgs = JSON.parse(localStorage[key]);
+		var lastTime = findLastTime(msgs);
+		_this = this;
+
+		if (typeof lastTime === "undefined") return;
+		libsb.emit("getTexts", {
+			to: roomName,
+			updateTime: lastTime,
+			after: 256
+		}, function (err, data) {
+			applyUpdates(data.results, key, endType);
+		});
 	}
 
 };
