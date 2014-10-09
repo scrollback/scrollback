@@ -11,6 +11,7 @@ var data = {
 	"Done": "Done",
 	"Enter a room name": "Enter a room name",
 	"Go back as guest": "Go back as guest",
+	"Just a sec...": "Just a sec...",
 	"Profiles are coming soon!": "Profiles are coming soon!",
 	"Room settings": "Room settings",
 	"Search": "Search",
