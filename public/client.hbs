@@ -282,22 +282,12 @@
 					</div>
 				</div>
 			</div>
-
-			<div data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full">
-				<div class="content-view-area">
-					<h1 data-string="Sign in to get started"></h1>
-					<p>
-						<a class="button js-has-auth-menu" data-string="Sign in"></a>
-					</p>
-				</div>
-			</div>
-
 		</section>
 
 		<section data-mode="noroom profile" class="content-view-wrapper content-area-right">
 			<div data-mode="noroom" class="content-view-area">
 
-				<h1 data-string="This room doesn't exist yet :-("></h1>
+				<h2 data-string="This room doesn't exist yet :-("></h2>
 				<p data-role="guest" data-string="You need to sign in first to create a room"></p>
 				<p>
 					<a data-role="user" class="button" id="noroom-view-create" data-string="Create room"></a>
@@ -305,7 +295,7 @@
 				</p>
 			</div>
 			<div data-mode="profile" class="content-view-area">
-				<h1><span data-string="Who is"></span>&nbsp;<span id="profile-view-name"></span>?</h1>
+				<h2><span data-string="Who is"></span>&nbsp;<span id="profile-view-name"></span>?</h2>
 				<p data-string="Profiles are coming soon!"></p>
 			</div>
 		</section>
@@ -326,10 +316,16 @@
 
 		<section data-state="online" data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
 			<div class="content-view-area">
-				<h1>Sign in to get started.</h1>
+				<h2 data-string="Sign in to get started."></h2>
 				<p>
-					<a class="button facebook js-phonegap-fb-login">Sign in with Facebook</a>
+					<a class="button facebook js-phonegap-fb-login" data-string="Sign in with Facebook"></a>
 				</p>
+			</div>
+		</section>
+
+		<section data-state="offline" data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
+			<div class="content-view-area">
+				<h2 data-string="Just a sec..."></h2>
 			</div>
 		</section>
 
