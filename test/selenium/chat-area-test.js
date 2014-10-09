@@ -6,7 +6,7 @@ var assert = require('assert'),
 module.exports = function(capabilities, options) {
 	describe('Chat Area Test: ' + options.id, function() {
 		this.timeout(timeout);
-		var driver, server = "https://dev.scrollback.io";
+		var driver, server = options.server;
 
 		before(function(done) {
 			this.timeout(3 * timeout);
