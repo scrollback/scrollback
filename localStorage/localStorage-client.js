@@ -8,4 +8,4 @@ require('./roomsCaching.js')(objCacheOps);
 require('./usersCaching.js')(objCacheOps);
 require('./occupantCaching.js')(objCacheOps);
 
-require('./sessionCaching.js');
+require('./sessionCaching.js')(objCacheOps);

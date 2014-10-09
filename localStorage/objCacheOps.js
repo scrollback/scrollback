@@ -1,3 +1,7 @@
+/* jshint browser:true */
+/* global libsb */
+
+
 /*
 	For members, a list of members have to maintained for each room since member roles can vary room to room.
 
@@ -5,7 +9,6 @@
 		By doing this the duplication of occupant objects can be eliminated.
 */
 
-/* global localStorage, libsb */
 
 var roomOccupantList = {};
 var globalOccupantList = {};
@@ -17,10 +20,15 @@ var membersPopulated = false;
 var occupantsPopulated = false;
 
 if (typeof window === "undefined") {
-	// for mocha tests
+	// for mocha tests, localStroage has to be simluated.
+
+	/* jshint ignore:start */
+	
 	localStorage = {};
 	membersPopulated = true;
 	occupantsPopulated = true;
+	
+	/* jshint ignore:end */
 }
 
 module.exports = {
@@ -212,5 +220,20 @@ module.exports = {
 		delete localStorage.roomOccupantList;
 		delete localStorage.roomMemberList;
 		delete localStorage.globalOccupantList;
+	},
+	delRoomTimeOut: function (roomId) {
+		/*
+		this function deletes a saved room object from the cache every 'n' mintues
+	*/
+		var minutes = 10; // 10 minutes timeout
+
+		clearTimeout(window.timeoutMapping[roomId]);
+
+		window.timeoutMapping[roomId] = setTimeout(function () {
+			if (this.cache && this.cache.rooms) {
+				delete this.cache.rooms[roomId];
+				this.save();
+			}
+		}, minutes * 60 * 1000);
 	}
 };
