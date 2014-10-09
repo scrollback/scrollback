@@ -106,11 +106,6 @@ module.exports = function (objCacheOps) {
 	}, 900);
 
 	libsb.on("init-dn", function (init, next) {
-		/*
-			CurrentState.roomName is undefined here, which should not happen.
-			This code was tested by hardcoding this value.
-			Apparently, after Harish's navigation, boot manager etc is pushed, this should be resolved.
-		*/
 		objCacheOps.deletePersistence();
 		objCacheOps.populateMembers(currentState.roomName);
 		objCacheOps.populateOccupants(currentState.roomName);
