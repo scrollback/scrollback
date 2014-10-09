@@ -1,14 +1,15 @@
 /* global libsb */
 
 module.exports = function (objCacheOps) {
+	
+	objCacheOps.loadRooms();
+	
 	libsb.on('room-dn', function (room, next) {
 		var roomObj = room.room;
-		if (objCacheOps.cache) {
-			objCacheOps.rooms = objCacheOps.rooms ? objCacheOps.rooms : {};
-			objCacheOps.rooms[roomObj.id] = roomObj;
-			objCacheOps.save();
-			objCacheOps.delRoomTimeOut(roomObj.id);
-		}
+		objCacheOps.rooms = objCacheOps.rooms || {};
+		objCacheOps.rooms[roomObj.id] = roomObj;
+		objCacheOps.saveRooms();
+		objCacheOps.delRoomTimeOut(roomObj.id);
 		next();
 	}, 500);
 
@@ -50,7 +51,7 @@ module.exports = function (objCacheOps) {
 
 		var rooms = {};
 
-		rooms = objCacheOps.rooms ? objCacheOps.rooms : {};
+		rooms = objCacheOps.rooms || {};
 
 		if (query.results) {
 			query.results.forEach(function (room) {
@@ -60,7 +61,7 @@ module.exports = function (objCacheOps) {
 		}
 
 		objCacheOps.rooms = rooms;
-		objCacheOps.save();
+		objCacheOps.saveRooms();
 
 		next();
 

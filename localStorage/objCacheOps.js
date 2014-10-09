@@ -9,6 +9,7 @@
 		By doing this the duplication of occupant objects can be eliminated.
 */
 
+var spaceManager = require('./spaceManager.js');
 
 var roomOccupantList = {};
 var globalOccupantList = {};
@@ -23,15 +24,16 @@ if (typeof window === "undefined") {
 	// for mocha tests, localStroage has to be simluated.
 
 	/* jshint ignore:start */
-	
+
 	localStorage = {};
 	membersPopulated = true;
 	occupantsPopulated = true;
-	
+
 	/* jshint ignore:end */
 }
 
 module.exports = {
+	rooms: {},
 	populateMembers: function (room) {
 		// populate memebers of room into our structures.
 		var members;
@@ -182,44 +184,35 @@ module.exports = {
 		this.saveUsers();
 	},
 	loadUsers: function () {
-		if (localStorage.hasOwnProperty("roomOccupantList")) {
-			roomOccupantList = JSON.parse(localStorage.roomOccupantList);
-		}
-		if (localStorage.hasOwnProperty("roomMemberList")) {
-			roomMemberList = JSON.parse(localStorage.roomMemberList);
-		}
-		if (localStorage.hasOwnProperty("globalOccupantList")) {
-			globalOccupantList = JSON.parse(localStorage.globalOccupantList);
-		}
+		var data;
+
+		data = spaceManager.get('roomOccupantList');
+		if (data !== null) roomOccupantList = data;
+
+		data = spaceManager.get('roomMemberList');
+		if (data !== null) roomMemberList = data;
+
+		data = spaceManager.get('globalOccupantList');
+		if (data !== null) globalOccupantList = data;
+
 	},
 	saveUsers: function () {
-		try {
-			localStorage.roomOccupantList = JSON.stringify(roomOccupantList);
-			localStorage.roomMemberList = JSON.stringify(roomMemberList);
-			localStorage.globalOccupantList = JSON.stringify(globalOccupantList);
-		} catch (e) {
-			var LRU = JSON.parse(localStorage.LRU);
-			if (e.name === 'QuotaExceededError' || e.code === 22) {
-				var leastTime = Infinity,
-					leastEntry;
-				for (var i in LRU) {
-					if (LRU[i] < leastTime) {
-						leastTime = LRU[i];
-						leastEntry = i;
-					}
-				}
-				if (leastTime != Infinity) {
-					delete localStorage[leastEntry];
-				}
-			}
-			this.saveUsers();
+		spaceManager.set('roomOccupantList', roomOccupantList);
+		spaceManager.set('roomMemberList', roomMemberList);
+		spaceManager.set('globalOccupantList', globalOccupantList);
+	},
+	saveRooms: function () {
+		spaceManager.set('rooms', this.rooms);
+	},
+	loadRooms: function () {
+		var data = spaceManager.get('rooms');
+		if (data !== null) {
+			this.rooms = data;
 		}
 	},
 	deletePersistence: function () {
 		// delete LS entry for users.
-		delete localStorage.roomOccupantList;
-		delete localStorage.roomMemberList;
-		delete localStorage.globalOccupantList;
+		spaceManager.clear('roomOccupantList', 'roomMemberList', 'globalOccupantList');
 	},
 	delRoomTimeOut: function (roomId) {
 		/*

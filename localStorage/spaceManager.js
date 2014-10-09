@@ -1,3 +1,5 @@
+/* Manages LocalStrorage data save taking into account space availablity */
+
 /* jshint browser:true */
 
 var LRU = {};
@@ -33,8 +35,16 @@ module.exports = {
 		}
 	},
 	clear: function () {
-		// clears elements in LocalStorage based on Least Recently Used strategy.
-		// deletes the least recently used entry from LocalStorage
+		// if arguments are passed, each passed entity is deleted from localStorage.
+		if (arguments.length > 0) {
+			var args = Array.prototype.slice.call(arguments, 0);
+			args.forEach(function (item) {
+				delete localStorage[item];
+			});
+			return;
+		}
+		
+		// clears elements in LocalStorage based on Least Recently Used strategy, if no arguments are passed.
 		var leastTime = Infinity,
 			leastEntry;
 		for (var i in LRU) {
