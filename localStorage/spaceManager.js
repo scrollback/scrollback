@@ -22,8 +22,11 @@ module.exports = {
 	},
 	get: function (key) {
 		this.touch(key);
-		if (localStorage.hasOwnProperty(key)) return JSON.parse(localStorage[key]);
-		else return null;
+		if (localStorage.hasOwnProperty(key)) {
+			return JSON.parse(localStorage[key]);
+		} else {
+			return null;
+		}
 	},
 	touch: function (key) {
 		LRU[key] = new Date().getTime();
@@ -43,7 +46,7 @@ module.exports = {
 			});
 			return;
 		}
-		
+
 		// clears elements in LocalStorage based on Least Recently Used strategy, if no arguments are passed.
 		var leastTime = Infinity,
 			leastEntry;

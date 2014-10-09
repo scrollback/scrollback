@@ -12,7 +12,7 @@ module.exports = {
 	},
 	loadArrayCache: function (key) {
 		var data = spaceManager.get(key);
-		if (data !== null) this.cache[key] = data;
+		if (data !== null) this.cache[key] = new ArrayCache(data);
 		else this.cache[key] = new ArrayCache([]);
 	},
 	start: function (endType, key, time, pos) {
