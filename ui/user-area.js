@@ -1,124 +1,111 @@
 /* jshint browser: true */
-/* global $, libsb, currentState */
+/* global $, libsb */
 
-var showMenu = require('./showmenu.js');
+var showMenu = require("./showmenu.js");
 
-$(function () {
-	$(".js-has-auth-menu").on('click', function () {
-		if ($('body').hasClass('role-guest')) {
-			libsb.emit('auth-menu', {
+$(function() {
+	var $userAvatar = $(".sb-avatar"),
+		$userName = $(".sb-user"),
+		$roomTitle = $("#room-title"),
+		signoutText = $("#signedout-dialog").html();
+
+	$(document).on("click", ".js-has-auth-menu", function() {
+		if ($("body").hasClass("role-guest")) {
+			libsb.emit("auth-menu", {
 				origin: $(this),
 				buttons: {},
-				title: 'Sign in to Scrollback with'
-			}, function (err, menu) {
+				title: "Sign in to Scrollback with"
+			}, function(err, menu) {
 				showMenu(menu);
 			});
 		}
 	});
 
-	$(".js-has-user-menu").on('click', function () {
-		if ($('body').hasClass('role-user')) {
-			libsb.emit('user-menu', {
+	$(document).on("click", ".js-has-user-menu", function() {
+		if ($("body").hasClass("role-user")) {
+			libsb.emit("user-menu", {
 				origin: $(this),
 				buttons: {},
 				items: {}
-			}, function (err, menu) {
+			}, function(err, menu) {
 				showMenu(menu);
 			});
 		}
 	});
-});
 
+	function setOwner() {
+		var isOwner = false;
 
-libsb.on('user-menu', function (menu, next) {
-	menu.items.userpref = {
-		text: 'My Account',
-		prio: 300,
-		action: function () {
-			libsb.emit("navigate", {
-				mode: "pref",
-				view: "meta"
-			});
-		}
-	};
-	next();
-}, 1000);
-
-libsb.on("logout", function (p, n) {
-	libsb.emit('navigate', {
-		view: 'loggedout',
-	});
-
-	$("<div>").html($("#signedout-dialog").html()).modal({ dismiss: false });
-
-	n();
-}, 1000);
-
-$(document).on("click", ".reload-page", function () {
-	location.reload();
-});
-
-libsb.on('navigate', function (state, next) {
-	var room = currentState.roomName;
-	if (state && (!state.old || state.roomName != state.old.roomName)) {
-		$("#room-title").text(room);
-	}
-	next();
-}, 100);
-
-function setOwnerClass() {
-	var isOwner = false;
-
-	function check() {
 		if (libsb.memberOf) {
-			libsb.memberOf.forEach(function (room) {
-				if (room.id === currentState.roomName && room.role === "owner") {
-					$("body").addClass("role-owner");
+			libsb.memberOf.forEach(function(room) {
+				if (room.id === window.currentState.roomName && room.role === "owner") {
 					isOwner = true;
 				}
 			});
 		}
 
-		if (!isOwner) $("body").removeClass("role-owner");
+		if (isOwner) {
+			$("body").addClass("role-owner");
+		} else {
+			$("body").removeClass("role-owner");
+		}
 	}
-	check();
-}
 
-libsb.on('init-dn', function (init, next) {
-	setOwnerClass();
-	next();
-}, 100);
+	function setUser() {
+		if (!libsb || !libsb.user || !libsb.user.id) {
+			return;
+		}
 
-libsb.on('back-dn', function (init, next) {
-	setOwnerClass();
-	next();
-}, 100);
+		if (/^guest-/.test(libsb.user.id)) {
+			$("body").removeClass("role-user").addClass("role-guest");
+		} else {
+			$("body").removeClass("role-guest").addClass("role-user");
+		}
 
-libsb.on('navigate', function (state, next) {
-	if (state.mode == 'normal' && state.roomName) {
-		setOwnerClass();
+		$userAvatar.attr("src", libsb.user.picture);
+		$userName.text(libsb.user.id.replace(/^guest-/, ""));
 	}
-	if (state.source == "boot") {
+
+	libsb.on("init-dn", function(init, next) {
+		if (init.auth && !init.user.id) {
+			return next();
+		}
+
+		setOwner();
 		setUser();
-	}
-	next();
-}, 100);
 
-function setUser() {
-	if (!libsb || !libsb.user || !libsb.user.id) return;
-	$(".sb-avatar").attr("src", libsb.user.picture);
-	$(".sb-user").text(libsb.user.id.replace(/^guest-/, ""));
-}
+		next();
+	}, 100);
 
-libsb.on("init-dn", function (init, next) {
-	if (init.auth && !init.user.id) return next();
+	libsb.on("back-dn", function(init, next) {
+		setOwner();
+		setUser();
 
-	if (/^guest-/.test(init.user.id)) {
-		$("body").removeClass("role-user").addClass("role-guest");
-	} else {
-		$("body").removeClass("role-guest").addClass("role-user");
-	}
+		next();
+	}, 100);
 
-	setUser();
-	next();
-}, 100);
+	libsb.on("navigate", function(state, next) {
+		if (state && state.old && state.roomName && state.roomName !== state.old.roomName) {
+			$roomTitle.text(state.roomName);
+			setOwner();
+		}
+
+		if (state.source === "boot") {
+			setUser();
+		}
+
+		next();
+	}, 100);
+
+	libsb.on("logout", function(p, n) {
+		var $signoutDialog = $("<div>").html(signoutText).modal({ dismiss: false });
+
+		libsb.emit("navigate", { view: "loggedout" });
+
+		$signoutDialog.on("click", ".reload-page", function() {
+			location.reload();
+		});
+
+		n();
+	}, 1000);
+});
