@@ -158,7 +158,7 @@ gulp.task("lace", [ "bower" ], function() {
 gulp.task("styles", [ "lace" ], function() {
 	return gulp.src(cssFiles)
 	.pipe(sass({
-		style: debug ? "expanded" : "compressed",
+		style: !debug ? "compressed" : "expanded",
 		sourcemapPath: "../scss"
 	}))
 	.pipe(plumber())
@@ -184,6 +184,7 @@ gulp.task("manifest", function() {
 		basePath: "public",
 		prefix: domain,
 		cache: [
+			"public/client.html",
 			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
@@ -209,7 +210,6 @@ gulp.task("clean", function() {
 		"public/{*.min.js,**/*.min.js}",
 		"public/{*.bundle.js,**/*.bundle.js}",
 		"public/{*.appcache,**/*.appcache}",
-		"public/{client.html,s/client.phonegap.html}",
 		libDir, cssDir, laceDir
 	], { read: false })
 	.pipe(plumber())

@@ -76,7 +76,7 @@ $(function(){
 			if (init.resource == libsb.resource) {
 				signingUser = init.user;
 
-				$("<div>").html(("#signup-dialog").html()).modal();
+				$("<div>").html($("#signup-dialog").html()).modal();
 			}
 		}
 		next();
