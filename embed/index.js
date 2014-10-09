@@ -1,3 +1,6 @@
+/* jslint browser: true, indent: 4, regexp: true*/
+
+
 var config = require("../client-config.js");
 var host = config.server.protocol + config.server.host;
 var validate = require("../lib/validate.js");
@@ -15,7 +18,6 @@ var domReady = (function(){
 
 	if(!ready) {
 		document.addEventListener("readystatechange", function(){
-			var funl
 			if (document.readyState === "complete") {
 				ready = true;
 				while(listeners.length){
@@ -34,7 +36,7 @@ var domReady = (function(){
 }());
 
 function onMessage(e){
-	var data, frames, i, widgetID;
+	var data, frames, i, l, widgetID;
 	if (e.origin !== host) return;
 	frames = document.getElementsByTagName('iframe');
 
@@ -70,8 +72,7 @@ domReady(function(){
 });
 
 function constructEmbed(options) {
-	var embed = {},
-		host = config.server.protocol + config.server.host;
+	var embed = {};
 
 	if (!validate(options.room)) {
 		console.log("Invalid room");
@@ -91,7 +92,7 @@ function constructEmbed(options) {
 }
 
 function addWidget(self){
-	var iframe, style, options = self.options, embed = self.embed;
+	var iframe, options = self.options, embed = self.embed;
 	
 	iframe = document.createElement("iframe");
 	iframe.src = host + "/" + options.room + (options.thread ? "/" + options.thread : "") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
@@ -115,8 +116,8 @@ function addWidget(self){
 	return iframe;
 }
 
-function scrollback(opts) {
-	var style, embed, widget={}, self = {
+function scrollback(opts, callback) {
+	var widget={}, ready, self = {
 		pendingCallbacks: {},
 		options: opts,
 		state: {},
@@ -138,7 +139,15 @@ function scrollback(opts) {
 		console.log("Posted message", post);
 		self.pendingCallbacks[post.id] = cb;
 	};
-
+	widget.navigation = require("./navigation.js")(self);
+	widget.following = require("./following.js")(self);
+	widget.options = require("./options.js")(self);
+	widget.signin = require("./signin.js")(self);
+	self.widget = widget;
+	
+	self.iframe = addWidget(self);
+	if (!self.embed) return;
+	
 	self.message = function (message) {
 		switch(message.type){
 			case "activity":
@@ -159,11 +168,14 @@ function scrollback(opts) {
 				}), host);
 			break;
 			case "navigate":
-				console.log("navigate", message.state);
+				if(message.state.connectionStatus && !ready) {
+					ready = true;
+					return callback(null, widget);
+				}
 				self.state = message.state;
 			break;
 			case "following":
-			
+				
 			break;
 		}
 		if(this.pendingCallbacks[message.id]) {
@@ -171,16 +183,6 @@ function scrollback(opts) {
 			else this.pendingCallbacks[message.id](null, message);
 		}
 	};
-
-	self.iframe = addWidget(self);
-	if (!self.embed) return;
-	
-	widget.navigation = require("./navigation.js")(self);
-	widget.following = require("./following.js")(self);
-	widget.options = require("./options.js")(self);
-	widget.signin = require("./signin.js")(self);
-	self.widget = widget;
-	return widget;
 }
 
 

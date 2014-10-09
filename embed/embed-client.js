@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $*/
+/* global $, libsb*/
 var parseURL = require("../lib/parseURL.js");
 
 /*  status flags.*/
@@ -7,7 +7,7 @@ var verificationStatus = false,
 	bootingDone = false,
 	verified = false,
 	verificationTimeout = false,
-	suggestedNick, parent;
+	suggestedNick, parentWindow;
 
 /*  lasting objects*/
 var embed, token, domain, path, preBootQueue = [],
@@ -17,7 +17,7 @@ var embed, token, domain, path, preBootQueue = [],
 function sendDomainChallenge() {
 	token = Math.random() * Math.random();
 	parentHost = embed.origin.protocol + "//" + embed.origin.host;
-	parent.postMessage(JSON.stringify({
+	parentWindow.postMessage(JSON.stringify({
 		type: "domain-challenge",
 		token: token
 	}), parentHost);
@@ -77,22 +77,22 @@ function classesOnLoad(embed) {
 }
 
 function postNavigation(state, next) {
-	var activity, stateClone = $.extend(true, {}, state)
+	var activity, stateClone = $.extend(true, {}, state);
 	if (stateClone.source == "embed" && stateClone.hasOwnProperty("minimize")) {
 		activity = {
 			type: "activity",
 			minimize: false
-		}
+		};
 		activity.minimize = state.minimize;
 		if (stateClone.minimize) {
 			$("body").addClass("minimized");
 		} else {
 			$("body").removeClass("minimized");
 		}
-		parent.postMessage(JSON.stringify(activity), parentHost);
-	}else if(parent){
+		parentWindow.postMessage(JSON.stringify(activity), parentHost);
+	}else if(parentWindow){
 		if(stateClone.room && stateClone.room.params) delete stateClone.room.params;
-		parent.postMessage(JSON.stringify({type:"navigate",state:stateClone}), parentHost);	
+		parentWindow.postMessage(JSON.stringify({type:"navigate",state:stateClone}), parentHost);	
 	}
 	
 	next();
@@ -106,22 +106,20 @@ function onMessage(e) {
 		verifyDomainResponse(data);
 		break;
 	case "navigate":
-			
-		console.log("Got Navigate event", data);
 		data.data.source = "parent";
 		libsb.emit("navigate", data.data, function (err, state) {
 			var obj;
 			if (err) {
 				err.type = "error";
 				err.id = data.id;
-				parent.postMessage(JSON.stringify(err), parentHost);
+				parentWindow.postMessage(JSON.stringify(err), parentHost);
 			} else {
 				obj = {
 					type: "navigate",
 					id: data.id,
 					state: state
 				};
-				parent.postMessage(JSON.stringify(obj), parentHost);
+				parentWindow.postMessage(JSON.stringify(obj), parentHost);
 			}
 
 		});
@@ -170,8 +168,8 @@ module.exports = function (libsb) {
 	var url = parseURL(window.location.pathname, window.location.search);
 	embed = url.embed;
 
-	if (window.parent !== window) {
-		parent = window.parent;
+	if (window.parentWindow !== window) {
+		parentWindow = window.parent;
 		if (embed) {
 			try {
 				embed = JSON.parse(decodeURIComponent(url.embed));
