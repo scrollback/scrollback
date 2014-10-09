@@ -20,7 +20,8 @@ module.exports = {
 	},
 	get: function (key) {
 		this.touch(key);
-		return JSON.parse(localStorage[key]);
+		if (localStorage.hasOwnProperty(key)) return JSON.parse(localStorage[key]);
+		else return null;
 	},
 	touch: function (key) {
 		LRU[key] = new Date().getTime();
