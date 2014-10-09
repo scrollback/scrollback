@@ -1008,7 +1008,7 @@ body {
 }
 
 .chat-position {
-    @include opacity(0);
+    @include opacity(1);
     @extend %transition;
 
     position: relative;
@@ -1021,10 +1021,7 @@ body {
     pointer-events: none;
     z-index: 20;
 
-    &:not(:empty) {
-        @include opacity(1);
-        @extend %nofilter;
-    }
+    &:empty, &.hidden { @include opacity(0); }
 }
 
 .chat-item {

@@ -61,6 +61,7 @@ function returnArray(query, index) {
 
 $(function () {
 	var $logs = $(".chat-area"),
+		$chatPosition = $(".chat-position")
 		roomName = "",
 		thread = '',
 		time = null;
@@ -316,8 +317,11 @@ $(function () {
 			}, function(err, state){
 				if (state.old && state.time !== state.old.time) {
 					if (state.time) {
-						$(".chat-position").text(format.friendlyTime(state.time, new Date().getTime()));
-						setTimeout(function(){$(".chat-position").text("");}, 1000);
+						$chatPosition.removeClass("hidden").text(format.friendlyTime(state.time, new Date().getTime()));
+
+						setTimeout(function() {
+							$chatPosition.addClass("hidden");
+						}, 1000);
 					}
 				}
 			});
