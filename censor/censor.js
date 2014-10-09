@@ -18,21 +18,21 @@ module.exports = function(core) {
         if(query.session == internalSession) return next(); // will be removed when we use app specific users.
         if(!query.results || !query.results.length) return next();
         function censor(e) {
-			delete e.params;
-            delete e.identities;
-			return e;
-		}
+		delete e.params;
+		delete e.identities;
+		return e;
+	}
         if(query.ref && (query.user.role === 'su' || query.user.role == "owner")) return next();
         if(query.hasMember) {
-			if(query.hasMember === query.user.id || query.hasMember === "me") {
-				query.results.forEach(function(e) {
-					if(e.role !== "owner") censor(e);
-				});	
-			}else{
-				query.results = query.results.map(censor);
-			}
-			return next();
-		} else if(query.ref) {
+		if(query.hasMember === query.user.id || query.hasMember === "me") {
+			query.results.forEach(function(e) {
+				if(e.role !== "owner") censor(e);
+			});	
+		} else {
+			query.results = query.results.map(censor);
+		}
+		return next();
+	} else if(query.ref) {
             core.emit("getRooms", {hasMember: query.user.id, ref: query.ref, session: internalSession}, function(err, q) {
                 if(q.results && q.results.length && q.results[0].role == "owner") {
                     return next();
@@ -40,11 +40,11 @@ module.exports = function(core) {
                 query.results = query.results.map(censor);
                 next();
             });
-        }else {
-			query.results = query.results.map(censor);
-            next();
+        } else {
+		query.results = query.results.map(censor);
+		next();
         }
-    },"watcher");
+    }, "watcher");
     
     core.on("getUsers", function(query, next) {
         if(query.session == internalSession) return next();
