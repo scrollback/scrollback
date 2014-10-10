@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, lace */
+/* global $ */
 
 var quicknotify = {
     /**
@@ -66,7 +66,7 @@ var quicknotify = {
             return;
         }
 
-        lace.animate("fadeOut", $element, function() {
+        $element.velocity("fadeOut", 150, function() {
             $(this).remove();
 
             if (!$container.children().length) {

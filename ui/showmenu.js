@@ -1,5 +1,5 @@
 /* jslint browser: true, indent: 4, regexp: true */
-/* global $, lace */
+/* global $ */
 
 /**
  * @example
@@ -46,7 +46,7 @@ var showMenu = function(menu) {
                 $("<a>").addClass("button " + button[2].toLowerCase().replace(' ', '-'))
                         .text(button[1].text)
                         .on("click", function() {
-                            lace.popover.hide();
+                            $.popover("dismiss");
                             button[1].action();
                         })
                         .appendTo($buttons);
@@ -76,7 +76,7 @@ var showMenu = function(menu) {
                 $("<li>").append($("<a>").addClass(item[2].toLowerCase().replace(' ', '-'))
                          .text(item[1].text))
                          .on("click", function() {
-                             lace.popover.hide();
+                             $.popover("dismiss");
                              item[1].action();
                          })
                          .appendTo($list.find("ul"));
@@ -87,7 +87,7 @@ var showMenu = function(menu) {
         $list.appendTo($popover);
     }
 
-    return lace.popover.show({ origin: menu.origin, body: $popover });
+    return $popover.popover({ origin: menu.origin });
 };
 
 module.exports = showMenu;

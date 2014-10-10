@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb */
 
 var formField = require("../lib/formField.js");
 
@@ -112,10 +112,9 @@ libsb.on("room-dn", function(room, next) {
 				" " + r.params.irc.channel + "\" in the IRC channel to complete the process.";
 			}
 
-			lace.alert.show({
-				id: "irc-info-message",
+			$("<div>").text(displayString).alertbar({
 				type: "info",
-				body: displayString
+				id: "irc-info-message"
 			});
 		});
 	}

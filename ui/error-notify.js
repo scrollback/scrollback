@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb */
 
 $(function() {
     var errmsg;
@@ -13,7 +13,7 @@ $(function() {
         }
 
         if (errmsg) {
-            lace.alert.show({ type: "error", body: errmsg });
+            $("<div>").text(errmsg).alertbar({ type: "error" });
         }
 
         next();

@@ -1,9 +1,37 @@
 /* jshint browser: true */
-/* global $, libsb, currentState */
+/* global $, libsb */
 
 var renderSettings = require("./render-settings.js"),
 	currentConfig,
 	oldState;
+
+$(function() {
+	$(".conf-save").on("click", function() {
+		if (window.currentState.mode === 'pref') {
+			var userObj = {
+				id: libsb.user.id,
+				description: '',
+				identities: [],
+				params: {},
+				guides: {}
+			};
+
+			libsb.emit('pref-save', userObj, function (err, user) {
+				libsb.emit('user-up', {
+					user: user
+				}, function() {
+					onComplete("conf-save");
+				});
+			});
+		}
+	});
+
+	$(".conf-cancel").on("click", function() {
+		if (window.currentState.mode === "pref") {
+			onComplete("conf-cancel");
+		}
+	});
+});
 
 function onComplete(source) {
 	var toState;
@@ -24,32 +52,6 @@ function onComplete(source) {
 
 	oldState = null;
 }
-
-$(".conf-save").on("click", function() {
-	if (currentState.mode === 'pref') {
-		var userObj = {
-			id: libsb.user.id,
-			description: '',
-			identities: [],
-			params: {},
-			guides: {}
-		};
-
-		libsb.emit('pref-save', userObj, function (err, user) {
-			libsb.emit('user-up', {
-				user: user
-			}, function() {
-				onComplete("conf-save");
-			});
-		});
-	}
-});
-
-$(".conf-cancel").on("click", function() {
-	if (window.currentState.mode === "pref") {
-		onComplete("conf-cancel");
-	}
-});
 
 function renderUserPref() {
 	libsb.emit('getUsers', {
@@ -83,15 +85,30 @@ libsb.on('navigate', function (state, next) {
 					mode: 'normal'
 				});
 			}
-            if (libsb.isInited === true) {
-               renderUserPref();
-            } else {
-                libsb.on('init-dn', function (i, n) {
-                    renderUserPref();
-                    n();
-                }, 100);
-            }
+
+			if (libsb.isInited === true) {
+			   renderUserPref();
+			} else {
+				libsb.on('init-dn', function (i, n) {
+					renderUserPref();
+					n();
+				}, 100);
+			}
 		}
 	}
 	next();
 }, 500);
+
+libsb.on("user-menu", function(menu, next) {
+	menu.items.userpref = {
+		text: "Account settings",
+		prio: 300,
+		action: function() {
+			libsb.emit("navigate", {
+				mode: "pref",
+				view: "meta"
+			});
+		}
+	};
+	next();
+}, 1000);

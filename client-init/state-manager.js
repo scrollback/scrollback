@@ -15,7 +15,7 @@ module.exports = function(l) {
 
 	libsb.on("navigate", loadOld, 999);
 	libsb.on("navigate", saveCurrentState, 700);
-	libsb.on("navigate", setDefaults, 600);
+	libsb.on("navigate", setDefaults, 750);
 
 	libsb.on('room-dn', function(room, next) {
 		if (room.room.id === currentState.roomName) {
