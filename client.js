@@ -41,6 +41,7 @@ require('./email/email-client.js');
 require('./http/notifications-client.js');
 require('./authorizer/authorizer-client.js');
 require('./authorizer/domain-auth-client.js');
+require('./embed/user-domain-blacklist.js');
 require('./http/seo-client.js');
 require('./http/roomGeneralSettings-client.js');
 require('./http/userProfile-client.js');
