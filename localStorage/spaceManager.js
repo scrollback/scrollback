@@ -19,7 +19,7 @@ if (LS.hasOwnProperty('LRU')) { // hasOwnProperty does not exist for the polyfil
 
 module.exports = {
 	set: function (key, value, touch) {
-		value = JSON.stringify(value);
+		value = (typeof value !== "string" ) ? JSON.stringify(value) : value;
 		try {
 			LS[key] = value;
 		} catch (e) {
@@ -29,10 +29,15 @@ module.exports = {
 		}
 		if(touch !== false) this.touch(key);
 	},
-	get: function (key) {
-		this.touch(key);
+	get: function (key, touch) {
+		if(touch !== false) this.touch(key);
 		if (LS.hasOwnProperty(key)) {
-			return JSON.parse(LS[key]);
+			try {
+				return JSON.parse(LS[key]);
+			} catch (e) {
+				return LS[key];
+			}
+			
 		} else {
 			return null;
 		}

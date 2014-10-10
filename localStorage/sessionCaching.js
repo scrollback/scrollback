@@ -10,7 +10,8 @@ module.exports = function (objCacheOps) {
 	libsb.on('init-up', function (init, next) {
 		var sid;
 		if (localStorage.hasOwnProperty('session')) {
-			libsb.session = sid = localStorage.session;
+//			libsb.session = sid = JSON.parse(localStorage.session);
+			libsb.session = sid = spaceManager.get('session', false);
 		}
 		if (!sid) {
 			sid = "web://" + generate.uid();
