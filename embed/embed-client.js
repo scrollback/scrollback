@@ -12,7 +12,7 @@ var verificationStatus = false,
 /*  lasting objects*/
 var embed, token, domain, path, preBootQueue = [],
 	queue = [],
-	parentHost;
+	parentHost, parentWindow;
 
 function sendDomainChallenge() {
 	token = Math.random() * Math.random();
@@ -92,6 +92,7 @@ function postNavigation(state, next) {
 		parentWindow.postMessage(JSON.stringify(activity), parentHost);
 	}else if(parentWindow){
 		if(stateClone.room && stateClone.room.params) delete stateClone.room.params;
+		console.log(parentHost);
 		parentWindow.postMessage(JSON.stringify({type:"navigate",state:stateClone}), parentHost);	
 	}
 	
@@ -168,7 +169,7 @@ module.exports = function (libsb) {
 	var url = parseURL(window.location.pathname, window.location.search);
 	embed = url.embed;
 
-	if (window.parentWindow !== window) {
+	if (window.parent !== window) {
 		parentWindow = window.parent;
 		if (embed) {
 			try {

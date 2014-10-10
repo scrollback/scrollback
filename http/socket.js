@@ -50,7 +50,7 @@ sock.on('connection', function (socket) {
 				return conn.send({type: 'error', id: d.id, message: "INVALID_SESSION"});
             }
 			if(!conn.session) conn.listeningTo = [];
-			conn.session = d.session; // Pin the session and resource.
+			conn.session = d.session;
 			conn.resource  = d.resource;
 			conn.origin = d.origin;
 			conn.origin.client = ip;
@@ -69,7 +69,6 @@ sock.on('connection', function (socket) {
 		}
 		
 		if(d.type == 'back') {
-			//just need for back as storeBack will be called before actionValidator
 			if(!d.to) {
 				e = {type: 'error', id: d.id, message: "INVALID_ROOM"};
 				conn.send(e);

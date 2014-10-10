@@ -34,6 +34,7 @@ require('./translation/translation-client.js').translateAll();
 require('./email/email-client.js');
 require('./http/notifications-client.js');
 require('./authorizer/authorizer-client.js');
+require('./authorizer/domain-auth-client.js');
 require('./http/seo-client.js');
 require('./http/roomGeneralSettings-client.js');
 require('./http/userProfile-client.js');

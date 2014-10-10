@@ -48,7 +48,7 @@ exports.init = function() {
 
 	app.use(express.logger("AA/HTTP - [:date] :method :url :referrer :user-agent :status"));
 	app.use(express.compress());
-	app.use(express["static"](__dirname + "/../" + config.http.home, { maxAge: 86400000 }));
+	app.use(express.static(__dirname + "/../" + config.http.home, { maxAge: 86400000 }));
 
 	app.use(express.cookieParser());
 	// app.use(session.parser);
