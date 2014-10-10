@@ -43,3 +43,5 @@ client-config.js
 /public/s/tmp/*
 /mocha-output-selenium.json
 /mocha-output-unit.json
+/public/s/client.phonegap.html
+/public/sb.js
