@@ -123,6 +123,23 @@ describe('Validator Test', function() {
 		});
 	});
 
+	it("should not allow user action without params", function(done) {
+		var t = copy(action);
+		t.type = "user";
+		t.from = "testinguser";
+		t.user = {
+			id: "testinguser",
+			type: "user",
+			identities: ["web://testing.com"],
+			guides: {}
+		}
+		core.emit("user", t, function(err, act) {
+			assert.equal(err instanceof Error, true, "user with no params is allowed.");
+			done();
+		});
+	});
+
+	
 	it("valid user action", function(done) {
 		var t = copy(action);
 		t.type = "user";
@@ -138,7 +155,8 @@ describe('Validator Test', function() {
 			assert.equal(err instanceof Error, false, "not allowing valid user action.");
 			done();
 		});
-
 	});
+	
+	
 
 });

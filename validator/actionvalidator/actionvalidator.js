@@ -94,17 +94,7 @@ module.exports = function (core) {
             action.to = "me";
             if (action.suggestedNick) action.suggestedNick = validateRoom(action.suggestedNick, true);
             callback();
-        },/*,
-        join: function (action, callback) {//move this to autharizer...
-            if (/^guest-/.test(action.from)) return callback(new SbError("GUEST_CANNOT_JOIN"));
-            if (!action.role) action.role = "follower";
-            callback();
         },
-        part: function (action, callback) {
-            if (/^guest-/.test(action.from)) return callback(new SbError("GUEST_CANNOT_PART"));
-            if (!action.role) action.role = "none";
-            callback();
-        },*/
         text: function (action, callback) {
             if (!validate(action, textValidator, callback)) return;
             var mentionMap = {};
@@ -166,7 +156,6 @@ module.exports = function (core) {
 
     events.forEach(function (event) {
         core.on(event, function (action, callback) {
-            log.d("Action", action);
             if (!validate(action, actionValidator, callback)) return;
             basicValidation(action, function (err) {
                 if (err) return callback(err);
