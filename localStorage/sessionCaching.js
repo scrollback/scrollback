@@ -2,6 +2,7 @@
 /* global libsb */
 
 var generate = require('../lib/generate');
+var spaceManager = require('./spaceManager.js');
 
 window.timeoutMapping = {};
 
@@ -14,7 +15,7 @@ module.exports = function (objCacheOps) {
 		if (!sid) {
 			sid = "web://" + generate.uid();
 			libsb.session = sid;
-			localStorage.session = sid;
+			spaceManager.set('session', sid, false);
 		}
 		init.session = sid;
 		return next();
@@ -45,10 +46,11 @@ module.exports = function (objCacheOps) {
 		});
 
 		// saving to LS
-		localStorage.user = JSON.stringify(user);
-		localStorage.occupantOf = JSON.stringify(occupantOf);
-		localStorage.memberOf = JSON.stringify(memberOf);
-		localStorage.rooms = JSON.stringify(rooms);
+		
+		spaceManager.set('user', user, false); // false implies do not add entry to LRU.
+		spaceManager.set('occupantOf', occupantOf, false);
+		spaceManager.set('memberOf', memberOf, false);
+		spaceManager.set('rooms', rooms, false);
 
 		next();
 	}, 500);

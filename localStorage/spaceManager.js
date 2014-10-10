@@ -18,7 +18,7 @@ if (LS.hasOwnProperty('LRU')) { // hasOwnProperty does not exist for the polyfil
 }
 
 module.exports = {
-	set: function (key, value) {
+	set: function (key, value, touch) {
 		value = JSON.stringify(value);
 		try {
 			LS[key] = value;
@@ -27,7 +27,7 @@ module.exports = {
 			this.clear();
 			this.set(key, value);
 		}
-		this.touch(key);
+		if(touch !== false) this.touch(key);
 	},
 	get: function (key) {
 		this.touch(key);
