@@ -2,17 +2,33 @@
 
 /* jshint browser:true */
 
+var LS;
+
+if (typeof window === "undefined") {
+	// This block is a polyfill for Unit Tests.
+
+	/* jshint ignore:start */
+
+	LS = {};
+	membersPopulated = true;
+	occupantsPopulated = true;
+
+	/* jshint ignore:end */
+} else {
+	LS = window.localStorage;
+}
+
 var LRU = {};
 
-if (localStorage.hasOwnProperty('LRU')) {
-	LRU = JSON.parse(localStorage.LRU);
+if (LS.hasOwnProperty('LRU')) { // hasOwnProperty does not exist for the polyfill
+	LRU = JSON.parse(LS.LRU);
 }
 
 module.exports = {
 	set: function (key, value) {
 		value = JSON.stringify(value);
 		try {
-			localStorage[key] = value;
+			LS[key] = value;
 		} catch (e) {
 			// handle space exceeds error.
 			this.clear();
@@ -22,8 +38,8 @@ module.exports = {
 	},
 	get: function (key) {
 		this.touch(key);
-		if (localStorage.hasOwnProperty(key)) {
-			return JSON.parse(localStorage[key]);
+		if (LS.hasOwnProperty(key)) {
+			return JSON.parse(LS[key]);
 		} else {
 			return null;
 		}
@@ -31,7 +47,7 @@ module.exports = {
 	touch: function (key) {
 		LRU[key] = new Date().getTime();
 		try {
-			localStorage.LRU = JSON.stringify(LRU);
+			LS.LRU = JSON.stringify(LRU);
 		} catch (e) {
 			this.clear();
 			this.touch(key);
@@ -42,7 +58,7 @@ module.exports = {
 		if (arguments.length > 0) {
 			var args = Array.prototype.slice.call(arguments, 0);
 			args.forEach(function (item) {
-				delete localStorage[item];
+				delete LS[item];
 			});
 			return;
 		}
@@ -58,7 +74,7 @@ module.exports = {
 		}
 		if (leastTime != Infinity) {
 			delete LRU[leastEntry];
-			delete localStorage[leastEntry];
+			delete LS[leastEntry];
 		}
 	}
 };

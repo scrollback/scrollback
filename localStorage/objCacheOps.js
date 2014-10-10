@@ -21,15 +21,9 @@ var membersPopulated = false;
 var occupantsPopulated = false;
 
 if (typeof window === "undefined") {
-	// for mocha tests, localStroage has to be simluated.
-
-	/* jshint ignore:start */
-
-	localStorage = {};
+	// for unit tests.
 	membersPopulated = true;
 	occupantsPopulated = true;
-
-	/* jshint ignore:end */
 }
 
 module.exports = {
@@ -191,10 +185,9 @@ module.exports = {
 
 		data = spaceManager.get('roomMemberList');
 		if (data !== null) roomMemberList = data;
-
+		
 		data = spaceManager.get('globalOccupantList');
 		if (data !== null) globalOccupantList = data;
-
 	},
 	saveUsers: function () {
 		spaceManager.set('roomOccupantList', roomOccupantList);
