@@ -6,14 +6,7 @@ var LS;
 
 if (typeof window === "undefined") {
 	// This block is a polyfill for Unit Tests.
-
-	/* jshint ignore:start */
-
 	LS = {};
-	membersPopulated = true;
-	occupantsPopulated = true;
-
-	/* jshint ignore:end */
 } else {
 	LS = window.localStorage;
 }
