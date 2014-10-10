@@ -9,6 +9,7 @@ var gulp = require("gulp"),
 	streamify = require("gulp-streamify"),
 	jshint = require("gulp-jshint"),
 	concat = require("gulp-concat"),
+	striplog = require("gulp-strip-debug"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
 	sass = require("gulp-ruby-sass"),
@@ -39,9 +40,11 @@ function bundle(files, opts) {
 			opts.entries = "./" + file;
 
 			return browserify(opts).bundle()
-			.pipe(source(file))
+			.pipe(source(file.split(/[\\/]/).pop()))
 			.on("error", gutil.log);
 		};
+
+	opts = opts || {};
 
 	if (files && files instanceof Array) {
 		for (var i = 0, l = files.length; i < l; i++) {
@@ -93,7 +96,7 @@ gulp.task("bower", function() {
 gulp.task("libs", [ "bower" ], function() {
 	return gulp.src(prefix(bowerDir + "/", [
 		"jquery/dist/jquery.min.js",
-		"lace/src/js/lace.js",
+		"lace/src/js/*.js",
 		"sockjs/sockjs.min.js",
 		"svg4everybody/svg4everybody.min.js",
 		"velocity/jquery.velocity.min.js",
@@ -113,6 +116,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 	.pipe(plumber())
 	.pipe(concat("polyfills.js"))
 	.pipe(!debug ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(striplog()) : gutil.noop())
 	.pipe(gulp.dest(libDir))
 	.pipe(rename({ suffix: ".min" }))
 	.pipe(gulp.dest(libDir))
@@ -124,6 +128,7 @@ gulp.task("bundle", [ "libs" ], function() {
 	return bundle([ "libsb.js", "client.js" ], { debug: debug })
 	.pipe(plumber())
 	.pipe(!debug ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(striplog()) : gutil.noop())
 	.pipe(rename({ suffix: ".bundle.min" }))
 	.pipe(gulp.dest("public/s/scripts"))
 	.on("error", gutil.log);
@@ -134,6 +139,7 @@ gulp.task("embed-legacy", function() {
 	return bundle("embed/embed-parent.js", { debug: debug })
 	.pipe(plumber())
 	.pipe(!debug ? streamify(uglify()) : gutil.noop())
+	.pipe(!debug ? streamify(striplog()) : gutil.noop())
 	.pipe(rename("embed.min.js"))
 	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
@@ -166,12 +172,12 @@ gulp.task("lace", [ "bower" ], function() {
 gulp.task("styles", [ "lace" ], function() {
 	return gulp.src(cssFiles)
 	.pipe(sass({
-		style: "expanded",
+		style: !debug ? "compressed" : "expanded",
 		sourcemapPath: "../scss"
 	}))
 	.pipe(plumber())
 	.on("error", function(e) { gutil.log(e.message); })
-	.pipe(gutil.env.production ? (autoprefixer() && minify()) : gutil.noop())
+	.pipe(!debug ? (autoprefixer() && minify()) : gutil.noop())
 	.pipe(gulp.dest(cssDir))
 	.on("error", gutil.log);
 });
@@ -192,6 +198,7 @@ gulp.task("manifest", function() {
 		basePath: "public",
 		prefix: domain,
 		cache: [
+			domain + "/client.html",
 			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
@@ -217,7 +224,6 @@ gulp.task("clean", function() {
 		"public/{*.min.js,**/*.min.js}",
 		"public/{*.bundle.js,**/*.bundle.js}",
 		"public/{*.appcache,**/*.appcache}",
-		"public/{client.html,s/client.phonegap.html}",
 		libDir, cssDir, laceDir
 	], { read: false })
 	.pipe(plumber())

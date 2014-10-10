@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, lace */
+/* global $, libsb */
 
 var validate = require("../lib/validate.js");
 
@@ -7,9 +7,17 @@ $(function(){
 	var signingUser, signingUp = false;
 
 	function submitUser() {
-		var userId = $("#signup-id").val();
-		if(!validate(userId)) {
-			lace.alert.show({type:"error", body: "Entered username is invalid", timeout: 3000});
+		var userId = $("#signup-id").val(),
+			$alert;
+
+		if (!validate(userId)) {
+			$alert = $("<div>").text("Entered username is invalid");
+
+			$alert.alertbar({
+				type: "error",
+				timeout: 3000
+			});
+
 			return;
 		}
 		libsb.emit("user-up", {
@@ -21,12 +29,18 @@ $(function(){
             }
 		}, function(err) {
                 signingUp = true;
-				if(err) {
-					if(err.message == "ERR_USER_EXISTS"){
-						lace.alert.show({type:"error", body: "Username already taken", timeout: 3000});
-					}else {
-						lace.alert.show({type:"error", body: err.message});
+
+				if (err) {
+					if(err.message == "ERR_USER_EXISTS") {
+						$alert = $("<div>").text("Username already taken");
+					} else {
+						$alert = $("<div>").text(err.message);
 					}
+
+					$alert.alertbar({
+						type: "error",
+						timeout: 3000
+					});
 				}
 		});
 	}
@@ -44,7 +58,7 @@ $(function(){
 	});*/
 
 	libsb.on("user-dn", function(action, next) {
-		lace.modal.hide();
+		$.modal("dismiss");
 
 		if(signingUp === true) location.reload();
 
@@ -58,11 +72,11 @@ $(function(){
 	}, 500);
 
 	libsb.on("init-dn", function(init, next) {
-		if(init.auth && init.user.identities && !init.user.id ) {
-			if(init.resource == libsb.resource) {
+		if (init.auth && init.user.identities && !init.user.id ) {
+			if (init.resource == libsb.resource) {
 				signingUser = init.user;
 
-				lace.modal.show({ body: $("#signup-dialog").html() });
+				$("<div>").html($("#signup-dialog").html()).modal();
 			}
 		}
 		next();
