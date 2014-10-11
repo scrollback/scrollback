@@ -3,7 +3,7 @@
 
 var chatEl = require("./chat.js"),
 	_ = require('underscore'),
-	chatArea = {}, scrollTimer = null;
+	chatArea = {}, scrollTimer = null, time, firstTime = false;;
 
 function getIdAndTime(index) {
 	var time, id;
@@ -21,6 +21,18 @@ function getIdAndTime(index) {
 		time: time,
 		id: id
 	};
+}
+
+
+function loadNewText(room, time, cb, results) {
+	if(!results) results = [];
+	libsb.getTexts({to: room, updateTime: time, after: 255}, function(err, query) {
+		var res = query.results;
+		res = res.slice(1);
+		results = results.concat(res);
+		if(query.results.length >=255) return loadNewText(room, query.results[query.results.length-1].time, cb, results);
+		cb(results);
+	});
 }
 
 function returnArray(query, index) {
@@ -87,13 +99,14 @@ $(function () {
 		itemHeight: 50,
 		startIndex: time,
 		getItems: function (index, before, after, recycle, callback) {
-			var query = {
+			var isOwner, query = {
 				to: roomName,
 				before: before,
 				after: after
 			};
+			
 			if (!roomName) return callback([]);
-
+			
 			index = getIdAndTime(index);
 
 			query.time = index.time;
@@ -104,47 +117,48 @@ $(function () {
 
 			if (thread) query.thread = thread;
 			if (!index.time && !before) return callback([false]);
-
+			
 			function loadTexts() {
-				libsb.emit("getUsers", {memberOf: currentState.roomName, ref: libsb.user.id}, function (e, d) {
-					var isOwner = (d.results[0] && d.results[0].role === "owner") ? true : false ;
-					libsb.getTexts(query, function (err, t) {
-						var texts = t.results || [];
-						if (err) throw err; // TODO: handle the error properly.
+				libsb.getTexts(query, function (err, t) {
+					var texts = t.results || [];
+					if (err) throw err; // TODO: handle the error properly.
 
-						if (!index && t.results.length === 0) {
-							return callback([false]);
+					if (!index && t.results.length === 0) {
+						return callback([false]);
+					}
+
+					texts = returnArray(query, index);
+
+					if (after === 0) {
+						if (texts.length < before) {
+							texts.unshift(false);
 						}
-
-						texts = returnArray(query, index);
-
-						if (after === 0) {
-							if (texts.length < before) {
-								texts.unshift(false);
-							}
-						} else if (before === 0) {
-							if (texts.length < after) {
-								texts.push(false);
-							}
+					} else if (before === 0) {
+						if (texts.length < after) {
+							texts.push(false);
 						}
-						callback(_.filter(texts.map(function (text) {
-								return text && chatEl.render(null, text, isOwner);
-							}), function(m) {
-								return typeof m !== "undefined";
-						}));
-					});
+					}
+					callback(_.filter(texts.map(function (text) {
+							return text && chatEl.render(null, text, isOwner);
+						}), function(m) {
+							return typeof m !== "undefined";
+					}));
 				});
 			}
 
-			if (typeof libsb.user === "undefined") {
-				libsb.on("navigate", function (state, next) {
-					if (state.connectionStatus === true && state.old.connectionStatus === false) {
-						loadTexts();
-					}
-					next();
-				}, 700);
-			} else {
+			if (!libsb.user || !libsb.user.id) {
+				firstTime = true;
+				return callback([false]);
+			}
+
+			if(/^guest-/.test(libsb.user.id)) {
+				isOwner = false;
 				loadTexts();
+			}else {
+				libsb.emit("getUsers", {memberOf: currentState.roomName, ref: libsb.user.id}, function (e, d) {
+					isOwner = (d.results && d.results[0] && d.results[0].role === "owner") ? true : false ;
+					loadTexts();
+				});
 			}
 
 		}
@@ -218,10 +232,7 @@ $(function () {
 
 		next();
 	}, 90);
-	libsb.on("init-dn", function (init, next) {
-		resetLog(time || null);
-		next();
-	}, 100);
+
 	libsb.on("navigate", function (state, next) {
 		var reset = false;
 
@@ -287,9 +298,7 @@ $(function () {
 		$logs.find(".chat").remove();
 		$logs.scroll();
 	};
-
-	var timeout;
-
+	
 	$logs.on("scroll", function () {
 
 		if(scrollTimer) clearTimeout(scrollTimer);
@@ -311,6 +320,7 @@ $(function () {
 				time = null;
 			}
 			scrollTimer = null;
+			time = time;			
 			libsb.emit('navigate', {
 				time: time,
 				source: 'chat-area'
@@ -335,6 +345,18 @@ $(function () {
 			$(this).empty().text(format.friendlyTime(time, new Date().getTime()));
 		});
 	}, 60000);
+	
+	libsb.on("back-dn", function(back, next) {
+		if(firstTime && back.to === currentState.roomName) {
+			resetLog(time);	
+			return next();
+		}
+		
+		loadNewText(back.to, null, function(results) {	
+			if(back.to === currentState.roomName && results.length) resetLog(time);	
+		});
+		next();
+	}, "watcher");
 });
 
 module.exports = chatArea;
