@@ -72,15 +72,19 @@ function safeSend(data) {
 }
 
 function connect() {
+	
+	libsb.on("init-dn", function(i, n){
+		n();
+	}, 1000);
+	
 	client = new SockJS(config.server.protocol + config.server.host + "/socket");
     client.onclose = disconnected;
 
 	client.onopen = function(){
         backOff = 1;
-        core.emit("init-up", {}, function(err) {
+        core.emit("init-up", {}, function(err, init) {
 			if(err) console.log(err.message);
 			else libsb.isInited = true;
-
 			core.emit("navigate", {connectionStatus: true, source: "socket"}, function(err) {
 				if(err) console.log(err.message);
 			});
@@ -216,8 +220,8 @@ function sendBack(back, next) {
 	var action = makeAction(back, {
 		type: 'back',
 		to: back.to,
-		id: back.id
-	});
+		id: back.id,
+	});		
 	safeSend(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);
 }

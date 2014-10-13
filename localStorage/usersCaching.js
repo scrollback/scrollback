@@ -1,7 +1,6 @@
 /* global libsb, currentState */
-var userCache = require('./userCache.js');
 
-module.exports = function () {
+module.exports = function (objCacheOps) {
 	libsb.on("getUsers", function (query, next) {
 		if (query.noCache && query.noCache === true) {
 			return next();
@@ -10,14 +9,14 @@ module.exports = function () {
 		if (query.hasOwnProperty("memberOf")) {
 			// fetching member info
 			if (query.hasOwnProperty("ref")) { // info for a single member
-				userCache.getMembers(query.memberOf, query.ref, function (data) {
+				objCacheOps.getMembers(query.memberOf, query.ref, function (data) {
 					if (data === null) return next();
 					query.results = data;
 					query.resultSource = "localStorage";
 					next();
 				});
 			} else { // return all members of requested room.
-				userCache.getMembers(query.memberOf, null, function(data) {
+				objCacheOps.getMembers(query.memberOf, null, function(data) {
 					if (data === null) return next();
 					query.results = data;
 					query.resultSource = "localStorage";
@@ -26,7 +25,7 @@ module.exports = function () {
 			}
 		} else if (query.hasOwnProperty("occupantOf")) {
 			// fetch occupant info
-			userCache.getOccupants(query.occupantOf, null, function(results) {
+			objCacheOps.getOccupants(query.occupantOf, null, function(results) {
 				if (results === null) return next();
 				query.results = results;
 				query.resultSource = "localStorage";
@@ -47,36 +46,36 @@ module.exports = function () {
 			return next();
 		}
 		if (query.hasOwnProperty("memberOf")) {
-			userCache.putMembers(query.memberOf, query.results);
+			objCacheOps.putMembers(query.memberOf, query.results);
 		} else if (query.hasOwnProperty("occupantOf")) {
-			userCache.putOccupants(query.occupantOf, query.results);
+			objCacheOps.putOccupants(query.occupantOf, query.results);
 		}
 		next();
 	}, 8);
 
 	libsb.on("join-dn", function (join, next) {
-		userCache.putMembers(join.to, join.user);
+		objCacheOps.putMembers(join.to, join.user);
 		next();
 	}, 900);
 
 	libsb.on("part-dn", function (part, next) {
-		userCache.removeMembers(part.to, part.user);
+		objCacheOps.removeMembers(part.to, part.user);
 		next();
 	}, 900);
 
 	libsb.on("away-dn", function (away, next) {
 		if (away.from === libsb.user.id) {
-			userCache.saveUsers();
+			objCacheOps.saveUsers();
 		}
-		userCache.removeOccupants(away.to, away.user);
+		objCacheOps.removeOccupants(away.to, away.user);
 		next();
 	}, 900);
 
 	libsb.on("back-dn", function (back, next) {
 		if (back.from === libsb.user.id) {
-			userCache.populateMembers(back.to);
-			userCache.populateOccupants(back.to);
-			userCache.loadUsers();
+			objCacheOps.populateMembers(back.to);
+			objCacheOps.populateOccupants(back.to);
+			objCacheOps.loadUsers();
 			
 			/*
 				This is a hack: server is not sending a user object with the back message
@@ -92,29 +91,24 @@ module.exports = function () {
 					}
 					
 					back.user.role = role;
-					userCache.putOccupants(back.to, back.user);
+					objCacheOps.putOccupants(back.to, back.user);
 					next();
 				});
 			}
 			else {
-				userCache.putOccupants(back.to, back.user);
+				objCacheOps.putOccupants(back.to, back.user);
 				next();
 			}
 		} else {
-			userCache.putOccupants(back.to, back.user);
+			objCacheOps.putOccupants(back.to, back.user);
 			next();
 		}
 	}, 900);
 
 	libsb.on("init-dn", function (init, next) {
-		/*
-			CurrentState.roomName is undefined here, which should not happen.
-			This code was tested by hardcoding this value.
-			Apparently, after Harish's navigation, boot manager etc is pushed, this should be resolved.
-		*/
-		userCache.deletePersistence();
-		userCache.populateMembers(currentState.roomName);
-		userCache.populateOccupants(currentState.roomName);
+		objCacheOps.deletePersistence();
+		objCacheOps.populateMembers(currentState.roomName);
+		objCacheOps.populateOccupants(currentState.roomName);
 
 		next();
 	}, 500);
