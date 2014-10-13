@@ -6,6 +6,11 @@ var spaceManager = require('./spaceManager.js');
 
 window.timeoutMapping = {};
 
+var userObj = spaceManager.get('user', false);
+if (userObj !== null) {
+	libsb.user = userObj;
+}
+
 module.exports = function (objCacheOps) {
 	libsb.on('init-up', function (init, next) {
 		var sid;
@@ -28,6 +33,7 @@ module.exports = function (objCacheOps) {
 		if (init.auth && !init.user.id) return next();
 
 		var user = init.user;
+		
 		var occupantOf = init.occupantOf;
 		var memberOf = init.memberOf;
 
