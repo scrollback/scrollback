@@ -7,5 +7,5 @@ module.exports = function(core){
 	require('./authRules/roomAuth.js')(core);
 	require('./authRules/userAuth.js')(core);
 	require('./authRules/queryAuth.js')(core);
-//	require('./authRules/initAuth.js')(core);
+	require('./authRules/initAuth.js')(core);
 };

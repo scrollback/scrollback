@@ -126,7 +126,15 @@ function onMessage(e) {
 		});
 		break;
 	case "following":
-		
+			if(data.follow) {
+				libsb.emit("join-up", {to: data.room, role: "follower"}, function(err, join) {
+					console.log(err, join);
+				});
+			}else{
+				libsb.emit("part-up", {to: data.room}, function(err, join) {
+					console.log(err, join);
+				});
+			}
 		break;
 	}
 }
