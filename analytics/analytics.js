@@ -100,7 +100,7 @@ function saveMembersAction(action) {
 	});
 	if (action.transitionTime) {
 		params.push("transitiontime");
-		values.push(new Date(action.transitionTime));
+		values.push(new Date(action.transitionTime).toISOString());
 	}
 	insert("member_actions", params, values);
 }
@@ -188,7 +188,7 @@ function saveRoomUserActions(action) {
 
 function getParamsAndValues(action) {
 	var params = ['id', 'type', 'from', 'time', 'session', 'resource', 'success' ];
-	var values = [action.id, action.type, action.from, new Date(action.time), action.session, action.resource, true];
+	var values = [action.id, action.type, action.from, new Date(action.time).toISOString(), action.session, action.resource, true];
 	return {
 		params: params,
 		values: values
