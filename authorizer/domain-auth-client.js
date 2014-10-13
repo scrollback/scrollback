@@ -20,7 +20,6 @@ libsb.on('config-show', function (conf, next) {
 
 libsb.on('config-save', function (room, next) {
 	var domains = $('#domain-list').val();
-	console.log(domains);
 	if (!room.guides) room.guides = {};
 	room.guides.domains = domains.split("\n");
 	next();

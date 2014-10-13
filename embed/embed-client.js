@@ -255,4 +255,20 @@ module.exports = function (libsb) {
 		else queue.push(processInit);
 	}, 500);
 	libsb.on("navigate", postNavigation, 500);
+	
+	libsb.on("init-dn", function(init, next) {
+		var membership = [];
+		if(!/^guest-/.test(init.user.id)) {
+			init.memberOf.forEach(function(e) {
+				if(!e.guides || (e.guides.domains && e.guides.domains.indexOf(domain))) {
+					membership.push(e.id);
+				}
+			});
+			parentWindow.postMessage(JSON.stringify({
+				type:"membership",
+				data: membership
+			}));
+		}
+		next();
+	}, "watcher");
 };

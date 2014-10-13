@@ -127,7 +127,7 @@ function scrollback(opts, callback) {
 	};
 
 	self.embed = constructEmbed(opts);
-
+	self.membership = [];
 	self.emit = function(type, data, cb) {
 		var post = {};
 		console.log("Emit called");
@@ -136,7 +136,6 @@ function scrollback(opts, callback) {
 		post.data = data;
 		console.log(this);
 		this.iframe.contentWindow.postMessage(JSON.stringify(post), host);
-		console.log("Posted message", post);
 		self.pendingCallbacks[post.id] = cb;
 	};
 	widget.navigation = require("./navigation.js")(self);
@@ -176,6 +175,9 @@ function scrollback(opts, callback) {
 			break;
 			case "following":
 				
+			break;
+			case: "membership":
+				self.membership = message.data;
 			break;
 		}
 		if(this.pendingCallbacks[message.id]) {
