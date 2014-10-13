@@ -1,216 +1,162 @@
 var assert = require("assert");
-var core = require("../test/mock-core.js")();
-var validator = require("./validator.js")(core);
+var core = new (require('../lib/emitter.js'))();
+var validator
 var generate = require("../lib/generate.js");
 
-/*****************************************************************************
+var action = {
+	id: generate.uid(33),
+	type: 'text',
+	to: "me",
+	time: new Date().getTime(),
+	session: "web://" + generate.uid(32),
+	resource: "web",
+	origin: {
+		gateway: "web"
+	}
+}
 
-This file perform tests on the validator plugin based on the new schema.
-Validator plugin will listen for all actions. throw errors if critical properties are missing and fill the properties if it can.
-should be the first app for all types of messages.
+function copy() {
+	return JSON.parse(JSON.stringify(action));
+}
 
+describe('Validator Test', function() {
 
-for text|back|away|join|part|admit|expel|room|user|edit|init actions:
+	before(function(done) {
+		validator= require("./validator.js")(core);
+		setTimeout(done, 1000);
+	});
 
-	critical properties:
-		type
-		from
-		to
-		session
-
-
-	properties that the plugin can fill
-		time
-		id
-
-
-for text
-	critical properties:
-		text
-
-for join
-	properties that the plugin can fill
-		role  -> if not present then set it to followers.
-
-for part
-	properties that the plugin can fill
-		role  -> if not present then set it to none.
-
-
-for admit
-	critical properties:
-		ref
-	properties that the plugin can fill
-		role  -> followers
-
-for expel
-	critical properties:
-		ref
-	properties that the plugin can fill
-		role  -> banned
-
-for init
-	?????????????????
-*****************************************************************************/
-describe('validator', function() {
-	describe('generic-test', function() {
-		it('Should throw an error if TYPE is undefined', function(done) {
-			core.emit("away",{id:generate.uid()}, function(err, data) {
-				assert(err, "Error not thrown");
-				assert.equal(err.message, "INVALID_ACTION_TYPE", "Error message is incorrect");
-				done();
-			});
-		});
-		it('Should throw an error if FROM is undefined', function(done) {
-			core.emit("text",{id:generate.uid(),type:"text"}, function(err, data) {
-				assert(err, "Error not thrown");
-				assert.equal(err.message, "INVALID_USER", "Error message is incorrect");
-				done();
-			});
-		});
-		it('Should throw an error if TO is undefined', function(done) {
-			core.emit("back",{id:generate.uid(),type:"back",from: generate.names(6)}, function(err, data) {
-				assert(err, "Error not thrown");
-				assert.equal(err.message, "INVALID_ROOM", "Error message is incorrect");
-				done();
-			});
+	it("should not allow init action if suggested nick is an object.", function(done) {
+		var t = copy(action);
+		t.type = "init";
+		t.suggestedNick = {};
+		core.emit("init", t, function(err, act) {
+			console.log("Init", arguments);
+			assert.equal(err instanceof Error, true, "Not throwing error for invalid Init..");
+			done();
 		});
 
-		it('Should throw an error if SESSION is undefined', function(done) {
-			core.emit("text",{id:generate.uid(),type:"text",from: generate.names(6), to:generate.names(6)}, function(err, data) {
-				assert(err, "Error not thrown");
-				assert.equal(err.message, "NO_SESSION_ID", "Error message is incorrect");
-				done();
-			});
+	});
+
+	it("Valid init action", function(done) {
+		var t = copy(action);
+		t.type = "init";
+		t.to = "me";
+		core.emit("init", t, function(err, act) {
+			assert.equal(err instanceof Error, false, "validation successful");
+			done();
 		});
-		it('Should set id to some value if it is undefined', function(done) {
-			core.emit("text",{type:"text",text:"hi there...", from: generate.names(6), 
-				to: generate.names(6), session:"http:127.0.0.1:ajsdbhciahnasjdnfn"}, function(err, data) {
-					assert(!err,"ERROR thrown when it shouldnt.");
-					assert(data.id, "ID not set by validator");
-					done();
-			});
-		});
-		it('Should set time to current time if it is undefined', function(done) {
-			core.emit("text",{id:generate.uid(),type:"text",text:"some random text", from: generate.names(6), 
-				to: generate.names(6), session:"http:127.0.0.1:ajsdbhciahnasjdnfn"}, function(err, data) {
-					assert(!err,"ERROR thrown when it shouldnt.");
-					assert(data.time, "time not set by validator");
-					done();
-			});
-		});
-		it('Should not throw an err when all the properties are set correctly', function(done) {
-			core.emit("text",{id:generate.uid(),type:"text",from: generate.names(6), to:generate.names(6),  
-				session:"http:127.0.0.1:ajsdbhciahnasjdnfn",text:"hi there... how are you?" }, function(err, data) {
-				assert(!err, "Message not sent");
-				done();
-			});
+
+	});
+
+	it("should not allow text action without text.", function(done) {
+		var t = copy(action);
+		t.type = "text";
+		t.text = "";
+		t.to = "scrollback";
+		t.from = "testinguser"
+		core.emit("text", t, function(err, act) {
+			assert.equal(err instanceof Error, true, "should not allow text action without text.");
+			done();
 		});
 	});
 
-	describe('Testing text messages', function(done) {
-		it('Should throw an error when text property is missing.', function(done) {
-			core.emit("text",{id: generate.uid(),type:"text",from: generate.names(6), to:generate.names(6),  
-				session:"http:127.0.0.1:ajsdbhciahnasjdnfn"}, function(err, data) {
-				assert(err, "Error not thrown");
-				assert.equal(err.message, "TEXT_MISSING", "Error message is incorrect");
-				done();
-			});
-		});
-		it('should not throw an error when all the properties are specified and valid.', function(done) {
-			core.emit("text",{id: generate.uid(),type:"text",from: generate.names(6), to:generate.names(6),  
-				session:"http:127.0.0.1:ajsdbhciahnasjdnfn", text:'hi there!!!'}, function(err, data) {
-				assert(!err, "Error thrown when it shouldnt");
-				done();
-			});
+	it("valid text action", function(done) {
+		var t = copy(action);
+		t.type = "text";
+		t.text = "this is testing message";
+		t.to = "scrollback";
+		t.from = "testinguser";
+		core.emit("text", t, function(err, act) {
+			assert.equal(err instanceof Error, false, "not allowing valid text action.");
+			done();
 		});
 	});
 
-	describe('Testing join/part messages', function(done) {
-		it('Should set role to "follower" if it is undefined', function(done) {
-			core.emit("join",{id:generate.uid(),type:"join",from: generate.names(6), to:generate.names(6),  
-				session:"http:127.0.0.1:ajsdbhciahnasjdnfn"}, function(err, data) {
-				assert(!err, "Error thrown when it shouldnt");
-				assert.equal(data.role, "follower","Not setting the default value for role correctly")
-				done();
-			});
-		});
-		it('Should set role to "none" if it is undefined', function(done) {
-			core.emit("part",{id:generate.uid(),type:"part",from: generate.names(6), to:generate.names(6),  
-				session:"http:127.0.0.1:ajsdbhciahnasjdnfn"}, function(err, data) {
-				assert(!err, "Error thrown when it shouldnt");
-				assert.equal(data.role, "none","Not setting the default value for role correctly")
-				done();
-			});
+	it("should not allow room action without params or guides.", function(done) {
+		var t = copy(action);
+		t.type = "room";
+		t.to = "scrollback";
+		t.from = "testinguser";
+		t.room = {
+			id: "scrollback",
+			type: "room",
+			identities: ["web://testing.com"],
+
+		}
+		core.emit("room", t, function(err, act) {
+			assert.equal(err instanceof Error, true, "room with no params and guides is allowed.");
+			done();
 		});
 	});
 
+	it("valid room action", function(done) {
+		var t = copy(action);
+		t.type = "room";
+		t.to = "scrollback";
+		t.from = "testinguser";
+		t.room = {
+			id: "scrollback",
+			type: "room",
+			identities: ["web://testing.com"],
+			params: {},
+			guides: {}
+		}
+		core.emit("room", t, function(err, act) {
+			assert.equal(err instanceof Error, false, "not allowing valid room action.");
+			done();
+		});
+	});
+	it("should not allow user action without params or guides.", function(done) {
+		var t = copy(action);
+		t.type = "user";
+		t.from = "testinguser";
+		t.user = {
+			id: "testinguser",
+			type: "user",
+			identities: ["web://testing.com"],
 
-	describe('Testing admit/expel messages', function(done) {
-		it('Should throw an error if ref is undefined', function(done) {
-			core.emit("admit",{id:generate.uid(),type:"admit",from: generate.names(6), text:"ok this is fine...", to:generate.names(6),  
-				session:"http:127.0.0.1:ajsdbhciahnasjdnfn"}, function(err, data) {
-				assert(err, "Error not thrown");
-				assert.equal(err.message, "REF_NOT_SPECIFIED", "Error message is incorrect");
-				done();
-			});
-		});
-		it('Should throw an error if ref is undefined', function(done) {
-			core.emit("admit",{id:generate.uid(),type:"admit",from: generate.names(6), text:"ok this is fine...", to:generate.names(6),  
-				session:"http:127.0.0.1:ajsdbhciahnasjdnfn", ref: "nsdf@#"}, function(err, data) {
-				assert(err, "Error not thrown");
-				assert.equal(err.message, "INVALID_REF", "Error message is incorrect");
-				done();
-			});
-		});
-		it('Should set role to "follow_invited" if it is undefined', function(done) {
-			core.emit("admit",{id:generate.uid(),type:"admit",from: generate.names(6), to:generate.names(6),  
-				session:"http:127.0.0.1:ajsdbhciahnasjdnfn", ref:"harish"}, function(err, data) {
-				assert(!err, "Error thrown when it shouldnt");
-				assert.equal(data.role, "follow_invited","Not setting the default value for role correctly")
-				done();
-			});
-		});
-		it('Should set role to "banned" if it is undefined', function(done) {
-			core.emit("expel",{id:generate.uid(),type:"expel",from: generate.names(6), to:generate.names(6),  
-				session:"http:127.0.0.1:ajsdbhciahnasjdnfn", ref:"harish"}, function(err, data) {
-				assert(!err, "Error thrown when it shouldnt");
-				assert.equal(data.role, "banned","Not setting the default value for role correctly")
-				done();
-			});
+		}
+		core.emit("user", t, function(err, act) {
+			assert.equal(err instanceof Error, true, "user with no params and guides is allowed.");
+			done();
 		});
 	});
 
-	describe("Testing edit messages", function(){
-		it('Should throw an error if ref is undefined', function(done) {
-			core.emit("edit",{id:generate.uid(),type:"edit",from: generate.names(6), to:generate.names(6),  
-				session:"http:127.0.0.1:ajsdbhciahnasjdnfn"}, function(err, data) {
-				assert(err, "Error not thrown");
-				assert.equal(err.message, "REF_NOT_SPECIFIED", "Error message is incorrect");
-				done();
-			});
+	it("should not allow user action without params", function(done) {
+		var t = copy(action);
+		t.type = "user";
+		t.from = "testinguser";
+		t.user = {
+			id: "testinguser",
+			type: "user",
+			identities: ["web://testing.com"],
+			guides: {}
+		}
+		core.emit("user", t, function(err, act) {
+			assert.equal(err instanceof Error, true, "user with no params is allowed.");
+			done();
 		});
-		it('Should throw an error if both text and label is undefined', function(done) {
-			core.emit("edit",{id:generate.uid(),type:"edit",from: generate.names(6), to:generate.names(6),  
-				ref: generate.uid(), session:"http:127.0.0.1:ajsdbhciahnasjdnfn"}, function(err, data) {
-				assert(err, "Error not thrown");
-				assert.equal(err.message, "NO_OPTION_TO_EDIT", "Error message is incorrect");
-				done();
-			});
-		});
-		it('Should not throw an error if one of the following is specified: text, label', function(done) {
-				core.emit("edit",{id:generate.uid(),type:"edit",from: generate.names(6), to:generate.names(6), text:"hiihi", 
-				ref:generate.uid(), session:"http:127.0.0.1:ajsdbhciahnasjdnfn"}, function(err, data) {
-				assert(!err,"ERROR thrown when it shouldnt.");
-				done();
-			});
-		});
-		it('Should not throw an error if one of the following is specified: text, label', function(done) {
-				core.emit("edit",{id:generate.uid(),type:"edit",from: generate.names(6), to:generate.names(6), label:{hi:1},
-				ref:generate.uid(), session:"http:127.0.0.1:ajsdbhciahnasjdnfn"}, function(err, data) {
-				assert(!err,"ERROR thrown when it shouldnt.");
-				done();
-			});
-		});	
 	});
+
+	
+	it("valid user action", function(done) {
+		var t = copy(action);
+		t.type = "user";
+		t.from = "testinguser";
+		t.user = {
+			id: "scrollback",
+			type: "room",
+			identities: ["web://testing.com"],
+			params: {},
+			guides: {}
+		}
+		core.emit("user", t, function(err, act) {
+			assert.equal(err instanceof Error, false, "not allowing valid user action.");
+			done();
+		});
+	});
+	
+	
+
 });
