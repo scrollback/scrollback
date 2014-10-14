@@ -2,12 +2,13 @@
 var assert = require('assert');
 var _ = require('underscore');
 
-var userCache = require('./userCache.js');
+var userCache = require('./objCacheOps.js');
 var members = [{id: 'member1', description: "testmember1"}, {id: 'member2', description: "testmember2"}];
 var occupants = [{id: 'occupant1', description: "testoccupant1"}, {id: 'occupant2', description: "testoccupant2"}];
 
 describe("User cache ", function () {
-
+	
+	
     it("should add new members to a room that does not exist ", function (done) {
 		userCache.putMembers("testroom1", members);
 		userCache.getMembers("testroom1", null, function (res) {

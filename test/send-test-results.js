@@ -71,8 +71,8 @@ function sendEmail() {
 	var colorPassed = "#5cb85c";
 	var spanStyle = "style=\" color:%s;\" ";
 	['unit', 'selenium'].forEach(function (v) { 
-		out.push("<a  style=\"display: block;color: black;font-size: 20;text-decoration: blink;margin-top: 5px;\" href='" +
-				 parse(tempUrl, v + "-test-results", today) + "'>" + v + " Tests</h2>");
+		out.push("<a  style=\"display: block;color: black;font-size: 20px;text-decoration: blink;margin-top: 5px;\" href='" +
+				 parse(tempUrl, v + "-test-results", today) + "'>" + v + " Tests</a>");
 		for (var test in r[v]) {
 			if (r[v].hasOwnProperty(test) && typeof r[v][test] == 'object') {
 				var cp = r[v][test].passed, cf = r[v][test].failed;
@@ -98,6 +98,7 @@ function sendEmail() {
 	});
 	out.push("<a href='" + parse(tempUrl, "email", yesterday) + "'>Previous day test results</a>");
 	out.push("<a href='" + parse(tempUrl, "email", today) + "'>See this email on browser</a>");
+	out.push("<a href='https://www.browserstack.com/automate'>See selenium test logs on browserstack</a>");
 	out.push("</body></html>");
 	var m = out.join("\n");
 	fs.writeFileSync("public/s/tmp/email-" + today + ".html", m);

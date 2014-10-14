@@ -1,14 +1,15 @@
 /* global libsb */
 
-module.exports = function (cacheOp) {
+module.exports = function (objCacheOps) {
+	
+	objCacheOps.loadRooms();
+	
 	libsb.on('room-dn', function (room, next) {
 		var roomObj = room.room;
-		if (cacheOp.cache) {
-			cacheOp.rooms = cacheOp.rooms ? cacheOp.rooms : {};
-			cacheOp.rooms[roomObj.id] = roomObj;
-			cacheOp.save();
-			cacheOp.delRoomTimeOut(roomObj.id);
-		}
+		objCacheOps.rooms = objCacheOps.rooms || {};
+		objCacheOps.rooms[roomObj.id] = roomObj;
+		objCacheOps.saveRooms();
+		objCacheOps.delRoomTimeOut(roomObj.id);
 		next();
 	}, 500);
 
@@ -31,7 +32,7 @@ module.exports = function (cacheOp) {
 				return next();
 			}
 
-			var rooms = cacheOp.rooms || {};
+			var rooms = objCacheOps.rooms || {};
 
 			if (rooms.hasOwnProperty(query.ref)) {
 				query.results = [rooms[query.ref]];
@@ -50,17 +51,17 @@ module.exports = function (cacheOp) {
 
 		var rooms = {};
 
-		rooms = cacheOp.rooms ? cacheOp.rooms : {};
+		rooms = objCacheOps.rooms || {};
 
 		if (query.results) {
 			query.results.forEach(function (room) {
 				rooms[room.id] = room;
-				cacheOp.delRoomTimeOut(room.id);
+				objCacheOps.delRoomTimeOut(room.id);
 			});
 		}
 
-		cacheOp.rooms = rooms;
-		cacheOp.save();
+		objCacheOps.rooms = rooms;
+		objCacheOps.saveRooms();
 
 		next();
 
