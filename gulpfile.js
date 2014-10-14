@@ -1,12 +1,14 @@
 // Load plugins and declare variables
 var gulp = require("gulp"),
+	del = require("del"),
 	bower = require("bower"),
 	browserify = require("browserify"),
 	source = require("vinyl-source-stream"),
+	buffer = require("vinyl-buffer"),
 	es = require("event-stream"),
+	lazypipe = require("lazypipe"),
 	plumber = require("gulp-plumber"),
 	gutil = require("gulp-util"),
-	streamify = require("gulp-streamify"),
 	jshint = require("gulp-jshint"),
 	concat = require("gulp-concat"),
 	striplog = require("gulp-strip-debug"),
@@ -16,7 +18,6 @@ var gulp = require("gulp"),
 	autoprefixer = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
-	rimraf = require("gulp-rimraf"),
 	config = require("./config.js"),
 	clientConfig = require("./client-config.js"),
 	debug = !(gutil.env.production || config.env === "production"),
@@ -55,7 +56,7 @@ function bundle(files, opts) {
 		streams.push(bundler(files));
 	}
 
-	return es.merge.apply(null, streams);
+	return es.merge.apply(null, streams).pipe(buffer());
 }
 
 // Add prefix in an array
@@ -72,6 +73,12 @@ function prefix(str, arr) {
 
 	return prefixed;
 }
+
+// Lazy pipe for building scripts
+var buildscripts = lazypipe()
+	.pipe(plumber)
+	.pipe(!debug ? uglify : gutil.noop)
+	.pipe(!debug ? striplog : gutil.noop);
 
 // Lint JavaScript files
 gulp.task("lint", function() {
@@ -112,10 +119,8 @@ gulp.task("polyfills", [ "bower" ], function() {
 		"flexie/dist/flexie.min.js",
 		"transformie/transformie.js"
 	]))
-	.pipe(plumber())
+	.pipe(buildscripts())
 	.pipe(concat("polyfills.js"))
-	.pipe(!debug ? streamify(uglify()) : gutil.noop())
-	.pipe(!debug ? streamify(striplog()) : gutil.noop())
 	.pipe(gulp.dest(libDir))
 	.pipe(rename({ suffix: ".min" }))
 	.pipe(gulp.dest(libDir))
@@ -125,9 +130,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 // Build browserify bundles
 gulp.task("bundle", [ "libs" ], function() {
 	return bundle([ "libsb.js", "client.js" ], { debug: debug })
-	.pipe(plumber())
-	.pipe(!debug ? streamify(uglify()) : gutil.noop())
-	.pipe(!debug ? streamify(striplog()) : gutil.noop())
+	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
 	.pipe(gulp.dest("public/s/scripts"))
 	.on("error", gutil.log);
@@ -136,9 +139,7 @@ gulp.task("bundle", [ "libs" ], function() {
 // Generate embed widget script
 gulp.task("embed", function() {
 	return bundle("embed/embed-parent.js", { debug: debug })
-	.pipe(plumber())
-	.pipe(!debug ? streamify(uglify()) : gutil.noop())
-	.pipe(!debug ? streamify(striplog()) : gutil.noop())
+	.pipe(buildscripts())
 	.pipe(rename("embed.min.js"))
 	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
@@ -163,9 +164,10 @@ gulp.task("styles", [ "lace" ], function() {
 		style: !debug ? "compressed" : "expanded",
 		sourcemapPath: "../scss"
 	}))
-	.pipe(plumber())
 	.on("error", function(e) { gutil.log(e.message); })
-	.pipe(!debug ? (autoprefixer() && minify()) : gutil.noop())
+	.pipe(plumber())
+	.pipe(!debug ? autoprefixer() : gutil.noop())
+	.pipe(!debug ? minify() : gutil.noop())
 	.pipe(gulp.dest(cssDir))
 	.on("error", gutil.log);
 });
@@ -207,16 +209,13 @@ gulp.task("manifest", function() {
 
 // Clean up generated files
 gulp.task("clean", function() {
-	return gulp.src([
+	return del([
 		"public/{*.map,**/*.map}",
 		"public/{*.min.js,**/*.min.js}",
 		"public/{*.bundle.js,**/*.bundle.js}",
 		"public/{*.appcache,**/*.appcache}",
 		libDir, cssDir, laceDir
-	], { read: false })
-	.pipe(plumber())
-	.pipe(rimraf())
-	.on("error", gutil.log);
+	]);
 });
 
 gulp.task("watch", function() {
