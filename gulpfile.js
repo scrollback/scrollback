@@ -11,7 +11,7 @@ var gulp = require("gulp"),
 	gutil = require("gulp-util"),
 	jshint = require("gulp-jshint"),
 	concat = require("gulp-concat"),
-	striplog = require("gulp-strip-debug"),
+	striplogs = require("gulp-strip-debug"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
 	sass = require("gulp-ruby-sass"),
@@ -19,19 +19,22 @@ var gulp = require("gulp"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
 	config = require("./config.js"),
-	clientConfig = require("./client-config.js"),
 	debug = !(gutil.env.production || config.env === "production"),
-	bowerDir = "bower_components",
-	libDir = "public/s/scripts/lib",
-	laceDir = "public/s/styles/lace",
-	cssDir = "public/s/styles/dist",
-	jsFiles = [
-		"*/*-client.js",
-		"lib/*.js", "ui/*.js",
-		"public/client.js", "public/libsb.js", "client-init/*.js",
-		"client-entityloader/*.js", "localStorage/*.js", "socket/*.js", "interface/*.js"
-	],
-	cssFiles = [ "public/s/styles/scss/*.scss" ];
+	dirs = {
+		bower: "bower_components",
+		lib: "public/s/scripts/lib",
+		lace: "public/s/styles/lace",
+		css: "public/s/styles/dist"
+	},
+	files = {
+		js: [
+			"*/*-client.js",
+			"lib/*.js", "ui/*.js",
+			"public/client.js", "public/libsb.js", "client-init/*.js",
+			"client-entityloader/*.js", "localStorage/*.js", "socket/*.js", "interface/*.js"
+		],
+	   css: [ "public/s/styles/scss/*.scss" ]
+	};
 
 // Make browserify bundle
 function bundle(files, opts) {
@@ -78,7 +81,7 @@ function prefix(str, arr) {
 var buildscripts = lazypipe()
 	.pipe(plumber)
 	.pipe(!debug ? uglify : gutil.noop)
-	.pipe(!debug ? striplog : gutil.noop);
+	.pipe(!debug ? striplogs : gutil.noop);
 
 // Lint JavaScript files
 gulp.task("lint", function() {
@@ -100,7 +103,7 @@ gulp.task("bower", function() {
 });
 
 gulp.task("libs", [ "bower" ], function() {
-	return gulp.src(prefix(bowerDir + "/", [
+	return gulp.src(prefix(dirs.bower + "/", [
 		"jquery/dist/jquery.min.js",
 		"lace/src/js/*.js",
 		"sockjs/sockjs.min.js",
@@ -109,21 +112,21 @@ gulp.task("libs", [ "bower" ], function() {
 		"velocity/velocity.ui.min.js"
 	]))
 	.pipe(plumber())
-	.pipe(gulp.dest(libDir))
+	.pipe(gulp.dest(dirs.lib))
 	.on("error", gutil.log);
 });
 
 // Copy and minify polyfills
 gulp.task("polyfills", [ "bower" ], function() {
-	return gulp.src(prefix(bowerDir + "/", [
+	return gulp.src(prefix(dirs.bower + "/", [
 		"flexie/dist/flexie.min.js",
 		"transformie/transformie.js"
 	]))
 	.pipe(buildscripts())
 	.pipe(concat("polyfills.js"))
-	.pipe(gulp.dest(libDir))
+	.pipe(gulp.dest(dirs.lib))
 	.pipe(rename({ suffix: ".min" }))
-	.pipe(gulp.dest(libDir))
+	.pipe(gulp.dest(dirs.lib))
 	.on("error", gutil.log);
 });
 
@@ -152,14 +155,14 @@ gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 
 // Generate styles
 gulp.task("lace", [ "bower" ], function() {
-	return gulp.src(bowerDir + "/lace/src/scss/*.scss")
+	return gulp.src(dirs.bower + "/lace/src/scss/*.scss")
 	.pipe(plumber())
-	.pipe(gulp.dest(laceDir))
+	.pipe(gulp.dest(dirs.lace))
 	.on("error", gutil.log);
 });
 
 gulp.task("styles", [ "lace" ], function() {
-	return gulp.src(cssFiles)
+	return gulp.src(files.css)
 	.pipe(sass({
 		style: !debug ? "compressed" : "expanded",
 		sourcemapPath: "../scss"
@@ -168,13 +171,14 @@ gulp.task("styles", [ "lace" ], function() {
 	.pipe(plumber())
 	.pipe(!debug ? autoprefixer() : gutil.noop())
 	.pipe(!debug ? minify() : gutil.noop())
-	.pipe(gulp.dest(cssDir))
+	.pipe(gulp.dest(dirs.css))
 	.on("error", gutil.log);
 });
 
 // Generate appcache manifest file
 gulp.task("manifest", function() {
-	var protocol = clientConfig.server.protocol,
+	var clientConfig = require("./client-config.js"),
+		protocol = clientConfig.server.protocol,
 		host = clientConfig.server.host,
 		domain = protocol + host;
 
@@ -214,13 +218,13 @@ gulp.task("clean", function() {
 		"public/{*.min.js,**/*.min.js}",
 		"public/{*.bundle.js,**/*.bundle.js}",
 		"public/{*.appcache,**/*.appcache}",
-		libDir, cssDir, laceDir
+		dirs.lib, dirs.css, dirs.lace
 	]);
 });
 
 gulp.task("watch", function() {
-	gulp.watch(jsFiles, [ "scripts", "manifest" ]);
-	gulp.watch(cssFiles, [ "styles", "manifest" ]);
+	gulp.watch(files.js, [ "scripts", "manifest" ]);
+	gulp.watch(files.css, [ "styles", "manifest" ]);
 });
 
 // Default Task
