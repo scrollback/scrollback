@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, currentState */
 
 var roomCard = require("./room-card.js"),
 	roomEl = require("./room-item.js"),

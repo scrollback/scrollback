@@ -5,7 +5,7 @@
 // Import components from lace
 @import "../lace/base";
 @import "../lace/animations";
-@import "../lace/alert";
+@import "../lace/alertbar";
 @import "../lace/modal";
 @import "../lace/popover";
 @import "../lace/switch";
@@ -1008,7 +1008,7 @@ body {
 }
 
 .chat-position {
-    @include opacity(0);
+    @include opacity(1);
     @extend %transition;
 
     position: relative;
@@ -1021,10 +1021,7 @@ body {
     pointer-events: none;
     z-index: 20;
 
-    &:not(:empty) {
-        @include opacity(1);
-        @extend %nofilter;
-    }
+    &:empty, &.hidden { @include opacity(0); }
 }
 
 .chat-item {
@@ -1586,7 +1583,7 @@ body {
     color: fade-out($dark-color, .3);
     text-align: center;
 
-    h3 {
+    h2 {
         font-size: 1.5em;
 
         @media #{$screenxxxx} { font-size: 2.4em; }

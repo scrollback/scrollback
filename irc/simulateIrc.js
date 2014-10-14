@@ -6,7 +6,7 @@
 var channel = "#scrollback";
 var irc = require("irc");
 var ircClients = [];
-var testingServer = "dev.scrollback.io";
+var testingServer = "stage.scrollback.io";
 var gen = require('../lib/generate.js');
 var names = gen.names;
 var sentence = gen.sentence;
@@ -36,7 +36,8 @@ function next() {
 			console.log("connecting");
 			setTimeout (function() {
 				var ic = new irc.Client(testingServer, names(6), {
-					channels: [channel]
+					channels: [channel],
+					debug: true
 				});
 				ircClients.push(ic);
 			}, tt);

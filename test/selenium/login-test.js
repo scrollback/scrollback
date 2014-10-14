@@ -7,7 +7,7 @@ var assert = require('assert'),
 module.exports = function(capabilities, options) {
 	describe('Login Test: ' + options.id, function() {
 		this.timeout(4 * timeout);
-		var driver, server = "https://dev.scrollback.io";
+		var driver, server = options.server;
 
 		before(function(done) {
 			this.timeout(3 * timeout);
@@ -19,8 +19,7 @@ module.exports = function(capabilities, options) {
 			console.log("login test");
 			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function() {
 				setTimeout(function() {
-					console.log("set Element");
-					driver.findElement(webdriver.By.css(".sb-user")).getText().then(function(t) {
+					testUtils.getMyUserid(driver).then(function(t) {
 						console.log("text: ", t);
 						assert.equal(config.personaUser.username, t, "Login unsuccessful");
 						done();

@@ -6,7 +6,7 @@ var assert = require('assert'),
 module.exports = function(capabilities, options) {
 	describe('Chat Area Test: ' + options.id, function() {
 		this.timeout(timeout);
-		var driver, server = "https://dev.scrollback.io";
+		var driver, server = options.server;
 
 		before(function(done) {
 			this.timeout(3 * timeout);
@@ -35,19 +35,19 @@ module.exports = function(capabilities, options) {
 		});
 
 		it('Messages sending test( click chat-send button)', function(done) {
+			var random;
 			driver.findElement(webdriver.By.css('.chat-entry')).
 			then(function(searchBox) {
-				var random = Math.random();
+				random = Math.random();
 				searchBox.sendKeys('hello Testing message from script: ' + random);
-				driver.findElement(webdriver.By.css('.chat-send')).click().
-				then(function() {
-					driver.findElement(webdriver.By.css('.chat-area')).getText().
-					then(function(text) {
-						console.log("text", text);
-						console.log("index=", text.indexOf("" + random));
-						assert.notEqual(-1, text.indexOf("" + random), "Message sending failed");
-						done();
-					});
+				return driver.findElement(webdriver.By.css('.chat-send')).click();
+			}).then(function() {
+				driver.findElement(webdriver.By.css('.chat-area')).getText().
+				then(function(text) {
+					console.log("text", text);
+					console.log("index=", text.indexOf("" + random));
+					assert.notEqual(-1, text.indexOf("" + random), "Message sending failed");
+					done();
 				});
 			});
 		});
@@ -58,12 +58,12 @@ module.exports = function(capabilities, options) {
 				var random = Math.random();
 				searchBox.sendKeys('hello Testing message from script: ' + random);
 				searchBox.sendKeys(webdriver.Key.RETURN). then(function() {
-					driver.findElement(webdriver.By.css('.chat-area')).getText().then(function(text) {
-						console.log("text", text);
-						console.log("index=", text.indexOf("" + random));
-						assert.notEqual(-1, text.indexOf("" + random), "Message sending failed");
-						done();
-					});
+					return driver.findElement(webdriver.By.css('.chat-area')).getText();
+				}).then(function(text) {
+					console.log("text", text);
+					console.log("index=", text.indexOf("" + random));
+					assert.notEqual(-1, text.indexOf("" + random), "Message sending failed");
+					done();
 				});
 			});
 		});

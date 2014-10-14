@@ -5,6 +5,63 @@ var renderSettings = require("./render-settings.js"),
     currentConfig,
     oldState;
 
+$(function() {
+    $(".configure-button").on("click", function () {
+        libsb.emit('navigate', {
+            mode: "conf",
+            source: "configure-button",
+            roomName: window.currentState.roomName
+        });
+    });
+
+    $(".conf-save").on("click", function () {
+        var self = $(this);
+
+        if (currentState.mode === 'conf') {
+            self.addClass("working");
+            self.attr("disabled", true);
+
+            libsb.emit('config-save', {
+                id: window.currentState.roomName,
+                description: '',
+                identities: [],
+                params: {},
+                guides: {}
+            }, function (err, room) {
+                var roomObj = {
+                    to: currentState.roomName,
+                    room: room
+                };
+
+                libsb.emit('room-up', roomObj, function (err, room) {
+                    self.removeClass("working");
+                    self.attr("disabled", false);
+
+                    if(err) {
+                        // handle the error
+                    } else {
+                        for (var i in room.room.params) {
+                            if(!room.room.params.hasOwnProperty(i)) continue;
+                            if(room.room.params[i].error) {
+                                return;
+                            }
+                        }
+
+                        onComplete("conf-save");
+                    }
+                });
+            });
+
+        }
+    });
+
+    $(".conf-cancel").on("click", function() {
+        if (window.currentState.mode === "conf") {
+            onComplete("conf-cancel");
+        }
+    });
+});
+
 function onComplete(source) {
     var toState;
 
@@ -24,60 +81,6 @@ function onComplete(source) {
 
     oldState = null;
 }
-
-$(".configure-button").on("click", function () {
-    libsb.emit('navigate', {
-        mode: "conf",
-        source: "configure-button",
-        roomName: window.currentState.roomName
-    });
-});
-
-$(".conf-save").on("click", function () {
-    var self = $(this);
-
-    if (currentState.mode === 'conf') {
-        self.addClass("working");
-        self.attr("disabled", true);
-
-        libsb.emit('config-save', {
-            id: window.currentState.roomName,
-            description: '',
-            identities: [],
-            params: {},
-            guides: {}
-        }, function (err, room) {
-            var roomObj = {
-                to: currentState.roomName,
-                room: room
-            };
-
-            libsb.emit('room-up', roomObj, function (err, room) {
-                self.removeClass("working");
-                self.attr("disabled", false);
-                if(err) {
-                    // handle the error
-                } else {
-                    for (var i in room.room.params) {
-                        if(!room.room.params.hasOwnProperty(i)) continue;
-                        if(room.room.params[i].error) {
-                            return;
-                        }
-                    }
-
-                    onComplete("conf-save");
-                }
-            });
-        });
-
-    }
-});
-
-$(".conf-cancel").on("click", function() {
-    if (window.currentState.mode === "conf") {
-        onComplete("conf-cancel");
-    }
-});
 
 
 function showConfig(room) {
