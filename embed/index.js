@@ -176,7 +176,8 @@ function scrollback(opts, callback) {
 			case "following":
 				
 			break;
-			case: "membership":
+			case "membership":
+				console.log("Membership data:", message.data);
 				self.membership = message.data;
 			break;
 		}

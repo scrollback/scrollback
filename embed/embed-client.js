@@ -100,15 +100,16 @@ function postNavigation(state, next) {
 }
 
 function onMessage(e) {
-	var data = e.data;
+	var data = e.data, action;
 	data = parseResponse(data);
+	action = data.data;
 	switch (data.type) {
 	case "domain-response":
 		verifyDomainResponse(data);
 		break;
 	case "navigate":
 		data.data.source = "parent";
-		libsb.emit("navigate", data.data, function (err, state) {
+		libsb.emit("navigate", action, function (err, state) {
 			var obj;
 			if (err) {
 				err.type = "error";
@@ -126,12 +127,13 @@ function onMessage(e) {
 		});
 		break;
 	case "following":
-			if(data.follow) {
-				libsb.emit("join-up", {to: data.room, role: "follower"}, function(err, join) {
+			console.log("Following", action);
+			if(action.follow) {
+				libsb.emit("join-up", {to: action.room, role: "follower"}, function(err, join) {
 					console.log(err, join);
 				});
 			}else{
-				libsb.emit("part-up", {to: data.room}, function(err, join) {
+				libsb.emit("part-up", {to: action.room}, function(err, join) {
 					console.log(err, join);
 				});
 			}
@@ -266,17 +268,20 @@ module.exports = function (libsb) {
 	
 	libsb.on("init-dn", function(init, next) {
 		var membership = [];
-		if(!/^guest-/.test(init.user.id)) {
-			init.memberOf.forEach(function(e) {
-				if(!e.guides || (e.guides.domains && e.guides.domains.indexOf(domain))) {
-					membership.push(e.id);
-				}
-			});
-			parentWindow.postMessage(JSON.stringify({
-				type:"membership",
-				data: membership
-			}));
+		if(parentWindow){
+			if(!/^guest-/.test(init.user.id)) {
+				init.memberOf.forEach(function(e) {
+					if(!e.guides || !e.guides.domains || (e.guides.domains && e.guides.domains.indexOf(domain))) {
+						membership.push(e.id);
+					}
+				});
+				parentWindow.postMessage(JSON.stringify({
+					type:"membership",
+					data: membership
+				}), parentHost);	
+			}
 		}
+		
 		next();
 	}, "watcher");
 };
