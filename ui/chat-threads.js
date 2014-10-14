@@ -3,18 +3,14 @@
 
 $(function() {
     var $container = $(".chat-area"),
+        $convdot = $(".chat-conv-dot"),
         $entry = $(".chat-entry"),
         lastMsg, lastThread, currMsg, currThread, autoText,
         removeLine = function() {
             var $line = $(".chat-conv-line"),
                 $dots = $(".chat-item-dot, .chat-conv-dot");
 
-            if ($dots.data("animating")) {
-                $dots.data("animating", false).velocity("stop").velocity({
-                    scale: 1,
-                    opacity: 1
-                }, 150);
-            }
+            $dots.removeClass("faded pulsed");
 
             if ($line.length) {
                 $line.velocity("stop").velocity({
@@ -26,22 +22,16 @@ $(function() {
         drawLine = function() {
             var $line = $(".chat-conv-line"),
                 $chatdot = $(".chat-item-dot"),
-                $convdot = $(".chat-conv-dot"),
                 $dots = $("[data-thread=" + currThread + "]").find($chatdot).add($convdot),
                 left = $container.offset().left,
                 top = $dots.first().offset().top,
                 bottom = $(document).height() - $convdot.offset().top - ($convdot.height() / 2),
                 containertop = $container.offset().top;
 
-            $chatdot.not($dots).velocity("stop").velocity({
-                scale: 1,
-                opacity: 0.3
-            }, 150).data("animating", true);
+            $chatdot.not($dots).removeClass("pulsed").addClass("faded");
 
-            $dots.velocity("stop").velocity({
-                scale: 1.5,
-                opacity: 1
-            }, 300).data("animating", true);
+            $dots.removeClass("faded").addClass("pulsed");
+            $convdot.addClass("pulsed");
 
             if (!$line.length) {
                 $line = $("<div>").addClass("chat-conv-line").attr("data-mode", "normal search").css({ opacity: 0 });
@@ -283,7 +273,7 @@ $(function() {
 		next();
 	}, 50);
 
-	$(document).on("click", ".chat-conv-dot-wrap", function() {
-		resetConv();
-	});
+    $(document).on("click", ".chat-conv-dot-wrap, .js-new-discussion", function() {
+        resetConv();
+    });
 });

@@ -7,6 +7,8 @@ $(function() {
 	var $entry = $(".chat-entry"),
 		$placeholder = $(".chat-placeholder"),
 		$input = $(".chat-input"),
+		$convdot = $(".chat-conv-dot"),
+		newThread = false,
 		sendMsg = function() {
 			var text = format.htmlToText($entry.html()).trim();
 
@@ -26,9 +28,11 @@ $(function() {
 
 			$("body").attr("class", classes);
 		},
-		setPlaceHolder = function() {
-			if (libsb.user && libsb.user.id && $entry.text().trim() === "") {
-				$placeholder.text("Reply as " + libsb.user.id.replace(/^guest-/, ""));
+		setPlaceHolder = function(content) {
+			if (libsb.user && libsb.user.id && !$entry.text().trim()) {
+				content = (typeof content === "string") ? content : "Reply as " + libsb.user.id.replace(/^guest-/, "") + " or <a class='text-button js-new-discussion'>start a discussion</a>";
+
+				$placeholder.html(content);
 			} else {
 				$placeholder.empty();
 			}
@@ -59,9 +63,35 @@ $(function() {
 		chatArea.setPosition($input.outerHeight());
 	});
 
-	$input.on("click", function() {
+	$input.on("click", function(e) {
+		if ($(e.target).closest(".js-new-discussion").length) {
+			newThread = true;
+
+			setPlaceHolder("");
+
+			$convdot.addClass("animating");
+
+			setTimeout(function() {
+				$convdot.removeClass("animating");
+			}, 500);
+		} else if ($(e.target).closest(".chat-conv-dot-wrap").length) {
+			newThread = false;
+
+			setPlaceHolder();
+		}
+
 		$entry.focus();
 	});
+
+	libsb.on("text-up", function(text, next) {
+		if (newThread) {
+			text.threads = [ { id: "new", score: 1.0 } ];
+		}
+
+		newThread = false;
+
+		next();
+	}, 300);
 
 	$entry.on("paste", function() {
 		setTimeout(function() {
@@ -88,7 +118,7 @@ $(function() {
 		}
 	});
 
-	libsb.on('navigate', function(state, next) {
+	libsb.on("navigate", function(state, next) {
 		var chatText = "";
 
 		if (state.old && state.old.connectionStatus != state.connectionStatus) {

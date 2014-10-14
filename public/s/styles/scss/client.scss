@@ -1189,24 +1189,39 @@ body {
     }
 }
 
-.chat-item-dot {
-    content: "";
-    float: left;
-    margin: .55em 0 auto -2em;
+%conv-dots {
+    @extend %transition;
+
     height: .5em;
     width: .5em;
     border-radius: 50%;
-    color: fade-out(lighten($dark-color, 15%), .5); /* only for enabling use of currentColor */
+    color: lighten($dark-color, 50%); /* only for enabling use of currentColor */
     background-color: currentColor; /* use the same color as text */
 
-    @media #{$screenxx} { margin-left: -10em; }
+    &.pulsed { box-shadow: 0 0 0 8px fade-out($dark-color, .9); }
+
+    &.faded { @include opacity(.3); }
+}
+
+.chat-item-dot {
+    @extend %conv-dots;
+
+    content: "";
+    float: left;
+    margin: .55em 0 auto -2em;
 
     @for $i from 1 through length($palette) {
         $color: nth($palette, $i);
         $j: $i - 1;
 
-        .chat-item.conv-#{$j} & { color: $color; }
+        .chat-item.conv-#{$j} & {
+            color: $color;
+
+            &.pulsed { box-shadow: 0 0 0 8px fade-out($color, .75); }
+        }
     }
+
+    @media #{$screenxx} { margin-left: -10em; }
 }
 
 .chat-nick {
@@ -1235,7 +1250,7 @@ body {
     position: fixed;
     margin-left: 1.15em;
     z-index: 50;
-    background-color: fade-out(lighten($dark-color, 15%), .5);
+    background-color: lighten($dark-color, 50%);
 
     @media #{$screenxx} { margin-left: 2.15em; }
 
@@ -1281,6 +1296,23 @@ body {
 
 .chat-entry-wrap { position: relative; }
 
+@include keyframes(dotpulse) {
+    0% {
+        background-color: $accent-color;
+        box-shadow: 0 0 0 0 fade-out($accent-color, .75);
+    }
+
+    75% {
+        background-color: $accent-color;
+        box-shadow: 0 0 0 1em fade-out($accent-color, .75);
+    }
+
+    100% {
+        background-color: currentColor;
+        box-shadow: 0 0 0 0 fade-out($accent-color, .75);
+    }
+}
+
 .chat-conv-dot-wrap {
     position: absolute;
     top: 0;
@@ -1291,24 +1323,28 @@ body {
     @media #{$screenxx} { width: 3.5em; }
 
     .chat-conv-dot {
+        @extend %conv-dots;
+
         position: absolute;
         content: "";
         top: 1em;
         left: 1em;
         margin: .55em 0 auto 0;
-        height: .5em;
-        width: .5em;
-        border-radius: 50%;
-        background-color: fade-out(lighten($dark-color, 15%), .5);
 
         @for $i from 1 through length($palette) {
             $color: nth($palette, $i);
             $j: $i - 1;
 
-            .conv-#{$j} & { background-color: $color; }
+            .conv-#{$j} & {
+                background-color: $color;
+
+                &.pulsed { box-shadow: 0 0 0 8px fade-out($color, .75); }
+            }
         }
 
         @media #{$screenxx} { left: 2em; }
+
+        &.animating { @include prefix(animation, dotpulse .5s 1); }
     }
 }
 
@@ -1316,11 +1352,28 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    padding: .9em 1em .9em 2.9em;
+    padding: 0 1em 0 2.9em;
     color: fade-out($dark-color, .5);
-    pointer-events: none;
+    line-height: 3.5em;
 
     @media #{$screenxx} { padding-left: 3.9em; }
+
+    .text-button {
+        color: currentColor;
+        font-weight: 700;
+        text-decoration: underline;
+        padding: .5em;
+        border: 1px solid transparent;
+        border-radius: $roundness;
+
+        &:focus, &:hover {
+            color: $dark-color;
+            border-color: darken($light-color, 30%);
+            box-shadow: 0 1px 5px 0 rgba(0,0,0,0.15);
+        }
+
+        &:active { background-color: rgba(0,0,0,0.05); }
+    }
 }
 
 .chat-entry {
