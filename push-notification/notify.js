@@ -3,6 +3,15 @@ var log = require('../lib/logger.js');
 var SbError = require('../lib/SbError.js');
 var config = require('../myConfig.js');
 
+/*
+	payload : 
+	{
+		title : "Push Notification Title,
+		message: "Message of Notification",
+		"foo": "baz"
+	}
+*/
+
 module.exports = function (payload, registrationIds) {
 	if (!registrationIds instanceof Array) {
 		log.e("registrationIds has to be an Array of device Registration ID(s). ");
