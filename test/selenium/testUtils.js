@@ -1,7 +1,9 @@
 var webdriver = require('browserstack-webdriver');
+var q = require('q');
 module.exports.openUrl = openUrl;
 module.exports.loginPersona = loginPersona;
-var q = require('q');
+module.exports.getMyUserid = getMyuserid;
+
 function openUrl(capabilities, server, roomid) {
 	var driver = new webdriver.Builder().
 	usingServer('http://hub.browserstack.com/wd/hub').
@@ -44,6 +46,13 @@ function loginPersona(driver, id, password, callback) {
 			return q.delay(5000)
 		}).then(callback);
 	});
+}
+
+/**
+ * Return a promise with username.
+ */
+function getMyuserid(driver) {
+	return driver.findElement(webdriver.By.css(".sb-user")).getText();
 }
 
 /**

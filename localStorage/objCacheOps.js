@@ -1,3 +1,7 @@
+/* jshint browser:true */
+/* global libsb */
+
+
 /*
 	For members, a list of members have to maintained for each room since member roles can vary room to room.
 
@@ -5,7 +9,7 @@
 		By doing this the duplication of occupant objects can be eliminated.
 */
 
-/* global localStorage, libsb */
+var spaceManager = require('./spaceManager.js');
 
 var roomOccupantList = {};
 var globalOccupantList = {};
@@ -17,13 +21,13 @@ var membersPopulated = false;
 var occupantsPopulated = false;
 
 if (typeof window === "undefined") {
-    // for mocha tests
-    localStorage = {};
-    membersPopulated = true;
-    occupantsPopulated = true;
+	// for unit tests.
+	membersPopulated = true;
+	occupantsPopulated = true;
 }
 
 module.exports = {
+	rooms: {},
 	populateMembers: function (room) {
 		// populate memebers of room into our structures.
 		var members;
@@ -55,9 +59,9 @@ module.exports = {
 	getMembers: function (room, memberId, callback) {
 		var res = [];
 		this.loadUsers();
-		
-		if (typeof room ===  "undefined") return;
-		
+
+		if (typeof room === "undefined") return;
+
 		if (memberId !== null) {
 			if (/^guest-/.test(memberId)) {
 				res = []; // guest cannot be a member
@@ -65,11 +69,9 @@ module.exports = {
 			// return the single member as an Array
 			if (!roomMemberList.hasOwnProperty(room)) {
 				res = [];
-			}
-			else if (!roomMemberList[room].hasOwnProperty(memberId)) {
+			} else if (!roomMemberList[room].hasOwnProperty(memberId)) {
 				res = [];
-			}
-			else res = [roomMemberList[room][memberId]];
+			} else res = [roomMemberList[room][memberId]];
 		} else {
 			// return all members of the room
 			var mList = roomMemberList[room];
@@ -86,7 +88,7 @@ module.exports = {
 	getOccupants: function (room, occupantId, callback) {
 		var res = [];
 		this.loadUsers();
-		
+
 		if (occupantId !== null) {
 			// return the singe occupant of this room 
 
@@ -103,7 +105,7 @@ module.exports = {
 				res.push(globalOccupantList[r]);
 			}
 		}
-		
+
 		if (occupantsPopulated === true) {
 			callback(res);
 		} else {
@@ -140,7 +142,7 @@ module.exports = {
 			delete roomOccupantList[room];
 		}
 		if (!(occupantList instanceof Array)) {
-			if(typeof occupantList !== "undefined") occupantList = [occupantList];
+			if (typeof occupantList !== "undefined") occupantList = [occupantList];
 			else occupantList = [];
 		}
 
@@ -176,25 +178,48 @@ module.exports = {
 		this.saveUsers();
 	},
 	loadUsers: function () {
-		if (localStorage.hasOwnProperty("roomOccupantList")) {
-			roomOccupantList = JSON.parse(localStorage.roomOccupantList);
-		}
-		if (localStorage.hasOwnProperty("roomMemberList")) {
-			roomMemberList = JSON.parse(localStorage.roomMemberList);
-		}
-		if (localStorage.hasOwnProperty("globalOccupantList")) {
-			globalOccupantList = JSON.parse(localStorage.globalOccupantList);
-		}
+		var data;
+
+		data = spaceManager.get('roomOccupantList');
+		if (data !== null) roomOccupantList = data;
+
+		data = spaceManager.get('roomMemberList');
+		if (data !== null) roomMemberList = data;
+		
+		data = spaceManager.get('globalOccupantList');
+		if (data !== null) globalOccupantList = data;
 	},
 	saveUsers: function () {
-		localStorage.roomOccupantList = JSON.stringify(roomOccupantList);
-		localStorage.roomMemberList = JSON.stringify(roomMemberList);
-		localStorage.globalOccupantList = JSON.stringify(globalOccupantList);
+		spaceManager.set('roomOccupantList', roomOccupantList);
+		spaceManager.set('roomMemberList', roomMemberList);
+		spaceManager.set('globalOccupantList', globalOccupantList);
+	},
+	saveRooms: function () {
+		spaceManager.set('rooms', this.rooms);
+	},
+	loadRooms: function () {
+		var data = spaceManager.get('rooms');
+		if (data !== null) {
+			this.rooms = data;
+		}
 	},
 	deletePersistence: function () {
 		// delete LS entry for users.
-		delete localStorage.roomOccupantList;
-		delete localStorage.roomMemberList;
-		delete localStorage.globalOccupantList;
+		spaceManager.clear('roomOccupantList', 'roomMemberList', 'globalOccupantList');
+	},
+	delRoomTimeOut: function (roomId) {
+		/*
+		this function deletes a saved room object from the cache every 'n' mintues
+	*/
+		var minutes = 10; // 10 minutes timeout
+
+		clearTimeout(window.timeoutMapping[roomId]);
+
+		window.timeoutMapping[roomId] = setTimeout(function () {
+			if (this.cache && this.cache.rooms) {
+				delete this.cache.rooms[roomId];
+				this.save();
+			}
+		}, minutes * 60 * 1000);
 	}
 };

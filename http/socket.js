@@ -33,6 +33,7 @@ var rConns = {}, uConns = {}, sConns = {}, urConns = {};
 var sock = sockjs.createServer();
 
 sock.on('connection', function (socket) {
+	if (socket === null) return;// issue : https://github.com/sockjs/sockjs-node/issues/121
 	var conn = { socket: socket };
 	var ip = socket.remoteAddress;
 	if (socket.headers && socket.headers["x-forwarded-for"]) {
