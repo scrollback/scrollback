@@ -161,13 +161,13 @@ module.exports = function(clientEmitter, client, callbacks) {
 	}
 	
 	function ircfyText(message) {
-		var l = 300;
+		var l = 400 - message.room.params.irc.channel.length;
 		if (message.text.length <= l) {
 			return message.text;
 		} else {
-			var url = config.http.host + "/" + message.to + "?time=" + 
-				new Date(message.time).toISOString() + "&tab=people";	
-			var r = message.text.substring(0, l - url.length) + "....[see full message on scrollback](" + url + ")";
+			var suffix = "....[full message at http://" + config.http.host + "/" + message.to + "?time=" + 
+				new Date(message.time).toISOString() + "&tab=people" + " ]";	
+			var r = message.text.substring(0, l - suffix.length) + suffix;
 			return r;
 		}
 	}
