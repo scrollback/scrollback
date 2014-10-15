@@ -73,6 +73,7 @@ module.exports = function (coreObj) {
 			if (text.labels) {
 				if (text.labels.action) t =  "/me " + text.text;
 			}
+			t = ircUtils.ircfyText(text);
 			ircUtils.say(text.to, text.from, t);
 		}
 		callback();
