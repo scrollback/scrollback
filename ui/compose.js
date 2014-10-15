@@ -10,7 +10,7 @@ $(function() {
 		sendMsg = function() {
 			var text = format.htmlToText($entry.html()).trim();
 
-			$entry.text("");
+			$entry.empty();
 
 			if (!text) { return; }
 

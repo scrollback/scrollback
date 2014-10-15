@@ -182,9 +182,7 @@ $(function() {
             msg = format.htmlToText($entry.html()),
 			atStart = false;
 
-        msg = msg ? msg : "";
-
-		if (msg.match(/^@\S+[\s+{1}]?/, "")) {
+		if (/^@\S+[\s+{1}]?/.test(msg)) {
 			msg = msg.replace(/^@\S+[\s+{1}]?/, "");
 			atStart = true;
 		} else {
@@ -201,7 +199,7 @@ $(function() {
 
 		msg = format.textToHtml(msg);
 
-        if ($entry.text() === "" || (($entry.text().indexOf(autoText) > -1) && !autoSel)) {
+        if (!$entry.text().trim() || (($entry.text().indexOf(autoText) > -1) && !autoSel)) {
             autoText = format.htmlToText(msg);
 
             $entry.html(msg ? msg + "&nbsp;" : "");
