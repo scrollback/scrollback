@@ -83,7 +83,7 @@
     "gulp-browserify": "latest",
     "gulp-concat": "latest",
     "gulp-jshint": "latest",
-    "gulp-manifest": "git://github.com/satya164/gulp-manifest.git#856b8ceeb6",
+    "gulp-manifest": "git://github.com/scrollback/gulp-manifest.git#0.0.6",
     "gulp-minify-css": "latest",
     "gulp-plumber": "latest",
     "gulp-rename": "latest",
