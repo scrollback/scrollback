@@ -14,6 +14,7 @@ function jws(action, callback) {
 	if(!action.auth || !action.auth.jws) return callback();
 	
 	core.emit("getUsers",{identity: action.auth.jws, session: internalSession}, function(err, user) {
+		console.log(err, user);
 		if(err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
 		if(!user.results || user.results.length === 0) {
 			action.user = {};
@@ -22,7 +23,14 @@ function jws(action, callback) {
 			return callback();
 		}
 		action.old = action.user;
-		action.user = user.results[0];
+		if(action.old.id === action.user.id) {
+			if(action.user.allowedDomains) {
+				
+			}
+		}
+		
+		
+		action.user.allowedDomains = [action.origin.domain];
 		callback();
 	});
 }

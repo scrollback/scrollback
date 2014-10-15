@@ -100,9 +100,10 @@ function postNavigation(state, next) {
 }
 
 function onMessage(e) {
-	var data = e.data, action;
+	var data = e.data, action, actionUp = {};
 	data = parseResponse(data);
 	action = data.data;
+	console.log("Got action:", data);
 	switch (data.type) {
 	case "domain-response":
 		verifyDomainResponse(data);
@@ -137,6 +138,21 @@ function onMessage(e) {
 					console.log(err, join);
 				});
 			}
+		break;
+	case "signin":
+			actionUp.auth = {};
+			actionUp.auth.jws = action.jws;
+			if(action.nick) {
+				action.auth.nick = action.nick; // TODO: can be used to generated nick suggestions.
+			}
+			libsb.emit("init-up", actionUp, function(err, init) {
+				if(err) {
+					alert("ERROR:", err.message);
+					return;
+				}
+				console.log("INIT complete", init);
+				
+			});
 		break;
 	}
 }
