@@ -1,6 +1,6 @@
 var config = require('../config.js');
 var log = require("../lib/logger.js");
-var redis = require('../lib/redisProxy.js').select(config.redisDB.recommandation);
+var redis = require('../lib/redisProxy.js').select(config.redisDB.recommendation);
 var core;
 module.exports = function(coreObject) {
 	core = coreObject;
