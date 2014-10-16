@@ -138,7 +138,7 @@ $(function () {
 
 			if (typeof libsb.user === "undefined") {
 				libsb.on("navigate", function (state, next) {
-					if (state.connectionStatus !== state.old.connectionStatus && state.connectionStatus!== "online") {
+					if (state.connectionStatus !== state.old.connectionStatus && state.connectionStatus === "online") {
 						loadTexts();
 					}
 					next();
