@@ -33,6 +33,14 @@ module.exports = function(coreObj) {
 				pendingCallbacks[message.id] = { message: message, fn: callback ,time:new Date().getTime()};
 				setTimeout(function() {
 					if(pendingCallbacks[message.id] ){
+						for (var i = 0;i < message.threads.length;i++) {
+							var th = message.threads[i];
+							if (th.id === "new") {
+								message.threads.splice(i, 1);
+								i--;
+							}
+						}
+						message.threads.push({id: message.id + getRandom(0, 9), score: 1, title: message.text});
 						pendingCallbacks[message.id].fn();
 						delete pendingCallbacks[message.id];
 						log("pending callback removed after 1 sec for message.id" + message.id);
@@ -46,6 +54,9 @@ module.exports = function(coreObj) {
 	}
 };
 
+function getRandom(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 /**
 *Process reply from java process and callback based on message.id
 * message.thread [{
