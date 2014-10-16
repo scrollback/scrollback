@@ -30,7 +30,13 @@ $(function() {
 		},
 		setPlaceHolder = function(content) {
 			if (libsb.user && libsb.user.id && !$entry.text().trim()) {
-				content = (typeof content === "string") ? content : "Reply as " + libsb.user.id.replace(/^guest-/, "") + " or <a class='text-button js-new-discussion'>start a discussion</a>";
+				if (typeof content !== "string") {
+					content = "Reply as " + libsb.user.id.replace(/^guest-/, "");
+
+					if (!window.currentState.thread) {
+						content += " or <a class='text-button js-new-discussion'>start a discussion</a>";
+					}
+				}
 
 				$placeholder.html(content);
 			} else {
@@ -52,8 +58,14 @@ $(function() {
 	}, 10);
 
 	libsb.on("navigate", function(state, next) {
-		if (state.old && state.old.roomName !== state.roomName) {
-			$entry.empty();
+		if (state.old) {
+			if (state.old.roomName !== state.roomName) {
+				$entry.empty();
+			}
+
+			if (state.old.thread !== state.thread) {
+				setPlaceHolder();
+			}
 		}
 
 		next();
