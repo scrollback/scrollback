@@ -1345,7 +1345,7 @@ body {
 
         @media #{$screenxx} { left: 2em; }
 
-        &.animating { @include prefix(animation, dotpulse .5s 1); }
+        &.animating { @include prefix(animation, dotpulse 1s 1); }
     }
 }
 

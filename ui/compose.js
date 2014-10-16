@@ -75,11 +75,19 @@ $(function() {
 		chatArea.setPosition($input.outerHeight());
 	});
 
+	$(document).on("keydown", function(e) {
+		if (e.keyCode === 27) {
+			newThread = false;
+
+			setPlaceHolder();
+		}
+	});
+
 	$input.on("click", function(e) {
 		if ($(e.target).closest(".js-new-discussion").length) {
 			newThread = true;
 
-			setPlaceHolder("");
+			setPlaceHolder("Type discussion title");
 
 			$convdot.addClass("animating");
 
