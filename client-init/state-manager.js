@@ -55,6 +55,7 @@ function loadOld(state, next) {
 }
 
 function saveCurrentState(state, next) {
+	console.log(state);
     props.forEach(function(prop) {
 		if (typeof state[prop] === "undefined") {
 			if (typeof state.old[prop] !== "undefined") {

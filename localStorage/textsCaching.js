@@ -19,11 +19,11 @@ module.exports = function (ArrayCacheOp) {
 			return next();
 		}
 
-		if (query.time === null && currentState.connectionStatus) {
+		if (query.time === null && currentState.connectionStatus === "online") {
 			// query.time is null, have to decide how LS will handle this.
 			return next();
 		}
-		if (!currentState.connectionStatus) query.partials = true;
+		if (currentState.connectionStatus !== "online") query.partials = true;
 		if (query.thread) return next();
 
 		var results = ArrayCacheOp.cache[key].get('time', query);
