@@ -83,7 +83,7 @@
     "gulp-browserify": "latest",
     "gulp-concat": "latest",
     "gulp-jshint": "latest",
-    "gulp-manifest": "git://github.com/satya164/gulp-manifest.git#856b8ceeb6",
+    "gulp-manifest": "git://github.com/scrollback/gulp-manifest.git#0.0.6",
     "gulp-minify-css": "latest",
     "gulp-plumber": "latest",
     "gulp-rename": "latest",
@@ -95,7 +95,7 @@
     "lazypipe": "latest",
     "main-bower-files": "latest",
     "mocha": "latest",
-    "mocha-html-reporter": "git://github.com/kamalkishor1991/mocha-html-reporter.git",
+    "mocha-html-reporter": "git://github.com/kamalkishor1991/mocha-html-reporter.git#defc65cc72b6ed965caff1fb1c2d323ca0f5a319",
     "selenium-webdriver": "latest",
     "vinyl-buffer": "latest",
     "vinyl-source-stream": "latest"
