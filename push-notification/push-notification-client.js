@@ -18,7 +18,7 @@ function mapDevicetoUser(regId) {
 		if (device && device.hasOwnProperty('registrationId')) {
 			if (device.registrationId === regId) {
 				deviceRegistered = true;
-			}	
+			}
 		}
 	});
 	var newDevice = {deviceName: device.name};
