@@ -43,10 +43,6 @@ $(function () {
 			if (text.labels) {
 				for (var label in text.labels) {
 					if (text.labels[label] === 1) {
-						// this has to be done only for non-owners!
-						if (label === "hidden" && !isOwner) {
-							return;
-						}
 						$el.addClass("chat-label-" + label);
 					}
 				}

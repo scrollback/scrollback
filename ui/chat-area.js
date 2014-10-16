@@ -3,7 +3,8 @@
 
 var chatEl = require("./chat.js"),
 	_ = require('underscore'),
-	chatArea = {}, scrollTimer = null;
+	chatArea = {},
+	scrollTimer = null;
 
 function getIdAndTime(index) {
 	var time, id;
@@ -28,7 +29,7 @@ function returnArray(query, index) {
 		rIndex = -1,
 		i, inc, end;
 	texts = texts.slice(0, texts.length);
-	if(!texts.length) return [];
+	if (!texts.length) return [];
 	if (query.time) {
 		if (query.before) {
 			i = texts.length - 1;
@@ -52,7 +53,7 @@ function returnArray(query, index) {
 				}
 				if (texts[i].time != index.time) break;
 			}
-			i+=inc;
+			i += inc;
 		}
 	}
 	if (rIndex >= 0) texts.splice(rIndex, 1);
@@ -62,9 +63,9 @@ function returnArray(query, index) {
 $(function () {
 	var $logs = $(".chat-area"),
 		$chatPosition = $(".chat-position")
-		roomName = "",
-		thread = '',
-		time = null;
+	roomName = "",
+	thread = '',
+	time = null;
 
 	function scrollToBottom($el) {
 		if (!($el && $el.length)) {
@@ -72,14 +73,17 @@ $(function () {
 		}
 
 		if ($.fn.velocity) {
-			$el.children().last().velocity("scroll", { duration: 150, container: $el });
+			$el.children().last().velocity("scroll", {
+				duration: 150,
+				container: $el
+			});
 		} else {
 			$el.get(0).scrollTop = $logs.get(0).scrollHeight;
 		}
 	}
 
-	function resetLog(time){
-		$logs.reset(time+"-" || null);
+	function resetLog(time) {
+		$logs.reset(time + "-" || null);
 	}
 	$logs.infinite({
 		scrollSpace: 2000,
@@ -106,33 +110,34 @@ $(function () {
 			if (!index.time && !before) return callback([false]);
 
 			function loadTexts() {
-				libsb.emit("getUsers", {memberOf: currentState.roomName, ref: libsb.user.id}, function (e, d) {
-					var isOwner = (d.results[0] && d.results[0].role === "owner") ? true : false ;
-					libsb.getTexts(query, function (err, t) {
-						var texts = t.results || [];
-						if (err) throw err; // TODO: handle the error properly.
+				libsb.getTexts(query, function (err, t) {
+					var texts = t.results.slice(0, t.results.length);
+					if (err) throw err; // TODO: handle the error properly.
 
-						if (!index && t.results.length === 0) {
-							return callback([false]);
+					if (!index && texts.length === "0") {
+						return callback([false]);
+					}
+
+					if (after === 0) {
+						if (texts.length < before) {
+							texts.unshift(false);
 						}
 
-						texts = returnArray(query, index);
-
-						if (after === 0) {
-							if (texts.length < before) {
-								texts.unshift(false);
-							}
-						} else if (before === 0) {
-							if (texts.length < after) {
-								texts.push(false);
-							}
+						if (t.time && texts.length && texts[texts.length - 1].time === t.time) {
+							texts.pop();
 						}
-						callback(_.filter(texts.map(function (text) {
-								return text && chatEl.render(null, text, isOwner);
-							}), function(m) {
-								return typeof m !== "undefined";
-						}));
-					});
+					} else if (before === 0) {
+						if (texts.length < after) {
+							texts.push(false);
+						}
+						if (texts.length && texts[0].time == t.time) {
+							texts.splice(0, 1);
+						}
+
+					}
+					callback(texts.map(function (text) {
+						return text && chatEl.render(null, text);
+					}));
 				});
 			}
 
@@ -292,9 +297,9 @@ $(function () {
 
 	$logs.on("scroll", function () {
 
-		if(scrollTimer) clearTimeout(scrollTimer);
+		if (scrollTimer) clearTimeout(scrollTimer);
 
-		scrollTimer = setTimeout(function() {
+		scrollTimer = setTimeout(function () {
 			var chats = $logs.find(".chat-item"),
 				time = getIdAndTime(chats.eq(0).data("index")).time,
 				parentOffset = $logs.offset().top;
@@ -314,12 +319,12 @@ $(function () {
 			libsb.emit('navigate', {
 				time: time,
 				source: 'chat-area'
-			}, function(err, state){
+			}, function (err, state) {
 				if (state.old && state.time !== state.old.time) {
 					if (state.time) {
 						$chatPosition.removeClass("hidden").text(format.friendlyTime(state.time, new Date().getTime()));
 
-						setTimeout(function() {
+						setTimeout(function () {
 							$chatPosition.addClass("hidden");
 						}, 1000);
 					}
