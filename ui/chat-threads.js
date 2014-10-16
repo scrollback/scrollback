@@ -6,17 +6,25 @@ $(function() {
         $convdot = $(".chat-conv-dot"),
         $entry = $(".chat-entry"),
         lastMsg, lastThread, currMsg, currThread, autoText,
-        removeLine = function() {
+        removeLine = function(cb) {
             var $line = $(".chat-conv-line"),
-                $dots = $(".chat-item-dot, .chat-conv-dot");
+                $dots = $(".chat-item-dot, .chat-conv-dot"),
+                resetAll = function() {
+                    $line.remove();
+                    $dots.removeClass("faded pulsed");
 
-            $dots.removeClass("faded pulsed");
+                    if (typeof cb === "function") {
+                        cb();
+                    }
+                };
 
             if ($line.length) {
                 $line.velocity("stop").velocity({
                     top: $line.offset().top + $line.height(),
                     opacity: 0
-                }, 150);
+                }, 150, resetAll);
+            } else {
+                resetAll();
             }
         },
         drawLine = function() {
@@ -58,26 +66,26 @@ $(function() {
         selectConv = function(threadId) {
             var classes = $("body").attr("class").replace(/conv-\d+/g, "").trim();
 
-            $("body").attr("class", classes);
-
-            if (threadId && typeof threadId === "string") {
+            if (typeof threadId === "string" && threadId !== "new") {
                 currThread = threadId;
 
-                $("body").addClass('conv-' + threadId.substr(-1));
+                classes += " conv-" + threadId.substr(-1);
             } else {
                 currThread = null;
             }
+
+            $("body").attr("class", classes);
         },
         resetConv = function(soft) {
             currMsg = null;
 
             $(".chat-item").removeClass("current").data("selected", false);
 
-            if (!soft) {
-                removeLine();
+            if (soft !== true) {
+                removeLine(selectConv);
+            } else {
+                selectConv();
             }
-
-            selectConv();
         };
 
     libsb.on("navigate", function(state, next) {
@@ -273,7 +281,5 @@ $(function() {
 		next();
 	}, 50);
 
-    $(document).on("click", ".chat-conv-dot-wrap, .js-new-discussion", function() {
-        resetConv();
-    });
+    $(document).on("click", ".chat-conv-dot-wrap, .js-new-discussion", resetConv);
 });

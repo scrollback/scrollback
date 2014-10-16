@@ -1251,6 +1251,7 @@ body {
     margin-left: 1.15em;
     z-index: 50;
     background-color: lighten($dark-color, 50%);
+    pointer-events: none;
 
     @media #{$screenxx} { margin-left: 2.15em; }
 
@@ -1351,12 +1352,12 @@ body {
 .chat-placeholder {
     position: absolute;
     top: 0;
-    left: 0;
-    padding: 0 1em 0 2.9em;
+    left: 2.9em;
+    right: 1em;
     color: fade-out($dark-color, .5);
     line-height: 3.5em;
 
-    @media #{$screenxx} { padding-left: 3.9em; }
+    @media #{$screenxx} { left: 3.9em; }
 
     .text-button {
         color: currentColor;
