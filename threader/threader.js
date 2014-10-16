@@ -67,12 +67,17 @@ function processReply(data){
 			if (!message) return;
 			if(!message.threads) message.threads = [];
 			var update = false;
-			message.threads.forEach(function(th) {
+			for (var i = 0; i < message.threads.length; i++) {
+				var th = message.threads[i];
 				if (th.id === id) {
 					th.title = title;
 					update = true;
 				}
-			});
+				if (th.id === "new") {
+					message.threads.splice(i, 1);
+					i--;
+				}
+			};
 			if (!update) {
 				message.threads.push({id: id, title: title, score: 1});
 			}
