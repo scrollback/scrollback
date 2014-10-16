@@ -111,7 +111,7 @@ var defaults = {
 		room: 9,
 		occupants: 10,
 		sitemap: 12,
-		recommandation: 13,
+		recommendation: 13,
 		search: 14
 	},
 	su: {
