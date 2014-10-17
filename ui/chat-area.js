@@ -134,16 +134,10 @@ $(function () {
 							texts.splice(0, 1);
 						}
 					}
-//					console.log("befrioe fileter ", texts);
 					var textsMap = texts.map(function (text) {
 						return text && chatEl.render(null, text);
 					});
-//					textsMap = _.filter(textsMap, function (t) {
-//						if (t !== null || typeof t !== "undefined") {
-//							return t;
-//						}
-//					});
-//					console.log(textsMap);
+
 					callback(textsMap);
 				});
 			}
