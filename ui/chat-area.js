@@ -181,7 +181,9 @@ $(function () {
 		if ($logs.data("lower-limit")) {
 			$logs.addBelow($newEl);
 
-			scrollToBottom($logs);
+			if ($logs.scrollTop() === $logs[0].scrollHeight) scrollToBottom($logs);
+		} else if(text.from == libsb.user.id) {
+			resetLog(null);
 		}
 
 		next();
@@ -215,14 +217,13 @@ $(function () {
 
 		if ($logs.data("lower-limit")) {
 			var $newEl = chatEl.render(null, text);
-
 			$logs.addBelow($newEl);
-
 			scrollToBottom($logs);
 		}
 
 		next();
 	}, 90);
+
 	libsb.on("init-dn", function (init, next) {
 		resetLog(time || null);
 		next();
