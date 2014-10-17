@@ -8,7 +8,7 @@ module.exports = function (libsb) {
 		function next() {
 			n();
 		}
-		if (["normal","conf"].indexOf(state.mode) >=0 && (!state.old || state.roomName != state.old.roomName || (state.old.connectionStatus !== state.connectionStatus && state.connectionStatus!= "online"))) {
+		if (["normal","conf"].indexOf(state.mode) >=0 && (!state.old || state.roomName != state.old.roomName)) {
 			libsb.getRooms({
 				ref: state.roomName
 			}, function (err, data) {
