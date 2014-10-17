@@ -74,9 +74,11 @@ $(function () {
 
 				timeBefore = text.time;
 			}
-
-			return $el;
+			if (typeof $el === "undefined" || $el === null) {
+				console.log("ELELMENT is undefined ", $el);
+			}
 		}
+		return $el;
 	};
 });
 

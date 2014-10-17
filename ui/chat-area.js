@@ -62,10 +62,10 @@ function returnArray(query, index) {
 
 $(function () {
 	var $logs = $(".chat-area"),
-		$chatPosition = $(".chat-position")
-	roomName = "",
-	thread = '',
-	time = null;
+		$chatPosition = $(".chat-position"),
+		roomName = "",
+		thread = '',
+		time = null;
 
 	function scrollToBottom($el) {
 		if (!($el && $el.length)) {
@@ -90,6 +90,7 @@ $(function () {
 		fillSpace: 1000,
 		itemHeight: 50,
 		startIndex: time,
+		debug: true,
 		getItems: function (index, before, after, recycle, callback) {
 			var query = {
 				to: roomName,
@@ -133,14 +134,20 @@ $(function () {
 						if (texts.length && texts[0].time == t.time) {
 							texts.splice(0, 1);
 						}
-
 					}
-					callback(texts.map(function (text) {
+//					console.log("befrioe fileter ", texts);
+					var textsMap = texts.map(function (text) {
 						return text && chatEl.render(null, text);
-					}));
+					});
+//					textsMap = _.filter(textsMap, function (t) {
+//						if (t !== null || typeof t !== "undefined") {
+//							return t;
+//						}
+//					});
+//					console.log(textsMap);
+					callback(textsMap);
 				});
 			}
-
 			if (typeof libsb.user === "undefined") {
 				libsb.on("navigate", function (state, next) {
 					if (state.connectionStatus === true && state.old.connectionStatus === false) {

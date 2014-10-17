@@ -7,8 +7,10 @@
 		var scrollSpace = options.scrollSpace || 1000,
 			fillSpace = options.fillSpace     || 200,
 			itemHeight = options.itemHeight   || 20,
+			maxReq = options.maxReq           || 32,
 			startIndex = options.startIndex,
-			getItems = options.getItems;
+			getItems = options.getItems,
+			debug = options.debug;
 
 		if(typeof getItems !== 'function') console.error("Infinite scroll requires a getItems callback.");
         
@@ -62,9 +64,9 @@
 				var itemsTop = viewTop + $items.offset().top - $logs.offset().top,
 					fillAbove = viewTop - itemsTop, cols,
 					fillBelow = (itemsTop + $items.height()) - (viewTop + viewHeight),
-					recycle = [];
+					recycle = [], number;
 
-//				console.log("updateItems", viewTop, fillAbove, fillBelow, atTop, atBottom);
+//				if (debug) console.log("updateItems", viewTop, fillAbove, fillBelow, atTop, atBottom);
 
 				if(fillAbove > fillSpace) {
 					recycle = recycle.concat(remove(fillAbove - fillSpace, "above"));
@@ -76,10 +78,10 @@
 				if(fillAbove < fillSpace && !pendingRequests.above && !atTop) {
 					pendingRequests.above = true;
 					cols = getGridColumns();
+					number = Math.min(maxReq, Math.ceil((fillSpace - fillAbove)/itemHeight/cols)*cols);
 					getItems(
 						$items.children().eq(0).data("index") || startIndex,
-						Math.ceil((fillSpace - fillAbove)/itemHeight/cols)*cols, 0,
-						recycle,
+						number, 0, recycle,
 						function(its) {
 							pendingRequests.above = false;
 							render(its, "above");
@@ -92,7 +94,7 @@
 					cols = getGridColumns();
 					getItems(
 						$items.children().eq(-1).data("index") || startIndex,
-						0, Math.ceil((fillSpace - fillBelow)/itemHeight/cols)*cols,
+						0, Math.min(maxReq, Math.ceil((fillSpace - fillBelow)/itemHeight/cols)*cols),
 						recycle,
 						function(its) {
 							pendingRequests.below = false;
@@ -103,8 +105,8 @@
 			}
 
 			function render(els, where) {
-				var oldTerm, height=0;
-
+				var oldTerm, height=0, dontUpdate = false;
+				
 				if(els[0] === false && where == "above") {
 					atTop = true;
 					$logs.data("upper-limit", true).children(".infinite-above").addClass("upper-limit");
@@ -131,14 +133,20 @@
 					oldTerm = $items.children().eq(0);
 					$items.prepend(els);
 					
-					if (oldTerm === null) return;
+					// does it ever become null? undocumented jquery behavior?
+//					if (oldTerm === null) return update();
 					
 					if(oldTerm.size()) {
 						height = oldTerm.offset().top - els[0].offset().top;
 					} else {
 						height = $items.height();
 					}
-					$above.height(Math.max(0, $above.height() - height));
+					if($above.height() > height) {
+						$above.height($above.height() - height);
+					} else {
+						$above.height(0);
+					}
+					
 				}
 				else {
 					oldTerm = $items.children().eq(-1);
@@ -152,10 +160,10 @@
 					$below.height(Math.max(0, $below.height() - height));
 				}
 
-				itemHeight = ($items.height() / $items.children().size()) || itemHeight; // dont change if it would become zero.
+				itemHeight = ($items.height() / $items.children().size()) || 1; // dont change if it would become zero.
 
-//				console.log("added " + els.length + " " + where + " with height ", height, "; " + $items.children().size() + " items.");
-				update();
+//				if (debug) console.log("added " + els.length + " " + where + " with height ", height, "; " + $items.children().size() + " items.");
+				if(!dontUpdate) update();
 			}
 
 			function remove(pixels, where) {
@@ -196,7 +204,6 @@
 				else $below.height($below.height() + height);
 
 				$(itemsToRemove).remove();
-//				console.log("removed " + itemsToRemove.length + " with height ", height , where + "; " + $items.children().size() + " left.");
 				return itemsToRemove;
 			}
 
@@ -206,6 +213,7 @@
 				updateSpaces();
 				updateItems();
 			}
+			
 			$logs.data("update-infinite", update);
 
 			$logs.scroll(function() {
