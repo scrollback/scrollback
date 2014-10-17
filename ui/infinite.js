@@ -104,7 +104,7 @@
 			}
 
 			function render(els, where) {
-				var oldTerm, height=0, dontUpdate = false;
+				var oldTerm, height=0;
 				
 				if(els[0] === false && where == "above") {
 					atTop = true;
@@ -162,7 +162,7 @@
 				itemHeight = ($items.height() / $items.children().size()) || 1; // dont change if it would become zero.
 
 //				if (debug) console.log("added " + els.length + " " + where + " with height ", height, "; " + $items.children().size() + " items.");
-				if(!dontUpdate) update();
+				update();
 			}
 
 			function remove(pixels, where) {
