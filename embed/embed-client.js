@@ -287,7 +287,7 @@ module.exports = function (libsb) {
 		if(parentWindow){
 			if(!/^guest-/.test(init.user.id)) {
 				init.memberOf.forEach(function(e) {
-					if(!e.guides || !e.guides.domains || (e.guides.domains && e.guides.domains.indexOf(domain))) {
+					if(!e.guides || !e.guides.allowedDomains || (e.guides.allowedDomains && e.guides.allowedDomains.indexOf(domain))) {
 						membership.push(e.id);
 					}
 				});

@@ -4,13 +4,13 @@ var handleAuthErrors = require('./handleAuthErrors.js');
 
 libsb.on('config-show', function (conf, next) {
 	if (!conf.room.guides) conf.room.guides = {};
-	if (!conf.room.guides.domains) conf.room.guides.domains = [];
+	if (!conf.room.guides.allowedDomains) conf.room.guides.llowedDomains = [];
 
 	var div = $('<div>').append(
-		formField('List of allowed domains', 'area', "domain-list", conf.room.guides.domains.join("\n"))
+		formField('List of allowed domains', 'area', "domain-list", conf.room.guides.allowedDomains.join("\n"))
 	);
 
-	conf.domains = {
+	conf.allowedDomains = {
 		html: div,
 		text: "domains",
 		prio: 100
@@ -21,7 +21,7 @@ libsb.on('config-show', function (conf, next) {
 libsb.on('config-save', function (room, next) {
 	var domains = $('#domain-list').val();
 	if (!room.guides) room.guides = {};
-	room.guides.domains = domains.split("\n");
+	room.guides.allowedDomains = domains.split("\n");
 	next();
 }, 500);
 
