@@ -222,5 +222,5 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 --
 create table time_queries_actions ( id text, type text, "timestamp" timestamp without time zone , "time" integer, primary key (id) );
 create index type_timestamp_time on time_queries_actions (type, timestamp, time);
-create index type_timestamp_time on time_queries_actions (time);
+create index "time" on time_queries_actions (time);
 create index timestamp_time on time_queries_actions (timestamp, time);
