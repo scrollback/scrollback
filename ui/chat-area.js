@@ -2,7 +2,6 @@
 /* global $, libsb, currentState, format */
 
 var chatEl = require("./chat.js"),
-	_ = require('underscore'),
 	chatArea = {},
 	scrollTimer = null;
 
