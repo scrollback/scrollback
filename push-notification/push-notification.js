@@ -1,6 +1,10 @@
 var logger = require('../lib/logger.js');
 var notify = require('./notify.js');
 
+/*
+	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
+*/
+
 module.exports = function(core) {
 	core.on('text', function (text, next) {
 		// send push notification when user is mentioned in a text message.
@@ -16,11 +20,11 @@ module.exports = function(core) {
 				userObj = data.results[0];
 				// send pushNotification to user.params.devices
 				if (userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
-					devices = userObj.params.pushNotifications.devices; 
+					devices = userObj.params.pushNotifications.devices;
 					devices.forEach(function (device) {
-						if (device.hasOwnProperty('registrationId') && device.registrationId === true) {
+						if (device.hasOwnProperty('registrationId') && device.enabled === true) {
 							// send notification
-							notify();
+							notify(payload, [device.registrationId]);
 						}
 					});
 				}

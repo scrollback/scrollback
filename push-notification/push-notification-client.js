@@ -2,7 +2,7 @@
 /* global libsb, device */
 
 /*
-	devices : [{deviceName: device.name, registrationId: true}]
+	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
 
 function mapDevicetoUser(regId) {
@@ -21,11 +21,12 @@ function mapDevicetoUser(regId) {
 			}
 		}
 	});
-	var newDevice = {deviceName: device.name};
-	newDevice[regId] = true;
+	var newDevice = {deviceName: device.name, registrationId: regId, enabled: true};
+	
 	if (deviceRegistered === false) {
 		devices.push(newDevice);
 		user.params.pushNotifications.devices = devices;
+		console.log("----- Devices, user is ", devices, user);
 		libsb.emit('user-up', user);
 	}
 }
