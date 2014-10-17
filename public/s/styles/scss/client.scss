@@ -1189,16 +1189,18 @@ body {
     }
 }
 
+$convdefault: lighten($dark-color, 50%);
+
 %conv-dots {
     @extend %transition;
 
     height: .5em;
     width: .5em;
     border-radius: 50%;
-    color: lighten($dark-color, 50%); /* only for enabling use of currentColor */
+    color: $convdefault; /* only for enabling use of currentColor */
     background-color: currentColor; /* use the same color as text */
 
-    &.pulsed { box-shadow: 0 0 0 8px fade-out($dark-color, .9); }
+    &.pulsed { box-shadow: 0 0 0 8px fade-out($dark-color, .7); }
 
     &.faded { @include opacity(.3); }
 }
@@ -1250,7 +1252,7 @@ body {
     position: fixed;
     margin-left: 1.15em;
     z-index: 50;
-    background-color: lighten($dark-color, 50%);
+    background-color: $convdefault;
     pointer-events: none;
 
     @media #{$screenxx} { margin-left: 2.15em; }
