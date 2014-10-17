@@ -142,7 +142,7 @@ $(function() {
 		var chatText = "";
 
 		if (state.old && state.old.connectionStatus != state.connectionStatus) {
-			if (state.connectionStatus) {
+			if (state.connectionStatus == "online") {
 				setPlaceHolder();
 
 				$entry.attr("contenteditable", true);

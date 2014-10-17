@@ -1121,7 +1121,11 @@ body {
         color: fade-out($dark-color, .5);
         font-style: italic;
 
-        body:not(.role-owner) & { display: none; }
+        body:not(.role-owner) & {
+			height: 0 !important; overflow: hidden; visibility: hidden;
+			padding: 0; margin: 0; border: none;
+			// display: none gives javascript undefined offsets, which messes with infinite scroll!
+		}
     }
 
     .chat-timestamp {
