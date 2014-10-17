@@ -174,7 +174,7 @@ $(function() {
             updateLine();
         }
 
-        if (!window.currentState.connectionStatus) {
+        if (window.currentState.connectionStatus!= "online") {
             return this;
         }
 

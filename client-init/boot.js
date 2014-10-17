@@ -15,7 +15,7 @@ function init(libsb) {
 		}
 
 		state.source = "boot";
-		state.connectionStatus = false;
+		state.connectionStatus = "connecting";
 		libsb.emit("navigate", state, function (err) {
 			if (err) return console.log(err);
 			libsb.hasBooted = true;
