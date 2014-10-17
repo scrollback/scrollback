@@ -9,8 +9,7 @@
 			itemHeight = options.itemHeight   || 20,
 			maxReq = options.maxReq           || 32,
 			startIndex = options.startIndex,
-			getItems = options.getItems,
-			debug = options.debug;
+			getItems = options.getItems;
 
 		if(typeof getItems !== 'function') console.error("Infinite scroll requires a getItems callback.");
         
