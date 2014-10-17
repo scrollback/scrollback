@@ -56,7 +56,7 @@ require('./customization/customization-client.js');
 require('./http/logout-client.js');
 require('./facebook/facebook-client.js');
 require('./github/github-client.js');
-require('./persona/persona-client.js');
+require('./browserid-auth/browserid-auth-client.js');
 
 // components
 require('./ui/quicknotify.js');

@@ -34,9 +34,6 @@ client-config.js
 /ircClient/myConfig.js
 /ircClient/Data
 /test/config.js
-
-
-
 /public/s/styles/lace
 /public/s/styles/dist
 /public/s/scripts/lib
@@ -45,3 +42,6 @@ client-config.js
 /mocha-output-unit.json
 /public/s/client.phonegap.html
 /public/sb.js
+/xunit-mocha.xml
+/public/s/client.phonegap.html
+/patchup-room
