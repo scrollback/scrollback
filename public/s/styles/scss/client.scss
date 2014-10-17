@@ -1217,7 +1217,7 @@ body {
         .chat-item.conv-#{$j} & {
             color: $color;
 
-            &.pulsed { box-shadow: 0 0 0 8px fade-out($color, .75); }
+            &.pulsed { box-shadow: 0 0 0 8px fade-out($color, .6); }
         }
     }
 
@@ -1297,20 +1297,22 @@ body {
 
 .chat-entry-wrap { position: relative; }
 
+$dotshadow: fade-out($accent-color, .6);
+
 @include keyframes(dotpulse) {
     0% {
         background-color: $accent-color;
-        box-shadow: 0 0 0 0 fade-out($accent-color, .75);
+        box-shadow: 0 0 0 0 $dotshadow;
     }
 
     75% {
         background-color: $accent-color;
-        box-shadow: 0 0 0 1em fade-out($accent-color, .75);
+        box-shadow: 0 0 0 8px $dotshadow;
     }
 
     100% {
         background-color: currentColor;
-        box-shadow: 0 0 0 0 fade-out($accent-color, .75);
+        box-shadow: 0 0 0 0 $dotshadow;
     }
 }
 
@@ -1339,7 +1341,7 @@ body {
             .conv-#{$j} & {
                 background-color: $color;
 
-                &.pulsed { box-shadow: 0 0 0 8px fade-out($color, .75); }
+                &.pulsed { box-shadow: 0 0 0 8px fade-out($color, .6); }
             }
         }
 
@@ -1599,7 +1601,7 @@ body {
         background-repeat: no-repeat;
         background-size: 3em 2em;
         border: none;
-        box-shadow: 0 0 10px 0 rgba(0,0,0,.3);
+        box-shadow: 0 0 8px 0 rgba(0,0,0,.3);
     }
 }
 
