@@ -7,6 +7,8 @@ $(function() {
 	var $entry = $(".chat-entry"),
 		$placeholder = $(".chat-placeholder"),
 		$input = $(".chat-input"),
+		$convdot = $(".chat-conv-dot"),
+		newThread = false,
 		sendMsg = function() {
 			var text = format.htmlToText($entry.html()).trim();
 
@@ -26,9 +28,17 @@ $(function() {
 
 			$("body").attr("class", classes);
 		},
-		setPlaceHolder = function() {
-			if (libsb.user && libsb.user.id && $entry.text().trim() === "") {
-				$placeholder.text("Reply as " + libsb.user.id.replace(/^guest-/, ""));
+		setPlaceHolder = function(content) {
+			if (libsb.user && libsb.user.id && !$entry.text().trim()) {
+				if (typeof content !== "string") {
+					content = "Reply as " + libsb.user.id.replace(/^guest-/, "");
+
+					if (!window.currentState.thread) {
+						content += " or <a class='text-button js-new-discussion'>start a discussion</a>";
+					}
+				}
+
+				$placeholder.html(content);
 			} else {
 				$placeholder.empty();
 			}
@@ -48,8 +58,14 @@ $(function() {
 	}, 10);
 
 	libsb.on("navigate", function(state, next) {
-		if (state.old && state.old.roomName !== state.roomName) {
-			$entry.empty();
+		if (state.old) {
+			if (state.old.roomName !== state.roomName) {
+				$entry.empty();
+			}
+
+			if (state.old.thread !== state.thread) {
+				setPlaceHolder();
+			}
 		}
 
 		next();
@@ -59,9 +75,43 @@ $(function() {
 		chatArea.setPosition($input.outerHeight());
 	});
 
-	$input.on("click", function() {
+	$(document).on("keydown", function(e) {
+		if (e.keyCode === 27) {
+			newThread = false;
+
+			setPlaceHolder();
+		}
+	});
+
+	$input.on("click", function(e) {
+		if ($(e.target).closest(".js-new-discussion").length) {
+			newThread = true;
+
+			setPlaceHolder("Type discussion title");
+
+			$convdot.addClass("animating");
+
+			setTimeout(function() {
+				$convdot.removeClass("animating");
+			}, 500);
+		} else if ($(e.target).closest(".chat-conv-dot-wrap").length) {
+			newThread = false;
+
+			setPlaceHolder();
+		}
+
 		$entry.focus();
 	});
+
+	libsb.on("text-up", function(text, next) {
+		if (newThread) {
+			text.threads = [ { id: "new", score: 1.0 } ];
+		}
+
+		newThread = false;
+
+		next();
+	}, 300);
 
 	$entry.on("paste", function() {
 		setTimeout(function() {
@@ -88,7 +138,7 @@ $(function() {
 		}
 	});
 
-	libsb.on('navigate', function(state, next) {
+	libsb.on("navigate", function(state, next) {
 		var chatText = "";
 
 		if (state.old && state.old.connectionStatus != state.connectionStatus) {

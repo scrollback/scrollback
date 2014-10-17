@@ -4,10 +4,10 @@
 var chatEl = {},
 	timeBefore;
 
-$(function () {
+$(function() {
 	var $template = $(".chat-item").eq(0);
 
-	chatEl.render = function ($el, text, isOwner) {
+	chatEl.render = function($el, text, isOwner) {
 
 		isOwner = isOwner ? true : false;
 
@@ -25,13 +25,13 @@ $(function () {
 
 			if (text.threads && text.threads.length) {
 				for (var i in text.threads) {
-					if (window.currentState.thread && window.currentState.thread === text.threads[i].id) {
+					if (window.currentState.thread && window.currentState.thread === text.threads[i].id && text.threads[i].id !== "new") {
 						$el.attr("data-thread", text.threads[i].id);
 						break;
 					}
 				}
 
-				if (!$el.attr("data-thread") && text.threads[0].id) {
+				if (!$el.attr("data-thread") && text.threads[0].id && text.threads[0].id !== "new") {
 					$el.attr("data-thread", text.threads[0].id);
 				}
 
@@ -57,7 +57,7 @@ $(function () {
 					width = (width > 360) ? width : 360;
 					charsPerLine = width / (parseInt($container.css("font-size"), 10) * 0.6);
 
-					lines.forEach(function (line) {
+					lines.forEach(function(line) {
 						lineCount += Math.ceil(line.length / charsPerLine);
 					});
 
