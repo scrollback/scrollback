@@ -82,8 +82,12 @@ function mapDevicetoUser(regId) {
 			devices: []
 		};
 	}
-	var devices = user.params.pushNotifications &&
-		user.params.pushNotifications.devices ? user.params.pushNotifications.devcies : [];
+	
+	var devices = [];
+	
+	devices = user.params.pushNotifications &&
+		user.params.pushNotifications.devices ? user.params.pushNotifications.devcies : devices;
+	
 	devices.forEach(function (device) {
 		if (device && device.hasOwnProperty('registrationId')) {
 			if (device.registrationId === regId) {
