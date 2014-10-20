@@ -16,6 +16,7 @@ module.exports = function(core) {
 			title: text.from + " has mentioned you on " + text.to,
 			message: text.text
 		};
+		console.log("%%%%%%%%%%% payload is ", payload);
 		mentions.forEach(function(user) {
 			core.emit("getUsers", {ref: user, session: internalSession}, function(err, data) {
 				console.log("%%%%%%%%%%%%%% get users data", user, data);
