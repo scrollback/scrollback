@@ -102,6 +102,8 @@ function mapDevicetoUser(regId) {
 	}
 }
 
+console.log("window.phonegap ", window.phonegap);
+
 if (window.phonegap) {
 	// add the device registration id to the users params.
 	var regId = localStorage.phonegapRegId;
