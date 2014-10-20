@@ -35,7 +35,7 @@ function errorHandler(error) {
 	console.log('registration error = ' + error);
 }
 
-window.onNotificationGCM = function (e) {
+function onNotificationGCM(e) {
 
 	console.log("CALLED onNotificationGCM **********");
 	// handler for push notifications.
@@ -68,7 +68,7 @@ window.onNotificationGCM = function (e) {
 		console.log(e);
 		break;
 	}
-};
+}
 
 function mapDevicetoUser(regId) {
 	/* Checks if device is registered to User for push notification, if not adds it */
