@@ -59,11 +59,7 @@ libsb.on("init-dn", function(init, next) {
 }, 500);
 
 libsb.on("navigate", function(state, next) {
-	if (state && state.source === "init" && state.thread) {
-		return next();
-	}
-
-	if (state && state.old && state.time && state.time !== state.old.time) {
+	if (state && state.source === "chat-area" && state.old && state.time && state.time !== state.old.time) {
 		showNotification($threadsTab, "browseArchives");
 	}
 
