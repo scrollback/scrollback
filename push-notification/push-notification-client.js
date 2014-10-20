@@ -4,15 +4,13 @@
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
+
 document.addEventListener('deviceready', registerPushNotification, false);
 
 var pushNotification, regId;
 
 window.onNotificationGCM = function (e) {
-
-	console.log("CALLED onNotificationGCM **********");
 	// handler for push notifications.
-
 	console.log("Got notification", e.event);
 
 	switch (e.event) {
@@ -73,7 +71,13 @@ function errorHandler(error) {
 	console.log('registration error = ' + error);
 }
 
+libsb.on('init-dn', function () {
+	console.log("got init-dn mapping to user ", localStorage.phonegapRegId, libsb.user.id);
+	mapDevicetoUser(localStorage.phonegapRegId);
+}, 100);
+
 function mapDevicetoUser(regId) {
+	if (typeof regId === "undefined") return;
 	/* Checks if device is registered to User for push notification, if not adds it */
 	var user = libsb.user;
 	var deviceRegistered = false;
