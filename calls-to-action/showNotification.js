@@ -6,27 +6,40 @@ var userActions = require("./notification-strings-en.js"),
 	gotIt = [ "Got it", "Cool", "Awesome", "Great", "Impressive" ], g = 0,
 	pending = [];
 
-$(applicationCache).on("downloading", function() {
+function setShowPopOver(value) {
+	if (value) {
+		showPopOver = true;
+
+		// Show pending notifications
+		if (pending[0]) {
+			showNotification(pending[0].origin, pending[0].name);
+		}
+	} else {
+		showPopOver = false;
+	}
+}
+
+$(applicationCache).on("checking downloading progress", function() {
 	// This is a very specialized case
 	// If appcache is downloading, there is a fair chance an alert bar will show
 	// It would be really weird if the calls to action is shown at the same time
-	showPopOver = false;
+	setShowPopOver(false);
+});
+
+$(applicationCache).on("cached noupdate updateready", function() {
+	// If appcache has no update, or update is ready
+	setShowPopOver(true);
 });
 
 $(document).on("alertbarInited modalInited popoverInited", function() {
 	// Something is on the screen
 	// Probably not the best time to show a popover
-	showPopOver = false;
+	setShowPopOver(false);
 });
 
 $(document).on("alertbarDismissed modalDismissed popoverDismissed", function() {
 	// Good time to show a popover
-	showPopOver = true;
-
-	// Show pending notifications
-	if (pending[0]) {
-		showNotification(pending[0].origin, pending[0].name);
-	}
+	setShowPopOver(true);
 });
 
 function fireNotification(origin, name) {
@@ -84,9 +97,7 @@ function fireNotification(origin, name) {
 	// Save the states to user params so that it's persistent across sessions
 	libsb.user.params.shownActions = shownActions;
 
-	libsb.emit("user-up", {
-		user: libsb.user
-	});
+	libsb.emit("user-up", { user: libsb.user });
 }
 
 function showNotification(origin, name) {

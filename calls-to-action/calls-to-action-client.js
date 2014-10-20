@@ -58,9 +58,12 @@ libsb.on("init-dn", function(init, next) {
 	next();
 }, 500);
 
-libsb.on("getTexts", function(query, next) {
-	// Need a better condition
-	if (query.hasOwnProperty("before") && query.before > 0 && query.time !== null) { // user has scrolled up.
+libsb.on("navigate", function(state, next) {
+	if (state && state.source === "init" && state.thread) {
+		return next();
+	}
+
+	if (state && state.old && state.time && state.time !== state.old.time) {
 		showNotification($threadsTab, "browseArchives");
 	}
 
