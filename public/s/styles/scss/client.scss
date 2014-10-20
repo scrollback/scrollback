@@ -16,6 +16,8 @@
 @import "../lace/tooltip";
 @import "../lace/progressbar";
 @import "../lace/linked";
+@import "../lace/filter";
+@import "../lace/assets";
 
 // Import global variables and mixins
 @import "global";
@@ -43,30 +45,6 @@
         margin: auto;
         height: 2em;
         width: 2em;
-    }
-}
-
-@mixin filter($map, $multi) {
-    @each $filter, $states in $map {
-        @each $state in $states {
-            @if (index($multi, $filter) != null) {
-                &:not(.#{$filter}-#{$state}) {
-                    [data-#{$filter}=#{$state}] { display: none; }
-                }
-            } @else {
-                &.#{$filter}-#{$state} {
-                    [data-#{$filter}]:not([data-#{$filter}~=#{$state}]) { display: none; }
-                }
-            }
-        }
-
-        &[class*=#{$filter}-] {
-            [data-#{$filter}=none] { display: none; }
-        }
-
-        &:not([class*=#{$filter}-]) {
-            [data-#{$filter}]:not([data-#{$filter}=none]) { display: none; }
-        }
     }
 }
 
@@ -1668,15 +1646,37 @@ $dotshadow: fade-out($accent-color, .6);
 }
 
 .popover-calls-to-action {
-    width: 12em;
-    padding: 1em;
-    background-color: $dark-color;
+    width: 18em;
+    font-weight: 700;
+    background-color: $info-color;
     color: $light-color;
-    border-color: $dark-color;
+    border-color: $info-color;
+
+    .popover-content { padding: 1em; }
+
+    .popover-got-it {
+        @extend %snappy;
+
+        background-color: rgba(0,0,0,.1);
+        padding: 1em;
+        text-transform: uppercase;
+        cursor: pointer;
+
+        &:focus, &:hover { background-color: rgba(0,0,0,.2); }
+
+        &:active { background-color: rgba(0,0,0,.3); }
+
+        &:before {
+            @include asset-content("check");
+
+            vertical-align: -.2em;
+            margin-right: 1em;
+        }
+    }
 
     &.popover-body:before {
-        background-image: linear-gradient(135deg, $dark-color 60%, $dark-color 60%, transparent 60%);
-        border-color: $dark-color;
+        background-image: linear-gradient(135deg, $info-color 60%, $info-color 60%, transparent 60%);
+        border-color: $info-color;
     }
 }
 

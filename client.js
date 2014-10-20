@@ -23,8 +23,7 @@ require('./public/s/scripts/lib/jquery.progressbar.js');
 var libsb = require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(libsb);
 require('./socket/socket-client')(libsb);
-require('./calls-to-action/calls-to-action.js');
-
+require('./calls-to-action/calls-to-action-client.js');
 
 // bootup related
 require('./client-init/client-init.js')(libsb);
