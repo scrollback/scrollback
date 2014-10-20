@@ -112,8 +112,26 @@ function mapDevicetoUser(regId) {
 		if (deviceRegistered === false) {
 			devices.push(newDevice);
 			user.params.pushNotifications.devices = devices;
-			console.log("Emitting user-up", user, user.params.pushnotifications);
-			libsb.emit('user-up', {user: user});
+			console.log("Emitting user-up", user, user.params.pushNotifications);
+			libsb.emit('user-up', {
+				user: user
+			});
 		}
 	});
 }
+
+libsb.on('pref-save', function (user, next) {
+	libsb.emit("getUsers", {
+		ref: "me"
+	}, function (e, d) {
+		var params = d.results[0].params;
+		if (params && params.hasOwnProperty('pushNotifications')) {
+			user.params.pushNotifications = params.pushNotifications;
+		} else {
+			user.params.pushNotifications = {
+				devices: []
+			};
+		}
+		next();
+	});
+});
