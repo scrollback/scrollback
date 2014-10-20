@@ -34,6 +34,8 @@ module.exports = function (objCacheOps) {
 
 		var user = init.user;
 		
+		libsb.user = user;
+		
 		var occupantOf = init.occupantOf;
 		var memberOf = init.memberOf;
 

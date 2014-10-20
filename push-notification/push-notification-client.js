@@ -79,73 +79,41 @@ libsb.on('init-dn', function () {
 function mapDevicetoUser(regId) {
 	if (typeof regId === "undefined") return;
 	/* Checks if device is registered to User for push notification, if not adds it */
-	var user = libsb.user;
-	var deviceRegistered = false;
-	if (typeof user.params.pushNotifications === "undefined") {
-		user.params.pushNotifications = {
-			devices: []
-		};
-	}
+	libsb.emit("getUsers", {
+		ref: "me"
+	}, function (e, d) {
+		var user = d.results[0];
+		var deviceRegistered = false;
+		if (typeof user.params.pushNotifications === "undefined") {
+			user.params.pushNotifications = {
+				devices: []
+			};
+		}
 
-	var devices = [];
+		var devices = [];
 
-	devices = user.params.pushNotifications &&
-		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : devices;
+		devices = user.params.pushNotifications &&
+			user.params.pushNotifications.devices ? user.params.pushNotifications.devices : devices;
 
-	devices.forEach(function (device) {
-		if (device && device.hasOwnProperty('registrationId')) {
-			if (device.registrationId === regId) {
-				deviceRegistered = true;
+		devices.forEach(function (device) {
+			if (device && device.hasOwnProperty('registrationId')) {
+				if (device.registrationId === regId) {
+					deviceRegistered = true;
+				}
 			}
+		});
+		console.log("Devices, deviceRegistered", devices, deviceRegistered);
+		var newDevice = {
+			deviceName: device.model,
+			registrationId: regId,
+			enabled: true
+		};
+		console.log("New Device is ", newDevice);
+		if (deviceRegistered === false) {
+			devices.push(newDevice);
+			user.params.pushNotifications.devices = devices;
+			console.log("Emitting user-up", user, user.params.pushnotifications);
+			libsb.emit('user-up', {user: user});
 		}
 	});
-	console.log("Devices, deviceRegistered", devices, deviceRegistered);
-	var newDevice = {
-		deviceName: device.model,
-		registrationId: regId,
-		enabled: true
-	};
-	console.log("New Device is ", newDevice);
-	if (deviceRegistered === false) {
-		devices.push(newDevice);
-		user.params.pushNotifications.devices = devices;
-		console.log("Emitting user-up", user);
-		libsb.emit('user-up', user);
-	}
 }
-
-console.log("window.phonegap ", window.phonegap);
-
-//if (window.phonegap) {
-//	// add the device registration id to the users params.
-//	
-//}
-
-
-
-//libsb.on('pref-show', function(tabs, next) {
-//	var $div = $('<div>');
-//	var user = tabs.user;
-//	
-//	var devices = user.params.pushNotifications && 
-//        user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
-/*
-		Structure of user.params.pushNotifications
-		
-		user.params.pushNotifications = {
-			devices : [ 
-				{platform: "Android", deviceId: "adsfaf32r23sdf21e123", enabled: true}, 
-				{platform: "iOS", deviceId: "234jkidksf9325pi23d2sdf", enabled: false}
-			]
-		}
-	
-	*/
-
-//	tabs.pushnotification = {
-//		text: "Your Devices",
-//		html: $div,
-//		prio: 1000
-//	};
-//	
-//	next();
-//});
