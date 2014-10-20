@@ -6,7 +6,7 @@
 */
 document.addEventListener('deviceready', registerPushNotification, false);
 
-var pushNotification;
+var pushNotification, regId;
 
 window.onNotificationGCM = function (e) {
 
@@ -16,30 +16,33 @@ window.onNotificationGCM = function (e) {
 	console.log("Got notification", e.event);
 
 	switch (e.event) {
-		case 'registered':
-			if (e.regid.length > 0) {
-				// Storing regId to be used by GCM to make push notifications.
-				console.log("regID = " + e.regid);
-				localStorage.phonegapRegId = e.regid;
-				console.log("Stored regid to localStorage ", localStorage.phonegapRegId);
-			}
-			break;
+	case 'registered':
+		if (e.regid.length > 0) {
+			// Storing regId to be used by GCM to make push notifications.
+			console.log("regID = " + e.regid);
+			localStorage.phonegapRegId = e.regid;
+			console.log("Stored regid to localStorage ", localStorage.phonegapRegId);
+		}
+		regId = localStorage.phonegapRegId;
+		console.log("Inside push-notification-client, reg id is ", regId);
+		mapDevicetoUser(regId);
+		break;
 
-		case 'message':
-			console.log(e);
-			// e.foreground is true if the notification came in when the user is in the foreground.
-			if (e.foreground) {
-				console.log(e.payload.message);
-			}
-			break;
+	case 'message':
+		console.log(e);
+		// e.foreground is true if the notification came in when the user is in the foreground.
+		if (e.foreground) {
+			console.log(e.payload.message);
+		}
+		break;
 
-		case 'error':
-			console.log(e.msg);
-			break;
+	case 'error':
+		console.log(e.msg);
+		break;
 
-		default:
-			console.log(e);
-			break;
+	default:
+		console.log(e);
+		break;
 	}
 };
 
@@ -88,6 +91,7 @@ function mapDevicetoUser(regId) {
 			}
 		}
 	});
+	console.log("Devices, deviceRegistered", devices, deviceRegistered);
 	var newDevice = {
 		deviceName: device.name,
 		registrationId: regId,
@@ -104,12 +108,10 @@ function mapDevicetoUser(regId) {
 
 console.log("window.phonegap ", window.phonegap);
 
-if (window.phonegap) {
-	// add the device registration id to the users params.
-	var regId = localStorage.phonegapRegId;
-	console.log("Inside push-notification-client, reg id is ", regId);
-	mapDevicetoUser(regId);
-}
+//if (window.phonegap) {
+//	// add the device registration id to the users params.
+//	
+//}
 
 
 
