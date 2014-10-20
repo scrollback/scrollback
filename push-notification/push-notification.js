@@ -1,5 +1,7 @@
 var logger = require('../lib/logger.js');
 var notify = require('./notify.js');
+var config = require('../config.js');
+var internalSession = Object.keys(config.whitelists)[0];
 
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
@@ -15,7 +17,7 @@ module.exports = function(core) {
 			message: text.text
 		};
 		mentions.forEach(function(user) {
-			core.emit("getUsers", {ref: user}, function(err, data) {
+			core.emit("getUsers", {ref: user, session: internalSession}, function(err, data) {
 				console.log("%%%%%%%%%%%%%% get users data", user, data);
 				if (data && data.results && data.results.length === 0) return;
 				userObj = data.results[0];
