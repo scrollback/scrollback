@@ -23,9 +23,6 @@ window.onNotificationGCM = function (e) {
 			localStorage.phonegapRegId = e.regid;
 			console.log("Stored regid to localStorage ", localStorage.phonegapRegId);
 		}
-		regId = localStorage.phonegapRegId;
-		console.log("Inside push-notification-client, reg id is ", regId);
-		mapDevicetoUser(regId);
 		break;
 
 	case 'message':
@@ -66,6 +63,9 @@ function registerPushNotification() {
 // result contains any message sent from the plugin call
 function successHandler(result) {
 	console.log('registration success result = ' + result);
+	regId = localStorage.phonegapRegId;
+	console.log("Mapping " + regId + "to user " + libsb.user.id);
+	mapDevicetoUser(regId);
 }
 
 // result contains any error description text returned from the plugin call
@@ -82,12 +82,12 @@ function mapDevicetoUser(regId) {
 			devices: []
 		};
 	}
-	
+
 	var devices = [];
-	
+
 	devices = user.params.pushNotifications &&
 		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : devices;
-	
+
 	devices.forEach(function (device) {
 		if (device && device.hasOwnProperty('registrationId')) {
 			if (device.registrationId === regId) {
