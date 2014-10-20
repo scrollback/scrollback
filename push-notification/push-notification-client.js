@@ -7,6 +7,7 @@
 
 window.onNotificationGCM = function (e) {
 	
+	console.log("CALLED onNotificationGCM **********");
 	// handler for push notifications.
 	
 	console.log("Got notification", e.event);
