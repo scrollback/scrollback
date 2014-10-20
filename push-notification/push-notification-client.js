@@ -101,7 +101,7 @@ function mapDevicetoUser(regId) {
 	});
 	console.log("Devices, deviceRegistered", devices, deviceRegistered);
 	var newDevice = {
-		deviceName: device.name,
+		deviceName: device.model,
 		registrationId: regId,
 		enabled: true
 	};
