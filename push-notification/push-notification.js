@@ -16,7 +16,8 @@ module.exports = function(core) {
 		};
 		mentions.forEach(function(user) {
 			core.emit("getUsers", {ref: user}, function(err, data) {
-				if (data.results.length === 0) return;
+				console.log("%%%%%%%%%%%%%% get users data", user, data);
+				if (data && data.results && data.results.length === 0) return;
 				userObj = data.results[0];
 				// send pushNotification to user.params.devices
 				if (userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
