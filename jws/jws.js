@@ -49,8 +49,9 @@ function jws(action, callback) {
 				checkCurrentRooms(action.user.id, domain, function (err, shouldAllow) {
 					if (err) return callback(err);
 					if (!shouldAllow) {
-						//					   ask for full login
-						callback(new Error("fail"));
+						// this means that the user is online some other and his identity will change on other rooms. but he is an already existing user. so we should force the complete login.
+						action.response = new Error("AUTH:Restricted");
+						callback();
 					} else {
 						action.old = action.user;
 						action.user = user;
@@ -65,7 +66,7 @@ function jws(action, callback) {
 						action.user.allowedDomains = [domain];
 					}
 				} else {
-					//					init fails.
+					//this state is when i am already logged in and a website gives me JSON signature and i cant do anything with it. so throwing error.
 					callback(new Error("fail"));
 				}
 			}
@@ -75,12 +76,15 @@ function jws(action, callback) {
 				checkCurrentRooms(action.user.id, domain, function (err, shouldAllow) {
 					if (err) return callback(err);
 					if (!shouldAllow) {
-						//					   ask for full login
+						
+						action.response = new Error("AUTH:Restricted");
+						callback();
 					} else {
 						action.old = action.user;
 						action.user = {};
 						action.user.identities = [action.auth.jws];
 						action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.auth.jws).digest('hex') + '/?d=retro';
+						action.response = new Error("AUTH:UNREGISTRED");
 						return callback();
 					}
 				});

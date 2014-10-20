@@ -124,6 +124,7 @@ module.exports = function(c) {
 
 function userHandler(action, callback) {
 	core.emit("getUsers", {ref: "me", session: action.session}, function(err, data){
+		console.log("RES:", err, data.results);
 		function done() {
 			if(action.user.identities) action.user.picture = 'https://gravatar.com/avatar/' +	crypto.createHash('md5').update(action.user.identities[0].substring(7)).digest('hex') + '/?d=retro';
 			else action.user.picture = 'https://gravatar.com/avatar/default';
