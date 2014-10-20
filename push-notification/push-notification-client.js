@@ -4,18 +4,42 @@
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
+document.addEventListener('deviceready', registerPushNotification, false);
 
-document.addEventListener('deviceready', gotDeviceReady, false);
+var pushNotification;
 
-function gotDeviceReady () {
+function registerPushNotification() {
 	console.log('inside push notification client , got device ready');
+	pushNotification = window.plugins && window.plugins.pushNotification;
+	if (!pushNotification) {
+		console.log("pushNotification isn't ready.");
+		return;
+	}
+
+	if (device.platform == 'android' || device.platform == 'Android') {
+		console.log('device ready; android ' + device.platform + " " + pushNotification);
+		pushNotification.register(successHandler, errorHandler, {
+			"senderID": "73969137499",
+			"ecb": "onNotificationGCM"
+		});
+	}
+}
+
+// result contains any message sent from the plugin call
+function successHandler(result) {
+	console.log('registration success result = ' + result);
+}
+
+// result contains any error description text returned from the plugin call
+function errorHandler(error) {
+	console.log('registration error = ' + error);
 }
 
 window.onNotificationGCM = function (e) {
-	
+
 	console.log("CALLED onNotificationGCM **********");
 	// handler for push notifications.
-	
+
 	console.log("Got notification", e.event);
 
 	switch (e.event) {
@@ -51,18 +75,24 @@ function mapDevicetoUser(regId) {
 	var user = libsb.user;
 	var deviceRegistered = false;
 	if (typeof user.params.pushNotifications === "undefined") {
-		user.params.pushNotifications = {devices: []};
+		user.params.pushNotifications = {
+			devices: []
+		};
 	}
-	var devices = user.params.pushNotifications && 
-		user.params.pushNotifications.devices ? user.params.pushNotifications.devcies: [];
-	devices.forEach(function(device) {
+	var devices = user.params.pushNotifications &&
+		user.params.pushNotifications.devices ? user.params.pushNotifications.devcies : [];
+	devices.forEach(function (device) {
 		if (device && device.hasOwnProperty('registrationId')) {
 			if (device.registrationId === regId) {
 				deviceRegistered = true;
 			}
 		}
 	});
-	var newDevice = {deviceName: device.name, registrationId: regId, enabled: true};
+	var newDevice = {
+		deviceName: device.name,
+		registrationId: regId,
+		enabled: true
+	};
 	console.log("New Device is ", newDevice);
 	if (deviceRegistered === false) {
 		devices.push(newDevice);
@@ -87,7 +117,7 @@ if (window.phonegap) {
 //	
 //	var devices = user.params.pushNotifications && 
 //        user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
-	/*
+/*
 		Structure of user.params.pushNotifications
 		
 		user.params.pushNotifications = {
@@ -98,7 +128,7 @@ if (window.phonegap) {
 		}
 	
 	*/
-	
+
 //	tabs.pushnotification = {
 //		text: "Your Devices",
 //		html: $div,
