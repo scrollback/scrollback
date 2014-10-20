@@ -5,6 +5,12 @@
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
 
+document.addEventListener('deviceready', gotDeviceReady, false);
+
+function gotDeviceReady () {
+	console.log('inside push notification client , got device ready');
+}
+
 window.onNotificationGCM = function (e) {
 	
 	console.log("CALLED onNotificationGCM **********");
@@ -57,10 +63,11 @@ function mapDevicetoUser(regId) {
 		}
 	});
 	var newDevice = {deviceName: device.name, registrationId: regId, enabled: true};
-	
+	console.log("New Device is ", newDevice);
 	if (deviceRegistered === false) {
 		devices.push(newDevice);
 		user.params.pushNotifications.devices = devices;
+		console.log("Emitting user-up", user);
 		libsb.emit('user-up', user);
 	}
 }
