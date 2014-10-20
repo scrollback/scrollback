@@ -143,7 +143,10 @@ sock.on('connection', function (socket) {
 			}
 			if(data.type == 'user') processUser(conn, data);
 			if(['getUsers', 'getTexts', 'getRooms', 'getThreads'].indexOf(data.type)>=0){
+				var t = data.eventStartTime;//TODO: copy properties of each query that is needed on client side.
+				delete data.eventStartTime;
 				conn.send(data);
+				data.eventStartTime = t;
 			}
 		});
 	});
@@ -248,6 +251,7 @@ function censorAction(action, filter) {
         }
     }
 	if (outAction.origin) delete outAction.origin;
+	if (outAction.eventStartTime) delete outAction.eventStartTime;//TODO: copy properties
     if(filter == 'both' || filter == 'user') {
         outAction.user = {
             id: action.user.id,

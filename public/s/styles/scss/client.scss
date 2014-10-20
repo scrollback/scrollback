@@ -1121,7 +1121,11 @@ body {
         color: fade-out($dark-color, .5);
         font-style: italic;
 
-        body:not(.role-owner) & { display: none; }
+        body:not(.role-owner) & {
+			height: 0 !important; overflow: hidden; visibility: hidden;
+			padding: 0; margin: 0; border: none;
+			// display: none gives javascript undefined offsets, which messes with infinite scroll!
+		}
     }
 
     .chat-timestamp {
@@ -1189,24 +1193,41 @@ body {
     }
 }
 
-.chat-item-dot {
-    content: "";
-    float: left;
-    margin: .55em 0 auto -2em;
+$convdefault: lighten($dark-color, 50%);
+
+%conv-dots {
+    @extend %transition;
+
     height: .5em;
     width: .5em;
     border-radius: 50%;
-    color: fade-out(lighten($dark-color, 15%), .5); /* only for enabling use of currentColor */
+    color: $convdefault; /* only for enabling use of currentColor */
     background-color: currentColor; /* use the same color as text */
 
-    @media #{$screenxx} { margin-left: -10em; }
+    &.pulsed { box-shadow: 0 0 0 8px fade-out($dark-color, .7); }
+
+    &.faded { @include opacity(.3); }
+}
+
+.chat-item-dot {
+    @extend %conv-dots;
+
+    content: "";
+    float: left;
+    margin: .55em 0 auto -2em;
 
     @for $i from 1 through length($palette) {
         $color: nth($palette, $i);
         $j: $i - 1;
 
-        .chat-item.conv-#{$j} & { color: $color; }
+        .chat-item.conv-#{$j} & {
+            color: $color;
+
+            &.pulsed { box-shadow: 0 0 0 8px fade-out($color, .6); }
+        }
     }
+
+    @media #{$screenxx} { margin-left: -10em; }
 }
 
 .chat-nick {
@@ -1235,7 +1256,8 @@ body {
     position: fixed;
     margin-left: 1.15em;
     z-index: 50;
-    background-color: fade-out(lighten($dark-color, 15%), .5);
+    background-color: $convdefault;
+    pointer-events: none;
 
     @media #{$screenxx} { margin-left: 2.15em; }
 
@@ -1281,6 +1303,25 @@ body {
 
 .chat-entry-wrap { position: relative; }
 
+$dotshadow: fade-out($accent-color, .6);
+
+@include keyframes(dotpulse) {
+    0% {
+        background-color: $accent-color;
+        box-shadow: 0 0 0 0 $dotshadow;
+    }
+
+    75% {
+        background-color: $accent-color;
+        box-shadow: 0 0 0 8px $dotshadow;
+    }
+
+    100% {
+        background-color: currentColor;
+        box-shadow: 0 0 0 0 $dotshadow;
+    }
+}
+
 .chat-conv-dot-wrap {
     position: absolute;
     top: 0;
@@ -1291,36 +1332,57 @@ body {
     @media #{$screenxx} { width: 3.5em; }
 
     .chat-conv-dot {
+        @extend %conv-dots;
+
         position: absolute;
         content: "";
         top: 1em;
         left: 1em;
         margin: .55em 0 auto 0;
-        height: .5em;
-        width: .5em;
-        border-radius: 50%;
-        background-color: fade-out(lighten($dark-color, 15%), .5);
 
         @for $i from 1 through length($palette) {
             $color: nth($palette, $i);
             $j: $i - 1;
 
-            .conv-#{$j} & { background-color: $color; }
+            .conv-#{$j} & {
+                background-color: $color;
+
+                &.pulsed { box-shadow: 0 0 0 8px fade-out($color, .6); }
+            }
         }
 
         @media #{$screenxx} { left: 2em; }
+
+        &.animating { @include prefix(animation, dotpulse 1s 1); }
     }
 }
 
 .chat-placeholder {
     position: absolute;
     top: 0;
-    left: 0;
-    padding: .9em 1em .9em 2.9em;
+    left: 2.9em;
+    right: 1em;
     color: fade-out($dark-color, .5);
-    pointer-events: none;
+    line-height: 3.5em;
 
-    @media #{$screenxx} { padding-left: 3.9em; }
+    @media #{$screenxx} { left: 3.9em; }
+
+    .text-button {
+        color: currentColor;
+        font-weight: 700;
+        text-decoration: underline;
+        padding: .5em;
+        border: 1px solid transparent;
+        border-radius: $roundness;
+
+        &:focus, &:hover {
+            color: $dark-color;
+            border-color: darken($light-color, 30%);
+            box-shadow: 0 1px 5px 0 rgba(0,0,0,0.15);
+        }
+
+        &:active { background-color: rgba(0,0,0,0.05); }
+    }
 }
 
 .chat-entry {
@@ -1545,7 +1607,7 @@ body {
         background-repeat: no-repeat;
         background-size: 3em 2em;
         border: none;
-        box-shadow: 0 0 10px 0 rgba(0,0,0,.3);
+        box-shadow: 0 0 8px 0 rgba(0,0,0,.3);
     }
 }
 

@@ -10,7 +10,7 @@
  * tab: {String} (info|people|threads|local|global)
  * thread: {String} threadId
  * query: {String} searchQuery
- * connectionStatus: (Boolean)
+ * connectionStatus: {String}
  * text: {String} textId
  * time: {String} - Timestamp of chat message
  * old: {Object} - Old state object
