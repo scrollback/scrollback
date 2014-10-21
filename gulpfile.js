@@ -204,7 +204,7 @@ gulp.task("manifest", function() {
 			domain + "/ " + domain + "/client.html"
 		],
 		preferOnline: true,
-		timeStamp: true,
+		timestamp: true,
 		filename: "manifest.appcache"
 	}))
 	.pipe(gulp.dest("public"))

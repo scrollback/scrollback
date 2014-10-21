@@ -358,6 +358,23 @@ footer {
     @media only screen and (min-width: 480px) { display: block; }
 }
 
+.blog {
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    z-index: 1;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: $light-color;
+
+    &:focus, &:hover, &:active {
+        color: $light-color;
+        border-bottom: 1px solid currentColor;
+    }
+
+    @media only screen and (min-width: 480px) { right: 6em; }
+}
+
 .scrollback-stream { display: none; }
 
 .scrollback-open {

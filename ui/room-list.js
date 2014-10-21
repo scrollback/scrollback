@@ -24,7 +24,7 @@ function enter(room) {
 		roomObjs[roomName] = room;
 	}
 
-	if (currentState.connectionStatus) {
+	if (currentState.connectionStatus == "online") {
 		if (!listening[roomName]){
 			listening[roomName] = BACK_SENT;
 			libsb.enter(roomName, function(err) {
@@ -206,11 +206,11 @@ module.exports = function(libsb) {
 			}
 		}
 
-		if (!state.connectionStatus && (!state.old || state.old.connectionStatus)) {
+		if (state.connectionStatus !== "online" && (!state.old || state.old.connectionStatus == "online")) {
 			Object.keys(listening).forEach(function(e) {
 				listening[e] = NOT_LISTENING;
 			});
-		}else if(state.connectionStatus && (!state.old || !state.old.connectionStatus)) {
+		}else if(state.connectionStatus == "online" && (!state.old || state.old.connectionStatus!="online")) {
 			listenQueue.forEach(function(e) {
 				enter({ id: e });
 			});

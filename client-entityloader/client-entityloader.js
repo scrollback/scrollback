@@ -8,7 +8,7 @@ module.exports = function (libsb) {
 		function next() {
 			n();
 		}
-		if (["normal","conf"].indexOf(state.mode) >=0 && (!state.old || state.roomName != state.old.roomName || (state.old.connectionStatus === false && state.connectionStatus))) {
+		if (["normal","conf"].indexOf(state.mode) >=0 && (!state.old || state.roomName != state.old.roomName || (state.connectionStatus && state.connectionStatus!= state.old.connectionStatus))) {
 			libsb.getRooms({
 				ref: state.roomName
 			}, function (err, data) {
@@ -26,12 +26,10 @@ module.exports = function (libsb) {
 							state.mode = 'profile';
 						} else {
 							state.room = null;
-							if (!state.connectionStatus) {
-								roomStatus = "pending";
-							} else {
-								roomStatus = "noroom";
+
+							if (state.connectionStatus == "online") {
 								state.mode = "noroom";
-							};
+							}
 						}
 						return next();
 					});
