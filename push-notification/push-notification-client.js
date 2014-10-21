@@ -32,7 +32,8 @@ window.onNotificationGCM = function (e) {
 			if (e.coldstart) {
 				var thread = e.payload.text.threads && e.payload.text.threads[0] ? e.payload.text.threads[0] : "";
 				var state = {
-					roomName: e.payload.text.to
+					roomName: e.payload.text.to,
+					mode: 'normal'
 				};
 
 				if (thread !== "") {
