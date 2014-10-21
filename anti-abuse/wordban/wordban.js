@@ -30,7 +30,7 @@ module.exports = function(core) {
 				for (var i = 0;i < customPhrases.length;i++) {
 					var phrase = customPhrases[i];
 					var r = search(textMessage, textArray, phrase);
-					if (r >= 0 && isSeperated(text, r, r + phrase.length - 1)) {
+					if (r >= 0 && isSeparated(text, r, r + phrase.length - 1)) {
 						log.d("Found phrase: ", phrase);
 						message.labels.abusive = 1;
 						return callback();
@@ -41,7 +41,7 @@ module.exports = function(core) {
 		return callback();
 	}, "antiabuse");
 
-	function isSeperated(text, in1, in2) {
+	function isSeparated(text, in1, in2) {
 		log.d("Sep:", text, in1, in2);
 		var r1 = in1 === 0;
 		var r2 = in2 === text.length - 1;
