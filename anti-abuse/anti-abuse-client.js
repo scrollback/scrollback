@@ -6,18 +6,18 @@ var formField = require("../lib/formField.js");
 libsb.on("config-show", function(tabs, next) {
 	var room = tabs.room, lists;
 	if (!room.params) room.params = {};
-    if (!room.params.antiAbuse) {
-        room.params.antiAbuse = {block: {english: false}, customPhrases: [], spam: true};
+	if (!room.params.antiAbuse) {
+		room.params.antiAbuse = {block: {english: false}, customPhrases: [], spam: true};
 	}
-    var antiAbuse = room.params.antiAbuse;
+	var antiAbuse = room.params.antiAbuse;
 	var $div = $("<div>").append(
-        formField("Spam control", "toggle", "spam-control", antiAbuse.spam),
-        formField("Blocked words list", "check", "blocklists", [
-            ["list-en-strict", "English abusive words", antiAbuse.block.english ]
-        ]),
-        formField("Custom blocked phrases/word", "area", "block-custom", antiAbuse.customPhrases.join("\n")),
-        formField("", "info", "spam-control-helper-text", "One phrase/word each line")
-    );
+		formField("Spam control", "toggle", "spam-control", antiAbuse.spam),
+		formField("Blocked words list", "check", "blocklists", [
+			["list-en-strict", "English abusive words", antiAbuse.block.english ]
+		]),
+		formField("Custom blocked phrases/word", "area", "block-custom", antiAbuse.customPhrases.join("\n")),
+		formField("", "info", "spam-control-helper-text", "One phrase/word each line")
+	);
 
 
 
@@ -33,10 +33,10 @@ libsb.on("config-show", function(tabs, next) {
 
 libsb.on("config-save", function(room, next){
 	room.params.antiAbuse = {
-        spam: $("#spam-control").is(":checked"),
-        block:{
-            english: $("#list-en-strict").is(":checked")
-        },
+		spam: $("#spam-control").is(":checked"),
+		block:{
+			english: $("#list-en-strict").is(":checked")
+		},
 		customPhrases: $("#block-custom").val().split("\n").map(function(item) {
 			return (item.trim()).toLowerCase();
 		})

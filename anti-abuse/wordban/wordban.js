@@ -41,15 +41,15 @@ module.exports = function(core) {
 		return callback();
 	}, "antiabuse");
 
-    function isSeperated(text, in1, in2) {
-        log.d("Sep:", text, in1, in2);
-        var r1 = in1 === 0;
-        var r2 = in2 === text.length - 1;
-        if (!r1) r1 = separators.test(text.charAt(in1 - 1));
-        if (!r2) r2 =  separators.test(text.charAt(in2 + 1));
-        log.d("Return:", (r1 && r2));
-        return r1 && r2;
-    }
+	function isSeperated(text, in1, in2) {
+		log.d("Sep:", text, in1, in2);
+		var r1 = in1 === 0;
+		var r2 = in2 === text.length - 1;
+		if (!r1) r1 = separators.test(text.charAt(in1 - 1));
+		if (!r2) r2 =  separators.test(text.charAt(in2 + 1));
+		log.d("Return:", (r1 && r2));
+		return r1 && r2;
+	}
 
 	core.on("room", function(action, callback){
 		var room  = action.room;
@@ -64,15 +64,15 @@ module.exports = function(core) {
         if (action.room.params && action.room.params.antiAbuse) {
 			var a = action.room.params.antiAbuse.customPhrases;
 			var l = 0;
-            if (a instanceof Array) {
+			if (a instanceof Array) {
 				var na = [];
 				a.forEach(function(sentance) {
-				    l += sentance.length;
-				    if (l > limit) {
-                        return callback(new Error("ERR_LIMIT_NOT_ALLOWED"));
-                    }
-                });
-                callback();
+					l += sentance.length;
+					if (l > limit) {
+						return callback(new Error("ERR_LIMIT_NOT_ALLOWED"));
+					}
+				});
+				callback();
 			} else {
 				callback(new Error("INVALID_WORDBLOCK"));
 			}
