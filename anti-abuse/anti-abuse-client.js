@@ -5,33 +5,21 @@ var formField = require("../lib/formField.js");
 
 libsb.on("config-show", function(tabs, next) {
 	var room = tabs.room, lists;
-
-	if(!room.params) room.params = {};
+	if (!room.params) room.params = {};
     if (!room.params.antiAbuse) {
-        room.params.antiAbuse = {offensive: true};
+        room.params.antiAbuse = {block: {english: false}, customPhrases: [], spam: true};
 	}
-
-    if (typeof room.params.antiAbuse.wordblock !== "boolean") {
-		room.params.antiAbuse.wordblock = true;
-	}
-
-	if (!(room.params.antiAbuse["block-lists"] instanceof Array)) {
-		lists = [];
-	}else {
-        lists = room.params.antiAbuse["block-lists"];
-    }
-
-    if(!room.params.antiAbuse.customWords) room.params.antiAbuse.customWords = [];
-
+    var antiAbuse = room.params.antiAbuse;
 	var $div = $("<div>").append(
-		formField("Block offensive words", "toggle", "block-offensive", room.params.antiAbuse.wordblock),
-		formField("Blocked words list", "check", "blocklists-list", [
-			["list-en-strict", "English abusive words", (lists.indexOf("list-en-strict") > -1)]
-			// ["list-en-moderate", "English moderate", (lists.indexOf("list-en-moderate") > -1)],
-			// ["list-zh-strict", "Chinese strict", (lists.indexOf("list-zh-strict") > -1)]
-		]),
-		formField("Custom blocked words", "area", "block-custom", room.params.antiAbuse.customWords)
-	);
+        formField("Spam control", "toggle", "spam-control", antiAbuse.spam),
+        formField("Blocked words list", "check", "blocklists", [
+            ["list-en-strict", "English abusive words", antiAbuse.block.english ]
+        ]),
+        formField("Custom blocked phrases/word", "area", "block-custom", antiAbuse.customPhrases.join("\n")),
+        formField("", "info", "spam-control-helper-text", "One phrase/word each line")
+    );
+
+
 
 	tabs.spam = {
 		text: "Spam control",
@@ -42,17 +30,17 @@ libsb.on("config-show", function(tabs, next) {
 	next();
 }, 500);
 
+
 libsb.on("config-save", function(room, next){
 	room.params.antiAbuse = {
-		wordblock: $("#block-offensive").is(":checked"),
-		"block-lists": $("input[name='blocklists-list']:checked").map(function(i, el) {
-			return $(el).attr("value");
-		}).get(),
-		customWords: $("#block-custom").val().split(",").map(function(item) {
+        spam: $("#spam-control").is(":checked"),
+        block:{
+            english: $("#list-en-strict").is(":checked")
+        },
+		customPhrases: $("#block-custom").val().split("\n").map(function(item) {
 			return (item.trim()).toLowerCase();
 		})
 	};
-
 	next();
 }, 500);
 
