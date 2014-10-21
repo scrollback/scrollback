@@ -13,6 +13,7 @@ module.exports = function () {
 	require('./usersCaching.js')(objCacheOps);
 
 	require('./sessionCaching.js')(objCacheOps);
+	require('./quick-settings.js')(objCacheOps);
 
 	// localStorage version check and upgrade.
 	var version = 'version' + config.localStorage.version;
