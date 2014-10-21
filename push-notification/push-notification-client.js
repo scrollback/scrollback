@@ -57,10 +57,8 @@ window.onNotificationGCM = function (e) {
 };
 
 function registerPushNotification() {
-	console.log('inside push notification client , got device ready');
 	pushNotification = window.plugins && window.plugins.pushNotification;
 	if (!pushNotification) {
-		console.log("pushNotification isn't ready.");
 		return;
 	}
 
@@ -77,7 +75,6 @@ function registerPushNotification() {
 function successHandler(result) {
 	console.log('registration success result = ' + result);
 	regId = localStorage.phonegapRegId;
-	console.log("Mapping " + regId + "to user " + libsb.user.id);
 	mapDevicetoUser(regId);
 }
 
@@ -106,7 +103,7 @@ function mapDevicetoUser(regId) {
 
 		var devices = [];
 
-		devices = user.params.pushNotifications &&
+		devices = user && user.params.pushNotifications &&
 			user.params.pushNotifications.devices ? user.params.pushNotifications.devices : devices;
 
 		devices.forEach(function (device) {
@@ -116,17 +113,14 @@ function mapDevicetoUser(regId) {
 				}
 			}
 		});
-		console.log("Devices, deviceRegistered", devices, deviceRegistered);
 		var newDevice = {
 			deviceName: device.model,
 			registrationId: regId,
 			enabled: true
 		};
-		console.log("New Device is ", newDevice);
 		if (deviceRegistered === false) {
 			devices.push(newDevice);
 			user.params.pushNotifications.devices = devices;
-			console.log("Emitting user-up", user, user.params.pushNotifications);
 			libsb.emit('user-up', {
 				user: user
 			});
