@@ -36,7 +36,7 @@ window.onNotificationGCM = function (e) {
 				};
 
 				if (thread !== "") {
-					state.thread = thread;
+					state.thread = thread.id;
 				}
 				console.log("State object for navigate ", state);
 				libsb.emit('navigate', state);
@@ -94,6 +94,7 @@ function mapDevicetoUser(regId) {
 		ref: "me"
 	}, function (e, d) {
 		var user = d.results[0];
+		if (typeof user === "undefined") return;
 		var deviceRegistered = false;
 		if (user && typeof user.params.pushNotifications === "undefined") {
 			user.params.pushNotifications = {
