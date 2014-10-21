@@ -85,7 +85,7 @@ function connect() {
         core.emit("init-up", {}, function(err, init) {
 			if(err) console.log(err.message);
 			else libsb.isInited = true;
-			core.emit("navigate", {connectionStatus: true, source: "socket"}, function(err) {
+			core.emit("navigate", {connectionStatus: "online", source: "socket"}, function(err) {
 				if(err) console.log(err.message);
 			});
 			//TODO: handle errors.
@@ -101,8 +101,9 @@ function disconnect(payload, next) {
 }
 
 function disconnected() {
+	console.log("Disconnected:", backOff);
 	if(backOff === 1) {
-		core.emit("navigate", {connectionStatus: false, source: "connection"}, function(err) {
+		core.emit("navigate", {connectionStatus: "offline", source: "connection"}, function(err) {
 			if(err) console.log(err.message);
 		});
 	}

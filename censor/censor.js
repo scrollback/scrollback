@@ -9,7 +9,7 @@ module.exports = function(core) {
         if(query.user.role === 'su') return next();
         
         query.results.forEach(function(e) {
-            delete e.session;
+            e && delete e.session;
         });
         next();
     },"watcher");
@@ -18,15 +18,16 @@ module.exports = function(core) {
         if(query.session == internalSession) return next(); // will be removed when we use app specific users.
         if(!query.results || !query.results.length) return next();
         function censor(e) {
-		delete e.params;
-		delete e.identities;
-		return e;
-	}
+			if(!e) return null;
+			delete e.params;
+			delete e.identities;
+			return e;
+		}
         if(query.ref && (query.user.role === 'su' || query.user.role == "owner")) return next();
         if(query.hasMember) {
 		if(query.hasMember === query.user.id || query.hasMember === "me") {
 			query.results.forEach(function(e) {
-				if(e.role !== "owner") censor(e);
+				if(e && e.role !== "owner") censor(e);
 			});	
 		} else {
 			query.results = query.results.map(censor);
@@ -52,7 +53,7 @@ module.exports = function(core) {
         if(!query.results || !query.results.length) return next();
         if(query.ref &&( query.ref=="me" || query.user.role === 'su')) return next();
         query.results.forEach(function(e) {
-            if(e.id === query.user.id) return;
+            if(!e || e.id === query.user.id) return;
             delete e.params;
             delete e.identities;
             delete e.sessions;

@@ -174,7 +174,7 @@ module.exports = function (core) {
             return callback(new SbError("INVALID_ROOM"));
         }
         if (!action.time) action.time = new Date().getTime();
-        return sessionValidation(action, callback);
+        return queryValidation(action, callback);
     }, "validation");
     core.on("getTexts", function (action, callback) {
         if (!action.to) {
@@ -185,29 +185,30 @@ module.exports = function (core) {
             if (action.updateTime === null) action.updateTime = new Date().getTime();
         }
 
-        return sessionValidation(action, callback);
+        return queryValidation(action, callback);
     }, "validation");
     core.on("getRooms", function (action, callback) {
-        if (!(action.ref || action.hasOccupant || action.hasMember || action.identity)) {
+        if (!(action.ref || action.hasOccupant || action.hasMember || action.identity || action.featured)) {
             return callback(new SbError("INVALID_QUERY"));
         }
-        return sessionValidation(action, callback);
+        return queryValidation(action, callback);
     }, "validation");
     core.on("getUsers", function (action, callback) {
         if (!(action.ref || action.occupantOf || action.memberOf || action.identity || action.timezone)) {
             return callback(new SbError("INVALID_QUERY"));
         }
-        return sessionValidation(action, callback);
+        return queryValidation(action, callback);
     }, "validation");
 
 };
 
-function sessionValidation(action, callback) {
-    if (!action.session) {
-        callback(new SbError("NO_SESSION_ID"));
-    } else {
-        callback();
-    }
+function queryValidation(query, callback) {
+	if (!query.id) query.id = generate.uid();
+	if (!query.session) {
+		callback(new SbError("NO_SESSION_ID"));
+	} else {
+		callback();
+	}
 }
 
 function basicValidation(action, callback) {

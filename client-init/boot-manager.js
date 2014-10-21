@@ -27,7 +27,7 @@ function init(libsb) {
 
 	libsb.on("navigate", function (state, next) {
 		if (state.source == "boot") return next();
-		if (state.connectionStatus === false) isInited = false;
+		if (state.connectionStatus != "online") isInited = false;
 
 		if (!libsb.hasBooted) {
 			// add more sources if the navigate has to be queued up.

@@ -3,17 +3,16 @@ var assert = require('assert'),
 	config = require('../config.js'),
 	webdriver = require('browserstack-webdriver'),
 	testUtils = require('./testUtils.js'),
-	q = require('q');
+	q = require('q'),
+	generator = require('../../lib/generate.js');
 
 module.exports = function(capabilities, options) {
 	describe('Create Room Test ' + options.id, function() {
 		this.timeout(timeout);
 		var driver, server = options.server;
-		var time = new Date().getTime();
-		var roomName = "scrollback" + time;
+		var roomName = "t" + generator.names(28);
 		before(function(done) {
 			this.timeout(3 * timeout);
-			time = new Date().getTime();
 			driver = testUtils.openUrl(capabilities, server, roomName);
 			setTimeout(done, 1.5 * timeout);
 		});
