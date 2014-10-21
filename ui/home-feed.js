@@ -1,6 +1,8 @@
 /* jslint browser: true, indent: 4, regexp: true */
 /* global $, libsb */
 
+var roomCard = require("./room-card.js");
+
 // Add entry to user menu
 libsb.on("user-menu", function(menu, next) {
 	if (window.currentState.mode !== "home") {
@@ -25,6 +27,7 @@ $(function() {
 		$cardContainer = $(".card-container"),
 		$gotoform = $("#home-go-to-room-form"),
 		$gotoentry = $("#home-go-to-room-entry"),
+		$featured = $(".js-area-home-feed-featured"),
 		goToRoom = function(roomName) {
 			if (!roomName) {
 				return;
@@ -40,6 +43,36 @@ $(function() {
 				time: null
 			});
 		};
+
+	function renderFeatured() {
+		if (window.currentState.mode !== "home" || window.currentState.connectionStatus !== "online") {
+			return;
+		}
+
+		libsb.emit("getRooms", { featured: true }, function(e, r) {
+			if (r && r.results) {
+				$featured.empty();
+
+				r.results.forEach(function(room) {
+					$featured.append(roomCard.render(null, room));
+				});
+			}
+		});
+	}
+
+	libsb.on("init-dn", function(state, next) {
+		renderFeatured();
+
+		next();
+	}, 10);
+
+	libsb.on("navigate", function(state, next) {
+		if (state && state.old && (state.mode !== state.old.mode || state.connectionStatus !== state.old.connectionStatus)) {
+			renderFeatured();
+		}
+
+		next();
+	}, 10);
 
 	$gotoentry.on("keydown paste", function() {
 		$(this).removeClass("error");

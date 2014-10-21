@@ -609,7 +609,8 @@ body {
 }
 
 .home-area-cover {
-    margin-top: $bar-height;
+    @extend %transition;
+
     width: 100%;
     min-height: $bar-height * 3;
     max-height: $bar-height * 3;
@@ -622,6 +623,8 @@ body {
         min-height: $bar-height * 2;
         max-height: $bar-height * 2;
     }
+
+    .scroll-up & { opacity: 0; }
 }
 
 .home-area-cover-content {
@@ -650,6 +653,7 @@ body {
     @include flex-direction(column);
     @include flex-wrap(nowrap);
 
+    padding-top: $bar-height;
     height: 100%;
     overflow-x: hidden;
 }
