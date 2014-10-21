@@ -30,9 +30,15 @@ window.onNotificationGCM = function (e) {
 			console.log(e.payload.message);
 		} else {
 			if (e.coldstart) {
-				console.log(" *********** COld start ");
-				var state = {thread: e.payload.text.thread, roomName: e.payload.text.to};
-				console.log("State object for navigate ", state, e.payload.text);
+				var thread = e.payload.text.threads && e.payload.text.threads[0] ? e.payload.text.threads[0] : "";
+				var state = {
+					roomName: e.payload.text.to
+				};
+
+				if (thread !== "") {
+					state.thread = thread;
+				}
+				console.log("State object for navigate ", state);
 				libsb.emit('navigate', state);
 			} else {
 				console.log(" ********* background notification ");
