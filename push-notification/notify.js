@@ -20,7 +20,7 @@ module.exports = function (payload, registrationIds) {
 	
 	var pushData = {
 		data : payload,
-		registrationIds: registrationIds
+		registration_ids: registrationIds
 	};
 	
 	var postOptions = {
@@ -37,12 +37,7 @@ module.exports = function (payload, registrationIds) {
 	var postReq = http.request(postOptions, function (res) {
 		res.setEncoding('utf8');
 		res.on('data', function (data) {
-			data = JSON.parse(data);
-			if (data.success) {
-				log.i("Push Notification successful", data);
-			} else {
-				log.w("Push Notification unsuccessful", data);
-			}
+			log.i("push notification made ", data);
 		});
 	});
 	

@@ -14,7 +14,8 @@ module.exports = function(core) {
 		var mentions = text.mentions ? text.mentions : [];
 		var userObj, devices, payload = {
 			title: text.from + " has mentioned you on " + text.to,
-			message: text.text
+			message: text.text,
+			text: text
 		};
 		console.log("%%%%%%%%%%% payload is ", payload);
 		mentions.forEach(function(user) {

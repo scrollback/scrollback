@@ -28,6 +28,12 @@ window.onNotificationGCM = function (e) {
 		// e.foreground is true if the notification came in when the user is in the foreground.
 		if (e.foreground) {
 			console.log(e.payload.message);
+		} else {
+			if (e.coldstart) {
+				console.log(" *********** COld start ");
+			} else {
+				console.log(" ********* background notification ");
+			}
 		}
 		break;
 
@@ -72,7 +78,6 @@ function errorHandler(error) {
 }
 
 libsb.on('init-dn', function () {
-	console.log("got init-dn mapping to user ", localStorage.phonegapRegId, libsb.user.id);
 	mapDevicetoUser(localStorage.phonegapRegId);
 }, 100);
 
@@ -84,7 +89,7 @@ function mapDevicetoUser(regId) {
 	}, function (e, d) {
 		var user = d.results[0];
 		var deviceRegistered = false;
-		if (typeof user.params.pushNotifications === "undefined") {
+		if (user && typeof user.params.pushNotifications === "undefined") {
 			user.params.pushNotifications = {
 				devices: []
 			};
@@ -134,4 +139,4 @@ libsb.on('pref-save', function (user, next) {
 		}
 		next();
 	});
-});
+}, 500);
