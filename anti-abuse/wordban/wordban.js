@@ -1,11 +1,11 @@
 var log = require("../../lib/logger.js"),
-    SbError = require("../../lib/SbError.js"),
+	SbError = require("../../lib/SbError.js"),
 	fs = require("fs"),
 	blockWords={},
 	longest = 0,
-    search = require('./searchPattern'),
-    suffixArray = require('./suffixArray.js'),
-    separators = /[ \t,\:\.]/;
+	search = require('./searchPattern'),
+	suffixArray = require('./suffixArray.js'),
+	separators = /[ \t,\:\.]/;
 
 module.exports = function(core) {
 
@@ -26,16 +26,16 @@ module.exports = function(core) {
 			if (message.room.params.antiAbuse.customPhrases) {
 				customPhrases = message.room.params.antiAbuse.customPhrases;
 				textMessage = message.text;
-                textArray = suffixArray(textMessage);
-                for (var i = 0;i < customPhrases.length;i++) {
-                    var phrase = customPhrases[i];
-                    var r = search(textMessage, textArray, phrase);
-                    if (r >= 0 && isSeperated(text, r, r + phrase.length - 1)) {
-                        log.d("Found phrase: ", phrase);
-                        message.labels.abusive = 1;
-                        return callback();
-                    }
-                };
+				textArray = suffixArray(textMessage);
+				for (var i = 0;i < customPhrases.length;i++) {
+					var phrase = customPhrases[i];
+					var r = search(textMessage, textArray, phrase);
+					if (r >= 0 && isSeperated(text, r, r + phrase.length - 1)) {
+						log.d("Found phrase: ", phrase);
+						message.labels.abusive = 1;
+						return callback();
+					}
+				};
 			}
 		}
 		return callback();
@@ -53,15 +53,15 @@ module.exports = function(core) {
 
 	core.on("room", function(action, callback){
 		var room  = action.room;
-        var text = room.id + (room.description ? (" " + room.description) : "");
+		var text = room.id + (room.description ? (" " + room.description) : "");
 		if (rejectable(text)) return callback(new SbError("Abusive_room_name"));
 		callback();
 	}, "antiabuse");
 
 	core.on("room", function(action, callback) {
 		var limit = 10000;
-        log.d("room action:", JSON.stringify(action));
-        if (action.room.params && action.room.params.antiAbuse) {
+		log.d("room action:", JSON.stringify(action));
+		if (action.room.params && action.room.params.antiAbuse) {
 			var a = action.room.params.antiAbuse.customPhrases;
 			var l = 0;
 			if (a instanceof Array) {
@@ -106,7 +106,7 @@ var init=function(){
 };
 
 var rejectable = function(text) {
-    log.d("text:", text);
+	log.d("text:", text);
 	var i, l, j, words, phrase;
 	words=text.replace(/\@/g,'a').replace(/\$/g,'s');
 	words = words.toLowerCase().split(/\W+/);
