@@ -6,19 +6,29 @@
 	text-overflow: ellipsis;
 }
 
+@mixin addcards($n) {
+	width: 100% / $n;
+
+	@for $i from 0 through ($n - 1) {
+		&:nth-of-type(#{$n}n - #{$i}) { @include slideup(#{1 - ($i / $n)}s); }
+	}
+}
+
 .card-item-wrap {
+	@include addcards(1);
+
 	display: inline-block;
-	width: 100%;
 	padding: .5em;
 
 	@media only screen and (min-width: 50em) {
-		width: 50%;
+		@include addcards(2);
+
 		padding: 1em;
 	}
 
-	@media only screen and (min-width: 70em) { width: 33.33%; }
+	@media only screen and (min-width: 70em) { @include addcards(3); }
 
-	@media only screen and (min-width: 130em) { width: 20%; }
+	@media only screen and (min-width: 130em) { @include addcards(5); }
 }
 
 .card-item {

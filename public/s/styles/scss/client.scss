@@ -666,6 +666,8 @@ body {
     overflow-x: hidden;
 }
 
+.card-container:not(:last-of-type):not(:only-of-type) { border-bottom: 1px solid darken($light-color, 10%); }
+
 .meta-button, .rooms-button {
     width: 3em;
     cursor: pointer;

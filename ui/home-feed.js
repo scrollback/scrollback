@@ -50,10 +50,18 @@ $(function() {
 		}
 
 		libsb.emit("getRooms", { featured: true }, function(e, r) {
+			var occupantOf = libsb.occupantOf;
+
 			if (r && r.results) {
 				$featured.empty();
 
 				r.results.forEach(function(room) {
+					for (var i = 0, l = occupantOf.length; i < l; i++) {
+						if (occupantOf[i] && occupantOf[i].id === room.id) {
+							return;
+						}
+					}
+
 					$featured.append(roomCard.render(null, room));
 				});
 			}
