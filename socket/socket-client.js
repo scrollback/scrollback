@@ -7,14 +7,14 @@ var generate = require("../lib/generate.js"),
 	core;
 
 var backOff = 1,
-    client, pendingQueries = {},
+	client, pendingQueries = {},
 	pendingActions = {},
 	queue = [];
 
 module.exports = function (c) {
 	core = c;
-    connect();
-    core.on("disconnect", disconnect, 1000);
+	connect();
+	core.on("disconnect", disconnect, 1000);
 
 	core.on("init-up", sendInit, 10);
 	core.on("text-up", sendText, 10);
@@ -29,25 +29,25 @@ module.exports = function (c) {
 	core.on("user-up", sendUser, 10);
 	core.on("room-up", sendRoom, 10);
 
-    core.on("getTexts", function(query, callback){
-		query.type="getTexts";
+	core.on("getTexts", function (query, callback) {
+		query.type = "getTexts";
 		sendQuery(query, callback);
 	}, 10);
 
-    core.on("getThreads",  function(query, callback){
-		query.type="getThreads";
+	core.on("getThreads", function (query, callback) {
+		query.type = "getThreads";
 		sendQuery(query, callback);
 	}, 10);
 
-    core.on("getUsers",  function(query, callback){
-		query.type="getUsers";
+	core.on("getUsers", function (query, callback) {
+		query.type = "getUsers";
 		sendQuery(query, callback);
 	}, 10);
 
-    core.on("getRooms",  function(query, callback){
-		query.type="getRooms";
+	core.on("getRooms", function (query, callback) {
+		query.type = "getRooms";
 		sendQuery(query, callback);
-    }, 10);
+	}, 10);
 };
 
 
@@ -74,18 +74,21 @@ function safeSend(data) {
 function connect() {
 
 	client = new SockJS(config.server.protocol + config.server.host + "/socket");
-    client.onclose = disconnected;
+	client.onclose = disconnected;
 
-	client.onopen = function(){
-        backOff = 1;
-        core.emit("init-up", {}, function(err, init) {
-			if(err) console.log(err.message);
+	client.onopen = function () {
+		backOff = 1;
+		core.emit("init-up", {}, function (err, init) {
+			if (err) console.log(err.message);
 			else libsb.isInited = true;
-			core.emit("navigate", {connectionStatus: "online", source: "socket"}, function(err) {
-				if(err) console.log(err.message);
+			core.emit("navigate", {
+				connectionStatus: "online",
+				source: "socket"
+			}, function (err) {
+				if (err) console.log(err.message);
 			});
 			//TODO: handle errors.
-        });
+		});
 	};
 
 	client.onmessage = receiveMessage;
@@ -98,20 +101,23 @@ function disconnect(payload, next) {
 
 function disconnected() {
 	console.log("Disconnected:", backOff);
-	if(backOff === 1) {
-		core.emit("navigate", {connectionStatus: "offline", source: "connection"}, function(err) {
-			if(err) console.log(err.message);
+	if (backOff === 1) {
+		core.emit("navigate", {
+			connectionStatus: "offline",
+			source: "connection"
+		}, function (err) {
+			if (err) console.log(err.message);
 		});
 	}
-	if(backOff < 180) backOff *= 2;
+	if (backOff < 180) backOff *= 2;
 	else backOff = 180;
-    setTimeout(connect, backOff*1000);
+	setTimeout(connect, backOff * 1000);
 }
 
 function sendQuery(query, next) {
-	if(query.results) return next();
+	if (query.results) return next();
 
-	if(!libsb.isInited){
+	if (!libsb.isInited) {
 		query.results = [];
 		return next();
 	}
@@ -178,7 +184,7 @@ function makeAction(action, props) {
 		if (props.hasOwnProperty(i)) action[i] = props[i];
 	}
 
-	if(libsb.user && libsb.user.id) {
+	if (libsb.user && libsb.user.id) {
 		action.from = libsb.user.id;
 	}
 
@@ -218,7 +224,7 @@ function sendBack(back, next) {
 		type: 'back',
 		to: back.to,
 		id: back.id,
-	});		
+	});
 	safeSend(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);
 }
@@ -244,7 +250,7 @@ function sendText(text, next) {
 		id: text.id,
 		labels: text.labels || {},
 		mentions: text.mentions || [],
-        origin: text.origin
+		origin: text.origin
 	});
 
 	safeSend(JSON.stringify(action));
@@ -311,7 +317,7 @@ function sendUser(user, next) {
 		user: user.user,
 		id: user.id
 	});
-	if(/^guest-/.test(user.user.id)) return next();
+	if (/^guest-/.test(user.user.id)) return next();
 	safeSend(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);
 }
@@ -323,7 +329,7 @@ function sendRoom(room, next) {
 		room: room.room,
 		id: room.id
 	});
-    safeSend(JSON.stringify(action));
+	safeSend(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);
 }
 "use strict";
@@ -335,14 +341,14 @@ var generate = require("../lib/generate.js"),
 	core;
 
 var backOff = 1,
-    client, pendingQueries = {},
+	client, pendingQueries = {},
 	pendingActions = {},
 	queue = [];
 
 module.exports = function (c) {
 	core = c;
-    connect();
-    core.on("disconnect", disconnect, 1000);
+	connect();
+	core.on("disconnect", disconnect, 1000);
 
 	core.on("init-up", sendInit, 10);
 	core.on("text-up", sendText, 10);
@@ -357,25 +363,25 @@ module.exports = function (c) {
 	core.on("user-up", sendUser, 10);
 	core.on("room-up", sendRoom, 10);
 
-    core.on("getTexts", function(query, callback){
-		query.type="getTexts";
+	core.on("getTexts", function (query, callback) {
+		query.type = "getTexts";
 		sendQuery(query, callback);
 	}, 10);
 
-    core.on("getThreads",  function(query, callback){
-		query.type="getThreads";
+	core.on("getThreads", function (query, callback) {
+		query.type = "getThreads";
 		sendQuery(query, callback);
 	}, 10);
 
-    core.on("getUsers",  function(query, callback){
-		query.type="getUsers";
+	core.on("getUsers", function (query, callback) {
+		query.type = "getUsers";
 		sendQuery(query, callback);
 	}, 10);
 
-    core.on("getRooms",  function(query, callback){
-		query.type="getRooms";
+	core.on("getRooms", function (query, callback) {
+		query.type = "getRooms";
 		sendQuery(query, callback);
-    }, 10);
+	}, 10);
 };
 
 
@@ -402,18 +408,21 @@ function safeSend(data) {
 function connect() {
 
 	client = new SockJS(config.server.protocol + config.server.host + "/socket");
-    client.onclose = disconnected;
+	client.onclose = disconnected;
 
-	client.onopen = function(){
-        backOff = 1;
-        core.emit("init-up", {}, function(err, init) {
-			if(err) console.log(err.message);
+	client.onopen = function () {
+		backOff = 1;
+		core.emit("init-up", {}, function (err, init) {
+			if (err) console.log(err.message);
 			else libsb.isInited = true;
-			core.emit("navigate", {connectionStatus: "online", source: "socket"}, function(err) {
-				if(err) console.log(err.message);
+			core.emit("navigate", {
+				connectionStatus: "online",
+				source: "socket"
+			}, function (err) {
+				if (err) console.log(err.message);
 			});
 			//TODO: handle errors.
-        });
+		});
 	};
 
 	client.onmessage = receiveMessage;
@@ -426,20 +435,23 @@ function disconnect(payload, next) {
 
 function disconnected() {
 	console.log("Disconnected:", backOff);
-	if(backOff === 1) {
-		core.emit("navigate", {connectionStatus: "offline", source: "connection"}, function(err) {
-			if(err) console.log(err.message);
+	if (backOff === 1) {
+		core.emit("navigate", {
+			connectionStatus: "offline",
+			source: "connection"
+		}, function (err) {
+			if (err) console.log(err.message);
 		});
 	}
-	if(backOff < 180) backOff *= 2;
+	if (backOff < 180) backOff *= 2;
 	else backOff = 180;
-    setTimeout(connect, backOff*1000);
+	setTimeout(connect, backOff * 1000);
 }
 
 function sendQuery(query, next) {
-	if(query.results) return next();
+	if (query.results) return next();
 
-	if(!libsb.isInited){
+	if (!libsb.isInited) {
 		query.results = [];
 		return next();
 	}
@@ -506,7 +518,7 @@ function makeAction(action, props) {
 		if (props.hasOwnProperty(i)) action[i] = props[i];
 	}
 
-	if(libsb.user && libsb.user.id) {
+	if (libsb.user && libsb.user.id) {
 		action.from = libsb.user.id;
 	}
 
@@ -546,7 +558,7 @@ function sendBack(back, next) {
 		type: 'back',
 		to: back.to,
 		id: back.id,
-	});		
+	});
 	safeSend(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);
 }
@@ -572,7 +584,7 @@ function sendText(text, next) {
 		id: text.id,
 		labels: text.labels || {},
 		mentions: text.mentions || [],
-        origin: text.origin
+		origin: text.origin
 	});
 
 	safeSend(JSON.stringify(action));
@@ -639,7 +651,7 @@ function sendUser(user, next) {
 		user: user.user,
 		id: user.id
 	});
-	if(/^guest-/.test(user.user.id)) {
+	if (/^guest-/.test(user.user.id)) {
 		return next();
 	}
 	safeSend(JSON.stringify(action));
@@ -653,6 +665,6 @@ function sendRoom(room, next) {
 		room: room.room,
 		id: room.id
 	});
-    safeSend(JSON.stringify(action));
+	safeSend(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);
 }
