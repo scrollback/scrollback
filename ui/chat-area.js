@@ -61,7 +61,9 @@ function returnArray(query, index) {
 
 $(function () {
 	var $logs = $(".chat-area"),
+		$logscontainer = $(".chat-area-container"),
 		$chatPosition = $(".chat-position"),
+		$chatScrollToBottom = $(".chat-scroll-to-bottom");
 		roomName = "",
 		thread = '',
 		time = null;
@@ -228,9 +230,15 @@ $(function () {
 		resetLog(time || null);
 		next();
 	}, 100);
+
+	$chatScrollToBottom.on('click', function() {
+		libsb.emit("navigate", {time: null, source: 'chat-area'}/*, function() {}*/);
+	});
+
 	libsb.on("navigate", function (state, next) {
 		var reset = false;
-
+		if (chatArea.getPosition() === 0) $chatScrollToBottom.addClass('hidden');
+		else $chatScrollToBottom.removeClass('hidden');
 		if (state.source == 'chat-area') return next();
 		if (state.source == "boot") {
 			roomName = state.roomName || currentState.roomName;
@@ -279,7 +287,7 @@ $(function () {
 	};
 
 	chatArea.setPosition = function (bottom) {
-		$logs.css({
+		$logscontainer.css({
 			bottom: bottom
 		});
 
