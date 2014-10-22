@@ -17,20 +17,16 @@ module.exports = function(core) {
 			message: text.text,
 			text: text
 		};
-		console.log("%%%%%%%%%%% payload is ", payload);
 		mentions.forEach(function(user) {
 			core.emit("getUsers", {ref: user, session: internalSession}, function(err, data) {
-				console.log("%%%%%%%%%%%%%% get users data", user, data);
 				if (data && data.results && data.results.length === 0) return;
 				userObj = data.results[0];
 				// send pushNotification to user.params.devices
 				if (userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
 					devices = userObj.params.pushNotifications.devices;
-					console.log("%%%%%%%%%%%% user devices ", devices);
 					devices.forEach(function (device) {
 						if (device.hasOwnProperty('registrationId') && device.enabled === true) {
 							// send notification
-							console.log("%%%%%%%%%%%%%%%% device registration id is ", device.registrationId);
 							notify(payload, [device.registrationId]);
 						}
 					});

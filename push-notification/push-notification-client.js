@@ -19,7 +19,6 @@ window.onNotificationGCM = function (e) {
 			// Storing regId to be used by GCM to make push notifications.
 			console.log("regID = " + e.regid);
 			localStorage.phonegapRegId = e.regid;
-			console.log("Stored regid to localStorage ", localStorage.phonegapRegId);
 		}
 		break;
 
@@ -39,10 +38,9 @@ window.onNotificationGCM = function (e) {
 				if (thread !== "") {
 					state.thread = thread.id;
 				}
-				console.log("State object for navigate ", state);
 				libsb.emit('navigate', state);
 			} else {
-				console.log(" ********* background notification ");
+				// console.log(" ********* background notification ");
 			}
 		}
 		break;
