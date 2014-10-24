@@ -232,7 +232,7 @@ $(function () {
 	}, 100);
 
 	$chatScrollToBottom.on('click', function() {
-		libsb.emit("navigate", {time: null, source: 'chat-area'}/*, function() {}*/);
+		libsb.emit("navigate", {time: null, source: 'chat-area-scroll-to-bottom'}/*, function() {}*/);
 	});
 
 	libsb.on("navigate", function (state, next) {
