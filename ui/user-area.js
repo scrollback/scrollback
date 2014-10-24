@@ -83,7 +83,10 @@ $(function() {
 
 		next();
 	}, 100);
-
+	libsb.on("user-dn", function(action, next) {
+		$userAvatar.attr("src",action.user.picture);
+		next();
+	}, 100);
 	libsb.on("navigate", function(state, next) {
 		if (state && state.old && state.roomName && state.roomName !== state.old.roomName) {
 			$roomTitle.text(state.roomName);

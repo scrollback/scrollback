@@ -38,15 +38,15 @@ function fbAuth(action, callback) {
 					var user;
 					delete action.auth.facebook.code;
 					if(err) return callback(err);
-					try{
+					try {
 						user = JSON.parse(body);
-						if(user.error) {
+						if (user.error) {
 							return callback(new Error(user.error));
 						}
 						core.emit("getUsers",{identity: "mailto:"+user.email, session: internalSession}, function(err, data) {
 							if(err || !data) return callback(err);
 
-							if(!data.results.length) {
+							if (!data.results.length) {
 								action.user = {};
 								action.user.identities = ["mailto:" + user.email];
 								action.user.picture =  "https://graph.facebook.com/"+user.id+"/picture?type=square";
@@ -55,28 +55,31 @@ function fbAuth(action, callback) {
 								};
 								return callback();
 							}
-							console.log("facebook login:");
+							
 							action.old = action.user;
 							action.user = data.results[0];
-							console.log("facebook login:", action.user.params);
-							if(action.user.params.pictures && action.user.params.images.indexOf("https://graph.facebook.com/"+user.id+"/picture?type=square")<0) {
-								action.user.params.images.push("https://graph.facebook.com/"+user.id+"/picture?type=square");
-								// emit user event.
-								
-								core.emit("user", {user:action.user}, function(err, action){
-									console.log("Action done:",err, action);
+							
+							if (action.user.params.pictures && action.user.params.pictures.indexOf("https://graph.facebook.com/"+user.id+"/picture?type=square")<0) {
+								action.user.params.pictures.push("https://graph.facebook.com/"+user.id+"/picture?type=square");
+								core.emit("user", {
+									type: "user",
+									to: action.user.id,
+									user: action.user,
+									session: internalSession
+								}, function (err, action) {
+									console.log("Action done:", err, action);
 								});
 							}
 							
 							callback();
 						});
-					}catch(e) {
+					} catch(e) {
 						return callback(e);
 					}
 				});
 			}
 		});
-	}else {
+	} else {
 		callback();
 	}
 }

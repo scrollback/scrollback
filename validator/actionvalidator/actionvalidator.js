@@ -79,7 +79,7 @@ module.exports = function (core) {
         var result = validator.validate(action, valid);
         log.d("validation results", result);
         if (!result.status) {
-            log.e("Error: invalid init params", JSON.stringify(result));
+            log.e("Error: invalid action params", JSON.stringify(result), " ID: ",action.id);
             if (!(action.type && typeof action.type === 'string')) action.type = '';
             callback(new Error("INVALID_" + action.type.toUpperCase() + "_PARAMS"));
             return false;
