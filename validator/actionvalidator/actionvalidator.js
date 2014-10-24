@@ -105,6 +105,7 @@ module.exports = function (core) {
                 }
             }
             if (!action.labels) action.labels = {};
+            if (!action.threads) action.threads = [];
             if (action.mentions && action.mentions.length > 0) {
                 //checking for multiple mentions for the same user
                 action.mentions.forEach(function (i) {
