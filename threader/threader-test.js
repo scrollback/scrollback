@@ -5,7 +5,7 @@ var threader = require("./threader.js");
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
 var names = gen.names;
-var msg = {id:guid(), text: "values : " + Math.random(), from : "guest-" + names(6), to: "scrollback", type: 'text', time: new Date().getTime(), labels: {}};
+var msg = {id:guid(), text: "values : " + Math.random(), from : "guest-" + names(6), to: "scrollback", type: 'text', time: new Date().getTime(), labels: {}, threads: []};
 
 describe('threader', function() {
 	before( function(done) {
@@ -50,7 +50,7 @@ describe('threader', function() {
 
 	it('should not take more then 1 sec', function(done) {
 		this.timeout(1100);
-		delete msg.threads;
+		msg.threads = [];
 		core.emit("text", msg, function(err, data) {
 			console.log(msg);
 			done();
