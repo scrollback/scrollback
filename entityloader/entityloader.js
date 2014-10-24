@@ -123,7 +123,15 @@ module.exports = function(c) {
 };
 
 function userHandler(action, callback) {
-	core.emit("getUsers", {ref: "me", session: action.session}, function(err, data){
+	var ref;
+	
+	
+	if(Object.keys(config.whitelists).indexOf(action.session)>=0) {
+		ref = action.user.id;
+	}else{
+		ref = "me";
+	}
+	core.emit("getUsers", {ref: ref, session: action.session}, function(err, data){
 		function done() {
 			if(action.user.identities) {
 				if(!action.user.picture) action.user.picture = 'https://gravatar.com/avatar/' +	crypto.createHash('md5').update(action.user.identities[0].substring(7)).digest('hex') + '/?d=retro';

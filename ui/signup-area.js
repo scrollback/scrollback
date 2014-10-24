@@ -25,7 +25,9 @@ $(function(){
 				id: userId,
 				picture: signingUser.picture,
 				identities: signingUser.identities,
-				params: {},
+				params: {
+					pictures: [signingUser.picture]
+				},
 				guides: {}
             }
 		}, function(err) {
