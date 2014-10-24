@@ -41,10 +41,14 @@ window.onNotificationGCM = function (e) {
 			// 		 should navigate user to the message.
 		} else {
 			if (e.coldstart) {
-				libsb.emit('navigate', state);
+				setTimeout(function () {
+					libsb.emit('navigate', state);
+				});
 			} else {
 				//background notification
-				libsb.emit('navigate', state);
+				setTimeout(function () {
+					libsb.emit('navigate', state);
+				});
 			}
 		}
 		break;
