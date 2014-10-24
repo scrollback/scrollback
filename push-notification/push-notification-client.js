@@ -4,6 +4,7 @@
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
+var config = require('../client-config.js');
 
 document.addEventListener('deviceready', registerPushNotification, false);
 
@@ -26,20 +27,23 @@ window.onNotificationGCM = function (e) {
 		// e.foreground is true if the notification came in when the user is in the foreground.
 		if (e.foreground) {
 			console.log(e.payload.message);
+			// TODO: Add a lace notification here, if the new new message is not in view. Clicking on this notification 
+			// 		 should navigate user to the message.
 		} else {
-			if (e.coldstart) {
-				var thread = e.payload.text.threads && e.payload.text.threads[0] ? e.payload.text.threads[0] : "";
-				var state = {
-					roomName: e.payload.text.to,
-					mode: 'normal'
-				};
+			var thread = e.payload.text.threads && e.payload.text.threads[0] ? e.payload.text.threads[0] : "";
+			var state = {
+				roomName: e.payload.text.to,
+				mode: 'normal'
+			};
 
-				if (thread !== "") {
-					state.thread = thread.id;
-				}
+			if (thread !== "") {
+				state.thread = thread.id;
+			}
+			if (e.coldstart) {
 				libsb.emit('navigate', state);
 			} else {
-				// console.log(" ********* background notification ");
+				//background notification
+				libsb.emit('navigate', state);
 			}
 		}
 		break;
@@ -63,7 +67,7 @@ function registerPushNotification() {
 	if (device.platform == 'android' || device.platform == 'Android') {
 		console.log('device ready; android ' + device.platform + " " + pushNotification);
 		pushNotification.register(successHandler, errorHandler, {
-			"senderID": "73969137499",
+			"senderID": config.pushNotification.gcm.senderID,
 			"ecb": "onNotificationGCM"
 		});
 	}
