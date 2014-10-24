@@ -28,9 +28,9 @@ function loginPersona(driver, id, password, callback) {
 		}).then(function () {
 			return q.delay(4000);
 		}).then(function() {
-			return driver.findElement(webdriver.By.css(".isDesktopOrStart")).sendKeys(id);
+			return driver.findElement(webdriver.By.id("authentication_email")).sendKeys(id);
 		}).then(function () {
-			return driver.findElement(webdriver.By.css(".isDesktopOrStart"))
+			return driver.findElement(webdriver.By.id("authentication_email"))
 			.sendKeys(webdriver.Key.RETURN);
 		}).then(function () {
 			return q.delay(7000);

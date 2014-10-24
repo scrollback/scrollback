@@ -63,14 +63,6 @@ $(function(){
 	libsb.on("user-dn", function(action, next) {
 		$.modal("dismiss");
 
-		if(signingUp === true) location.reload();
-
-		libsb.emit('navigate', {
-			view: 'normal',
-			mode: 'normal',
-			tab: 'info'
-		});
-
 		next();
 	}, 500);
 

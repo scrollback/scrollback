@@ -36,13 +36,17 @@ exports.init = function(app, coreObject) {
 		});
 	});
 
+	app.get("/", function(req, res) {
+		res.redirect(307, config.http.index);
+	});
+
 	app.get("/*", function(req, res, next) {
 		if (/^\/t\//.test(req.path)) return next();
 		if (/^\/s\//.test(req.path)) {console.log("static"); return next();}
 
 		if (!req.secure && config.http.https) {
 			var queryString  = req._parsedUrl.search ? req._parsedUrl.search : "";
-			return res.redirect(307, 'https://' + config.http.host + req.path + queryString);
+			return res.redirect(301, 'https://' + config.http.host + req.path + queryString);
 		}
 
 		seo.getSEOHtml(req, function(r) {

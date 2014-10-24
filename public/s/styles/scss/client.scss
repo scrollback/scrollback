@@ -16,6 +16,8 @@
 @import "../lace/tooltip";
 @import "../lace/progressbar";
 @import "../lace/linked";
+@import "../lace/filter";
+@import "../lace/assets";
 
 // Import global variables and mixins
 @import "global";
@@ -43,30 +45,6 @@
         margin: auto;
         height: 2em;
         width: 2em;
-    }
-}
-
-@mixin filter($map, $multi) {
-    @each $filter, $states in $map {
-        @each $state in $states {
-            @if (index($multi, $filter) != null) {
-                &:not(.#{$filter}-#{$state}) {
-                    [data-#{$filter}=#{$state}] { display: none; }
-                }
-            } @else {
-                &.#{$filter}-#{$state} {
-                    [data-#{$filter}]:not([data-#{$filter}~=#{$state}]) { display: none; }
-                }
-            }
-        }
-
-        &[class*=#{$filter}-] {
-            [data-#{$filter}=none] { display: none; }
-        }
-
-        &:not([class*=#{$filter}-]) {
-            [data-#{$filter}]:not([data-#{$filter}=none]) { display: none; }
-        }
     }
 }
 
@@ -492,6 +470,9 @@ body {
     color: $dark-color;
     border-right: 4px solid lighten($dark-color, 15%);
     cursor: pointer;
+    box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.05);
+
+    &:last-of-type { box-shadow: none; }
 
     &:first-letter { text-transform: uppercase; } /* make the first letter uppercase, only works in webkit */
 
@@ -970,14 +951,24 @@ body {
     }
 }
 
-.chat-area {
-    @extend %scroll-elem;
-
+.chat-area-container {
     position: absolute;
     top: $bar-height;
     bottom: $bar-height;
     right: 0;
     left: 0;
+    overflow: hidden!important;
+}
+
+
+.chat-area {
+    @extend %scroll-elem;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
     background-color: $light-color;
 
     .infinite-above, .infinite-below {
@@ -1007,21 +998,53 @@ body {
     }
 }
 
-.chat-position {
-    @include opacity(1);
+%chat-quick-action {
+    @include opacity(0);
     @extend %transition;
 
-    position: relative;
-    float: right;
-    margin: 1em;
-    padding: .5em 1em;
+    position: absolute;
+    right: 2em;
+    padding: .75em 1em;
+    font-weight: 700;
+    border-radius: $roundness;
+    z-index: 20;
+    pointer-events: none;
+
+    &.visible { @include opacity(1); }
+}
+
+.chat-position {
+    @extend %chat-quick-action;
+
     background-color: $dark-color;
     color: $light-color;
-    border-radius: $roundness;
-    pointer-events: none;
-    z-index: 20;
+    cursor: pointer;
+    top: 1em;
+}
 
-    &:empty, &.hidden { @include opacity(0); }
+.chat-scroll-to-bottom {
+    @include transform(translate3d(0, 100%, 0));
+    @extend %chat-quick-action;
+
+    background-color: $info-color;
+    color: $light-color;
+    cursor: pointer;
+    bottom: 1em;
+
+    &:focus, &:hover { background-color: darken($info-color, 5%); }
+
+    &:active { background-color: darken($info-color, 10%); }
+
+    &:before {
+        content: "\21e3";
+        margin-right: .5em;
+    }
+
+    &.visible {
+        @include transform(translate3d(0, 0, 0));
+
+        pointer-events: auto;
+    }
 }
 
 .chat-item {
@@ -1665,6 +1688,41 @@ $dotshadow: fade-out($accent-color, .6);
 
 .signedout-dialog, .signin-dialog, .signup-dialog {
     input, .button { width: 100%; }
+}
+
+.popover-calls-to-action {
+    width: 18em;
+    font-weight: 700;
+    background-color: $info-color;
+    color: $light-color;
+    border-color: $info-color;
+
+    .popover-content { padding: 1em; }
+
+    .popover-got-it {
+        @extend %snappy;
+
+        background-color: rgba(0,0,0,.1);
+        padding: 1em;
+        text-transform: uppercase;
+        cursor: pointer;
+
+        &:focus, &:hover { background-color: rgba(0,0,0,.2); }
+
+        &:active { background-color: rgba(0,0,0,.3); }
+
+        &:before {
+            @include asset-content("check");
+
+            vertical-align: -.2em;
+            margin-right: 1em;
+        }
+    }
+
+    &.popover-body:before {
+        background-image: linear-gradient(135deg, $info-color 60%, $info-color 60%, transparent 60%);
+        border-color: $info-color;
+    }
 }
 
 .ie-warning {

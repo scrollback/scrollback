@@ -1,19 +1,19 @@
 var config = require("../config.js");
 var internalSession = Object.keys(config.whitelists)[0];
 module.exports = function(core) {
-    
+
     core.on("getTexts", function(query, next) {
         if(query.session == internalSession) return next();
-        
+
         if(!query.results || !query.results.length) return next();
         if(query.user.role === 'su') return next();
-        
+
         query.results.forEach(function(e) {
             e && delete e.session;
         });
         next();
     },"watcher");
-    
+
     core.on("getRooms", function(query, next) {
         if(query.session == internalSession) return next(); // will be removed when we use app specific users.
         if(!query.results || !query.results.length) return next();
@@ -28,7 +28,7 @@ module.exports = function(core) {
 		if(query.hasMember === query.user.id || query.hasMember === "me") {
 			query.results.forEach(function(e) {
 				if(e && e.role !== "owner") censor(e);
-			});	
+			});
 		} else {
 			query.results = query.results.map(censor);
 		}
@@ -46,10 +46,10 @@ module.exports = function(core) {
 		next();
         }
     }, "watcher");
-    
+
     core.on("getUsers", function(query, next) {
         if(query.session == internalSession) return next();
-        
+
         if(!query.results || !query.results.length) return next();
         if(query.ref &&( query.ref=="me" || query.user.role === 'su')) return next();
         query.results.forEach(function(e) {
@@ -58,8 +58,8 @@ module.exports = function(core) {
             delete e.identities;
             delete e.sessions;
         });
-        
+
         next();
     },"watcher");
-    
+
 };

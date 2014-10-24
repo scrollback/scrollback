@@ -61,7 +61,9 @@ function returnArray(query, index) {
 
 $(function () {
 	var $logs = $(".chat-area"),
+		$logscontainer = $(".chat-area-container"),
 		$chatPosition = $(".chat-position"),
+		$chatScrollToBottom = $(".chat-scroll-to-bottom");
 		roomName = "",
 		thread = '',
 		time = null;
@@ -228,8 +230,27 @@ $(function () {
 		resetLog(time || null);
 		next();
 	}, 100);
+
+	$chatScrollToBottom.on('click', function() {
+		libsb.emit("navigate", {time: null, source: 'chat-area-scroll-to-bottom'}/*, function() {}*/);
+	});
+
 	libsb.on("navigate", function (state, next) {
 		var reset = false;
+
+		if (state.old && state.time !== state.old.time) {
+			if (state.time) {
+				$chatScrollToBottom.addClass('visible');
+				$chatPosition.addClass("visible").text(format.friendlyTime(state.time, new Date().getTime()));
+				setTimeout(function () {
+					$chatPosition.removeClass("visible");
+				}, 1000);
+			} else {
+				setTimeout(function() {
+					$chatScrollToBottom.removeClass('visible');
+				}, 500);
+			}
+		}
 
 		if (state.source == 'chat-area') return next();
 		if (state.source == "boot") {
@@ -279,7 +300,7 @@ $(function () {
 	};
 
 	chatArea.setPosition = function (bottom) {
-		$logs.css({
+		$logscontainer.css({
 			bottom: bottom
 		});
 
@@ -320,16 +341,6 @@ $(function () {
 			libsb.emit('navigate', {
 				time: time,
 				source: 'chat-area'
-			}, function (err, state) {
-				if (state.old && state.time !== state.old.time) {
-					if (state.time) {
-						$chatPosition.removeClass("hidden").text(format.friendlyTime(state.time, new Date().getTime()));
-
-						setTimeout(function () {
-							$chatPosition.addClass("hidden");
-						}, 1000);
-					}
-				}
 			});
 		}, 500);
 	});
