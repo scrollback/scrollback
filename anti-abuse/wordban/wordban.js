@@ -1,64 +1,86 @@
 var log = require("../../lib/logger.js"),
-    SbError = require("../../lib/SbError.js"),
+	SbError = require("../../lib/SbError.js"),
 	fs = require("fs"),
 	blockWords={},
-	longest = 0;
-
-log("Checking");
+	longest = 0,
+	search = require('./searchPattern'),
+	suffixArray = require('./suffixArray.js'),
+	separators = /[ \t,\:\.]/;
 
 module.exports = function(core) {
 
 	init();
 	core.on('text', function(message, callback) {
 		var room = message.room, text, customWords, index, l;
-
 		log("Heard \"text\" event");
-        if (message.session){
-            var gateway = message.session.substring(0, message.session.indexOf(":"));
-            if(gateway == "irc" || gateway=="twitter") {
-				return callback();
-            }
-        }
-
 		text = message.text;
-		text += " " + message.to;
-
-		if(room.params && room.params.antiAbuse) {
-			if (room.params.antiAbuse.wordblock) {
-				if(rejectable(text)){
-					if(!message.labels) message.labels = {};
+		if(room.params && room.params.antiAbuse && room.params.antiAbuse.spam) {
+			if (room.params.antiAbuse.block && room.params.antiAbuse.block.english) {
+				if (rejectable(text)) {
 					message.labels.abusive = 1;
 					log(message);
 					return callback();
 				}
 			}
 
-			if (message.room.params.antiAbuse.customWords) {
-				customWords = message.room.params.antiAbuse.customWords;
+			if (message.room.params.antiAbuse.customPhrases) {
+				customPhrases = message.room.params.antiAbuse.customPhrases;
 				textMessage = message.text;
-
-				for (index=0, l = customWords.length; index<l; ++index) {
-					if((textMessage.toLowerCase()).indexOf(customWords[index])!= -1) {
-						if(customWords[index]==='') continue;
-						log("You cannot use banned words!");
-						if(!message.labels) message.labels = {};
+				textArray = suffixArray(textMessage);
+				for (var i = 0;i < customPhrases.length;i++) {
+					var phrase = customPhrases[i];
+					var r = search(textMessage, textArray, phrase);
+					if (r >= 0 && isSeparated(text, r, r + phrase.length - 1)) {
+						log.d("Found phrase: ", phrase);
 						message.labels.abusive = 1;
-						break;
+						return callback();
 					}
-				}
+				};
 			}
 		}
-
 		return callback();
 	}, "antiabuse");
 
+	function isSeparated(text, in1, in2) {
+		log.d("Sep:", text, in1, in2);
+		var r1 = in1 === 0;
+		var r2 = in2 === text.length - 1;
+		if (!r1) r1 = separators.test(text.charAt(in1 - 1));
+		if (!r2) r2 =  separators.test(text.charAt(in2 + 1));
+		log.d("Return:", (r1 && r2));
+		return r1 && r2;
+	}
+
 	core.on("room", function(action, callback){
 		var room  = action.room;
-        var text = room.id+(room.name?(" "+room.name):"")+" "+(room.description?(" "+room.description):"");
-		if(rejectable(text)) return callback(new SbError("Abusive_room_name"));
+		var text = room.id + (room.description ? (" " + room.description) : "");
+		if (rejectable(text)) return callback(new SbError("Abusive_room_name"));
 		callback();
 	}, "antiabuse");
+
+	core.on("room", function(action, callback) {
+		var limit = 10000;
+		log.d("room action:", JSON.stringify(action));
+		if (action.room.params && action.room.params.antiAbuse) {
+			var a = action.room.params.antiAbuse.customPhrases;
+			var l = 0;
+			if (a instanceof Array) {
+				var na = [];
+				a.forEach(function(sentance) {
+					l += sentance.length;
+					if (l > limit) {
+						return callback(new Error("ERR_LIMIT_NOT_ALLOWED"));
+					}
+				});
+				callback();
+			} else {
+				callback(new Error("INVALID_WORDBLOCK"));
+			}
+		} else callback();
+	}, "appLevelValidation");
 };
+
+
 
 var init=function(){
 	fs.readFile(__dirname + "/blockedWords.txt","utf-8", function (err, data) {
@@ -84,7 +106,7 @@ var init=function(){
 };
 
 var rejectable = function(text) {
-    log("text", text);
+	log.d("text:", text);
 	var i, l, j, words, phrase;
 	words=text.replace(/\@/g,'a').replace(/\$/g,'s');
 	words = words.toLowerCase().split(/\W+/);
