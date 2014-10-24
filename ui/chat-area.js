@@ -237,8 +237,21 @@ $(function () {
 
 	libsb.on("navigate", function (state, next) {
 		var reset = false;
-		if (chatArea.getPosition() === 0) $chatScrollToBottom.addClass('hidden');
-		else $chatScrollToBottom.removeClass('hidden');
+
+		if (state.old && state.time !== state.old.time) {
+			if (state.time) {
+				$chatScrollToBottom.addClass('visible');
+				$chatPosition.addClass("visible").text(format.friendlyTime(state.time, new Date().getTime()));
+				setTimeout(function () {
+					$chatPosition.removeClass("visible");
+				}, 1000);
+			} else {
+				setTimeout(function() {
+					$chatScrollToBottom.removeClass('visible');
+				}, 500);
+			}
+		}
+
 		if (state.source == 'chat-area') return next();
 		if (state.source == "boot") {
 			roomName = state.roomName || currentState.roomName;
@@ -328,16 +341,6 @@ $(function () {
 			libsb.emit('navigate', {
 				time: time,
 				source: 'chat-area'
-			}, function (err, state) {
-				if (state.old && state.time !== state.old.time) {
-					if (state.time) {
-						$chatPosition.removeClass("hidden").text(format.friendlyTime(state.time, new Date().getTime()));
-
-						setTimeout(function () {
-							$chatPosition.addClass("hidden");
-						}, 1000);
-					}
-				}
 			});
 		}, 500);
 	});

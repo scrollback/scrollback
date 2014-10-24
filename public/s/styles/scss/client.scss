@@ -1017,29 +1017,36 @@ body {
     }
 }
 
-.chat-position, .chat-scroll-to-bottom {
-    @include opacity(1);
+%chat-quick-action {
+    @include opacity(0);
     @extend %transition;
 
     position: absolute;
     right: 2em;
     padding: .75em 1em;
-    background-color: $info-color;
-    color: $light-color;
     font-weight: 700;
     border-radius: $roundness;
     z-index: 20;
+    pointer-events: none;
 
-    &:empty, &.hidden { @include opacity(0); }
+    &.visible { @include opacity(1); }
 }
 
 .chat-position {
+    @extend %chat-quick-action;
+
+    background-color: $dark-color;
+    color: $light-color;
     cursor: pointer;
-    pointer-events: none;
     top: 1em;
 }
 
 .chat-scroll-to-bottom {
+    @include transform(translate3d(0, 100%, 0));
+    @extend %chat-quick-action;
+
+    background-color: $info-color;
+    color: $light-color;
     cursor: pointer;
     bottom: 1em;
 
@@ -1051,7 +1058,12 @@ body {
         content: "\21e3";
         margin-right: .5em;
     }
-    border: 1px solid darken($light-color, 20%);
+
+    &.visible {
+        @include transform(translate3d(0, 0, 0));
+
+        pointer-events: auto;
+    }
 }
 
 .chat-item {
