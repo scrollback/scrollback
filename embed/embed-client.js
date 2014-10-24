@@ -12,7 +12,7 @@ var verificationStatus = false,
 /*  lasting objects*/
 var embed, token, domain, path, preBootQueue = [],
 	queue = [],
-	parentHost, minimized = false;
+	parentHost;
 
 function sendDomainChallenge() {
 	token = Math.random() * Math.random();
@@ -77,14 +77,14 @@ function classesOnLoad(embed) {
 }
 
 function toastChange(state, next) {
-	if (state.source == "embed" && state.hasOwnProperty("minimize")) {
+	if (state.source === "embed" && state.embed && state.embed.form === "toast" && state.hasOwnProperty("minimize")) {
 		if (state.minimize) {
-			minimized = true;
 			$("body").addClass("minimized");
+
 			window.parent.postMessage("minimize", parentHost);
 		} else {
 			$("body").removeClass("minimized");
-			minimized = false;
+
 			window.parent.postMessage("maximize", parentHost);
 		}
 	}
