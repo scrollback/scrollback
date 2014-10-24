@@ -24,21 +24,22 @@ window.onNotificationGCM = function (e) {
 
 	case 'message':
 		console.log(e);
+		// creating the state object.
+		var thread = e.payload.text.threads && e.payload.text.threads[0] ? e.payload.text.threads[0] : "";
+		var state = {
+			roomName: e.payload.text.to,
+			mode: 'normal'
+		};
+
+		if (thread !== "") {
+			state.thread = thread.id;
+		}
 		// e.foreground is true if the notification came in when the user is in the foreground.
 		if (e.foreground) {
 			console.log(e.payload.message);
 			// TODO: Add a lace notification here, if the new new message is not in view. Clicking on this notification 
 			// 		 should navigate user to the message.
 		} else {
-			var thread = e.payload.text.threads && e.payload.text.threads[0] ? e.payload.text.threads[0] : "";
-			var state = {
-				roomName: e.payload.text.to,
-				mode: 'normal'
-			};
-
-			if (thread !== "") {
-				state.thread = thread.id;
-			}
 			if (e.coldstart) {
 				libsb.emit('navigate', state);
 			} else {
@@ -92,50 +93,40 @@ libsb.on('init-dn', function () {
 function mapDevicetoUser(regId) {
 	if (typeof regId === "undefined") return;
 	/* Checks if device is registered to User for push notification, if not adds it */
-	libsb.emit("getUsers", {
-		ref: "me"
-	}, function (e, d) {
-		var user = d.results[0];
-		if (typeof user === "undefined") return;
-		var deviceRegistered = false;
-		if (user && typeof user.params.pushNotifications === "undefined") {
-			user.params.pushNotifications = {
-				devices: []
-			};
-		}
+	var user = libsb.user;
+	if (typeof user === "undefined") return;
 
-		var devices = [];
-
-		devices = user && user.params.pushNotifications &&
-			user.params.pushNotifications.devices ? user.params.pushNotifications.devices : devices;
-
-		devices.forEach(function (device) {
-			if (device && device.hasOwnProperty('registrationId')) {
-				if (device.registrationId === regId) {
-					deviceRegistered = true;
-				}
-			}
-		});
-		var newDevice = {
-			deviceName: device.model,
-			registrationId: regId,
-			enabled: true
+	if (user && typeof user.params.pushNotifications === "undefined") {
+		libsb.user.params.pushNotifications = {
+			devices: []
 		};
-		if (deviceRegistered === false) {
-			devices.push(newDevice);
-			user.params.pushNotifications.devices = devices;
-			libsb.emit('user-up', {
-				user: user
-			});
-		}
-	});
+	}
+
+	var thisDevice = {
+		deviceName: device.model,
+		type: 'GCM',
+		registrationId: regId,
+		enabled: true
+	};
+
+	var devices = user && user.params.pushNotifications &&
+		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
+
+	if (
+		devices.filter(function (d) {
+			return d.type === thisDevice.type && d.registrationId === thisDevice.registrationId;
+		}).length === 0
+	) {
+		devices.push(thisDevice);
+		user.params.pushNotifications.devices = devices;
+		libsb.emit('user-up', {
+			user: user
+		});
+	}
 }
 
 libsb.on('pref-save', function (user, next) {
-	libsb.emit("getUsers", {
-		ref: "me"
-	}, function (e, d) {
-		var params = d.results[0].params;
+		var params = libsb.user.params;
 		if (params && params.hasOwnProperty('pushNotifications')) {
 			user.params.pushNotifications = params.pushNotifications;
 		} else {
@@ -144,5 +135,4 @@ libsb.on('pref-save', function (user, next) {
 			};
 		}
 		next();
-	});
 }, 500);
