@@ -10,13 +10,9 @@ libsb.on('pref-show', function(tabs, next) {
 	description = tabs.user ? tabs.user.description : "";
 	picture = tabs.user ? tabs.user.picture : "";
 
-	$avatar = formField("Picture", null, "pref-user-avatar", $("<a>").append(
-		$("<img>").attr("src", picture),
-		$("<span>").addClass("label").text("Change")
-	).attr({
-		href: "http://gravatar.com/emails",
-		target: "_blank"
-	}).addClass("pref-user-avatar"));
+	$avatar = formField("Picture", null, "pref-user-avatar", $("<span>").append(
+		$("<img>").attr("src", picture)
+	).addClass("pref-user-avatar"));
 
 	$about = formField("About me", "area", "pref-about-me", description);
 

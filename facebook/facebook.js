@@ -49,7 +49,8 @@ function fbAuth(action, callback) {
 							if(!data.results.length) {
 								action.user = {};
 								action.user.identities = ["mailto:" + user.email];
-								action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update( user.email).digest('hex') + '/?d=retro';
+								action.user.picture = "https://graph.facebook.com/"+user.id+"/picture?type=square";
+									//'https://gravatar.com/avatar/' + crypto.createHash('md5').update( user.email).digest('hex') + '/?d=retro';
 								return callback();
 							}
 							action.old = action.user;
