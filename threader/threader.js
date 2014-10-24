@@ -69,14 +69,11 @@ function processReply(data){
    try {
 		log("data=-:" + data + ":-");
 		data = JSON.parse(data);
-		log("Data returned by scrollback.jar = "+data.threadId, pendingCallbacks[data.id].message);
+		log("Data returned by scrollback.jar = "+data.threadId, (pendingCallbacks[data.id] && pendingCallbacks[data.id].message));
 		var id = data.threadId;
 		var title = data.title;
 		var message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
-		if(message) {
-			message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
-			if (!message) return;
-			if(!message.threads) message.threads = [];
+		if (message) {
 			var update = false;
 			for (var i = 0; i < message.threads.length; i++) {
 				var th = message.threads[i];
