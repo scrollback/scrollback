@@ -27,10 +27,6 @@ module.exports = function(capabilities, options){
 			}).then(function(){
 				return driver.findElement(webdriver.By.id('description')).clear();
 			}).then(function(){
-				return driver.findElement(webdriver.By.css('.conf-save')).click();
-			}).then(function(){
-				return driver.findElement(webdriver.By.css('.configure-button')).click();
-			}).then(function(){
 				return driver.findElement(webdriver.By.id('description')).sendKeys(random);
 			}).then(function(){
 				return driver.findElement(webdriver.By.css('.conf-save')).click();
@@ -42,20 +38,20 @@ module.exports = function(capabilities, options){
 				console.log("Room description: ", random);
 				var b = text.indexOf(random) !== -1;
 				assert.equal(b, true, "saving not successful");
-				driver.findElement(webdriver.By.css('.conf-save')).click();
+				/*driver.findElement(webdriver.By.css('.conf-save')).click();*/
 				done();
 			});
 		});
 		
 		it("Permissions test", function(done){
 			this.timeout(4 * timeOut);
-			driver.findElement(webdriver.By.css('.tab-info')).click().
+			/*driver.findElement(webdriver.By.css('.tab-info')).click().
 			then(function(){
 				console.log("configuring room...");
 				return driver.findElement(webdriver.By.css('.configure-button')).click();
 			}).then(function(){
-				return driver.findElement(webdriver.By.css('.list-item-authorizer-settings')).click();
-			}).then(function(){
+				return */driver.findElement(webdriver.By.css('.list-item-authorizer-settings')).click()/*;
+			})*/.then(function(){
 				return driver.findElement(webdriver.By.id('authorizer-post-guest')).click();
 			})/*.then(function(){
 				return driver.findElement(webdriver.By.id('authorizer-post-users')).click();
@@ -77,7 +73,45 @@ module.exports = function(capabilities, options){
 			});
 		});
 		
-		
+		it("Spam control test", function(done){
+			this.timeout(4 * timeOut);
+			driver.findElement(webdriver.By.css('.tab-info')).click().
+			then(function(){
+				console.log("configuring room...");
+				return driver.findElement(webdriver.By.css('.configure-button')).click();
+			}).then(function(){
+				return driver.findElement(webdriver.By.css('.list-item-spam-settings')).click();
+			}).then(function(){
+				return driver.findElement(webdriver.By.id('block-custom')).clear();
+			}).then(function(){
+				return driver.findElement(webdriver.By.css('.conf-save')).click();
+			}).then(function(){
+				return driver.findElement(webdriver.By.css('.configure-button')).click();
+			}).then(function(){
+				return driver.findElement(webdriver.By.css('.list-item-spam-settings')).click();
+			}).then(function(){
+				return driver.findElement(webdriver.By.id('block-custom')).sendKeys(random);
+			}).then(function(){
+				return driver.findElement(webdriver.By.id('list-en-strict')).click();
+			}).then(function(){
+				return driver.findElement(webdriver.By.css('.conf-save')).click();
+			}).then(function(){
+				return driver.findElement(webdriver.By.css(".configure-button")).click();
+			}).then(function(){
+				return driver.findElement(webdriver.By.css('.list-item-spam-settings')).click();
+			}).then(function(){
+				return driver.findElement(webdriver.By.id('list-en-strict')).isEnabled();
+			}).then(function(t){
+				assert.equal(t, true, "saving unsuccessful");
+			}).then(function(){
+				return driver.findElement(webdriver.By.id('block-custom')).getAttribute("value");
+			}).then(function(text){
+				console.log("blocked word is: ", text);
+				var b = text.indexOf(random) !== -1;
+				assert.equal(b, true, "saving not successful");
+				done();
+			});
+		});
 		
 		after(function(done){
 			this.timeout(timeOut);
