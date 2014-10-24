@@ -976,14 +976,24 @@ body {
     }
 }
 
-.chat-area {
-    @extend %scroll-elem;
-
+.chat-area-container {
     position: absolute;
     top: $bar-height;
     bottom: $bar-height;
     right: 0;
     left: 0;
+    overflow: hidden!important;
+}
+
+
+.chat-area {
+    @extend %scroll-elem;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
     background-color: $light-color;
 
     .infinite-above, .infinite-below {
@@ -1013,21 +1023,53 @@ body {
     }
 }
 
-.chat-position {
-    @include opacity(1);
+%chat-quick-action {
+    @include opacity(0);
     @extend %transition;
 
-    position: relative;
-    float: right;
-    margin: 1em;
-    padding: .5em 1em;
+    position: absolute;
+    right: 2em;
+    padding: .75em 1em;
+    font-weight: 700;
+    border-radius: $roundness;
+    z-index: 20;
+    pointer-events: none;
+
+    &.visible { @include opacity(1); }
+}
+
+.chat-position {
+    @extend %chat-quick-action;
+
     background-color: $dark-color;
     color: $light-color;
-    border-radius: $roundness;
-    pointer-events: none;
-    z-index: 20;
+    cursor: pointer;
+    top: 1em;
+}
 
-    &:empty, &.hidden { @include opacity(0); }
+.chat-scroll-to-bottom {
+    @include transform(translate3d(0, 100%, 0));
+    @extend %chat-quick-action;
+
+    background-color: $info-color;
+    color: $light-color;
+    cursor: pointer;
+    bottom: 1em;
+
+    &:focus, &:hover { background-color: darken($info-color, 5%); }
+
+    &:active { background-color: darken($info-color, 10%); }
+
+    &:before {
+        content: "\21e3";
+        margin-right: .5em;
+    }
+
+    &.visible {
+        @include transform(translate3d(0, 0, 0));
+
+        pointer-events: auto;
+    }
 }
 
 .chat-item {
