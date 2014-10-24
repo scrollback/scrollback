@@ -11,7 +11,6 @@ var pushNotification, regId;
 
 window.onNotificationGCM = function (e) {
 	// handler for push notifications.
-	console.log("Got notification", e.event);
 
 	switch (e.event) {
 	case 'registered':
