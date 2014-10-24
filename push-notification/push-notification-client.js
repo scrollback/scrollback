@@ -1,5 +1,5 @@
 /* jshint browser:true */
-/* global libsb, device */
+/* global libsb, device, $ */
 
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
@@ -36,9 +36,13 @@ window.onNotificationGCM = function (e) {
 		}
 		// e.foreground is true if the notification came in when the user is in the foreground.
 		if (e.foreground) {
-			console.log(e.payload.message);
+			console.log("In foreground ", e.payload.message);
 			// TODO: Add a lace notification here, if the new new message is not in view. Clicking on this notification 
 			// 		 should navigate user to the message.
+			var $notif = $('<div>').html(e.payload.title + "<a class='pushnotif-navigate'>Click here to view it.</a>").alertbar();
+			$notif.find('.pushnotif-navigate').click(function (){
+				libsb.emit("navigate", state);
+			});
 		} else {
 			if (e.coldstart) {
 				setTimeout(function () {
