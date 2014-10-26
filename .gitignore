@@ -2,6 +2,7 @@
 
 .*
 !.gitignore
+!.pre-commit
 !.jscs.json
 !.jshintrc
 !.jsbeautifyrc
