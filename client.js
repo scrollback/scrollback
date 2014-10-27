@@ -75,7 +75,7 @@ require('./ui/person.js');
 require('./ui/people-area.js');
 require('./ui/info-area.js');
 require('./ui/room-item.js');
-require('./ui/room-list.js')(libsb);
+require('./ui/room-list.js');
 require('./ui/search.js');
 require('./ui/follow-room.js');
 require('./ui/facebook.js');
