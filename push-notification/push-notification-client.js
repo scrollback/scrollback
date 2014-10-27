@@ -94,8 +94,9 @@ function errorHandler(error) {
 	console.log('registration error = ' + error);
 }
 
-libsb.on('init-dn', function () {
+libsb.on('init-dn', function (init, next) {
 	mapDevicetoUser(localStorage.phonegapRegId);
+	next();
 }, 100);
 
 function mapDevicetoUser(regId) {
