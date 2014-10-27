@@ -6,10 +6,13 @@ var gulp = require("gulp"),
 	source = require("vinyl-source-stream"),
 	buffer = require("vinyl-buffer"),
 	es = require("event-stream"),
+	map = require("map-stream"),
 	lazypipe = require("lazypipe"),
 	plumber = require("gulp-plumber"),
 	gutil = require("gulp-util"),
 	jshint = require("gulp-jshint"),
+	gitmodified = require("gulp-gitmodified"),
+	symlink = require("gulp-symlink"),
 	concat = require("gulp-concat"),
 	striplogs = require("gulp-strip-debug"),
 	uglify = require("gulp-uglify"),
@@ -28,10 +31,9 @@ var gulp = require("gulp"),
 	},
 	files = {
 		js: [
-			"*/*-client.js",
-			"lib/*.js", "ui/*.js",
-			"public/client.js", "public/libsb.js", "client-init/*.js",
-			"client-entityloader/*.js", "localStorage/*.js", "socket/*.js", "interface/*.js"
+			"*/*{.js,/**/*.js}",
+			"!*/*{.min.js,/**/*.min.js}",
+			"!node_modules{,/**}", "!bower_components{,/**}"
 		],
 	   css: [ "public/s/styles/scss/*.scss" ]
 	};
@@ -83,16 +85,26 @@ var buildscripts = lazypipe()
 	.pipe(!debug ? uglify : gutil.noop)
 	.pipe(!debug ? striplogs : gutil.noop);
 
+// Install the pre-commit hook
+gulp.task("hook", function() {
+	return gulp.src(".pre-commit")
+	.pipe(symlink(".git/hooks/pre-commit"));
+});
+
 // Lint JavaScript files
 gulp.task("lint", function() {
-	return gulp.src([
-		"*/*{.js,/*.js,/*/*.js}",
-		"!*/*{.min.js,/*.min.js,/*/*.min.js}",
-		"!node_modules{,/**}", "!bower_components{,/**}"
-	])
+	return gulp.src(files.js)
 	.pipe(plumber())
+	.pipe(gitmodified("modified"))
 	.pipe(jshint())
 	.pipe(jshint.reporter("jshint-stylish"))
+	.pipe(map(function(file, cb) {
+		if (!file.jshint.success) {
+			process.exit(1);
+		}
+
+		cb(null, file);
+	}))
 	.on("error", gutil.log);
 });
 
@@ -228,4 +240,4 @@ gulp.task("watch", function() {
 });
 
 // Default Task
-gulp.task("default", [ "scripts", "styles", "manifest" ]);
+gulp.task("default", [ "lint", "scripts", "styles", "manifest" ]);
