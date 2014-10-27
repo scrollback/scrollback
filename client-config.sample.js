@@ -8,5 +8,8 @@ module.exports = {
     },
     localStorage: {
         version: 1.0
+    },
+    errorception: {
+        id: "XXXXXXXXXXXXXXXXX"//https://errorception.com/ project id
     }
 };
