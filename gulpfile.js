@@ -35,7 +35,7 @@ var gulp = require("gulp"),
 			"!*/*{.min.js,/**/*.min.js}",
 			"!node_modules{,/**}", "!bower_components{,/**}"
 		],
-	   css: [ "public/s/styles/scss/*.scss" ]
+		css: [ "public/s/styles/scss/*.scss" ]
 	};
 
 // Make browserify bundle
