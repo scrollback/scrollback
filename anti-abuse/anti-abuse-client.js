@@ -6,9 +6,10 @@ var formField = require("../lib/formField.js");
 libsb.on("config-show", function(tabs, next) {
 	var room = tabs.room, lists;
 	if (!room.params) room.params = {};
-	if (!room.params.antiAbuse) {
-		room.params.antiAbuse = {block: {english: false}, customPhrases: [], spam: true};
-	}
+	if (!room.params.antiAbuse) room.params.antiAbuse = {};
+	if (!room.params.antiAbuse.block) room.params.antiAbuse.block = {english: false};
+	if (!room.params.antiAbuse.customPhrases) room.params.antiAbuse.customPhrases = [];
+	if (!room.params.antiAbuse.spam) room.params.antiAbuse.spam = true;
 	var antiAbuse = room.params.antiAbuse;
 	var $div = $("<div>").append(
 		formField("Spam control", "toggle", "spam-control", antiAbuse.spam),

@@ -23,6 +23,7 @@ require('./public/s/scripts/lib/jquery.progressbar.js');
 var libsb = require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(libsb);
 require('./socket/socket-client')(libsb);
+require('./calls-to-action/calls-to-action-client.js');
 
 // bootup related
 require('./client-init/client-init.js')(libsb);
@@ -55,6 +56,7 @@ require('./http/logout-client.js');
 require('./facebook/facebook-client.js');
 require('./github/github-client.js');
 require('./persona/persona-client.js');
+require('./push-notification/push-notification-client.js');
 
 // components
 require('./ui/quicknotify.js');

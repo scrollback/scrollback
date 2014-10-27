@@ -50,7 +50,7 @@ module.exports = function (l) {
     window.libsb = libsb; // still being used.
     addProperties(libsb);
     
-    libsb.on('init-dn', recvInit, 1000);
+    libsb.on('init-dn', recvInit, 999); // should run after the local storage quick settings thing.
     libsb.on('back-dn', recvBack, 1000);
     libsb.on('away-dn', recvAway, 1000);
     libsb.on('join-dn', recvJoin, 1000);
@@ -180,9 +180,6 @@ function recvInit(init, next) {
     libsb.memberOf = init.memberOf;
     libsb.occupantOf = init.occupantOf;
 	libsb.isInited = true;
-    if (init.auth && !init.user.id) {
-        libsb.emit("navigate", {});
-    }
     libsb.user = init.user;
     next();
 }

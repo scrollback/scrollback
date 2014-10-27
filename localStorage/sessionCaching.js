@@ -26,6 +26,11 @@ module.exports = function (objCacheOps) {
 		init.session = sid;
 		return next();
 	}, "validation");
+	
+	libsb.on('user-dn', function (user, next) {
+		libsb.user = user.user;
+		next();
+	}, 1000);
 
 
 	libsb.on('init-dn', function (init, next) {
@@ -33,6 +38,8 @@ module.exports = function (objCacheOps) {
 		if (init.auth && !init.user.id) return next();
 
 		var user = init.user;
+		
+		libsb.user = user;
 		
 		var occupantOf = init.occupantOf;
 		var memberOf = init.memberOf;
