@@ -79,17 +79,6 @@ function prefix(str, arr) {
 	return prefixed;
 }
 
-// Custom error reporter for jshint
-function reporterror() {
-	return map(function(file, cb) {
-		if (!file.jshint.success) {
-			process.exit(1);
-		}
-
-		cb(null, file);
-	});
-}
-
 // Lazy pipe for building scripts
 var buildscripts = lazypipe()
 	.pipe(plumber)
@@ -109,7 +98,13 @@ gulp.task("lint", function() {
 	.pipe(gitmodified("modified"))
 	.pipe(jshint())
 	.pipe(jshint.reporter("jshint-stylish"))
-	.pipe(reporterror())
+	.pipe(map(function(file, cb) {
+		if (!file.jshint.success) {
+			process.exit(1);
+		}
+
+		cb(null, file);
+	}))
 	.on("error", gutil.log);
 });
 
