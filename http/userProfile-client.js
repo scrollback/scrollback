@@ -4,22 +4,23 @@
 //user profile settings
 var formField = require("../lib/formField.js");
 var pictureSelected = "";
-
+var pictureList = [];
 
 libsb.on("init-dn", function(action, next) {
 	pictureSelected = action.user.picture;
+	pictureList = action.user.params.pictures;
 	next();
 }, 100);
 
 libsb.on("user-dn", function(action, next) {
 	pictureSelected = action.user.picture;
+	pictureList = action.user.params.pictures;
 	next();
 }, 100);
 
 libsb.on("user-up", function(action, next) {
-	
 	action.user.picture = pictureSelected;
-	console.log(action.user);
+	if(pictureList) action.user.params.pictures = pictureList;
 	next();
 }, 100);
 
