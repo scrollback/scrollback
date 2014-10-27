@@ -7,6 +7,7 @@ module.exports = function (objCacheOps) {
 		}
 		// run before socket
 		if (query.hasOwnProperty("memberOf")) {
+			if (!objCacheOps.hasKnowledgeOf("members", query.memberOf)) return next();
 			// fetching member info
 			if (query.hasOwnProperty("ref")) { // info for a single member
 				objCacheOps.getMembers(query.memberOf, query.ref, function (data) {
@@ -24,6 +25,7 @@ module.exports = function (objCacheOps) {
 				});
 			}
 		} else if (query.hasOwnProperty("occupantOf")) {
+			if (!objCacheOps.hasKnowledgeOf("occupants", query.occupantOf)) return next();
 			// fetch occupant info
 			objCacheOps.getOccupants(query.occupantOf, null, function(results) {
 				if (results === null) return next();
