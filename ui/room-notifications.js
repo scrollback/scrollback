@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $, libsb */
 
-function updateNotifier(roomName, type){
+function updateNotifier(roomName, type) {
 	var $roomItem = $("[data-room='" + roomName + "']"),
 		$badge = $roomItem.find(".js-room-notifications-counter"),
 		counter;
@@ -10,7 +10,7 @@ function updateNotifier(roomName, type){
 		return;
 	}
 
-	if (type === "remove"){
+	if (type === "remove") {
 		$badge.removeClass("mentioned").text("");
 
 		return;
@@ -51,7 +51,7 @@ libsb.on("text-dn", function(text, next) {
 }, 1000);
 
 libsb.on("navigate", function(state, next) {
-	if (state.roomName !== state.old.roomName){
+	if (state.roomName !== state.old.roomName) {
 		updateNotifier(state.roomName, "remove");
 	}
 

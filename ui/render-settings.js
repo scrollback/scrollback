@@ -7,7 +7,7 @@ function renderSettings(tabs) {
 		data = [];
 
 	for (var tab in tabs) {
-		data.push([ tabs[tab].prio, tab, tabs[tab] ]);
+		data.push([tabs[tab].prio, tab, tabs[tab]]);
 	}
 
 	data.sort(function(a, b) {
@@ -39,7 +39,9 @@ function renderSettings(tabs) {
 			break;
 	}
 
-	libsb.emit("navigate", { tab: data[0][1] });
+	libsb.emit("navigate", {
+		tab: data[0][1]
+	});
 
 	addErrors(currentState.room);
 
@@ -60,12 +62,16 @@ libsb.on("room-dn", function(action, next) {
 			errorTab = i;
 		}
 	}
-	if (error){
-		libsb.emit("config-show", { room: action.room }, function(err, tabs) {
+	if (error) {
+		libsb.emit("config-show", {
+			room: action.room
+		}, function(err, tabs) {
 			delete tabs.room;
 			renderSettings(tabs);
 			$(".list-item-" + errorTab + "-settings").addClass("error");
-			libsb.emit("navigate", { tab: errorTab });
+			libsb.emit("navigate", {
+				tab: errorTab
+			});
 		});
 	}
 	next();
