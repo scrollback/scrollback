@@ -88,7 +88,7 @@ var buildscripts = lazypipe()
 // Install the pre-commit hook
 gulp.task("hook", function() {
 	return gulp.src(".pre-commit")
-	.pipe(symlink(".git/hooks/pre-commit"));
+	.pipe(symlink(".git/hooks/pre-commit", { force: true }));
 });
 
 // Lint JavaScript files
