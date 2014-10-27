@@ -2,8 +2,10 @@
 
 .*
 !.gitignore
+!.pre-commit
 !.jscs.json
 !.jshintrc
+!.jsbeautifyrc
 
 *.seed
 *.log
@@ -33,13 +35,13 @@ client-config.js
 
 /ircClient/myConfig.js
 /ircClient/Data
+
 /test/config.js
-
-
 
 /public/s/styles/lace
 /public/s/styles/dist
 /public/s/scripts/lib
 /public/s/tmp/*
+
 /mocha-output-selenium.json
 /mocha-output-unit.json
