@@ -9,12 +9,18 @@ var pictureList = [];
 libsb.on("init-dn", function(action, next) {
 	pictureSelected = action.user.picture;
 	pictureList = action.user.params.pictures;
+	if(!pictureList && !/^guest-/.test(action.user.id)) {
+		pictureList = [pictureSelected];
+	}
 	next();
 }, 100);
 
 libsb.on("user-dn", function(action, next) {
 	pictureSelected = action.user.picture;
 	pictureList = action.user.params.pictures;
+	if(!pictureList) {
+		pictureList = [pictureSelected];
+	}
 	next();
 }, 100);
 
@@ -30,14 +36,15 @@ libsb.on('pref-show', function(tabs, next) {
 
 	description = tabs.user ? tabs.user.description : "";
 	picture = tabs.user ? tabs.user.picture : "";
-	
 	var imgList = [];
-	
+	if(tabs.user.params && !tabs.user.params.pictures) {
+		tabs.user.params.pictures = pictureList;
+	}
 	if(tabs.user.params && tabs.user.params.pictures) {
 		tabs.user.params.pictures.forEach(function(pic) {
 			var ava = $("<span>").append(
 				$("<img>").attr("src", pic)
-			).addClass("pref-user-avatar").data("url", pic);;
+			).addClass("pref-user-avatar").data("url", pic);
 			
 			if(pic === tabs.user.picture) ava.addClass("current");
 			imgList.push(ava);
