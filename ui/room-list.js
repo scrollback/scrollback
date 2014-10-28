@@ -22,6 +22,7 @@ function enter(room) {
 	if (rooms.indexOf(roomName) < 0) {
 		rooms.push(roomName);
 		roomObjs[roomName] = room;
+		resetRooms();
 	}
 
 	if (currentState.connectionStatus == "online") {
@@ -198,13 +199,7 @@ module.exports = function(libsb) {
 	}, 10);
 
 	libsb.on("navigate", function(state, next) {
-		if (state.old && state.room !== state.old.room) {
-			$(".room-item.current").removeClass("current");
-
-			if (state.roomName) {
-				$("#room-item-" + state.roomName).addClass("current");
-			}
-		}
+		
 
 		if (state.connectionStatus !== "online" && (!state.old || state.old.connectionStatus == "online")) {
 			Object.keys(listening).forEach(function(e) {
@@ -215,6 +210,14 @@ module.exports = function(libsb) {
 				enter({ id: e });
 			});
 		}
+		
+		if (state.old && state.roomName !== state.old.roomName) {
+			$(".room-item.current").removeClass("current");
+			enter(state.room);
+			if (state.roomName) {
+				$("#room-item-" + state.roomName).addClass("current");
+			}
+		}
 		next();
-	}, 100);
+	}, 99);
 };

@@ -27,7 +27,6 @@ function init(libsb) {
 
 	libsb.on("navigate", function (state, next) {
 		if (state.source == "boot") return next();
-		if (state.connectionStatus != "online") isInited = false;
 
 		if (!libsb.hasBooted) {
 			// add more sources if the navigate has to be queued up.
@@ -36,6 +35,10 @@ function init(libsb) {
 		}
 		next();
 	}, 1000);
+	libsb.on("navigate", function(state, next) {
+		if (state.connectionStatus != "online") isInited = false;
+		next();
+	}, 500);
 }
 
 module.exports = function (l) {
