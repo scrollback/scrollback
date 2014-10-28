@@ -54,6 +54,7 @@ require('./customization/customization-client.js');
 // user menus
 require('./http/logout-client.js');
 require('./facebook/facebook-client.js');
+require('./google/google-client.js');
 require('./github/github-client.js');
 require('./persona/persona-client.js');
 require('./push-notification/push-notification-client.js');

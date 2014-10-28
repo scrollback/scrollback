@@ -1,0 +1,5 @@
+html
+	head
+		body
+			script.
+				location.href='https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login'+'client_id=#{client_id}'+'&redirect_uri='+encodeURIComponent("#{redirect_uri}")+'&response_type=code&access_type=offline';
