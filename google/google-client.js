@@ -8,9 +8,9 @@ function loginWithGoogle() {
 
 $('.js-phonegap-fb-login').click(loginWithGoogle);
 
-libsb.on('auth-menu', function (menu, next) {
+libsb.on('auth-menu', function(menu, next) {
 	menu.buttons.google = {
-		text: 'Google',	
+		text: 'Google',
 		prio: 100,
 		action: loginWithGoogle
 	};

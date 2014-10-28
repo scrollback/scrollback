@@ -79,7 +79,7 @@ require('./ui/room-item.js');
 require('./ui/room-list.js')(libsb);
 require('./ui/search.js');
 require('./ui/follow-room.js');
-require('./ui/facebook.js');
+require('./ui/oauth-listener.js');
 require('./ui/conf-area.js');
 require('./ui/pref-area.js');
 require('./ui/noroom-area.js');

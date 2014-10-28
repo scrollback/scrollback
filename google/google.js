@@ -1,22 +1,79 @@
 var core;
-
-
+var config = require("../config.js"),
+	request = require("request"),
+	core;
 module.exports = function(c) {
 	core = c;
-	core.on("http/init", onInit, "setters");
-	core.on("init", fbAuth, "authentication");
+	if (!config.google || !config.google.client_id || !config.google.client_secret) {
+		console.log("Missing google params:");
+		return;
+	}
+	core.on("http/init", function(payload, callback) {
+		payload.push({
+			get: {
+				"/r/google/*": handlerRequest
+			}
+		});
+		callback(null, payload);
+	}, "setters");
+
+
+	core.on("init", function(action, callback) {
+
+		if (action.auth && action.auth.google) {
+			request.post({
+				uri: "https://accounts.google.com/o/oauth2/token",
+				headers: {
+					'content-type': 'application/x-www-form-urlencoded'
+				},
+				body: require('querystring').stringify({
+					code: action.auth.google.code,
+					redirect_uri: "https://" + config.http.host + "/r/google/return",
+					client_id: config.google.client_id,
+					client_secret: config.google.client_secret,
+					grant_type: "authorization_code"
+				})
+			}, function(err, res, body) {
+				if (err) return callback(err);
+				try {
+					body = JSON.parse(body);
+					console.log(body);
+
+
+					request("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + body.access_token, function(err, res, body) {
+						if (err) return callback(err);
+						try {
+							body = JSON.parse(body);
+							console.log(body);
+						} catch (e) {
+							return callback(e);
+						}
+					});
+				} catch (e) {
+					return callback(e);
+				}
+			});
+
+		} else {
+			callback();
+		}
+
+	}, "authentication");
 };
 
 function handlerRequest(req, res) {
-	var path = req.path.substring(1);
+	var path = req.path.substring(3);
 	path = path.split("/");
-	if(path[0] == "login") {
-		return res.render(__dirname+"/login.jade", {
-			client_id: config.facebook.client_id,
-			redirect_uri: "https://"+config.http.host+"/r/facebook/return"
-		});
+	if (path[0] == "google") {
+		if (path[1] == "login") {
+			console.log("Google loging:");
+			return res.render(__dirname + "/login.jade", {
+				client_id: config.google.client_id,
+				redirect_uri: "https://" + config.http.host + "/r/google/return"
+			});
+		} else if (path[1] == "return") {
+			return res.render(__dirname + "/return.jade", {});
+		}
 	}
-	if(path[0] == "return") {
-		return res.render(__dirname+"/return.jade", {});
-	}
+
 }

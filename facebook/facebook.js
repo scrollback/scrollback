@@ -67,16 +67,20 @@ function fbAuth(action, callback) {
 	}
 }
 
-function handlerRequest(req, res) {
-	var path = req.path.substring(12);
+function handlerRequest(req, res, next) {
+	var path = req.path.substring(3);
 	path = path.split("/");
-	if(path[0] == "login") {
-		return res.render(__dirname+"/login.jade", {
-			client_id: config.facebook.client_id,
-			redirect_uri: "https://"+config.http.host+"/r/facebook/return"
-		});
-	}
-	if(path[0] == "return") {
-		return res.render(__dirname+"/return.jade", {});
+	if(path[0]==="facebook") {
+		if(path[1] == "login") {
+			return res.render(__dirname+"/login.jade", {
+				client_id: config.facebook.client_id,
+				redirect_uri: "https://"+config.http.host+"/r/facebook/return"
+			});
+		}
+		if(path[1] == "return") {
+			return res.render(__dirname+"/return.jade", {});
+		}	
+	}else {
+		next();
 	}
 }

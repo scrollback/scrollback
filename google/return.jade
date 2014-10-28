@@ -1,0 +1,24 @@
+html
+	head
+		title facebook callback
+	body
+		script
+			var params = location.search.substring(1).split("&"), l,i, split, code;
+			for(i=0,l=params.length;i<l;i++) {
+				split = params[i].split("=");
+				if(split[0]=="code") {
+					code = split[1];
+					break;
+				}
+			}
+			window.postedMessages = [];
+			var auth = {
+				command:"signin",
+				auth: {
+					google:{
+						code: code
+					}
+				}
+			};
+			window.postedMessages.push(auth);
+			window.opener.postMessage(auth,"*");

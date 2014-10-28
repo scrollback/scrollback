@@ -119,6 +119,8 @@ var defaults = {
 
 	},
 	facebook: {
+	},
+	google:{
 	}
 };
 
