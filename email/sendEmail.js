@@ -1,5 +1,5 @@
 var nodemailer = require('nodemailer');
-var log = require("../lib/logger.js").tag("mail");
+var log = require("../lib/logger.js");
 var config = require('../config.js');
 var emailConfig = config.email;
 var transport = nodemailer.createTransport("SMTP", {
