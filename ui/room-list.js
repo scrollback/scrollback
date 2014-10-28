@@ -143,6 +143,78 @@ $(function() {
 			time: null
 		});
 	});
+
+	// Handle create new room
+	$(".js-create-room").on("click", function() {
+		var $createRoomDialog = $("<div>").html($("#createroom-dialog").html()).modal(),
+			$createRoomEntry = $createRoomDialog.find("#createroom-id"),
+			$createRoomButton = $createRoomDialog.find("#createroom-save"),
+			$errorMsg = $(),
+			showError = function(error) {
+				if (!error) {
+					$createRoomEntry.removeClass("error");
+					$errorMsg.popover("dismiss");
+					$createRoomDialog.modal("dismiss");
+
+					return;
+				}
+
+				$createRoomEntry.addClass("error");
+
+				$errorMsg = $("<div>").addClass("error").text(error).popover({
+					origin: $createRoomEntry
+				});
+			};
+
+		$createRoomEntry.on("change input paste", function() {
+			$(this).removeClass("error");
+		});
+
+		$createRoomDialog.find("#createroom").on("submit", function(e) {
+			var name = $createRoomEntry.val();
+
+			e.preventDefault();
+
+			if (typeof name !== "string") {
+				showError("Room name cannot be empty!");
+			} else if (name.length < 3) {
+				showError("Room name must be at least 3 letters long.");
+			} else if (/[^0-9a-z\-]/.test(name)) {
+				showError("Room name can contain only lowercase letters, digits and hyphens (-)");
+			} else if (/^[^a-z]/.test(name)) {
+				showError("Room name must start with a lower case letter.");
+			} else {
+				$createRoomButton.addClass("loading");
+
+				libsb.emit("getRooms", { ref: name }, function(err, res) {
+					$createRoomButton.removeClass("loading");
+
+					if (res && res.results && res.results.length) {
+						showError("Another room with same name already exists!");
+					} else {
+						showError(false);
+
+						libsb.emit("room-up", {
+							to: name,
+							room: {
+								id: name,
+								description: "",
+								params: {},
+								guides: {}
+							}
+						}, function() {
+							libsb.emit("navigate", {
+								roomName: name,
+								mode: "normal",
+								tab: "info",
+								time: null
+							});
+						});
+					}
+				});
+			}
+		});
+	});
 });
 
 libsb.on("navigate", function(state, next) {

@@ -168,6 +168,36 @@ body {
     }
 }
 
+.room-area-create-new {
+    position: absolute;
+    display: block;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    margin: 0;
+    padding: .75em 0;
+    color: $light-color;
+    text-transform: uppercase;
+    border-top: 1px solid lighten($dark-color, 5%);
+
+    &:hover, &:focus {
+        color: $light-color;
+        background-color: rgba(0,0,0,.3);
+    }
+
+    &:active {
+        color: $light-color;
+        background-color: rgba(0,0,0,.5);
+    }
+
+    &:before {
+        content: "+";
+        font-size: 1.5em;
+        vertical-align: -.1em;
+        margin: 0 .5em;
+    }
+}
+
 .meta-area {
     @extend %column;
 
@@ -1686,18 +1716,38 @@ $dotshadow: fade-out($accent-color, .6);
 
 .infinite-items { width: 100%; }
 
-.signedout-dialog, .signin-dialog, .signup-dialog {
+.signedout-dialog, .signin-dialog, .signup-dialog, .createroom-dialog {
     input, .button { width: 100%; }
 }
 
+.popover-body {
+    $types: (
+        info: $info-color,
+        success: $success-color,
+        warning: $warning-color,
+        error: $error-color
+    );
+
+    @each $type, $color in $types {
+        &.#{$type} {
+            padding: 1em;
+            background-color: $color;
+            color: $light-color;
+            border-color: $color;
+
+            &.popover-body:before {
+                background-image: linear-gradient(135deg, $color 60%, $info-color 60%, transparent 60%);
+                border-color: $color;
+            }
+        }
+    }
+}
+
 .popover-calls-to-action {
+    @extend .popover-body.info;
+
     width: 18em;
     font-weight: 700;
-    background-color: $info-color;
-    color: $light-color;
-    border-color: $info-color;
-
-    .popover-content { padding: 1em; }
 
     .popover-got-it {
         @extend %snappy;
@@ -1717,11 +1767,6 @@ $dotshadow: fade-out($accent-color, .6);
             vertical-align: -.2em;
             margin-right: 1em;
         }
-    }
-
-    &.popover-body:before {
-        background-image: linear-gradient(135deg, $info-color 60%, $info-color 60%, transparent 60%);
-        border-color: $info-color;
     }
 }
 
