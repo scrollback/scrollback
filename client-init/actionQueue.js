@@ -1,11 +1,11 @@
 var queue = [];
 
-module.exports = function () {
+module.exports = function() {
 	return {
-		enQueue: function (foo) {
+		enQueue: function(foo) {
 			queue.push(foo);
 		},
-		processAll: function () {
+		processAll: function() {
 			while (queue.length)(queue.shift())();
 		}
 	};
