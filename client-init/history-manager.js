@@ -36,20 +36,20 @@ module.exports = function(l) {
 
 function updateTitle(state) {
 	switch (state.mode) {
-	case "conf":
-		document.title = (currentState.tab ? (currentState.tab.charAt(0).toUpperCase() + currentState.tab.slice(1)) : "Room") + " settings" + (currentState.roomName ? ( " - "  + currentState.roomName) : "");
-		break;
-	case "pref":
-		document.title = "Account settings - " + (libsb.user ? libsb.user.id : "Scrollback");
-		break;
-	case "search":
-		document.title = "Results for " + state.query + " - Scrollback";
-		break;
-	case "home":
-		document.title = "My rooms on Scrollback";
-		break;
-	default:
-		document.title = state.roomName ? state.roomName + " on Scrollback" : "Scrollback.io";
+		case "conf":
+			document.title = (currentState.tab ? (currentState.tab.charAt(0).toUpperCase() + currentState.tab.slice(1)) : "Room") + " settings" + (currentState.roomName ? (" - " + currentState.roomName) : "");
+			break;
+		case "pref":
+			document.title = "Account settings - " + (libsb.user ? libsb.user.id : "Scrollback");
+			break;
+		case "search":
+			document.title = "Results for " + state.query + " - Scrollback";
+			break;
+		case "home":
+			document.title = "My rooms on Scrollback";
+			break;
+		default:
+			document.title = state.roomName ? state.roomName + " on Scrollback" : "Scrollback.io";
 	}
 }
 
@@ -57,22 +57,22 @@ function buildUrl(state) {
 	var path, params = [];
 
 	switch (state.mode) {
-	case 'conf':
-		path = '/' + (state.roomName ? state.roomName + '/edit' : 'me');
-		break;
-	case 'pref':
-		path = '/me/edit';
-		break;
-	case 'search':
-		path = state.roomName ? '/' + state.roomName : '';
-		params.push('q=' + encodeURIComponent(state.query));
-		break;
-	case "home":
-		path = "/me";
-		break;
-	default:
-		path = (state.roomName ? '/' + state.roomName + (
-			state.thread ? '/' + state.thread : "" /*+ '/' + format.sanitize(state.thread): ''*/ ) : '');
+		case 'conf':
+			path = '/' + (state.roomName ? state.roomName + '/edit' : 'me');
+			break;
+		case 'pref':
+			path = '/me/edit';
+			break;
+		case 'search':
+			path = state.roomName ? '/' + state.roomName : '';
+			params.push('q=' + encodeURIComponent(state.query));
+			break;
+		case "home":
+			path = "/me";
+			break;
+		default:
+			path = (state.roomName ? '/' + state.roomName + (
+				state.thread ? '/' + state.thread : "" /*+ '/' + format.sanitize(state.thread): ''*/ ) : '');
 	}
 
 	if (state.time) {

@@ -5,19 +5,19 @@ function init(libsb) {
 	var isInited = false;
 	var backQueue = [];
 
-	libsb.on("init-dn", function (action, next) {
+	libsb.on("init-dn", function(action, next) {
 		isInited = true;
-		backQueue.forEach(function (e) {
+		backQueue.forEach(function(e) {
 			e();
 		});
 		next();
 	}, 1000);
 
-	libsb.on("init-up", function (action, next) {
+	libsb.on("init-up", function(action, next) {
 		if (libsb.hasBooted) return next();
 		actionQueue.enQueue(next);
 	}, 1000);
-	libsb.on("back-up", function (action, next) {
+	libsb.on("back-up", function(action, next) {
 		if (!isInited) {
 			backQueue.push(next);
 			return;
@@ -25,7 +25,7 @@ function init(libsb) {
 		return next();
 	}, 1000);
 
-	libsb.on("navigate", function (state, next) {
+	libsb.on("navigate", function(state, next) {
 		if (state.source == "boot") return next();
 
 		if (!libsb.hasBooted) {
@@ -41,6 +41,6 @@ function init(libsb) {
 	}, 500);
 }
 
-module.exports = function (l) {
+module.exports = function(l) {
 	init(l);
 };

@@ -19,24 +19,28 @@ Boston, MA 02111-1307 USA.
 */
 
 var express = require("express"),
-	http = require("http"), https = require("https"),
+	http = require("http"),
+	https = require("https"),
 	fs = require("fs"),
 	config = require("../config.js");
 
 exports.init = function() {
-	var app = express(), srv, srvs;
+	var app = express(),
+		srv, srvs;
 
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
-	app.set('view options', { debug: true });
+	app.set('view options', {
+		debug: true
+	});
 
 	/**
-	* We need to serve the correct mimetype for the manifest.appcache file.
-	* Even though latest browsers don't require this, older versions of browsers do.
-	* Also, we need to make sure that the manifest.appcache is not cached.
-	*/
+	 * We need to serve the correct mimetype for the manifest.appcache file.
+	 * Even though latest browsers don't require this, older versions of browsers do.
+	 * Also, we need to make sure that the manifest.appcache is not cached.
+	 */
 	app.use(function(req, res, next) {
-		if((req.url).match(/.*\.appcache$/)) {
+		if ((req.url).match(/.*\.appcache$/)) {
 			res.header('Content-Type', 'text/cache-manifest');
 			res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 			res.header('Expires', '0');
@@ -48,7 +52,9 @@ exports.init = function() {
 
 	app.use(express.logger("AA/HTTP - [:date] :method :url :referrer :user-agent :status"));
 	app.use(express.compress());
-	app.use(express["static"](__dirname + "/../" + config.http.home, { maxAge: 86400000 }));
+	app.use(express.static(__dirname + "/../" + config.http.home, {
+		maxAge: 86400000
+	}));
 
 	app.use(express.cookieParser());
 	// app.use(session.parser);
@@ -64,7 +70,7 @@ exports.init = function() {
 		srvs = https.createServer({
 			key: fs.readFileSync(__dirname + "/../" + config.http.https.key),
 			cert: fs.readFileSync(__dirname + "/../" + config.http.https.cert),
-			ca : !config.http.https.ca || fs.readFileSync(__dirname + "/../" + config.http.https.ca)
+			ca: !config.http.https.ca || fs.readFileSync(__dirname + "/../" + config.http.https.ca)
 		}, app);
 		srvs.listen(config.http.https.port);
 		app.httpsServer = srvs;
@@ -72,4 +78,3 @@ exports.init = function() {
 
 	return app;
 };
-

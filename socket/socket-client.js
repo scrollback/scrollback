@@ -11,7 +11,7 @@ var backOff = 1,
 	pendingActions = {},
 	queue = [];
 
-module.exports = function (c) {
+module.exports = function(c) {
 	core = c;
 	connect();
 	core.on("disconnect", disconnect, 1000);
@@ -29,29 +29,29 @@ module.exports = function (c) {
 	core.on("user-up", sendUser, 10);
 	core.on("room-up", sendRoom, 10);
 
-	core.on("getTexts", function (query, callback) {
+	core.on("getTexts", function(query, callback) {
 		query.type = "getTexts";
 		sendQuery(query, callback);
 	}, 10);
 
-	core.on("getThreads", function (query, callback) {
+	core.on("getThreads", function(query, callback) {
 		query.type = "getThreads";
 		sendQuery(query, callback);
 	}, 10);
 
-	core.on("getUsers", function (query, callback) {
+	core.on("getUsers", function(query, callback) {
 		query.type = "getUsers";
 		sendQuery(query, callback);
 	}, 10);
 
-	core.on("getRooms", function (query, callback) {
+	core.on("getRooms", function(query, callback) {
 		query.type = "getRooms";
 		sendQuery(query, callback);
 	}, 10);
 };
 
 
-libsb.on("inited", function (undef, next) {
+libsb.on("inited", function(undef, next) {
 	while (queue.length) {
 		queue.splice(0, 1)[0]();
 	}
@@ -65,7 +65,7 @@ function safeSend(data) {
 	if (libsb.isInited) {
 		client.send(data);
 	} else {
-		queue.push(function () {
+		queue.push(function() {
 			client.send(data);
 		});
 	}
@@ -76,15 +76,15 @@ function connect() {
 	client = new SockJS(config.server.protocol + config.server.host + "/socket");
 	client.onclose = disconnected;
 
-	client.onopen = function () {
+	client.onopen = function() {
 		backOff = 1;
-		core.emit("init-up", {}, function (err, init) {
+		core.emit("init-up", {}, function(err) {
 			if (err) console.log(err.message);
 			else libsb.isInited = true;
 			core.emit("navigate", {
 				connectionStatus: "online",
 				source: "socket"
-			}, function (err) {
+			}, function(err) {
 				if (err) console.log(err.message);
 			});
 			//TODO: handle errors.
@@ -105,7 +105,7 @@ function disconnected() {
 		core.emit("navigate", {
 			connectionStatus: "offline",
 			source: "connection"
-		}, function (err) {
+		}, function(err) {
 			if (err) console.log(err.message);
 		});
 	}
@@ -163,7 +163,7 @@ function receiveMessage(event) {
 
 function returnPending(action, next) {
 
-	return function (newAction) {
+	return function(newAction) {
 		var i;
 		if (newAction.type === "error") return next(newAction);
 

@@ -17,7 +17,7 @@
  * changes: {Object} - New values of changed properties
  */
 
-module.exports = function (libsb) {
+module.exports = function(libsb) {
 	require("./boot-manager.js")(libsb);
 	require("./state-manager.js")(libsb);
 	require("./history-manager.js")(libsb);
