@@ -7,6 +7,8 @@
 		navigator.userAgent.match(/AppleWebKit/) &&
 		navigator.userAgent.match(/Safari/)) {
 		// This also matches Chrome on iOS :(
-		$("body").css({ cursor: "pointer" });
+		$("body").css({
+			cursor: "pointer"
+		});
 	}
 }());

@@ -8,7 +8,9 @@ var roomCard = require("./room-card.js"),
 	roomObjs = {},
 	listenQueue = [],
 	listening = {},
-	BACK_SENT = 1, BACK_RECEIVED = 2, NOT_LISTENING = 0;
+	BACK_SENT = 1,
+	BACK_RECEIVED = 2,
+	NOT_LISTENING = 0;
 
 function enter(room) {
 	var roomName;
@@ -22,10 +24,11 @@ function enter(room) {
 	if (rooms.indexOf(roomName) < 0) {
 		rooms.push(roomName);
 		roomObjs[roomName] = room;
+		resetRooms();
 	}
 
 	if (currentState.connectionStatus == "online") {
-		if (!listening[roomName]){
+		if (!listening[roomName]) {
 			listening[roomName] = BACK_SENT;
 			libsb.enter(roomName, function(err) {
 				var x;
@@ -34,8 +37,8 @@ function enter(room) {
 				} else {
 					listening[roomName] = BACK_RECEIVED;
 				}
-				x=listenQueue.indexOf(roomName);
-				if(x>=0)listenQueue.splice(x,1);
+				x = listenQueue.indexOf(roomName);
+				if (x >= 0) listenQueue.splice(x, 1);
 			});
 		}
 	} else {
@@ -44,7 +47,8 @@ function enter(room) {
 		}
 	}
 }
-function resetRooms(){
+
+function resetRooms() {
 	if (window.currentState.mode !== "home" && $roomarea) {
 		$roomarea.reset(0);
 	}
@@ -66,7 +70,7 @@ module.exports = function(libsb) {
 
 				if (before) {
 					if (typeof index === "undefined") {
-						return callback([ false ]);
+						return callback([false]);
 					}
 
 					from = index - before;
@@ -144,7 +148,7 @@ module.exports = function(libsb) {
 			return next();
 		}
 
-		if(state.source == "boot" || !state.old) {
+		if (state.source == "boot" || !state.old) {
 			if (libsb.memberOf) {
 				libsb.memberOf.forEach(function(e) {
 					enter(e);
@@ -156,10 +160,12 @@ module.exports = function(libsb) {
 				});
 			}
 			if (room) {
-				enter({ id: room });
+				enter({
+					id: room
+				});
 			}
 			resetRooms();
-		}else if(["home","normal"].indexOf(state.mode)>=0 && state.mode!= state.old.mode){
+		} else if (["home", "normal"].indexOf(state.mode) >= 0 && state.mode != state.old.mode) {
 			resetRooms();
 		}
 		next();
@@ -183,7 +189,9 @@ module.exports = function(libsb) {
 		}
 
 		listenQueue.forEach(function(e) {
-			enter({ id: e });
+			enter({
+				id: e
+			});
 		});
 
 		if (window.currentState.mode !== "home" && $roomarea) {
@@ -198,23 +206,27 @@ module.exports = function(libsb) {
 	}, 10);
 
 	libsb.on("navigate", function(state, next) {
-		if (state.old && state.room !== state.old.room) {
-			$(".room-item.current").removeClass("current");
-
-			if (state.roomName) {
-				$("#room-item-" + state.roomName).addClass("current");
-			}
-		}
+		
 
 		if (state.connectionStatus !== "online" && (!state.old || state.old.connectionStatus == "online")) {
 			Object.keys(listening).forEach(function(e) {
 				listening[e] = NOT_LISTENING;
 			});
-		}else if(state.connectionStatus == "online" && (!state.old || state.old.connectionStatus!="online")) {
+		} else if (state.connectionStatus == "online" && (!state.old || state.old.connectionStatus != "online")) {
 			listenQueue.forEach(function(e) {
-				enter({ id: e });
+				enter({
+					id: e
+				});
 			});
 		}
+		
+		if (state.old && state.roomName !== state.old.roomName) {
+			$(".room-item.current").removeClass("current");
+			enter(state.room);
+			if (state.roomName) {
+				$("#room-item-" + state.roomName).addClass("current");
+			}
+		}
 		next();
-	}, 100);
+	}, 99);
 };
