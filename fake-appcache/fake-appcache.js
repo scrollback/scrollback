@@ -1,5 +1,5 @@
 /* jshint browser:true */
-/* global LocalFileSystem */
+/* global LocalFileSystem, $ */
 
 /*
 	This plugin polyfills the behaviour of appcache on phonegap.
@@ -43,27 +43,10 @@ function getServerManifest(done) {
 }
 
 function getLocalManifest(done) {
-	// read file system and fetch the content of manifest.appcache as string.
-	window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
-		console.log("GOT file system, root path", fileSystem.root, fileSystem.root.fullPath);
-		fileSystem.root.getFile('manifest.appcache', null, gotFileEntry, fail);
-	}, fail);
-
-	function gotFileEntry(fileEntry) {
-		fileEntry.file(function(file) {
-			var reader = new FileReader();
-			reader.onloadend = function(evt) {
-				var fileContent = evt.target.result;
-				console.log("Read local appcache as text", fileContent);
-				done(fileContent); // return data
-			};
-			reader.readAsText(file);
-		}, fail);
-	}
-
-	function fail(evt) {
-		console.log(evt.target.error.code);
-	}
+	$.get('manifest.appcache', null, function (d) {
+		console.log("GOt client appcache ", d);
+		done(d);
+	});
 }
 
 function updateLocalManifest(newManifestContent) {
