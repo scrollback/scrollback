@@ -98,9 +98,13 @@ $(function() {
 	}, 100);
 
 	libsb.on("logout", function(p, n) {
-		var $signoutDialog = $("<div>").html(signoutText).modal({ dismiss: false });
+		var $signoutDialog = $("<div>").html(signoutText).modal({
+			dismiss: false
+		});
 
-		libsb.emit("navigate", { view: "loggedout" });
+		libsb.emit("navigate", {
+			view: "loggedout"
+		});
 
 		$signoutDialog.on("click", ".reload-page", function() {
 			location.reload();

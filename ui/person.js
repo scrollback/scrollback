@@ -6,10 +6,12 @@ var personEl = {};
 $(function() {
 	var $template = $(".person").eq(0);
 
-	personEl.render = function ($el, person, index) {
+	personEl.render = function($el, person, index) {
 		$el = $el || $template.clone(false);
 
-		$el.find(".person-avatar").attr({src: person.picture});
+		$el.find(".person-avatar").attr({
+			src: person.picture
+		});
 		$el.find(".person-name").text(person.id.replace(/^guest-/, ""));
 		$el.attr("data-index", index);
 
