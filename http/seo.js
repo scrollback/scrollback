@@ -4,7 +4,7 @@ var internalSession = Object.keys(config.whitelists)[0];
 var noOfThreads = 50;
 var noOfText = 255;
 
-module.exports = function (core) {
+module.exports = function(core) {
 	return {
 		getSEOHtml: getSEOHtml
 	};
@@ -14,8 +14,8 @@ module.exports = function (core) {
 	function getSEOHtml(req, callback) {
 		var query = req.query;
 		if (!query.embed) {
-			getHeadHtml(req, function (head) {
-				getBodyHtml(req, function (body) {
+			getHeadHtml(req, function(head) {
+				getBodyHtml(req, function(body) {
 					callback({
 						head: head,
 						body: body
@@ -33,23 +33,23 @@ module.exports = function (core) {
 	function getHeadHtml(req, callback) {
 		var path = req.path;
 		var a = path.substring(1).split("/");
-		if (a[0]) {
-			var ct = 0;
-			var thread;
-			var room;
+		var ct = 0;
+		var thread;
+		var room;
 
-			function done() {
-				if (++ct == 2) {
-					if (room) callback(genHeadHtml(room, thread));
-					else callback("");
-				}
+		function done() {
+			if (++ct == 2) {
+				if (room) callback(genHeadHtml(room, thread));
+				else callback("");
 			}
+		}
+		if (a[0]) {
 			if (a[1]) {
 				core.emit("getThreads", {
 					to: a[0],
 					ref: a[1],
 					session: internalSession
-				}, function (err, data) {
+				}, function(err, data) {
 					log.d("Results:", data);
 					if (!err && data && data.results && data.results.length) {
 						thread = data.results[0];
@@ -63,7 +63,7 @@ module.exports = function (core) {
 			core.emit("getRooms", {
 				ref: a[0],
 				session: internalSession
-			}, function (err, data) {
+			}, function(err, data) {
 				if (!err && data.results && data.results[0]) {
 					room = data.results[0];
 					done();
@@ -84,7 +84,7 @@ module.exports = function (core) {
 				time: query.time ? new Date(query.time).getTime() : 1,
 				after: noOfText + 1,
 				session: internalSession
-			}, function (err, data) {
+			}, function(err, data) {
 				var room = data.room;
 				if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
 					var r = getRoomHtml(room) + "\n" + getTextHtml(data.results, a[0], a[1]);
@@ -98,7 +98,7 @@ module.exports = function (core) {
 				time: new Date(query.time).getTime(),
 				after: noOfThreads + 1,
 				session: internalSession
-			}, function (err, data) {
+			}, function(err, data) {
 				var room = data.room;
 				if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
 					var r = getRoomHtml(room) + "\n" + getThreadsHtml(data.results, a[0]);
@@ -120,7 +120,7 @@ function getRoomHtml(room) {
 }
 
 function getTextHtml(r, roomid, threadid) {
-	var a = r.map(function (text) {
+	var a = r.map(function(text) {
 		var t = text.from.replace("guest-", "") + ": " + text.text;
 		t = htmlEscape(t);
 		return ("<p>" + t + "</p>");

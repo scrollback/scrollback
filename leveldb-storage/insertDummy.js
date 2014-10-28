@@ -1,60 +1,58 @@
-var assert = require('assert');
 var core = require('../lib/emitter.js');
 var generate = require("../lib/generate.js");
 require("./leveldb-storage.js")(core);
 
 core.emit("user", {
 	id: generate.uid(),
-	type:"user",
+	type: "user",
 	user: {
-		id:"kamal",
+		id: "kamal",
 		description: generate.sentence(4),
-		type:"user",
-		picture:"http://gravatar.com/avatar/alscalladf",
-		identities:["mailto:kamal@scrollback.io"], 
-		params:{},
+		type: "user",
+		picture: "http://gravatar.com/avatar/alscalladf",
+		identities: ["mailto:kamal@scrollback.io"],
+		params: {},
 		timezone: 60
 	}
 });
 
 core.emit("user", {
 	id: generate.uid(),
-	type:"user",
+	type: "user",
 	user: {
-		id:"testuser2",
+		id: "testuser2",
 		description: generate.sentence(4),
-		type:"user",
-		picture:"http://gravatar.com/avatar/alscalladf",
-		identities:["mailto:kamal@sb.lk"], 
-		params:{},
+		type: "user",
+		picture: "http://gravatar.com/avatar/alscalladf",
+		identities: ["mailto:kamal@sb.lk"],
+		params: {},
 		timezone: 90
 	}
 });
 
 core.emit("room", {
 	id: generate.uid(),
-	type:"room",
+	type: "room",
 	room: {
-		id:"testroom1",
+		id: "testroom1",
 		description: generate.sentence(4),
-		type:"room",
-		params:{
-		}
+		type: "room",
+		params: {}
 	},
 	user: {
-		id:"amalantony",
+		id: "amalantony",
 	}
 });
 
 
 core.emit("room", {
 	id: generate.uid(),
-	type:"room",
+	type: "room",
 	room: {
-		id:"scrollback",
+		id: "scrollback",
 		description: generate.sentence(4),
-		type:"room",
-		params:{
+		type: "room",
+		params: {
 			irc: {
 				server: "dev.scrollback.io",
 				channel: "#scrollback",
@@ -65,7 +63,7 @@ core.emit("room", {
 		identities: ["irc://dev.scrollback.io/#scrollback"]
 	},
 	user: {
-		id:"kamal"
+		id: "kamal"
 	}
 });
 
@@ -74,15 +72,19 @@ core.emit("room", {
 
 core.emit("room", {
 	id: generate.uid(),
-	type:"room",
+	type: "room",
 	room: {
-		id:"testroom2",
+		id: "testroom2",
 		description: generate.sentence(4),
-		type:"room",
-		params:{openFollow: false, readLevel: "guest", writeLevel: "follower"}
+		type: "room",
+		params: {
+			openFollow: false,
+			readLevel: "guest",
+			writeLevel: "follower"
+		}
 	},
 	user: {
-		id:"testuser2",
+		id: "testuser2",
 	}
 });
 

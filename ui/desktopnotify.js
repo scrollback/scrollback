@@ -17,7 +17,7 @@ var desktopnotify = {
 
 		if ("webkitNotifications" in window) {
 			type = "webkit";
-			switch(webkitNotifications.checkPermission()) {
+			switch (webkitNotifications.checkPermission()) {
 				case "0":
 					permission = "granted";
 					break;
@@ -40,7 +40,10 @@ var desktopnotify = {
 			return false;
 		}
 
-		return { "type" : type, "permission" : permission };
+		return {
+			"type": type,
+			"permission": permission
+		};
 	},
 
 	/**
@@ -74,7 +77,13 @@ var desktopnotify = {
 				n.show();
 				n.onclick = notification.action;
 			} else if (check.type === "html5") {
-				n = new Notification(notification.title, { dir: "auto", lang: "en-US", body: notification.body, tag: notification.tag, icon: notification.icon });
+				n = new Notification(notification.title, {
+					dir: "auto",
+					lang: "en-US",
+					body: notification.body,
+					tag: notification.tag,
+					icon: notification.icon
+				});
 				n.onclick = notification.action;
 			}
 		} else {

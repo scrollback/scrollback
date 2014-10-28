@@ -23,47 +23,11 @@ function getIdAndTime(index) {
 	};
 }
 
-function returnArray(query, index) {
-	var texts = query.results,
-		rIndex = -1,
-		i, inc, end;
-	texts = texts.slice(0, texts.length);
-	if (!texts.length) return [];
-	if (query.time) {
-		if (query.before) {
-			i = texts.length - 1;
-			inc = -1;
-			end = 0;
-		} else if (query.after) {
-			end = texts.length - 1;
-			inc = 1;
-			i = 0;
-		}
-		while (i != end) {
-			if (texts[i].type == "missing") {
-				if (texts[i].endTime == index.time || texts[i].startTime == index.time) {
-					rIndex = i;
-					break;
-				}
-			} else if (texts[i].type == "text") {
-				if (texts[i].id == index.id) {
-					rIndex = i;
-					break;
-				}
-				if (texts[i].time != index.time) break;
-			}
-			i += inc;
-		}
-	}
-	if (rIndex >= 0) texts.splice(rIndex, 1);
-	return texts;
-}
-
-$(function () {
+$(function() {
 	var $logs = $(".chat-area"),
 		$logscontainer = $(".chat-area-container"),
 		$chatPosition = $(".chat-position"),
-		$chatScrollToBottom = $(".chat-scroll-to-bottom");
+		$chatScrollToBottom = $(".chat-scroll-to-bottom"),
 		roomName = "",
 		thread = '',
 		time = null;
@@ -92,7 +56,7 @@ $(function () {
 		itemHeight: 50,
 		startIndex: time,
 		debug: true,
-		getItems: function (index, before, after, recycle, callback) {
+		getItems: function(index, before, after, recycle, callback) {
 			var query = {
 				to: roomName,
 				before: before,
@@ -112,7 +76,7 @@ $(function () {
 			if (!index.time && !before) return callback([false]);
 
 			function loadTexts() {
-				libsb.getTexts(query, function (err, t) {
+				libsb.getTexts(query, function(err, t) {
 					var texts = t.results.slice(0, t.results.length);
 					if (err) throw err; // TODO: handle the error properly.
 
@@ -136,7 +100,7 @@ $(function () {
 							texts.splice(0, 1);
 						}
 					}
-					var textsMap = texts.map(function (text) {
+					var textsMap = texts.map(function(text) {
 						return text && chatEl.render(null, text);
 					});
 
@@ -144,7 +108,7 @@ $(function () {
 				});
 			}
 			if (typeof libsb.user === "undefined") {
-				libsb.on("navigate", function (state, next) {
+				libsb.on("navigate", function(state, next) {
 					if (state.connectionStatus !== state.old.connectionStatus && state.connectionStatus === "online") {
 						loadTexts();
 					}
@@ -158,7 +122,7 @@ $(function () {
 	});
 
 	// Insert incoming text messages.
-	libsb.on("text-dn", function (text, next) {
+	libsb.on("text-dn", function(text, next) {
 		var $oldEl = $("#chat-" + text.id),
 			$newEl = chatEl.render(null, text);
 
@@ -184,15 +148,15 @@ $(function () {
 			$logs.addBelow($newEl);
 
 			if ($logs.scrollTop() === $logs[0].scrollHeight) scrollToBottom($logs);
-		} else if(text.from == libsb.user.id) {
+		} else if (text.from == libsb.user.id) {
 			resetLog(null);
 		}
 
 		next();
 	}, 100);
 
-	libsb.on("text-up", function (text, next) {
-		libsb.getOccupants(window.currentState.roomName, function (err, data) {
+	libsb.on("text-up", function(text, next) {
+		libsb.getOccupants(window.currentState.roomName, function(err, data) {
 			var occupants = [];
 
 			if (data.results && data.results.length) {
@@ -226,23 +190,26 @@ $(function () {
 		next();
 	}, 90);
 
-	libsb.on("init-dn", function (init, next) {
+	libsb.on("init-dn", function(init, next) {
 		resetLog(time || null);
 		next();
 	}, 100);
 
 	$chatScrollToBottom.on('click', function() {
-		libsb.emit("navigate", {time: null, source: 'chat-area-scroll-to-bottom'}/*, function() {}*/);
+		libsb.emit("navigate", {
+			time: null,
+			source: 'chat-area-scroll-to-bottom'
+		} /*, function() {}*/ );
 	});
 
-	libsb.on("navigate", function (state, next) {
+	libsb.on("navigate", function(state, next) {
 		var reset = false;
 
 		if (state.old && state.time !== state.old.time) {
 			if (state.time) {
 				$chatScrollToBottom.addClass('visible');
 				$chatPosition.addClass("visible").text(format.friendlyTime(state.time, new Date().getTime()));
-				setTimeout(function () {
+				setTimeout(function() {
 					$chatPosition.removeClass("visible");
 				}, 1000);
 			} else {
@@ -289,7 +256,7 @@ $(function () {
 	}, 200);
 
 	// The chatArea API.
-	chatArea.getPosition = function () {
+	chatArea.getPosition = function() {
 		var pos = $logs[0].scrollHeight - ($logs.scrollTop() + $logs.height());
 
 		if (!this.value) {
@@ -299,7 +266,7 @@ $(function () {
 		return pos;
 	};
 
-	chatArea.setPosition = function (bottom) {
+	chatArea.setPosition = function(bottom) {
 		$logscontainer.css({
 			bottom: bottom
 		});
@@ -309,19 +276,17 @@ $(function () {
 		}
 	};
 
-	chatArea.setRoom = function (r) {
+	chatArea.setRoom = function(r) {
 		roomName = r;
 		$logs.find(".chat").remove();
 		$logs.scroll();
 	};
 
-	var timeout;
-
-	$logs.on("scroll", function () {
+	$logs.on("scroll", function() {
 
 		if (scrollTimer) clearTimeout(scrollTimer);
 
-		scrollTimer = setTimeout(function () {
+		scrollTimer = setTimeout(function() {
 			var chats = $logs.find(".chat-item"),
 				time = getIdAndTime(chats.eq(0).data("index")).time,
 				parentOffset = $logs.offset().top;
@@ -345,8 +310,8 @@ $(function () {
 		}, 500);
 	});
 
-	setInterval(function () {
-		$(".chat-timestamp").each(function () {
+	setInterval(function() {
+		$(".chat-timestamp").each(function() {
 			var time = getIdAndTime($(this).parent().data("index")).time;
 
 			$(this).empty().text(format.friendlyTime(time, new Date().getTime()));

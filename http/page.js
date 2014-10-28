@@ -18,9 +18,11 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
-var config = require('../config.js'), core,
+var config = require('../config.js'),
+	core,
 	clientData = require('../client-config.js'),
-	fs = require("fs"), core,
+	fs = require("fs"),
+	core,
 	handlebars = require("handlebars"),
 	seo, clientTemp, clientHbs,
 	log = require('../lib/logger.js');
@@ -42,10 +44,13 @@ exports.init = function(app, coreObject) {
 
 	app.get("/*", function(req, res, next) {
 		if (/^\/t\//.test(req.path)) return next();
-		if (/^\/s\//.test(req.path)) {console.log("static"); return next();}
+		if (/^\/s\//.test(req.path)) {
+			console.log("static");
+			return next();
+		}
 
 		if (!req.secure && config.http.https) {
-			var queryString  = req._parsedUrl.search ? req._parsedUrl.search : "";
+			var queryString = req._parsedUrl.search ? req._parsedUrl.search : "";
 			return res.redirect(301, 'https://' + config.http.host + req.path + queryString);
 		}
 
