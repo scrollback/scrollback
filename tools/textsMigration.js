@@ -108,7 +108,7 @@ function migrateTexts(limit, cb) {
 	function done() {
 		storeIndex(startingTime);
 		setTimeout(function() {
-			if(cb) cb();
+			if (cb) cb();
 		}, 1000);
 	}
 }
