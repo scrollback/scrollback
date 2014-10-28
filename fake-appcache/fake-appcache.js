@@ -1,5 +1,5 @@
 /* jshint browser:true */
-/* global LocalFileSystem, $ */
+/* global $ */
 
 /*
 	This plugin polyfills the behaviour of appcache on phonegap.
@@ -37,14 +37,14 @@ function getServerManifest(done) {
 		}
 	};
 
-	req.open("GET", "manifest.appcache", true);
+	req.open("GET", "https://scrollback.io/manifest.appcache", true);
 
 	req.send();
 }
 
 function getLocalManifest(done) {
 	$.get('manifest.appcache', null, function (d) {
-		console.log("GOt client appcache ", d);
+		console.log("GOt local manifest ", d);
 		done(d);
 	});
 }
