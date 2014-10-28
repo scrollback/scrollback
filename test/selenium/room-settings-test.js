@@ -11,7 +11,7 @@ module.exports = function(capabilities, options){
 		var random = Math.random() + "";
 		before(function(done){
 			this.timeout(4 * timeOut);
-			driver = testUtils.openUrl(capabilities, server, "room");    
+			driver = testUtils.openUrl(capabilities, server, "room1");    
 			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function(){
 				console.log("logging in through Persona...");
 				done();
@@ -22,7 +22,6 @@ module.exports = function(capabilities, options){
 			this.timeout(4 * timeOut);
 			driver.findElement(webdriver.By.css('.tab-info')).click().
 			then(function(){
-				console.log("configuring room...");
 				return driver.findElement(webdriver.By.css('.configure-button')).click();
 			}).then(function(){
 				return driver.findElement(webdriver.By.id('description')).clear();
@@ -77,7 +76,6 @@ module.exports = function(capabilities, options){
 			this.timeout(4 * timeOut);
 			driver.findElement(webdriver.By.css('.tab-info')).click().
 			then(function(){
-				console.log("configuring room...");
 				return driver.findElement(webdriver.By.css('.configure-button')).click();
 			}).then(function(){
 				return driver.findElement(webdriver.By.css('.list-item-spam-settings')).click();
@@ -90,7 +88,7 @@ module.exports = function(capabilities, options){
 			}).then(function(){
 				return driver.findElement(webdriver.By.css('.list-item-spam-settings')).click();
 			}).then(function(){
-				return driver.findElement(webdriver.By.id('block-custom')).sendKeys(random);
+				return driver.findElement(webdriver.By.id('block-custom')).sendKeys("block" + random);
 			}).then(function(){
 				return driver.findElement(webdriver.By.id('list-en-strict')).click();
 			}).then(function(){
