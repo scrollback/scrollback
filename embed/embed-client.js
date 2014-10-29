@@ -219,6 +219,7 @@ module.exports = function(libsb) {
 };
 
 function addStyleSheet(embed) {
+	if (!(embed && embed.titleBackground)) return;
 	var textColor,
 		r = [];
 	if (isDark(embed.titleBackground)) {
