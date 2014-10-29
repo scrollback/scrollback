@@ -1,7 +1,6 @@
 /* jshint browser: true */
 /* global $*/
 var parseURL = require("../lib/parseURL.js");
-
 /*  status flags.*/
 var verificationStatus = false,
 	bootingDone = false,
@@ -22,7 +21,7 @@ function sendDomainChallenge() {
 		token: token
 	}), parentHost);
 
-	setTimeout(function () {
+	setTimeout(function() {
 		if (!verificationStatus) {
 			verificationStatus = true;
 			verified = false;
@@ -91,15 +90,15 @@ function toastChange(state, next) {
 	next();
 }
 
-module.exports = function (libsb) {
-	$(function () {
+module.exports = function(libsb) {
+	$(function() {
 		// Handle fullview button click
-		$(".embed-action-fullview").on("click", function () {
+		$(".embed-action-fullview").on("click", function() {
 			window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, ""), "_blank");
 		});
 
 		// Handle minimize
-		$(".embed-action-minimize").on("click", function () {
+		$(".embed-action-minimize").on("click", function() {
 			libsb.emit("navigate", {
 				minimize: true,
 				source: "embed",
@@ -107,7 +106,7 @@ module.exports = function (libsb) {
 			});
 		});
 
-		$(".title-bar").on("click", function (e) {
+		$(".title-bar").on("click", function(e) {
 			if (e.target === e.currentTarget) {
 				libsb.emit("navigate", {
 					minimize: true,
@@ -117,7 +116,7 @@ module.exports = function (libsb) {
 			}
 		});
 
-		$(".minimize-bar").on("click", function () {
+		$(".minimize-bar").on("click", function() {
 			libsb.emit("navigate", {
 				minimize: false,
 				source: "embed",
@@ -128,7 +127,6 @@ module.exports = function (libsb) {
 
 	var url = parseURL(window.location.pathname, window.location.search);
 	embed = url.embed;
-
 	if (window.parent !== window) {
 		if (embed) {
 			try {
@@ -136,7 +134,6 @@ module.exports = function (libsb) {
 			} catch (e) {
 				embed = {};
 			}
-
 			suggestedNick = embed.nick;
 			classesOnLoad(embed);
 
@@ -145,7 +142,7 @@ module.exports = function (libsb) {
 			}
 
 			if (embed.origin) {
-				window.onmessage = function (e) {
+				window.onmessage = function(e) {
 					var data = e.data;
 					data = parseResponse(data);
 					if (data.type == "domain-response") {
@@ -167,11 +164,11 @@ module.exports = function (libsb) {
 		verified = true;
 		verificationStatus = true;
 	}
-
-	libsb.on("navigate", function (state, next) {
+	addStyleSheet(embed);
+	libsb.on("navigate", function(state, next) {
 		function processNavigate() {
 			var guides;
-//				console.log("DATA:", {booted: libsb.hasBooted, verificationStatus: verificationStatus,verificationTimeout: verificationTimeout, verified: verified, domain: domain, path: path, state: state});
+			//				console.log("DATA:", {booted: libsb.hasBooted, verificationStatus: verificationStatus,verificationTimeout: verificationTimeout, verified: verified, domain: domain, path: path, state: state});
 			if (state.source == "boot") {
 				bootingDone = true;
 				state.embed = embed;
@@ -190,7 +187,7 @@ module.exports = function (libsb) {
 
 		if (state.source == "boot") {
 			if (!verificationStatus) {
-				preBootQueue.push(function () {
+				preBootQueue.push(function() {
 					processNavigate();
 				});
 			} else {
@@ -201,7 +198,7 @@ module.exports = function (libsb) {
 		}
 	}, 997);
 
-	libsb.on("init-up", function (init, next) {
+	libsb.on("init-up", function(init, next) {
 		function processInit() {
 			init.origin = {
 				domain: domain,
@@ -220,3 +217,48 @@ module.exports = function (libsb) {
 	}, 500);
 	libsb.on("navigate", toastChange, 500);
 };
+
+function addStyleSheet(embed) {
+	var textColor,
+		r = [];
+	if (isDark(embed.titleBackground)) {
+		textColor = '#fff';
+	} else {
+		textColor = '#000';
+	}
+	r.push(getGeneratedCss("custom-title-bar-bg", ["background"], [embed.titleBackground]));
+	r.push(getGeneratedCss("custom-title-bar-fg", ["background"], [textColor]));
+	$('head').append($("<style>").text(r.join(" ")));
+}
+
+function getGeneratedCss(className, cssProperties, cssValues) {
+	var r = [];
+	r.push("." + className + "{");
+	for (var i = 0; i < cssProperties.length; i++) {
+		r.push(cssProperties[i] + ":");
+		r.push(cssValues[i] + "!important;");
+	}
+	r.push("}");
+	return r.join("\n");
+}
+
+
+function isDark(hexColor) {
+	var rgbColor = hexToRgb(hexColor);
+	return (0.2126 * rgbColor.r + 0.7152 * rgbColor.g + 0.0722 * rgbColor.b) > 0.5;
+}
+
+function hexToRgb(hex) {
+	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+	var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+	hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+		return r + r + g + g + b + b;
+	});
+
+	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	return result ? {
+		r: parseInt(result[1], 16),
+		g: parseInt(result[2], 16),
+		b: parseInt(result[3], 16)
+	} : null;
+}

@@ -1,4 +1,4 @@
-	/* jslint browser: true, indent: 4, regexp: true */
+	/* jslint browser: true, indent: 4, regexp: true  */
 
 (function () {
 	var config = require("../client-config.js");
@@ -11,7 +11,6 @@
 			var embed = {};
 			var sb, style, iframe,
 				host = config.server.protocol + config.server.host;
-
 			window.scrollback = window.scrollback || {};
 			sb = window.scrollback;
 
@@ -27,7 +26,7 @@
 				path: location.pathname + location.search + location.hash
 			};
 			embed.minimize = (typeof sb.minimize === "boolean") ? sb.minimize : false;
-
+			embed.titleBackground = sb.titleBackground;
 			sb.room = validate(sb.room, true);
 			// Insert required styles
 			style = document.createElement("link");
@@ -48,7 +47,6 @@
 			} else {
 				container.appendChild(iframe);
 			}
-
 			// TODO: change "embed" to "context"
 			iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
 			iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
