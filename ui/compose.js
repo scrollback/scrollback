@@ -14,7 +14,9 @@ $(function() {
 
 			$entry.empty();
 
-			if (!text) { return; }
+			if (!text) {
+				return;
+			}
 
 			if (window.currentState && window.currentState.roomName) {
 				libsb.say(window.currentState.roomName, text, window.currentState.thread);
@@ -105,7 +107,10 @@ $(function() {
 
 	libsb.on("text-up", function(text, next) {
 		if (newThread) {
-			text.threads = [ { id: "new", score: 1.0 } ];
+			text.threads = [{
+				id: "new",
+				score: 1.0
+			}];
 		}
 
 		newThread = false;

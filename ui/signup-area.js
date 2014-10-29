@@ -3,7 +3,7 @@
 
 var validate = require("../lib/validate.js");
 
-$(function(){
+$(function() {
 	var signingUser, signingUp = false;
 
 	function submitUser() {
@@ -29,29 +29,29 @@ $(function(){
 					pictures: [signingUser.picture]
 				},
 				guides: {}
-            }
+			}
 		}, function(err) {
-                signingUp = true;
+			signingUp = true;
 
-				if (err) {
-					if(err.message == "ERR_USER_EXISTS") {
-						$alert = $("<div>").text("Username already taken");
-					} else {
-						$alert = $("<div>").text(err.message);
-					}
-
-					$alert.alertbar({
-						type: "error",
-						timeout: 3000
-					});
+			if (err) {
+				if (err.message == "ERR_USER_EXISTS") {
+					$alert = $("<div>").text("Username already taken");
+				} else {
+					$alert = $("<div>").text(err.message);
 				}
+
+				$alert.alertbar({
+					type: "error",
+					timeout: 3000
+				});
+			}
 		});
 	}
-	$(document).on("submit", "#signup", function(event){
+	$(document).on("submit", "#signup", function(event) {
 		submitUser();
 		event.preventDefault();
 	});
-	$(document).on("click", ".signup-save", function(){
+	$(document).on("click", ".signup-save", function() {
 		submitUser();
 	});
 
@@ -67,7 +67,7 @@ $(function(){
 	}, 500);
 
 	libsb.on("init-dn", function(init, next) {
-		if (init.auth && init.user.identities && !init.user.id ) {
+		if (init.auth && init.user.identities && !init.user.id) {
 			if (init.resource == libsb.resource) {
 				signingUser = init.user;
 
@@ -75,9 +75,9 @@ $(function(){
 			}
 		}
 		next();
-	},1000);
+	}, 1000);
 
-	$(document).on("click", ".signup-cancel", function(){
+	$(document).on("click", ".signup-cancel", function() {
 		libsb.emit('navigate', {
 			view: 'normal',
 			mode: 'normal',
