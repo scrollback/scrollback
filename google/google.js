@@ -1,6 +1,8 @@
 var core;
 var config = require("../config.js"),
+	crypto = require('crypto'),
 	request = require("request"),
+	internalSession = Object.keys(config.whitelists)[0],
 	core;
 module.exports = function(c) {
 	core = c;
@@ -37,14 +39,26 @@ module.exports = function(c) {
 				if (err) return callback(err);
 				try {
 					body = JSON.parse(body);
-					console.log(body);
-
-
 					request("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + body.access_token, function(err, res, body) {
 						if (err) return callback(err);
 						try {
 							body = JSON.parse(body);
-							console.log(body);
+							core.emit("getUsers", {
+								identity: "mailto:" + body.email,
+								session: internalSession
+							}, function(err, data) {
+								if (err || !data) return callback(err);
+
+								if (!data.results.length) {
+									action.user = {};
+									action.user.identities = ["mailto:" + body.email];
+									action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=retro';
+									return callback();
+								}
+								action.old = action.user;
+								action.user = data.results[0];
+								callback();
+							});
 						} catch (e) {
 							return callback(e);
 						}
