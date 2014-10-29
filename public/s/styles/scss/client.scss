@@ -1578,6 +1578,12 @@ $dotshadow: fade-out($accent-color, .6);
         float: left;
         margin-right: .5em;
     }
+
+    .embed-share-button {
+        margin: 0 .25em;
+
+        &:first-of-type { margin-left: 0; }
+    }
 }
 
 .settings-label, .settings-action {
