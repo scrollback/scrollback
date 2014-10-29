@@ -9,7 +9,7 @@ var pictureList = [];
 libsb.on("init-dn", function(action, next) {
 	pictureSelected = action.user.picture;
 	pictureList = action.user.params.pictures;
-	if(!pictureList && !/^guest-/.test(action.user.id)) {
+	if (!pictureList && !/^guest-/.test(action.user.id)) {
 		pictureList = [pictureSelected];
 	}
 	next();
@@ -18,7 +18,7 @@ libsb.on("init-dn", function(action, next) {
 libsb.on("user-dn", function(action, next) {
 	pictureSelected = action.user.picture;
 	pictureList = action.user.params.pictures;
-	if(!pictureList) {
+	if (!pictureList) {
 		pictureList = [pictureSelected];
 	}
 	next();
@@ -26,7 +26,7 @@ libsb.on("user-dn", function(action, next) {
 
 libsb.on("user-up", function(action, next) {
 	action.user.picture = pictureSelected;
-	if(pictureList) action.user.params.pictures = pictureList;
+	if (pictureList) action.user.params.pictures = pictureList;
 	next();
 }, 100);
 
@@ -37,20 +37,20 @@ libsb.on('pref-show', function(tabs, next) {
 	description = tabs.user ? tabs.user.description : "";
 	picture = tabs.user ? tabs.user.picture : "";
 	var imgList = [];
-	if(tabs.user.params && !tabs.user.params.pictures) {
+	if (tabs.user.params && !tabs.user.params.pictures) {
 		tabs.user.params.pictures = pictureList;
 	}
-	if(tabs.user.params && tabs.user.params.pictures) {
+	if (tabs.user.params && tabs.user.params.pictures) {
 		tabs.user.params.pictures.forEach(function(pic) {
-			var ava = $("<span>").append(
+			var ava = $("<div>").append(
 				$("<img>").attr("src", pic)
 			).addClass("pref-user-avatar").data("url", pic);
-			
-			if(pic === tabs.user.picture) ava.addClass("current");
+
+			if (pic === tabs.user.picture) ava.addClass("current");
 			imgList.push(ava);
 		});
 	}
-	$avatar = formField("Picture", null, "pref-user-avatar", imgList);
+	$avatar = formField("Picture", null, "picture-list", imgList);
 
 	$about = formField("About me", "area", "pref-about-me", description);
 
@@ -66,17 +66,16 @@ libsb.on('pref-show', function(tabs, next) {
 	next();
 }, 500);
 
-$(document).on("click",".pref-user-avatar", function(e){
+$(document).on("click", ".pref-user-avatar", function(e) {
 	var d = $(e.target).closest(".pref-user-avatar");
-	pictureSelected = $(d).data("url");
-	
+	$(".pref-user-avatar.current").removeClass("current");
+	d.addClass("current");
 });
 
 libsb.on('pref-save', function(user, next) {
 	console.log("pref-save:", user, pictureSelected);
 	user.description = $('#pref-about-me').val();
 	user.identities = libsb.user.identities;
-	user.picture = pictureSelected;
-	console.log(user);
+	pictureSelected = user.picture = $(".pref-user-avatar.current").data("url");
 	next();
 }, 500);
