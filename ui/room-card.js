@@ -17,7 +17,6 @@ roomCard.render = function(roomObj, $el) {
 
 	$card = $el.find(".card-item");
 
-	$card.attr("id", "room-card-" + roomObj.id);
 	$card.attr("data-room", roomObj.id);
 
 	$card.find(".card-header-title").text(roomObj.id);

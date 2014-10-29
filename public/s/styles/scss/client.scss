@@ -639,6 +639,12 @@ body {
     overflow-x: hidden;
 }
 
+.home-area-heading {
+    text-transform: uppercase;
+    margin: .5em;
+    margin-bottom: 0;
+}
+
 .card-container-wrap {
     @include flex-grow(1);
     @extend %scroll-elem;

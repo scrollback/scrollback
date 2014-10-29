@@ -1,13 +1,35 @@
 /* jshint browser: true */
 /* global $, libsb */
 
+// Add entry to user menu
+libsb.on("user-menu", function(menu, next) {
+	if (window.currentState.mode !== "home") {
+		menu.items.homefeed = {
+			text: "My rooms",
+			prio: 100,
+			action: function() {
+				libsb.emit("navigate", {
+					mode: "home",
+					view: "normal",
+					source: "user-menu"
+				});
+			}
+		};
+	}
+
+	next();
+}, 1000);
+
 $(function() {
 	var roomCard = require("./room-card.js"),
 		roomItem = require("./room-item.js"),
 		rooms = require("./rooms"),
-		roomList = rooms(".js-area-rooms", roomItem.render),
-		homeFeedFeatured = rooms(".js-area-home-feed-featured", roomCard.render),
-		homeFeedMine = rooms(".js-area-home-feed-mine", roomCard.render),
+		roomList = rooms(".js-area-rooms", roomItem.render, "room-item"),
+		homeFeedFeatured = rooms(".js-area-home-feed-featured", roomCard.render, "room-card-featured"),
+		homeFeedMine = rooms(".js-area-home-feed-mine", roomCard.render, "room-card-mine"),
+		$roomHeader = $(".room-header"),
+		$gotoform = $("#home-go-to-room-form"),
+		$gotoentry = $("#home-go-to-room-entry"),
 		roomArea = {
 			add: function(roomObj) {
 				if (window.currentState.mode === "home") {
@@ -54,8 +76,6 @@ $(function() {
 
 		roomArea.empty();
 
-		$(".room-item.current").removeClass("current");
-
 		if (room) {
 			libsb.emit("getRooms", { ref: room }, function(err, response) {
 				if (!(response && response.results && response.results.length)) {
@@ -63,8 +83,6 @@ $(function() {
 				}
 
 				roomArea.add(response.results[0]);
-
-				$("#room-item-" + room).addClass("current");
 			});
 		}
 
@@ -79,6 +97,9 @@ $(function() {
 				roomArea.add(roomObj);
 			});
 		}
+
+		$("[data-room]").removeClass("current");
+		$("[data-room=" + room + "]").addClass("current");
 	}
 
 	libsb.on("navigate", function(state, next) {
@@ -87,6 +108,7 @@ $(function() {
 				(state.old.roomName !== state.roomName) ||
 				((state.old.mode !== state.mode))) {
 				updateMyRooms();
+				updateFeaturedRooms();
 			}
 		}
 
@@ -94,27 +116,58 @@ $(function() {
 	}, 500);
 
 	libsb.on("init-dn", function(init, next) {
-		updateFeaturedRooms();
 		updateMyRooms();
-
+		updateFeaturedRooms();
 		next();
 	}, 500);
 
 	$(document).on("click", function(e) {
-		var $el = $(e.target).closest(".room-item");
+		var $el = $(e.target).closest("[data-room]");
 
 		if (!$el.length) {
 			return;
 		}
 
 		libsb.emit("navigate", {
-			roomName: $el.attr("id").replace(/^room-item-/, ""),
+			roomName: $el.attr("data-room"),
 			mode: "normal",
 			view: "normal",
 			source: "room-area",
 			query: null,
 			thread: null,
 			time: null
+		});
+	});
+
+	$gotoentry.on("keydown paste", function() {
+		$(this).removeClass("error");
+	});
+
+	$gotoform.on("submit", function(e) {
+		var roomName = $gotoentry.val();
+
+		e.preventDefault();
+
+		if (roomName) {
+			libsb.emit("navigate", {
+				roomName: roomName.toLowerCase(),
+				mode: "normal",
+				view: "normal",
+				source: "room-list",
+				query: null,
+				thread: null,
+				time: null
+			});
+		} else {
+			$gotoentry.addClass("error").focus();
+		}
+	});
+
+	$roomHeader.on("click", function() {
+		libsb.emit("navigate", {
+			mode: "home",
+			view: "normal",
+			source: "room-header"
 		});
 	});
 });

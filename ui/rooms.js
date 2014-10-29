@@ -1,11 +1,12 @@
 /* jshint browser: true */
 /* global $ */
 
-function Rooms(container, render) {
+function Rooms(container, render, prefix) {
 	if (typeof render !== "function") {
 		throw new Error("Invalid render function passed!");
 	}
 
+	this.prefix = prefix;
 	this.container = $(container);
 
 	if (!this.container.length) {
@@ -15,15 +16,13 @@ function Rooms(container, render) {
 	this.render = function(roomObj) {
 		var $el = render(roomObj);
 
-		$el.attr("id", "room-item-" + roomObj.id);
+		$el.attr("id", this.prefix + "-" + roomObj.id);
 
 		return $el;
 	};
 
 	this.getElement = function(roomObj) {
-		var roomId = roomObj.id;
-
-		return this.container.find("#room-item-" + roomId);
+		return this.container.find("#" + this.prefix + "-" + roomObj.id);
 	};
 }
 
@@ -49,6 +48,6 @@ Rooms.prototype = {
 	}
 };
 
-module.exports = function(container, render) {
-	return new Rooms(container, render);
+module.exports = function(container, render, prefix) {
+	return new Rooms(container, render, prefix);
 };

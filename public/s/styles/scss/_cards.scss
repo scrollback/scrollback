@@ -18,13 +18,9 @@
 	@include addcards(1);
 
 	display: inline-block;
-	padding: .5em;
+	padding: 1em;
 
-	@media only screen and (min-width: 50em) {
-		@include addcards(2);
-
-		padding: 1em;
-	}
+	@media only screen and (min-width: 50em) { @include addcards(2); }
 
 	@media only screen and (min-width: 70em) { @include addcards(3); }
 

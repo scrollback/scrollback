@@ -10,7 +10,6 @@ roomEl.render = function(roomObj, $el) {
 	$el = $el || $template.clone(false);
 
 	$el.find(".room-name").text(id);
-	$el.attr("id", "room-item-" + id);
 	$el.attr("data-room", id);
 
 	if (window.currentState.roomName === id) {

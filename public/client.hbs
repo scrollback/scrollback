@@ -265,26 +265,29 @@
 							<input id="home-go-to-room-entry" type="text" data-string="placeholder::Enter a room name" autofocus><input id="home-go-to-room-button" type="submit" value="Go to room">
 						</form>
 					</div>
-					<div class="card-container hide-scroll js-area-home-feed-featured"></div>
-					<div class="card-container hide-scroll js-area-home-feed-mine">
-						<div class="card-item-wrap">
-							<div class="card-item">
-								<div class="card-segment card-header">
-									<div class="card-header-title"></div>
-									<div class="card-header-badge js-room-notifications-counter"></div>
-								</div>
-								<div class="card-segment card-content">
-									<div class="card-content-title"></div>
-									<div class="card-content-summary"></div>
-								</div>
-								<div class="card-segment card-actions">
-									<div class="card-actions-view" data-string="View room"></div>
-<!--
-								<div class="card-actions-online"><span class="card-actions-online-number">0</span> people talking</div>
--->
+					<div class="home-area-section">
+						<h2 class="home-area-heading">My rooms</h2>
+						<div class="card-container hide-scroll js-area-home-feed-mine">
+							<div class="card-item-wrap">
+								<div class="card-item">
+									<div class="card-segment card-header">
+										<div class="card-header-title"></div>
+										<div class="card-header-badge js-room-notifications-counter"></div>
+									</div>
+									<div class="card-segment card-content">
+										<div class="card-content-title"></div>
+										<div class="card-content-summary"></div>
+									</div>
+									<div class="card-segment card-actions">
+										<div class="card-actions-view" data-string="View room"></div>
+									</div>
 								</div>
 							</div>
 						</div>
+					</div>
+					<div class="home-area-section">
+						<h2 class="home-area-heading">Featured rooms</h2>
+						<div class="card-container hide-scroll js-area-home-feed-featured"></div>
 					</div>
 				</div>
 			</div>
