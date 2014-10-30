@@ -52,11 +52,28 @@ module.exports = function(c) {
 								if (!data.results.length) {
 									action.user = {};
 									action.user.identities = ["mailto:" + body.email];
-									action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=retro';
+									action.user.picture = body.picture;
+									
+									action.user.params = {
+										pictures: [body.picture, 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=retro']
+									};
+									
 									return callback();
 								}
 								action.old = action.user;
 								action.user = data.results[0];
+								if (action.user.params.pictures && action.user.params.pictures.indexOf(body.picture) < 0) {
+									action.user.params.pictures.push(body.picture);
+									core.emit("user", {
+										type: "user",
+										to: action.user.id,
+										user: action.user,
+										session: internalSession
+									}, function(err, action) {
+										console.log("Action done:", err, action);
+									});
+								}
+								
 								callback();
 							});
 						} catch (e) {
