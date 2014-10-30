@@ -7,6 +7,8 @@ function openUrl(capabilities, server, roomid) {
 	withCapabilities(capabilities).
 	build();
 	driver.get(server + "/" + roomid);
+	var window = new webdriver.WebDriver.Window(driver);
+	window.maximize();
 	return driver;
 }
 
@@ -24,14 +26,14 @@ function loginPersona(driver, id, password, callback) {
 			return driver.switchTo().window(win[1]);
 		}).then(function () {
 			return q.delay(4000);
-		}).then(function() {
+		}).then(function () {
 			return driver.findElement(webdriver.By.id("authentication_email")).sendKeys(id);
 		}).then(function () {
 			return driver.findElement(webdriver.By.id("authentication_email"))
-			.sendKeys(webdriver.Key.RETURN);
+				.sendKeys(webdriver.Key.RETURN);
 		}).then(function () {
 			return q.delay(7000);
-		}).then(function() {
+		}).then(function () {
 			return driver.findElement(webdriver.By.id("authentication_password")).
 			sendKeys(password);
 		}).then(function () {
@@ -39,7 +41,7 @@ function loginPersona(driver, id, password, callback) {
 			sendKeys(webdriver.Key.RETURN);
 		}).then(function () {
 			driver.switchTo().window(win[0])
-		}).then(function() {
+		}).then(function () {
 			return q.delay(5000)
 		}).then(callback);
 	});
@@ -47,8 +49,8 @@ function loginPersona(driver, id, password, callback) {
 
 function loginFacebook(driver, email, pass, callback) {
 	driver.findElement(webdriver.By.css('.user-area')).click().
-	then(function() {
-		findVisibleElementByClass(driver, ".facebook", function(el){
+	then(function () {
+		findVisibleElementByClass(driver, ".facebook", function (el) {
 			var win;
 			el.click().
 			then(function () {
@@ -58,21 +60,32 @@ function loginFacebook(driver, email, pass, callback) {
 				return driver.switchTo().window(win[1]);
 			}).then(function () {
 				return q.delay(4000);
-			}).then(function() {
+			}).then(function () {
 				console.log("entering email");
 				return driver.findElement(webdriver.By.id("email")).sendKeys(email);
 			}).then(function () {
 				return driver.findElement(webdriver.By.id("pass")).sendKeys(pass);
-			}).then(function() {
+			}).then(function () {
 				return driver.findElement(webdriver.By.id("u_0_1")).click();
 			}).then(function () {
 				console.log("logging in...");
 				driver.switchTo().window(win[0])
-			}).then(function() {
+			}).then(function () {
 				return q.delay(5000);
 			}).then(callback);
 		});
 	});
+}
+
+function logout(driver, callback) {
+	driver.findElement(webdriver.By.css('.user-area')).click().
+	then(function () {
+		return driver.findElement(webdriver.By.css('.logout')).click();
+	}).then(function () {
+		return driver.findElement(webdriver.By.css('.reload-page')).click();
+	}).then(function () {
+		return q.delay(2000);
+	}).then(callback);
 }
 
 /**
@@ -90,6 +103,7 @@ function findVisibleElementByClass(driver, name, cb) {
 	then(function (el) {
 		var element;
 		var c = 0;
+
 		function done() {
 			if (++c === el.length) {
 				cb(element);
@@ -113,5 +127,6 @@ module.exports = {
 	loginPersona: loginPersona,
 	getMyUserid: getMyuserid,
 	findVisibleElementByClass: findVisibleElementByClass,
-	loginFacebook: loginFacebook
+	loginFacebook: loginFacebook,
+	logout: logout
 }
