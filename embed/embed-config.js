@@ -3,8 +3,9 @@
 var formField = require('../lib/formField.js');
 libsb.on("config-show", function (conf, next) {
    //room URL
-	var backgroundColor = "";
-	var backgroundImage = "";
+	var backgroundColor;
+	var backgroundImage;
+	var form = "toast";
 	var $div = $("<div>");
 	var roomURL = "https://" + window.location.host + "/" + currentState.roomName;
 	var $roomURLField = $("<input>").addClass("embed-input-url").attr("readonly", true).val(roomURL);
@@ -42,6 +43,12 @@ libsb.on("config-show", function (conf, next) {
 	$imageBackground.find("input").attr("type", "url");
 
 	$div.append($imageBackground);
+	//form
+	var $formOptions = formField("Form", "radio", "embed-form-options",
+								 [["embed-form-toast", "toast", true], ["embed-form-canvas", "canvas"]]);
+
+	$div.append($formOptions);
+
 	//code.
 	$div.append(formField("", "<p>", "embed-code-info",
 						  format.textToHtml("Place the following code just before the closing </head> tag ")));
@@ -72,9 +79,17 @@ libsb.on("config-show", function (conf, next) {
 		}
 
 	});
+
 	$imageBackground.on("keydown paste input change", function() {
 		var $bkg = $('#embed-image-background');
 		backgroundImage = $bkg.val();
+		code = getCode();
+		$textarea.text(code);
+	});
+
+	$formOptions.on('change', function() {
+		console.log("On change radio");
+		form = $('input[name=\"embed-form-options\"]:checked', $formOptions).val().substring(11);
 		code = getCode();
 		$textarea.text(code);
 	});
@@ -87,17 +102,21 @@ libsb.on("config-show", function (conf, next) {
     next();
 
 	function getCode() {
-		var code = '<script>window.scrollback = {%sroom:"' + window.currentState.roomName + '",form:"toast",theme:"dark",minimize:true};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>';
-
-		if (backgroundColor && backgroundImage) {
-			code = parse(code, "backgroundColor:\"" + backgroundColor + "\"," +
-						 "backgroundImage:\"" + backgroundImage + "\",");
-		} else if (backgroundColor) {
-			code = parse(code, "backgroundColor:\"" + backgroundColor + "\",");
-		} else if (backgroundImage) {
-			code = parse(code, "backgroundImage:\"" + backgroundImage + "\",");
-		} else code = parse(code, "");
+		var code = '<script>window.scrollback = {%s;(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>';
+		var embedObj = {
+			room: window.currentState.roomName,
+			theme: "dark",
+			backgroundColor: backgroundColor,
+			backgroundImage: backgroundImage,
+			form: form
+		};
+		code = parse(code, JSON.stringify(embedObj));
 		return code;
+	}
+
+	function getMailToLink() {
+		return "mailto:?body=" + encodeURIComponent(getCode()) +
+			"&subject=" + encodeURIComponent("Embed Code for room: " + currentState.roomName);
 	}
 }, 500);
 
@@ -112,6 +131,4 @@ function parse(str) {
 	});
 }
 
-function getMailToLink() {
-	return "mailto:?body=" + "Testingtext" + "&subject=codefadfasdf";
-}
+
