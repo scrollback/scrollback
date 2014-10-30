@@ -44,7 +44,6 @@ function browserAuth(action, callback) {
 				action.user.params = {};
 				action.user.guides = {};
 				action.user.params.pictures = [action.user.picture];
-				console.log("NEW USER: ", action.user);
 				return callback();
 			}
 			action.old = action.user;
