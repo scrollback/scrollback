@@ -27,7 +27,8 @@
 				path: location.pathname + location.search + location.hash
 			};
 			embed.minimize = (typeof sb.minimize === "boolean") ? sb.minimize : false;
-			embed.titleBackground = sb.titleBackground;
+			embed.backgroundColor = sb.backgroundColor;
+			embed.backgroundImage = sb.backgroundImage;
 
 			sb.room = validate(sb.room, true);
 

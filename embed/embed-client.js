@@ -219,16 +219,21 @@ module.exports = function(libsb) {
 };
 
 function addStyleSheet(embed) {
-	if (!(embed && embed.titleBackground)) return;
-	var textColor,
-		r = [];
-	if (isDark(embed.titleBackground)) {
-		textColor = '#fff';
-	} else {
-		textColor = '#000';
+	var r = [];
+	if (!(embed && embed.backgroundColor && embed.backgroundImage)) return;
+	if (embed && embed.backgroundColor) {
+		var textColor;
+		if (isDark(embed.backgroundColor)) {
+			textColor = '#fff';
+		} else {
+			textColor = '#000';
+		}
+		r.push(getGeneratedCss("custom-title-bar-bg", ["background"], [embed.backgroundColor]));
+		r.push(getGeneratedCss("custom-title-bar-fg", ["background"], [textColor]));
 	}
-	r.push(getGeneratedCss("custom-title-bar-bg", ["background"], [embed.titleBackground]));
-	r.push(getGeneratedCss("custom-title-bar-fg", ["background"], [textColor]));
+	if (embed && embed.backgroundImage) {
+		r.push(getGeneratedCss("custom-background-image", ["background-image"], ["url(\"" +embed.backgroundImage +"\")"]));
+	}
 	$('head').append($("<style>").text(r.join(" ")));
 }
 

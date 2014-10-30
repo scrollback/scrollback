@@ -90,7 +90,7 @@ libsb.on("config-show", function (conf, next) {
 		var code = '<script>window.scrollback = {%sroom:"' + window.currentState.roomName + '",form:"toast",theme:"dark",minimize:true};(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>';
 
 		if (backgroundColor && backgroundImage) {
-			code = parse(code, "backgroundColor:\"" + backgroundColor + "\",\"" +
+			code = parse(code, "backgroundColor:\"" + backgroundColor + "\"," +
 						 "backgroundImage:\"" + backgroundImage + "\",");
 		} else if (backgroundColor) {
 			code = parse(code, "backgroundColor:\"" + backgroundColor + "\",");
