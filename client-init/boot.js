@@ -11,6 +11,10 @@ function init(libsb) {
 			state.mode = "home";
 		} else {
 			state = parseURL(window.location.pathname, window.location.search);
+			if(state.platform) {
+				state.phonegap = true;
+				state.mode = "home";
+			}
 			if(state.embed) delete state.embed;
 		}
 

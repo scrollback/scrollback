@@ -359,11 +359,21 @@
 		<script>window.jQuery || document.write('<script src="{{server.protocol}}{{server.host}}/s/scripts/lib/jquery.min.js"><\/script>');</script>
 
 		<script src="https://login.persona.org/include.js"></script>
-
+	
 		<!--[if IE]>
 		<script src="{{server.protocol}}{{server.host}}/s/scripts/lib/polyfills.min.js"></script>
 		<![endif]-->
-
+		
+		<script>
+			console.log("Adding event listener..")
+			document.addEventListener('deviceready', function () {
+				console.log("Inside client.js, got device ready event!");
+			}, false);
+		</script>
+		
+		<script src="cordova.js"></script>
+		<script src="cordova_plugins.js"></script>
+		
 		<script src="{{server.protocol}}{{server.host}}/s/scripts/client.bundle.min.js"></script>
 
 		<!-- phonegap scripts -->
