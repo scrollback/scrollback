@@ -12,10 +12,10 @@ function getParameterByName(name, url) {
 function loginWithFb() {
 	var fbRef = window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
 	if (currentState.phonegap) {
-		var interval = setInterval(function () {
+		var interval = setInterval(function() {
 			fbRef.executeScript({
 				code: "window.location.href;"
-			}, function (ret) {
+			}, function(ret) {
 				var url = ret[0];
 				var code = getParameterByName('code', url);
 				if (code !== null) {
@@ -38,12 +38,12 @@ function loginWithFb() {
 
 $('.js-phonegap-fb-login').click(loginWithFb);
 
-libsb.on('auth-menu', function (menu, next) {
+libsb.on('auth-menu', function(menu, next) {
 	menu.buttons.facebook = {
 		text: 'Facebook',
 		prio: 100,
 		action: loginWithFb
-	
+
 	};
 	next();
 }, 1000);

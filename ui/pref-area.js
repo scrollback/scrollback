@@ -11,9 +11,9 @@ $(function() {
 			var userObj = {
 				id: libsb.user.id,
 				description: '',
-				identities: [],
-				params: {},
-				guides: {}
+				identities: libsb.user.identities || libsb.user.identities,
+				params: libsb.user.params || {},
+				guides: libsb.user.guides|| {}
 			};
 
 			libsb.emit('pref-save', userObj, function(err, user) {

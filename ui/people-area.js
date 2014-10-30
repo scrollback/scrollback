@@ -81,7 +81,7 @@ $(function() {
 				next();
 			}, 100);
 		}
-	["join-dn", "part-dn", "away-dn", "back-dn"].forEach(listener);
+	["join-dn", "part-dn", "away-dn", "back-dn","user-dn"].forEach(listener);
 
 	// Set up infinite scroll here.
 	$people.infinite({
