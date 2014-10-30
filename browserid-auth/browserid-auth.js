@@ -41,6 +41,9 @@ function browserAuth(action, callback) {
 				action.user = {};
 				action.user.identities = [identity];
 				action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=retro';
+				action.user.params = {};
+				action.user.guides = {};
+				action.user.params.pictures = [action.user.picture];
 				return callback();
 			}
 			action.old = action.user;
