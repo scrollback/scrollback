@@ -18,13 +18,13 @@
 //	});
 //})();
 
-libsb.on('auth-menu', function(menu, next){
+libsb.on('auth-menu', function(menu, next) {
 	menu.buttons.persona = {
 		text: 'Persona',
 		prio: 200,
-		action: function(){
+		action: function() {
 			navigator.id.watch({
-				onlogin: function(assertion){
+				onlogin: function(assertion) {
 					var action = {};
 					action.auth = {
 						browserid: assertion

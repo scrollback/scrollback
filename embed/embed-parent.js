@@ -1,15 +1,16 @@
-	/* jslint browser: true, indent: 4, regexp: true  */
+/* jslint browser: true, indent: 4, regexp: true  */
 
-(function () {
-	var config = require("../client-config.js");
-	var validate = require("../lib/validate.js");
+(function() {
+	var config = require("../client-config.js"),
+		validate = require("../lib/validate.js");
 
-	document.addEventListener('readystatechange', function () {
+	document.addEventListener("readystatechange", function() {
 		var container;
+
 		if (document.readyState === "complete") {
-			//            Add to iframe url: embed={minimize,path}
-			var embed = {};
+			// Add to iframe url: embed={minimize,path}
 			var sb, style, iframe,
+				embed = {},
 				host = config.server.protocol + config.server.host;
 
 			window.scrollback = window.scrollback || {};
@@ -39,6 +40,7 @@
 			style.href = host + "/s/styles/dist/embed.css";
 
 			document.head.appendChild(style);
+
 			// Create and append the iframe
 			iframe = document.createElement("iframe");
 
@@ -57,8 +59,9 @@
 			iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
 			iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
 
-			window.addEventListener("message", function (e) {
+			window.addEventListener("message", function(e) {
 				var data;
+
 				if (e.origin === host) {
 					var minReg = /\bscrollback-minimized\b/;
 
@@ -78,5 +81,5 @@
 				}
 			}, false);
 		}
-	});
+	}, false);
 })();

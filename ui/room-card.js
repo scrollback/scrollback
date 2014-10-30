@@ -22,7 +22,7 @@ roomCard.render = function($el, room, online, index) {
 
 	$card.find(".card-header-title").text(room.id);
 	$card.find(".card-content-summary").text(room.description || "This room has no description.");
-//	$card.find(".card-actions-online").text(online);
+	//	$card.find(".card-actions-online").text(online);
 
 	return $el;
 };

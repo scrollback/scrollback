@@ -165,6 +165,7 @@ module.exports = function(libsb) {
 		verificationStatus = true;
 	}
 	addStyleSheet(embed);
+	
 	libsb.on("navigate", function(state, next) {
 		function processNavigate() {
 			var guides;

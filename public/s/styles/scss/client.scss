@@ -1515,15 +1515,29 @@ $dotshadow: fade-out($accent-color, .6);
 
             .button, .button-secondary { padding: .5em 1em; }
         }
-
+		.picture-container{
+			position: relative;
+			padding: 0px;
+			.picture-list{
+				position: absolute;
+			}
+		}
         .conf-twitter-account, .pref-user-avatar {
             position: relative;
             display: block;
             height: 80px;
             width: 80px;
-            background: url(../../img/client/avatar-fallback.svg) center center no-repeat;
-            background-size: contain;
-
+           	background-size: contain;
+			border-width: 0.5em;
+			border-style: solid;
+			border-color: transparent;
+			display: inline-block;
+			
+			&.current {
+				border-color: darken($light-color, 20%);
+				border-radius: $roundness;
+			}
+			
             img {
                 border-radius: $roundness;
                 height: 100%;

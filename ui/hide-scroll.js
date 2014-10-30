@@ -5,10 +5,10 @@ $(function() {
 	var outer, inner, swy;
 
 	outer = $("<div></div>").css({
-			width: "100px",
-			height: "100px",
-			overflow: "auto"
-		}).appendTo(document.body);
+		width: "100px",
+		height: "100px",
+		overflow: "auto"
+	}).appendTo(document.body);
 
 	inner = $("<div></div>").appendTo(outer);
 
@@ -17,6 +17,6 @@ $(function() {
 	outer.remove();
 
 	$("<style>").attr("type", "text/css")
-				.html(".hide-scroll { overflow-y: scroll; margin-right: -" + swy + "px; }")
-				.appendTo("head");
+		.html(".hide-scroll { overflow-y: scroll; margin-right: -" + swy + "px; }")
+		.appendTo("head");
 });

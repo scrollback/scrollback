@@ -83,7 +83,10 @@ $(function() {
 
 		next();
 	}, 100);
-
+	libsb.on("user-dn", function(action, next) {
+		$userAvatar.attr("src",action.user.picture);
+		next();
+	}, 100);
 	libsb.on("navigate", function(state, next) {
 		if (state && state.old && state.roomName && state.roomName !== state.old.roomName) {
 			$roomTitle.text(state.roomName);
@@ -98,9 +101,13 @@ $(function() {
 	}, 100);
 
 	libsb.on("logout", function(p, n) {
-		var $signoutDialog = $("<div>").html(signoutText).modal({ dismiss: false });
+		var $signoutDialog = $("<div>").html(signoutText).modal({
+			dismiss: false
+		});
 
-		libsb.emit("navigate", { view: "loggedout" });
+		libsb.emit("navigate", {
+			view: "loggedout"
+		});
 
 		$signoutDialog.on("click", ".reload-page", function() {
 			location.reload();

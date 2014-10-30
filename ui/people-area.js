@@ -3,13 +3,13 @@
 
 var personEl = require("./person.js"),
 	peopleArea = {};
-$(function () {
+$(function() {
 	var $people = $(".pane-people-wrap"),
 		people = [],
 		roomName = "";
 
 	function resetList(index) {
-		getPeople(function () {
+		getPeople(function() {
 			$people.reset(index);
 		});
 	}
@@ -19,11 +19,11 @@ $(function () {
 			sorted = [];
 		libsb.getUsers({
 			memberOf: roomName
-		}, function (err, res) {
+		}, function(err, res) {
 			var r = res.results,
 				i, l;
 
-			r = r.map(function (user) {
+			r = r.map(function(user) {
 				return $.extend({}, user);
 			});
 
@@ -37,12 +37,12 @@ $(function () {
 
 			libsb.getUsers({
 				occupantOf: roomName
-			}, function (err, res) {
+			}, function(err, res) {
 				var r = res.results,
 					e,
 					i, l;
 
-				r = r.map(function (user) {
+				r = r.map(function(user) {
 					return $.extend({}, user);
 				});
 
@@ -64,9 +64,9 @@ $(function () {
 					}
 
 				}
-				sorted.sort(function (a, b) {
-					if(a.score!==b.score) return -(a.score - b.score);
-					else return(a.id<b.id?-1:1);
+				sorted.sort(function(a, b) {
+					if (a.score !== b.score) return -(a.score - b.score);
+					else return (a.id < b.id ? -1 : 1);
 				});
 
 				people = sorted;
@@ -75,13 +75,13 @@ $(function () {
 		});
 	}
 
-	function listener(event){
-		libsb.on(event, function (action, next) {
-			if(action.to === roomName) resetList();
-			next();
-		}, 100);
-	}
-	["join-dn", "part-dn", "away-dn", "back-dn"].forEach(listener);
+	function listener(event) {
+			libsb.on(event, function(action, next) {
+				if (action.to === roomName) resetList();
+				next();
+			}, 100);
+		}
+	["join-dn", "part-dn", "away-dn", "back-dn","user-dn"].forEach(listener);
 
 	// Set up infinite scroll here.
 	$people.infinite({
@@ -89,9 +89,10 @@ $(function () {
 		fillSpace: 500,
 		itemHeight: 100,
 		startIndex: 0,
-		getItems: function (index, before, after, recycle, callback) {
-			var res = [], from, to, i;
-			
+		getItems: function(index, before, after, recycle, callback) {
+			var res = [],
+				from, to, i;
+
 			if (before) {
 				if (typeof index === "undefined") return callback([false]);
 				from = index - before;
@@ -102,44 +103,43 @@ $(function () {
 				to = index + after;
 			}
 
-			if(from < 0) from = 0;
-			if(to >= people.length) to = people.length - 1;
+			if (from < 0) from = 0;
+			if (to >= people.length) to = people.length - 1;
 
 			for (i = from; i <= to; i++) {
 				if (typeof people[i] !== "undefined") {
 					res.push(personEl.render(null, people[i], i));
 				}
 			}
-			if(before){
-				if(res.length < before) res.unshift(false);
-			}
-			else if(after){
-				if(res.length < after) res.push(false);
+			if (before) {
+				if (res.length < before) res.unshift(false);
+			} else if (after) {
+				if (res.length < after) res.push(false);
 			}
 			callback(res);
 		}
 	});
 
-	libsb.on('navigate', function (state, next) {
+	libsb.on('navigate', function(state, next) {
 		var reset = false,
 			$people;
 		if (state.source == 'people-area') return next();
 		roomName = state.roomName;
 
-		if(state.old){
+		if (state.old) {
 			$people = $(".pane-people");
 
-			if(state.tab === "people"){
+			if (state.tab === "people") {
 				$people.addClass("current");
-				if(state.tab != state.old.tab) reset = true;
-			}else{
+				if (state.tab != state.old.tab) reset = true;
+			} else {
 				$people.removeClass("current");
 			}
 
-			if(state.source == "boot") reset = true;
-			if(state.old.connectionStatus != state.connectionStatus) reset = true;
-			if(state.roomName != state.old.roomName) reset = true;
-		}else {
+			if (state.source == "boot") reset = true;
+			if (state.old.connectionStatus != state.connectionStatus) reset = true;
+			if (state.roomName != state.old.roomName) reset = true;
+		} else {
 			reset = true;
 		}
 
@@ -147,7 +147,7 @@ $(function () {
 		next();
 	}, 400);
 
-	peopleArea.setBottom = function (bottom) {
+	peopleArea.setBottom = function(bottom) {
 		var atBottom = ($people.scrollTop() + $people.height() == $people[0].scrollHeight);
 
 		$people.css({
@@ -156,9 +156,8 @@ $(function () {
 		if (atBottom) $people.scrollTop($people[0].scrollHeight);
 	};
 
-	peopleArea.setRoom = function (r) {
+	peopleArea.setRoom = function(r) {
 		roomName = r;
 		$people.reset();
 	};
 });
-
