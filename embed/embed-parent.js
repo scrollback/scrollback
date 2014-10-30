@@ -4,18 +4,19 @@
 	var config = require("../client-config.js");
 	var validate = require("../lib/validate.js");
 
-	document.onreadystatechange = function () {
+	document.addEventListener('readystatechange', function () {
 		var container;
 		if (document.readyState === "complete") {
 			//            Add to iframe url: embed={minimize,path}
 			var embed = {};
 			var sb, style, iframe,
 				host = config.server.protocol + config.server.host;
+
 			window.scrollback = window.scrollback || {};
+
 			sb = window.scrollback;
 
 			sb.room = sb.room || ((sb.streams && sb.streams.length) ? sb.streams[0] : "scrollback");
-
 
 			embed.form = sb.form || "toast";
 			embed.theme = /* sb.theme || */ "dark";
@@ -27,7 +28,9 @@
 			};
 			embed.minimize = (typeof sb.minimize === "boolean") ? sb.minimize : false;
 			embed.titleBackground = sb.titleBackground;
+
 			sb.room = validate(sb.room, true);
+
 			// Insert required styles
 			style = document.createElement("link");
 			style.rel = "stylesheet";
@@ -41,15 +44,18 @@
 			if (embed.form === "canvas") {
 				container = document.getElementById("scrollback-container");
 			}
+
 			if (!container) {
 				embed.form = sb.embed = "toast";
 				document.body.appendChild(iframe);
 			} else {
 				container.appendChild(iframe);
 			}
+
 			// TODO: change "embed" to "context"
 			iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
 			iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
+
 			window.addEventListener("message", function (e) {
 				var data;
 				if (e.origin === host) {
@@ -71,5 +77,5 @@
 				}
 			}, false);
 		}
-	};
+	});
 })();
