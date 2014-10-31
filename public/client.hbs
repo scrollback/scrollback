@@ -367,12 +367,12 @@
 		<script>
 			console.log("Adding event listener..")
 			document.addEventListener('deviceready', function () {
-				console.log("Inside client.js, got device ready event!");
+				console.log("Inside client.js, got device ready event!!!!");
 			}, false);
 		</script>
 		
-		<script src="cordova.js"></script>
-		<script src="cordova_plugins.js"></script>
+		<script src="{{cordova}}"></script>
+		<script src="{{cordovaPlugin}}"></script>
 		
 		<script src="{{server.protocol}}{{server.host}}/s/scripts/client.bundle.min.js"></script>
 
