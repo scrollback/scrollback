@@ -364,13 +364,6 @@
 		<script src="{{server.protocol}}{{server.host}}/s/scripts/lib/polyfills.min.js"></script>
 		<![endif]-->
 		
-		<script>
-			console.log("Adding event listener..")
-			document.addEventListener('deviceready', function () {
-				console.log("Inside client.js, got device ready event!!!!");
-			}, false);
-		</script>
-		
 		{{#if android}}
 			<script src="cordova.js"></script>
 			<script src="cordova_plugins.js"></script>
