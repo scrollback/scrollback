@@ -23,7 +23,6 @@ var config = require('../config.js'), core,
 	fs = require("fs"), core,
 	handlebars = require("handlebars"),
 	seo, clientTemp, clientHbs,
-	useragent = require('express-useragent'),
 	log = require('../lib/logger.js');
 
 exports.init = function(app, coreObject) {
@@ -50,16 +49,18 @@ exports.init = function(app, coreObject) {
 			var queryString  = req._parsedUrl.search ? req._parsedUrl.search : "";
 			return res.redirect(301, 'https://' + config.http.host + req.path + queryString);
 		}
-		var ua = useragent.parse(req.headers['user-agent']);
 		
-		if (ua.isAndroid) {
-			clientData.cordova = "cordova.js";
-			clientData.cordovaPlugin = "cordova_plugins.js";
-		} 
+		var platform = req.query.platform;
+		
+		if (platform && platform.toLowerCase() === "android") {
+			clientData.android = true;
+			clientData.manifest = "androidmanifest.appcache";
+		} else {
+			clientData.manifest = "manifest.appcache";
+		}
 		
 		seo.getSEOHtml(req, function(r) {
 			clientData.seo = r;
-
 			res.end(clientTemp(clientData));
 		});
 
