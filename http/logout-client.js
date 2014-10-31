@@ -1,9 +1,9 @@
 /* global libsb*/
-libsb.on('user-menu', function(menu, next){
+libsb.on('user-menu', function(menu, next) {
 	menu.items.logout = {
 		text: 'Logout',
 		prio: 1000,
-		action: function(){
+		action: function() {
 			libsb.logout();
 		}
 	};

@@ -19,7 +19,7 @@ module.exports = function(core) {
 		};
 		mentions.forEach(function(user) {
 			core.emit("getUsers", {ref: user, session: internalSession}, function(err, data) {
-				if (data && data.results && data.results.length === 0) return;
+				if (!data || !data.results || !data.results[0]) return;
 				userObj = data.results[0];
 				// send pushNotification to user.params.devices
 				if (userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {

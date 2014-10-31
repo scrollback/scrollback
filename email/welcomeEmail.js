@@ -1,5 +1,5 @@
 var config = require('../config.js');
-var log = require("../lib/logger.js");//.tag("mail");
+var log = require("../lib/logger.js");
 var fs=require("fs"),jade = require("jade");
 var emailConfig = config.email;
 var welcomeEmailJade;

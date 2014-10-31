@@ -3,15 +3,15 @@
 
 var currentState = window.currentState;
 
-module.exports = function (libsb) {
-	libsb.on("navigate", function (state, n) {
+module.exports = function(libsb) {
+	libsb.on("navigate", function(state, n) {
 		function next() {
 			n();
 		}
-		if (["normal","conf"].indexOf(state.mode) >=0 && (!state.old || state.roomName != state.old.roomName || (state.connectionStatus && state.connectionStatus!= state.old.connectionStatus))) {
+		if (["normal", "conf"].indexOf(state.mode) >= 0 && (!state.old || state.roomName != state.old.roomName || (state.connectionStatus && state.connectionStatus != state.old.connectionStatus))) {
 			libsb.getRooms({
 				ref: state.roomName
-			}, function (err, data) {
+			}, function(err, data) {
 				if (err) {
 					console.log("ERROR: ", err, data);
 					return next(err);
@@ -21,7 +21,7 @@ module.exports = function (libsb) {
 					libsb.emit('getUsers', {
 						ref: state.roomName,
 						source: "loader"
-					}, function (e, d) {
+					}, function(e, d) {
 						if (d.results && d.results.length) {
 							state.mode = 'profile';
 						} else {
