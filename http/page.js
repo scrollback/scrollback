@@ -57,6 +57,7 @@ exports.init = function(app, coreObject) {
 			clientData.manifest = "androidmanifest.appcache";
 		} else {
 			clientData.manifest = "manifest.appcache";
+			clientData.android = false;
 		}
 		
 		seo.getSEOHtml(req, function(r) {
