@@ -1,8 +1,8 @@
 /* jslint browser: true, indent: 4, regexp: true */
 /* global $, libsb, currentState, format */
 var formField = require('../lib/formField.js');
-libsb.on("config-show", function (conf, next) {
-   //room URL
+libsb.on("config-show", function(conf, next) {
+	//room URL
 	var backgroundColor;
 	var backgroundImage;
 	var form = "toast";
@@ -14,15 +14,9 @@ libsb.on("config-show", function (conf, next) {
 	});
 	$div.append(formField("URL", "", "embed-room-url", $roomURLField));
 
-	var $shareDiv = $("<div>").addClass('embed-share').append($("<a>").attr("href", "https://plus.google.com/share?url=" + roomURL).
-					  attr("target", "_blank").
-					  addClass("google  embed-share-button").text("Google+"));
-	$shareDiv.append($("<a>").attr("href", "https://www.facebook.com/sharer/sharer.php?u=" + roomURL).
-					 attr("target", "_blank").
-					 addClass("facebook  embed-share-button").text("facebook"));
-	$shareDiv.append($("<a>").attr("href", "https://twitter.com/intent/tweet?url=" + roomURL).
-					 attr("target", "_blank").
-					 addClass("twitter embed-share-button").text("twitter"));
+	var $shareDiv = $("<div>").addClass('embed-share').append($("<a>").attr("href", "https://plus.google.com/share?url=" + roomURL).attr("target", "_blank").addClass("google  embed-share-button").text("Google+"));
+	$shareDiv.append($("<a>").attr("href", "https://www.facebook.com/sharer/sharer.php?u=" + roomURL).attr("target", "_blank").addClass("facebook  embed-share-button").text("facebook"));
+	$shareDiv.append($("<a>").attr("href", "https://twitter.com/intent/tweet?url=" + roomURL).attr("target", "_blank").addClass("twitter embed-share-button").text("twitter"));
 	$div.append(
 		formField("Share on", "", "share-embed", $shareDiv)
 	);
@@ -31,9 +25,9 @@ libsb.on("config-show", function (conf, next) {
 	$div.append(
 		formField("QR code", "", "embed-qr-code", qrCode)
 	);
-	//Embed customization
+	// Embed customization
 	$div.append(formField("Embed Customization", "", "embed-customization-title", ""));
-	//change title color
+	// change title color
 	var $titleBackground = formField("Embed Title Color", "text", "embed-title-background", "#");
 	$titleBackground.find("input").attr("type", "color");
 
@@ -44,22 +38,27 @@ libsb.on("config-show", function (conf, next) {
 
 	$div.append($imageBackground);
 	//form
-	var $formOptions = formField("Form", "radio", "embed-form-options",
-								 [["embed-form-toast", "toast", true], ["embed-form-canvas", "canvas"]]);
+	var $formOptions = formField("Form", "radio", "embed-form-options", [["embed-form-toast", "toast", true], ["embed-form-canvas", "canvas"]]);
 
 	$div.append($formOptions);
 
 	//code.
 	$div.append(formField("", "<p>", "embed-code-info",
-						  format.textToHtml("Place the following code just before the closing </head> tag ")));
+		format.textToHtml("Place the following code just before the closing </head> tag ")));
 	var code = getCode();
 	var $textarea = $("<textarea>").addClass("embed-code").attr("readonly", true).text(code);
-  	$div.append(
-    	formField("Code","", "embed-code", $textarea)
-  	);
+	$div.append(
+		formField("Code", "", "embed-code", $textarea)
+	);
+	//mailto link
 	var $email = $("<a>").attr("href", getMailToLink()).text("Email to developer");
+	$email.attr("target", "_blank");
 	$div.append(formField("", "", "embed-email-link", $email));
-
+	//help
+	var $help = $("<a>").attr("href", "https://github.com/scrollback/scrollback/wiki/Embed-Options");
+	$help.text("Know more about Embed Options");
+	$help.attr("target", "_blank");
+	$div.append(formField("", "", "embed-help-link", $help));
 	$textarea.click(function() {
 		this.select();
 	});
@@ -93,16 +92,16 @@ libsb.on("config-show", function (conf, next) {
 		code = getCode();
 		$textarea.text(code);
 	});
-    conf.embed = {
-      text: "Share & Embed",
-        html: $div,
-        prio: 400
-    };
+	conf.embed = {
+		text: "Share & Embed",
+		html: $div,
+		prio: 400
+	};
 
-    next();
+	next();
 
 	function getCode() {
-		var code = '<script>window.scrollback = {%s;(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>';
+		var code = '<script>window.scrollback = %s;(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>';
 		var embedObj = {
 			room: window.currentState.roomName,
 			theme: "dark",
@@ -130,5 +129,3 @@ function parse(str) {
 		return args[i++];
 	});
 }
-
-
