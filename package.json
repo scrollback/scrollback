@@ -69,7 +69,8 @@
     "twit": "~1.1.12",
     "underscore": "latest",
     "valid": "git://github.com/scrollback/valid.git",
-    "winston": "^0.7.3"
+    "winston": "^0.7.3",
+	"express-useragent": "latest"
   },
   "optionalDependencies": {},
   "devDependencies": {
