@@ -110,7 +110,11 @@ body {
     }
 }
 
-.room-list { @extend %scroll-elem; }
+.room-list {
+    @extend %scroll-elem;
+
+    padding-bottom: $bar-height;
+}
 
 .room-item {
     @extend %snappy;
@@ -178,6 +182,7 @@ body {
     padding: .75em 0;
     color: $light-color;
     text-transform: uppercase;
+    background-color: $dark-color;
     border-top: 1px solid lighten($dark-color, 5%);
 
     &:hover, &:focus {
@@ -1562,12 +1567,12 @@ $dotshadow: fade-out($accent-color, .6);
 			border-style: solid;
 			border-color: transparent;
 			display: inline-block;
-			
+
 			&.current {
 				border-color: darken($light-color, 20%);
 				border-radius: $roundness;
 			}
-			
+
             img {
                 border-radius: $roundness;
                 height: 100%;
