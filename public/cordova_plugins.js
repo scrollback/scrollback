@@ -37,7 +37,7 @@ module.exports = [
         ]
     }
 ];
-module.exports.metadata = 
+module.exports.metadata =
 // TOP OF METADATA
 {
     "org.apache.cordova.inappbrowser": "0.5.2",

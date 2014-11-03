@@ -10,7 +10,7 @@ $(function() {
 		var userId = $("#signup-id").val(),
 			$alert;
 
-		if (!validate(userId)) {
+		if (!validate(userId).isValid) {
 			$alert = $("<div>").text("Entered username is invalid");
 
 			$alert.alertbar({

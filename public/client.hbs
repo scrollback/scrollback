@@ -56,6 +56,10 @@
 			<div role="list" class="room-list hide-scroll js-area-rooms">
 				<a class="room-item"><span class="room-name"></span><span class="js-room-notifications-counter room-item-unread-count"></span></a>
 			</div>
+
+			<div data-role="user" class="room-area-create-new">
+				<a class="js-create-room" data-string="Create room"></a>
+			</div>
 		</section>
 
 		<section class="meta-area column" data-mode="normal search conf pref">
@@ -341,7 +345,7 @@
 			<div class="signup-dialog">
 				<h1>Choose a username</h1>
 				<form id="signup">
-					<input type="text" id="signup-id" name="username" placeholder="Enter username" autofocus><br/>
+					<input type="text" id="signup-id" name="username" placeholder="Enter username" autofocus><br>
 					<input class="signup-save" type="button" value="Create account">
 			</form>
 			</div>
@@ -354,21 +358,32 @@
 			</div>
 		</script>
 
+		<script type="text/template" id="createroom-dialog">
+			<div class="createroom-dialog">
+				<h1>Create a new room</h1>
+				<form id="createroom">
+					<input type="text" id="createroom-id" name="roomname" placeholder="Enter room name" autofocus>
+					<p class="error"></p>
+					<input id="createroom-save" type="submit" value="Create room">
+				</form>
+			</div>
+		</script>
+
 		<!-- scripts -->
 		<script src="{{server.protocol}}//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script>window.jQuery || document.write('<script src="{{server.protocol}}{{server.host}}/s/scripts/lib/jquery.min.js"><\/script>');</script>
 
 		<script src="https://login.persona.org/include.js"></script>
-	
+
 		<!--[if IE]>
 		<script src="{{server.protocol}}{{server.host}}/s/scripts/lib/polyfills.min.js"></script>
 		<![endif]-->
-		
+
 		{{#if android}}
 			<script src="cordova.js"></script>
 			<script src="cordova_plugins.js"></script>
 		{{/if}}
-		
+
 		<script src="{{server.protocol}}{{server.host}}/s/scripts/client.bundle.min.js"></script>
 
 		<!-- phonegap scripts -->
