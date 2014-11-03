@@ -206,13 +206,11 @@ function recvBack(back, next) {
 
 function recvAway(away, next) {
     if (away.from !== libsb.user.id) return next();
-	libsb.occupantOf = underscore.compact(
-		libsb.occupantOf.map(
-			function(room)	{
-				if(room.id !== away.to) return room; 
-			}
-		)
-	);
+	libsb.occupantOf = libsb.occupantOf.filter(function(room) {
+		if (room && room.id !== away.to) {
+			return room;	
+		}
+	});
     next();
 }
 
@@ -230,12 +228,9 @@ function recvJoin(join, next) {
 
 function recvPart(part, next) {
     if (part.from !== libsb.user.id) return next();
-    libsb.memberOf = underscore.compact(
-		libsb.memberOf.map(
-			function (room) {
-				if (room.id !== part.to) return room;
-			}
-		)
-	);
+    libsb.memberOf = libsb.memberOf.filter(function(room) {
+		if (room && room.id !== part.to) return room;
+	});
+	
     next();
 }

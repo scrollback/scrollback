@@ -106,12 +106,10 @@ function cancelEdit() {
 function checkOwnerShip() {
 	var isOwner = false;
 	if (libsb.memberOf) {
-		console.log("************* ", libsb.memberOf);
 		libsb.memberOf.forEach(function(room) {
 			if (room.id == currentState.roomName && room.role == "owner") isOwner = true;
 		});
 	}
-	console.log(isOwner);
 	return isOwner;
 }
 
@@ -131,7 +129,6 @@ libsb.on('navigate', function(state, next) {
 			ref: currentState.roomName,
 			hasMember: libsb.user.id,
 		}, function(err, data) {
-			console.log("Query ", err, data);
 			if (err || !data.results || !data.results.length) { // cachedRoom false will fetch the room from server directly.
 				//may be even show error.
 				cancelEdit();
