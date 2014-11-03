@@ -1,4 +1,5 @@
 var core;
+var log = require("../lib/logger.js");
 var config = require("../config.js"),
 	crypto = require('crypto'),
 	request = require("request"),
@@ -53,7 +54,7 @@ module.exports = function(c) {
 									action.user = {};
 									action.user.identities = ["mailto:" + body.email];
 									action.user.picture = body.picture;
-									
+									log.d("Google user object:",body.email);
 									action.user.params = {
 										pictures: [body.picture, 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=retro']
 									};
