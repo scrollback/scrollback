@@ -582,8 +582,6 @@ body {
 }
 
 .home-area {
-    background-color: darken($light-color, 5%);
-
     .title-bar { position: fixed; }
 
     .header-image { padding: 0 1em; }
@@ -596,7 +594,7 @@ body {
     min-height: $bar-height * 3;
     max-height: $bar-height * 3;
     background-color: $light-color;
-    border-bottom: 1px solid darken($light-color, 10%);
+    border-bottom: 1px solid darken($light-color, 5%);
     color: $dark-color;
     text-align: center;
 
@@ -641,8 +639,7 @@ body {
 
 .home-area-heading {
     text-transform: uppercase;
-    margin: .5em;
-    margin-bottom: 0;
+    margin: 1em .5em 0 .5em;
 }
 
 .card-container-wrap {
@@ -1544,12 +1541,12 @@ $dotshadow: fade-out($accent-color, .6);
 			border-style: solid;
 			border-color: transparent;
 			display: inline-block;
-			
+
 			&.current {
 				border-color: darken($light-color, 20%);
 				border-radius: $roundness;
 			}
-			
+
             img {
                 border-radius: $roundness;
                 height: 100%;
