@@ -46,9 +46,9 @@ function addProperties(l) {
 }
 
 function loadUserInfo(libsb) {
-	var user = spaceManager.get('user');
-	var occupantOf = spaceManager.get('occupantOf');
-	var memberOf = spaceManager.get('memberOf');
+	var user = spaceManager.get('user', false);
+	var occupantOf = spaceManager.get('occupantOf', false);
+	var memberOf = spaceManager.get('memberOf', false);
 	
  	if (user !== null) libsb.user = user;
 	if (occupantOf !== null) libsb.occupantOf = occupantOf;
