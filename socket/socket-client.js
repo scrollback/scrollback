@@ -312,12 +312,23 @@ function sendExpel(expel, next) {
 }
 
 function sendUser(user, next) {
-	var action = makeAction(user, {
+	var action;
+
+	if (!user.user.params) {
+		user.user.params = {};
+	}
+
+	if (!user.user.guides) {
+		user.user.guides = {};
+	}
+
+	action = makeAction(user, {
 		type: 'user',
 		to: "me",
 		user: user.user,
 		id: user.id
 	});
+
 	if (/^guest-/.test(user.user.id)) return next();
 	safeSend(JSON.stringify(action));
 	pendingActions[action.id] = returnPending(action, next);

@@ -54,11 +54,28 @@ function fbAuth(action, callback) {
 								if (!data.results.length) {
 									action.user = {};
 									action.user.identities = ["mailto:" + user.email];
-									action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
+									action.user.picture = "https://graph.facebook.com/" + user.id + "/picture?type=square";
+									action.user.params = {
+										pictures: ["https://graph.facebook.com/" + user.id + "/picture?type=square", 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro']
+									};
 									return callback();
 								}
+
 								action.old = action.user;
 								action.user = data.results[0];
+
+								if (action.user.params.pictures && action.user.params.pictures.indexOf("https://graph.facebook.com/" + user.id + "/picture?type=square") < 0) {
+									action.user.params.pictures.push("https://graph.facebook.com/" + user.id + "/picture?type=square");
+									core.emit("user", {
+										type: "user",
+										to: action.user.id,
+										user: action.user,
+										session: internalSession
+									}, function(err, action) {
+										console.log("Action done:", err, action);
+									});
+								}
+
 								callback();
 							});
 						} catch (e) {
