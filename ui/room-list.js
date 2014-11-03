@@ -1,7 +1,8 @@
 /* jshint browser: true */
 /* global $, libsb, currentState */
 
-var roomCard = require("./room-card.js"),
+var validate = require("../lib/validate.js"),
+	roomCard = require("./room-card.js"),
 	roomEl = require("./room-item.js"),
 	$roomarea, $homefeed,
 	rooms = [],
@@ -173,50 +174,49 @@ $(function() {
 		});
 
 		$createRoomDialog.find("#createroom").on("submit", function(e) {
-			var name = $createRoomEntry.val();
+			var name = $createRoomEntry.val(),
+				validation = validate(name);
 
 			e.preventDefault();
 
-			if (typeof name !== "string") {
-				showError("Room name cannot be empty!");
-			} else if (name.length < 3) {
-				showError("Room name must be at least 3 letters long.");
-			} else if (/[^0-9a-z\-]/.test(name)) {
-				showError("Room name can contain only lowercase letters, digits and hyphens (-)");
-			} else if (/^[^a-z]/.test(name)) {
-				showError("Room name must start with a lower case letter.");
+			if (validation.isValid) {
+				showError(false);
 			} else {
-				$createRoomButton.addClass("loading");
+				showError(validation.error);
 
-				libsb.emit("getRooms", { ref: name }, function(err, res) {
-					$createRoomButton.removeClass("loading");
-
-					if (res && res.results && res.results.length) {
-						showError("Another room with same name already exists!");
-					} else {
-						showError(false);
-
-						libsb.emit("room-up", {
-							to: name,
-							room: {
-								id: name,
-								description: "",
-								params: {},
-								guides: {}
-							}
-						}, function() {
-							libsb.emit("navigate", {
-								roomName: name,
-								mode: "normal",
-								tab: "info",
-								time: null
-							}, function() {
-								location.reload();
-							});
-						});
-					}
-				});
+				return;
 			}
+
+			$createRoomButton.addClass("loading");
+
+			libsb.emit("getRooms", { ref: name }, function(err, res) {
+				$createRoomButton.removeClass("loading");
+
+				if (res && res.results && res.results.length) {
+					showError("Another room with same name already exists!");
+				} else {
+					showError(false);
+
+					libsb.emit("room-up", {
+						to: name,
+						room: {
+							id: name,
+							description: "",
+							params: {},
+							guides: {}
+						}
+					}, function() {
+						libsb.emit("navigate", {
+							roomName: name,
+							mode: "normal",
+							tab: "info",
+							time: null
+						}, function() {
+							location.reload();
+						});
+					});
+				}
+			});
 		});
 	});
 });
