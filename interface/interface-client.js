@@ -65,8 +65,6 @@ module.exports = function (l) {
     libsb.on('away-dn', recvAway, 1000);
     libsb.on('join-dn', recvJoin, 1000);
     libsb.on('part-dn', recvPart, 1000);
-    libsb.on('admit-dn', recvAdmit, 1000);
-    libsb.on('expel-dn', recvExpel, 1000);
     // libsb.on('error-dn', recvError);
 
     libsb.on('connected', onConnect, 1000);
@@ -196,58 +194,48 @@ function recvInit(init, next) {
 
 function recvBack(back, next) {
     if (back.from !== libsb.user.id) return next();
-    /*	if(!libsb.rooms.filter(function(room){ return room.id === back.to; }).length){
-		libsb.rooms.push(back.room);
-		core.emit('rooms-update');
-	}
-	if(!libsb.occupantOf.filter(function(room){ return room.id === back.to; }).length){
+	if(libsb.occupantOf.filter(
+		function(room){ 
+			return room.id === back.to; 
+		}
+	).length === 0)	{
 		libsb.occupantOf.push(back.room);
-		libsb.emit('occupantof-update');
-	}*/
+	}
     next();
 }
 
 function recvAway(away, next) {
     if (away.from !== libsb.user.id) return next();
-    /*libsb.rooms = underscore.compact(libsb.rooms.map(function(room){ if(room.id !== away.to) return room; }));
-	libsb.occupantOf = underscore.compact(libsb.occupantOf.map(function(room){ if(room.id !== away.to) return room; }));
-	libsb.emit('rooms-update');
-	libsb.emit('occupantof-update');*/
+	libsb.occupantOf = underscore.compact(
+		libsb.occupantOf.map(
+			function(room)	{
+				if(room.id !== away.to) return room; 
+			}
+		)
+	);
     next();
 }
 
 function recvJoin(join, next) {
     if (join.from !== libsb.user.id) return next();
-    if (!libsb.memberOf.filter(function (room) {
-        return room.id === join.to;
-    }).length) {
+    if (libsb.memberOf.filter(
+		function (room) {
+        	return room.id === join.to;
+    	}
+	).length === 0) {
         libsb.memberOf.push(join.room);
-        libsb.emit('memberof-update');
     }
     next();
 }
 
 function recvPart(part, next) {
     if (part.from !== libsb.user.id) return next();
-    libsb.memberOf = underscore.compact(libsb.memberOf.map(function (room) {
-        if (room.id !== part.to) return room;
-    }));
-    libsb.emit('memberof-update');
-    next();
-}
-
-function recvAdmit(admit, next) {
-    if (admit.ref === libsb.user.id) {
-        libsb.memberOf.push(admit.room);
-    }
-    next();
-}
-
-function recvExpel(expel, next) {
-    if (expel.ref === libsb.user.id) {
-        libsb.memberOf = libsb.memberOf.filter(function (room) {
-            return room.id !== expel.to;
-        });
-    }
+    libsb.memberOf = underscore.compact(
+		libsb.memberOf.map(
+			function (room) {
+				if (room.id !== part.to) return room;
+			}
+		)
+	);
     next();
 }
