@@ -3,6 +3,7 @@
 
 var underscore = require('underscore'),
     generate = require('../lib/generate.js'),
+	spaceManager = require('../localStorage/spaceManager.js'),
     libsb;
 
 function logout() {
@@ -44,12 +45,21 @@ function addProperties(l) {
     }
 }
 
+function loadUserInfo(libsb) {
+	var user = spaceManager.get('user');
+	var occupantOf = spaceManager.get('occupantOf');
+	var memberOf = spaceManager.get('memberOf');
+	
+ 	if (user !== null) libsb.user = user;
+	if (occupantOf !== null) libsb.occupantOf = occupantOf;
+	if (memberOf !== null) libsb.memberOf = memberOf;
+}
 
 module.exports = function (l) {
     libsb = l;
     window.libsb = libsb; // still being used.
     addProperties(libsb);
-    
+    loadUserInfo(libsb);
     libsb.on('init-dn', recvInit, 999); // should run after the local storage quick settings thing.
     libsb.on('back-dn', recvBack, 1000);
     libsb.on('away-dn', recvAway, 1000);
