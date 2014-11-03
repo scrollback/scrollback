@@ -179,9 +179,7 @@ $(function() {
 
 			e.preventDefault();
 
-			if (validation.isValid) {
-				showError(false);
-			} else {
+			if (!validation.isValid) {
 				showError(validation.error);
 
 				return;
