@@ -9,6 +9,7 @@ module.exports = function(capabilities, options){
 		this.timeout(4 * timeOut);
 		var driver, server = options.server;
 		var random = Math.random() + "";
+
 		before(function(done){
 			this.timeout(4 * timeOut);
 

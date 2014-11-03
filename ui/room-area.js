@@ -21,7 +21,8 @@ libsb.on("user-menu", function(menu, next) {
 }, 1000);
 
 $(function() {
-	var roomCard = require("./room-card.js"),
+	var validate = require("../lib/validate.js"),
+		roomCard = require("./room-card.js"),
 		roomItem = require("./room-item.js"),
 		rooms = require("./rooms"),
 		roomList = rooms(".js-area-rooms", roomItem.render, "room-item"),
@@ -30,6 +31,7 @@ $(function() {
 		$roomHeader = $(".room-header"),
 		$gotoform = $("#home-go-to-room-form"),
 		$gotoentry = $("#home-go-to-room-entry"),
+		$createRoomButton = $(".js-create-room"),
 		roomArea = {
 			add: function(roomObj) {
 				if (window.currentState.mode === "home") {
@@ -106,6 +108,27 @@ $(function() {
 		setCurrentRoom(room);
 	}
 
+	function createRoom(name) {
+		libsb.emit("room-up", {
+			to: name,
+			room: {
+				id: name,
+				description: "",
+				params: {},
+				guides: {}
+			}
+		}, function() {
+			libsb.emit("navigate", {
+				roomName: name,
+				mode: "normal",
+				tab: "info",
+				time: null
+			}, function() {
+				location.reload();
+			});
+		});
+	}
+
 	libsb.on("navigate", function(state, next) {
 		if (state.old) {
 			if ((state.old.connectionStatus !== state.connectionStatus) ||
@@ -175,6 +198,61 @@ $(function() {
 			mode: "home",
 			view: "normal",
 			source: "room-header"
+		});
+	});
+
+	// Handle create new room
+	$createRoomButton.on("click", function() {
+		var $createRoomDialog = $("<div>").html($("#createroom-dialog").html()).modal(),
+			$createRoomEntry = $createRoomDialog.find("#createroom-id"),
+			$createRoomButton = $createRoomDialog.find("#createroom-save"),
+			$errorMsg = $(),
+			showError = function(error) {
+				if (!error) {
+					$createRoomEntry.removeClass("error");
+					$errorMsg.popover("dismiss");
+					$createRoomDialog.modal("dismiss");
+
+					return;
+				}
+
+				$createRoomEntry.addClass("error");
+
+				$errorMsg = $("<div>").addClass("error").text(error).popover({
+					origin: $createRoomEntry
+				});
+			};
+
+		$createRoomEntry.on("change input paste", function() {
+			$.popover("dismiss");
+
+			$(this).removeClass("error");
+		});
+
+		$createRoomDialog.find("#createroom").on("submit", function(e) {
+			var name = $createRoomEntry.val(),
+				validation = validate(name);
+
+			e.preventDefault();
+
+			if (!validation.isValid) {
+				showError(validation.error);
+
+				return;
+			}
+
+			$createRoomButton.addClass("loading");
+
+			libsb.emit("getRooms", { ref: name }, function(err, res) {
+				$createRoomButton.removeClass("loading");
+
+				if (res && res.results && res.results.length) {
+					showError("Another room with same name already exists!");
+				} else {
+					showError(false);
+					createRoom(name);
+				}
+			});
 		});
 	});
 });

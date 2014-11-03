@@ -6,14 +6,20 @@
  *
  * showMenu({
  *     origin: $("a"),
- *     title: "This is a title",
+ *     title:d "This is a title",
  *     buttons: {
- *         "Facebook" : function() {},
- *         "Persona" : function() {}
+ *         "facebook" : {
+ *				text: {string},
+ *				prio: {number},
+ *				action: {function}
+ *			}
  *     },
  *     items: {
- *         "Show" : function() {},
- *         "Hide" : function() {}
+ *         "guest-settings" :{
+ *				text: {string},
+ *				prio: {number},
+ *				action: {function}
+ *			}
  *     }
  * });
  */
@@ -55,7 +61,6 @@ var showMenu = function(menu) {
 
 		$buttons.appendTo($popover);
 	}
-
 
 	if (typeof menu.items === "object" && !$.isEmptyObject(menu.items)) {
 		$list = $("<div>").addClass("popover-section").append("<ul>");

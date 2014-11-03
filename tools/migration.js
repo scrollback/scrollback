@@ -54,8 +54,8 @@ function migrateTexts(limit, cb) {
 	stream.on("result", function(text) {
 		db.pause();
 		text.type = "text";
-		text.to = validate(text.to, true);
-		text.from = validate(text.from, true);
+		text.to = validate(text.to).sanitized;
+		text.from = validate(text.from).sanitized;
 		text.threads = [];
 		if (text.labels) {
 			l = fixLabels(text);
@@ -213,7 +213,8 @@ function migrateRooms(cb) {
 				return;
 			}
 
-			room.id = validate(room.id, true);
+			room.id = validate(room.id).sanitized;
+
 			var newRoom = {
 				id: room.id,
 				description: room.description,

@@ -46,5 +46,4 @@ module.exports.metadata = {
     "org.apache.cordova.device": "0.2.12",
     "com.phonegap.plugins.PushPlugin": "2.4.0"
 };
-
 });

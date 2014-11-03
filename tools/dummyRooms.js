@@ -48,7 +48,7 @@ var leveldb, types;
 			types.rooms.get(row.to, function(err, data) {
 				var newRoom;
 				if (!data) {
-					row.to = validate(row.to, true);
+					row.to = validate(row.to).sanitized;
 					newRoom = {
 						id: row.to,
 						description: "",
