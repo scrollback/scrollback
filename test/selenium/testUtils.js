@@ -10,6 +10,8 @@ function openUrl(capabilities, server, roomid) {
 	withCapabilities(capabilities).
 	build();
 	driver.get(server + "/" + roomid);
+	var window = new webdriver.WebDriver.Window(driver);
+	window.maximize();
 	return driver;
 }
 
