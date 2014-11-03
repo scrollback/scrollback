@@ -53,6 +53,11 @@ $(function() {
 			}
 		};
 
+	function setCurrentRoom(room) {
+		$("[data-room]").removeClass("current");
+		$("[data-room=" + room + "]").addClass("current");
+	}
+
 	function updateFeaturedRooms() {
 		homeFeedFeatured.empty();
 
@@ -98,15 +103,14 @@ $(function() {
 			});
 		}
 
-		$("[data-room]").removeClass("current");
-		$("[data-room=" + room + "]").addClass("current");
+		setCurrentRoom(room);
 	}
 
 	libsb.on("navigate", function(state, next) {
 		if (state.old) {
 			if ((state.old.connectionStatus !== state.connectionStatus) ||
-				(state.old.roomName !== state.roomName) ||
-				((state.old.mode !== state.mode))) {
+				(state.old.roomName !== state.roomName && state.source !== "room-area") ||
+				(state.old.mode !== state.mode)) {
 				updateMyRooms();
 				updateFeaturedRooms();
 			}
@@ -122,14 +126,17 @@ $(function() {
 	}, 500);
 
 	$(document).on("click", function(e) {
-		var $el = $(e.target).closest("[data-room]");
+		var $el = $(e.target).closest("[data-room]"),
+			room = $el.attr("data-room");
 
 		if (!$el.length) {
 			return;
 		}
 
+		setCurrentRoom(room);
+
 		libsb.emit("navigate", {
-			roomName: $el.attr("data-room"),
+			roomName: room,
 			mode: "normal",
 			view: "normal",
 			source: "room-area",
