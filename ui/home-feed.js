@@ -56,7 +56,7 @@ $(function() {
 	});
 
 	$gotoform.on("submit", function(e) {
-		var roomName = $gotoentry.val();
+		var roomName = $gotoentry.val().toLowerCase();
 
 		e.preventDefault();
 
