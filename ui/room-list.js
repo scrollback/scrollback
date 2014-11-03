@@ -167,6 +167,8 @@ $(function() {
 			};
 
 		$createRoomEntry.on("change input paste", function() {
+			$.popover("dismiss");
+
 			$(this).removeClass("error");
 		});
 
@@ -208,6 +210,8 @@ $(function() {
 								mode: "normal",
 								tab: "info",
 								time: null
+							}, function() {
+								location.reload();
 							});
 						});
 					}
