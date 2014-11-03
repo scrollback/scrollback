@@ -4,19 +4,23 @@ var parseURL = require("../lib/parseURL.js");
 var actionQueue = require("./actionQueue.js")();
 
 function init(libsb) {
-	$(function () {
+	$(function() {
 		var state = {};
 		if (window.phonegap || window.cordova) {
 			state.phonegap = true;
 			state.mode = "home";
 		} else {
 			state = parseURL(window.location.pathname, window.location.search);
+			if(state.platform) {
+				state.phonegap = true;
+				state.mode = "home";
+			}
 			if(state.embed) delete state.embed;
 		}
 
 		state.source = "boot";
 		state.connectionStatus = "connecting";
-		libsb.emit("navigate", state, function (err) {
+		libsb.emit("navigate", state, function(err) {
 			if (err) return console.log(err);
 			libsb.hasBooted = true;
 			actionQueue.processAll();
@@ -24,6 +28,6 @@ function init(libsb) {
 	});
 }
 
-module.exports = function (l) {
+module.exports = function(l) {
 	init(l);
 };

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="{{server.protocol}}{{server.host}}/manifest.appcache" lang="en">
+<html manifest="{{server.protocol}}{{server.host}}/{{manifest}}" lang="en">
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
@@ -376,6 +376,11 @@
 		<!--[if IE]>
 		<script src="{{server.protocol}}{{server.host}}/s/scripts/lib/polyfills.min.js"></script>
 		<![endif]-->
+
+		{{#if android}}
+			<script src="cordova.js"></script>
+			<script src="cordova_plugins.js"></script>
+		{{/if}}
 
 		<script src="{{server.protocol}}{{server.host}}/s/scripts/client.bundle.min.js"></script>
 

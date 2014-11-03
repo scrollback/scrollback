@@ -1,16 +1,15 @@
 /* jshint browser: true */
 /* global $, libsb */
 
-(function(){
+(function() {
 	$(document).on("click", ".button.persona", function() {
 		navigator.id.watch({
-			onlogin: function(assertion){
+			onlogin: function(assertion) {
 				var action = {};
 				action.auth = {
 					browserid: assertion
 				};
-				libsb.emit("init-up", action, function(err, data) {
-                });
+				libsb.emit("init-up", action, function() {});
 			},
 			onlogout: function() {
 				// will get there soon enough.

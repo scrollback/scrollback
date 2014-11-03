@@ -22,7 +22,7 @@ function sendDomainChallenge() {
 		token: token
 	}), parentHost);
 
-	setTimeout(function () {
+	setTimeout(function() {
 		if (!verificationStatus) {
 			verificationStatus = true;
 			verified = false;
@@ -91,15 +91,15 @@ function toastChange(state, next) {
 	next();
 }
 
-module.exports = function (libsb) {
-	$(function () {
+module.exports = function(libsb) {
+	$(function() {
 		// Handle fullview button click
-		$(".embed-action-fullview").on("click", function () {
+		$(".embed-action-fullview").on("click", function() {
 			window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, ""), "_blank");
 		});
 
 		// Handle minimize
-		$(".embed-action-minimize").on("click", function () {
+		$(".embed-action-minimize").on("click", function() {
 			libsb.emit("navigate", {
 				minimize: true,
 				source: "embed",
@@ -107,7 +107,7 @@ module.exports = function (libsb) {
 			});
 		});
 
-		$(".title-bar").on("click", function (e) {
+		$(".title-bar").on("click", function(e) {
 			if (e.target === e.currentTarget) {
 				libsb.emit("navigate", {
 					minimize: true,
@@ -117,7 +117,7 @@ module.exports = function (libsb) {
 			}
 		});
 
-		$(".minimize-bar").on("click", function () {
+		$(".minimize-bar").on("click", function() {
 			libsb.emit("navigate", {
 				minimize: false,
 				source: "embed",
@@ -145,7 +145,7 @@ module.exports = function (libsb) {
 			}
 
 			if (embed.origin) {
-				window.onmessage = function (e) {
+				window.onmessage = function(e) {
 					var data = e.data;
 					data = parseResponse(data);
 					if (data.type == "domain-response") {
@@ -168,10 +168,10 @@ module.exports = function (libsb) {
 		verificationStatus = true;
 	}
 
-	libsb.on("navigate", function (state, next) {
+	libsb.on("navigate", function(state, next) {
 		function processNavigate() {
 			var guides;
-//				console.log("DATA:", {booted: libsb.hasBooted, verificationStatus: verificationStatus,verificationTimeout: verificationTimeout, verified: verified, domain: domain, path: path, state: state});
+			//				console.log("DATA:", {booted: libsb.hasBooted, verificationStatus: verificationStatus,verificationTimeout: verificationTimeout, verified: verified, domain: domain, path: path, state: state});
 			if (state.source == "boot") {
 				bootingDone = true;
 				state.embed = embed;
@@ -190,7 +190,7 @@ module.exports = function (libsb) {
 
 		if (state.source == "boot") {
 			if (!verificationStatus) {
-				preBootQueue.push(function () {
+				preBootQueue.push(function() {
 					processNavigate();
 				});
 			} else {
@@ -201,7 +201,7 @@ module.exports = function (libsb) {
 		}
 	}, 997);
 
-	libsb.on("init-up", function (init, next) {
+	libsb.on("init-up", function(init, next) {
 		function processInit() {
 			init.origin = {
 				domain: domain,
