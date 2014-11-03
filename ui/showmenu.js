@@ -6,14 +6,20 @@
  *
  * showMenu({
  *     origin: $("a"),
- *     title: "This is a title",
+ *     title:d "This is a title",
  *     buttons: {
- *         "Facebook" : function() {},
- *         "Persona" : function() {}
+ *         "facebook" : {
+ *				text: {string},
+ *				prio: {number},
+ *				action: {function}
+ *			}
  *     },
  *     items: {
- *         "Show" : function() {},
- *         "Hide" : function() {}
+ *         "guest-settings" :{
+ *				text: {string},
+ *				prio: {number},
+ *				action: {function}
+ *			}
  *     }
  * });
  */
