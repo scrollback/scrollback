@@ -1,3 +1,5 @@
+/* global cordova */
+
 cordova.define('cordova/plugin_list', function(require, exports, module) {
 module.exports = [
     {
@@ -37,13 +39,12 @@ module.exports = [
         ]
     }
 ];
-module.exports.metadata =
-// TOP OF METADATA
-{
+
+module.exports.metadata = {
     "org.apache.cordova.inappbrowser": "0.5.2",
     "org.apache.cordova.network-information": "0.2.12",
     "org.apache.cordova.device": "0.2.12",
     "com.phonegap.plugins.PushPlugin": "2.4.0"
-}
-// BOTTOM OF METADATA
+};
+
 });
