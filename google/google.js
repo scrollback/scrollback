@@ -40,10 +40,18 @@ module.exports = function(c) {
 				if (err) return callback(err);
 				try {
 					body = JSON.parse(body);
+					
 					request("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + body.access_token, function(err, res, body) {
 						if (err) return callback(err);
 						try {
 							body = JSON.parse(body);
+							
+							if(!body.email) {
+								log.d("Google + Error Action received: ", JSON.stringify(action));
+								log.e("Google + login Error: ", JSON.stringify(body));
+								return callback(new Error("Error in saving USER"));
+							}
+							
 							core.emit("getUsers", {
 								identity: "mailto:" + body.email,
 								session: internalSession
@@ -61,6 +69,7 @@ module.exports = function(c) {
 									
 									return callback();
 								}
+								
 								action.old = action.user;
 								action.user = data.results[0];
 								if (action.user.params.pictures && action.user.params.pictures.indexOf(body.picture) < 0) {
