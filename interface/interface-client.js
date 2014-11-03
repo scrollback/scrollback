@@ -196,7 +196,7 @@ function recvBack(back, next) {
     if (back.from !== libsb.user.id) return next();
 	if(libsb.occupantOf.filter(
 		function(room){ 
-			return room.id === back.to; 
+			if(room) return room.id === back.to; 
 		}
 	).length === 0)	{
 		libsb.occupantOf.push(back.room);
@@ -220,7 +220,7 @@ function recvJoin(join, next) {
     if (join.from !== libsb.user.id) return next();
     if (libsb.memberOf.filter(
 		function (room) {
-        	return room.id === join.to;
+        	if(room) return room.id === join.to;
     	}
 	).length === 0) {
         libsb.memberOf.push(join.room);
