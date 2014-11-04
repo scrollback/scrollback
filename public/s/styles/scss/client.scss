@@ -1789,12 +1789,11 @@ $dotshadow: fade-out($accent-color, .6);
 
     @each $type, $color in $types {
         &.#{$type} {
-            padding: 1em;
             background-color: $color;
             color: $light-color;
             border-color: $color;
 
-            &.popover-body:before {
+            &:before {
                 background-image: linear-gradient(135deg, $color 60%, $info-color 60%, transparent 60%);
                 border-color: $color;
             }
@@ -1803,10 +1802,10 @@ $dotshadow: fade-out($accent-color, .6);
 }
 
 .popover-calls-to-action {
-    @extend .popover-body.info;
-
     width: 18em;
     font-weight: 700;
+
+    .popover-content { padding: 1em; }
 
     .popover-got-it {
         @extend %snappy;
