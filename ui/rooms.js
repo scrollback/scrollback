@@ -30,42 +30,36 @@ function Rooms(container, render, prefix) {
 Rooms.prototype = {
 	container: this.container,
 
-	add: function(roomObj, callback) {
-		var $el;
-
+	add: function(roomObj) {
 		if (!(roomObj && roomObj.id)) {
-			return;
+			return false;
 		}
 
 		if (this.getElement(roomObj).length) {
-			return;
+			return false;
 		}
 
-		$el = this.container.append(this.render(roomObj));
+		this.container.append(this.render(roomObj));
 
-		if (typeof callback === "function") {
-			return callback.apply($el, [ roomObj ]);
-		}
+		return true;
 	},
 
-	remove: function(roomObj, callback) {
+	remove: function(roomObj) {
 		var $el;
 
 		if (!(roomObj && roomObj.id)) {
-			return;
+			return false;
 		}
 
 		$el = this.getElement(roomObj);
 
 		if (!$el.length) {
-			return;
+			return false;
 		}
 
 		$el.remove();
 
-		if (typeof callback === "function") {
-			return callback.apply($el, [ roomObj ]);
-		}
+		return true;
 	}
 };
 

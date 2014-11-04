@@ -26,31 +26,27 @@ libsb.on("user-menu", function(menu, next) {
 	next();
 }, 1000);
 
-function back(id) {
-	roomsList[id] = LISTENING;
-
-	libsb.enter(id, function(err) {
-		var index;
-
-		if (err) {
-			roomsList[id] = NOT_LISTENING;
-		}
-
-		index = backQueue.indexOf(id);
-
-		if (index >= 0) {
-			backQueue.splice(index, 1);
-		}
-	});
-}
-
 function enter(id) {
 	if (roomsList[id] === LISTENING) {
 		return;
 	}
 
 	if (window.currentState.connectionStatus == "online") {
-		back(id);
+		roomsList[id] = LISTENING;
+
+		libsb.enter(id, function(err) {
+			var index;
+
+			if (err) {
+				roomsList[id] = NOT_LISTENING;
+			}
+
+			index = backQueue.indexOf(id);
+
+			if (index >= 0) {
+				backQueue.splice(index, 1);
+			}
+		});
 	} else {
 		roomsList[id] = WAITING;
 
@@ -79,26 +75,30 @@ $(function() {
 		$createRoomButton = $(".js-create-room"),
 		roomArea = {
 			add: function(roomObj) {
-				var cb = function(r) {
-					enter(r.id);
-				};
+				var done  = false;
 
 				if (window.currentState.mode === "home") {
-					return homeFeedMine.add(roomObj, cb);
-				} else if (!(window.currentState.embed && window.currentState.embed.form)) {
-					return roomList.add(roomObj, cb);
+					done = homeFeedMine.add(roomObj);
+				} else {
+					done = roomList.add(roomObj);
+				}
+
+				if (done) {
+					enter(roomObj.id);
 				}
 			},
 
 			remove: function(roomObj) {
-				var cb = function(r) {
-					leave(r.id);
-				};
+				var done  = false;
 
 				if (window.currentState.mode === "home") {
-					return homeFeedMine.remove(roomObj, cb);
-				} else if (!(window.currentState.embed && window.currentState.embed.form)) {
-					return roomList.remove(roomObj, cb);
+					done = homeFeedMine.remove(roomObj);
+				} else {
+					done = roomList.remove(roomObj);
+				}
+
+				if (done) {
+					leave(roomObj.id);
 				}
 			},
 
@@ -107,7 +107,7 @@ $(function() {
 					$els = $areas.find("[data-room]");
 
 				for (var i = 0, l = $els.length; i < l; i++) {
-					roomArea.remove({ id: $els.eq(0).attr("data-room") });
+					roomArea.remove({ id: $els.eq(i).attr("data-room") });
 				}
 
 				return $areas.empty();
