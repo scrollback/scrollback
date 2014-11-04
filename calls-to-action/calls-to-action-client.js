@@ -11,14 +11,14 @@ $(".chat-input").on("click", function() {
 		return;
 	}
 
-	showNotification($userArea, "signIn");
+	showNotification([$userArea, '.meta-button-back'], "signIn");
 });
 
 libsb.on("text-up", function(text, next) {
 	if (!/^guest-/.test(libsb.user.id)) {
 		showNotification($followButton, "followRoom");
 	} else {
-		showNotification($userArea, "signIn");
+		showNotification([$userArea, '.meta-button-back'], "signIn");
 	}
 
 	next();
@@ -29,7 +29,7 @@ libsb.on("user-dn", function(user, next) {
 		return next(); // not a new signup
 	}
 
-	showNotification($userArea, "choosePic");
+	showNotification([$userArea, '.meta-button-back'], "choosePic");
 
 	next();
 }, 800);
@@ -60,7 +60,7 @@ libsb.on("init-dn", function(init, next) {
 
 libsb.on("navigate", function(state, next) {
 	if (state && state.source === "chat-area" && state.old && state.time && state.time !== state.old.time) {
-		showNotification($threadsTab, "browseArchives");
+		showNotification([$threadsTab, '.meta-button-back'], "browseArchives");
 	}
 
 	next();
