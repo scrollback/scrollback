@@ -6,13 +6,7 @@
 	text-overflow: ellipsis;
 }
 
-@mixin addcards($n) {
-	width: 100% / $n;
-
-	@for $i from 0 through ($n - 1) {
-		&:nth-of-type(#{$n}n - #{$i}) { @include fadein(#{1 - ($i / $n)}s); }
-	}
-}
+@mixin addcards($n) { width: 100% / $n; }
 
 .card-item-wrap {
 	@include addcards(1);

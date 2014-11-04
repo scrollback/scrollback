@@ -685,6 +685,7 @@ body {
 }
 
 .home-area-heading {
+    color: lighten($dark-color, 20%);
     text-transform: uppercase;
     margin: 1em .5em 0 .5em;
 }
@@ -698,6 +699,23 @@ body {
 }
 
 .card-container:not(:last-of-type):not(:only-of-type) { border-bottom: 1px solid darken($light-color, 10%); }
+
+.card-container {
+    @extend %fadein;
+
+    & + .home-area-no-my-rooms {
+        display: none;
+        color: darken($light-color, 20%);
+        font-size: 2em;
+        padding: 2em .5em;
+    }
+
+    &:empty {
+        display: none;
+
+        & + .home-area-no-my-rooms { display: block; }
+    }
+}
 
 .meta-button, .rooms-button {
     width: 3em;
