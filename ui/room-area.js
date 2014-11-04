@@ -1,6 +1,8 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, currentState */
 
+
+var roomsList = {}, LISTENING = 1, NOT_LISTENING = 0, WAITING = 2, backQueue = [];
 // Add entry to user menu
 libsb.on("user-menu", function(menu, next) {
 	if (window.currentState.mode !== "home") {
@@ -19,6 +21,29 @@ libsb.on("user-menu", function(menu, next) {
 
 	next();
 }, 1000);
+
+function back(id) {
+	roomsList[id] = LISTENING;
+	libsb.enter(id, function(err) {
+		var index;
+		if(err) roomsList[id] = NOT_LISTENING;
+		index = backQueue.indexOf(id);
+		if(index>=0) backQueue.splice(index, 1);
+	});
+}
+function enter(id) {
+	if(roomsList[id] === LISTENING) return;
+	
+	if(currentState.connectionStatus == "online") {
+		back(id);
+	}else {
+		roomsList[id] = WAITING;
+		if(backQueue.indexOf(id)<0) backQueue.push(id);
+	}
+}
+function leave(id) {
+	libsb.leave(id);
+}
 
 $(function() {
 	var validate = require("../lib/validate.js"),
@@ -39,6 +64,7 @@ $(function() {
 				} else if (!(window.currentState.embed && window.currentState.embed.form)) {
 					roomList.add(roomObj);
 				}
+				enter(roomObj.id);
 			},
 
 			remove: function(roomObj) {
@@ -47,6 +73,7 @@ $(function() {
 				} else if (!(window.currentState.embed && window.currentState.embed.form)) {
 					roomList.remove(roomObj);
 				}
+				leave(roomObj.id);
 			},
 
 			empty: function() {
@@ -145,6 +172,10 @@ $(function() {
 	libsb.on("init-dn", function(init, next) {
 		updateMyRooms();
 		updateFeaturedRooms();
+		while(backQueue.length) {
+			enter(backQueue[0]);
+			backQueue = backQueue.slice(1);
+		}
 		next();
 	}, 500);
 
