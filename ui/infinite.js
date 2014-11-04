@@ -237,7 +237,7 @@
 
 	$.fn.reset = function(index) {
 		var $logs = $(this);
-		//		var	options = $logs.data("options"); 
+		//		var	options = $logs.data("options");
 
 		$logs.find(".infinite-items").empty();
 		$logs.data("lower-limit", false).children(".infinite-above").removeClass("upper-limit").height("inherit");

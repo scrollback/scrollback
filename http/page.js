@@ -31,7 +31,7 @@ exports.init = function(app, coreObject) {
 	core = coreObject;
 	if (!config.http.https) log.w("Insecure connection. Specify https options in your config file.");
 	init();
-	
+
 	app.get('/t/*', function(req, res, next) {
 		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data) {
 			res.end(data);
@@ -42,7 +42,7 @@ exports.init = function(app, coreObject) {
 	app.get("/", function(req, res) {
 		res.redirect(307, config.http.index);
 	});
-	
+
 	app.get("/*", function(req, res, next) {
 		if (/^\/t\//.test(req.path)) return next();
 		if (/^\/s\//.test(req.path)) {
@@ -54,9 +54,9 @@ exports.init = function(app, coreObject) {
 			var queryString = req._parsedUrl.search ? req._parsedUrl.search : "";
 			return res.redirect(301, 'https://' + config.http.host + req.path + queryString);
 		}
-		
+
 		var platform = req.query.platform;
-		
+
 		if (platform && platform.toLowerCase() === "android") {
 			clientData.android = true;
 			clientData.manifest = "androidmanifest.appcache";
@@ -64,7 +64,7 @@ exports.init = function(app, coreObject) {
 			clientData.manifest = "manifest.appcache";
 			clientData.android = false;
 		}
-		
+
 		seo.getSEOHtml(req, function(r) {
 			clientData.seo = r;
 			res.end(clientTemp(clientData));

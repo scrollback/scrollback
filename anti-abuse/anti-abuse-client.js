@@ -1,5 +1,5 @@
-/* jshint browser: true */
-/* global $, libsb, currentState */
+/* jshint node: true */
+/* global require, $, libsb, currentState */
 
 var formField = require("../lib/formField.js");
 
