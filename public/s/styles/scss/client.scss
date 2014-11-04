@@ -100,7 +100,7 @@ body {
 
 .room-header {
     height: $bar-height;
-    padding: .5em 1em;
+    background: url(../../img/client/scrollback-small.svg) no-repeat 1em center;
     border-bottom: 1px solid lighten($dark-color, 5%);
     cursor: pointer;
 
@@ -624,7 +624,14 @@ body {
 .home-area {
     .title-bar { position: fixed; }
 
-    .header-image { padding: 0 1em; }
+    .header-image {
+        background: url(../../img/client/scrollback-small-dark.svg) no-repeat 1em center;
+        height: 3.5em;
+        width: 12em;
+        max-width: 100%;
+
+        .theme-dark & { background: url(../../img/client/scrollback-small.svg) no-repeat 1em center; }
+    }
 }
 
 .home-area-cover {
