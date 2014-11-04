@@ -26,7 +26,7 @@ $(applicationCache).on("checking downloading progress", function() {
 	setShowPopOver(false);
 });
 
-$(applicationCache).on("cached noupdate updateready", function() {
+$(applicationCache).on("cached noupdate updateready error", function() {
 	// If appcache has no update, or update is ready
 	setShowPopOver(true);
 });
@@ -71,7 +71,7 @@ function fireNotification(origin, name) {
 		return;
 	}
 
-	notification = $("<div>").addClass("popover-calls-to-action").append(
+	notification = $("<div>").addClass("popover-calls-to-action info").append(
 		$("<div>").addClass("popover-content").text(userActions[name]),
 		$("<div>").addClass("popover-got-it").text(gotIt[g] + "!").on("click", function() {
 			$.popover("dismiss");
