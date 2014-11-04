@@ -60,8 +60,9 @@ function enter(id) {
 	}
 }
 
-function leave(id) {
-	libsb.leave(id);
+function leave() {
+	// Disable leave until the functionality is complete
+	// libsb.leave(id);
 }
 
 $(function() {

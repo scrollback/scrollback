@@ -17,6 +17,7 @@ function Rooms(container, render, prefix) {
 		var $el = render(roomObj);
 
 		$el.attr("id", this.prefix + "-" + roomObj.id);
+		$el.attr("data-room", roomObj.id);
 
 		return $el;
 	};
@@ -43,7 +44,7 @@ Rooms.prototype = {
 		$el = this.container.append(this.render(roomObj));
 
 		if (typeof callback === "function") {
-			return callback.apply(roomObj, $el);
+			return callback.apply($el, [ roomObj ]);
 		}
 	},
 
@@ -63,7 +64,7 @@ Rooms.prototype = {
 		$el.remove();
 
 		if (typeof callback === "function") {
-			return callback.apply(roomObj, $el);
+			return callback.apply($el, [ roomObj ]);
 		}
 	}
 };
