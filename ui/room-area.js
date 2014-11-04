@@ -103,13 +103,14 @@ $(function() {
 			},
 
 			clear: function() {
-				var $els = roomList.container.find("[data-room]").add(homeFeedMine.container.find("[data-room]"));
+				var $areas = roomList.container.add(homeFeedMine.container),
+					$els = $areas.find("[data-room]");
 
 				for (var i = 0, l = $els.length; i < l; i++) {
 					roomArea.remove({ id: $els.eq(0).attr("data-room") });
 				}
 
-				return roomList.container;
+				return $areas.empty();
 			}
 		};
 
@@ -139,7 +140,7 @@ $(function() {
 			return;
 		}
 
-		roomArea.clear().empty();
+		roomArea.clear();
 
 		if (room) {
 			libsb.emit("getRooms", { ref: room }, function(err, response) {
