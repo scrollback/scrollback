@@ -1,8 +1,12 @@
 /* jshint browser: true */
-/* global $, libsb, currentState */
+/* global $, libsb */
 
+var LISTENING = 1,
+	NOT_LISTENING = 0,
+	WAITING = 2,
+	roomsList = {},
+	backQueue = [];
 
-var roomsList = {}, LISTENING = 1, NOT_LISTENING = 0, WAITING = 2, backQueue = [];
 // Add entry to user menu
 libsb.on("user-menu", function(menu, next) {
 	if (window.currentState.mode !== "home") {
@@ -24,23 +28,38 @@ libsb.on("user-menu", function(menu, next) {
 
 function back(id) {
 	roomsList[id] = LISTENING;
+
 	libsb.enter(id, function(err) {
 		var index;
-		if(err) roomsList[id] = NOT_LISTENING;
+
+		if (err) {
+			roomsList[id] = NOT_LISTENING;
+		}
+
 		index = backQueue.indexOf(id);
-		if(index>=0) backQueue.splice(index, 1);
+
+		if (index >= 0) {
+			backQueue.splice(index, 1);
+		}
 	});
 }
+
 function enter(id) {
-	if(roomsList[id] === LISTENING) return;
-	
-	if(currentState.connectionStatus == "online") {
+	if (roomsList[id] === LISTENING) {
+		return;
+	}
+
+	if (window.currentState.connectionStatus == "online") {
 		back(id);
-	}else {
+	} else {
 		roomsList[id] = WAITING;
-		if(backQueue.indexOf(id)<0) backQueue.push(id);
+
+		if (backQueue.indexOf(id) < 0) {
+			backQueue.push(id);
+		}
 	}
 }
+
 function leave(id) {
 	libsb.leave(id);
 }
@@ -59,26 +78,37 @@ $(function() {
 		$createRoomButton = $(".js-create-room"),
 		roomArea = {
 			add: function(roomObj) {
+				var cb = function(r) {
+					enter(r.id);
+				};
+
 				if (window.currentState.mode === "home") {
-					homeFeedMine.add(roomObj);
+					return homeFeedMine.add(roomObj, cb);
 				} else if (!(window.currentState.embed && window.currentState.embed.form)) {
-					roomList.add(roomObj);
+					return roomList.add(roomObj, cb);
 				}
-				enter(roomObj.id);
 			},
 
 			remove: function(roomObj) {
+				var cb = function(r) {
+					leave(r.id);
+				};
+
 				if (window.currentState.mode === "home") {
-					homeFeedMine.remove(roomObj);
+					return homeFeedMine.remove(roomObj, cb);
 				} else if (!(window.currentState.embed && window.currentState.embed.form)) {
-					roomList.remove(roomObj);
+					return roomList.remove(roomObj, cb);
 				}
-				leave(roomObj.id);
 			},
 
-			empty: function() {
-				roomList.empty();
-				homeFeedMine.empty();
+			clear: function() {
+				var $els = roomList.container.find("[data-room]").add(homeFeedMine.container.find("[data-room]"));
+
+				for (var i = 0, l = $els.length; i < l; i++) {
+					roomArea.remove({ id: $els.eq(0).attr("data-room") });
+				}
+
+				return roomList.container;
 			}
 		};
 
@@ -88,7 +118,7 @@ $(function() {
 	}
 
 	function updateFeaturedRooms() {
-		homeFeedFeatured.empty();
+		homeFeedFeatured.container.empty();
 
 		libsb.emit("getRooms", { featured: true }, function(err, response) {
 			if (!(response && response.results && response.results.length)) {
@@ -108,7 +138,7 @@ $(function() {
 			return;
 		}
 
-		roomArea.empty();
+		roomArea.clear().empty();
 
 		if (room) {
 			libsb.emit("getRooms", { ref: room }, function(err, response) {
@@ -172,10 +202,12 @@ $(function() {
 	libsb.on("init-dn", function(init, next) {
 		updateMyRooms();
 		updateFeaturedRooms();
-		while(backQueue.length) {
+
+		while (backQueue.length) {
 			enter(backQueue[0]);
 			backQueue = backQueue.slice(1);
 		}
+
 		next();
 	}, 500);
 

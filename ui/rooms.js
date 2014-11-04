@@ -27,7 +27,11 @@ function Rooms(container, render, prefix) {
 }
 
 Rooms.prototype = {
-	add: function(roomObj) {
+	container: this.container,
+
+	add: function(roomObj, callback) {
+		var $el;
+
 		if (!(roomObj && roomObj.id)) {
 			return;
 		}
@@ -36,15 +40,31 @@ Rooms.prototype = {
 			return;
 		}
 
-		return this.container.append(this.render(roomObj));
+		$el = this.container.append(this.render(roomObj));
+
+		if (typeof callback === "function") {
+			return callback.apply(roomObj, $el);
+		}
 	},
 
-	remove: function(roomObj) {
-		return this.getElement(roomObj).remove();
-	},
+	remove: function(roomObj, callback) {
+		var $el;
 
-	empty: function() {
-		return this.container.empty();
+		if (!(roomObj && roomObj.id)) {
+			return;
+		}
+
+		$el = this.getElement(roomObj);
+
+		if (!$el.length) {
+			return;
+		}
+
+		$el.remove();
+
+		if (typeof callback === "function") {
+			return callback.apply(roomObj, $el);
+		}
 	}
 };
 
