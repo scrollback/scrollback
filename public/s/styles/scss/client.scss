@@ -1788,28 +1788,33 @@ $dotshadow: fade-out($accent-color, .6);
     input, .button { width: 100%; }
 }
 
+%popup-menu { width: 16em; }
+
+.user-menu, .auth-menu { @extend %popup-menu; }
+
 .popover-calls-to-action {
-    width: 18em;
+    @extend %popup-menu;
+
     font-weight: 700;
+}
 
-    .popover-got-it {
-        @extend %snappy;
+.popover-got-it {
+    @extend %snappy;
 
-        background-color: rgba(0,0,0,.1);
-        padding: 1em;
-        text-transform: uppercase;
-        cursor: pointer;
+    background-color: rgba(0,0,0,.1);
+    padding: 1em;
+    text-transform: uppercase;
+    cursor: pointer;
 
-        &:focus, &:hover { background-color: rgba(0,0,0,.2); }
+    &:focus, &:hover { background-color: rgba(0,0,0,.2); }
 
-        &:active { background-color: rgba(0,0,0,.3); }
+    &:active { background-color: rgba(0,0,0,.3); }
 
-        &:before {
-            @include asset-content("check");
+    &:before {
+        @include asset-content("check");
 
-            vertical-align: -.2em;
-            margin-right: 1em;
-        }
+        vertical-align: -.2em;
+        margin-right: 1em;
     }
 }
 
