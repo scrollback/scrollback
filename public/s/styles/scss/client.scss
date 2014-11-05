@@ -600,9 +600,7 @@ body {
     &:active, &.current:active { background-color: rgba(0,0,0,.2); }
 
     @each $setting in $settings {
-        &.list-item-#{$setting}-settings {
-            background-image: url(../../img/client/icons/#{$setting}-settings.svg);
-        }
+        &.list-item-#{$setting}-settings { background-image: url(../../img/client/icons/#{$setting}-settings.svg); }
     }
 }
 
@@ -1788,9 +1786,9 @@ $dotshadow: fade-out($accent-color, .6);
     input, .button { width: 100%; }
 }
 
-%popup-menu { width: 16em; }
+%popup-menu { min-width: 18em; }
 
-.user-menu, .auth-menu { @extend %popup-menu; }
+.auth-menu { @extend %popup-menu; }
 
 .popover-calls-to-action {
     @extend %popup-menu;
@@ -1816,6 +1814,51 @@ $dotshadow: fade-out($accent-color, .6);
         vertical-align: -.2em;
         margin-right: 1em;
     }
+}
+
+%popover-item {
+    &:before {
+        margin-right: 1em;
+        vertical-align: -.2em;
+    }
+}
+
+.user-menu {
+    .homefeed {
+        @extend %popover-item;
+
+        &:before { @include asset-content("grid", lighten($dark-color, 30%)); }
+    }
+
+    .userpref {
+        @extend %popover-item;
+
+        &:before { @include asset-content("settings", lighten($dark-color, 30%)); }
+    }
+
+    .reportissue {
+        @extend %popover-item;
+
+        &:before { @include asset-content("info", lighten($dark-color, 30%)); }
+    }
+
+    .logout {
+        @extend %popover-item;
+
+        &:before { @include asset-content("logout", lighten($dark-color, 30%)); }
+    }
+}
+
+.guest-sound-notification-disable {
+    @extend %popover-item;
+
+    &:before { @include asset-content("sound", lighten($dark-color, 30%)); }
+}
+
+.guest-sound-notification-enable {
+    @extend %popover-item;
+
+    &:before { @include asset-content("sound-off", lighten($dark-color, 30%)); }
 }
 
 .ie-warning {
