@@ -1,8 +1,7 @@
 /* jshint browser: true */
 /* global window*/
 
-var underscore = require('underscore'),
-    generate = require('../lib/generate.js'),
+var generate = require('../lib/generate.js'),
 	spaceManager = require('../localStorage/spaceManager.js'),
     libsb;
 
@@ -188,7 +187,9 @@ function recvInit(init, next) {
     libsb.memberOf = init.memberOf;
     libsb.occupantOf = init.occupantOf;
 	libsb.isInited = true;
-    libsb.user = init.user;
+	if(init.user.id) {
+		libsb.user = init.user;	
+	}
     next();
 }
 
