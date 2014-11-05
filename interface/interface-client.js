@@ -187,7 +187,9 @@ function recvInit(init, next) {
     libsb.memberOf = init.memberOf;
     libsb.occupantOf = init.occupantOf;
 	libsb.isInited = true;
-    libsb.user = init.user;
+	if(init.user.id) {
+		libsb.user = init.user;	
+	}
     next();
 }
 
