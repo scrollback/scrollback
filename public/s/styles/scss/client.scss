@@ -17,6 +17,7 @@
 @import "../lace/progressbar";
 @import "../lace/linked";
 @import "../lace/filter";
+@import "../lace/dropshadow";
 @import "../lace/assets";
 
 // Import global variables and mixins
@@ -1088,7 +1089,8 @@ body {
 }
 
 .chat-position {
-    @extend %chat-quick-action;
+	@extend %chat-quick-action;
+	@include dropshadow(2);
 
     background-color: $dark-color;
     color: $light-color;
@@ -1098,6 +1100,7 @@ body {
 
 .chat-scroll-to-bottom {
     @include transform(translate3d(0, 100%, 0));
+	@include dropshadow(2);
     @extend %chat-quick-action;
 
     background-color: $info-color;
@@ -1110,8 +1113,11 @@ body {
     &:active { background-color: darken($info-color, 10%); }
 
     &:before {
-        content: "\21e3";
-        margin-right: .5em;
+        @include asset-content("arrow-down");
+
+		margin: 0 .75em 0 .25em;
+		vertical-align: -.3em;
+		line-height: 1em;
     }
 
     &.visible {
@@ -1708,6 +1714,8 @@ $dotshadow: fade-out($accent-color, .6);
     .search-focus & { display: block; }
 
     .search-entry {
+		@include dropshadow(3);
+
         position: relative;
         display: block;
         width: 100%;
@@ -1719,7 +1727,6 @@ $dotshadow: fade-out($accent-color, .6);
         background-repeat: no-repeat;
         background-size: 3em 2em;
         border: none;
-        box-shadow: 0 0 8px 0 rgba(0,0,0,.3);
     }
 }
 
