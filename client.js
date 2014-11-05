@@ -7,8 +7,9 @@ require('./public/s/scripts/lib/sockjs.min.js');
 require('./public/s/scripts/lib/jquery.velocity.min.js');
 require('./public/s/scripts/lib/svg4everybody.min.js');
 
-require('./lib/jquery.setCursorEnd.js');
 require('./lib/jquery.attrchange.js');
+require('./lib/jquery.setCursorEnd.js');
+require('./lib/jquery.isOnScreen.js');
 require('./lib/format.js');
 require('./lib/swipe-events.js');
 
@@ -54,6 +55,7 @@ require('./customization/customization-client.js');
 // user menus
 require('./http/logout-client.js');
 require('./facebook/facebook-client.js');
+require('./google/google-client.js');
 require('./github/github-client.js');
 require('./persona/persona-client.js');
 
@@ -80,7 +82,7 @@ require('./ui/info-area.js');
 require('./ui/room-area.js');
 require('./ui/search.js');
 require('./ui/follow-room.js');
-require('./ui/facebook.js');
+require('./ui/oauth-listener.js');
 require('./ui/conf-area.js');
 require('./ui/pref-area.js');
 require('./ui/noroom-area.js');
