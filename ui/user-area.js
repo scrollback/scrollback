@@ -14,6 +14,7 @@ $(function() {
 			libsb.emit("auth-menu", {
 				origin: $(this),
 				buttons: {},
+				items: {},
 				title: "Sign in to Scrollback with"
 			}, function(err, menu) {
 				showMenu(menu);

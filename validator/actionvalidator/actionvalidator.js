@@ -24,7 +24,11 @@ module.exports = function (core) {
         }
         return r;
     });
-    validator.registerType('roomid', validateRoom);
+
+    validator.registerType('roomid', function(roomid) {
+        return validateRoom(roomid).isValid;
+    });
+
     var actionValidator = {
         ref: ['string', 'undefined'],
         id: ['undefined', 'string'],
@@ -35,7 +39,7 @@ module.exports = function (core) {
         resource: ['undefined', 'string'],
         origin: ['strictObject', 'undefined']
     };
- 
+
     var initValidator = {
         suggestedNick: ['undefined', 'string'],
         origin: ['undefined', 'strictObject']
@@ -49,7 +53,7 @@ module.exports = function (core) {
         threads: ['array', 'undefined'],
         to: ['roomid']
     };
-     
+
     var userValidator = {
         user: [
             {
@@ -60,7 +64,7 @@ module.exports = function (core) {
             }
         ]
     };
-    
+
     var roomValidator = {
         room: [
             {
@@ -72,7 +76,7 @@ module.exports = function (core) {
         ],
         to: ['roomid']
     };
-    
+
 
     function validate(action, valid, callback) {
         log.d("Action:", action, valid);
@@ -92,7 +96,7 @@ module.exports = function (core) {
         init: function (action, callback) {
             if (!validate(action, initValidator, callback)) return;
             action.to = "me";
-            if (action.suggestedNick) action.suggestedNick = validateRoom(action.suggestedNick, true);
+            if (action.suggestedNick) action.suggestedNick = validateRoom(action.suggestedNick).sanitized;
             callback();
         },
         text: function (action, callback) {
@@ -120,7 +124,7 @@ module.exports = function (core) {
         },
         admit: function (action, callback) {
             if (!action.ref) return callback(new SbError("REF_NOT_SPECIFIED"));
-            if (!validateRoom(action.ref)) {
+            if (!validateRoom(action.ref).isValid) {
                 return callback(new SbError("INVALID_REF"));
             }
             if (!action.role) action.role = "follow_invited";
@@ -128,7 +132,7 @@ module.exports = function (core) {
         },
         expel: function (action, callback) {
             if (!action.ref) return callback(new SbError("REF_NOT_SPECIFIED"));
-            if (!validateRoom(action.ref)) {
+            if (!validateRoom(action.ref).isValid) {
                 return callback(new SbError("INVALID_REF"));
             }
             if (!action.role) action.role = "banned";
@@ -143,7 +147,7 @@ module.exports = function (core) {
         },
         user: function (action, callback) {
            if (!validate(action, userValidator, callback)) return;
-            action.user.id = action.user.id.toLowerCase();   
+            action.user.id = action.user.id.toLowerCase();
             if (action.role) delete action.role;
             callback();
         },
@@ -219,7 +223,7 @@ function basicValidation(action, callback) {
 		from and user is loaded by the entity loader using the session property.
 	*/
     log.d("Basic validation:", action);
-    if (!(action.type === "init" || action.type === "user") && (!validateRoom(action.to)))  {
+    if (!(action.type === "init" || action.type === "user") && (!validateRoom(action.to).isValid))  {
         return callback(new SbError("INVALID_ROOM"));
     }
     if (action.from) action.from = action.from.toLowerCase();

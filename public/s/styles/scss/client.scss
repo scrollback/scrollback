@@ -110,7 +110,11 @@ body {
     }
 }
 
-.room-list { @extend %scroll-elem; }
+.room-list {
+    @extend %scroll-elem;
+
+    padding-bottom: $bar-height;
+}
 
 .room-item {
     @extend %snappy;
@@ -165,6 +169,42 @@ body {
         &:empty { display: none; }
 
         &.mentioned { background-color: $error-color; }
+    }
+}
+
+.room-area-create-new {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: $dark-color;
+    border-top: 1px solid lighten($dark-color, 5%);
+    box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);
+
+    a {
+        display: block;
+        margin: 0;
+        padding: 1em 0;
+        color: $light-color;
+        text-transform: uppercase;
+
+        &:hover, &:focus {
+            color: $light-color;
+            background-color: rgba(0,0,0,.3);
+        }
+
+        &:active {
+            color: $light-color;
+            background-color: rgba(0,0,0,.5);
+        }
+
+        &:before {
+            content: "+";
+            color: $accent-color;
+            font-size: 1.5em;
+            vertical-align: -.1em;
+            margin: 0 .5em;
+        }
     }
 }
 
@@ -1532,12 +1572,12 @@ $dotshadow: fade-out($accent-color, .6);
 			border-style: solid;
 			border-color: transparent;
 			display: inline-block;
-			
+
 			&.current {
 				border-color: darken($light-color, 20%);
 				border-radius: $roundness;
 			}
-			
+
             img {
                 border-radius: $roundness;
                 height: 100%;
@@ -1700,16 +1740,35 @@ $dotshadow: fade-out($accent-color, .6);
 
 .infinite-items { width: 100%; }
 
-.signedout-dialog, .signin-dialog, .signup-dialog {
+.signedout-dialog, .signin-dialog, .signup-dialog, .createroom-dialog {
     input, .button { width: 100%; }
+}
+
+.popover-body {
+    $types: (
+        info: $info-color,
+        success: $success-color,
+        warning: $warning-color,
+        error: $error-color
+    );
+
+    @each $type, $color in $types {
+        &.#{$type} {
+            background-color: $color;
+            color: $light-color;
+            border-color: $color;
+
+            &:before {
+                background-image: linear-gradient(135deg, $color 60%, $info-color 60%, transparent 60%);
+                border-color: $color;
+            }
+        }
+    }
 }
 
 .popover-calls-to-action {
     width: 18em;
     font-weight: 700;
-    background-color: $info-color;
-    color: $light-color;
-    border-color: $info-color;
 
     .popover-content { padding: 1em; }
 
@@ -1731,11 +1790,6 @@ $dotshadow: fade-out($accent-color, .6);
             vertical-align: -.2em;
             margin-right: 1em;
         }
-    }
-
-    &.popover-body:before {
-        background-image: linear-gradient(135deg, $info-color 60%, $info-color 60%, transparent 60%);
-        border-color: $info-color;
     }
 }
 

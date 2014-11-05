@@ -1,8 +1,5 @@
 var webdriver = require('browserstack-webdriver');
 var q = require('q');
-module.exports.openUrl = openUrl;
-module.exports.loginPersona = loginPersona;
-module.exports.getMyUserid = getMyuserid;
 
 function openUrl(capabilities, server, roomid) {
 	var driver = new webdriver.Builder().
@@ -29,14 +26,14 @@ function loginPersona(driver, id, password, callback) {
 			return driver.switchTo().window(win[1]);
 		}).then(function () {
 			return q.delay(4000);
-		}).then(function() {
+		}).then(function () {
 			return driver.findElement(webdriver.By.id("authentication_email")).sendKeys(id);
 		}).then(function () {
 			return driver.findElement(webdriver.By.id("authentication_email"))
-			.sendKeys(webdriver.Key.RETURN);
+				.sendKeys(webdriver.Key.RETURN);
 		}).then(function () {
 			return q.delay(7000);
-		}).then(function() {
+		}).then(function () {
 			return driver.findElement(webdriver.By.id("authentication_password")).
 			sendKeys(password);
 		}).then(function () {
@@ -44,10 +41,51 @@ function loginPersona(driver, id, password, callback) {
 			sendKeys(webdriver.Key.RETURN);
 		}).then(function () {
 			driver.switchTo().window(win[0])
-		}).then(function() {
+		}).then(function () {
 			return q.delay(5000)
 		}).then(callback);
 	});
+}
+
+function loginFacebook(driver, email, pass, callback) {
+	driver.findElement(webdriver.By.css('.user-area')).click().
+	then(function () {
+		findVisibleElementByClass(driver, ".facebook", function (el) {
+			var win;
+			el.click().
+			then(function () {
+				return driver.getAllWindowHandles();
+			}).then(function (w) {
+				win = w;
+				return driver.switchTo().window(win[1]);
+			}).then(function () {
+				return q.delay(4000);
+			}).then(function () {
+				console.log("entering email");
+				return driver.findElement(webdriver.By.id("email")).sendKeys(email);
+			}).then(function () {
+				return driver.findElement(webdriver.By.id("pass")).sendKeys(pass);
+			}).then(function () {
+				return driver.findElement(webdriver.By.id("u_0_1")).click();
+			}).then(function () {
+				console.log("logging in...");
+				driver.switchTo().window(win[0])
+			}).then(function () {
+				return q.delay(5000);
+			}).then(callback);
+		});
+	});
+}
+
+function logout(driver, callback) {
+	driver.findElement(webdriver.By.css('.user-area')).click().
+	then(function () {
+		return driver.findElement(webdriver.By.css('.logout')).click();
+	}).then(function () {
+		return driver.findElement(webdriver.By.css('.reload-page')).click();
+	}).then(function () {
+		return q.delay(2000);
+	}).then(callback);
 }
 
 /**
@@ -65,6 +103,7 @@ function findVisibleElementByClass(driver, name, cb) {
 	then(function (el) {
 		var element;
 		var c = 0;
+
 		function done() {
 			if (++c === el.length) {
 				cb(element);
@@ -80,4 +119,14 @@ function findVisibleElementByClass(driver, name, cb) {
 		});
 
 	});
+}
+
+
+module.exports = {
+	openUrl: openUrl,
+	loginPersona: loginPersona,
+	getMyUserid: getMyuserid,
+	findVisibleElementByClass: findVisibleElementByClass,
+	loginFacebook: loginFacebook,
+	logout: logout
 }

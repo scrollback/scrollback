@@ -56,7 +56,10 @@ require('./http/logout-client.js');
 require('./facebook/facebook-client.js');
 require('./github/github-client.js');
 require('./persona/persona-client.js');
+
+// phonegap specific
 require('./push-notification/push-notification-client.js');
+require('./ui/guest-settings.js');
 
 // components
 require('./ui/quicknotify.js');
@@ -75,7 +78,7 @@ require('./ui/person.js');
 require('./ui/people-area.js');
 require('./ui/info-area.js');
 require('./ui/room-item.js');
-require('./ui/room-list.js')(libsb);
+require('./ui/room-list.js');
 require('./ui/search.js');
 require('./ui/follow-room.js');
 require('./ui/facebook.js');
