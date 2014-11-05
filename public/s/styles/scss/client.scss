@@ -183,7 +183,8 @@ body {
     box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);
 
     a {
-        display: block;
+		display: block;
+		font-weight: 700;
         margin: 0;
         padding: 1em 0;
         color: $light-color;
