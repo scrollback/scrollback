@@ -213,11 +213,10 @@ $(function() {
 		next();
 	}, 500);
 
-	$(document).on("click", function(e) {
-		var $el = $(e.target).closest("[data-room]"),
-			room = $el.attr("data-room");
+	$(document).on("click", "[data-room]", function() {
+		var room = $(this).attr("data-room");
 
-		if (!$el.length) {
+		if (!room) {
 			return;
 		}
 
