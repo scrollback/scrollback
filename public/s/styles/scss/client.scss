@@ -183,8 +183,8 @@ body {
     box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);
 
     a {
-		display: block;
-		font-weight: 700;
+        display: block;
+        font-weight: 700;
         margin: 0;
         padding: 1em 0;
         color: $light-color;
@@ -1033,9 +1033,8 @@ body {
     bottom: $bar-height;
     right: 0;
     left: 0;
-    overflow: hidden!important;
+    overflow: hidden;
 }
-
 
 .chat-area {
     @extend %scroll-elem;
@@ -1090,8 +1089,8 @@ body {
 }
 
 .chat-position {
-	@extend %chat-quick-action;
-	@include dropshadow(2);
+    @extend %chat-quick-action;
+    @include dropshadow(2);
 
     background-color: $dark-color;
     color: $light-color;
@@ -1101,7 +1100,7 @@ body {
 
 .chat-scroll-to-bottom {
     @include transform(translate3d(0, 100%, 0));
-	@include dropshadow(2);
+    @include dropshadow(2);
     @extend %chat-quick-action;
 
     background-color: $info-color;
@@ -1116,9 +1115,9 @@ body {
     &:before {
         @include asset-content("arrow-down");
 
-		margin: 0 .75em 0 .25em;
-		vertical-align: -.3em;
-		line-height: 1em;
+        margin: 0 .75em 0 .25em;
+        vertical-align: -.3em;
+        line-height: 1em;
     }
 
     &.visible {
@@ -1226,10 +1225,14 @@ body {
         font-style: italic;
 
         body:not(.role-owner) & {
-			height: 0 !important; overflow: hidden; visibility: hidden;
-			padding: 0; margin: 0; border: none;
-			// display: none gives javascript undefined offsets, which messes with infinite scroll!
-		}
+            // display: none gives javascript undefined offsets, which messes with infinite scroll!
+            height: 0;
+            overflow: hidden;
+            visibility: hidden;
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
     }
 
     .chat-timestamp {
@@ -1596,29 +1599,29 @@ $dotshadow: fade-out($accent-color, .6);
 
             .button, .button-secondary { padding: .5em 1em; }
         }
-		.picture-container{
-			position: relative;
-			padding: 0px;
-			.picture-list{
-				position: absolute;
-			}
-		}
+
+        .picture-container {
+            position: relative;
+            padding: 0;
+        }
+
+        .picture-list { position: absolute; }
 
         .conf-twitter-account, .pref-user-avatar {
             position: relative;
             display: block;
             height: 80px;
             width: 80px;
-           	background-size: contain;
-			border-width: 0.5em;
-			border-style: solid;
-			border-color: transparent;
-			display: inline-block;
+            background-size: contain;
+            border-width: 0.5em;
+            border-style: solid;
+            border-color: transparent;
+            display: inline-block;
 
-			&.current {
-				border-color: darken($light-color, 20%);
-				border-radius: $roundness;
-			}
+            &.current {
+                border-color: darken($light-color, 20%);
+                border-radius: $roundness;
+            }
 
             img {
                 border-radius: $roundness;
@@ -1715,7 +1718,7 @@ $dotshadow: fade-out($accent-color, .6);
     .search-focus & { display: block; }
 
     .search-entry {
-		@include dropshadow(3);
+        @include dropshadow(3);
 
         position: relative;
         display: block;
