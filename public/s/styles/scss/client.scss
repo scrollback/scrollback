@@ -1228,7 +1228,6 @@ body {
             // display: none gives javascript undefined offsets, which messes with infinite scroll!
             height: 0;
             overflow: hidden;
-            visibility: hidden;
             padding: 0;
             margin: 0;
             border: none;
@@ -1753,6 +1752,7 @@ $dotshadow: fade-out($accent-color, .6);
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 400;
 }
 
 .content-view-wrapper {
@@ -1776,8 +1776,6 @@ $dotshadow: fade-out($accent-color, .6);
 }
 
 .content-view-area { display: block; }
-
-.content-view-phonegap-startpage { z-index: 400; }
 
 .infinite-above, .infinite-below {
     height: 100%;
