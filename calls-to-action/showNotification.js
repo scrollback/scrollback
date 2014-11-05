@@ -101,11 +101,27 @@ function fireNotification(origin, name) {
 }
 
 function showNotification(origin, name) {
+	var onScreenElement = origin;
+
+	// Loop through each element in the array to check which one is on screen
+	if (origin instanceof Array && origin.length) {
+		onScreenElement = origin[0];
+
+		for (var i = 0;i < origin.length;i++) {
+			origin[i] = $(origin[i]);
+
+			if (origin[i].isOnScreen()) {
+				onScreenElement = origin[i];
+				break;
+			}
+		}
+	}
+
 	// It takes some time for the DOM to render
 	// We don't know when it'll complete, so just adding a timeout
 	// Also, probably the notification shouldn't be displayed instantly
 	setTimeout(function() {
-		fireNotification(origin, name);
+		fireNotification(onScreenElement, name);
 	}, 300);
 }
 
