@@ -23,7 +23,8 @@ module.exports = function (core) {
 	}, "authorization");
 	core.on('getThreads', function (query, callback) {
 		var readLevel;
-		if (query.user.role === "none") {
+
+		if (query.user && query.user.role === "none") {
 			if (/^guest-/.test(query.user.id)) {
 				query.user.role = "guest";
 			} else {

@@ -21,6 +21,7 @@ var data = {
 	"This room doesn't exist yet :-(": "This room doesn't exist yet :-(",
 	"This room": "This room",
 	"Type to search...": "Type to search...",
+	"You are not following any rooms :-(": "You are not following any rooms :-(",
 	"View room": "View room",
 	"Who is": "Who is",
 	"You need to sign in first to create a room": "You need to sign in first to create a room",

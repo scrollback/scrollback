@@ -6,56 +6,59 @@
 	text-overflow: ellipsis;
 }
 
+@mixin addcards($n) { width: 100% / $n; }
+
 .card-item-wrap {
+	@include addcards(1);
+
 	display: inline-block;
-	width: 100%;
-	padding: .5em;
+	padding: 1em;
 
-	@media only screen and (min-width: 50em) {
-		width: 50%;
-		padding: 1em;
-	}
+	@media only screen and (min-width: 50em) { @include addcards(2); }
 
-	@media only screen and (min-width: 70em) { width: 33.33%; }
+	@media only screen and (min-width: 70em) { @include addcards(3); }
 
-	@media only screen and (min-width: 130em) { width: 20%; }
+	@media only screen and (min-width: 130em) { @include addcards(5); }
 }
 
 .card-item {
-	@extend %transition;
+	@extend %snappy;
 
-	background-color: $light-color;
+	background-color: $dark-color;
+	color: $light-color;
 	border-radius: $roundness;
 	overflow: hidden;
 	cursor: pointer;
-	box-shadow: inset 0 0 0 1px rgba(0,0,0,.1);
 
-	&:focus, &:hover {
-		box-shadow: inset 0 0 0 1px rgba(0,0,0,.15),
-					0 0 10px 0 rgba(0,0,0,.1);
-	}
+	&:focus, &:hover { box-shadow: 0 0 10px 0 rgba(0,0,0,.1); }
 
-	&:active {
-		box-shadow: inset 0 0 0 1px rgba(0,0,0,.15),
-					0 0 10px 0 rgba(0,0,0,.3);
+	&:active { box-shadow: 0 0 10px 0 rgba(0,0,0,.3); }
+
+	@for $i from 1 through length($palette) {
+		$color: nth($palette, $i);
+		$j: $i - 1;
+
+		.color-#{$j} & {
+			background-color: $color;
+
+			&:focus, &:hover { background-color: darken($color, 10%); }
+
+			&:active { background-color: darken($color, 20%); }
+		}
 	}
 }
 
 .card-segment {
 	padding: 1em;
-	border-bottom: 1px solid rgba(0,0,0,.05);
 
 	&:last-child { border-bottom: none; }
 }
 
 .card-header {
-	background-color: rgba(0,0,0,.025);
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
 	align-items: center;
-	padding-top: .75em;
-	padding-bottom: .75em;
 
 	@for $i from 1 through length($palette) {
 		$color: nth($palette, $i);
@@ -70,15 +73,17 @@
 
 	flex-grow: 1;
 	font-weight: 400;
-	font-size: 1.5em;
+	font-size: 2.4em;
+	padding-top: 1em;
+	padding-bottom: .5em;
 }
 
 .card-header-badge {
 	@include appear;
 	@extend %nowrap;
 
-	background-color: $accent-color;
-	color: $light-color;
+	background-color: fade-out($light-color, .5);
+	color: $dark-color;
 	font-weight: 700;
 	font-size: .8em;
 	padding: 0 .5em;
@@ -90,14 +95,11 @@
 		$color: nth($palette, $i);
 		$j: $i - 1;
 
-		.card-item.conv-#{$j} & {
-			background-color: fade-out($light-color, .2);
-			color: $color;
-		}
+		.color-#{$j} & { color: $color; }
 	}
 
 	// TODO: rethink when the card color represents conversation
-	&.mentioned { background-color: $error-color; }
+	&.mentioned { background-color: $light-color; }
 
 	&:empty { display: none; }
 }
@@ -115,45 +117,5 @@
 .card-content-summary {
 	@extend %nowrap;
 
-	color: lighten($dark-color, 20%);
-}
-
-.card-actions {
-	@include flexbox;
-	@include flex-direction(row);
-	@include flex-wrap(nowrap);
-	@include align-items(center);
-	@include align-content(center);
-
-	padding-top: 0;
-	padding-bottom: 0;
-}
-
-.card-actions-view {
-	@include flex-grow(1);
-
-	font-weight: 700;
-	text-transform: uppercase;
-	color: lighten($dark-color, 20%);
-	padding: 1em 0;
-
-	@for $i from 1 through length($palette) {
-		$color: nth($palette, $i);
-		$j: $i - 1;
-
-		.card-item.conv-#{$j} & { color: $color; }
-	}
-}
-
-.card-actions-online {
-	color: lighten($dark-color, 20%);
-	text-align: right;
-	text-transform: uppercase;
-	padding: .75em 0;
-	cursor: pointer;
-}
-
-.card-action-online-number {
-	color: $accent-color;
-	font-weight: 700;
+	color: fade-out($light-color, .2);
 }
