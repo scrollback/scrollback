@@ -40,18 +40,20 @@ module.exports = function(c) {
 				if (err) return callback(err);
 				try {
 					body = JSON.parse(body);
-					
+
 					request("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + body.access_token, function(err, res, body) {
+						var gravatar, googlePic, sendUpdate = false;
 						if (err) return callback(err);
 						try {
 							body = JSON.parse(body);
-							
-							if(!body.email) {
+
+							if (!body.email) {
 								log.d("Google + Error Action received: ", JSON.stringify(action));
 								log.e("Google + login Error: ", JSON.stringify(body));
 								return callback(new Error("Error in saving USER"));
 							}
-							
+							gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=retro';
+							googlePic = body.picture;
 							core.emit("getUsers", {
 								identity: "mailto:" + body.email,
 								session: internalSession
@@ -62,28 +64,37 @@ module.exports = function(c) {
 									action.user = {};
 									action.user.identities = ["mailto:" + body.email];
 									action.user.picture = body.picture;
-									log.d("Google user object:",body.email);
+									log.d("Google user object:", body.email);
 									action.user.params = {
-										pictures: [body.picture, 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=retro']
+										pictures: [googlePic, gravatar]
 									};
-									
+
 									return callback();
 								}
-								
+
 								action.old = action.user;
 								action.user = data.results[0];
-								if (action.user.params.pictures && action.user.params.pictures.indexOf(body.picture) < 0) {
-									action.user.params.pictures.push(body.picture);
+								if (!action.user.params.pictures) action.user.params.pictures = [];
+
+								if (action.user.params.pictures.indexOf(googlePic) < 0) {
+									action.user.params.pictures.push(googlePic);
+									sendUpdate = true;
+								}
+								if (action.user.params.pictures.indexOf(gravatar) < 0) {
+									action.user.params.pictures.push(gravatar);
+									sendUpdate = true;
+								}
+								if (sendUpdate) {
 									core.emit("user", {
 										type: "user",
 										to: action.user.id,
 										user: action.user,
 										session: internalSession
 									}, function(err, action) {
-										console.log("Action done:", err, action);
+										log.d("Adding picture on sign-in: ", err, action);
 									});
 								}
-								
+
 								callback();
 							});
 						} catch (e) {
