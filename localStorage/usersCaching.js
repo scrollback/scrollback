@@ -1,4 +1,4 @@
-/* global libsb, currentState */
+/* global libsb,$ ,currentState */
 
 module.exports = function (objCacheOps) {
 	libsb.on("getUsers", function (query, next) {
@@ -56,12 +56,16 @@ module.exports = function (objCacheOps) {
 	}, 8);
 
 	libsb.on("join-dn", function (join, next) {
-		objCacheOps.putMembers(join.to, join.user);
+		var user = $.extend({}, join.user);
+		user.role = join.role;
+		objCacheOps.putMembers(join.to, user);
 		next();
 	}, 900);
 
 	libsb.on("part-dn", function (part, next) {
-		objCacheOps.removeMembers(part.to, part.user);
+		var user = $.extend({}, part.user);
+		user.role = part.role;
+		objCacheOps.removeMembers(part.to, user);
 		next();
 	}, 900);
 

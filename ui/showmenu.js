@@ -62,7 +62,6 @@ var showMenu = function(menu) {
 		$buttons.appendTo($popover);
 	}
 
-
 	if (typeof menu.items === "object" && !$.isEmptyObject(menu.items)) {
 		$list = $("<div>").addClass("popover-section").append("<ul>");
 		sortable = [];

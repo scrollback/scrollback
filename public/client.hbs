@@ -49,9 +49,7 @@
 		</main>
 
 		<section data-embed="none" data-mode="normal search conf pref noroom profile" class="room-area column">
-			<div class="room-header">
-				<img src="{{server.protocol}}{{server.host}}/s/img/client/scrollback-small.svg" alt="scrollback"></a>
-			</div>
+			<div class="room-header"></div>
 
 			<div role="list" class="room-list hide-scroll js-area-rooms">
 				<a class="room-item"><span class="room-name"></span><span class="js-room-notifications-counter room-item-unread-count"></span></a>
@@ -236,7 +234,7 @@
 		<section data-mode="home" class="home-area content-area-full">
 			<div class="title-bar">
 				<div class="left-area">
-					<div class="header-image"><img src="{{server.protocol}}{{server.host}}/s/img/client/scrollback-small-dark.svg" alt="scrollback"></div>
+					<div class="header-image"></div>
 				</div>
 				<div class="right-area">
 					<div data-embed="toast canvas" class="embed-area">
@@ -263,31 +261,33 @@
 				</div>
 			</div>
 			<div class="home-area-container content-area-full">
-				<div class="home-area-cover">
-					<form id="home-go-to-room-form" class="home-area-cover-content">
-						<input id="home-go-to-room-entry" type="text" data-string="placeholder::Enter a room name" autofocus><input id="home-go-to-room-button" type="submit" value="Go to room">
-					</form>
-				</div>
 				<div class="card-container-wrap hide-scroll">
-					<div class="card-container hide-scroll js-area-home-feed">
-						<div class="card-item-wrap">
-							<div class="card-item">
-								<div class="card-segment card-header">
-									<div class="card-header-title"></div>
-									<div class="card-header-badge js-room-notifications-counter"></div>
-								</div>
-								<div class="card-segment card-content">
-									<div class="card-content-title"></div>
-									<div class="card-content-summary"></div>
-								</div>
-								<div class="card-segment card-actions">
-									<div class="card-actions-view" data-string="View room"></div>
-<!--
-								<div class="card-actions-online"><span class="card-actions-online-number">0</span> people talking</div>
--->
+					<div class="home-area-cover">
+						<form id="home-go-to-room-form" class="home-area-cover-content">
+							<input id="home-go-to-room-entry" type="text" data-string="placeholder::Enter a room name" autofocus><input id="home-go-to-room-button" type="submit" value="Go to room">
+						</form>
+					</div>
+					<div class="home-area-section">
+						<h2 class="home-area-heading">My rooms</h2>
+						<div class="card-container hide-scroll js-area-home-feed-mine">
+							<div class="card-item-wrap">
+								<div class="card-item">
+									<div class="card-segment card-header">
+										<div class="card-header-title"></div>
+										<div class="card-header-badge js-room-notifications-counter"></div>
+									</div>
+									<div class="card-segment card-content">
+										<div class="card-content-title"></div>
+										<div class="card-content-summary"></div>
+									</div>
 								</div>
 							</div>
 						</div>
+						<div class="home-area-no-my-rooms" data-string="You are not following any rooms :-("></div>
+					</div>
+					<div class="home-area-section">
+						<h2 class="home-area-heading">Featured rooms</h2>
+						<div class="card-container hide-scroll js-area-home-feed-featured"></div>
 					</div>
 				</div>
 			</div>
@@ -327,7 +327,8 @@
 			<div class="content-view-area">
 				<h2 data-string="Sign in to get started."></h2>
 				<p>
-					<a class="button facebook js-phonegap-fb-login" data-string="Sign in with Facebook"></a>
+					<a class="button facebook js-phonegap-fb-login" data-string="Facebook"></a>
+					<a class="button google js-phonegap-google-login" data-string="Google +"></a>
 				</p>
 			</div>
 		</section>

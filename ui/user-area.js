@@ -85,7 +85,7 @@ $(function() {
 		next();
 	}, 100);
 	libsb.on("user-dn", function(action, next) {
-		$userAvatar.attr("src",action.user.picture);
+		$userAvatar.attr("src", action.user.picture);
 		next();
 	}, 100);
 	libsb.on("navigate", function(state, next) {

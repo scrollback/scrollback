@@ -5,6 +5,7 @@ var formField = require("../lib/formField.js");
 
 libsb.on("config-show", function(tabs, next) {
 	var room = tabs.room;
+
 	if (!room.params) room.params = {};
 	if (!room.params.antiAbuse) room.params.antiAbuse = {};
 	if (!room.params.antiAbuse.block) room.params.antiAbuse.block = {english: false};
