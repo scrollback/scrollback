@@ -78,8 +78,7 @@ require('./ui/thread-area.js');
 require('./ui/person.js');
 require('./ui/people-area.js');
 require('./ui/info-area.js');
-require('./ui/room-item.js');
-require('./ui/room-list.js');
+require('./ui/room-area.js');
 require('./ui/search.js');
 require('./ui/follow-room.js');
 require('./ui/oauth-listener.js');
@@ -90,7 +89,6 @@ require('./ui/signup-area.js');
 require('./ui/persona.js');
 require('./ui/message-menu.js');
 require('./ui/room-notifications.js');
-require('./ui/home-feed.js');
 require('./ui/google-analytics.js');
 require('./ui/workarounds.js');
 

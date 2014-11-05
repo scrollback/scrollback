@@ -57,7 +57,7 @@ module.exports = function (capabilities, options) {
 		});
 
 		after(function (done) {
-			driver.quit()
+			driver.quit();
 			done();
 		});
 	});

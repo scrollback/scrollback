@@ -40,9 +40,9 @@ function loginPersona(driver, id, password, callback) {
 			return driver.findElement(webdriver.By.id("authentication_password")).
 			sendKeys(webdriver.Key.RETURN);
 		}).then(function () {
-			driver.switchTo().window(win[0])
+			driver.switchTo().window(win[0]);
 		}).then(function () {
-			return q.delay(5000)
+			return q.delay(5000);
 		}).then(callback);
 	});
 }
@@ -69,7 +69,7 @@ function loginFacebook(driver, email, pass, callback) {
 				return driver.findElement(webdriver.By.id("u_0_1")).click();
 			}).then(function () {
 				console.log("logging in...");
-				driver.switchTo().window(win[0])
+				driver.switchTo().window(win[0]);
 			}).then(function () {
 				return q.delay(5000);
 			}).then(callback);
@@ -129,4 +129,5 @@ module.exports = {
 	findVisibleElementByClass: findVisibleElementByClass,
 	loginFacebook: loginFacebook,
 	logout: logout
-}
+};
+

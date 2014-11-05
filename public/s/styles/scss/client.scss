@@ -100,7 +100,7 @@ body {
 
 .room-header {
     height: $bar-height;
-    padding: .5em 1em;
+    background: url(../../img/client/scrollback-small.svg) no-repeat 1em center;
     border-bottom: 1px solid lighten($dark-color, 5%);
     cursor: pointer;
 
@@ -622,20 +622,26 @@ body {
 }
 
 .home-area {
-    background-color: darken($light-color, 5%);
-
     .title-bar { position: fixed; }
 
-    .header-image { padding: 0 1em; }
+    .header-image {
+        background: url(../../img/client/scrollback-small-dark.svg) no-repeat 1em center;
+        height: 3.5em;
+        width: 12em;
+        max-width: 100%;
+
+        .theme-dark & { background: url(../../img/client/scrollback-small.svg) no-repeat 1em center; }
+    }
 }
 
 .home-area-cover {
-    margin-top: $bar-height;
+    @extend %transition;
+
     width: 100%;
     min-height: $bar-height * 3;
     max-height: $bar-height * 3;
     background-color: $light-color;
-    border-bottom: 1px solid darken($light-color, 10%);
+    border-bottom: 1px solid darken($light-color, 5%);
     color: $dark-color;
     text-align: center;
 
@@ -643,6 +649,8 @@ body {
         min-height: $bar-height * 2;
         max-height: $bar-height * 2;
     }
+
+    .scroll-up & { opacity: 0; }
 }
 
 .home-area-cover-content {
@@ -671,8 +679,15 @@ body {
     @include flex-direction(column);
     @include flex-wrap(nowrap);
 
+    padding-top: $bar-height;
     height: 100%;
     overflow-x: hidden;
+}
+
+.home-area-heading {
+    color: lighten($dark-color, 20%);
+    text-transform: uppercase;
+    margin: 1em .5em 0 .5em;
 }
 
 .card-container-wrap {
@@ -681,6 +696,25 @@ body {
 
     width: 100%;
     overflow-x: hidden;
+}
+
+.card-container:not(:last-of-type):not(:only-of-type) { border-bottom: 1px solid darken($light-color, 10%); }
+
+.card-container {
+    @extend %fadein;
+
+    & + .home-area-no-my-rooms {
+        display: none;
+        color: darken($light-color, 20%);
+        font-size: 2em;
+        padding: 2em .5em;
+    }
+
+    &:empty {
+        display: none;
+
+        & + .home-area-no-my-rooms { display: block; }
+    }
 }
 
 .meta-button, .rooms-button {
@@ -1562,6 +1596,7 @@ $dotshadow: fade-out($accent-color, .6);
 				position: absolute;
 			}
 		}
+
         .conf-twitter-account, .pref-user-avatar {
             position: relative;
             display: block;
