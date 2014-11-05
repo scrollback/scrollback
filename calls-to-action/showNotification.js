@@ -101,43 +101,28 @@ function fireNotification(origin, name) {
 }
 
 function showNotification(origin, name) {
-	// It takes some time for the DOM to render
-	// We don't know when it'll complete, so just adding a timeout
-	// Also, probably the notification shouldn't be displayed instantly
 	var onScreenElement = origin;
+
+	// Loop through each element in the array to check which one is on screen
 	if (origin instanceof Array && origin.length) {
 		onScreenElement = origin[0];
+
 		for (var i = 0;i < origin.length;i++) {
 			origin[i] = $(origin[i]);
+
 			if (origin[i].isOnScreen()) {
 				onScreenElement = origin[i];
 				break;
 			}
 		}
-	} 
+	}
+
+	// It takes some time for the DOM to render
+	// We don't know when it'll complete, so just adding a timeout
+	// Also, probably the notification shouldn't be displayed instantly
 	setTimeout(function() {
 		fireNotification(onScreenElement, name);
 	}, 300);
 }
-
-$.fn.isOnScreen = function(){
-	
-	var win = $(window);
-
-	var viewport = {
-		top : win.scrollTop(),
-		left : win.scrollLeft()
-	};
-	viewport.right = viewport.left + win.width();
-	viewport.bottom = viewport.top + win.height();
-
-	var bounds = this.offset();
-	bounds.right = bounds.left + this.outerWidth();
-	bounds.bottom = bounds.top + this.outerHeight();
-
-	return (!(viewport.right < bounds.left || viewport.left > bounds.right || 
-			  viewport.bottom < bounds.top || viewport.top > bounds.bottom));
-
-};
 
 module.exports = showNotification;

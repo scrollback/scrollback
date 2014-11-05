@@ -1,8 +1,7 @@
 /* jshint browser: true */
 /* global window*/
 
-var underscore = require('underscore'),
-    generate = require('../lib/generate.js'),
+var generate = require('../lib/generate.js'),
 	spaceManager = require('../localStorage/spaceManager.js'),
     libsb;
 
@@ -49,7 +48,7 @@ function loadUserInfo(libsb) {
 	var user = spaceManager.get('user', false);
 	var occupantOf = spaceManager.get('occupantOf', false);
 	var memberOf = spaceManager.get('memberOf', false);
-	
+
  	if (user !== null) libsb.user = user;
 	if (occupantOf !== null) libsb.occupantOf = occupantOf;
 	if (memberOf !== null) libsb.memberOf = memberOf;
@@ -195,8 +194,8 @@ function recvInit(init, next) {
 function recvBack(back, next) {
     if (back.from !== libsb.user.id) return next();
 	if(libsb.occupantOf.filter(
-		function(room){ 
-			if(room) return room.id === back.to; 
+		function(room){
+			if(room) return room.id === back.to;
 		}
 	).length === 0)	{
 		libsb.occupantOf.push(back.room);
@@ -208,7 +207,7 @@ function recvAway(away, next) {
     if (away.from !== libsb.user.id) return next();
 	libsb.occupantOf = libsb.occupantOf.filter(function(room) {
 		if (room && room.id !== away.to) {
-			return room;	
+			return room;
 		}
 	});
     next();
@@ -231,6 +230,6 @@ function recvPart(part, next) {
     libsb.memberOf = libsb.memberOf.filter(function(room) {
 		if (room && room.id !== part.to) return room;
 	});
-	
+
     next();
 }
