@@ -219,7 +219,12 @@ var threadEl = require("./thread.js"),
 			});
 		});
 	});
-
+	libsb.on("text-dn", function(action, next) {
+		var element = $(".thread-item-container").find(".infinite-below");
+		console.log(element.hasClass("lower-limit"), action);
+		// push things inside.
+		next();
+	}, 100);
 	libsb.on('navigate', function(state, next) {
 		if (state.old && state.thread !== state.old.thread) {
 			$(".thread-item.current").removeClass("current");
