@@ -1,7 +1,8 @@
 /* jshint browser:true */
 /* global libsb, $, currentState */
 
-var showNotification = require("./showNotification.js"),
+var desktopnotify = require("../ui/desktopnotify.js"),
+	showNotification = require("./showNotification.js"),
 	$userArea = $(".user-area"),
 	$followButton = $(".follow-button"),
 	$threadsTab = $(".tab-threads");
@@ -35,16 +36,22 @@ libsb.on("user-dn", function(user, next) {
 }, 800);
 
 libsb.on("navigate", function(state, next) {
+	var notify;
+
 	if (state && state.old && state.old.mode !== state.mode && state.mode === "pref") {
-		showNotification(".list-item-notification-settings", "desktopNotifications");
+		notify = desktopnotify.supported();
+
+		if (notify && notify.permission !== "granted") {
+			showNotification(".list-item-notification-settings", "desktopNotifications");
+		}
 	}
 
 	next();
 }, 100);
 
 libsb.on("init-dn", function(init, next) {
-	if (init.user && !/^guest-/.test(init.user.id)) { // user has signed in.
-		// if user is signed in, but not a follower, show the notification.
+	if (init.user && !/^guest-/.test(init.user.id)) {
+		// If user is signed in, but not a follower, show the notification.
 		libsb.emit("getUsers", {
 			memberOf: currentState.roomName,
 			ref: libsb.user.id
