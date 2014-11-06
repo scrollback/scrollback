@@ -66,6 +66,9 @@ sock.on('connection', function(socket) {
 				});
 			}
 			if (!conn.session) conn.listeningTo = [];
+			if (!d.origin) {
+				return;
+			}
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource = d.resource;
 			conn.origin = d.origin;
