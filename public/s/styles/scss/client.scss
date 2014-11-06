@@ -17,6 +17,7 @@
 @import "../lace/progressbar";
 @import "../lace/linked";
 @import "../lace/filter";
+@import "../lace/dropshadow";
 @import "../lace/assets";
 
 // Import global variables and mixins
@@ -183,6 +184,7 @@ body {
 
     a {
         display: block;
+        font-weight: 700;
         margin: 0;
         padding: 1em 0;
         color: $light-color;
@@ -598,9 +600,7 @@ body {
     &:active, &.current:active { background-color: rgba(0,0,0,.2); }
 
     @each $setting in $settings {
-        &.list-item-#{$setting}-settings {
-            background-image: url(../../img/client/icons/#{$setting}-settings.svg);
-        }
+        &.list-item-#{$setting}-settings { background-image: url(../../img/client/icons/#{$setting}-settings.svg); }
     }
 }
 
@@ -851,7 +851,7 @@ body {
 
     .role-follower & { fill: lighten($dark-color, 15%); }
 
-    .role-owner &, .embed & { display: none; }
+    .role-owner & { display: none; }
 
     &:focus, &:hover, &:active {
         fill: none;
@@ -894,10 +894,6 @@ body {
 
         .theme-dark & { color: $accent-color; }
     }
-}
-
-.follow-room-action {
-    .role-follower.embed &, .role-owner.embed & { display: none; }
 }
 
 .full-view-action {
@@ -1031,9 +1027,8 @@ body {
     bottom: $bar-height;
     right: 0;
     left: 0;
-    overflow: hidden!important;
+    overflow: hidden;
 }
-
 
 .chat-area {
     @extend %scroll-elem;
@@ -1089,6 +1084,7 @@ body {
 
 .chat-position {
     @extend %chat-quick-action;
+    @include dropshadow(2);
 
     background-color: $dark-color;
     color: $light-color;
@@ -1098,6 +1094,7 @@ body {
 
 .chat-scroll-to-bottom {
     @include transform(translate3d(0, 100%, 0));
+    @include dropshadow(2);
     @extend %chat-quick-action;
 
     background-color: $info-color;
@@ -1110,8 +1107,11 @@ body {
     &:active { background-color: darken($info-color, 10%); }
 
     &:before {
-        content: "\21e3";
-        margin-right: .5em;
+        @include asset-content("arrow-down");
+
+        margin: 0 .75em 0 .25em;
+        vertical-align: -.3em;
+        line-height: 1em;
     }
 
     &.visible {
@@ -1219,10 +1219,13 @@ body {
         font-style: italic;
 
         body:not(.role-owner) & {
-			height: 0 !important; overflow: hidden; visibility: hidden;
-			padding: 0; margin: 0; border: none;
-			// display: none gives javascript undefined offsets, which messes with infinite scroll!
-		}
+            // display: none gives javascript undefined offsets, which messes with infinite scroll!
+            height: 0;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
     }
 
     .chat-timestamp {
@@ -1589,29 +1592,29 @@ $dotshadow: fade-out($accent-color, .6);
 
             .button, .button-secondary { padding: .5em 1em; }
         }
-		.picture-container{
-			position: relative;
-			padding: 0px;
-			.picture-list{
-				position: absolute;
-			}
-		}
+
+        .picture-container {
+            position: relative;
+            padding: 0;
+        }
+
+        .picture-list { position: absolute; }
 
         .conf-twitter-account, .pref-user-avatar {
             position: relative;
             display: block;
             height: 80px;
             width: 80px;
-           	background-size: contain;
-			border-width: 0.5em;
-			border-style: solid;
-			border-color: transparent;
-			display: inline-block;
+            background-size: contain;
+            border-width: 0.5em;
+            border-style: solid;
+            border-color: transparent;
+            display: inline-block;
 
-			&.current {
-				border-color: darken($light-color, 20%);
-				border-radius: $roundness;
-			}
+            &.current {
+                border-color: darken($light-color, 20%);
+                border-radius: $roundness;
+            }
 
             img {
                 border-radius: $roundness;
@@ -1708,6 +1711,8 @@ $dotshadow: fade-out($accent-color, .6);
     .search-focus & { display: block; }
 
     .search-entry {
+        @include dropshadow(3);
+
         position: relative;
         display: block;
         width: 100%;
@@ -1719,7 +1724,6 @@ $dotshadow: fade-out($accent-color, .6);
         background-repeat: no-repeat;
         background-size: 3em 2em;
         border: none;
-        box-shadow: 0 0 8px 0 rgba(0,0,0,.3);
     }
 }
 
@@ -1742,6 +1746,7 @@ $dotshadow: fade-out($accent-color, .6);
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 400;
 }
 
 .content-view-wrapper {
@@ -1766,8 +1771,6 @@ $dotshadow: fade-out($accent-color, .6);
 
 .content-view-area { display: block; }
 
-.content-view-phonegap-startpage { z-index: 400; }
-
 .infinite-above, .infinite-below {
     height: 100%;
     width: 100%;
@@ -1779,53 +1782,79 @@ $dotshadow: fade-out($accent-color, .6);
     input, .button { width: 100%; }
 }
 
-.popover-body {
-    $types: (
-        info: $info-color,
-        success: $success-color,
-        warning: $warning-color,
-        error: $error-color
-    );
+%popup-menu { min-width: 18em; }
 
-    @each $type, $color in $types {
-        &.#{$type} {
-            background-color: $color;
-            color: $light-color;
-            border-color: $color;
+.auth-menu { @extend %popup-menu; }
 
-            &:before {
-                background-image: linear-gradient(135deg, $color 60%, $info-color 60%, transparent 60%);
-                border-color: $color;
-            }
-        }
+.popover-calls-to-action {
+    @extend %popup-menu;
+
+    font-weight: 700;
+}
+
+.popover-got-it {
+    @extend %snappy;
+
+    background-color: rgba(0,0,0,.1);
+    padding: 1em;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    &:focus, &:hover { background-color: rgba(0,0,0,.2); }
+
+    &:active { background-color: rgba(0,0,0,.3); }
+
+    &:before {
+        @include asset-content("check");
+
+        vertical-align: -.2em;
+        margin-right: 1em;
     }
 }
 
-.popover-calls-to-action {
-    width: 18em;
-    font-weight: 700;
-
-    .popover-content { padding: 1em; }
-
-    .popover-got-it {
-        @extend %snappy;
-
-        background-color: rgba(0,0,0,.1);
-        padding: 1em;
-        text-transform: uppercase;
-        cursor: pointer;
-
-        &:focus, &:hover { background-color: rgba(0,0,0,.2); }
-
-        &:active { background-color: rgba(0,0,0,.3); }
-
-        &:before {
-            @include asset-content("check");
-
-            vertical-align: -.2em;
-            margin-right: 1em;
-        }
+%popover-item {
+    &:before {
+        margin-right: 1em;
+        vertical-align: -.2em;
     }
+}
+
+.user-menu {
+    .homefeed {
+        @extend %popover-item;
+
+        &:before { @include asset-content("grid", lighten($dark-color, 30%)); }
+    }
+
+    .userpref {
+        @extend %popover-item;
+
+        &:before { @include asset-content("settings", lighten($dark-color, 30%)); }
+    }
+
+    .reportissue {
+        @extend %popover-item;
+
+        &:before { @include asset-content("info", lighten($dark-color, 30%)); }
+    }
+
+    .logout {
+        @extend %popover-item;
+
+        &:before { @include asset-content("logout", lighten($dark-color, 30%)); }
+    }
+}
+
+.guest-sound-notification-disable {
+    @extend %popover-item;
+
+    &:before { @include asset-content("sound", lighten($dark-color, 30%)); }
+}
+
+.guest-sound-notification-enable {
+    @extend %popover-item;
+
+    &:before { @include asset-content("sound-off", lighten($dark-color, 30%)); }
 }
 
 .ie-warning {

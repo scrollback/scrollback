@@ -17,7 +17,7 @@ $(function() {
 				items: {},
 				title: "Sign in to Scrollback with"
 			}, function(err, menu) {
-				showMenu(menu);
+				showMenu("auth-menu", menu);
 			});
 		}
 	});
@@ -29,7 +29,7 @@ $(function() {
 				buttons: {},
 				items: {}
 			}, function(err, menu) {
-				showMenu(menu);
+				showMenu("user-menu", menu);
 			});
 		}
 	});

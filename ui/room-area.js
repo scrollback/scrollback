@@ -267,7 +267,7 @@ $(function() {
 
 	// Handle create new room
 	$createRoomButton.on("click", function() {
-		var $createRoomDialog = $("<div>").html($("#createroom-dialog").html()).modal(),
+		var $createRoomDialog = $("<div>").attr("id", "createroom-modal").html($("#createroom-dialog").html()).modal(),
 			$createRoomEntry = $createRoomDialog.find("#createroom-id"),
 			$createRoomButton = $createRoomDialog.find("#createroom-save"),
 			$errorMsg = $(),
@@ -282,8 +282,16 @@ $(function() {
 
 				$createRoomEntry.addClass("error");
 
-				$errorMsg = $("<div>").addClass("error").text(error).popover({
+				$errorMsg = $("<div>").addClass("error").append(
+					$("<div>").addClass("popover-content").text(error)
+				).popover({
 					origin: $createRoomEntry
+				});
+
+				$(document).off("modalDismissed.createroom").on("modalDismissed.createroom", function(e, modal) {
+					if (modal && modal.attr("id") === "createroom-modal") {
+						$errorMsg.popover("dismiss");
+					}
 				});
 			};
 

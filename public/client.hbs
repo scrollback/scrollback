@@ -150,7 +150,7 @@
 						</span>
 					</a>
 					<h2 data-mode="normal" data-embed="none" class="room-title" id="room-title"></h2>
-					<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
+					<a data-mode="normal" data-embed="none" data-role="user" class="follow-button follow-room-action" role="button">
 						<svg class="follow-icon" width="28" height="28" viewBox="0 0 28 28">
 							<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#icon"></use>
 						</svg>
@@ -163,13 +163,20 @@
 				</div>
 				<div data-mode="normal search" class="right-area">
 
-					<a data-mode="normal" data-string="data-tooltip::Search" class="search-button" role="button">
+					<a data-mode="normal" data-embed="none" data-string="data-tooltip::Search" class="search-button" role="button">
 						<svg class="search-icon" width="28" height="28" viewBox="0 0 28 28">
 							<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/search.svg#icon"></use>
 						</svg>
 					</a>
 
 					<div data-embed="toast canvas" class="embed-area">
+
+						<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
+							<svg class="follow-icon" width="28" height="28" viewBox="0 0 28 28">
+								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#icon"></use>
+							</svg>
+						</a>
+
 						<div data-embed="toast" class="embed-action-minimize embed-button">
 							<svg class="minimize-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
 								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/minimize.svg#icon"></use>
@@ -260,7 +267,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="home-area-container content-area-full">
+			<div class="home-area-container">
 				<div class="card-container-wrap hide-scroll">
 					<div class="home-area-cover">
 						<form id="home-go-to-room-form" class="home-area-cover-content">
