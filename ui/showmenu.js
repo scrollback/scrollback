@@ -4,7 +4,7 @@
 /**
  * @example
  *
- * showMenu({
+ * showMenu("user-menu", {
  *     origin: $("a"),
  *     title:d "This is a title",
  *     buttons: {
@@ -24,7 +24,7 @@
  * });
  */
 
-var showMenu = function(menu) {
+var showMenu = function(type, menu) {
 	var $popover = $("<div>"),
 		$list, item,
 		$buttons, button, sortable = [];
@@ -92,7 +92,7 @@ var showMenu = function(menu) {
 		$list.appendTo($popover);
 	}
 
-	return $popover.popover({
+	return $popover.addClass(type).popover({
 		origin: menu.origin
 	});
 };

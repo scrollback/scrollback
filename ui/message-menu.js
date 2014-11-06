@@ -29,7 +29,7 @@ $(function() {
 			}, function(err, menu) {
 				delete menu.role;
 				delete menu.target;
-				showMenu(menu);
+				showMenu("text-menu", menu);
 			});
 		}
 	});
