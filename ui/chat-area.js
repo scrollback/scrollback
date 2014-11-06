@@ -32,21 +32,6 @@ $(function() {
 		thread = '',
 		time = null;
 
-	function scrollToBottom($el) {
-		if (!($el && $el.length)) {
-			return;
-		}
-
-		if ($.fn.velocity) {
-			$el.children().last().velocity("scroll", {
-				duration: 150,
-				container: $el
-			});
-		} else {
-			$el.get(0).scrollTop = $logs.get(0).scrollHeight;
-		}
-	}
-
 	function resetLog(time) {
 		$logs.reset(time + "-" || null);
 	}
@@ -146,8 +131,7 @@ $(function() {
 
 		if ($logs.data("lower-limit")) {
 			$logs.addBelow($newEl);
-
-			if ($logs.scrollTop() === $logs[0].scrollHeight) scrollToBottom($logs);
+			
 		} else if (text.from == libsb.user.id) {
 			resetLog(null);
 		}
@@ -184,7 +168,7 @@ $(function() {
 		if ($logs.data("lower-limit")) {
 			var $newEl = chatEl.render(null, text);
 			$logs.addBelow($newEl);
-			scrollToBottom($logs);
+			$logs.scrollToBottom();
 		}
 
 		next();
