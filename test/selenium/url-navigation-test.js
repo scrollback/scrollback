@@ -108,7 +108,7 @@ module.exports = function(capabilities, options) {
 			then(function() {
 				return q.delay(3000);
 			}).then(function() {
-				driver.findElement(webdriver.By.css('.js-area-home-feed')).isDisplayed().
+				driver.findElement(webdriver.By.css('.js-area-home-feed-mine')).isDisplayed().
 				then(function(t) {
 					assert.equal(t, true, "page loading failed");
 
