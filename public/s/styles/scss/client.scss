@@ -817,7 +817,7 @@ body {
 
     .role-follower & { fill: lighten($dark-color, 15%); }
 
-    .role-owner &, .embed & { display: none; }
+    .role-owner & { display: none; }
 
     &:focus, &:hover, &:active {
         fill: none;
@@ -860,10 +860,6 @@ body {
 
         .theme-dark & { color: $accent-color; }
     }
-}
-
-.follow-room-action {
-    .role-follower.embed &, .role-owner.embed & { display: none; }
 }
 
 .full-view-action {
