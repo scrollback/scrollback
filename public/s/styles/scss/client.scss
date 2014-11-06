@@ -76,7 +76,7 @@ body {
     background-color: $dark-color;
     color: $light-color;
     z-index: 10;
-    padding-bottom: $bar-height; /* adjust to accomodate the logo */
+    padding-bottom: $bar-height * 2; /* adjust to accomodate the logo and create room button */
 
     @media #{$screenx} {
         left: ( $width-roomx + $width-metax ) * -1;
@@ -111,11 +111,7 @@ body {
     }
 }
 
-.room-list {
-    @extend %scroll-elem;
-
-    padding-bottom: $bar-height;
-}
+.room-list { @extend %scroll-elem; }
 
 .room-item {
     @extend %snappy;
