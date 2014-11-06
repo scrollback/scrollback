@@ -14,9 +14,10 @@ $(function() {
 			libsb.emit("auth-menu", {
 				origin: $(this),
 				buttons: {},
+				items: {},
 				title: "Sign in to Scrollback with"
 			}, function(err, menu) {
-				showMenu(menu);
+				showMenu("auth-menu", menu);
 			});
 		}
 	});
@@ -28,7 +29,7 @@ $(function() {
 				buttons: {},
 				items: {}
 			}, function(err, menu) {
-				showMenu(menu);
+				showMenu("user-menu", menu);
 			});
 		}
 	});
@@ -84,7 +85,7 @@ $(function() {
 		next();
 	}, 100);
 	libsb.on("user-dn", function(action, next) {
-		$userAvatar.attr("src",action.user.picture);
+		$userAvatar.attr("src", action.user.picture);
 		next();
 	}, 100);
 	libsb.on("navigate", function(state, next) {

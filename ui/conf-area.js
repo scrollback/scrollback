@@ -110,7 +110,6 @@ function checkOwnerShip() {
 			if (room.id == currentState.roomName && room.role == "owner") isOwner = true;
 		});
 	}
-
 	return isOwner;
 }
 
@@ -124,11 +123,11 @@ libsb.on('navigate', function(state, next) {
 			cancelEdit();
 			return next();
 		}
-
+		
+		
 		libsb.getRooms({
 			ref: currentState.roomName,
 			hasMember: libsb.user.id,
-			cachedRoom: false
 		}, function(err, data) {
 			if (err || !data.results || !data.results.length) { // cachedRoom false will fetch the room from server directly.
 				//may be even show error.

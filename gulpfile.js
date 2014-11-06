@@ -1,3 +1,4 @@
+/* jshint node:true */
 // Load plugins and declare variables
 var gulp = require("gulp"),
 	del = require("del"),
@@ -223,6 +224,41 @@ gulp.task("manifest", function() {
 	.on("error", gutil.log);
 });
 
+gulp.task("android-manifest", function() {
+	var clientConfig = require("./client-config.js"),
+		protocol = clientConfig.server.protocol,
+		host = clientConfig.server.host,
+		domain = protocol + host;
+
+	return gulp.src(prefix("public/s/", [
+		"lib/jquery.min.js",
+		"scripts/client.bundle.min.js",
+		"styles/dist/client.css",
+		"img/client/**/*"
+	]))
+	.pipe(manifest({
+		basePath: "public",
+		prefix: domain,
+		cache: [
+			domain + "/client.html?platform=android",
+			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
+			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
+			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
+		],
+		network: [ "*" ],
+		fallback: [
+			protocol + "//gravatar.com/avatar/ " + domain + "/s/img/client/avatar-fallback.svg",
+			domain + "/socket " + domain + "/s/socket-fallback?platform=android",
+			domain + "/ " + domain + "/client.html?platform=android"
+		],
+		preferOnline: true,
+		timestamp: true,
+		filename: "androidmanifest.appcache"
+	}))
+	.pipe(gulp.dest("public"))
+	.on("error", gutil.log);
+});
+
 // Clean up generated files
 gulp.task("clean", function() {
 	return del([
@@ -235,9 +271,9 @@ gulp.task("clean", function() {
 });
 
 gulp.task("watch", function() {
-	gulp.watch(files.js, [ "scripts", "manifest" ]);
-	gulp.watch(files.css, [ "styles", "manifest" ]);
+	gulp.watch(files.js, [ "scripts", "manifest", "android-manifest" ]);
+	gulp.watch(files.css, [ "styles", "manifest", "android-manifest" ]);
 });
 
 // Default Task
-gulp.task("default", [ "lint", "scripts", "styles", "manifest" ]);
+gulp.task("default", [ "lint", "scripts", "styles", "manifest", "android-manifest" ]);

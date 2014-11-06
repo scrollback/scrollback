@@ -2,22 +2,25 @@ var webdriver = require('browserstack-webdriver'),
 	assert = require('assert'),
 	testUtils = require('./testUtils.js'),
 	config = require('../config.js'),
-	q = require('q'),
 	timeOut = 25000;
+
 module.exports = function(capabilities, options){
 	describe('Room settings test: '+ options.id, function(){
 		this.timeout(4 * timeOut);
 		var driver, server = options.server;
 		var random = Math.random() + "";
+
 		before(function(done){
 			this.timeout(4 * timeOut);
-			driver = testUtils.openUrl(capabilities, server, "room1");    
+
+			driver = testUtils.openUrl(capabilities, server, "room1");
+
 			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function(){
 				console.log("logging in through Persona...");
 				done();
 			});
 		});
-		
+
 		it("General settings test", function(done){
 			this.timeout(4 * timeOut);
 			driver.findElement(webdriver.By.css('.tab-info')).click().
@@ -41,7 +44,7 @@ module.exports = function(capabilities, options){
 				done();
 			});
 		});
-		
+
 		it("Permissions test", function(done){
 			this.timeout(4 * timeOut);
 			/*driver.findElement(webdriver.By.css('.tab-info')).click().
@@ -71,7 +74,7 @@ module.exports = function(capabilities, options){
 				done();
 			});
 		});
-		
+
 		it("Spam control test", function(done){
 			this.timeout(4 * timeOut);
 			driver.findElement(webdriver.By.css('.tab-info')).click().
@@ -110,7 +113,7 @@ module.exports = function(capabilities, options){
 				done();
 			});
 		});
-		
+
 		after(function(done){
 			this.timeout(timeOut);
 			driver.quit();

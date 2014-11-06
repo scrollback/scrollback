@@ -22,23 +22,23 @@
 			embed.form = sb.form || "toast";
 			embed.theme = /* sb.theme || */ "dark";
 			embed.nick = sb.nick || sb.suggestedNick;
+			embed.minimize = (typeof sb.minimize === "boolean") ? sb.minimize : false;
 			embed.origin = {
 				protocol: location.protocol,
 				host: location.host,
 				path: location.pathname + location.search + location.hash
 			};
-			embed.minimize = (typeof sb.minimize === "boolean") ? sb.minimize : false;
+
 			embed.backgroundColor = sb.backgroundColor;
 			embed.backgroundImage = sb.backgroundImage;
 
-			sb.room = validate(sb.room, true);
+			sb.room = validate(sb.room).sanitized;
 
 			// Insert required styles
 			style = document.createElement("link");
 			style.rel = "stylesheet";
 			style.type = "text/css";
 			style.href = host + "/s/styles/dist/embed.css";
-
 			document.head.appendChild(style);
 
 			// Create and append the iframe

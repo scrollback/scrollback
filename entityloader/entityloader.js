@@ -147,8 +147,7 @@ module.exports = function(c) {
 
 function userHandler(action, callback) {
 	var ref;
-	
-	
+
 	if(Object.keys(config.whitelists).indexOf(action.session)>=0) {
 		ref = action.user.id;
 	}else{

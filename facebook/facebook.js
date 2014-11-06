@@ -37,7 +37,7 @@ function fbAuth(action, callback) {
 				}
 				if (token) {
 					request("https://graph.facebook.com/me?access_token=" + token, function(err, res, body) {
-						var user;
+						var user, gravatar, fbpic, sendUpdate = false;
 						delete action.auth.facebook.code;
 						if (err) return callback(err);
 						try {
@@ -54,18 +54,31 @@ function fbAuth(action, callback) {
 								if (!data.results.length) {
 									action.user = {};
 									action.user.identities = ["mailto:" + user.email];
-									action.user.picture = "https://graph.facebook.com/" + user.id + "/picture?type=square";
+									fbpic = action.user.picture = "https://graph.facebook.com/" + user.id + "/picture?type=square";
+									gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
 									action.user.params = {
-										pictures: ["https://graph.facebook.com/" + user.id + "/picture?type=square", 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro']
+										pictures: [fbpic, gravatar]
 									};
 									return callback();
 								}
 
 								action.old = action.user;
 								action.user = data.results[0];
-
-								if (action.user.params.pictures && action.user.params.pictures.indexOf("https://graph.facebook.com/" + user.id + "/picture?type=square") < 0) {
-									action.user.params.pictures.push("https://graph.facebook.com/" + user.id + "/picture?type=square");
+								if(!action.user.params.pictures) action.user.params.pictures = [];
+								
+								fbpic = action.user.picture = "https://graph.facebook.com/" + user.id + "/picture?type=square";
+								gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
+								
+								if(action.user.params.pictures.indexOf(fbpic)<0) {
+									action.user.params.pictures.push(fbpic);
+									sendUpdate = true;
+								}
+								if(action.user.params.pictures.indexOf(gravatar)<0) {
+									action.user.params.pictures.push(gravatar);
+									sendUpdate = true;
+								}
+								
+								if (sendUpdate) {
 									core.emit("user", {
 										type: "user",
 										to: action.user.id,
@@ -89,16 +102,20 @@ function fbAuth(action, callback) {
 	}
 }
 
-function handlerRequest(req, res) {
-	var path = req.path.substring(12);
+function handlerRequest(req, res, next) {
+	var path = req.path.substring(3);
 	path = path.split("/");
-	if (path[0] == "login") {
-		return res.render(__dirname + "/login.jade", {
-			client_id: config.facebook.client_id,
-			redirect_uri: "https://" + config.http.host + "/r/facebook/return"
-		});
-	}
-	if (path[0] == "return") {
-		return res.render(__dirname + "/return.jade", {});
+	if(path[0]==="facebook") {
+		if(path[1] == "login") {
+			return res.render(__dirname+"/login.jade", {
+				client_id: config.facebook.client_id,
+				redirect_uri: "https://"+config.http.host+"/r/facebook/return"
+			});
+		}
+		if(path[1] == "return") {
+			return res.render(__dirname+"/return.jade", {});
+		}	
+	}else {
+		next();
 	}
 }

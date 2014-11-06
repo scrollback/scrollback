@@ -31,6 +31,7 @@ exports.init = function(app, coreObject) {
 	core = coreObject;
 	if (!config.http.https) log.w("Insecure connection. Specify https options in your config file.");
 	init();
+
 	app.get('/t/*', function(req, res, next) {
 		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data) {
 			res.end(data);
@@ -54,9 +55,18 @@ exports.init = function(app, coreObject) {
 			return res.redirect(301, 'https://' + config.http.host + req.path + queryString);
 		}
 
+		var platform = req.query.platform;
+
+		if (platform && platform.toLowerCase() === "android") {
+			clientData.android = true;
+			clientData.manifest = "androidmanifest.appcache";
+		} else {
+			clientData.manifest = "manifest.appcache";
+			clientData.android = false;
+		}
+
 		seo.getSEOHtml(req, function(r) {
 			clientData.seo = r;
-
 			res.end(clientTemp(clientData));
 		});
 

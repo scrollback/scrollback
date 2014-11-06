@@ -47,7 +47,6 @@ sock.on('connection', function(socket) {
 	}
 	log("socket:", ip);
 	socket.on('data', function(d) {
-		var e;
 		try {
 			d = JSON.parse(d);
 			log("Socket received ", d);
@@ -59,12 +58,9 @@ sock.on('connection', function(socket) {
 		if (!d.type) return;
 		if (d.type == 'init' && d.session) {
 			if (!/^web:/.test(d.session)) {
-				return conn.send({
-					type: 'error',
-					id: d.id,
-					message: "INVALID_SESSION"
-				});
+				return conn.send(getErrorObject(d, "INVALID_SESSION"));
 			}
+			if (!d.origin) conn.send(getErrorObject(d, "INVALID_ORIGIN"));
 			if (!conn.session) conn.listeningTo = [];
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource = d.resource;
@@ -87,21 +83,9 @@ sock.on('connection', function(socket) {
 		if (d.type == 'back') {
 			//just need for back as storeBack will be called before actionValidator
 			if (!d.to) {
-				e = {
-					type: 'error',
-					id: d.id,
-					message: "INVALID_ROOM"
-				};
-				conn.send(e);
-				return;
+				return conn.send(getErrorObject(d, "INVALID_ROOM"));
 			} else if (!d.from) {
-				e = {
-					type: 'error',
-					id: d.id,
-					message: "INVALID_USER"
-				};
-				conn.send(e);
-				return;
+				return conn.send(getErrorObject(d, "INVALID_USER"));
 			}
 			if (!verifyBack(conn, d)) {
 				storeBack(conn, d);
@@ -430,3 +414,12 @@ function verifyBack(conn, back) {
 	if (!urConns[back.from + ":" + back.to]) return true;
 	return (urConns[back.from + ":" + back.to].length === 0);
 }
+
+function getErrorObject(action, message) {
+	return {
+		type: 'error',
+		id: action.id,
+		message: message
+	};
+}
+
