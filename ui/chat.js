@@ -3,6 +3,7 @@
 
 var chatEl = {},
 	timeBefore;
+var emojify = require('./emojify.js');
 
 $(function() {
 	var $template = $(".chat-item").eq(0);
@@ -48,6 +49,7 @@ $(function() {
 				}
 
 				if (text.text) {
+					text.text = emojify(text.text);
 					var $container = $(".chat-area"),
 						width = $container.width(),
 						lines = text.text.split("\n"),
