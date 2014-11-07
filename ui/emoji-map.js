@@ -288,7 +288,7 @@ module.exports = {
 	":green_heart:": "💚",
 	":grimacing:": "😬",
 	":grin:": "😁",
-	"xD:": "😁",
+	"xD": "😁",
 	"x-D": "😁",
 	"XD": "😁",
 	"X-D": "😁",

@@ -5,6 +5,9 @@ module.exports = function (ArrayCacheOp) {
 	libsb.on('getTexts', function (query, next) {
 		// getTextsBefore
 		var key;
+		if (query.hasOwnProperty('noCache') && query.noCache === true) {
+			return next();
+		}
 		if (query.thread) {
 			// creating individual cache entries for queries with the thread property
 			key = ArrayCacheOp.generateLSKey(query.to, query.thread, 'texts');

@@ -1,7 +1,11 @@
 /* global libsb, currentState */
+/* jshint browser:true */
 
 module.exports = function (ArrayCacheOp) {
 	libsb.on('getThreads', function (query, next) {
+		if (query.hasOwnProperty('noCache') && localStorage.noCache === true) {
+			return next();
+		}
 		if (query.hasOwnProperty('q')) { // search queries should always be served from the server.
 			return next();
 		}

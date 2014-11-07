@@ -1,14 +1,14 @@
-var emojiMap = require('./emjoi-map.js');
+var emojiMap = require('./emoji-map.js');
 
 module.exports = function(text) {
+	if (typeof text !== "string") return;
 	var emoji;
-	var words = text.split('[,. ]+');
-	words.map(function(word) {
+	var words = text.split(/[,. ]+/);
+	words.forEach(function(word) {
 		if (emojiMap.hasOwnProperty(word)) {
 			emoji = emojiMap[word];
-			text.replace(word, emoji);
+			text = text.replace(word, emoji);
 		}
 	});
-	console.log("Returned text is ", text);
 	return text;
 };
