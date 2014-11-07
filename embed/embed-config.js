@@ -34,15 +34,12 @@ libsb.on("config-show", function(conf, next) {
 		$titlebarColor,
 		$formOptions, $embedCode, $embedCodeDiv;
 
-	$roomURLField = $("<input>").addClass("embed-input-url")
-								.attr({
-									readonly: true,
-									type: "url"
-								})
-								.val(roomURL)
-								.on("click", function() {
-									$(this).select();
-								});
+	$roomURLField = $("<input>").addClass("embed-input-url").attr({
+		readonly: true,
+		type: "url"
+	}).val(roomURL).on("click", function() {
+		$(this).select();
+	});
 
 	$config = $("<div>").append(formField("Room URL", "", "embed-room-url", $roomURLField));
 
@@ -79,7 +76,7 @@ libsb.on("config-show", function(conf, next) {
 
 	$titlebarColor.find("input").attr({
 		type: "color",
-		placeholder: "e.g. - #3ca"
+		placeholder: "#33ccaa"
 	}).on("keydown paste input change", function() {
 		var $input = $(this);
 
