@@ -83,6 +83,7 @@ function getRandom(min, max) {
 * }, ... ]
 */
 function processReply(data){
+	var i, l;
    try {
 		log("data=-:" + data + ":-");
 		data = JSON.parse(data);
@@ -92,7 +93,7 @@ function processReply(data){
 		var message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 		if (message) {
 			var update = false;
-			for (var i = 0; i < message.threads.length; i++) {
+			for (i = 0; i < message.threads.length; i++) {
 				var th = message.threads[i];
 				if (th.id === id) {
 					th.title = title;
@@ -117,6 +118,14 @@ function processReply(data){
 					}
 				}
 			}
+			
+			for (i = 0, l = message.threads.length; i < l; i++) {
+				if (message.threads[i].id.indexOf(message.id) === 0) {
+					message.labels.startOfThread = 1;
+					break;
+				}
+			}
+			
 			pendingCallbacks[data.id].fn();
 			log("called back in ", new Date().getTime() - pendingCallbacks[data.id].time);
 			delete pendingCallbacks[data.id];

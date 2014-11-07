@@ -12,6 +12,7 @@ require('./lib/jquery.setCursorEnd.js');
 require('./lib/jquery.isOnScreen.js');
 require('./lib/format.js');
 require('./lib/swipe-events.js');
+require('./lib/jquery.scrollToBottom.js');
 
 // ui widgets
 require('./public/s/scripts/lib/jquery.alertbar.js');
