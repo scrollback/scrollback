@@ -8,7 +8,6 @@ function getEmbedCode() {
 	var code = '<script>window.scrollback = %s;(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>',
 		embedObj = {
 			room: window.currentState.roomName,
-			theme: "dark",
 			titlebarColor: titlebarColor,
 			form: embedForm
 		};

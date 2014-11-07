@@ -103,7 +103,7 @@ function toastChange(state, next) {
 function generateCss(selector, styleBlock) {
 	var r = [];
 
-	r.push(selector + "{");
+	r.push("\n" + selector + " {");
 
 	for (var prop in styleBlock) {
 		r.push(prop + ":" + styleBlock[prop] + "!important;");
@@ -124,18 +124,31 @@ function insertCss(embed) {
 	if (embed.titlebarColor) {
 		colorObj =  new Color(embed.titlebarColor);
 
-		if (colorObj.luma > 50) {
-			titlebarFg = "rgba(255,255,255,.9)";
+		if (colorObj.value > 50) {
+			titlebarFg = "#333";
 		} else {
-			titlebarFg = "rgba(0,0,0,.9)";
+			titlebarFg = "#fff";
 		}
 
-		if (colorObj.saturation < 10) {
-			$("body").addClass("customization-titlebar-greyscale");
+		if (colorObj.saturation > 10) {
+			r.push(generateCss(".custom-titlebar-sb-color", {
+				"color": titlebarFg,
+				"fill": titlebarFg
+			}));
 		}
 
-		r.push(generateCss(".custom-titlebar-bg", { "background-color": embed.titlebarColor }));
-		r.push(generateCss(".custom-titlebar-fg", { "color": titlebarFg }));
+		r.push(generateCss(".custom-titlebar-bg", {
+			"background-color": embed.titlebarColor
+		}));
+
+		r.push(generateCss(".custom-titlebar-fg", {
+			"color": titlebarFg,
+			"fill": titlebarFg
+		}));
+
+		r.push(generateCss(".custom-titlebar-stroke", {
+			"stroke": titlebarFg
+		}));
 	}
 
 	if (embed.backgroundImage) {

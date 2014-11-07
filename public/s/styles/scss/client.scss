@@ -46,6 +46,11 @@
         margin: auto;
         height: 2em;
         width: 2em;
+        fill-opacity: .75;
+
+        &:hover, &:focus { fill-opacity: .85; }
+
+        &:active { fill-opacity: 1; }
     }
 }
 
@@ -211,9 +216,9 @@ body {
 
     left: $width-meta * -1;
     width: $width-meta;
-    border-right: 1px solid rgba(0,0,0,.1);
     background-color: darken($light-color, 5%);
     color: $dark-color;
+    box-shadow: inset -1px 0 0 rgba(0,0,0,0.1);
     z-index: 20;
 
     @media #{$screenx} {
@@ -248,7 +253,7 @@ body {
 
     list-style: none;
     height: $bar-height;
-    border-bottom: 1px solid darken($light-color, 15%);
+    box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1);
 
     li {
         @include flexbox;
@@ -262,9 +267,10 @@ body {
         cursor: pointer;
 
         &.rooms-button {
+            @include title-icon(rooms-icon);
+
             min-width: 3em;
             width: 3em;
-            fill: lighten($dark-color, 15%);
 
             @media #{$screenxxxx} { display: none; }
 
@@ -282,23 +288,24 @@ body {
 
         text-align: center;
         background-color: transparent;
-        border-left: 1px solid darken($light-color, 15%);
-        fill: lighten($dark-color, 50%);
+        border-left: 1px solid rgba(0,0,0,0.1);
+        fill: $dark-color;
+        fill-opacity: .5;
 
         &:first-child { border-left: none; }
 
         &:hover, &:focus {
-            fill: lighten($dark-color, 5%);
+            fill-opacity: .85;
             background-color: rgba(0,0,0,.05);
         }
 
         &:active {
-            fill: $dark-color;
+            fill-opacity: 1;
             background-color: rgba(0,0,0,.05);
         }
 
         &.current {
-            fill: lighten($dark-color, 15%);
+            fill-opacity: .85;
             background-color: rgba(0,0,0,.1);
         }
     }
@@ -751,10 +758,8 @@ body {
     @include title-icon(meta-icon);
 
     height: $bar-height;
-    fill: lighten($dark-color, 50%);
+    fill: $dark-color;
     overflow: hidden;
-
-    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 15%); }
 
     @media #{$screenxxx} { display: none; }
 
@@ -803,6 +808,7 @@ body {
     background-color: darken($light-color, 5%);
     color: $dark-color;
     box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1),
+                -1px 0 0 rgba(0,0,0,.1),
                 0 3px 2px -1px rgba(0,0,0,.1);
 }
 
@@ -841,19 +847,34 @@ body {
 
     width: 3.5em;
     padding: .75em;
-    fill: none;
-    stroke-width: 2px;
-    stroke: lighten($dark-color, 15%);
 
-    .role-follower & { fill: lighten($dark-color, 15%); }
+    .follow-icon {
+        fill-opacity: 0;
+        stroke-width: 2px;
+        stroke: $dark-color;
+        stroke-opacity: .75;
 
-    .role-owner & { display: none; }
+        .role-follower & { fill-opacity: .75; }
+
+        .role-owner & { display: none; }
+    }
 
     &:focus, &:hover, &:active {
-        fill: none;
-        stroke: lighten($dark-color, 5%);
+        .follow-icon {
+            fill-opacity: 0;
+            stroke-opacity: .85;
 
-        .role-follower & { fill: lighten($dark-color, 5%); }
+            .role-follower & { fill-opacity: .85; }
+        }
+    }
+
+    &:active {
+        .follow-icon {
+            fill-opacity: 0;
+            stroke-opacity: 1;
+
+            .role-follower & { fill-opacity: 1; }
+        }
     }
 }
 
@@ -873,9 +894,7 @@ body {
     width: 3.5em;
     padding: .75em .5em;
     cursor: pointer;
-    fill: lighten($dark-color, 15%);
-
-    &:focus, &:hover, &:active { fill: lighten($dark-color, 5%); }
+    fill: $dark-color;
 }
 
 .cta-area {
