@@ -178,12 +178,12 @@ module.exports = function(libsb) {
 			});
 		});
 
-		$(".titlebar").on("click", function(e) {
+		$(".title-bar").on("click", function(e) {
 			if (e.target === e.currentTarget) {
 				libsb.emit("navigate", {
 					minimize: true,
 					source: "embed",
-					event: "titlebar"
+					event: "title-bar"
 				});
 			}
 		});
