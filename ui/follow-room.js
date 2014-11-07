@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, currentState*/
 
 $(function() {
 	var $body = $("body"),
@@ -84,4 +84,9 @@ $(function() {
 		getFollow();
 		next();
 	}, 100);
+	
+	libsb.on("room-dn", function(room, next) {
+		if(room.to === currentState.roomName && room.from === libsb.user) getFollow();
+		next();
+	}, 50);
 });
