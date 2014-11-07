@@ -136,10 +136,6 @@ $(function() {
 	function updateMyRooms() {
 		var room = window.currentState.roomName;
 
-		if (window.currentState.mode !== "normal" && window.currentState.mode !== "home") {
-			return;
-		}
-
 		roomArea.clear();
 
 		if (room) {
