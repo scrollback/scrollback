@@ -107,7 +107,7 @@ $(function() {
 					$els = $areas.find("[data-room]");
 
 				for (var i = 0, l = $els.length; i < l; i++) {
-					roomArea.remove({ id: $els.eq(i).attr("data-room") });
+					leave($els.eq(i).attr("data-room"));
 				}
 
 				return $areas.empty();
@@ -179,8 +179,8 @@ $(function() {
 		}, function() {
 			libsb.emit("navigate", {
 				roomName: name,
-				mode: "normal",
-				tab: "info",
+				mode: "conf",
+				tab: "embed",
 				time: null
 			}, function() {
 				location.reload();
