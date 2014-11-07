@@ -75,7 +75,7 @@ $(function() {
 		$createRoomButton = $(".js-create-room"),
 		roomArea = {
 			add: function(roomObj) {
-				var done  = false;
+				var done = false;
 
 				if (window.currentState.mode === "home") {
 					done = homeFeedMine.add(roomObj);
@@ -89,7 +89,7 @@ $(function() {
 			},
 
 			remove: function(roomObj) {
-				var done  = false;
+				var done = false;
 
 				if (window.currentState.mode === "home") {
 					done = homeFeedMine.remove(roomObj);
@@ -107,7 +107,9 @@ $(function() {
 					$els = $areas.find("[data-room]");
 
 				for (var i = 0, l = $els.length; i < l; i++) {
-					roomArea.remove({ id: $els.eq(i).attr("data-room") });
+					roomArea.remove({
+						id: $els.eq(i).attr("data-room")
+					});
 				}
 
 				return $areas.empty();
@@ -122,7 +124,9 @@ $(function() {
 	function updateFeaturedRooms() {
 		homeFeedFeatured.container.empty();
 
-		libsb.emit("getRooms", { featured: true }, function(err, response) {
+		libsb.emit("getRooms", {
+			featured: true
+		}, function(err, response) {
 			if (!(response && response.results && response.results.length)) {
 				return;
 			}
@@ -143,7 +147,9 @@ $(function() {
 		roomArea.clear();
 
 		if (room) {
-			libsb.emit("getRooms", { ref: room }, function(err, response) {
+			libsb.emit("getRooms", {
+				ref: room
+			}, function(err, response) {
 				if (!(response && response.results && response.results.length)) {
 					return;
 				}
@@ -182,8 +188,6 @@ $(function() {
 				mode: "normal",
 				tab: "info",
 				time: null
-			}, function() {
-				location.reload();
 			});
 		});
 	}
@@ -314,12 +318,10 @@ $(function() {
 			}
 
 			$createRoomButton.addClass("loading");
-
-			libsb.emit("getRooms", { ref: name }, function(err, res) {
-				$createRoomButton.removeClass("loading");
-
-				if (res && res.results && res.results.length) {
-					showError("Another room with same name already exists!");
+			checkOld(name, function(isTaken) {
+				showError("Entered name already taken!");
+				if (isTaken) {
+					showError("Entered name already taken!");
 				} else {
 					showError(false);
 					createRoom(name);
@@ -328,3 +330,17 @@ $(function() {
 		});
 	});
 });
+
+function checkOld(id, callback) {
+	libsb.emit("getRooms", {
+		ref: id
+	}, function(err, res) {
+		if (res && res.results && res.results.length) return callback(true);
+		libsb.emit("getUsers", {
+			ref: id
+		}, function(err, res) {
+			if (res && res.results && res.results.length) return callback(true);
+			return callback(false);
+		});
+	});
+}
