@@ -29,8 +29,8 @@
 				path: location.pathname + location.search + location.hash
 			};
 
-			embed.backgroundColor = sb.backgroundColor;
-			embed.backgroundImage = sb.backgroundImage;
+			embed.titlebarColor = sb.titlebarColor;
+			embed.titlebarImage = sb.titlebarImage;
 
 			sb.room = validate(sb.room).sanitized;
 

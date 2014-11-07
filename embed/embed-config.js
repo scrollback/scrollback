@@ -1,125 +1,24 @@
 /* jslint browser: true, indent: 4, regexp: true */
-/* global $, libsb, currentState, format */
-var formField = require('../lib/formField.js');
-libsb.on("config-show", function(conf, next) {
-	//room URL
-	var backgroundColor;
-	var backgroundImage;
-	var form = "toast";
-	var $div = $("<div>");
-	var roomURL = "https://" + window.location.host + "/" + currentState.roomName;
-	var $roomURLField = $("<input>").addClass("embed-input-url").attr("readonly", true).val(roomURL);
-	$roomURLField.click(function() {
-		this.select();
-	});
-	$div.append(formField("URL", "", "embed-room-url", $roomURLField));
+/* global $, libsb */
 
-	var $shareDiv = $("<div>").addClass('embed-share').append($("<a>").attr("href", "https://plus.google.com/share?url=" + roomURL).attr("target", "_blank").addClass("google  embed-share-button").text("Google+"));
-	$shareDiv.append($("<a>").attr("href", "https://www.facebook.com/sharer/sharer.php?u=" + roomURL).attr("target", "_blank").addClass("facebook  embed-share-button").text("facebook"));
-	$shareDiv.append($("<a>").attr("href", "https://twitter.com/intent/tweet?url=" + roomURL).attr("target", "_blank").addClass("twitter embed-share-button").text("twitter"));
-	$div.append(
-		formField("Share on", "", "share-embed", $shareDiv)
-	);
-	//qr code
-	var qrCode = $("<img>").attr("src", "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=http://sb.lk/" + window.currentState.roomName);
-	$div.append(
-		formField("QR code", "", "embed-qr-code", qrCode)
-	);
-	// Embed customization
-	$div.append(formField("Embed Customization", "", "embed-customization-title", ""));
-	// change title color
-	var $titleBackground = formField("Embed Title Color", "text", "embed-title-background", "#");
-	$titleBackground.find("input").attr("type", "color");
+var formField = require("../lib/formField.js"),
+	embedForm, titlebarColor;
 
-	$div.append($titleBackground);
-	//change background Image
-	var $imageBackground = formField("Background Image URL", "text", "embed-image-background", "");
-	$imageBackground.find("input").attr("type", "url");
-
-	$div.append($imageBackground);
-	//form
-	var $formOptions = formField("Form", "radio", "embed-form-options", [["embed-form-toast", "toast", true], ["embed-form-canvas", "canvas"]]);
-
-	$div.append($formOptions);
-
-	//code.
-	$div.append(formField("", "<p>", "embed-code-info",
-		format.textToHtml("Place the following code just before the closing </head> tag ")));
-	var code = getCode();
-	var $textarea = $("<textarea>").addClass("embed-code").attr("readonly", true).text(code);
-	$div.append(
-		formField("Code", "", "embed-code", $textarea)
-	);
-	//mailto link
-	var $email = $("<a>").attr("href", getMailToLink()).text("Email to developer");
-	$email.attr("target", "_blank");
-	$div.append(formField("", "", "embed-email-link", $email));
-	//help
-	var $help = $("<a>").attr("href", "https://github.com/scrollback/scrollback/wiki/Embed-Options");
-	$help.text("Know more about Embed Options");
-	$help.attr("target", "_blank");
-	$div.append(formField("", "", "embed-help-link", $help));
-	$textarea.click(function() {
-		this.select();
-	});
-
-	$titleBackground.on("keydown paste input change", function() {
-		var $titleTextField = $("#embed-title-background");
-		var text = $titleTextField.val();
-		var code = "";
-		text.toLowerCase();
-		if (/(^#[0-9a-f]{6}$)|(^#[0-9a-f]{3}$)/i.test(text)) {
-			backgroundColor = text;
-			code = getCode();
-			$textarea.text(code);
-			$titleTextField.removeClass("error");
-		} else {
-			$titleTextField.addClass("error");
-		}
-
-	});
-
-	$imageBackground.on("keydown paste input change", function() {
-		var $bkg = $('#embed-image-background');
-		backgroundImage = $bkg.val();
-		code = getCode();
-		$textarea.text(code);
-	});
-
-	$formOptions.on('change', function() {
-		console.log("On change radio");
-		form = $('input[name=\"embed-form-options\"]:checked', $formOptions).val().substring(11);
-		code = getCode();
-		$textarea.text(code);
-	});
-	conf.embed = {
-		text: "Share & Embed",
-		html: $div,
-		prio: 400
-	};
-
-	next();
-
-	function getCode() {
-		var code = '<script>window.scrollback = %s;(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>';
-		var embedObj = {
+function getEmbedCode() {
+	var code = '<script>window.scrollback = %s;(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>',
+		embedObj = {
 			room: window.currentState.roomName,
 			theme: "dark",
-			backgroundColor: backgroundColor,
-			backgroundImage: backgroundImage,
-			form: form
+			titlebarColor: titlebarColor,
+			form: embedForm
 		};
-		code = parse(code, JSON.stringify(embedObj));
-		return code;
-	}
 
-	function getMailToLink() {
-		return "mailto:?body=" + encodeURIComponent(getCode()) +
-			"&subject=" + encodeURIComponent("Embed Code for room: " + currentState.roomName);
-	}
-}, 500);
+	return parse(code, JSON.stringify(embedObj));
+}
 
-
+function getMailToLink() {
+	return "mailto:?body=" + encodeURIComponent(getEmbedCode()) + "&subject=" + encodeURIComponent("Embed Code for room: " + window.currentState.roomName);
+}
 
 function parse(str) {
 	var args = [].slice.call(arguments, 1),
@@ -129,3 +28,119 @@ function parse(str) {
 		return args[i++];
 	});
 }
+
+libsb.on("config-show", function(conf, next) {
+	var roomURL = "https://" + window.location.host + "/" + window.currentState.roomName,
+		$config, $roomURLField, $shareDiv, $qrCode,
+		$titlebarColor,
+		$formOptions, $embedCode, $embedCodeDiv;
+
+	$roomURLField = $("<input>").addClass("embed-input-url")
+								.attr({
+									readonly: true,
+									type: "url"
+								})
+								.val(roomURL)
+								.on("click", function() {
+									$(this).select();
+								});
+
+	$config = $("<div>").append(formField("Room URL", "", "embed-room-url", $roomURLField));
+
+	// Share buttons
+	$shareDiv = $("<div>").addClass("embed-share").append(
+		$("<a>").attr({
+			href: "https://plus.google.com/share?url=" + roomURL,
+			target: "_blank"
+		}).addClass("google  embed-share-button").text("Google+"),
+
+		$("<a>").attr({
+			href: "https://www.facebook.com/sharer/sharer.php?u=" + roomURL,
+			target: "_blank"
+		}).addClass("facebook embed-share-button").text("Facebook"),
+
+		$("<a>").attr({
+			href: "https://twitter.com/intent/tweet?url=" + roomURL,
+			target: "_blank"
+		}).addClass("twitter embed-share-button").text("Twitter")
+	);
+
+	$config.append(formField("Share room on", "", "share-embed", $shareDiv));
+
+	// Qr code
+	$qrCode = $("<img>").attr("src", "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=http://sb.lk/" + window.currentState.roomName);
+
+	$config.append(formField("QR code", "", "embed-qr-code", $qrCode));
+
+	// Embed customization
+	$config.append($("<h3>").text("Embed options"));
+
+	// Titlebar color
+	$titlebarColor = formField("Titlebar background color", "text", "embed-titlebar-color", "");
+
+	$titlebarColor.find("input").attr({
+		type: "color",
+		placeholder: "e.g. - #3ca"
+	}).on("keydown paste input change", function() {
+		var $input = $(this);
+
+		titlebarColor = $input.val() || "";
+
+		titlebarColor.toLowerCase();
+
+		if (/(^#[0-9a-f]{6}$)|(^#[0-9a-f]{3}$)/i.test(titlebarColor)) {
+			$embedCode.text(getEmbedCode());
+			$input.removeClass("error");
+		} else {
+			$input.addClass("error");
+		}
+
+	});
+
+	$config.append($titlebarColor);
+
+	// Widget form
+	$formOptions = formField("Widget appearance", "radio", "embed-form-options", [[ "embed-form-toast", "Toast", true ], [ "embed-form-canvas", "Canvas" ]]);
+
+	$formOptions.find("[name='embed-form-options']").on("change", function() {
+		embedForm = $("[name='embed-form-options']:checked").attr("id");
+
+		embedForm = (typeof embedForm === "string" && embedForm.length > 11) ? embedForm.toLowerCase().substring(11) : "toast";
+
+		$embedCode.text(getEmbedCode());
+	});
+
+	$config.append($formOptions);
+
+	$embedCode = $("<textarea>").addClass("embed-code").attr("readonly", true).text(getEmbedCode()).on("click", function() {
+		this.select();
+	});
+
+	// Embed code
+	$embedCodeDiv = $("<div>").append(
+		$("<p>").text("Place the following code just before the closing '</head>' tag."),
+		$embedCode,
+		$("<p>").append(
+			$("<a>").attr({
+				href: getMailToLink(),
+				target: "_blank"
+			}).addClass("button secondary").text("Email to developer")
+		),
+		$("<p>").append(
+			$("<a>").attr({
+				href: "https://github.com/scrollback/scrollback/wiki/Embed-Options",
+				target: "_blank"
+			}).text("Know more about Embed options")
+		)
+	);
+
+	$config.append(formField("Embed code", "", "embed-code", $embedCodeDiv));
+
+	conf.embed = {
+		text: "Share & Embed",
+		html: $config,
+		prio: 400
+	};
+
+	next();
+}, 500);

@@ -1606,11 +1606,10 @@ $dotshadow: fade-out($accent-color, .6);
             border-style: solid;
             border-color: transparent;
             display: inline-block;
+            border-radius: $roundness;
+            cursor: pointer;
 
-            &.current {
-                border-color: darken($light-color, 20%);
-                border-radius: $roundness;
-            }
+            &.current, &:focus, &:hover, &:active { border-color: $accent-color; }
 
             img {
                 border-radius: $roundness;
@@ -1648,7 +1647,7 @@ $dotshadow: fade-out($accent-color, .6);
 
     .embed-code {
         min-width: 27em;
-        min-height: 16em;
+        min-height: 15em;
         background-color: darken($light-color, 5%);
         font-weight: 700;
         font-family: $font-family-monospace;
@@ -1660,11 +1659,23 @@ $dotshadow: fade-out($accent-color, .6);
         max-width: 100%;
     }
 
-    textarea { resize: vertical; }
+    input[type="text"], input[type="url"], textarea { min-width: 27em; }
+
+    textarea {
+        resize: vertical;
+        min-height: 9em;
+    }
 
     input[type="checkbox"], input[type="radio"] {
         float: left;
         margin-right: .5em;
+    }
+
+    input[type="color"] {
+        height: 2.5em;
+        width: 12em;
+        padding: 0 .1em;
+        cursor: pointer;
     }
 
     .embed-share-button {
@@ -1686,11 +1697,9 @@ $dotshadow: fade-out($accent-color, .6);
 }
 
 .settings-label {
-    text-align: left;
     padding-right: 1em;
 
     @media #{$screenxx} {
-        text-align: right;
         vertical-align: top;
         padding: .5em 0;
     }

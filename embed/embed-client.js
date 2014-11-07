@@ -1,21 +1,23 @@
 /* jshint browser: true */
 /* global $*/
-var parseURL = require("../lib/parseURL.js");
-/*  status flags.*/
-var verificationStatus = false,
+
+var Color = require("../lib/color.js"),
+	parseURL = require("../lib/parseURL.js"),
+	/* status flags */
+	verificationStatus = false,
 	bootingDone = false,
 	verified = false,
 	verificationTimeout = false,
-	suggestedNick;
-
-/*  lasting objects*/
-var embed, token, domain, path, preBootQueue = [],
+	suggestedNick,
+	/*  lasting objects*/
+	embed, token, domain, path, preBootQueue = [],
 	queue = [],
 	parentHost;
 
 function sendDomainChallenge() {
 	token = Math.random() * Math.random();
 	parentHost = embed.origin.protocol + "//" + embed.origin.host;
+
 	window.parent.postMessage(JSON.stringify({
 		type: "domain-challenge",
 		token: token
@@ -26,6 +28,7 @@ function sendDomainChallenge() {
 			verificationStatus = true;
 			verified = false;
 			verificationTimeout = true;
+
 			while (preBootQueue.length) {
 				(preBootQueue.shift())();
 			}
@@ -36,13 +39,19 @@ function sendDomainChallenge() {
 function verifyDomainResponse(data) {
 	domain = embed.origin.host;
 	path = embed.origin.path;
-	if (verificationTimeout) return;
+
+	if (verificationTimeout) {
+		return;
+	}
+
 	if (data.token == token) {
 		verified = true;
 	} else {
 		verified = false;
 	}
+
 	verificationStatus = true;
+
 	while (preBootQueue.length) {
 		(preBootQueue.shift())();
 	}
@@ -54,6 +63,7 @@ function parseResponse(data) {
 	} catch (e) {
 		data = {};
 	}
+
 	return data;
 }
 
@@ -90,6 +100,55 @@ function toastChange(state, next) {
 	next();
 }
 
+function generateCss(selector, styleBlock) {
+	var r = [];
+
+	r.push(selector + "{");
+
+	for (var prop in styleBlock) {
+		r.push(prop + ":" + styleBlock[prop] + "!important;");
+	}
+
+	r.push("}");
+
+	return r.join("\n");
+}
+
+function insertCss(embed) {
+	var r = [], colorObj, titlebarFg;
+
+	if (!embed) {
+		return;
+	}
+
+	if (embed.titlebarColor) {
+		colorObj =  new Color(embed.titlebarColor);
+
+		if (colorObj.luma > 50) {
+			titlebarFg = "rgba(255,255,255,.9)";
+		} else {
+			titlebarFg = "rgba(0,0,0,.9)";
+		}
+
+		if (colorObj.saturation < 10) {
+			$("body").addClass("customization-titlebar-greyscale");
+		}
+
+		r.push(generateCss(".custom-titlebar-bg", { "background-color": embed.titlebarColor }));
+		r.push(generateCss(".custom-titlebar-fg", { "color": titlebarFg }));
+	}
+
+	if (embed.backgroundImage) {
+		r.push(generateCss(".custom-titlebar-image", { "background-image": "url('" + embed.titlebarImage + "')" }));
+	}
+
+	if (!r.length) {
+		return;
+	}
+
+	$("head").append($("<style>").text(r.join(" ")));
+}
+
 module.exports = function(libsb) {
 	$(function() {
 		// Handle fullview button click
@@ -106,12 +165,12 @@ module.exports = function(libsb) {
 			});
 		});
 
-		$(".title-bar").on("click", function(e) {
+		$(".titlebar").on("click", function(e) {
 			if (e.target === e.currentTarget) {
 				libsb.emit("navigate", {
 					minimize: true,
 					source: "embed",
-					event: "title-bar"
+					event: "titlebar"
 				});
 			}
 		});
@@ -127,6 +186,7 @@ module.exports = function(libsb) {
 
 	var url = parseURL(window.location.pathname, window.location.search);
 	embed = url.embed;
+
 	if (window.parent !== window) {
 		if (embed) {
 			try {
@@ -134,6 +194,7 @@ module.exports = function(libsb) {
 			} catch (e) {
 				embed = {};
 			}
+
 			suggestedNick = embed.nick;
 			classesOnLoad(embed);
 
@@ -164,12 +225,13 @@ module.exports = function(libsb) {
 		verified = true;
 		verificationStatus = true;
 	}
-	addStyleSheet(embed);
-	
+
+	insertCss(embed);
+
 	libsb.on("navigate", function(state, next) {
 		function processNavigate() {
 			var guides;
-			//				console.log("DATA:", {booted: libsb.hasBooted, verificationStatus: verificationStatus,verificationTimeout: verificationTimeout, verified: verified, domain: domain, path: path, state: state});
+
 			if (state.source == "boot") {
 				bootingDone = true;
 				state.embed = embed;
@@ -179,7 +241,9 @@ module.exports = function(libsb) {
 				guides = state.room.guides;
 				if (!state.old || !state.old.roomName || state.roomName != state.old.roomName) {
 					if (guides && guides.http && guides.http.allowedDomains && guides.http.allowedDomains.length) {
-						if (!verified || guides.http.allowedDomains.indexOf(domain) == -1) state.room = 'embed-disallowed';
+						if (!verified || guides.http.allowedDomains.indexOf(domain) == -1) {
+							state.room = "embed-disallowed";
+						}
 					}
 				}
 			}
@@ -213,59 +277,13 @@ module.exports = function(libsb) {
 
 			next();
 		}
-		if (libsb.hasBooted) processInit();
-		else queue.push(processInit);
+
+		if (libsb.hasBooted) {
+			processInit();
+		} else {
+			queue.push(processInit);
+		}
 	}, 500);
+
 	libsb.on("navigate", toastChange, 500);
 };
-
-function addStyleSheet(embed) {
-	var r = [];
-	if (!(embed && embed.backgroundColor && embed.backgroundImage)) return;
-	if (embed && embed.backgroundColor) {
-		var textColor;
-		if (isDark(embed.backgroundColor)) {
-			textColor = '#fff';
-		} else {
-			textColor = '#000';
-		}
-		r.push(getGeneratedCss("custom-title-bar-bg", ["background"], [embed.backgroundColor]));
-		r.push(getGeneratedCss("custom-title-bar-fg", ["background"], [textColor]));
-	}
-	if (embed && embed.backgroundImage) {
-		r.push(getGeneratedCss("custom-background-image", ["background-image"], ["url(\"" +embed.backgroundImage +"\")"]));
-	}
-	$('head').append($("<style>").text(r.join(" ")));
-}
-
-function getGeneratedCss(className, cssProperties, cssValues) {
-	var r = [];
-	r.push("." + className + "{");
-	for (var i = 0; i < cssProperties.length; i++) {
-		r.push(cssProperties[i] + ":");
-		r.push(cssValues[i] + "!important;");
-	}
-	r.push("}");
-	return r.join("\n");
-}
-
-
-function isDark(hexColor) {
-	var rgbColor = hexToRgb(hexColor);
-	return (0.2126 * rgbColor.r + 0.7152 * rgbColor.g + 0.0722 * rgbColor.b) > 0.5;
-}
-
-function hexToRgb(hex) {
-	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-	var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-	hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-		return r + r + g + g + b + b;
-	});
-
-	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-	return result ? {
-		r: parseInt(result[1], 16),
-		g: parseInt(result[2], 16),
-		b: parseInt(result[3], 16)
-	} : null;
-}
