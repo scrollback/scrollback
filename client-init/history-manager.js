@@ -92,10 +92,10 @@ function buildUrl(state) {
 
 function pushState(state) {
 	var url, pushableState;
-	if(state && typeof state == "object") return;
+	if(!state || typeof state !== "object") return;
 	
 	url = state.phonegap ? null : buildUrl(state);
-	pushableState = $.extend(true, {}. state);
+	pushableState = $.extend({}. state, true);
 	
 	if (pushableState.source == "init" || pushableState.source == "chat-area") {
 		history.replaceState(pushableState, null, url);
