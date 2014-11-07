@@ -124,10 +124,10 @@ function insertCss(embed) {
 	if (embed.titlebarColor) {
 		colorObj =  new Color(embed.titlebarColor);
 
-		if (colorObj.value > 50) {
-			titlebarFg = "#333";
-		} else {
+		if (colorObj.luma < 65) {
 			titlebarFg = "#fff";
+		} else {
+			titlebarFg = "#333";
 		}
 
 		if (colorObj.saturation > 10) {
