@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global window*/
+/* global window, $*/
 
 var generate = require('../lib/generate.js'),
 	spaceManager = require('../localStorage/spaceManager.js'),
@@ -65,7 +65,7 @@ module.exports = function (l) {
     libsb.on('join-dn', recvJoin, 1000);
     libsb.on('part-dn', recvPart, 1000);
     // libsb.on('error-dn', recvError);
-
+	libsb.on("room-dn", roomdown, 1000);
     libsb.on('connected', onConnect, 1000);
     libsb.on('disconnected', onDisconnect, 1000);
 
@@ -234,4 +234,23 @@ function recvPart(part, next) {
 	});
 
     next();
+}
+
+function roomdown(action, next) {
+	var room, l, i;
+	if (action.from === libsb.user.id) {
+		for (i = 0, l = libsb.memberOf.length; i < l; i++) {
+			if(libsb.memberOf[i].id === action.to) {
+				room = $.extend(true, {}, action.room);
+				libsb.memberOf[i] = room;
+				libsb.memberOf[i].role = "owner";
+				next();
+				break;
+			}
+		}
+		room = $.extend(true, {}, action.room);
+		room.role = "owner";
+		libsb.memberOf.push(room);
+	}
+	next();
 }

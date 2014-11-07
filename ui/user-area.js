@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, currentState */
 
 var showMenu = require("./showmenu.js");
 
@@ -116,4 +116,8 @@ $(function() {
 
 		n();
 	}, 1000);
+	libsb.on("room-dn", function(action, next) {
+		if(action.to === currentState.roomName) setOwner();
+		next();
+	}, 25);
 });
