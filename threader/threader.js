@@ -6,7 +6,7 @@ var client;
 var pendingCallbacks = {};
 var core;
 var validator = new (require('valid'))();
-
+var colors = require('./colors.js');
 var threaderValidator = {
 	params: [{
 		threader: ['undefined', {
@@ -29,17 +29,18 @@ module.exports = function(coreObj) {
 			} else callback();
 		}, "appLevelValidation");
 
-		core.on('text', function(message, callback) {
+		core.on('text', function(message, cb) {
+			var callback = colors(message, cb);
 			var room = message.room;
 			if (client.writable && (!room.params || !room.params.threader || room.params.threader.enabled)) {//if client connected
 				var threadId = message.threads && message.threads[0] ? message.threads[0].id : undefined;
 				var msg = JSON.stringify({
-					id: message.id, time: message.time, author: message.from.replace(/guest-/g,""),
+					id: message.id, time: message.time, author: message.from.replace(/guest-/g, ""),
 					text: message.text,
 					room: message.to,
 					threadId: threadId
 				});
-				log("Sending msg to scrollback.jar= "+msg);
+				log("Sending msg to scrollback.jar= " + msg);
 				try {
 					client.write(msg + ",");
 				} catch(err) {
@@ -49,15 +50,7 @@ module.exports = function(coreObj) {
 				}
 				pendingCallbacks[message.id] = { message: message, fn: callback ,time:new Date().getTime()};
 				setTimeout(function() {
-					if(pendingCallbacks[message.id] ){
-						for (var i = 0;i < message.threads.length;i++) {
-							var th = message.threads[i];
-							if (th.id === "new") {
-								message.threads.splice(i, 1);
-								i--;
-							}
-						}
-						message.threads.push({id: message.id + getRandom(0, 9), score: 1, title: message.text});
+					if (pendingCallbacks[message.id]) {
 						pendingCallbacks[message.id].fn();
 						delete pendingCallbacks[message.id];
 						log("pending callback removed after 1 sec for message.id" + message.id);
@@ -71,9 +64,7 @@ module.exports = function(coreObj) {
 	}
 };
 
-function getRandom(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+
 /**
 *Process reply from java process and callback based on message.id
 * message.thread [{
@@ -83,8 +74,8 @@ function getRandom(min, max) {
 * }, ... ]
 */
 function processReply(data){
-	var i, l;
-   try {
+	var i;
+	try {
 		log("data=-:" + data + ":-");
 		data = JSON.parse(data);
 		log("Data returned by scrollback.jar = "+data.threadId, (pendingCallbacks[data.id] && pendingCallbacks[data.id].message));
@@ -118,14 +109,7 @@ function processReply(data){
 					}
 				}
 			}
-			
-			for (i = 0, l = message.threads.length; i < l; i++) {
-				if (message.threads[i].id.indexOf(message.id) === 0) {
-					message.labels.startOfThread = 1;
-					break;
-				}
-			}
-			
+
 			pendingCallbacks[data.id].fn();
 			log("called back in ", new Date().getTime() - pendingCallbacks[data.id].time);
 			delete pendingCallbacks[data.id];
