@@ -355,35 +355,37 @@ function generateNick(suggestedNick, callback) {
 	if (!suggestedNick) suggestedNick = names(6);
 	suggestedNick = suggestedNick.toLowerCase();
 
+
 	function checkUser(suggestedNick, attemptC, callback) {
+		var ct = 0, result = true;
 		var trying = suggestedNick;
 		if (attemptC) trying += attemptC;
-		if (attemptC >= 3) return callback(names(6));
-		core.emit('getUsers', {
-			ref: "guest-" + trying,
-			session: internalSession
-		}, function(err, data) {
-			if (data && data.results && data.results.length > 0) {
-				return checkUser(suggestedNick, attemptC + 1, callback);
+		if (attemptC >= config.entityloader.nickRetries) return callback(names(6));
+		function done(r) {
+			result &= r;
+			if (++ct >= 2) {
+				if (result) {
+					callback(trying);
+				} else {
+					checkUser(suggestedNick, attemptC + 1, callback);
+				}
 			}
-			core.emit('getUsers', {
-				ref: trying,
+		}
+		function checkRoomUser(type, name) {
+			core.emit(type, {
+				ref: name,
 				session: internalSession
 			}, function(err, data) {
 				if (data && data.results && data.results.length > 0) {
-					return checkUser(suggestedNick, attemptC + 1, callback);
+					done(false);
+				}  else {
+					done(true);
 				}
-				core.emit('getRooms', {
-					ref: trying,
-					session: internalSession
-				}, function(err, data) {
-					if (data && data.results && data.results.length > 0) {
-						return checkUser(suggestedNick, attemptC + 1, callback);
-					}
-					callback(trying);
-				});
 			});
-		});
+		}
+		checkRoomUser("getRooms", trying);
+		checkRoomUser("getUsers", "guest-" + trying);
+
 	}
 	checkUser(suggestedNick, 0, callback);
 }
