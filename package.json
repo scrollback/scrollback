@@ -97,7 +97,6 @@
     "jshint-stylish": "latest",
     "lazypipe": "latest",
     "main-bower-files": "latest",
-    "map-stream": "latest",
     "mocha": "latest",
     "mocha-html-reporter": "git://github.com/kamalkishor1991/mocha-html-reporter.git#defc65cc72b6ed965caff1fb1c2d323ca0f5a319",
     "selenium-webdriver": "latest",

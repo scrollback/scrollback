@@ -7,7 +7,6 @@ var gulp = require("gulp"),
 	source = require("vinyl-source-stream"),
 	buffer = require("vinyl-buffer"),
 	es = require("event-stream"),
-	map = require("map-stream"),
 	lazypipe = require("lazypipe"),
 	plumber = require("gulp-plumber"),
 	gutil = require("gulp-util"),
@@ -99,13 +98,7 @@ gulp.task("lint", function() {
 	.pipe(gitmodified("modified"))
 	.pipe(jshint())
 	.pipe(jshint.reporter("jshint-stylish"))
-	.pipe(map(function(file, cb) {
-		if (!file.jshint.success) {
-			process.exit(1);
-		}
-
-		cb(null, file);
-	}))
+	.pipe(jshint.reporter("fail"))
 	.on("error", gutil.log);
 });
 
