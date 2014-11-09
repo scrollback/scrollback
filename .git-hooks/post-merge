@@ -8,7 +8,7 @@ check_file() {
 }
 
 # `npm install` and `npm prune` if the `package.json` file gets changed
-check_file package.json "npm install && npm prune"
+check_file "package.json" "npm install && npm prune"
 
 # `bower install` and `bower prune` if the `bower.json` file gets changed
-check_file bower.json "bower install && bower prune"
+check_file "bower.json" "bower install && bower prune"
