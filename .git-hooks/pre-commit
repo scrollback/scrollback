@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Check if any .js file changed
 git diff --cached --name-only --diff-filter=ACM | grep '.js$' >/dev/null 2>&1

@@ -40,7 +40,7 @@
   "scripts": {
     "start": "node index",
     "test": "node_modules/.bin/mocha test/test.js",
-    "postinstall": "gulp hook"
+    "postinstall": "gulp postinstall"
   },
   "engines": {
     "node": ">=0.8"
@@ -91,7 +91,7 @@
     "gulp-rename": "latest",
     "gulp-ruby-sass": "latest",
     "gulp-strip-debug": "latest",
-    "gulp-symlink": "latest",
+    "gulp-sym": "latest",
     "gulp-uglify": "latest",
     "gulp-util": "latest",
     "jshint-stylish": "latest",
