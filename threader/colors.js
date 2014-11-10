@@ -4,7 +4,7 @@ var config = require('../config.js'),
 
 module.exports = function(message, callback) {
 	return function () {
-		var isNewThread = generateId(message);
+		var isNewThread = addThread(message);
 		addLabel(message);
 		if (message.labels.startOfThread && isNewThread) {
 			atomicIncAndGet(message, function(color) {
@@ -30,15 +30,13 @@ function atomicIncAndGet(message, callback) {
 }
 
 function addLabel(message) {
-	for (var i = 0, l = message.threads.length; i < l; i++) {
-		if (message.threads[i].id.indexOf(message.id) === 0) {
-			message.labels.startOfThread = 1;
-			break;
-		}
+	if (message.threads[0] && message.threads[0].id.indexOf(message.id) === 0) {
+		message.labels.startOfThread = 1;
+		message.threads[0].title = message.text;
 	}
 }
 
-function generateId(message) {
+function addThread(message) {
 	var flag = false;
 	for (var i = 0;i < message.threads.length;i++) {
 		var th = message.threads[i];
