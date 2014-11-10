@@ -1,43 +1,36 @@
 var config = require('../config.js'),
 	redis = require('../lib/redisProxy.js').select(config.redisDB.threader),
-	log = require("../lib/logger.js"),
-	lock = {};
+	log = require("../lib/logger.js");
 
 module.exports = function(message, callback) {
 	return function () {
-		generateId(message);
+		var isNewThread = generateId(message);
 		addLabel(message);
-		if (message.labels.startOfThread) {
+		if (message.labels.startOfThread && isNewThread) {
 			atomicIncAndGet(message, function(color) {
-				var t = message.threads[0].id;
-				t = t.substring(0, t.length - 1) + color;
-				message.threads[0].id = t;
+				message.threads[0].id = message.threads[0].id + color;
 				callback();
 			});
 		} else callback();
-	}
-}
+	};
+};
 
 
 function atomicIncAndGet(message, callback) {
-	if (!lock[message.to]) {
-		lock[message.to] = true;
-		redis.get("threader:" + message.to + ":color", function(err, color) {
-			var color = (color === null) ? 0 : parseInt(color);
-			redis.set("threader:" + message.to + ":color", (color + 1) % 10, function(err, data) {
-				delete lock[message.to];
-				callback(color);
-			});
-		});
-	} else {
-		process.nextTick(function() {
-			redisIncAndGet(message, callback);
-		})
-	}
+	redis.incr("threader:" + message.to + ":color", function(err, num) {
+		var c = parseInt(num);
+		var color = (c - 1) % 10;
+		callback(color);
+		if (c >= (100000000)) {
+			log("Number of threads exceeded 10^8");
+			redis.decrby("threader:" + message.to + ":color", 100000000);
+		}
+	});
+
 }
 
 function addLabel(message) {
-	for (i = 0, l = message.threads.length; i < l; i++) {
+	for (var i = 0, l = message.threads.length; i < l; i++) {
 		if (message.threads[i].id.indexOf(message.id) === 0) {
 			message.labels.startOfThread = 1;
 			break;
@@ -57,6 +50,7 @@ function generateId(message) {
 	}
 	if (flag) {
 		message.labels.startOfThread = 1;
-		message.threads.push({id: message.id + "0", score: 1, title: message.text});
+		message.threads.push({id: message.id, score: 1, title: message.text});
 	}
+	return flag;
 }
