@@ -110,7 +110,15 @@ module.exports = function (objCacheOps) {
 			next();
 		}
 	}, 900);
-
+	libsb.on("room-dn", function(room, next) {
+		var user;
+		if(room.from === libsb.user.id) {
+			user = $.extend(true, {},libsb.user);
+			user.role = "owner";
+			objCacheOps.putMembers(room.to, user);
+		}
+		next();
+	}, 100);
 	libsb.on("init-dn", function (init, next) {
 		objCacheOps.deletePersistence();
 		objCacheOps.populateMembers(currentState.roomName);
