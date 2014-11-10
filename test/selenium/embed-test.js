@@ -1,6 +1,5 @@
 var assert = require('assert'),
 	timeout = 25000,
-	config = require('../config.js'),
 	webdriver = require('browserstack-webdriver'),
 	testUtils = require('./testUtils.js');
 
@@ -13,7 +12,6 @@ module.exports = function(capabilities, options) {
 			console.log("embed page testing");
 			driver = testUtils.openUrl(capabilities, server,
 				"s/test-embed.html?room=testroom1&minimize=false");
-			setTimeout(done, 1.5 * timeout);
 			driver.switchTo().frame(0). //if there is only one frame
 			then(function() {
 				driver.findElement(webdriver.By.css('.embed')).isDisplayed().
@@ -29,7 +27,6 @@ module.exports = function(capabilities, options) {
 			console.log("minimized embed page testing");
 			driver = testUtils.openUrl(capabilities, server,
 				"s/test-embed.html?room=testroom1&minimize=true");
-			setTimeout(done, 1.5 * timeout);
 			driver.switchTo().frame(0).
 			then(function() {
 				driver.findElement(webdriver.By.css('.minimize-room-title')).isDisplayed().
