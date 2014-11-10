@@ -54,7 +54,7 @@ describe('threader', function() {
 		});
 	});
 
-    it('should Update thread ID', function (done) {
+    it('should Update thread ID (threader enabled)', function (done) {
 		var msg = copyMsg();
 		msg.threads = [{
 			id: "new",
@@ -68,7 +68,37 @@ describe('threader', function() {
 			done();
 		});
 	});
-
+	
+	it('should Update thread ID (threader disbled)', function (done) {
+		var msg = copyMsg();
+		msg.room.params.threader.enabled = false;
+		msg.threads = [{
+			id: "new",
+			score: 1
+		}];
+		core.emit("text", msg, function (/*err, msg*/) {
+			console.log("message= ", msg);
+			var m = (msg.threads && msg.threads instanceof Array && msg.threads.length) > 0 ? true : false;
+			m = m && (msg.threads[0].id && msg.threads[0].id !== 'new' && msg.threads[0].score ? true : false);
+			assert.equal(m, true, "Not updating thread ID OR typeof thread is not an array.");
+			done();
+		});
+	});
+	
+	it('should add startOfThread label', function (done) {
+		var msg = copyMsg();
+		msg.room.params.threader.enabled = false;
+		msg.threads = [{
+			id: "new",
+			score: 1
+		}];
+		core.emit("text", msg, function (/*err, msg*/) {
+			console.log("message= ", msg);
+			assert.equal(msg.labels.startOfThread, 1, "labels startOfThread is not added");
+			done();
+		});
+	});
+	
 	it('should not take more then 1 sec', function(done) {
 		this.timeout(1100);
 		var msg = copyMsg();
