@@ -124,16 +124,18 @@ module.exports = function(ArrayCacheOp) {
 		}
 
 		// check if new thread was created.
-		if (text.id === text.threads[0].id) {
+		if (text.labels && text.labels.hasOwnProperty('startOfThread') && text.labels.startOfThread === 1) {
 			var threadKey = ArrayCacheOp.generateLSKey(text.to, 'threads');
 			ArrayCacheOp.loadArrayCache(threadKey);
 			var lastThread = ArrayCacheOp.cache[threadKey].d[ArrayCacheOp.cache[threadKey].length - 1];
 			if (!lastThread || lastThread.type === 'result-end') {
 				ArrayCacheOp.start('startTime', threadKey, window.backTimes[text.to]);
 			}
-			ArrayCacheOp.cache[threadKey].d.push(text.threads[0]);
-			console.log("Saved thread aC is ", ArrayCacheOp.cache[threadKey.d]);
-			ArrayCacheOp.saveCache(threadKey);
+			var newThread = text.threads[0];
+			newThread.startTime = text.time;
+			ArrayCacheOp.cache[threadKey].d.push(newThread);
+			console.log("Saved thread aC is ", ArrayCacheOp.cache[threadKey].d);
+			ArrayCacheOp.saveArrayCache(threadKey);
 		}
 
 		next();
