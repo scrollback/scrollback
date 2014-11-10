@@ -1,8 +1,7 @@
 /* jshint browser: true */
-/* global window*/
+/* global window, $*/
 
-var underscore = require('underscore'),
-    generate = require('../lib/generate.js'),
+var generate = require('../lib/generate.js'),
 	spaceManager = require('../localStorage/spaceManager.js'),
     libsb;
 
@@ -49,7 +48,7 @@ function loadUserInfo(libsb) {
 	var user = spaceManager.get('user', false);
 	var occupantOf = spaceManager.get('occupantOf', false);
 	var memberOf = spaceManager.get('memberOf', false);
-	
+
  	if (user !== null) libsb.user = user;
 	if (occupantOf !== null) libsb.occupantOf = occupantOf;
 	if (memberOf !== null) libsb.memberOf = memberOf;
@@ -66,7 +65,7 @@ module.exports = function (l) {
     libsb.on('join-dn', recvJoin, 1000);
     libsb.on('part-dn', recvPart, 1000);
     // libsb.on('error-dn', recvError);
-
+	libsb.on("room-dn", roomdown, 1000);
     libsb.on('connected', onConnect, 1000);
     libsb.on('disconnected', onDisconnect, 1000);
 
@@ -188,15 +187,17 @@ function recvInit(init, next) {
     libsb.memberOf = init.memberOf;
     libsb.occupantOf = init.occupantOf;
 	libsb.isInited = true;
-    libsb.user = init.user;
+	if(init.user.id) {
+		libsb.user = init.user;	
+	}
     next();
 }
 
 function recvBack(back, next) {
     if (back.from !== libsb.user.id) return next();
 	if(libsb.occupantOf.filter(
-		function(room){ 
-			if(room) return room.id === back.to; 
+		function(room){
+			if(room) return room.id === back.to;
 		}
 	).length === 0)	{
 		libsb.occupantOf.push(back.room);
@@ -208,7 +209,7 @@ function recvAway(away, next) {
     if (away.from !== libsb.user.id) return next();
 	libsb.occupantOf = libsb.occupantOf.filter(function(room) {
 		if (room && room.id !== away.to) {
-			return room;	
+			return room;
 		}
 	});
     next();
@@ -231,6 +232,25 @@ function recvPart(part, next) {
     libsb.memberOf = libsb.memberOf.filter(function(room) {
 		if (room && room.id !== part.to) return room;
 	});
-	
+
     next();
+}
+
+function roomdown(action, next) {
+	var room, l, i;
+	if (action.from === libsb.user.id) {
+		for (i = 0, l = libsb.memberOf.length; i < l; i++) {
+			if(libsb.memberOf[i].id === action.to) {
+				room = $.extend(true, {}, action.room);
+				libsb.memberOf[i] = room;
+				libsb.memberOf[i].role = "owner";
+				next();
+				break;
+			}
+		}
+		room = $.extend(true, {}, action.room);
+		room.role = "owner";
+		libsb.memberOf.push(room);
+	}
+	next();
 }

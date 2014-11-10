@@ -23,9 +23,8 @@ $("#noroom-view-create").on("click", function() {
 	libsb.emit('room-up', roomObj, function() {
 		libsb.emit("navigate", {
 			mode: 'normal',
-			tab: 'info'
-		}, function() {
-			location.reload();
+			tab: 'info',
+			time: new Date().getTime()
 		});
 	});
 });

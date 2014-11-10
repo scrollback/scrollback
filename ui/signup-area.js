@@ -26,7 +26,7 @@ $(function() {
 				picture: signingUser.picture,
 				identities: signingUser.identities,
 				params: {
-					pictures: [signingUser.picture]
+					pictures: signingUser.pictures
 				},
 				guides: {}
 			}

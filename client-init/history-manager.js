@@ -27,7 +27,8 @@ module.exports = function(l) {
 					}
 				}
 			}
-
+			if(currentState.connectionStatus) state.connectionStatus = currentState.connectionStatus;
+			else state.connectionStatus = "connecting";
 			state.source = "history";
 			libsb.emit("navigate", state);
 		}
@@ -90,34 +91,36 @@ function buildUrl(state) {
 }
 
 function pushState(state) {
-	var url = state.phonegap ? null : buildUrl(state);
-
-	/*state.old && delete state.old;
-        state.changes && delete state.changes;*/
-	if (Object.keys(state.changes).length === "") {
-		state.view = "normal";
-	}
-
-	if (state.source == "init" || state.source == "chat-area") {
-		history.replaceState(state, null, url);
+	var url, pushableState;
+	if(!state || typeof state !== "object") return;
+	
+	url = state.phonegap ? null : buildUrl(state);
+	pushableState = $.extend({}. state, true);
+	
+	if (pushableState.source == "init" || pushableState.source == "chat-area") {
+		history.replaceState(pushableState, null, url);
 		return;
 	}
 
-	if ((state.changes.view == "rooms" || state.changes.view == "meta" || state.changes.view == "normal") && Object.keys(state.changes).length == 1) {
-		history.pushState(state, null, url);
+	if (pushableState.changes && (pushableState.changes.view == "rooms" || pushableState.changes.view == "meta" || pushableState.changes.view == "normal") && Object.keys(pushableState.changes).length == 1) {
+		history.pushState(pushableState, null, url);
 		return;
 	} else if (Object.keys(state.changes).length === 0) {
-		history.pushState(state, null, url);
+		history.pushState(pushableState, null, url);
 		return;
 	}
-
-	if (url && history.pushState && url != location.pathname + location.search && state.source !== "history") {
-		if (state.changes.time && Object.keys(state.changes).length == 1) {
-			history.replaceState(state, null, url);
+	
+	delete pushableState.old;
+	delete pushableState.changes;
+	
+	if (url && history.pushState && url != location.pathname + location.search && pushableState.source !== "history") {
+		if (state.changes && state.changes.time && Object.keys(state.changes).length == 1) {
+			history.replaceState(pushableState, null, url);
 		} else {
-			history.pushState(state, null, url);
+			history.pushState(pushableState, null, url);
 		}
 	}
+
 }
 
 function updateHistory(state, next) {

@@ -4,21 +4,27 @@
 /**
  * @example
  *
- * showMenu({
+ * showMenu("user-menu", {
  *     origin: $("a"),
- *     title: "This is a title",
+ *     title:d "This is a title",
  *     buttons: {
- *         "Facebook" : function() {},
- *         "Persona" : function() {}
+ *         "facebook" : {
+ *				text: {string},
+ *				prio: {number},
+ *				action: {function}
+ *			}
  *     },
  *     items: {
- *         "Show" : function() {},
- *         "Hide" : function() {}
+ *         "guest-settings" :{
+ *				text: {string},
+ *				prio: {number},
+ *				action: {function}
+ *			}
  *     }
  * });
  */
 
-var showMenu = function(menu) {
+var showMenu = function(type, menu) {
 	var $popover = $("<div>"),
 		$list, item,
 		$buttons, button, sortable = [];
@@ -56,7 +62,6 @@ var showMenu = function(menu) {
 		$buttons.appendTo($popover);
 	}
 
-
 	if (typeof menu.items === "object" && !$.isEmptyObject(menu.items)) {
 		$list = $("<div>").addClass("popover-section").append("<ul>");
 		sortable = [];
@@ -87,7 +92,7 @@ var showMenu = function(menu) {
 		$list.appendTo($popover);
 	}
 
-	return $popover.popover({
+	return $popover.addClass(type).popover({
 		origin: menu.origin
 	});
 };

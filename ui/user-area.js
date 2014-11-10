@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, currentState */
 
 var showMenu = require("./showmenu.js");
 
@@ -14,9 +14,10 @@ $(function() {
 			libsb.emit("auth-menu", {
 				origin: $(this),
 				buttons: {},
+				items: {},
 				title: "Sign in to Scrollback with"
 			}, function(err, menu) {
-				showMenu(menu);
+				showMenu("auth-menu", menu);
 			});
 		}
 	});
@@ -28,7 +29,7 @@ $(function() {
 				buttons: {},
 				items: {}
 			}, function(err, menu) {
-				showMenu(menu);
+				showMenu("user-menu", menu);
 			});
 		}
 	});
@@ -84,7 +85,7 @@ $(function() {
 		next();
 	}, 100);
 	libsb.on("user-dn", function(action, next) {
-		$userAvatar.attr("src",action.user.picture);
+		$userAvatar.attr("src", action.user.picture);
 		next();
 	}, 100);
 	libsb.on("navigate", function(state, next) {
@@ -115,4 +116,8 @@ $(function() {
 
 		n();
 	}, 1000);
+	libsb.on("room-dn", function(action, next) {
+		if(action.to === currentState.roomName) setOwner();
+		next();
+	}, 25);
 });

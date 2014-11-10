@@ -78,7 +78,7 @@ function connect() {
 
 	client.onopen = function() {
 		backOff = 1;
-		core.emit("init-up", {}, function(err) {
+		core.emit("init-up", {}, function (err) {
 			if (err) console.log(err.message);
 			else libsb.isInited = true;
 			core.emit("navigate", {
