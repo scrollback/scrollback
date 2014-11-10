@@ -80,14 +80,13 @@ function processReply(data){
 		data = JSON.parse(data);
 		log("Data returned by scrollback.jar = "+data.threadId, (pendingCallbacks[data.id] && pendingCallbacks[data.id].message));
 		var id = data.threadId;
-		var title = data.title;
+		//var title = data.title;
 		var message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 		if (message) {
 			var update = false;
 			for (i = 0; i < message.threads.length; i++) {
 				var th = message.threads[i];
 				if (th.id === id) {
-					th.title = title;
 					update = true;
 				}
 				if (th.id === "new") {
@@ -96,7 +95,7 @@ function processReply(data){
 				}
 			}
 			if (!update) {
-				message.threads.push({id: id, title: title, score: 1});
+				message.threads.push({id: id, score: 1});
 			}
 			if (data.spamIndex) {
 				for (var index in data.spamIndex) {
