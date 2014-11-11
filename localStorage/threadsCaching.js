@@ -2,8 +2,11 @@
 
 module.exports = function (ArrayCacheOp) {
 	libsb.on('getThreads', function (query, next) {
-		if (query.hasOwnProperty('q')) { // search queries should always be served from the server.
+		if (query.hasOwnProperty('q') || query.hasOwnProperty('noCache')) { // search queries should always be served from the server.
 			return next();
+		}
+		if (query.hasOwnProperty('time')) {
+			query.startTime = query.time;
 		}
 		var key = ArrayCacheOp.generateLSKey(query.to, 'threads');
 		if (!ArrayCacheOp.cache.hasOwnProperty(key)) {
