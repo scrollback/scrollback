@@ -8,28 +8,29 @@ var internalSession = Object.keys(config.whitelists)[0];
 */
 
 module.exports = function(core) {
-	function notifyAllDevices(user, payload) {
-		var userObj, devices;
+	function notifyUserId(id, payload) {
 		core.emit("getUsers", {
-			ref: user,
+			ref: id,
 			session: internalSession
 		}, function(err, data) {
 			if (!data || !data.results || !data.results[0]) return;
-			userObj = data.results[0];
-			// send pushNotification to user.params.devices
-			if (userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
-				devices = userObj.params.pushNotifications.devices;
-				devices.forEach(function(device) {
-					if (device.hasOwnProperty('registrationId') && device.enabled === true) {
-						// send notification
-						notify(payload, [device.registrationId]);
-					}
-				});
-			}
+			notifyUser(data.results[0], payload);
 		});
 	}
+
+	function notifyUser(userObj, payload) {
+		if (userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
+			var devices = userObj.params.pushNotifications.devices;
+			devices.forEach(function(device) {
+				if (device.hasOwnProperty('registrationId') && device.enabled === true) {
+					// send notification
+					notify(payload, [device.registrationId]);
+				}
+			});
+		}
+	}
 	core.on('text', function(text, next) {
-		
+
 		// push notification when user is mentioned in a text message.
 		var mentions = text.mentions ? text.mentions : [];
 		var payload = {
@@ -38,10 +39,10 @@ module.exports = function(core) {
 			text: text
 		};
 		mentions.forEach(function(user) {
-			notifyAllDevices(user, payload);
+			notifyUserId(user, payload);
 		});
 
-		
+
 		// push notification on new thread creation.
 		if (text.labels && text.labels.hasOwnProperty('startOfThread') &&
 			text.labels.startOfThread === 1 && text.threads[0]) {
@@ -50,16 +51,19 @@ module.exports = function(core) {
 				message: text.threads[0].title,
 				text: text
 			};
-			core.emit("getUsers", {memberOf: text.to, session: internalSession}, function (e, d) {
+			core.emit("getUsers", {
+				memberOf: text.to,
+				session: internalSession
+			}, function(e, d) {
 				if (!d || !d.results) return;
 				d.results.forEach(function(u) {
 					if (u.id !== text.from) {
-						notifyAllDevices(u.id, payload);
+						notifyUser(u, payload);
 					}
 				});
 			});
 		}
-		
+
 		next();
 	}, "gateway");
 };
