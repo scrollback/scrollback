@@ -66,12 +66,16 @@ exports.getTexts = exports.getThreads = function(iq) {
 
 exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	var q = makeQuery();
-	q.sources.push(iq.type == 'getEntities'? 'entities': iq.type == 'getRooms'? 'rooms': 'users');
+	q.sources.push('entities');
 	
 	if (iq.ref) {
 		q.filters.push(["id", "eq", iq.ref]);
 	}
     
+	if (iq.type) {
+		q.filters.push(["type", "eq", iq.type]);
+	}
+	
     if (iq.identity) {
 		q.filters.push('identities', 'cts', [iq.identity]);
 	}

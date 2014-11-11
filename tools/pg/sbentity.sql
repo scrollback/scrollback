@@ -1,46 +1,44 @@
+BEGIN;
+
 CREATE TYPE entType AS ENUM('room',
-						   	'user');
+                            'user');
 
 CREATE TYPE rolType AS ENUM('banned',
-						 	'gagged',
-						 	'none',
-						 	'visitor',
-						 	'follower',
-							'moderator',
-							'owner');
+                            'gagged',
+                            'none',
+                            'visitor',
+                            'follower',
+                            'moderator',
+                            'owner');
 
 CREATE TYPE trnType AS ENUM('request',
-							'invite',
-							'timeout');
+                            'invite',
+                            'timeout');
 
 CREATE TABLE entities (
-	id text,
+	id text PRIMARY KEY,
 	type entType,
 	description text,
+	color integer,
 	picture text,
 	createTime timestamp,
 	identities text[][],	/* identities[?][0] is gateway */
 	timezone integer,
 	locale text,
 	params jsonb,
+	guides jsonb,
+	terms tsvector,
 	deleteTime timestamp
 );
 
-CREATE TABLE rooms (
-	guides jsonb
-) INHERITS (entities);
-
-CREATE TABLE users (
-) INHERITS (entities);
-
-CREATE TABLE memberships (
-	"room" text,
-	"user" text,
+CREATE TABLE relations (
+	"room" text REFERENCES entities,
+	"user" text REFERENCES entities,
 	role rolType,
 	roleTime timestamp,
 	
-	officer text, /* admitter/expeller */
-	reason text,  /*  */
+	officer text, /* moderator/inviter */
+	message text,
 	
 	transitionRole rolType,
 	transitionType trnType,
@@ -49,3 +47,17 @@ CREATE TABLE memberships (
 	lastVisitTime timestamp
 );
 
+/*****************************************************************************/
+
+CREATE INDEX ON entities (type);
+CREATE INDEX ON entities USING GIN (identities);
+CREATE INDEX ON entities (timezone);
+CREATE INDEX ON entities USING GIN (terms);
+
+CREATE INDEX ON relations ("room");
+CREATE INDEX ON relations ("user");
+CREATE INDEX ON relations (role);
+CREATE INDEX ON relations (transitionTime);
+CREATE INDEX ON relations (lastVisitTime);
+
+COMMIT;

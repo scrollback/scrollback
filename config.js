@@ -52,7 +52,14 @@ var defaults = {
 		newrelic: { name: 'Scrollback Local' }
 	},
 	env: "production",
-	mysql: {
+	storage: {
+		/* The new postgres-based storage */
+		db: { 
+			entity: "postgres://scrollback:scrollback@localhost/sbentity",
+			content: "postgres://scrollback:scrollback@localhost/sbcontent",
+		}
+	},
+	mysql: { // I am pretty sure this is no longer needed.
 		host     : 'localhost',
 		user     : 'scrollback',
 		password : 'scrollback',
