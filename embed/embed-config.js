@@ -48,7 +48,7 @@ libsb.on("config-show", function(conf, next) {
 		$("<a>").attr({
 			href: "https://plus.google.com/share?url=" + roomURL,
 			target: "_blank"
-		}).addClass("google  embed-share-button").text("Google+"),
+		}).addClass("googleplus embed-share-button").text("Google+"),
 
 		$("<a>").attr({
 			href: "https://www.facebook.com/sharer/sharer.php?u=" + roomURL,

@@ -1628,7 +1628,11 @@ $dotshadow: fade-out($accent-color, .6);
             border-radius: $roundness;
             cursor: pointer;
 
-            &.current, &:focus, &:hover, &:active { border-color: $accent-color; }
+            &:focus, &:hover { border-color: fade-out($dark-color, .5); }
+
+            &:active { border-color: fade-out($dark-color, .3); }
+
+            &.current { border-color: $accent-color; }
 
             img {
                 border-radius: $roundness;
