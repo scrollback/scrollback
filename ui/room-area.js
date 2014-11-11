@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, currentState */
 
 var LISTENING = 1,
 	NOT_LISTENING = 0,
@@ -73,6 +73,7 @@ $(function() {
 		$gotoform = $("#home-go-to-room-form"),
 		$gotoentry = $("#home-go-to-room-entry"),
 		$createRoomButton = $(".js-create-room"),
+		$noRoomCreateButton = $("#noroom-view-create"),
 		roomArea = {
 			add: function(roomObj) {
 				var done = false;
@@ -269,9 +270,7 @@ $(function() {
 			source: "room-header"
 		});
 	});
-
-	// Handle create new room
-	$createRoomButton.on("click", function() {
+	function newRoomHandler() {
 		var $createRoomDialog = $("<div>").attr("id", "createroom-modal").html($("#createroom-dialog").html()).modal(),
 			$createRoomEntry = $createRoomDialog.find("#createroom-id"),
 			$createRoomButton = $createRoomDialog.find("#createroom-save"),
@@ -330,7 +329,14 @@ $(function() {
 				}
 			});
 		});
-	});
+	}
+	function noRoomHandler() {
+		newRoomHandler();
+		$('#createroom-id').val(currentState.roomName);
+	}
+	// Handle create new room
+	$noRoomCreateButton.on("click", noRoomHandler);
+	$createRoomButton.on("click", newRoomHandler);
 });
 
 function checkOld(id, callback) {
