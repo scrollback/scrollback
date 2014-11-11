@@ -236,13 +236,20 @@ $(function() {
 	});
 
 	$gotoform.on("submit", function(e) {
-		var roomName = $gotoentry.val();
+		var roomName = $gotoentry.val().toLowerCase(),
+			validation = validate(roomName);
 
 		e.preventDefault();
 
+		if (!validation.isValid) {
+			$gotoentry.addClass("error");
+
+			return;
+		}
+
 		if (roomName) {
 			libsb.emit("navigate", {
-				roomName: roomName.toLowerCase(),
+				roomName: roomName,
 				mode: "normal",
 				view: "normal",
 				source: "room-list",
@@ -312,6 +319,7 @@ $(function() {
 			}
 
 			$createRoomButton.addClass("loading");
+
 			checkOld(name, function(isTaken) {
 				showError("Entered name already taken!");
 				if (isTaken) {
@@ -329,11 +337,17 @@ function checkOld(id, callback) {
 	libsb.emit("getRooms", {
 		ref: id
 	}, function(err, res) {
-		if (res && res.results && res.results.length) return callback(true);
+		if (res && res.results && res.results.length) {
+			return callback(true);
+		}
+
 		libsb.emit("getUsers", {
 			ref: id
 		}, function(err, res) {
-			if (res && res.results && res.results.length) return callback(true);
+			if (res && res.results && res.results.length) {
+				return callback(true);
+			}
+
 			return callback(false);
 		});
 	});
