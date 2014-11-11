@@ -25,9 +25,9 @@ window.onNotificationGCM = function (e) {
 	case 'message':
 		console.log(e);
 		// creating the state object.
-		var thread = e.payload.text.threads && e.payload.text.threads[0] ? e.payload.text.threads[0] : "";
+		var thread = e.payload.threadId;
 		var state = {
-			roomName: e.payload.text.to,
+			roomName: e.payload.roomName,
 			mode: 'normal'
 		};
 

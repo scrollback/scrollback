@@ -37,7 +37,11 @@ module.exports = function (payload, registrationIds) {
 	var postReq = http.request(postOptions, function (res) {
 		res.setEncoding('utf8');
 		res.on('data', function (data) {
-			log.i("push notification made ", data);
+			log.i("Push notification made ", data);
+			data = JSON.parse(data);
+			if (data && data.failure) {
+				log.e("Push notification failed ", JSON.stringify(data));
+			}
 		});
 	});
 	
