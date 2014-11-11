@@ -1,32 +1,35 @@
 /* global libsb, currentState */
 /* jshint browser:true */
 
-module.exports = function (cacheOp) {
-	libsb.on('getTexts', function (query, next) {
+module.exports = function(ArrayCacheOp) {
+	libsb.on('getTexts', function(query, next) {
 		// getTextsBefore
 		var key;
+		if (query.hasOwnProperty('updateTime')) {
+			return next();
+		}
 		if (query.thread) {
 			// creating individual cache entries for queries with the thread property
-			key = cacheOp.generateLSKey(query.to, query.thread, 'texts');
+			key = ArrayCacheOp.generateLSKey(query.to, query.thread, 'texts');
 		} else {
-			key = cacheOp.generateLSKey(query.to, 'texts');
+			key = ArrayCacheOp.generateLSKey(query.to, 'texts');
 		}
-		if (!cacheOp.cache.hasOwnProperty(key)) {
-			cacheOp.loadArrayCache(key);
+		if (!ArrayCacheOp.cache.hasOwnProperty(key)) {
+			ArrayCacheOp.loadArrayCache(key);
 		}
 
-		if (!cacheOp.cache[key].d.length) {
+		if (!ArrayCacheOp.cache[key].d.length) {
 			return next();
 		}
 
-		if (query.time === null && currentState.connectionStatus) {
+		if (query.time === null && currentState.connectionStatus === "online") {
 			// query.time is null, have to decide how LS will handle this.
 			return next();
 		}
-		if (!currentState.connectionStatus) query.partials = true;
+		if (currentState.connectionStatus !== "online") query.partials = true;
 		if (query.thread) return next();
 
-		var results = cacheOp.cache[key].get('time', query);
+		var results = ArrayCacheOp.cache[key].get('time', query);
 		if (!results || !results.length) {
 
 			return next();
@@ -38,7 +41,7 @@ module.exports = function (cacheOp) {
 		}
 	}, 200); // runs before the socket
 
-	libsb.on('getTexts', function (query, next) {
+	libsb.on('getTexts', function(query, next) {
 		var results = query.results;
 		if (!query.results || !query.results.length || query.resultSource == 'localStorage') {
 			return next();
@@ -74,53 +77,67 @@ module.exports = function (cacheOp) {
 					time: query.time
 				});
 			}
-			var lskey = cacheOp.generateLSKey(query.to, 'texts');
-			if (!cacheOp.cache.hasOwnProperty(lskey)) {
-				cacheOp.loadArrayCache(lskey);
+			var lskey = ArrayCacheOp.generateLSKey(query.to, 'texts');
+			if (!ArrayCacheOp.cache.hasOwnProperty(lskey)) {
+				ArrayCacheOp.loadArrayCache(lskey);
 			}
-			cacheOp.cache[lskey].put('time', results);
+			ArrayCacheOp.cache[lskey].put('time', results);
 
 			if (query.thread) {
 				// save into thread cache as well 
-				var lsThreadKey = cacheOp.generateLSKey(query.to, query.thread, 'texts');
-				if (!cacheOp.cache.hasOwnProperty(lsThreadKey)) {
-					cacheOp.loadArrayCache(lsThreadKey);
+				var lsThreadKey = ArrayCacheOp.generateLSKey(query.to, query.thread, 'texts');
+				if (!ArrayCacheOp.cache.hasOwnProperty(lsThreadKey)) {
+					ArrayCacheOp.loadArrayCache(lsThreadKey);
 				}
-				cacheOp.cache[lsThreadKey].put('time', results);
-				cacheOp.saveCache(lsThreadKey);
+				ArrayCacheOp.cache[lsThreadKey].put('time', results);
+				ArrayCacheOp.saveArrayCache(lsThreadKey);
 			}
 
-			cacheOp.saveCache(lskey);
+			ArrayCacheOp.saveArrayCache(lskey);
 		}
 		next();
 	}, 8); // runs after the socket
 
-	libsb.on('text-dn', function (text, next) {
-		var key = cacheOp.generateLSKey(text.to, 'texts');
-		cacheOp.loadArrayCache(key);
-		var lastItem = cacheOp.cache[key].d[cacheOp.cache[key].length - 1];
+	libsb.on('text-dn', function(text, next) {
+		var key = ArrayCacheOp.generateLSKey(text.to, 'texts');
+		ArrayCacheOp.loadArrayCache(key);
+		var lastItem = ArrayCacheOp.cache[key].d[ArrayCacheOp.cache[key].length - 1];
 
 		if (lastItem && lastItem.type === 'result-end') {
-			cacheOp.start('time', key, window.backTimes[text.to]);
+			ArrayCacheOp.start('time', key, window.backTimes[text.to]);
 		}
 
-		cacheOp.cache[key].d.push(text);
-		cacheOp.saveCache(key);
+		ArrayCacheOp.cache[key].d.push(text);
+		ArrayCacheOp.saveArrayCache(key);
 		// putting the incoming text into each threadId cache it is a part of
 
 		if (text.threads) {
-			text.threads.forEach(function (threadObj) {
-				key = cacheOp.generateLSKey(text.to, threadObj.id, 'texts');
+			text.threads.forEach(function(threadObj) {
+				key = ArrayCacheOp.generateLSKey(text.to, threadObj.id, 'texts');
 
-				cacheOp.loadArrayCache(key);
-				lastItem = cacheOp.cache[key].d[cacheOp.cache[key].length - 1];
+				ArrayCacheOp.loadArrayCache(key);
+				lastItem = ArrayCacheOp.cache[key].d[ArrayCacheOp.cache[key].length - 1];
 
 				if (!lastItem || lastItem.type === 'result-end') {
-					cacheOp.start('time', key, window.backTimes[text.to]);
+					ArrayCacheOp.start('time', key, window.backTimes[text.to]);
 				}
-				cacheOp.cache[key].d.push(text);
-				cacheOp.saveCache(key);
+				ArrayCacheOp.cache[key].d.push(text);
+				ArrayCacheOp.saveArrayCache(key);
 			});
+		}
+
+		// check if new thread was created.
+		if (text.labels && text.labels.hasOwnProperty('startOfThread') && text.labels.startOfThread === 1) {
+			var threadKey = ArrayCacheOp.generateLSKey(text.to, 'threads');
+			ArrayCacheOp.loadArrayCache(threadKey);
+			var lastThread = ArrayCacheOp.cache[threadKey].d[ArrayCacheOp.cache[threadKey].d.length - 1];
+			if (!lastThread || lastThread.type === 'result-end') {
+				ArrayCacheOp.start('startTime', threadKey, window.backTimes[text.to]);
+			}
+			var newThread = text.threads[0];
+			newThread.startTime = text.time;
+			ArrayCacheOp.cache[threadKey].d.push(newThread);
+			ArrayCacheOp.saveArrayCache(threadKey);
 		}
 
 		next();

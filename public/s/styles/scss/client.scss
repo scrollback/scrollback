@@ -16,6 +16,9 @@
 @import "../lace/tooltip";
 @import "../lace/progressbar";
 @import "../lace/linked";
+@import "../lace/filter";
+@import "../lace/dropshadow";
+@import "../lace/assets";
 
 // Import global variables and mixins
 @import "global";
@@ -43,30 +46,11 @@
         margin: auto;
         height: 2em;
         width: 2em;
-    }
-}
+        fill-opacity: .75;
 
-@mixin filter($map, $multi) {
-    @each $filter, $states in $map {
-        @each $state in $states {
-            @if (index($multi, $filter) != null) {
-                &:not(.#{$filter}-#{$state}) {
-                    [data-#{$filter}=#{$state}] { display: none; }
-                }
-            } @else {
-                &.#{$filter}-#{$state} {
-                    [data-#{$filter}]:not([data-#{$filter}~=#{$state}]) { display: none; }
-                }
-            }
-        }
+        &:hover, &:focus { fill-opacity: .85; }
 
-        &[class*=#{$filter}-] {
-            [data-#{$filter}=none] { display: none; }
-        }
-
-        &:not([class*=#{$filter}-]) {
-            [data-#{$filter}]:not([data-#{$filter}=none]) { display: none; }
-        }
+        &:active { fill-opacity: 1; }
     }
 }
 
@@ -97,7 +81,7 @@ body {
     background-color: $dark-color;
     color: $light-color;
     z-index: 10;
-    padding-bottom: $bar-height; /* adjust to accomodate the logo */
+    padding-bottom: $bar-height * 2; /* adjust to accomodate the logo and create room button */
 
     @media #{$screenx} {
         left: ( $width-roomx + $width-metax ) * -1;
@@ -122,7 +106,7 @@ body {
 
 .room-header {
     height: $bar-height;
-    padding: .5em 1em;
+    background: url(../../img/client/scrollback-small.svg) no-repeat 1em center;
     border-bottom: 1px solid lighten($dark-color, 5%);
     cursor: pointer;
 
@@ -190,14 +174,51 @@ body {
     }
 }
 
+.room-area-create-new {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: $dark-color;
+    border-top: 1px solid lighten($dark-color, 5%);
+    box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);
+
+    a {
+        display: block;
+        font-weight: 700;
+        margin: 0;
+        padding: 1em 0;
+        color: $light-color;
+        text-transform: uppercase;
+
+        &:hover, &:focus {
+            color: $light-color;
+            background-color: rgba(0,0,0,.3);
+        }
+
+        &:active {
+            color: $light-color;
+            background-color: rgba(0,0,0,.5);
+        }
+
+        &:before {
+            content: "+";
+            color: $accent-color;
+            font-size: 1.5em;
+            vertical-align: -.1em;
+            margin: 0 .5em;
+        }
+    }
+}
+
 .meta-area {
     @extend %column;
 
     left: $width-meta * -1;
     width: $width-meta;
-    border-right: 1px solid rgba(0,0,0,.1);
     background-color: darken($light-color, 5%);
     color: $dark-color;
+    box-shadow: inset -1px 0 0 rgba(0,0,0,0.1);
     z-index: 20;
 
     @media #{$screenx} {
@@ -232,7 +253,7 @@ body {
 
     list-style: none;
     height: $bar-height;
-    border-bottom: 1px solid darken($light-color, 15%);
+    box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1);
 
     li {
         @include flexbox;
@@ -246,9 +267,10 @@ body {
         cursor: pointer;
 
         &.rooms-button {
+            @include title-icon(rooms-icon);
+
             min-width: 3em;
             width: 3em;
-            fill: lighten($dark-color, 15%);
 
             @media #{$screenxxxx} { display: none; }
 
@@ -266,23 +288,24 @@ body {
 
         text-align: center;
         background-color: transparent;
-        border-left: 1px solid darken($light-color, 15%);
-        fill: lighten($dark-color, 50%);
+        border-left: 1px solid rgba(0,0,0,0.1);
+        fill: $dark-color;
+        fill-opacity: .5;
 
         &:first-child { border-left: none; }
 
         &:hover, &:focus {
-            fill: lighten($dark-color, 5%);
+            fill-opacity: .85;
             background-color: rgba(0,0,0,.05);
         }
 
         &:active {
-            fill: $dark-color;
+            fill-opacity: 1;
             background-color: rgba(0,0,0,.05);
         }
 
         &.current {
-            fill: lighten($dark-color, 15%);
+            fill-opacity: .85;
             background-color: rgba(0,0,0,.1);
         }
     }
@@ -492,6 +515,9 @@ body {
     color: $dark-color;
     border-right: 4px solid lighten($dark-color, 15%);
     cursor: pointer;
+    box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.05);
+
+    &:last-of-type { box-shadow: none; }
 
     &:first-letter { text-transform: uppercase; } /* make the first letter uppercase, only works in webkit */
 
@@ -577,9 +603,7 @@ body {
     &:active, &.current:active { background-color: rgba(0,0,0,.2); }
 
     @each $setting in $settings {
-        &.list-item-#{$setting}-settings {
-            background-image: url(../../img/client/icons/#{$setting}-settings.svg);
-        }
+        &.list-item-#{$setting}-settings { background-image: url(../../img/client/icons/#{$setting}-settings.svg); }
     }
 }
 
@@ -601,20 +625,26 @@ body {
 }
 
 .home-area {
-    background-color: darken($light-color, 5%);
-
     .title-bar { position: fixed; }
 
-    .header-image { padding: 0 1em; }
+    .header-image {
+        background: url(../../img/client/scrollback-small-dark.svg) no-repeat 1em center;
+        height: 3.5em;
+        width: 12em;
+        max-width: 100%;
+
+        .theme-dark & { background: url(../../img/client/scrollback-small.svg) no-repeat 1em center; }
+    }
 }
 
 .home-area-cover {
-    margin-top: $bar-height;
+    @extend %transition;
+
     width: 100%;
     min-height: $bar-height * 3;
     max-height: $bar-height * 3;
     background-color: $light-color;
-    border-bottom: 1px solid darken($light-color, 10%);
+    border-bottom: 1px solid darken($light-color, 5%);
     color: $dark-color;
     text-align: center;
 
@@ -622,6 +652,8 @@ body {
         min-height: $bar-height * 2;
         max-height: $bar-height * 2;
     }
+
+    .scroll-up & { opacity: 0; }
 }
 
 .home-area-cover-content {
@@ -650,8 +682,15 @@ body {
     @include flex-direction(column);
     @include flex-wrap(nowrap);
 
+    padding-top: $bar-height;
     height: 100%;
     overflow-x: hidden;
+}
+
+.home-area-heading {
+    color: lighten($dark-color, 20%);
+    text-transform: uppercase;
+    margin: 1em .5em 0 .5em;
 }
 
 .card-container-wrap {
@@ -660,6 +699,25 @@ body {
 
     width: 100%;
     overflow-x: hidden;
+}
+
+.card-container:not(:last-of-type):not(:only-of-type) { border-bottom: 1px solid darken($light-color, 10%); }
+
+.card-container {
+    @extend %fadein;
+
+    & + .home-area-no-my-rooms {
+        display: none;
+        color: darken($light-color, 20%);
+        font-size: 2em;
+        padding: 2em .5em;
+    }
+
+    &:empty {
+        display: none;
+
+        & + .home-area-no-my-rooms { display: block; }
+    }
 }
 
 .meta-button, .rooms-button {
@@ -700,10 +758,8 @@ body {
     @include title-icon(meta-icon);
 
     height: $bar-height;
-    fill: lighten($dark-color, 50%);
+    fill: $dark-color;
     overflow: hidden;
-
-    &, &:focus, &:hover, &:active { fill: lighten($dark-color, 15%); }
 
     @media #{$screenxxx} { display: none; }
 
@@ -752,6 +808,7 @@ body {
     background-color: darken($light-color, 5%);
     color: $dark-color;
     box-shadow: inset 0 -1px 0 0 rgba(0,0,0,.1),
+                -1px 0 0 rgba(0,0,0,.1),
                 0 3px 2px -1px rgba(0,0,0,.1);
 }
 
@@ -790,19 +847,34 @@ body {
 
     width: 3.5em;
     padding: .75em;
-    fill: none;
-    stroke-width: 2px;
-    stroke: lighten($dark-color, 15%);
 
-    .role-follower & { fill: lighten($dark-color, 15%); }
+    .follow-icon {
+        fill-opacity: 0;
+        stroke-width: 2px;
+        stroke: $dark-color;
+        stroke-opacity: .75;
 
-    .role-owner &, .embed & { display: none; }
+        .role-follower & { fill-opacity: .75; }
+
+        .role-owner & { display: none; }
+    }
 
     &:focus, &:hover, &:active {
-        fill: none;
-        stroke: lighten($dark-color, 5%);
+        .follow-icon {
+            fill-opacity: 0;
+            stroke-opacity: .85;
 
-        .role-follower & { fill: lighten($dark-color, 5%); }
+            .role-follower & { fill-opacity: .85; }
+        }
+    }
+
+    &:active {
+        .follow-icon {
+            fill-opacity: 0;
+            stroke-opacity: 1;
+
+            .role-follower & { fill-opacity: 1; }
+        }
     }
 }
 
@@ -822,9 +894,7 @@ body {
     width: 3.5em;
     padding: .75em .5em;
     cursor: pointer;
-    fill: lighten($dark-color, 15%);
-
-    &:focus, &:hover, &:active { fill: lighten($dark-color, 5%); }
+    fill: $dark-color;
 }
 
 .cta-area {
@@ -839,10 +909,6 @@ body {
 
         .theme-dark & { color: $accent-color; }
     }
-}
-
-.follow-room-action {
-    .role-follower.embed &, .role-owner.embed & { display: none; }
 }
 
 .full-view-action {
@@ -970,14 +1036,23 @@ body {
     }
 }
 
-.chat-area {
-    @extend %scroll-elem;
-
+.chat-area-container {
     position: absolute;
     top: $bar-height;
     bottom: $bar-height;
     right: 0;
     left: 0;
+    overflow: hidden;
+}
+
+.chat-area {
+    @extend %scroll-elem;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
     background-color: $light-color;
 
     .infinite-above, .infinite-below {
@@ -1007,23 +1082,57 @@ body {
     }
 }
 
-.chat-position {
+%chat-quick-action {
     @include opacity(0);
     @extend %transition;
 
-    position: relative;
-    float: right;
-    margin: 1em;
-    padding: .5em 1em;
+    position: absolute;
+    right: 2em;
+    padding: .75em 1em;
+    font-weight: 700;
+    border-radius: $roundness;
+    z-index: 20;
+    pointer-events: none;
+
+    &.visible { @include opacity(1); }
+}
+
+.chat-position {
+    @extend %chat-quick-action;
+    @include dropshadow(2);
+
     background-color: $dark-color;
     color: $light-color;
-    border-radius: $roundness;
-    pointer-events: none;
-    z-index: 20;
+    cursor: pointer;
+    top: 1em;
+}
 
-    &:not(:empty) {
-        @include opacity(1);
-        @extend %nofilter;
+.chat-scroll-to-bottom {
+    @include transform(translate3d(0, 100%, 0));
+    @include dropshadow(2);
+    @extend %chat-quick-action;
+
+    background-color: $info-color;
+    color: $light-color;
+    cursor: pointer;
+    bottom: 1em;
+
+    &:focus, &:hover { background-color: darken($info-color, 5%); }
+
+    &:active { background-color: darken($info-color, 10%); }
+
+    &:before {
+        @include asset-content("arrow-down");
+
+        margin: 0 .75em 0 .25em;
+        vertical-align: -.3em;
+        line-height: 1em;
+    }
+
+    &.visible {
+        @include transform(translate3d(0, 0, 0));
+
+        pointer-events: auto;
     }
 }
 
@@ -1124,7 +1233,14 @@ body {
         color: fade-out($dark-color, .5);
         font-style: italic;
 
-        body:not(.role-owner) & { display: none; }
+        body:not(.role-owner) & {
+            // display: none gives javascript undefined offsets, which messes with infinite scroll!
+            height: 0;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
     }
 
     .chat-timestamp {
@@ -1192,24 +1308,41 @@ body {
     }
 }
 
-.chat-item-dot {
-    content: "";
-    float: left;
-    margin: .55em 0 auto -2em;
+$convdefault: lighten($dark-color, 50%);
+
+%conv-dots {
+    @extend %transition;
+
     height: .5em;
     width: .5em;
     border-radius: 50%;
-    color: fade-out(lighten($dark-color, 15%), .5); /* only for enabling use of currentColor */
+    color: $convdefault; /* only for enabling use of currentColor */
     background-color: currentColor; /* use the same color as text */
 
-    @media #{$screenxx} { margin-left: -10em; }
+    &.pulsed { box-shadow: 0 0 0 8px fade-out($dark-color, .7); }
+
+    &.faded { @include opacity(.3); }
+}
+
+.chat-item-dot {
+    @extend %conv-dots;
+
+    content: "";
+    float: left;
+    margin: .55em 0 auto -2em;
 
     @for $i from 1 through length($palette) {
         $color: nth($palette, $i);
         $j: $i - 1;
 
-        .chat-item.conv-#{$j} & { color: $color; }
+        .chat-item.conv-#{$j} & {
+            color: $color;
+
+            &.pulsed { box-shadow: 0 0 0 8px fade-out($color, .6); }
+        }
     }
+
+    @media #{$screenxx} { margin-left: -10em; }
 }
 
 .chat-nick {
@@ -1238,7 +1371,8 @@ body {
     position: fixed;
     margin-left: 1.15em;
     z-index: 50;
-    background-color: fade-out(lighten($dark-color, 15%), .5);
+    background-color: $convdefault;
+    pointer-events: none;
 
     @media #{$screenxx} { margin-left: 2.15em; }
 
@@ -1284,6 +1418,25 @@ body {
 
 .chat-entry-wrap { position: relative; }
 
+$dotshadow: fade-out($accent-color, .6);
+
+@include keyframes(dotpulse) {
+    0% {
+        background-color: $accent-color;
+        box-shadow: 0 0 0 0 $dotshadow;
+    }
+
+    75% {
+        background-color: $accent-color;
+        box-shadow: 0 0 0 8px $dotshadow;
+    }
+
+    100% {
+        background-color: currentColor;
+        box-shadow: 0 0 0 0 $dotshadow;
+    }
+}
+
 .chat-conv-dot-wrap {
     position: absolute;
     top: 0;
@@ -1294,36 +1447,57 @@ body {
     @media #{$screenxx} { width: 3.5em; }
 
     .chat-conv-dot {
+        @extend %conv-dots;
+
         position: absolute;
         content: "";
         top: 1em;
         left: 1em;
         margin: .55em 0 auto 0;
-        height: .5em;
-        width: .5em;
-        border-radius: 50%;
-        background-color: fade-out(lighten($dark-color, 15%), .5);
 
         @for $i from 1 through length($palette) {
             $color: nth($palette, $i);
             $j: $i - 1;
 
-            .conv-#{$j} & { background-color: $color; }
+            .conv-#{$j} & {
+                background-color: $color;
+
+                &.pulsed { box-shadow: 0 0 0 8px fade-out($color, .6); }
+            }
         }
 
         @media #{$screenxx} { left: 2em; }
+
+        &.animating { @include prefix(animation, dotpulse 1s 1); }
     }
 }
 
 .chat-placeholder {
     position: absolute;
     top: 0;
-    left: 0;
-    padding: .9em 1em .9em 2.9em;
+    left: 2.9em;
+    right: 1em;
     color: fade-out($dark-color, .5);
-    pointer-events: none;
+    line-height: 3.5em;
 
-    @media #{$screenxx} { padding-left: 3.9em; }
+    @media #{$screenxx} { left: 3.9em; }
+
+    .text-button {
+        color: currentColor;
+        font-weight: 700;
+        text-decoration: underline;
+        padding: .5em;
+        border: 1px solid transparent;
+        border-radius: $roundness;
+
+        &:focus, &:hover {
+            color: $dark-color;
+            border-color: darken($light-color, 30%);
+            box-shadow: 0 1px 5px 0 rgba(0,0,0,0.15);
+        }
+
+        &:active { background-color: rgba(0,0,0,0.05); }
+    }
 }
 
 .chat-entry {
@@ -1434,13 +1608,31 @@ body {
             .button, .button-secondary { padding: .5em 1em; }
         }
 
+        .picture-container {
+            position: relative;
+            padding: 0;
+        }
+
+        .picture-list { position: absolute; }
+
         .conf-twitter-account, .pref-user-avatar {
             position: relative;
             display: block;
             height: 80px;
             width: 80px;
-            background: url(../../img/client/avatar-fallback.svg) center center no-repeat;
             background-size: contain;
+            border-width: 0.5em;
+            border-style: solid;
+            border-color: transparent;
+            display: inline-block;
+            border-radius: $roundness;
+            cursor: pointer;
+
+            &:focus, &:hover { border-color: fade-out($dark-color, .5); }
+
+            &:active { border-color: fade-out($dark-color, .3); }
+
+            &.current { border-color: $accent-color; }
 
             img {
                 border-radius: $roundness;
@@ -1478,7 +1670,7 @@ body {
 
     .embed-code {
         min-width: 27em;
-        min-height: 16em;
+        min-height: 15em;
         background-color: darken($light-color, 5%);
         font-weight: 700;
         font-family: $font-family-monospace;
@@ -1490,11 +1682,29 @@ body {
         max-width: 100%;
     }
 
-    textarea { resize: vertical; }
+    input[type="text"], input[type="url"], textarea { min-width: 27em; }
+
+    textarea {
+        resize: vertical;
+        min-height: 9em;
+    }
 
     input[type="checkbox"], input[type="radio"] {
         float: left;
         margin-right: .5em;
+    }
+
+    input[type="color"] {
+        height: 2.5em;
+        width: 12em;
+        padding: 0 .1em;
+        cursor: pointer;
+    }
+
+    .embed-share-button {
+        margin: 0 .25em;
+
+        &:first-of-type { margin-left: 0; }
     }
 }
 
@@ -1510,11 +1720,9 @@ body {
 }
 
 .settings-label {
-    text-align: left;
     padding-right: 1em;
 
     @media #{$screenxx} {
-        text-align: right;
         vertical-align: top;
         padding: .5em 0;
     }
@@ -1537,6 +1745,8 @@ body {
     .search-focus & { display: block; }
 
     .search-entry {
+        @include dropshadow(3);
+
         position: relative;
         display: block;
         width: 100%;
@@ -1548,7 +1758,6 @@ body {
         background-repeat: no-repeat;
         background-size: 3em 2em;
         border: none;
-        box-shadow: 0 0 10px 0 rgba(0,0,0,.3);
     }
 }
 
@@ -1571,6 +1780,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 400;
 }
 
 .content-view-wrapper {
@@ -1595,8 +1805,6 @@ body {
 
 .content-view-area { display: block; }
 
-.content-view-phonegap-startpage { z-index: 400; }
-
 .infinite-above, .infinite-below {
     height: 100%;
     width: 100%;
@@ -1604,8 +1812,83 @@ body {
 
 .infinite-items { width: 100%; }
 
-.signedout-dialog, .signin-dialog, .signup-dialog {
+.signedout-dialog, .signin-dialog, .signup-dialog, .createroom-dialog {
     input, .button { width: 100%; }
+}
+
+%popup-menu { min-width: 18em; }
+
+.auth-menu { @extend %popup-menu; }
+
+.popover-calls-to-action {
+    @extend %popup-menu;
+
+    font-weight: 700;
+}
+
+.popover-got-it {
+    @extend %snappy;
+
+    background-color: rgba(0,0,0,.1);
+    padding: 1em;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    &:focus, &:hover { background-color: rgba(0,0,0,.2); }
+
+    &:active { background-color: rgba(0,0,0,.3); }
+
+    &:before {
+        @include asset-content("check");
+
+        vertical-align: -.2em;
+        margin-right: 1em;
+    }
+}
+
+%popover-item {
+    &:before {
+        margin-right: 1em;
+        vertical-align: -.2em;
+    }
+}
+
+.user-menu {
+    .homefeed {
+        @extend %popover-item;
+
+        &:before { @include asset-content("grid", lighten($dark-color, 30%)); }
+    }
+
+    .userpref {
+        @extend %popover-item;
+
+        &:before { @include asset-content("settings", lighten($dark-color, 30%)); }
+    }
+
+    .reportissue {
+        @extend %popover-item;
+
+        &:before { @include asset-content("info", lighten($dark-color, 30%)); }
+    }
+
+    .logout {
+        @extend %popover-item;
+
+        &:before { @include asset-content("logout", lighten($dark-color, 30%)); }
+    }
+}
+
+.guest-sound-notification-disable {
+    @extend %popover-item;
+
+    &:before { @include asset-content("sound", lighten($dark-color, 30%)); }
+}
+
+.guest-sound-notification-enable {
+    @extend %popover-item;
+
+    &:before { @include asset-content("sound-off", lighten($dark-color, 30%)); }
 }
 
 .ie-warning {

@@ -6,10 +6,11 @@ var conString = "pg://" + config.pg.username + ":" +
 var textActions = ['text', 'edit'];
 var occupantActions = ['back', 'away'];
 var memberActions = ['join', 'part', 'admit', 'expel'];
-
+var queriesAndActions = ['getTexts', 'getRooms', 'getThreads', 'getUsers', 'init', 'text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'expel', 'room', 'user'];
 
 
 module.exports = function(core) {
+	init(core);
 	textActions.forEach(function(type) {
 		core.on(type, function(action, cb) {
 			cb();
@@ -44,6 +45,32 @@ module.exports = function(core) {
         }, "watcher");
     });
 };
+
+function init(core) {
+	queriesAndActions.forEach(function(event) {
+		core.on(event, function(qa, callback) {
+			qa.eventStartTime = new Date().getTime();
+			callback();
+		}, "antiflood");
+		core.on(event, function(qa, callback) {
+			log.d("queries: ",event,  qa.id);
+			log.d((new Date().getTime() - qa.eventStartTime));
+			var params = [];
+			var values = [];
+			params.push('id');
+			values.push(qa.id);
+			params.push('type');
+			values.push(event);
+			params.push('timestamp');
+			values.push(new Date(qa.eventStartTime).toISOString());
+			params.push('time');
+			values.push(new Date().getTime() - qa.eventStartTime);
+			insert('time_queries_actions', params, values);
+			delete qa.eventStartTime;
+			callback();
+		}, "watcher");
+	});
+}
 
 function saveOccupantAction(action) {
 	var pav = getParamsAndValues(action);
@@ -100,7 +127,7 @@ function saveMembersAction(action) {
 	});
 	if (action.transitionTime) {
 		params.push("transitiontime");
-		values.push(new Date(action.transitionTime));
+		values.push(new Date(action.transitionTime).toISOString());
 	}
 	insert("member_actions", params, values);
 }
@@ -188,7 +215,7 @@ function saveRoomUserActions(action) {
 
 function getParamsAndValues(action) {
 	var params = ['id', 'type', 'from', 'time', 'session', 'resource', 'success' ];
-	var values = [action.id, action.type, action.from, new Date(action.time), action.session, action.resource, true];
+	var values = [action.id, action.type, action.from, new Date(action.time).toISOString(), action.session, action.resource, true];
 	return {
 		params: params,
 		values: values

@@ -11,10 +11,8 @@ var core;
 var timeout = 30*1000;//for debuging only
 
 module.exports = function(coreObject) {
-	log("email mudule");
 	core = coreObject;
 	require('./welcomeEmail.js')(core);
-    //if(!debug) log = log.tag("mail");
     emailDigest.init(core);
 	if (config.email && config.email.auth) {
 		core.on('text', function(message, callback) {

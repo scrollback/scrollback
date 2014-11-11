@@ -18,8 +18,9 @@ function processTestResults(testResults) {
 	r.failed = testResults.selenium.failed + testResults.unit.failed;
 	r.unit = r1;
 	r.selenium = r2;
-	var cp = 0, cf = 0;
-    ['unit', 'selenium'].forEach(function (v) {
+	var cp = 0,
+		cf = 0;
+    ['unit', 'selenium'].forEach(function(v) {
 		for (var test in r[v]) {
 			if (r[v].hasOwnProperty(test) && typeof r[v][test] == 'object') {
 				cp = 0;
@@ -70,26 +71,27 @@ function sendEmail() {
 	var colorFailed = "#d9534f";
 	var colorPassed = "#5cb85c";
 	var spanStyle = "style=\" color:%s;\" ";
-	['unit', 'selenium'].forEach(function (v) { 
-		out.push("<a  style=\"display: block;color: black;font-size: 20;text-decoration: blink;margin-top: 5px;\" href='" +
-				 parse(tempUrl, v + "-test-results", today) + "'>" + v + " Tests</h2>");
+	['unit', 'selenium'].forEach(function(v) {
+		out.push("<a  style=\"display: block;color: black;font-size: 20px;text-decoration: blink;margin-top: 5px;\" href='" +
+			parse(tempUrl, v + "-test-results", today) + "'>" + v + " Tests</a>");
 		for (var test in r[v]) {
 			if (r[v].hasOwnProperty(test) && typeof r[v][test] == 'object') {
-				var cp = r[v][test].passed, cf = r[v][test].failed;
+				var cp = r[v][test].passed,
+					cf = r[v][test].failed;
 				var color = cf !== 0 ? colorFailed : colorPassed;
-				out.push("<li style=\"list-style:none\"><table><tr><td style=\"width:250px;word-wrap:break-word;\"><a " + parse(style, color) + 
-						 " href='" + parse(url, v, r[v][test].id) + "'>" + test + "</a></td><td><span " + parse(spanStyle, colorPassed) +
-						 "> " + cp +  " &#10004;</span></td><td><span " + parse(spanStyle, colorFailed) + "> " + cf + "&#x2717;</span></td></tr></table></li>");
+				out.push("<li style=\"list-style:none\"><table><tr><td style=\"width:250px;word-wrap:break-word;\"><a " + parse(style, color) +
+					" href='" + parse(url, v, r[v][test].id) + "'>" + test + "</a></td><td><span " + parse(spanStyle, colorPassed) +
+					"> " + cp + " &#10004;</span></td><td><span " + parse(spanStyle, colorFailed) + "> " + cf + "&#x2717;</span></td></tr></table></li>");
 				if (cf !== 0) {
 					out.push("<ul style=\"margin-top:0px\">");
 					for (var t in r[v][test]) {
 						if (r[v][test].hasOwnProperty(t) && typeof r[v][test][t] === 'object') {
 							var tt = r[v][test][t];
-							if (tt.status === 'FAILED')  {
-								out.push("<li style=\"color:" + colorFailed + "\"><a " + parse(style, color) + " href='" +  parse(url, v, r[v][test][t].id) + "'>" + t + "</a></li>");
+							if (tt.status === 'FAILED') {
+								out.push("<li style=\"color:" + colorFailed + "\"><a " + parse(style, color) + " href='" + parse(url, v, r[v][test][t].id) + "'>" + t + "</a></li>");
 							}
 						}
-					}	
+					}
 					out.push("</ul>");
 				}
 			}
@@ -98,6 +100,7 @@ function sendEmail() {
 	});
 	out.push("<a href='" + parse(tempUrl, "email", yesterday) + "'>Previous day test results</a>");
 	out.push("<a href='" + parse(tempUrl, "email", today) + "'>See this email on browser</a>");
+	out.push("<a href='https://www.browserstack.com/automate'>See selenium test logs on browserstack</a>");
 	out.push("</body></html>");
 	var m = out.join("\n");
 	fs.writeFileSync("public/s/tmp/email-" + today + ".html", m);
@@ -105,9 +108,9 @@ function sendEmail() {
 		console.log(config.email.from);
 		emailObj.send(config.email.from, to, email.subject, m, function() {
 			console.log("Arguments:", arguments);
-		});	
+		});
 	});
-	
+
 }
 
 function getDateString(date) {

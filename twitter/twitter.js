@@ -1,5 +1,4 @@
 var log = require("../lib/logger.js");
-var logTwitter = log;
 var htmlEncode = require('htmlencode');
 var Twit = require('twit');
 var guid = require("../lib/generate.js").uid;
@@ -22,9 +21,6 @@ module.exports = function(coreObj) {
 
 	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
 		log("twitter app started");
-		if (!debug) {
-			logTwitter = log.tag('twitter');
-		}
 		core = coreObj;
 		init();
 
@@ -82,7 +78,7 @@ function twitterRoomHandler(action, callback) {
  *add it to room object
  */
 function addTwitterTokens(room, callback) {
-	logTwitter("adding twitter tokens.", JSON.stringify(room));
+	log.d("adding twitter tokens.", JSON.stringify(room));
 	redis.multi(function(multi) {
 		var key = room.room.params.twitter.username;
 		multi.get("twitter:userData:token:" + key);
@@ -91,13 +87,13 @@ function addTwitterTokens(room, callback) {
 		multi.exec(function(err, replies) {
 			log("replies from redis", replies);
 			if (err) {
-				logTwitter(" Error: ", err);
+				log(" Error: ", err);
                 room.params.twitter.error = "ERR_TWITTER_LOGIN";
 				callback();
 			}
 			else {
 				if (replies[0] && replies[1] && replies[2]) {
-					logTwitter("twitter ---adding new values....");
+					log("twitter ---adding new values....");
 					room.room.params.twitter.token = replies[0];
 					room.room.params.twitter.tokenSecret = replies[1];
 					room.room.params.twitter.profile = JSON.parse(replies[2]);
@@ -129,8 +125,7 @@ function addIdentity(room, username) {
 
 
 function copyOld(room, callback) {
-	logTwitter("copyOld");
-
+	log("copyOld");
 	var old, newParams;//old account
 	if(room.old && room.old.params) old = room.old.params.twitter;
     newParams = room.room.params.twitter;
@@ -169,8 +164,9 @@ function initTwitterSearch() {
 	log("getting room data....");
 	core.emit("getRooms",{identity: "twitter", session: internalSession }, function(err, data) {
 		if (!err) {
-			if (debug) logTwitter("data returned from labelDB: ", JSON.stringify(data));
+			log.d("data returned from labelDB: ", JSON.stringify(data));
 			var rooms = data.results;
+			log("Number of rooms:", data.results.length);
 			rooms.forEach(function(room) {
 				redis.get("twitter:lastMessageTime:" + room.id, function(err, data) {
 					log("last Message Time: ", data, new Date().getTime() - parseInt(data), silentTimeout);
@@ -189,7 +185,7 @@ function initTwitterSearch() {
 function fetchTweets(room) {
 
 	if (room.params && room.params.twitter  && room.params.twitter.tags && room.params.twitter.token && room.params.twitter.tokenSecret) {
-		logTwitter("connecting for room: ", room);
+		log("connecting for room: ", room);
 		var twit;
 		twit = new Twit({
 			consumer_key: twitterConsumerKey ,
@@ -197,7 +193,6 @@ function fetchTweets(room) {
 			access_token:  room.params.twitter.token,
 			access_token_secret: room.params.twitter.tokenSecret
 		});
-		logTwitter("calling room,", room);
 		redis.get("twitter:lastTweetTime:" + room.id, function(err, data) {
 
 			twit.get(
@@ -207,14 +202,14 @@ function fetchTweets(room) {
 					result_type: "recent"
 				}, function(err, reply) {
 					if (err) {
-						logTwitter("Error: ", err);
+						log("error: ", err);
 					}
 					else {
-						//logTwitter("var reply= ", JSON.stringify(reply));
+						log.d("var reply= ", JSON.stringify(reply));
 						if (reply.statuses && reply.statuses[0] && !reply.statuses[0].retweeted &&
 							(new Date(reply.statuses[0].created_at).getTime()) > (data ? parseInt(data, 10) : 1)) {
 							redis.set("twitter:lastTweetTime:" + room.id, (new Date(reply.statuses[0].created_at).getTime()), function(err, data) {
-								logTwitter("added data to room...", err, data);
+								log.d("added data to room...", err, data);
 								sendMessages(reply, room);
 							});
 						}
@@ -314,7 +309,7 @@ function getRequest(req, res, next) {
 						multi.setex("twitter:userData:tokenSecret:" + uid, expireTime, access_token_secret);
 						multi.setex("twitter:userData:profile:" + uid, expireTime, JSON.stringify(results));
 						multi.exec(function(err,replies) {
-							logTwitter("user data added: ", replies);
+							log("user data added: ", replies);
 						});
 					});
 					return res.render(__dirname + "/login.jade", {profile: { screen_name: results.screen_name }});

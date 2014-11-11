@@ -80,7 +80,8 @@ var defaults = {
 		port: 80,
 		home: "public", // the directory containing static files
 		time: 60000,
-		limit: 30
+		limit: 30,
+		index: "/me"//index URL redirect
 	},
 	email: {
 		from: "scrollback@scrollback.io"
@@ -117,13 +118,17 @@ var defaults = {
 		user: 9,
 		room: 9,
 		occupants: 10,
+		threader: 11,
 		sitemap: 12,
+		recommendation: 13,
 		search: 14
 	},
 	su: {
 
 	},
 	facebook: {
+	},
+	google:{
 	}
 };
 

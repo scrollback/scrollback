@@ -90,7 +90,6 @@ CREATE TABLE session_actions (
     suggestednick text,
     authapp text,
     authdata text,
-    gateway text,
     client inet,
     server text,
     domain text,
@@ -217,3 +216,11 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 --
 -- PostgreSQL database dump complete
 --
+
+--
+-- Create table time_querues_actions
+--
+create table time_queries_actions ( id text, type text, "timestamp" timestamp without time zone , "time" integer, primary key (id) );
+create index type_timestamp_time on time_queries_actions (type, timestamp, time);
+create index "time" on time_queries_actions (time);
+create index timestamp_time on time_queries_actions (timestamp, time);

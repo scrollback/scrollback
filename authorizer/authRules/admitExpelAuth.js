@@ -59,7 +59,6 @@ function admitExpel(action, callback) {
 	} catch (e) {
 		return callback(e);
 	}
-
 }
 
 module.exports = function (core) {

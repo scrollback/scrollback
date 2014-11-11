@@ -2,8 +2,10 @@
 
 .*
 !.gitignore
+!.git-hooks
 !.jscs.json
 !.jshintrc
+!.jsbeautifyrc
 
 *.seed
 *.log
@@ -30,16 +32,17 @@ bower_components
 
 myConfig.js
 client-config.js
-
+/leveldb-storage/data-test/
 /ircClient/myConfig.js
 /ircClient/Data
+
 /test/config.js
-
-
 
 /public/s/styles/lace
 /public/s/styles/dist
 /public/s/scripts/lib
 /public/s/tmp/*
+
 /mocha-output-selenium.json
 /mocha-output-unit.json
+/mocha-output.json

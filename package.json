@@ -39,14 +39,13 @@
   "main": "./index.js",
   "scripts": {
     "start": "node index",
-    "test": "node_modules/.bin/mocha test/test.js"
+    "test": "node_modules/.bin/mocha test/test.js",
+    "postinstall": "gulp postinstall"
   },
   "engines": {
     "node": ">=0.8"
   },
   "dependencies": {
-    "browserify": "x",
-    "browserstack-webdriver": "^2.41.1",
     "connect-redis": "1.4.6",
     "cookie": "latest",
     "elasticsearch": "^2.3.0",
@@ -57,7 +56,6 @@
     "irc": "git://github.com/scrollback/node-irc.git",
     "jade": "0.x",
     "limiter": "latest",
-    "mocha-html-reporter": "git://github.com/kamalkishor1991/mocha-html-reporter.git",
     "newrelic": "latest",
     "nodemailer": "0.7",
     "oauth": "~0.9.12",
@@ -70,6 +68,7 @@
     "sockjs-client": "latest",
     "twit": "~1.1.12",
     "underscore": "latest",
+    "valid": "git://github.com/scrollback/valid.git#v0.0.1",
     "winston": "^0.7.3"
   },
   "optionalDependencies": {},
@@ -77,28 +76,31 @@
     "blanket": "^1.1.6",
     "bower": "latest",
     "browserify": "latest",
+    "browserstack-webdriver": "latest",
+    "del": "latest",
     "event-stream": "latest",
     "gulp": "latest",
     "gulp-autoprefixer": "latest",
     "gulp-browserify": "latest",
     "gulp-concat": "latest",
+    "gulp-gitmodified": "latest",
     "gulp-jshint": "latest",
-    "gulp-manifest": "git://github.com/satya164/gulp-manifest.git#856b8ceeb6",
+    "gulp-manifest": "git://github.com/scrollback/gulp-manifest.git#v0.0.7",
     "gulp-minify-css": "latest",
     "gulp-plumber": "latest",
     "gulp-rename": "latest",
-    "gulp-rimraf": "latest",
     "gulp-ruby-sass": "latest",
-    "gulp-sourcemaps": "latest",
-    "gulp-streamify": "latest",
     "gulp-strip-debug": "latest",
+    "gulp-sym": "latest",
     "gulp-uglify": "latest",
     "gulp-util": "latest",
     "jshint-stylish": "latest",
+    "lazypipe": "latest",
     "main-bower-files": "latest",
     "mocha": "latest",
+    "mocha-html-reporter": "git://github.com/kamalkishor1991/mocha-html-reporter.git#defc65cc72b6ed965caff1fb1c2d323ca0f5a319",
     "selenium-webdriver": "latest",
-    "vinyl-source-stream": "latest",
-    "xunit-file": "latest"
+    "vinyl-buffer": "latest",
+    "vinyl-source-stream": "latest"
   }
 }

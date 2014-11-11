@@ -3,14 +3,14 @@
 
 var validate = require("../lib/validate.js");
 
-$(function(){
+$(function() {
 	var signingUser, signingUp = false;
 
 	function submitUser() {
 		var userId = $("#signup-id").val(),
 			$alert;
 
-		if (!validate(userId)) {
+		if (!validate(userId).isValid) {
 			$alert = $("<div>").text("Entered username is invalid");
 
 			$alert.alertbar({
@@ -23,32 +23,35 @@ $(function(){
 		libsb.emit("user-up", {
 			user: {
 				id: userId,
+				picture: signingUser.picture,
 				identities: signingUser.identities,
-				params: {},
+				params: {
+					pictures: signingUser.pictures
+				},
 				guides: {}
-            }
+			}
 		}, function(err) {
-                signingUp = true;
+			signingUp = true;
 
-				if (err) {
-					if(err.message == "ERR_USER_EXISTS") {
-						$alert = $("<div>").text("Username already taken");
-					} else {
-						$alert = $("<div>").text(err.message);
-					}
-
-					$alert.alertbar({
-						type: "error",
-						timeout: 3000
-					});
+			if (err) {
+				if (err.message == "ERR_USER_EXISTS") {
+					$alert = $("<div>").text("Username already taken");
+				} else {
+					$alert = $("<div>").text(err.message);
 				}
+
+				$alert.alertbar({
+					type: "error",
+					timeout: 3000
+				});
+			}
 		});
 	}
-	$(document).on("submit", "#signup", function(event){
+	$(document).on("submit", "#signup", function(event) {
 		submitUser();
 		event.preventDefault();
 	});
-	$(document).on("click", ".signup-save", function(){
+	$(document).on("click", ".signup-save", function() {
 		submitUser();
 	});
 
@@ -60,19 +63,11 @@ $(function(){
 	libsb.on("user-dn", function(action, next) {
 		$.modal("dismiss");
 
-		if(signingUp === true) location.reload();
-
-		libsb.emit('navigate', {
-			view: 'normal',
-			mode: 'normal',
-			tab: 'info'
-		});
-
 		next();
 	}, 500);
 
 	libsb.on("init-dn", function(init, next) {
-		if (init.auth && init.user.identities && !init.user.id ) {
+		if (init.auth && init.user.identities && !init.user.id) {
 			if (init.resource == libsb.resource) {
 				signingUser = init.user;
 
@@ -80,9 +75,9 @@ $(function(){
 			}
 		}
 		next();
-	},1000);
+	}, 1000);
 
-	$(document).on("click", ".signup-cancel", function(){
+	$(document).on("click", ".signup-cancel", function() {
 		libsb.emit('navigate', {
 			view: 'normal',
 			mode: 'normal',

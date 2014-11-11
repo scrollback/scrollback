@@ -12,7 +12,7 @@ capabilities.forEach(function(c) {
 	} else {
 		options.id = c.browser + " " + c.browser_version;
 	}
-	options.server = config.server;
+	options.server = "http://" + config.server;
 	config.selenium.tests.forEach(function(test) {
 		require("./" + test)(c, options);
 	});

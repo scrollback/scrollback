@@ -299,8 +299,10 @@ function onLeave(client) {
 		left(client, [channel], nick);
 	});
 
-	client.addListener('kill', function (nick, reason, channels, message) { //TODO see if autoconnect after kill
-		left(client, channels, nick);
+	client.addListener('kill', function (nick, reason, channels, message) {
+		if (client.nick === nick) {//scrollback bot
+			log.e("bot got killed on server: " + client.opt.server, JSON.stringify(arguments));
+		} else left(client, channels, nick);
 	});
 
 	client.addListener('quit', function (nick, reason, channels, message) {
@@ -313,6 +315,7 @@ function onLeave(client) {
 		if (nick === client.nick) {
 			var room = servChanProp[server][channel].room;
 			if (!room) return;
+			log.e("Bot " + nick + " is kicked from channel " + channel + " by " + by + " because of " + reason + " room: " + room.id);
 			var users = servChanProp[server] && servChanProp[server][channel] && servChanProp[room.params.irc.server][channel].users;
 			if (users) users.forEach(function (user) {
 				if (servNick[server][user].dir === 'out') {

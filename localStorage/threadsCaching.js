@@ -1,25 +1,29 @@
 /* global libsb, currentState */
 
-module.exports = function (cacheOp) {
+module.exports = function (ArrayCacheOp) {
 	libsb.on('getThreads', function (query, next) {
-		if (query.hasOwnProperty('q')) { // search queries should always be served from the server.
+		if (query.hasOwnProperty('q') || query.hasOwnProperty('noCache') ||
+			query.hasOwnProperty('updateTime')) { // search queries should always be served from the server.
 			return next();
 		}
-		var key = cacheOp.generateLSKey(query.to, 'threads');
-		if (!cacheOp.cache.hasOwnProperty(key)) {
-			cacheOp.loadArrayCache(key);
+		if (query.hasOwnProperty('time')) {
+			query.startTime = query.time;
 		}
-		if (!cacheOp.cache[key].d.length) {
+		var key = ArrayCacheOp.generateLSKey(query.to, 'threads');
+		if (!ArrayCacheOp.cache.hasOwnProperty(key)) {
+			ArrayCacheOp.loadArrayCache(key);
+		}
+		if (!ArrayCacheOp.cache[key].d.length) {
 			return next();
 		}
 
-		if (query.time === null && currentState.connectionStatus) {
+		if (query.time === null && currentState.connectionStatus!== "online") {
 			// query.time is null, have to decide how LS will handle this.
 			return next();
 		}
-		if (!currentState.connectionStatus) query.partials = true;
+		if (currentState.connectionStatus !== "online") query.partials = true;
 
-		var results = cacheOp.cache[key].get('startTime', query);
+		var results = ArrayCacheOp.cache[key].get('startTime', query);
 
 		if (!results || !results.length) {
 			return next();
@@ -64,12 +68,12 @@ module.exports = function (cacheOp) {
 					startTime: query.time
 				});
 			}
-			var lskey = cacheOp.generateLSKey(query.to, 'threads');
-			if (!cacheOp.cache.hasOwnProperty(lskey)) {
-				cacheOp.loadArrayCache(lskey);
+			var lskey = ArrayCacheOp.generateLSKey(query.to, 'threads');
+			if (!ArrayCacheOp.cache.hasOwnProperty(lskey)) {
+				ArrayCacheOp.loadArrayCache(lskey);
 			}
-			cacheOp.cache[lskey].put('startTime', results);
-			cacheOp.saveCache(lskey);
+			ArrayCacheOp.cache[lskey].put('startTime', results);
+			ArrayCacheOp.saveArrayCache(lskey);
 		}
 		next();
 	}, 8); // runs after socket 	
