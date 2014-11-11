@@ -317,10 +317,11 @@ $(function() {
 				return;
 			}
 
-			$createRoomButton.addClass("loading");
+			$createRoomButton.addClass("working");
 
 			checkOld(name, function(isTaken) {
-				showError("Entered name already taken!");
+				$createRoomButton.removeClass("working");
+
 				if (isTaken) {
 					showError("Entered name already taken!");
 				} else {
