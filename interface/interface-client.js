@@ -237,20 +237,22 @@ function recvPart(part, next) {
 }
 
 function roomdown(action, next) {
-	var room, l, i;
+	var room, l, i, isNewRoom = true;
 	if (action.from === libsb.user.id) {
 		for (i = 0, l = libsb.memberOf.length; i < l; i++) {
 			if(libsb.memberOf[i].id === action.to) {
 				room = $.extend(true, {}, action.room);
 				libsb.memberOf[i] = room;
 				libsb.memberOf[i].role = "owner";
-				next();
+				isNewRoom = false;
 				break;
 			}
 		}
-		room = $.extend(true, {}, action.room);
-		room.role = "owner";
-		libsb.memberOf.push(room);
+		if (isNewRoom) {
+			room = $.extend(true, {}, action.room);
+			room.role = "owner";
+			libsb.memberOf.push(room);
+		}
 	}
 	next();
 }
