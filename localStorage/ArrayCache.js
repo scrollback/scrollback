@@ -56,7 +56,9 @@ ArrayCache.prototype.put = function (cacheType, data) {
 };
 
 ArrayCache.prototype.get = function (cacheType, query) {
-	console.log("GET is called ", cacheType, query);
+	if (!query.hasOwnProperty(cacheType)) {
+		throw new Error("ERR_ARRAYCACHE_INDEX_MISMATCH");
+	}
 	var time = query[cacheType],
 		before = Math.max(0, query.before || 0),
 		after = Math.max(0, query.after || 0),
