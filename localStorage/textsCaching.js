@@ -137,7 +137,6 @@ module.exports = function(ArrayCacheOp) {
 			var newThread = text.threads[0];
 			newThread.startTime = text.time;
 			ArrayCacheOp.cache[threadKey].d.push(newThread);
-			console.log("Saved thread aC is ", ArrayCacheOp.cache[threadKey].d);
 			ArrayCacheOp.saveArrayCache(threadKey);
 		}
 
