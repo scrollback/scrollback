@@ -130,7 +130,7 @@ module.exports = function(ArrayCacheOp) {
 		if (text.labels && text.labels.hasOwnProperty('startOfThread') && text.labels.startOfThread === 1) {
 			var threadKey = ArrayCacheOp.generateLSKey(text.to, 'threads');
 			ArrayCacheOp.loadArrayCache(threadKey);
-			var lastThread = ArrayCacheOp.cache[threadKey].d[ArrayCacheOp.cache[threadKey].length - 1];
+			var lastThread = ArrayCacheOp.cache[threadKey].d[ArrayCacheOp.cache[threadKey].d.length - 1];
 			if (!lastThread || lastThread.type === 'result-end') {
 				ArrayCacheOp.start('startTime', threadKey, window.backTimes[text.to]);
 			}
