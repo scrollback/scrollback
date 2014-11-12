@@ -39,12 +39,14 @@ function renderSettings(tabs) {
 			break;
 	}
 
-	libsb.emit("navigate", {
-		tab: data[0][1]
-	});
-
 	addErrors(currentState.room);
 
+	// set initial classes only after settings have been rendered and DOM is ready.
+	if (currentState.mode === "pref" || currentState.mode === "conf") {
+		$(".list-item.current, .list-view.current").removeClass("current");
+		$(".list-item-" + currentState.tab + "-settings, .list-view-" + currentState.tab +
+			"-settings").addClass("current");
+	}
 }
 
 libsb.on("room-dn", function(action, next) {
