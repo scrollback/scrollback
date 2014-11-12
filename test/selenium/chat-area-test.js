@@ -122,7 +122,7 @@ module.exports = function(capabilities, options) {
 			this.timeout(timeout);
 			driver.findElement(webdriver.By.css('.user-area')).click().
 			then(function() {
-				driver.findElement(webdriver.By.css('.popover-body')).isDisplayed().
+				driver.findElement(webdriver.By.css('.auth-menu')).isDisplayed().
 				then(function(d) {
 					assert(true, d, "sign in options not visible");
 					done();
