@@ -134,7 +134,7 @@ libsb.on('navigate', function(state, next) {
 				return next();
 			}
 
-			showConfig(data.results[0]);
+			return showConfig(data.results[0]);
 		});
 	}
 
