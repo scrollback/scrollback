@@ -49,7 +49,8 @@ function updateClass(state, next) {
 			if (state.tab) {
 				if (state.mode === "pref" || state.mode === "conf") {
 					$(".list-item.current, .list-view.current").removeClass("current");
-					$(".list-item-" + state.tab + "-settings, .list-view-" + state.tab + "-settings").addClass("current");
+					$(".list-item-" + state.tab + "-settings, .list-view-" + state.tab +
+					  "-settings").addClass("current");
 				} else {
 					$(".tab.current").removeClass("current");
 					$(".tab-" + state.tab).addClass("current");

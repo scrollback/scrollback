@@ -263,7 +263,8 @@ $(function() {
 			source: "room-header"
 		});
 	});
-	function newRoomHandler() {
+
+	function newRoomHandler(roomName) {
 		var $createRoomDialog = $("<div>").attr("id", "createroom-modal").html($("#createroom-dialog").html()).modal(),
 			$createRoomEntry = $createRoomDialog.find("#createroom-id"),
 			$createRoomButton = $createRoomDialog.find("#createroom-save"),
@@ -291,12 +292,16 @@ $(function() {
 					}
 				});
 			};
-
+		
 		$createRoomEntry.on("change input paste", function() {
 			$.popover("dismiss");
 
 			$(this).removeClass("error");
 		});
+		
+		if (typeof roomName === "string") {
+			$createRoomEntry.val(roomName);
+		}
 
 		$createRoomDialog.find("#createroom").on("submit", function(e) {
 			var name = $createRoomEntry.val(),
@@ -322,14 +327,29 @@ $(function() {
 			});
 		});
 	}
+
 	function noRoomHandler() {
-		newRoomHandler();
-		$('#createroom-id').val(currentState.roomName);
+		newRoomHandler(currentState.roomName);
 	}
+	
 	// Handle create new room
 	$noRoomCreateButton.on("click", noRoomHandler);
 	$createRoomButton.on("click", newRoomHandler);
 });
+
+libsb.on('room-dn', function(room, next) {
+	setTimeout(function() { // settimeout, so that ownership information is available when you navigate.
+		if (!room.old || !room.old.id) {
+			libsb.emit("navigate", {
+				mode: 'conf',
+				tab: 'embed',
+				time: null,
+				roomName: room.room.id
+			});
+		}
+		next();	
+	}, 0);
+}, 100);
 
 function checkOld(id, callback) {
 	libsb.emit("getRooms", {
