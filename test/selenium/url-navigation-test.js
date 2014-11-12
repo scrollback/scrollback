@@ -60,7 +60,6 @@ module.exports = function(capabilities, options) {
 				driver.findElement(webdriver.By.css('.pane-people')).isDisplayed().
 				then(function(t) {
 					assert.equal(t, true, "page loading failed");
-
 					done();
 				});
 			});
@@ -76,30 +75,31 @@ module.exports = function(capabilities, options) {
 				driver.findElement(webdriver.By.css('.pane-threads')).isDisplayed().
 				then(function(t) {
 					assert.equal(t, true, "page loading failed");
-
 					done();
 				});
 			});
 		});
 
-		/*it("test for navigation to edit page", function(done) {
-				this.timeout(4 * timeout);
-				var items = Array("general", "irc", "twitter", "authorizer", "spam", "seo", "embed");
-				var classes = [".list-view-general-settings", ".list-view-irc-settings",
+		it("test for navigation to edit page", function(done) {
+			this.timeout(4 * timeout);
+			var items = Array("general", "irc", "twitter", "authorizer", "spam", "seo", "embed"),
+				classes = [".list-view-general-settings", ".list-view-irc-settings",
 						  "list-view-twitter-settings", ".list-view-authorizer-settings",
 						  ".list-view-spam-settings", ".list-view-seo-settings",
-						  ".list-item-embed-settings"];
-				var index = Math.floor(Math.random() * items.length);
-				var item = items[index];
-				console.log("testing for edit", item);
-				driver = testUtils.openUrl(capabilities, server, "room1/edit?tab=" + item);
-				driver.findElement(webdriver.By.css(classes[index])).isDisplayed().
-				then(function(t) {
-					assert.equal(t, true, "page loading failed");
-				});
-				driver.quit().then(done);
-
-			});*/
+						  ".list-item-embed-settings"],
+				index = Math.floor(Math.random() * items.length),
+				item = items[index];
+			console.log("testing for edit", item);
+			driver.get("https://stage.scrollback.io/room1/edit?tab=" + item).
+			then(function() {
+				return q.delay(4000);
+			}).then(function() {
+				return driver.findElement(webdriver.By.css(classes[index])).isDisplayed();
+			}).then(function(t) {
+				assert.equal(t, true, "page loading failed");
+				done();
+			});
+		});
 
 		it("test for navigation to home feed page", function(done) {
 			this.timeout(4 * timeout);
@@ -111,7 +111,6 @@ module.exports = function(capabilities, options) {
 				driver.findElement(webdriver.By.css('.js-area-home-feed-mine')).isDisplayed().
 				then(function(t) {
 					assert.equal(t, true, "page loading failed");
-
 					done();
 				});
 			});
