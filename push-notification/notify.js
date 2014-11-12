@@ -40,7 +40,7 @@ module.exports = function (payload, registrationIds) {
 			log.i("Push notification made ", data);
 			data = JSON.parse(data);
 			if (data && data.failure) {
-				log.e("Push notification failed ", JSON.stringify(data));
+				log.i("Push notification failed ", JSON.stringify(data));
 			}
 		});
 	});
