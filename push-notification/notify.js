@@ -12,17 +12,19 @@ var config = require('../myConfig.js');
 	}
 */
 
-module.exports = function (payload, registrationIds) {
+module.exports = function(payload, registrationIds) {
 	if (!registrationIds instanceof Array) {
 		log.e("registrationIds has to be an Array of device Registration ID(s). ");
-		throw new SbError("ERR_INVALID_PARAMS", {source: 'push-notification/notify.js'});
+		throw new SbError("ERR_INVALID_PARAMS", {
+			source: 'push-notification/notify.js'
+		});
 	}
-	
+
 	var pushData = {
-		data : payload,
+		data: payload,
 		registration_ids: registrationIds
 	};
-	
+
 	var postOptions = {
 		host: 'android.googleapis.com',
 		port: 80,
@@ -33,18 +35,22 @@ module.exports = function (payload, registrationIds) {
 			'Authorization': config.pushNotification.key
 		}
 	};
-	
-	var postReq = http.request(postOptions, function (res) {
+
+	var postReq = http.request(postOptions, function(res) {
 		res.setEncoding('utf8');
-		res.on('data', function (data) {
+		res.on('data', function(data) {
 			log.i("Push notification made ", data);
-			data = JSON.parse(data);
-			if (data && data.failure) {
-				log.i("Push notification failed ", JSON.stringify(data));
+			try {
+				data = JSON.parse(data);
+				if (data && data.failure) {
+					log.i("Push notification failed ", JSON.stringify(data));
+				}
+			} catch (e) {
+				log.i("GCM responsoe parse error", e);
 			}
 		});
 	});
-	
+
 	postReq.write(JSON.stringify(pushData));
 	postReq.end();
 };
