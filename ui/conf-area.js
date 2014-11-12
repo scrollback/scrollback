@@ -71,9 +71,9 @@ function onComplete(source) {
 	$(".conf-area").empty();
 
 	oldState = oldState || {};
-
+	
 	toState = {
-		mode: oldState.mode || "normal",
+		mode: (oldState.mode && oldState.mode !== "noroom") ? oldState.mode : "normal",
 		tab: oldState.tab || "info",
 		source: source
 	};

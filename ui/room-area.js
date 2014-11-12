@@ -177,13 +177,6 @@ $(function() {
 				params: {},
 				guides: {}
 			}
-		}, function() {
-			libsb.emit("navigate", {
-				roomName: name,
-				mode: "conf",
-				tab: "embed",
-				time: null
-			});
 		});
 	}
 
