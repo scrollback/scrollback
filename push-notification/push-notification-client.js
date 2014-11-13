@@ -1,18 +1,19 @@
 /* jshint browser:true */
-/* global libsb, device, $ */
+/* global libsb, device */
 
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
+
 var config = require('../client-config.js');
+var pushNotification, regId;
 
 document.addEventListener('deviceready', registerPushNotification, false);
-
-var pushNotification, regId;
+libsb.on('logout', unregisterPushNotification, 100);
 
 window.onNotificationGCM = function (e) {
 	// handler for push notifications.
-
+	console.log("GOT GCM notificatoin event ", e.event);
 	switch (e.event) {
 	case 'registered':
 		if (e.regid.length > 0) {
@@ -75,18 +76,35 @@ function registerPushNotification() {
 
 	if (device.platform == 'android' || device.platform == 'Android') {
 		console.log('device ready; android ' + device.platform + " " + pushNotification);
-		pushNotification.register(successHandler, errorHandler, {
+		pushNotification.register(registerSuccessHandler, errorHandler, {
 			"senderID": config.pushNotification.gcm.senderID,
 			"ecb": "onNotificationGCM"
 		});
 	}
 }
 
+function unregisterPushNotification(l, n) {
+	pushNotification = window.plugins && window.plugins.pushNotification;
+	if (!pushNotification) return;
+	console.log("Unregistering pushnotification");
+	pushNotification.unregister(unregisterSuccessHandler, errorHandler, {
+		"senderID": config.pushNotification.gcm.senderID
+	});
+	n();
+}
+
 // result contains any message sent from the plugin call
-function successHandler(result) {
+function registerSuccessHandler(result) {
 	console.log('registration success result = ' + result);
 	regId = localStorage.phonegapRegId;
 	mapDevicetoUser(regId);
+}
+
+function unregisterSuccessHandler(result) {
+	console.log('unregistration success result = ' + result);
+	regId = localStorage.phonegapRegId;
+	delete localStorage.phonegapRegId;
+	unmapDevice(regId);
 }
 
 // result contains any error description text returned from the plugin call
@@ -100,10 +118,9 @@ libsb.on('init-dn', function (init, next) {
 }, 100);
 
 function mapDevicetoUser(regId) {
-	if (typeof regId === "undefined") return;
-	/* Checks if device is registered to User for push notification, if not adds it */
 	var user = libsb.user;
-	if (typeof user === "undefined") return;
+	if (typeof regId === "undefined" || typeof user === "undefined") return;
+	/* Checks if device is registered to User for push notification, if not adds it */
 
 	if (user && typeof user.params.pushNotifications === "undefined") {
 		libsb.user.params.pushNotifications = {
@@ -132,6 +149,21 @@ function mapDevicetoUser(regId) {
 			user: user
 		});
 	}
+}
+
+function unmapDevice(regId) {
+	/* removes device with regId from user's list of devices */
+	var user = libsb.user;
+	if (typeof regId === "undefined" || typeof user === "undefined") return;
+	/* removes device with regId from list of users devices */
+	var devices = user.params && user.params.pushNotifications &&
+		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
+	user.params.pushNotifications.devices = devices.filter(function(device) {
+		return device.registrationId !== regId;
+	});
+	libsb.emit('user-up', {
+		user: user
+	});
 }
 
 libsb.on('pref-save', function (user, next) {
