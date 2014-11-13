@@ -38,8 +38,8 @@ function unregisterDevice(user, registrationId) {
 
 module.exports = function(payload, registrationId, user, core) {
 	c = core;
-	if (!registrationId instanceof Array) {
-		log.e("registrationId has to be an Array of device Registration ID(s). ");
+	if (typeof registrationId !== "string") {
+		log.e("registrationId has to be a String. ");
 		throw new SbError("ERR_INVALID_PARAMS", {
 			source: 'push-notification/notify.js'
 		});
