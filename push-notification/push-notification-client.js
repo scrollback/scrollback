@@ -7,7 +7,7 @@
 
 var config = require('../client-config.js');
 var pushNotification, regId;
-var userObj;
+var userObj, registrationID;
 
 document.addEventListener('deviceready', registerPushNotification, false);
 
@@ -89,6 +89,7 @@ function unregisterPushNotification(l, n) {
 	pushNotification = window.plugins && window.plugins.pushNotification;
 	if (!pushNotification) return;
 	userObj = libsb.user;// userObj is needed inside unregisterSuccesHandler, which is an async function.
+	registrationID = localStorage.phonegapRegId;
 	console.log("Unregistering pushnotification");
 	pushNotification.unregister(unregisterSuccessHandler, errorHandler, {
 		"senderID": config.pushNotification.gcm.senderID
@@ -105,9 +106,8 @@ function registerSuccessHandler(result) {
 
 function unregisterSuccessHandler(result) {
 	console.log('unregistration success result = ' + result);
-	regId = localStorage.phonegapRegId;
 	delete localStorage.phonegapRegId;
-	unmapDevice(regId);
+	unmapDevice(registrationID);
 }
 
 function errorHandler(error) {
