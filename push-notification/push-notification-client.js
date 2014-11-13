@@ -9,62 +9,63 @@ var config = require('../client-config.js');
 var pushNotification, regId;
 
 document.addEventListener('deviceready', registerPushNotification, false);
+
 libsb.on('logout', unregisterPushNotification, 100);
 
-window.onNotificationGCM = function (e) {
+window.onNotificationGCM = function(e) {
 	// handler for push notifications.
 	console.log("GOT GCM notificatoin event ", e.event);
 	switch (e.event) {
-	case 'registered':
-		if (e.regid.length > 0) {
-			// Storing regId to be used by GCM to make push notifications.
-			console.log("regID = " + e.regid);
-			localStorage.phonegapRegId = e.regid;
-		}
-		break;
+		case 'registered':
+			if (e.regid.length > 0) {
+				// Storing regId to be used by GCM to make push notifications.
+				console.log("regID = " + e.regid);
+				localStorage.phonegapRegId = e.regid;
+			}
+			break;
 
-	case 'message':
-		console.log(e);
-		// creating the state object.
-		var thread = e.payload.threadId;
-		var state = {
-			roomName: e.payload.roomName,
-			mode: 'normal'
-		};
+		case 'message':
+			console.log(e);
+			// creating the state object.
+			var thread = e.payload.threadId;
+			var state = {
+				roomName: e.payload.roomName,
+				mode: 'normal'
+			};
 
-		if (thread !== "") {
-			state.thread = thread.id;
-		}
-		// e.foreground is true if the notification came in when the user is in the foreground.
-		if (e.foreground) {
-			console.log("In foreground ", e.payload.message);
-			// TODO: Add a lace notification here, if the new new message is not in view. Clicking on this notification 
-			// 		 should navigate user to the message.
-			/*var $notif = $('<div>').html(e.payload.title + "<a class='pushnotif-navigate'>Click here to view it.</a>").alertbar();
+			if (thread !== "") {
+				state.thread = thread.id;
+			}
+			// e.foreground is true if the notification came in when the user is in the foreground.
+			if (e.foreground) {
+				console.log("In foreground ", e.payload.message);
+				// TODO: Add a lace notification here, if the new new message is not in view. Clicking on this notification 
+				// 		 should navigate user to the message.
+				/*var $notif = $('<div>').html(e.payload.title + "<a class='pushnotif-navigate'>Click here to view it.</a>").alertbar();
 			$notif.find('.pushnotif-navigate').click(function (){
 				libsb.emit("navigate", state);
 			});*/
-		} else {
-			if (e.coldstart) {
-				setTimeout(function () {
-					libsb.emit('navigate', state);
-				});
 			} else {
-				//background notification
-				setTimeout(function () {
-					libsb.emit('navigate', state);
-				});
+				if (e.coldstart) {
+					setTimeout(function() {
+						libsb.emit('navigate', state);
+					});
+				} else {
+					//background notification
+					setTimeout(function() {
+						libsb.emit('navigate', state);
+					});
+				}
 			}
-		}
-		break;
+			break;
 
-	case 'error':
-		console.log(e.msg);
-		break;
+		case 'error':
+			console.log(e.msg);
+			break;
 
-	default:
-		console.log(e);
-		break;
+		default:
+			console.log(e);
+			break;
 	}
 };
 
@@ -111,7 +112,7 @@ function errorHandler(error) {
 	console.log('registration/unreg error = ' + error);
 }
 
-libsb.on('init-dn', function (init, next) {
+libsb.on('init-dn', function(init, next) {
 	mapDevicetoUser(localStorage.phonegapRegId);
 	next();
 }, 100);
@@ -138,7 +139,7 @@ function mapDevicetoUser(regId) {
 		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
 
 	if (
-		devices.filter(function (d) {
+		devices.filter(function(d) {
 			return d.type === thisDevice.type && d.registrationId === thisDevice.registrationId;
 		}).length === 0
 	) {
@@ -153,27 +154,30 @@ function mapDevicetoUser(regId) {
 function unmapDevice(regId) {
 	var user = libsb.user;
 	if (typeof regId === "undefined" || typeof user === "undefined") return;
-	
-	/* removes device with regId from list of users devices */
+
+	/* removes device with regId from list of user's devices */
 	var devices = user.params && user.params.pushNotifications &&
 		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
+
 	user.params.pushNotifications.devices = devices.filter(function(device) {
 		return device.registrationId !== regId;
 	});
-	
+
+	console.log("Unmapped device ", regId, "Devices now ", user.params.pushNotifications.devices);
+
 	libsb.emit('user-up', {
 		user: user
 	});
 }
 
-libsb.on('pref-save', function (user, next) {
-		var params = libsb.user.params;
-		if (params && params.hasOwnProperty('pushNotifications')) {
-			user.params.pushNotifications = params.pushNotifications;
-		} else {
-			user.params.pushNotifications = {
-				devices: []
-			};
-		}
-		next();
+libsb.on('pref-save', function(user, next) {
+	var params = libsb.user.params;
+	if (params && params.hasOwnProperty('pushNotifications')) {
+		user.params.pushNotifications = params.pushNotifications;
+	} else {
+		user.params.pushNotifications = {
+			devices: []
+		};
+	}
+	next();
 }, 500);
