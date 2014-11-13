@@ -1,4 +1,4 @@
-var logger = require('../lib/logger.js');
+var log = require('../lib/logger.js');
 var notify = require('./notify.js');
 var config = require('../config.js');
 var internalSession = Object.keys(config.whitelists)[0];
@@ -41,7 +41,7 @@ module.exports = function(core) {
 		var msgLen = JSON.stringify(payload).length;
 		
 		if (msgLen > 4 * 1024) {
-			logger.e("Payload too big for push notification!");
+			log.e("Payload too big for push notification!");
 			payload.message = payload.message.substring(0, 700);
 		}
 		return payload;
@@ -60,8 +60,8 @@ module.exports = function(core) {
 
 
 		// push notification on new thread creation.
-		if (text.labels && text.labels.hasOwnProperty('startOfThread') &&
-			text.labels.startOfThread === 1 && text.threads[0]) {
+		if (text.labels && text.labels.hasOwnProperty('startOfThreadManual') &&
+			text.labels.startOfThreadManual === 1 && text.threads[0]) {
 			title = text.from + " has started a new discussion on " + text.to;
 			message = text.threads[0].title;
 			payload = makePayload(title, message, text);
