@@ -19,7 +19,7 @@ module.exports = function(core) {
 	}
 
 	function notifyUser(userObj, payload) {
-		if (userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
+		if (userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
 			var devices = userObj.params.pushNotifications.devices;
 			devices.forEach(function(device) {
 				if (device.hasOwnProperty('registrationId') && device.enabled === true) {
