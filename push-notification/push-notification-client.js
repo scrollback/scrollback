@@ -15,7 +15,6 @@ libsb.on('logout', unregisterPushNotification, 500);
 
 window.onNotificationGCM = function(e) {
 	// handler for push notifications.
-	console.log("GOT GCM notificatoin event ", e.event);
 	switch (e.event) {
 		case 'registered':
 			if (e.regid.length > 0) {
@@ -87,10 +86,9 @@ function registerPushNotification() {
 
 function unregisterPushNotification(l, n) {
 	pushNotification = window.plugins && window.plugins.pushNotification;
-	if (!pushNotification) return;
+	if (!pushNotification) return n();
 	userObj = libsb.user;// userObj is needed inside unregisterSuccesHandler, which is an async function.
 	registrationID = localStorage.phonegapRegId;
-	console.log("Unregistering pushnotification");
 	pushNotification.unregister(unregisterSuccessHandler, errorHandler, {
 		"senderID": config.pushNotification.gcm.senderID
 	});
@@ -164,8 +162,6 @@ function unmapDevice(regId) {
 	user.params.pushNotifications.devices = devices.filter(function(device) {
 		return device.registrationId !== regId;
 	});
-
-	console.log("Unmapped device ", regId, "Devices now ", user.params.pushNotifications.devices);
 
 	libsb.emit('user-up', {
 		user: user

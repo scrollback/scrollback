@@ -24,7 +24,7 @@ module.exports = function(core) {
 			devices.forEach(function(device) {
 				if (device.hasOwnProperty('registrationId') && device.enabled === true) {
 					// send notification
-					notify(payload, [device.registrationId]);
+					notify(payload, device.registrationId, userObj, core);
 				}
 			});
 		}

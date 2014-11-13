@@ -2,7 +2,9 @@ var http = require('http');
 var log = require('../lib/logger.js');
 var SbError = require('../lib/SbError.js');
 var config = require('../myConfig.js');
+var internalSession = Object.keys(config.whitelists)[0];
 
+var c;
 /*
 	payload : 
 	{
@@ -12,9 +14,32 @@ var config = require('../myConfig.js');
 	}
 */
 
-module.exports = function(payload, registrationIds) {
-	if (!registrationIds instanceof Array) {
-		log.e("registrationIds has to be an Array of device Registration ID(s). ");
+function unregisterDevice(user, registrationId) {
+	if (
+		typeof user === "undefined" ||
+		typeof registrationId === "undefined" ||
+		typeof c === "undefined"
+	) return;
+	
+	log.i("Unregistering device ", registrationId, "for user", JSON.stringify(user));
+	
+	var devices = user.params && user.params.pushNotifications &&
+		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
+
+	user.params.pushNotifications.devices = devices.filter(function(device) {
+		return device.registrationId !== registrationId;
+	});
+
+	c.emit('user', {
+		user: user,
+		session: internalSession
+	});
+}
+
+module.exports = function(payload, registrationId, user, core) {
+	c = core;
+	if (!registrationId instanceof Array) {
+		log.e("registrationId has to be an Array of device Registration ID(s). ");
 		throw new SbError("ERR_INVALID_PARAMS", {
 			source: 'push-notification/notify.js'
 		});
@@ -22,7 +47,7 @@ module.exports = function(payload, registrationIds) {
 
 	var pushData = {
 		data: payload,
-		registration_ids: registrationIds
+		registration_ids: [registrationId]
 	};
 
 	var postOptions = {
@@ -44,9 +69,14 @@ module.exports = function(payload, registrationIds) {
 				data = JSON.parse(data);
 				if (data && data.failure) {
 					log.i("Push notification failed ", JSON.stringify(data));
+					if (data.results && data.results[0] &&
+						data.results[0].error === "NotRegistered") {
+						// remove device from list of devices.
+						unregisterDevice(user, registrationId);
+					}
 				}
 			} catch (e) {
-				log.i("GCM responsoe parse error", e);
+				log.i("GCM response parse error", e);
 			}
 		});
 	});
