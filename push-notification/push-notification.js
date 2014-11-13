@@ -1,6 +1,7 @@
 var log = require('../lib/logger.js');
 var notify = require('./notify.js');
 var config = require('../config.js');
+var stringUtils = require('../lib/stringUtils.js');
 var internalSession = Object.keys(config.whitelists)[0];
 
 /*
@@ -32,6 +33,7 @@ module.exports = function(core) {
 	
 	function makePayload(title, message, text) {
 		var payload = {
+			notId: stringUtils.hashCode(text.to),
 			title: title,
 			message: message,
 			roomName: text.to,
@@ -51,8 +53,8 @@ module.exports = function(core) {
 		if (!text.threads || !text.threads[0]) return next();
 		// push notification when user is mentioned in a text message.
 		var mentions = text.mentions ? text.mentions : [];
-		var title = text.from + " has mentioned you on " + text.to;
-		var message = text.text;
+		var title = "[" + text.to + "] " + text.from + " mentioned you";
+		var message = "[" + text.from.replace(/^guest-/, "") + "] " + text.text;
 		var payload = makePayload(title, message, text);
 		mentions.forEach(function(user) {
 			notifyUserId(user, payload);
@@ -62,8 +64,8 @@ module.exports = function(core) {
 		// push notification on new thread creation.
 		if (text.labels && text.labels.hasOwnProperty('startOfThreadManual') &&
 			text.labels.startOfThreadManual === 1 && text.threads[0]) {
-			title = text.from + " has started a new discussion on " + text.to;
-			message = text.threads[0].title;
+			title = "[" + text.to + "] " + "new discussion";
+			message =  "[" + text.from.replace(/^guest-/, "") + "] " + text.text;
 			payload = makePayload(title, message, text);
 			core.emit("getUsers", {
 				memberOf: text.to,
@@ -80,4 +82,5 @@ module.exports = function(core) {
 
 		next();
 	}, "gateway");
+
 };
