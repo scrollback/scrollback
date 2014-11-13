@@ -9,7 +9,6 @@ module.exports = function(l) {
 	libsb = l;
 	// On navigation, add history and change URLs and title
 	libsb.on("navigate", updateHistory, 200);
-
 	// On history change, load the appropriate state
 	$(window).on("popstate", function() {
 		if (!currentState || currentState.embed) {
@@ -27,7 +26,7 @@ module.exports = function(l) {
 					}
 				}
 			}
-			if(currentState.connectionStatus) state.connectionStatus = currentState.connectionStatus;
+			if (currentState.connectionStatus) state.connectionStatus = currentState.connectionStatus;
 			else state.connectionStatus = "connecting";
 			state.source = "history";
 			libsb.emit("navigate", state);
@@ -91,49 +90,27 @@ function buildUrl(state) {
 }
 
 function pushState(state) {
-	var url, pushableState;
-	if(!state || typeof state !== "object") return;
-	
-	url = state.phonegap ? null : buildUrl(state);
-	pushableState = $.extend({}. state, true);
-	
-	if (pushableState.source == "init" || pushableState.source == "chat-area") {
-		history.replaceState(pushableState, null, url);
+	var url, oldUrl = location.pathname + location.search,
+		pushableState, fun = "pushState";
+	if (!state || typeof state !== "object") return;
+	pushableState = $.extend({}, state, true);
+	url = buildUrl(pushableState);
+	if (oldUrl !== url) {
+		if (["boot", "socket"].indexOf(pushableState.source) >= 0 || (Object.keys(state.changes)).length === 1 && state.changes.time) fun = "replaceState";
+	} else if (!state.changes.view) {
 		return;
 	}
 
-	if (pushableState.changes && (pushableState.changes.view == "rooms" || pushableState.changes.view == "meta" || pushableState.changes.view == "normal") && Object.keys(pushableState.changes).length == 1) {
-		history.pushState(pushableState, null, url);
-		return;
-	} else if (Object.keys(state.changes).length === 0) {
-		history.pushState(pushableState, null, url);
-		return;
-	}
-	
 	delete pushableState.old;
 	delete pushableState.changes;
-	
-	if (url && history.pushState && url != location.pathname + location.search && pushableState.source !== "history") {
-		if (state.changes && state.changes.time && Object.keys(state.changes).length == 1) {
-			history.replaceState(pushableState, null, url);
-		} else {
-			history.pushState(pushableState, null, url);
-		}
-	}
-
+	delete pushableState.connectionStatus;
+	history[fun](pushableState, null, url);
 }
 
 function updateHistory(state, next) {
-	if (currentState.embed) {
-		return next();
-	}
-
+	if (currentState.embed) return next();
 	updateTitle(state);
-
-	if (state.source == "history") {
-		return next();
-	}
-
+	if (state.source == "history") return next();
 	pushState(state);
 	next();
 }
