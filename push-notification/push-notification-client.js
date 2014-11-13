@@ -107,9 +107,8 @@ function unregisterSuccessHandler(result) {
 	unmapDevice(regId);
 }
 
-// result contains any error description text returned from the plugin call
 function errorHandler(error) {
-	console.log('registration error = ' + error);
+	console.log('registration/unreg error = ' + error);
 }
 
 libsb.on('init-dn', function (init, next) {
@@ -152,15 +151,16 @@ function mapDevicetoUser(regId) {
 }
 
 function unmapDevice(regId) {
-	/* removes device with regId from user's list of devices */
 	var user = libsb.user;
 	if (typeof regId === "undefined" || typeof user === "undefined") return;
+	
 	/* removes device with regId from list of users devices */
 	var devices = user.params && user.params.pushNotifications &&
 		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
 	user.params.pushNotifications.devices = devices.filter(function(device) {
 		return device.registrationId !== regId;
 	});
+	
 	libsb.emit('user-up', {
 		user: user
 	});
