@@ -10,7 +10,7 @@ var pushNotification, regId;
 
 document.addEventListener('deviceready', registerPushNotification, false);
 
-libsb.on('logout', unregisterPushNotification, 100);
+libsb.on('logout', unregisterPushNotification, 500);
 
 window.onNotificationGCM = function(e) {
 	// handler for push notifications.
