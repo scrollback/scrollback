@@ -9,6 +9,7 @@ $(function() {
 	$(".configure-button").on("click", function() {
 		libsb.emit('navigate', {
 			mode: "conf",
+			tab: "general",
 			source: "configure-button",
 			roomName: window.currentState.roomName
 		});
@@ -70,9 +71,9 @@ function onComplete(source) {
 	$(".conf-area").empty();
 
 	oldState = oldState || {};
-
+	
 	toState = {
-		mode: oldState.mode || "normal",
+		mode: (oldState.mode && oldState.mode !== "noroom") ? oldState.mode : "normal",
 		tab: oldState.tab || "info",
 		source: source
 	};
@@ -98,6 +99,7 @@ function cancelEdit() {
 	setTimeout(function() {
 		libsb.emit('navigate', {
 			mode: 'normal',
+			tab: 'info',
 			source: "conf-cancel"
 		});
 	}, 0);
@@ -116,15 +118,12 @@ function checkOwnerShip() {
 libsb.on('navigate', function(state, next) {
 
 	if (state.old && state.old.mode !== state.mode && state.mode === "conf") {
-
 		oldState = state.old;
-
 		if (!checkOwnerShip()) {
 			cancelEdit();
 			return next();
 		}
-		
-		
+
 		libsb.getRooms({
 			ref: currentState.roomName,
 			hasMember: libsb.user.id,

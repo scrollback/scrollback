@@ -25,9 +25,9 @@ window.onNotificationGCM = function (e) {
 	case 'message':
 		console.log(e);
 		// creating the state object.
-		var thread = e.payload.text.threads && e.payload.text.threads[0] ? e.payload.text.threads[0] : "";
+		var thread = e.payload.threadId;
 		var state = {
-			roomName: e.payload.text.to,
+			roomName: e.payload.roomName,
 			mode: 'normal'
 		};
 
@@ -39,10 +39,10 @@ window.onNotificationGCM = function (e) {
 			console.log("In foreground ", e.payload.message);
 			// TODO: Add a lace notification here, if the new new message is not in view. Clicking on this notification 
 			// 		 should navigate user to the message.
-			var $notif = $('<div>').html(e.payload.title + "<a class='pushnotif-navigate'>Click here to view it.</a>").alertbar();
+			/*var $notif = $('<div>').html(e.payload.title + "<a class='pushnotif-navigate'>Click here to view it.</a>").alertbar();
 			$notif.find('.pushnotif-navigate').click(function (){
 				libsb.emit("navigate", state);
-			});
+			});*/
 		} else {
 			if (e.coldstart) {
 				setTimeout(function () {

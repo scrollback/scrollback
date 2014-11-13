@@ -20,7 +20,7 @@
 
 libsb.on('auth-menu', function(menu, next) {
 	menu.buttons.persona = {
-		text: 'Persona',
+		text: 'Email',
 		prio: 200,
 		action: function() {
 			navigator.id.watch({

@@ -106,6 +106,7 @@ libsb.on("user-menu", function(menu, next) {
 		action: function() {
 			libsb.emit("navigate", {
 				mode: "pref",
+				tab: "profile",
 				view: "meta"
 			});
 		}

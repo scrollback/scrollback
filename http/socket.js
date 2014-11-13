@@ -60,7 +60,7 @@ sock.on('connection', function(socket) {
 			if (!/^web:/.test(d.session)) {
 				return conn.send(getErrorObject(d, "INVALID_SESSION"));
 			}
-			if (!d.origin) conn.send(getErrorObject(d, "INVALID_ORIGIN"));
+			if (!d.origin) return conn.send(getErrorObject(d, "INVALID_ORIGIN"));
 			if (!conn.session) conn.listeningTo = [];
 			conn.session = d.session; // Pin the session and resource.
 			conn.resource = d.resource;

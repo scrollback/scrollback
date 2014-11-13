@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, currentState */
 
 var LISTENING = 1,
 	NOT_LISTENING = 0,
@@ -73,6 +73,7 @@ $(function() {
 		$gotoform = $("#home-go-to-room-form"),
 		$gotoentry = $("#home-go-to-room-entry"),
 		$createRoomButton = $(".js-create-room"),
+		$noRoomCreateButton = $("#noroom-view-create"),
 		roomArea = {
 			add: function(roomObj) {
 				var done = false;
@@ -176,13 +177,6 @@ $(function() {
 				params: {},
 				guides: {}
 			}
-		}, function() {
-			libsb.emit("navigate", {
-				roomName: name,
-				mode: "conf",
-				tab: "embed",
-				time: null
-			});
 		});
 	}
 
@@ -236,13 +230,20 @@ $(function() {
 	});
 
 	$gotoform.on("submit", function(e) {
-		var roomName = $gotoentry.val();
+		var roomName = $gotoentry.val().toLowerCase(),
+			validation = validate(roomName);
 
 		e.preventDefault();
 
+		if (!validation.isValid) {
+			$gotoentry.addClass("error");
+
+			return;
+		}
+
 		if (roomName) {
 			libsb.emit("navigate", {
-				roomName: roomName.toLowerCase(),
+				roomName: roomName,
 				mode: "normal",
 				view: "normal",
 				source: "room-list",
@@ -263,8 +264,7 @@ $(function() {
 		});
 	});
 
-	// Handle create new room
-	$createRoomButton.on("click", function() {
+	function newRoomHandler(roomName) {
 		var $createRoomDialog = $("<div>").attr("id", "createroom-modal").html($("#createroom-dialog").html()).modal(),
 			$createRoomEntry = $createRoomDialog.find("#createroom-id"),
 			$createRoomButton = $createRoomDialog.find("#createroom-save"),
@@ -292,12 +292,16 @@ $(function() {
 					}
 				});
 			};
-
+		
 		$createRoomEntry.on("change input paste", function() {
 			$.popover("dismiss");
 
 			$(this).removeClass("error");
 		});
+		
+		if (typeof roomName === "string") {
+			$createRoomEntry.val(roomName);
+		}
 
 		$createRoomDialog.find("#createroom").on("submit", function(e) {
 			var name = $createRoomEntry.val(),
@@ -311,9 +315,11 @@ $(function() {
 				return;
 			}
 
-			$createRoomButton.addClass("loading");
+			$createRoomButton.addClass("working");
+
 			checkOld(name, function(isTaken) {
-				showError("Entered name already taken!");
+				$createRoomButton.removeClass("working");
+
 				if (isTaken) {
 					showError("Entered name already taken!");
 				} else {
@@ -322,18 +328,46 @@ $(function() {
 				}
 			});
 		});
-	});
+	}
+
+	function noRoomHandler() {
+		newRoomHandler(currentState.roomName);
+	}
+	
+	// Handle create new room
+	$noRoomCreateButton.on("click", noRoomHandler);
+	$createRoomButton.on("click", newRoomHandler);
 });
+
+libsb.on('room-dn', function(room, next) {
+	setTimeout(function() { // settimeout, so that ownership information is available when you navigate.
+		if (!room.old || !room.old.id) {
+			libsb.emit("navigate", {
+				mode: 'conf',
+				tab: 'embed',
+				time: null,
+				roomName: room.room.id
+			});
+		}
+		next();	
+	}, 0);
+}, 100);
 
 function checkOld(id, callback) {
 	libsb.emit("getRooms", {
 		ref: id
 	}, function(err, res) {
-		if (res && res.results && res.results.length) return callback(true);
+		if (res && res.results && res.results.length) {
+			return callback(true);
+		}
+
 		libsb.emit("getUsers", {
 			ref: id
 		}, function(err, res) {
-			if (res && res.results && res.results.length) return callback(true);
+			if (res && res.results && res.results.length) {
+				return callback(true);
+			}
+
 			return callback(false);
 		});
 	});
