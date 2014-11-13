@@ -50,11 +50,12 @@ module.exports = function(core) {
 	}
 	
 	core.on('text', function(text, next) {
+		var from = text.from.replace(/^guest-/, "");
 		if (!text.threads || !text.threads[0]) return next();
 		// push notification when user is mentioned in a text message.
 		var mentions = text.mentions ? text.mentions : [];
-		var title = "[" + text.to + "] " + text.from + " mentioned you";
-		var message = "[" + text.from.replace(/^guest-/, "") + "] " + text.text;
+		var title = "[" + text.to + "] " + from + " mentioned you";
+		var message = "[" + from + "] " + text.text;
 		var payload = makePayload(title, message, text);
 		mentions.forEach(function(user) {
 			notifyUserId(user, payload);
@@ -65,7 +66,7 @@ module.exports = function(core) {
 		if (text.labels && text.labels.hasOwnProperty('startOfThreadManual') &&
 			text.labels.startOfThreadManual === 1 && text.threads[0]) {
 			title = "[" + text.to + "] " + "new discussion";
-			message =  "[" + text.from.replace(/^guest-/, "") + "] " + text.text;
+			message =  "[" + from + "] " + text.text;
 			payload = makePayload(title, message, text);
 			core.emit("getUsers", {
 				memberOf: text.to,
