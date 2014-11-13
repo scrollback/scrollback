@@ -7,6 +7,7 @@
 
 var config = require('../client-config.js');
 var pushNotification, regId;
+var userObj;
 
 document.addEventListener('deviceready', registerPushNotification, false);
 
@@ -87,6 +88,7 @@ function registerPushNotification() {
 function unregisterPushNotification(l, n) {
 	pushNotification = window.plugins && window.plugins.pushNotification;
 	if (!pushNotification) return;
+	userObj = libsb.user;// userObj is needed inside unregisterSuccesHandler, which is an async function.
 	console.log("Unregistering pushnotification");
 	pushNotification.unregister(unregisterSuccessHandler, errorHandler, {
 		"senderID": config.pushNotification.gcm.senderID
@@ -152,7 +154,7 @@ function mapDevicetoUser(regId) {
 }
 
 function unmapDevice(regId) {
-	var user = libsb.user;
+	var user = userObj;
 	if (typeof regId === "undefined" || typeof user === "undefined") return;
 
 	/* removes device with regId from list of user's devices */
