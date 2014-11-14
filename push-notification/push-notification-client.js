@@ -1,5 +1,5 @@
 /* jshint browser:true */
-/* global libsb, device */
+/* global libsb, device, currentState */
 
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
@@ -71,7 +71,7 @@ window.onNotificationGCM = function(e) {
 
 function registerPushNotification() {
 	pushNotification = window.plugins && window.plugins.pushNotification;
-	if (!pushNotification || !device) {
+	if (!pushNotification || typeof device === "undefined") {
 		return;
 	}
 
@@ -118,7 +118,7 @@ libsb.on('init-dn', function(init, next) {
 }, 100);
 
 function mapDevicetoUser(regId) {
-	if (!device) return;
+	if (typeof device === "undefined") return;
 	var user = libsb.user;
 	if (typeof regId === "undefined" || typeof user === "undefined") return;
 	/* Checks if device is registered to User for push notification, if not adds it */
