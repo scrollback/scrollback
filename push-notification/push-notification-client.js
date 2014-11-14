@@ -105,7 +105,6 @@ function registerSuccessHandler(result) {
 function unregisterSuccessHandler(result) {
 	console.log('unregistration success result = ' + result);
 	delete localStorage.phonegapRegId;
-	unmapDevice(registrationID);
 }
 
 function errorHandler(error) {
@@ -150,23 +149,6 @@ function mapDevicetoUser(regId) {
 			user: user
 		});
 	}
-}
-
-function unmapDevice(regId) {
-	var user = userObj;
-	if (typeof regId === "undefined" || typeof user === "undefined") return;
-
-	/* removes device with regId from list of user's devices */
-	var devices = user.params && user.params.pushNotifications &&
-		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
-
-	user.params.pushNotifications.devices = devices.filter(function(device) {
-		return device.registrationId !== regId;
-	});
-
-	libsb.emit('user-up', {
-		user: user
-	});
 }
 
 libsb.on('pref-save', function(user, next) {
