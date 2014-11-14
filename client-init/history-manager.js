@@ -55,7 +55,6 @@ function updateTitle(state) {
 
 function buildUrl(state) {
 	var path, params = [];
-
 	switch (state.mode) {
 		case 'conf':
 			path = '/' + (state.roomName ? state.roomName + '/edit' : 'me');
@@ -80,7 +79,7 @@ function buildUrl(state) {
 	}
 
 	if (state.platform) {
-		params.push("platfrom=" + state.platform);
+		params.push("platform=" + state.platform);
 	}
 
 	if (state.tab) {
