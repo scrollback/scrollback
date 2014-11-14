@@ -79,6 +79,10 @@ function buildUrl(state) {
 		params.push("time=" + new Date(state.time).toISOString());
 	}
 
+	if (state.platform) {
+		params.push("platfrom=" + state.platform);
+	}
+
 	if (state.tab) {
 		params.push("tab=" + state.tab);
 	}
