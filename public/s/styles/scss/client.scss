@@ -46,11 +46,11 @@
         margin: auto;
         height: 2em;
         width: 2em;
-        fill-opacity: .75;
+        opacity: .75;
 
-        &:hover, &:focus { fill-opacity: .85; }
+        &:hover, &:focus { opacity: .85; }
 
-        &:active { fill-opacity: 1; }
+        &:active { opacity: 1; }
     }
 }
 
@@ -849,32 +849,19 @@ body {
     padding: .75em;
 
     .follow-icon {
-        fill-opacity: 0;
-        stroke-width: 2px;
-        stroke: $dark-color;
-        stroke-opacity: .75;
+        .fill {
+            opacity: 0;
 
-        .role-follower & { fill-opacity: .75; }
+            .role-follower & { opacity: 1; }
+        }
+
+        .stroke {
+            opacity: 1;
+
+            .role-follower & { opacity: 0; }
+        }
 
         .role-owner & { display: none; }
-    }
-
-    &:focus, &:hover, &:active {
-        .follow-icon {
-            fill-opacity: 0;
-            stroke-opacity: .85;
-
-            .role-follower & { fill-opacity: .85; }
-        }
-    }
-
-    &:active {
-        .follow-icon {
-            fill-opacity: 0;
-            stroke-opacity: 1;
-
-            .role-follower & { fill-opacity: 1; }
-        }
     }
 }
 
