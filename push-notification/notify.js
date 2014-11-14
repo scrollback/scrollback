@@ -2,9 +2,7 @@ var http = require('http');
 var log = require('../lib/logger.js');
 var SbError = require('../lib/SbError.js');
 var config = require('../myConfig.js');
-var internalSession = Object.keys(config.whitelists)[0];
 
-var c;
 /*
 	payload : 
 	{
@@ -14,45 +12,17 @@ var c;
 	}
 */
 
-function unregisterDevice(user, registrationId) {
-	if (
-		typeof user === "undefined" ||
-		typeof registrationId === "undefined" ||
-		typeof c === "undefined"
-	) return;
-	
-	log.i("Unregistering device ", registrationId, "for user", JSON.stringify(user));
-	
-	var devices = user.params && user.params.pushNotifications &&
-		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
-
-	user.params.pushNotifications.devices = devices.filter(function(device) {
-		return device.registrationId !== registrationId;
-	});
-	
-	c.emit('user', {
-		user: user,
-		session: internalSession
-	}, function(e,d) {
-		if (e) {
-			log.i("User event error", JSON.stringify(d.results));
-		} else {
-			log.i("User event succeeded", JSON.stringify(d.results));
-		}
-	});
-}
-
-module.exports = function(payload, registrationId, user, core) {
-	c = core;
-	if (typeof registrationId !== "string") {
-		log.e("registrationId has to be a String. ");
+module.exports = function(payload, registrationIds) {
+	if (!registrationIds instanceof Array) {
+		log.e("registrationIds has to be an Array of device Registration ID(s). ");
 		throw new SbError("ERR_INVALID_PARAMS", {
 			source: 'push-notification/notify.js'
 		});
 	}
+
 	var pushData = {
 		data: payload,
-		registration_ids: [registrationId]
+		registration_ids: registrationIds
 	};
 
 	var postOptions = {
@@ -74,14 +44,9 @@ module.exports = function(payload, registrationId, user, core) {
 				data = JSON.parse(data);
 				if (data && data.failure) {
 					log.i("Push notification failed ", JSON.stringify(data));
-					if (data.results && data.results[0] &&
-						data.results[0].error === "NotRegistered") {
-						// remove device from list of devices.
-						unregisterDevice(user, registrationId);
-					}
 				}
 			} catch (e) {
-				log.i("GCM response parse error", e);
+				log.i("GCM responsoe parse error", e);
 			}
 		});
 	});
