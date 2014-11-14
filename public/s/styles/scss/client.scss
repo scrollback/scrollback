@@ -1620,6 +1620,7 @@ $dotshadow: fade-out($accent-color, .6);
             display: block;
             height: 80px;
             width: 80px;
+            margin: 0 .25em;
             background-size: contain;
             border-width: 0.5em;
             border-style: solid;
@@ -1628,9 +1629,9 @@ $dotshadow: fade-out($accent-color, .6);
             border-radius: $roundness;
             cursor: pointer;
 
-            &:focus, &:hover { border-color: fade-out($dark-color, .5); }
+            &:focus, &:hover { border-color: fade-out($dark-color, .7); }
 
-            &:active { border-color: fade-out($dark-color, .3); }
+            &:active { border-color: fade-out($dark-color, .5); }
 
             &.current { border-color: $accent-color; }
 
@@ -1766,6 +1767,7 @@ $dotshadow: fade-out($accent-color, .6);
 
     left: 0;
     right: 0;
+    z-index: 100;
 
     @media #{$screenxxxx} {
         left: $width-roomxxxx;
