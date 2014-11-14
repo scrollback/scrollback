@@ -1880,6 +1880,10 @@ $dotshadow: fade-out($accent-color, .6);
     &:before { @include asset-content("sound-off", lighten($dark-color, 30%)); }
 }
 
+.phonegap-login-buttons {
+    .button { display: block; }
+}
+
 .ie-warning {
     display: table;
     position: fixed;
