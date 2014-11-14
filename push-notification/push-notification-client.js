@@ -71,7 +71,7 @@ window.onNotificationGCM = function(e) {
 
 function registerPushNotification() {
 	pushNotification = window.plugins && window.plugins.pushNotification;
-	if (!pushNotification) {
+	if (!pushNotification || !device) {
 		return;
 	}
 
@@ -118,6 +118,7 @@ libsb.on('init-dn', function(init, next) {
 }, 100);
 
 function mapDevicetoUser(regId) {
+	if (!device) return;
 	var user = libsb.user;
 	if (typeof regId === "undefined" || typeof user === "undefined") return;
 	/* Checks if device is registered to User for push notification, if not adds it */
