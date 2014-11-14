@@ -6,7 +6,7 @@ var currentState = window.currentState = {},
 	props = [
 		"roomName", "room", "view", "theme", "embed", "minimize",
 		"mode", "tab", "thread", "query", "text", "time",
-		"roomStatus", "connectionStatus", "phonegap"
+		"roomStatus", "connectionStatus", "phonegap", "platform"
 	],
 	libsb; // think of a way to remove this from window.(if need)
 
