@@ -29,10 +29,16 @@ function unregisterDevice(user, registrationId) {
 	user.params.pushNotifications.devices = devices.filter(function(device) {
 		return device.registrationId !== registrationId;
 	});
-
+	
 	c.emit('user', {
 		user: user,
 		session: internalSession
+	}, function(e,d) {
+		if (e) {
+			log.i("User event error", JSON.stringify(d.results));
+		} else {
+			log.i("User event succeeded", JSON.stringify(d.results));
+		}
 	});
 }
 
@@ -44,7 +50,6 @@ module.exports = function(payload, registrationId, user, core) {
 			source: 'push-notification/notify.js'
 		});
 	}
-
 	var pushData = {
 		data: payload,
 		registration_ids: [registrationId]
