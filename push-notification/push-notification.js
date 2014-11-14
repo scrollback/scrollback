@@ -64,8 +64,8 @@ module.exports = function(core) {
 
 
 		// push notification on new thread creation.
-		if (text.labels && text.labels.hasOwnProperty('startOfThreadManual') &&
-			text.labels.startOfThreadManual === 1 && text.threads[0]) {
+		if (text.labels && text.labels.manualThreaded === 1 && 
+			text.labels.startOfThread && text.threads[0]) {
 			title = "[" + text.to + "] " + "new discussion";
 			message =  "[" + from + "] " + text.text;
 			payload = makePayload(title, message, text);
