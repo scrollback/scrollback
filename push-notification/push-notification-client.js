@@ -1,109 +1,127 @@
 /* jshint browser:true */
-/* global libsb, device, $ */
+/* global libsb, device, currentState */
 
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
+
 var config = require('../client-config.js');
+var pushNotification, regId;
+var userObj, registrationID;
 
 document.addEventListener('deviceready', registerPushNotification, false);
 
-var pushNotification, regId;
+libsb.on('logout', unregisterPushNotification, 500);
 
-window.onNotificationGCM = function (e) {
+window.onNotificationGCM = function(e) {
 	// handler for push notifications.
-
 	switch (e.event) {
-	case 'registered':
-		if (e.regid.length > 0) {
-			// Storing regId to be used by GCM to make push notifications.
-			console.log("regID = " + e.regid);
-			localStorage.phonegapRegId = e.regid;
-		}
-		break;
+		case 'registered':
+			if (e.regid.length > 0) {
+				// Storing regId to be used by GCM to make push notifications.
+				console.log("regID = " + e.regid);
+				localStorage.phonegapRegId = e.regid;
+			}
+			break;
 
-	case 'message':
-		console.log(e);
-		// creating the state object.
-		var thread = e.payload.threadId;
-		var state = {
-			roomName: e.payload.roomName,
-			mode: 'normal'
-		};
+		case 'message':
+			console.log(e);
+			// creating the state object.
+			var thread = e.payload.threadId;
+			var state = {
+				roomName: e.payload.roomName,
+				mode: 'normal'
+			};
 
-		if (thread !== "") {
-			state.thread = thread.id;
-		}
-		// e.foreground is true if the notification came in when the user is in the foreground.
-		if (e.foreground) {
-			console.log("In foreground ", e.payload.message);
-			// TODO: Add a lace notification here, if the new new message is not in view. Clicking on this notification 
-			// 		 should navigate user to the message.
-			/*var $notif = $('<div>').html(e.payload.title + "<a class='pushnotif-navigate'>Click here to view it.</a>").alertbar();
+			if (thread !== "") {
+				state.thread = thread.id;
+			}
+			// e.foreground is true if the notification came in when the user is in the foreground.
+			if (e.foreground) {
+				console.log("In foreground ", e.payload.message);
+				// TODO: Add a lace notification here, if the new new message is not in view. Clicking on this notification 
+				// 		 should navigate user to the message.
+				/*var $notif = $('<div>').html(e.payload.title + "<a class='pushnotif-navigate'>Click here to view it.</a>").alertbar();
 			$notif.find('.pushnotif-navigate').click(function (){
 				libsb.emit("navigate", state);
 			});*/
-		} else {
-			if (e.coldstart) {
-				setTimeout(function () {
-					libsb.emit('navigate', state);
-				});
 			} else {
-				//background notification
-				setTimeout(function () {
-					libsb.emit('navigate', state);
-				});
+				if (e.coldstart) {
+					setTimeout(function() {
+						libsb.emit('navigate', state);
+					});
+				} else {
+					//background notification
+					setTimeout(function() {
+						libsb.emit('navigate', state);
+					});
+				}
 			}
-		}
-		break;
+			break;
 
-	case 'error':
-		console.log(e.msg);
-		break;
+		case 'error':
+			console.log(e.msg);
+			break;
 
-	default:
-		console.log(e);
-		break;
+		default:
+			console.log(e);
+			break;
 	}
 };
 
 function registerPushNotification() {
 	pushNotification = window.plugins && window.plugins.pushNotification;
-	if (!pushNotification) {
+	if (!pushNotification || typeof device === "undefined") {
 		return;
 	}
 
 	if (device.platform == 'android' || device.platform == 'Android') {
 		console.log('device ready; android ' + device.platform + " " + pushNotification);
-		pushNotification.register(successHandler, errorHandler, {
+		pushNotification.register(registerSuccessHandler, errorHandler, {
 			"senderID": config.pushNotification.gcm.senderID,
 			"ecb": "onNotificationGCM"
 		});
 	}
 }
 
+function unregisterPushNotification(l, n) {
+	pushNotification = window.plugins && window.plugins.pushNotification;
+	if (!pushNotification) return n();
+	userObj = libsb.user;// userObj is needed inside unregisterSuccesHandler, which is an async function.
+	registrationID = localStorage.phonegapRegId;
+	pushNotification.unregister(unregisterSuccessHandler, errorHandler, {
+		"senderID": config.pushNotification.gcm.senderID
+	});
+	n();
+}
+
 // result contains any message sent from the plugin call
-function successHandler(result) {
+function registerSuccessHandler(result) {
 	console.log('registration success result = ' + result);
 	regId = localStorage.phonegapRegId;
 	mapDevicetoUser(regId);
 }
 
-// result contains any error description text returned from the plugin call
-function errorHandler(error) {
-	console.log('registration error = ' + error);
+function unregisterSuccessHandler(result) {
+	console.log('unregistration success result = ' + result);
+	delete localStorage.phonegapRegId;
+	unmapDevice(registrationID);
 }
 
-libsb.on('init-dn', function (init, next) {
+function errorHandler(error) {
+	console.log('registration/unreg error = ' + error);
+}
+
+libsb.on('init-dn', function(init, next) {
 	mapDevicetoUser(localStorage.phonegapRegId);
 	next();
 }, 100);
 
 function mapDevicetoUser(regId) {
-	if (typeof regId === "undefined") return;
-	/* Checks if device is registered to User for push notification, if not adds it */
+	if (typeof device === "undefined") return;
 	var user = libsb.user;
-	if (typeof user === "undefined") return;
+	if (typeof regId === "undefined" || typeof user === "undefined") return;
+	/* Checks if device is registered to User for push notification, if not adds it */
 
 	if (user && typeof user.params.pushNotifications === "undefined") {
 		libsb.user.params.pushNotifications = {
@@ -122,7 +140,7 @@ function mapDevicetoUser(regId) {
 		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
 
 	if (
-		devices.filter(function (d) {
+		devices.filter(function(d) {
 			return d.type === thisDevice.type && d.registrationId === thisDevice.registrationId;
 		}).length === 0
 	) {
@@ -134,14 +152,31 @@ function mapDevicetoUser(regId) {
 	}
 }
 
-libsb.on('pref-save', function (user, next) {
-		var params = libsb.user.params;
-		if (params && params.hasOwnProperty('pushNotifications')) {
-			user.params.pushNotifications = params.pushNotifications;
-		} else {
-			user.params.pushNotifications = {
-				devices: []
-			};
-		}
-		next();
+function unmapDevice(regId) {
+	var user = userObj;
+	if (typeof regId === "undefined" || typeof user === "undefined") return;
+
+	/* removes device with regId from list of user's devices */
+	var devices = user.params && user.params.pushNotifications &&
+		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
+
+	user.params.pushNotifications.devices = devices.filter(function(device) {
+		return device.registrationId !== regId;
+	});
+
+	libsb.emit('user-up', {
+		user: user
+	});
+}
+
+libsb.on('pref-save', function(user, next) {
+	var params = libsb.user.params;
+	if (params && params.hasOwnProperty('pushNotifications')) {
+		user.params.pushNotifications = params.pushNotifications;
+	} else {
+		user.params.pushNotifications = {
+			devices: []
+		};
+	}
+	next();
 }, 500);

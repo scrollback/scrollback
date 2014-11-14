@@ -77,5 +77,5 @@ module.exports = function (objCacheOps) {
 		delete libsb.user;
 		localStorage.clear(); // clear LocalStorage on logout for security reasons
 		n();
-	}, 1000);
+	}, 10);
 };
