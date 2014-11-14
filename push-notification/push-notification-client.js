@@ -1,5 +1,5 @@
 /* jshint browser:true */
-/* global libsb, device, currentState */
+/* global libsb, device */
 
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
