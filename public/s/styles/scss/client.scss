@@ -848,6 +848,8 @@ body {
     width: 3.5em;
     padding: .75em;
 
+    .role-owner & { display: none; }
+
     .follow-icon {
         .fill {
             opacity: 0;
@@ -860,8 +862,6 @@ body {
 
             .role-follower & { opacity: 0; }
         }
-
-        .role-owner & { display: none; }
     }
 }
 
