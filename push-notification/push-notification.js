@@ -33,6 +33,7 @@ module.exports = function(core) {
 	
 	function makePayload(title, message, text) {
 		var payload = {
+			collapse_key: text.to, //for each room discard old message if not delivered
 			notId: stringUtils.hashCode(text.to),
 			title: title,
 			message: message,
@@ -43,7 +44,7 @@ module.exports = function(core) {
 		var msgLen = JSON.stringify(payload).length;
 		
 		if (msgLen > 4 * 1024) {
-			log.e("Payload too big for push notification!");
+			log.e("Payload too big for push notification! ", JSON.stringify(payload));
 			payload.message = payload.message.substring(0, 700);
 		}
 		return payload;
