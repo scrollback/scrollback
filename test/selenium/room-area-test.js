@@ -3,6 +3,7 @@ var webdriver = require('browserstack-webdriver'),
 	testUtils = require('./testUtils.js'),
 	config = require('../config.js'),
 	assert = require('assert'),
+	q = require('q'),
 	generator = require('../../lib/generate.js');
 module.exports = function(capabilities, options) {
 	describe("Room area test: " + options.id, function() {
@@ -10,7 +11,7 @@ module.exports = function(capabilities, options) {
 		var driver,
 			server = options.server;
 		before(function(done) {
-			driver = testUtils.openUrl(capabilities, server, "room1");
+			driver = testUtils.openUrl(capabilities, server, "scrollback");
 			testUtils.loginFacebook(driver, config.facebookUser.email, config.facebookUser.password, function() {
 				console.log("logging in through Facebook...");
 				done();
@@ -19,27 +20,29 @@ module.exports = function(capabilities, options) {
 
 		it("Testing for room existance", function(done) {
 			this.timeout(4 * timeout);
-			var room = Math.floor(Math.random() * config.facebookUser.rooms.length);
-			driver.findElement(webdriver.By.id('room-item-' + config.facebookUser.rooms[room])).click().
+			var room = Math.floor(Math.random() * config.user.followedRooms.length);
+			driver.findElement(webdriver.By.id('room-item-' + config.user.followedRooms[room])).click().
 			then(function() {
 				return driver.findElement(webdriver.By.id('room-title')).getText();
 			}).then(function(t) {
 				console.log(t);
-				assert.equal(t, config.facebookUser.rooms[room], "room does not exists");
+				assert.equal(t, config.user.followedRooms[room], "room does not exists");
 				done();
 			});
 		});
 
 		it("Testing for create room", function(done) {
 			this.timeout(4 * timeout);
-			var roomName = "t" + generator.names(8);
+			var roomName = "c" + generator.names(8);
 			driver.findElement(webdriver.By.css('.js-create-room')).click().
 			then(function() {
 				return driver.findElement(webdriver.By.id('createroom-id')).sendKeys(roomName);
 			}).then(function() {
 				return driver.findElement(webdriver.By.id('createroom-save')).click();
 			}).then(function() {
-				return driver.findElement(webdriver.By.id('room-title')).getText();
+				return q.delay(2000);
+			}).then(function() {
+				return driver.findElement(webdriver.By.id('room-item-' + roomName)).getText();
 			}).then(function(t) {
 				console.log(t);
 				assert.equal(t, roomName, "Some problem is there");

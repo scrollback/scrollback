@@ -56,7 +56,6 @@ module.exports = function(capabilities, options) {
 			});
 		});
 
-
 		it("login using Google", function(done) {
 			console.log("google login test");
 			testUtils.loginGoogle(driver, config.facebookUser.email, config.facebookUser.password,

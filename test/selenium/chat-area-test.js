@@ -9,7 +9,7 @@ module.exports = function(capabilities, options) {
 		var driver, server = options.server;
 
 		before(function(done) {
-			this.timeout(3 * timeout);
+			this.timeout(2 * timeout);
 			driver = testUtils.openUrl(capabilities, server, "scrollback");
 			setTimeout(done, 1.5 * timeout);
 		});
@@ -81,7 +81,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("Scrolling test", function(done) {
-			this.timeout(1.5 * timeout);
+			this.timeout(3 * timeout);
 			var ids = [];
 			driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
 				e.forEach(function(el) {
@@ -117,7 +117,7 @@ module.exports = function(capabilities, options) {
 				});
 			}, 15000);
 		});
-		
+
 		it("login Menu test", function(done) {
 			this.timeout(timeout);
 			driver.findElement(webdriver.By.css('.user-area')).click().
@@ -129,8 +129,7 @@ module.exports = function(capabilities, options) {
 				});
 			});
 		});
-		
-		
+
 		after(function(done) {
 			this.timeout(timeout);
 			driver.quit().then(done);
