@@ -23,9 +23,7 @@
             color: $text;
         }
 
-        .follow-button { stroke: $text; }
-
-        .follow-button, .meta-tabs li.rooms-button, .meta-button, .search-button, .embed-button { fill: $text; }
+        .follow-button .fill, .follow-button .stroke, .meta-tabs li.rooms-button, .meta-button, .search-button, .embed-button { fill: $text; }
 
         $icon-color-top: $text;
         $icon-color-bottom: $text;

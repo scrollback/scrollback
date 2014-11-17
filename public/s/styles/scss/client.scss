@@ -46,11 +46,11 @@
         margin: auto;
         height: 2em;
         width: 2em;
-        fill-opacity: .75;
+        opacity: .75;
 
-        &:hover, &:focus { fill-opacity: .85; }
+        &:hover, &:focus { opacity: .85; }
 
-        &:active { fill-opacity: 1; }
+        &:active { opacity: 1; }
     }
 }
 
@@ -848,32 +848,19 @@ body {
     width: 3.5em;
     padding: .75em;
 
+    .role-owner & { display: none; }
+
     .follow-icon {
-        fill-opacity: 0;
-        stroke-width: 2px;
-        stroke: $dark-color;
-        stroke-opacity: .75;
+        .fill {
+            opacity: 0;
 
-        .role-follower & { fill-opacity: .75; }
-
-        .role-owner & { display: none; }
-    }
-
-    &:focus, &:hover, &:active {
-        .follow-icon {
-            fill-opacity: 0;
-            stroke-opacity: .85;
-
-            .role-follower & { fill-opacity: .85; }
+            .role-follower & { opacity: 1; }
         }
-    }
 
-    &:active {
-        .follow-icon {
-            fill-opacity: 0;
-            stroke-opacity: 1;
+        .stroke {
+            opacity: 1;
 
-            .role-follower & { fill-opacity: 1; }
+            .role-follower & { opacity: 0; }
         }
     }
 }
@@ -1051,8 +1038,8 @@ body {
     position: absolute;
     top: 0;
     left: 0;
+    right: 0;
     height: 100%;
-    width: 100%;
     background-color: $light-color;
 
     .infinite-above, .infinite-below {
@@ -1620,6 +1607,7 @@ $dotshadow: fade-out($accent-color, .6);
             display: block;
             height: 80px;
             width: 80px;
+            margin: 0 .25em;
             background-size: contain;
             border-width: 0.5em;
             border-style: solid;
@@ -1628,9 +1616,9 @@ $dotshadow: fade-out($accent-color, .6);
             border-radius: $roundness;
             cursor: pointer;
 
-            &:focus, &:hover { border-color: fade-out($dark-color, .5); }
+            &:focus, &:hover { border-color: fade-out($dark-color, .7); }
 
-            &:active { border-color: fade-out($dark-color, .3); }
+            &:active { border-color: fade-out($dark-color, .5); }
 
             &.current { border-color: $accent-color; }
 
@@ -1766,6 +1754,7 @@ $dotshadow: fade-out($accent-color, .6);
 
     left: 0;
     right: 0;
+    z-index: 100;
 
     @media #{$screenxxxx} {
         left: $width-roomxxxx;
@@ -1889,6 +1878,10 @@ $dotshadow: fade-out($accent-color, .6);
     @extend %popover-item;
 
     &:before { @include asset-content("sound-off", lighten($dark-color, 30%)); }
+}
+
+.phonegap-login-buttons {
+    .button { display: block; }
 }
 
 .ie-warning {

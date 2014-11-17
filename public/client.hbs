@@ -151,8 +151,9 @@
 					</a>
 					<h2 data-mode="normal" data-embed="none" class="room-title" id="room-title"></h2>
 					<a data-mode="normal" data-embed="none" data-role="user" class="follow-button follow-room-action" role="button">
-						<svg class="follow-icon custom-titlebar-fg custom-titlebar-stroke" width="28" height="28" viewBox="0 0 28 28">
-							<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#icon"></use>
+						<svg class="follow-icon" width="28" height="28" viewBox="0 0 28 28">
+							<use class="fill custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#fill"></use>
+							<use class="stroke custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#stroke"></use>
 						</svg>
 					</a>
 					<div data-mode="conf pref search" class="action-buttons">
@@ -172,8 +173,9 @@
 					<div data-embed="toast canvas" class="embed-area">
 
 						<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
-							<svg class="follow-icon embed-icon custom-titlebar-fg custom-titlebar-stroke" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#icon"></use>
+							<svg class="follow-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
+								<use class="fill custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#fill"></use>
+								<use class="stroke custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#stroke"></use>
 							</svg>
 						</a>
 
@@ -333,9 +335,9 @@
 		<section data-state="online" data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
 			<div class="content-view-area">
 				<h2 data-string="Sign in to get started."></h2>
-				<p>
+				<p class="phonegap-login-buttons">
 					<a class="button facebook js-phonegap-fb-login" data-string="Facebook"></a>
-					<a class="button google js-phonegap-google-login" data-string="Google +"></a>
+					<a class="button google js-phonegap-google-login" data-string="Google"></a>
 				</p>
 			</div>
 		</section>

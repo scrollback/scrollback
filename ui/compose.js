@@ -107,6 +107,8 @@ $(function() {
 
 	libsb.on("text-up", function(text, next) {
 		if (newThread) {
+			if (!text.labels) text.labels = {};
+			text.labels.manualThreaded = 1;
 			text.threads = [{
 				id: "new",
 				score: 1.0

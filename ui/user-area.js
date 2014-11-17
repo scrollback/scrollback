@@ -115,7 +115,7 @@ $(function() {
 		});
 
 		n();
-	}, 1000);
+	}, 100);
 	libsb.on("room-dn", function(action, next) {
 		if(action.to === currentState.roomName) setOwner();
 		next();

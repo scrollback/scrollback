@@ -1,21 +1,12 @@
 /* jshint browser: true */
 /* global $ */
 
-var roomCard = {},
+var stringUtils = require("../lib/stringUtils.js"),
+	roomCard = {},
 	$template = $(".card-item-wrap").eq(0);
 
 function getHashCode(str) {
-	var hash = 0, i, chr, len;
-
-	if (str.length === 0) {
-		return hash;
-	}
-
-	for (i = 0, len = str.length; i < len; i++) {
-		chr   = str.charCodeAt(i);
-		hash  = ((hash << 5) - hash) + chr;
-		hash |= 0; // Convert to 32bit integer
-	}
+	var hash = stringUtils.hashCode(str);
 
 	if (hash < 0) {
 		hash = hash >>> 1;
