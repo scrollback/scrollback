@@ -9,6 +9,32 @@ var internalSession = Object.keys(config.whitelists)[0];
 */
 
 module.exports = function(core) {
+	function mapUsersToIds(idList) {
+		var userList = [];
+		idList.forEach(function(id) {
+			core.emit("getUsers", {ref: id, session: internalSession}, function(err, data) {
+				if (!data || !data.results || !data.results[0]) return;
+				userList.push(data.results[0]);
+			});
+		});
+		return userList;
+	}
+	
+	function notifyUsers(userList) {
+		var regList = [];
+		userList.forEach(function(userObj) {
+			if (userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
+				var devices = userObj.params.pushNotifications.devices;
+				devices.forEach(function(device) {
+					if (device.hasOwnProperty('registrationId') && device.enabled === true) {
+						regList.push({userId: userObj.id, registrationId: device.registrationId});
+					}
+				});
+			}
+		});
+		notify(regList);
+	}
+	
 	function notifyUserId(id, payload) {
 		core.emit("getUsers", {
 			ref: id,
