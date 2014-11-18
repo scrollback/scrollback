@@ -2,6 +2,7 @@ var http = require('http');
 var log = require('../lib/logger.js');
 var SbError = require('../lib/SbError.js');
 var config = require('../myConfig.js');
+var _ = require('underscore');
 
 /*
 	payload : 
@@ -12,18 +13,15 @@ var config = require('../myConfig.js');
 	}
 */
 
-module.exports = function(payload, registrationIds) {
-	if (!registrationIds instanceof Array) {
+module.exports = function(payload, userRegMapping) {
+	if (!userRegMapping instanceof Array) {
 		log.e("registrationIds has to be an Array of device Registration ID(s). ");
 		throw new SbError("ERR_INVALID_PARAMS", {
 			source: 'push-notification/notify.js'
 		});
 	}
 
-	var pushData = {
-		data: payload,
-		registration_ids: registrationIds
-	};
+	var registrationIds = _.pluck(userRegMapping, 'registrationId');
 
 	var postOptions = {
 		host: 'android.googleapis.com',
@@ -51,6 +49,27 @@ module.exports = function(payload, registrationIds) {
 		});
 	});
 
-	postReq.write(JSON.stringify(pushData));
+	// splice registrationIds array in elements of 1000 each (GCM limit) and notify. 
+	var tmp_arr = registrationIds,
+		notifyArr;
+	
+	function postData(notifArr) {
+		var pushData = {
+			data: payload,
+			registration_ids: notifArr
+		};
+
+		postReq.write(JSON.stringify(pushData));
+	}
+	
+	while (tmp_arr.length > 999) {
+		notifyArr = tmp_arr.splice(0, 1000);
+		postData(notifyArr);
+	}
+	
+	if (tmp_arr.length) {
+		postData(tmp_arr);
+	}
+
 	postReq.end();
 };

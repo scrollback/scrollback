@@ -1,5 +1,5 @@
 var log = require('../lib/logger.js');
-var notify = require('./notify.js');
+var gcm_notify = require('./gcm-notify.js');
 var config = require('../config.js');
 var stringUtils = require('../lib/stringUtils.js');
 var internalSession = Object.keys(config.whitelists)[0];
@@ -32,7 +32,7 @@ module.exports = function(core) {
 				});
 			}
 		});
-		notify(regList);
+		gcm_notify(regList);
 	}
 	
 	function notifyUserId(id, payload) {
@@ -51,7 +51,7 @@ module.exports = function(core) {
 			devices.forEach(function(device) {
 				if (device.hasOwnProperty('registrationId') && device.enabled === true) {
 					// send notification
-					notify(payload, [device.registrationId]);
+					gcm_notify(payload, [device.registrationId]);
 				}
 			});
 		}
