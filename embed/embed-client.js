@@ -3,6 +3,7 @@
 
 var Color = require("../lib/color.js"),
 	parseURL = require("../lib/parseURL.js"),
+	stringUtils = require("../lib/stringUtils.js"),
 	/* status flags */
 	verificationStatus = false,
 	bootingDone = false,
@@ -13,6 +14,10 @@ var Color = require("../lib/color.js"),
 	embed, token, domain, path, preBootQueue = [],
 	queue = [],
 	parentHost;
+
+function openFullView() {
+	window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
+}
 
 function sendDomainChallenge() {
 	token = Math.random() * Math.random();
@@ -165,9 +170,7 @@ function insertCss(embed) {
 module.exports = function(libsb) {
 	$(function() {
 		// Handle fullview button click
-		$(".embed-action-fullview").on("click", function() {
-			window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, ""), "_blank");
-		});
+		$(".embed-action-fullview").on("click", openFullView);
 
 		// Handle minimize
 		$(".embed-action-minimize").on("click", function() {
@@ -198,6 +201,7 @@ module.exports = function(libsb) {
 	});
 
 	var url = parseURL(window.location.pathname, window.location.search);
+
 	embed = url.embed;
 
 	if (window.parent !== window) {
@@ -248,6 +252,21 @@ module.exports = function(libsb) {
 			if (state.source == "boot") {
 				bootingDone = true;
 				state.embed = embed;
+
+				if ((navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
+					 navigator.userAgent.match(/AppleWebKit/) &&
+					 navigator.userAgent.match(/Safari/)) &&
+					embed &&
+					embed.form === "toast"
+				   ) {
+					$(document).on("click", function(e) {
+						if (!$(e.target).closest(".title-bar, .minimize-bar").length) {
+							e.stopPropagation();
+
+							openFullView();
+						}
+					});
+				}
 			}
 
 			if (state.room && state.room === "object") {
