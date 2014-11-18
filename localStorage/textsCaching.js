@@ -5,6 +5,10 @@ module.exports = function(ArrayCacheOp) {
 	libsb.on('getTexts', function(query, next) {
 		// getTextsBefore
 		var key;
+		// ArrayCache cannot handle ref queries without time property, sending to server.
+		if (query.hasOwnProperty('ref') && !query.hasOwnProperty('time')) {
+			return next();
+		}
 		if (query.hasOwnProperty('updateTime')) {
 			return next();
 		}
