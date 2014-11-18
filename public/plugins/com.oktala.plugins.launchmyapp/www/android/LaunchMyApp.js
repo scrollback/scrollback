@@ -1,4 +1,4 @@
-cordova.define("com.machenmusik.plugins.launchmyapp.LaunchMyApp", function(require, exports, module) { (function () {
+cordova.define("com.oktala.plugins.launchmyapp.LaunchMyApp", function(require, exports, module) { (function () {
     "use strict";
     
     function triggerOpenURL() {
