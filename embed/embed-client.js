@@ -14,7 +14,7 @@ var Color = require("../lib/color.js"),
 	queue = [],
 	parentHost;
 
-function fullview(){
+function openFullView() {
 	window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, ""), "_blank");
 }
 
@@ -169,8 +169,7 @@ function insertCss(embed) {
 module.exports = function(libsb) {
 	$(function() {
 		// Handle fullview button click
-		
-		$(".embed-action-fullview").on("click", fullview);
+		$(".embed-action-fullview").on("click", openFullView);
 
 		// Handle minimize
 		$(".embed-action-minimize").on("click", function() {
@@ -198,18 +197,10 @@ module.exports = function(libsb) {
 				event: "minimize-bar"
 			});
 		});
-		
-		if ((navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
-			navigator.userAgent.match(/AppleWebKit/) &&
-			navigator.userAgent.match(/Safari/)) &&
-			window.currentState.embed &&
-			window.currentState.embed.form === "toast"
-		   ) {
-			$(document).on("click", fullview);
-		}
 	});
 
 	var url = parseURL(window.location.pathname, window.location.search);
+
 	embed = url.embed;
 
 	if (window.parent !== window) {
@@ -260,6 +251,21 @@ module.exports = function(libsb) {
 			if (state.source == "boot") {
 				bootingDone = true;
 				state.embed = embed;
+
+				if ((navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
+					 navigator.userAgent.match(/AppleWebKit/) &&
+					 navigator.userAgent.match(/Safari/)) &&
+					embed &&
+					embed.form === "toast"
+				   ) {
+					$(document).on("click", function(e) {
+						if (!$(e.target).closest(".title-bar, .minimize-bar").length) {
+							e.stopPropagation();
+
+							openFullView();
+						}
+					});
+				}
 			}
 
 			if (state.room && state.room === "object") {
