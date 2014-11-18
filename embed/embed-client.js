@@ -3,6 +3,7 @@
 
 var Color = require("../lib/color.js"),
 	parseURL = require("../lib/parseURL.js"),
+	stringUtils = require("../lib/stringUtils.js"),
 	/* status flags */
 	verificationStatus = false,
 	bootingDone = false,
@@ -15,7 +16,7 @@ var Color = require("../lib/color.js"),
 	parentHost;
 
 function openFullView() {
-	window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, ""), "_blank");
+	window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
 }
 
 function sendDomainChallenge() {
