@@ -10,7 +10,6 @@ function init(libsb) {
 		
 		if(state.platform) {
 			state.phonegap = true;
-			state.mode = "home";
 		}
 		if(state.embed) delete state.embed;
 		
