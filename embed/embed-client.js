@@ -14,6 +14,10 @@ var Color = require("../lib/color.js"),
 	queue = [],
 	parentHost;
 
+function fullview(){
+	window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, ""), "_blank");
+}
+
 function sendDomainChallenge() {
 	token = Math.random() * Math.random();
 	parentHost = embed.origin.protocol + "//" + embed.origin.host;
@@ -165,9 +169,8 @@ function insertCss(embed) {
 module.exports = function(libsb) {
 	$(function() {
 		// Handle fullview button click
-		$(".embed-action-fullview").on("click", function() {
-			window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, ""), "_blank");
-		});
+		
+		$(".embed-action-fullview").on("click", fullview);
 
 		// Handle minimize
 		$(".embed-action-minimize").on("click", function() {
@@ -195,6 +198,15 @@ module.exports = function(libsb) {
 				event: "minimize-bar"
 			});
 		});
+		
+		if ((navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
+			navigator.userAgent.match(/AppleWebKit/) &&
+			navigator.userAgent.match(/Safari/)) &&
+			window.currentState.embed &&
+			window.currentState.embed.form === "toast"
+		   ) {
+			$(document).on("click", fullview);
+		}
 	});
 
 	var url = parseURL(window.location.pathname, window.location.search);
