@@ -367,9 +367,25 @@ body {
 }
 
 .pane-info-wrap {
+    position: relative;
+    height: 100%;
+    padding-bottom: $bar-height;
+}
+
+.pane-info-content {
     @extend %scroll-elem;
 
     padding: 1.5em;
+}
+
+.pane-info-privacy {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 1em 1.5em;
+    border-top: 1px solid darken($light-color, 20%);
+    background-color: darken($light-color, 5%);
+    box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);
 }
 
 .pane-people-wrap {
