@@ -37,7 +37,7 @@ $(function() {
 		};
 
 	libsb.on("text-dn", function(text, next) {
-		if (window.currentState.minimize && text.from && text.text) {
+		if (window.currentState.minimize && text.from && text.text && text.to === window.currentState.roomName) {
 			msgarr.push(text.from.replace(/^guest-/, "") + ": " + text.text);
 
 			if (msgarr.length > 3) {
