@@ -7,17 +7,23 @@ var internalSession = Object.keys(config.whitelists)[0];
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
+// arr = [1,2]; cnt = 2
 
 module.exports = function(core) {
-	function mapUsersToIds(idList) {
-		var userList = [];
+	function mapUsersToIds(idList, cb) {
+		var cnt = idList.length;
+        var userList = [];
+        function done() {
+            cnt--;
+            if (cnt === 0) cb(userList);
+        }
 		idList.forEach(function(id) {
 			core.emit("getUsers", {ref: id, session: internalSession}, function(err, data) {
 				if (!data || !data.results || !data.results[0]) return;
 				userList.push(data.results[0]);
+                done();
 			});
 		});
-		return userList;
 	}
 	
 	function notifyUsers(userList, payload) {
@@ -62,8 +68,11 @@ module.exports = function(core) {
 		var title = "[" + text.to + "] " + from + " mentioned you";
 		var message = "[" + from + "] " + text.text;
 		var payload = makePayload(title, message, text);
-		notifyUsers(mapUsersToIds(mentions));
-
+		
+        mapUsersToIds(mentions, function(userList) {
+           notifyUsers(userList); 
+        });
+        
 		// push notification on new thread creation.
 		if (text.labels && text.labels.manualThreaded === 1 && 
 			text.labels.startOfThread && text.threads[0]) {
