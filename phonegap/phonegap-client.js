@@ -5,13 +5,15 @@ libsb.on("navigate", function(state, next) {
 	if (state.phonegap && state.source === 'boot') {
 		window.openExternal = function openExternal(elem) {
 			window.open(elem.href, "_system");
-			return false; // Prevent execution of the default onClick handler 
+			return false;
 		};
-		$(document).on('click', "a[href]", function() {
+		$(document).on('click', "a[href]", function(e) {
 			// config.host e.g- //local.scrollback.io
 			if (!(new RegExp("(^https?:" + config.host + ")(($)|(\/)).*")).test(this.href)) {
+				e.preventDefault();
 				window.openExternal(this);
 			}
+
 		});
 	}
 	next();
