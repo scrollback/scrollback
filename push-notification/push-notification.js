@@ -15,7 +15,7 @@ module.exports = function(core) {
         var userList = [];
         function done() {
             cnt--;
-            if (cnt === 0) cb(userList);
+            if (cnt <= 0) cb(userList);
         }
 		idList.forEach(function(id) {
 			core.emit("getUsers", {ref: id, session: internalSession}, function(err, data) {
