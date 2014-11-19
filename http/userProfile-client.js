@@ -13,7 +13,7 @@ libsb.on("init-dn", function(action, next) {
 		pictureList = [pictureSelected];
 	}
 	next();
-}, 100);
+}, 800);
 
 libsb.on("user-dn", function(action, next) {
 	pictureSelected = action.user.picture;
@@ -22,7 +22,7 @@ libsb.on("user-dn", function(action, next) {
 		pictureList = [pictureSelected];
 	}
 	next();
-}, 100);
+}, 800);
 
 libsb.on("user-up", function(action, next) {
 	action.user.picture = pictureSelected;
