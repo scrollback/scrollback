@@ -20,41 +20,19 @@ module.exports = function(core) {
 		return userList;
 	}
 	
-	function notifyUsers(userList) {
+	function notifyUsers(userList, payload) {
 		var regList = [];
 		userList.forEach(function(userObj) {
 			if (userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
 				var devices = userObj.params.pushNotifications.devices;
 				devices.forEach(function(device) {
 					if (device.hasOwnProperty('registrationId') && device.enabled === true) {
-						regList.push({userId: userObj.id, registrationId: device.registrationId});
+						regList.push({user: userObj, registrationId: device.registrationId});
 					}
 				});
 			}
 		});
-		gcm_notify(regList);
-	}
-	
-	function notifyUserId(id, payload) {
-		core.emit("getUsers", {
-			ref: id,
-			session: internalSession
-		}, function(err, data) {
-			if (!data || !data.results || !data.results[0]) return;
-			notifyUser(data.results[0], payload);
-		});
-	}
-
-	function notifyUser(userObj, payload) {
-		if (userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
-			var devices = userObj.params.pushNotifications.devices;
-			devices.forEach(function(device) {
-				if (device.hasOwnProperty('registrationId') && device.enabled === true) {
-					// send notification
-					gcm_notify(payload, [device.registrationId]);
-				}
-			});
-		}
+		gcm_notify(regList, payload, core);
 	}
 	
 	function makePayload(title, message, text) {
