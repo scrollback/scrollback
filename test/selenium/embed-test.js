@@ -6,7 +6,8 @@ var assert = require('assert'),
 module.exports = function(capabilities, options) {
 	describe('Navigating to embed page url: ' + options.id, function() {
 		this.timeout(4 * timeout);
-		var driver, server = options.server, noop = function() {};
+		var driver, server = options.server,
+			noop = function() {};
 
 		it("embed script testing", function(done) {
 			console.log("embed page testing");

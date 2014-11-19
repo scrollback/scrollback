@@ -9,25 +9,25 @@ var assert = require('assert'),
 module.exports = function(capabilities, options) {
 	describe('Create Room Test ' + options.id, function() {
 		this.timeout(timeout);
-		var driver, server = options.server;
-		var roomName = "t" + generator.names(28);
+		var driver, server = options.server,
+			roomName = "t" + generator.names(28);
 		before(function(done) {
 			this.timeout(3 * timeout);
 			driver = testUtils.openUrl(capabilities, server, roomName);
 			setTimeout(done, 1.5 * timeout);
 		});
 
-		it("login persona on create room view", function(done) { 
+		it("login persona on create room view", function(done) {
 			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function() {
 				driver.findElement(webdriver.By.id("noroom-view-create")).click()
-				.then(function() {
-					return q.delay(5000);
-				}).then(function() {
-					driver.findElement(webdriver.By.css(".info-title")).getText().then(function(t) {
-						assert.equal(t, roomName, "Room creation unsuccessful");
-						done();
+					.then(function() {
+						return q.delay(5000);
+					}).then(function() {
+						driver.findElement(webdriver.By.css(".info-title")).getText().then(function(t) {
+							assert.equal(t, roomName, "Room creation unsuccessful");
+							done();
+						});
 					});
-				});					
 			});
 		});
 
