@@ -62,8 +62,7 @@ body {
         embed: $embeds,
         mode: $modes,
         media: $medialist,
-        state: $states,
-        toast: ( minimized, maximized )
+        state: $states
     );
 
     $multi: ( role );
@@ -846,6 +845,8 @@ body {
     @include justify-content(flex-end);
     @include align-items(center);
     @include align-content(center);
+
+    .toast-minimized & { display: none; }
 }
 
 .room-title {

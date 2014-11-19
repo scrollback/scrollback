@@ -187,6 +187,7 @@ module.exports = function(libsb) {
 			} else if ((e.target === e.currentTarget) || $(e.target).closest(".embed-action-minimize").length) {
 				libsb.emit("navigate", {
 					minimize: true,
+					view: "normal",
 					source: "embed",
 					event: "title-bar"
 				});
