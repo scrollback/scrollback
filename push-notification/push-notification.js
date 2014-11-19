@@ -69,7 +69,7 @@ module.exports = function(core) {
 		var payload = makePayload(title, message, text);
 		
         mapUsersToIds(mentions, function(userList) {
-           notifyUsers(userList); 
+           notifyUsers(userList, payload); 
         });
         
 		// push notification on new thread creation.
@@ -83,7 +83,7 @@ module.exports = function(core) {
 				session: internalSession
 			}, function(e, d) {
 				if (!d || !d.results) return;
-				notifyUsers(d.results);
+				notifyUsers(d.results, payload);
 			});
 		}
 

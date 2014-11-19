@@ -62,7 +62,7 @@ module.exports = function(userRegMapping, payload, core) {
 			registration_ids: notifArr
 		};
 		request.post({
-			uri: 'android.googleapis.com/gcm/send',
+			uri: 'https://android.googleapis.com/gcm/send',
 			headers: headers,
 			body: JSON.stringify(pushData)
 		}, function(err, res, body) {
