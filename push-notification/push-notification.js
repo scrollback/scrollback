@@ -62,10 +62,7 @@ module.exports = function(core) {
 		var title = "[" + text.to + "] " + from + " mentioned you";
 		var message = "[" + from + "] " + text.text;
 		var payload = makePayload(title, message, text);
-		mentions.forEach(function(user) {
-			notifyUserId(user, payload);
-		});
-
+		notifyUsers(mapUsersToIds(mentions));
 
 		// push notification on new thread creation.
 		if (text.labels && text.labels.manualThreaded === 1 && 
@@ -78,11 +75,7 @@ module.exports = function(core) {
 				session: internalSession
 			}, function(e, d) {
 				if (!d || !d.results) return;
-				d.results.forEach(function(u) {
-					if (u.id !== text.from) {
-						notifyUser(u, payload);
-					}
-				});
+				notifyUsers(d.results);
 			});
 		}
 

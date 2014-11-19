@@ -14,7 +14,7 @@ var internalSession = Object.keys(config.whitelists)[0];
 	}
 */
 
-module.exports = function(payload, userRegMapping, core) {
+module.exports = function(userRegMapping, payload, core) {
 
 	if (!userRegMapping instanceof Array) {
 		log.e("registrationIds has to be an Array of device Registration ID(s). ");
@@ -32,6 +32,7 @@ module.exports = function(payload, userRegMapping, core) {
 	};
 
 	function removeDevice(userRegMap) {
+		if (!userRegMap.hasOwnProperty('registrationId') || !userRegMap.hasOwnProperty('user')) return;
 		log.i("REMOVE device called with", userRegMap);
 		var regId = userRegMap.registrationId;
 		var userObj = userRegMap.user;
@@ -43,12 +44,16 @@ module.exports = function(payload, userRegMapping, core) {
 		}
 		// emit user-up for userObj
 		log.i("EMITTING user", JSON.stringify(userObj));
+		
 		core.emit('user', {
+			type: "user",
+			to: userObj.id,
 			user: userObj,
 			session: internalSession
 		}, function(err, data) {
 			log.i("Emitter user-up ", err, JSON.stringify(data));
 		});
+		
 	}
 
 	function postData(notifArr) {
@@ -62,8 +67,8 @@ module.exports = function(payload, userRegMapping, core) {
 			body: JSON.stringify(pushData)
 		}, function(err, res, body) {
 			try {
-				body = JSON.parse(body);
 				log.i("GCM request made, body", body);
+				body = JSON.parse(body);
 				if (body.failure) {
 					for (index = 0; index < body.results.length; index++) {
 						result = body.results[index];
