@@ -7,7 +7,6 @@ var internalSession = Object.keys(config.whitelists)[0];
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
-// arr = [1,2]; cnt = 2
 
 module.exports = function(core) {
 	function mapUsersToIds(idList, cb) {
@@ -19,7 +18,7 @@ module.exports = function(core) {
         }
 		idList.forEach(function(id) {
 			core.emit("getUsers", {ref: id, session: internalSession}, function(err, data) {
-				if (!data || !data.results || !data.results[0]) return;
+				if (!data || !data.results || !data.results[0]) done();
 				userList.push(data.results[0]);
                 done();
 			});
