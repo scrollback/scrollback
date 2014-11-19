@@ -6,7 +6,6 @@ $(window).on("message", function(event) {
 	var data = event.originalEvent.data;
 	var action;
 	if (event.originalEvent.origin !== "https://" + location.host) return;
-	if(initSent) return;
 	if (typeof data === 'string') {
 		try {
 			action = JSON.parse(data);
@@ -19,20 +18,25 @@ $(window).on("message", function(event) {
 	}
 
 	if (!data.command || data.command != "signin") return;
-	delete data.command;
-	initSent = true;
-	libsb.emit("init-up", action, done);
+	sendInit(action);
+	sendInit(action);
 });
 
 $(window).on("phonegapmsg", function(e, p) {
-	delete p.command;
-	if(initSent) return;
-	initSent = true;
-	libsb.emit('init-up', p, done);
+	sendInit(p);
 });
 
-
-
-function done() {
-	initSent = false;
+function sendInit(action) {
+	if(initSent) return;
+	delete action.command;
+	initSent = true;
+	if(/^guest-/.test(libsb.user.id)) {
+		libsb.emit('init-up', action, function() {
+			initSent = false;
+		});
+	}else{
+		initSent = false;
+	}
 }
+
+
