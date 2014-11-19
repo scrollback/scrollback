@@ -775,6 +775,12 @@ body {
             .view-meta &, .view-rooms & { @include transform(rotate(180deg)); }
         }
     }
+
+    .meta-button-logo {
+        .meta-icon {
+            &, &:focus, &:hover, &:active { opacity: 1; }
+        }
+    }
 }
 
 .embed {
@@ -792,6 +798,13 @@ body {
 .sb-icon-top { fill: $accent-color; }
 
 .sb-icon-bottom { fill: $dark-color; }
+
+.title-logotype {
+    .title-logotype-icon {
+        padding: .25em 0;
+        fill: $light-color;
+    }
+}
 
 .title-bar {
     @include flexbox;
