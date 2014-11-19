@@ -73,7 +73,8 @@ module.exports = function(userRegMapping, payload, core) {
 					for (index = 0; index < body.results.length; index++) {
 						result = body.results[index];
 						if (result.hasOwnProperty('error') &&
-							(result.error === "InvalidRegistration" || result.error === "NotRegistered")) {
+							(result.error === "InvalidRegistration" || 
+							 result.error === "NotRegistered") || result.error === "MismatchSenderId") {
 							removeDevice(userRegMapping[index]);
 						}
 					}
