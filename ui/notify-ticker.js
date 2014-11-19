@@ -5,16 +5,16 @@ $(function() {
 	var msgarr = [],
 		loopMsg,
 		checkMsg = function() {
+			var $bar = $(".title-bar"),
+				$ticker = $(".minimize-ticker"),
+				classes = $bar.attr("class").replace(/(has-messages)+(-\d+)?/g, "").trim();
+
+			$bar.attr("class", classes);
+
 			clearInterval(loopMsg);
 
-			if (window.currentState.minimize) {
-				var $bar = $(".minimize-bar"),
-					$ticker = $(".minimize-ticker"),
-					classes = $bar.attr("class").replace(/has-messages-\d+/g, "").trim();
-
-				$bar.attr("class", classes);
-
-				if (msgarr.length) {
+			if (msgarr.length) {
+				if (window.currentState.minimize) {
 					var i = 0,
 						setMsg = function() {
 							$ticker.text(msgarr[i]);
@@ -31,10 +31,8 @@ $(function() {
 
 					$bar.addClass("has-messages has-messages-" + msgarr.length);
 				} else {
-					$bar.removeClass("has-messages");
+					msgarr = [];
 				}
-			} else if (msgarr.length) {
-				msgarr = [];
 			}
 		};
 
@@ -53,12 +51,6 @@ $(function() {
 	}, 100);
 
 	libsb.on("navigate", function(state, next) {
-		var $title = $(".minimize-room-title");
-
-		if (state && (!state.old || state.roomName != state.old.roomName)) {
-			$title.text(state.roomName);
-		}
-
 		if (state.old && state.minimize !== state.old.minimize) {
 			checkMsg();
 		}
