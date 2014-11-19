@@ -10,7 +10,7 @@ libsb.on("config-show", function(tabs, next) {
 	if (!room.params.antiAbuse) room.params.antiAbuse = {};
 	if (!room.params.antiAbuse.block) room.params.antiAbuse.block = {english: false};
 	if (!room.params.antiAbuse.customPhrases) room.params.antiAbuse.customPhrases = [];
-	if (!room.params.antiAbuse.spam) room.params.antiAbuse.spam = true;
+	if (typeof room.params.antiAbuse.spam !== 'boolean') room.params.antiAbuse.spam = true;
 	var antiAbuse = room.params.antiAbuse;
 	var $div = $("<div>").append(
 		formField("Spam control", "toggle", "spam-control", antiAbuse.spam),
