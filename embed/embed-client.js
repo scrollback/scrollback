@@ -85,8 +85,6 @@ function classesOnLoad(embed) {
 
 	if (embed.minimize) {
 		$("body").addClass("toast-minimized");
-	} else {
-		$("body").addClass("toast-maximized");
 	}
 
 	if (embed && embed.form) {
@@ -97,11 +95,11 @@ function classesOnLoad(embed) {
 function toastChange(state, next) {
 	if (state.source === "embed" && state.embed && state.embed.form === "toast" && state.hasOwnProperty("minimize")) {
 		if (state.minimize) {
-			$("body").removeClass("toast-maximized").addClass("toast-minimized");
+			$("body").addClass("toast-minimized");
 
 			window.parent.postMessage("minimize", parentHost);
 		} else {
-			$("body").removeClass("toast-minimized").addClass("toast-maximized");
+			$("body").removeClass("toast-minimized");
 
 			window.parent.postMessage("maximize", parentHost);
 		}
