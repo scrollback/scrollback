@@ -13,7 +13,6 @@ function openUrl(capabilities, server, roomid) {
 }
 
 function loginPersona(driver, id, password, callback) {
-
 	findVisibleElementByClass(driver, ".js-has-auth-menu", function(el) {
 		var win;
 		el.click().
@@ -23,6 +22,7 @@ function loginPersona(driver, id, password, callback) {
 			return driver.getAllWindowHandles();
 		}).then(function(w) {
 			win = w;
+			console.log("windows", win);
 			return driver.switchTo().window(win[1]);
 		}).then(function() {
 			return q.delay(4000);
@@ -57,6 +57,7 @@ function loginFacebook(driver, email, pass, callback) {
 				return driver.getAllWindowHandles();
 			}).then(function(w) {
 				win = w;
+				console.log("windows", win);
 				return driver.switchTo().window(win[1]);
 			}).then(function() {
 				return q.delay(4000);
