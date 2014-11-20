@@ -30,11 +30,13 @@ module.exports = function(core) {
 				textArray = suffixArray(textMessage);
 				for (var i = 0; i < customPhrases.length; i++) {
 					var phrase = customPhrases[i];
-					var r = search(textMessage, textArray, phrase);
-					if (r >= 0 && isSeparated(text, r, r + phrase.length - 1)) {
-						log.d("Found phrase: ", phrase);
-						message.labels.abusive = 1;
-						return callback();
+					if (phrase) {//phrase can not be empty string.
+						var r = search(textMessage, textArray, phrase);
+						if (r >= 0 && isSeparated(text, r, r + phrase.length - 1)) {
+							log.d("Found phrase: ", phrase);
+							message.labels.abusive = 1;
+							return callback();
+						}
 					}
 				}
 			}
@@ -66,12 +68,17 @@ module.exports = function(core) {
 			var a = action.room.params.antiAbuse.customPhrases;
 			var l = 0;
 			if (a instanceof Array) {
-				a.forEach(function(sentance) {
+				for (var i = 0;i < a.length;i++) {
+					var sentance = a[i];
+					if (!sentance) {
+						a.splice(i, 1);
+						i--;
+					}
 					l += sentance.length;
 					if (l > limit) {
 						return callback(new Error("ERR_LIMIT_NOT_ALLOWED"));
 					}
-				});
+				}
 				callback();
 			} else {
 				callback(new Error("INVALID_WORDBLOCK"));
