@@ -1127,7 +1127,7 @@ body {
     &:before {
         @include asset-content("arrow-down");
 
-        margin: 0 .75em 0 .25em;
+        margin: 0 .5em;
         vertical-align: -.3em;
         line-height: 1em;
     }
