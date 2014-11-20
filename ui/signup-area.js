@@ -4,7 +4,7 @@
 var validate = require("../lib/validate.js");
 
 $(function() {
-	var signingUser, signingUp = false;
+	var signingUser, signingUp = false, $signupDialog;
 
 	function submitUser() {
 		var userId = $("#signup-id").val(),
@@ -26,7 +26,7 @@ $(function() {
 				picture: signingUser.picture,
 				identities: signingUser.identities,
 				params: {
-					pictures: [signingUser.picture]
+					pictures: signingUser.pictures
 				},
 				guides: {}
 			}
@@ -61,7 +61,9 @@ $(function() {
 	});*/
 
 	libsb.on("user-dn", function(action, next) {
-		$.modal("dismiss");
+		if ($signupDialog && $signupDialog.length) {
+			$signupDialog.modal("dismiss");
+		}
 
 		next();
 	}, 500);
@@ -70,8 +72,7 @@ $(function() {
 		if (init.auth && init.user.identities && !init.user.id) {
 			if (init.resource == libsb.resource) {
 				signingUser = init.user;
-
-				$("<div>").html($("#signup-dialog").html()).modal();
+				$signupDialog = $("<div>").html($("#signup-dialog").html()).modal();
 			}
 		}
 		next();

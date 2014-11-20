@@ -7,13 +7,12 @@ var gulp = require("gulp"),
 	source = require("vinyl-source-stream"),
 	buffer = require("vinyl-buffer"),
 	es = require("event-stream"),
-	map = require("map-stream"),
 	lazypipe = require("lazypipe"),
 	plumber = require("gulp-plumber"),
 	gutil = require("gulp-util"),
 	jshint = require("gulp-jshint"),
 	gitmodified = require("gulp-gitmodified"),
-	symlink = require("gulp-symlink"),
+	symlink = require("gulp-sym"),
 	concat = require("gulp-concat"),
 	striplogs = require("gulp-strip-debug"),
 	uglify = require("gulp-uglify"),
@@ -86,11 +85,17 @@ var buildscripts = lazypipe()
 	.pipe(!debug ? uglify : gutil.noop)
 	.pipe(!debug ? striplogs : gutil.noop);
 
-// Install the pre-commit hook
-gulp.task("hook", function() {
-	return gulp.src(".pre-commit")
-	.pipe(symlink(".git/hooks/pre-commit", { force: true }));
+// Install the GIT hooks
+gulp.task("hooks", function() {
+	return gulp.src([ ".git-hooks/pre-commit", ".git-hooks/post-merge" ])
+	.pipe(symlink([ ".git/hooks/pre-commit", ".git/hooks/post-merge" ], {
+		relative: true,
+		force: true
+	}));
 });
+
+// npm post-install hooks
+gulp.task("postinstall", [ "hooks" ]);
 
 // Lint JavaScript files
 gulp.task("lint", function() {
@@ -99,13 +104,7 @@ gulp.task("lint", function() {
 	.pipe(gitmodified("modified"))
 	.pipe(jshint())
 	.pipe(jshint.reporter("jshint-stylish"))
-	.pipe(map(function(file, cb) {
-		if (!file.jshint.success) {
-			process.exit(1);
-		}
-
-		cb(null, file);
-	}))
+	.pipe(jshint.reporter("fail"))
 	.on("error", gutil.log);
 });
 

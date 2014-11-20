@@ -39,7 +39,9 @@ module.exports = function (objCacheOps) {
 
 		var user = init.user;
 		
-		libsb.user = user;
+		if(user.id) {
+			libsb.user = user;	
+		}
 		
 		var occupantOf = init.occupantOf;
 		var memberOf = init.memberOf;
@@ -75,5 +77,5 @@ module.exports = function (objCacheOps) {
 		delete libsb.user;
 		localStorage.clear(); // clear LocalStorage on logout for security reasons
 		n();
-	}, 1000);
+	}, 10);
 };

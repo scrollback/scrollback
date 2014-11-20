@@ -49,9 +49,7 @@
 		</main>
 
 		<section data-embed="none" data-mode="normal search conf pref noroom profile" class="room-area column">
-			<div class="room-header">
-				<img src="{{server.protocol}}{{server.host}}/s/img/client/scrollback-small.svg" alt="scrollback"></a>
-			</div>
+			<div class="room-header"></div>
 
 			<div role="list" class="room-list hide-scroll js-area-rooms">
 				<a class="room-item"><span class="room-name"></span><span class="js-room-notifications-counter room-item-unread-count"></span></a>
@@ -63,26 +61,26 @@
 		</section>
 
 		<section class="meta-area column" data-mode="normal search conf pref">
-			<ul role="tablist" class="meta-tabs">
+			<ul role="tablist" class="meta-tabs custom-titlebar-bg custom-titlebar-fg">
 				<li data-embed="none" role="tab" class="rooms-button">
-					<svg class="rooms-icon" width="28" height="28" viewBox="0 0 28 28">
+					<svg class="rooms-icon " width="28" height="28" viewBox="0 0 28 28">
 						<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/back.svg#icon"></use>
 					</svg>
 				</li>
 				<li role="tab" data-mode="normal" class="tab tab-info">
-					<svg class="info-icon" width="28" height="28" viewBox="0 0 28 28">
+					<svg class="info-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
 						<path d="M 14 2 C 7.3735792 2 2 7.3735792 2 14 C 2 20.62642 7.3735792 26 14 26 C 20.62642 26 26 20.62642 26 14 C 26 7.3735792 20.62642 2 14 2 z M 14 6.8125 C 15.322726 6.8125 16.40625 7.8647736 16.40625 9.1875 C 16.40625 10.510226 15.322726 11.59375 14 11.59375 C 12.677274 11.59375 11.59375 10.510226 11.59375 9.1875 C 11.59375 7.8647736 12.677274 6.8125 14 6.8125 z M 11.59375 14 L 16.40625 14 L 16.40625 21.1875 L 11.59375 21.1875 L 11.59375 14 z " fill-rule="evenodd"/>
 					</svg>
 				</li>
 				<li role="tab" data-mode="normal" class="tab tab-people">
-					<svg class="people-icon" width="28" height="28" viewBox="0 0 28 28">
+					<svg class="people-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
 						<g transform="translate(0,-0.99999997)">
 							<path d="M 18 3 C 14.661356 3.1329198 13.876148 4.0872521 12.4375 6.125 C 11.551696 9.2368721 11.544264 13.562326 13.125 15.6875 C 13.789392 16.695566 14.710574 18.012323 14 19.21875 C 13.157772 20.425576 11.936285 21.274758 10.65625 22 C 10.335695 21.729203 10.059232 21.406857 9.8125 21.0625 C 9.3150996 20.239936 9.9411717 19.343567 10.40625 18.65625 C 11.57514 17.07892 11.727449 13.640877 10.875 12.09375 C 10.104763 10.752473 9.3333338 10.051541 7 10 C 4.6629492 10.090627 3.8989522 10.735627 3.125 12.125 C 2.5049358 14.246731 2.4872348 17.207267 3.59375 18.65625 C 4.0588258 19.343567 4.6849022 20.239936 4.1875 21.0625 C 3.2680234 22.345792 1.7393752 23.050843 0.34375 23.75 C -0.1303642 23.79674 0.0317464 24.218801 0 24.53125 C -0.0007616 24.779736 -0.0662 25.085103 0.3125 24.96875 L 6.46875 24.96875 L 7.53125 24.96875 L 8.15625 24.96875 C 8.2220258 24.995069 8.30225 25.011413 8.4375 24.96875 L 13.6875 24.96875 C 13.808684 25.005981 13.892185 25.004871 13.9375 24.96875 L 17.25 24.96875 L 18.75 24.96875 L 27.5625 24.96875 C 28.1035 25.139391 28.001085 24.645697 28 24.28125 C 27.95464 23.822993 28.177318 23.224835 27.5 23.15625 C 25.506249 22.130819 23.313542 21.100911 22 19.21875 C 21.289429 18.012322 22.210603 16.695565 22.875 15.6875 C 24.544842 13.374081 24.749034 8.3316201 23.53125 6.0625 C 22.430912 4.0952942 21.333333 3.075592 18 3 z "/>
 						</g>
 					</svg>
 				</li>
 				<li role="tab" data-mode="normal" class="tab tab-threads">
-					<svg class="threads-icon" width="28" height="28" viewBox="0 0 28 28">
+					<svg class="threads-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
 						<path d="M 5.199999,4.0000001 C 2,4.0000001 2,4.0000001 2,7.3328459 L 2,17.331384 C 2,20.664241 2,21.664 5.199999,21.664 L 10,21.664 c 4.2544,4.447679 4.247999,4.447679 8,0 l 4.8,0 c 3.2,0 3.2,-0.999759 3.2,-4.332616 L 26,7.3328459 C 26,4.0000001 26,4.0000001 22.8,4.0000001 l -17.600001,0 M 6,8 18,8 18,10 6,10 m 4,2 12,0 0,2 -12,-0.0015 M 6,16 l 12,0 0,2 -12,0"/>
 					</svg>
 				</li>
@@ -93,10 +91,13 @@
 			</ul>
 			<div data-mode="normal search" class="meta-panes">
 				<div role="tabpanel" class="pane pane-info">
-					<div class="pane-info-wrap hide-scroll">
-						<h2 class="info-title"></h2>
-						<p class="info-description"></p>
-						<a data-role="owner" class="button configure-button" data-string="Configure room"></a>
+					<div class="pane-info-wrap">
+						<div class="pane-info-content hide-scroll">
+							<h2 class="info-title"></h2>
+							<p class="info-description"></p>
+							<a data-role="owner" class="button configure-button" data-string="Configure room"></a>
+						</div>
+						<div class="pane-info-privacy">We respect your privacy. <a href="http://web.scrollback.io/privacy" target="_blank">Learn more</a>.</div>
 					</div>
 				</div>
 				<div role="tabpanel" class="pane pane-people">
@@ -133,28 +134,29 @@
 		</section>
 
 		<section role="main" data-mode="normal search conf pref" class="main-area column">
-			<div data-mode="normal search conf pref" class="title-bar">
+			<div data-mode="normal search conf pref" class="title-bar custom-titlebar-bg custom-titlebar-fg">
 				<div class="left-area">
 					<a class="meta-button">
 						<span data-embed="toast canvas" class="meta-button-logo">
-							<svg class="meta-icon" width="28" height="28" viewBox="0 0 28 28">
-								<path d="m 14.000045,1020.3622 -10.000045,10 5.664746,0 4.335208,-4.3664 4.335305,4.3664 5.664766,0 z" width="524.41" height="372.05" transform="matrix(0.9999986,0,0,0.9999986,8.5999958e-6,-1020.3608)" class="sb-icon-top"/>
-								<g class="sb-icon-bottom">
+							<svg class="meta-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
+								<path d="m 14.000045,1020.3622 -10.000045,10 5.664746,0 4.335208,-4.3664 4.335305,4.3664 5.664766,0 z" width="524.41" height="372.05" transform="matrix(0.9999986,0,0,0.9999986,8.5999958e-6,-1020.3608)" class="sb-icon-top custom-titlebar-sb-color"/>
+								<g class="sb-icon-bottom custom-titlebar-fg">
 									<path d="m 4,11.999803 0,3.999994 19.999972,0 0,-3.999994 z"/>
 									<path d="m 14.000043,1048.3622 -10.000046,-10 5.664746,0 4.335208,4.3664 4.335305,-4.3664 5.664766,0 z" width="524.41" height="372.05" transform="matrix(0.9999986,0,0,0.9999986,8.5999958e-6,-1020.3608)"/>
 								</g>
 							</svg>
 						</span>
 						<span class="meta-button-back">
-							<svg class="meta-icon" width="28" height="28" viewBox="0 0 28 28">
+							<svg class="meta-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
 								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/back.svg#icon"></use>
 							</svg>
 						</span>
 					</a>
 					<h2 data-mode="normal" data-embed="none" class="room-title" id="room-title"></h2>
-					<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
+					<a data-mode="normal" data-embed="none" data-role="user" class="follow-button follow-room-action" role="button">
 						<svg class="follow-icon" width="28" height="28" viewBox="0 0 28 28">
-							<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#icon"></use>
+							<use class="fill custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#fill"></use>
+							<use class="stroke custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#stroke"></use>
 						</svg>
 					</a>
 					<div data-mode="conf pref search" class="action-buttons">
@@ -165,20 +167,28 @@
 				</div>
 				<div data-mode="normal search" class="right-area">
 
-					<a data-mode="normal" data-string="data-tooltip::Search" class="search-button" role="button">
+					<a data-mode="normal" data-embed="none" data-string="data-tooltip::Search" class="search-button" role="button">
 						<svg class="search-icon" width="28" height="28" viewBox="0 0 28 28">
 							<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/search.svg#icon"></use>
 						</svg>
 					</a>
 
 					<div data-embed="toast canvas" class="embed-area">
+
+						<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
+							<svg class="follow-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
+								<use class="fill custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#fill"></use>
+								<use class="stroke custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#stroke"></use>
+							</svg>
+						</a>
+
 						<div data-embed="toast" class="embed-action-minimize embed-button">
-							<svg class="minimize-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
+							<svg class="minimize-icon embed-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
 								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/minimize.svg#icon"></use>
 							</svg>
 						</div>
 						<div class="embed-action-fullview embed-button">
-							<svg class="fullview-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
+							<svg class="fullview-icon embed-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
 								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/fullview.svg#icon"></use>
 							</svg>
 						</div>
@@ -195,7 +205,7 @@
 				</div>
 			</div>
 			<div data-mode="normal search" class="content-area">
-				<div class="chat-area-container hide-scroll">
+				<div class="chat-area-container">
 					<div class="chat-position"></div>
 					<div class="chat-scroll-to-bottom">Scroll to bottom</div>
 					<div class="chat-area hide-scroll">
@@ -234,19 +244,19 @@
 		</section>
 
 		<section data-mode="home" class="home-area content-area-full">
-			<div class="title-bar">
+			<div class="title-bar custom-titlebar-bg custom-titlebar-fg">
 				<div class="left-area">
-					<div class="header-image"><img src="{{server.protocol}}{{server.host}}/s/img/client/scrollback-small-dark.svg" alt="scrollback"></div>
+					<div class="header-image"></div>
 				</div>
 				<div class="right-area">
 					<div data-embed="toast canvas" class="embed-area">
 						<div data-embed="toast" class="embed-action-minimize embed-button">
-							<svg class="minimize-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
+							<svg class="minimize-icon embed-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
 								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/minimize.svg#icon"></use>
 							</svg>
 						</div>
 						<div class="embed-action-fullview embed-button">
-							<svg class="fullview-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
+							<svg class="fullview-icon embed-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
 								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/fullview.svg#icon"></use>
 							</svg>
 						</div>
@@ -262,32 +272,34 @@
 					</div>
 				</div>
 			</div>
-			<div class="home-area-container content-area-full">
-				<div class="home-area-cover">
-					<form id="home-go-to-room-form" class="home-area-cover-content">
-						<input id="home-go-to-room-entry" type="text" data-string="placeholder::Enter a room name" autofocus><input id="home-go-to-room-button" type="submit" value="Go to room">
-					</form>
-				</div>
+			<div class="home-area-container">
 				<div class="card-container-wrap hide-scroll">
-					<div class="card-container hide-scroll js-area-home-feed">
-						<div class="card-item-wrap">
-							<div class="card-item">
-								<div class="card-segment card-header">
-									<div class="card-header-title"></div>
-									<div class="card-header-badge js-room-notifications-counter"></div>
-								</div>
-								<div class="card-segment card-content">
-									<div class="card-content-title"></div>
-									<div class="card-content-summary"></div>
-								</div>
-								<div class="card-segment card-actions">
-									<div class="card-actions-view" data-string="View room"></div>
-<!--
-								<div class="card-actions-online"><span class="card-actions-online-number">0</span> people talking</div>
--->
+					<div class="home-area-cover">
+						<form id="home-go-to-room-form" class="home-area-cover-content">
+							<input id="home-go-to-room-entry" type="text" data-string="placeholder::Enter a room name" autofocus><input id="home-go-to-room-button" type="submit" value="Go to room">
+						</form>
+					</div>
+					<div class="home-area-section">
+						<h2 class="home-area-heading">My rooms</h2>
+						<div class="card-container hide-scroll js-area-home-feed-mine">
+							<div class="card-item-wrap">
+								<div class="card-item">
+									<div class="card-segment card-header">
+										<div class="card-header-title"></div>
+										<div class="card-header-badge js-room-notifications-counter"></div>
+									</div>
+									<div class="card-segment card-content">
+										<div class="card-content-title"></div>
+										<div class="card-content-summary"></div>
+									</div>
 								</div>
 							</div>
 						</div>
+						<div class="home-area-no-my-rooms" data-string="You are not following any rooms :-("></div>
+					</div>
+					<div class="home-area-section">
+						<h2 class="home-area-heading">Featured rooms</h2>
+						<div class="card-container hide-scroll js-area-home-feed-featured"></div>
 					</div>
 				</div>
 			</div>
@@ -309,11 +321,11 @@
 			</div>
 		</section>
 
-		<section data-embed="toast" class="minimize-bar">
+		<section data-embed="toast" class="minimize-bar custom-titlebar-bg custom-titlebar-fg">
 			<div class="minimize-bar-button minimize-logo">
-				<svg class="minimize-bar-icon" width="28" height="28" viewBox="0 0 28 28">
-					<path d="m 14.000045,1020.3622 -10.000045,10 5.664746,0 4.335208,-4.3664 4.335305,4.3664 5.664766,0 z" width="524.41" height="372.05" transform="matrix(0.9999986,0,0,0.9999986,8.5999958e-6,-1020.3608)" class="sb-icon-top"/>
-					<g class="sb-icon-bottom">
+				<svg class="minimize-bar-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
+					<path d="m 14.000045,1020.3622 -10.000045,10 5.664746,0 4.335208,-4.3664 4.335305,4.3664 5.664766,0 z" width="524.41" height="372.05" transform="matrix(0.9999986,0,0,0.9999986,8.5999958e-6,-1020.3608)" class="sb-icon-top custom-titlebar-sb-color"/>
+					<g class="sb-icon-bottom custom-titlebar-fg">
 						<path d="m 4,11.999803 0,3.999994 19.999972,0 0,-3.999994 z"/>
 						<path d="m 14.000043,1048.3622 -10.000046,-10 5.664746,0 4.335208,4.3664 4.335305,-4.3664 5.664766,0 z" width="524.41" height="372.05" transform="matrix(0.9999986,0,0,0.9999986,8.5999958e-6,-1020.3608)"/>
 					</g>
@@ -326,8 +338,9 @@
 		<section data-state="online" data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
 			<div class="content-view-area">
 				<h2 data-string="Sign in to get started."></h2>
-				<p>
-					<a class="button facebook js-phonegap-fb-login" data-string="Sign in with Facebook"></a>
+				<p class="phonegap-login-buttons">
+					<a class="button facebook js-phonegap-fb-login" data-string="Facebook"></a>
+					<a class="button google js-phonegap-google-login" data-string="Google"></a>
 				</p>
 			</div>
 		</section>

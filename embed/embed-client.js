@@ -1,22 +1,28 @@
 /* jshint browser: true */
 /* global $*/
-var parseURL = require("../lib/parseURL.js");
 
-/*  status flags.*/
-var verificationStatus = false,
+var Color = require("../lib/color.js"),
+	parseURL = require("../lib/parseURL.js"),
+	stringUtils = require("../lib/stringUtils.js"),
+	/* status flags */
+	verificationStatus = false,
 	bootingDone = false,
 	verified = false,
 	verificationTimeout = false,
-	suggestedNick;
-
-/*  lasting objects*/
-var embed, token, domain, path, preBootQueue = [],
+	suggestedNick,
+	/*  lasting objects*/
+	embed, token, domain, path, preBootQueue = [],
 	queue = [],
 	parentHost;
+
+function openFullView() {
+	window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
+}
 
 function sendDomainChallenge() {
 	token = Math.random() * Math.random();
 	parentHost = embed.origin.protocol + "//" + embed.origin.host;
+
 	window.parent.postMessage(JSON.stringify({
 		type: "domain-challenge",
 		token: token
@@ -27,6 +33,7 @@ function sendDomainChallenge() {
 			verificationStatus = true;
 			verified = false;
 			verificationTimeout = true;
+
 			while (preBootQueue.length) {
 				(preBootQueue.shift())();
 			}
@@ -37,13 +44,19 @@ function sendDomainChallenge() {
 function verifyDomainResponse(data) {
 	domain = embed.origin.host;
 	path = embed.origin.path;
-	if (verificationTimeout) return;
+
+	if (verificationTimeout) {
+		return;
+	}
+
 	if (data.token == token) {
 		verified = true;
 	} else {
 		verified = false;
 	}
+
 	verificationStatus = true;
+
 	while (preBootQueue.length) {
 		(preBootQueue.shift())();
 	}
@@ -55,6 +68,7 @@ function parseResponse(data) {
 	} catch (e) {
 		data = {};
 	}
+
 	return data;
 }
 
@@ -91,12 +105,72 @@ function toastChange(state, next) {
 	next();
 }
 
+function generateCss(selector, styleBlock) {
+	var r = [];
+
+	r.push("\n" + selector + " {");
+
+	for (var prop in styleBlock) {
+		r.push(prop + ":" + styleBlock[prop] + "!important;");
+	}
+
+	r.push("}");
+
+	return r.join("\n");
+}
+
+function insertCss(embed) {
+	var r = [], colorObj, titlebarFg;
+
+	if (!embed) {
+		return;
+	}
+
+	if (embed.titlebarColor) {
+		colorObj =  new Color(embed.titlebarColor);
+
+		if (colorObj.luma < 65) {
+			titlebarFg = "#fff";
+		} else {
+			titlebarFg = "#333";
+		}
+
+		if (colorObj.saturation > 10) {
+			r.push(generateCss(".custom-titlebar-sb-color", {
+				"color": titlebarFg,
+				"fill": titlebarFg
+			}));
+		}
+
+		r.push(generateCss(".custom-titlebar-bg", {
+			"background-color": embed.titlebarColor
+		}));
+
+		r.push(generateCss(".custom-titlebar-fg", {
+			"color": titlebarFg,
+			"fill": titlebarFg
+		}));
+
+		r.push(generateCss(".custom-titlebar-stroke", {
+			"stroke": titlebarFg
+		}));
+	}
+
+	if (embed.backgroundImage) {
+		r.push(generateCss(".custom-titlebar-image", { "background-image": "url('" + embed.titlebarImage + "')" }));
+	}
+
+	if (!r.length) {
+		return;
+	}
+
+	$("head").append($("<style>").text(r.join(" ")));
+}
+
 module.exports = function(libsb) {
 	$(function() {
 		// Handle fullview button click
-		$(".embed-action-fullview").on("click", function() {
-			window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, ""), "_blank");
-		});
+		$(".embed-action-fullview").on("click", openFullView);
 
 		// Handle minimize
 		$(".embed-action-minimize").on("click", function() {
@@ -127,6 +201,7 @@ module.exports = function(libsb) {
 	});
 
 	var url = parseURL(window.location.pathname, window.location.search);
+
 	embed = url.embed;
 
 	if (window.parent !== window) {
@@ -168,20 +243,39 @@ module.exports = function(libsb) {
 		verificationStatus = true;
 	}
 
+	insertCss(embed);
+
 	libsb.on("navigate", function(state, next) {
 		function processNavigate() {
 			var guides;
-			//				console.log("DATA:", {booted: libsb.hasBooted, verificationStatus: verificationStatus,verificationTimeout: verificationTimeout, verified: verified, domain: domain, path: path, state: state});
+
 			if (state.source == "boot") {
 				bootingDone = true;
 				state.embed = embed;
+
+				if ((navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
+					 navigator.userAgent.match(/AppleWebKit/) &&
+					 navigator.userAgent.match(/Safari/)) &&
+					embed &&
+					embed.form === "toast"
+				   ) {
+					$(document).on("click", function(e) {
+						if (!$(e.target).closest(".title-bar, .minimize-bar").length) {
+							e.stopPropagation();
+
+							openFullView();
+						}
+					});
+				}
 			}
 
 			if (state.room && state.room === "object") {
 				guides = state.room.guides;
 				if (!state.old || !state.old.roomName || state.roomName != state.old.roomName) {
 					if (guides && guides.http && guides.http.allowedDomains && guides.http.allowedDomains.length) {
-						if (!verified || guides.http.allowedDomains.indexOf(domain) == -1) state.room = 'embed-disallowed';
+						if (!verified || guides.http.allowedDomains.indexOf(domain) == -1) {
+							state.room = "embed-disallowed";
+						}
 					}
 				}
 			}
@@ -215,8 +309,13 @@ module.exports = function(libsb) {
 
 			next();
 		}
-		if (libsb.hasBooted) processInit();
-		else queue.push(processInit);
+
+		if (libsb.hasBooted) {
+			processInit();
+		} else {
+			queue.push(processInit);
+		}
 	}, 500);
+
 	libsb.on("navigate", toastChange, 500);
 };

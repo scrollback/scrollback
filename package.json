@@ -40,7 +40,7 @@
   "scripts": {
     "start": "node index",
     "test": "node_modules/.bin/mocha test/test.js",
-    "postinstall": "gulp hook"
+    "postinstall": "gulp postinstall"
   },
   "engines": {
     "node": ">=0.8"
@@ -68,7 +68,7 @@
     "sockjs-client": "latest",
     "twit": "~1.1.12",
     "underscore": "latest",
-    "valid": "git://github.com/scrollback/valid.git",
+    "valid": "git://github.com/scrollback/valid.git#v0.0.1",
     "winston": "^0.7.3"
   },
   "optionalDependencies": {},
@@ -91,13 +91,12 @@
     "gulp-rename": "latest",
     "gulp-ruby-sass": "latest",
     "gulp-strip-debug": "latest",
-    "gulp-symlink": "latest",
+    "gulp-sym": "latest",
     "gulp-uglify": "latest",
     "gulp-util": "latest",
     "jshint-stylish": "latest",
     "lazypipe": "latest",
     "main-bower-files": "latest",
-    "map-stream": "latest",
     "mocha": "latest",
     "mocha-html-reporter": "git://github.com/kamalkishor1991/mocha-html-reporter.git#defc65cc72b6ed965caff1fb1c2d323ca0f5a319",
     "selenium-webdriver": "latest",

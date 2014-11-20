@@ -26,4 +26,14 @@ $(function() {
 		});
 
 	});
+	
+	libsb.on("navigate", function(state, next) {
+		if (state.tab !== state.old.tab) {
+			if (state.tab && state.mode == "normal"){
+				$(".tab.current").removeClass("current");
+				$(".tab-" + state.tab).addClass("current");
+			}
+		}
+		next();
+	}, 100);
 });

@@ -81,7 +81,7 @@ var desktopnotify = require("../ui/desktopnotify.js"),
 	}());
 
 libsb.on('text-dn', function(text, next) {
-	var sound = (libsb.user && libsb.user.params && libsb.user.params.notifications && libsb.user.params.notifications.sound);
+	var sound = (libsb.user && libsb.user.params && libsb.user.params.notifications && typeof libsb.user.params.notifications.sound == "boolean")? libsb.user.params.notifications.sound: true;
 
 	if (libsb.user && text.mentions && text.mentions.indexOf(libsb.user.id) > -1) {
 		browserNotify(text.text, true, sound);

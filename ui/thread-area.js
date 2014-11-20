@@ -165,7 +165,8 @@ var threadEl = require("./thread.js"),
 
 	$(function() {
 		$threads = $(".thread-item-container");
-
+		window.thread = $threads;
+		
 		$threads.infinite({
 			scrollSpace: 2000,
 			fillSpace: 1000,
@@ -220,6 +221,35 @@ var threadEl = require("./thread.js"),
 		});
 	});
 
+	
+	
+	libsb.on("text-dn", function(action, next) {
+		var newThread = null,
+			element,
+			i, l;
+		if (action.labels.startOfThread && $threads.data("lower-limit")) {
+
+			for (i = 0, l = action.threads.length; i < l; i++) {
+				if (action.threads[i].id.indexOf(action.id) === 0) {
+					newThread = action.threads[i];
+					break;
+				}
+			}
+			if (newThread) {
+				element = threadEl.render(null, newThread, newThread.startTime);
+				if (element) {
+					$threads.addBelow(element);
+					if($threads.scrollHeight-($threads.height() + $threads.scrollTop()) <50){
+						$threads.scrollToBottom();
+					}
+				}
+			}
+
+		}
+
+		next();
+	}, 100);
+	
 	libsb.on('navigate', function(state, next) {
 		if (state.old && state.thread !== state.old.thread) {
 			$(".thread-item.current").removeClass("current");
