@@ -82,7 +82,7 @@ var threadEl = require("./thread.js"),
 		libsb.getThreads(query, function(err, t) {
 			var threads = t.results;
 			if (err) throw err; // TODO: handle the error properly.
-
+			if(t.to !== currentState.roomName) return callback([]);
 			if (!index && threads.length === 0) return callback([false]);
 
 			if (before) {
