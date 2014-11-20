@@ -16,7 +16,7 @@ module.exports = function(capabilities, options) {
 			q.delay(timeout).then(function() {
 				return driver.switchTo().frame(0); //if there is only one frame
 			}).then(function() {
-				return driver.findElement(webdriver.By.css('.embed')).isDisplayed();
+				return driver.findElement(webdriver.By.css('.user-area')).isDisplayed();
 			}).then(function(t) {
 				assert.equal(t, true, "page is not loaded");
 				driver.quit();
@@ -31,9 +31,9 @@ module.exports = function(capabilities, options) {
 			q.delay(timeout).then(function() {
 				return driver.switchTo().frame(0);
 			}).then(function() {
-				return driver.findElement(webdriver.By.css('.minimize-room-title')).isDisplayed();
+				return driver.findElement(webdriver.By.css('.user-area')).isDisplayed();
 			}).then(function(t) {
-				assert.equal(t, true, "page is not loaded");
+				assert.equal(t, false, "page is not loaded");
 				driver.quit();
 				done();
 			});
