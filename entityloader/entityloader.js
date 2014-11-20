@@ -1,5 +1,6 @@
 var crypto = require('crypto') /*, log = require("../lib/logger.js")*/ ;
 var names = require('../lib/generate.js').names;
+var MathUtils = require('../lib/MathUtils.js')();
 var uid = require('../lib/generate.js').uid;
 var config = require("../config.js");
 var internalSession = Object.keys(config.whitelists)[0];
@@ -352,6 +353,7 @@ function initializerUser(action, callback) {
 }
 
 function generateNick(suggestedNick, callback) {
+	var lowBound = 1, upBound = 1;
 	if (!suggestedNick) suggestedNick = names(6);
 	suggestedNick = suggestedNick.toLowerCase();
 
@@ -359,11 +361,17 @@ function generateNick(suggestedNick, callback) {
 	function checkUser(suggestedNick, attemptC, callback) {
 		var ct = 0, result = true;
 		var trying = suggestedNick;
-		if (attemptC) trying += attemptC;
+		
+		if (attemptC) {
+			lowBound = upBound;
+			upBound = 1 << attemptC;
+			trying += MathUtils.random(lowBound, upBound);
+		}
+		
 		if (attemptC >= config.entityloader.nickRetries) return callback(names(6));
 		function done(r) {
 			result &= r;
-			if (++ct >= 2) {
+			if (++ct >= 3) {
 				if (result) {
 					callback(trying);
 				} else {
@@ -384,6 +392,7 @@ function generateNick(suggestedNick, callback) {
 			});
 		}
 		checkRoomUser("getRooms", trying);
+		checkRoomUser("getUsers", trying);
 		checkRoomUser("getUsers", "guest-" + trying);
 
 	}

@@ -1,6 +1,7 @@
 var config = require("../config.js"),
 	crypto = require('crypto'),
 	request = require("request"),
+	log = require('../lib/logger.js'),
 	core,
 	internalSession = Object.keys(config.whitelists)[0];
 
@@ -42,7 +43,8 @@ function fbAuth(action, callback) {
 						if (err) return callback(err);
 						try {
 							user = JSON.parse(body);
-							if (user.error) {
+							if (user.error || !user.email) {
+								if(!user.email) log.e("Facebook login failed: ", body);
 								return callback(new Error(user.error));
 							}
 							core.emit("getUsers", {
@@ -55,7 +57,8 @@ function fbAuth(action, callback) {
 									action.user = {};
 									action.user.identities = ["mailto:" + user.email];
 									fbpic = action.user.picture = "https://graph.facebook.com/" + user.id + "/picture?type=square";
-									gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
+									gravatar = 'https://gravatar.com/avatar/' + 	crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';	
+									
 									action.user.params = {
 										pictures: [fbpic, gravatar]
 									};
