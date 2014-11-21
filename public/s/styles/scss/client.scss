@@ -791,23 +791,40 @@ body {
             .view-meta &, .view-rooms & { @include transform(rotate(180deg)); }
         }
     }
+
+    .meta-button-logo {
+        .meta-icon {
+            &, &:focus, &:hover, &:active { opacity: 1; }
+        }
+    }
 }
 
 .embed {
     .meta-button { @include meta-logo-visible; }
 
-    &:focus, &:hover, &:active {
-        .meta-button { @include meta-back-visible; }
-    }
+    &:not(.toast-minimized) {
+        &:focus, &:hover, &:active {
+            .meta-button { @include meta-back-visible; }
+        }
 
-    &.view-meta {
-        .meta-button { @include meta-back-visible; }
+        &.view-meta {
+            .meta-button { @include meta-back-visible; }
+        }
     }
 }
 
 .sb-icon-top { fill: $accent-color; }
 
 .sb-icon-bottom { fill: $dark-color; }
+
+.title-logotype {
+    .title-logotype-icon {
+        padding: .25em 0;
+        fill: $dark-color;
+    }
+
+    .has-messages & { display: none; }
+}
 
 .title-bar {
     @include flexbox;
@@ -844,6 +861,8 @@ body {
     @include justify-content(flex-end);
     @include align-items(center);
     @include align-content(center);
+
+    .toast-minimized & { display: none; }
 }
 
 .room-title {
@@ -950,49 +969,13 @@ body {
     }
 }
 
-.minimize-bar {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 300;
-    height: $bar-height;
-    width: 100%;
-    background-color: darken($light-color, 5%);
-    color: $dark-color;
-
-    .minimized & {
-        display: table;
-        table-layout: fixed; /* make tables responsive */
-    }
-}
-
-.minimize-logo {
-    @include title-icon(minimize-bar-icon);
-
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-    width: 3em;
-}
-
-.minimize-room-title {
-    display: table-cell;
-    vertical-align: middle;
-    font-size: 1.2em;
-    font-weight: 700;
-
-    .has-messages & { display: none; }
-}
-
 .minimize-ticker {
     display: none;
 
     .has-messages & {
         @extend %fadein;
 
-        display: table-cell;
-        vertical-align: middle;
+        display: block;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
