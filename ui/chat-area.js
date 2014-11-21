@@ -194,6 +194,9 @@ $(function() {
 				$chatScrollToBottom.addClass('visible');
 				$chatPosition.addClass("visible").text(format.friendlyTime(state.time, new Date().getTime()));
 				setTimeout(function() {
+					$chatScrollToBottom.removeClass("visible");
+				}, 3000);
+				setTimeout(function() {
 					$chatPosition.removeClass("visible");
 				}, 1000);
 			} else {

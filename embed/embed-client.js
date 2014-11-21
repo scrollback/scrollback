@@ -82,9 +82,11 @@ function classesOnLoad(embed) {
 			$("body").addClass("theme-" + embed.theme);
 		}
 	}
+
 	if (embed.minimize) {
-		$("body").addClass("minimized");
+		$("body").addClass("toast-minimized");
 	}
+
 	if (embed && embed.form) {
 		$("body").addClass("embed-" + embed.form);
 	}
@@ -93,11 +95,11 @@ function classesOnLoad(embed) {
 function toastChange(state, next) {
 	if (state.source === "embed" && state.embed && state.embed.form === "toast" && state.hasOwnProperty("minimize")) {
 		if (state.minimize) {
-			$("body").addClass("minimized");
+			$("body").addClass("toast-minimized");
 
 			window.parent.postMessage("minimize", parentHost);
 		} else {
-			$("body").removeClass("minimized");
+			$("body").removeClass("toast-minimized");
 
 			window.parent.postMessage("maximize", parentHost);
 		}
@@ -172,31 +174,22 @@ module.exports = function(libsb) {
 		// Handle fullview button click
 		$(".embed-action-fullview").on("click", openFullView);
 
-		// Handle minimize
-		$(".embed-action-minimize").on("click", function() {
-			libsb.emit("navigate", {
-				minimize: true,
-				source: "embed",
-				event: "action-minimize"
-			});
-		});
-
+		// Handle minimize and maximize
 		$(".title-bar").on("click", function(e) {
-			if (e.target === e.currentTarget) {
+			if ($("body").hasClass("toast-minimized")) {
+				libsb.emit("navigate", {
+					minimize: false,
+					source: "embed",
+					event: "minimize-bar"
+				});
+			} else if ((e.target === e.currentTarget) || $(e.target).closest(".embed-action-minimize").length) {
 				libsb.emit("navigate", {
 					minimize: true,
+					view: "normal",
 					source: "embed",
 					event: "title-bar"
 				});
 			}
-		});
-
-		$(".minimize-bar").on("click", function() {
-			libsb.emit("navigate", {
-				minimize: false,
-				source: "embed",
-				event: "minimize-bar"
-			});
 		});
 	});
 
@@ -214,10 +207,6 @@ module.exports = function(libsb) {
 
 			suggestedNick = embed.nick;
 			classesOnLoad(embed);
-
-			if (embed.minimize) {
-				$("body").addClass("minimized");
-			}
 
 			if (embed.origin) {
 				window.onmessage = function(e) {

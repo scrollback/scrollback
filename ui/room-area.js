@@ -9,7 +9,7 @@ var LISTENING = 1,
 
 // Add entry to user menu
 libsb.on("user-menu", function(menu, next) {
-	if (window.currentState.mode !== "home") {
+	if (window.currentState.mode !== "home" && !window.currentState.embed) {
 		menu.items.homefeed = {
 			text: "My rooms",
 			prio: 100,

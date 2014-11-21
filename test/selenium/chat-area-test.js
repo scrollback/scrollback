@@ -120,18 +120,6 @@ module.exports = function(capabilities, options) {
 			}, 15000);
 		});
 
-		it("login Menu test", function(done) {
-			this.timeout(timeout);
-			driver.findElement(webdriver.By.css('.user-area')).click().
-			then(function() {
-				driver.findElement(webdriver.By.css('.auth-menu')).isDisplayed().
-				then(function(d) {
-					assert(true, d, "sign in options not visible");
-					done();
-				});
-			});
-		});
-
 		after(function(done) {
 			this.timeout(timeout);
 			driver.quit().then(done);
