@@ -19,7 +19,6 @@ $(window).on("message", function(event) {
 
 	if (!data.command || data.command != "signin") return;
 	sendInit(action);
-	sendInit(action);
 });
 
 $(window).on("phonegapmsg", function(e, p) {
