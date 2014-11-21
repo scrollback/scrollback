@@ -64,7 +64,9 @@ $(function() {
 				libsb.getTexts(query, function(err, t) {
 					var texts = t.results.slice(0, t.results.length);
 					if (err) throw err; // TODO: handle the error properly.
-
+					if(t.to !== currentState.roomName) {
+						return callback([]);
+					}
 					if (!index && texts.length === "0") {
 						return callback([false]);
 					}
