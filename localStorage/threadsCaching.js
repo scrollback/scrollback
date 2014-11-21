@@ -2,6 +2,10 @@
 
 module.exports = function (ArrayCacheOp) {
 	libsb.on('getThreads', function (query, next) {
+		// ArrayCache cannot handle ref queries without time property, sending to server.
+		if (query.hasOwnProperty('ref') && !query.hasOwnProperty('time')) {
+			return next();
+		}
 		if (query.hasOwnProperty('q') || query.hasOwnProperty('noCache') ||
 			query.hasOwnProperty('updateTime')) { // search queries should always be served from the server.
 			return next();
