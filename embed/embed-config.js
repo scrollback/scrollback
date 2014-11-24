@@ -2,7 +2,8 @@
 /* global $, libsb */
 
 var formField = require("../lib/formField.js"),
-	embedForm, titlebarColor;
+	embedForm, titlebarColor,
+	stringUtils = require('../lib/stringUtils.js');
 
 function getEmbedCode() {
 	var code = '<script>window.scrollback = %s;(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>',
@@ -12,20 +13,11 @@ function getEmbedCode() {
 			form: embedForm
 		};
 
-	return parse(code, JSON.stringify(embedObj));
+	return stringUtils.format(code, JSON.stringify(embedObj));
 }
 
 function getMailToLink() {
 	return "mailto:?body=" + encodeURIComponent(getEmbedCode()) + "&subject=" + encodeURIComponent("Embed Code for room: " + window.currentState.roomName);
-}
-
-function parse(str) {
-	var args = [].slice.call(arguments, 1),
-		i = 0;
-
-	return str.replace(/%s/g, function() {
-		return args[i++];
-	});
 }
 
 libsb.on("config-show", function(conf, next) {
