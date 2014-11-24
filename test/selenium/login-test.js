@@ -31,6 +31,7 @@ module.exports = function(capabilities, options) {
 		//logout test
 
 		it("logout", function(done) {
+			this.timeout(1.5 * timeout);
 			console.log("logging out...");
 			testUtils.logout(driver, function() {
 				driver.findElement(webdriver.By.css('.sign-in')).isDisplayed().
@@ -72,8 +73,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		after(function(done) {
-			driver.quit();
-			done();
+			driver.quit().then(done);
 		});
 	});
 };
