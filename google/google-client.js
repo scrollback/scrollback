@@ -38,11 +38,20 @@ function loginWithGoogle() {
 
 $('.js-phonegap-google-login').click(loginWithGoogle);
 
+var google = {
+	text: 'Google',
+	prio: 100,
+	action: loginWithGoogle
+};
+
 libsb.on('auth-menu', function(menu, next) {
-	menu.buttons.google = {
-		text: 'Google',
-		prio: 100,
-		action: loginWithGoogle
-	};
+	menu.buttons.google = google;
+
 	next();
 }, 1000);
+
+libsb.on("auth-dialog", function(dialog, next) {
+	dialog.buttons.google = google;
+
+	next();
+}, 300);

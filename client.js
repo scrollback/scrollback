@@ -34,6 +34,7 @@ require('./client-entityloader/client-entityloader.js')(libsb);
 
 require('./ui/infinite.js');
 require('./ui/hide-scroll.js');
+require('./ui/dialogs.js');
 require('./ui/user-area.js');
 require('./ui/chat.js');
 require('./ui/chat-area.js');
@@ -64,6 +65,7 @@ require('./persona/persona-client.js');
 // phonegap specific
 require('./push-notification/push-notification-client.js');
 require('./phonegap/phonegap-client.js');
+
 // components
 require('./ui/guest-settings.js');
 require('./ui/quicknotify.js');
