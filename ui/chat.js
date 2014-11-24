@@ -10,7 +10,6 @@ $(function() {
 
 	chatEl.render = function($el, text, isOwner) {
 
-		//text.text = emojify(text.text);
 		var t;
 		
 		isOwner = isOwner ? true : false;
@@ -25,7 +24,7 @@ $(function() {
 			t = text.text;
 			t = emojify(t);
 //			$el.find(".chat-message").html(format.linkify(format.textToHtml(t || "")));
-			$el.find(".chat-message").html(format.formatText(t));
+			$el.find(".chat-message").html(format.formatTextToMD(t));
 			$el.find(".chat-timestamp").text(format.friendlyTime(text.time, new Date().getTime()));
 			$el.attr("data-index", text.time + "-" + text.id);
 			$el.attr("id", "chat-" + text.id);
