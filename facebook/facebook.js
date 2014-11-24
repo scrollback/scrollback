@@ -66,7 +66,7 @@ function fbAuth(action, callback) {
 								action.user = data.results[0];
 								if(!action.user.params.pictures) action.user.params.pictures = [];
 								
-								fbpic = action.user.picture = "https://graph.facebook.com/" + user.id + "/picture?type=square";
+								fbpic = "https://graph.facebook.com/" + user.id + "/picture?type=square";
 								gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
 								
 								if(action.user.params.pictures.indexOf(fbpic)<0) {
