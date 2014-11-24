@@ -1,4 +1,5 @@
 var config = require("../config.js"),
+	log = require("../lib/logger.js"),
 	crypto = require('crypto'),
 	request = require("request"),
 	core,
@@ -42,8 +43,8 @@ function fbAuth(action, callback) {
 						if (err) return callback(err);
 						try {
 							user = JSON.parse(body);
-							if (user.error) {
-								return callback(new Error(user.error));
+							if (user.error || !user.email) {
+								return callback(new Error(user.error || "Error in facebook sign in."));
 							}
 							core.emit("getUsers", {
 								identity: "mailto:" + user.email,
@@ -67,13 +68,19 @@ function fbAuth(action, callback) {
 								if(!action.user.params.pictures) action.user.params.pictures = [];
 								
 								fbpic = "https://graph.facebook.com/" + user.id + "/picture?type=square";
-								gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
+
+								try {
+									gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
+								} catch (e) {
+									log.d(action, action.old );
+									log.i("Error creating the gravatar image.", "\n" + body);
+								}
 								
 								if(action.user.params.pictures.indexOf(fbpic)<0) {
 									action.user.params.pictures.push(fbpic);
 									sendUpdate = true;
 								}
-								if(action.user.params.pictures.indexOf(gravatar)<0) {
+								if(gravatar && action.user.params.pictures.indexOf(gravatar)<0) {
 									action.user.params.pictures.push(gravatar);
 									sendUpdate = true;
 								}
