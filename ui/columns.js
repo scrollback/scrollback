@@ -17,7 +17,7 @@ $(function() {
 		}
 	});
 
-	$(".meta-button").on("click", function() {
+	$(".meta-button-back").on("click", function() {
 		if (window.currentState.view === "meta") {
 			libsb.emit("navigate", {
 				view: "normal",

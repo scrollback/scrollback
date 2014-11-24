@@ -63,9 +63,9 @@ require('./persona/persona-client.js');
 
 // phonegap specific
 require('./push-notification/push-notification-client.js');
-require('./ui/guest-settings.js');
-
+require('./phonegap/phonegap-client.js');
 // components
+require('./ui/guest-settings.js');
 require('./ui/quicknotify.js');
 require('./ui/load-indicator.js');
 require('./ui/appcache.js');
