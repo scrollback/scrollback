@@ -41,7 +41,7 @@ var stringUtils = require('../lib/stringUtils.js'),
 			"none": "not authorized to perform this action",
 			"guest": "a guest user",
 			"follower": "a follower of this room",
-			"owner": "the owner of thisroom"
+			"owner": "the owner of this room"
 		},
 		"authErrTpl": "You should be %s to %s, but you're %s. Try %s first."
 	}
