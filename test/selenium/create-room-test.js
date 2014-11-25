@@ -19,10 +19,10 @@ module.exports = function(capabilities, options) {
 
 		it("login persona on create room view", function(done) {
 			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function() {
-				q.delay(5000).then(function() {
+				q.delay(3000).then(function() {
 					return driver.findElement(webdriver.By.id("noroom-view-create")).click();
 				}).then(function() {
-					return q.delay(5000);
+					return q.delay(2000);
 				}).then(function() {
 					return driver.findElement(webdriver.By.id("createroom-save")).click();
 				}).then(function() {
