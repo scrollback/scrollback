@@ -17,8 +17,8 @@ module.exports = function(capabilities, options) {
 			setTimeout(done, 1.5 * timeout);
 		});
 
-		it("login persona on create room view", function(done) {
-			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function() {
+		it("login facebook on create room view", function(done) {
+			testUtils.loginFacebook(driver, config.facebookUser.email, config.facebookUser.password, function() {
 				q.delay(5000).then(function() {
 					return driver.findElement(webdriver.By.id("noroom-view-create")).click();
 				}).then(function() {

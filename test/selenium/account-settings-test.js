@@ -12,8 +12,8 @@ module.exports = function(capabilities, options) {
 		before(function(done) {
 			this.timeout(4 * timeOut);
 			driver = testUtils.openUrl(capabilities, server, "testroom1");
-			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function() {
-				console.log("logging in through Persona...");
+			testUtils.loginFacebook(driver, config.facebookUser.email, config.facebookUser.password, function() {
+				console.log("logging in through facebook...");
 				done();
 			});
 		});

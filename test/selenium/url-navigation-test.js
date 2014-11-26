@@ -11,16 +11,16 @@ module.exports = function(capabilities, options) {
 
 		before(function(done) {
 			this.timeout(3 * timeout);
-			driver = testUtils.openUrl(capabilities, server, "room1");
+			driver = testUtils.openUrl(capabilities, server, "facebook");
 			setTimeout(done, 1.5 * timeout);
 		});
 
 		it("test for navigation to default edit page", function(done) {
 			console.log("Default edit page");
-			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password,
+			testUtils.loginFacebook(driver, config.facebookUser.email, config.facebookUser.password,
 				function() {
 					setTimeout(function() {
-						driver.get("https://stage.scrollback.io/room1/edit").
+						driver.get("https://stage.scrollback.io/facebook/edit").
 						then(function() {
 							return q.delay(3000);
 						}).
@@ -38,7 +38,7 @@ module.exports = function(capabilities, options) {
 		it("test for navigation to info page", function(done) {
 			this.timeout(4 * timeout);
 			console.log("testing for info area");
-			driver.get("https://stage.scrollback.io/room1?tab=info").
+			driver.get("https://stage.scrollback.io/facebook?tab=info").
 			then(function() {
 				return q.delay(3000);
 			}).then(function() {
@@ -53,7 +53,7 @@ module.exports = function(capabilities, options) {
 		it("test for navigation to people page", function(done) {
 			this.timeout(4 * timeout);
 			console.log("testing for people area");
-			driver.get("https://stage.scrollback.io/room1?tab=people").
+			driver.get("https://stage.scrollback.io/facebook?tab=people").
 			then(function() {
 				return q.delay(3000);
 			}).then(function() {
@@ -68,7 +68,7 @@ module.exports = function(capabilities, options) {
 		it("test for navigation to threads page", function(done) {
 			this.timeout(4 * timeout);
 			console.log("testing for threads area");
-			driver.get("https://stage.scrollback.io/room1?tab=threads").
+			driver.get("https://stage.scrollback.io/facebook?tab=threads").
 			then(function() {
 				return q.delay(3000);
 			}).then(function() {
@@ -90,7 +90,7 @@ module.exports = function(capabilities, options) {
 				index = Math.floor(Math.random() * items.length),
 				item = items[index];
 			console.log("testing for edit", item);
-			driver.get("https://stage.scrollback.io/room1/edit?tab=" + item).
+			driver.get("https://stage.scrollback.io/facebook/edit?tab=" + item).
 			then(function() {
 				return q.delay(4000);
 			}).then(function() {
