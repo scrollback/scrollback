@@ -1,4 +1,5 @@
 @import "../lace/animations";
+@import "../lace/dropshadow";
 
 %nowrap {
 	white-space: nowrap;
@@ -12,7 +13,7 @@
 	@include addcards(1);
 
 	display: inline-block;
-	padding: 1em;
+	padding: .5em;
 
 	@media only screen and (min-width: 50em) { @include addcards(2); }
 
@@ -22,6 +23,7 @@
 }
 
 .card-item {
+	@include dropshadow(1);
 	@extend %snappy;
 
 	background-color: $dark-color;
@@ -30,9 +32,9 @@
 	overflow: hidden;
 	cursor: pointer;
 
-	&:focus, &:hover { box-shadow: 0 0 10px 0 rgba(0,0,0,.1); }
+	&:focus, &:hover { @include dropshadow(2); }
 
-	&:active { box-shadow: 0 0 10px 0 rgba(0,0,0,.3); }
+	&:active { @include dropshadow(3); }
 
 	@for $i from 1 through length($palette) {
 		$color: nth($palette, $i);
@@ -49,7 +51,7 @@
 }
 
 .card-segment {
-	padding: 1em;
+	padding: .5em 1.5em;
 
 	&:last-child { border-bottom: none; }
 }
@@ -79,14 +81,14 @@
 }
 
 .card-header-badge {
-	@include appear;
+	@extend %appear;
 	@extend %nowrap;
 
-	background-color: fade-out($light-color, .5);
+	background-color: $light-color;
 	color: $dark-color;
 	font-weight: 700;
 	font-size: .8em;
-	padding: 0 .5em;
+	padding: .25em .5em;
 	min-width: 2em;
 	border-radius: $roundness;
 	text-align: center;
@@ -117,5 +119,5 @@
 .card-content-summary {
 	@extend %nowrap;
 
-	color: fade-out($light-color, .2);
+	color: $light-color;
 }
