@@ -48,31 +48,33 @@ function loginPersona(driver, id, password, callback) {
 }
 
 function loginFacebook(driver, email, pass, callback) {
-	driver.findElement(webdriver.By.css('.user-area')).click().
-	then(function() {
-		findVisibleElementByClass(driver, ".facebook", function(el) {
-			var win;
-			el.click().
-			then(function() {
-				return driver.getAllWindowHandles();
-			}).then(function(w) {
-				win = w;
-				return driver.switchTo().window(win[1]);
-			}).then(function() {
-				return q.delay(4000);
-			}).then(function() {
-				console.log("entering email");
-				return driver.findElement(webdriver.By.id("email")).sendKeys(email);
-			}).then(function() {
-				return driver.findElement(webdriver.By.id("pass")).sendKeys(pass);
-			}).then(function() {
-				return driver.findElement(webdriver.By.id("u_0_1")).click();
-			}).then(function() {
-				console.log("logging in...");
-				driver.switchTo().window(win[0]);
-			}).then(function() {
-				return q.delay(5000);
-			}).then(callback);
+	findVisibleElementByClass(driver, ".js-has-auth-menu", function(el) {
+		el.click().
+		then(function() {
+			findVisibleElementByClass(driver, ".facebook", function(el) {
+				var win;
+				el.click().
+				then(function() {
+					return driver.getAllWindowHandles();
+				}).then(function(w) {
+					win = w;
+					return driver.switchTo().window(win[1]);
+				}).then(function() {
+					return q.delay(4000);
+				}).then(function() {
+					console.log("entering email");
+					return driver.findElement(webdriver.By.id("email")).sendKeys(email);
+				}).then(function() {
+					return driver.findElement(webdriver.By.id("pass")).sendKeys(pass);
+				}).then(function() {
+					return driver.findElement(webdriver.By.id("u_0_1")).click();
+				}).then(function() {
+					console.log("logging in...");
+					driver.switchTo().window(win[0]);
+				}).then(function() {
+					return q.delay(5000);
+				}).then(callback);
+			});
 		});
 	});
 }
