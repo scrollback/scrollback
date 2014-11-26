@@ -7,8 +7,8 @@ var webdriver = require('browserstack-webdriver'),
 module.exports = function(capabilities, options) {
 	describe('Room settings test: ' + options.id, function() {
 		this.timeout(4 * timeOut);
-		var driver, server = options.server;
-		var random = Math.random() + "";
+		var driver, server = options.server,
+			random = Math.random() + "";
 
 		before(function(done) {
 			this.timeout(4 * timeOut);

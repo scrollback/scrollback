@@ -126,11 +126,8 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("select Thread", function(done) {
-			this.timeout(2 * timeout);
-			var threads;
-			var index;
-			var messages;
-			var id;
+			this.timeout(timeout);
+			var threads, index, messages, id;
 			driver.findElements(webdriver.By.css('.thread-item')).
 			then(function(t) {
 				threads = t;

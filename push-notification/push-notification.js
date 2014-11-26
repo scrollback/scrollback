@@ -22,7 +22,7 @@ module.exports = function(core) {
 				ref: id,
 				session: internalSession
 			}, function(err, data) {
-				if (!data || !data.results || !data.results[0]) done();
+				if (!data || !data.results || !data.results[0]) return done();
 				userList.push(data.results[0]);
 				done();
 			});
