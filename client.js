@@ -26,6 +26,7 @@ var libsb = require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(libsb);
 require('./socket/socket-client')(libsb);
 require('./calls-to-action/calls-to-action-client.js');
+require('./dialogs/dialogs-client.js');
 
 // bootup related
 require('./client-init/client-init.js')(libsb);
@@ -34,7 +35,6 @@ require('./client-entityloader/client-entityloader.js')(libsb);
 
 require('./ui/infinite.js');
 require('./ui/hide-scroll.js');
-require('./ui/dialogs.js');
 require('./ui/user-area.js');
 require('./ui/chat.js');
 require('./ui/chat-area.js');
