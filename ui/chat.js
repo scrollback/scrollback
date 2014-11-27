@@ -3,15 +3,12 @@
 
 var chatEl = {},
 	timeBefore;
-var emojify = require('./emojify.js');
 
 $(function() {
 	var $template = $(".chat-item").eq(0);
 
 	chatEl.render = function($el, text, isOwner) {
 
-		var t;
-		
 		isOwner = isOwner ? true : false;
 
 		$el = $el || $template.clone(false);
@@ -21,10 +18,8 @@ $(function() {
 			$el.attr("data-index", (text.endTime || text.startTime || 0) + "-missing");
 		} else {
 			$el.find(".chat-nick").text(text.from.replace(/^guest-/, ""));
-			t = text.text;
-			t = emojify(t);
-//			$el.find(".chat-message").html(format.linkify(format.textToHtml(t || "")));
-			$el.find(".chat-message").html(format.formatTextToMD(t));
+//			$el.find(".chat-message").html(format.linkify(format.textToHtml(text.text || "")));
+			$el.find(".chat-message").html(format.formatTextToMD(text.text));
 			$el.find(".chat-timestamp").text(format.friendlyTime(text.time, new Date().getTime()));
 			$el.attr("data-index", text.time + "-" + text.id);
 			$el.attr("id", "chat-" + text.id);

@@ -7,7 +7,7 @@ $(function() {
 	var $template = $(".pane-info").eq(0);
 	infoArea.render = function(room) {
 		$template.find('.info-title').text(room.id);
-		$template.find('.info-description').html(format.textToHtml(room.description || "This room has no description."));
+		$template.find('.info-description').html(format.formatTextToMD(room.description || "This room has no description."));
 	};
 	// change this. Probably a single app should make a decisions on room to which it should send a back message to.
 	libsb.on("init-dn", function(q, n) {
