@@ -1,45 +1,10 @@
 /* jshint browser: true */
 /* global $, libsb */
 
-var dialogTemplates = require("./dialogs-templates.js");
+var dialogTemplates = require("./dialogs-templates.js"),
+	signingup;
 
-function showDialog(type) {
-	var template, eventname;
-
-	if (!type) {
-		$.modal("dismiss");
-		return;
-	}
-
-	// Default dialog template
-	template = {
-		title: "", // Modal title
-		description: "", // A description to be displayed under title
-		buttons: {}, // List of objects, e.g. - google: { text: "Google+", action: function() {} }
-		content: [], // Additional content to be displayed under buttons
-		action: null // Action button, e.g. - { text: "Create account", action: function() {} }
-	};
-
-	template = $.extend(template, dialogTemplates[type]);
-	eventname = type;
-
-	switch (type) {
-		case "createroom":
-			if (!libsb.user) {
-				return;
-			}
-
-			if ((/^guest-/).test(libsb.user.id)) {
-				template = $.extend(template, dialogTemplates["auth-createroom"]);
-				eventname = "auth";
-			} else if ((/^guest-/).test(libsb.user.from)) {
-				template = $.extend(template, dialogTemplates["signup-createroom"]);
-				eventname = "auth";
-			}
-
-			break;
-	}
-
+function showDialog(eventname, type, template) {
 	libsb.emit(eventname + "-dialog", template, function(err, dialog) {
 		var $modal = $("<form>").addClass(type + "-dialog " + eventname + "-dialog dialog"),
 			$buttons, $content, $action;
@@ -92,18 +57,49 @@ function showDialog(type) {
 			dialog.action.action.apply($action, [ e ]);
 		});
 
-		$modal.modal();
+		$modal.modal().find("input[type=text]:not(disabled)").eq(0).focus();
 	});
 }
 
-// Emit a dialog event when navigate is called
-libsb.on("navigate", function(state, next) {
-	if ("dialog" in state.changes && state.source !== "modal-dismiss") {
-		showDialog(state.dialog);
+function emitDialog(type) {
+	var defaults, template, eventname;
+
+	if (!type) {
+		return $.modal("dismiss");
 	}
 
-	next();
-}, 500);
+	// Default dialog template
+	defaults = {
+		title: "", // Modal title
+		description: "", // A description to be displayed under title
+		buttons: {}, // List of objects, e.g. - google: { text: "Google+", action: function() {} }
+		content: [], // Additional content to be displayed under buttons
+		action: null // Action button, e.g. - { text: "Create account", action: function() {} }
+	};
+
+	template = (type in dialogTemplates) ? $.extend({}, defaults, dialogTemplates[type]) : $.extend({}, defaults);
+
+	eventname = type;
+
+	switch (type) {
+		case "createroom":
+			if (!libsb.user) {
+				return;
+			}
+
+			if (signingup) {
+				template = $.extend({}, defaults, dialogTemplates["signup-createroom"]);
+				signingup = false;
+			} else if ((/^guest-/).test(libsb.user.id)) {
+				template = $.extend({}, defaults, dialogTemplates["auth-createroom"]);
+				eventname = "auth";
+			}
+
+			break;
+	}
+
+	showDialog(eventname, type, template);
+}
 
 // When modal is dismissed, reset the dialog property to null
 $(document).on("modalDismissed", function() {
@@ -112,6 +108,35 @@ $(document).on("modalDismissed", function() {
 		source: "modal-dismiss"
 	});
 });
+
+// Emit a dialog event when navigate is called
+libsb.on("navigate", function(state, next) {
+	if (state.source === "dialog" || ("dialog" in state.changes && state.source !== "modal-dismiss")) {
+		emitDialog(state.dialog);
+	}
+
+	next();
+}, 500);
+
+libsb.on("init-dn", function(init, next) {
+	if (init.auth && init.user.identities && !init.user.id && init.resource == libsb.resource) {
+		signingup = true;
+	} else {
+		signingup = false;
+	}
+
+	if (window.currentState.dialog === "createroom") {
+		libsb.emit("navigate", {
+			dialog: "createroom",
+			source: "dialog"
+		});
+	} else if (signingup) {
+		libsb.emit("navigate", { dialog: "signup" });
+		signingup = false;
+	}
+
+	next();
+}, 500);
 
 libsb.on("createroom-dialog", function(dialog, next) {
 	next();

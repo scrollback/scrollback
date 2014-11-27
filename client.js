@@ -90,7 +90,6 @@ require('./ui/oauth-listener.js');
 require('./ui/conf-area.js');
 require('./ui/pref-area.js');
 require('./ui/noroom-area.js');
-require('./ui/signup-area.js');
 require('./ui/persona.js');
 require('./ui/message-menu.js');
 require('./ui/room-notifications.js');

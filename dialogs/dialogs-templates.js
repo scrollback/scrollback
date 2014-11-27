@@ -14,7 +14,9 @@ var validate = require("../lib/validate.js"),
 			],
 			action: {
 				text: "Create account",
-				action: function() {}
+				action: function() {
+					createUser("#signup-dialog-user", this);
+				}
 			}
 		},
 		"auth-createroom": {
@@ -22,7 +24,7 @@ var validate = require("../lib/validate.js"),
 			description: "You must sign in first.",
 			content: [
 				"<p>Choose a room name for your community.</p>",
-				"<input type='text' id='createroom-dialog-room' autofocus>"
+				"<input type='text' id='createroom-dialog-room' disabled>"
 			]
 		},
 		"signup-createroom": {
@@ -34,8 +36,19 @@ var validate = require("../lib/validate.js"),
 				"<input type='text' id='createroom-dialog-room' autofocus>"
 			],
 			action: {
-				text: "Create room",
-				action: function() {}
+				text: "Sign up & create room",
+				action: function() {
+					var $userEntry = $("#createroom-dialog-user"),
+						$roomEntry = $("#createroom-dialog-room");
+
+					if ($userEntry.val() === $roomEntry.val()) {
+						return showError("Room name and user name cannot be the same", $userEntry);
+					}
+
+					createUser($userEntry, this, function() {
+						createRoom($roomEntry, this);
+					});
+				}
 			}
 		},
 		"createroom": {
@@ -108,7 +121,7 @@ function checkExisting(name, callback) {
 
 }
 
-function createRoom(entry, button) {
+function createEntity(entry, button, callback) {
 	var $entry = $(entry),
 		$button = $(button),
 		name = $entry.val(),
@@ -126,23 +139,79 @@ function createRoom(entry, button) {
 		$button.removeClass("working");
 
 		if (isTaken) {
-			showError(name + " is not available!", entry);
+			showError(name + " is not available. May be try another?", entry);
 		} else {
 			showError(false);
 
-			libsb.emit("room-up", {
-				to: name,
-				room: {
-					id: name,
-					description: "",
-					params: {},
-					guides: {}
-				}
-			}, function() {
-				libsb.emit("navigate", { dialog: null });
-			});
+			if (typeof callback === "function") {
+				callback(name);
+			}
 		}
 
+	});
+}
+
+function createRoom(entry, button, callback) {
+	createEntity(entry, button, function(name) {
+		var errormessage = "We could not create the room. Please refresh the page and try again.";
+
+		if (!name) {
+			showError(errormessage, entry);
+		}
+
+		libsb.emit("room-up", {
+			to: name,
+			room: {
+				id: name,
+				description: "",
+				params: {},
+				guides: {}
+			}
+		}, function(err) {
+			console.log("hey", err);
+
+			if (err) {
+				return showError(errormessage, entry);
+			} else {
+				if (typeof callback === "function") {
+					callback();
+				}
+
+				libsb.emit("navigate", { dialog: null });
+			}
+		});
+	});
+}
+
+function createUser(entry, button, callback) {
+	createEntity(entry, button, function(name) {
+		var errormessage = "We could not create your account. Please refresh the page and try again.";
+
+		if (!name || !libsb.user || !libsb.user.identities) {
+			return showError(errormessage, entry);
+		}
+
+		libsb.emit("user-up", {
+			user: {
+				id: name,
+				identities: libsb.user.identities,
+				picture: libsb.user.picture,
+				params: {
+					pictures: libsb.user.params.pictures
+				},
+				guides: {}
+			}
+		}, function(err) {
+			if (err) {
+				return showError(errormessage, entry);
+			} else {
+				if (typeof callback === "function") {
+					callback();
+				}
+
+				libsb.emit("navigate", { dialog: null });
+			}
+		});
 	});
 }
 
