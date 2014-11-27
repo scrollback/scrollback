@@ -87,7 +87,7 @@ function registerPushNotification() {
 function unregisterPushNotification(l, n) {
 	pushNotification = window.plugins && window.plugins.pushNotification;
 	if (!pushNotification) return n();
-	userObj = libsb.user;// userObj is needed inside unregisterSuccesHandler, which is an async function.
+	userObj = libsb.user; // userObj is needed inside unregisterSuccesHandler, which is an async function.
 	registrationID = localStorage.phonegapRegId;
 	pushNotification.unregister(unregisterSuccessHandler, errorHandler, {
 		"senderID": config.pushNotification.gcm.senderID
@@ -120,6 +120,8 @@ function mapDevicetoUser(regId) {
 	if (typeof device === "undefined") return;
 	var user = libsb.user;
 	if (typeof regId === "undefined" || typeof user === "undefined") return;
+	if (!window.plugins || !window.plugins.uniqueDeviceID) return;
+
 	/* Checks if device is registered to User for push notification, if not adds it */
 
 	if (user && typeof user.params.pushNotifications === "undefined") {
@@ -128,27 +130,30 @@ function mapDevicetoUser(regId) {
 		};
 	}
 
-	var thisDevice = {
-		deviceName: device.model,
-		type: 'GCM',
-		registrationId: regId,
-		enabled: true
-	};
+	window.plugins.uniqueDeviceID.get(function(uuid) {
+		var thisDevice = {
+			deviceName: device.model,
+			type: 'GCM',
+			registrationId: regId,
+			uuid: uuid,
+			enabled: true
+		};
 
-	var devices = user && user.params.pushNotifications &&
-		user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
-
-	if (
-		devices.filter(function(d) {
-			return d.type === thisDevice.type && d.registrationId === thisDevice.registrationId;
-		}).length === 0
-	) {
-		devices.push(thisDevice);
-		user.params.pushNotifications.devices = devices;
-		libsb.emit('user-up', {
-			user: user
+		var devices = user && user.params.pushNotifications &&
+			user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
+		
+		// if device does not have a uuid, remove it; also remove it if it already exists in the list.
+		devices = devices.filter(function(d) {
+			return d.hasOwnProperty('uuid') && d.uuid !== thisDevice.uuid;
 		});
-	}
+		 
+        devices.push(thisDevice);
+        user.params.pushNotifications.devices = devices;
+        libsb.emit('user-up', {
+            user: user
+        });
+		
+	});
 }
 
 libsb.on('pref-save', function(user, next) {

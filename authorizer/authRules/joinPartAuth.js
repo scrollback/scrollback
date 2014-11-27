@@ -1,7 +1,7 @@
 var permissionWeights = require('../permissionWeights.js');
 var SbError = require('../../lib/SbError.js');
 function joinPart(action, callback) {
-	var openFollow = action.room.guides.authorizer && action.room.guides.authorizer.openFollow;
+	var openFollow = action.room.guides && action.room.guides.authorizer && action.room.guides.authorizer.openFollow;
 	if (typeof openFollow === "undefined") {
 		openFollow = true;
 	}
