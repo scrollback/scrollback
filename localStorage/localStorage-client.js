@@ -5,7 +5,7 @@ module.exports = function () {
 	var objCacheOps = require('./objCacheOps.js');
 	var config = require('../client-config.js');
 
-	require('./textsCaching.js')(arrayCacheOps);
+    require('./textsCaching.js')(arrayCacheOps);
 	require('./threadsCaching.js')(arrayCacheOps);
 	require('./occupantCaching.js')(arrayCacheOps);
 
