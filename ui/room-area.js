@@ -218,8 +218,12 @@ $(function() {
 	});
 
 	$gotoform.on("submit", function(e) {
-		var roomName = $gotoentry.val().toLowerCase(),
-			validation = validate(roomName);
+		var roomName = $gotoentry.val(),
+			validation;
+
+		roomName = (typeof roomName === "string") ? roomName : roomName.toLowerCase().trim();
+
+		validation = validate(roomName);
 
 		e.preventDefault();
 

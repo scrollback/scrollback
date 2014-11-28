@@ -40,10 +40,15 @@ var validate = require("../lib/validate.js"),
 				action: function() {
 					var $userEntry = $("#createroom-dialog-user"),
 						$roomEntry = $("#createroom-dialog-room"),
+						username = $userEntry.val(),
+						roomname = $roomEntry.val(),
 						self = this;
 
-					if ($userEntry.val() === $roomEntry.val()) {
-						return showError("Room name and user name cannot be the same", $userEntry);
+					username = (typeof username === "string") ? username : username.toLowerCase().trim();
+					roomname = (typeof roomname === "string") ? roomname : roomname.toLowerCase().trim();
+
+					if (username === roomname) {
+						return showError("User and room names cannot be the same", $userEntry);
 					}
 
 					createUser($userEntry, self, function() {
@@ -127,7 +132,11 @@ function createEntity(entry, button, callback) {
 	var $entry = $(entry),
 		$button = $(button),
 		name = $entry.val(),
-		validation = validate(name);
+		validation;
+
+	name = (typeof name === "string") ? name : name.toLowerCase().trim();
+
+	validation = validate(name);
 
 	if (!validation.isValid) {
 		showError(validation.error, entry);
