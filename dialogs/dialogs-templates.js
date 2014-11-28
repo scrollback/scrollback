@@ -58,6 +58,10 @@ function getDialogTemplates(opts) {
 						return showError("User and room names cannot be the same", $userEntry);
 					}
 
+					if (!roomname) {
+						return showError("Room name cannot be empty", $roomEntry);
+					}
+
 					createUser($userEntry, self, function() {
 						createRoom($roomEntry, self);
 					});
@@ -144,9 +148,7 @@ function createEntity(entry, button, callback) {
 	validation = validate(name);
 
 	if (!validation.isValid) {
-		showError(validation.error, entry);
-
-		return;
+		return showError(validation.error, entry);
 	}
 
 	$button.addClass("working");
