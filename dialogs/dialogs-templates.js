@@ -14,7 +14,7 @@ function getDialogTemplates(opts) {
 		},
 		"signup": {
 			title: "Finish sign up",
-			description: "Choose a username.",
+			description: "Choose a username",
 			content: [
 				"<input type='text' id='signup-dialog-user' value='" + userName + "' autofocus>",
 				"<p>Be creative. People in Scrollback will know you by this name.</p>"
@@ -28,18 +28,18 @@ function getDialogTemplates(opts) {
 		},
 		"auth-createroom": {
 			title: "Create a new room",
-			description: "You must sign in first.",
+			description: "You must sign in first",
 			content: [
-				"<p>Choose a room name for your community.</p>",
+				"<p>Choose a room name for your community</p>",
 				"<input type='text' id='createroom-dialog-room' value='" + roomName + "' disabled>"
 			]
 		},
 		"signup-createroom": {
 			title: "Create a new room",
 			content: [
-				"<p>Choose a user name.</p>",
+				"<p>Choose a username</p>",
 				"<input type='text' id='createroom-dialog-user' value='" + userName + "' autofocus>",
-				"<p>Choose a room name for your community.</p>",
+				"<p>Choose a room name for your community</p>",
 				"<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>"
 			],
 			action: {
@@ -73,7 +73,7 @@ function getDialogTemplates(opts) {
 		},
 		"createroom": {
 			title: "Create a new room",
-			description: "Choose a room name for your community.",
+			description: "Choose a room name for your community",
 			content: [ "<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>" ],
 			action: {
 				text: "Create room",
@@ -194,7 +194,7 @@ function createRoom(entry, button, callback) {
 			}
 
 			if (typeof callback === "function") {
-				return callback();
+				callback();
 			}
 
 			libsb.emit("navigate", { dialog: null });
