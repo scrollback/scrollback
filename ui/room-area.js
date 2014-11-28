@@ -73,7 +73,6 @@ $(function() {
 		$gotoform = $("#home-go-to-room-form"),
 		$gotoentry = $("#home-go-to-room-entry"),
 		$createRoomButton = $(".js-create-room"),
-		$noRoomCreateButton = $("#noroom-view-create"),
 		roomArea = {
 			add: function(roomObj) {
 				var done = false;
@@ -257,7 +256,7 @@ $(function() {
 	});
 
 	// Handle create new room
-	$noRoomCreateButton.add($createRoomButton).on("click", function() {
+	$createRoomButton.on("click", function() {
 		libsb.emit("navigate", { dialog: "createroom" });
 	});
 });

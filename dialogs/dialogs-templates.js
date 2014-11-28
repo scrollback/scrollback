@@ -2,14 +2,21 @@
 /* global $, libsb */
 
 var validate = require("../lib/validate.js"),
-	dialogTemplates = {
+	afterSignUp;
+
+function getDialogTemplates(opts) {
+	var roomName = (opts && opts.roomName) ? opts.roomName : "",
+		userName = (opts && opts.userName) ? opts.userName : "";
+
+	return {
 		"auth": {
 			title: "Sign in to Scrollback"
 		},
 		"signup": {
 			title: "Finish sign up",
+			description: "Choose a username.",
 			content: [
-				"<input type='text' id='signup-dialog-user' autofocus>",
+				"<input type='text' id='signup-dialog-user' value='" + userName + "' autofocus>",
 				"<p>Be creative. People in Scrollback will know you by this name.</p>"
 			],
 			action: {
@@ -24,16 +31,16 @@ var validate = require("../lib/validate.js"),
 			description: "You must sign in first.",
 			content: [
 				"<p>Choose a room name for your community.</p>",
-				"<input type='text' id='createroom-dialog-room' disabled>"
+				"<input type='text' id='createroom-dialog-room' value='" + roomName + "' disabled>"
 			]
 		},
 		"signup-createroom": {
 			title: "Create a new room",
 			content: [
 				"<p>Choose a user name.</p>",
-				"<input type='text' id='createroom-dialog-user' autofocus>",
+				"<input type='text' id='createroom-dialog-user' value='" + userName + "' autofocus>",
 				"<p>Choose a room name for your community.</p>",
-				"<input type='text' id='createroom-dialog-room' autofocus>"
+				"<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>"
 			],
 			action: {
 				text: "Sign up & create room",
@@ -60,9 +67,7 @@ var validate = require("../lib/validate.js"),
 		"createroom": {
 			title: "Create a new room",
 			description: "Choose a room name for your community.",
-			content: [
-				"<input type='text' id='createroom-dialog-room' autofocus>"
-			],
+			content: [ "<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>" ],
 			action: {
 				text: "Create room",
 				action: function() {
@@ -70,8 +75,8 @@ var validate = require("../lib/validate.js"),
 				}
 			}
 		}
-	},
-	afterSignUp;
+	};
+}
 
 function showError(error, entry) {
 	var $entry = $(entry),
@@ -233,4 +238,4 @@ libsb.on("user-dn", function(user, next) {
 	next();
 }, 800);
 
-module.exports = dialogTemplates;
+module.exports = getDialogTemplates;

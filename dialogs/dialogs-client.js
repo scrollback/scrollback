@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $, libsb */
 
-var dialogTemplates = require("./dialogs-templates.js"),
+var getDialogTemplates = require("./dialogs-templates.js"),
 	signingUp;
 
 function showDialog(eventname, type, template) {
@@ -61,7 +61,8 @@ function showDialog(eventname, type, template) {
 }
 
 function emitDialog(type) {
-	var defaults, template, eventname;
+	var defaults, template, eventname,
+		dialogTemplates;
 
 	if (!type) {
 		return $.modal("dismiss");
@@ -75,6 +76,10 @@ function emitDialog(type) {
 		content: [], // Additional content to be displayed under buttons
 		action: null // Action button, e.g. - { text: "Create account", action: function() {} }
 	};
+
+	dialogTemplates = getDialogTemplates({
+		roomName: (window.currentState.mode === "noroom") ? window.currentState.roomName : ""
+	});
 
 	template = (type in dialogTemplates) ? $.extend({}, defaults, dialogTemplates[type]) : $.extend({}, defaults);
 
