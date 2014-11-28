@@ -56,7 +56,9 @@ function showDialog(eventname, type, template) {
 			dialog.action.action.apply($action, [ e ]);
 		});
 
-		$modal.modal().find("input[type=text]:not(disabled)").eq(0).focus();
+		$modal.modal({
+			dismiss: (typeof dialog.dismiss === "boolean") ? dialog.dismiss : true
+		}).find("input[type=text]:not(disabled)").eq(0).focus();
 	});
 }
 
@@ -74,7 +76,8 @@ function emitDialog(type) {
 		description: "", // A description to be displayed under title
 		buttons: {}, // List of objects, e.g. - google: { text: "Google+", action: function() {} }
 		content: [], // Additional content to be displayed under buttons
-		action: null // Action button, e.g. - { text: "Create account", action: function() {} }
+		action: null, // Action button, e.g. - { text: "Create account", action: function() {} }
+		dismiss: true // Dialog is dismissable or not
 	};
 
 	dialogTemplates = getDialogTemplates({
