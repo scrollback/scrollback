@@ -220,7 +220,7 @@ $(function() {
 		var roomName = $gotoentry.val(),
 			validation;
 
-		roomName = (typeof roomName === "string") ? roomName : roomName.toLowerCase().trim();
+		roomName = (typeof roomName === "string") ? roomName.toLowerCase().trim() : "";
 
 		validation = validate(roomName);
 

@@ -51,8 +51,8 @@ function getDialogTemplates(opts) {
 						roomname = $roomEntry.val(),
 						self = this;
 
-					username = (typeof username === "string") ? username : username.toLowerCase().trim();
-					roomname = (typeof roomname === "string") ? roomname : roomname.toLowerCase().trim();
+					username = (typeof username === "string") ? username.toLowerCase().trim() : "";
+					roomname = (typeof roomname === "string") ? roomname.toLowerCase().trim() : "";
 
 					if (username === roomname) {
 						return showError("User and room names cannot be the same", $userEntry);
@@ -139,7 +139,7 @@ function createEntity(entry, button, callback) {
 		name = $entry.val(),
 		validation;
 
-	name = (typeof name === "string") ? name : name.toLowerCase().trim();
+	name = (typeof name === "string") ? name.toLowerCase().trim() : "";
 
 	validation = validate(name);
 
