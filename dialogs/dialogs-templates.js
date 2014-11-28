@@ -65,8 +65,16 @@ function getDialogTemplates(opts) {
 						return showError(validation.error, $roomEntry);
 					}
 
-					createUser($userEntry, self, function() {
-						createRoom($roomEntry, self);
+					checkExisting(roomname, function(isTaken) {
+						if (isTaken) {
+							showError(name + " is not available. May be try another?", $roomEntry);
+						} else {
+							showError(false);
+
+							createUser($userEntry, self, function() {
+								createRoom($roomEntry, self);
+							});
+						}
 					});
 				}
 			}
@@ -168,7 +176,6 @@ function createEntity(entry, button, callback) {
 				callback(name);
 			}
 		}
-
 	});
 }
 
