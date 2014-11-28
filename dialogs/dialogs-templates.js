@@ -49,7 +49,6 @@ function getDialogTemplates(opts) {
 						$roomEntry = $("#createroom-dialog-room"),
 						username = $userEntry.val(),
 						roomname = $roomEntry.val(),
-						validation,
 						self = this;
 
 					username = (typeof username === "string") ? username.toLowerCase().trim() : "";
@@ -59,22 +58,10 @@ function getDialogTemplates(opts) {
 						return showError("User and room names cannot be the same", $userEntry);
 					}
 
-					validation = validate(roomname);
-
-					if (!validation.isValid) {
-						return showError(validation.error, $roomEntry);
-					}
-
-					checkExisting(roomname, function(isTaken) {
-						if (isTaken) {
-							showError(name + " is not available. May be try another?", $roomEntry);
-						} else {
-							showError(false);
-
-							createUser($userEntry, self, function() {
-								createRoom($roomEntry, self);
-							});
-						}
+					validateName($roomEntry, self, "Room", function() {
+						createUser($userEntry, self, function() {
+							createRoom($roomEntry, self);
+						});
 					});
 				}
 			}
@@ -148,7 +135,7 @@ function checkExisting(name, callback) {
 
 }
 
-function createEntity(entry, button, callback) {
+function validateName(entry, button, type, callback) {
 	var $entry = $(entry),
 		$button = $(button),
 		name = $entry.val(),
@@ -159,7 +146,7 @@ function createEntity(entry, button, callback) {
 	validation = validate(name);
 
 	if (!validation.isValid) {
-		return showError(validation.error, entry);
+		return showError(type + " " + validation.error, entry);
 	}
 
 	$button.addClass("working");
@@ -180,7 +167,7 @@ function createEntity(entry, button, callback) {
 }
 
 function createRoom(entry, button, callback) {
-	createEntity(entry, button, function(name) {
+	validateName(entry, button, "Room", function(name) {
 		var errormessage = "We could not create the room. Please refresh the page and try again.";
 
 		if (!name) {
@@ -210,7 +197,7 @@ function createRoom(entry, button, callback) {
 }
 
 function createUser(entry, button, callback) {
-	createEntity(entry, button, function(name) {
+	validateName(entry, button, "User", function(name) {
 		var errormessage = "We could not create your account. Please refresh the page and try again.";
 
 		if (!name || !libsb.user || !libsb.user.identities) {
