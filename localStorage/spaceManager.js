@@ -63,12 +63,12 @@ module.exports = {
 			});
 			return;
 		}
-        
-        var that = this;
+
+		var that = this;
 
 		// clears elements in LocalStorage based on Least Recently Used strategy, if no arguments are passed.
 		if (that.backOffVal === Infinity) that.backOffVal = 1;
-        _.times(that.backOffVal, function() {
+		_.times(that.backOffVal, function() {
 			var leastTime = Infinity,
 				leastEntry;
 			for (var i in LRU) {
@@ -81,8 +81,8 @@ module.exports = {
 				delete LRU[leastEntry];
 				delete LS[leastEntry];
 			}
-            
-            that.backOffVal = that.backOffVal * 2;
+
+			that.backOffVal = that.backOffVal * 2;
 		});
 	}
 };
