@@ -39,14 +39,15 @@ var validate = require("../lib/validate.js"),
 				text: "Sign up & create room",
 				action: function() {
 					var $userEntry = $("#createroom-dialog-user"),
-						$roomEntry = $("#createroom-dialog-room");
+						$roomEntry = $("#createroom-dialog-room"),
+						self = this;
 
 					if ($userEntry.val() === $roomEntry.val()) {
 						return showError("Room name and user name cannot be the same", $userEntry);
 					}
 
-					createUser($userEntry, this, function() {
-						createRoom($roomEntry, this);
+					createUser($userEntry, self, function() {
+						createRoom($roomEntry, self);
 					});
 				}
 			}
@@ -64,7 +65,8 @@ var validate = require("../lib/validate.js"),
 				}
 			}
 		}
-	};
+	},
+	afterSignUp;
 
 function showError(error, entry) {
 	var $entry = $(entry),
@@ -156,7 +158,7 @@ function createRoom(entry, button, callback) {
 		var errormessage = "We could not create the room. Please refresh the page and try again.";
 
 		if (!name) {
-			showError(errormessage, entry);
+			return showError(errormessage, entry);
 		}
 
 		libsb.emit("room-up", {
@@ -168,17 +170,15 @@ function createRoom(entry, button, callback) {
 				guides: {}
 			}
 		}, function(err) {
-			console.log("hey", err);
-
 			if (err) {
 				return showError(errormessage, entry);
-			} else {
-				if (typeof callback === "function") {
-					callback();
-				}
-
-				libsb.emit("navigate", { dialog: null });
 			}
+
+			if (typeof callback === "function") {
+				return callback();
+			}
+
+			libsb.emit("navigate", { dialog: null });
 		});
 	});
 }
@@ -204,15 +204,24 @@ function createUser(entry, button, callback) {
 		}, function(err) {
 			if (err) {
 				return showError(errormessage, entry);
-			} else {
-				if (typeof callback === "function") {
-					callback();
-				}
-
-				libsb.emit("navigate", { dialog: null });
 			}
+
+			if (typeof callback === "function") {
+				afterSignUp = callback;
+			}
+
+			libsb.emit("navigate", { dialog: null });
 		});
 	});
 }
+
+libsb.on("user-dn", function(user, next) {
+	if (typeof afterSignUp === "function") {
+		afterSignUp();
+		afterSignUp = null;
+	}
+
+	next();
+}, 800);
 
 module.exports = dialogTemplates;

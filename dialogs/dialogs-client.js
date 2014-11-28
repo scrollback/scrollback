@@ -2,7 +2,7 @@
 /* global $, libsb */
 
 var dialogTemplates = require("./dialogs-templates.js"),
-	signingup;
+	signingUp;
 
 function showDialog(eventname, type, template) {
 	libsb.emit(eventname + "-dialog", template, function(err, dialog) {
@@ -47,7 +47,6 @@ function showDialog(eventname, type, template) {
 				type: "submit",
 				value: dialog.action.text
 			}).addClass("button dialog-action dialog-action-" + dialog.action.text.replace(/ /g, "-").toLowerCase())
-			.on("click", dialog.action.action)
 			.appendTo($modal);
 		}
 
@@ -87,9 +86,9 @@ function emitDialog(type) {
 				return;
 			}
 
-			if (signingup) {
+			if (signingUp) {
 				template = $.extend({}, defaults, dialogTemplates["signup-createroom"]);
-				signingup = false;
+				signingUp = false;
 			} else if ((/^guest-/).test(libsb.user.id)) {
 				template = $.extend({}, defaults, dialogTemplates["auth-createroom"]);
 				eventname = "auth";
@@ -120,9 +119,9 @@ libsb.on("navigate", function(state, next) {
 
 libsb.on("init-dn", function(init, next) {
 	if (init.auth && init.user.identities && !init.user.id && init.resource == libsb.resource) {
-		signingup = true;
+		signingUp = true;
 	} else {
-		signingup = false;
+		signingUp = false;
 	}
 
 	if (window.currentState.dialog === "createroom") {
@@ -130,9 +129,9 @@ libsb.on("init-dn", function(init, next) {
 			dialog: "createroom",
 			source: "dialog"
 		});
-	} else if (signingup) {
+	} else if (signingUp) {
 		libsb.emit("navigate", { dialog: "signup" });
-		signingup = false;
+		signingUp = false;
 	}
 
 	next();
