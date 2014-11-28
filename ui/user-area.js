@@ -120,6 +120,7 @@ $(function() {
 				window.location.reload();
 			}
 		};
+		dialog.dismiss = false;
 
 		next();
 	}, 500);
