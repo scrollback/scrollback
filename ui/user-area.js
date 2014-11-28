@@ -6,8 +6,7 @@ var showMenu = require("./showmenu.js");
 $(function() {
 	var $userAvatar = $(".sb-avatar"),
 		$userName = $(".sb-user"),
-		$roomTitle = $("#room-title"),
-		signoutText = $("#signedout-dialog").html();
+		$roomTitle = $("#room-title");
 
 	$(document).on("click", ".js-has-auth-menu", function() {
 		if ($("body").hasClass("role-guest")) {
@@ -88,6 +87,7 @@ $(function() {
 		$userAvatar.attr("src", action.user.picture);
 		next();
 	}, 100);
+
 	libsb.on("navigate", function(state, next) {
 		if (state && state.old && state.roomName && state.roomName !== state.old.roomName) {
 			$roomTitle.text(state.roomName);
@@ -101,23 +101,26 @@ $(function() {
 		next();
 	}, 100);
 
-	libsb.on("logout", function(p, n) {
-		var $signoutDialog = $("<div>").html(signoutText).modal({
-			dismiss: false
-		});
-
-		libsb.emit("navigate", {
-			view: "loggedout"
-		});
-
-		$signoutDialog.on("click", ".reload-page", function() {
-			location.reload();
-		});
-
-		n();
-	}, 100);
 	libsb.on("room-dn", function(action, next) {
 		if(action.to === currentState.roomName) setOwner();
 		next();
 	}, 25);
+
+	libsb.on("logout", function(action, next) {
+		libsb.emit("navigate", { dialog: "logout" });
+
+		next();
+	}, 100);
+
+	libsb.on("logout-dialog", function(dialog, next) {
+		dialog.title = "You've been signed out!";
+		dialog.action = {
+			text: "Go back as guest",
+			action: function() {
+				window.location.reload();
+			}
+		};
+
+		next();
+	}, 500);
 });
