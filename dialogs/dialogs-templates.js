@@ -49,6 +49,7 @@ function getDialogTemplates(opts) {
 						$roomEntry = $("#createroom-dialog-room"),
 						username = $userEntry.val(),
 						roomname = $roomEntry.val(),
+						validation,
 						self = this;
 
 					username = (typeof username === "string") ? username.toLowerCase().trim() : "";
@@ -58,8 +59,10 @@ function getDialogTemplates(opts) {
 						return showError("User and room names cannot be the same", $userEntry);
 					}
 
-					if (!roomname) {
-						return showError("Room name cannot be empty", $roomEntry);
+					validation = validate(roomname);
+
+					if (!validation.isValid) {
+						return showError(validation.error, $roomEntry);
 					}
 
 					createUser($userEntry, self, function() {
