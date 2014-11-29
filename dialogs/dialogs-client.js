@@ -211,14 +211,6 @@ function showDialog(eventname, type, template) {
 	});
 }
 
-// When modal is dismissed, reset the dialog property to null
-$(document).on("modalDismissed", function() {
-	libsb.emit("navigate", {
-		dialog: null,
-		source: "modal-dismiss"
-	});
-});
-
 // Emit a dialog event when navigate is called
 libsb.on("navigate", function(state, next) {
 	var eventname;
@@ -272,6 +264,16 @@ libsb.on("init-dn", function(init, next) {
 
 	next();
 }, 500);
+
+libsb.on("user-dn", function(user, next) {
+	if (typeof afterSignUp === "function") {
+		afterSignUp();
+		afterSignUp = null;
+	}
+
+	next();
+}, 800);
+
 
 libsb.on("auth-dialog", function(dialog, next) {
 	var roomName = (window.currentState.mode === "noroom") ? window.currentState.roomName : "";
@@ -355,3 +357,11 @@ libsb.on("signup-dialog", function(dialog, next) {
 
 	next();
 }, 100);
+
+// When modal is dismissed, reset the dialog property to null
+$(document).on("modalDismissed", function() {
+	libsb.emit("navigate", {
+		dialog: null,
+		source: "modal-dismiss"
+	});
+});
