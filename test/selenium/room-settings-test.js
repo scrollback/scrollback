@@ -22,7 +22,6 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("General settings test", function(done) {
-			this.timeout(4 * timeOut);
 			driver.findElement(webdriver.By.css('.tab-info')).click().
 			then(function() {
 				return driver.findElement(webdriver.By.css('.configure-button')).click();
@@ -46,7 +45,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("Permissions test", function(done) {
-			this.timeout(4 * timeOut);
+			this.timeout(3 * timeOut);
 			/*driver.findElement(webdriver.By.css('.tab-info')).click().
 			then(function(){
 				console.log("configuring room...");

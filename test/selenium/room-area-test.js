@@ -18,7 +18,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("Testing for room existance", function(done) {
-			this.timeout(4 * timeout);
+			this.timeout(2 * timeout);
 			var room = Math.floor(Math.random() * config.facebookUser.rooms.length);
 			driver.findElement(webdriver.By.id('room-item-' + config.facebookUser.rooms[room])).click().
 			then(function() {
