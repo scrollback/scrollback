@@ -9,7 +9,6 @@ var host = config.http.host;
 var redis = require('../lib/redisProxy.js').select(config.redisDB.twitter);
 var twitterConsumerKey = config.twitter.consumerKey;
 var twitterConsumerSecret = config.twitter.consumerSecret;
-var debug = config.twitter.debug;
 var core;
 var expireTime = 15 * 60; // expireTime for twitter API key...
 var timeout  = config.twitter.timeout; // search Interval
@@ -184,7 +183,8 @@ function initTwitterSearch() {
  */
 function fetchTweets(room) {
 
-	if (room.params && room.params.twitter  && room.params.twitter.tags && room.params.twitter.token && room.params.twitter.tokenSecret) {
+	if (room.params && room.params.twitter  && room.params.twitter.tags &&
+		room.params.twitter.token && room.params.twitter.tokenSecret) {
 		log("connecting for room: ", room);
 		var twit;
 		twit = new Twit({
@@ -194,7 +194,8 @@ function fetchTweets(room) {
 			access_token_secret: room.params.twitter.tokenSecret
 		});
 		redis.get("twitter:lastTweetTime:" + room.id, function(err, data) {
-
+			log("Last tweet time:", room.id, err, data);
+			var startTime = new Date().getTime();
 			twit.get(
 				'search/tweets', {
 					q: room.params.twitter.tags.split(" ").join(" OR "),
@@ -205,11 +206,15 @@ function fetchTweets(room) {
 						log("error: ", err);
 					}
 					else {
-						log.d("var reply= ", JSON.stringify(reply));
-						if (reply.statuses && reply.statuses[0] && !reply.statuses[0].retweeted &&
+						log("var reply= ", reply);
+						if (new Date().getTime() - startTime >= timeout) {
+							log.e("Twitter search is taking time more then the search interval: ",
+								  (new Date.getTime() - startTime), room.id);
+						} else if (reply.statuses && reply.statuses[0] && !reply.statuses[0].retweeted &&
 							(new Date(reply.statuses[0].created_at).getTime()) > (data ? parseInt(data, 10) : 1)) {
-							redis.set("twitter:lastTweetTime:" + room.id, (new Date(reply.statuses[0].created_at).getTime()), function(err, data) {
-								log.d("added data to room...", err, data);
+							redis.set("twitter:lastTweetTime:" + room.id,
+									  (new Date(reply.statuses[0].created_at).getTime()), function(err, data) {
+								log("added data to room...", room.id, err, data);
 								sendMessages(reply, room);
 							});
 						}
@@ -284,10 +289,13 @@ function getRequest(req, res, next) {
 		oauth.getOAuthRequestToken({"scope": "https://api.twitter.com/oauth/request_token"},
 								function(error, oauth_token, oauth_token_secret/*, results*/) {
 			res.redirect("https://api.twitter.com/oauth/authenticate?oauth_token=" + oauth_token);
-			pendingOauths[uid].oauthToken = oauth_token;
-			pendingOauths[uid].oauthTokenSecret = oauth_token_secret;
-
-			log("callback url", arguments);
+			if (pendingOauths[uid]) {
+				pendingOauths[uid].oauthToken = oauth_token;
+				pendingOauths[uid].oauthTokenSecret = oauth_token_secret;
+				log("callback url", arguments);
+			} else {
+				log.e("Pending oauth expired before callback", uid);
+			}
 		});
 		log("twitter oauth=", oauth);
 	}
@@ -330,7 +338,7 @@ function deletePendingOAuths() {
 			var t = new Date().getTime(),
 			     pt = pendingOauths[id].time;
 			if (t - pt >= oauthTimeout) {
-				log("deleting Pending oauth");
+				log("deleting Pending oauth", id);
 				delete pendingOauths[id];
 			}
 		}
