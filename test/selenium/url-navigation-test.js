@@ -6,7 +6,7 @@ var webdriver = require('browserstack-webdriver'),
 	timeout = 25000;
 module.exports = function(capabilities, options) {
 	describe('url navigatiion test ' + options.id, function() {
-		this.timeout(4 * timeout);
+		this.timeout(3 * timeout);
 		var driver, server = options.server;
 
 		before(function(done) {
@@ -36,7 +36,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("test for navigation to info page", function(done) {
-			this.timeout(4 * timeout);
+			this.timeout(1.5 * timeout);
 			console.log("testing for info area");
 			driver.get("https://stage.scrollback.io/room1?tab=info").
 			then(function() {
@@ -51,7 +51,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("test for navigation to people page", function(done) {
-			this.timeout(4 * timeout);
+			this.timeout(1.5 * timeout);
 			console.log("testing for people area");
 			driver.get("https://stage.scrollback.io/room1?tab=people").
 			then(function() {
@@ -66,7 +66,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("test for navigation to threads page", function(done) {
-			this.timeout(4 * timeout);
+			this.timeout(1.5 * timeout);
 			console.log("testing for threads area");
 			driver.get("https://stage.scrollback.io/room1?tab=threads").
 			then(function() {
@@ -102,7 +102,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("test for navigation to home feed page", function(done) {
-			this.timeout(4 * timeout);
+			this.timeout(2 * timeout);
 			console.log("testing for home feed area");
 			driver.get("https://stage.scrollback.io/me").
 			then(function() {
