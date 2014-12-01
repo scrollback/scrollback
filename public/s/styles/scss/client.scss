@@ -1913,7 +1913,7 @@ $dotshadow: fade-out($accent-color, .6);
 }
 
 .room-area, .meta-area, .main-area {
-    @include transition(.3s, ease-out); /* animate css transforms */
+    @include transition(.3s ease-out); /* animate css transforms */
     @include transform(translate3d(0, 0, 0)); /* enable hardware acceleration in small screen */
 
     @media #{$screenxx} { @include transform(none); }
