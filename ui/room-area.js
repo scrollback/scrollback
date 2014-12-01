@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb, currentState */
+/* global $, libsb */
 
 var LISTENING = 1,
 	NOT_LISTENING = 0,
@@ -9,7 +9,7 @@ var LISTENING = 1,
 
 // Add entry to user menu
 libsb.on("user-menu", function(menu, next) {
-	if (window.currentState.mode !== "home") {
+	if (window.currentState.mode !== "home" && !window.currentState.embed) {
 		menu.items.homefeed = {
 			text: "My rooms",
 			prio: 100,
@@ -73,7 +73,6 @@ $(function() {
 		$gotoform = $("#home-go-to-room-form"),
 		$gotoentry = $("#home-go-to-room-entry"),
 		$createRoomButton = $(".js-create-room"),
-		$noRoomCreateButton = $("#noroom-view-create"),
 		roomArea = {
 			add: function(roomObj) {
 				var done = false;
@@ -168,25 +167,6 @@ $(function() {
 		setCurrentRoom(room);
 	}
 
-	function createRoom(name) {
-		libsb.emit("room-up", {
-			to: name,
-			room: {
-				id: name,
-				description: "",
-				params: {},
-				guides: {}
-			}
-		}, function() {
-			libsb.emit("navigate", {
-				roomName: name,
-				mode: "conf",
-				tab: "embed",
-				time: null
-			});
-		});
-	}
-
 	libsb.on("navigate", function(state, next) {
 		if (state.old) {
 			if ((state.old.connectionStatus !== state.connectionStatus) ||
@@ -237,8 +217,12 @@ $(function() {
 	});
 
 	$gotoform.on("submit", function(e) {
-		var roomName = $gotoentry.val().toLowerCase(),
-			validation = validate(roomName);
+		var roomName = $gotoentry.val(),
+			validation;
+
+		roomName = (typeof roomName === "string") ? roomName.toLowerCase().trim() : "";
+
+		validation = validate(roomName);
 
 		e.preventDefault();
 
@@ -270,91 +254,23 @@ $(function() {
 			source: "room-header"
 		});
 	});
-	function newRoomHandler() {
-		var $createRoomDialog = $("<div>").attr("id", "createroom-modal").html($("#createroom-dialog").html()).modal(),
-			$createRoomEntry = $createRoomDialog.find("#createroom-id"),
-			$createRoomButton = $createRoomDialog.find("#createroom-save"),
-			$errorMsg = $(),
-			showError = function(error) {
-				if (!error) {
-					$createRoomEntry.removeClass("error");
-					$errorMsg.popover("dismiss");
-					$createRoomDialog.modal("dismiss");
 
-					return;
-				}
-
-				$createRoomEntry.addClass("error");
-
-				$errorMsg = $("<div>").addClass("error").append(
-					$("<div>").addClass("popover-content").text(error)
-				).popover({
-					origin: $createRoomEntry
-				});
-
-				$(document).off("modalDismissed.createroom").on("modalDismissed.createroom", function(e, modal) {
-					if (modal && modal.attr("id") === "createroom-modal") {
-						$errorMsg.popover("dismiss");
-					}
-				});
-			};
-
-		$createRoomEntry.on("change input paste", function() {
-			$.popover("dismiss");
-
-			$(this).removeClass("error");
-		});
-
-		$createRoomDialog.find("#createroom").on("submit", function(e) {
-			var name = $createRoomEntry.val(),
-				validation = validate(name);
-
-			e.preventDefault();
-
-			if (!validation.isValid) {
-				showError(validation.error);
-
-				return;
-			}
-
-			$createRoomButton.addClass("loading");
-
-			checkOld(name, function(isTaken) {
-				showError("Entered name already taken!");
-				if (isTaken) {
-					showError("Entered name already taken!");
-				} else {
-					showError(false);
-					createRoom(name);
-				}
-			});
-		});
-	}
-	function noRoomHandler() {
-		newRoomHandler();
-		$('#createroom-id').val(currentState.roomName);
-	}
 	// Handle create new room
-	$noRoomCreateButton.on("click", noRoomHandler);
-	$createRoomButton.on("click", newRoomHandler);
+	$createRoomButton.on("click", function() {
+		libsb.emit("navigate", { dialog: "createroom" });
+	});
 });
 
-function checkOld(id, callback) {
-	libsb.emit("getRooms", {
-		ref: id
-	}, function(err, res) {
-		if (res && res.results && res.results.length) {
-			return callback(true);
+libsb.on('room-dn', function(room, next) {
+	setTimeout(function() { // settimeout, so that ownership information is available when you navigate.
+		if (!room.old || !room.old.id) {
+			libsb.emit("navigate", {
+				mode: 'conf',
+				tab: 'embed',
+				time: null,
+				roomName: room.room.id
+			});
 		}
-
-		libsb.emit("getUsers", {
-			ref: id
-		}, function(err, res) {
-			if (res && res.results && res.results.length) {
-				return callback(true);
-			}
-
-			return callback(false);
-		});
-	});
-}
+		next();
+	}, 0);
+}, 100);

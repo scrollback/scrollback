@@ -26,6 +26,8 @@ var libsb = require('./interface/interface-client')(core);
 require('./localStorage/localStorage-client')(libsb);
 require('./socket/socket-client')(libsb);
 require('./calls-to-action/calls-to-action-client.js');
+require('./dialogs/dialogs-client.js');
+require('./dialogs/dialogs-listeners.js');
 
 // bootup related
 require('./client-init/client-init.js')(libsb);
@@ -63,9 +65,10 @@ require('./persona/persona-client.js');
 
 // phonegap specific
 require('./push-notification/push-notification-client.js');
-require('./ui/guest-settings.js');
+require('./phonegap/phonegap-client.js');
 
 // components
+require('./ui/guest-settings.js');
 require('./ui/quicknotify.js');
 require('./ui/load-indicator.js');
 require('./ui/appcache.js');
@@ -88,7 +91,6 @@ require('./ui/oauth-listener.js');
 require('./ui/conf-area.js');
 require('./ui/pref-area.js');
 require('./ui/noroom-area.js');
-require('./ui/signup-area.js');
 require('./ui/persona.js');
 require('./ui/message-menu.js');
 require('./ui/room-notifications.js');

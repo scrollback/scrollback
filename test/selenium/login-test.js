@@ -31,6 +31,7 @@ module.exports = function(capabilities, options) {
 		//logout test
 
 		it("logout", function(done) {
+			this.timeout(1.5 * timeout);
 			console.log("logging out...");
 			testUtils.logout(driver, function() {
 				driver.findElement(webdriver.By.css('.sign-in')).isDisplayed().
@@ -56,7 +57,6 @@ module.exports = function(capabilities, options) {
 			});
 		});
 
-
 		it("login using Google", function(done) {
 			console.log("google login test");
 			testUtils.loginGoogle(driver, config.facebookUser.email, config.facebookUser.password,
@@ -72,8 +72,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		after(function(done) {
-			driver.quit();
-			done();
+			driver.quit().then(done);
 		});
 	});
 };

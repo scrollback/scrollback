@@ -265,6 +265,8 @@ $(function() {
 		var $chat = $(".chat-item.current");
 
 		if ($chat.length && currThread) {
+			if (!text.labels) text.labels = {};
+			text.labels.manualThreaded = 1;
 			text.threads = [{
 				id: currThread,
 				score: 1.0

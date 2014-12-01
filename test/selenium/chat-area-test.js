@@ -1,11 +1,11 @@
 var assert = require('assert'),
-//npm install -g browserstack
+	//npm install -g browserstack
 	webdriver = require('browserstack-webdriver'),
 	testUtils = require('./testUtils.js'),
 	timeout = 25000;
 module.exports = function(capabilities, options) {
 	describe('Chat Area Test: ' + options.id, function() {
-		this.timeout(timeout);
+		this.timeout(2 * timeout);
 		var driver, server = options.server;
 
 		before(function(done) {
@@ -17,6 +17,7 @@ module.exports = function(capabilities, options) {
 		it("Message Load test", function(done) {
 			driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
 				var c = 0;
+
 				function d() {
 					if (e.length === ++c) {
 						done();
@@ -57,7 +58,7 @@ module.exports = function(capabilities, options) {
 			then(function(searchBox) {
 				var random = Math.random();
 				searchBox.sendKeys('hello Testing message from script: ' + random);
-				searchBox.sendKeys(webdriver.Key.RETURN). then(function() {
+				searchBox.sendKeys(webdriver.Key.RETURN).then(function() {
 					return driver.findElement(webdriver.By.css('.chat-area')).getText();
 				}).then(function(text) {
 					console.log("text", text);
@@ -81,7 +82,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("Scrolling test", function(done) {
-			this.timeout(1.5 * timeout);
+			this.timeout(3 * timeout);
 			var ids = [];
 			driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
 				e.forEach(function(el) {
@@ -98,6 +99,7 @@ module.exports = function(capabilities, options) {
 			setTimeout(function() {
 				driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
 					var c = 0;
+
 					function d() {
 						if (e.length === ++c) {
 							done();
@@ -117,20 +119,7 @@ module.exports = function(capabilities, options) {
 				});
 			}, 15000);
 		});
-		
-		it("login Menu test", function(done) {
-			this.timeout(timeout);
-			driver.findElement(webdriver.By.css('.user-area')).click().
-			then(function() {
-				driver.findElement(webdriver.By.css('.popover-body')).isDisplayed().
-				then(function(d) {
-					assert(true, d, "sign in options not visible");
-					done();
-				});
-			});
-		});
-		
-		
+
 		after(function(done) {
 			this.timeout(timeout);
 			driver.quit().then(done);

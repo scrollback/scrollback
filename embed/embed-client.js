@@ -3,6 +3,7 @@
 
 var Color = require("../lib/color.js"),
 	parseURL = require("../lib/parseURL.js"),
+	stringUtils = require("../lib/stringUtils.js"),
 	/* status flags */
 	verificationStatus = false,
 	bootingDone = false,
@@ -13,6 +14,10 @@ var Color = require("../lib/color.js"),
 	embed, token, domain, path, preBootQueue = [],
 	queue = [],
 	parentHost;
+
+function openFullView() {
+	window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
+}
 
 function sendDomainChallenge() {
 	token = Math.random() * Math.random();
@@ -77,9 +82,11 @@ function classesOnLoad(embed) {
 			$("body").addClass("theme-" + embed.theme);
 		}
 	}
+
 	if (embed.minimize) {
-		$("body").addClass("minimized");
+		$("body").addClass("toast-minimized");
 	}
+
 	if (embed && embed.form) {
 		$("body").addClass("embed-" + embed.form);
 	}
@@ -88,11 +95,11 @@ function classesOnLoad(embed) {
 function toastChange(state, next) {
 	if (state.source === "embed" && state.embed && state.embed.form === "toast" && state.hasOwnProperty("minimize")) {
 		if (state.minimize) {
-			$("body").addClass("minimized");
+			$("body").addClass("toast-minimized");
 
 			window.parent.postMessage("minimize", parentHost);
 		} else {
-			$("body").removeClass("minimized");
+			$("body").removeClass("toast-minimized");
 
 			window.parent.postMessage("maximize", parentHost);
 		}
@@ -165,39 +172,29 @@ function insertCss(embed) {
 module.exports = function(libsb) {
 	$(function() {
 		// Handle fullview button click
-		$(".embed-action-fullview").on("click", function() {
-			window.open((window.location.href).replace(/[&,?]embed=[^&,?]+/g, ""), "_blank");
-		});
+		$(".embed-action-fullview").on("click", openFullView);
 
-		// Handle minimize
-		$(".embed-action-minimize").on("click", function() {
-			libsb.emit("navigate", {
-				minimize: true,
-				source: "embed",
-				event: "action-minimize"
-			});
-		});
-
+		// Handle minimize and maximize
 		$(".title-bar").on("click", function(e) {
-			if (e.target === e.currentTarget) {
+			if ($("body").hasClass("toast-minimized")) {
+				libsb.emit("navigate", {
+					minimize: false,
+					source: "embed",
+					event: "minimize-bar"
+				});
+			} else if ((e.target === e.currentTarget) || $(e.target).closest(".embed-action-minimize").length) {
 				libsb.emit("navigate", {
 					minimize: true,
+					view: "normal",
 					source: "embed",
 					event: "title-bar"
 				});
 			}
 		});
-
-		$(".minimize-bar").on("click", function() {
-			libsb.emit("navigate", {
-				minimize: false,
-				source: "embed",
-				event: "minimize-bar"
-			});
-		});
 	});
 
 	var url = parseURL(window.location.pathname, window.location.search);
+
 	embed = url.embed;
 
 	if (window.parent !== window) {
@@ -210,10 +207,6 @@ module.exports = function(libsb) {
 
 			suggestedNick = embed.nick;
 			classesOnLoad(embed);
-
-			if (embed.minimize) {
-				$("body").addClass("minimized");
-			}
 
 			if (embed.origin) {
 				window.onmessage = function(e) {
@@ -248,6 +241,21 @@ module.exports = function(libsb) {
 			if (state.source == "boot") {
 				bootingDone = true;
 				state.embed = embed;
+
+				if ((navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
+					 navigator.userAgent.match(/AppleWebKit/) &&
+					 navigator.userAgent.match(/Safari/)) &&
+					embed &&
+					embed.form === "toast"
+				   ) {
+					$(document).on("click", function(e) {
+						if (!$(e.target).closest(".title-bar, .minimize-bar").length) {
+							e.stopPropagation();
+
+							openFullView();
+						}
+					});
+				}
 			}
 
 			if (state.room && state.room === "object") {

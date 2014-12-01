@@ -94,6 +94,9 @@ var defaults = {
 		port: 6379,
 		db:0
 	},
+	entityloader: {
+		nickRetries: 100
+	},
 	threader: {
 		host : "local.scrollback.io",
 		port : 12345

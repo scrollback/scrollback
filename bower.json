@@ -15,7 +15,7 @@
   "dependencies": {
     "flexie": "~1.0.3",
     "jquery": "1",
-    "lace": "755b70ee92a56af1272e7a37c3fcbd73779d4663",
+    "lace": "0.1.1",
     "sockjs": "~0.3.4",
     "svg4everybody": "*",
     "transformie": "*",

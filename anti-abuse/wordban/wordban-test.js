@@ -1,5 +1,5 @@
+/*global it, describe, before*/
 var assert = require("assert");
-var config = require('../../config.js');
 var core = new(require('../../lib/emitter.js'))();
 var wordban = require("./wordban.js");
 var gen = require("../../lib/generate.js")
@@ -20,8 +20,9 @@ var rooms = [{
             ]
 		}
 	}
-}]
-var msg = {
+}];
+
+var message = {
 	id: guid(),
 	room: rooms[0],
 	text: "value : " + Math.random(),
@@ -32,7 +33,9 @@ var msg = {
 	time: new Date().getTime(),
 	session: "web://sdjfkalja24aadf:dkaslkfjkjaf"
 };
-
+function copy(obj) {
+	return JSON.parse(JSON.stringify(obj));
+}
 describe('wordban', function () {
 	before(function (done) {
 		wordban(core);
@@ -42,6 +45,7 @@ describe('wordban', function () {
 	});
 
 	it('Message test', function (done) {
+		var msg = copy(message);
 		core.emit("text", msg, function (err, data) {
 			console.log("reply:", msg, err);
 			var l = msg.labels.abusive;
@@ -52,14 +56,12 @@ describe('wordban', function () {
 	});
 
 	it('banned word test', function (done) {
-		var t = msg.text;
+		var msg = copy(message);
 		msg.text += " fuck";
 		core.emit("text", msg, function (err, data) {
 			console.log("reply:", msg, err);
 			var l = msg.labels.abusive;
 			assert(l, 1, "Not banning word fuck");
-			delete msg.labels.abusive;
-			msg.text = t;
 			done();
 		});
 
@@ -75,19 +77,47 @@ describe('wordban', function () {
 				id: "fuck",
 				type: "room"
 			}
-
-		}, function (err, room) {
+		}, function (err) {
 			console.log(err);
 			assert(err, new Error("Abusive room name"), "Not banning word fuck if it is a room name");
 			done();
 		});
 	});
 
-	it("room saving", function (done) {
+	it("room saving empty custrom phrases test-1", function (done) {
+		var rs = copy(rooms);
+		rs[0].params.antiAbuse.customPhrases = ["abc", "", "abc cde"];
 		core.emit("room", {
 			id: guid(),
-			to: rooms[0].id,
-			room: rooms[0]
+			to: rs[0].id,
+			room: rs[0]
+		}, function () {
+			console.log("Reply=", JSON.stringify(rs[0]));
+			assert.equal(rs[0].params.antiAbuse.customPhrases.length, 2, "Not removing empty string from array");
+			done();
+		});
+	});
+
+	it("room saving empty custrom phrases test-2", function (done) {
+		var rs = copy(rooms);
+		rs[0].params.antiAbuse.customPhrases = [""];
+		core.emit("room", {
+			id: guid(),
+			to: rs[0].id,
+			room: rs[0]
+		}, function () {
+			console.log("Reply=", JSON.stringify(rs[0]));
+			assert.equal(rs[0].params.antiAbuse.customPhrases.length, 0, "Not removing empty string from array");
+			done();
+		});
+	});
+
+	it("room saving", function (done) {
+		var rs = copy(rooms);
+		core.emit("room", {
+			id: guid(),
+			to: rs[0].id,
+			room: rs[0]
 		}, function (err, reply) {
 			console.log("Reply:", err, reply);
 			assert.ifError(err);
@@ -96,54 +126,58 @@ describe('wordban', function () {
 	});
 
 	it("customPhrases test - 1", function (done) {
-		var t = msg.text;
+		var msg = copy(message);
 		msg.text += " cde";
-		console.log("Text :", msg.text);
-		core.emit("text", msg, function (err, data) {
+		core.emit("text", msg, function (err) {
 			console.log("reply:", msg, err);
 			var l = msg.labels.abusive;
 			assert(l, 1, "Not banning custom word cde");
-			delete msg.labels.abusive;
-			msg.text = t;
 			done();
 		});
 	});
 
 	it("customPhrases test - 2", function (done) {
-		var t = msg.text;
+		var msg = copy(message);
 		msg.text += "cde";
 		core.emit("text", msg, function (err, data) {
 			console.log("reply:", msg, err);
 			var l = msg.labels.abusive;
 			assert.notEqual(l, 1, "Banning substring cde");
-			delete msg.labels.abusive;
-			msg.text = t;
 			done();
 		});
 	});
 
 	it("customPhrases test - 3", function (done) {
-		var t = msg.text;
+		var msg = copy(message);
 		msg.text += " abc def testing test..";
 		core.emit("text", msg, function (err, data) {
 			console.log("reply:", msg, err);
 			var l = msg.labels.abusive;
 			assert.equal(l, 1, "not banning");
-			delete msg.labels.abusive;
-			msg.text = t;
 			done();
 		});
 	});
 
 	it("customPhrases test - 4", function (done) {
-		var t = msg.text;
+		var msg = copy(message);
 		msg.text += " abc testing test..";
-		core.emit("text", msg, function (err, data) {
+		core.emit("text", msg, function (err) {
 			console.log("reply:", msg, err);
 			var l = msg.labels.abusive;
 			assert.notEqual(l, 1, "not banning");
-			delete msg.labels.abusive;
-			msg.text = t;
+			done();
+		});
+	});
+
+	it("customPhrases test - 5", function (done) {
+		var msg = copy(message);
+		msg.text = ":P";
+		msg.room.params.antiAbuse.customPhrases = [""];
+		core.emit("text", msg, function (err, data) {
+			console.log("reply:", data, err);
+			var l = msg.labels.abusive;
+			console.log(l);
+			assert.equal(!!l, false, "don't match empty string");
 			done();
 		});
 	});

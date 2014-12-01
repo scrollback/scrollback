@@ -18,6 +18,7 @@ function loginWithFb() {
 			}, function(ret) {
 				var url = ret[0];
 				var code = getParameterByName('code', url);
+
 				if (code !== null) {
 					var auth = {
 						command: "signin",
@@ -38,12 +39,13 @@ function loginWithFb() {
 
 $('.js-phonegap-fb-login').click(loginWithFb);
 
-libsb.on('auth-menu', function(menu, next) {
-	menu.buttons.facebook = {
+libsb.on('auth', function(auth, next) {
+	auth.buttons.facebook = {
 		text: 'Facebook',
 		prio: 100,
 		action: loginWithFb
 
 	};
+
 	next();
-}, 1000);
+}, 600);
