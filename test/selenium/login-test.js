@@ -36,7 +36,7 @@ module.exports = function(capabilities, options) {
 			testUtils.logout(driver, function() {
 				driver.findElement(webdriver.By.css('.sign-in')).isDisplayed().
 				then(function(t) {
-					assert.equal(t, true, "logout unsuccessful");
+					assert.equal(t, true, "logout failed");
 					done();
 				});
 			});

@@ -12,9 +12,12 @@ function openUrl(capabilities, server, roomid) {
 	return driver;
 }
 
-function loginPersona(driver, id, password, callback) {
-
-	findVisibleElementByClass(driver, ".js-has-auth-menu", function(el) {
+function loginPersona(driver, id, password, callback, className) {
+    if(!className)
+    {
+        className = ".js-has-auth-menu";
+    }
+    findVisibleElementByClass(driver, className, function(el) {
 		var win;
 		el.click().
 		then(function() {
@@ -47,8 +50,11 @@ function loginPersona(driver, id, password, callback) {
 	});
 }
 
-function loginFacebook(driver, email, pass, callback) {
-	driver.findElement(webdriver.By.css('.user-area')).click().
+function loginFacebook(driver, email, pass, callback, className) {
+    if (!className) {
+        className = '.user-area';
+    }
+	driver.findElement(webdriver.By.css(className)).click().
 	then(function() {
 		findVisibleElementByClass(driver, ".facebook", function(el) {
 			var win;
@@ -82,7 +88,7 @@ function logout(driver, callback) {
 	then(function() {
 		return driver.findElement(webdriver.By.css('.logout')).click();
 	}).then(function() {
-		return driver.findElement(webdriver.By.css('.reload-page')).click();
+		return driver.findElement(webdriver.By.css('.dialog-action-go-back-as-guest')).click();
 	}).then(function() {
 		return q.delay(2000);
 	}).then(callback);

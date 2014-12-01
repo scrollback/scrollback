@@ -6,7 +6,7 @@ var assert = require('assert'),
 	q = require('q'),
 	generator = require('../../lib/generate.js');
 
-module.exports = function(capabilities, options) {
+module.exports = function (capabilities, options) {
 	describe('Create Room Test ' + options.id, function() {
 		this.timeout(2 * timeout);
 		var driver, server = options.server;
@@ -18,19 +18,19 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("login persona on create room view", function(done) {
-			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function() {
+			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, ".js-create-room" ,function() {
 				q.delay(3000).then(function() {
-					return driver.findElement(webdriver.By.id("noroom-view-create")).click();
+					return driver.findElement(webdriver.By.css(".dialog-action-create-room")).click();
 				}).then(function() {
 					return q.delay(2000);
 				}).then(function() {
-					return driver.findElement(webdriver.By.id("createroom-save")).click();
+					return driver.findElement(webdriver.By.css(".conf-save")).click();
 				}).then(function() {
 					return q.delay(3000);
 				}).then(function() {
 					return driver.findElement(webdriver.By.id("room-item-" + roomName)).getText();
 				}).then(function(t) {
-					assert.equal(t, roomName, "Room creation unsuccessful");
+					assert.equal(t, roomName, "Room creation failed");
 					done();
 				});
 			});
