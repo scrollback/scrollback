@@ -153,9 +153,9 @@ function createUser(entry, button, callback) {
 	});
 }
 
-function showDialog(eventname, type, template) {
-	libsb.emit(eventname + "-dialog", template, function(err, dialog) {
-		var $modal = $("<form>").addClass(type + "-dialog " + eventname + "-dialog dialog"),
+function showDialog(type, template) {
+	libsb.emit(type + "-dialog", template, function(err, dialog) {
+		var $modal = $("<form>").addClass(type + "-dialog dialog"),
 			$buttons, $content, $action;
 
 		if (dialog.title) {
@@ -213,8 +213,6 @@ function showDialog(eventname, type, template) {
 
 // Emit a dialog event when navigate is called
 libsb.on("navigate", function(state, next) {
-	var eventname;
-
 	if (state.source === "dialog" || ("dialog" in state.changes && state.source !== "modal-dismiss")) {
 		if (!state.dialog) {
 			$.modal("dismiss");
@@ -222,15 +220,7 @@ libsb.on("navigate", function(state, next) {
 			return next();
 		}
 
-		eventname = state.dialog;
-
-		if (/(createroom|signup)/.test(state.dialog)) {
-			if (!signingUp && (/^guest-/).test(libsb.user.id)) {
-				eventname = "auth";
-			}
-		}
-
-		showDialog(eventname, state.dialog, {
+		showDialog(state.dialog, {
 			title: null, // Modal title
 			description: null, // A description to be displayed under title
 			buttons: {}, // List of objects, e.g. - google: { text: "Google+", action: function() {} }
@@ -241,7 +231,7 @@ libsb.on("navigate", function(state, next) {
 	}
 
 	next();
-}, 500);
+}, 100);
 
 libsb.on("init-dn", function(init, next) {
 	if (init.auth && init.user.identities && !init.user.id && init.resource == libsb.resource) {
@@ -261,37 +251,12 @@ libsb.on("init-dn", function(init, next) {
 	}
 
 	next();
-}, 500);
+}, 100);
 
 libsb.on("user-dn", function(user, next) {
 	if (typeof afterSignUp === "function") {
 		afterSignUp();
 		afterSignUp = null;
-	}
-
-	next();
-}, 800);
-
-
-libsb.on("auth-dialog", function(dialog, next) {
-	var roomName = (window.currentState.mode === "noroom") ? window.currentState.roomName : "";
-
-	if ((/^guest-/).test(libsb.user.id)) {
-		switch (window.currentState.dialog) {
-			case "signup":
-				dialog.title = "Sign up for scrollback";
-				break;
-			case "createroom":
-				dialog.title = "Create a new room";
-				dialog.description = "You must sign in first";
-				dialog.content = [
-					"<p>Choose a room name for your community</p>",
-					"<input type='text' id='createroom-dialog-room' value='" + roomName + "' disabled>"
-				];
-				break;
-			default:
-				dialog.title = "Sign in to Scrollback";
-		}
 	}
 
 	next();
@@ -332,6 +297,19 @@ libsb.on("createroom-dialog", function(dialog, next) {
 					});
 				}
 			};
+		} else {
+			dialog.title = "Create a new room";
+			dialog.description = "You must sign in first";
+			dialog.content = [
+				"<p>Choose a room name for your community</p>",
+				"<input type='text' id='createroom-dialog-room' value='" + roomName + "' disabled>"
+			];
+
+			libsb.emit("auth", dialog, function() {
+				next();
+			});
+
+			return;
 		}
 	} else {
 		dialog.title = "Create a new room";
@@ -363,6 +341,14 @@ libsb.on("signup-dialog", function(dialog, next) {
 					createUser("#signup-dialog-user", this);
 				}
 			};
+		} else {
+			dialog.title = "Sign up for scrollback";
+
+			libsb.emit("auth", dialog, function() {
+				next();
+			});
+
+			return;
 		}
 	} else {
 		dialog.title = "You're already signed in!";

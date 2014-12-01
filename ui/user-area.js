@@ -66,6 +66,12 @@ $(function() {
 		$userName.text(libsb.user.id.replace(/^guest-/, ""));
 	}
 
+	libsb.on("auth-menu", function(menu, next) {
+		libsb.emit("auth", menu, function() {
+			next();
+		});
+	}, 100);
+
 	libsb.on("init-dn", function(init, next) {
 		if (init.auth && !init.user.id) {
 			return next();
