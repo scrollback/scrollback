@@ -38,8 +38,8 @@ function loginWithGoogle() {
 
 $('.js-phonegap-google-login').click(loginWithGoogle);
 
-libsb.on('auth', function(menu, next) {
-	menu.buttons.google = {
+libsb.on('auth', function(auth, next) {
+	auth.buttons.google = {
 		text: 'Google',
 		prio: 100,
 		action: loginWithGoogle

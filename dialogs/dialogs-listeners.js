@@ -167,7 +167,6 @@ libsb.on("init-dn", function(init, next) {
 		});
 	} else if (signingUp) {
 		libsb.emit("navigate", { dialog: "signup" });
-		signingUp = false;
 	}
 
 	next();
@@ -189,9 +188,9 @@ libsb.on("createroom-dialog", function(dialog, next) {
 		if (signingUp) {
 			dialog.title = "Create a new room";
 			dialog.content = [
-				"<p>Choose a username</p>",
+				"<p><b>Step 1:</b> Choose a username</p>",
 				"<input type='text' id='createroom-dialog-user' autofocus>",
-				"<p>Choose a room name for your community</p>",
+				"<p><b>Step 2:</b> Choose a room name</p>",
 				"<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>"
 			];
 			dialog.action = {
@@ -217,11 +216,13 @@ libsb.on("createroom-dialog", function(dialog, next) {
 					});
 				}
 			};
+
+			signingUp = false;
 		} else {
 			dialog.title = "Create a new room";
-			dialog.description = "You must sign in first";
+			dialog.description = "<b>Step 1:</b> Sign in to scrollback";
 			dialog.content = [
-				"<p>Choose a room name for your community</p>",
+				"<p><b>Step 2:</b> Choose a room name</p>",
 				"<input type='text' id='createroom-dialog-room' value='" + roomName + "' disabled>"
 			];
 
@@ -233,7 +234,7 @@ libsb.on("createroom-dialog", function(dialog, next) {
 		}
 	} else {
 		dialog.title = "Create a new room";
-		dialog.description = "Choose a room name for your community";
+		dialog.description = "Choose a room name";
 		dialog.content = [ "<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>" ];
 		dialog.action = {
 			text: "Create room",
@@ -261,6 +262,8 @@ libsb.on("signup-dialog", function(dialog, next) {
 					createUser("#signup-dialog-user", this);
 				}
 			};
+
+			signingUp = false;
 		} else {
 			dialog.title = "Sign up for scrollback";
 
