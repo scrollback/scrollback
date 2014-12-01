@@ -12,7 +12,7 @@ function showDialog(type, template) {
 		}
 
 		if (dialog.description) {
-			$("<p>").addClass("dialog-description").text(dialog.description).appendTo($modal);
+			$("<p>").addClass("dialog-description").html(dialog.description).appendTo($modal);
 		}
 
 		if (Object.keys(dialog.buttons).length) {
