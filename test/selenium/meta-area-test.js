@@ -14,7 +14,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("meta button test", function(done) {
-			this.timeout(timeout);
+			this.timeout(1.5 * timeout);
 			var mb;
 			driver.findElement(webdriver.By.css('.meta-button-back'))
 				.then(function(m) {
@@ -39,7 +39,6 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("People area test1", function(done) {
-			this.timeout(timeout);
 			driver.findElement(webdriver.By.css('.pane-people'))
 				.isDisplayed()
 				.then(function(v) {

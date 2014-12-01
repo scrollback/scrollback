@@ -722,6 +722,8 @@ body {
 .card-container {
     @extend %fadein;
 
+    padding: .5em;
+
     & + .home-area-no-my-rooms {
         display: none;
         color: darken($light-color, 20%);

@@ -37,8 +37,8 @@ describe('EntityLoader', function() {
 			session: "web:127.0.0.1:asdhouasnoujnvihdbfaksdmcrouadf"
 		}, function(err, data) {
 			assert(!err, "threw an error when it shouldnt.");
-			assert.equal(data.user.timezone == 330, "User object loaded incorrectly");
-			assert.equal(data.room.timezone == 300, "Room object loaded incorrectly");
+			assert.equal(data.user.id == "harish", "User object loaded incorrectly");
+			assert.equal(data.room.id == "scrollback", "Room object loaded incorrectly");
 			done();
 		});
 	});
