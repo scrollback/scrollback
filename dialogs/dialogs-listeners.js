@@ -277,11 +277,3 @@ libsb.on("signup-dialog", function(dialog, next) {
 
 	next();
 }, 100);
-
-// When modal is dismissed, reset the dialog property to null
-$(document).on("modalDismissed", function() {
-	libsb.emit("navigate", {
-		dialog: null,
-		source: "modal-dismiss"
-	});
-});

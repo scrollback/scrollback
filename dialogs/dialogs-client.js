@@ -1,6 +1,7 @@
 /* jshint browser: true */
 /* global $, libsb */
 
+// Emit a dialog event
 function showDialog(type, template) {
 	libsb.emit(type + "-dialog", template, function(err, dialog) {
 		var $modal = $("<form>").addClass(type + "-dialog dialog"),
@@ -80,3 +81,11 @@ libsb.on("navigate", function(state, next) {
 
 	next();
 }, 100);
+
+// When modal is dismissed, reset the dialog property to null
+$(document).on("modalDismissed", function() {
+	libsb.emit("navigate", {
+		dialog: null,
+		source: "modal-dismiss"
+	});
+});
