@@ -40,6 +40,18 @@ var defaults = {
 		storage: 200,
 		watcher: 100
 	},
+	analytics: {
+		pg: {//post gre config
+			server: "localhost",//server:port
+			db: "logs",
+			username: "username",
+			password: "password"
+			//port:
+		},
+	},
+	"browser-id-auth": {
+		audience: "local.scrollback.io"
+	},
 	env: "production",
 	mysql: {
 		host     : 'localhost',
@@ -48,13 +60,6 @@ var defaults = {
 		connectionLimit: 100,
 		//debug    :true         ,
 		database : 'scrollback'
-	},
-	pg: {//post gre config
-		server: "localhost",//server:port
-		db: "logs",
-		username: "username",
-		password: "password"
-		//port:
 	},
 	http: {
 		host: "local.scrollback.io",
@@ -66,10 +71,8 @@ var defaults = {
 		index: "/me"//index URL redirect
 	},
 	email: {
-		from: "scrollback@scrollback.io"
-	},
-	auth: {
-		audience: "local.scrollback.io"
+		from: "scrollback@scrollback.io",
+		redis: 7
 	},
 	redis:{
 		host: "local.scrollback.io",

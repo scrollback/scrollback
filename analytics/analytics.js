@@ -1,16 +1,20 @@
-var config = require('../server-config-defaults.js');
+var config;
 var log  = require('../lib/logger.js');
 var pg = require('pg');
-var conString = "pg://" + config.pg.username + ":" +
-	config.pg.password + "@" + config.pg.server + "/" + config.pg.db;
+var conString = "";
 var textActions = ['text', 'edit'];
 var occupantActions = ['back', 'away'];
 var memberActions = ['join', 'part', 'admit', 'expel'];
 var queriesAndActions = ['getTexts', 'getRooms', 'getThreads', 'getUsers', 'init', 'text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'expel', 'room', 'user'];
 
 
-module.exports = function(core) {
+module.exports = function(core, conf) {
+	config = conf;
+	conString = "pg://" + config.pg.username + ":" +
+	config.pg.password + "@" + config.pg.server + "/" + config.pg.db;
+	
 	init(core);
+	
 	textActions.forEach(function(type) {
 		core.on(type, function(action, cb) {
 			cb();

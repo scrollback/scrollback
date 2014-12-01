@@ -1,27 +1,34 @@
-var config = require('../server-config-defaults.js');
+var config;
 var log = require("../lib/logger.js");
-var redis = require('../lib/redisProxy.js').select(config.redisDB.email);
-var emailDigest = require('./emailDigest.js');
-var initMailSending = emailDigest.initMailSending;//function
-var sendPeriodicMails = emailDigest.sendPeriodicMails;//function
-var trySendingToUsers = emailDigest.trySendingToUsers;//function.
-var internalSession = Object.keys(config.whitelists)[0];
-var emailConfig = config.email;
+var redis;
+var emailDigest;
+var initMailSending;
+var sendPeriodicMails;
+var trySendingToUsers;
 var core;
 var timeout = 30*1000;//for debuging only
 
-module.exports = function(coreObject) {
+module.exports = function(coreObject, conf) {
+	config = conf;
 	core = coreObject;
-	require('./welcomeEmail.js')(core);
+	
+	emailDigest = require('./emailDigest.js')(core, conf);
+	initMailSending = emailDigest.initMailSending;//function
+	sendPeriodicMails = emailDigest.sendPeriodicMails;//function
+	trySendingToUsers = emailDigest.trySendingToUsers;//function.
+	
+	redis = require('../lib/redisProxy.js').select(config.redis);
+	
+	require('./welcomeEmail.js')(core, conf);
     emailDigest.init(core);
-	if (config.email && config.email.auth) {
+	if (config.auth) {
 		core.on('text', function(message, callback) {
 			callback();
 			if(message.type === "text"){
 				addMessage(message);
 			}
 		}, "gateway");
-		if (emailConfig.debug) {
+		if (config.debug) {
 			setInterval(sendPeriodicMails, timeout);
 			setInterval(trySendingToUsers,timeout/8);
 		}
@@ -32,7 +39,7 @@ module.exports = function(coreObject) {
 };
 
 function getExpireTime() {
-	if (emailConfig.debug) {
+	if (config.debug) {
 		return timeout*2;
 	}
 	else return 2*24*60*60;//2 days//TODO move this to config.
@@ -44,7 +51,7 @@ function getExpireTime() {
  */
 function addMessage(message){
     var room = message.to;
-    if(emailConfig.debug) log("email -"  , message);
+    if(config.debug) log("email -"  , message);
     if (message.threads && message.threads[0]) {
         var label = message.threads[0].id;
         var title = message.threads[0].title;
@@ -69,7 +76,7 @@ function addMessage(message){
 					multi.exec(function(err,replies) {
 						log("added mention ", replies);
 						if (!err) {
-                            core.emit("getUsers", {ref: username, session: internalSession}, function(err, r) {
+                            core.emit("getUsers", {ref: username, session: "internal-email"}, function(err, r) {
                                 if(!err && r.results && r.results[0]) {
                                     var user = r.results[0];
                                     if(!user.params.email || (user.params.email && user.params.email.notifications)) {

@@ -35,7 +35,7 @@ log.w("This is \"" +  process.env.NODE_ENV + "\" server");
 function start(name) {
 	log.i("starting ", name);
 	var plugin = require("./"+name+"/"+name+".js");
-	plugin(core);
+	plugin(core, config[name] || {});
 }
 
 plugins.forEach(function(name) {
