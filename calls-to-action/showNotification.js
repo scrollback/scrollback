@@ -122,7 +122,7 @@ function showNotification(origin, name) {
 	// Also, probably the notification shouldn't be displayed instantly
 	setTimeout(function() {
 		fireNotification(onScreenElement, name);
-	}, 300);
+	}, 1000);
 }
 
 module.exports = showNotification;

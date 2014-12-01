@@ -1658,7 +1658,6 @@ $dotshadow: fade-out($accent-color, .6);
     }
 
     .embed-code {
-        min-width: 27em;
         min-height: 15em;
         background-color: darken($light-color, 5%);
         font-weight: 700;
@@ -1671,7 +1670,7 @@ $dotshadow: fade-out($accent-color, .6);
         max-width: 100%;
     }
 
-    input[type="text"], input[type="url"], textarea { min-width: 27em; }
+    input[type="text"], input[type="url"], textarea { min-width: 21em; }
 
     textarea {
         resize: vertical;
