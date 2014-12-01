@@ -5,7 +5,7 @@ var assert = require('assert'),
 	timeout = 25000;
 module.exports = function(capabilities, options) {
 	describe('Chat Area Test: ' + options.id, function() {
-		this.timeout(timeout);
+		this.timeout(2 * timeout);
 		var driver, server = options.server;
 
 		before(function(done) {
@@ -82,7 +82,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("Scrolling test", function(done) {
-			this.timeout(1.5 * timeout);
+			this.timeout(3 * timeout);
 			var ids = [];
 			driver.findElements(webdriver.By.css('.chat-item')).then(function(e) {
 				e.forEach(function(el) {
