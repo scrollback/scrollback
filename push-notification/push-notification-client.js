@@ -5,7 +5,7 @@
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
 
-var config = require('../client-config.js');
+var config = require('../client-config-defaults.js');
 var pushNotification, regId;
 var userObj, registrationID;
 

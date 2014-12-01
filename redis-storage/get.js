@@ -1,4 +1,4 @@
-var config = require("../config.js");
+var config = require("../server-config-defaults.js");
 var dataBases = {
 	session: require('../lib/redisProxy.js').select(config.redisDB.session),
 	user: require('../lib/redisProxy.js').select(config.redisDB.user),

@@ -1,4 +1,4 @@
-var config = require("../config.js");
+var config = require("../server-config-defaults.js");
 var objectlevel = require("objectlevel");
 
 module.exports = function(core) {

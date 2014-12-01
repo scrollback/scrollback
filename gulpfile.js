@@ -21,7 +21,7 @@ var gulp = require("gulp"),
 	autoprefixer = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
-	config = require("./config.js"),
+	config = require("./server-config-defaults.js"),
 	debug = !(gutil.env.production || config.env === "production"),
 	dirs = {
 		bower: "bower_components",
@@ -144,7 +144,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 
 // Build browserify bundles
 gulp.task("bundle", [ "libs" ], function() {
-	return bundle([ "libsb.js", "client.js" ], { debug: debug })
+	return bundle(["client.js" ], { debug: debug })
 	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
 	.pipe(gulp.dest("public/s/scripts"))
@@ -171,7 +171,7 @@ gulp.task("lace", [ "bower" ], function() {
 	.pipe(plumber())
 	.pipe(gulp.dest(dirs.lace))
 	.on("error", gutil.log);
-});
+});	
 
 gulp.task("styles", [ "lace" ], function() {
 	return gulp.src(files.css)
@@ -189,7 +189,7 @@ gulp.task("styles", [ "lace" ], function() {
 
 // Generate appcache manifest file
 gulp.task("manifest", function() {
-	var clientConfig = require("./client-config.js"),
+	var clientConfig = require("./client-config-defaults.js"),
 		protocol = clientConfig.server.protocol,
 		host = clientConfig.server.host,
 		domain = protocol + host;
@@ -224,7 +224,7 @@ gulp.task("manifest", function() {
 });
 
 gulp.task("android-manifest", function() {
-	var clientConfig = require("./client-config.js"),
+	var clientConfig = require("./client-config-defaults.js"),
 		protocol = clientConfig.server.protocol,
 		host = clientConfig.server.host,
 		domain = protocol + host;

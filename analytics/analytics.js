@@ -1,4 +1,4 @@
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 var log  = require('../lib/logger.js');
 var pg = require('pg');
 var conString = "pg://" + config.pg.username + ":" +

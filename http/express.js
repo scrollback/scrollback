@@ -22,7 +22,7 @@ var express = require("express"),
 	http = require("http"),
 	https = require("https"),
 	fs = require("fs"),
-	config = require("../config.js");
+	config = require("../server-config-defaults.js");
 
 exports.init = function() {
 	var app = express(),

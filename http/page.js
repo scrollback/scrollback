@@ -18,9 +18,9 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
-var config = require('../config.js'),
+var config = require('../server-config-defaults.js'),
 	core,
-	clientData = require('../client-config.js'),
+	clientData = require('../client-config-defaults.js'),
 	fs = require("fs"),
 	core,
 	handlebars = require("handlebars"),

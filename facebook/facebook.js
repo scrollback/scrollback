@@ -1,4 +1,4 @@
-var config = require("../config.js"),
+var config = require("../server-config-defaults.js"),
 	crypto = require('crypto'),
 	request = require("request"),
 	log = require('../lib/logger.js'),

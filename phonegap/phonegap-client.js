@@ -1,6 +1,6 @@
 /* jshint browser:true */
 /* global libsb, $ */
-var config = require('../client-config.js');
+var config = require('../client-config-defaults.js');
 libsb.on("navigate", function(state, next) {
 	var regex;
 	if (state.phonegap && state.source === 'boot') {

@@ -1,6 +1,6 @@
 var nodemailer = require('nodemailer');
 var log = require("../lib/logger.js");
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 var emailConfig = config.email;
 var transport = nodemailer.createTransport("SMTP", {
     host: "email-smtp.us-east-1.amazonaws.com",

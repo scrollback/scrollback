@@ -23,7 +23,7 @@ var plugins = [ "analytics", "validator","browserid-auth", "facebook", "recommen
 			   "push-notification","google"];
 require('newrelic');
 var log = require('./lib/logger.js');
-var core = new (require("./lib/emitter.js"))(), config = require("./config.js");
+var core = new (require("./lib/emitter.js"))(), config = require("./server-config-defaults.js");
 log.setEmailConfig(config.email);
 
 process.title = config.core.name;

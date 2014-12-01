@@ -1,9 +1,3 @@
-var fs = require('fs');
-var changes = {};
-
-if (fs.existsSync('.//server-config-defaults.js')) {
-	changes = require("./server-config-defaults.js");
-}
 /**
  *It merge c into d
  *@param {object} d default Object
@@ -13,6 +7,9 @@ function merge(d, c) {
 	for(var i in c) {
 		if (typeof d[i] === 'object' && typeof c[i] === 'object' && d[i] !== null && c[i] !== null) {
 			if (d[i] instanceof Array && c[i] instanceof Array) {
+				// d[i] = d[i].concat(c[i]);
+				/*Concatinating the plugins array from the default ones and the ones in
+				myConfig is probably not something that we might be interested in.*/
 				d[i] = c[i];
 			} else {
 				merge(d[i], c[i]);
@@ -21,19 +18,7 @@ function merge(d, c) {
 			d[i] = c[i];
 		}
 	}
+	return d;
 }
 
-
-var defaults = {
-	botNick: "scrollback",//default bot nick,
-	port: 8910,
-	debug: false,
-	webirc: {
-	},
-	env: "production",
-	email: {
-		from: "scrollback@scrollback.io"
-	}
-};
-merge(defaults, changes);
-module.exports = defaults;
+module.exports = merge;

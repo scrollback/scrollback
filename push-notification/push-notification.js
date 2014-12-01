@@ -1,6 +1,6 @@
 var log = require('../lib/logger.js');
 var gcm_notify = require('./gcm-notify.js');
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 var stringUtils = require('../lib/stringUtils.js');
 var internalSession = Object.keys(config.whitelists)[0];
 

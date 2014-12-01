@@ -1,5 +1,5 @@
 var log = require("../lib/logger.js");
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 var searchDB = require('../lib/redisProxy.js').select(config.redisDB.search);
 var es = require('elasticsearch');
 var indexName = 'sb';

@@ -1,5 +1,5 @@
 var log = require("../lib/logger.js");
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 var nodemailer = require('nodemailer');
 var redisProxy = require('../lib/redisProxy.js');
 var url = require("url");

@@ -1,5 +1,5 @@
 var objectlevel = require("objectlevel");
-var config = require("../../config.js");
+var config = require("../../server-config-defaults.js");
 
 
 module.exports = function (db) {

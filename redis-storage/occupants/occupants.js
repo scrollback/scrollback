@@ -1,5 +1,5 @@
 var log = require("../../lib/logger.js");
-var config = require('../../config.js');
+var config = require('../../server-config-defaults.js');
 var redisProxy = require('../../lib/redisProxy.js');
 
 module.exports = function(core) {

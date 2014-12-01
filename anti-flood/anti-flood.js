@@ -1,7 +1,7 @@
 var log = require("../lib/logger.js");
 var SbError = require("../lib/SbError.js");
 var users={};
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 
 
 var RateLimiter = function(a,b){

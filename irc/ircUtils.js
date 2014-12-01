@@ -1,7 +1,7 @@
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
 var log = require("../lib/logger.js");
-var config = require("../config.js");
+var config = require("../server-config-defaults.js");
 
 module.exports = function(clientEmitter, client, callbacks) {
 

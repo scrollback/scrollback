@@ -1,5 +1,5 @@
 var log = require("../lib/logger.js");
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 var debug = config.irc.debug;
 var internalSession = Object.keys(config.whitelists)[0];
 module.exports = function (core, client, ircUtils, firstMessage) {

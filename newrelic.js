@@ -5,7 +5,7 @@
  * description of configuration variables and their potential values.
  */
 
-var config = require('./config.js');
+var config = require('./server-config-defaults.js');
 
 if(config.core.newrelic.key) exports.config = {
 	app_name : config.core.newrelic.name || "Scrollback",

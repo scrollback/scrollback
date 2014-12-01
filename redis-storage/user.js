@@ -1,5 +1,5 @@
 var core;
-var config = require("../config.js");
+var config = require("../server-config-defaults.js");
 var userDB = require('../lib/redisProxy.js').select(config.redisDB.user);
 var occupantDB = require('../lib/redisProxy.js').select(config.redisDB.occupants);
 

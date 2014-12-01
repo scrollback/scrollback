@@ -1,6 +1,6 @@
 var core;
 var log = require("../lib/logger.js");
-var config = require("../config.js"),
+var config = require("../server-config-defaults.js"),
 	crypto = require('crypto'),
 	request = require("request"),
 	internalSession = Object.keys(config.whitelists)[0],

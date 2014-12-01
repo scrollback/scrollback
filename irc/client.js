@@ -5,7 +5,7 @@ var eventEmitter = new events.EventEmitter();
 var ObjectReader = require('../lib/ObjectReader.js');
 var or = new ObjectReader(eventEmitter);
 var log = require("../lib/logger.js");
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 var core;
 var port = config.irc.port;
 var server = config.irc.server;

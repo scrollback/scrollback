@@ -3,7 +3,7 @@
 /* global libsb, SockJS*/
 
 var generate = require("../lib/generate.js"),
-	config = require("../client-config.js"),
+	config = require("../client-config-defaults.js"),
 	core;
 
 var backOff = 1,

@@ -1,5 +1,5 @@
 var core;
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 var internalSession = Object.keys(config.whitelists)[0];
 var core, events = ['text', 'edit', 'admit', 'expel',
 							'room', 'getRooms', "getUsers", "getTexts", "getThreads"];

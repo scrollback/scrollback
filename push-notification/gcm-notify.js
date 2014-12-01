@@ -1,6 +1,6 @@
 var log = require('../lib/logger.js');
 var SbError = require('../lib/SbError.js');
-var config = require('../myConfig.js');
+var config = require('..//server-config-defaults.js');
 var _ = require('underscore');
 var request = require('request');
 var internalSession = Object.keys(config.whitelists)[0];

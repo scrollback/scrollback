@@ -1,6 +1,6 @@
 /* global module, require */
 var log = require("../../lib/logger.js");
-var config = require('../../config.js');
+var config = require('../../server-config-defaults.js');
 var internalSessions = Object.keys(config.whitelists);
 var su = config.su;
 var user, room, types;

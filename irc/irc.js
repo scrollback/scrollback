@@ -1,6 +1,6 @@
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 var log = require("../lib/logger.js");
 var events = require('events');
 var clientEmitter = new events.EventEmitter();

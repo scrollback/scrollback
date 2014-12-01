@@ -1,5 +1,5 @@
 var log = require('../lib/logger.js');
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 var internalSession = Object.keys(config.whitelists)[0];
 var noOfThreads = 50;
 var noOfText = 255;

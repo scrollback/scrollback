@@ -1,6 +1,5 @@
-var config = require("../config.js");
+var config = require("../server-config-defaults.js");
 //var log = require("../lib/logger.js");
-//var config = require('../../config.js');
 var occupantDB = require('../lib/redisProxy.js').select(config.redisDB.occupants);
 var userDB = require('../lib/redisProxy.js').select(config.redisDB.user);
 var roomDB = require('../lib/redisProxy.js').select(config.redisDB.room);

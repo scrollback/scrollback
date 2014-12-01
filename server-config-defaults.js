@@ -17,35 +17,9 @@ along with this program. If not, see http://www.gnu.org/licenses/agpl.txt
 or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
-
-var fs = require('fs');
-var changes = {};
-
-if (fs.existsSync('./myConfig.js')) {
-	changes = require("./myConfig.js");
-}
-/**
- *It merge c into d
- *@param {object} d default Object
- *@param {object} c this object will be merged into d.
- */
-function merge(d, c) {
-	for(var i in c) {
-		if (typeof d[i] === 'object' && typeof c[i] === 'object' && d[i] !== null && c[i] !== null) {
-			if (d[i] instanceof Array && c[i] instanceof Array) {
-				// d[i] = d[i].concat(c[i]);
-				/*Concatinating the plugins array from the default ones and the ones in
-				myConfig is probably not something that we might be interested in.*/
-				d[i] = c[i];
-			} else {
-				merge(d[i], c[i]);
-			}
-		} else {
-			d[i] = c[i];
-		}
-	}
-}
-
+var merge = require("./merge-config.js");
+var fs = require("fs");
+var config = {};
 var defaults = {
 	core: {
 		name: "scrollback",
@@ -128,6 +102,13 @@ var defaults = {
 	}
 };
 
+config = (function() {
+	var changes = {};
+	if (fs.existsSync("./server-config.js")) {
+		changes = require("./server-config.js");
+	}  
+	return merge(defaults, changes);
+}());
 
-merge(defaults, changes);
-module.exports = defaults;
+
+module.exports = config;

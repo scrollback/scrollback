@@ -1,4 +1,4 @@
-var config = require('../config.js'),
+var config = require('../server-config-defaults.js'),
 	redis = require('../lib/redisProxy.js').select(config.redisDB.threader),
 	log = require("../lib/logger.js");
 

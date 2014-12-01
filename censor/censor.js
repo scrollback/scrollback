@@ -1,4 +1,4 @@
-var config = require("../config.js");
+var config = require("../server-config-defaults.js");
 var internalSession = Object.keys(config.whitelists)[0];
 module.exports = function(core) {
 

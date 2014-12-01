@@ -1,4 +1,4 @@
-var config = require("../../config.js");
+var config = require("../../server-config-defaults.js");
 
 module.exports = function (store) {
     return store.defineType('awayback', {

@@ -1,6 +1,6 @@
 /* jshint browser:true */
 /* global libsb, $, currentState */
-var config = require("../client-config.js");
+var config = require("../client-config-defaults.js");
 
 function getParameterByName(name, url) {
 	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");

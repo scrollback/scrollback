@@ -2,7 +2,7 @@ var crypto = require('crypto') /*, log = require("../lib/logger.js")*/ ;
 var names = require('../lib/generate.js').names;
 var MathUtils = require('../lib/MathUtils.js')();
 var uid = require('../lib/generate.js').uid;
-var config = require("../config.js");
+var config = require("../server-config-defaults.js");
 var internalSession = Object.keys(config.whitelists)[0];
 var _ = require('underscore');
 var log = require('../lib/logger.js');

@@ -1,4 +1,4 @@
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 var log = require("../lib/logger.js");
 var send = require('./sendEmail.js');
 var fs=require("fs"),jade = require("jade");
