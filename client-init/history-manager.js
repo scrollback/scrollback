@@ -78,17 +78,16 @@ function buildUrl(state) {
 		params.push("time=" + new Date(state.time).toISOString());
 	}
 
-	if (state.platform) {
-		params.push("platform=" + state.platform);
-	}
-
-	if (state.tab) {
-		params.push("tab=" + state.tab);
-	}
-
 	if (state.embed) {
 		params.push("embed=" + encodeURIComponent(JSON.stringify(state.embed)));
 	}
+
+	[ "tab", "dialog", "platform" ].forEach(function(query) {
+		if (query in state && state[query] !== null && typeof state[query] !== "undefined") {
+			params.push(query + "=" + encodeURIComponent(state[query]));
+		}
+	});
+
 	return path + (params.length ? "?" + params.join("&") : "");
 }
 

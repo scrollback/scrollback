@@ -117,7 +117,9 @@ $(function() {
 		dialog.action = {
 			text: "Go back as guest",
 			action: function() {
-				window.location.reload();
+				libsb.emit("navigate", { dialog: null }, function() {
+					window.location.reload();
+				});
 			}
 		};
 		dialog.dismiss = false;

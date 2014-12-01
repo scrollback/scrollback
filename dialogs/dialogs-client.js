@@ -217,16 +217,14 @@ libsb.on("navigate", function(state, next) {
 
 	if (state.source === "dialog" || ("dialog" in state.changes && state.source !== "modal-dismiss")) {
 		if (!state.dialog) {
-			return $.modal("dismiss");
+			$.modal("dismiss");
+
+			return next();
 		}
 
 		eventname = state.dialog;
 
-		if (state.dialog === "createroom") {
-			if (!libsb.user) {
-				return;
-			}
-
+		if (/(createroom|signup)/.test(state.dialog)) {
 			if (!signingUp && (/^guest-/).test(libsb.user.id)) {
 				eventname = "auth";
 			}
@@ -252,9 +250,9 @@ libsb.on("init-dn", function(init, next) {
 		signingUp = false;
 	}
 
-	if (window.currentState.dialog === "createroom") {
+	if (/(createroom|signup)/.test(window.currentState.dialog)) {
 		libsb.emit("navigate", {
-			dialog: "createroom",
+			dialog: window.currentState.dialog,
 			source: "dialog"
 		});
 	} else if (signingUp) {
@@ -278,15 +276,22 @@ libsb.on("user-dn", function(user, next) {
 libsb.on("auth-dialog", function(dialog, next) {
 	var roomName = (window.currentState.mode === "noroom") ? window.currentState.roomName : "";
 
-	if (window.currentState.dialog === "createroom" && (/^guest-/).test(libsb.user.id)) {
-		dialog.title = "Create a new room";
-		dialog.description = "You must sign in first";
-		dialog.content = [
-			"<p>Choose a room name for your community</p>",
-			"<input type='text' id='createroom-dialog-room' value='" + roomName + "' disabled>"
-		];
-	} else {
-		dialog.title = "Sign in to Scrollback";
+	if ((/^guest-/).test(libsb.user.id)) {
+		switch (window.currentState.dialog) {
+			case "signup":
+				dialog.title = "Sign up for scrollback";
+				break;
+			case "createroom":
+				dialog.title = "Create a new room";
+				dialog.description = "You must sign in first";
+				dialog.content = [
+					"<p>Choose a room name for your community</p>",
+					"<input type='text' id='createroom-dialog-room' value='" + roomName + "' disabled>"
+				];
+				break;
+			default:
+				dialog.title = "Sign in to Scrollback";
+		}
 	}
 
 	next();
@@ -295,37 +300,39 @@ libsb.on("auth-dialog", function(dialog, next) {
 libsb.on("createroom-dialog", function(dialog, next) {
 	var roomName = (window.currentState.mode === "noroom") ? window.currentState.roomName : "";
 
-	if (signingUp) {
-		dialog.title = "Create a new room";
-		dialog.content = [
-			"<p>Choose a username</p>",
-			"<input type='text' id='createroom-dialog-user' autofocus>",
-			"<p>Choose a room name for your community</p>",
-			"<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>"
-		];
-		dialog.action = {
-			text: "Sign up & create room",
-			action: function() {
-				var $userEntry = $("#createroom-dialog-user"),
-					$roomEntry = $("#createroom-dialog-room"),
-					username = $userEntry.val(),
-					roomname = $roomEntry.val(),
-					self = this;
+	if ((/^guest-/).test(libsb.user.id)) {
+		if (signingUp) {
+			dialog.title = "Create a new room";
+			dialog.content = [
+				"<p>Choose a username</p>",
+				"<input type='text' id='createroom-dialog-user' autofocus>",
+				"<p>Choose a room name for your community</p>",
+				"<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>"
+			];
+			dialog.action = {
+				text: "Sign up & create room",
+				action: function() {
+					var $userEntry = $("#createroom-dialog-user"),
+						$roomEntry = $("#createroom-dialog-room"),
+						username = $userEntry.val(),
+						roomname = $roomEntry.val(),
+						self = this;
 
-				username = (typeof username === "string") ? username.toLowerCase().trim() : "";
-				roomname = (typeof roomname === "string") ? roomname.toLowerCase().trim() : "";
+					username = (typeof username === "string") ? username.toLowerCase().trim() : "";
+					roomname = (typeof roomname === "string") ? roomname.toLowerCase().trim() : "";
 
-				if (username === roomname) {
-					return showError("User and room names cannot be the same", $userEntry);
-				}
+					if (username === roomname) {
+						return showError("User and room names cannot be the same", $userEntry);
+					}
 
-				validateName($roomEntry, self, "Room", function() {
-					createUser($userEntry, self, function() {
-						createRoom($roomEntry, self);
+					validateName($roomEntry, self, "Room", function() {
+						createUser($userEntry, self, function() {
+							createRoom($roomEntry, self);
+						});
 					});
-				});
-			}
-		};
+				}
+			};
+		}
 	} else {
 		dialog.title = "Create a new room";
 		dialog.description = "Choose a room name for your community";
@@ -342,18 +349,25 @@ libsb.on("createroom-dialog", function(dialog, next) {
 }, 100);
 
 libsb.on("signup-dialog", function(dialog, next) {
-	dialog.title = "Finish sign up";
-	dialog.description = "Choose a username";
-	dialog.content = [
-		"<input type='text' id='signup-dialog-user' autofocus>",
-		"<p>Be creative. People in Scrollback will know you by this name.</p>"
-	];
-	dialog.action = {
-		text: "Create account",
-		action: function() {
-			createUser("#signup-dialog-user", this);
+	if ((/^guest-/).test(libsb.user.id)) {
+		if (signingUp) {
+			dialog.title = "Finish sign up";
+			dialog.description = "Choose a username";
+			dialog.content = [
+				"<input type='text' id='signup-dialog-user' autofocus>",
+				"<p>Be creative. People in Scrollback will know you by this name.</p>"
+			];
+			dialog.action = {
+				text: "Create account",
+				action: function() {
+					createUser("#signup-dialog-user", this);
+				}
+			};
 		}
-	};
+	} else {
+		dialog.title = "You're already signed in!";
+		dialog.description = "Sign out to sign up for a new account";
+	}
 
 	next();
 }, 100);
