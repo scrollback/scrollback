@@ -20,7 +20,7 @@ function AddItem(menu, type) {
 
 			if (!user.params.notifications) {
 				user.params.notifications = {};
-				user.params.notifications[type] = true;
+				user.params.notifications[type] = false;
 			} else {
 				user.params.notifications[type] = !user.params.notifications[type];
 			}
