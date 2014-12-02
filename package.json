@@ -83,7 +83,6 @@
     "event-stream": "latest",
     "gulp": "latest",
     "gulp-autoprefixer": "latest",
-    "gulp-browserify": "latest",
     "gulp-concat": "latest",
     "gulp-gitmodified": "latest",
     "gulp-jshint": "latest",
