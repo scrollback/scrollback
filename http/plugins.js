@@ -5,9 +5,9 @@ module.exports = function(c, conf) {
 	config = conf;
 	
 	return {
-		init: init;
-	}
-}
+		init: init
+	};
+};
 
 
 var init = function(app) {

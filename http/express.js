@@ -85,5 +85,5 @@ module.exports = function(core, conf) {
 	config = conf;
 	return {
 		init: init
-	}
+	};
 };
