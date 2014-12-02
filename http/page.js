@@ -18,8 +18,7 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
-var config = require('../server-config-defaults.js'),
-	core,
+var core, config,
 	clientData = require('../client-config-defaults.js'),
 	fs = require("fs"),
 	core,
@@ -27,10 +26,19 @@ var config = require('../server-config-defaults.js'),
 	seo, clientTemp, clientHbs,
 	log = require('../lib/logger.js');
 
-exports.init = function(app, coreObject) {
-	core = coreObject;
+
+
+module.exports = function(c, conf) {
+	core = c;
+	config = conf;
+	
+	return {
+		init: init
+	};
+};
+function init (app) {
 	if (!config.http.https) log.w("Insecure connection. Specify https options in your config file.");
-	init();
+	start();
 
 	app.get('/t/*', function(req, res, next) {
 		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data) {
@@ -71,10 +79,14 @@ exports.init = function(app, coreObject) {
 		});
 
 	});
-};
+}
 
-function init() {
+function start() {
 	clientHbs = fs.readFileSync(__dirname + "/../public/client.hbs", "utf8");
 	seo = require('./seo.js')(core);
 	clientTemp = handlebars.compile(clientHbs);
 }
+
+
+
+

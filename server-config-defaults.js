@@ -115,8 +115,10 @@ var defaults = {
 
 	},
 	facebook: {
+		host: this.http.host
 	},
 	google:{
+		host: this.http.host
 	}
 };
 

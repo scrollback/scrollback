@@ -3,11 +3,12 @@ var log = require("../lib/logger.js");
 var config = require("../server-config-defaults.js"),
 	crypto = require('crypto'),
 	request = require("request"),
-	internalSession = Object.keys(config.whitelists)[0],
 	core;
-module.exports = function(c) {
+module.exports = function(c, conf) {
 	core = c;
-	if (!config.google || !config.google.client_id || !config.google.client_secret) {
+	config =conf;
+	
+	if (!config.client_id || !config.client_secret) {
 		console.log("Missing google params:");
 		return;
 	}
@@ -31,9 +32,9 @@ module.exports = function(c) {
 				},
 				body: require('querystring').stringify({
 					code: action.auth.google.code,
-					redirect_uri: "https://" + config.http.host + "/r/google/return",
-					client_id: config.google.client_id,
-					client_secret: config.google.client_secret,
+					redirect_uri: "https://" + config.host + "/r/google/return",
+					client_id: config.client_id,
+					client_secret: config.client_secret,
 					grant_type: "authorization_code"
 				})
 			}, function(err, res, body) {
@@ -56,7 +57,7 @@ module.exports = function(c) {
 							googlePic = body.picture;
 							core.emit("getUsers", {
 								identity: "mailto:" + body.email,
-								session: internalSession
+								session: "internal-google"
 							}, function(err, data) {
 								if (err || !data) return callback(err);
 
@@ -89,7 +90,7 @@ module.exports = function(c) {
 										type: "user",
 										to: action.user.id,
 										user: action.user,
-										session: internalSession
+										session: "internal-google"
 									}, function(err, action) {
 										log.d("Adding picture on sign-in: ", err, action);
 									});
@@ -118,10 +119,9 @@ function handlerRequest(req, res) {
 	path = path.split("/");
 	if (path[0] == "google") {
 		if (path[1] == "login") {
-			console.log("Google loging:");
 			return res.render(__dirname + "/login.jade", {
-				client_id: config.google.client_id,
-				redirect_uri: "https://" + config.http.host + "/r/google/return"
+				client_id: config.client_id,
+				redirect_uri: "https://" + config.host + "/r/google/return"
 			});
 		} else if (path[1] == "return") {
 			return res.render(__dirname + "/return.jade", {});

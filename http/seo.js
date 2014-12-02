@@ -1,10 +1,10 @@
 var log = require('../lib/logger.js');
-var config = require('../server-config-defaults.js');
-var internalSession = Object.keys(config.whitelists)[0];
+var config;
 var noOfThreads = 50;
 var noOfText = 255;
 
-module.exports = function(core) {
+module.exports = function(core, conf) {
+	config = conf;
 	return {
 		getSEOHtml: getSEOHtml
 	};
@@ -48,7 +48,7 @@ module.exports = function(core) {
 				core.emit("getThreads", {
 					to: a[0],
 					ref: a[1],
-					session: internalSession
+					session: "internal-http-seo"
 				}, function(err, data) {
 					log.d("Results:", data);
 					if (!err && data && data.results && data.results.length) {
@@ -62,7 +62,7 @@ module.exports = function(core) {
 
 			core.emit("getRooms", {
 				ref: a[0],
-				session: internalSession
+				session: "internal-http-seo"
 			}, function(err, data) {
 				if (!err && data.results && data.results[0]) {
 					room = data.results[0];
@@ -83,7 +83,7 @@ module.exports = function(core) {
 				thread: a[1],
 				time: query.time ? new Date(query.time).getTime() : 1,
 				after: noOfText + 1,
-				session: internalSession
+				session: "internal-http-seo"
 			}, function(err, data) {
 				var room = data.room;
 				if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
@@ -97,7 +97,7 @@ module.exports = function(core) {
 				to: a[0],
 				time: new Date(query.time).getTime(),
 				after: noOfThreads + 1,
-				session: internalSession
+				session: "internal-http-seo"
 			}, function(err, data) {
 				var room = data.room;
 				if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
