@@ -1,12 +1,11 @@
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
-var config = require('../server-config-defaults.js');
+var config;
 var log = require("../lib/logger.js");
 var events = require('events');
 var clientEmitter = new events.EventEmitter();
-var client = require('./client.js');
-var internalSession = Object.keys(config.whitelists)[0];
-client.init(clientEmitter);
+var client;
+
 var core;
 var callbacks = {};
 var onlineUsers = {}; //scrollback users that are already online
@@ -15,8 +14,11 @@ var userExp = 10 * 60 * 1000;
 var initCount = 0;
 var ircUtils = new require('./ircUtils.js')(clientEmitter, client, callbacks);
 
-module.exports = function (coreObj) {
+module.exports = function (coreObj, conf) {
 	core = coreObj;
+	config = conf;
+	client = require('./client.js')(core, conf);
+	client.init(clientEmitter);
 	init();
 	require('./roomEvent.js')(core, client, ircUtils, firstMessage);
 	core.on("http/init", function (payload, callback) {
@@ -109,7 +111,7 @@ function init() {
 
 		core.emit("getRooms", {
 			identity: "irc",
-			session: internalSession
+			session: "internal-irc"
 		}, function (err, data) {
 			var rooms = data.results;
 			log("returned state from IRC:", JSON.stringify(state));
@@ -187,14 +189,14 @@ function init() {
 		log("room event:", room);
 		core.emit("getRooms", {
 			ref: room.room.id,
-			session: internalSession
+			session: "internal-irc"
 		}, function (err, reply) {
 			log("results of getRooms", err, reply);
 			if (err || !reply.results) return;
 			var r = reply.results[0];
 			var rr = {
 				type: "room",
-				session: internalSession,
+				session: "internal-irc",
 				room: {}
 			};
 

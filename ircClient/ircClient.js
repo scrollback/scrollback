@@ -2,7 +2,7 @@ var irc = require('irc');
 irc.startIdentServer();
 var queue = require("./queue.js");
 var log = require('../lib/logger.js');
-var config = require('./server-config-defaults.js');
+var config = require('./config.js');
 var core;
 var botNick = config.botNick; //part of config of IRC client.
 var clients = {}; //for server channel user,server --> client.

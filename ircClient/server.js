@@ -1,5 +1,5 @@
 var ircClient = require('./ircClient.js');
-var config = require('./server-config-defaults.js');
+var config = require('./config.js');
 var net = require('net');
 var events = require('events');
 var core = new events.EventEmitter();
