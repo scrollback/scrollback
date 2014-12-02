@@ -722,6 +722,8 @@ body {
 .card-container {
     @extend %fadein;
 
+    padding: .5em;
+
     & + .home-area-no-my-rooms {
         display: none;
         color: darken($light-color, 20%);
@@ -1663,7 +1665,6 @@ img.emoji {
     }
 
     .embed-code {
-        min-width: 27em;
         min-height: 15em;
         background-color: darken($light-color, 5%);
         font-weight: 700;
@@ -1676,7 +1677,7 @@ img.emoji {
         max-width: 100%;
     }
 
-    input[type="text"], input[type="url"], textarea { min-width: 27em; }
+    input[type="text"], input[type="url"], textarea { min-width: 21em; }
 
     textarea {
         resize: vertical;
@@ -1807,7 +1808,7 @@ img.emoji {
 
 .infinite-items { width: 100%; }
 
-.signedout-dialog, .signin-dialog, .signup-dialog, .createroom-dialog {
+.dialog {
     input, .button { width: 100%; }
 }
 
@@ -1918,7 +1919,7 @@ img.emoji {
 }
 
 .room-area, .meta-area, .main-area {
-    @include transition(.3s, ease-out); /* animate css transforms */
+    @include transition(.3s ease-out); /* animate css transforms */
     @include transform(translate3d(0, 0, 0)); /* enable hardware acceleration in small screen */
 
     @media #{$screenxx} { @include transform(none); }

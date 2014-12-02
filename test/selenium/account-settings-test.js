@@ -12,8 +12,8 @@ module.exports = function(capabilities, options) {
 		before(function(done) {
 			this.timeout(4 * timeOut);
 			driver = testUtils.openUrl(capabilities, server, "testroom1");
-			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function() {
-				console.log("logging in through Persona...");
+			testUtils.loginFacebook(driver, config.facebookUser.email, config.facebookUser.password, function() {
+				console.log("logging in through facebook...");
 				done();
 			});
 		});
@@ -41,7 +41,7 @@ module.exports = function(capabilities, options) {
 			}).then(function() {
 				return driver.findElement(webdriver.By.css('.userpref')).click();
 			}).then(function() {
-				return q.delay(5000);
+				return q.delay(3000);
 			}).then(function() {
 				return driver.findElement(webdriver.By.id('pref-about-me')).getAttribute("value");
 			}).then(function(text) {
@@ -67,7 +67,7 @@ module.exports = function(capabilities, options) {
 			}).then(function() {
 				return driver.findElement(webdriver.By.css('.conf-save')).click();
 			}).then(function() {
-				return q.delay(2000);
+				return q.delay(3000);
 			}).then(function() {
 				return driver.findElement(webdriver.By.css(".sb-user")).isDisplayed();
 			}).then(function(t) {

@@ -15,7 +15,6 @@
     "requireCamelCaseOrUpperCaseIdentifiers": true,
     "requireDotNotation": true,
     "maximumLineLength": {
-        "value": 160,
         "tabSize": 4,
         "allowUrlComments": true,
         "allowRegex": true
