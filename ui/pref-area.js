@@ -80,10 +80,11 @@ libsb.on('navigate', function(state, next) {
 		oldState = state.old;
 
 		if (!currentConfig) {
-			if (libsb.user.id.indexOf('guest-') === 0) {
+			if (!libsb.user || !libsb.user.id || /guest-/.test(libsb.user.id)) {
 				libsb.emit('navigate', {
-					mode: 'normal'
+					mode: 'home'
 				});
+				return next();
 			}
 
 			if (libsb.isInited === true) {
