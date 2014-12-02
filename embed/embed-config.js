@@ -2,14 +2,15 @@
 /* global $, libsb */
 
 var formField = require("../lib/formField.js"),
-	embedForm, titlebarColor;
+	embedForm, startMinimized, titlebarColor;
 
 function getEmbedCode() {
 	var code = '<script>window.scrollback = %s;(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>',
 		embedObj = {
 			room: window.currentState.roomName,
 			titlebarColor: titlebarColor,
-			form: embedForm
+			form: embedForm,
+			minimize: startMinimized
 		};
 
 	return parse(code, JSON.stringify(embedObj));
@@ -32,7 +33,11 @@ libsb.on("config-show", function(conf, next) {
 	var roomURL = "https://" + window.location.host + "/" + window.currentState.roomName,
 		$config, $roomURLField, $shareDiv, $qrCode,
 		$titlebarColor,
-		$formOptions, $embedCode, $embedCodeDiv;
+		$formOptions, $minimizeOptions, $embedCode, $embedCodeDiv;
+
+	// Set default embed options
+	embedForm = "toast";
+	startMinimized = false;
 
 	$roomURLField = $("<input>").addClass("embed-input-url").attr({
 		readonly: true,
@@ -94,6 +99,17 @@ libsb.on("config-show", function(conf, next) {
 	});
 
 	$config.append($titlebarColor);
+
+	// Widget minimize
+	$minimizeOptions = formField("Start widget minimized", "check", "embed-minimized-check", [[ "", "", startMinimized ]]);
+
+	$minimizeOptions.find("[name='embed-minimized-check']").on("change", function() {
+		startMinimized = $(this).is(":checked");
+
+		$embedCode.text(getEmbedCode());
+	});
+
+	$config.append($minimizeOptions);
 
 	// Widget form
 	$formOptions = formField("Widget appearance", "radio", "embed-form-options", [[ "embed-form-toast", "Toast", true ], [ "embed-form-canvas", "Canvas" ]]);
