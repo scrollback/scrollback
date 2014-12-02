@@ -100,6 +100,10 @@ libsb.on('navigate', function(state, next) {
 }, 500);
 
 libsb.on("user-menu", function(menu, next) {
+	if (window.currentState.mode === "pref") {
+		return next();
+	}
+
 	menu.items.userpref = {
 		text: "Account settings",
 		prio: 300,
