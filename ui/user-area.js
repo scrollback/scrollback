@@ -9,6 +9,7 @@ $(function() {
 		$roomTitle = $("#room-title");
 
 	$(document).on("click", ".js-has-user-menu", function() {
+        if (currentState.hasOwnProperty('webview')) return;
 		libsb.emit("user-menu", {
 			origin: $(this),
 			buttons: {},
