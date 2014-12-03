@@ -1880,6 +1880,10 @@ $dotshadow: fade-out($accent-color, .6);
     &:before { @include asset-content("sound-off", lighten($dark-color, 30%)); }
 }
 
+.embed-toast.toast-minimized {
+    .alert-bar { display: none; }
+}
+
 .phonegap-login-buttons {
     .button { display: block; }
 }
