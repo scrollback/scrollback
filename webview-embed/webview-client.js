@@ -1,23 +1,21 @@
 /* jshint node:true, browser:true */
 /* global libsb, currentState, $ */
 
-var changedNick = false;
-
 libsb.on("navigate", function(state, next) {
-    if (!changedNick && state.hasOwnProperty('webview') && currentState.connectionStatus === "online") {
-        try {
+	if (state.source === "boot" && state.hasOwnProperty('webview')) {
+		setTimeout(function() {
             $('body').addClass('webview-true webview');
-            var webview = JSON.parse(decodeURIComponent(state.webview));
-            if (webview.hasOwnProperty('nick')) {
-                libsb.emit('init-up', {
-                    suggestedNick: webview.nick
-                }, function() {
-                    changedNick = true;
-                });
-            }
-        } catch(e) {
-            // silently discard parse error
-        }
-    }
+        }, 0);
+	}
     next();
 }, 600);
+
+libsb.on('init-up', function(init, next) {
+    if (currentState.hasOwnProperty('webview')) {
+		var webview = JSON.parse(decodeURIComponent(currentState.webview));
+        if (webview.hasOwnProperty('nick')) {
+            init.suggestedNick = webview.nick;
+        }
+	}
+	next();
+}, 500);
