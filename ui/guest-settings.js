@@ -1,9 +1,13 @@
 /* jshint browser: true */
 /* global $, libsb */
 
-libsb.on("auth-menu", function(menu, next) {
+libsb.on("user-menu", function(menu, next) {
+	if (!(/^guest-/).test(libsb.user.id)) {
+		return next();
+	}
+
 	AddItem(menu, "sound");
-	//	AddItem(menu, "desktop"); 
+	//	AddItem(menu, "desktop");
 	next();
 }, 500);
 
