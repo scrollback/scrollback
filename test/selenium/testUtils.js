@@ -14,7 +14,7 @@ function openUrl(capabilities, server, roomid) {
 
 function loginPersona(driver, id, password, callback) {
 
-	findVisibleElementByClass(driver, ".js-has-auth-menu", function(el) {
+	findVisibleElementByClass(driver, ".js-has-user-menu", function(el) {
 		var win;
 		el.click().
 		then(function() {
@@ -48,7 +48,7 @@ function loginPersona(driver, id, password, callback) {
 }
 
 function loginFacebook(driver, email, pass, callback) {
-	findVisibleElementByClass(driver, ".js-has-auth-menu", function(el) {
+	findVisibleElementByClass(driver, ".js-has-user-menu", function(el) {
 		el.click().
 		then(function() {
 			findVisibleElementByClass(driver, ".facebook", function(el) {

@@ -101,7 +101,7 @@ libsb.on('navigate', function(state, next) {
 }, 500);
 
 libsb.on("user-menu", function(menu, next) {
-	if (window.currentState.mode === "pref") {
+	if (window.currentState.mode === "pref" || (/^guest-/).test(libsb.user.id)) {
 		return next();
 	}
 

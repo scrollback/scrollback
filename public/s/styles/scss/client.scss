@@ -1807,7 +1807,7 @@ $dotshadow: fade-out($accent-color, .6);
 
 %popup-menu { min-width: 18em; }
 
-.auth-menu { @extend %popup-menu; }
+.user-menu { @extend %popup-menu; }
 
 .popover-calls-to-action {
     @extend %popup-menu;
