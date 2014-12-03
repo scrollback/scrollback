@@ -78,13 +78,13 @@ function buildUrl(state) {
 		params.push("time=" + new Date(state.time).toISOString());
 	}
 
-	["embed", "webview"].forEach(function(component) {
+	["embed"].forEach(function(component) {
         if (component in state && state[component] !== null && typeof state[component] !== "undefined") {
 		  params.push(component + "=" + encodeURIComponent(JSON.stringify(state[component])));
         }
-	}); 
+	});
     
-	[ "tab", "dialog", "platform" ].forEach(function(component) {
+	[ "tab", "dialog", "platform", "webview"].forEach(function(component) {
 		if (component in state && state[component] !== null && typeof state[component] !== "undefined") {
 			params.push(component + "=" + encodeURIComponent(state[component]));
 		}
