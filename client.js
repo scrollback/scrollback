@@ -33,6 +33,7 @@ require('./dialogs/dialogs-listeners.js');
 require('./client-init/client-init.js')(libsb);
 require('./id-generator/id-generator-client.js')(libsb);
 require('./client-entityloader/client-entityloader.js')(libsb);
+require('./webview-embed/webview-client.js');
 
 require('./ui/infinite.js');
 require('./ui/hide-scroll.js');

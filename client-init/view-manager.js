@@ -20,7 +20,7 @@ function updateClass(state, next) {
 		classList = $("body").attr("class").trim() || "";
 
 		if (state.connectionStatus !== state.old.connectionStatus) {
-			classList = classList.replace(/state-\S+/g, "");
+			classList = classList.replace(/\bstate-\S+/g, "");
 
 			if (state.connectionStatus === "online") {
 				classList += " state-online";
@@ -30,7 +30,7 @@ function updateClass(state, next) {
 		}
 
 		if (state.mode !== state.old.mode) {
-			classList = classList.replace(/mode-\S+/g, "");
+			classList = classList.replace(/\bmode-\S+/g, "");
 
 			if (state.mode) {
 				classList += " mode-" + state.mode;
@@ -38,7 +38,7 @@ function updateClass(state, next) {
 		}
 
 		if (state.view !== state.old.view) {
-			classList = classList.replace(/view-\S+/g, "");
+			classList = classList.replace(/\bview-\S+/g, "");
 
 			if (state.view) {
 				classList += " view-" + state.view;
