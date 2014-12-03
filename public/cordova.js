@@ -1655,14 +1655,11 @@ function handlePluginsObject(path, moduleList, finishPluginLoading) {
 function findCordovaPath() {
     var path = null;
     var scripts = document.getElementsByTagName('script');
-    var term1 = 'cordova.js', term2 = 'phonegap.js';
+    var term = 'cordova.js';
     for (var n = scripts.length-1; n>-1; n--) {
         var src = scripts[n].src.replace(/\?.*$/, ''); // Strip any query param (CB-6007).
-        if (src.indexOf(term1) == (src.length - term1.length)) {
-            path = src.substring(0, src.length - term1.length);
-            break;
-        } else if (src.indexOf(term2) == (src.length - term2.length)) {
-            path = src.substring(0, src.length - term2.length);
+        if (src.indexOf(term) == (src.length - term.length)) {
+            path = src.substring(0, src.length - term.length);
             break;
         }
     }
