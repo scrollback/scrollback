@@ -1,5 +1,9 @@
 /* global libsb*/
 libsb.on('user-menu', function(menu, next) {
+	if ((/^guest-/).test(libsb.user.id)) {
+		return next();
+	}
+
 	menu.items.logout = {
 		text: 'Logout',
 		prio: 1000,
@@ -7,5 +11,6 @@ libsb.on('user-menu', function(menu, next) {
 			libsb.logout();
 		}
 	};
+
 	next();
 }, 1000);

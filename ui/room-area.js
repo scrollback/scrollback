@@ -9,19 +9,21 @@ var LISTENING = 1,
 
 // Add entry to user menu
 libsb.on("user-menu", function(menu, next) {
-	if (window.currentState.mode !== "home" && !window.currentState.embed) {
-		menu.items.homefeed = {
-			text: "My rooms",
-			prio: 100,
-			action: function() {
-				libsb.emit("navigate", {
-					mode: "home",
-					view: "normal",
-					source: "user-menu"
-				});
-			}
-		};
+	if (window.currentState.mode === "home" || window.currentState.embed || (/^guest-/).test(libsb.user.id)) {
+		return next();
 	}
+
+	menu.items.homefeed = {
+		text: "My rooms",
+		prio: 100,
+		action: function() {
+			libsb.emit("navigate", {
+				mode: "home",
+				view: "normal",
+				source: "user-menu"
+			});
+		}
+	};
 
 	next();
 }, 1000);
