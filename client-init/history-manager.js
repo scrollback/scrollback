@@ -82,7 +82,7 @@ function buildUrl(state) {
 		params.push("embed=" + encodeURIComponent(JSON.stringify(state.embed)));
 	}
 
-	[ "tab", "dialog", "platform" ].forEach(function(query) {
+	[ "tab", "dialog", "platform", "webview" ].forEach(function(query) {
 		if (query in state && state[query] !== null && typeof state[query] !== "undefined") {
 			params.push(query + "=" + encodeURIComponent(state[query]));
 		}

@@ -293,7 +293,7 @@ module.exports = function(libsb) {
 			};
 
 			if (url) {
-				init.suggestedNick = suggestedNick || "";
+				init.suggestedNick = init.suggestedNick || suggestedNick || "";
 			}
 
 			next();
