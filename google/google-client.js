@@ -1,4 +1,4 @@
-/* jshint browser:true */
+/* jshint browser:true, node:true */
 /* global libsb, $, currentState*/
 var config = require("../client-config.js");
 
