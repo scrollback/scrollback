@@ -17,34 +17,34 @@ module.exports = function(capabilities, options) {
 			this.timeout(1.5 * timeout);
 			var mb;
 			driver.findElement(webdriver.By.css('.meta-button-back'))
-				.then(function(m) {
-					mb = m;
-					return mb.isDisplayed();
-				})
-				.then(function(v) {
-					if (v) {
-						mb.click()
-							.then(function() {
-								return driver.findElement(webdriver.By.css('.meta-area'));
-							})
-							.then(function(ma) {
-								return ma.isDisplayed();
-							})
-							.then(function(v) {
-								assert.equal(true, v, "Meta-button-back is not working");
-								done();
-							});
-					} else done();
-				});
+			.then(function(m) {
+				mb = m;
+				return mb.isDisplayed();
+			})
+			.then(function(v) {
+				if (v) {
+					mb.click()
+					.then(function() {
+						return driver.findElement(webdriver.By.css('.meta-area'));
+					})
+					.then(function(ma) {
+						return ma.isDisplayed();
+					})
+					.then(function(v) {
+						assert.equal(true, v, "Meta-button-back is not working");
+						done();
+					});
+				} else done();
+			});
 		});
 
 		it("People area test1", function(done) {
 			driver.findElement(webdriver.By.css('.pane-people'))
-				.isDisplayed()
-				.then(function(v) {
-					assert.equal(true, v, "people pane is not visible");
-					done();
-				});
+			.isDisplayed()
+			.then(function(v) {
+				assert.equal(true, v, "people pane is not visible");
+				done();
+			});
 		});
 
 		it("People area test2", function(done) {
@@ -59,16 +59,16 @@ module.exports = function(capabilities, options) {
 		it("config area test1", function(done) {
 			this.timeout(timeout);
 			driver.findElement(webdriver.By.css('.tab-info'))
-				.then(function(tab) {
-					return tab.click();
-				}).then(function() {
-					return driver.findElement(webdriver.By.css('.pane-info'));
-				}).then(function(el) {
-					return el.isDisplayed();
-				}).then(function(v) {
-					assert.equal(true, v, "Info area not visible after clicking info tab");
-					done();
-				});
+			.then(function(tab) {
+				return tab.click();
+			}).then(function() {
+				return driver.findElement(webdriver.By.css('.pane-info'));
+			}).then(function(el) {
+				return el.isDisplayed();
+			}).then(function(v) {
+				assert.equal(true, v, "Info area not visible after clicking info tab");
+				done();
+			});
 		});
 
 		it("config area test2", function(done) {
