@@ -2,7 +2,7 @@
 /* global $*/
 
 var Color = require("../lib/color.js"),
-	parseURL = require("../lib/parseURL.js"),
+	urlUtils = require("../lib/url-utils.js"),
 	stringUtils = require("../lib/stringUtils.js"),
 	/* status flags */
 	verificationStatus = false,
@@ -204,18 +204,12 @@ module.exports = function(libsb) {
 		});
 	});
 
-	var url = parseURL(window.location.pathname, window.location.search);
+	var url = urlUtils.parse(window.location.pathname, window.location.search);
 
 	embed = url.embed;
 
 	if (window.parent !== window) {
 		if (embed) {
-			try {
-				embed = JSON.parse(decodeURIComponent(url.embed));
-			} catch (e) {
-				embed = {};
-			}
-
 			suggestedNick = embed.nick;
 			classesOnLoad(embed);
 
