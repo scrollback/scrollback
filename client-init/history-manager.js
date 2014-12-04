@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $, window*/
 /* exported currentState */
-var	urlUtils = require("../lib/url-utils.js");
+var urlUtils = require("../lib/url-utils.js");
 
 var currentState = window.currentState,
 	libsb;
