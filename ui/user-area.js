@@ -8,29 +8,16 @@ $(function() {
 		$userName = $(".sb-user"),
 		$roomTitle = $("#room-title");
 
-	$(document).on("click", ".js-has-auth-menu", function() {
-		if ($("body").hasClass("role-guest")) {
-			libsb.emit("auth-menu", {
-				origin: $(this),
-				buttons: {},
-				items: {},
-				title: "Sign in to Scrollback with"
-			}, function(err, menu) {
-				showMenu("auth-menu", menu);
-			});
-		}
-	});
-
 	$(document).on("click", ".js-has-user-menu", function() {
-		if ($("body").hasClass("role-user")) {
-			libsb.emit("user-menu", {
-				origin: $(this),
-				buttons: {},
-				items: {}
-			}, function(err, menu) {
-				showMenu("user-menu", menu);
-			});
-		}
+        if (currentState.hasOwnProperty('webview')) return;
+		libsb.emit("user-menu", {
+			origin: $(this),
+			buttons: {},
+			items: {},
+			title: (/^guest-/).test(libsb.user.id) ? "Sign in to Scrollback with" : null
+		}, function(err, menu) {
+			showMenu("user-menu", menu);
+		});
 	});
 
 	function setOwner() {
@@ -66,7 +53,11 @@ $(function() {
 		$userName.text(libsb.user.id.replace(/^guest-/, ""));
 	}
 
-	libsb.on("auth-menu", function(menu, next) {
+	libsb.on("user-menu", function(menu, next) {
+		if (!(/^guest-/).test(libsb.user.id)) {
+			return next();
+		}
+
 		libsb.emit("auth", menu, function() {
 			next();
 		});

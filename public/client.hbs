@@ -13,24 +13,29 @@
 		<link rel="stylesheet" type="text/css"  media="screen" href="{{server.protocol}}//fonts.googleapis.com/css?family=Open+Sans:400,600">
 		<link rel="stylesheet" type="text/css" media="screen" href="{{server.protocol}}{{server.host}}/s/styles/dist/client.css">
 
-		<script type="text/javascript">
-			var _gaq = _gaq || [];
-			_gaq.push(['_setAccount', '{{analytics.id}}']);
-			_gaq.push(['_trackPageview']);
+		{{#if analytics.id}}
+			<script>
+				var _gaq = _gaq || [];
+				_gaq.push(['_setAccount', '{{analytics.id}}']);
+				_gaq.push(['_trackPageview']);
 
-			(function() {
-				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-			})();
-		</script>
-		<script>
-			(function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
-			c&&c.apply(this,a)};var b=function(){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];
-			c.src="//beacon.errorception.com/"+s+".js";c.async=!0;b.parentNode.insertBefore(c,b)};
-			_.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
-			(window,document,"script","{{errorception.id}}");
-		</script>
+				(function() {
+					var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+					ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+					var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+				})();
+			</script>
+		{{/if}}
+
+		{{#if errorception.id}}
+			<script>
+				(function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
+				c&&c.apply(this,a)};var b=function(){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];
+				c.src="//beacon.errorception.com/"+s+".js";c.async=!0;b.parentNode.insertBefore(c,b)};
+				_.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
+				(window,document,"script","{{errorception.id}}");
+			</script>
+		{{/if}}
 	</head>
 
 	<body class="role-guest mode-normal">
@@ -48,7 +53,7 @@
 			{{{seo.body}}}
 		</main>
 
-		<section data-embed="none" data-mode="normal search conf pref noroom profile" class="room-area column">
+		<section data-webview="none" data-embed="none" data-mode="normal search conf pref noroom profile" class="room-area column">
 			<div class="room-header"></div>
 
 			<div role="list" class="room-list hide-scroll js-area-rooms">
@@ -134,7 +139,7 @@
 		</section>
 
 		<section role="main" data-mode="normal search conf pref" class="main-area column">
-			<div data-mode="normal search conf pref" class="title-bar custom-titlebar-bg custom-titlebar-fg">
+			<div data-mode="normal search conf pref" class="title-bar custom-titlebar-image custom-titlebar-bg custom-titlebar-fg">
 				<div class="left-area">
 					<a class="meta-button">
 						<span data-embed="toast canvas" class="meta-button-logo">
@@ -208,10 +213,10 @@
 							</svg>
 						</div>
 					</div>
-					<div class="user-area js-has-user-menu js-has-auth-menu">
+					<div class="user-area js-has-user-menu">
 						<div data-embed="none" class="user-detail cta-area">
 							<div class="sb-user"></div>
-							<div data-state="online" data-role="guest" class="sign-in cta-action" data-string="Sign in"></div>
+							<div data-webview="none" data-state="online" data-role="guest" class="sign-in cta-action" data-string="Sign in"></div>
 						</div>
 						<div class="user-avatar">
 							<img alt="" class="sb-avatar" >
@@ -259,7 +264,7 @@
 		</section>
 
 		<section data-mode="home" class="home-area content-area-full">
-			<div class="title-bar custom-titlebar-bg custom-titlebar-fg">
+			<div class="title-bar custom-titlebar-image custom-titlebar-bg custom-titlebar-fg">
 				<div class="left-area">
 					<div class="header-image"></div>
 				</div>
@@ -276,10 +281,10 @@
 							</svg>
 						</div>
 					</div>
-					<div class="user-area js-has-user-menu js-has-auth-menu">
+					<div class="user-area js-has-user-menu">
 						<div data-embed="none" class="user-detail cta-area">
 							<div class="sb-user"></div>
-							<div data-state="online" data-role="guest" class="sign-in cta-action" data-string="Sign in"></div>
+							<div data-webview="none" data-state="online" data-role="guest" class="sign-in cta-action" data-string="Sign in"></div>
 						</div>
 						<div class="user-avatar">
 							<img alt="" class="sb-avatar" >

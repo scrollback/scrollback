@@ -205,6 +205,10 @@ libsb.on("createroom-dialog", function(dialog, next) {
 					username = (typeof username === "string") ? username.toLowerCase().trim() : "";
 					roomname = (typeof roomname === "string") ? roomname.toLowerCase().trim() : "";
 
+					if (!username) {
+						return showError("User name cannot be empty", $userEntry);
+					}
+
 					if (username === roomname) {
 						return showError("User and room names cannot be the same", $userEntry);
 					}

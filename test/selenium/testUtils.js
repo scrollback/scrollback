@@ -15,7 +15,7 @@ function openUrl(capabilities, server, roomid) {
 function loginPersona(driver, id, password, callback, className) {
     if(!className)
     {
-        className = ".js-has-auth-menu";
+        className = ".js-has-user-menu";
     }
     findVisibleElementByClass(driver, className, function(el) {
 		var win;
