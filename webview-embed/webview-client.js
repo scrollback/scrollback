@@ -10,7 +10,7 @@ libsb.on("navigate", function(state, next) {
 
 libsb.on('init-up', function(init, next) {
 	if (currentState.hasOwnProperty('webview')) {
-		var webview = JSON.parse(decodeURIComponent(currentState.webview));
+		var webview = currentState.webview;
 		if (webview.hasOwnProperty('nick')) {
 			init.suggestedNick = webview.nick;
 		}
