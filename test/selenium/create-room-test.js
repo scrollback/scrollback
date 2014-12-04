@@ -16,8 +16,8 @@ module.exports = function (capabilities, options) {
 			driver = testUtils.openUrl(capabilities, server, roomName);
 			setTimeout(done, 1.5 * timeout);
 		});
-        
-        it("login facebook on create room view", function(done) {
+
+		it("login facebook on create room view", function(done) {
 			testUtils.loginFacebook(driver, config.facebookUser.email, config.facebookUser.password, function() {
 				q.delay(3000).then(function() {
 					return driver.findElement(webdriver.By.css(".dialog-action-create-room")).click();

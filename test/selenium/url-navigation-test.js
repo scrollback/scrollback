@@ -18,21 +18,21 @@ module.exports = function(capabilities, options) {
 		it("test for navigation to default edit page", function(done) {
 			console.log("Default edit page");
 			testUtils.loginFacebook(driver, config.facebookUser.email, config.facebookUser.password,
-				function() {
-					setTimeout(function() {
-						driver.get("https://stage.scrollback.io/facebook/edit").
-						then(function() {
-							return q.delay(3000);
-						}).
-						then(function() {
-							return driver.findElement(webdriver.By.css('.list-view-general-settings')).
-							isDisplayed();
-						}).then(function(t) {
-							assert.equal(t, true, "page loading failed");
-							done();
-						});
-					}, 5000);
-				});
+									function() {
+				setTimeout(function() {
+					driver.get("https://stage.scrollback.io/facebook/edit").
+					then(function() {
+						return q.delay(3000);
+					}).
+					then(function() {
+						return driver.findElement(webdriver.By.css('.list-view-general-settings')).
+						isDisplayed();
+					}).then(function(t) {
+						assert.equal(t, true, "page loading failed");
+						done();
+					});
+				}, 5000);
+			});
 		});
 
 		it("test for navigation to info page", function(done) {
@@ -84,9 +84,9 @@ module.exports = function(capabilities, options) {
 			this.timeout(4 * timeout);
 			var items = Array("general", "irc", "twitter", "authorizer", "spam", "seo", "embed"),
 				classes = [".list-view-general-settings", ".list-view-irc-settings",
-						  "list-view-twitter-settings", ".list-view-authorizer-settings",
-						  ".list-view-spam-settings", ".list-view-seo-settings",
-						  ".list-item-embed-settings"],
+						   "list-view-twitter-settings", ".list-view-authorizer-settings",
+						   ".list-view-spam-settings", ".list-view-seo-settings",
+						   ".list-item-embed-settings"],
 				index = Math.floor(Math.random() * items.length),
 				item = items[index];
 			console.log("testing for edit", item);

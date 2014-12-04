@@ -13,11 +13,11 @@ function openUrl(capabilities, server, roomid) {
 }
 
 function loginPersona(driver, id, password, callback, className) {
-    if(!className)
-    {
-        className = ".js-has-user-menu";
-    }
-    findVisibleElementByClass(driver, className, function(el) {
+	if(!className)
+	{
+		className = ".js-has-user-menu";
+	}
+	findVisibleElementByClass(driver, className, function(el) {
 		var win;
 		el.click().
 		then(function() {
@@ -33,7 +33,7 @@ function loginPersona(driver, id, password, callback, className) {
 			return driver.findElement(webdriver.By.id("authentication_email")).sendKeys(id);
 		}).then(function() {
 			return driver.findElement(webdriver.By.id("authentication_email"))
-				.sendKeys(webdriver.Key.RETURN);
+			.sendKeys(webdriver.Key.RETURN);
 		}).then(function() {
 			return q.delay(7000);
 		}).then(function() {
@@ -51,9 +51,9 @@ function loginPersona(driver, id, password, callback, className) {
 }
 
 function loginFacebook(driver, email, pass, callback, className) {
-    if (!className) {
-        className = '.user-area';
-    }
+	if (!className) {
+		className = '.user-area';
+	}
 	driver.findElement(webdriver.By.css(className)).click().
 	then(function() {
 		findVisibleElementByClass(driver, ".facebook", function(el) {
