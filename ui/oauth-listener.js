@@ -1,5 +1,6 @@
 /* jshint browser:true, node:true */
-/* global $, libsb, currentState */
+/* global $, libsb */
+
 var initSent = false;
 
 $(window).on("message", function(event) {
@@ -37,42 +38,3 @@ function sendInit(action) {
 		initSent = false;
 	}
 }
-
-var windowRef;
-
-function getParameterByName(name, url) {
-	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-		results = regex.exec(url);
-	return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
-
-module.exports = function(authUrl, retVals) {
-	if (typeof authUrl !== "string" || !(retVals instanceof Array)) {
-		return;
-	}
-	windowRef = window.open(authUrl, "_blank", "location=no");
-	if (currentState.phonegap) {
-		var interval = setInterval(function() {
-			windowRef.executeScript({
-				code: "window.location.href;"
-			}, function(ret) {
-				var url = ret[0];
-				var code = getParameterByName(retVals[0], url);
-				if (code !== null) {
-					var auth = {
-						command: "signin",
-						auth: {
-							facebook: {
-								code: code
-							}
-						}
-					};
-					$(window).trigger("phonegapmsg", [auth]);
-					clearInterval(interval);
-					windowRef.close();
-				}
-			});
-		}, 100);
-	}
-};
