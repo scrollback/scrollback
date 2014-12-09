@@ -1,7 +1,6 @@
-var log = require("../lib/logger.js");
-var config = require('../server-config-defaults.js');
-var searchDB = require('../lib/redisProxy.js').select(config.redisDB.search);
+var log = require("../lib/logger.js"), searchDB;
 var es = require('elasticsearch');
+var config;
 var indexName = 'sb';
 var client;
     
@@ -9,7 +8,6 @@ var searchTimeout = 10000;
 var messageCount = 0;
 var updateThreads = [];
 var indexAtCount = 200;
-
 
 /*
     this function takes a list of ids and gets the thread objects from the elastic search.
@@ -145,8 +143,10 @@ function indexTexts() {
     });
 }
 
-module.exports = function (core) {
-    if (config.search) {
+module.exports = function (core, conf) {
+	config = conf;
+	searchDB = require('../lib/redisProxy.js').select(config.search);
+    if (config) {
         if(!client) {
             init();
         }
@@ -342,8 +342,8 @@ function searchThreads(data, callback){
  
 function init() {
     log("Connecting to Elasticsearch server .... ");
-    if (config.search.server && config.search.port) {
-        var searchServer = config.search.server + ":" + config.search.port;
+    if (config.server && config.port) {
+        var searchServer = config.server + ":" + config.port;
         client = new es.Client({
             host: searchServer
         });

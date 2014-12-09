@@ -1,9 +1,9 @@
-var config = require('../server-config-defaults.js');
-var log = require("../lib/logger.js");
-var redis = require('../lib/redisProxy.js').select(config.redisDB.recommendation);
-var core;
-module.exports = function(coreObject) {
+var log = require("../lib/logger.js"), redis, core;
+
+module.exports = function(coreObject, config) {
+	redis = require('../lib/redisProxy.js').select(config.redisDB);
 	core = coreObject;
+	
 	core.on("getRooms", function(q, callback) {
 		if (q.featured) {
 			log.i("Query for featured room");

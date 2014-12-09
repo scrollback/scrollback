@@ -2,30 +2,29 @@ var log = require("../lib/logger.js");
 var htmlEncode = require('htmlencode');
 var Twit = require('twit');
 var guid = require("../lib/generate.js").uid;
-var config = require('../server-config-defaults.js');
 var OAuth = require('oauth');
-var internalSession = Object.keys(config.whitelists)[0];
-var host = config.http.host;
-var redis = require('../lib/redisProxy.js').select(config.redisDB.twitter);
-var twitterConsumerKey = config.twitter.consumerKey;
-var twitterConsumerSecret = config.twitter.consumerSecret;
+var config, redis, twitterConsumerKey, twitterConsumerSecret;
 var core;
 var expireTime = 15 * 60; // expireTime for twitter API key...
-var timeout  = config.twitter.timeout; // search Interval
+var timeout, host;
 var maxTweets = 1; // max tweets to search in timeout inteval
 var pendingOauths = {};
 var oauthTimeout = 15 * 60 * 1000; // 15 min
-var silentTimeout = config.twitter.silentTimeout;
-module.exports = function(coreObj) {
-
-	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
+var silentTimeout;
+module.exports = function(coreObj, conf) {
+	config = conf;
+	if (config && config.consumerKey && config.consumerSecret) {
+		redis = require('../lib/redisProxy.js').select(config.redisDB);
+		twitterConsumerKey = config.consumerKey;
+		twitterConsumerSecret = config.consumerSecret;
+		timeout  = config.timeout; // search Interval
+		silentTimeout = config.silentTimeout;
 		log("twitter app started");
 		core = coreObj;
+		host = config.host;
 		init();
-
+		
 		core.on("http/init", function(payload, callback) {
-			
-			console.log("twitter.......");
 			payload.push({
 				get: {
 					"/r/twitter/*": function(req,res,next) {
@@ -35,11 +34,11 @@ module.exports = function(coreObj) {
 			});
 			callback(null, payload);
 		}, "setters");
+		
 		core.on('text', onText, "watcher");
 		core.on("room", twitterRoomHandler, "gateway");
 		core.on("room", twitterParamsValidation, "appLevelValidation");
-	}
-	else {
+	} else {
 		log("Twitter module is not enabled.");
 	}
 };
@@ -161,7 +160,7 @@ function init() {
  */
 function initTwitterSearch() {
 	log("getting room data....");
-	core.emit("getRooms",{identity: "twitter", session: internalSession }, function(err, data) {
+	core.emit("getRooms",{identity: "twitter", session: "internal-twitter" }, function(err, data) {
 		if (!err) {
 			log.d("data returned from labelDB: ", JSON.stringify(data));
 			var rooms = data.results;

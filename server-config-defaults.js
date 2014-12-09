@@ -19,8 +19,13 @@ Boston, MA 02111-1307 USA.
 */
 var merge = require("./merge-config.js");
 var fs = require("fs");
+var host = "local.scrollback.io";
+
 var config = {};
 var defaults = {
+	global:{
+		host: host
+	},
 	core: {
 		name: "scrollback",
 		newrelic: { name: 'Scrollback Local' }
@@ -50,7 +55,7 @@ var defaults = {
 		},
 	},
 	"browser-id-auth": {
-		audience: "local.scrollback.io"
+		audience: host
 	},
 	env: "production",
 	mysql: {
@@ -62,7 +67,7 @@ var defaults = {
 		database : 'scrollback'
 	},
 	http: {
-		host: "local.scrollback.io",
+		host: host,
 		cookieDomain: ".scrollback.io",
 		port: 80,
 		home: "public", // the directory containing static files

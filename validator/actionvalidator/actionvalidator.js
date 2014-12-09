@@ -1,10 +1,11 @@
+var config;
 var generate = require("../../lib/generate.js");
 var validateRoom = require('../../lib/validate.js');
 var SbError = require("../../lib/SbError.js");
 var validator = new (require('valid'))();
 var log = require('../../lib/logger.js');
-module.exports = function (core) {
-
+module.exports = function (core, conf) {
+	config = conf;
     /* list of event that the basic validation function is called for.*/
     var events = ['init', 'text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'expel', 'room', 'user'];
 
