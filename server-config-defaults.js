@@ -23,12 +23,14 @@ var host = "local.scrollback.io";
 
 var config = {};
 var defaults = {
-	global:{
+	global: {
 		host: host
 	},
 	core: {
 		name: "scrollback",
-		newrelic: { name: 'Scrollback Local' }
+		newrelic: {
+			name: 'Scrollback Local'
+		}
 	},
 	appPriorities: {
 		antiflood: 1000,
@@ -46,8 +48,8 @@ var defaults = {
 		watcher: 100
 	},
 	analytics: {
-		pg: {//post gre config
-			server: "localhost",//server:port
+		pg: { //post gre config
+			server: "localhost", //server:port
 			db: "logs",
 			username: "username",
 			password: "password"
@@ -59,12 +61,12 @@ var defaults = {
 	},
 	env: "production",
 	mysql: {
-		host     : 'localhost',
-		user     : 'scrollback',
-		password : 'scrollback',
+		host: 'localhost',
+		user: 'scrollback',
+		password: 'scrollback',
 		connectionLimit: 100,
 		//debug    :true         ,
-		database : 'scrollback'
+		database: 'scrollback'
 	},
 	http: {
 		host: host,
@@ -73,23 +75,23 @@ var defaults = {
 		home: "public", // the directory containing static files
 		time: 60000,
 		limit: 30,
-		index: "/me"//index URL redirect
+		index: "/me" //index URL redirect
 	},
 	email: {
 		from: "scrollback@scrollback.io",
 		redis: 7
 	},
-	redis:{
+	redis: {
 		host: "local.scrollback.io",
 		port: 6379,
-		db:0
+		db: 0
 	},
 	entityloader: {
 		nickRetries: 100
 	},
 	threader: {
-		host : "local.scrollback.io",
-		port : 12345
+		host: "local.scrollback.io",
+		port: 12345
 	},
 	twitter: {
 		//consumerKey: ".."
@@ -104,7 +106,7 @@ var defaults = {
 	leveldb: {
 		path: "/data"
 	},
-	redisDB:{
+	redisDB: {
 		twitter: 6,
 		email: 7,
 		session: 8,
@@ -122,7 +124,7 @@ var defaults = {
 	facebook: {
 		host: this.http.host
 	},
-	google:{
+	google: {
 		host: this.http.host
 	}
 };
@@ -131,7 +133,7 @@ config = (function() {
 	var changes = {};
 	if (fs.existsSync("./server-config.js")) {
 		changes = require("./server-config.js");
-	}  
+	}
 	return merge(defaults, changes);
 }());
 
