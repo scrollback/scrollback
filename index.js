@@ -32,7 +32,7 @@ log.w("This is \"" +  process.env.NODE_ENV + "\" server");
 
 function start(name) {
 	log.i("starting ", name);
-	var plugin = require("./"+name+"/"+name+".js");
+	var plugin = require("./"+name+"/"+name+".js"); //loads required plugin
 	plugin(core);
 }
 
