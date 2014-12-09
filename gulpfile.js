@@ -34,7 +34,8 @@ var gulp = require("gulp"),
 		js: [
 			"*/*{.js,/**/*.js}",
 			"!*/*{.min.js,/**/*.min.js}",
-			"!node_modules{,/**}", "!bower_components{,/**}"
+			"!node_modules{,/**}", "!bower_components{,/**}",
+            "!public/phonegap/**"
 		],
 		css: [ "public/s/styles/scss/*.scss" ]
 	};
