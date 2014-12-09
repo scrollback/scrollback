@@ -1,6 +1,6 @@
 /* jshint browser:true */
 
-module.exports = function () {
+module.exports = function() {
 	var arrayCacheOps = require('./arrayCacheOps.js');
 	var objCacheOps = require('./objCacheOps.js');
 	var config = require('../client-config-defaults.js');

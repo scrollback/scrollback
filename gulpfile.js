@@ -204,7 +204,6 @@ gulp.task("manifest", function() {
 		basePath: "public",
 		prefix: domain,
 		cache: [
-			domain + "/client.html",
 			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
@@ -239,7 +238,6 @@ gulp.task("android-manifest", function() {
 		basePath: "public",
 		prefix: domain,
 		cache: [
-			domain + "/client.html?platform=android",
 			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"

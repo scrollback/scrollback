@@ -78,17 +78,18 @@ function buildUrl(state) {
 		params.push("time=" + new Date(state.time).toISOString());
 	}
 
-	if (state.platform) {
-		params.push("platform=" + state.platform);
-	}
+	["embed"].forEach(function(component) {
+        if (component in state && state[component] !== null && typeof state[component] !== "undefined") {
+		  params.push(component + "=" + encodeURIComponent(JSON.stringify(state[component])));
+        }
+	});
+    
+	[ "tab", "dialog", "platform", "webview"].forEach(function(component) {
+		if (component in state && state[component] !== null && typeof state[component] !== "undefined") {
+			params.push(component + "=" + encodeURIComponent(state[component]));
+		}
+	});
 
-	if (state.tab) {
-		params.push("tab=" + state.tab);
-	}
-
-	if (state.embed) {
-		params.push("embed=" + encodeURIComponent(JSON.stringify(state.embed)));
-	}
 	return path + (params.length ? "?" + params.join("&") : "");
 }
 

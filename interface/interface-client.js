@@ -21,7 +21,6 @@ function addProperties(l) {
         disconnect: disconnect,
         resource: generate.uid(),
 
-        getLoginMenu: getLoginMenu,
         getTexts: getTexts,
         getThreads: getThreads,
         getOccupants: getOccupants,
@@ -89,10 +88,6 @@ function connect() {
 
 function disconnect() {
     libsb.emit('disconnect');
-}
-
-function getLoginMenu(callback) {
-    libsb.emit('auth-menu', callback);
 }
 
 function getTexts(query, callback) {
@@ -187,9 +182,16 @@ function recvInit(init, next) {
     libsb.memberOf = init.memberOf;
     libsb.occupantOf = init.occupantOf;
 	libsb.isInited = true;
-	if(init.user.id) {
-		libsb.user = init.user;	
+
+	if (init.user.id) {
+		libsb.user = init.user;
+	} else {
+		libsb.user.identities = init.user.identities;
+		libsb.user.picture = init.user.picture;
+		libsb.user.params = libsb.user.params || {};
+		libsb.user.params.pictures = init.user.params.pictures;
 	}
+
     next();
 }
 
