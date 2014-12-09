@@ -1,5 +1,5 @@
 var types;
-module.exports = function (t) {
+module.exports = function (t/*, config*/) {
     types = t;
     return {
         put: function (data, cb) {

@@ -1,16 +1,15 @@
-var config = require("../server-config-defaults.js");
-var objectlevel = require("objectlevel");
+var objectlevel = require("objectlevel"), config;
 
-module.exports = function(core) {
-	var db = new objectlevel(__dirname + "/" + config.leveldb.path);
-	var types = require("./types/types.js")(db);
-	var texts = require("./schemas/text.js")(types);
-	var roomuser = require("./schemas/roomuser.js")(types);
-	var joinpart = require("./schemas/joinpart.js")(types);
-	var admitexpel = require("./schemas/admitexpel.js")(types);
-	var edit = require("./schemas/edit.js")(types);
-	var threads = require("./schemas/thread.js")(types);
-
+module.exports = function(core, conf) {
+	config = conf;
+	var db = new objectlevel(__dirname + "/" + config.path);
+	var types = require("./types/types.js")(db, config);
+	var texts = require("./schemas/text.js")(types, config);
+	var roomuser = require("./schemas/roomuser.js")(types, config);
+	var joinpart = require("./schemas/joinpart.js")(types, config);
+	var admitexpel = require("./schemas/admitexpel.js")(types, config);
+	var edit = require("./schemas/edit.js")(types, config);
+	var threads = require("./schemas/thread.js")(types, config);
 
 	core.on('room', roomuser.put, "storage");
 	core.on('user', roomuser.put, "storage");
