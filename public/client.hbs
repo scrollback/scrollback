@@ -13,24 +13,29 @@
 		<link rel="stylesheet" type="text/css"  media="screen" href="{{server.protocol}}//fonts.googleapis.com/css?family=Open+Sans:400,600">
 		<link rel="stylesheet" type="text/css" media="screen" href="{{server.protocol}}{{server.host}}/s/styles/dist/client.css">
 
-		<script type="text/javascript">
-			var _gaq = _gaq || [];
-			_gaq.push(['_setAccount', '{{analytics.id}}']);
-			_gaq.push(['_trackPageview']);
+		{{#if analytics.id}}
+			<script>
+				var _gaq = _gaq || [];
+				_gaq.push(['_setAccount', '{{analytics.id}}']);
+				_gaq.push(['_trackPageview']);
 
-			(function() {
-				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-			})();
-		</script>
-		<script>
-			(function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
-			c&&c.apply(this,a)};var b=function(){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];
-			c.src="//beacon.errorception.com/"+s+".js";c.async=!0;b.parentNode.insertBefore(c,b)};
-			_.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
-			(window,document,"script","{{errorception.id}}");
-		</script>
+				(function() {
+					var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+					ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+					var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+				})();
+			</script>
+		{{/if}}
+
+		{{#if errorception.id}}
+			<script>
+				(function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
+				c&&c.apply(this,a)};var b=function(){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];
+				c.src="//beacon.errorception.com/"+s+".js";c.async=!0;b.parentNode.insertBefore(c,b)};
+				_.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
+				(window,document,"script","{{errorception.id}}");
+			</script>
+		{{/if}}
 	</head>
 
 	<body class="role-guest mode-normal">
@@ -55,7 +60,7 @@
 				<a class="room-item"><span class="room-name"></span><span class="js-room-notifications-counter room-item-unread-count"></span></a>
 			</div>
 
-			<div data-role="user" class="room-area-create-new">
+			<div class="room-area-create-new">
 				<a class="js-create-room" data-string="Create room"></a>
 			</div>
 		</section>
@@ -180,7 +185,7 @@
 						<a data-mode="conf pref" class="button secondary conf-cancel" data-string="Cancel"></a>
 					</div>
 				</div>
-				<div data-mode="normal search" class="right-area">
+				<div class="right-area">
 
 					<a data-mode="normal" data-embed="none" data-string="data-tooltip::Search" class="search-button" role="button">
 						<svg class="search-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -188,7 +193,7 @@
 						</svg>
 					</a>
 
-					<div data-embed="toast canvas" class="embed-area">
+					<div data-mode="normal search" data-embed="toast canvas" class="embed-area">
 
 						<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
 							<svg class="follow-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -324,10 +329,9 @@
 			<div data-mode="noroom" class="content-view-area">
 
 				<h2 data-string="This room doesn't exist yet :-("></h2>
-				<p data-role="guest" data-string="You need to sign in first to create a room"></p>
 				<p>
-					<a data-role="user" class="button" id="noroom-view-create" data-string="Create room"></a>
-					<a data-role="guest" class="button js-has-auth-menu" id="noroom-view-login" data-string="Sign in"></a>
+					<a data-role="user" class="button js-create-room" data-string="Create room"></a>
+					<a data-role="guest" class="button js-create-room" data-string="Sign in and create room"></a>
 				</p>
 			</div>
 			<div data-mode="profile" class="content-view-area">
@@ -354,35 +358,6 @@
 
 		<aside class="progressbar loading"></aside>
 
-		<!-- templates -->
-		<script type="text/template" id="signup-dialog">
-			<div class="signup-dialog">
-				<h1>Choose a username</h1>
-				<form id="signup">
-					<input type="text" id="signup-id" name="username" placeholder="Enter username" autofocus><br>
-					<input class="signup-save" type="button" value="Create account">
-			</form>
-			</div>
-		</script>
-
-		<script type="text/template" id="signedout-dialog">
-			<div class="signedout-dialog">
-				<h1>You've been signed out!</h1>
-				<a class="button reload-page modal-remove">Go back as guest</a>
-			</div>
-		</script>
-
-		<script type="text/template" id="createroom-dialog">
-			<div class="createroom-dialog">
-				<h1>Create a new room</h1>
-				<form id="createroom">
-					<input type="text" id="createroom-id" name="roomname" placeholder="Enter room name" autofocus>
-					<p class="error"></p>
-					<input id="createroom-save" type="submit" value="Create room">
-				</form>
-			</div>
-		</script>
-
 		<!-- scripts -->
 		<script src="{{server.protocol}}//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script>window.jQuery || document.write('<script src="{{server.protocol}}{{server.host}}/s/scripts/lib/jquery.min.js"><\/script>');</script>
@@ -394,8 +369,8 @@
 		<![endif]-->
 
 		{{#if android}}
-			<script src="cordova.js"></script>
-			<script src="cordova_plugins.js"></script>
+			<script src="/phonegap/cordova-plugins/{{appVersion}}/cordova.js"></script>
+			<script src="/phonegap/cordova-plugins/{{appVersion}}/cordova_plugins.js"></script>
 		{{/if}}
 
 		<script src="{{server.protocol}}{{server.host}}/s/scripts/client.bundle.min.js"></script>

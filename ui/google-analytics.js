@@ -2,11 +2,17 @@
 /* global _gaq, libsb */
 
 (function() {
-	// Track navigation events
-	var props = ["roomName", "thread", "mode", "tab", "query"];
+	var props;
 
+	if (!("_gaq" in window)) {
+		return;
+	}
+
+	props = [ "roomName", "thread", "mode", "dialog", "tab", "query" ];
+
+	// Track navigation events
 	libsb.on("navigate", function(state, next) {
-		if (!(state.old && _gaq)) {
+		if (!state.old) {
 			return next();
 		}
 

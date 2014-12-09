@@ -1,7 +1,9 @@
 /* jshint browser:true */
 /* global libsb, $ */
+
 var config = require('../client-config.js');
 libsb.on("navigate", function(state, next) {
+	
 	var regex;
 	if (state.phonegap && state.source === 'boot') {
 		regex = new RegExp("(^https?:" + config.server.host + ")(($)|(\/)).*");

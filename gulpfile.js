@@ -22,6 +22,7 @@ var gulp = require("gulp"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
 	config = require("./config.js"),
+	clientConfig = require("./client-config.js"),
 	debug = !(gutil.env.production || config.env === "production"),
 	dirs = {
 		bower: "bower_components",
@@ -189,8 +190,7 @@ gulp.task("styles", [ "lace" ], function() {
 
 // Generate appcache manifest file
 gulp.task("manifest", function() {
-	var clientConfig = require("./client-config.js"),
-		protocol = clientConfig.server.protocol,
+	var protocol = clientConfig.server.protocol,
 		host = clientConfig.server.host,
 		domain = protocol + host;
 
@@ -204,7 +204,6 @@ gulp.task("manifest", function() {
 		basePath: "public",
 		prefix: domain,
 		cache: [
-			domain + "/client.html",
 			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
@@ -224,8 +223,7 @@ gulp.task("manifest", function() {
 });
 
 gulp.task("android-manifest", function() {
-	var clientConfig = require("./client-config.js"),
-		protocol = clientConfig.server.protocol,
+	var protocol = clientConfig.server.protocol,
 		host = clientConfig.server.host,
 		domain = protocol + host;
 
@@ -239,7 +237,6 @@ gulp.task("android-manifest", function() {
 		basePath: "public",
 		prefix: domain,
 		cache: [
-			domain + "/client.html?platform=android",
 			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"

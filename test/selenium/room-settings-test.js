@@ -13,16 +13,15 @@ module.exports = function(capabilities, options) {
 		before(function(done) {
 			this.timeout(4 * timeOut);
 
-			driver = testUtils.openUrl(capabilities, server, "room1");
+			driver = testUtils.openUrl(capabilities, server, "facebook");
 
-			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function() {
-				console.log("logging in through Persona...");
+			testUtils.loginFacebook(driver, config.facebookUser.email, config.facebookUser.password, function() {
+				console.log("logging in through facebook...");
 				done();
 			});
 		});
 
 		it("General settings test", function(done) {
-			this.timeout(4 * timeOut);
 			driver.findElement(webdriver.By.css('.tab-info')).click().
 			then(function() {
 				return driver.findElement(webdriver.By.css('.configure-button')).click();
@@ -46,7 +45,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("Permissions test", function(done) {
-			this.timeout(4 * timeOut);
+			this.timeout(3 * timeOut);
 			/*driver.findElement(webdriver.By.css('.tab-info')).click().
 			then(function(){
 				console.log("configuring room...");

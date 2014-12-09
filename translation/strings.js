@@ -18,6 +18,7 @@ var data = {
 	"Sign in to get started": "Sign in to get started",
 	"Sign in with Facebook": "Sign in with Facebook",
 	"Sign in": "Sign in",
+	"Sign in and create room": "Sign in and create room",
 	"This room doesn't exist yet :-(": "This room doesn't exist yet :-(",
 	"This room": "This room",
 	"Type to search...": "Type to search...",
