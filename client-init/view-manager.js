@@ -22,10 +22,8 @@ function updateClass(state, next) {
 		if (state.connectionStatus !== state.old.connectionStatus) {
 			classList = classList.replace(/\bstate-\S+/g, "");
 
-			if (state.connectionStatus === "online") {
-				classList += " state-online";
-			} else {
-				classList += " state-offline";
+			if (state.connectionStatus) {
+				classList += " state-" + state.connectionStatus;
 			}
 		}
 

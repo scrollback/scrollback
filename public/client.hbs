@@ -38,7 +38,7 @@
 		{{/if}}
 	</head>
 
-	<body class="role-guest mode-normal">
+	<body class="role-guest mode-normal state-connecting">
 		<!-- [if lt IE 9]>
 		<div class="ie-warning">
 			<div class="ie-warning-content">
@@ -350,9 +350,16 @@
 			</div>
 		</section>
 
-		<section data-state="offline" data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
+		<section data-state="connecting" data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
 			<div class="content-view-area">
 				<h2 data-string="Just a sec..."></h2>
+			</div>
+		</section>
+
+		<section data-state="online" data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
+			<div class="content-view-area">
+				<h2 data-string="Couldn't connect to Scrollback :-("></h2>
+				<a class="button js-reload-page" data-string="Try again"></a>
 			</div>
 		</section>
 
