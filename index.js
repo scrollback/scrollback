@@ -28,6 +28,7 @@ var log = require('./lib/logger.js');
 var config = require("./server-config-defaults.js"), core = new (require('ebus'))(config.appPriorities);
 log.setEmailConfig(config.email);
 
+
 process.title = config.core.name;
 process.env.NODE_ENV = config.env;
 log.w("This is \"" +  process.env.NODE_ENV + "\" server");
@@ -35,6 +36,13 @@ log.w("This is \"" +  process.env.NODE_ENV + "\" server");
 function start(name) {
 	log.i("starting ", name);
 	var plugin = require("./"+name+"/"+name+".js");
+	if(!config[name]) config[name] = {};
+	config[name].global = config.global;
+	
+	console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+	log.d("Appname:", name);
+	log.d("config:", config[name]);
+	console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 	plugin(core, config[name] || {});
 }
 

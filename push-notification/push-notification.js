@@ -42,7 +42,7 @@ module.exports = function(core, conf) {
 				});
 			}
 		});
-		gcm_notify(regList, payload, core);
+		gcm_notify(regList, payload, core, config);
 	}
 
 	function makePayload(title, message, text) {

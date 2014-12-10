@@ -56,7 +56,7 @@ var defaults = {
 			//port:
 		},
 	},
-	"browser-id-auth": {
+	"browserid-auth": {
 		audience: host
 	},
 	env: "production",
@@ -125,10 +125,8 @@ var defaults = {
 
 	},
 	facebook: {
-		host: host
 	},
 	google: {
-		host: host
 	}
 };
 

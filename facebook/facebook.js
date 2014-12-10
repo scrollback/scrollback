@@ -23,7 +23,7 @@ function onInit(payload, callback) {
 function fbAuth(action, callback) {
 	if (action.auth && action.auth.facebook) {
 		request("https://graph.facebook.com/oauth/access_token?client_id=" + config.client_id +
-			"&redirect_uri=https://" + config.host + "/r/facebook/return" +
+			"&redirect_uri=https://" + config.global.host + "/r/facebook/return" +
 			"&client_secret=" + config.client_secret +
 			"&code=" + action.auth.facebook.code,
 			function(err, res, body) {
@@ -118,7 +118,7 @@ function handlerRequest(req, res, next) {
 		if(path[1] == "login") {
 			return res.render(__dirname+"/login.jade", {
 				client_id: config.client_id,
-				redirect_uri: "https://"+config.host+"/r/facebook/return"
+				redirect_uri: "https://"+config.global.host+"/r/facebook/return"
 			});
 		}
 		if(path[1] == "return") {

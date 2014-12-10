@@ -13,6 +13,8 @@ function browserAuth(action, callback) {
 	var assertion;
 	if (!action.auth || !action.auth.browserid) return callback();
 	assertion = action.auth.browserid;
+	
+	log.d("assertion", assertion, config);
 	request.post("https://verifier.login.persona.org/verify", {
 		form: {
 			assertion: assertion,

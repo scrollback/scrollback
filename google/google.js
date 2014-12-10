@@ -32,7 +32,7 @@ module.exports = function(c, conf) {
 				},
 				body: require('querystring').stringify({
 					code: action.auth.google.code,
-					redirect_uri: "https://" + config.host + "/r/google/return",
+					redirect_uri: "https://" + config.global.host + "/r/google/return",
 					client_id: config.client_id,
 					client_secret: config.client_secret,
 					grant_type: "authorization_code"
@@ -121,7 +121,7 @@ function handlerRequest(req, res) {
 		if (path[1] == "login") {
 			return res.render(__dirname + "/login.jade", {
 				client_id: config.client_id,
-				redirect_uri: "https://" + config.host + "/r/google/return"
+				redirect_uri: "https://" + config.global.host + "/r/google/return"
 			});
 		} else if (path[1] == "return") {
 			return res.render(__dirname + "/return.jade", {});
