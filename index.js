@@ -38,11 +38,6 @@ function start(name) {
 	var plugin = require("./"+name+"/"+name+".js");
 	if(!config[name]) config[name] = {};
 	config[name].global = config.global;
-	
-	console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-	log.d("Appname:", name);
-	log.d("config:", config[name]);
-	console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 	plugin(core, config[name] || {});
 }
 
