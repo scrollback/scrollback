@@ -79,25 +79,31 @@ var defaults = {
 	},
 	email: {
 		from: "scrollback@scrollback.io",
-		redis: 7
+		redisDB: 7
 	},
-	redis: {
+	"redis-storage": {
 		host: "local.scrollback.io",
 		port: 6379,
-		db: 0
+		db: 0,
+		session: 8,
+		user: 9,
+		room: 9,
+		occupants: 10
 	},
 	entityloader: {
 		nickRetries: 100
 	},
 	threader: {
 		host: "local.scrollback.io",
-		port: 12345
+		port: 12345,
+		redisDB: 11
 	},
 	twitter: {
 		//consumerKey: ".."
 		//consumerSecret: ".."
 		timeout: 1000 * 60,
-		silentTimeout: 1000 * 60 * 10
+		silentTimeout: 1000 * 60 * 10,
+		redisDB: 6,
 	},
 	irc: {
 		port: 8910,
@@ -106,26 +112,23 @@ var defaults = {
 	leveldb: {
 		path: "/data"
 	},
-	redisDB: {
-		twitter: 6,
-		email: 7,
-		session: 8,
-		user: 9,
-		room: 9,
-		occupants: 10,
-		threader: 11,
-		sitemap: 12,
-		recommendation: 13,
-		search: 14
+	recommendation:{
+		redisDB: 13
+	},
+	search:{
+		redisDB: 14
+	},
+	sitemap: {
+		redisDB: 12
 	},
 	su: {
 
 	},
 	facebook: {
-		host: this.http.host
+		host: host
 	},
 	google: {
-		host: this.http.host
+		host: host
 	}
 };
 

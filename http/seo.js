@@ -171,14 +171,14 @@ function htmlEscape(str) {
 
 function genHeadHtml(room, thread) {
 	var r = [];
-	var roomIcon = "https://" + config.http.host + "/s/img/scrollback.png";
+	var roomIcon = "https://" + config.host + "/s/img/scrollback.png";
 	r.push("<meta name=\"description\" content=\"" + htmlEscape(room.description) + "\">");
 	r.push("<meta name=\"twitter:card\" content=\"summary\" />");
 	r.push("<meta name=\"twitter:title\" content=\"" + htmlEscape(room.id) + " on scrollback\">");
 	r.push("<meta name=\"twitter:description\" content=\"" + htmlEscape(room.description) + "\">");
 	r.push("<meta name=\"twitter:image\" content=\"" + roomIcon + "\">"); //just a placeholder for now
 	r.push("<meta property=\"og:type\" content=\"website\"/>");
-	r.push("<meta property=\"og:url\" content=\"https://" + config.http.host + "/" + room.id + "\">");
+	r.push("<meta property=\"og:url\" content=\"https://" + config.host + "/" + room.id + "\">");
 	r.push("<meta property=\"og:title\" content=\"" + htmlEscape(room.id) + " on scrollback\">");
 	r.push("<meta property=\"og:description\" content=\"" + htmlEscape(room.description) + "\">");
 	r.push("<meta property=\"og:image\" content=\"" + roomIcon + "\">"); //just a placeholder for now

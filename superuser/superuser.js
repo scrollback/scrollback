@@ -3,7 +3,7 @@ var core, events = ['text', 'edit', 'admit', 'expel',
 							'room', 'getRooms', "getUsers", "getTexts", "getThreads"];
 var su;
 module.exports = function(c, config) {
-	su = config.su;
+	su = config.su || {};
 	core = c;
 	events.forEach(function(event) {
 		core.on(event, queriesAndAction, "sudo");

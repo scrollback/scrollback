@@ -17,7 +17,7 @@ var ircUtils = new require('./ircUtils.js')(clientEmitter, client, callbacks);
 module.exports = function (coreObj, conf) {
 	core = coreObj;
 	config = conf;
-	client = require('./client.js')(core, conf);
+	client = require('./client.js')(clientEmitter, config);
 	client.init(clientEmitter);
 	init();
 	require('./roomEvent.js')(core, client, ircUtils, firstMessage);

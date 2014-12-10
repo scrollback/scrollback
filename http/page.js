@@ -37,7 +37,7 @@ module.exports = function(c, conf) {
 	};
 };
 function init (app) {
-	if (!config.http.https) log.w("Insecure connection. Specify https options in your config file.");
+	if (!config.https) log.w("Insecure connection. Specify https options in your config file.");
 	start();
 
 	app.get('/t/*', function(req, res, next) {
@@ -48,7 +48,7 @@ function init (app) {
 	});
 
 	app.get("/", function(req, res) {
-		res.redirect(307, config.http.index);
+		res.redirect(307, config.index);
 	});
 
 	app.get("/*", function(req, res, next) {
@@ -58,9 +58,9 @@ function init (app) {
 			return next();
 		}
 
-		if (!req.secure && config.http.https) {
+		if (!req.secure && config.https) {
 			var queryString = req._parsedUrl.search ? req._parsedUrl.search : "";
-			return res.redirect(301, 'https://' + config.http.host + req.path + queryString);
+			return res.redirect(301, 'https://' + config.host + req.path + queryString);
 		}
 
 		var platform = req.query.platform;
@@ -83,7 +83,7 @@ function init (app) {
 
 function start() {
 	clientHbs = fs.readFileSync(__dirname + "/../public/client.hbs", "utf8");
-	seo = require('./seo.js')(core);
+	seo = require('./seo.js')(core, config);
 	clientTemp = handlebars.compile(clientHbs);
 }
 

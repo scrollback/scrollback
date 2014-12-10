@@ -1,5 +1,5 @@
 var config = require('../server-config-defaults.js'),
-	redis = require('../lib/redisProxy.js').select(config.redisDB.threader),
+	redis = require('../lib/redisProxy.js').select(config.threader.redisDB),
 	log = require("../lib/logger.js");
 
 module.exports = function(message, callback) {

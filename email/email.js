@@ -12,7 +12,7 @@ module.exports = function(coreObject, conf) {
 	config = conf;
 	core = coreObject;
 	
-	emailDigest = require('./emailDigest.js')(core, conf);
+	emailDigest = require('./emailDigest.js');
 	initMailSending = emailDigest.initMailSending;//function
 	sendPeriodicMails = emailDigest.sendPeriodicMails;//function
 	trySendingToUsers = emailDigest.trySendingToUsers;//function.
@@ -20,7 +20,7 @@ module.exports = function(coreObject, conf) {
 	redis = require('../lib/redisProxy.js').select(config.redis);
 	
 	require('./welcomeEmail.js')(core, conf);
-    emailDigest.init(core);
+    emailDigest.init(core, config);
 	if (config.auth) {
 		core.on('text', function(message, callback) {
 			callback();
