@@ -59,7 +59,7 @@ exports.init = function(app, coreObject) {
 
 		if (platform && platform.toLowerCase() === "android") {
 			clientData.android = true;
-			clientData.manifest = "androidmanifest.appcache";
+			clientData.manifest = "cordova.appcache";
 		} else {
 			clientData.manifest = "manifest.appcache";
 			clientData.android = false;

@@ -210,7 +210,6 @@ gulp.task("manifest", function() {
 		],
 		network: [ "*" ],
 		fallback: [
-			protocol + "//gravatar.com/avatar/ " + domain + "/s/img/client/avatar-fallback.svg",
 			domain + "/socket " + domain + "/s/socket-fallback",
 			domain + "/ " + domain + "/client.html"
 		],
@@ -222,12 +221,13 @@ gulp.task("manifest", function() {
 	.on("error", gutil.log);
 });
 
-gulp.task("android-manifest", function() {
+gulp.task("cordova-manifest", function() {
 	var protocol = clientConfig.server.protocol,
 		host = clientConfig.server.host,
 		domain = protocol + host;
 
 	return gulp.src(prefix("public/s/", [
+		"cordova/**/*",
 		"lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
 		"styles/dist/client.css",
@@ -243,13 +243,12 @@ gulp.task("android-manifest", function() {
 		],
 		network: [ "*" ],
 		fallback: [
-			protocol + "//gravatar.com/avatar/ " + domain + "/s/img/client/avatar-fallback.svg",
 			domain + "/socket " + domain + "/s/socket-fallback?platform=android",
 			domain + "/ " + domain + "/client.html?platform=android"
 		],
 		preferOnline: true,
 		timestamp: true,
-		filename: "androidmanifest.appcache"
+		filename: "cordova.appcache"
 	}))
 	.pipe(gulp.dest("public"))
 	.on("error", gutil.log);
@@ -267,9 +266,9 @@ gulp.task("clean", function() {
 });
 
 gulp.task("watch", function() {
-	gulp.watch(files.js, [ "scripts", "manifest", "android-manifest" ]);
-	gulp.watch(files.css, [ "styles", "manifest", "android-manifest" ]);
+	gulp.watch(files.js, [ "scripts", "manifest", "cordova-manifest" ]);
+	gulp.watch(files.css, [ "styles", "manifest", "cordova-manifest" ]);
 });
 
 // Default Task
-gulp.task("default", [ "lint", "scripts", "styles", "manifest", "android-manifest" ]);
+gulp.task("default", [ "lint", "scripts", "styles", "manifest", "cordova-manifest" ]);
