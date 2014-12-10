@@ -11,12 +11,12 @@ $(function() {
 			var userObj = {
 				id: libsb.user.id,
 				description: '',
-				identities: [],
-				params: {},
-				guides: {}
+				identities: libsb.user.identities || libsb.user.identities,
+				params: libsb.user.params || {},
+				guides: libsb.user.guides|| {}
 			};
 
-			libsb.emit('pref-save', userObj, function (err, user) {
+			libsb.emit('pref-save', userObj, function(err, user) {
 				libsb.emit('user-up', {
 					user: user
 				}, function() {
@@ -56,7 +56,7 @@ function onComplete(source) {
 function renderUserPref() {
 	libsb.emit('getUsers', {
 		ref: "me"
-	}, function (err, data) {
+	}, function(err, data) {
 		var user = data.results[0];
 
 		if (!user.params) user.params = {};
@@ -66,7 +66,7 @@ function renderUserPref() {
 			user: user
 		};
 
-		libsb.emit('pref-show', userObj, function (err, tabs) {
+		libsb.emit('pref-show', userObj, function(err, tabs) {
 			delete tabs.user;
 			currentConfig = tabs;
 			renderSettings(tabs, user);
@@ -74,22 +74,23 @@ function renderUserPref() {
 	});
 }
 
-libsb.on('navigate', function (state, next) {
+libsb.on('navigate', function(state, next) {
 	if (state.old && state.old.mode !== state.mode && state.mode === "pref") {
 
 		oldState = state.old;
 
 		if (!currentConfig) {
-			if (libsb.user.id.indexOf('guest-') === 0) {
+			if (!libsb.user || !libsb.user.id || /guest-/.test(libsb.user.id)) {
 				libsb.emit('navigate', {
-					mode: 'normal'
+					mode: 'home'
 				});
+				return next();
 			}
 
 			if (libsb.isInited === true) {
-			   renderUserPref();
+				renderUserPref();
 			} else {
-				libsb.on('init-dn', function (i, n) {
+				libsb.on('init-dn', function(i, n) {
 					renderUserPref();
 					n();
 				}, 100);
@@ -100,12 +101,17 @@ libsb.on('navigate', function (state, next) {
 }, 500);
 
 libsb.on("user-menu", function(menu, next) {
+	if (window.currentState.mode === "pref" || (/^guest-/).test(libsb.user.id)) {
+		return next();
+	}
+
 	menu.items.userpref = {
 		text: "Account settings",
 		prio: 300,
 		action: function() {
 			libsb.emit("navigate", {
 				mode: "pref",
+				tab: "profile",
 				view: "meta"
 			});
 		}

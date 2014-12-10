@@ -56,6 +56,17 @@ module.exports = {
 			occupantsPopulated = true;
 		});
 	},
+	hasKnowledgeOf: function (property, roomName) {
+		switch(property){
+				case "occupants" :
+					if (!roomOccupantList.hasOwnProperty(roomName)) return false;
+					break;
+				case "members":
+					if (!roomMemberList.hasOwnProperty(roomName)) return false;
+				break;
+		}
+		return true;
+	},
 	getMembers: function (room, memberId, callback) {
 		var res = [];
 		this.loadUsers();

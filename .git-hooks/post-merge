@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# List changed files
+changed_files="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+
+check_file() {
+	echo "$changed_files" | grep --quiet "$1" && eval "$2"
+}
+
+# `npm install` and `npm prune` if the `package.json` file gets changed
+check_file "package.json" "npm install && npm prune"
+
+# `bower install` and `bower prune` if the `bower.json` file gets changed
+check_file "bower.json" "bower install && bower prune"

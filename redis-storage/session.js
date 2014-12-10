@@ -4,30 +4,30 @@ var put = require("./put.js");
 module.exports = function(core) {
 
 	core.on('user', function(action, callback) {
-		if(/^guest-/.test(action.from)) {
-            get("session",action.session, function(err, sessionObj) {
+		if (/^guest-/.test(action.from)) {
+			get("session", action.session, function(err, sessionObj) {
 				var session = {
 					id: action.session,
 					user: action.user.id,
 					origin: action.origin
 				};
-				if(!err) {
+				if (!err) {
 					session.origin = sessionObj.origin || {};
-						
+
 				}
-				put("session",action.session,session);
+				put("session", action.session, session);
 				return callback();
 			});
-        }else{
-        	callback();
-        }
+		} else {
+			callback();
+		}
 	}, "storage");
 
-    core.on("init", function(action, callback) {
-		if(action.auth && !action.user.id) {
-	        return callback();
-	    }
-		get("session",action.session, function(err, sessionObj) {
+	core.on("init", function(action, callback) {
+		if (action.auth && !action.user.id) {
+			return callback();
+		}
+		get("session", action.session, function(err, sessionObj) {
 			var session = {
 				id: action.session,
 				user: action.user.id,
@@ -46,8 +46,8 @@ module.exports = function(core) {
 					});
 				}	
 			}
-			put("session",action.session,session);
+			put("session", action.session, session);
 			callback();
 		});
-	},"storage");
+	}, "storage");
 };

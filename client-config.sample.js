@@ -1,6 +1,6 @@
 module.exports = {
     server: {
-        protocol: "https:",
+        protocol: "http:",
         host: "//local.scrollback.io"
     },
     analytics: {
@@ -8,5 +8,8 @@ module.exports = {
     },
     localStorage: {
         version: 1.0
+    },
+    errorception: {
+        id: "XXXXXXXXXXXXXXXXX"//https://errorception.com/ project id
     }
 };

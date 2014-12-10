@@ -14,7 +14,7 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("meta button test", function(done) {
-			this.timeout(timeout);
+			this.timeout(1.5 * timeout);
 			var mb;
 			driver.findElement(webdriver.By.css('.meta-button-back'))
 			.then(function(m) {
@@ -39,7 +39,6 @@ module.exports = function(capabilities, options) {
 		});
 
 		it("People area test1", function(done) {
-			this.timeout(timeout);
 			driver.findElement(webdriver.By.css('.pane-people'))
 			.isDisplayed()
 			.then(function(v) {
@@ -75,6 +74,7 @@ module.exports = function(capabilities, options) {
 		it("config area test2", function(done) {
 			this.timeout(timeout);
 			var c = 0;
+
 			function d() {
 				if (++c == 3) done();
 			}
@@ -107,7 +107,7 @@ module.exports = function(capabilities, options) {
 			then(function(tab) {
 				return tab.click();
 			}).then(function() {
-				return driver.findElement(webdriver.By.css('.pane-threads'))
+				return driver.findElement(webdriver.By.css('.pane-threads'));
 			}).then(function(el) {
 				return el.isDisplayed();
 			}).then(function(v) {
@@ -127,10 +127,7 @@ module.exports = function(capabilities, options) {
 
 		it("select Thread", function(done) {
 			this.timeout(timeout);
-			var threads;
-			var index;
-			var messages;
-			var id;
+			var threads, index, messages, id;
 			driver.findElements(webdriver.By.css('.thread-item')).
 			then(function(t) {
 				threads = t;
@@ -146,6 +143,7 @@ module.exports = function(capabilities, options) {
 				return q.delay(5000);
 			}).then(function() {
 				var c = 0;
+
 				function d() {
 					if (++c == messages.length) done();
 				}

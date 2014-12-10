@@ -2,18 +2,26 @@
 /* global _gaq, libsb */
 
 (function() {
-    // Track navigation events
-    var props = ["roomName", "thread", "mode", "tab", "query"];
+	var props;
 
-    libsb.on("navigate", function(state, next) {
-        if (!(state.old && _gaq)) { return next(); }
+	if (!("_gaq" in window)) {
+		return;
+	}
 
-        props.forEach(function(prop) {
-            if (state.old[prop] !== state[prop]) {
-                _gaq.push(["_trackEvent", prop, state[prop]]);
-            }
-        });
+	props = [ "roomName", "thread", "mode", "dialog", "tab", "query" ];
 
-        next();
-    }, 500);
+	// Track navigation events
+	libsb.on("navigate", function(state, next) {
+		if (!state.old) {
+			return next();
+		}
+
+		props.forEach(function(prop) {
+			if (state.old[prop] !== state[prop]) {
+				_gaq.push(["_trackEvent", prop, state[prop]]);
+			}
+		});
+
+		next();
+	}, 500);
 })();

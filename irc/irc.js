@@ -73,6 +73,7 @@ module.exports = function (coreObj) {
 			if (text.labels) {
 				if (text.labels.action) t =  "/me " + text.text;
 			}
+			t = ircUtils.ircfyText(text);
 			ircUtils.say(text.to, text.from, t);
 		}
 		callback();
@@ -232,18 +233,20 @@ function init() {
 			data.text = data.text.substring(4);
 			labels.action = 1;
 		}
-		core.emit('text', {
-			id: guid(),
-			type: 'text',
-			to: data.to,
-			from: data.from,
-			text: data.text,
-			labels: labels,
-			time: data.time ? data.time : new Date().getTime(),
-			session: data.session
-		}, function (err, message) {
-			log("message", err, message);
-		});
+		if (data.text && data.text.trim()) {
+			core.emit('text', {
+				id: guid(),
+				type: 'text',
+				to: data.to,
+				from: data.from,
+				text: data.text,
+				labels: labels,
+				time: data.time ? data.time : new Date().getTime(),
+				session: data.session
+			}, function (err, message) {
+				log("message", err, message);
+			});
+		} else log("Empty text message from irc");
 	});
 }
 

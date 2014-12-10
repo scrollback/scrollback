@@ -20,33 +20,37 @@ Boston, MA 02111-1307 USA.
 
 var express = require("./express.js"),
 	socket = require("./socket.js"),
-	log = require("../lib/logger.js"),
 	plugins = require('./plugins.js'),
-	page=require("./page.js"),
+	page = require("./page.js"),
 	app = express.init();
 
 var init = function(core) {
 	socket.initCore(core);
 	socket.initServer(app.httpServer);
-	if(app.httpsServer) socket.initServer(app.httpsServer, core);
+	if (app.httpsServer) socket.initServer(app.httpsServer, core);
 	plugins.init(app, core);
 	page.init(app, core);
 
 };
 
-module.exports = function(core){
+module.exports = function(core) {
 	init(core);
-	
+
 	core.on("room", function(action, callback) {
 
-		if(action.room.params.http && typeof action.room.params.http.seo !== "boolean") return callback(new Error("ERR_INVAILD_PARAMS"));
+		if (action.room.params.http && typeof action.room.params.http.seo !== "boolean") return callback(new Error("ERR_INVAILD_PARAMS"));
 		callback();
 	}, 'appLevelValidation');
 
 	core.on("user", function(action, callback) {
-		if(!action.user.params.notifications) return callback();
-		if(typeof action.user.params.notifications.sound !== "boolean") return callback(new Error("ERR_INVAILD_PARAMS"));
-		if(typeof action.user.params.notifications.desktop !== "boolean") return callback(new Error("ERR_INVAILD_PARAMS"));
+		if (!action.user.params.notifications) return callback();
+		if (typeof action.user.params.notifications.sound !== "boolean") {
+			return callback(new Error("ERR_INVAILD_PARAMS"));
+		}
+		
+		if (typeof action.user.params.notifications.desktop !== "boolean") {
+			return callback(new Error("ERR_INVAILD_PARAMS"));
+		}
 		callback();
 	}, 'appLevelValidation');
 };

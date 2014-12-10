@@ -7,7 +7,7 @@ function renderSettings(tabs) {
 		data = [];
 
 	for (var tab in tabs) {
-		data.push([ tabs[tab].prio, tab, tabs[tab] ]);
+		data.push([tabs[tab].prio, tab, tabs[tab]]);
 	}
 
 	data.sort(function(a, b) {
@@ -39,10 +39,14 @@ function renderSettings(tabs) {
 			break;
 	}
 
-	libsb.emit("navigate", { tab: data[0][1] });
-
 	addErrors(currentState.room);
 
+	// set initial classes only after settings have been rendered and DOM is ready.
+	if (currentState.mode === "pref" || currentState.mode === "conf") {
+		$(".list-item.current, .list-view.current").removeClass("current");
+		$(".list-item-" + currentState.tab + "-settings, .list-view-" + currentState.tab +
+			"-settings").addClass("current");
+	}
 }
 
 libsb.on("room-dn", function(action, next) {
@@ -60,12 +64,16 @@ libsb.on("room-dn", function(action, next) {
 			errorTab = i;
 		}
 	}
-	if (error){
-		libsb.emit("config-show", { room: action.room }, function(err, tabs) {
+	if (error) {
+		libsb.emit("config-show", {
+			room: action.room
+		}, function(err, tabs) {
 			delete tabs.room;
 			renderSettings(tabs);
 			$(".list-item-" + errorTab + "-settings").addClass("error");
-			libsb.emit("navigate", { tab: errorTab });
+			libsb.emit("navigate", {
+				tab: errorTab
+			});
 		});
 	}
 	next();

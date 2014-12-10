@@ -1,10 +1,17 @@
 /* global libsb, currentState */
 /* jshint browser:true */
 
-module.exports = function (ArrayCacheOp) {
-	libsb.on('getTexts', function (query, next) {
+module.exports = function(ArrayCacheOp) {
+	libsb.on('getTexts', function(query, next) {
 		// getTextsBefore
 		var key;
+		// ArrayCache cannot handle ref queries without time property, sending to server.
+		if (query.hasOwnProperty('ref') && !query.hasOwnProperty('time')) {
+			return next();
+		}
+		if (query.hasOwnProperty('updateTime')) {
+			return next();
+		}
 		if (query.thread) {
 			// creating individual cache entries for queries with the thread property
 			key = ArrayCacheOp.generateLSKey(query.to, query.thread, 'texts');
@@ -19,11 +26,11 @@ module.exports = function (ArrayCacheOp) {
 			return next();
 		}
 
-		if (query.time === null && currentState.connectionStatus) {
+		if (query.time === null && currentState.connectionStatus === "online") {
 			// query.time is null, have to decide how LS will handle this.
 			return next();
 		}
-		if (!currentState.connectionStatus) query.partials = true;
+		if (currentState.connectionStatus !== "online") query.partials = true;
 		if (query.thread) return next();
 
 		var results = ArrayCacheOp.cache[key].get('time', query);
@@ -38,7 +45,7 @@ module.exports = function (ArrayCacheOp) {
 		}
 	}, 200); // runs before the socket
 
-	libsb.on('getTexts', function (query, next) {
+	libsb.on('getTexts', function(query, next) {
 		var results = query.results;
 		if (!query.results || !query.results.length || query.resultSource == 'localStorage') {
 			return next();
@@ -96,7 +103,7 @@ module.exports = function (ArrayCacheOp) {
 		next();
 	}, 8); // runs after the socket
 
-	libsb.on('text-dn', function (text, next) {
+	libsb.on('text-dn', function(text, next) {
 		var key = ArrayCacheOp.generateLSKey(text.to, 'texts');
 		ArrayCacheOp.loadArrayCache(key);
 		var lastItem = ArrayCacheOp.cache[key].d[ArrayCacheOp.cache[key].length - 1];
@@ -110,7 +117,7 @@ module.exports = function (ArrayCacheOp) {
 		// putting the incoming text into each threadId cache it is a part of
 
 		if (text.threads) {
-			text.threads.forEach(function (threadObj) {
+			text.threads.forEach(function(threadObj) {
 				key = ArrayCacheOp.generateLSKey(text.to, threadObj.id, 'texts');
 
 				ArrayCacheOp.loadArrayCache(key);
@@ -122,6 +129,20 @@ module.exports = function (ArrayCacheOp) {
 				ArrayCacheOp.cache[key].d.push(text);
 				ArrayCacheOp.saveArrayCache(key);
 			});
+		}
+
+		// check if new thread was created.
+		if (text.labels && text.labels.hasOwnProperty('startOfThread') && text.labels.startOfThread === 1) {
+			var threadKey = ArrayCacheOp.generateLSKey(text.to, 'threads');
+			ArrayCacheOp.loadArrayCache(threadKey);
+			var lastThread = ArrayCacheOp.cache[threadKey].d[ArrayCacheOp.cache[threadKey].d.length - 1];
+			if (!lastThread || lastThread.type === 'result-end') {
+				ArrayCacheOp.start('startTime', threadKey, window.backTimes[text.to]);
+			}
+			var newThread = text.threads[0];
+			newThread.startTime = text.time;
+			ArrayCacheOp.cache[threadKey].d.push(newThread);
+			ArrayCacheOp.saveArrayCache(threadKey);
 		}
 
 		next();

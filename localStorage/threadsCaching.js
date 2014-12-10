@@ -2,8 +2,16 @@
 
 module.exports = function (ArrayCacheOp) {
 	libsb.on('getThreads', function (query, next) {
-		if (query.hasOwnProperty('q')) { // search queries should always be served from the server.
+		// ArrayCache cannot handle ref queries without time property, sending to server.
+		if (query.hasOwnProperty('ref') && !query.hasOwnProperty('time')) {
 			return next();
+		}
+		if (query.hasOwnProperty('q') || query.hasOwnProperty('noCache') ||
+			query.hasOwnProperty('updateTime')) { // search queries should always be served from the server.
+			return next();
+		}
+		if (query.hasOwnProperty('time')) {
+			query.startTime = query.time;
 		}
 		var key = ArrayCacheOp.generateLSKey(query.to, 'threads');
 		if (!ArrayCacheOp.cache.hasOwnProperty(key)) {
@@ -13,11 +21,11 @@ module.exports = function (ArrayCacheOp) {
 			return next();
 		}
 
-		if (query.time === null && currentState.connectionStatus) {
+		if (query.time === null && currentState.connectionStatus!== "online") {
 			// query.time is null, have to decide how LS will handle this.
 			return next();
 		}
-		if (!currentState.connectionStatus) query.partials = true;
+		if (currentState.connectionStatus !== "online") query.partials = true;
 
 		var results = ArrayCacheOp.cache[key].get('startTime', query);
 

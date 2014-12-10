@@ -12,9 +12,9 @@ fi
 # Detect the current distro
 distro=$(grep '^NAME=' /etc/os-release | sed -e s/NAME=//g -e s/\"//g)
 
-[[ "$distro" = "Antergos" || "$distro" = "Manjaro" ]] && distro="Arch"
+[[ "$distro" = "Antergos" || "$distro" = "Manjaro" ]] && distro="Arch Linux"
 
-if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" || "$distro" = "Arch" ]]; then
+if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" || "$distro" = "Arch Linux" ]]; then
     # Show the list of items to install
     pkgs=($(whiptail --separate-output \
             --title "Review items" \
@@ -30,6 +30,9 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" || "$distro" = "Arch" ]]; the
 
     # Update the sources list in Ubuntu
     [[ "$distro" = "Ubuntu" ]] && sudo apt-get update
+
+    # Update the sources list in Arch Linux
+    [[ "$distro" = "Arch Linux" ]] && sudo pacman -Sy
 
     # Iterate over all the items in the array and perform operations accordingly
     for (( i = 0; i < ${#pkgs[@]} ; i++ )); do
@@ -53,8 +56,9 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" || "$distro" = "Arch" ]]; the
                         sudo pacman -S --needed --noconfirm ruby;;
                 esac
                 # Add the gem installation directory to path
-                grep ".gem/ruby" "${HOME}/.bashrc" > /dev/null 2>&1
-                [[ $? -eq 0 ]] || echo PATH="\"\$(ruby -rubygems -e 'puts Gem.user_dir')/bin:\${PATH}\"" >> "${HOME}/.bashrc"
+                gempath="\$(ruby -rubygems -e 'puts Gem.user_dir')/bin"
+                grep "$gempath" "${HOME}/.bashrc" > /dev/null 2>&1
+                [[ $? -eq 0 ]] || echo PATH="\"${gempath}:\${PATH}\"" >> "${HOME}/.bashrc"
                 # Install sass
                 gem install sass;;
             nodejs)

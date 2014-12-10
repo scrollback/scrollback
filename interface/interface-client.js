@@ -1,8 +1,8 @@
 /* jshint browser: true */
-/* global window*/
+/* global window, $*/
 
-var underscore = require('underscore'),
-    generate = require('../lib/generate.js'),
+var generate = require('../lib/generate.js'),
+	spaceManager = require('../localStorage/spaceManager.js'),
     libsb;
 
 function logout() {
@@ -21,7 +21,6 @@ function addProperties(l) {
         disconnect: disconnect,
         resource: generate.uid(),
 
-        getLoginMenu: getLoginMenu,
         getTexts: getTexts,
         getThreads: getThreads,
         getOccupants: getOccupants,
@@ -44,21 +43,28 @@ function addProperties(l) {
     }
 }
 
+function loadUserInfo(libsb) {
+	var user = spaceManager.get('user', false);
+	var occupantOf = spaceManager.get('occupantOf', false);
+	var memberOf = spaceManager.get('memberOf', false);
+
+ 	if (user !== null) libsb.user = user;
+	if (occupantOf !== null) libsb.occupantOf = occupantOf;
+	if (memberOf !== null) libsb.memberOf = memberOf;
+}
 
 module.exports = function (l) {
     libsb = l;
     window.libsb = libsb; // still being used.
     addProperties(libsb);
-    
-    libsb.on('init-dn', recvInit, 1000);
+    loadUserInfo(libsb);
+    libsb.on('init-dn', recvInit, 999); // should run after the local storage quick settings thing.
     libsb.on('back-dn', recvBack, 1000);
     libsb.on('away-dn', recvAway, 1000);
     libsb.on('join-dn', recvJoin, 1000);
     libsb.on('part-dn', recvPart, 1000);
-    libsb.on('admit-dn', recvAdmit, 1000);
-    libsb.on('expel-dn', recvExpel, 1000);
     // libsb.on('error-dn', recvError);
-
+	libsb.on("room-dn", roomdown, 1000);
     libsb.on('connected', onConnect, 1000);
     libsb.on('disconnected', onDisconnect, 1000);
 
@@ -82,10 +88,6 @@ function connect() {
 
 function disconnect() {
     libsb.emit('disconnect');
-}
-
-function getLoginMenu(callback) {
-    libsb.emit('auth-menu', callback);
 }
 
 function getTexts(query, callback) {
@@ -180,67 +182,79 @@ function recvInit(init, next) {
     libsb.memberOf = init.memberOf;
     libsb.occupantOf = init.occupantOf;
 	libsb.isInited = true;
-    if (init.auth && !init.user.id) {
-        libsb.emit("navigate", {});
-    }
-    libsb.user = init.user;
+
+	if (init.user.id) {
+		libsb.user = init.user;
+	} else {
+		libsb.user.identities = init.user.identities;
+		libsb.user.picture = init.user.picture;
+		libsb.user.params = libsb.user.params || {};
+		libsb.user.params.pictures = init.user.params.pictures;
+	}
+
     next();
 }
 
 function recvBack(back, next) {
     if (back.from !== libsb.user.id) return next();
-    /*	if(!libsb.rooms.filter(function(room){ return room.id === back.to; }).length){
-		libsb.rooms.push(back.room);
-		core.emit('rooms-update');
-	}
-	if(!libsb.occupantOf.filter(function(room){ return room.id === back.to; }).length){
+	if(libsb.occupantOf.filter(
+		function(room){
+			if(room) return room.id === back.to;
+		}
+	).length === 0)	{
 		libsb.occupantOf.push(back.room);
-		libsb.emit('occupantof-update');
-	}*/
+	}
     next();
 }
 
 function recvAway(away, next) {
     if (away.from !== libsb.user.id) return next();
-    /*libsb.rooms = underscore.compact(libsb.rooms.map(function(room){ if(room.id !== away.to) return room; }));
-	libsb.occupantOf = underscore.compact(libsb.occupantOf.map(function(room){ if(room.id !== away.to) return room; }));
-	libsb.emit('rooms-update');
-	libsb.emit('occupantof-update');*/
+	libsb.occupantOf = libsb.occupantOf.filter(function(room) {
+		if (room && room.id !== away.to) {
+			return room;
+		}
+	});
     next();
 }
 
 function recvJoin(join, next) {
     if (join.from !== libsb.user.id) return next();
-    if (!libsb.memberOf.filter(function (room) {
-        return room.id === join.to;
-    }).length) {
+    if (libsb.memberOf.filter(
+		function (room) {
+        	if(room) return room.id === join.to;
+    	}
+	).length === 0) {
         libsb.memberOf.push(join.room);
-        libsb.emit('memberof-update');
     }
     next();
 }
 
 function recvPart(part, next) {
     if (part.from !== libsb.user.id) return next();
-    libsb.memberOf = underscore.compact(libsb.memberOf.map(function (room) {
-        if (room.id !== part.to) return room;
-    }));
-    libsb.emit('memberof-update');
+    libsb.memberOf = libsb.memberOf.filter(function(room) {
+		if (room && room.id !== part.to) return room;
+	});
+
     next();
 }
 
-function recvAdmit(admit, next) {
-    if (admit.ref === libsb.user.id) {
-        libsb.memberOf.push(admit.room);
-    }
-    next();
-}
-
-function recvExpel(expel, next) {
-    if (expel.ref === libsb.user.id) {
-        libsb.memberOf = libsb.memberOf.filter(function (room) {
-            return room.id !== expel.to;
-        });
-    }
-    next();
+function roomdown(action, next) {
+	var room, l, i, isNewRoom = true;
+	if (action.from === libsb.user.id) {
+		for (i = 0, l = libsb.memberOf.length; i < l; i++) {
+			if(libsb.memberOf[i].id === action.to) {
+				room = $.extend(true, {}, action.room);
+				libsb.memberOf[i] = room;
+				libsb.memberOf[i].role = "owner";
+				isNewRoom = false;
+				break;
+			}
+		}
+		if (isNewRoom) {
+			room = $.extend(true, {}, action.room);
+			room.role = "owner";
+			libsb.memberOf.push(room);
+		}
+	}
+	next();
 }

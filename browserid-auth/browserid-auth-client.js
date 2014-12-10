@@ -18,17 +18,19 @@
 //	});
 //})();
 
-libsb.on('auth-menu', function(menu, next){
-	menu.buttons.persona = {
-		text: 'Persona',
+libsb.on('auth', function(auth, next) {
+	auth.buttons.persona = {
+		text: "Email",
 		prio: 200,
-		action: function(){
+		action: function() {
 			navigator.id.watch({
-				onlogin: function(assertion){
+				onlogin: function(assertion) {
 					var action = {};
+
 					action.auth = {
 						browserid: assertion
 					};
+
 					libsb.emit("init-up", action, function() {});
 				},
 				onlogout: function() {
@@ -38,5 +40,6 @@ libsb.on('auth-menu', function(menu, next){
 			navigator.id.request();
 		}
 	};
+
 	next();
-}, 1000);
+}, 500);

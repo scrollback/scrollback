@@ -17,9 +17,10 @@ along with this program. If not, see http://www.gnu.org/licenses/agpl.txt
 or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
-var plugins = [ "analytics", "validator","browserid-auth", "facebook",
+var plugins = [ "analytics", "validator","browserid-auth", "facebook", "recommendation", "anti-abuse",
 			   "threader", "authorizer", "redis-storage",  "leveldb-storage",
-			   "admin-notifier", "entityloader", "irc", "twitter","jws",  "censor", "email", "superuser", "search", "sitemap"];
+			   "admin-notifier", "entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "search", "sitemap",
+			   "push-notification","google"];
 require('newrelic');
 var log = require('./lib/logger.js');
 var core = new (require("./lib/emitter.js"))(), config = require("./config.js");

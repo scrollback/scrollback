@@ -35,13 +35,15 @@ gulp
 
 # Restart IRC
 sudo restart sbirc
-mocha test/test.js -R mocha-html-reporter > "public/s/tmp/unit-test-results-$(date +%y%m%d).html"
+mocha test/test.js -R mocha-html-reporter 
+mv mocha-output.html "public/s/tmp/unit-test-results-$(date +%y%m%d).html"
 mocha test/test.js -R html-cov > "public/s/tmp/coverage-$(date +%y%m%d).html"
 sudo start scrollback
 mv mocha-output.json mocha-output-unit.json
-
+sleep 15 # startup time
 #run selenium...
-mocha test/selenium/test.js -R mocha-html-reporter > "public/s/tmp/selenium-test-results-$(date +%y%m%d).html"
+mocha test/selenium/test.js -R mocha-html-reporter 
+mv mocha-output.html "public/s/tmp/selenium-test-results-$(date +%y%m%d).html"
 mv mocha-output.json mocha-output-selenium.json
 node test/send-test-results.js
 

@@ -1,4 +1,4 @@
-/* global libsb, currentState */
+/* global libsb,$ ,currentState */
 
 module.exports = function (objCacheOps) {
 	libsb.on("getUsers", function (query, next) {
@@ -7,6 +7,7 @@ module.exports = function (objCacheOps) {
 		}
 		// run before socket
 		if (query.hasOwnProperty("memberOf")) {
+			if (!objCacheOps.hasKnowledgeOf("members", query.memberOf)) return next();
 			// fetching member info
 			if (query.hasOwnProperty("ref")) { // info for a single member
 				objCacheOps.getMembers(query.memberOf, query.ref, function (data) {
@@ -24,6 +25,7 @@ module.exports = function (objCacheOps) {
 				});
 			}
 		} else if (query.hasOwnProperty("occupantOf")) {
+			if (!objCacheOps.hasKnowledgeOf("occupants", query.occupantOf)) return next();
 			// fetch occupant info
 			objCacheOps.getOccupants(query.occupantOf, null, function(results) {
 				if (results === null) return next();
@@ -54,12 +56,16 @@ module.exports = function (objCacheOps) {
 	}, 8);
 
 	libsb.on("join-dn", function (join, next) {
-		objCacheOps.putMembers(join.to, join.user);
+		var user = $.extend({}, join.user);
+		user.role = join.role;
+		objCacheOps.putMembers(join.to, user);
 		next();
 	}, 900);
 
 	libsb.on("part-dn", function (part, next) {
-		objCacheOps.removeMembers(part.to, part.user);
+		var user = $.extend({}, part.user);
+		user.role = part.role;
+		objCacheOps.removeMembers(part.to, user);
 		next();
 	}, 900);
 
@@ -104,7 +110,15 @@ module.exports = function (objCacheOps) {
 			next();
 		}
 	}, 900);
-
+	libsb.on("room-dn", function(room, next) {
+		var user;
+		if(room.from === libsb.user.id) {
+			user = $.extend(true, {},libsb.user);
+			user.role = "owner";
+			objCacheOps.putMembers(room.to, user);
+		}
+		next();
+	}, 100);
 	libsb.on("init-dn", function (init, next) {
 		objCacheOps.deletePersistence();
 		objCacheOps.populateMembers(currentState.roomName);

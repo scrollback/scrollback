@@ -1,6 +1,7 @@
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
 var log = require("../lib/logger.js");
+var config = require("../config.js");
 
 module.exports = function(clientEmitter, client, callbacks) {
 
@@ -159,6 +160,18 @@ module.exports = function(clientEmitter, client, callbacks) {
 			(/^web/).test(action.session) && client.connected() && rp.irc.enabled && !rp.irc.error);	
 	}
 	
+	function ircfyText(message) {
+		var l = 400 - message.room.params.irc.channel.length;
+		if (message.text.length <= l) {
+			return message.text;
+		} else {
+			var suffix = "... [full message at http://" + config.http.host + "/" + message.to + "?time=" + 
+				new Date(message.time).toISOString() + "&tab=people" + " ]";	
+			var r = message.text.substring(0, l - suffix.length) + suffix;
+			return r;
+		}
+	}
+	
 	return {
 		connectUser: connectUser,
 		say: say,
@@ -169,6 +182,7 @@ module.exports = function(clientEmitter, client, callbacks) {
 		getBotNick: getBotNick,
 		getRequest: getRequest,
 		channelLowerCase: channelLowerCase,
-		isActionReq: isActionReq
+		isActionReq: isActionReq,
+		ircfyText: ircfyText
 	};
 };
