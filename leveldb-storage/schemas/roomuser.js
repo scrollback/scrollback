@@ -8,7 +8,7 @@ module.exports = function (t, conf) {
 	types = t;
     room = types.rooms;
     user = types.users;
-	su = config.su;
+	su = config.global.su;
     return {
         getUsers: function (query, cb) {
             var gateway, req = {};

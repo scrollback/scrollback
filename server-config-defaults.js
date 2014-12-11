@@ -24,7 +24,8 @@ var host = "local.scrollback.io";
 var config = {};
 var defaults = {
 	global: {
-		host: host
+		host: host,
+		su: {}
 	},
 	core: {
 		name: "scrollback",
@@ -120,9 +121,6 @@ var defaults = {
 	},
 	sitemap: {
 		redisDB: 12
-	},
-	su: {
-
 	},
 	facebook: {
 	},
