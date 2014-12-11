@@ -1,8 +1,8 @@
 var fs = require('fs');
 var changes = {};
 
-if (fs.existsSync('.//server-config-defaults.js')) {
-	changes = require("./server-config-defaults.js");
+if (fs.existsSync('./config.js')) {
+	changes = require("./config.js");
 }
 /**
  *It merge c into d

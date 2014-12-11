@@ -21,7 +21,7 @@ module.exports = function(coreObj, conf) {
 		silentTimeout = config.silentTimeout;
 		log("twitter app started");
 		core = coreObj;
-		host = config.host;
+		host = config.global.host;
 		init();
 		
 		core.on("http/init", function(payload, callback) {

@@ -12,14 +12,16 @@ var onlineUsers = {}; //scrollback users that are already online
 var firstMessage = {}; //[room][username] = true //it is shared b/w roomEvent and irc
 var userExp = 10 * 60 * 1000;
 var initCount = 0;
-var ircUtils = new require('./ircUtils.js')(clientEmitter, client, callbacks);
+var ircUtils;
 
 module.exports = function (coreObj, conf) {
 	core = coreObj;
 	config = conf;
 	client = require('./client.js')(clientEmitter, config);
 	client.init(clientEmitter);
+	ircUtils = new require('./ircUtils.js')(config, clientEmitter, client, callbacks);
 	init();
+	
 	require('./roomEvent.js')(core, config, client, ircUtils, firstMessage);
 	core.on("http/init", function (payload, callback) {
 		payload.push({
