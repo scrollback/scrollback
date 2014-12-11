@@ -1,5 +1,6 @@
 var assert = require("assert");
 var core = new (require('../lib/emitter.js'))();
+var config = require("../server-config-defaults.js")
 var validator
 var generate = require("../lib/generate.js");
 
@@ -22,7 +23,7 @@ function copy() {
 describe('Validator Test', function() {
 
 	before(function(done) {
-		validator= require("./validator.js")(core);
+		validator= require("./validator.js")(core, config.validator);
 		setTimeout(done, 1000);
 	});
 

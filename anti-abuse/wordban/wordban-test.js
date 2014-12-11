@@ -2,7 +2,8 @@
 var assert = require("assert");
 var core = new(require('../../lib/emitter.js'))();
 var wordban = require("./wordban.js");
-var gen = require("../../lib/generate.js")
+var gen = require("../../lib/generate.js");
+var config = require("./server-config-defaults.js");
 var guid = gen.uid;
 var names = gen.names;
 var rooms = [{
@@ -38,7 +39,7 @@ function copy(obj) {
 }
 describe('wordban', function () {
 	before(function (done) {
-		wordban(core);
+		wordban(core, config);
 		setTimeout(function () {
 			done();
 		}, 1500);

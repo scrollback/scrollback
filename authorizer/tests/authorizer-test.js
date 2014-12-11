@@ -5,8 +5,9 @@
 
 /* global describe */
 var core = new (require('../../lib/emitter.js'))();
+var config = require("./server-config-defaults.js");
 var auth = require('../authorizer.js');
-auth(core);
+auth(core, config.authorizer);
 //var join = {id: 'asfsaf', type: 'join', to:'testroom', user: {role: "registered"}, room: {guides: { authorizer: {openFollow: true}}}};
 //var admit = {id: 'osdfkj', type: 'admit', to: 'testroom', role: 'follower', victim:{transitionRole: 'follower', transitionType: 'invite'} };
 

@@ -1,4 +1,4 @@
-var config = require('../config.js');
+var config = require("../server-config-defaults.js");
 var core = new (require('../lib/emitter.js'))();
 var ircSb = require("./irc.js");
 var gen = require("../lib/generate.js");
@@ -93,7 +93,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 			channels: ["#scrollback", "#testingroom", "#testingroom2", "#testingroom3"]
 		});
 		
-		ircSb(core);
+		ircSb(core, config.irc);
 		setTimeout(function(){
 			done();		
 		}, 20000);

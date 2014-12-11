@@ -1,8 +1,8 @@
 /* global describe, before, it*/
 var assert = require('assert');
+var config = require("../server-config-defaults.js");
 var fs = require('fs');
 var core = new(require('../lib/emitter.js'))();
-var config = require("../config.js");
 var generate = require("../lib/generate.js");
 var time = 1398139968009,
 	id;
@@ -22,7 +22,7 @@ var deleteFolderRecursive = function(path) {
 	}
 };
 deleteFolderRecursive(path);
-config.leveldb.path = "data-test";
+config["leveldb-storage"].path = "data-test";
 // describe("Just to try something out quick.",function(){
 // 	it("Checking join:", function(done) {
 // 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
@@ -40,7 +40,7 @@ describe("user and room action", function() {
 	before(function(done) {
 		this.timeout(10000);
 		setTimeout(done, 7000);
-		require("./leveldb-storage.js")(core);
+		require("./leveldb-storage.js")(core, config["leveldb-storage"]);
 	});
 
 	it("storing user harish", function(done) {
