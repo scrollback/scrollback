@@ -1,6 +1,6 @@
 var core;
 var log = require("../lib/logger.js");
-var config = require("../server-config-defaults.js"),
+var config,
 	crypto = require('crypto'),
 	request = require("request"),
 	core;
