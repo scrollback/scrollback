@@ -64,10 +64,10 @@ function init (app) {
 		}
 
 		var platform = req.query.platform;
-
 		if (platform && platform.toLowerCase() === "android") {
 			clientData.android = true;
 			clientData.manifest = "androidmanifest.appcache";
+			clientData.appVersion = req.query["app-version"] || "defaults";
 		} else {
 			clientData.manifest = "manifest.appcache";
 			clientData.android = false;
