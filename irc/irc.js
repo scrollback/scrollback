@@ -20,7 +20,7 @@ module.exports = function (coreObj, conf) {
 	client = require('./client.js')(clientEmitter, config);
 	client.init(clientEmitter);
 	init();
-	require('./roomEvent.js')(core, client, ircUtils, firstMessage);
+	require('./roomEvent.js')(core, config, client, ircUtils, firstMessage);
 	core.on("http/init", function (payload, callback) {
 		payload.push({
 			get: {

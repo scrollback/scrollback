@@ -1,6 +1,6 @@
 var config;
 var log = require("../lib/logger.js");
-var send = require('./sendEmail.js');
+var send;
 var fs=require("fs"),jade = require("jade");
 var redis;
 var core, digestJade;
@@ -9,6 +9,7 @@ var waitingTime1, waitingTime2;
 
 module.exports.init = function (coreObj, conf) {
 	config = conf;
+	send = require('./sendEmail.js')(config);
 	waitingTime1 = config.mentionEmailTimeout || 3 * 60 * 60 * 1000; //mention email timeout
 	waitingTime2 = config.regularEmailTimeout || 12 * 60 * 60 *  1000;//regular email timeout
  	redis = require('../lib/redisProxy.js').select(config.redis);

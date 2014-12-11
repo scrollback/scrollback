@@ -6,7 +6,8 @@ var client;
 var pendingCallbacks = {};
 var core;
 var validator = new (require('valid'))();
-var colors = require('./colors.js');
+var colors;
+
 var threaderValidator = {
 	params: [{
 		threader: ['undefined', {
@@ -17,8 +18,10 @@ var threaderValidator = {
 /**
 Communicate with scrollback java Process through TCP and set message.threads.
 */
-module.exports = function(coreObj) {
+module.exports = function(coreObj, conf) {
 	core = coreObj;
+	config = conf;
+	colors = require('./colors.js')(core, config);
 	if (config.threader) {
 		init();
 		core.on("room", function(action, callback) {

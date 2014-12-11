@@ -109,7 +109,7 @@ var defaults = {
 		port: 8910,
 		server: "localhost"
 	},
-	leveldb: {
+	"leveldb-storage": {
 		path: "/data"
 	},
 	recommendation:{
