@@ -1,12 +1,8 @@
-var log = require("../lib/logger.js");
-var config = require('../server-config-defaults.js');
-var net = require('net');
-var timeout = 60 * 1000;
-var client;
-var pendingCallbacks = {};
-var core;
-var validator = new (require('valid'))();
-var colors;
+var log = require("../lib/logger.js"),
+	config, net = require('net'), timeout = 60 * 1000,
+	client, pendingCallbacks = {}, core,
+	validator = new (require('valid'))(),
+	colors, redis;
 
 var threaderValidator = {
 	params: [{
@@ -21,8 +17,9 @@ Communicate with scrollback java Process through TCP and set message.threads.
 module.exports = function(coreObj, conf) {
 	core = coreObj;
 	config = conf;
-	colors = require('./colors.js')(core, config);
-	if (config.threader) {
+	redis = require('../lib/redisProxy.js').select(config.redisDB);
+	colors = require('./colors.js')(redis, config);
+	if (config) {
 		init();
 		core.on("room", function(action, callback) {
 			var result = validator.validate(action.room, threaderValidator);
@@ -125,7 +122,7 @@ function processReply(data){
 
 function init(){
 	log("Trying to connect.... ");
-	client = net.connect({port: config.threader.port, host: config.threader.host},
+	client = net.connect({port: config.port, host: config.host},
 		function() { //'connect' listener
 		log('client connected');
 		client.write("[");//sending array of JSON objects
