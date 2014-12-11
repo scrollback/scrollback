@@ -63,7 +63,7 @@ module.exports = function(core) {
 
 	core.on("room", function(action, callback) {
 		var limit = 10000;
-		log.d("room action:", JSON.stringify(action));
+		log.d("room action:", action);
 		if (action.room.params && action.room.params.antiAbuse) {
 			var a = action.room.params.antiAbuse.customPhrases;
 			var l = 0;

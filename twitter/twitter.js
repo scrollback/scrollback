@@ -77,7 +77,7 @@ function twitterRoomHandler(action, callback) {
  *add it to room object
  */
 function addTwitterTokens(room, callback) {
-	log.d("adding twitter tokens.", JSON.stringify(room));
+	log.d("adding twitter tokens.", room);
 	redis.multi(function(multi) {
 		var key = room.room.params.twitter.username;
 		multi.get("twitter:userData:token:" + key);
@@ -163,7 +163,7 @@ function initTwitterSearch() {
 	log("getting room data....");
 	core.emit("getRooms",{identity: "twitter", session: internalSession }, function(err, data) {
 		if (!err) {
-			log.d("data returned from labelDB: ", JSON.stringify(data));
+			log.d("data returned from labelDB: ", data);
 			var rooms = data.results;
 			log("Number of rooms:", data.results.length);
 			rooms.forEach(function(room) {
@@ -310,7 +310,6 @@ function getRequest(req, res, next) {
 					console.log('oauth_access_token: ' + access_token);
 					console.log('oauth_access_token_secret: ' + access_token_secret);
 					//save tokens.
-					console.log("results: ", results);
 					var uid = results.screen_name;
 					redis.multi(function(multi) {
 						multi.setex("twitter:userData:token:" + uid, expireTime, access_token);

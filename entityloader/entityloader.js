@@ -103,7 +103,7 @@ var handlers = {
 };
 
 function loadVictim(action, callback) {
-	log.d("Entity Loader:", JSON.stringify(action));
+	log.d("Entity Loader:", action);
 	if (action.ref) {
 		core.emit("getUsers", {
 			ref: action.ref,
