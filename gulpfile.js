@@ -227,7 +227,7 @@ gulp.task("cordova-manifest", function() {
 		domain = protocol + host;
 
 	return gulp.src(prefix("public/s/", [
-		"cordova/**/*",
+		"phonegap/**/*",
 		"lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
 		"styles/dist/client.css",
