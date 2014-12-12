@@ -4,7 +4,7 @@ html
 	body
 		script
 			var code = location.search.substring(6);
-			window.postedMessage = [];
+			window.postedMessages = [];
 			var auth = {
 				command:"signin",
 				auth: {
@@ -14,5 +14,5 @@ html
 				}
 			};
 			window.postedMessages.push(auth);
-			window.opener.postMessage(auth,"*");
+			if(window.opener) window.opener.postMessage(auth,"*");
 			window.close();
