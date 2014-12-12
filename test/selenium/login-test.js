@@ -17,16 +17,15 @@ module.exports = function(capabilities, options) {
 
 		it("login using Persona", function(done) {
 			console.log("persona login test");
-			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password,
-				function() {
-					setTimeout(function() {
-						testUtils.getMyUserid(driver).then(function(t) {
-							console.log("text: ", t);
-							assert.equal(config.personaUser.username, t, "Login unsuccessful");
-							done();
-						});
-					}, 5000);
-				});
+			testUtils.loginPersona(driver, config.personaUser.email, config.personaUser.password, function() {
+				setTimeout(function() {
+					testUtils.getMyUserid(driver).then(function(t) {
+						console.log("text: ", t);
+						assert.equal(config.personaUser.username, t, "Login unsuccessful");
+						done();
+					});
+				}, 5000);
+			});
 		});
 		//logout test
 
@@ -36,7 +35,7 @@ module.exports = function(capabilities, options) {
 			testUtils.logout(driver, function() {
 				driver.findElement(webdriver.By.css('.sign-in')).isDisplayed().
 				then(function(t) {
-					assert.equal(t, true, "logout unsuccessful");
+					assert.equal(t, true, "logout failed");
 					done();
 				});
 			});
@@ -59,16 +58,15 @@ module.exports = function(capabilities, options) {
 
 		it("login using Google", function(done) {
 			console.log("google login test");
-			testUtils.loginGoogle(driver, config.facebookUser.email, config.facebookUser.password,
-				function() {
-					setTimeout(function() {
-						testUtils.getMyUserid(driver).then(function(t) {
-							console.log("text: ", t);
-							assert.equal(config.facebookUser.username, t, "Login unsuccessful");
-							done();
-						});
-					}, 5000);
-				});
+			testUtils.loginGoogle(driver, config.facebookUser.email, config.facebookUser.password, function() {
+				setTimeout(function() {
+					testUtils.getMyUserid(driver).then(function(t) {
+						console.log("text: ", t);
+						assert.equal(config.facebookUser.username, t, "Login unsuccessful");
+						done();
+					});
+				}, 5000);
+			});
 		});
 
 		after(function(done) {
