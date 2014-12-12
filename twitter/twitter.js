@@ -68,6 +68,7 @@ function twitterRoomHandler(action, callback) {
 	log("room twitter--", JSON.stringify(room));
 	if (room.params.twitter && room.params.twitter.username) {
 		addTwitterTokens(action, callback);
+		redis.set("twitter:noOfRetries:" + room.id, 0);
 	} else {
 		callback();
 	}
@@ -163,25 +164,43 @@ function initTwitterSearch() {
 	log("getting room data....");
 	core.emit("getRooms",{identity: "twitter", session: internalSession }, function(err, data) {
 		if (!err) {
-			log.d("data returned from labelDB: ", data);
 			var rooms = data.results;
 			log("Number of rooms:", data.results.length);
 			rooms.forEach(function(room) {
-				redis.get("twitter:lastMessageTime:" + room.id, function(err, data) {
-					log("last Message Time: ", data, new Date().getTime() - parseInt(data), silentTimeout);
-					if (err || !data || (new Date().getTime() - parseInt(data) > silentTimeout)) {
-						fetchTweets(room);
-					}
-				});
+				tryRoom(room);
 			});
 		}
+	});
+}
+
+function tryRoom(room) {
+	redis.multi(function(multi) {
+		multi.get("twitter:lastSent:" + room.id);
+		multi.get("twitter:noOfRetries:" + room.id);
+		multi.get("twitter:lastMessageTime:" + room.id);
+		multi.exec(function(err, reply) {
+			if (err) return;
+			log.d("Twitter reply:", reply);
+			var lastSent = reply[0] ? parseInt(reply[0]) : 0;
+			var retryCount = (reply[1] ? parseInt(reply[1]) : 0);
+			var roomTimeout = lastSent + incFunction(timeout, retryCount);
+			var lastMessage = reply[2] ? parseInt(reply[2]) : 0;
+			log.d("Max:", Math.max(roomTimeout, lastMessage + silentTimeout),
+				  new Date().getTime(), (Math.max(roomTimeout,
+												  lastMessage + silentTimeout) - new Date().getTime()) / 1000);
+			if (Math.max(roomTimeout, lastMessage + silentTimeout) <= new Date().getTime()) { // fetch tweet.
+				fetchTweets(room, retryCount);
+			} else {
+				log("Not fetching now: ", room.id, new Date(lastSent), roomTimeout, lastMessage, retryCount);
+			}
+		});
 	});
 }
 /**
  *Connect with twitter
  *1. if tag is empty will not connect
  */
-function fetchTweets(room) {
+function fetchTweets(room, lastNumber) {
 
 	if (room.params && room.params.twitter  && room.params.twitter.tags &&
 		room.params.twitter.token && room.params.twitter.tokenSecret) {
@@ -212,11 +231,20 @@ function fetchTweets(room) {
 								  (new Date.getTime() - startTime), room.id);
 						} else if (reply.statuses && reply.statuses[0] && !reply.statuses[0].retweeted &&
 							(new Date(reply.statuses[0].created_at).getTime()) > (data ? parseInt(data, 10) : 1)) {
-							redis.set("twitter:lastTweetTime:" + room.id,
-									  (new Date(reply.statuses[0].created_at).getTime()), function(err, data) {
-								log("added data to room...", room.id, err, data);
-								sendMessages(reply, room);
+							redis.multi(function(multi) {
+								multi.set("twitter:lastTweetTime:" + room.id,
+										  (new Date(reply.statuses[0].created_at).getTime()));
+								multi.set("twitter:lastSent:" + room.id, new Date().getTime());
+								if (lastNumber !== 0) multi.decr("twitter:noOfRetries:" + room.id);
+
+								multi.exec(function(err, rl) {
+									log("added data to room...", room.id, err, rl);
+									sendMessages(reply, room);
+								});
 							});
+
+						} else {
+							redis.incr("twitter:noOfRetries:" + room.id);
 						}
 					}
 				}
@@ -342,5 +370,9 @@ function deletePendingOAuths() {
 			}
 		}
 	}
+}
+
+function incFunction(timeout , x) {
+	return timeout * (x * x);
 }
 /**** get request handler *******/
