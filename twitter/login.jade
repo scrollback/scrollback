@@ -1,5 +1,8 @@
 html
 	head
 		script.
-			window.opener.postMessage("{\"twitter\": {\"username\": !{'\\"' + profile.screen_name + '\\"'}}}","*");
+            var returnStr = "{\"twitter\": {\"username\": !{'\\"' + profile.screen_name + '\\"'}}}","*";
+            window.postedMessages = [];
+            window.postedMessages.push(returnStr);
+			if (window.opener) window.opener.postMessage(returnStr);
 			window.close();
