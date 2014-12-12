@@ -2,7 +2,6 @@
 /* global libsb, $ */
 
 var config = require("../client-config.js");
-require('../lib/phonegap-polyfill.js');
 
 function loginWithFb() {
 	window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
