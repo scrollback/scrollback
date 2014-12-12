@@ -22,10 +22,6 @@ $(window).on("message", function(event) {
 	sendInit(action);
 });
 
-$(window).on("phonegapmsg", function(e, p) {
-	sendInit(p);
-});
-
 function sendInit(action) {
 	if (initSent) return;
 	delete action.command;
