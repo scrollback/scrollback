@@ -150,7 +150,7 @@ gulp.task("bundle", [ "libs" ], function() {
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
-	.pipe(sourcemaps.write("./"))
+	.pipe(sourcemaps.write())
 	.pipe(gulp.dest("public/s/scripts"))
 	.on("error", gutil.log);
 });
@@ -161,7 +161,7 @@ gulp.task("embed", function() {
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename("embed.min.js"))
-	.pipe(sourcemaps.write("./"))
+	.pipe(sourcemaps.write())
 	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
 	.pipe(gulp.dest("public"))
@@ -181,14 +181,16 @@ gulp.task("lace", [ "bower" ], function() {
 
 gulp.task("styles", [ "lace" ], function() {
 	return gulp.src(files.css)
+	.pipe(plumber())
 	.pipe(sass({
 		style: !debug ? "compressed" : "expanded",
 		sourcemapPath: "../scss"
 	}))
 	.on("error", function(e) { gutil.log(e.message); })
-	.pipe(plumber())
+	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(!debug ? autoprefixer() : gutil.noop())
 	.pipe(!debug ? minify() : gutil.noop())
+	.pipe(sourcemaps.write())
 	.pipe(gulp.dest(dirs.css))
 	.on("error", gutil.log);
 });
