@@ -16,6 +16,7 @@ var maxTweets = 1; // max tweets to search in timeout inteval
 var pendingOauths = {};
 var oauthTimeout = 15 * 60 * 1000; // 15 min
 var silentTimeout = config.twitter.silentTimeout;
+var functionUtils = require('../lib/functionUtils.js');
 module.exports = function(coreObj) {
 
 	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
@@ -163,15 +164,19 @@ function init() {
 function initTwitterSearch() {
 	log("getting room data....");
 	core.emit("getRooms",{identity: "twitter", session: internalSession }, function(err, data) {
+		var fnList = [];
 		if (!err) {
 			var rooms = data.results;
 			log("Number of rooms:", data.results.length);
 			rooms.forEach(function(room) {
-				tryRoom(room);
+				fnList.push(function() { tryRoom(room);});
 			});
+			functionUtils.execFunctions(fnList, timeout / 4);
 		}
 	});
 }
+
+
 
 function tryRoom(room) {
 	redis.multi(function(multi) {
