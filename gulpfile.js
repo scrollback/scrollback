@@ -10,6 +10,7 @@ var gulp = require("gulp"),
 	lazypipe = require("lazypipe"),
 	plumber = require("gulp-plumber"),
 	gutil = require("gulp-util"),
+	sourcemaps = require("gulp-sourcemaps"),
 	jshint = require("gulp-jshint"),
 	gitmodified = require("gulp-gitmodified"),
 	symlink = require("gulp-sym"),
@@ -145,18 +146,22 @@ gulp.task("polyfills", [ "bower" ], function() {
 
 // Build browserify bundles
 gulp.task("bundle", [ "libs" ], function() {
-	return bundle([ "libsb.js", "client.js" ], { debug: debug })
+	return bundle([ "libsb.js", "client.js" ], { debug: true })
+	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
+	.pipe(sourcemaps.write("./"))
 	.pipe(gulp.dest("public/s/scripts"))
 	.on("error", gutil.log);
 });
 
 // Generate embed widget script
 gulp.task("embed", function() {
-	return bundle("embed/embed-parent.js", { debug: debug })
+	return bundle("embed/embed-parent.js", { debug: true })
+	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename("embed.min.js"))
+	.pipe(sourcemaps.write("./"))
 	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
 	.pipe(gulp.dest("public"))

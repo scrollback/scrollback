@@ -90,6 +90,7 @@
     "gulp-plumber": "latest",
     "gulp-rename": "latest",
     "gulp-ruby-sass": "latest",
+    "gulp-sourcemaps": "latest",
     "gulp-strip-debug": "latest",
     "gulp-sym": "latest",
     "gulp-uglify": "latest",
