@@ -29,6 +29,7 @@ var gulp = require("gulp"),
 		bower: "bower_components",
 		lib: "public/s/scripts/lib",
 		lace: "public/s/styles/lace",
+		scss: "public/s/styles/scss",
 		css: "public/s/styles/dist"
 	},
 	files = {
@@ -37,7 +38,7 @@ var gulp = require("gulp"),
 			"!*/*{.min.js,/**/*.min.js}",
 			"!node_modules{,/**}", "!bower_components{,/**}"
 		],
-		css: [ "public/s/styles/scss/*.scss" ]
+		scss: [ "public/s/styles/scss/*.scss" ]
 	};
 
 // Make browserify bundle
@@ -150,7 +151,7 @@ gulp.task("bundle", [ "libs" ], function() {
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
-	.pipe(sourcemaps.write())
+	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest("public/s/scripts"))
 	.on("error", gutil.log);
 });
@@ -161,7 +162,7 @@ gulp.task("embed", function() {
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename("embed.min.js"))
-	.pipe(sourcemaps.write())
+	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
 	.pipe(gulp.dest("public"))
@@ -180,17 +181,15 @@ gulp.task("lace", [ "bower" ], function() {
 });
 
 gulp.task("styles", [ "lace" ], function() {
-	return gulp.src(files.css)
-	.pipe(plumber())
-	.pipe(sass({
+	return sass(dirs.scss, {
 		style: !debug ? "compressed" : "expanded",
-		sourcemapPath: "../scss"
-	}))
-	.on("error", function(e) { gutil.log(e.message); })
-	.pipe(sourcemaps.init({ loadMaps: true }))
+		lineNumbers: debug,
+		sourcemap: true
+	})
+	.pipe(plumber())
 	.pipe(!debug ? autoprefixer() : gutil.noop())
 	.pipe(!debug ? minify() : gutil.noop())
-	.pipe(sourcemaps.write())
+	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest(dirs.css))
 	.on("error", gutil.log);
 });
@@ -275,7 +274,7 @@ gulp.task("clean", function() {
 
 gulp.task("watch", function() {
 	gulp.watch(files.js, [ "scripts", "manifest", "android-manifest" ]);
-	gulp.watch(files.css, [ "styles", "manifest", "android-manifest" ]);
+	gulp.watch(files.scss, [ "styles", "manifest", "android-manifest" ]);
 });
 
 // Default Task
