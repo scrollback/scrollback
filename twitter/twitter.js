@@ -170,7 +170,7 @@ function initTwitterSearch() {
 			rooms.forEach(function(room) {
 				fnList.push(function() { tryRoom(room);});
 			});
-			functionUtils.execFunctions(fnList, timeout / 4);
+			functionUtils.execFunctionsAfterSometime(fnList, timeout / 4);
 		}
 	});
 }
