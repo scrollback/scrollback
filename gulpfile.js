@@ -119,15 +119,19 @@ gulp.task("bower", function() {
 		.on("error", gutil.log);
 });
 
-gulp.task("libs", ["bower"], function() {
-	return gulp.src(prefix(dirs.bower + "/", [
+gulp.task("copylibs", ["bower"], function() {
+	var scripts = prefix(dirs.bower + "/", [
 		"jquery/dist/jquery.min.js",
 		"lace/src/js/*.js",
 		"sockjs/sockjs.min.js",
 		"svg4everybody/svg4everybody.min.js",
 		"velocity/jquery.velocity.min.js",
 		"velocity/velocity.ui.min.js"
-	]))
+	]);
+	
+	scripts.push("lib/post-message-polyfill.js")
+	
+	return gulp.src(scripts)
 		.pipe(plumber())
 		.pipe(gulp.dest(dirs.lib))
 		.on("error", gutil.log);
@@ -150,7 +154,7 @@ gulp.task("polyfills", ["bower"], function() {
 });
 
 // Build browserify bundles
-gulp.task("bundle", ["libs"], function() {
+gulp.task("bundle", ["copylibs"], function() {
 	return bundle(["libsb.js", "client.js"], {
 			debug: debug
 		})
@@ -280,16 +284,10 @@ gulp.task("clean", function() {
 	]);
 });
 
-gulp.task("copy-polyfill", function() {
-	gulp.src('./lib/post-message-polyfill.js')
-		.pipe(gulp.dest('./public'));
-});
-
 gulp.task("watch", function() {
 	gulp.watch(files.js, ["scripts", "manifest", "android-manifest"]);
 	gulp.watch(files.css, ["styles", "manifest", "android-manifest"]);
-	gulp.watch(files.public_js, ["copy-polyfill"]);
 });
 
 // Default Task
-gulp.task("default", ["lint", "scripts", "styles", "manifest", "android-manifest", "copy-polyfill"]);
+gulp.task("default", ["lint", "scripts", "styles", "manifest", "android-manifest"]);
