@@ -2,6 +2,7 @@ html
 	head
 		title facebook callback
 	body
+		script(src="/post-message-polyfill.js")
 		script
 			var params = location.search.substring(1).split("&"), l,i, split, code;
 			for(i=0,l=params.length;i<l;i++) {
@@ -11,15 +12,13 @@ html
 					break;
 				}
 			}
-			window.postedMessages = [];
 			var auth = {
 				command:"signin",
 				auth: {
-					google:{
+					google: {
 						code: code
 					}
 				}
 			};
-			window.postedMessages.push(auth);
 			window.opener.postMessage(auth,"*");
 			window.close();

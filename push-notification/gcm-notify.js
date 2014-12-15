@@ -38,7 +38,7 @@ module.exports = function(userRegMapping, payload, core) {
 		var userObj = userRegMap.user;
 		if (userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
 			var devices = userObj.params.pushNotifications.devices;
-			userObj.params.pushNotifications = devices.filter(function(device) {
+			userObj.params.pushNotifications.devices = devices.filter(function(device) {
 				return device.registrationId !== regId;
 			});
 		}
