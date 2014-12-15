@@ -68,7 +68,7 @@ function bundle(files, opts) {
 }
 
 // Add prefix in an array
-function prefix(str, arr) {
+function prefix(str, arr, extra) {
 	var prefixed = [];
 
 	if (!(arr && arr instanceof Array)) {
@@ -77,6 +77,14 @@ function prefix(str, arr) {
 
 	for (var i = 0, l = arr.length; i < l; i++) {
 		prefixed.push(str + arr[i]);
+	}
+
+	if (extra) {
+		if (extra instanceof Array) {
+			prefixed.concat(extra);
+		} else {
+			prefixed.push(extra);
+		}
 	}
 
 	return prefixed;
@@ -117,7 +125,7 @@ gulp.task("bower", function() {
 	.on("error", gutil.log);
 });
 
-gulp.task("libs", [ "bower" ], function() {
+gulp.task("copylibs", [ "bower" ], function() {
 	return gulp.src(prefix(dirs.bower + "/", [
 		"jquery/dist/jquery.min.js",
 		"lace/src/js/*.js",
@@ -125,7 +133,7 @@ gulp.task("libs", [ "bower" ], function() {
 		"svg4everybody/svg4everybody.min.js",
 		"velocity/jquery.velocity.min.js",
 		"velocity/velocity.ui.min.js"
-	]))
+	], "lib/post-message-polyfill.js"))
 	.pipe(plumber())
 	.pipe(gulp.dest(dirs.lib))
 	.on("error", gutil.log);
