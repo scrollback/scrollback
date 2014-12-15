@@ -38,7 +38,7 @@
 		{{/if}}
 	</head>
 
-	<body class="role-guest mode-normal">
+	<body class="role-guest mode-normal state-connecting {{#if android}} media-phonegap {{/if}}">
 		<!-- [if lt IE 9]>
 		<div class="ie-warning">
 			<div class="ie-warning-content">
@@ -340,19 +340,22 @@
 			</div>
 		</section>
 
-		<section data-state="online" data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
-			<div class="content-view-area">
+		<section data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
+			<div class="content-view-area" data-state="online">
 				<h2 data-string="Sign in to get started."></h2>
 				<p class="phonegap-login-buttons">
 					<a class="button facebook js-phonegap-fb-login" data-string="Facebook"></a>
 					<a class="button google js-phonegap-google-login" data-string="Google"></a>
 				</p>
 			</div>
-		</section>
 
-		<section data-state="offline" data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
-			<div class="content-view-area">
+			<div class="content-view-area" data-state="connecting">
 				<h2 data-string="Just a sec..."></h2>
+			</div>
+
+			<div class="content-view-area" data-state="offline">
+				<h2 data-string="Couldn't connect to Scrollback :-("></h2>
+				<a class="button js-reload-page" data-string="Try again"></a>
 			</div>
 		</section>
 
@@ -369,8 +372,8 @@
 		<![endif]-->
 
 		{{#if android}}
-			<script src="/phonegap/cordova-plugins/{{appVersion}}/cordova.js"></script>
-			<script src="/phonegap/cordova-plugins/{{appVersion}}/cordova_plugins.js"></script>
+			<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova.js"></script>
+			<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova_plugins.js"></script>
 		{{/if}}
 
 		<script src="{{server.protocol}}{{server.host}}/s/scripts/client.bundle.min.js"></script>
