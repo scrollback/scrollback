@@ -37,6 +37,7 @@ var gulp = require("gulp"),
 			"!node_modules{,/**}", "!bower_components{,/**}",
             "!public/phonegap/**"
 		],
+		public_js: ["lib/post-message-polyfill.js"],
 		css: [ "public/s/styles/scss/*.scss" ]
 	};
 
@@ -267,10 +268,16 @@ gulp.task("clean", function() {
 	]);
 });
 
+gulp.task("copy-polyfill", function() {
+	gulp.src('./lib/post-message-polyfill.js')
+	.pipe(gulp.dest('./public'));
+});
+
 gulp.task("watch", function() {
 	gulp.watch(files.js, [ "scripts", "manifest", "android-manifest" ]);
 	gulp.watch(files.css, [ "styles", "manifest", "android-manifest" ]);
+	gulp.watch(files.public_js, ["copy-polyfill"]);
 });
 
 // Default Task
-gulp.task("default", [ "lint", "scripts", "styles", "manifest", "android-manifest" ]);
+gulp.task("default", [ "lint", "scripts", "styles", "manifest", "android-manifest", "copy-polyfill" ]);
