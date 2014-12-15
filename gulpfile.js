@@ -282,7 +282,7 @@ gulp.task("clean", function() {
 
 gulp.task("watch", function() {
 	gulp.watch(files.js, [ "scripts", "manifest", "cordova-manifest" ]);
-	gulp.watch(files.css, [ "styles", "manifest", "cordova-manifest" ]);
+	gulp.watch(files.scss, [ "styles", "manifest", "cordova-manifest" ]);
 });
 
 // Default Task
