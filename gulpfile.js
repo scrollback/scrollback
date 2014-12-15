@@ -38,7 +38,7 @@ var gulp = require("gulp"),
             "!public/phonegap/**"
 		],
 		public_js: ["lib/post-message-polyfill.js"],
-		css: [ "public/s/styles/scss/*.scss" ]
+		css: ["public/s/styles/scss/*.scss"]
 	};
 
 // Make browserify bundle
@@ -48,8 +48,8 @@ function bundle(files, opts) {
 			opts.entries = "./" + file;
 
 			return browserify(opts).bundle()
-			.pipe(source(file.split(/[\\/]/).pop()))
-			.on("error", gutil.log);
+				.pipe(source(file.split(/[\\/]/).pop()))
+				.on("error", gutil.log);
 		};
 
 	opts = opts || {};
@@ -90,34 +90,36 @@ var buildscripts = lazypipe()
 
 // Install the GIT hooks
 gulp.task("hooks", function() {
-	return gulp.src([ ".git-hooks/pre-commit", ".git-hooks/post-merge" ])
-	.pipe(symlink([ ".git/hooks/pre-commit", ".git/hooks/post-merge" ], {
-		relative: true,
-		force: true
-	}));
+	return gulp.src([".git-hooks/pre-commit", ".git-hooks/post-merge"])
+		.pipe(symlink([".git/hooks/pre-commit", ".git/hooks/post-merge"], {
+			relative: true,
+			force: true
+		}));
 });
 
 // npm post-install hooks
-gulp.task("postinstall", [ "hooks" ]);
+gulp.task("postinstall", ["hooks"]);
 
 // Lint JavaScript files
 gulp.task("lint", function() {
 	return gulp.src(files.js)
-	.pipe(plumber())
-	.pipe(gitmodified("modified"))
-	.pipe(jshint())
-	.pipe(jshint.reporter("jshint-stylish"))
-	.pipe(jshint.reporter("fail"))
-	.on("error", gutil.log);
+		.pipe(plumber())
+		.pipe(gitmodified("modified"))
+		.pipe(jshint())
+		.pipe(jshint.reporter("jshint-stylish"))
+		.pipe(jshint.reporter("fail"))
+		.on("error", gutil.log);
 });
 
 // Install and copy third-party libraries
 gulp.task("bower", function() {
-	return bower.commands.install([], { save: true }, {})
-	.on("error", gutil.log);
+	return bower.commands.install([], {
+			save: true
+		}, {})
+		.on("error", gutil.log);
 });
 
-gulp.task("libs", [ "bower" ], function() {
+gulp.task("libs", ["bower"], function() {
 	return gulp.src(prefix(dirs.bower + "/", [
 		"jquery/dist/jquery.min.js",
 		"lace/src/js/*.js",
@@ -126,68 +128,78 @@ gulp.task("libs", [ "bower" ], function() {
 		"velocity/jquery.velocity.min.js",
 		"velocity/velocity.ui.min.js"
 	]))
-	.pipe(plumber())
-	.pipe(gulp.dest(dirs.lib))
-	.on("error", gutil.log);
+		.pipe(plumber())
+		.pipe(gulp.dest(dirs.lib))
+		.on("error", gutil.log);
 });
 
 // Copy and minify polyfills
-gulp.task("polyfills", [ "bower" ], function() {
+gulp.task("polyfills", ["bower"], function() {
 	return gulp.src(prefix(dirs.bower + "/", [
 		"flexie/dist/flexie.min.js",
 		"transformie/transformie.js"
 	]))
-	.pipe(buildscripts())
-	.pipe(concat("polyfills.js"))
-	.pipe(gulp.dest(dirs.lib))
-	.pipe(rename({ suffix: ".min" }))
-	.pipe(gulp.dest(dirs.lib))
-	.on("error", gutil.log);
+		.pipe(buildscripts())
+		.pipe(concat("polyfills.js"))
+		.pipe(gulp.dest(dirs.lib))
+		.pipe(rename({
+			suffix: ".min"
+		}))
+		.pipe(gulp.dest(dirs.lib))
+		.on("error", gutil.log);
 });
 
 // Build browserify bundles
-gulp.task("bundle", [ "libs" ], function() {
-	return bundle([ "libsb.js", "client.js" ], { debug: debug })
-	.pipe(buildscripts())
-	.pipe(rename({ suffix: ".bundle.min" }))
-	.pipe(gulp.dest("public/s/scripts"))
-	.on("error", gutil.log);
+gulp.task("bundle", ["libs"], function() {
+	return bundle(["libsb.js", "client.js"], {
+			debug: debug
+		})
+		.pipe(buildscripts())
+		.pipe(rename({
+			suffix: ".bundle.min"
+		}))
+		.pipe(gulp.dest("public/s/scripts"))
+		.on("error", gutil.log);
 });
 
 // Generate embed widget script
 gulp.task("embed", function() {
-	return bundle("embed/embed-parent.js", { debug: debug })
-	.pipe(buildscripts())
-	.pipe(rename("embed.min.js"))
-	.pipe(gulp.dest("public"))
-	.pipe(rename("client.min.js"))
-	.pipe(gulp.dest("public"))
-	.on("error", gutil.log);
+	return bundle("embed/embed-parent.js", {
+			debug: debug
+		})
+		.pipe(buildscripts())
+		.pipe(rename("embed.min.js"))
+		.pipe(gulp.dest("public"))
+		.pipe(rename("client.min.js"))
+		.pipe(gulp.dest("public"))
+		.on("error", gutil.log);
 });
 
 // Generate scripts
-gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
+gulp.task("scripts", ["polyfills", "bundle", "embed"]);
 
 // Generate styles
-gulp.task("lace", [ "bower" ], function() {
+gulp.task("lace", ["bower"], function() {
 	return gulp.src(dirs.bower + "/lace/src/scss/*.scss")
-	.pipe(plumber())
-	.pipe(gulp.dest(dirs.lace))
-	.on("error", gutil.log);
+		.pipe(plumber())
+		.pipe(gulp.dest(dirs.lace))
+		.on("error", gutil.log);
 });
 
-gulp.task("styles", [ "lace" ], function() {
+gulp.task("styles", ["lace"], function() {
 	return gulp.src(files.css)
-	.pipe(sass({
-		style: !debug ? "compressed" : "expanded",
-		sourcemapPath: "../scss"
-	}))
-	.on("error", function(e) { gutil.log(e.message); })
-	.pipe(plumber())
-	.pipe(!debug ? autoprefixer() : gutil.noop())
-	.pipe(!debug ? minify() : gutil.noop())
-	.pipe(gulp.dest(dirs.css))
-	.on("error", gutil.log);
+		.pipe(sass({
+			style: !debug ? "compressed" : "expanded",
+			sourcemapPath: "../scss"
+		}))
+		.on("error", function(e) {
+			gutil.log(e.message);
+		})
+		.pipe(plumber())
+		.pipe(!debug ? autoprefixer() : gutil.noop())
+		.pipe(!debug ? minify() : gutil.noop())
+		.pipe(gulp.dest(dirs.css))
+		.on("error", gutil.log);
 });
 
 // Generate appcache manifest file
@@ -202,26 +214,26 @@ gulp.task("manifest", function() {
 		"styles/dist/client.css",
 		"img/client/**/*"
 	]))
-	.pipe(manifest({
-		basePath: "public",
-		prefix: domain,
-		cache: [
+		.pipe(manifest({
+			basePath: "public",
+			prefix: domain,
+			cache: [
 			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
 		],
-		network: [ "*" ],
-		fallback: [
+			network: ["*"],
+			fallback: [
 			protocol + "//gravatar.com/avatar/ " + domain + "/s/img/client/avatar-fallback.svg",
 			domain + "/socket " + domain + "/s/socket-fallback",
 			domain + "/ " + domain + "/client.html"
 		],
-		preferOnline: true,
-		timestamp: true,
-		filename: "manifest.appcache"
-	}))
-	.pipe(gulp.dest("public"))
-	.on("error", gutil.log);
+			preferOnline: true,
+			timestamp: true,
+			filename: "manifest.appcache"
+		}))
+		.pipe(gulp.dest("public"))
+		.on("error", gutil.log);
 });
 
 gulp.task("android-manifest", function() {
@@ -235,26 +247,26 @@ gulp.task("android-manifest", function() {
 		"styles/dist/client.css",
 		"img/client/**/*"
 	]))
-	.pipe(manifest({
-		basePath: "public",
-		prefix: domain,
-		cache: [
+		.pipe(manifest({
+			basePath: "public",
+			prefix: domain,
+			cache: [
 			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
 			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
 		],
-		network: [ "*" ],
-		fallback: [
+			network: ["*"],
+			fallback: [
 			protocol + "//gravatar.com/avatar/ " + domain + "/s/img/client/avatar-fallback.svg",
 			domain + "/socket " + domain + "/s/socket-fallback?platform=android",
 			domain + "/ " + domain + "/client.html?platform=android"
 		],
-		preferOnline: true,
-		timestamp: true,
-		filename: "androidmanifest.appcache"
-	}))
-	.pipe(gulp.dest("public"))
-	.on("error", gutil.log);
+			preferOnline: true,
+			timestamp: true,
+			filename: "androidmanifest.appcache"
+		}))
+		.pipe(gulp.dest("public"))
+		.on("error", gutil.log);
 });
 
 // Clean up generated files
@@ -270,14 +282,14 @@ gulp.task("clean", function() {
 
 gulp.task("copy-polyfill", function() {
 	gulp.src('./lib/post-message-polyfill.js')
-	.pipe(gulp.dest('./public'));
+		.pipe(gulp.dest('./public'));
 });
 
 gulp.task("watch", function() {
-	gulp.watch(files.js, [ "scripts", "manifest", "android-manifest" ]);
-	gulp.watch(files.css, [ "styles", "manifest", "android-manifest" ]);
+	gulp.watch(files.js, ["scripts", "manifest", "android-manifest"]);
+	gulp.watch(files.css, ["styles", "manifest", "android-manifest"]);
 	gulp.watch(files.public_js, ["copy-polyfill"]);
 });
 
 // Default Task
-gulp.task("default", [ "lint", "scripts", "styles", "manifest", "android-manifest", "copy-polyfill" ]);
+gulp.task("default", ["lint", "scripts", "styles", "manifest", "android-manifest", "copy-polyfill"]);
