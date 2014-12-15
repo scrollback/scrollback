@@ -70,6 +70,7 @@ function joinServer(server, nick, channels, options, cb) {
 	clients[nick][server] = client;
 	client.conn.on("connect", cb);
 	onError(client);
+	onPrivateMessage(client);
 	return client;
 }
 /**
@@ -658,5 +659,12 @@ function onError(client) {
 			server: client.opt.server,
 			message: message
 		});
+	});
+}
+
+function onPrivateMessage(client) {
+	client.on("pm", function(nick, text, message) {
+		log("Private Message: ", nick, text, message);
+		client.say(nick, "Hey " + nick + ", I am using a web client that doesn't support PMs. Try reaching me on the channel.");
 	});
 }
