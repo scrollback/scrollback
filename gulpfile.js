@@ -10,6 +10,7 @@ var gulp = require("gulp"),
 	lazypipe = require("lazypipe"),
 	plumber = require("gulp-plumber"),
 	gutil = require("gulp-util"),
+	sourcemaps = require("gulp-sourcemaps"),
 	jshint = require("gulp-jshint"),
 	gitmodified = require("gulp-gitmodified"),
 	symlink = require("gulp-sym"),
@@ -28,6 +29,7 @@ var gulp = require("gulp"),
 		bower: "bower_components",
 		lib: "public/s/scripts/lib",
 		lace: "public/s/styles/lace",
+		scss: "public/s/styles/scss",
 		css: "public/s/styles/dist"
 	},
 	files = {
@@ -36,7 +38,7 @@ var gulp = require("gulp"),
 			"!*/*{.min.js,/**/*.min.js}",
 			"!node_modules{,/**}", "!bower_components{,/**}"
 		],
-		css: [ "public/s/styles/scss/*.scss" ]
+		scss: [ "public/s/styles/scss/*.scss" ]
 	};
 
 // Make browserify bundle
@@ -66,7 +68,7 @@ function bundle(files, opts) {
 }
 
 // Add prefix in an array
-function prefix(str, arr) {
+function prefix(str, arr, extra) {
 	var prefixed = [];
 
 	if (!(arr && arr instanceof Array)) {
@@ -75,6 +77,14 @@ function prefix(str, arr) {
 
 	for (var i = 0, l = arr.length; i < l; i++) {
 		prefixed.push(str + arr[i]);
+	}
+
+	if (extra) {
+		if (extra instanceof Array) {
+			prefixed.concat(extra);
+		} else {
+			prefixed.push(extra);
+		}
 	}
 
 	return prefixed;
@@ -115,7 +125,7 @@ gulp.task("bower", function() {
 	.on("error", gutil.log);
 });
 
-gulp.task("libs", [ "bower" ], function() {
+gulp.task("copylibs", [ "bower" ], function() {
 	return gulp.src(prefix(dirs.bower + "/", [
 		"jquery/dist/jquery.min.js",
 		"lace/src/js/*.js",
@@ -123,7 +133,7 @@ gulp.task("libs", [ "bower" ], function() {
 		"svg4everybody/svg4everybody.min.js",
 		"velocity/jquery.velocity.min.js",
 		"velocity/velocity.ui.min.js"
-	]))
+	], "lib/post-message-polyfill.js"))
 	.pipe(plumber())
 	.pipe(gulp.dest(dirs.lib))
 	.on("error", gutil.log);
@@ -145,18 +155,22 @@ gulp.task("polyfills", [ "bower" ], function() {
 
 // Build browserify bundles
 gulp.task("bundle", [ "libs" ], function() {
-	return bundle([ "libsb.js", "client.js" ], { debug: debug })
+	return bundle([ "libsb.js", "client.js" ], { debug: true })
+	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
+	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest("public/s/scripts"))
 	.on("error", gutil.log);
 });
 
 // Generate embed widget script
 gulp.task("embed", function() {
-	return bundle("embed/embed-parent.js", { debug: debug })
+	return bundle("embed/embed-parent.js", { debug: true })
+	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename("embed.min.js"))
+	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
 	.pipe(gulp.dest("public"))
@@ -175,15 +189,15 @@ gulp.task("lace", [ "bower" ], function() {
 });
 
 gulp.task("styles", [ "lace" ], function() {
-	return gulp.src(files.css)
-	.pipe(sass({
+	return sass(dirs.scss, {
 		style: !debug ? "compressed" : "expanded",
-		sourcemapPath: "../scss"
-	}))
-	.on("error", function(e) { gutil.log(e.message); })
+		lineNumbers: debug,
+		sourcemap: true
+	})
 	.pipe(plumber())
 	.pipe(!debug ? autoprefixer() : gutil.noop())
 	.pipe(!debug ? minify() : gutil.noop())
+	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest(dirs.css))
 	.on("error", gutil.log);
 });
