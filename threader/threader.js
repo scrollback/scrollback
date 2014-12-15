@@ -51,9 +51,11 @@ module.exports = function(coreObj) {
 				pendingCallbacks[message.id] = { message: message, fn: callback ,time:new Date().getTime()};
 				setTimeout(function() {
 					if (pendingCallbacks[message.id]) {
-						pendingCallbacks[message.id].fn();
+						var fn = pendingCallbacks[message.id].fn;
 						delete pendingCallbacks[message.id];
+						message.threads = [ { id: "new" } ]; // Make it a new thread if no reply.
 						log("pending callback removed after 1 sec for message.id" + message.id);
+						fn();
 					}
 				}, 1000);
 			} else callback();
