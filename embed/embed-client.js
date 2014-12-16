@@ -2,7 +2,7 @@
 /* global $*/
 
 var Color = require("../lib/color.js"),
-	parseURL = require("../lib/parseURL.js"),
+	urlUtils = require("../lib/url-utils.js"),
 	stringUtils = require("../lib/stringUtils.js"),
 	/* status flags */
 	verificationStatus = false,
@@ -113,7 +113,13 @@ function generateCss(selector, styleBlock) {
 	r.push("\n" + selector + " {");
 
 	for (var prop in styleBlock) {
-		r.push(prop + ":" + styleBlock[prop] + "!important;");
+		if (styleBlock[prop] instanceof Array) {
+			for (var i = 0, l = styleBlock[prop].length; i < l; i++) {
+				r.push(prop + ":" + styleBlock[prop][i] + "!important;");
+			}
+		} else {
+			r.push(prop + ":" + styleBlock[prop] + "!important;");
+		}
 	}
 
 	r.push("}");
@@ -158,8 +164,13 @@ function insertCss(embed) {
 		}));
 	}
 
-	if (embed.backgroundImage) {
-		r.push(generateCss(".custom-titlebar-image", { "background-image": "url('" + embed.titlebarImage + "')" }));
+	if (embed.titlebarImage) {
+		r.push(generateCss(".custom-titlebar-image", {
+			"background-image": "url('" + embed.titlebarImage + "')",
+			"background-repeat": "no-repeat",
+			"background-position": "center",
+			"background-size": [ "100%", "cover" ]
+		}));
 	}
 
 	if (!r.length) {
@@ -193,18 +204,12 @@ module.exports = function(libsb) {
 		});
 	});
 
-	var url = parseURL(window.location.pathname, window.location.search);
+	var url = urlUtils.parse(window.location.pathname, window.location.search);
 
 	embed = url.embed;
 
 	if (window.parent !== window) {
 		if (embed) {
-			try {
-				embed = JSON.parse(decodeURIComponent(url.embed));
-			} catch (e) {
-				embed = {};
-			}
-
 			suggestedNick = embed.nick;
 			classesOnLoad(embed);
 
@@ -293,7 +298,7 @@ module.exports = function(libsb) {
 			};
 
 			if (url) {
-				init.suggestedNick = suggestedNick || "";
+				init.suggestedNick = init.suggestedNick || suggestedNick || "";
 			}
 
 			next();

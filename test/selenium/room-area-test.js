@@ -37,9 +37,9 @@ module.exports = function(capabilities, options) {
 			driver.findElement(webdriver.By.css('.js-create-room')).click().
 			then(function() {
 				console.log("creating room", roomName);
-				return driver.findElement(webdriver.By.id('createroom-id')).sendKeys(roomName);
+				return driver.findElement(webdriver.By.id('createroom-dialog-room')).sendKeys(roomName);
 			}).then(function() {
-				return driver.findElement(webdriver.By.id('createroom-save')).click();
+				return driver.findElement(webdriver.By.css('.dialog-action-create-room')).click();
 			}).then(function() {
 				q.delay(2000);
 			}).then(function() {

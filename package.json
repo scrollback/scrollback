@@ -75,7 +75,7 @@
   },
   "optionalDependencies": {},
   "devDependencies": {
-    "blanket": "^1.1.6",
+    "blanket": "latest",
     "bower": "latest",
     "browserify": "latest",
     "browserstack-webdriver": "latest",
@@ -90,7 +90,8 @@
     "gulp-minify-css": "latest",
     "gulp-plumber": "latest",
     "gulp-rename": "latest",
-    "gulp-ruby-sass": "latest",
+    "gulp-ruby-sass": "^1.0.0-alpha",
+    "gulp-sourcemaps": "latest",
     "gulp-strip-debug": "latest",
     "gulp-sym": "latest",
     "gulp-uglify": "latest",

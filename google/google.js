@@ -48,7 +48,7 @@ module.exports = function(c) {
 							body = JSON.parse(body);
 
 							if (!body.email) {
-								log.d("Google + Error Action received: ", JSON.stringify(action));
+								log.d("Google + Error Action received: ", action);
 								log.e("Google + login Error: ", JSON.stringify(body));
 								return callback(new Error("Error in saving USER"));
 							}

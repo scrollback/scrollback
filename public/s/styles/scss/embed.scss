@@ -25,7 +25,7 @@ $bar-height: 49px !default;
 		border-bottom: none;
 		z-index: 999;
 
-		&.scrollback-minimized { bottom: -($widget-height - $bar-height); }
+		&.scrollback-minimized { height: $bar-height; }
 
 		@media only screen and (max-width: $widget-width + ($offset-right * 2)) { right: 0; }
 	}

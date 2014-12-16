@@ -97,7 +97,7 @@ var defaults = {
 	twitter: {
 		//consumerKey: ".."
 		//consumerSecret: ".."
-		timeout: 1000 * 60,
+		timeout: 1000 * 60 * 5,
 		silentTimeout: 1000 * 60 * 10
 	},
 	irc: {

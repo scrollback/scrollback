@@ -80,10 +80,11 @@ libsb.on('navigate', function(state, next) {
 		oldState = state.old;
 
 		if (!currentConfig) {
-			if (libsb.user.id.indexOf('guest-') === 0) {
+			if (!libsb.user || !libsb.user.id || /guest-/.test(libsb.user.id)) {
 				libsb.emit('navigate', {
-					mode: 'normal'
+					mode: 'home'
 				});
+				return next();
 			}
 
 			if (libsb.isInited === true) {
@@ -100,6 +101,10 @@ libsb.on('navigate', function(state, next) {
 }, 500);
 
 libsb.on("user-menu", function(menu, next) {
+	if (window.currentState.mode === "pref" || (/^guest-/).test(libsb.user.id)) {
+		return next();
+	}
+
 	menu.items.userpref = {
 		text: "Account settings",
 		prio: 300,
