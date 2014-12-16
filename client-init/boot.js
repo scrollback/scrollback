@@ -1,12 +1,12 @@
 /* jshint browser: true */
 /* global $*/
-var parseURL = require("../lib/parseURL.js");
+var urlUtils = require("../lib/url-utils.js");
 var actionQueue = require("./actionQueue.js")();
 
 function init(libsb) {
 	$(function() {
 		var state = {};
-		state = parseURL(window.location.pathname, window.location.search);
+		state = urlUtils.parse(window.location.pathname, window.location.search);
 		
 		if(state.platform) {
 			state.phonegap = true;

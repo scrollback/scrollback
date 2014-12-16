@@ -1,6 +1,7 @@
 /* jshint browser: true */
 /* global $, window*/
 /* exported currentState */
+var urlUtils = require("../lib/url-utils.js");
 
 var currentState = window.currentState,
 	libsb;
@@ -53,52 +54,12 @@ function updateTitle(state) {
 	}
 }
 
-function buildUrl(state) {
-	var path, params = [];
-	switch (state.mode) {
-		case 'conf':
-			path = '/' + (state.roomName ? state.roomName + '/edit' : 'me');
-			break;
-		case 'pref':
-			path = '/me/edit';
-			break;
-		case 'search':
-			path = state.roomName ? '/' + state.roomName : '';
-			params.push('q=' + encodeURIComponent(state.query));
-			break;
-		case "home":
-			path = "/me";
-			break;
-		default:
-			path = (state.roomName ? '/' + state.roomName + (
-				state.thread ? '/' + state.thread : "" /*+ '/' + format.sanitize(state.thread): ''*/ ) : '');
-	}
-
-	if (state.time) {
-		params.push("time=" + new Date(state.time).toISOString());
-	}
-
-	["embed"].forEach(function(component) {
-        if (component in state && state[component] !== null && typeof state[component] !== "undefined") {
-		  params.push(component + "=" + encodeURIComponent(JSON.stringify(state[component])));
-        }
-	});
-    
-	[ "tab", "dialog", "platform", "webview"].forEach(function(component) {
-		if (component in state && state[component] !== null && typeof state[component] !== "undefined") {
-			params.push(component + "=" + encodeURIComponent(state[component]));
-		}
-	});
-
-	return path + (params.length ? "?" + params.join("&") : "");
-}
-
 function pushState(state) {
 	var url, oldUrl = location.pathname + location.search,
 		pushableState, fun = "pushState";
 	if (!state || typeof state !== "object") return;
 	pushableState = $.extend({}, state, true);
-	url = buildUrl(pushableState);
+	url = urlUtils.build(pushableState);
 	if (oldUrl !== url) {
 		if (["boot", "socket"].indexOf(pushableState.source) >= 0 || (Object.keys(state.changes)).length === 1 && state.changes.time) fun = "replaceState";
 	} else if (!state.changes.view) {
