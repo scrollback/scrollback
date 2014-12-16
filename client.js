@@ -68,6 +68,7 @@ require('./persona/persona-client.js');
 // phonegap specific
 require('./push-notification/push-notification-client.js');
 require('./phonegap/phonegap-client.js');
+require('./lib/win-open-polyfill.js');
 
 // components
 require('./ui/guest-settings.js');

@@ -1,6 +1,6 @@
 var crypto = require('crypto') /*, log = require("../lib/logger.js")*/ ;
 var names = require('../lib/generate.js').names;
-var MathUtils = require('../lib/MathUtils.js')();
+var mathUtils = require('../lib/mathUtils.js');
 var uid = require('../lib/generate.js').uid;
 var config;
 var _ = require('underscore');
@@ -102,7 +102,7 @@ var handlers = {
 };
 
 function loadVictim(action, callback) {
-	log.d("Entity Loader:", JSON.stringify(action));
+	log.d("Entity Loader:", action);
 	if (action.ref) {
 		core.emit("getUsers", {
 			ref: action.ref,
@@ -365,7 +365,7 @@ function generateNick(suggestedNick, callback) {
 		if (attemptC) {
 			lowBound = upBound;
 			upBound = 1 << attemptC;
-			trying += MathUtils.random(lowBound, upBound);
+			trying += mathUtils.random(lowBound, upBound);
 		}
 		
 		if (attemptC >= config.nickRetries) return callback(names(6));

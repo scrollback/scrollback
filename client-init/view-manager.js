@@ -8,24 +8,14 @@ var currentState = window.currentState;
 function updateClass(state, next) {
 	var classList;
 
-	if (state.source === "boot") {
-		if (state.phonegap) {
-			$("body").addClass("media-phonegap");
-		} else {
-			$("body").addClass("media-normal");
-		}
-	}
-
 	if (state.old) {
 		classList = $("body").attr("class").trim() || "";
 
 		if (state.connectionStatus !== state.old.connectionStatus) {
 			classList = classList.replace(/\bstate-\S+/g, "");
 
-			if (state.connectionStatus === "online") {
-				classList += " state-online";
-			} else {
-				classList += " state-offline";
+			if (state.connectionStatus) {
+				classList += " state-" + state.connectionStatus;
 			}
 		}
 
