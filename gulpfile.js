@@ -23,7 +23,6 @@ var gulp = require("gulp"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
 	config = require("./config.js"),
-	clientConfig = require("./client-config.js"),
 	debug = !(gutil.env.production || config.env === "production"),
 	dirs = {
 		bower: "bower_components",
@@ -89,6 +88,32 @@ function prefix(str, arr, extra) {
 	}
 
 	return prefixed;
+}
+
+// Generate appcache manifest
+function genmanifest(files, platform) {
+	var filename = platform ? (platform + ".appcache") : "manifest.appcache";
+
+	return gulp.src(files)
+	.pipe(plumber())
+	.pipe(manifest({
+		basePath: "public",
+		cache: [
+			"//fonts.googleapis.com/css?family=Open+Sans:400,600",
+			"//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
+			"//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
+		],
+		network: [ "*" ],
+		fallback: [
+			"/socket /s/socket-fallback",
+			"/ /client.html" + (platform ? ("?platform=" + platform) : "")
+		],
+		preferOnline: true,
+		timestamp: true,
+		filename: filename
+	}))
+	.pipe(gulp.dest("public"))
+	.on("error", gutil.log);
 }
 
 // Lazy pipe for building scripts
@@ -204,70 +229,26 @@ gulp.task("styles", [ "lace" ], function() {
 });
 
 // Generate appcache manifest file
-gulp.task("manifest", function() {
-	var protocol = clientConfig.server.protocol,
-		host = clientConfig.server.host,
-		domain = protocol + host;
-
-	return gulp.src(prefix("public/s/", [
-		"lib/jquery.min.js",
+gulp.task("client-manifest", function() {
+	return genmanifest(prefix("public/s/", [
+		"scripts/lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
 		"styles/dist/client.css",
 		"img/client/**/*"
-	]))
-	.pipe(manifest({
-		basePath: "public",
-		prefix: domain,
-		cache: [
-			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
-			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
-			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
-		],
-		network: [ "*" ],
-		fallback: [
-			domain + "/socket " + domain + "/s/socket-fallback",
-			domain + "/ " + domain + "/client.html"
-		],
-		preferOnline: true,
-		timestamp: true,
-		filename: "manifest.appcache"
-	}))
-	.pipe(gulp.dest("public"))
-	.on("error", gutil.log);
+	]));
 });
 
-gulp.task("cordova-manifest", function() {
-	var protocol = clientConfig.server.protocol,
-		host = clientConfig.server.host,
-		domain = protocol + host;
-
-	return gulp.src(prefix("public/s/", [
+gulp.task("android-manifest", function() {
+	return genmanifest(prefix("public/s/", [
 		"phonegap/**/*",
-		"lib/jquery.min.js",
+		"scripts/lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
 		"styles/dist/client.css",
 		"img/client/**/*"
-	]))
-	.pipe(manifest({
-		basePath: "public",
-		prefix: domain,
-		cache: [
-			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
-			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
-			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
-		],
-		network: [ "*" ],
-		fallback: [
-			domain + "/socket " + domain + "/s/socket-fallback?platform=android",
-			domain + "/ " + domain + "/client.html?platform=android"
-		],
-		preferOnline: true,
-		timestamp: true,
-		filename: "cordova.appcache"
-	}))
-	.pipe(gulp.dest("public"))
-	.on("error", gutil.log);
+	]), "android");
 });
+
+gulp.task("manifest", [ "client-manifest", "android-manifest" ]);
 
 // Clean up generated files
 gulp.task("clean", function() {
@@ -281,9 +262,9 @@ gulp.task("clean", function() {
 });
 
 gulp.task("watch", function() {
-	gulp.watch(files.js, [ "scripts", "manifest", "cordova-manifest" ]);
-	gulp.watch(files.scss, [ "styles", "manifest", "cordova-manifest" ]);
+	gulp.watch(files.js, [ "scripts", "manifest" ]);
+	gulp.watch(files.scss, [ "styles", "manifest" ]);
 });
 
 // Default Task
-gulp.task("default", [ "lint", "scripts", "styles", "manifest", "cordova-manifest" ]);
+gulp.task("default", [ "lint", "scripts", "styles", "manifest" ]);
