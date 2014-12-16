@@ -117,9 +117,10 @@ function updateUser(action, callback) {
 module.exports = function(c, conf) {
 	core = c;
 	config = conf;
-	
-	userDB = require('../lib/redisProxy.js').select(config.user);
-	occupantDB = require('../lib/redisProxy.js').select(config.occupants);
+	userDB = require('redis').createClient();
+	userDB.select(config.userDB);
+	occupantDB = require('redis').createClient();
+	occupantDB.select(config.occupantsDB);
 	get = require("./get.js")(config);
 	put = require("./put.js")(config);
 	

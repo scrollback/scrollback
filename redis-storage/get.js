@@ -1,8 +1,15 @@
+
 module.exports = function(config) {
+	var sessionDB = require('redis').createClient();
+	sessionDB.select(config.sessionDB);
+	var userDB = require('redis').createClient();
+	userDB.select(config.userDB);
+	var roomDB = require('redis').createClient();
+	roomDB.select(config.roomDB);
 	var dataBases = {
-		session: require('../lib/redisProxy.js').select(config.session),
-		user: require('../lib/redisProxy.js').select(config.user),
-		room: require('../lib/redisProxy.js').select(config.room)
+		session: sessionDB,
+		user: userDB,
+		room: roomDB
 	};
 
 	return function(type, id, callback) {

@@ -2,9 +2,12 @@ var config, occupantDB, userDB, roomDB, core;
 module.exports = function(c, conf) {
 	core = c;
 	config = conf;
-	occupantDB = require('../lib/redisProxy.js').select(config.occupants);
-	userDB = require('../lib/redisProxy.js').select(config.user);
-	roomDB = require('../lib/redisProxy.js').select(config.room);
+	occupantDB = require('redis').createClient();
+	occupantDB.select(config.occupantsDB);
+	userDB = require('redis').createClient();
+	userDB.select(config.userDB);
+	roomDB = require('redis').createClient();
+	roomDB.select(config.roomDB);
 	require("./user.js")(core, config);
 	require("./session.js")(core, config);
 	occupantDB.flushdb();

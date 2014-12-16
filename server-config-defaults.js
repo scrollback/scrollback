@@ -85,11 +85,10 @@ var defaults = {
 	"redis-storage": {
 		host: "local.scrollback.io",
 		port: 6379,
-		db: 0,
-		session: 8,
-		user: 9,
-		room: 9,
-		occupants: 10
+		sessionDB: 8,
+		userDB: 9,
+		roomDB: 9,
+		occupantsDB: 10
 	},
 	entityloader: {
 		nickRetries: 100

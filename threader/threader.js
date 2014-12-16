@@ -17,7 +17,8 @@ Communicate with scrollback java Process through TCP and set message.threads.
 module.exports = function(coreObj, conf) {
 	core = coreObj;
 	config = conf;
-	redis = require('../lib/redisProxy.js').select(config.redisDB);
+	redis = require('redis').createClient();
+	redis.select(config.redisDB);
 	colors = require('./colors.js')(redis, config);
 	if (config) {
 		init();

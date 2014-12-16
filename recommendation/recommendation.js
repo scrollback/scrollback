@@ -1,7 +1,8 @@
 var log = require("../lib/logger.js"), redis, core;
 
 module.exports = function(coreObject, config) {
-	redis = require('../lib/redisProxy.js').select(config.redisDB);
+	redis = require('redis').createClient();
+	redis.select(config.redisDB);
 	core = coreObject;
 	
 	core.on("getRooms", function(q, callback) {

@@ -15,7 +15,8 @@ var silentTimeout;
 module.exports = function(coreObj, conf) {
 	config = conf;
 	if (config && config.consumerKey && config.consumerSecret) {
-		redis = require('../lib/redisProxy.js').select(config.redisDB);
+		redis = require('redis').createClient();
+		redis.select(config.redisDB);
 		twitterConsumerKey = config.consumerKey;
 		twitterConsumerSecret = config.consumerSecret;
 		timeout  = config.timeout; // search Interval

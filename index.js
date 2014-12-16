@@ -20,7 +20,7 @@ Boston, MA 02111-1307 USA.
 
 var plugins = [ "analytics", "validator","browserid-auth", "facebook", "recommendation", "anti-abuse",
 			   "threader", "authorizer", "redis-storage",  "leveldb-storage",
-			   "admin-notifier", "entityloader", "irc", "twitter",  "censor", "email", "superuser", "search", "sitemap",
+			   "entityloader", "irc", "twitter",  "censor", "email", "superuser", "search", "sitemap",
 			   "push-notification","google"];
 
 require('newrelic');

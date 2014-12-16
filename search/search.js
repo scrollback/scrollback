@@ -145,7 +145,8 @@ function indexTexts() {
 
 module.exports = function (core, conf) {
 	config = conf;
-	searchDB = require('../lib/redisProxy.js').select(config.search);
+    searchDB = require('redis').createClient();
+    searchDB.select(config.redisDB);
     if (config) {
         if(!client) {
             init();
