@@ -1,16 +1,13 @@
 /* jshint browser: true */
-/* global $ */
+/* global $, libsb */
 
 $(function() {
-	if ($.fn.attrchange) {
-		$("body").attrchange(function() {
-			if ($("body").attr("class") && $("body").attr("class").match(/mode-/)) {
-				$.progressbar("dismiss");
-			}
-		});
-	} else {
-		setTimeout(function() {
+	libsb.on("navigate", function(state, next) {
+		if ("mode" in state.changes) {
+			// We aren't really certain if the classes are added to body yet
 			$.progressbar("dismiss");
-		}, 300);
-	}
+		}
+
+		next();
+	}, 100);
 });
