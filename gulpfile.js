@@ -155,7 +155,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 
 // Build browserify bundles
 gulp.task("bundle", [ "copylibs" ], function() {
-	return bundle([ "libsb.js", "client.js" ], { debug: true })
+	return bundle([ "client.js" ], { debug: true })
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
