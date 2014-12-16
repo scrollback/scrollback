@@ -1265,7 +1265,11 @@ body {
         border-bottom: 1px solid darken($light-color, 10%);
     }
 
-    pre, blockquote { margin: 1em 0; }
+    pre, blockquote {
+        margin: 1em 0;
+
+        &:only-child { margin: 0; }
+    }
 
     blockquote {
         font-style: italic;
