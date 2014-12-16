@@ -62,7 +62,8 @@ var myConfig = {
 		"leveldb-storage",
 		"admin-notifier",
 		"entityloader"
-	]
+	],
+	env: "dev"
 };
 
 module.exports = myConfig;
