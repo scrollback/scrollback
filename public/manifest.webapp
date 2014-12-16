@@ -10,7 +10,7 @@
     },
     "developer": {
         "name": "Scrollback",
-        "url": "http://web.scrollback.io/"
+        "url": "https://scrollback.io/me"
     },
     "installs_allowed_from": ["*"],
     "default_locale": "en"
