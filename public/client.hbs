@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="{{server.protocol}}{{server.host}}/{{manifest}}" lang="en">
+<html manifest="/{{manifest}}" lang="en">
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
@@ -8,10 +8,10 @@
 
 		{{{seo.head}}}
 
-		<link rel="shortcut icon" href="{{server.protocol}}{{server.host}}/s/img/favicon.png" type="image/x-icon">
+		<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
 
-		<link rel="stylesheet" type="text/css"  media="screen" href="{{server.protocol}}//fonts.googleapis.com/css?family=Open+Sans:400,600">
-		<link rel="stylesheet" type="text/css" media="screen" href="{{server.protocol}}{{server.host}}/s/styles/dist/client.css">
+		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:400,600">
+		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/dist/client.css">
 
 		{{#if analytics.id}}
 			<script>
@@ -69,7 +69,7 @@
 			<ul role="tablist" class="meta-tabs custom-titlebar-bg custom-titlebar-fg">
 				<li data-webview="none" data-embed="none" role="tab" class="rooms-button">
 					<svg class="rooms-icon " width="28" height="28" viewBox="0 0 28 28">
-						<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/back.svg#icon"></use>
+						<use xlink:href="/s/img/client/icons/back.svg#icon"></use>
 					</svg>
 				</li>
 				<li role="tab" data-mode="normal" class="tab tab-info">
@@ -153,7 +153,7 @@
 						</span>
 						<span class="meta-button-back">
 							<svg class="meta-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/back.svg#icon"></use>
+								<use xlink:href="/s/img/client/icons/back.svg#icon"></use>
 							</svg>
 						</span>
 					</a>
@@ -175,8 +175,8 @@
 					<div data-embed="toast" class="minimize-ticker"></div>
 					<a data-mode="normal" data-embed="none" data-role="user" class="follow-button follow-room-action" role="button">
 						<svg class="follow-icon" width="28" height="28" viewBox="0 0 28 28">
-							<use class="fill custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#fill"></use>
-							<use class="stroke custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#stroke"></use>
+							<use class="fill custom-titlebar-fg" xlink:href="/s/img/client/icons/follow.svg#fill"></use>
+							<use class="stroke custom-titlebar-fg" xlink:href="/s/img/client/icons/follow.svg#stroke"></use>
 						</svg>
 					</a>
 					<div data-mode="conf pref search" class="action-buttons">
@@ -189,7 +189,7 @@
 
 					<a data-mode="normal" data-embed="none" data-string="data-tooltip::Search" class="search-button" role="button">
 						<svg class="search-icon" width="28" height="28" viewBox="0 0 28 28">
-							<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/search.svg#icon"></use>
+							<use xlink:href="/s/img/client/icons/search.svg#icon"></use>
 						</svg>
 					</a>
 
@@ -197,19 +197,19 @@
 
 						<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
 							<svg class="follow-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
-								<use class="fill custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#fill"></use>
-								<use class="stroke custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#stroke"></use>
+								<use class="fill custom-titlebar-fg" xlink:href="/s/img/client/icons/follow.svg#fill"></use>
+								<use class="stroke custom-titlebar-fg" xlink:href="/s/img/client/icons/follow.svg#stroke"></use>
 							</svg>
 						</a>
 
 						<div data-embed="toast" class="embed-action-minimize embed-button">
 							<svg class="minimize-icon embed-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/minimize.svg#icon"></use>
+								<use xlink:href="/s/img/client/icons/minimize.svg#icon"></use>
 							</svg>
 						</div>
 						<div class="embed-action-fullview embed-button">
 							<svg class="fullview-icon embed-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/fullview.svg#icon"></use>
+								<use xlink:href="/s/img/client/icons/fullview.svg#icon"></use>
 							</svg>
 						</div>
 					</div>
@@ -252,7 +252,7 @@
 					<div role="textbox" class="chat-entry" contenteditable></div>
 				</div>
 				<svg version="1.1" class="chat-send">
-					<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/send.svg#icon"></use>
+					<use xlink:href="/s/img/client/icons/send.svg#icon"></use>
 				</svg>
 			</div>
 		</section>
@@ -272,12 +272,12 @@
 					<div data-embed="toast canvas" class="embed-area">
 						<div data-embed="toast" class="embed-action-minimize embed-button">
 							<svg class="minimize-icon embed-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/minimize.svg#icon"></use>
+								<use xlink:href="/s/img/client/icons/minimize.svg#icon"></use>
 							</svg>
 						</div>
 						<div class="embed-action-fullview embed-button">
 							<svg class="fullview-icon embed-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/fullview.svg#icon"></use>
+								<use xlink:href="/s/img/client/icons/fullview.svg#icon"></use>
 							</svg>
 						</div>
 					</div>
@@ -362,13 +362,13 @@
 		<aside class="progressbar loading"></aside>
 
 		<!-- scripts -->
-		<script src="{{server.protocol}}//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="{{server.protocol}}{{server.host}}/s/scripts/lib/jquery.min.js"><\/script>');</script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="/s/scripts/lib/jquery.min.js"><\/script>');</script>
 
 		<script src="https://login.persona.org/include.js"></script>
 
 		<!--[if IE]>
-		<script src="{{server.protocol}}{{server.host}}/s/scripts/lib/polyfills.min.js"></script>
+		<script src="/s/scripts/lib/polyfills.min.js"></script>
 		<![endif]-->
 
 		{{#if android}}
@@ -376,7 +376,7 @@
 			<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova_plugins.js"></script>
 		{{/if}}
 
-		<script src="{{server.protocol}}{{server.host}}/s/scripts/client.bundle.min.js"></script>
+		<script src="/s/scripts/client.bundle.min.js"></script>
 
 		<!-- phonegap scripts -->
 
