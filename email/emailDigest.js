@@ -9,11 +9,12 @@ var waitingTime1, waitingTime2;
 
 module.exports.init = function (coreObj, conf) {
 	config = conf;
+	core = coreObj;
 	send = require('./sendEmail.js')(config);
 	waitingTime1 = config.mentionEmailTimeout || 3 * 60 * 60 * 1000; //mention email timeout
 	waitingTime2 = config.regularEmailTimeout || 12 * 60 * 60 *  1000;//regular email timeout
- 	redis = require('../lib/redisProxy.js').select(config.redis);
-	core = coreObj;
+ 	redis = require('redis').createClient();
+	redis.select(config.redisDB);
 	init();
 };
 module.exports.initMailSending = initMailSending;

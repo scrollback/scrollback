@@ -17,8 +17,7 @@ module.exports = function(coreObject, conf) {
 	sendPeriodicMails = emailDigest.sendPeriodicMails;//function
 	trySendingToUsers = emailDigest.trySendingToUsers;//function.
 	
-	redis = require('redis');
-	redis = redis.createClient();
+	redis = require('redis').createClient();
 	redis.select(config.redisDB);
 	
 	require('./welcomeEmail.js')(core, conf);
@@ -71,10 +70,10 @@ function addMessage(message){
 		});
         if (message.mentions) {
             message.mentions.forEach(function(username) {
-				multi = redis.multi();
-				multi.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message)); // mentioned msg
-				multi.set("email:" + username + ":isMentioned", true); // mentioned indicator for username
-				multi.exec(function(err,replies) {
+				var multi2 = redis.multi();
+				multi2.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message)); // mentioned msg
+				multi2.set("email:" + username + ":isMentioned", true); // mentioned indicator for username
+				multi2.exec(function(err,replies) {
 					log("added mention ", replies);
 					if (!err) {
 						core.emit("getUsers", {ref: username, session: "internal-email"}, function(err, r) {

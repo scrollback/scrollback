@@ -79,44 +79,41 @@ function twitterRoomHandler(action, callback) {
  */
 function addTwitterTokens(room, callback) {
 	log.d("adding twitter tokens.", room);
-	redis.multi(function(multi) {
-		var key = room.room.params.twitter.username;
-		multi.get("twitter:userData:token:" + key);
-		multi.get("twitter:userData:tokenSecret:" + key);
-		multi.get("twitter:userData:profile:" + key);
-		multi.exec(function(err, replies) {
-			log("replies from redis", replies);
-			if (err) {
-				log(" Error: ", err);
-                room.params.twitter.error = "ERR_TWITTER_LOGIN";
+	var multi = redis.multi();
+	var key = room.room.params.twitter.username;
+	multi.get("twitter:userData:token:" + key);
+	multi.get("twitter:userData:tokenSecret:" + key);
+	multi.get("twitter:userData:profile:" + key);
+	multi.exec(function(err, replies) {
+		log("replies from redis", replies);
+		if (err) {
+			log(" Error: ", err);
+			room.params.twitter.error = "ERR_TWITTER_LOGIN";
+			callback();
+		}
+		else {
+			if (replies[0] && replies[1] && replies[2]) {
+				log("twitter ---adding new values....");
+				room.room.params.twitter.token = replies[0];
+				room.room.params.twitter.tokenSecret = replies[1];
+				room.room.params.twitter.profile = JSON.parse(replies[2]);
+				room.room.params.twitter.tags = room.room.params.twitter.tags || "";
+				room.room.params.twitter.tags = formatString(room.room.params.twitter.tags);
+				log("added values from redis");
+				if (room.room.params.twitter.tags) addIdentity(room, key);
 				callback();
+				var multi2 = redis.multi();
+				multi2.del("twitter:userData:token:" + key);
+				multi2.del("twitter:userData:tokenSecret:" + key);
+				multi2.del("twitter:userData:profile:" + key);
+				multi2.exec(function(err, r) {
+					log("values deleted from redis", r);
+				});
+			} else {//new values are not present in redis.. copy old
+				copyOld(room, callback);
 			}
-			else {
-				if (replies[0] && replies[1] && replies[2]) {
-					log("twitter ---adding new values....");
-					room.room.params.twitter.token = replies[0];
-					room.room.params.twitter.tokenSecret = replies[1];
-					room.room.params.twitter.profile = JSON.parse(replies[2]);
-					room.room.params.twitter.tags = room.room.params.twitter.tags || "";
-					room.room.params.twitter.tags = formatString(room.room.params.twitter.tags);
-					log("added values from redis");
-					if (room.room.params.twitter.tags) addIdentity(room, key);
-					callback();
-					redis.multi(function(multi) {
-						multi.del("twitter:userData:token:" + key);
-						multi.del("twitter:userData:tokenSecret:" + key);
-						multi.del("twitter:userData:profile:" + key);
-						multi.exec(function(err, r) {
-							log("values deleted from redis", r);
-						});
-					});
 
-				} else {//new values are not present in redis.. copy old
-					copyOld(room, callback);
-				}
-
-			}
-		});
+		}
 	});
 }
 function addIdentity(room, username) {
@@ -319,13 +316,12 @@ function getRequest(req, res, next) {
 					console.log('oauth_access_token_secret: ' + access_token_secret);
 					//save tokens.
 					var uid = results.screen_name;
-					redis.multi(function(multi) {
-						multi.setex("twitter:userData:token:" + uid, expireTime, access_token);
-						multi.setex("twitter:userData:tokenSecret:" + uid, expireTime, access_token_secret);
-						multi.setex("twitter:userData:profile:" + uid, expireTime, JSON.stringify(results));
-						multi.exec(function(err,replies) {
-							log("user data added: ", replies);
-						});
+					var multi = redis.multi();
+					multi.setex("twitter:userData:token:" + uid, expireTime, access_token);
+					multi.setex("twitter:userData:tokenSecret:" + uid, expireTime, access_token_secret);
+					multi.setex("twitter:userData:profile:" + uid, expireTime, JSON.stringify(results));
+					multi.exec(function(err,replies) {
+						log("user data added: ", replies);
 					});
 					return res.render(__dirname + "/login.jade", {profile: { screen_name: results.screen_name }});
 				}
