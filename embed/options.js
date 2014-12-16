@@ -5,6 +5,6 @@ module.exports = function(self) {
 			widget.options(changes) updates the options that are specified.
 			Security: None
 		*/
-		
+
 	};
 };

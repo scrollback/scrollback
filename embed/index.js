@@ -4,61 +4,66 @@
 var config = require("../client-config.js");
 var host = config.server.protocol + config.server.host;
 var validate = require("../lib/validate.js");
-var iframeCount = 0, widgets = {};
+var iframeCount = 0,
+	widgets = {};
 
 function guid(n) {
-    var str="", i;
+	var str = "",
+		i;
 	n = n || 32;
-	for(i=0; i<n; i++) str += (Math.random()*36|0).toString(36);
+	for (i = 0; i < n; i++) str += (Math.random() * 36 | 0).toString(36);
 	return str;
 }
 
-var domReady = (function(){
-	var ready = document.readyState === "complete", listeners = [], fun;
+var domReady = (function() {
+	var ready = document.readyState === "complete",
+		listeners = [],
+		fun;
 
-	if(!ready) {
-		document.addEventListener("readystatechange", function(){
+	if (!ready) {
+		document.addEventListener("readystatechange", function() {
 			if (document.readyState === "complete") {
 				ready = true;
-				while(listeners.length){
-					listeners.splice(0,1)[0]();
+				while (listeners.length) {
+					listeners.splice(0, 1)[0]();
 				}
 			}
 		});
 	}
-	
-	fun = function(cb){
-		if(ready) return cb();
+
+	fun = function(cb) {
+		if (ready) return cb();
 		listeners.push(cb);
 	};
 
 	return fun;
 }());
 
-function onMessage(e){
+function onMessage(e) {
 	var data, frames, i, l, widgetID;
 	if (e.origin !== host) return;
 	frames = document.getElementsByTagName('iframe');
 
-	for (i = 0,l = frames.length; i < l; i++) {
-	    if (frames[i].contentWindow === e.source) {
-	    	widgetID = frames[i].dataset.id;
-	        break;
-	    }
+	for (i = 0, l = frames.length; i < l; i++) {
+		if (frames[i].contentWindow === e.source) {
+			widgetID = frames[i].dataset.id;
+			break;
+		}
 	}
-	if(i==l) return;
-	try{
+	if (i == l) return;
+	try {
 		data = JSON.parse(e.data);
-	}catch(e) {
+	} catch (e) {
 		return;
 	}
-	
+
 	widgets[widgetID].message(data);
 
 	/**/
 }
-window.addEventListener("message",onMessage, false);
-function addStyles(){
+window.addEventListener("message", onMessage, false);
+
+function addStyles() {
 	var style;
 	style = document.createElement("link");
 	style.rel = "stylesheet";
@@ -67,7 +72,7 @@ function addStyles(){
 	document.head.appendChild(style);
 }
 
-domReady(function(){
+domReady(function() {
 	addStyles();
 });
 
@@ -91,19 +96,20 @@ function constructEmbed(options) {
 	return embed;
 }
 
-function addWidget(self){
-	var iframe, options = self.options, embed = self.embed;
-	
+function addWidget(self) {
+	var iframe, options = self.options,
+		embed = self.embed;
+
 	iframe = document.createElement("iframe");
 	iframe.src = host + "/" + options.room + (options.thread ? "/" + options.thread : "") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
 	iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((embed.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
 	iframe.dataset.id = ++iframeCount;
 	widgets[iframe.dataset.id] = self;
 	// temp thing. implement better way to position these things.
-	if(Object.keys(widgets).length>1) {
+	if (Object.keys(widgets).length > 1) {
 		iframe.style.left = 50;
 	}
-	domReady(function(){
+	domReady(function() {
 		var container = document.getElementById(self.options.container);
 		if (!container) {
 			embed.form = "toast";
@@ -112,19 +118,22 @@ function addWidget(self){
 			container.appendChild(iframe);
 		}
 	});
-	
+
 	return iframe;
 }
 
 function scrollback(opts, callback) {
-	var widget={}, ready, self = {
-		pendingCallbacks: {},
-		options: opts,
-		state: {},
-		iframe: null,
-		embed: null,
-		config: config
-	};
+	var widget = {},
+		ready, self = {
+			pendingCallbacks: {},
+			options: opts,
+			state: {},
+			iframe: null,
+			embed: null,
+			config: config
+		};
+	// for now atleast.
+	if (iframeCount >= 1) throw new Error("Error: Cannot have multiple widgets on the same page.");
 
 	self.embed = constructEmbed(opts);
 	self.membership = [];
@@ -143,14 +152,14 @@ function scrollback(opts, callback) {
 	widget.options = require("./options.js")(self);
 	widget.signin = require("./signin.js")(self);
 	self.widget = widget;
-	
+
 	self.iframe = addWidget(self);
 	if (!self.embed) return;
-	
-	self.message = function (message) {
-		switch(message.type){
+
+	self.message = function(message) {
+		switch (message.type) {
 			case "activity":
-				if(message.hasOwnProperty("minimize")) {
+				if (message.hasOwnProperty("minimize")) {
 					var minReg = /\bscrollback-minimized\b/;
 
 					if (message.minimize && !minReg.test(this.iframe.className)) {
@@ -159,33 +168,34 @@ function scrollback(opts, callback) {
 						this.iframe.className = this.iframe.className.replace(minReg, "").trim();
 					}
 				}
-			break;
+				break;
 			case "domain-challenge":
 				this.iframe.contentWindow.postMessage(JSON.stringify({
 					type: "domain-response",
 					token: message.token
 				}), host);
-			break;
+				break;
 			case "navigate":
-				if(message.state.connectionStatus && !ready) {
+				if (message.state.connectionStatus && !ready) {
 					ready = true;
 					return callback(null, widget);
 				}
 				self.state = message.state;
-			break;
+				break;
 			case "following":
-				
-			break;
+
+				break;
 			case "membership":
-				console.log("Membership data:", message.data);
 				self.membership = message.data;
-			break;
+				break;
 		}
-		if(this.pendingCallbacks[message.id]) {
-			if(message.type === "error") return this.pendingCallbacks[message.id](message);
+
+		if (this.pendingCallbacks[message.id]) {
+			if (message.type === "error") return this.pendingCallbacks[message.id](message);
 			else this.pendingCallbacks[message.id](null, message);
 		}
 	};
+	return widget;
 }
 
 

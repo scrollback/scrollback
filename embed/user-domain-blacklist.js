@@ -1,7 +1,7 @@
 /* global libsb, $ */
 var formField = require("../lib/formField.js");
 
-libsb.on("pref-show", function (conf, next) {
+libsb.on("pref-show", function(conf, next) {
 	var div = $("<div>");
 	if (!conf.user.params) conf.user.params = {};
 	if (!conf.user.params["domain-blacklist"]) conf.user.params["domain-blacklist"] = [];
@@ -12,13 +12,13 @@ libsb.on("pref-show", function (conf, next) {
 	conf["blacklisted-domains"] = {
 		html: div,
 		text: "blacklisted domains",
-		prio: 100
+		prio: 1000
 	};
 	next();
 }, 500);
 
 
-libsb.on("pref-save", function (user, next) {
+libsb.on("pref-save", function(user, next) {
 	if (!user.params) user.params = {};
 	user.params["domain-blacklist"] = $("#domain-blacklist").val().split("\n");
 	next();

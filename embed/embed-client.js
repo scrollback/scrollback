@@ -1,6 +1,5 @@
 /* jshint browser: true */
 /* global $, libsb*/
-var parseURL = require("../lib/parseURL.js");
 var Color = require("../lib/color.js"),
 	urlUtils = require("../lib/url-utils.js"),
 	stringUtils = require("../lib/stringUtils.js"),
@@ -164,7 +163,6 @@ function onMessage(e) {
 			}
 			libsb.emit("init-up", actionUp, function(err, init) {
 				if(err) {
-					alert("ERROR:", err.message);
 					return;
 				}
 				console.log("INIT complete", init);

@@ -184,7 +184,7 @@ gulp.task("embed-apis", function() {
 	.pipe(buildscripts())
 	.pipe(rename("sb.js"))
 	.pipe(sourcemaps.write("."))
-	.pipe(gulp.dest("public/s/scripts"))
+	.pipe(gulp.dest("public/s"))
 	.on("error", gutil.log);
 });
 

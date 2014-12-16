@@ -1,10 +1,11 @@
-module.exports = function (self) {
-	return function () {
-		var room, following = {}, follow,
+module.exports = function(self) {
+	return function() {
+		var room, following = {},
+			follow,
 			callback;
-		if(arguments.length >=3) {
+		if (arguments.length >= 3) {
 			throw new Error("INVALID ARGUMENTS: Too many arguments");
-		}else if (arguments.length == 2) {
+		} else if (arguments.length == 2) {
 			if (typeof arguments[0] == "string" && typeof arguments[1] == "boolean") {
 				room = arguments[0];
 				follow = arguments[1];
@@ -24,7 +25,7 @@ module.exports = function (self) {
 				return (self.membership.indexOf(room) >= 0);
 			}
 		}
-		
+
 		following = {
 			room: room,
 			follow: follow

@@ -7,13 +7,12 @@ libsb.on('config-show', function (conf, next) {
 	if (!conf.room.guides.allowedDomains) conf.room.guides.llowedDomains = [];
 
 	var div = $('<div>').append(
-		formField('List of allowed domains', 'area', "domain-list", conf.room.guides.allowedDomains.join("\n"))
+		formField('List of allowed domains', 'area', "domain-list", (conf.room.guides && conf.room.guides.allowedDomains)? conf.room.guides.allowedDomains.join("\n"): "")
 	);
-
-	conf.allowedDomains = {
+	conf.domains = {
 		html: div,
-		text: "domains",
-		prio: 100
+		text: "Allowed domains",
+		prio: 425
 	};
 	next();
 }, 500);
