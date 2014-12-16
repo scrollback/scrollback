@@ -16,6 +16,7 @@ var maxTweets = 1; // max tweets to search in timeout inteval
 var pendingOauths = {};
 var oauthTimeout = 15 * 60 * 1000; // 15 min
 var silentTimeout = config.twitter.silentTimeout;
+var functionUtils = require('../lib/functionUtils.js');
 module.exports = function(coreObj) {
 
 	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
@@ -77,7 +78,7 @@ function twitterRoomHandler(action, callback) {
  *add it to room object
  */
 function addTwitterTokens(room, callback) {
-	log.d("adding twitter tokens.", JSON.stringify(room));
+	log.d("adding twitter tokens.", room);
 	redis.multi(function(multi) {
 		var key = room.room.params.twitter.username;
 		multi.get("twitter:userData:token:" + key);
@@ -162,21 +163,29 @@ function init() {
 function initTwitterSearch() {
 	log("getting room data....");
 	core.emit("getRooms",{identity: "twitter", session: internalSession }, function(err, data) {
+		var fnList = [];
 		if (!err) {
-			log.d("data returned from labelDB: ", JSON.stringify(data));
 			var rooms = data.results;
 			log("Number of rooms:", data.results.length);
 			rooms.forEach(function(room) {
-				redis.get("twitter:lastMessageTime:" + room.id, function(err, data) {
-					log("last Message Time: ", data, new Date().getTime() - parseInt(data), silentTimeout);
-					if (err || !data || (new Date().getTime() - parseInt(data) > silentTimeout)) {
-						fetchTweets(room);
-					}
-				});
+				fnList.push(function() { tryRoom(room);});
 			});
+			functionUtils.execFunctionsAfterSometime(fnList, timeout / 4);
 		}
 	});
 }
+
+
+
+function tryRoom(room) {
+	redis.get("twitter:lastMessageTime:" + room.id, function(err, data) {
+		log("last Message Time: ", data, new Date().getTime() - parseInt(data), silentTimeout);
+		if (err || !data || (new Date().getTime() - parseInt(data) > silentTimeout)) {
+			fetchTweets(room);
+		}
+	});
+}
+
 /**
  *Connect with twitter
  *1. if tag is empty will not connect
@@ -211,7 +220,7 @@ function fetchTweets(room) {
 							log.e("Twitter search is taking time more then the search interval: ",
 								  (new Date.getTime() - startTime), room.id);
 						} else if (reply.statuses && reply.statuses[0] && !reply.statuses[0].retweeted &&
-							(new Date(reply.statuses[0].created_at).getTime()) > (data ? parseInt(data, 10) : 1)) {
+								   (new Date(reply.statuses[0].created_at).getTime()) > (data ? parseInt(data, 10) : 1)) {
 							redis.set("twitter:lastTweetTime:" + room.id,
 									  (new Date(reply.statuses[0].created_at).getTime()), function(err, data) {
 								log("added data to room...", room.id, err, data);
@@ -310,7 +319,6 @@ function getRequest(req, res, next) {
 					console.log('oauth_access_token: ' + access_token);
 					console.log('oauth_access_token_secret: ' + access_token_secret);
 					//save tokens.
-					console.log("results: ", results);
 					var uid = results.screen_name;
 					redis.multi(function(multi) {
 						multi.setex("twitter:userData:token:" + uid, expireTime, access_token);
@@ -344,4 +352,5 @@ function deletePendingOAuths() {
 		}
 	}
 }
+
 /**** get request handler *******/

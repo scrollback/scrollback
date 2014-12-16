@@ -54,8 +54,9 @@ function loginFacebook(driver, email, pass, callback, className) {
 	if (!className) {
 		className = '.user-area';
 	}
-	driver.findElement(webdriver.By.css(className)).click().
-	then(function() {
+	q.delay(5000).then(function() {
+			return driver.findElement(webdriver.By.css(className)).click();
+	}).then(function() {
 		findVisibleElementByClass(driver, ".facebook", function(el) {
 			var win;
 			el.click().
@@ -65,7 +66,7 @@ function loginFacebook(driver, email, pass, callback, className) {
 				win = w;
 				return driver.switchTo().window(win[1]);
 			}).then(function() {
-				return q.delay(4000);
+				return q.delay(5000);
 			}).then(function() {
 				console.log("entering email");
 				return driver.findElement(webdriver.By.id("email")).sendKeys(email);
@@ -106,7 +107,7 @@ function loginGoogle(driver, email, pass, callback) {
 				win = w;
 				return driver.switchTo().window(win[1]);
 			}).then(function() {
-				return q.delay(4000);
+				return q.delay(5000);
 			}).then(function() {
 				console.log("entering email");
 				return driver.findElement(webdriver.By.id("Email")).sendKeys(email);

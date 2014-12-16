@@ -1,0 +1,3 @@
+[submodule "public/s/phonegap"]
+	path = public/s/phonegap
+	url = https://github.com/scrollback/phonegap.git
