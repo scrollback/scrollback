@@ -338,13 +338,12 @@ function sortLabels(room, roomObj, mentions,callback) {
 function deleteMentions(username , rooms) {
 	rooms.forEach(function(room) {
 		var m = "email:mentions:" + room + ":" + username ;
-		redis.multi(function(multi) {
-			multi.del(m);
-			m = "email:" + username + ":isMentioned";
-			multi.del(m);
-			multi.exec(function(replies) {
-				log("mentions deleted" , replies);
-			});
+		var multi = redis.multi();
+		multi.del(m);
+		m = "email:" + username + ":isMentioned";
+		multi.del(m);
+		multi.exec(function(replies) {
+			log("mentions deleted" , replies);
 		});
 	});
 }

@@ -6,7 +6,7 @@ var initMailSending;
 var sendPeriodicMails;
 var trySendingToUsers;
 var core;
-var timeout = 30*1000;//for debuging only
+var timeout = 30 * 1000; // for debuging only
 
 module.exports = function(coreObject, conf) {
 	config = conf;
@@ -17,7 +17,9 @@ module.exports = function(coreObject, conf) {
 	sendPeriodicMails = emailDigest.sendPeriodicMails;//function
 	trySendingToUsers = emailDigest.trySendingToUsers;//function.
 	
-	redis = require('../lib/redisProxy.js').select(config.redis);
+	redis = require('redis');
+	redis = redis.createClient();
+	redis.select(config.redisDB);
 	
 	require('./welcomeEmail.js')(core, conf);
     emailDigest.init(core, config);
@@ -55,40 +57,38 @@ function addMessage(message){
     if (message.threads && message.threads[0]) {
         var label = message.threads[0].id;
         var title = message.threads[0].title;
-        redis.multi(function(multi) {
-			multi.zadd("email:label:" + room + ":labels" ,message.time , label); // email: roomname : labels is a sorted set
-			multi.incr("email:label:" + room + ":" + label + ":count");
-			multi.expire("email:label:" + room + ":" + label + ":count" , getExpireTime());
-			if(title) multi.set("email:label:" + room + ":" + label + ":title", title);
-			multi.expire("email:label:" + room + ":" + label + ":title" , getExpireTime());
-			multi.lpush("email:label:" + room + ":" + label +":tail", JSON.stringify(message));//last message of label
-			multi.ltrim("email:label:" + room + ":" + label +":tail", 0, 2);
-			multi.expire("email:label:" + room + ":" + label + ":tail" , getExpireTime());
-			multi.exec(function(err,replies) {
-				log("added message in redis" , err, replies);
-			});
+		var multi = redis.multi();
+		multi.zadd("email:label:" + room + ":labels" ,message.time , label); // email: roomname : labels is a sorted set
+		multi.incr("email:label:" + room + ":" + label + ":count");
+		multi.expire("email:label:" + room + ":" + label + ":count" , getExpireTime());
+		if(title) multi.set("email:label:" + room + ":" + label + ":title", title);
+		multi.expire("email:label:" + room + ":" + label + ":title" , getExpireTime());
+		multi.lpush("email:label:" + room + ":" + label +":tail", JSON.stringify(message));//last message of label
+		multi.ltrim("email:label:" + room + ":" + label +":tail", 0, 2);
+		multi.expire("email:label:" + room + ":" + label + ":tail" , getExpireTime());
+		multi.exec(function(err,replies) {
+			log("added message in redis" , err, replies);
 		});
         if (message.mentions) {
             message.mentions.forEach(function(username) {
-                redis.multi( function(multi) {
-					multi.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message));//mentioned msg
-					multi.set("email:" + username + ":isMentioned", true);//mentioned indicator for username
-					multi.exec(function(err,replies) {
-						log("added mention ", replies);
-						if (!err) {
-                            core.emit("getUsers", {ref: username, session: "internal-email"}, function(err, r) {
-                                if(!err && r.results && r.results[0]) {
-                                    var user = r.results[0];
-                                    if(!user.params.email || (user.params.email && user.params.email.notifications)) {
-                                        log("sending mention email to user", username);
-                                        initMailSending(username);    
-                                    } else log("Not sending email to user ", username);
-                                }
-                            });
-							
-						}
-					});//mention is a set)
-				});
+				multi = redis.multi();
+				multi.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message)); // mentioned msg
+				multi.set("email:" + username + ":isMentioned", true); // mentioned indicator for username
+				multi.exec(function(err,replies) {
+					log("added mention ", replies);
+					if (!err) {
+						core.emit("getUsers", {ref: username, session: "internal-email"}, function(err, r) {
+							if(!err && r.results && r.results[0]) {
+								var user = r.results[0];
+								if(!user.params.email || (user.params.email && user.params.email.notifications)) {
+									log("sending mention email to user", username);
+									initMailSending(username);    
+								} else log("Not sending email to user ", username);
+							}
+						});
+
+					}
+				}); // mention is a set)
 			});
         }
     }
