@@ -33,7 +33,7 @@ var defaults = {
 			name: 'Scrollback Local'
 		}
 	},
-	appPriorities: {
+	appPriorities: { // don't override 
 		antiflood: 1000,
 		validation: 900,
 		loader: 850,
@@ -61,14 +61,6 @@ var defaults = {
 		audience: host
 	},
 	env: "production",
-	mysql: {
-		host: 'localhost',
-		user: 'scrollback',
-		password: 'scrollback',
-		connectionLimit: 100,
-		//debug    :true         ,
-		database: 'scrollback'
-	},
 	http: {
 		host: host,
 		cookieDomain: ".scrollback.io",
