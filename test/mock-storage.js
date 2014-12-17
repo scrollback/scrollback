@@ -1,4 +1,4 @@
-var core = new(require("../lib/emitter.js"))();
+var core = new(require("ebus"))();
 var rooms = {
 	"scrollback": {
 		id: "scrollback",

@@ -1,9 +1,9 @@
-/*global it, describe, before*/
+/* jshint mocha: true */
 var assert = require("assert");
-var core = new(require('../../lib/emitter.js'))();
+var core = new (require('ebus'))();
 var wordban = require("./wordban.js");
 var gen = require("../../lib/generate.js");
-var config = require("./server-config-defaults.js");
+var config = require("./../../server-config-defaults.js");
 var guid = gen.uid;
 var names = gen.names;
 var rooms = [{
@@ -47,7 +47,7 @@ describe('wordban', function () {
 
 	it('Message test', function (done) {
 		var msg = copy(message);
-		core.emit("text", msg, function (err, data) {
+		core.emit("text", msg, function (err) {
 			console.log("reply:", msg, err);
 			var l = msg.labels.abusive;
 			assert.notEqual(l, 1, "banning normal message");
@@ -59,7 +59,7 @@ describe('wordban', function () {
 	it('banned word test', function (done) {
 		var msg = copy(message);
 		msg.text += " fuck";
-		core.emit("text", msg, function (err, data) {
+		core.emit("text", msg, function (err) {
 			console.log("reply:", msg, err);
 			var l = msg.labels.abusive;
 			assert(l, 1, "Not banning word fuck");
@@ -140,7 +140,7 @@ describe('wordban', function () {
 	it("customPhrases test - 2", function (done) {
 		var msg = copy(message);
 		msg.text += "cde";
-		core.emit("text", msg, function (err, data) {
+		core.emit("text", msg, function (err) {
 			console.log("reply:", msg, err);
 			var l = msg.labels.abusive;
 			assert.notEqual(l, 1, "Banning substring cde");
@@ -151,7 +151,7 @@ describe('wordban', function () {
 	it("customPhrases test - 3", function (done) {
 		var msg = copy(message);
 		msg.text += " abc def testing test..";
-		core.emit("text", msg, function (err, data) {
+		core.emit("text", msg, function (err) {
 			console.log("reply:", msg, err);
 			var l = msg.labels.abusive;
 			assert.equal(l, 1, "not banning");

@@ -15,7 +15,6 @@ require("../authorizer/tests/authorizer-test.js");
 require("../localStorage/ArrayCache-test.js");
 require("../localStorage/userCache-test.js");
 require("../threader/threader-test.js");
-require("../lib/emitter-test.js");
 require("../leveldb-storage/leveldb-test.js");
 require("../redis-storage/redis-test.js");
 require("../lib/validate-test.js");

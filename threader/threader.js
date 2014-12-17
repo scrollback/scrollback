@@ -1,3 +1,4 @@
+/* jshint mocha: true */
 var log = require("../lib/logger.js"),
 	config, net = require('net'), timeout = 60 * 1000,
 	client, pendingCallbacks = {}, core,

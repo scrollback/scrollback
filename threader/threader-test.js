@@ -1,9 +1,10 @@
 /* jshint node: true */
 /* global it, before, describe */
 var assert = require("assert");
-var core = new (require("../lib/emitter.js"))();
+var core = new (require("ebus"))();
 var threader = require("./threader.js");
 var gen = require("../lib/generate.js");
+var config = require('./../server-config-defaults.js');
 var guid = gen.uid;
 var names = gen.names;
 var message = {
@@ -28,7 +29,7 @@ function copyMsg() { return JSON.parse(JSON.stringify(message)); }
 describe('threader', function() {
 	before( function(done) {
 		this.timeout(10000);
-		threader(core);
+		threader(core, config.threader);
 		setTimeout(function(){
 			done();	
 		}, 9000);

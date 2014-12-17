@@ -1,8 +1,8 @@
-/* global describe, before, it*/
+/* jshint mocha: true */
 var assert = require('assert');
 var config = require("../server-config-defaults.js");
 var fs = require('fs');
-var core = new(require('../lib/emitter.js'))();
+var core = new(require('ebus'))();
 var generate = require("../lib/generate.js");
 var time = 1398139968009,
 	id;
