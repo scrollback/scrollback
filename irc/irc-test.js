@@ -52,7 +52,8 @@ var rooms = [{
 describe('IRC test: ', function() {//this will connect 2 rooms scrollback and testingroom
 	before( function(done) {
 		this.timeout(5 * 40000);
-        core.on('getUsers', function(v, callback) {
+		ircSb(core, config.irc);
+		core.on('getUsers', function(v, callback) {
 			v.results = users;
 			callback(null, v);
 		}, 500);
@@ -94,7 +95,6 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 			channels: ["#scrollback", "#testingroom", "#testingroom2", "#testingroom3"]
 		});
 		
-		ircSb(core, config.irc);
 		setTimeout(function(){
 			done();		
 		}, 20000);
