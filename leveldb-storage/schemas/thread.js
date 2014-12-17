@@ -20,6 +20,7 @@ module.exports = function (t/*, config*/) {
                 return types.threads.get(query.ref, function (err, thread) {
                     if (err || !thread) return callback();
                     query.results = [thread];
+					
                     return callback();
                 });
             } else if (query.ref) {
@@ -53,7 +54,6 @@ module.exports = function (t/*, config*/) {
             if (query.before) {
                 dbQuery.reverse = true;
             }
-            console.log(dbQuery);
             types.threads.get(dbQuery, function (err, results) {
                 if (err || !results) {
                     return callback();
