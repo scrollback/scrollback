@@ -52,7 +52,7 @@ function loginPersona(driver, id, password, callback, className) {
 
 function loginFacebook(driver, email, pass, callback, className) {
 	if (!className) {
-		className = '.user-area';
+		className = '.main-area .user-area.js-has-user-menu';
 	}
 	q.delay(5000).then(function() {
 			return driver.findElement(webdriver.By.css(className)).click();
@@ -85,7 +85,7 @@ function loginFacebook(driver, email, pass, callback, className) {
 }
 
 function logout(driver, callback) {
-	driver.findElement(webdriver.By.css('.user-area')).click().
+	driver.findElement(webdriver.By.css('.main-area .user-area.js-has-user-menu')).click().
 	then(function() {
 		return driver.findElement(webdriver.By.css('.logout')).click();
 	}).then(function() {
@@ -96,7 +96,7 @@ function logout(driver, callback) {
 }
 
 function loginGoogle(driver, email, pass, callback) {
-	driver.findElement(webdriver.By.css('.user-area')).click().
+	driver.findElement(webdriver.By.css('.main-area .user-area.js-has-user-menu')).click().
 	then(function() {
 		findVisibleElementByClass(driver, ".google", function(el) {
 			var win;
@@ -129,7 +129,7 @@ function loginGoogle(driver, email, pass, callback) {
 		 Return a promise with username.
 		 */
 function getMyuserid(driver) {
-	return driver.findElement(webdriver.By.css(".sb-user")).getText();
+	return driver.findElement(webdriver.By.css(".main-area .user-area.js-has-user-menu")).getText();
 }
 
 /**
