@@ -240,8 +240,7 @@ function insert(tableName, params, values) {
 			return;
 		}
 		client.query(q, values, function(e, result) {
-			log(" result: ", result);
-			if (e) log("Unable to run query: ", e, q, values);
+			if (e) log("Unable to run query: ", e, q, values, result);
 			done();
 		});
 	});

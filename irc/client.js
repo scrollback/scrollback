@@ -6,7 +6,6 @@ var ObjectReader = require('../lib/ObjectReader.js');
 var or = new ObjectReader(eventEmitter);
 var log = require("../lib/logger.js");
 var config;
-//config = require('../server-config-defaults.js');
 var core;
 var port, server;
 var client;
@@ -15,7 +14,6 @@ var reconnectTime = 1000 * 60;
 /**
  *@param coreObj event emitter.
  */
-
 
 module.exports = function(c, conf) {
 	core = c;
@@ -27,6 +25,7 @@ module.exports = function(c, conf) {
 		connected: isConnected,	
 	};
 };
+
 function init() {
 	start();
 	eventEmitter.on('object', function(obj) {
@@ -66,7 +65,6 @@ function start() {
 		},reconnectTime);
 	});
 }
-
 
 function writeObject(obj) {
 	var v = JSON.stringify(obj);

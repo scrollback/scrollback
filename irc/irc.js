@@ -5,11 +5,10 @@ var log = require("../lib/logger.js");
 var events = require('events');
 var clientEmitter = new events.EventEmitter();
 var client;
-
 var core;
 var callbacks = {};
-var onlineUsers = {}; //scrollback users that are already online
-var firstMessage = {}; //[room][username] = true //it is shared b/w roomEvent and irc
+var onlineUsers = {}; // scrollback users that are already online
+var firstMessage = {}; // [room][username] = true //it is shared b/w roomEvent and irc
 var userExp = 10 * 60 * 1000;
 var initCount = 0;
 var ircUtils;
@@ -19,7 +18,7 @@ module.exports = function (coreObj, conf) {
 	config = conf;
 	client = require('./client.js')(clientEmitter, config);
 	client.init(clientEmitter);
-	ircUtils = new require('./ircUtils.js')(config, clientEmitter, client, callbacks);
+	ircUtils = require('./ircUtils.js')(config, clientEmitter, client, callbacks);
 	init();
 	
 	require('./roomEvent.js')(core, config, client, ircUtils, firstMessage);
