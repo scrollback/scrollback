@@ -18,6 +18,7 @@ var gulp = require("gulp"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
 	sass = require("gulp-ruby-sass"),
+	combinemq = require("gulp-combine-mq"),
 	autoprefixer = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
@@ -224,6 +225,7 @@ gulp.task("styles", [ "lace" ], function() {
 		sourcemap: true
 	})
 	.pipe(plumber())
+	.pipe(combinemq())
 	.pipe(!debug ? autoprefixer() : gutil.noop())
 	.pipe(!debug ? minify() : gutil.noop())
 	.pipe(sourcemaps.write("."))
