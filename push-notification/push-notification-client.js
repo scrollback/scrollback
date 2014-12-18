@@ -71,7 +71,6 @@ window.onNotificationGCM = function(e) {
 
 function registerPushNotification(init, next) {
 	var user = init.user || libsb.user;
-	console.log("User is ", user);
 	if (/^guest-/.test(user.id)) return next(); //don't register users for pushNotifications, if they are not logged in.
 	
 	pushNotification = window.plugins && window.plugins.pushNotification;
