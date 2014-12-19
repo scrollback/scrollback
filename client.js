@@ -8,7 +8,6 @@ require('./public/s/scripts/lib/sockjs.min.js');
 require('./public/s/scripts/lib/jquery.velocity.min.js');
 require('./public/s/scripts/lib/svg4everybody.min.js');
 
-require('./lib/jquery.attrchange.js');
 require('./lib/jquery.setCursorEnd.js');
 require('./lib/jquery.isOnScreen.js');
 require('./lib/format.js');

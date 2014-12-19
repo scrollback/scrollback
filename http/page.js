@@ -66,7 +66,6 @@ function init (app) {
 		var platform = req.query.platform;
 		if (platform && platform.toLowerCase() === "android") {
 			clientData.android = true;
-			clientData.manifest = "cordova.appcache";
 			clientData.appVersion = req.query["app-version"] || "defaults";
 
 		} else {
