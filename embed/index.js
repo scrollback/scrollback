@@ -79,15 +79,18 @@ domReady(function() {
 function constructEmbed(options) {
 	var embed = {};
 
-	if (!validate(options.room)) {
+	if (!validate(options.roomName)) {
 		console.log("Invalid room");
 		return;
 	}
-	embed.room = options.room;
+	embed.roomName = options.roomName;
 	embed.form = options.form || "toast";
 	if (options.nick) embed.nick = options.nick;
 	embed.minimize = (typeof options.minimize === "boolean") ? options.minimize : false;
-
+	if(options.tab) embed.tab = options.tab;
+	if(options.mode) embed.mode = options.mode;
+	if(options.time) embed.time = options.time;
+	
 	embed.origin = {
 		protocol: location.protocol,
 		host: location.host,
@@ -98,10 +101,19 @@ function constructEmbed(options) {
 
 function addWidget(self) {
 	var iframe, options = self.options,
-		embed = self.embed;
+		embed = self.embed, params = [];
 
+	["tab", "time"].forEach(function(ops) {
+		if(embed[ops]) {
+			params.push(ops + "=" + embed[ops]);
+			delete embed[ops];
+		}
+	});
+	
+	params.push("embed=" + encodeURIComponent(JSON.stringify(embed)));
+	
 	iframe = document.createElement("iframe");
-	iframe.src = host + "/" + options.room + (options.thread ? "/" + options.thread : "") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
+	iframe.src = host + "/" + options.roomName + (options.thread ? "/" + options.thread : "") + "?"+params.join("&");
 	iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((embed.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
 	iframe.dataset.id = ++iframeCount;
 	widgets[iframe.dataset.id] = self;
@@ -178,7 +190,7 @@ function scrollback(opts, callback) {
 			case "navigate":
 				if (message.state.connectionStatus && !ready) {
 					ready = true;
-					return callback(null, widget);
+					if(callback) callback(null, widget);
 				}
 				self.state = message.state;
 				break;

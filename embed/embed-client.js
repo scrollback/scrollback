@@ -107,7 +107,6 @@ function postNavigation(state, next) {
 		parentWindow.postMessage(JSON.stringify(activity), parentHost);
 	}else if(parentWindow){
 		if(stateClone.room && stateClone.room.params) delete stateClone.room.params;
-		console.log(parentHost);
 		parentWindow.postMessage(JSON.stringify({type:"navigate",state:stateClone}), parentHost);	
 	}
 	
@@ -119,7 +118,6 @@ function onMessage(e) {
 	var data = e.data, action, actionUp = {};
 	data = parseResponse(data);
 	action = data.data;
-	console.log("Got action:", data);
 	switch (data.type) {
 	case "domain-response":
 		verifyDomainResponse(data);
@@ -144,15 +142,10 @@ function onMessage(e) {
 		});
 		break;
 	case "following":
-			console.log("Following", action);
 			if(action.follow) {
-				libsb.emit("join-up", {to: action.room, role: "follower"}, function(err, join) {
-					console.log(err, join);
-				});
+				libsb.emit("join-up", {to: action.room, role: "follower"});
 			}else{
-				libsb.emit("part-up", {to: action.room}, function(err, join) {
-					console.log(err, join);
-				});
+				libsb.emit("part-up", {to: action.room});
 			}
 		break;
 	case "signin":
@@ -161,13 +154,7 @@ function onMessage(e) {
 			if(action.nick) {
 				action.auth.nick = action.nick; // TODO: can be used to generated nick suggestions.
 			}
-			libsb.emit("init-up", actionUp, function(err, init) {
-				if(err) {
-					return;
-				}
-				console.log("INIT complete", init);
-				
-			});
+			libsb.emit("init-up", actionUp);
 		break;
 	}
 }

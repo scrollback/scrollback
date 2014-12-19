@@ -1,6 +1,6 @@
 /* global describe, it*/
 var assert = require("assert");
-var core = require("../test/mock-core.js")();
+var core = new (require("ebus"))();
 require("../test/mock-storage.js")(core);
 require("./entityloader.js")(core);
 var gen = require("../lib/generate.js");
