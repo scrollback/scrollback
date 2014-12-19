@@ -10,7 +10,7 @@ function makePut() {
 */
 
 
-exports.texts = function (text) {
+exports.text = function (text) {
 	var puts = [], put;
 	
 	/* Start Compatibility Block */
@@ -53,7 +53,6 @@ exports.texts = function (text) {
 			};
 		} else {
 			/* For existing threads update endTime, length and perhaps title */
-			put = makePut();
 			put.update = [
 				['endTime', 'set', text.time],
 				['length', 'incr', 1]
@@ -86,7 +85,7 @@ exports.edit = function (edit) {
 exports.room = exports.user = function (action) {
 	var entity = action[action.type], put;
 	
-	put.source = action.type + 's';
+	put.source = 'entities';
 	if(entity.identities.length) {
 		entity.identities = entity.identities.map(function(ident) {
 			return ident.split(':', 2);

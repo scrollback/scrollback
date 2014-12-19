@@ -20,9 +20,9 @@ module.exports = function(conf) {
 		} else if (typeof val === 'object') {
 			if(val instanceof Array) {
 				if (context == 'json') {
-					return "'" + JSON.stringify() + "'::jsonb";
+					return "'" + JSON.stringify(val) + "'::jsonb";
 				}
-				return 'ARRAY[' + val.map(value).join(',') + ']';
+				return 'ARRAY[' + val.map(val).join(',') + ']';
 			} else {
 				return "'" + JSON.stringify(val) + "'::jsonb";
 			}
@@ -51,6 +51,7 @@ module.exports = function(conf) {
 				case 'gte':	sql.push('>='); break;
 				case 'cts': sql.push('@>'); break;
 				case 'ctd': sql.push('<@'); break;
+				case 'mts': sql.push('@@'); break;
 			}
 			sql.push(value(f[f.length-1]));
 		}
@@ -63,7 +64,8 @@ module.exports = function(conf) {
 			names.push(name(i));
 			values.push(value(data[i]));
 		}
-		sql = ['('].concat(names, ') VALUES (', )
+		sql = ['('].concat(names, ') VALUES (').
+			concat(values.map(value)).concat(')');
 	}
 	
 	function updatesql(data) {
