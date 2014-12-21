@@ -1,6 +1,7 @@
 /* jslint browser: true */
 
-var core = new (require("./lib/emitter.js"))();
+var config = require("./client-config-defaults.js");
+var core = new (require("ebus"))(config.appPriorities);
 
 // third party libraries
 require('./public/s/scripts/lib/sockjs.min.js');

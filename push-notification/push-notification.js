@@ -1,14 +1,12 @@
-var log = require('../lib/logger.js');
+var log = require('../lib/logger.js'), config;
 var gcm_notify = require('./gcm-notify.js');
-var config = require('../config.js');
 var stringUtils = require('../lib/stringUtils.js');
-var internalSession = Object.keys(config.whitelists)[0];
-
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
 
-module.exports = function(core) {
+module.exports = function(core, conf) {
+	config = conf;
 	function mapUsersToIds(idList, cb) {
 		var cnt = idList.length;
 		var userList = [];
@@ -20,7 +18,7 @@ module.exports = function(core) {
 		idList.forEach(function(id) {
 			core.emit("getUsers", {
 				ref: id,
-				session: internalSession
+				session: "internal-push-notifications"
 			}, function(err, data) {
 				if (!data || !data.results || !data.results[0]) return done();
 				userList.push(data.results[0]);
@@ -44,7 +42,7 @@ module.exports = function(core) {
 				});
 			}
 		});
-		gcm_notify(regList, payload, core);
+		gcm_notify(regList, payload, core, config);
 	}
 
 	function makePayload(title, message, text) {
@@ -87,7 +85,7 @@ module.exports = function(core) {
 			payload = makePayload(title, message, text);
 			core.emit("getUsers", {
 				memberOf: text.to,
-				session: internalSession
+				session: "internal-push-notifications"
 			}, function(e, d) {
 				if (!d || !d.results) return;
 				notifyUsers(d.results, payload);

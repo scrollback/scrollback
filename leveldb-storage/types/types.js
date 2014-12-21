@@ -1,7 +1,3 @@
-var objectlevel = require("objectlevel");
-var config = require("../../config.js");
-
-
 module.exports = function (db) {
     var texts = require("./text-type.js")(db);
     var rooms = require("./room-type.js")(db);

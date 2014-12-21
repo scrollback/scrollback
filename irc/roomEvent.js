@@ -1,8 +1,9 @@
 var log = require("../lib/logger.js");
-var config = require('../config.js');
-var debug = config.irc.debug;
-var internalSession = Object.keys(config.whitelists)[0];
-module.exports = function (core, client, ircUtils, firstMessage) {
+var debug, config;
+module.exports = function (core, conf, client, ircUtils, firstMessage) {
+	config = conf;
+	debug = config.debug;
+	
 	core.on("room", function (action, cb) {
 		var callback = ircUtils.channelLowerCase(action, cb);
 		var r = action.room;
@@ -17,7 +18,7 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 			}
 			core.emit('getRooms', {
 				identity: "irc://" + r.params.irc.server + "/" + r.params.irc.channel,
-				session: internalSession
+				session: "internal-irc"
 			}, function (err, reply) {
 				var room = reply.results;
 				if (!room[0]) callback();
@@ -35,7 +36,7 @@ module.exports = function (core, client, ircUtils, firstMessage) {
 		var callback = ircUtils.channelLowerCase(action, cb);
 		var room = action.room;
 		log("room irc:", JSON.stringify(action), client.connected());
-		if (!room.params.irc || room.params.irc.error || action.session === internalSession) return callback();
+		if (!room.params.irc || room.params.irc.error || /^internal-/.test(action.session)) return callback();
 
 		function done(err) {
 			if (err) {
@@ -125,7 +126,7 @@ function isNewRoom(room) {
 
 function isIrcChanged(action) {
 	var or = action.old && action.old.params && action.old.params.irc;
-	var nr = action.room && action.room.params && action.room.params.irc; ;
+	var nr = action.room && action.room.params && action.room.params.irc;
 	return or && nr && (nr.server !== or.server || or.channel !== nr.channel);
 }
 

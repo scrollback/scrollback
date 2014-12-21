@@ -1,5 +1,3 @@
-var config = require("../../config.js");
-
 module.exports = function (store) {
     return store.defineType('admitexpel', {
         indexes: {

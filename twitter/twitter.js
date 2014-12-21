@@ -2,31 +2,32 @@ var log = require("../lib/logger.js");
 var htmlEncode = require('htmlencode');
 var Twit = require('twit');
 var guid = require("../lib/generate.js").uid;
-var config = require('../config.js');
 var OAuth = require('oauth');
-var internalSession = Object.keys(config.whitelists)[0];
-var host = config.http.host;
-var redis = require('../lib/redisProxy.js').select(config.redisDB.twitter);
-var twitterConsumerKey = config.twitter.consumerKey;
-var twitterConsumerSecret = config.twitter.consumerSecret;
+var config, redis, twitterConsumerKey, twitterConsumerSecret;
 var core;
 var expireTime = 15 * 60; // expireTime for twitter API key...
-var timeout  = config.twitter.timeout; // search Interval
+var timeout, host;
 var maxTweets = 1; // max tweets to search in timeout inteval
 var pendingOauths = {};
 var oauthTimeout = 15 * 60 * 1000; // 15 min
-var silentTimeout = config.twitter.silentTimeout;
 var functionUtils = require('../lib/functionUtils.js');
-module.exports = function(coreObj) {
+var silentTimeout;
+module.exports = function(coreObj, conf) {
+	config = conf;
+	if (config && config.consumerKey && config.consumerSecret) {
+		redis = require('redis').createClient();
+		redis.select(config.redisDB);
+		twitterConsumerKey = config.consumerKey;
+		twitterConsumerSecret = config.consumerSecret;
+		timeout  = config.timeout; // search Interval
+		silentTimeout = config.silentTimeout;
 
-	if (config.twitter && config.twitter.consumerKey && config.twitter.consumerSecret) {
 		log("twitter app started");
 		core = coreObj;
+		host = config.global.host;
 		init();
-
+		
 		core.on("http/init", function(payload, callback) {
-			
-			console.log("twitter.......");
 			payload.push({
 				get: {
 					"/r/twitter/*": function(req,res,next) {
@@ -36,11 +37,11 @@ module.exports = function(coreObj) {
 			});
 			callback(null, payload);
 		}, "setters");
+		
 		core.on('text', onText, "watcher");
 		core.on("room", twitterRoomHandler, "gateway");
 		core.on("room", twitterParamsValidation, "appLevelValidation");
-	}
-	else {
+	} else {
 		log("Twitter module is not enabled.");
 	}
 };
@@ -79,44 +80,41 @@ function twitterRoomHandler(action, callback) {
  */
 function addTwitterTokens(room, callback) {
 	log.d("adding twitter tokens.", room);
-	redis.multi(function(multi) {
-		var key = room.room.params.twitter.username;
-		multi.get("twitter:userData:token:" + key);
-		multi.get("twitter:userData:tokenSecret:" + key);
-		multi.get("twitter:userData:profile:" + key);
-		multi.exec(function(err, replies) {
-			log("replies from redis", replies);
-			if (err) {
-				log(" Error: ", err);
-                room.params.twitter.error = "ERR_TWITTER_LOGIN";
+	var multi = redis.multi();
+	var key = room.room.params.twitter.username;
+	multi.get("twitter:userData:token:" + key);
+	multi.get("twitter:userData:tokenSecret:" + key);
+	multi.get("twitter:userData:profile:" + key);
+	multi.exec(function(err, replies) {
+		log("replies from redis", replies);
+		if (err) {
+			log(" Error: ", err);
+			room.params.twitter.error = "ERR_TWITTER_LOGIN";
+			callback();
+		}
+		else {
+			if (replies[0] && replies[1] && replies[2]) {
+				log("twitter ---adding new values....");
+				room.room.params.twitter.token = replies[0];
+				room.room.params.twitter.tokenSecret = replies[1];
+				room.room.params.twitter.profile = JSON.parse(replies[2]);
+				room.room.params.twitter.tags = room.room.params.twitter.tags || "";
+				room.room.params.twitter.tags = formatString(room.room.params.twitter.tags);
+				log("added values from redis");
+				if (room.room.params.twitter.tags) addIdentity(room, key);
 				callback();
+				var multi2 = redis.multi();
+				multi2.del("twitter:userData:token:" + key);
+				multi2.del("twitter:userData:tokenSecret:" + key);
+				multi2.del("twitter:userData:profile:" + key);
+				multi2.exec(function(err, r) {
+					log("values deleted from redis", r);
+				});
+			} else {//new values are not present in redis.. copy old
+				copyOld(room, callback);
 			}
-			else {
-				if (replies[0] && replies[1] && replies[2]) {
-					log("twitter ---adding new values....");
-					room.room.params.twitter.token = replies[0];
-					room.room.params.twitter.tokenSecret = replies[1];
-					room.room.params.twitter.profile = JSON.parse(replies[2]);
-					room.room.params.twitter.tags = room.room.params.twitter.tags || "";
-					room.room.params.twitter.tags = formatString(room.room.params.twitter.tags);
-					log("added values from redis");
-					if (room.room.params.twitter.tags) addIdentity(room, key);
-					callback();
-					redis.multi(function(multi) {
-						multi.del("twitter:userData:token:" + key);
-						multi.del("twitter:userData:tokenSecret:" + key);
-						multi.del("twitter:userData:profile:" + key);
-						multi.exec(function(err, r) {
-							log("values deleted from redis", r);
-						});
-					});
 
-				} else {//new values are not present in redis.. copy old
-					copyOld(room, callback);
-				}
-
-			}
-		});
+		}
 	});
 }
 function addIdentity(room, username) {
@@ -161,8 +159,7 @@ function init() {
  *Get all accounts where gateway = 'twitter' and init searching.
  */
 function initTwitterSearch() {
-	log("getting room data....");
-	core.emit("getRooms",{identity: "twitter", session: internalSession }, function(err, data) {
+	core.emit("getRooms",{identity: "twitter", session: "internal-twitter" }, function(err, data) {
 		var fnList = [];
 		if (!err) {
 			var rooms = data.results;
@@ -320,13 +317,12 @@ function getRequest(req, res, next) {
 					console.log('oauth_access_token_secret: ' + access_token_secret);
 					//save tokens.
 					var uid = results.screen_name;
-					redis.multi(function(multi) {
-						multi.setex("twitter:userData:token:" + uid, expireTime, access_token);
-						multi.setex("twitter:userData:tokenSecret:" + uid, expireTime, access_token_secret);
-						multi.setex("twitter:userData:profile:" + uid, expireTime, JSON.stringify(results));
-						multi.exec(function(err,replies) {
-							log("user data added: ", replies);
-						});
+					var multi = redis.multi();
+					multi.setex("twitter:userData:token:" + uid, expireTime, access_token);
+					multi.setex("twitter:userData:tokenSecret:" + uid, expireTime, access_token_secret);
+					multi.setex("twitter:userData:profile:" + uid, expireTime, JSON.stringify(results));
+					multi.exec(function(err,replies) {
+						log("user data added: ", replies);
 					});
 					return res.render(__dirname + "/login.jade", {profile: { screen_name: results.screen_name }});
 				}

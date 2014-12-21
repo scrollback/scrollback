@@ -22,7 +22,7 @@ var gulp = require("gulp"),
 	autoprefixer = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
-	config = require("./config.js"),
+	config = require("./server-config-defaults.js"),
 	debug = !(gutil.env.production || config.env === "production"),
 	dirs = {
 		bower: "bower_components",
@@ -185,7 +185,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 
 // Build browserify bundles
 gulp.task("bundle", [ "copylibs" ], function() {
-	return bundle([ "libsb.js", "client.js" ], { debug: true })
+	return bundle([ "client.js" ], { debug: true })
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
@@ -216,7 +216,7 @@ gulp.task("lace", [ "bower" ], function() {
 	.pipe(plumber())
 	.pipe(gulp.dest(dirs.lace))
 	.on("error", gutil.log);
-});
+});	
 
 gulp.task("styles", [ "lace" ], function() {
 	return sass(dirs.scss, {
@@ -234,6 +234,7 @@ gulp.task("styles", [ "lace" ], function() {
 });
 
 // Generate appcache manifest file
+
 gulp.task("client-manifest", function() {
 	return genmanifest(prefix("public/s/", [
 		"scripts/lib/jquery.min.js",

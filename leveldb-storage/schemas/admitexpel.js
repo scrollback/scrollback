@@ -1,4 +1,4 @@
-module.exports = function (types) {
+module.exports = function (types/*, config*/) {
     return {
         put: function (action, cb) {
             types.admitexpel.put(action, function () {

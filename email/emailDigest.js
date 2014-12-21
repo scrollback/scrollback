@@ -1,18 +1,20 @@
-var config = require('../config.js');
+var config;
 var log = require("../lib/logger.js");
-var send = require('./sendEmail.js');
+var send;
 var fs=require("fs"),jade = require("jade");
-var redis = require('../lib/redisProxy.js').select(config.redisDB.email);
-var core;
-var internalSession = Object.keys(config.whitelists)[0];
-var emailConfig = config.email, digestJade;
-var waitingTime1 = emailConfig.mentionEmailTimeout || 3 * 60 * 60 * 1000; //mention email timeout
-var waitingTime2 = emailConfig.regularEmailTimeout || 12 * 60 * 60 *  1000;//regular email timeout
+var redis;
+var core, digestJade;
 var timeout = 30 * 1000;//for debuging only
-var debug = emailConfig.debug;
+var waitingTime1, waitingTime2;
 
-module.exports.init = function (coreObj) {
+module.exports.init = function (coreObj, conf) {
+	config = conf;
 	core = coreObj;
+	send = require('./sendEmail.js')(config);
+	waitingTime1 = config.mentionEmailTimeout || 3 * 60 * 60 * 1000; //mention email timeout
+	waitingTime2 = config.regularEmailTimeout || 12 * 60 * 60 *  1000;//regular email timeout
+ 	redis = require('redis').createClient();
+	redis.select(config.redisDB);
 	init();
 };
 module.exports.initMailSending = initMailSending;
@@ -52,7 +54,7 @@ function init() {
 function trySendingToUsers() {
 	redis.smembers("email:toSend", function(err,usernames) {
 		if(!err && usernames) {
-			if (emailConfig.debug) log("checking for mentions...", usernames);
+			if (config.debug) log("checking for mentions...", usernames);
 			usernames.forEach(function(username) {
 				initMailSending(username);
 			});
@@ -77,7 +79,7 @@ function trySendingToUsers() {
 			var ct = new Date().getTime();
 			var interval = waitingTime2 ;
 			if (data) interval = waitingTime1;
-			if (emailConfig.debug) {
+			if (config.debug) {
 				log("username " + username + " is mentioned ", data);
 				interval = timeout/2;
 				if (data) interval = timeout/8;
@@ -88,7 +90,7 @@ function trySendingToUsers() {
 			if (parseInt(lastSent, 10) + interval <= ct) {
 				//get rooms that user is following...
 				log("getting rooms that user is following....");
-				core.emit("getRooms", {hasMember: username, session: internalSession}, function(err, following) {
+				core.emit("getRooms", {hasMember: username, session: "internal-email"}, function(err, following) {
 					log("results:", following);
 					if(err || !following) {
 						log("error in getting members information" , err);
@@ -144,7 +146,7 @@ function trySendingToUsers() {
  *@param {function} callback(err, emailObject).
  */
 function prepareEmailObject(username ,rooms, lastSent, callback) {
-	if (emailConfig.debug) log("send mail to user ", username , rooms);
+	if (config.debug) log("send mail to user ", username , rooms);
 	var email = {};
 	email.username = username;
 	email.rooms = [];
@@ -166,7 +168,7 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 				var l = "email:label:" + room + ":labels";
 
 				redis.zrangebyscore(l, lastSent, "+inf",  function(err,labels) {
-					if(emailConfig.debug) log("labels returned from redis" , labels);
+					if(config.debug) log("labels returned from redis" , labels);
 					roomsObj.labels = [];
 					roomsObj.totalCount = labels.length;
 					if (!err) {
@@ -337,13 +339,12 @@ function sortLabels(room, roomObj, mentions,callback) {
 function deleteMentions(username , rooms) {
 	rooms.forEach(function(room) {
 		var m = "email:mentions:" + room + ":" + username ;
-		redis.multi(function(multi) {
-			multi.del(m);
-			m = "email:" + username + ":isMentioned";
-			multi.del(m);
-			multi.exec(function(replies) {
-				log("mentions deleted" , replies);
-			});
+		var multi = redis.multi();
+		multi.del(m);
+		m = "email:" + username + ":isMentioned";
+		multi.del(m);
+		multi.exec(function(replies) {
+			log("mentions deleted" , replies);
 		});
 	});
 }
@@ -354,7 +355,7 @@ function deleteMentions(username , rooms) {
  *@param {object} Email Object
  */
 function sendMail(email) {
-	core.emit("getUsers", {ref: email.username, session: internalSession}, function(err, data) {
+	core.emit("getUsers", {ref: email.username, session: "internal-email"}, function(err, data) {
 		if (err || !data.results) return;
 		var user = data.results;
 		log("getting email id", data);
@@ -376,10 +377,10 @@ function sendMail(email) {
 						return;
 					}
 					log(email , "sending email to user " , html );
-					send(emailConfig.from, email.emailId, email.heading, html);
+					send(config.from, email.emailId, email.heading, html);
 					redis.set("email:" + email.username + ":lastsent", new Date().getTime());
 					var interval = 2*24*60*60*1000;//TODO move this variable inside myConfig
-					if (emailConfig.debug) {
+					if (config.debug) {
 						interval = timeout*2;
 					}
 					email.rooms.forEach(function(room) {
@@ -458,7 +459,7 @@ function sendPeriodicMails(){
 	var end1 = start1 + 59;
 	var start2 = -100*60;//big values
 	var end2 = -200*60;
-	if (emailConfig.debug) {
+	if (config.debug) {
 		start1=0;//for testing....
 		end1=10000000;//for testing...
 	}
@@ -493,10 +494,10 @@ function sendPeriodicMails(){
 		start2 = end2;
 		end2 = t;
 	}
-	core.emit("getUsers", {timezone: {gte: start1, lte: end1}, session: internalSession}, function(err, data) {
+	core.emit("getUsers", {timezone: {gte: start1, lte: end1}, session: "internal-email"}, function(err, data) {
 		processResults(err, data);
 	});
-	core.emit("getUsers", {timezone: {gte: start2, lte: end2}, session: internalSession}, function(err, data) {
+	core.emit("getUsers", {timezone: {gte: start2, lte: end2}, session: "internal-email"}, function(err, data) {
 		processResults(err, data);
 	});
 

@@ -1,5 +1,5 @@
 var log = require("../../lib/logger.js"),
-	SbError = require("../../lib/SbError.js"),
+	config, SbError = require("../../lib/SbError.js"),
 	fs = require("fs"),
 	blockWords = {},
 	longest = 0,
@@ -7,8 +7,8 @@ var log = require("../../lib/logger.js"),
 	suffixArray = require('./suffixArray.js'),
 	separators = /[ \t,\:\.]/;
 
-module.exports = function(core) {
-
+module.exports = function(core, conf) {
+	config = conf;
 	init();
 	core.on('text', function(message, callback) {
 		var room = message.room,

@@ -1,10 +1,4 @@
-var core;
-var config = require("../config.js");
-var userDB = require('../lib/redisProxy.js').select(config.redisDB.user);
-var occupantDB = require('../lib/redisProxy.js').select(config.redisDB.occupants);
-
-var get = require("./get.js");
-var put = require("./put.js");
+var core, userDB, occupantDB, config, get, put;
 
 function getUserById(id, callback) {
 	return get("user", id, function(err, data) {
@@ -120,12 +114,21 @@ function updateUser(action, callback) {
 	});
 }
 
-module.exports = function(c) {
+module.exports = function(c, conf) {
 	core = c;
+	config = conf;
+	userDB = require('redis').createClient();
+	userDB.select(config.userDB);
+	occupantDB = require('redis').createClient();
+	occupantDB.select(config.occupantsDB);
+	get = require("./get.js")(config);
+	put = require("./put.js")(config);
+	
 	core.on("user", function(action, callback) {
 		userDB.set("user:{{" + action.user.id + "}}", JSON.stringify(action.user));
 		callback();
 	}, "storage");
+	
 	core.on("init", updateUser, "storage");
 	core.on("getUsers", onGetUsers, "cache");
 };

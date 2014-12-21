@@ -5,11 +5,13 @@ module.exports = function (store) {
                 emit(room.createdOn);
             },
             gatewayIdentity: function (room, emit) {
-                room.identities && room.identities.forEach(function (identity) {
-                    //fix this inconsistancy.
-                    var parts = identity.split(":");
-                    emit(parts[0], parts[1]);
-                });
+                if(room.identities) {
+					room.identities.forEach(function (identity) {
+						//fix this inconsistancy.
+						var parts = identity.split(":");
+						emit(parts[0], parts[1]);
+					});
+				}
             }
         }
     });

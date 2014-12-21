@@ -1,5 +1,6 @@
-var config = require('../config.js');
-var core = new (require('../lib/emitter.js'))();
+/* jshint mocha: true */
+var config = require("../server-config-defaults.js");
+var core = new (require('ebus'))();
 var ircSb = require("./irc.js");
 var gen = require("../lib/generate.js");
 var irc = require('irc');
@@ -51,7 +52,8 @@ var rooms = [{
 describe('IRC test: ', function() {//this will connect 2 rooms scrollback and testingroom
 	before( function(done) {
 		this.timeout(5 * 40000);
-        core.on('getUsers', function(v, callback) {
+		ircSb(core, config.irc);
+		core.on('getUsers', function(v, callback) {
 			v.results = users;
 			callback(null, v);
 		}, 500);
@@ -93,7 +95,6 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 			channels: ["#scrollback", "#testingroom", "#testingroom2", "#testingroom3"]
 		});
 		
-		ircSb(core);
 		setTimeout(function(){
 			done();		
 		}, 20000);
@@ -149,7 +150,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 	
 	it("away message test", function(done) {
 		this.timeout(1000*60);
-		client.on("part", function(channel, nick, reason, message){
+		client.on("part", function(channel, nick){
 			if (nick === 'outuser0' && channel == "#scrollback") {
 				done();
 			}
@@ -236,7 +237,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 				
 			},
 			session: "web://somesession"
-		}, function(room) {
+		}, function() {
 			//TODO test if bot joined the room.
 			console.log("room is connected now");
 			c++;
@@ -249,11 +250,11 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 	it("Disconnect All rooms", function(done) {
 		this.timeout(60 * 1000 * 2);
 		var c = 0;
-		client.on("part", function(channel, nick, reason, message) {
+		client.on("part", function(channel, nick) {
 			if(nick.indexOf(botName) != -1) c++;
 			go();
 		});
-		client.on("quit", function(channel, nick, reason, message) {
+		client.on("quit", function(channel, nick) {
 			if(nick.indexOf(botName) !== -1) c++;
 			go();
 		});
@@ -291,7 +292,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 				
 			},
 			session: "web://somesession"
-		}, function(err, room) {
+		}, function() {
 			c++;
 			go();
 			console.log("Disconnected", arguments);
@@ -326,7 +327,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 				
 			},
 			session: "web://somesession"
-		}, function(err, room) {
+		}, function() {
 			c++;
 			go();
 			console.log("Disconnected", arguments);
@@ -360,7 +361,7 @@ describe('IRC test: ', function() {//this will connect 2 rooms scrollback and te
 				
 			},
 			session: "web://somesession"
-		}, function(err, room) {
+		}, function() {
 			c++;
 			go();
 			console.log("Disconnected", arguments);
