@@ -1,5 +1,6 @@
-/* jshint browser:true */
+/* jshint browser:true, node:true */
 /* global $, libsb */
+
 var initSent = false;
 
 $(window).on("message", function(event) {
@@ -21,21 +22,15 @@ $(window).on("message", function(event) {
 	sendInit(action);
 });
 
-$(window).on("phonegapmsg", function(e, p) {
-	sendInit(p);
-});
-
 function sendInit(action) {
-	if(initSent) return;
+	if (initSent) return;
 	delete action.command;
 	initSent = true;
-	if(/^guest-/.test(libsb.user.id)) {
+	if (/^guest-/.test(libsb.user.id)) {
 		libsb.emit('init-up', action, function() {
 			initSent = false;
 		});
-	}else{
+	} else {
 		initSent = false;
 	}
 }
-
-

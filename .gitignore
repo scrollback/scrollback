@@ -30,8 +30,11 @@ results
 node_modules
 bower_components
 
+
+server-config.js
 myConfig.js
 client-config.js
+/mysql-storage
 /leveldb-storage/data-test/
 /ircClient/myConfig.js
 /ircClient/Data

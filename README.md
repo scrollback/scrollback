@@ -10,4 +10,4 @@ To run Scrollback run:
 
 	sudo npm start
 
-myConfig.js can be used to override default configuration.
+server-config.js can be used to override default configuration.

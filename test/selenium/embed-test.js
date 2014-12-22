@@ -11,8 +11,7 @@ module.exports = function(capabilities, options) {
 
 		it("embed script testing", function(done) {
 			console.log("embed page testing");
-			driver = testUtils.openUrl(capabilities, server,
-				"s/test-embed.html?room=testroom1&minimize=false");
+			driver = testUtils.openUrl(capabilities, server,"s/test-embed.html?room=testroom1&minimize=false");
 			q.delay(timeout).then(function() {
 				return driver.switchTo().frame(0); //if there is only one frame
 			}).then(function() {
@@ -26,8 +25,7 @@ module.exports = function(capabilities, options) {
 
 		it("embed script testing(minimized)", function(done) {
 			console.log("minimized embed page testing");
-			driver = testUtils.openUrl(capabilities, server,
-				"s/test-embed.html?room=testroom1&minimize=true");
+			driver = testUtils.openUrl(capabilities, server,"s/test-embed.html?room=testroom1&minimize=true");
 			q.delay(timeout).then(function() {
 				return driver.switchTo().frame(0);
 			}).then(function() {

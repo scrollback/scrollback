@@ -12,9 +12,12 @@ function openUrl(capabilities, server, roomid) {
 	return driver;
 }
 
-function loginPersona(driver, id, password, callback) {
-
-	findVisibleElementByClass(driver, ".js-has-auth-menu", function(el) {
+function loginPersona(driver, id, password, callback, className) {
+	if(!className)
+	{
+		className = ".js-has-user-menu";
+	}
+	findVisibleElementByClass(driver, className, function(el) {
 		var win;
 		el.click().
 		then(function() {
@@ -30,7 +33,7 @@ function loginPersona(driver, id, password, callback) {
 			return driver.findElement(webdriver.By.id("authentication_email")).sendKeys(id);
 		}).then(function() {
 			return driver.findElement(webdriver.By.id("authentication_email"))
-				.sendKeys(webdriver.Key.RETURN);
+			.sendKeys(webdriver.Key.RETURN);
 		}).then(function() {
 			return q.delay(7000);
 		}).then(function() {
@@ -47,51 +50,53 @@ function loginPersona(driver, id, password, callback) {
 	});
 }
 
-function loginFacebook(driver, email, pass, callback) {
-	findVisibleElementByClass(driver, ".js-has-auth-menu", function(el) {
-		el.click().
-		then(function() {
-			findVisibleElementByClass(driver, ".facebook", function(el) {
-				var win;
-				el.click().
-				then(function() {
-					return driver.getAllWindowHandles();
-				}).then(function(w) {
-					win = w;
-					return driver.switchTo().window(win[1]);
-				}).then(function() {
-					return q.delay(4000);
-				}).then(function() {
-					console.log("entering email");
-					return driver.findElement(webdriver.By.id("email")).sendKeys(email);
-				}).then(function() {
-					return driver.findElement(webdriver.By.id("pass")).sendKeys(pass);
-				}).then(function() {
-					return driver.findElement(webdriver.By.id("u_0_1")).click();
-				}).then(function() {
-					console.log("logging in...");
-					driver.switchTo().window(win[0]);
-				}).then(function() {
-					return q.delay(5000);
-				}).then(callback);
-			});
+function loginFacebook(driver, email, pass, callback, className) {
+	if (!className) {
+		className = '.main-area .user-area.js-has-user-menu';
+	}
+	q.delay(5000).then(function() {
+			return driver.findElement(webdriver.By.css(className)).click();
+	}).then(function() {
+		findVisibleElementByClass(driver, ".facebook", function(el) {
+			var win;
+			el.click().
+			then(function() {
+				return driver.getAllWindowHandles();
+			}).then(function(w) {
+				win = w;
+				return driver.switchTo().window(win[1]);
+			}).then(function() {
+				return q.delay(5000);
+			}).then(function() {
+				console.log("entering email");
+				return driver.findElement(webdriver.By.id("email")).sendKeys(email);
+			}).then(function() {
+				return driver.findElement(webdriver.By.id("pass")).sendKeys(pass);
+			}).then(function() {
+				return driver.findElement(webdriver.By.id("u_0_1")).click();
+			}).then(function() {
+				console.log("logging in...");
+				driver.switchTo().window(win[0]);
+			}).then(function() {
+				return q.delay(5000);
+			}).then(callback);
 		});
 	});
 }
 
 function logout(driver, callback) {
-	driver.findElement(webdriver.By.css('.user-area')).click().
+	driver.findElement(webdriver.By.css('.main-area .user-area.js-has-user-menu')).click().
 	then(function() {
 		return driver.findElement(webdriver.By.css('.logout')).click();
 	}).then(function() {
-		return driver.findElement(webdriver.By.css('.reload-page')).click();
+		return driver.findElement(webdriver.By.css('.dialog-action-go-back-as-guest')).click();
 	}).then(function() {
 		return q.delay(2000);
 	}).then(callback);
 }
 
 function loginGoogle(driver, email, pass, callback) {
-	driver.findElement(webdriver.By.css('.user-area')).click().
+	driver.findElement(webdriver.By.css('.main-area .user-area.js-has-user-menu')).click().
 	then(function() {
 		findVisibleElementByClass(driver, ".google", function(el) {
 			var win;
@@ -102,7 +107,7 @@ function loginGoogle(driver, email, pass, callback) {
 				win = w;
 				return driver.switchTo().window(win[1]);
 			}).then(function() {
-				return q.delay(4000);
+				return q.delay(5000);
 			}).then(function() {
 				console.log("entering email");
 				return driver.findElement(webdriver.By.id("Email")).sendKeys(email);
@@ -124,7 +129,7 @@ function loginGoogle(driver, email, pass, callback) {
 		 Return a promise with username.
 		 */
 function getMyuserid(driver) {
-	return driver.findElement(webdriver.By.css(".sb-user")).getText();
+	return driver.findElement(webdriver.By.css(".main-area .user-area.js-has-user-menu")).getText();
 }
 
 /**

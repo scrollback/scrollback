@@ -1,8 +1,9 @@
-/* global describe, it*/
+/* jshint mocha: true */
 var assert = require('assert');
-var core = new(require('../lib/emitter.js'))();
+var core = new(require('ebus'))();
 var generate = require("../lib/generate.js");
-require("./redis-storage.js")(core);
+var config = require("../server-config-defaults.js");
+require("./redis-storage.js")(core, config["redis-storage"]);
 
 describe("user and room action", function() {
 	it("storing user harish", function(done) {

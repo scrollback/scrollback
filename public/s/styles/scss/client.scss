@@ -59,6 +59,7 @@ html, body { height: 100%; }
 body {
     $map: (
         role: $roles,
+        webview: (),
         embed: $embeds,
         mode: $modes,
         media: $medialist,
@@ -240,7 +241,7 @@ body {
         width: $width-metaxxxx;
         left: $width-roomxxxx;
 
-        .embed & { left: 0; }
+        .embed &, .webview & { left: 0; }
     }
 }
 
@@ -317,7 +318,7 @@ body {
         text-transform: uppercase;
         cursor: default;
 
-        .embed & { padding-left: .75em; }
+        .embed &, .webview & { padding-left: .75em; }
 
         @media #{$screenxxxx} {
             padding-left: 4.25em;
@@ -636,7 +637,7 @@ body {
     @media #{$screenxxxx} {
         left: $width-roomxxxx + $width-metaxxxx;
 
-        .embed & { left: $width-metaxxxx; }
+        .embed &, .webview & { left: $width-metaxxxx; }
     }
 }
 
@@ -953,7 +954,7 @@ body {
 
     @media #{$screenxx} { display: block; }
 
-    .embed & {
+    .embed &, .webview & {
         @media #{$screenx} { display: block; }
     }
 }
@@ -1759,7 +1760,7 @@ $dotshadow: fade-out($accent-color, .6);
     @media #{$screenxxxx} {
         left: $width-roomxxxx;
 
-        .embed & { left: 0; }
+        .embed &, .webview & { left: 0; }
     }
 }
 
@@ -1807,7 +1808,7 @@ $dotshadow: fade-out($accent-color, .6);
 
 %popup-menu { min-width: 18em; }
 
-.auth-menu { @extend %popup-menu; }
+.user-menu { @extend %popup-menu; }
 
 .popover-calls-to-action {
     @extend %popup-menu;
@@ -1878,6 +1879,10 @@ $dotshadow: fade-out($accent-color, .6);
     @extend %popover-item;
 
     &:before { @include asset-content("sound-off", lighten($dark-color, 30%)); }
+}
+
+.embed-toast.toast-minimized {
+    .alert-bar { display: none; }
 }
 
 .phonegap-login-buttons {

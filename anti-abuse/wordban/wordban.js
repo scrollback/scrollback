@@ -1,5 +1,5 @@
 var log = require("../../lib/logger.js"),
-	SbError = require("../../lib/SbError.js"),
+	config, SbError = require("../../lib/SbError.js"),
 	fs = require("fs"),
 	blockWords = {},
 	longest = 0,
@@ -7,8 +7,8 @@ var log = require("../../lib/logger.js"),
 	suffixArray = require('./suffixArray.js'),
 	separators = /[ \t,\:\.]/;
 
-module.exports = function(core) {
-
+module.exports = function(core, conf) {
+	config = conf;
 	init();
 	core.on('text', function(message, callback) {
 		var room = message.room,
@@ -63,7 +63,7 @@ module.exports = function(core) {
 
 	core.on("room", function(action, callback) {
 		var limit = 10000;
-		log.d("room action:", JSON.stringify(action));
+		log.d("room action:", action);
 		if (action.room.params && action.room.params.antiAbuse) {
 			var a = action.room.params.antiAbuse.customPhrases;
 			var l = 0;

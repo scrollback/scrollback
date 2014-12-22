@@ -1,7 +1,6 @@
-var config = require('../config.js');
+var config;
 var log = require("../lib/logger.js");
 var fs=require("fs"),jade = require("jade");
-var emailConfig = config.email;
 var welcomeEmailJade;
 var core;
 var send = require('./sendEmail.js');
@@ -11,7 +10,8 @@ var send = require('./sendEmail.js');
  * Listen to Room Event
  * @param coreObject
  */
-module.exports = function(coreObject) {
+module.exports = function(coreObject, conf) {
+	config = conf;
 	core = coreObject;
 	if (config.email && config.email.auth) {
 		init();
@@ -55,6 +55,6 @@ function sendWelcomeEmail(user) {
 	log("email add", user, emailAdd);
 	if (emailAdd) {
 		log("sending welcome email." , emailAdd);
-		send(emailConfig.from, emailAdd, "Welcome to Scrollback", emailHtml);
+		send(config.from, emailAdd, "Welcome to Scrollback", emailHtml);
 	}
 }

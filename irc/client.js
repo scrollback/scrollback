@@ -5,31 +5,43 @@ var eventEmitter = new events.EventEmitter();
 var ObjectReader = require('../lib/ObjectReader.js');
 var or = new ObjectReader(eventEmitter);
 var log = require("../lib/logger.js");
-var config = require('../config.js');
+var config;
 var core;
-var port = config.irc.port;
-var server = config.irc.server;
+var port, server;
 var client;
 var connected = false;
 var reconnectTime = 1000 * 60;
 /**
  *@param coreObj event emitter.
  */
-module.exports.init = function(coreObj) {
-	core = coreObj;
-	init();
+
+module.exports = function(c, conf) {
+	core = c;
+	config = conf;
+	port = config.port;
+	server = config.server;
+	return {
+		init: init,
+		connected: isConnected,	
+	};
+};
+
+function init() {
+	start();
 	eventEmitter.on('object', function(obj) {
 		core.emit(obj.type, obj);
 	});
 	core.on('write', function(obj) {
 		writeObject(obj);
 	});
-};
+}
 
-module.exports.connected = function() {
+function isConnected() {
 	return connected;
-};
-function init() {
+}
+
+
+function start() {
 	client = net.connect({port: port, host: server},
 		function() { //'connect' listener
 		log('client connected');
@@ -53,7 +65,6 @@ function init() {
 		},reconnectTime);
 	});
 }
-
 
 function writeObject(obj) {
 	var v = JSON.stringify(obj);

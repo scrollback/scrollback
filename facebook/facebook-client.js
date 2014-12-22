@@ -1,40 +1,9 @@
 /* jshint browser:true */
-/* global libsb, $, currentState */
-var config = require("../client-config.js");
-
-function getParameterByName(name, url) {
-	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-		results = regex.exec(url);
-	return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
+/* global libsb, $ */
+var config = require("../client-config-defaults.js");
 
 function loginWithFb() {
-	var fbRef = window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
-	if (currentState.phonegap) {
-		var interval = setInterval(function() {
-			fbRef.executeScript({
-				code: "window.location.href;"
-			}, function(ret) {
-				var url = ret[0];
-				var code = getParameterByName('code', url);
-
-				if (code !== null) {
-					var auth = {
-						command: "signin",
-						auth: {
-							facebook: {
-								code: code
-							}
-						}
-					};
-					$(window).trigger("phonegapmsg", [auth]);
-					clearInterval(interval);
-					fbRef.close();
-				}
-			});
-		}, 100);
-	}
+	window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
 }
 
 $('.js-phonegap-fb-login').click(loginWithFb);

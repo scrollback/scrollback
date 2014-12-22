@@ -1,9 +1,7 @@
 var log = require('../lib/logger.js');
 var SbError = require('../lib/SbError.js');
-var config = require('../myConfig.js');
 var _ = require('underscore');
 var request = require('request');
-var internalSession = Object.keys(config.whitelists)[0];
 
 /*
 	payload : 
@@ -14,7 +12,7 @@ var internalSession = Object.keys(config.whitelists)[0];
 	}
 */
 
-module.exports = function(userRegMapping, payload, core) {
+module.exports = function(userRegMapping, payload, core, config) {
 
 	if (!userRegMapping instanceof Array) {
 		log.e("registrationIds has to be an Array of device Registration ID(s). ");
@@ -28,7 +26,7 @@ module.exports = function(userRegMapping, payload, core) {
 
 	var headers = {
 		'Content-Type': 'application/json',
-		'Authorization': config.pushNotification.key
+		'Authorization': config.key
 	};
 
 	function removeDevice(userRegMap) {
@@ -38,7 +36,7 @@ module.exports = function(userRegMapping, payload, core) {
 		var userObj = userRegMap.user;
 		if (userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
 			var devices = userObj.params.pushNotifications.devices;
-			userObj.params.pushNotifications = devices.filter(function(device) {
+			userObj.params.pushNotifications.devices = devices.filter(function(device) {
 				return device.registrationId !== regId;
 			});
 		}
@@ -49,7 +47,7 @@ module.exports = function(userRegMapping, payload, core) {
 			type: "user",
 			to: userObj.id,
 			user: userObj,
-			session: internalSession
+			session: "internal-push-notification"
 		}, function(err, data) {
 			log.i("Emitter user-up ", err, JSON.stringify(data));
 		});

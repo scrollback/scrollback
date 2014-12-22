@@ -21,7 +21,6 @@ function addProperties(l) {
         disconnect: disconnect,
         resource: generate.uid(),
 
-        getLoginMenu: getLoginMenu,
         getTexts: getTexts,
         getThreads: getThreads,
         getOccupants: getOccupants,
@@ -89,10 +88,6 @@ function connect() {
 
 function disconnect() {
     libsb.emit('disconnect');
-}
-
-function getLoginMenu(callback) {
-    libsb.emit('auth-menu', callback);
 }
 
 function getTexts(query, callback) {

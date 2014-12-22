@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="{{server.protocol}}{{server.host}}/{{manifest}}" lang="en">
+<html {{#if manifest}} manifest="/{{manifest}}" {{/if}} lang="en">
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
@@ -8,32 +8,37 @@
 
 		{{{seo.head}}}
 
-		<link rel="shortcut icon" href="{{server.protocol}}{{server.host}}/s/img/favicon.png" type="image/x-icon">
+		<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
 
-		<link rel="stylesheet" type="text/css"  media="screen" href="{{server.protocol}}//fonts.googleapis.com/css?family=Open+Sans:400,600">
-		<link rel="stylesheet" type="text/css" media="screen" href="{{server.protocol}}{{server.host}}/s/styles/dist/client.css">
+		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:400,600">
+		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/dist/client.css">
 
-		<script type="text/javascript">
-			var _gaq = _gaq || [];
-			_gaq.push(['_setAccount', '{{analytics.id}}']);
-			_gaq.push(['_trackPageview']);
+		{{#if analytics.id}}
+			<script>
+				var _gaq = _gaq || [];
+				_gaq.push(['_setAccount', '{{analytics.id}}']);
+				_gaq.push(['_trackPageview']);
 
-			(function() {
-				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-			})();
-		</script>
-		<script>
-			(function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
-			c&&c.apply(this,a)};var b=function(){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];
-			c.src="//beacon.errorception.com/"+s+".js";c.async=!0;b.parentNode.insertBefore(c,b)};
-			_.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
-			(window,document,"script","{{errorception.id}}");
-		</script>
+				(function() {
+					var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+					ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+					var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+				})();
+			</script>
+		{{/if}}
+
+		{{#if errorception.id}}
+			<script>
+				(function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
+				c&&c.apply(this,a)};var b=function(){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];
+				c.src="//beacon.errorception.com/"+s+".js";c.async=!0;b.parentNode.insertBefore(c,b)};
+				_.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
+				(window,document,"script","{{errorception.id}}");
+			</script>
+		{{/if}}
 	</head>
 
-	<body class="role-guest mode-normal">
+	<body class="role-guest mode-normal state-connecting {{#if android}} media-phonegap {{/if}}">
 		<!-- [if lt IE 9]>
 		<div class="ie-warning">
 			<div class="ie-warning-content">
@@ -48,7 +53,7 @@
 			{{{seo.body}}}
 		</main>
 
-		<section data-embed="none" data-mode="normal search conf pref noroom profile" class="room-area column">
+		<section data-webview="none" data-embed="none" data-mode="normal search conf pref noroom profile" class="room-area column">
 			<div class="room-header"></div>
 
 			<div role="list" class="room-list hide-scroll js-area-rooms">
@@ -56,15 +61,15 @@
 			</div>
 
 			<div class="room-area-create-new">
-				<a class="js-create-room" data-string="Create room"></a>
+				<a class="js-create-room room-area-create-new-button" data-string="Create room"></a>
 			</div>
 		</section>
 
 		<section class="meta-area column" data-mode="normal search conf pref">
 			<ul role="tablist" class="meta-tabs custom-titlebar-bg custom-titlebar-fg">
-				<li data-embed="none" role="tab" class="rooms-button">
+				<li data-webview="none" data-embed="none" role="tab" class="rooms-button">
 					<svg class="rooms-icon " width="28" height="28" viewBox="0 0 28 28">
-						<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/back.svg#icon"></use>
+						<use xlink:href="/s/img/client/icons/back.svg#icon"></use>
 					</svg>
 				</li>
 				<li role="tab" data-mode="normal" class="tab tab-info">
@@ -134,7 +139,7 @@
 		</section>
 
 		<section role="main" data-mode="normal search conf pref" class="main-area column">
-			<div data-mode="normal search conf pref" class="title-bar custom-titlebar-bg custom-titlebar-fg">
+			<div data-mode="normal search conf pref" class="title-bar custom-titlebar-image custom-titlebar-bg custom-titlebar-fg">
 				<div class="left-area">
 					<a class="meta-button">
 						<span data-embed="toast canvas" class="meta-button-logo">
@@ -148,7 +153,7 @@
 						</span>
 						<span class="meta-button-back">
 							<svg class="meta-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/back.svg#icon"></use>
+								<use xlink:href="/s/img/client/icons/back.svg#icon"></use>
 							</svg>
 						</span>
 					</a>
@@ -170,8 +175,8 @@
 					<div data-embed="toast" class="minimize-ticker"></div>
 					<a data-mode="normal" data-embed="none" data-role="user" class="follow-button follow-room-action" role="button">
 						<svg class="follow-icon" width="28" height="28" viewBox="0 0 28 28">
-							<use class="fill custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#fill"></use>
-							<use class="stroke custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#stroke"></use>
+							<use class="fill custom-titlebar-fg" xlink:href="/s/img/client/icons/follow.svg#fill"></use>
+							<use class="stroke custom-titlebar-fg" xlink:href="/s/img/client/icons/follow.svg#stroke"></use>
 						</svg>
 					</a>
 					<div data-mode="conf pref search" class="action-buttons">
@@ -184,7 +189,7 @@
 
 					<a data-mode="normal" data-embed="none" data-string="data-tooltip::Search" class="search-button" role="button">
 						<svg class="search-icon" width="28" height="28" viewBox="0 0 28 28">
-							<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/search.svg#icon"></use>
+							<use xlink:href="/s/img/client/icons/search.svg#icon"></use>
 						</svg>
 					</a>
 
@@ -192,26 +197,26 @@
 
 						<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
 							<svg class="follow-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
-								<use class="fill custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#fill"></use>
-								<use class="stroke custom-titlebar-fg" xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/follow.svg#stroke"></use>
+								<use class="fill custom-titlebar-fg" xlink:href="/s/img/client/icons/follow.svg#fill"></use>
+								<use class="stroke custom-titlebar-fg" xlink:href="/s/img/client/icons/follow.svg#stroke"></use>
 							</svg>
 						</a>
 
 						<div data-embed="toast" class="embed-action-minimize embed-button">
 							<svg class="minimize-icon embed-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/minimize.svg#icon"></use>
+								<use xlink:href="/s/img/client/icons/minimize.svg#icon"></use>
 							</svg>
 						</div>
 						<div class="embed-action-fullview embed-button">
 							<svg class="fullview-icon embed-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/fullview.svg#icon"></use>
+								<use xlink:href="/s/img/client/icons/fullview.svg#icon"></use>
 							</svg>
 						</div>
 					</div>
-					<div class="user-area js-has-user-menu js-has-auth-menu">
+					<div class="user-area js-has-user-menu">
 						<div data-embed="none" class="user-detail cta-area">
 							<div class="sb-user"></div>
-							<div data-state="online" data-role="guest" class="sign-in cta-action" data-string="Sign in"></div>
+							<div data-webview="none" data-state="online" data-role="guest" class="sign-in cta-action" data-string="Sign in"></div>
 						</div>
 						<div class="user-avatar">
 							<img alt="" class="sb-avatar" >
@@ -247,7 +252,7 @@
 					<div role="textbox" class="chat-entry" contenteditable></div>
 				</div>
 				<svg version="1.1" class="chat-send">
-					<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/send.svg#icon"></use>
+					<use xlink:href="/s/img/client/icons/send.svg#icon"></use>
 				</svg>
 			</div>
 		</section>
@@ -259,7 +264,7 @@
 		</section>
 
 		<section data-mode="home" class="home-area content-area-full">
-			<div class="title-bar custom-titlebar-bg custom-titlebar-fg">
+			<div class="title-bar custom-titlebar-image custom-titlebar-bg custom-titlebar-fg">
 				<div class="left-area">
 					<div class="header-image"></div>
 				</div>
@@ -267,19 +272,19 @@
 					<div data-embed="toast canvas" class="embed-area">
 						<div data-embed="toast" class="embed-action-minimize embed-button">
 							<svg class="minimize-icon embed-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/minimize.svg#icon"></use>
+								<use xlink:href="/s/img/client/icons/minimize.svg#icon"></use>
 							</svg>
 						</div>
 						<div class="embed-action-fullview embed-button">
 							<svg class="fullview-icon embed-icon custom-titlebar-fg" width="28" height="28" viewBox="0 0 28 28">
-								<use xlink:href="{{server.protocol}}{{server.host}}/s/img/client/icons/fullview.svg#icon"></use>
+								<use xlink:href="/s/img/client/icons/fullview.svg#icon"></use>
 							</svg>
 						</div>
 					</div>
-					<div class="user-area js-has-user-menu js-has-auth-menu">
+					<div class="user-area js-has-user-menu">
 						<div data-embed="none" class="user-detail cta-area">
 							<div class="sb-user"></div>
-							<div data-state="online" data-role="guest" class="sign-in cta-action" data-string="Sign in"></div>
+							<div data-webview="none" data-state="online" data-role="guest" class="sign-in cta-action" data-string="Sign in"></div>
 						</div>
 						<div class="user-avatar">
 							<img alt="" class="sb-avatar" >
@@ -325,8 +330,8 @@
 
 				<h2 data-string="This room doesn't exist yet :-("></h2>
 				<p>
-					<a data-role="user" class="button js-create-room" data-string="Create room"></a>
-					<a data-role="guest" class="button js-create-room" data-string="Sign in and create room"></a>
+					<a data-role="user" class="button noroom-create-room-user js-create-room" data-string="Create room"></a>
+					<a data-role="guest" class="button noroom-create-room-guest js-create-room" data-string="Sign in and create room"></a>
 				</p>
 			</div>
 			<div data-mode="profile" class="content-view-area">
@@ -335,40 +340,43 @@
 			</div>
 		</section>
 
-		<section data-state="online" data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
-			<div class="content-view-area">
+		<section data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
+			<div class="content-view-area" data-state="online">
 				<h2 data-string="Sign in to get started."></h2>
 				<p class="phonegap-login-buttons">
 					<a class="button facebook js-phonegap-fb-login" data-string="Facebook"></a>
 					<a class="button google js-phonegap-google-login" data-string="Google"></a>
 				</p>
 			</div>
-		</section>
 
-		<section data-state="offline" data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
-			<div class="content-view-area">
+			<div class="content-view-area" data-state="connecting">
 				<h2 data-string="Just a sec..."></h2>
+			</div>
+
+			<div class="content-view-area" data-state="offline">
+				<h2 data-string="Couldn't connect to Scrollback :-("></h2>
+				<a class="button js-reload-page" data-string="Try again"></a>
 			</div>
 		</section>
 
 		<aside class="progressbar loading"></aside>
 
 		<!-- scripts -->
-		<script src="{{server.protocol}}//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="{{server.protocol}}{{server.host}}/s/scripts/lib/jquery.min.js"><\/script>');</script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="/s/scripts/lib/jquery.min.js"><\/script>');</script>
 
 		<script src="https://login.persona.org/include.js"></script>
 
 		<!--[if IE]>
-		<script src="{{server.protocol}}{{server.host}}/s/scripts/lib/polyfills.min.js"></script>
+		<script src="/s/scripts/lib/polyfills.min.js"></script>
 		<![endif]-->
 
 		{{#if android}}
-			<script src="cordova.js"></script>
-			<script src="cordova_plugins.js"></script>
+			<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova.js"></script>
+			<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova-plugins.js"></script>
 		{{/if}}
 
-		<script src="{{server.protocol}}{{server.host}}/s/scripts/client.bundle.min.js"></script>
+		<script src="/s/scripts/client.bundle.min.js"></script>
 
 		<!-- phonegap scripts -->
 
