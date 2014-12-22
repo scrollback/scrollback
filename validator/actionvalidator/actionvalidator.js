@@ -146,14 +146,17 @@ module.exports = function (core) {
             callback();
         },
         user: function (action, callback) {
+			action.user = cleanEntity(action);
            if (!validate(action, userValidator, callback)) return;
             action.user.id = action.user.id.toLowerCase();
             if (action.role) delete action.role;
             callback();
         },
         room: function (action, callback) {
+			action.room = cleanEntity(action);
             if (!validate(action, roomValidator, callback)) return;
             action.room.id = action.room.id.toLowerCase();
+			if(action.to !== action.room.id) return callback(new SbError("INVALID_ROOM"));
             if (!action.room.identities) action.room.identities = [];
             callback();
         }
@@ -235,4 +238,39 @@ function basicValidation(action, callback) {
     }
 
     return callback();
+}
+
+function cleanEntity(action){
+	var i, type = action.type,
+		data = action[type];
+
+	var newRoom = {
+		id: data.id,
+		description: data.description,
+		createTime: new Date().getTime(),
+		type: data.type,
+		picture: data.picture,
+		identities: [],
+		params: {},
+		guides: {}
+	};
+
+	for (i in data.guides) {
+		if (data.guides.hasOwnProperty(i)) {
+			newRoom.guides[i] = data.guides[i];
+		}
+	}
+
+	for (i in data.params) {
+		if (data.params.hasOwnProperty(i)) {
+			newRoom.params[i] = data.params[i];
+		}
+	}
+	if (data.identities) {
+		newRoom.identities = data.identities;
+	}
+	if (action.type === "user") {
+		newRoom.timezone = data.timezone ? data.timezone : 0;
+	}
+	return newRoom;
 }
