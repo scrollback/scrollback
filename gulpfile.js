@@ -33,10 +33,9 @@ var gulp = require("gulp"),
 	},
 	files = {
 		js: [
-			"*/*{.js,/**/*.js}",
-			"!*/*{.min.js,/**/*.min.js}",
-			"!node_modules{,/**}", "!bower_components{,/**}",
-			"!public/s/*{.js,/**/*.js}"
+			"**/*.js", "!**/*.min.js",
+			"!node_modules/**", "!bower_components/**",
+			"!public/s/**/*.js"
 		],
 		scss: [ "public/s/styles/scss/*.scss" ]
 	};
