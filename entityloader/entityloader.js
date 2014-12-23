@@ -10,6 +10,14 @@ var log = require('../lib/logger.js');
 var core, events = ['text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'expel', 'room'];
 
 var handlers = {
+	room: function(action, callback) {
+		action.room.createTime = action.old.createTime? action.old.createTime: action.room.createTime;
+		callback();
+	},
+	user: function(action, callback) {
+		action.user.createTime = action.old.createTime? action.old.createTime: action.user.createTime;
+		callback();
+	},
 	init: function(action, callback) {
 		var wait = true;
 
