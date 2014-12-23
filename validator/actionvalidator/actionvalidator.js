@@ -146,18 +146,18 @@ module.exports = function (core) {
             callback();
         },
         user: function (action, callback) {
-			action.user = cleanEntity(action);
            if (!validate(action, userValidator, callback)) return;
             action.user.id = action.user.id.toLowerCase();
             if (action.role) delete action.role;
+            action.user = cleanEntity(action);
             callback();
         },
         room: function (action, callback) {
-			action.room = cleanEntity(action);
             if (!validate(action, roomValidator, callback)) return;
             action.room.id = action.room.id.toLowerCase();
 			if(action.to !== action.room.id) return callback(new SbError("INVALID_ROOM"));
             if (!action.room.identities) action.room.identities = [];
+            action.room = cleanEntity(action);
             callback();
         }
     };
