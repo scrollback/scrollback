@@ -1,6 +1,7 @@
 *~
 
 .*
+!.brackets.json
 !.gitignore
 !.git-hooks
 !.jscsrc
