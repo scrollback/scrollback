@@ -1,7 +1,6 @@
-var jws = require("jws"),
-	config = require("../config.js"),
-	fs = require("fs"),
-	crypto = require('crypto'), core;
+var jwt = require('jsonwebtoken'),			
+	crypto = require('crypto'), core,
+	keys = require("./jws-keys.js");
 
 module.exports = function (c) {
 	core = c;
@@ -33,16 +32,12 @@ function checkCurrentRooms(user, domain, callback) {
 }
 
 function jwsHandler(action, callback) {
-	var domain, sigStream = fs.readFileSync("./keys").toString();
+	var domain;
 	if (!action.auth || !action.auth.jws) return callback();
-	jws.createVerify({
-		publicKey: config.publicKeys[action.origin.domain],
-		signature: sigStream
-	}).on('done', function(valid, data) {
-		if(!valid) return callback(new Error("AUTH_FAIL: INVALID_TOKEN"));
-		
+	verify(action, function(isVerified, payload) {
+		if(!isVerified) return callback(new Error("AUTH_FAIL: INVALID_TOKEN"));
 		core.emit("getUsers", {
-			identity: data.email,
+			identity: payload.email,
 			session: "internal"
 		}, function (err, res) {
 			var user;
@@ -102,3 +97,24 @@ function jwsHandler(action, callback) {
 		});	
 	});
 }
+
+
+
+
+var verify = (function() {	
+	return function(action, callback) {
+		var availableKeys;
+		if(!action.origin || !action.origin.domain || !keys[action.origin.domain]) return callback(false, {});
+		
+		availableKeys = keys[action.origin.domain];
+		availableKeys.forEach(function(key) {
+			jwt.verify(action.auth.jws, key, function(err, decoded) {
+				if(err) return callback(false, err.message);
+				if(decoded) return callback(true, decoded);
+			});
+		});
+		
+	};
+}());
+/* verifies and returns athentication data: */
+
