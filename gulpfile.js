@@ -33,10 +33,9 @@ var gulp = require("gulp"),
 	},
 	files = {
 		js: [
-			"*/*{.js,/**/*.js}",
-			"!*/*{.min.js,/**/*.min.js}",
-			"!node_modules{,/**}", "!bower_components{,/**}",
-			"!public/s/*{.js,/**/*.js}"
+			"**/*.js", "!**/*.min.js",
+			"!node_modules/**", "!bower_components/**",
+			"!public/s/**/*.js"
 		],
 		scss: [ "public/s/styles/scss/*.scss" ]
 	};
@@ -128,8 +127,10 @@ var buildscripts = lazypipe()
 
 // Install the GIT hooks
 gulp.task("hooks", function() {
-	return gulp.src([ ".git-hooks/pre-commit", ".git-hooks/post-merge" ])
-	.pipe(symlink([ ".git/hooks/pre-commit", ".git/hooks/post-merge" ], {
+	var hooks = [ "pre-commit", "post-merge" ];
+
+	return gulp.src(prefix(".git-hooks/", hooks))
+	.pipe(symlink(prefix(".git/hooks/", hooks), {
 		relative: true,
 		force: true
 	}));
@@ -258,13 +259,10 @@ gulp.task("manifest", [ "client-manifest", "android-manifest" ]);
 
 // Clean up generated files
 gulp.task("clean", function() {
-	return del([
-		"public/{*.map,**/*.map}",
-		"public/{*.min.js,**/*.min.js}",
-		"public/{*.bundle.js,**/*.bundle.js}",
-		"public/{*.appcache,**/*.appcache}",
-		dirs.lib, dirs.css, dirs.lace
-	]);
+	return del(prefix("public/", [
+		"**/*.map", "**/*.min.js",
+		"**/*.bundle.js", "**/*.appcache}"
+	], dirs.lib, dirs.css, dirs.lace));
 });
 
 gulp.task("watch", function() {
