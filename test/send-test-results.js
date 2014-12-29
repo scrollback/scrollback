@@ -1,5 +1,5 @@
 var fs = require('fs');
-var config = require('../config.js');
+var config = require('../server-config-defaults.js');
 var host = config.http.host;
 var Email = require('../lib/email.js');
 var emailObj = new Email(config.email.auth);
