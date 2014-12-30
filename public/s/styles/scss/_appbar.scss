@@ -1,0 +1,47 @@
+@include exports("appbar") {
+    .appbar {
+        @include dropshadow(2);
+        @extend %clearfix;
+
+        min-height: $bar-height;
+        height: $bar-height;
+        width: 100%;
+        background-color: $accent-color;
+        color: $light-color;
+
+        &-title {
+            float: left;
+            line-height: $bar-height / 1.2;
+            font-size: 1.2em;
+            margin: 0;
+            padding: 0 (.5em / 1.2);
+        }
+
+        &-avatar {
+            float: left;
+            margin: .5em 1em;
+            height: $bar-height - 1em;
+            width: $bar-height - 1em;
+            border-radius: 50%;
+            border: 2px solid $light-color;
+        }
+
+        &-icon {
+            float: right;
+            font-size: 1.5em;
+            padding: .67em;
+            color: inherit;
+            height: 100%;
+
+            &:hover, &:focus {
+                background-color: rgba(0,0,0,0.2);
+                color: inherit;
+            }
+
+            &:active {
+                background-color: rgba(0,0,0,0.3);
+                color: inherit;
+            }
+        }
+    }
+}

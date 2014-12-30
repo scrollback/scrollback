@@ -23,6 +23,7 @@
 
 @import "global";
 @import "icons";
+@import "appbar";
 @import "profile";
 
 html, body { height: 100%; }
@@ -65,5 +66,19 @@ body {
     }
 
     &-block { border-bottom: 1px solid rgba(0,0,0,0.2); }
+}
+
+.main {
+    @include flexbox;
+    @include flex-direction(column);
+    @include flex-wrap(nowrap);
+    @include align-items(flex-start);
+    @include align-content(center);
+}
+
+.main-content {
+    @include flex-grow(1);
+
+    overflow: auto;
 }
 
