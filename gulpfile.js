@@ -216,7 +216,11 @@ gulp.task("styles", [ "lace" ], function() {
 	return gulp.src(files.scss)
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(plumber())
-	.pipe(sass())
+	.pipe(sass({
+		style: !gutil.env.production ? "expanded" : "compressed",
+		lineNumbers: !gutil.env.production,
+		sourcemap: true
+	}))
 	.pipe(combinemq())
 	.pipe(!debug ? autoprefixer() : gutil.noop())
 	.pipe(!debug ? minify() : gutil.noop())
