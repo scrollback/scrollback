@@ -17,7 +17,7 @@ var gulp = require("gulp"),
 	striplogs = require("gulp-strip-debug"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
-	sass = require("gulp-ruby-sass"),
+	sass = require("gulp-sass"),
 	combinemq = require("gulp-combine-mq"),
 	autoprefixer = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
@@ -213,13 +213,10 @@ gulp.task("lace", [ "bower" ], function() {
 });
 
 gulp.task("styles", [ "lace" ], function() {
-	return sass(dirs.scss, {
-		style: "expanded",
-		lineNumbers: debug,
-		sourcemap: true
-	})
-	.on("error", gutil.log)
+	return gulp.src(files.scss)
+	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(plumber())
+	.pipe(sass())
 	.pipe(combinemq())
 	.pipe(!debug ? autoprefixer() : gutil.noop())
 	.pipe(!debug ? minify() : gutil.noop())
