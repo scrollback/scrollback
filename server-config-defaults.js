@@ -116,6 +116,14 @@ var defaults = {
 	facebook: {
 	},
 	google: {
+	},
+	storage: {
+		pg: {	
+			server: "localhost", //server:port
+			db: "scrollback",
+			username: "username",
+			password: "password"
+		}
 	}
 };
 

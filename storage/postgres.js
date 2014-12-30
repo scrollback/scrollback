@@ -1,83 +1,15 @@
-var pg = require('pg');
+var pg = require('pg'),
+	log = require('../lib/logger.js'),
+	config, conString, 
+	runQueries = require('./run-queries.js'),
+	storageUtils = require('./storage-utils.js');
 
 module.exports = function(conf) {
-
-	function conn(source) {
-		switch (source) {
-			case 'texts':
-			case 'threads':
-				return conf.db.content;
-			default:
-				return conf.db.entity;
-		}
-	}
+	config = conf;
+	log.d("config", config);
+	conString = "pg://" + config.pg.username + ":" +
+		config.pg.password + "@" + config.pg.server + "/" + config.pg.db;
 	
-	function value (val, context) {
-		if(typeof val === 'number') {
-			return val;
-		} else if (typeof val === 'string') {
-			return "'" + val.replace("'", '') + "'";
-		} else if (typeof val === 'object') {
-			if(val instanceof Array) {
-				if (context == 'json') {
-					return "'" + JSON.stringify(val) + "'::jsonb";
-				}
-				return 'ARRAY[' + val.map(val).join(',') + ']';
-			} else {
-				return "'" + JSON.stringify(val) + "'::jsonb";
-			}
-		}
-	}
-	
-	function name(str) {
-		return '"' + str.replace('"', '') + '"';
-	}
-	
-	function filtersql(filters) {
-		var sql = [], i, f;
-		for(i=0; i<filters.length; i++) {
-			f = filters[i];
-			sql.push(!i? 'WHERE': 'AND', name(f[0]));
-			if(f[1].indexOf('prop') === 0) {
-				sql.push('->', name(f[2]));
-				f = [f[0], f[1].substr(4), f[3]];
-			}
-			switch(f[1]) {
-				case 'eq': 	sql.push('=');  break;
-				case 'neq':	sql.push('<>'); break;
-				case 'lt':	sql.push('<');  break;
-				case 'lte':	sql.push('<='); break;
-				case 'gt':	sql.push('>');  break;
-				case 'gte':	sql.push('>='); break;
-				case 'cts': sql.push('@>'); break;
-				case 'ctd': sql.push('<@'); break;
-				case 'mts': sql.push('@@'); break;
-			}
-			sql.push(value(f[f.length-1]));
-		}
-		return sql;
-	}
-	
-	function insertsql(data) {
-		var sql=[], names=[], values=[], i;
-		for(i in data) {
-			names.push(name(i));
-			values.push(value(data[i]));
-		}
-		sql = ['('].concat(names, ') VALUES (').
-			concat(values.map(value)).concat(')');
-	}
-	
-	function updatesql(data) {
-		
-	}
-	
-	function rollback (client, done) {
-		client.query('ROLLBACK', function(err) {
-			return done(err);
-		});
-	}
-
 	function get (q, cb) {
 		var sql = ['SELECT * FROM'], i;
 		
@@ -102,7 +34,7 @@ module.exports = function(conf) {
 		if(q.iterate.limit) sql.push('LIMIT', value(q.iterate.limit));
 		if(q.iterate.skip) sql.push('OFFSET', value(q.iterate.skip));
 		
-		pg.connect(conn(q.sources[0]), function (err, client, done) {
+		pg.connect(getConnectionString(q.sources[0]), function (err, client, done) {
 			if(err) return cb(err);
 			client.query(sql.join(" "), function (err, results) {
 				process.nextTick(function() { cb(err, results); });
@@ -112,15 +44,36 @@ module.exports = function(conf) {
 	}
 	
 	function put (q, cb) {
-		var delsql=['DELETE FROM'], inssql=['INSERT INTO'];
+		var queries = storageUtils.transformsToQuery(q);
+		pg.connect(getConnectionString(q.source), function(err, client, done) {
+			if (err) {
+				log("Unable to get Pool Connection Object: ", err, q);
+				return;
+			}
+			runQueries(client, queries, function() {
+				log.d("Arguments", arguments);
+				done();
+				cb();
+			});
+		});
 		
-		if(!q.filters.length) return; // for safety
-		delsql.push(name(q.source));
+		
+		/*pg.connect(getConnectionString(q.source), function(err, client, done) {
+			log.d("err: ", err, client, inssql, inSql[1]);
+			client.query(inssql, inSql[1], function(err, r) {
+				log.d("arguments: ", arguments);
+				cb();
+				done();
+			});
+		});*/
+		
+		//if(!q.filters.length) return; // for safety
+		/*delsql.push(name(q.source));
 		delsql = delsql.concat(filtersql(q.filters));
 		
 		inssql.push(name(q.source));
 		inssql.push(insertsql(q.data));
-		
+		log.d("ins sql=", inssql);
 		pg.connect(conn(q.source), function(err, client, done) {
 			if(err) return cb(err);
 			client.query('BEGIN', function(err) {
@@ -136,7 +89,7 @@ module.exports = function(conf) {
 					});
 				});
 			});
-		});
+		});*/
 	}
 	
 	function del (q, cb) {
@@ -146,7 +99,7 @@ module.exports = function(conf) {
 		sql.push(name(q.source));
 		sql = sql.concat(filtersql(q.filters));
 		
-		pg.connect(conn(q.source), function(err, client, done) {
+		pg.connect(getConnectionString(q.source), function(err, client, done) {
 			if(err) return cb(err);
 			client.query(sql.join(' '), function (err) {
 				process.nextTick(function() { cb(err); });
@@ -158,3 +111,48 @@ module.exports = function(conf) {
 	return { get: get, put: put, del: del };
 	
 };
+
+function filtersql(filters) {
+	var sql = [], i, f;
+	for(i=0; i<filters.length; i++) {
+		f = filters[i];
+		sql.push(!i? 'WHERE': 'AND', name(f[0]));
+		if(f[1].indexOf('prop') === 0) {
+			sql.push('->', name(f[2]));
+			f = [f[0], f[1].substr(4), f[3]];
+		}
+		switch(f[1]) {
+			case 'eq': 	sql.push('=');  break;
+			case 'neq':	sql.push('<>'); break;
+			case 'lt':	sql.push('<');  break;
+			case 'lte':	sql.push('<='); break;
+			case 'gt':	sql.push('>');  break;
+			case 'gte':	sql.push('>='); break;
+			case 'cts': sql.push('@>'); break;
+			case 'ctd': sql.push('<@'); break;
+			case 'mts': sql.push('@@'); break;
+		}
+		sql.push(escapeValue(f[f.length-1]));
+	}
+	return sql;
+}
+
+function getConnectionString(/*source*/) {
+	return conString;
+	/*switch (source) {
+			case 'texts':
+			case 'threads':
+				return conf.db.content;
+			default:
+				return conf.db.entity;
+		}*/
+}
+
+function name() {
+}
+
+function escapeValue() {
+}
+
+function value() {
+}
