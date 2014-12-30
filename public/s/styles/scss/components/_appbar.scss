@@ -10,6 +10,7 @@
         width: 100%;
         background-color: $accent-color;
         color: $light-color;
+        overflow: hidden;
 
         &-title {
             float: left;
@@ -17,6 +18,10 @@
             font-size: 1.2em;
             margin: 0;
             padding: 0 (.5em / 1.2);
+            height: 100%;
+            max-width: 50%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         &-avatar {
@@ -31,17 +36,17 @@
         &-icon {
             float: right;
             font-size: 1.5em;
-            padding: .67em;
+            padding: (1em / 1.5);
             color: inherit;
             height: 100%;
 
             &:hover, &:focus {
-                background-color: rgba(0,0,0,0.2);
+                background-color: rgba(0,0,0,0.1);
                 color: inherit;
             }
 
             &:active {
-                background-color: rgba(0,0,0,0.3);
+                background-color: rgba(0,0,0,0.2);
                 color: inherit;
             }
         }

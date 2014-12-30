@@ -8,8 +8,6 @@
         height: $bar-height;
         width: 100%;
 
-        .appbar + & > &-input { border-top: none; }
-
         &-input {
             margin: 0;
             height: 100%;
