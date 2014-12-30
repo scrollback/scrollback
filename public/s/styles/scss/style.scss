@@ -23,8 +23,10 @@
 
 @import "global";
 @import "icons";
-@import "appbar";
-@import "profile";
+
+@import "components/appbar";
+@import "components/searchbar";
+@import "components/profile";
 
 html, body { height: 100%; }
 
@@ -80,5 +82,5 @@ body {
     @include flex-grow(1);
 
     overflow: auto;
+    padding: 1em;
 }
-

@@ -1,0 +1,33 @@
+@include exports("searchbar") {
+    .searchbar {
+        @include dropshadow(1);
+
+        position: relative;
+        z-index: 1;
+        min-height: $bar-height;
+        height: $bar-height;
+        width: 100%;
+
+        .appbar + & > &-input { border-top: none; }
+
+        &-input {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+        }
+
+        &-icon {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 1.5em;
+            padding: .67em;
+            color: inherit;
+            height: 100%;
+            opacity: .3;
+        }
+    }
+}

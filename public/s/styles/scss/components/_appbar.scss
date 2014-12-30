@@ -3,6 +3,8 @@
         @include dropshadow(2);
         @extend %clearfix;
 
+        position: relative;
+        z-index: 2;
         min-height: $bar-height;
         height: $bar-height;
         width: 100%;

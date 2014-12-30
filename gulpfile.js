@@ -37,7 +37,7 @@ var gulp = require("gulp"),
 			"!node_modules/**", "!bower_components/**",
 			"!public/s/**/*.js"
 		],
-		scss: [ "public/s/styles/scss/*.scss" ]
+		scss: [ "public/s/styles/scss/**/*.scss" ]
 	};
 
 // Make browserify bundle
@@ -214,7 +214,7 @@ gulp.task("lace", [ "bower" ], function() {
 
 gulp.task("styles", [ "lace" ], function() {
 	return sass(dirs.scss, {
-		style: !debug ? "compressed" : "expanded",
+		style: "expanded",
 		lineNumbers: debug,
 		sourcemap: true
 	})
