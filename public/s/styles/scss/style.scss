@@ -1,0 +1,69 @@
+/**
+* Stylesheet for the client
+*/
+
+// Import components from lace
+@import "../lace/base";
+@import "../lace/animations";
+@import "../lace/alertbar";
+@import "../lace/modal";
+@import "../lace/popover";
+@import "../lace/switch";
+@import "../lace/button";
+@import "../lace/entry";
+@import "../lace/multientry";
+@import "../lace/flexbox";
+@import "../lace/tooltip";
+@import "../lace/progressbar";
+@import "../lace/linked";
+@import "../lace/filter";
+@import "../lace/dropshadow";
+@import "../lace/grid";
+@import "../lace/assets";
+
+@import "global";
+@import "icons";
+@import "profile";
+
+html, body { height: 100%; }
+
+body {
+    @include flexbox;
+    @include flex-direction(row);
+    @include flex-wrap(nowrap);
+    @include align-items(flex-start);
+    @include align-content(center);
+
+    height: 100%;
+}
+
+.column {
+    @include flex-grow(1);
+
+    height: 100%;
+}
+
+.column-left {
+    min-width: 20em;
+    width: 20em;
+}
+
+.sidebar {
+    /*
+    * Text becomes too bold on dark background on Mac OS X
+    * Antialiased font looks crispier
+    */
+    @include font-smoothing(antialiased);
+
+    background-color: $dark-color;
+    color: $light-color;
+
+    &-content {
+        max-height: 100%;
+        overflow: auto;
+        -webkit-overflow-scrolling : touch; /* momentum scrolling in webkit */
+    }
+
+    &-block { border-bottom: 1px solid rgba(0,0,0,0.2); }
+}
+
