@@ -4,8 +4,9 @@
         @extend %clearfix;
 
         position: relative;
-        z-index: 2;
+        z-index: 200;
         min-height: $bar-height;
+        max-height: $bar-height;
         height: $bar-height;
         width: 100%;
         background-color: $accent-color;
@@ -19,8 +20,9 @@
             margin: 0;
             padding: 0 (.5em / 1.2);
             height: 100%;
-            max-width: 50%;
+            max-width: 70%;
             overflow: hidden;
+            white-space: nowrap;
             text-overflow: ellipsis;
         }
 

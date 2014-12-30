@@ -45,6 +45,7 @@
         max-height: 8em;
         padding: .5em;
         overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .profile-username { font-weight: 700; }

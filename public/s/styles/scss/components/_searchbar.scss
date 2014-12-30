@@ -3,8 +3,9 @@
         @include dropshadow(1);
 
         position: relative;
-        z-index: 1;
+        z-index: 100;
         min-height: $bar-height;
+        max-height: $bar-height;
         height: $bar-height;
         width: 100%;
 

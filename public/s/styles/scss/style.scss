@@ -24,6 +24,7 @@
 @import "global";
 @import "icons";
 
+@import "components/listview";
 @import "components/fab";
 @import "components/appbar";
 @import "components/searchbar";
@@ -49,6 +50,7 @@ body {
 
 .column-left {
     min-width: 20em;
+    max-width: 20em;
     width: 20em;
 }
 
@@ -58,7 +60,10 @@ body {
     * Antialiased font looks crispier
     */
     @include font-smoothing(antialiased);
+    @include dropshadow(2);
 
+    position: relative;
+    z-index: 100;
     background-color: $dark-color;
     color: $light-color;
 
@@ -82,6 +87,11 @@ body {
 .main-content {
     @include flex-grow(1);
 
+    width: 100%;
+    height: 100%;
     overflow: auto;
-    padding: 1em;
+    padding: 2em;
+    background-color: darken($light-color, 5%);
+
+    .list-content { border-radius: $roundness; }
 }

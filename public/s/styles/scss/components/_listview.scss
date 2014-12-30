@@ -1,0 +1,25 @@
+@include exports(listview) {
+    .list-header {
+        text-transform: uppercase;
+        opacity: .8;
+        font-size: 1em;
+        margin: .5em 1em;
+        font-weight: 700;
+    }
+
+    .list-content {
+        @include dropshadow(1);
+
+        background-color: $light-color;
+        border: 1px solid rgba(0,0,0,0.15);
+        list-style: none;
+    }
+
+    .list-item {
+        font-size: 1.2em;
+        padding: .83em;
+        border-bottom: 1px solid rgba(0,0,0,0.075);
+
+        &:last-child { border-bottom: none; }
+    }
+}
