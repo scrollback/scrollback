@@ -22,7 +22,7 @@ var gulp = require("gulp"),
 	autoprefixer = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
-	config = require("./config.js"),
+	config = require("./server-config-defaults.js"),
 	debug = !(gutil.env.production || config.env === "production"),
 	dirs = {
 		bower: "bower_components",
@@ -33,10 +33,9 @@ var gulp = require("gulp"),
 	},
 	files = {
 		js: [
-			"*/*{.js,/**/*.js}",
-			"!*/*{.min.js,/**/*.min.js}",
-			"!node_modules{,/**}", "!bower_components{,/**}",
-			"!public/s/*{.js,/**/*.js}"
+			"**/*.js", "!**/*.min.js",
+			"!node_modules/**", "!bower_components/**",
+			"!public/s/**/*.js"
 		],
 		scss: [ "public/s/styles/scss/*.scss" ]
 	};
@@ -128,8 +127,10 @@ var buildscripts = lazypipe()
 
 // Install the GIT hooks
 gulp.task("hooks", function() {
-	return gulp.src([ ".git-hooks/pre-commit", ".git-hooks/post-merge" ])
-	.pipe(symlink([ ".git/hooks/pre-commit", ".git/hooks/post-merge" ], {
+	var hooks = [ "pre-commit", "post-merge" ];
+
+	return gulp.src(prefix(".git-hooks/", hooks))
+	.pipe(symlink(prefix(".git/hooks/", hooks), {
 		relative: true,
 		force: true
 	}));
@@ -185,7 +186,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 
 // Build browserify bundles
 gulp.task("bundle", [ "copylibs" ], function() {
-	return bundle([ "libsb.js", "client.js" ], { debug: true })
+	return bundle([ "client.js" ], { debug: true })
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
@@ -216,7 +217,7 @@ gulp.task("lace", [ "bower" ], function() {
 	.pipe(plumber())
 	.pipe(gulp.dest(dirs.lace))
 	.on("error", gutil.log);
-});
+});	
 
 gulp.task("styles", [ "lace" ], function() {
 	return sass(dirs.scss, {
@@ -234,6 +235,7 @@ gulp.task("styles", [ "lace" ], function() {
 });
 
 // Generate appcache manifest file
+
 gulp.task("client-manifest", function() {
 	return genmanifest(prefix("public/s/", [
 		"scripts/lib/jquery.min.js",
@@ -257,13 +259,10 @@ gulp.task("manifest", [ "client-manifest", "android-manifest" ]);
 
 // Clean up generated files
 gulp.task("clean", function() {
-	return del([
-		"public/{*.map,**/*.map}",
-		"public/{*.min.js,**/*.min.js}",
-		"public/{*.bundle.js,**/*.bundle.js}",
-		"public/{*.appcache,**/*.appcache}",
-		dirs.lib, dirs.css, dirs.lace
-	]);
+	return del(prefix("public/", [
+		"**/*.map", "**/*.min.js",
+		"**/*.bundle.js", "**/*.appcache}"
+	], dirs.lib, dirs.css, dirs.lace));
 });
 
 gulp.task("watch", function() {

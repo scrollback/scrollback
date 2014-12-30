@@ -18,19 +18,27 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
-var config = require('../config.js'),
-	core,
-	clientData = require('../client-config.js'),
+var core, config,
+	clientData = require('../client-config-defaults.js'),
 	fs = require("fs"),
 	core,
 	handlebars = require("handlebars"),
 	seo, clientTemp, clientHbs,
 	log = require('../lib/logger.js');
 
-exports.init = function(app, coreObject) {
-	core = coreObject;
-	if (!config.http.https) log.w("Insecure connection. Specify https options in your config file.");
-	init();
+
+
+module.exports = function(c, conf) {
+	core = c;
+	config = conf;
+	
+	return {
+		init: init
+	};
+};
+function init (app) {
+	if (!config.https) log.w("Insecure connection. Specify https options in your config file.");
+	start();
 
 	app.get('/t/*', function(req, res, next) {
 		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data) {
@@ -40,7 +48,7 @@ exports.init = function(app, coreObject) {
 	});
 
 	app.get("/", function(req, res) {
-		res.redirect(307, config.http.index);
+		res.redirect(307, config.index);
 	});
 
 	app.get("/*", function(req, res, next) {
@@ -50,9 +58,9 @@ exports.init = function(app, coreObject) {
 			return next();
 		}
 
-		if (!req.secure && config.http.https) {
+		if (!req.secure && config.https) {
 			var queryString = req._parsedUrl.search ? req._parsedUrl.search : "";
-			return res.redirect(301, 'https://' + config.http.host + req.path + queryString);
+			return res.redirect(301, 'https://' + config.host + req.path + queryString);
 		}
 
 		var platform = req.query.platform;
@@ -71,10 +79,14 @@ exports.init = function(app, coreObject) {
 		});
 
 	});
-};
+}
 
-function init() {
+function start() {
 	clientHbs = fs.readFileSync(__dirname + "/../public/client.hbs", "utf8");
-	seo = require('./seo.js')(core);
+	seo = require('./seo.js')(core, config);
 	clientTemp = handlebars.compile(clientHbs);
 }
+
+
+
+

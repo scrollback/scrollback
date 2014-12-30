@@ -1,7 +1,7 @@
 /* global module, require*/
 var log = require("../../lib/logger.js");
 
-module.exports = function (types) {
+module.exports = function (types/*, config*/) {
 
     var texts = types.texts;
 

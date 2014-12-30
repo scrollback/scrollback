@@ -1,8 +1,8 @@
-var config = require('../config.js');
-var core = new (require('../lib/emitter.js'))();
-var gen = require("../lib/generate.js");
+/* jshint mocha: true */
+var core = new (require('ebus'))();
 var assert = require('assert');
-require('./recommendation.js')(core);
+var config = require('../server-config-defaults.js');
+require('./recommendation.js')(core, config.recommendation);
 describe('Recommendation tests', function() {
 
 	it("getRooms API: (get featured rooms)", function(done) {

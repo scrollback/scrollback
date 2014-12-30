@@ -60,7 +60,12 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" || "$distro" = "Arch Linux" ]
                 grep "$gempath" "${HOME}/.bashrc" > /dev/null 2>&1
                 [[ $? -eq 0 ]] || echo PATH="\"${gempath}:\${PATH}\"" >> "${HOME}/.bashrc"
                 # Install sass
-                gem install sass;;
+                if [[ -w /usr/local/bin ]]; then
+                    # Directory is writable, no need to use sudo
+                    gem install sass
+                else
+                    sudo gem install sass
+                fi;;
             nodejs)
                 case "$distro" in
                     Ubuntu)
@@ -131,7 +136,15 @@ export PYTHON="python2.7"
 
 # Install various dependencies for scrollback
 echo "Installing dependencies..."
-sudo npm install -g gulp bower forever
+install_npm_modules="npm install -g gulp bower forever"
+
+if [[ -w /usr/local/bin ]]; then
+    # Directory is writable, no need to use sudo
+    ${install_npm_modules}
+else
+    sudo ${install_npm_modules}
+fi
+
 npm install
 bower install
 
@@ -153,9 +166,7 @@ if [[ ! $? -eq 0 ]]; then
 fi
 
 # Copy sample myConfig.js and client-config.js files
-[[ -f "myConfig.js" ]] || cp "myConfig.sample.js" "myConfig.js"
 [[ -f "ircClient/myConfig.js" ]] || cp "ircClient/myConfig.sample.js" "ircClient/myConfig.js"
-[[ -f "client-config.js" ]] || cp "client-config.sample.js" "client-config.js"
 
 # Run Gulp to generate misc files
 echo "Running Gulp"

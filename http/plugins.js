@@ -1,6 +1,16 @@
 var log = require("../lib/logger.js");
+var core, config;
+module.exports = function(c, conf) {
+	core = c;
+	config = conf;
+	
+	return {
+		init: init
+	};
+};
 
-exports.init = function(app, core) {
+
+var init = function(app) {
 	configInit();
 
 	function configInit() {

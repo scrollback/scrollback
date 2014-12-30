@@ -18,24 +18,32 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
-var express = require("./express.js"),
-	socket = require("./socket.js"),
-	plugins = require('./plugins.js'),
-	page = require("./page.js"),
-	app = express.init();
+var express, socket = require("./socket.js"),
+	plugins, app, config,
+	page;
+	
 
 var init = function(core) {
+	express = require("./express.js")(core, config);
+	app = express.init();
+	
 	socket.initCore(core);
 	socket.initServer(app.httpServer);
 	if (app.httpsServer) socket.initServer(app.httpsServer, core);
-	plugins.init(app, core);
-	page.init(app, core);
+	
+	plugins = require('./plugins.js')(core, config);
+	plugins.init(app);
+	
+	page = require("./page.js")(core, config);
+	page.init(app);
 
 };
 
-module.exports = function(core) {
-	init(core);
-
+module.exports = function(core, conf) {
+	config = conf;
+	
+ 	init(core);
+	
 	core.on("room", function(action, callback) {
 
 		if (action.room.params.http && typeof action.room.params.http.seo !== "boolean") return callback(new Error("ERR_INVAILD_PARAMS"));
