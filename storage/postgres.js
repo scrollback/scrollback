@@ -1,7 +1,6 @@
 var pg = require('pg'),
 	log = require('../lib/logger.js'),
 	config, conString, 
-	runQueries = require('./run-queries.js'),
 	storageUtils = require('./storage-utils.js');
 
 module.exports = function(conf) {
@@ -45,12 +44,13 @@ module.exports = function(conf) {
 	
 	function put (q, cb) {
 		var queries = storageUtils.transformsToQuery(q);
+		log.d("Queries:", queries);
 		pg.connect(getConnectionString(q.source), function(err, client, done) {
 			if (err) {
 				log("Unable to get Pool Connection Object: ", err, q);
 				return;
 			}
-			runQueries(client, queries, function() {
+			storageUtils.runQueries(client, queries, function() {
 				log.d("Arguments", arguments);
 				done();
 				cb();
