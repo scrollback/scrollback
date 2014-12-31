@@ -159,7 +159,7 @@ function scrollback(opts, callback) {
 		this.iframe.contentWindow.postMessage(JSON.stringify(post), host);
 		self.pendingCallbacks[post.id] = cb;
 	};
-	widget.navigation = require("./navigation.js")(self);
+//	widget.navigation = require("./navigation.js")(self);
 	widget.following = require("./following.js")(self);
 	widget.options = require("./options.js")(self);
 	widget.signin = require("./signin.js")(self);
