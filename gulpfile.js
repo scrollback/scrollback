@@ -214,12 +214,12 @@ gulp.task("lace", [ "bower" ], function() {
 
 gulp.task("styles", [ "lace" ], function() {
 	return gulp.src(files.scss)
-	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(plumber())
+	.pipe(sourcemaps.init())
 	.pipe(sass({
-		style: !gutil.env.production ? "expanded" : "compressed",
+		outputStyle: "expanded",
 		lineNumbers: !gutil.env.production,
-		sourcemap: true
+		sourceMap: true
 	}))
 	.pipe(combinemq())
 	.pipe(!debug ? autoprefixer() : gutil.noop())
