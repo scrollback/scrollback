@@ -1,0 +1,25 @@
+@import "listview";
+@import "gridview";
+
+@include exports(listgridview) {
+    .listgrid-header {
+        @extend %transition;
+        @extend .list-header;
+
+        @media #{$screenxxx} { @include gridheader; }
+    }
+
+    .listgrid-content {
+        @extend %transition;
+        @extend .list-content;
+
+        @media #{$screenxxx} { @include gridcontent; }
+    }
+
+    .listgrid-item {
+        @extend %transition;
+        @extend .list-item;
+
+        @media #{$screenxxx} { @include griditem; }
+    }
+}

@@ -1,38 +1,36 @@
+@mixin listheader {
+    text-transform: uppercase;
+    opacity: .8;
+    font-size: 1em;
+    margin: .5em 1em;
+    font-weight: 700;
+}
+
+@mixin listcontent {
+    @include dropshadow(1);
+
+    background-color: $light-color;
+    border: 1px solid rgba(0,0,0,0.15);
+    list-style: none;
+}
+
+@mixin listitem {
+    @extend %snappy;
+
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+
+    &:last-child { border-bottom: none; }
+
+    &-content {
+        font-size: 1.2em;
+        padding: (1em / 1.2);
+    }
+}
+
 @include exports(listview) {
-    .list-header {
-        text-transform: uppercase;
-        opacity: .8;
-        font-size: 1em;
-        margin: .5em 1em;
-        font-weight: 700;
-    }
+    .list-header { @include listheader; }
 
-    .list-content {
-        @include dropshadow(1);
+    .list-content { @include listcontent; }
 
-        background-color: $light-color;
-        border: 1px solid rgba(0,0,0,0.15);
-        list-style: none;
-    }
-
-    .list-item {
-        border-bottom: 1px solid rgba(0,0,0,0.075);
-
-        &:last-child { border-bottom: none; }
-
-        &-content {
-            font-size: 1.2em;
-            padding: (1em / 1.2);
-
-            &:hover, &:focus {
-                background-color: rgba(0,0,0,0.1);
-                color: inherit;
-            }
-
-            &:active {
-                background-color: rgba(0,0,0,0.2);
-                color: inherit;
-            }
-        }
-    }
+    .list-item { @include listitem; }
 }

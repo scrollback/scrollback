@@ -1,30 +1,39 @@
+@mixin gridheader {
+    text-transform: uppercase;
+    opacity: .8;
+    font-size: 1em;
+    margin: .5em 1.5em 0 1.5em;
+    font-weight: 700;
+}
+
+@mixin gridcontent {
+    @include flexbox;
+    @include flex-direction(row);
+    @include flex-wrap(wrap);
+    @include align-items(flex-start);
+
+    list-style: none;
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+@mixin griditem {
+    @include flex-grow(1);
+    @include dropshadow(1);
+
+    min-width: 20em;
+    max-width: 27em;
+    margin: .5em;
+    background-color: $light-color;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: $roundness;
+}
+
 @include exports(gridview) {
-    .grid-header {
-        text-transform: uppercase;
-        opacity: .8;
-        font-size: 1em;
-        margin: .5em 1.5em 0 1.5em;
-        font-weight: 700;
-    }
+    .grid-header { @include gridheader; }
 
-    .grid-content {
-        @include flexbox;
-        @include flex-direction(row);
-        @include flex-wrap(wrap);
-        @include align-items(flex-start);
+    .grid-content { @include gridcontent; }
 
-        list-style: none;
-    }
-
-    .grid-item {
-        @include flex-grow(1);
-        @include dropshadow(1);
-
-        min-width: 20em;
-        max-width: 27em;
-        margin: .5em;
-        background-color: $light-color;
-        border: 1px solid rgba(0,0,0,0.15);
-        border-radius: $roundness;
-    }
+    .grid-item { @include griditem; }
 }
