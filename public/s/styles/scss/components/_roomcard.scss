@@ -1,4 +1,6 @@
 @include exports("roomcard") {
+    $card-height: 12em;
+
     %ellipsize {
         overflow: hidden;
         white-space: nowrap;
@@ -6,9 +8,9 @@
     }
 
     .room-card {
-        min-height: 12em;
-        max-height: 12em;
-        height: 12em;
+        min-height: $card-height;
+        max-height: $card-height;
+        height: $card-height;
 
         &-header {
             @include flexbox;
@@ -18,7 +20,6 @@
             @include align-content(center);
 
             height: $bar-height;
-            margin-bottom: 1em;
             border-bottom: 1px solid rgba(0,0,0,0.05);
 
             &-title {
@@ -56,19 +57,14 @@
             }
         }
 
-        &-description {
-            @extend %ellipsize;
-
-            padding: .5em 1em;
-            opacity: .5;
+        &-content {
+            margin: 1em;
+            height: $card-height - 6em;
+            overflow: hidden;
         }
 
         &-discussion {
             @extend %ellipsize;
-
-            margin: 0 1em;
-
-            &:last-child { margin-bottom: 1em; }
 
             &-nick {
                 color: $accent-color;

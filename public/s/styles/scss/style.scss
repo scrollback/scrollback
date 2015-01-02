@@ -61,12 +61,12 @@ body {
     * Antialiased font looks crispier
     */
     @include font-smoothing(antialiased);
-    @include dropshadow(2);
 
     position: relative;
     z-index: 100;
     background-color: $dark-color;
     color: $light-color;
+    box-shadow: 3px 0 6px rgba(0,0,0,0.16);
 
     &-content {
         max-height: 100%;
