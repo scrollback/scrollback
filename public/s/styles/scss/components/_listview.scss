@@ -16,10 +16,23 @@
     }
 
     .list-item {
-        font-size: 1.2em;
-        padding: .83em;
         border-bottom: 1px solid rgba(0,0,0,0.075);
 
         &:last-child { border-bottom: none; }
+
+        &-content {
+            font-size: 1.2em;
+            padding: (1em / 1.2);
+
+            &:hover, &:focus {
+                background-color: rgba(0,0,0,0.1);
+                color: inherit;
+            }
+
+            &:active {
+                background-color: rgba(0,0,0,0.2);
+                color: inherit;
+            }
+        }
     }
 }

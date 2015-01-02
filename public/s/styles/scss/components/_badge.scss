@@ -1,0 +1,26 @@
+@include exports(badge) {
+    .notification-badge {
+        position: relative;
+        padding: (.5em / .8);
+        background-color: $accent-color;
+        color: $light-color;
+        border-radius: (1em / .8);
+        font-size: .8em;
+        font-weight: 700;
+        line-height: 1;
+        cursor: pointer;
+
+        &-count { margin: 0 (.25em / .8); }
+
+        &-mention {
+            background-color: $error-color;
+
+            &:before {
+                content: "@";
+                opacity: .8;
+            }
+        }
+
+        [class^="icon-"], [class*=" icon-"] { opacity: .8; }
+    }
+}

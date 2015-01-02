@@ -1,0 +1,82 @@
+@include exports("roomcard") {
+    %ellipsize {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .room-card {
+        min-height: 12em;
+        max-height: 12em;
+        height: 12em;
+
+        &-header {
+            @include flexbox;
+            @include flex-direction(row);
+            @include flex-wrap(nowrap);
+            @include align-items(center);
+            @include align-content(center);
+
+            height: $bar-height;
+            margin-bottom: 1em;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+
+            &-title {
+                @include flex-grow(1);
+                @extend %ellipsize;
+
+                font-size: 1.2em;
+                font-weight: 700;
+                padding: 0 (1em / 1.2);
+                line-height: 1em;
+                margin: 0;
+            }
+
+            &-icon {
+                font-size: 1.5em;
+                padding: (1em / 1.5);
+                color: inherit;
+                height: 100%;
+
+                &:hover, &:focus {
+                    background-color: rgba(0,0,0,0.1);
+                    color: inherit;
+                }
+
+                &:active {
+                    background-color: rgba(0,0,0,0.2);
+                    color: inherit;
+                }
+            }
+
+            &-badge {
+                float: right;
+                margin-left: (.5em / .8);
+                margin-right: (.25em / .8);
+            }
+        }
+
+        &-description {
+            @extend %ellipsize;
+
+            padding: .5em 1em;
+            opacity: .5;
+        }
+
+        &-discussion {
+            @extend %ellipsize;
+
+            margin: 0 1em;
+
+            &:last-child { margin-bottom: 1em; }
+
+            &-nick {
+                color: $accent-color;
+                font-weight: 700;
+                margin-right: .25em;
+            }
+
+            &-message { opacity: 0.8; }
+        }
+    }
+}

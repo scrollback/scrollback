@@ -21,7 +21,13 @@
                 rgba(0,0,0,0.9) 100%
             );
         }
+
+        &:focus, &:hover {
+            .profile-avatar { @include transform(scale(1.1)); }
+        }
     }
+
+    .profile-avatar { @include transition(.3s); }
 
     .profile-scrollback-logo {
         display: block;
@@ -42,7 +48,7 @@
         left: 0;
         bottom: .5em;
         right: 5em;
-        max-height: 8em;
+        max-height: 8.5em;
         padding: .5em;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -74,7 +80,7 @@
 
         padding: .5em 0;
 
-        p {
+        > p {
             font-weight: 700;
             opacity: .5;
         }
@@ -106,14 +112,14 @@
                 }
             }
 
-            h3 {
+            > h3 {
                 font-weight: 700;
                 font-size: 1.5em;
                 line-height: 1em;
                 margin: 0;
             }
 
-            p {
+            > p {
                 text-transform: uppercase;
                 font-weight: 700;
                 font-size: .8em;

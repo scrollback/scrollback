@@ -1,0 +1,30 @@
+@include exports(gridview) {
+    .grid-header {
+        text-transform: uppercase;
+        opacity: .8;
+        font-size: 1em;
+        margin: .5em 1.5em 0 1.5em;
+        font-weight: 700;
+    }
+
+    .grid-content {
+        @include flexbox;
+        @include flex-direction(row);
+        @include flex-wrap(wrap);
+        @include align-items(flex-start);
+
+        list-style: none;
+    }
+
+    .grid-item {
+        @include flex-grow(1);
+        @include dropshadow(1);
+
+        min-width: 20em;
+        max-width: 27em;
+        margin: .5em;
+        background-color: $light-color;
+        border: 1px solid rgba(0,0,0,0.15);
+        border-radius: $roundness;
+    }
+}

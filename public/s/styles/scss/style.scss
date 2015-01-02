@@ -24,11 +24,13 @@
 @import "global";
 @import "icons";
 
-@import "components/listview";
+@import "components/gridview";
 @import "components/fab";
 @import "components/appbar";
 @import "components/searchbar";
 @import "components/profile";
+@import "components/roomcard";
+@import "components/badge";
 
 html, body { height: 100%; }
 
@@ -37,7 +39,6 @@ body {
     @include flex-direction(row);
     @include flex-wrap(nowrap);
     @include align-items(flex-start);
-    @include align-content(center);
 
     height: 100%;
 }
@@ -73,7 +74,7 @@ body {
         -webkit-overflow-scrolling : touch; /* momentum scrolling in webkit */
     }
 
-    &-block { border-bottom: 1px solid rgba(0,0,0,0.2); }
+    &-block { border-bottom: 1px solid rgba(0,0,0,0.1); }
 }
 
 .main {
@@ -81,7 +82,6 @@ body {
     @include flex-direction(column);
     @include flex-wrap(nowrap);
     @include align-items(flex-start);
-    @include align-content(center);
 }
 
 .main-content {
@@ -91,7 +91,6 @@ body {
     height: 100%;
     overflow: auto;
     padding: 2em;
+    padding-bottom: 6em;
     background-color: darken($light-color, 5%);
-
-    .list-content { border-radius: $roundness; }
 }
