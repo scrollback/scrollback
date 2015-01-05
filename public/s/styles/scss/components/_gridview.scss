@@ -7,10 +7,7 @@
 }
 
 @mixin gridcontent {
-    @include flexbox;
-    @include flex-direction(row);
-    @include flex-wrap(wrap);
-    @include align-items(flex-start);
+    @extend %clearfix;
 
     list-style: none;
     background: none;
@@ -19,15 +16,25 @@
 }
 
 @mixin griditem {
-    @include flex-grow(1);
     @include dropshadow(1);
 
-    min-width: 20em;
-    max-width: 27em;
+    float: left;
+    width: 100%;
     margin: .5em;
     background-color: $light-color;
     border: 1px solid rgba(0,0,0,0.15);
     border-radius: $roundness;
+
+    $item-width: 27em;
+
+    @for $i from 1 through 10 {
+        @media only screen and (min-width: #{$item-width * $i}) {
+            width: (100% / $i) - 10%;
+            width: calc(#{100% / $i} - 1em);
+        }
+    }
+
+    @media only screen and (min-width: #{$item-width * 11}) { min-width: 21em; }
 }
 
 @include exports(gridview) {
