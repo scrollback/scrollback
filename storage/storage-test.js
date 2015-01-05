@@ -182,13 +182,79 @@ describe("Storage Test.", function() {
 		});
 	});
 	
-});
-/*
+	it("Update user.", function(done) {
+		var user = getNewUser();
+		core.emit("user", user, function() {
+			var old = copy(user.user);
+			user.old = old;
+			user.user.description = generate.sentence(12);
+			core.emit("user", user, function() {
+				pg.connect(connString, function(err, client, cb) {
+					storageUtils.runQueries(client, 
+											[{query: "SELECT * from entities where id=$1", values: [user.user.id]}], 
+											function(err, results) {
+						log.d("Arguments:", arguments);
+						results.forEach(function(result) {
+							log("User: ", user.user.description, result.rows[0].description);
+							assert.equal(result.rows[0].description, user.user.description, "updating description failed");
+						});
+						cb();
+						done();
+					});
+				});	
+			});
+			
+		});
+	});
+	
+	it("storing new Room.", function(done) {
+		var room = getNewRoom();
+		core.emit("room", room, function(){
+			pg.connect(connString, function(err, client, cb) {
+				storageUtils.runQueries(client, 
+										[{query: "SELECT * from entities where id=$1", values: [room.room.id]}], 
+										function(err, results) {
+					log.d("Arguments:", arguments);
+					results.forEach(function(result) {
+						assert.deepEqual(result.rows[0].id, room.room.id, "Adding new user failed");
+					});
+					cb();
+					done();
+				});
+			});
+		});
+	});
 
-function generatePick(id) {
-	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=identicon&s=48';
-}
-*/
+	it("Update room.", function(done) {
+		var room = getNewRoom();
+		core.emit("room", room, function() {
+			var old = copy(room.room);
+			room.old = old;
+			room.room.identities = room.room.identities.splice(0, 1);
+			core.emit("room", room, function() {
+				pg.connect(connString, function(err, client, cb) {
+					storageUtils.runQueries(client, 
+											[{query: "SELECT * from entities where id=$1", values: [room.room.id]}], 
+											function(err, results) {
+						log.d("Arguments:", arguments);
+						results.forEach(function(result) {
+							room.room.identities.sort();
+							result.rows[0].identities.sort();
+							assert.deepEqual(result.rows[0].identities, room.room.identities, "updating description failed");
+						});
+						cb();
+						done();
+					});
+				});	
+			});
+
+		});
+	});
+	
+	
+	
+});
+
 
 function getNewTextMessage() {
 	var id = generate.uid();
@@ -221,6 +287,29 @@ function getNewUser() {
 	};
 }
 
+function getNewRoom() {
+	
+	return {
+		id: generate.uid(),
+		type:"room",
+		room: {
+			id:generate.names(8),
+			description: generate.sentence(10),
+			type:"room",
+			identities:["twitter://" + generate.names(10), generate.names(5) + "://" + generate.names(10)], 
+			params:{},
+			guides: {}
+		},
+		old: {}
+	};
+}
+
+
 function generatePick(id) {
 	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=identicon&s=48';
+}
+
+
+function copy(action) {
+	return JSON.parse(JSON.stringify(action));
 }

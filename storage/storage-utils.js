@@ -103,8 +103,8 @@ function makeUpdateQuery(transform) {
 
 function runQueries(client, queries, callback) {
 	function rollback(err, client, done) {
-		client.query('ROLLBACK', function(err) {
-			log.e("Rollback", err);
+		client.query('ROLLBACK', function(er) {
+			log.e("Rollback", err, er);
 			return done(err);
 		});
 	}

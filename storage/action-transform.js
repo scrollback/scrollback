@@ -97,8 +97,9 @@ exports.edit = function (edit) {
 exports.room = exports.user = function (action) {
 	
 	var entity = action[action.type],
-		isNewEntity = !(entity.old && entity.old.id),
+		isNewEntity = !(action.old && action.old.id),
 		put = makePut(isNewEntity ? 'insert' : 'update', 'entities');
+	log.d("Is new entity:", isNewEntity, entity);
 	if (isNewEntity) { // new room or user.
 		put.insert = {
 			id: entity.id, type: action.type, 
@@ -114,8 +115,14 @@ exports.room = exports.user = function (action) {
 			deletetime: entity.deleteTime
 		};
 	} else { // update
+		log.d("Update entity:", action);
 		put.filters.push(['id', 'eq', entity.id]);
-		put.update.push(['']);
+		['description', 'picture', 'createTime', 'identities', 'timezone', 'params', 'guides', 'deleteTime'].forEach(function(p) {
+			if (action.old[p] !== entity[p]) {
+				// column name in database are lower case of property name of entity.
+				put.update.push([p.toLowerCase(), 'set', entity[p]]); 
+			}
+		});
 	}
 	
 	return [put];
