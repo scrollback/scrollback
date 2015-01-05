@@ -111,6 +111,31 @@ describe("Storage Test.", function() {
 				});
 			});
 		});
+	});
+	
+	it("Edit (Edit title)", function(done) {
+		var m1 = getNewTextMessage();
+		core.emit("text", m1, function() {
+			var text = generate.sentence(11);
+			var edit = {
+				ref: m1.id,
+				title: text
+			};
+			core.emit("edit", edit, function() {
+				pg.connect(connString, function(err, client, cb) {
+					storageUtils.runQueries(client, 
+											[{query: "SELECT * from threads where id=$1", values: [m1.id]}], 
+											function(err, results) {
+						log.d("Arguments:", arguments);
+						results.forEach(function(result) {
+							assert.equal(result.rows[0].title, text, "Updating title failed");
+						});
+						cb();
+						done();
+					});
+				});
+			});
+		});
 	});	
 	
 	it("Edit (labels text)", function(done) {

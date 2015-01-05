@@ -4,7 +4,9 @@ function makePut(type, source) {
 	if (!type || !source) {
 		return log.d("No source or type");
 	}
-	return { source: source, filters: [], type: type };
+	var r = { source: source, filters: [], type: type };
+	if (type === 'update') r.update = [];
+	return r;
 }
 
 /*
@@ -19,10 +21,10 @@ exports.text = function (text) {
 	var puts = [], put;
 	
 	/* Start Compatibility Block */
-	text.thread = text.threads[0].id.substr(0, text.threads[0].id.length-1);
-	text.title = text.threads[0].title;
-	text.labels['color' + text.threads[0].id.substr(text.threads[0].id.length-1)] = 1;
+	
+	addThread(text);
 	addTags(text);
+	
 	/* End Compatibility Block */
 	log.d("Text:", text);
 	// insert text
@@ -39,10 +41,10 @@ exports.text = function (text) {
 	
 	// insert thread
 	if (text.thread) {
-		put = makePut(text.id == text.thread ? "insert" : "update", 'threads');
+		put = makePut(text.id === text.thread ? "insert" : "update", 'threads');
 		put.filters.push(['id', 'eq', text.thread]);
 
-		if (text.id == text.thread) {
+		if (text.id === text.thread) {
 			/* This is a new thread */
 			put.insert = {
 				id: text.thread, from: text.from, to: text.to,
@@ -69,14 +71,20 @@ exports.edit = function (edit) {
 	var puts = [], put = makePut("update", 'texts');
 	put.filters.push(['id', 'eq', edit.ref]);
 	put.update = [];
+	// start compability block.
 	addTags(edit);
+	addThread(edit);
+	// end Compatibility block.
 	if (edit.text) {
 		put.update.push(['text', 'set', edit.text]);
 	}
-	/*
+	
 	if (edit.title) {
-		
-	}*/
+		var tput = makePut('update', 'threads');
+		tput.filters.push(['id', 'eq', edit.ref]);
+		tput.update.push(['title', 'set', edit.title]);
+		puts.push(tput);
+	}
 	
 	if (edit.tags) {
 		put.update.push(['tags', 'set', edit.tags]); 
@@ -122,4 +130,12 @@ exports.join = exports.part = exports.admit = exports.expel = function (/*action
 function addTags(action) {
 	if (!action.tags) action.tags = [];
 	for (var i in action.labels) if (action.labels[i] > 0.5) action.tags.push(i);
+}
+
+function addThread(action) {
+	if (action.threads && action.threads[0]) {
+		action.thread = action.threads[0].id.substr(0, action.threads[0].id.length-1);
+		action.title = action.threads[0].title;
+		action.labels['color' + action.threads[0].id.substr(action.threads[0].id.length-1)] = 1;
+	}
 }
