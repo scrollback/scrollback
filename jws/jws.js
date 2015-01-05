@@ -103,17 +103,26 @@ function jwsHandler(action, callback) {
 
 var verify = (function() {	
 	return function(action, callback) {
-		var availableKeys;
+		var availableKeys, breakNow = false;
 		if(!action.origin || !action.origin.domain || !keys[action.origin.domain]) return callback(false, {});
 		
 		availableKeys = keys[action.origin.domain];
-		availableKeys.forEach(function(key) {
-			jwt.verify(action.auth.jws, key, function(err, decoded) {
-				if(err) return callback(false, err.message);
-				if(decoded) return callback(true, decoded);
-			});
-		});
 		
+		function testKey(i) {
+			if (i == availableKeys.length) return callback(false);
+			jwt.verify(action.auth.jws, availableKeys[i], function(err, decoded) {
+					if (!err && decoded) {
+						breakNow = true;
+						return callback(true, decoded);
+					}
+					testKey(i++);
+				}
+			);
+		}
+		
+		if(availableKeys && availableKeys.length !== 0) {
+			testKey(0);
+		}
 	};
 }());
 /* verifies and returns athentication data: */
