@@ -6,6 +6,7 @@
         @include dropshadow(3);
 
         position: fixed;
+        z-index: 500;
         right: 0;
         bottom: 0;
         margin: (2em / 1.5);

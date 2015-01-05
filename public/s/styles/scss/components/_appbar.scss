@@ -33,6 +33,7 @@
             width: $bar-height - 1em;
             border-radius: 50%;
             border: 2px solid $light-color;
+            cursor: pointer;
         }
 
         &-icon {
