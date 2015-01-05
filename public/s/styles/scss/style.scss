@@ -130,7 +130,6 @@ body {
     height: 100%;
     overflow: auto;
     padding: .5em 0;
-    padding-bottom: 6em;
     background-color: darken($light-color, 5%);
 
     .listgrid-content {
@@ -147,5 +146,11 @@ body {
             border-right-width: 1px;
             border-radius: $roundness;
         }
+    }
+
+    &:after {
+        content: "";
+        display: block;
+        height: 6em;
     }
 }
