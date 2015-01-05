@@ -9,7 +9,7 @@ var config = require('../client-config-defaults.js');
 var pushNotification, regId;
 var userObj, registrationID;
 
-libsb.on('init-dn', registerPushNotification, false);
+libsb.on('init-dn', registerPushNotification, 500);
 
 libsb.on('logout', unregisterPushNotification, 500);
 
