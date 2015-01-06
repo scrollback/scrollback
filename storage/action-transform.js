@@ -41,26 +41,21 @@ exports.text = function (text) {
 	
 	// insert thread
 	if (text.thread) {
-		put = makePut(text.id === text.thread ? "insert" : "update", 'threads');
+		put = makePut("upsert", 'threads');
 		put.filters.push(['id', 'eq', text.thread]);
-
-		if (text.id === text.thread) {
-			/* This is a new thread */
-			put.insert = {
-				id: text.thread, from: text.from, to: text.to,
-				title: text.title, starttime: storageUtils.timetoString(text.time), 
-				endtime: storageUtils.timetoString(text.time), length: 1, tags: text.tags,
-				/*mentions: text.mentions*/
-			};
-		} else {
-			/* For existing threads update endTime, length and perhaps title */
-			put.update = [
-				['endtime', 'set', storageUtils.timetoString(text.time)],
-				['length', 'incr', 1]
-			];
-			
-			if(text.title) put.update.push(['title', 'set', text.title]);
-		}
+		
+		put.insert = {
+			id: text.thread, from: text.from, to: text.to,
+			title: text.title, starttime: storageUtils.timetoString(text.time), 
+			endtime: storageUtils.timetoString(text.time), length: 1, tags: text.tags,
+			/*mentions: text.mentions*/
+		};
+		/* For existing threads update endTime, length and perhaps title */
+		put.update = [
+			['endtime', 'set', storageUtils.timetoString(text.time)],
+			['length', 'incr', 1]
+		];
+		if(text.title) put.update.push(['title', 'set', text.title]);
 		puts.push(put);
 	}
 	return puts;

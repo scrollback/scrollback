@@ -77,7 +77,7 @@ function makeUpsertQuery(transform) {
 	inSql.push("(");
 	var keys = [], inValues = [];
 	for (var key in transform.insert) {
-		keys.push(key);
+		keys.push(name(key));
 		inValues.push("$" + i);
 		values.push(transform.insert[key]);
 		i++;
