@@ -27,7 +27,7 @@ module.exports = function(c, conf) {
 };
 
 function init() {
-	start();
+	connect();
 	eventEmitter.on('object', function(obj) {
 		core.emit(obj.type, obj);
 	});
@@ -41,7 +41,7 @@ function isConnected() {
 }
 
 
-function start() {
+function connect() {
 	client = net.connect({port: port, host: server},
 		function() { //'connect' listener
 		log('client connected');
@@ -54,15 +54,15 @@ function start() {
 		log("Can not connect to ircClient process", error);
 		connected = false;
 		setTimeout(function(){
-			init();	
-		},reconnectTime);
+			connect();	
+		}, reconnectTime);
 	});
 	client.on('end', function() {
 		log('connection terminated');
 		connected = false;
 		setTimeout(function(){
-			init();	
-		},reconnectTime);
+			connect();	
+		}, reconnectTime);
 	});
 }
 
