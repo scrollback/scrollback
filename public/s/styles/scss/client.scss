@@ -2,6 +2,9 @@
  * Stylesheet for the client
  */
 
+// Import global settings
+@import "settings";
+
 // Import components from lace
 @import "../lace/base";
 @import "../lace/animations";
@@ -20,8 +23,6 @@
 @import "../lace/dropshadow";
 @import "../lace/assets";
 
-// Import global variables and mixins
-@import "global";
 @import "themes";
 @import "tip";
 @import "cards";
