@@ -5,7 +5,7 @@ function makePut(type, source) {
 		return log.d("No source or type");
 	}
 	var r = { source: source, filters: [], type: type };
-	if (type === 'update') r.update = [];
+	if (type === 'update' || type === 'upsert') r.update = [];
 	return r;
 }
 
@@ -97,39 +97,35 @@ exports.edit = function (edit) {
 exports.room = exports.user = function (action) {
 	
 	var entity = action[action.type],
-		isNewEntity = !(action.old && action.old.id),
-		put = makePut(isNewEntity ? 'insert' : 'update', 'entities');
-	log.d("Is new entity:", isNewEntity, entity);
-	if (isNewEntity) { // new room or user.
-		put.insert = {
-			id: entity.id, type: action.type, 
-			description: entity.description,
-			picture: entity.picture, 
-			createtime: entity.createTime,
-			identities: entity.identities.map(function(ident) { 
-				return ident.split(':', 2); 
-			}),
-			timezone: entity.timezone, locale: entity.locale,
-			params: entity.params,
-			guides: entity.guides,
-			deletetime: entity.deleteTime
-		};
-	} else { // update
-		log.d("Update entity:", action);
-		put.filters.push(['id', 'eq', entity.id]);
-		['description', 'picture', 'createTime', 'identities', 'timezone', 'params', 'guides', 'deleteTime'].forEach(function(p) {
-			if (action.old[p] !== entity[p]) {
-				// column name in database are lower case of property name of entity.
-				put.update.push([p.toLowerCase(), 'set', entity[p]]); 
-			}
-		});
-	}
+		put = makePut('upsert', 'entities');
+	
+	put.insert = {
+		id: entity.id, type: action.type,
+		description: entity.description,
+		picture: entity.picture,
+		createtime: entity.createTime,
+		identities: entity.identities.map(function(ident) {
+			return ident.split(':', 2);
+		}),
+		timezone: entity.timezone, locale: entity.locale,
+		params: entity.params,
+		guides: entity.guides,
+		deletetime: entity.deleteTime
+	};
+	log.d("Update entity:", action);
+	put.filters.push(['id', 'eq', entity.id]);
+	['description', 'picture', 'createTime', 'identities', 'timezone', 'params', 'guides', 'deleteTime'].forEach(function(p) {
+			// column name in database are lower case of property name of entity.
+			put.update.push([p.toLowerCase(), 'set', entity[p]]);
+	});
 	
 	return [put];
 };
 
 exports.join = exports.part = exports.admit = exports.expel = function (/*action*/) {
+	//var put = makePut('insert', 'relations');
 	
+	//set 
 };
 
 
