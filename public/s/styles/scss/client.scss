@@ -816,12 +816,12 @@ body {
     font-size: 1.2em;
     font-weight: 700;
     margin: 0;
-    padding: .375em 0;
+    padding: .25em 0;
 
     @media #{$screenxxx} {
         font-size: 1.5em;
         font-weight: 400;
-        padding: .25em 0;
+        padding: .125em 0;
     }
 }
 
@@ -829,7 +829,7 @@ body {
     @extend %transition;
 
     height: $bar-height;
-    padding: .625em 0;
+    padding: .75em 0;
     overflow: hidden;
 
     @media #{$screenxxx} { padding-left: 1.5em; }
@@ -842,6 +842,7 @@ body {
 .title-logotype-icon {
     @extend %transition;
 
+    height: 2em;
     fill: $dark-color;
 }
 
