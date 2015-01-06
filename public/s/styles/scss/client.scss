@@ -2,6 +2,9 @@
  * Stylesheet for the client
  */
 
+// Import global settings
+@import "settings";
+
 // Import components from lace
 @import "../lace/base";
 @import "../lace/animations";
@@ -20,8 +23,6 @@
 @import "../lace/dropshadow";
 @import "../lace/assets";
 
-// Import global variables and mixins
-@import "global";
 @import "themes";
 @import "tip";
 @import "cards";
@@ -749,85 +750,26 @@ body {
     @include transition(.5s);
 }
 
-@mixin meta-logo-visible {
-    .meta-button-logo {
-        @include opacity(1);
-        @include transform(translate3d(0, 0, 0));
-    }
-
-    .meta-button-back {
-        @include opacity(0);
-        @include transform(translate3d(0, 0, 0));
-    }
-}
-
-@mixin meta-back-visible {
-    .meta-button-logo {
-        @include opacity(0);
-        @include transform(translate3d(0, -100%, 0));
-    }
-
-    .meta-button-back {
-        @include opacity(1);
-        @include transform(translate3d(0, -100%, 0));
-    }
-}
-
 .meta-button {
     @include title-icon(meta-icon);
 
     height: $bar-height;
     fill: $dark-color;
     overflow: hidden;
+    padding: .75em .5em;
 
     @media #{$screenxxx} { display: none; }
 
-    .meta-button-back, .meta-button-logo {
-        @extend %transition;
-
-        display: block;
-        height: 100%;
-        width: 100%;
-        padding: .75em .5em;
-
-        .meta-icon {
-            .view-meta &, .view-rooms & { @include transform(rotate(180deg)); }
-        }
+    .meta-icon {
+        .view-meta &, .view-rooms & { @include transform(rotate(180deg)); }
     }
 
-    .meta-button-logo {
-        .meta-icon {
-            &, &:focus, &:hover, &:active { opacity: 1; }
-        }
-    }
-}
-
-.embed {
-    .meta-button { @include meta-logo-visible; }
-
-    &:not(.toast-minimized) {
-        &:focus, &:hover, &:active {
-            .meta-button { @include meta-back-visible; }
-        }
-
-        &.view-meta {
-            .meta-button { @include meta-back-visible; }
-        }
-    }
+    .toast-minimized & { display: none; }
 }
 
 .sb-icon-top { fill: $accent-color; }
 
 .sb-icon-bottom { fill: $dark-color; }
-
-.title-logotype {
-    .title-logotype-icon {
-        padding: .125em 0;
-        fill: $dark-color;
-    }
-
-    .has-messages & { display: none; }
-}
 
 .title-bar {
     @include flexbox;
@@ -869,14 +811,85 @@ body {
 }
 
 .room-title {
+    @extend %transition;
+
     font-size: 1.2em;
     font-weight: 700;
     margin: 0;
+    padding: .375em 0;
 
     @media #{$screenxxx} {
-        padding-left: 1em;
         font-size: 1.5em;
         font-weight: 400;
+        padding: .25em 0;
+    }
+}
+
+.title-logotype {
+    @extend %transition;
+
+    height: $bar-height;
+    padding: .625em 0;
+    overflow: hidden;
+
+    @media #{$screenxxx} { padding-left: 1.5em; }
+
+    .toast-minimized & { padding-left: 1em; }
+
+    .has-messages & { display: none; }
+}
+
+.title-logotype-icon {
+    @extend %transition;
+
+    fill: $dark-color;
+}
+
+.embed {
+    &.toast-minimized {
+        .title-logotype { @include transform(translate3d(0, 0, 0)); }
+    }
+
+    .title-logotype {
+        @include transform(translate3d(-2em, 0, 0));
+
+        .title-logotype-icon {
+            @include opacity(1);
+            @include transform(translate3d(0, 0, 0));
+        }
+
+        .room-title {
+            @include opacity(0);
+            @include transform(translate3d(0, 0, 0));
+        }
+    }
+
+    .meta-button {
+        @include opacity(0);
+        @include transform(translate3d(-100%, 0, 0));
+    }
+
+    &:not(.toast-minimized) {
+        &:focus, &:hover, &:active {
+            .title-logotype {
+                @include transform(translate3d(0, 0, 0));
+
+                .title-logotype-icon {
+                    @include opacity(0);
+                    @include transform(translate3d(0, -100%, 0));
+                }
+
+                .room-title {
+                    @include opacity(1);
+                    @include transform(translate3d(0, -100%, 0));
+                }
+            }
+
+            .meta-button {
+                @include opacity(1);
+                @include transform(translate3d(0, 0, 0));
+            }
+        }
     }
 }
 
