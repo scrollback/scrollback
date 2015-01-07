@@ -61,6 +61,7 @@ UPDATE table SET field='C', field2='Z' WHERE id=3;
 INSERT INTO table (id, field, field2)
        SELECT 3, 'C', 'Z'
        WHERE NOT EXISTS (SELECT 1 FROM table WHERE id=3); 
+This query to filter should have a unique key constraints 
 @return Array of queries.
 // http://stackoverflow.com/questions/1109061/insert-on-duplicate-update-in-postgresql
 */
@@ -68,9 +69,6 @@ function makeUpsertQuery(transform) {
 	log.d("Upsert query");
 	var updateQuery = getUpdateQuery(transform, 1, true),
 		i = 1, values = [];
-	/*var insertQuery = makeInsertQuery(transform, i);
-	sql.push(insertQuery.query );
-	values.push(insertQuery.values);*/
 	var inSql = [];
 	inSql.push("INSERT INTO");
 	inSql.push(transform.source);

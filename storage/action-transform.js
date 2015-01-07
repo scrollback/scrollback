@@ -117,9 +117,38 @@ exports.room = exports.user = function (action) {
 	return [put];
 };
 
-exports.join = exports.part = exports.admit = exports.expel = function (/*action*/) {
-	//var put = makePut('insert', 'relations');
+exports.join = exports.part = exports.admit = exports.expel = function (action) {
+	var put = makePut('upsert', 'relations');
+	var user;
+	var officer;
+	if (action.type === 'admit' || action.type === 'expel') {
+		officer = action.user.id;
+		user = action.victim.id;
+	} else {
+		user = action.user.id;
+	}
+	put.insert = {
+		room: action.room.id,
+		user: user,
+		role: action.role,
+		transitionrole: action.transitionRole,
+		transitiontype: action.transitionType,
+		message: action.text,
+		officer: officer,
+		roletime: storageUtils.timetoString(action.time)
+		
+	};
 	
+	var columnNames = ['role', 'roletime', 'officer', 'message', 'transitionrole', 'transitiontype'];
+	var values = [action.role, storageUtils.timetoString(action.time), officer, action.text, action.transitionRole, action.transitionType];
+	
+	for (var i = 0; i < columnNames.length; i++) {
+		put.update.push([columnNames[i], 'set', values[i]]);
+	}
+	
+	put.filters.push(['user', 'eq', user]);
+	put.filters.push(['room', 'eq', action.room.id]);
+	return [put];
 	//set 
 };
 

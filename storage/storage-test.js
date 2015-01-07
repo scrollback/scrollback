@@ -251,8 +251,69 @@ describe("Storage Test.", function() {
 		});
 	});
 	
+	it("Join room.", function(done) {
+		var relation = getRelationAction('join', 'follower');
+		var user = getNewUser();
+		var room = getNewRoom();
+		user.user = relation.user;
+		room.room = relation.room;
+		core.emit("room", room, function() {
+			core.emit("user", user, function() {
+				core.emit("join", relation, function() {
+					log("Join :", arguments);
+					pg.connect(connString, function(err, client, cb) {
+						
+						storageUtils.runQueries(client, 
+												[{query: "SELECT * from relations where \"room\"=$1 and \"user\"=$2", 
+												  values: [room.room.id, user.user.id]}], 
+												function(err, results) {
+							log.d("Arguments:", arguments);
+							results.forEach(function(result) {
+								log("Result:", result);
+								assert.equal(result.rows[0].room, room.room.id, "join message insert failed");
+							});
+							cb();
+							done();
+						});
+					});	
+				});
+			});
+		});
+	});
 	
-	
+	it("part room.", function(done) {
+		var relation = getRelationAction('join', 'follower');
+		var user = getNewUser();
+		var room = getNewRoom();
+		user.user = relation.user;
+		room.room = relation.room;
+		core.emit("room", room, function() {
+			core.emit("user", user, function() {
+				core.emit("join", relation, function() {
+					relation.role = 'none';
+					relation.time = new Date().getTime();
+					core.emit("part", relation, function() {
+						pg.connect(connString, function(err, client, cb) {
+
+							storageUtils.runQueries(client, 
+													[{query: "SELECT * from relations where \"room\"=$1 and \"user\"=$2", 
+													  values: [room.room.id, user.user.id]}], 
+													function(err, results) {
+								log.d("Arguments:", arguments);
+								results.forEach(function(result) {
+									log("Result:", result);
+									assert.equal(result.rows[0].role, 'none', "part message failed");
+									assert.equal(result.rows.length, 1, "Multiple rows");
+								});
+								cb();
+								done();
+							});
+						});
+					});	
+				});
+			});
+		});
+	});
 });
 
 
@@ -273,15 +334,15 @@ function getNewUser() {
 	var email = generate.names(15) + "@" + generate.names(6) +"." + generate.names(2);
 	return {
 		id: generate.uid(),
-		type:"user",
+		type: "user",
 		user: {
-			id:generate.names(8),
-			description:"this is me?",
-			type:"user",
+			id: generate.names(8),
+			description: "this is me?",
+			type: "user",
 			timezone: 0,
 			picture: generatePick(email),
-			identities:["mailto:"+email], 
-			params:{},
+			identities: ["mailto:" + email], 
+			params: {},
 			guides: {}
 		}
 	};
@@ -293,11 +354,11 @@ function getNewRoom() {
 		id: generate.uid(),
 		type:"room",
 		room: {
-			id:generate.names(8),
+			id: generate.names(9),
 			description: generate.sentence(10),
 			type:"room",
 			identities:["twitter://" + generate.names(10), generate.names(5) + "://" + generate.names(10)], 
-			params:{},
+			params: {},
 			guides: {}
 		},
 		old: {}
@@ -312,4 +373,28 @@ function generatePick(id) {
 
 function copy(action) {
 	return JSON.parse(JSON.stringify(action));
+}
+
+function getRelationAction(type, userRole) {
+	var user = getNewUser().user;
+	var room = getNewRoom().room;
+	var victim;
+	var from = user.id;
+	if (type === 'admit' || type === 'expel') {
+		victim = getNewUser();
+	} 
+	var r = {
+		type: type,
+		id: generate.uid(),
+		role: userRole,
+		to: room.id,
+		victim: victim,
+		from: from,
+		session: generate.uid(),
+		resource: generate.uid(),
+		user: user,
+		room: room,
+		time: new Date().getTime()
+	};
+	return r;
 }

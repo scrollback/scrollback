@@ -44,7 +44,8 @@ CREATE TABLE relations (
 	transitionType trnType,
 	transitionTime timestamp,
 	
-	lastVisitTime timestamp
+	lastVisitTime timestamp,
+	PRIMARY KEY("room", "user")
 );
 
 /*****************************************************************************/
