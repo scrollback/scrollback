@@ -1,59 +1,7 @@
 /* jshint browser: true */
 /* global $, libsb */
 
-//var formField = require("../lib/formField.js");
-
 $(function() {
-//	libsb.on("config-show", function(tabs, next) {
-//		var results = tabs.room;
-//
-//		if (!results.guides) {
-//			results.guides = {};
-//		}
-//
-//		if (!results.guides.customization) {
-//			results.guides.customization = {};
-//		}
-//
-//		if (!results.guides.customization.css) {
-//			results.guides.customization.css = "";
-//		}
-//
-//		var $div = $("<div>").append(formField("Custom CSS", "area", "custom-css", results.guides.customization.css));
-//
-//		tabs.customization = {
-//			text: "Customization",
-//			html: $div,
-//			prio: 300
-//		};
-//
-//		next();
-//	}, 500);
-//
-//	libsb.on("config-save", function(room, next){
-//		if (!room.guides.customization) {
-//			room.guides.customization = {};
-//		}
-//
-//		room.guides.customization.css = $("#custom-css").val().replace("<", "\\3c").replace(">", "\\3e");
-//
-//		next();
-//	}, 500);
-
-	libsb.on("navigate", function(state, next) {
-		if (state.old && state.roomName !== state.old.roomName) {
-			customStyle.applyCss();
-		}
-
-		next();
-	}, 700);
-
-	libsb.on("room-dn", function(room, next) {
-		customStyle.applyCss();
-
-		next();
-	}, 100);
-
 	// Customization API (temporary)
 	var customStyle = {
 		setCss: function(customCss) {
@@ -79,24 +27,36 @@ $(function() {
 			libsb.emit("room-up", roomObj);
 		},
 
-		applyCss: function() {
-			var room = window.currentState.room,
-				customization;
+		applyCss: function(room) {
+			var customization;
 
 			$("#scrollback-custom-style").remove();
 
-			if (!room || !room.guides || !room.guides.customization) {
+			if (!(room && room.guides && room.guides.customization)) {
 				return;
 			}
 
 			customization = room.guides.customization;
 
 			if (customization && customization.css) {
-				$("<style>").text(customization.css)
-				.attr("id", "scrollback-custom-style").appendTo("head");
+				$("<style>").text(customization.css).attr("id", "scrollback-custom-style").appendTo("head");
 			}
 		}
 	};
+
+	libsb.on("navigate", function(state, next) {
+		if ("roomName" in state.changes) {
+			customStyle.applyCss(state.room);
+		}
+
+		next();
+	}, 700);
+
+	libsb.on("room-dn", function(data, next) {
+		customStyle.applyCss(data.room);
+
+		next();
+	}, 100);
 
 	window.customStyle = customStyle;
 });

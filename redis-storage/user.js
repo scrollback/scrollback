@@ -1,5 +1,6 @@
-var core, userDB, occupantDB, config, get, put;
-
+var core, userDB, occupantDB, config, get, put,
+	log = require("../lib/logger.js");
+	
 function getUserById(id, callback) {
 	return get("user", id, function(err, data) {
 		if (err || !data) return callback();
@@ -101,14 +102,22 @@ function updateUser(action, callback) {
 	}
 	put("user", action.user.id, action.user, function() {
 		if (action.old && action.old.id) {
-			userDB.del("user:{{" + action.old.id + "}}");
+			userDB.del("user:{{" + action.old.id + "}}", function(err) {
+				if(err) {
+					log.e("Old not present", JSON.stringify(action));
+				}
+			});
 			occupantDB.smembers("user:{{" + action.old.id + "}}:occupantOf", function(err, data) {
 				data.forEach(function(room) {
 					occupantDB.srem("room:{{" + room + "}}:hasOccupants", action.old.id);
 					occupantDB.sadd("room:{{" + room + "}}:hasOccupants", action.user.id);
 				});
 			});
-			occupantDB.rename("user:{{" + action.old.id + "}}:occupantOf", "user:{{" + action.user.id + "}}:occupantOf");
+			occupantDB.rename("user:{{" + action.old.id + "}}:occupantOf", "user:{{" + action.user.id + "}}:occupantOf", function(err) {
+				if(err) {
+					log.e("Old not present", JSON.stringify(action));
+				}
+			});
 		}
 		callback();
 	});

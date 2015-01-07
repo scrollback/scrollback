@@ -1,9 +1,10 @@
 *~
 
 .*
+!.brackets.json
 !.gitignore
 !.git-hooks
-!.jscs.json
+!.jscsrc
 !.jshintrc
 !.jsbeautifyrc
 

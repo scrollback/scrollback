@@ -2,7 +2,7 @@
  * Mixin for themes support in the client
  */
 
-@import "global";
+@import "settings";
 
 @mixin theme($name, $base, $text) {
     .theme-#{$name} {
