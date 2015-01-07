@@ -159,7 +159,6 @@ function multiGet(type, ids, callback) {
 		i, errorThrown = false;
 
 	function done(err, data) {
-		var i;
 		if (errorThrown) return;
 		count++;
 		if (err) {

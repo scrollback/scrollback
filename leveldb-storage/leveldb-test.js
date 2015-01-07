@@ -23,15 +23,6 @@ var deleteFolderRecursive = function(path) {
 };
 deleteFolderRecursive(path);
 config.leveldb.path = "data-test";
-// describe("Just to try something out quick.",function(){
-// 	it("Checking join:", function(done) {
-// 		core.emit("getRooms", {hasMember:"harish"}, function(err, data){
-// 			console.log(data);			
-// 			done();			
-// 		});
-// 	});
-// });
-
 
 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
 console.log("+++++Text should be run after clearing the DB+++++");
@@ -56,6 +47,25 @@ describe("user and room action", function() {
 				picture: generatePick(email),
 				identities: ["mailto:" + email],
 				params: {}
+			}
+		}, function(err) {
+			assert(!err, "Error thrown");
+			done();
+		});
+	});
+	it("storing room scrollback", function(done) {
+		core.emit("room", {
+			id: generate.uid(),
+			type: "room",
+			room: {
+				id: "scrollback",
+				description: generate.sentence(24),
+				type: "room",
+				identities : ["somedomain.io:scrollback"],
+				params: {}
+			},
+			user: {
+				id: "harish",
 			}
 		}, function(err) {
 			assert(!err, "Error thrown");
@@ -99,24 +109,7 @@ describe("user and room action", function() {
 			done();
 		});
 	});
-	it("storing room scrollback", function(done) {
-		core.emit("room", {
-			id: generate.uid(),
-			type: "room",
-			room: {
-				id: "scrollback",
-				description: generate.sentence(24),
-				type: "room",
-				params: {}
-			},
-			user: {
-				id: "harish",
-			}
-		}, function(err) {
-			assert(!err, "Error thrown");
-			done();
-		});
-	});
+	
 	it("storing room nodejs", function(done) {
 		core.emit("room", {
 			id: generate.uid(),
@@ -167,7 +160,7 @@ describe("user and room action", function() {
 describe("get queries: ", function() {
 	it("getting user by id:", function(done) {
 		core.emit("getUsers", {
-			ref: "arvind"
+			ref: "harish"
 		}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
@@ -182,6 +175,20 @@ describe("get queries: ", function() {
 		core.emit("getRooms", {
 			ref: "scrollback"
 		}, function(err, data) {
+			assert(!err, "Error thrown");
+			assert(data, "no response");
+			assert(data.results, "no results");
+			assert(data.results[0], "empty results");
+			assert.equal(data.results[0].id, "scrollback", "empty results");
+			assert.equal(data.results.length, 1, "extra results returned");
+			done();
+		});
+	});
+	it("getting room by ident:", function(done) {
+		core.emit("getRooms", {
+			identity: "somedomain.io"
+		}, function(err, data) {
+			console.log(data.results);
 			assert(!err, "Error thrown");
 			assert(data, "no response");
 			assert(data.results, "no results");

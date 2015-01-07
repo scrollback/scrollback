@@ -1,9 +1,8 @@
 /* jslint browser: true, indent: 4, regexp: true*/
-
+/* global require*/
 
 var config = require("../client-config.js");
 var host = config.server.protocol + config.server.host;
-var validate = require("../lib/validate.js");
 var iframeCount = 0,
 	widgets = {};
 
@@ -79,10 +78,6 @@ domReady(function() {
 function constructEmbed(options) {
 	var embed = {};
 
-	if (!validate(options.roomName)) {
-		console.log("Invalid room");
-		return;
-	}
 	embed.roomName = options.roomName;
 	embed.form = options.form || "toast";
 	if (options.nick) embed.nick = options.nick;
@@ -103,7 +98,7 @@ function addWidget(self) {
 	var iframe, options = self.options,
 		embed = self.embed, params = [];
 
-	["tab", "time"].forEach(function(ops) {
+	["tab", "time","dialog"].forEach(function(ops) {
 		if(embed[ops]) {
 			params.push(ops + "=" + embed[ops]);
 			delete embed[ops];
@@ -138,12 +133,14 @@ function scrollback(opts, callback) {
 	var widget = {},
 		ready, self = {
 			pendingCallbacks: {},
-			options: opts,
+			options: {},
 			state: {},
 			iframe: null,
 			embed: null,
 			config: config
 		};
+	
+	self.options = opts;
 	// for now atleast.
 	if (iframeCount >= 1) throw new Error("Error: Cannot have multiple widgets on the same page.");
 
@@ -151,7 +148,6 @@ function scrollback(opts, callback) {
 	self.membership = [];
 	self.emit = function(type, data, cb) {
 		var post = {};
-		console.log("Emit called");
 		post.id = guid();
 		post.type = type;
 		post.data = data;
@@ -159,10 +155,10 @@ function scrollback(opts, callback) {
 		this.iframe.contentWindow.postMessage(JSON.stringify(post), host);
 		self.pendingCallbacks[post.id] = cb;
 	};
-//	widget.navigation = require("./navigation.js")(self);
-	widget.following = require("./following.js")(self);
+	widget.navigation = require("./navigation.js")(self);
+	/*widget.following = require("./following.js")(self);
 	widget.options = require("./options.js")(self);
-	widget.signin = require("./signin.js")(self);
+	widget.signin = require("./signin.js")(self);*/
 	self.widget = widget;
 
 	self.iframe = addWidget(self);
@@ -207,7 +203,6 @@ function scrollback(opts, callback) {
 			else this.pendingCallbacks[message.id](null, message);
 		}
 	};
-	return widget;
 }
 
 
