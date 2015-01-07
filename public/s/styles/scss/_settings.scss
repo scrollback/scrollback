@@ -38,7 +38,7 @@ $bar-height: 3.5em !default;
 $icon-font-path: "../../fonts";
 
 $settings: general, irc, twitter, threader, authorizer, requests, spam, seo, customization, embed, profile, email, notification !default;
-$modes: normal, search, conf, pref, home, noroom, profile !default;
+$modes: normal, room, chat, search, conf, pref, home, noroom, profile !default;
 $roles: guest, user, follower, owner !default;
 $embeds: toast, canvas !default;
 $medialist: normal, phonegap !default;

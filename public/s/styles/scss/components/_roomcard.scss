@@ -2,16 +2,12 @@
     $card-height: 12em;
 
     %ellipsize {
-        overflow: hidden;
+        overflow-x: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
 
     .room-card {
-        min-height: $card-height;
-        max-height: $card-height;
-        height: $card-height;
-
         &-header {
             @include flexbox;
             @include flex-direction(row);
@@ -29,7 +25,6 @@
                 font-size: 1.2em;
                 font-weight: 700;
                 padding: 0 (1em / 1.2);
-                line-height: 1em;
                 margin: 0;
             }
 
@@ -54,6 +49,8 @@
                 float: right;
                 margin-left: (.5em / .8);
                 margin-right: (.25em / .8);
+
+                &[data-empty] { display: none; };
             }
         }
 

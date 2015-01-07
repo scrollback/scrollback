@@ -18,7 +18,7 @@
             line-height: $bar-height / 1.2;
             font-size: 1.2em;
             margin: 0;
-            padding: 0 (.5em / 1.2);
+            padding: 0 (.25em / 1.2);
             height: 100%;
             max-width: 70%;
             overflow: hidden;
@@ -42,6 +42,8 @@
             padding: (1em / 1.5);
             color: inherit;
             height: 100%;
+
+            &-left { float: left; }
 
             &:hover, &:focus {
                 background-color: rgba(0,0,0,0.1);
