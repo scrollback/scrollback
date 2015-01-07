@@ -8,7 +8,7 @@ var desktopnotify = require("../ui/desktopnotify.js"),
 	$threadsTab = $(".tab-threads");
 
 $(".chat-input").on("click", function() {
-	if (!/^guest-/.test(libsb.user.id) || window.currentState.mode !== "normal") {
+	if (!/^guest-/.test(libsb.user.id) || window.currentState.mode !== "normal" || (window.currentState.embed && libsb.user.isSuggested)) {
 		return;
 	}
 
