@@ -36,12 +36,22 @@
 html, body { height: 100%; }
 
 body {
+    @include filter((
+        role: $roles,
+        webview: (),
+        embed: $embeds,
+        mode: $modes,
+        media: $medialist,
+        state: $states
+    ), ( role )); /* show hide elements based on filter */
+
     @include flexbox;
     @include flex-direction(row);
     @include flex-wrap(nowrap);
     @include align-items(flex-start);
 
-    height: 100%;
+    word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
+    overflow: hidden; /* fix overflow in firefox */
 }
 
 .column {
@@ -51,9 +61,9 @@ body {
 }
 
 .column-left {
-    min-width: 20em;
-    max-width: 20em;
-    width: 20em;
+    min-width: $width-sidebar;
+    max-width: $width-sidebar;
+    width: $width-sidebar;
 }
 
 .sidebar {
