@@ -1,14 +1,14 @@
 /* global module, require */
 var log = require("../../lib/logger.js");
-var config = require('../../config.js');
-var internalSessions = Object.keys(config.whitelists);
-var su = config.su;
+var config;
+var su;
 var user, room, types;
-module.exports = function (t) {
+module.exports = function (t, conf) {
+	config = conf;
 	types = t;
     room = types.rooms;
     user = types.users;
-
+	su = config.global.su;
     return {
         getUsers: function (query, cb) {
             var gateway, req = {};
@@ -115,9 +115,10 @@ module.exports = function (t) {
             } else {
                 room.put(newRoom, function (err /*, res*/ ) {
                     if (!action.old || !action.old.id) {
-                        if (internalSessions.indexOf(action.session) !== -1 || su[action.user.id]) { //if user is a super user do not create links
+                        if (/^internal/.test(action.session) || su[action.user.id]) { //if user is a super user do not create links
                             return cb();
                         }
+						
                         types.rooms.link(data.id, 'hasMember', action.user.id, {
                             role: "owner",
                             roleSince: new Date().getTime()

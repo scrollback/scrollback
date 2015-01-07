@@ -1,4 +1,3 @@
-/* jshint node:true */
 // Load plugins and declare variables
 var gulp = require("gulp"),
 	del = require("del"),
@@ -18,12 +17,12 @@ var gulp = require("gulp"),
 	striplogs = require("gulp-strip-debug"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
-	sass = require("gulp-ruby-sass"),
+	sass = require("gulp-sass"),
+	combinemq = require("gulp-combine-mq"),
 	autoprefixer = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
-	config = require("./config.js"),
-	clientConfig = require("./client-config.js"),
+	config = require("./server-config-defaults.js"),
 	debug = !(gutil.env.production || config.env === "production"),
 	dirs = {
 		bower: "bower_components",
@@ -34,12 +33,11 @@ var gulp = require("gulp"),
 	},
 	files = {
 		js: [
-			"*/*{.js,/**/*.js}",
-			"!*/*{.min.js,/**/*.min.js}",
-			"!node_modules{,/**}", "!bower_components{,/**}",
-			"!public/s/*{.js,/**/*.js}"
+			"**/*.js", "!**/*.min.js",
+			"!node_modules/**", "!bower_components/**",
+			"!public/s/**/*.js"
 		],
-		scss: [ "public/s/styles/scss/*.scss" ]
+		scss: [ "public/s/styles/scss/**/*.scss" ]
 	};
 
 // Make browserify bundle
@@ -49,8 +47,12 @@ function bundle(files, opts) {
 			opts.entries = "./" + file;
 
 			return browserify(opts).bundle()
-			.pipe(source(file.split(/[\\/]/).pop()))
-			.on("error", gutil.log);
+			.on("error", function(err) {
+				gutil.log(err);
+				// End the stream to prevent gulp from crashing
+				this.end();
+			})
+			.pipe(source(file.split(/[\\/]/).pop()));
 		};
 
 	opts = opts || {};
@@ -91,6 +93,31 @@ function prefix(str, arr, extra) {
 	return prefixed;
 }
 
+// Generate appcache manifest
+function genmanifest(files, platform) {
+	var filename = platform ? (platform + ".appcache") : "manifest.appcache";
+
+	return gulp.src(files)
+	.pipe(plumber())
+	.pipe(manifest({
+		basePath: "public",
+		cache: [
+			"//fonts.googleapis.com/css?family=Open+Sans:400,600",
+			"//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
+			"//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
+		],
+		network: [ "*" ],
+		fallback: [
+			"/socket /s/socket-fallback",
+			"/ /client.html" + (platform ? ("?platform=" + platform) : "")
+		],
+		preferOnline: true,
+		timestamp: true,
+		filename: filename
+	}))
+	.pipe(gulp.dest("public"));
+}
+
 // Lazy pipe for building scripts
 var buildscripts = lazypipe()
 	.pipe(plumber)
@@ -99,8 +126,10 @@ var buildscripts = lazypipe()
 
 // Install the GIT hooks
 gulp.task("hooks", function() {
-	return gulp.src([ ".git-hooks/pre-commit", ".git-hooks/post-merge" ])
-	.pipe(symlink([ ".git/hooks/pre-commit", ".git/hooks/post-merge" ], {
+	var hooks = [ "pre-commit", "post-merge" ];
+
+	return gulp.src(prefix(".git-hooks/", hooks))
+	.pipe(symlink(prefix(".git/hooks/", hooks), {
 		relative: true,
 		force: true
 	}));
@@ -116,8 +145,7 @@ gulp.task("lint", function() {
 	.pipe(gitmodified("modified"))
 	.pipe(jshint())
 	.pipe(jshint.reporter("jshint-stylish"))
-	.pipe(jshint.reporter("fail"))
-	.on("error", gutil.log);
+	.pipe(jshint.reporter("fail"));
 });
 
 // Install and copy third-party libraries
@@ -136,8 +164,7 @@ gulp.task("copylibs", [ "bower" ], function() {
 		"velocity/velocity.ui.min.js"
 	], "lib/post-message-polyfill.js"))
 	.pipe(plumber())
-	.pipe(gulp.dest(dirs.lib))
-	.on("error", gutil.log);
+	.pipe(gulp.dest(dirs.lib));
 });
 
 // Copy and minify polyfills
@@ -150,19 +177,17 @@ gulp.task("polyfills", [ "bower" ], function() {
 	.pipe(concat("polyfills.js"))
 	.pipe(gulp.dest(dirs.lib))
 	.pipe(rename({ suffix: ".min" }))
-	.pipe(gulp.dest(dirs.lib))
-	.on("error", gutil.log);
+	.pipe(gulp.dest(dirs.lib));
 });
 
 // Build browserify bundles
 gulp.task("bundle", [ "copylibs" ], function() {
-	return bundle([ "libsb.js", "client.js" ], { debug: true })
+	return bundle([ "client.js" ], { debug: true })
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
 	.pipe(sourcemaps.write("."))
-	.pipe(gulp.dest("public/s/scripts"))
-	.on("error", gutil.log);
+	.pipe(gulp.dest("public/s/scripts"));
 });
 
 // Generate embed widget script
@@ -174,8 +199,7 @@ gulp.task("embed-legacy", function() {
 	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
-	.pipe(gulp.dest("public"))
-	.on("error", gutil.log);
+	.pipe(gulp.dest("public"));
 });
 
 gulp.task("embed-apis", function() {
@@ -197,105 +221,60 @@ gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 gulp.task("lace", [ "bower" ], function() {
 	return gulp.src(dirs.bower + "/lace/src/scss/*.scss")
 	.pipe(plumber())
-	.pipe(gulp.dest(dirs.lace))
-	.on("error", gutil.log);
+	.pipe(gulp.dest(dirs.lace));
 });
 
 gulp.task("styles", [ "lace" ], function() {
-	return sass(dirs.scss, {
-		style: !debug ? "compressed" : "expanded",
-		lineNumbers: debug,
-		sourcemap: true
-	})
+	return gulp.src(files.scss)
 	.pipe(plumber())
+	.pipe(sourcemaps.init())
+	.pipe(sass({
+		outputStyle: "expanded",
+		lineNumbers: !gutil.env.production,
+		sourceMap: true
+	}))
+	.pipe(combinemq())
 	.pipe(!debug ? autoprefixer() : gutil.noop())
 	.pipe(!debug ? minify() : gutil.noop())
 	.pipe(sourcemaps.write("."))
-	.pipe(gulp.dest(dirs.css))
-	.on("error", gutil.log);
+	.pipe(gulp.dest(dirs.css));
 });
 
 // Generate appcache manifest file
-gulp.task("manifest", function() {
-	var protocol = clientConfig.server.protocol,
-		host = clientConfig.server.host,
-		domain = protocol + host;
 
-	return gulp.src(prefix("public/s/", [
-		"lib/jquery.min.js",
+gulp.task("client-manifest", function() {
+	return genmanifest(prefix("public/s/", [
+		"scripts/lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
 		"styles/dist/client.css",
 		"img/client/**/*"
-	]))
-	.pipe(manifest({
-		basePath: "public",
-		prefix: domain,
-		cache: [
-			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
-			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
-			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
-		],
-		network: [ "*" ],
-		fallback: [
-			domain + "/socket " + domain + "/s/socket-fallback",
-			domain + "/ " + domain + "/client.html"
-		],
-		preferOnline: true,
-		timestamp: true,
-		filename: "manifest.appcache"
-	}))
-	.pipe(gulp.dest("public"))
-	.on("error", gutil.log);
+	]));
 });
 
-gulp.task("cordova-manifest", function() {
-	var protocol = clientConfig.server.protocol,
-		host = clientConfig.server.host,
-		domain = protocol + host;
-
-	return gulp.src(prefix("public/s/", [
+gulp.task("android-manifest", function() {
+	return genmanifest(prefix("public/s/", [
 		"phonegap/**/*",
-		"lib/jquery.min.js",
+		"scripts/lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
 		"styles/dist/client.css",
 		"img/client/**/*"
-	]))
-	.pipe(manifest({
-		basePath: "public",
-		prefix: domain,
-		cache: [
-			protocol + "//fonts.googleapis.com/css?family=Open+Sans:400,600",
-			protocol + "//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
-			protocol + "//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
-		],
-		network: [ "*" ],
-		fallback: [
-			domain + "/socket " + domain + "/s/socket-fallback?platform=android",
-			domain + "/ " + domain + "/client.html?platform=android"
-		],
-		preferOnline: true,
-		timestamp: true,
-		filename: "cordova.appcache"
-	}))
-	.pipe(gulp.dest("public"))
-	.on("error", gutil.log);
+	]), "android");
 });
+
+gulp.task("manifest", [ "client-manifest", "android-manifest" ]);
 
 // Clean up generated files
 gulp.task("clean", function() {
-	return del([
-		"public/{*.map,**/*.map}",
-		"public/{*.min.js,**/*.min.js}",
-		"public/{*.bundle.js,**/*.bundle.js}",
-		"public/{*.appcache,**/*.appcache}",
-		dirs.lib, dirs.css, dirs.lace
-	]);
+	return del(prefix("public/", [
+		"**/*.map", "**/*.min.js",
+		"**/*.bundle.js", "**/*.appcache}"
+	], dirs.lib, dirs.css, dirs.lace));
 });
 
 gulp.task("watch", function() {
-	gulp.watch(files.js, [ "scripts", "manifest", "cordova-manifest" ]);
-	gulp.watch(files.scss, [ "styles", "manifest", "cordova-manifest" ]);
+	gulp.watch(files.js, [ "scripts", "manifest" ]);
+	gulp.watch(files.scss, [ "styles", "manifest" ]);
 });
 
 // Default Task
-gulp.task("default", [ "lint", "scripts", "styles", "manifest", "cordova-manifest" ]);
+gulp.task("default", [ "lint", "scripts", "styles", "manifest" ]);

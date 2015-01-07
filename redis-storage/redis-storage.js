@@ -1,14 +1,15 @@
-var config = require("../config.js");
-//var log = require("../lib/logger.js");
-//var config = require('../../config.js');
-var occupantDB = require('../lib/redisProxy.js').select(config.redisDB.occupants);
-var userDB = require('../lib/redisProxy.js').select(config.redisDB.user);
-var roomDB = require('../lib/redisProxy.js').select(config.redisDB.room);
-var core;
-module.exports = function(c) {
+var config, occupantDB, userDB, roomDB, core;
+module.exports = function(c, conf) {
 	core = c;
-	require("./user.js")(core);
-	require("./session.js")(core);
+	config = conf;
+	occupantDB = require('redis').createClient();
+	occupantDB.select(config.occupantsDB);
+	userDB = require('redis').createClient();
+	userDB.select(config.userDB);
+	roomDB = require('redis').createClient();
+	roomDB.select(config.roomDB);
+	require("./user.js")(core, config);
+	require("./session.js")(core, config);
 	occupantDB.flushdb();
 	core.on("back", onBack, "storage");
 	core.on("away", onAway, "storage");

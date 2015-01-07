@@ -1,7 +1,6 @@
-var get = require("./get.js");
-var put = require("./put.js");
-
-module.exports = function(core) {
+module.exports = function(core, config) {
+	var get = require("./get.js")(config);
+	var put = require("./put.js")(config);
 
 	core.on('user', function(action, callback) {
 		if (/^guest-/.test(action.from)) {

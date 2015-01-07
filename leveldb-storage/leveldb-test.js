@@ -1,8 +1,8 @@
-/* global describe, before, it*/
+/* jshint mocha: true */
 var assert = require('assert');
+var config = require("../server-config-defaults.js");
 var fs = require('fs');
-var core = new(require('../lib/emitter.js'))();
-var config = require("../config.js");
+var core = new(require('ebus'))();
 var generate = require("../lib/generate.js");
 var time = 1398139968009,
 	id;
@@ -22,7 +22,9 @@ var deleteFolderRecursive = function(path) {
 	}
 };
 deleteFolderRecursive(path);
-config.leveldb.path = "data-test";
+
+config["leveldb-storage"].path = "data-test";
+config["leveldb-storage"].global = config.global;
 
 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++");
 console.log("+++++Text should be run after clearing the DB+++++");
@@ -31,7 +33,7 @@ describe("user and room action", function() {
 	before(function(done) {
 		this.timeout(10000);
 		setTimeout(done, 7000);
-		require("./leveldb-storage.js")(core);
+		require("./leveldb-storage.js")(core, config["leveldb-storage"]);
 	});
 
 	it("storing user harish", function(done) {
@@ -262,11 +264,14 @@ describe("get queries: ", function() {
 		core.emit("getRooms", {
 			hasMember: "harish"
 		}, function(err, data) {
+			var found = false;
 			assert(!err, "Error thrown");
 			assert(data, "no response");
 			assert(data.results[0], "empty results");
-			assert.equal(data.results[0].id, "scrollback", "empty results");
-			assert.equal(data.results.length, 1, "extra results returned");
+			data.results.forEach(function(obj) {
+				if(obj.id == "scrollback") found = true;
+			});
+			assert(found, "wrong results");
 			done();
 		});
 	});
@@ -301,7 +306,6 @@ describe("get queries: ", function() {
 			});
 			assert(ids.indexOf("scrollback") >= 0, "missing results");
 			assert(ids.indexOf("scrollbackteam2") >= 0, "missing results");
-			assert.equal(data.results.length, 2, "extra results returned");
 			done();
 		});
 	});
@@ -518,7 +522,6 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 			else if (i > count / 3) to = "nodejs";
 			else to = "scrollback";
 			x += 2000;
-
 			core.emit("text", {
 				id: (id = generate.uid()),
 				from: from,
@@ -540,7 +543,7 @@ describe("Threads: Add assertions to the validity of the data: ", function() {
 
 	it("query using id: ", function(done) {
 		core.emit("getThreads", {
-			ref: "thread48"
+			ref: "threadscrollback8"
 		}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");

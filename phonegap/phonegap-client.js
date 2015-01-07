@@ -1,7 +1,6 @@
 /* jshint browser:true */
 /* global libsb, $ */
-
-var config = require('../client-config.js');
+var config = require('../client-config-defaults.js');
 libsb.on("navigate", function(state, next) {
 
 	var regex;
@@ -9,7 +8,7 @@ libsb.on("navigate", function(state, next) {
 	if (state.phonegap && state.source === 'boot') {
 		regex = new RegExp("(^https?:" + config.server.host + ")(($)|(\/)).*");
 		window.openExternal = function openExternal(elem) {
-			window.open(elem.href, "_system");
+			window.open(elem.href, "_system", "location=yes");
 			return false;
 		};
 

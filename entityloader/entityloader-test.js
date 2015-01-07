@@ -1,8 +1,9 @@
 /* global describe, it*/
 var assert = require("assert");
-var core = new (require("ebus"))();
+var core = require("../test/mock-core.js")();
+var config = require("./server-config-defaults.js");
 require("../test/mock-storage.js")(core);
-require("./entityloader.js")(core);
+require("./entityloader.js")(core, config.entityloader);
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
 var names = gen.names;

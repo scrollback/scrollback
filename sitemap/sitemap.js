@@ -1,10 +1,8 @@
-var config = require('../config.js');
-var log = require("../lib/logger.js");
-//var redis = require('../lib/redisProxy.js').select(config.redisDB.sitemap);
-var core;
+var core, config;
 var fs = require('fs');
 var sitemapHtml;
-module.exports = function(coreObject) {
+module.exports = function(coreObject, conf) {
+	config = conf;
 	init();
 	core = coreObject;
 	core.on("http/init", function(payload, callback) {

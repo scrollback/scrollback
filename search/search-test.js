@@ -3,6 +3,7 @@ var assert = require("assert");
 var core = require("../test/mock-core.js")();
 var gen = require("../lib/generate.js");
 var search = require("./search.js");
+var config = require("../server-config-defaults.js");
 var guid = gen.uid;
 var names = gen.names;
 var msg = {
@@ -31,7 +32,7 @@ var room = {
 
 describe('search', function () {
     before(function (done) {
-        search(core);
+        search(core, config.search);
         this.timeout(15000);
         done();
     });

@@ -1,21 +1,27 @@
-var config = require('../config.js'),
-	redis = require('../lib/redisProxy.js').select(config.redisDB.threader),
+var config, redis,
 	log = require("../lib/logger.js");
 
-module.exports = function(message, callback) {
-	return function () {
-		var isNewThread = addThread(message);
-		addLabel(message);
-		if (message.labels.startOfThread && isNewThread) {
-			atomicIncAndGet(message, function(color) {
-				message.threads[0].id = message.threads[0].id + color;
-				callback();
-			});
-		} else callback();
+module.exports = init;
+
+
+function init(redisObj, conf) {
+	redis = redisObj;
+	config = conf;
+	
+	return function(message,callback) {
+		return function () {
+			var isNewThread = addThread(message);
+			addLabel(message);
+			if (message.labels.startOfThread && isNewThread) {
+				atomicIncAndGet(message, function(color) {
+					message.threads[0].id = message.threads[0].id + color;
+					callback();
+				});
+			} else callback();
+		};
 	};
-};
 
-
+}
 function atomicIncAndGet(message, callback) {
 	redis.incr("threader:" + message.to + ":color", function(err, num) {
 		var c = parseInt(num);

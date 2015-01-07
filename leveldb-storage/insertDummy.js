@@ -1,7 +1,9 @@
-var core = require('../lib/emitter.js');
+
+var config = require("./server-config-defaults.js");
 var generate = require("../lib/generate.js");
 require("./leveldb-storage.js")(core);
 
+var core = new (require('ebus'))(config.appPriorities);
 core.emit("user", {
 	id: generate.uid(),
 	type: "user",

@@ -5,11 +5,11 @@
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
 
-var config = require('../client-config.js');
+var config = require('../client-config-defaults.js');
 var pushNotification, regId;
 var userObj, registrationID;
 
-document.addEventListener('deviceready', registerPushNotification, false);
+libsb.on('init-dn', registerPushNotification, 500);
 
 libsb.on('logout', unregisterPushNotification, 500);
 
@@ -69,10 +69,13 @@ window.onNotificationGCM = function(e) {
 	}
 };
 
-function registerPushNotification() {
+function registerPushNotification(init, next) {
+	var user = init.user || libsb.user;
+	if (/^guest-/.test(user.id)) return next(); //don't register users for pushNotifications, if they are not logged in.
+	
 	pushNotification = window.plugins && window.plugins.pushNotification;
 	if (!pushNotification || typeof device === "undefined") {
-		return;
+		return next();
 	}
 
 	if (device.platform == 'android' || device.platform == 'Android') {
@@ -82,6 +85,7 @@ function registerPushNotification() {
 			"ecb": "onNotificationGCM"
 		});
 	}
+	return next();
 }
 
 function unregisterPushNotification(l, n) {

@@ -1,11 +1,11 @@
-var config = require("../config.js"),
+var config, log = require("../lib/logger.js"),
 	crypto = require('crypto'),
 	request = require("request"),
-	core,
-	internalSession = Object.keys(config.whitelists)[0];
+	core;
 
-module.exports = function (c) {
+module.exports = function(c, conf) {
 	core = c;
+	config = conf;
 	core.on("init", browserAuth, "authentication");
 };
 
@@ -13,10 +13,12 @@ function browserAuth(action, callback) {
 	var assertion;
 	if (action.response || !action.auth || !action.auth.browserid) return callback();
 	assertion = action.auth.browserid;
+	
+	log.d("assertion", assertion, config);
 	request.post("https://verifier.login.persona.org/verify", {
 		form: {
 			assertion: assertion,
-			audience: config.auth.audience
+			audience: config.audience
 		}
 	}, function(err, res, body) {
 		var identity;
@@ -39,7 +41,7 @@ function browserAuth(action, callback) {
 		identity = "mailto:" + body.email;
 		core.emit("getUsers", {
 			identity: identity,
-			session: internalSession
+			session: "internal-browserid-auth"
 		}, function(err, user) {
 			if (!user.results || user.results.length === 0) {
 				action.user = {};

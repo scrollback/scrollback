@@ -22,9 +22,9 @@ var express = require("express"),
 	http = require("http"),
 	https = require("https"),
 	fs = require("fs"),
-	config = require("../config.js");
+	config;
 
-exports.init = function() {
+function init() {
 	var app = express(),
 		srv, srvs;
 
@@ -52,7 +52,7 @@ exports.init = function() {
 
 	app.use(express.logger("AA/HTTP - [:date] :method :url :referrer :user-agent :status"));
 	app.use(express.compress());
-	app.use(express.static(__dirname + "/../" + config.http.home, {
+	app.use(express.static(__dirname + "/../" + config.home, {
 		maxAge: 86400000
 	}));
 
@@ -63,18 +63,27 @@ exports.init = function() {
 
 	srv = http.createServer(app);
 
-	srv.listen(config.http.port);
+	srv.listen(config.port);
 	app.httpServer = srv;
 
-	if (config.http.https) {
+	if (config.https) {
 		srvs = https.createServer({
-			key: fs.readFileSync(__dirname + "/../" + config.http.https.key),
-			cert: fs.readFileSync(__dirname + "/../" + config.http.https.cert),
-			ca: !config.http.https.ca || fs.readFileSync(__dirname + "/../" + config.http.https.ca)
+			key: fs.readFileSync(__dirname + "/../" + config.https.key),
+			cert: fs.readFileSync(__dirname + "/../" + config.https.cert),
+			ca: !config.https.ca || fs.readFileSync(__dirname + "/../" + config.https.ca)
 		}, app);
-		srvs.listen(config.http.https.port);
+		srvs.listen(config.https.port);
 		app.httpsServer = srvs;
 	}
 
 	return app;
+}
+
+
+
+module.exports = function(core, conf) {
+	config = conf;
+	return {
+		init: init
+	};
 };

@@ -33,7 +33,7 @@ module.exports = function (capabilities, options) {
 					assert.equal(t, roomName, "Room creation failed");
 					done();
 				});
-			}, ".js-create-room");
+			}, ".noroom-create-room-guest");
 		});
 
 		after(function(done) {
