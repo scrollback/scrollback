@@ -19,6 +19,6 @@
     "sockjs": "~0.3.4",
     "svg4everybody": "*",
     "transformie": "*",
-    "velocity": "~0.7.0"
+    "velocity": "~1.2.1"
   }
 }

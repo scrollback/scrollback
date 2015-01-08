@@ -160,8 +160,7 @@ gulp.task("copylibs", [ "bower" ], function() {
 		"lace/src/js/*.js",
 		"sockjs/sockjs.min.js",
 		"svg4everybody/svg4everybody.min.js",
-		"velocity/jquery.velocity.min.js",
-		"velocity/velocity.ui.min.js"
+		"velocity/velocity.min.js"
 	], "lib/post-message-polyfill.js"))
 	.pipe(plumber())
 	.pipe(gulp.dest(dirs.lib));
