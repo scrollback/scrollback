@@ -1,13 +1,13 @@
 /* jshint mocha: true */
 var assert = require('assert'),
-	crypto = require('crypto'),
 	core =new (require('ebus'))(),
-	generate = require("../lib/generate.js"),
-	storageUtils = require('./storage-utils.js'),
-	log = require("../lib/logger.js"),
-	storage = require('./storage.js'),
-	config = require('./../server-config-defaults.js'),
+	generate = require("../../lib/generate.js"),
+	storageUtils = require('./../storage-utils.js'),
+	log = require("../../lib/logger.js"),
+	storage = require('../storage.js'),
+	config = require('./../../server-config-defaults.js'),
 	pg = require('pg'),
+	utils = require('./utils.js'),
 	connString = "pg://" + config.storage.pg.username + ":" +
 	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
 	
@@ -23,7 +23,7 @@ describe("Storage Test.", function() {
 	});
 	
 	it("Insert new text message.", function(done) {
-		var msg = getNewTextMessage();
+		var msg = utils.getNewTextAction();
 		core.emit("text", msg, function() {
 			log("inserted message");
 			pg.connect(connString, function(err, client, cb) {
@@ -43,7 +43,7 @@ describe("Storage Test.", function() {
 	});
 	
 	it("Insert new text message. (Labels and tags)", function(done) {
-		var msg = getNewTextMessage();
+		var msg = utils.getNewTextAction();
 		msg.labels.abusive = 1;
 		msg.labels.hidden = 1;
 		msg.tags = ['abc'];
@@ -66,9 +66,9 @@ describe("Storage Test.", function() {
 	});
 	
 	it("Update Thread", function(done) {
-		var m1 = getNewTextMessage();
+		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
-			var m2 = getNewTextMessage();
+			var m2 = utils.getNewTextAction();
 			m2.threads = m1.threads;
 			delete m2.threads[0].title; // don't update title.
 			core.emit("text", m2, function() {
@@ -89,7 +89,7 @@ describe("Storage Test.", function() {
 	});	
 	
 	it("Edit (Edit text)", function(done) {
-		var m1 = getNewTextMessage();
+		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
 			var text = generate.sentence(11);
 			var edit = {
@@ -114,7 +114,7 @@ describe("Storage Test.", function() {
 	});
 	
 	it("Edit (Edit title)", function(done) {
-		var m1 = getNewTextMessage();
+		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
 			var text = generate.sentence(11);
 			var edit = {
@@ -139,7 +139,7 @@ describe("Storage Test.", function() {
 	});	
 	
 	it("Edit (labels text)", function(done) {
-		var m1 = getNewTextMessage();
+		var m1 = utils.getNewTextAction();
 		m1.labels.abusive = 1;
 		m1.labels.hidden = 1;
 		core.emit("text", m1, function() {
@@ -165,7 +165,7 @@ describe("Storage Test.", function() {
 	});	
 	
 	it("storing new user.", function(done) {
-		var user = getNewUser();
+		var user = utils.getNewUserAction();
 		core.emit("user", user, function(){
 			pg.connect(connString, function(err, client, cb) {
 				storageUtils.runQueries(client, 
@@ -183,9 +183,9 @@ describe("Storage Test.", function() {
 	});
 	
 	it("Update user.", function(done) {
-		var user = getNewUser();
+		var user = utils.getNewUserAction();
 		core.emit("user", user, function() {
-			var old = copy(user.user);
+			var old = utils.copy(user.user);
 			user.old = old;
 			user.user.description = generate.sentence(12);
 			core.emit("user", user, function() {
@@ -208,7 +208,7 @@ describe("Storage Test.", function() {
 	});
 	
 	it("storing new Room.", function(done) {
-		var room = getNewRoom();
+		var room = utils.getNewRoomAction();
 		core.emit("room", room, function(){
 			pg.connect(connString, function(err, client, cb) {
 				storageUtils.runQueries(client, 
@@ -226,9 +226,9 @@ describe("Storage Test.", function() {
 	});
 
 	it("Update room.", function(done) {
-		var room = getNewRoom();
+		var room = utils.getNewRoomAction();
 		core.emit("room", room, function() {
-			var old = copy(room.room);
+			var old = utils.copy(room.room);
 			room.old = old;
 			room.room.identities = room.room.identities.splice(0, 1);
 			core.emit("room", room, function() {
@@ -252,9 +252,9 @@ describe("Storage Test.", function() {
 	});
 	
 	it("Join room.", function(done) {
-		var relation = getRelationAction('join', 'follower');
-		var user = getNewUser();
-		var room = getNewRoom();
+		var relation = utils.getNewRelationAction('join', 'follower');
+		var user = utils.getNewUserAction();
+		var room = utils.getNewRoomAction();
 		user.user = relation.user;
 		room.room = relation.room;
 		core.emit("room", room, function() {
@@ -282,9 +282,9 @@ describe("Storage Test.", function() {
 	});
 	
 	it("part room.", function(done) {
-		var relation = getRelationAction('join', 'follower');
-		var user = getNewUser();
-		var room = getNewRoom();
+		var relation = utils.getNewRelationAction('join', 'follower');
+		var user = utils.getNewUserAction();
+		var room = utils.getNewRoomAction();
 		user.user = relation.user;
 		room.room = relation.room;
 		core.emit("room", room, function() {
@@ -314,87 +314,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
+	
+	
 });
 
-
-function getNewTextMessage() {
-	var id = generate.uid();
-	return {
-		id: (id),
-		from: generate.names(6),
-		to: generate.names(10),
-		text: generate.sentence(10),
-		labels: {},
-		threads: [{id: id + (3), title: generate.sentence(15)}],
-		time: new Date().getTime()
-	};
-}
-
-function getNewUser() {
-	var email = generate.names(15) + "@" + generate.names(6) +"." + generate.names(2);
-	return {
-		id: generate.uid(),
-		type: "user",
-		user: {
-			id: generate.names(8),
-			description: "this is me?",
-			type: "user",
-			timezone: 0,
-			picture: generatePick(email),
-			identities: ["mailto:" + email], 
-			params: {},
-			guides: {}
-		}
-	};
-}
-
-function getNewRoom() {
-	
-	return {
-		id: generate.uid(),
-		type:"room",
-		room: {
-			id: generate.names(9),
-			description: generate.sentence(10),
-			type:"room",
-			identities:["twitter://" + generate.names(10), generate.names(5) + "://" + generate.names(10)], 
-			params: {},
-			guides: {}
-		},
-		old: {}
-	};
-}
-
-
-function generatePick(id) {
-	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=identicon&s=48';
-}
-
-
-function copy(action) {
-	return JSON.parse(JSON.stringify(action));
-}
-
-function getRelationAction(type, userRole) {
-	var user = getNewUser().user;
-	var room = getNewRoom().room;
-	var victim;
-	var from = user.id;
-	if (type === 'admit' || type === 'expel') {
-		victim = getNewUser();
-	} 
-	var r = {
-		type: type,
-		id: generate.uid(),
-		role: userRole,
-		to: room.id,
-		victim: victim,
-		from: from,
-		session: generate.uid(),
-		resource: generate.uid(),
-		user: user,
-		room: room,
-		time: new Date().getTime()
-	};
-	return r;
-}

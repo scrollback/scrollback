@@ -1,0 +1,87 @@
+/* jshint mocha: true */
+var	crypto = require('crypto'),
+	generate = require("../../lib/generate.js"),
+	r = {};
+r.getNewTextAction = function getNewTextActions() {
+	var id = generate.uid();
+	return {
+		id: (id),
+		from: generate.names(6),
+		to: generate.names(10),
+		text: generate.sentence(10),
+		labels: {},
+		threads: [{id: id + (3), title: generate.sentence(15)}],
+		time: new Date().getTime()
+	};
+};
+
+r.getNewUserAction = function() {
+	var email = generate.names(15) + "@" + generate.names(6) +"." + generate.names(2);
+	return {
+		id: generate.uid(),
+		type: "user",
+		user: {
+			id: generate.names(8),
+			description: generate.sentence(14),
+			type: "user",
+			timezone: 0,
+			picture: generatePick(email),
+			identities: ["mailto:" + email], 
+			params: {},
+			guides: {}
+		}
+	};
+};
+
+r.getNewRoomAction = function(){
+
+	return {
+		id: generate.uid(),
+		type:"room",
+		room: {
+			id: generate.names(9),
+			description: generate.sentence(10),
+			type:"room",
+			identities:["twitter://" + generate.names(10), generate.names(5) + "://" + generate.names(10)], 
+			params: {},
+			guides: {}
+		},
+		old: {}
+	};
+};
+
+
+function generatePick(id) {
+	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=identicon&s=48';
+}
+
+
+r.copy = function (action) {
+	return JSON.parse(JSON.stringify(action));
+};
+
+r.getNewRelationAction = function(type, userRole) {
+	var user = r.getNewUserAction().user;
+	var room = r.getNewRoomAction().room;
+	var victim;
+	var from = user.id;
+	if (type === 'admit' || type === 'expel') {
+		victim = r.getNewUser();
+	} 
+	var ret = {
+		type: type,
+		id: generate.uid(),
+		role: userRole,
+		to: room.id,
+		victim: victim,
+		from: from,
+		session: generate.uid(),
+		resource: generate.uid(),
+		user: user,
+		room: room,
+		time: new Date().getTime()
+	};
+	return ret;
+};
+
+module.exports = r;
