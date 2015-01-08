@@ -10,6 +10,23 @@ module.exports = function(conf) {
 		config.pg.password + "@" + config.pg.server + "/" + config.pg.db;
 	
 	function get (q, cb) {
+		
+		var queries = storageUtils.transformsToQuery(q);
+		log.d("Queries:", queries);
+		pg.connect(getConnectionString(q.source), function(err, client, done) {
+			if (err) {
+				log("Unable to get Pool Connection Object: ", err, q);
+				return;
+			}
+			storageUtils.runQueries(client, queries, function(err, replies) {
+				log.d("Arguments", arguments);
+				done();
+				cb(err, replies);
+			});
+		});
+		
+		
+		/*log.d("Query:", q);
 		var sql = ['SELECT * FROM'], i;
 		
 		sql.push(name(q.sources[0]));
@@ -39,7 +56,7 @@ module.exports = function(conf) {
 				process.nextTick(function() { cb(err, results); });
 				done();
 			});
-		});
+		});*/
 	}
 	
 	function put (q, cb) {
@@ -137,6 +154,10 @@ function filtersql(filters) {
 	return sql;
 }
 
+/*
+	["col"
+*/
+
 function getConnectionString(/*source*/) {
 	return conString;
 	/*switch (source) {
@@ -152,7 +173,4 @@ function name() {
 }
 
 function escapeValue() {
-}
-
-function value() {
 }

@@ -20,13 +20,15 @@ module.exports = {
 
 function toQuery(transform) {
 	log.d("Transform type: ", transform);
-	if (transform.type === 'insert') {
-		return makeInsertQuery(transform);
-	} else if (transform.type === 'update') {
-		return makeUpdateQuery(transform);
-	} else if (transform.type === 'upsert') {
-		return makeUpsertQuery(transform);
+	var ret;
+	switch(transform.type) {
+		case 'insert': ret = makeInsertQuery(transform); break;
+		case 'update': ret = makeUpdateQuery(transform); break;
+		case 'upsert': ret = makeUpsertQuery(transform); break;
+		case 'select': ret = makeSelectQuery(transform); break;
+		
 	}
+	return ret;
 }
 
 function makeInsertQuery(transform, index) {
@@ -137,6 +139,50 @@ function getUpdateQuery(transform, i, isSource) {
 	sql.push(m.join(","));
 	log.d("sql: ", sql);
 
+	addFilters(transform, sql, values, i);
+
+	log.d("Sql:", sql);
+	return {
+		query: sql.join(" "),
+		values: values
+	};
+}
+/**
+1. select * from texts where time > 123456373 and "from"='roomname' and time > text.room.createTime && order by time desc limit 256 
+only non [hidden].
+2. select * from entities INNER JOIN relations on (relations.user=entities.id AND relations.role='follower' AND relations.user='russeved');
+
+if delete time is set.
+2. 
+*/
+function makeSelectQuery(transform) {
+	var sql = [], i = 1, values = [], t;
+	sql.push("SELECT");
+	t = [];
+	if (transform.select) {
+		transform.select.forEach(function(s) {
+			t.push(name(s));
+		});
+		sql.push(t.join(','));
+	} else {
+		sql.push("*");
+	}
+	sql.push("FROM");
+	/* adding source can have multiple source */
+	
+	sql.push(transform.source);
+	
+	/* added source */
+	addFilters(transform, sql, values, i);
+	
+	return {
+		query: sql.join(" "),
+		values: values
+	};
+	
+}
+
+function addFilters(transform, sql, values, i) {
 	var filters = [];
 	if (transform.filters && transform.filters.length) {
 		sql.push("WHERE");
@@ -151,14 +197,7 @@ function getUpdateQuery(transform, i, isSource) {
 		});
 		sql.push(filters.join(" AND "));
 	}
-
-	log.d("Sql:", sql);
-	return {
-		query: sql.join(" "),
-		values: values
-	};
 }
-
 
 function runQueries(client, queries, callback) {
 	function rollback(err, client, done) {

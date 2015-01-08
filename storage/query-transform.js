@@ -1,4 +1,12 @@
-function makeQuery() {
+var log = require('../lib/logger.js');
+/**
+select * from texts where time > 123456373 and "from"='roomname' and time > text.room.createTime && order by time desc limit 256 
+only non [hidden].
+ 
+if delete time is set.
+
+*/
+function makeQuery(type) {
 	function quantFilter(col, fob) {
 		var filters = this.filters;
 		
@@ -8,40 +16,40 @@ function makeQuery() {
 		}
 
 		['eq', 'neq', 'lt', 'lte', 'gt', 'gte'].forEach(function(op) {
-			if(fob.hasOwnProperty(op)) {
+			if (fob.hasOwnProperty(op)) {
 				filters.push([col, op, fob[op]]);
 				return;
 			}
 		});
 	}
 	
-	return { sources: [], filters: [], iterate: {
+	return { sources: [], type: type, filters: [], iterate: {
 		key: null, start: null, reverse: false, skip: 0, limit: 256
 	}, quantFilter: quantFilter };
 }
 
 // Content queries: texts, threads.
 
-exports.getTexts = exports.getThreads = function(iq) {
+exports.getTexts = exports.getThreads = function(query) {
 	var q = makeQuery();
-	q.sources.push(iq.type == 'getThreads'? 'threads': 'texts');
+	q.sources.push(query.type == 'getThreads'? 'threads': 'texts');
 	
-	if(iq.to) {
-		q.filters.push(["to", "eq", iq.to]);
+	if(query.to) {
+		q.filters.push(["to", "eq", query.to]);
 	}
 	
-	if(iq.thread && iq.type == 'getTexts') {
-		q.filters.push(["thread", "eq", iq.thread]);
+	if(query.thread && query.type === 'getTexts') {
+		q.filters.push(["thread", "eq", query.thread]);
 	}
 	
-	if(iq.label) {
-		q.filters.push(["label", "propgt", iq.label, 0.5]);
+	if(query.label) {
+		q.filters.push(["label", "propgt", query.label, 0.5]);
 	}
 	
-	if (iq.updateTime) {
+	if (query.updateTime) {
 		q.iterate.key = "updateTime";
-		q.iterate.start = iq.updateTime;
-	} else if (iq.type == 'getThreads' && iq.q) {
+		q.iterate.start = query.updateTime;
+	} else if (query.type == 'getThreads' && query.q) {
 //		TODO: TEXT SEARCH
 //		q.filters.push(["terms", "ts", iq.q]);
 //		q.iterate.key = ["tsrank" "terms", iq.q];
@@ -49,31 +57,36 @@ exports.getTexts = exports.getThreads = function(iq) {
 //		Maybe it won't go here at all.
 	} else {
 		q.iterate.key = "time";
-		q.iterate.start = iq.time || new Date().getTime();
+		q.iterate.start = query.time || new Date().getTime();
 	}
 	
-	if(iq.before) {
+	if(query.before) {
 		q.iterate.reverse = true;
-		q.iterate.limit = iq.before;
+		q.iterate.limit = query.before;
 	} else {
-		q.iterate.limit = iq.after || 256;
+		q.iterate.limit = query.after || 256;
 	}
-	
 	return q;
 };
 
 // Entity queries: rooms, users.
 
+/**
+select * from entities INNER JOIN relations on (relations.user=entities.id AND relations.role='follower' AND relations.user='russeved');
+*/
+
 exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
-	var q = makeQuery();
-	q.sources.push('entities');
+	var q = makeQuery('select'),
+		type = (iq.type === 'getEntities' ? undefined : (iq.type === 'getUsers' ? 'user' : 'room'));
 	
+	q.sources.push('entities');
+	q.source = "entities";
 	if (iq.ref) {
 		q.filters.push(["id", "eq", iq.ref]);
 	}
     
 	if (iq.type) {
-		q.filters.push(["type", "eq", iq.type]);
+		q.filters.push(["type", "eq", type]);
 	}
 	
     if (iq.identity) {
@@ -81,15 +94,14 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	}
 	
 	if (iq.memberOf) {
-		q.sources.push(['memberships', 'user']);
+		q.sources.push(['relations', 'user']);
 		q.filters.push(['room', 'eq', iq.memberOf]);
 	}
 	
 	if (iq.hasMember) {
-		q.sources.push(['memberships', 'room']);
+		q.sources.push(['relations', 'room']);
 		q.filters.push(['user', 'eq', iq.hasMember]);
 	}
-	
 	if (iq.timezone) q.quantFilter('timezone', iq.timezone);
 	if (iq.locale) q.quantFilter('locale', iq.locale);
 	if (iq.role) q.quantFilter('role', iq.role);
@@ -102,12 +114,12 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.iterate.start = iq.roleTime;
 	}
 	
-	if(iq.before) {
+	if (iq.before) {
 		q.iterate.reverse = true;
 		q.iterate.limit = iq.before;
 	} else {
 		q.iterate.limit = iq.after || 256;
 	}
-	
-	return q;
+	log.d("entities Query:", q);
+	return [q];
 };

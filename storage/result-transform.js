@@ -1,12 +1,13 @@
-exports.getTexts = function(texts) {
-	var i, l = texts.length, text, t;
+var log = require('../lib/logger.js');
+exports.getTexts = function(/*texts*/) {
+	/*var i, l = texts.length, text, t;
 	
 	for(i=0; i<l; i++) {
 		text = texts[i], t = {};
 		t[text.thread] = 1;
 		text.threads = [t];
 	};
-	return texts;
+	return texts;*/
 };
 
 exports.getThreads = function(threads) {
@@ -19,14 +20,32 @@ exports.getThreads = function(threads) {
 };
 
 exports.getRooms = exports.getUsers = exports.getEntities = function(entities) {
-	var i, l = entities.length, entity;
+	log.d("Entities: ", entities);
+	var results = [];
+	entities[0].rows.forEach(function(row) {
+		
+		var entity = {
+			id: row.id,
+			type: row.type,
+			createTime: row.createtime,
+			description: row.description,
+			identities: row.identities,
+			params: row.params,
+			guides: row.guides,
+			picture: row.picture,
+			timezone: row.timezone
+		};
+		results.push(entity);
+	});
 	
-	for(i=0; i<l; i++) {
+	//var i, l = entities.length, entity;
+	
+	/*for(i=0; i<l; i++) {
 		entity = entities[i];
 		if(entity.room) delete entity.room;
 		if(entity.user) delete entity.user;
-	}
+	}*/
 	
-	return entities;
+	return results;
 };
 

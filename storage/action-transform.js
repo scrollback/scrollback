@@ -89,6 +89,8 @@ exports.edit = function (edit) {
 	return puts;
 };
 
+
+/* TODO if delete time is set then update the type also.*/
 exports.room = exports.user = function (action) {
 	
 	var entity = action[action.type],

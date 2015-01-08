@@ -19,7 +19,7 @@ function putHandler(type) {
 		log.d("put: ", object);
 		pg.put(actionTr[type](object), function(err) {
 			if(err) next(err);
-			next();
+			else next();
 		});
 	};
 }
