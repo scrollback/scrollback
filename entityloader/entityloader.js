@@ -19,11 +19,12 @@ var handlers = {
 		callback();
 	},
 	init: function(action, callback) {
-		var wait = true;
+		var wait = true, userID = action.user.id;
 
+		if(action.old) userID = action.old.id;
 		core.emit("getRooms", {
 			id: uid(),
-			hasOccupant: action.user.id,
+			hasOccupant: userID,
 			session: action.session
 		}, function(err, rooms) {
 			if (err || !rooms || !rooms.results || !rooms.results.length) {
@@ -31,26 +32,28 @@ var handlers = {
 			} else {
 				action.occupantOf = rooms.results;
 			}
-
-			// if(isErr) return;
 			if (wait) wait = false;
 			else callback();
 		});
-
-		core.emit("getRooms", {
-			id: uid(),
-			hasMember: action.from,
-			session: action.session
-		}, function(err, rooms) {
-			if (err || !rooms || !rooms.results || !rooms.results.length) {
-				action.memberOf = [];
-			} else {
-				action.memberOf = rooms.results;
-			}
-			// if(isErr) return;
+		if(!utils.isGuest(userID)) {
+			core.emit("getRooms", {
+				id: uid(),
+				hasMember: action.from,
+				session: action.session
+			}, function(err, rooms) {
+				if (err || !rooms || !rooms.results || !rooms.results.length) {
+					action.memberOf = [];
+				} else {
+					action.memberOf = rooms.results;
+				}
+				if (wait) wait = false;
+				else callback();
+			});	
+		}else{
+			action.memberOf = [];
 			if (wait) wait = false;
 			else callback();
-		});
+		}
 	},
 	text: function(action, callback) {
 		var text = action.text;
@@ -222,6 +225,7 @@ function initHandler(action, callback) {
 				if (action.suggestedNick) {
 					action.user.isSuggested = true;
 					action.user.assignedBy = action.origin.domain;
+					action.user.requestedNick = action.suggestedNick;
 				}
 				return done();
 			});
@@ -229,13 +233,14 @@ function initHandler(action, callback) {
 			old = action.user = data.results[0];
 		}
 		function allowSuggested(user) {
-			if(user.isSuggested) return action.origin.domain === action.user.assignedBy;
+			if(user.isSuggested) return (action.origin.domain === action.user.assignedBy && action.suggestedNick != action.user.requestedNick);
 			else return true;
 		}
 		if (action.suggestedNick && utils.isGuest(action.user.id) && allowSuggested(data.results[0])) {
 			return initializerUser(action, function() {
 				action.user.isSuggested = true;
 				action.user.assignedBy = action.origin.domain;
+				action.user.requestedNick = action.suggestedNick;
 				action.old = old;
 				return done();
 			});
