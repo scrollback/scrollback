@@ -23,13 +23,16 @@ exports.getRooms = exports.getUsers = exports.getEntities = function(entities) {
 	log.d("Entities: ", entities);
 	var results = [];
 	entities[0].rows.forEach(function(row) {
-		
+		var identities = [];
+		row.identities.forEach(function(identity) {
+			identities.push(identity[1]);
+		});
 		var entity = {
 			id: row.id,
 			type: row.type,
 			createTime: row.createtime,
 			description: row.description,
-			identities: row.identities,
+			identities: identities,
 			params: row.params,
 			guides: row.guides,
 			picture: row.picture,

@@ -250,7 +250,7 @@ function getOperatorString(s) {
 		case 'cts': r = '@>'; break;
 		case 'ctd': r = '<@'; break;
 		case 'mts': r = '@@'; break;
-		default: throw new Error("Invalid string");
+		default: throw new Error("Invalid operator string: " + s);
 	}
 	return r;
 }

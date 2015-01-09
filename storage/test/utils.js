@@ -42,7 +42,7 @@ r.getNewRoomAction = function(){
 			id: generate.names(9),
 			description: generate.sentence(10),
 			type:"room",
-			identities:["twitter://" + generate.names(10), generate.names(5) + "://" + generate.names(10)], 
+			identities:[generate.names(6) + "://" + generate.names(10), generate.names(5) + "://" + generate.names(10)], 
 			params: {},
 			guides: {}
 		},
@@ -83,5 +83,30 @@ r.getNewRelationAction = function(type, userRole) {
 	};
 	return ret;
 };
+
+r.emitActions = function(core, actions, callback) {
+	var ct = 0;
+	var error;
+	var results = [];
+	for (var j = 0;j < actions.length;j++) results.push(null);
+	function done() {
+		if (++ct == actions.length) callback(error, results);
+	}
+	
+	function run(i) {
+		core.emit(actions[i].type, actions[i], function(err, reply) {
+			if (!err) {
+				results[i] = reply;
+				done();
+			}
+			else error = err;
+		});
+	}
+	for (j = 0; j < actions.length; j++) {
+		run(j);
+	}
+	
+};
+
 
 module.exports = r;

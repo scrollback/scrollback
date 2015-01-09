@@ -90,7 +90,8 @@ exports.edit = function (edit) {
 };
 
 
-/* TODO if delete time is set then update the type also.*/
+/* TODO 1. if delete time is set then update the type also.
+2. check if identities array is a set.*/
 exports.room = exports.user = function (action) {
 	
 	var entity = action[action.type],
@@ -102,7 +103,7 @@ exports.room = exports.user = function (action) {
 		picture: entity.picture,
 		createtime: entity.createTime,
 		identities: entity.identities.map(function(ident) {
-			return ident.split(':', 2);
+			return [ident.split(':', 2)[0], ident];
 		}),
 		timezone: entity.timezone, locale: entity.locale,
 		params: entity.params,

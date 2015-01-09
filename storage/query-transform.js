@@ -90,7 +90,12 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	}
 	
     if (iq.identity) {
-		q.filters.push('identities', 'cts', [iq.identity]);
+		q.filters.push(['identities', 'cts', [iq.identity]]);
+	}
+	
+	if (iq.timezone) {
+		if (typeof iq.timezone.gte === 'number') q.filters.push(['timezone', 'gte', iq.timezone.gte]);
+		if (typeof iq.timezone.lte === 'number') q.filters.push(['timezone', 'lte', iq.timezone.lte]);
 	}
 	
 	if (iq.memberOf) {
@@ -98,11 +103,12 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.filters.push(['room', 'eq', iq.memberOf]);
 	}
 	
+	
 	if (iq.hasMember) {
 		q.sources.push(['relations', 'room']);
 		q.filters.push(['user', 'eq', iq.hasMember]);
 	}
-	if (iq.timezone) q.quantFilter('timezone', iq.timezone);
+	
 	if (iq.locale) q.quantFilter('locale', iq.locale);
 	if (iq.role) q.quantFilter('role', iq.role);
 	
