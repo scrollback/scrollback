@@ -105,7 +105,7 @@ export PYTHON="python2.7"
 echo "Installing dependencies..."
 install_npm_modules="npm install -g gulp bower mocha"
 
-if [[ -w /usr/local/bin && -w /usr/local/bin ]]; then
+if [[ -w /usr/local/bin/ && -w /usr/local/lib/ ]]; then
     # Directory is writable, no need to use sudo
     ${install_npm_modules}
 else
