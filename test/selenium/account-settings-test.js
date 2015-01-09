@@ -55,7 +55,7 @@ module.exports = function(capabilities, options) {
 		it("account settings test(Email)", function(done) {
 			this.timeout(4 * timeOut);
 			console.log("testing for user area");
-			driver.findElement(webdriver.By.css('..main-area .user-area.js-has-user-menu')).click().
+			driver.findElement(webdriver.By.css('.main-area .user-area.js-has-user-menu')).click().
 			then(function() {
 				console.log("this is Email testing...");
 				return driver.findElement(webdriver.By.css('.userpref')).click();
