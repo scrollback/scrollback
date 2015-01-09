@@ -5,7 +5,7 @@ var core = new (require("ebus"))(config.appPriorities);
 
 // third party libraries
 require('./public/s/scripts/lib/sockjs.min.js');
-require('./public/s/scripts/lib/jquery.velocity.min.js');
+require('./public/s/scripts/lib/velocity.min.js');
 require('./public/s/scripts/lib/svg4everybody.min.js');
 
 require('./lib/jquery.setCursorEnd.js');
