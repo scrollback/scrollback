@@ -1,5 +1,5 @@
-@include exports("roomcard") {
-    $card-height: 12em;
+@include exports("card") {
+    $card-height: 12.5em;
 
     %ellipsize {
         overflow-x: hidden;
@@ -7,7 +7,7 @@
         text-overflow: ellipsis;
     }
 
-    .room-card {
+    .card {
         &-header {
             @include flexbox;
             @include flex-direction(row);
@@ -22,17 +22,24 @@
                 @include flex-grow(1);
                 @extend %ellipsize;
 
-                font-size: 1.2em;
+                font-size: 1em;
                 font-weight: 700;
-                padding: 0 (1em / 1.2);
+                padding: 0 1em;
                 margin: 0;
             }
 
             &-icon {
+                $icon-width: $bar-height / 1.5;
+
+                @include flex-grow(1);
+
                 font-size: 1.5em;
                 padding: (1em / 1.5);
                 color: inherit;
                 height: 100%;
+                width: $icon-width;
+                min-width: $icon-width;
+                max-width: $icon-width;
 
                 &:hover, &:focus {
                     background-color: rgba(0,0,0,0.1);
@@ -60,16 +67,30 @@
             overflow: hidden;
         }
 
-        &-discussion {
+        &-chat {
             @extend %ellipsize;
 
+            line-height: 2;
+
             &-nick {
-                color: $accent-color;
                 font-weight: 700;
-                margin-right: .25em;
+                opacity: 0.8;
+
+                &:after {
+                    content: ":";
+                    font-weight: 400;
+                    margin: 0 .25em;
+                }
             }
 
-            &-message { opacity: 0.8; }
+            &-message { opacity: 0.6; }
+        }
+    }
+
+    .room-card {
+        .card-header-title {
+            font-size: 1.2em;
+            padding: 0 (1em / 1.2);
         }
     }
 }

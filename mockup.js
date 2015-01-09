@@ -8,7 +8,7 @@ var config = require("./client-config-defaults.js"),
     libsb = require('./interface/interface-client')(core),
     generate = require('./lib/generate.js'),
     View = require("./mockup/view.js"),
-    Roomcard = require("./mockup/roomcard.js");
+    Card = require("./mockup/card.js");
 
 function addRooms() {
     var listgrid = new View({ type: "listgrid" }),
@@ -18,10 +18,11 @@ function addRooms() {
     for (var i = 0, l = headers.length; i < l; i++) {
         listgrid.addHeader(headers[i]);
 
-        for (var j = 0; j < 12; j++) {
-            card = new Roomcard({
-                id: generate.names(Math.floor(Math.random() * 7) + 3)
-            });
+        for (var j = 0; j < 5; j++) {
+            card = new Card({
+                id: generate.names(Math.floor(Math.random() * 7) + 3),
+                color: "#" + Math.floor(Math.random() * 16777215).toString(16)
+            }, "room");
 
             for (var k = 0; k < 5; k++) {
                 card.addMessage({
@@ -44,9 +45,11 @@ function addDiscussions() {
         card;
 
     for (var j = 0; j < 12; j++) {
-        card = new Roomcard({
-            id: generate.names(Math.floor(Math.random() * 7) + 3)
-        });
+        card = new Card({
+            title: generate.sentence(Math.floor(Math.random() * 7) + 3),
+            id: generate.names(Math.floor(Math.random() * 7) + 3),
+            color: "#" + Math.floor(Math.random() * 16777215).toString(16)
+        }, "discussion");
 
         for (var k = 0; k < 5; k++) {
             card.addMessage({
@@ -54,8 +57,6 @@ function addDiscussions() {
                 text: generate.sentence(Math.floor(Math.random() * 17) + 3)
             });
         }
-
-        card.setCount("mention", Math.round(Math.random() * 100)).setCount("message", Math.round(Math.random() * 100));
 
         grid.addItem(card.element);
     }
@@ -113,7 +114,11 @@ $(function() {
         libsb.emit("navigate", { view: null });
     });
 
-    $(document).on("click", ".room-card", function() {
+    $(document).on("click", ".room-card", function(e) {
+        if ($(e.target).closest(".action-room-more").length) {
+            return;
+        }
+
         libsb.emit("navigate", {
             mode: "room",
             roomName: $(this).attr("data-room")

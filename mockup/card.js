@@ -1,14 +1,18 @@
 /* jshint browser: true */
 /* global $ */
 
-var Roomcard = function(room) {
-    if (typeof room !== "object") {
-        throw new Error("Invalid room object");
+function Card(opts, type) {
+    if (typeof opts !== "object") {
+        throw new Error("Invalid options passed");
     }
 
-    if (typeof room.id !== "string") {
-        throw new Error("Invalid room name");
+    if (typeof opts.title !== "string" && typeof opts.id !== "string") {
+        throw new Error("Invalid title passed");
     }
+
+    this._title = $('<h3 class="card-header-title">').css(opts.color ? {
+        color: opts.color
+    } : {}).text(opts.title || opts.id);
 
     this._mentioncount = $('<span class="notification-badge-count">');
     this._mentionbadge = $('<span class="card-header-badge notification-badge notification-badge-mention">').attr("data-empty", "").append(this._mentioncount);
@@ -18,23 +22,30 @@ var Roomcard = function(room) {
         this._messagecount
     );
 
-    this.more = $('<a class="action-room-more card-header-icon card-header-icon-more icon-navigation-more-vert">');
+    this.more = $('<a class="card-header-icon card-header-icon-more icon-navigation-more-vert' + (type ? ' action-' + type + '-more' : '') + '">');
 
-    this.element = $('<div class="room-card card">').append(
+    this.element = $('<div class="card' + (type ? ' ' + type + '-card' : '') + '">').append(
         $('<div class="card-header">').append(
-            $('<h3 class="card-header-title">').css({
-                color: "#" + Math.floor(Math.random() * 16777215).toString(16)
-            }).text(room.id),
+            this._title,
             this._mentionbadge,
             this._messagebadge,
             this.more
         )
-    ).attr("data-room", room.id);
+    );
 
-    this.room = room;
-};
+    this.id = opts.id;
+}
 
-Roomcard.prototype = {
+Card.prototype = {
+    setTitle: function(text) {
+        if (typeof text !== "string") {
+            throw new Error("Invalid title specified");
+        }
+
+        this._title.text(text);
+
+        return this;
+    },
     setCount: function(type, text) {
         var $badge;
 
@@ -87,4 +98,4 @@ Roomcard.prototype = {
     }
 };
 
-module.exports = Roomcard;
+module.exports = Card;

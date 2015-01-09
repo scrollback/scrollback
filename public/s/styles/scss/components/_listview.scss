@@ -10,7 +10,7 @@
     @include dropshadow(1);
 
     background-color: $light-color;
-    border: 1px solid rgba(0,0,0,0.15);
+    border: 1px solid transparent; // otherwise bottom padding is lost on chrome
     list-style: none;
     border-radius: $roundness;
 }

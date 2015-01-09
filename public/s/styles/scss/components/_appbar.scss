@@ -37,11 +37,16 @@
         }
 
         &-icon {
+            $icon-width: $bar-height / 1.5;
+
             float: right;
             font-size: 1.5em;
             padding: (1em / 1.5);
             color: inherit;
             height: 100%;
+            width: $icon-width;
+            min-width: $icon-width;
+            max-width: $icon-width;
 
             &-left { float: left; }
 

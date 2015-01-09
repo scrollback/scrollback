@@ -1,8 +1,11 @@
 @include exports(badge) {
+    $badge-messages: #71c8ff;
+    $badge-mentions: #ff8d8d;
+
     .notification-badge {
         position: relative;
         padding: (.5em / .8);
-        background-color: $accent-color;
+        background-color: $badge-messages;
         color: $light-color;
         border-radius: (1em / .8);
         font-size: .8em;
@@ -13,7 +16,7 @@
         &-count { margin: 0 (.25em / .8); }
 
         &-mention {
-            background-color: $error-color;
+            background-color: $badge-mentions;
 
             &:before {
                 content: "@";

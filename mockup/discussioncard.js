@@ -1,14 +1,20 @@
 /* jshint browser: true */
 /* global $ */
 
-var Roomcard = function(room) {
-    if (typeof room !== "object") {
-        throw new Error("Invalid room object");
+var Card = require("./card.js");
+
+function Discussioncard = function(opts) {
+    if (typeof opts !== "object") {
+        throw new Error("Invalid options passed");
     }
 
-    if (typeof room.id !== "string") {
-        throw new Error("Invalid room name");
+    if (typeof opts.title !== "string") {
+        throw new Error("Invalid discussion title");
     }
+
+    this._title = $('<h3 class="card-header-title">').css({
+        color: "#" + Math.floor(Math.random() * 16777215).toString(16)
+    }).text(opts.title);
 
     this._mentioncount = $('<span class="notification-badge-count">');
     this._mentionbadge = $('<span class="card-header-badge notification-badge notification-badge-mention">').attr("data-empty", "").append(this._mentioncount);
@@ -18,43 +24,28 @@ var Roomcard = function(room) {
         this._messagecount
     );
 
-    this.more = $('<a class="action-room-more card-header-icon card-header-icon-more icon-navigation-more-vert">');
+    this.more = $('<a class="action-discussion-more card-header-icon-more card-header-icon icon-navigation-more-vert">');
 
-    this.element = $('<div class="room-card card">').append(
+    this.element = $('<div class="discussion-card card">').append(
         $('<div class="card-header">').append(
-            $('<h3 class="card-header-title">').css({
-                color: "#" + Math.floor(Math.random() * 16777215).toString(16)
-            }).text(room.id),
+            this._title,
             this._mentionbadge,
             this._messagebadge,
             this.more
         )
-    ).attr("data-room", room.id);
+    ).attr("data-discussion", opts.id);
 
-    this.room = room;
+    this.discussion = opts.title;
+    this.id = opts.id;
 };
 
-Roomcard.prototype = {
-    setCount: function(type, text) {
-        var $badge;
-
-        if (typeof type !== "string" || !this["_" + type + "count"]) {
-            throw new Error("Invalid property specified");
+Discussioncard.prototype = {
+    setTitle: function(text) {
+        if (typeof text !== "string") {
+            throw new Error("Invalid title specified");
         }
 
-        if (typeof text !== "string" && typeof text !== "number") {
-            throw new Error("Invalid value");
-        }
-
-        $badge = this["_" + type + "badge"];
-
-        if (text) {
-            $badge.removeAttr("data-empty");
-        } else {
-            $badge.attr("data-empty", true);
-        }
-
-        this["_" + type + "count"].text(text);
+        this._title.text(text);
 
         return this;
     },
@@ -87,4 +78,4 @@ Roomcard.prototype = {
     }
 };
 
-module.exports = Roomcard;
+module.exports = Discussioncard;

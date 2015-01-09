@@ -22,8 +22,8 @@
     width: 100%;
     margin: .5em;
     background-color: $light-color;
-    border: 1px solid rgba(0,0,0,0.15);
     border-radius: $roundness;
+    overflow: hidden;
 
     $item-width: 27em;
 
