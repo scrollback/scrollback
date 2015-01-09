@@ -21,8 +21,7 @@ module.exports = function(capabilities, options) {
 		it("account settings test(profile)", function(done) {
 			this.timeout(4 * timeOut);
 			console.log("testing for user area");
-
-			driver.findElement(webdriver.By.css('.user-area')).click().
+			driver.findElement(webdriver.By.css('.main-area .user-area.js-has-user-menu')).click().
 			then(function() {
 				console.log("this is profile testing...");
 				return driver.findElement(webdriver.By.css('.userpref')).click();
@@ -37,7 +36,7 @@ module.exports = function(capabilities, options) {
 			}).then(function() {
 				return q.delay(1000);
 			}).then(function() {
-				return driver.findElement(webdriver.By.css('.user-area')).click();
+				return driver.findElement(webdriver.By.css('.main-area .user-area.js-has-user-menu')).click();
 			}).then(function() {
 				return driver.findElement(webdriver.By.css('.userpref')).click();
 			}).then(function() {
@@ -56,7 +55,7 @@ module.exports = function(capabilities, options) {
 		it("account settings test(Email)", function(done) {
 			this.timeout(4 * timeOut);
 			console.log("testing for user area");
-			driver.findElement(webdriver.By.css('.user-area')).click().
+			driver.findElement(webdriver.By.css('..main-area .user-area.js-has-user-menu')).click().
 			then(function() {
 				console.log("this is Email testing...");
 				return driver.findElement(webdriver.By.css('.userpref')).click();
@@ -69,7 +68,8 @@ module.exports = function(capabilities, options) {
 			}).then(function() {
 				return q.delay(3000);
 			}).then(function() {
-				return driver.findElement(webdriver.By.css(".sb-user")).isDisplayed();
+				return driver.findElement(webdriver.By.css(".main-area .user-area.js-has-user-menu"))
+				.isDisplayed();
 			}).then(function(t) {
 				assert.equal(t, true, "saving unsuccessful");
 				done();
