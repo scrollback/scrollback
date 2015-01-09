@@ -23,10 +23,8 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" || "$distro" = "Arch Linux" ]
             --cancel-button "Skip" \
             --notags 15 40 5 \
             git "GIT version control" on \
-            sass "Sass preprocessor" on \
             nodejs "Node.js" on \
-            redis "Redis server" on \
-            libcap "Constrain capability" on 3>&1 1>&2 2>&3))
+            redis "Redis server" on 3>&1 1>&2 2>&3))
 
     # Update the sources list in Ubuntu
     [[ "$distro" = "Ubuntu" ]] && sudo apt-get update
@@ -46,26 +44,6 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" || "$distro" = "Arch Linux" ]
                     Arch)
                         sudo pacman -S --needed --noconfirm git;;
                 esac;;
-            sass)
-                case "$distro" in
-                    Ubuntu)
-                        sudo apt-get install -y ruby;;
-                    Fedora)
-                        sudo yum install -y rubygems;;
-                    Arch)
-                        sudo pacman -S --needed --noconfirm ruby;;
-                esac
-                # Add the gem installation directory to path
-                gempath="\$(ruby -rubygems -e 'puts Gem.user_dir')/bin"
-                grep "$gempath" "${HOME}/.bashrc" > /dev/null 2>&1
-                [[ $? -eq 0 ]] || echo PATH="\"${gempath}:\${PATH}\"" >> "${HOME}/.bashrc"
-                # Install sass
-                if [[ -w /usr/local/bin ]]; then
-                    # Directory is writable, no need to use sudo
-                    gem install sass
-                else
-                    sudo gem install sass
-                fi;;
             nodejs)
                 case "$distro" in
                     Ubuntu)
@@ -92,17 +70,6 @@ if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" || "$distro" = "Arch Linux" ]
                     Arch)
                         sudo pacman -S --needed --noconfirm redis;;
                 esac;;
-            libcap)
-                case "$distro" in
-                    Ubuntu)
-                        sudo apt-get install -y libcap2-bin;;
-                    Fedora)
-                        sudo yum install -y libcap;;
-                    Arch)
-                        sudo pacman -S --needed --noconfirm libcap;;
-                esac
-                # Set caps
-                sudo setcap "cap_net_bind_service=+ep" "$(readlink -f /usr/bin/node)";;
         esac
     done
 else
@@ -136,9 +103,9 @@ export PYTHON="python2.7"
 
 # Install various dependencies for scrollback
 echo "Installing dependencies..."
-install_npm_modules="npm install -g gulp bower forever"
+install_npm_modules="npm install -g gulp bower mocha"
 
-if [[ -w /usr/local/bin ]]; then
+if [[ -w /usr/local/bin && -w /usr/local/bin ]]; then
     # Directory is writable, no need to use sudo
     ${install_npm_modules}
 else
