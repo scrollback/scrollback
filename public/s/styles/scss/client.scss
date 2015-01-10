@@ -783,7 +783,7 @@ body {
     height: $bar-height;
     width: 100%;
     z-index: 20;
-    overflow-x: hidden;
+    overflow: hidden; // overflow-x hidden causes vertical scrollbar to appear
     white-space: nowrap;
     text-overflow: ellipsis;
     background-color: darken($light-color, 5%);
