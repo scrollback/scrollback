@@ -1,7 +1,7 @@
 {
     "language": {
         "javascript": {
-            "linting.prefer": "JSHint",
+            "linting.prefer": [ "JSHint", "JSCS" ],
             "linting.usePreferredOnly": true
         }
     }
