@@ -131,7 +131,6 @@ sock.on('connection', function(socket) {
 				if (data.old) {
 					data.occupantOf.forEach(function(e) {
 						var role, i, l;
-
 						for (i = 0, l = data.memberOf.length; i < l; i++) {
 							if (data.memberOf[i].id == e.id) {
 								role = data.memberOf[i].role;
