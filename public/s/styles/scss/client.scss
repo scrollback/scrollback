@@ -1324,6 +1324,12 @@ body {
     }
 }
 
+.emoji {
+   height: 1em;
+   width: 1em;
+   vertical-align: -.1em;
+}
+
 @mixin missing($bg) {
     background-color: darken($bg, 5%);
 
@@ -1610,13 +1616,6 @@ $dotshadow: fade-out($accent-color, .6);
             &:hover, &:focus, &:active { fill: darken($color, 10%); }
         }
     }
-}
-
-img.emoji {
-   height: 1em;
-   width: 1em;
-   margin: 0 .05em 0 .1em;
-   vertical-align: -0.1em;
 }
 
 .conf-area, .pref-area {
