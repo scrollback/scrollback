@@ -1267,16 +1267,18 @@ body {
         .chat-timestamp { display: inline-block; }
     }
 
-    a {
-        &:hover, &:focus, &:active { text-decoration: underline; }
-    }
-
-    // oEmbed stuff
+    // Embed stuff
     iframe, embed {
         display: block;
         margin: .5em 0;
         max-width: 100%;
         max-height: auto;
+    }
+}
+
+.markdown-text {
+    a {
+        &:hover, &:focus, &:active { text-decoration: underline; }
     }
 
     // Markdown stuff
