@@ -109,8 +109,6 @@ body {
                 z-index: 100;
                 box-shadow: 3px 0 6px rgba(0,0,0,0.16);
             }
-
-            .list-view { font-size: .9em; }
         }
     }
 
@@ -150,6 +148,10 @@ body {
         }
     }
 
+    @media #{$screenxxx} {
+        .list-view { font-size: .9em; }
+    }
+
     .list-content {
         background-color: transparent;
         box-shadow: none;
@@ -168,6 +170,26 @@ body {
         .action-sidebar-left-open { display: none; }
 
         .appbar-title { margin-left: 1em; }
+    }
+}
+
+.people-list-item {
+    padding: .5em;
+
+    &-avatar {
+        float: left;
+        display: block;
+        margin: .5em;
+        height: $bar-height - 1em;
+        width: $bar-height - 1em;
+        border-radius: 50%;
+    }
+
+
+    &-nick {
+        font-weight: 700;
+        line-height: $bar-height;
+        margin: 0 .5em;
     }
 }
 
