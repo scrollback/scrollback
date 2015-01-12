@@ -8,7 +8,7 @@ function getHandler(type) {
 	return function(query, next) {
 		pg.get(queryTr[type](query), function(err, results) {
 			if(err) return next(err);
-			query.results = resultTr[type](results);
+			query.results = resultTr[type](results); // reply of run queries is passed here.
 			next();
 		});
 	};

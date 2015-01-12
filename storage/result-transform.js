@@ -1,13 +1,28 @@
 var log = require('../lib/logger.js');
-exports.getTexts = function(/*texts*/) {
-	/*var i, l = texts.length, text, t;
-	
-	for(i=0; i<l; i++) {
-		text = texts[i], t = {};
-		t[text.thread] = 1;
-		text.threads = [t];
-	};
-	return texts;*/
+exports.getTexts = function(texts) {
+	var results = [];
+	texts[0].rows.forEach(function(row) {
+		var labels = {};
+		row.tags.forEach(function(tag) {
+			labels[tag] = 1;
+		});
+		var text = {
+			id: row.id, 
+			to: row.to,
+			from: row.from,
+			text: row.text,
+			type: row.type,
+			thread: row.thread,
+			title: row.title,
+			tags: row.tags,
+			threads: [{id: row.thread, title: row.title, score: 1}], // backward compatibility
+			labels: labels, // backward compatibility
+			mentions: row.mentions,
+			time: row.time
+		};
+		results.push(text);
+	});
+	return results;	
 };
 
 exports.getThreads = function(threads) {

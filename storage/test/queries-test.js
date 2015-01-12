@@ -4,13 +4,12 @@ var assert = require('assert'),
 	core = new (require('ebus'))(),
 	mathUtils = require('../../lib/mathUtils.js'),
 	//generate = require("../../lib/generate.js"),
-	//storageUtils = require('./../storage-utils.js'),
 	log = require("../../lib/logger.js"),
 	storage = require('./../storage.js'),
-	config = require('./../../server-config-defaults.js');
-	/*pg = require('pg'),
+	config = require('./../../server-config-defaults.js'),
+	pg = require('pg'),
 	connString = "pg://" + config.storage.pg.username + ":" +
-	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;*/
+	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
 
 
 describe("Storage Test.", function() {
@@ -21,6 +20,20 @@ describe("Storage Test.", function() {
 			return;
 		}
 		setTimeout(done, 1500);
+	});
+	
+	beforeEach(function(done) {
+		log("Before each");
+		if (config.env === 'production') {
+			log.w("Can not run test cases in production.");
+			return;
+		}
+		pg.connect(connString, function(err, client, cb) {
+			utils.clearTables(client, ['relations', 'entities', 'texts', 'threads'], function() {
+				cb();
+				done();
+			});
+		});
 	});
 	
 	it("getUsers query (ref)", function(done) {
@@ -162,9 +175,32 @@ describe("Storage Test.", function() {
 
 		});
 	});
+	it("getTexts query (ref)", function(done) {
+		var text = utils.getNewTextAction();
+		core.emit("text", text, function(/*err, r*/) {
+			core.emit("getTexts", {ref: text.id}, function(err, reply) {
+				assert.equal(reply.results[0].id, text.id, "getTexts(ref) not working");
+				done();
+			});
+		});
+	});
 	
 	
-	
-	
-
+	/*it("getTexts query", function(done) {
+		var texts = [];
+		var to = generate.names(8);
+		var n = mathUtils.random(1, 250);
+		for (var i = 0;i < n;i++) {
+			var text = utils.getNewTextAction();
+			text.to = to;
+			text.time += i; // increasing time.
+			texts.push(text);
+		}
+		utils.emitActions(core, texts, function(err, results) {
+			log("getTexts:", err, results);
+			core.emit("getTexts", {time: null, before: 256, to: to}, function(err, results) {
+				
+			});
+		});
+ 	});*/
 });

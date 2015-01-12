@@ -31,18 +31,22 @@ function makeQuery(type) {
 // Content queries: texts, threads.
 
 exports.getTexts = exports.getThreads = function(query) {
-	var q = makeQuery();
-	q.sources.push(query.type == 'getThreads'? 'threads': 'texts');
+	var q = makeQuery('select');
+	q.source = (query.type === 'getThreads'? 'threads': 'texts');
 	
-	if(query.to) {
+	if (query.to) {
 		q.filters.push(["to", "eq", query.to]);
 	}
 	
-	if(query.thread && query.type === 'getTexts') {
+	if (query.ref) {
+		q.filters.push(['id', 'eq', query.ref]);
+	}
+	
+	if (query.thread && query.type === 'getTexts') {
 		q.filters.push(["thread", "eq", query.thread]);
 	}
 	
-	if(query.label) {
+	if (query.label) {
 		q.filters.push(["label", "propgt", query.label, 0.5]);
 	}
 	
@@ -66,7 +70,7 @@ exports.getTexts = exports.getThreads = function(query) {
 	} else {
 		q.iterate.limit = query.after || 256;
 	}
-	return q;
+	return [q];
 };
 
 // Entity queries: rooms, users.

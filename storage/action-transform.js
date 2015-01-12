@@ -34,6 +34,7 @@ exports.text = function (text) {
 			id: text.id, from: text.from, to: text.to,
 			text: text.text, time: storageUtils.timetoString(text.time), 
 			thread: text.thread,
+			title: text.title,
 			tags: text.tags, mentions: text.mentions
 		};
 		puts.push(put);

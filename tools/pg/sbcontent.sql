@@ -25,6 +25,7 @@ CREATE TABLE texts (
 	"text" text,
 	position integer,
 	thread text,
+	title text,
 	tags text[],
 	mentions text[],
 	upvoters text[],

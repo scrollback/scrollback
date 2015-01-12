@@ -7,8 +7,9 @@ var assert = require('assert'),
 	storage = require('../storage.js'),
 	config = require('./../../server-config-defaults.js'),
 	pg = require('pg'),
-	utils = require('./utils.js'),
-	connString = "pg://" + config.storage.pg.username + ":" +
+	utils = require('./utils.js');
+	config.storage.pg.db = "testingdatabase"; // don't change this.
+var connString = "pg://" + config.storage.pg.username + ":" +
 	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
 	
 
@@ -20,6 +21,20 @@ describe("Storage Test.", function() {
 			return;
 		}
 		setTimeout(done, 1500);
+	});
+	
+	beforeEach(function(done) {
+		log.e("Before each");
+		if (config.env === 'production') {
+			log.w("Can not run test cases in production.");
+			return;
+		}
+		pg.connect(connString, function(err, client, cb) {
+			utils.clearTables(client, ['relations', 'entities', 'texts', 'threads'], function() {
+				cb();
+				done();
+			});
+		});
 	});
 	
 	it("Insert new text message.", function(done) {

@@ -109,5 +109,16 @@ r.emitActions = function(core, actions, callback) {
 	
 };
 
+r.clearTables = function(client, tables, callback) {
+	var ct = 0;
+	function done() {
+		if (++ct >= tables.length) callback();	
+	}
+	tables.forEach(function(table) {
+		client.query("delete from " + table, function() {
+			done();
+		});
+	});
+};
 
 module.exports = r;
