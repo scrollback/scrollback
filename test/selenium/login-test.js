@@ -2,6 +2,7 @@ var assert = require('assert'),
 	timeout = 25000,
 	config = require('../config.js'),
 	webdriver = require('browserstack-webdriver'),
+	q = require('q'),
 	testUtils = require('./testUtils.js');
 
 module.exports = function(capabilities, options) {
@@ -33,8 +34,9 @@ module.exports = function(capabilities, options) {
 			this.timeout(1.5 * timeout);
 			console.log("logging out...");
 			testUtils.logout(driver, function() {
-				driver.findElement(webdriver.By.css('.sign-in')).isDisplayed().
-				then(function(t) {
+				q.delay(1000).then(function(){
+					return driver.findElement(webdriver.By.css('.main-area .user-area.js-has-user-menu .sign-in')).isDisplayed();
+				}).then(function(t) {
 					assert.equal(t, true, "logout failed");
 					done();
 				});

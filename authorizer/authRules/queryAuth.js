@@ -1,7 +1,6 @@
 var SbError = require('../../lib/SbError.js');
 var permissionLevels = require('../permissionWeights.js');
-var config = require('../../myConfig.js');
-var internalSession = Object.keys(config.whitelists)[0];
+
 module.exports = function (core) {
 	core.on('getTexts', function (query, callback) {
 		if (query.user.role === "none") {
@@ -46,7 +45,7 @@ module.exports = function (core) {
 
     ['getRooms', 'getUsers'].forEach(function (e) {
 		core.on(e, function (query, next) {
-			if (query.identity && query.user.role !== 'su' && query.session !== internalSession) {
+			if (query.identity && query.user.role !== 'su' && !/^internal/.test(query.session)) {
 				next(new SbError('ERR_NOT_ALLOWED')); // prob not a good idea to send requiredRole as superuser to client :)
 			} else next();
 		}, "authorization");

@@ -1,10 +1,11 @@
+var config;
 var generate = require("../../lib/generate.js");
 var validateRoom = require('../../lib/validate.js');
 var SbError = require("../../lib/SbError.js");
 var validator = new (require('valid'))();
 var log = require('../../lib/logger.js');
-module.exports = function (core) {
-
+module.exports = function (core, conf) {
+	config = conf;
     /* list of event that the basic validation function is called for.*/
     var events = ['init', 'text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'expel', 'room', 'user'];
 
@@ -149,12 +150,15 @@ module.exports = function (core) {
            if (!validate(action, userValidator, callback)) return;
             action.user.id = action.user.id.toLowerCase();
             if (action.role) delete action.role;
+            action.user = cleanEntity(action);
             callback();
         },
         room: function (action, callback) {
             if (!validate(action, roomValidator, callback)) return;
             action.room.id = action.room.id.toLowerCase();
+			if(action.to !== action.room.id) return callback(new SbError("INVALID_ROOM"));
             if (!action.room.identities) action.room.identities = [];
+            action.room = cleanEntity(action);
             callback();
         }
     };
@@ -235,4 +239,39 @@ function basicValidation(action, callback) {
     }
 
     return callback();
+}
+
+function cleanEntity(action){
+	var i, type = action.type,
+		data = action[type];
+
+	var newRoom = {
+		id: data.id,
+		description: data.description,
+		createTime: new Date().getTime(),
+		type: data.type,
+		picture: data.picture,
+		identities: [],
+		params: {},
+		guides: {}
+	};
+
+	for (i in data.guides) {
+		if (data.guides.hasOwnProperty(i)) {
+			newRoom.guides[i] = data.guides[i];
+		}
+	}
+
+	for (i in data.params) {
+		if (data.params.hasOwnProperty(i)) {
+			newRoom.params[i] = data.params[i];
+		}
+	}
+	if (data.identities) {
+		newRoom.identities = data.identities;
+	}
+	if (action.type === "user") {
+		newRoom.timezone = data.timezone ? data.timezone : 0;
+	}
+	return newRoom;
 }

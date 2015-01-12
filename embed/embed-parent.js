@@ -1,7 +1,7 @@
 /* jslint browser: true, indent: 4, regexp: true  */
 
 (function() {
-	var config = require("../client-config.js"),
+	var config = require("../client-config-defaults.js"),
 		validate = require("../lib/validate.js");
 
 	function insertWidget() {

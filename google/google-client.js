@@ -1,7 +1,7 @@
-/* jshint browser:true, node:true */
-/* global libsb, $ */
+/* jshint browser:true */
+/* global libsb, $*/
+var config = require("../client-config-defaults.js");
 
-var config = require("../client-config.js");
 
 function loginWithGoogle() {
 	window.open("https:" + config.server.host + "/r/google/login", "_blank", "location=no");

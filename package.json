@@ -71,7 +71,8 @@
     "twit": "~1.1.12",
     "underscore": "latest",
     "valid": "git://github.com/scrollback/valid.git#v0.0.1",
-    "winston": "^0.7.3"
+    "winston": "^0.7.3",
+    "ebus":"latest"
   },
   "optionalDependencies": {},
   "devDependencies": {
@@ -83,6 +84,7 @@
     "event-stream": "latest",
     "gulp": "latest",
     "gulp-autoprefixer": "latest",
+    "gulp-combine-mq": "latest",
     "gulp-concat": "latest",
     "gulp-gitmodified": "latest",
     "gulp-jshint": "latest",
@@ -90,7 +92,7 @@
     "gulp-minify-css": "latest",
     "gulp-plumber": "latest",
     "gulp-rename": "latest",
-    "gulp-ruby-sass": "^1.0.0-alpha",
+    "gulp-sass": "latest",
     "gulp-sourcemaps": "latest",
     "gulp-strip-debug": "latest",
     "gulp-sym": "latest",

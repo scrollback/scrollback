@@ -1,5 +1,5 @@
 //var crypto = require('crypto');
-var config = require("../config.js");
+var config = require("../server-config-defaults.js");
 var objectlevel = require("objectlevel");
 var log = require("../lib/logger.js");
 var validate = require("../lib/validate.js");

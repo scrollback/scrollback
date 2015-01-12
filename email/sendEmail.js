@@ -1,13 +1,7 @@
 var nodemailer = require('nodemailer');
 var log = require("../lib/logger.js");
-var config = require('../config.js');
-var emailConfig = config.email;
-var transport = nodemailer.createTransport("SMTP", {
-    host: "email-smtp.us-east-1.amazonaws.com",
-    secureConnection: true,
-    port: 465,
-    auth: emailConfig && emailConfig.auth
-});
+var transport, emailConfig;
+
 function send(from,to,subject,html) {
 
     var email = {
@@ -36,4 +30,13 @@ function send(from,to,subject,html) {
     });
 }
 
-module.exports = send;
+module.exports = function(conf) {
+	emailConfig = conf;
+	transport = nodemailer.createTransport("SMTP", {
+		host: "email-smtp.us-east-1.amazonaws.com",
+		secureConnection: true,
+		port: 465,
+		auth: emailConfig && emailConfig.auth
+	});
+	return send;
+};
