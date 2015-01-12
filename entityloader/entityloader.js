@@ -1,6 +1,6 @@
 var crypto = require('crypto') /*, log = require("../lib/logger.js")*/ ;
 var names = require('../lib/generate.js').names;
-var utils = require('../lib/app-utils.js');
+var utils = require('../lib/appUtils.js');
 var mathUtils = require('../lib/mathUtils.js');
 var uid = require('../lib/generate.js').uid;
 var config;
