@@ -39,6 +39,8 @@
         &-icon {
             $icon-width: $bar-height / 1.5;
 
+            @extend %appear;
+
             float: right;
             font-size: 1.5em;
             padding: (1em / 1.5);

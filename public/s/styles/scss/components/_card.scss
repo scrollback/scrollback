@@ -52,6 +52,7 @@
 
             &-badge {
                 @include flex-shrink(0);
+                @extend %appear;
 
                 margin: 0 (.5em / .8);
 

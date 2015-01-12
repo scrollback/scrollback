@@ -60,24 +60,16 @@ body {
     height: 100%;
 }
 
-.column-left {
-    min-width: $width-sidebar;
-    max-width: $width-sidebar;
-    width: $width-sidebar;
-}
-
 .sidebar {
-    /*
-    * Text becomes too bold on dark background on Mac OS X
-    * Antialiased font looks crispier
-    */
-    @include font-smoothing(antialiased);
     @include transition;
 
     position: absolute;
+    top: 0;
+    min-width: $width-sidebar;
+    max-width: $width-sidebar;
+    width: $width-sidebar;
+    height: 100%;
     z-index: 700;
-    background-color: $dark-color;
-    color: $light-color;
     box-shadow: 0 0 0 transparent;
     will-change: transform;
 
@@ -90,7 +82,16 @@ body {
     &-block { border-bottom: 1px solid rgba(0,0,0,0.1); }
 
     &-left {
+        /*
+        * Text becomes too bold on dark background on Mac OS X
+        * Antialiased font looks crispier
+        */
+        @include font-smoothing(antialiased);
         @include transform(translateX(-100%));
+
+        left: 0;
+        background-color: $dark-color;
+        color: $light-color;
 
         .view-sidebar-left & {
             @include transform(translateX(0));
@@ -103,29 +104,27 @@ body {
                 @include transform(translateX(0));
 
                 position: relative;
+                left: auto;
+                top: auto;
                 z-index: 100;
                 box-shadow: 3px 0 6px rgba(0,0,0,0.16);
             }
+
+            .list-view { font-size: .9em; }
         }
     }
 
     &-right {
         @include transform(translateX(100%));
 
+        right: 0;
+        background-color: $light-color;
+        color: $dark-color;
+
         .view-sidebar-right & {
             @include transform(translateX(0));
 
-            box-shadow: 10px 0 20px rgba(0,0,0,0.19);
-        }
-
-        @media #{$screenxxx} {
-            &, .view-sidebar-right & {
-                @include transform(translateX(0));
-
-                position: relative;
-                z-index: 100;
-                box-shadow: 3px 0 6px rgba(0,0,0,0.16);
-            }
+            box-shadow: -10px 0 20px rgba(0,0,0,0.19);
         }
     }
 
@@ -146,7 +145,9 @@ body {
             pointer-events: auto;
         }
 
-        @media #{$screenxxx} { display: none; }
+        @media #{$screenxxx} {
+            .view-sidebar-left & { display: none; }
+        }
     }
 
     .list-content {
@@ -164,7 +165,7 @@ body {
 
 .appbar {
     @media #{$screenxxx} {
-        .action-sidebar-open { display: none; }
+        .action-sidebar-left-open { display: none; }
 
         .appbar-title { margin-left: 1em; }
     }

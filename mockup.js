@@ -119,8 +119,13 @@ $(function() {
     addRooms();
     addDiscussions();
 
-    $(".action-sidebar-open").on("click", function() {
+    $(".action-sidebar-left-open").on("click", function() {
         libsb.emit("navigate", { view: "sidebar-left" });
+    });
+
+    $(".action-sidebar-right-open").on("click", function() {
+        console.log("heya");
+        libsb.emit("navigate", { view: "sidebar-right" });
     });
 
     $(".action-sidebar-close").on("click", function() {
