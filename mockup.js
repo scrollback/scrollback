@@ -58,6 +58,10 @@ function addDiscussions() {
             });
         }
 
+        card.setCount("mention", Math.round(Math.random() * 100));
+
+        card.element.append($('<div class="card-button"><span class="card-button-icon icon-content-reply action-quick-reply"></span><span class="card-button-text">Quick reply</span></div>'));
+
         grid.addItem(card.element);
     }
 

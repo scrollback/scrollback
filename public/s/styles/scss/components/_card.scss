@@ -16,7 +16,7 @@
             @include align-content(center);
 
             height: $bar-height;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
 
             &-title {
                 @include flex-grow(1);
@@ -31,29 +31,28 @@
             &-icon {
                 $icon-width: $bar-height / 1.5;
 
-                @include flex-grow(1);
+                @include flex-shrink(0);
 
                 font-size: 1.5em;
                 padding: (1em / 1.5);
                 color: inherit;
                 height: 100%;
                 width: $icon-width;
-                min-width: $icon-width;
-                max-width: $icon-width;
 
                 &:hover, &:focus {
-                    background-color: rgba(0,0,0,0.1);
+                    background-color: rgba(0,0,0,0.05);
                     color: inherit;
                 }
 
                 &:active {
-                    background-color: rgba(0,0,0,0.2);
+                    background-color: rgba(0,0,0,0.1);
                     color: inherit;
                 }
             }
 
             &-badge {
-                float: right;
+                @include flex-shrink(0);
+
                 margin-left: (.5em / .8);
                 margin-right: (.25em / .8);
 
@@ -84,6 +83,40 @@
             }
 
             &-message { opacity: 0.6; }
+        }
+
+        &-button {
+            @extend %ellipsize;
+            @extend %clearfix;
+
+            border-top: 1px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+
+            &:hover, &:focus {
+                background-color: rgba(0,0,0,0.05);
+                color: inherit;
+            }
+
+            &:active {
+                background-color: rgba(0,0,0,0.1);
+                color: inherit;
+            }
+
+            &-icon {
+                float: left;
+                font-size: 1.5em;
+                padding: (.75em / 1.5) (1em / 1.5);
+                opacity: .5;
+            }
+
+            &-text {
+                display: inline-block;
+                font-weight: 700;
+                text-transform: uppercase;
+                font-size: .8em;
+                padding: (1em / .8);
+                padding-left: 0;
+            }
         }
     }
 
