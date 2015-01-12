@@ -12,7 +12,7 @@ var Color = require("../lib/color.js"),
 	suggestedNick,
 	/*  lasting objects*/
 	embed, token, domain, path, preBootQueue = [],
-	queue = [],
+//	queue = [],
 	parentHost;
 
 function openFullView() {
@@ -334,7 +334,7 @@ module.exports = function(libsb) {
 			processNavigate();
 		}
 
-	}, 997);
+	}, 996);
 
 	libsb.on("init-up", function(init, next) {
 		function processInit() {
@@ -351,11 +351,11 @@ module.exports = function(libsb) {
 			next();
 		}
 
-		if (libsb.hasBooted) {
+//		if (libsb.hasBooted) {
 			processInit();
-		} else {
+		/*} else {
 			queue.push(processInit);
-		}
+		}*/
 	}, 500);
 	
 	libsb.on("navigate", postNavigation, 500);

@@ -197,7 +197,7 @@ module.exports = function (core, conf) {
         return queryValidation(action, callback);
     }, "validation");
     core.on("getRooms", function (action, callback) {
-        if (!(action.ref || action.hasOccupant || action.hasMember || action.featured)) {
+        if (!(action.ref || action.hasOccupant || action.hasMember || action.identity || action.featured)) {
             return callback(new SbError("INVALID_QUERY"));
         }
         return queryValidation(action, callback);

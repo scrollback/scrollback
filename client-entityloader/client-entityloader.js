@@ -1,6 +1,5 @@
 /* jshint browser: true */
 /* global window*/
-
 var currentState = window.currentState;
 
 module.exports = function(libsb) {
@@ -17,33 +16,38 @@ module.exports = function(libsb) {
 				}
 				console.log("Results:", data);
 				if (!data || !data.results || !data.results.length) {
-					if (data.identity) {
-						roomID = data.identity.substring(data.identity.lastIndexOf(":")+1);
-						state.mode = "noroom";
-						state.roomName = roomID;
-						state.room = {
-							id: roomID,
-							identities: [data.identity],
-							roomSaved: false
-						};
-						state.dialog = "createroom";
-						return next();
-					}else{
-						libsb.emit('getUsers', {
-							ref: state.roomName,
-							source: "loader"
-						}, function(e, d) {
-							if (d.results && d.results.length) {
-								state.mode = 'profile';
-							} else {
-								state.room = null;
-
-								if (state.connectionStatus == "online") {
-									state.mode = "noroom";
-								}
-							}
+					if (currentState && currentState.connectionStatus === "online") {
+						if (data.identity) {
+							roomID = data.identity.substring(data.identity.lastIndexOf(":")+1);
+							state.mode = "noroom";
+							state.roomName = roomID;
+							state.room = {
+								id: roomID,
+								identities: [data.identity],
+								roomSaved: false
+							};
+							state.dialog = "createroom";
 							return next();
-						});
+						}else{
+							libsb.emit('getUsers', {
+								ref: state.roomName,
+								source: "loader"
+							}, function(e, d) {
+								if (d.results && d.results.length) {
+									state.mode = 'profile';
+								} else {
+									state.room = null;
+
+									if (state.connectionStatus == "online") {
+										state.mode = "noroom";
+									}
+								}
+								return next();
+							});
+						}
+					} else {
+						state.room = null;
+						next();
 					}
 				} else {
 					state.room = data.results[0];
