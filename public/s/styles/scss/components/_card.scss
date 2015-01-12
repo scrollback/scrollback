@@ -53,8 +53,7 @@
             &-badge {
                 @include flex-shrink(0);
 
-                margin-left: (.5em / .8);
-                margin-right: (.25em / .8);
+                margin: 0 (.5em / .8);
 
                 &[data-empty] { display: none; };
             }

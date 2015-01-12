@@ -11,33 +11,42 @@ var config = require("./client-config-defaults.js"),
     Card = require("./mockup/card.js");
 
 function addRooms() {
-    var listgrid = new View({ type: "listgrid" }),
+    var grid = new View({ type: "grid" }),
+        list = new View({ type: "list" }),
         headers = [ "My rooms", "Following", "Featured" ],
-        card;
+        card1, card2;
 
     for (var i = 0, l = headers.length; i < l; i++) {
-        listgrid.addHeader(headers[i]);
+        grid.addHeader(headers[i]);
+        list.addHeader(headers[i]);
 
         for (var j = 0; j < 5; j++) {
-            card = new Card({
+            card1 = new Card({
                 id: generate.names(Math.floor(Math.random() * 7) + 3),
                 color: "#" + Math.floor(Math.random() * 16777215).toString(16)
             }, "room");
 
+            card2 = new Card({ id: generate.names(Math.floor(Math.random() * 7) + 3) }, "room");
+
             for (var k = 0; k < 5; k++) {
-                card.addMessage({
+                card1.addMessage({
                     from: generate.names(Math.floor(Math.random() * 7) + 3),
                     text: generate.sentence(Math.floor(Math.random() * 17) + 3)
                 });
             }
 
-            card.setCount("mention", Math.round(Math.random() * 100)).setCount("message", Math.round(Math.random() * 100));
+            if (Math.random() < 0.5) {
+                card1.setCount("mention", Math.round(Math.random() * 100)).setCount("message", Math.round(Math.random() * 100));
+                card2.setCount("mention", Math.round(Math.random() * 100));
+            }
 
-            listgrid.addItem(card.element);
+            grid.addItem(card1.element);
+            list.addItem(card2.element);
         }
     }
 
-    listgrid.element.appendTo(".main-content-rooms");
+    grid.element.appendTo(".main-content-rooms");
+    list.element.appendTo(".room-list");
 }
 
 function addDiscussions() {
