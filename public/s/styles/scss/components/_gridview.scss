@@ -13,6 +13,7 @@
     background: none;
     border: none;
     box-shadow: none;
+    padding: .5em 1em;
 }
 
 @mixin griditem {
@@ -20,12 +21,15 @@
 
     float: left;
     width: 100%;
-    margin: .5em;
+    max-width: 100%;
+    margin: .5em 0;
     background-color: $light-color;
     border-radius: $roundness;
     overflow: hidden;
 
     $item-width: 27em;
+
+    @media only screen and (min-width: #{$item-width * 2}) { margin: .5em; }
 
     @for $i from 1 through 10 {
         @media only screen and (min-width: #{$item-width * $i}) {
