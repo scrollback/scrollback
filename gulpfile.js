@@ -8,6 +8,7 @@ var gulp = require("gulp"),
 	es = require("event-stream"),
 	lazypipe = require("lazypipe"),
 	plumber = require("gulp-plumber"),
+	notify = require("gulp-notify"),
 	gutil = require("gulp-util"),
 	sourcemaps = require("gulp-sourcemaps"),
 	jshint = require("gulp-jshint"),
@@ -120,7 +121,7 @@ function genmanifest(files, platform) {
 
 // Lazy pipe for building scripts
 var buildscripts = lazypipe()
-	.pipe(plumber)
+	.pipe(plumber, { errorHandler: notify.onError("Error: <%= error.message %>") })
 	.pipe(!debug ? uglify : gutil.noop)
 	.pipe(!debug ? striplogs : gutil.noop);
 
@@ -141,7 +142,7 @@ gulp.task("postinstall", [ "hooks" ]);
 // Lint JavaScript files
 gulp.task("lint", function() {
 	return gulp.src(files.js)
-	.pipe(plumber())
+	.pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
 	.pipe(gitmodified("modified"))
 	.pipe(jshint())
 	.pipe(jshint.reporter("jshint-stylish"))
@@ -162,7 +163,7 @@ gulp.task("copylibs", [ "bower" ], function() {
 		"svg4everybody/svg4everybody.min.js",
 		"velocity/velocity.min.js"
 	], "lib/post-message-polyfill.js"))
-	.pipe(plumber())
+	.pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
 	.pipe(gulp.dest(dirs.lib));
 });
 
@@ -207,13 +208,13 @@ gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 // Generate styles
 gulp.task("lace", [ "bower" ], function() {
 	return gulp.src(dirs.bower + "/lace/src/scss/*.scss")
-	.pipe(plumber())
+	.pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
 	.pipe(gulp.dest(dirs.lace));
 });
 
 gulp.task("styles", [ "lace" ], function() {
 	return gulp.src(files.scss)
-	.pipe(plumber())
+	.pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
 	.pipe(sourcemaps.init())
 	.pipe(sass({
 		outputStyle: "expanded",
