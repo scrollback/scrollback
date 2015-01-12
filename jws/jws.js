@@ -36,9 +36,11 @@ function jwsHandler(action, callback) {
 	if (!action.auth || !action.auth.jws) return callback();
 	verify(action, function(isVerified, payload) {
 		if(!isVerified) return callback(new Error("AUTH_FAIL: INVALID_TOKEN"));
+		if(payload.iss != action.origin.domain) return callback("AUTH_FAIL:INVALID_ISS");
+		
 		core.emit("getUsers", {
-			identity: payload.email,
-			session: "internal"
+			identity: payload.sub,
+			session: "internal-jws"
 		}, function (err, res) {
 			var user;
 			if (err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));

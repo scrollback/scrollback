@@ -29,14 +29,11 @@ function init(libsb) {
 		var i;
 		if (state.source == "boot") return next();
 		if (state.source == "socket" && continueBoot) {
-			bootState.connectionStatus = "online";
 			for(i in bootState) {
-				if(bootState.hasOwnProperty(i)) {
+				if(bootState.hasOwnProperty(i) && i != "source" && i != "connectionStatus") {
 					state[i] = bootState[i];
 				}
 			}
-//			continueBoot();
-			continueBoot = bootState = null;
 		} else if (!libsb.hasBooted) {
 			// add more sources if the navigate has to be queued up.
 			if (["socket"].indexOf(state.source) >= 0) return actionQueue.enQueue(next);
@@ -49,6 +46,14 @@ function init(libsb) {
 		if( state.source === 'boot' && !state.room ) {
 			continueBoot = next;
 			bootState = state;
+		}else if(state.source === 'socket' && continueBoot) {
+			bootState.room = state.room;
+			bootState.roomName = state.roomName;
+			continueBoot();
+			continueBoot = bootState = null;
+			next();
+		}else{
+			next();
 		}
 	}, 997);
 

@@ -15,4 +15,5 @@ describe("Authorizer app ", function () {
 	// TODO: Make test cases for other actions
 	require('./joinPart.js')(core, config.authorizer);
 	require('./admitExpel.js')(core, config.authorizer);
+	require('./query-test.js')(core, config.authorizer);
 });

@@ -7,7 +7,7 @@ var client;
 var searchTimeout = 10000;
 var messageCount = 0;
 var updateThreads = [];
-var indexAtCount = 200;
+var indexAtCount = 3;
 
 /*
     this function takes a list of ids and gets the thread objects from the elastic search.

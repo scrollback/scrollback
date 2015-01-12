@@ -16,7 +16,7 @@ module.exports = function(libsb) {
 				}
 				console.log("Results:", data);
 				if (!data || !data.results || !data.results.length) {
-					if (currentState && currentState.connectionStatus === "online") {
+					if (state && state.connectionStatus === "online") {
 						if (data.identity) {
 							roomID = data.identity.substring(data.identity.lastIndexOf(":")+1);
 							state.mode = "noroom";
@@ -51,6 +51,7 @@ module.exports = function(libsb) {
 					}
 				} else {
 					state.room = data.results[0];
+					state.roomName = state.room.id;
 					return next();
 				}
 			});

@@ -1,8 +1,8 @@
 var SbError = require('../../lib/SbError.js');
 var permissionLevels = require('../permissionWeights.js');
 
-module.exports = function (core) {
-	core.on('getTexts', function (query, callback) {
+module.exports = function(core) {
+	core.on('getTexts', function(query, callback) {
 		if (query.user.role === "none") {
 			if (/^guest-/.test(query.user.id)) {
 				query.user.role = "guest";
@@ -20,7 +20,7 @@ module.exports = function (core) {
 			currentRole: query.user.role
 		}));
 	}, "authorization");
-	core.on('getThreads', function (query, callback) {
+	core.on('getThreads', function(query, callback) {
 		var readLevel;
 
 		if (query.user && query.user.role === "none") {
@@ -43,12 +43,26 @@ module.exports = function (core) {
 		}));
 	}, "authorization");
 
-    ['getRooms', 'getUsers'].forEach(function (e) {
-		core.on(e, function (query, next) {
-			if (query.identity && query.user.role !== 'su' && !/^internal/.test(query.session)) {
-				next(new SbError('ERR_NOT_ALLOWED')); // prob not a good idea to send requiredRole as superuser to client :)
-			} else next();
-		}, "authorization");
-	});
+	core.on('getRooms', function(query, next) {
+		var isFull = true,
+			split;
+
+		if (query.identity) {
+			split = query.identity.split(":");
+			if (!split[1] || !split[1].length) isFull = false;
+		}
+
+		if (query.identity && !isFull && query.user.role !== 'su' && !/^internal/.test(query.session)) {
+			return next(new SbError('ERR_NOT_ALLOWED')); // prob not a good idea to send requiredRole as superuser to client :)
+		}
+
+		next();
+	}, "authorization");
+
+	core.on('getUsers', function(query, next) {
+		if (query.identity && query.user.role !== 'su' && !/^internal/.test(query.session)) {
+			next(new SbError('ERR_NOT_ALLOWED')); // prob not a good idea to send requiredRole as superuser to client :)
+		} else next();
+	}, "authorization");
 
 };

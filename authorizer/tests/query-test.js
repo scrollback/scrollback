@@ -77,7 +77,7 @@ module.exports = function(core) {
 				type: "getRooms",
 				identity: "irc://scrollback.io/#scrollback",
 				user: {
-					role: "su"
+					role: "system"
 				},
 				session: "internal-test"
 			};
@@ -94,7 +94,7 @@ module.exports = function(core) {
 				type: "getRooms",
 				identity: "irc",
 				user: {
-					role: "su"
+					role: "system"
 				},
 				session: "internal-test"
 			};
