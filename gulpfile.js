@@ -223,6 +223,7 @@ gulp.task("styles", [ "lace" ], function() {
 	.pipe(combinemq())
 	.pipe(!debug ? autoprefixer() : gutil.noop())
 	.pipe(!debug ? minify() : gutil.noop())
+	.pipe(rename({ suffix: ".min" }))
 	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest(dirs.css));
 });
@@ -233,7 +234,7 @@ gulp.task("client-manifest", function() {
 	return genmanifest(prefix("public/s/", [
 		"scripts/lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
-		"styles/dist/client.css",
+		"styles/dist/client.min.css",
 		"img/client/**/*"
 	]));
 });
@@ -243,7 +244,7 @@ gulp.task("android-manifest", function() {
 		"phonegap/**/*",
 		"scripts/lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
-		"styles/dist/client.css",
+		"styles/dist/client.min.css",
 		"img/client/**/*"
 	]), "android");
 });
@@ -253,8 +254,8 @@ gulp.task("manifest", [ "client-manifest", "android-manifest" ]);
 // Clean up generated files
 gulp.task("clean", function() {
 	return del(prefix("public/", [
-		"**/*.map", "**/*.min.js",
-		"**/*.bundle.js", "**/*.appcache}"
+		"**/*.min.js", "**/*.min.css",
+		"**/*.map", "**/*.appcache}"
 	], dirs.lib, dirs.css, dirs.lace));
 });
 
