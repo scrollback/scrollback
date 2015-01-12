@@ -1,7 +1,8 @@
 /* jshint mocha: true */
 var	crypto = require('crypto'),
 	generate = require("../../lib/generate.js"),
-	r = {};
+	r = {},
+	mathUtils = require('../../lib/mathUtils.js');
 r.getNewTextAction = function getNewTextActions() {
 	var id = generate.uid();
 	return {
@@ -24,7 +25,7 @@ r.getNewUserAction = function() {
 			id: generate.names(8),
 			description: generate.sentence(14),
 			type: "user",
-			timezone: 0,
+			timezone: mathUtils.random(-24, 24) * 30,
 			picture: generatePick(email),
 			identities: ["mailto:" + email], 
 			params: {},

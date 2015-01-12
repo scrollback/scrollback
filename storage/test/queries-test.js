@@ -84,7 +84,7 @@ describe("Storage Test.", function() {
 		var n = mathUtils.random(5, 10);
 		for (var i = 0;i < n;i++) {
 			users.push(utils.getNewUserAction());
-			users[i].timezone = Math.random(t1, t2);
+			users[i].user.timezone = mathUtils.random(t1, t2);
 		}
 		utils.emitActions(core, users, function(err, results) {
 			log.d("actions: ", err, results);
@@ -96,11 +96,73 @@ describe("Storage Test.", function() {
 				}
 			}, function(err, reply) {
 				log.d("N=", n, reply.results.length);
-				assert.equal(reply.results.length >= n, true, "Timezone query failed");
+				assert.equal(reply.results.length >= n, true, "Timezone query failed"); // TODO write a better assertion.
 				done();
 			});
 		});
 	});
+	
+	it("getUsers query (memberOf)", function(done) {
+		var relations = [];
+		var users = [];
+		var room = utils.getNewRoomAction();
+		var n = mathUtils.random(1, 10);
+		for (var i = 0;i < n; i++) {
+			relations.push(utils.getNewRelationAction('join', 'follower'));
+			var user = utils.getNewUserAction();
+			relations[i].user = user.user;
+			relations[i].room = room.room;
+			users.push(user);
+		}
+		utils.emitActions(core, [room] , function(err1, results1) {
+			utils.emitActions(core, users, function(err2, results2) {
+				utils.emitActions(core, relations, function(err3, results3) {
+					log.d("actions: ", err1, err2, err3, results1, results2, results3);
+					core.emit("getUsers", {
+						type: 'getUsers',
+						memberOf: room.room.id
+					}, function(err, reply) {
+						log.d("N=", n, reply.results.length);
+						assert.equal(reply.results.length >= n, true, "member of query failed.");
+						done();
+					});
+				});
+			});
+			
+		});
+	});
+	
+	
+	it("getUsers query (hasMember)", function(done) {
+		var relations = [];
+		var rooms = [];
+		var user = utils.getNewUserAction();
+		var n = mathUtils.random(1, 10);
+		for (var i = 0;i < n; i++) {
+			relations.push(utils.getNewRelationAction('join', 'follower'));
+			var room = utils.getNewRoomAction();
+			relations[i].user = user.user;
+			relations[i].room = room.room;
+			rooms.push(room);
+		}
+		utils.emitActions(core, [user] , function(err1, results1) {
+			utils.emitActions(core, rooms, function(err2, results2) {
+				utils.emitActions(core, relations, function(err3, results3) {
+					log.d("actions: ", err1, err2, err3, results1, results2, results3);
+					core.emit("getRooms", {
+						type: 'getRooms',
+						hasMember: user.user.id
+					}, function(err, reply) {
+						log.d("N=", n, reply.results.length);
+						assert.equal(reply.results.length >= n, true, "hasMember query failed.");
+						done();
+					});
+				});
+			});
+
+		});
+	});
+	
 	
 	
 	

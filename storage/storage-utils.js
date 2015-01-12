@@ -169,16 +169,44 @@ function makeSelectQuery(transform) {
 	}
 	sql.push("FROM");
 	/* adding source can have multiple source */
-	
-	sql.push(transform.source);
-	
-	/* added source */
-	addFilters(transform, sql, values, i);
-	
-	return {
-		query: sql.join(" "),
-		values: values
-	};
+	if (transform.sources && transform.sources.length) { // JOIN query
+		sql.push(transform.sources[0]);
+		sql.push("INNER JOIN");
+		sql.push(transform.sources[1]);
+		sql.push("ON");
+		t = [];
+		transform.filters.forEach(function(filter) {
+			var p1, p2;
+			
+			if (filter[0] instanceof Array) p1 = filter[0][0] + "." + filter[0][1]; 
+			else p1 = name(filter[0]);
+			
+			if (filter[2] instanceof Array) p2 = filter[2][0] + "." + filter[2][1]; 
+			else {
+				p2 = "$" + i;
+				values.push(filter[2]);
+				i++;
+			}
+			
+			t.push(p1 + getOperatorString(filter[1]) + p2);
+		});
+		var s = "(" + t.join(" AND ") + ")";
+		sql.push(s);
+		return {
+			query: sql.join(" "),
+			values: values
+		};
+	} else {
+		
+		sql.push(transform.source);
+		/* added source */
+		addFilters(transform, sql, values, i);
+
+		return {
+			query: sql.join(" "),
+			values: values
+		};
+	}
 	
 }
 
@@ -234,7 +262,11 @@ function runQueries(client, queries, callback) {
 
 /*column name*/
 function name(n) {
-	return '"' + n + '"';
+	if (n instanceof Array) {
+		return n[0] + "." + n[1];
+	} else {
+		return '"' + n + '"';
+	}
 }
 
 

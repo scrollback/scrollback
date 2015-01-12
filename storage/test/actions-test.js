@@ -166,7 +166,7 @@ describe("Storage Test.", function() {
 	
 	it("storing new user.", function(done) {
 		var user = utils.getNewUserAction();
-		core.emit("user", user, function(){
+		core.emit("user", user, function() {
 			pg.connect(connString, function(err, client, cb) {
 				storageUtils.runQueries(client, 
 										[{query: "SELECT * from entities where id=$1", values: [user.user.id]}], 
@@ -181,6 +181,25 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
+	
+	it("storing new user. (timezone)", function(done) {
+		var user = utils.getNewUserAction();
+		core.emit("user", user, function() {
+			pg.connect(connString, function(err, client, cb) {
+				storageUtils.runQueries(client, 
+										[{query: "SELECT * from entities where id=$1", values: [user.user.id]}], 
+										function(err, results) {
+					log.d("Arguments:", arguments);
+					results.forEach(function(result) {
+						assert.deepEqual(result.rows[0].timezone, user.user.timezone, "Adding new user failed");
+					});
+					cb();
+					done();
+				});
+			});
+		});
+	});
+	
 	
 	it("Update user.", function(done) {
 		var user = utils.getNewUserAction();

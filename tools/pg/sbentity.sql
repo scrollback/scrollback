@@ -23,7 +23,7 @@ CREATE TABLE entities (
 	picture text,
 	createTime timestamp,
 	identities text[][],	/* identities[?][0] is gateway */
-	timezone integer,
+	timezone integer default 0,
 	locale text,
 	params jsonb,
 	guides jsonb,

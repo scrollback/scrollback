@@ -78,15 +78,13 @@ select * from entities INNER JOIN relations on (relations.user=entities.id AND r
 exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	var q = makeQuery('select'),
 		type = (iq.type === 'getEntities' ? undefined : (iq.type === 'getUsers' ? 'user' : 'room'));
-	
-	q.sources.push('entities');
 	q.source = "entities";
 	if (iq.ref) {
 		q.filters.push(["id", "eq", iq.ref]);
 	}
     
 	if (iq.type) {
-		q.filters.push(["type", "eq", type]);
+		q.filters.push([["entities", "type"], "eq", type]);
 	}
 	
     if (iq.identity) {
@@ -98,19 +96,22 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		if (typeof iq.timezone.lte === 'number') q.filters.push(['timezone', 'lte', iq.timezone.lte]);
 	}
 	
-	if (iq.memberOf) {
-		q.sources.push(['relations', 'user']);
-		q.filters.push(['room', 'eq', iq.memberOf]);
+	if (iq.memberOf || iq.hasMember) {
+		q.sources.push('entities');
+		q.sources.push('relations');
+		q.filters.push([['relations', 'role'], 'neq', 'none']);
+		if (iq.memberOf) {
+			q.filters.push([['relations', 'room'], 'eq', iq.memberOf]);
+			q.filters.push([['relations', 'user'], 'eq', ['entities', 'id']]);
+		} else if (iq.hasMember) {
+			q.filters.push([['relations', 'user'], 'eq', iq.hasMember]);
+			q.filters.push([['relations', 'room'], 'eq', ['entities', 'id']]);	
+		}
 	}
 	
-	
-	if (iq.hasMember) {
-		q.sources.push(['relations', 'room']);
-		q.filters.push(['user', 'eq', iq.hasMember]);
-	}
-	
-	if (iq.locale) q.quantFilter('locale', iq.locale);
-	if (iq.role) q.quantFilter('role', iq.role);
+	/*
+	//if (iq.locale) q.quantFilter('locale', iq.locale);
+	if (iq.role) q.filters.push(['role', 'eq', q.role]);// q.quantFilter('role', iq.role);
 	
 	if(iq.roleTime) {
 		q.iterate.key = 'roleTime';
@@ -125,7 +126,7 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.iterate.limit = iq.before;
 	} else {
 		q.iterate.limit = iq.after || 256;
-	}
+	}*/
 	log.d("entities Query:", q);
 	return [q];
 };
