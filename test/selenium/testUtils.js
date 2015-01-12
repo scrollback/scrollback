@@ -96,8 +96,9 @@ function logout(driver, callback) {
 }
 
 function loginGoogle(driver, email, pass, callback) {
-	driver.findElement(webdriver.By.css('.main-area .user-area.js-has-user-menu')).click().
-	then(function() {
+	q.delay(3000).then(function(){
+		return driver.findElement(webdriver.By.css('.main-area .user-area.js-has-user-menu')).click();
+	}).then(function() {
 		findVisibleElementByClass(driver, ".google", function(el) {
 			var win;
 			el.click().
