@@ -907,21 +907,21 @@ body {
 
     width: 3.5em;
     padding: .75em;
+    margin: 0 .5em;
 
     .role-owner & { display: none; }
+}
 
-    .follow-icon {
-        .fill {
-            opacity: 0;
+.follow-icon {
+    @include icon(star);
 
-            .role-follower & { opacity: 1; }
-        }
+    color: $dark-color;
 
-        .stroke {
-            opacity: 1;
+    .role-follower & { @include icon(star-empty); }
 
-            .role-follower & { opacity: 0; }
-        }
+    &:before {
+        font-size: 2em;
+        vertical-align: -.3em;
     }
 }
 

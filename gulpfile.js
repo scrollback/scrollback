@@ -245,6 +245,7 @@ gulp.task("client-manifest", function() {
 		"scripts/lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
 		"styles/dist/client.min.css",
+		"styles/fonts/icons.*",
 		"img/client/**/*"
 	]));
 });
@@ -255,6 +256,7 @@ gulp.task("android-manifest", function() {
 		"scripts/lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
 		"styles/dist/client.min.css",
+		"styles/fonts/icons.*",
 		"img/client/**/*"
 	]), "android");
 });
