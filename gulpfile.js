@@ -30,6 +30,7 @@ var gulp = require("gulp"),
 		bower: "bower_components",
 		lib: "public/s/scripts/lib",
 		lace: "public/s/styles/lace",
+		fonts: "public/s/styles/fonts",
 		scss: "public/s/styles/scss",
 		css: "public/s/styles/dist"
 	},
@@ -160,7 +161,7 @@ gulp.task("bower", function() {
 gulp.task("copylibs", [ "bower" ], function() {
 	return gulp.src(prefix(dirs.bower + "/", [
 		"jquery/dist/jquery.min.js",
-		"lace/src/js/*.js",
+		"lace/src/js/**/*.js",
 		"sockjs/sockjs.min.js",
 		"svg4everybody/svg4everybody.min.js",
 		"velocity/velocity.min.js"
@@ -209,12 +210,18 @@ gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 
 // Generate styles
 gulp.task("lace", [ "bower" ], function() {
-	return gulp.src(dirs.bower + "/lace/src/scss/*.scss")
+	return gulp.src(dirs.bower + "/lace/src/scss/**/*.scss")
 	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(gulp.dest(dirs.lace));
 });
 
-gulp.task("styles", [ "lace" ], function() {
+gulp.task("fonts", [ "bower" ], function() {
+	return gulp.src(dirs.bower + "/lace/src/fonts/**/*")
+	.pipe(plumber({ errorHandler: onerror }))
+	.pipe(gulp.dest(dirs.fonts));
+});
+
+gulp.task("styles", [ "lace", "fonts" ], function() {
 	return gulp.src(files.scss)
 	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(sourcemaps.init())
@@ -259,7 +266,7 @@ gulp.task("clean", function() {
 	return del(prefix("public/", [
 		"**/*.min.js", "**/*.min.css",
 		"**/*.map", "**/*.appcache}"
-	], dirs.lib, dirs.css, dirs.lace));
+	], dirs.lib, dirs.css, dirs.lace, dirs.fonts));
 });
 
 gulp.task("watch", function() {
