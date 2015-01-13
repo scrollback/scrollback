@@ -9,10 +9,9 @@ var Color = require("../lib/color.js"),
 	bootingDone = false,
 	verified = false,
 	verificationTimeout = false,
-	suggestedNick,
 	/*  lasting objects*/
+	suggestedNick, jws,
 	embed, token, domain, path, preBootQueue = [],
-//	queue = [],
 	parentHost;
 
 function openFullView() {
@@ -256,13 +255,13 @@ module.exports = function(libsb) {
 	});
 
 	var url = urlUtils.parse(window.location.pathname, window.location.search);
-
+	console.log("+++++++++++++++++++++++++++++++++++++++++++++++++",url);
 	embed = url.embed;
-
 	if (window.parent !== window) {
 		parentWindow = window.parent;
 		if (embed) {
 			suggestedNick = embed.nick;
+			jws = embed.jws;
 			classesOnLoad(embed);
 
 			if (embed.origin) {
@@ -343,19 +342,19 @@ module.exports = function(libsb) {
 				path: path,
 				verified: verified
 			};
-
+			if(jws && !init.auth) init.auth = {jws: jws};
 			if (url) {
 				init.suggestedNick = init.suggestedNick || suggestedNick || "";
 			}
-
+			
 			next();
 		}
 
-//		if (libsb.hasBooted) {
+		if (verificationStatus) {
 			processInit();
-		/*} else {
-			queue.push(processInit);
-		}*/
+		} else {
+			preBootQueue.push(processInit);
+		}
 	}, 500);
 	
 	libsb.on("navigate", postNavigation, 500);

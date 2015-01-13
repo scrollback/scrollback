@@ -9,7 +9,7 @@ module.exports = function (c) {
 
 function checkCurrentRooms(user, domain, callback) {
 	core.emit("getRooms", {
-		hasOcuppant: user,
+		hasOccupant: user,
 		session: "internal-jws"
 	}, function (err, rooms) {
 		var shouldAllow = true,
@@ -35,17 +35,18 @@ function jwsHandler(action, callback) {
 	var domain;
 	if (!action.auth || !action.auth.jws) return callback();
 	verify(action, function(isVerified, payload) {
+		console.log(isVerified, payload);
 		if(!isVerified) return callback(new Error("AUTH_FAIL: INVALID_TOKEN"));
 		if(payload.iss != action.origin.domain) return callback("AUTH_FAIL:INVALID_ISS");
 		
 		core.emit("getUsers", {
-			identity: payload.sub,
+			identity: "mailto:"+payload.sub,
 			session: "internal-jws"
 		}, function (err, res) {
 			var user;
 			if (err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
 			domain = action.origin.domain;
-			user = (!res.results && res.results.length) ? res[0] : null;
+			user = (res.results && res.results.length) ? res.results[0] : null;
 
 			if (user) {
 				if (/^guest-/.test(action.user.id)) {
@@ -58,7 +59,8 @@ function jwsHandler(action, callback) {
 						} else {
 							action.old = action.user;
 							action.user = user;
-							action.allowedDomains = [domain];
+							action.user.allowedDomains = [domain];
+							return callback();
 						}
 					});
 				} else {
@@ -105,16 +107,14 @@ function jwsHandler(action, callback) {
 
 var verify = (function() {	
 	return function(action, callback) {
-		var availableKeys, breakNow = false;
+		var availableKeys, i=0;
 		if(!action.origin || !action.origin.domain || !keys[action.origin.domain]) return callback(false, {});
-		
 		availableKeys = keys[action.origin.domain];
 		
-		function testKey(i) {
+		function testKey() {
 			if (i == availableKeys.length) return callback(false);
 			jwt.verify(action.auth.jws, availableKeys[i], function(err, decoded) {
 					if (!err && decoded) {
-						breakNow = true;
 						return callback(true, decoded);
 					}
 					testKey(i++);
@@ -123,7 +123,7 @@ var verify = (function() {
 		}
 		
 		if(availableKeys && availableKeys.length !== 0) {
-			testKey(0);
+			testKey(i);
 		}
 	};
 }());
