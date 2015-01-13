@@ -58,7 +58,7 @@ function init(libsb) {
 	}, 997);
 
 	libsb.on("navigate", function(state, next) {
-		if (state.connectionStatus != "online") isInited = false;
+		if (state.connectionStatus != "online" && state.source !="boot") isInited = false;
 		next();
 	}, 500);
 }
