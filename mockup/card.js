@@ -2,17 +2,21 @@
 /* global $ */
 
 function Card(opts, type) {
+    var title;
+
     if (typeof opts !== "object") {
         throw new Error("Invalid options passed");
     }
 
-    if (typeof opts.title !== "string" && typeof opts.id !== "string") {
+    title = opts.title || opts.id;
+
+    if (typeof title !== "string") {
         throw new Error("Invalid title passed");
     }
 
     this._title = $('<h3 class="card-header-title">').css(opts.color ? {
         color: opts.color
-    } : {}).text(opts.title || opts.id);
+    } : {}).text(title);
 
     this._mentionbadge = $('<span class="card-header-badge notification-badge notification-badge-mention">').attr("data-empty", "");
     this._messagebadge = $('<span class="card-header-badge notification-badge notification-badge-messages">').attr("data-empty", "");
@@ -27,6 +31,10 @@ function Card(opts, type) {
             this.more
         )
     );
+
+    if (type) {
+        this.element.attr("data-" + type, title);
+    }
 
     this.id = opts.id;
 }

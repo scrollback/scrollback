@@ -53,6 +53,8 @@ function addDiscussions() {
     var grid = new View({ type: "grid" }),
         card;
 
+    grid.addHeader("Discussions");
+
     for (var j = 0; j < 12; j++) {
         card = new Card({
             title: generate.sentence(Math.floor(Math.random() * 7) + 3),
@@ -97,10 +99,11 @@ function addPeople() {
 
 $(function() {
     var keys = [ "view", "mode" ],
-        oldState = {}, currentState = {};
+        oldState = {}, currentState = {},
+        $title = $(".appbar-title");
 
     // Listen to navigate and add class names
-    libsb.on("navigate", function(state) {
+    libsb.on("navigate", function(state, next) {
         var classList;
 
         oldState = $.extend({}, currentState);
@@ -128,7 +131,24 @@ $(function() {
         classList = classList.replace(/^\s+|\s+$/g, "");
 
         $("body").attr("class", classList);
+
+        next();
     }, 1000);
+
+    libsb.on("navigate", function(state, next) {
+        if (state && oldState && state.mode !== oldState.mode) {
+            switch (state.mode) {
+            case "room":
+                $title.text(state.roomName);
+                break;
+            case "home":
+                $title.text("My feed");
+                break;
+            }
+        }
+
+        next();
+    });
 
     // Send initial navigate
     libsb.emit("navigate", { mode: "home" });
