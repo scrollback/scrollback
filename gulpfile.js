@@ -8,6 +8,7 @@ var gulp = require("gulp"),
 	es = require("event-stream"),
 	lazypipe = require("lazypipe"),
 	plumber = require("gulp-plumber"),
+	notify = require("gulp-notify"),
 	gutil = require("gulp-util"),
 	sourcemaps = require("gulp-sourcemaps"),
 	jshint = require("gulp-jshint"),
@@ -24,10 +25,12 @@ var gulp = require("gulp"),
 	manifest = require("gulp-manifest"),
 	config = require("./server-config-defaults.js"),
 	debug = !(gutil.env.production || config.env === "production"),
+	onerror = notify.onError("Error: <%= error.message %>"),
 	dirs = {
 		bower: "bower_components",
 		lib: "public/s/scripts/lib",
 		lace: "public/s/styles/lace",
+		fonts: "public/s/styles/fonts",
 		scss: "public/s/styles/scss",
 		css: "public/s/styles/dist"
 	},
@@ -47,8 +50,9 @@ function bundle(files, opts) {
 			opts.entries = "./" + file;
 
 			return browserify(opts).bundle()
-			.on("error", function(err) {
-				gutil.log(err);
+			.on("error", function(error) {
+				onerror(error);
+
 				// End the stream to prevent gulp from crashing
 				this.end();
 			})
@@ -120,7 +124,7 @@ function genmanifest(files, platform) {
 
 // Lazy pipe for building scripts
 var buildscripts = lazypipe()
-	.pipe(plumber)
+	.pipe(plumber, { errorHandler: onerror })
 	.pipe(!debug ? uglify : gutil.noop)
 	.pipe(!debug ? striplogs : gutil.noop);
 
@@ -141,7 +145,7 @@ gulp.task("postinstall", [ "hooks" ]);
 // Lint JavaScript files
 gulp.task("lint", function() {
 	return gulp.src(files.js)
-	.pipe(plumber())
+	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(gitmodified("modified"))
 	.pipe(jshint())
 	.pipe(jshint.reporter("jshint-stylish"))
@@ -151,18 +155,18 @@ gulp.task("lint", function() {
 // Install and copy third-party libraries
 gulp.task("bower", function() {
 	return bower.commands.install([], { save: true }, {})
-	.on("error", gutil.log);
+	.on("error", onerror);
 });
 
 gulp.task("copylibs", [ "bower" ], function() {
 	return gulp.src(prefix(dirs.bower + "/", [
 		"jquery/dist/jquery.min.js",
-		"lace/src/js/*.js",
+		"lace/src/js/**/*.js",
 		"sockjs/sockjs.min.js",
 		"svg4everybody/svg4everybody.min.js",
 		"velocity/velocity.min.js"
 	], "lib/post-message-polyfill.js"))
-	.pipe(plumber())
+	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(gulp.dest(dirs.lib));
 });
 
@@ -206,14 +210,20 @@ gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 
 // Generate styles
 gulp.task("lace", [ "bower" ], function() {
-	return gulp.src(dirs.bower + "/lace/src/scss/*.scss")
-	.pipe(plumber())
+	return gulp.src(dirs.bower + "/lace/src/scss/**/*.scss")
+	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(gulp.dest(dirs.lace));
 });
 
-gulp.task("styles", [ "lace" ], function() {
+gulp.task("fonts", [ "bower" ], function() {
+	return gulp.src(dirs.bower + "/lace/src/fonts/**/*")
+	.pipe(plumber({ errorHandler: onerror }))
+	.pipe(gulp.dest(dirs.fonts));
+});
+
+gulp.task("styles", [ "lace", "fonts" ], function() {
 	return gulp.src(files.scss)
-	.pipe(plumber())
+	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(sourcemaps.init())
 	.pipe(sass({
 		outputStyle: "expanded",
@@ -223,6 +233,7 @@ gulp.task("styles", [ "lace" ], function() {
 	.pipe(combinemq())
 	.pipe(!debug ? autoprefixer() : gutil.noop())
 	.pipe(!debug ? minify() : gutil.noop())
+	.pipe(rename({ suffix: ".min" }))
 	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest(dirs.css));
 });
@@ -233,7 +244,8 @@ gulp.task("client-manifest", function() {
 	return genmanifest(prefix("public/s/", [
 		"scripts/lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
-		"styles/dist/client.css",
+		"styles/dist/client.min.css",
+		"styles/fonts/icons.*",
 		"img/client/**/*"
 	]));
 });
@@ -243,7 +255,8 @@ gulp.task("android-manifest", function() {
 		"phonegap/**/*",
 		"scripts/lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
-		"styles/dist/client.css",
+		"styles/dist/client.min.css",
+		"styles/fonts/icons.*",
 		"img/client/**/*"
 	]), "android");
 });
@@ -253,9 +266,9 @@ gulp.task("manifest", [ "client-manifest", "android-manifest" ]);
 // Clean up generated files
 gulp.task("clean", function() {
 	return del(prefix("public/", [
-		"**/*.map", "**/*.min.js",
-		"**/*.bundle.js", "**/*.appcache}"
-	], dirs.lib, dirs.css, dirs.lace));
+		"**/*.min.js", "**/*.min.css",
+		"**/*.map", "**/*.appcache}"
+	], dirs.lib, dirs.css, dirs.lace, dirs.fonts));
 });
 
 gulp.task("watch", function() {

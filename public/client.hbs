@@ -11,7 +11,7 @@
 		<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
 
 		<link rel="stylesheet" type="text/css" media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:400,600">
-		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/dist/client.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/dist/client.min.css">
 
 		{{#if analytics.id}}
 			<script>
@@ -178,10 +178,7 @@
 					</div>
 					<div data-embed="toast" class="minimize-ticker"></div>
 					<a data-mode="normal" data-embed="none" data-role="user" class="follow-button follow-room-action" role="button">
-						<svg class="follow-icon" width="28" height="28" viewBox="0 0 28 28">
-							<use class="fill custom-titlebar-fg" xlink:href="/s/img/client/icons/follow.svg#fill"></use>
-							<use class="stroke custom-titlebar-fg" xlink:href="/s/img/client/icons/follow.svg#stroke"></use>
-						</svg>
+							<span class="follow-icon custom-titlebar-fg"></span>
 					</a>
 					<div data-mode="conf pref search" class="action-buttons">
 						<a data-mode="search" class="button search-back"></a>
@@ -200,10 +197,7 @@
 					<div data-mode="normal search" data-embed="toast canvas" class="embed-area">
 
 						<a data-mode="normal" data-role="user" class="follow-button follow-room-action" role="button">
-							<svg class="follow-icon embed-icon" width="28" height="28" viewBox="0 0 28 28">
-								<use class="fill custom-titlebar-fg" xlink:href="/s/img/client/icons/follow.svg#fill"></use>
-								<use class="stroke custom-titlebar-fg" xlink:href="/s/img/client/icons/follow.svg#stroke"></use>
-							</svg>
+							<span class="follow-icon custom-titlebar-fg"></span>
 						</a>
 
 						<div data-embed="toast" class="embed-action-minimize embed-button">

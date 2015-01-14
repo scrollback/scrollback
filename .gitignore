@@ -43,6 +43,7 @@ client-config.js
 /test/config.js
 
 /public/s/styles/lace
+/public/s/styles/fonts
 /public/s/styles/dist
 /public/s/scripts/lib
 /public/s/tmp/*
