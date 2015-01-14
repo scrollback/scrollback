@@ -31,11 +31,18 @@ module.exports = function(core, config) {
 				id: action.session,
 				user: action.user.id,
 				origin: action.origin,
-				restricted: sessionObj && sessionObj.restricted
+				restricted: sessionObj && sessionObj.restricted,
+				allowedDomains: action.user.allowedDomains
 			};
-			if(action.auth && action.auth.jws) {
-				session.restricted = true;
+			if(action.auth){
+				if(action.auth.jws) {
+					session.restricted = true;
+				}else{
+					delete session.restricted;
+					delete session.allowedDomains;
+				}
 			}
+			
 			if(!err) {
 				if(sessionObj && sessionObj.origin && sessionObj.origin.locations) {
 					Object.keys(sessionObj.origin.locations).forEach(function(resource) {

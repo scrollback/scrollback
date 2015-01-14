@@ -20,5 +20,8 @@
     "svg4everybody": "*",
     "transformie": "*",
     "velocity": "~0.7.0"
+  },
+  "resolutions": {
+    "velocity": "~1.1.0"
   }
 }

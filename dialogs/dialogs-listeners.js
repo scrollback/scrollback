@@ -284,3 +284,11 @@ libsb.on("signup-dialog", function(dialog, next) {
 
 	next();
 }, 100);
+
+
+libsb.on("signin-dialog", function(dialog, next) {
+	dialog.title = "Restricted session, login.";
+	libsb.emit("auth", dialog, function() {
+		next();
+	});
+}, 100);

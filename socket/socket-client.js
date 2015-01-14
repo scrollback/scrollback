@@ -79,7 +79,17 @@ function connect() {
 	client.onopen = function() {
 		backOff = 1;
 		core.emit("init-up", {}, function (err) {
-			if (err) console.log(err.message);
+			if (err) {
+				console.log(err.message);
+				core.emit("navigate", {
+					connectionStatus: "online",
+					source: "socket",
+					dialog: "signin"
+				}, function(err) {
+					if (err) console.log(err.message);
+				});	
+				return;
+			}
 			else libsb.isInited = true;
 			core.emit("navigate", {
 				connectionStatus: "online",

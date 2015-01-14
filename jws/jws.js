@@ -70,6 +70,7 @@ function jwsHandler(action, callback) {
 						} else {
 							action.user.allowedDomains = [domain];
 						}
+						callback();
 					} else {
 						//this state is when i am already logged in and a website gives me JSON signature and i cant do anything with it. so throwing error.
 						callback(new Error("fail"));
