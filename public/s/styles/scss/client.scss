@@ -21,7 +21,7 @@
 @import "../lace/linked";
 @import "../lace/filter";
 @import "../lace/dropshadow";
-@import "../lace/assets";
+@import "../lace/icons";
 
 @import "themes";
 @import "tip";
@@ -907,21 +907,21 @@ body {
 
     width: 3.5em;
     padding: .75em;
+    margin: 0 .5em;
 
     .role-owner & { display: none; }
+}
 
-    .follow-icon {
-        .fill {
-            opacity: 0;
+.follow-icon {
+    @include icon(star);
 
-            .role-follower & { opacity: 1; }
-        }
+    color: $dark-color;
 
-        .stroke {
-            opacity: 1;
+    .role-follower & { @include icon(star-empty); }
 
-            .role-follower & { opacity: 0; }
-        }
+    &:before {
+        font-size: 2em;
+        vertical-align: -.3em;
     }
 }
 
@@ -1122,8 +1122,10 @@ body {
 .chat-scroll-to-bottom {
     @include transform(translate3d(0, 100%, 0));
     @include dropshadow(2);
+    @include icon(down-big);
     @extend %chat-quick-action;
 
+    padding: .75em 1em;
     background-color: $info-color;
     color: $light-color;
     cursor: pointer;
@@ -1132,14 +1134,6 @@ body {
     &:focus, &:hover { background-color: darken($info-color, 5%); }
 
     &:active { background-color: darken($info-color, 10%); }
-
-    &:before {
-        @include asset-content("arrow-down");
-
-        margin: 0 .5em;
-        vertical-align: -.3em;
-        line-height: 1em;
-    }
 
     &.visible {
         @include transform(translate3d(0, 0, 0));
@@ -1891,6 +1885,8 @@ $dotshadow: fade-out($accent-color, .6);
 }
 
 .popover-got-it {
+    @include icon(done);
+    @extend %popover-item;
     @extend %snappy;
 
     background-color: rgba(0,0,0,.1);
@@ -1902,18 +1898,15 @@ $dotshadow: fade-out($accent-color, .6);
 
     &:active { background-color: rgba(0,0,0,.3); }
 
-    &:before {
-        @include asset-content("check");
-
-        vertical-align: -.2em;
-        margin-right: 1em;
-    }
+    &:before { margin-right: 1em; }
 }
 
 %popover-item {
     &:before {
+        opacity: .7;
         margin-right: 1em;
-        vertical-align: -.2em;
+        font-size: 1.2em;
+        vertical-align: -.1em;
     }
 }
 
@@ -1921,38 +1914,38 @@ $dotshadow: fade-out($accent-color, .6);
     .homefeed {
         @extend %popover-item;
 
-        &:before { @include asset-content("grid", lighten($dark-color, 30%)); }
+        &:before { @include icon(grid); }
     }
 
     .userpref {
         @extend %popover-item;
 
-        &:before { @include asset-content("settings", lighten($dark-color, 30%)); }
+        &:before { @include icon(configure); }
     }
 
     .reportissue {
         @extend %popover-item;
 
-        &:before { @include asset-content("info", lighten($dark-color, 30%)); }
+        &:before { @include icon(info-circled); }
     }
 
     .logout {
         @extend %popover-item;
 
-        &:before { @include asset-content("logout", lighten($dark-color, 30%)); }
+        &:before { @include icon(off); }
     }
 }
 
 .guest-sound-notification-disable {
     @extend %popover-item;
 
-    &:before { @include asset-content("sound", lighten($dark-color, 30%)); }
+    &:before { @include icon(audio); }
 }
 
 .guest-sound-notification-enable {
     @extend %popover-item;
 
-    &:before { @include asset-content("sound-off", lighten($dark-color, 30%)); }
+    &:before { @include icon(audio-off); }
 }
 
 .embed-toast.toast-minimized {
