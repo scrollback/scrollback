@@ -25,7 +25,7 @@ function makeQuery(type) {
 	}
 	
 	return { sources: [], type: type, filters: [], iterate: {
-		key: null, start: null, reverse: false, skip: 0, limit: 256
+		keys: [], start: [], reverse: false, skip: 0, limit: 256
 	}, quantFilter: quantFilter };
 }
 
@@ -46,8 +46,8 @@ exports.getTexts = exports.getThreads = function(query) {
 	} else if (query.ref) {
 		q.filters.push(['id', 'eq', query.ref]);
 	} else if (query.updateTime) {
-		q.iterate.key = "updateTime";
-		q.iterate.start = query.updateTime;
+		q.iterate.keys.push("updatetime");
+		q.iterate.start.push(query.updateTime);
 	} /*else if (query.type == 'getThreads' && query.q) {
 //		TODO: TEXT SEARCH
 //		q.filters.push(["terms", "ts", iq.q]);
@@ -55,8 +55,8 @@ exports.getTexts = exports.getThreads = function(query) {
 //		
 //		Maybe it won't go here at all.
 	}*/ else {
-		q.iterate.key = "time";
-		q.iterate.start = storageUtils.timetoString(query.time || new Date().getTime());
+		q.iterate.keys.push("time");
+		q.iterate.start.push(storageUtils.timetoString(query.time || new Date().getTime()));
 	}
 	
 	if(query.before) {
@@ -80,27 +80,26 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	var q = makeQuery('select'),
 		type = (iq.type === 'getEntities' ? undefined : (iq.type === 'getUsers' ? 'user' : 'room'));
 	q.source = "entities";
-	if (iq.ref) {
-		q.filters.push(["id", "eq", iq.ref]);
-	}
+	
     
 	if (iq.type) {
 		q.filters.push([["entities", "type"], "eq", type]);
 	}
-	
-    if (iq.identity) {
+	if (iq.ref) {
+		q.filters.push(["id", "eq", iq.ref]);
+	} else if (iq.identity) {
 		q.filters.push(['identities', 'cts', [iq.identity]]);
-	}
-	
-	if (iq.timezone) {
+	} else if (iq.timezone) {
 		if (typeof iq.timezone.gte === 'number') q.filters.push(['timezone', 'gte', iq.timezone.gte]);
 		if (typeof iq.timezone.lte === 'number') q.filters.push(['timezone', 'lte', iq.timezone.lte]);
-	}
-	
-	if (iq.memberOf || iq.hasMember) {
+	} else if (iq.memberOf || iq.hasMember) {
 		q.sources.push('entities');
 		q.sources.push('relations');
-		q.filters.push([['relations', 'role'], 'neq', 'none']);
+		if (!iq.role) {
+			q.filters.push([['relations', 'role'], 'neq', 'none']);
+		} else {
+			q.filters.push([['relations', 'role'], 'eq', iq.role]);
+		}
 		if (iq.memberOf) {
 			q.filters.push([['relations', 'room'], 'eq', iq.memberOf]);
 			q.filters.push([['relations', 'user'], 'eq', ['entities', 'id']]);
@@ -108,18 +107,24 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 			q.filters.push([['relations', 'user'], 'eq', iq.hasMember]);
 			q.filters.push([['relations', 'room'], 'eq', ['entities', 'id']]);	
 		}
-	}
+	} else if (iq.role) q.filters.push(['role', 'eq', q.role]);
 	
-	/*
+	
+	
+	
 	//if (iq.locale) q.quantFilter('locale', iq.locale);
-	if (iq.role) q.filters.push(['role', 'eq', q.role]);// q.quantFilter('role', iq.role);
 	
-	if(iq.roleTime) {
+/*	if (iq.roleTime) {
 		q.iterate.key = 'roleTime';
 		q.iterate.start = iq.roleTime;
-	} else if(iq.createTime) {
-		q.iterate.key = 'roleTime';
-		q.iterate.start = iq.roleTime;
+	} else */
+	if (iq.createTime) {
+		q.iterate.keys.push('createtime');
+		q.iterate.start.push(iq.createTime);
+	} 
+	if (iq.iterator) {
+		q.iterate.keys.push('id');
+		q.iterate.start.push(iq.iterator);
 	}
 	
 	if (iq.before) {
@@ -127,7 +132,8 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.iterate.limit = iq.before;
 	} else {
 		q.iterate.limit = iq.after || 256;
-	}*/
+		q.iterate.reverse = false;
+	}
 	log.d("entities Query:", q);
 	return [q];
 };

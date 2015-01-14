@@ -157,14 +157,17 @@ if delete time is set.
 */
 function makeSelectQuery(transform) {
 	log.d("Transform", transform);
-	if (transform.iterate.key) {
-		if (transform.iterate.reverse) {
-			transform.filters.push([transform.iterate.key, 'lte', transform.iterate.start]);
-		} else {
-			transform.filters.push([transform.iterate.key, 'gte', transform.iterate.start]);
+	if (transform.iterate.keys && transform.iterate.keys.length) {
+		if (typeof transform.iterate.keys === 'string') transform.iterate.keys = [transform.iterate.keys]; // if string change it to an array
+		for (var j = 0; j < transform.iterate.keys.length; j++) {
+			if (transform.iterate.reverse) {
+				transform.filters.push([transform.iterate.keys[j], 'lte', transform.iterate.start[j]]);
+			} else {
+				transform.filters.push([transform.iterate.keys[j], 'gte', transform.iterate.start[j]]);
+			}
 		}
 	}
-	
+	log.d("Transform", transform);
 	var sql = [], i = 1, values = [], t;
 	sql.push("SELECT");
 	t = [];
@@ -208,9 +211,13 @@ function makeSelectQuery(transform) {
 		addFilters(transform, sql, values, i);
 	}
 	
-	if (transform.iterate.key) {
-		sql.push("order by " + name(transform.iterate.key));
-		sql.push(transform.iterate.reverse ? "DESC": "ASC");
+	if (transform.iterate.keys && transform.iterate.keys.length) {
+		var orderby = [];
+		transform.iterate.keys.forEach(function(key) {
+			orderby.push(name(key) + " " + (transform.iterate.reverse ? "DESC": "ASC"));
+		});
+		sql.push("order by " + orderby.join(','));
+		//sql.push(transform.iterate.reverse ? "DESC": "ASC");
 		sql.push("limit " + transform.iterate.limit);
 	}
 	
