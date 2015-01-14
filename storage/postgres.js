@@ -10,7 +10,7 @@ module.exports = function(conf) {
 		config.pg.password + "@" + config.pg.server + "/" + config.pg.db;
 	
 	function get (q, cb) {
-		
+		log.d("Query:", q);
 		var queries = storageUtils.transformsToQuery(q);
 		log.d("Queries:", queries);
 		pg.connect(getConnectionString(q.source), function(err, client, done) {

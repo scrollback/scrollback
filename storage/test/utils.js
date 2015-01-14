@@ -7,6 +7,7 @@ r.getNewTextAction = function getNewTextActions() {
 	var id = generate.uid();
 	return {
 		id: (id),
+		type: "text",
 		from: generate.names(6),
 		to: generate.names(10),
 		text: generate.sentence(10),
@@ -89,7 +90,7 @@ r.emitActions = function(core, actions, callback) {
 	var ct = 0;
 	var error;
 	var results = [];
-	for (var j = 0;j < actions.length;j++) results.push(null);
+	for (var j = 0; j < actions.length; j++) results.push(null);
 	function done() {
 		if (++ct == actions.length) callback(error, results);
 	}

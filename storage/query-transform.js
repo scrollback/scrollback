@@ -1,8 +1,9 @@
-var log = require('../lib/logger.js');
+var log = require('../lib/logger.js'),
+	storageUtils = require('./storage-utils.js');
 /**
 select * from texts where time > 123456373 and "from"='roomname' and time > text.room.createTime && order by time desc limit 256 
 only non [hidden].
- 
+
 if delete time is set.
 
 */
@@ -38,30 +39,24 @@ exports.getTexts = exports.getThreads = function(query) {
 		q.filters.push(["to", "eq", query.to]);
 	}
 	
-	if (query.ref) {
-		q.filters.push(['id', 'eq', query.ref]);
-	}
-	
 	if (query.thread && query.type === 'getTexts') {
 		q.filters.push(["thread", "eq", query.thread]);
-	}
-	
-	if (query.label) {
-		q.filters.push(["label", "propgt", query.label, 0.5]);
-	}
-	
-	if (query.updateTime) {
+	} else if (query.tag) {
+		q.filters.push(["tags", "cts", query.tag]);
+	} else if (query.ref) {
+		q.filters.push(['id', 'eq', query.ref]);
+	} else if (query.updateTime) {
 		q.iterate.key = "updateTime";
 		q.iterate.start = query.updateTime;
-	} else if (query.type == 'getThreads' && query.q) {
+	} /*else if (query.type == 'getThreads' && query.q) {
 //		TODO: TEXT SEARCH
 //		q.filters.push(["terms", "ts", iq.q]);
 //		q.iterate.key = ["tsrank" "terms", iq.q];
 //		
 //		Maybe it won't go here at all.
-	} else {
+	}*/ else {
 		q.iterate.key = "time";
-		q.iterate.start = query.time || new Date().getTime();
+		q.iterate.start = storageUtils.timetoString(query.time || new Date().getTime());
 	}
 	
 	if(query.before) {
@@ -69,7 +64,9 @@ exports.getTexts = exports.getThreads = function(query) {
 		q.iterate.limit = query.before;
 	} else {
 		q.iterate.limit = query.after || 256;
+		q.iterate.reverse = false;
 	}
+	log.d("Query:", q);
 	return [q];
 };
 

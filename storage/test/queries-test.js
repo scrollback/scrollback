@@ -3,12 +3,13 @@ var assert = require('assert'),
 	utils = require('./utils.js'),
 	core = new (require('ebus'))(),
 	mathUtils = require('../../lib/mathUtils.js'),
-	//generate = require("../../lib/generate.js"),
+	generate = require("../../lib/generate.js"),
 	log = require("../../lib/logger.js"),
 	storage = require('./../storage.js'),
 	config = require('./../../server-config-defaults.js'),
-	pg = require('pg'),
-	connString = "pg://" + config.storage.pg.username + ":" +
+	pg = require('pg');
+	config.storage.pg.db = "testingdatabase"; // don't change this.
+var	connString = "pg://" + config.storage.pg.username + ":" +
 	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
 
 
@@ -177,7 +178,7 @@ describe("Storage Test.", function() {
 	});
 	it("getTexts query (ref)", function(done) {
 		var text = utils.getNewTextAction();
-		core.emit("text", text, function(/*err, r*/) {
+		core.emit("text", text, function() {
 			core.emit("getTexts", {ref: text.id}, function(err, reply) {
 				assert.equal(reply.results[0].id, text.id, "getTexts(ref) not working");
 				done();
@@ -186,21 +187,157 @@ describe("Storage Test.", function() {
 	});
 	
 	
-	/*it("getTexts query", function(done) {
+	it("getTexts query-1 (time: null / msg: 256 / before)", function(done) {
+		this.timeout(10000);
 		var texts = [];
 		var to = generate.names(8);
-		var n = mathUtils.random(1, 250);
+		var n = mathUtils.random(1, 256);
+		var time = new Date().getTime();
+		for (var i = 0; i < n; i++) {
+			var text = utils.getNewTextAction();
+			text.to = to;
+			text.time = time  + i; // increasing time.
+			texts.push(text);
+		}
+		utils.emitActions(core, texts, function() {
+			core.emit("getTexts", {time: null, before: 256, to: to}, function(err, results) {
+				log.d("Texts:", results);
+				assert.equal(results.results.length, n, "not n messages");
+				for (var i = 0; i < n; i++) {
+					assert.equal(results.results[i].id, texts[i].id, "Incorrect results");
+				}
+				done();
+			});
+		});
+ 	});
+	
+	it("getTexts query-2 (time: null / msg > 256 / before)", function(done) {
+		this.timeout(20000);
+		var texts = [];
+		var to = generate.names(8);
+		var n = mathUtils.random(257, 500);
+		var time = new Date().getTime();
 		for (var i = 0;i < n;i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
-			text.time += i; // increasing time.
+			text.time = time + i; // increasing time.
 			texts.push(text);
 		}
-		utils.emitActions(core, texts, function(err, results) {
-			log("getTexts:", err, results);
-			core.emit("getTexts", {time: null, before: 256, to: to}, function(err, results) {
-				
+		var num = 256;
+		utils.emitActions(core, texts, function() {
+			core.emit("getTexts", {time: null, before: num, to: to}, function(err, results) {
+				log.d("Texts:", results);
+				assert.equal(results.results.length, num, "Number of messages are not 256");
+				for (var i = n - num ; i < n; i++) {
+					assert.equal(results.results[i - (n - num)].id, texts[i].id, "Incorrect results");
+				}
+				done();
 			});
 		});
- 	});*/
+	});
+	
+	it("getTexts query-3 (time: number / msg <= 256 / after)", function(done) {
+		this.timeout(10000);
+		var texts = [];
+		var to = generate.names(8);
+		var n = mathUtils.random(1, 256);
+		var time = new Date().getTime();
+		for (var i = 0;i < n;i++) {
+			var text = utils.getNewTextAction();
+			text.to = to;
+			text.time = time  + i; // increasing time.
+			texts.push(text);
+		}
+		utils.emitActions(core, texts, function() {
+			core.emit("getTexts", {time: time - 1, after: 256, to: to}, function(err, results) {
+				log.d("Texts:", results);
+				assert.equal(results.results.length, n, "not n messages");
+				for (var i = 0; i < n; i++) {
+					assert.equal(results.results[i].id, texts[i].id, "Incorrect results");
+				}
+				
+				done();
+			});
+		});
+	});
+
+	it("getTexts query-4 ((time: number / msg > 256 / after))", function(done) {
+		this.timeout(20000);
+		var texts = [];
+		var to = generate.names(8);
+		var n = mathUtils.random(257, 500);
+		var time = new Date().getTime();
+		for (var i = 0;i < n;i++) {
+			var text = utils.getNewTextAction();
+			text.to = to;
+			text.time = time + i; // increasing time.
+			texts.push(text);
+		}
+		var num = 256;
+		utils.emitActions(core, texts, function() {
+			core.emit("getTexts", {time: time - 1, after: num, to: to}, function(err, results) {
+				log.d("Texts:", results);
+				assert.equal(results.results.length, num, "Number of messages are not 256");
+				for (var i = 0; i < num; i++) {
+					assert.equal(results.results[i].id, texts[i].id, "Incorrect results");
+				}
+				done();
+			});
+		});
+	});
+	
+	
+	it("getTexts query-5 ((time: number / msg > 256 / after)", function(done) {
+		this.timeout(20000);
+		var texts = [];
+		var to = generate.names(8);
+		var n = mathUtils.random(300, 500);
+		var time = new Date().getTime();
+		for (var i = 0;i < n;i++) {
+			var text = utils.getNewTextAction();
+			text.to = to;
+			text.time = time + i; // increasing time.
+			texts.push(text);
+		}
+		var num = 256;
+		var at = mathUtils.random(1, 45);
+		utils.emitActions(core, texts, function() {
+			core.emit("getTexts", {time: time + at, after: num, to: to}, function(err, results) {
+				log.d("Texts:", results);
+				assert.equal(results.results.length, num, "Number of messages are not 256");
+				for (var i = at; i < num; i++) {
+					assert.equal(results.results[i - at].id, texts[i].id, "Incorrect results");
+				}
+				done();
+			});
+		});
+	});
+	
+	it("getTexts query-6 ((time: number / msg > 256 / before)", function(done) {
+		this.timeout(20000);
+		var texts = [];
+		var to = generate.names(8);
+		var n = mathUtils.random(300, 500);
+		var time = new Date().getTime();
+		for (var i = 0;i < n;i++) {
+			var text = utils.getNewTextAction();
+			text.to = to;
+			text.time = time + i; // increasing time.
+			texts.push(text);
+		}
+		var num = mathUtils.random(1, 256);
+		var at = mathUtils.random(1, 25);
+		utils.emitActions(core, texts, function() {
+			core.emit("getTexts", {time: time + (n - 1) - at, before: num, to: to}, function(err, results) {
+				log.d("Texts:", results);
+				assert.equal(results.results.length, num, "Number of messages are not correct");
+				for (var i = n - num - at; i < (n - at); i++) {
+					//log.d("Results", results.results[i - (n - num - at)].id, texts[i].id, i - (n - num - at), i);
+					assert.equal(results.results[i - (n - num - at)].id, texts[i].id, "Incorrect results");
+				}
+				done();
+			});
+		});
+	});
+	
 });

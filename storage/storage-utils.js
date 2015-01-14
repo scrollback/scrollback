@@ -1,7 +1,7 @@
 var log = require('./../lib/logger.js');
 module.exports = {
 	timetoString: function(time) {
-		return (new Date(time).toISOString());
+		return (new Date(time));
 	},
 	transformsToQuery: function(transforms) {
 		var r = [];
@@ -11,7 +11,7 @@ module.exports = {
 				reply.forEach(function(rep) {
 					r.push(rep);
 				});
-			} else r.push(toQuery(transform));
+			} else r.push(reply);
 		});
 		return r;
 	},
@@ -156,6 +156,15 @@ if delete time is set.
 2. 
 */
 function makeSelectQuery(transform) {
+	log.d("Transform", transform);
+	if (transform.iterate.key) {
+		if (transform.iterate.reverse) {
+			transform.filters.push([transform.iterate.key, 'lte', transform.iterate.start]);
+		} else {
+			transform.filters.push([transform.iterate.key, 'gte', transform.iterate.start]);
+		}
+	}
+	
 	var sql = [], i = 1, values = [], t;
 	sql.push("SELECT");
 	t = [];
@@ -192,25 +201,28 @@ function makeSelectQuery(transform) {
 		});
 		var s = "(" + t.join(" AND ") + ")";
 		sql.push(s);
-		return {
-			query: sql.join(" "),
-			values: values
-		};
 	} else {
 		
 		sql.push(transform.source);
 		/* added source */
 		addFilters(transform, sql, values, i);
-
-		return {
-			query: sql.join(" "),
-			values: values
-		};
 	}
+	
+	if (transform.iterate.key) {
+		sql.push("order by " + name(transform.iterate.key));
+		sql.push(transform.iterate.reverse ? "DESC": "ASC");
+		sql.push("limit " + transform.iterate.limit);
+	}
+	
+	return {
+		query: sql.join(" "),
+		values: values
+	};
 	
 }
 
 function addFilters(transform, sql, values, i) {
+	log.d("Transform", transform);
 	var filters = [];
 	if (transform.filters && transform.filters.length) {
 		sql.push("WHERE");

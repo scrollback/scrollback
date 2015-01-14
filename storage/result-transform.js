@@ -1,5 +1,5 @@
 var log = require('../lib/logger.js');
-exports.getTexts = function(texts) {
+exports.getTexts = function(query, texts) {
 	var results = [];
 	texts[0].rows.forEach(function(row) {
 		var labels = {};
@@ -22,6 +22,10 @@ exports.getTexts = function(texts) {
 		};
 		results.push(text);
 	});
+	
+	if (query.before) {
+		results.reverse();
+	}
 	return results;	
 };
 
@@ -34,7 +38,7 @@ exports.getThreads = function(threads) {
 	return threads;
 };
 
-exports.getRooms = exports.getUsers = exports.getEntities = function(entities) {
+exports.getRooms = exports.getUsers = exports.getEntities = function(query, entities) {
 	log.d("Entities: ", entities);
 	var results = [];
 	entities[0].rows.forEach(function(row) {
