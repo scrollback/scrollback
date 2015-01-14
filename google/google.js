@@ -6,8 +6,8 @@ var config,
 	core;
 module.exports = function(c, conf) {
 	core = c;
-	config =conf;
-	
+	config = conf;
+
 	if (!config.client_id || !config.client_secret) {
 		console.log("Missing google params:");
 		return;
