@@ -34,13 +34,14 @@ module.exports = function (coreObj, conf) {
 	}, "setters");
 
 	core.on("init", function (init, callback) {
+		var oldUser;
 		log("init irc:", init);
 		if ((/^irc/).test(init.session)) return callback();
-		var oldUser = {
-			id: init.from
-		};
+		if(init.old && init.old.id){
+			oldUser = init.old;	
+		}
+		
 		var newUser = init.user;
-
 		if (oldUser && newUser && oldUser.id !== newUser.id) {
 			var uid = guid();
 			clientEmitter.emit("write", {
