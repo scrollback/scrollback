@@ -14,15 +14,10 @@ function Card(opts, type) {
         color: opts.color
     } : {}).text(opts.title || opts.id);
 
-    this._mentioncount = $('<span class="notification-badge-count">');
-    this._mentionbadge = $('<span class="card-header-badge notification-badge notification-badge-mention">').attr("data-empty", "").append(this._mentioncount);
-    this._messagecount = $('<span class="notification-badge-count">');
-    this._messagebadge = $('<span class="card-header-badge notification-badge notification-badge-messages">').attr("data-empty", "").append(
-        $('<span class="icon-communication-message">'),
-        this._messagecount
-    );
+    this._mentionbadge = $('<span class="card-header-badge notification-badge notification-badge-mention">').attr("data-empty", "");
+    this._messagebadge = $('<span class="card-header-badge notification-badge notification-badge-messages">').attr("data-empty", "");
 
-    this.more = $('<a class="card-header-icon card-header-icon-more icon-navigation-more-vert' + (type ? ' action-' + type + '-more' : '') + '">');
+    this.more = $('<a class="card-header-icon card-header-icon-more' + (type ? ' action-' + type + '-more' : '') + '">');
 
     this.element = $('<div class="card' + (type ? ' ' + type + '-card' : '') + '">').append(
         $('<div class="card-header">').append(
@@ -49,7 +44,7 @@ Card.prototype = {
     setCount: function(type, text) {
         var $badge;
 
-        if (typeof type !== "string" || !this["_" + type + "count"]) {
+        if (typeof type !== "string" || !this["_" + type + "badge"]) {
             throw new Error("Invalid property specified");
         }
 
@@ -65,7 +60,7 @@ Card.prototype = {
             $badge.attr("data-empty", true);
         }
 
-        this["_" + type + "count"].text(text);
+        $badge.text(text);
 
         return this;
     },

@@ -19,6 +19,8 @@
         }
 
         &-icon {
+            @include icon(search);
+
             position: absolute;
             top: 0;
             right: 0;
@@ -27,6 +29,7 @@
             color: inherit;
             height: 100%;
             opacity: .3;
+            line-height: 1;
         }
     }
 }

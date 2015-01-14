@@ -49,6 +49,7 @@
             width: $icon-width;
             min-width: $icon-width;
             max-width: $icon-width;
+            line-height: 1;
 
             &-left { float: left; }
 
@@ -61,6 +62,16 @@
                 background-color: rgba(0,0,0,0.2);
                 color: inherit;
             }
+
+            &-menu { @include icon(hamburger); }
+
+            &-more { @include icon(more); }
+
+            &-search { @include icon(search); }
+
+            &-people { @include icon(contact); }
+
+            &-follow { @include icon(star-empty); }
         }
     }
 }

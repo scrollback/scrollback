@@ -38,6 +38,7 @@
                 color: inherit;
                 height: 100%;
                 width: $icon-width;
+                line-height: 1;
 
                 &:hover, &:focus {
                     background-color: rgba(0,0,0,0.05);
@@ -48,6 +49,8 @@
                     background-color: rgba(0,0,0,0.1);
                     color: inherit;
                 }
+
+                &-more { @include icon(more); }
             }
 
             &-badge {
@@ -86,11 +89,19 @@
         }
 
         &-button {
+            @include icon(reply);
             @extend %ellipsize;
             @extend %clearfix;
 
+            display: block;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: .8em;
+            padding: (1em / .8);
+            padding-left: 0;
             border-top: 1px solid rgba(0,0,0,0.1);
             cursor: pointer;
+            opacity: .7;
 
             &:hover, &:focus {
                 background-color: rgba(0,0,0,0.05);
@@ -102,20 +113,11 @@
                 color: inherit;
             }
 
-            &-icon {
+            &:before {
                 float: left;
                 font-size: 1.5em;
-                padding: (.75em / 1.5) (1em / 1.5);
-                opacity: .5;
-            }
-
-            &-text {
-                display: inline-block;
-                font-weight: 700;
-                text-transform: uppercase;
-                font-size: .8em;
-                padding: (1em / .8);
-                padding-left: 0;
+                padding: 0 (1em / 1.5);
+                opacity: .7;
             }
         }
     }

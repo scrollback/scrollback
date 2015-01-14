@@ -57,6 +57,8 @@
     .profile-username { font-weight: 700; }
 
     .profile-settings {
+        @include icon(configure);
+
         position: absolute;
         z-index: 1;
         right: 0;
@@ -86,9 +88,12 @@
         }
 
         &-icon {
+            @include icon(clock);
+
             float: left;
             padding: .33em;
             font-size: 1.5em;
+            line-height: 1;
             color: $accent-color;
         }
     }

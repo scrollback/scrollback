@@ -5,7 +5,7 @@
     .notification-badge {
         position: relative;
         padding: (.5em / .8);
-        background-color: $badge-messages;
+        background-color: $accent-color;
         color: $light-color;
         border-radius: (1em / .8);
         font-size: .8em;
@@ -13,17 +13,21 @@
         line-height: 1;
         cursor: pointer;
 
-        &-count { margin: 0 (.25em / .8); }
+        &-messages {
+            @include icon(comment);
 
-        &-mention {
-            background-color: $badge-mentions;
-
-            &:before {
-                content: "@";
-                opacity: .8;
-            }
+            background-color: $badge-messages;
         }
 
-        [class^="icon-"], [class*=" icon-"] { opacity: .8; }
+        &-mention {
+            @include icon(at);
+
+            background-color: $badge-mentions;
+        }
+
+        &:before {
+            opacity: .8;
+            margin-right: (.25em / .8);
+        }
     }
 }
