@@ -192,11 +192,11 @@ body {
     border-top: 1px solid lighten($dark-color, 5%);
     box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);
 
-    a {
+    &-button {
         display: block;
         font-weight: 700;
         margin: 0;
-        padding: 1em 0;
+        padding: .5em 0;
         color: $light-color;
         text-transform: uppercase;
 
@@ -584,6 +584,7 @@ body {
     position: relative;
     display: block;
     font-size: 1.2em;
+    line-height: 1;
     padding: .75em;
     padding-left: 2.75em;
     background-size: 24px 24px;
@@ -828,6 +829,7 @@ body {
     font-weight: 700;
     margin: 0;
     padding: .25em 0;
+    line-height: 1;
 
     @media #{$screenxxx} {
         font-size: 1.5em;
