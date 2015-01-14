@@ -4,7 +4,6 @@
 
 // Import global settings
 @import "settings";
-@import "icons";
 
 // Import components from lace
 @import "../lace/base";
@@ -23,7 +22,7 @@
 @import "../lace/filter";
 @import "../lace/dropshadow";
 @import "../lace/grid";
-@import "../lace/assets";
+@import "../lace/icons";
 
 @import "components/listgridview";
 @import "components/fab";
