@@ -1,5 +1,6 @@
 var crypto = require('crypto') /*, log = require("../lib/logger.js")*/ ;
 var names = require('../lib/generate.js').names;
+var utils = require('../lib/appUtils.js');
 var mathUtils = require('../lib/mathUtils.js');
 var uid = require('../lib/generate.js').uid;
 var config;
@@ -18,11 +19,12 @@ var handlers = {
 		callback();
 	},
 	init: function(action, callback) {
-		var wait = true;
+		var wait = true, userID = action.user.id;
 
+		if(action.old) userID = action.old.id;
 		core.emit("getRooms", {
 			id: uid(),
-			hasOccupant: action.user.id,
+			hasOccupant: userID,
 			session: action.session
 		}, function(err, rooms) {
 			if (err || !rooms || !rooms.results || !rooms.results.length) {
@@ -30,26 +32,28 @@ var handlers = {
 			} else {
 				action.occupantOf = rooms.results;
 			}
-
-			// if(isErr) return;
 			if (wait) wait = false;
 			else callback();
 		});
-
-		core.emit("getRooms", {
-			id: uid(),
-			hasMember: action.from,
-			session: action.session
-		}, function(err, rooms) {
-			if (err || !rooms || !rooms.results || !rooms.results.length) {
-				action.memberOf = [];
-			} else {
-				action.memberOf = rooms.results;
-			}
-			// if(isErr) return;
+		if(!utils.isGuest(userID)) {
+			core.emit("getRooms", {
+				id: uid(),
+				hasMember: action.from,
+				session: action.session
+			}, function(err, rooms) {
+				if (err || !rooms || !rooms.results || !rooms.results.length) {
+					action.memberOf = [];
+				} else {
+					action.memberOf = rooms.results;
+				}
+				if (wait) wait = false;
+				else callback();
+			});	
+		}else{
+			action.memberOf = [];
 			if (wait) wait = false;
 			else callback();
-		});
+		}
 	},
 	text: function(action, callback) {
 		var text = action.text;
@@ -157,7 +161,7 @@ module.exports = function(c, conf) {
 function userHandler(action, callback) {
 	var ref;
 
-	if(/^internal/.test(action.session)) {
+	if(utils.isInternalSession(action.session)) {
 		ref = action.user.id;
 	}else{
 		ref = "me";
@@ -180,7 +184,7 @@ function userHandler(action, callback) {
 				ref: action.user.id,
 				session: "internal-loader"
 			}, function(err, data) {
-				if (/^guest-/.test(action.from)) { // signup
+				if (utils.isGuest(action.from)) { // signup
 					if (data && data.results && data.results.length) {
 						return callback(new Error("ERR_USER_EXISTS"));
 					}
@@ -215,20 +219,32 @@ function initHandler(action, callback) {
 		ref: "me",
 		session: action.session
 	}, function(err, data) {
+		var old;
 		if (err || !data || !data.results || !data.results.length) {
 			return initializerUser(action, function() {
-				if (action.suggestedNick) action.user.isSuggested = true;
+				if (action.suggestedNick) {
+					action.user.isSuggested = true;
+					action.user.assignedBy = action.origin.domain;
+					action.user.requestedNick = action.suggestedNick;
+				}
 				return done();
 			});
 		} else {
-			action.user = data.results[0];
+			old = action.user = data.results[0];
 		}
-		if (action.suggestedNick && /^guest-/.test(action.user.id) && !data.results[0].isSuggested) {
+		function allowSuggested(user) {
+			if(user.isSuggested) return (action.origin.domain === action.user.assignedBy && action.suggestedNick != action.user.requestedNick);
+			else return true;
+		}
+		if (action.suggestedNick && utils.isGuest(action.user.id) && allowSuggested(data.results[0])) {
 			return initializerUser(action, function() {
 				action.user.isSuggested = true;
+				action.user.assignedBy = action.origin.domain;
+				action.user.requestedNick = action.suggestedNick;
+				action.old = old;
 				return done();
 			});
-		} else if (action.ref && /^guest-/.test(data.results[0].id)) {
+		} else if (action.ref && utils.isGuest(data.results[0].id)) {
 			core.emit("getUsers", {
 				id: uid(),
 				ref: action.ref,
@@ -251,7 +267,7 @@ function initHandler(action, callback) {
 
 function loadUser(action, callback) {
 	if (action.ref == "me") return callback();
-	if (/^internal/.test(action.session)) {
+	if (utils.isInternalSession(action.session)) {
 		action.user = {
 			id: "system",
 			role: "owner" // should look for alternatives.

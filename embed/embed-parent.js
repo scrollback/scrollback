@@ -34,7 +34,7 @@
 		style = document.createElement("link");
 		style.rel = "stylesheet";
 		style.type = "text/css";
-		style.href = host + "/s/styles/dist/embed.css";
+		style.href = host + "/s/styles/dist/embed.min.css";
 
 		document.head.appendChild(style);
 		iframe = document.createElement("iframe");

@@ -33,32 +33,33 @@ module.exports = function (coreObj, conf) {
 		callback(null, payload);
 	}, "setters");
 
-//	core.on("init", function (init, callback) {
-//		log("init irc:", init);
-//		if ((/^irc/).test(init.session)) return callback();
-//		var oldUser = {
-//			id: init.from
-//		};
-//		var newUser = init.user;
-//
-//		if (oldUser && newUser && oldUser.id !== newUser.id) {
-//			var uid = guid();
-//			clientEmitter.emit("write", {
-//				type: "isUserConnected",
-//				sbNick: oldUser.id,
-//				uid: uid
-//			});
-//			callbacks[uid] = function (isConn) {
-//				if (isConn) {
-//					clientEmitter.emit('write', {
-//						type: "disconnectUser",
-//						sbNick: oldUser.id
-//					});
-//				}
-//			};
-//		}
-//		callback();
-//	}, "gateway");
+	core.on("init", function (init, callback) {
+		var oldUser;
+		log("init irc:", init);
+		if ((/^irc/).test(init.session)) return callback();
+		if(init.old && init.old.id){
+			oldUser = init.old;	
+		}
+		
+		var newUser = init.user;
+		if (oldUser && newUser && oldUser.id !== newUser.id) {
+			var uid = guid();
+			clientEmitter.emit("write", {
+				type: "isUserConnected",
+				sbNick: oldUser.id,
+				uid: uid
+			});
+			callbacks[uid] = function (isConn) {
+				if (isConn) {
+					clientEmitter.emit('write', {
+						type: "disconnectUser",
+						sbNick: oldUser.id
+					});
+				}
+			};
+		}
+		callback();
+	}, "gateway");
 
 	core.on('text', function (text, callback) {
 		log("On text:", client.connected(), text.id);

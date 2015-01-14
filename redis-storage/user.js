@@ -114,11 +114,14 @@ function updateUser(action, callback) {
 					occupantDB.sadd("room:{{" + room + "}}:hasOccupants", action.user.id);
 				});
 			});
-			occupantDB.rename("user:{{" + action.old.id + "}}:occupantOf", "user:{{" + action.user.id + "}}:occupantOf", function(err) {
-				if(err) {
-					log.e("Old not present", JSON.stringify(action));
-				}
-			});
+			if(action.occupantOf && action.occupantOf.length) {
+				occupantDB.rename("user:{{" + action.old.id + "}}:occupantOf", "user:{{" + action.user.id + "}}:occupantOf", function(err) {
+					if(err) {
+						log.e("Old not present", JSON.stringify(action));
+					}
+				});	
+			}
+			
 		}
 		callback();
 	});

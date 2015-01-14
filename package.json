@@ -71,7 +71,7 @@
     "underscore": "latest",
     "valid": "git://github.com/scrollback/valid.git#v0.0.1",
     "winston": "^0.7.3",
-    "ebus":"latest"
+    "ebus": "latest"
   },
   "optionalDependencies": {},
   "devDependencies": {
@@ -89,6 +89,7 @@
     "gulp-jshint": "latest",
     "gulp-manifest": "git://github.com/scrollback/gulp-manifest.git#v0.0.7",
     "gulp-minify-css": "latest",
+    "gulp-notify": "latest",
     "gulp-plumber": "latest",
     "gulp-rename": "latest",
     "gulp-sass": "latest",
