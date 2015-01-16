@@ -2,10 +2,11 @@
 * Stylesheet for the client
 */
 
-// Import global settings
+// Import global settings (must be the first)
 @import "settings";
 
-// Import components from lace
+
+// Import base styles from lace
 @import "../lace/base";
 @import "../lace/animations";
 @import "../lace/alertbar";
@@ -24,6 +25,8 @@
 @import "../lace/grid";
 @import "../lace/icons";
 
+
+// Import various components
 @import "components/listgridview";
 @import "components/fab";
 @import "components/appbar";
@@ -31,7 +34,11 @@
 @import "components/profile";
 @import "components/card";
 @import "components/badge";
+@import "components/sidebar";
+@import "components/chat";
 
+
+// Element styles
 html, body { height: 100%; }
 
 body {
@@ -53,102 +60,52 @@ body {
     overflow: hidden; /* fix overflow in firefox */
 }
 
-.column {
-    @include flex-grow(1);
-
-    height: 100%;
-}
-
 .sidebar {
-    @include transition;
-
-    position: absolute;
-    top: 0;
-    min-width: $width-sidebar;
-    max-width: $width-sidebar;
-    width: $width-sidebar;
-    height: 100%;
-    z-index: 700;
-    box-shadow: 0 0 0 transparent;
-    will-change: transform;
-
-    &-content {
-        max-height: 100%;
-        overflow: auto;
-        -webkit-overflow-scrolling : touch; /* momentum scrolling in webkit */
-    }
-
-    &-block { border-bottom: 1px solid rgba(0,0,0,0.1); }
+    @include flex-shrink(0);
 
     &-left {
-        /*
-        * Text becomes too bold on dark background on Mac OS X
-        * Antialiased font looks crispier
-        */
-        @include font-smoothing(antialiased);
-        @include transform(translateX(-100%));
+        .card-header { border-bottom: none; }
 
-        left: 0;
-        background-color: $dark-color;
-        color: $light-color;
+        .list-item {
+            &:focus, &:hover { background-color: darken($dark-color, 5%); }
 
-        .view-sidebar-left & {
-            @include transform(translateX(0));
-
-            box-shadow: 10px 0 20px rgba(0,0,0,0.19);
-        }
-
-        @media #{$screenxxx} {
-            &, .view-sidebar-left & {
-                @include transform(translateX(0));
-
-                position: relative;
-                left: auto;
-                top: auto;
-                z-index: 100;
-                box-shadow: 3px 0 6px rgba(0,0,0,0.16);
-            }
+            &:active { background-color: darken($dark-color, 10%); }
         }
     }
 
     &-right {
-        @include transform(translateX(100%));
+        @media #{$screenxxxxx}  {
+            .searchbar {
+                @include flex-shrink(0);
 
-        right: 0;
-        background-color: $light-color;
-        color: $dark-color;
+                color: $light-color;
 
-        .view-sidebar-right & {
-            @include transform(translateX(0));
+                &-input { background-color: darken($accent-color, 5%); }
+            }
+        }
 
-            box-shadow: -10px 0 20px rgba(0,0,0,0.19);
+        .list-item {
+            &:focus, &:hover { background-color: darken($light-color, 5%); }
+
+            &:active { background-color: darken($light-color, 10%); }
         }
     }
 
-    &-overlay {
-        @include transition;
+    &-room-list, &-people-list {
+        @include flexbox;
+        @include flex-direction(column);
+        @include flex-wrap(nowrap);
+        @include align-items(flex-start);
 
-        position: fixed;
-        z-index: 600;
-        top: 0;
-        width: 100%;
         height: 100%;
-        background-color: rgba(0,0,0,0.7);
-        opacity: 0;
-        pointer-events: none;
-
-        .view-sidebar-left &, .view-sidebar-right & {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        @media #{$screenxxx} {
-            .view-sidebar-left & { display: none; }
-        }
+        width: 100%;
     }
 
-    @media #{$screenxxx} {
-        .list-view { font-size: .9em; }
+    &-content {
+        @include flex-grow(1);
+
+        overflow: auto;
+        width: 100%;
     }
 
     .list-content {
@@ -164,11 +121,25 @@ body {
     .card-header-icon-more { display: none; }
 }
 
+.scrollback-logo {
+    @include flex-shrink(0);
+    @include dropshadow(2);
+
+    padding: .75em .5em;
+    width: 100%;
+
+    &-image { display: block; }
+}
+
 .appbar {
     @media #{$screenxxx} {
-        .action-sidebar-left-open { display: none; }
+        &-icon-menu { display: none; }
 
-        .appbar-title { margin-left: 1em; }
+        &-title { margin-left: 1em; }
+    }
+
+    @media #{$screenxxxxx} {
+        &-icon-people { display: none; }
     }
 }
 
@@ -190,6 +161,8 @@ body {
         line-height: $bar-height;
         margin: 0 .5em;
     }
+
+    &-offline { opacity: .7; }
 }
 
 .main {
@@ -197,6 +170,10 @@ body {
     @include flex-direction(column);
     @include flex-wrap(nowrap);
     @include align-items(flex-start);
+    @include flex-grow(1);
+
+    height: 100%;
+    overflow: hidden; /* otherwise makes the right sidebar shrink in firefox */
 }
 
 .main-content {
@@ -213,6 +190,5 @@ body {
     &:after {
         content: "";
         display: block;
-        height: 6em;
     }
 }

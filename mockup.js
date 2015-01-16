@@ -97,10 +97,27 @@ function addPeople() {
     list.element.appendTo(".people-list");
 }
 
+function addChat() {
+    var $list = $(".chat-area-messages-list");
+
+    setInterval(function() {
+        setTimeout(function() {
+            var $chat = $('<div class="chat-item">').append(
+                            $('<div class="chat-item-nick">').text(generate.names(Math.floor(Math.random() * 7) + 3)),
+                            $('<div class="chat-item-message">').text(generate.sentence(Math.floor(Math.random() * 17) + 3))
+                         );
+
+            $list.append($chat);
+
+            $chat.get(0).scrollIntoView(true);
+        }, 1000 * Math.random());
+    }, 1000);
+}
+
 $(function() {
     var keys = [ "view", "mode" ],
         oldState = {}, currentState = {},
-        $title = $(".appbar-title");
+        $title = $(".js-appbar-title");
 
     // Listen to navigate and add class names
     libsb.on("navigate", function(state, next) {
@@ -141,6 +158,9 @@ $(function() {
             case "room":
                 $title.text(state.roomName);
                 break;
+            case "chat":
+                $title.text(state.roomName);
+                break;
             case "home":
                 $title.text("My feed");
                 break;
@@ -157,21 +177,22 @@ $(function() {
     addRooms();
     addDiscussions();
     addPeople();
+    addChat();
 
-    $(".action-sidebar-left-open").on("click", function() {
+    $(".js-sidebar-left-open").on("click", function() {
         libsb.emit("navigate", { view: "sidebar-left" });
     });
 
-    $(".action-sidebar-right-open").on("click", function() {
+    $(".js-sidebar-right-open").on("click", function() {
         libsb.emit("navigate", { view: "sidebar-right" });
     });
 
-    $(".action-sidebar-close").on("click", function() {
+    $(".js-sidebar-close").on("click", function() {
         libsb.emit("navigate", { view: null });
     });
 
-    $(document).on("click", ".room-card", function(e) {
-        if ($(e.target).closest(".action-room-more").length) {
+    $(document).on("click", ".js-room-card", function(e) {
+        if ($(e.target).closest(".js-room-more").length) {
             return;
         }
 
@@ -179,5 +200,13 @@ $(function() {
             mode: "room",
             roomName: $(this).attr("data-room")
         });
+    });
+
+    $(document).on("click", ".js-discussion-card", function(e) {
+        if ($(e.target).closest(".js-discussion-more").length) {
+            return;
+        }
+
+        libsb.emit("navigate", { mode: "chat" });
     });
 });

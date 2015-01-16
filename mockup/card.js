@@ -23,7 +23,7 @@ function Card(opts, type) {
 
     this.more = $('<a class="card-header-icon card-header-icon-more' + (type ? ' action-' + type + '-more' : '') + '">');
 
-    this.element = $('<div class="card' + (type ? ' ' + type + '-card' : '') + '">').append(
+    this.element = $('<div class="card' + (type ? ' ' + type + '-card ' + 'js-' + type + '-card' : '') + '">').append(
         $('<div class="card-header">').append(
             this._title,
             this._mentionbadge,
