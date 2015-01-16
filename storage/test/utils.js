@@ -30,7 +30,8 @@ r.getNewUserAction = function() {
 			picture: generatePick(email),
 			identities: ["mailto:" + email], 
 			params: {},
-			guides: {}
+			guides: {},
+			createTime: new Date().getTime()
 		}
 	};
 };
@@ -46,7 +47,8 @@ r.getNewRoomAction = function(){
 			type:"room",
 			identities:[generate.names(6) + "://" + generate.names(10), generate.names(5) + "://" + generate.names(10)], 
 			params: {},
-			guides: {}
+			guides: {},
+			createTime: new Date().getTime()
 		},
 		old: {}
 	};

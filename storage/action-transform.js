@@ -99,25 +99,31 @@ exports.room = exports.user = function (action) {
 		put = makePut('upsert', 'entities');
 	
 	put.insert = {
-		id: entity.id, type: action.type,
+		id: entity.id, 
+		type: action.type,
 		description: entity.description,
 		picture: entity.picture,
-		createtime: entity.createTime,
+		
 		identities: entity.identities.map(function(ident) {
 			return [ident.split(':', 2)[0], ident];
 		}),
-		timezone: entity.timezone, locale: entity.locale,
+		timezone: entity.timezone, 
+		//locale: entity.locale,
 		params: entity.params,
 		guides: entity.guides,
-		deletetime: entity.deleteTime
+		//deletetime: entity.deleteTime
 	};
+	put.insert.createtime = entity.createTime ? new Date(entity.createTime) : undefined;
+	put.insert.deletetime = entity.deleteTime ? new Date(entity.deleteTime) : undefined;
 	log.d("Update entity:", action);
 	put.filters.push(['id', 'eq', entity.id]);
-	['description', 'picture', 'createTime', 'identities', 'timezone', 'params', 'guides', 'deleteTime'].forEach(function(p) {
+	['description', 'picture', 'identities', 'timezone', 'params', 'guides'].forEach(function(p) {
 			// column name in database are lower case of property name of entity.
 			put.update.push([p.toLowerCase(), 'set', entity[p]]);
 	});
-	
+	if (entity.createTime) put.update.push(['createtime', 'set', new Date(entity.createTime)]);
+	if (entity.deleteTime) put.update.push(['deletetime', 'set', new Date(entity.deleteTime)]);
+
 	return [put];
 };
 
