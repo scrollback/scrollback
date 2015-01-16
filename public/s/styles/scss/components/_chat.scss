@@ -7,6 +7,7 @@
 
 		height: 100%;
 		width: 100%;
+		overflow: hidden;
 
 		&:before {
 			@include flex-grow(1);
