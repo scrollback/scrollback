@@ -16,6 +16,7 @@ function checkCurrentRooms(user, domain, callback) {
 			i, l, res;
 		if (err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
 		if (!rooms.results || !rooms.results.length) res = [];
+		else res = rooms.results;
 		for (i = 0, l = res.length; i < l; i++) {
 			if (res[i].guides && res[i].allowedDomains) {
 				if (res[i].guides.allowedDomains.indexOf(domain) < 0) {

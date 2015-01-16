@@ -6,8 +6,8 @@ var config,
 	core;
 module.exports = function(c, conf) {
 	core = c;
-	config =conf;
-	
+	config = conf;
+
 	if (!config.client_id || !config.client_secret) {
 		console.log("Missing google params:");
 		return;
@@ -73,7 +73,11 @@ module.exports = function(c, conf) {
 									return callback();
 								}
 
-								action.old = action.user;
+								if (action.user.id != data.results[0].id) {
+									action.old = action.user;
+								} else {
+									action.old = {};
+								}
 								action.user = data.results[0];
 								if (!action.user.params.pictures) action.user.params.pictures = [];
 

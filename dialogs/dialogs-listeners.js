@@ -3,7 +3,8 @@
 
 var validate = require("../lib/validate.js"),
 	afterSignUp,
-	signingUp;
+	signingUp,
+	isRestricted = false;
 
 function showError(error, entry) {
 	var $entry = $(entry),
@@ -116,7 +117,9 @@ function createRoom(entry, button, callback) {
 				callback();
 			}
 
-			libsb.emit("navigate", { dialog: null });
+			libsb.emit("navigate", {
+				dialog: null
+			});
 		});
 	});
 }
@@ -148,7 +151,9 @@ function createUser(entry, button, callback) {
 				afterSignUp = callback;
 			}
 
-			libsb.emit("navigate", { dialog: null });
+			libsb.emit("navigate", {
+				dialog: null
+			});
 		});
 	});
 }
@@ -159,14 +164,19 @@ libsb.on("init-dn", function(init, next) {
 	} else {
 		signingUp = false;
 	}
-
 	if (/(createroom|signup)/.test(window.currentState.dialog)) {
 		libsb.emit("navigate", {
 			dialog: window.currentState.dialog,
 			source: "dialog"
 		});
 	} else if (signingUp) {
-		libsb.emit("navigate", { dialog: "signup" });
+		libsb.emit("navigate", {
+			dialog: "signup"
+		});
+	} else if (isRestricted) {
+		libsb.emit("navigate", {
+			dialog: null
+		});
 	}
 
 	next();
@@ -239,7 +249,7 @@ libsb.on("createroom-dialog", function(dialog, next) {
 	} else {
 		dialog.title = "Create a new room";
 		dialog.description = "Choose a room name";
-		dialog.content = [ "<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>" ];
+		dialog.content = ["<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>"];
 		dialog.action = {
 			text: "Create room",
 			action: function() {
@@ -287,6 +297,7 @@ libsb.on("signup-dialog", function(dialog, next) {
 
 
 libsb.on("signin-dialog", function(dialog, next) {
+	isRestricted = true;
 	dialog.title = "Restricted session, login.";
 	libsb.emit("auth", dialog, function() {
 		next();

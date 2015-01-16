@@ -52,8 +52,12 @@ function browserAuth(action, callback) {
 				action.user.params.pictures = [action.user.picture];
 				return callback();
 			}
-
-			action.old = action.user;
+			
+			if(action.user.id!= user.results[0].id) {
+				action.old = action.user;
+			}else{
+				action.old = {};
+			}
 			action.user = user.results[0];
 			callback();
 		});

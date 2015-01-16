@@ -31,7 +31,7 @@ function fbAuth(action, callback) {
 					action.response = err;
 					return callback();
 				}
-			
+
 				var queries = body.split("&"),
 					i, l, token;
 				for (i = 0, l = queries.length; i < l; i++) {
@@ -48,18 +48,18 @@ function fbAuth(action, callback) {
 							action.response = err;
 							return callback();
 						}
-						
+
 						try {
 							user = JSON.parse(body);
-							if (user.error){
+							if (user.error) {
 								action.response = user.error;
 								return callback();
-							}else if(!user.email) {
-								if(!user.email) log.e("Facebook login failed: ", body);
+							} else if (!user.email) {
+								if (!user.email) log.e("Facebook login failed: ", body);
 								action.response = "Facebook auth failed: possible reason, unverified email";
 								return callback();
 							}
-							
+
 							core.emit("getUsers", {
 								identity: "mailto:" + user.email,
 								session: "internal-facebook"
@@ -73,36 +73,39 @@ function fbAuth(action, callback) {
 									action.user = {};
 									action.user.identities = ["mailto:" + user.email];
 									fbpic = action.user.picture = "https://graph.facebook.com/" + user.id + "/picture?type=square";
-									gravatar = 'https://gravatar.com/avatar/' + 	crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';	
-									
+									gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
+
 									action.user.params = {
 										pictures: [fbpic, gravatar]
 									};
 									return callback();
 								}
-
-								action.old = action.user;
+								if (action.user.id != user.results[0].id) {
+									action.old = action.user;
+								} else {
+									action.old = {};
+								}
 								action.user = data.results[0];
-								if(!action.user.params.pictures) action.user.params.pictures = [];
-								
+								if (!action.user.params.pictures) action.user.params.pictures = [];
+
 								fbpic = "https://graph.facebook.com/" + user.id + "/picture?type=square";
 
 								try {
 									gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
 								} catch (e) {
-									log.d(action, action.old );
+									log.d(action, action.old);
 									log.e("Error creating the gravatar image.", "\n" + body);
 								}
-								
-								if(action.user.params.pictures.indexOf(fbpic)<0) {
+
+								if (action.user.params.pictures.indexOf(fbpic) < 0) {
 									action.user.params.pictures.push(fbpic);
 									sendUpdate = true;
 								}
-								if(gravatar && action.user.params.pictures.indexOf(gravatar)<0) {
+								if (gravatar && action.user.params.pictures.indexOf(gravatar) < 0) {
 									action.user.params.pictures.push(gravatar);
 									sendUpdate = true;
 								}
-								
+
 								if (sendUpdate) {
 									core.emit("user", {
 										type: "user",
@@ -132,17 +135,17 @@ function handlerRequest(req, res, next) {
 	var path = req.path.substring(3);
 	path = path.split("/");
 
-	if(path[0]==="facebook") {
-		if(path[1] == "login") {
-			return res.render(__dirname+"/login.jade", {
+	if (path[0] === "facebook") {
+		if (path[1] == "login") {
+			return res.render(__dirname + "/login.jade", {
 				client_id: config.client_id,
-				redirect_uri: "https://"+config.global.host+"/r/facebook/return"
+				redirect_uri: "https://" + config.global.host + "/r/facebook/return"
 			});
 		}
-		if(path[1] == "return") {
-			return res.render(__dirname+"/return.jade", {});
-		}	
-	}else {
+		if (path[1] == "return") {
+			return res.render(__dirname + "/return.jade", {});
+		}
+	} else {
 		next();
 	}
 }
