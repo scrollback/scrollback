@@ -53,17 +53,17 @@ libsb.on("config-show", function(conf, next) {
 		$("<a>").attr({
 			href: "https://plus.google.com/share?url=" + roomURL,
 			target: "_blank"
-		}).addClass("googleplus embed-share-button").text("Google+"),
+		}).addClass("button googleplus embed-share-button").text("Google+"),
 
 		$("<a>").attr({
 			href: "https://www.facebook.com/sharer/sharer.php?u=" + roomURL,
 			target: "_blank"
-		}).addClass("facebook embed-share-button").text("Facebook"),
+		}).addClass("button facebook embed-share-button").text("Facebook"),
 
 		$("<a>").attr({
 			href: "https://twitter.com/intent/tweet?url=" + roomURL,
 			target: "_blank"
-		}).addClass("twitter embed-share-button").text("Twitter")
+		}).addClass("button twitter embed-share-button").text("Twitter")
 	);
 
 	$config.append(formField("Share room on", "", "share-embed", $shareDiv));
