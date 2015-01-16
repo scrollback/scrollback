@@ -192,3 +192,20 @@ body {
         display: block;
     }
 }
+
+.mode-room {
+    .grid-item {
+        $item-width: 32em;
+
+        @media only screen and (min-width: #{$item-width * 2}) { margin: .5em; }
+
+        @for $i from 1 through 10 {
+            @media only screen and (min-width: #{$item-width * $i}) {
+                width: (100% / $i) - 10%;
+                width: calc(#{100% / $i} - 1em);
+            }
+        }
+
+        @media only screen and (min-width: #{$item-width * 11}) { min-width: 21em; }
+    }
+}
