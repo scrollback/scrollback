@@ -59,7 +59,9 @@ exports.getRooms = exports.getUsers = exports.getEntities = function(query, enti
 		};
 		results.push(entity);
 	});
-	
+	if (query.before) {
+		results.reverse();
+	}
 	//var i, l = entities.length, entity;
 	
 	/*for(i=0; i<l; i++) {

@@ -47,7 +47,7 @@ exports.getTexts = exports.getThreads = function(query) {
 		q.filters.push(['id', 'eq', query.ref]);
 	} else if (query.updateTime) {
 		q.iterate.keys.push("updatetime");
-		q.iterate.start.push(query.updateTime);
+		q.iterate.start.push(new Date(query.updateTime));
 	} /*else if (query.type == 'getThreads' && query.q) {
 //		TODO: TEXT SEARCH
 //		q.filters.push(["terms", "ts", iq.q]);
@@ -120,7 +120,7 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	} else */
 	if (iq.createTime) {
 		q.iterate.keys.push('createtime');
-		q.iterate.start.push(iq.createTime);
+		q.iterate.start.push(new Date(iq.createTime));
 	} 
 	if (iq.iterator) {
 		q.iterate.keys.push('id');

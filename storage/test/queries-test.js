@@ -340,4 +340,101 @@ describe("Storage Test.", function() {
 		});
 	});
 	
+	/* Iterator getRooms/getUsers*/
+	
+	it("getRooms query iterator-1 (create time/after)", function(done) {
+		this.timeout(10000);
+		var rooms = [];
+		var n = mathUtils.random(1, 256);
+		var time = new Date().getTime();
+		for (var i = 0; i < n; i++) {
+			var room = utils.getNewRoomAction();
+			room.room.createTime = time  + i; // increasing time.
+			rooms.push(room);
+		}
+		utils.emitActions(core, rooms, function() {
+			core.emit("getRooms", { createTime: time - 1, after: 256}, function(err, results) {
+				log.d("rooms:", results);
+				
+				assert.equal(results.results.length, n, "not n messages");
+				for (var i = 0; i < n; i++) {
+					assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
+				}
+				done();
+			});
+		});
+	});
+	
+	it("getRooms query iterator-2 (create time / before)", function(done) {
+		this.timeout(10000);
+		var rooms = [];
+		var n = mathUtils.random(1, 256);
+		var time = new Date().getTime();
+		for (var i = 0; i < n; i++) {
+			var room = utils.getNewRoomAction();
+			room.room.createTime = time  + i; // increasing time.
+			rooms.push(room);
+		}
+		utils.emitActions(core, rooms, function() {
+			core.emit("getRooms", { createTime: time + n + 2, before: 256}, function(err, results) {
+				log.d("rooms:", results);
+
+				assert.equal(results.results.length, n, "not n messages");
+				for (var i = 0; i < n; i++) {
+					assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
+				}
+				done();
+			});
+		});
+	});
+	
+	it("getRooms query iterator-3 (create time / before) more then 256", function(done) {
+		this.timeout(15000);
+		var rooms = [];
+		var n = mathUtils.random(300, 500);
+		var time = new Date().getTime();
+		for (var i = 0; i < n; i++) {
+			var room = utils.getNewRoomAction();
+			room.room.createTime = time  + i; // increasing time.
+			rooms.push(room);
+		}
+		var num = 256;
+		utils.emitActions(core, rooms, function() {
+			core.emit("getRooms", { createTime: time + n + 2, before: num}, function(err, results) {
+				log.d("rooms:", results);
+
+				assert.equal(results.results.length, num, "not n messages");
+				for (var i = 0; i < results.length; i++) {
+					assert.equal(results.results[i].id, rooms[i + (n - num)].room.id, "Incorrect results");
+				}
+				done();
+			});
+		});
+	});
+	
+	it("getRooms query iterator-4 (create time / after) more then 256", function(done) {
+		this.timeout(15000);
+		var rooms = [];
+		var n = mathUtils.random(300, 500);
+		var time = new Date().getTime();
+		for (var i = 0; i < n; i++) {
+			var room = utils.getNewRoomAction();
+			room.room.createTime = time  + i; // increasing time.
+			rooms.push(room);
+		}
+		var num = 256;
+		utils.emitActions(core, rooms, function() {
+			core.emit("getRooms", { createTime: time + n + 2, before: num}, function(err, results) {
+				log.d("rooms:", results);
+
+				assert.equal(results.results.length, num, "not n messages");
+				for (var i = 0; i < results.length; i++) {
+					assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
+				}
+				done();
+			});
+		});
+	});
+	
+	
 });
