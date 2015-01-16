@@ -121,11 +121,11 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	if (iq.createTime) {
 		q.iterate.keys.push('createtime');
 		q.iterate.start.push(new Date(iq.createTime));
-	} 
-	if (iq.iterator) {
+	} else { // alphabetical order
 		q.iterate.keys.push('id');
-		q.iterate.start.push(iq.iterator);
+		q.iterate.start.push(iq.iterator || "");
 	}
+	
 	
 	if (iq.before) {
 		q.iterate.reverse = true;

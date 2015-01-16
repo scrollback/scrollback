@@ -218,9 +218,8 @@ function makeSelectQuery(transform) {
 		});
 		sql.push("order by " + orderby.join(','));
 		//sql.push(transform.iterate.reverse ? "DESC": "ASC");
-		sql.push("limit " + transform.iterate.limit);
 	}
-	
+	sql.push("LIMIT " + transform.iterate.limit);
 	return {
 		query: sql.join(" "),
 		values: values
