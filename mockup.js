@@ -168,7 +168,7 @@ $(function() {
         }
 
         next();
-    });
+    }, 500);
 
     // Send initial navigate
     libsb.emit("navigate", { mode: "home" });
