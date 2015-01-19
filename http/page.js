@@ -64,14 +64,9 @@ function init (app) {
 
 		var platform = req.query.platform;
 
-		if (platform && (/cordova-android/i).test(platform)) {
-			clientData.cordova = true;
-			clientData.appVersion = req.query["app-version"] || "defaults";
-			clientData.manifest = "cordova-android.appcache";
-		} else {
-			clientData.manifest = "manifest.appcache";
-			clientData.cordova = false;
-		}
+		clientData.appVersion = req.query["app-version"] || "defaults";
+		clientData.manifest = (platform ? platform.toLowerCase() : "manifest") + ".appcache";
+		clientData.cordova = !!(platform && (/cordova/i).test(platform));
 
 		seo.getSEOHtml(req, function(r) {
 			clientData.seo = r;
