@@ -1,24 +1,27 @@
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
-var config = require('../config.js');
+var config;
 var log = require("../lib/logger.js");
 var events = require('events');
 var clientEmitter = new events.EventEmitter();
-var client = require('./client.js');
-var internalSession = Object.keys(config.whitelists)[0];
-client.init(clientEmitter);
+var client;
 var core;
 var callbacks = {};
-var onlineUsers = {}; //scrollback users that are already online
-var firstMessage = {}; //[room][username] = true //it is shared b/w roomEvent and irc
+var onlineUsers = {}; // scrollback users that are already online
+var firstMessage = {}; // [room][username] = true //it is shared b/w roomEvent and irc
 var userExp = 10 * 60 * 1000;
 var initCount = 0;
-var ircUtils = new require('./ircUtils.js')(clientEmitter, client, callbacks);
+var ircUtils;
 
-module.exports = function (coreObj) {
+module.exports = function (coreObj, conf) {
 	core = coreObj;
+	config = conf;
+	client = require('./client.js')(clientEmitter, config);
+	client.init(clientEmitter);
+	ircUtils = require('./ircUtils.js')(config, clientEmitter, client, callbacks);
 	init();
-	require('./roomEvent.js')(core, client, ircUtils, firstMessage);
+	
+	require('./roomEvent.js')(core, config, client, ircUtils, firstMessage);
 	core.on("http/init", function (payload, callback) {
 		payload.push({
 			get: {
@@ -31,13 +34,14 @@ module.exports = function (coreObj) {
 	}, "setters");
 
 	core.on("init", function (init, callback) {
+		var oldUser;
 		log("init irc:", init);
 		if ((/^irc/).test(init.session)) return callback();
-		var oldUser = {
-			id: init.from
-		};
+		if(init.old && init.old.id){
+			oldUser = init.old;	
+		}
+		
 		var newUser = init.user;
-
 		if (oldUser && newUser && oldUser.id !== newUser.id) {
 			var uid = guid();
 			clientEmitter.emit("write", {
@@ -109,7 +113,7 @@ function init() {
 
 		core.emit("getRooms", {
 			identity: "irc",
-			session: internalSession
+			session: "internal-irc"
 		}, function (err, data) {
 			var rooms = data.results;
 			log("returned state from IRC:", JSON.stringify(state));
@@ -187,14 +191,14 @@ function init() {
 		log("room event:", room);
 		core.emit("getRooms", {
 			ref: room.room.id,
-			session: internalSession
+			session: "internal-irc"
 		}, function (err, reply) {
 			log("results of getRooms", err, reply);
 			if (err || !reply.results) return;
 			var r = reply.results[0];
 			var rr = {
 				type: "room",
-				session: internalSession,
+				session: "internal-irc",
 				room: {}
 			};
 

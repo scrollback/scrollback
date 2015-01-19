@@ -1,9 +1,8 @@
-var config = require("../config.js");
-var internalSession = Object.keys(config.whitelists)[0];
-module.exports = function(core) {
-
+var log = require("../lib/logger.js");
+module.exports = function(core, config) {
+	log.d("Censor app config: ",config);
 	core.on("getTexts", function(query, next) {
-		if (query.session == internalSession) return next();
+		if (/^internal/.test(query.session)) return next();
 
 		if (!query.results || !query.results.length) return next();
 		if (query.user.role === 'su') return next();
@@ -15,7 +14,7 @@ module.exports = function(core) {
 	}, "watcher");
 
 	core.on("getRooms", function(query, next) {
-		if (query.session == internalSession) return next(); // will be removed when we use app specific users.
+		if (/^internal/.test(query.session)) return next();
 		if (!query.results || !query.results.length) return next();
 
 		function censor(e) {
@@ -38,7 +37,7 @@ module.exports = function(core) {
 			core.emit("getRooms", {
 				hasMember: query.user.id,
 				ref: query.ref,
-				session: internalSession
+				session: "internal-censor"
 			}, function(err, q) {
 				if (q.results && q.results.length && q.results[0].role == "owner") {
 					return next();
@@ -53,7 +52,7 @@ module.exports = function(core) {
 	}, "watcher");
 
 	core.on("getUsers", function(query, next) {
-		if (query.session == internalSession) return next();
+		if (/^internal/.test(query.session)) return next();
 
 		if (!query.results || !query.results.length) return next();
 		if (query.ref && (query.ref == "me" || query.user.role === 'su')) return next();

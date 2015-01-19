@@ -2,15 +2,16 @@
 /* global $, libsb */
 
 var formField = require("../lib/formField.js"),
-	embedForm, titlebarColor,
-	stringUtils = require('../lib/stringUtils.js');
+	stringUtils = require('../lib/stringUtils.js'),
+	embedForm, startMinimized, titlebarColor;
 
 function getEmbedCode() {
 	var code = '<script>window.scrollback = %s;(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>',
 		embedObj = {
 			room: window.currentState.roomName,
 			titlebarColor: titlebarColor,
-			form: embedForm
+			form: embedForm,
+			minimize: startMinimized
 		};
 
 	return stringUtils.format(code, JSON.stringify(embedObj));
@@ -24,7 +25,11 @@ libsb.on("config-show", function(conf, next) {
 	var roomURL = "https://" + window.location.host + "/" + window.currentState.roomName,
 		$config, $roomURLField, $shareDiv, $qrCode,
 		$titlebarColor,
-		$formOptions, $embedCode, $embedCodeDiv;
+		$formOptions, $minimizeOptions, $embedCode, $embedCodeDiv;
+
+	// Set default embed options
+	embedForm = "toast";
+	startMinimized = false;
 
 	$roomURLField = $("<input>").addClass("embed-input-url").attr({
 		readonly: true,
@@ -40,17 +45,17 @@ libsb.on("config-show", function(conf, next) {
 		$("<a>").attr({
 			href: "https://plus.google.com/share?url=" + roomURL,
 			target: "_blank"
-		}).addClass("googleplus embed-share-button").text("Google+"),
+		}).addClass("button googleplus embed-share-button").text("Google+"),
 
 		$("<a>").attr({
 			href: "https://www.facebook.com/sharer/sharer.php?u=" + roomURL,
 			target: "_blank"
-		}).addClass("facebook embed-share-button").text("Facebook"),
+		}).addClass("button facebook embed-share-button").text("Facebook"),
 
 		$("<a>").attr({
 			href: "https://twitter.com/intent/tweet?url=" + roomURL,
 			target: "_blank"
-		}).addClass("twitter embed-share-button").text("Twitter")
+		}).addClass("button twitter embed-share-button").text("Twitter")
 	);
 
 	$config.append(formField("Share room on", "", "share-embed", $shareDiv));
@@ -86,6 +91,17 @@ libsb.on("config-show", function(conf, next) {
 	});
 
 	$config.append($titlebarColor);
+
+	// Widget minimize
+	$minimizeOptions = formField("Start widget minimized", "check", "embed-minimized-check", [[ "", "", startMinimized ]]);
+
+	$minimizeOptions.find("[name='embed-minimized-check']").on("change", function() {
+		startMinimized = $(this).is(":checked");
+
+		$embedCode.text(getEmbedCode());
+	});
+
+	$config.append($minimizeOptions);
 
 	// Widget form
 	$formOptions = formField("Widget appearance", "radio", "embed-form-options", [[ "embed-form-toast", "Toast", true ], [ "embed-form-canvas", "Canvas" ]]);

@@ -1,6 +1,8 @@
+/* jshint mocha: true */
 var assert = require("assert");
-var core = new (require('../lib/emitter.js'))();
-var validator
+var core = new (require('ebus'))();
+var config = require("../server-config-defaults.js");
+var validator;
 var generate = require("../lib/generate.js");
 
 var action = {
@@ -13,7 +15,7 @@ var action = {
 	origin: {
 		gateway: "web"
 	}
-}
+};
 
 function copy() {
 	return JSON.parse(JSON.stringify(action));
@@ -22,7 +24,7 @@ function copy() {
 describe('Validator Test', function() {
 
 	before(function(done) {
-		validator= require("./validator.js")(core);
+		validator= require("./validator.js")(core, config.validator);
 		setTimeout(done, 1000);
 	});
 
@@ -30,7 +32,7 @@ describe('Validator Test', function() {
 		var t = copy(action);
 		t.type = "init";
 		t.suggestedNick = {};
-		core.emit("init", t, function(err, act) {
+		core.emit("init", t, function(err) {
 			console.log("Init", arguments);
 			assert.equal(err instanceof Error, true, "Not throwing error for invalid Init..");
 			done();
@@ -42,7 +44,7 @@ describe('Validator Test', function() {
 		var t = copy(action);
 		t.type = "init";
 		t.to = "me";
-		core.emit("init", t, function(err, act) {
+		core.emit("init", t, function(err) {
 			assert.equal(err instanceof Error, false, "validation successful");
 			done();
 		});
@@ -54,8 +56,8 @@ describe('Validator Test', function() {
 		t.type = "text";
 		t.text = "";
 		t.to = "scrollback";
-		t.from = "testinguser"
-		core.emit("text", t, function(err, act) {
+		t.from = "testinguser";
+		core.emit("text", t, function(err) {
 			assert.equal(err instanceof Error, true, "should not allow text action without text.");
 			done();
 		});
@@ -67,7 +69,7 @@ describe('Validator Test', function() {
 		t.text = "this is testing message";
 		t.to = "scrollback";
 		t.from = "testinguser";
-		core.emit("text", t, function(err, act) {
+		core.emit("text", t, function(err) {
 			assert.equal(err instanceof Error, false, "not allowing valid text action.");
 			done();
 		});
@@ -83,8 +85,8 @@ describe('Validator Test', function() {
 			type: "room",
 			identities: ["web://testing.com"],
 
-		}
-		core.emit("room", t, function(err, act) {
+		};
+		core.emit("room", t, function(err) {
 			assert.equal(err instanceof Error, true, "room with no params and guides is allowed.");
 			done();
 		});
@@ -101,8 +103,8 @@ describe('Validator Test', function() {
 			identities: ["web://testing.com"],
 			params: {},
 			guides: {}
-		}
-		core.emit("room", t, function(err, act) {
+		};
+		core.emit("room", t, function(err) {
 			assert.equal(err instanceof Error, false, "not allowing valid room action.");
 			done();
 		});
@@ -116,8 +118,8 @@ describe('Validator Test', function() {
 			type: "user",
 			identities: ["web://testing.com"],
 
-		}
-		core.emit("user", t, function(err, act) {
+		};
+		core.emit("user", t, function(err) {
 			assert.equal(err instanceof Error, true, "user with no params and guides is allowed.");
 			done();
 		});
@@ -132,8 +134,8 @@ describe('Validator Test', function() {
 			type: "user",
 			identities: ["web://testing.com"],
 			guides: {}
-		}
-		core.emit("user", t, function(err, act) {
+		};
+		core.emit("user", t, function(err) {
 			assert.equal(err instanceof Error, true, "user with no params is allowed.");
 			done();
 		});
@@ -150,8 +152,8 @@ describe('Validator Test', function() {
 			identities: ["web://testing.com"],
 			params: {},
 			guides: {}
-		}
-		core.emit("user", t, function(err, act) {
+		};
+		core.emit("user", t, function(err) {
 			assert.equal(err instanceof Error, false, "not allowing valid user action.");
 			done();
 		});

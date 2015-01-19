@@ -1,11 +1,12 @@
-var config = require("../config.js"),
+var config,
 	crypto = require('crypto'),
 	request = require("request"),
-	core,
-	internalSession = Object.keys(config.whitelists)[0];
+	log = require('../lib/logger.js'),
+	core;
 
-module.exports = function(c) {
+module.exports = function(c, conf) {
 	core = c;
+	config = conf;
 	core.on("http/init", onInit, "setters");
 	core.on("init", fbAuth, "authentication");
 };
@@ -21,9 +22,9 @@ function onInit(payload, callback) {
 
 function fbAuth(action, callback) {
 	if (action.auth && action.auth.facebook) {
-		request("https://graph.facebook.com/oauth/access_token?client_id=" + config.facebook.client_id +
-			"&redirect_uri=https://" + config.http.host + "/r/facebook/return" +
-			"&client_secret=" + config.facebook.client_secret +
+		request("https://graph.facebook.com/oauth/access_token?client_id=" + config.client_id +
+			"&redirect_uri=https://" + config.global.host + "/r/facebook/return" +
+			"&client_secret=" + config.client_secret +
 			"&code=" + action.auth.facebook.code,
 			function(err, res, body) {
 				if (err) return callback(err);
@@ -42,12 +43,13 @@ function fbAuth(action, callback) {
 						if (err) return callback(err);
 						try {
 							user = JSON.parse(body);
-							if (user.error) {
-								return callback(new Error(user.error));
+							if (user.error || !user.email) {
+								if(!user.email) log.e("Facebook login failed: ", body);
+								return callback(new Error(user.error || "Error in facebook sign in."));
 							}
 							core.emit("getUsers", {
 								identity: "mailto:" + user.email,
-								session: internalSession
+								session: "internal-facebook"
 							}, function(err, data) {
 								if (err || !data) return callback(err);
 
@@ -55,7 +57,8 @@ function fbAuth(action, callback) {
 									action.user = {};
 									action.user.identities = ["mailto:" + user.email];
 									fbpic = action.user.picture = "https://graph.facebook.com/" + user.id + "/picture?type=square";
-									gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
+									gravatar = 'https://gravatar.com/avatar/' + 	crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';	
+									
 									action.user.params = {
 										pictures: [fbpic, gravatar]
 									};
@@ -67,13 +70,19 @@ function fbAuth(action, callback) {
 								if(!action.user.params.pictures) action.user.params.pictures = [];
 								
 								fbpic = "https://graph.facebook.com/" + user.id + "/picture?type=square";
-								gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
+
+								try {
+									gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
+								} catch (e) {
+									log.d(action, action.old );
+									log.i("Error creating the gravatar image.", "\n" + body);
+								}
 								
 								if(action.user.params.pictures.indexOf(fbpic)<0) {
 									action.user.params.pictures.push(fbpic);
 									sendUpdate = true;
 								}
-								if(action.user.params.pictures.indexOf(gravatar)<0) {
+								if(gravatar && action.user.params.pictures.indexOf(gravatar)<0) {
 									action.user.params.pictures.push(gravatar);
 									sendUpdate = true;
 								}
@@ -83,7 +92,7 @@ function fbAuth(action, callback) {
 										type: "user",
 										to: action.user.id,
 										user: action.user,
-										session: internalSession
+										session: "internal-facebook"
 									}, function(err, action) {
 										console.log("Action done:", err, action);
 									});
@@ -108,8 +117,8 @@ function handlerRequest(req, res, next) {
 	if(path[0]==="facebook") {
 		if(path[1] == "login") {
 			return res.render(__dirname+"/login.jade", {
-				client_id: config.facebook.client_id,
-				redirect_uri: "https://"+config.http.host+"/r/facebook/return"
+				client_id: config.client_id,
+				redirect_uri: "https://"+config.global.host+"/r/facebook/return"
 			});
 		}
 		if(path[1] == "return") {

@@ -1,5 +1,5 @@
 var types;
-module.exports = function (t) {
+module.exports = function (t/*, config*/) {
     types = t;
     return {
         put: function (data, cb) {
@@ -20,6 +20,7 @@ module.exports = function (t) {
                 return types.threads.get(query.ref, function (err, thread) {
                     if (err || !thread) return callback();
                     query.results = [thread];
+					
                     return callback();
                 });
             } else if (query.ref) {
@@ -53,7 +54,6 @@ module.exports = function (t) {
             if (query.before) {
                 dbQuery.reverse = true;
             }
-            console.log(dbQuery);
             types.threads.get(dbQuery, function (err, results) {
                 if (err || !results) {
                     return callback();

@@ -1,8 +1,9 @@
 /* global describe, it*/
 var assert = require("assert");
 var core = require("../test/mock-core.js")();
+var config = require("./server-config-defaults.js");
 require("../test/mock-storage.js")(core);
-require("./entityloader.js")(core);
+require("./entityloader.js")(core, config.entityloader);
 var gen = require("../lib/generate.js");
 var guid = gen.uid;
 var names = gen.names;
@@ -37,8 +38,8 @@ describe('EntityLoader', function() {
 			session: "web:127.0.0.1:asdhouasnoujnvihdbfaksdmcrouadf"
 		}, function(err, data) {
 			assert(!err, "threw an error when it shouldnt.");
-			assert.equal(data.user.timezone == 330, "User object loaded incorrectly");
-			assert.equal(data.room.timezone == 300, "Room object loaded incorrectly");
+			assert.equal(data.user.id == "harish", "User object loaded incorrectly");
+			assert.equal(data.room.id == "scrollback", "Room object loaded incorrectly");
 			done();
 		});
 	});

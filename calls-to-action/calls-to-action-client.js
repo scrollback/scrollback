@@ -8,7 +8,7 @@ var desktopnotify = require("../ui/desktopnotify.js"),
 	$threadsTab = $(".tab-threads");
 
 $(".chat-input").on("click", function() {
-	if (!/^guest-/.test(libsb.user.id)) {
+	if (!/^guest-/.test(libsb.user.id) || window.currentState.mode !== "normal" || (window.currentState.embed && libsb.user.isSuggested)) {
 		return;
 	}
 
@@ -16,6 +16,10 @@ $(".chat-input").on("click", function() {
 });
 
 libsb.on("text-up", function(text, next) {
+	if (window.currentState.mode !== "normal") {
+		return next();
+	}
+
 	if (!/^guest-/.test(libsb.user.id)) {
 		showNotification($followButton, "followRoom");
 	} else {
@@ -26,7 +30,7 @@ libsb.on("text-up", function(text, next) {
 }, 800);
 
 libsb.on("user-dn", function(user, next) {
-	if (!/^guest-/.test(user.from)) {
+	if (!/^guest-/.test(user.from) || !/(normal|conf|pref)/.test(window.currentState.mode)) {
 		return next(); // not a new signup
 	}
 
@@ -50,7 +54,7 @@ libsb.on("navigate", function(state, next) {
 }, 100);
 
 libsb.on("init-dn", function(init, next) {
-	if (init.user && !/^guest-/.test(init.user.id)) {
+	if (init.user && !/^guest-/.test(init.user.id) && window.currentState.mode === "normal") {
 		// If user is signed in, but not a follower, show the notification.
 		libsb.emit("getUsers", {
 			memberOf: currentState.roomName,
@@ -66,7 +70,7 @@ libsb.on("init-dn", function(init, next) {
 }, 500);
 
 libsb.on("navigate", function(state, next) {
-	if (state && state.source === "chat-area" && state.old && state.time && state.time !== state.old.time) {
+	if (state && state.source === "chat-area" && state.old && state.time && state.time !== state.old.time && window.currentState.mode === "normal") {
 		showNotification([$threadsTab, '.meta-button-back'], "browseArchives");
 	}
 

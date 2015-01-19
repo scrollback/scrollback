@@ -1,12 +1,10 @@
-var log = require("../lib/logger.js");
-var config = require('../config.js');
-var net = require('net');
-var timeout = 60 * 1000;
-var client;
-var pendingCallbacks = {};
-var core;
-var validator = new (require('valid'))();
-var colors = require('./colors.js');
+/* jshint mocha: true */
+var log = require("../lib/logger.js"),
+	config, net = require('net'), timeout = 60 * 1000,
+	client, pendingCallbacks = {}, core,
+	validator = new (require('valid'))(),
+	colors, redis;
+
 var threaderValidator = {
 	params: [{
 		threader: ['undefined', {
@@ -17,9 +15,13 @@ var threaderValidator = {
 /**
 Communicate with scrollback java Process through TCP and set message.threads.
 */
-module.exports = function(coreObj) {
+module.exports = function(coreObj, conf) {
 	core = coreObj;
-	if (config.threader) {
+	config = conf;
+	redis = require('redis').createClient();
+	redis.select(config.redisDB);
+	colors = require('./colors.js')(redis, config);
+	if (config) {
 		init();
 		core.on("room", function(action, callback) {
 			var result = validator.validate(action.room, threaderValidator);
@@ -51,9 +53,11 @@ module.exports = function(coreObj) {
 				pendingCallbacks[message.id] = { message: message, fn: callback ,time:new Date().getTime()};
 				setTimeout(function() {
 					if (pendingCallbacks[message.id]) {
-						pendingCallbacks[message.id].fn();
+						var fn = pendingCallbacks[message.id].fn;
 						delete pendingCallbacks[message.id];
+						message.threads = [ { id: "new" } ]; // Make it a new thread if no reply.
 						log("pending callback removed after 1 sec for message.id" + message.id);
+						fn();
 					}
 				}, 1000);
 			} else callback();
@@ -122,7 +126,7 @@ function processReply(data){
 
 function init(){
 	log("Trying to connect.... ");
-	client = net.connect({port: config.threader.port, host: config.threader.host},
+	client = net.connect({port: config.port, host: config.host},
 		function() { //'connect' listener
 		log('client connected');
 		client.write("[");//sending array of JSON objects

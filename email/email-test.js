@@ -1,8 +1,8 @@
 var assert = require("assert");
-var config  = require('../config.js');
+var config  = require('../server-config-defaults.js');
 var core = require("../test/mock-core.js")();
-var email = require("./email.js");
-var gen = require("../lib/generate.js")
+var email = require("./email.js")(config.email);
+var gen = require("../lib/generate.js");
 var guid = 	gen.uid;
 var names = gen.names;
 var msg = {
@@ -26,7 +26,7 @@ describe('Email test', function() {
         this.timeout(30000);
 		core.emit("text", msg, function(err, data) {
             console.log(msg);
-            setTimeout(function() {done()}, 15000);
+            setTimeout(function() {done();}, 15000);
         });
     });
 

@@ -1,9 +1,10 @@
 *~
 
 .*
+!.brackets.json
 !.gitignore
 !.git-hooks
-!.jscs.json
+!.jscsrc
 !.jshintrc
 !.jsbeautifyrc
 
@@ -30,8 +31,11 @@ results
 node_modules
 bower_components
 
+
+server-config.js
 myConfig.js
 client-config.js
+/mysql-storage
 /leveldb-storage/data-test/
 /ircClient/myConfig.js
 /ircClient/Data
@@ -39,6 +43,7 @@ client-config.js
 /test/config.js
 
 /public/s/styles/lace
+/public/s/styles/fonts
 /public/s/styles/dist
 /public/s/scripts/lib
 /public/s/tmp/*

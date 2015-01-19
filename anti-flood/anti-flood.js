@@ -1,7 +1,7 @@
 var log = require("../lib/logger.js");
 var SbError = require("../lib/SbError.js");
 var users={};
-var config = require('../config.js');
+var config;
 
 
 var RateLimiter = function(a,b){
@@ -20,7 +20,8 @@ var RateLimiter = function(a,b){
     };
 };
 
-module.exports = function(core) {
+module.exports = function(core, conf) {
+	config = conf;
 	core.on('message', function(message, callback) {
 		var limiter;
 		log("Heard \"message\" event");
