@@ -1903,8 +1903,13 @@ $dotshadow: fade-out($accent-color, .6);
     .alert-bar { display: none; }
 }
 
+.content-view-cordova-startpage { font-size: 1.2em; }
+
 .cordova-login-buttons {
-    .button { display: block; }
+    .button {
+        display: block;
+        margin: 1em;
+    }
 }
 
 .ie-warning {
