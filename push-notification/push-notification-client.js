@@ -135,6 +135,7 @@ function mapDevicetoUser(regId) {
 	}
 
 	window.plugins.uniqueDeviceID.get(function(uuid) {
+		var user = libsb.user;
 		var thisDevice = {
 			deviceName: device.model,
 			type: 'GCM',
@@ -143,8 +144,8 @@ function mapDevicetoUser(regId) {
 			enabled: true
 		};
 
-		var devices = user && user.params.pushNotifications &&
-			user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
+		var devices = (user && user.params.pushNotifications &&
+			user.params.pushNotifications.devices) ? user.params.pushNotifications.devices : [];
 		
 		// if device does not have a uuid, remove it; also remove it if it already exists in the list.
 		devices = devices.filter(function(d) {
