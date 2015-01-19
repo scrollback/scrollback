@@ -24,7 +24,6 @@ describe("Storage Test.", function() {
 	});
 	
 	beforeEach(function(done) {
-		log.e("Before each");
 		if (config.env === 'production') {
 			log.w("Can not run test cases in production.");
 			return;
@@ -243,17 +242,23 @@ describe("Storage Test.", function() {
 	
 	it("storing new Room.", function(done) {
 		var room = utils.getNewRoomAction();
-		core.emit("room", room, function(){
-			pg.connect(connString, function(err, client, cb) {
-				storageUtils.runQueries(client, 
-										[{query: "SELECT * from entities where id=$1", values: [room.room.id]}], 
-										function(err, results) {
-					log.d("Arguments:", arguments);
-					results.forEach(function(result) {
-						assert.deepEqual(result.rows[0].id, room.room.id, "Adding new user failed");
+		var user = utils.getNewUserAction();
+		room.user = user.user;
+		utils.emitActions( core, [user], function() {
+			utils.emitActions(core, [room], function() {
+				pg.connect(connString, function(err, client, cb) {
+					storageUtils.runQueries(client, 
+											[{query: "SELECT * from entities where id=$1", values: [room.room.id]}, 
+											 {query: "SELECT * from relations where \"room\"=$1 AND \"user\"=$2", values: [room.room.id, room.user.id]}], 
+											function(err, results) {
+						log.d("Arguments:", arguments);
+						//results.forEach(function(result) {
+						assert.deepEqual(results[0].rows[0].id, room.room.id, "Adding new room failed");
+						assert.equal(results[1].rows[0].role, "owner", "room user relation is not correct.");
+						//});
+						cb();
+						done();
 					});
-					cb();
-					done();
 				});
 			});
 		});
@@ -261,27 +266,33 @@ describe("Storage Test.", function() {
 
 	it("Update room.", function(done) {
 		var room = utils.getNewRoomAction();
-		core.emit("room", room, function() {
-			var old = utils.copy(room.room);
-			room.old = old;
-			room.room.identities = room.room.identities.splice(0, 1);
+		var user = utils.getNewUserAction();
+		var roomOwner = utils.getNewUserAction();
+		room.user = roomOwner.user;	
+		utils.emitActions(core, [user, roomOwner], function() {
 			core.emit("room", room, function() {
-				pg.connect(connString, function(err, client, cb) {
-					storageUtils.runQueries(client, 
-											[{query: "SELECT * from entities where id=$1", values: [room.room.id]}], 
-											function(err, results) {
-						log.d("Arguments:", arguments);
-						results.forEach(function(result) {
-							room.room.identities.sort();
-							result.rows[0].identities.sort();
-							assert.deepEqual(result.rows[0].identities, room.room.identities, "updating description failed");
+				var old = utils.copy(room.room);
+				room.user = user.user;
+				room.old = old;
+				room.room.identities = room.room.identities.splice(0, 1);
+				core.emit("room", room, function() {
+					pg.connect(connString, function(err, client, cb) {
+						storageUtils.runQueries(client, 
+												[{query: "SELECT * from entities where id=$1", values: [room.room.id]}], 
+												function(err, results) {
+							log.d("Arguments:", arguments);
+							results.forEach(function(result) {
+								room.room.identities.sort();
+								result.rows[0].identities.sort();
+								assert.deepEqual(result.rows[0].identities, room.room.identities, "updating identites failed");
+							});
+							cb();
+							done();
 						});
-						cb();
-						done();
-					});
-				});	
-			});
+					});	
+				});
 
+			});
 		});
 	});
 	
@@ -291,8 +302,10 @@ describe("Storage Test.", function() {
 		var room = utils.getNewRoomAction();
 		user.user = relation.user;
 		room.room = relation.room;
-		core.emit("room", room, function() {
-			core.emit("user", user, function() {
+		var roomOwner = utils.getNewUserAction();
+		room.user = roomOwner.user;
+		utils.emitActions(core, [user, roomOwner], function() {
+			core.emit("room", room, function() {
 				core.emit("join", relation, function() {
 					log("Join :", arguments);
 					pg.connect(connString, function(err, client, cb) {
@@ -319,10 +332,14 @@ describe("Storage Test.", function() {
 		var relation = utils.getNewRelationAction('join', 'follower');
 		var user = utils.getNewUserAction();
 		var room = utils.getNewRoomAction();
+		
 		user.user = relation.user;
 		room.room = relation.room;
-		core.emit("room", room, function() {
-			core.emit("user", user, function() {
+		var roomOwner = utils.getNewUserAction();
+		room.user = roomOwner.user;
+		utils.emitActions(core, [user, roomOwner], function() {
+			core.emit("room", room, function() {
+				room.user = user.user;
 				core.emit("join", relation, function() {
 					relation.role = 'none';
 					relation.time = new Date().getTime();

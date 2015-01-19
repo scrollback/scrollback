@@ -96,7 +96,8 @@ exports.edit = function (edit) {
 exports.room = exports.user = function (action) {
 	
 	var entity = action[action.type],
-		put = makePut('upsert', 'entities');
+		put = makePut('upsert', 'entities'),
+		putOwner = makePut('insert', 'relations');
 	
 	put.insert = {
 		id: entity.id, 
@@ -123,8 +124,17 @@ exports.room = exports.user = function (action) {
 	});
 	if (entity.createTime) put.update.push(['createtime', 'set', new Date(entity.createTime)]);
 	if (entity.deleteTime) put.update.push(['deletetime', 'set', new Date(entity.deleteTime)]);
-
-	return [put];
+	var ret = [put];
+	if (!(entity.old && entity.old.id) && (action.type == 'room')) { // add relationship role = owner
+		putOwner.insert = {
+			room: action.room.id,
+			user: action.user.id,
+			role: "owner",
+			roletime: new Date(action.time)
+		};
+		ret.push(putOwner);
+	}
+	return ret;
 };
 
 exports.join = exports.part = exports.admit = exports.expel = function (action) {

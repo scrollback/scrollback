@@ -340,6 +340,39 @@ describe("Storage Test.", function() {
 		});
 	});
 	
+	it("getTexts query-7 ((time: number / msg > 256 / before) iterator.", function(done) {
+		this.timeout(20000);
+		var texts = [];
+		var to = generate.names(8);
+		var n = mathUtils.random(300, 500);
+		var time = new Date().getTime();
+		for (var i = 0;i < n;i++) {
+			var text = utils.getNewTextAction();
+			text.to = to;
+			text.time = time + i; // increasing time.
+			texts.push(text);
+		}
+		var num = mathUtils.random(1, 256);
+		utils.emitActions(core, texts, function() {
+			function getTexts(time, index) {
+				
+				core.emit("getTexts", {time: time, before: num, to: to}, function(err, results) {
+					log.d("Texts:", results);
+					//assert.equal(results.results.length, num, "Number of messages are not correct");
+					for (var i = results.results.length - 1; i >= 0; i--) {
+						//log.d("Results:", results.results[i].id, texts[index].id, index);
+						assert.equal(results.results[i].id, texts[index--].id, "Incorrect results");
+					}
+					if (results.results.length != num) {
+						done();
+					} else getTexts(results.results[0].time, index + 1);
+				});	
+			}
+			getTexts(null, n - 1);
+			
+		});
+	});
+	
 	// Iterator getRooms/getUsers
 	
 	it("getRooms query iterator-1 (create time/after)", function(done) {
@@ -466,11 +499,6 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
-	
-	
-	
-	
 	
 	
 });

@@ -32,7 +32,9 @@ r.getNewUserAction = function() {
 			params: {},
 			guides: {},
 			createTime: new Date().getTime()
-		}
+		},
+		old: {},
+		time: new Date().getTime()
 	};
 };
 
@@ -50,6 +52,7 @@ r.getNewRoomAction = function(){
 			guides: {},
 			createTime: new Date().getTime()
 		},
+		time: new Date().getTime(),
 		old: {}
 	};
 };
