@@ -67,7 +67,7 @@ body {
         webview: (),
         embed: $embeds,
         mode: $modes,
-        media: $medialist,
+        platform: $platforms,
         state: $states
     );
 
@@ -1903,7 +1903,7 @@ $dotshadow: fade-out($accent-color, .6);
     .alert-bar { display: none; }
 }
 
-.phonegap-login-buttons {
+.cordova-login-buttons {
     .button { display: block; }
 }
 

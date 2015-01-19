@@ -7,12 +7,13 @@ function init(libsb) {
 	$(function() {
 		var state = {};
 		state = urlUtils.parse(window.location.pathname, window.location.search);
-		
-		if(state.platform) {
-			state.phonegap = true;
+
+		if ((/cordova-android/i).test(state.platform)) {
+			state.cordova = true;
 		}
+
 		if(state.embed) delete state.embed;
-		
+
 		state.source = "boot";
 		state.connectionStatus = "connecting";
 		libsb.emit("navigate", state, function(err) {

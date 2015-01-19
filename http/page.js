@@ -27,11 +27,10 @@ var core, config,
 	log = require('../lib/logger.js');
 
 
-
 module.exports = function(c, conf) {
 	core = c;
 	config = conf;
-	
+
 	return {
 		init: init
 	};
@@ -64,13 +63,14 @@ function init (app) {
 		}
 
 		var platform = req.query.platform;
-		if (platform && platform.toLowerCase() === "android") {
-			clientData.android = true;
-			clientData.appVersion = req.query["app-version"] || "defaults";
 
+		if (platform && (/cordova-android/i).test(platform)) {
+			clientData.cordova = true;
+			clientData.appVersion = req.query["app-version"] || "defaults";
+			clientData.manifest = "cordova-android.appcache";
 		} else {
 			clientData.manifest = "manifest.appcache";
-			clientData.android = false;
+			clientData.cordova = false;
 		}
 
 		seo.getSEOHtml(req, function(r) {
