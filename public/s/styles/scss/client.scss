@@ -873,6 +873,9 @@ body {
             @include opacity(0);
             @include transform(translate3d(0, 0, 0));
         }
+
+
+        @media #{$screenxxx} { @include transform(translate3d(0, 0, 0)); }
     }
 
     .meta-button {
