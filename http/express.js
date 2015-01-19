@@ -55,9 +55,12 @@ function init() {
 	app.use(express.static(__dirname + "/../" + config.home, {
 		maxAge: 86400000
 	}));
-
+	
+	if(process.env.NODE_ENV === "dev") {
+		app.use(express.static(__dirname + '/../test/public'));
+	}
+	
 	app.use(express.cookieParser());
-	// app.use(session.parser);
 	app.use(express.query());
 	app.use(express.bodyParser());
 
