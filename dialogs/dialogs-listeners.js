@@ -303,3 +303,9 @@ libsb.on("signin-dialog", function(dialog, next) {
 		next();
 	});
 }, 100);
+
+libsb.on("noroom-dialog", function(dialog, next) {
+	dialog.title = "This room doesn't exist";
+	dialog.dismiss = false;
+	next();
+}, 1000);

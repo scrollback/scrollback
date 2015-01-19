@@ -62,7 +62,7 @@ function showDialog(type, template) {
 
 // Emit a dialog event when navigate is called
 libsb.on("navigate", function(state, next) {
-	if (state.source === "dialog" || ("dialog" in state.changes && state.source !== "modal-dismiss")) {
+	if (["dialog", "boot"].indexOf(state.source)>=0 ||  ("dialog" in state.changes && state.source !== "modal-dismiss")) {
 		if (!state.dialog) {
 			$.modal("dismiss");
 

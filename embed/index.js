@@ -86,6 +86,8 @@ function constructEmbed(options) {
 	if(options.mode) embed.mode = options.mode;
 	if(options.time) embed.time = options.time;
 	if(options.jws) embed.jws = options.jws;
+	if(typeof options.createRoom == "boolean")embed.createRoom = options.createRoom;
+	if(typeof options.createUser == "boolean")embed.createUser = options.createUser;
 	embed.origin = {
 		protocol: location.protocol,
 		host: location.host,

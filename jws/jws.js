@@ -1,6 +1,8 @@
 var jwt = require('jsonwebtoken'),			
 	crypto = require('crypto'), core,
-	keys = require("./jws-keys.js");
+	keys = require("./jws-keys.js"),
+	utils = require('../lib/appUtils.js');
+
 
 module.exports = function (c) {
 	core = c;
@@ -18,14 +20,11 @@ function checkCurrentRooms(user, domain, callback) {
 		if (!rooms.results || !rooms.results.length) res = [];
 		else res = rooms.results;
 		for (i = 0, l = res.length; i < l; i++) {
-			if (res[i].guides && res[i].allowedDomains) {
+			if (res[i].guides && res[i].guides.allowedDomains) {
 				if (res[i].guides.allowedDomains.indexOf(domain) < 0) {
 					shouldAllow = false;
 					break;
 				}
-			} else {
-				shouldAllow = false;
-				break;
 			}
 		}
 		return callback(null, shouldAllow);
@@ -35,8 +34,8 @@ function checkCurrentRooms(user, domain, callback) {
 function jwsHandler(action, callback) {
 	var domain;
 	if (!action.auth || !action.auth.jws) return callback();
+	if(!utils.isGuest(action.user.id) && !action.user.allowedDomains) return callback();
 	verify(action, function(isVerified, payload) {
-		console.log(isVerified, payload);
 		if(!isVerified) return callback(new Error("AUTH_FAIL: INVALID_TOKEN"));
 		if(payload.iss != action.origin.domain) return callback("AUTH_FAIL:INVALID_ISS");
 		
@@ -91,6 +90,8 @@ function jwsHandler(action, callback) {
 							action.user = {};
 							action.user.identities = [action.auth.jws];
 							action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.auth.jws).digest('hex') + '/?d=retro';
+							action.user.params = {};
+							action.user.params.pictures = [action.user.picture];
 							action.response = new Error("AUTH:UNREGISTRED");
 							return callback();
 						}

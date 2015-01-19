@@ -9,10 +9,11 @@ var Color = require("../lib/color.js"),
 	bootingDone = false,
 	verified = false,
 	verificationTimeout = false,
+	isEmbed = false,
 	/*  lasting objects*/
 	suggestedNick, jws,
 	embed, token, domain, path, preBootQueue = [],
-	parentHost;
+	parentHost, createRoom, createUser;
 
 function openFullView() {
 	window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
@@ -255,13 +256,15 @@ module.exports = function(libsb) {
 	});
 
 	var url = urlUtils.parse(window.location.pathname, window.location.search);
-	console.log("+++++++++++++++++++++++++++++++++++++++++++++++++",url);
 	embed = url.embed;
 	if (window.parent !== window) {
 		parentWindow = window.parent;
 		if (embed) {
+			isEmbed = true;
 			suggestedNick = embed.nick;
 			jws = embed.jws;
+			createRoom = embed.createRoom;
+			createUser = embed.createUser;
 			classesOnLoad(embed);
 
 			if (embed.origin) {
@@ -291,7 +294,6 @@ module.exports = function(libsb) {
 			if (state.source == "boot") {
 				bootingDone = true;
 				state.embed = embed;
-
 				if ((navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
 					 navigator.userAgent.match(/AppleWebKit/) &&
 					 navigator.userAgent.match(/Safari/)) &&
@@ -324,7 +326,7 @@ module.exports = function(libsb) {
 		if (state.source == "boot") {
 			if (!verificationStatus) {
 				preBootQueue.push(function() {
-					processNavigate();
+				processNavigate();
 				});
 			} else {
 				processNavigate();
@@ -334,7 +336,17 @@ module.exports = function(libsb) {
 		}
 
 	}, 996);
-
+	libsb.on("navigate", function(state, next) {
+		if(isEmbed && state.source == "boot" && state.mode == "noroom"){
+			if(createRoom){
+				state.dialog = "createroom";
+			}else {
+				state.dialog = "noroom";	
+			}
+			
+		}
+		next();
+	}, 995);
 	libsb.on("init-up", function(init, next) {
 		function processInit() {
 			init.origin = {

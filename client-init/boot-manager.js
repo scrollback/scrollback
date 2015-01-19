@@ -49,6 +49,7 @@ function init(libsb) {
 		}else if(state.source === 'socket' && continueBoot) {
 			bootState.room = state.room;
 			bootState.roomName = state.roomName;
+			bootState.mode = state.mode;
 			continueBoot();
 			continueBoot = bootState = null;
 			next();
