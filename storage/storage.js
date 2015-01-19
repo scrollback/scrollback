@@ -6,11 +6,13 @@ var queryTr = require('./query-transform.js'),
 	
 function getHandler(type) {
 	return function(query, next) {
-		pg.get(queryTr[type](query), function(err, results) {
-			if(err) return next(err);
-			query.results = resultTr[type](query, results); // reply of run queries is passed here.
-			next();
-		});
+		if (!query.results) {
+			pg.get(queryTr[type](query), function(err, results) {
+				if(err) return next(err);
+				query.results = resultTr[type](query, results); // reply of run queries is passed here.
+				next();
+			});
+		} else next();
 	};
 }
 
@@ -24,7 +26,7 @@ function putHandler(type) {
 	};
 }
 
-module.exports = function(conf, core) {
+module.exports = function(core, conf) {
 	//var s = "storage";
 	config = conf;
 	pg = require('./postgres.js')(config);

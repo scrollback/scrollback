@@ -121,7 +121,7 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	if (iq.createTime) {
 		q.iterate.keys.push('createtime');
 		q.iterate.start.push(new Date(iq.createTime));
-	} else { // alphabetical order
+	} else if(!iq.ref) { // alphabetical order
 		q.iterate.keys.push('id');
 		q.iterate.start.push(iq.iterator || "");
 	}

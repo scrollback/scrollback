@@ -15,7 +15,7 @@ var connString = "pg://" + config.storage.pg.username + ":" +
 
 describe("Storage Test.", function() {
 	before(function(done) {
-		storage(config.storage, core);
+		storage(core, config.storage);
 		if (config.env === 'production') {
 			log.w("Can not run test cases in production.");
 			return;

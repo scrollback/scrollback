@@ -15,7 +15,7 @@ var	connString = "pg://" + config.storage.pg.username + ":" +
 
 describe("Storage Test.", function() {
 	before(function(done) {
-		storage(config.storage, core);
+		storage(core, config.storage);
 		if (config.env === 'production') {
 			log.w("Can not run test cases in production.");
 			return;
@@ -49,44 +49,79 @@ describe("Storage Test.", function() {
 		});
 	});
 	
+	it("getRooms query (empty results)", function(done) {
+		var room = utils.getNewRoomAction();
+		var user = utils.getNewUserAction();
+		room.user = user.user;
+		core.emit("user", user, function() {
+			core.emit("room", room, function() {
+				core.emit("getRooms", {type: 'getRooms', ref: generate.names(10)}, function(err, reply) {
+					log.d("Arguments:", arguments);
+					assert.equal(reply.results.length, 0, "Should return 0 results");
+					done();
+				});
+			});
+		});
+	});
+	
+	it("getRooms query (filled results)", function(done) {
+		var room = utils.getNewRoomAction();
+		core.emit("getRooms", {type: 'getRooms', ref: room.room.id, results: [room.room]}, function(err, reply) {
+			log.d("Arguments:", arguments);
+			assert.equal(reply.results.length, 1, "Should return 0 results");
+			done();
+		});
+	});
+	
+	
 	it("getRooms query (ref)", function(done) {
 		var room = utils.getNewRoomAction();
-		core.emit("user", room, function() {
-			core.emit("getRooms", {type: 'getRooms', ref: room.room.id}, function(err, reply) {
-				log.d("Arguments:", arguments);
-				assert.equal(reply.results.length, 1, "Not one result");
-				assert.equal(reply.results[0].id, room.room.id, "Get room failed");
-				done();
+		var user = utils.getNewUserAction();
+		room.user = user.user;
+		core.emit("user", user, function() {
+			core.emit("room", room, function() {
+				core.emit("getRooms", {type: 'getRooms', ref: room.room.id}, function(err, reply) {
+					log.d("Arguments:", arguments);
+					assert.equal(reply.results.length, 1, "Not one result");
+					assert.equal(reply.results[0].id, room.room.id, "Get room failed");
+					done();
+				});
 			});
 		});
 	});
 	
 	it("getRooms query (identities)", function(done) {
 		var room = utils.getNewRoomAction();
-		log.d("Room:", room);
-		core.emit("user", room, function() {
-			var identity = room.room.identities[0];
-			log("Identity:", identity);
-			core.emit("getRooms", {type: 'getRooms', identity: identity.substr(0, identity.indexOf(":"))}, function(err, reply) {
-				log.d("Arguments:", arguments);
-				assert.equal(reply.results.length, 1, "Not one result");
-				assert.equal(reply.results[0].id, room.room.id, "Get room failed");
-				done();
+		var user = utils.getNewUserAction();
+		room.user = user.user;
+		core.emit("user", user, function() {
+			core.emit("room", room, function() {
+				var identity = room.room.identities[0];
+				log("Identity:", identity);
+				core.emit("getRooms", {type: 'getRooms', identity: identity.substr(0, identity.indexOf(":"))}, function(err, reply) {
+					log.d("Arguments:", arguments);
+					assert.equal(reply.results.length, 1, "Not one result");
+					assert.equal(reply.results[0].id, room.room.id, "Get room failed");
+					done();
+				});
 			});
 		});
 	});
 	
 	it("getRooms query (identities)", function(done) {
 		var room = utils.getNewRoomAction();
-		log.d("Room:", room);
-		core.emit("user", room, function() {
-			var identity = room.room.identities[0];
-			log("Identity:", identity);
-			core.emit("getRooms", {type: 'getRooms', identity: identity}, function(err, reply) {
-				log.d("Arguments:", arguments);
-				assert.equal(reply.results.length, 1, "Not one result");
-				assert.equal(reply.results[0].id, room.room.id, "Get room failed");
-				done();
+		var user = utils.getNewUserAction();
+		room.user = user.user;
+		core.emit("user", user, function() {
+			core.emit("room", room, function() {
+				var identity = room.room.identities[0];
+				log("Identity:", identity);
+				core.emit("getRooms", {type: 'getRooms', identity: identity}, function(err, reply) {
+					log.d("Arguments:", arguments);
+					assert.equal(reply.results.length, 1, "Not one result");
+					assert.equal(reply.results[0].id, room.room.id, "Get room failed");
+					done();
+				});
 			});
 		});
 	});
@@ -120,6 +155,8 @@ describe("Storage Test.", function() {
 		var relations = [];
 		var users = [];
 		var room = utils.getNewRoomAction();
+		var roomOwner = utils.getNewUserAction();
+		room.user = roomOwner.user;
 		var n = mathUtils.random(1, 10);
 		for (var i = 0;i < n; i++) {
 			relations.push(utils.getNewRelationAction('join', 'follower'));
@@ -128,21 +165,23 @@ describe("Storage Test.", function() {
 			relations[i].room = room.room;
 			users.push(user);
 		}
-		utils.emitActions(core, [room] , function(err1, results1) {
-			utils.emitActions(core, users, function(err2, results2) {
-				utils.emitActions(core, relations, function(err3, results3) {
-					log.d("actions: ", err1, err2, err3, results1, results2, results3);
-					core.emit("getUsers", {
-						type: 'getUsers',
-						memberOf: room.room.id
-					}, function(err, reply) {
-						log.d("N=", n, reply.results.length);
-						assert.equal(reply.results.length >= n, true, "member of query failed.");
-						done();
+		core.emit("user", roomOwner, function() {
+			utils.emitActions(core, [room] , function(err1, results1) {
+				utils.emitActions(core, users, function(err2, results2) {
+					utils.emitActions(core, relations, function(err3, results3) {
+						log.d("actions: ", err1, err2, err3, results1, results2, results3);
+						core.emit("getUsers", {
+							type: 'getUsers',
+							memberOf: room.room.id
+						}, function(err, reply) {
+							log.d("N=", n, reply.results.length);
+							assert.equal(reply.results.length >= n, true, "member of query failed.");
+							done();
+						});
 					});
 				});
+
 			});
-			
 		});
 	});
 	
@@ -152,14 +191,16 @@ describe("Storage Test.", function() {
 		var rooms = [];
 		var user = utils.getNewUserAction();
 		var n = mathUtils.random(1, 10);
+		var roomOwner = utils.getNewUserAction();
 		for (var i = 0;i < n; i++) {
 			relations.push(utils.getNewRelationAction('join', 'follower'));
 			var room = utils.getNewRoomAction();
+			room.user = roomOwner.user;
 			relations[i].user = user.user;
 			relations[i].room = room.room;
 			rooms.push(room);
 		}
-		utils.emitActions(core, [user] , function(err1, results1) {
+		utils.emitActions(core, [user, roomOwner] , function(err1, results1) {
 			utils.emitActions(core, rooms, function(err2, results2) {
 				utils.emitActions(core, relations, function(err3, results3) {
 					log.d("actions: ", err1, err2, err3, results1, results2, results3);
@@ -176,10 +217,11 @@ describe("Storage Test.", function() {
 
 		});
 	});
+	
 	it("getTexts query (ref)", function(done) {
 		var text = utils.getNewTextAction();
 		core.emit("text", text, function() {
-			core.emit("getTexts", {ref: text.id}, function(err, reply) {
+			core.emit("getTexts", {type: "getTexts", ref: text.id}, function(err, reply) {
 				assert.equal(reply.results[0].id, text.id, "getTexts(ref) not working");
 				done();
 			});
@@ -380,20 +422,24 @@ describe("Storage Test.", function() {
 		var rooms = [];
 		var n = mathUtils.random(1, 256);
 		var time = new Date().getTime();
+		var user = utils.getNewUserAction();
 		for (var i = 0; i < n; i++) {
 			var room = utils.getNewRoomAction();
+			room.user = user.user;
 			room.room.createTime = time  + i; // increasing time.
 			rooms.push(room);
 		}
-		utils.emitActions(core, rooms, function() {
-			core.emit("getRooms", { createTime: time - 1, after: 256}, function(err, results) {
-				log.d("rooms:", results);
-				
-				assert.equal(results.results.length, n, "not n messages");
-				for (var i = 0; i < n; i++) {
-					assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
-				}
-				done();
+		core.emit("user", user, function() {
+			utils.emitActions(core, rooms, function() {
+				core.emit("getRooms", {type: "getRooms", createTime: time - 1, after: 256}, function(err, results) {
+					log.d("rooms:", results.results.length, n);
+
+					assert.equal(results.results.length, n, "not n rooms");
+					for (var i = 0; i < n; i++) {
+						assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
+					}
+					done();
+				});
 			});
 		});
 	});
@@ -403,20 +449,24 @@ describe("Storage Test.", function() {
 		var rooms = [];
 		var n = mathUtils.random(1, 256);
 		var time = new Date().getTime();
+		var user = utils.getNewUserAction();
 		for (var i = 0; i < n; i++) {
 			var room = utils.getNewRoomAction();
+			room.user = user.user;
 			room.room.createTime = time  + i; // increasing time.
 			rooms.push(room);
 		}
-		utils.emitActions(core, rooms, function() {
-			core.emit("getRooms", { createTime: time + n + 2, before: 256}, function(err, results) {
-				log.d("rooms:", results);
+		core.emit("user", user, function() {
+			utils.emitActions(core, rooms, function() {
+				core.emit("getRooms", { type: "getRooms", createTime: time + n + 2, before: 256}, function(err, results) {
+					log.d("rooms:", results);
 
-				assert.equal(results.results.length, n, "not n messages");
-				for (var i = 0; i < n; i++) {
-					assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
-				}
-				done();
+					assert.equal(results.results.length, n, "not n messages");
+					for (var i = 0; i < n; i++) {
+						assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
+					}
+					done();
+				});
 			});
 		});
 	});
@@ -426,21 +476,25 @@ describe("Storage Test.", function() {
 		var rooms = [];
 		var n = mathUtils.random(300, 500);
 		var time = new Date().getTime();
+		var user = utils.getNewUserAction();
 		for (var i = 0; i < n; i++) {
 			var room = utils.getNewRoomAction();
+			room.user = user.user;
 			room.room.createTime = time  + i; // increasing time.
 			rooms.push(room);
 		}
 		var num = 256;
-		utils.emitActions(core, rooms, function() {
-			core.emit("getRooms", { createTime: time + n + 2, before: num}, function(err, results) {
-				log.d("rooms:", results);
+		core.emit("user", user, function() {
+			utils.emitActions(core, rooms, function() {
+				core.emit("getRooms", {type: "getRooms", createTime: time + n + 2, before: num}, function(err, results) {
+					log.d("rooms:", results);
 
-				assert.equal(results.results.length, num, "not n messages");
-				for (var i = 0; i < results.results.length; i++) {
-					assert.equal(results.results[i].id, rooms[i + (n - num)].room.id, "Incorrect results");
-				}
-				done();
+					assert.equal(results.results.length, num, "not n messages");
+					for (var i = 0; i < results.results.length; i++) {
+						assert.equal(results.results[i].id, rooms[i + (n - num)].room.id, "Incorrect results");
+					}
+					done();
+				});
 			});
 		});
 	});
@@ -450,22 +504,26 @@ describe("Storage Test.", function() {
 		var rooms = [];
 		var n = mathUtils.random(300, 500);
 		var time = new Date().getTime();
+		var user = utils.getNewUserAction();
 		for (var i = 0; i < n; i++) {
 			var room = utils.getNewRoomAction();
+			room.user = user.user;
 			room.room.createTime = time  + i; // increasing time.
 			rooms.push(room);
 		}
 		var num = 256;
-		utils.emitActions(core, rooms, function() {
-			core.emit("getRooms", { createTime: time - 1, after: num}, function(err, results) {
-				log.d("rooms:", results);
+		core.emit("user", user, function() {
+			utils.emitActions(core, rooms, function() {
+				core.emit("getRooms", {type: "getRooms", createTime: time - 1, after: num}, function(err, results) {
+					log.d("rooms:", results);
 
-				assert.equal(results.results.length, num, "not n messages");
-				for (var i = 0; i < results.results.length; i++) {
-					//log.d("create room", results.results[i].id + "," + rooms[i].room.id);
-					assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
-				}
-				done();
+					assert.equal(results.results.length, num, "not n messages");
+					for (var i = 0; i < results.results.length; i++) {
+						//log.d("create room", results.results[i].id + "," + rooms[i].room.id);
+						assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
+					}
+					done();
+				});
 			});
 		});
 	});
@@ -476,8 +534,10 @@ describe("Storage Test.", function() {
 		var rooms = [];
 		var n = mathUtils.random(300, 500);
 		var time = new Date().getTime();
+		var user = utils.getNewUserAction();
 		for (var i = 0; i < n; i++) {
 			var room = utils.getNewRoomAction();
+			room.user = user.user;
 			room.room.createTime = time  + i; // increasing time.
 			room.room.identities.push("twitter://" + generate.names(15));
 			rooms.push(room);
@@ -486,16 +546,18 @@ describe("Storage Test.", function() {
 		rooms.sort(function(r1, r2) {
 			return r1.room.id > r2.room.id ? 1 : (r1.room.id === r2.room.id ? 0 : -1);
 		});
-		utils.emitActions(core, rooms, function() {
-			core.emit("getRooms", {identity: "twitter"}, function(err, results) {
-				log.d("rooms:", results.results.length);
+		core.emit("user", user, function() {
+			utils.emitActions(core, rooms, function() {
+				core.emit("getRooms", {identity: "twitter"}, function(err, results) {
+					log.d("rooms:", results.results.length);
 
-				assert.equal(results.results.length, num, "not n messages");
-				for (var i = 0; i < results.results.length; i++) {
-					//log.d("create room", results.results[i].id + "," + rooms[i].room.id);
-					assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
-				}
-				done();
+					assert.equal(results.results.length, num, "not n messages");
+					for (var i = 0; i < results.results.length; i++) {
+						//log.d("create room", results.results[i].id + "," + rooms[i].room.id);
+						assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
+					}
+					done();
+				});
 			});
 		});
 	});
