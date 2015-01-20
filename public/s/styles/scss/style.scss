@@ -122,14 +122,20 @@ body {
     .card-header-icon-more { display: none; }
 }
 
-.scrollback-logo {
+.sidebar-header {
+    @extend %clearfix;
     @include flex-shrink(0);
     @include dropshadow(2);
 
-    padding: .75em .5em;
     width: 100%;
 
-    &-image { display: block; }
+    &-logo {
+        float: left;
+        display: block;
+        margin: .75em .5em;
+    }
+
+    &-icon { float: right; }
 }
 
 .appbar-primary {

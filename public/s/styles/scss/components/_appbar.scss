@@ -87,6 +87,8 @@
 
             &-more { @include icon(more); }
 
+            &-grid { @include icon(grid); }
+
             &-search { @include icon(search); }
 
             &-people { @include icon(contact); }

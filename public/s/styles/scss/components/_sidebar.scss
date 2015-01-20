@@ -11,6 +11,7 @@
         z-index: 700;
         box-shadow: 0 0 0 transparent;
         will-change: transform;
+        padding-bottom: $bar-height;
 
         @media #{$screenxxx} {
             @include transform(translateX(0));
@@ -49,6 +50,12 @@
 
             @media #{$screenxxx} {
                 &, .view-sidebar-left & { box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+            }
+
+            &-footer {
+                &:focus, &:hover { background-color: darken($dark-color, 5%); }
+
+                &:active { background-color: darken($dark-color, 10%); }
             }
         }
 
@@ -90,6 +97,37 @@
 
             @media #{$screenxxx} {
                 .view-sidebar-left & { display: none; }
+            }
+        }
+
+        &-footer {
+            @extend %clearfix;
+
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: $bar-height;
+            background-color: $dark-color;
+            box-shadow: 0 -3px 6px rgba(0,0,0,0.16);
+
+            &-icon {
+                float: left;
+                color: inherit;
+                font-size: 1.5em;
+                line-height: $bar-height / 1.5;
+                margin: 0 (1em / 1.5);
+
+                &, &:focus, &:hover, &:active { color: $accent-color; }
+
+                &-grid { @include icon(grid); }
+            }
+
+            &-label {
+                font-weight: 700;
+                line-height: $bar-height;
+
+                &, &:focus, &:hover, &:active { color: inherit; }
             }
         }
     }

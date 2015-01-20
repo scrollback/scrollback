@@ -194,7 +194,17 @@ $(function() {
     });
 
     $(".js-goto-room").on("click", function() {
-        libsb.emit("navigate", { mode: "room" });
+        libsb.emit("navigate", {
+            mode: "room",
+            view: null
+        });
+    });
+
+    $(".js-goto-home").on("click", function() {
+        libsb.emit("navigate", {
+            mode: "home",
+            view: null
+        });
     });
 
     $(document).on("click", ".js-room-card", function(e) {
@@ -204,7 +214,8 @@ $(function() {
 
         libsb.emit("navigate", {
             mode: "room",
-            roomName: $(this).attr("data-room")
+            roomName: $(this).attr("data-room"),
+            view: null
         });
     });
 
@@ -215,7 +226,8 @@ $(function() {
 
         libsb.emit("navigate", {
             mode: "chat",
-            discussionId: $(this).attr("data-discussion")
+            discussionId: $(this).attr("data-discussion"),
+            view: null
         });
     });
 });
