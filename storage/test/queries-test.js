@@ -49,6 +49,17 @@ describe("Storage Test.", function() {
 		});
 	});
 	
+	it("getUsers query (ref is an empty array)", function(done) {
+		var user = utils.getNewUserAction();
+		core.emit("user", user, function() {
+			core.emit("getUsers", {type: 'getUsers', ref: []}, function(err, reply) {
+				log.d("Arguments:", arguments);
+				assert.equal(reply.results.length, 0, "Not zero result");
+				done();
+			});
+		});
+	});
+	
 	it("getRooms query (empty results)", function(done) {
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
@@ -255,6 +266,16 @@ describe("Storage Test.", function() {
 		core.emit("text", text, function() {
 			core.emit("getTexts", {type: "getTexts", ref: text.id}, function(err, reply) {
 				assert.equal(reply.results[0].id, text.id, "getTexts(ref) not working");
+				done();
+			});
+		});
+	});
+	
+	it("getTexts query (ref is an empty array)", function(done) {
+		var text = utils.getNewTextAction();
+		core.emit("text", text, function() {
+			core.emit("getTexts", {type: "getTexts", ref: []}, function(err, reply) {
+				assert.equal(reply.results.length, 0, "array length is not zero");
 				done();
 			});
 		});

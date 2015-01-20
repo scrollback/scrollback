@@ -45,7 +45,8 @@ exports.getTexts = exports.getThreads = function(query) {
 		q.filters.push(["tags", "cts", query.tag]);
 	} else if (query.ref) {
 		if (query.ref instanceof Array) {
-			q.filters.push(['id', 'in', query.ref]);	
+			if (query.ref.length) q.filters.push(['id', 'in', query.ref]);	
+			else return []; // no results.
 		} else q.filters.push(["id", "eq", query.ref]);
 	} else if (query.updateTime) {
 		q.iterate.keys.push("updatetime");
@@ -88,8 +89,9 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.filters.push([["entities", "type"], "eq", type]);
 	}
 	if (iq.ref) {
-		if (iq.ref instanceof Array) {
-			q.filters.push(['id', 'in', iq.ref]);	
+		if (iq.ref instanceof Array ) {
+			if (iq.ref.length) q.filters.push(['id', 'in', iq.ref]);
+			else return []; // no results because ref is an empty array. 
 		} else q.filters.push(["id", "eq", iq.ref]);
 	} else if (iq.identity) {
 		q.filters.push(['identities', 'cts', [iq.identity]]);

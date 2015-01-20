@@ -244,6 +244,9 @@ function addFilters(transform, sql, values, i) {
 }
 
 function runQueries(client, queries, callback) {
+	if (queries.length === 0) {
+		return callback(null, []);
+	}
 	function rollback(err, client, done) {
 		client.query('ROLLBACK', function(er) {
 			log.e("Rollback", err, er);
