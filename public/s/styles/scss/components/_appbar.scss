@@ -9,21 +9,39 @@
         max-height: $bar-height;
         height: $bar-height;
         width: 100%;
-        background-color: $accent-color;
-        color: $light-color;
         overflow: hidden;
+
+        &-primary {
+            background-color: $accent-color;
+            color: $light-color;
+        }
+
+        &-secondary {
+            background-color: $light-color;
+            color: fade-out($dark-color, .3);
+        }
 
         &-title {
             float: left;
-            line-height: $bar-height / 1.2;
-            font-size: 1.2em;
             margin: 0;
-            padding: 0 (.25em / 1.2);
             height: 100%;
             max-width: 70%;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+            font-weight: 700;
+
+            &-primary {
+                line-height: $bar-height / 1.2;
+                font-size: 1.2em;
+                padding: 0 (.25em / 1.2);
+            }
+
+            &-secondary {
+                line-height: $bar-height;
+                font-size: 1em;
+                padding: 0 .25em;
+            }
         }
 
         &-avatar {
@@ -62,6 +80,8 @@
                 background-color: rgba(0,0,0,0.2);
                 color: inherit;
             }
+
+            &-back { @include icon(arrow-left); }
 
             &-menu { @include icon(hamburger); }
 

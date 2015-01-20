@@ -43,12 +43,12 @@ html, body { height: 100%; }
 
 body {
     @include filter((
-        role: $roles,
-        webview: (),
-        embed: $embeds,
-        mode: $modes,
-        media: $medialist,
-        state: $states
+                    role: $roles,
+                    webview: (),
+                    embed: $embeds,
+                    mode: $modes,
+                    platform: $platforms,
+                    state: $states
     ), ( role )); /* show hide elements based on filter */
 
     @include flexbox;
@@ -131,15 +131,15 @@ body {
     &-image { display: block; }
 }
 
-.appbar {
+.appbar-primary {
     @media #{$screenxxx} {
-        &-icon-menu { display: none; }
+        .appbar-icon-menu, .appbar-avatar { display: none; }
 
-        &-title { margin-left: 1em; }
+        .appbar-title { margin-left: 1em; }
     }
 
     @media #{$screenxxxxx} {
-        &-icon-people { display: none; }
+        .appbar-icon-people { display: none; }
     }
 }
 

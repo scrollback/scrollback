@@ -117,7 +117,8 @@ function addChat() {
 $(function() {
     var keys = [ "view", "mode" ],
         oldState = {}, currentState = {},
-        $title = $(".js-appbar-title");
+        $title = $(".js-appbar-title"),
+        $discussion = $(".js-discussion-title");
 
     // Listen to navigate and add class names
     libsb.on("navigate", function(state, next) {
@@ -160,6 +161,7 @@ $(function() {
                 break;
             case "chat":
                 $title.text(state.roomName);
+                $discussion.text(state.discussionId);
                 break;
             case "home":
                 $title.text("My feed");
@@ -191,6 +193,10 @@ $(function() {
         libsb.emit("navigate", { view: null });
     });
 
+    $(".js-goto-room").on("click", function() {
+        libsb.emit("navigate", { mode: "room" });
+    });
+
     $(document).on("click", ".js-room-card", function(e) {
         if ($(e.target).closest(".js-room-more").length) {
             return;
@@ -207,6 +213,9 @@ $(function() {
             return;
         }
 
-        libsb.emit("navigate", { mode: "chat" });
+        libsb.emit("navigate", {
+            mode: "chat",
+            discussionId: $(this).attr("data-discussion")
+        });
     });
 });
