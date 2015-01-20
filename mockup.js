@@ -71,7 +71,11 @@ function addDiscussions() {
 
         card.setCount("mention", Math.round(Math.random() * 100));
 
-        card.element.append($('<div class="card-button card-button-reply">Quick reply</div>'));
+        card.element.append($('<div class="card-quick-reply js-quick-reply">').append(
+                                $('<div class="card-quick-reply-content">').append(
+                                    $('<div class="card-button card-button-reply">Quick reply</div>'),
+                                    $('<input type="text" class="card-entry card-entry-reply js-quick-reply-entry">')
+                            )));
 
         grid.addItem(card.element);
     }
@@ -220,7 +224,22 @@ $(function() {
     });
 
     $(document).on("click", ".js-discussion-card", function(e) {
-        if ($(e.target).closest(".js-discussion-more").length) {
+        var $target = $(e.target),
+            $quickreply;
+
+        if ($target.closest(".js-discussion-more").length) {
+            return;
+        }
+
+        $quickreply = $target.closest(".js-quick-reply");
+
+        if ($quickreply.length) {
+            $quickreply.addClass("active");
+
+            setTimeout(function() {
+                $quickreply.find(".js-quick-reply-entry").focus();
+            }, 200);
+
             return;
         }
 
@@ -229,5 +248,9 @@ $(function() {
             discussionId: $(this).attr("data-discussion"),
             view: null
         });
+    });
+
+    $(document).on("blur", ".js-quick-reply-entry", function() {
+        $(this).closest(".js-quick-reply").removeClass("active");
     });
 });
