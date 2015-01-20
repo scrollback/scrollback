@@ -80,7 +80,7 @@ function fbAuth(action, callback) {
 									};
 									return callback();
 								}
-								if (action.user.id != user.results[0].id) {
+								if (user.results && user.results[0]) {
 									action.old = action.user;
 								} else {
 									action.old = {};

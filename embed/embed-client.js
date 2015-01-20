@@ -3,14 +3,12 @@
 var Color = require("../lib/color.js"),
 	urlUtils = require("../lib/url-utils.js"),
 	stringUtils = require("../lib/stringUtils.js"),
-	/* status flags */
 	verificationStatus = false,
 	parentWindow = null,
 	bootingDone = false,
 	verified = false,
 	verificationTimeout = false,
 	isEmbed = false,
-	/*  lasting objects*/
 	suggestedNick, jws,
 	embed, token, domain, path, preBootQueue = [],
 	parentHost, createRoom, createUser;
@@ -310,13 +308,11 @@ module.exports = function(libsb) {
 				}
 			}
 
-			if (state.room && state.room === "object") {
+			if (isEmbed && state.room && typeof state.room === "object") {
 				guides = state.room.guides;
-				if (!state.old || !state.old.roomName || state.roomName != state.old.roomName) {
-					if (guides && guides.http && guides.http.allowedDomains && guides.http.allowedDomains.length) {
-						if (!verified || guides.http.allowedDomains.indexOf(domain) == -1) {
-							state.room = "embed-disallowed";
-						}
+				if (guides && guides.allowedDomains && guides.allowedDomains.length) {
+					if (!verified || guides.allowedDomains.indexOf(domain) == -1) {
+						state.dialog = "disallowed";
 					}
 				}
 			}
@@ -343,7 +339,6 @@ module.exports = function(libsb) {
 			}else {
 				state.dialog = "noroom";	
 			}
-			
 		}
 		next();
 	}, 995);

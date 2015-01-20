@@ -1,7 +1,7 @@
 /* jshint node:true */
 var permissionWeights = require('../permissionWeights.js');
 var SbError = require('../../lib/SbError.js');
-var log = require('../../lib/logger.js');
+var domainCheck;
 function checkAuthority(action) {
 	var openFollow = action.room.guides.authorizer && action.room.guides.authorizer.openFollow;
 	if (typeof openFollow === "undefined") {
@@ -61,9 +61,10 @@ function admitExpel(action, callback) {
 	}
 }
 
-module.exports = function (core) {
-
+module.exports = function (core, config) {
+	domainCheck = require("../domain-auth.js")(core, config);
 	core.on('admit', function (admit, callback) {
+		if(!domainCheck(admit.room, admit.origin)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
 		/*This is hacky code, rewite it.*/
 		if (admit.user.role == 'owner' || admit.user.role == 'su') {
 			 return callback();
@@ -78,6 +79,7 @@ module.exports = function (core) {
 	}, "authorization");
 
 	core.on('expel', function (expel, callback) {
+		if(!domainCheck(expel.room, expel.origin)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
 		if (!expel.role) {
 			expel.role = "none";
 		}

@@ -9,7 +9,7 @@ module.exports = function(libsb) {
 		query[key] = state.roomName;
 		if (["normal", "conf"].indexOf(state.mode) >= 0 && (!state.old || state.roomName != state.old.roomName || (state.connectionStatus && state.connectionStatus != state.old.connectionStatus))) {
 			libsb.getRooms(query, function(err, data) {
-				var roomID;
+				var roomID, domain;
 				if (err) {
 					console.log("ERROR: ", err, data);
 					return next(err);
@@ -18,13 +18,17 @@ module.exports = function(libsb) {
 				if (!data || !data.results || !data.results.length) {
 					if (state && state.connectionStatus === "online") {
 						if (data.identity) {
+							domain = data.identity.substring(0,data.identity.lastIndexOf(":"));
 							roomID = data.identity.substring(data.identity.lastIndexOf(":")+1);
 							state.mode = "noroom";
 							state.roomName = roomID;
 							state.room = {
 								id: roomID,
 								identities: [data.identity],
-								roomSaved: false
+								roomSaved: false,
+								guides:{
+									allowedDomains: [domain]
+								}
 							};
 							state.dialog = "createroom";
 							return next();

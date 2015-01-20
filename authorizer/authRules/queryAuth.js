@@ -1,8 +1,12 @@
 var SbError = require('../../lib/SbError.js');
 var permissionLevels = require('../permissionWeights.js');
-
-module.exports = function(core) {
+var utils = require('../../lib/appUtils.js');
+var domainCheck;
+module.exports = function(core, config) {
+	domainCheck = require("../domain-auth.js")(core, config);
 	core.on('getTexts', function(query, callback) {
+		console.log(query.origin);
+		if(!utils.isInternalSession(query.session) && !domainCheck(query.room, query.origin)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
 		if (query.user.role === "none") {
 			if (/^guest-/.test(query.user.id)) {
 				query.user.role = "guest";
@@ -22,7 +26,7 @@ module.exports = function(core) {
 	}, "authorization");
 	core.on('getThreads', function(query, callback) {
 		var readLevel;
-
+		if(!domainCheck(query.room, query.origin)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
 		if (query.user && query.user.role === "none") {
 			if (/^guest-/.test(query.user.id)) {
 				query.user.role = "guest";

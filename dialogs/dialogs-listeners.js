@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $, libsb, currentState */
 
 var validate = require("../lib/validate.js"),
 	afterSignUp,
@@ -106,7 +106,8 @@ function createRoom(entry, button, callback) {
 				id: name,
 				description: "",
 				params: {},
-				guides: {}
+				guides: currentState.room.guides,
+				identities: currentState.room.identities || []
 			}
 		}, function(err) {
 			if (err) {
@@ -306,6 +307,13 @@ libsb.on("signin-dialog", function(dialog, next) {
 
 libsb.on("noroom-dialog", function(dialog, next) {
 	dialog.title = "This room doesn't exist";
+	dialog.dismiss = false;
+	next();
+}, 1000);
+
+
+libsb.on("disallowed-dialog", function(dialog, next) {
+	dialog.title = "Domain Mismatch";
 	dialog.dismiss = false;
 	next();
 }, 1000);

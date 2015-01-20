@@ -54,6 +54,7 @@ module.exports = {
 		"meta-area-test.js",
 		"login-test.js"
 		]
-	}
-
+	},
+	server:"stage.scrollback.io",
+	externalServer:"test.scrollback.io"
 };
