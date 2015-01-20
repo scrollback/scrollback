@@ -14,16 +14,15 @@ function Card(opts, type) {
         throw new Error("Invalid title passed");
     }
 
-    this._title = $('<h3 class="card-header-title">').css(opts.color ? {
-        color: opts.color
-    } : {}).text(title);
+    this._title = $('<h3 class="card-header-title">').text(title);
 
     this._mentionbadge = $('<span class="card-header-badge notification-badge notification-badge-mention">').attr("data-empty", "");
     this._messagebadge = $('<span class="card-header-badge notification-badge notification-badge-messages">').attr("data-empty", "");
 
     this.more = $('<a class="card-header-icon card-header-icon-more' + (type ? ' action-' + type + '-more' : '') + '">');
 
-    this.element = $('<div class="card' + (type ? ' ' + type + '-card ' + 'js-' + type + '-card' : '') + '">').append(
+    this.element = $('<div class="card' + (type ? ' ' + type + '-card ' + 'js-' + type + '-card' : '') +
+        ((typeof opts.color !== "undefined") ? ' color-' + opts.color : '') + '">').append(
         $('<div class="card-header">').append(
             this._title,
             this._mentionbadge,

@@ -179,6 +179,7 @@ body {
     @include align-items(flex-start);
     @include flex-grow(1);
 
+    position: relative;
     height: 100%;
     overflow: hidden; /* otherwise makes the right sidebar shrink in firefox */
 }
@@ -197,6 +198,7 @@ body {
     &:after {
         content: "";
         display: block;
+        height: $bar-height * 1.5;
     }
 }
 

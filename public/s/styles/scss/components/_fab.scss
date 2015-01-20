@@ -1,19 +1,21 @@
 @include exports("fab") {
     $fab-size: $bar-height;
-    $color: nth($palette, 7);
+    $color: nth($palette, 9);
 
     .fab {
+        @include icon(add);
         @include dropshadow(3);
 
-        position: fixed;
+        position: absolute;
         z-index: 500;
         right: 0;
         bottom: 0;
         margin: (2em / 1.5);
         font-size: 1.5em;
+        display: block;
         height: $fab-size / 1.5;
         width: $fab-size / 1.5;
-        padding: (1em / 1.5);
+        padding: (.5em / 1.5) (1em / 1.5);
         border-radius: 50%;
         background-color: $color;
         color: rgba(0,0,0,0.5);

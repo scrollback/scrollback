@@ -23,7 +23,7 @@ function addRooms() {
         for (var j = 0; j < 5; j++) {
             card1 = new Card({
                 id: generate.names(Math.floor(Math.random() * 7) + 3),
-                color: "#" + Math.floor(Math.random() * 16777215).toString(16)
+                color: Math.floor(Math.random() * 10)
             }, "room");
 
             card2 = new Card({ id: generate.names(Math.floor(Math.random() * 7) + 3) }, "room");
@@ -59,7 +59,7 @@ function addDiscussions() {
         card = new Card({
             title: generate.sentence(Math.floor(Math.random() * 7) + 3),
             id: generate.names(Math.floor(Math.random() * 7) + 3),
-            color: "#" + Math.floor(Math.random() * 16777215).toString(16)
+            color: Math.floor(Math.random() * 10)
         }, "discussion");
 
         for (var k = 0; k < 5; k++) {
