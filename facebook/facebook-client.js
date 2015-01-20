@@ -1,9 +1,14 @@
 /* jshint browser:true */
-/* global libsb */
+/* global libsb, $, facebookConnectPlugin */
+
 var config = require("../client-config-defaults.js");
 
 function loginWithFb() {
 	window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
+}
+
+if (!facebookConnectPlugin) {
+	$('.js-phonegap-fb-login').click(loginWithFb);
 }
 
 libsb.on('auth', function(auth, next) {
