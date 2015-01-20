@@ -1,6 +1,5 @@
 /* jshint browser:true */
 /* global libsb, facebookConnectPlugin */
-var config = require("../client-config-defaults.js");
 
 libsb.on('logout', function(l, n) {
 	if (facebookConnectPlugin) {
@@ -45,10 +44,12 @@ function loginWithFacebook() {
 		});
 		
 		var intervalId = setInterval(function() {
-			facebookConnectPlugin.getLoginStatus(function(obj) {
+			facebookConnectPlugin.getLoginStatus(function(obj) { 
+				// this hack fires the callback when, the login is successfull, but success callback does not fire.
+				// misbehaving phonegap plugins :-|
 				if (obj.hasOwnProperty('status') && obj.status === "connected") {
 					clearInterval(intervalId);
-				} 
+				}
 			}, function() {
 				clearInterval(intervalId);
 			});
@@ -56,7 +57,7 @@ function loginWithFacebook() {
 				clearInterval(intervalId);
 				return n();
 			}, 500);
-		}, 1000);
+		}, 100);
 	}
 }
 
