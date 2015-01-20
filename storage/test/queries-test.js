@@ -64,6 +64,38 @@ describe("Storage Test.", function() {
 		});
 	});
 	
+	it("getRooms query (ref is an array)", function(done) {
+		this.timeout(7000);
+		var rooms = [];
+		var n = mathUtils.random(2, 100);
+		var time = new Date().getTime();
+		var user = utils.getNewUserAction();
+		var ref = [];
+		for (var i = 0; i < n; i++) {
+			var room = utils.getNewRoomAction();
+			room.user = user.user;
+			room.room.createTime = time  + i; // increasing time.
+			rooms.push(room);
+			if (i % 2 === 0) ref.push(room.room.id); //valid room
+			else ref.push(generate.names(10)); //invalid room
+		}
+		
+		core.emit("user", user, function() {
+			utils.emitActions(core, rooms, function() {
+				core.emit("getRooms", {type: "getRooms", ref: ref}, function(err, results) {
+					assert.equal(results.results.length, n, "not n results");
+					for (var i = 0; i < results.results.length; i++) {
+						//log.d("results:", (results.results[i] ? results.results[i].id : null), ref[i]);
+						var tt1 = (i % 2 === 0) ? rooms[i].room.id : null;
+						var tt2 = (i % 2 === 0) ? results.results[i].id : null;
+						assert.equal(tt2, tt1, "Incorrect results");
+					}
+					done();
+				});
+			});
+		});
+	});
+	
 	it("getRooms query (filled results)", function(done) {
 		var room = utils.getNewRoomAction();
 		core.emit("getRooms", {type: 'getRooms', ref: room.room.id, results: [room.room]}, function(err, reply) {
@@ -228,6 +260,34 @@ describe("Storage Test.", function() {
 		});
 	});
 	
+	it("getTexts query-(ref is an array)", function(done) {
+		this.timeout(10000);
+		var texts = [];
+		var n = mathUtils.random(1, 256);
+		var time = new Date().getTime();
+		var ref = [];
+		var t = mathUtils.random(1, 2) + 1;
+		for (var i = 0; i < n; i++) {
+			var text = utils.getNewTextAction();
+			text.time = time  + i; // increasing time.
+			texts.push(text);
+			if (i % t === 0) ref.push(generate.uid());
+			else ref.push(text.id);
+		}
+		utils.emitActions(core, texts, function() {
+			core.emit("getTexts", {type: "getTexts", ref: ref}, function(err, results) {
+				log.d("Texts:", results);
+				assert.equal(results.results.length, n, "not n messages");
+				for (var i = 0; i < n; i++) {
+					var a1 = (i % t === 0 ? null : texts[i].id);
+					var a2 = (i % t === 0 ? null : results.results[i].id);
+					assert.equal(a2, a1, "Incorrect results");
+				}
+				done();
+			});
+		});
+	});
+	
 	
 	it("getTexts query-1 (time: null / msg: 256 / before)", function(done) {
 		this.timeout(10000);
@@ -242,7 +302,7 @@ describe("Storage Test.", function() {
 			texts.push(text);
 		}
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {time: null, before: 256, to: to}, function(err, results) {
+			core.emit("getTexts", {type: "getTexts", time: null, before: 256, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, n, "not n messages");
 				for (var i = 0; i < n; i++) {
@@ -267,7 +327,7 @@ describe("Storage Test.", function() {
 		}
 		var num = 256;
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {time: null, before: num, to: to}, function(err, results) {
+			core.emit("getTexts", {type: "getTexts", time: null, before: num, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, num, "Number of messages are not 256");
 				for (var i = n - num ; i < n; i++) {
@@ -291,7 +351,7 @@ describe("Storage Test.", function() {
 			texts.push(text);
 		}
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {time: time - 1, after: 256, to: to}, function(err, results) {
+			core.emit("getTexts", {type: "getTexts", time: time - 1, after: 256, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, n, "not n messages");
 				for (var i = 0; i < n; i++) {
@@ -344,7 +404,7 @@ describe("Storage Test.", function() {
 		var num = 256;
 		var at = mathUtils.random(1, 45);
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {time: time + at, after: num, to: to}, function(err, results) {
+			core.emit("getTexts", {type: "getTexts", time: time + at, after: num, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, num, "Number of messages are not 256");
 				for (var i = at; i < num; i++) {
@@ -370,7 +430,7 @@ describe("Storage Test.", function() {
 		var num = mathUtils.random(1, 256);
 		var at = mathUtils.random(1, 25);
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {time: time + (n - 1) - at, before: num, to: to}, function(err, results) {
+			core.emit("getTexts", {type: "getTexts", time: time + (n - 1) - at, before: num, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, num, "Number of messages are not correct");
 				for (var i = n - num - at; i < (n - at); i++) {
@@ -398,7 +458,7 @@ describe("Storage Test.", function() {
 		utils.emitActions(core, texts, function() {
 			function getTexts(time, index) {
 				
-				core.emit("getTexts", {time: time, before: num, to: to}, function(err, results) {
+				core.emit("getTexts", {type: "getTexts", time: time, before: num, to: to}, function(err, results) {
 					log.d("Texts:", results);
 					//assert.equal(results.results.length, num, "Number of messages are not correct");
 					for (var i = results.results.length - 1; i >= 0; i--) {

@@ -25,6 +25,17 @@ exports.getTexts = function(query, texts) {
 	
 	if (query.before) {
 		results.reverse();
+	} else if (query.ref instanceof Array) { //order based on ref
+		var tr = results;
+		var textPosMap = {};
+		results = [];
+		for (var i = 0;i < query.ref.length;i++) {
+			textPosMap[query.ref[i]] = i;
+			results.push(null);
+		}
+		tr.forEach(function(room) {
+			results[textPosMap[room.id]] = room;
+		});
 	}
 	return results;	
 };
@@ -40,6 +51,7 @@ exports.getThreads = function(threads) {
 
 exports.getRooms = exports.getUsers = exports.getEntities = function(query, entities) {
 	log.d("Entities: ", entities);
+	
 	var results = [];
 	entities[0].rows.forEach(function(row) {
 		var identities = [];
@@ -59,8 +71,20 @@ exports.getRooms = exports.getUsers = exports.getEntities = function(query, enti
 		};
 		results.push(entity);
 	});
+	
 	if (query.before) {
 		results.reverse();
+	} else if (query.ref instanceof Array) {
+		var tr = results;
+		var roomPosMap = {};
+		results = [];
+		for (var i = 0;i < query.ref.length;i++) {
+			roomPosMap[query.ref[i]] = i;
+			results.push(null);
+		}
+		tr.forEach(function(room) {
+			results[roomPosMap[room.id]] = room;
+		});
 	}
 	//var i, l = entities.length, entity;
 	

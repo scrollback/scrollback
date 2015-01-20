@@ -44,7 +44,9 @@ exports.getTexts = exports.getThreads = function(query) {
 	} else if (query.tag) {
 		q.filters.push(["tags", "cts", query.tag]);
 	} else if (query.ref) {
-		q.filters.push(['id', 'eq', query.ref]);
+		if (query.ref instanceof Array) {
+			q.filters.push(['id', 'in', query.ref]);	
+		} else q.filters.push(["id", "eq", query.ref]);
 	} else if (query.updateTime) {
 		q.iterate.keys.push("updatetime");
 		q.iterate.start.push(new Date(query.updateTime));
@@ -86,7 +88,9 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.filters.push([["entities", "type"], "eq", type]);
 	}
 	if (iq.ref) {
-		q.filters.push(["id", "eq", iq.ref]);
+		if (iq.ref instanceof Array) {
+			q.filters.push(['id', 'in', iq.ref]);	
+		} else q.filters.push(["id", "eq", iq.ref]);
 	} else if (iq.identity) {
 		q.filters.push(['identities', 'cts', [iq.identity]]);
 	} else if (iq.timezone) {

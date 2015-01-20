@@ -88,22 +88,9 @@ function makeUpsertQuery(transform) {
 	inSql.push("SELECT");
 	inSql.push(inValues.join(","));
 	/** make last query*/
-	var filters = [];
-	var fs = [];
-	if (transform.filters && transform.filters.length) {
-		fs.push("WHERE");
-		transform.filters.forEach(function(filter) {
-			var f = [name(filter[0])];
-			f.push(getOperatorString(filter[1]));
-			f.push("$" + i);
-			log.d("FFFF", f);
-			filters.push(f.join(""));
-			values.push(filter[2]);
-			i++;
-		});
-		fs.push(filters.join(" AND "));
-	}
-	inSql.push("WHERE NOT EXISTS (SELECT 1 FROM " + transform.source + " " + fs.join(" ") + ")");
+	var sql = [];
+	addFilters(transform, sql, values, i); // sql ['where', 'id=$1' AND user=$2]
+	inSql.push("WHERE NOT EXISTS (SELECT 1 FROM " + transform.source + " " + sql.join(" ") + ")");
 	
 	return [
 		updateQuery, {
@@ -217,7 +204,6 @@ function makeSelectQuery(transform) {
 			orderby.push(name(key) + " " + (transform.iterate.reverse ? "DESC": "ASC"));
 		});
 		sql.push("order by " + orderby.join(','));
-		//sql.push(transform.iterate.reverse ? "DESC": "ASC");
 	}
 	sql.push("LIMIT " + transform.iterate.limit);
 	return {
@@ -234,12 +220,24 @@ function addFilters(transform, sql, values, i) {
 		sql.push("WHERE");
 		transform.filters.forEach(function(filter) {
 			var f = [name(filter[0])];
-			f.push(getOperatorString(filter[1]));
-			f.push("$" + i);
-			log.d("FFFF", f);
-			filters.push(f.join(""));
-			values.push(filter[2]);
-			i++;
+			if (filter[1] != 'in') {
+				f.push(getOperatorString(filter[1]));
+				f.push("$" + i);
+				filters.push(f.join(""));
+				values.push(filter[2]);
+				i++;
+			} else { // IN operator. ( IN ('abc', 'cde'))
+				f.push(getOperatorString(filter[1]));
+				f.push("(");
+				var tf = [];
+				filter[2].forEach(function(e) {
+					tf.push("$" + (i++));
+					values.push(e);
+				});
+				f.push(tf.join(','));
+				f.push(")");
+				filters.push(f.join(""));
+			}
 		});
 		sql.push(filters.join(" AND "));
 	}
@@ -257,7 +255,6 @@ function runQueries(client, queries, callback) {
 		for (var i = 0;i < queries.length;i++) {
 			results.push(null);
 		}
-		log.d("Length:", results.length);
 		if (err) rollback(err, client, callback);
 		function run(i) {
 			if (i < queries.length) {
@@ -300,6 +297,7 @@ function getOperatorString(s) {
 		case 'cts': r = '@>'; break;
 		case 'ctd': r = '<@'; break;
 		case 'mts': r = '@@'; break;
+		case 'in': r = " IN ";break;
 		default: throw new Error("Invalid operator string: " + s);
 	}
 	return r;
