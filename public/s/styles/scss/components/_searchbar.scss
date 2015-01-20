@@ -34,9 +34,9 @@
         }
 
         &-icon {
+            @extend %transition;
             @include icon(search);
             @include transform(translate3d(0,0,0));
-            @extend %transition;
 
             position: absolute;
             top: 0;

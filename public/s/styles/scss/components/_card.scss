@@ -19,8 +19,8 @@
             border-bottom: 1px solid rgba(0,0,0,0.1);
 
             &-title {
-                @include flex-grow(1);
                 @extend %ellipsize;
+                @include flex-grow(1);
 
                 font-size: 1em;
                 font-weight: 700;
@@ -54,8 +54,8 @@
             }
 
             &-badge {
-                @include flex-shrink(0);
                 @extend %appear;
+                @include flex-shrink(0);
 
                 margin: 0 (.5em / .8);
 
@@ -89,9 +89,9 @@
         }
 
         &-button {
-            @include icon(reply);
             @extend %ellipsize;
             @extend %clearfix;
+            @include icon(reply);
 
             display: block;
             font-weight: 700;

@@ -27,7 +27,8 @@
 
 
 // Import various components
-@import "components/listgridview";
+@import "components/listview";
+@import "components/gridview";
 @import "components/fab";
 @import "components/appbar";
 @import "components/searchbar";
@@ -193,8 +194,8 @@ body {
     }
 }
 
-.mode-room {
-    .grid-item {
+.grid-item {
+    .mode-room & {
         $item-width: 32em;
 
         @media only screen and (min-width: #{$item-width * 2}) { margin: .5em; }

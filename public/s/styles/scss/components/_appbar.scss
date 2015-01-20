@@ -1,7 +1,7 @@
 @include exports("appbar") {
     .appbar {
-        @include dropshadow(2);
         @extend %clearfix;
+        @include dropshadow(2);
 
         position: relative;
         z-index: 200;

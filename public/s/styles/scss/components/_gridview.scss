@@ -17,6 +17,7 @@
 }
 
 @mixin griditem {
+    @extend %snappy;
     @include dropshadow(1);
 
     float: left;
@@ -27,6 +28,11 @@
     border-radius: $roundness;
     border: none;
     overflow: hidden;
+    cursor: pointer;
+
+    &:focus, &:hover { @include dropshadow(2); }
+
+    &:active { @include dropshadow(1); }
 
     $item-width: 27em;
 
