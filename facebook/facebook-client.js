@@ -7,7 +7,7 @@ function loginWithFb() {
 	window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
 }
 
-if (!facebookConnectPlugin) {
+if (typeof facebookConnectPlugin === "undefined") {
 	$('.js-phonegap-fb-login').click(loginWithFb);
 }
 
