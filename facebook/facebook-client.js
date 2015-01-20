@@ -4,12 +4,13 @@
 var config = require("../client-config-defaults.js");
 
 function loginWithFb() {
+	if (typeof facebookConnectPlugin !== "undefined") {
+		return;
+	}
 	window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
 }
 
-if (typeof facebookConnectPlugin === "undefined") {
-	$('.js-phonegap-fb-login').click(loginWithFb);
-}
+$('.js-phonegap-fb-login').click(loginWithFb);
 
 libsb.on('auth', function(auth, next) {
 	auth.buttons.facebook = {
