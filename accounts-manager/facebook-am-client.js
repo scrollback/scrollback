@@ -43,9 +43,6 @@ function loginWithFacebook() {
 			// login failed
 			console.log("Login failed", msg);
 		});
-	} else {
-		// proceed with regular in-app browser based login.
-		window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
 	}
 }
 
