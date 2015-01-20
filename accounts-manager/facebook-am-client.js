@@ -43,16 +43,19 @@ function loginWithFacebook() {
 			// login failed
 			console.log("Login failed", msg);
 		});
+		
 		var intervalId = setInterval(function() {
 			facebookConnectPlugin.getLoginStatus(function(obj) {
-				if (obj.hasOwnProperty('status') && obj.status !== "connected") {
-					loginWithFacebook();
-				} else {
+				if (obj.hasOwnProperty('status') && obj.status === "connected") {
 					clearInterval(intervalId);
-				}
+				} 
 			}, function() {
 				clearInterval(intervalId);
 			});
+			libsb.on('init-dn', function(i, n) {
+				clearInterval(intervalId);
+				return n();
+			}, 500);
 		}, 1000);
 	}
 }
