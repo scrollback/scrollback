@@ -398,10 +398,11 @@ describe("Storage Test.", function() {
 		}
 		var num = 256;
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {time: time - 1, after: num, to: to}, function(err, results) {
+			core.emit("getTexts", {type: "getTexts", time: time - 1, after: num, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, num, "Number of messages are not 256");
 				for (var i = 0; i < num; i++) {
+					//log.d("values:", results.results[i].id, texts[i].id);
 					assert.equal(results.results[i].id, texts[i].id, "Incorrect results");
 				}
 				done();

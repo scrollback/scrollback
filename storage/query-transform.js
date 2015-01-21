@@ -1,5 +1,4 @@
-var log = require('../lib/logger.js'),
-	storageUtils = require('./storage-utils.js');
+var log = require('../lib/logger.js');
 /**
 select * from texts where time > 123456373 and "from"='roomname' and time > text.room.createTime && order by time desc limit 256 
 only non [hidden].
@@ -51,19 +50,20 @@ exports.getTexts = exports.getThreads = function(query) {
 	} else if (query.updateTime) {
 		q.iterate.keys.push("updatetime");
 		q.iterate.start.push(new Date(query.updateTime));
-	} /*else if (query.type == 'getThreads' && query.q) {
-//		TODO: TEXT SEARCH
-//		q.filters.push(["terms", "ts", iq.q]);
-//		q.iterate.key = ["tsrank" "terms", iq.q];
-//		
-//		Maybe it won't go here at all.
-	}*/ else if (query.type === "getTexts") {
+	} else if (query.type === "getTexts") {
 		q.iterate.keys.push("time");
-		q.iterate.start.push(storageUtils.timetoString(query.time || new Date().getTime()));
+		q.iterate.start.push(query.time ? (new Date(query.time)) : (new Date()));
 	} else if (query.type === "getThreads") {
 		q.iterate.keys.push("starttime");
-		q.iterate.start.push(storageUtils.timetoString(query.time || new Date().getTime()));
+		q.iterate.start.push(query.time ? (new Date(query.time)) : (new Date()));
 	}
+	/*else if (query.type == 'getThreads' && query.q) {
+		TODO: TEXT SEARCH
+		q.filters.push(["terms", "ts", iq.q]);
+		q.iterate.key = ["tsrank" "terms", iq.q];
+		
+		Maybe it won't go here at all.
+	}*/
 	
 	if(query.before) {
 		q.iterate.reverse = true;
@@ -134,7 +134,6 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.iterate.keys.push('id');
 		q.iterate.start.push(iq.iterator || "");
 	}
-	
 	
 	if (iq.before) {
 		q.iterate.reverse = true;

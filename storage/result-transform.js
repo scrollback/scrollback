@@ -74,13 +74,15 @@ exports.getRooms = exports.getUsers = exports.getEntities = function(query, enti
 			var entity = {
 				id: row.id,
 				type: row.type,
-				createTime: row.createtime.getTime(),
+				createTime: (row.createtime ? row.createtime.getTime() : null),
 				description: row.description,
 				identities: identities,
 				params: JSON.parse(row.params),
 				guides: JSON.parse(row.guides),
 				picture: row.picture,
-				timezone: row.timezone
+				timezone: row.timezone,
+				role: row.role,
+				roleSince: row.roletime
 			};
 			results.push(entity);
 		});

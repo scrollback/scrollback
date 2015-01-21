@@ -1,8 +1,6 @@
 var log = require('./../lib/logger.js');
 module.exports = {
-	timetoString: function(time) {
-		return (new Date(time));
-	},
+	
 	transformsToQuery: function(transforms) {
 		var r = [];
 		transforms.forEach(function(transform) {

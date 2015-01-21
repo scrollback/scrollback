@@ -1,5 +1,4 @@
-var storageUtils = require('./storage-utils.js'),
-	log = require('../lib/logger.js');
+var log = require('../lib/logger.js');
 function makePut(type, source) {
 	if (!type || !source) {
 		return log.d("No source or type");
@@ -32,7 +31,9 @@ exports.text = function (text) {
 		put = makePut("insert", "texts");
 		put.insert = {
 			id: text.id, from: text.from, to: text.to,
-			text: text.text, time: storageUtils.timetoString(text.time), 
+			text: text.text, 
+			time: new Date(text.time),
+			updatetime: new Date(text.time),
 			thread: text.thread,
 			title: text.title,
 			tags: text.tags, mentions: text.mentions
@@ -47,13 +48,13 @@ exports.text = function (text) {
 		
 		put.insert = {
 			id: text.thread, from: text.from, to: text.to,
-			title: text.title, starttime: storageUtils.timetoString(text.time), 
-			endtime: storageUtils.timetoString(text.time), length: 1, tags: text.tags,
+			title: text.title, starttime: new Date(text.time), 
+			endtime: new Date(text.time), length: 1, tags: text.tags,
 			/*mentions: text.mentions*/
 		};
 		/* For existing threads update endTime, length and perhaps title */
 		put.update = [
-			['endtime', 'set', storageUtils.timetoString(text.time)],
+			['endtime', 'set', new Date(text.time)],
 			['length', 'incr', 1]
 		];
 		if(text.title) put.update.push(['title', 'set', text.title]);
@@ -73,12 +74,14 @@ exports.edit = function (edit) {
 	// end Compatibility block.
 	if (edit.text) {
 		put.update.push(['text', 'set', edit.text]);
+		put.update.push(['updatetime', 'set', edit.time]);
 	}
 	
 	if (edit.title) {
 		var tput = makePut('update', 'threads');
 		tput.filters.push(['id', 'eq', edit.ref]);
 		tput.update.push(['title', 'set', edit.title]);
+		tput.update.push(['updatetime', 'set', edit.time]);
 		puts.push(tput);
 	}
 	
@@ -158,12 +161,12 @@ exports.join = exports.part = exports.admit = exports.expel = function (action) 
 		transitiontype: action.transitionType,
 		message: action.text,
 		officer: officer,
-		roletime: storageUtils.timetoString(action.time)
+		roletime: new Date(action.time)
 		
 	};
 	
 	var columnNames = ['role', 'roletime', 'officer', 'message', 'transitionrole', 'transitiontype'];
-	var values = [action.role, storageUtils.timetoString(action.time), officer, action.text, action.transitionRole, action.transitionType];
+	var values = [action.role, new Date(action.time), officer, action.text, action.transitionRole, action.transitionType];
 	
 	for (var i = 0; i < columnNames.length; i++) {
 		put.update.push([columnNames[i], 'set', values[i]]);
