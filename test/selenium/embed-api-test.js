@@ -26,8 +26,7 @@ module.exports = function(capabilities, options) {
 				return driver.findElement(webdriver.By.css(".noroom-dialog")).isDisplayed();
 			}).then(function(t) {
 				assert.equal(t, true, "page is not loaded");
-				driver.quit();
-				done();
+				return driver.quit().then(done);
 			});
 		});
 
@@ -52,8 +51,7 @@ module.exports = function(capabilities, options) {
 				return driver.findElement(webdriver.By.css('.chat-placeholder')).getText();
 			}).then(function(t) {
 				assert.equal(t.indexOf(config.jws.username) >= 0, true, "room not loaded correctly");
-				driver.quit();
-				done();
+				return driver.quit().then(done);
 			});
 		});
 
@@ -74,8 +72,7 @@ module.exports = function(capabilities, options) {
 				return driver.findElement(webdriver.By.css('.chat-placeholder')).getText();
 			}).then(function(t) {
 				assert.equal(t.indexOf(nick) >= 0, true, "room not loaded correctly");
-				driver.quit();
-				done();
+				return driver.quit().then(done);
 			});
 		});
 
@@ -105,8 +102,7 @@ module.exports = function(capabilities, options) {
 					return driver.findElement(webdriver.By.css(".mode-conf")).isDisplayed();
 				}).then(function(t) {
 					assert.equal(t, true, "room not loaded correctly");
-					driver.quit();
-					done();
+					return driver.quit().then(done);
 				});
 			});
 			it("Room exist", function(done) {
@@ -123,14 +119,13 @@ module.exports = function(capabilities, options) {
 					return driver.findElement(webdriver.By.css(".mode-normal")).isDisplayed();
 				}).then(function(t) {
 					assert.equal(t, true, "room not loaded correctly");
-					driver.quit();
-					done();
+					return driver.quit().then(done);
 				});
 			});
 
 		});
 
-		describe('Room creation test without identity' + options.id, function() {
+		describe('Room creation test with identity' + options.id, function() {
 			var room = generate.names(12);
 			it("room creation", function(done) {
 				var jws = testUtils.generateJWS(externalServer.replace("http://", ""), config.jws.email, server, private_key);
@@ -155,8 +150,7 @@ module.exports = function(capabilities, options) {
 					return driver.findElement(webdriver.By.css(".mode-conf")).isDisplayed();
 				}).then(function(t) {
 					assert.equal(t, true, "room not loaded correctly");
-					driver.quit();
-					done();
+					return driver.quit().then(done);
 				});
 			});
 
@@ -174,14 +168,10 @@ module.exports = function(capabilities, options) {
 					return driver.findElement(webdriver.By.css(".mode-normal")).isDisplayed();
 				}).then(function(t) {
 					assert.equal(t, true, "room not loaded correctly");
-					driver.quit();
-					done();
+					return driver.quit().then(done);
 				});
 			});
 
 		});
-
-
-
 	});
 };
