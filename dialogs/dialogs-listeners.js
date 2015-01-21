@@ -106,7 +106,7 @@ function createRoom(entry, button, callback) {
 		
 		if(currentState.room && typeof currentState.room == "object") {
 			room.guides = currentState.room.guides || {};
-			room.identities = currentState.room.guides || [];
+			room.identities = currentState.room.identities || [];
 		}
 		if (!name) {
 			return showError(errormessage, entry);

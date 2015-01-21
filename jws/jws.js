@@ -88,8 +88,8 @@ function jwsHandler(action, callback) {
 						} else {
 							action.old = action.user;
 							action.user = {};
-							action.user.identities = [action.auth.jws];
-							action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.auth.jws).digest('hex') + '/?d=retro';
+							action.user.identities = [payload.sub];
+							action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(payload.sub).digest('hex') + '/?d=retro';
 							action.user.params = {};
 							action.user.params.pictures = [action.user.picture];
 							action.response = new Error("AUTH:UNREGISTRED");
