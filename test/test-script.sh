@@ -3,6 +3,10 @@
 currdir=`cd $(dirname "${BASH_SOURCE[0]}") && pwd`
 scrollbackdir="${currdir%/*}"
 logfile="${scrollbackdir}/logs/test-$(date +%y%m%d%H).log"
+backup="${scrollbackdir}/leveldb-storage/backup-$(date +%y%m%d%H)"
+data="${scrollbackdir}/leveldb-storage/data"
+testing_state="${scrollbackdir}/leveldb-storage/testing-state"
+leveldb_storage="${scrollbackdir}/leveldb-storage"
 
 # Create logfile
 touch "$logfile"
@@ -28,6 +32,14 @@ git checkout master || show_err "Failed to checkout master branch"
 git pull
 # Stop the server
 sudo stop scrollback
+
+# clear redis
+redis-cli FLUSHALL
+#backing up previous data
+mv "$data" "$backup"
+#recovering data
+cp -a "$testing_state/data" "$leveldb_storage"
+
 # Setup
 npm install
 
