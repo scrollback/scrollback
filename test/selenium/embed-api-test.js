@@ -12,8 +12,8 @@ module.exports = function(capabilities, options) {
 		var driver, externalServer = options["jws-parent"];
 		var server = options.server;
 		var private_key = config.jws["private-keys"][config["jws-parent"]];
-		/*	it("Room does-not exist", function(done) {
-			driver = testUtils.openUrl(capabilities, externalServer,"t/");
+		it("Room does-not exist", function(done) {
+			driver = testUtils.openUrl(capabilities, externalServer, "t/");
 			q.delay(timeout).then(function() {
 				return driver.findElement(webdriver.By.id('roomName')).sendKeys("dsldncajsdnlkjansd");
 			}).then(function() {
@@ -30,14 +30,14 @@ module.exports = function(capabilities, options) {
 				done();
 			});
 		});
-		
-		
-        
-        it("jws login", function(done) {
-            var jws = testUtils.generateJWS(externalServer.replace("http://", ""), config.jws.email, server, private_key);
-            
-            console.log(config.jws.username);
-			driver = testUtils.openUrl(capabilities, externalServer,"t/");
+
+
+
+		it("jws login", function(done) {
+			var jws = testUtils.generateJWS(externalServer.replace("http://", ""), config.jws.email, server, private_key);
+
+			console.log(config.jws.username);
+			driver = testUtils.openUrl(capabilities, externalServer, "t/");
 			q.delay(1000).then(function() {
 				return driver.findElement(webdriver.By.id('roomName')).sendKeys("scrollback");
 			}).then(function() {
@@ -52,14 +52,14 @@ module.exports = function(capabilities, options) {
 				return driver.findElement(webdriver.By.css('.chat-placeholder')).getText();
 			}).then(function(t) {
 				assert.equal(t.indexOf(config.jws.username) >= 0, true, "room not loaded correctly");
-                driver.quit();
+				driver.quit();
 				done();
 			});
 		});
-        
-        it("suggested nick login", function(done) {
-            var nick = generate.names(12);
-            driver = testUtils.openUrl(capabilities, externalServer,"t/");
+
+		it("suggested nick login", function(done) {
+			var nick = generate.names(12);
+			driver = testUtils.openUrl(capabilities, externalServer, "t/");
 			q.delay(1000).then(function() {
 				return driver.findElement(webdriver.By.id('roomName')).sendKeys("scrollback");
 			}).then(function() {
@@ -74,14 +74,14 @@ module.exports = function(capabilities, options) {
 				return driver.findElement(webdriver.By.css('.chat-placeholder')).getText();
 			}).then(function(t) {
 				assert.equal(t.indexOf(nick) >= 0, true, "room not loaded correctly");
-                driver.quit();
+				driver.quit();
 				done();
 			});
 		});
-        
+
 
 		describe('Room creation test without identity' + options.id, function() {
-            var room = generate.names(12);
+			var room = generate.names(12);
 			it("room creation", function(done) {
 				var jws = testUtils.generateJWS(externalServer.replace("http://", ""), config.jws.email, server, private_key);
 				driver = testUtils.openUrl(capabilities, externalServer, "t/");
@@ -129,14 +129,14 @@ module.exports = function(capabilities, options) {
 			});
 
 		});
-                         */
-        describe('Room creation test without identity' + options.id, function() {
-            var room = generate.names(12);
+
+		describe('Room creation test without identity' + options.id, function() {
+			var room = generate.names(12);
 			it("room creation", function(done) {
 				var jws = testUtils.generateJWS(externalServer.replace("http://", ""), config.jws.email, server, private_key);
 				driver = testUtils.openUrl(capabilities, externalServer, "t/");
 				q.delay(1000).then(function() {
-					return driver.findElement(webdriver.By.id('roomName')).sendKeys(externalServer.replace("http://", "")+":"+room);
+					return driver.findElement(webdriver.By.id('roomName')).sendKeys(externalServer.replace("http://", "") + ":" + room);
 				}).then(function() {
 					return driver.findElement(webdriver.By.id('jws')).sendKeys(jws);
 				}).then(function() {
@@ -159,11 +159,11 @@ module.exports = function(capabilities, options) {
 					done();
 				});
 			});
-            
+
 			it("Room exist", function(done) {
 				driver = testUtils.openUrl(capabilities, externalServer, "t/");
 				q.delay(timeout).then(function() {
-					return driver.findElement(webdriver.By.id('roomName')).sendKeys(externalServer.replace("http://", "")+":"+room);
+					return driver.findElement(webdriver.By.id('roomName')).sendKeys(externalServer.replace("http://", "") + ":" + room);
 				}).then(function() {
 					return driver.findElement(webdriver.By.id('basic-embed')).click();
 				}).then(function() {
