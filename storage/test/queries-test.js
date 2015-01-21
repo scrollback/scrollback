@@ -644,4 +644,43 @@ describe("Storage Test.", function() {
 	});
 	
 	
+	it("getThreads query-1 ((time: null / before) iterator.", function(done) {
+		this.timeout(20000);
+		var texts = [];
+		var to = generate.names(8);
+		var n = mathUtils.random(300, 500);
+		var time = new Date().getTime();
+		var numThreads = mathUtils.random(5, 20);
+		var threadIds = [];
+		for (var i = 0;i < n;i++) {
+			var text = utils.getNewTextAction();
+			text.to = to;
+			text.time = time + i; // increasing time.
+			texts.push(text);
+			if (i < numThreads) {
+				threadIds.push(text.threads[0].id);
+			} else {
+				text.threads = [{id: threadIds[i % numThreads]}];
+			}
+		}
+		var num = mathUtils.random(1, 256);
+		utils.emitActions(core, texts, function() {
+			
+
+			core.emit("getThreads", {type: "getThreads", time: time - 1, after: num, to: to}, function(err, results) {
+				log.d("Texts:", results);
+				log.d("Length: ", results.results.length, numThreads);
+				assert.equal(results.results.length, numThreads, "Number of threads are not correct");
+				for (var i = 0; i < results.results.length; i++) {
+					log.d("Results:", results.results[i].id, threadIds[i]);
+					assert.equal(results.results[i].id, threadIds[i], "Incorrect results");
+				}
+				done();
+			});	
+			
+
+		});
+	});
+	
+	
 });

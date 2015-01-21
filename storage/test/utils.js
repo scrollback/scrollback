@@ -12,7 +12,7 @@ r.getNewTextAction = function getNewTextActions() {
 		to: generate.names(10),
 		text: generate.sentence(10),
 		labels: {},
-		threads: [{id: id + (3), title: generate.sentence(15)}],
+		threads: [{id: id + (mathUtils.random(0, 9)), title: generate.sentence(15)}],
 		time: new Date().getTime()
 	};
 };

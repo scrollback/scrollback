@@ -57,8 +57,11 @@ exports.getTexts = exports.getThreads = function(query) {
 //		q.iterate.key = ["tsrank" "terms", iq.q];
 //		
 //		Maybe it won't go here at all.
-	}*/ else {
+	}*/ else if (query.type === "getTexts") {
 		q.iterate.keys.push("time");
+		q.iterate.start.push(storageUtils.timetoString(query.time || new Date().getTime()));
+	} else if (query.type === "getThreads") {
+		q.iterate.keys.push("starttime");
 		q.iterate.start.push(storageUtils.timetoString(query.time || new Date().getTime()));
 	}
 	

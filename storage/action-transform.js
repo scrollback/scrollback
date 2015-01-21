@@ -111,19 +111,22 @@ exports.room = exports.user = function (action) {
 		timezone: entity.timezone, 
 		//locale: entity.locale,
 		params: entity.params,
-		guides: entity.guides,
-		//deletetime: entity.deleteTime
+		guides: entity.guides
 	};
-	put.insert.createtime = entity.createTime ? new Date(entity.createTime) : undefined;
-	put.insert.deletetime = entity.deleteTime ? new Date(entity.deleteTime) : undefined;
 	log.d("Update entity:", action);
 	put.filters.push(['id', 'eq', entity.id]);
 	['description', 'picture', 'identities', 'timezone', 'params', 'guides'].forEach(function(p) {
 			// column name in database are lower case of property name of entity.
 			put.update.push([p.toLowerCase(), 'set', entity[p]]);
 	});
-	if (entity.createTime) put.update.push(['createtime', 'set', new Date(entity.createTime)]);
-	if (entity.deleteTime) put.update.push(['deletetime', 'set', new Date(entity.deleteTime)]);
+	if (entity.createTime) {
+		put.update.push(['createtime', 'set', new Date(entity.createTime)]);
+		put.insert.createtime = new Date(entity.createTime);
+	}
+	if (entity.deleteTime) {
+		put.update.push(['deletetime', 'set', new Date(entity.deleteTime)]);
+		put.insert.deletetime = new Date(entity.deleteTime);
+	}
 	var ret = [put];
 	if (!(entity.old && entity.old.id) && (action.type == 'room')) { // add relationship role = owner
 		putOwner.insert = {
@@ -181,8 +184,9 @@ function addTags(action) {
 
 function addThread(action) {
 	if (action.threads && action.threads[0]) {
-		action.thread = action.threads[0].id.substr(0, action.threads[0].id.length-1);
+		action.labels['color' + action.threads[0].id.substr(action.threads[0].id.length - 1)] = 1;
+		action.thread = action.threads[0].id; // .substr(0, action.threads[0].id.length - 1);
 		action.title = action.threads[0].title;
-		action.labels['color' + action.threads[0].id.substr(action.threads[0].id.length-1)] = 1;
+		
 	}
 }
