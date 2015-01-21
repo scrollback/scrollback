@@ -27,20 +27,20 @@
             * Antialiased font looks crispier
             */
             @include font-smoothing(antialiased);
-            @include transform(translateX(-100%));
+            @include transform(translate3d(-100%,0,0));
 
             left: 0;
             background-color: $dark-color;
             color: $light-color;
 
             .view-sidebar-left & {
-                @include transform(translateX(0));
+                @include transform(translate3d(0,0,0));
 
                 box-shadow: 10px 0 20px rgba(0,0,0,0.19);
             }
 
             @media #{$screenxxx} {
-                @include transform(translateX(0));
+                @include transform(translate3d(0,0,0));
 
                 position: relative;
                 left: auto;
@@ -58,20 +58,20 @@
         }
 
         &-right {
-            @include transform(translateX(100%));
+            @include transform(translate3d(100%,0,0));
 
             right: 0;
             background-color: $light-color;
             color: $dark-color;
 
             .view-sidebar-right & {
-                @include transform(translateX(0));
+                @include transform(translate3d(0,0,0));
 
                 box-shadow: -10px 0 20px rgba(0,0,0,0.19);
             }
 
             @media #{$screenxxxxx}  {
-                @include transform(translateX(0));
+                @include transform(translate3d(0,0,0));
 
                 position: relative;
                 left: auto;

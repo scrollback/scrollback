@@ -40,7 +40,10 @@
 
 
 // Element styles
-html, body { height: 100%; }
+html, body {
+    height: 100%;
+    width: 100%;
+}
 
 body {
     @include filter((
