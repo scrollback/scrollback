@@ -95,20 +95,26 @@ function validateName(entry, button, type, callback) {
 function createRoom(entry, button, callback) {
 	validateName(entry, button, "Room", function(name) {
 		var errormessage = "We could not create the room. Please refresh the page and try again.";
-
+		var room = {
+			id: name,
+			description: "",
+			params: {},
+			guides: {},
+			identities:[]
+		};
+		
+		
+		if(currentState.room && typeof currentState.room == "object") {
+			room.guides = currentState.room.guides || {};
+			room.identities = currentState.room.guides || [];
+		}
 		if (!name) {
 			return showError(errormessage, entry);
 		}
 
 		libsb.emit("room-up", {
 			to: name,
-			room: {
-				id: name,
-				description: "",
-				params: {},
-				guides: currentState.room.guides,
-				identities: currentState.room.identities || []
-			}
+			room: room
 		}, function(err) {
 			if (err) {
 				return showError(errormessage, entry);

@@ -1,6 +1,5 @@
 /* jslint browser: true, indent: 4, regexp: true */
 /* global $, libsb */
-
 var formField = require("../lib/formField.js"),
 	embedForm, startMinimized, titlebarColor;
 
@@ -34,6 +33,8 @@ libsb.on("config-show", function(conf, next) {
 		$config, $roomURLField, $shareDiv, $qrCode,
 		$titlebarColor,
 		$formOptions, $minimizeOptions, $embedCode, $embedCodeDiv;
+	if (!conf.room.guides) conf.room.guides = {};
+	if (!conf.room.guides.allowedDomains) conf.room.guides.llowedDomains = [];
 
 	// Set default embed options
 	embedForm = "toast";
@@ -65,7 +66,9 @@ libsb.on("config-show", function(conf, next) {
 			target: "_blank"
 		}).addClass("twitter embed-share-button").text("Twitter")
 	);
-
+	$config.append(
+		formField('List of allowed domains', 'area', "domain-list", (conf.room.guides && conf.room.guides.allowedDomains) ? conf.room.guides.allowedDomains.join("\n") : "")
+	);
 	$config.append(formField("Share room on", "", "share-embed", $shareDiv));
 
 	// Qr code
@@ -101,7 +104,7 @@ libsb.on("config-show", function(conf, next) {
 	$config.append($titlebarColor);
 
 	// Widget minimize
-	$minimizeOptions = formField("Start widget minimized", "check", "embed-minimized-check", [[ "", "", startMinimized ]]);
+	$minimizeOptions = formField("Start widget minimized", "check", "embed-minimized-check", [["", "", startMinimized]]);
 
 	$minimizeOptions.find("[name='embed-minimized-check']").on("change", function() {
 		startMinimized = $(this).is(":checked");
@@ -112,7 +115,7 @@ libsb.on("config-show", function(conf, next) {
 	$config.append($minimizeOptions);
 
 	// Widget form
-	$formOptions = formField("Widget appearance", "radio", "embed-form-options", [[ "embed-form-toast", "Toast", true ], [ "embed-form-canvas", "Canvas" ]]);
+	$formOptions = formField("Widget appearance", "radio", "embed-form-options", [["embed-form-toast", "Toast", true], ["embed-form-canvas", "Canvas"]]);
 
 	$formOptions.find("[name='embed-form-options']").on("change", function() {
 		embedForm = $("[name='embed-form-options']:checked").attr("id");
@@ -154,5 +157,13 @@ libsb.on("config-show", function(conf, next) {
 		prio: 400
 	};
 
+	next();
+}, 500);
+
+
+libsb.on('config-save', function (room, next) {
+	var domains = $('#domain-list').val();
+	if (!room.guides) room.guides = {};
+	room.guides.allowedDomains = domains.split("\n");
 	next();
 }, 500);
