@@ -36,14 +36,14 @@ describe("Storage Test.", function() {
 		});
 	});
 	
-	it("Insert new text message.", function(done) {
+	it("Insert new text messagee", function(done) {
 		var msg = utils.getNewTextAction();
 		core.emit("text", msg, function() {
 			log("inserted message");
 			pg.connect(connString, function(err, client, cb) {
 				storageUtils.runQueries(client, 
 										 [{query: "SELECT * from texts where id=$1", values: [msg.id]},
-										  {query: "SELECT * from threads where id=$1", values: [msg.id]}], 
+										  {query: "SELECT * from threads where id=$1", values: [msg.thread]}], 
 										 function(err, results) {
 					log.d("Arguments:", arguments);
 					results.forEach(function(result) {
@@ -70,7 +70,7 @@ describe("Storage Test.", function() {
 					log.d("Arguments:", arguments);
 					results.forEach(function(result) {
 						result.rows[0].tags.sort();
-						assert.deepEqual(result.rows[0].tags, ['abc', 'color3', 'abusive', 'hidden'].sort(), "tags / labels not saved");
+						assert.deepEqual(result.rows[0].tags, msg.tags.sort(), "tags / labels not saved");
 					});
 					cb();
 					done();
@@ -88,7 +88,7 @@ describe("Storage Test.", function() {
 			core.emit("text", m2, function() {
 				pg.connect(connString, function(err, client, cb) {
 					storageUtils.runQueries(client, 
-											[{query: "SELECT * from threads where id=$1", values: [m1.id]}], 
+											[{query: "SELECT * from threads where id=$1", values: [m1.thread]}], 
 											function(err, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
@@ -102,7 +102,7 @@ describe("Storage Test.", function() {
 		});
 	});	
 	
-	it("Edit (Edit text)", function(done) {
+	it("Edit (Edit text)-1", function(done) {
 		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
 			var text = generate.sentence(11);
@@ -127,18 +127,18 @@ describe("Storage Test.", function() {
 		});
 	});
 	
-	it("Edit (Edit title)", function(done) {
+	it("Edit (Edit title)-2", function(done) {
 		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
 			var text = generate.sentence(11);
 			var edit = {
-				ref: m1.id,
+				ref: m1.thread,
 				title: text
 			};
 			core.emit("edit", edit, function() {
 				pg.connect(connString, function(err, client, cb) {
 					storageUtils.runQueries(client, 
-											[{query: "SELECT * from threads where id=$1", values: [m1.id]}], 
+											[{query: "SELECT * from threads where id=$1", values: [m1.thread]}], 
 											function(err, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
