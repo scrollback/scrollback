@@ -6,13 +6,17 @@
 
 <body>
     <div>
-        <input id="roomName" / type="text" placeholder="room">
-		<input id="nick" / type="text" placeholder="nick">
-		<input id="jws" / type="text" placeholder="jws">
+        <input id="roomName"  type="text" placeholder="room">
+		<input id="nick"  type="text" placeholder="nick">
+		<input id="jws"  type="text" placeholder="jws">
+		<input type="checkbox" value="createRoom" id="createRoom">CreateRoom</input>
 		
         <button id="basic-embed">Embed this room.</button>
         <button id="basic-room-nick">Embed this room with nick</button>
 		<button id="basic-room-jws">Embed this room with jws</button>
+		<option>
+			
+		</option>
     </div>
     <script>
         document.write('<script src="http' +
@@ -27,7 +31,7 @@
 				fields.forEach(function(e) {
 					opts[e] = $("#"+e).val();
 				});
-				opts.createRoom = true;
+				opts.createRoom = $("#createRoom").prop('checked');
 				return opts;
 			}
         	$("#basic-embed").on("click", function() {

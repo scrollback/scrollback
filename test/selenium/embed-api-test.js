@@ -7,32 +7,42 @@ var assert = require('assert'),
 module.exports = function(capabilities, options) {
 	describe('Embed Api Test: ' + options.id, function() {
 		this.timeout(4 * timeout);
-		var driver, server = options.server;
-		it("Basic embed", function(done) {
-			driver = testUtils.openUrl(capabilities, server,"s/test-embed.html?room=testroom1&minimize=false");
+		var driver, externalServer = options.server;
+		
+		it("Room does-not exist", function(done) {
+			driver = testUtils.openUrl(capabilities, externalServer,"/t/");
 			q.delay(timeout).then(function() {
+				return driver.findElement(webdriver.By.id('roomName')).sendKeys("dsldncajsdnlkjansd");
+			}).then(function() {
+				return driver.findElement(webdriver.By.id('basic-embed')).click();
+			}).then(function() {
 				return driver.switchTo().frame(0); //if there is only one frame
 			}).then(function() {
-				return driver.findElement(webdriver.By.css('.user-area')).isDisplayed();
+				return driver.findElement(webdriver.By.css(".noroom-dialog")).isDisplayed();
 			}).then(function(t) {
 				assert.equal(t, true, "page is not loaded");
 				driver.quit();
 				done();
 			});
 		});
-
-		it("embed script testing(minimized)", function(done) {
-			console.log("minimized embed page testing");
-			driver = testUtils.openUrl(capabilities, server,"s/test-embed.html?room=testroom1&minimize=true");
+		
+		it("Room does-not exist", function(done) {
+			driver = testUtils.openUrl(capabilities, externalServer,"/t/");
 			q.delay(timeout).then(function() {
-				return driver.switchTo().frame(0);
+				return driver.findElement(webdriver.By.id('roomName')).sendKeys("scrollback");
 			}).then(function() {
-				return driver.findElement(webdriver.By.css('.user-area')).isDisplayed();
+				return driver.findElement(webdriver.By.id('basic-embed')).click();
+			}).then(function() {
+				return driver.switchTo().frame(0); //if there is only one frame
+			}).then(function() {
+				return driver.findElement(webdriver.By.css(".noroom-dialog")).isDisplayed();
 			}).then(function(t) {
 				assert.equal(t, false, "page is not loaded");
 				driver.quit();
 				done();
 			});
 		});
+		
+		
 	});
 };
