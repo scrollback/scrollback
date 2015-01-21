@@ -1,11 +1,11 @@
 var jwt = require('jsonwebtoken'),			
 	crypto = require('crypto'), core,
-	keys = require("./jws-keys.js"),
-	utils = require('../lib/appUtils.js');
+	keys, utils = require('../lib/appUtils.js');
 
 
-module.exports = function (c) {
+module.exports = function (c, config) {
 	core = c;
+	keys = config.keys;
 	core.on("init", jwsHandler, "authentication");
 };
 
