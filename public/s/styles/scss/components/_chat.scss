@@ -40,6 +40,12 @@
 				padding: 1em;
 				padding-right: 4em;
 
+				&:focus, &:hover, &:active {
+	                @for $i from 1 through length($palette) {
+	                    .color-#{$i - 1} & { border-color: nth($palette, $i); }
+	                }
+	            }
+
 		    	@media #{$screenxxxx} { padding: 1em 3em; }
 		    }
 
@@ -54,11 +60,16 @@
 		    	font-size: 1.5em;
 		    	line-height: 1;
 		    	cursor: pointer;
+
+				@for $i from 1 through length($palette) {
+                    .color-#{$i - 1} & { color: nth($palette, $i); }
+                }
 			}
 
 		    &-entry:empty + &-send {
 		    	@include icon(emoticon);
 
+				color: $dark-color;
 	    		opacity: .5;
 
 		    	&:focus, &:hover { opacity: .8; }

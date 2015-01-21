@@ -1,6 +1,7 @@
 @include exports("appbar") {
     .appbar {
         @extend %clearfix;
+        @include transition(.3s $easeOutQuad);
         @include dropshadow(2);
 
         position: relative;

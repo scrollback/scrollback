@@ -77,11 +77,17 @@ body {
     &-right {
         @media #{$screenxxxxx}  {
             .searchbar {
+                @include transition(.3s $easeOutQuad);
                 @include flex-shrink(0);
 
                 color: $light-color;
+                background-color: $accent-color;
 
-                &-input { background-color: darken($accent-color, 5%); }
+                @for $i from 1 through length($palette) {
+                    .color-#{$i - 1} & { background-color: nth($palette, $i); }
+                }
+
+                &-input { background-color: rgba(0,0,0,.1); }
             }
         }
 
@@ -147,6 +153,10 @@ body {
 
     @media #{$screenxxxxx} {
         .appbar-icon-people { display: none; }
+    }
+
+    .appbar-icon-follow {
+        .role-follower & { @include icon(star); }
     }
 }
 

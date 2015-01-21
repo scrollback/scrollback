@@ -51,7 +51,7 @@ function addRooms() {
 
 function addDiscussions() {
     var grid = new View({ type: "grid" }),
-        card;
+        card, c = 0;
 
     grid.addHeader("Discussions");
 
@@ -59,8 +59,10 @@ function addDiscussions() {
         card = new Card({
             title: generate.sentence(Math.floor(Math.random() * 7) + 3),
             id: generate.names(Math.floor(Math.random() * 7) + 3),
-            color: Math.floor(Math.random() * 10)
+            color: c
         }, "discussion");
+
+        c = (c < 9) ? (c + 1) : 0;
 
         for (var k = 0; k < 5; k++) {
             card.addMessage({
@@ -119,7 +121,7 @@ function addChat() {
 }
 
 $(function() {
-    var keys = [ "view", "mode" ],
+    var keys = [ "view", "mode", "color" ],
         oldState = {}, currentState = {},
         $title = $(".js-appbar-title"),
         $discussion = $(".js-discussion-title");
@@ -158,12 +160,17 @@ $(function() {
     }, 1000);
 
     libsb.on("navigate", function(state, next) {
+        var classList = $("body").attr("class").trim() || "";
+
+        classList = classList.replace(/\bcolor-\S+/g, "");
+
         if (state && oldState && state.mode !== oldState.mode) {
             switch (state.mode) {
             case "room":
                 $title.text(state.roomName);
                 break;
             case "chat":
+                classList += " color-" + state.color;
                 $title.text(state.roomName);
                 $discussion.text(state.discussionId);
                 break;
@@ -172,6 +179,8 @@ $(function() {
                 break;
             }
         }
+
+        $("body").attr("class", classList);
 
         next();
     }, 500);
@@ -211,6 +220,10 @@ $(function() {
         });
     });
 
+    $(".js-follow-room").on("click", function() {
+        $("body").toggleClass("role-follower");
+    });
+
     $(document).on("click", ".js-room-card", function(e) {
         if ($(e.target).closest(".js-room-more").length) {
             return;
@@ -246,6 +259,7 @@ $(function() {
         libsb.emit("navigate", {
             mode: "chat",
             discussionId: $(this).attr("data-discussion"),
+            color: $(this).attr("data-color"),
             view: null
         });
     });

@@ -73,7 +73,7 @@
             }
 
             @media #{$screenxxxxx}  {
-                &, .view-sidebar-right & { box-shadow: -1px 0 0 rgba(0,0,0,0.06), -1px 0 3px rgba(0,0,0,0.12); }
+                &, .view-sidebar-right & { box-shadow: inset 1px 0 0 rgba(0,0,0,0.12), -1px 0 3px rgba(0,0,0,0.06); }
             }
         }
 

@@ -28,7 +28,7 @@
                 margin: 0;
 
                 @for $i from 1 through length($palette) {
-                    .card.color-#{$i - 1} & { color: nth($palette, $i); }
+                    [data-color="#{$i - 1}"] & { color: nth($palette, $i); }
                 }
             }
 

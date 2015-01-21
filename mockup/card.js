@@ -21,15 +21,14 @@ function Card(opts, type) {
 
     this.more = $('<a class="card-header-icon card-header-icon-more' + (type ? ' action-' + type + '-more' : '') + '">');
 
-    this.element = $('<div class="card' + (type ? ' ' + type + '-card ' + 'js-' + type + '-card' : '') +
-        ((typeof opts.color !== "undefined") ? ' color-' + opts.color : '') + '">').append(
+    this.element = $('<div class="card' + (type ? ' ' + type + '-card ' + 'js-' + type + '-card' : '') + '">').append(
         $('<div class="card-header">').append(
             this._title,
             this._mentionbadge,
             this._messagebadge,
             this.more
         )
-    );
+    ).attr("data-color", (typeof opts.color !== "undefined") ? opts.color : '');
 
     if (type) {
         this.element.attr("data-" + type, title);
