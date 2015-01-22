@@ -50,6 +50,7 @@ function browserAuth(action, callback) {
 				action.user.params = {};
 				action.user.guides = {};
 				action.user.params.pictures = [action.user.picture];
+                action.response = new Error("AUTH:UNREGISTRED");
 				return callback();
 			}
 			

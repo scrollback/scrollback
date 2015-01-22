@@ -5,7 +5,7 @@ module.exports = function(core) {
 		if(/^guest-/.test(user.id)) return next();
 		blacklist = user.params && user.params["domain-blacklist"];
 		if (action.user.allowedDomains && action.user.allowedDomains.indexOf(action.origin.domain) < 0) {
-			return next(new Error(""));
+			return next(new Error("RESTRICTED_SESSION"));
 		}
 		if(!(blacklist instanceof Array) || blacklist.length) return next();
 		

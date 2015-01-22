@@ -1,11 +1,12 @@
 var jwt = require('jsonwebtoken'),			
 	crypto = require('crypto'), core,
-	keys, utils = require('../lib/appUtils.js');
+	keys, utils = require('../lib/appUtils.js'), config;
 
 
-module.exports = function (c, config) {
+module.exports = function (c, conf) {
 	core = c;
-	keys = config.keys;
+    config = conf;
+    keys = config.keys;
 	core.on("init", jwsHandler, "authentication");
 };
 
@@ -49,12 +50,12 @@ function jwsHandler(action, callback) {
 			user = (res.results && res.results.length) ? res.results[0] : null;
 
 			if (user) {
+                if(config.global.su[user.id]) return callback(new Error("Oops.."));
 				if (/^guest-/.test(action.user.id)) {
 					checkCurrentRooms(action.user.id, domain, function (err, shouldAllow) {
 						if (err) return callback(err);
 						if (!shouldAllow) {
-							// this means that the user is online some other and his identity will change on other rooms. but he is an already existing user. so we should force the complete login.
-							action.response = new Error("AUTH:Restricted");
+							action.response = new Error("AUTH:RESTRICTED");
 							callback();
 						} else {
 							action.old = action.user;
@@ -82,8 +83,7 @@ function jwsHandler(action, callback) {
 					checkCurrentRooms(action.user.id, domain, function (err, shouldAllow) {
 						if (err) return callback(err);
 						if (!shouldAllow) {
-
-							action.response = new Error("AUTH:Restricted");
+							action.response = new Error("AUTH:RESTRICTED");
 							callback();
 						} else {
 							action.old = action.user;
