@@ -918,11 +918,11 @@ body {
 }
 
 .follow-icon {
-    @include icon(star);
+    @include icon(star-empty);
 
     color: $dark-color;
 
-    .role-follower & { @include icon(star-empty); }
+    .role-follower & { @include icon(star); }
 
     &:before {
         font-size: 2em;
