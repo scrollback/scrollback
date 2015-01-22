@@ -34,12 +34,9 @@
             left: 0;
             background-color: $dark-color;
             color: $light-color;
+            box-shadow: 1px 0 3px rgba(0,0,0,0.06);
 
-            .view-sidebar-left & {
-                @include transform(translate3d(0,0,0));
-
-                box-shadow: 10px 0 20px rgba(0,0,0,0.19);
-            }
+            .view-sidebar-left & { @include transform(translate3d(0,0,0)); }
 
             @media #{$screenxxx} {
                 @include transform(translate3d(0,0,0));
@@ -48,8 +45,6 @@
                 left: auto;
                 top: auto;
                 z-index: 100;
-
-                &, .view-sidebar-left & { box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
             }
 
             &-footer {
@@ -65,12 +60,9 @@
             right: 0;
             background-color: $light-color;
             color: $dark-color;
+            box-shadow: inset 1px 0 0 rgba(0,0,0,0.12), -1px 0 3px rgba(0,0,0,0.06);
 
-            .view-sidebar-right & {
-                @include transform(translate3d(0,0,0));
-
-                box-shadow: -10px 0 20px rgba(0,0,0,0.19);
-            }
+            .view-sidebar-right & { @include transform(translate3d(0,0,0)); }
 
             @media #{$screenxxxxx}  {
                 @include transform(translate3d(0,0,0));
@@ -79,15 +71,14 @@
                 left: auto;
                 top: auto;
                 z-index: 100;
-
-                &, .view-sidebar-right & { box-shadow: inset 1px 0 0 rgba(0,0,0,0.12), -1px 0 3px rgba(0,0,0,0.06); }
             }
         }
 
         &-overlay {
             @include transition;
+            @include transform(translate3d(0,0,0));
 
-            position: fixed;
+            position: absolute;
             z-index: 600;
             top: 0;
             left: 0;

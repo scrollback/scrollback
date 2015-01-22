@@ -62,6 +62,7 @@ body {
 
     word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
     overflow: hidden; /* fix overflow in firefox */
+    position: fixed; /* make sure that it works on ios when position: absolute */
 }
 
 .sidebar {
