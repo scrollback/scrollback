@@ -6,17 +6,17 @@
 
 <body>
     <div>
-        <input id="roomName"  type="text" placeholder="room">
-		<input id="nick"  type="text" placeholder="nick">
-		<input id="jws"  type="text" placeholder="jws">
-		<input type="checkbox" value="createRoom" id="createRoom">CreateRoom</input>
-		
+        <input id="roomName" type="text" placeholder="room">
+        <input id="nick" type="text" placeholder="nick">
+        <input id="jws" type="text" placeholder="jws">
+        <input type="checkbox" value="createRoom" id="createRoom">CreateRoom</input>
+
         <button id="basic-embed">Embed this room.</button>
         <button id="basic-room-nick">Embed this room with nick</button>
-		<button id="basic-room-jws">Embed this room with jws</button>
-		<option>
-			
-		</option>
+        <button id="basic-room-jws">Embed this room with jws</button>
+        <option>
+
+        </option>
     </div>
     <script>
         document.write('<script src="http' +
@@ -26,25 +26,25 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script>
         $(function() {
-			function embedOpts(fields) {
-				var opts = {};
-				fields.forEach(function(e) {
-					opts[e] = $("#"+e).val();
-				});
-				opts.createRoom = $("#createRoom").prop('checked');
-				return opts;
-			}
+        	function embedOpts(fields) {
+        		var opts = {};
+        		fields.forEach(function(e) {
+        			opts[e] = $("#" + e).val();
+        		});
+        		opts.createRoom = $("#createRoom").prop('checked');
+        		return opts;
+        	}
         	$("#basic-embed").on("click", function() {
         		scrollback(embedOpts(['roomName']));
         	});
-			
-			$("#basic-room-nick").on("click", function() {
+
+        	$("#basic-room-nick").on("click", function() {
         		scrollback(embedOpts(['roomName', "nick"]));
         	});
-			$("#basic-room-jws").on("click", function() {
+        	$("#basic-room-jws").on("click", function() {
         		scrollback(embedOpts(['roomName', "nick", "jws"]));
         	});
-			
+
         });
     </script>
 

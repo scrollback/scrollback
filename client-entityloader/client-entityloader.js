@@ -14,7 +14,6 @@ module.exports = function(libsb) {
 					console.log("ERROR: ", err, data);
 					return next(err);
 				}
-				console.log("Results:", data);
 				if (!data || !data.results || !data.results.length) {
 					if (state && state.connectionStatus === "online") {
 						if (data.identity) {

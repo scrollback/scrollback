@@ -67,7 +67,7 @@ libsb.on("config-show", function(conf, next) {
 		}).addClass("button twitter embed-share-button").text("Twitter")
 	);
 	$config.append(
-		formField('List of allowed domains', 'area', "domain-list", (conf.room.guides && conf.room.guides.allowedDomains) ? conf.room.guides.allowedDomains.join("\n") : "")
+		formField('List of domain names where this room can be embedded. (Leave empty to allow embedding anywhere.)', 'area', "domain-list", (conf.room.guides && conf.room.guides.allowedDomains) ? conf.room.guides.allowedDomains.join("\n") : "")
 	);
 	$config.append(formField("Share room on", "", "share-embed", $shareDiv));
 
@@ -164,6 +164,10 @@ libsb.on("config-show", function(conf, next) {
 libsb.on('config-save', function (room, next) {
 	var domains = $('#domain-list').val();
 	if (!room.guides) room.guides = {};
-	room.guides.allowedDomains = domains.split("\n");
+    if(!room.guides.allowedDomains) room.guides.allowedDomains = [];
+	domains = domains.split("\n");
+    domains.forEach(function(e) {
+        if(e.trim()) room.guides.allowedDomains.push(e.trim());
+    });
 	next();
 }, 500);
