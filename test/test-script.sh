@@ -54,7 +54,7 @@ sudo start scrollback
 mv mocha-output.json mocha-output-unit.json
 sleep 15 # startup time
 #run selenium...
-cp "${basedir}/test/config-defaults.js" "${basedir}/test/config.js"
+cp -f "${basedir}/test/config-defaults.js" "${basedir}/test/config.js"
 mocha test/selenium/test.js -R mocha-html-reporter 
 mv mocha-output.html "public/s/tmp/selenium-test-results-$(date +%y%m%d).html"
 mv mocha-output.json mocha-output-selenium.json
