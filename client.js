@@ -66,9 +66,9 @@ require('./google/google-client.js');
 require('./github/github-client.js');
 require('./browserid-auth/browserid-auth-client.js');
 
-// phonegap specific
+// cordova specific
 require('./push-notification/push-notification-client.js');
-require('./phonegap/phonegap-client.js');
+require('./cordova/cordova-client.js');
 require('./lib/win-open-polyfill.js');
 
 // components

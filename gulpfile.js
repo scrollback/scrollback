@@ -262,7 +262,7 @@ gulp.task("client-manifest", function() {
 	]));
 });
 
-gulp.task("android-manifest", function() {
+gulp.task("cordova-android-manifest", function() {
 	return genmanifest(prefix("public/s/", [
 		"phonegap/**/*",
 		"scripts/lib/jquery.min.js",
@@ -270,10 +270,10 @@ gulp.task("android-manifest", function() {
 		"styles/dist/client.min.css",
 		"styles/fonts/icons.*",
 		"img/client/**/*"
-	]), "android");
+	]), "cordova-android");
 });
 
-gulp.task("manifest", [ "client-manifest", "android-manifest" ]);
+gulp.task("manifest", [ "client-manifest", "cordova-android-manifest" ]);
 
 // Clean up generated files
 gulp.task("clean", function() {
