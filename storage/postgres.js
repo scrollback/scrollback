@@ -241,6 +241,12 @@ function addFilters(transform, sql, values, i) {
 	}
 }
 
+/**
+[{ query: string,
+values: [],
+}, .....]
+*/
+
 function runQueries(client, queries, callback) {
 	if (queries.length === 0) {
 		return callback(null, []);

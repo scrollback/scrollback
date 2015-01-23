@@ -53,15 +53,17 @@ function afterSavingAllUsers() {
 			log.d("reply:", arguments);
 			if (!err && reply.results && reply.results.length) {
 				c.inc(reply.results.length);
+				c.done();
 				reply.results.forEach(function(room) {
 					saveRoom(room, users[userid], function() {
 						c.done();
 					});
 				});
-			}
+			} else c.done();
 		});	
 	}
 	for (var userid in users) {
+		c.inc(1);
 		processUser(userid);
 	}
 	
@@ -93,12 +95,7 @@ function saveRoom(room, owner, callback) {
 		if (!room.createTime) {
 			coreLevelDB.emit("getTexts", {to: room.id, after: 2, time: 1}, function(err, reply) {
 				if (reply.results && reply.results.length) {
-					/*if (room.id === 'scrollbackteam') {
-						log.d("Results:", reply, roomAction);
-						process.exit(1);
-					}*/
 					room.createTime = reply.results[0].time - 1;
-					
 				} else room.createTime = new Date().getTime();
 				save(roomAction);
 			}); 
