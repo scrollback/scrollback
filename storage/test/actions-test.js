@@ -2,7 +2,7 @@
 var assert = require('assert'),
 	core =new (require('ebus'))(),
 	generate = require("../../lib/generate.js"),
-	storageUtils = require('./../storage-utils.js'),
+	postgres = require('./../postgres.js'),
 	log = require("../../lib/logger.js"),
 	storage = require('../storage.js'),
 	config = require('./../../server-config-defaults.js'),
@@ -41,7 +41,7 @@ describe("Storage Test.", function() {
 		core.emit("text", msg, function() {
 			log("inserted message");
 			pg.connect(connString, function(err, client, cb) {
-				storageUtils.runQueries(client, 
+				postgres.runQueries(client, 
 										 [{query: "SELECT * from texts where id=$1", values: [msg.id]},
 										  {query: "SELECT * from threads where id=$1", values: [msg.thread]}], 
 										 function(err, results) {
@@ -64,7 +64,7 @@ describe("Storage Test.", function() {
 		core.emit("text", msg, function() {
 			log("inserted message");
 			pg.connect(connString, function(err, client, cb) {
-				storageUtils.runQueries(client, 
+				postgres.runQueries(client, 
 										[{query: "SELECT * from texts where id=$1", values: [msg.id]}], 
 										function(err, results) {
 					log.d("Arguments:", arguments);
@@ -87,7 +87,7 @@ describe("Storage Test.", function() {
 			delete m2.threads[0].title; // don't update title.
 			core.emit("text", m2, function() {
 				pg.connect(connString, function(err, client, cb) {
-					storageUtils.runQueries(client, 
+					postgres.runQueries(client, 
 											[{query: "SELECT * from threads where id=$1", values: [m1.thread]}], 
 											function(err, results) {
 						log.d("Arguments:", arguments);
@@ -112,7 +112,7 @@ describe("Storage Test.", function() {
 			};
 			core.emit("edit", edit, function() {
 				pg.connect(connString, function(err, client, cb) {
-					storageUtils.runQueries(client, 
+					postgres.runQueries(client, 
 											[{query: "SELECT * from texts where id=$1", values: [m1.id]}], 
 											function(err, results) {
 						log.d("Arguments:", arguments);
@@ -137,7 +137,7 @@ describe("Storage Test.", function() {
 			};
 			core.emit("edit", edit, function() {
 				pg.connect(connString, function(err, client, cb) {
-					storageUtils.runQueries(client, 
+					postgres.runQueries(client, 
 											[{query: "SELECT * from threads where id=$1", values: [m1.thread]}], 
 											function(err, results) {
 						log.d("Arguments:", arguments);
@@ -163,7 +163,7 @@ describe("Storage Test.", function() {
 			};
 			core.emit("edit", edit, function() {
 				pg.connect(connString, function(err, client, cb) {
-					storageUtils.runQueries(client, 
+					postgres.runQueries(client, 
 											[{query: "SELECT * from texts where id=$1", values: [m1.id]}], 
 											function(err, results) {
 						log.d("Arguments:", arguments);
@@ -182,7 +182,7 @@ describe("Storage Test.", function() {
 		var user = utils.getNewUserAction();
 		core.emit("user", user, function() {
 			pg.connect(connString, function(err, client, cb) {
-				storageUtils.runQueries(client, 
+				postgres.runQueries(client, 
 										[{query: "SELECT * from entities where id=$1", values: [user.user.id]}], 
 										function(err, results) {
 					log.d("Arguments:", arguments);
@@ -200,7 +200,7 @@ describe("Storage Test.", function() {
 		var user = utils.getNewUserAction();
 		core.emit("user", user, function() {
 			pg.connect(connString, function(err, client, cb) {
-				storageUtils.runQueries(client, 
+				postgres.runQueries(client, 
 										[{query: "SELECT * from entities where id=$1", values: [user.user.id]}], 
 										function(err, results) {
 					log.d("Arguments:", arguments);
@@ -223,7 +223,7 @@ describe("Storage Test.", function() {
 			user.user.description = generate.sentence(12);
 			core.emit("user", user, function() {
 				pg.connect(connString, function(err, client, cb) {
-					storageUtils.runQueries(client, 
+					postgres.runQueries(client, 
 											[{query: "SELECT * from entities where id=$1", values: [user.user.id]}], 
 											function(err, results) {
 						log.d("Arguments:", arguments);
@@ -247,7 +247,7 @@ describe("Storage Test.", function() {
 		utils.emitActions( core, [user], function() {
 			utils.emitActions(core, [room], function() {
 				pg.connect(connString, function(err, client, cb) {
-					storageUtils.runQueries(client, 
+					postgres.runQueries(client, 
 											[{query: "SELECT * from entities where id=$1", values: [room.room.id]}, 
 											 {query: "SELECT * from relations where \"room\"=$1 AND \"user\"=$2", values: [room.room.id, room.user.id]}], 
 											function(err, results) {
@@ -277,7 +277,7 @@ describe("Storage Test.", function() {
 				room.room.identities = room.room.identities.splice(0, 1);
 				core.emit("room", room, function() {
 					pg.connect(connString, function(err, client, cb) {
-						storageUtils.runQueries(client, 
+						postgres.runQueries(client, 
 												[{query: "SELECT * from entities where id=$1", values: [room.room.id]}], 
 												function(err, results) {
 							log.d("Arguments:", arguments);
@@ -308,9 +308,8 @@ describe("Storage Test.", function() {
 			core.emit("room", room, function() {
 				core.emit("join", relation, function() {
 					log("Join :", arguments);
-					pg.connect(connString, function(err, client, cb) {
-						
-						storageUtils.runQueries(client, 
+					pg.connect(connString, function(err, client, cb) {	
+						postgres.runQueries(client, 
 												[{query: "SELECT * from relations where \"room\"=$1 and \"user\"=$2", 
 												  values: [room.room.id, user.user.id]}], 
 												function(err, results) {
@@ -345,8 +344,7 @@ describe("Storage Test.", function() {
 					relation.time = new Date().getTime();
 					core.emit("part", relation, function() {
 						pg.connect(connString, function(err, client, cb) {
-
-							storageUtils.runQueries(client, 
+							postgres.runQueries(client, 
 													[{query: "SELECT * from relations where \"room\"=$1 and \"user\"=$2", 
 													  values: [room.room.id, user.user.id]}], 
 													function(err, results) {

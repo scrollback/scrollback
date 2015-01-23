@@ -2,12 +2,12 @@ var queryTr = require('./query-transform.js'),
 	actionTr = require('./action-transform.js'),
 	resultTr = require('./result-transform.js'),
 	log = require('../lib/logger.js'),
-	config, pg;
+	config, ps;
 	
 function getHandler(type) {
 	return function(query, next) {
 		if (!query.results) {
-			pg.get(queryTr[type](query), function(err, results) {
+			ps.get(queryTr[type](query), function(err, results) {
 				if(err) return next(err);
 				query.results = resultTr[type](query, results); // reply of run queries is passed here.
 				next();
@@ -19,7 +19,7 @@ function getHandler(type) {
 function putHandler(type) {
 	return function(object, next) {
 		log.d("put: ", object);
-		pg.put(actionTr[type](object), function(err) {
+		ps.put(actionTr[type](object), function(err) {
 			if(err) next(err);
 			else next();
 		});
@@ -29,7 +29,7 @@ function putHandler(type) {
 module.exports = function(core, conf) {
 	//var s = "storage";
 	config = conf;
-	pg = require('./postgres.js')(config);
+	ps = require('./postgres-storage.js')(config);
 	["text", "edit", "room", "user", "join", "part", "admit", "expel"].forEach(function(action) {
 		core.on(action, putHandler(action), "storage");
 	});
