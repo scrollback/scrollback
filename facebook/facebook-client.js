@@ -6,7 +6,7 @@ function loginWithFb() {
 	window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
 }
 
-$('.js-phonegap-fb-login').click(loginWithFb);
+$('.js-cordova-fb-login').click(loginWithFb);
 
 libsb.on('auth', function(auth, next) {
 	auth.buttons.facebook = {
