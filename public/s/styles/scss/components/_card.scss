@@ -67,16 +67,68 @@
             }
         }
 
+        &-cover {
+            @extend %clearfix;
+
+            height: 12em;
+            background-image: url("https://ununsplash.imgix.net/photo-1416339684178-3a239570f315?fit=crop&fm=jpg&h=800&q=75&w=1050");
+            background-size: 100%;
+            background-size: cover;
+            background-position: center center;
+            color: $light-color;
+            box-shadow: inset 12em 50em 0 rgba(85,85,85,.5);
+
+            &-header {
+                float: right;
+                border-bottom: none;
+            }
+
+            &-logo {
+              height: 8em;
+              width: 8em;
+              margin: 2em;
+              border-radius: 50%;
+              border: 2px solid $light-color;
+              background-image: url(https://unsplash.imgix.net/photo-1415226581130-91cb7f52f078?fit=crop&fm=jpg&h=800&q=75&w=1050);
+              background-size: cover;
+            }
+
+            &-title {
+              float: right;
+              margin: (-4em / 1.5) 1em 0 0;
+              font-size: 1.5em;
+            }
+
+            &-icon {
+                &:hover, &:focus {
+                    background-color: rgba(255,255,255,.2);
+                    color: inherit;
+                }
+
+                &:active {
+                    background-color: rgba(255,255,255,.3);
+                    color: inherit;
+                }
+            }
+        }
+
         &-content {
             margin: 1em;
             height: $card-height - 6em;
             overflow: hidden;
+
+            &-title {
+                text-transform: uppercase;
+                font-size: .9em;
+                font-weight: 700;
+                opacity: .6;
+            }
+
+            &-big { height: 10em; }
         }
 
         &-chat {
             @extend %ellipsize;
-
-            line-height: 2;
 
             &-nick {
                 font-weight: 700;
@@ -90,6 +142,22 @@
             }
 
             &-message { opacity: 0.6; }
+        }
+
+        &-discussion {
+            margin: .75em 0;
+
+            &-message {
+                @extend %ellipsize;
+
+                display: block;
+            }
+
+            &-by {
+                display: block;
+                opacity: .5;
+                font-size: .9em;
+            }
         }
 
         &-button {

@@ -1,43 +1,41 @@
 /* jshint browser: true */
 /* global $ */
 
-function Card(opts, type) {
-    var title;
-
+function Roomcard(opts) {
     if (typeof opts !== "object") {
         throw new Error("Invalid options passed");
     }
 
-    title = opts.title || opts.id;
-
-    if (typeof title !== "string") {
+    if (typeof opts.id !== "string") {
         throw new Error("Invalid title passed");
     }
 
-    this._title = $('<h3 class="card-header-title">').text(title);
+    this._title = $('<h3 class="card-cover-title">').text(opts.id);
 
     this._mentionbadge = $('<span class="card-header-badge notification-badge notification-badge-mention">').attr("data-empty", "");
     this._messagebadge = $('<span class="card-header-badge notification-badge notification-badge-messages">').attr("data-empty", "");
 
-    this.more = $('<a class="card-header-icon card-header-icon-more' + (type ? ' js-' + type + '-more' : '') + '">');
+    this.more = $('<a class="card-header-icon card-header-icon-more card-cover-icon js-room-more">');
 
-    this.element = $('<div class="card' + (type ? ' ' + type + '-card ' + 'js-' + type + '-card' : '') + '">').append(
-        $('<div class="card-header">').append(
-            this._title,
-            this._mentionbadge,
-            this._messagebadge,
-            this.more
-        )
-    ).attr("data-color", (typeof opts.color !== "undefined") ? opts.color : '');
-
-    if (type) {
-        this.element.attr("data-" + type, title);
-    }
+    this.element = $('<div class="card room-card js-room-card">').append(
+        $('<div class="card-cover">').append(
+            $('<div class="card-cover-header card-header">').append(
+                this._mentionbadge,
+                this._messagebadge,
+                this.more
+            ),
+            $('<div class="card-cover-logo">').css("background-image", "url(" + opts.avatar + ")"),
+            this._title
+        ).css("background-image", "url(" + opts.cover + ")")
+    ).attr({
+        "data-color": (typeof opts.color !== "undefined") ? opts.color : '',
+        "data-room": opts.id
+    });
 
     this.id = opts.id;
 }
 
-Card.prototype = {
+Roomcard.prototype = {
     setTitle: function(text) {
         if (typeof text !== "string") {
             throw new Error("Invalid title specified");
@@ -84,14 +82,15 @@ Card.prototype = {
         }
 
         if (!this._content) {
-            this._content = $('<div class="card-content">');
+            this._content = $('<div class="card-content card-content-big">');
+            this._content.append($('<h4 class="card-content-title">').text("Recent discussions"));
             this._content.appendTo(this.element);
         }
 
         this._content.append(
-            $('<div class="card-chat">').append(
-                $('<span class="card-chat-nick">').text(message.from),
-                $('<span class="card-chat-message">').text(message.text)
+            $('<div class="card-discussion">').append(
+                $('<span class="card-discussion-message">').text(message.text),
+                $('<span class="card-discussion-by">').text(message.from + " and " + message.count + " others")
             )
         );
 
@@ -99,4 +98,4 @@ Card.prototype = {
     }
 };
 
-module.exports = Card;
+module.exports = Roomcard;
