@@ -12,6 +12,7 @@
 
 		<link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:400,600">
 		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/dist/client.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="/s/css/spinner.css" type="text/css">
 
 		{{#if analytics.id}}
 			<script>
@@ -347,6 +348,9 @@
 					<a class="button facebook js-phonegap-fb-login" data-string="Facebook"></a>
 					<a class="button google js-phonegap-google-login" data-string="Google"></a>
 				</p>
+				<div id="spinner-container">
+					<div id="spinner"></div>
+				</div>
 			</div>
 
 			<div class="content-view-area" data-state="connecting">

@@ -17,7 +17,6 @@ libsb.on('auth', function(auth, next) {
 		text: 'Facebook',
 		prio: 100,
 		action: loginWithFb
-
 	};
 
 	next();
