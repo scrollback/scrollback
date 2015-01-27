@@ -33,7 +33,7 @@ function sendInit(token) {
 }
 
 function loginWithFacebook() {
-	if (facebookConnectPlugin) {
+	if (typeof facebookConnectPlugin !== "undefined") {
 		facebookConnectPlugin.login([], function(obj) {
 			// login success
 			console.log("Login succeeded", obj);
