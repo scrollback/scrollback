@@ -46,7 +46,7 @@ exports.getThreads = function(query, threads) {
 				tags: row.tags,
 				time: row.time,
 				terms: row.terms,
-				strartTime: row.starttime.getTime(),
+				startTime: row.starttime.getTime(),
 				endTime: row.endtime.getTime()
 			};
 			results.push(thread);
@@ -86,7 +86,7 @@ exports.getRooms = exports.getUsers = exports.getEntities = function(query, enti
 			};
 			results.push(entity);
 		});
-
+		
 		if (query.before) {
 			results.reverse();
 		} else if (query.ref instanceof Array) {

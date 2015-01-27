@@ -228,6 +228,74 @@ describe("Storage Test.", function() {
 		});
 	});
 	
+	it("getUsers query (ref and memberOf role: none)", function(done) {
+		var users = [];
+		var room = utils.getNewRoomAction();
+		var roomOwner = utils.getNewUserAction();
+		room.user = roomOwner.user;
+		var n = mathUtils.random(1, 10);
+		for (var i = 0;i < n; i++) {
+			var user = utils.getNewUserAction();
+			users.push(user);
+		}
+		var index = mathUtils.random(0, n - 1);
+		core.emit("user", roomOwner, function() {
+			utils.emitActions(core, [room] , function(err1, results1) {
+				utils.emitActions(core, users, function(err2, results2) {
+					log.d("actions: ", err1, err2, results1, results2);
+					core.emit("getUsers", {
+						type: 'getUsers',
+						ref: users[index].user.id,
+						memberOf: room.room.id
+					}, function(err, reply) {
+						log.d("N=", 0, reply.results.length);
+						assert.equal(reply.results.length, 0, "member of query failed.");
+						done();
+					});
+					
+				});
+
+			});
+		});
+	});
+	
+	it("getUsers query (memberOf and ref)", function(done) {
+		var relations = [];
+		var users = [];
+		var room = utils.getNewRoomAction();
+		var roomOwner = utils.getNewUserAction();
+		room.user = roomOwner.user;
+		var n = mathUtils.random(1, 10);
+		for (var i = 0;i < n; i++) {
+			relations.push(utils.getNewRelationAction('join', 'follower'));
+			var user = utils.getNewUserAction();
+			relations[i].user = user.user;
+			relations[i].room = room.room;
+			users.push(user);
+		}
+		var index = mathUtils.random(0, n - 1);
+		core.emit("user", roomOwner, function() {
+			utils.emitActions(core, [room] , function(err1, results1) {
+				utils.emitActions(core, users, function(err2, results2) {
+					utils.emitActions(core, relations, function(err3, results3) {
+						log.d("actions: ", err1, err2, err3, results1, results2, results3);
+						core.emit("getUsers", {
+							type: 'getUsers',
+							ref: users[index].user.id,
+							memberOf: room.room.id
+						}, function(err, reply) {
+							log.d("N=", n, reply.results.length);
+							assert.equal(reply.results.length, 1, "member of query failed.");
+							assert.equal(reply.results[0].id, users[index].user.id, "Not same user");
+							assert.equal(reply.results[0].role, "follower", "User is not a follower");
+							done();
+						});
+					});
+				});
+
+			});
+		});
+	});
 	
 	it("getUsers query (hasMember)", function(done) {
 		var relations = [];
@@ -666,8 +734,6 @@ describe("Storage Test.", function() {
 		}
 		var num = mathUtils.random(1, 256);
 		utils.emitActions(core, texts, function() {
-			
-
 			core.emit("getThreads", {type: "getThreads", time: time - 1, after: num, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				log.d("Length: ", results.results.length, numThreads);
@@ -678,8 +744,6 @@ describe("Storage Test.", function() {
 				}
 				done();
 			});	
-			
-
 		});
 	});
 	

@@ -96,7 +96,8 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 			if (iq.ref.length) q.filters.push(['id', 'in', iq.ref]);
 			else return []; // no results because ref is an empty array. 
 		} else q.filters.push(["id", "eq", iq.ref]);
-	} else if (iq.identity) {
+	} 
+	if (iq.identity) {
 		q.filters.push(['identities', 'cts', [iq.identity]]);
 	} else if (iq.timezone) {
 		if (typeof iq.timezone.gte === 'number') q.filters.push(['timezone', 'gte', iq.timezone.gte]);
