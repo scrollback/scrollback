@@ -1,5 +1,7 @@
 /* jshint browser:true */
-/* global libsb, facebookConnectPlugin, $ */
+/* global libsb, facebookConnectPlugin */
+
+var spinner = require('./spinner.js');
 
 libsb.on('logout', function(l, n) {
 	if (facebookConnectPlugin) {
@@ -34,17 +36,16 @@ function sendInit(token) {
 
 function loginWithFacebook() {
 	if (typeof facebookConnectPlugin !== "undefined") {
-		require('./spinner.js');
-		var $spinnerEl = $('#spinner');
+        spinner.spin();
 		facebookConnectPlugin.login([], function(obj) {
 			// login success
 			console.log("Login succeeded", obj);
-			$spinnerEl.removeClass('spinner');
 			sendInit(obj.authResponse.accessToken);
+            spinner.stop();
 		}, function(msg) {
 			// login failed, remove spinner
 			console.log("Login failed", msg);
-			$spinnerEl.removeClass('spinner');
+            spinner.stop();
 		});
 		
 		var intervalId = setInterval(function() {
@@ -58,6 +59,7 @@ function loginWithFacebook() {
 				clearInterval(intervalId);
 			});
 			libsb.on('init-dn', function(i, n) {
+                spinner.stop();
 				clearInterval(intervalId);
 				return n();
 			}, 500);
