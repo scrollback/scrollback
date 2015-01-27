@@ -67,7 +67,7 @@ body {
         webview: (),
         embed: $embeds,
         mode: $modes,
-        media: $medialist,
+        platform: $platforms,
         state: $states
     );
 
@@ -918,11 +918,11 @@ body {
 }
 
 .follow-icon {
-    @include icon(star);
+    @include icon(star-empty);
 
     color: $dark-color;
 
-    .role-follower & { @include icon(star-empty); }
+    .role-follower & { @include icon(star); }
 
     &:before {
         font-size: 2em;
@@ -1906,8 +1906,13 @@ $dotshadow: fade-out($accent-color, .6);
     .alert-bar { display: none; }
 }
 
-.phonegap-login-buttons {
-    .button { display: block; }
+.content-view-cordova-startpage { font-size: 1.2em; }
+
+.cordova-login-buttons {
+    .button {
+        display: block;
+        margin: 1em;
+    }
 }
 
 .ie-warning {

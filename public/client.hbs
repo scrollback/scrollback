@@ -38,7 +38,7 @@
 		{{/if}}
 	</head>
 
-	<body class="role-guest mode-normal state-connecting {{#if android}} media-phonegap {{/if}}">
+	<body class="role-guest mode-normal state-connecting {{#if cordova}} platform-cordova {{/if}}">
 		<!-- [if lt IE 9]>
 			<div class="ie-warning">
 				<div class="ie-warning-content">
@@ -339,12 +339,12 @@
 			</div>
 		</section>
 
-		<section data-role="guest" data-media="phonegap" class="content-view-wrapper content-area-full content-view-phonegap-startpage">
+		<section data-role="guest" data-platform="cordova" class="content-view-wrapper content-area-full content-view-cordova-startpage">
 			<div class="content-view-area" data-state="online">
 				<h2 data-string="Sign in to get started."></h2>
-				<p class="phonegap-login-buttons">
-					<a class="button facebook js-phonegap-fb-login" data-string="Facebook"></a>
-					<a class="button google js-phonegap-google-login" data-string="Google"></a>
+				<p class="cordova-login-buttons">
+					<a class="button facebook js-cordova-fb-login" data-string="Facebook"></a>
+					<a class="button google js-cordova-google-login" data-string="Google"></a>
 				</p>
 			</div>
 
@@ -370,14 +370,14 @@
 			<script src="/s/scripts/lib/polyfills.min.js"></script>
 		<![endif]-->
 
-		{{#if android}}
+		{{#if cordova}}
 			<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova.js"></script>
 			<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova-plugins.js"></script>
 		{{/if}}
 
 		<script src="/s/scripts/client.bundle.min.js"></script>
 
-		<!-- phonegap scripts -->
+		<!-- cordova scripts -->
 
 		<script>libsb.connect();</script>
 	</body>
