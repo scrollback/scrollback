@@ -36,6 +36,7 @@ var stringUtils = require('../lib/stringUtils.js'),
 		},
 		currentRoleStr: {
 			"moderator": "a moderator",
+            "registered": "a registered user",
 			"banned": "banned in this room",
 			"gagged": "gagged in this room",
 			"none": "not authorized to perform this action",
