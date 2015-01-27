@@ -1,6 +1,5 @@
 /* jshint browser:true */
 /* global libsb, facebookConnectPlugin, $ */
-require('./spinner.js');
 
 libsb.on('logout', function(l, n) {
 	if (facebookConnectPlugin) {
@@ -35,14 +34,16 @@ function sendInit(token) {
 
 function loginWithFacebook() {
 	if (typeof facebookConnectPlugin !== "undefined") {
+		require('./spinner.js');
+		var $spinnerEl = $('#spinner');
 		facebookConnectPlugin.login([], function(obj) {
 			// login success
 			console.log("Login succeeded", obj);
+			$spinnerEl.removeClass('spinner');
 			sendInit(obj.authResponse.accessToken);
 		}, function(msg) {
 			// login failed, remove spinner
 			console.log("Login failed", msg);
-			var $spinnerEl = $('#spinner');
 			$spinnerEl.removeClass('spinner');
 		});
 		

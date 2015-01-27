@@ -1,7 +1,6 @@
 /* jshint browser:true */
-/* global libsb */
+/* global libsb, $ */
 var config = require("../client-config-defaults.js");
-require('./spinner.js');
 
 function sendInit(token) {
 	/* sends init with the auth token */
@@ -34,18 +33,22 @@ function loginWithGoogle() {
 		interval_id; // required since the successCallback is not reliably fired in case of multiple accounts
 	var isGuest = libsb && libsb.user && (/^guest-/).test(libsb.user.id);
 	if (window.plugins && window.plugins.googleplus) {
+		require('./spinner.js');
+		var $spinnerEl = $('#spinner');
 		window.plugins.googleplus.logout(function(m) {
 			console.log("Logged out", m);
 			window.plugins.googleplus.login({},
 				function(obj) {
 					//successCallback
 					logged_in = true;
+					$spinnerEl.removeClass('spinner');
 					console.log("Login with Google+ successfull", obj);
 					sendInit(obj.oauthToken);
 				},
 				function(msg) {
 					//errorCallback
 					console.log("Login with Google+ failed", msg);
+					$spinnerEl.removeClass('spinner');
 				});
 			if (isGuest && !logged_in) {
 				var interval_id_arr = [];
