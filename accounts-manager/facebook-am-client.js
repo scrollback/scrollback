@@ -1,5 +1,6 @@
 /* jshint browser:true */
-/* global libsb, facebookConnectPlugin */
+/* global libsb, facebookConnectPlugin, $ */
+require('./spinner.js');
 
 libsb.on('logout', function(l, n) {
 	if (facebookConnectPlugin) {
@@ -39,8 +40,10 @@ function loginWithFacebook() {
 			console.log("Login succeeded", obj);
 			sendInit(obj.authResponse.accessToken);
 		}, function(msg) {
-			// login failed
+			// login failed, remove spinner
 			console.log("Login failed", msg);
+			var $spinnerEl = $('#spinner');
+			$spinnerEl.removeClass('spinner');
 		});
 		
 		var intervalId = setInterval(function() {

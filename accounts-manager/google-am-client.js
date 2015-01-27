@@ -1,6 +1,7 @@
 /* jshint browser:true */
 /* global libsb */
 var config = require("../client-config-defaults.js");
+require('./spinner.js');
 
 function sendInit(token) {
 	/* sends init with the auth token */
