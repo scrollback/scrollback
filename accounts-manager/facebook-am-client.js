@@ -34,6 +34,8 @@ function sendInit(token) {
 	});
 }
 
+var intervalId;
+
 function loginWithFacebook() {
 	if (typeof facebookConnectPlugin !== "undefined") {
 		spinner.spin();
@@ -47,23 +49,32 @@ function loginWithFacebook() {
 			console.log("Login failed", msg);
 			spinner.stop();
 		});
+		
+		if (intervalId) {
+			clearInterval(intervalId);
+			intervalId = null;
+		}
 
-		var intervalId = setInterval(function() {
+		intervalId = setInterval(function() {
 			facebookConnectPlugin.getLoginStatus(function(obj) {
 				// this hack fires the callback when, the login is successfull, but success callback does not fire.
 				// misbehaving phonegap plugins :-|
 				if (obj.hasOwnProperty('status') && obj.status === "connected") {
 					clearInterval(intervalId);
+					intervalId = null;
 				}
 			}, function() {
 				clearInterval(intervalId);
+				intervalId = null;
 			});
-			libsb.on('init-dn', function(i, n) {
-				spinner.stop();
-				clearInterval(intervalId);
-				return n();
-			}, 500);
 		}, 100);
+
+		libsb.on('init-dn', function(i, n) {
+			spinner.stop();
+			clearInterval(intervalId);
+			intervalId = null;
+			return n();
+		}, 500);
 	}
 }
 

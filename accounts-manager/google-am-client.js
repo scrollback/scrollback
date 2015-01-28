@@ -1,6 +1,5 @@
 /* jshint browser:true */
 /* global libsb */
-var config = require("../client-config-defaults.js");
 var spinner = require('./spinner.js');
 
 function sendInit(token) {
@@ -29,9 +28,11 @@ libsb.on('logout', function(l, n) {
 	}
 }, 500);
 
+var interval_id; // required since the successCallback is not reliably fired in case of multiple accounts
+
 function loginWithGoogle() {
-	var logged_in = false,
-		interval_id; // required since the successCallback is not reliably fired in case of multiple accounts
+	var logged_in = false;
+		
 	var isGuest = libsb && libsb.user && (/^guest-/).test(libsb.user.id);
 	if (window.plugins && window.plugins.googleplus) {
 		spinner.spin();
@@ -51,9 +52,11 @@ function loginWithGoogle() {
 					spinner.stop();
 				});
 			if (isGuest && !logged_in) {
-				var interval_id_arr = [];
+				if (interval_id) {
+					clearInterval(interval_id);
+					interval_id = null;
+				}
 				interval_id = setInterval(function() {
-					interval_id_arr.push(interval_id);
 					console.log("Trying silent login");
 					window.plugins.googleplus.trySilentLogin({},
 						function(obj) {
@@ -61,6 +64,7 @@ function loginWithGoogle() {
 							console.log("Silent lgn success", JSON.stringify(obj));
 							sendInit(obj.oauthToken);
 							clearInterval(interval_id);
+							interval_id = null;
 						},
 						function(msg) {
 							console.log('Silent login for google+ failed: ' + msg);
@@ -70,20 +74,13 @@ function loginWithGoogle() {
 				libsb.on('init-dn', function(i, n) {
 					// clear all intervals used for polling.
 					// multiple intervals get added if user clicks the login button multiple times.
-					if (interval_id_arr.length) {
-						console.log("Clearing all intervals ", interval_id_arr.length);
-						interval_id_arr.forEach(function(interval) {
-							clearInterval(interval);
-						});
-					}
+					clearInterval(interval_id);
+					interval_id = null;
 					spinner.stop();
 					n();
 				}, 500);
 			}
 		});
-	} else {
-		// usual login flow with inapp browser.
-		window.open("https:" + config.server.host + "/r/google/login", "_blank", "location=no");
 	}
 }
 
