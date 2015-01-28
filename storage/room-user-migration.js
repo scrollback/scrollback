@@ -4,7 +4,7 @@ var coreLevelDB = new (require('ebus'))();
 var coreStorage = new (require('ebus'))();
 var log = require('../lib/logger.js');
 //var path = __dirname + "/" + "data-test";
-
+process.env.NODE_ENV = config.env;
 
 config["leveldb-storage"].global = config.global;
 require('./storage.js')(coreStorage, config.storage);
@@ -21,28 +21,28 @@ Counter.prototype.done = function() {
 	this.counter += 1;
 	if (this.counter === this.count) {
 		return this.callback();
-	} else log("counter ", this.counter, this.count);
+	}
 };
 Counter.prototype.inc = function(i) {
 	this.count += i;
-	log.d("Count:",  this.count, i);
-	//process.exit(0);
 };
 coreLevelDB.emit("getUsers", {identity: "mailto"}, function(err, reply) { 
-	console.log(JSON.stringify(reply));
 	var cc = new (Counter)(reply.results.length, afterSavingAllUsers);
 	reply.results.forEach( function(user)  {
 		users[user.id] = user;
 		if (!user.createTime) user.createTime = 1;
-		coreStorage.emit("user", {type: "user", user: user}, function() {
-			console.log("saved user", arguments);
+		coreStorage.emit("user", {type: "user", user: user}, function(err) {
+			if (err) {
+				log.e("user event failed:", err);
+				process.exit(1);
+			}
 			cc.done();
 		});
 	});
 });
 
 function afterSavingAllUsers() {
-	log.d("All users", users);
+	//log.d("All users", users);
 	var c = new (Counter)(0, function() {
 		afterSavingAllRooms();
 		log.d("Room saving complete");
@@ -94,6 +94,10 @@ function saveRoom(room, owner, callback) {
 		
 		if (!room.createTime) {
 			coreLevelDB.emit("getTexts", {to: room.id, after: 2, time: 1}, function(err, reply) {
+				if (err) {
+					log.e("getTexts failed:", err);
+					process.exit(1);
+				}
 				if (reply.results && reply.results.length) {
 					room.createTime = reply.results[0].time - 1;
 				} else room.createTime = new Date().getTime();
@@ -120,6 +124,9 @@ function afterSavingAllRooms() {
 						joinCounter.done();
 					});
 				}); 
+			} else if (err) {
+				log.e("getUsers failed:", err);
+				process.exit(1);
 			}
 		});
 	}

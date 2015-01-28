@@ -27,11 +27,10 @@ Counter.prototype.done = function() {
 	this.counter += 1;
 	if (this.counter === this.count) {
 		return this.callback();
-	} else log("counter ", this.counter, this.count);
+	}
 };
 Counter.prototype.inc = function(i) {
 	this.count += i;
-	log.d("Count:",  this.count, i);
 	//process.exit(0);
 };
 coreLevelDB.emit("getUsers", {identity: "mailto"}, function(err, reply) {
@@ -43,7 +42,6 @@ coreLevelDB.emit("getUsers", {identity: "mailto"}, function(err, reply) {
 });
 
 function afterSavingAllUsers() {
-	log.d("All users", users);
 	var c = new (Counter)(0, function() {
 		afterSavingAllRooms();
 		log.d("Room saving complete");
@@ -51,7 +49,7 @@ function afterSavingAllUsers() {
 
 	function processUser(userid) {
 		coreLevelDB.emit("getRooms", {hasMember: userid, role: "owner"}, function(err, reply) {
-			log.d("reply:", arguments);
+			//log.d("reply:", arguments);
 			if (!err && reply.results && reply.results.length) {
 				c.inc(reply.results.length);
 				c.done();
@@ -70,9 +68,6 @@ function afterSavingAllUsers() {
 }
 
 function afterSavingAllRooms() {
-	log.d("all rooms saved", rooms.scrollback);
-	/*log.d("Rooms:", rooms);
-	log.d("Users:", users);*/
 	for (var roomid in rooms) {
 		saveTextAndThreadsForRoom(rooms[roomid]);
 	}
@@ -113,9 +108,9 @@ function saveTextAndThreadsForRoom(room) {
 				if (timestamp !== 1) { 
 					reply.results.splice(0, 1);
 				}
-				log("Results:-", reply.results);
+				//log("Results:-", reply.results);
 				saveNextSetOfMessages(reply.results,  function() {
-					log("Timestamp", reply.results[reply.results.length - 1].time);
+					//log("Timestamp", reply.results[reply.results.length - 1].time);
 					redis.set("timestamp:" + room.id, reply.results[reply.results.length - 1].time, function() {
 						saveTextAndThreadsForRoom(room);
 					});
