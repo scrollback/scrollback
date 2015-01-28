@@ -13,7 +13,7 @@ module.exports = {
 		});
 		return r;
 	},
-	runQueries: runQueries
+	runQueries: require('./run-queries.js')
 };
 
 function toQuery(transform) {
@@ -240,47 +240,6 @@ function addFilters(transform, sql, values, i) {
 		sql.push(filters.join(" AND "));
 	}
 }
-
-/**
-[{ query: string,
-values: [],
-}, .....]
-*/
-
-function runQueries(client, queries, callback) {
-	if (queries.length === 0) {
-		return callback(null, []);
-	}
-	function rollback(err, client, done) {
-		client.query('ROLLBACK', function(er) {
-			log.e("Rollback", err, er);
-			return done(err);
-		});
-	}
-	client.query("BEGIN", function(err) {
-		var results = [];
-		for (var i = 0;i < queries.length;i++) {
-			results.push(null);
-		}
-		if (err) rollback(err, client, callback);
-		function run(i) {
-			if (i < queries.length) {
-				client.query(queries[i].query, queries[i].values, function(err, result) {
-					console.log("arguments run queries:", arguments, queries[i].query);
-					results[i] =  result;
-					if (err) rollback(err, client, callback);
-					else run(i + 1);
-				});
-			} else {
-				client.query("COMMIT", function(err) {
-					callback(err, results);
-				});
-			}
-		}
-		run(0);
-	});
-}
-
 
 /*column name*/
 function name(n) {

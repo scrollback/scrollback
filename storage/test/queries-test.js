@@ -739,7 +739,7 @@ describe("Storage Test.", function() {
 				log.d("Length: ", results.results.length, numThreads);
 				assert.equal(results.results.length, numThreads, "Number of threads are not correct");
 				for (var i = 0; i < results.results.length; i++) {
-					log.d("Results:", results.results[i].id, threadIds[i]);
+					//log.d("Results:", results.results[i].id, threadIds[i]);
 					assert.equal(results.results[i].id, threadIds[i], "Incorrect results");
 				}
 				done();
