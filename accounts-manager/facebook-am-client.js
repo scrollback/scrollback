@@ -36,18 +36,18 @@ function sendInit(token) {
 
 function loginWithFacebook() {
 	if (typeof facebookConnectPlugin !== "undefined") {
-        spinner.spin();
+		spinner.spin();
 		facebookConnectPlugin.login([], function(obj) {
 			// login success
 			console.log("Login succeeded", obj);
 			sendInit(obj.authResponse.accessToken);
-            spinner.stop();
+			spinner.stop();
 		}, function(msg) {
 			// login failed, remove spinner
 			console.log("Login failed", msg);
-            spinner.stop();
+			spinner.stop();
 		});
-		
+
 		var intervalId = setInterval(function() {
 			facebookConnectPlugin.getLoginStatus(function(obj) {
 				// this hack fires the callback when, the login is successfull, but success callback does not fire.
@@ -59,7 +59,7 @@ function loginWithFacebook() {
 				clearInterval(intervalId);
 			});
 			libsb.on('init-dn', function(i, n) {
-                spinner.stop();
+				spinner.stop();
 				clearInterval(intervalId);
 				return n();
 			}, 500);
