@@ -20,7 +20,7 @@ window.onNotificationGCM = function(e) {
 			if (e.regid.length > 0) {
 				// Storing regId to be used by GCM to make push notifications.
 				console.log("regID = " + e.regid);
-				localStorage.phonegapRegId = e.regid;
+				localStorage.cordovaRegId = e.regid;
 			}
 			break;
 
@@ -72,8 +72,9 @@ window.onNotificationGCM = function(e) {
 function registerPushNotification(init, next) {
 	var user = init.user || libsb.user;
 	if (/^guest-/.test(user.id)) return next(); //don't register users for pushNotifications, if they are not logged in.
-	
+
 	pushNotification = window.plugins && window.plugins.pushNotification;
+
 	if (!pushNotification || typeof device === "undefined") {
 		return next();
 	}
@@ -92,7 +93,7 @@ function unregisterPushNotification(l, n) {
 	pushNotification = window.plugins && window.plugins.pushNotification;
 	if (!pushNotification) return n();
 	userObj = libsb.user; // userObj is needed inside unregisterSuccesHandler, which is an async function.
-	registrationID = localStorage.phonegapRegId;
+	registrationID = localStorage.cordovaRegId;
 	pushNotification.unregister(unregisterSuccessHandler, errorHandler, {
 		"senderID": config.pushNotification.gcm.senderID
 	});
@@ -102,13 +103,13 @@ function unregisterPushNotification(l, n) {
 // result contains any message sent from the plugin call
 function registerSuccessHandler(result) {
 	console.log('registration success result = ' + result);
-	regId = localStorage.phonegapRegId;
+	regId = localStorage.cordovaRegId;
 	mapDevicetoUser(regId);
 }
 
 function unregisterSuccessHandler(result) {
 	console.log('unregistration success result = ' + result);
-	delete localStorage.phonegapRegId;
+	delete localStorage.cordovaRegId;
 }
 
 function errorHandler(error) {
@@ -116,7 +117,7 @@ function errorHandler(error) {
 }
 
 libsb.on('init-dn', function(init, next) {
-	mapDevicetoUser(localStorage.phonegapRegId);
+	mapDevicetoUser(localStorage.cordovaRegId);
 	next();
 }, 100);
 
@@ -135,6 +136,7 @@ function mapDevicetoUser(regId) {
 	}
 
 	window.plugins.uniqueDeviceID.get(function(uuid) {
+		var user = libsb.user;
 		var thisDevice = {
 			deviceName: device.model,
 			type: 'GCM',
@@ -143,20 +145,19 @@ function mapDevicetoUser(regId) {
 			enabled: true
 		};
 
-		var devices = user && user.params.pushNotifications &&
-			user.params.pushNotifications.devices ? user.params.pushNotifications.devices : [];
-		
+		var devices = (user && user.params.pushNotifications &&
+			user.params.pushNotifications.devices) ? user.params.pushNotifications.devices : [];
+
 		// if device does not have a uuid, remove it; also remove it if it already exists in the list.
 		devices = devices.filter(function(d) {
 			return d.hasOwnProperty('uuid') && d.uuid !== thisDevice.uuid;
 		});
-		 
+
         devices.push(thisDevice);
         user.params.pushNotifications.devices = devices;
         libsb.emit('user-up', {
             user: user
         });
-		
 	});
 }
 

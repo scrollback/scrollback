@@ -5,7 +5,7 @@ var core = new (require("ebus"))(config.appPriorities);
 
 // third party libraries
 require('./public/s/scripts/lib/sockjs.min.js');
-require('./public/s/scripts/lib/jquery.velocity.min.js');
+require('./public/s/scripts/lib/velocity.min.js');
 require('./public/s/scripts/lib/svg4everybody.min.js');
 
 require('./lib/jquery.setCursorEnd.js');
@@ -64,9 +64,9 @@ require('./google/google-client.js');
 require('./github/github-client.js');
 require('./persona/persona-client.js');
 
-// phonegap specific
+// cordova specific
 require('./push-notification/push-notification-client.js');
-require('./phonegap/phonegap-client.js');
+require('./cordova/cordova-client.js');
 require('./lib/win-open-polyfill.js');
 require('./accounts-manager/accounts-manager-client.js');
 

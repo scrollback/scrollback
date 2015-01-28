@@ -3,8 +3,15 @@
  * Fonts and colors are defined in lace
  */
 
-@import "../lace/functions";
-@import "../lace/global";
+// Font settings
+$icon-font-path: "../fonts" !default;
+
+// Colors
+$accent-color: #3ca !default;
+
+// Misc
+$roundness: 2px !default;
+$mobile-break-point: "only screen and (max-width: 27em)" !default;
 
 $palette: #2ba #e48 #3c6 #76f #e63 #5ad #95b #ed0 #e92 #ae3 !default;
 
@@ -33,5 +40,5 @@ $settings: general, irc, twitter, threader, authorizer, requests, spam, seo, cus
 $modes: normal, search, conf, pref, home, noroom, profile !default;
 $roles: guest, user, follower, owner !default;
 $embeds: toast, canvas !default;
-$medialist: normal, phonegap !default;
+$platforms: normal, cordova !default;
 $states: online offline connecting !default;

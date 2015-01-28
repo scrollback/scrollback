@@ -27,11 +27,10 @@ var core, config,
 	log = require('../lib/logger.js');
 
 
-
 module.exports = function(c, conf) {
 	core = c;
 	config = conf;
-	
+
 	return {
 		init: init
 	};
@@ -64,14 +63,10 @@ function init (app) {
 		}
 
 		var platform = req.query.platform;
-		if (platform && platform.toLowerCase() === "android") {
-			clientData.android = true;
-			clientData.appVersion = req.query["app-version"] || "defaults";
 
-		} else {
-			clientData.manifest = "manifest.appcache";
-			clientData.android = false;
-		}
+		clientData.appVersion = req.query["app-version"] || "defaults";
+		clientData.manifest = (platform ? platform.toLowerCase() : "manifest") + ".appcache";
+		clientData.cordova = !!(platform && (/cordova/i).test(platform));
 
 		seo.getSEOHtml(req, function(r) {
 			clientData.seo = r;

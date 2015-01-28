@@ -8,6 +8,7 @@ var gulp = require("gulp"),
 	es = require("event-stream"),
 	lazypipe = require("lazypipe"),
 	plumber = require("gulp-plumber"),
+	notify = require("gulp-notify"),
 	gutil = require("gulp-util"),
 	sourcemaps = require("gulp-sourcemaps"),
 	jshint = require("gulp-jshint"),
@@ -17,17 +18,19 @@ var gulp = require("gulp"),
 	striplogs = require("gulp-strip-debug"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
-	sass = require("gulp-ruby-sass"),
+	sass = require("gulp-sass"),
 	combinemq = require("gulp-combine-mq"),
 	autoprefixer = require("gulp-autoprefixer"),
 	minify = require("gulp-minify-css"),
 	manifest = require("gulp-manifest"),
 	config = require("./server-config-defaults.js"),
 	debug = !(gutil.env.production || config.env === "production"),
+	onerror = notify.onError("Error: <%= error.message %>"),
 	dirs = {
 		bower: "bower_components",
 		lib: "public/s/scripts/lib",
 		lace: "public/s/styles/lace",
+		fonts: "public/s/styles/fonts",
 		scss: "public/s/styles/scss",
 		css: "public/s/styles/dist"
 	},
@@ -37,7 +40,7 @@ var gulp = require("gulp"),
 			"!node_modules/**", "!bower_components/**",
 			"!public/s/**/*.js"
 		],
-		scss: [ "public/s/styles/scss/*.scss" ]
+		scss: [ "public/s/styles/scss/**/*.scss" ]
 	};
 
 // Make browserify bundle
@@ -47,8 +50,9 @@ function bundle(files, opts) {
 			opts.entries = "./" + file;
 
 			return browserify(opts).bundle()
-			.on("error", function(err) {
-				gutil.log(err);
+			.on("error", function(error) {
+				onerror(error);
+
 				// End the stream to prevent gulp from crashing
 				this.end();
 			})
@@ -115,13 +119,12 @@ function genmanifest(files, platform) {
 		timestamp: true,
 		filename: filename
 	}))
-	.pipe(gulp.dest("public"))
-	.on("error", gutil.log);
+	.pipe(gulp.dest("public"));
 }
 
 // Lazy pipe for building scripts
 var buildscripts = lazypipe()
-	.pipe(plumber)
+	.pipe(plumber, { errorHandler: onerror })
 	.pipe(!debug ? uglify : gutil.noop)
 	.pipe(!debug ? striplogs : gutil.noop);
 
@@ -142,32 +145,29 @@ gulp.task("postinstall", [ "hooks" ]);
 // Lint JavaScript files
 gulp.task("lint", function() {
 	return gulp.src(files.js)
-	.pipe(plumber())
+	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(gitmodified("modified"))
 	.pipe(jshint())
 	.pipe(jshint.reporter("jshint-stylish"))
-	.pipe(jshint.reporter("fail"))
-	.on("error", gutil.log);
+	.pipe(jshint.reporter("fail"));
 });
 
 // Install and copy third-party libraries
 gulp.task("bower", function() {
 	return bower.commands.install([], { save: true }, {})
-	.on("error", gutil.log);
+	.on("error", onerror);
 });
 
 gulp.task("copylibs", [ "bower" ], function() {
 	return gulp.src(prefix(dirs.bower + "/", [
 		"jquery/dist/jquery.min.js",
-		"lace/src/js/*.js",
+		"lace/src/js/**/*.js",
 		"sockjs/sockjs.min.js",
 		"svg4everybody/svg4everybody.min.js",
-		"velocity/jquery.velocity.min.js",
-		"velocity/velocity.ui.min.js"
+		"velocity/velocity.min.js"
 	], "lib/post-message-polyfill.js"))
-	.pipe(plumber())
-	.pipe(gulp.dest(dirs.lib))
-	.on("error", gutil.log);
+	.pipe(plumber({ errorHandler: onerror }))
+	.pipe(gulp.dest(dirs.lib));
 });
 
 // Copy and minify polyfills
@@ -180,8 +180,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 	.pipe(concat("polyfills.js"))
 	.pipe(gulp.dest(dirs.lib))
 	.pipe(rename({ suffix: ".min" }))
-	.pipe(gulp.dest(dirs.lib))
-	.on("error", gutil.log);
+	.pipe(gulp.dest(dirs.lib));
 });
 
 // Build browserify bundles
@@ -191,8 +190,7 @@ gulp.task("bundle", [ "copylibs" ], function() {
 	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
 	.pipe(sourcemaps.write("."))
-	.pipe(gulp.dest("public/s/scripts"))
-	.on("error", gutil.log);
+	.pipe(gulp.dest("public/s/scripts"));
 });
 
 // Generate embed widget script
@@ -204,8 +202,7 @@ gulp.task("embed", function() {
 	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
-	.pipe(gulp.dest("public"))
-	.on("error", gutil.log);
+	.pipe(gulp.dest("public"));
 });
 
 // Generate scripts
@@ -213,25 +210,32 @@ gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 
 // Generate styles
 gulp.task("lace", [ "bower" ], function() {
-	return gulp.src(dirs.bower + "/lace/src/scss/*.scss")
-	.pipe(plumber())
-	.pipe(gulp.dest(dirs.lace))
-	.on("error", gutil.log);
-});	
+	return gulp.src(dirs.bower + "/lace/src/scss/**/*.scss")
+	.pipe(plumber({ errorHandler: onerror }))
+	.pipe(gulp.dest(dirs.lace));
+});
 
-gulp.task("styles", [ "lace" ], function() {
-	return sass(dirs.scss, {
-		style: !debug ? "compressed" : "expanded",
-		lineNumbers: debug,
-		sourcemap: true
-	})
-	.pipe(plumber())
+gulp.task("fonts", [ "bower" ], function() {
+	return gulp.src(dirs.bower + "/lace/src/fonts/**/*")
+	.pipe(plumber({ errorHandler: onerror }))
+	.pipe(gulp.dest(dirs.fonts));
+});
+
+gulp.task("styles", [ "lace", "fonts" ], function() {
+	return gulp.src(files.scss)
+	.pipe(plumber({ errorHandler: onerror }))
+	.pipe(sourcemaps.init())
+	.pipe(sass({
+		outputStyle: "expanded",
+		lineNumbers: !gutil.env.production,
+		sourceMap: true
+	}))
 	.pipe(combinemq())
 	.pipe(!debug ? autoprefixer() : gutil.noop())
 	.pipe(!debug ? minify() : gutil.noop())
+	.pipe(rename({ suffix: ".min" }))
 	.pipe(sourcemaps.write("."))
-	.pipe(gulp.dest(dirs.css))
-	.on("error", gutil.log);
+	.pipe(gulp.dest(dirs.css));
 });
 
 // Generate appcache manifest file
@@ -240,29 +244,31 @@ gulp.task("client-manifest", function() {
 	return genmanifest(prefix("public/s/", [
 		"scripts/lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
-		"styles/dist/client.css",
+		"styles/dist/client.min.css",
+		"styles/fonts/icons.*",
 		"img/client/**/*"
 	]));
 });
 
-gulp.task("android-manifest", function() {
+gulp.task("cordova-android-manifest", function() {
 	return genmanifest(prefix("public/s/", [
 		"phonegap/**/*",
 		"scripts/lib/jquery.min.js",
 		"scripts/client.bundle.min.js",
-		"styles/dist/client.css",
+		"styles/dist/client.min.css",
+		"styles/fonts/icons.*",
 		"img/client/**/*"
-	]), "android");
+	]), "cordova-android");
 });
 
-gulp.task("manifest", [ "client-manifest", "android-manifest" ]);
+gulp.task("manifest", [ "client-manifest", "cordova-android-manifest" ]);
 
 // Clean up generated files
 gulp.task("clean", function() {
 	return del(prefix("public/", [
-		"**/*.map", "**/*.min.js",
-		"**/*.bundle.js", "**/*.appcache}"
-	], dirs.lib, dirs.css, dirs.lace));
+		"**/*.min.js", "**/*.min.css",
+		"**/*.map", "**/*.appcache}"
+	], dirs.lib, dirs.css, dirs.lace, dirs.fonts));
 });
 
 gulp.task("watch", function() {
