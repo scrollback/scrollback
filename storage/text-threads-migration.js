@@ -88,40 +88,50 @@ function saveTextAndThreadsForRoom(room) {
 			postgres.runQueries(client, queries, function(err, replies) {
 				if (err){
 					log.e("replies:", err, replies);
-					process.exit();
+					process.exit(1);
 				}
 				done();
 				callback();
 			});
 		});
 	}
-	
-	redis.get("timestamp:" + room.id, function(err, timestamp) {
+	var multi = redis.multi();
+	multi.get("timestamp:" + room.id);
+	multi.get("id:" + room.id);
+	multi.exec(function(err, replies) {
+		var timestamp = replies[0];
+		var lastId = replies[1];
 		if (!timestamp) timestamp = 1;
 		else timestamp = parseInt(timestamp);
 		coreLevelDB.emit("getTexts", {to: room.id, after: 256, time: timestamp}, function(err, reply) {
-			log("Timestamp:", timestamp, timestamp !== 1);
+			log("Timestamp:", timestamp, timestamp !== 1, lastId);
 			
-			//log("Results:-", reply.results);
-			//process.exit(1);
 			if (reply.results.length === 256) {	
-				if (timestamp !== 1) { 
-					reply.results.splice(0, 1);
-				}
+				removeInitialPartOfResults(reply, timestamp, lastId, room);
 				//log("Results:-", reply.results);
 				saveNextSetOfMessages(reply.results,  function() {
-					//log("Timestamp", reply.results[reply.results.length - 1].time);
-					redis.set("timestamp:" + room.id, reply.results[reply.results.length - 1].time, function() {
+					var multi = redis.multi();
+					multi.set("id:" + room.id, reply.results[reply.results.length - 1].id);
+					multi.set("timestamp:" + room.id, reply.results[reply.results.length - 1].time);
+					multi.exec(function(err, replies) {
+						if (err) {
+							log.e("replies:", err, replies);
+							process.exit(1);
+						}
 						saveTextAndThreadsForRoom(room);
 					});
 				});
 			} else { // end of text messages
-				if (timestamp !== 1) { 
-					reply.results.splice(0, 1);
-				}
+				removeInitialPartOfResults(reply, timestamp, lastId, room);
 				if (reply.results && reply.results.length) {
 					saveNextSetOfMessages(reply.results, function() {
-						redis.set("timestamp:" + room.id, reply.results[reply.results.length - 1].time, function() {
+						multi.set("id:" + room.id, reply.results[reply.results.length - 1].id);
+						multi.set("timestamp:" + room.id, reply.results[reply.results.length - 1].time);
+						multi.exec(function(err, replies) {
+							if (err) {
+								log.e("replies:", err, replies);
+								process.exit(1);
+							}
 							log("Saving for room ", room.id, "complete");
 						});
 					});
@@ -131,6 +141,23 @@ function saveTextAndThreadsForRoom(room) {
 	});
 }
 
+
+function removeInitialPartOfResults(reply, timestamp, lastId, room) {
+	if (timestamp !== 1) {
+		var isMatched = false;
+		for (var i = 0; i < reply.results.length; i++) {
+			if (reply.results[i].id === lastId) {
+				isMatched = true;
+				break;	
+			}
+		}
+		if (!isMatched && reply.results.length !== 0) {
+			log.e("ID did not match any result", room.id);
+			process.exit(1);
+		}
+		reply.results.splice(0, i + 1);
+	}
+}
 
 function getQueriesForTextMessages(texts) {
 	var r = [];
