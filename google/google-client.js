@@ -5,18 +5,14 @@ var config = require("../client-config-defaults.js");
 var loginWithAccManager = require('./google-am-client.js');
 
 function loginWithGoogle() {
-	window.open("https:" + config.server.host + "/r/google/login", "_blank", "location=no");
+	var hasGooglePlugin = window.plugins && window.plugins.googleplus;
+	if(currentState.cordova && hasGooglePlugin) {
+		loginWithAccManager();
+	}
+	else window.open("https:" + config.server.host + "/r/google/login", "_blank", "location=no");
 }
 
-var hasGooglePlugin = window.plugins && window.plugins.googleplus;
-
-if (currentState.cordova && !hasGooglePlugin) {
-	$('.js-phonegap-google-login').click(loginWithGoogle);
-}
-
-if (currentState.cordova && hasGooglePlugin) {
-	$('.js-phonegap-google-login').click(loginWithAccManager);
-}
+$('.js-phonegap-google-login').click(loginWithGoogle);
 
 libsb.on('auth', function(auth, next) {
 	auth.buttons.google = {
