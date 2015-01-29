@@ -38,7 +38,7 @@ redis-cli FLUSHALL
 #backing up previous data
 mv "$data" "$backup"
 #recovering data
-cp -a "$testing_state/data" "$leveldb_storage"
+cp -a "$testing_state/data" "$leveldb_storage/"
 
 # Setup
 npm install
