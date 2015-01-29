@@ -29,6 +29,7 @@ Counter.prototype.inc = function(i) {
 coreLevelDB.emit("getUsers", {identity: "mailto"}, function(err, reply) { 
 	var cc = new (Counter)(reply.results.length, afterSavingAllUsers);
 	reply.results.forEach( function(user)  {
+		fixCoreuptUser(user);
 		users[user.id] = user;
 		if (!user.createTime) user.createTime = 1;
 		coreStorage.emit("user", {type: "user", user: user}, function(err) {
@@ -40,6 +41,32 @@ coreLevelDB.emit("getUsers", {identity: "mailto"}, function(err, reply) {
 		});
 	});
 });
+
+
+function fixCoreuptUser(user) {
+	if (!user.params) user.params = {};
+	if (!user.guides) user.guides = {};
+	user.identities = makeSet(user.identities);
+	
+}
+
+function fixCoreuptRoom(room) {
+	if (!room.params) room.params = {};
+	if (!room.guides) room.guides = {};
+	room.identities = makeSet(room.identities);
+}
+
+function makeSet(arr) {
+	var map = {};
+	arr.forEach(function(a) {
+		map[a] = true;
+	});
+	var r = [];
+	for (var key in map) {
+		r.push(key);
+	}
+	return r;
+}
 
 function afterSavingAllUsers() {
 	//log.d("All users", users);
@@ -70,6 +97,7 @@ function afterSavingAllUsers() {
 }
 
 function saveRoom(room, owner, callback) {
+	fixCoreuptRoom(room);
 	function save(ra) {
 		if (!room.roleSince) {
 			ra.time = Math.max(owner.createTime, room.createTime); 

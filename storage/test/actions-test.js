@@ -274,6 +274,7 @@ describe("Storage Test.", function() {
 				var old = utils.copy(room.room);
 				room.user = user.user;
 				room.old = old;
+				room.room.description = generate.sentence(32);
 				room.room.identities = room.room.identities.splice(0, 1);
 				core.emit("room", room, function() {
 					pg.connect(connString, function(err, client, cb) {
@@ -283,8 +284,14 @@ describe("Storage Test.", function() {
 							log.d("Arguments:", arguments);
 							results.forEach(function(result) {
 								room.room.identities.sort();
-								result.rows[0].identities.sort();
-								assert.deepEqual(result.rows[0].identities, room.room.identities, "updating identites failed");
+								var identResults = [];
+								result.rows[0].identities.forEach(function(identity) {
+									identResults.push(identity[1]);
+								});
+								identResults.sort();
+								room.room.identities.sort();
+								assert.deepEqual(identResults, room.room.identities, "updating identites failed");
+								assert.equal(result.rows[0].description, room.room.description, "updating description failed");
 							});
 							cb();
 							done();
