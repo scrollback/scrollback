@@ -41,6 +41,7 @@ client-config.js
 /ircClient/Data
 
 /test/config.js
+/test/config-defaults.js
 
 /public/s/styles/lace
 /public/s/styles/fonts
