@@ -68,7 +68,6 @@ require('./persona/persona-client.js');
 require('./push-notification/push-notification-client.js');
 require('./cordova/cordova-client.js');
 require('./lib/win-open-polyfill.js');
-require('./accounts-manager/accounts-manager-client.js');
 
 // components
 require('./ui/guest-settings.js');

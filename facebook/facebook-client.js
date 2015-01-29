@@ -2,10 +2,11 @@
 /* global libsb, $, facebookConnectPlugin */
 
 var config = require("../client-config-defaults.js");
+var loginWithAccManager = require("./facebook-am-client.js");
 
 function loginWithFb() {
 	if (typeof facebookConnectPlugin !== "undefined") {
-		return;
+		loginWithAccManager();
 	}
 	window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
 }

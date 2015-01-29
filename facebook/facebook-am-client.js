@@ -1,7 +1,7 @@
 /* jshint browser:true */
-/* global libsb, facebookConnectPlugin */
+/* global libsb, facebookConnectPlugin, $ */
 
-var spinner = require('./spinner.js');
+var $fbbutton =  $('.js-cordova-fb-login');
 
 libsb.on('logout', function(l, n) {
 	if (facebookConnectPlugin) {
@@ -38,16 +38,16 @@ var intervalId;
 
 function loginWithFacebook() {
 	if (typeof facebookConnectPlugin !== "undefined") {
-		spinner.spin();
+		$fbbutton.addClass('loading');
 		facebookConnectPlugin.login([], function(obj) {
 			// login success
 			console.log("Login succeeded", obj);
 			sendInit(obj.authResponse.accessToken);
-			spinner.stop();
+			$fbbutton.removeClass('loading');
 		}, function(msg) {
 			// login failed, remove spinner
 			console.log("Login failed", msg);
-			spinner.stop();
+			$fbbutton.removeClass('loading');
 		});
 		
 		if (intervalId) {
@@ -70,7 +70,7 @@ function loginWithFacebook() {
 		}, 100);
 
 		libsb.on('init-dn', function(i, n) {
-			spinner.stop();
+			$fbbutton.removeClass('loading');
 			clearInterval(intervalId);
 			intervalId = null;
 			return n();

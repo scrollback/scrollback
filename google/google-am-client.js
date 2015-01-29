@@ -1,7 +1,6 @@
 /* jshint browser:true */
-/* global libsb */
-var spinner = require('./spinner.js');
-
+/* global libsb, $ */
+var $googlebutton = $('.js-cordova-google-login');
 function sendInit(token) {
 	/* sends init with the auth token */
 	if (!token) {
@@ -35,21 +34,21 @@ function loginWithGoogle() {
 		
 	var isGuest = libsb && libsb.user && (/^guest-/).test(libsb.user.id);
 	if (window.plugins && window.plugins.googleplus) {
-		spinner.spin();
+		$googlebutton.addClass('loading');
 		window.plugins.googleplus.logout(function(m) {
 			console.log("Logged out", m);
 			window.plugins.googleplus.login({},
 				function(obj) {
 					//successCallback
 					logged_in = true;
-					spinner.stop();
+					$googlebutton.removeClass('loading');
 					console.log("Login with Google+ successfull", obj);
 					sendInit(obj.oauthToken);
 				},
 				function(msg) {
 					//errorCallback
 					console.log("Login with Google+ failed", msg);
-					spinner.stop();
+					$googlebutton.removeClass('loading');
 				});
 			if (isGuest && !logged_in) {
 				if (interval_id) {
@@ -76,7 +75,7 @@ function loginWithGoogle() {
 					// multiple intervals get added if user clicks the login button multiple times.
 					clearInterval(interval_id);
 					interval_id = null;
-					spinner.stop();
+					$googlebutton.removeClass('loading');
 					n();
 				}, 500);
 			}

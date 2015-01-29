@@ -2,7 +2,7 @@
 /* global libsb, $, currentState */
 
 var config = require("../client-config-defaults.js");
-
+var loginWithAccManager = require('./google-am-client.js');
 
 function loginWithGoogle() {
 	window.open("https:" + config.server.host + "/r/google/login", "_blank", "location=no");
@@ -12,6 +12,10 @@ var hasGooglePlugin = window.plugins && window.plugins.googleplus;
 
 if (currentState.phonegap && !hasGooglePlugin) {
 	$('.js-phonegap-google-login').click(loginWithGoogle);
+}
+
+if (currentState.phonegap && hasGooglePlugin) {
+	$('.js-phonegap-google-login').click(loginWithAccManager);
 }
 
 libsb.on('auth', function(auth, next) {
