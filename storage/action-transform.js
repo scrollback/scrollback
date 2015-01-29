@@ -118,10 +118,16 @@ exports.room = exports.user = function (action) {
 	};
 	log.d("Update entity:", action);
 	put.filters.push(['id', 'eq', entity.id]);
-	['description', 'picture', 'identities', 'timezone', 'params', 'guides'].forEach(function(p) {
+	['description', 'picture', 'timezone', 'params', 'guides'].forEach(function(p) {
 			// column name in database are lower case of property name of entity.
 			put.update.push([p.toLowerCase(), 'set', entity[p]]);
 	});
+	
+	if (entity.identities) {
+		put.update.push(['identities', 'set', entity.identities.map(function(ident) {
+			return [ident.split(':', 2)[0], ident];
+		})]);
+	}
 	if (entity.createTime) {
 		put.update.push(['createtime', 'set', new Date(entity.createTime)]);
 		put.insert.createtime = new Date(entity.createTime);
@@ -131,7 +137,7 @@ exports.room = exports.user = function (action) {
 		put.insert.deletetime = new Date(entity.deleteTime);
 	}
 	var ret = [put];
-	if (!(entity.old && entity.old.id) && (action.type == 'room')) { // add relationship role = owner
+	if ((!(action.old && action.old.id)) && (action.type === 'room')) { // add relationship role = owner
 		putOwner.insert = {
 			room: action.room.id,
 			user: action.user.id,

@@ -151,6 +151,41 @@ describe("Storage Test.", function() {
 		});
 	});
 	
+	it("getRooms query (identity, params, guides)", function(done) {
+		var room = utils.getNewRoomAction();
+		var user = utils.getNewUserAction();
+		room.user = user.user;
+		core.emit("user", user, function() {
+			core.emit("room", room, function() {
+				var updatedRoom = utils.copy(room);
+				updatedRoom.old = room.room;
+				updatedRoom.room.description =  generate.sentence(14);
+				updatedRoom.room.params = {
+					test: { test1: 1}
+				};
+				updatedRoom.room.identities = [generate.names(6) + "://" + generate.names(10), generate.names(5) + "://" + generate.names(10)];
+				updatedRoom.room.timezone = mathUtils.random(0, 24) * 30;
+				core.emit("room", updatedRoom, function() {
+					core.emit("getRooms", {type: 'getRooms', ref: room.room.id}, function(err, reply) {
+						log.d("Arguments:", arguments);
+						log.d("room:", room);
+						log.d("Updated Room", updatedRoom);
+						assert.equal(reply.results.length, 1, "Not one result");
+						var identities = updatedRoom.room.identities;
+						identities.sort();
+						reply.results[0].identities.sort();
+						assert.deepEqual(reply.results[0].identities, updatedRoom.room.identities, "room.identities did not match.");
+						assert.equal(reply.results[0].description, updatedRoom.room.description, "updation of room failed");
+						assert.deepEqual(reply.results[0].params, updatedRoom.room.params, "room.params not saved");
+						assert.equal(reply.results[0].timezone, updatedRoom.room.timezone, 'room.timezone updation failed');
+						done();
+					});
+				});
+			});
+		});
+	});
+	
+	
 	it("getRooms query (identities)", function(done) {
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
