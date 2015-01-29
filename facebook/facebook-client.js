@@ -8,7 +8,7 @@ function loginWithFb() {
 	if (typeof facebookConnectPlugin !== "undefined") {
 		loginWithAccManager();
 	}
-	window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
+	else window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
 }
 
 $('.js-cordova-fb-login').click(loginWithFb);

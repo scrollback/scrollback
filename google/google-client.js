@@ -10,11 +10,11 @@ function loginWithGoogle() {
 
 var hasGooglePlugin = window.plugins && window.plugins.googleplus;
 
-if (currentState.phonegap && !hasGooglePlugin) {
+if (currentState.cordova && !hasGooglePlugin) {
 	$('.js-phonegap-google-login').click(loginWithGoogle);
 }
 
-if (currentState.phonegap && hasGooglePlugin) {
+if (currentState.cordova && hasGooglePlugin) {
 	$('.js-phonegap-google-login').click(loginWithAccManager);
 }
 
