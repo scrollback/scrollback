@@ -38,16 +38,16 @@ var intervalId;
 
 function loginWithFacebook() {
 	if (typeof facebookConnectPlugin !== "undefined") {
-		$fbbutton.addClass('loading');
+		$fbbutton.addClass('working');
 		facebookConnectPlugin.login([], function(obj) {
 			// login success
 			console.log("Login succeeded", obj);
 			sendInit(obj.authResponse.accessToken);
-			$fbbutton.removeClass('loading');
+			$fbbutton.removeClass('working');
 		}, function(msg) {
 			// login failed, remove spinner
 			console.log("Login failed", msg);
-			$fbbutton.removeClass('loading');
+			$fbbutton.removeClass('working');
 		});
 		
 		if (intervalId) {
@@ -70,7 +70,7 @@ function loginWithFacebook() {
 		}, 100);
 
 		libsb.on('init-dn', function(i, n) {
-			$fbbutton.removeClass('loading');
+			$fbbutton.removeClass('working');
 			clearInterval(intervalId);
 			intervalId = null;
 			return n();

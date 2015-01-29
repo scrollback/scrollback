@@ -34,21 +34,21 @@ function loginWithGoogle() {
 		
 	var isGuest = libsb && libsb.user && (/^guest-/).test(libsb.user.id);
 	if (window.plugins && window.plugins.googleplus) {
-		$googlebutton.addClass('loading');
+		$googlebutton.addClass('working');
 		window.plugins.googleplus.logout(function(m) {
 			console.log("Logged out", m);
 			window.plugins.googleplus.login({},
 				function(obj) {
 					//successCallback
 					logged_in = true;
-					$googlebutton.removeClass('loading');
+					$googlebutton.removeClass('working');
 					console.log("Login with Google+ successfull", obj);
 					sendInit(obj.oauthToken);
 				},
 				function(msg) {
 					//errorCallback
 					console.log("Login with Google+ failed", msg);
-					$googlebutton.removeClass('loading');
+					$googlebutton.removeClass('working');
 				});
 			if (isGuest && !logged_in) {
 				if (interval_id) {
@@ -75,7 +75,7 @@ function loginWithGoogle() {
 					// multiple intervals get added if user clicks the login button multiple times.
 					clearInterval(interval_id);
 					interval_id = null;
-					$googlebutton.removeClass('loading');
+					$googlebutton.removeClass('working');
 					n();
 				}, 500);
 			}
