@@ -75,6 +75,23 @@ describe("Storage Test.", function() {
 		});
 	});
 	
+	it("getEntities query", function(done) {
+		var room = utils.getNewRoomAction();
+		var user = utils.getNewUserAction();
+		room.user = user.user;
+		core.emit("user", user, function() {
+			core.emit("room", room, function() {
+				core.emit("getEntities", {type: 'getEntities', ref: [room.room.id, user.user.id]}, function(err, reply) {
+					log.d("Arguments:", arguments);
+					assert.equal(reply.results.length, 2, "Should return 2 results");
+					assert.equal(reply.results[0].id, room.room.id, "wrong room");
+					assert.equal(reply.results[1].id, user.user.id, "wrong user");
+					done();
+				});
+			});
+		});
+	});
+	
 	it("getRooms query (ref is an array)", function(done) {
 		this.timeout(7000);
 		var rooms = [];

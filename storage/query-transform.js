@@ -87,8 +87,7 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		type = (iq.type === 'getEntities' ? undefined : (iq.type === 'getUsers' ? 'user' : 'room'));
 	q.source = "entities";
 	
-    
-	if (iq.type) {
+	if (type) {
 		q.filters.push([["entities", "type"], "eq", type]);
 	}
 	if (iq.ref) {

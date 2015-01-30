@@ -165,6 +165,10 @@ function afterSavingAllRooms() {
 }
 
 function sendJoin(user, room, callback) {
+	if (!users[user.id]) {
+		log("Invalid User:", user);
+		return;
+	}
 	if (!user.createTime) user.createTime = 1;
 	var joinAction = {
 		to: room.id,

@@ -63,7 +63,7 @@ process.on('SIGINT', function() {
 	function done() {
 		ct--;
 		if (ct === 0) {
-			log.d("Complete: shutting down now.");
+			log("Complete: shutting down now.");
 			process.exit(0);
 		}
 	}
