@@ -1,9 +1,14 @@
 /* jshint browser:true */
-/* global libsb, $ */
+/* global libsb, $, facebookConnectPlugin */
+
 var config = require("../client-config-defaults.js");
+var loginWithAccManager = require("./facebook-am-client.js");
 
 function loginWithFb() {
-	window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
+	if (typeof facebookConnectPlugin !== "undefined") {
+		loginWithAccManager();
+	}
+	else window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
 }
 
 $('.js-cordova-fb-login').click(loginWithFb);
@@ -13,7 +18,6 @@ libsb.on('auth', function(auth, next) {
 		text: 'Facebook',
 		prio: 100,
 		action: loginWithFb
-
 	};
 
 	next();
