@@ -14,6 +14,7 @@ redis.select(15);
 
 config["leveldb-storage"].global = config.global;
 require('./storage.js')(coreStorage, config.storage);
+config['leveldb-storage'].disableQueries = false;
 require("./../leveldb-storage/leveldb-storage.js")(coreLevelDB, config["leveldb-storage"]);
 var rooms = {};
 var users = {};
