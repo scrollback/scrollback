@@ -108,7 +108,8 @@ describe("Storage Test.", function() {
 			var text = generate.sentence(11);
 			var edit = {
 				ref: m1.id,
-				text: text
+				text: text,
+				time: new Date().getTime()
 			};
 			core.emit("edit", edit, function() {
 				pg.connect(connString, function(err, client, cb) {
@@ -133,7 +134,8 @@ describe("Storage Test.", function() {
 			var text = generate.sentence(11);
 			var edit = {
 				ref: m1.thread,
-				title: text
+				title: text,
+				time: new Date().getTime()
 			};
 			core.emit("edit", edit, function() {
 				pg.connect(connString, function(err, client, cb) {
@@ -159,7 +161,8 @@ describe("Storage Test.", function() {
 		core.emit("text", m1, function() {
 			var edit = {
 				ref: m1.id,
-				labels: {abusive: 1, color3: 1}
+				labels: {abusive: 1, color3: 1},
+				time: new Date().getTime()
 			};
 			core.emit("edit", edit, function() {
 				pg.connect(connString, function(err, client, cb) {

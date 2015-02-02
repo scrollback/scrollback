@@ -72,21 +72,22 @@ exports.edit = function (edit) {
 	addTags(edit);
 	addThread(edit);
 	// end Compatibility block.
-	if (edit.text) {
+	if (edit.text || edit.tags) {
+		put.update.push(['updatetime', 'set', new Date(edit.time)]);
+	}
+	if (edit.text || edit.tags) {
 		put.update.push(['text', 'set', edit.text]);
-		put.update.push(['updatetime', 'set', edit.time]);
+	}
+	if (edit.tags) {
+		put.update.push(['tags', 'set', edit.tags]); 
 	}
 	
 	if (edit.title) {
 		var tput = makePut('update', 'threads');
 		tput.filters.push(['id', 'eq', edit.ref]);
 		tput.update.push(['title', 'set', edit.title]);
-		tput.update.push(['updatetime', 'set', edit.time]);
+		tput.update.push(['updatetime', 'set', new Date(edit.time)]);
 		puts.push(tput);
-	}
-	
-	if (edit.tags) {
-		put.update.push(['tags', 'set', edit.tags]); 
 	}
 	
 	puts.push(put);
