@@ -60,24 +60,6 @@ function addDiscussions() {
     grid.element.appendTo(".main-content-discussions");
 }
 
-function addPeople() {
-    var list = new View({ type: "list" }),
-        headers = [ "Online (3)", "Offline (5)" ];
-
-    for (var i = 0, l = headers.length; i < l; i++) {
-        list.addHeader(headers[i]);
-
-        for (var j = 0; j < 5; j++) {
-            list.addItem($('<div class="people-list-item">').append(
-                            $('<img class="people-list-item-avatar">').attr("src", "https://secure.gravatar.com/avatar/" + generate.names(Math.floor(Math.random() * 30) + 3)+ "?d=identicon&s=48"),
-                            $('<span class="people-list-item-nick">').text(generate.names(Math.floor(Math.random() * 7) + 3))
-                         ));
-        }
-    }
-
-    list.element.appendTo(".people-list");
-}
-
 function addChat() {
     var $list = $(".chat-area-messages-list");
 
@@ -165,7 +147,6 @@ $(function() {
 
     // Generate room names
     addDiscussions();
-    addPeople();
     addChat();
 
     $(".js-sidebar-left-open").on("click", function() {
