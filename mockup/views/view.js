@@ -93,7 +93,7 @@ View.prototype = {
         this._removeStuff(id, "headers");
     },
 
-    addItem: function(item, section) {
+    addItem: function(item, section, position) {
         var $item, id;
 
         if (section && !this._sections[section]) {
@@ -112,7 +112,11 @@ View.prototype = {
 
         $item = $("<li class='" + this.type + "-item'>").attr("data-item", id).append(item);
 
-        $item.appendTo(this._sections[section]);
+        if (position === "start") {
+            $item.prependTo(this._sections[section]);
+        } else {
+            $item.appendTo(this._sections[section]);
+        }
 
         // Store the item reference
         this._items[id] = $item;

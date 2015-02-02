@@ -3,20 +3,19 @@
 
 "use strict";
 
-var config = require("./client-config-defaults.js"),
+var config = require(".././client-config-defaults.js"),
     core = new (require("ebus"))(config.appPriorities),
-    libsb = require('./interface/interface-client')(core),
-    data = require("./mockup/store/data.json"),
-    generate = require('./lib/generate.js'),
-    View = require("./mockup/views/view.js"),
-    Card = require("./mockup/views/card.js");
+    libsb = require('.././interface/interface-client')(core),
+    generate = require('.././lib/generate.js'),
+    data = require("./store/data.json");
 
 window.core = core;
 
-require("./mockup/store/state-manager.js");
-require("./mockup/components/roomlist.js");
-require("./mockup/components/user.js");
-require("./mockup/components/people.js");
+require("./store/state-manager.js");
+require("./components/roomlist.js");
+require("./components/user.js");
+require("./components/people.js");
+require("./components/discussions.js");
 
 window.currentState = data; // FIXME: should set to empty schema
 
@@ -24,41 +23,6 @@ window.currentState = data; // FIXME: should set to empty schema
 core.emit("setstate", data, function() {
     window.currentState = data;
 });
-
-function addDiscussions() {
-    var grid = new View({ type: "grid" }),
-        card, c = 0;
-
-    grid.addHeader("Discussions");
-
-    for (var j = 0; j < 12; j++) {
-        card = new Card({
-            title: generate.sentence(Math.floor(Math.random() * 7) + 3),
-            id: generate.names(Math.floor(Math.random() * 7) + 3),
-            color: c
-        }, "discussion");
-
-        c = (c < 9) ? (c + 1) : 0;
-
-        for (var k = 0; k < 5; k++) {
-            card.addMessage({
-                from: generate.names(Math.floor(Math.random() * 7) + 3),
-                text: generate.sentence(Math.floor(Math.random() * 17) + 3)
-            });
-        }
-
-        card.setCount("mention", Math.round(Math.random() * 100));
-
-        card.element.append($('<div class="card-quick-reply js-quick-reply">').append(
-                                $('<div class="card-button card-button-reply">Quick reply</div>'),
-                                $('<input type="text" class="card-entry card-entry-reply js-quick-reply-entry">')
-                            ));
-
-        grid.addItem(card.element);
-    }
-
-    grid.element.appendTo(".main-content-discussions");
-}
 
 function addChat() {
     var $list = $(".chat-area-messages-list");
@@ -146,7 +110,6 @@ $(function() {
     libsb.emit("navigate", { mode: "home" });
 
     // Generate room names
-    addDiscussions();
     addChat();
 
     $(".js-sidebar-left-open").on("click", function() {

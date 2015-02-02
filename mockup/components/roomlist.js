@@ -17,6 +17,7 @@ var View = require("../views/view.js"),
 roomlist = (function() {
     var grid = new View({ type: "grid" }),
         list = new View({ type: "list" }),
+        cards = {},
         rooms = {};
 
     grid.element.appendTo(".main-content-rooms");
@@ -26,14 +27,16 @@ roomlist = (function() {
 		addHeader: function(title) {
 			return [ grid.addHeader(title), list.addHeader(title) ];
 		},
+
 		addItem: function(roomObj, secs) {
-			var cards = [ (new Roomcard(roomObj)), (new Card(roomObj, "room")) ];
+			cards[roomObj.id] = [ (new Roomcard(roomObj)), (new Card(roomObj, "room")) ];
 
 			rooms[roomObj.id] = [
-	            grid.addItem(cards[0].element, secs[0]),
-	            list.addItem(cards[1].element, secs[1])
+	            grid.addItem(cards[roomObj.id][0].element, secs[0], "start"),
+	            list.addItem(cards[roomObj.id][1].element, secs[1], "start")
             ];
 		},
+
 		getItem: function(roomObj) {
 			var items = rooms[roomObj.id];
 
@@ -43,21 +46,32 @@ roomlist = (function() {
 
 			return [ grid.getItem(items[0]), grid.getItem(items[1]) ];
 		},
-		updateItem: function(roomObj) {
-			var cards = this.getItem[roomObj];
 
-			for (var i = 0, l = cards.length; i < l; i++) {
-				cards[i].updateCard(roomObj);
-			}
-		},
 		removeItem: function(roomObj) {
-			var cards = this.getItem[roomObj];
+			var items = this.getItem[roomObj];
 
-			for (var i = 0, l = cards.length; i < l; i++) {
-				cards[i].element.remove();
+            grid.removeItem(items[0]);
+            list.removeItem(items[1]);
+
+			delete cards[roomObj.id];
+			delete rooms[roomObj.id];
+		},
+
+		getCards: function(roomObj) {
+			var items = cards[roomObj.id];
+
+			if (!(items && items instanceof Array)) {
+				return [];
 			}
 
-			delete rooms[roomObj.id];
+			return items;
+		},
+
+		updateCards: function(roomObj) {
+			var items = this.getCards[roomObj];
+
+            items[0].updateCard(roomObj);
+            items[1].updateCard(roomObj);
 		}
 	};
 }());
@@ -81,7 +95,7 @@ core.on("statechange", function(changes, next) {
 			}
 
 			if (rooms.length) {
-				roomlist.updateItem(roomObj, sections[roomRel.role]);
+				roomlist.updateCards(roomObj);
 			} else {
 				roomlist.addItem(roomObj, sections[roomRel.role]);
 			}

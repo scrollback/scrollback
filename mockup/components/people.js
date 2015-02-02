@@ -13,13 +13,13 @@ people = {
 		users[user.id] = list.addItem($('<div class="people-list-item">').append(
 	                        $('<img class="people-list-item-avatar">').attr("src", user.picture),
 	                        $('<span class="people-list-item-nick">').text(user.id)
-	                     ), section);
+	                     ), section, "start");
 
 		return users[user.id];
 	},
 
 	removeItem: function(user) {
-		users[user.id].remove();
+		list.removeItem(users[user.id]);
 
 		delete users[user.id];
 	}
