@@ -31,7 +31,6 @@ Counter.prototype.done = function() {
 };
 Counter.prototype.inc = function(i) {
 	this.count += i;
-	//process.exit(0);
 };
 coreLevelDB.emit("getUsers", {identity: "mailto"}, function(err, reply) {
 	console.log(JSON.stringify(reply));
@@ -162,6 +161,7 @@ function removeInitialPartOfResults(reply, timestamp, lastId, room) {
 function getQueriesForTextMessages(texts) {
 	var r = [];
 	texts.forEach(function(text) {
+		fixCoreuptText(text);
 		var transform = actionTr.text(text);
 		var q = (postgres.transformsToQuery(transform));
 		q.forEach(function(query) {
@@ -170,6 +170,12 @@ function getQueriesForTextMessages(texts) {
 		
 	});
 	return r;
+}
+
+function fixCoreuptText(text) {
+	delete text.labels.normal;
+	delete text.labels.nonsense;
+	delete text.labels.spam;
 }
 
 

@@ -57,7 +57,7 @@ exports.text = function (text) {
 			['endtime', 'set', new Date(text.time)],
 			['length', 'incr', 1]
 		];
-		if(text.title) put.update.push(['title', 'set', text.title]);
+		if (text.title) put.update.push(['title', 'set', text.title]);
 		puts.push(put);
 	}
 	return puts;
