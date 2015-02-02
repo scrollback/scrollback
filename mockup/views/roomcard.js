@@ -24,7 +24,7 @@ function Roomcard(opts) {
                 this._messagebadge,
                 this.more
             ),
-            $('<div class="card-cover-logo">').css("background-image", "url(" + opts.avatar + ")"),
+            $('<div class="card-cover-logo">').css("background-image", "url(" + opts.picture + ")"),
             this._title
         ).css("background-image", "url(" + opts.cover + ")")
     ).attr({

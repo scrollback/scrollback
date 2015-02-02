@@ -2,19 +2,7 @@
 /* global $ */
 
 function Card(opts, type) {
-    var title;
-
-    if (typeof opts !== "object") {
-        throw new Error("Invalid options passed");
-    }
-
-    title = opts.title || opts.id;
-
-    if (typeof title !== "string") {
-        throw new Error("Invalid title passed");
-    }
-
-    this._title = $('<h3 class="card-header-title">').text(title);
+    this._title = $('<h3 class="card-header-title">');
 
     this._mentionbadge = $('<span class="card-header-badge notification-badge notification-badge-mention">').attr("data-empty", "");
     this._messagebadge = $('<span class="card-header-badge notification-badge notification-badge-messages">').attr("data-empty", "");
@@ -28,16 +16,43 @@ function Card(opts, type) {
             this._messagebadge,
             this.more
         )
-    ).attr("data-color", (typeof opts.color !== "undefined") ? opts.color : '');
+    );
 
-    if (type) {
-        this.element.attr("data-" + type, title);
-    }
+    this.type = type;
 
-    this.id = opts.id;
+    this.updateCard(opts);
 }
 
 Card.prototype = {
+    updateCard: function(opts) {
+        var title;
+
+        if (typeof opts !== "object") {
+            throw new Error("Invalid options passed");
+        }
+
+        title = opts.title || opts.id;
+
+        if (typeof title !== "string") {
+            throw new Error("Invalid title passed");
+        }
+
+        if (title !== this._currentTitle) {
+            this._title.text(title);
+
+            if (this.type) {
+                this.element.attr("data-" + this.type, title);
+            }
+
+            this._currentTitle = title;
+        }
+
+        if (opts.color !== this._currentColor) {
+            this.element.attr("data-color", (typeof opts.color !== "undefined") ? opts.color : '');
+
+            this._currentColor = opts.color;
+        }
+    },
     setTitle: function(text) {
         if (typeof text !== "string") {
             throw new Error("Invalid title specified");

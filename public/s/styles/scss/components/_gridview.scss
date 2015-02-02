@@ -6,7 +6,7 @@
     font-weight: 700;
 }
 
-@mixin gridcontent {
+@mixin gridsection {
     @extend %clearfix;
 
     list-style: none;
@@ -51,7 +51,7 @@
 @include exports(gridview) {
     .grid-header { @include gridheader; }
 
-    .grid-content { @include gridcontent; }
+    .grid-section { @include gridsection; }
 
     .grid-item { @include griditem; }
 }

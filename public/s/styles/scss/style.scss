@@ -71,6 +71,8 @@ body {
     &-left {
         .card-header { border-bottom: none; }
 
+        .list-section { background-color: transparent; }
+
         .list-item {
             &:focus, &:hover { background-color: darken($dark-color, 5%); }
 
@@ -138,6 +140,7 @@ body {
     @include dropshadow(2);
 
     width: 100%;
+    cursor: pointer;
 
     &-logo {
         float: left;
@@ -145,7 +148,25 @@ body {
         margin: .75em .5em;
     }
 
-    &-icon { float: right; }
+    &-icon {
+        $icon-width: $bar-height / 1.5;
+
+        @extend %appear;
+
+        float: right;
+        font-size: 1.5em;
+        padding: (1em / 1.5);
+        color: inherit;
+        height: 100%;
+        width: $icon-width;
+        min-width: $icon-width;
+        max-width: $icon-width;
+        line-height: 1;
+
+        &:hover, &:focus, &:active { color: inherit; }
+
+        &-grid { @include icon(grid); }
+    }
 }
 
 .appbar-primary {

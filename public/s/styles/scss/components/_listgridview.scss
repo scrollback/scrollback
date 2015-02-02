@@ -9,11 +9,11 @@
         @media #{$screenxxx} { @include gridheader; }
     }
 
-    .listgrid-content {
+    .listgrid-section {
         @extend %transition;
-        @extend .list-content;
+        @extend .list-section;
 
-        @media #{$screenxxx} { @include gridcontent; }
+        @media #{$screenxxx} { @include gridsection; }
     }
 
     .listgrid-item {

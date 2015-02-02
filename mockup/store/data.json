@@ -1,0 +1,379 @@
+{
+	"nav": {
+		"mode": "loading",
+		"view": "main",
+		"room": "numix"
+	},
+
+	"user": "satya164",
+
+	"session": {},
+
+	"content": {
+		"numix": {
+			"textRanges": {
+				"thread1": [{
+					"start": 14948874892847,
+					"end": null,
+					"items": [
+						{ "from": "kamal1991", "text": "Hello world!", "id": 0 },
+						{ "from": "satya164", "text": "Welcome", "id": 1 },
+						{ "from": "priynag", "text": "whassup kamal1991?", "id": 2 },
+						{ "from": "harish", "text": "what's going on", "id": 4 },
+						{ "from": "amalantony", "text": "hello there", "id": 5 },
+						{ "from": "kamal1991", "text": "I'm kamal1991", "id": 6 },
+						{ "from": "priynag", "text": "I'm not groot", "id": 7 },
+						{ "from": "satya164", "text": "hello grooty", "id": 8 },
+						{ "from": "amalantony", "text": "what the hell", "id": 9 },
+						{ "from": "harish", "text": "oh god", "id": 10 },
+						{ "from": "priynag", "text": "I know right", "id": 11 },
+						{ "from": "kamal1991", "text": "just testing", "id": 12 },
+						{ "from": "harish", "text": "what are you testing", "id": 13 },
+						{ "from": "kamal1991", "text": "stuff", "id": 14 },
+						{ "from": "kamal1991", "text": "important stuff", "id": 15 },
+						{ "from": "priynag", "text": "okay", "id": 16 },
+						{ "from": "priynag", "text": "keep testing", "id": 18 },
+						{ "from": "priynag", "text": "just don't spam, okay", "id": 19 }
+					]
+				}]
+			},
+			"threadRanges": [{
+				"start": 14948874892847,
+				"end": null,
+				"items": [
+					{ "title": "Testing", "id": "thread1" },
+					{ "title": "Some thread", "id": "thread2" }
+				]
+			}]
+		},
+		"scrollback": {
+			"textRanges": {
+				"thread1": [{
+					"start": 14948874892847,
+					"end": null,
+					"items": [
+						{ "from": "kamal1991", "text": "Hello world!", "id": 0 },
+						{ "from": "satya164", "text": "Welcome", "id": 1 },
+						{ "from": "priynag", "text": "whassup kamal1991?", "id": 2 },
+						{ "from": "harish", "text": "what's going on", "id": 4 },
+						{ "from": "amalantony", "text": "hello there", "id": 5 },
+						{ "from": "kamal1991", "text": "I'm kamal1991", "id": 6 },
+						{ "from": "priynag", "text": "I'm not groot", "id": 7 },
+						{ "from": "satya164", "text": "hello grooty", "id": 8 },
+						{ "from": "amalantony", "text": "what the hell", "id": 9 },
+						{ "from": "harish", "text": "oh god", "id": 10 },
+						{ "from": "priynag", "text": "I know right", "id": 11 },
+						{ "from": "kamal1991", "text": "just testing", "id": 12 },
+						{ "from": "harish", "text": "what are you testing", "id": 13 },
+						{ "from": "kamal1991", "text": "stuff", "id": 14 },
+						{ "from": "kamal1991", "text": "important stuff", "id": 15 },
+						{ "from": "priynag", "text": "okay", "id": 16 },
+						{ "from": "priynag", "text": "keep testing", "id": 18 },
+						{ "from": "priynag", "text": "just don't spam, okay", "id": 19 }
+					]
+				}]
+			},
+			"threadRanges": [{
+				"start": 14948874892847,
+				"end": null,
+				"items": [
+					{ "title": "Testing", "id": "thread1" },
+					{ "title": "Some thread", "id": "thread2" }
+				]
+			}]
+		},
+		"mozillaindia": {},
+		"potterheads": {},
+		"chefs": {},
+		"owlgirl": {},
+		"memeworld": {},
+		"booklovers": {},
+		"bigbang": {},
+		"shield": {},
+		"theflash": {},
+		"thearrow": {},
+		"doctorwho": {},
+		"broadchurch": {}
+	},
+
+	"entities": {
+		"numix": {
+			"id": "numix",
+			"description": "Room for the Numix Project",
+			"cover": "https://unsplash.imgix.net/photo-1418226970361-9f1f7227d638?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"picture": "https://unsplash.imgix.net/photo-1416424312427-baefa7707d85?fit=crop&fm=jpg&h=800&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"scrollback": {
+			"id": "scrollback",
+			"description": "The official Scrollback room",
+			"cover": "https://unsplash.imgix.net/photo-1416184008836-5486f3e2cf58?fit=crop&fm=jpg&q=75&w=1050",
+			"picture": "https://ununsplash.imgix.net/photo-1416339306562-f3d12fefd36f?fit=crop&fm=jpg&h=800&q=75&w=1050",
+			"createTime": 1262080091000,
+			"type": "room"
+		},
+		"mozillaindia": {
+			"id": "mozillaindia",
+			"description": "Room for the Numix Project",
+			"cover": "https://ununsplash.imgix.net/photo-1413913619092-816734eed3a7?fit=crop&fm=jpg&h=600&q=75&w=1050",
+			"picture": "https://unsplash.imgix.net/photo-1416339411116-62e1226aacd8?fit=crop&fm=jpg&h=1400&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"potterheads": {
+			"id": "potterheads",
+			"description": "Room for the Numix Project",
+			"cover": "https://unsplash.imgix.net/uploads/1413386993023a925afb4/4e769802?fit=crop&fm=jpg&q=75&w=1050",
+			"picture": "https://ununsplash.imgix.net/photo-1416339426675-1f96fd81b653?fit=crop&fm=jpg&h=800&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"chefs": {
+			"id": "chefs",
+			"description": "Room for the Numix Project",
+			"cover": "https://ununsplash.imgix.net/uploads/14132599381062b4d4ede/3b6f33f2?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"picture": "https://unsplash.imgix.net/photo-1416339442236-8ceb164046f8?fit=crop&fm=jpg&h=775&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"owlgirl": {
+			"id": "owlgirl",
+			"description": "Room for the Numix Project",
+			"cover": "https://unsplash.imgix.net/reserve/URG2BbWQQ9SAcqLuTOLp_BP7A9947.jpg?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"picture": "https://ununsplash.imgix.net/photo-1416339672936-7fe434088e8c?fit=crop&fm=jpg&h=800&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"memeworld": {
+			"id": "memeworld",
+			"description": "Room for the Numix Project",
+			"cover": "https://unsplash.imgix.net/reserve/O7A9fAvYSXC7NTdz8gLQ_IMGP1039.jpg?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"picture": "https://ununsplash.imgix.net/photo-1416339698674-4f118dd3388b?fit=crop&fm=jpg&h=1400&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"booklovers": {
+			"id": "booklovers",
+			"description": "Room for the Numix Project",
+			"cover": "https://unsplash.imgix.net/photo-1416838375725-e834a83f62b7?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"picture": "https://unsplash.imgix.net/photo-1414542563971-94513793d046?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"bigbang": {
+			"id": "bigbang",
+			"description": "Room for the Numix Project",
+			"cover": "https://ununsplash.imgix.net/uploads/141319062591093cefc09/ad50c1f0?fit=crop&fm=jpg&h=725&q=75&w=1050",
+			"picture": "https://unsplash.imgix.net/reserve/unsplash_52d9133506548_1.JPG?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"shield": {
+			"id": "shield",
+			"description": "Room for the Numix Project",
+			"cover": "https://ununsplash.imgix.net/reserve/eBJIgrh3TCeHf7unLQ5e_sailing-5.jpg?fit=crop&fm=jpg&h=800&q=75&w=1050",
+			"picture": "https://unsplash.imgix.net/reserve/UJO0jYLtRte4qpyA37Xu_9X6A7388.jpg?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"theflash": {
+			"id": "theflash",
+			"description": "Room for the Numix Project",
+			"cover": "https://ununsplash.imgix.net/reserve/unsplash_5288cc8f3571d_1.JPG?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"picture": "https://unsplash.imgix.net/reserve/nE6neNVdRPSIasnmePZe_IMG_1950.jpg?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"thearrow": {
+			"id": "thearrow",
+			"description": "Room for the Numix Project",
+			"cover": "https://unsplash.imgix.net/photo-1417962798089-0c93ceaed88a?fit=crop&fm=jpg&h=1575&q=75&w=1050",
+			"picture": "https://ununsplash.imgix.net/uploads/1413395496082cbc91228/43e39040?fit=crop&fm=jpg&h=1575&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"doctorwho": {
+			"id": "doctorwho",
+			"description": "Room for the Numix Project",
+			"cover": "https://unsplash.imgix.net/photo-1415033523948-6c31d010530d?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"picture": "https://ununsplash.imgix.net/uploads/1413399939678471ea070/2c0343f7?fit=crop&fm=jpg&h=725&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"broadchurch": {
+			"id": "broadchurch",
+			"description": "Room for the Numix Project",
+			"cover": "https://unsplash.imgix.net/photo-1414924347000-9823c338079b?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"picture": "https://ununsplash.imgix.net/photo-1414788020357-3690cfdab669?fit=crop&fm=jpg&h=700&q=75&w=1050",
+			"createTime": 1382080091000,
+			"type": "room"
+		},
+		"satya164": {
+			"id": "satya164",
+			"picture": "https://lh4.googleusercontent.com/-oj3ghzcr1Qg/AAAAAAAAAAI/AAAAAAAAOkw/wjtabXxcxVk/photo.jpg",
+			"description": "Designer at Scrollback",
+			"type": "user"
+		},
+		"kamal1991": {
+			"id": "kamal1991",
+			"picture": "https://gravatar.com/avatar/ead87e79344a51627fc6ab2ebf4dcb04/?d=monsterid",
+			"description": "Algo expert",
+			"type": "user"
+		},
+		"priynag": {
+			"id": "priynag",
+			"picture": "https://graph.facebook.com/1744567329/picture?type=square",
+			"description": "Some random girl",
+			"type": "user"
+		},
+		"harish": {
+			"id": "harish",
+			"picture": "https://gravatar.com/avatar/48925cfb6a8ae4b1a0e4fb374afacddc/?d=retro",
+			"description": "It's complicated",
+			"type": "user"
+		},
+		"amalantony": {
+			"id": "amalantony",
+			"picture": "https://lh4.googleusercontent.com/-sQHR-oF_rt8/AAAAAAAAAAI/AAAAAAAAAyk/dbGIJ6k0H5s/photo.jpg",
+			"description": "blah blah blah",
+			"type": "user"
+		}
+	},
+
+	"relations": [
+		{
+			"room": "numix",
+			"user": "satya164",
+			"role": "owner",
+			"status": "online"
+		},
+		{
+			"room": "numix",
+			"user": "kamal1991",
+			"role": "member",
+			"status": "online"
+		},
+		{
+			"room": "numix",
+			"user": "priynag",
+			"role": "member",
+			"status": "offline"
+		},
+		{
+			"room": "numix",
+			"user": "harish",
+			"role": "visitor",
+			"status": "offline"
+		},
+		{
+			"room": "numix",
+			"user": "amalantony",
+			"role": "visitor",
+			"status": "offline"
+		},
+		{
+			"room": "scrollback",
+			"user": "satya164",
+			"role": "owner",
+			"status": "online"
+		},
+		{
+			"room": "scrollback",
+			"user": "kamal1991",
+			"role": "member",
+			"status": "online"
+		},
+		{
+			"room": "scrollback",
+			"user": "priynag",
+			"role": "member",
+			"status": "offline"
+		},
+		{
+			"room": "scrollback",
+			"user": "harish",
+			"role": "visitor",
+			"status": "offline"
+		},
+		{
+			"room": "scrollback",
+			"user": "amalantony",
+			"role": "visitor",
+			"status": "offline"
+		},
+		{
+			"room": "mozillaindia",
+			"user": "satya164",
+			"role": "member",
+			"status": "online"
+		},
+		{
+			"room": "potterheads",
+			"user": "satya164",
+			"role": "visitor",
+			"status": "online"
+		},
+		{
+			"room": "chefs",
+			"user": "satya164",
+			"role": "visitor",
+			"status": "online"
+		},
+		{
+			"room": "memeworld",
+			"user": "satya164",
+			"role": "visitor",
+			"status": "online"
+		},
+		{
+			"room": "booklovers",
+			"user": "satya164",
+			"role": "visitor",
+			"status": "online"
+		},
+		{
+			"room": "bigbang",
+			"user": "satya164",
+			"role": "visitor",
+			"status": "online"
+		},
+		{
+			"room": "shield",
+			"user": "satya164",
+			"role": "member",
+			"status": "online"
+		},
+		{
+			"room": "theflash",
+			"user": "satya164",
+			"role": "member",
+			"status": "online"
+		},
+		{
+			"room": "thearrow",
+			"user": "satya164",
+			"role": "member",
+			"status": "online"
+		},
+		{
+			"room": "doctorwho",
+			"user": "satya164",
+			"role": "member",
+			"status": "online"
+		},
+		{
+			"room": "broadchurch",
+			"user": "satya164",
+			"role": "member",
+			"status": "online"
+		}
+	],
+
+	"indexes": {
+		"userRooms": {},
+		"roomUsers": {}
+	}
+}
+
+

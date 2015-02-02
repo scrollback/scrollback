@@ -6,7 +6,7 @@
     font-weight: 700;
 }
 
-@mixin listcontent {
+@mixin listsection {
     @include dropshadow(1);
 
     background-color: $light-color;
@@ -33,7 +33,7 @@
 @include exports(listview) {
     .list-header { @include listheader; }
 
-    .list-content { @include listcontent; }
+    .list-section { @include listsection; }
 
     .list-item { @include listitem; }
 }

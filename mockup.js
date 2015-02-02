@@ -6,88 +6,24 @@
 var config = require("./client-config-defaults.js"),
     core = new (require("ebus"))(config.appPriorities),
     libsb = require('./interface/interface-client')(core),
+    data = require("./mockup/store/data.json"),
     generate = require('./lib/generate.js'),
-    View = require("./mockup/view.js"),
-    Card = require("./mockup/card.js"),
-    Roomcard = require("./mockup/roomcard.js"),
-    covers = [
-        "https://unsplash.imgix.net/photo-1418226970361-9f1f7227d638?fit=crop&fm=jpg&h=700&q=75&w=1050",
-        "https://unsplash.imgix.net/photo-1416184008836-5486f3e2cf58?fit=crop&fm=jpg&q=75&w=1050",
-        "https://ununsplash.imgix.net/photo-1413913619092-816734eed3a7?fit=crop&fm=jpg&h=600&q=75&w=1050",
-        "https://unsplash.imgix.net/uploads/1413386993023a925afb4/4e769802?fit=crop&fm=jpg&q=75&w=1050",
-        "https://ununsplash.imgix.net/uploads/14132599381062b4d4ede/3b6f33f2?fit=crop&fm=jpg&h=700&q=75&w=1050",
-        "https://unsplash.imgix.net/reserve/URG2BbWQQ9SAcqLuTOLp_BP7A9947.jpg?fit=crop&fm=jpg&h=700&q=75&w=1050",
-        "https://unsplash.imgix.net/reserve/O7A9fAvYSXC7NTdz8gLQ_IMGP1039.jpg?fit=crop&fm=jpg&h=700&q=75&w=1050",
-        "https://unsplash.imgix.net/photo-1419332563740-42322047ff09?fit=crop&fm=jpg&h=700&q=75&w=1050",
-        "https://unsplash.imgix.net/photo-1416838375725-e834a83f62b7?fit=crop&fm=jpg&h=700&q=75&w=1050",
-        "https://ununsplash.imgix.net/uploads/141319062591093cefc09/ad50c1f0?fit=crop&fm=jpg&h=725&q=75&w=1050",
-        "https://ununsplash.imgix.net/reserve/eBJIgrh3TCeHf7unLQ5e_sailing-5.jpg?fit=crop&fm=jpg&h=800&q=75&w=1050",
-        "https://ununsplash.imgix.net/reserve/unsplash_5288cc8f3571d_1.JPG?fit=crop&fm=jpg&h=700&q=75&w=1050",
-        "https://unsplash.imgix.net/photo-1417962798089-0c93ceaed88a?fit=crop&fm=jpg&h=1575&q=75&w=1050",
-        "https://unsplash.imgix.net/photo-1415033523948-6c31d010530d?fit=crop&fm=jpg&h=700&q=75&w=1050",
-        "https://unsplash.imgix.net/photo-1414924347000-9823c338079b?fit=crop&fm=jpg&h=700&q=75&w=1050"
-    ],
-    avatars = [
-        "http://svgavatars.com/style/svg/01.svg",
-        "http://svgavatars.com/style/svg/02.svg",
-        "http://svgavatars.com/style/svg/03.svg",
-        "http://svgavatars.com/style/svg/04.svg",
-        "http://svgavatars.com/style/svg/05.svg",
-        "http://svgavatars.com/style/svg/06.svg",
-        "http://svgavatars.com/style/svg/07.svg",
-        "http://svgavatars.com/style/svg/08.svg",
-        "http://svgavatars.com/style/svg/09.svg",
-        "http://svgavatars.com/style/svg/10.svg",
-        "http://svgavatars.com/style/svg/11.svg",
-        "http://svgavatars.com/style/svg/12.svg",
-        "http://svgavatars.com/style/svg/13.svg",
-        "http://svgavatars.com/style/svg/14.svg",
-        "http://svgavatars.com/style/svg/15.svg",
-    ];
+    View = require("./mockup/views/view.js"),
+    Card = require("./mockup/views/card.js");
 
-function addRooms() {
-    var grid = new View({ type: "grid" }),
-        list = new View({ type: "list" }),
-        headers = [ "My rooms", "Following", "Featured" ],
-        card1, card2, c  = 0;
+window.core = core;
 
-    for (var i = 0, l = headers.length; i < l; i++) {
-        grid.addHeader(headers[i]);
-        list.addHeader(headers[i]);
+require("./mockup/store/state-manager.js");
+require("./mockup/components/roomlist.js");
+require("./mockup/components/user.js");
+require("./mockup/components/people.js");
 
-        for (var j = 0; j < 5; j++) {
-            card1 = new Roomcard({
-                id: generate.names(Math.floor(Math.random() * 7) + 3),
-                color: Math.floor(Math.random() * 10),
-                cover: covers[c],
-                avatar: avatars[c]
-            });
+window.currentState = data; // FIXME: should set to empty schema
 
-            c += 1;
-
-            card2 = new Card({ id: generate.names(Math.floor(Math.random() * 7) + 3) }, "room");
-
-            for (var k = 0; k < 5; k++) {
-                card1.addMessage({
-                    count: Math.round((Math.random() * 10) + 1),
-                    from: generate.names(Math.floor(Math.random() * 7) + 3),
-                    text: generate.sentence(Math.floor(Math.random() * 17) + 3)
-                });
-            }
-
-            if (Math.random() < 0.5) {
-                card1.setCount("mention", Math.round(Math.random() * 100)).setCount("message", Math.round(Math.random() * 100));
-                card2.setCount("mention", Math.round(Math.random() * 100));
-            }
-
-            grid.addItem(card1.element);
-            list.addItem(card2.element);
-        }
-    }
-
-    grid.element.appendTo(".main-content-rooms");
-    list.element.appendTo(".room-list");
-}
+// Send the initial setstate event
+core.emit("setstate", data, function() {
+    window.currentState = data;
+});
 
 function addDiscussions() {
     var grid = new View({ type: "grid" }),
@@ -229,7 +165,6 @@ $(function() {
     libsb.emit("navigate", { mode: "home" });
 
     // Generate room names
-    addRooms();
     addDiscussions();
     addPeople();
     addChat();
