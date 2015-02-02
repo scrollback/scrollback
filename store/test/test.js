@@ -1,10 +1,6 @@
 var ebus = require("ebus");
 var core = new ebus();
 
-var listeners = {
-	onBoot: [],
-	onChange: []
-};
 var state = {
     "nav": {
         "mode": "loading",
@@ -29,4 +25,6 @@ var options = {
     state: state;
 };
 
-require("./validation.js")(core, {}, options);
+//require("../nav-manager.js")(core, {}, options);
+//require("../state-manager.js")(core, {}, options);
+
