@@ -102,7 +102,8 @@ var defaults = {
 		server: "localhost"
 	},
 	"leveldb-storage": {
-		path: "/data"
+		path: "/data",
+		disableQueries: true
 	},
 	recommendation:{
 		redisDB: 13
