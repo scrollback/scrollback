@@ -50,10 +50,9 @@ function addDiscussions() {
         card.setCount("mention", Math.round(Math.random() * 100));
 
         card.element.append($('<div class="card-quick-reply js-quick-reply">').append(
-                                $('<div class="card-quick-reply-content">').append(
-                                    $('<div class="card-button card-button-reply">Quick reply</div>'),
-                                    $('<input type="text" class="card-entry card-entry-reply js-quick-reply-entry">')
-                            )));
+                                $('<div class="card-button card-button-reply">Quick reply</div>'),
+                                $('<input type="text" class="card-entry card-entry-reply js-quick-reply-entry">')
+                            ));
 
         grid.addItem(card.element);
     }
@@ -239,7 +238,7 @@ $(function() {
         });
     });
 
-    $(document).on("blur", ".js-quick-reply-entry", function() {
+    $(document).on("blur", ".js-quick-reply", function() {
         $(this).closest(".js-quick-reply").removeClass("active");
     });
 });
