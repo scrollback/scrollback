@@ -1,7 +1,6 @@
 /* jshint browser: true */
-/* global core */
+/* global core, $ */
 
-"use strict";
 
 var View = require("../views/view.js"),
 	Card = require("../views/card.js"),
@@ -105,3 +104,26 @@ core.on("statechange", function(changes, next) {
 	next();
 }, 500);
 
+
+$(document).on("click", ".js-room-card", function(e) {
+    if ($(e.target).closest(".js-room-more").length) {
+        return;
+    }
+
+    core.emit("setstate", {
+        nav: {
+            mode: "room",
+            roomName: $(this).attr("data-room"),
+            view: null
+        }
+    });
+});
+
+$(".js-goto-room").on("click", function() {
+    core.emit("setstate", {
+        nav: {
+            mode: "room",
+            view: null
+        }
+    });
+});

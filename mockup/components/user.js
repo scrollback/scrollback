@@ -18,3 +18,8 @@ core.on("statechange", function(changes, next) {
 
 	next();
 }, 500);
+
+
+$(".js-follow-room").on("click", function() {
+    $("body").toggleClass("role-follower");
+});

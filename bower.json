@@ -19,6 +19,7 @@
     "sockjs": "~0.3.4",
     "svg4everybody": "*",
     "transformie": "*",
-    "velocity": "~1.2.1"
+    "velocity": "~1.2.1",
+    "elan": "*"
   }
 }

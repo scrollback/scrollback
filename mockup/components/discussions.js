@@ -1,5 +1,6 @@
 /* jshint browser: true */
-/* global core */
+/* global core, $ */
+
 
 var View = require("../views/view.js"),
 	Card = require("../views/card.js"),
@@ -65,3 +66,37 @@ core.on("statechange", function(changes, next) {
 
 	next();
 }, 500);
+
+$(document).on("click", ".js-discussion-card", function(e) {
+    var $target = $(e.target),
+        $quickreply;
+
+    if ($target.closest(".js-discussion-more").length) {
+        return;
+    }
+
+    $quickreply = $target.closest(".js-quick-reply");
+
+    if ($quickreply.length) {
+        $quickreply.addClass("active");
+
+        setTimeout(function() {
+            $quickreply.find(".js-quick-reply-entry").focus();
+        }, 200);
+
+        return;
+    }
+
+    core.emit("setstate", {
+        nav: {
+            mode: "chat",
+            discussionId: $(this).attr("data-discussion"),
+            color: $(this).attr("data-color"),
+            view: null
+        }
+    });
+});
+
+$(document).on("blur", ".js-quick-reply", function() {
+    $(this).closest(".js-quick-reply").removeClass("active");
+});

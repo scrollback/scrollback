@@ -1,6 +1,6 @@
 {
 	"nav": {
-		"mode": "loading",
+		"mode": "home",
 		"view": "main",
 		"room": "numix"
 	},
