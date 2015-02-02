@@ -20,14 +20,16 @@ var View = function(opts) {
 };
 
 View.prototype = {
-    _removeStuff: function(id, type) {
-        var reference;
-
+    _getStuff: function(id, type) {
         if (typeof id !== "string") {
             throw new Error("Invalid " + type + " specified");
         }
 
-        reference = this["_" + type][id];
+        return this["_" + type][id];
+    },
+
+    _removeStuff: function(id, type) {
+        var reference = this.getItem(id, type);
 
         if (!reference) {
             throw new Error(type + " doesn't exist");
@@ -54,6 +56,10 @@ View.prototype = {
         return id;
     },
 
+    getSection: function(id) {
+        this._getStuff(id, "sections");
+    },
+
     removeSection: function(id) {
         this._removeStuff(id, "sections");
     },
@@ -77,6 +83,10 @@ View.prototype = {
 
         // Add a new section
         return this.addSection();
+    },
+
+    getHeader: function(id) {
+        this._getStuff(id, "headers");
     },
 
     removeHeader: function(id) {
@@ -110,12 +120,12 @@ View.prototype = {
         return id;
     },
 
-    removeItem: function(id) {
-        this._removeStuff(id, "items");
+    getItem: function(id) {
+        this._getStuff(id, "items");
     },
 
-    getItem: function(id) {
-        return this["_" + type][id];
+    removeItem: function(id) {
+        this._removeStuff(id, "items");
     }
 };
 

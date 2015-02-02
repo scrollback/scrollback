@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+var Card = require("./card.js");
+
 function Roomcard(opts) {
     if (typeof opts !== "object") {
         throw new Error("Invalid options passed");
@@ -35,67 +37,35 @@ function Roomcard(opts) {
     this.id = opts.id;
 }
 
-Roomcard.prototype = {
-    setTitle: function(text) {
-        if (typeof text !== "string") {
-            throw new Error("Invalid title specified");
-        }
+Roomcard.prototype = Object.create(Card.prototype);
 
-        this._title.text(text);
-
-        return this;
-    },
-    setCount: function(type, text) {
-        var $badge;
-
-        if (typeof type !== "string" || !this["_" + type + "badge"]) {
-            throw new Error("Invalid property specified");
-        }
-
-        if (typeof text !== "string" && typeof text !== "number") {
-            throw new Error("Invalid value");
-        }
-
-        $badge = this["_" + type + "badge"];
-
-        if (text) {
-            $badge.removeAttr("data-empty");
-        } else {
-            $badge.attr("data-empty", true);
-        }
-
-        $badge.text(text);
-
-        return this;
-    },
-    addMessage: function(message) {
-        if (typeof message !== "object") {
-            throw new Error("Invalid message");
-        }
-
-        if (typeof message.from !== "string") {
-            throw new Error("Invalid 'from' property in message");
-        }
-
-        if (typeof message.text !== "string") {
-            throw new Error("Invalid 'text' property in message");
-        }
-
-        if (!this._content) {
-            this._content = $('<div class="card-content card-content-big">');
-            this._content.append($('<h4 class="card-content-title">').text("Recent discussions"));
-            this._content.appendTo(this.element);
-        }
-
-        this._content.append(
-            $('<div class="card-discussion">').append(
-                $('<span class="card-discussion-message">').text(message.text),
-                $('<span class="card-discussion-by">').text(message.from + " and " + message.count + " others")
-            )
-        );
-
-        return this;
+Roomcard.prototype.addMessage = function(message) {
+    if (typeof message !== "object") {
+        throw new Error("Invalid message");
     }
+
+    if (typeof message.from !== "string") {
+        throw new Error("Invalid 'from' property in message");
+    }
+
+    if (typeof message.text !== "string") {
+        throw new Error("Invalid 'text' property in message");
+    }
+
+    if (!this._content) {
+        this._content = $('<div class="card-content card-content-big">');
+        this._content.append($('<h4 class="card-content-title">').text("Recent discussions"));
+        this._content.appendTo(this.element);
+    }
+
+    this._content.append(
+        $('<div class="card-discussion">').append(
+            $('<span class="card-discussion-message">').text(message.text),
+            $('<span class="card-discussion-by">').text(message.from + " and " + message.count + " others")
+        )
+    );
+
+    return this;
 };
 
 module.exports = Roomcard;

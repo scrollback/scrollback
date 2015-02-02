@@ -43,6 +43,13 @@ roomlist = (function() {
 
 			return [ grid.getItem(items[0]), grid.getItem(items[1]) ];
 		},
+		updateItem: function(roomObj) {
+			var cards = this.getItem[roomObj];
+
+			for (var i = 0, l = cards.length; i < l; i++) {
+				cards[i].updateCard(roomObj);
+			}
+		},
 		removeItem: function(roomObj) {
 			var cards = this.getItem[roomObj];
 
@@ -69,12 +76,14 @@ core.on("statechange", function(changes, next) {
 			roomObj = changes.entities[roomRel.room];
 			rooms = roomlist.getItem(roomObj);
 
-			if (!rooms.length) {
-				if (roomObj === null) {
-					roomlist.removeItem(roomObj);
-				} else {
-					roomlist.addItem(roomObj, sections[roomRel.role]);
-				}
+			if (roomObj === null) {
+				roomlist.remove({ id: roomRel.room });
+			}
+
+			if (rooms.length) {
+				roomlist.updateItem(roomObj, sections[roomRel.role]);
+			} else {
+				roomlist.addItem(roomObj, sections[roomRel.role]);
 			}
 		}
 	}
