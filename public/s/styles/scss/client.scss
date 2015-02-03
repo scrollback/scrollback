@@ -1284,6 +1284,7 @@ body {
 
     pre, blockquote {
         margin: 1em 0;
+        clear: both;
 
         &:first-child { margin-top: 0; }
 
@@ -1296,6 +1297,7 @@ body {
         font-style: italic;
         padding-left: 1em;
         border-left: 2px solid darken($light-color, 10%);
+        clear: both;
     }
 
     p {
