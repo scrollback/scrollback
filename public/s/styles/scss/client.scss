@@ -380,13 +380,13 @@ body {
 }
 
 .pane-info-privacy {
+    font-size: .8em;
     position: absolute;
     bottom: 0;
     width: 100%;
-    padding: 1em 1.5em;
+    padding: 1.45em 1.875em;
     border-top: 1px solid darken($light-color, 20%);
     background-color: darken($light-color, 5%);
-    box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);
 }
 
 .pane-people-wrap {
@@ -605,9 +605,7 @@ body {
 
     $types: info, success, warning, error;
 
-    @for $i from 1 through length($types) {
-        $type: nth($types, $i);
-
+    @each $type in $types {
         &.#{$type} {
             &:after { background-image: url(../../img/client/icons/#{$type}-icon.svg); }
         }
@@ -1286,6 +1284,7 @@ body {
 
     pre, blockquote {
         margin: 1em 0;
+        clear: both;
 
         &:first-child { margin-top: 0; }
 
@@ -1298,6 +1297,7 @@ body {
         font-style: italic;
         padding-left: 1em;
         border-left: 2px solid darken($light-color, 10%);
+        clear: both;
     }
 
     p {

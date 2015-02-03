@@ -4,7 +4,7 @@
 var $fbbutton =  $('.js-cordova-fb-login');
 
 libsb.on('logout', function(l, n) {
-	if (facebookConnectPlugin) {
+	if (typeof facebookConnectPlugin !== "undefined") {
 		facebookConnectPlugin.logout(function() {
 			// success
 			console.log("Sucessfully logged out from Facebook");
@@ -49,7 +49,7 @@ function loginWithFacebook() {
 			console.log("Login failed", msg);
 			$fbbutton.removeClass('working');
 		});
-		
+
 		if (intervalId) {
 			clearInterval(intervalId);
 			intervalId = null;
