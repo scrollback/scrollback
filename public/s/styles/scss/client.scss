@@ -605,9 +605,7 @@ body {
 
     $types: info, success, warning, error;
 
-    @for $i from 1 through length($types) {
-        $type: nth($types, $i);
-
+    @each $type in $types {
         &.#{$type} {
             &:after { background-image: url(../../img/client/icons/#{$type}-icon.svg); }
         }
