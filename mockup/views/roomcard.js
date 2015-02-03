@@ -39,17 +39,17 @@ function Roomcard(opts) {
 
 Roomcard.prototype = Object.create(Card.prototype);
 
-Roomcard.prototype.addMessage = function(message) {
-    if (typeof message !== "object") {
-        throw new Error("Invalid message");
+Roomcard.prototype.addThread = function(thread, people) {
+    if (typeof thread !== "object") {
+        throw new Error("Invalid thread");
     }
 
-    if (typeof message.from !== "string") {
-        throw new Error("Invalid 'from' property in message");
+    if (typeof thread.from !== "string") {
+        throw new Error("Invalid 'from' property in thread");
     }
 
-    if (typeof message.text !== "string") {
-        throw new Error("Invalid 'text' property in message");
+    if (typeof thread.title !== "string") {
+        throw new Error("Invalid 'title' property in thread");
     }
 
     if (!this._content) {
@@ -60,8 +60,8 @@ Roomcard.prototype.addMessage = function(message) {
 
     this._content.append(
         $('<div class="card-discussion">').append(
-            $('<span class="card-discussion-message">').text(message.text),
-            $('<span class="card-discussion-by">').text(message.from + " and " + message.count + " others")
+            $('<span class="card-discussion-message">').text(thread.title),
+            $('<span class="card-discussion-by">').text(thread.from + (people ? " and " + people + " others": ""))
         )
     );
 

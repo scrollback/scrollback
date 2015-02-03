@@ -9,7 +9,7 @@
 
     window.core = new (require("ebus"))(config.appPriorities);
 
-    window.currentState = require("./store/data.json"); // FIXME: should set to empty schema
+    window.currentState = data; // FIXME: should set to empty schema
 
     // third party libraries
     require(".././public/s/scripts/lib/sockjs.min.js");

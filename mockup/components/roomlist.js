@@ -81,10 +81,10 @@ for (var role in roles) {
 
 core.on("statechange", function(changes, next) {
 	var user = window.currentState.user,
-		roomRel, roomObj, rooms;
+		room, roomRel, roomObj, rooms, items, cards;
 
 	if ("indexes" in changes && "userRooms" in changes.indexes && user in changes.indexes.userRooms) {
-		for (var room in changes.indexes.userRooms[user]) {
+		for (room in changes.indexes.userRooms[user]) {
 			roomRel = changes.indexes.userRooms[user][room];
 			roomObj = changes.entities[roomRel.room];
 			rooms = roomlist.getItem(roomObj);
@@ -97,6 +97,24 @@ core.on("statechange", function(changes, next) {
 				roomlist.updateCards(roomObj);
 			} else {
 				roomlist.addItem(roomObj, sections[roomRel.role]);
+			}
+		}
+	}
+
+	if ("content" in changes) {
+		for (room in changes.content) {
+			roomObj = changes.entities[room];
+
+			if ("threadRanges" in changes.content[room] && "items" in changes.content[room].threadRanges[0]) {
+				items = changes.content[room].threadRanges[0].items;
+
+				for (var i = 0, l = items.length; i < l; i++) {
+					cards = roomlist.getCards(roomObj);
+
+					if (cards.length) {
+						cards[0].addThread(items[i]);
+					}
+				}
 			}
 		}
 	}
