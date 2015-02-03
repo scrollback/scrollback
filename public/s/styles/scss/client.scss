@@ -1530,6 +1530,12 @@ $dotshadow: fade-out($accent-color, .6);
 }
 
 .chat-placeholder {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
     position: absolute;
     top: 0;
     left: 2.9em;
