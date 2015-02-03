@@ -380,13 +380,13 @@ body {
 }
 
 .pane-info-privacy {
+    font-size: .8em;
     position: absolute;
     bottom: 0;
     width: 100%;
-    padding: 1em 1.5em;
+    padding: 1.45em 1.875em;
     border-top: 1px solid darken($light-color, 20%);
     background-color: darken($light-color, 5%);
-    box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);
 }
 
 .pane-people-wrap {
