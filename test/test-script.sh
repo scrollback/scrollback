@@ -1,8 +1,12 @@
 #!/bin/bash
 # Get user's home directory
 currdir=`cd $(dirname "${BASH_SOURCE[0]}") && pwd`
-scrollbackdir="${currdir%/*}"
-logfile="${scrollbackdir}/logs/test-$(date +%y%m%d%H).log"
+basedir="${currdir%/*}"
+logfile="${basedir}/logs/test-$(date +%y%m%d%H).log"
+backup="${basedir}/leveldb-storage/backup-$(date +%y%m%d%H)"
+data="${basedir}/leveldb-storage/data"
+testing_state="${basedir}/leveldb-storage/testing-state"
+leveldb_storage="${basedir}/leveldb-storage"
 
 # Create logfile
 touch "$logfile"
@@ -16,10 +20,10 @@ show_err() {
 }
 
 # Go to the scrollback directory
-if [[ -d "$scrollbackdir" ]]; then
-    cd "$scrollbackdir"
+if [[ -d "$basedir" ]]; then
+    cd "$basedir"
 else
-    show_err "Couldn't find directory: $scrollbackdir"
+    show_err "Couldn't find directory: $basedir"
 fi
 
 # Checkout the master branch
@@ -28,6 +32,14 @@ git checkout master || show_err "Failed to checkout master branch"
 git pull
 # Stop the server
 sudo stop scrollback
+
+# clear redis
+redis-cli FLUSHALL
+#backing up previous data
+mv "$data" "$backup"
+#recovering data
+cp -a "$testing_state/data" "$leveldb_storage/"
+
 # Setup
 npm install
 
@@ -42,6 +54,7 @@ sudo start scrollback
 mv mocha-output.json mocha-output-unit.json
 sleep 15 # startup time
 #run selenium...
+cp -f "${basedir}/test/config-defaults.js" "${basedir}/test/config.js"
 mocha test/selenium/test.js -R mocha-html-reporter 
 mv mocha-output.html "public/s/tmp/selenium-test-results-$(date +%y%m%d).html"
 mv mocha-output.json mocha-output-selenium.json

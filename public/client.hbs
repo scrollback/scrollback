@@ -12,8 +12,8 @@
 
 		<link rel="stylesheet" type="text/css" media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:400,600">
 		<link rel="stylesheet" type="text/css" media="screen" href="/s/styles/dist/client.min.css">
-
-		{{#if analytics.id}}
+		
+        {{#if analytics.id}}
 			<script>
 				var _gaq = _gaq || [];
 				_gaq.push(['_setAccount', '{{analytics.id}}']);
@@ -346,6 +346,9 @@
 					<a class="button facebook js-cordova-fb-login" data-string="Facebook"></a>
 					<a class="button google js-cordova-google-login" data-string="Google"></a>
 				</p>
+				<div id="spinner-container">
+					<div id="spinner"></div>
+				</div>
 			</div>
 
 			<div class="content-view-area" data-state="connecting">
@@ -372,7 +375,7 @@
 
 		{{#if cordova}}
 			<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova.js"></script>
-			<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova-plugins.js"></script>
+			<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova_plugins.js"></script>
 		{{/if}}
 
 		<script src="/s/scripts/client.bundle.min.js"></script>
@@ -380,5 +383,6 @@
 		<!-- cordova scripts -->
 
 		<script>libsb.connect();</script>
+		<script src="//twemoji.maxcdn.com/twemoji.min.js"></script>
 	</body>
 </html>

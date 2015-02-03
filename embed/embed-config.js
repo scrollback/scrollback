@@ -1,6 +1,7 @@
 /* jslint browser: true, indent: 4, regexp: true */
 /* global $, libsb */
 var formField = require("../lib/formField.js"),
+	stringUtils = require('../lib/stringUtils.js'),
 	embedForm, startMinimized, titlebarColor;
 
 function getEmbedCode() {
@@ -12,20 +13,11 @@ function getEmbedCode() {
 			minimize: startMinimized
 		};
 
-	return parse(code, JSON.stringify(embedObj));
+	return stringUtils.format(code, JSON.stringify(embedObj));
 }
 
 function getMailToLink() {
 	return "mailto:?body=" + encodeURIComponent(getEmbedCode()) + "&subject=" + encodeURIComponent("Embed Code for room: " + window.currentState.roomName);
-}
-
-function parse(str) {
-	var args = [].slice.call(arguments, 1),
-		i = 0;
-
-	return str.replace(/%s/g, function() {
-		return args[i++];
-	});
 }
 
 libsb.on("config-show", function(conf, next) {

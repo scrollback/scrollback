@@ -21,10 +21,74 @@ module.exports = function(c, conf) {
 		callback(null, payload);
 	}, "setters");
 
+	function loginUser(token, action, callback) {
+		request("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + token,
+			function(err, res, body) {
+				var gravatar, googlePic, sendUpdate = false;
+				if (err) return callback(err);
+				try {
+					body = JSON.parse(body);
+
+					if (!body.email) {
+						log.d("Google + Error Action received: ", action);
+						log.e("Google + login Error: ", JSON.stringify(body));
+						return callback(new Error("Error in saving USER"));
+					}
+					gravatar = 'https://gravatar.com/avatar/' +
+						crypto.createHash('md5').update(body.email).digest('hex') + '/?d=retro';
+					googlePic = body.picture;
+					core.emit("getUsers", {
+						identity: "mailto:" + body.email,
+						session: "internal-google"
+					}, function(err, data) {
+						if (err || !data) return callback(err);
+
+						if (!data.results.length) {
+							action.user = {};
+							action.user.identities = ["mailto:" + body.email];
+							action.user.picture = body.picture;
+							log.d("Google user object:", body.email);
+							action.user.params = {
+								pictures: [googlePic, gravatar]
+							};
+
+							return callback();
+						}
+
+						action.old = action.user;
+						action.user = data.results[0];
+						if (!action.user.params.pictures) action.user.params.pictures = [];
+
+						if (action.user.params.pictures.indexOf(googlePic) < 0) {
+							action.user.params.pictures.push(googlePic);
+							sendUpdate = true;
+						}
+						if (action.user.params.pictures.indexOf(gravatar) < 0) {
+							action.user.params.pictures.push(gravatar);
+							sendUpdate = true;
+						}
+						if (sendUpdate) {
+							core.emit("user", {
+								type: "user",
+								to: action.user.id,
+								user: action.user,
+								session: "internal-google"
+							}, function(err, action) {
+								log.d("Adding picture on sign-in: ", err, action);
+							});
+						}
+
+						callback();
+					});
+				} catch (e) {
+					return callback(e);
+				}
+			});
+	}
 
 	core.on("init", function(action, callback) {
 
-		if (action.auth && action.auth.google) {
+		if (action.auth && action.auth.google && action.auth.google.code) {
 			request.post({
 				uri: "https://accounts.google.com/o/oauth2/token",
 				headers: {
@@ -37,80 +101,21 @@ module.exports = function(c, conf) {
 					client_secret: config.client_secret,
 					grant_type: "authorization_code"
 				})
-			}, function(err, res, body) {
+			}, function(err, res, tokenBody) {
 				if (err) return callback(err);
 				try {
-					body = JSON.parse(body);
-
-					request("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + body.access_token, function(err, res, body) {
-						var gravatar, googlePic, sendUpdate = false;
-						if (err) return callback(err);
-						try {
-							body = JSON.parse(body);
-
-							if (!body.email) {
-								log.d("Google + Error Action received: ", action);
-								log.e("Google + login Error: ", JSON.stringify(body));
-								return callback(new Error("Error in saving USER"));
-							}
-							gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=retro';
-							googlePic = body.picture;
-							core.emit("getUsers", {
-								identity: "mailto:" + body.email,
-								session: "internal-google"
-							}, function(err, data) {
-								if (err || !data) return callback(err);
-
-								if (!data.results.length) {
-									action.user = {};
-									action.user.identities = ["mailto:" + body.email];
-									action.user.picture = body.picture;
-									log.d("Google user object:", body.email);
-									action.user.params = {
-										pictures: [googlePic, gravatar]
-									};
-
-									return callback();
-								}
-
-								if (action.user.id != data.results[0].id) {
-									action.old = action.user;
-								} else {
-									action.old = {};
-								}
-								action.user = data.results[0];
-								if (!action.user.params.pictures) action.user.params.pictures = [];
-
-								if (action.user.params.pictures.indexOf(googlePic) < 0) {
-									action.user.params.pictures.push(googlePic);
-									sendUpdate = true;
-								}
-								if (action.user.params.pictures.indexOf(gravatar) < 0) {
-									action.user.params.pictures.push(gravatar);
-									sendUpdate = true;
-								}
-								if (sendUpdate) {
-									core.emit("user", {
-										type: "user",
-										to: action.user.id,
-										user: action.user,
-										session: "internal-google"
-									}, function(err, action) {
-										log.d("Adding picture on sign-in: ", err, action);
-									});
-								}
-
-								callback();
-							});
-						} catch (e) {
-							return callback(e);
-						}
-					});
+					tokenBody = JSON.parse(tokenBody);
+					var token = tokenBody.access_token;
+					if (token) {
+						loginUser(token, action, callback);
+					}
 				} catch (e) {
 					return callback(e);
 				}
 			});
 
+		} else if (action.auth && action.auth.google && action.auth.google.token) {
+			loginUser(action.auth.google.token, action, callback);
 		} else {
 			callback();
 		}

@@ -305,7 +305,7 @@ libsb.on("signup-dialog", function(dialog, next) {
 
 libsb.on("signin-dialog", function(dialog, next) {
 	isRestricted = true;
-	dialog.title = "Restricted session, login.";
+	dialog.title = "Login to continue.";
     dialog.dismiss = false;
 	libsb.emit("auth", dialog, function() {
 		next();
