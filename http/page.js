@@ -66,7 +66,8 @@ function init (app) {
 
 		clientData.appVersion = req.query["app-version"] || "defaults";
 		clientData.manifest = (platform ? platform.toLowerCase() : "manifest") + ".appcache";
-		clientData.cordova = !!(platform && (/cordova/i).test(platform));
+		clientData.cordova = (!!(platform && (/cordova/i).test(platform))) || 
+			(platform === "android"); // fixing backward compatibitly issue
 
 		seo.getSEOHtml(req, function(r) {
 			clientData.seo = r;
