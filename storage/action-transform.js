@@ -47,14 +47,23 @@ exports.text = function (text) {
 		put.filters.push(['id', 'eq', text.thread]);
 		
 		put.insert = {
-			id: text.thread, from: text.from, to: text.to,
-			title: text.title, starttime: new Date(text.time), 
-			endtime: new Date(text.time), length: 1, tags: text.tags,
+			id: text.thread, 
+			from: text.from, 
+			to: text.to,
+			title: text.title, 
+			starttime: new Date(text.time), 
+			updatetime: new Date(text.time), 
+			length: 1, 
+			tags: text.tags,
+			updater: text.from,
+			color: (/[0-9]/.test(text.thread.substr(text.thread.length - 1)) ? 
+					text.thread.substr(text.thread.length - 1) : 0)
 			/*mentions: text.mentions*/
 		};
 		/* For existing threads update endTime, length and perhaps title */
 		put.update = [
-			['endtime', 'set', new Date(text.time)],
+			['updatetime', 'set', new Date(text.time)],
+			['updater', 'set', text.from],
 			['length', 'incr', 1]
 		];
 		if (text.title) put.update.push(['title', 'set', text.title]);
@@ -194,9 +203,7 @@ function addTags(action) {
 
 function addThread(action) {
 	if (action.threads && action.threads[0]) {
-		action.labels['color' + action.threads[0].id.substr(action.threads[0].id.length - 1)] = 1;
 		action.thread = action.threads[0].id; // .substr(0, action.threads[0].id.length - 1);
 		action.title = action.threads[0].title;
-		
 	}
 }

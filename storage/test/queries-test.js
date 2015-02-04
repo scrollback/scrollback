@@ -620,7 +620,7 @@ describe("Storage Test.", function() {
 	// Iterator getRooms/getUsers
 	
 	it("getRooms query iterator-1 (create time/after)", function(done) {
-		this.timeout(10000);
+		this.timeout(15000);
 		var rooms = [];
 		var n = mathUtils.random(1, 256);
 		var time = new Date().getTime();
@@ -647,7 +647,7 @@ describe("Storage Test.", function() {
 	});
 	
 	it("getRooms query iterator-2 (create time / before)", function(done) {
-		this.timeout(10000);
+		this.timeout(15000);
 		var rooms = [];
 		var n = mathUtils.random(1, 256);
 		var time = new Date().getTime();
@@ -674,7 +674,7 @@ describe("Storage Test.", function() {
 	});
 	
 	it("getRooms query iterator-3 (create time / before) more then 256", function(done) {
-		this.timeout(15000);
+		this.timeout(20000);
 		var rooms = [];
 		var n = mathUtils.random(300, 500);
 		var time = new Date().getTime();
@@ -702,7 +702,7 @@ describe("Storage Test.", function() {
 	});
 	
 	it("getRooms query iterator-4 (create time / after) more then 256", function(done) {
-		this.timeout(15000);
+		this.timeout(20000);
 		var rooms = [];
 		var n = mathUtils.random(300, 500);
 		var time = new Date().getTime();
@@ -732,7 +732,7 @@ describe("Storage Test.", function() {
 	
 	
 	it("getRooms query iterator-5 (identities / after) more then 256", function(done) {
-		this.timeout(15000);
+		this.timeout(20000);
 		var rooms = [];
 		var n = mathUtils.random(300, 500);
 		var time = new Date().getTime();

@@ -7,7 +7,6 @@ CREATE TABLE threads (
 	title text,
 	color integer,
 	starttime timestamp,
-	endtime timestamp,
 	length integer,
 	tags text[],
 	concerns text[],

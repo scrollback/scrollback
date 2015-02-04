@@ -43,11 +43,13 @@ exports.getThreads = function(query, threads) {
 				to: row.to,
 				from: row.from,
 				title: row.title,
+				color: row.color,
 				tags: row.tags,
 				time: row.time,
 				terms: row.terms,
+				updater: row.updater,
 				startTime: row.starttime.getTime(),
-				endTime: row.endtime.getTime()
+				updateTime: row.updatetime.getTime()
 			};
 			results.push(thread);
 		});
