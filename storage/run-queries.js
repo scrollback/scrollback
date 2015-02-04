@@ -56,7 +56,10 @@ function rollback(err, client, done) {
 	});
 }
 
-process.on('SIGINT', function() {
+process.on('SIGINT', onShutDownSignal);
+process.on('SIGTERM', onShutDownSignal);
+
+function onShutDownSignal() {
 	shuttingDown = true;
 	log.w("Process killed, rolling back queries");
 	var ct = 1;
@@ -71,10 +74,10 @@ process.on('SIGINT', function() {
 		log.d("Key:", key);
 		if (runningQueries.hasOwnProperty(key)) {
 			ct++;
-			rollback(new Error("error: SIGINT"), runningQueries[key], done);
+			rollback(new Error("error: SIGINT/SIGTERM"), runningQueries[key], done);
 		}
 	}
 	done();
-});
+}
 
 module.exports = runQueries;

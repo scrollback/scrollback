@@ -7,6 +7,7 @@ var redis = require('redis').createClient();
 var postgres = require('./postgres.js');
 var actionTr = require('./action-transform.js');
 var pg = require('pg');
+var numbers = 10000;
 process.env.NODE_ENV = config.env;
 var conString = "pg://" + config.storage.pg.username + ":" +
 	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
@@ -68,18 +69,29 @@ function afterSavingAllUsers() {
 }
 
 function afterSavingAllRooms() {
-	for (var roomid in rooms) {
-		saveTextAndThreadsForRoom(rooms[roomid]);
+	var t = new Date().getTime();
+	var counter = new Counter(1, function() {
+		log("All texts saved: ", (new Date().getTime() - t));
+	});
+	function done() {
+		counter.done();
 	}
+	for (var roomid in rooms) {
+		counter.inc(1);
+		saveTextAndThreadsForRoom(rooms[roomid], done);
+	}
+	counter.done();
 	
 }
 
 
 // TODO 1. Too many files open problem. 
-function saveTextAndThreadsForRoom(room) {
+function saveTextAndThreadsForRoom(room, cb) {
 	function saveNextSetOfMessages(messages, callback) {
+		if (messages.length === 0) return callback();
 		var queries = getQueriesForTextMessages(messages);
 		log.d(queries);
+		var t = new Date().getTime();
 		pg.connect(conString, function(error, client, done) {
 			if (error) {
 				log("Unable to get Pool Connection Object: ", error);
@@ -90,6 +102,7 @@ function saveTextAndThreadsForRoom(room) {
 					log.e("replies:", err, replies);
 					process.exit(1);
 				}
+				log("Time taken by pg:", (new Date().getTime() - t));
 				done();
 				callback();
 			});
@@ -103,10 +116,16 @@ function saveTextAndThreadsForRoom(room) {
 		var lastId = replies[1];
 		if (!timestamp) timestamp = 1;
 		else timestamp = parseInt(timestamp);
-		coreLevelDB.emit("getTexts", {to: room.id, after: 256, time: timestamp}, function(err, reply) {
-			log("Timestamp:", timestamp, timestamp !== 1, lastId);
-			
-			if (reply.results.length === 256) {	
+		var t = new Date().getTime();
+		coreLevelDB.emit("getTexts", {to: room.id, after: numbers, time: timestamp}, function(err, reply) {
+			log.d("Timestamp:", timestamp, timestamp !== 1, lastId);
+			log("Time taken by levelDB:", (new Date().getTime() - t));
+			if (err) {
+				log.e("Error:", err);
+				process.exit(1);
+				return;
+			}
+			if (reply.results.length === numbers) {	
 				removeInitialPartOfResults(reply, timestamp, lastId, room);
 				//log("Results:-", reply.results);
 				saveNextSetOfMessages(reply.results,  function() {
@@ -118,7 +137,7 @@ function saveTextAndThreadsForRoom(room) {
 							log.e("replies:", err, replies);
 							process.exit(1);
 						}
-						saveTextAndThreadsForRoom(room);
+						saveTextAndThreadsForRoom(room, cb);
 					});
 				});
 			} else { // end of text messages
@@ -133,8 +152,11 @@ function saveTextAndThreadsForRoom(room) {
 								process.exit(1);
 							}
 							log("Saving for room ", room.id, "complete");
+							cb();
 						});
 					});
+				} else {
+					cb();
 				}
 			}
 		});
@@ -178,5 +200,3 @@ function fixCoreuptText(text) {
 	delete text.labels.nonsense;
 	delete text.labels.spam;
 }
-
-
