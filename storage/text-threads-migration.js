@@ -7,7 +7,7 @@ var redis = require('redis').createClient();
 var postgres = require('./postgres.js');
 var actionTr = require('./action-transform.js');
 var pg = require('pg');
-var numbers = 10000;
+var limit = config['leveldb-storage'].limit || 256;
 process.env.NODE_ENV = config.env;
 var conString = "pg://" + config.storage.pg.username + ":" +
 	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
@@ -117,7 +117,7 @@ function saveTextAndThreadsForRoom(room, cb) {
 		if (!timestamp) timestamp = 1;
 		else timestamp = parseInt(timestamp);
 		var t = new Date().getTime();
-		coreLevelDB.emit("getTexts", {to: room.id, after: numbers, time: timestamp}, function(err, reply) {
+		coreLevelDB.emit("getTexts", {to: room.id, after: limit, time: timestamp}, function(err, reply) {
 			log.d("Timestamp:", timestamp, timestamp !== 1, lastId);
 			log("Time taken by levelDB:", (new Date().getTime() - t));
 			if (err) {
@@ -125,7 +125,7 @@ function saveTextAndThreadsForRoom(room, cb) {
 				process.exit(1);
 				return;
 			}
-			if (reply.results.length === numbers) {	
+			if (reply.results.length === limit) {	
 				removeInitialPartOfResults(reply, timestamp, lastId, room);
 				//log("Results:-", reply.results);
 				saveNextSetOfMessages(reply.results,  function() {
