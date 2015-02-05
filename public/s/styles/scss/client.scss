@@ -112,14 +112,9 @@ body {
 
 .room-header {
     height: $bar-height;
-    background: url(../../img/client/scrollback-small.svg) no-repeat 1em center;
+    background: url(../../img/client/scrollback-logo.svg) no-repeat 1em center;
     border-bottom: 1px solid lighten($dark-color, 5%);
     cursor: pointer;
-
-    img {
-        height: 2.5em;
-        width: auto;
-    }
 }
 
 .room-list { @extend %scroll-elem; }
@@ -385,13 +380,13 @@ body {
 }
 
 .pane-info-privacy {
+    font-size: .8em;
     position: absolute;
     bottom: 0;
     width: 100%;
-    padding: 1em 1.5em;
+    padding: 1.45em 1.875em;
     border-top: 1px solid darken($light-color, 20%);
     background-color: darken($light-color, 5%);
-    box-shadow: 0 -3px 2px -1px rgba(0,0,0,.1);
 }
 
 .pane-people-wrap {
@@ -610,9 +605,7 @@ body {
 
     $types: info, success, warning, error;
 
-    @for $i from 1 through length($types) {
-        $type: nth($types, $i);
-
+    @each $type in $types {
         &.#{$type} {
             &:after { background-image: url(../../img/client/icons/#{$type}-icon.svg); }
         }
@@ -651,12 +644,12 @@ body {
     .title-bar { position: fixed; }
 
     .header-image {
-        background: url(../../img/client/scrollback-small-dark.svg) no-repeat 1em center;
+        background: url(../../img/client/scrollback-logo-dark.svg) no-repeat 1em center;
         height: 3.5em;
         width: 12em;
         max-width: 100%;
 
-        .theme-dark & { background: url(../../img/client/scrollback-small.svg) no-repeat 1em center; }
+        .theme-dark & { background: url(../../img/client/scrollback-logo.svg) no-repeat 1em center; }
     }
 }
 
@@ -1291,6 +1284,7 @@ body {
 
     pre, blockquote {
         margin: 1em 0;
+        clear: both;
 
         &:first-child { margin-top: 0; }
 
@@ -1303,6 +1297,7 @@ body {
         font-style: italic;
         padding-left: 1em;
         border-left: 2px solid darken($light-color, 10%);
+        clear: both;
     }
 
     p {
@@ -1535,6 +1530,12 @@ $dotshadow: fade-out($accent-color, .6);
 }
 
 .chat-placeholder {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
     position: absolute;
     top: 0;
     left: 2.9em;

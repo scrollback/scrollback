@@ -81,7 +81,7 @@ libsb.on("config-show", function(tabs, next) {
 }, 500);
 
 libsb.on("config-save", function(room, next) {
-    var tags = $("#twitter-hashtags").multientry("items").join(" ");
+    var tags = $("#twitter-hashtags").multientry("items", true).join(" ");
 
     room.params.twitter = {};
 

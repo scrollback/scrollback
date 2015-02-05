@@ -6,8 +6,15 @@ var actionQueue = require("./actionQueue.js")();
 function init(libsb) {
 	$(function() {
 		var state = urlUtils.parse(window.location.pathname, window.location.search);
-
-		state.cordova = !!(state.platform && (/cordova/i).test(state.platform));
+		
+		if (state.platform && state.platform === 'android') {
+			// for fixing backward compatibility with the older app versions.
+			// delete it once everyone has moved to a newer app version.
+			state.platform = 'cordova';   
+		}
+		
+		
+		state.cordova = (!!(state.platform && (/cordova/i).test(state.platform)));
 
 		if (state.embed) delete state.embed;
 

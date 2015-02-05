@@ -13,7 +13,7 @@ $accent-color: #3ca !default;
 $roundness: 2px !default;
 $mobile-break-point: "only screen and (max-width: 27em)" !default;
 
-$palette: #2ba #e48 #3c6 #76f #e63 #5ad #95b #ed0 #e92 #ae3 !default;
+$palette: (#2ba, #e48, #3c6, #76f, #e63, #5ad, #95b, #ed0, #e92, #ae3) !default;
 
 $screenx: "only screen and (min-width: 18em)" !default;
 $screenxx: "only screen and (min-width: 27em)" !default;
@@ -36,9 +36,9 @@ $width-home: 70em !default;
 
 $bar-height: 3.5em !default;
 
-$settings: general, irc, twitter, threader, authorizer, requests, spam, seo, customization, embed, profile, email, notification !default;
-$modes: normal, search, conf, pref, home, noroom, profile !default;
-$roles: guest, user, follower, owner !default;
-$embeds: toast, canvas !default;
-$platforms: normal, cordova !default;
-$states: online offline connecting !default;
+$settings: (general, irc, twitter, threader, authorizer, requests, spam, seo, customization, embed, profile, email, notification) !default;
+$modes: (normal, search, conf, pref, home, noroom, profile) !default;
+$roles: (guest, user, follower, owner) !default;
+$embeds: (toast, canvas) !default;
+$platforms: (normal, cordova) !default;
+$states: (online, offline, connecting) !default;
