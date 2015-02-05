@@ -124,7 +124,8 @@ var defaults = {
 			db: "scrollback",
 			username: "username",
 			password: "password"
-		}
+		},
+		redisDB: 5
 	}
 };
 

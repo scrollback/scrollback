@@ -30,6 +30,7 @@ module.exports = function(core, conf) {
 	//var s = "storage";
 	config = conf;
 	ps = require('./postgres-storage.js')(config);
+	require('./timestamp.js')(core, config);
 	["text", "edit", "room", "user", "join", "part", "admit", "expel"].forEach(function(action) {
 		core.on(action, putHandler(action), "storage");
 	});
