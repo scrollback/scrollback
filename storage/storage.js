@@ -7,7 +7,10 @@ var queryTr = require('./query-transform.js'),
 function getHandler(type) {
 	return function(query, next) {
 		if (!query.results) {
+			var t = new Date().getTime();
 			ps.get(queryTr[type](query), function(err, results) {
+				log.d("query:", query, (new Date().getTime() - t));
+				log("Time taken by query:", query.id, ":", (new Date().getTime() - t));
 				if(err) return next(err);
 				query.results = resultTr[type](query, results); // reply of run queries is passed here.
 				next();
@@ -19,7 +22,9 @@ function getHandler(type) {
 function putHandler(type) {
 	return function(object, next) {
 		log.d("put: ", object);
+		var t = new Date().getTime();
 		ps.put(actionTr[type](object), function(err) {
+			log("Time taken by action:", object.id, ":", (new Date().getTime() - t));
 			if(err) next(err);
 			else next();
 		});
