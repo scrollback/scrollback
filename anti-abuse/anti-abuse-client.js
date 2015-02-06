@@ -62,14 +62,13 @@ libsb.on('text-menu', function(menu, next) {
 	libsb.emit('getTexts', {ref: menu.target.id.substring(5), to: currentState.roomName}, function(err, data){
 		textObj = data.results[0];
 		var target = menu.target;
-		var textMsg = $(target).find('.chat-message').text();
 
 		if(!hasLabel('hidden', textObj.labels)){
 			menu.items.hidemessage = {
 				prio: 500,
 				text: 'Hide Message',
 				action: function(){
-					libsb.emit('edit-up', {to: currentState.roomName, labels: {'hidden': 1}, text: textMsg, ref: target.id.substring(5), cookie: false});
+					libsb.emit('edit-up', {to: currentState.roomName, labels: {'hidden': 1}, ref: target.id.substring(5), cookie: false});
 					$(target).addClass('chat-label-hidden');
 				}
 			};
@@ -88,7 +87,7 @@ libsb.on('text-menu', function(menu, next) {
 				prio: 500,
 				text: 'Mark as not abusive',
 				action: function(){
-					libsb.emit('edit-up', {to: currentState.roomName, labels: {'abusive': 0}, text: textMsg, ref: target.id.substring(5), cookie: false});
+					libsb.emit('edit-up', {to: currentState.roomName, labels: {'abusive': 0}, ref: target.id.substring(5), cookie: false});
 				}
 			};
 		}
