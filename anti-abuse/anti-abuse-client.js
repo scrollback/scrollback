@@ -78,7 +78,7 @@ libsb.on('text-menu', function(menu, next) {
 				prio: 500,
 				text: 'Unhide Message',
 				action: function(){
-					libsb.emit('edit-up', {to: currentState.roomName, labels: {'hidden': 0}, text: textMsg, ref: target.id.substring(5), cookie: false});
+					libsb.emit('edit-up', {to: currentState.roomName, labels: {'hidden': 0}, ref: target.id.substring(5), cookie: false});
 					$(target).removeClass('chat-label-hidden');
 				}
 			};
