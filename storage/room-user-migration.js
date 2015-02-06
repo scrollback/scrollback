@@ -5,6 +5,7 @@ var coreStorage = new (require('ebus'))();
 var log = require('../lib/logger.js');
 //var path = __dirname + "/" + "data-test";
 process.env.NODE_ENV = config.env;
+log.setEmailConfig(config.email);
 config['leveldb-storage'].disableQueries = false;
 config["leveldb-storage"].global = config.global;
 require('./storage.js')(coreStorage, config.storage);

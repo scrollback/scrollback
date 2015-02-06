@@ -9,6 +9,7 @@ var actionTr = require('./action-transform.js');
 var pg = require('pg');
 var limit = config['leveldb-storage'].limit || 256;
 process.env.NODE_ENV = config.env;
+log.setEmailConfig(config.email);
 var conString = "pg://" + config.storage.pg.username + ":" +
 	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
 redis.select(15);
