@@ -126,7 +126,6 @@ exports.room = exports.user = function (action) {
 		params: entity.params,
 		guides: entity.guides
 	};
-	log.d("Update entity:", action);
 	put.filters.push(['id', 'eq', entity.id]);
 	['description', 'picture', 'timezone', 'params', 'guides'].forEach(function(p) {
 			// column name in database are lower case of property name of entity.

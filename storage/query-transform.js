@@ -31,6 +31,7 @@ function makeQuery(type) {
 // Content queries: texts, threads.
 
 exports.getTexts = exports.getThreads = function(query) {
+	log("query:", query);
 	var q = makeQuery('select');
 	q.source = (query.type === 'getThreads'? 'threads': 'texts');
 	
@@ -72,7 +73,6 @@ exports.getTexts = exports.getThreads = function(query) {
 		q.iterate.limit = query.after || 256;
 		q.iterate.reverse = false;
 	}
-	log.d("Query:", q);
 	return [q];
 };
 
@@ -142,6 +142,5 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.iterate.limit = iq.after || 256;
 		q.iterate.reverse = false;
 	}
-	log.d("entities Query:", q);
 	return [q];
 };

@@ -17,7 +17,7 @@ module.exports = {
 };
 
 function toQuery(transform) {
-	log.d("Transform type: ", transform);
+	log("Transform:", transform);
 	var ret;
 	switch(transform.type) {
 		case 'insert': ret = makeInsertQuery(transform); break;
@@ -66,7 +66,6 @@ This query to filter should have a unique key constraints
 // http://stackoverflow.com/questions/1109061/insert-on-duplicate-update-in-postgresql
 */
 function makeUpsertQuery(transform) {
-	log.d("Upsert query");
 	var updateQuery = getUpdateQuery(transform, 1, true),
 		i = 1, values = [];
 	var inSql = [];
@@ -122,11 +121,9 @@ function getUpdateQuery(transform, i, isSource) {
 		}
 	});
 	sql.push(m.join(","));
-	log.d("sql: ", sql);
 
 	addFilters(transform, sql, values, i);
 
-	log.d("Sql:", sql);
 	return {
 		query: sql.join(" "),
 		values: values
@@ -141,7 +138,6 @@ if delete time is set.
 2. 
 */
 function makeSelectQuery(transform) {
-	log.d("Transform", transform);
 	if (transform.iterate.keys && transform.iterate.keys.length) {
 		if (typeof transform.iterate.keys === 'string') transform.iterate.keys = [transform.iterate.keys]; // if string change it to an array
 		for (var j = 0; j < transform.iterate.keys.length; j++) {
@@ -152,7 +148,6 @@ function makeSelectQuery(transform) {
 			}
 		}
 	}
-	log.d("Transform", transform);
 	var sql = [], i = 1, values = [], t;
 	sql.push("SELECT");
 	t = [];
@@ -212,7 +207,6 @@ function makeSelectQuery(transform) {
 }
 
 function addFilters(transform, sql, values, i) {
-	log.d("Transform", transform);
 	var filters = [];
 	if (transform.filters && transform.filters.length) {
 		sql.push("WHERE");

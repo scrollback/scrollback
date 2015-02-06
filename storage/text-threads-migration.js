@@ -45,7 +45,7 @@ coreLevelDB.emit("getUsers", {identity: "mailto"}, function(err, reply) {
 function afterSavingAllUsers() {
 	var c = new (Counter)(0, function() {
 		afterSavingAllRooms();
-		log.d("Room saving complete");
+		log("Room saving complete");
 	});
 
 	function processUser(userid) {
@@ -90,7 +90,6 @@ function saveTextAndThreadsForRoom(room, cb) {
 	function saveNextSetOfMessages(messages, callback) {
 		if (messages.length === 0) return callback();
 		var queries = getQueriesForTextMessages(messages);
-		log.d(queries);
 		var t = new Date().getTime();
 		pg.connect(conString, function(error, client, done) {
 			if (error) {
@@ -127,7 +126,6 @@ function saveTextAndThreadsForRoom(room, cb) {
 			}
 			if (reply.results.length === limit) {	
 				removeInitialPartOfResults(reply, timestamp, lastId, room);
-				//log("Results:-", reply.results);
 				saveNextSetOfMessages(reply.results,  function() {
 					var multi = redis.multi();
 					multi.set("id:" + room.id, reply.results[reply.results.length - 1].id);

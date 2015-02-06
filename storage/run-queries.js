@@ -32,7 +32,6 @@ function runQueries(client, queries, cb) {
 		function run(i) {
 			if (i < queries.length && !shuttingDown) {
 				client.query(queries[i].query, queries[i].values, function(err, result) {
-					log("arguments run queries:", arguments, queries[i].query);
 					results[i] =  result;
 					if (err) rollback(err, client, callback);
 					else run(i + 1);
@@ -71,7 +70,6 @@ function onShutDownSignal() {
 		}
 	}
 	for (var key in runningQueries) {
-		log.d("Key:", key);
 		if (runningQueries.hasOwnProperty(key)) {
 			ct++;
 			rollback(new Error("error: SIGINT/SIGTERM"), runningQueries[key], done);

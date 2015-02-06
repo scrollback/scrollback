@@ -72,7 +72,7 @@ function afterSavingAllUsers() {
 	//log.d("All users", users);
 	var c = new (Counter)(0, function() {
 		afterSavingAllRooms();
-		log.d("Room saving complete");
+		log("Room saving complete");
 	});
 	
 	function processUser(userid) {
@@ -140,7 +140,7 @@ function saveRoom(room, owner, callback) {
 
 function afterSavingAllRooms() {
 	var joinCounter = new Counter(0, function() {
-		log.d("Join complete");
+		log("Join complete");
 	});
 	function forEachRoom(roomid) {
 		
