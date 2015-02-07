@@ -102,7 +102,8 @@ var defaults = {
 		server: "localhost"
 	},
 	"leveldb-storage": {
-		path: "/data"
+		path: "/data",
+		disableQueries: true
 	},
 	recommendation:{
 		redisDB: 13
@@ -116,6 +117,15 @@ var defaults = {
 	facebook: {
 	},
 	google: {
+	},
+	storage: {
+		pg: {	
+			server: "localhost", //server:port
+			db: "scrollback",
+			username: "username",
+			password: "password"
+		},
+		redisDB: 5
 	}
 };
 

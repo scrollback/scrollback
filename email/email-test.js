@@ -1,4 +1,4 @@
-var assert = require("assert");
+/* jshint mocha: true */
 var config  = require('../server-config-defaults.js');
 var core = require("../test/mock-core.js")();
 var email = require("./email.js")(config.email);
@@ -24,7 +24,7 @@ describe('Email test', function() {
     });
     it('add message test', function(done) {
         this.timeout(30000);
-		core.emit("text", msg, function(err, data) {
+		core.emit("text", msg, function() {
             console.log(msg);
             setTimeout(function() {done();}, 15000);
         });
