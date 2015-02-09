@@ -154,15 +154,16 @@ describe("Storage Test.", function() {
 		});
 	});	
 	
-	it("Edit (labels text)", function(done) {
+	it("Edit (labels update)", function(done) {
 		var m1 = utils.getNewTextAction();
 		m1.labels.abusive = 1;
 		m1.labels.hidden = 1;
 		core.emit("text", m1, function() {
 			var edit = {
 				ref: m1.id,
-				labels: {abusive: 1, color3: 1},
-				time: new Date().getTime()
+				labels: {color3: 1},
+				time: new Date().getTime(),
+				old: m1
 			};
 			core.emit("edit", edit, function() {
 				pg.connect(connString, function(err, client, cb) {
@@ -171,7 +172,39 @@ describe("Storage Test.", function() {
 											function(err, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
-							assert.deepEqual(result.rows[0].tags, ['abusive', 'color3'], "Updating text failed");
+							result.rows[0].tags.sort();
+							assert.deepEqual(result.rows[0].tags, ['abusive', 'color3', "hidden"], "Updating text failed");
+						});
+						cb();
+						done();
+					});
+				});
+			});
+		});
+	});
+	
+	it("Edit (labels remove/update test.)", function(done) {
+		var m1 = utils.getNewTextAction();
+		m1.labels.abusive = 1;
+		m1.labels.hidden = 1;
+		m1.labels.color3 = 1;
+		core.emit("text", m1, function() {
+			var edit = {
+				ref: m1.id,
+				labels: {hidden: 0, abc: 1}, // remove hidden, add abc
+				time: new Date().getTime(),
+				old: m1
+			};
+			core.emit("edit", edit, function() {
+				pg.connect(connString, function(err, client, cb) {
+					postgres.runQueries(client, 
+										[{query: "SELECT * from texts where id=$1", values: [m1.id]}], 
+										function(err, results) {
+						log.d("Arguments:", arguments);
+						
+						results.forEach(function(result) {
+							result.rows[0].tags.sort();
+							assert.deepEqual(result.rows[0].tags, ['abc', 'abusive', 'color3'], "Updating text failed");
 						});
 						cb();
 						done();

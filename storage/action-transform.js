@@ -54,7 +54,6 @@ exports.text = function (text) {
 			starttime: new Date(text.time), 
 			updatetime: new Date(text.time), 
 			length: 1, 
-			tags: text.tags,
 			updater: text.from,
 			color: (/[0-9]/.test(text.thread.substr(text.thread.length - 1)) ? 
 					text.thread.substr(text.thread.length - 1) : 0)
@@ -73,11 +72,12 @@ exports.text = function (text) {
 };
 
 
-exports.edit = function (edit) {
+exports.edit = function (edit) {	
 	var puts = [], put = makePut("update", 'texts');
 	put.filters.push(['id', 'eq', edit.ref]);
 	put.update = [];
 	// start compability block.
+	addOldTags(edit);
 	addTags(edit);
 	addThread(edit);
 	// end Compatibility block.
@@ -204,5 +204,25 @@ function addThread(action) {
 	if (action.threads && action.threads[0]) {
 		action.thread = action.threads[0].id; // .substr(0, action.threads[0].id.length - 1);
 		action.title = action.threads[0].title;
+	}
+}
+
+function addOldTags(edit) {
+
+	if (edit.old && edit.old.labels) {
+		var newLabels = edit.old.labels;
+		for(var l in edit.old.labels) {
+			if (edit.old.labels.hasOwnProperty(l)) {
+				newLabels[l] = edit.old.labels[l];
+			}
+		}
+		if (edit.labels) {
+			for (var label in edit.labels) {
+				if (edit.labels.hasOwnProperty(label)) {
+					newLabels[label] = edit.labels[label];
+				}
+			}
+		}
+		edit.labels = newLabels;
 	}
 }
