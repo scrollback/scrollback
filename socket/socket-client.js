@@ -200,11 +200,7 @@ function makeAction(action, props) {
 	}
 
 	action.time = new Date().getTime();
-	if (localStorage.hasOwnProperty("session")) {
-		action.session = localStorage.session;
-	} else {
-		action.session = libsb.session;
-	}
+    action.session = libsb.session;
 	action.resource = libsb.resource;
 	return action;
 }

@@ -1,6 +1,7 @@
 /* jshint browser: true */
 /* global $, libsb*/
 var Color = require("../lib/color.js"),
+    generate = require('../lib/generate.js'),
 	urlUtils = require("../lib/url-utils.js"),
 	stringUtils = require("../lib/stringUtils.js"),
 	verificationStatus = false,
@@ -11,7 +12,7 @@ var Color = require("../lib/color.js"),
 	isEmbed = false,
 	suggestedNick, jws,
 	embed, token, domain, path, preBootQueue = [],
-	parentHost, createRoom, createUser;
+	parentHost, createRoom, createUser, domainSessions = {};
 
 function openFullView() {
 	window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
@@ -252,7 +253,16 @@ module.exports = function(libsb) {
 			}
 		});
 	});
-
+    
+    
+    
+    var LS = window.localStorage || {};
+    try {
+        domainSessions = JSON.parse(LS.DomainSessions);
+    } catch(e) {
+        domainSessions = {};
+    }
+    
 	var url = urlUtils.parse(window.location.pathname, window.location.search);
 	embed = url.embed;
 	if (window.parent !== window) {
@@ -349,7 +359,19 @@ module.exports = function(libsb) {
 				path: path,
 				verified: verified
 			};
-			if(jws && !init.auth) init.auth = {jws: jws};
+            if(jws && !init.auth) {
+                init.auth = {jws: jws};
+            }
+            
+            if(domainSessions[domain]){
+                init.session = domainSessions[domain];
+                libsb.session = init.session = domainSessions[domain];
+            } else if(jws) {
+                domainSessions[domain] = "web://" + generate.uid();
+                window.localStorage.DomainSessions = JSON.stringify(domainSessions);
+                libsb.session = init.session = domainSessions[domain];
+            }
+			
 			if (url) {
 				init.suggestedNick = init.suggestedNick || suggestedNick || "";
 			}
