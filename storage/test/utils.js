@@ -3,7 +3,8 @@ var	crypto = require('crypto'),
 	generate = require("../../lib/generate.js"),
 	r = {},
 	mathUtils = require('../../lib/mathUtils.js');
-r.getNewTextAction = function getNewTextActions() {
+	
+r.getNewTextAction = function() {
 	var id = generate.uid();
 	return {
 		id: (id),
