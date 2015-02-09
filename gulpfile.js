@@ -18,6 +18,7 @@ var gulp = require("gulp"),
 	striplogs = require("gulp-strip-debug"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
+	react = require("gulp-react"),
 	sass = require("gulp-sass"),
 	combinemq = require("gulp-combine-mq"),
 	autoprefixer = require("gulp-autoprefixer"),
@@ -29,6 +30,7 @@ var gulp = require("gulp"),
 	dirs = {
 		bower: "bower_components",
 		lib: "public/s/scripts/lib",
+		jsx: "public/s/scripts/jsx",
 		lace: "public/s/styles/lace",
 		fonts: "public/s/styles/fonts",
 		scss: "public/s/styles/scss",
@@ -36,7 +38,7 @@ var gulp = require("gulp"),
 	},
 	files = {
 		js: [
-			"**/*.js", "!**/*.min.js",
+			"**/*.js", "**/*.jsx", "!**/*.min.js",
 			"!node_modules/**", "!bower_components/**",
 			"!public/s/**/*.js"
 		],
@@ -184,8 +186,15 @@ gulp.task("polyfills", [ "bower" ], function() {
 	.pipe(gulp.dest(dirs.lib));
 });
 
+// Build react files
+gulp.task("react", function () {
+    return gulp.src("mockup/jsx/*.jsx")
+        .pipe(react())
+        .pipe(gulp.dest(dirs.jsx));
+});
+
 // Build browserify bundles
-gulp.task("bundle", [ "copylibs" ], function() {
+gulp.task("bundle", [ "copylibs", "react" ], function() {
 	return bundle([ "client.js", "mockup/mockup.js" ], { debug: true })
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
@@ -269,7 +278,7 @@ gulp.task("clean", function() {
 	return del(prefix("public/", [
 		"**/*.min.js", "**/*.min.css",
 		"**/*.map", "**/*.appcache}"
-	], dirs.lib, dirs.css, dirs.lace, dirs.fonts));
+	], dirs.lib, dirs.jsx, dirs.css, dirs.lace, dirs.fonts));
 });
 
 gulp.task("watch", function() {

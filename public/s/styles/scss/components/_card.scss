@@ -63,7 +63,7 @@
 
                 margin: 0 (.5em / .8);
 
-                &[data-empty] { display: none; };
+                &:empty { display: none; };
             }
         }
 

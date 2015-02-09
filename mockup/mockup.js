@@ -1,33 +1,33 @@
 /* jshint browser: true */
-/* global core */
 
 (function() {
     "use strict";
 
     var config = require(".././client-config-defaults.js"),
-        data = require("./store/data.json");
+        data = require("./store/data.json"),
+        core = new (require("ebus"))(config.appPriorities);
 
-    window.core = new (require("ebus"))(config.appPriorities);
-
-    window.currentState = data; // FIXME: should set to empty schema
+    window.core = core;
 
     // third party libraries
-    require(".././public/s/scripts/lib/sockjs.min.js");
-    require(".././public/s/scripts/lib/velocity.min.js");
+    require("../public/s/scripts/lib/sockjs.min.js");
+    require("../public/s/scripts/lib/velocity.min.js");
 
     // core
-    require("./store/state-manager.js");
+    require("./store/state-manager.js")(core);
+    require("./store/view-manager.js")(core);
 
     // components
-    require("./components/roomlist.js");
-    require("./components/user.js");
-    require("./components/people.js");
-    require("./components/discussions.js");
-    require("./components/chat.js");
-    require("./components/sidebar.js");
+    require("./components/user.js")(core);
+    require("./components/people.js")(core);
+    require("./components/discussions.js")(core);
+    require("./components/chat.js")(core);
+    require("./components/sidebar.js")(core);
+
+    // JSX components
+    require("../public/s/scripts/jsx/homefeed.js")(core);
 
     // send the initial setstate event
-    core.emit("setstate", data, function() {
-        window.currentState = data;
-    });
+    core.emit("setstate", data);
 }());
+

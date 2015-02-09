@@ -1,11 +1,9 @@
 /* jshint browser: true */
-/* global core, $ */
 
 "use strict";
 
-var keys = [ "view", "mode", "color" ],
-    $title = $(".js-appbar-title"),
-    $discussion = $(".js-discussion-title");
+var objUtils = require("../../lib/obj-utils.js"),
+	current = {}; // not to be confused with window.state, which is the API to access properties of this state.
 
 function buildIndex(state) {
 	state.indexes = {
@@ -41,71 +39,127 @@ function extendObj(obj1, obj2) {
 	return obj1;
 }
 
-// Listen to navigate and add class names
-core.on("statechange", function(changes, next) {
-    var classList = $("body").attr("class") || "";
+// TODO: implement;
+// function mergeRanges(original, newrange, key) {
+// }
 
-    for (var i = 0, l = keys.length; i < l; i++) {
-        if ([keys[i]] in changes.nav) {
-            classList = classList.replace(new RegExp("\\b" + keys[i] + "-" + "\\S+", "g"), "");
+function findIndex (items, propName, value, start, end) {
+    var pos;
 
-            classList += " " + keys[i] + "-" + (changes.nav[keys[i]] || "");
-        }
+    if (typeof start === 'undefined') {
+        return findIndex(propName, value, 0, items.length);
     }
 
-    classList = classList.replace(/\bcolor-\S+/g, "").replace(/^\s+|\s+$/g, "");
-
-    if ("nav" in changes && "mode" in changes.nav) {
-        switch (changes.nav.mode) {
-        case "room":
-            $title.text(changes.nav.room);
-            break;
-        case "chat":
-            classList += " color-" + changes.color;
-            $title.text(changes.nav.room);
-            $discussion.text(changes.nav.discussionId);
-            break;
-        case "home":
-            $title.text("My feed");
-            break;
-        }
+    if (value === null) {
+        return end;
     }
 
-    $("body").attr("class", classList);
+    if (start >= end) return start;
+    pos = ((start + end) / 2) | 0;
 
-    next();
-}, 1000);
+    if (items[pos] && items[pos][propName] < value) {
+        return findIndex(propName, value, pos + 1, end);
+    } else if (items[pos - 1] && items[pos - 1][propName] >= value) {
+        return findIndex(propName, value, start, pos - 1);
+    } else {
+        return pos;
+    }
+}
 
-core.on("setstate", function(changes, next) {
-	var state = window.currentState;
+function getItems(ranges, propName, value, interval) {
+    var index, startIndex, endIndex, range, missingAbove, missingBelow;
 
-	buildIndex(changes);
+    range = ranges.filter(function (r) {
+        return (
+            (value === null && r.end === null) ||
+            ((r.start === null || r.start < value) &&
+            (r.end === null || r.end > value))
+        );
 
-	core.emit("statechange", changes, function() {
-		var roomId = Object.keys(state.content)[0],
-			threadId,
-			threadRanges, textRanges;
+    })[0];
 
-		// merge state and changes
-		extendObj(state, changes);
+    if(!range) return ["missing"];
 
-		if (roomId && changes.content) {
-			textRanges = changes.content[roomId].textRanges;
-			threadRanges = changes.content[roomId].threadRanges;
+    index = findIndex(range.items, propName, value);
+    if(interval < 0) {
+    	startIndex = index + interval;
+    	endIndex = index;
+    } else {
+    	startIndex = index;
+    	endIndex = index + interval;
+    }
 
-			if (textRanges) {
-				threadId = Object.keys(textRanges)[0];
+    if(startIndex < 0) {
+        missingAbove = true;
+        startIndex = 0;
+    }
 
-				textRanges[threadId][0].items.push(textRanges[threadId][0].items[0]);
+    if(endIndex > range.items.length) {
+        missingBelow = true;
+        endIndex = range.items.length;
+    }
+
+    return [].concat(
+        (missingAbove? ['missing']: []),
+        range.items.slice(startIndex, endIndex),
+        (missingBelow? ['missing']: [])
+    );
+}
+
+window.state = {
+	get: function() {
+		var args = Array.prototype.slice.call(arguments);
+
+		args.unshift(current);
+
+		return objUtils.get.apply(null, args);
+	},
+	getThreads: function (roomId, timestamp, interval) {
+		return getItems(current.threads[roomId], 'startTime', timestamp, interval);
+	},
+	getTexts: function (roomId, threadId, timestamp, interval) {
+		return getItems(current.texts[roomId + (threadId? '_' + threadId: '')], 'time', timestamp, interval);
+	}
+};
+
+module.exports = function(core) {
+	core.on("setstate", function(changes, next) {
+
+		buildIndex(changes);
+
+		core.emit("statechange", changes, function() {
+			var roomId;
+
+			// merge state and changes
+			extendObj(current.nav, changes.nav);
+			extendObj(current.context, changes.context);
+			extendObj(current.app, changes.app);
+
+			if(changes.texts) {
+				for(roomId in changes.texts) {
+					if (current.texts[roomId]) {
+						// mergeRanges(current.texts[roomId], changes.texts[roomId], 'time');
+					} else {
+						current.texts[roomId] = changes.texts[roomId];
+					}
+				}
 			}
 
-			if (threadRanges) {
-				threadRanges[0].items.push(threadRanges[0].items[0]);
+			if(changes.threads) {
+				for(roomId in changes.threads) {
+					if (current.threads[roomId]) {
+						// mergeRanges(current.threads[roomId], changes.threads[roomId], 'startTime');
+					} else {
+						current.threads[roomId] = changes.threads[roomId];
+					}
+				}
 			}
-		}
 
-		buildIndex(state);
-	});
+			buildIndex(current);
+			// TODO: replace this call with some way to merge the indexes from changes into state; save CPU!
+		});
 
-	next();
-}, 1000);
+		next();
+	}, 0);
+};
+
