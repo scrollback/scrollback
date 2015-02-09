@@ -1,25 +1,27 @@
 /* jshint browser: true */
-/* global $, core */
+/* global $ */
 
-var $nick = $(".js-user-nick"),
-	$description = $(".js-user-description"),
-	$avatar = $(".js-user-avatar");
+module.exports = function(core) {
+	var $nick = $(".js-user-nick"),
+		$description = $(".js-user-description"),
+		$avatar = $(".js-user-avatar");
 
-core.on("statechange", function(changes, next) {
-	var user;
+	core.on("statechange", function(changes, next) {
+		var user;
 
-	if ("user" in changes) {
-		user = window.currentState.entities[changes.user];
+		if ("user" in changes) {
+			user = window.currentState.entities[changes.user];
 
-		$nick.text(user.id);
-		$description.text(user.description);
-		$avatar.attr("src", user.picture);
-	}
+			$nick.text(user.id);
+			$description.text(user.description);
+			$avatar.attr("src", user.picture);
+		}
 
-	next();
-}, 500);
+		next();
+	}, 500);
 
 
-$(".js-follow-room").on("click", function() {
-    $("body").toggleClass("role-follower");
-});
+	$(".js-follow-room").on("click", function() {
+	    $("body").toggleClass("role-follower");
+	});
+};

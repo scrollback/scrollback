@@ -3,7 +3,7 @@
 "use strict";
 
 var objUtils = require("../../lib/obj-utils.js"),
-	current = {}; // not to be confused with window.state, which is the API to access properties of this state.
+	current = {};
 
 function buildIndex(state) {
 	state.indexes = {
@@ -160,6 +160,6 @@ module.exports = function(core) {
 		});
 
 		next();
-	}, 0);
+	}, 10);
 };
 
