@@ -18,14 +18,14 @@
     require("./store/view-manager.js")(core);
 
     // components
-    require("./components/user.js")(core);
     require("./components/people.js")(core);
     require("./components/discussions.js")(core);
     require("./components/chat.js")(core);
-    require("./components/sidebar.js")(core);
 
     // JSX components
-    require("../public/s/scripts/jsx/homefeed.js")(core);
+    require("./jsx/sidebar.jsx")(core);
+    require("./jsx/profile-card.jsx")(core);
+    require("./jsx/homefeed.jsx")(core);
 
     // send the initial setstate event
     core.emit("setstate", data);

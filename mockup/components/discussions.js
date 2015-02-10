@@ -51,18 +51,18 @@ module.exports = function(core) {
 	}());
 
 	core.on("statechange", function(changes, next) {
-		var room = window.currentState.nav.room,
-			items;
+		// var room = state.get("nav", "room"),
+		// 	items;
 
-		if ("content" in changes && room in changes.content) {
-			if ("threadRanges" in changes.content[room] && "items" in changes.content[room].threadRanges[0]) {
-				items = changes.content[room].threadRanges[0].items;
+		// if ("content" in changes && room in changes.content) {
+		// 	if ("threadRanges" in changes.content[room] && "items" in changes.content[room].threadRanges[0]) {
+		// 		items = changes.content[room].threadRanges[0].items;
 
-				for (var i = 0, l = items.length; i < l; i++) {
-					discussion.addItem(items[i]);
-				}
-			}
-		}
+		// 		for (var i = 0, l = items.length; i < l; i++) {
+		// 			discussion.addItem(items[i]);
+		// 		}
+		// 	}
+		// }
 
 		next();
 	}, 500);

@@ -5,8 +5,8 @@
 module.exports = function(core) {
 	var View = require("../views/view.js"),
 		list = new View({ type: "list" }),
-		online = list.addHeader("Online"),
-		offline = list.addHeader("Offline"),
+		// online = list.addHeader("Online"),
+		// offline = list.addHeader("Offline"),
 		users = {},
 		people;
 
@@ -30,25 +30,25 @@ module.exports = function(core) {
 	list.element.appendTo(".people-list");
 
 	core.on("statechange", function(changes, next) {
-		var room = window.currentState.nav.room,
-			userRel, userObj;
+		// var room = window.currentState.nav.room,
+		// 	userRel, userObj;
 
-		if ("indexes" in changes && "roomUsers" in changes.indexes && room in changes.indexes.roomUsers) {
-			for (var user in changes.indexes.roomUsers[room]) {
-				userRel = changes.indexes.roomUsers[room][user];
-				userObj = changes.entities[userRel.user];
+		// if ("indexes" in changes && "roomUsers" in changes.indexes && room in changes.indexes.roomUsers) {
+		// 	for (var user in changes.indexes.roomUsers[room]) {
+		// 		userRel = changes.indexes.roomUsers[room][user];
+		// 		userObj = changes.entities[userRel.user];
 
-				if (userRel.user === null) {
-					people.removeItem(userObj);
-				} else {
-					if (userRel.status === "online") {
-						people.addItem(userObj, online);
-					} else {
-						people.addItem(userObj, offline);
-					}
-				}
-			}
-		}
+		// 		if (userRel.user === null) {
+		// 			people.removeItem(userObj);
+		// 		} else {
+		// 			if (userRel.status === "online") {
+		// 				people.addItem(userObj, online);
+		// 			} else {
+		// 				people.addItem(userObj, offline);
+		// 			}
+		// 		}
+		// 	}
+		// }
 
 		next();
 	}, 500);

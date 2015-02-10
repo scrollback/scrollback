@@ -8,22 +8,25 @@ var objUtils = require("../../lib/obj-utils.js"),
 		context: {},
 		app: {},
 		texts: {},
-		threads: {}
+		threads: {},
+		entities: {}
 	};
 
-function buildIndex(state) {
-	state.indexes = {
+function buildIndex(obj) {
+	var relation;
+
+	obj.indexes = {
 		userRooms: {},
 		roomUsers: {}
 	};
 
-	if (state.relations && state.relations.length) {
-		state.relations.forEach(function(relation) {
-			state.entities[relation.room + "_" + relation.user] = relation;
+	for (var name in obj.entities) {
+		relation = obj.entities[name];
 
-			(state.indexes.userRooms[relation.user] = state.indexes.userRooms[relation.user] || []).push(relation);
-			(state.indexes.roomUsers[relation.room] = state.indexes.roomUsers[relation.room] || []).push(relation);
-		});
+		if (relation.room && relation.user) {
+			(obj.indexes.userRooms[relation.user] = obj.indexes.userRooms[relation.user] || []).push(relation);
+			(obj.indexes.roomUsers[relation.room] = obj.indexes.roomUsers[relation.room] || []).push(relation);
+		}
 	}
 }
 
@@ -36,7 +39,8 @@ function extendObj(obj1, obj2) {
 		if (obj2[name] === null) {
 			delete obj1[name];
 		} else if (typeof obj1[name] === "object" && typeof obj2[name] === "object" && obj1[name] !== null) {
-			extendObj(obj1[name], obj2[name]);
+			obj1[name] = obj2[name];
+			// extendObj(obj1[name], obj2[name]);
 		} else {
 			obj1[name] = obj2[name];
 		}
@@ -74,6 +78,10 @@ function findIndex (items, propName, value, start, end) {
 
 function getItems(ranges, propName, value, interval) {
     var index, startIndex, endIndex, range, missingAbove, missingBelow;
+
+    if (!ranges) {
+    	return;
+    }
 
     range = ranges.filter(function (r) {
         return (
@@ -132,14 +140,17 @@ module.exports = function(core) {
 	core.on("setstate", function(changes, next) {
 		var roomId, threadId;
 
-		buildIndex(changes);
-
 		// merge state and changes
 		extendObj(current.nav, changes.nav);
 		extendObj(current.context, changes.context);
 		extendObj(current.app, changes.app);
+		extendObj(current.entities, changes.entities); // Todo: replace with shallow extend
 
-		if(changes.texts) {
+		if (changes.userId) {
+			current.userId = changes.userId;
+		}
+
+		if (changes.texts) {
 			for(roomId in changes.texts) {
 				if (changes.threads.roomId && changes.threads.roomId[0] && changes.threads.roomId[0].items) {
 					for (var i = 0, l = changes.threads.roomId[0].items.length; i < l; i++) {
@@ -155,7 +166,7 @@ module.exports = function(core) {
 			}
 		}
 
-		if(changes.threads) {
+		if (changes.threads) {
 			for (roomId in changes.threads) {
 				if (current.threads[roomId]) {
 					// mergeRanges(current.threads[roomId], changes.threads[roomId], 'startTime');
@@ -165,12 +176,12 @@ module.exports = function(core) {
 			}
 		}
 
-		buildIndex(current);
-		// TODO: replace this call with some way to merge the indexes from changes into state; save CPU!
+		buildIndex(changes);
+		buildIndex(current); // TODO: replace this call with some way to merge the indexes from changes into state; save CPU!
 
 		core.emit("statechange", changes);
 
 		next();
-	}, 5);
+	}, 1);
 };
 
