@@ -3,6 +3,7 @@ var gulp = require("gulp"),
 	del = require("del"),
 	bower = require("bower"),
 	browserify = require("browserify"),
+	reactify = require("reactify"),
 	source = require("vinyl-source-stream"),
 	buffer = require("vinyl-buffer"),
 	es = require("event-stream"),
@@ -18,7 +19,6 @@ var gulp = require("gulp"),
 	striplogs = require("gulp-strip-debug"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
-	react = require("gulp-react"),
 	sass = require("gulp-sass"),
 	combinemq = require("gulp-combine-mq"),
 	autoprefixer = require("gulp-autoprefixer"),
@@ -30,7 +30,6 @@ var gulp = require("gulp"),
 	dirs = {
 		bower: "bower_components",
 		lib: "public/s/scripts/lib",
-		jsx: "public/s/scripts/jsx",
 		lace: "public/s/styles/lace",
 		fonts: "public/s/styles/fonts",
 		scss: "public/s/styles/scss",
@@ -42,7 +41,7 @@ var gulp = require("gulp"),
 			"!node_modules/**", "!bower_components/**",
 			"!public/s/**/*.js"
 		],
-		jsx: [ "mockup/jsx/**/*.jsx" ],
+		jsx: [ "**/*.jsx" ],
 		scss: [ "public/s/styles/scss/**/*.scss" ]
 	};
 
@@ -146,7 +145,7 @@ gulp.task("hooks", function() {
 gulp.task("postinstall", [ "hooks" ]);
 
 // Lint JavaScript files
-gulp.task("lint", function() {
+gulp.task("jshint", function() {
 	return gulp.src(files.js)
 	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(gitmodified("modified"))
@@ -154,6 +153,8 @@ gulp.task("lint", function() {
 	.pipe(jshint.reporter("jshint-stylish"))
 	.pipe(jshint.reporter("fail"));
 });
+
+gulp.task("lint", [ "jshint" ]);
 
 // Install and copy third-party libraries
 gulp.task("bower", function() {
@@ -167,8 +168,7 @@ gulp.task("copylibs", [ "bower" ], function() {
 		"lace/src/js/**/*.js",
 		"sockjs/sockjs.min.js",
 		"svg4everybody/svg4everybody.min.js",
-		"velocity/velocity.min.js",
-		"elan/elan.js"
+		"velocity/velocity.min.js"
 	], "lib/post-message-polyfill.js"))
 	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(gulp.dest(dirs.lib));
@@ -187,16 +187,12 @@ gulp.task("polyfills", [ "bower" ], function() {
 	.pipe(gulp.dest(dirs.lib));
 });
 
-// Build react files
-gulp.task("react", function () {
-    return gulp.src(files.jsx)
-        .pipe(react())
-        .pipe(gulp.dest(dirs.jsx));
-});
-
 // Build browserify bundles
-gulp.task("bundle", [ "copylibs", "react" ], function() {
-	return bundle([ "client.js", "mockup/mockup.js" ], { debug: true })
+gulp.task("bundle", [ "copylibs" ], function() {
+	return bundle([ "client.js", "mockup/mockup.js" ], {
+		debug: true,
+		transform: [ reactify ]
+	})
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
@@ -279,7 +275,7 @@ gulp.task("clean", function() {
 	return del(prefix("public/", [
 		"**/*.min.js", "**/*.min.css",
 		"**/*.map", "**/*.appcache}"
-	], dirs.lib, dirs.jsx, dirs.css, dirs.lace, dirs.fonts));
+	], dirs.lib, dirs.css, dirs.lace, dirs.fonts));
 });
 
 gulp.task("watch", function() {
