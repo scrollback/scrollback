@@ -3,7 +3,13 @@
 "use strict";
 
 var objUtils = require("../../lib/obj-utils.js"),
-	current = {};
+	current = {
+		nav: {},
+		context: {},
+		app: {},
+		texts: {},
+		threads: {}
+	};
 
 function buildIndex(state) {
 	state.indexes = {
@@ -23,7 +29,7 @@ function buildIndex(state) {
 
 function extendObj(obj1, obj2) {
 	if (typeof obj1 !== "object" || typeof obj2 !== "object") {
-		throw new Error("Invalid parameters passed");
+		return obj1;
 	}
 
 	for (var name in obj2) {
@@ -124,42 +130,47 @@ window.state = {
 
 module.exports = function(core) {
 	core.on("setstate", function(changes, next) {
+		var roomId, threadId;
 
 		buildIndex(changes);
 
-		core.emit("statechange", changes, function() {
-			var roomId;
+		// merge state and changes
+		extendObj(current.nav, changes.nav);
+		extendObj(current.context, changes.context);
+		extendObj(current.app, changes.app);
 
-			// merge state and changes
-			extendObj(current.nav, changes.nav);
-			extendObj(current.context, changes.context);
-			extendObj(current.app, changes.app);
+		if(changes.texts) {
+			for(roomId in changes.texts) {
+				if (changes.threads.roomId && changes.threads.roomId[0] && changes.threads.roomId[0].items) {
+					for (var i = 0, l = changes.threads.roomId[0].items.length; i < l; i++) {
+						threadId = changes.threads.roomId[0].items[i].id;
 
-			if(changes.texts) {
-				for(roomId in changes.texts) {
-					if (current.texts[roomId]) {
-						// mergeRanges(current.texts[roomId], changes.texts[roomId], 'time');
-					} else {
-						current.texts[roomId] = changes.texts[roomId];
+						if (current.texts[roomId + "_" + threadId]) {
+							// mergeRanges(current.texts[roomId + "_" + threadId], changes.texts[roomId + "_" + threadId], 'time');
+						} else {
+							current.texts[roomId + "_" + threadId] = changes.texts[roomId + "_" + threadId];
+						}
 					}
 				}
 			}
+		}
 
-			if(changes.threads) {
-				for(roomId in changes.threads) {
-					if (current.threads[roomId]) {
-						// mergeRanges(current.threads[roomId], changes.threads[roomId], 'startTime');
-					} else {
-						current.threads[roomId] = changes.threads[roomId];
-					}
+		if(changes.threads) {
+			for (roomId in changes.threads) {
+				if (current.threads[roomId]) {
+					// mergeRanges(current.threads[roomId], changes.threads[roomId], 'startTime');
+				} else {
+					current.threads[roomId] = changes.threads[roomId];
 				}
 			}
+		}
 
-			buildIndex(current);
-			// TODO: replace this call with some way to merge the indexes from changes into state; save CPU!
-		});
+		buildIndex(current);
+		// TODO: replace this call with some way to merge the indexes from changes into state; save CPU!
+
+		core.emit("statechange", changes);
 
 		next();
-	}, 10);
+	}, 5);
 };
 

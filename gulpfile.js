@@ -38,10 +38,11 @@ var gulp = require("gulp"),
 	},
 	files = {
 		js: [
-			"**/*.js", "**/*.jsx", "!**/*.min.js",
+			"**/*.js", "!**/*.min.js",
 			"!node_modules/**", "!bower_components/**",
 			"!public/s/**/*.js"
 		],
+		jsx: [ "mockup/jsx/**/*.jsx" ],
 		scss: [ "public/s/styles/scss/**/*.scss" ]
 	};
 
@@ -188,7 +189,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 
 // Build react files
 gulp.task("react", function () {
-    return gulp.src("mockup/jsx/*.jsx")
+    return gulp.src(files.jsx)
         .pipe(react())
         .pipe(gulp.dest(dirs.jsx));
 });
@@ -282,7 +283,7 @@ gulp.task("clean", function() {
 });
 
 gulp.task("watch", function() {
-	gulp.watch(files.js, [ "scripts", "manifest" ]);
+	gulp.watch(files.js.concat(files.jsx), [ "scripts", "manifest" ]);
 	gulp.watch(files.scss, [ "styles", "manifest" ]);
 });
 

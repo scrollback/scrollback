@@ -13,7 +13,7 @@ module.exports = function(core) {
 			visitor: "Recently visited"
 		};
 
-	core.on("statechange", function(changes) {
+	core.on("statechange", function(changes, next) {
 		var relations, sectionsarr,
 			sections = {};
 
@@ -37,6 +37,8 @@ module.exports = function(core) {
 		});
 
 		React.render(<GridView sections={sectionsarr} />, document.getElementByClassName(".main-content-rooms"));
+
+		next();
 	}, 500);
 };
 

@@ -30,11 +30,13 @@ RoomCard = React.createClass({
 		return this.getCardState();
 	},
 	componentDidMount: function () {
-		core.on('stateChanged', function (changes) {
+		core.on('statechange', function(changes, next) {
 			if(changes.contains('content.' + this.props.roomId + '.threadRanges')) {
 				this.setState (this.getCardState());
 			}
-		});
+
+			next();
+		}, 500);
 	},
 	render: function() {
 		var discussions = [],

@@ -47,6 +47,7 @@ client-config.js
 /public/s/styles/fonts
 /public/s/styles/dist
 /public/s/scripts/lib
+/public/s/scripts/jsx
 /public/s/tmp/*
 
 /mocha-output-selenium.json
