@@ -34,8 +34,8 @@ function makeTimeUnique(action, propertyName, callback) {
 			}
 		});
 	} else {
-		process.nextTick(function() {
+		setTimeout(function() {
 			makeTimeUnique(action, propertyName, callback);
-		});
+		}, 1);
 	}
 }
