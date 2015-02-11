@@ -1,4 +1,5 @@
-/* global state */
+/* jshint browser: true */
+/* global state, core */
 
 var React = require("react"),
 	RoomCard;
@@ -37,6 +38,16 @@ RoomCard = React.createClass({
 	// 		next();
 	// 	}, 500);
 	// },
+	onClick: function() {
+		core.emit("setstate", {
+			nav: {
+				room: this.props.roomId,
+				mode: "room",
+				view: null
+			}
+		});
+	},
+
 	render: function() {
 		var discussions = [],
 			room = state.get("entities", this.props.roomId),
@@ -53,7 +64,7 @@ RoomCard = React.createClass({
 		// });
 
 		return (
-		    <div className="card room-card js-room-card" data-color={room.color} data-room={room.room}>
+		    <div className="card room-card js-room-card" onClick={this.onClick}>
 		      	<div className="card-cover" style={coverStyle}>
 		      		<div className="card-cover-header card-header">
 		      			<span className="card-header-badge notification-badge notification-badge-mention">{room.mentions}</span>

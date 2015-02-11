@@ -8,12 +8,18 @@ var React = require("react"),
  * 	{
  * 		key: "somekey",
  * 		header: "Some header"
- * 		items: [ { key: item } ]
+ * 		items: [{
+ * 			key: "somekey"
+ * 			elem: reactelem
+ * 		}]
  * 	},
  * 	{
  * 		key: "otherkey",
  * 		header: "Another header"
- * 		items: [ { key: item } ]
+ * 		items: [{
+ * 			key: "somekey"
+ * 			elem: reactelem
+ * 		}]
  * 	}
  * ]
  */
@@ -33,9 +39,7 @@ GridView = React.createClass({
 				items = [];
 
 				for (var j = 0, m = sections[i].items.length; j < m; j++) {
-					for (var key in sections[i].items[j]) {
-						items.push(<li key={key} className="grid-item">{sections[i].items[j][key]}</li>);
-					}
+					items.push(<li key={sections[i].items[j].key} className="grid-item">{sections[i].items[j].elem}</li>);
 				}
 
 				gridview.push(<ul key={"section-" + sections[i].key} className="grid-section">{items}</ul>);

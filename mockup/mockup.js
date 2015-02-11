@@ -25,7 +25,7 @@
     // JSX components
     require("./jsx/sidebar.jsx")(core);
     require("./jsx/profile-card.jsx")(core);
-    require("./jsx/homefeed.jsx")(core);
+    require("./jsx/home-feed.jsx")(core);
 
     // send the initial setstate event
     core.emit("setstate", data);
