@@ -57,8 +57,10 @@ module.exports = function(core, conf) {
 	}, 'storage');
 
 	core.on('edit', edit.put, 'storage');
-	core.on('getUsers', roomuser.getUsers, 'storage');
-	core.on('getRooms', roomuser.getRooms, 'storage');
-	core.on('getThreads', threads.get, 'storage');
-	core.on('getTexts', texts.get, 'storage');
+	if (!config.disableQueries) {
+		core.on('getUsers', roomuser.getUsers, 'storage');
+		core.on('getRooms', roomuser.getRooms, 'storage');
+		core.on('getThreads', threads.get, 'storage');
+		core.on('getTexts', texts.get, 'storage');
+	}
 };

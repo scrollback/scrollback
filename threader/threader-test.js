@@ -45,15 +45,15 @@ describe('threader', function() {
 		});
 	});
 
-	it('should get a thread with lables', function(done) {
+	/*it('should get a thread with lables', function(done) {
 		var msg = copyMsg();
-		core.emit("text", msg, function(/*err, msg*/) {
+		core.emit("text", msg, function(err, msg) {
 			console.log("message= ", msg);
 			var m = (msg.labels && msg.labels.normal && msg.labels.nonsense && msg.labels.spam) ? true : false;
 			assert.equal(m, true, "Unable to get a labels");
 			done();
 		});
-	});
+	});*/
 
     it('should Update thread ID (threader enabled)', function (done) {
 		var msg = copyMsg();
