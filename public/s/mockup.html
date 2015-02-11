@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <link rel="stylesheet" type="text/css"  media="screen" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600">
+    <link rel="stylesheet" type="text/css"  media="screen" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700">
     <link rel="stylesheet" type="text/css" media="screen" href="./styles/dist/style.min.css">
 
     <title>Scrollback</title>
@@ -17,7 +17,7 @@
     <section id="sidebar-left" class="column sidebar sidebar-left">
         <div class="sidebar-content" data-mode="home">
             <div class="profile">
-                <div class="js-profile-card"></div>
+                <div id="js-profile-card"></div>
                 <div class="profile-last-seen sidebar-block">
                     <span class="profile-last-seen-icon"></span>
                     <p>Last seen 2 hours ago</p>
@@ -43,28 +43,16 @@
                 <img class="sidebar-header-logo" src="./img/client/scrollback-logo.svg">
                 <a class="sidebar-header-icon sidebar-header-icon sidebar-header-icon-grid"></a>
             </div>
-            <div class="room-list sidebar-content js-room-list"></div>
+            <div id="js-room-list" class="room-list sidebar-content"></div>
         </div>
     </section>
 
     <main id="main" class="main">
-        <div id="appbar" class="appbar appbar-primary">
-            <a data-mode="room chat" class="appbar-icon appbar-icon-left appbar-icon-menu js-sidebar-left-open"></a>
-            <img data-mode="home" class="appbar-avatar js-sidebar-left-open" alt="satya164" src="https://avatars3.githubusercontent.com/u/1174278?v=3&amp;s=460">
-            <h1 class="appbar-title appbar-title-primary js-appbar-title">My feed</h1>
-            <a class="appbar-icon appbar-icon-more"></a>
-            <a class="appbar-icon appbar-icon-search"></a>
-            <a data-mode="room chat" class="appbar-icon appbar-icon-people js-sidebar-right-open"></a>
-            <a data-mode="room chat" class="appbar-icon appbar-icon-follow js-follow-room"></a>
-        </div>
-
-        <div class="appbar appbar-secondary" data-mode="chat">
-            <a class="appbar-icon appbar-icon-back appbar-icon-left js-goto-room"></a>
-            <h2 class="appbar-title appbar-title-secondary js-discussion-title"></h2>
-        </div>
+        <div id="js-appbar-primary" class="appbar appbar-primary"></div>
+        <div id="js-appbar-secondary" class="appbar appbar-secondary" data-mode="chat"></div>
 
         <div class="main-content" data-mode="home search room">
-            <div class="main-content-rooms js-home-feed" data-mode="home"></div>
+            <div id="js-home-feed" class="main-content-rooms" data-mode="home"></div>
             <div class="main-content-search" data-mode="search"></div>
             <div class="main-content-discussions" data-mode="room"></div>
         </div>
@@ -88,7 +76,7 @@
                 <input type="search" class="searchbar-input" placeholder="Find people" required>
                 <span class="searchbar-icon"></span>
             </div>
-            <div class="people-list sidebar-content js-people-list"></div>
+            <div id="js-people-list" class="people-list sidebar-content"></div>
         </div>
     </section>
 

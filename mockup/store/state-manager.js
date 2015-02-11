@@ -120,22 +120,6 @@ function getItems(ranges, propName, value, interval) {
     );
 }
 
-window.state = {
-	get: function() {
-		var args = Array.prototype.slice.call(arguments);
-
-		args.unshift(current);
-
-		return objUtils.get.apply(null, args);
-	},
-	getThreads: function (roomId, timestamp, interval) {
-		return getItems(current.threads[roomId], 'startTime', timestamp, interval);
-	},
-	getTexts: function (roomId, threadId, timestamp, interval) {
-		return getItems(current.texts[roomId + (threadId? '_' + threadId: '')], 'time', timestamp, interval);
-	}
-};
-
 module.exports = function(core) {
 	core.on("setstate", function(changes, next) {
 		var roomId, threadId;
@@ -183,5 +167,21 @@ module.exports = function(core) {
 
 		next();
 	}, 1);
+
+	return {
+		get: function() {
+			var args = Array.prototype.slice.call(arguments);
+
+			args.unshift(current);
+
+			return objUtils.get.apply(null, args);
+		},
+		getThreads: function (roomId, timestamp, interval) {
+			return getItems(current.threads[roomId], 'startTime', timestamp, interval);
+		},
+		getTexts: function (roomId, threadId, timestamp, interval) {
+			return getItems(current.texts[roomId + (threadId? '_' + threadId: '')], 'time', timestamp, interval);
+		}
+	};
 };
 
