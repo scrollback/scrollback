@@ -14,18 +14,6 @@ var React = require("react"),
 		visitor: "Recently visited"
 	};
 
-HomeFeed = React.createClass({
-	render: function() {
-		return (<GridView sections={this.props.sections} />);
-	}
-});
-
-RoomList = React.createClass({
-	render: function() {
-		return (<ListView sections={this.props.sections} />);
-	}
-});
-
 function getSections(type) {
 	var sections = {}, arr = [];
 
@@ -44,7 +32,7 @@ function getSections(type) {
 
 	for (var role in sections) {
 		arr.push({
-			key: sections[role].key,
+			key: sections[role].key + (type ? "-" + type : ""),
 			header: sections[role].header,
 			items: sections[role].items
 		});
@@ -53,23 +41,45 @@ function getSections(type) {
 	return arr;
 }
 
+HomeFeed = React.createClass({
+	render: function() {
+		return (<GridView sections={getSections("large")} />);
+	}
+});
+
+RoomList = React.createClass({
+	render: function() {
+		return (<ListView sections={getSections("small")} />);
+	}
+});
+
 module.exports = function(core) {
+	var homefeed = $(".js-home-feed").get(0),
+		roomlist = $(".js-room-list").get(0);
+
 	core.on("statechange", function(changes, next) {
 		var mode = state.get("nav", "mode");
 
-		if (!(changes && changes.indexes && changes.indexes.userRooms)) {
-			return next();
-		}
+		if (changes && changes.indexes && changes.indexes.userRooms) {
+			if (mode === "home") {
+				React.render(<HomeFeed />, homefeed);
+			}
 
-		if (mode === "home") {
-			React.render(<HomeFeed sections={getSections()} />, $(".js-home-feed").get(0));
-		}
-
-		if (mode === "room") {
-			React.render(<RoomList sections={getSections("small")} />, $(".js-room-list").get(0));
+			if (mode === "room") {
+				React.render(<RoomList />, roomlist);
+			}
 		}
 
 		next();
 	}, 500);
+
+	$(".js-goto-room").on("click", function() {
+	    core.emit("setstate", {
+	        nav: {
+	            mode: "room",
+	            view: null
+	        }
+	    });
+	});
 };
 

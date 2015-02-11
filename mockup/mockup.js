@@ -26,7 +26,7 @@
     require("./jsx/sidebar.jsx")(core, config, state);
     require("./jsx/profile-card.jsx")(core, config, state);
     require("./jsx/home-feed.jsx")(core, config, state);
-
+    require("./jsx/people-list.jsx")(core, config, state);
     // send the initial setstate event
     core.emit("setstate", data);
 }());
