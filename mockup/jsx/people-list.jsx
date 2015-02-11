@@ -51,7 +51,7 @@ module.exports = function(core, config, state) {
 	});
 
 	core.on("statechange", function(changes, next) {
-		if ((changes && changes.indexes && changes.indexes.roomsUsers) || (/^(room|chat)$/).test(state.get("nav", "mode"))) {
+		if (("indexes" in changes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(state.get("nav", "mode"))) {
 			React.render(<PeopleList />, peoplelist);
 		}
 

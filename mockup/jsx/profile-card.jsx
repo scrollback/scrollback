@@ -7,13 +7,15 @@ module.exports = function(core, config, state) {
 
 	ProfileCard = React.createClass({
 		render: function() {
+			var user = state.get("entities", state.get("userId"));
+
 			return (
 			    <div className="profile-card">
 		            <a className="profile-scrollback-logo"></a>
-		            <img className="profile-avatar js-user-avatar" alt="satya164" src={this.props.user.picture} />
+		            <img className="profile-avatar js-user-avatar" alt="satya164" src={user.picture} />
 		            <div className="profile-details">
-		                <h3 className="profile-username js-user-nick">{this.props.user.id}</h3>
-		                <p className="profile-bio js-user-description">{this.props.user.description}</p>
+		                <h3 className="profile-username js-user-nick">{user.id}</h3>
+		                <p className="profile-bio js-user-description">{user.description}</p>
 		            </div>
 		            <a className="profile-settings"></a>
 		        </div>
@@ -22,12 +24,8 @@ module.exports = function(core, config, state) {
 	});
 
 	core.on("statechange", function(changes, next) {
-		var user;
-
-		if ("entities" in changes) {
-			user = state.get("entities", state.get("userId"));
-
-			React.render(<ProfileCard user={user} />, profilecard);
+		if ("userId" in changes || ("entities" in changes && state.get("userId") in changes.entities)) {
+			React.render(<ProfileCard />, profilecard);
 		}
 
 		next();

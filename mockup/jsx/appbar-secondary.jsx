@@ -11,10 +11,12 @@ module.exports = function(core, config, state) {
 		},
 
 		render: function() {
+			var title = state.get("nav", "discussion");
+
 			return (
 		        <div>
 		            <a class="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goToRoom}></a>
-		            <h2 class="appbar-title appbar-title-secondary js-discussion-title">{this.props.title}</h2>
+		            <h2 class="appbar-title appbar-title-secondary js-discussion-title">{title}</h2>
 		        </div>
 	        );
 		}
@@ -22,7 +24,7 @@ module.exports = function(core, config, state) {
 
 	core.on("statechange", function(changes, next) {
 		if ("nav" in changes && (("discussion" in changes.nav || "mode" in changes.nav) && changes.nav.mode === "chat")) {
-			React.render(<AppbarSecondary title={state.get("nav", "discussion")} />, appbarsecondary);
+			React.render(<AppbarSecondary />, appbarsecondary);
 		}
 
 		next();

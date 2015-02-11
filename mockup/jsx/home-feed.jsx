@@ -59,7 +59,7 @@ module.exports = function(core, config, state) {
 	core.on("statechange", function(changes, next) {
 		var mode = state.get("nav", "mode");
 
-		if (changes && changes.indexes && changes.indexes.userRooms) {
+		if ("indexes" in changes && "userRooms" in changes) {
 			if (mode === "home") {
 				React.render(<HomeFeed />, homefeed);
 			}
