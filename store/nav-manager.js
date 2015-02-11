@@ -12,6 +12,8 @@ nav: {
 }
 
 */
+
+/*
 var modes = ["room-list", "thread-list", "chat", "conf", "pref"];
 var config = null;
 var tabs = {
@@ -49,4 +51,4 @@ function addChanges(newState) {
 
 function addOld(newState) {
 	newState.old = {};
-}
+}*/

@@ -1,28 +1,17 @@
-var config;
-/********remove this after testing.**********/
-var state = {
-	nav: {},
-	content: {},
-	context: {},
-	user: {},
-	entities: {},
-	sessions: {}
-};
-/******************/
-var rangeOps = require("../lib/rangeOps.js");
-module.exports = function(core, conf) {
+var config, state;
+module.exports = function(core, conf, s) {
 	config = conf;
-	core.on("setState", function(newState, next) {
-		/*
-            loadContent to store if from changes.
-        */
+    state = s;
+    
+	/*core.on("setState", function(newState, next) {
 		if (newState.changes.nav) updateNav(newState.changes.nav, state.nav);
 		if (newState.changes.entities) updateEntities(newState.changes.entities);
 		if (newState.changes.content) updateContent(newState.changes.content);
 		next();
-	});
+	});*/
 };
 
+/*
 function updateNav(nav, stateNav) {
 	var keys = Object.keys(nav);
 	keys.forEach(function(e) {
@@ -69,4 +58,4 @@ function updateIndex(type, ranges) {
 			index[item.id] = item;
 		});
 	});
-}
+}*/

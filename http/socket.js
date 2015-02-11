@@ -95,6 +95,7 @@ sock.on('connection', function(socket) {
 		}
 		core.emit(d.type, d, function(err, data) {
 			var e, action;
+            log.i("response", err, data);
 			if (err) {
 				e = {
 					type: 'error',
@@ -170,6 +171,7 @@ sock.on('connection', function(socket) {
 			if (['getUsers', 'getTexts', 'getRooms', 'getThreads'].indexOf(data.type) >= 0) {
 				var t = data.eventStartTime; //TODO: copy properties of each query that is needed on client side.
 				delete data.eventStartTime;
+                console.log("sending response", data);
 				conn.send(data);
 				data.eventStartTime = t;
 			}
