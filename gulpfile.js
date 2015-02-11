@@ -3,6 +3,7 @@ var gulp = require("gulp"),
 	del = require("del"),
 	bower = require("bower"),
 	browserify = require("browserify"),
+	reactify = require("reactify"),
 	source = require("vinyl-source-stream"),
 	buffer = require("vinyl-buffer"),
 	es = require("event-stream"),
@@ -40,6 +41,7 @@ var gulp = require("gulp"),
 			"!node_modules/**", "!bower_components/**",
 			"!public/s/**/*.js"
 		],
+		jsx: [ "**/*.jsx" ],
 		scss: [ "public/s/styles/scss/**/*.scss" ]
 	};
 
@@ -143,7 +145,7 @@ gulp.task("hooks", function() {
 gulp.task("postinstall", [ "hooks" ]);
 
 // Lint JavaScript files
-gulp.task("lint", function() {
+gulp.task("jshint", function() {
 	return gulp.src(files.js)
 	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(gitmodified("modified"))
@@ -151,6 +153,8 @@ gulp.task("lint", function() {
 	.pipe(jshint.reporter("jshint-stylish"))
 	.pipe(jshint.reporter("fail"));
 });
+
+gulp.task("lint", [ "jshint" ]);
 
 // Install and copy third-party libraries
 gulp.task("bower", function() {
@@ -185,7 +189,10 @@ gulp.task("polyfills", [ "bower" ], function() {
 
 // Build browserify bundles
 gulp.task("bundle", [ "copylibs" ], function() {
-	return bundle([ "client.js" ], { debug: true })
+	return bundle([ "client.js", "mockup/mockup.js" ], {
+		debug: true,
+		transform: [ reactify ]
+	})
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename({ suffix: ".bundle.min" }))
@@ -272,7 +279,7 @@ gulp.task("clean", function() {
 });
 
 gulp.task("watch", function() {
-	gulp.watch(files.js, [ "scripts", "manifest" ]);
+	gulp.watch(files.js.concat(files.jsx), [ "scripts", "manifest" ]);
 	gulp.watch(files.scss, [ "styles", "manifest" ]);
 });
 

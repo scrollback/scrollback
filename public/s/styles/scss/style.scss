@@ -1,0 +1,255 @@
+/**
+* Stylesheet for the client
+*/
+
+// Import global settings (must be the first)
+@import "settings";
+
+
+// Import base styles from lace
+@import "../lace/base";
+@import "../lace/animations";
+@import "../lace/alertbar";
+@import "../lace/modal";
+@import "../lace/popover";
+@import "../lace/switch";
+@import "../lace/button";
+@import "../lace/entry";
+@import "../lace/multientry";
+@import "../lace/flexbox";
+@import "../lace/tooltip";
+@import "../lace/progressbar";
+@import "../lace/linked";
+@import "../lace/filter";
+@import "../lace/dropshadow";
+@import "../lace/grid";
+@import "../lace/icons";
+
+
+// Import various components
+@import "components/listview";
+@import "components/gridview";
+@import "components/fab";
+@import "components/appbar";
+@import "components/searchbar";
+@import "components/profile";
+@import "components/card";
+@import "components/badge";
+@import "components/sidebar";
+@import "components/chat";
+
+
+// Element styles
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    @include filter((
+                    role: $roles,
+                    webview: (),
+                    embed: $embeds,
+                    mode: $modes,
+                    platform: $platforms,
+                    state: $states
+    ), ( role )); /* show hide elements based on filter */
+
+    @include flexbox;
+    @include flex-direction(row);
+    @include flex-wrap(nowrap);
+    @include align-items(flex-start);
+
+    word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
+    overflow: hidden; /* fix overflow in firefox */
+    position: fixed; /* make sure that it works on ios when position: absolute */
+}
+
+.sidebar {
+    @include flex-shrink(0);
+
+    &-left {
+        .card-header { border-bottom: none; }
+
+        .list-section { background-color: transparent; }
+
+        .list-item {
+            &:focus, &:hover { background-color: darken($dark-color, 5%); }
+
+            &:active { background-color: darken($dark-color, 10%); }
+        }
+    }
+
+    &-right {
+        @media #{$screenxxxxx}  {
+            .searchbar {
+                @include transition(.3s $easeOutQuad);
+                @include flex-shrink(0);
+
+                color: $light-color;
+                background-color: $accent-color;
+
+                @for $i from 1 through length($palette) {
+                    .color-#{$i - 1} & { background-color: nth($palette, $i); }
+                }
+
+                &-input { background-color: rgba(0,0,0,.1); }
+            }
+        }
+
+        .list-item {
+            &:focus, &:hover { background-color: darken($light-color, 5%); }
+
+            &:active { background-color: darken($light-color, 10%); }
+        }
+    }
+
+    &-room-list, &-people-list {
+        @include flexbox;
+        @include flex-direction(column);
+        @include flex-wrap(nowrap);
+        @include align-items(flex-start);
+
+        height: 100%;
+        width: 100%;
+    }
+
+    &-content {
+        @include flex-grow(1);
+
+        overflow: auto;
+        width: 100%;
+    }
+
+    .list-content {
+        background-color: transparent;
+        box-shadow: none;
+        border-left-width: 0;
+        border-right-width: 0;
+        border-radius: 0;
+    }
+
+    .list-header { opacity: .5; }
+
+    .card-header-icon-more { display: none; }
+}
+
+.sidebar-header {
+    @extend %clearfix;
+    @include flex-shrink(0);
+    @include dropshadow(2);
+
+    width: 100%;
+    cursor: pointer;
+
+    &-logo {
+        float: left;
+        display: block;
+        margin: .75em .5em;
+    }
+
+    &-icon {
+        $icon-width: $bar-height / 1.5;
+
+        @extend %appear;
+
+        float: right;
+        font-size: 1.5em;
+        padding: (1em / 1.5);
+        color: inherit;
+        height: 100%;
+        width: $icon-width;
+        min-width: $icon-width;
+        max-width: $icon-width;
+        line-height: 1;
+
+        &:hover, &:focus, &:active { color: inherit; }
+
+        &-grid { @include icon(grid); }
+    }
+}
+
+.appbar-primary {
+    @media #{$screenxxx} {
+        .appbar-icon-menu, .appbar-avatar { display: none; }
+
+        .appbar-title { margin-left: 1em; }
+    }
+
+    @media #{$screenxxxxx} {
+        .appbar-icon-people { display: none; }
+    }
+
+    .appbar-icon-follow {
+        .role-follower & { @include icon(star); }
+    }
+}
+
+.people-list-item {
+    padding: .5em;
+
+    &-avatar {
+        float: left;
+        display: block;
+        margin: .5em;
+        height: $bar-height - 1em;
+        width: $bar-height - 1em;
+        border-radius: 50%;
+    }
+
+
+    &-nick {
+        font-weight: 700;
+        line-height: $bar-height;
+        margin: 0 .5em;
+    }
+
+    &-offline { opacity: .7; }
+}
+
+.main {
+    @include flexbox;
+    @include flex-direction(column);
+    @include flex-wrap(nowrap);
+    @include align-items(flex-start);
+    @include flex-grow(1);
+
+    position: relative;
+    height: 100%;
+    overflow: hidden; /* otherwise makes the right sidebar shrink in firefox */
+}
+
+.main-content {
+    @include flex-grow(1);
+
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: .5em 0;
+    background-color: darken($light-color, 5%);
+
+    @media #{$screenxx} { padding: 2em; }
+
+    &:after {
+        content: "";
+        display: block;
+        height: $bar-height * 1.5;
+    }
+}
+
+.grid-item {
+    .mode-room & {
+        $item-width: 32em;
+
+        @media only screen and (min-width: #{$item-width * 2}) { margin: .5em; }
+
+        @for $i from 1 through 10 {
+            @media only screen and (min-width: #{$item-width * $i}) {
+                width: (100% / $i) - 10%;
+                width: calc(#{100% / $i} - 1em);
+            }
+        }
+
+        @media only screen and (min-width: #{$item-width * 11}) { min-width: 21em; }
+    }
+}

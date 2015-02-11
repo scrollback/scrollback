@@ -1,0 +1,116 @@
+@include exports(chat) {
+	.chat-area {
+	    @include flexbox;
+	    @include flex-direction(column);
+	    @include flex-wrap(nowrap);
+	    @include align-items(flex-end);
+
+		height: 100%;
+		width: 100%;
+		overflow: hidden;
+
+		&:before {
+			@include flex-grow(1);
+			@include flex-shrink(1);
+
+			content: "";
+		}
+
+		&-messages {
+			width: 100%;
+			overflow: auto;
+			-webkit-overflow-scrolling: touch;
+
+		    @media #{$screenxxxx} { padding: 0 2em; }
+		}
+
+		&-input {
+			@include flex-shrink(0);
+
+			position: relative;;
+			min-height: $bar-height;
+			width: 100%;
+	        box-shadow: 0 -3px 6px rgba(0,0,0,0.16);
+
+	        &-entry {
+	        	@extend .entry;
+
+				border-width: 1px 0 0 0;
+				border-radius: 0;
+				padding: 1em;
+				padding-right: 4em;
+
+				&:focus, &:hover, &:active {
+	                @for $i from 1 through length($palette) {
+	                    .color-#{$i - 1} & { border-color: nth($palette, $i); }
+	                }
+	            }
+
+		    	@media #{$screenxxxx} { padding: 1em 3em; }
+		    }
+
+		    &-send {
+				@include icon(right-big);
+
+		    	position: absolute;
+		    	right: 0;
+		    	bottom: 0;
+		    	display: block;
+		    	padding: (1em / 1.5);
+		    	font-size: 1.5em;
+		    	line-height: 1;
+		    	cursor: pointer;
+
+				@for $i from 1 through length($palette) {
+                    .color-#{$i - 1} & { color: nth($palette, $i); }
+                }
+			}
+
+		    &-entry:empty + &-send {
+		    	@include icon(emoticon);
+
+				color: $dark-color;
+	    		opacity: .5;
+
+		    	&:focus, &:hover { opacity: .8; }
+
+		   		&:active { opacity: 1; }
+		    }
+		}
+	}
+
+	.chat-item {
+		$spacing-left-mobile: 5em;
+		$spacing-left-normal: 10em;
+
+		@extend %clearfix;
+
+		padding: .75em 1em;
+
+		&-nick {
+			float: left;
+			font-weight: 700;
+			margin-right: 1em;
+			min-width: $spacing-left-mobile - 1em;
+			opacity: .8;
+
+			&:after {
+				content: ":";
+				margin-left: .25em;
+				opacity: .5;
+			}
+
+			@media #{$screenxx} {
+				min-width: $spacing-left-normal - 1em;
+
+				&:after { display: none; }
+			}
+		}
+
+		&-message {
+			margin-left: $spacing-left-mobile;
+
+			@media #{$screenxx} { margin-left: $spacing-left-normal; }
+		}
+	}
+}

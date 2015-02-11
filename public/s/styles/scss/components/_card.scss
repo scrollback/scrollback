@@ -1,0 +1,248 @@
+@include exports("card") {
+    $card-height: 12.5em;
+
+    %ellipsize {
+        overflow-x: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .card {
+        &-header {
+            @include flexbox;
+            @include flex-direction(row);
+            @include flex-wrap(nowrap);
+            @include align-items(center);
+            @include align-content(center);
+
+            height: $bar-height;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+
+            &-title {
+                @extend %ellipsize;
+                @include flex-grow(1);
+
+                font-size: 1em;
+                font-weight: 700;
+                padding: 0 1em;
+                margin: 0;
+
+                @for $i from 1 through length($palette) {
+                    [data-color="#{$i - 1}"] & { color: nth($palette, $i); }
+                }
+            }
+
+            &-icon {
+                $icon-width: $bar-height / 1.5;
+
+                @include flex-shrink(0);
+
+                font-size: 1.5em;
+                padding: (1em / 1.5);
+                color: inherit;
+                height: 100%;
+                width: $icon-width;
+                line-height: 1;
+
+                &:hover, &:focus {
+                    background-color: rgba(0,0,0,0.05);
+                    color: inherit;
+                }
+
+                &:active {
+                    background-color: rgba(0,0,0,0.1);
+                    color: inherit;
+                }
+
+                &-more { @include icon(more); }
+            }
+
+            &-badge {
+                @extend %appear;
+                @include flex-shrink(0);
+
+                margin: 0 (.5em / .8);
+
+                &:empty { display: none; };
+            }
+        }
+
+        &-cover {
+            @extend %clearfix;
+
+            height: 12em;
+            background-image: url("https://ununsplash.imgix.net/photo-1416339684178-3a239570f315?fit=crop&fm=jpg&h=800&q=75&w=1050");
+            background-size: 100%;
+            background-size: cover;
+            background-position: center center;
+            color: $light-color;
+            box-shadow: inset 12em 50em 0 rgba(85,85,85,.5);
+
+            &-header {
+                float: right;
+                border-bottom: none;
+            }
+
+            &-logo {
+              height: 8em;
+              width: 8em;
+              margin: 2em;
+              border-radius: 50%;
+              border: 2px solid $light-color;
+              background-image: url(https://unsplash.imgix.net/photo-1415226581130-91cb7f52f078?fit=crop&fm=jpg&h=800&q=75&w=1050);
+              background-size: cover;
+            }
+
+            &-title {
+              float: right;
+              margin: (-4em / 1.5) 1em 0 0;
+              font-size: 1.5em;
+            }
+
+            &-icon {
+                &:hover, &:focus {
+                    background-color: rgba(255,255,255,.2);
+                    color: inherit;
+                }
+
+                &:active {
+                    background-color: rgba(255,255,255,.3);
+                    color: inherit;
+                }
+            }
+        }
+
+        &-content {
+            margin: 1em;
+            height: $card-height - 6em;
+            overflow: hidden;
+
+            &-title {
+                text-transform: uppercase;
+                font-size: .9em;
+                font-weight: 700;
+                opacity: .6;
+            }
+
+            &-big { height: 10em; }
+        }
+
+        &-chat {
+            @extend %ellipsize;
+
+            &-nick {
+                font-weight: 700;
+                opacity: 0.8;
+
+                &:after {
+                    content: ":";
+                    font-weight: 400;
+                    margin: 0 .25em;
+                }
+            }
+
+            &-message { opacity: 0.6; }
+        }
+
+        &-discussion {
+            margin: .75em 0;
+
+            &-message {
+                @extend %ellipsize;
+
+                display: block;
+            }
+
+            &-by {
+                display: block;
+                opacity: .5;
+                font-size: .9em;
+            }
+        }
+
+        &-button {
+            @extend %ellipsize;
+            @extend %clearfix;
+
+            display: block;
+            height: $bar-height / .8;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: .8em;
+            padding: (1em / .8);
+            padding-left: 0;
+            cursor: pointer;
+            opacity: .7;
+
+            &:hover, &:focus {
+                background-color: rgba(0,0,0,0.05);
+                color: inherit;
+            }
+
+            &:active {
+                background-color: rgba(0,0,0,0.1);
+                color: inherit;
+            }
+
+            &:before {
+                float: left;
+                font-size: 1.5em;
+                padding: 0 (1em / 1.5);
+                opacity: .7;
+            }
+
+            &-reply {
+                @include icon(reply);
+
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                z-index: 200;
+
+                .card-quick-reply.active & {
+                    opacity: 0;
+                    pointer-events: none;
+                }
+            }
+        }
+
+        &-entry {
+            display: block;
+            height: $bar-height;
+            padding: 1em;
+            margin: 0;
+            border: none;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            width: 100%;
+
+            &-reply {
+                @include icon(reply);
+
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                z-index: 100;
+
+                .card-quick-reply.active & {
+                    box-shadow: inset 0 0 0 1px $accent-color;
+
+                    @for $i from 1 through length($palette) {
+                        [data-color="#{$i - 1}"] & { box-shadow: inset 0 0 0 1px nth($palette, $i); }
+                    }
+                }
+            }
+        }
+
+        &-quick-reply {
+            position: relative;
+            height: $bar-height;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+    }
+}
