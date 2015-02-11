@@ -21,7 +21,7 @@ module.exports = function(c, conf, options) {
 function handleRoomChange(newState){
     var room = newState.changes.nav.room;
     if(!state.entities[room] || state.entities[room]!== "loading") {
-        (newState.changes.entities = newState.changes.entities || {})[room] = "loading";
+        state.entities[room] = "loading";
         core.emit("getEntity", (room.indexOf(":")>=0)?{identity:room}:{ref:room}, function(err, data) {
             var newRoom, updatingState = {
                 changes:{
@@ -42,7 +42,7 @@ function handleRoomChange(newState){
 }
 
 function handleTextChange() {
-
+    
 }
 
 function handleThreadChange() {
