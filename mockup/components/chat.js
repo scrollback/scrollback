@@ -2,8 +2,8 @@
 /* global $ */
 
 module.exports = function() {
-	var generate = require('../.././lib/generate.js'),
-	    $list = $(".chat-area-messages-list");
+	var generate = require("../.././lib/generate.js"),
+		$list = $(".chat-area-messages-list");
 
 	setInterval(function() {
 	    setTimeout(function() {
