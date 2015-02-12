@@ -18,6 +18,7 @@ require("../threader/threader-test.js");
 require("../leveldb-storage/leveldb-test.js");
 require("../redis-storage/redis-test.js");
 require("../lib/validate-test.js");
+require("../lib/generate-test.js");
 require("../validator/validator-test.js");
 require("../recommendation/recommendation-test.js");
 require("../anti-abuse/anti-abuse-test.js");
