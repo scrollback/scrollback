@@ -53,71 +53,77 @@ function extendObj(obj1, obj2) {
 // function mergeRanges(original, newrange, key) {
 // }
 
-function findIndex (items, propName, value, start, end) {
-    var pos;
+function findIndex(items, propName, value, start, end) {
+	var pos;
 
-    if (typeof start === 'undefined') {
-        return findIndex(propName, value, 0, items.length);
-    }
+	if (typeof start === "undefined") {
+		return findIndex(items, propName, value, 0, items.length);
+	}
 
-    if (value === null) {
-        return end;
-    }
+	if (value === null) {
+		return end;
+	}
 
-    if (start >= end) return start;
-    pos = ((start + end) / 2) | 0;
+	if (start >= end) {
+		return start;
+	}
 
-    if (items[pos] && items[pos][propName] < value) {
-        return findIndex(propName, value, pos + 1, end);
-    } else if (items[pos - 1] && items[pos - 1][propName] >= value) {
-        return findIndex(propName, value, start, pos - 1);
-    } else {
-        return pos;
-    }
+	pos = ((start + end) / 2) | 0;
+
+	if (items[pos] && items[pos][propName] < value) {
+		return findIndex(items, propName, value, pos + 1, end);
+	} else if (items[pos - 1] && items[pos - 1][propName] >= value) {
+		return findIndex(items, propName, value, start, pos - 1);
+	} else {
+		return pos;
+	}
 }
 
 function getItems(ranges, propName, value, interval) {
-    var index, startIndex, endIndex, range, missingAbove, missingBelow;
+	var index, startIndex, endIndex, range, missingAbove, missingBelow;
 
-    if (!ranges) {
-    	return;
-    }
+	if (!ranges) {
+		return;
+	}
 
-    range = ranges.filter(function (r) {
-        return (
-            (value === null && r.end === null) ||
-            ((r.start === null || r.start < value) &&
-            (r.end === null || r.end > value))
-        );
+	range = ranges.filter(function(r) {
+		return (
+			(value === null && r.end === null) ||
+			((r.start === null || r.start < value) &&
+			(r.end === null || r.end > value))
+		);
 
-    })[0];
+	})[0];
 
-    if(!range) return ["missing"];
+	if (!range) {
+		return ["missing"];
+	}
 
-    index = findIndex(range.items, propName, value);
-    if(interval < 0) {
-    	startIndex = index + interval;
-    	endIndex = index;
-    } else {
-    	startIndex = index;
-    	endIndex = index + interval;
-    }
+	index = findIndex(range.items, propName, value);
 
-    if(startIndex < 0) {
-        missingAbove = true;
-        startIndex = 0;
-    }
+	if (interval < 0) {
+		startIndex = index + interval;
+		endIndex = index;
+	} else {
+		startIndex = index;
+		endIndex = index + interval;
+	}
 
-    if(endIndex > range.items.length) {
-        missingBelow = true;
-        endIndex = range.items.length;
-    }
+	if (startIndex < 0) {
+		missingAbove = true;
+		startIndex = 0;
+	}
 
-    return [].concat(
-        (missingAbove? ['missing']: []),
-        range.items.slice(startIndex, endIndex),
-        (missingBelow? ['missing']: [])
-    );
+	if (endIndex > range.items.length) {
+		missingBelow = true;
+		endIndex = range.items.length;
+	}
+
+	return [].concat(
+		(missingAbove ? ["missing"] : []),
+		range.items.slice(startIndex, endIndex),
+		(missingBelow ? ["missing"] : [])
+	);
 }
 
 module.exports = function(core) {
@@ -135,13 +141,13 @@ module.exports = function(core) {
 		}
 
 		if (changes.texts) {
-			for(roomId in changes.texts) {
+			for (roomId in changes.texts) {
 				if (changes.threads.roomId && changes.threads.roomId[0] && changes.threads.roomId[0].items) {
 					for (var i = 0, l = changes.threads.roomId[0].items.length; i < l; i++) {
 						threadId = changes.threads.roomId[0].items[i].id;
 
 						if (current.texts[roomId + "_" + threadId]) {
-							// mergeRanges(current.texts[roomId + "_" + threadId], changes.texts[roomId + "_" + threadId], 'time');
+							// mergeRanges(current.texts[roomId + "_" + threadId], changes.texts[roomId + "_" + threadId], "time");
 						} else {
 							current.texts[roomId + "_" + threadId] = changes.texts[roomId + "_" + threadId];
 						}
@@ -153,7 +159,7 @@ module.exports = function(core) {
 		if (changes.threads) {
 			for (roomId in changes.threads) {
 				if (current.threads[roomId]) {
-					// mergeRanges(current.threads[roomId], changes.threads[roomId], 'startTime');
+					// mergeRanges(current.threads[roomId], changes.threads[roomId], "startTime");
 				} else {
 					current.threads[roomId] = changes.threads[roomId];
 				}
@@ -176,12 +182,59 @@ module.exports = function(core) {
 
 			return objUtils.get.apply(null, args);
 		},
-		getThreads: function (roomId, timestamp, interval) {
-			return getItems(current.threads[roomId], 'startTime', timestamp, interval);
+		getThreads: function(roomId, timestamp, interval) {
+			return getItems(current.threads[roomId], "startTime", timestamp, interval);
 		},
-		getTexts: function (roomId, threadId, timestamp, interval) {
-			return getItems(current.texts[roomId + (threadId? '_' + threadId: '')], 'time', timestamp, interval);
+		getTexts: function(roomId, threadId, timestamp, interval) {
+			return getItems(current.texts[roomId + (threadId ? "_" + threadId : "")], "time", timestamp, interval);
+		},
+		getEntity: function(entity) {
+			if (typeof entity !== "string") {
+				return;
+			}
+
+			return this.get("entities", entity);
+		},
+		getRoom: function(room) {
+			var roomobj;
+
+			if (typeof room === "undefined") {
+				return this.get("entities", this.get("nav", "room"));
+			}
+
+			roomobj = this.get("entities", room);
+
+			if ( roomobj && roomobj.type === "room") {
+				return roomobj;
+			} else {
+				return;
+			}
+		},
+		getUser: function(user) {
+			var userobj;
+
+			if (typeof user === "undefined") {
+				return this.get("entities", this.get("userId"));
+			}
+
+			userobj = this.get("entities", user);
+
+			if (userobj && userobj.type === "user") {
+				return userobj;
+			} else {
+				return;
+			}
+		},
+		getRelatedRooms: function() {},
+		getRelatedUsers: function() {},
+		getNav: function() {
+			return this.get("nav");
+		},
+		getContext: function() {
+			return this.get("context");
+		},
+		getApp: function() {
+			return this.get("app");
 		}
 	};
 };
-

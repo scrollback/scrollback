@@ -11,7 +11,7 @@ module.exports = function(core, config, state) {
 		},
 
 		render: function() {
-			var title = state.get("nav", "discussion");
+			var title = state.getNav().thread;
 
 			return (
 		        <div>
@@ -23,7 +23,7 @@ module.exports = function(core, config, state) {
 	});
 
 	core.on("statechange", function(changes, next) {
-		if ("nav" in changes && (("discussion" in changes.nav || "mode" in changes.nav) && changes.nav.mode === "chat")) {
+		if ("nav" in changes && (("thread" in changes.nav || "mode" in changes.nav) && changes.nav.mode === "chat")) {
 			React.render(<AppbarSecondary />, appbarsecondary);
 		}
 

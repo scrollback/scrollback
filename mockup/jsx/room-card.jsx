@@ -4,24 +4,6 @@ module.exports = function(core, config, state) {
 	var React = require("react"),
 		RoomCard;
 
-	/**
-	 * RoomCard component.
-	 *
-	 * room: {
-	 * 	room: "somename",
-	 * 	cover: "http://example.com/cover.jpg",
-	 * 	picture: "http://example.com/logo.jpg",
-	 * 	mentions: 23,
-	 * 	messages: 54,
-	 * 	color: "#00aaff",
-	 * 	discussions: [
-	 * 		{ title: "Thread title 1", from: "someone" },
-	 * 		{ title: "Thread title 2", from: "someother" }
-	 * 	]
-	 * }
-	 */
-
-
 	RoomCard = React.createClass({
 		// getCardState: function () {
 		// 	return { threads: state.getThreads(room.roomId, null, -room.discussionCount || -2).reverse() };
@@ -49,19 +31,19 @@ module.exports = function(core, config, state) {
 		},
 
 		render: function() {
-			var discussions = [],
-				room = state.get("entities", this.props.roomId),
+			var room = state.getRoom(this.props.roomId),
 			  	coverStyle = { backgroundImage: "url(" + room.cover + ")" },
-			  	logoStyle = { backgroundImage: "url(" + room.picture + ")" };
+			  	logoStyle = { backgroundImage: "url(" + room.picture + ")" },
+			  	discussions;
 
-			// discussions = this.state.threads.map(function (thread) {
-			// 	return (
-			// 	        <div className="card-discussion">
-			// 				<span className="card-discussion-message">{thread.title}</span>
-			// 				<span className="card-discussion-by">{thread.from}</span>
-			// 			</div>
-			// 	);
-			// });
+			discussions = state.getThreads(this.props.roomId, null, ((this.props.discussionCount || 2) * -1)).reverse().map(function(thread) {
+				return (
+				        <div key={"thread-" + room.id + "-" + thread.id} className="card-discussion">
+							<span className="card-discussion-message">{thread.title}</span>
+							<span className="card-discussion-by">{thread.from}</span>
+						</div>
+				);
+			});
 
 			return (
 			    <div className="card room-card js-room-card" onClick={this.goToRoom}>

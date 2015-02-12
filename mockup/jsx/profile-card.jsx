@@ -7,7 +7,7 @@ module.exports = function(core, config, state) {
 
 	ProfileCard = React.createClass({
 		render: function() {
-			var user = state.get("entities", state.get("userId"));
+			var user = state.getUser();
 
 			return (
 			    <div className="profile-card">

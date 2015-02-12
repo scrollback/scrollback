@@ -15,7 +15,7 @@ module.exports = function(core, config, state) {
 				},
 				arr = [];
 
-			room = state.get("nav", "room");
+			room = state.getRoom();
 			people = state.get("indexes", "roomUsers", state.get("nav", "room"));
 
 			for (var i = 0, l = people.length; i < l; i++) {

@@ -1,5 +1,4 @@
 /* jshint browser: true */
-/* global $ */
 
 module.exports = function(core, config, state) {
 	var React = require("react"),
@@ -57,9 +56,9 @@ module.exports = function(core, config, state) {
 	});
 
 	core.on("statechange", function(changes, next) {
-		var mode = state.get("nav", "mode");
+		var mode = state.getNav().mode;
 
-		if ("indexes" in changes && "userRooms" in changes) {
+		if ("indexes" in changes && "userRooms" in changes.indexes) {
 			if (mode === "home") {
 				React.render(<HomeFeed />, homefeed);
 			}
@@ -71,15 +70,6 @@ module.exports = function(core, config, state) {
 
 		next();
 	}, 500);
-
-	$(".js-goto-room").on("click", function() {
-	    core.emit("setstate", {
-	        nav: {
-	            mode: "room",
-	            view: null
-	        }
-	    });
-	});
 
 	return HomeFeed;
 };

@@ -19,13 +19,14 @@ module.exports = function(core, config, state) {
 		},
 
 		render: function() {
-			var user = state.get("entities", state.get("userId")),
+			var user = state.getUser(),
+				nav = state.getNav(),
 				title;
 
-			switch (state.get("nav", "mode")) {
+			switch (nav.mode) {
 			case "room":
 			case "chat":
-			    title = state.get("nav", "room");
+			    title = nav.room;
 			    break;
 			case "home":
 			    title = "My feed";
