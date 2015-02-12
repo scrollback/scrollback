@@ -23,7 +23,7 @@ module.exports = function(core, config, state) {
 					user = state.get("entities", people[i].user);
 
 					sections[people[i].status].push({
-						key: room + "-" + user.id,
+						key: "people-list-" + room + "-" + user.id,
 						elem: (
 						    <div className="people-list-item">
 						      	<img className="people-list-item-avatar" src={user.picture} />
@@ -39,7 +39,7 @@ module.exports = function(core, config, state) {
 
 				if (items.length) {
 					arr.push({
-						key: "people-" + status,
+						key: "people-list-" + status,
 						header: status.charAt(0).toUpperCase() + status.slice(1) + " (" + items.length + ")",
 						items: items
 					});

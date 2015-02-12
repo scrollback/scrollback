@@ -10,7 +10,7 @@ module.exports = function(core, config, state) {
 			var user = state.getUser();
 
 			return (
-			    <div className="profile-card">
+			    <div key="profile-card" className="profile-card">
 		            <a className="profile-scrollback-logo"></a>
 		            <img className="profile-avatar js-user-avatar" alt="satya164" src={user.picture} />
 		            <div className="profile-details">

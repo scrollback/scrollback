@@ -38,13 +38,12 @@
                 </div>
             </div>
         </div>
-        <div class="sidebar-room-list" data-mode="room chat search">
-            <div class="sidebar-header js-goto-home">
-                <img class="sidebar-header-logo" src="./img/client/scrollback-logo.svg">
-                <a class="sidebar-header-icon sidebar-header-icon sidebar-header-icon-grid"></a>
-            </div>
-            <div id="js-room-list" class="room-list sidebar-content"></div>
+        <div class="sidebar-header js-goto-home" data-mode="room chat">
+            <img class="sidebar-header-logo" src="./img/client/scrollback-logo.svg">
+            <a class="sidebar-header-icon sidebar-header-icon sidebar-header-icon-grid"></a>
         </div>
+        <div id="js-room-list" class="room-list sidebar-content" data-mode="room"></div>
+        <div id="js-thread-list" class="thread-list sidebar-content" data-mode="chat"></div>
     </section>
 
     <main id="main" class="main">
@@ -54,7 +53,7 @@
         <div class="main-content" data-mode="home search room">
             <div id="js-home-feed" class="main-content-rooms" data-mode="home"></div>
             <div class="main-content-search" data-mode="search"></div>
-            <div class="main-content-discussions" data-mode="room"></div>
+            <div id="js-thread-feed" class="main-content-threads" data-mode="room"></div>
         </div>
 
         <div class="main-content-chat chat-area" data-mode="chat">
@@ -67,7 +66,7 @@
             </div>
         </div>
 
-        <a class="fab js-create-discussion" data-mode="room"></a>
+        <a class="fab js-create-thread" data-mode="room"></a>
     </main>
 
     <section data-mode="room chat" id="sidebar-right" class="sidebar sidebar-right">

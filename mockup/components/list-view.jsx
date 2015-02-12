@@ -1,14 +1,14 @@
 module.exports = function() {
 	var React = require("react"),
-		GridView;
+		ListView;
 
 	/**
-	 * GridView component.
+	 * ListView component.
 	 *
 	 * sections: [
 	 * 	{
 	 * 		key: "somekey",
-	 * 		header: "Some header"
+	 * 		header: "Some header",
 	 * 		items: [{
 	 * 			key: "somekey"
 	 * 			elem: reactelem
@@ -25,31 +25,31 @@ module.exports = function() {
 	 * ]
 	 */
 
-	GridView = React.createClass({
+	ListView = React.createClass({
 		render: function() {
 			var sections = this.props.sections,
-				gridview = [],
+				listview = [],
 				items;
 
 			for (var i = 0, l = sections.length; i < l; i++) {
 				if (sections[i].header) {
-					gridview.push(<h3 key={"header-" + sections[i].key} className="grid-header">{sections[i].header}</h3>);
+					listview.push(<h3 key={"header-" + sections[i].key} className="list-header">{sections[i].header}</h3>);
 				}
 
 				if (sections[i].items) {
 					items = [];
 
 					for (var j = 0, m = sections[i].items.length; j < m; j++) {
-						items.push(<li key={sections[i].items[j].key} className="grid-item">{sections[i].items[j].elem}</li>);
+						items.push(<li key={sections[i].items[j].key} className="list-item">{sections[i].items[j].elem}</li>);
 					}
 
-					gridview.push(<ul key={"section-" + sections[i].key} className="grid-section">{items}</ul>);
+					listview.push(<ul key={"section-" + sections[i].key} className="list-section">{items}</ul>);
 				}
 			}
 
-			return (<div className="grid-view">{gridview}</div>);
+			return (<div className="list-view">{listview}</div>);
 		}
 	});
 
-	return GridView;
+	return ListView;
 };

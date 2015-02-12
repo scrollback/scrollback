@@ -34,7 +34,7 @@ module.exports = function(core, config, state) {
 			}
 
 			return (
-		        <div>
+		        <div key="appbar-primary">
 		            <a data-mode="room chat" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.openSidebarLeft}></a>
 		            <img data-mode="home" className="appbar-avatar" alt={user.id} src={user.picture} onClick={this.openSidebarLeft} />
 		            <h1 className="appbar-title appbar-title-primary js-appbar-title">{title}</h1>

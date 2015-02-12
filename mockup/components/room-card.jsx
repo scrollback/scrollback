@@ -6,7 +6,7 @@ module.exports = function(core, config, state) {
 
 	RoomCard = React.createClass({
 		// getCardState: function () {
-		// 	return { threads: state.getThreads(room.roomId, null, -room.discussionCount || -2).reverse() };
+		// 	return { threads: state.getThreads(room.roomId, null, -room.threadCount || -2).reverse() };
 		// },
 		// getInitialState: function () {
 		// 	return this.getCardState();
@@ -25,7 +25,8 @@ module.exports = function(core, config, state) {
 				nav: {
 					room: this.props.roomId,
 					mode: "room",
-					view: null
+					view: null,
+					thread: null
 				}
 			});
 		},
@@ -34,19 +35,19 @@ module.exports = function(core, config, state) {
 			var room = state.getRoom(this.props.roomId),
 			  	coverStyle = { backgroundImage: "url(" + room.cover + ")" },
 			  	logoStyle = { backgroundImage: "url(" + room.picture + ")" },
-			  	discussions;
+			  	threads;
 
-			discussions = state.getThreads(this.props.roomId, null, ((this.props.discussionCount || 2) * -1)).reverse().map(function(thread) {
+			threads = (state.getThreads(this.props.roomId, null, ((this.props.threadCount || 2) * -1)) || []).reverse().map(function(thread) {
 				return (
-				        <div key={"thread-" + room.id + "-" + thread.id} className="card-discussion">
-							<span className="card-discussion-message">{thread.title}</span>
-							<span className="card-discussion-by">{thread.from}</span>
-						</div>
+			        <div key={"room-card-thread-" + room.id + "-" + thread.id} className="card-thread">
+						<span className="card-thread-message">{thread.title}</span>
+						<span className="card-thread-by">{thread.from}</span>
+					</div>
 				);
 			});
 
 			return (
-			    <div className="card room-card js-room-card" onClick={this.goToRoom}>
+			    <div key={"room-card-" + room.id} className="card room-card js-room-card" onClick={this.goToRoom}>
 			      	<div className="card-cover" style={coverStyle}>
 			      		<div className="card-cover-header card-header">
 			      			<span className="card-header-badge notification-badge notification-badge-mention">{room.mentions}</span>
@@ -58,7 +59,7 @@ module.exports = function(core, config, state) {
 					</div>
 					<div className="card-content card-content-big">
 						<h4 className="card-content-title">Recent discussions</h4>
-						{discussions}
+						{threads}
 					</div>
 				</div>
 			);

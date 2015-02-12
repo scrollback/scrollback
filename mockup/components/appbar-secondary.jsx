@@ -11,19 +11,19 @@ module.exports = function(core, config, state) {
 		},
 
 		render: function() {
-			var title = state.getNav().thread;
+			var title = state.getNav().thread; // TODO: use thread title instead of ID
 
 			return (
-		        <div>
-		            <a class="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goToRoom}></a>
-		            <h2 class="appbar-title appbar-title-secondary js-discussion-title">{title}</h2>
+		        <div key="appbar-secondary">
+		            <a className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goToRoom}></a>
+		            <h2 className="appbar-title appbar-title-secondary js-thread-title">{title}</h2>
 		        </div>
 	        );
 		}
 	});
 
 	core.on("statechange", function(changes, next) {
-		if ("nav" in changes && (("thread" in changes.nav || "mode" in changes.nav) && changes.nav.mode === "chat")) {
+		if (("nav" in changes && ("thread" in changes.nav || "mode" in changes.nav)) && state.getNav().mode === "chat") {
 			React.render(<AppbarSecondary />, appbarsecondary);
 		}
 

@@ -10,7 +10,8 @@ module.exports = function(core, config, state) {
 				nav: {
 					room: this.props.roomId,
 					mode: "room",
-					view: null
+					view: null,
+					thread: null
 				}
 			});
 		},
@@ -19,7 +20,7 @@ module.exports = function(core, config, state) {
 			var room = state.get("entities", this.props.roomId);
 
 			return (
-		        <div className="card room-card" onClick={this.goToRoom}>
+		        <div key={"room-list-" + room.id} className="card room-card" onClick={this.goToRoom}>
 		        	<div className="card-header">
 		        		<h3 className="card-header-title">{room.id}</h3>
 		        		<span className="card-header-badge notification-badge notification-badge-mention">{room.mentions}</span>

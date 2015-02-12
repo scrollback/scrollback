@@ -49,9 +49,11 @@ function extendObj(obj1, obj2) {
 	return obj1;
 }
 
-// TODO: implement;
-// function mergeRanges(original, newrange, key) {
-// }
+// TODO: implement properly;
+function mergeRanges(original, newrange, key) {
+	original.concat(newrange);
+	key = key; // suppress silly jshint error. I dont know how.
+}
 
 function findIndex(items, propName, value, start, end) {
 	var pos;
@@ -128,7 +130,7 @@ function getItems(ranges, propName, value, interval) {
 
 module.exports = function(core) {
 	core.on("setstate", function(changes, next) {
-		var roomId, threadId;
+		var roomId, roomThreadId;
 
 		// merge state and changes
 		extendObj(current.nav, changes.nav);
@@ -141,17 +143,11 @@ module.exports = function(core) {
 		}
 
 		if (changes.texts) {
-			for (roomId in changes.texts) {
-				if (changes.threads.roomId && changes.threads.roomId[0] && changes.threads.roomId[0].items) {
-					for (var i = 0, l = changes.threads.roomId[0].items.length; i < l; i++) {
-						threadId = changes.threads.roomId[0].items[i].id;
-
-						if (current.texts[roomId + "_" + threadId]) {
-							// mergeRanges(current.texts[roomId + "_" + threadId], changes.texts[roomId + "_" + threadId], "time");
-						} else {
-							current.texts[roomId + "_" + threadId] = changes.texts[roomId + "_" + threadId];
-						}
-					}
+			for (roomThreadId in changes.texts) {
+				if (current.texts[roomThreadId]) {
+					mergeRanges(current.texts[roomThreadId], changes.texts[roomThreadId], "time");
+				} else {
+					current.texts[roomThreadId] = changes.texts[roomThreadId];
 				}
 			}
 		}
@@ -159,7 +155,7 @@ module.exports = function(core) {
 		if (changes.threads) {
 			for (roomId in changes.threads) {
 				if (current.threads[roomId]) {
-					// mergeRanges(current.threads[roomId], changes.threads[roomId], "startTime");
+					mergeRanges(current.threads[roomId], changes.threads[roomId], "startTime");
 				} else {
 					current.threads[roomId] = changes.threads[roomId];
 				}
