@@ -1,60 +1,6 @@
 module.exports = {
-	
+    merge: mergeRange
 };
-/*
-function pushAtEnd(ranges, range) {
-    console.log(ranges, range);
-    return ranges;
-}
-function pushAtStart(ranges, range) {
-    console.log(ranges, range);
-    return ranges;
-}
-
-function pushAtMiddle(ranges, range) {
-    
-}
-function AddRange(ranges, range) {
-	var i, l = ranges.length, position;
-    if(l === 0) {
-        ranges.push(range);
-        return ranges;
-    }
-    if (range.end === null) {
-    	return pushAtEnd(range);
-    } else if (range.start === null) {
-    	return pushAtStart(range);
-    } else {
-        return pushAtmiddle(ranges, range);
-    }
-}*/
-
-
-function findRange(ranges, range) {
-    var low = 0, high = ranges.length;
-    var current, mid;
-    
-    while (low <= high) {
-        current = (low +high / 2) | 0;
-        mid = ranges[current];
-        
-        if(mid.start > range.start) {
-            high = current -1;
-            continue;
-        }
-        
-    }
-    
-    var start = range.start, end = range.end;
-    console.log(end);
-    if(start < ranges[current].start) {
-        
-    } else if (start < ranges[current].start) {}
-    else return current;
-    
-}
-
-
 
 function findIndex(items, propName, value, start, end) {
 	var pos;
@@ -80,5 +26,58 @@ function findIndex(items, propName, value, start, end) {
 }
 
 
-
-console.log(findIndex, findRange);
+function mergeRange(ranges, range, propName) {
+    var topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex;
+    
+    if(range.start === null) {
+        topRangeIndex = 0;
+        topItemIndex = -1;
+    } else {
+        for(
+            topRangeIndex = 0;
+            topRangeIndex < ranges.length && (
+                ranges[topRangeIndex].end !== null &&
+                ranges[topRangeIndex].end < range.start
+            );
+            topRangeIndex++
+        );
+        
+        if(ranges[topRangeIndex].start <= range.start && ranges[topRangeIndex].end >= range.start) {
+            topItemIndex = findIndex(ranges[topRangeIndex].items, propName, range.start);
+        } else {
+            topItemIndex = -1;
+        }
+    }
+    
+    if(range.end === null) { bottomRangeIndex = ranges.length; }
+    else {
+        for(
+            bottomRangeIndex = ranges.length;
+            bottomRangeIndex >= 0 && (
+                ranges[bottomRangeIndex].start !== null &&
+                ranges[bottomRangeIndex].start <= range.end
+            );
+            bottomRangeIndex--
+        );
+        
+        if(ranges[bottomRangeIndex].start <= range.end && ranges[bottomRangeIndex].end >= range.end) {
+            bottomItemIndex = findIndex(ranges[bottomRangeIndex].items, propName, range.end);
+            if(ranges[bottomRangeIndex].items[bottomItemIndex][propName] == range.end) bottomItemIndex++;
+        } else {
+            bottomItemIndex = -1;
+        }
+    }
+    console.log(topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex);
+    
+    if(topItemIndex != -1) {
+        range.items = ranges[topRangeIndex].items.slice(0,topItemIndex).concat(range.items);
+        range.start = ranges[topRangeIndex].start;
+    }
+    
+    if(bottomItemIndex != -1) {
+        range.items = range.items.concat(ranges[bottomRangeIndex].items.slice(bottomItemIndex));
+        range.end = ranges[bottomRangeIndex].end;
+    }
+    
+    ranges.splice(topRangeIndex, bottomRangeIndex - topRangeIndex, range);
+}
