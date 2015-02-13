@@ -58,11 +58,9 @@ function loginWithFacebook() {
 		}
 
 		intervalId = setInterval(function() {
-			console.log("in interval ", intervalId);
 			facebookConnectPlugin.getLoginStatus(function(obj) {
 				// this hack fires the callback when, the login is successfull, but success callback does not fire.
 				// misbehaving phonegap plugins :-|
-				console.log("login status", obj);
 				if (obj.hasOwnProperty('status') && obj.status === "connected") {
 					clearInterval(intervalId);
 					intervalId = null;
