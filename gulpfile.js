@@ -12,6 +12,7 @@ var gulp = require("gulp"),
 	gutil = require("gulp-util"),
 	sourcemaps = require("gulp-sourcemaps"),
 	jshint = require("gulp-jshint"),
+	jscs = require("gulp-jscs"),
 	gitmodified = require("gulp-gitmodified"),
 	symlink = require("gulp-sym"),
 	concat = require("gulp-concat"),
@@ -143,7 +144,7 @@ gulp.task("hooks", function() {
 gulp.task("postinstall", [ "hooks" ]);
 
 // Lint JavaScript files
-gulp.task("lint", function() {
+gulp.task("jshint", function() {
 	return gulp.src(files.js)
 	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(gitmodified("modified"))
@@ -151,6 +152,15 @@ gulp.task("lint", function() {
 	.pipe(jshint.reporter("jshint-stylish"))
 	.pipe(jshint.reporter("fail"));
 });
+
+gulp.task("jscs", function() {
+	return gulp.src(files.js)
+	.pipe(plumber({ errorHandler: onerror }))
+	.pipe(gitmodified("modified"))
+	.pipe(jscs());
+});
+
+gulp.task("lint", [ "jshint" ]);
 
 // Install and copy third-party libraries
 gulp.task("bower", function() {
