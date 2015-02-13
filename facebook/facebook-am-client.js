@@ -2,6 +2,7 @@
 /* global libsb, facebookConnectPlugin, $ */
 
 var $fbbutton =  $('.js-cordova-fb-login');
+var initSent = false;
 
 libsb.on('logout', function(l, n) {
 	if (typeof facebookConnectPlugin !== "undefined") {
@@ -20,9 +21,10 @@ libsb.on('logout', function(l, n) {
 }, 500);
 
 function sendInit(token) {
-	if (!token) {
+	if (!token || initSent) {
 		return;
 	}
+	initSent = true;
 	libsb.emit("init-up", {
 		auth: {
 			facebook: {
@@ -30,7 +32,7 @@ function sendInit(token) {
 			}
 		}
 	}, function() {
-
+		
 	});
 }
 
@@ -56,12 +58,15 @@ function loginWithFacebook() {
 		}
 
 		intervalId = setInterval(function() {
+			console.log("in interval ", intervalId);
 			facebookConnectPlugin.getLoginStatus(function(obj) {
 				// this hack fires the callback when, the login is successfull, but success callback does not fire.
 				// misbehaving phonegap plugins :-|
+				console.log("login status", obj);
 				if (obj.hasOwnProperty('status') && obj.status === "connected") {
 					clearInterval(intervalId);
 					intervalId = null;
+					sendInit(obj.authResponse.accessToken);
 				}
 			}, function() {
 				clearInterval(intervalId);
