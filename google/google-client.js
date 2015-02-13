@@ -2,14 +2,9 @@
 /* global libsb, $, currentState */
 
 var config = require("../client-config-defaults.js");
-var loginWithAccManager = require('./google-am-client.js');
 
 function loginWithGoogle() {
-	var hasGooglePlugin = window.plugins && window.plugins.googleplus;
-	if(currentState.cordova && hasGooglePlugin) {
-		loginWithAccManager();
-	}
-	else window.open("https:" + config.server.host + "/r/google/login", "_blank", "location=no");
+	window.open("https:" + config.server.host + "/r/google/login", "_blank", "location=no");
 }
 
 $('.js-cordova-google-login').click(loginWithGoogle);
