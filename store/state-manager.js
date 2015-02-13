@@ -1,15 +1,22 @@
 var config, state;
+//var rangeOps = require("./range-ops.js");
 module.exports = function(core, conf, s) {
 	config = conf;
     state = s;
     
-	/*core.on("setState", function(newState, next) {
-		if (newState.changes.nav) updateNav(newState.changes.nav, state.nav);
-		if (newState.changes.entities) updateEntities(newState.changes.entities);
-		if (newState.changes.content) updateContent(newState.changes.content);
+	core.on("setState", function(newState, next) {
+		/*if (newState.changes.nav) updateNav(newState.changes.nav, state.nav);
+		if (newState.changes.entities) updateEntities(newState.changes.entities);*/
+		if (newState.changes.texts) updateTexts(newState.changes.texts);
 		next();
-	});*/
+	}, 1000);
 };
+
+function updateTexts(texts) {
+	console.log(texts);
+}
+
+
 
 /*
 function updateNav(nav, stateNav) {
