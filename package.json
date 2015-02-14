@@ -88,6 +88,7 @@
     "gulp-combine-mq": "latest",
     "gulp-concat": "latest",
     "gulp-gitmodified": "latest",
+    "gulp-jscs": "latest",
     "gulp-jshint": "latest",
     "gulp-manifest": "git://github.com/scrollback/gulp-manifest.git#v0.0.7",
     "gulp-minify-css": "latest",

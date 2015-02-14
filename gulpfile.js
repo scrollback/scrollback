@@ -12,6 +12,7 @@ var gulp = require("gulp"),
 	gutil = require("gulp-util"),
 	sourcemaps = require("gulp-sourcemaps"),
 	jshint = require("gulp-jshint"),
+	jscs = require("gulp-jscs"),
 	gitmodified = require("gulp-gitmodified"),
 	symlink = require("gulp-sym"),
 	concat = require("gulp-concat"),
@@ -143,7 +144,7 @@ gulp.task("hooks", function() {
 gulp.task("postinstall", [ "hooks" ]);
 
 // Lint JavaScript files
-gulp.task("lint", function() {
+gulp.task("jshint", function() {
 	return gulp.src(files.js)
 	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(gitmodified("modified"))
@@ -151,6 +152,15 @@ gulp.task("lint", function() {
 	.pipe(jshint.reporter("jshint-stylish"))
 	.pipe(jshint.reporter("fail"));
 });
+
+gulp.task("jscs", function() {
+	return gulp.src(files.js)
+	.pipe(plumber({ errorHandler: onerror }))
+	.pipe(gitmodified("modified"))
+	.pipe(jscs());
+});
+
+gulp.task("lint", [ "jshint" ]);
 
 // Install and copy third-party libraries
 gulp.task("bower", function() {
@@ -239,7 +249,6 @@ gulp.task("styles", [ "lace", "fonts" ], function() {
 });
 
 // Generate appcache manifest file
-
 gulp.task("client-manifest", function() {
 	return genmanifest(prefix("public/s/", [
 		"scripts/lib/jquery.min.js",
@@ -271,10 +280,16 @@ gulp.task("clean", function() {
 	], dirs.lib, dirs.css, dirs.lace, dirs.fonts));
 });
 
+// Watch for changes
 gulp.task("watch", function() {
 	gulp.watch(files.js, [ "scripts", "manifest" ]);
 	gulp.watch(files.scss, [ "styles", "manifest" ]);
 });
 
+// Build all files
+gulp.task("build", [ "scripts", "styles", "manifest" ]);
+
 // Default Task
-gulp.task("default", [ "lint", "scripts", "styles", "manifest" ]);
+gulp.task("default", [ "clean", "lint" ], function() {
+	gulp.start("build");
+});

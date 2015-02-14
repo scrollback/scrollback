@@ -13,18 +13,16 @@
     "requireMultipleVarDecl": true,
     "requireCommaBeforeLineBreak": true,
     "requireCamelCaseOrUpperCaseIdentifiers": true,
-    "requireDotNotation": true,
-    "maximumLineLength": {
-        "tabSize": 4,
-        "allowUrlComments": true,
-        "allowRegex": true
-    },
+    "requireDotNotation": "except_snake_case",
+    "requireSpacesInForStatement": true,
+    "requireSpaceBetweenArguments": true,
 
     "disallowMixedSpacesAndTabs": "smart",
     "disallowTrailingWhitespace": true,
     "disallowMultipleLineStrings": true,
     "disallowTrailingComma": true,
 
+    "requireSpaceBeforeBlockStatements": true,
     "requireSpacesInFunctionExpression": {
         "beforeOpeningCurlyBrace": true
     },
