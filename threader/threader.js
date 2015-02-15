@@ -101,6 +101,8 @@ function processReply(data){
 			if (!update) {
 				message.threads.push({id: id, score: 1});
 			}
+			/*
+			// Code for adding spam, nonsense, normal etc. labels
 			if (data.spamIndex) {
 				for (var index in data.spamIndex) {
 					if (data.spamIndex.hasOwnProperty(index)) {
@@ -111,7 +113,7 @@ function processReply(data){
 						message.labels[index] = a;
 					}
 				}
-			}
+			}*/
 
 			pendingCallbacks[data.id].fn();
 			log("called back in ", new Date().getTime() - pendingCallbacks[data.id].time);

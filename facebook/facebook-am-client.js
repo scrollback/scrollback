@@ -49,7 +49,7 @@ function loginWithFacebook() {
 			console.log("Login failed", msg);
 			$fbbutton.removeClass('working');
 		});
-		
+
 		if (intervalId) {
 			clearInterval(intervalId);
 			intervalId = null;

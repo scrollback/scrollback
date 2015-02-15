@@ -12,7 +12,7 @@ function loginWithGoogle() {
 	else window.open("https:" + config.server.host + "/r/google/login", "_blank", "location=no");
 }
 
-$('.js-corodova-google-login').click(loginWithGoogle);
+$('.js-cordova-google-login').click(loginWithGoogle);
 
 libsb.on('auth', function(auth, next) {
 	auth.buttons.google = {
