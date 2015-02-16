@@ -15,11 +15,12 @@
 
     // core
     var state = require("./../store/store.js")(core, config );
+    window.state = state;
     require("./store/view-manager.js")(core, config, state);
 
     // components
-//    require("./components/people.js")(core, config, state);
-//    require("./components/discussions.js")(core, config, state);
+    require("./components/people.js")(core, config, state);
+    require("./components/discussions.js")(core, config, state);
     require("./components/chat.js")(core, config, state);
 
     // JSX components
