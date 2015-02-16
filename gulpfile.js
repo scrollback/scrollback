@@ -254,7 +254,6 @@ gulp.task("styles", [ "lace", "fonts" ], function() {
 });
 
 // Generate appcache manifest file
-
 gulp.task("client-manifest", function() {
 	return genmanifest(prefix("public/s/", [
 		"scripts/lib/jquery.min.js",
@@ -286,10 +285,16 @@ gulp.task("clean", function() {
 	], dirs.lib, dirs.css, dirs.lace, dirs.fonts));
 });
 
+// Watch for changes
 gulp.task("watch", function() {
 	gulp.watch(files.js.concat(files.jsx), [ "scripts", "manifest" ]);
 	gulp.watch(files.scss, [ "styles", "manifest" ]);
 });
 
+// Build all files
+gulp.task("build", [ "scripts", "styles", "manifest" ]);
+
 // Default Task
-gulp.task("default", [ "lint", "scripts", "styles", "manifest" ]);
+gulp.task("default", [ "clean", "lint" ], function() {
+	gulp.start("build");
+});

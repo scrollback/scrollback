@@ -16,7 +16,6 @@
     "requireDotNotation": "except_snake_case",
     "requireSpacesInForStatement": true,
     "requireSpaceBetweenArguments": true,
-    "validateQuoteMarks": { "mark": "\"", "escape": true },
 
     "disallowMixedSpacesAndTabs": "smart",
     "disallowTrailingWhitespace": true,

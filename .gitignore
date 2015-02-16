@@ -2,6 +2,7 @@
 
 .*
 !.brackets.json
+!.editorconfig
 !.gitignore
 !.git-hooks
 !.jscsrc
