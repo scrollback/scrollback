@@ -16,7 +16,7 @@
             @include align-content(center);
 
             height: $bar-height;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
 
             &-title {
                 @extend %ellipsize;
@@ -84,19 +84,20 @@
             }
 
             &-logo {
-              height: 8em;
-              width: 8em;
-              margin: 2em;
-              border-radius: 50%;
-              border: 2px solid $light-color;
-              background-image: url(https://unsplash.imgix.net/photo-1415226581130-91cb7f52f078?fit=crop&fm=jpg&h=800&q=75&w=1050);
-              background-size: cover;
+                height: 8em;
+                width: 8em;
+                margin: 2em;
+                border-radius: 50%;
+                border: 2px solid $light-color;
+                background-image: url(https://unsplash.imgix.net/photo-1415226581130-91cb7f52f078?fit=crop&fm=jpg&h=800&q=75&w=1050);
+                background-size: cover;
             }
 
             &-title {
-              float: right;
-              margin: (-4em / 1.5) 1em 0 0;
-              font-size: 1.5em;
+                float: right;
+                font-weight: 400;
+                margin: (-4em / 1.5) 1em 0 0;
+                font-size: 1.5em;
             }
 
             &-icon {
@@ -130,6 +131,8 @@
         &-chat {
             @extend %ellipsize;
 
+            line-height: 2;
+
             &-nick {
                 font-weight: 700;
                 opacity: 0.8;
@@ -144,7 +147,7 @@
             &-message { opacity: 0.6; }
         }
 
-        &-discussion {
+        &-thread {
             margin: .75em 0;
 
             &-message {
@@ -241,7 +244,7 @@
         &-quick-reply {
             position: relative;
             height: $bar-height;
-            border-top: 1px solid rgba(0,0,0,0.1);
+            border-top: 1px solid rgba(0,0,0,0.05);
             overflow: hidden;
         }
     }

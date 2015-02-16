@@ -4,7 +4,7 @@
 module.exports = function(core) {
 	var keys = [ "view", "mode", "color" ],
 	    $title = $(".js-appbar-title"),
-	    $discussion = $(".js-discussion-title");
+	    $thread = $(".js-thread-title");
 
 	// Listen to navigate and add class names
 	core.on("statechange", function(changes, next) {
@@ -28,7 +28,7 @@ module.exports = function(core) {
 	        case "chat":
 	            classList += " color-" + changes.color;
 	            $title.text(changes.nav.room);
-	            $discussion.text(changes.nav.discussionId);
+	            $thread.text(changes.nav.threadId);
 	            break;
 	        case "home":
 	            $title.text("My feed");

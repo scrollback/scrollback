@@ -1,7 +1,7 @@
 /* global module, require*/
 var log = require("../../lib/logger.js");
 
-module.exports = function (types/*, config*/) {
+module.exports = function (types, config) {
 
     var texts = types.texts;
 
@@ -87,7 +87,7 @@ module.exports = function (types/*, config*/) {
             }
             dbQuery.gte = [];
             dbQuery.lte = [];
-            dbQuery.limit = 256;
+            dbQuery.limit = config.limit || 256;
 
             dbQuery.gte.push(query.to);
             dbQuery.lte.push(query.to);

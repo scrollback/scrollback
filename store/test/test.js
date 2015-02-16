@@ -19,11 +19,15 @@ var state = {
         roomUsers:{},
         userRooms:{}
     }
+    
 };
+console.log(state, core);
+/*
 
 var options = {
     state: state;
 };
+*/
 
 //require("../nav-manager.js")(core, {}, options);
 //require("../state-manager.js")(core, {}, options);

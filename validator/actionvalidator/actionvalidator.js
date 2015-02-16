@@ -8,7 +8,7 @@ module.exports = function (core, conf) {
 	config = conf;
     /* list of event that the basic validation function is called for.*/
     var events = ['init', 'text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'expel', 'room', 'user'];
-
+    var queriesAndActions = ['init', 'text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'expel', 'room', 'user', 'getTexts', 'getThreads', 'getRooms', 'getUsers'];
     /* if few more validtion is to be added for to any event add it to this list. eq:
 		var handlers = {
 			'init': function(action, callback){
@@ -16,6 +16,12 @@ module.exports = function (core, conf) {
 			}
 		};
 	*/
+    queriesAndActions.forEach(function(qa) {
+        core.on(qa, function(q, cb) {
+            if (!q.type) q.type = qa;
+            cb();
+        }, 'validation');
+    });
     validator.registerType('identities', function(is) {
         var r = is instanceof Array;
         if (r) {
@@ -176,7 +182,7 @@ module.exports = function (core, conf) {
             });
         }, "validation");
     });
-
+    
 
     core.on("getThreads", function (action, callback) {
         if (!(action.to || action.q)) {
