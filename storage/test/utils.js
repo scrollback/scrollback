@@ -106,8 +106,10 @@ r.emitActions = function(core, actions, callback) {
 			if (!err) {
 				results[i] = reply;
 				done();
+			} else {
+				error = err;
+				done();
 			}
-			else error = err;
 		});
 	}
 	for (j = 0; j < actions.length; j++) {

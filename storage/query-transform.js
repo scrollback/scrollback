@@ -7,25 +7,9 @@ if delete time is set.
 
 */
 function makeQuery(type) {
-	function quantFilter(col, fob) {
-		var filters = this.filters;
-		
-		if(typeof fob !== 'object') {
-			filters.push([col, 'eq', fob]);
-			return;
-		}
-
-		['eq', 'neq', 'lt', 'lte', 'gt', 'gte'].forEach(function(op) {
-			if (fob.hasOwnProperty(op)) {
-				filters.push([col, op, fob[op]]);
-				return;
-			}
-		});
-	}
-	
 	return { sources: [], type: type, filters: [], iterate: {
 		keys: [], start: [], reverse: false, skip: 0, limit: 256
-	}, quantFilter: quantFilter };
+	} };
 }
 
 // Content queries: texts, threads.
