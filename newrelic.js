@@ -15,7 +15,7 @@ if(config.core.newrelic.key) exports.config = {
 	},
 	rules: {
 		ignore: [
-			'^/socket/\*',
+			'^/socket/\\*',
 		]
 	}
 };

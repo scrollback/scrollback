@@ -1,7 +1,7 @@
 var webdriver = require('browserstack-webdriver'),
 	assert = require('assert'),
 	testUtils = require('./testUtils.js'),
-	q = require('q');
+	q = require('q'),
 	config = require('../config.js'),
 	timeOut = 25000;
 

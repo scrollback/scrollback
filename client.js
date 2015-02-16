@@ -46,6 +46,8 @@ require('./translation/translation-client.js').translateAll();
 require('./email/email-client.js');
 require('./http/notifications-client.js');
 require('./authorizer/authorizer-client.js');
+//require('./authorizer/domain-auth-client.js');
+//require('./embed/user-domain-blacklist.js');
 require('./http/seo-client.js');
 require('./http/roomGeneralSettings-client.js');
 require('./http/userProfile-client.js');
@@ -62,7 +64,7 @@ require('./http/logout-client.js');
 require('./facebook/facebook-client.js');
 require('./google/google-client.js');
 require('./github/github-client.js');
-require('./persona/persona-client.js');
+require('./browserid-auth/browserid-auth-client.js');
 
 // cordova specific
 require('./push-notification/push-notification-client.js');

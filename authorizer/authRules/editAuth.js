@@ -1,6 +1,10 @@
 var SbError = require('../../lib/SbError.js');
-module.exports = function (core) {
+var utils = require('../../lib/appUtils.js');
+var domainCheck;
+module.exports = function (core, config) {
+	domainCheck = require("../domain-auth.js")(core, config);
 	core.on('edit', function (action, callback) {
+		if(!utils.isIRCSession(action.session) && !domainCheck(action.room, action.origin)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
 		if (action.user.role === "none") {
 			if (/^guest-/.test(action.user.id)) {
 				action.user.role = "guest";

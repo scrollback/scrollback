@@ -1,19 +1,18 @@
 /* jshint browser: true */
-/* global $*/
-
+/* global $, libsb*/
 var Color = require("../lib/color.js"),
+    generate = require('../lib/generate.js'),
 	urlUtils = require("../lib/url-utils.js"),
 	stringUtils = require("../lib/stringUtils.js"),
-	/* status flags */
 	verificationStatus = false,
+	parentWindow = null,
 	bootingDone = false,
 	verified = false,
 	verificationTimeout = false,
-	suggestedNick,
-	/*  lasting objects*/
+	isEmbed = false,
+	suggestedNick, jws,
 	embed, token, domain, path, preBootQueue = [],
-	queue = [],
-	parentHost;
+	parentHost, createRoom, createUser, domainSessions = {};
 
 function openFullView() {
 	window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
@@ -22,8 +21,7 @@ function openFullView() {
 function sendDomainChallenge() {
 	token = Math.random() * Math.random();
 	parentHost = embed.origin.protocol + "//" + embed.origin.host;
-
-	window.parent.postMessage(JSON.stringify({
+	parentWindow.postMessage(JSON.stringify({
 		type: "domain-challenge",
 		token: token
 	}), parentHost);
@@ -92,24 +90,76 @@ function classesOnLoad(embed) {
 	}
 }
 
-function toastChange(state, next) {
-	if (state.source === "embed" && state.embed && state.embed.form === "toast" && state.hasOwnProperty("minimize")) {
-		if (state.minimize) {
-			$("body").addClass("toast-minimized");
-
-			window.parent.postMessage("minimize", parentHost);
+function postNavigation(state, next) {
+	var activity, stateClone = $.extend(true, {}, state);
+	if (stateClone.source == "embed" && stateClone.hasOwnProperty("minimize")) {
+		activity = {
+			type: "activity",
+			minimize: false
+		};
+		activity.minimize = state.minimize;
+		if (stateClone.minimize) {
+			$("body").addClass("minimized");
 		} else {
-			$("body").removeClass("toast-minimized");
-
-			window.parent.postMessage("maximize", parentHost);
+			$("body").removeClass("minimized");
 		}
+		parentWindow.postMessage(JSON.stringify(activity), parentHost);
+	}else if(parentWindow){
+		if(stateClone.room && stateClone.room.params) delete stateClone.room.params;
+		parentWindow.postMessage(JSON.stringify({type:"navigate",state:stateClone}), parentHost);	
 	}
+	
 	next();
+}
+
+
+function onMessage(e) {
+	var data = e.data, action, actionUp = {};
+	data = parseResponse(data);
+	action = data.data;
+	switch (data.type) {
+	case "domain-response":
+		verifyDomainResponse(data);
+		break;
+	case "navigate":
+		data.data.source = "parent";
+		libsb.emit("navigate", action, function (err, state) {
+			var obj;
+			if (err) {
+				err.type = "error";
+				err.id = data.id;
+				parentWindow.postMessage(JSON.stringify(err), parentHost);
+			} else {
+				obj = {
+					type: "navigate",
+					id: data.id,
+					state: state
+				};
+				parentWindow.postMessage(JSON.stringify(obj), parentHost);
+			}
+
+		});
+		break;
+	case "following":
+			if(action.follow) {
+				libsb.emit("join-up", {to: action.room, role: "follower"});
+			}else{
+				libsb.emit("part-up", {to: action.room});
+			}
+		break;
+	case "signin":
+			actionUp.auth = {};
+			actionUp.auth.jws = action.jws;
+			if(action.nick) {
+				action.auth.nick = action.nick; // TODO: can be used to generated nick suggestions.
+			}
+			libsb.emit("init-up", actionUp);
+		break;
+	}
 }
 
 function generateCss(selector, styleBlock) {
 	var r = [];
-
 	r.push("\n" + selector + " {");
 
 	for (var prop in styleBlock) {
@@ -203,24 +253,30 @@ module.exports = function(libsb) {
 			}
 		});
 	});
-
+    
+    
+    
+    var LS = window.localStorage || {};
+    try {
+        domainSessions = JSON.parse(LS.DomainSessions);
+    } catch(e) {
+        domainSessions = {};
+    }
+    
 	var url = urlUtils.parse(window.location.pathname, window.location.search);
-
 	embed = url.embed;
-
 	if (window.parent !== window) {
+		parentWindow = window.parent;
 		if (embed) {
+			isEmbed = true;
 			suggestedNick = embed.nick;
+			jws = embed.jws;
+			createRoom = embed.createRoom;
+			createUser = embed.createUser;
 			classesOnLoad(embed);
 
 			if (embed.origin) {
-				window.onmessage = function(e) {
-					var data = e.data;
-					data = parseResponse(data);
-					if (data.type == "domain-response") {
-						verifyDomainResponse(data);
-					}
-				};
+				window.onmessage = onMessage;
 				sendDomainChallenge(embed.origin);
 			} else {
 				verificationStatus = true;
@@ -246,7 +302,6 @@ module.exports = function(libsb) {
 			if (state.source == "boot") {
 				bootingDone = true;
 				state.embed = embed;
-
 				if ((navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
 					 navigator.userAgent.match(/AppleWebKit/) &&
 					 navigator.userAgent.match(/Safari/)) &&
@@ -263,13 +318,11 @@ module.exports = function(libsb) {
 				}
 			}
 
-			if (state.room && state.room === "object") {
+			if (isEmbed && state.room && typeof state.room === "object") {
 				guides = state.room.guides;
-				if (!state.old || !state.old.roomName || state.roomName != state.old.roomName) {
-					if (guides && guides.http && guides.http.allowedDomains && guides.http.allowedDomains.length) {
-						if (!verified || guides.http.allowedDomains.indexOf(domain) == -1) {
-							state.room = "embed-disallowed";
-						}
+				if (guides && guides.allowedDomains && guides.allowedDomains.length) {
+					if (!verified || guides.allowedDomains.indexOf(domain) == -1) {
+						state.dialog = "disallowed";
 					}
 				}
 			}
@@ -279,7 +332,7 @@ module.exports = function(libsb) {
 		if (state.source == "boot") {
 			if (!verificationStatus) {
 				preBootQueue.push(function() {
-					processNavigate();
+				processNavigate();
 				});
 			} else {
 				processNavigate();
@@ -287,8 +340,18 @@ module.exports = function(libsb) {
 		} else {
 			processNavigate();
 		}
-	}, 997);
 
+	}, 996);
+	libsb.on("navigate", function(state, next) {
+		if(isEmbed && state.source == "boot" && state.mode == "noroom"){
+			if(createRoom){
+				state.dialog = "createroom";
+			}else {
+				state.dialog = "noroom";	
+			}
+		}
+		next();
+	}, 995);
 	libsb.on("init-up", function(init, next) {
 		function processInit() {
 			init.origin = {
@@ -296,20 +359,51 @@ module.exports = function(libsb) {
 				path: path,
 				verified: verified
 			};
-
+            if(jws && !init.auth) {
+                init.auth = {jws: jws};
+            }
+            
+            if(domainSessions[domain]){
+                init.session = domainSessions[domain];
+                libsb.session = init.session = domainSessions[domain];
+            } else if(jws) {
+                domainSessions[domain] = "web://" + generate.uid();
+                window.localStorage.DomainSessions = JSON.stringify(domainSessions);
+                libsb.session = init.session = domainSessions[domain];
+            }
+			
 			if (url) {
 				init.suggestedNick = init.suggestedNick || suggestedNick || "";
 			}
-
+			
 			next();
 		}
 
-		if (libsb.hasBooted) {
+		if (verificationStatus) {
 			processInit();
 		} else {
-			queue.push(processInit);
+			preBootQueue.push(processInit);
 		}
 	}, 500);
-
-	libsb.on("navigate", toastChange, 500);
+	
+	libsb.on("navigate", postNavigation, 500);
+	
+	libsb.on("init-dn", function(init, next) {
+		var membership = [];
+		if(parentWindow){
+			if(!/^guest-/.test(init.user.id)) {
+				init.memberOf.forEach(function(e) {
+					if(!e.guides || !e.guides.allowedDomains || (e.guides.allowedDomains && e.guides.allowedDomains.indexOf(domain))) {
+						membership.push(e.id);
+					}
+				});
+				parentWindow.postMessage(JSON.stringify({
+					type:"membership",
+					data: membership
+				}), parentHost);	
+			}
+		}
+		
+		next();
+	}, "watcher");
 };
