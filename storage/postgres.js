@@ -26,6 +26,7 @@ function toQuery(transform) {
 		case 'select': ret = makeSelectQuery(transform); break;
 		
 	}
+	log.d("Queries: ", ret);
 	return ret;
 }
 
@@ -173,11 +174,18 @@ function makeSelectQuery(transform) {
 			if (filter[0] instanceof Array) p1 = filter[0][0] + "." + filter[0][1]; 
 			else p1 = name(filter[0]);
 			
-			if (filter[2] instanceof Array) p2 = filter[2][0] + "." + filter[2][1]; 
-			else {
-				p2 = "$" + i;
-				values.push(filter[2]);
-				i++;
+			if (filter.length === 4 && filter[3] === 'column') {
+				p2 = filter[2][0] + "." + filter[2][1]; 
+			} else {
+				if (filter[1] === 'in') {
+					var inString = arrayToStringForInOperator(filter[2], i, values);
+					p2 = inString;
+					i += filter[2].length;
+				} else {
+					p2 = "$" + i;
+					values.push(filter[2]);
+					i++;
+				}
 			}
 			
 			t.push(p1 + getOperatorString(filter[1]) + p2);
@@ -220,19 +228,33 @@ function addFilters(transform, sql, values, i) {
 				i++;
 			} else { // IN operator. ( IN ('abc', 'cde'))
 				f.push(getOperatorString(filter[1]));
-				f.push("(");
-				var tf = [];
-				filter[2].forEach(function(e) {
-					tf.push("$" + (i++));
-					values.push(e);
-				});
-				f.push(tf.join(','));
-				f.push(")");
+				var inString = arrayToStringForInOperator(filter[2], i, values);
+				f.push(inString);
+				i += filter[2].length;
 				filters.push(f.join(""));
 			}
 		});
 		sql.push(filters.join(" AND "));
 	}
+}
+
+/**
+@params array: input array.
+@params i: current index in query 
+@values array 
+@return string ($i, $i + 1, $i + 2  ... , $i + array length);
+*/
+function arrayToStringForInOperator(array, i, values) {
+	var f = [];
+	f.push("(");
+	var tf = [];
+	array.forEach(function(e) {
+		tf.push("$" + (i++));
+		values.push(e);
+	});
+	f.push(tf.join(','));
+	f.push(")");
+	return f.join("");
 }
 
 /*column name*/

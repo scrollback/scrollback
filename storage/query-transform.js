@@ -89,16 +89,16 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.sources.push('entities');
 		q.sources.push('relations');
 		if (!iq.role) {
-			q.filters.push([['relations', 'role'], 'neq', 'none']);
+			q.filters.push([['relations', 'role'], 'gt', 'none']);
 		} else {
 			q.filters.push([['relations', 'role'], 'eq', iq.role]);
 		}
 		if (iq.memberOf) {
 			q.filters.push([['relations', 'room'], 'eq', iq.memberOf]);
-			q.filters.push([['relations', 'user'], 'eq', ['entities', 'id']]);
+			q.filters.push([['relations', 'user'], 'eq', ['entities', 'id'], 'column']);
 		} else if (iq.hasMember) {
 			q.filters.push([['relations', 'user'], 'eq', iq.hasMember]);
-			q.filters.push([['relations', 'room'], 'eq', ['entities', 'id']]);	
+			q.filters.push([['relations', 'room'], 'eq', ['entities', 'id'], 'column']);	
 		}
 	} else if (iq.role) q.filters.push(['role', 'eq', q.role]);
 	

@@ -74,7 +74,7 @@ r.getNewRelationAction = function(type, userRole) {
 	var victim;
 	var from = user.id;
 	if (type === 'admit' || type === 'expel') {
-		victim = r.getNewUser();
+		victim = r.getNewUserAction().user;
 	} 
 	var ret = {
 		type: type,
