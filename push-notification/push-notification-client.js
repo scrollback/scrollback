@@ -14,7 +14,9 @@ libsb.on('init-dn', registerPushNotification, 500);
 libsb.on('logout', unregisterPushNotification, 500);
 
 window.onNotificationGCM = function(e) {
-	// handler for push notifications.
+	/* 
+		This function is called by the Push notification plugin, on recieving a notification from the server.
+	*/
 	switch (e.event) {
 		case 'registered':
 			if (e.regid.length > 0) {
@@ -39,19 +41,13 @@ window.onNotificationGCM = function(e) {
 			// e.foreground is true if the notification came in when the user is in the foreground.
 			if (e.foreground) {
 				console.log("In foreground ", e.payload.message);
-				// TODO: Add a lace notification here, if the new new message is not in view. Clicking on this notification 
-				// 		 should navigate user to the message.
-				/*var $notif = $('<div>').html(e.payload.title + "<a class='pushnotif-navigate'>Click here to view it.</a>").alertbar();
-			$notif.find('.pushnotif-navigate').click(function (){
-				libsb.emit("navigate", state);
-			});*/
 			} else {
 				if (e.coldstart) {
 					setTimeout(function() {
 						libsb.emit('navigate', state);
 					});
 				} else {
-					//background notification
+					//background notification, navigate to relevant room and thread
 					setTimeout(function() {
 						libsb.emit('navigate', state);
 					});
@@ -122,12 +118,12 @@ libsb.on('init-dn', function(init, next) {
 }, 100);
 
 function mapDevicetoUser(regId) {
+	/* Checks if device is registered to User for push notification, if not adds it */
+	
 	if (typeof device === "undefined") return;
 	var user = libsb.user;
 	if (typeof regId === "undefined" || typeof user === "undefined") return;
 	if (!window.plugins || !window.plugins.uniqueDeviceID) return;
-
-	/* Checks if device is registered to User for push notification, if not adds it */
 
 	if (user && typeof user.params.pushNotifications === "undefined") {
 		libsb.user.params.pushNotifications = {
