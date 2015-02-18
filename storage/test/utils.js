@@ -74,7 +74,7 @@ r.getNewRelationAction = function(type, userRole) {
 	var victim;
 	var from = user.id;
 	if (type === 'admit' || type === 'expel') {
-		victim = r.getNewUser();
+		victim = r.getNewUserAction().user;
 	} 
 	var ret = {
 		type: type,
@@ -106,8 +106,10 @@ r.emitActions = function(core, actions, callback) {
 			if (!err) {
 				results[i] = reply;
 				done();
+			} else {
+				error = err;
+				done();
 			}
-			else error = err;
 		});
 	}
 	for (j = 0; j < actions.length; j++) {
