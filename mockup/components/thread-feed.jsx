@@ -14,7 +14,7 @@ module.exports = function(core, config, state) {
 		var roomId = state.getNav().room,
 			items = [];
 
-		state.getThreads(roomId, null, -10).reverse().forEach(function(thread) {
+		state.getThreads(roomId, null, -50).reverse().forEach(function(thread) {
 			if (typeof thread !== "object" || typeof thread.id !== "string") {
 				return;
 			}
