@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $ */
 
-module.exports = function(core) {
+module.exports = function(core, config, state) {
 	var keys = [ "view", "mode", "color" ],
 	    $title = $(".js-appbar-title"),
 	    $thread = $(".js-thread-title");
@@ -14,21 +14,21 @@ module.exports = function(core) {
 	        if ([keys[i]] in changes.nav) {
 	            classList = classList.replace(new RegExp("\\b" + keys[i] + "-" + "\\S+", "g"), "");
 
-	            classList += " " + keys[i] + "-" + (changes.nav[keys[i]] || "");
+	            classList += " " + keys[i] + "-" + (state.getNav()[keys[i]] || "");
 	        }
 	    }
 
 	    classList = classList.replace(/\bcolor-\S+/g, "").replace(/^\s+|\s+$/g, "");
 
 	    if ("nav" in changes && "mode" in changes.nav) {
-	        switch (changes.nav.mode) {
+	        switch (state.getNav().mode) {
 	        case "room":
-	            $title.text(changes.nav.room);
+	            $title.text(state.getNav().room);
 	            break;
 	        case "chat":
-	            classList += " color-" + changes.color;
-	            $title.text(changes.nav.room);
-	            $thread.text(changes.nav.threadId);
+	            classList += " color-" + state.getNav().color;
+	            $title.text(state.getNav().room);
+	            $thread.text(state.getNav().threadId);
 	            break;
 	        case "home":
 	            $title.text("My feed");
