@@ -11,14 +11,29 @@
     window.core = core;
     window.state = state;
 
-    // third party libraries
-    require("../public/s/scripts/lib/sockjs.min.js");
-    require("../public/s/scripts/lib/velocity.min.js");
+    // jQuery library
+    window.jQuery = window.$ = require("../bower_components/jquery/dist/jquery.min.js");
 
-    // core
+    // Third party libraries
+    require("../bower_components/sockjs/sockjs.min.js");
+    require("../bower_components/velocity/velocity.min.js");
+
+	// UI widgets
+	require('../bower_components/lace/src/js/jquery.alertbar.js');
+	require('../bower_components/lace/src/js/jquery.modal.js');
+	require('../bower_components/lace/src/js/jquery.multientry.js');
+	require('../bower_components/lace/src/js/jquery.popover.js');
+	require('../bower_components/lace/src/js/jquery.progressbar.js');
+
+    // jQuery plugins
+	require('../lib/jquery.setCursorEnd.js');
+	require('../lib/jquery.isOnScreen.js');
+	require('../lib/jquery.scrollToBottom.js');
+
+    // Core
     require("./store/view-manager.js")(core, config, state);
 
-    // components
+    // Components
     require("./components/appbar-primary.jsx")(core, config, state);
     require("./components/appbar-secondary.jsx")(core, config, state);
     require("./components/chat.jsx")(core, config, state);
@@ -28,7 +43,9 @@
     require("./components/sidebar.jsx")(core, config, state);
     require("./components/thread-feed.jsx")(core, config, state);
 
-    // send the initial setstate event
+	require('./misc/workarounds.js')(core, config, state);
+
+    // Send the initial setstate event
     req = new XMLHttpRequest();
 
 	req.onreadystatechange = function() {
