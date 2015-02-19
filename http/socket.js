@@ -189,6 +189,7 @@ function processUser(conn, user) {
 		core.emit("init", {
 			time: new Date().getTime(),
 			to: 'me',
+			origin: conn.origin,
 			session: conn.session,
 			resource: conn.resource,
 			type: "init"
@@ -421,4 +422,3 @@ function getErrorObject(action, message) {
 		message: message
 	};
 }
-
