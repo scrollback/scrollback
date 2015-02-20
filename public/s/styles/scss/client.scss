@@ -116,7 +116,7 @@ body {
 
 .room-header {
     height: $bar-height;
-    background: url(../../img/client/scrollback-logo.svg) no-repeat 1em center;
+    background: url(../../img/scrollback-logo.svg) no-repeat 1em center;
     border-bottom: 1px solid lighten($dark-color, 5%);
     cursor: pointer;
 }
@@ -648,12 +648,12 @@ body {
     .title-bar { position: fixed; }
 
     .header-image {
-        background: url(../../img/client/scrollback-logo-dark.svg) no-repeat 1em center;
+        background: url(../../img/scrollback-logo-dark.svg) no-repeat 1em center;
         height: 3.5em;
         width: 12em;
         max-width: 100%;
 
-        .theme-dark & { background: url(../../img/client/scrollback-logo.svg) no-repeat 1em center; }
+        .theme-dark & { background: url(../../img/scrollback-logo.svg) no-repeat 1em center; }
     }
 }
 

@@ -171,7 +171,7 @@ function htmlEscape(str) {
 
 function genHeadHtml(room, thread) {
 	var r = [];
-	var roomIcon = "https://" + config.host + "/s/img/scrollback.png";
+	var roomIcon = "https://" + config.host + "/s/img/scrollback-preview.png";
 	r.push("<meta name=\"description\" content=\"" + htmlEscape(room.description) + "\">");
 	r.push("<meta name=\"twitter:card\" content=\"summary\" />");
 	r.push("<meta name=\"twitter:title\" content=\"" + htmlEscape(room.id) + " on scrollback\">");
