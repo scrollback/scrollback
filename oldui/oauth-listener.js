@@ -26,7 +26,7 @@ function sendInit(action) {
 	if (initSent) return;
 	delete action.command;
 	initSent = true;
-	if (/^guest-/.test(libsb.user.id)) {
+	if (initSent) {
 		libsb.emit('init-up', action, function() {
 			initSent = false;
 		});

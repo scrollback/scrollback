@@ -8,6 +8,13 @@ var stringUtils = require('../lib/stringUtils.js');
 module.exports = function(core, conf) {
 	config = conf;
 	function mapUsersToIds(idList, cb) {
+		/*
+			Takes an array of user ids, and calls the callback passed to it with the 
+			list of corresponding user objects.
+			
+			This functionality has to be ideally implemented in the entity loader, but since entity loader does not support
+			this yet, this query has to be made.
+		*/
 		var cnt = idList.length;
 		var userList = [];
 
@@ -28,6 +35,10 @@ module.exports = function(core, conf) {
 	}
 
 	function notifyUsers(userList, payload) {
+		/*
+			The function takes a list of user objects and the push notification payload, and  
+			calls gcm_notify with a list of GCM registration ids and the payload.
+		*/
 		var regList = [];
 		userList.forEach(function(userObj) {
 			if (userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
@@ -46,9 +57,12 @@ module.exports = function(core, conf) {
 	}
 
 	function makePayload(title, message, text) {
+		/* 
+			Create a valid push notification payload
+		*/
 		var payload = {
 			collapse_key: text.to, //for each room discard old message if not delivered
-			notId: stringUtils.hashCode(text.to),
+			notId: stringUtils.hashCode(text.to), // push notifications should be grouped by room name on the client device
 			title: title,
 			message: message,
 			roomName: text.to,
@@ -58,7 +72,7 @@ module.exports = function(core, conf) {
 		var msgLen = JSON.stringify(payload).length;
 
 		if (msgLen > 4 * 1024) {
-			log.e("Payload too big for push notification! ", JSON.stringify(payload));
+			log.i("Payload too big for push notification, truncating ... ", JSON.stringify(payload));
 			payload.message = payload.message.substring(0, 700);
 		}
 		return payload;

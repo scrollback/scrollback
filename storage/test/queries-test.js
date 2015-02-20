@@ -252,11 +252,25 @@ describe("Storage Test.", function() {
 		var room = utils.getNewRoomAction();
 		var roomOwner = utils.getNewUserAction();
 		room.user = roomOwner.user;
-		var n = mathUtils.random(1, 10);
+		var n = mathUtils.random(5, 15);
+		var type, v;
+		var bannedCount = 0;
 		for (var i = 0;i < n; i++) {
-			relations.push(utils.getNewRelationAction('join', 'follower'));
+			if (i % 3 === 0) {
+				type = 'expel';
+				v = 'banned';
+				bannedCount++;
+			} else {
+				type = 'join';
+				v = 'follower';
+			}
+			relations.push(utils.getNewRelationAction(type, v));
 			var user = utils.getNewUserAction();
-			relations[i].user = user.user;
+			if (i % 3 === 0) {
+				relations[i].victim = user.user;
+			} else {
+				relations[i].user = user.user;
+			}
 			relations[i].room = room.room;
 			users.push(user);
 		}
@@ -270,7 +284,8 @@ describe("Storage Test.", function() {
 							memberOf: room.room.id
 						}, function(err, reply) {
 							log.d("N=", n, reply.results.length);
-							assert.equal(reply.results.length >= n, true, "member of query failed.");
+							
+							assert.equal(reply.results.length, n - bannedCount + 1, "member of query failed.");
 							done();
 						});
 					});
@@ -372,7 +387,7 @@ describe("Storage Test.", function() {
 						hasMember: user.user.id
 					}, function(err, reply) {
 						log.d("N=", n, reply.results.length);
-						assert.equal(reply.results.length >= n, true, "hasMember query failed.");
+						assert.equal(reply.results.length, n, "hasMember query failed.");
 						done();
 					});
 				});
@@ -380,6 +395,86 @@ describe("Storage Test.", function() {
 
 		});
 	});
+	
+	
+	
+	it("getUsers query (hasMember and ref as an array)", function(done) {
+		var relations = [];
+		var rooms = [];
+		var user = utils.getNewUserAction();
+		var n = mathUtils.random(1, 10);
+		var roomOwner = utils.getNewUserAction();
+		var ref = [];
+		for (var i = 0;i < n; i++) {
+			relations.push(utils.getNewRelationAction('join', 'follower'));
+			var room = utils.getNewRoomAction();
+			room.user = roomOwner.user;
+			relations[i].user = user.user;
+			relations[i].room = room.room;
+			if (i % 2 === 0) {
+				ref.push(room.room.id);
+			}
+			rooms.push(room);
+		}
+		utils.emitActions(core, [user, roomOwner] , function(err1, results1) {
+			utils.emitActions(core, rooms, function(err2, results2) {
+				utils.emitActions(core, relations, function(err3, results3) {
+					log.d("actions: ", err1, err2, err3, results1, results2, results3);
+					core.emit("getRooms", {
+						type: 'getRooms',
+						hasMember: user.user.id,
+						ref: ref
+					}, function(err, reply) {
+						log.d("N=", n, reply.results.length, reply.results);
+						assert.equal(reply.results.length,ref.length , "hasMember query failed.");
+						reply.results.forEach(function(room, i) {
+							assert.equal(room.id, ref[i], "not equal");
+						});
+						done();
+					});
+				});
+			});
+
+		});
+	});
+	
+	
+	it("getUsers query (hasMember and ref)", function(done) {
+		var relations = [];
+		var rooms = [];
+		var user = utils.getNewUserAction();
+		var n = mathUtils.random(3, 10);
+		var roomOwner = utils.getNewUserAction();
+		for (var i = 0;i < n; i++) {
+			relations.push(utils.getNewRelationAction('join', 'follower'));
+			var room = utils.getNewRoomAction();
+			room.user = roomOwner.user;
+			relations[i].user = user.user;
+			relations[i].room = room.room;
+			rooms.push(room);
+		}
+		var index = mathUtils.random(0, n - 1);
+		utils.emitActions(core, [user, roomOwner] , function(err1, results1) {
+			utils.emitActions(core, rooms, function(err2, results2) {
+				utils.emitActions(core, relations, function(err3, results3) {
+					log.d("actions: ", err1, err2, err3, results1, results2, results3);
+					core.emit("getRooms", {
+						type: 'getRooms',
+						hasMember: user.user.id,
+						ref: rooms[index].room.id
+					}, function(err, reply) {
+						log.d("N, length=", n, reply.results.length, reply.results);
+						assert.equal(reply.results.length, 1, "hasMember query failed.");
+						assert.equal(reply.results[0].id, rooms[index].room.id, "Incorrect room");
+						assert.equal(reply.results[0].role, "follower", "Incorrect role");
+						done();
+					});
+				});
+			});
+
+		});
+	});
+	
 	
 	it("getTexts query (ref)", function(done) {
 		var text = utils.getNewTextAction();
@@ -785,7 +880,9 @@ describe("Storage Test.", function() {
 			}
 		}
 		var num = mathUtils.random(1, 256);
-		utils.emitActions(core, texts, function() {
+		utils.emitActions(core, texts, function(err) {
+			if (err) log.e("getThreads:", err);
+			assert.ok(!err, "Error while saving texts");
 			core.emit("getThreads", {type: "getThreads", time: time - 1, after: num, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				log.d("Length: ", results.results.length, numThreads);

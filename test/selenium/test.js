@@ -13,6 +13,7 @@ capabilities.forEach(function(c) {
 		options.id = c.browser + " " + c.browser_version;
 	}
 	options.server = "http://" + config.server;
+    options["jws-parent"] = "http://" + config["jws-parent"];
 	config.selenium.tests.forEach(function(test) {
 		require("./" + test)(c, options);
 	});

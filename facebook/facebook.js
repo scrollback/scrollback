@@ -91,13 +91,17 @@ function loginUser(token, action, callback) {
 }
 
 function fbAuth(action, callback) {
-	if (action.auth && action.auth.facebook && action.auth.facebook.code) {
+	if (!action.response && action.auth && action.auth.facebook && action.auth.facebook.code) {
 		request("https://graph.facebook.com/oauth/access_token?client_id=" + config.client_id +
 			"&redirect_uri=https://" + config.global.host + "/r/facebook/return" +
 			"&client_secret=" + config.client_secret +
 			"&code=" + action.auth.facebook.code,
 			function(err, res, body) {
-				if (err) return callback(err);
+				if (err) {
+					action.response = err;
+					return callback();
+				}
+
 				var queries = body.split("&"),
 					i, l, token;
 				for (i = 0, l = queries.length; i < l; i++) {

@@ -202,7 +202,7 @@ gulp.task("bundle", function() {
 });
 
 // Generate embed widget script
-gulp.task("embed", function() {
+gulp.task("embed-legacy", function() {
 	return bundle("embed/embed-parent.js", { debug: true })
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
@@ -212,6 +212,18 @@ gulp.task("embed", function() {
 	.pipe(rename("client.min.js"))
 	.pipe(gulp.dest("public"));
 });
+
+gulp.task("embed-apis", function() {
+	return bundle("embed/index.js", { debug: debug })
+	.pipe(sourcemaps.init({ loadMaps: true }))
+	.pipe(buildscripts())
+	.pipe(rename("sb.js"))
+	.pipe(sourcemaps.write("."))
+	.pipe(gulp.dest("public/s"))
+	.on("error", gutil.log);
+});
+
+gulp.task("embed", [ "embed-legacy", "embed-apis" ]);
 
 // Generate scripts
 gulp.task("scripts", [ "polyfills", "copylibs", "bundle", "embed" ]);

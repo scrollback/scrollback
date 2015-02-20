@@ -32,7 +32,6 @@ client-config.js
 /leveldb-storage/data-test/
 /ircClient/myConfig.js
 /ircClient/Data
-
 /test/config.js
 /test/config-defaults.js
 
@@ -41,4 +40,9 @@ client-config.js
 
 /mocha-output-selenium.json
 /mocha-output-unit.json
+/public/s/client.phonegap.html
+/public/sb.js
+/xunit-mocha.xml
+/public/s/client.phonegap.html
+/patchup-room
 /mocha-output.json
