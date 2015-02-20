@@ -1,5 +1,5 @@
 /* jshint browser:true */
-/* global libsb, $, currentState */
+/* global libsb, $ */
 
 var config = require("../client-config-defaults.js");
 
