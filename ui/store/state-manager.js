@@ -138,8 +138,8 @@ module.exports = function(core) {
 		extendObj(current.app, changes.app);
 		extendObj(current.entities, changes.entities); // Todo: replace with shallow extend
 
-		if (changes.userId) {
-			current.userId = changes.userId;
+		if (changes.user) {
+			current.user = changes.user;
 		}
 
 		if (changes.texts) {
@@ -210,7 +210,7 @@ module.exports = function(core) {
 			var userobj;
 
 			if (typeof user === "undefined") {
-				return this.get("entities", this.get("userId"));
+				return this.get("entities", this.get("user"));
 			}
 
 			userobj = this.get("entities", user);

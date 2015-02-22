@@ -19,7 +19,7 @@ module.exports = function(core, config, state) {
 	function getSections(type) {
 		var sections = {}, arr = [];
 
-		state.get("indexes", "userRooms", state.get("userId")).forEach(function(rel) {
+		state.get("indexes", "userRooms", state.get("user")).forEach(function(rel) {
 			sections[rel.role] = sections[rel.role] || {
 				key: "home-feed-" + rel.role,
 				header: titles[rel.role],

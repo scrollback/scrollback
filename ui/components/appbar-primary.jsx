@@ -49,7 +49,7 @@ module.exports = function(core, config, state) {
 
 	core.on("statechange", function(changes, next) {
 		if ("nav" in changes && ("room" in changes.nav || "mode" in changes.nav) ||
-		    "userId" in changes || ("entities" in changes && state.get("userId") in changes.entities)) {
+		    "user" in changes || ("entities" in changes && state.get("user") in changes.entities)) {
 			React.render(<AppbarPrimary />, appbarprimary);
 		}
 
