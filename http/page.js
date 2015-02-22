@@ -26,7 +26,6 @@ var core, config,
 	seo, clientTemp, clientHbs,
 	log = require('../lib/logger.js');
 
-
 module.exports = function(c, conf) {
 	core = c;
 	config = conf;
@@ -35,8 +34,12 @@ module.exports = function(c, conf) {
 		init: init
 	};
 };
+
 function init (app) {
-	if (!config.https) log.w("Insecure connection. Specify https options in your config file.");
+	if (!config.https) {
+		log.w("Insecure connection. Specify https options in your config file.");
+	}
+
 	start();
 
 	app.get('/t/*', function(req, res, next) {
@@ -51,7 +54,10 @@ function init (app) {
 	});
 
 	app.get("/*", function(req, res, next) {
-		if (/^\/t\//.test(req.path)) return next();
+		if (/^\/t\//.test(req.path)) {
+			return next();
+		}
+
 		if (/^\/s\//.test(req.path)) {
 			console.log("static");
 			return next();
@@ -66,7 +72,7 @@ function init (app) {
 
 		clientData.appVersion = req.query["app-version"] || "defaults";
 		clientData.manifest = (platform ? platform.toLowerCase() : "manifest") + ".appcache";
-		clientData.cordova = (!!(platform && (/cordova/i).test(platform))) || 
+		clientData.cordova = (!!(platform && (/cordova/i).test(platform))) ||
 			(platform === "android"); // fixing backward compatibitly issue
 
 		seo.getSEOHtml(req, function(r) {
@@ -78,11 +84,7 @@ function init (app) {
 }
 
 function start() {
-	clientHbs = fs.readFileSync(__dirname + "/../public/client.hbs", "utf8");
+	clientHbs = fs.readFileSync(__dirname + "/../public/app.hbs", "utf8");
 	seo = require('./seo.js')(core, config);
 	clientTemp = handlebars.compile(clientHbs);
 }
-
-
-
-

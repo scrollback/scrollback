@@ -1,0 +1,5 @@
+@include exports("dialog") {
+    .dialog {
+        input, .button { width: 100%; }
+    }
+}

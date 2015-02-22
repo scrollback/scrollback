@@ -37,43 +37,52 @@
 		style.href = host + "/s/styles/dist/embed.min.css";
 
 		document.head.appendChild(style);
-
-		// Create and append the iframe
 		iframe = document.createElement("iframe");
-
 		if (embed.form === "canvas") {
 			container = document.getElementById("scrollback-container");
 		}
-
+		
 		if (!container) {
 			embed.form = sb.embed = "toast";
 			document.body.appendChild(iframe);
 		} else {
 			container.appendChild(iframe);
 		}
+		
+
 
 		// TODO: change "embed" to "context"
 		iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
-		iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
 
-		window.addEventListener("message", function(e) {
+		iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form == "toast") ? " scrollback-minimized" : "");				
+		window.addEventListener("message", function (e) {
 			var data;
+			var minReg = /\bscrollback-minimized\b/;
 
 			if (e.origin === host) {
-				var minReg = /\bscrollback-minimized\b/;
-
-				if (e.data === "minimize" && !minReg.test(iframe.className)) {
-					iframe.className = iframe.className + " scrollback-minimized";
-				} else if (e.data === "maximize") {
-					iframe.className = iframe.className.replace(minReg, "").trim();
-				} else {
+				try{
 					data = JSON.parse(e.data);
-					if (data.type === "domain-challenge") {
+				}catch(e){
+					console.log("Parse error: ", data);
+					return;
+				}
+				switch(data.type) {
+					case "activity":
+						if(data.hasOwnProperty("minimize")) {
+
+							if (data.minimize && !minReg.test(iframe.className)) {
+								iframe.className = iframe.className + " scrollback-minimized";
+							} else {
+								iframe.className = iframe.className.replace(minReg, "").trim();
+							}
+						}
+					break;
+					case "domain-challenge":
 						iframe.contentWindow.postMessage(JSON.stringify({
 							type: "domain-response",
 							token: data.token
 						}), host);
-					}
+					break;		
 				}
 			}
 		}, false);

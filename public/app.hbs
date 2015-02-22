@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html {{#if manifest}} manifest="/{{manifest}}" {{/if}} lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+	{{{seo.head}}}
+
+	<link rel="shortcut icon" href="/s/img/client/favicon.png" type="image/x-icon">
+
+    <link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:400,700">
+    <link rel="stylesheet" type="text/css" media="screen" href="/s/dist/styles/style.min.css">
+
+    {{#if analytics.id}}
+		<script>
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', '{{analytics.id}}']);
+			_gaq.push(['_trackPageview']);
+
+			(function() {
+				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			})();
+		</script>
+	{{/if}}
+
+	{{#if errorception.id}}
+		<script>
+			(function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
+			c&&c.apply(this,a)};var b=function(){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];
+			c.src="//beacon.errorception.com/"+s+".js";c.async=!0;b.parentNode.insertBefore(c,b)};
+			_.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
+			(window,document,"script","{{errorception.id}}");
+		</script>
+	{{/if}}
+</head>
+
+<body class="{{#if cordova}} platform-cordova {{/if}}">
+	<!-- [if lt IE 9]>
+		<div class="ie-warning">
+			<div class="ie-warning-content">
+				<h1>Your browser isn’t supported :-(</h1>
+				<p>Please <a href="http://browsehappy.com">upgrade</a> to a modern browser.</p>
+			</div>
+		</div>
+	<![endif]-->
+
+	<!-- SEO -->
+	<main itemscope style="position: absolute; top: -9999em; left: -9999em;">
+		{{{seo.body}}}
+	</main>
+
+    <section id="sidebar-left" class="column sidebar sidebar-left">
+        <div class="sidebar-content" data-mode="home">
+            <div class="profile">
+                <div id="js-profile-card"></div>
+                <div class="profile-last-seen sidebar-block">
+                    <span class="profile-last-seen-icon"></span>
+                    <p>Last seen 2 hours ago</p>
+                </div>
+                <div class="profile-points sidebar-block">
+                    <div class="profile-points-block profile-points-block-xp">
+                        <h3>34</h3>
+                        <p>xp</p>
+                    </div>
+                    <div class="profile-points-block profile-points-block-cookies">
+                        <h3>34</h3>
+                        <p>cookies</p>
+                    </div>
+                    <div class="profile-points-block profile-points-block-posts">
+                        <h3>34</h3>
+                        <p>messages</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-header js-goto-home" data-mode="room chat">
+            <img class="sidebar-header-logo" src="/s/img/scrollback-logo.png">
+            <a class="sidebar-header-icon sidebar-header-icon sidebar-header-icon-grid"></a>
+        </div>
+        <div id="js-room-list" class="room-list sidebar-content" data-mode="room"></div>
+        <div id="js-thread-list" class="thread-list sidebar-content" data-mode="chat"></div>
+    </section>
+
+    <main id="main" class="main">
+        <div id="js-appbar-primary" class="appbar appbar-primary"></div>
+        <div id="js-appbar-secondary" class="appbar appbar-secondary" data-mode="chat"></div>
+
+        <div class="main-content" data-mode="home search room">
+            <div id="js-home-feed" class="main-content-rooms" data-mode="home"></div>
+            <div class="main-content-search" data-mode="search"></div>
+            <div id="js-thread-feed" class="main-content-threads" data-mode="room"></div>
+        </div>
+
+        <div class="main-content-chat chat-area" data-mode="chat">
+            <div class="chat-area-messages">
+                <div class="chat-area-messages-list"></div>
+            </div>
+            <div class="chat-area-input">
+                <div class="chat-area-input-entry" contenteditable></div>
+                <div class="chat-area-input-send"></div>
+            </div>
+        </div>
+
+        <a class="fab js-create-thread" data-mode="room"></a>
+    </main>
+
+    <section data-mode="room chat" id="sidebar-right" class="sidebar sidebar-right">
+        <div class="sidebar-people-list">
+            <div class="searchbar">
+                <input type="search" class="searchbar-input" placeholder="Find people" required>
+                <span class="searchbar-icon"></span>
+            </div>
+            <div id="js-people-list" class="people-list sidebar-content"></div>
+        </div>
+    </section>
+
+    <div id="sidebar-overlay" class="sidebar-overlay js-sidebar-close"></div>
+
+	{{#if cordova}}
+		<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova.js"></script>
+		<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova_plugins.js"></script>
+	{{/if}}
+
+    <script src="/s/dist/scripts/app.bundle.min.js"></script>
+
+	<script src="https://login.persona.org/include.js"></script>
+
+	<!--[if IE]>
+		<script src="/s/scripts/lib/polyfills.min.js"></script>
+	<![endif]-->
+
+</body>
+</html>

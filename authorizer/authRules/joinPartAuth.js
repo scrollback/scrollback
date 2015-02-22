@@ -1,5 +1,6 @@
 var permissionWeights = require('../permissionWeights.js');
 var SbError = require('../../lib/SbError.js');
+var domainCheck;
 function joinPart(action, callback) {
 	var openFollow = action.room.guides && action.room.guides.authorizer && action.room.guides.authorizer.openFollow;
 	if (typeof openFollow === "undefined") {
@@ -26,8 +27,10 @@ function joinPart(action, callback) {
 	}
 }
 
-module.exports = function (core) {
+module.exports = function (core, config) {
+	domainCheck = require("../domain-auth.js")(core, config);
 	core.on('join', function (join, callback) {
+		if(!domainCheck(join.room, join.origin)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
 		if (!join.role) {
 			join.role = "follower";
 		}
@@ -35,6 +38,7 @@ module.exports = function (core) {
 	}, "authorization");
 	
 	core.on('part', function (part, callback) {
+		if(!domainCheck(part.room, part.origin)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
 		if (!part.role) {
 			part.role = "none";
 		}

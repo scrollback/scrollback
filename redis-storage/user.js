@@ -35,7 +35,8 @@ function onGetUsers(query, callback) {
 						if (err || !data) {
 							return callback();
 						}
-
+						data.allowedDomains = sess.allowedDomains;
+						data.restricted = sess.restricted;
 						query.results = [data];
 						callback();
 					});

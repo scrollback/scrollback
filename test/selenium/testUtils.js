@@ -1,6 +1,23 @@
+var jwt = require('jsonwebtoken');
 var webdriver = require('browserstack-webdriver'),
 	q = require('q');
 
+
+function generateJWS(domain, email, aud, cert) {
+	var payload = {
+		"iss": domain,
+		"sub": email,
+		"aud": aud,
+		"iat": Math.floor((new Date()).getTime() / 1000),
+		"exp": Math.floor((new Date()).getTime() / 1000) + 30000
+	};
+	var token = jwt.sign(payload, cert, {
+		algorithm: 'RS256',
+		type: "jws"
+	});
+	return token;
+}
+ 
 function openUrl(capabilities, server, roomid) {
 	var driver = new webdriver.Builder().
 	usingServer('http://hub.browserstack.com/wd/hub').
@@ -166,5 +183,6 @@ module.exports = {
 	findVisibleElementByClass: findVisibleElementByClass,
 	loginFacebook: loginFacebook,
 	loginGoogle: loginGoogle,
-	logout: logout
+	logout: logout,
+    generateJWS: generateJWS
 };

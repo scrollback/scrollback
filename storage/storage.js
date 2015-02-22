@@ -39,8 +39,9 @@ module.exports = function(core, conf) {
 	["text", "edit", "room", "user", "join", "part", "admit", "expel"].forEach(function(action) {
 		core.on(action, putHandler(action), "storage");
 	});
-	
-	["getTexts", "getThreads", "getRooms", "getUsers", "getEntities"].forEach(function(query) {
-		core.on(query, getHandler(query), "storage");
-	});
+	if (!config.disableQueries) {
+		["getTexts", "getThreads", "getRooms", "getUsers", "getEntities"].forEach(function(query) {
+			core.on(query, getHandler(query), "storage");
+		});
+	}
 };

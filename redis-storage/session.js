@@ -30,19 +30,27 @@ module.exports = function(core, config) {
 			var session = {
 				id: action.session,
 				user: action.user.id,
-				origin: action.origin
+				origin: action.origin,
+				restricted: sessionObj && sessionObj.restricted,
+				allowedDomains: action.user.allowedDomains
 			};
-			if (err) {
-
-			} else {
-				if (sessionObj && sessionObj.origin && sessionObj.origin.locations) {
+			if(action.auth){
+				if(action.auth.jws) {
+					session.restricted = true;
+				}else{
+					delete session.restricted;
+					delete session.allowedDomains;
+				}
+			}
+			
+			if(!err) {
+				if(sessionObj && sessionObj.origin && sessionObj.origin.locations) {
 					Object.keys(sessionObj.origin.locations).forEach(function(resource) {
-						if (session.origin && session.origin.locations) {
+						if(session.origin && session.origin.locations){
 							session.origin.locations[resource] = sessionObj.origin.locations[resource];
 						}
 					});
-				}
-
+				}	
 			}
 			put("session", action.session, session);
 			callback();

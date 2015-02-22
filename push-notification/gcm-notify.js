@@ -30,6 +30,9 @@ module.exports = function(userRegMapping, payload, core, config) {
 	};
 
 	function removeDevice(userRegMap) {
+		/*
+			Removes a device from the list of the user's devices.
+		*/
 		if (!userRegMap.hasOwnProperty('registrationId') || !userRegMap.hasOwnProperty('user')) return;
 		log.i("REMOVE device called with", userRegMap);
 		var regId = userRegMap.registrationId;
@@ -55,6 +58,7 @@ module.exports = function(userRegMapping, payload, core, config) {
 	}
 
 	function postData(notifArr) {
+		/* make a HTTP Post request to the GCM servers */
 		var pushData = {
 			data: payload,
 			registration_ids: notifArr

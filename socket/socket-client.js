@@ -79,7 +79,18 @@ function connect() {
 	client.onopen = function() {
 		backOff = 1;
 		core.emit("init-up", {}, function (err) {
-			if (err) console.log(err.message);
+			if (err) {
+				if(err.message === "RESTRICTED_SESSION") {
+                    core.emit("navigate", {
+                        connectionStatus: "online",
+                        source: "socket",
+                        dialog: "signin"
+                    }, function(err) {
+                        if (err) console.log(err.message);
+                    });	
+                }
+                return;
+			}
 			else libsb.isInited = true;
 			core.emit("navigate", {
 				connectionStatus: "online",
@@ -189,11 +200,7 @@ function makeAction(action, props) {
 	}
 
 	action.time = new Date().getTime();
-	if (localStorage.hasOwnProperty("session")) {
-		action.session = localStorage.session;
-	} else {
-		action.session = libsb.session;
-	}
+    action.session = libsb.session;
 	action.resource = libsb.resource;
 	return action;
 }

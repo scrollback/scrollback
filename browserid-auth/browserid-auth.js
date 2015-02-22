@@ -11,7 +11,7 @@ module.exports = function(c, conf) {
 
 function browserAuth(action, callback) {
 	var assertion;
-	if (!action.auth || !action.auth.browserid) return callback();
+	if (action.response || !action.auth || !action.auth.browserid) return callback();
 	assertion = action.auth.browserid;
 	
 	log.d("assertion", assertion, config);
@@ -22,22 +22,27 @@ function browserAuth(action, callback) {
 		}
 	}, function(err, res, body) {
 		var identity;
-		if (err) return callback(new Error("AUTH_FAIL_NETWORK/" + err.message));
+		if (err) {
+			action.response = new Error("AUTH_FAIL_NETWORK/" + err.message);
+			return callback();
+		}
 		try {
 			body = JSON.parse(body);
 		} catch (e) {
-			log("Network failure");
-			return callback(new Error("AUTH_FAIL_SERVER/" + body));
+			action.response = new Error("AUTH_FAIL_SERVER/" + body);
+			return callback();
 		}
+		
 		if (body.status !== 'okay') {
-			return callback(new Error("AUTH_FAIL/" + body.reason));
+			action.response = new Error("AUTH_FAIL/" + body.reason);
+			return callback();
 		}
+		
 		identity = "mailto:" + body.email;
 		core.emit("getUsers", {
 			identity: identity,
 			session: "internal-browserid-auth"
 		}, function(err, user) {
-			if (err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
 			if (!user.results || user.results.length === 0) {
 				action.user = {};
 				action.user.identities = [identity];
@@ -45,9 +50,15 @@ function browserAuth(action, callback) {
 				action.user.params = {};
 				action.user.guides = {};
 				action.user.params.pictures = [action.user.picture];
+                action.response = new Error("AUTH:UNREGISTRED");
 				return callback();
 			}
-			action.old = action.user;
+			
+			if(action.user.id!= user.results[0].id) {
+				action.old = action.user;
+			}else{
+				action.old = {};
+			}
 			action.user = user.results[0];
 			callback();
 		});

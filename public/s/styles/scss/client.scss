@@ -9,22 +9,23 @@ $font-line-height: 1.5em;
 @import "settings";
 
 // Import components from lace
-@import "../lace/base";
-@import "../lace/animations";
-@import "../lace/alertbar";
-@import "../lace/modal";
-@import "../lace/popover";
-@import "../lace/switch";
-@import "../lace/button";
-@import "../lace/entry";
-@import "../lace/multientry";
-@import "../lace/flexbox";
-@import "../lace/tooltip";
-@import "../lace/progressbar";
-@import "../lace/linked";
-@import "../lace/filter";
-@import "../lace/dropshadow";
-@import "../lace/icons";
+@import "../../../../bower_components/lace/src/scss/base";
+@import "../../../../bower_components/lace/src/scss/animations";
+@import "../../../../bower_components/lace/src/scss/alertbar";
+@import "../../../../bower_components/lace/src/scss/modal";
+@import "../../../../bower_components/lace/src/scss/popover";
+@import "../../../../bower_components/lace/src/scss/switch";
+@import "../../../../bower_components/lace/src/scss/button";
+@import "../../../../bower_components/lace/src/scss/entry";
+@import "../../../../bower_components/lace/src/scss/multientry";
+@import "../../../../bower_components/lace/src/scss/flexbox";
+@import "../../../../bower_components/lace/src/scss/tooltip";
+@import "../../../../bower_components/lace/src/scss/progressbar";
+@import "../../../../bower_components/lace/src/scss/linked";
+@import "../../../../bower_components/lace/src/scss/filter";
+@import "../../../../bower_components/lace/src/scss/dropshadow";
+@import "../../../../bower_components/lace/src/scss/grid";
+@import "../../../../bower_components/lace/src/scss/icons";
 
 @import "themes";
 @import "tip";
@@ -115,7 +116,7 @@ body {
 
 .room-header {
     height: $bar-height;
-    background: url(../../img/client/scrollback-logo.svg) no-repeat 1em center;
+    background: url(../../img/scrollback-logo.svg) no-repeat 1em center;
     border-bottom: 1px solid lighten($dark-color, 5%);
     cursor: pointer;
 }
@@ -647,12 +648,12 @@ body {
     .title-bar { position: fixed; }
 
     .header-image {
-        background: url(../../img/client/scrollback-logo-dark.svg) no-repeat 1em center;
+        background: url(../../img/scrollback-logo-dark.svg) no-repeat 1em center;
         height: 3.5em;
         width: 12em;
         max-width: 100%;
 
-        .theme-dark & { background: url(../../img/client/scrollback-logo.svg) no-repeat 1em center; }
+        .theme-dark & { background: url(../../img/scrollback-logo.svg) no-repeat 1em center; }
     }
 }
 

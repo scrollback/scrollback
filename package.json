@@ -49,6 +49,7 @@
     "connect-redis": "1.4.6",
     "cookie": "latest",
     "ebus": "latest",
+    "jsonwebtoken":"latest",
     "elasticsearch": "^2.3.0",
     "express": "3.0.x",
     "generic-pool": "latest",
