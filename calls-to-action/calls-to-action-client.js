@@ -1,78 +1,72 @@
 /* jshint browser:true */
-/* global libsb, $, currentState */
+/* global $ */
 
-var desktopnotify = require("../ui/desktopnotify.js"),
-	showNotification = require("./showNotification.js"),
-	$userArea = $(".user-area"),
-	$followButton = $(".follow-button"),
-	$threadsTab = $(".tab-threads");
+module.exports = function(core, config, state) {
+	var desktopnotify = require("../lib/desktopnotify.js"),
+		showNotification = require("./showNotification.js"),
+		$appbarMore = $(".appbar-icon-more"),
+		$appbarFollow = $(".appbar-icon-follow");
 
-$(".chat-input").on("click", function() {
-	if (!/^guest-/.test(libsb.user.id) || window.currentState.mode !== "normal" || (window.currentState.embed && libsb.user.isSuggested)) {
-		return;
-	}
-
-	showNotification([$userArea, '.meta-button-back'], "signIn");
-});
-
-libsb.on("text-up", function(text, next) {
-	if (window.currentState.mode !== "normal") {
-		return next();
-	}
-
-	if (!/^guest-/.test(libsb.user.id)) {
-		showNotification($followButton, "followRoom");
-	} else {
-		showNotification([$userArea, '.meta-button-back'], "signIn");
-	}
-
-	next();
-}, 800);
-
-libsb.on("user-dn", function(user, next) {
-	if (!/^guest-/.test(user.from) || !/(normal|conf|pref)/.test(window.currentState.mode)) {
-		return next(); // not a new signup
-	}
-
-	showNotification([$userArea, '.meta-button-back'], "choosePic");
-
-	next();
-}, 800);
-
-libsb.on("navigate", function(state, next) {
-	var notify;
-
-	if (state && state.old && state.old.mode !== state.mode && state.mode === "pref") {
-		notify = desktopnotify.supported();
-
-		if (notify && notify.permission !== "granted") {
-			showNotification(".list-item-notification-settings", "desktopNotifications");
+	$(".chat-input").on("click", function() {
+		// TODO: ignore in embed
+		if (!/^guest-/.test(state.get("user")) || state.getNav().mode !== "chat") {
+			return;
 		}
-	}
 
-	next();
-}, 100);
+		showNotification($appbarMore, "signIn");
+	});
 
-libsb.on("init-dn", function(init, next) {
-	if (init.user && !/^guest-/.test(init.user.id) && window.currentState.mode === "normal") {
-		// If user is signed in, but not a follower, show the notification.
-		libsb.emit("getUsers", {
-			memberOf: currentState.roomName,
-			ref: libsb.user.id
-		}, function(e, user) {
-			if (user.results && user.results.length === 0) {
-				showNotification($followButton, "followRoom");
+	core.on("text-up", function(text, next) {
+		if (state.getNav().mode !== "chat") {
+			return next();
+		}
+
+		if (!/^guest-/.test(state.get("user"))) {
+			showNotification($appbarFollow, "followRoom");
+		} else {
+			showNotification($appbarMore, "signIn");
+		}
+
+		next();
+	}, 800);
+
+	core.on("user-dn", function(user, next) {
+		if (!/^guest-/.test(user.from) || !/(chat|conf|pref)/.test(state.getNav().mode)) {
+			return next(); // not a new signup
+		}
+
+		showNotification($appbarMore, "choosePic");
+
+		next();
+	}, 800);
+
+	core.on("statechange", function(changes, next) {
+		var notify;
+
+		if ("nav" in changes && "mode" in changes.nav && state.getNav().mode !== "pref") {
+			notify = desktopnotify.supported();
+
+			if (notify && notify.permission !== "granted") {
+				showNotification(".list-item-notification-settings", "desktopNotifications");
 			}
-		});
-	}
+		}
 
-	next();
-}, 500);
+		next();
+	}, 100);
 
-libsb.on("navigate", function(state, next) {
-	if (state && state.source === "chat-area" && state.old && state.time && state.time !== state.old.time && window.currentState.mode === "normal") {
-		showNotification([$threadsTab, '.meta-button-back'], "browseArchives");
-	}
+	core.on("init-dn", function(init, next) {
+		if (init.user && !/^guest-/.test(init.user.id) && state.getNav().mode === "chat") {
+			// If user is signed in, but not a follower, show the notification.
+			core.emit("getUsers", {
+				memberOf: state.getNav().room,
+				ref: state.get("user")
+			}, function(e, user) {
+				if (user.results && user.results.length === 0) {
+					showNotification($appbarFollow, "followRoom");
+				}
+			});
+		}
 
-	next();
-}, 100);
+		next();
+	}, 500);
+};
