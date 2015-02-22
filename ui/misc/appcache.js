@@ -1,7 +1,7 @@
-/* jslint browser: true, indent: 4, regexp: true*/
+/* jshint browser: true */
 /* global $ */
 
-$(function() {
+module.exports = function() {
 	var $alert = $("<div>").html("Scrollback has been updated. <a class='appcache-reload-page'>Reload to start using the new version</a>.");
 
 	// Check if a new cache is available on page load.
@@ -17,4 +17,4 @@ $(function() {
 	$alert.on("click", ".appcache-reload-page", function() {
 		location.reload();
 	});
-});
+};

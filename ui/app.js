@@ -46,6 +46,10 @@
     require("./components/sidebar.jsx")(core, config, state);
     require("./components/thread-feed.jsx")(core, config, state);
 
+    // Miscellaneous
+	require('./misc/load-indicator.js')(core, config, state);
+	require('./misc/appcache.js')(core, config, state);
+	require('./misc/google-analytics.js')(core, config, state);
 	require('./misc/workarounds.js')(core, config, state);
 
     // Send the initial setstate event
