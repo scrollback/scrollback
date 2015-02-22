@@ -221,6 +221,17 @@ module.exports = function(core) {
 				return;
 			}
 		},
+		getRelation: function(room, user) {
+			if (typeof room === "undefined") {
+				room = this.get("entities", this.get("nav", "room"));
+			}
+
+			if (typeof user === "undefined") {
+				user = this.get("entities", this.get("user"));
+			}
+
+			return this.get("entities", room + "_" + user);
+		},
 		getRelatedRooms: function() {},
 		getRelatedUsers: function() {},
 		getNav: function() {
