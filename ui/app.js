@@ -33,6 +33,9 @@
     // Core
     require("./store/view-manager.js")(core, config, state);
 
+    require("../dialogs/dialogs-client.js")(core, config, state);
+    require("../dialogs/dialogs-listeners.js")(core, config, state);
+
     // Components
     require("./components/appbar-primary.jsx")(core, config, state);
     require("./components/appbar-secondary.jsx")(core, config, state);
