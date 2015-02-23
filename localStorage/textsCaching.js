@@ -53,7 +53,6 @@ module.exports = function(ArrayCacheOp) {
 
 		results = query.results.slice(0); // copying by value
 		if (results && results.length > 0) {
-			if(query.hasOwnProperty("updateTime"))
 			// merging results into the Cache.
 			if (query.before) {
 				if (results.length === query.before) {
