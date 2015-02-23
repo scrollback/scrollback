@@ -1,7 +1,0 @@
-{
-	"node": true,
-	"unused": true,
-	"undef": true,
-	"curly": false,
-	"notypeof": true
-}
