@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+	<head>
+
+		<title>Scrollback embed tester</title>
+
+		<style type="text/css">
+			.scrollback-container {
+				width: 640px;
+				height: 480px;
+				max-width: 100%;
+				max-height: 100%;
+				margin: auto;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<div id="scrollback-container" class="scrollback-container"></div>
+
+		<script>
+			var opts = {};
+
+			location.search.substr(1).split('&').forEach(
+				function(v) { v = v.split('='); opts [v[0]] = v[1]; }
+			);
+
+			opts.room = opts.room || 'scrollback';
+			opts.theme = opts.theme || 'dark';
+			opts.form = opts.form || 'toast';
+
+			try {
+				if(opts.minimize) opts.minimize = JSON.parse(opts.minimize);
+			} catch(e) {}
+
+			window.scrollback = opts;
+
+			console.log(window.scrollback);
+
+			(function(d,h,e){e=d.createElement('script');e.async=1;e.src=h+'/client.min.js';
+			scrollback.host=h;d.body.appendChild(e);}(document,location.protocol+"//"+location.hostname));
+		</script>
+
+	</body>
+</html>

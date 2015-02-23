@@ -1,0 +1,11 @@
+# If you operate a search engine and would like to crawl scrollback, please
+# email scrollback@scrollback.io. Thanks.
+
+User-agent: *
+Disallow: /t/*
+Disallow: /socket/*
+Disallow: /me/*
+Disallow: /*/until/*
+Disallow: /*/since/*
+
+Sitemap: http://scrollback.io/r/sitemap
