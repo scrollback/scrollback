@@ -219,7 +219,7 @@ gulp.task("embed-apis", function() {
 	.pipe(buildscripts())
 	.pipe(rename("sb.js"))
 	.pipe(sourcemaps.write("."))
-	.pipe(gulp.dest("public/s"))
+	.pipe(gulp.dest("public"))
 	.on("error", gutil.log);
 });
 

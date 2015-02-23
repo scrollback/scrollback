@@ -6,22 +6,30 @@ module.exports = function(core, config, state) {
 		appbarprimary = document.getElementById("js-appbar-primary");
 
 	AppbarPrimary = React.createClass({
-		openSidebarLeft: function() {
+		toggleSidebarLeft: function() {
 			core.emit("setstate", { nav: { view: "sidebar-left" }});
 		},
 
-		openSidebarRight: function() {
+		toggleSidebarRight: function() {
 			core.emit("setstate", { nav: { view: "sidebar-right" }});
 		},
 
-		followRoom: function() {
+		toggleFollowRoom: function() {
+			var room= state.getNav().room,
+				relation = state.getRelation(room);
 
+			if (relation && relation.role === "follower") {
+				core.emit("part-up", { room: room });
+			} else {
+				core.emit("join-up", { room: room });
+			}
 		},
 
 		render: function() {
 			var user = state.getUser(),
 				nav = state.getNav(),
-				title;
+				relation = state.getRelation(),
+				title, following;
 
 			switch (nav.mode) {
 			case "room":
@@ -33,15 +41,16 @@ module.exports = function(core, config, state) {
 			    break;
 			}
 
+			following = (relation && relation.role === "follower") ? "following" : "";
+
 			return (
 		        <div key="appbar-primary">
-		            <a data-mode="room chat" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.openSidebarLeft}></a>
-		            <img data-mode="home" className="appbar-avatar" alt={user.id} src={user.picture} onClick={this.openSidebarLeft} />
+		            <a data-mode="room chat" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.toggleSidebarLeft}></a>
+		            <img data-mode="home" className="appbar-avatar" alt={user.id} src={user.picture} onClick={this.toggleSidebarLeft} />
 		            <h1 className="appbar-title appbar-title-primary js-appbar-title">{title}</h1>
 		            <a className="appbar-icon appbar-icon-more"></a>
-		            <a className="appbar-icon appbar-icon-search"></a>
-		            <a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.openSidebarRight}></a>
-		            <a data-mode="room chat" className="appbar-icon appbar-icon-follow" onClick={this.followRoom}></a>
+		            <a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
+		            <a data-role="user follower" data-mode="room chat" className="appbar-icon appbar-icon-follow {following}" onClick={this.toggleFollowRoom}></a>
 		        </div>
 	        );
 		}

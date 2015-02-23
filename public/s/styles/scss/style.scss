@@ -54,7 +54,7 @@ body {
                     mode: $modes,
                     platform: $platforms,
                     state: $states
-    ), ( role )); /* show hide elements based on filter */
+    ), ()); /* show hide elements based on filter */
 
     @include flexbox;
     @include flex-direction(row);
@@ -182,7 +182,7 @@ body {
     }
 
     .appbar-icon-follow {
-        .role-follower & { @include icon(star); }
+        .role-follower &, .role-member & { @include icon(star); }
     }
 }
 
