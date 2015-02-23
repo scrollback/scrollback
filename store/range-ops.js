@@ -28,7 +28,7 @@ function findIndex(items, propName, value, start, end) {
 
 function mergeRange(ranges, range, propName) {
     var topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex;
-    
+    console.log(ranges);
     if(range.start === null) {
         topRangeIndex = 0;
         topItemIndex = -1;
@@ -41,7 +41,7 @@ function mergeRange(ranges, range, propName) {
             );
             topRangeIndex++
         );
-        
+        console.log("topRangeIndex: ",topRangeIndex);
         if(ranges[topRangeIndex].start <= range.start && ranges[topRangeIndex].end >= range.start) {
             topItemIndex = findIndex(ranges[topRangeIndex].items, propName, range.start);
         } else {
