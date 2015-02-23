@@ -44,9 +44,9 @@ module.exports = function(core, config, state) {
 		            <a data-mode="room chat" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.openSidebarLeft}></a>
 		            <img data-mode="home" className="appbar-avatar" alt={user.id} src={user.picture} onClick={this.openSidebarLeft} />
 		            <h1 className="appbar-title appbar-title-primary js-appbar-title">{title}</h1>
-		            <a data-role="user follower member" className="appbar-icon appbar-icon-more"></a>
+		            <a className="appbar-icon appbar-icon-more"></a>
 		            <a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.openSidebarRight}></a>
-		            <a data-mode="room chat" className="appbar-icon appbar-icon-follow" onClick={this.followRoom}></a>
+		            <a data-role="user follower member" data-mode="room chat" className="appbar-icon appbar-icon-follow" onClick={this.followRoom}></a>
 		        </div>
 	        );
 		}

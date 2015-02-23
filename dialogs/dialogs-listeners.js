@@ -41,7 +41,6 @@ module.exports = function(core, config, state) {
 		$entry.focus();
 	}
 
-	// TODO: implement properly
 	function checkExisting(name, callback) {
 		core.emit("getRooms", {
 			ref: name
@@ -170,26 +169,28 @@ module.exports = function(core, config, state) {
 	}
 
 	core.on("init-dn", function(init, next) {
+		var dialog = state.getNav().dialog;
+
 		// TODO: Implement properly
 		// if (init.auth && init.user.identities && !init.user.id && init.resource == libsb.resource) {
 		// 	signingUp = true;
 		// } else {
 		// 	signingUp = false;
 		// }
-		// if (/(createroom|signup)/.test(window.currentState.dialog)) {
-		// 	libsb.emit("navigate", {
-		// 		dialog: window.currentState.dialog,
-		// 		source: "dialog"
-		// 	});
-		// } else if (signingUp) {
-		// 	libsb.emit("navigate", {
-		// 		dialog: "signup"
-		// 	});
-		// } else if (isRestricted) {
-		// 	libsb.emit("navigate", {
-		// 		dialog: null
-		// 	});
-		// }
+
+		if (/(createroom|signup)/.test(dialog)) {
+			core.emit("setstate", {
+				nav: { dialog: dialog }
+			});
+		} else if (signingUp) {
+			core.emit("setstate", {
+				nav: { dialog: "signup" }
+			});
+		} else if (isRestricted) {
+			core.emit("setstate", {
+				nav: { dialog: null }
+			});
+		}
 
 		next();
 	}, 100);
@@ -309,6 +310,7 @@ module.exports = function(core, config, state) {
 
 	core.on("signin-dialog", function(dialog, next) {
 		isRestricted = true;
+
 		dialog.title = "Login to continue.";
 	    dialog.dismiss = false;
 
@@ -320,12 +322,14 @@ module.exports = function(core, config, state) {
 	core.on("noroom-dialog", function(dialog, next) {
 		dialog.title = "This room doesn't exist";
 		dialog.dismiss = false;
+
 		next();
 	}, 1000);
 
 	core.on("disallowed-dialog", function(dialog, next) {
 		dialog.title = "Domain Mismatch";
 		dialog.dismiss = false;
+
 		next();
 	}, 1000);
 };
