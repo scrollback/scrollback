@@ -29,13 +29,12 @@
 	require('../lib/jquery.setCursorEnd.js');
 	require('../lib/jquery.isOnScreen.js');
 	require('../lib/jquery.scrollToBottom.js');
+	require('../lib/jquery.validInput.js');
 
     // Core
     require("./store/view-manager.js")(core, config, state);
 
-    require("../dialogs/dialogs-client.js")(core, config, state);
     require("../dialogs/dialogs-listeners.js")(core, config, state);
-
     require("../calls-to-action/calls-to-action-client.js")(core, config, state);
 
     // Components

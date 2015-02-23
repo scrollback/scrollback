@@ -2,203 +2,67 @@
 /* global $ */
 
 module.exports = function(core, config, state) {
-	var validate = require("../lib/validate.js"),
-		afterSignUp,
-		signingUp,
-		isRestricted = false;
+	var appUtils = require("../lib/appUtils.js"),
+		validateEntity = require("./validate-entity.js")(core, config, state),
+		createEntity = require("./create-entity.js")(core, config, state),
+		showDialog = require("./show-dialog.js")(core, config, state),
+		userChangeCallback;
 
-	function showError(error, entry) {
-		var $entry = $(entry),
-			$errorMsg = $entry.data("errorMsg") || $();
-
-		if (!error) {
-			$entry.removeClass("error");
-			$errorMsg.popover("dismiss");
-
-			return;
-		}
-
-		$entry.addClass("error");
-
-		$errorMsg = $("<div>").addClass("error").append(
-			$("<div>").addClass("popover-content").text(error)
-		).popover({
-			origin: $entry
-		});
-
-		$entry.data("errorMsg", $errorMsg);
-
-		$(document).off("modalDismissed.errorentry").on("modalDismissed.errorentry", function() {
-			$errorMsg.popover("dismiss");
-		});
-
-		$entry.off("change.errorentry input.errorentry paste.errorentry").on("change.errorentry input.errorentry paste.errorentry", function() {
-			$errorMsg.popover("dismiss");
-
-			$(this).removeClass("error");
-		});
-
-		$entry.focus();
-	}
-
-	function checkExisting(name, callback) {
-		core.emit("getRooms", {
-			ref: name
-		}, function(err, res) {
-			if (res && res.results && res.results.length) {
-				return callback(true);
-			}
-
-			core.emit("getUsers", {
-				ref: name
-			}, function(err, res) {
-				if (res && res.results && res.results.length) {
-					return callback(true);
-				}
-
-				return callback(false);
-			});
-		});
-
-	}
-
-	function validateName(entry, button, type, callback) {
+	function createAndValidate(type, entry, button, callback) {
 		var $entry = $(entry),
 			$button = $(button),
-			name = $entry.val(),
-			validation;
+			name = $entry.val();
 
-		name = (typeof name === "string") ? name.toLowerCase().trim() : "";
-
-		validation = validate(name);
-
-		if (!validation.isValid) {
-			return showError(type + " " + validation.error, entry);
-		}
-
-		$button.addClass("working");
-
-		checkExisting(name, function(isTaken) {
-			$button.removeClass("working");
-
-			if (isTaken) {
-				showError(name + " is not available. May be try another?", entry);
+		createEntity(type, name, function(res, message) {
+			if (res === "wait") {
+				$button.addClass("working");
 			} else {
-				showError(false);
-
-				if (typeof callback === "function") {
-					callback(name);
-				}
-			}
-		});
-	}
-
-	function createRoom(entry, button, callback) {
-		validateName(entry, button, "Room", function(name) {
-			var errormessage = "We could not create the room. Please refresh the page and try again.",
-				room = state.getNav().room,
-				roomObj = state.getRoom(room),
-				newRoom = {
-					id: name,
-					description: "",
-					params: {},
-					guides: {},
-					identities:[]
-				};
-
-			if (room) {
-				newRoom.guides = roomObj.guides || {};
-				newRoom.identities = roomObj.identities || [];
-			}
-			if (!name) {
-				return showError(errormessage, entry);
+				$button.removeClass("working");
 			}
 
-			core.emit("room-up", {
-				to: name,
-				room: newRoom
-			}, function(err) {
-				if (err) {
-					return showError(errormessage, entry);
-				}
+			if (res === "error") {
+				$entry.validInput(function(value, callback) {
+					callback(message);
+				});
+			}
+
+			if (res === "ok") {
+				core.emit("setstate", {
+					nav: { dialog: null }
+				});
 
 				if (typeof callback === "function") {
 					callback();
 				}
-
-				core.emit("setstate", {
-					nav: { dialog: null }
-				});
-			});
-		});
-	}
-
-	function createUser(entry, button, callback) {
-		validateName(entry, button, "User", function(name) {
-			var errormessage = "We could not create your account. Please refresh the page and try again.",
-				userObj = state.getUser();
-
-			if (!name || !userObj || !userObj.identities) {
-				return showError(errormessage, entry);
 			}
-
-			core.emit("user-up", {
-				user: {
-					id: name,
-					identities: userObj.identities,
-					picture: userObj.picture,
-					params: {
-						pictures: userObj.params.pictures
-					},
-					guides: {}
-				}
-			}, function(err) {
-				if (err) {
-					return showError(errormessage, entry);
-				}
-
-				if (typeof callback === "function") {
-					afterSignUp = callback;
-				}
-
-				core.emit("setstate", {
-					nav: { dialog: null }
-				});
-			});
 		});
 	}
 
-	core.on("init-dn", function(init, next) {
-		var dialog = state.getNav().dialog;
+	core.on("statechange", function(changes, next) {
+		var dialog;
 
-		// TODO: Implement properly
-		// if (init.auth && init.user.identities && !init.user.id && init.resource == libsb.resource) {
-		// 	signingUp = true;
-		// } else {
-		// 	signingUp = false;
-		// }
-
-		if (/(createroom|signup)/.test(dialog)) {
-			core.emit("setstate", {
-				nav: { dialog: dialog }
-			});
-		} else if (signingUp) {
-			core.emit("setstate", {
-				nav: { dialog: "signup" }
-			});
-		} else if (isRestricted) {
-			core.emit("setstate", {
-				nav: { dialog: null }
-			});
+		if (typeof userChangeCallback === "function" && changes.user && appUtils.isGuest(state.get("user"))) {
+				userChangeCallback();
+				userChangeCallback = null;
 		}
 
-		next();
-	}, 100);
+		if (changes.nav && "dialog" in changes.nav || (/(createroom|signup|signin)/.test(dialog) && changes.user)) {
+			dialog = state.getNav().dialog;
 
-	core.on("user-dn", function(user, next) {
-		if (typeof afterSignUp === "function") {
-			afterSignUp();
-			afterSignUp = null;
+			if (!dialog) {
+				$.modal("dismiss");
+
+				return next();
+			}
+
+			showDialog(dialog, {
+				title: null, // Modal title
+				description: null, // A description to be displayed under title
+				buttons: {}, // List of objects, e.g. - google: { text: "Google+", action: function() {} }
+				content: [], // Additional content to be displayed under buttons
+				action: null, // Action button, e.g. - { text: "Create account", action: function() {} }
+				dismiss: true // Dialog is dismissable or not
+			});
 		}
 
 		next();
@@ -207,8 +71,8 @@ module.exports = function(core, config, state) {
 	core.on("createroom-dialog", function(dialog, next) {
 		var roomName = state.getNav().room;
 
-		if ((/^guest-/).test(state.get("user"))) {
-			if (signingUp) {
+		if (appUtils.isGuest(state.get("user"))) {
+			if (state.getUser().identities.length) {
 				dialog.title = "Create a new room";
 				dialog.content = [
 					"<p><b>Step 1:</b> Choose a username</p>",
@@ -221,30 +85,37 @@ module.exports = function(core, config, state) {
 					action: function() {
 						var $userEntry = $("#createroom-dialog-user"),
 							$roomEntry = $("#createroom-dialog-room"),
-							username = $userEntry.val(),
-							roomname = $roomEntry.val(),
 							self = this;
 
-						username = (typeof username === "string") ? username.toLowerCase().trim() : "";
-						roomname = (typeof roomname === "string") ? roomname.toLowerCase().trim() : "";
+						$userEntry.validInput(function(username, callback) {
+							var roomname = $roomEntry.val();
 
-						if (!username) {
-							return showError("User name cannot be empty", $userEntry);
-						}
+							roomname = (typeof roomname === "string") ? roomname.toLowerCase().trim() : "";
 
-						if (username === roomname) {
-							return showError("User and room names cannot be the same", $userEntry);
-						}
+							if (!username) {
+								callback("User name cannot be empty");
+							} else if (username === roomname) {
+								callback("User and room names cannot be the same");
+							}
+						});
 
-						validateName($roomEntry, self, "Room", function() {
-							createUser($userEntry, self, function() {
-								createRoom($roomEntry, self);
+						$roomEntry.validInput(function(roomname, callback) {
+							validateEntity(roomname, function(res, message) {
+								if (res === "error") {
+									callback(message);
+								}
+
+								if (res === "ok") {
+									callback();
+
+									createAndValidate("user", $userEntry, self, function() {
+										createAndValidate("room", $roomEntry, self);
+									});
+								}
 							});
 						});
 					}
 				};
-
-				signingUp = false;
 			} else {
 				dialog.title = "Create a new room";
 				dialog.description = "<b>Step 1:</b> Sign in to scrollback";
@@ -266,7 +137,7 @@ module.exports = function(core, config, state) {
 			dialog.action = {
 				text: "Create room",
 				action: function() {
-					createRoom("#createroom-dialog-room", this);
+					createAndValidate("room", "#createroom-dialog-room", this);
 				}
 			};
 		}
@@ -275,8 +146,8 @@ module.exports = function(core, config, state) {
 	}, 100);
 
 	core.on("signup-dialog", function(dialog, next) {
-		if ((/^guest-/).test(state.get("user"))) {
-			if (signingUp) {
+		if (appUtils.isGuest(state.get("user"))) {
+			if (state.getUser().identities.length) {
 				dialog.title = "Finish sign up";
 				dialog.description = "Choose a username";
 				dialog.content = [
@@ -286,11 +157,9 @@ module.exports = function(core, config, state) {
 				dialog.action = {
 					text: "Create account",
 					action: function() {
-						createUser("#signup-dialog-user", this);
+						createAndValidate("user", "#signup-dialog-user", this);
 					}
 				};
-
-				signingUp = false;
 			} else {
 				dialog.title = "Sign up for scrollback";
 
@@ -309,10 +178,17 @@ module.exports = function(core, config, state) {
 	}, 100);
 
 	core.on("signin-dialog", function(dialog, next) {
-		isRestricted = true;
-
+		// Ask users to upgrade their session to unrestricted
 		dialog.title = "Login to continue.";
-	    dialog.dismiss = false;
+		dialog.dismiss = false;
+
+		userChangeCallback = function() {
+			if (state.getNav().dialog === "signin" && state.getUser().isRestricted) {
+				core.emit("setstate", {
+					nav: { dialog: null }
+				});
+			}
+		};
 
 		core.emit("auth", dialog, function() {
 			next();
@@ -332,4 +208,36 @@ module.exports = function(core, config, state) {
 
 		next();
 	}, 1000);
+
+	core.on("logout-dialog", function(dialog, next) {
+		dialog.title = "You've been signed out!";
+		dialog.action = {
+			text: "Go back as guest",
+			action: function() {
+				core.emit("setstate", {
+					nav: { dialog: null }
+				}, function() {
+					window.location.reload();
+				});
+			}
+		};
+		dialog.dismiss = false;
+
+		next();
+	}, 500);
+
+	core.on("logout", function(action, next) {
+		core.emit("setstate", {
+			nav: { dialog: "logout" }
+		});
+
+		next();
+	}, 100);
+
+	// When modal is dismissed, reset the dialog property
+	$(document).on("modalDismissed", function() {
+		core.emit("setstate", {
+			nav: { dialog: null }
+		});
+	});
 };

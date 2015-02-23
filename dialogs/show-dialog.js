@@ -1,9 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
-module.exports = function(core, config, state) {
-	// Emit a dialog event
-	function showDialog(type, template) {
+module.exports = function(core) {
+	return function(type, template) {
 		core.emit(type + "-dialog", template, function(err, dialog) {
 			var $modal = $("<form>").addClass(type + "-dialog dialog"),
 				$buttons, $content, $action;
@@ -59,38 +58,5 @@ module.exports = function(core, config, state) {
 				dismiss: (typeof dialog.dismiss === "boolean") ? dialog.dismiss : true
 			}).find("input[type=text]:not(disabled)").eq(0).focus();
 		});
-	}
-
-	// Emit a dialog event when navigate is called
-	core.on("statechange", function(changes, next) {
-		var dialog;
-
-		if ("nav" in changes && "dialog" in changes.nav) {
-			dialog = state.getNav().dialog;
-
-			if (!dialog) {
-				$.modal("dismiss");
-
-				return next();
-			}
-
-			showDialog(dialog, {
-				title: null, // Modal title
-				description: null, // A description to be displayed under title
-				buttons: {}, // List of objects, e.g. - google: { text: "Google+", action: function() {} }
-				content: [], // Additional content to be displayed under buttons
-				action: null, // Action button, e.g. - { text: "Create account", action: function() {} }
-				dismiss: true // Dialog is dismissable or not
-			});
-		}
-
-		next();
-	}, 100);
-
-	// When modal is dismissed, reset the dialog property
-	$(document).on("modalDismissed", function() {
-		core.emit("setstate", {
-			nav: { dialog: null }
-		});
-	});
+	};
 };
