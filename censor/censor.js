@@ -39,10 +39,19 @@ module.exports = function(core, config) {
 				ref: query.ref,
 				session: "internal-censor"
 			}, function(err, q) {
-				if (q.results && q.results.length && q.results[0].role == "owner") {
-					return next();
-				}
-				query.results = query.results.map(censor);
+                var roomMap = {};
+                
+				if (q.results && q.results.length) {
+                   q.results.forEach(function(e) {
+                       if(e && e.id) roomMap[e.id] = e;
+                   });     
+                }
+                
+				query.results = query.results.map(function(r) {
+                    if(!roomMap[r.id] || roomMap[r.id].role != "owner") return censor(r);
+                    else return r;
+                });
+                
 				next();
 			});
 		} else {

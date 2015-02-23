@@ -123,7 +123,7 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.iterate.reverse = true;
 		q.iterate.limit = iq.before;
 	} else {
-		q.iterate.limit = iq.after || 256;
+		q.iterate.limit = iq.after || 20000; // TODO: temp fix. need to create iterators for these kind of queries.
 		q.iterate.reverse = false;
 	}
 	return [q];
