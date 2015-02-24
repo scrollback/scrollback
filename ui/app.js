@@ -41,6 +41,7 @@
     require("./components/appbar-primary.jsx")(core, config, state);
     require("./components/appbar-secondary.jsx")(core, config, state);
     require("./components/chat.jsx")(core, config, state);
+    require("./components/compose.jsx")(core, config, state);
     require("./components/home-feed.jsx")(core, config, state);
     require("./components/people-list.jsx")(core, config, state);
     require("./components/profile-card.jsx")(core, config, state);

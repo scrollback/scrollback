@@ -27,10 +27,35 @@
 		&-input {
 			@include flex-shrink(0);
 
-			position: relative;;
-			min-height: $bar-height;
+			position: relative;
 			width: 100%;
 	        box-shadow: 0 -3px 6px rgba(0,0,0,0.16);
+
+            &-placeholder {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+
+                position: absolute;
+                top: 0;
+                left: 0;
+                padding: 1em;
+                padding-right: 4em;
+                color: fade-out($dark-color, .5);
+                pointer-events: none;
+
+                @media #{$screenxxxx} { padding: 1em 3em; }
+            }
+
+            &-inner {
+                width: 100%;
+                min-height: $bar-height;
+                max-height: 12em;
+                overflow: auto;
+                word-wrap: break-word;
+            }
 
 	        &-entry {
 	        	@extend .entry;

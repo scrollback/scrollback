@@ -35,14 +35,12 @@ client-config.js
 /test/config.js
 /test/config-defaults.js
 
+/public/s/sb.js
 /public/s/dist
 /public/s/tmp
 
 /mocha-output-selenium.json
 /mocha-output-unit.json
-/public/s/client.phonegap.html
-/public/sb.js
 /xunit-mocha.xml
-/public/s/client.phonegap.html
 /patchup-room
 /mocha-output.json
