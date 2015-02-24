@@ -180,10 +180,6 @@ body {
     @media #{$screenxxxxx} {
         .appbar-icon-people { display: none; }
     }
-
-    .appbar-icon-follow {
-        .role-follower &, .role-member & { @include icon(star); }
-    }
 }
 
 .people-list-item {

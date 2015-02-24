@@ -13,8 +13,20 @@ module.exports = function(core, config, store) {
 			member: "Following",
 			visitor: "Recently visited"
 		},
-		homefeed = document.getElementById("js-home-feed"),
-		roomlist = document.getElementById("js-room-list");
+		homefeedEl = document.getElementById("js-home-feed"),
+		roomlistEl = document.getElementById("js-room-list");
+
+	HomeFeed = React.createClass({
+		render: function() {
+			return (<GridView sections={this.props.sections} />);
+		}
+	});
+
+	RoomList = React.createClass({
+		render: function() {
+			return (<ListView sections={this.props.sections} />);
+		}
+	});
 
 	function getSections(type) {
 		var sections = {}, arr = [];
@@ -43,26 +55,14 @@ module.exports = function(core, config, store) {
 		return arr;
 	}
 
-	HomeFeed = React.createClass({
-		render: function() {
-			return (<GridView sections={getSections("card")} />);
-		}
-	});
-
-	RoomList = React.createClass({
-		render: function() {
-			return (<ListView sections={getSections("list")} />);
-		}
-	});
-
 	core.on("statechange", function(changes, next) {
 		if ("indexes" in changes && "userRooms" in changes.indexes) {
 			switch (store.getNav().mode) {
 			case "home":
-				React.render(<HomeFeed />, homefeed);
+				React.render(<HomeFeed sections={getSections("card")} />, homefeedEl);
 				break;
 			case "room":
-				React.render(<RoomList />, roomlist);
+				React.render(<RoomList sections={getSections("list")} />, roomlistEl);
 				break;
 			}
 		}

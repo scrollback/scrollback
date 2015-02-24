@@ -98,7 +98,11 @@
 
             &-people { @include icon(contact); }
 
-            &-follow { @include icon(star-empty); }
+            &-follow {
+                @include icon(star-empty);
+
+                &.following { @include icon(star); }
+            }
         }
     }
 }

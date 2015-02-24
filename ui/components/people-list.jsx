@@ -4,17 +4,23 @@ module.exports = function(core, config, store) {
 	var React = require("react"),
 		ListView = require("./list-view.jsx")(core, config, store),
 		PeopleList,
-		peoplelist = document.getElementById("js-people-list");
+		peoplelistEl = document.getElementById("js-people-list");
 
 	PeopleList = React.createClass({
 		render: function() {
-			var people, room, user, items,
-				sections = {
-					online: [],
-					offline: []
-				},
-				arr = [];
+			return (<ListView sections={this.props.sections} />);
+		}
+	});
 
+	core.on("statechange", function(changes, next) {
+		var people, room, user, items,
+			sections = {
+				online: [],
+				offline: []
+			},
+			arr = [];
+
+		if (("indexes" in changes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(store.get("nav", "mode"))) {
 			room = store.getRoom();
 			people = store.get("indexes", "roomUsers", store.get("nav", "room"));
 
@@ -46,13 +52,7 @@ module.exports = function(core, config, store) {
 				}
 			}
 
-			return (<ListView sections={arr} />);
-		}
-	});
-
-	core.on("statechange", function(changes, next) {
-		if (("indexes" in changes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(store.get("nav", "mode"))) {
-			React.render(<PeopleList />, peoplelist);
+			React.render(<PeopleList sections={arr} />, peoplelistEl);
 		}
 
 		next();
