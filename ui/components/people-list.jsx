@@ -1,8 +1,8 @@
 /* jshint browser: true */
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	var React = require("react"),
-		ListView = require("./list-view.jsx")(core, config, state),
+		ListView = require("./list-view.jsx")(core, config, store),
 		PeopleList,
 		peoplelist = document.getElementById("js-people-list");
 
@@ -15,12 +15,12 @@ module.exports = function(core, config, state) {
 				},
 				arr = [];
 
-			room = state.getRoom();
-			people = state.get("indexes", "roomUsers", state.get("nav", "room"));
+			room = store.getRoom();
+			people = store.get("indexes", "roomUsers", store.get("nav", "room"));
 
 			for (var i = 0, l = people.length; i < l; i++) {
 				if (sections[people[i].status]) {
-					user = state.get("entities", people[i].user);
+					user = store.get("entities", people[i].user);
 
 					sections[people[i].status].push({
 						key: "people-list-" + room + "-" + user.id,
@@ -51,7 +51,7 @@ module.exports = function(core, config, state) {
 	});
 
 	core.on("statechange", function(changes, next) {
-		if (("indexes" in changes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(state.get("nav", "mode"))) {
+		if (("indexes" in changes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(store.get("nav", "mode"))) {
 			React.render(<PeopleList />, peoplelist);
 		}
 

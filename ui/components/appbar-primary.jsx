@@ -1,6 +1,6 @@
 /* jshint browser: true */
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	var React = require("react"),
 		AppbarPrimary,
 		appbarprimary = document.getElementById("js-appbar-primary");
@@ -15,8 +15,8 @@ module.exports = function(core, config, state) {
 		},
 
 		toggleFollowRoom: function() {
-			var room= state.getNav().room,
-				relation = state.getRelation(room);
+			var room= store.getNav().room,
+				relation = store.getRelation(room);
 
 			if (relation && relation.role === "follower") {
 				core.emit("part-up", { room: room });
@@ -26,9 +26,9 @@ module.exports = function(core, config, state) {
 		},
 
 		render: function() {
-			var user = state.getUser(),
-				nav = state.getNav(),
-				relation = state.getRelation(),
+			var user = store.getUser(),
+				nav = store.getNav(),
+				relation = store.getRelation(),
 				title, following;
 
 			switch (nav.mode) {
@@ -58,7 +58,7 @@ module.exports = function(core, config, state) {
 
 	core.on("statechange", function(changes, next) {
 		if ("nav" in changes && ("room" in changes.nav || "mode" in changes.nav) ||
-		    "user" in changes || ("entities" in changes && state.get("user") in changes.entities)) {
+		    "user" in changes || ("entities" in changes && store.get("user") in changes.entities)) {
 			React.render(<AppbarPrimary />, appbarprimary);
 		}
 

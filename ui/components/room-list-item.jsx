@@ -1,6 +1,6 @@
 /* jshint browser: true */
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	var React = require("react"),
 		RoomListItem;
 
@@ -17,7 +17,7 @@ module.exports = function(core, config, state) {
 		},
 
 		render: function() {
-			var room = state.get("entities", this.props.roomId);
+			var room = store.get("entities", this.props.roomId);
 
 			return (
 		        <div key={"room-list-" + room.id} className="card room-card" onClick={this.goToRoom}>

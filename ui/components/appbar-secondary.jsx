@@ -1,6 +1,6 @@
 /* jshint browser: true */
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	var React = require("react"),
 		AppbarSecondary,
 		appbarsecondary = document.getElementById("js-appbar-secondary");
@@ -11,7 +11,7 @@ module.exports = function(core, config, state) {
 		},
 
 		render: function() {
-			var title = state.getNav().thread; // TODO: use thread title instead of ID
+			var title = store.getNav().thread; // TODO: use thread title instead of ID
 
 			return (
 		        <div key="appbar-secondary">
@@ -23,7 +23,7 @@ module.exports = function(core, config, state) {
 	});
 
 	core.on("statechange", function(changes, next) {
-		if (("nav" in changes && ("thread" in changes.nav || "mode" in changes.nav)) && state.getNav().mode === "chat") {
+		if (("nav" in changes && ("thread" in changes.nav || "mode" in changes.nav)) && store.getNav().mode === "chat") {
 			React.render(<AppbarSecondary />, appbarsecondary);
 		}
 

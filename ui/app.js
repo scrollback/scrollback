@@ -5,11 +5,11 @@
 
     var config = require(".././client-config-defaults.js"),
         core = new (require("ebus"))(config.appPriorities),
-        state = require("./store/state-manager.js")(core, config),
+        store = require("./store/state-manager.js")(core, config),
         req;
 
     window.core = core;
-    window.state = state;
+    window.store = store;
 
     // jQuery library
     window.jQuery = window.$ = require("../bower_components/jquery/dist/jquery.min.js");
@@ -32,27 +32,27 @@
 	require('../lib/jquery.validInput.js');
 
     // Core
-    require("./store/view-manager.js")(core, config, state);
+    require("./store/view-manager.js")(core, config, store);
 
-    require("../dialogs/dialogs-listeners.js")(core, config, state);
-    require("../calls-to-action/calls-to-action-client.js")(core, config, state);
+    require("../dialogs/dialogs-listeners.js")(core, config, store);
+    require("../calls-to-action/calls-to-action-client.js")(core, config, store);
 
     // Components
-    require("./components/appbar-primary.jsx")(core, config, state);
-    require("./components/appbar-secondary.jsx")(core, config, state);
-    require("./components/chat.jsx")(core, config, state);
-    require("./components/compose.jsx")(core, config, state);
-    require("./components/home-feed.jsx")(core, config, state);
-    require("./components/people-list.jsx")(core, config, state);
-    require("./components/profile-card.jsx")(core, config, state);
-    require("./components/sidebar.jsx")(core, config, state);
-    require("./components/thread-feed.jsx")(core, config, state);
+    require("./components/appbar-primary.jsx")(core, config, store);
+    require("./components/appbar-secondary.jsx")(core, config, store);
+    require("./components/chat.jsx")(core, config, store);
+    require("./components/compose.jsx")(core, config, store);
+    require("./components/home-feed.jsx")(core, config, store);
+    require("./components/people-list.jsx")(core, config, store);
+    require("./components/profile-card.jsx")(core, config, store);
+    require("./components/sidebar.jsx")(core, config, store);
+    require("./components/thread-feed.jsx")(core, config, store);
 
     // Miscellaneous
-	require('./misc/load-indicator.js')(core, config, state);
-	require('./misc/appcache.js')(core, config, state);
-	require('./misc/google-analytics.js')(core, config, state);
-	require('./misc/workarounds.js')(core, config, state);
+	require('./misc/load-indicator.js')(core, config, store);
+	require('./misc/appcache.js')(core, config, store);
+	require('./misc/google-analytics.js')(core, config, store);
+	require('./misc/workarounds.js')(core, config, store);
 
     // Send the initial setstate event
     req = new XMLHttpRequest();

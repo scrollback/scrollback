@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global _gaq */
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	var props;
 
 	if (!("_gaq" in window)) {
@@ -18,7 +18,7 @@ module.exports = function(core, config, state) {
 
 		props.forEach(function(prop) {
 			if (prop in changes.nav) {
-				_gaq.push(["_trackEvent", prop, state.getNav()[prop]]);
+				_gaq.push(["_trackEvent", prop, store.getNav()[prop]]);
 			}
 		});
 

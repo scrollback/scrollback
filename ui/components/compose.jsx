@@ -2,7 +2,7 @@
 
 var format = require("../../lib/format.js");
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	var React = require("react"),
 		Compose,
 		composeEl = document.getElementById("js-chat-area-input");
@@ -21,7 +21,7 @@ module.exports = function(core, config, state) {
 			}
 
 			core.emit("text-up", {
-				to: state.getNav().room,
+				to: store.getNav().room,
 				from: this.props.nick,
 				text: text,
 				time: new Date().getTime()
@@ -78,8 +78,8 @@ module.exports = function(core, config, state) {
 	});
 
 	core.on("statechange", function(changes, next) {
-		if ("user" in changes || ("entities" in changes && state.get("user") in changes.entities)) {
-			React.render(<Compose nick={state.get("user")} />, composeEl);
+		if ("user" in changes || ("entities" in changes && store.get("user") in changes.entities)) {
+			React.render(<Compose nick={store.get("user")} />, composeEl);
 		}
 
 		next();
