@@ -1,20 +1,20 @@
 /* jshint browser: true */
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	var React = require("react"),
-		ListView = require("./list-view.jsx")(core, config, state),
-		GridView = require("./grid-view.jsx")(core, config, state),
-		ThreadCard = require("./thread-card.jsx")(core, config, state),
-		ThreadListItem = require("./thread-list-item.jsx")(core, config, state),
+		ListView = require("./list-view.jsx")(core, config, store),
+		GridView = require("./grid-view.jsx")(core, config, store),
+		ThreadCard = require("./thread-card.jsx")(core, config, store),
+		ThreadListItem = require("./thread-list-item.jsx")(core, config, store),
 		ThreadFeed, ThreadList,
 		threadfeed = document.getElementById("js-thread-feed"),
 		threadlist = document.getElementById("js-thread-list");
 
 	function getItems(type) {
-		var roomId = state.getNav().room,
+		var roomId = store.getNav().room,
 			items = [];
 
-		state.getThreads(roomId, null, -50).reverse().forEach(function(thread) {
+		store.getThreads(roomId, null, -50).reverse().forEach(function(thread) {
 			if (typeof thread !== "object" || typeof thread.id !== "string") {
 				return;
 			}
@@ -46,7 +46,7 @@ module.exports = function(core, config, state) {
 
 	core.on("statechange", function(changes, next) {
 		if ("threads" in changes || ("nav" in changes && ("room" in changes.nav || "thread" in changes.nav || "mode" in changes.nav))) {
-			switch (state.getNav().mode) {
+			switch (store.getNav().mode) {
 			case "room":
 				React.render(<ThreadFeed />, threadfeed);
 				break;

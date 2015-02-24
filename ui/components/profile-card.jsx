@@ -1,13 +1,13 @@
 /* jshint browser: true */
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	var React = require("react"),
 		ProfileCard,
 		profilecard = document.getElementById("js-profile-card");
 
 	ProfileCard = React.createClass({
 		render: function() {
-			var user = state.getUser();
+			var user = store.getUser();
 
 			return (
 			    <div key="profile-card" className="profile-card">
@@ -24,7 +24,7 @@ module.exports = function(core, config, state) {
 	});
 
 	core.on("statechange", function(changes, next) {
-		if ("user" in changes || ("entities" in changes && state.get("user") in changes.entities)) {
+		if ("user" in changes || ("entities" in changes && store.get("user") in changes.entities)) {
 			React.render(<ProfileCard />, profilecard);
 		}
 

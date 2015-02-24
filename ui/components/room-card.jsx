@@ -34,13 +34,13 @@ function getRoomPics(roomId) {
 	return roomPics[roomId];
 }
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	var React = require("react"),
 		RoomCard;
 
 	RoomCard = React.createClass({
 		// getCardState: function () {
-		// 	return { threads: state.getThreads(room.roomId, null, -room.threadCount || -2).reverse() };
+		// 	return { threads: store.getThreads(room.roomId, null, -room.threadCount || -2).reverse() };
 		// },
 		// getInitialState: function () {
 		// 	return this.getCardState();
@@ -66,12 +66,12 @@ module.exports = function(core, config, state) {
 		},
 
 		render: function() {
-			var room = state.getRoom(this.props.roomId),
+			var room = store.getRoom(this.props.roomId),
 				roomCover = room.cover || getRoomPics(this.props.roomId).cover,
 				roomPicture = room.picture || getRoomPics(this.props.roomId).picture,
 				threads;
 
-			threads = (state.getThreads(this.props.roomId, null, ((this.props.threadCount || 2) * -1)) || []).reverse().map(function(thread) {
+			threads = (store.getThreads(this.props.roomId, null, ((this.props.threadCount || 2) * -1)) || []).reverse().map(function(thread) {
 				return (
 			        <div key={"room-card-thread-" + room.id + "-" + thread.id} className="card-thread">
 						<span className="card-thread-message">{thread.title}</span>

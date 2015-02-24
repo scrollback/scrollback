@@ -219,14 +219,16 @@ gulp.task("embed-apis", function() {
 	.pipe(buildscripts())
 	.pipe(rename("sb.js"))
 	.pipe(sourcemaps.write("."))
-	.pipe(gulp.dest("public"))
+	.pipe(gulp.dest("public/s"))
 	.on("error", gutil.log);
 });
 
 gulp.task("embed", [ "embed-legacy", "embed-apis" ]);
 
 // Generate scripts
-gulp.task("scripts", [ "polyfills", "copylibs", "bundle", "embed" ]);
+gulp.task("scripts", [ "polyfills", "copylibs", "bundle", "embed" ], function() {
+	gulp.start("manifest");
+});
 
 // Generate styles
 gulp.task("fonts", [ "bower" ], function() {
@@ -235,7 +237,7 @@ gulp.task("fonts", [ "bower" ], function() {
 	.pipe(gulp.dest(dirs.fonts));
 });
 
-gulp.task("styles", [ "fonts" ], function() {
+gulp.task("scss", [ "bower" ], function() {
 	return gulp.src(files.scss)
 	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(sourcemaps.init())
@@ -250,6 +252,10 @@ gulp.task("styles", [ "fonts" ], function() {
 	.pipe(rename({ suffix: ".min" }))
 	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest(dirs.css));
+});
+
+gulp.task("styles", [ "fonts", "scss" ], function() {
+	gulp.start("manifest");
 });
 
 // Generate appcache manifest file
@@ -273,8 +279,8 @@ gulp.task("clean", function() {
 
 // Watch for changes
 gulp.task("watch", function() {
-	gulp.watch(files.js.concat(files.jsx), [ "scripts", "manifest" ]);
-	gulp.watch(files.scss, [ "styles", "manifest" ]);
+	gulp.watch(files.js.concat(files.jsx), [ "scripts" ]);
+	gulp.watch(files.scss, [ "styles" ]);
 });
 
 // Build all files

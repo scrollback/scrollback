@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $ */
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	var keys = [ "view", "mode", "color" ],
 		$title = $(".js-appbar-title"),
 		$thread = $(".js-thread-title");
@@ -15,21 +15,21 @@ module.exports = function(core, config, state) {
 			if ([keys[i]] in changes.nav) {
 				classList = classList.replace(new RegExp("\\b" + keys[i] + "-" + "\\S+", "g"), "");
 
-				classList += " " + keys[i] + "-" + (state.getNav()[keys[i]] || "");
+				classList += " " + keys[i] + "-" + (store.getNav()[keys[i]] || "");
 			}
 		}
 
 		classList = classList.replace(/\bcolor-\S+/g, "").replace(/^\s+|\s+$/g, "");
 
 		if ("nav" in changes && "mode" in changes.nav) {
-			switch (state.getNav().mode) {
+			switch (store.getNav().mode) {
 			case "room":
-				$title.text(state.getNav().room);
+				$title.text(store.getNav().room);
 				break;
 			case "chat":
-				classList += " color-" + state.getNav().color;
-				$title.text(state.getNav().room);
-				$thread.text(state.getNav().threadId);
+				classList += " color-" + store.getNav().color;
+				$title.text(store.getNav().room);
+				$thread.text(store.getNav().threadId);
 				break;
 			case "home":
 				$title.text("My feed");
@@ -38,7 +38,7 @@ module.exports = function(core, config, state) {
 		}
 
 		if ("indexes" in changes && ("roomUsers" in changes.indexes || "userRooms" in changes.index)) {
-			relation = state.getRelation();
+			relation = store.getRelation();
 
 			classList = classList.replace(/\brole-\S+/g, "");
 

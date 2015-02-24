@@ -3,7 +3,7 @@
 
 module.exports = function(core, config, state) {
 	var desktopnotify = require("../lib/desktopnotify.js"),
-		showNotification = require("./showNotification.js"),
+		showNotification = require("./show-notification.js")(core, config, state),
 		$appbarMore = $(".appbar-icon-more"),
 		$appbarFollow = $(".appbar-icon-follow");
 

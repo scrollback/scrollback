@@ -40,7 +40,7 @@ module.exports = function() {
 					items = [];
 
 					for (var j = 0, m = sections[i].items.length; j < m; j++) {
-						items.push(<li key={sections[i].items[j].key} className="grid-item">{sections[i].items[j].elem}</li>);
+						items.push(<li key={sections[i].items[j].key} className="grid-item" tabIndex="1">{sections[i].items[j].elem}</li>);
 					}
 
 					gridview.push(<ul key={"section-" + sections[i].key} className="grid-section">{items}</ul>);

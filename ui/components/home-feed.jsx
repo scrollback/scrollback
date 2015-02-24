@@ -1,11 +1,11 @@
 /* jshint browser: true */
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	var React = require("react"),
-		ListView = require("./list-view.jsx")(core, config, state),
-		GridView = require("./grid-view.jsx")(core, config, state),
-		RoomCard = require("./room-card.jsx")(core, config, state),
-		RoomListItem = require("./room-list-item.jsx")(core, config, state),
+		ListView = require("./list-view.jsx")(core, config, store),
+		GridView = require("./grid-view.jsx")(core, config, store),
+		RoomCard = require("./room-card.jsx")(core, config, store),
+		RoomListItem = require("./room-list-item.jsx")(core, config, store),
 		HomeFeed, RoomList,
 		titles = {
 			owner: "My rooms",
@@ -19,7 +19,7 @@ module.exports = function(core, config, state) {
 	function getSections(type) {
 		var sections = {}, arr = [];
 
-		state.get("indexes", "userRooms", state.get("user")).forEach(function(rel) {
+		store.get("indexes", "userRooms", store.get("user")).forEach(function(rel) {
 			sections[rel.role] = sections[rel.role] || {
 				key: "home-feed-" + rel.role,
 				header: titles[rel.role],
@@ -57,7 +57,7 @@ module.exports = function(core, config, state) {
 
 	core.on("statechange", function(changes, next) {
 		if ("indexes" in changes && "userRooms" in changes.indexes) {
-			switch (state.getNav().mode) {
+			switch (store.getNav().mode) {
 			case "home":
 				React.render(<HomeFeed />, homefeed);
 				break;

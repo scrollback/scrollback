@@ -1,6 +1,6 @@
 /* jshint browser: true */
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	var React = require("react"),
 		ThreadCard;
 
@@ -19,7 +19,7 @@ module.exports = function(core, config, state) {
 			var thread = this.props.thread,
 			  	chats;
 
-			chats = (state.getTexts(this.props.roomId, thread.id, null, ((this.props.textCount || 3) * -1)) || []).reverse().map(function(chat) {
+			chats = (store.getTexts(this.props.roomId, thread.id, null, ((this.props.textCount || 3) * -1)) || []).reverse().map(function(chat) {
 				if (typeof chat === "object" && typeof chat.text === "string") {
 					return (
 				        <div key={"thread-card-chat-" + thread.id + "-" + chat.id} className="card-chat">

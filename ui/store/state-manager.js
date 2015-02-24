@@ -132,7 +132,7 @@ module.exports = function(core) {
 	core.on("setstate", function(changes, next) {
 		var roomId, roomThreadId;
 
-		// merge state and changes
+		// merge store and changes
 		extendObj(current.nav, changes.nav);
 		extendObj(current.context, changes.context);
 		extendObj(current.app, changes.app);
@@ -163,7 +163,7 @@ module.exports = function(core) {
 		}
 
 		buildIndex(changes);
-		buildIndex(current); // TODO: replace this call with some way to merge the indexes from changes into state; save CPU!
+		buildIndex(current); // TODO: replace this call with some way to merge the indexes from changes into store; save CPU!
 
 		core.emit("statechange", changes);
 
