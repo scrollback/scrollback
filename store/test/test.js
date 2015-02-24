@@ -22,6 +22,9 @@ var state = {
     
 };
 console.log(state, core);
+
+
+require("./range-ops-test.js");
 /*
 
 var options = {
