@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+var getAvatar = require("../../lib/get-avatar.js");
+
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		ListView = require("./list-view.jsx")(core, config, store),
@@ -29,10 +31,10 @@ module.exports = function(core, config, store) {
 					user = store.get("entities", people[i].user);
 
 					sections[people[i].status].push({
-						key: "people-list-" + room + "-" + user.id,
+						key: "people-list-" + room.id + "-" + user.id,
 						elem: (
 						    <div className="people-list-item">
-						      	<img className="people-list-item-avatar" src={user.picture} />
+						      	<img className="people-list-item-avatar" src={getAvatar(user.picture, 48)} />
 						      	<span className="people-list-item-nick">{user.id}</span>
 						    </div>
 						)
