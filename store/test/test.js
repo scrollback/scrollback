@@ -1,37 +1,8 @@
 var ebus = require("ebus");
 var core = new ebus();
 
-var state = {
-    "nav": {
-        "mode": "loading",
-        "view": "main",
-        "room": null
-    },
-    session:{
-    },
-    "user": {
-    },
-    "content": {},
-    entities:{},
-    indexes:{
-        textsById:{},
-        threadsById:{},
-        roomUsers:{},
-        userRooms:{}
-    }
-    
-};
-console.log(state, core);
+//require("./range-ops-test.js");
+var store = require("./../store.js")(core, {});
+require("./state-manager-test.js")(core, {}, store);
 
-
-require("./range-ops-test.js");
-/*
-
-var options = {
-    state: state;
-};
-*/
-
-//require("../nav-manager.js")(core, {}, options);
-//require("../state-manager.js")(core, {}, options);
 

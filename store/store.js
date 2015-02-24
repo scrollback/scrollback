@@ -1,6 +1,6 @@
 var objUtils = require("../lib/obj-utils.js");
 var generate = require("../lib/generate.js");
-var store = {
+var state = {
     "nav": {
         "mode": "loading",
         "view": "main",
@@ -21,23 +21,18 @@ var store = {
     }
 };
 
-function get() {
-    var args = Array.prototype.slice.call(arguments);
-    args.unshift(store);
-    return objUtils.get.apply(null, args);
-}
-
-
 module.exports = function(core, config) {
-    var state = {};
+	var store = {};
+    store.get = get;
     
+	store.getApp = getProp("app");
+    store.getNav = getProp("nav");
+	store.getContext = getProp("context");
+	
+	store.getRooms = getEntities;
+    store.getUsers = getEntities;
     
-    state.get = get;
-    state.getApp = function(){};
-    state.getNav = function(){};
-    state.getRooms = function(){};
-    state.getUsers = function(){};
-    state.getTexts = function(roomid) {
+	store.getTexts = function(roomid) {
         var res = [];
         for(var i =0;i<100;i++) {
             res.push(createText(roomid));
@@ -47,8 +42,10 @@ module.exports = function(core, config) {
         });
         return res;
     };
-    state.getEntity = function(){};
-    state.getThreads = function(roomid) {
+    
+	store.getEntity = getEntities;
+    
+	store.getThreads = function(roomid) {
         var res = [];
         for(var i =0;i<100;i++) {
             res.push(createThread(roomid));
@@ -58,16 +55,74 @@ module.exports = function(core, config) {
         });
         return res;
     };
-    state.getContext = function(){};
-    state.getRelatedRooms = function(){};
-    state.getRelatedUsers =function(){};
     
-//	require("./validation.js")(core, config, state);
-    require("./state-manager.js")(core, config, state);
-    require("./mock-socket.js")(core, config, state);
+    store.getRelatedRooms = getRelatedRooms;
+    store.getRelatedUsers = getRelatedUsers;
     
-    return state;
+    require("./state-manager.js")(core, config, store, state);
+    return store;
 };
+
+
+
+function get() {
+    var args = Array.prototype.slice.call(arguments);
+    args.unshift(state);
+    return objUtils.get.apply(null, args);
+}
+
+function getProp(block) {
+	return function(property) {
+		var args = [block];
+		if(property) args.push(property);
+		return this.get.apply(this, args);
+	};
+}
+
+function getRelatedUsers(id, filter) {
+	var user;
+	if(typeof id == "string") {
+		user = id;
+	}else if(typeof id === "object") {
+		user = this.get("user", "id");
+		filter = id;
+	}
+}
+
+function getFeaturedRooms() {
+	var rooms = this.getApp("featuredRooms"), result;
+	var user = this.get("user", "id");
+	
+	rooms.forEach(function(room) {
+		var roomObj = this.getRoom(room, user);
+		result.push(roomObj);
+	});
+	
+	return result;
+}
+
+function getRecommendedRooms() {
+	
+}
+
+function getRelatedRooms(id, filter) {
+	var room;
+	if(typeof id == "string") {
+		if(id === "featured") {
+			return getFeaturedRooms();
+		} else if(id === "recommended") {
+			return getRecommendedRooms();
+		}else{
+			room = id;
+		}
+	}else if(typeof id === "object") {
+		room = this.getNav("room");
+		filter = id;
+	}
+	
+//	returnRelatedRooms(room, filter);
+}
+
 
 function createThread() {
     var time = new Date().getTime() - 1000000;
@@ -97,4 +152,16 @@ function createText(room) {
         time: time + (((Math.random() + 1) * 10000 )| 0)
     };
     return action;
+}
+
+function getEntities() {
+	var roomId;
+	if(arguments.length === 0) roomId = this.get("nav", "room");
+	else roomId = arguments[0];
+	
+	if(roomId.indexOf(":") >= 0){
+		// get room based on id.
+	}else if(roomId){
+		return this.get("entities", roomId);
+	}
 }
