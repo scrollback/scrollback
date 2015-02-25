@@ -3,6 +3,7 @@
 "use strict";
 
 var objUtils = require("../../lib/obj-utils.js"),
+	_ = require("underscore.js"),
 	current = {
 		nav: {},
 		context: {},
@@ -32,21 +33,29 @@ function buildIndex(obj) {
 
 function extendObj(obj1, obj2) {
 	if (typeof obj1 !== "object" || typeof obj2 !== "object") {
-		return obj1;
+		return clone(obj1);
+	}
+	
+	if(obj1 instanceof Array && obj2 instanceof Array) {
+		return _.uniq(obj1.map(clone).concat(obj2.map(clone)), JSON.stringify);
 	}
 
 	for (var name in obj2) {
 		if (obj2[name] === null) {
 			delete obj1[name];
 		} else if (typeof obj1[name] === "object" && typeof obj2[name] === "object" && obj1[name] !== null) {
-			obj1[name] = obj2[name];
-			// extendObj(obj1[name], obj2[name]);
+			obj1[name] = extendObj(obj1[name], obj2[name]);
 		} else {
-			obj1[name] = obj2[name];
+			obj1[name] = clone(obj2[name]);
 		}
 	}
 
 	return obj1;
+}
+
+function clone(obj) {
+	// TODO: fix
+	return obj;
 }
 
 // TODO: implement properly;
@@ -137,6 +146,7 @@ module.exports = function(core) {
 		extendObj(current.context, changes.context);
 		extendObj(current.app, changes.app);
 		extendObj(current.entities, changes.entities); // Todo: replace with shallow extend
+		
 
 		if (changes.user) {
 			current.user = changes.user;
@@ -245,3 +255,5 @@ module.exports = function(core) {
 		}
 	};
 };
+
+

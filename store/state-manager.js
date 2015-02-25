@@ -1,22 +1,21 @@
 var config, store;
+var objUtils = require("./../lib/obj-utils.js");
 var rangeOps = require("./range-ops.js");
-var oldStore;
-module.exports = function(core, conf, s) {
+var state;
+module.exports = function(core, conf, s, st) {
 	config = conf;
     store = s;
-    console.log("+++++",oldStore);
-	core.on("setState", function(newState, next) {
-		if (newState.nav) updateNav(newState.nav);
-		if (newState.entities) updateEntities(newState.changes.entities);
-		if (newState.texts) updateTexts(newState.texts);
+	state = st;
+	core.on("setState", function(changes, next) {
+		if (changes.nav) objUtils.extend(state.nav, changes.nav);
+		if (changes.context) objUtils.extend(state.context, changes.context);
+		if (changes.app) objUtils.extend(state.app, changes.app);
+		
+		if (changes.entities) updateEntities(state.entities, changes.entities);
+		if (changes.texts) updateTexts(changes.texts);
 		next();
 	}, 1000);
 };
-module.exports.setStore = function(s) {
-	console.log("setting oldStore.");
-	oldStore = s;
-};
-
 
 function updateTexts(texts) {
 	var rooms = Object.keys(texts), ranges;
@@ -26,40 +25,47 @@ function updateTexts(texts) {
 			ranges = store.get("texts", room, thread);
 			if(!ranges) ranges = store.texts[room][thread] = [];
 			texts.textRanges[thread].forEach(function(newRange) {
-				rangeOps.merge(ranges, newRange);
+				rangeOps.merge(ranges, newRange, "time");
 			});
 		});
 	});
 }
 
-function updateNav(nav) {
-	var keys = Object.keys(nav);
-	keys.forEach(function(e) {
-		if (nav[e] && typeof nav[e] == "object") {
-			oldStore.nav[e] = clone(nav[e]); //TODO: clone objects.
-		} else {
-			oldStore.nav[e] = nav[e];
+function buildIndex(obj) {
+	var relation;
+
+	obj.indexes = {
+		userRooms: {},
+		roomUsers: {}
+	};
+
+	for (var name in obj.entities) {
+		relation = obj.entities[name];
+
+		if (relation.room && relation.user) {
+			(obj.indexes.userRooms[relation.user] = obj.indexes.userRooms[relation.user] || []).push(relation);
+			(obj.indexes.roomUsers[relation.room] = obj.indexes.roomUsers[relation.room] || []).push(relation);
 		}
-	});
+	}
 }
 
-function clone(){
-}
-
-
-function updateEntities(entities) {
-	var ids = Object.keys(entities);
+function updateEntities(stateEntities, changesEntities) {
+	objUtils.extend(stateEntities, changesEntities);
+	buildIndex(state);
+	/*var ids = Object.keys(entities);
+	var roomuser;
 	ids.forEach(function(id) {
 		if (entities[id] === null) {
 			delete store.entities[id];
 		} else {
-			store.entities[id] = entities[id];
+			state.entities[id] = clone(entities[id]);
+			delete state.entities[id].role;
+			//TODO: also delete other properties regarding membership.
 		}
-	});
-	updateContent();
+	});*/
 }
 
-
+/*
 function updateContent(content) {
 	var rooms = Object.keys(content);
 	rooms.forEach(function(e) {
@@ -73,12 +79,13 @@ function updateContent(content) {
 		}
 	});
 }
+*/
 
-function updateIndex(type, ranges) {
+/*function updateIndex(type, ranges) {
 	ranges.forEach(function(r) {
 		var index = store.indexes[type + "ById"] = store.indexes[type + "ById"] || {};
 		r.items.forEach(function(item) {
 			index[item.id] = item;
 		});
 	});
-}
+}*/
