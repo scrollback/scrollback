@@ -27,7 +27,12 @@
 module.exports = function(type, menu) {
 	var $popover = $("<div>"),
 		$list, item,
-		$buttons, button, sortable = [];
+		$buttons, button, sortable = [],
+		dismiss = function() {
+			setTimeout(function() {
+				$popover.popover("dismiss");
+			}, 300);
+		};
 
 	if (typeof menu.title === "string") {
 		$("<div>").addClass("popover-section popover-title")
@@ -53,7 +58,8 @@ module.exports = function(type, menu) {
 				$("<a>").addClass("button " + button[2].toLowerCase().replace(' ', '-'))
 					.text(button[1].text)
 					.on("click", function() {
-						$.popover("dismiss");
+						dismiss();
+
 						button[1].action();
 					})
 					.appendTo($buttons);
@@ -82,7 +88,8 @@ module.exports = function(type, menu) {
 				$("<li>").append($("<a>").addClass(item[2].toLowerCase().replace(' ', '-'))
 						.text(item[1].text))
 					.on("click", function() {
-						$.popover("dismiss");
+						dismiss();
+
 						item[1].action();
 					})
 					.appendTo($list.find("ul"));

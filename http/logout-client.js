@@ -1,3 +1,5 @@
+/* jshint browser: true */
+
 var appUtils = require("../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
@@ -24,4 +26,21 @@ module.exports = function(core, config, store) {
 
 		next();
 	}, 100);
+
+	core.on("logout-dialog", function(dialog, next) {
+		dialog.title = "You've been signed out!";
+		dialog.action = {
+			text: "Go back as guest",
+			action: function() {
+				core.emit("setstate", {
+					nav: { dialog: null }
+				}, function() {
+					window.location.reload();
+				});
+			}
+		};
+		dialog.dismiss = false;
+
+		next();
+	}, 500);
 };

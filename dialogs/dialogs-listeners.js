@@ -38,7 +38,7 @@ module.exports = function(core, config, store) {
 		});
 	}
 
-	core.on("storechange", function(changes, next) {
+	core.on("statechange", function(changes, next) {
 		var dialog;
 
 		if (typeof userChangeCallback === "function" && changes.user && appUtils.isGuest(store.get("user"))) {
@@ -208,23 +208,6 @@ module.exports = function(core, config, store) {
 
 		next();
 	}, 1000);
-
-	core.on("logout-dialog", function(dialog, next) {
-		dialog.title = "You've been signed out!";
-		dialog.action = {
-			text: "Go back as guest",
-			action: function() {
-				core.emit("setstate", {
-					nav: { dialog: null }
-				}, function() {
-					window.location.reload();
-				});
-			}
-		};
-		dialog.dismiss = false;
-
-		next();
-	}, 500);
 
 	// When modal is dismissed, reset the dialog property
 	$(document).on("modalDismissed", function() {
