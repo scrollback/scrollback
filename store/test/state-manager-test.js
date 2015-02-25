@@ -33,11 +33,11 @@ module.exports = function(c, conf, s) {
 				done();
 			});
 		});
-		
+
 		it("setting objects in nav", function(done) {
 			core.emit("setState", {
 				nav: {
-					dialog:{
+					dialog: {
 						prop1: "hi",
 						prop2: "hello"
 					}
@@ -48,11 +48,11 @@ module.exports = function(c, conf, s) {
 				done();
 			});
 		});
-		
+
 		it("setting objects in context", function(done) {
 			core.emit("setState", {
 				context: {
-					embed:{
+					embed: {
 						domain: "h10.in",
 						suggestedNick: "hi"
 					}
@@ -63,11 +63,11 @@ module.exports = function(c, conf, s) {
 				done();
 			});
 		});
-		
+
 		it("changing objects in nav", function(done) {
 			core.emit("setState", {
 				nav: {
-					dialog:{
+					dialog: {
 						prop1: "what"
 					}
 				}
@@ -76,34 +76,34 @@ module.exports = function(c, conf, s) {
 				assert.equal(store.getNav("dialog").prop2, "hello", "Navigation didnot happen");
 				done();
 			});
-		});		
-		
+		});
+
 		it("setting arrays in app", function(done) {
 			core.emit("setState", {
 				app: {
-					CTAS:["signin", "logs"]
+					CTAS: ["signin", "logs"]
 				}
 			}, function() {
-				assert.equal(store.getApp("CTAS").length,2, "Navigation didnot happen");
+				assert.equal(store.getApp("CTAS").length, 2, "Navigation didnot happen");
 				assert.equal(store.getApp("CTAS")[0], "signin", "Navigation didnot happen");
 				assert.equal(store.getApp("CTAS")[1], "logs", "Navigation didnot happen");
 				done();
 			});
 		});
-		
+
 		it("changing arrays in app", function(done) {
 			core.emit("setState", {
 				app: {
-					CTAS:["signup", "logs"]
+					CTAS: ["signup", "logs"]
 				}
 			}, function() {
-				assert.equal(store.getApp("CTAS").length,2, "Navigation didnot happen");
+				assert.equal(store.getApp("CTAS").length, 2, "Navigation didnot happen");
 				assert.equal(store.getApp("CTAS")[0], "signup", "Navigation didnot happen");
 				assert.equal(store.getApp("CTAS")[1], "logs", "Navigation didnot happen");
 				done();
 			});
 		});
-		
+
 		it("deleting arrays in app", function(done) {
 			core.emit("setState", {
 				app: {
@@ -114,7 +114,7 @@ module.exports = function(c, conf, s) {
 				done();
 			});
 		});
-		
+
 		it("emitting setState with entities.", function(done) {
 			core.emit("setState", {
 				entities: {
@@ -138,8 +138,8 @@ module.exports = function(c, conf, s) {
 				done();
 			});
 		});
-		
-		
+
+
 		it("emitting setState with relations.", function(done) {
 			core.emit("setState", {
 				entities: {
@@ -165,10 +165,10 @@ module.exports = function(c, conf, s) {
 			core.emit("setState", {
 				entities: {
 					scrollback_harish: {
-						status:"offline"
+						status: "offline"
 					},
 					scrollbackteam_harish: {
-						status:"offline"
+						status: "offline"
 					}
 				}
 			}, function() {
@@ -185,13 +185,13 @@ module.exports = function(c, conf, s) {
 				done();
 			});
 		});
-		
+
 		it("emitting setState with relations update.", function(done) {
 			core.emit("setState", {
 				entities: {
 					scrollbackteam_harish: {
-						status:"offline",
-						role:"banned"
+						status: "offline",
+						role: "banned"
 					}
 				}
 			}, function() {
@@ -208,27 +208,26 @@ module.exports = function(c, conf, s) {
 				done();
 			});
 		});
-		
-		
-		it("emitting setState with relations update.", function(done) {
+
+
+		it("emitting setState with relations update. banning.", function(done) {
 			core.emit("setState", {
 				entities: {
 					scrollbackteam_harish: {
-						status:"offline",
-						role:"banned"
+						status: "offline",
+						role: "banned"
 					}
 				}
 			}, function() {
 				var results = {};
-				store.getRelatedRooms("harish").forEach(function(e) {
+				store.getRelatedRooms("harish", {
+					role: "banned"
+				}).forEach(function(e) {
 					results[e.id] = e;
 				});
-				
-				assert.equal(results.scrollback.id, "scrollback", "Navigation didnot happen");
+				assert(!results.scrollback, "Navigation didnot happen");
 				assert.equal(results.scrollbackteam.id, "scrollbackteam", "Navigation didnot happen");
-				assert.equal(results.scrollback.status, "offline", "Navigation didnot happen");
 				assert.equal(results.scrollbackteam.status, "offline", "Navigation didnot happen");
-				assert.equal(results.scrollback.role, "owner", "Navigation didnot happen");
 				assert.equal(results.scrollbackteam.role, "banned", "Navigation didnot happen");
 				done();
 			});

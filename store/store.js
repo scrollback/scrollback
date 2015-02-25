@@ -89,9 +89,18 @@ function getRelatedUsers(id, filter) {
 	}
 	
 	users = this.get("indexes", "roomUsers", roomId);
-	users = users.map(function(relation) {
-		var userObj = self.getUser(relation.user);
-		return objUtils.extend(userObj, relation);
+	users = users.filter(function(relation) {
+		var userObj, filterKeys, i;
+		if(filter) {
+			filterKeys = Object.keys(filter);
+			for(i = 0; i<filterKeys.length; i++) {
+				if(filter[filterKeys] != relation[filterKeys]) return false;
+			}
+		}
+		
+		userObj = self.getUser(relation.user);
+		objUtils.extend(userObj, relation);
+		return true;
 	});
 	
 	return users;
@@ -129,9 +138,17 @@ function getRelatedRooms(id, filter) {
 		filter = id;
 	}
 	rooms = this.get("indexes", "userRooms", user);
-	rooms = rooms.map(function(roomRelation) {
-		var roomObj = self.getRoom(roomRelation.room);
-		return objUtils.extend(roomObj, roomRelation);
+	rooms = rooms.filter(function(roomRelation) {
+		var roomObj, filterKeys, i;
+		if(filter) {
+			filterKeys = Object.keys(filter);
+			for(i = 0; i<filterKeys.length; i++) {
+				if(filter[filterKeys] != roomRelation[filterKeys]) return false;
+			}
+		}
+		roomObj = self.getRoom(roomRelation.room);
+		objUtils.extend(roomRelation, roomObj);
+		return true;
 	});
 	
 	return rooms;
