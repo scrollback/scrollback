@@ -9,13 +9,15 @@ module.exports = function(core, config, store) {
 	// Listen to navigate and add class names
 	core.on("statechange", function(changes, next) {
 		var classList = $("body").attr("class") || "",
-			relation;
+			relation, value;
 
 		for (var i = 0, l = keys.length; i < l; i++) {
 			if ([keys[i]] in changes.nav) {
 				classList = classList.replace(new RegExp("\\b" + keys[i] + "-" + "\\S+", "g"), "");
 
-				classList += " " + keys[i] + "-" + (store.getNav()[keys[i]] || "");
+				value = store.getNav()[keys[i]];
+
+				classList += value ? (" " + keys[i] + "-" + value) : "";
 			}
 		}
 
