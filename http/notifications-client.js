@@ -2,7 +2,7 @@
 /* global $, libsb */
 
 var desktopnotify = require("../ui/desktopnotify.js"),
-	formField = require("../lib/formField.js");
+	formField = require("../ui/helpers/form-field.js");
 
 libsb.on("pref-show", function(tabs, next) {
 	var user = tabs.user,

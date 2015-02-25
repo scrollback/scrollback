@@ -2,6 +2,7 @@
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		browserSupports = require("../misc/browser-supports.js"),
 		ChatItem = require("./chat-item.jsx")(core, config, store),
 		ChatMessageList,
 		chatmessagelistEl = document.getElementById("js-chat-area-input");
@@ -22,7 +23,7 @@ module.exports = function(core, config, store) {
 	});
 
 	core.on("statechange", function(changes, next) {
-		// React.render(<ChatMessageList />, chatmessagelistEl);
+		React.render(<ChatMessageList />, chatmessagelistEl);
 
 		next();
 	}, 500);

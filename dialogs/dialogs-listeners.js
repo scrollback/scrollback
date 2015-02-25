@@ -2,7 +2,7 @@
 /* global $ */
 
 module.exports = function(core, config, store) {
-	var appUtils = require("../lib/appUtils.js"),
+	var appUtils = require("../lib/app-utils.js"),
 		validateEntity = require("./validate-entity.js")(core, config, store),
 		createEntity = require("./create-entity.js")(core, config, store),
 		showDialog = require("./show-dialog.js")(core, config, store),

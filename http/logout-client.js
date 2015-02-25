@@ -1,4 +1,4 @@
-var appUtils = require("../lib/appUtils.js");
+var appUtils = require("../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	core.on("user-menu", function(menu, next) {

@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $, libsb */
 
-var formField = require("../lib/formField.js");
+var formField = require("../ui/helpers/form-field.js");
 
 libsb.on('conf-show', function(tabs, next) {
 	var results = tabs.room;

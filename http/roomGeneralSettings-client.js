@@ -2,7 +2,7 @@
 /* global $, libsb */
 
 // Room general settings
-var formField = require("../lib/formField.js");
+var formField = require("../ui/helpers/form-field.js");
 
 libsb.on('conf-show', function(tabs, next) {
 	var $div = $('<div>').append(

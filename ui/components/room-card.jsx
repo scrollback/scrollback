@@ -1,6 +1,6 @@
 /* jshint browser: true */
 
-var stringUtils = require("../../lib/stringUtils.js"),
+var stringUtils = require("../../lib/string-utils.js"),
 	roomPics = {};
 
 function getRoomPics(roomId) {

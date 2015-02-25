@@ -3,7 +3,7 @@
 var Color = require("../lib/color.js"),
     generate = require('../lib/generate.js'),
 	urlUtils = require("../lib/url-utils.js"),
-	stringUtils = require("../lib/stringUtils.js"),
+	stringUtils = require("../lib/string-utils.js"),
 	verificationStatus = false,
 	parentWindow = null,
 	bootingDone = false,
@@ -106,9 +106,9 @@ function postNavigation(state, next) {
 		parentWindow.postMessage(JSON.stringify(activity), parentHost);
 	}else if(parentWindow){
 		if(stateClone.room && stateClone.room.params) delete stateClone.room.params;
-		parentWindow.postMessage(JSON.stringify({type:"navigate",state:stateClone}), parentHost);	
+		parentWindow.postMessage(JSON.stringify({type:"navigate",state:stateClone}), parentHost);
 	}
-	
+
 	next();
 }
 
@@ -253,16 +253,16 @@ module.exports = function(libsb) {
 			}
 		});
 	});
-    
-    
-    
+
+
+
     var LS = window.localStorage || {};
     try {
         domainSessions = JSON.parse(LS.DomainSessions);
     } catch(e) {
         domainSessions = {};
     }
-    
+
 	var url = urlUtils.parse(window.location.pathname, window.location.search);
 	embed = url.embed;
 	if (window.parent !== window) {
@@ -347,7 +347,7 @@ module.exports = function(libsb) {
 			if(createRoom){
 				state.dialog = "createroom";
 			}else {
-				state.dialog = "noroom";	
+				state.dialog = "noroom";
 			}
 		}
 		next();
@@ -362,7 +362,7 @@ module.exports = function(libsb) {
             if(jws && !init.auth) {
                 init.auth = {jws: jws};
             }
-            
+
             if(domainSessions[domain]){
                 init.session = domainSessions[domain];
                 libsb.session = init.session = domainSessions[domain];
@@ -371,11 +371,11 @@ module.exports = function(libsb) {
                 window.localStorage.DomainSessions = JSON.stringify(domainSessions);
                 libsb.session = init.session = domainSessions[domain];
             }
-			
+
 			if (url) {
 				init.suggestedNick = init.suggestedNick || suggestedNick || "";
 			}
-			
+
 			next();
 		}
 
@@ -385,9 +385,9 @@ module.exports = function(libsb) {
 			preBootQueue.push(processInit);
 		}
 	}, 500);
-	
+
 	libsb.on("navigate", postNavigation, 500);
-	
+
 	libsb.on("init-dn", function(init, next) {
 		var membership = [];
 		if(parentWindow){
@@ -400,10 +400,10 @@ module.exports = function(libsb) {
 				parentWindow.postMessage(JSON.stringify({
 					type:"membership",
 					data: membership
-				}), parentHost);	
+				}), parentHost);
 			}
 		}
-		
+
 		next();
 	}, "watcher");
 };

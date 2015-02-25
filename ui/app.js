@@ -26,10 +26,10 @@
 	require("../bower_components/lace/src/js/jquery.progressbar.js");
 
     // jQuery plugins
-	require("../lib/jquery.setCursorEnd.js");
-	require("../lib/jquery.isOnScreen.js");
-	require("../lib/jquery.scrollToBottom.js");
-	require("../lib/jquery.validInput.js");
+	require("./plugins/jquery.setCursorEnd.js");
+	require("./plugins/jquery.isOnScreen.js");
+	require("./plugins/jquery.scrollToBottom.js");
+	require("./plugins/jquery.validInput.js");
 
     // Core
     require("./store/view-manager.js")(core, config, store);

@@ -2,8 +2,8 @@
 var	crypto = require('crypto'),
 	generate = require("../../lib/generate.js"),
 	r = {},
-	mathUtils = require('../../lib/mathUtils.js');
-	
+	mathUtils = require('../../lib/math-utils.js');
+
 r.getNewTextAction = function() {
 	var id = generate.uid();
 	return {
@@ -29,7 +29,7 @@ r.getNewUserAction = function() {
 			type: "user",
 			timezone: mathUtils.random(-24, 24) * 30,
 			picture: generatePick(email),
-			identities: ["mailto:" + email], 
+			identities: ["mailto:" + email],
 			params: {},
 			guides: {},
 			createTime: new Date().getTime()
@@ -48,7 +48,7 @@ r.getNewRoomAction = function(){
 			id: generate.names(9),
 			description: generate.sentence(10),
 			type:"room",
-			identities:[generate.names(6) + "://" + generate.names(10), generate.names(5) + "://" + generate.names(10)], 
+			identities:[generate.names(6) + "://" + generate.names(10), generate.names(5) + "://" + generate.names(10)],
 			params: {},
 			guides: {},
 			createTime: new Date().getTime()
@@ -75,7 +75,7 @@ r.getNewRelationAction = function(type, userRole) {
 	var from = user.id;
 	if (type === 'admit' || type === 'expel') {
 		victim = r.getNewUserAction().user;
-	} 
+	}
 	var ret = {
 		type: type,
 		id: generate.uid(),
@@ -100,7 +100,7 @@ r.emitActions = function(core, actions, callback) {
 	function done() {
 		if (++ct == actions.length) callback(error, results);
 	}
-	
+
 	function run(i) {
 		core.emit(actions[i].type, actions[i], function(err, reply) {
 			if (!err) {
@@ -115,13 +115,13 @@ r.emitActions = function(core, actions, callback) {
 	for (j = 0; j < actions.length; j++) {
 		run(j);
 	}
-	
+
 };
 
 r.clearTables = function(client, tables, callback) {
 	var ct = 0;
 	function done() {
-		if (++ct >= tables.length) callback();	
+		if (++ct >= tables.length) callback();
 	}
 	tables.forEach(function(table) {
 		client.query("delete from " + table, function() {

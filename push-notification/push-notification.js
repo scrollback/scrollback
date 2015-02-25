@@ -1,6 +1,6 @@
 var log = require('../lib/logger.js'), config;
 var gcm_notify = require('./gcm-notify.js');
-var stringUtils = require('../lib/stringUtils.js');
+var stringUtils = require('../lib/string-utils.js');
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
@@ -9,9 +9,9 @@ module.exports = function(core, conf) {
 	config = conf;
 	function mapUsersToIds(idList, cb) {
 		/*
-			Takes an array of user ids, and calls the callback passed to it with the 
+			Takes an array of user ids, and calls the callback passed to it with the
 			list of corresponding user objects.
-			
+
 			This functionality has to be ideally implemented in the entity loader, but since entity loader does not support
 			this yet, this query has to be made.
 		*/
@@ -36,7 +36,7 @@ module.exports = function(core, conf) {
 
 	function notifyUsers(userList, payload) {
 		/*
-			The function takes a list of user objects and the push notification payload, and  
+			The function takes a list of user objects and the push notification payload, and
 			calls gcm_notify with a list of GCM registration ids and the payload.
 		*/
 		var regList = [];
@@ -57,7 +57,7 @@ module.exports = function(core, conf) {
 	}
 
 	function makePayload(title, message, text) {
-		/* 
+		/*
 			Create a valid push notification payload
 		*/
 		var payload = {

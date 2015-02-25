@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $ */
 
-var formField = require("../lib/formField.js"),
+var formField = require("../ui/helpers/form-field.js"),
 	pictureSelected = "",
 	pictureList = [];
 

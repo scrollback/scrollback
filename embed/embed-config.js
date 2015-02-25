@@ -1,8 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
-var formField = require("../lib/formField.js"),
-	stringUtils = require('../lib/stringUtils.js'),
+var formField = require("../ui/helpers/form-field.js"),
+	stringUtils = require('../lib/string-utils.js'),
 	embedForm, startMinimized, titlebarColor;
 
 module.exports = function(core, config, store) {

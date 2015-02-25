@@ -1,6 +1,6 @@
 var SbError = require('../../lib/SbError.js');
 var permissionLevels = require('../permissionWeights.js');
-var utils = require('../../lib/appUtils.js');
+var utils = require('../../lib/app-utils.js');
 var domainCheck;
 module.exports = function(core, config) {
 	domainCheck = require("../domain-auth.js")(core, config);

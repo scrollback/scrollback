@@ -1,5 +1,5 @@
 /* global libsb, $ */
-var formField = require("../lib/formField.js");
+var formField = require("../ui/helpers/form-field.js");
 var handleAuthErrors = require('./handleAuthErrors.js');
 
 libsb.on('conf-show', function (tabs, next) {

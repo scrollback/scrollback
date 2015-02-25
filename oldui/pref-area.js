@@ -2,7 +2,7 @@
 /* global $ */
 
 var renderSettings = require("./render-settings.js"),
-	appUtils = require("../lib/appUtils.js");
+	appUtils = require("../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	$(document).on("click", ".js-pref-save", function() {
