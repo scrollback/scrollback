@@ -1,4 +1,4 @@
-var appUtils = require("./../../lib/appUtils.js");
+var appUtils = require("./../../lib/app-utils.js");
 
 module.exports = function(core) {
 	core.on("init", function(action, next){
@@ -11,7 +11,7 @@ module.exports = function(core) {
 			return next(new Error("RESTRICTED_SESSION"));
 		}
 		if(!(blacklist instanceof Array) || blacklist.length) return next();
-		
+
 		if(blacklist.indexOf(origin.domain)>=0) return next(new Error("BLACKLISTED_DOMAIN"));
 		next();
 	}, "authorization");
