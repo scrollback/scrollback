@@ -1,99 +1,99 @@
 /* jshint browser: true */
-/* global currentState, libsb, $ */
-function renderSettings(tabs) {
+/* global $ */
 
-	var $items = $("<div>"),
-		$views = $("<div>"),
-		data = [];
+module.exports = function(core, config, store) {
+	function addErrors($dialog, room) {
+		var pluginErr;
 
-	for (var tab in tabs) {
-		data.push([tabs[tab].prio, tab, tabs[tab]]);
-	}
-
-	data.sort(function(a, b) {
-		return b[0] - a[0];
-	});
-
-	for (var i = 0; i < data.length; i++) {
-		if (data[i][2].notify && data[i][2].notify.type) {
-			$items.find(".list-item-" + data[i][1] + "-settings").addClass(data[i][2].notify.type);
+		if (!(room && room.params)) {
+			return;
 		}
 
-		$("<a>").addClass("list-item list-item-" + data[i][1] + "-settings ")
-			.text(data[i][2].text)
-			.appendTo($items);
+		Object.keys(room.params).forEach(function(p) {
+			if (room.params[p] && room.params[p].error) {
 
-		$(data[i][2].html).addClass("list-view list-view-" + data[i][1] + "-settings ")
-			.appendTo($views);
-	}
+				pluginErr = p;
 
-	switch (currentState.mode) {
-		case "pref":
-			$('.meta-pref').empty().append($items);
-			$('.pref-area').empty().append($views);
-			break;
-
-		case "conf":
-			$('.meta-conf').empty().append($items);
-			$('.conf-area').empty().append($views);
-			break;
-	}
-
-	addErrors(currentState.room);
-
-	// set initial classes only after settings have been rendered and DOM is ready.
-	if (currentState.mode === "pref" || currentState.mode === "conf") {
-		$(".list-item.current, .list-view.current").removeClass("current");
-		$(".list-item-" + currentState.tab + "-settings, .list-view-" + currentState.tab +
-			"-settings").addClass("current");
-	}
-}
-
-libsb.on("room-dn", function(action, next) {
-	var room = action.room,
-		error = false,
-		errorTab;
-
-	if (!room.params) {
-		return next();
-	}
-
-	for (var i in room.params) {
-		if (room.params[i].error) {
-			error = true;
-			errorTab = i;
-		}
-	}
-	if (error) {
-		libsb.emit("config-show", {
-			room: action.room
-		}, function(err, tabs) {
-			delete tabs.room;
-			renderSettings(tabs);
-			$(".list-item-" + errorTab + "-settings").addClass("error");
-			libsb.emit("navigate", {
-				tab: errorTab
-			});
+				$dialog.find(".list-item-" + p + "-settings").addClass("error");
+			}
 		});
-	}
-	next();
-}, 500);
 
-function addErrors(room) {
-	var pluginErr;
-
-	if (!(room && room.params)) {
-		return;
+		return pluginErr;
 	}
 
-	Object.keys(room.params).forEach(function(p) {
-		if (room.params[p] && room.params[p].error) {
-			pluginErr = p;
-			$(".list-item-" + p + "-settings").addClass("error");
+	function renderSettings(items) {
+		var $dialog = $("<div>").addClass("settings-container"),
+			$list = $("<div>").addClass("settings-list"),
+			$views = $("<div>").addClass("settings-view"),
+			data = [],
+			nav = store.getNav();
+
+		for (var item in items) {
+			if (/(room|user)/.test(items)) {
+				data.push([items[item].prio, item, items[item]]);
+			}
 		}
-	});
 
-	return pluginErr;
-}
+		data.sort(function(a, b) {
+			return b[0] - a[0];
+		});
 
-module.exports = renderSettings;
+		for (var i = 0; i < data.length; i++) {
+			if (data[i][2].notify && data[i][2].notify.type) {
+				$list.find(".list-item-" + data[i][1] + "-settings").addClass(data[i][2].notify.type);
+			}
+
+			$("<a>").addClass("list-item list-item-" + data[i][1] + "-settings ")
+				.text(data[i][2].text)
+				.appendTo($list);
+
+			$(data[i][2].html).addClass("list-view list-view-" + data[i][1] + "-settings ")
+				.appendTo($views);
+		}
+
+		$dialog.append($list, $views);
+
+		addErrors($dialog, store.getRoom());
+
+		// set initial classes only after settings have been rendered and DOM is ready.
+		if (/(conf|pref)/.test(nav.dialog)) {
+			$(".list-item.current, .list-view.current").removeClass("current");
+			$(".list-item-" + nav.dialogState + "-settings, .list-view-" + nav.dialogState + "-settings").addClass("current");
+		}
+	}
+
+	core.on("room-dn", function(action, next) {
+		var room = action.room,
+			error = false,
+			errorItem;
+
+		if (!room.params) {
+			return next();
+		}
+
+		for (var i in room.params) {
+			if (room.params[i].error) {
+				error = true;
+				errorItem = i;
+			}
+		}
+		if (error) {
+			core.emit("conf-show", {
+				room: action.room
+			}, function(err, items) {
+				delete items.room;
+
+				renderSettings(items);
+
+				$(".list-item-" + errorItem + "-settings").addClass("error");
+
+				core.emit("setstate", {
+					nav: {
+						dialogState: errorItem
+					}
+				});
+			});
+		}
+		next();
+	}, 500);
+};

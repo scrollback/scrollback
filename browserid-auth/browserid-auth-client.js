@@ -1,45 +1,30 @@
-/* global libsb, navigator */
+/* jshint browser: true */
 
-//(function(){
-//	$(document).on("click", ".button.persona", function() {
-//		navigator.id.watch({
-//			onlogin: function(assertion){
-//				var action = {};
-//				action.auth = {
-//					browserid: assertion
-//				};
-//				libsb.emit("init-up", action, function(err, data) {});
-//			},
-//			onlogout: function() {
-//				// will get there soon enough.
-//			}
-//		});
-//		navigator.id.request();
-//	});
-//})();
+module.exports = function(core) {
+	core.on('auth', function(auth, next) {
+		auth.buttons.persona = {
+			text: "Email",
+			prio: 200,
+			action: function() {
+				navigator.id.watch({
+					onlogin: function(assertion) {
+						var action = {};
 
-libsb.on('auth', function(auth, next) {
-	auth.buttons.persona = {
-		text: "Email",
-		prio: 200,
-		action: function() {
-			navigator.id.watch({
-				onlogin: function(assertion) {
-					var action = {};
+						action.auth = {
+							browserid: assertion
+						};
 
-					action.auth = {
-						browserid: assertion
-					};
+						core.emit("init-up", action, function() {});
+					},
+					onlogout: function() {
+						// will get there soon enough.
+					}
+				});
 
-					libsb.emit("init-up", action, function() {});
-				},
-				onlogout: function() {
-					// will get there soon enough.
-				}
-			});
-			navigator.id.request();
-		}
-	};
+				navigator.id.request();
+			}
+		};
 
-	next();
-}, 500);
+		next();
+	}, 500);
+};

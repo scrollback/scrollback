@@ -19,17 +19,17 @@
     require("../bower_components/velocity/velocity.min.js");
 
 	// UI widgets
-	require('../bower_components/lace/src/js/jquery.alertbar.js');
-	require('../bower_components/lace/src/js/jquery.modal.js');
-	require('../bower_components/lace/src/js/jquery.multientry.js');
-	require('../bower_components/lace/src/js/jquery.popover.js');
-	require('../bower_components/lace/src/js/jquery.progressbar.js');
+	require("../bower_components/lace/src/js/jquery.alertbar.js");
+	require("../bower_components/lace/src/js/jquery.modal.js");
+	require("../bower_components/lace/src/js/jquery.multientry.js");
+	require("../bower_components/lace/src/js/jquery.popover.js");
+	require("../bower_components/lace/src/js/jquery.progressbar.js");
 
     // jQuery plugins
-	require('../lib/jquery.setCursorEnd.js');
-	require('../lib/jquery.isOnScreen.js');
-	require('../lib/jquery.scrollToBottom.js');
-	require('../lib/jquery.validInput.js');
+	require("../lib/jquery.setCursorEnd.js");
+	require("../lib/jquery.isOnScreen.js");
+	require("../lib/jquery.scrollToBottom.js");
+	require("../lib/jquery.validInput.js");
 
     // Core
     require("./store/view-manager.js")(core, config, store);
@@ -48,11 +48,18 @@
     require("./components/sidebar.jsx")(core, config, store);
     require("./components/thread-feed.jsx")(core, config, store);
 
+	// User menus provider.
+	require("../http/logout-client.js")(core, config, store);
+	require("../facebook/facebook-client.js")(core, config, store);
+	require("../google/google-client.js")(core, config, store);
+	require("../github/github-client.js")(core, config, store);
+	require("../browserid-auth/browserid-auth-client.js")(core, config, store);
+
     // Miscellaneous
-	require('./misc/load-indicator.js')(core, config, store);
-	require('./misc/appcache.js')(core, config, store);
-	require('./misc/google-analytics.js')(core, config, store);
-	require('./misc/workarounds.js')(core, config, store);
+	require("./misc/load-indicator.js")(core, config, store);
+	require("./misc/appcache.js")(core, config, store);
+	require("./misc/google-analytics.js")(core, config, store);
+	require("./misc/workarounds.js")(core, config, store);
 
     // Send the initial setstate event
     req = new XMLHttpRequest();

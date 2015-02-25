@@ -2,6 +2,8 @@
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		appUtils = require("../../lib/appUtils.js"),
+		showMenu = require("../helpers/show-menu.js"),
 		AppbarPrimary,
 		appbarprimaryEl = document.getElementById("js-appbar-primary");
 
@@ -25,13 +27,24 @@ module.exports = function(core, config, store) {
 			}
 		},
 
+		showUserMenu: function(e) {
+			core.emit("user-menu", {
+				origin: e.target,
+				buttons: {},
+				items: {},
+				title: appUtils.isGuest(store.get("user")) ? "Sign in to Scrollback with" : null
+			}, function(err, menu) {
+				showMenu("user-menu", menu);
+			});
+		},
+
 		render: function() {
 			return (
 		        <div key="appbar-primary">
 		            <a data-mode="room chat" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.toggleSidebarLeft}></a>
 		            <img data-mode="home" className="appbar-avatar" alt={this.props.user.id} src={this.props.user.picture} onClick={this.toggleSidebarLeft} />
 		            <h1 className="appbar-title appbar-title-primary js-appbar-title">{this.props.title}</h1>
-		            <a className="appbar-icon appbar-icon-more"></a>
+		            <a className="appbar-icon appbar-icon-more" onClick={this.showUserMenu}></a>
 		            <a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
 		            <a data-role="user follower" data-mode="room chat" className="appbar-icon appbar-icon-follow {this.props.following}" onClick={this.toggleFollowRoom}></a>
 		        </div>

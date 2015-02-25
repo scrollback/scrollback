@@ -3,7 +3,7 @@
 
 var formField = require("../lib/formField.js");
 
-libsb.on('config-show', function(tabs, next) {
+libsb.on('conf-show', function(tabs, next) {
 	var results = tabs.room;
 
 	if (!results.params.threader) {
@@ -24,7 +24,7 @@ libsb.on('config-show', function(tabs, next) {
 	next();
 }, 500);
 
-libsb.on('config-save', function(room, next) {
+libsb.on('conf-save', function(room, next) {
 	if (!room.params.threader) room.params.threader = {};
 	room.params.threader.enabled = $('#threader-allow-threading').is(':checked');
 	next();
