@@ -78,7 +78,7 @@ module.exports = function(c, conf, s) {
 			});
 		});		
 		
-		it("setting arryas in app", function(done) {
+		it("setting arrays in app", function(done) {
 			core.emit("setState", {
 				app: {
 					CTAS:["signin", "logs"]
@@ -91,7 +91,7 @@ module.exports = function(c, conf, s) {
 			});
 		});
 		
-		it("changing arryas in app", function(done) {
+		it("changing arrays in app", function(done) {
 			core.emit("setState", {
 				app: {
 					CTAS:["signup", "logs"]
@@ -161,7 +161,7 @@ module.exports = function(c, conf, s) {
 				done();
 			});
 		});
-		it("emitting setState with relations.", function(done) {
+		it("emitting setState with relations to merge with old relation.", function(done) {
 			core.emit("setState", {
 				entities: {
 					scrollback_harish: {
@@ -172,9 +172,64 @@ module.exports = function(c, conf, s) {
 					}
 				}
 			}, function() {
-				assert.equal(store.getRoom("scrollback").id, "scrollback", "Navigation didnot happen");
-				assert.equal(store.getRoom("scrollbackteam").id, "scrollbackteam", "Navigation didnot happen");
-				assert.equal(store.getUser("harish").id, "harish", "Navigation didnot happen");
+				var results = {};
+				store.getRelatedRooms("harish").forEach(function(e) {
+					results[e.id] = e;
+				});
+				assert.equal(results.scrollback.id, "scrollback", "Navigation didnot happen");
+				assert.equal(results.scrollbackteam.id, "scrollbackteam", "Navigation didnot happen");
+				assert.equal(results.scrollback.status, "offline", "Navigation didnot happen");
+				assert.equal(results.scrollbackteam.status, "offline", "Navigation didnot happen");
+				assert.equal(results.scrollback.role, "owner", "Navigation didnot happen");
+				assert.equal(results.scrollbackteam.role, "follower", "Navigation didnot happen");
+				done();
+			});
+		});
+		
+		it("emitting setState with relations update.", function(done) {
+			core.emit("setState", {
+				entities: {
+					scrollbackteam_harish: {
+						status:"offline",
+						role:"banned"
+					}
+				}
+			}, function() {
+				var results = {};
+				store.getRelatedRooms("harish").forEach(function(e) {
+					results[e.id] = e;
+				});
+				assert.equal(results.scrollback.id, "scrollback", "Navigation didnot happen");
+				assert.equal(results.scrollbackteam.id, "scrollbackteam", "Navigation didnot happen");
+				assert.equal(results.scrollback.status, "offline", "Navigation didnot happen");
+				assert.equal(results.scrollbackteam.status, "offline", "Navigation didnot happen");
+				assert.equal(results.scrollback.role, "owner", "Navigation didnot happen");
+				assert.equal(results.scrollbackteam.role, "banned", "Navigation didnot happen");
+				done();
+			});
+		});
+		
+		
+		it("emitting setState with relations update.", function(done) {
+			core.emit("setState", {
+				entities: {
+					scrollbackteam_harish: {
+						status:"offline",
+						role:"banned"
+					}
+				}
+			}, function() {
+				var results = {};
+				store.getRelatedRooms("harish").forEach(function(e) {
+					results[e.id] = e;
+				});
+				
+				assert.equal(results.scrollback.id, "scrollback", "Navigation didnot happen");
+				assert.equal(results.scrollbackteam.id, "scrollbackteam", "Navigation didnot happen");
+				assert.equal(results.scrollback.status, "offline", "Navigation didnot happen");
+				assert.equal(results.scrollbackteam.status, "offline", "Navigation didnot happen");
+				assert.equal(results.scrollback.role, "owner", "Navigation didnot happen");
+				assert.equal(results.scrollbackteam.role, "banned", "Navigation didnot happen");
 				done();
 			});
 		});

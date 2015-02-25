@@ -80,13 +80,21 @@ function getProp(block) {
 }
 
 function getRelatedUsers(id, filter) {
-	var user;
+	var roomId, users, self = this;
 	if (typeof id == "string") {
-		user = id;
+		roomId = id;
 	} else if (typeof id === "object") {
-		user = this.get("user", "id");
+		roomId = this.getNav("room");
 		filter = id;
 	}
+	
+	users = this.get("indexes", "roomUsers", roomId);
+	users = users.map(function(relation) {
+		var userObj = self.getUser(relation.user);
+		return objUtils.extend(userObj, relation);
+	});
+	
+	return users;
 }
 
 function getFeaturedRooms() {
@@ -107,21 +115,26 @@ function getRecommendedRooms() {
 }
 
 function getRelatedRooms(id, filter) {
-	var room;
+	var user, rooms, self = this;
 	if (typeof id == "string") {
 		if (id === "featured") {
 			return getFeaturedRooms();
 		} else if (id === "recommended") {
 			return getRecommendedRooms();
 		} else {
-			room = id;
+			user = id;
 		}
 	} else if (typeof id === "object") {
-		room = this.getNav("room");
+		user = this.getNav("user").id;
 		filter = id;
 	}
-
-	//	returnRelatedRooms(room, filter);
+	rooms = this.get("indexes", "userRooms", user);
+	rooms = rooms.map(function(roomRelation) {
+		var roomObj = self.getRoom(roomRelation.room);
+		return objUtils.extend(roomObj, roomRelation);
+	});
+	
+	return rooms;
 }
 
 
