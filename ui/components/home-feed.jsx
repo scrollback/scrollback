@@ -31,7 +31,7 @@ module.exports = function(core, config, store) {
 	function getSections(type) {
 		var sections = {}, arr = [];
 
-		store.get("indexes", "userRooms", store.get("user")).forEach(function(rel) {
+		store.getRelatedRooms().forEach(function(rel) {
 			sections[rel.role] = sections[rel.role] || {
 				key: "home-feed-" + rel.role,
 				header: titles[rel.role],

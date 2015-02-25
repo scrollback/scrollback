@@ -24,7 +24,7 @@ module.exports = function(core, config, store) {
 
 		if (("indexes" in changes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(store.get("nav", "mode"))) {
 			room = store.getRoom();
-			people = store.get("indexes", "roomUsers", store.get("nav", "room"));
+			people = store.getRelatedUsers();
 
 			for (var i = 0, l = people.length; i < l; i++) {
 				if (sections[people[i].status]) {
