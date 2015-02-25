@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $ */
 
-(function() {
+$(function() {
 	// Hack to get event bubbling work properly in iOS safari
 	if (navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
 		navigator.userAgent.match(/AppleWebKit/) &&
@@ -11,4 +11,4 @@
 			cursor: "pointer"
 		});
 	}
-}());
+});

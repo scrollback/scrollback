@@ -23,7 +23,7 @@ module.exports = function(core, config, store) {
 
 		classList = classList.replace(/\bcolor-\S+/g, "").replace(/^\s+|\s+$/g, "");
 
-		if ("nav" in changes && "mode" in changes.nav) {
+		if (changes.nav && changes.nav.mode) {
 			switch (store.getNav().mode) {
 			case "room":
 				$title.text(store.getNav().room);
@@ -39,7 +39,7 @@ module.exports = function(core, config, store) {
 			}
 		}
 
-		if ("indexes" in changes && ("roomUsers" in changes.indexes || "userRooms" in changes.index)) {
+		if (changes.indexes && ("roomUsers" in changes.indexes || "userRooms" in changes.index)) {
 			relation = store.getRelation();
 
 			classList = classList.replace(/\brole-\S+/g, "");

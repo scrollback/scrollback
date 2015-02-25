@@ -43,7 +43,7 @@ module.exports = function(core, config, state) {
 	core.on("statechange", function(changes, next) {
 		var notify;
 
-		if ("nav" in changes && "mode" in changes.nav && state.getNav().mode !== "pref") {
+		if (changes.nav && changes.nav.mode && state.getNav().mode !== "pref") {
 			notify = desktopnotify.supported();
 
 			if (notify && notify.permission !== "granted") {

@@ -55,7 +55,7 @@ module.exports = function(core, config, store) {
 	core.on("statechange", function(changes, next) {
 		var user, nav, relation, title, following;
 
-		if ("nav" in changes && ("room" in changes.nav || "mode" in changes.nav) ||
+		if (changes.nav && (changes.nav.room || changes.nav.mode) ||
 		    "user" in changes || ("entities" in changes && store.get("user") in changes.entities)) {
 
 			user = store.getUser();

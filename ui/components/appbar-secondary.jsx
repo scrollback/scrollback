@@ -24,7 +24,7 @@ module.exports = function(core, config, store) {
 	core.on("statechange", function(changes, next) {
 		var title;
 
-		if (("nav" in changes && ("thread" in changes.nav || "mode" in changes.nav)) && store.getNav().mode === "chat") {
+		if ((changes.nav && (changes.nav.thread || changes.nav.mode)) && store.getNav().mode === "chat") {
 			title = store.getNav().thread; // TODO: use thread title instead of ID
 
 			React.render(<AppbarSecondary title={title} />, appbarsecondaryEl);

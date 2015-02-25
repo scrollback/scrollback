@@ -40,7 +40,7 @@
     // Components
     require("./components/appbar-primary.jsx")(core, config, store);
     require("./components/appbar-secondary.jsx")(core, config, store);
-    require("./components/chat.jsx")(core, config, store);
+    require("./components/chat-message-list.jsx")(core, config, store);
     require("./components/compose.jsx")(core, config, store);
     require("./components/home-feed.jsx")(core, config, store);
     require("./components/people-list.jsx")(core, config, store);

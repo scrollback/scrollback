@@ -56,7 +56,7 @@ module.exports = function(core, config, store) {
 	}
 
 	core.on("statechange", function(changes, next) {
-		if ("indexes" in changes && "userRooms" in changes.indexes) {
+		if (changes.indexes && "userRooms" in changes.indexes) {
 			switch (store.getNav().mode) {
 			case "home":
 				React.render(<HomeFeed sections={getSections("card")} />, homefeedEl);

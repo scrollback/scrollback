@@ -22,7 +22,7 @@ module.exports = function(core, config, store) {
 			},
 			arr = [];
 
-		if (("indexes" in changes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(store.get("nav", "mode"))) {
+		if ((changes.indexes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(store.get("nav", "mode"))) {
 			room = store.getRoom();
 			people = store.getRelatedUsers();
 

@@ -53,7 +53,7 @@ module.exports = function(core, config, store) {
 	}, 1000);
 
 	core.on("statechange", function(changes, next) {
-		if (changes.nav && "room" in changes.nav) {
+		if (changes.nav && changes.nav.room) {
 			updateNotifier(store.getNav().room, "remove");
 		}
 

@@ -42,7 +42,7 @@ module.exports = function(core, config, store) {
 	};
 
 	core.on("statechange", function(changes, next) {
-		if ((changes.nav && "room" in changes.nav) || changes.entities && store.getNav().room in changes.entities) {
+		if ((changes.nav && changes.nav.room) || changes.entities && store.getNav().room in changes.entities) {
 			customStyle.applyCss(store.getRoom());
 		}
 

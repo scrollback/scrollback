@@ -1,29 +1,45 @@
 /* jshint browser: true */
+/* global $ */
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		browserSupports = require("../misc/browser-supports.js"),
+		browserSupports = require("../../lib/browser-supports.js"),
 		ChatItem = require("./chat-item.jsx")(core, config, store),
 		ChatMessageList,
-		chatmessagelistEl = document.getElementById("js-chat-area-input");
+		chatmessagelistEl = document.getElementById("js-chat-area-messages");
+
+	// Enhance chat area layout in modern browsers
+	if (browserSupports.CSS("display", "flex")) {
+		$("#js-chat-area").addClass("chat-area-enhanced");
+	}
 
 	ChatMessageList = React.createClass({
 		render: function() {
+			var chatitems = [];
+
+			this.props.messages.forEach(function(text) {
+				if (typeof text === "object") {
+					chatitems.push(<ChatItem text={text} key={"chat-message-list-" + text.id} />);
+				}
+			});
+
+
 			return (
-		        <div key="chat-area-input" className="chat-area-input-inner">
-		        	<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: this.state.userInput}}
-		        		 onPaste={this.onPaste} onBlur={this.onBlur} onKeyDown={this.onKeyDown} onInput={this.setPlaceHolder}
-		        		 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
-		        	</div>
-		        	<div ref="composePlaceholder" className="chat-area-input-placeholder"></div>
-		            <div className="chat-area-input-send" onClick={this.sendMessage}></div>
+		        <div className="chat-area-messages-list">
+		        	{chatitems}
 		        </div>
 	        );
 		}
 	});
 
 	core.on("statechange", function(changes, next) {
-		React.render(<ChatMessageList />, chatmessagelistEl);
+		var messages, nav = store.getNav();
+
+		if (("texts" in changes || (changes.nav && (changes.nav.room || changes.nav.thread || changes.nav.mode))) && nav.mode === "chat") {
+			messages = store.getTexts(nav.room, nav.thread, null, 100) || [];
+
+			React.render(<ChatMessageList messages={messages} />, chatmessagelistEl);
+		}
 
 		next();
 	}, 500);
