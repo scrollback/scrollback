@@ -10,8 +10,8 @@ require("blanket")({
 		return false;
 	}
 });
-//require("../irc/irc-test.js");
-//require("../authorizer/tests/authorizer-test.js");
+require("../irc/irc-test.js");
+require("../authorizer/tests/authorizer-test.js");
 require("../localStorage/ArrayCache-test.js");
 require("../localStorage/userCache-test.js");
 require("../threader/threader-test.js");
