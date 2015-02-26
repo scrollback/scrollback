@@ -1,6 +1,6 @@
 /* jshint browser: true */
 
-var validate = require("../lib/validate.js");
+var validate = require("../../lib/validate.js");
 
 module.exports = function(core) {
 	function checkExisting(name, callback) {

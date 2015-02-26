@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $ */
 
-var formField = require("../ui/helpers/form-field.js");
+var formField = require("../ui/utils/form-field.js");
 
 module.exports = function(core, config, store) {
 	core.on('conf-show', function(tabs, next) {
@@ -76,12 +76,11 @@ module.exports = function(core, config, store) {
 		tabs.irc = {
 			text: "IRC integration",
 			html: $div,
-			prio: 800,
 			notify: notify
 		};
 
 		next();
-	}, 500);
+	}, 800);
 
 	core.on('conf-save', function(room, next) {
 		var server = $('#irc-server').val(),

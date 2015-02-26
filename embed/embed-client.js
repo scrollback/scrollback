@@ -1,5 +1,6 @@
 /* jshint browser: true */
 /* global $, libsb*/
+
 var Color = require("../lib/color.js"),
     generate = require('../lib/generate.js'),
 	urlUtils = require("../lib/url-utils.js"),
@@ -91,39 +92,48 @@ function classesOnLoad(embed) {
 }
 
 function postNavigation(state, next) {
-	var activity, stateClone = $.extend(true, {}, state);
-	if (stateClone.source == "embed" && stateClone.hasOwnProperty("minimize")) {
-		activity = {
-			type: "activity",
-			minimize: false
-		};
-		activity.minimize = state.minimize;
-		if (stateClone.minimize) {
-			$("body").addClass("minimized");
+	var stateClone;
+
+	if (state.source === "embed" && "minimize" in state) {
+		if (state.minimize) {
+			$("body").addClass("toast-minimized");
 		} else {
-			$("body").removeClass("minimized");
+			$("body").removeClass("toast-minimized");
 		}
-		parentWindow.postMessage(JSON.stringify(activity), parentHost);
-	}else if(parentWindow){
-		if(stateClone.room && stateClone.room.params) delete stateClone.room.params;
-		parentWindow.postMessage(JSON.stringify({type:"navigate",state:stateClone}), parentHost);
+
+		parentWindow.postMessage(JSON.stringify({
+			type: "activity",
+			minimize: state.minimize
+		}), parentHost);
+
+	} else if (parentWindow) {
+		stateClone = $.extend(true, {}, state);
+
+		if (stateClone.room && stateClone.room.params) {
+			delete stateClone.room.params;
+		}
+
+		parentWindow.postMessage(JSON.stringify({
+			type: "navigate",
+			state: stateClone
+		}), parentHost);
 	}
 
 	next();
 }
 
-
 function onMessage(e) {
 	var data = e.data, action, actionUp = {};
 	data = parseResponse(data);
 	action = data.data;
+
 	switch (data.type) {
 	case "domain-response":
 		verifyDomainResponse(data);
 		break;
 	case "navigate":
 		data.data.source = "parent";
-		libsb.emit("navigate", action, function (err, state) {
+		libsb.emit("navigate", action, function(err, state) {
 			var obj;
 			if (err) {
 				err.type = "error";
@@ -141,18 +151,20 @@ function onMessage(e) {
 		});
 		break;
 	case "following":
-			if(action.follow) {
+			if (action.follow) {
 				libsb.emit("join-up", {to: action.room, role: "follower"});
-			}else{
+			} else {
 				libsb.emit("part-up", {to: action.room});
 			}
 		break;
 	case "signin":
 			actionUp.auth = {};
 			actionUp.auth.jws = action.jws;
-			if(action.nick) {
+
+			if (action.nick) {
 				action.auth.nick = action.nick; // TODO: can be used to generated nick suggestions.
 			}
+
 			libsb.emit("init-up", actionUp);
 		break;
 	}
@@ -254,12 +266,10 @@ module.exports = function(libsb) {
 		});
 	});
 
-
-
     var LS = window.localStorage || {};
     try {
         domainSessions = JSON.parse(LS.DomainSessions);
-    } catch(e) {
+    } catch (e) {
         domainSessions = {};
     }
 
@@ -302,11 +312,11 @@ module.exports = function(libsb) {
 			if (state.source == "boot") {
 				bootingDone = true;
 				state.embed = embed;
+
 				if ((navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
 					 navigator.userAgent.match(/AppleWebKit/) &&
 					 navigator.userAgent.match(/Safari/)) &&
-					embed &&
-					embed.form === "toast"
+					embed && embed.form === "toast"
 				   ) {
 					$(document).on("click", function(e) {
 						if (!$(e.target).closest(".title-bar, .minimize-bar").length) {
@@ -343,8 +353,8 @@ module.exports = function(libsb) {
 
 	}, 996);
 	libsb.on("navigate", function(state, next) {
-		if(isEmbed && state.source == "boot" && state.mode == "noroom"){
-			if(createRoom){
+		if (isEmbed && state.source == "boot" && state.mode == "noroom") {
+			if (createRoom) {
 				state.dialog = "createroom";
 			}else {
 				state.dialog = "noroom";
@@ -359,14 +369,14 @@ module.exports = function(libsb) {
 				path: path,
 				verified: verified
 			};
-            if(jws && !init.auth) {
+            if (jws && !init.auth) {
                 init.auth = {jws: jws};
             }
 
-            if(domainSessions[domain]){
+            if (domainSessions[domain]) {
                 init.session = domainSessions[domain];
                 libsb.session = init.session = domainSessions[domain];
-            } else if(jws) {
+            } else if (jws) {
                 domainSessions[domain] = "web://" + generate.uid();
                 window.localStorage.DomainSessions = JSON.stringify(domainSessions);
                 libsb.session = init.session = domainSessions[domain];
@@ -390,10 +400,11 @@ module.exports = function(libsb) {
 
 	libsb.on("init-dn", function(init, next) {
 		var membership = [];
-		if(parentWindow){
-			if(!/^guest-/.test(init.user.id)) {
+
+		if (parentWindow) {
+			if (!/^guest-/.test(init.user.id)) {
 				init.memberOf.forEach(function(e) {
-					if(!e.guides || !e.guides.allowedDomains || (e.guides.allowedDomains && e.guides.allowedDomains.indexOf(domain))) {
+					if (!e.guides || !e.guides.allowedDomains || (e.guides.allowedDomains && e.guides.allowedDomains.indexOf(domain))) {
 						membership.push(e.id);
 					}
 				});

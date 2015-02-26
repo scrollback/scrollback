@@ -1,9 +1,9 @@
 /* jshint browser: true */
 /* global $ */
 
-var renderSettings = require("./render-settings.js");
-
 module.exports = function(core, config, store) {
+	var renderSettings = require("../utils/render-settings.js")(core, config, store);
+
 	$(document).on("click", ".js-conf-save", function() {
 		var self = $(this),
 			roomName = store.getNav().room,
@@ -47,7 +47,7 @@ module.exports = function(core, config, store) {
 		});
 	});
 
-	core.on("conf-dialog", function(state, next) {
+	core.on("conf-dialog", function(dialog, next) {
 		var rel = store.getRelation();
 
 		if (rel && rel.role === "owner") {
@@ -55,11 +55,11 @@ module.exports = function(core, config, store) {
 			return;
 		}
 
-		core.emit("conf-show", { room: store.getRoom() }, function(err, tabs) {
-			renderSettings(tabs);
-		});
+		core.emit("conf-show", { room: store.getRoom() }, function(err, items) {
+			dialog.element = renderSettings(items);
 
-		next();
+			next();
+		});
 	}, 500);
 
 	core.on("room-menu", function(menu, next) {

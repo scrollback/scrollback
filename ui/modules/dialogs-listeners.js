@@ -2,10 +2,10 @@
 /* global $ */
 
 module.exports = function(core, config, store) {
-	var appUtils = require("../lib/app-utils.js"),
-		validateEntity = require("./validate-entity.js")(core, config, store),
-		createEntity = require("./create-entity.js")(core, config, store),
-		showDialog = require("./show-dialog.js")(core, config, store),
+	var appUtils = require("../../lib/app-utils.js"),
+		validateEntity = require("../utils/validate-entity.js")(core, config, store),
+		createEntity = require("../utils/create-entity.js")(core, config, store),
+		showDialog = require("../utils/show-dialog.js")(core, config, store),
 		userChangeCallback;
 
 	function createAndValidate(type, entry, button, callback) {
@@ -55,14 +55,7 @@ module.exports = function(core, config, store) {
 				return next();
 			}
 
-			showDialog(dialog, {
-				title: null, // Modal title
-				description: null, // A description to be displayed under title
-				buttons: {}, // List of objects, e.g. - google: { text: "Google+", action: function() {} }
-				content: [], // Additional content to be displayed under buttons
-				action: null, // Action button, e.g. - { text: "Create account", action: function() {} }
-				dismiss: true // Dialog is dismissable or not
-			});
+			showDialog(dialog);
 		}
 
 		next();

@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $ */
 
-var formField = require("../ui/helpers/form-field.js");
+var formField = require("../ui/utils/form-field.js");
 
 module.exports = function(core, config, store) {
 	core.on("conf-show", function(tabs, next) {
@@ -31,12 +31,11 @@ module.exports = function(core, config, store) {
 
 		tabs.spam = {
 			text: "Spam control",
-			html: $div,
-			prio: 600
+			html: $div
 		};
 
 		next();
-	}, 500);
+	}, 600);
 
 	core.on("conf-save", function(room, next) {
 		room.params.antiAbuse = {

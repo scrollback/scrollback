@@ -1,31 +1,35 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $ */
 
-var formField = require("../ui/helpers/form-field.js");
+var formField = require("../ui/utils/form-field.js");
 
-libsb.on('conf-show', function(tabs, next) {
-	var results = tabs.room;
+module.exports = function(core) {
+	core.on("conf-show", function(tabs, next) {
+		var results = tabs.room;
 
-	if (!results.params.threader) {
-		results.params.threader = {
-			enabled: true
+		if (!results.params.threader) {
+			results.params.threader = {
+				enabled: true
+			};
+		}
+
+		var $div = $("<div>").append(formField("Automatically group text into discussions", "toggle",
+											   "threader-allow-threading", results.params.threader.enabled));
+
+		tabs.threader = {
+			text: "Discussions",
+			html: $div
 		};
-	}
 
-	var $div = $('<div>').append(formField("Automatically group text into discussions", "toggle",
-										   "threader-allow-threading", results.params.threader.enabled));
+		next();
+	}, 400);
 
-	tabs.threader = {
-		text: "Discussions",
-		html: $div,
-		prio: 400
-	};
+	core.on("conf-save", function(room, next) {
+		if (!room.params.threader) {
+			room.params.threader = {};
+		}
 
-	next();
-}, 500);
-
-libsb.on('conf-save', function(room, next) {
-	if (!room.params.threader) room.params.threader = {};
-	room.params.threader.enabled = $('#threader-allow-threading').is(':checked');
-	next();
-}, 500);
+		room.params.threader.enabled = $("#threader-allow-threading").is(":checked");
+		next();
+	}, 500);
+};

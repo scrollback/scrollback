@@ -1,4 +1,4 @@
-/* jshint browser:true */
+/* jshint browser: true */
 /* global facebookConnectPlugin, $ */
 
 module.exports = function(core) {
