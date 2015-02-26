@@ -4,7 +4,7 @@
 
 var objUtils = require("../../lib/obj-utils.js"),
 	_ = require("underscore.js"),
-	current = {
+	state = {
 		nav: {},
 		context: {},
 		app: {},
@@ -142,38 +142,37 @@ module.exports = function(core) {
 		var roomId, roomThreadId;
 
 		// merge store and changes
-		extendObj(current.nav, changes.nav);
-		extendObj(current.context, changes.context);
-		extendObj(current.app, changes.app);
-		extendObj(current.entities, changes.entities); // Todo: replace with shallow extend
-		
+		extendObj(state.nav, changes.nav);
+		extendObj(state.context, changes.context);
+		extendObj(state.app, changes.app);
+		extendObj(state.entities, changes.entities); // Todo: replace with shallow extend
 
 		if (changes.user) {
-			current.user = changes.user;
+			state.user = changes.user;
 		}
 
 		if (changes.texts) {
 			for (roomThreadId in changes.texts) {
-				if (current.texts[roomThreadId]) {
-					mergeRanges(current.texts[roomThreadId], changes.texts[roomThreadId], "time");
+				if (state.texts[roomThreadId]) {
+					mergeRanges(state.texts[roomThreadId], changes.texts[roomThreadId], "time");
 				} else {
-					current.texts[roomThreadId] = changes.texts[roomThreadId];
+					state.texts[roomThreadId] = changes.texts[roomThreadId];
 				}
 			}
 		}
 
 		if (changes.threads) {
 			for (roomId in changes.threads) {
-				if (current.threads[roomId]) {
-					mergeRanges(current.threads[roomId], changes.threads[roomId], "startTime");
+				if (state.threads[roomId]) {
+					mergeRanges(state.threads[roomId], changes.threads[roomId], "startTime");
 				} else {
-					current.threads[roomId] = changes.threads[roomId];
+					state.threads[roomId] = changes.threads[roomId];
 				}
 			}
 		}
 
 		buildIndex(changes);
-		buildIndex(current); // TODO: replace this call with some way to merge the indexes from changes into store; save CPU!
+		buildIndex(state); // TODO: replace this call with some way to merge the indexes from changes into store; save CPU!
 
 		core.emit("statechange", changes);
 
@@ -184,15 +183,15 @@ module.exports = function(core) {
 		get: function() {
 			var args = Array.prototype.slice.call(arguments);
 
-			args.unshift(current);
+			args.unshift(state);
 
 			return objUtils.get.apply(null, args);
 		},
 		getThreads: function(roomId, timestamp, interval) {
-			return getItems(current.threads[roomId], "startTime", timestamp, interval);
+			return getItems(state.threads[roomId], "startTime", timestamp, interval);
 		},
 		getTexts: function(roomId, threadId, timestamp, interval) {
-			return getItems(current.texts[roomId + (threadId ? "_" + threadId : "")], "time", timestamp, interval);
+			return getItems(state.texts[roomId + (threadId ? "_" + threadId : "")], "time", timestamp, interval);
 		},
 		getEntity: function(entity) {
 			if (typeof entity !== "string") {
@@ -233,17 +232,29 @@ module.exports = function(core) {
 		},
 		getRelation: function(room, user) {
 			if (typeof room === "undefined") {
-				room = this.get("entities", this.get("nav", "room"));
+				room = this.get("nav", "room");
 			}
 
 			if (typeof user === "undefined") {
-				user = this.get("entities", this.get("user"));
+				user = this.get("user");
 			}
 
 			return this.get("entities", room + "_" + user);
 		},
-		getRelatedRooms: function() {},
-		getRelatedUsers: function() {},
+		getRelatedRooms: function(user) {
+			if (typeof user === "undefined") {
+				user = this.get("user");
+			}
+
+			return this.get("indexes", "userRooms", user);
+		},
+		getRelatedUsers: function(room) {
+			if (typeof user === "undefined") {
+				room = this.get("nav", "room");
+			}
+
+			return this.get("indexes", "roomUsers", room);
+		},
 		getNav: function() {
 			return this.get("nav");
 		},

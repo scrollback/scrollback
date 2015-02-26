@@ -1,6 +1,6 @@
 var log = require("../lib/logger.js");
 module.exports = function(core, config) {
-	log.d("Censor app config: ",config);
+	log.d("Censor app config: ", config);
 	core.on("getTexts", function(query, next) {
 		if (/^internal/.test(query.session)) return next();
 
@@ -8,7 +8,7 @@ module.exports = function(core, config) {
 		if (query.user.role === 'su') return next();
 
 		query.results.forEach(function(e) {
-			if(e && e.session) delete e.session;
+			if (e && e.session) delete e.session;
 		});
 		next();
 	}, "watcher");
@@ -39,10 +39,19 @@ module.exports = function(core, config) {
 				ref: query.ref,
 				session: "internal-censor"
 			}, function(err, q) {
-				if (q.results && q.results.length && q.results[0].role == "owner") {
-					return next();
+				var roomMap = {};
+
+				if (q.results && q.results.length) {
+					q.results.forEach(function(e) {
+						if (e && e.id) roomMap[e.id] = e;
+					});
 				}
-				query.results = query.results.map(censor);
+
+				query.results = query.results.map(function(r) {
+					if (!roomMap[r.id] || roomMap[r.id].role != "owner") return censor(r);
+					else return r;
+				});
+
 				next();
 			});
 		} else {

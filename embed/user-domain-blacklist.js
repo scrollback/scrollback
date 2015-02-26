@@ -1,5 +1,5 @@
 /* global libsb, $ */
-var formField = require("../lib/formField.js");
+var formField = require("../ui/helpers/form-field.js");
 
 libsb.on("pref-show", function(conf, next) {
 	var div = $("<div>");

@@ -1,7 +1,7 @@
 /* jslint browser: true, indent: 4, regexp: true */
-/* global $, libsb */
+/* global $ */
 
-$(function() {
+module.exports = function(core, config, store) {
 	var msgarr = [],
 		loopMsg,
 		checkMsg = function() {
@@ -36,8 +36,8 @@ $(function() {
 			}
 		};
 
-	libsb.on("text-dn", function(text, next) {
-		if (window.currentState.minimize && text.from && text.text && text.to === window.currentState.roomName) {
+	core.on("text-dn", function(text, next) {
+		if (window.currentState.minimize && text.from && text.text && text.to === store.getNav().room) {
 			msgarr.push(text.from.replace(/^guest-/, "") + ": " + text.text);
 
 			if (msgarr.length > 3) {
@@ -50,11 +50,11 @@ $(function() {
 		next();
 	}, 100);
 
-	libsb.on("navigate", function(state, next) {
+	core.on("navigate", function(state, next) {
 		if (state.old && state.minimize !== state.old.minimize) {
 			checkMsg();
 		}
 
 		next();
 	}, 100);
-});
+};

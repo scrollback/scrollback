@@ -1,21 +1,21 @@
 /* jshint browser: true */
 
+var getAvatar = require("../../lib/get-avatar.js");
+
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		ProfileCard,
-		profilecard = document.getElementById("js-profile-card");
+		profilecardEl = document.getElementById("js-profile-card");
 
 	ProfileCard = React.createClass({
 		render: function() {
-			var user = store.getUser();
-
 			return (
 			    <div key="profile-card" className="profile-card">
 		            <a className="profile-scrollback-logo"></a>
-		            <img className="profile-avatar js-user-avatar" alt="satya164" src={user.picture} />
+		            <img className="profile-avatar" alt="{this.props.user.id}" src={getAvatar(this.props.user.picture, 280)} />
 		            <div className="profile-details">
-		                <h3 className="profile-username js-user-nick">{user.id}</h3>
-		                <p className="profile-bio js-user-description">{user.description}</p>
+		                <h3 className="profile-username">{this.props.user.id}</h3>
+		                <p className="profile-bio">{this.props.user.description}</p>
 		            </div>
 		            <a className="profile-settings"></a>
 		        </div>
@@ -25,7 +25,7 @@ module.exports = function(core, config, store) {
 
 	core.on("statechange", function(changes, next) {
 		if ("user" in changes || ("entities" in changes && store.get("user") in changes.entities)) {
-			React.render(<ProfileCard />, profilecard);
+			React.render(<ProfileCard user={store.getUser()} />, profilecardEl);
 		}
 
 		next();

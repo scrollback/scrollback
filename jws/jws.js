@@ -1,6 +1,6 @@
-var jwt = require('jsonwebtoken'),			
+var jwt = require('jsonwebtoken'),
 	crypto = require('crypto'), core,
-	keys, utils = require('../lib/appUtils.js'), config;
+	keys, utils = require('../lib/app-utils.js'), config;
 
 
 module.exports = function (c, conf) {
@@ -39,7 +39,7 @@ function jwsHandler(action, callback) {
 	verify(action, function(isVerified, payload) {
 		if(!isVerified) return callback(new Error("AUTH_FAIL: INVALID_TOKEN"));
 		if(payload.iss != action.origin.domain) return callback("AUTH_FAIL:INVALID_ISS");
-		
+
 		core.emit("getUsers", {
 			identity: "mailto:"+payload.sub,
 			session: "internal-jws"
@@ -101,19 +101,19 @@ function jwsHandler(action, callback) {
 					callback(new Error("fail"));
 				}
 			}
-		});	
+		});
 	});
 }
 
 
 
 
-var verify = (function() {	
+var verify = (function() {
 	return function(action, callback) {
 		var availableKeys, i=0;
 		if(!action.origin || !action.origin.domain || !keys[action.origin.domain]) return callback(false, {});
 		availableKeys = keys[action.origin.domain];
-		
+
 		function testKey() {
 			if (i == availableKeys.length) return callback(false);
 			jwt.verify(action.auth.jws, availableKeys[i], function(err, decoded) {
@@ -124,7 +124,7 @@ var verify = (function() {
 				}
 			);
 		}
-		
+
 		if(availableKeys && availableKeys.length !== 0) {
 			testKey(i);
 		}

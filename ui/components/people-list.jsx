@@ -1,32 +1,40 @@
 /* jshint browser: true */
 
+var getAvatar = require("../../lib/get-avatar.js");
+
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		ListView = require("./list-view.jsx")(core, config, store),
 		PeopleList,
-		peoplelist = document.getElementById("js-people-list");
+		peoplelistEl = document.getElementById("js-people-list");
 
 	PeopleList = React.createClass({
 		render: function() {
-			var people, room, user, items,
-				sections = {
-					online: [],
-					offline: []
-				},
-				arr = [];
+			return (<ListView sections={this.props.sections} />);
+		}
+	});
 
+	core.on("statechange", function(changes, next) {
+		var people, room, user, items,
+			sections = {
+				online: [],
+				offline: []
+			},
+			arr = [];
+
+		if ((changes.indexes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(store.get("nav", "mode"))) {
 			room = store.getRoom();
-			people = store.get("indexes", "roomUsers", store.get("nav", "room"));
+			people = store.getRelatedUsers();
 
 			for (var i = 0, l = people.length; i < l; i++) {
 				if (sections[people[i].status]) {
 					user = store.get("entities", people[i].user);
 
 					sections[people[i].status].push({
-						key: "people-list-" + room + "-" + user.id,
+						key: "people-list-" + room.id + "-" + user.id,
 						elem: (
 						    <div className="people-list-item">
-						      	<img className="people-list-item-avatar" src={user.picture} />
+						      	<img className="people-list-item-avatar" src={getAvatar(user.picture, 48)} />
 						      	<span className="people-list-item-nick">{user.id}</span>
 						    </div>
 						)
@@ -46,13 +54,7 @@ module.exports = function(core, config, store) {
 				}
 			}
 
-			return (<ListView sections={arr} />);
-		}
-	});
-
-	core.on("statechange", function(changes, next) {
-		if (("indexes" in changes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(store.get("nav", "mode"))) {
-			React.render(<PeopleList />, peoplelist);
+			React.render(<PeopleList sections={arr} />, peoplelistEl);
 		}
 
 		next();

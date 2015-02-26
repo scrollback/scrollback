@@ -2,7 +2,7 @@
 
 var validateEntity = require("./validate-entity.js");
 
-module.exports = function(core, config, state) {
+module.exports = function(core, config, store) {
 	function createEntity(type, name, callback) {
 		if (typeof callback === "function") {
 			callback = function() {};
@@ -22,8 +22,8 @@ module.exports = function(core, config, state) {
 				}
 
 				if (res === "ok") {
-					room = state.getNav().room;
-					roomObj = state.getRoom(room);
+					room = store.getNav().room;
+					roomObj = store.getRoom(room);
 					newRoom = {
 						id: name,
 						description: "",
@@ -61,7 +61,7 @@ module.exports = function(core, config, state) {
 				}
 
 				if (res === "ok") {
-					userObj = state.getUser();
+					userObj = store.getUser();
 
 					if (!name || !userObj || !userObj.identities) {
 						return callback("error", errormessage);

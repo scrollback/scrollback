@@ -7,8 +7,20 @@ module.exports = function(core, config, store) {
 		ThreadCard = require("./thread-card.jsx")(core, config, store),
 		ThreadListItem = require("./thread-list-item.jsx")(core, config, store),
 		ThreadFeed, ThreadList,
-		threadfeed = document.getElementById("js-thread-feed"),
-		threadlist = document.getElementById("js-thread-list");
+		threadfeedEl = document.getElementById("js-thread-feed"),
+		threadlistEl = document.getElementById("js-thread-list");
+
+	ThreadFeed = React.createClass({
+		render: function() {
+			return (<GridView sections={this.props.sections} />);
+		}
+	});
+
+	ThreadList = React.createClass({
+		render: function() {
+			return (<ListView sections={this.props.sections} />);
+		}
+	});
 
 	function getItems(type) {
 		var roomId = store.getNav().room,
@@ -32,26 +44,14 @@ module.exports = function(core, config, store) {
 		}];
 	}
 
-	ThreadFeed = React.createClass({
-		render: function() {
-			return (<GridView sections={getItems("card")} />);
-		}
-	});
-
-	ThreadList = React.createClass({
-		render: function() {
-			return (<ListView sections={getItems("list")} />);
-		}
-	});
-
 	core.on("statechange", function(changes, next) {
-		if ("threads" in changes || ("nav" in changes && ("room" in changes.nav || "thread" in changes.nav || "mode" in changes.nav))) {
+		if ("threads" in changes || (changes.nav && (changes.nav.room || changes.nav.thread || changes.nav.mode))) {
 			switch (store.getNav().mode) {
 			case "room":
-				React.render(<ThreadFeed />, threadfeed);
+				React.render(<ThreadFeed sections={getItems("card")} />, threadfeedEl);
 				break;
 			case "chat":
-				React.render(<ThreadList />, threadlist);
+				React.render(<ThreadList sections={getItems("list")} />, threadlistEl);
 				break;
 			}
 		}

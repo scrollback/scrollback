@@ -2,9 +2,9 @@
 /* global $, libsb */
 
 // Room general settings
-var formField = require("../lib/formField.js");
+var formField = require("../ui/helpers/form-field.js");
 
-libsb.on('config-show', function(tabs, next) {
+libsb.on('conf-show', function(tabs, next) {
 	var $div = $('<div>').append(
 		formField("Description", "area", "description", tabs.room.description)
 	);
@@ -18,7 +18,7 @@ libsb.on('config-show', function(tabs, next) {
 	next();
 }, 500);
 
-libsb.on('config-save', function(room, next) {
+libsb.on('conf-save', function(room, next) {
 	var desc = $('#description').val();
 
 	room.description = desc;

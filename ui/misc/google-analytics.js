@@ -12,7 +12,7 @@ module.exports = function(core, config, store) {
 
 	// Track navigation events
 	core.on("statechange", function(changes, next) {
-		if (!("nav" in changes)) {
+		if (!(changes.nav)) {
 			return next();
 		}
 

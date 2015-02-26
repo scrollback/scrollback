@@ -1,142 +1,86 @@
 /* jshint browser: true */
-/* global $, libsb, currentState */
+/* global $ */
 
-var renderSettings = require("./render-settings.js"),
-	currentConfig,
-	oldState;
+var renderSettings = require("./render-settings.js");
 
-$(function() {
-	$(".configure-button").on("click", function() {
-		libsb.emit('navigate', {
-			mode: "conf",
-			tab: "general",
-			source: "configure-button",
-			roomName: window.currentState.roomName
-		});
-	});
-
-	$(".conf-save").on("click", function() {
-		var self = $(this);
-
-		if (currentState.mode === 'conf') {
-			self.addClass("working");
-			self.attr("disabled", true);
-
-			libsb.emit('config-save', {
-				id: window.currentState.roomName,
-				description: '',
+module.exports = function(core, config, store) {
+	$(document).on("click", ".js-conf-save", function() {
+		var self = $(this),
+			roomName = store.getNav().room,
+			roomObj = {
+				id: roomName,
+				description: "",
 				identities: [],
 				params: {},
 				guides: {}
-			}, function(err, room) {
-				var roomObj = {
-					to: currentState.roomName,
-					room: room
-				};
+			};
 
-				libsb.emit('room-up', roomObj, function(err, room) {
-					self.removeClass("working");
-					self.attr("disabled", false);
+		self.addClass("working");
 
-					if (err) {
-						// handle the error
-					} else {
-						for (var i in room.room.params) {
-							if (!room.room.params.hasOwnProperty(i)) continue;
-							if (room.room.params[i].error) {
-								return;
-							}
+		core.emit("conf-save", roomObj, function(err, room) {
+			core.emit("room-up", {
+				to: roomName,
+				room: room
+			 }, function(err, room) {
+				self.removeClass("working");
+
+				if (err) {
+					// handle the error
+				} else {
+					for (var i in room.room.params) {
+						if (!room.room.params.hasOwnProperty(i)) {
+							continue;
 						}
 
-						onComplete("conf-save");
+						if (room.room.params[i].error) {
+							return;
+						}
 					}
-				});
+
+					core.emit("setstate", {
+						nav: {
+							dialog: null
+						}
+					});
+				}
 			});
-
-		}
-	});
-
-	$(".conf-cancel").on("click", function() {
-		if (window.currentState.mode === "conf") {
-			onComplete("conf-cancel");
-		}
-	});
-});
-
-function onComplete(source) {
-	var toState;
-
-	currentConfig = null;
-
-	$(".conf-area").empty();
-
-	oldState = oldState || {};
-	
-	toState = {
-		mode: (oldState.mode && oldState.mode !== "noroom") ? oldState.mode : "normal",
-		tab: oldState.tab || "info",
-		source: source
-	};
-
-	libsb.emit("navigate", toState);
-
-	oldState = null;
-}
-
-
-function showConfig(room) {
-	var roomObj = {
-		room: room
-	};
-	libsb.emit('config-show', roomObj, function(err, tabs) {
-		delete tabs.room;
-		currentConfig = tabs;
-		renderSettings(tabs);
-	});
-}
-
-function cancelEdit() {
-	setTimeout(function() {
-		libsb.emit('navigate', {
-			mode: 'normal',
-			tab: 'info',
-			source: "conf-cancel"
 		});
-	}, 0);
-}
+	});
 
-function checkOwnerShip() {
-	var isOwner = false;
-	if (libsb.memberOf) {
-		libsb.memberOf.forEach(function(room) {
-			if (room.id == currentState.roomName && room.role == "owner") isOwner = true;
+	core.on("conf-dialog", function(state, next) {
+		var rel = store.getRelation();
+
+		if (rel && rel.role === "owner") {
+			// Don't proceed
+			return;
+		}
+
+		core.emit("conf-show", { room: store.getRoom() }, function(err, tabs) {
+			renderSettings(tabs);
 		});
-	}
-	return isOwner;
-}
 
-libsb.on('navigate', function(state, next) {
+		next();
+	}, 500);
 
-	if (state.old && state.old.mode !== state.mode && state.mode === "conf") {
-		oldState = state.old;
-		if (!checkOwnerShip()) {
-			cancelEdit();
+	core.on("room-menu", function(menu, next) {
+		var rel = store.getRelation();
+
+		if (rel && rel.role === "owner") {
 			return next();
 		}
 
-		libsb.getRooms({
-			ref: currentState.roomName,
-			hasMember: libsb.user.id,
-		}, function(err, data) {
-			if (err || !data.results || !data.results.length) { // cachedRoom false will fetch the room from server directly.
-				//may be even show error.
-				cancelEdit();
-				return next();
+		menu.items.userpref = {
+			text: "Configure room",
+			prio: 300,
+			action: function() {
+				core.emit("setstate", {
+					nav: {
+						dialog: "conf"
+					}
+				});
 			}
+		};
 
-			return showConfig(data.results[0]);
-		});
-	}
-
-	return next();
-}, 500);
+		next();
+	}, 1000);
+};

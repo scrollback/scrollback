@@ -1,6 +1,6 @@
 /* jshint multistr: true */
 /* global $ */
-var stringUtils = require('../lib/stringUtils.js'),
+var stringUtils = require('../lib/string-utils.js'),
 	strings = {
 	"EN": {
 		requiredRoleStr: {

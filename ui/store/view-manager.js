@@ -9,19 +9,21 @@ module.exports = function(core, config, store) {
 	// Listen to navigate and add class names
 	core.on("statechange", function(changes, next) {
 		var classList = $("body").attr("class") || "",
-			relation;
+			relation, value;
 
 		for (var i = 0, l = keys.length; i < l; i++) {
 			if ([keys[i]] in changes.nav) {
 				classList = classList.replace(new RegExp("\\b" + keys[i] + "-" + "\\S+", "g"), "");
 
-				classList += " " + keys[i] + "-" + (store.getNav()[keys[i]] || "");
+				value = store.getNav()[keys[i]];
+
+				classList += value ? (" " + keys[i] + "-" + value) : "";
 			}
 		}
 
 		classList = classList.replace(/\bcolor-\S+/g, "").replace(/^\s+|\s+$/g, "");
 
-		if ("nav" in changes && "mode" in changes.nav) {
+		if (changes.nav && changes.nav.mode) {
 			switch (store.getNav().mode) {
 			case "room":
 				$title.text(store.getNav().room);
@@ -37,7 +39,7 @@ module.exports = function(core, config, store) {
 			}
 		}
 
-		if ("indexes" in changes && ("roomUsers" in changes.indexes || "userRooms" in changes.index)) {
+		if (changes.indexes && ("roomUsers" in changes.indexes || "userRooms" in changes.index)) {
 			relation = store.getRelation();
 
 			classList = classList.replace(/\brole-\S+/g, "");

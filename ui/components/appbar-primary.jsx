@@ -2,8 +2,10 @@
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		appUtils = require("../../lib/app-utils.js"),
+		showMenu = require("../helpers/show-menu.js"),
 		AppbarPrimary,
-		appbarprimary = document.getElementById("js-appbar-primary");
+		appbarprimaryEl = document.getElementById("js-appbar-primary");
 
 	AppbarPrimary = React.createClass({
 		toggleSidebarLeft: function() {
@@ -25,11 +27,40 @@ module.exports = function(core, config, store) {
 			}
 		},
 
+		showUserMenu: function(e) {
+			core.emit("user-menu", {
+				origin: e.target,
+				buttons: {},
+				items: {},
+				title: appUtils.isGuest(store.get("user")) ? "Sign in to Scrollback with" : null
+			}, function(err, menu) {
+				showMenu("user-menu", menu);
+			});
+		},
+
 		render: function() {
-			var user = store.getUser(),
-				nav = store.getNav(),
-				relation = store.getRelation(),
-				title, following;
+			return (
+		        <div key="appbar-primary">
+		            <a data-mode="room chat" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.toggleSidebarLeft}></a>
+		            <img data-mode="home" className="appbar-avatar" alt={this.props.user.id} src={this.props.user.picture} onClick={this.toggleSidebarLeft} />
+		            <h1 className="appbar-title appbar-title-primary js-appbar-title">{this.props.title}</h1>
+		            <a className="appbar-icon appbar-icon-more" onClick={this.showUserMenu}></a>
+		            <a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
+		            <a data-role="user follower" data-mode="room chat" className="appbar-icon appbar-icon-follow {this.props.following}" onClick={this.toggleFollowRoom}></a>
+		        </div>
+	        );
+		}
+	});
+
+	core.on("statechange", function(changes, next) {
+		var user, nav, relation, title, following;
+
+		if (changes.nav && (changes.nav.room || changes.nav.mode) ||
+		    "user" in changes || ("entities" in changes && store.get("user") in changes.entities)) {
+
+			user = store.getUser();
+			nav = store.getNav();
+			relation = store.getRelation();
 
 			switch (nav.mode) {
 			case "room":
@@ -43,23 +74,7 @@ module.exports = function(core, config, store) {
 
 			following = (relation && relation.role === "follower") ? "following" : "";
 
-			return (
-		        <div key="appbar-primary">
-		            <a data-mode="room chat" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.toggleSidebarLeft}></a>
-		            <img data-mode="home" className="appbar-avatar" alt={user.id} src={user.picture} onClick={this.toggleSidebarLeft} />
-		            <h1 className="appbar-title appbar-title-primary js-appbar-title">{title}</h1>
-		            <a className="appbar-icon appbar-icon-more"></a>
-		            <a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
-		            <a data-role="user follower" data-mode="room chat" className="appbar-icon appbar-icon-follow {following}" onClick={this.toggleFollowRoom}></a>
-		        </div>
-	        );
-		}
-	});
-
-	core.on("statechange", function(changes, next) {
-		if ("nav" in changes && ("room" in changes.nav || "mode" in changes.nav) ||
-		    "user" in changes || ("entities" in changes && store.get("user") in changes.entities)) {
-			React.render(<AppbarPrimary />, appbarprimary);
+			React.render(<AppbarPrimary title={title} user={user} following={following} />, appbarprimaryEl);
 		}
 
 		next();

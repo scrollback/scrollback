@@ -1,9 +1,9 @@
 /* jshint browser: true */
 /* global $, libsb */
 
-var formField = require("../lib/formField.js");
+var formField = require("../ui/helpers/form-field.js");
 
-libsb.on('config-show', function(tabs, next) {
+libsb.on('conf-show', function(tabs, next) {
 	var results = tabs.room;
 
 	if (!results.params.http) {
@@ -23,7 +23,7 @@ libsb.on('config-show', function(tabs, next) {
 	next();
 }, 500);
 
-libsb.on('config-save', function(room, next) {
+libsb.on('conf-save', function(room, next) {
 	if (!room.params.http) room.params.http = {};
 	room.params.http.seo = $('#allow-index').is(':checked');
 	next();

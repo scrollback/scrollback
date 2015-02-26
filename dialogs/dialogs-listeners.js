@@ -1,11 +1,11 @@
 /* jshint browser: true */
 /* global $ */
 
-module.exports = function(core, config, state) {
-	var appUtils = require("../lib/appUtils.js"),
-		validateEntity = require("./validate-entity.js")(core, config, state),
-		createEntity = require("./create-entity.js")(core, config, state),
-		showDialog = require("./show-dialog.js")(core, config, state),
+module.exports = function(core, config, store) {
+	var appUtils = require("../lib/app-utils.js"),
+		validateEntity = require("./validate-entity.js")(core, config, store),
+		createEntity = require("./create-entity.js")(core, config, store),
+		showDialog = require("./show-dialog.js")(core, config, store),
 		userChangeCallback;
 
 	function createAndValidate(type, entry, button, callback) {
@@ -41,13 +41,13 @@ module.exports = function(core, config, state) {
 	core.on("statechange", function(changes, next) {
 		var dialog;
 
-		if (typeof userChangeCallback === "function" && changes.user && appUtils.isGuest(state.get("user"))) {
+		if (typeof userChangeCallback === "function" && changes.user && appUtils.isGuest(store.get("user"))) {
 				userChangeCallback();
 				userChangeCallback = null;
 		}
 
 		if (changes.nav && "dialog" in changes.nav || (/(createroom|signup|signin)/.test(dialog) && changes.user)) {
-			dialog = state.getNav().dialog;
+			dialog = store.getNav().dialog;
 
 			if (!dialog) {
 				$.modal("dismiss");
@@ -69,10 +69,10 @@ module.exports = function(core, config, state) {
 	}, 100);
 
 	core.on("createroom-dialog", function(dialog, next) {
-		var roomName = state.getNav().room;
+		var roomName = store.getNav().room;
 
-		if (appUtils.isGuest(state.get("user"))) {
-			if (state.getUser().identities.length) {
+		if (appUtils.isGuest(store.get("user"))) {
+			if (store.getUser().identities.length) {
 				dialog.title = "Create a new room";
 				dialog.content = [
 					"<p><b>Step 1:</b> Choose a username</p>",
@@ -146,8 +146,8 @@ module.exports = function(core, config, state) {
 	}, 100);
 
 	core.on("signup-dialog", function(dialog, next) {
-		if (appUtils.isGuest(state.get("user"))) {
-			if (state.getUser().identities.length) {
+		if (appUtils.isGuest(store.get("user"))) {
+			if (store.getUser().identities.length) {
 				dialog.title = "Finish sign up";
 				dialog.description = "Choose a username";
 				dialog.content = [
@@ -183,7 +183,7 @@ module.exports = function(core, config, state) {
 		dialog.dismiss = false;
 
 		userChangeCallback = function() {
-			if (state.getNav().dialog === "signin" && state.getUser().isRestricted) {
+			if (store.getNav().dialog === "signin" && store.getUser().isRestricted) {
 				core.emit("setstate", {
 					nav: { dialog: null }
 				});
@@ -208,31 +208,6 @@ module.exports = function(core, config, state) {
 
 		next();
 	}, 1000);
-
-	core.on("logout-dialog", function(dialog, next) {
-		dialog.title = "You've been signed out!";
-		dialog.action = {
-			text: "Go back as guest",
-			action: function() {
-				core.emit("setstate", {
-					nav: { dialog: null }
-				}, function() {
-					window.location.reload();
-				});
-			}
-		};
-		dialog.dismiss = false;
-
-		next();
-	}, 500);
-
-	core.on("logout", function(action, next) {
-		core.emit("setstate", {
-			nav: { dialog: "logout" }
-		});
-
-		next();
-	}, 100);
 
 	// When modal is dismissed, reset the dialog property
 	$(document).on("modalDismissed", function() {

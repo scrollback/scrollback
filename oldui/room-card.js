@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $ */
 
-var stringUtils = require("../lib/stringUtils.js"),
+var stringUtils = require("../lib/string-utils.js"),
 	roomCard = {},
 	$template = $(".card-item-wrap").eq(0);
 

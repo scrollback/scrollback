@@ -84,6 +84,8 @@ function onGetRooms(query, callback) {
 				if (err || !data) {
 					return callback();
 				}
+                
+                query.source = "redis";
 				query.results = data;
 				callback();
 			});

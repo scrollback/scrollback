@@ -2,7 +2,7 @@
 var assert = require('assert'),
 	utils = require('./utils.js'),
 	core = new (require('ebus'))(),
-	mathUtils = require('../../lib/mathUtils.js'),
+	mathUtils = require('../../lib/math-utils.js'),
 	generate = require("../../lib/generate.js"),
 	log = require("../../lib/logger.js"),
 	storage = require('./../storage.js'),
@@ -22,7 +22,7 @@ describe("Storage Test.", function() {
 		}
 		setTimeout(done, 1500);
 	});
-	
+
 	beforeEach(function(done) {
 		log("Before each");
 		if (config.env === 'production') {
@@ -36,7 +36,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getUsers query (ref)", function(done) {
 		var user = utils.getNewUserAction();
 		core.emit("user", user, function() {
@@ -48,7 +48,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getUsers query (ref is an empty array)", function(done) {
 		var user = utils.getNewUserAction();
 		core.emit("user", user, function() {
@@ -59,7 +59,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getRooms query (empty results)", function(done) {
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
@@ -74,7 +74,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getEntities query", function(done) {
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
@@ -91,7 +91,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getRooms query (ref is an array)", function(done) {
 		this.timeout(7000);
 		var rooms = [];
@@ -107,7 +107,7 @@ describe("Storage Test.", function() {
 			if (i % 2 === 0) ref.push(room.room.id); //valid room
 			else ref.push(generate.names(10)); //invalid room
 		}
-		
+
 		core.emit("user", user, function() {
 			utils.emitActions(core, rooms, function() {
 				core.emit("getRooms", {type: "getRooms", ref: ref}, function(err, results) {
@@ -123,7 +123,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getRooms query (filled results)", function(done) {
 		var room = utils.getNewRoomAction();
 		core.emit("getRooms", {type: 'getRooms', ref: room.room.id, results: [room.room]}, function(err, reply) {
@@ -132,8 +132,8 @@ describe("Storage Test.", function() {
 			done();
 		});
 	});
-	
-	
+
+
 	it("getRooms query (ref)", function(done) {
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
@@ -149,7 +149,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getRooms query (identities)", function(done) {
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
@@ -167,7 +167,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getRooms query (identity, params, guides)", function(done) {
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
@@ -201,8 +201,8 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
-	
+
+
 	it("getRooms query (identities)", function(done) {
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
@@ -220,7 +220,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getUsers query (timezone)", function(done) {
 		var users = [];
 		var t1 = mathUtils.random(-10, 5) * 60;
@@ -245,7 +245,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getUsers query (memberOf)", function(done) {
 		var relations = [];
 		var users = [];
@@ -284,7 +284,7 @@ describe("Storage Test.", function() {
 							memberOf: room.room.id
 						}, function(err, reply) {
 							log.d("N=", n, reply.results.length);
-							
+
 							assert.equal(reply.results.length, n - bannedCount + 1, "member of query failed.");
 							done();
 						});
@@ -294,7 +294,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getUsers query (ref and memberOf role: none)", function(done) {
 		var users = [];
 		var room = utils.getNewRoomAction();
@@ -319,13 +319,13 @@ describe("Storage Test.", function() {
 						assert.equal(reply.results.length, 0, "member of query failed.");
 						done();
 					});
-					
+
 				});
 
 			});
 		});
 	});
-	
+
 	it("getUsers query (memberOf and ref)", function(done) {
 		var relations = [];
 		var users = [];
@@ -363,7 +363,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getUsers query (hasMember)", function(done) {
 		var relations = [];
 		var rooms = [];
@@ -395,9 +395,9 @@ describe("Storage Test.", function() {
 
 		});
 	});
-	
-	
-	
+
+
+
 	it("getUsers query (hasMember and ref as an array)", function(done) {
 		var relations = [];
 		var rooms = [];
@@ -437,8 +437,8 @@ describe("Storage Test.", function() {
 
 		});
 	});
-	
-	
+
+
 	it("getUsers query (hasMember and ref)", function(done) {
 		var relations = [];
 		var rooms = [];
@@ -474,8 +474,8 @@ describe("Storage Test.", function() {
 
 		});
 	});
-	
-	
+
+
 	it("getTexts query (ref)", function(done) {
 		var text = utils.getNewTextAction();
 		core.emit("text", text, function() {
@@ -485,7 +485,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getTexts query (ref is an empty array)", function(done) {
 		var text = utils.getNewTextAction();
 		core.emit("text", text, function() {
@@ -495,7 +495,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getTexts query-(ref is an array)", function(done) {
 		this.timeout(10000);
 		var texts = [];
@@ -523,8 +523,8 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
-	
+
+
 	it("getTexts query-1 (time: null / msg: 256 / before)", function(done) {
 		this.timeout(10000);
 		var texts = [];
@@ -548,7 +548,7 @@ describe("Storage Test.", function() {
 			});
 		});
  	});
-	
+
 	it("getTexts query-2 (time: null / msg > 256 / before)", function(done) {
 		this.timeout(20000);
 		var texts = [];
@@ -573,7 +573,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getTexts query-3 (time: number / msg <= 256 / after)", function(done) {
 		this.timeout(10000);
 		var texts = [];
@@ -593,7 +593,7 @@ describe("Storage Test.", function() {
 				for (var i = 0; i < n; i++) {
 					assert.equal(results.results[i].id, texts[i].id, "Incorrect results");
 				}
-				
+
 				done();
 			});
 		});
@@ -624,8 +624,8 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
-	
+
+
 	it("getTexts query-5 ((time: number / msg > 256 / after)", function(done) {
 		this.timeout(20000);
 		var texts = [];
@@ -651,7 +651,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getTexts query-6 ((time: number / msg > 256 / before)", function(done) {
 		this.timeout(20000);
 		var texts = [];
@@ -678,7 +678,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getTexts query-7 ((time: number / msg > 256 / before) iterator.", function(done) {
 		this.timeout(20000);
 		var texts = [];
@@ -694,7 +694,7 @@ describe("Storage Test.", function() {
 		var num = mathUtils.random(1, 256);
 		utils.emitActions(core, texts, function() {
 			function getTexts(time, index) {
-				
+
 				core.emit("getTexts", {type: "getTexts", time: time, before: num, to: to}, function(err, results) {
 					log.d("Texts:", results);
 					//assert.equal(results.results.length, num, "Number of messages are not correct");
@@ -705,15 +705,15 @@ describe("Storage Test.", function() {
 					if (results.results.length != num) {
 						done();
 					} else getTexts(results.results[0].time, index + 1);
-				});	
+				});
 			}
 			getTexts(null, n - 1);
-			
+
 		});
 	});
-	
+
 	// Iterator getRooms/getUsers
-	
+
 	it("getRooms query iterator-1 (create time/after)", function(done) {
 		this.timeout(15000);
 		var rooms = [];
@@ -740,7 +740,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getRooms query iterator-2 (create time / before)", function(done) {
 		this.timeout(15000);
 		var rooms = [];
@@ -767,7 +767,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getRooms query iterator-3 (create time / before) more then 256", function(done) {
 		this.timeout(20000);
 		var rooms = [];
@@ -795,7 +795,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("getRooms query iterator-4 (create time / after) more then 256", function(done) {
 		this.timeout(20000);
 		var rooms = [];
@@ -824,8 +824,8 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
-	
+
+
 	it("getRooms query iterator-5 (identities / after) more then 256", function(done) {
 		this.timeout(20000);
 		var rooms = [];
@@ -858,8 +858,8 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
-	
+
+
 	it("getThreads query-1 ((time: null / before) iterator.", function(done) {
 		this.timeout(20000);
 		var texts = [];
@@ -892,9 +892,9 @@ describe("Storage Test.", function() {
 					assert.equal(results.results[i].id, threadIds[i], "Incorrect results");
 				}
 				done();
-			});	
+			});
 		});
 	});
-	
-	
+
+
 });

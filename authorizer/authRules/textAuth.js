@@ -1,5 +1,5 @@
 var permissionLevels = require('../permissionWeights.js');
-var utils = require('../../lib/appUtils.js');
+var utils = require('../../lib/app-utils.js');
 var SbError = require('../../lib/SbError.js');
 var domainCheck;
 module.exports = function (core, config) {

@@ -16,6 +16,24 @@
 			content: "";
 		}
 
+        &-enhanced {
+            @include flexbox;
+            @include flex-direction(column);
+            @include flex-wrap(nowrap);
+            @include align-items(flex-end);
+
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+
+            &:before {
+                @include flex-grow(1);
+                @include flex-shrink(1);
+
+                content: "";
+            }
+        }
+
 		&-messages {
 			width: 100%;
 			overflow: auto;

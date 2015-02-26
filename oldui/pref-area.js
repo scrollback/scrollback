@@ -1,120 +1,73 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $ */
 
 var renderSettings = require("./render-settings.js"),
-	currentConfig,
-	oldState;
+	appUtils = require("../lib/app-utils.js");
 
-$(function() {
-	$(".conf-save").on("click", function() {
-		if (window.currentState.mode === 'pref') {
-			var userObj = {
-				id: libsb.user.id,
-				description: '',
-				identities: libsb.user.identities || libsb.user.identities,
-				params: libsb.user.params || {},
-				guides: libsb.user.guides|| {}
+module.exports = function(core, config, store) {
+	$(document).on("click", ".js-pref-save", function() {
+		var self = $(this),
+			currentUser = store.getUser(),
+			userObj = {
+				id: currentUser.id,
+				description: "",
+				identities: currentUser.identities || [],
+				params: currentUser.params || {},
+				guides: currentUser.guides || {}
 			};
 
-			libsb.emit('pref-save', userObj, function(err, user) {
-				libsb.emit('user-up', {
-					user: user
-				}, function() {
-					onComplete("conf-save");
+		self.addClass("working");
+
+		core.emit("pref-save", userObj, function(err, user) {
+			core.emit("user-up", {
+				user: user
+			}, function() {
+				self.removeClass("working");
+
+				core.emit("setstate", {
+					nav: {
+						dialog: null
+					}
 				});
 			});
-		}
-	});
-
-	$(".conf-cancel").on("click", function() {
-		if (window.currentState.mode === "pref") {
-			onComplete("conf-cancel");
-		}
-	});
-});
-
-function onComplete(source) {
-	var toState;
-
-	currentConfig = null;
-
-	$(".pref-area").empty();
-
-	oldState = oldState || {};
-
-	toState = {
-		mode: oldState.mode || "home",
-		tab: oldState.tab || "info",
-		source: source
-	};
-
-	libsb.emit("navigate", toState);
-
-	oldState = null;
-}
-
-function renderUserPref() {
-	libsb.emit('getUsers', {
-		ref: "me"
-	}, function(err, data) {
-		var user = data.results[0];
-
-		if (!user.params) user.params = {};
-		if (!user.guides) user.guides = {};
-
-		var userObj = {
-			user: user
-		};
-
-		libsb.emit('pref-show', userObj, function(err, tabs) {
-			delete tabs.user;
-			currentConfig = tabs;
-			renderSettings(tabs, user);
 		});
 	});
-}
 
-libsb.on('navigate', function(state, next) {
-	if (state.old && state.old.mode !== state.mode && state.mode === "pref") {
+	core.on("pref-dialog", function(dialog, next) {
+		var user = store.getUser;
 
-		oldState = state.old;
+		if (!user || appUtils.isGuest(user.id)) {
+			// Don't proceed
+			return;
+		}
 
-		if (!currentConfig) {
-			if (!libsb.user || !libsb.user.id || /guest-/.test(libsb.user.id)) {
-				libsb.emit('navigate', {
-					mode: 'home'
+		user.params = user.params || {};
+		user.guides = user.guides || {};
+
+		core.emit("pref-show", { user: user }, function(err, items) {
+			dialog.contents.push(renderSettings(items));
+
+			next();
+		});
+	}, 500);
+
+	core.on("user-menu", function(menu, next) {
+		if (appUtils.isGuest(store.get("user"))) {
+			return next();
+		}
+
+		menu.items.userpref = {
+			text: "Account settings",
+			prio: 300,
+			action: function() {
+				core.emit("setstate", {
+					nav: {
+						dialog: "pref"
+					}
 				});
-				return next();
 			}
+		};
 
-			if (libsb.isInited === true) {
-				renderUserPref();
-			} else {
-				libsb.on('init-dn', function(i, n) {
-					renderUserPref();
-					n();
-				}, 100);
-			}
-		}
-	}
-	next();
-}, 500);
-
-libsb.on("user-menu", function(menu, next) {
-	if (window.currentState.mode === "pref" || (/^guest-/).test(libsb.user.id)) {
-		return next();
-	}
-
-	menu.items.userpref = {
-		text: "Account settings",
-		prio: 300,
-		action: function() {
-			libsb.emit("navigate", {
-				mode: "pref",
-				tab: "profile",
-				view: "meta"
-			});
-		}
-	};
-	next();
-}, 1000);
+		next();
+	}, 1000);
+};

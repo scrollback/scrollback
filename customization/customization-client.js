@@ -1,12 +1,11 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $ */
 
-$(function() {
+module.exports = function(core, config, store) {
 	// Customization API (temporary)
 	var customStyle = {
 		setCss: function(customCss) {
-			var room = $.extend({}, window.currentState.room),
-				roomObj;
+			var room = store.getRoom();
 
 			if (!(room && typeof customCss === "string")) {
 				return;
@@ -22,9 +21,7 @@ $(function() {
 
 			room.guides.customization.css = customCss.replace("<", "\\3c").replace(">", "\\3e");
 
-			roomObj = { to: window.currentState.roomName, room: room };
-
-			libsb.emit("room-up", roomObj);
+			core.emit("room-up", { to: store.getNav().room, room: room });
 		},
 
 		applyCss: function(room) {
@@ -44,19 +41,13 @@ $(function() {
 		}
 	};
 
-	libsb.on("navigate", function(state, next) {
-		if ("roomName" in state.changes) {
-			customStyle.applyCss(state.room);
+	core.on("statechange", function(changes, next) {
+		if ((changes.nav && changes.nav.room) || changes.entities && store.getNav().room in changes.entities) {
+			customStyle.applyCss(store.getRoom());
 		}
 
 		next();
 	}, 700);
 
-	libsb.on("room-dn", function(data, next) {
-		customStyle.applyCss(data.room);
-
-		next();
-	}, 100);
-
 	window.customStyle = customStyle;
-});
+};

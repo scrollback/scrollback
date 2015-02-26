@@ -180,10 +180,6 @@ body {
     @media #{$screenxxxxx} {
         .appbar-icon-people { display: none; }
     }
-
-    .appbar-icon-follow {
-        .role-follower &, .role-member & { @include icon(star); }
-    }
 }
 
 .people-list-item {
@@ -252,4 +248,10 @@ body {
 
         @media only screen and (min-width: #{$item-width * 11}) { min-width: 21em; }
     }
+}
+
+.progressbar {
+    @include dropshadow(2);
+
+    background-color: $light-color;
 }

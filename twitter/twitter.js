@@ -10,7 +10,7 @@ var timeout, host;
 var maxTweets = 1; // max tweets to search in timeout inteval
 var pendingOauths = {};
 var oauthTimeout = 15 * 60 * 1000; // 15 min
-var functionUtils = require('../lib/functionUtils.js');
+var functionUtils = require('../lib/function-utils.js');
 var silentTimeout;
 module.exports = function(coreObj, conf) {
 	config = conf;
@@ -26,7 +26,7 @@ module.exports = function(coreObj, conf) {
 		core = coreObj;
 		host = config.global.host;
 		init();
-		
+
 		core.on("http/init", function(payload, callback) {
 			payload.push({
 				get: {
@@ -37,7 +37,7 @@ module.exports = function(coreObj, conf) {
 			});
 			callback(null, payload);
 		}, "setters");
-		
+
 		core.on('text', onText, "watcher");
 		core.on("room", twitterRoomHandler, "gateway");
 		core.on("room", twitterParamsValidation, "appLevelValidation");

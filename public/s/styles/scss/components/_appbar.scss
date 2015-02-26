@@ -81,7 +81,7 @@
                 color: inherit;
             }
 
-            &:active {
+            &:active, &.popover-active {
                 background-color: rgba(0,0,0,0.2);
                 color: inherit;
             }
@@ -98,7 +98,11 @@
 
             &-people { @include icon(contact); }
 
-            &-follow { @include icon(star-empty); }
+            &-follow {
+                @include icon(star-empty);
+
+                &.following { @include icon(star); }
+            }
         }
     }
 }

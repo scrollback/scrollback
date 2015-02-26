@@ -9,7 +9,7 @@ module.exports = function(core) {
 			return next();
 		}
 
-		if ("nav" in changes && "mode" in changes.nav) {
+		if (changes.nav && changes.nav.mode) {
 			done = true;
 
 			// We aren't really certain if the classes are added to body yet

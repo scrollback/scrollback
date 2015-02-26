@@ -1,7 +1,7 @@
 var crypto = require('crypto') /*, log = require("../lib/logger.js")*/ ;
 var names = require('../lib/generate.js').names;
-var utils = require('../lib/appUtils.js');
-var mathUtils = require('../lib/mathUtils.js');
+var utils = require('../lib/app-utils.js');
+var mathUtils = require('../lib/math-utils.js');
 var uid = require('../lib/generate.js').uid;
 var config;
 var _ = require('underscore');
@@ -48,7 +48,7 @@ var handlers = {
 				}
 				if (wait) wait = false;
 				else callback();
-			});	
+			});
 		}else{
 			action.memberOf = [];
 			if (wait) wait = false;
@@ -389,13 +389,13 @@ function generateNick(suggestedNick, callback) {
 	function checkUser(suggestedNick, attemptC, callback) {
 		var ct = 0, result = true;
 		var trying = suggestedNick;
-		
+
 		if (attemptC) {
 			lowBound = upBound;
 			upBound = 1 << attemptC;
 			trying += mathUtils.random(lowBound, upBound);
 		}
-		
+
 		if (attemptC >= config.nickRetries) return callback(names(6));
 		function done(r) {
 			result &= r;

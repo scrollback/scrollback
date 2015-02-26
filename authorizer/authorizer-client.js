@@ -1,8 +1,8 @@
 /* global libsb, $ */
-var formField = require("../lib/formField.js");
+var formField = require("../ui/helpers/form-field.js");
 var handleAuthErrors = require('./handleAuthErrors.js');
 
-libsb.on('config-show', function (tabs, next) {
+libsb.on('conf-show', function (tabs, next) {
 	var room = tabs.room;
 
 	var guestPermRead = false,
@@ -57,7 +57,7 @@ libsb.on('config-show', function (tabs, next) {
 	next();
 }, 500);
 
-libsb.on('config-save', function (room, next) {
+libsb.on('conf-save', function (room, next) {
 	var mapRoles = {
 		guest: 'guest',
 		users: 'registered',
