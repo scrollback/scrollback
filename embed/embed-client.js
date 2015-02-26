@@ -99,9 +99,9 @@ function postNavigation(state, next) {
 		};
 		activity.minimize = state.minimize;
 		if (stateClone.minimize) {
-			$("body").addClass("minimized");
+			$("body").addClass("toast-minimized");
 		} else {
-			$("body").removeClass("minimized");
+			$("body").removeClass("toast-minimized");
 		}
 		parentWindow.postMessage(JSON.stringify(activity), parentHost);
 	}else if(parentWindow){
