@@ -101,10 +101,9 @@ function getRelatedUsers(id, filter) {
 function getFeaturedRooms() {
 	var rooms = this.getApp("featuredRooms"),
 		result;
-	var user = this.get("user", "id");
 
 	rooms.forEach(function(room) {
-		var roomObj = this.getRoom(room, user);
+		var roomObj = this.getRoom(room);
 		result.push(roomObj);
 	});
 
@@ -112,7 +111,9 @@ function getFeaturedRooms() {
 }
 
 function getRecommendedRooms() {
-
+	//TODO: right now no recommended rooms
+	
+	return [];
 }
 
 function getRelatedRooms(id, filter) {

@@ -31,10 +31,6 @@ function findIndex(items, propName, value, start, end) {
 
 function getItems(ranges, req, propName) {
     var index, startIndex, endIndex, range, missingAbove, missingBelow;
-    ranges.forEach(function(e) {
-		console.log(e.start, e.end, e.items.length);
-	});
-	console.log(req);
     range = ranges.filter(function (r) {
         return (
             (req[propName] === null && r.end === null) ||
@@ -43,11 +39,9 @@ function getItems(ranges, req, propName) {
         );
         
     })[0];
-    console.log("Range:",range.items.length);
     if(!range) return ["missing"];
     
     index = findIndex(range.items, propName, req[propName]);
-	console.log("index:", index);
 	
     startIndex = index - (req.above || 0);
     endIndex = index + (req.below || 0);
