@@ -36,7 +36,7 @@ module.exports = function(core, config, store) {
 			$list = $("<ul>").addClass("settings-page-content-list"),
 			$view = $("<div>").addClass("settings-page-content-view"),
 			nav = store.getNav(),
-			title;
+			dialogState, title;
 
 		for (var i in items) {
 			if (/^(room|user)$/.test(i)) {
@@ -84,11 +84,21 @@ module.exports = function(core, config, store) {
 		});
 
 		// Set default page
-		if (nav.dialogState) {
-			setPage(nav.dialogState, $page);
-		} else {
-			setPage($list.find("[data-settings-list]").eq(0).attr("data-settings-list"), $page);
+		for (var state in items) {
+			if (/^(room|user)$/.test(state)) {
+				continue;
+			}
+
+			dialogState = dialogState || state;
+
+			if (nav.dialogState && nav.dialogState === state) {
+				dialogState = state;
+
+				break;
+			}
 		}
+
+		setPage(dialogState, $page);
 
 		return $page;
 	}

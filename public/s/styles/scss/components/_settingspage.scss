@@ -43,11 +43,12 @@
                 &-item {
                     padding: 1em 1.25em;
                     border-bottom: 1px solid rgba(0,0,0,0.05);
+                    font-weight: 700;
                     cursor: pointer;
 
-                    &.current, &:focus, &:hover { background-color: rgba(0,0,0,0.025); }
+                    &.current, &:focus, &:hover { background-color: rgba(0,0,0,0.075); }
 
-                    &:active { background-color: rgba(0,0,0,0.0625); }
+                    &:active { background-color: rgba(0,0,0,0.1); }
                 }
             }
 
@@ -65,53 +66,53 @@
         }
     }
 
-            .picture-container {
-                position: relative;
-                padding: 0;
-            }
+    .profile-picture-container {
+        position: relative;
+        padding: 0;
+    }
 
-            .picture-list { position: absolute; }
+    .profile-picture-list { position: absolute; }
 
-            .conf-twitter-account, .pref-user-avatar {
-                position: relative;
-                display: block;
-                height: 80px;
-                width: 80px;
-                margin: 0 .25em;
-                background-size: contain;
-                border-width: 0.5em;
-                border-style: solid;
-                border-color: transparent;
-                display: inline-block;
-                border-radius: $roundness;
-                cursor: pointer;
+    .twitter-account-chooser, .profile-user-avatar {
+        position: relative;
+        display: block;
+        height: 80px;
+        width: 80px;
+        margin: 0 .25em;
+        background-size: contain;
+        border-width: 0.5em;
+        border-style: solid;
+        border-color: transparent;
+        display: inline-block;
+        border-radius: $roundness;
+        cursor: pointer;
 
-                &:focus, &:hover { border-color: fade-out($dark-color, .7); }
+        &:focus, &:hover { border-color: fade-out($dark-color, .7); }
 
-                &:active { border-color: fade-out($dark-color, .5); }
+        &:active { border-color: fade-out($dark-color, .5); }
 
-                &.current { border-color: $accent-color; }
+        &.current { border-color: $accent-color; }
 
-                img {
-                    border-radius: $roundness;
-                    height: 100%;
-                    width: 100%;
-                }
+        img {
+            border-radius: $roundness;
+            height: 100%;
+            width: 100%;
+        }
 
-                .label {
-                    position: absolute;
-                    left: 0;
-                    bottom: 0;
-                    width: 100%;
-                    padding: .5em;
-                    background-color: rgba(0,0,0,0.5);
-                    font-weight: 700;
-                    text-transform: uppercase;
-                    text-align: center;
-                    color: $light-color;
-                    border-radius: 0 0 $roundness $roundness;
-                }
-            }
+        .label {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            padding: .5em;
+            background-color: rgba(0,0,0,0.5);
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
+            color: $light-color;
+            border-radius: 0 0 $roundness $roundness;
+        }
+    }
 
     .settings-item {
         display: block;

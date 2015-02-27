@@ -49,8 +49,7 @@ module.exports = function(core) {
 
 		tabs.notification = {
 			text: "Notifications",
-			html: $div,
-			prio: 800
+			html: $div
 		};
 
 		next();

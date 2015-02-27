@@ -33,7 +33,7 @@ module.exports = function(core, config, store) {
 		next();
 	}, 100);
 
-	core.on('pref-show', function(tabs, next) {
+	core.on("pref-show", function(tabs, next) {
 		var $avatar, $about,
 			description, picture;
 
@@ -48,7 +48,7 @@ module.exports = function(core, config, store) {
 			tabs.user.params.pictures.forEach(function(pic) {
 				var ava = $("<div>").append(
 					$("<img>").attr("src", pic)
-				).addClass("pref-user-avatar").data("url", pic);
+				).addClass("profile-user-avatar").data("url", pic);
 
 				if (pic === tabs.user.picture) {
 					ava.addClass("current");
@@ -58,32 +58,32 @@ module.exports = function(core, config, store) {
 			});
 		}
 
-		$avatar = formField("Picture", null, "picture-list", imgList);
+		$avatar = formField("Picture", null, "profile-picture-list", imgList);
 
-		$about = formField("About me", "area", "pref-about-me", description);
+		$about = formField("About me", "area", "profile-about-me", description);
 
 		tabs.profile = {
 			text: "Profile",
 			html: $("<div>").append(
 				$avatar,
 				$about
-			),
-			prio: 1000
+			)
 		};
 
 		next();
-	}, 500);
+	}, 800);
 
-	$(document).on("click", ".pref-user-avatar", function(e) {
-		var d = $(e.target).closest(".pref-user-avatar");
-		$(".pref-user-avatar.current").removeClass("current");
-		d.addClass("current");
+	$(document).on("click", ".profile-user-avatar", function(e) {
+		$(".profile-user-avatar.current").removeClass("current");
+
+		$(e.target).closest(".profile-user-avatar").addClass("current");
 	});
 
-	core.on('pref-save', function(user, next) {
-		user.description = $('#pref-about-me').val();
+	core.on("pref-save", function(user, next) {
+		user.description = $("#profile-about-me").val();
 		user.identities = store.getUser().identities;
-		pictureSelected = user.picture = $(".pref-user-avatar.current").data("url");
+
+		pictureSelected = user.picture = $(".profile-user-avatar.current").data("url");
 
 		next();
 	}, 500);

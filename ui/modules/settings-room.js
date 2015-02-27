@@ -50,7 +50,7 @@ module.exports = function(core, config, store) {
 	core.on("conf-dialog", function(dialog, next) {
 		var rel = store.getRelation();
 
-		if (rel && rel.role === "owner") {
+		if (!rel || (rel && rel.role !== "owner")) {
 			// Don't proceed
 			return;
 		}

@@ -38,7 +38,7 @@ module.exports = function(core) {
 		};
 
 		next();
-	}, 900);
+	}, 600);
 
 	core.on("pref-save", function(user, next) {
 		user.params.email = {
