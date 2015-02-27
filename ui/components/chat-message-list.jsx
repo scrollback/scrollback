@@ -25,10 +25,10 @@ module.exports = function(core, config, store) {
 
 
 			return (
-		        <div className="chat-area-messages-list">
-		        	{chatitems}
-		        </div>
-	        );
+				<div className="chat-area-messages-list">
+					{chatitems}
+				</div>
+			);
 		}
 	});
 

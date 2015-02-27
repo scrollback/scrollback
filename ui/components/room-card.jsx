@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
 var stringUtils = require("../../lib/string-utils.js"),
+	showMenu = require("../utils/show-menu.js"),
 	roomPics = {};
 
 function getRoomPics(roomId) {
@@ -55,7 +56,22 @@ module.exports = function(core, config, store) {
 			}, 500);
 		},
 
-		goToRoom: function() {
+		showRoomMenu: function(e) {
+			core.emit("room-menu", {
+				origin: e.target,
+				buttons: {},
+				items: {},
+				room: this.props.roomId
+			}, function(err, menu) {
+				showMenu("room-menu", menu);
+			});
+		},
+
+		goToRoom: function(e) {
+			if (/icon-more/.test(e.target.getAttribute("class"))) {
+				return;
+			}
+
 			core.emit("setstate", {
 				nav: {
 					room: this.props.roomId,
@@ -74,7 +90,7 @@ module.exports = function(core, config, store) {
 
 			threads = this.state.threads.map(function(thread) {
 				return (
-			        <div key={"room-card-thread-" + room.id + "-" + thread.id} className="card-thread">
+					<div key={"room-card-thread-" + room.id + "-" + thread.id} className="card-thread">
 						<span className="card-thread-message">{thread.title}</span>
 						<span className="card-thread-by">{thread.from}</span>
 					</div>
@@ -82,12 +98,12 @@ module.exports = function(core, config, store) {
 			});
 
 			return (
-			    <div key={"room-card-" + room.id} className="card room-card js-room-card" onClick={this.goToRoom}>
-			      	<div className="card-cover" style={{ backgroundImage: "url(" + roomCover  + ")" }}>
-			      		<div className="card-cover-header card-header">
-			      			<span className="card-header-badge notification-badge notification-badge-mention">{room.mentions}</span>
-			      			<span className="card-header-badge notification-badge notification-badge-messages">{room.messages}</span>
-			      			<a className="card-header-icon card-header-icon-more card-cover-icon js-room-more"></a>
+				<div key={"room-card-" + room.id} className="card room-card js-room-card" onClick={this.goToRoom}>
+				  	<div className="card-cover" style={{ backgroundImage: "url(" + roomCover  + ")" }}>
+				  		<div className="card-cover-header card-header">
+				  			<span className="card-header-badge notification-badge notification-badge-mention">{room.mentions}</span>
+				  			<span className="card-header-badge notification-badge notification-badge-messages">{room.messages}</span>
+				  			<a className="card-header-icon card-header-icon-more card-cover-icon" onClick={this.showRoomMenu}></a>
 			  			</div>
 			  			<div className="card-cover-logo" style={{ backgroundImage: "url(" + roomPicture  + ")" }}></div>
 			  			<h3 className="card-cover-title">{room.id}</h3>

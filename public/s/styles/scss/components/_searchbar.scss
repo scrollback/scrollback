@@ -22,6 +22,7 @@
         max-height: $bar-height;
         height: $bar-height;
         width: 100%;
+        overflow: hidden;
 
         &-input {
             margin: 0;

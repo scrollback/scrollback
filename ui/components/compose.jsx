@@ -60,20 +60,20 @@ module.exports = function(core, config, store) {
 		},
 
 		componentDidMount: function () {
-		    this.setPlaceHolder();
+			this.setPlaceHolder();
 		},
 
 		render: function() {
 			return (
-		        <div key="chat-area-input" className="chat-area-input-inner">
-		        	<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: this.state.userInput}}
-		        		 onPaste={this.onPaste} onBlur={this.onBlur} onKeyDown={this.onKeyDown} onInput={this.setPlaceHolder}
-		        		 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
-		        	</div>
-		        	<div ref="composePlaceholder" className="chat-area-input-placeholder"></div>
-		            <div className="chat-area-input-send" onClick={this.sendMessage}></div>
-		        </div>
-	        );
+				<div key="chat-area-input" className="chat-area-input-inner">
+					<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: this.state.userInput}}
+						 onPaste={this.onPaste} onBlur={this.onBlur} onKeyDown={this.onKeyDown} onInput={this.setPlaceHolder}
+						 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
+					</div>
+					<div ref="composePlaceholder" className="chat-area-input-placeholder"></div>
+					<div className="chat-area-input-send" onClick={this.sendMessage}></div>
+				</div>
+			);
 		}
 	});
 

@@ -10,16 +10,16 @@ module.exports = function(core, config, store) {
 	ProfileCard = React.createClass({
 		render: function() {
 			return (
-			    <div key="profile-card" className="profile-card">
-		            <a className="profile-scrollback-logo"></a>
-		            <img className="profile-avatar" alt="{this.props.user.id}" src={getAvatar(this.props.user.picture, 280)} />
-		            <div className="profile-details">
-		                <h3 className="profile-username">{this.props.user.id}</h3>
-		                <p className="profile-bio">{this.props.user.description}</p>
-		            </div>
-		            <a className="profile-settings"></a>
-		        </div>
-	        );
+				<div key="profile-card" className="profile-card">
+					<a className="profile-scrollback-logo"></a>
+					<img className="profile-avatar" alt="{this.props.user.id}" src={getAvatar(this.props.user.picture, 280)} />
+					<div className="profile-details">
+						<h3 className="profile-username">{this.props.user.id}</h3>
+						<p className="profile-bio">{this.props.user.description}</p>
+					</div>
+					<a className="profile-settings"></a>
+				</div>
+			);
 		}
 	});
 
