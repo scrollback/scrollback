@@ -8,17 +8,17 @@ describe("Merge text.", function() {
         var ranges = [];
         var range1, range2, range3;
 		
-		range1 = createRange(start, 100);
+		range1 = createRange(start, 100, 1);
 		ranges.push(range1);
 
 		start += 100;
-		range2 = createRange(start, 100);
+		range2 = createRange(start, 100, 1);
         ranges.push(range2);
 		
 		start += 150;
-        range3 = createRange(start, 100);
-		
+        range3 = createRange(start, 100, 1);
         merged = rangeOps.merge(ranges, range3, "time");
+		console.log(merged);
         assert.equal(merged.length, 3, "Invalid Result");
 		assert.equal(merged[0].start, range1.start, "Invalid Result");
 		assert.equal(merged[0].end, range1.end, "Invalid Result");
@@ -38,6 +38,7 @@ describe("Merge text.", function() {
 		ranges.push(range1);
 
 		start += 100;
+		console.log("To merge");
 		range2 = createRange(start, 100);
 		
 		start += 150;
@@ -58,7 +59,7 @@ describe("Merge text.", function() {
         var t = new Date().getTime() - 10000, start = t, merged;
         var ranges = [];
         var range1, range2, range3;
-		
+		console.log("To merge");
 		range1 = createRange(start, 100);
 
 		start += 100;
@@ -80,21 +81,21 @@ describe("Merge text.", function() {
 	
 	
 	
-	it("Merging range at begin", function(done) {
+	it("not passed: Merging range at begin", function(done) {
         var t = new Date().getTime() - 10000, start = t, merged;
         var ranges = [];
         var range1, range2, range3;
-		
-		range1 = createRange(start, 100);
+		console.log("To merge");
+		range1 = createRange(start, 100, 1);
 		start += 50;
-		range2 = createRange(start, 100);
+		range2 = createRange(start, 100, 1);
 		ranges.push(range2);
 		start += 250;
-        range3 = createRange(start, 100);
+        range3 = createRange(start, 100, 1);
 		ranges.push(range3);
 		
         merged = rangeOps.merge(ranges, range1, "time");
-
+		console.log(merged);
         assert.equal(merged.length, 2, "Invalid Result");
 		assert.equal(merged[0].start, range1.start, "Invalid Result");
 		assert.equal(merged[0].end, range2.end, "Invalid Result");
@@ -109,7 +110,8 @@ describe("Merge text.", function() {
 		
 		range1 = createRange(start, 100);
 		ranges.push(range1);
-		start += 100;
+		start += 50;
+		console.log("To merge");
 		range2 = createRange(start, 100);
 		start += 150;
         range3 = createRange(start, 100);
@@ -119,8 +121,8 @@ describe("Merge text.", function() {
 
         assert.equal(merged.length, 2, "Invalid Result");
 		assert.equal(merged[0].start, range1.start, "Invalid Result");
-		assert.equal(merged[0].end, range1.end, "Invalid Result");
-		assert.equal(merged[1].start, range2.start, "Invalid Result");
+		assert.equal(merged[0].end, range2.end, "Invalid Result");
+		assert.equal(merged[1].start, range3.start, "Invalid Result");
 		assert.equal(merged[1].end, range3.end, "Invalid Result");
 	   done();
 	});
@@ -134,17 +136,40 @@ describe("Merge text.", function() {
 		start += 100;
 		range2 = createRange(start, 100);
 		ranges.push(range2);
-		start -= 50;
+		start += 50;
+		console.log("To merge");
         range3 = createRange(start, 100);
 		
         merged = rangeOps.merge(ranges, range3, "time");
 
         assert.equal(merged.length, 2, "Invalid Result");
 		assert.equal(merged[0].start, range1.start, "Invalid Result");
-		assert.equal(merged[0].end, range2.end, "Invalid Result");
-		assert.equal(merged[1].start, range3.start, "Invalid Result");
+		assert.equal(merged[0].end, range1.end, "Invalid Result");
+		assert.equal(merged[1].start, range2.start, "Invalid Result");
 		assert.equal(merged[1].end, range3.end, "Invalid Result");
 	   done();
+	});
+	
+	
+	it("Merging range at middle with two", function(done) {
+        var t = new Date().getTime() - 10000, start = t, merged;
+        var ranges = [];
+        var range1, range2, range3;
+		
+		range1 = createRange(start, 100);
+		ranges.push(range1);
+		start += 80;
+		console.log("To merge");
+		range2 = createRange(start, 100);
+		start += 80;
+        range3 = createRange(start, 100);
+		ranges.push(range3);
+        merged = rangeOps.merge(ranges, range2, "time");
+
+        assert.equal(merged.length, 1, "Invalid Result");
+		assert.equal(merged[0].start, range1.start, "Invalid Result");
+		assert.equal(merged[0].end, range3.end, "Invalid Result");
+	   	done();
 	});
 });
 
@@ -163,7 +188,7 @@ function createTexts(start, count) {
 }
 
 
-function createRange(start, count){
+function createRange(start, count, log){
 	var range;
 	var items = createTexts(start, count);
 	range = {
@@ -171,6 +196,7 @@ function createRange(start, count){
 		end: items[items.length -1].time,
 		items: items
 	};
+	if (log) console.log("Range:",start, range.end);
 	return range;
 }
 
