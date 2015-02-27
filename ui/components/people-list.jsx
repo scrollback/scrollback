@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
-var getAvatar = require("../../lib/get-avatar.js");
+var getAvatar = require("../../lib/get-avatar.js"),
+	stringUtils = require("../../lib/string-utils.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -9,21 +10,26 @@ module.exports = function(core, config, store) {
 		peoplelistEl = document.getElementById("js-people-list");
 
 	function getPeople(query) {
-		var people, room, user, items,
+		var room = store.getRoom(),
+			people = store.getRelatedUsers(),
 			sections = {
 				online: [],
 				offline: []
 			},
-			arr = [];
+			arr = [],
+			user, items, regex;
 
-		room = store.getRoom();
-		people = store.getRelatedUsers();
+		try {
+			regex = new RegExp(stringUtils.escapeRegExp(query));
+		} catch (e) {
+			return [];
+		}
 
 		for (var i = 0, l = people.length; i < l; i++) {
 			if (sections[people[i].status]) {
 				user = store.get("entities", people[i].user);
 
-				if ((new RegExp(query)).test(user.id)) {
+				if (regex.test(user.id)) {
 					sections[people[i].status].push({
 						key: "people-list-" + room.id + "-" + user.id,
 						elem: (
