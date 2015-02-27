@@ -4,10 +4,15 @@ module.exports = {
 	getItems: getItems
 };
 
+
+/*
+	Finds the insertion point where the value would fit.
+*/
+
 function findIndex(items, propName, value, start, end) {
 	var pos;
 	if (typeof start === 'undefined') {
-		return findIndex(items, propName, value, 0, items.length-1);
+		return findIndex(items, propName, value, 0, items.length);
 	}
 
 	if (value === null) {
@@ -15,7 +20,7 @@ function findIndex(items, propName, value, start, end) {
 	}
 
 	if (start >= end) {
-		return (items[start] && items[start][propName] === value) ?start: -1;
+		return start;
 	}
 	pos = ((start + end) / 2) | 0;
 
@@ -24,9 +29,11 @@ function findIndex(items, propName, value, start, end) {
 	} else if (items[pos - 1] && items[pos - 1][propName] >= value) {
 		return findIndex(items, propName, value, start, pos - 1);
 	} else {
-		return (items[pos] && items[pos][propName] === value) ?pos: -1;
+		return pos;
 	}
 }
+
+
 
 
 function getItems(ranges, req, propName) {
@@ -37,25 +44,25 @@ function getItems(ranges, req, propName) {
             ((r.start === null || r.start < req[propName]) &&
             (r.end === null || r.end > req[propName]))
         );
-        
+
     })[0];
     if(!range) return ["missing"];
-    
+
     index = findIndex(range.items, propName, req[propName]);
-	
+
     startIndex = index - (req.above || 0);
     endIndex = index + (req.below || 0);
-    
+
     if(startIndex < 0) {
         missingAbove = true;
         startIndex = 0;
     }
-    
+
     if(endIndex > range.items.length) {
         missingBelow = true;
         endIndex = range.items.length;
     }
-    
+
     return [].concat(
         (missingAbove? ['missing']: []),
         range.items.slice(startIndex, endIndex),
@@ -63,55 +70,76 @@ function getItems(ranges, req, propName) {
     );
 }
 
+function isInRange(range, value) {
+	return (range.start === null || range.start <= value) && (range.end === null || range.end >= value);
+}
+
 function mergeRange(ranges, range, propName) {
-	var topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex, index;
+	var topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex, index, mergedRange = {};
 
 	if (range.start === null) topRangeIndex = -1;
 	else {
 		for (
-			topRangeIndex = 0; topRangeIndex < ranges.length - 1 && (
+			topRangeIndex = 0;
+			topRangeIndex < ranges.length && (
 				ranges[topRangeIndex].end !== null &&
-				ranges[topRangeIndex].end < range.start
-			); topRangeIndex++
+				ranges[topRangeIndex].end < range.start);
+			topRangeIndex++
 		);
-
 	}
 	if (range.end === null) bottomRangeIndex = ranges.length;
 	else {
 		for (
-			bottomRangeIndex = ranges.length; bottomRangeIndex > 0 && (
-				ranges[bottomRangeIndex - 1].start !== null &&
-				ranges[bottomRangeIndex - 1].start >= range.end
-			); bottomRangeIndex--
+			bottomRangeIndex = ranges.length-1;
+			bottomRangeIndex >= 0 && (
+				ranges[bottomRangeIndex].start !== null &&
+				ranges[bottomRangeIndex].start > range.end);
+			bottomRangeIndex--
 		);
 	}
-	
-	if (ranges[topRangeIndex].start <= range.start && ranges[topRangeIndex].end >= range.start) {
+
+	if (isInRange(ranges[topRangeIndex], range.start)) {
 		topItemIndex = findIndex(ranges[topRangeIndex].items, propName, range.start);
-	}else{
+		while(
+			ranges[topRangeIndex].items[topItemIndex-1] &&
+			ranges[topRangeIndex].items[topItemIndex-1][propName] === range.start
+		) topItemIndex--;
+	} else {
 		topItemIndex = -1;
 	}
-	if(bottomRangeIndex < ranges.length){
+
+	if(ranges[bottomRangeIndex] && isInRange(ranges[bottomRangeIndex], range.end)){
 		bottomItemIndex = findIndex(ranges[bottomRangeIndex].items, propName, range.end);
-	}else if(bottomRangeIndex === ranges.length){
-		bottomItemIndex = findIndex(ranges[bottomRangeIndex-1].items, propName, range.end);
-	}else{
+		console.log('bii', bottomItemIndex);
+		while(
+			ranges[bottomRangeIndex].items[bottomItemIndex] &&
+			ranges[bottomRangeIndex].items[bottomItemIndex][propName] === range.end
+		) bottomItemIndex++;
+	} else {
 		bottomItemIndex = -1;
 	}
+
+	console.log(JSON.stringify(ranges),'\n', JSON.stringify(range),'\n', topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex);
+
+	mergedRange = {start: range.start, end: range.end, items: []};
+
 	if(topItemIndex !== -1) {
-		range.items = ranges[topRangeIndex].items.slice(0, topItemIndex).concat(range.items);
-		range.start = ranges[topRangeIndex].start;
+		mergedRange.start = ranges[topRangeIndex].start;
+		mergedRange.items = mergedRange.items.concat(ranges[topRangeIndex].items.slice(0, topItemIndex));
 	}
+
+	mergedRange.items = mergedRange.items.concat(range.items);
+
 	if (bottomItemIndex != -1) {
-		index = bottomRangeIndex === ranges.length? bottomRangeIndex -1: bottomRangeIndex;
-		range.items = range.items.concat(ranges[index].items.slice(bottomItemIndex));
-		range.end = ranges[index].end;
+		mergedRange.items = mergedRange.items.concat(ranges[bottomRangeIndex].items.slice(bottomItemIndex));
+		mergedRange.end = ranges[bottomRangeIndex].end;
 	}
-	
-	if(bottomItemIndex == topItemIndex && topItemIndex == -1 && bottomRangeIndex == ranges.length) {
-		ranges.push(range);
-		return ranges;
-	}
-	ranges.splice(topRangeIndex,bottomRangeIndex - topRangeIndex, range);
+
+//	if(topItemIndex === -1) topRangeIndex++;
+//	if(bottomItemIndex === -1) bottomRangeIndex--;
+
+	console.log(topRangeIndex, bottomRangeIndex, mergedRange);
+
+	ranges.splice(topRangeIndex, bottomRangeIndex - topRangeIndex + 1, mergedRange);
 	return ranges;
 }

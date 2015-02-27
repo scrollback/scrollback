@@ -3,11 +3,11 @@
 
 var rangeOps = require("../range-ops.js");
 var assert = require('assert');
-var core, config, store;
-modules.export = function(c, conf, s) {
-	core = c;
-	config = conf;
-	store = s;
+//var core, config, store;
+//module.exports = function(c, conf, s) {
+//	core = c;
+//	config = conf;
+//	store = s;
 	describe("Merge text.", function() {
 		it("pushing range at end", function(done) {
 			var t = new Date().getTime() - 10000, start = t, merged;
@@ -177,12 +177,12 @@ modules.export = function(c, conf, s) {
 			assert.equal(merged[0].end, range3.end, "Invalid Result");
 			done();
 		});
-	});	
-};
-function createTexts(start, count) { 
+	});
+//};
+function createTexts(start, count) {
     var i, time = start;
     var res = [];
-    
+
     for(i = 0; i<count; i++) {
         res.push({
             text: "text" + i,
