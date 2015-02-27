@@ -5,34 +5,29 @@
  * @example
  *
  * showMenu("user-menu", {
- *     origin: $("a"),
- *     title: "This is a title",
- *     buttons: {
- *         "facebook" : {
+ *	 origin: $("a"),
+ *	 title: "This is a title",
+ *	 buttons: {
+ *		 "facebook" : {
  *				text: {string},
  *				prio: {number},
  *				action: {function}
  *			}
- *     },
- *     items: {
- *         "guest-settings" :{
+ *	 },
+ *	 items: {
+ *		 "guest-settings" :{
  *				text: {string},
  *				prio: {number},
  *				action: {function}
  *			}
- *     }
+ *	 }
  * });
  */
 
 module.exports = function(type, menu) {
 	var $popover = $("<div>"),
 		$list, item,
-		$buttons, button, sortable = [],
-		dismiss = function() {
-			setTimeout(function() {
-				$popover.popover("dismiss");
-			}, 300);
-		};
+		$buttons, button, sortable = [];
 
 	if (typeof menu.title === "string") {
 		$("<div>").addClass("popover-section popover-title")
@@ -58,7 +53,7 @@ module.exports = function(type, menu) {
 				$("<a>").addClass("button " + button[2].toLowerCase().replace(' ', '-'))
 					.text(button[1].text)
 					.on("click", function() {
-						dismiss();
+						$popover.popover("dismiss");
 
 						button[1].action();
 					})
@@ -88,7 +83,7 @@ module.exports = function(type, menu) {
 				$("<li>").append($("<a>").addClass(item[2].toLowerCase().replace(' ', '-'))
 						.text(item[1].text))
 					.on("click", function() {
-						dismiss();
+						$popover.popover("dismiss");
 
 						item[1].action();
 					})

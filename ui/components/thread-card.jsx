@@ -38,7 +38,7 @@ module.exports = function(core, config, store) {
 			chats = this.state.texts.map(function(chat) {
 				if (typeof chat === "object" && typeof chat.text === "string") {
 					return (
-				        <div key={"thread-card-chat-" + thread.id + "-" + chat.id} className="card-chat">
+						<div key={"thread-card-chat-" + thread.id + "-" + chat.id} className="card-chat">
 							<span className="card-chat-nick">{chat.from}</span>
 							<span className="card-chat-message">{chat.text}</span>
 						</div>
@@ -47,14 +47,14 @@ module.exports = function(core, config, store) {
 			});
 
 			return (
-			    <div  key={"thread-card-" + thread.id} className="card thread-card" data-color={thread.color} onClick={this.goToThread}>
-			    	<div className="card-header">
-			    		<h3 className="card-header-title">{thread.title}</h3>
-		      			<span className="card-header-badge notification-badge notification-badge-mention">{thread.mentions}</span>
-		      			<span className="card-header-badge notification-badge notification-badge-messages">{thread.messages}</span>
-			    		<a className="card-header-icon card-header-icon-more"></a>
-		    		</div>
-	    			<div className="card-content">{chats}</div>
+				<div  key={"thread-card-" + thread.id} className="card thread-card" data-color={thread.color} onClick={this.goToThread}>
+					<div className="card-header">
+						<h3 className="card-header-title">{thread.title}</h3>
+			  			<span className="card-header-badge notification-badge notification-badge-mention">{thread.mentions}</span>
+			  			<span className="card-header-badge notification-badge notification-badge-messages">{thread.messages}</span>
+						<a className="card-header-icon card-header-icon-more"></a>
+					</div>
+					<div className="card-content">{chats}</div>
 					<div className="card-quick-reply js-quick-reply">
 						<div className="card-quick-reply-content">
 							<div className="card-button card-button-reply">Quick reply</div>

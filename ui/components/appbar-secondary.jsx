@@ -13,11 +13,11 @@ module.exports = function(core, config, store) {
 		render: function() {
 
 			return (
-		        <div key="appbar-secondary">
-		            <a className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goToRoom}></a>
-		            <h2 className="appbar-title appbar-title-secondary js-thread-title">{this.props.title}</h2>
-		        </div>
-	        );
+				<div key="appbar-secondary">
+					<a className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goToRoom}></a>
+					<h2 className="appbar-title appbar-title-secondary js-thread-title">{this.props.title}</h2>
+				</div>
+			);
 		}
 	});
 

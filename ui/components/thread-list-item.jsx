@@ -17,14 +17,14 @@ module.exports = function(core) {
 
 		render: function() {
 			return (
-		        <div className="card thread-card" onClick={this.goToThread}>
-		        	<div className="card-header">
-		        		<h3 className="card-header-title">{this.props.thread.title}</h3>
-		        		<span className="card-header-badge notification-badge notification-badge-mention">{this.props.thread.mentions}</span>
-		        		<span className="card-header-badge notification-badge notification-badge-messages">{this.props.thread.messages}</span>
-	        		</div>
-	        	</div>
-	    	);
+				<div className="card thread-card" onClick={this.goToThread}>
+					<div className="card-header">
+						<h3 className="card-header-title">{this.props.thread.title}</h3>
+						<span className="card-header-badge notification-badge notification-badge-mention">{this.props.thread.mentions}</span>
+						<span className="card-header-badge notification-badge notification-badge-messages">{this.props.thread.messages}</span>
+					</div>
+				</div>
+			);
 
 		}
 	});

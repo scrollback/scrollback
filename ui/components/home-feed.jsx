@@ -10,7 +10,7 @@ module.exports = function(core, config, store) {
 		titles = {
 			owner: "My rooms",
 			moderator: "My rooms",
-			member: "Following",
+			follower: "Following",
 			visitor: "Recently visited"
 		},
 		homefeedEl = document.getElementById("js-home-feed"),
