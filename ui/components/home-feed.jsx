@@ -40,7 +40,7 @@ module.exports = function(core, config, store) {
 
 			sections[rel.role].items.push({
 				key: "home-feed-room-card-" + rel.room,
-				elem: (type === "list") ?  <RoomListItem roomId={rel.room} /> : <RoomCard roomId={rel.room} threadCount="2" />
+				elem: (type === "list") ?  <RoomListItem roomId={rel.room} /> : <RoomCard roomId={rel.room} threadCount="3" />
 			});
 		});
 

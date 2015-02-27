@@ -2,8 +2,8 @@
 
 "use strict";
 
-var objUtils = require("../../lib/obj-utils.js"),
-	_ = require("underscore.js"),
+var _ = require("underscore"),
+	objUtils = require("../../lib/obj-utils.js"),
 	state = {
 		nav: {},
 		context: {},
@@ -35,8 +35,8 @@ function extendObj(obj1, obj2) {
 	if (typeof obj1 !== "object" || typeof obj2 !== "object") {
 		return clone(obj1);
 	}
-	
-	if(obj1 instanceof Array && obj2 instanceof Array) {
+
+	if (obj1 instanceof Array && obj2 instanceof Array) {
 		return _.uniq(obj1.map(clone).concat(obj2.map(clone)), JSON.stringify);
 	}
 
@@ -266,5 +266,3 @@ module.exports = function(core) {
 		}
 	};
 };
-
-
