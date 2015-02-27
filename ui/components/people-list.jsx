@@ -8,13 +8,7 @@ module.exports = function(core, config, store) {
 		PeopleList,
 		peoplelistEl = document.getElementById("js-people-list");
 
-	PeopleList = React.createClass({
-		render: function() {
-			return (<ListView sections={this.props.sections} />);
-		}
-	});
-
-	core.on("statechange", function(changes, next) {
+	function getPeople(query) {
 		var people, room, user, items,
 			sections = {
 				online: [],
@@ -22,39 +16,70 @@ module.exports = function(core, config, store) {
 			},
 			arr = [];
 
-		if ((changes.indexes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(store.get("nav", "mode"))) {
-			room = store.getRoom();
-			people = store.getRelatedUsers();
+		room = store.getRoom();
+		people = store.getRelatedUsers();
 
-			for (var i = 0, l = people.length; i < l; i++) {
-				if (sections[people[i].status]) {
-					user = store.get("entities", people[i].user);
+		for (var i = 0, l = people.length; i < l; i++) {
+			if (sections[people[i].status]) {
+				user = store.get("entities", people[i].user);
 
+				if ((new RegExp(query)).test(user.id)) {
 					sections[people[i].status].push({
 						key: "people-list-" + room.id + "-" + user.id,
 						elem: (
-						    <div className="people-list-item">
-						      	<img className="people-list-item-avatar" src={getAvatar(user.picture, 48)} />
-						      	<span className="people-list-item-nick">{user.id}</span>
-						    </div>
+							<div className="people-list-item">
+								<img className="people-list-item-avatar" src={getAvatar(user.picture, 48)} />
+								<span className="people-list-item-nick">{user.id}</span>
+							</div>
 						)
 					});
 				}
 			}
+		}
 
-			for (var status in sections) {
-				items = sections[status];
+		for (var status in sections) {
+			items = sections[status];
 
-				if (items.length) {
-					arr.push({
-						key: "people-list-" + status,
-						header: status.charAt(0).toUpperCase() + status.slice(1) + " (" + items.length + ")",
-						items: items
-					});
-				}
+			if (items.length) {
+				arr.push({
+					key: "people-list-" + status,
+					header: status.charAt(0).toUpperCase() + status.slice(1) + " (" + i + ")",
+					items: items
+				});
 			}
+		}
 
-			React.render(<PeopleList sections={arr} />, peoplelistEl);
+		return arr;
+	}
+
+	PeopleList = React.createClass({
+		getInitialState: function() {
+			return { query: "", };
+		},
+
+		onChange: function(e) {
+			this.setState({ query: e.target.value });
+		},
+
+		render: function() {
+			var sections = getPeople(this.state.query);
+
+			return (
+					<div className="people-list sidebar-content">
+						<div className="searchbar">
+							<input type="search" className="searchbar-input" placeholder="Find people" required="true"
+								   value={this.state.query} onChange={this.onChange} />
+							<span className="searchbar-icon" />
+						</div>
+						<ListView sections={sections} />
+					</div>
+					);
+		}
+	});
+
+	core.on("statechange", function(changes, next) {
+		if ((changes.indexes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(store.get("nav", "mode"))) {
+			React.render(<PeopleList />, peoplelistEl);
 		}
 
 		next();
