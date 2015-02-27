@@ -1,5 +1,6 @@
 var store, core, config;
 var relationsProps = ['role', 'transistionTime'];
+var pendingActions = {};
 module.exports = function(c, conf, s) {
 	store = s;
 	core = c;
@@ -45,20 +46,46 @@ module.exports = function(c, conf, s) {
 
 
 	core.on("join-dn", onJoin, 1000);
-	core.on("text-up", onText, 1000);
-	core.on("text-dn", onText, 1000);
+	core.on("text-up", onTextUp, 1000);
+	core.on("text-dn", onTextDn, 1000);
 };
 
-function onText(text, next) {
+function onTextUp(text, next) {
 	var textRange = {
-		start: text.time,
-		end: null, 
-		items: [text]
-	}, key, newState = {};
-	
+			start: text.time,
+			end: null,
+			items: [text]
+		},
+		key, newState = {};
+	pendingActions[text.id] = text;
 	key = text.to;
-	if(text.thread) key += text.thread;
-	newState.texts[key] = textRange; 
+	if (text.thread) key += text.thread;
+	newState.texts[key] = textRange;
+	core.emit("setState", newState);
+	next();
+}
+
+function onTextDn(text, next) {
+	var textRange = {
+			start: text.time,
+			end: null,
+			items: [text]
+		},
+		key, newState = {};
+
+	key = text.to;
+	if (text.thread) key += text.thread;
+	newState.texts[key] = textRange;
+	if (pendingActions[text.id]) {
+		newState.texts[pendingActions[text.id].to + pendingActions[text.id].thread ? "_" + pendingActions[text.id].thread : ""] = {
+			start: pendingActions[text.id].time,
+			end: pendingActions[text.id].time,
+			items:[
+				
+			]
+		};
+	}
+	
 	core.emit("setState", newState);
 	next();
 }
