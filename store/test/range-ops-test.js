@@ -81,7 +81,7 @@ describe("Merge text.", function() {
 	
 	
 	
-	it("not passed: Merging range at begin", function(done) {
+	it("Merging range at begin", function(done) {
         var t = new Date().getTime() - 10000, start = t, merged;
         var ranges = [];
         var range1, range2, range3;

@@ -102,15 +102,12 @@ function mergeRange(ranges, range, propName) {
 	if(topItemIndex !== -1) {
 		range.items = ranges[topRangeIndex].items.slice(0, topItemIndex).concat(range.items);
 		range.start = ranges[topRangeIndex].start;
-	}	
-	
+	}
 	if (bottomItemIndex != -1) {
 		index = bottomRangeIndex === ranges.length? bottomRangeIndex -1: bottomRangeIndex;
 		range.items = range.items.concat(ranges[index].items.slice(bottomItemIndex));
 		range.end = ranges[index].end;
 	}
-	console.log(topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex);
-	
 	
 	if(bottomItemIndex == topItemIndex && topItemIndex == -1 && bottomRangeIndex == ranges.length) {
 		ranges.push(range);
