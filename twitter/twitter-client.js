@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $ */
 
-var formField = require("../ui/helpers/form-field.js"),
+var formField = require("../ui/utils/form-field.js"),
 	twitterUsername;
 
 module.exports = function(core, config, store) {
@@ -75,12 +75,11 @@ module.exports = function(core, config, store) {
 
 		tabs.twitter = {
 			text: "Twitter integration",
-			html: $div,
-			prio: 700
+			html: $div
 		};
 
 		next();
-	}, 500);
+	}, 700);
 
 	core.on("conf-save", function(room, next) {
 	    var tags = $("#twitter-hashtags").multientry("items", true).join(" ");

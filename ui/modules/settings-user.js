@@ -1,10 +1,11 @@
 /* jshint browser: true */
 /* global $ */
 
-var renderSettings = require("./render-settings.js"),
-	appUtils = require("../lib/app-utils.js");
+var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
+	var renderSettings = require("../utils/render-settings.js")(core, config, store);
+
 	$(document).on("click", ".js-pref-save", function() {
 		var self = $(this),
 			currentUser = store.getUser(),
@@ -45,7 +46,7 @@ module.exports = function(core, config, store) {
 		user.guides = user.guides || {};
 
 		core.emit("pref-show", { user: user }, function(err, items) {
-			dialog.contents.push(renderSettings(items));
+			dialog.element = renderSettings(items);
 
 			next();
 		});

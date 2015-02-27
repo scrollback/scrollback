@@ -1,27 +1,27 @@
 /* jshint browser: true */
-/* global $, libsb */
+/* global $ */
 
-// Room general settings
-var formField = require("../ui/helpers/form-field.js");
+var formField = require("../ui/utils/form-field.js");
 
-libsb.on('conf-show', function(tabs, next) {
-	var $div = $('<div>').append(
-		formField("Description", "area", "description", tabs.room.description)
-	);
+module.exports = function(core) {
+	core.on("conf-show", function(tabs, next) {
+		var $div = $("<div>").append(
+			formField("Description", "area", "room-settings-description", tabs.room.description)
+		);
 
-	tabs.general = {
-		text: "General settings",
-		html: $div,
-		prio: 900
-	};
+		tabs.general = {
+			text: "General settings",
+			html: $div
+		};
 
-	next();
-}, 500);
+		next();
+	}, 900);
 
-libsb.on('conf-save', function(room, next) {
-	var desc = $('#description').val();
+	core.on("conf-save", function(room, next) {
+		var desc = $("#room-settings-description").val();
 
-	room.description = desc;
+		room.description = desc;
 
-	next();
-}, 500);
+		next();
+	}, 500);
+};

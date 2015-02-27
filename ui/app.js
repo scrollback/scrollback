@@ -34,8 +34,23 @@
     // Core
     require("./store/view-manager.js")(core, config, store);
 
-    require("../dialogs/dialogs-listeners.js")(core, config, store);
-    require("../calls-to-action/calls-to-action-client.js")(core, config, store);
+    // Apps
+    require("../anti-abuse/anti-abuse-client.js")(core, config, store);
+    require("../authorizer/authorizer-client.js")(core, config, store);
+    require("../email/email-client.js")(core, config, store);
+    require("../embed/embed-client.js")(core, config, store);
+    require("../http/notifications-client.js")(core, config, store);
+    require("../http/roomGeneralSettings-client.js")(core, config, store);
+    require("../http/seo-client.js")(core, config, store);
+    require("../http/userProfile-client.js")(core, config, store);
+    require("../irc/irc-client.js")(core, config, store);
+    require("../threader/threader-client.js")(core, config, store);
+    require("../twitter/twitter-client.js")(core, config, store);
+
+    // Modules
+    require("./modules/dialogs-listeners.js")(core, config, store);
+    require("./modules/settings-room.js")(core, config, store);
+    require("./modules/settings-user.js")(core, config, store);
 
     // Components
     require("./components/appbar-primary.jsx")(core, config, store);

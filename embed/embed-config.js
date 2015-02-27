@@ -1,7 +1,7 @@
 /* jshint browser: true */
 /* global $ */
 
-var formField = require("../ui/helpers/form-field.js"),
+var formField = require("../ui/utils/form-field.js"),
 	stringUtils = require('../lib/string-utils.js'),
 	embedForm, startMinimized, titlebarColor;
 
@@ -153,12 +153,11 @@ module.exports = function(core, config, store) {
 
 		conf.embed = {
 			text: "Share & Embed",
-			html: $config,
-			prio: 400
+			html: $config
 		};
 
 		next();
-	}, 500);
+	}, 400);
 
 	core.on('conf-save', function(room, next) {
 		var domains = $('#domain-list').val();

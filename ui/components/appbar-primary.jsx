@@ -3,7 +3,7 @@
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		appUtils = require("../../lib/app-utils.js"),
-		showMenu = require("../helpers/show-menu.js"),
+		showMenu = require("../utils/show-menu.js"),
 		AppbarPrimary,
 		appbarprimaryEl = document.getElementById("js-appbar-primary");
 
