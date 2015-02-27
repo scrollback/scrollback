@@ -1,5 +1,5 @@
 var objUtils = require("../lib/obj-utils.js");
-var generate = require("../lib/generate.js");
+var rangeOps = require("./range-ops.js");
 var state = {
 	"nav": {
 		"mode": "loading",
@@ -32,28 +32,20 @@ module.exports = function(core, config) {
 	store.getRoom = getEntities;
 	store.getUser = getEntities;
 
-	store.getTexts = function(roomid) {
-		var res = [];
-		for (var i = 0; i < 100; i++) {
-			res.push(createText(roomid));
-		}
-		res.sort(function(a, b) {
-			return a - b;
-		});
-		return res;
+	store.getTexts = function(roomId, threadId, time, range) {
+		var req = {time:time || new Date().getDate()};
+		if(range <0) req.below = range * -1;
+		else req.above = range;
+		return rangeOps.getItems(state.texts[roomId][threadId], req, "time");
 	};
 
 	store.getEntity = getEntities;
 
-	store.getThreads = function(roomid) {
-		var res = [];
-		for (var i = 0; i < 100; i++) {
-			res.push(createThread(roomid));
-		}
-		res.sort(function(a, b) {
-			return a - b;
-		});
-		return res;
+	store.getThreads = function(roomId, time, range) {
+		var req = {startTime:time || new Date().getDate()};
+		if(range <0) req.below = range * -1;
+		else req.above = range;
+		return rangeOps.getItems(state.threads[roomId], req, "startTime");
 	};
 
 	store.getRelatedRooms = getRelatedRooms;
@@ -152,37 +144,6 @@ function getRelatedRooms(id, filter) {
 	});
 	
 	return rooms;
-}
-
-
-function createThread() {
-	var time = new Date().getTime() - 1000000;
-	var threads = {
-		id: generate.uid(),
-		title: generate.sentence(((Math.random() + 1) * 10) | 0),
-		startTime: time + (((Math.random() + 1) * 10000) | 0)
-	};
-	createText();
-	return threads;
-}
-
-
-function createText(room) {
-	var time = new Date().getTime() - 1000000;
-	var action = {
-		id: generate.uid(),
-		to: room,
-		type: "text",
-		threads: [{
-			id: generate.uid(),
-			title: generate.sentence(((Math.random() + 1) * 10) | 0),
-			startTime: time + (((Math.random() + 1) * 10000) | 0)
-        }],
-		from: generate.names(12),
-		text: generate.sentence(((Math.random() + 1) * 10) | 0),
-		time: time + (((Math.random() + 1) * 10000) | 0)
-	};
-	return action;
 }
 
 function getEntities() {
