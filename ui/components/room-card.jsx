@@ -39,21 +39,22 @@ module.exports = function(core, config, store) {
 		RoomCard;
 
 	RoomCard = React.createClass({
-		// getCardState: function () {
-		// 	return { threads: store.getThreads(room.roomId, null, -room.threadCount || -2).reverse() };
-		// },
-		// getInitialState: function () {
-		// 	return this.getCardState();
-		// },
-		// componentDidMount: function () {
-		// 	core.on('statechange', function(changes, next) {
-		// 		if(changes.contains('content.' + room.roomId + '.threadRanges')) {
-		// 			this.setstate (this.getCardState());
-		// 		}
+		getInitialState: function () {
+			return { threads: (store.getThreads(this.props.roomId, null, -(this.props.threadCount || 3)) || []).reverse() };
+		},
 
-		// 		next();
-		// 	}, 500);
-		// },
+		componentDidMount: function () {
+			var self = this;
+
+			core.on("statechange", function(changes, next) {
+				if (self.isMounted() && "threads" in changes) {
+					self.replaceState(self.getInitialState());
+				}
+
+				next();
+			}, 500);
+		},
+
 		goToRoom: function() {
 			core.emit("setstate", {
 				nav: {
@@ -71,7 +72,7 @@ module.exports = function(core, config, store) {
 				roomPicture = room.picture || getRoomPics(this.props.roomId).picture,
 				threads;
 
-			threads = (store.getThreads(this.props.roomId, null, ((this.props.threadCount || 2) * -1)) || []).reverse().map(function(thread) {
+			threads = this.state.threads.map(function(thread) {
 				return (
 			        <div key={"room-card-thread-" + room.id + "-" + thread.id} className="card-thread">
 						<span className="card-thread-message">{thread.title}</span>

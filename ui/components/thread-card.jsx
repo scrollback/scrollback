@@ -5,6 +5,22 @@ module.exports = function(core, config, store) {
 		ThreadCard;
 
 	ThreadCard = React.createClass({
+		getInitialState: function () {
+			return { texts: (store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).reverse() };
+		},
+
+		componentDidMount: function () {
+			var self = this;
+
+			core.on("statechange", function(changes, next) {
+				if (self.isMounted() && "texts" in changes) {
+					self.replaceState(self.getInitialState());
+				}
+
+				next();
+			}, 500);
+		},
+
 		goToThread: function() {
 			core.emit("setstate", {
 				nav: {
@@ -19,7 +35,7 @@ module.exports = function(core, config, store) {
 			var thread = this.props.thread,
 			  	chats;
 
-			chats = (store.getTexts(this.props.roomId, thread.id, null, ((this.props.textCount || 3) * -1)) || []).reverse().map(function(chat) {
+			chats = this.state.texts.map(function(chat) {
 				if (typeof chat === "object" && typeof chat.text === "string") {
 					return (
 				        <div key={"thread-card-chat-" + thread.id + "-" + chat.id} className="card-chat">
