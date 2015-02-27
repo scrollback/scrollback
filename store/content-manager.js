@@ -1,5 +1,5 @@
 var store, core, config;
-
+var relationsProps = ['role', 'transistionTime'];
 module.exports = function(c, conf, s) {
 	store = s;
 	core = c;
@@ -30,46 +30,115 @@ module.exports = function(c, conf, s) {
 
 		init.memberOf.forEach(function(e) {
 			if (!entities[e.id]) entities[e.id] = e;
-			if(entities[e.id + "_" + init.user.id]) {
+			if (entities[e.id + "_" + init.user.id]) {
 				entities[e.id + "_" + init.user.id].role = e.role;
 			} else {
 				entities[e.id + "_" + init.user.id] = {
 					room: e.id,
 					user: init.user.id,
 					status: "offline",
-					role : e.role
+					role: e.role
 				};
 			}
 		});
-		core.emit("setState", {entities: entities});
+		core.emit("setState", {
+			entities: entities
+		});
 		next();
 	}, 1000);
 };
 
-function handleRoomChange(newState) {
-	var room = newState.changes.nav.room;
-	if (!store.entities[room] || store.entities[room] !== "loading") {
-		store.entities[room] = "loading";
-		core.emit("getEntity", (room.indexOf(":") >= 0) ? {
-			identity: room
-		} : {
-			ref: room
-		}, function(err, data) {
-			var newRoom, updatingState = {
-				changes: {
-					entities: {}
-				}
+function loadRoom(roomId) {
+	core.emit("getEntity", (roomId.indexOf(":") >= 0) ? {
+		identity: roomId
+	} : {
+		ref: roomId
+	}, function(err, data) {
+		var newRoom, updatingState = {
+			entities: {}
+		};
+		
+		if (!err && data.results.length) {
+			newRoom = data.results[0];
+			if (roomId !== newRoom.id) {
+				updatingState.nav = {
+					room: newRoom.id
+				};
+			}
+			updatingState.entities[roomId] = null;
+			updatingState.entities[newRoom.id] = newRoom;
+			core.emit("setstore", updatingState);
+		}
+	});
+}
+
+function loadOccupants(roomId) {
+	core.emit("getUsers", {
+		occupantOf: roomId
+	}, function(err, data) {
+		var entities = {};
+		data.results.forEach(function(e) {
+			var relation = {
+				user: e.id,
+				room: roomId,
+				status: "online",
 			};
 
-			if (!err && data.results.length) {
-				newRoom = data.results[0];
-				(newState.changes.entities = newState.changes.entities || {})[room] = "loading";
-				updatingState.changes.entities[newRoom.id] = newRoom;
-				updatingState.changes.entities[room] = null;
-
-				core.emit("setstore", updatingState);
-			}
+			relationsProps.forEach(function(key) {
+				if (relation[key]) {
+					relation[key] = e[key];
+					delete e[key];
+				}
+			});
+			entities[e.id] = e;
+			entities[roomId + "_" + e.id] = relation;
 		});
+		core.emit("setState", {
+			entities: entities
+		});
+	});
+}
+
+function loadMembers(roomId) {
+	core.emit("getUsers", {
+		memberOf: roomId
+	}, function(err, data) {
+		var entities = {};
+		data.results.forEach(function(e) {
+			var relation = {
+				user: e.id,
+				room: roomId
+			};
+			relationsProps.forEach(function(key) {
+				if (relation[key]) {
+					relation[key] = e[key];
+					delete e[key];
+				}
+			});
+
+			entities[e.id] = e;
+			entities[roomId + "_" + e.id] = relation;
+		});
+		core.emit("setState", {
+			entities: entities
+		});
+	});
+}
+
+
+function handleRoomChange(newState) {
+	var roomId = newState.nav.room;
+	var roomObj = store.getRoom(roomId);
+
+	if (typeof roomObj === "string" && roomObj == "missing") {
+		newState.entities[roomId] = "missing";
+		loadRoom(roomId);
+		if (store.getRelatedUsers(roomId).length) {
+			loadMembers(roomId);
+			loadOccupants(roomId);
+		}
+	} else {
+		newState.entities[roomId] = roomObj;
 	}
 }
 
