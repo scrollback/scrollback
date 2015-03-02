@@ -6,7 +6,7 @@ module.exports = function(core, conf, s, st) {
 	config = conf;
     store = s;
 	state = st;
-	core.on("setState", function(changes, next) {
+	core.on("setstate", function(changes, next) {
 		if (changes.nav) objUtils.extend(state.nav, changes.nav);
 		if (changes.context) objUtils.extend(state.context, changes.context);
 		if (changes.app) objUtils.extend(state.app, changes.app);

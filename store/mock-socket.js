@@ -45,7 +45,7 @@ function connect() {
 function disconnected() {
 	console.log("Disconnected:", backOff);
 	if (backOff === 1) {
-		core.emit("setState", {
+		core.emit("setstate", {
 			app: {
 				connectionStatus: "offline"
 			}
@@ -94,7 +94,7 @@ function sendInit() {
 	client.send(JSON.stringify(init));
 	pendingActions[init.id] = returnPending(init, function() {
         console.log("init done", arguments);
-		core.emit("setState", {
+		core.emit("setstate", {
 			app: {
 				connectionStatus: "online"
 			}

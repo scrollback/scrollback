@@ -6,12 +6,12 @@ module.exports = function(c, conf, s) {
 	core = c;
 	config = conf;
 
-	core.on("setState", function(newState, next) {
+	core.on("setstate", function(newState, next) {
 		if (newState.nav.room) handleRoomChange(newState);
 		if (newState.nav.textRange) handleTextChange(newState);
 		if (newState.nav.threadRange) handleThreadChange(newState);
 		next();
-	});
+	}, 1000);
 
 	function constructEntitiesFromRoomList(list, entities, userId) {
 		list.forEach(function(e) {
@@ -38,7 +38,7 @@ module.exports = function(c, conf, s) {
 		if (init.occupantOf) entities = constructEntitiesFromRoomList(init.occupantOf, entities, init.user.id);
 		if (init.memberOf) entities = constructEntitiesFromRoomList(init.memberOf, entities, init.user.id);
 		
-		core.emit("setState", {
+		core.emit("setstate", {
 			entities: entities,
 			user: init.user
 		});
@@ -59,7 +59,7 @@ module.exports = function(c, conf, s) {
 function entityEvent(action, next) {
 	var entities = {};
 	entities[action.to] = action[action.type == "room" ? "room":"user"];
-	core.emit("setState", {entities: entities});
+	core.emit("setstate", {entities: entities});
 	next();
 }
 
@@ -75,7 +75,7 @@ function presenseChange(action, next) {
 	entities[action.to] = action.room;
 	entities[action.from] = action.user;
 	entities[relation.room+"_"+relation.user] = relation;
-	core.emit("setState", {entities: entities});
+	core.emit("setstate", {entities: entities});
 	next();
 }
 
@@ -90,7 +90,7 @@ function onTextUp(text, next) {
 	key = text.to;
 	if (text.thread) key += text.thread;
 	newState.texts[key] = textRange;
-	core.emit("setState", newState);
+	core.emit("setstate", newState);
 	next();
 }
 
@@ -115,7 +115,7 @@ function onTextDn(text, next) {
 		};
 	}
 	
-	core.emit("setState", newState);
+	core.emit("setstate", newState);
 	next();
 }
 
@@ -143,7 +143,7 @@ function onJoin(join, next) {
 	entities[user.id] = user;
 	entities[room.id + "_" + user.id] = relation;
 
-	core.emit("setState", {
+	core.emit("setstate", {
 		entities: entities
 	});
 	return next();
@@ -160,7 +160,7 @@ function onPart(part, next) {
 	entities[user.id] = user;
 	entities[room.id + "_" + user.id] = null;
 
-	core.emit("setState", {
+	core.emit("setstate", {
 		entities: entities
 	});
 	return next();
@@ -217,7 +217,7 @@ function loadOccupants(roomId) {
 	}, function(err, data) {
 		var entities = {};
 		entities = constructEntitiesFromUserList(data.results, entities, data.occupantOf);
-		core.emit("setState", {
+		core.emit("setstate", {
 			entities: entities
 		});
 	});
@@ -229,7 +229,7 @@ function loadMembers(roomId) {
 	}, function(err, data) {
 		var entities = {};
 		entities = constructEntitiesFromUserList(data.results, entities, data.memberOf);
-		core.emit("setState", {
+		core.emit("setstate", {
 			entities: entities
 		});
 	});
@@ -272,7 +272,7 @@ function textResponse(err, texts) {
 			end: texts.time,
 			items: texts.results
 		});
-		core.emit("setState", updatingState);
+		core.emit("setstate", updatingState);
 	}
 }
 
@@ -324,7 +324,7 @@ function threadResponse(err, threads) {
 			end: threads.time,
 			items: threads.results
 		});
-		core.emit("setState", updatingState);
+		core.emit("setstate", updatingState);
 	}
 }
 

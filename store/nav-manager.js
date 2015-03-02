@@ -26,12 +26,12 @@ module.exports = function(core, conf, options) {
 	state = options.state;
 	config = conf;
 
-	core.on("setState", function(newState, next) {
+	core.on("setstate", function(newState, next) {
 		validate(newState);
 		next();
 	});// starting
 
-	core.on("setState", function(newState, next) {
+	core.on("setstate", function(newState, next) {
 		addChanges(newState);
 		addOld(newState);
 		next();

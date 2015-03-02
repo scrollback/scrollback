@@ -52,6 +52,7 @@ module.exports = function(core, config) {
 	store.getRelatedUsers = getRelatedUsers;
 
 	require("./state-manager.js")(core, config, store, state);
+	require("./content-manager.js")(core, config, store, state);
 	return store;
 };
 

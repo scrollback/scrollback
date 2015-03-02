@@ -8,7 +8,7 @@ function init() {
 	}
 	state.app.connectionStatus = "connecting";
 	core.emit("boot", state, function() {
-		core.emit("setState", {app:{bootComplete: true}});
+		core.emit("setstate", {app:{bootComplete: true}});
 	});
 }
 

@@ -9,9 +9,9 @@ module.exports = function(c, conf, s) {
 	config = conf;
 	store = s;
 
-	describe("basic setState test", function() {
+	describe("basic setstate test", function() {
 		it("Changing rooms", function(done) {
-			core.emit("setState", {
+			core.emit("setstate", {
 				nav: {
 					room: "scrollbackteam"
 				}
@@ -22,7 +22,7 @@ module.exports = function(c, conf, s) {
 		});
 
 		it("Changing multiple properties in nav", function(done) {
-			core.emit("setState", {
+			core.emit("setstate", {
 				nav: {
 					room: "scrollback",
 					view: "people"
@@ -35,7 +35,7 @@ module.exports = function(c, conf, s) {
 		});
 
 		it("setting objects in nav", function(done) {
-			core.emit("setState", {
+			core.emit("setstate", {
 				nav: {
 					dialog: {
 						prop1: "hi",
@@ -50,7 +50,7 @@ module.exports = function(c, conf, s) {
 		});
 
 		it("setting objects in context", function(done) {
-			core.emit("setState", {
+			core.emit("setstate", {
 				context: {
 					embed: {
 						domain: "h10.in",
@@ -65,7 +65,7 @@ module.exports = function(c, conf, s) {
 		});
 
 		it("changing objects in nav", function(done) {
-			core.emit("setState", {
+			core.emit("setstate", {
 				nav: {
 					dialog: {
 						prop1: "what"
@@ -79,7 +79,7 @@ module.exports = function(c, conf, s) {
 		});
 
 		it("setting arrays in app", function(done) {
-			core.emit("setState", {
+			core.emit("setstate", {
 				app: {
 					CTAS: ["signin", "logs"]
 				}
@@ -92,7 +92,7 @@ module.exports = function(c, conf, s) {
 		});
 
 		it("changing arrays in app", function(done) {
-			core.emit("setState", {
+			core.emit("setstate", {
 				app: {
 					CTAS: ["signup", "logs"]
 				}
@@ -105,7 +105,7 @@ module.exports = function(c, conf, s) {
 		});
 
 		it("deleting arrays in app", function(done) {
-			core.emit("setState", {
+			core.emit("setstate", {
 				app: {
 					CTAS: null
 				}
@@ -115,8 +115,8 @@ module.exports = function(c, conf, s) {
 			});
 		});
 
-		it("emitting setState with entities.", function(done) {
-			core.emit("setState", {
+		it("emitting setstate with entities.", function(done) {
+			core.emit("setstate", {
 				entities: {
 					scrollback: {
 						id: "scrollback",
@@ -140,8 +140,8 @@ module.exports = function(c, conf, s) {
 		});
 
 
-		it("emitting setState with relations.", function(done) {
-			core.emit("setState", {
+		it("emitting setstate with relations.", function(done) {
+			core.emit("setstate", {
 				entities: {
 					scrollback_harish: {
 						room: "scrollback",
@@ -161,8 +161,8 @@ module.exports = function(c, conf, s) {
 				done();
 			});
 		});
-		it("emitting setState with relations to merge with old relation.", function(done) {
-			core.emit("setState", {
+		it("emitting setstate with relations to merge with old relation.", function(done) {
+			core.emit("setstate", {
 				entities: {
 					scrollback_harish: {
 						status: "offline"
@@ -186,8 +186,8 @@ module.exports = function(c, conf, s) {
 			});
 		});
 
-		it("emitting setState with relations update.", function(done) {
-			core.emit("setState", {
+		it("emitting setstate with relations update.", function(done) {
+			core.emit("setstate", {
 				entities: {
 					scrollbackteam_harish: {
 						status: "offline",
@@ -210,8 +210,8 @@ module.exports = function(c, conf, s) {
 		});
 
 
-		it("emitting setState with relations update. banning.", function(done) {
-			core.emit("setState", {
+		it("emitting setstate with relations update. banning.", function(done) {
+			core.emit("setstate", {
 				entities: {
 					scrollbackteam_harish: {
 						status: "offline",

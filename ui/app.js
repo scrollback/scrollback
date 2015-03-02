@@ -5,7 +5,7 @@
 
 	var config = require(".././client-config-defaults.js"),
 		core = new (require("ebus"))(config.appPriorities),
-		store = require("./store/state-manager.js")(core, config),
+		store = require("./../store/store.js")(core, config),
 		req;
 
 	window.core = core;
