@@ -45,9 +45,10 @@ function connect() {
 function disconnected() {
 	console.log("Disconnected:", backOff);
 	if (backOff === 1) {
-		core.emit("navigate", {
-			connectionStatus: "offline",
-			source: "connection"
+		core.emit("setState", {
+			app: {
+				connectionStatus: "offline"
+			}
 		}, function(err) {
 			if (err) console.log(err.message);
 		});
@@ -93,6 +94,11 @@ function sendInit() {
 	client.send(JSON.stringify(init));
 	pendingActions[init.id] = returnPending(init, function() {
         console.log("init done", arguments);
+		core.emit("setState", {
+			app: {
+				connectionStatus: "online"
+			}
+		});
     });
 }
 
