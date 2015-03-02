@@ -10,7 +10,7 @@
         z-index: 500;
         right: 0;
         bottom: 0;
-        margin: (2em / 1.5);
+        margin: (3em / 1.5);
         font-size: 1.5em;
         display: block;
         height: $fab-size / 1.5;
@@ -29,5 +29,7 @@
             background-color: lighten($color, 10%);
             color: rgba(0,0,0,0.5);
         }
+
+        @media #{$mobile-break-point} { margin: (2em / 1.5); }
     }
 }

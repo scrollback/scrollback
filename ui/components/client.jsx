@@ -19,7 +19,7 @@ module.exports = function(core, config, store) {
 		},
 
 		createThread: function() {
-			core.emit("setstate", { nav: { dialog: "createroom" }});
+			core.emit("setstate", { nav: { dialog: "createthread" }});
 		},
 
 		closeSidebar: function() {

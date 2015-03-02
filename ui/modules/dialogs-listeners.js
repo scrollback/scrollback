@@ -202,6 +202,29 @@ module.exports = function(core, config, store) {
 		next();
 	}, 1000);
 
+	core.on("createthread-dialog", function(dialog, next) {
+		dialog.title = "Start a new thread";
+		dialog.content = ["<input type='text' id='createthread-dialog-thread' placeholder='Enter thread title' autofocus>"];
+		dialog.action = {
+			text: "Start thread",
+			action: function() {
+				var $threadEntry = $("#createthread-dialog-thread");
+
+				$threadEntry.validInput(function(thread, callback) {
+					var threadTitle = (thread || "").trim();
+
+					if (!threadTitle) {
+						callback("Thread title cannot be empty");
+					} else {
+						// Create new thread
+					}
+				});
+			}
+		};
+
+		next();
+	}, 100);
+
 	// When modal is dismissed, reset the dialog property
 	$(document).on("modalDismissed", function() {
 		core.emit("setstate", {
