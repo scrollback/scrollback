@@ -8,7 +8,11 @@ module.exports = function(core, config, store) {
 
 	HomeFeed = React.createClass({
 		render: function() {
-			return (<GridView sections={roomListUtils.getSections("card")} />);
+			return (
+			        <div className="main-content-rooms" data-mode="home">
+			        	<GridView sections={roomListUtils.getSections("card")} />
+			        </div>
+        	);
 		}
 	});
 

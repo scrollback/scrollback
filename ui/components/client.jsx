@@ -6,8 +6,7 @@ module.exports = function(core, config, store) {
 		AppbarSecondary = require("./appbar-secondary.jsx")(core, config, store),
 		SidebarLeft = require("./sidebar-left.jsx")(core, config, store),
 		SidebarRight = require("./sidebar-right.jsx")(core, config, store),
-		ChatMessageList = require("./chat-message-list.jsx")(core, config, store),
-		Compose = require("./compose.jsx")(core, config, store),
+		ChatArea = require("./chat-area.jsx")(core, config, store),
 		HomeFeed = require("./home-feed.jsx")(core, config, store),
 		ThreadFeed = require("./thread-feed.jsx")(core, config, store),
 		Client,
@@ -31,28 +30,18 @@ module.exports = function(core, config, store) {
 			        <div className="app-container">
 						<SidebarLeft />
 
-					    <main id="main" className="main">
+					    <main className="main">
 					        <AppbarPrimary />
 
 					        <AppbarSecondary />
 
 					        <div className="main-content" data-mode="home search room">
-					            <div className="main-content-rooms" data-mode="home">
-					            	<HomeFeed />
-					            </div>
+					            <HomeFeed />
 
-					            <div className="main-content-threads" data-mode="room">
-					            	<ThreadFeed />
-					            </div>
+					            <ThreadFeed />
 					        </div>
 
-					        <div className="main-content-chat chat-area" data-mode="chat">
-					            <div className="chat-area-messages">
-					            	<ChatMessageList />
-					            </div>
-
-					            <Compose />
-					        </div>
+					        <ChatArea />
 
 					        <a className="fab" data-mode="home" onClick={this.createRoom}></a>
 					        <a className="fab" data-mode="room" onClick={this.createThread}></a>
@@ -60,7 +49,7 @@ module.exports = function(core, config, store) {
 
 					    <SidebarRight />
 
-					    <div id="sidebar-overlay" className="sidebar-overlay" onClick={this.closeSidebar}></div>
+					    <div className="sidebar-overlay" onClick={this.closeSidebar}></div>
 
 					    <div className="progressbar loading"></div>
 					</div>

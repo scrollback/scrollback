@@ -8,7 +8,7 @@ module.exports = function(core, config, store) {
 	SidebarRight = React.createClass({
 		render: function() {
 			return (
-				<div data-mode="room chat" id="sidebar-right" className="column sidebar sidebar-right">
+				<div data-mode="room chat" className="column sidebar sidebar-right">
 				    <div class="sidebar-people-list">
 				    	<PeopleList />
 				    </div>
