@@ -37,18 +37,47 @@ module.exports = function(c, conf, s) {
 
 		if (init.occupantOf) entities = constructEntitiesFromRoomList(init.occupantOf, entities, init.user.id);
 		if (init.memberOf) entities = constructEntitiesFromRoomList(init.memberOf, entities, init.user.id);
-
+		
 		core.emit("setState", {
-			entities: entities
+			entities: entities,
+			user: init.user
 		});
 		next();
 	}, 1000);
 
 
 	core.on("join-dn", onJoin, 1000);
+	core.on("part-dn", onPart, 1000);
 	core.on("text-up", onTextUp, 1000);
 	core.on("text-dn", onTextDn, 1000);
+	core.on("away-dn", presenseChange, 1000);
+	core.on("back-dn", presenseChange, 1000);
+	core.on("room-dn", entityEvent, 1000);
+	core.on("user-dn", entityEvent, 1000);
 };
+
+function entityEvent(action, next) {
+	var entities = {};
+	entities[action.to] = action[action.type == "room" ? "room":"user"];
+	core.emit("setState", {entities: entities});
+	next();
+}
+
+function presenseChange(action, next) {
+	var entities = {}, relation = {room: action.to, user: action.from, status: action.type == "away"?"offline": "online"};
+	relationsProps.forEach(function(key) {
+		if (relation[key]) {
+			relation[key] = action.room[key];
+			delete action.to[key];
+		}
+	});
+	
+	entities[action.to] = action.room;
+	entities[action.from] = action.user;
+	entities[relation.room+"_"+relation.user] = relation;
+	core.emit("setState", {entities: entities});
+	next();
+}
 
 function onTextUp(text, next) {
 	var textRange = {
@@ -98,6 +127,14 @@ function onJoin(join, next) {
 
 	relation.user = user.id;
 	relation.room = room.id;
+	
+	relationsProps.forEach(function(key) {
+		if (relation[key]) {
+			relation[key] = join.room[key];
+			delete join.to[key];
+		}
+	});
+	
 	relationsProps.forEach(function(prop) {
 		relation[prop] = join[prop];
 	});
@@ -105,6 +142,23 @@ function onJoin(join, next) {
 	entities[room.id] = room;
 	entities[user.id] = user;
 	entities[room.id + "_" + user.id] = relation;
+
+	core.emit("setState", {
+		entities: entities
+	});
+	return next();
+}
+
+
+
+function onPart(part, next) {
+	var room = part.room;
+	var user = part.user;
+	var entities = {};
+	
+	entities[room.id] = room;
+	entities[user.id] = user;
+	entities[room.id + "_" + user.id] = null;
 
 	core.emit("setState", {
 		entities: entities
