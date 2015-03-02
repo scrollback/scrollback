@@ -5,7 +5,6 @@
 var generate = require("../lib/generate.js"),
     config, core, client;
 
-
 var backOff = 1,
 	client, pendingQueries = {},
 	pendingActions = {}, session, resource;
@@ -46,9 +45,10 @@ function connect() {
 function disconnected() {
 	console.log("Disconnected:", backOff);
 	if (backOff === 1) {
-		core.emit("navigate", {
-			connectionStatus: "offline",
-			source: "connection"
+		core.emit("setState", {
+			app: {
+				connectionStatus: "offline"
+			}
 		}, function(err) {
 			if (err) console.log(err.message);
 		});
@@ -65,10 +65,7 @@ function receiveMessage(event) {
 	} catch (err) {
 		core.emit("error", err);
 	}
-    
-    
-    console.log("Got data back now: ", data);
-	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "error"].indexOf(data.type) != -1) {
+    if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "error"].indexOf(data.type) != -1) {
 		if (pendingQueries[data.id]) {
             console.log("calling the call back");
 			pendingQueries[data.id].query.results = data.results;
@@ -97,6 +94,11 @@ function sendInit() {
 	client.send(JSON.stringify(init));
 	pendingActions[init.id] = returnPending(init, function() {
         console.log("init done", arguments);
+		core.emit("setState", {
+			app: {
+				connectionStatus: "online"
+			}
+		});
     });
 }
 

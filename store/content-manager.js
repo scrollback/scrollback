@@ -34,7 +34,7 @@ module.exports = function(c, conf, s) {
 	core.on("init-dn", function(init, next) {
 		var entities = {};
 		if (!init.user.id) return next();
-
+		
 		if (init.occupantOf) entities = constructEntitiesFromRoomList(init.occupantOf, entities, init.user.id);
 		if (init.memberOf) entities = constructEntitiesFromRoomList(init.memberOf, entities, init.user.id);
 		
