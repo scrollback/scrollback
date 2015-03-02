@@ -5,7 +5,6 @@
 var generate = require("../lib/generate.js"),
     config, core, client;
 
-
 var backOff = 1,
 	client, pendingQueries = {},
 	pendingActions = {}, session, resource;
@@ -65,10 +64,7 @@ function receiveMessage(event) {
 	} catch (err) {
 		core.emit("error", err);
 	}
-    
-    
-    console.log("Got data back now: ", data);
-	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "error"].indexOf(data.type) != -1) {
+    if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "error"].indexOf(data.type) != -1) {
 		if (pendingQueries[data.id]) {
             console.log("calling the call back");
 			pendingQueries[data.id].query.results = data.results;
