@@ -53,65 +53,7 @@
 		{{{seo.body}}}
 	</main>
 
-    <section id="sidebar-left" class="column sidebar sidebar-left">
-        <div class="sidebar-content" data-mode="home">
-            <div class="profile">
-                <div id="js-profile-card"></div>
-                <div class="profile-last-seen sidebar-block">
-                    <span class="profile-last-seen-icon"></span>
-                    <p>Last seen 2 hours ago</p>
-                </div>
-                <div class="profile-points sidebar-block">
-                    <div class="profile-points-block profile-points-block-xp">
-                        <h3>34</h3>
-                        <p>xp</p>
-                    </div>
-                    <div class="profile-points-block profile-points-block-cookies">
-                        <h3>34</h3>
-                        <p>cookies</p>
-                    </div>
-                    <div class="profile-points-block profile-points-block-posts">
-                        <h3>34</h3>
-                        <p>messages</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="sidebar-header js-goto-home" data-mode="room chat">
-            <img class="sidebar-header-logo" src="/s/img/scrollback-logo.png">
-            <a class="sidebar-header-icon sidebar-header-icon sidebar-header-icon-grid"></a>
-        </div>
-        <div id="js-room-list" class="room-list sidebar-content" data-mode="room"></div>
-        <div id="js-thread-list" class="thread-list sidebar-content" data-mode="chat"></div>
-    </section>
-
-    <main id="main" class="main">
-        <div id="js-appbar-primary" class="appbar appbar-primary"></div>
-        <div id="js-appbar-secondary" class="appbar appbar-secondary" data-mode="chat"></div>
-
-        <div class="main-content" data-mode="home search room">
-            <div id="js-home-feed" class="main-content-rooms" data-mode="home"></div>
-            <div class="main-content-search" data-mode="search"></div>
-            <div id="js-thread-feed" class="main-content-threads" data-mode="room"></div>
-        </div>
-
-        <div class="main-content-chat chat-area" data-mode="chat" id="js-chat-area">
-            <div class="chat-area-messages" id="js-chat-area-messages">
-                <div class="chat-area-messages-list" id="js-chat-area-message-list"></div>
-            </div>
-            <div id="js-chat-area-input" class="chat-area-input"></div>
-        </div>
-
-        <a class="fab js-create-thread" data-mode="room"></a>
-    </main>
-
-    <section data-mode="room chat" id="sidebar-right" class="sidebar sidebar-right">
-        <div id="js-people-list" class="sidebar-people-list"></div>
-    </section>
-
-    <div id="sidebar-overlay" class="sidebar-overlay js-sidebar-close"></div>
-
-    <div class="progressbar loading"></div>
+	<div id="app-client"></div>
 
 	{{#if cordova}}
 		<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova.js"></script>

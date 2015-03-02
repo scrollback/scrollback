@@ -55,10 +55,10 @@ module.exports = function(core, config, store) {
 						<a className="card-header-icon card-header-icon-more"></a>
 					</div>
 					<div className="card-content">{chats}</div>
-					<div className="card-quick-reply js-quick-reply">
+					<div className="card-quick-reply">
 						<div className="card-quick-reply-content">
 							<div className="card-button card-button-reply">Quick reply</div>
-							<input type="text" className="card-entry card-entry-reply js-quick-reply-entry" />
+							<input type="text" className="card-entry card-entry-reply" />
 						</div>
 					</div>
 				</div>

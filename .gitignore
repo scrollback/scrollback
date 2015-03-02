@@ -8,6 +8,7 @@
 !.jscsrc
 !.jshintrc
 !.jsbeautifyrc
+!.scss-lint.yml
 
 *.seed
 *.log

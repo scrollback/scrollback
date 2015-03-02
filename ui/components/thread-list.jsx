@@ -3,14 +3,14 @@
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		threadListUtils = require("./thread-list-utils.jsx")(core, config, store),
-		GridView = require("./grid-view.jsx")(core, config, store),
-		ThreadFeed;
+		ListView = require("./list-view.jsx")(core, config, store),
+		ThreadList;
 
-	ThreadFeed = React.createClass({
+	ThreadList = React.createClass({
 		render: function() {
-			return (<GridView sections={threadListUtils.getSections("card")} />);
+			return (<ListView sections={threadListUtils.getSections("list")} />);
 		}
 	});
 
-	return ThreadFeed;
+	return ThreadList;
 };

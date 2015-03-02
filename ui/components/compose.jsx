@@ -4,8 +4,7 @@ var format = require("../../lib/format.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		Compose,
-		composeEl = document.getElementById("js-chat-area-input");
+		Compose;
 
 	Compose = React.createClass({
 		getInitialState: function() {
@@ -22,7 +21,7 @@ module.exports = function(core, config, store) {
 
 			core.emit("text-up", {
 				to: store.getNav().room,
-				from: this.props.nick,
+				from: store.get("user"),
 				text: text,
 				time: new Date().getTime()
 			});
@@ -65,25 +64,19 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			return (
-				<div key="chat-area-input" className="chat-area-input-inner">
-					<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: this.state.userInput}}
-						 onPaste={this.onPaste} onBlur={this.onBlur} onKeyDown={this.onKeyDown} onInput={this.setPlaceHolder}
-						 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
+				<div key="chat-area-input" className="chat-area-input">
+					<div className="chat-area-input-inner">
+						<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: this.state.userInput}}
+							 onPaste={this.onPaste} onBlur={this.onBlur} onKeyDown={this.onKeyDown} onInput={this.setPlaceHolder}
+							 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
+						</div>
+						<div ref="composePlaceholder" className="chat-area-input-placeholder"></div>
+						<div className="chat-area-input-send" onClick={this.sendMessage}></div>
 					</div>
-					<div ref="composePlaceholder" className="chat-area-input-placeholder"></div>
-					<div className="chat-area-input-send" onClick={this.sendMessage}></div>
 				</div>
 			);
 		}
 	});
-
-	core.on("statechange", function(changes, next) {
-		if ("user" in changes || ("entities" in changes && store.get("user") in changes.entities)) {
-			React.render(<Compose nick={store.get("user")} />, composeEl);
-		}
-
-		next();
-	}, 500);
 
 	return Compose;
 };

@@ -6,8 +6,7 @@ var getAvatar = require("../../lib/get-avatar.js"),
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		ListView = require("./list-view.jsx")(core, config, store),
-		PeopleList,
-		peoplelistEl = document.getElementById("js-people-list");
+		PeopleList;
 
 	function getPeople(query) {
 		var room = store.getRoom(),
@@ -82,14 +81,6 @@ module.exports = function(core, config, store) {
 					);
 		}
 	});
-
-	core.on("statechange", function(changes, next) {
-		if ((changes.indexes && "roomUsers" in changes.indexes) || (/^(room|chat)$/).test(store.get("nav", "mode"))) {
-			React.render(<PeopleList />, peoplelistEl);
-		}
-
-		next();
-	}, 500);
 
 	return PeopleList;
 };

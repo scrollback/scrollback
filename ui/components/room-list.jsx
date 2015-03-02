@@ -3,14 +3,14 @@
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		roomListUtils = require("./room-list-utils.jsx")(core, config, store),
-		GridView = require("./grid-view.jsx")(core, config, store),
-		HomeFeed;
+		ListView = require("./list-view.jsx")(core, config, store),
+		RoomList;
 
-	HomeFeed = React.createClass({
+	RoomList = React.createClass({
 		render: function() {
-			return (<GridView sections={roomListUtils.getSections("card")} />);
+			return (<ListView sections={roomListUtils.getSections("list")} />);
 		}
 	});
 
-	return HomeFeed;
+	return RoomList;
 };

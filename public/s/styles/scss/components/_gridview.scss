@@ -9,6 +9,7 @@
 @mixin gridsection {
     @extend %clearfix;
 
+    margin: 0;
     list-style: none;
     background: none;
     border: none;
