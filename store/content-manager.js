@@ -7,24 +7,27 @@ module.exports = function(c, conf, s) {
 	config = conf;
 
 	core.on("setstate", function(newState, next) {
-		if (!newState.nav) return next();
-		if (newState.nav.room) {
-			handleRoomChange(newState);
-			if (!newState.nav.textRange) {
-				newState.nav.textRange = {
-					time: null,
-					above: 50
-				};
+		if (newState.nav) {
+			if (newState.nav.room) {
+				handleRoomChange(newState);
+				if (!newState.nav.threadRange) {
+					newState.nav.threadRange = {
+						time: null,
+						above: 50
+					};
+				}
 			}
-			if (!newState.nav.threadRange) {
-				newState.nav.threadRange = {
-					time: null,
-					above: 50
-				};
+			if (newState.nav.thread || newState.nav.room) {
+				if (!newState.nav.textRange) {
+					newState.nav.textRange = {
+						time: null,
+						above: 50
+					};
+				}
+				handleTextChange(newState);
 			}
+			if (newState.nav.threadRange) handleThreadRangeChange(newState);
 		}
-		if (newState.nav.textRange) handleTextChange(newState);
-		if (newState.nav.threadRange) handleThreadChange(newState);
 		next();
 		core.emit("statechange", newState);
 	}, 900);
@@ -313,7 +316,7 @@ function textResponse(err, texts) {
 }
 
 function handleTextChange(newState) {
-	var textRange = newState.nav.textRange,
+	var textRange = newState.nav.textRange || {},
 		thread = (newState.nav.thread ? newState.nav.thread : store.getNav("thread")),
 		roomId = (newState.nav.room ? newState.nav.room : store.getNav("room")),
 		time = textRange.time || null,
@@ -351,14 +354,14 @@ function threadResponse(err, threads) {
 	if (!err && threads.results && threads.results.length) {
 		if (threads.before) {
 			range.end = threads.time;
-			range.start = threads.results[0].time;
+			range.start = threads.results[0].startTime;
 		} else {
 			range.start = threads.time;
-			range.end = threads.results[threads.results.length - 1].time;
+			range.end = threads.results[threads.results.length - 1].startTime;
 		}
 		range.items = threads.results;
 		updatingState.threads[threads.to].push({
-			start: threads.results[0].time,
+			start: threads.results[0].startTime,
 			end: threads.time,
 			items: threads.results
 		});
@@ -366,7 +369,7 @@ function threadResponse(err, threads) {
 	core.emit("setstate", updatingState);
 }
 
-function handleThreadChange(newState) {
+function handleThreadRangeChange(newState) {
 	var threadRange = newState.nav.threadRange,
 		roomId = (newState.nav.room ? newState.nav.room : store.getNav("room")),
 		time = threadRange.time || null,

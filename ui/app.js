@@ -9,7 +9,8 @@
 
 	window.core = core;
 	window.store = store;
-
+	console.log("moved adding statechange logger .");
+	core.on("statechange", function(a, n){console.log("statechanged", a); n();} ,1);
 	// jQuery library
 	window.jQuery = window.$ = require("../bower_components/jquery/dist/jquery.min.js");
 

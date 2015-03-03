@@ -7,7 +7,7 @@ var state = {
 		"room": null
 	},
 	session: {},
-	"user": {},
+	"user": "",
 	"texts": {},
 	"threads": {},
 	entities: {},
@@ -49,7 +49,7 @@ module.exports = function(core, config) {
 
 	store.getThreads = function(roomId, time, range) {
 		var req = {
-			startTime: time || new Date().getDate()
+			startTime: time || null
 		};
 		if (range < 0) req.below = range * -1;
 		else req.above = range;
@@ -73,7 +73,7 @@ module.exports = function(core, config) {
 function get() {
 	var args = Array.prototype.slice.call(arguments);
 	args.unshift(state);
-	return objUtils.get.apply(null, args);
+	return objUtils.clone(objUtils.get.apply(null, args));
 }
 
 function getProp(block) {

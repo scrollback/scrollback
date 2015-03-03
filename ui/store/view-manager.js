@@ -11,18 +11,21 @@ module.exports = function(core, config, store) {
 		var classList = $("body").attr("class") || "",
 			relation, value;
 
-		for (var i = 0, l = keys.length; i < l; i++) {
-			if ([keys[i]] in changes.nav) {
-				classList = classList.replace(new RegExp("\\b" + keys[i] + "-" + "\\S+", "g"), "");
+		if(changes.nav) {
+			for (var i = 0, l = keys.length; i < l; i++) {
+				if ([keys[i]] in changes.nav) {
+					classList = classList.replace(new RegExp("\\b" + keys[i] + "-" + "\\S+", "g"), "");
 
-				value = store.getNav()[keys[i]];
+					value = store.getNav()[keys[i]];
 
-				classList += value ? (" " + keys[i] + "-" + value) : "";
+					classList += value ? (" " + keys[i] + "-" + value) : "";
+				}
 			}
+
+			classList = classList.replace(/\bcolor-\S+/g, "").replace(/^\s+|\s+$/g, "");
+
 		}
-
-		classList = classList.replace(/\bcolor-\S+/g, "").replace(/^\s+|\s+$/g, "");
-
+		
 		if (changes.nav && changes.nav.mode) {
 			switch (store.getNav().mode) {
 			case "room":

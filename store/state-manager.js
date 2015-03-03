@@ -15,11 +15,26 @@ module.exports = function(core, conf, s, st) {
 		
 		if (changes.entities) updateEntities(state.entities, changes.entities);
 		if (changes.texts) updateTexts(changes.texts);
+		if (changes.threads) updateThreads(changes.threads);
 		if(changes.user) updateCurrentUser(changes.user);
 		next();
 	}, 1000);
 };
-
+function updateThreads(threads) {
+	var rooms = Object.keys(threads), ranges;
+	rooms.forEach(function(roomId) {
+		ranges = store.get("threads", roomId);
+		if(!ranges) ranges = state.threads[roomId] = [];
+		
+		if(threads[roomId].length) {
+			threads[roomId].forEach(function(newRange) {
+				state.threads[roomId] = rangeOps.merge(ranges, newRange, "startTime");
+			});
+		} else {
+			console.log(roomId);
+		}
+	});
+}
 
 function updateCurrentUser(user) {
 	state.user = user;
