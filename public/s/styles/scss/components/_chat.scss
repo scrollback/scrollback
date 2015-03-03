@@ -28,6 +28,8 @@
 			-webkit-overflow-scrolling: touch;
 
 		    @media #{$screenxxxx} { padding: 0 2em; }
+
+            .chat-area-enhanced & { @include flex-grow(0); }
 		}
 
 		&-input {
