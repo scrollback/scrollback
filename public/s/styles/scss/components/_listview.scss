@@ -25,6 +25,8 @@
 
     &:last-child { border-bottom: none; }
 
+    &:focus { outline: none; }
+
     &-content {
         font-size: 1.2em;
         padding: (1em / 1.2);
