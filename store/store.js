@@ -37,8 +37,8 @@ module.exports = function(core, config) {
 				time: time || null
 			},
 			key = roomId + (threadId ? "_" + threadId : "");
-		if (range < 0) req.below = range * -1;
-		else req.above = range;
+		if (range < 0) req.before = range * -1;
+		else req.after = range;
 		if (!state.texts[roomId]) return ['missing'];
 		if (threadId && !state.texts[key]) return ['missing'];
 
@@ -51,22 +51,20 @@ module.exports = function(core, config) {
 		var req = {
 			startTime: time || null
 		};
-		if (range < 0) req.below = range * -1;
-		else req.above = range;
+		if (range < 0) req.before = range * -1;
+		else req.after = range;
 		if (!state.threads[roomId]) return ["missing"];
 		return rangeOps.getItems(state.threads[roomId], req, "startTime");
 	};
-	store.getRelation = function() {
-		return [];
-	};
+	store.getRelation = getRelation;
 	store.getRelatedRooms = getRelatedRooms;
 	store.getRelatedUsers = getRelatedUsers;
-
+	store.getRecommendedRooms = getRecommendedRooms;
 	store.getFeaturedRooms = getFeaturedRooms;
 
 	require("./state-manager.js")(core, config, store, state);
 	require("./content-manager.js")(core, config, store, state);
-//	require("./mock-socket.js")(core, config, store, state);
+	require("./mock-socket.js")(core, config, store, state);
 	return store;
 };
 
@@ -138,19 +136,17 @@ function getRecommendedRooms() {
 
 	return [];
 }
-
+function getRelation(roomId, userId) {
+	if(!roomId) roomId = this.getNav("room");
+	if(!userId) userId = this.get("user");
+	return this.get("entities", roomId + "_"+ userId);
+}
 function getRelatedRooms(id, filter) {
 	var user, rooms, self = this;
 	if (typeof id == "string") {
-		if (id === "featured") {
-			return getFeaturedRooms();
-		} else if (id === "recommended") {
-			return getRecommendedRooms();
-		} else {
-			user = id;
-		}
+		user = id;
 	} else if (typeof id === "object") {
-		user = this.getNav("user").id;
+		user = this.get("user");
 		filter = id;
 	} else {
 		id = this.getNav("room");
