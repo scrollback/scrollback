@@ -1,13 +1,13 @@
 @include exports(chat) {
-	.chat-area {
+    .chat-area {
         @include flexbox;
         @include flex-direction(column);
         @include flex-wrap(nowrap);
         @include align-items(flex-start);
 
-		height: 100%;
-		width: 100%;
-		overflow: hidden;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
 
         &-enhanced {
             @include align-items(flex-end);
@@ -20,24 +20,24 @@
             }
         }
 
-		&-messages {
+        &-messages {
             @include flex-grow(1);
 
-			width: 100%;
-			overflow: auto;
-			-webkit-overflow-scrolling: touch;
+            width: 100%;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
 
-		    @media #{$screenxxxx} { padding: 0 2em; }
+            @media #{$screenxxxx} { padding: 0 2em; }
 
             .chat-area-enhanced & { @include flex-grow(0); }
-		}
+        }
 
-		&-input {
-			@include flex-shrink(0);
+        &-input {
+            @include flex-shrink(0);
 
-			position: relative;
-			width: 100%;
-	        box-shadow: 0 -3px 6px rgba(0,0,0,0.16);
+            position: relative;
+            width: 100%;
+            box-shadow: 0 -3px 6px rgba(0,0,0,0.16);
 
             &-placeholder {
                 -webkit-touch-callout: none;
@@ -65,85 +65,89 @@
                 word-wrap: break-word;
             }
 
-	        &-entry {
-	        	@extend .entry;
+            &-entry {
+                @extend .entry;
 
-				border-width: 1px 0 0 0;
-				border-radius: 0;
-				padding: 1em;
-				padding-right: 4em;
+                border-width: 1px 0 0 0;
+                border-radius: 0;
+                padding: 1em;
+                padding-right: 4em;
 
-				&:focus, &:hover, &:active {
-	                @for $i from 1 through length($palette) {
-	                    .color-#{$i - 1} & { border-color: nth($palette, $i); }
-	                }
-	            }
+                &:focus, &:hover, &:active {
+                    @for $i from 1 through length($palette) {
+                        .color-#{$i - 1} & { border-color: nth($palette, $i); }
+                    }
+                }
 
-		    	@media #{$screenxxxx} { padding: 1em 3em; }
-		    }
+                @media #{$screenxxxx} { padding: 1em 3em; }
+            }
 
-		    &-send {
-				@include icon(right-big);
+            &-send {
+                @include icon(right-big);
 
-		    	position: absolute;
-		    	right: 0;
-		    	bottom: 0;
-		    	display: block;
-		    	padding: (1em / 1.5);
-		    	font-size: 1.5em;
-		    	line-height: 1;
-		    	cursor: pointer;
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                display: block;
+                padding: (1em / 1.5);
+                font-size: 1.5em;
+                line-height: 1;
+                cursor: pointer;
 
-				@for $i from 1 through length($palette) {
+                @for $i from 1 through length($palette) {
                     .color-#{$i - 1} & { color: nth($palette, $i); }
                 }
-			}
+            }
 
-		    &-entry:empty + &-send {
-		    	@include icon(emoticon);
+            &-entry:empty + &-send {
+                @include icon(emoticon);
 
-				color: $dark-color;
-	    		opacity: .5;
+                color: $dark-color;
+                opacity: .5;
 
-		    	&:focus, &:hover { opacity: .8; }
+                &:focus, &:hover { opacity: .8; }
 
-		   		&:active { opacity: 1; }
-		    }
-		}
-	}
+                   &:active { opacity: 1; }
+            }
+        }
+    }
 
-	.chat-item {
-		$spacing-left-mobile: 5em;
-		$spacing-left-normal: 10em;
+    .chat-item {
+        $spacing-left-mobile: 5em;
+        $spacing-left-normal: 10em;
 
-		@extend %clearfix;
+        @extend %clearfix;
 
-		padding: .75em 1em;
+        padding: .75em 1em;
 
-		&-nick {
-			float: left;
-			font-weight: 700;
-			margin-right: 1em;
-			min-width: $spacing-left-mobile - 1em;
-			opacity: .8;
+        @media #{$screenxx} { padding-left: $spacing-left-normal; }
 
-			&:after {
-				content: ":";
-				margin-left: .25em;
-				opacity: .5;
-			}
+        &-nick {
+            float: left;
+            font-weight: 700;
+            margin-right: 1em;
+            opacity: .8;
 
-			@media #{$screenxx} {
-				min-width: $spacing-left-normal - 1em;
+            &:after {
+                content: ":";
+                margin-left: .25em;
+                opacity: .5;
+            }
 
-				&:after { display: none; }
-			}
-		}
+            @media #{$screenxx} {
+                margin-left: 1em - $spacing-left-normal;
 
-		&-message {
-			margin-left: $spacing-left-mobile;
+                &:after { display: none; }
+            }
+        }
 
-			@media #{$screenxx} { margin-left: $spacing-left-normal; }
-		}
-	}
+        &-message {
+            @media #{$screenxx} { float: left; }
+        }
+
+        &-timestamp {
+            float: right;
+            opacity: 0.5;
+        }
+    }
 }

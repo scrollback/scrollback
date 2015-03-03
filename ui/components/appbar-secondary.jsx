@@ -10,7 +10,7 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var title = store.getNav().thread;
+			var title = store.getNav().thread || "All conversations";
 
 			return (
 				<div key="appbar-secondary" className="appbar appbar-secondary" data-mode="chat">
