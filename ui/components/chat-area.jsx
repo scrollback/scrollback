@@ -20,7 +20,7 @@ module.exports = function(core, config, store) {
 
 			(store.getTexts(nav.room, nav.thread, null, -100) || []).forEach(function(text) {
 				if (typeof text === "object") {
-					chatitems.push(<ChatItem text={text} key={"chat-message-list-" + text.id} />);
+					chatitems.push(<ChatItem text={text} key={"chat-message-list-" + nav.room + "-" + nav.thread + "-" + text.id} />);
 				}
 			});
 

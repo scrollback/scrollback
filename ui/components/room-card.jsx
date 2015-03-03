@@ -40,22 +40,6 @@ module.exports = function(core, config, store) {
 		RoomCard;
 
 	RoomCard = React.createClass({
-		getInitialState: function () {
-			return { threads: (store.getThreads(this.props.roomId, null, -(this.props.threadCount || 3)) || []).reverse() };
-		},
-
-		componentDidMount: function () {
-			var self = this;
-
-			core.on("statechange", function(changes, next) {
-				if (self.isMounted() && "threads" in changes) {
-					self.replaceState(self.getInitialState());
-				}
-
-				next();
-			}, 500);
-		},
-
 		showRoomMenu: function(e) {
 			core.emit("room-menu", {
 				origin: e.target,
@@ -88,7 +72,7 @@ module.exports = function(core, config, store) {
 				roomPicture = room.picture || getRoomPics(this.props.roomId).picture,
 				threads;
 
-			threads = this.state.threads.map(function(thread) {
+			threads = (store.getThreads(this.props.roomId, null, -(this.props.threadCount || 3)) || []).reverse().map(function(thread) {
 				return (
 					<div key={"room-card-thread-" + room.id + "-" + thread.id} className="card-thread">
 						<span className="card-thread-message">{thread.title}</span>

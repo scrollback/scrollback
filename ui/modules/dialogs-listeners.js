@@ -63,10 +63,11 @@ module.exports = function(core, config, store) {
 
 	core.on("createroom-dialog", function(dialog, next) {
 		var nav = store.getNav(),
+			user = store.getUser(),
 			roomName = (nav.dialogState === "prefill") ? nav.room : "";
 
-		if (appUtils.isGuest(store.get("user"))) {
-			if (store.getUser().identities.length) {
+		if (user && appUtils.isGuest(store.get("user"))) {
+			if (user.identities && user.identities.length) {
 				dialog.title = "Create a new room";
 				dialog.content = [
 					"<p><b>Step 1:</b> Choose a username</p>",
@@ -140,8 +141,10 @@ module.exports = function(core, config, store) {
 	}, 100);
 
 	core.on("signup-dialog", function(dialog, next) {
-		if (appUtils.isGuest(store.get("user"))) {
-			if (store.getUser().identities.length) {
+		var user = store.getUser();
+
+		if (user && appUtils.isGuest(user.id)) {
+			if (user.identities && user.identities.length) {
 				dialog.title = "Finish sign up";
 				dialog.description = "Choose a username";
 				dialog.content = [
@@ -177,7 +180,9 @@ module.exports = function(core, config, store) {
 		dialog.dismiss = false;
 
 		userChangeCallback = function() {
-			if (store.getNav().dialog === "signin" && store.getUser().isRestricted) {
+			var user = store.getUser();
+
+			if (store.getNav().dialog === "signin" && user && user.isRestricted) {
 				core.emit("setstate", {
 					nav: { dialog: null }
 				});

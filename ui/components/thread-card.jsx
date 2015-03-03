@@ -5,22 +5,6 @@ module.exports = function(core, config, store) {
 		ThreadCard;
 
 	ThreadCard = React.createClass({
-		getInitialState: function () {
-			return { texts: (store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).reverse() };
-		},
-
-		componentDidMount: function () {
-			var self = this;
-
-			core.on("statechange", function(changes, next) {
-				if (self.isMounted() && "texts" in changes) {
-					self.replaceState(self.getInitialState());
-				}
-
-				next();
-			}, 500);
-		},
-
 		goToThread: function(e) {
 			if (/(icon-more|reply)/.test(e.target.getAttribute("class"))) {
 				return;
@@ -92,10 +76,10 @@ module.exports = function(core, config, store) {
 			var thread = this.props.thread,
 			  	chats;
 
-			chats = this.state.texts.map(function(chat) {
+			chats = (store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).reverse().map(function(chat) {
 				if (typeof chat === "object" && typeof chat.text === "string") {
 					return (
-						<div key={"thread-card-chat-" + thread.id + "-" + chat.id} className="card-chat">
+						<div key={"thread-card-chat-" + store.getNav().room + "-" + thread.id + "-" + chat.id} className="card-chat">
 							<span className="card-chat-nick">{chat.from}</span>
 							<span className="card-chat-message">{chat.text}</span>
 						</div>
