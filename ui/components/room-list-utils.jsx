@@ -24,7 +24,10 @@ module.exports = function(core, config, store) {
 		}
 
 		store.getRelatedRooms().forEach(function(rel) {
-			if(typeof room !== "object") return;
+			if (typeof room !== "object") {
+				return;
+			}
+
 			sections[rel.role].items.push({
 				key: "home-feed-room-card-" + rel + "-" + rel.room,
 				elem: (type === "list") ?  <RoomListItem roomId={rel.room} /> : <RoomCard roomId={rel.room} threadCount="3" />
@@ -32,7 +35,10 @@ module.exports = function(core, config, store) {
 		});
 
 		store.getFeaturedRooms().forEach(function(room) {
-			if(typeof room !== "object") return;
+			if (typeof room !== "object") {
+				return;
+			}
+
 			sections.featured.items.push({
 				key: "home-feed-room-card-featured-" + room.id,
 				elem: (type === "list") ?  <RoomListItem roomId={room.id} /> : <RoomCard roomId={room.id} threadCount="3" />

@@ -20,6 +20,16 @@
             }
         }
 
+        &-empty {
+            @include flex-grow(1);
+
+            width: 100%;
+            text-align: center;
+            padding: 2em / 1.4;
+            font-size: 1.4em;
+            opacity: .5;
+        }
+
         &-messages {
             @include flex-grow(1);
 
