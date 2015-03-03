@@ -2,8 +2,7 @@
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		AppbarSecondary,
-		appbarsecondaryEl = document.getElementById("js-appbar-secondary");
+		AppbarSecondary;
 
 	AppbarSecondary = React.createClass({
 		goToRoom: function() {
@@ -11,27 +10,16 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
+			var title = store.getNav().thread;
 
 			return (
-				<div key="appbar-secondary">
+				<div key="appbar-secondary" className="appbar appbar-secondary" data-mode="chat">
 					<a className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goToRoom}></a>
-					<h2 className="appbar-title appbar-title-secondary js-thread-title">{this.props.title}</h2>
+					<h2 className="appbar-title appbar-title-secondary">{title}</h2>
 				</div>
 			);
 		}
 	});
-
-	core.on("statechange", function(changes, next) {
-		var title;
-
-		if ((changes.nav && (changes.nav.thread || changes.nav.mode)) && store.getNav().mode === "chat") {
-			title = store.getNav().thread; // TODO: use thread title instead of ID
-
-			React.render(<AppbarSecondary title={title} />, appbarsecondaryEl);
-		}
-
-		next();
-	}, 500);
 
 	return AppbarSecondary;
 };

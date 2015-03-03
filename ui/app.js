@@ -58,16 +58,8 @@
 	require("./modules/settings-room.js")(core, config, store);
 	require("./modules/settings-user.js")(core, config, store);
 
-	// Components
-	require("./components/appbar-primary.jsx")(core, config, store);
-	require("./components/appbar-secondary.jsx")(core, config, store);
-	require("./components/chat-message-list.jsx")(core, config, store);
-	require("./components/compose.jsx")(core, config, store);
-	require("./components/home-feed.jsx")(core, config, store);
-	require("./components/people-list.jsx")(core, config, store);
-	require("./components/profile-card.jsx")(core, config, store);
-	require("./components/sidebar.jsx")(core, config, store);
-	require("./components/thread-feed.jsx")(core, config, store);
+	// Render the client
+	require("./components/client.jsx")(core, config, store);
 
 	// Miscellaneous
 	require("./misc/load-indicator.js")(core, config, store);

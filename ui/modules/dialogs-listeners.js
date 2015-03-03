@@ -202,6 +202,39 @@ module.exports = function(core, config, store) {
 		next();
 	}, 1000);
 
+	core.on("createthread-dialog", function(dialog, next) {
+		dialog.title = "Start a new discussion";
+		dialog.content = ["<input type='text' id='createthread-dialog-thread' placeholder='Enter discussion title' autofocus>"];
+		dialog.action = {
+			text: "Start discussion",
+			action: function() {
+				var $threadEntry = $("#createthread-dialog-thread");
+
+				$threadEntry.validInput(function(thread, callback) {
+					var threadTitle = (thread || "").trim();
+
+					if (!threadTitle) {
+						callback("Thread title cannot be empty");
+					} else {
+						core.emit("text-up", {
+							to: store.getNav().room,
+							from: store.get("user"),
+							text: threadTitle,
+							time: new Date().getTime(),
+							manualThreaded: 1,
+							threads: [{
+								id: "new",
+								score: 1.0
+							}]
+						});
+					}
+				});
+			}
+		};
+
+		next();
+	}, 100);
+
 	// When modal is dismissed, reset the dialog property
 	$(document).on("modalDismissed", function() {
 		core.emit("setstate", {

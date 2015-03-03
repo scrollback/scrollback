@@ -98,7 +98,7 @@ module.exports = function(core, config, store) {
 			});
 
 			return (
-				<div key={"room-card-" + room.id} className="card room-card js-room-card" onClick={this.goToRoom}>
+				<div key={"room-card-" + room.id} className="card room-card" onClick={this.goToRoom}>
 				  	<div className="card-cover" style={{ backgroundImage: "url(" + roomCover  + ")" }}>
 				  		<div className="card-cover-header card-header">
 				  			<span className="card-header-badge notification-badge notification-badge-mention">{room.mentions}</span>

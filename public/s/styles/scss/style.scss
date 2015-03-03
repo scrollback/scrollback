@@ -55,11 +55,16 @@ body {
                     platform: $platforms,
                     state: $states
     ), ()); /* show hide elements based on filter */
+}
 
+.app-container {
     @include flexbox;
     @include flex-direction(row);
     @include flex-wrap(nowrap);
     @include align-items(flex-start);
+
+    height: 100%;
+    width: 100%;
 
     word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
     overflow: hidden; /* fix overflow in firefox */

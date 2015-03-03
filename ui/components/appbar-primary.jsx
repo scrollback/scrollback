@@ -4,8 +4,7 @@ module.exports = function(core, config, store) {
 	var React = require("react"),
 		appUtils = require("../../lib/app-utils.js"),
 		showMenu = require("../utils/show-menu.js"),
-		AppbarPrimary,
-		appbarprimaryEl = document.getElementById("js-appbar-primary");
+		AppbarPrimary;
 
 	AppbarPrimary = React.createClass({
 		toggleSidebarLeft: function() {
@@ -39,24 +38,7 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			return (
-				<div key="appbar-primary">
-					<a data-mode="room chat" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.toggleSidebarLeft}></a>
-					<img data-mode="home" className="appbar-avatar" alt={this.props.user.id} src={this.props.user.picture} onClick={this.toggleSidebarLeft} />
-					<h1 className="appbar-title appbar-title-primary js-appbar-title">{this.props.title}</h1>
-					<a className="appbar-icon appbar-icon-more" onClick={this.showUserMenu}></a>
-					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
-					<a data-role="user follower" data-mode="room chat" className="appbar-icon appbar-icon-follow {this.props.following}" onClick={this.toggleFollowRoom}></a>
-				</div>
-			);
-		}
-	});
-
-	core.on("statechange", function(changes, next) {
-		var user, nav, relation, title, following;
-
-		if (changes.nav && (changes.nav.room || changes.nav.mode) ||
-			"user" in changes || ("entities" in changes && store.get("user") in changes.entities)) {
+			var user, nav, relation, title, following;
 
 			user = store.getUser();
 			nav = store.getNav();
@@ -74,11 +56,18 @@ module.exports = function(core, config, store) {
 
 			following = (relation && relation.role === "follower") ? "following" : "";
 
-			React.render(<AppbarPrimary title={title} user={user} following={following} />, appbarprimaryEl);
+			return (
+				<div key="appbar-primary" className="appbar appbar-primary">
+					<a data-mode="room chat" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.toggleSidebarLeft}></a>
+					<img data-mode="home" className="appbar-avatar" alt={user.id} src={user.picture} onClick={this.toggleSidebarLeft} />
+					<h1 className="appbar-title appbar-title-primary">{title}</h1>
+					<a className="appbar-icon appbar-icon-more" onClick={this.showUserMenu}></a>
+					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
+					<a data-role="user follower" data-mode="room chat" className="appbar-icon appbar-icon-follow {following}" onClick={this.toggleFollowRoom}></a>
+				</div>
+			);
 		}
-
-		next();
-	}, 500);
+	});
 
 	return AppbarPrimary;
 };
