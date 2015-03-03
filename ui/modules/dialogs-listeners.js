@@ -62,7 +62,8 @@ module.exports = function(core, config, store) {
 	}, 100);
 
 	core.on("createroom-dialog", function(dialog, next) {
-		var roomName = store.getNav().room;
+		var nav = store.getNav(),
+			roomName = (nav.dialogState === "prefill") ? nav.room : "";
 
 		if (appUtils.isGuest(store.get("user"))) {
 			if (store.getUser().identities.length) {
@@ -204,28 +205,41 @@ module.exports = function(core, config, store) {
 
 	core.on("createthread-dialog", function(dialog, next) {
 		dialog.title = "Start a new discussion";
-		dialog.content = ["<input type='text' id='createthread-dialog-thread' placeholder='Enter discussion title' autofocus>"];
+		dialog.content = [
+			"<input type='text' id='createthread-dialog-thread' placeholder='Enter discussion title' autofocus>",
+			"<textarea id='createthread-dialog-text' placeholder='Enter your message' style='resize:none'></textarea>"
+		];
 		dialog.action = {
 			text: "Start discussion",
 			action: function() {
-				var $threadEntry = $("#createthread-dialog-thread");
+				var $threadEntry = $("#createthread-dialog-thread"),
+					$textEntry = $("#createthread-dialog-text");
 
-				$threadEntry.validInput(function(thread, callback) {
-					var threadTitle = (thread || "").trim();
+				$threadEntry.validInput(function(threadTitle, callback) {
+					threadTitle = (threadTitle || "").trim();
 
 					if (!threadTitle) {
 						callback("Thread title cannot be empty");
 					} else {
-						core.emit("text-up", {
-							to: store.getNav().room,
-							from: store.get("user"),
-							text: threadTitle,
-							time: new Date().getTime(),
-							manualThreaded: 1,
-							threads: [{
-								id: "new",
-								score: 1.0
-							}]
+						$textEntry.validInput(function(text, callback) {
+							text = (text || "").trim();
+
+							if (!text) {
+								callback("Message cannot be empty");
+							} else {
+								core.emit("text-up", {
+									to: store.getNav().room,
+									from: store.get("user"),
+									text: text,
+									time: new Date().getTime(),
+									manualThreaded: 1,
+									threads: [{
+										id: "new",
+										title: threadTitle,
+										score: 1.0
+									}]
+								});
+							}
 						});
 					}
 				});
