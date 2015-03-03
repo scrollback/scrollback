@@ -61,18 +61,18 @@ module.exports = function(c, conf, s) {
 			user: init.user.id
 		});
 		core.emit("getRooms", {featured: true}, function(err, rooms) {
-			var featuredRooms = [];
-			console.log("Featured", rooms);
+			var featuredRooms = [], entities = {};
 			if(rooms && rooms.results) {
 				rooms.results.forEach(function(e) {
 					featuredRooms.push(e.id);
+					entities[e.id] = e;
 				});
 			}
-			
 			core.emit("setstate", {
 				app:{
 					featuredRooms: featuredRooms
-				}
+				},
+				entities: entities
 			});
 		});
 		next();
