@@ -36,31 +36,31 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			return (
-			        <div className="app-container">
+					<div className="app-container">
 						<SidebarLeft />
 
-					    <main className="main">
-					        <AppbarPrimary />
+						<main className="main">
+							<AppbarPrimary />
 
-					        <AppbarSecondary />
+							<AppbarSecondary />
 
-					        <div className="main-content" data-mode="home search room">
-					            <HomeFeed />
+							<div className="main-content" data-mode="home search room">
+								<HomeFeed />
 
-					            <ThreadFeed />
-					        </div>
+								<ThreadFeed />
+							</div>
 
-					        <ChatArea />
+							<ChatArea />
 
-					        <a className="fab" data-mode="home" onClick={this.createRoom}></a>
-					        <a className="fab" data-mode="room" onClick={this.createThread}></a>
-					    </main>
+							<a className="fab" data-mode="home" onClick={this.createRoom}></a>
+							<a className="fab" data-mode="room" onClick={this.createThread}></a>
+						</main>
 
-					    <SidebarRight />
+						<SidebarRight />
 
-					    <div className="sidebar-overlay" onClick={this.closeSidebar}></div>
+						<div className="sidebar-overlay" onClick={this.closeSidebar}></div>
 
-					    <div className="progressbar loading"></div>
+						<div className="progressbar loading"></div>
 					</div>
 			);
 

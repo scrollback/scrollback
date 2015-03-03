@@ -9,10 +9,10 @@ module.exports = function(core, config, store) {
 	ThreadFeed = React.createClass({
 		render: function() {
 			return (
-			        <div className="main-content-threads" data-mode="room">
-			        	<GridView sections={threadListUtils.getSections("card")} />
-			        </div>
-	        );
+					<div className="main-content-threads" data-mode="room">
+						<GridView sections={threadListUtils.getSections("card")} />
+					</div>
+			);
 		}
 	});
 

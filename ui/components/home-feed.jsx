@@ -9,10 +9,10 @@ module.exports = function(core, config, store) {
 	HomeFeed = React.createClass({
 		render: function() {
 			return (
-			        <div className="main-content-rooms" data-mode="home">
-			        	<GridView sections={roomListUtils.getSections("card")} />
-			        </div>
-        	);
+					<div className="main-content-rooms" data-mode="home">
+						<GridView sections={roomListUtils.getSections("card")} />
+					</div>
+			);
 		}
 	});
 

@@ -25,9 +25,9 @@ module.exports = function(core, config, store) {
 			});
 
 			return (
-			        <div className={classNames} data-mode="chat">
-				        <div className="chat-area-messages">
-				        	<div className="chat-area-messages-list">{chatitems}</div>
+					<div className={classNames} data-mode="chat">
+						<div className="chat-area-messages">
+							<div className="chat-area-messages-list">{chatitems}</div>
 						</div>
 
 						<Compose />
