@@ -41,7 +41,7 @@ module.exports = function(core, config) {
 		else req.above = range;
 		if (!state.texts[roomId]) return ['missing'];
 		if (threadId && !state.texts[key]) return ['missing'];
-		
+
 		return rangeOps.getItems(state.texts[key], req, "time");
 	};
 
@@ -61,6 +61,8 @@ module.exports = function(core, config) {
 	};
 	store.getRelatedRooms = getRelatedRooms;
 	store.getRelatedUsers = getRelatedUsers;
+
+	store.getFeaturedRooms = getFeaturedRooms;
 
 	require("./state-manager.js")(core, config, store, state);
 	require("./content-manager.js")(core, config, store, state);
@@ -119,6 +121,10 @@ function getRelatedUsers(id, filter) {
 function getFeaturedRooms() {
 	var rooms = this.getApp("featuredRooms"),
 		result;
+
+	if (!rooms) {
+		return [];
+	}
 
 	rooms.forEach(function(room) {
 		var roomObj = this.getRoom(room);
