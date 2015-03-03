@@ -16,7 +16,8 @@ module.exports = function(core, conf, s, st) {
 		if (changes.entities) updateEntities(state.entities, changes.entities);
 		if (changes.texts) updateTexts(changes.texts);
 		if (changes.threads) updateThreads(changes.threads);
-		if(changes.user) updateCurrentUser(changes.user);
+		if (changes.session) updateSession(changes.session);
+		if (changes.user) updateCurrentUser(changes.user);
 		next();
 	}, 1000);
 };
@@ -34,6 +35,10 @@ function updateThreads(threads) {
 			console.log(roomId);
 		}
 	});
+}
+
+function updateSession(session) {
+	state.session = session;
 }
 
 function updateCurrentUser(user) {
