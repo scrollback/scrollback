@@ -203,10 +203,10 @@ module.exports = function(core, config, store) {
 	}, 1000);
 
 	core.on("createthread-dialog", function(dialog, next) {
-		dialog.title = "Start a new thread";
-		dialog.content = ["<input type='text' id='createthread-dialog-thread' placeholder='Enter thread title' autofocus>"];
+		dialog.title = "Start a new discussion";
+		dialog.content = ["<input type='text' id='createthread-dialog-thread' placeholder='Enter discussion title' autofocus>"];
 		dialog.action = {
-			text: "Start thread",
+			text: "Start discussion",
 			action: function() {
 				var $threadEntry = $("#createthread-dialog-thread");
 
@@ -216,7 +216,17 @@ module.exports = function(core, config, store) {
 					if (!threadTitle) {
 						callback("Thread title cannot be empty");
 					} else {
-						// Create new thread
+						core.emit("text-up", {
+							to: store.getNav().room,
+							from: store.get("user"),
+							text: threadTitle,
+							time: new Date().getTime(),
+							manualThreaded: 1,
+							threads: [{
+								id: "new",
+								score: 1.0
+							}]
+						});
 					}
 				});
 			}
