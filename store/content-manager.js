@@ -60,7 +60,21 @@ module.exports = function(c, conf, s) {
 			entities: entities,
 			user: init.user.id
 		});
-
+		core.emit("getRooms", {featured: true}, function(err, rooms) {
+			var featuredRooms = [];
+			console.log("Featured", rooms);
+			if(rooms && rooms.results) {
+				rooms.results.forEach(function(e) {
+					featuredRooms.push(e.id);
+				});
+			}
+			
+			core.emit("setstate", {
+				app:{
+					featuredRooms: featuredRooms
+				}
+			});
+		});
 		next();
 	}, 1000);
 
@@ -113,7 +127,7 @@ function onTextUp(text, next) {
 			end: null,
 			items: [text]
 		},
-		key, newState = {};
+		key, newState = {texts:{}};
 	pendingActions[text.id] = text;
 	key = text.to;
 	if (text.thread) key += text.thread;
@@ -128,7 +142,7 @@ function onTextDn(text, next) {
 			end: null,
 			items: [text]
 		},
-		key, newState = {};
+		key, newState = {texts:{}};
 
 	key = text.to;
 	if (text.thread) key += text.thread;

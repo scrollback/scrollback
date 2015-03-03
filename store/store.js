@@ -119,14 +119,14 @@ function getRelatedUsers(id, filter) {
 
 function getFeaturedRooms() {
 	var rooms = this.getApp("featuredRooms"),
-		result;
+		result = [], self = this;
 
 	if (!rooms) {
 		return [];
 	}
 
 	rooms.forEach(function(room) {
-		var roomObj = this.getRoom(room);
+		var roomObj = self.getRoom(room);
 		result.push(roomObj);
 	});
 
