@@ -5,34 +5,46 @@ module.exports = function(core, config, store) {
 		RoomCard = require("./room-card.jsx")(core, config, store),
 		RoomListItem = require("./room-list-item.jsx")(core, config, store),
 		titles = {
+			visitor: "Recently visited",
 			owner: "My rooms",
-			moderator: "My rooms",
+			moderator: "Moderated rooms",
 			follower: "Following",
-			visitor: "Recently visited"
+			featured: "Featured rooms"
 		};
 
 	function getSections(type) {
 		var sections = {}, arr = [];
 
-		store.getRelatedRooms().forEach(function(rel) {
-			sections[rel.role] = sections[rel.role] || {
-				key: "home-feed-" + rel.role,
-				header: titles[rel.role],
+		for (var t in titles) {
+			sections[t] = {
+				key: "home-feed-" + t,
+				header: titles[t],
 				items: []
 			};
+		}
 
+		store.getRelatedRooms().forEach(function(rel) {
 			sections[rel.role].items.push({
 				key: "home-feed-room-card-" + rel.room,
 				elem: (type === "list") ?  <RoomListItem roomId={rel.room} /> : <RoomCard roomId={rel.room} threadCount="3" />
 			});
 		});
 
-		for (var role in sections) {
-			arr.push({
-				key: "home-feed-" + sections[role].key + (type ? "-" + type : ""),
-				header: sections[role].header,
-				items: sections[role].items
+		store.getFeaturedRooms().forEach(function(room) {
+			sections.featured.items.push({
+				key: "home-feed-room-card-featured",
+				elem: (type === "list") ?  <RoomListItem roomId={room.id} /> : <RoomCard roomId={room.id} threadCount="3" />
 			});
+		});
+
+		for (var role in sections) {
+			if (sections[role].items.length) {
+				arr.push({
+					key: "home-feed-" + sections[role].key + (type ? "-" + type : ""),
+					header: sections[role].header,
+					items: sections[role].items
+				});
+			}
 		}
 
 		return arr;

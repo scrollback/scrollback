@@ -70,13 +70,15 @@ module.exports = function(core, config, store) {
 			var sections = getPeople(this.state.query);
 
 			return (
-					<div className="people-list sidebar-content">
+			        <div className="sidebar-people-list">
 						<div className="searchbar">
 							<input type="search" className="searchbar-input" placeholder="Find people" required="true"
 								   value={this.state.query} onChange={this.onChange} />
 							<span className="searchbar-icon" />
 						</div>
-						<ListView sections={sections} />
+						<div className="people-list sidebar-content">
+							<ListView sections={sections} />
+						</div>
 					</div>
 					);
 		}
