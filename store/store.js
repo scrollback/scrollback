@@ -105,9 +105,8 @@ function getRelatedUsers(id, filter) {
 					if (filter[filterKeys] != relation[filterKeys]) return false;
 				}
 			}
-
 			userObj = self.getUser(relation.user);
-			objUtils.extend(userObj, relation);
+			objUtils.extend(relation, userObj);
 			return true;
 		});
 	}
@@ -175,7 +174,6 @@ function getUser() {
 	var userId, res;
 	if (arguments.length === 0) userId = this.get("user");
 	else userId = arguments[0];
-	console.log("getting user ", userId);
 	res = this.get("entities", userId);
 	if(res) return res;
 	return "missing";

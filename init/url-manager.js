@@ -9,7 +9,6 @@ module.exports = function(core /*, config*/ ) {
 			state[key] = s[key];
 		});
 		if (!state.nav.mode) state.nav.mode = "chat";
-		console.log("url manager boot", state);
 		next();
 	}, 900);
 };

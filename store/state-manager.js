@@ -22,7 +22,6 @@ module.exports = function(core, conf, s, st) {
 
 
 function updateCurrentUser(user) {
-	console.log("user changed");
 	state.user = user;
 }
 
@@ -63,36 +62,8 @@ function buildIndex(obj) {
 
 function updateEntities(stateEntities, changesEntities) {
 	objUtils.extend(stateEntities, changesEntities);
-	console.log("Updating entities", stateEntities);
 	buildIndex(state);
-	/*var ids = Object.keys(entities);
-	var roomuser;
-	ids.forEach(function(id) {
-		if (entities[id] === null) {
-			delete store.entities[id];
-		} else {
-			state.entities[id] = clone(entities[id]);
-			delete state.entities[id].role;
-			//TODO: also delete other properties regarding membership.
-		}
-	});*/
 }
-
-/*
-function updateContent(content) {
-	var rooms = Object.keys(content);
-	rooms.forEach(function(e) {
-		if (content[e].textRanges) {
-			updateIndex("text", content[e].textRanges);
-			rangeOps(e, content[e].textRanges);
-		}
-		if (content[e].threadRanges) {
-			updateIndex("thread", content[e].textRanges);
-			rangeOps(e, content[e].threadRanges);
-		}
-	});
-}
-*/
 
 /*function updateIndex(type, ranges) {
 	ranges.forEach(function(r) {

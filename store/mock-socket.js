@@ -71,10 +71,8 @@ function receiveMessage(event) {
 	} catch (err) {
 		core.emit("error", err);
 	}
-	console.log(data);
     if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "error"].indexOf(data.type) != -1) {
 		if (pendingQueries[data.id]) {
-            console.log("calling the call back");
 			pendingQueries[data.id].query.results = data.results;
 			pendingQueries[data.id]();
 			delete pendingQueries[data.id];
@@ -100,10 +98,8 @@ function sendInit() {
     
 	client.send(JSON.stringify(init));
 	pendingActions[init.id] = returnPending(init, function() {
-        console.log("init done", arguments);
 		initDone = true;
-		while(queue.length){console.log(queue.splice(0,1)[0]());}
-		
+		while(queue.length){queue.splice(0,1)[0]();}
 		core.emit("setstate", {
 			app: {
 				connectionStatus: "online"
