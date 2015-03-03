@@ -63,6 +63,10 @@ module.exports = function(core, config, store) {
 			this.setPlaceHolder();
 		},
 
+		componentDidUpdate: function () {
+			this.setPlaceHolder();
+		},
+
 		render: function() {
 			return (
 				<div key="chat-area-input" className="chat-area-input">
