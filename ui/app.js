@@ -2,18 +2,15 @@
 
 (function() {
 	"use strict";
-	require("../bower_components/sockjs/sockjs.js");
-	var config = require(".././client-config-defaults.js"),
-		core = new (require("ebus"))(config.appPriorities),
-		store = require("./../store/store.js")(core, config);
 
-	window.core = core;
-	window.store = store;
+	var config  = require(".././client-config-defaults.js"),
+		core, store;
 
 	// jQuery library
 	window.jQuery = window.$ = require("../bower_components/jquery/dist/jquery.min.js");
 
 	// Third party libraries
+	require("../bower_components/sockjs/sockjs.js");
 	require("../bower_components/velocity/velocity.min.js");
 
 	// UI widgets
@@ -30,6 +27,9 @@
 	require("./plugins/jquery.validInput.js");
 
 	// Core
+	window.core = core = new (require("ebus"))(config.appPriorities);
+	window.store = store = require("./../store/store.js")(core, config);
+
 	require("./store/view-manager.js")(core, config, store);
 
 	// Apps
@@ -65,5 +65,7 @@
 	require("./misc/appcache.js")(core, config, store);
 	require("./misc/google-analytics.js")(core, config, store);
 	require("./misc/workarounds.js")(core, config, store);
+
+	// Initialize
 	require("../init/init.js")(core, config, store);
 }());
