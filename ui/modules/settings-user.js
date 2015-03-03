@@ -66,9 +66,7 @@ module.exports = function(core, config, store) {
 			prio: 300,
 			action: function() {
 				core.emit("setstate", {
-					nav: {
-						dialog: "pref"
-					}
+					nav: { dialog: "pref" }
 				});
 			}
 		};

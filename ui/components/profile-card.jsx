@@ -7,6 +7,12 @@ module.exports = function(core, config, store) {
 		ProfileCard;
 
 	ProfileCard = React.createClass({
+		goToSettings: function() {
+			core.emit("setstate", {
+				nav: { dialog: "pref" }
+			});
+		},
+
 		render: function() {
 			var user = store.getUser();
 
@@ -18,7 +24,7 @@ module.exports = function(core, config, store) {
 						<h3 className="profile-username">{user.id}</h3>
 						<p className="profile-bio">{user.description}</p>
 					</div>
-					<a className="profile-settings"></a>
+					<a className="profile-settings" onClick={this.goToSettings}></a>
 				</div>
 			);
 		}
