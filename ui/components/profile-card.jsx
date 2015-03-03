@@ -19,7 +19,7 @@ module.exports = function(core, config, store) {
 			return (
 				<div key="profile-card" className="profile-card">
 					<a className="profile-scrollback-logo"></a>
-					<img className="profile-avatar" alt="{this.props.user.id}" src={getAvatar(user.picture, 280)} />
+					<img className="profile-avatar" alt={user.id} src={getAvatar(user.picture, 280)} />
 					<div className="profile-details">
 						<h3 className="profile-username">{user.id}</h3>
 						<p className="profile-bio">{user.description}</p>
