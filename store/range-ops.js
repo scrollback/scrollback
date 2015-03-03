@@ -37,7 +37,7 @@ function findIndex(items, propName, value, start, end) {
 
 
 function getItems(ranges, req, propName) {
-    var index, startIndex, endIndex, range, missingAbove, missingBelow;
+    var index, startIndex, endIndex, range, missingBefore, missingAfter;
     range = ranges.filter(function (r) {
         return (
             (req[propName] === null && r.end === null) ||
@@ -50,23 +50,23 @@ function getItems(ranges, req, propName) {
 
     index = findIndex(range.items, propName, req[propName]);
 
-    startIndex = index - (req.below || 0);
-    endIndex = index + (req.above || 0);
+    startIndex = index - (req.before || 0);
+    endIndex = index + (req.after || 0);
 
     if(startIndex < 0) {
-        missingAbove = true;
+        missingBefore = true;
         startIndex = 0;
     }
 
     if(endIndex > range.items.length) {
-        missingBelow = true;
+        missingAfter = true;
         endIndex = range.items.length;
     }
 
     return [].concat(
-        (missingAbove? ['missing']: []),
+        (missingBefore? ['missing']: []),
         range.items.slice(startIndex, endIndex),
-        (missingBelow? ['missing']: [])
+        (missingAfter? ['missing']: [])
     );
 }
 

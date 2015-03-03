@@ -64,7 +64,7 @@ module.exports = function(core, config) {
 
 	require("./state-manager.js")(core, config, store, state);
 	require("./content-manager.js")(core, config, store, state);
-	require("./mock-socket.js")(core, config, store, state);
+//	require("./mock-socket.js")(core, config, store, state);
 	return store;
 };
 

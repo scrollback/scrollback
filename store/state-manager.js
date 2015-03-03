@@ -63,7 +63,7 @@ function buildIndex(obj) {
 
 function updateEntities(stateEntities, changesEntities) {
 	objUtils.extend(stateEntities, changesEntities);
-	console.log("Updating entities", stateEntities);
+//	console.log("Updating entities", stateEntities);
 	buildIndex(state);
 	/*var ids = Object.keys(entities);
 	var roomuser;
