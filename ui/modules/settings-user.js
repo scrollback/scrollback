@@ -54,7 +54,11 @@ module.exports = function(core, config, store) {
 
 	core.on("user-menu", function(menu, next) {
 		if (appUtils.isGuest(store.get("user"))) {
-			return next();
+			menu.title = "Sign in to Scrollback with";
+
+			core.emit("auth", menu, function() {
+				next();
+			});
 		}
 
 		menu.items.userpref = {
@@ -62,9 +66,7 @@ module.exports = function(core, config, store) {
 			prio: 300,
 			action: function() {
 				core.emit("setstate", {
-					nav: {
-						dialog: "pref"
-					}
+					nav: { dialog: "pref" }
 				});
 			}
 		};

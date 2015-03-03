@@ -14,44 +14,53 @@ module.exports = function(core, config, store) {
 
 	Client = React.createClass({
 		createRoom: function() {
-			core.emit("setstate", { nav: { dialog: "createroom" }});
+			core.emit("setstate", {
+				nav: {
+					dialog: "createroom",
+					dialogState: null
+				}
+			});
 		},
 
 		createThread: function() {
-			core.emit("setstate", { nav: { dialog: "createthread" }});
+			core.emit("setstate", {
+				nav: { dialog: "createthread" }
+			});
 		},
 
 		closeSidebar: function() {
-			core.emit("setstate", { nav: { view: null }});
+			core.emit("setstate", {
+				nav: { view: null }
+			});
 		},
 
 		render: function() {
 			return (
-			        <div className="app-container">
+					<div className="app-container">
 						<SidebarLeft />
 
-					    <main className="main">
-					        <AppbarPrimary />
+						<main className="main">
+							<AppbarPrimary />
 
-					        <AppbarSecondary />
+							<AppbarSecondary />
 
-					        <div className="main-content" data-mode="home search room">
-					            <HomeFeed />
+							<div className="main-content" data-mode="home search room">
+								<HomeFeed />
 
-					            <ThreadFeed />
-					        </div>
+								<ThreadFeed />
+							</div>
 
-					        <ChatArea />
+							<ChatArea />
 
-					        <a className="fab" data-mode="home" onClick={this.createRoom}></a>
-					        <a className="fab" data-mode="room" onClick={this.createThread}></a>
-					    </main>
+							<a className="fab" data-mode="home" onClick={this.createRoom}></a>
+							<a className="fab" data-mode="room" onClick={this.createThread}></a>
+						</main>
 
-					    <SidebarRight />
+						<SidebarRight />
 
-					    <div className="sidebar-overlay" onClick={this.closeSidebar}></div>
+						<div className="sidebar-overlay" onClick={this.closeSidebar}></div>
 
-					    <div className="progressbar loading"></div>
+						<div className="progressbar loading"></div>
 					</div>
 			);
 

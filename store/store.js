@@ -36,14 +36,12 @@ module.exports = function(core, config) {
 		var req = {
 				time: time || null
 			},
-			key = "";
+			key = roomId + (threadId ? "_" + threadId : "");
 		if (range < 0) req.below = range * -1;
 		else req.above = range;
 		if (!state.texts[roomId]) return ['missing'];
-		if (threadId && !state.texts[roomId][threadId]) return ['missing'];
+		if (threadId && !state.texts[key]) return ['missing'];
 		
-		key = roomId + (threadId ? "_" + threadId : "");
-		console.log("Requesting for texts: ", key, req);
 		return rangeOps.getItems(state.texts[key], req, "time");
 	};
 

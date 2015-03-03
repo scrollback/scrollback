@@ -14,7 +14,6 @@
 	window.jQuery = window.$ = require("../bower_components/jquery/dist/jquery.min.js");
 
 	// Third party libraries
-	
 	require("../bower_components/velocity/velocity.min.js");
 
 	// UI widgets
