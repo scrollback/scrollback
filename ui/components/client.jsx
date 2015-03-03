@@ -14,15 +14,24 @@ module.exports = function(core, config, store) {
 
 	Client = React.createClass({
 		createRoom: function() {
-			core.emit("setstate", { nav: { dialog: "createroom" }});
+			core.emit("setstate", {
+				nav: {
+					dialog: "createroom",
+					dialogState: null
+				}
+			});
 		},
 
 		createThread: function() {
-			core.emit("setstate", { nav: { dialog: "createthread" }});
+			core.emit("setstate", {
+				nav: { dialog: "createthread" }
+			});
 		},
 
 		closeSidebar: function() {
-			core.emit("setstate", { nav: { view: null }});
+			core.emit("setstate", {
+				nav: { view: null }
+			});
 		},
 
 		render: function() {
