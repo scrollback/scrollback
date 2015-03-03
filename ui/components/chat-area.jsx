@@ -18,12 +18,11 @@ module.exports = function(core, config, store) {
 				classNames += " chat-area-enhanced";
 			}
 
-			(store.getTexts(nav.room, nav.thread, null, 100) || []).forEach(function(text) {
+			(store.getTexts(nav.room, nav.thread, null, -100) || []).forEach(function(text) {
 				if (typeof text === "object") {
 					chatitems.push(<ChatItem text={text} key={"chat-message-list-" + text.id} />);
 				}
 			});
-
 
 			return (
 			        <div className={classNames} data-mode="chat">

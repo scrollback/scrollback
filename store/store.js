@@ -11,8 +11,8 @@ var state = {
 	"texts": {},
 	"threads": {},
 	entities: {},
-	context:{},
-	app:{},
+	context: {},
+	app: {},
 	indexes: {
 		textsById: {},
 		threadsById: {},
@@ -33,24 +33,32 @@ module.exports = function(core, config) {
 	store.getUser = getEntities;
 
 	store.getTexts = function(roomId, threadId, time, range) {
-		var req = {time:time || new Date().getDate()};
-		if(range <0) req.below = range * -1;
+		var req = {
+				time: time || null
+			},
+			key = "";
+		if (range < 0) req.below = range * -1;
 		else req.above = range;
-		if(!state.texts[roomId]) return ['missing']; 
-		if(!state.texts[roomId][threadId]) return ['missing'];
-		return rangeOps.getItems(state.texts[roomId][threadId], req, "time");
+		if (!state.texts[roomId]) return ['missing'];
+		if (threadId && !state.texts[roomId][threadId]) return ['missing'];
+		
+		key = roomId + (threadId ? "_" + threadId : "");
+		console.log("Requesting for texts: ", key, req);
+		return rangeOps.getItems(state.texts[key], req, "time");
 	};
 
 	store.getEntity = getEntities;
 
 	store.getThreads = function(roomId, time, range) {
-		var req = {startTime:time || new Date().getDate()};
-		if(range <0) req.below = range * -1;
+		var req = {
+			startTime: time || new Date().getDate()
+		};
+		if (range < 0) req.below = range * -1;
 		else req.above = range;
-		if(!state.threads[roomId]) return ["missing"];
+		if (!state.threads[roomId]) return ["missing"];
 		return rangeOps.getItems(state.threads[roomId], req, "startTime");
 	};
-	store.getRelation = function(){
+	store.getRelation = function() {
 		return [];
 	};
 	store.getRelatedRooms = getRelatedRooms;
@@ -85,16 +93,18 @@ function getRelatedUsers(id, filter) {
 	} else if (typeof id === "object") {
 		roomId = this.getNav("room");
 		filter = id;
+	} else {
+		id = roomId = this.getNav("room");
 	}
-	
+
 	users = this.get("indexes", "roomUsers", roomId);
-	if(users){
+	if (users) {
 		users = users.filter(function(relation) {
 			var userObj, filterKeys, i;
-			if(filter) {
+			if (filter) {
 				filterKeys = Object.keys(filter);
-				for(i = 0; i<filterKeys.length; i++) {
-					if(filter[filterKeys] != relation[filterKeys]) return false;
+				for (i = 0; i < filterKeys.length; i++) {
+					if (filter[filterKeys] != relation[filterKeys]) return false;
 				}
 			}
 
@@ -102,10 +112,9 @@ function getRelatedUsers(id, filter) {
 			objUtils.extend(userObj, relation);
 			return true;
 		});
-
 	}
-	
-	if(users) return users;
+
+	if (users) return users;
 	else return [];
 }
 
@@ -123,7 +132,7 @@ function getFeaturedRooms() {
 
 function getRecommendedRooms() {
 	//TODO: right now no recommended rooms
-	
+
 	return [];
 }
 
@@ -140,21 +149,27 @@ function getRelatedRooms(id, filter) {
 	} else if (typeof id === "object") {
 		user = this.getNav("user").id;
 		filter = id;
+	} else {
+		id = this.getNav("room");
 	}
+
 	rooms = this.get("indexes", "userRooms", user);
-	rooms = rooms.filter(function(roomRelation) {
-		var roomObj, filterKeys, i;
-		if(filter) {
-			filterKeys = Object.keys(filter);
-			for(i = 0; i<filterKeys.length; i++) {
-				if(filter[filterKeys] != roomRelation[filterKeys]) return false;
+	if (rooms) {
+		rooms = rooms.filter(function(roomRelation) {
+			var roomObj, filterKeys, i;
+			if (filter) {
+				filterKeys = Object.keys(filter);
+				for (i = 0; i < filterKeys.length; i++) {
+					if (filter[filterKeys] != roomRelation[filterKeys]) return false;
+				}
 			}
-		}
-		roomObj = self.getRoom(roomRelation.room);
-		objUtils.extend(roomRelation, roomObj);
-		return true;
-	});
-	if(rooms) return rooms;
+			roomObj = self.getRoom(roomRelation.room);
+			objUtils.extend(roomRelation, roomObj);
+			return true;
+		});
+
+	}
+	if (rooms) return rooms;
 	else return [];
 }
 
@@ -168,7 +183,7 @@ function getEntities() {
 	} else if (roomId) {
 		res = this.get("entities", roomId);
 	}
-	
-	if(res) return res;
+
+	if (res) return res;
 	else return "missing";
 }

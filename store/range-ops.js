@@ -50,8 +50,8 @@ function getItems(ranges, req, propName) {
 
     index = findIndex(range.items, propName, req[propName]);
 
-    startIndex = index - (req.above || 0);
-    endIndex = index + (req.below || 0);
+    startIndex = index - (req.below || 0);
+    endIndex = index + (req.above || 0);
 
     if(startIndex < 0) {
         missingAbove = true;

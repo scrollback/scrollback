@@ -3,12 +3,11 @@
 /* global SockJS*/
 
 var generate = require("../lib/generate.js"),
-	
     config, core, client;
 
 var backOff = 1,
 	client, pendingQueries = {},
-	pendingActions = {}, session, resource;
+	pendingActions = {}, session, resource, queue = [], initDone = false;
 
 module.exports = function(c, conf) {
     core = c;
@@ -16,9 +15,14 @@ module.exports = function(c, conf) {
     connect();
     ["getTexts", "getUsers","getRooms","getThreads","getEntities"].forEach(function(e) {
         core.on(e, function(q, n) {
-			console.log("Making queries", q);
             q.type = e;
-            sendQuery(q, n);
+			if(initDone) {
+				sendQuery(q, n);	
+			} else {
+				queue.push(function(){
+					sendQuery(q, n);
+				});
+			}
         },10);
     });
 };
@@ -97,6 +101,9 @@ function sendInit() {
 	client.send(JSON.stringify(init));
 	pendingActions[init.id] = returnPending(init, function() {
         console.log("init done", arguments);
+		initDone = true;
+		while(queue.length){console.log(queue.splice(0,1)[0]());}
+		
 		core.emit("setstate", {
 			app: {
 				connectionStatus: "online"

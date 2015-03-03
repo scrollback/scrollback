@@ -43,15 +43,13 @@ module.exports = function(c, conf, s) {
 	}
 	core.on("init-dn", function(init, next) {
 		var entities = {};
-		console.log("init-dn", init);
 		if (!init.user.id) return next();
 		
 		if (init.occupantOf) entities = constructEntitiesFromRoomList(init.occupantOf, entities, init.user.id);
 		if (init.memberOf) entities = constructEntitiesFromRoomList(init.memberOf, entities, init.user.id);
-		console.log("init-dn", init.user);
 		core.emit("setstate", {
 			entities: entities,
-			user: init.user
+			user: init.user.id
 		});
 		
 		next();
@@ -199,7 +197,6 @@ function loadRoom(roomId) {
 
 			updatingState.entities[roomId] = null;
 			updatingState.entities[newRoom.id] = newRoom;
-			console.log("Emitting setstate", updatingState);
 			core.emit("setstate", updatingState);
 		}
 	});
@@ -231,7 +228,6 @@ function loadOccupants(roomId) {
 	}, function(err, data) {
 		var entities = {};
 		entities = constructEntitiesFromUserList(data.results, entities, data.occupantOf);
-		console.log("Emitting setstate with entities", entities);
 		core.emit("setstate", {
 			entities: entities
 		});
@@ -245,7 +241,6 @@ function loadMembers(roomId) {
 	}, function(err, data) {
 		var entities = {};
 		entities = constructEntitiesFromUserList(data.results, entities, data.memberOf);
-		console.log("Emitting setstate with entities", entities);
 		core.emit("setstate", {
 			entities: entities
 		});
@@ -255,7 +250,6 @@ function loadMembers(roomId) {
 function handleRoomChange(newState) {
 	var roomId = newState.nav.room;
 	var roomObj = store.getRoom(roomId);
-	console.log(roomObj);
 	if (typeof roomObj === "string" && roomObj == "missing") {
 		if(!newState.entities) newState.entities = [];
 		newState.entities[roomId] = "missing";
@@ -324,10 +318,11 @@ function handleTextChange(newState) {
 }
 
 function threadResponse(err, threads) {
-	var updatingState = {},
-		range = {};
+	var updatingState = {
+		threads:{}
+	}, range = {};
 
-	if (!err && threads.results) {
+	if (!err && threads.results && threads.results.length) {
 		if (threads.before) {
 			range.end = threads.time;
 			range.start = threads.results[0].time;
@@ -341,8 +336,10 @@ function threadResponse(err, threads) {
 			end: threads.time,
 			items: threads.results
 		});
-		core.emit("setstate", updatingState);
+	}else {
+		updatingState.threads[threads.to] = [];
 	}
+	core.emit("setstate", updatingState);
 }
 
 function handleThreadChange(newState) {

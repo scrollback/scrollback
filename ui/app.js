@@ -66,5 +66,5 @@
 	require("./misc/appcache.js")(core, config, store);
 	require("./misc/google-analytics.js")(core, config, store);
 	require("./misc/workarounds.js")(core, config, store);
-
+	require("../init/init.js")(core, config, store);
 }());
