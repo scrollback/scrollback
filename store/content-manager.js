@@ -47,6 +47,7 @@ module.exports = function(c, conf, s) {
 		
 		if (init.occupantOf) entities = constructEntitiesFromRoomList(init.occupantOf, entities, init.user.id);
 		if (init.memberOf) entities = constructEntitiesFromRoomList(init.memberOf, entities, init.user.id);
+		entities[init.user.id] = init.user;
 		core.emit("setstate", {
 			entities: entities,
 			user: init.user.id
@@ -321,7 +322,7 @@ function threadResponse(err, threads) {
 	var updatingState = {
 		threads:{}
 	}, range = {};
-
+	updatingState.threads[threads.to] = [];
 	if (!err && threads.results && threads.results.length) {
 		if (threads.before) {
 			range.end = threads.time;
@@ -336,8 +337,6 @@ function threadResponse(err, threads) {
 			end: threads.time,
 			items: threads.results
 		});
-	}else {
-		updatingState.threads[threads.to] = [];
 	}
 	core.emit("setstate", updatingState);
 }

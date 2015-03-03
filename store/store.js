@@ -29,8 +29,8 @@ module.exports = function(core, config) {
 	store.getNav = getProp("nav");
 	store.getContext = getProp("context");
 
-	store.getRoom = getEntities;
-	store.getUser = getEntities;
+	store.getRoom = getRoom;
+	store.getUser = getUser;
 
 	store.getTexts = function(roomId, threadId, time, range) {
 		var req = {
@@ -173,17 +173,35 @@ function getRelatedRooms(id, filter) {
 	else return [];
 }
 
-function getEntities() {
+function getUser() {
+	var userId, res;
+	if (arguments.length === 0) userId = this.get("user");
+	else userId = arguments[0];
+	console.log("getting user ", userId);
+	res = this.get("entities", userId);
+	if(res) return res;
+	return "missing";
+}
+
+function getRoom() {
 	var roomId, res;
 	if (arguments.length === 0) roomId = this.get("nav", "room");
 	else roomId = arguments[0];
-
-	if (roomId.indexOf(":") >= 0) {
-		// get room based on id.
-	} else if (roomId) {
+	if (roomId) {
 		res = this.get("entities", roomId);
 	}
+	if (res) return res;
+	else return "missing";
+}
 
+function getEntities(id) {
+	var res;
+	if (id) {
+		res = this.get("entities", id);
+	}else{
+		return {};
+	}
+	
 	if (res) return res;
 	else return "missing";
 }
