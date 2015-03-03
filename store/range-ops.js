@@ -110,7 +110,6 @@ function mergeRange(ranges, range, propName) {
 
 	if(ranges[bottomRangeIndex] && isInRange(ranges[bottomRangeIndex], range.end)){
 		bottomItemIndex = findIndex(ranges[bottomRangeIndex].items, propName, range.end);
-		console.log('bii', bottomItemIndex);
 		while(
 			ranges[bottomRangeIndex].items[bottomItemIndex] &&
 			ranges[bottomRangeIndex].items[bottomItemIndex][propName] === range.end
@@ -119,7 +118,7 @@ function mergeRange(ranges, range, propName) {
 		bottomItemIndex = -1;
 	}
 
-	console.log(JSON.stringify(ranges),'\n', JSON.stringify(range),'\n', topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex);
+/*	console.log(JSON.stringify(ranges),'\n', JSON.stringify(range),'\n', topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex);*/
 
 	mergedRange = {start: range.start, end: range.end, items: []};
 
@@ -137,8 +136,6 @@ function mergeRange(ranges, range, propName) {
 
 //	if(topItemIndex === -1) topRangeIndex++;
 //	if(bottomItemIndex === -1) bottomRangeIndex--;
-
-	console.log(topRangeIndex, bottomRangeIndex, mergedRange);
 
 	ranges.splice(topRangeIndex, bottomRangeIndex - topRangeIndex + 1, mergedRange);
 	return ranges;

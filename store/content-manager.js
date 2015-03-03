@@ -1,5 +1,5 @@
 var store, core, config;
-var relationsProps = ['role', 'transistionTime'];
+var relationsProps = ['role', 'roleSince'];
 var pendingActions = {};
 module.exports = function(c, conf, s) {
 	store = s;
@@ -7,18 +7,27 @@ module.exports = function(c, conf, s) {
 	config = conf;
 
 	core.on("setstate", function(newState, next) {
-		if(!newState.nav) return next();
-		if (newState.nav.room){
-			handleRoomChange(newState);
-			if(!newState.nav.textRange){
-				newState.nav.textRange = {time: null, above: 50};
+		if (newState.nav) {
+			if (newState.nav.room) {
+				handleRoomChange(newState);
+				if (!newState.nav.threadRange) {
+					newState.nav.threadRange = {
+						time: null,
+						above: 50
+					};
+				}
 			}
-			if(!newState.nav.threadRange){
-				newState.nav.threadRange = {time: null, above: 50};
+			if (newState.nav.thread || newState.nav.room) {
+				if (!newState.nav.textRange) {
+					newState.nav.textRange = {
+						time: null,
+						above: 50
+					};
+				}
+				handleTextChange(newState);
 			}
+			if (newState.nav.threadRange) handleThreadRangeChange(newState);
 		}
-		if (newState.nav.textRange) handleTextChange(newState);
-		if (newState.nav.threadRange) handleThreadChange(newState);
 		next();
 		core.emit("statechange", newState);
 	}, 900);
@@ -28,9 +37,8 @@ module.exports = function(c, conf, s) {
 			var relation = {};
 			relation.room = e.id;
 			relation.user = userId;
-			relation.status = "online";
 			relationsProps.forEach(function(key) {
-				if (relation[key]) {
+				if (e[key]) {
 					relation[key] = e[key];
 					delete e[key];
 				}
@@ -44,14 +52,15 @@ module.exports = function(c, conf, s) {
 	core.on("init-dn", function(init, next) {
 		var entities = {};
 		if (!init.user.id) return next();
-		
+
 		if (init.occupantOf) entities = constructEntitiesFromRoomList(init.occupantOf, entities, init.user.id);
 		if (init.memberOf) entities = constructEntitiesFromRoomList(init.memberOf, entities, init.user.id);
+		entities[init.user.id] = init.user;
 		core.emit("setstate", {
 			entities: entities,
 			user: init.user.id
 		});
-		
+
 		next();
 	}, 1000);
 
@@ -68,24 +77,33 @@ module.exports = function(c, conf, s) {
 
 function entityEvent(action, next) {
 	var entities = {};
-	entities[action.to] = action[action.type == "room" ? "room":"user"];
-	core.emit("setstate", {entities: entities});
+	entities[action.to] = action[action.type == "room" ? "room" : "user"];
+	core.emit("setstate", {
+		entities: entities
+	});
 	next();
 }
 
 function presenseChange(action, next) {
-	var entities = {}, relation = {room: action.to, user: action.from, status: action.type == "away"?"offline": "online"};
+	var entities = {},
+		relation = {
+			room: action.to,
+			user: action.from,
+			status: action.type == "away" ? "offline" : "online"
+		};
 	relationsProps.forEach(function(key) {
-		if (relation[key]) {
+		if (action.room[key]) {
 			relation[key] = action.room[key];
 			delete action.to[key];
 		}
 	});
-	
+
 	entities[action.to] = action.room;
 	entities[action.from] = action.user;
-	entities[relation.room+"_"+relation.user] = relation;
-	core.emit("setstate", {entities: entities});
+	entities[relation.room + "_" + relation.user] = relation;
+	core.emit("setstate", {
+		entities: entities
+	});
 	next();
 }
 
@@ -119,12 +137,12 @@ function onTextDn(text, next) {
 		newState.texts[pendingActions[text.id].to + pendingActions[text.id].thread ? "_" + pendingActions[text.id].thread : ""] = {
 			start: pendingActions[text.id].time,
 			end: pendingActions[text.id].time,
-			items:[
-				
+			items: [
+
 			]
 		};
 	}
-	
+
 	core.emit("setstate", newState);
 	next();
 }
@@ -137,14 +155,14 @@ function onJoin(join, next) {
 
 	relation.user = user.id;
 	relation.room = room.id;
-	
+
 	relationsProps.forEach(function(key) {
-		if (relation[key]) {
+		if (join.room[key]) {
 			relation[key] = join.room[key];
 			delete join.to[key];
 		}
 	});
-	
+
 	relationsProps.forEach(function(prop) {
 		relation[prop] = join[prop];
 	});
@@ -165,7 +183,7 @@ function onPart(part, next) {
 	var room = part.room;
 	var user = part.user;
 	var entities = {};
-	
+
 	entities[room.id] = room;
 	entities[user.id] = user;
 	entities[room.id + "_" + user.id] = null;
@@ -185,7 +203,7 @@ function loadRoom(roomId) {
 		var newRoom, updatingState = {
 			entities: {}
 		};
-		
+
 		if (!err && data.results && data.results.length) {
 			newRoom = data.results[0];
 
@@ -204,12 +222,16 @@ function loadRoom(roomId) {
 
 function constructEntitiesFromUserList(list, entities, roomId) {
 	list.forEach(function(e) {
-		var relation = {};
+		var relation;
+
+		if (entities[roomId + "_" + e.id]) relation = entities[roomId + "_" + e.id];
+		else relation = {};
+
 		relation.room = roomId;
 		relation.user = e.id;
-		relation.status = "online";
+		relation.status = "offline";
 		relationsProps.forEach(function(key) {
-			if (relation[key]) {
+			if (e[key]) {
 				relation[key] = e[key];
 				delete e[key];
 			}
@@ -217,33 +239,38 @@ function constructEntitiesFromUserList(list, entities, roomId) {
 		entities[e.id] = e;
 		entities[roomId + "_" + e.id] = relation;
 	});
-
-	return entities;
 }
 
-function loadOccupants(roomId) {
-	core.emit("getUsers", {
-		type:"getUsers",
-		occupantOf: roomId
-	}, function(err, data) {
-		var entities = {};
-		entities = constructEntitiesFromUserList(data.results, entities, data.occupantOf);
+function loadUsersList(roomId) {
+	var occupantList, memberList, done = false,
+		entities = {};
+
+	function emitSetState() {
+		constructEntitiesFromUserList(memberList, entities, roomId);
+		constructEntitiesFromUserList(occupantList, entities, roomId);
+		occupantList.forEach(function(e) {
+			entities[roomId + "_" + e.id].status = "online";
+		});
 		core.emit("setstate", {
 			entities: entities
 		});
-	});
-}
+	}
 
-function loadMembers(roomId) {
 	core.emit("getUsers", {
-		type:"getUsers",
+		type: "getUsers",
 		memberOf: roomId
 	}, function(err, data) {
-		var entities = {};
-		entities = constructEntitiesFromUserList(data.results, entities, data.memberOf);
-		core.emit("setstate", {
-			entities: entities
-		});
+		memberList = data.results || [];
+		if (!done) done = true;
+		else emitSetState();
+	});
+	core.emit("getUsers", {
+		type: "getUsers",
+		occupantOf: roomId
+	}, function(err, data) {
+		occupantList = data.results || [];
+		if (!done) done = true;
+		else emitSetState();
 	});
 }
 
@@ -251,18 +278,19 @@ function handleRoomChange(newState) {
 	var roomId = newState.nav.room;
 	var roomObj = store.getRoom(roomId);
 	if (typeof roomObj === "string" && roomObj == "missing") {
-		if(!newState.entities) newState.entities = [];
+		if (!newState.entities) newState.entities = [];
 		newState.entities[roomId] = "missing";
 		loadRoom(roomId);
 		if (roomId.indexOf(":") < 0 && !store.getRelatedUsers(roomId).length) {
-			loadMembers(roomId);
-			loadOccupants(roomId);
+			loadUsersList(roomId);
 		}
 	}
 }
 
 function textResponse(err, texts) {
-	var updatingState = {texts:{}},
+	var updatingState = {
+			texts: {}
+		},
 		range = {},
 		key = texts.to;
 
@@ -277,7 +305,7 @@ function textResponse(err, texts) {
 			range.end = texts.results[texts.results.length - 1].time;
 		}
 		range.items = texts.results;
-		
+
 		updatingState.texts[key] = [{
 			start: texts.results[0].time,
 			end: texts.time,
@@ -288,7 +316,7 @@ function textResponse(err, texts) {
 }
 
 function handleTextChange(newState) {
-	var textRange = newState.nav.textRange,
+	var textRange = newState.nav.textRange || {},
 		thread = (newState.nav.thread ? newState.nav.thread : store.getNav("thread")),
 		roomId = (newState.nav.room ? newState.nav.room : store.getNav("room")),
 		time = textRange.time || null,
@@ -319,30 +347,29 @@ function handleTextChange(newState) {
 
 function threadResponse(err, threads) {
 	var updatingState = {
-		threads:{}
-	}, range = {};
-
+			threads: {}
+		},
+		range = {};
+	updatingState.threads[threads.to] = [];
 	if (!err && threads.results && threads.results.length) {
 		if (threads.before) {
 			range.end = threads.time;
-			range.start = threads.results[0].time;
+			range.start = threads.results[0].startTime;
 		} else {
 			range.start = threads.time;
-			range.end = threads.results[threads.results.length - 1].time;
+			range.end = threads.results[threads.results.length - 1].startTime;
 		}
 		range.items = threads.results;
 		updatingState.threads[threads.to].push({
-			start: threads.results[0].time,
+			start: threads.results[0].startTime,
 			end: threads.time,
 			items: threads.results
 		});
-	}else {
-		updatingState.threads[threads.to] = [];
 	}
 	core.emit("setstate", updatingState);
 }
 
-function handleThreadChange(newState) {
+function handleThreadRangeChange(newState) {
 	var threadRange = newState.nav.threadRange,
 		roomId = (newState.nav.room ? newState.nav.room : store.getNav("room")),
 		time = threadRange.time || null,

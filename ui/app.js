@@ -2,10 +2,9 @@
 
 (function() {
 	"use strict";
-
 	var config  = require(".././client-config-defaults.js"),
 		core, store;
-
+	
 	// jQuery library
 	window.jQuery = window.$ = require("../bower_components/jquery/dist/jquery.min.js");
 

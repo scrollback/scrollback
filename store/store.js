@@ -7,7 +7,7 @@ var state = {
 		"room": null
 	},
 	session: {},
-	"user": {},
+	"user": "",
 	"texts": {},
 	"threads": {},
 	entities: {},
@@ -29,8 +29,8 @@ module.exports = function(core, config) {
 	store.getNav = getProp("nav");
 	store.getContext = getProp("context");
 
-	store.getRoom = getEntities;
-	store.getUser = getEntities;
+	store.getRoom = getRoom;
+	store.getUser = getUser;
 
 	store.getTexts = function(roomId, threadId, time, range) {
 		var req = {
@@ -41,7 +41,7 @@ module.exports = function(core, config) {
 		else req.above = range;
 		if (!state.texts[roomId]) return ['missing'];
 		if (threadId && !state.texts[key]) return ['missing'];
-		
+
 		return rangeOps.getItems(state.texts[key], req, "time");
 	};
 
@@ -49,7 +49,7 @@ module.exports = function(core, config) {
 
 	store.getThreads = function(roomId, time, range) {
 		var req = {
-			startTime: time || new Date().getDate()
+			startTime: time || null
 		};
 		if (range < 0) req.below = range * -1;
 		else req.above = range;
@@ -62,6 +62,8 @@ module.exports = function(core, config) {
 	store.getRelatedRooms = getRelatedRooms;
 	store.getRelatedUsers = getRelatedUsers;
 
+	store.getFeaturedRooms = getFeaturedRooms;
+
 	require("./state-manager.js")(core, config, store, state);
 	require("./content-manager.js")(core, config, store, state);
 //	require("./mock-socket.js")(core, config, store, state);
@@ -73,7 +75,7 @@ module.exports = function(core, config) {
 function get() {
 	var args = Array.prototype.slice.call(arguments);
 	args.unshift(state);
-	return objUtils.get.apply(null, args);
+	return objUtils.clone(objUtils.get.apply(null, args));
 }
 
 function getProp(block) {
@@ -105,9 +107,8 @@ function getRelatedUsers(id, filter) {
 					if (filter[filterKeys] != relation[filterKeys]) return false;
 				}
 			}
-
 			userObj = self.getUser(relation.user);
-			objUtils.extend(userObj, relation);
+			objUtils.extend(relation, userObj);
 			return true;
 		});
 	}
@@ -119,6 +120,10 @@ function getRelatedUsers(id, filter) {
 function getFeaturedRooms() {
 	var rooms = this.getApp("featuredRooms"),
 		result;
+
+	if (!rooms) {
+		return [];
+	}
 
 	rooms.forEach(function(room) {
 		var roomObj = this.getRoom(room);
@@ -171,17 +176,34 @@ function getRelatedRooms(id, filter) {
 	else return [];
 }
 
-function getEntities() {
+function getUser() {
+	var userId, res;
+	if (arguments.length === 0) userId = this.get("user");
+	else userId = arguments[0];
+	res = this.get("entities", userId);
+	if(res) return res;
+	return "missing";
+}
+
+function getRoom() {
 	var roomId, res;
 	if (arguments.length === 0) roomId = this.get("nav", "room");
 	else roomId = arguments[0];
-
-	if (roomId.indexOf(":") >= 0) {
-		// get room based on id.
-	} else if (roomId) {
+	if (roomId) {
 		res = this.get("entities", roomId);
 	}
+	if (res) return res;
+	else return "missing";
+}
 
+function getEntities(id) {
+	var res;
+	if (id) {
+		res = this.get("entities", id);
+	}else{
+		return {};
+	}
+	
 	if (res) return res;
 	else return "missing";
 }
