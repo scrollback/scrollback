@@ -62,7 +62,8 @@ module.exports = function(core, config, store) {
 	}, 100);
 
 	core.on("createroom-dialog", function(dialog, next) {
-		var roomName = store.getNav().room;
+		var nav = store.getNav(),
+			roomName = (nav.dialogState === "prefill") ? nav.room : "";
 
 		if (appUtils.isGuest(store.get("user"))) {
 			if (store.getUser().identities.length) {
