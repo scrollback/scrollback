@@ -28,21 +28,17 @@ function updateCurrentUser(user) {
 
 function updateTexts(texts) {
 	var rooms = Object.keys(texts), ranges;
-	rooms.forEach(function(room) {
-		var thread, parts = room.split("_");
-		room = parts[0];
-		if(parts[1]) thread = parts[1];
-		ranges = store.get("texts", room, thread);
-		if(!ranges) ranges = state.texts[room] = [];
-		if(texts[room].length) {
-			texts[room].forEach(function(newRange) {
-				texts[room] = rangeOps.merge(ranges, newRange, "time");
+	
+	rooms.forEach(function(roomThread) {
+		ranges = store.get("texts", roomThread);
+		if(!ranges) ranges = state.texts[roomThread] = [];
+		if(texts[roomThread].length) {
+			texts[roomThread].forEach(function(newRange) {
+				state.texts[roomThread] = rangeOps.merge(ranges, newRange, "time");
 			});
-		}else{
-			console.log(room);
+		} else {
+			console.log(roomThread);
 		}
-		
-		
 	});
 }
 

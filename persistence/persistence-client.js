@@ -102,8 +102,9 @@ module.exports = function (core, config, store) {
 		
 		if(changes.texts) {
 			for(key in changes.texts) {
+				var room = key.split('_');
 				changes.texts[key].forEach(function (range) {
-					
+					var items = store.getTexts(room, thread, range.start, )
 				});
 			}
 		}
