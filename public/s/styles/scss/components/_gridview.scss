@@ -31,6 +31,8 @@
     overflow: hidden;
     cursor: pointer;
 
+    &:focus { outline: none; }
+
     &:focus, &:hover { @include dropshadow(2); }
 
     &:active { @include dropshadow(1); }
