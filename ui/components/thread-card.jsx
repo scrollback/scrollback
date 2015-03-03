@@ -21,7 +21,15 @@ module.exports = function(core, config, store) {
 			}, 500);
 		},
 
-		goToThread: function() {
+		goToThread: function(e) {
+			if (/(icon-more|reply)/.test(e.target.getAttribute("class"))) {
+				return;
+			}
+
+			if (/active/.test(this.refs.quickReply.getDOMNode().getAttribute("class"))) {
+				return;
+			}
+
 			core.emit("setstate", {
 				nav: {
 					thread: this.props.thread.id,
@@ -29,6 +37,55 @@ module.exports = function(core, config, store) {
 					view: null
 				}
 			});
+		},
+
+		sendMessage: function(e) {
+			var text;
+
+			if (e.keyCode !== 13) {
+				return;
+			}
+
+			text = e.currentTarget.value.trim();
+
+			if (!text) {
+				return;
+			}
+
+			core.emit("text-up", {
+				to: store.getNav().room,
+				from: store.get("user"),
+				text: text,
+				time: new Date().getTime(),
+				threads: [{ id: this.props.thread }]
+			});
+
+			e.currentTarget.value = "";
+		},
+
+		showQuickReply: function() {
+			var DOMNode = this.refs.quickReply.getDOMNode();
+
+			if (/active/.test(DOMNode.getAttribute("class"))) {
+				return;
+			}
+
+			DOMNode.className += " active";
+
+			setTimeout(function() {
+				DOMNode.querySelector(".card-entry-reply").focus();
+			}, 50);
+		},
+
+		hideQuickReply: function() {
+			var DOMNode = this.refs.quickReply.getDOMNode(),
+				classNames = DOMNode.getAttribute("class");
+
+			if (!/active/.test(classNames)) {
+				return;
+			}
+
+			classNames = classNames.replace(/\bactive\b/, "").trim();
 		},
 
 		render: function() {
@@ -52,13 +109,12 @@ module.exports = function(core, config, store) {
 						<h3 className="card-header-title">{thread.title}</h3>
 			  			<span className="card-header-badge notification-badge notification-badge-mention">{thread.mentions}</span>
 			  			<span className="card-header-badge notification-badge notification-badge-messages">{thread.messages}</span>
-						<a className="card-header-icon card-header-icon-more"></a>
 					</div>
 					<div className="card-content">{chats}</div>
-					<div className="card-quick-reply">
+					<div ref="quickReply" className="card-quick-reply" onClick={this.showQuickReply}>
 						<div className="card-quick-reply-content">
 							<div className="card-button card-button-reply">Quick reply</div>
-							<input type="text" className="card-entry card-entry-reply" />
+							<input type="text" className="card-entry card-entry-reply" onKeyDown={this.sendMessage} onBlur={this.hideQuickReply} />
 						</div>
 					</div>
 				</div>

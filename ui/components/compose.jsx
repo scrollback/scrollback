@@ -23,7 +23,8 @@ module.exports = function(core, config, store) {
 				to: store.getNav().room,
 				from: store.get("user"),
 				text: text,
-				time: new Date().getTime()
+				time: new Date().getTime(),
+				threads: [{ id: store.getNav().thread }]
 			});
 
 			this.replaceState(this.getInitialState());
