@@ -4,7 +4,7 @@ module.exports = function(core) {
 	core.on("init", function(action, next){
 		var origin = action.origin || {}, user = action.user, blacklist;
         if (appUtils.isIRCSession(action.session)) return next();
-		if(!origin.verified) return next(new Error("BLACKLISTED_DOMAIN"));
+//		if(!origin.verified) return next(new Error("BLACKLISTED_DOMAIN"));
 		if(/^guest-/.test(user.id)) return next();
 		blacklist = user.params && user.params["domain-blacklist"];
 		if (action.user.allowedDomains && action.user.allowedDomains.indexOf(action.origin.domain) < 0) {

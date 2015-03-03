@@ -7,11 +7,21 @@ module.exports = function(c, conf, s) {
 	config = conf;
 
 	core.on("setstate", function(newState, next) {
-		if (newState.nav.room) handleRoomChange(newState);
+		if(!newState.nav) return next();
+		if (newState.nav.room){
+			handleRoomChange(newState);
+			if(!newState.nav.textRange){
+				newState.nav.textRange = {time: null, above: 50};
+			}
+			if(!newState.nav.threadRange){
+				newState.nav.threadRange = {time: null, above: 50};
+			}
+		}
 		if (newState.nav.textRange) handleTextChange(newState);
 		if (newState.nav.threadRange) handleThreadChange(newState);
 		next();
-	}, 1000);
+		core.emit("statechange", newState);
+	}, 900);
 
 	function constructEntitiesFromRoomList(list, entities, userId) {
 		list.forEach(function(e) {
@@ -33,15 +43,17 @@ module.exports = function(c, conf, s) {
 	}
 	core.on("init-dn", function(init, next) {
 		var entities = {};
+		console.log("init-dn", init);
 		if (!init.user.id) return next();
 		
 		if (init.occupantOf) entities = constructEntitiesFromRoomList(init.occupantOf, entities, init.user.id);
 		if (init.memberOf) entities = constructEntitiesFromRoomList(init.memberOf, entities, init.user.id);
-		
+		console.log("init-dn", init.user);
 		core.emit("setstate", {
 			entities: entities,
 			user: init.user
 		});
+		
 		next();
 	}, 1000);
 
@@ -167,7 +179,7 @@ function onPart(part, next) {
 }
 
 function loadRoom(roomId) {
-	core.emit("getEntity", (roomId.indexOf(":") >= 0) ? {
+	core.emit("getEntities", (roomId.indexOf(":") >= 0) ? {
 		identity: roomId
 	} : {
 		ref: roomId
@@ -175,8 +187,8 @@ function loadRoom(roomId) {
 		var newRoom, updatingState = {
 			entities: {}
 		};
-
-		if (!err && data.results.length) {
+		
+		if (!err && data.results && data.results.length) {
 			newRoom = data.results[0];
 
 			if (roomId !== newRoom.id) {
@@ -187,7 +199,8 @@ function loadRoom(roomId) {
 
 			updatingState.entities[roomId] = null;
 			updatingState.entities[newRoom.id] = newRoom;
-			core.emit("setstore", updatingState);
+			console.log("Emitting setstate", updatingState);
+			core.emit("setstate", updatingState);
 		}
 	});
 }
@@ -213,10 +226,12 @@ function constructEntitiesFromUserList(list, entities, roomId) {
 
 function loadOccupants(roomId) {
 	core.emit("getUsers", {
+		type:"getUsers",
 		occupantOf: roomId
 	}, function(err, data) {
 		var entities = {};
 		entities = constructEntitiesFromUserList(data.results, entities, data.occupantOf);
+		console.log("Emitting setstate with entities", entities);
 		core.emit("setstate", {
 			entities: entities
 		});
@@ -225,10 +240,12 @@ function loadOccupants(roomId) {
 
 function loadMembers(roomId) {
 	core.emit("getUsers", {
+		type:"getUsers",
 		memberOf: roomId
 	}, function(err, data) {
 		var entities = {};
 		entities = constructEntitiesFromUserList(data.results, entities, data.memberOf);
+		console.log("Emitting setstate with entities", entities);
 		core.emit("setstate", {
 			entities: entities
 		});
@@ -238,27 +255,26 @@ function loadMembers(roomId) {
 function handleRoomChange(newState) {
 	var roomId = newState.nav.room;
 	var roomObj = store.getRoom(roomId);
-
+	console.log(roomObj);
 	if (typeof roomObj === "string" && roomObj == "missing") {
+		if(!newState.entities) newState.entities = [];
 		newState.entities[roomId] = "missing";
 		loadRoom(roomId);
 		if (roomId.indexOf(":") < 0 && !store.getRelatedUsers(roomId).length) {
 			loadMembers(roomId);
 			loadOccupants(roomId);
 		}
-	} else {
-		newState.entities[roomId] = roomObj;
 	}
 }
 
 function textResponse(err, texts) {
-	var updatingState = {},
+	var updatingState = {texts:{}},
 		range = {},
 		key = texts.to;
 
 	if (texts.thread) key += "_" + texts.thread;
 
-	if (!err && texts.results) {
+	if (!err && texts.results && texts.results.length) {
 		if (texts.before) {
 			range.end = texts.time;
 			range.start = texts.results[0].time;
@@ -267,17 +283,18 @@ function textResponse(err, texts) {
 			range.end = texts.results[texts.results.length - 1].time;
 		}
 		range.items = texts.results;
-		updatingState.texts[key].push({
+		
+		updatingState.texts[key] = [{
 			start: texts.results[0].time,
 			end: texts.time,
 			items: texts.results
-		});
+		}];
 		core.emit("setstate", updatingState);
 	}
 }
 
 function handleTextChange(newState) {
-	var textRange = newState.textRange,
+	var textRange = newState.nav.textRange,
 		thread = (newState.nav.thread ? newState.nav.thread : store.getNav("thread")),
 		roomId = (newState.nav.room ? newState.nav.room : store.getNav("room")),
 		time = textRange.time || null,
@@ -329,7 +346,7 @@ function threadResponse(err, threads) {
 }
 
 function handleThreadChange(newState) {
-	var threadRange = newState.threadRange,
+	var threadRange = newState.nav.threadRange,
 		roomId = (newState.nav.room ? newState.nav.room : store.getNav("room")),
 		time = threadRange.time || null,
 		ranges = [];

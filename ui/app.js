@@ -2,11 +2,10 @@
 
 (function() {
 	"use strict";
-
+	require("../bower_components/sockjs/sockjs.js");
 	var config = require(".././client-config-defaults.js"),
 		core = new (require("ebus"))(config.appPriorities),
-		store = require("./../store/store.js")(core, config),
-		req;
+		store = require("./../store/store.js")(core, config);
 
 	window.core = core;
 	window.store = store;
@@ -15,7 +14,7 @@
 	window.jQuery = window.$ = require("../bower_components/jquery/dist/jquery.min.js");
 
 	// Third party libraries
-	require("../bower_components/sockjs/sockjs.min.js");
+	
 	require("../bower_components/velocity/velocity.min.js");
 
 	// UI widgets
@@ -76,21 +75,4 @@
 	require("./misc/google-analytics.js")(core, config, store);
 	require("./misc/workarounds.js")(core, config, store);
 
-	// Send the initial setstate event
-	req = new XMLHttpRequest();
-
-	req.onreadystatechange = function() {
-		var data;
-
-		if (req.readyState === 4 ) {
-		   if (req.status < 400 && req.responseText) {
-				data = JSON.parse(req.responseText);
-
-				core.emit("setstate", data);
-		   }
-		}
-	};
-
-	req.open("GET", "/s/data.json", true);
-	req.send();
 }());

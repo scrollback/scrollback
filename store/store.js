@@ -36,6 +36,8 @@ module.exports = function(core, config) {
 		var req = {time:time || new Date().getDate()};
 		if(range <0) req.below = range * -1;
 		else req.above = range;
+		if(!state.texts[roomId]) return ['missing']; 
+		if(!state.texts[roomId][threadId]) return ['missing'];
 		return rangeOps.getItems(state.texts[roomId][threadId], req, "time");
 	};
 
@@ -45,14 +47,18 @@ module.exports = function(core, config) {
 		var req = {startTime:time || new Date().getDate()};
 		if(range <0) req.below = range * -1;
 		else req.above = range;
+		if(!state.threads[roomId]) return ["missing"];
 		return rangeOps.getItems(state.threads[roomId], req, "startTime");
 	};
-
+	store.getRelation = function(){
+		return [];
+	};
 	store.getRelatedRooms = getRelatedRooms;
 	store.getRelatedUsers = getRelatedUsers;
 
 	require("./state-manager.js")(core, config, store, state);
 	require("./content-manager.js")(core, config, store, state);
+	require("./mock-socket.js")(core, config, store, state);
 	return store;
 };
 
@@ -82,21 +88,25 @@ function getRelatedUsers(id, filter) {
 	}
 	
 	users = this.get("indexes", "roomUsers", roomId);
-	users = users.filter(function(relation) {
-		var userObj, filterKeys, i;
-		if(filter) {
-			filterKeys = Object.keys(filter);
-			for(i = 0; i<filterKeys.length; i++) {
-				if(filter[filterKeys] != relation[filterKeys]) return false;
+	if(users){
+		users = users.filter(function(relation) {
+			var userObj, filterKeys, i;
+			if(filter) {
+				filterKeys = Object.keys(filter);
+				for(i = 0; i<filterKeys.length; i++) {
+					if(filter[filterKeys] != relation[filterKeys]) return false;
+				}
 			}
-		}
-		
-		userObj = self.getUser(relation.user);
-		objUtils.extend(userObj, relation);
-		return true;
-	});
+
+			userObj = self.getUser(relation.user);
+			objUtils.extend(userObj, relation);
+			return true;
+		});
+
+	}
 	
-	return users;
+	if(users) return users;
+	else return [];
 }
 
 function getFeaturedRooms() {
@@ -144,18 +154,21 @@ function getRelatedRooms(id, filter) {
 		objUtils.extend(roomRelation, roomObj);
 		return true;
 	});
-	
-	return rooms;
+	if(rooms) return rooms;
+	else return [];
 }
 
 function getEntities() {
-	var roomId;
+	var roomId, res;
 	if (arguments.length === 0) roomId = this.get("nav", "room");
 	else roomId = arguments[0];
 
 	if (roomId.indexOf(":") >= 0) {
 		// get room based on id.
 	} else if (roomId) {
-		return this.get("entities", roomId);
+		res = this.get("entities", roomId);
 	}
+	
+	if(res) return res;
+	else return "missing";
 }

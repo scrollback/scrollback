@@ -1,8 +1,7 @@
 /* jshint browser: true */
-var urlUtils = require("../lib/url-utils.js");
 var core, config, store;
 function init() {
-	var state = urlUtils.generateState(window.location.pathname, window.location.search);
+	var state = {};
 	if(!state.app){
 		state.app = {};
 	}

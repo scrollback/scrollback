@@ -75,7 +75,7 @@ function isInRange(range, value) {
 }
 
 function mergeRange(ranges, range, propName) {
-	var topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex, index, mergedRange = {};
+	var topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex, mergedRange = {};
 
 	if (range.start === null) topRangeIndex = -1;
 	else {
@@ -98,7 +98,7 @@ function mergeRange(ranges, range, propName) {
 		);
 	}
 
-	if (isInRange(ranges[topRangeIndex], range.start)) {
+	if (ranges[topRangeIndex] && isInRange(ranges[topRangeIndex], range.start)) {
 		topItemIndex = findIndex(ranges[topRangeIndex].items, propName, range.start);
 		while(
 			ranges[topRangeIndex].items[topItemIndex-1] &&

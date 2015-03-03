@@ -93,6 +93,7 @@ sock.on('connection', function(socket) {
 				return;
 			}
 		}
+		console.log(d);
 		core.emit(d.type, d, function(err, data) {
 			var e, action;
             log.i("response", err, data);
@@ -168,7 +169,7 @@ sock.on('connection', function(socket) {
 				storeInit(conn, data);
 			}
 			if (data.type == 'user') processUser(conn, data);
-			if (['getUsers', 'getTexts', 'getRooms', 'getThreads'].indexOf(data.type) >= 0) {
+			if (['getUsers', 'getTexts', 'getRooms', 'getThreads', "getEntities"].indexOf(data.type) >= 0) {
 				var t = data.eventStartTime; //TODO: copy properties of each query that is needed on client side.
 				delete data.eventStartTime;
                 console.log("sending response", data);

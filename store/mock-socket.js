@@ -3,6 +3,7 @@
 /* global SockJS*/
 
 var generate = require("../lib/generate.js"),
+	
     config, core, client;
 
 var backOff = 1,
@@ -13,8 +14,9 @@ module.exports = function(c, conf) {
     core = c;
     config = conf;
     connect();
-    ["getTexts", "getUsers","getRooms","getThreads"].forEach(function(e) {
+    ["getTexts", "getUsers","getRooms","getThreads","getEntities"].forEach(function(e) {
         core.on(e, function(q, n) {
+			console.log("Making queries", q);
             q.type = e;
             sendQuery(q, n);
         },10);
@@ -65,7 +67,8 @@ function receiveMessage(event) {
 	} catch (err) {
 		core.emit("error", err);
 	}
-    if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "error"].indexOf(data.type) != -1) {
+	console.log(data);
+    if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "error"].indexOf(data.type) != -1) {
 		if (pendingQueries[data.id]) {
             console.log("calling the call back");
 			pendingQueries[data.id].query.results = data.results;

@@ -1,3 +1,4 @@
+/* jshint browser: true */
 var config, store;
 var objUtils = require("./../lib/obj-utils.js");
 var rangeOps = require("./range-ops.js");
@@ -6,6 +7,7 @@ module.exports = function(core, conf, s, st) {
 	config = conf;
     store = s;
 	state = st;
+	window.state = state;
 	core.on("setstate", function(changes, next) {
 		if (changes.nav) objUtils.extend(state.nav, changes.nav);
 		if (changes.context) objUtils.extend(state.context, changes.context);
@@ -13,21 +15,34 @@ module.exports = function(core, conf, s, st) {
 		
 		if (changes.entities) updateEntities(state.entities, changes.entities);
 		if (changes.texts) updateTexts(changes.texts);
+		if(changes.user) updateCurrentUser(changes.user);
 		next();
 	}, 1000);
 };
 
+
+function updateCurrentUser(user) {
+	console.log("user changed");
+	state.user = user;
+}
+
 function updateTexts(texts) {
 	var rooms = Object.keys(texts), ranges;
 	rooms.forEach(function(room) {
-		var threads = Object.keys(room.textRanges);
-		threads.forEach(function(thread) {
-			ranges = store.get("texts", room, thread);
-			if(!ranges) ranges = store.texts[room][thread] = [];
-			texts.textRanges[thread].forEach(function(newRange) {
-				rangeOps.merge(ranges, newRange, "time");
+		var thread, parts = room.split("_");
+		room = parts[0];
+		if(parts[1]) thread = parts[1];
+		ranges = store.get("texts", room, thread);
+		if(!ranges) ranges = state.texts[room] = [];
+		if(texts[room].length) {
+			texts[room].forEach(function(newRange) {
+				texts[room] = rangeOps.merge(ranges, newRange, "time");
 			});
-		});
+		}else{
+			console.log(room);
+		}
+		
+		
 	});
 }
 
@@ -38,19 +53,21 @@ function buildIndex(obj) {
 		userRooms: {},
 		roomUsers: {}
 	};
-
-	for (var name in obj.entities) {
-		relation = obj.entities[name];
-
-		if (relation.room && relation.user) {
-			(obj.indexes.userRooms[relation.user] = obj.indexes.userRooms[relation.user] || []).push(relation);
-			(obj.indexes.roomUsers[relation.room] = obj.indexes.roomUsers[relation.room] || []).push(relation);
+	if(obj.entities){
+		for (var name in obj.entities) {
+			relation = obj.entities[name];
+			if (relation && relation.room && relation.user) {
+				(obj.indexes.userRooms[relation.user] = obj.indexes.userRooms[relation.user] || []).push(relation);
+				(obj.indexes.roomUsers[relation.room] = obj.indexes.roomUsers[relation.room] || []).push(relation);
+			}
 		}
 	}
+	
 }
 
 function updateEntities(stateEntities, changesEntities) {
 	objUtils.extend(stateEntities, changesEntities);
+	console.log("Updating entities", stateEntities);
 	buildIndex(state);
 	/*var ids = Object.keys(entities);
 	var roomuser;
