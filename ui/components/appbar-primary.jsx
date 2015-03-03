@@ -2,7 +2,6 @@
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		appUtils = require("../../lib/app-utils.js"),
 		showMenu = require("../utils/show-menu.js"),
 		AppbarPrimary;
 
@@ -30,8 +29,7 @@ module.exports = function(core, config, store) {
 			core.emit("user-menu", {
 				origin: e.target,
 				buttons: {},
-				items: {},
-				title: appUtils.isGuest(store.get("user")) ? "Sign in to Scrollback with" : null
+				items: {}
 			}, function(err, menu) {
 				showMenu("user-menu", menu);
 			});
