@@ -24,7 +24,7 @@ module.exports = function(core, config, store) {
 						<h3 className="profile-username">{user.id}</h3>
 						<p className="profile-bio">{user.description}</p>
 					</div>
-					<a className="profile-settings" onClick={this.goToSettings}></a>
+					<a className="profile-settings" data-role="user follower owner" onClick={this.goToSettings}></a>
 				</div>
 			);
 		}
