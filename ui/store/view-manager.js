@@ -2,18 +2,16 @@
 /* global $ */
 
 module.exports = function(core, config, store) {
-	var keys = [ "view", "mode", "color" ],
-		$title = $(".js-appbar-title"),
-		$thread = $(".js-thread-title");
+	var keys = [ "view", "mode" ];
 
 	// Listen to navigate and add class names
 	core.on("statechange", function(changes, next) {
 		var classList = $("body").attr("class") || "",
-			relation, value;
+			relation, value, nav, thread;
 
-		if(changes.nav) {
+		if (changes.nav) {
 			for (var i = 0, l = keys.length; i < l; i++) {
-				if ([keys[i]] in changes.nav) {
+				if (keys[i] in changes.nav) {
 					classList = classList.replace(new RegExp("\\b" + keys[i] + "-" + "\\S+", "g"), "");
 
 					value = store.getNav()[keys[i]];
@@ -25,20 +23,14 @@ module.exports = function(core, config, store) {
 			classList = classList.replace(/\bcolor-\S+/g, "").replace(/^\s+|\s+$/g, "");
 
 		}
-		
-		if (changes.nav && changes.nav.mode) {
-			switch (store.getNav().mode) {
-			case "room":
-				$title.text(store.getNav().room);
-				break;
-			case "chat":
-				classList += " color-" + store.getNav().color;
-				$title.text(store.getNav().room);
-				$thread.text(store.getNav().threadId);
-				break;
-			case "home":
-				$title.text("My feed");
-				break;
+
+		nav = store.getNav();
+
+		if (changes.nav && nav.mode === "chat" && nav.thread) {
+			thread = store.get("indexes", "threadsById", nav.thread);
+
+			if (thread) {
+				classList += " color-" + thread.color;
 			}
 		}
 

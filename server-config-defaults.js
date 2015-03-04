@@ -60,7 +60,7 @@ var defaults = {
 	"browserid-auth": {
 		audience: host
 	},
-	env: "production",
+	env: "development",
 	http: {
 		host: host,
 		cookieDomain: ".scrollback.io",
@@ -131,7 +131,7 @@ var defaults = {
 
 config = (function() {
 	var changes = {};
-	if (fs.existsSync("./server-config.js")) {
+	if (fs.existsSync(__dirname + "/server-config.js")) {
 		changes = require("./server-config.js");
 	}
 	return merge(defaults, changes);

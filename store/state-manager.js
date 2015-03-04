@@ -67,13 +67,15 @@ function updateTexts(texts) {
 }
 
 function buildIndex(obj) {
-	var relation;
+	var relation, items;
 
 	obj.indexes = {
 		userRooms: {},
-		roomUsers: {}
+		roomUsers: {},
+		threadsById: {}
 	};
-	if(obj.entities){
+
+	if (obj.entities) {
 		for (var name in obj.entities) {
 			relation = obj.entities[name];
 			if (relation && relation.room && relation.user) {
@@ -83,6 +85,25 @@ function buildIndex(obj) {
 		}
 	}
 
+	if (obj.threads) {
+		for (var room in obj.threads) {
+			if (obj.threads[room] && obj.threads[room].length) {
+				for (var i = 0, l = obj.threads[room].length; i < l; i++) {
+					if (obj.threads[room][i]) {
+						items = obj.threads[room][i].items;
+
+						if (items && items.length) {
+							for (var j = 0, k = items.length; j < k; j++) {
+								if (items[j] && items[j].id) {
+									obj.indexes.threadsById[items[j].id] = items[j];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 function updateEntities(stateEntities, changesEntities) {

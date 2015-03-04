@@ -48,7 +48,7 @@ module.exports = function(core, config, store) {
 			if (items.length) {
 				arr.push({
 					key: "people-list-" + status,
-					header: status.charAt(0).toUpperCase() + status.slice(1) + " (" + i + ")",
+					header: status.charAt(0).toUpperCase() + status.slice(1) + " (" + items.length + ")",
 					items: items
 				});
 			}
