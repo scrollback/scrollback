@@ -1,6 +1,6 @@
 var store, core, config;
 var entityOps = require("./entity-ops.js");
-var relationsProps = require("../property-list.js").relations;
+var relationsProps = require("./property-list.js").relations;
 var pendingActions = {};
 module.exports = function(c, conf, s) {
 	store = s;
@@ -13,7 +13,7 @@ module.exports = function(c, conf, s) {
 				if (!newState.nav.threadRange) {
 					newState.nav.threadRange = {
 						time: null,
-						above: 50
+						before: 50
 					};
 				}
 			}
@@ -21,7 +21,7 @@ module.exports = function(c, conf, s) {
 				if (!newState.nav.textRange) {
 					newState.nav.textRange = {
 						time: null,
-						above: 50
+						before: 50
 					};
 				}
 				handleTextChange(newState);
@@ -60,8 +60,11 @@ module.exports = function(c, conf, s) {
 			var featuredRooms = [], entities = {};
 			if(rooms && rooms.results) {
 				rooms.results.forEach(function(e) {
-					featuredRooms.push(e.id);
-					entities[e.id] = e;
+					if(e) {
+						featuredRooms.push(e.id);
+						entities[e.id] = e;
+					}
+					
 				});
 			}
 			core.emit("setstate", {
@@ -116,12 +119,13 @@ function onTextUp(text, next) {
 			items: [text]
 		},
 		key, newState = {texts:{}};
+	next();
 	pendingActions[text.id] = text;
 	key = text.to;
 	if (text.thread) key += text.thread;
 	newState.texts[key] = textRange;
 	core.emit("setstate", newState);
-	next();
+	
 }
 
 function onTextDn(text, next) {
@@ -232,8 +236,8 @@ function handleTextChange(newState) {
 		time = textRange.time || null,
 		ranges = [];
 
-	if (textRange.above) ranges.push(store.getTexts(roomId, thread, time, textRange.above));
-	if (textRange.below) ranges.push(store.getTexts(roomId, thread, time, -textRange.below));
+	if (textRange.after) ranges.push(store.getTexts(roomId, thread, time, textRange.after));
+	if (textRange.before) ranges.push(store.getTexts(roomId, thread, time, -textRange.before));
 
 	ranges.forEach(function(r) {
 		if (r[0] == "missing") {
@@ -286,8 +290,8 @@ function handleThreadRangeChange(newState) {
 		ranges = [];
 
 
-	if (threadRange.above) ranges.push(store.getTexts(roomId, time, threadRange.above));
-	if (threadRange.below) ranges.push(store.getTexts(roomId, time, -threadRange.below));
+	if (threadRange.after) ranges.push(store.getTexts(roomId, time, threadRange.after));
+	if (threadRange.before) ranges.push(store.getTexts(roomId, time, -threadRange.before));
 
 	ranges.forEach(function(r) {
 		if (r[0] == "missing") {

@@ -12,7 +12,9 @@ var state = {
 	"threads": {},
 	entities: {},
 	context: {},
-	app: {},
+	app: {
+		listeningRooms: []
+	},
 	indexes: {
 		textsById: {},
 		threadsById: {},

@@ -1,34 +1,53 @@
 var core, config, store;
-var relationsProps = require("./../property-lists.js").relations;
+var queueBack = [];
+//var entityOps = require("./../entity-ops.js");
 module.exports = function(c, conf, s) {
+	
 	core = c;
 	config = conf;
 	store = s;
-	
+		
 	core.on("setstate", function(changes, next) {
-		var listeningRooms;
-		if(changes.app && changes.app.connectionStatus && changes.app.connectionStatus === "offline"){
-			changes.app.listeningTo = null;
-		}
-		if(changes.nav && changes.nav.room) {
-			listeningRooms = store.getApp("listeningRooms");		
-			if(listeningRooms.indexOf(changes.nav.room) <0) {
-				sendBack();
-			}
+		if (changes.nav && changes.nav.room) {
+			sendBack(changes.nav.room);
 		}
 		next();
 	}, 900);
+	
+	core.on("statechange", function(changes, next){
+		if (changes.app && changes.app.connectionStatus) {
+			if (changes.app.connectionStatus === "offline") {
+				changes.app.listeningTo = null;
+			} else if (changes.app.connectionStatus === "online") {
+				while (queueBack.length) enter(queueBack.splice(0, 1)[0]);
+			}
+		}
+		next();
+	}, 500);
+	
+	core.on("init-dn", function(init, next){
+		init.occupantOf.forEach(function(roomObj) {
+			sendBack(roomObj.id);
+		});
+		init.memberOf.forEach(function(roomObj) {
+			sendBack(roomObj.id);
+		});
+		next();
+	}, 500);
 };
-
+function enter(roomId){
+	core.emit("back-up", {
+		to: roomId
+	});
+}
 
 function sendBack(roomId) {
-	core.emit("back-dn", {
-		to:roomId
-	},function(err, back) {
-		var changes = {}, relation = {};
-		if(err) return;
-		
-		
-		
-	});
+	var listeningRooms = store.getApp("listeningRooms");
+	if (listeningRooms.indexOf(roomId) < 0) {
+		if (store.getApp("connectionStatus") === "online") {
+			enter(roomId);
+		} else {
+			queueBack.push(roomId);
+		}
+	}
 }

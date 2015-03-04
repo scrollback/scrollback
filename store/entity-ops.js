@@ -1,4 +1,4 @@
-var relationsProps = require("../property-list.js").relations;
+var relationsProps = require("./property-list.js").relations;
 var objUtils = require("../lib/obj-utils.js");
 module.exports = {
 	relatedEntityToEntity: function(relatedEntity) {
