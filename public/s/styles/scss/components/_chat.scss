@@ -159,5 +159,14 @@
             float: right;
             opacity: 0.5;
         }
+
+        &-label {
+            &-hidden, &-abusive {
+                font-style: italic;
+                opacity: .5;
+
+                body:not(.role-owner) & { display: none; }
+            }
+        }
     }
 }
