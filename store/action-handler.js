@@ -1,5 +1,6 @@
 var store, core, config;
-var relationsProps = require("./property-list.js").relations;
+var entityOps = require("./entity-ops.js");
+var relationsProps = require("../property-list.js").relations;
 var pendingActions = {};
 module.exports = function(c, conf, s) {
 	store = s;
@@ -33,16 +34,12 @@ module.exports = function(c, conf, s) {
 
 	function constructEntitiesFromRoomList(list, entities, userId) {
 		list.forEach(function(e) {
-			var relation = {};
+			var relation = {}, entity = {};
 			relation.room = e.id;
 			relation.user = userId;
-			relationsProps.forEach(function(key) {
-				if (e[key]) {
-					relation[key] = e[key];
-					delete e[key];
-				}
-			});
-			entities[e.id] = e;
+			relation = entityOps.relatedEntityToRelation(e, {id:userId,type:"user"});
+			entity = entityOps.relatedEntityToEntity(e);
+			entities[e.id] = entity;
 			entities[e.id + "_" + userId] = relation;
 		});
 
@@ -98,21 +95,13 @@ function entityEvent(action, next) {
 }
 
 function presenseChange(action, next) {
-	var entities = {},
-		relation = {
-			room: action.to,
-			user: action.from,
-			status: action.type == "away" ? "offline" : "online"
-		};
-	relationsProps.forEach(function(key) {
-		if (action.room[key]) {
-			relation[key] = action.room[key];
-			delete action.to[key];
-		}
-	});
-
-	entities[action.to] = action.room;
-	entities[action.from] = action.user;
+	var entities = {}, relation;
+	entities[action.to] = entityOps.relatedEntityToEntity(action.room);
+	entities[action.from] = entityOps.relatedEntityToEntity(action.user);
+	
+	relation = entityOps.relatedEntityToRelation(action.user, action.room);
+	relation.status = action.type == "away" ? "offline" : "online";
+	
 	entities[relation.room + "_" + relation.user] = relation;
 	core.emit("setstate", {
 		entities: entities
