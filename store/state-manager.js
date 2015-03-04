@@ -9,6 +9,9 @@ module.exports = function(core, conf, s, st) {
 	state = st;
 	window.state = state;
 	core.on("setstate", function(changes, next) {
+		
+		console.log('updating state', changes);
+		
 		if (changes.nav) objUtils.extend(state.nav, changes.nav);
 		if (changes.context) objUtils.extend(state.context, changes.context);
 		if (changes.app) objUtils.extend(state.app, changes.app);
@@ -18,6 +21,7 @@ module.exports = function(core, conf, s, st) {
 		if (changes.threads) updateThreads(changes.threads);
 		if (changes.session) updateSession(changes.session);
 		if (changes.user) updateCurrentUser(changes.user);
+		
 		next();
 	}, 1000);
 };
@@ -38,6 +42,7 @@ function updateThreads(threads) {
 }
 
 function updateSession(session) {
+	console.log('Session updating to', session);
 	state.session = session;
 }
 
