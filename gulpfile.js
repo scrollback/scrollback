@@ -226,9 +226,7 @@ gulp.task("embed-apis", function() {
 gulp.task("embed", [ "embed-legacy", "embed-apis" ]);
 
 // Generate scripts
-gulp.task("scripts", [ "polyfills", "copylibs", "bundle", "embed" ], function() {
-	gulp.start("manifest");
-});
+gulp.task("scripts", [ "polyfills", "copylibs", "bundle", "embed", "manifest" ]);
 
 // Generate styles
 gulp.task("fonts", [ "bower" ], function() {
@@ -254,9 +252,7 @@ gulp.task("scss", [ "bower" ], function() {
 	.pipe(gulp.dest(dirs.css));
 });
 
-gulp.task("styles", [ "fonts", "scss" ], function() {
-	gulp.start("manifest");
-});
+gulp.task("styles", [ "fonts", "scss", "manifest" ]);
 
 // Generate appcache manifest file
 gulp.task("client-manifest", function() {

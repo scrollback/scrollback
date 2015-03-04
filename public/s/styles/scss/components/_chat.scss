@@ -124,13 +124,18 @@
 
     .chat-item {
         $spacing-left-mobile: 5em;
-        $spacing-left-normal: 10em;
+        $spacing-left-normal: 12em;
 
         @extend %clearfix;
 
         padding: .75em 1em;
 
         @media #{$screenxx} { padding-left: $spacing-left-normal; }
+
+        &.popover-active {
+            background-color: rgba(0,0,0,0.05);
+            border-radius: $roundness;
+        }
 
         &-nick {
             float: left;
@@ -158,6 +163,15 @@
         &-timestamp {
             float: right;
             opacity: 0.5;
+        }
+
+        &-label {
+            &-hidden, &-abusive {
+                font-style: italic;
+                opacity: .5;
+
+                body:not(.role-owner) & { display: none; }
+            }
         }
     }
 }

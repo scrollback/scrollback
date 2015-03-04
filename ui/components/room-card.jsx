@@ -42,7 +42,7 @@ module.exports = function(core, config, store) {
 	RoomCard = React.createClass({
 		showRoomMenu: function(e) {
 			core.emit("room-menu", {
-				origin: e.target,
+				origin: e.currentTarget,
 				buttons: {},
 				items: {},
 				room: this.props.roomId
