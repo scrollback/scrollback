@@ -25,9 +25,13 @@ exports.getTexts = exports.getThreads = function(query) {
 	
 	if (query.thread && query.type === 'getTexts') {
 		q.filters.push(["thread", "eq", query.thread]);
-	} else if (query.tag) {
+	} 
+	
+	if (query.tag) {
 		q.filters.push(["tags", "cts", query.tag]);
-	} else if (query.ref) {
+	} 
+	
+	if (query.ref) {
 		if (query.ref instanceof Array) {
 			if (query.ref.length) q.filters.push(['id', 'in', query.ref]);	
 			else return []; // no results.
@@ -50,12 +54,14 @@ exports.getTexts = exports.getThreads = function(query) {
 		Maybe it won't go here at all.
 	}*/
 	
-	if(query.before) {
+	if(query.after) {
+		q.iterate.limit = query.after;
+		q.iterate.reverse = false;
+	} else if(query.before) {
 		q.iterate.reverse = true;
 		q.iterate.limit = query.before;
 	} else {
-		q.iterate.limit = query.after || 256;
-		q.iterate.reverse = false;
+		q.iterate.limit = 256;
 	}
 	return [q];
 };
