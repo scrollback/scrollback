@@ -132,6 +132,12 @@
 
         @media #{$screenxx} { padding-left: $spacing-left-normal; }
 
+        &.popover-active {
+            background-color: rgba(0,0,0,0.05);
+            color: inherit;
+            border-radius: $roundness;
+        }
+
         &-nick {
             float: left;
             font-weight: 700;
