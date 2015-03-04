@@ -3,15 +3,16 @@
 /* global SockJS*/
 
 var generate = require("../lib/generate.js"),
-    config, core, client;
+    config, core, client, store;
 
 var backOff = 1,
 	client, pendingQueries = {},
-	pendingActions = {}, session, resource, queue = [], initDone = false;
+	pendingActions = {}, session, resource, queue = [], initDone = false, actionQueue = [], user;
 
-module.exports = function(c, conf) {
+module.exports = function(c, conf, s) {
     core = c;
     config = conf;
+	store = s;
     connect();
     ["getTexts", "getUsers","getRooms","getThreads","getEntities"].forEach(function(e) {
         core.on(e, function(q, n) {
@@ -25,15 +26,43 @@ module.exports = function(c, conf) {
 			}
         },10);
     });
+	[ "init-up","text-up", "edit-up", "back-up","away-up",
+	 "nick-up", "join-up", "part-up","admit-up","expel-up",
+	 "user-up", "room-up" ].forEach(function(event) {
+		core.on(event, function(action, next) {
+			action.type = event.replace(/-up$/,"");
+			if(initDone) {
+				sendAction(action);	
+			} else {
+				actionQueue.push(function(){
+					sendAction(action);
+				});
+			}
+			next();
+		}, 1);
+	});
+	
+	
+	core.on("statechange", function(changes, next) {
+		if(changes.app && changes.app.connectionStatus == "online") {
+			initDone = true;
+			while(queue.length){queue.splice(0,1)[0]();}	
+		}
+		next();
+	}, 1000);
 };
-
+function sendAction(action) {
+	if (!action.id) action.id = generate.uid();
+	action.session = session;
+	action.from = user;
+	client.send(JSON.stringify(action));
+}
 function sendQuery(query, next) {
 	if (!query.id) query.id = generate.uid();
 	query.session = session;
 	client.send(JSON.stringify(query));
 	pendingQueries[query.id] = next;
 	pendingQueries[query.id].query = query;
-    window.core = core;
 }
 
 function connect() {
@@ -97,26 +126,18 @@ function sendInit() {
     init.origin = {};
     
 	client.send(JSON.stringify(init));
-	pendingActions[init.id] = returnPending(init, function() {
-		initDone = true;
-		while(queue.length){queue.splice(0,1)[0]();}
-		core.emit("setstate", {
-			app: {
-				connectionStatus: "online"
-			}
-		});
-    });
-}
-
-function returnPending(action, next) {
-	return function(newAction) {
-		var i;
-		if (newAction.type === "error") return next(newAction);
-
-		for (i in action) delete action[i];
-		for (i in newAction) {
-			if (newAction.hasOwnProperty(i)) action[i] = newAction[i];
+	pendingActions[init.id] = function(init){
+		if(init.type == "init") {
+			initDone = true;
+			console.log(init);
+			while(queue.length){queue.splice(0,1)[0]();}
+			user = init.user.id;
+			core.emit("setstate", {
+				app: {
+					connectionStatus: "online"
+				},
+				user: init.user.id
+			});
 		}
-		next();
 	};
 }

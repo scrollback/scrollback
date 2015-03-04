@@ -7,8 +7,8 @@ nav: {
     view: (main | nav | people),
     dialog: (signup|createroom| ...),
     dialog-state:,
-    textRange:{time:, above:, below:},
-    threadRange:{time:, above:, below:}
+    textRange:{time:, after:, before:},
+    threadRange:{time:, after:, before:}
 }
 
 */

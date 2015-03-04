@@ -1,5 +1,6 @@
 var store, core, config;
-var relationsProps = ['role', 'roleSince'];
+var entityOps = require("./entity-ops.js");
+var relationsProps = require("./property-list.js").relations;
 var pendingActions = {};
 module.exports = function(c, conf, s) {
 	store = s;
@@ -9,11 +10,10 @@ module.exports = function(c, conf, s) {
 	core.on("setstate", function(newState, next) {
 		if (newState.nav) {
 			if (newState.nav.room) {
-				handleRoomChange(newState);
 				if (!newState.nav.threadRange) {
 					newState.nav.threadRange = {
 						time: null,
-						above: 50
+						before: 50
 					};
 				}
 			}
@@ -21,7 +21,7 @@ module.exports = function(c, conf, s) {
 				if (!newState.nav.textRange) {
 					newState.nav.textRange = {
 						time: null,
-						above: 50
+						before: 50
 					};
 				}
 				handleTextChange(newState);
@@ -34,16 +34,12 @@ module.exports = function(c, conf, s) {
 
 	function constructEntitiesFromRoomList(list, entities, userId) {
 		list.forEach(function(e) {
-			var relation = {};
+			var relation = {}, entity = {};
 			relation.room = e.id;
 			relation.user = userId;
-			relationsProps.forEach(function(key) {
-				if (e[key]) {
-					relation[key] = e[key];
-					delete e[key];
-				}
-			});
-			entities[e.id] = e;
+			relation = entityOps.relatedEntityToRelation(e, {id:userId,type:"user"});
+			entity = entityOps.relatedEntityToEntity(e);
+			entities[e.id] = entity;
 			entities[e.id + "_" + userId] = relation;
 		});
 
@@ -64,8 +60,11 @@ module.exports = function(c, conf, s) {
 			var featuredRooms = [], entities = {};
 			if(rooms && rooms.results) {
 				rooms.results.forEach(function(e) {
-					featuredRooms.push(e.id);
-					entities[e.id] = e;
+					if(e) {
+						featuredRooms.push(e.id);
+						entities[e.id] = e;
+					}
+					
 				});
 			}
 			core.emit("setstate", {
@@ -99,21 +98,13 @@ function entityEvent(action, next) {
 }
 
 function presenseChange(action, next) {
-	var entities = {},
-		relation = {
-			room: action.to,
-			user: action.from,
-			status: action.type == "away" ? "offline" : "online"
-		};
-	relationsProps.forEach(function(key) {
-		if (action.room[key]) {
-			relation[key] = action.room[key];
-			delete action.to[key];
-		}
-	});
-
-	entities[action.to] = action.room;
-	entities[action.from] = action.user;
+	var entities = {}, relation;
+	entities[action.to] = entityOps.relatedEntityToEntity(action.room);
+	entities[action.from] = entityOps.relatedEntityToEntity(action.user);
+	
+	relation = entityOps.relatedEntityToRelation(action.user, action.room);
+	relation.status = action.type == "away" ? "offline" : "online";
+	
 	entities[relation.room + "_" + relation.user] = relation;
 	core.emit("setstate", {
 		entities: entities
@@ -128,12 +119,13 @@ function onTextUp(text, next) {
 			items: [text]
 		},
 		key, newState = {texts:{}};
+	next();
 	pendingActions[text.id] = text;
 	key = text.to;
 	if (text.thread) key += text.thread;
 	newState.texts[key] = textRange;
 	core.emit("setstate", newState);
-	next();
+	
 }
 
 function onTextDn(text, next) {
@@ -208,98 +200,6 @@ function onPart(part, next) {
 	return next();
 }
 
-function loadRoom(roomId) {
-	core.emit("getEntities", (roomId.indexOf(":") >= 0) ? {
-		identity: roomId
-	} : {
-		ref: roomId
-	}, function(err, data) {
-		var newRoom, updatingState = {
-			entities: {}
-		};
-
-		if (!err && data.results && data.results.length) {
-			newRoom = data.results[0];
-
-			if (roomId !== newRoom.id) {
-				updatingState.nav = {
-					room: newRoom.id
-				};
-			}
-
-			updatingState.entities[roomId] = null;
-			updatingState.entities[newRoom.id] = newRoom;
-			core.emit("setstate", updatingState);
-		}
-	});
-}
-
-function constructEntitiesFromUserList(list, entities, roomId) {
-	list.forEach(function(e) {
-		var relation;
-
-		if (entities[roomId + "_" + e.id]) relation = entities[roomId + "_" + e.id];
-		else relation = {};
-
-		relation.room = roomId;
-		relation.user = e.id;
-		relation.status = "offline";
-		relationsProps.forEach(function(key) {
-			if (e[key]) {
-				relation[key] = e[key];
-				delete e[key];
-			}
-		});
-		entities[e.id] = e;
-		entities[roomId + "_" + e.id] = relation;
-	});
-}
-
-function loadUsersList(roomId) {
-	var occupantList, memberList, done = false,
-		entities = {};
-
-	function emitSetState() {
-		constructEntitiesFromUserList(memberList, entities, roomId);
-		constructEntitiesFromUserList(occupantList, entities, roomId);
-		occupantList.forEach(function(e) {
-			entities[roomId + "_" + e.id].status = "online";
-		});
-		core.emit("setstate", {
-			entities: entities
-		});
-	}
-
-	core.emit("getUsers", {
-		type: "getUsers",
-		memberOf: roomId
-	}, function(err, data) {
-		memberList = data.results || [];
-		if (!done) done = true;
-		else emitSetState();
-	});
-	core.emit("getUsers", {
-		type: "getUsers",
-		occupantOf: roomId
-	}, function(err, data) {
-		occupantList = data.results || [];
-		if (!done) done = true;
-		else emitSetState();
-	});
-}
-
-function handleRoomChange(newState) {
-	var roomId = newState.nav.room;
-	var roomObj = store.getRoom(roomId);
-	if (typeof roomObj === "string" && roomObj == "missing") {
-		if (!newState.entities) newState.entities = [];
-		newState.entities[roomId] = "missing";
-		loadRoom(roomId);
-		if (roomId.indexOf(":") < 0 && !store.getRelatedUsers(roomId).length) {
-			loadUsersList(roomId);
-		}
-	}
-}
 
 function textResponse(err, texts) {
 	var updatingState = {
@@ -336,8 +236,8 @@ function handleTextChange(newState) {
 		time = textRange.time || null,
 		ranges = [];
 
-	if (textRange.above) ranges.push(store.getTexts(roomId, thread, time, textRange.above));
-	if (textRange.below) ranges.push(store.getTexts(roomId, thread, time, -textRange.below));
+	if (textRange.after) ranges.push(store.getTexts(roomId, thread, time, textRange.after));
+	if (textRange.before) ranges.push(store.getTexts(roomId, thread, time, -textRange.before));
 
 	ranges.forEach(function(r) {
 		if (r[0] == "missing") {
@@ -390,8 +290,8 @@ function handleThreadRangeChange(newState) {
 		ranges = [];
 
 
-	if (threadRange.above) ranges.push(store.getTexts(roomId, time, threadRange.above));
-	if (threadRange.below) ranges.push(store.getTexts(roomId, time, -threadRange.below));
+	if (threadRange.after) ranges.push(store.getTexts(roomId, time, threadRange.after));
+	if (threadRange.before) ranges.push(store.getTexts(roomId, time, -threadRange.before));
 
 	ranges.forEach(function(r) {
 		if (r[0] == "missing") {
