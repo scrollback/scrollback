@@ -72,7 +72,7 @@ module.exports = function(core, config, store) {
 			return (
 			        <div className="sidebar-people-list">
 						<div className="searchbar">
-							<input type="search" className="searchbar-input" placeholder="Find people" required="true"
+							<input type="search" className="searchbar-input" placeholder="Filter people" required="true"
 								   value={this.state.query} onChange={this.onChange} />
 							<span className="searchbar-icon" />
 						</div>

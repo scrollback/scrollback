@@ -5,28 +5,12 @@ module.exports = function(core, config, store) {
 		ThreadCard;
 
 	ThreadCard = React.createClass({
-		getInitialState: function () {
-			return { texts: (store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).reverse() };
-		},
-
-		componentDidMount: function () {
-			var self = this;
-
-			core.on("statechange", function(changes, next) {
-				if (self.isMounted() && "texts" in changes) {
-					self.replaceState(self.getInitialState());
-				}
-
-				next();
-			}, 500);
-		},
-
 		goToThread: function(e) {
-			if (/(icon-more|reply)/.test(e.target.getAttribute("class"))) {
+			if (/(icon-more|reply)/.test(e.target.className)) {
 				return;
 			}
 
-			if (/active/.test(this.refs.quickReply.getDOMNode().getAttribute("class"))) {
+			if (/has-quickreply/.test(e.currentTarget.className)) {
 				return;
 			}
 
@@ -64,38 +48,44 @@ module.exports = function(core, config, store) {
 		},
 
 		showQuickReply: function() {
-			var DOMNode = this.refs.quickReply.getDOMNode();
+			var quickReply = this.refs.quickReply.getDOMNode();
 
-			if (/active/.test(DOMNode.getAttribute("class"))) {
+			if (/active/.test(quickReply.className)) {
 				return;
 			}
 
-			DOMNode.className += " active";
+			quickReply.className += " active";
 
-			setTimeout(function() {
-				DOMNode.querySelector(".card-entry-reply").focus();
-			}, 50);
+			quickReply.querySelector(".card-entry-reply").focus();
+
+			// Set a flag on threadCard so we can prevent click
+			this.refs.threadCard.getDOMNode().className += " has-quickreply";
 		},
 
 		hideQuickReply: function() {
-			var DOMNode = this.refs.quickReply.getDOMNode(),
-				classNames = DOMNode.getAttribute("class");
+			var quickReply = this.refs.quickReply.getDOMNode(),
+				threadCard = this.refs.threadCard.getDOMNode();
 
-			if (!/active/.test(classNames)) {
+			if (!/active/.test(quickReply.className)) {
 				return;
 			}
 
-			classNames = classNames.replace(/\bactive\b/, "").trim();
+			quickReply.className = quickReply.className.replace(/\bactive\b/, "").trim();
+
+			// Remove the flag on threadCard
+			setTimeout(function() {
+				threadCard.className = threadCard.className.replace(/\bhas-quickreply\b/, "").trim();
+			}, 300);
 		},
 
 		render: function() {
 			var thread = this.props.thread,
 			  	chats;
 
-			chats = this.state.texts.map(function(chat) {
+			chats = (store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).reverse().map(function(chat) {
 				if (typeof chat === "object" && typeof chat.text === "string") {
 					return (
-						<div key={"thread-card-chat-" + thread.id + "-" + chat.id} className="card-chat">
+						<div key={"thread-card-chat-" + store.getNav().room + "-" + thread.id + "-" + chat.id} className="card-chat">
 							<span className="card-chat-nick">{chat.from}</span>
 							<span className="card-chat-message">{chat.text}</span>
 						</div>
@@ -104,7 +94,7 @@ module.exports = function(core, config, store) {
 			});
 
 			return (
-				<div  key={"thread-card-" + thread.id} className="card thread-card" data-color={thread.color} onClick={this.goToThread}>
+				<div ref="threadCard" key={"thread-card-" + thread.id} className="card thread-card" data-color={thread.color} onClick={this.goToThread}>
 					<div className="card-header">
 						<h3 className="card-header-title">{thread.title}</h3>
 			  			<span className="card-header-badge notification-badge notification-badge-mention">{thread.mentions}</span>
