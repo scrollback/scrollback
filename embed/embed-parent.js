@@ -69,9 +69,10 @@
 				switch(data.type) {
 					case "activity":
 						if(data.hasOwnProperty("minimize")) {
-
-							if (data.minimize && !minReg.test(iframe.className)) {
-								iframe.className = iframe.className + " scrollback-minimized";
+							if (data.minimize) {
+								if(!minReg.test(iframe.className)) {
+									iframe.className = iframe.className + " scrollback-minimized";
+								}
 							} else {
 								iframe.className = iframe.className.replace(minReg, "").trim();
 							}

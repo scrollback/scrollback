@@ -30,6 +30,7 @@ describe("Storage Test.", function() {
 			return;
 		}
 		pg.connect(connString, function(err, client, cb) {
+			if(err) throw err;
 			utils.clearTables(client, ['relations', 'entities', 'texts', 'threads'], function() {
 				cb();
 				done();
