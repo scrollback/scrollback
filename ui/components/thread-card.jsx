@@ -35,13 +35,13 @@ module.exports = function(core, config, store) {
 			if (!text) {
 				return;
 			}
-
+			console.log(this.props.thread);
 			core.emit("text-up", {
 				to: store.getNav().room,
 				from: store.get("user"),
 				text: text,
 				time: new Date().getTime(),
-				threads: [{ id: this.props.thread }]
+				threads: [this.props.thread]
 			});
 
 			e.currentTarget.value = "";
