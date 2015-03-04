@@ -300,14 +300,14 @@ function handleThreadRangeChange(newState) {
 			core.emit("getThreads", {
 				to: roomId,
 				time: time,
-				before: 256
+				before: 16
 			}, threadResponse);
 		}
 		if (r[r.length - 1] == "missing") {
 			core.emit("getThreads", {
 				to: roomId,
 				time: r.length >= 2 ? r.length - 2 : threadRange.time,
-				after: 256
+				after: 16
 			}, threadResponse);
 		}
 	});
