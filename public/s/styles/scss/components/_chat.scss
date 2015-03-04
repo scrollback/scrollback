@@ -124,7 +124,7 @@
 
     .chat-item {
         $spacing-left-mobile: 5em;
-        $spacing-left-normal: 10em;
+        $spacing-left-normal: 12em;
 
         @extend %clearfix;
 
@@ -134,7 +134,6 @@
 
         &.popover-active {
             background-color: rgba(0,0,0,0.05);
-            color: inherit;
             border-radius: $roundness;
         }
 

@@ -7,7 +7,7 @@ module.exports = function(core, config, store) {
 	// Listen to navigate and add class names
 	core.on("statechange", function(changes, next) {
 		var classList = $("body").attr("class") || "",
-			relation, value, nav;
+			relation, value, nav, thread;
 
 		if (changes.nav) {
 			for (var i = 0, l = keys.length; i < l; i++) {
@@ -27,7 +27,11 @@ module.exports = function(core, config, store) {
 		nav = store.getNav();
 
 		if (changes.nav && nav.mode === "chat" && nav.thread) {
-			classList += " color-" + store.get("indexes", "threadsById", nav.thread).color;
+			thread = store.get("indexes", "threadsById", nav.thread);
+
+			if (thread) {
+				classList += " color-" + thread.color;
+			}
 		}
 
 		if (changes.indexes && ("roomUsers" in changes.indexes || "userRooms" in changes.index)) {

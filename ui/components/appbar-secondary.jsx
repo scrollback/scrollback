@@ -10,14 +10,9 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var thread = store.getNav().thread,
-				title;
-
-			if (thread) {
-				title = store.get("indexes", "threadsById", thread).title;
-			} else {
-				title = "All discussions";
-			}
+			var threadId = store.getNav().thread,
+				threadObj = store.get("indexes", "threadsById", threadId),
+				title = threadObj ? threadObj.title : threadId ? threadId : "All discussions";
 
 			return (
 				<div key="appbar-secondary" className="appbar appbar-secondary" data-mode="chat">
