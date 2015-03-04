@@ -18,7 +18,7 @@ module.exports = function(core, conf, s, st) {
 		if (changes.threads) updateThreads(changes.threads);
 		if(changes.user) updateCurrentUser(changes.user);
 		next();
-	}, 1000);
+	}, 1);
 };
 function updateThreads(threads) {
 	var rooms = Object.keys(threads), ranges;

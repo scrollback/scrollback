@@ -3,60 +3,89 @@
 /* global SockJS*/
 
 var generate = require("../lib/generate.js"),
-    config, core, client, store;
+	config, core, client, store;
 
 var backOff = 1,
 	client, pendingQueries = {},
-	pendingActions = {}, session, resource, queue = [], initDone = false, actionQueue = [], user;
+	pendingActions = {},
+	session, resource, queue = [],
+	initDone = false,
+	actionQueue = [],
+	user;
 
 module.exports = function(c, conf, s) {
-    core = c;
-    config = conf;
+	core = c;
+	config = conf;
 	store = s;
-    connect();
-    ["getTexts", "getUsers","getRooms","getThreads","getEntities"].forEach(function(e) {
-        core.on(e, function(q, n) {
-            q.type = e;
-			if(initDone) {
-				sendQuery(q, n);	
+	connect();
+    ["getTexts", "getUsers", "getRooms", "getThreads", "getEntities"].forEach(function(e) {
+		core.on(e, function(q, n) {
+			q.type = e;
+			if (initDone) {
+				sendQuery(q, n);
 			} else {
-				queue.push(function(){
+				queue.push(function() {
 					sendQuery(q, n);
 				});
 			}
-        },10);
-    });
-	[ "init-up","text-up", "edit-up", "back-up","away-up",
-	 "nick-up", "join-up", "part-up","admit-up","expel-up",
-	 "user-up", "room-up" ].forEach(function(event) {
+		}, 10);
+	});
+	["text-up", "edit-up", "back-up", "away-up",
+	 "nick-up", "join-up", "part-up", "admit-up", "expel-up",
+	 "user-up", "room-up"].forEach(function(event) {
 		core.on(event, function(action, next) {
-			action.type = event.replace(/-up$/,"");
-			if(initDone) {
-				sendAction(action);	
+			action.type = event.replace(/-up$/, "");
+			if (initDone) {
+				sendAction(action);
 			} else {
-				actionQueue.push(function(){
+				actionQueue.push(function() {
 					sendAction(action);
 				});
 			}
 			next();
 		}, 1);
 	});
-	
-	
+
+	core.on("init-up", function(init, next) {
+		if(!init.session) session = init.session = "web://" + generate.uid();
+		client.send(JSON.stringify(init));
+		pendingActions[init.id] = function(init) {
+			if (init.type == "init") {
+				initDone = true;
+				while (queue.length) {
+					queue.splice(0, 1)[0]();
+				}
+				user = init.user.id;
+				core.emit("setstate", {
+					app: {
+						connectionStatus: "online"
+					},
+					user: init.user.id
+				});
+			}
+		};
+
+		next();
+	}, 1);
+
 	core.on("statechange", function(changes, next) {
-		if(changes.app && changes.app.connectionStatus == "online") {
+		if (changes.app && changes.app.connectionStatus == "online") {
 			initDone = true;
-			while(queue.length){queue.splice(0,1)[0]();}	
+			while (queue.length) {
+				queue.splice(0, 1)[0]();
+			}
 		}
 		next();
 	}, 1000);
 };
+
 function sendAction(action) {
 	if (!action.id) action.id = generate.uid();
 	action.session = session;
 	action.from = user;
 	client.send(JSON.stringify(action));
 }
+
 function sendQuery(query, next) {
 	if (!query.id) query.id = generate.uid();
 	query.session = session;
@@ -68,12 +97,12 @@ function sendQuery(query, next) {
 function connect() {
 	client = new SockJS(config.server.protocol + config.server.host + "/socket");
 	client.onclose = disconnected;
-    
+
 	client.onopen = function() {
 		backOff = 1;
-        sendInit();
+		sendInit();
 	};
-    
+
 	client.onmessage = receiveMessage;
 }
 
@@ -100,7 +129,7 @@ function receiveMessage(event) {
 	} catch (err) {
 		core.emit("error", err);
 	}
-    if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "error"].indexOf(data.type) != -1) {
+	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "error"].indexOf(data.type) != -1) {
 		if (pendingQueries[data.id]) {
 			pendingQueries[data.id].query.results = data.results;
 			pendingQueries[data.id]();
@@ -117,27 +146,11 @@ function receiveMessage(event) {
 }
 
 function sendInit() {
-    var init = {};
-    init.id = generate.uid();
-    session = init.session = "web://"+generate.uid();
-    resource = init.resource = generate.uid();
-    init.type="init";
-    init.to = "me";
-    init.origin = {};
-    
-	client.send(JSON.stringify(init));
-	pendingActions[init.id] = function(init){
-		if(init.type == "init") {
-			initDone = true;
-			console.log(init);
-			while(queue.length){queue.splice(0,1)[0]();}
-			user = init.user.id;
-			core.emit("setstate", {
-				app: {
-					connectionStatus: "online"
-				},
-				user: init.user.id
-			});
-		}
-	};
+	var init = {};
+	init.id = generate.uid();
+	resource = init.resource = generate.uid();
+	init.type = "init";
+	init.to = "me";
+	init.origin = {};
+	core.emit("init-up", init, function() {});
 }

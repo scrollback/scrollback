@@ -99,10 +99,12 @@ function entityEvent(action, next) {
 
 function presenseChange(action, next) {
 	var entities = {}, relation;
-	entities[action.to] = entityOps.relatedEntityToEntity(action.room);
-	entities[action.from] = entityOps.relatedEntityToEntity(action.user);
-	
-	relation = entityOps.relatedEntityToRelation(action.user, action.room);
+	if(!action.room) action.room = store.getRoom(action.to);
+	if(!action.user) action.user = store.getRoom(action.from);
+
+	entities[action.to] = entityOps.relatedEntityToEntity(action.room || {});
+	entities[action.from] = entityOps.relatedEntityToEntity(action.user || {});
+	relation = entityOps.relatedEntityToRelation(entities[action.to], {id:action.from, type:"user"});
 	relation.status = action.type == "away" ? "offline" : "online";
 	
 	entities[relation.room + "_" + relation.user] = relation;

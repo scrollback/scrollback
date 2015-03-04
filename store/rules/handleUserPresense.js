@@ -12,7 +12,7 @@ module.exports = function(c, conf, s) {
 			sendBack(changes.nav.room);
 		}
 		next();
-	}, 900);
+	}, 998);
 	
 	core.on("statechange", function(changes, next){
 		if (changes.app && changes.app.connectionStatus) {
