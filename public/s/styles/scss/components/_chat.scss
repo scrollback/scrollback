@@ -132,6 +132,12 @@
 
         @media #{$screenxx} { padding-left: $spacing-left-normal; }
 
+        &.popover-active {
+            background-color: rgba(0,0,0,0.05);
+            color: inherit;
+            border-radius: $roundness;
+        }
+
         &-nick {
             float: left;
             font-weight: 700;
@@ -158,6 +164,15 @@
         &-timestamp {
             float: right;
             opacity: 0.5;
+        }
+
+        &-label {
+            &-hidden, &-abusive {
+                font-style: italic;
+                opacity: .5;
+
+                body:not(.role-owner) & { display: none; }
+            }
         }
     }
 }

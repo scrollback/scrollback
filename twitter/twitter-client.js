@@ -97,8 +97,8 @@ module.exports = function(core, config, store) {
 	}, 500);
 
 	core.on("text-menu", function(menu, next) {
-		var chatMessage = $(menu.target).find(".chat-message").text(),
-	        tweetUrl = "https://twitter.com/home/?status=" + encodeURIComponent(chatMessage)  + " via https://scrollback.io/" + encodeURIComponent(store.getNav().room);
+		var text = menu.textObj.text,
+	        tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&amp;url=" + encodeURIComponent(config.server.protocol + config.server.host + "/" + store.getNav().room) + "&amp;via=" + encodeURIComponent(store.get("user"));
 
 		menu.items.tweetmessage = {
 			text: "Tweet this message",

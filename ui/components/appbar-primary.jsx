@@ -1,8 +1,9 @@
 /* jshint browser: true */
 
+var showMenu = require("../utils/show-menu.js");
+
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		showMenu = require("../utils/show-menu.js"),
 		AppbarPrimary;
 
 	AppbarPrimary = React.createClass({
@@ -27,7 +28,7 @@ module.exports = function(core, config, store) {
 
 		showUserMenu: function(e) {
 			core.emit("user-menu", {
-				origin: e.target,
+				origin: e.currentTarget,
 				buttons: {},
 				items: {}
 			}, function(err, menu) {
