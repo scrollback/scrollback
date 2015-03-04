@@ -52,7 +52,7 @@ module.exports = function(core, config, store) {
 		},
 
 		goToRoom: function(e) {
-			if (/icon-more/.test(e.target.getAttribute("class"))) {
+			if (/icon-more/.test(e.target.className)) {
 				return;
 			}
 
