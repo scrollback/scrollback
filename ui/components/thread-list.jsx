@@ -22,6 +22,11 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
+			// Don't show
+			if (store.getNav().mode !== "chat") {
+				return <div />;
+			}
+
 			return (<ListView sections={threadListUtils.getSections("list")} endless={true} atTop={true} onScroll={this.onScroll} />);
 		}
 	});

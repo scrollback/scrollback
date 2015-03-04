@@ -22,6 +22,11 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
+			// Don't show
+			if (store.getNav().mode !== "room") {
+				return <div />;
+			}
+
 			return (
 					<div className="main-content-threads" data-mode="room">
 						<GridView sections={threadListUtils.getSections("card")} endless={true} atTop={true} onScroll={this.onScroll} />

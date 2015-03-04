@@ -29,6 +29,11 @@ module.exports = function(core, config, store) {
 				classNames = "main-content-chat chat-area",
 				content;
 
+			// Don't show
+			if (store.getNav().mode !== "chat") {
+				return <div />;
+			}
+
 			// Enhance chat area layout in modern browsers
 			if (browserSupports.CSS("display", "flex")) {
 				classNames += " chat-area-enhanced";
@@ -41,7 +46,7 @@ module.exports = function(core, config, store) {
 				}
 			});
 
-			atTop = !(chatitems.length && chatitems.length >= 100);
+			atTop = (chatitems.length < 100);
 
 			if (chatitems.length) {
 				content = (
