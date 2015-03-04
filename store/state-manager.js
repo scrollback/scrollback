@@ -12,7 +12,7 @@ module.exports = function(core, conf, s, st) {
 		if (changes.nav) objUtils.extend(state.nav, changes.nav);
 		if (changes.context) objUtils.extend(state.context, changes.context);
 		if (changes.app) objUtils.extend(state.app, changes.app);
-		
+
 		if (changes.entities) updateEntities(state.entities, changes.entities);
 		if (changes.texts) updateTexts(changes.texts);
 		if (changes.threads) updateThreads(changes.threads);
@@ -25,7 +25,7 @@ function updateThreads(threads) {
 	rooms.forEach(function(roomId) {
 		ranges = store.get("threads", roomId);
 		if(!ranges) ranges = state.threads[roomId] = [];
-		
+
 		if(threads[roomId].length) {
 			threads[roomId].forEach(function(newRange) {
 				state.threads[roomId] = rangeOps.merge(ranges, newRange, "startTime");
@@ -42,7 +42,7 @@ function updateCurrentUser(user) {
 
 function updateTexts(texts) {
 	var rooms = Object.keys(texts), ranges;
-	
+
 	rooms.forEach(function(roomThread) {
 		ranges = store.get("texts", roomThread);
 		if(!ranges) ranges = state.texts[roomThread] = [];
@@ -72,7 +72,7 @@ function buildIndex(obj) {
 			}
 		}
 	}
-	
+
 }
 
 function updateEntities(stateEntities, changesEntities) {
