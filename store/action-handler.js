@@ -28,8 +28,8 @@ module.exports = function(c, conf, s) {
 			}
 			if (newState.nav.threadRange) handleThreadRangeChange(newState);
 		}
+
 		next();
-		core.emit("statechange", newState);
 	}, 900);
 
 	function constructEntitiesFromRoomList(list, entities, userId) {
@@ -64,7 +64,7 @@ module.exports = function(c, conf, s) {
 						featuredRooms.push(e.id);
 						entities[e.id] = e;
 					}
-					
+
 				});
 			}
 			core.emit("setstate", {
@@ -101,10 +101,10 @@ function presenseChange(action, next) {
 	var entities = {}, relation;
 	entities[action.to] = entityOps.relatedEntityToEntity(action.room);
 	entities[action.from] = entityOps.relatedEntityToEntity(action.user);
-	
+
 	relation = entityOps.relatedEntityToRelation(action.user, action.room);
 	relation.status = action.type == "away" ? "offline" : "online";
-	
+
 	entities[relation.room + "_" + relation.user] = relation;
 	core.emit("setstate", {
 		entities: entities
@@ -125,7 +125,7 @@ function onTextUp(text, next) {
 	if (text.thread) key += text.thread;
 	newState.texts[key] = textRange;
 	core.emit("setstate", newState);
-	
+
 }
 
 function onTextDn(text, next) {
