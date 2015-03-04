@@ -75,6 +75,8 @@
     "winston": "^0.7.3",
     "ebus": "latest",
     "secure-random": "~1.1.1"
+    "through2": "latest"
+    "object-assign" : "latest"
   },
   "optionalDependencies": {},
   "devDependencies": {
