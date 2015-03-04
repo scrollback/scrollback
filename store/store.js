@@ -63,7 +63,8 @@ module.exports = function(core, config) {
 	store.getFeaturedRooms = getFeaturedRooms;
 
 	require("./state-manager.js")(core, config, store, state);
-	require("./content-manager.js")(core, config, store, state);
+	require("./action-handler.js")(core, config, store, state);
+	require("./rule-manager.js")(core, config, store, state);
 	require("./mock-socket.js")(core, config, store, state);
 	return store;
 };
