@@ -27,9 +27,23 @@ module.exports = function(core, config, store) {
 			}
 
 			if (res === "ok") {
-				core.emit("setstate", {
-					nav: { dialog: null }
-				});
+				if (type === "room") {
+					core.emit("setstate", {
+						nav: {
+							room: name,
+							mode: "room",
+							dialog: null,
+							dialogState: null
+						}
+					});
+				} else {
+					core.emit("setstate", {
+						nav: {
+							dialog: null,
+							dialogState: null
+						}
+					});
+				}
 
 				if (typeof callback === "function") {
 					callback();
@@ -39,23 +53,51 @@ module.exports = function(core, config, store) {
 	}
 
 	core.on("statechange", function(changes, next) {
-		var dialog;
+		var nav = store.getNav(),
+			user = store.get("user");
+
+		if (changes.nav && ("dialog" in changes.nav || (nav.dialog && changes.nav.dialogState === "update"))) {
+			if (nav.dialog) {
+				showDialog(nav.dialog);
+			} else {
+				$.modal("dismiss");
+			}
+		}
 
 		if (typeof userChangeCallback === "function" && changes.user && appUtils.isGuest(store.get("user"))) {
 				userChangeCallback();
 				userChangeCallback = null;
 		}
 
-		if (changes.nav && "dialog" in changes.nav || (/(createroom|signup|signin)/.test(dialog) && changes.user)) {
-			dialog = store.getNav().dialog;
-
-			if (!dialog) {
-				$.modal("dismiss");
-
-				return next();
+		if (changes.entities && changes.entities[user] && store.getUser().identities) {
+			if (appUtils.isGuest(store.get("user"))) {
+				// User signs up
+				if (nav.dialog === "createroom" ) {
+					// Trying to create room
+					core.emit("setstate", {
+						nav: { dialogState: "update" }
+					});
+				} else {
+					core.emit("setstate", {
+						nav: { dialog: "signup" }
+					});
+				}
+			} else if (changes.user) {
+				// User signs in
+				if (nav.dialog === "createroom" ) {
+					// Trying to create room
+					core.emit("setstate", {
+						nav: { dialogState: "update" }
+					});
+				} else if (/(signup|signin)/.test(nav.dialog)) {
+					core.emit("setstate", {
+						nav: {
+							dialog: null,
+							dialogState: null
+						}
+					});
+				}
 			}
-
-			showDialog(dialog);
 		}
 
 		next();
@@ -66,7 +108,7 @@ module.exports = function(core, config, store) {
 			user = store.getUser(),
 			roomName = (nav.dialogState === "prefill") ? nav.room : "";
 
-		if (user && appUtils.isGuest(store.get("user"))) {
+		if (user && appUtils.isGuest(user.id)) {
 			if (user.identities && user.identities.length) {
 				dialog.title = "Create a new room";
 				dialog.content = [
@@ -86,28 +128,29 @@ module.exports = function(core, config, store) {
 							var roomname = $roomEntry.val();
 
 							roomname = (typeof roomname === "string") ? roomname.toLowerCase().trim() : "";
+							username = (typeof username === "string") ? username.toLowerCase().trim() : "";
 
 							if (!username) {
 								callback("User name cannot be empty");
 							} else if (username === roomname) {
 								callback("User and room names cannot be the same");
-							}
-						});
+							} else {
+								$roomEntry.validInput(function(roomname, callback) {
+									validateEntity("Room", roomname, function(res, message) {
+										if (res === "error") {
+											callback(message);
+										}
 
-						$roomEntry.validInput(function(roomname, callback) {
-							validateEntity(roomname, function(res, message) {
-								if (res === "error") {
-									callback(message);
-								}
+										if (res === "ok") {
+											callback();
 
-								if (res === "ok") {
-									callback();
-
-									createAndValidate("user", $userEntry, self, function() {
-										createAndValidate("room", $roomEntry, self);
+											createAndValidate("user", $userEntry, self, function() {
+												createAndValidate("room", $roomEntry, self);
+											});
+										}
 									});
-								}
-							});
+								});
+							}
 						});
 					}
 				};

@@ -26,7 +26,7 @@ module.exports = function(core) {
 	function validateEntity(type, name, callback) {
 		var validation;
 
-		if (typeof callback === "function") {
+		if (typeof callback !== "function") {
 			callback = function() {};
 		}
 
