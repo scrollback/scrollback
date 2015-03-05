@@ -1,7 +1,7 @@
 module.exports = {
     server: {
         protocol: "http:",
-        host: "//local.scrollback.io"
+        host: "//localhost:7528"
     },
     analytics: {
         "id": "UA-XXXXXXXX-1"

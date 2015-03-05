@@ -19,12 +19,11 @@ Boston, MA 02111-1307 USA.
 */
 var merge = require("./merge-config.js");
 var fs = require("fs");
-var host = "local.scrollback.io";
 
 var config = {};
 var defaults = {
 	global: {
-		host: host,
+		host: "localhost",
 		su: {}
 	},
 	core: {
@@ -52,19 +51,19 @@ var defaults = {
 		pg: { //post gre config
 			server: "localhost", //server:port
 			db: "logs",
-			username: "username",
-			password: "password"
+			username: "scrollback",
+			password: "scrollback"
 			//port:
 		},
 	},
 	"browserid-auth": {
-		audience: host
+		audience: "localhost:7528"
 	},
 	env: "development",
 	http: {
-		host: host,
-		cookieDomain: ".scrollback.io",
-		port: 80,
+		host: "localhost",
+		cookieDomain: "localhost",
+		port: 7528,
 		home: "public", // the directory containing static files
 		time: 60000,
 		limit: 30,
@@ -75,7 +74,7 @@ var defaults = {
 		redisDB: 7
 	},
 	"redis-storage": {
-		host: "local.scrollback.io",
+		host: "localhost",
 		port: 6379,
 		sessionDB: 8,
 		userDB: 9,
@@ -86,7 +85,7 @@ var defaults = {
 		nickRetries: 100
 	},
 	threader: {
-		host: "local.scrollback.io",
+		host: "localhost",
 		port: 12345,
 		redisDB: 11
 	},
@@ -122,8 +121,8 @@ var defaults = {
 		pg: {	
 			server: "localhost", //server:port
 			db: "scrollback",
-			username: "username",
-			password: "password"
+			username: "scrollback",
+			password: "scrollback"
 		},
 		redisDB: 5
 	}

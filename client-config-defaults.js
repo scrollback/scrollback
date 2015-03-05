@@ -2,7 +2,7 @@ var merge = require("./merge-config.js");
 var defaults = {
 	server: {
 		protocol: "http:",
-		host: "//local.scrollback.io"
+		host: "//localhost:7528"
 	},
     localStorage: {
         version: 1.00
