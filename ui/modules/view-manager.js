@@ -8,7 +8,7 @@ module.exports = function(core, config, store) {
 	core.on("statechange", function(changes, next) {
 		var classList, relation, value, nav, thread;
 
-		if (changes.nav && (changes.nav.view || changes.nav.mode || changes.nav.thread)) {
+		if (changes.nav && ("view" in changes.nav || "mode" in changes.nav || "thread" in changes.nav)) {
 			classList = $("body").attr("class") || "";
 			nav = store.getNav();
 

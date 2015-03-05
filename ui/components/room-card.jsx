@@ -87,7 +87,7 @@ module.exports = function(core, config, store) {
 				  		<div className="card-cover-header card-header">
 				  			<span className="card-header-badge notification-badge notification-badge-mention">{room.mentions}</span>
 				  			<span className="card-header-badge notification-badge notification-badge-messages">{room.messages}</span>
-				  			<a className="card-header-icon card-header-icon-more card-cover-icon" onClick={this.showRoomMenu}></a>
+				  			<a className="card-header-icon card-header-icon-more card-cover-icon" data-role="user follower moderator owner" onClick={this.showRoomMenu}></a>
 			  			</div>
 			  			<div className="card-cover-logo" style={{ backgroundImage: "url(" + roomPicture  + ")" }}></div>
 			  			<h3 className="card-cover-title">{room.id}</h3>
