@@ -41,25 +41,33 @@ function getItems(ranges, req, propName) {
     range = ranges.filter(function (r) {
         return (
             (req[propName] === null && r.end === null) ||
-            ((r.start === null || r.start < req[propName]) &&
-            (r.end === null || r.end > req[propName]))
+            ((r.start === null || r.start <= req[propName]) &&
+            (r.end === null || r.end >= req[propName]))
         );
 
     })[0];
     if(!range) return ["missing"];
 
     index = findIndex(range.items, propName, req[propName]);
-
+	
+	if(range.items[index] && range.items[index][propName] === req[propName] && req.before && !req.after) index++;
+	/*
+		Consider the range [1, 2, 3, 4, 5].
+		(index: 3, before: 2) => 2 items [2, 3] so that it is consistent with
+		(index: 3, after: 2) =>  2 items [3, 4]. However
+		(index: 3, before: 2, after: 2) => 4 items [1, 2, 3, 4].
+	*/
+	
     startIndex = index - (req.before || 0);
     endIndex = index + (req.after || 0);
 
     if(startIndex < 0) {
-        missingBefore = true;
+        if(range.start !== null) missingBefore = true;
         startIndex = 0;
     }
 
     if(endIndex > range.items.length) {
-        missingAfter = true;
+        if(range.end !== null) missingAfter = true;
         endIndex = range.items.length;
     }
 

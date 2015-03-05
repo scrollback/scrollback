@@ -11,9 +11,6 @@ module.exports = function(core, conf, s, st) {
 	state = st;
 
 	core.on("setstate", function(changes, next) {
-		
-		console.log('updating state', changes);
-		
 		if (changes.nav) objUtils.extend(state.nav, changes.nav);
 		if (changes.context) objUtils.extend(state.context, changes.context);
 		if (changes.app) objUtils.extend(state.app, changes.app);
@@ -29,6 +26,7 @@ module.exports = function(core, conf, s, st) {
 		next();
 	}, 1);
 };
+
 function updateThreads(threads) {
 	var rooms = Object.keys(threads), ranges;
 
@@ -41,7 +39,7 @@ function updateThreads(threads) {
 				state.threads[roomId] = rangeOps.merge(ranges, newRange, "startTime");
 			});
 		} else {
-			console.log(roomId);
+			console.log(roomId + ' has no threads yet.');
 		}
 	});
 }
