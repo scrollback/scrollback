@@ -17,7 +17,7 @@ module.exports = function(c, conf, s) {
 					};
 				}
 			}
-			if (newState.nav.thread || newState.nav.room) {
+			if (newState.nav.thread || newState.nav.room || newState.nav.textRange) {
 				if (!newState.nav.textRange) {
 					newState.nav.textRange = {
 						time: null,
@@ -47,7 +47,11 @@ module.exports = function(c, conf, s) {
 	}
 	core.on("init-dn", function(init, next) {
 		var entities = {};
-		if (!init.user.id) return next();
+		if (!init.user.id) {
+			entities[store.get("user")] = init.user;
+			core.emit("setstate", {entities:entities});
+			return next();
+		}
 
 		if (init.occupantOf) entities = constructEntitiesFromRoomList(init.occupantOf, entities, init.user.id);
 		if (init.memberOf) entities = constructEntitiesFromRoomList(init.memberOf, entities, init.user.id);
@@ -216,17 +220,15 @@ function textResponse(err, texts) {
 		if (texts.before) {
 			range.end = texts.time;
 			range.start = texts.results[0].time;
-		} else {
+			if(texts.results.length < texts.before) range.start = null;
+		} else if(texts.after) {
 			range.start = texts.time;
 			range.end = texts.results[texts.results.length - 1].time;
+			if(texts.results.length < texts.after) range.end = null;
 		}
 		range.items = texts.results;
 
-		updatingState.texts[key] = [{
-			start: texts.results[0].time,
-			end: texts.time,
-			items: texts.results
-		}];
+		updatingState.texts[key] = [range];
 		core.emit("setstate", updatingState);
 	}
 }
@@ -247,15 +249,15 @@ function handleTextChange(newState) {
 				to: roomId,
 				thread: thread,
 				time: time,
-				before: 256
+				before: 50
 			}, textResponse);
 		}
 		if (r[r.length - 1] == "missing") {
 			core.emit("getTexts", {
 				to: roomId,
 				thread: thread,
-				time: r.length >= 2 ? r.length - 2 : textRange.time,
-				after: 256
+				time: r.length >= 2 ? r[r.length - 2].time : textRange.time,
+				after: 50
 			}, textResponse);
 		}
 	});
@@ -271,16 +273,14 @@ function threadResponse(err, threads) {
 		if (threads.before) {
 			range.end = threads.time;
 			range.start = threads.results[0].startTime;
-		} else {
+			if(threads.results.length < threads.before) range.start = null;
+		} else if(threads.after) {
 			range.start = threads.time;
 			range.end = threads.results[threads.results.length - 1].startTime;
+			if(threads.results.length < threads.after) range.end = null;
 		}
 		range.items = threads.results;
-		updatingState.threads[threads.to].push({
-			start: threads.results[0].startTime,
-			end: threads.time,
-			items: threads.results
-		});
+		updatingState.threads[threads.to].push(range);
 	}
 	core.emit("setstate", updatingState);
 }

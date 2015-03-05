@@ -14,6 +14,12 @@ module.exports = function(c, conf, s) {
 	
 	core.on("init-dn", function(initDn, next) {
 		LS.setItem("session", initDn.session);
+		session = initDn.session;
 		next();
 	}, 999);
+	
+	core.on("logout", function(logout, next) {
+		LS.removeItem("session");
+		next();
+	}, 1000);
 };

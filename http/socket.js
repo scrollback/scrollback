@@ -131,6 +131,7 @@ sock.on('connection', function(socket) {
 			if (data.type == 'away') storeAway(conn, data);
 			if (data.type == 'init') {
 				if (data.old) {
+					log.i("Occupant of: ", data.occupantOf);
 					data.occupantOf.forEach(function(e) {
 						var role, i, l;
 						for (i = 0, l = data.memberOf.length; i < l; i++) {
