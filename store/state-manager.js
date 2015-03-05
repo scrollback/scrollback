@@ -20,6 +20,8 @@ module.exports = function(core, conf, s, st) {
 		if (changes.threads) updateThreads(changes.threads);
 		if (changes.user) updateCurrentUser(changes.user);
 
+		buildIndex(changes);
+
 		core.emit("statechange", changes);
 
 		next();

@@ -30,8 +30,6 @@
 	window.core = core = new (require("ebus"))(config.appPriorities);
 	window.store = store = require("./../store/store.js")(core, config);
 
-	require("./store/view-manager.js")(core, config, store);
-
 	// Apps
 	require("../http/room-general-settings-client.js")(core, config, store);
 	require("../http/user-profile-settings-client.js")(core, config, store);
@@ -53,6 +51,7 @@
 	require("../browserid-auth/browserid-auth-client.js")(core, config, store);
 
 	// Modules
+	require("./modules/view-manager.js")(core, config, store);
 	require("./modules/notifications.js")(core, config, store);
 	require("./modules/dialogs-listeners.js")(core, config, store);
 	require("./modules/settings-room.js")(core, config, store);
