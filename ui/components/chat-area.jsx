@@ -19,9 +19,6 @@ module.exports = function(core, config, store) {
 			} else {
 				time = parseInt(key.split("-").pop());
 			}
-			
-			this.startTime = new Date();
-			console.log('chatArea navigating to', time, before, after);
 
 			core.emit("setstate", {
 				nav: {
@@ -40,7 +37,7 @@ module.exports = function(core, config, store) {
 				classNames = "main-content-chat chat-area",
 				content, before, after, beforeItems, afterItems;
 
-			// Don't show
+			// Don"t show
 			if (store.getNav().mode !== "chat") {
 				return <div />;
 			}
@@ -56,10 +53,10 @@ module.exports = function(core, config, store) {
 			beforeItems = store.getTexts(nav.room, nav.thread, nav.textRange.time, -before);
 			afterItems = store.getTexts(nav.room, nav.thread, nav.textRange.time, after);
 
-			atTop = (beforeItems.length < before && beforeItems[0] != 'missing');
-			atBottom = (afterItems.length < after && afterItems[afterItems.length-1] != 'missing');
+			atTop = (beforeItems.length < before && beforeItems[0] !== "missing");
+			atBottom = (afterItems.length < after && afterItems[afterItems.length-1] !== "missing");
 
-			if (beforeItems[beforeItems.length-1] == afterItems[0] || (
+			if (beforeItems[beforeItems.length-1] === afterItems[0] || (
 			   beforeItems[beforeItems.length-1] && afterItems[0] &&
 			   beforeItems[beforeItems.length-1].id === afterItems[0].id)) {
 				beforeItems.pop();
@@ -69,13 +66,15 @@ module.exports = function(core, config, store) {
 				var key;
 				if (typeof text === "object") {
 					key = "chat-message-list-" + nav.room + "-" + nav.thread + "-" + text.id + "-" + text.time;
+
 					chatitems.push(<ChatItem text={text} key={key} />);
 				} else if (text === "missing") {
-					key = "chat-message-list-" + nav.room + "-" + nav.thread + "-unknown-" + (items[i+1] || items[i-1] || {time:null}).time;
-					chatitems.push(<div className='chat-item chat-item-missing' key={key}><em>Missing</em></div>);
+					key = "chat-message-list-" + nav.room + "-" + nav.thread + "-unknown-" + (items[i+1] || items[i-1] || { time: null }).time;
+
+					chatitems.push(<div className="chat-item chat-item-missing" key={key}><em>Missing</em></div>);
 				}
 			});
-			
+
 			if (chatitems.length) {
 				content = (
 							<div className="chat-area-messages">

@@ -7,37 +7,33 @@ module.exports = function(core, config, store) {
 		ThreadFeed;
 
 	ThreadFeed = React.createClass({
-		onScroll: function (key, before, after) {
-			var time;
+		onScroll: threadListUtils.onScroll,
 
-			if (key === "top") {
-				time = 1;
-			} else if (key === "bottom") {
-				time = null;
-			} else {
-				time = parseInt(key.split("-").pop());
+		getCols: function() {
+			var container = document.querySelector(".main-content-threads"),
+				card = document.querySelector(".main-content-threads .grid-item");
+
+			if (!(container && card)) {
+				return 1;
 			}
 
-			core.emit("setstate", {
-				nav: {
-					threadRange: {
-						time: time,
-						before: before,
-						after: after
-					}
-				}
-			});
+			return (Math.floor(container.offsetWidth / card.offsetWidth) || 1);
+
 		},
 
 		render: function() {
+			var sections;
+
 			// Don't show
 			if (store.getNav().mode !== "room") {
 				return <div />;
 			}
 
+			sections = threadListUtils.getSections("card", this.getCols());
+
 			return (
 					<div className="main-content-threads" data-mode="room">
-						<GridView sections={threadListUtils.getSections("card")} endless={true} atTop={true} onScroll={this.onScroll} />
+						<GridView sections={sections} endless={true} atTop={true} onScroll={this.onScroll} />
 					</div>
 			);
 		}

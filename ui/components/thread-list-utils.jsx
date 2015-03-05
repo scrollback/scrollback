@@ -5,21 +5,46 @@ module.exports = function(core, config, store) {
 		ThreadCard = require("./thread-card.jsx")(core, config, store),
 		ThreadListItem = require("./thread-list-item.jsx")(core, config, store);
 
-	function getSections(type) {
+
+	function onScroll(key, before, after) {
+		var time;
+
+		if (key === "top") {
+			time = 1;
+		} else if (key === "bottom") {
+			time = null;
+		} else {
+			time = parseInt(key.split("-").pop());
+		}
+
+		core.emit("setstate", {
+			nav: {
+				threadRange: {
+					time: time,
+					before: before,
+					after: after
+				}
+			}
+		});
+	}
+
+	function getSections(type, cols) {
 		var nav = store.getNav(),
 			items = [], atTop = false, atBottom = true,
 			before, after, beforeItems, afterItems;
 
-			before = (nav.threadRange.before || 0) + 10;
-			after = (nav.threadRange.after || 0) + 10;
+			cols = (typeof cols === "number" && !isNaN((cols))) ? cols : 1;
+
+			before = (nav.threadRange.before || 0) + (10 * cols);
+			after = (nav.threadRange.after || 0) + (10 * cols);
 
 			beforeItems = store.getThreads(nav.room, nav.threadRange.time, -before);
 			afterItems = store.getThreads(nav.room, nav.threadRange.time, after);
 
-			atTop = (beforeItems.length < before);
-			atBottom = (afterItems.length < after);
+			atTop = (beforeItems.length < before && beforeItems[0] !== "missing");
+			atBottom = (afterItems.length < after && afterItems[afterItems.length-1] !== "missing");
 
-			if (beforeItems[beforeItems.length-1] == afterItems[0] || (
+			if (beforeItems[beforeItems.length-1] === afterItems[0] || (
 			   beforeItems[beforeItems.length-1] && afterItems[0] &&
 			   beforeItems[beforeItems.length-1].id === afterItems[0].id)) {
 				beforeItems.pop();
@@ -45,6 +70,7 @@ module.exports = function(core, config, store) {
 	}
 
 	return {
-		getSections: getSections
+		getSections: getSections,
+		onScroll: onScroll
 	};
 };
