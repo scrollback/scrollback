@@ -48,7 +48,7 @@
   "dependencies": {
     "connect-redis": "1.4.6",
     "cookie": "latest",
-	"jsonwebtoken":"latest",
+    "jsonwebtoken": "latest",
     "elasticsearch": "^2.3.0",
     "express": "3.0.x",
     "generic-pool": "latest",
@@ -74,7 +74,8 @@
     "valid": "git://github.com/scrollback/valid.git#v0.0.1",
     "winston": "^0.7.3",
     "ebus": "latest",
-    "secure-random": "~1.1.1"
+    "secure-random": "~1.1.1",
+    "big-integer": "~1.4.4"
   },
   "optionalDependencies": {},
   "devDependencies": {
