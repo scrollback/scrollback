@@ -16,4 +16,9 @@ module.exports = function(c, conf, s) {
 		LS.setItem("session", initDn.session);
 		next();
 	}, 999);
+	
+	core.on("logout", function(logout, next) {
+		LS.removeItem("session");
+		next();
+	}, 1000);
 };
