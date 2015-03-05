@@ -37,7 +37,7 @@ module.exports = function (core, config, store) {
 	core.on('boot', function (changes, next) {
 		var entities={}, textRanges={}, texts={}, threadRanges={}, threads={}, sid, key, o;
 
-		sid = store.get('session');
+		sid = changes.session;
 		if(!sid) {
 			console.error('boot@persistence: Session ID is missing.');
 		}
@@ -107,6 +107,8 @@ module.exports = function (core, config, store) {
 	
 	core.on('statechange', function (changes, next) {
 		var key, data={}, sid = store.get('session'), ranges;
+		
+		console.log("Session id", sid);
 		
 		if(changes.entities) {
 			for(key in changes.entities) {

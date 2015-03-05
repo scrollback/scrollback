@@ -11,6 +11,9 @@ module.exports = function(core, conf, s, st) {
 	state = st;
 
 	core.on("setstate", function(changes, next) {
+		
+		console.log('updating state', changes);
+		
 		if (changes.nav) objUtils.extend(state.nav, changes.nav);
 		if (changes.context) objUtils.extend(state.context, changes.context);
 		if (changes.app) objUtils.extend(state.app, changes.app);
@@ -18,12 +21,11 @@ module.exports = function(core, conf, s, st) {
 		if (changes.entities) updateEntities(state.entities, changes.entities);
 		if (changes.texts) updateTexts(changes.texts);
 		if (changes.threads) updateThreads(changes.threads);
+		if (changes.session) updateSession(changes.session);
 		if (changes.user) updateCurrentUser(changes.user);
 
 		buildIndex(changes);
-
 		core.emit("statechange", changes);
-
 		next();
 	}, 1);
 };
@@ -42,6 +44,11 @@ function updateThreads(threads) {
 			console.log(roomId);
 		}
 	});
+}
+
+function updateSession(session) {
+	console.log('Session updating to', session);
+	state.session = session;
 }
 
 function updateCurrentUser(user) {

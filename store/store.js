@@ -6,7 +6,7 @@ var state = {
 		"view": "main",
 		"room": null
 	},
-	session: {},
+	session: "",
 	"user": "",
 	"texts": {},
 	"threads": {},
