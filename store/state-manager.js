@@ -1,13 +1,15 @@
 /* jshint browser: true */
+
 var config, store;
 var objUtils = require("./../lib/obj-utils.js");
 var rangeOps = require("./range-ops.js");
 var state;
+
 module.exports = function(core, conf, s, st) {
 	config = conf;
     store = s;
 	state = st;
-	window.state = state;
+
 	core.on("setstate", function(changes, next) {
 		
 		console.log('updating state', changes);
@@ -21,12 +23,15 @@ module.exports = function(core, conf, s, st) {
 		if (changes.threads) updateThreads(changes.threads);
 		if (changes.session) updateSession(changes.session);
 		if (changes.user) updateCurrentUser(changes.user);
-		
+
+		buildIndex(changes);
+		core.emit("statechange", changes);
 		next();
-	}, 1000);
+	}, 1);
 };
 function updateThreads(threads) {
 	var rooms = Object.keys(threads), ranges;
+
 	rooms.forEach(function(roomId) {
 		ranges = store.get("threads", roomId);
 		if(!ranges) ranges = state.threads[roomId] = [];

@@ -93,7 +93,7 @@ sock.on('connection', function(socket) {
 				return;
 			}
 		}
-		console.log(d);
+		log.i("Reached here:", d);
 		core.emit(d.type, d, function(err, data) {
 			var e, action;
             log.i("response", err, data);

@@ -5,7 +5,7 @@ module.exports = function(c, conf, s) {
 	conf = config;
 	store = s;
 	core.on("back-dn", function(backDn, next) {
-		loadUsersList(backDn.to);
+		if (store.get("user") === backDn.from) loadUsersList(backDn.to);
 		next();
 	}, 1000);
 };
@@ -33,7 +33,10 @@ function constructEntitiesFromUserList(list, entities, roomId) {
 
 function loadUsersList(roomId) {
 	var occupantList, memberList, done = false,
-		entities = {};
+		entities = {},
+		listeningRooms = store.getApp("listeningRooms");
+
+	if (listeningRooms.indexOf(roomId) < 0) listeningRooms.push(roomId);
 
 	function emitSetState() {
 		constructEntitiesFromUserList(memberList, entities, roomId);
@@ -42,7 +45,10 @@ function loadUsersList(roomId) {
 			entities[roomId + "_" + e.id].status = "online";
 		});
 		core.emit("setstate", {
-			entities: entities
+			entities: entities,
+			app: {
+				listeningRooms: listeningRooms
+			}
 		});
 	}
 

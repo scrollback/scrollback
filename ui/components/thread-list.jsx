@@ -7,15 +7,23 @@ module.exports = function(core, config, store) {
 		ThreadList;
 
 	ThreadList = React.createClass({
-		onScroll: function (key, above, below) {
-			var time = parseInt(key.split('-').pop());
+		onScroll: function (key, before, after) {
+			var time;
+
+			if (key === "top") {
+				time = 1;
+			} else if (key === "bottom") {
+				time = null;
+			} else {
+				time = parseInt(key.split("-").pop());
+			}
 
 			core.emit("setstate", {
 				nav: {
 					threadRange: {
 						time: time,
-						above: above,
-						below: below
+						before: before,
+						after: after
 					}
 				}
 			});

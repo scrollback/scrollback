@@ -9,15 +9,23 @@ module.exports = function(core, config, store) {
 		ChatArea;
 
 	ChatArea = React.createClass({
-		onScroll: function (key, above, below) {
-			var time = parseInt(key.split('-').pop());
+		onScroll: function (key, before, after) {
+			var time;
+
+			if (key === "top") {
+				time = 1;
+			} else if (key === "bottom") {
+				time = null;
+			} else {
+				time = parseInt(key.split("-").pop());
+			}
 
 			core.emit("setstate", {
 				nav: {
 					textRange: {
 						time: time,
-						above: above,
-						below: below
+						before: before,
+						after: after
 					}
 				}
 			});
@@ -27,7 +35,7 @@ module.exports = function(core, config, store) {
 			var chatitems = [], atTop = false, atBottom = true,
 				nav = store.getNav(),
 				classNames = "main-content-chat chat-area",
-				content;
+				content, before, after, beforeItems, afterItems;
 
 			// Don't show
 			if (store.getNav().mode !== "chat") {
@@ -39,14 +47,27 @@ module.exports = function(core, config, store) {
 				classNames += " chat-area-enhanced";
 			}
 
-			// TODO: if(textRange.before + 10) getText( - textrange.before).concat() + 10)
-			(store.getTexts(nav.room, nav.thread, null, -100) || []).forEach(function(text) {
+			before = (nav.textRange.before || 0) + 10;
+			after = (nav.textRange.after || 0) + 10;
+
+			beforeItems = store.getTexts(nav.room, nav.thread, nav.textRange.time, -before);
+			afterItems = store.getTexts(nav.room, nav.thread, nav.textRange.time, after);
+
+			atTop = (beforeItems.length < before);
+			atBottom = (afterItems.length < after);
+
+			if (beforeItems[beforeItems.length-1] == afterItems[0] || (
+			   beforeItems[beforeItems.length-1] && afterItems[0] &&
+			   beforeItems[beforeItems.length-1].id === afterItems[0].id)) {
+				beforeItems.pop();
+				before--;
+			}
+
+			(beforeItems.concat(afterItems)).forEach(function(text) {
 				if (typeof text === "object") {
 					chatitems.push(<ChatItem text={text} key={"chat-message-list-" + nav.room + "-" + nav.thread + "-" + text.id + "-" + text.time} />);
 				}
 			});
-
-			atTop = (chatitems.length < 100);
 
 			if (chatitems.length) {
 				content = (

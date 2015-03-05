@@ -96,7 +96,7 @@ module.exports = function(type, menu) {
 	}
 
 	return $popover.addClass(type).popover({
-		arrow: menu.arrow,
+		arrow: !!(menu.arrow),
 		origin: menu.origin
 	});
 };
