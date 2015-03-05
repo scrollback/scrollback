@@ -35,7 +35,6 @@ module.exports = function(core, config, store) {
 			if (!text) {
 				return;
 			}
-			console.log(this.props.thread);
 			core.emit("text-up", {
 				to: store.getNav().room,
 				from: store.get("user"),
@@ -82,7 +81,7 @@ module.exports = function(core, config, store) {
 			var thread = this.props.thread,
 			  	chats;
 
-			chats = (store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).reverse().map(function(chat) {
+			chats = (store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).map(function(chat) {
 				if (typeof chat === "object" && typeof chat.text === "string") {
 					return (
 						<div key={"thread-card-chat-" + store.getNav().room + "-" + thread.id + "-" + chat.id} className="card-chat">

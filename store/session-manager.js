@@ -14,6 +14,7 @@ module.exports = function(c, conf, s) {
 	
 	core.on("init-dn", function(initDn, next) {
 		LS.setItem("session", initDn.session);
+		session = initDn.session;
 		next();
 	}, 999);
 	
