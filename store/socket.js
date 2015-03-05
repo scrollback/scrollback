@@ -47,7 +47,9 @@ module.exports = function(c, conf, s) {
 	});
 
 	core.on("init-up", function(init, next) {
-		if(!init.session) session = init.session = "web://" + generate.uid();
+		if (!init.session) session = init.session = "web://" + generate.uid();
+		init.type = "init";
+		init.to = "me";
 		client.send(JSON.stringify(init));
 		pendingActions[init.id] = function(init) {
 			if (init.type == "init") {

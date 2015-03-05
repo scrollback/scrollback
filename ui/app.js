@@ -56,6 +56,7 @@
 	require("./modules/dialogs-listeners.js")(core, config, store);
 	require("./modules/settings-room.js")(core, config, store);
 	require("./modules/settings-user.js")(core, config, store);
+	require("./modules/signin-handler.js")(core, config, store);
 
 	// Render the client
 	require("./components/client.jsx")(core, config, store);
