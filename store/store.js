@@ -121,7 +121,8 @@ function getRelatedUsers(id, filter) {
 
 function getFeaturedRooms() {
 	var rooms = this.getApp("featuredRooms"),
-		result = [], self = this;
+		result = [],
+		self = this;
 
 	if (!rooms) {
 		return [];
@@ -140,20 +141,20 @@ function getRecommendedRooms() {
 
 	return [];
 }
+
 function getRelation(roomId, userId) {
-	if(!roomId) roomId = this.getNav("room");
-	if(!userId) userId = this.get("user");
-	return this.get("entities", roomId + "_"+ userId);
+	if (!roomId) roomId = this.getNav("room");
+	if (!userId) userId = this.get("user");
+	return this.get("entities", roomId + "_" + userId);
 }
+
 function getRelatedRooms(id, filter) {
 	var user, rooms, self = this;
 	if (typeof id == "string") {
 		user = id;
-	} else if (typeof id === "object") {
-		user = this.get("user");
-		filter = id;
 	} else {
-		id = this.getNav("room");
+		user = this.get("user");
+		if (typeof id === "object") filter = id;
 	}
 
 	rooms = this.get("indexes", "userRooms", user);
@@ -181,7 +182,7 @@ function getUser() {
 	if (arguments.length === 0) userId = this.get("user");
 	else userId = arguments[0];
 	res = this.get("entities", userId);
-	if(res) return res;
+	if (res) return res;
 	return "missing";
 }
 
@@ -200,10 +201,10 @@ function getEntities(id) {
 	var res;
 	if (id) {
 		res = this.get("entities", id);
-	}else{
+	} else {
 		return {};
 	}
-	
+
 	if (res) return res;
 	else return "missing";
 }
