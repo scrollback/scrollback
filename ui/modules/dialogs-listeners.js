@@ -1,6 +1,6 @@
 /* jshint browser: true */
 /* global $ */
-
+var generate = require("../../lib/generate.js");
 module.exports = function(core, config, store) {
 	var appUtils = require("../../lib/app-utils.js"),
 		validateEntity = require("../utils/validate-entity.js")(core, config, store),
@@ -261,7 +261,7 @@ module.exports = function(core, config, store) {
 			text: "Start discussion",
 			action: function() {
 				var $threadEntry = $("#createthread-dialog-thread"),
-					$textEntry = $("#createthread-dialog-text");
+					$textEntry = $("#createthread-dialog-text"), id = generate.uid(32);
 
 				$threadEntry.validInput(function(threadTitle, callback) {
 					threadTitle = (threadTitle || "").trim();
@@ -276,9 +276,12 @@ module.exports = function(core, config, store) {
 								callback("Message cannot be empty");
 							} else {
 								core.emit("text-up", {
+									id: id,
 									to: store.getNav().room,
 									from: store.get("user"),
 									text: text,
+									thread: id,
+									title: threadTitle,
 									time: new Date().getTime(),
 									manualThreaded: 1,
 									threads: [{
