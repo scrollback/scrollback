@@ -10,12 +10,14 @@ module.exports = function(core, config, store) {
 		onScroll: threadListUtils.onScroll,
 
 		render: function() {
+			var key, nav = store.getNav();
 			// Don't show
-			if (store.getNav().mode !== "chat") {
+			if (nav.mode !== "chat") {
 				return <div />;
 			}
-
-			return (<ListView sections={threadListUtils.getSections("list")} endless={true} atTop={true} onScroll={this.onScroll} />);
+			
+			key = 'thread-list-' + nav.room;
+			return (<ListView endlesskey={key} sections={threadListUtils.getSections("list")} endless={true} onScroll={this.onScroll} />);
 		}
 	});
 

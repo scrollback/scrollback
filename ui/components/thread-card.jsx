@@ -95,7 +95,7 @@ module.exports = function(core, config, store) {
 			return (
 				<div ref="threadCard" key={"thread-card-" + thread.id} className="card thread-card" data-color={thread.color} onClick={this.goToThread}>
 					<div className="card-header">
-						<h3 className="card-header-title">{thread.title}</h3>
+						<h3 className="card-header-title">{Date(parseFloat(thread.startTime))}</h3>
 			  			<span className="card-header-badge notification-badge notification-badge-mention">{thread.mentions}</span>
 			  			<span className="card-header-badge notification-badge notification-badge-messages">{thread.messages}</span>
 					</div>

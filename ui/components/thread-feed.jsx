@@ -22,18 +22,19 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var sections;
+			var sections, key, nav = store.getNav();
 
 			// Don't show
-			if (store.getNav().mode !== "room") {
+			if (nav.mode !== "room") {
 				return <div />;
 			}
 
 			sections = threadListUtils.getSections("card", this.getCols());
+			key = 'thread-feed-' + nav.room;
 
 			return (
 					<div className="main-content-threads" data-mode="room">
-						<GridView sections={sections} endless={true} atTop={true} onScroll={this.onScroll} />
+						<GridView endlesskey={key} sections={sections} endless={true} onScroll={this.onScroll} />
 					</div>
 			);
 		}
