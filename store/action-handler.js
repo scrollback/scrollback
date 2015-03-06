@@ -129,7 +129,7 @@ function onTextUp(text, next) {
 	pendingActions[text.id] = text;
 	key = text.to;
 	if (text.thread) key += text.thread;
-	newState.texts[key] = textRange;
+	newState.texts[key] = [textRange];
 	core.emit("setstate", newState);
 
 }
@@ -140,19 +140,22 @@ function onTextDn(text, next) {
 			end: null,
 			items: [text]
 		},
-		key, newState = {texts:{}};
+		key, newState = {texts:{}}, oldKey = "";
 
 	key = text.to;
 	if (text.thread) key += text.thread;
-	newState.texts[key] = textRange;
+	newState.texts[key] = [textRange];
 	if (pendingActions[text.id]) {
-		newState.texts[pendingActions[text.id].to + pendingActions[text.id].thread ? "_" + pendingActions[text.id].thread : ""] = {
+		oldKey = pendingActions[text.id].to + (pendingActions[text.id].thread ? "_" + pendingActions[text.id].thread : "");
+		if(!newState.texts[oldKey]) newState.texts[oldKey] = [];
+			
+		newState.texts[oldKey].push({
 			start: pendingActions[text.id].time,
 			end: pendingActions[text.id].time,
 			items: [
 
 			]
-		};
+		});
 	}
 
 	core.emit("setstate", newState);
