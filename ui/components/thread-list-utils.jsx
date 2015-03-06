@@ -38,13 +38,8 @@ module.exports = function(core, config, store) {
 
 		cols = (typeof cols === "number" && !isNaN((cols))) ? cols : 1;
 
-<<<<<<< HEAD
 		before = cols*Math.round(((nav.threadRange.before || 0) + Math.max(10, 3*cols))/cols)+1;
 		after = cols*Math.round(((nav.threadRange.after || 0) + Math.max(10, 3*cols))/cols);
-=======
-			before = (nav.threadRange.before || 0) + (3 * cols);
-			after = (nav.threadRange.after || 0) + (3 * cols);
->>>>>>> a50a823e14e1ea52976b19872f1354921691392a
 
 		beforeItems = store.getThreads(nav.room, nav.threadRange.time || null, -before);
 		afterItems = store.getThreads(nav.room, nav.threadRange.time || null, after);

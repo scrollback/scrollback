@@ -39,9 +39,9 @@ module.exports = function(core, config, store) {
 				content, before, after, beforeItems, afterItems;
 
 			// Don"t show
-	//		if (store.getNav().mode !== "chat") {
+			if (store.getNav().mode !== "chat") {
 				return <div />;
-	//		}
+			}
 
 			// Enhance chat area layout in modern browsers
 			if (browserSupports.CSS("display", "flex")) {
