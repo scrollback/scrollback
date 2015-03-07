@@ -43,7 +43,9 @@ module.exports = function() {
 					items = [];
 
 					for (var j = 0, m = sections[i].items.length; j < m; j++) {
-						items.push(<li key={sections[i].items[j].key + "-" + sections[i].items[j].elem.key} className="list-item" tabIndex="1">{sections[i].items[j].elem}</li>);
+						items.push(<li key={sections[i].items[j].key + 
+							(sections[i].items[j].elem.key? "-" + sections[i].items[j].elem.key: "")}
+							className="list-item" tabIndex="1">{sections[i].items[j].elem}</li>);
 					}
 
 					if (this.props.endless) {
