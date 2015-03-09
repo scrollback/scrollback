@@ -21,6 +21,7 @@ module.exports = function(core, config, store) {
 
 		core.emit("pref-save", userObj, function(err, user) {
 			core.emit("user-up", {
+				to: user.id,
 				user: user
 			}, function() {
 				self.removeClass("working");
@@ -35,7 +36,7 @@ module.exports = function(core, config, store) {
 	});
 
 	core.on("pref-dialog", function(dialog, next) {
-		var user = store.getUser;
+		var user = store.getUser();
 
 		if (!user || appUtils.isGuest(user.id)) {
 			// Don't proceed

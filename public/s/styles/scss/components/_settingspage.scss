@@ -67,13 +67,6 @@
         }
     }
 
-    .profile-picture-container {
-        position: relative;
-        padding: 0;
-    }
-
-    .profile-picture-list { position: absolute; }
-
     .twitter-account-chooser, .profile-user-avatar {
         position: relative;
         display: block;
@@ -94,24 +87,14 @@
 
         &.current { border-color: $accent-color; }
 
+        &:first-child { margin-left: 0; }
+
+        &:last-child { margin-right: 0; }
+
         img {
             border-radius: $roundness;
             height: 100%;
             width: 100%;
-        }
-
-        .label {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            padding: .5em;
-            background-color: rgba(0,0,0,0.5);
-            font-weight: 700;
-            text-transform: uppercase;
-            text-align: center;
-            color: $light-color;
-            border-radius: 0 0 $roundness $roundness;
         }
     }
 
