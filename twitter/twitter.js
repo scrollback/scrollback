@@ -26,7 +26,7 @@ module.exports = function(coreObj, conf) {
 		core = coreObj;
 		host = config.global.host;
 		init();
-		
+
 		core.on("http/init", function(payload, callback) {
 			payload.push({
 				get: {
@@ -37,7 +37,7 @@ module.exports = function(coreObj, conf) {
 			});
 			callback(null, payload);
 		}, "setters");
-		
+
 		core.on('text', onText, "watcher");
 		core.on("room", twitterRoomHandler, "gateway");
 		core.on("room", twitterParamsValidation, "appLevelValidation");
@@ -251,7 +251,9 @@ function sendMessages(replies, room) {
 					gateway: "twitter"
 				}
 			}, function(err, init) {
-				if (err) return;
+				if (err) {
+					log.e("Error: ", err);
+				}
 				var message = {
 					id: guid(),
 					type: "text",
@@ -263,7 +265,7 @@ function sendMessages(replies, room) {
 					session: "twitter://" + r.user.screen_name
 				};
 				core.emit("text", message, function(err) {
-					if(err) log("error while sending message:" , err);
+					if(err) log.e("error while sending message:" , err);
 				});
 			});
 		}

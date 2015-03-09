@@ -1,9 +1,8 @@
-var appUtils = require("./../../lib/appUtils.js");
 
 module.exports = function(core) {
 	core.on("init", function(action, next){
 		var origin = action.origin || {}, user = action.user, blacklist;
-        if (appUtils.isIRCSession(action.session)) return next();
+        if (!(/^web/.test(action.session))) return next(); // don't check for domain if not web session.
 		if(!origin.verified) return next(new Error("BLACKLISTED_DOMAIN"));
 		if(/^guest-/.test(user.id)) return next();
 		blacklist = user.params && user.params["domain-blacklist"];
@@ -11,7 +10,7 @@ module.exports = function(core) {
 			return next(new Error("RESTRICTED_SESSION"));
 		}
 		if(!(blacklist instanceof Array) || blacklist.length) return next();
-		
+
 		if(blacklist.indexOf(origin.domain)>=0) return next(new Error("BLACKLISTED_DOMAIN"));
 		next();
 	}, "authorization");
