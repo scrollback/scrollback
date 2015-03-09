@@ -49,7 +49,7 @@
     "connect-redis": "1.4.6",
     "cookie": "latest",
     "ebus": "latest",
-    "jsonwebtoken":"latest",
+    "jsonwebtoken": "latest",
     "elasticsearch": "^2.3.0",
     "express": "3.0.x",
     "generic-pool": "latest",
@@ -76,7 +76,8 @@
     "valid": "git://github.com/scrollback/valid.git#v0.0.1",
     "winston": "^0.7.3",
     "ebus": "latest",
-    "secure-random": "~1.1.1"
+    "secure-random": "~1.1.1",
+    "big-integer": "~1.4.4"
   },
   "optionalDependencies": {},
   "devDependencies": {
@@ -107,7 +108,6 @@
     "gulp-util": "latest",
     "jshint-stylish": "latest",
     "lazypipe": "latest",
-    "main-bower-files": "latest",
     "mocha": "latest",
     "mocha-html-reporter": "git://github.com/kamalkishor1991/mocha-html-reporter.git#defc65cc72b6ed965caff1fb1c2d323ca0f5a319",
     "reactify": "latest",
