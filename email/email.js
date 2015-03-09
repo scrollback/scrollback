@@ -71,7 +71,9 @@ function addMessage(message){
         if (message.mentions) {
             message.mentions.forEach(function(username) {
 				var multi2 = redis.multi();
-				multi2.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message)); // mentioned msg
+				multi2.sadd("email:mentions:" + room + ":" + username, JSON.stringify(message), function(err, res) {
+					if (err) log.i(err, res);
+				});
 				multi2.set("email:" + username + ":isMentioned", true); // mentioned indicator for username
 				multi2.exec(function(err,replies) {
 					log("added mention ", replies);
