@@ -82,9 +82,7 @@ module.exports = function(core, config, store) {
 				);
 			});
 
-			console.log(relation.role, this.props.roomId);
-
-			if (/(user|follower|moderator|owner)/.test(relation.role)) {
+			if (relation && /(user|follower|moderator|owner)/.test(relation.role)) {
 				menu = <a className="card-header-icon card-header-icon-more card-cover-icon" onClick={this.showRoomMenu}></a>;
 			} else {
 				menu = [];
