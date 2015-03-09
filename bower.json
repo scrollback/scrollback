@@ -20,6 +20,6 @@
     "svg4everybody": "*",
     "transformie": "*",
     "velocity": "~1.2.1",
-    "endless": "*"
+    "endless": "0.9.3"
   }
 }
