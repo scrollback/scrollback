@@ -6,16 +6,19 @@ module.exports = function(core, config, store) {
 		ThreadListItem = require("./thread-list-item.jsx")(core, config, store);
 
 
-	function onScroll(key, before, after) {
+	function onScroll(key, after, before) { /* reverse chronological; below -> before, above -> after */
 		var time;
 
 		if (key === "top") {
-			time = 1;
-		} else if (key === "bottom") {
 			time = null;
+		} else if (key === "bottom") {
+			time = 1;
 		} else {
 			time = parseInt(key.split("-").pop());
+			if(isNaN(time)) time = null;
 		}
+		
+		console.log('Threadrange setting state to ', time);
 
 		core.emit("setstate", {
 			nav: {
@@ -31,41 +34,69 @@ module.exports = function(core, config, store) {
 	function getSections(type, cols) {
 		var nav = store.getNav(),
 			items = [], atTop = false, atBottom = true,
-			before, after, beforeItems, afterItems;
+			before, after, beforeItems, afterItems, beforeCount, afterCount;
 
-			cols = (typeof cols === "number" && !isNaN((cols))) ? cols : 1;
+		cols = (typeof cols === "number" && !isNaN((cols))) ? cols : 1;
 
-			before = (nav.threadRange.before || 0) + (3 * cols);
-			after = (nav.threadRange.after || 0) + (3 * cols);
+		before = cols*Math.ceil(((nav.threadRange.before || 0) + Math.max(10, 3*cols))/cols)+1;
+		after = cols*Math.ceil(((nav.threadRange.after || 0) + Math.max(10, 3*cols))/cols);
 
-			beforeItems = store.getThreads(nav.room, nav.threadRange.time, -before);
-			afterItems = store.getThreads(nav.room, nav.threadRange.time, after);
+		beforeItems = store.getThreads(nav.room, nav.threadRange.time || null, -before);
+		afterItems = store.getThreads(nav.room, nav.threadRange.time || null, after);
 
-			atTop = (beforeItems.length < before && beforeItems[0] !== "missing");
-			atBottom = (afterItems.length < after && afterItems[afterItems.length-1] !== "missing");
+		atBottom = (beforeItems.length < before && beforeItems[0] !== "missing");
+		atTop = (afterItems.length < after && afterItems[afterItems.length-1] !== "missing");
 
-			if (beforeItems[beforeItems.length-1] === afterItems[0] || (
-			   beforeItems[beforeItems.length-1] && afterItems[0] &&
-			   beforeItems[beforeItems.length-1].id === afterItems[0].id)) {
-				beforeItems.pop();
-				before--;
+		if(beforeItems[0] === "missing") beforeItems.shift();
+		if(afterItems[afterItems.length-1] == 'missing') afterItems.pop();
+		
+		// if the last beforeItem and the first afterItem are the same, then pop.
+		if(beforeItems[beforeItems.length-1] && afterItems[0] &&
+		   beforeItems[beforeItems.length-1].id === afterItems[0].id) {
+			beforeItems.pop();
+		} else {
+			beforeItems.shift();
+		}
+		
+		if(afterItems.length && afterItems[0].startTime === nav.threadRange.time) {
+			afterCount = cols*Math.floor((afterItems.length-1)/cols)+1;
+		} else {
+			afterCount = cols*Math.floor(afterItems.length/cols);
+		}
+		
+		if(beforeItems.length && beforeItems[beforeItems.length-1].startTime === nav.threadRange.time){
+			beforeCount = cols*Math.floor((beforeItems.length+1)/cols)-1;
+		} else {
+			beforeCount = cols*Math.floor(beforeItems.length/cols);
+		}
+		
+/*
+		console.log('Threadlist('+cols+'): At\t', new Date(nav.threadRange.time).toISOString().substr(11,8), 
+			nav.threadRange.after, nav.threadRange.before, '=>', after, before,
+			'\nThreadlist: Got\t', afterItems.length, beforeItems.length, afterCount, beforeCount,
+			atTop?'atTop':'', atBottom?'atBottom':'');
+*/
+			
+		if(!atTop && cols>1) afterItems = afterItems.slice(0, afterCount);
+		if(!atBottom && cols>1) beforeItems = beforeItems.slice(-beforeCount);
+
+		(beforeItems.concat(afterItems).reverse()).forEach(function(thread) {
+			if(typeof thread == "object") {
+				items.push({
+					key: "thread-" + (type ? "-" + type : "") + "-" + thread.startTime,
+					elem: (type === "card")?
+						<ThreadCard roomId={nav.room} thread={thread} />:
+						<ThreadListItem roomId={nav.room} thread={thread} />
+				});
 			}
-
-			(beforeItems.concat(afterItems)).forEach(function(thread) {
-			if (typeof thread !== "object" || typeof thread.id !== "string") {
-				return;
-			}
-
-			items.push({
-				key: "thread-card-" + thread.id + (type ? "-" + type : ""),
-				elem: (type === "card") ? <ThreadCard roomId={nav.room} thread={thread} /> : <ThreadListItem roomId={nav.room} thread={thread} />
-			});
 		});
-
+		
 		return [{
 			key: "threads-" + nav.room ,
 			header: "Discussions",
-			items: items
+			items: items,
+			atTop: atTop,
+			atBottom: atBottom
 		}];
 	}
 

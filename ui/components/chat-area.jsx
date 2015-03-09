@@ -18,6 +18,7 @@ module.exports = function(core, config, store) {
 				time = null;
 			} else {
 				time = parseInt(key.split("-").pop());
+				if(isNaN(time)) time = null;
 			}
 
 			core.emit("setstate", {
@@ -38,40 +39,47 @@ module.exports = function(core, config, store) {
 				content, before, after, beforeItems, afterItems;
 
 			// Don"t show
-			if (store.getNav().mode !== "chat") {
+	//		if (store.getNav().mode !== "chat") {
 				return <div />;
-			}
+	//		}
 
 			// Enhance chat area layout in modern browsers
 			if (browserSupports.CSS("display", "flex")) {
 				classNames += " chat-area-enhanced";
 			}
 
-			before = (nav.textRange.before || 0) + 10;
+			before = (nav.textRange.before || 0) + 11; /* one item will get removed */
 			after = (nav.textRange.after || 0) + 10;
 
-			beforeItems = store.getTexts(nav.room, nav.thread, nav.textRange.time, -before);
-			afterItems = store.getTexts(nav.room, nav.thread, nav.textRange.time, after);
+			beforeItems = store.getTexts(nav.room, nav.thread, nav.textRange.time || null, -before);
+			afterItems = store.getTexts(nav.room, nav.thread, nav.textRange.time || null, after);
 
 			atTop = (beforeItems.length < before && beforeItems[0] !== "missing");
 			atBottom = (afterItems.length < after && afterItems[afterItems.length-1] !== "missing");
+			
+			if(beforeItems[0] === "missing") beforeItems.shift();
+			if(afterItems[afterItems.length-1] == 'missing') afterItems.pop();
 
-			if (beforeItems[beforeItems.length-1] === afterItems[0] || (
-			   beforeItems[beforeItems.length-1] && afterItems[0] &&
-			   beforeItems[beforeItems.length-1].id === afterItems[0].id)) {
+			if(beforeItems[beforeItems.length-1] && afterItems[0] &&
+			   beforeItems[beforeItems.length-1].id === afterItems[0].id) {
 				beforeItems.pop();
+			} else {
+				beforeItems.shift();
 			}
+			
+/*
+			console.log('Chatarea: At\t', nav.textRange.time, nav.textRange.before, nav.textRange.after, '=>', before, after,
+				'\nChatarea: Got\t', beforeItems.length, afterItems.length, 
+				beforeItems[0] && beforeItems[0].time, '---',
+				afterItems[afterItems.length-1] && afterItems[afterItems.length-1].time,
+				atTop?'atTop':'', atBottom?'atBottom':'');
+*/
 
-			(beforeItems.concat(afterItems)).forEach(function(text, i, items) {
+			(beforeItems.concat(afterItems)).forEach(function(text) {
 				var key;
 				if (typeof text === "object") {
-					key = "chat-message-list-" + nav.room + "-" + nav.thread + "-" + text.id + "-" + text.time;
-
+					key = "chat-list-" + nav.room + "-" + nav.thread + "-" + text.id + "-" + text.time;
 					chatitems.push(<ChatItem text={text} key={key} />);
-				} else if (text === "missing") {
-					key = "chat-message-list-" + nav.room + "-" + nav.thread + "-unknown-" + (items[i+1] || items[i-1] || { time: null }).time;
-
-					chatitems.push(<div className="chat-item chat-item-missing" key={key}><em>Missing</em></div>);
 				}
 			});
 
@@ -79,7 +87,7 @@ module.exports = function(core, config, store) {
 				content = (
 							<div className="chat-area-messages">
 								<div className="chat-area-messages-list">
-									<Endless items={chatitems} onScroll={this.onScroll} atTop={atTop} atBottom={atBottom} />
+									<Endless key={'chat-area-' + nav.room + '-' + nav.thread} items={chatitems} onScroll={this.onScroll} atTop={atTop} atBottom={atBottom} />
 								</div>
 							</div>
 				);
