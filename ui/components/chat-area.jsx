@@ -39,9 +39,9 @@ module.exports = function(core, config, store) {
 				content, before, after, beforeItems, afterItems;
 
 			// Don"t show
-	//		if (store.getNav().mode !== "chat") {
+			if (store.getNav().mode !== "chat") {
 				return <div />;
-	//		}
+			}
 
 			// Enhance chat area layout in modern browsers
 			if (browserSupports.CSS("display", "flex")) {
@@ -56,24 +56,24 @@ module.exports = function(core, config, store) {
 
 			atTop = (beforeItems.length < before && beforeItems[0] !== "missing");
 			atBottom = (afterItems.length < after && afterItems[afterItems.length-1] !== "missing");
-			
+
 			if(beforeItems[0] === "missing") beforeItems.shift();
 			if(afterItems[afterItems.length-1] == 'missing') afterItems.pop();
 
 			if(beforeItems[beforeItems.length-1] && afterItems[0] &&
 			   beforeItems[beforeItems.length-1].id === afterItems[0].id) {
 				beforeItems.pop();
-			} else {
+			} else if(beforeItems.length > before) {
 				beforeItems.shift();
 			}
-			
-/*
-			console.log('Chatarea: At\t', nav.textRange.time, nav.textRange.before, nav.textRange.after, '=>', before, after,
-				'\nChatarea: Got\t', beforeItems.length, afterItems.length, 
-				beforeItems[0] && beforeItems[0].time, '---',
-				afterItems[afterItems.length-1] && afterItems[afterItems.length-1].time,
-				atTop?'atTop':'', atBottom?'atBottom':'');
-*/
+
+
+			// console.log('Chatarea: At\t', nav.textRange.time, nav.textRange.before, nav.textRange.after, '=>', before, after,
+			// 	'\nChatarea: Got\t', beforeItems.length, afterItems.length,
+			// 	beforeItems[0] && beforeItems[0].time, '---',
+			// 	afterItems[afterItems.length-1] && afterItems[afterItems.length-1].time,
+			// 	atTop?'atTop':'', atBottom?'atBottom':'');
+
 
 			(beforeItems.concat(afterItems)).forEach(function(text) {
 				var key;
