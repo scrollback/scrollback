@@ -2,7 +2,7 @@
 /* global $ */
 
 var formField = require("../ui/utils/form-field.js"),
-	stringUtils = require('../lib/string-utils.js'),
+	stringUtils = require("../lib/string-utils.js"),
 	embedForm, startMinimized, titlebarColor;
 
 module.exports = function(core, config, store) {
@@ -67,7 +67,7 @@ module.exports = function(core, config, store) {
 			}).addClass("button twitter embed-share-button").text("Twitter")
 		);
 		$config.append(
-			formField('List of domain names where this room can be embedded. (Leave empty to allow embedding anywhere.)', 'area', "domain-list", (conf.room.guides && conf.room.guides.allowedDomains) ? conf.room.guides.allowedDomains.join("\n") : "")
+			formField("List of domain names where this room can be embedded. (Leave empty to allow embedding anywhere.)", "area", "domain-list", (conf.room.guides && conf.room.guides.allowedDomains) ? conf.room.guides.allowedDomains.join("\n") : "")
 		);
 		$config.append(formField("Share room on", "", "share-embed", $shareDiv));
 
@@ -159,8 +159,8 @@ module.exports = function(core, config, store) {
 		next();
 	}, 400);
 
-	core.on('conf-save', function(room, next) {
-		var domains = $('#domain-list').val();
+	core.on("conf-save", function(room, next) {
+		var domains = $("#domain-list").val();
 		if (!room.guides) {
 			room.guides = {};
 		}
