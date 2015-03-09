@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
-var showMenu = require("../utils/show-menu.js");
+var showMenu = require("../utils/show-menu.js"),
+	getAvatar = require("../../lib/get-avatar.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -58,7 +59,7 @@ module.exports = function(core, config, store) {
 			return (
 				<div key="appbar-primary" className="appbar appbar-primary">
 					<a data-mode="room chat" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.toggleSidebarLeft}></a>
-					<img data-mode="home" className="appbar-avatar" alt={user.id} src={user.picture} onClick={this.toggleSidebarLeft} />
+					<img data-mode="home" className="appbar-avatar" alt={user.id} src={getAvatar(user.picture, 48)} onClick={this.toggleSidebarLeft} />
 					<h1 className="appbar-title appbar-title-primary">{title}</h1>
 					<a className="appbar-icon appbar-icon-more" onClick={this.showUserMenu}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
