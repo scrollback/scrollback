@@ -18,6 +18,10 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
+			if ("embed" in store.get("context")) {
+				return <div data-embed="none" />;
+			}
+
 			return (
 				<div className="column sidebar sidebar-left">
 					<div className="sidebar-content" data-mode="home">
