@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
 var stringUtils = require("../../lib/string-utils.js"),
+	appUtils = require("../../lib/app-utils.js"),
 	showMenu = require("../utils/show-menu.js"),
 	roomPics = {};
 
@@ -70,7 +71,6 @@ module.exports = function(core, config, store) {
 			var room = store.getRoom(this.props.roomId),
 				roomCover = room.cover || getRoomPics(this.props.roomId).cover,
 				roomPicture = room.picture || getRoomPics(this.props.roomId).picture,
-				relation = store.getRelation(this.props.roomId),
 				menu, threads;
 
 			threads = (store.getThreads(this.props.roomId, null, -(this.props.threadCount || 3)) || []).reverse().map(function(thread) {
@@ -82,10 +82,10 @@ module.exports = function(core, config, store) {
 				);
 			});
 
-			if (relation && /(user|follower|moderator|owner)/.test(relation.role)) {
-				menu = <a className="card-header-icon card-header-icon-more card-cover-icon" onClick={this.showRoomMenu}></a>;
-			} else {
+			if (appUtils.isGuest(store.get("user"))) {
 				menu = [];
+			} else {
+				menu = <a className="card-header-icon card-header-icon-more card-cover-icon" onClick={this.showRoomMenu}></a>;
 			}
 
 			return (

@@ -21,9 +21,15 @@ module.exports = function(core, config, store) {
 				relation = store.getRelation(room);
 
 			if (relation && relation.role === "follower") {
-				core.emit("part-up", { room: room });
+				core.emit("part-up",  {
+					to: room,
+					room: room
+				});
 			} else {
-				core.emit("join-up", { room: room });
+				core.emit("join-up",  {
+					to: room,
+					room: room
+				});
 			}
 		},
 

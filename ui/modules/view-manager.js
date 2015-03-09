@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+var appUtils = require("../../lib/app-utils.js");
+
 module.exports = function(core, config, store) {
 	var keys = [ "view", "mode" ];
 
@@ -41,6 +43,8 @@ module.exports = function(core, config, store) {
 
 			if (relation && relation.role) {
 				classList += " role-" + relation.role;
+			} else {
+				classList += " role-" + (appUtils.isGuest(store.get("user")) ? "guest" : "user" );
 			}
 		}
 
