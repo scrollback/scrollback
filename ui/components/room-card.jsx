@@ -70,7 +70,8 @@ module.exports = function(core, config, store) {
 			var room = store.getRoom(this.props.roomId),
 				roomCover = room.cover || getRoomPics(this.props.roomId).cover,
 				roomPicture = room.picture || getRoomPics(this.props.roomId).picture,
-				threads;
+				relation = store.getRelation(this.props.roomId),
+				menu, threads;
 
 			threads = (store.getThreads(this.props.roomId, null, -(this.props.threadCount || 3)) || []).reverse().map(function(thread) {
 				return (
@@ -81,13 +82,21 @@ module.exports = function(core, config, store) {
 				);
 			});
 
+			console.log(relation.role, this.props.roomId);
+
+			if (/(user|follower|moderator|owner)/.test(relation.role)) {
+				menu = <a className="card-header-icon card-header-icon-more card-cover-icon" onClick={this.showRoomMenu}></a>;
+			} else {
+				menu = [];
+			}
+
 			return (
 				<div key={"room-card-" + room.id} className="card room-card" onClick={this.goToRoom}>
 				  	<div className="card-cover" style={{ backgroundImage: "url(" + roomCover  + ")" }}>
 				  		<div className="card-cover-header card-header">
 				  			<span className="card-header-badge notification-badge notification-badge-mention">{room.mentions}</span>
 				  			<span className="card-header-badge notification-badge notification-badge-messages">{room.messages}</span>
-				  			<a className="card-header-icon card-header-icon-more card-cover-icon" data-role="user follower moderator owner" onClick={this.showRoomMenu}></a>
+				  			{menu}
 			  			</div>
 			  			<div className="card-cover-logo" style={{ backgroundImage: "url(" + roomPicture  + ")" }}></div>
 			  			<h3 className="card-cover-title">{room.id}</h3>
