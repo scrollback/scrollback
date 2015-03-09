@@ -58,9 +58,10 @@ module.exports = function(core, config, store) {
 
 			return (
 				<div key="appbar-primary" className="appbar appbar-primary">
-					<a data-mode="room chat" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.toggleSidebarLeft}></a>
+					<a data-mode="room chat" data-embed="none" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.toggleSidebarLeft}></a>
 					<img data-mode="home" className="appbar-avatar" alt={user.id} src={getAvatar(user.picture, 48)} onClick={this.toggleSidebarLeft} />
-					<h1 className="appbar-title appbar-title-primary">{title}</h1>
+					<img data-embed="toast canvas" className="appbar-logotype appbar-logotype-primary" src="/s/img/scrollback-logo-white.png" />
+					<h1 data-embed="none" className="appbar-title appbar-title-primary">{title}</h1>
 					<a className="appbar-icon appbar-icon-more" onClick={this.showUserMenu}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
 					<a data-role="user follower" data-mode="room chat" className="appbar-icon appbar-icon-follow {following}" onClick={this.toggleFollowRoom}></a>

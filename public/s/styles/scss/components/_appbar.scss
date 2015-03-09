@@ -26,6 +26,11 @@
             color: fade-out($dark-color, .3);
         }
 
+        &-logotype {
+            float: left;
+            margin: .75em .5em
+        }
+
         &-title {
             float: left;
             margin: 0;
