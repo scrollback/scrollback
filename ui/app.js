@@ -53,6 +53,7 @@
 
 	// Modules
 	require("./modules/dialogs-listeners.js")(core, config, store);
+	require("./modules/thread-dialog.js")(core, config, store);
 	require("./modules/notifications.js")(core, config, store);
 	require("./modules/settings-room.js")(core, config, store);
 	require("./modules/settings-user.js")(core, config, store);

@@ -11,19 +11,19 @@ function makePut(type, source) {
 /*
 	BEGIN TRANSACTION;
 	DELETE FROM $source WHERE wherify($key);
-	INSERT INTO $source 
+	INSERT INTO $source
 
 */
 
 
 exports.text = function (text) {
 	var puts = [], put;
-	
+
 	/* Start Compatibility Block */
-	
+
 	addThread(text);
 	addTags(text);
-	
+
 	/* End Compatibility Block */
 	log.d("Text:", text);
 	// insert text
@@ -31,7 +31,7 @@ exports.text = function (text) {
 		put = makePut("insert", "texts");
 		put.insert = {
 			id: text.id, from: text.from, to: text.to,
-			text: text.text, 
+			text: text.text,
 			time: new Date(text.time),
 			updatetime: new Date(text.time),
 			thread: text.thread,
@@ -40,22 +40,23 @@ exports.text = function (text) {
 		};
 		puts.push(put);
 	}
-	
+
 	// insert thread
 	if (text.thread) {
 		put = makePut("upsert", 'threads');
+		put.lock = text.thread;
 		put.filters.push(['id', 'eq', text.thread]);
-		
+
 		put.insert = {
-			id: text.thread, 
-			from: text.from, 
+			id: text.thread,
+			from: text.from,
 			to: text.to,
-			title: text.title, 
-			starttime: new Date(text.time), 
-			updatetime: new Date(text.time), 
-			length: 1, 
+			title: text.title,
+			starttime: new Date(text.time),
+			updatetime: new Date(text.time),
+			length: 1,
 			updater: text.from,
-			color: (/[0-9]/.test(text.thread.substr(text.thread.length - 1)) ? 
+			color: (/[0-9]/.test(text.thread.substr(text.thread.length - 1)) ?
 					text.thread.substr(text.thread.length - 1) : 0)
 			/*mentions: text.mentions*/
 		};
@@ -72,7 +73,7 @@ exports.text = function (text) {
 };
 
 
-exports.edit = function (edit) {	
+exports.edit = function (edit) {
 	var puts = [], put = makePut("update", 'texts');
 	put.filters.push(['id', 'eq', edit.ref]);
 	put.update = [];
@@ -88,9 +89,9 @@ exports.edit = function (edit) {
 		put.update.push(['text', 'set', edit.text]);
 	}
 	if (edit.tags) {
-		put.update.push(['tags', 'set', edit.tags]); 
+		put.update.push(['tags', 'set', edit.tags]);
 	}
-	
+
 	if (edit.title) {
 		var tput = makePut('update', 'threads');
 		tput.filters.push(['id', 'eq', edit.ref]);
@@ -98,7 +99,7 @@ exports.edit = function (edit) {
 		tput.update.push(['updatetime', 'set', new Date(edit.time)]);
 		puts.push(tput);
 	}
-	
+
 	puts.push(put);
 	return puts;
 };
@@ -107,21 +108,21 @@ exports.edit = function (edit) {
 /* TODO 1. if delete time is set then update the type also.
 2. check if identities array is a set.*/
 exports.room = exports.user = function (action) {
-	
+
 	var entity = action[action.type],
 		put = makePut('upsert', 'entities'),
 		putOwner = makePut('insert', 'relations');
-	
+	put.lock = entity.id;
 	put.insert = {
-		id: entity.id, 
+		id: entity.id,
 		type: action.type,
 		description: entity.description,
 		picture: entity.picture,
-		
+
 		identities: entity.identities.map(function(ident) {
 			return [ident.split(':', 2)[0], ident];
 		}),
-		timezone: entity.timezone, 
+		timezone: entity.timezone,
 		//locale: entity.locale,
 		params: entity.params,
 		guides: entity.guides
@@ -131,7 +132,7 @@ exports.room = exports.user = function (action) {
 			// column name in database are lower case of property name of entity.
 			put.update.push([p.toLowerCase(), 'set', entity[p]]);
 	});
-	
+
 	if (entity.identities) {
 		put.update.push(['identities', 'set', entity.identities.map(function(ident) {
 			return [ident.split(':', 2)[0], ident];
@@ -177,20 +178,21 @@ exports.join = exports.part = exports.admit = exports.expel = function (action) 
 		message: action.text,
 		officer: officer,
 		roletime: new Date(action.time)
-		
+
 	};
-	
+
 	var columnNames = ['role', 'roletime', 'officer', 'message', 'transitionrole', 'transitiontype'];
 	var values = [action.role, new Date(action.time), officer, action.text, action.transitionRole, action.transitionType];
-	
+
 	for (var i = 0; i < columnNames.length; i++) {
 		put.update.push([columnNames[i], 'set', values[i]]);
 	}
-	
+
 	put.filters.push(['user', 'eq', user]);
 	put.filters.push(['room', 'eq', action.room.id]);
+	put.lock = user + ":" + action.room.id;
 	return [put];
-	//set 
+	//set
 };
 
 

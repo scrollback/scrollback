@@ -226,7 +226,7 @@ gulp.task("embed-apis", function() {
 gulp.task("embed", [ "embed-legacy", "embed-apis" ]);
 
 // Generate scripts
-gulp.task("scripts", [ "polyfills", "copylibs", "bundle", "embed", "manifest" ]);
+gulp.task("scripts", [ "polyfills", "copylibs", "bundle", "embed" ]);
 
 // Generate styles
 gulp.task("fonts", [ "bower" ], function() {
@@ -252,7 +252,7 @@ gulp.task("scss", [ "bower" ], function() {
 	.pipe(gulp.dest(dirs.css));
 });
 
-gulp.task("styles", [ "fonts", "scss", "manifest" ]);
+gulp.task("styles", [ "fonts", "scss" ]);
 
 // Generate appcache manifest file
 gulp.task("client-manifest", function() {
@@ -275,12 +275,14 @@ gulp.task("clean", function() {
 
 // Watch for changes
 gulp.task("watch", function() {
-	gulp.watch(files.js.concat(files.jsx), [ "scripts" ]);
-	gulp.watch(files.scss, [ "styles" ]);
+	gulp.watch(files.js.concat(files.jsx), [ "scripts", "manifest" ]);
+	gulp.watch(files.scss, [ "styles", "manifest" ]);
 });
 
 // Build all files
-gulp.task("build", [ "scripts", "styles", "manifest" ]);
+gulp.task("build", [ "scripts", "styles" ], function() {
+	gulp.start("manifest");
+});
 
 // Default Task
 gulp.task("default", [ "clean", "lint" ], function() {
