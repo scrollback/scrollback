@@ -109,7 +109,7 @@ function getAdvisoryLockQuery(transform) {
 	var hash = new BigInteger(s.substring(0, 15), 16); // 60 bit
 	var index = 15;
 	while(index < s.length) {
-		var nbi = new BigInteger(index, index + 15);
+		var nbi = new BigInteger(s.substring(index, index + 15), 16);
 		index += 15;
 		hash = hash.xor(nbi);
 	}
