@@ -5,12 +5,16 @@ module.exports = function(core, config, store) {
 		ThreadCard;
 
 	ThreadCard = React.createClass({
+		getInitialState: function () {
+		    return { quickReplyShown: false };
+		},
+
 		goToThread: function(e) {
 			if (/(icon-more|reply)/.test(e.target.className)) {
 				return;
 			}
 
-			if (/has-quickreply/.test(e.currentTarget.className)) {
+			if (this.state.quickReplyShown) {
 				return;
 			}
 
@@ -58,13 +62,12 @@ module.exports = function(core, config, store) {
 
 			quickReply.querySelector(".card-entry-reply").focus();
 
-			// Set a flag on threadCard so we can prevent click
-			this.refs.threadCard.getDOMNode().className += " has-quickreply";
+			// Set a flag so we can prevent click
+			this.setState({ quickReplyShown: true });
 		},
 
 		hideQuickReply: function() {
-			var quickReply = this.refs.quickReply.getDOMNode(),
-				threadCard = this.refs.threadCard.getDOMNode();
+			var quickReply = this.refs.quickReply.getDOMNode();
 
 			if (!/active/.test(quickReply.className)) {
 				return;
@@ -74,8 +77,8 @@ module.exports = function(core, config, store) {
 
 			// Remove the flag on threadCard
 			setTimeout(function() {
-				threadCard.className = threadCard.className.replace(/\bhas-quickreply\b/, "").trim();
-			}, 300);
+				this.setState({ quickReplyShown: false });
+			}.bind(this), 300);
 		},
 
 		render: function() {
@@ -94,7 +97,7 @@ module.exports = function(core, config, store) {
 			});
 
 			return (
-				<div ref="threadCard" key={"thread-card-" + thread.id} className="card thread-card" data-color={thread.color} onClick={this.goToThread}>
+				<div key={"thread-card-" + thread.id} className="card thread-card" data-color={thread.color} onClick={this.goToThread}>
 					<div className="card-header">
 						<h3 className="card-header-title">{thread.title}</h3>
 			  			<span className="card-header-badge notification-badge notification-badge-mention">{thread.mentions}</span>
