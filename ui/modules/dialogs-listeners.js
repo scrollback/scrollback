@@ -56,10 +56,10 @@ module.exports = function(core, config, store) {
 		var nav = store.getNav(),
 			user = store.get("user");
 
-		if ((changes.nav && ("dialog" in changes.nav || changes.nav.dialogState === "update")) || (currentDialog && nav.dialog !== currentDialog)) {
+		if ((changes.nav && ("dialog" in changes.nav || (nav.dialog && changes.nav.dialogState === "update"))) || (nav.dialog !== currentDialog)) {
 			if (nav.dialog) {
 				showDialog(nav.dialog);
-			} else {
+			} else if (currentDialog) {
 				$.modal("dismiss");
 			}
 		}
