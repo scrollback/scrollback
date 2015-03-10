@@ -24,7 +24,7 @@ module.exports = function(core, config, store) {
 			var nav =  store.getNav(),
 				text = format.formatTextToMD(this.props.text.text),
 				time = format.friendlyTime(this.props.text.time, new Date().getTime()),
-				classNames = "chat-item";
+				timeStamp, classNames = "chat-item";
 
 			if (this.props.text.labels) {
 				for (var label in this.props.text.labels) {
@@ -34,11 +34,15 @@ module.exports = function(core, config, store) {
 				}
 			}
 
+			if (this.props.showtime) {
+				timeStamp = <time className="chat-item-timestamp" dateTime={new Date(this.props.text.time).toISOString()}>{time}</time>;
+			}
+
 			return (
 				<div className={classNames} key={"chat-item-" + nav.room + "-" + nav.thread + "-" + this.props.text.id} onClick={this.showChatMenu}>
 			 		<div className="chat-item-nick">{this.props.text.from}</div>
 					<div className="chat-item-message markdown-text" dangerouslySetInnerHTML={{__html: text}}></div>
-					<time className="chat-item-timestamp" dateTime={new Date(this.props.text.time).toISOString()}>{time}</time>
+					{timeStamp}
 		 		</div>
 			);
 		}
