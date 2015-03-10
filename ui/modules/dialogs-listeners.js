@@ -210,8 +210,7 @@ module.exports = function(core, config, store) {
 				return;
 			}
 		} else {
-			dialog.title = "You're already signed in!";
-			dialog.description = "Sign out to sign up for a new account";
+			return;
 		}
 
 		next();

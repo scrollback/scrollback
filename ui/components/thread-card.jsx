@@ -41,7 +41,7 @@ module.exports = function(core, config, store) {
 				from: store.get("user"),
 				text: text,
 				time: new Date().getTime(),
-				threads: [this.props.thread]
+				thread: this.props.thread.id
 			});
 
 			e.currentTarget.value = "";

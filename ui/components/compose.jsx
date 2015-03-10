@@ -13,18 +13,19 @@ module.exports = function(core, config, store) {
 
 		sendMessage: function() {
 			var composeBox = this.refs.composeBox.getDOMNode(),
-				text = format.htmlToText(composeBox.innerHTML);
+				text = format.htmlToText(composeBox.innerHTML),
+				nav = store.getNav();
 
 			if (!text) {
 				return;
 			}
 
 			core.emit("text-up", {
-				to: store.getNav().room,
+				to: nav.room,
 				from: store.get("user"),
 				text: text,
 				time: new Date().getTime(),
-				threads: [{ id: store.getNav().thread }]
+				thread: nav.thread
 			});
 
 			this.replaceState(this.getInitialState());
