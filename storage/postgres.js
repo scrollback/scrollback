@@ -1,6 +1,9 @@
-var log = require('./../lib/logger.js');
+var log = require('./../lib/logger.js'),
+	generate = require('../lib/generate.js'),
+	BigInteger = require('big-integer');
+
 module.exports = {
-	
+
 	transformsToQuery: function(transforms) {
 		var r = [];
 		transforms.forEach(function(transform) {
@@ -24,7 +27,7 @@ function toQuery(transform) {
 		case 'update': ret = makeUpdateQuery(transform); break;
 		case 'upsert': ret = makeUpsertQuery(transform); break;
 		case 'select': ret = makeSelectQuery(transform); break;
-		
+
 	}
 	log.d("Queries: ", ret);
 	return ret;
@@ -41,7 +44,7 @@ function makeInsertQuery(transform, index) {
 		v.push(transform.insert[i]);
 		index++;
 	}
-	sql.push("(" + names.join(",") + ") VALUES (" + values.join(",") + ")"); 
+	sql.push("(" + names.join(",") + ") VALUES (" + values.join(",") + ")");
 	return {
 		query: sql.join(" "),
 		values: v
@@ -61,10 +64,11 @@ function makeUpdateQuery(transform) {
 UPDATE table SET field='C', field2='Z' WHERE id=3;
 INSERT INTO table (id, field, field2)
        SELECT 3, 'C', 'Z'
-       WHERE NOT EXISTS (SELECT 1 FROM table WHERE id=3); 
-This query to filter should have a unique key constraints 
+       WHERE NOT EXISTS (SELECT 1 FROM table WHERE id=3);
+This query to filter should have a unique key constraints
 @return Array of queries.
 // http://stackoverflow.com/questions/1109061/insert-on-duplicate-update-in-postgresql
+Upsert query is using Advisory lock on id.
 */
 function makeUpsertQuery(transform) {
 	var updateQuery = getUpdateQuery(transform, 1, true),
@@ -81,7 +85,7 @@ function makeUpsertQuery(transform) {
 		i++;
 	}
 	inSql.push(keys.join(','));
-	
+
 	inSql.push(")");
 	inSql.push("SELECT");
 	inSql.push(inValues.join(","));
@@ -89,16 +93,35 @@ function makeUpsertQuery(transform) {
 	var sql = [];
 	addFilters(transform, sql, values, i); // sql ['where', 'id=$1' AND user=$2]
 	inSql.push("WHERE NOT EXISTS (SELECT 1 FROM " + transform.source + " " + sql.join(" ") + ")");
-	
+
 	return [
+		getAdvisoryLockQuery(transform),
 		updateQuery, {
 		query: inSql.join(" "),
 		values: values
 	}];
 }
 
+function getAdvisoryLockQuery(transform) {
+	var s = transform.lock;
+	if (!s) s = generate.uid();
+	s = new Buffer(s).toString('hex');
+	var hash = new BigInteger(s.substring(0, 15), 16); // 60 bit
+	var index = 15;
+	while(index < s.length) {
+		var nbi = new BigInteger(s.substring(index, index + 15), 16);
+		index += 15;
+		hash = hash.xor(nbi);
+	}
+	// hash is 60 bit hash value of id.
+	var r = {
+		query: "SELECT pg_advisory_xact_lock(" + hash.toString() + ")",
+		values: []
+	};
+	return r;
+}
 /*function makeDeleteQuery(transform) {
-	
+
 }*/
 /**
 used by update and upsert.
@@ -131,12 +154,12 @@ function getUpdateQuery(transform, i, isSource) {
 	};
 }
 /**
-1. select * from texts where time > 123456373 and "from"='roomname' and time > text.room.createTime && order by time desc limit 256 
+1. select * from texts where time > 123456373 and "from"='roomname' and time > text.room.createTime && order by time desc limit 256
 only non [hidden].
 2. select * from entities INNER JOIN relations on (relations.user=entities.id AND relations.role='follower' AND relations.user='russeved');
 
 if delete time is set.
-2. 
+2.
 */
 function makeSelectQuery(transform) {
 	if (transform.iterate.keys && transform.iterate.keys.length) {
@@ -170,12 +193,12 @@ function makeSelectQuery(transform) {
 		t = [];
 		transform.filters.forEach(function(filter) {
 			var p1, p2;
-			
-			if (filter[0] instanceof Array) p1 = filter[0][0] + "." + filter[0][1]; 
+
+			if (filter[0] instanceof Array) p1 = filter[0][0] + "." + filter[0][1];
 			else p1 = name(filter[0]);
-			
+
 			if (filter.length === 4 && filter[3] === 'column') {
-				p2 = filter[2][0] + "." + filter[2][1]; 
+				p2 = filter[2][0] + "." + filter[2][1];
 			} else {
 				if (filter[1] === 'in') {
 					var inString = arrayToStringForInOperator(filter[2], i, values);
@@ -187,18 +210,18 @@ function makeSelectQuery(transform) {
 					i++;
 				}
 			}
-			
+
 			t.push(p1 + getOperatorString(filter[1]) + p2);
 		});
 		var s = "(" + t.join(" AND ") + ")";
 		sql.push(s);
 	} else {
-		
+
 		sql.push(transform.source);
 		/* added source */
 		addFilters(transform, sql, values, i);
 	}
-	
+
 	if (transform.iterate.keys && transform.iterate.keys.length) {
 		var orderby = [];
 		transform.iterate.keys.forEach(function(key) {
@@ -211,7 +234,7 @@ function makeSelectQuery(transform) {
 		query: sql.join(" "),
 		values: values
 	};
-	
+
 }
 
 function addFilters(transform, sql, values, i) {
@@ -240,8 +263,8 @@ function addFilters(transform, sql, values, i) {
 
 /**
 @params array: input array.
-@params i: current index in query 
-@values array 
+@params i: current index in query
+@values array
 @return string ($i, $i + 1, $i + 2  ... , $i + array length);
 */
 function arrayToStringForInOperator(array, i, values) {

@@ -128,7 +128,7 @@ function onTextUp(text, next) {
 	next();
 	pendingActions[text.id] = text;
 	key = text.to;
-	if (text.thread) key += text.thread;
+	if (text.thread) key = key + "_" + text.thread;
 	newState.texts[text.to] = [textRange];
 	newState.texts[key] = [textRange];
 	core.emit("setstate", newState);
@@ -144,7 +144,7 @@ function onTextDn(text, next) {
 		key, newState = {texts:{}}, oldKey = "";
 
 	key = text.to;
-	if (text.thread) key += text.thread;
+	if (text.thread) key = key + "_" + text.thread;
 	newState.texts[text.to] = [textRange];
 	newState.texts[key] = [textRange];
 	if (pendingActions[text.id]) {

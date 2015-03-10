@@ -1,6 +1,6 @@
 /* jshint browser: true */
 /* global $ */
-var generate = require("../../lib/generate.js");
+
 module.exports = function(core, config, store) {
 	var appUtils = require("../../lib/app-utils.js"),
 		validateEntity = require("../utils/validate-entity.js")(core, config, store),
@@ -250,55 +250,6 @@ module.exports = function(core, config, store) {
 
 		next();
 	}, 1000);
-
-	core.on("createthread-dialog", function(dialog, next) {
-		dialog.title = "Start a new discussion";
-		dialog.content = [
-			"<input type='text' id='createthread-dialog-thread' placeholder='Enter discussion title' autofocus>",
-			"<textarea id='createthread-dialog-text' placeholder='Enter your message' style='resize:none'></textarea>"
-		];
-		dialog.action = {
-			text: "Start discussion",
-			action: function() {
-				var $threadEntry = $("#createthread-dialog-thread"),
-					$textEntry = $("#createthread-dialog-text"), id = generate.uid(32);
-
-				$threadEntry.validInput(function(threadTitle, callback) {
-					threadTitle = (threadTitle || "").trim();
-
-					if (!threadTitle) {
-						callback("Thread title cannot be empty");
-					} else {
-						$textEntry.validInput(function(text, callback) {
-							text = (text || "").trim();
-
-							if (!text) {
-								callback("Message cannot be empty");
-							} else {
-								core.emit("text-up", {
-									id: id,
-									to: store.getNav().room,
-									from: store.get("user"),
-									text: text,
-									thread: id,
-									title: threadTitle,
-									time: new Date().getTime(),
-									manualThreaded: 1,
-									threads: [{
-										id: "new",
-										title: threadTitle,
-										score: 1.0
-									}]
-								});
-							}
-						});
-					}
-				});
-			}
-		};
-
-		next();
-	}, 100);
 
 	// When modal is dismissed, reset the dialog property
 	$(document).on("modalDismissed", function() {

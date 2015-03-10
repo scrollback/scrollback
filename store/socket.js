@@ -18,6 +18,7 @@ module.exports = function(c, conf, s) {
 	config = conf;
 	store = s;
 	connect();
+	console.log(conf);
     ["getTexts", "getUsers", "getRooms", "getThreads", "getEntities"].forEach(function(e) {
 		core.on(e, function(q, n) {
 			q.type = e;
@@ -50,6 +51,10 @@ module.exports = function(c, conf, s) {
 		if (!init.session) session = init.session = "web://" + generate.uid();
 		init.type = "init";
 		init.to = "me";
+		init.origin = {
+			domain: config.server.host.replace(/^\/\//, ""),
+			verified: true
+		};
 		client.send(JSON.stringify(init));
 		pendingActions[init.id] = function(init) {
 			if (init.type == "init") {

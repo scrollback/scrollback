@@ -12,10 +12,10 @@ module.exports = function(c, conf, s) {
 				loadRecentThreads(featuredRoomId);
 			});
 		}
-		
+
 		if(changes.entities && user) {
 			Object.keys(changes.entities).forEach(function(key) {
-				if(regex.test(key) && changes.entities[key].room){
+				if(regex.test(key) && changes.entities[key] && changes.entities[key].room) {
 					loadRecentThreads(changes.entities[key].room);
 				}
 			});
@@ -36,7 +36,7 @@ function loadRecentThreads(featuredRoomId) {
 			end : null,
 			items: threads.results
 		});
-		
+
 		if(threads.results.length) {
 			changes.threads[threads.to][0].start = threads.results[0].startTime;
 		} else {
