@@ -68,7 +68,7 @@ module.exports = function(core) {
 				});
 			}
 
-			$modal.addClass(type + "-dialog dialog").modal({
+			$modal.addClass(type + "-dialog dialog").attr("data-dialog", type).modal({
 				dismiss: (typeof dialog.dismiss === "boolean") ? dialog.dismiss : true
 			}).find("input[type=text]:not(disabled)").eq(0).focus();
 		});

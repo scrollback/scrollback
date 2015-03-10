@@ -6,7 +6,7 @@ module.exports = function(core, config, store) {
 		validateEntity = require("../utils/validate-entity.js")(core, config, store),
 		createEntity = require("../utils/create-entity.js")(core, config, store),
 		showDialog = require("../utils/show-dialog.js")(core, config, store),
-		userChangeCallback;
+		currentDialog, userChangeCallback;
 
 	function createAndValidate(type, entry, button, callback) {
 		var $entry = $(entry),
@@ -56,7 +56,7 @@ module.exports = function(core, config, store) {
 		var nav = store.getNav(),
 			user = store.get("user");
 
-		if (changes.nav && ("dialog" in changes.nav || (nav.dialog && changes.nav.dialogState === "update"))) {
+		if ((changes.nav && ("dialog" in changes.nav || changes.nav.dialogState === "update")) || (currentDialog && nav.dialog !== currentDialog)) {
 			if (nav.dialog) {
 				showDialog(nav.dialog);
 			} else {
@@ -250,10 +250,19 @@ module.exports = function(core, config, store) {
 		next();
 	}, 1000);
 
+	// Keep track of if modal is shown
+	$(document).on("modalInited", function(event, dialog) {
+		if (dialog) {
+			currentDialog = dialog.attr("data-dialog");
+		}
+	});
+
 	// When modal is dismissed, reset the dialog property
 	$(document).on("modalDismissed", function() {
 		core.emit("setstate", {
 			nav: { dialog: null }
 		});
+
+		currentDialog = null;
 	});
 };
