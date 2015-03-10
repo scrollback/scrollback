@@ -36,7 +36,7 @@ module.exports = function(core, config, store) {
 			var chatitems = [], atTop = false, atBottom = true,
 				nav = store.getNav(),
 				classNames = "main-content-chat chat-area",
-				content, before, after, beforeItems, afterItems;
+				content, before, after, beforeItems, afterItems, beforeTime;
 
 			// Don"t show
 			if (store.getNav().mode !== "chat") {
@@ -67,19 +67,17 @@ module.exports = function(core, config, store) {
 				beforeItems.shift();
 			}
 
+			(beforeItems.concat(afterItems)).forEach(function(text, i, items) {
+				var key, showtime;
 
-			// console.log('Chatarea: At\t', nav.textRange.time, nav.textRange.before, nav.textRange.after, '=>', before, after,
-			// 	'\nChatarea: Got\t', beforeItems.length, afterItems.length,
-			// 	beforeItems[0] && beforeItems[0].time, '---',
-			// 	afterItems[afterItems.length-1] && afterItems[afterItems.length-1].time,
-			// 	atTop?'atTop':'', atBottom?'atBottom':'');
-
-
-			(beforeItems.concat(afterItems)).forEach(function(text) {
-				var key;
 				if (typeof text === "object") {
+					showtime = (beforeTime && ((text.time - beforeTime) > 180000)) || (i === (items.length - 1));
+
 					key = "chat-list-" + nav.room + "-" + nav.thread + "-" + text.id + "-" + text.time;
-					chatitems.push(<ChatItem text={text} key={key} />);
+
+					chatitems.push(<ChatItem text={text} key={key} showtime={showtime} />);
+
+					beforeTime = text.time;
 				}
 			});
 
