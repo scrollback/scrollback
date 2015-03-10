@@ -9,7 +9,7 @@ module.exports = function(core /*, config*/ ) {
 			state[key] = s[key];
 		});
 		if (!state.nav.mode) state.nav.mode = "chat";
-		state.nav.dialog = "signup";
+		state.nav.dialog = "signin";
 		next();
 	}, 900);
 };

@@ -201,7 +201,7 @@ module.exports = function(core, config, store) {
 					}
 				};
 			} else {
-				dialog.title = "Sign up for scrollback";
+				dialog.title = "Sign in to scrollback";
 
 				core.emit("auth", dialog, function() {
 					next();
