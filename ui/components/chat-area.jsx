@@ -36,9 +36,9 @@ module.exports = function(core, config, store) {
 			var chatitems = [], atTop = false, atBottom = true,
 				nav = store.getNav(),
 				classNames = "main-content-chat chat-area",
-				content, before, after, beforeItems, afterItems;
+				content, before, after, beforeItems, afterItems, positionKey;
 
-			// Don"t show
+			// Don't show
 			if (store.getNav().mode !== "chat") {
 				return <div />;
 			}
@@ -79,6 +79,7 @@ module.exports = function(core, config, store) {
 				var key;
 				if (typeof text === "object") {
 					key = "chat-list-" + nav.room + "-" + nav.thread + "-" + text.id + "-" + text.time;
+					if(!atTop && !atBottom && text.time <= nav.textRange.time) positionKey = key;
 					chatitems.push(<ChatItem text={text} key={key} />);
 				}
 			});
@@ -87,7 +88,10 @@ module.exports = function(core, config, store) {
 				content = (
 							<div className="chat-area-messages">
 								<div className="chat-area-messages-list">
-									<Endless key={'chat-area-' + nav.room + '-' + nav.thread} items={chatitems} onScroll={this.onScroll} atTop={atTop} atBottom={atBottom} />
+									<Endless key={'chat-area-' + nav.room + '-' + nav.thread}
+										items={chatitems} onScroll={this.onScroll}
+										position={positionKey}
+										atTop={atTop} atBottom={atBottom} />
 								</div>
 							</div>
 				);
