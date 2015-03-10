@@ -44,7 +44,8 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var user, nav, relation, title, following;
+			var user, nav, relation, title,
+				classNames = "appbar-icon appbar-icon-follow";
 
 			user = store.getUser();
 			nav = store.getNav();
@@ -60,7 +61,7 @@ module.exports = function(core, config, store) {
 				break;
 			}
 
-			following = (relation && relation.role === "follower") ? "following" : "";
+			classNames += (relation && relation.role === "follower") ? " following" : "";
 
 			return (
 				<div key="appbar-primary" className="appbar appbar-primary">
@@ -70,7 +71,7 @@ module.exports = function(core, config, store) {
 					<h1 data-embed="none" className="appbar-title appbar-title-primary">{title}</h1>
 					<a className="appbar-icon appbar-icon-more" onClick={this.showUserMenu}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
-					<a data-role="user follower" data-mode="room chat" className="appbar-icon appbar-icon-follow {following}" onClick={this.toggleFollowRoom}></a>
+					<a data-role="user follower" data-mode="room chat" className={classNames} onClick={this.toggleFollowRoom}></a>
 				</div>
 			);
 		}
