@@ -38,7 +38,7 @@ function atomicIncAndGet(message, callback) {
 function addLabel(message) {
 	if (message.threads[0] && message.threads[0].id.indexOf(message.id) === 0) {
 		message.labels.startOfThread = 1;
-		message.threads[0].title = message.text;
+		message.threads[0].title = message.title || message.text;
 	}
 }
 
@@ -54,7 +54,7 @@ function addThread(message) {
 	}
 	if (flag) {
 		message.labels.startOfThread = 1;
-		message.threads.push({id: message.id, score: 1, title: message.text});
+		message.threads.push({id: message.id, score: 1, title: message.title || message.text});
 	}
 	return flag;
 }

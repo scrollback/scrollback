@@ -48,7 +48,7 @@ module.exports = function(core, config) {
 				}
 
 				query.results = query.results.map(function(r) {
-					if (!roomMap[r.id] || roomMap[r.id].role != "owner") return censor(r);
+					if (r && (!roomMap[r.id] || roomMap[r.id].role != "owner")) return censor(r);
 					else return r;
 				});
 
