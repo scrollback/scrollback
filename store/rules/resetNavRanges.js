@@ -8,11 +8,11 @@ module.exports = function (core, config, store) {
 		if(changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread)) {
 			mode = changes.nav.mode || store.getNav().mode;
 			if(mode == 'room') {
-				changes.threadRange = {time: null, before: 25};
+				changes.threadRange = changes.threadRange || {time: null, before: 25};
 			} else if(mode == 'chat') {
-				changes.textRange = {time: null, before: 25};
+				changes.textRange = changes.textRange || {time: null, before: 25};
 			}
 		}
 		next();
 	}
-}
+};

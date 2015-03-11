@@ -41,8 +41,7 @@ module.exports = function(core, config) {
 			key = roomId + (threadId ? "_" + threadId : "");
 		if (range < 0) req.before = range * -1;
 		else req.after = range;
-		if (!state.texts[roomId]) return ['missing'];
-		if (threadId && !state.texts[key]) return ['missing'];
+		if (!state.texts[key]) return ['missing'];
 
 		return rangeOps.getItems(state.texts[key], req, "time");
 	};
