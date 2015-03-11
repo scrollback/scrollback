@@ -59,7 +59,7 @@ module.exports = function(core, config, store) {
 
 	PeopleList = React.createClass({
 		getInitialState: function() {
-			return { query: "", };
+			return { query: "" };
 		},
 
 		onChange: function(e) {

@@ -60,11 +60,11 @@ module.exports = function(core, config, store) {
 			}
 		},
 
-		componentDidMount: function () {
+		componentDidMount: function() {
 			this.setPlaceHolder();
 		},
 
-		componentDidUpdate: function () {
+		componentDidUpdate: function() {
 			this.setPlaceHolder();
 		},
 

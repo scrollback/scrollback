@@ -5,7 +5,7 @@ module.exports = function(core, config, store) {
 		ThreadCard;
 
 	ThreadCard = React.createClass({
-		getInitialState: function () {
+		getInitialState: function() {
 		    return { quickReplyShown: false };
 		},
 
@@ -83,7 +83,7 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var thread = this.props.thread,
-			  	chats;
+				chats;
 
 			chats = (store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).map(function(chat) {
 				if (typeof chat === "object" && typeof chat.text === "string") {
@@ -100,8 +100,8 @@ module.exports = function(core, config, store) {
 				<div key={"thread-card-" + thread.id} className="card thread-card" data-color={thread.color} onClick={this.goToThread}>
 					<div className="card-header">
 						<h3 className="card-header-title">{thread.title}</h3>
-			  			<span className="card-header-badge notification-badge notification-badge-mention">{thread.mentions}</span>
-			  			<span className="card-header-badge notification-badge notification-badge-messages">{thread.messages}</span>
+						<span className="card-header-badge notification-badge notification-badge-mention">{thread.mentions}</span>
+						<span className="card-header-badge notification-badge notification-badge-messages">{thread.messages}</span>
 					</div>
 					<div className="card-content">{chats}</div>
 					<div ref="quickReply" className="card-quick-reply" onClick={this.showQuickReply}>

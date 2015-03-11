@@ -9,7 +9,7 @@ module.exports = function(core, config, store) {
 		ChatArea;
 
 	ChatArea = React.createClass({
-		onScroll: function (key, before, after) {
+		onScroll: function(key, before, after) {
 			var time;
 
 			if (key === "top") {
@@ -18,7 +18,9 @@ module.exports = function(core, config, store) {
 				time = null;
 			} else {
 				time = parseInt(key.split("-").pop());
-				if(isNaN(time)) time = null;
+				if (isNaN(time)) {
+					time = null;
+				}
 			}
 
 			core.emit("setstate", {
@@ -55,15 +57,20 @@ module.exports = function(core, config, store) {
 			afterItems = store.getTexts(nav.room, nav.thread, nav.textRange.time || null, after);
 
 			atTop = (beforeItems.length < before && beforeItems[0] !== "missing");
-			atBottom = (afterItems.length < after && afterItems[afterItems.length-1] !== "missing");
+			atBottom = (afterItems.length < after && afterItems[afterItems.length - 1] !== "missing");
 
-			if(beforeItems[0] === "missing") beforeItems.shift();
-			if(afterItems[afterItems.length-1] == 'missing') afterItems.pop();
+			if (beforeItems[0] === "missing") {
+				beforeItems.shift();
+			}
 
-			if(beforeItems[beforeItems.length-1] && afterItems[0] &&
-			   beforeItems[beforeItems.length-1].id === afterItems[0].id) {
+			if (afterItems[afterItems.length - 1] === "missing") {
+				afterItems.pop();
+			}
+
+			if (beforeItems[beforeItems.length - 1] && afterItems[0] &&
+			    beforeItems[beforeItems.length - 1].id === afterItems[0].id) {
 				beforeItems.pop();
-			} else if(beforeItems.length > before) {
+			} else if (beforeItems.length > before) {
 				beforeItems.shift();
 			}
 

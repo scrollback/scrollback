@@ -32,7 +32,7 @@ module.exports = function() {
 		render: function() {
 			var sections = this.props.sections,
 				listview = [],
-				content, items;
+				content, items, key;
 
 			for (var i = 0, l = sections.length; i < l; i++) {
 				if (sections[i].header) {
@@ -43,9 +43,9 @@ module.exports = function() {
 					items = [];
 
 					for (var j = 0, m = sections[i].items.length; j < m; j++) {
-						items.push(<li key={sections[i].items[j].key + 
-							(sections[i].items[j].elem.key? "-" + sections[i].items[j].elem.key: "")}
-							className="list-item" tabIndex="1">{sections[i].items[j].elem}</li>);
+						key = sections[i].items[j].key + (sections[i].items[j].elem.key ? "-" + sections[i].items[j].elem.key : "");
+
+						items.push(<li key={key} className="list-item" tabIndex="1">{sections[i].items[j].elem}</li>);
 					}
 
 					if (this.props.endless) {

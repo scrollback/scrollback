@@ -44,10 +44,10 @@ module.exports = function(core, config, store) {
 
 			return (
 				<div className={classNames} key={"chat-item-" + nav.room + "-" + nav.thread + "-" + this.props.text.id} onClick={this.showChatMenu}>
-			 		<div className="chat-item-nick">{this.props.text.from}</div>
+					<div className="chat-item-nick">{this.props.text.from}</div>
 					<div className="chat-item-message markdown-text" dangerouslySetInnerHTML={{__html: text}}></div>
 					{timeStamp}
-		 		</div>
+				</div>
 			);
 		}
 	});
