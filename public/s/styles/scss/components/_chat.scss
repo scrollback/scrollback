@@ -42,9 +42,14 @@
             .chat-area-enhanced & { @include flex-grow(0); }
         }
 
-        &-input {
+        &-actions {
             @include flex-shrink(0);
 
+            position: relative;
+            width: 100%;
+        }
+
+        &-input {
             position: relative;
             width: 100%;
             box-shadow: 0 -3px 6px rgba(0,0,0,0.16);

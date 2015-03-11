@@ -9,6 +9,14 @@ module.exports = function(core, config, store) {
 		ChatArea;
 
 	ChatArea = React.createClass({
+		scrollToBottom: function() {
+			core.emit("setstate", {
+				nav: {
+					textRange: { time: null }
+				}
+			});
+		},
+
 		onScroll: function(key, before, after) {
 			var time;
 
@@ -37,7 +45,8 @@ module.exports = function(core, config, store) {
 		render: function() {
 			var chatitems = [], atTop = false, atBottom = true,
 				nav = store.getNav(),
-				classNames = "main-content-chat chat-area",
+				chatAreaClassNames = "main-content-chat chat-area",
+				scrollToClassNames = "chat-area-scroll-to scroll-to",
 				content, before, after, beforeItems, afterItems, beforeTime;
 
 			// Don"t show
@@ -47,7 +56,7 @@ module.exports = function(core, config, store) {
 
 			// Enhance chat area layout in modern browsers
 			if (browserSupports.CSS("display", "flex")) {
-				classNames += " chat-area-enhanced";
+				chatAreaClassNames += " chat-area-enhanced";
 			}
 
 			before = (nav.textRange.before || 0) + 11; /* one item will get removed */
@@ -100,11 +109,20 @@ module.exports = function(core, config, store) {
 				content = <div className="chat-area-empty">There are no messages yet :-(</div>;
 			}
 
+			if (nav.textRange && nav.textRange.time) {
+				scrollToClassNames += " visible";
+			}
+
 			return (
-					<div className={classNames} data-mode="chat">
+					<div className={chatAreaClassNames} data-mode="chat">
+
 						{content}
 
-						<Compose />
+						<div className="chat-area-actions">
+							<div className={scrollToClassNames} onClick={this.scrollToBottom}>Scroll to bottom</div>
+
+							<Compose />
+						</div>
 					</div>
 			);
 		}
