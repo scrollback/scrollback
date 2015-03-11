@@ -201,7 +201,7 @@ module.exports = function(core, config, store) {
 					}
 				};
 			} else {
-				dialog.title = "Sign up for scrollback";
+				dialog.title = "Sign in to scrollback";
 
 				core.emit("auth", dialog, function() {
 					next();
@@ -217,6 +217,7 @@ module.exports = function(core, config, store) {
 	}, 100);
 
 	core.on("signin-dialog", function(dialog, next) {
+		var user = store.get("user");
 		// Ask users to upgrade their session to unrestricted
 		dialog.title = "Login to continue.";
 		dialog.dismiss = false;
@@ -230,10 +231,11 @@ module.exports = function(core, config, store) {
 				});
 			}
 		};
-
-		core.emit("auth", dialog, function() {
-			next();
-		});
+		if(user && appUtils.isGuest(user)) {
+			core.emit("auth", dialog, function() {
+				next();
+			});
+		}
 	}, 100);
 
 	core.on("noroom-dialog", function(dialog, next) {
