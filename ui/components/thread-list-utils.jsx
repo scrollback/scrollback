@@ -36,7 +36,8 @@ module.exports = function(core, config, store) {
 	function getSections(type, cols) {
 		var nav = store.getNav(),
 			items = [], atTop = false, atBottom = true,
-			before, after, beforeItems, afterItems, beforeCount, afterCount;
+			before, after, beforeCount, afterCount,
+			allItems, beforeItems, afterItems;
 
 		cols = (typeof cols === "number" && !isNaN((cols))) ? cols : 1;
 
@@ -85,7 +86,16 @@ module.exports = function(core, config, store) {
 			beforeItems = beforeItems.slice(-beforeCount);
 		}
 
-		(beforeItems.concat(afterItems).reverse()).forEach(function(thread) {
+		allItems = beforeItems.concat(afterItems);
+
+		// All discussions
+		allItems.push({
+			title: "All discussions",
+			id: null,
+			startTime: null
+		});
+
+		allItems.reverse().forEach(function(thread) {
 			if (typeof thread == "object") {
 				items.push({
 					key: "thread-" + (type ? "-" + type : "") + "-" + thread.startTime,
