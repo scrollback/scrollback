@@ -50,9 +50,7 @@ client-config.js
 
 /mocha-output-selenium.json
 /mocha-output-unit.json
-/public/s/client.phonegap.html
-/public/sb.js
+/public/s/sb.js
 /xunit-mocha.xml
-/public/s/client.phonegap.html
 /patchup-room
 /mocha-output.json
