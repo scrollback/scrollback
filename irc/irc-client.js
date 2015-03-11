@@ -5,24 +5,23 @@ var formField = require("../ui/utils/form-field.js");
 
 module.exports = function(core, config, store) {
 	core.on('conf-show', function(tabs, next) {
-		var results = tabs.room,
+		var results = tabs.room || {},
+			ircServer, ircChannel, enabled, notify,
 			$div = $('<div>'),
-			ircServer = "",
-			ircChannel = "",
-			notify = {},
-			enabled = true;
+			$displayMsg, $infoMsg, $infoString, $errMsg, $errString;
 
-		if (results.params.irc && results.params.irc.server && results.params.irc.channel) {
-			ircServer = results.params.irc.server;
-			ircChannel = results.params.irc.channel;
-			enabled = results.params.irc.enabled;
-		}
+		results.params = results.params | {};
+		results.params.irc = results.params.irc || {};
 
-		var $displayMsg = formField("", "", "irc-message-text", ""),
-			$infoMsg = formField("", "info", "irc-message-text", ""),
-			$infoString = $infoMsg.find("#irc-message-text"),
-			$errMsg = formField("", "error", "irc-message-text", ""),
-			$errString = $errMsg.find("#irc-message-text");
+		ircServer = results.params.irc.server;
+		ircChannel = results.params.irc.channel;
+		enabled = results.params.irc.enabled;
+
+		$displayMsg = formField("", "", "irc-message-text", "");
+		$infoMsg = formField("", "info", "irc-message-text", "");
+		$infoString = $infoMsg.find("#irc-message-text");
+		$errMsg = formField("", "error", "irc-message-text", "");
+		$errString = $errMsg.find("#irc-message-text");
 
 		$div.append(formField("Enable IRC", "check", "irc-enable-check", [
 						[ "irc-enable", "", enabled ]
@@ -35,8 +34,11 @@ module.exports = function(core, config, store) {
 		if (results.params.irc) {
 			var ircParams = results.params.irc;
 			if (ircParams.error) {
-				notify.type = "error";
-				notify.value = null;
+				notify = {
+					type: "error",
+					value: null
+				};
+
 				if (results.params.irc.error === "ERR_CONNECTED_OTHER_ROOM") {
 					$errString.text("This IRC account is already linked with another scrollback room. You can't use it until they unlink.");
 				} else {
@@ -47,8 +49,10 @@ module.exports = function(core, config, store) {
 				$displayMsg = $errMsg;
 
 			} else if (ircParams.server && ircParams.channel && ircParams.pending && ircParams.enabled) {
-				notify.type = "info";
-				notify.value = null;
+				notify = {
+					type: "info",
+					value: null
+				};
 
 				$.get('/r/irc/' + results.id, function(botName) {
 					if (botName !== "ERR_NOT_CONNECTED") {

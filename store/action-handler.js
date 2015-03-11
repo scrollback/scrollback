@@ -127,12 +127,22 @@ function onTextUp(text, next) {
 		key, newState = {texts:{}};
 	next();
 	pendingActions[text.id] = text;
-	key = text.to;
-	if (text.thread) key = key + "_" + text.thread;
+	key = keyFromText(text);
 	newState.texts[text.to] = [textRange];
 	newState.texts[key] = [textRange];
 	core.emit("setstate", newState);
 
+}
+
+function keyFromText(text) {
+	var key = text.to;
+	if (text.thread) {
+		key = key + "_" + text.thread;
+	} else if(text.threads && text.threads.length > 0 && text.threads[0] && text.threads[0].id) {
+		key = key + "_" + text.threads[0].id;
+	}
+	
+	return key;
 }
 
 function onTextDn(text, next) {
@@ -143,12 +153,12 @@ function onTextDn(text, next) {
 		}, oldRange,
 		key, newState = {texts:{}}, oldKey = "";
 
-	key = text.to;
-	if (text.thread) key = key + "_" + text.thread;
+	key = keyFromText(text);
+	
 	newState.texts[text.to] = [textRange];
 	newState.texts[key] = [textRange];
 	if (pendingActions[text.id]) {
-		oldKey = pendingActions[text.id].to + (pendingActions[text.id].thread ? "_" + pendingActions[text.id].thread : "");
+		oldKey = keyFromText(pendingActions[text.id]);
 		if(!newState.texts[oldKey]) newState.texts[oldKey] = [];
 		oldRange = {
 			start: pendingActions[text.id].time,
@@ -158,7 +168,7 @@ function onTextDn(text, next) {
 			]
 		};
 		newState.texts[text.to].push(oldRange);
-		if(text.thread) newState.texts[oldKey].push(oldRange);
+		if(pendingActions[text.id].to !== oldKey) newState.texts[oldKey].push(oldRange);
 	}
 
 	core.emit("setstate", newState);

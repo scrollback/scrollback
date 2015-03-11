@@ -1,4 +1,7 @@
 {
+    "esprima": "esprima-fb",
+    "fileExtensions": [ ".js", ".jsx" ],
+
     "requireCurlyBraces": [
         "if",
         "else",

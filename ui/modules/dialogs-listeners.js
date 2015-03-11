@@ -6,7 +6,7 @@ module.exports = function(core, config, store) {
 		validateEntity = require("../utils/validate-entity.js")(core, config, store),
 		createEntity = require("../utils/create-entity.js")(core, config, store),
 		showDialog = require("../utils/show-dialog.js")(core, config, store),
-		userChangeCallback;
+		currentDialog, userChangeCallback;
 
 	function createAndValidate(type, entry, button, callback) {
 		var $entry = $(entry),
@@ -56,10 +56,10 @@ module.exports = function(core, config, store) {
 		var nav = store.getNav(),
 			user = store.get("user");
 
-		if (changes.nav && ("dialog" in changes.nav || (nav.dialog && changes.nav.dialogState === "update"))) {
+		if ((changes.nav && ("dialog" in changes.nav || (nav.dialog && changes.nav.dialogState === "update"))) || (nav.dialog !== currentDialog)) {
 			if (nav.dialog) {
 				showDialog(nav.dialog);
-			} else {
+			} else if (currentDialog) {
 				$.modal("dismiss");
 			}
 		}
@@ -201,7 +201,7 @@ module.exports = function(core, config, store) {
 					}
 				};
 			} else {
-				dialog.title = "Sign up for scrollback";
+				dialog.title = "Sign in to scrollback";
 
 				core.emit("auth", dialog, function() {
 					next();
@@ -210,14 +210,14 @@ module.exports = function(core, config, store) {
 				return;
 			}
 		} else {
-			dialog.title = "You're already signed in!";
-			dialog.description = "Sign out to sign up for a new account";
+			return;
 		}
 
 		next();
 	}, 100);
 
 	core.on("signin-dialog", function(dialog, next) {
+		var user = store.get("user");
 		// Ask users to upgrade their session to unrestricted
 		dialog.title = "Login to continue.";
 		dialog.dismiss = false;
@@ -231,10 +231,11 @@ module.exports = function(core, config, store) {
 				});
 			}
 		};
-
-		core.emit("auth", dialog, function() {
-			next();
-		});
+		if(user && appUtils.isGuest(user)) {
+			core.emit("auth", dialog, function() {
+				next();
+			});
+		}
 	}, 100);
 
 	core.on("noroom-dialog", function(dialog, next) {
@@ -251,10 +252,19 @@ module.exports = function(core, config, store) {
 		next();
 	}, 1000);
 
+	// Keep track of if modal is shown
+	$(document).on("modalInited", function(event, dialog) {
+		if (dialog) {
+			currentDialog = dialog.attr("data-dialog");
+		}
+	});
+
 	// When modal is dismissed, reset the dialog property
 	$(document).on("modalDismissed", function() {
 		core.emit("setstate", {
 			nav: { dialog: null }
 		});
+
+		currentDialog = null;
 	});
 };

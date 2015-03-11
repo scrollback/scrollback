@@ -9,7 +9,15 @@ module.exports = function(core, config, store) {
 		ChatArea;
 
 	ChatArea = React.createClass({
-		onScroll: function (key, before, after) {
+		scrollToBottom: function() {
+			core.emit("setstate", {
+				nav: {
+					textRange: { time: null }
+				}
+			});
+		},
+
+		onScroll: function(key, before, after) {
 			var time;
 
 			if (key === "top") {
@@ -18,7 +26,9 @@ module.exports = function(core, config, store) {
 				time = null;
 			} else {
 				time = parseInt(key.split("-").pop());
-				if(isNaN(time)) time = null;
+				if (isNaN(time)) {
+					time = null;
+				}
 			}
 
 			core.emit("setstate", {
@@ -35,8 +45,9 @@ module.exports = function(core, config, store) {
 		render: function() {
 			var chatitems = [], atTop = false, atBottom = true,
 				nav = store.getNav(),
-				classNames = "main-content-chat chat-area",
-				content, before, after, beforeItems, afterItems, positionKey;
+				chatAreaClassNames = "main-content-chat chat-area",
+				scrollToClassNames = "chat-area-scroll-to scroll-to",
+				content, before, after, beforeItems, afterItems, beforeTime, positionKey;
 
 			// Don't show
 			if (store.getNav().mode !== "chat") {
@@ -45,7 +56,7 @@ module.exports = function(core, config, store) {
 
 			// Enhance chat area layout in modern browsers
 			if (browserSupports.CSS("display", "flex")) {
-				classNames += " chat-area-enhanced";
+				chatAreaClassNames += " chat-area-enhanced";
 			}
 
 			before = (nav.textRange.before || 0) + 11; /* one item will get removed */
@@ -55,32 +66,34 @@ module.exports = function(core, config, store) {
 			afterItems = store.getTexts(nav.room, nav.thread, nav.textRange.time || null, after);
 
 			atTop = (beforeItems.length < before && beforeItems[0] !== "missing");
-			atBottom = (afterItems.length < after && afterItems[afterItems.length-1] !== "missing");
+			atBottom = (afterItems.length < after && afterItems[afterItems.length - 1] !== "missing");
 
-			if(beforeItems[0] === "missing") beforeItems.shift();
-			if(afterItems[afterItems.length-1] == 'missing') afterItems.pop();
-
-			if(beforeItems[beforeItems.length-1] && afterItems[0] &&
-			   beforeItems[beforeItems.length-1].id === afterItems[0].id) {
-				beforeItems.pop();
-			} else if(beforeItems.length > before) {
+			if (beforeItems[0] === "missing") {
 				beforeItems.shift();
 			}
 
+			if (afterItems[afterItems.length - 1] === "missing") {
+				afterItems.pop();
+			}
 
-			// console.log('Chatarea: At\t', nav.textRange.time, nav.textRange.before, nav.textRange.after, '=>', before, after,
-			// 	'\nChatarea: Got\t', beforeItems.length, afterItems.length,
-			// 	beforeItems[0] && beforeItems[0].time, '---',
-			// 	afterItems[afterItems.length-1] && afterItems[afterItems.length-1].time,
-			// 	atTop?'atTop':'', atBottom?'atBottom':'');
+			if (beforeItems[beforeItems.length - 1] && afterItems[0] &&
+			    beforeItems[beforeItems.length - 1].id === afterItems[0].id) {
+				beforeItems.pop();
+			} else if (beforeItems.length > before) {
+				beforeItems.shift();
+			}
 
+			(beforeItems.concat(afterItems)).forEach(function(text, i, items) {
+				var key, showtime;
 
-			(beforeItems.concat(afterItems)).forEach(function(text) {
-				var key;
 				if (typeof text === "object") {
+					showtime = (beforeTime && ((text.time - beforeTime) > 180000)) || (i === (items.length - 1));
+
 					key = "chat-list-" + nav.room + "-" + nav.thread + "-" + text.id + "-" + text.time;
 					if(!atTop && !atBottom && text.time <= nav.textRange.time) positionKey = key;
-					chatitems.push(<ChatItem text={text} key={key} />);
+					chatitems.push(<ChatItem text={text} key={key} showtime={showtime} />);
+
+					beforeTime = text.time;
 				}
 			});
 
@@ -99,11 +112,20 @@ module.exports = function(core, config, store) {
 				content = <div className="chat-area-empty">There are no messages yet :-(</div>;
 			}
 
+			if (nav.textRange && nav.textRange.time) {
+				scrollToClassNames += " visible";
+			}
+
 			return (
-					<div className={classNames} data-mode="chat">
+					<div className={chatAreaClassNames} data-mode="chat">
+
 						{content}
 
-						<Compose />
+						<div className="chat-area-actions">
+							<div className={scrollToClassNames} onClick={this.scrollToBottom}>Scroll to bottom</div>
+
+							<Compose />
+						</div>
 					</div>
 			);
 		}

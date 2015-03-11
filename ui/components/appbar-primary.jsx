@@ -17,7 +17,7 @@ module.exports = function(core, config, store) {
 		},
 
 		toggleFollowRoom: function() {
-			var room= store.getNav().room,
+			var room = store.getNav().room,
 				relation = store.getRelation(room);
 
 			if (relation && relation.role === "follower") {

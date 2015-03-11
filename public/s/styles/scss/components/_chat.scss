@@ -37,14 +37,19 @@
             overflow: auto;
             -webkit-overflow-scrolling: touch;
 
-            @media #{$screenxxxx} { padding: 0 2em; }
+            @media #{$screenxxxx} { padding: 1em 2em; }
 
             .chat-area-enhanced & { @include flex-grow(0); }
         }
 
-        &-input {
+        &-actions {
             @include flex-shrink(0);
 
+            position: relative;
+            width: 100%;
+        }
+
+        &-input {
             position: relative;
             width: 100%;
             box-shadow: 0 -3px 6px rgba(0,0,0,0.16);
@@ -126,16 +131,17 @@
         $spacing-left-mobile: 5em;
         $spacing-left-normal: 12em;
 
+        @extend %transition;
         @extend %clearfix;
 
         padding: .75em 1em;
 
-        @media #{$screenxx} { padding-left: $spacing-left-normal; }
-
-        &.popover-active {
-            background-color: rgba(0,0,0,0.05);
+        @media #{$screenxx} {
+            padding-left: $spacing-left-normal;
             border-radius: $roundness;
         }
+
+        &.popover-active { background-color: rgba(0,0,0,0.05); }
 
         &-nick {
             float: left;
@@ -157,7 +163,7 @@
         }
 
         &-message {
-            @media #{$screenxx} { float: left; }
+            @media #{$screenxx} { display: inline-block; }
         }
 
         &-timestamp {
@@ -172,7 +178,14 @@
                 font-style: italic;
                 opacity: .5;
 
-                body:not(.role-owner) & { display: none; }
+                body:not(.role-owner) & {
+                    // display: none gives javascript undefined offsets
+                    height: 0;
+                    padding: 0;
+                    margin: 0;
+                    border: 0;
+                    overflow: hidden;
+                }
             }
         }
     }

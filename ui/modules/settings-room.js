@@ -65,7 +65,7 @@ module.exports = function(core, config, store) {
 	core.on("room-menu", function(menu, next) {
 		var rel = store.getRelation(menu.room);
 
-		if (/(owner|moderator)/.test(rel.role)) {
+		if (rel && /(owner|moderator)/.test(rel.role)) {
 			menu.items.configure = {
 				text: "Configure room",
 				prio: 300,
@@ -78,7 +78,7 @@ module.exports = function(core, config, store) {
 					});
 				}
 			};
-		} else if (rel.role === "follower") {
+		} else if (rel && rel.role === "follower") {
 			menu.items.unfollow = {
 				text: "Unfollow room",
 				prio: 300,
