@@ -1,5 +1,4 @@
 var log = require('./../lib/logger.js'),
-	generate = require('../lib/generate.js'),
 	BigInteger = require('big-integer');
 
 module.exports = {
@@ -104,7 +103,7 @@ function makeUpsertQuery(transform) {
 
 function getAdvisoryLockQuery(transform) {
 	var s = transform.lock;
-	if (!s) s = generate.uid();
+	if (!s) throw new Error("transform.lock is undefined for upsert query");
 	s = new Buffer(s).toString('hex');
 	var hash = new BigInteger(s.substring(0, 15), 16); // 60 bit
 	var index = 15;
