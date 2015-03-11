@@ -37,7 +37,7 @@
             overflow: auto;
             -webkit-overflow-scrolling: touch;
 
-            @media #{$screenxxxx} { padding: 0 2em; }
+            @media #{$screenxxxx} { padding: 1em 2em; }
 
             .chat-area-enhanced & { @include flex-grow(0); }
         }
@@ -126,16 +126,17 @@
         $spacing-left-mobile: 5em;
         $spacing-left-normal: 12em;
 
+        @extend %transition;
         @extend %clearfix;
 
         padding: .75em 1em;
 
-        @media #{$screenxx} { padding-left: $spacing-left-normal; }
-
-        &.popover-active {
-            background-color: rgba(0,0,0,0.05);
+        @media #{$screenxx} {
+            padding-left: $spacing-left-normal;
             border-radius: $roundness;
         }
+
+        &.popover-active { background-color: rgba(0,0,0,0.05); }
 
         &-nick {
             float: left;
@@ -157,7 +158,7 @@
         }
 
         &-message {
-            @media #{$screenxx} { float: left; }
+            @media #{$screenxx} { display: inline-block; }
         }
 
         &-timestamp {
