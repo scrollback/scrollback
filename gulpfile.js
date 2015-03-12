@@ -171,7 +171,8 @@ gulp.task("bower", function() {
 
 gulp.task("copylibs", function() {
 	return gulp.src("lib/post-message-polyfill.js")
-	.pipe(plumber({ errorHandler: onerror }))
+	.pipe(buildscripts())
+	.pipe(rename({ suffix: ".min" }))
 	.pipe(gulp.dest(dirs.scripts));
 });
 
@@ -182,9 +183,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 		"transformie/transformie.js"
 	]))
 	.pipe(buildscripts())
-	.pipe(concat("polyfills.js"))
-	.pipe(gulp.dest(dirs.scripts))
-	.pipe(rename({ suffix: ".min" }))
+	.pipe(concat("polyfills.min.js"))
 	.pipe(gulp.dest(dirs.scripts));
 });
 
@@ -268,9 +267,10 @@ gulp.task("manifest", [ "client-manifest", "cordova-android-manifest" ]);
 // Clean up generated files
 gulp.task("clean", function() {
 	return del(prefix("public/", [
+		"s/dist",
 		"**/*.min.js", "**/*.min.css",
-		"**/*.map", "**/*.appcache}"
-	], dirs.scripts, dirs.css, dirs.fonts));
+		"**/*.map", "**/*.appcache"
+	]));
 });
 
 // Watch for changes
