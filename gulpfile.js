@@ -205,10 +205,8 @@ gulp.task("embed-legacy", function() {
 	return bundle("embed/embed-parent.js", { debug: true })
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
-	.pipe(rename("embed.min.js"))
-	.pipe(sourcemaps.write("."))
-	.pipe(gulp.dest("public"))
 	.pipe(rename("client.min.js"))
+	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest("public"));
 });
 
