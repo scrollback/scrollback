@@ -148,7 +148,7 @@ function receiveMessage(event) {
 			pendingActions[data.id](data);
 			delete pendingActions[data.id];
 		}
-		console.log(data.type+ "-dn", data);
+//		console.log(data.type+ "-dn", data);
 		core.emit(data.type + "-dn", data);
 	}
 }
