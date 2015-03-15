@@ -4,6 +4,7 @@ module.exports = function(core, config, store) {
 	var React = require("react"),
 		AppbarPrimary = require("./appbar-primary.jsx")(core, config, store),
 		AppbarSecondary = require("./appbar-secondary.jsx")(core, config, store),
+		CallToActionBar = require("./calltoactionbar.jsx")(core, config, store),
 		SidebarLeft = require("./sidebar-left.jsx")(core, config, store),
 		SidebarRight = require("./sidebar-right.jsx")(core, config, store),
 		ChatArea = require("./chat-area.jsx")(core, config, store),
@@ -41,6 +42,8 @@ module.exports = function(core, config, store) {
 
 						<main className="main">
 							<AppbarPrimary />
+
+							<CallToActionBar />
 
 							<AppbarSecondary />
 

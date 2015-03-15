@@ -231,7 +231,7 @@ module.exports = function(core, config, store) {
 				});
 			}
 		};
-		if(user && appUtils.isGuest(user)) {
+		if (user && appUtils.isGuest(user)) {
 			core.emit("auth", dialog, function() {
 				next();
 			});

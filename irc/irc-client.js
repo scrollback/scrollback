@@ -10,7 +10,7 @@ module.exports = function(core, config, store) {
 			$div = $('<div>'),
 			$displayMsg, $infoMsg, $infoString, $errMsg, $errString;
 
-		results.params = results.params | {};
+		results.params = results.params || {};
 		results.params.irc = results.params.irc || {};
 
 		ircServer = results.params.irc.server;

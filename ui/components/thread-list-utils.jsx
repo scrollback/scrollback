@@ -19,8 +19,6 @@ module.exports = function(core, config, store) {
 			}
 		}
 
-/*		console.log('Threadrange setting state to ', time);*/
-
 		core.emit("setstate", {
 			nav: {
 				threadRange: {

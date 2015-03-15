@@ -39,6 +39,8 @@
 @import "components/chat";
 @import "components/markdown";
 @import "components/settingspage";
+@import "components/scrollto";
+@import "components/calltoactionbar";
 
 
 // Element styles
@@ -274,38 +276,4 @@ form.dialog {
     padding: 0;
 
     @media #{$mobile-break-point} { padding: 0; }
-}
-
-.scroll-to {
-    @extend %transition;
-    @extend %button.info;
-    @include dropshadow(2);
-
-    left: 50%;
-    margin: 1em;
-    margin-left: -6em;
-    width: 12em;
-    padding: .75em 1em;
-    border-radius: 1.5em;
-    text-align: center;
-    z-index: 400;
-    opacity: 0;
-    pointer-events: none;
-    text-transform: none;
-    cursor: pointer;
-
-    &.visible {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    &.chat-area-scroll-to {
-        position: absolute;
-        top: -6em;
-    }
-
-    &.thread-feed-scroll-to {
-        position: absolute;
-        top: $bar-height + 1em;
-    }
 }
