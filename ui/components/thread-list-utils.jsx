@@ -14,13 +14,12 @@ module.exports = function(core, config, store) {
 			time = 1;
 		} else {
 			time = parseInt(key.split("-").pop());
-
 			if (isNaN(time)) {
 				time = null;
 			}
 		}
 
-		console.log('Threadrange setting state to ', time);
+/*		console.log('Threadrange setting state to ', time);*/
 
 		core.emit("setstate", {
 			nav: {
@@ -37,7 +36,7 @@ module.exports = function(core, config, store) {
 		var nav = store.getNav(),
 			items = [], atTop = false, atBottom = true,
 			before, after, beforeCount, afterCount,
-			allItems, beforeItems, afterItems;
+			allItems, beforeItems, afterItems, positionKey;
 
 		cols = (typeof cols === "number" && !isNaN((cols))) ? cols : 1;
 
@@ -96,20 +95,26 @@ module.exports = function(core, config, store) {
 		});
 
 		allItems.reverse().forEach(function(thread) {
+			var key = "thread-" + (type ? "-" + type : "") + "-" + thread.startTime;
 			if (typeof thread == "object") {
+				if(nav.threadRange.time && thread.startTime >= nav.threadRange.time) positionKey = key;
 				items.push({
-					key: "thread-" + (type ? "-" + type : "") + "-" + thread.startTime,
+					key: key,
 					elem: (type === "card") ? <ThreadCard roomId={nav.room} thread={thread} /> : <ThreadListItem roomId={nav.room} thread={thread} />
 				});
 			}
 		});
-
+		
+		if(nav.threadRange.time === 1) positionKey = 'bottom';
+		else if(nav.threadRange.time === null) positionKey = 'top';
+		
 		return [{
 			key: "threads-" + nav.room,
 			header: "Discussions",
 			items: items,
 			atTop: atTop,
-			atBottom: atBottom
+			atBottom: atBottom,
+			position: positionKey
 		}];
 	}
 

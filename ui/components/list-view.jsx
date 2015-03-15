@@ -49,7 +49,8 @@ module.exports = function() {
 					}
 
 					if (this.props.endless) {
-						content = <Endless key={this.props.endlesskey} items={items} onScroll={this.props.onScroll} atTop={sections[i].atTop} atBottom={sections[i].atBottom} />;
+						content = <Endless key={this.props.endlesskey} items={items} onScroll={this.props.onScroll}
+							atTop={sections[i].atTop} atBottom={sections[i].atBottom} position={sections[i].position}/>;
 					} else {
 						content = items;
 					}

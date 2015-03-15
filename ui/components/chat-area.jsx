@@ -30,6 +30,8 @@ module.exports = function(core, config, store) {
 					time = null;
 				}
 			}
+			
+/*			console.log(key, store.getNav().textRange.time);*/
 
 			core.emit("setstate", {
 				nav: {
@@ -84,20 +86,27 @@ module.exports = function(core, config, store) {
 			}
 
 			(beforeItems.concat(afterItems)).forEach(function(text, i, items) {
-				var key, showtime;
+				var key, showtime, continues, continuation;
 
 				if (typeof text === "object") {
-					showtime = (beforeTime && ((text.time - beforeTime) > 180000)) || (i === (items.length - 1));
+					showtime = (i === items.length-1 || items[i+1].time - text.time > 60*1000);
+					continues = (i !== items.length-1 && items[i+1].from === text.from);
+					continuation = ( i === 0 || items[i-1].from !== text.from );
 
 					key = "chat-list-" + nav.room + "-" + nav.thread + "-" + text.id + "-" + text.time;
-					if(!atTop && !atBottom && text.time <= nav.textRange.time) positionKey = key;
-					chatitems.push(<ChatItem text={text} key={key} showtime={showtime} />);
-
-					beforeTime = text.time;
+/*					console.log(text.time, nav.textRange.time);*/
+					if(nav.textRange.time && text.time <= nav.textRange.time) positionKey = key;
+					chatitems.push(<ChatItem text={text} key={key} showtime={showtime}
+						continues={continues} continuation={continuation}/>);
 				}
 			});
+			
+			if(nav.textRange.time === 1) positionKey = 'top';
+			else if(nav.textRange.time === null) positionKey = 'bottom';
 
 			if (chatitems.length) {
+/*				console.log('rerendering at', positionKey, atTop?'atTop':'', atBottom?'atBottom':'');*/
+				
 				content = (
 							<div className="chat-area-messages">
 								<div className="chat-area-messages-list">

@@ -34,7 +34,7 @@ module.exports = function (core, config, store) {
 			state.nav.mode = 'chat';
 			state.nav.room = path[0];
 			if(path[1] !== 'all') state.nav.thread = path[1];
-			state.nav.textRange = { time: params.t || null };
+			state.nav.textRange = { time: parseFloat(params.t) || null };
 			state.nav.textRange[params.t? 'after': 'before'] = 30;
 		} else {
 			state.nav.mode = 'home';
@@ -47,6 +47,8 @@ module.exports = function (core, config, store) {
 				}
 			}
 		}
+		
+		console.log('boot state', state.nav.textRange, params);
 		
 		next();
 	}, 900);
@@ -86,10 +88,10 @@ module.exports = function (core, config, store) {
 		if(paramstr.length) url = url + '?' + paramstr.join('&');
 		
 		if(changes.nav && (changes.nav.mode || changes.nav.dialog)) {
-			console.log('pushstate', state.nav);
+//			console.log('pushstate', state.nav);
 			history.pushState(state.nav, null, url);
 		} else {
-			console.log('replacestate', state.nav);
+//			console.log('replacestate', state.nav);
 			history.replaceState(state.nav, null, url);
 		}
 		next();
