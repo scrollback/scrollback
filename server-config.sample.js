@@ -1,6 +1,6 @@
 module.exports = {
 	global: {
-		host: "scrollback.io",
+		host: "local.scrollback.io",
 		su: {}
 	},
 	core: {
@@ -19,6 +19,9 @@ module.exports = {
 		}
 	},
 	env: "dev",
+	"browserid-auth": {
+		audience: "local.scrollback.io"
+	},
 	http: {
 		host: "local.scrollback.io",
 		cookieDomain: ".scrollback.io",
