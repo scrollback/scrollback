@@ -29,7 +29,7 @@
 
         &-logotype {
             float: left;
-            margin: .75em .5em
+            padding: .75em 0;
         }
 
         &-title {
@@ -105,6 +105,8 @@
             &-search { @include icon(search); }
 
             &-people { @include icon(people); }
+
+            &-maximize { @include icon(maximize); }
 
             &-follow {
                 @include icon(star-empty);

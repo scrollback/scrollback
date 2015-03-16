@@ -178,15 +178,60 @@ body {
     }
 }
 
-.appbar-primary {
-    @media #{$screenxxx} {
-        .appbar-icon-menu, .appbar-avatar { display: none; }
 
-        .appbar-title { margin-left: 1em; }
+.embed {
+    &-toast, &-canvas {
+        .appbar-title-container {
+            margin-left: 1em;
+
+            @include transition;
+            @include transform(translate3d(0, 0, 0));
+        }
+
+        &:not(:focus):not(:hover):not(:active) {
+            .appbar-title-container { @include transform(translate3d(0, -100%, 0)); }
+
+            .appbar-primary { background-color: $dark-color; }
+
+            .appbar-icon-people { opacity: 0; }
+        }
+    }
+}
+
+.appbar {
+    &-title-container {
+        position: relative;
+        height: 100%;
+        float: left;
+
+        .appbar-title {
+            min-width: 8em;
+            height: 100%;
+
+            @media #{$screenx} { min-width: 12em; }
+
+            @media #{$screenxx} { min-width: 36em; }
+
+            @media #{$screenxxx} { min-width: 50em; }
+        }
+
+        .appbar-logotype {
+            position: absolute;
+            top: 100%;
+            height: 100%;
+        }
     }
 
-    @media #{$screenxxxxx} {
-        .appbar-icon-people { display: none; }
+    &-primary {
+        @media #{$screenxxx} {
+            .appbar-icon-menu, .appbar-avatar { display: none; }
+
+            .appbar-title-container { margin-left: 1em; }
+        }
+
+        @media #{$screenxxxxx} {
+            .appbar-icon-people { display: none; }
+        }
     }
 }
 

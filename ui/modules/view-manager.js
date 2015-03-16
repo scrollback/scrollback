@@ -8,10 +8,16 @@ module.exports = function(core, config, store) {
 
 	// Listen to navigate and add class names
 	core.on("statechange", function(changes, next) {
-		var classList, relation, value, nav, thread;
+		var classList, relation, value, nav, thread, form, minimize,
+			getClassList = function() {
+				classList = ((typeof classList === "string") ? classList : $("body").attr("class")) || "";
+
+				return classList;
+			};
 
 		if (changes.nav && ("view" in changes.nav || "mode" in changes.nav || "thread" in changes.nav)) {
-			classList = $("body").attr("class") || "";
+			getClassList();
+
 			nav = store.get("nav");
 
 			for (var i = 0, l = keys.length; i < l; i++) {
@@ -36,7 +42,8 @@ module.exports = function(core, config, store) {
 		}
 
 		if (changes.indexes && ("roomUsers" in changes.indexes || "userRooms" in changes.index)) {
-			classList = ((typeof classList === "string") ? classList : $("body").attr("class")) || "";
+			getClassList();
+
 			relation = store.getRelation();
 
 			classList = classList.replace(/\brole-\S+/g, "").trim();
@@ -45,6 +52,31 @@ module.exports = function(core, config, store) {
 				classList += " role-" + relation.role;
 			} else {
 				classList += " role-" + (appUtils.isGuest(store.get("user")) ? "guest" : "user" );
+			}
+		}
+
+		if (store.get("context", "env") === "embed") {
+			if (changes.context && changes.context.embed) {
+				getClassList();
+
+				form = store.get("context", "embed", "form");
+
+				if ("form" in changes.context.embed) {
+					classList = classList.replace(/\bembed-\S+/g, "").trim();
+
+					if (form) {
+						classList += " embed-" + form;
+					}
+				}
+
+				if (form && "minimize" in changes.context.embed) {
+					classList.replace(form + "-minimize", "").trim();
+					minimize = store.get("context", "embed", "minimize");
+
+					if (minimize) {
+						classList += form + "-minimize";
+					}
+				}
 			}
 		}
 
