@@ -110,9 +110,9 @@ function trySendingToUsers() {
 				});
 				redis.srem("email:toSend", username);
 			}else {
-				log("can not send email to user ", username, " now" );
+				log("can not send email to user ", username, " now");
 				redis.sadd("email:toSend", username, function(err, res) {
-					if(err) log.d(err, res);
+					if (err) log.d(err, res);
 				});
 			}
 		});
