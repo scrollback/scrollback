@@ -24,6 +24,6 @@ module.exports = function(c, conf, s) {
 	core = c;
 	config = conf;
 	store = s;
-//	require("./url-manager.js")(core, config, store);
+	require("./url-manager.js")(core, config, store);
 	init();
 };
