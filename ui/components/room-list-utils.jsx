@@ -62,4 +62,3 @@ module.exports = function(core, config, store) {
 		getSections: getSections
 	};
 };
-

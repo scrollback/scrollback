@@ -1,8 +1,9 @@
 var merge = require("./merge-config.js");
+
 var defaults = {
 	server: {
 		protocol: "http:",
-		host: "//localhost:7528"
+		host: "localhost:7528"
 	},
     localStorage: {
         version: 1.00

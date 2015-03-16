@@ -3,7 +3,7 @@
 
 module.exports = function(core, config) {
 	function loginWithGoogle() {
-		window.open("https:" + config.server.host + "/r/google/login", "_blank", "location=no");
+		window.open("https://" + config.server.host + "/r/google/login", "_blank", "location=no");
 	}
 
 	$('.js-cordova-google-login').click(loginWithGoogle);

@@ -7,6 +7,7 @@ function init() {
 	}
 	newState.app.connectionStatus = "connecting";
 	core.emit("boot", newState, function() {
+//		console.log('atEndofboot',newState.nav.textRange);
 		newState.app.bootComplete = true;
 		bootComplete = true;
 		core.emit("setstate", newState);
@@ -23,6 +24,6 @@ module.exports = function(c, conf, s) {
 	core = c;
 	config = conf;
 	store = s;
-	require("./url-manager.js")(core, config, store);
+//	require("./url-manager.js")(core, config, store);
 	init();
 };

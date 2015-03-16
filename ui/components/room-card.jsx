@@ -14,7 +14,7 @@ function getRoomPics(roomId) {
 
 	hash = stringUtils.hashCode(roomId);
 	cover = parseInt((hash + "").slice(-2));
-	picture = parseInt((hash + "").slice(-4).slice(0,2));
+	picture = parseInt((hash + "").slice(-4).slice(0, 2));
 
 	if (cover > 50) {
 		cover = Math.round(cover / 2) + "";
@@ -90,14 +90,14 @@ module.exports = function(core, config, store) {
 
 			return (
 				<div key={"room-card-" + room.id} className="card room-card" onClick={this.goToRoom}>
-				  	<div className="card-cover" style={{ backgroundImage: "url(" + roomCover  + ")" }}>
-				  		<div className="card-cover-header card-header">
-				  			<span className="card-header-badge notification-badge notification-badge-mention">{room.mentions}</span>
-				  			<span className="card-header-badge notification-badge notification-badge-messages">{room.messages}</span>
-				  			{menu}
-			  			</div>
-			  			<div className="card-cover-logo" style={{ backgroundImage: "url(" + roomPicture  + ")" }}></div>
-			  			<h3 className="card-cover-title">{room.id}</h3>
+					<div className="card-cover" style={{ backgroundImage: "url(" + roomCover  + ")" }}>
+						<div className="card-cover-header card-header">
+							<span className="card-header-badge notification-badge notification-badge-mention">{room.mentions}</span>
+							<span className="card-header-badge notification-badge notification-badge-messages">{room.messages}</span>
+							{menu}
+						</div>
+						<div className="card-cover-logo" style={{ backgroundImage: "url(" + roomPicture  + ")" }}></div>
+						<h3 className="card-cover-title">{room.id}</h3>
 					</div>
 					<div className="card-content card-content-big">
 						<h4 className="card-content-title">Recent discussions</h4>

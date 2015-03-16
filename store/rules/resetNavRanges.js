@@ -1,18 +1,18 @@
-module.exports = function (core, config, store) {
-	core.on('boot', handle, 100);
-	core.on('setstate', handle, 100);
+/*
+	Rule: ResetNavRanges
+	Reads: room, thread
+	Writes: textRange, threadRange
+*/
+
+module.exports = function (core) {
+	core.on('setstate', handle, 900);
 
 	function handle(changes, next) {
-		var mode;
-
-		if(changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread)) {
-			mode = changes.nav.mode || store.getNav().mode;
-			if(mode == 'room') {
-				changes.threadRange = {time: null, before: 25};
-			} else if(mode == 'chat') {
-				changes.textRange = {time: null, before: 25};
-			}
+		if(changes.nav && (changes.nav.room || changes.nav.thread)) {
+			console.log('resetting textRange');
+			if(changes.nav.room) changes.nav.threadRange = changes.nav.threadRange || {time: null, before: 25};
+			changes.nav.textRange = changes.nav.textRange || {time: null, before: 25};
 		}
 		next();
 	}
-}
+};

@@ -10,13 +10,13 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var threadId = store.getNav().thread,
+			var threadId = store.get("nav", "thread"),
 				threadObj = store.get("indexes", "threadsById", threadId),
 				title = threadObj ? threadObj.title : threadId ? threadId : "All discussions";
 
 			return (
 				<div key="appbar-secondary" className="appbar appbar-secondary" data-mode="chat">
-					<a className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goToRoom}></a>
+					<a className="appbar-icon appbar-icon-close appbar-icon-left" onClick={this.goToRoom}></a>
 					<h2 className="appbar-title appbar-title-secondary">{title}</h2>
 				</div>
 			);

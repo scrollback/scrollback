@@ -20,7 +20,12 @@ module.exports = function(core, conf, s, st) {
 		if (changes.threads) updateThreads(changes.threads);
 		if (changes.session) updateSession(changes.session);
 		if (changes.user) updateCurrentUser(changes.user);
-
+		
+		
+		if(changes.nav && changes.nav.textRange) {
+//			console.log('textRange is now', changes.nav.textRange);
+		}
+		
 		buildIndex(changes);
 		core.emit("statechange", changes);
 		next();

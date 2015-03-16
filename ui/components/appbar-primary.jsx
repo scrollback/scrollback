@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
 var showMenu = require("../utils/show-menu.js"),
+	stringUtils = require("../../lib/string-utils.js"),
 	getAvatar = require("../../lib/get-avatar.js");
 
 module.exports = function(core, config, store) {
@@ -17,10 +18,10 @@ module.exports = function(core, config, store) {
 		},
 
 		toggleFollowRoom: function() {
-			var room= store.getNav().room,
-				relation = store.getRelation(room);
+			var room = store.get("nav", "room"),
+				rel = store.getRelation(room);
 
-			if (relation && relation.role === "follower") {
+			if (rel && rel.role === "follower") {
 				core.emit("part-up",  {
 					to: room,
 					room: room
@@ -31,6 +32,20 @@ module.exports = function(core, config, store) {
 					room: room
 				});
 			}
+		},
+
+		toggleMinimize: function() {
+			if (store.get("context", "env") === "embed" && store.get("context", "embed", "form") === "toast") {
+				core.emit("setstate", {
+					context: {
+						embed: { minimize: !store.get("context", "embed", "minimize") }
+					}
+				});
+			}
+		},
+
+		fullScreen: function() {
+			window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
 		},
 
 		showUserMenu: function(e) {
@@ -47,8 +62,8 @@ module.exports = function(core, config, store) {
 			var user, nav, relation, title,
 				classNames = "appbar-icon appbar-icon-follow";
 
+			nav = store.get("nav");
 			user = store.getUser();
-			nav = store.getNav();
 			relation = store.getRelation();
 
 			switch (nav.mode) {
@@ -67,11 +82,14 @@ module.exports = function(core, config, store) {
 				<div key="appbar-primary" className="appbar appbar-primary">
 					<a data-mode="room chat" data-embed="none" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.toggleSidebarLeft}></a>
 					<img data-mode="home" className="appbar-avatar" alt={user.id} src={getAvatar(user.picture, 48)} onClick={this.toggleSidebarLeft} />
-					<img data-embed="toast canvas" className="appbar-logotype appbar-logotype-primary" src="/s/img/scrollback-logo-white.png" />
-					<h1 data-embed="none" className="appbar-title appbar-title-primary">{title}</h1>
+					<div className="appbar-title-container">
+						<img className="appbar-logotype appbar-logotype-primary" src="/s/img/scrollback-logo.png" />
+						<h1 className="appbar-title appbar-title-primary">{title}</h1>
+					</div>
 					<a className="appbar-icon appbar-icon-more" onClick={this.showUserMenu}></a>
+					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
-					<a data-role="user follower" data-mode="room chat" className={classNames} onClick={this.toggleFollowRoom}></a>
+					<a data-embed="none" data-role="user follower" data-mode="room chat" className={classNames} onClick={this.toggleFollowRoom}></a>
 				</div>
 			);
 		}

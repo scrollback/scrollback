@@ -7,6 +7,14 @@ module.exports = function(core, config, store) {
 		ThreadFeed;
 
 	ThreadFeed = React.createClass({
+		scrollToTop: function() {
+			core.emit("setstate", {
+				nav: {
+					threadRange: { time: null }
+				}
+			});
+		},
+
 		onScroll: threadListUtils.onScroll,
 
 		getCols: function() {
@@ -22,7 +30,8 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var sections, key, nav = store.getNav();
+			var sections, key, nav = store.get("nav"),
+				scrollToClassNames = "thread-feed-scroll-to scroll-to";
 
 			// Don't show
 			if (nav.mode !== "room") {
@@ -32,9 +41,14 @@ module.exports = function(core, config, store) {
 			sections = threadListUtils.getSections("card", this.getCols());
 			key = 'thread-feed-' + nav.room;
 
+			if (nav.threadRange && nav.threadRange.time) {
+				scrollToClassNames += " visible";
+			}
+
 			return (
 					<div className="main-content-threads" data-mode="room">
-						<GridView endlesskey={key} sections={sections} endless={true} onScroll={this.onScroll} />
+						<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>
+						<GridView endlesskey={key} sections={sections} onScroll={this.onScroll} />
 					</div>
 			);
 		}

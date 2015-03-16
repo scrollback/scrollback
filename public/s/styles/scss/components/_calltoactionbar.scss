@@ -1,0 +1,39 @@
+@include exports("calltoactionbar") {
+    .call-to-action-bar {
+        @extend %clearfix;
+        @include flex-shrink(0);
+        @include dropshadow(2);
+
+        position: relative;
+        z-index: 200;
+        width: 100%;
+        font-size: .9em;
+
+        &.hidden { display: none; }
+
+        &-info {
+            float: left;
+            margin: 0;
+            padding: (.75em / .9) 1.5em;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        &-button {
+            float: right;
+            padding: (.25em / .9) 1em;
+        }
+
+        &-close {
+            @include icon(close);
+
+            float: right;
+            padding: (.75em / .9) 1em;
+            color: fade-out($dark-color, .5);
+
+            &:hover, &:focus { color: fade-out($dark-color, .2); }
+
+            &:active { color: $dark-color; }
+        }
+    }
+}

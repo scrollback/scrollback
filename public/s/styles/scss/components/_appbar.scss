@@ -22,13 +22,14 @@
         }
 
         &-secondary {
+            border-top: 1px solid rgba(0, 0, 0, .1);
             background-color: $light-color;
             color: fade-out($dark-color, .3);
         }
 
         &-logotype {
             float: left;
-            margin: .75em .5em
+            padding: .75em 0;
         }
 
         &-title {
@@ -91,6 +92,8 @@
                 color: inherit;
             }
 
+            &-close { @include icon(close); }
+
             &-back { @include icon(arrow-left); }
 
             &-menu { @include icon(hamburger); }
@@ -101,7 +104,9 @@
 
             &-search { @include icon(search); }
 
-            &-people { @include icon(contact); }
+            &-people { @include icon(people); }
+
+            &-maximize { @include icon(maximize); }
 
             &-follow {
                 @include icon(star-empty);

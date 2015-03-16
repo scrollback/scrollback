@@ -9,7 +9,7 @@ module.exports = function(core, config, store) {
 	function getEmbedCode() {
 		var code = '<script>window.scrollback = %s;(function(d,s,h,e){e=d.createElement(s);e.async=1;e.src=(location.protocol === "https:" ? "https:" : "http:") + "//' + window.location.host + '/client.min.js";d.getElementsByTagName(s)[0].parentNode.appendChild(e);}(document,"script"));</script>',
 			embedObj = {
-				room: store.getNav().room,
+				room: store.get("nav", "room"),
 				titlebarColor: titlebarColor,
 				form: embedForm,
 				minimize: startMinimized
@@ -19,11 +19,11 @@ module.exports = function(core, config, store) {
 	}
 
 	function getMailToLink() {
-		return "mailto:?body=" + encodeURIComponent(getEmbedCode()) + "&subject=" + encodeURIComponent("Embed Code for room: " + store.getNav().room);
+		return "mailto:?body=" + encodeURIComponent(getEmbedCode()) + "&subject=" + encodeURIComponent("Embed Code for room: " + store.get("nav", "room"));
 	}
 
 	core.on("conf-show", function(conf, next) {
-		var roomURL = "https://" + window.location.host + "/" + store.getNav().room,
+		var roomURL = "https://" + window.location.host + "/" + store.get("nav", "room"),
 			$config, $roomURLField, $shareDiv, $qrCode,
 			$titlebarColor,
 			$formOptions, $minimizeOptions, $embedCode, $embedCodeDiv;
@@ -72,7 +72,7 @@ module.exports = function(core, config, store) {
 		$config.append(formField("Share room on", "", "share-embed", $shareDiv));
 
 		// Qr code
-		$qrCode = $("<img>").attr("src", "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=http://sb.lk/" + store.getNav().room);
+		$qrCode = $("<img>").attr("src", "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=http://sb.lk/" + store.get("nav", "room"));
 
 		$config.append(formField("QR code", "", "embed-qr-code", $qrCode));
 

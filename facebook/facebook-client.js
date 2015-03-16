@@ -8,7 +8,7 @@ module.exports = function(core, config, store) {
 		if (typeof facebookConnectPlugin !== "undefined") {
 			loginWithAccManager();
 		} else {
-			window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
+			window.open("https://" + config.server.host + "/r/facebook/login", "_blank", "location=no");
 		}
 	}
 

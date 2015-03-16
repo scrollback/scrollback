@@ -9,6 +9,10 @@ module.exports = function(core, config, store) {
 
 	ChatItem = React.createClass({
 		showChatMenu: function(e) {
+			if (e.target.tagName === "A") {
+				return;
+			}
+
 			core.emit("text-menu", {
 				origin: e.currentTarget,
 				buttons: {},
@@ -21,10 +25,10 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var nav =  store.getNav(),
+			var nav =  store.get("nav"),
 				text = format.formatTextToMD(this.props.text.text),
 				time = format.friendlyTime(this.props.text.time, new Date().getTime()),
-				timeStamp, classNames = "chat-item";
+				timeStamp, nick, classNames = "chat-item", pref = "";
 
 			if (this.props.text.labels) {
 				for (var label in this.props.text.labels) {
@@ -37,13 +41,26 @@ module.exports = function(core, config, store) {
 			if (this.props.showtime) {
 				timeStamp = <time className="chat-item-timestamp" dateTime={new Date(this.props.text.time).toISOString()}>{time}</time>;
 			}
+			
+			if(this.props.continues) {
+				classNames += " chat-item-continues";
+				pref += "cs "
+			}
+			
+			if(this.props.continuation) {
+				classNames += " chat-item-continuation";
+				pref += "cn ";
+			}
+			
+			nick = <div className="chat-item-nick">{pref + this.props.text.from}</div>;
+			
 
 			return (
 				<div className={classNames} key={"chat-item-" + nav.room + "-" + nav.thread + "-" + this.props.text.id} onClick={this.showChatMenu}>
-			 		<div className="chat-item-nick">{this.props.text.from}</div>
+					{nick}
 					<div className="chat-item-message markdown-text" dangerouslySetInnerHTML={{__html: text}}></div>
 					{timeStamp}
-		 		</div>
+				</div>
 			);
 		}
 	});

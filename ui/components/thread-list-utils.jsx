@@ -5,7 +5,6 @@ module.exports = function(core, config, store) {
 		ThreadCard = require("./thread-card.jsx")(core, config, store),
 		ThreadListItem = require("./thread-list-item.jsx")(core, config, store);
 
-
 	function onScroll(key, after, before) { /* reverse chronological; below -> before, above -> after */
 		var time;
 
@@ -15,10 +14,10 @@ module.exports = function(core, config, store) {
 			time = 1;
 		} else {
 			time = parseInt(key.split("-").pop());
-			if(isNaN(time)) time = null;
+			if (isNaN(time)) {
+				time = null;
+			}
 		}
-		
-		console.log('Threadrange setting state to ', time);
 
 		core.emit("setstate", {
 			nav: {
@@ -32,71 +31,108 @@ module.exports = function(core, config, store) {
 	}
 
 	function getSections(type, cols) {
-		var nav = store.getNav(),
+		var nav = store.get("nav"),
 			items = [], atTop = false, atBottom = true,
-			before, after, beforeItems, afterItems, beforeCount, afterCount;
+			before, after, beforeCount, afterCount,
+			allItems, beforeItems, afterItems, positionKey;
 
 		cols = (typeof cols === "number" && !isNaN((cols))) ? cols : 1;
 
-		before = cols*Math.ceil(((nav.threadRange.before || 0) + Math.max(10, 3*cols))/cols)+1;
-		after = cols*Math.ceil(((nav.threadRange.after || 0) + Math.max(10, 3*cols))/cols);
+		before = cols * Math.ceil(((nav.threadRange.before || 0) + Math.max(10, 3 * cols)) / cols) + 1;
+		after = cols * Math.ceil(((nav.threadRange.after || 0) + Math.max(10, 3 * cols)) / cols);
 
 		beforeItems = store.getThreads(nav.room, nav.threadRange.time || null, -before);
 		afterItems = store.getThreads(nav.room, nav.threadRange.time || null, after);
 
 		atBottom = (beforeItems.length < before && beforeItems[0] !== "missing");
-		atTop = (afterItems.length < after && afterItems[afterItems.length-1] !== "missing");
+		atTop = (afterItems.length < after && afterItems[afterItems.length - 1] !== "missing");
 
-		if(beforeItems[0] === "missing") beforeItems.shift();
-		if(afterItems[afterItems.length-1] == 'missing') afterItems.pop();
-		
+		if (beforeItems[0] === "missing") {
+			beforeItems.shift();
+		}
+
+		if (afterItems[afterItems.length - 1] === "missing") {
+			afterItems.pop();
+		}
+
 		// if the last beforeItem and the first afterItem are the same, then pop.
-		if(beforeItems[beforeItems.length-1] && afterItems[0] &&
-		   beforeItems[beforeItems.length-1].id === afterItems[0].id) {
+		if (beforeItems[beforeItems.length - 1] && afterItems[0] &&
+		   beforeItems[beforeItems.length - 1].id === afterItems[0].id) {
 			beforeItems.pop();
 		} else {
 			beforeItems.shift();
 		}
-		
-		if(afterItems.length && afterItems[0].startTime === nav.threadRange.time) {
-			afterCount = cols*Math.floor((afterItems.length-1)/cols)+1;
-		} else {
-			afterCount = cols*Math.floor(afterItems.length/cols);
-		}
-		
-		if(beforeItems.length && beforeItems[beforeItems.length-1].startTime === nav.threadRange.time){
-			beforeCount = cols*Math.floor((beforeItems.length+1)/cols)-1;
-		} else {
-			beforeCount = cols*Math.floor(beforeItems.length/cols);
-		}
-		
-/*
-		console.log('Threadlist('+cols+'): At\t', new Date(nav.threadRange.time).toISOString().substr(11,8), 
-			nav.threadRange.after, nav.threadRange.before, '=>', after, before,
-			'\nThreadlist: Got\t', afterItems.length, beforeItems.length, afterCount, beforeCount,
-			atTop?'atTop':'', atBottom?'atBottom':'');
-*/
-			
-		if(!atTop && cols>1) afterItems = afterItems.slice(0, afterCount);
-		if(!atBottom && cols>1) beforeItems = beforeItems.slice(-beforeCount);
 
-		(beforeItems.concat(afterItems).reverse()).forEach(function(thread) {
-			if(typeof thread == "object") {
+		if (afterItems.length && afterItems[0].startTime === nav.threadRange.time) {
+			afterCount = cols * Math.floor((afterItems.length - 1) / cols) + 1;
+		} else {
+			afterCount = cols * Math.floor(afterItems.length / cols);
+		}
+
+		if (beforeItems.length && beforeItems[beforeItems.length - 1].startTime === nav.threadRange.time) {
+			beforeCount = cols * Math.floor((beforeItems.length + 1) / cols) - 1;
+		} else {
+			beforeCount = cols * Math.floor(beforeItems.length / cols);
+		}
+
+		if (!atTop && cols > 1) {
+			afterItems = afterItems.slice(0, afterCount);
+		}
+
+		if (!atBottom && cols > 1) {
+			beforeItems = beforeItems.slice(-beforeCount);
+		}
+
+		allItems = beforeItems.concat(afterItems);
+
+		// All discussions
+/*
+		allItems.push({
+			title: "All discussions",
+			id: null,
+			startTime: null
+		});
+*/
+
+		allItems.reverse().forEach(function(thread) {
+			var key = "thread-" + (type ? "-" + type : "") + "-" + thread.startTime;
+			if (typeof thread == "object") {
+				if(nav.threadRange.time && thread.startTime >= nav.threadRange.time) positionKey = key;
 				items.push({
-					key: "thread-" + (type ? "-" + type : "") + "-" + thread.startTime,
-					elem: (type === "card")?
-						<ThreadCard roomId={nav.room} thread={thread} />:
-						<ThreadListItem roomId={nav.room} thread={thread} />
+					key: key,
+					elem: (type === "card") ? <ThreadCard roomId={nav.room} thread={thread} /> : <ThreadListItem roomId={nav.room} thread={thread} />
 				});
 			}
 		});
 		
-		return [{
-			key: "threads-" + nav.room ,
+		if(nav.threadRange.time === 1) positionKey = 'bottom';
+		else if(nav.threadRange.time === null) positionKey = 'top';
+		
+		var allThread = {
+			title: "All discussions",
+			id: null,
+			startTime: null
+		};
+		
+		return [
+		{
+			key: "threads-" + nav.room + "-all",
+			endless: false,
+			items: [{
+				key: "thread-" + (type ? "-" + type : "") + "-all",
+				elem: (type === "card")?
+					<ThreadCard roomId={nav.room} thread={allThread}/>:
+					<ThreadListItem roomId={nav.room} thread={allThread} />
+			}]
+		},
+		{
+			key: "threads-" + nav.room,
 			header: "Discussions",
+			endless: true,
 			items: items,
 			atTop: atTop,
-			atBottom: atBottom
+			atBottom: atBottom,
+			position: positionKey
 		}];
 	}
 

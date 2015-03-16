@@ -63,13 +63,15 @@ module.exports = function(core, config, store) {
 	}
 
 	core.on('text-menu', function(menu, next) {
-		var textObj;
+		var textObj, room;
 
 		if (menu.role !== "owner") {
 			return next();
 		}
 
-		core.emit('getTexts', { ref: menu.target.id.substring(5), to: store.getNav().room}, function(err, data) {
+		room = store.get("nav", "room");
+
+		core.emit('getTexts', { ref: menu.target.id.substring(5), to: room }, function(err, data) {
 			var target = menu.target;
 
 			textObj = data.results[0];
@@ -79,7 +81,7 @@ module.exports = function(core, config, store) {
 					prio: 500,
 					text: 'Unhide Message',
 					action: function() {
-						core.emit('edit-up', {to: store.getNav().room, labels: {'hidden': 0}, ref: target.id.substring(5), cookie: false});
+						core.emit('edit-up', {to: room, labels: {'hidden': 0}, ref: target.id.substring(5), cookie: false});
 
 						$(target).removeClass('chat-label-hidden');
 					}
@@ -89,7 +91,7 @@ module.exports = function(core, config, store) {
 					prio: 500,
 					text: 'Hide Message',
 					action: function() {
-						core.emit('edit-up', {to: store.getNav().room, labels: {'hidden': 1}, ref: target.id.substring(5), cookie: false});
+						core.emit('edit-up', {to: room, labels: {'hidden': 1}, ref: target.id.substring(5), cookie: false});
 
 						$(target).addClass('chat-label-hidden');
 					}
@@ -101,7 +103,7 @@ module.exports = function(core, config, store) {
 					prio: 500,
 					text: 'Mark as not abusive',
 					action: function() {
-						core.emit('edit-up', {to: store.getNav().room, labels: {'abusive': 0}, ref: target.id.substring(5), cookie: false});
+						core.emit('edit-up', {to: room, labels: {'abusive': 0}, ref: target.id.substring(5), cookie: false});
 
 						$(target).removeClass('chat-label-abusive');
 					}
