@@ -79,7 +79,7 @@ module.exports = function(core, config, store) {
 			classNames += (relation && relation.role === "follower") ? " following" : "";
 
 			return (
-				<div key="appbar-primary" className="appbar appbar-primary">
+				<div key="appbar-primary" className="appbar appbar-primary"  onClick={this.toggleMinimize}>
 					<a data-mode="room chat" data-embed="none" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.toggleSidebarLeft}></a>
 					<img data-mode="home" className="appbar-avatar" alt={user.id} src={getAvatar(user.picture, 48)} onClick={this.toggleSidebarLeft} />
 					<div className="appbar-title-container">

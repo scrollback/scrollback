@@ -35,7 +35,7 @@ module.exports = function(c, conf, s) {
 	
 	
 	core.on("statechange", function(changes, next) {
-		if(changes.context && changes.context.embed && changes.context.embed.minimize) {
+		if(changes.context && changes.context.embed && typeof changes.context.embed.minimize == "boolean") {
 			parentWindow.postMessage(JSON.stringify({
 				type: "activity",
 				minimize: changes.context.embed.minimize
