@@ -7,7 +7,7 @@
 	function insertWidget() {
 		var sb, style, iframe, container,
 			embed = {},
-			host = config.server.protocol + config.server.host;
+			host = config.server.protocol + "//" + config.server.host;
 
 		window.scrollback = window.scrollback || {};
 
@@ -41,20 +41,20 @@
 		if (embed.form === "canvas") {
 			container = document.getElementById("scrollback-container");
 		}
-		
+
 		if (!container) {
 			embed.form = sb.embed = "toast";
 			document.body.appendChild(iframe);
 		} else {
 			container.appendChild(iframe);
 		}
-		
+
 
 
 		// TODO: change "embed" to "context"
 		iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
 
-		iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form == "toast") ? " scrollback-minimized" : "");				
+		iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
 		window.addEventListener("message", function (e) {
 			var data;
 			var minReg = /\bscrollback-minimized\b/;
@@ -83,7 +83,7 @@
 							type: "domain-response",
 							token: data.token
 						}), host);
-					break;		
+					break;
 				}
 			}
 		}, false);
