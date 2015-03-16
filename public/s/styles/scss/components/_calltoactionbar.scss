@@ -1,12 +1,12 @@
 @include exports("calltoactionbar") {
     .call-to-action-bar {
         @extend %clearfix;
+        @include flex-shrink(0);
         @include dropshadow(2);
 
         position: relative;
         z-index: 200;
         width: 100%;
-        height: $bar-height;
         font-size: .9em;
 
         &.hidden { display: none; }
@@ -21,7 +21,7 @@
 
         &-button {
             float: right;
-            padding: (.125em / .9) 1em;
+            padding: (.25em / .9) 1em;
         }
 
         &-close {

@@ -46,13 +46,13 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var chatitems = [], atTop = false, atBottom = true,
-				nav = store.getNav(),
+				nav = store.get("nav"),
 				chatAreaClassNames = "main-content-chat chat-area",
 				scrollToClassNames = "chat-area-scroll-to scroll-to",
 				content, before, after, beforeItems, afterItems, beforeTime, positionKey;
 
 			// Don't show
-			if (store.getNav().mode !== "chat") {
+			if (store.get("nav", "mode") !== "chat") {
 				return <div />;
 			}
 
@@ -94,10 +94,14 @@ module.exports = function(core, config, store) {
 					continuation = ( i === 0 || items[i-1].from !== text.from );
 
 					key = "chat-list-" + nav.room + "-" + nav.thread + "-" + text.id + "-" + text.time;
-/*					console.log(text.time, nav.textRange.time);*/
-					if(nav.textRange.time && text.time <= nav.textRange.time) positionKey = key;
+					
+					if (!atTop && !atBottom && text.time <= nav.textRange.time) {
+						positionKey = key;
+					}
+					
 					chatitems.push(<ChatItem text={text} key={key} showtime={showtime}
 						continues={continues} continuation={continuation}/>);
+
 				}
 			});
 			

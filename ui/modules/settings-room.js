@@ -6,7 +6,7 @@ module.exports = function(core, config, store) {
 
 	$(document).on("click", ".js-conf-save", function() {
 		var self = $(this),
-			roomName = store.getNav().room,
+			roomName = store.get("nav", "room"),
 			roomObj = {
 				id: roomName,
 				description: "",

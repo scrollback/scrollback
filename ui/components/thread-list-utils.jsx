@@ -31,7 +31,7 @@ module.exports = function(core, config, store) {
 	}
 
 	function getSections(type, cols) {
-		var nav = store.getNav(),
+		var nav = store.get("nav"),
 			items = [], atTop = false, atBottom = true,
 			before, after, beforeCount, afterCount,
 			allItems, beforeItems, afterItems, positionKey;

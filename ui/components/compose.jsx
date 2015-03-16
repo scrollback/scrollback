@@ -14,7 +14,7 @@ module.exports = function(core, config, store) {
 		sendMessage: function() {
 			var composeBox = this.refs.composeBox.getDOMNode(),
 				text = format.htmlToText(composeBox.innerHTML),
-				nav = store.getNav();
+				nav = store.get("nav");
 
 			if (!text) {
 				return;

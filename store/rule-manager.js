@@ -7,4 +7,5 @@ module.exports = function(core, config, store) {
 	require("./rules/resetNavRanges.js")(core, config, store);
 	require("./rules/loadTextsOnNav.js")(core, config, store);
 	require("./rules/loadThreadsOnNav.js")(core, config, store);
+	require("./rules/callToAction.js")(core, config, store);
 };

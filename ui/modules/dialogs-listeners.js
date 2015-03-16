@@ -53,7 +53,7 @@ module.exports = function(core, config, store) {
 	}
 
 	core.on("statechange", function(changes, next) {
-		var nav = store.getNav(),
+		var nav = store.get("nav"),
 			user = store.get("user");
 
 		if ((changes.nav && ("dialog" in changes.nav || (nav.dialog && changes.nav.dialogState === "update"))) || (nav.dialog !== currentDialog)) {
@@ -104,7 +104,7 @@ module.exports = function(core, config, store) {
 	}, 100);
 
 	core.on("createroom-dialog", function(dialog, next) {
-		var nav = store.getNav(),
+		var nav = store.get("nav"),
 			user = store.getUser(),
 			roomName = (nav.dialogState === "prefill") ? nav.room : "";
 
@@ -225,7 +225,7 @@ module.exports = function(core, config, store) {
 		userChangeCallback = function() {
 			var user = store.getUser();
 
-			if (store.getNav().dialog === "signin" && user && user.isRestricted) {
+			if (store.get("nav", "dialog") === "signin" && user && user.isRestricted) {
 				core.emit("setstate", {
 					nav: { dialog: null }
 				});
