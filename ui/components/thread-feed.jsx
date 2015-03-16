@@ -30,7 +30,7 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var sections, key, nav = store.getNav(),
+			var sections, key, nav = store.get("nav"),
 				scrollToClassNames = "thread-feed-scroll-to scroll-to";
 
 			// Don't show

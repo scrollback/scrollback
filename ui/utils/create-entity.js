@@ -26,7 +26,7 @@ module.exports = function(core, config, store) {
 				}
 
 				if (res === "ok") {
-					room = store.getNav().room;
+					room = store.get("nav", "room");
 					roomObj = store.getRoom(room);
 					newRoom = {
 						id: name,

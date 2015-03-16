@@ -17,7 +17,7 @@ module.exports = function(core, config, store) {
 		},
 
 		toggleFollowRoom: function() {
-			var room = store.getNav().room,
+			var room = store.get("nav", "room"),
 				relation = store.getRelation(room);
 
 			if (relation && relation.role === "follower") {
@@ -47,8 +47,8 @@ module.exports = function(core, config, store) {
 			var user, nav, relation, title,
 				classNames = "appbar-icon appbar-icon-follow";
 
+			nav = store.get("nav");
 			user = store.getUser();
-			nav = store.getNav();
 			relation = store.getRelation();
 
 			switch (nav.mode) {

@@ -21,7 +21,7 @@ module.exports = function(core, config, store) {
 
 			room.guides.customization.css = customCss.replace("<", "\\3c").replace(">", "\\3e");
 
-			core.emit("room-up", { to: store.getNav().room, room: room });
+			core.emit("room-up", { to: store.get("nav", "room"), room: room });
 		},
 
 		applyCss: function(room) {
@@ -42,7 +42,7 @@ module.exports = function(core, config, store) {
 	};
 
 	core.on("statechange", function(changes, next) {
-		if ((changes.nav && changes.nav.room) || changes.entities && store.getNav().room in changes.entities) {
+		if ((changes.nav && changes.nav.room) || changes.entities && store.get("nav", "room") in changes.entities) {
 			customStyle.applyCss(store.getRoom());
 		}
 

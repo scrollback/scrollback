@@ -44,13 +44,13 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var chatitems = [], atTop = false, atBottom = true,
-				nav = store.getNav(),
+				nav = store.get("nav"),
 				chatAreaClassNames = "main-content-chat chat-area",
 				scrollToClassNames = "chat-area-scroll-to scroll-to",
 				content, before, after, beforeItems, afterItems, beforeTime, positionKey;
 
 			// Don't show
-			if (store.getNav().mode !== "chat") {
+			if (store.get("nav", "mode") !== "chat") {
 				return <div />;
 			}
 
@@ -90,7 +90,11 @@ module.exports = function(core, config, store) {
 					showtime = (beforeTime && ((text.time - beforeTime) > 180000)) || (i === (items.length - 1));
 
 					key = "chat-list-" + nav.room + "-" + nav.thread + "-" + text.id + "-" + text.time;
-					if(!atTop && !atBottom && text.time <= nav.textRange.time) positionKey = key;
+
+					if (!atTop && !atBottom && text.time <= nav.textRange.time) {
+						positionKey = key;
+					}
+
 					chatitems.push(<ChatItem text={text} key={key} showtime={showtime} />);
 
 					beforeTime = text.time;

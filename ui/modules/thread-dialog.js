@@ -14,7 +14,7 @@ module.exports = function(core, config, store) {
 
 		core.emit("text-up", {
 			id: id,
-			to: store.getNav().room,
+			to: store.get("nav", "room"),
 			from: store.get("user"),
 			text: text,
 			thread: id,

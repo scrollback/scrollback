@@ -18,7 +18,7 @@ module.exports = function(core, config, store) {
 
 		props.forEach(function(prop) {
 			if (prop in changes.nav) {
-				_gaq.push(["_trackEvent", prop, store.getNav()[prop]]);
+				_gaq.push(["_trackEvent", prop, store.get("nav")[prop]]);
 			}
 		});
 

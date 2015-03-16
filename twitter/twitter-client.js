@@ -98,7 +98,7 @@ module.exports = function(core, config, store) {
 
 	core.on("text-menu", function(menu, next) {
 		var text = menu.textObj.text,
-	        tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&amp;url=" + encodeURIComponent(config.server.protocol + config.server.host + "/" + store.getNav().room) + "&amp;via=" + encodeURIComponent(store.get("user"));
+	        tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&amp;url=" + encodeURIComponent(config.server.protocol + config.server.host + "/" + store.get("nav", "room")) + "&amp;via=" + encodeURIComponent(store.get("user"));
 
 		menu.items.tweetmessage = {
 			text: "Tweet this message",

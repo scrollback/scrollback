@@ -6,7 +6,7 @@ module.exports = function (core, config, store) {
 		var mode;
 
 		if(changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread)) {
-			mode = changes.nav.mode || store.getNav().mode;
+			mode = changes.nav.mode || store.get("nav", "mode");
 			if(mode == 'room') {
 				changes.threadRange = changes.threadRange || {time: null, before: 25};
 			} else if(mode == 'chat') {

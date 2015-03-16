@@ -35,7 +35,7 @@ module.exports = function(core, config, store) {
 		var $page = $("<div>").addClass("settings-page"),
 			$list = $("<ul>").addClass("settings-page-content-list"),
 			$view = $("<div>").addClass("settings-page-content-view"),
-			nav = store.getNav(),
+			nav = store.get("nav"),
 			dialogState, title;
 
 		for (var i in items) {
@@ -104,8 +104,8 @@ module.exports = function(core, config, store) {
 	}
 
 	core.on("statechange", function(changes, next) {
-		if (changes.nav && changes.nav.dialogState && store.getNav().dialog) {
-			setPage(store.getNav().dialogState);
+		if (changes.nav && changes.nav.dialogState && store.get("nav", "dialog")) {
+			setPage(store.get("nav", "dialogState"));
 		}
 
 		next();

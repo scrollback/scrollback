@@ -12,7 +12,7 @@ module.exports = function(core, config, store) {
 
 		if (changes.nav && ("view" in changes.nav || "mode" in changes.nav || "thread" in changes.nav)) {
 			classList = $("body").attr("class") || "";
-			nav = store.getNav();
+			nav = store.get("nav");
 
 			for (var i = 0, l = keys.length; i < l; i++) {
 				if (keys[i] in changes.nav) {
