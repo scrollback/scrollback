@@ -7,7 +7,7 @@ function init() {
 	}
 	newState.app.connectionStatus = "connecting";
 	core.emit("boot", newState, function() {
-		console.log('atEndofboot',newState.nav.textRange);
+//		console.log('atEndofboot',newState.nav.textRange);
 		newState.app.bootComplete = true;
 		core.emit("setstate", newState);
 	});

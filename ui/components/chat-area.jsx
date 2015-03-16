@@ -102,7 +102,7 @@ module.exports = function(core, config, store) {
 			});
 			
 			if(nav.textRange.time === 1) positionKey = 'top';
-			else if(nav.textRange.time === null) positionKey = 'bottom';
+			else if(!nav.textRange.time) positionKey = 'bottom';
 
 			if (chatitems.length) {
 /*				console.log('rerendering at', positionKey, atTop?'atTop':'', atBottom?'atBottom':'');*/

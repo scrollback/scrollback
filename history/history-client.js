@@ -29,7 +29,7 @@ module.exports = function (core, config, store) {
 		} else if(path.length === 1) {
 			state.nav.mode = 'room';
 			state.nav.room = path[0];
-			state.nav.threadRange = { time: params.t || null, before: 20 };
+			state.nav.threadRange = { time: parseFloat(params.t) || null, before: 20 };
 		} else if(path.length === 2) {
 			state.nav.mode = 'chat';
 			state.nav.room = path[0];
@@ -48,7 +48,7 @@ module.exports = function (core, config, store) {
 			}
 		}
 		
-		console.log('boot state', state.nav.textRange, params);
+//		console.log('boot state', state.nav.textRange, params);
 		
 		next();
 	}, 900);

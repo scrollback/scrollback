@@ -48,7 +48,7 @@ module.exports = function() {
 						items.push(<li key={key} className="grid-item" tabIndex="1">{sections[i].items[j].elem}</li>);
 					}
 
-					if (this.props.endless) {
+					if (sections[i].endless) {
 						content = <Endless key={this.props.endlesskey} items={items} onScroll={this.props.onScroll}
 							atTop={sections[i].atTop} atBottom={sections[i].atBottom} position={sections[i].position}/>;
 					} else {

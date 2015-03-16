@@ -47,7 +47,7 @@ module.exports = function(core, config, store) {
 
 			return (
 					<div className="main-content-threads" data-mode="room">
-						<GridView endlesskey={key} sections={sections} endless={true} onScroll={this.onScroll} />
+						<GridView endlesskey={key} sections={sections} onScroll={this.onScroll} />
 						<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>
 					</div>
 			);

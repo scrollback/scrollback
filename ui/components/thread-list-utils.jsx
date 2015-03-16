@@ -86,11 +86,13 @@ module.exports = function(core, config, store) {
 		allItems = beforeItems.concat(afterItems);
 
 		// All discussions
+/*
 		allItems.push({
 			title: "All discussions",
 			id: null,
 			startTime: null
 		});
+*/
 
 		allItems.reverse().forEach(function(thread) {
 			var key = "thread-" + (type ? "-" + type : "") + "-" + thread.startTime;
@@ -106,9 +108,27 @@ module.exports = function(core, config, store) {
 		if(nav.threadRange.time === 1) positionKey = 'bottom';
 		else if(nav.threadRange.time === null) positionKey = 'top';
 		
-		return [{
+		var allThread = {
+			title: "All discussions",
+			id: null,
+			startTime: null
+		};
+		
+		return [
+		{
+			key: "threads-" + nav.room + "-all",
+			endless: false,
+			items: [{
+				key: "thread-" + (type ? "-" + type : "") + "-all",
+				elem: (type === "card")?
+					<ThreadCard roomId={nav.room} thread={allThread}/>:
+					<ThreadListItem roomId={nav.room} thread={allThread} />
+			}]
+		},
+		{
 			key: "threads-" + nav.room,
 			header: "Discussions",
+			endless: true,
 			items: items,
 			atTop: atTop,
 			atBottom: atBottom,
