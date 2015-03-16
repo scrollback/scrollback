@@ -13,7 +13,7 @@ var	connString = "pg://" + config.storage.pg.username + ":" +
 	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
 
 
-describe("Storage Test.", function() {
+describe("Storage Test(Queries)", function() {
 	before(function(done) {
 		storage(core, config.storage);
 		if (config.env === 'production') {

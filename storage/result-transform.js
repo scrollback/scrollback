@@ -9,7 +9,7 @@ exports.getTexts = function(query, texts) {
 				labels[tag] = 1;
 			});
 			var text = {
-				id: row.id, 
+				id: row.id,
 				to: row.to,
 				from: row.from,
 				text: row.text,
@@ -31,16 +31,16 @@ exports.getTexts = function(query, texts) {
 			results = orderResultsBasedOnRef(query, results);
 		}
 	}
-	return results;	
+	return results;
 };
 
 exports.getThreads = function(query, threads) {
 	log("Threads:", threads);
 	var results = [];
 	if (threads.length) {
-		threads[0].rows.forEach(function(row) {		
+		threads[0].rows.forEach(function(row) {
 			var thread = {
-				id: row.id, 
+				id: row.id,
 				to: row.to,
 				from: row.from,
 				title: row.title,
@@ -61,7 +61,7 @@ exports.getThreads = function(query, threads) {
 			results = orderResultsBasedOnRef(query, results);
 		}
 	}
-	return results;	
+	return results;
 };
 
 exports.getRooms = exports.getUsers = exports.getEntities = function(query, entities) {
@@ -88,14 +88,14 @@ exports.getRooms = exports.getUsers = exports.getEntities = function(query, enti
 			};
 			results.push(entity);
 		});
-		
+
 		if (query.before) {
 			results.reverse();
 		} else if (query.ref instanceof Array) {
 			results = orderResultsBasedOnRef(query, results);
 		}
 	}
-	
+
 	return results;
 };
 

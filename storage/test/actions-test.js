@@ -11,9 +11,9 @@ var assert = require('assert'),
 	config.storage.pg.db = "testingdatabase"; // don't change this.
 var connString = "pg://" + config.storage.pg.username + ":" +
 	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
-	
 
-describe("Storage Test.", function() {
+
+describe("Storage Test(actions).", function() {
 	before(function(done) {
 		storage(core, config.storage);
 		if (config.env === 'production') {
@@ -22,7 +22,7 @@ describe("Storage Test.", function() {
 		}
 		setTimeout(done, 1500);
 	});
-	
+
 	beforeEach(function(done) {
 		if (config.env === 'production') {
 			log.w("Can not run test cases in production.");
@@ -35,15 +35,15 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("Insert new text messagee", function(done) {
 		var msg = utils.getNewTextAction();
 		core.emit("text", msg, function() {
 			log("inserted message");
 			pg.connect(connString, function(err, client, cb) {
-				postgres.runQueries(client, 
+				postgres.runQueries(client,
 										 [{query: "SELECT * from texts where id=$1", values: [msg.id]},
-										  {query: "SELECT * from threads where id=$1", values: [msg.thread]}], 
+										  {query: "SELECT * from threads where id=$1", values: [msg.thread]}],
 										 function(err, results) {
 					log.d("Arguments:", arguments);
 					results.forEach(function(result) {
@@ -55,7 +55,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("Insert new text message. (Labels and tags)", function(done) {
 		var msg = utils.getNewTextAction();
 		msg.labels.abusive = 1;
@@ -64,8 +64,8 @@ describe("Storage Test.", function() {
 		core.emit("text", msg, function() {
 			log("inserted message");
 			pg.connect(connString, function(err, client, cb) {
-				postgres.runQueries(client, 
-										[{query: "SELECT * from texts where id=$1", values: [msg.id]}], 
+				postgres.runQueries(client,
+										[{query: "SELECT * from texts where id=$1", values: [msg.id]}],
 										function(err, results) {
 					log.d("Arguments:", arguments);
 					results.forEach(function(result) {
@@ -78,7 +78,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("Update Thread", function(done) {
 		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
@@ -87,8 +87,8 @@ describe("Storage Test.", function() {
 			delete m2.threads[0].title; // don't update title.
 			core.emit("text", m2, function() {
 				pg.connect(connString, function(err, client, cb) {
-					postgres.runQueries(client, 
-											[{query: "SELECT * from threads where id=$1", values: [m1.thread]}], 
+					postgres.runQueries(client,
+											[{query: "SELECT * from threads where id=$1", values: [m1.thread]}],
 											function(err, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
@@ -100,8 +100,8 @@ describe("Storage Test.", function() {
 				});
 			});
 		});
-	});	
-	
+	});
+
 	it("Edit (Edit text)-1", function(done) {
 		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
@@ -113,8 +113,8 @@ describe("Storage Test.", function() {
 			};
 			core.emit("edit", edit, function() {
 				pg.connect(connString, function(err, client, cb) {
-					postgres.runQueries(client, 
-											[{query: "SELECT * from texts where id=$1", values: [m1.id]}], 
+					postgres.runQueries(client,
+											[{query: "SELECT * from texts where id=$1", values: [m1.id]}],
 											function(err, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
@@ -127,7 +127,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("Edit (Edit title)-2", function(done) {
 		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
@@ -139,8 +139,8 @@ describe("Storage Test.", function() {
 			};
 			core.emit("edit", edit, function() {
 				pg.connect(connString, function(err, client, cb) {
-					postgres.runQueries(client, 
-											[{query: "SELECT * from threads where id=$1", values: [m1.thread]}], 
+					postgres.runQueries(client,
+											[{query: "SELECT * from threads where id=$1", values: [m1.thread]}],
 											function(err, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
@@ -152,8 +152,8 @@ describe("Storage Test.", function() {
 				});
 			});
 		});
-	});	
-	
+	});
+
 	it("Edit (labels update)", function(done) {
 		var m1 = utils.getNewTextAction();
 		m1.labels.abusive = 1;
@@ -167,8 +167,8 @@ describe("Storage Test.", function() {
 			};
 			core.emit("edit", edit, function() {
 				pg.connect(connString, function(err, client, cb) {
-					postgres.runQueries(client, 
-											[{query: "SELECT * from texts where id=$1", values: [m1.id]}], 
+					postgres.runQueries(client,
+											[{query: "SELECT * from texts where id=$1", values: [m1.id]}],
 											function(err, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
@@ -182,7 +182,7 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("Edit (labels remove/update test.)", function(done) {
 		var m1 = utils.getNewTextAction();
 		m1.labels.abusive = 1;
@@ -197,11 +197,11 @@ describe("Storage Test.", function() {
 			};
 			core.emit("edit", edit, function() {
 				pg.connect(connString, function(err, client, cb) {
-					postgres.runQueries(client, 
-										[{query: "SELECT * from texts where id=$1", values: [m1.id]}], 
+					postgres.runQueries(client,
+										[{query: "SELECT * from texts where id=$1", values: [m1.id]}],
 										function(err, results) {
 						log.d("Arguments:", arguments);
-						
+
 						results.forEach(function(result) {
 							result.rows[0].tags.sort();
 							assert.deepEqual(result.rows[0].tags, ['abc', 'abusive', 'color3'], "Updating text failed");
@@ -212,14 +212,14 @@ describe("Storage Test.", function() {
 				});
 			});
 		});
-	});	
-	
+	});
+
 	it("storing new user.", function(done) {
 		var user = utils.getNewUserAction();
 		core.emit("user", user, function() {
 			pg.connect(connString, function(err, client, cb) {
-				postgres.runQueries(client, 
-										[{query: "SELECT * from entities where id=$1", values: [user.user.id]}], 
+				postgres.runQueries(client,
+										[{query: "SELECT * from entities where id=$1", values: [user.user.id]}],
 										function(err, results) {
 					log.d("Arguments:", arguments);
 					results.forEach(function(result) {
@@ -231,13 +231,13 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
+
 	it("storing new user. (timezone)", function(done) {
 		var user = utils.getNewUserAction();
 		core.emit("user", user, function() {
 			pg.connect(connString, function(err, client, cb) {
-				postgres.runQueries(client, 
-										[{query: "SELECT * from entities where id=$1", values: [user.user.id]}], 
+				postgres.runQueries(client,
+										[{query: "SELECT * from entities where id=$1", values: [user.user.id]}],
 										function(err, results) {
 					log.d("Arguments:", arguments);
 					results.forEach(function(result) {
@@ -249,8 +249,8 @@ describe("Storage Test.", function() {
 			});
 		});
 	});
-	
-	
+
+
 	it("Update user.", function(done) {
 		var user = utils.getNewUserAction();
 		core.emit("user", user, function() {
@@ -259,8 +259,8 @@ describe("Storage Test.", function() {
 			user.user.description = generate.sentence(12);
 			core.emit("user", user, function() {
 				pg.connect(connString, function(err, client, cb) {
-					postgres.runQueries(client, 
-											[{query: "SELECT * from entities where id=$1", values: [user.user.id]}], 
+					postgres.runQueries(client,
+											[{query: "SELECT * from entities where id=$1", values: [user.user.id]}],
 											function(err, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
@@ -270,12 +270,12 @@ describe("Storage Test.", function() {
 						cb();
 						done();
 					});
-				});	
+				});
 			});
-			
+
 		});
 	});
-	
+
 	it("storing new Room.", function(done) {
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
@@ -283,9 +283,9 @@ describe("Storage Test.", function() {
 		utils.emitActions( core, [user], function() {
 			utils.emitActions(core, [room], function() {
 				pg.connect(connString, function(err, client, cb) {
-					postgres.runQueries(client, 
-											[{query: "SELECT * from entities where id=$1", values: [room.room.id]}, 
-											 {query: "SELECT * from relations where \"room\"=$1 AND \"user\"=$2", values: [room.room.id, room.user.id]}], 
+					postgres.runQueries(client,
+											[{query: "SELECT * from entities where id=$1", values: [room.room.id]},
+											 {query: "SELECT * from relations where \"room\"=$1 AND \"user\"=$2", values: [room.room.id, room.user.id]}],
 											function(err, results) {
 						log.d("Arguments:", arguments);
 						//results.forEach(function(result) {
@@ -304,7 +304,7 @@ describe("Storage Test.", function() {
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
 		var roomOwner = utils.getNewUserAction();
-		room.user = roomOwner.user;	
+		room.user = roomOwner.user;
 		utils.emitActions(core, [user, roomOwner], function() {
 			core.emit("room", room, function() {
 				var old = utils.copy(room.room);
@@ -314,8 +314,8 @@ describe("Storage Test.", function() {
 				room.room.identities = room.room.identities.splice(0, 1);
 				core.emit("room", room, function() {
 					pg.connect(connString, function(err, client, cb) {
-						postgres.runQueries(client, 
-												[{query: "SELECT * from entities where id=$1", values: [room.room.id]}], 
+						postgres.runQueries(client,
+												[{query: "SELECT * from entities where id=$1", values: [room.room.id]}],
 												function(err, results) {
 							log.d("Arguments:", arguments);
 							results.forEach(function(result) {
@@ -332,13 +332,13 @@ describe("Storage Test.", function() {
 							cb();
 							done();
 						});
-					});	
+					});
 				});
 
 			});
 		});
 	});
-	
+
 	it("Join room.", function(done) {
 		var relation = utils.getNewRelationAction('join', 'follower');
 		var user = utils.getNewUserAction();
@@ -351,10 +351,10 @@ describe("Storage Test.", function() {
 			core.emit("room", room, function() {
 				core.emit("join", relation, function() {
 					log("Join :", arguments);
-					pg.connect(connString, function(err, client, cb) {	
-						postgres.runQueries(client, 
-												[{query: "SELECT * from relations where \"room\"=$1 and \"user\"=$2", 
-												  values: [room.room.id, user.user.id]}], 
+					pg.connect(connString, function(err, client, cb) {
+						postgres.runQueries(client,
+												[{query: "SELECT * from relations where \"room\"=$1 and \"user\"=$2",
+												  values: [room.room.id, user.user.id]}],
 												function(err, results) {
 							log.d("Arguments:", arguments);
 							results.forEach(function(result) {
@@ -364,17 +364,17 @@ describe("Storage Test.", function() {
 							cb();
 							done();
 						});
-					});	
+					});
 				});
 			});
 		});
 	});
-	
+
 	it("part room.", function(done) {
 		var relation = utils.getNewRelationAction('join', 'follower');
 		var user = utils.getNewUserAction();
 		var room = utils.getNewRoomAction();
-		
+
 		user.user = relation.user;
 		room.room = relation.room;
 		var roomOwner = utils.getNewUserAction();
@@ -387,9 +387,9 @@ describe("Storage Test.", function() {
 					relation.time = new Date().getTime();
 					core.emit("part", relation, function() {
 						pg.connect(connString, function(err, client, cb) {
-							postgres.runQueries(client, 
-													[{query: "SELECT * from relations where \"room\"=$1 and \"user\"=$2", 
-													  values: [room.room.id, user.user.id]}], 
+							postgres.runQueries(client,
+													[{query: "SELECT * from relations where \"room\"=$1 and \"user\"=$2",
+													  values: [room.room.id, user.user.id]}],
 													function(err, results) {
 								log.d("Arguments:", arguments);
 								results.forEach(function(result) {
@@ -401,12 +401,12 @@ describe("Storage Test.", function() {
 								done();
 							});
 						});
-					});	
+					});
 				});
 			});
 		});
 	});
-	
-	
+
+
 });
 
