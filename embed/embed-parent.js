@@ -55,7 +55,7 @@
 
 		window.addEventListener("message", function(e) {
 			var data;
-
+			
 			if (e.origin === host) {
 				try {
 					data = JSON.parse(e.data);
@@ -66,7 +66,7 @@
 				switch (data.type) {
 					case "activity":
 						if (data.hasOwnProperty("minimize")) {
-							iframe.className.replace(/\bscrollback-minimized\b/, "").trim();
+							iframe.className = iframe.className.replace(/\bscrollback-minimized\b/g, "").trim();
 
 							if (data.minimize) {
 								iframe.className += " scrollback-minimized";

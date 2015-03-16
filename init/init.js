@@ -1,7 +1,7 @@
 /* jshint browser: true */
-var core, config, store;
+var core, config, store, bootComplete = false;
 function init() {
-	var newState = {};
+	var newState = {}, initNext;
 	if(!newState.app){
 		newState.app = {};
 	}
@@ -9,14 +9,21 @@ function init() {
 	core.emit("boot", newState, function() {
 //		console.log('atEndofboot',newState.nav.textRange);
 		newState.app.bootComplete = true;
+		bootComplete = true;
 		core.emit("setstate", newState);
+		if(initNext) initNext();
 	});
+	core.on("init-up", function(action, next) {
+		console.log(action, bootComplete);
+		if(!bootComplete) initNext = next;
+		else next();
+	}, 1000);
 }
 
 module.exports = function(c, conf, s) {
 	core = c;
 	config = conf;
 	store = s;
-//	require("./url-manager.js")(core, config, store);
+	require("./url-manager.js")(core, config, store);
 	init();
 };

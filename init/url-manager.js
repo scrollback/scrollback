@@ -8,8 +8,7 @@ module.exports = function(core /*, config*/ ) {
 		Object.keys(s).forEach(function(key) {
 			state[key] = s[key];
 		});
-		if (!state.nav.mode) state.nav.mode = "chat";
-		state.nav.dialog = "signin";
+		if (!state.nav.mode) state.nav.mode = "room";
 		next();
-	}, 900);
+	}, 1000);
 };

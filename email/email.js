@@ -11,15 +11,15 @@ var timeout = 30 * 1000; // for debuging only
 module.exports = function(coreObject, conf) {
 	config = conf;
 	core = coreObject;
-	
+
 	emailDigest = require('./emailDigest.js');
 	initMailSending = emailDigest.initMailSending;//function
 	sendPeriodicMails = emailDigest.sendPeriodicMails;//function
 	trySendingToUsers = emailDigest.trySendingToUsers;//function.
-	
+
 	redis = require('redis').createClient();
 	redis.select(config.redisDB);
-	
+
 	require('./welcomeEmail.js')(core, conf);
     emailDigest.init(core, config);
 	if (config.auth) {
@@ -71,9 +71,11 @@ function addMessage(message){
         if (message.mentions) {
             message.mentions.forEach(function(username) {
 				var multi2 = redis.multi();
-				multi2.sadd("email:mentions:" + room + ":" + username , JSON.stringify(message), function(err, res) {
-					if(err) log.d(err, res);
-				}); // mentioned msg
+
+				multi2.sadd("email:mentions:" + room + ":" + username, JSON.stringify(message), function(err, res) {
+					if (err) log.i(err, res);
+				});
+
 				multi2.set("email:" + username + ":isMentioned", true); // mentioned indicator for username
 				multi2.exec(function(err,replies) {
 					log("added mention ", replies);
@@ -83,7 +85,7 @@ function addMessage(message){
 								var user = r.results[0];
 								if(!user.params.email || (user.params.email && user.params.email.notifications)) {
 									log("sending mention email to user", username);
-									initMailSending(username);    
+									initMailSending(username);
 								} else log("Not sending email to user ", username);
 							}
 						});
