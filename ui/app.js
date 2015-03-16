@@ -30,6 +30,8 @@
 	window.core = core = new (require("ebus"))(config.appPriorities);
 	window.store = store = require("./../store/store.js")(core, config);
 
+	require("../history/history-client.js")(core, config, store);
+
 	// Apps
 	require("../anti-abuse/anti-abuse-client.js")(core, config, store);
 	require("../authorizer/authorizer-client.js")(core, config, store);
@@ -43,9 +45,7 @@
 	require("../threader/threader-client.js")(core, config, store);
 	require("../twitter/twitter-client.js")(core, config, store);
 	require('../customization/customization-client.js')(core, config, store);
-	
-	require("../history/history-client.js")(core, config, store);
-	
+
 	// User menu providers
 	require("../browserid-auth/browserid-auth-client.js")(core, config, store);
 	require("../facebook/facebook-client.js")(core, config, store);

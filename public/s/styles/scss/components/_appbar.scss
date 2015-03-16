@@ -92,6 +92,8 @@
                 color: inherit;
             }
 
+            &-close { @include icon(close); }
+
             &-back { @include icon(arrow-left); }
 
             &-menu { @include icon(hamburger); }
