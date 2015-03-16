@@ -5,4 +5,5 @@ module.exports = function(core, config, store) {
 	require("./rules/preLoadThreads.js")(core, config, store);
 	require("./rules/preLoadTexts.js")(core, config, store);
 	require("./rules/resetNavRanges.js")(core, config, store);
+	require("./rules/callToAction.js")(core, config, store);
 };
