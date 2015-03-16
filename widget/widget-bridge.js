@@ -2,7 +2,7 @@
 
 var core, config, store, parentHost, parentWindow,
 	embedPath, embedProtocol, verificationStatus,
-	verificationTimeout, verified, bootNext, domain, path;
+	verificationTimeout, verified, bootNext, domain, path, token, isEmbed = false;
 
 module.exports = function(c, conf, s) {
 	core = c;
@@ -11,27 +11,40 @@ module.exports = function(c, conf, s) {
 
 	if (window.parent !== window) {
 		parentWindow = window.parent;
+		isEmbed = true;
 	} else {
 		domain = location.hostname;
 		path = location.path;
 		verified = true;
 		verificationStatus = true;
 	}
-
+	window.onmessage = onMessage;
 	core.on("boot", function(changes, next) {
+		var embed;
 		if (changes.context && changes.context.env == "embed") {
-			parentHost = changes.context.domain;
-			embedPath = changes.context.path;
-			embedProtocol = changes.context.protocol;
+			embed = changes.context.embed;
+			parentHost = embed.origin.host;
+			embedPath = embed.origin.path;
+			embedProtocol = embed.origin.protocol;
+			console.log("Values:", parentHost, embedProtocol, embedPath, embed);
 			sendDomainChallenge();
 			bootNext = next;
 		}
 		next();
-	}, 1000);
+	}, 999);
+	
+	core.on("init-up", function(init, next) {
+		if(init.origin) init.origin = {};
+		init.origin.domain = parentHost;
+		init.origin.path = embedPath;
+		init.origin.verified = verified;
+		next();
+	}, 999);
+	
 };
 
 function sendDomainChallenge() {
-	var token = Math.random() * Math.random();
+	token = Math.random();
 	verificationStatus = false;
 	parentHost = embedProtocol + "//" + parentHost;
 	parentWindow.postMessage(JSON.stringify({
@@ -45,13 +58,14 @@ function sendDomainChallenge() {
 			verified = false;
 			verificationTimeout = true;
 		}
+		if(bootNext){
+			bootNext();
+			bootNext = null;
+		}
 	}, 1000);
 }
 
 function verifyDomainResponse(data) {
-	domain = embed.origin.host;
-	path = embed.origin.path;
-
 	if (verificationTimeout) {
 		return;
 	}
@@ -63,6 +77,10 @@ function verifyDomainResponse(data) {
 	}
 
 	verificationStatus = true;
+	if(bootNext){
+		bootNext();
+		bootNext = null;
+	}
 }
 
 function parseResponse(data) {
@@ -84,30 +102,11 @@ function onMessage(e) {
 	case "domain-response":
 		verifyDomainResponse(data);
 		break;
-	case "navigate":
-		data.data.source = "parent";
-		libsb.emit("navigate", action, function(err, state) {
-			var obj;
-			if (err) {
-				err.type = "error";
-				err.id = data.id;
-				parentWindow.postMessage(JSON.stringify(err), parentHost);
-			} else {
-				obj = {
-					type: "navigate",
-					id: data.id,
-					state: state
-				};
-				parentWindow.postMessage(JSON.stringify(obj), parentHost);
-			}
-
-		});
-		break;
 	case "following":
 			if (action.follow) {
-				libsb.emit("join-up", {to: action.room, role: "follower"});
+				core.emit("join-up", {to: action.room, role: "follower"});
 			} else {
-				libsb.emit("part-up", {to: action.room});
+				core.emit("part-up", {to: action.room});
 			}
 		break;
 	case "signin":
@@ -118,7 +117,7 @@ function onMessage(e) {
 				action.auth.nick = action.nick; // TODO: can be used to generated nick suggestions.
 			}
 
-			libsb.emit("init-up", actionUp);
+			core.emit("init-up", actionUp);
 		break;
 	}
 }

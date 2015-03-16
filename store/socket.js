@@ -51,10 +51,6 @@ module.exports = function(c, conf, s) {
 		if (!init.session) session = init.session = "web://" + generate.uid();
 		init.type = "init";
 		init.to = "me";
-		init.origin = {
-			domain: config.server.host.replace(/^\/\//, ""),
-			verified: true
-		};
 		client.send(JSON.stringify(init));
 		pendingActions[init.id] = function(init) {
 			if (init.type == "init") {
