@@ -70,11 +70,12 @@ module.exports = function(core, config, store) {
 				}
 
 				if (form && "minimize" in changes.context.embed) {
-					classList.replace(form + "-minimize", "").trim();
+					classList = classList.replace(form + "-minimized", "").trim();
+
 					minimize = store.get("context", "embed", "minimize");
 
 					if (minimize) {
-						classList += form + "-minimize";
+						classList += " " + form + "-minimized";
 					}
 				}
 			}
