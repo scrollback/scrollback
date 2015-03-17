@@ -33,7 +33,7 @@
 	// Trunks
 	require("../widget/widget-bridge.js")(core, config, store);
 	require("../history/history-client.js")(core, config, store);
-	
+
 	// Apps
 	require("../anti-abuse/anti-abuse-client.js")(core, config, store);
 	require("../authorizer/authorizer-client.js")(core, config, store);
