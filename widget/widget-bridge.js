@@ -2,7 +2,7 @@
 
 var core, config, store, parentHost, parentWindow,
 	embedPath, embedProtocol, verificationStatus,
-	verificationTimeout, verified, bootNext, domain, path, token, isEmbed = false, suggestedNick; 
+	verificationTimeout, verified, bootNext, domain, path, token, isEmbed = false, suggestedNick;
 
 module.exports = function(c, conf, s) {
 	core = c;
@@ -30,8 +30,9 @@ module.exports = function(c, conf, s) {
 			console.log("Values:", parentHost, embedProtocol, embedPath, embed);
 			sendDomainChallenge();
 			bootNext = next;
+		} else {
+			next();
 		}
-		next();
 	}, 999);
 	
 	
