@@ -44,16 +44,13 @@ module.exports = function(core, config, store) {
 			
 			if(this.props.continues) {
 				classNames += " chat-item-continues";
-/*				pref += "cs "*/
 			}
 			
 			if(this.props.continuation) {
 				classNames += " chat-item-continuation";
-/*				pref += "cn ";*/
 			} else {
 				nick = <div className="chat-item-nick">{this.props.text.from}</div>;
 			}
-			
 
 			return (
 				<div className={classNames} key={"chat-item-" + nav.room + "-" + (nav.thread || "all") + "-" + this.props.text.id} onClick={this.showChatMenu}>

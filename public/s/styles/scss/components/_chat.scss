@@ -199,6 +199,23 @@
                     overflow: hidden;
                 }
             }
+
+            &-action {
+                color: lighten($dark-color, 5%);
+                border-right: 2px solid $accent-color;
+                font-style: italic;
+
+                .chat-item-nick {
+                    font-weight: 400;
+                    padding-right: .25em;
+                    margin-right: 0;
+                    color: lighten($dark-color, 5%);
+
+                    &:after { content: ""; }
+
+                    @media #{$screenxx} { margin-left: 0; }
+                }
+            }
         }
     }
 }
