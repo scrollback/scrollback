@@ -164,6 +164,11 @@
             }
         }
 
+
+		&.chat-item-continues { padding-bottom: 0; }
+
+		&.chat-item-continuation { padding-top: 0; }
+
         &-message {
             @media #{$screenxx} { display: inline-block; }
         }

@@ -5,7 +5,9 @@ module.exports = function(c, conf, s) {
 	config = conf;
 	store = s;
 	core.on("setstate", function(changes, next) {
-		var room = store.getNav("room") || "";
+		var room = store.getNav("room") || "",
+			current = store.get();
+		
 		if (changes.threads && changes.threads[room]) {
 			changes.threads[room].forEach(function(threadRange) {
 				if(threadRange.items && threadRange.items.length){
@@ -15,6 +17,17 @@ module.exports = function(c, conf, s) {
 				}
 			});
 		}
+				
+		if (changes.nav && (room = changes.nav.room) && current.threads && current.threads[room]) {
+			current.threads[room].forEach(function(threadRange) {
+				if(threadRange.items && threadRange.items.length){
+					threadRange.items.forEach(function(threadObj) {
+						loadRecentTexts(room, threadObj.id);
+					});
+				}
+			});
+		}
+		
 		next();
 	}, 800);
 };
@@ -23,7 +36,7 @@ module.exports = function(c, conf, s) {
 function loadRecentTexts(roomId, threadId) {
 	var key = roomId+"_"+threadId;
 	
-	if(store.get('texts', key)) {
+	if(store.get('texts', key) && store.get('texts', key).length) {
 //		console.log('texts already exist for ', threadId, 'Skipping');
 		return; // Already there.
 	}

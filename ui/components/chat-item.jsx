@@ -44,19 +44,19 @@ module.exports = function(core, config, store) {
 			
 			if(this.props.continues) {
 				classNames += " chat-item-continues";
-				pref += "cs "
+/*				pref += "cs "*/
 			}
 			
 			if(this.props.continuation) {
 				classNames += " chat-item-continuation";
-				pref += "cn ";
+/*				pref += "cn ";*/
+			} else {
+				nick = <div className="chat-item-nick">{this.props.text.from}</div>;
 			}
-			
-			nick = <div className="chat-item-nick">{pref + this.props.text.from}</div>;
 			
 
 			return (
-				<div className={classNames} key={"chat-item-" + nav.room + "-" + nav.thread + "-" + this.props.text.id} onClick={this.showChatMenu}>
+				<div className={classNames} key={"chat-item-" + nav.room + "-" + (nav.thread || "all") + "-" + this.props.text.id} onClick={this.showChatMenu}>
 					{nick}
 					<div className="chat-item-message markdown-text" dangerouslySetInnerHTML={{__html: text}}></div>
 					{timeStamp}

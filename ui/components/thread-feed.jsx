@@ -10,7 +10,7 @@ module.exports = function(core, config, store) {
 		scrollToTop: function() {
 			core.emit("setstate", {
 				nav: {
-					threadRange: { time: null }
+					threadRange: { time: null, after: 5*this.getCols(), before: 0 }
 				}
 			});
 		},

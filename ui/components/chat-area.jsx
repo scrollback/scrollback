@@ -91,7 +91,7 @@ module.exports = function(core, config, store) {
 				if (typeof text === "object") {
 					showtime = (i === items.length-1 || items[i+1].time - text.time > 60*1000);
 					continues = (i !== items.length-1 && items[i+1].from === text.from);
-					continuation = ( i === 0 || items[i-1].from !== text.from );
+					continuation = (i !== 0 && items[i-1].from === text.from);
 
 					key = "chat-list-" + nav.room + "-" + nav.thread + "-" + text.id + "-" + text.time;
 					
