@@ -33,7 +33,7 @@ module.exports = function(c, conf, s) {
 		} else {
 			next();
 		}
-	}, 999);
+	}, 800);
 	
 	
 	core.on("statechange", function(changes, next) {
