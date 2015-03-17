@@ -10,7 +10,7 @@ module.exports = function(core, config, store) {
 		scrollToTop: function() {
 			core.emit("setstate", {
 				nav: {
-					threadRange: { time: null, after: 5*this.getCols(), before: 0 }
+					threadRange: { time: null, after: 5 * this.getCols(), before: 0 }
 				}
 			});
 		},
@@ -47,7 +47,7 @@ module.exports = function(core, config, store) {
 
 			return (
 					<div className="main-content-threads" data-mode="room">
-						<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>
+						{/*<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>*/}
 						<GridView endlesskey={key} sections={sections} onScroll={this.onScroll} />
 					</div>
 			);

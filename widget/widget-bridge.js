@@ -2,7 +2,7 @@
 
 var core, config, store, parentHost, parentWindow,
 	embedPath, embedProtocol, verificationStatus,
-	verificationTimeout, verified, bootNext, domain, path, token, isEmbed = false;
+	verificationTimeout, verified, bootNext, domain, path, token, isEmbed = false, suggestedNick;
 
 module.exports = function(c, conf, s) {
 	core = c;
@@ -26,12 +26,14 @@ module.exports = function(c, conf, s) {
 			parentHost = embed.origin.host;
 			embedPath = embed.origin.path;
 			embedProtocol = embed.origin.protocol;
+			suggestedNick = embed.nick;
 			console.log("Values:", parentHost, embedProtocol, embedPath, embed);
 			sendDomainChallenge();
 			bootNext = next;
+		} else {
+			next();
 		}
-		next();
-	}, 999);
+	}, 800);
 	
 	
 	core.on("statechange", function(changes, next) {
@@ -49,6 +51,7 @@ module.exports = function(c, conf, s) {
 		init.origin.domain = parentHost;
 		init.origin.path = embedPath;
 		init.origin.verified = verified;
+		if(suggestedNick) init.suggestedNick = suggestedNick;
 		next();
 	}, 999);
 	

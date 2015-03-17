@@ -17,7 +17,6 @@ function getParams(string) {
 
 var propMap = {
 	nav: { dialog: 'd', dialogState: 'ds'},
-	context: { domain: 'domain' }
 };
 
 module.exports = function(core, config, store) {
@@ -42,6 +41,16 @@ module.exports = function(core, config, store) {
 			state.nav.textRange[params.t? 'after': 'before'] = 30;
 		} else {
 			state.nav.mode = 'home';
+		}
+		
+		if(params.embed) {
+			state.context.env = "embed";
+			try {
+				state.context.embed = JSON.parse(params.embed);
+			} catch(e) {
+				console.error("JSON parse of embed param failed", e);
+				state.context.embed = {};
+			}
 		}
 
 		for (var section in propMap) {
@@ -80,6 +89,10 @@ module.exports = function(core, config, store) {
 
 		if (state.nav.mode === 'chat' && state.nav.textRange.time) {
 			params.t = state.nav.textRange.time;
+		}
+		
+		if(state.context.embed) {
+			params.embed = JSON.stringify(state.context.embed);
 		}
 
 		for (var section in propMap) {
