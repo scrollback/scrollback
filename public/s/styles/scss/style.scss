@@ -216,14 +216,14 @@ body {
         float: left;
 
         .appbar-title {
-            min-width: 8em;
+            width: 8em;
             height: 100%;
 
-            @media #{$screenx} { min-width: 12em; }
+            @media #{$screenx} { width: 12em; }
 
-            @media #{$screenxx} { min-width: 36em; }
+            @media #{$screenxxx} { width: 18em; }
 
-            @media #{$screenxxx} { min-width: 50em; }
+            @media #{$screenxxxx} { width: 30em; }
         }
 
         .appbar-logotype {
