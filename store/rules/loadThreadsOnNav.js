@@ -42,21 +42,21 @@ module.exports = function (core, config, store) {
 			ranges = [];
 
 
-		if (threadRange.after) ranges.push(store.getTexts(roomId, time, threadRange.after));
-		if (threadRange.before) ranges.push(store.getTexts(roomId, time, -threadRange.before));
+		if (threadRange.after) ranges.push(store.getThreads(roomId, time, threadRange.after));
+		if (threadRange.before) ranges.push(store.getThreads(roomId, time, -threadRange.before));
 
 		ranges.forEach(function(r) {
 			if (r[0] == "missing") {
 				core.emit("getThreads", {
 					to: roomId,
-					time: time,
+					time: (r.length >= 2 ? r[1].startTime : threadRange.time) || null,
 					before: threadRange.before<16? 16: threadRange.before
 				}, threadResponse);
 			}
 			if (r[r.length - 1] == "missing") {
 				core.emit("getThreads", {
 					to: roomId,
-					time: r.length >= 2 ? r.length - 2 : threadRange.time,
+					time: (r.length >= 2 ? r[r.length - 2].startTime : threadRange.time) || null,
 					after: threadRange.after<16? 16: threadRange.after
 				}, threadResponse);
 			}

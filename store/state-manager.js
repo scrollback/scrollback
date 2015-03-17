@@ -45,6 +45,7 @@ function updateThreads(threads) {
 			});
 		} else {
 			console.log(roomId + ' has no threads yet.');
+//			debugger;
 		}
 	});
 }

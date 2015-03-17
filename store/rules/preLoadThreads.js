@@ -26,6 +26,9 @@ module.exports = function(c, conf, s) {
 
 
 function loadRecentThreads(featuredRoomId) {
+	
+	if(store.get('threads', featuredRoomId)) return;
+	
 	core.emit("getThreads", {to:featuredRoomId, time: null, before: 3}, function(err, threads) {
 		var changes = {
 			threads:{}

@@ -57,7 +57,7 @@ module.exports = function (core, config, store) {
 				core.emit("getTexts", {
 					to: roomId,
 					thread: thread,
-					time: time,
+					time: (r.length >= 2 ? r[1].time : textRange.time) || null,
 					before: 50
 				}, textResponse);
 			}
@@ -65,7 +65,7 @@ module.exports = function (core, config, store) {
 				core.emit("getTexts", {
 					to: roomId,
 					thread: thread,
-					time: r.length >= 2 ? r[r.length - 2].time : textRange.time,
+					time: (r.length >= 2 ? r[r.length - 2].time : textRange.time) || null,
 					after: 50
 				}, textResponse);
 			}

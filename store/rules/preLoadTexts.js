@@ -21,10 +21,15 @@ module.exports = function(c, conf, s) {
 
 
 function loadRecentTexts(roomId, threadId) {
+	var key = roomId+"_"+threadId;
+	
+	if(store.get('texts', key)) {
+//		console.log('texts already exist for ', threadId, 'Skipping');
+		return; // Already there.
+	}
+	
 	core.emit("getTexts", {to:roomId, thread:threadId, time: null, before: 3}, function(err, texts) {
-		var key = roomId+"_"+threadId, changes = {
-			texts:{}
-		};
+		var changes = { texts:{} };
 		if(err || !texts || !texts.results) return;
 		
 		changes.texts[key] = [];
