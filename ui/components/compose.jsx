@@ -39,7 +39,7 @@ module.exports = function(core, config, store) {
 				composeBox = this.refs.composeBox.getDOMNode(),
 				text = (composeBox.innerText || composeBox.textContent);
 
-			composePlaceholder.innerText = composePlaceholder.textContent = text ? "" : "Reply as " + store.get("user");
+			composePlaceholder.innerText = composePlaceholder.textContent = text ? "" : "Reply as " + format.username(store.get("user"));
 		},
 
 		onPaste: function() {
