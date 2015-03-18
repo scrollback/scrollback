@@ -22,7 +22,13 @@
                 float: right;
                 margin: .375em .5em;
 
-                .button { margin: 0 .25em; }
+                .button {
+                    margin: 0 .25em;
+
+                    &:first-of-type { margin-left: 0; }
+
+                    &:last-of-type { margin-right: 0; }
+                }
             }
         }
 
@@ -43,7 +49,6 @@
 
                 &-item {
                     padding: 1em 1.25em;
-                    border-bottom: 1px solid rgba(0,0,0,0.05);
                     font-weight: 700;
                     cursor: pointer;
 
@@ -55,7 +60,7 @@
 
             &-view {
                 height: 100%;
-                background-color: #fff;
+                background-color: $light-color;
                 overflow: auto;
 
                 &-item {
