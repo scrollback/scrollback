@@ -13,10 +13,12 @@ module.exports = function(core, config, store) {
 
 		changes.app = changes.app || {};
 
-		if (appUtils.isGuest(user) && dismissed.indexOf("signin") === -1) {
-			changes.app.cta = "signin";
-		} else {
-			changes.app.cta = null;
+		if (appUtils.isGuest(user)) {
+			if (dismissed.indexOf("signin") === -1) {
+				changes.app.cta = "signin";
+			} else {
+				changes.app.cta = null;
+			}
 		}
 
 		if (changes.entities) {
@@ -38,10 +40,12 @@ module.exports = function(core, config, store) {
 		room = room || store.get("nav", "room");
 		mode = mode || store.get("nav", "mode");
 
-		if (!appUtils.isGuest(user) && (/(chat|room)/).test(mode) && ((/(visitor|none)/).test(rel.role) || !rel.role) && dismissed.indexOf("follow") === -1) {
-			changes.app.cta = "follow";
-		} else {
-			changes.app.cta = null;
+		if (!appUtils.isGuest(user) && (/(chat|room)/).test(mode)) {
+			if (dismissed.indexOf("follow") === -1 && ((/(visitor|none)/).test(rel.role) || !rel.role)) {
+				changes.app.cta = "follow";
+			} else {
+				changes.app.cta = null;
+			}
 		}
 
 		next();
