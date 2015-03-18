@@ -5,9 +5,9 @@ var defaults = {
 		protocol: "http:",
 		host: "localhost:7528"
 	},
-    localStorage: {
-        version: 1.00
-    },
+	localStorage: {
+		version: 1.0
+	},
 	appPriorities: {
 		antiflood: 1000,
 		validation: 900,
