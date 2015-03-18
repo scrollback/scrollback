@@ -10,14 +10,14 @@ module.exports = function(c, conf, s) {
 		
 		if (changes.threads && changes.threads[room]) {
 			changes.threads[room].forEach(function(threadRange) {
-				if(threadRange.items && threadRange.items.length){
+				if(threadRange.items && threadRange.items.length) {
 					threadRange.items.forEach(function(threadObj) {
 						loadRecentTexts(room, threadObj.id);
 					});
 				}
 			});
 		}
-				
+		
 		if (changes.nav && (room = changes.nav.room) && current.threads && current.threads[room]) {
 			current.threads[room].forEach(function(threadRange) {
 				if(threadRange.items && threadRange.items.length){

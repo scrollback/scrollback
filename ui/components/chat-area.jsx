@@ -93,7 +93,7 @@ module.exports = function(core, config, store) {
 					continues = (i !== items.length-1 && items[i+1].from === text.from);
 					continuation = (i !== 0 && items[i-1].from === text.from);
 
-					key = "chat-list-" + nav.room + "-" + nav.thread + "-" + text.id + "-" + text.time;
+					key = "chat-list-" + nav.room + "-" + (nav.thread || "all") + "-" + text.id + "-" + text.time;
 					
 					if (!atTop && !atBottom && text.time <= nav.textRange.time) {
 						positionKey = key;

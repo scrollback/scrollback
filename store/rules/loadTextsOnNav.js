@@ -8,8 +8,6 @@ module.exports = function (core, config, store) {
 	core.on('setstate', function (changes, next) {
 		if(changes.nav && (changes.nav.room || changes.nav.thread || changes.nav.textRange)) {
 			handleTextChange(changes);
-		} else {
-//			console.log('no text changes for ',changes);
 		}
 		next();
 	}, 850);
@@ -37,8 +35,6 @@ module.exports = function (core, config, store) {
 			range.items = texts.results;
 
 			updatingState.texts[key] = [range];
-			
-			console.log('got texts', range);
 			core.emit("setstate", updatingState);
 		}
 	}

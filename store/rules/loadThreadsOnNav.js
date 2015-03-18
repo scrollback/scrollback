@@ -30,13 +30,10 @@ module.exports = function (core, config, store) {
 				range.start = threads.time;
 				range.end = threads.results[threads.results.length - 1].startTime;
 				if(threads.results.length < threads.after) range.end = null;
-			} else {
-				console.log('neither before nor after?', threads);
 			}
 			range.items = threads.results;
 			updatingState.threads[threads.to].push(range);
 			
-			console.log('threads loaded', updatingState.threads);
 			core.emit("setstate", updatingState);
 		}
 	}
