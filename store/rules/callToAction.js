@@ -38,16 +38,10 @@ module.exports = function(core, config, store) {
 		room = room || store.get("nav", "room");
 		mode = mode || store.get("nav", "mode");
 
-		if (user && room && !appUtils.isGuest(user) && (/(chat|room)/).test(mode)) {
-			switch (rel.role) {
-				case undefined:
-				case "none":
-				case "visitor":
-					changes.app.cta = "follow";
-					break;
-				default:
-					changes.app.cta = null;
-			}
+		if (!appUtils.isGuest(user) && (/(chat|room)/).test(mode) && ((/(visitor|none)/).test(rel.role) || !rel.role) && dismissed.indexOf("follow") === -1) {
+			changes.app.cta = "follow";
+		} else {
+			changes.app.cta = null;
 		}
 
 		next();
