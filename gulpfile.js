@@ -99,31 +99,6 @@ function prefix(str, arr, extra) {
 	return prefixed;
 }
 
-// Generate appcache manifest
-function genmanifest(files, platform) {
-	var filename = platform ? (platform + ".appcache") : "manifest.appcache";
-
-	return gulp.src(files)
-	.pipe(plumber())
-	.pipe(manifest({
-		basePath: "public",
-		cache: [
-			"//fonts.googleapis.com/css?family=Open+Sans:400,700",
-			"//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
-			"//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
-		],
-		network: [ "*" ],
-		fallback: [
-			"/socket /s/socket-fallback",
-			"/ /app.html" + (platform ? ("?platform=" + platform) : "")
-		],
-		preferOnline: true,
-		timestamp: true,
-		filename: filename
-	}))
-	.pipe(gulp.dest("public"));
-}
-
 // Lazy pipe for building scripts
 var buildscripts = lazypipe()
 	.pipe(plumber, { errorHandler: onerror })
@@ -252,15 +227,27 @@ gulp.task("scss", [ "bower" ], function() {
 gulp.task("styles", [ "fonts", "scss" ]);
 
 // Generate appcache manifest file
-gulp.task("client-manifest", function() {
-	return genmanifest([ "public/s/dist/**/*" ]);
+gulp.task("manifest", function() {
+	return gulp.src("public/s/dist/**/*")
+	.pipe(plumber())
+	.pipe(manifest({
+		basePath: "public",
+		cache: [
+			"//fonts.googleapis.com/css?family=Open+Sans:400,700",
+			"//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
+			"//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
+		],
+		network: [ "*" ],
+		fallback: [
+			"/socket /s/socket-fallback",
+			"/ /fallback.html"
+		],
+		preferOnline: true,
+		timestamp: true,
+		filename: "manifest.appcache"
+	}))
+	.pipe(gulp.dest("public"));
 });
-
-gulp.task("cordova-android-manifest", function() {
-	return genmanifest([ "public/s/dist/**/*" ], "cordova-android");
-});
-
-gulp.task("manifest", [ "client-manifest", "cordova-android-manifest" ]);
 
 // Clean up generated files
 gulp.task("clean", function() {
