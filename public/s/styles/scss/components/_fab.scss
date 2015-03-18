@@ -1,5 +1,5 @@
 @include exports("fab") {
-    $fab-size: $bar-height;
+    $fab-size: $bar-height + 1em;
     $color: nth($palette, 9);
 
     .fab {
@@ -15,7 +15,7 @@
         display: block;
         height: $fab-size / 1.5;
         width: $fab-size / 1.5;
-        padding: (.5em / 1.5) (1em / 1.5);
+        padding: (1em / 1.5) 1em;
         border-radius: 50%;
         background-color: $color;
         color: rgba(0,0,0,0.5);
@@ -31,5 +31,32 @@
         }
 
         @media #{$mobile-break-point} { margin: (2em / 1.5); }
+
+        &-label {
+            @include dropshadow(2);
+
+            position: absolute;
+            right: 100%;
+            margin: 0 1.5em;
+            padding: .5em;
+            width: 10em;
+            font-size: (1em / 1.5);
+            text-align: center;
+            border-radius: $roundness;
+            background-color: $info-color;
+            color: $light-color;
+
+            &:after {
+                content: "";
+                position: absolute;
+                left: 100%;
+                top: (1em / 1.5);
+                width: 0;
+                height: 0;
+                border-top: (1em / 1.5) solid transparent;
+                border-bottom: (1em / 1.5) solid transparent;
+                border-left: (1em / 1.5) solid $info-color;
+            }
+        }
     }
 }
