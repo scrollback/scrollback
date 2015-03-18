@@ -26,8 +26,9 @@ var defaults = {
 };
 
 module.exports = (function() {
-	var changes = {};
-	changes = require("./client-config.js");
-	if(!changes) changes = {};
+	var changes = require("./client-config.js");
+
+	if (!changes) changes = {};
+
 	return merge(defaults, changes);
 }());
