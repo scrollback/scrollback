@@ -1,5 +1,5 @@
 @include exports("fab") {
-    $fab-size: $bar-height + 1em;
+    $fab-size: $bar-height + .5em;
     $color: nth($palette, 9);
 
     .fab {
@@ -15,7 +15,7 @@
         display: block;
         height: $fab-size / 1.5;
         width: $fab-size / 1.5;
-        padding: (1em / 1.5) 1em;
+        padding: (.75em / 1.5) (1.25em / 1.5);
         border-radius: 50%;
         background-color: $color;
         color: rgba(0,0,0,0.5);
@@ -40,7 +40,7 @@
             margin: 0 1.5em;
             padding: .5em;
             width: 10em;
-            font-size: (1em / 1.5);
+            font-size: (.9em / 1.5);
             text-align: center;
             border-radius: $roundness;
             background-color: $info-color;
