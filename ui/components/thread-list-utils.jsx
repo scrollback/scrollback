@@ -85,47 +85,41 @@ module.exports = function(core, config, store) {
 
 		allItems = beforeItems.concat(afterItems);
 
-		// All discussions
-/*
-		allItems.push({
-			title: "All discussions",
-			id: null,
-			startTime: null
-		});
-*/
-
 		allItems.reverse().forEach(function(thread) {
 			var key = "thread-" + (type ? "-" + type : "") + "-" + thread.startTime;
+
 			if (typeof thread == "object") {
-				if(nav.threadRange.time && thread.startTime >= nav.threadRange.time) positionKey = key;
+				if (nav.threadRange.time && thread.startTime >= nav.threadRange.time) {
+					positionKey = key;
+				}
+
 				items.push({
 					key: key,
 					elem: (type === "card") ? <ThreadCard roomId={nav.room} thread={thread} /> : <ThreadListItem roomId={nav.room} thread={thread} />
 				});
 			}
 		});
-		
-		if(nav.threadRange.time === 1) positionKey = 'bottom';
-		else if(nav.threadRange.time === null) positionKey = 'top';
-		
+
+		if (nav.threadRange.time === 1) {
+			positionKey = 'bottom';
+		} else if (nav.threadRange.time === null) {
+			positionKey = 'top';
+		}
+
 		var allThread = {
 			title: "All discussions",
 			id: null,
 			startTime: null
 		};
-		
-		return [
-		{
+
+		return [{
 			key: "threads-" + nav.room + "-all",
 			endless: false,
 			items: [{
 				key: "thread-" + (type ? "-" + type : "") + "-all",
-				elem: (type === "card")?
-					<ThreadCard roomId={nav.room} thread={allThread}/>:
-					<ThreadListItem roomId={nav.room} thread={allThread} />
+				elem: <ThreadListItem roomId={nav.room} thread={allThread} />
 			}]
-		},
-		{
+		}, {
 			key: "threads-" + nav.room,
 			header: "Discussions",
 			endless: true,
