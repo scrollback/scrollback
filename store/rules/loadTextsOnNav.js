@@ -37,6 +37,8 @@ module.exports = function (core, config, store) {
 			range.items = texts.results;
 
 			updatingState.texts[key] = [range];
+			
+			console.log('got texts', range);
 			core.emit("setstate", updatingState);
 		}
 	}
@@ -47,29 +49,31 @@ module.exports = function (core, config, store) {
 			/* threads may be in the process of being reset using null; in this case, use null. */
 			roomId = (newState.nav.room ? newState.nav.room : store.getNav("room")),
 			time = textRange.time || null,
-			ranges = [];
+			r;
 
-		if (textRange.after) ranges.push(store.getTexts(roomId, thread, time, textRange.after));
-		if (textRange.before) ranges.push(store.getTexts(roomId, thread, time, -textRange.before));
-
-		ranges.forEach(function(r) {
+		if (textRange.after) {
+			r = store.getTexts(roomId, thread, time, textRange.after);
+			if(r[r.length-1] === "missing") {
+				core.emit("getTexts", {
+					to: roomId,
+					thread: thread,
+					time: (r.length > 1 ? r[r.length - 2].time : time),
+					after: Math.max(50, textRange.after - r.length + 1)
+				}, textResponse);
+			}
+		}
+		
+		if (textRange.before) {
+			r = store.getTexts(roomId, thread, time, -textRange.before);
 			if (r[0] == "missing") {
 				core.emit("getTexts", {
 					to: roomId,
 					thread: thread,
-					time: (r.length >= 2 ? r[1].time : textRange.time) || null,
-					before: 50
+					time: (r.length > 1 ? r[1].time : time),
+					before: Math.max(50, textRange.before - r.length + 1)
 				}, textResponse);
 			}
-			if (r[r.length - 1] == "missing") {
-				core.emit("getTexts", {
-					to: roomId,
-					thread: thread,
-					time: (r.length >= 2 ? r[r.length - 2].time : textRange.time) || null,
-					after: 50
-				}, textResponse);
-			}
-		});
+		}
 	}
 
 };
