@@ -24,18 +24,40 @@ var core, config,
 	core,
 	handlebars = require("handlebars"),
 	seo, clientTemp, clientHbs,
-	log = require('../lib/logger.js');
+	log = require('../lib/logger.js'),
+	redis,
+	newClientRooms = [],
+	newClientAvailable = false,
+	newClientHtml = "";
 
+function fetchRooms() {
+	log.d("fetching rooms");
+	redis.smembers("RoomsWithNewClient", function(err, roomids) {
+		if (roomids) newClientRooms = roomids;
+		log.d("New client room", newClientRooms);
+	});
+}
 
 module.exports = function(c, conf) {
 	core = c;
 	config = conf;
-
+	redis = require('redis').createClient();
+	redis.select(config.redisDB);
+	
+	if (fs.existsSync(__dirname + "/newClient.html")) {
+		newClientAvailable = true;
+		newClientHtml = fs.readFileSync(__dirname + "/newClient.html");
+		console.log("New client room", newClientRooms, newClientHtml);
+		fetchRooms();
+		setInterval(fetchRooms, 120000);
+	}
+	
 	return {
 		init: init
 	};
 };
-function init (app) {
+
+function init(app) {
 	if (!config.https) log.w("Insecure connection. Specify https options in your config file.");
 	start();
 
@@ -51,22 +73,26 @@ function init (app) {
 	});
 
 	app.get("/*", function(req, res, next) {
+		var room, platform;
 		if (/^\/t\//.test(req.path)) return next();
-		if (/^\/s\//.test(req.path)) {
-			console.log("static");
-			return next();
-		}
+		if (/^\/s\//.test(req.path)) return next();
 
 		if (!req.secure && config.https) {
 			var queryString = req._parsedUrl.search ? req._parsedUrl.search : "";
 			return res.redirect(301, 'https://' + config.host + req.path + queryString);
 		}
 
-		var platform = req.query.platform;
-
+		platform = req.query.platform;
+		room = req.path.substring(1).split("/")[0];
+		
+		if (newClientRooms.indexOf(room) > -1) {
+			res.end(newClientHtml);
+			return;
+		}
+		
 		clientData.appVersion = req.query["app-version"] || "defaults";
 		clientData.manifest = (platform ? platform.toLowerCase() : "manifest") + ".appcache";
-		clientData.cordova = (!!(platform && (/cordova/i).test(platform))) || 
+		clientData.cordova = (!!(platform && (/cordova/i).test(platform))) ||
 			(platform === "android"); // fixing backward compatibitly issue
 
 		seo.getSEOHtml(req, function(r) {
@@ -82,7 +108,3 @@ function start() {
 	seo = require('./seo.js')(core, config);
 	clientTemp = handlebars.compile(clientHbs);
 }
-
-
-
-

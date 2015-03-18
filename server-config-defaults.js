@@ -68,7 +68,8 @@ var defaults = {
 		home: "public", // the directory containing static files
 		time: 60000,
 		limit: 30,
-		index: "/me" //index URL redirect
+		index: "/me", //index URL redirect
+		redisDB: 15
 	},
 	email: {
 		from: "scrollback@scrollback.io",
