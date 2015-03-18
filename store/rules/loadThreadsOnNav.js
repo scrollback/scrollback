@@ -18,8 +18,10 @@ module.exports = function (core, config, store) {
 				threads: {}
 			},
 			range = {};
-		updatingState.threads[threads.to] = [];
+		
 		if (!err && threads.results && threads.results.length) {
+			updatingState.threads[threads.to] = [];
+			
 			if (threads.before) {
 				range.end = threads.time;
 				range.start = threads.results[0].startTime;
@@ -31,36 +33,38 @@ module.exports = function (core, config, store) {
 			}
 			range.items = threads.results;
 			updatingState.threads[threads.to].push(range);
+			
+			core.emit("setstate", updatingState);
 		}
-		core.emit("setstate", updatingState);
 	}
 
 	function handleThreadRangeChange(newState) {
 		var threadRange = newState.nav.threadRange,
 			roomId = (newState.nav.room ? newState.nav.room : store.getNav("room")),
 			time = threadRange.time || null,
-			ranges = [];
+			r;
 
-
-		if (threadRange.after) ranges.push(store.getThreads(roomId, time, threadRange.after));
-		if (threadRange.before) ranges.push(store.getThreads(roomId, time, -threadRange.before));
-
-		ranges.forEach(function(r) {
-			if (r[0] == "missing") {
-				core.emit("getThreads", {
-					to: roomId,
-					time: (r.length >= 2 ? r[1].startTime : threadRange.time) || null,
-					before: threadRange.before<16? 16: threadRange.before
-				}, threadResponse);
-			}
+		if (threadRange.after) {
+			r = store.getThreads(roomId, time, threadRange.after);
 			if (r[r.length - 1] == "missing") {
 				core.emit("getThreads", {
 					to: roomId,
-					time: (r.length >= 2 ? r[r.length - 2].startTime : threadRange.time) || null,
-					after: threadRange.after<16? 16: threadRange.after
+					time: (r.length > 1 ? r[r.length - 2].startTime : time),
+					after: Math.max(16, threadRange.after - r.length + 1)
 				}, threadResponse);
 			}
-		});
+		}
+		
+		if (threadRange.before) {
+			r = store.getThreads(roomId, time, -threadRange.before);
+			if (r[0] == "missing") {
+				core.emit("getThreads", {
+					to: roomId,
+					time: (r.length > 1 ? r[1].startTime : time),
+					before: Math.max(16, threadRange.before - r.length + 1)
+				}, threadResponse);
+			}
+		}
 	}
 };
 

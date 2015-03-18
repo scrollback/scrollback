@@ -49,7 +49,7 @@ module.exports = function(core, config, store) {
 			if(this.props.continuation) {
 				classNames += " chat-item-continuation";
 			} else {
-				nick = <div className="chat-item-nick">{this.props.text.from}</div>;
+				nick = <div className="chat-item-nick">{format.username(this.props.text.from)}</div>;
 			}
 
 			return (
