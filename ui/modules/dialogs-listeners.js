@@ -112,10 +112,8 @@ module.exports = function(core, config, store) {
 			if (user.identities && user.identities.length) {
 				dialog.title = "Create a new room";
 				dialog.content = [
-					"<p><b>Step 1:</b> Choose a username</p>",
-					"<input type='text' id='createroom-dialog-user' autofocus>",
-					"<p><b>Step 2:</b> Choose a room name</p>",
-					"<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>"
+					"<p><b>Step 1:</b> Choose a username<input type='text' id='createroom-dialog-user' autofocus></p>",
+					"<p><b>Step 2:</b> Choose a room name<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus></p>"
 				];
 				dialog.action = {
 					text: "Sign up & create room",
@@ -158,7 +156,7 @@ module.exports = function(core, config, store) {
 				dialog.title = "Create a new room";
 				dialog.description = "<b>Step 1:</b> Sign in to scrollback";
 				dialog.content = [
-					"<p><b>Step 2:</b> Choose a room name</p>",
+					"<b>Step 2:</b> Choose a room name",
 					"<input type='text' id='createroom-dialog-room' value='" + roomName + "' disabled>"
 				];
 

@@ -29,7 +29,7 @@ module.exports = function(core) {
 				}
 
 				if (Object.keys(dialog.buttons).length) {
-					$buttons = $("<div>").addClass("dialog-buttons");
+					$buttons = $("<p>").addClass("dialog-buttons");
 
 					for (var i in dialog.buttons) {
 						if (typeof dialog.buttons[i].text === "string" && typeof dialog.buttons[i].action === "function") {
