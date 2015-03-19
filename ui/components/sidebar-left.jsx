@@ -52,7 +52,7 @@ module.exports = function(core, config, store) {
 						</div>
 					</div>
 					<div className="sidebar-header" data-mode="room chat" onClick={this.goToHome}>
-						<img className="sidebar-header-logo" src="/s/img/scrollback-logo.png" />
+						<img className="sidebar-header-logo" src="/s/img/scrollback-logo-white.png" />
 						<a className="sidebar-header-icon sidebar-header-icon sidebar-header-icon-grid"></a>
 					</div>
 
