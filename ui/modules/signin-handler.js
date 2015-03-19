@@ -39,4 +39,17 @@ module.exports = function(c, conf, s) {
 			initSent = false;
 		}
 	}
+	console.log("Adding the login event listner");
+	window.addEventListener("login", function(e) {
+		console.log("Got the login event", e);
+		var auth = {}, data = e.detail;
+		
+		auth[data.provider] = {
+			token: data.token
+		};
+		console.log("Emitting init: ", auth);
+		core.emit("init-up", {
+			auth: auth
+		});
+	});
 };

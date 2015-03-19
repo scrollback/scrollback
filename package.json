@@ -53,7 +53,7 @@
     "handlebars": "latest",
     "htmlencode": "latest",
     "irc": "git://github.com/scrollback/node-irc.git",
-    "jade": "latest",
+    "jade": "0.x",
     "jsonwebtoken": "latest",
     "markdown-it": "latest",
     "markdown-it-emoji": "latest",

@@ -52,6 +52,11 @@ module.exports = function(core, config, store) {
 				state.context.embed = {};
 			}
 		}
+		
+		
+		if(params.android) {
+			state.context.env = "android";
+		}
 
 		for (var section in propMap) {
 			for (var prop in propMap[section]) {

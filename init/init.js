@@ -1,4 +1,6 @@
-/* jshint browser: true */
+/* jshint browser:true */
+/* global Android */
+
 var core, config, store, bootComplete = false;
 function init() {
 	var newState = {}, initNext;
@@ -6,10 +8,14 @@ function init() {
 		newState.app = {};
 	}
 	newState.app.connectionStatus = "connecting";
-	core.emit("boot", newState, function() {
+	core.emit("boot", newState, function(err, state) {
 //		console.log('atEndofboot',newState.nav.textRange);
 		newState.app.bootComplete = true;
 		bootComplete = true;
+		if(state.context && state.context.env == "android"){
+			console.log("calling the on finished loading...");
+			Android.onFinishedLoading();
+		}
 		core.emit("setstate", newState);
 		if(initNext) initNext();
 	});
