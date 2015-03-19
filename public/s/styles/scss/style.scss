@@ -78,17 +78,9 @@ body {
     @include flex-shrink(0);
 
     .list-item {
-        opacity: .75;
+        &:focus, &:hover { background-color: darken($light-color, 5%); }
 
-        &:focus, &:hover {
-            opacity: 1;
-            background-color: darken($light-color, 5%);
-        }
-
-        &:active {
-            opacity: 1;
-            background-color: darken($light-color, 10%);
-        }
+        &:active { background-color: darken($light-color, 10%); }
     }
 
     &-left {
@@ -96,7 +88,12 @@ body {
 
         .list-section { background-color: transparent; }
 
-        .list-item { border-bottom: 0; }
+        .list-item {
+            opacity: .75;
+            border-bottom: 0;
+
+            &:focus, &:hover, &:active { opacity: 1; }
+        }
     }
 
     &-right {
