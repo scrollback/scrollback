@@ -16,7 +16,7 @@ module.exports = function(core, config, store) {
 
 			return (
 				<div key="appbar-secondary" className="appbar appbar-secondary" data-mode="chat">
-					<a className="appbar-icon appbar-icon-close appbar-icon-left" onClick={this.goToRoom}></a>
+					<a className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goToRoom}></a>
 					<h2 className="appbar-title appbar-title-secondary">{title}</h2>
 				</div>
 			);
