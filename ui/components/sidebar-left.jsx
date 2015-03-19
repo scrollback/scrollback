@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+var appUtils = require("../../lib/app-utils.js");
+
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		ProfileCard = require("./profile-card.jsx")(core, config, store),
