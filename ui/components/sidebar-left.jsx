@@ -37,7 +37,9 @@ module.exports = function(core, config, store) {
 								<div className="sidebar-label">My feed</div>
 				           </div>
 				           );
-			} else {
+			}
+
+			if (store.get("nav", "mode") !== "home" && !appUtils.isGuest(store.get("user"))) {
 				items.push(
 				           <div className="sidebar-block sidebar-block-item"  onClick={this.goToSettings}>
 								<div className="sidebar-icon sidebar-icon-settings"></div>
