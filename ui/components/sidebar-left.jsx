@@ -17,9 +17,33 @@ module.exports = function(core, config, store) {
 			});
 		},
 
+		goToSettings: function() {
+			core.emit("setstate", {
+				nav: { dialog: "pref" }
+			});
+		},
+
 		render: function() {
+			var items = [];
+
 			if ("embed" in store.get("context")) {
 				return <div data-embed="none" />;
+			}
+
+			if (store.get("nav", "mode") !== "home") {
+				items.push(
+				           <div className="sidebar-block sidebar-block-item" onClick={this.goToHome}>
+								<div className="sidebar-icon sidebar-icon-grid"></div>
+								<div className="sidebar-label">My feed</div>
+				           </div>
+				           );
+			} else {
+				items.push(
+				           <div className="sidebar-block sidebar-block-item"  onClick={this.goToSettings}>
+								<div className="sidebar-icon sidebar-icon-settings"></div>
+								<div className="sidebar-label">Account settings</div>
+				           </div>
+				           );
 			}
 
 			return (
@@ -51,10 +75,11 @@ module.exports = function(core, config, store) {
 							*/}
 						</div>
 					</div>
-					<div className="sidebar-header" data-mode="room chat" onClick={this.goToHome}>
+					<div className="sidebar-header" data-mode="room chat">
 						<img className="sidebar-header-logo" src="/s/img/scrollback-logo-white.png" />
-						<a className="sidebar-header-icon sidebar-header-icon sidebar-header-icon-grid"></a>
 					</div>
+
+					{items}
 
 					<div className="room-list sidebar-content" data-mode="room">
 						<RoomList />

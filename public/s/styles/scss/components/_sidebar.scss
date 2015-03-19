@@ -20,8 +20,6 @@
             -webkit-overflow-scrolling : touch; /* momentum scrolling in webkit */
         }
 
-        &-block { border-bottom: 1px solid rgba(0,0,0,0.1); }
-
         &-left {
             @include transform(translate3d(-100%,0,0));
 
@@ -88,6 +86,49 @@
             @media #{$screenxxx} {
                 .view-sidebar-left & { display: none; }
             }
+        }
+
+        &-block {
+            @extend %clearfix;
+
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+
+            &-item {
+                cursor: pointer;
+
+                &:focus, &:hover { background-color: darken($light-color, 5%); }
+
+                &:active { background-color: darken($light-color, 10%); }
+            }
+
+            &-content { padding: 1em; }
+        }
+
+        &-icon {
+            $icon-width: $bar-height / 1.5;
+
+            @extend %appear;
+
+            float: left;
+            font-size: 1.5em;
+            padding: (1em / 1.5);
+            color: inherit;
+            height: 100%;
+            width: $icon-width;
+            min-width: $icon-width;
+            max-width: $icon-width;
+            line-height: 1;
+
+            &:hover, &:focus, &:active { color: inherit; }
+
+            &-grid { @include icon(grid); }
+
+            &-settings { @include icon(configure); }
+        }
+
+        &-label {
+            font-weight: 700;
+            padding: 1em;
         }
     }
 }
