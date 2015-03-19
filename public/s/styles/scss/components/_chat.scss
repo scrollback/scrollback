@@ -131,7 +131,6 @@
         $spacing-left-mobile: 5em;
         $spacing-left-normal: 12em;
 
-        @extend %transition;
         @extend %clearfix;
 
         padding: .75em 1em;
