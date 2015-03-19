@@ -34,16 +34,16 @@ module.exports = function(core, config, store) {
 
 			if (store.get("nav", "mode") !== "home") {
 				items.push(
-				           <div className="sidebar-block sidebar-block-item" onClick={this.goToHome}>
+				           <div className="sidebar-block sidebar-block-item" key="sidebar-my-feed" onClick={this.goToHome}>
 								<div className="sidebar-icon sidebar-icon-grid"></div>
 								<div className="sidebar-label">My feed</div>
 				           </div>
 				           );
 			}
 
-			if (store.get("nav", "mode") !== "home" && !appUtils.isGuest(store.get("user"))) {
+			if (store.get("nav", "mode") === "home" && !appUtils.isGuest(store.get("user"))) {
 				items.push(
-				           <div className="sidebar-block sidebar-block-item"  onClick={this.goToSettings}>
+				           <div className="sidebar-block sidebar-block-item" key="sidebar-account-settings" onClick={this.goToSettings}>
 								<div className="sidebar-icon sidebar-icon-settings"></div>
 								<div className="sidebar-label">Account settings</div>
 				           </div>

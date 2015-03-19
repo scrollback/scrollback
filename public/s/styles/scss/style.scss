@@ -154,6 +154,7 @@ body {
     background-color: $accent-color;
     width: 100%;
     cursor: pointer;
+    box-shadow: inset -1px 0 0 rgba(0,0,0,0.06);
 
     @for $i from 1 through length($palette) {
         .color-#{$i - 1} & { background-color: nth($palette, $i); }
