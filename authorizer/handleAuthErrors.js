@@ -12,7 +12,7 @@ var stringUtils = require('../lib/string-utils.js'),
 			"owner": "an owner of this room"
 		},
 		reqestedRoleTasks: {
-			"gagged": "asking a moderator to ungag you",
+			"gagged": "asking a moderator to unban you",
 			"guest": "asking a moderator to remove your gag or ban",
 			"registered": "signing into scrollback",
 			"follower": "following this room",
@@ -40,7 +40,7 @@ var stringUtils = require('../lib/string-utils.js'),
 			"banned": "banned in this room",
 			"gagged": "gagged in this room",
 			"none": "not authorized to perform this action",
-			"guest": "a guest user",
+			"guest": "a guest",
 			"follower": "a follower of this room",
 			"owner": "the owner of this room"
 		},
