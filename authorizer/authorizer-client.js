@@ -46,7 +46,11 @@ libsb.on('config-show', function (tabs, next) {
 
 	var div = $('<div>').append(
 		//		formField('Who can read messages?', 'radio', "authorizer-read",[['authorizer-read-guest', 'Anyone (Public)', guestPermRead], ['authorizer-read-users', 'Logged in users', registeredPermRead], ['authorizer-read-followers', 'Followers', followerPermRead]]),
-		formField('Who can post messages?', 'radio', "authorizer-write", [['authorizer-post-guest', 'Anyone (Public)', guestPermWrite], ['authorizer-post-users', 'Logged in users', registeredPermWrite], ['authorizer-post-followers', 'Followers', followerPermWrite]])
+		formField('Who can post messages?', 'radio', "authorizer-write", [
+			['authorizer-post-guest', 'Anyone (Public)', guestPermWrite],
+			['authorizer-post-users', 'Logged in users', registeredPermWrite],
+			['authorizer-post-followers', 'Followers', followerPermWrite]
+			])
 	);
 
 	tabs.authorizer = {
