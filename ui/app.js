@@ -53,6 +53,7 @@
 	require("../facebook/facebook-client.js")(core, config, store);
 	require("../github/github-client.js")(core, config, store);
 	require("../google/google-client.js")(core, config, store);
+	require("../push-notification/gcm-client.js")(core, config, store);
 	require("../http/logout-client.js")(core, config, store);
 
 	// Modules
