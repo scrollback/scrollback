@@ -25,7 +25,8 @@ var plugins = [ "analytics", "validator","browserid-auth", "facebook", "recommen
 
 require('newrelic');
 var log = require('./lib/logger.js');
-var config = require("./server-config-defaults.js"), core = new (require('ebus'))(config.appPriorities);
+var config = require("./server-config-defaults.js"),
+    core = new (require('ebus'))(config.appPriorities);
 log.setEmailConfig(config.email);
 
 
