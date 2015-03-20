@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+var appUtils = require("../../lib/app-utils.js");
+
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		ProfileCard = require("./profile-card.jsx")(core, config, store),
@@ -17,9 +19,35 @@ module.exports = function(core, config, store) {
 			});
 		},
 
+		goToSettings: function() {
+			core.emit("setstate", {
+				nav: { dialog: "pref" }
+			});
+		},
+
 		render: function() {
+			var items = [];
+
 			if ("embed" in store.get("context")) {
 				return <div data-embed="none" />;
+			}
+
+			if (store.get("nav", "mode") !== "home") {
+				items.push(
+				           <div className="sidebar-block sidebar-block-item" key="sidebar-my-feed" onClick={this.goToHome}>
+								<div className="sidebar-icon sidebar-icon-grid"></div>
+								<div className="sidebar-label">My feed</div>
+				           </div>
+				           );
+			}
+
+			if (store.get("nav", "mode") === "home" && !appUtils.isGuest(store.get("user"))) {
+				items.push(
+				           <div className="sidebar-block sidebar-block-item" key="sidebar-account-settings" onClick={this.goToSettings}>
+								<div className="sidebar-icon sidebar-icon-settings"></div>
+								<div className="sidebar-label">Account settings</div>
+				           </div>
+				           );
 			}
 
 			return (
@@ -51,10 +79,11 @@ module.exports = function(core, config, store) {
 							*/}
 						</div>
 					</div>
-					<div className="sidebar-header" data-mode="room chat" onClick={this.goToHome}>
-						<img className="sidebar-header-logo" src="/s/img/scrollback-logo.png" />
-						<a className="sidebar-header-icon sidebar-header-icon sidebar-header-icon-grid"></a>
+					<div className="sidebar-header" data-mode="room chat">
+						<img className="sidebar-header-logo" src="/s/img/scrollback-logo-white.png" />
 					</div>
+
+					{items}
 
 					<div className="room-list sidebar-content" data-mode="room">
 						<RoomList />

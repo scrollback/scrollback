@@ -219,6 +219,13 @@
             border-top-left-radius: 0;
             border-top-right-radius: 0;
             width: 100%;
+            opacity: 0;
+            pointer-events: none;
+
+            .card-quick-reply.active & {
+                opacity: 1;
+                pointer-events: auto;
+            }
 
             &-reply {
                 @include icon(reply);

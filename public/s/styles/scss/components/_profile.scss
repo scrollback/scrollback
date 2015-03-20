@@ -6,6 +6,7 @@
         height: $card-width;
         width: $card-width;
         overflow: hidden;
+        color: $light-color;
 
         &:after {
             content: "";
