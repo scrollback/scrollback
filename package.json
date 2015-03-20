@@ -62,7 +62,7 @@
     "nodemailer": "latest",
     "oauth": "latest",
     "objectlevel": "git://github.com/scrollback/objectlevel.git",
-    "pg": "~3.3.0",
+    "pg": "latest",
     "react": "latest",
     "redis": "latest",
     "request": "latest",
