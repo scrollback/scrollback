@@ -147,8 +147,8 @@ module.exports = function (core, conf) {
         },
         edit: function (action, callback) {
             if (!action.ref) return callback(new SbError("REF_NOT_SPECIFIED"));
-            if (!action.text && !action.labels) return callback(new SbError("NO_OPTION_TO_EDIT"));
-            if (action.labels && typeof action.labels != "object") return callback(new SbError("INVALID_EDIT_OPTION_LABEL"));
+            if (!action.text && !action.tags) return callback(new SbError("NO_OPTION_TO_EDIT"));
+            if (action.tags && typeof action.tags != "object") return callback(new SbError("INVALID_EDIT_OPTION_LABEL"));
             if (action.text && typeof action.text != "string") return callback(new SbError("INVALID_EDIT_OPTION_TEXT"));
             callback();
         },
@@ -182,7 +182,7 @@ module.exports = function (core, conf) {
             });
         }, "validation");
     });
-    
+
 
     core.on("getThreads", function (action, callback) {
         if (!(action.to || action.q)) {
