@@ -19,13 +19,7 @@ module.exports = function(core, config, store) {
 			text: text,
 			thread: id,
 			title: title,
-			time: new Date().getTime(),
-			manualThreaded: 1,
-			threads: [{
-				id: "new",
-				title: title,
-				score: 1.0
-			}]
+			time: new Date().getTime()
 		}, function(err) {
 			if (err) {
 				return callback("error", threadError);

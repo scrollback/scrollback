@@ -20,6 +20,15 @@ module.exports = function(core) {
 			}
 		}
 
+		// If no threads property is present, add it
+		if (action.thread && !action.threads) {
+			action.threads = [{
+				id: action.thread,
+				title: action.title,
+				score: 1.0
+			}];
+		}
+
 		next();
 	}, "validation");
 
