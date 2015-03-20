@@ -1,13 +1,13 @@
 /*
-	Scrollback: Beautiful text chat for your community. 
+	Scrollback: Beautiful text chat for your community.
 	Copyright (c) 2014 Askabt Pte. Ltd.
-	
-This program is free software: you can redistribute it and/or modify it 
+
+This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any 
+the Free Software Foundation, either version 3 of the License, or any
 later version.
 
-This program is distributed in the hope that it will be useful, but 
+This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
 License for more details.
@@ -18,10 +18,10 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
-var plugins = [  "validator","browserid-auth", "facebook", "recommendation", "anti-abuse",
+var plugins = [  "validator", "compatibility", "browserid-auth", "facebook", "recommendation", "anti-abuse",
 			   "threader", "authorizer", "redis-storage", "storage",
 			   "entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "search", "sitemap",
-			   "push-notification","google"];
+			   "push-notification", "google"];
 
 require('newrelic');
 var log = require('./lib/logger.js');
@@ -44,4 +44,4 @@ function start(name) {
 plugins.forEach(function(name) {
 	start(name);
 });
-start("http"); // start http app at last 
+start("http"); // start http app at last
