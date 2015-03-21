@@ -4,7 +4,7 @@
 var formField = require("../ui/utils/form-field.js"),
 	twitterUsername;
 
-module.exports = function(core, config, store) {
+module.exports = function(core) {
 	// Twitter integration
 	core.on("conf-show", function(tabs, next) {
 		var $div = $("<div>"),
@@ -92,21 +92,6 @@ module.exports = function(core, config, store) {
 	            username: twitterUsername
 	        };
 	    }
-
-		next();
-	}, 500);
-
-	core.on("text-menu", function(menu, next) {
-		var text = menu.textObj.text,
-	        tweetUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&amp;url=" + encodeURIComponent(config.server.protocol + "//" + config.server.host + "/" + store.get("nav", "room")) + "&amp;via=" + encodeURIComponent(store.get("user"));
-
-		menu.items.tweetmessage = {
-			text: "Tweet this message",
-			prio: 300,
-			action: function() {
-				window.open(tweetUrl, "_blank");
-			}
-		};
 
 		next();
 	}, 500);

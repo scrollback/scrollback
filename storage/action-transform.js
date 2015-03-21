@@ -85,7 +85,7 @@ exports.edit = function (edit) {
 	if (edit.text || edit.tags) {
 		put.update.push(['updatetime', 'set', new Date(edit.time)]);
 	}
-	if (edit.text || edit.tags) {
+	if (edit.text) {
 		put.update.push(['text', 'set', edit.text]);
 	}
 	if (edit.tags) {
@@ -198,8 +198,15 @@ exports.join = exports.part = exports.admit = exports.expel = function (action) 
 
 
 function addTags(action) {
-	if (!action.tags) action.tags = [];
-	for (var i in action.labels) if (action.labels[i] > 0.5) action.tags.push(i);
+	if (!action.tags) {
+		action.tags = [];
+
+		for (var i in action.labels) {
+			if (action.labels[i] > 0.5) {
+				action.tags.push(i);
+			}
+		}
+	}
 }
 
 function addThread(action) {

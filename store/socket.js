@@ -32,7 +32,7 @@ module.exports = function(c, conf, s) {
 		}, 10);
 	});
 	["text-up", "edit-up", "back-up", "away-up",
-	 "nick-up", "join-up", "part-up", "admit-up", "expel-up",
+	 "join-up", "part-up", "admit-up", "expel-up",
 	 "user-up", "room-up"].forEach(function(event) {
 		core.on(event, function(action, next) {
 			action.type = event.replace(/-up$/, "");
@@ -138,7 +138,9 @@ function receiveMessage(event) {
 			pendingQueries[data.id]();
 			delete pendingQueries[data.id];
 		}
-	} else {
+	} 
+	
+	if (["text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "error"].indexOf(data.type) != -1) {
 		//data is an action
 		if (pendingActions[data.id]) {
 			pendingActions[data.id](data);

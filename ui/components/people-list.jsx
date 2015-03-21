@@ -8,55 +8,6 @@ module.exports = function(core, config, store) {
 		ListView = require("./list-view.jsx")(core, config, store),
 		PeopleList;
 
-	function getPeople(query) {
-		var room = store.getRoom(),
-			people = store.getRelatedUsers(),
-			sections = {
-				online: [],
-				offline: []
-			},
-			arr = [],
-			user, items, regex;
-
-		try {
-			regex = new RegExp(stringUtils.escapeRegExp(query));
-		} catch (e) {
-			return [];
-		}
-
-		for (var i = 0, l = people.length; i < l; i++) {
-			if (sections[people[i].status]) {
-				user = store.get("entities", people[i].user);
-
-				if (regex.test(user.id)) {
-					sections[people[i].status].push({
-						key: "people-list-" + room.id + "-" + user.id,
-						elem: (
-							<div className="people-list-item">
-								<img className="people-list-item-avatar" src={getAvatar(user.picture, 48)} />
-								<span className="people-list-item-nick">{user.id}</span>
-							</div>
-						)
-					});
-				}
-			}
-		}
-
-		for (var status in sections) {
-			items = sections[status];
-
-			if (items.length) {
-				arr.push({
-					key: "people-list-" + status,
-					header: status.charAt(0).toUpperCase() + status.slice(1) + " (" + items.length + ")",
-					items: items
-				});
-			}
-		}
-
-		return arr;
-	}
-
 	PeopleList = React.createClass({
 		getInitialState: function() {
 			return { query: "" };
@@ -67,7 +18,52 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var sections = getPeople(this.state.query);
+			var room = store.getRoom(),
+				people = store.getRelatedUsers(),
+				headers = {
+					online: [],
+					offline: []
+				},
+				sections = [],
+				user, items, regex;
+
+			try {
+				regex = new RegExp(stringUtils.escapeRegExp(this.state.query));
+			} catch (e) {
+				return [];
+			}
+
+			for (var i = 0, l = people.length; i < l; i++) {
+				people[i].status = people[i].status || "offline";
+
+				if (headers[people[i].status]) {
+					user = store.get("entities", people[i].user);
+
+					if (regex.test(user.id)) {
+						headers[people[i].status].push({
+							key: "people-list-" + room.id + "-" + user.id,
+							elem: (
+								<div className="people-list-item">
+									<img className="people-list-item-avatar" src={getAvatar(user.picture, 48)} />
+									<span className="people-list-item-nick">{user.id}</span>
+								</div>
+							)
+						});
+					}
+				}
+			}
+
+			for (var status in headers) {
+				items = headers[status];
+
+				if (items.length) {
+					sections.push({
+						key: "people-list-" + status,
+						header: status.charAt(0).toUpperCase() + status.slice(1) + " (" + items.length + ")",
+						items: items
+					});
+				}
+			}
 
 			return (
 			        <div className="sidebar-people-list">
