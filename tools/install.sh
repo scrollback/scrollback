@@ -1,145 +1,375 @@
-#!/bin/bash
+# Copyright (c) 20015-2016 "Askabt Technology"
+# This file is a part of Scrollback <https://scrollback.io>
+#
+# Scrollback is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+# Author: Sindhu S <sindhus@live.in>
+#!/usr/bin/env bash
 
-# Exit script on Ctrl+C
-trap exit 1 INT
+# echo on for DEBUG!
+# set -xv
 
-# Don't run as root
-if [[ "$(whoami)" = "root" ]]; then
-    echo "Please run the script as normal user"
-    exit 1
-fi
+# Vars for Scrollback/Env
+kernel=$(uname)
+declare -A sys_deps
+sys_deps=(
+    ['git']=$(command -v git)
+    ['nodejs']=$(command -v node)
+    ['redis']=$(command -v redis-server)
+    ['postgres']=$(command -v psql)
+    ['npm']=$(command -v npm))
+declare -A app_deps
+app_deps=( ['gulp']=$(command -v gulp)
+    ['bower']=$(command -v bower))
+application_deps=""
+system_deps=""
+declare -A specific_pkg_names
+specific_pkg_names=(
+    ['postgres']="apt-get:postgresql-9.4 apt-get:postgresql-contrib-9.4 yum:postgresql-9.4 pacman:postgresql "
+    ['nodejs']="apt-get:nodejs-legacy yum:nodejs pacman:nodejs"
+    ['npm']="apt-get:npm yum:npm"
+    ['git']="apt-get:git yum:git pacman:git"
+    ['redis']="apt-get:redis-server yum:redis pacman:redis")
+ip="localhost"
+port="7528"
 
-# Detect the current distro
-distro=$(grep '^NAME=' /etc/os-release | sed -e s/NAME=//g -e s/\"//g)
+check_root() {
+    if [[ "$(whoami)" = "root" ]]; then
+        echo "Run script as normal user, exiting!"
+        exit 1
+    fi
+}
 
-[[ "$distro" = "Antergos" || "$distro" = "Manjaro" ]] && distro="Arch Linux"
+check_bash() {
+    version=$(bash -c 'echo $BASH_VERSINFO')
+    if [ "$version" -eq 4 ]; then
+        echo "You have Bash 4.x, will continue installation :)"
+    else
+        echo "You don't have Bash 4.x, exiting :("
+        exit 1
+    fi
+}
 
-if [[ "$distro" = "Fedora" || "$distro" = "Ubuntu" || "$distro" = "Arch Linux" ]]; then
-    # Show the list of items to install
-    pkgs=($(whiptail --separate-output \
-            --title "Review items" \
-            --checklist "The following items will be installed." \
-            --ok-button "Install" \
-            --cancel-button "Skip" \
-            --notags 15 40 5 \
-            git "GIT version control" on \
-            nodejs "Node.js" on \
-            redis "Redis server" on 3>&1 1>&2 2>&3))
+whereami() {
+    if [[ -d "scrollback" ]]; then
+        change_dir scrollback
+        location="$(grep -s "\"name\": \"Scrollback\"," package.json)"
+        if [[ "$location" ]]; then
+            update_scrollback
+        else
+            echo "You don't have Scrollback repo!"
+            change_dir ..
+        fi
+    else
+        get_scrollback
+    fi
+}
 
-    # Update the sources list in Ubuntu
-    [[ "$distro" = "Ubuntu" ]] && sudo apt-get update
+change_dir(){
+    cd $1
+}
 
-    # Update the sources list in Arch Linux
-    [[ "$distro" = "Arch Linux" ]] && sudo pacman -Sy
-
-    # Iterate over all the items in the array and perform operations accordingly
-    for (( i = 0; i < ${#pkgs[@]} ; i++ )); do
-        case "${pkgs[$i]}" in
-            git)
-                case "$distro" in
-                    Ubuntu)
-                        sudo apt-get install -y git;;
-                    Fedora)
-                        sudo yum install -y git;;
-                    Arch)
-                        sudo pacman -S --needed --noconfirm git;;
-                esac;;
-            nodejs)
-                case "$distro" in
-                    Ubuntu)
-                        if [[ "$(lsb_release -sr)" < "14.04" ]]; then
-                            sudo add-apt-repository -y ppa:chris-lea/node.js
-                            sudo apt-get update
-                            sudo apt-get install -y nodejs
-                        else
-                            sudo apt-get install -y nodejs-legacy npm
-                        fi;;
-                    Fedora)
-                        sudo yum install -y nodejs npm;;
-                    Arch)
-                        sudo pacman -S --needed --noconfirm nodejs;;
-                esac;;
-            redis)
-                case "$distro" in
-                    Ubuntu)
-                        sudo add-apt-repository -y ppa:rwky/redis
-                        sudo apt-get update
-                        sudo apt-get install -y redis-server;;
-                    Fedora)
-                        sudo yum install -y redis;;
-                    Arch)
-                        sudo pacman -S --needed --noconfirm redis;;
-                esac;;
-        esac
-    done
-else
-    # We only install packages for Ubuntu, Fedora and Arch
-    echo "Unsupported distro. You will need to install the dependencies manually. Continue anyway [y/n]?"
-    read -n 1 ans
-    [[ "$ans" = [Yy] ]] || exit 1
-fi
-
-# Set open file limits
-filemax=$(( $(cat /proc/sys/fs/file-max) - 2048 ))
-limitconf="/etc/security/limits.conf"
-grep "$(whoami) hard nofile" "$limitconf" > /dev/null 2>&1
-[[ $? -eq 0 ]] || echo "$(whoami) hard nofile $filemax" | sudo tee -a "$limitconf"
-grep "$(whoami) soft nofile" "$limitconf" > /dev/null 2>&1
-[[ $? -eq 0 ]] || echo "$(whoami) soft nofile $filemax" | sudo tee -a "$limitconf"
-
-# Are we inside the cloned repository?
-grep "\"name\": \"Scrollback\"" "package.json" > /dev/null 2>&1
-if [[ ! $? -eq 0 ]]; then
-    # Allow cloning from a forked repository
-    echo "Scrollback will be installed from the upstream repo. Enter the Github username to to change, otherwise press enter:"
+get_scrollback() {
+    echo "Do you want to clone your fork of Scrollback? If yes, enter your username:"
     read -t 10 ghuser
     [[ -z "$ghuser" ]] && ghuser="scrollback"
-    git clone "https://github.com/$ghuser/scrollback.git"
-    cd "scrollback"
-fi
+    echo "$(git clone --depth=1 https://github.com/$ghuser/scrollback.git)"
+    echo $(chown -R scrollback:scrollback scrollback)
+    echo " *** Note *** This is a shallow clone, to unshallow run 'git fetch --depth=10000000"
+    change_dir scrollback
+}
 
-# Temporarily set python version (needed by leveldb)
-export PYTHON="python2.7"
+check_deps() {
+    for each in ${!sys_deps[@]}; do
+        if [[ ${sys_deps[$each]} != "" ]]; then
+            unset sys_deps[$each];
+        fi
+    done
 
-# Install various dependencies for scrollback
-echo "Installing dependencies..."
-install_npm_modules="npm install -g gulp bower mocha"
+    for each in ${!app_deps[@]}; do
+        if [[ ${app_deps[$each]} != "" ]]; then
+            unset app_deps[$each];
+        fi
+    done
 
-if [[ -w /usr/local/bin/ && -w /usr/local/lib/ ]]; then
-    # Directory is writable, no need to use sudo
-    ${install_npm_modules}
-else
-    sudo ${install_npm_modules}
-fi
+    for each in ${!sys_deps[@]}; do
+        system_deps=$system_deps" "$each
+    done
 
-npm install
-bower install
+    for each in ${!app_deps[@]}; do
+        application_deps=$application_deps" "$each
+    done
+}
 
-# Enable and start the Redis daemon
-echo "Starting Redis"
-if [[ `command -v systemctl` ]]; then
-    sudo systemctl enable redis
-    sudo systemctl start redis
-elif [[ `command -v service` ]]; then
-    sudo service redis start
-fi
+deps_osx() {
+    if [[ $(which brew) ]]; then
+        echo "You are on OS X with Brew installed,"
+        if [[ "$system_deps" ]]; then
+            echo "Running 'brew update' and will install system dependencies..."
+            echo $(brew -v update && brew -v install $system_deps)
+        else
+            echo "You have all system dependencies installed!"
+        fi
+    fi
+}
 
-# Add local.scrollback.io to /etc/hosts
-grep "local.scrollback.io" "/etc/hosts" > /dev/null 2>&1
-if [[ ! $? -eq 0 ]]; then
-    echo "Add 'local.scrollback.io' to /etc/hosts [y/n]?"
-    read -t 5 -n 1 ans
-    [[ -z "$ans" || "$ans" = [Yy] ]] && echo "127.0.0.1	local.scrollback.io" | sudo tee -a "/etc/hosts"
-fi
+postgres_sources() {
+    # Both Debian and Ubuntu have /etc/os-release
+    # Debian doesn't support -P of grep, Ubuntu does
+    # Debian doesn't have lsb_release, Ubuntu does
 
-# Copy sample myConfig.js and client-config.js files
-[[ -f "ircClient/myConfig.js" ]] || cp "ircClient/myConfig.sample.js" "ircClient/myConfig.js"
+    lsb=$(command -v lsb_release)
+    if [[ $lsb != "" ]]; then
+        info=$(lsb_release -c)
+        release_name=$(echo $info | grep -oP 'Codename:.* \K\w*')
+    else
+        release_name=$(grep VERSION= /etc/os-release | tr -d '(' | cut -d ' ' -f 2-  | tr -d ')"')
+    fi
 
-# Run Gulp to generate misc files
-echo "Running Gulp"
-gulp
+    if [[ $release_name != "" ]]; then
+        apt_source="deb http://apt.postgresql.org/pub/repos/apt/ $release_name-pgdg main"
+        echo "Adding Postgres' source to your software sources list (need root user rights).."
+        echo $(sudo echo $apt_source > /etc/apt/sources.list.d/pgdg.list)
+        echo "Updating GPG Keys for source..."
+        echo $(wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -)
+    fi
+}
 
-# Show notification when installation finishes
-[[ `command -v notify-send` ]] && notify-send "Scrollback installation finished." "Start scrollback with 'sudo npm start'."
+deps_linux() {
+    echo "You are on a Linux system,"
+    echo "Finding your distribution type and package manager..."
+    declare -A osInfo;
+    osInfo=(
+    ['/etc/arch-release']='pacman -Svy --noconfirm base-devel'
+    ['/etc/debian_version']='apt-get update && apt-get -y install build-essential'
+    ['/etc/fedora-release']='yum update && yum install -y --verbose @development-tools' )
+    for each in ${!osInfo[@]}; do
+        if [[ -f $each ]];then
+            pkg_mgr=${osInfo[$each]}
+        fi
+    done
 
-# EOF
+    arr0=($pkg_mgr)
+    install=$pkg_mgr
+
+    if [[ "$system_deps" ]]; then
+        for dep in $system_deps; do
+            for pkg in ${!specific_pkg_names[@]}; do
+                if [[ $dep == $pkg ]]; then
+                    for each in ${specific_pkg_names[$pkg]}; do
+                        arr1=(${each//:/ })
+                        if [[ "${arr1[0]}" == "${arr0[0]}" ]]; then
+                            install+=" ${arr1[1]}"
+                        fi
+                        # For debian systems that are known not to have postgresql-9.4
+                        if [[ ${arr1[0]} == "apt-get" ]]; then
+                            postgres_sources
+                        fi
+                    done
+                fi
+            done
+        done
+
+        echo "Updating sources and installing dependencies with:"
+        echo $install
+        eval $install
+    else
+        echo "You have all system dependencies installed!"
+    fi
+}
+
+install_deps() {
+    if [[ ${kernel} == "Darwin" ]]; then
+        deps_osx
+    elif [[ ${kernel} == "Linux" ]]; then
+        deps_linux
+    else
+        echo "Whoa! You are not on a kernel we recognise."
+        echo "If you think Nodejs applications are capable of runnning on this system,"
+        echo "File an issue on https://github.com/scrollback/scrollback/issues."
+        exit 1
+    fi
+}
+
+update_scrollback() {
+    echo "Bringing your local Scrollback master branch up-to-date with upstream master..."
+    echo "*** Stashing *** your local changes with 'git stash save'"
+    echo "To bring back local changes later, use 'git stash apply'"
+    echo $(git stash save)
+    echo $(git checkout master)
+    echo $(git pull --rebase origin master)
+}
+
+install_pkgs() {
+    echo "Installing application dependencies for Scrollback..."
+    npm_base="npm install --verbose"
+    npm_global="sudo $npm_base -g $application_deps"
+    npm_command="$npm_base"
+
+    # Directory is writable, no need to use root rights
+    if [[ -w /usr/local/bin/ && -w /usr/local/lib/ ]]; then
+        echo "Writable"
+    else
+        npm_command="sudo $npm_base"
+    fi
+    eval $npm_command
+
+    if [[ "$application_deps" ]]; then
+        eval $npm_global
+    fi
+
+    echo $(bower install --verbose)
+    echo $(gulp)
+}
+
+config() {
+    if [[ -f client-config.sample.js ]]; then
+        echo $(cp client-config.sample.js client-config.js)
+    else
+        echo $(echo "module.exports = {};" > client-config.js)
+    fi
+}
+
+redis() {
+    redis_pid=$(pgrep redis-server)
+    if [[ "$redis_pid" ]]; then
+        echo "Looks like you are already running redis-server with PID $redis_pid"
+    else
+        echo "Starting Redis Server..."
+        $(redis-server > /dev/null)
+    fi
+}
+
+service_manager() {
+    init_location=$(type init)
+    sysvinit="init is /sbin/init"
+    systemd="init is /usr/sbin/init"
+    if [[ $init_location == $sysvinit ]]; then
+        echo sysvinit
+    else
+        echo systemd
+    fi
+}
+
+postgres_osx_start() {
+    # Known issue of missing dirs in OS X 10.10: Stackoverflow #25970132
+    echo $(mkdir -p /usr/local/var/postgres/{pg_tblspc,pg_twophase,pg_stat_tmp}/)
+    echo "Starting Postgres Server..."
+    echo $(pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start)
+    echo "You can shutdown Postgres later with 'pg_ctl -D /usr/local/var/postgres stop -s -m fast'"
+}
+
+postgres_schemas() {
+    echo "Creating tables in databases..."
+    echo $(psql -U scrollback -d scrollback -a -f tools/pg/sbcontent.sql)
+    echo $(psql -U scrollback -d scrollback -a -f tools/pg/sbentity.sql)
+    echo $(psql -U scrollback -d logs -a -f tools/pg/logs.sql)
+}
+
+postgres_osx_create() {
+    echo "Creating user: 'scrollback' without password..."
+    echo $(createuser scrollback)
+    echo "Creating database: 'scrollback'"
+    echo $(createdb -U `whoami` -w -O scrollback scrollback )
+    echo "Creating database: 'logs'"
+    echo $(createdb -U `whoami` -w -O scrollback logs)
+}
+
+postgres_create_linux() {
+    echo "Creating user: 'scrollback' without password..."
+    $(sudo -u postgres createuser -s scrollback)
+    echo "Creating database: 'scrollback'"
+    $(sudo -u postgres createdb -w -O scrollback scrollback)
+    echo "Creating database: 'logs'"
+    $(sudo -u postgres createdb -w -O scrollback logs)
+}
+
+postgres_sysvinit() {
+    echo "Starting Postgres Server..."
+    $(sudo /etc/init.d/postgresql start)
+    echo "To stop Postgres Server later, use 'sudo /etc/init.d/postgresql stop'"
+}
+
+postgres_systemd() {
+    echo "Enabling Postgres Server.."
+    $(sudo systemctl enable postgresql.service)
+    echo "Starting Postgres Server..."
+    $(sudo systemctl start postgresql.service)
+    echo "To stop Postgres Server later, use 'sudo systemctl postgres stop'"
+}
+
+postgres() {
+    echo "Checking for Postgres..."
+    postgres_pids=$(pgrep postgres)
+    if [[ "$postgres_pids" ]]; then
+        if [[ ${kernel} == "Darwin" ]]; then
+            postgres_osx_start
+            postgres_osx_create
+            postgres_schemas
+        elif [[ ${kernel} == "Linux" ]]; then
+            if [[ $service_manager == "sysvinit" ]]; then
+                postgres_sysvinit
+            elif [[ $service_manager == "systemd" ]]; then
+                postgres_systemd
+            fi
+            postgres_create_linux
+            postgres_schemas
+        fi
+    else
+        echo "You are running Postgres server on $postgres_pids"
+    fi
+}
+
+run() {
+    echo "Starting Scrollback, open your browser at http://$ip:$port, "
+    echo $(node index.js)
+}
+
+main() {
+    echo " ********** BEGIN Scrollback.io INSTALL ********** "
+    # Listen to Ctrl+C
+    trap exit 1 INT
+
+    # Don't run as root
+    # check_root
+
+    # Have bash 4.x?
+    check_bash
+
+    # Have Scrollback?
+    whereami
+
+    # Check for installed deps
+    check_deps
+
+    # System deps
+    install_deps
+
+    # Application deps
+    install_pkgs
+    config
+
+    # Run redis
+    redis
+
+    # Run/setup postgres
+    postgres
+
+    # Run Scrollback
+    run
+
+    echo " ********** END Scrollback.io INSTALL ********** "
+}
+
+main
