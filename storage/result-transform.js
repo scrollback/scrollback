@@ -4,10 +4,6 @@ exports.getTexts = function(query, texts) {
 	var results = [];
 	if (texts.length) {
 		texts[0].rows.forEach(function(row) {
-			var labels = {};
-			row.tags.forEach(function(tag) {
-				labels[tag] = 1;
-			});
 			var text = {
 				id: row.id,
 				to: row.to,
@@ -17,8 +13,6 @@ exports.getTexts = function(query, texts) {
 				thread: row.thread,
 				title: row.title,
 				tags: row.tags,
-				threads: [{id: row.thread, title: row.title, score: 1}], // backward compatibility
-				labels: labels, // backward compatibility
 				mentions: row.mentions,
 				time: row.time.getTime()
 			};

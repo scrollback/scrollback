@@ -18,8 +18,8 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
-var plugins = [  "validator", "compatibility", "browserid-auth", "facebook", "recommendation", "anti-abuse",
-			   "threader", "authorizer", "redis-storage", "storage",
+var plugins = ["validator","browserid-auth", "facebook", "recommendation", "anti-abuse",
+			   "threader", "thread-color", "authorizer", "redis-storage", "storage",
 			   "entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "search", "sitemap",
 			   "push-notification", "google"];
 
