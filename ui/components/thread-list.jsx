@@ -180,7 +180,7 @@ module.exports = function(core, config, store) {
 						</div>
 				);
 			} else {
-				return (<ListView endlesskey={key} sections={sections} endless={true} onScroll={this.onScroll} />);
+				return (<ListView endlesskey={key} sections={sections} onScroll={this.onScroll} />);
 			}
 		}
 	});
