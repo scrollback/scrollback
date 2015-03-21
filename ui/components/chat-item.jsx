@@ -9,21 +9,39 @@ module.exports = function(core, config, store) {
 
 	ChatItem = React.createClass({
 		showChatMenu: function(e) {
-			var index, currentText, selectedTexts;
+			core.emit("text-menu", {
+				origin: e.currentTarget,
+				buttons: {},
+				items: {},
+				arrow: true,
+				textObj: this.props.text
+			}, function(err, menu) {
+				showMenu("text-menu", menu);
+			});
+		},
+
+		selectMessage: function(e) {
+			var navChanges = {},
+				index, currentText, selectedTexts;
 
 			if (e.target.tagName === "A") {
 				return;
 			}
 
 			currentText = store.get("nav", "currentText");
-			selectedTexts = store.get("nav", "selectedTexts") || [];
 
-			index = selectedTexts.indexOf(this.props.text.id);
+			if (!/\bchat-item-nick\b/.test(e.target.className)) {
+				selectedTexts = store.get("nav", "selectedTexts") || [];
 
-			if (index > -1) {
-				selectedTexts.splice(index, 1);
-			} else {
-				selectedTexts.push(this.props.text.id);
+				index = selectedTexts.indexOf(this.props.text.id);
+
+				if (index > -1) {
+					selectedTexts.splice(index, 1);
+				} else {
+					selectedTexts.push(this.props.text.id);
+				}
+
+				navChanges.selectedTexts = selectedTexts;
 			}
 
 			if (currentText === this.props.text.id) {
@@ -31,23 +49,12 @@ module.exports = function(core, config, store) {
 			} else {
 				currentText = this.props.text.id;
 
-				core.emit("text-menu", {
-					origin: e.currentTarget,
-					buttons: {},
-					items: {},
-					arrow: true,
-					textObj: this.props.text
-				}, function(err, menu) {
-					showMenu("text-menu", menu);
-				});
+				this.showChatMenu(e);
 			}
 
-			core.emit("setstate", {
-				nav: {
-					currentText: currentText,
-					selectedTexts: selectedTexts
-				}
-			});
+			navChanges.currentText = currentText;
+
+			core.emit("setstate", { nav: navChanges });
 		},
 
 		render: function() {
@@ -77,7 +84,7 @@ module.exports = function(core, config, store) {
 			}
 
 			return (
-				<div className={classNames} key={"chat-item-" + nav.room + "-" + (nav.thread || "all") + "-" + this.props.text.id} onClick={this.showChatMenu}>
+				<div className={classNames} key={"chat-item-" + nav.room + "-" + (nav.thread || "all") + "-" + this.props.text.id} onClick={this.selectMessage}>
 					{nick}
 					<div className="chat-item-message markdown-text" dangerouslySetInnerHTML={{__html: text}}></div>
 					{timeStamp}
