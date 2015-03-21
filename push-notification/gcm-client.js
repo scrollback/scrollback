@@ -72,5 +72,5 @@ module.exports = function(c, conf, st) {
 			Android.unregisterGCM();
 		}
 		next();
-	});
+	}, 500);
 };
