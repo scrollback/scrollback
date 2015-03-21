@@ -58,7 +58,7 @@ var defaults = {
 		}
 	},
 	"browserid-auth": {
-		audience: "localhost:7528"
+		audience: "http://localhost:7528"
 	},
 	env: "development",
 	http: {
@@ -87,8 +87,12 @@ var defaults = {
 	},
 	threader: {
 		host: "localhost",
-		port: 12345,
+		port: 55555,
 		redisDB: 11
+	},
+	"thread-color": {
+		redisDB: 11, // no harm in reusing as long as there is no key collision
+		numColors: 10
 	},
 	twitter: {
 		//consumerKey: ".."

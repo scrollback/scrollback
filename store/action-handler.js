@@ -103,6 +103,21 @@ function onTextUp(text, next) {
 	key = keyFromText(text);
 	newState.texts[text.to] = [textRange];
 	newState.texts[key] = [textRange];
+	
+//	Optimistically adding new threads is made complex
+//	by the unavailability of an id on the text-up.
+//	if(text.thread == "new") {
+//		newState.threads = {};
+//		newState.threads[text.to] = [{
+//			start: text.time, end: null, items: [{
+//				id: text.id, from: text.from, to: text.to,
+//				startTime: text.time, color: -1, tags: null,
+//				title: text.title, updateTime: text.time,
+//				updater: text.from
+//			}]
+//		}];
+//	}
+	
 	core.emit("setstate", newState);
 
 }
@@ -136,13 +151,27 @@ function onTextDn(text, next) {
 		oldRange = {
 			start: pendingActions[text.id].time,
 			end: pendingActions[text.id].time,
-			items: [
-
-			]
+			items: []
 		};
 		newState.texts[text.to].push(oldRange);
 		if(pendingActions[text.id].to !== oldKey) newState.texts[oldKey].push(oldRange);
 	}
+	
+	if(text.thread === text.id) {
+		console.log("this text starts a new thread", text);
+		
+		newState.threads = {};
+		newState.threads[text.to] = [{
+			start: text.time, end: text.time, items: [{
+				id: text.thread, from: text.from, to: text.to,
+				startTime: text.time, color: text.color, tags: null,
+				title: text.title, updateTime: text.time,
+				updater: text.from
+			}]
+		}];
+	}
+	
+	// TODO? If text.title exists, change title of thread.
 
 	core.emit("setstate", newState);
 	next();

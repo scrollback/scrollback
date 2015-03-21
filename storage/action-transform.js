@@ -21,8 +21,8 @@ exports.text = function (text) {
 
 	/* Start Compatibility Block */
 
-	addThread(text);
-	addTags(text);
+//	addThread(text);
+//	addTags(text);
 
 	/* End Compatibility Block */
 	log.d("Text:", text);
@@ -56,9 +56,8 @@ exports.text = function (text) {
 			updatetime: new Date(text.time),
 			length: 1,
 			updater: text.from,
-			color: (/[0-9]/.test(text.thread.substr(text.thread.length - 1)) ?
-					text.thread.substr(text.thread.length - 1) : 0)
-			/*mentions: text.mentions*/
+			color: text.color
+			/* concerns: [text.from].concat(text.mentions) */
 		};
 		/* For existing threads update endTime, length and perhaps title */
 		put.update = [
@@ -78,9 +77,9 @@ exports.edit = function (edit) {
 	put.filters.push(['id', 'eq', edit.ref]);
 	put.update = [];
 	// start compability block.
-	addOldTags(edit);
-	addTags(edit);
-	addThread(edit);
+//	addOldTags(edit);
+//	addTags(edit);
+//	addThread(edit);
 	// end Compatibility block.
 	if (edit.text || edit.tags) {
 		put.update.push(['updatetime', 'set', new Date(edit.time)]);
@@ -196,35 +195,37 @@ exports.join = exports.part = exports.admit = exports.expel = function (action) 
 };
 
 
-
-function addTags(action) {
-	if (!action.tags) action.tags = [];
-	for (var i in action.labels) if (action.labels[i] > 0.5) action.tags.push(i);
-}
-
-function addThread(action) {
-	if (action.threads && action.threads[0]) {
-		action.thread = action.threads[0].id; // .substr(0, action.threads[0].id.length - 1);
-		action.title = action.threads[0].title;
-	}
-}
-
-function addOldTags(edit) {
-
-	if (edit.old && edit.old.labels) {
-		var newLabels = edit.old.labels;
-		for(var l in edit.old.labels) {
-			if (edit.old.labels.hasOwnProperty(l)) {
-				newLabels[l] = edit.old.labels[l];
-			}
-		}
-		if (edit.labels) {
-			for (var label in edit.labels) {
-				if (edit.labels.hasOwnProperty(label)) {
-					newLabels[label] = edit.labels[label];
-				}
-			}
-		}
-		edit.labels = newLabels;
-	}
-}
+//
+//function addTags(action) {
+//	if (!action.tags) {
+//		action.tags = [];
+//		for (var i in action.labels) if (action.labels[i] > 0.5) action.tags.push(i);
+//	}
+//}
+//
+//function addThread(action) {
+//	if (action.threads && action.threads[0]) {
+//		action.thread = action.threads[0].id; // .substr(0, action.threads[0].id.length - 1);
+//		action.title = action.threads[0].title;
+//	}
+//}
+//
+//function addOldTags(edit) {
+//
+//	if (edit.old && edit.old.labels) {
+//		var newLabels = edit.old.labels;
+//		for(var l in edit.old.labels) {
+//			if (edit.old.labels.hasOwnProperty(l)) {
+//				newLabels[l] = edit.old.labels[l];
+//			}
+//		}
+//		if (edit.labels) {
+//			for (var label in edit.labels) {
+//				if (edit.labels.hasOwnProperty(label)) {
+//					newLabels[label] = edit.labels[label];
+//				}
+//			}
+//		}
+//		edit.labels = newLabels;
+//	}
+//}

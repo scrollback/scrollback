@@ -19,7 +19,7 @@ Boston, MA 02111-1307 USA.
 */
 
 var plugins = [  "validator","browserid-auth", "facebook", "recommendation", "anti-abuse",
-			   "threader", "authorizer", "redis-storage", "storage",
+			   "threader", "thread-color", "authorizer", "redis-storage", "storage",
 			   "entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "search", "sitemap",
 			   "push-notification","google"];
 
