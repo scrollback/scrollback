@@ -83,16 +83,20 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var thread = this.props.thread,
-				chats;
+				chats = [];
 
-			chats = (store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).map(function(chat) {
+			(store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).forEach(function(chat) {
+				if (chat.tags && (chat.tags.indexOf("hidden") > -1 || chat.tags.indexOf("abusive") > -1)) {
+					return;
+				}
+
 				if (typeof chat === "object" && typeof chat.text === "string") {
-					return (
+					chats.push((
 						<div key={"thread-card-chat-" + store.get("nav", "room") + "-" + thread.id + "-" + chat.id} className="card-chat">
 							<span className="card-chat-nick">{chat.from}</span>
 							<span className="card-chat-message">{chat.text}</span>
 						</div>
-					);
+					));
 				}
 			});
 
