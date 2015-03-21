@@ -54,6 +54,37 @@ module.exports = function(core, config, store) {
 	}, 500);
 
 	core.on("user-menu", function(menu, next) {
+		var user = store.getUser(),
+			notification = (user.params.notifications && typeof user.params.notifications.sound == "boolean") ? user.params.notifications.sound : true;
+
+		if (!appUtils.isGuest(store.get("user"))) {
+			menu.items.userpref = {
+				text: "Account settings",
+				prio: 300,
+				action: function() {
+					core.emit("setstate", {
+						nav: { dialog: "pref" }
+					});
+				}
+			};
+		}
+
+		menu.items["sound-notification-" + (notification ? "disable" : "enable")] = {
+			text: (notification ? "Disable " : "Enable ") + "sound notifications",
+			prio: 500,
+			action: function() {
+				user.params.notifications = user.params.notifications || {};
+
+				user.params.notifications.sound = !user.params.notifications.sound;
+
+				core.emit("user-up", {
+					to: user.id,
+					from: user.id,
+					user: user
+				});
+			}
+		};
+
 		if (appUtils.isGuest(store.get("user"))) {
 			menu.title = "Sign in to Scrollback with";
 
@@ -61,16 +92,6 @@ module.exports = function(core, config, store) {
 				next();
 			});
 		}
-
-		menu.items.userpref = {
-			text: "Account settings",
-			prio: 300,
-			action: function() {
-				core.emit("setstate", {
-					nav: { dialog: "pref" }
-				});
-			}
-		};
 
 		next();
 	}, 1000);

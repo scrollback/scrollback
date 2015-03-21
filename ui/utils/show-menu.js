@@ -84,7 +84,7 @@ module.exports = function(type, menu) {
 		// append items in sorted order
 		sortable.forEach(function(item) {
 			if (typeof item[1].text === "string" && typeof item[1].action === "function") {
-				$("<li>").append($("<a>").addClass(item[2].toLowerCase().replace(' ', '-'))
+				$("<li>").append($("<a>").addClass("menu-item menu-" + item[2].toLowerCase().replace(' ', '-'))
 						.text(item[1].text))
 					.on("click", function() {
 						$popover.popover("dismiss");
@@ -99,7 +99,7 @@ module.exports = function(type, menu) {
 		$list.appendTo($popover);
 	}
 
-	return $popover.addClass(type).popover({
+	return $popover.addClass("menu menu-" + type).popover({
 		arrow: !!(menu.arrow),
 		origin: menu.origin
 	});

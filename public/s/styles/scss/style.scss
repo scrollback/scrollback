@@ -322,3 +322,39 @@ body {
         width: 50em;
     }
 }
+
+.menu {
+    width: auto;
+
+    &-item {
+        white-space: pre;
+
+        &:before {
+            opacity: .7;
+            margin-right: .75em;
+            font-size: 1.2em;
+            vertical-align: -.1em;
+            padding: 0 .2em;
+        }
+    }
+
+    &-userpref {
+        &:before { @include icon(configure); }
+    }
+
+    &-reportissue {
+        &:before { @include icon(info-circled); }
+    }
+
+    &-sound-notification-enable {
+        &:before { @include icon(audio); }
+    }
+
+    &-sound-notification-disable {
+        &:before { @include icon(audio-off); }
+    }
+
+    &-logout {
+        &:before { @include icon(off); }
+    }
+}
