@@ -9,18 +9,44 @@ module.exports = function(core, config, store) {
 
 	ChatItem = React.createClass({
 		showChatMenu: function(e) {
+			var index, currentText, selectedTexts;
+
 			if (e.target.tagName === "A") {
 				return;
 			}
 
-			core.emit("text-menu", {
-				origin: e.currentTarget,
-				buttons: {},
-				items: {},
-				arrow: true,
-				textObj: this.props.text
-			}, function(err, menu) {
-				showMenu("text-menu", menu);
+			currentText = store.get("nav", "currentText");
+			selectedTexts = store.get("nav", "selectedTexts") || [];
+
+			index = selectedTexts.indexOf(this.props.text.id);
+
+			if (index > -1) {
+				selectedTexts.splice(index, 1);
+			} else {
+				selectedTexts.push(this.props.text.id);
+			}
+
+			if (currentText === this.props.text.id) {
+				currentText = null;
+			} else {
+				currentText = this.props.text.id;
+
+				core.emit("text-menu", {
+					origin: e.currentTarget,
+					buttons: {},
+					items: {},
+					arrow: true,
+					textObj: this.props.text
+				}, function(err, menu) {
+					showMenu("text-menu", menu);
+				});
+			}
+
+			core.emit("setstate", {
+				nav: {
+					currentText: currentText,
+					selectedTexts: selectedTexts
+				}
 			});
 		},
 

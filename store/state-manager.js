@@ -20,12 +20,12 @@ module.exports = function(core, conf, s, st) {
 		if (changes.threads) updateThreads(changes.threads);
 		if (changes.session) updateSession(changes.session);
 		if (changes.user) updateCurrentUser(changes.user);
-		
-		
+
+
 		if(changes.nav && changes.nav.textRange) {
 //			console.log('textRange is now', changes.nav.textRange);
 		}
-		
+
 		buildIndex(changes);
 		core.emit("statechange", changes);
 		next();
@@ -64,8 +64,12 @@ function updateTexts(texts) {
 
 	rooms.forEach(function(roomThread) {
 		ranges = store.get("texts", roomThread);
-		if(!ranges) ranges = state.texts[roomThread] = [];
-		if(texts[roomThread].length) {
+
+		if (!ranges) {
+			ranges = state.texts[roomThread] = [];
+		}
+
+		if (texts[roomThread].length) {
 			texts[roomThread].forEach(function(newRange) {
 				state.texts[roomThread] = rangeOps.merge(ranges, newRange, "time");
 			});
@@ -81,6 +85,7 @@ function buildIndex(obj) {
 	obj.indexes = {
 		userRooms: {},
 		roomUsers: {},
+		textsById: {},
 		threadsById: {}
 	};
 
@@ -105,6 +110,26 @@ function buildIndex(obj) {
 							for (var j = 0, k = items.length; j < k; j++) {
 								if (items[j] && items[j].id) {
 									obj.indexes.threadsById[items[j].id] = items[j];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (obj.texts) {
+		for (var roomThread in obj.texts) {
+			if (obj.texts[roomThread] && obj.texts[roomThread].length) {
+				for (var m = 0, n = obj.texts[roomThread].length; m < n; m++) {
+					if (obj.texts[roomThread][m]) {
+						items = obj.texts[roomThread][m].items;
+
+						if (items && items.length) {
+							for (var o = 0, p = items.length; o < p; o++) {
+								if (items[o] && items[o].id) {
+									obj.indexes.textsById[items[o].id] = items[o];
 								}
 							}
 						}

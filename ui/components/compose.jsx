@@ -69,10 +69,38 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
+			var currentText = store.get("nav", "currentText"),
+				textObj = store.get("indexes", "textsById", currentText),
+				msg = this.state.userInput || "",
+				user, nick, atStart;
+
+			if (textObj) {
+				nick = textObj.from;
+				user = store.get("user");
+
+				if (/^@\S+[\s+{1}]?/.test(msg)) {
+					msg = msg.replace(/^@\S+[\s+{1}]?/, "");
+					atStart = true;
+				} else {
+					msg = msg.replace(/@\S+[\s+{1}]?$/, "");
+				}
+
+				if (msg.indexOf("@" + nick) < 0 && user !== nick) {
+					if (atStart) {
+						msg = "@" + nick + (msg ? " " + msg : "");
+					} else {
+						msg = (msg ? msg + " " : "") + "@" + nick;
+					}
+				}
+
+				msg = format.textToHtml(msg).trim();
+				msg = msg ? msg + "&nbsp;" : "";
+			}
+
 			return (
 				<div key="chat-area-input" className="chat-area-input">
 					<div className="chat-area-input-inner">
-						<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: this.state.userInput}}
+						<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: msg}}
 							 onPaste={this.onPaste} onBlur={this.onBlur} onKeyDown={this.onKeyDown} onInput={this.setPlaceHolder}
 							 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
 						</div>
