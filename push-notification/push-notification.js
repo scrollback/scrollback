@@ -30,10 +30,10 @@ module.exports = function(core, conf) {
 				if(devices instanceof Array) return;
 				Object.keys(devices).forEach(function(uuid) {
 					var device = devices[uuid];
-					if (device.hasOwnProperty('registrationId') && device.enabled === true) {
+					if (device.hasOwnProperty('regId') && device.enabled === true) {
 						regList.push({
 							user: userObj,
-							registrationId: device.registrationId
+							registrationId: device.regId
 						});
 					}
 				});
