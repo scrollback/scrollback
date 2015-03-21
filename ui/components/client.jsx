@@ -9,7 +9,7 @@ module.exports = function(core, config, store) {
 		SidebarRight = require("./sidebar-right.jsx")(core, config, store),
 		ChatArea = require("./chat-area.jsx")(core, config, store),
 		HomeFeed = require("./home-feed.jsx")(core, config, store),
-		ThreadFeed = require("./thread-feed.jsx")(core, config, store),
+		ThreadList = require("./thread-list.jsx")(core, config, store),
 		Client,
 		clientEl = document.getElementById("app-client");
 
@@ -50,7 +50,7 @@ module.exports = function(core, config, store) {
 							<div className="main-content" data-mode="home search room">
 								<HomeFeed />
 
-								<ThreadFeed />
+								<ThreadList type="feed" />
 							</div>
 
 							<ChatArea />
