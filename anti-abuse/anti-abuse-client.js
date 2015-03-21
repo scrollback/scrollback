@@ -64,10 +64,12 @@ module.exports = function(core, config, store) {
 				prio: 500,
 				text: "Unhide Message",
 				action: function() {
+					var tags = (textObj.tags || []).slice(0);
+
 					core.emit("edit-up", {
 						to: room,
 						ref: textObj.id,
-						tags: textObj.tags.filter(function(t) {
+						tags: tags.filter(function(t) {
 							return t !== "hidden";
 						})
 					});
@@ -78,7 +80,9 @@ module.exports = function(core, config, store) {
 				prio: 500,
 				text: "Hide Message",
 				action: function() {
-					textObj.tags.push("hidden");
+					var tags = (textObj.tags || []).slice(0);
+
+					tags.push("hidden");
 
 					core.emit("edit-up", {
 						to: room,
