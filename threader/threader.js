@@ -35,18 +35,20 @@ module.exports = function(coreObj, conf) {
 			var callback = colors(message, cb);
 			var room = message.room;
 			if (client.writable && (!room.params || !room.params.threader || room.params.threader.enabled)) {//if client connected
-				var threadId = message.threads && message.threads[0] ? message.threads[0].id : undefined;
-				var msg = JSON.stringify({
+				
+				var threadId = message.thread,
+					msg = JSON.stringify({
 					id: message.id, time: message.time, author: message.from.replace(/guest-/g, ""),
 					text: message.text,
 					room: message.to,
 					threadId: threadId
 				});
-				log("Sending msg to scrollback.jar= " + msg);
+				
+				log.d("Sending msg to scrollback.jar: " + msg);
 				try {
 					client.write(msg + ",");
 				} catch(err) {
-					log("--error --"+err);
+					log.e("Threader socket write error:" + err);
 					callback();
 					return;
 				}
@@ -56,17 +58,19 @@ module.exports = function(coreObj, conf) {
 						var fn = pendingCallbacks[message.id].fn;
 						delete pendingCallbacks[message.id];
 						message.threads = [ { id: "new" } ]; // Make it a new thread if no reply.
-						log("pending callback removed after 1 sec for message.id" + message.id);
+						log.i("pending callback removed after 1 sec for message.id" + message.id);
 						fn();
 					}
 				}, 1000);
 			} else callback();
 		}, "modifier");
-	}
-	else{
+	} else {
 		log("threader module is not enabled");
 	}
 };
+
+
+
 
 
 /**
@@ -80,26 +84,13 @@ module.exports = function(coreObj, conf) {
 function processReply(data){
 	var i;
 	try {
-		log("data=-:" + data + ":-");
+		log("JSB Response" + data);
 		data = JSON.parse(data);
-		log("Data returned by scrollback.jar = "+data.threadId, (pendingCallbacks[data.id] && pendingCallbacks[data.id].message));
-		var id = data.threadId;
-		//var title = data.title;
+		var id = data.threadId.substr(0,data.threadId.length - 1);
 		var message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 		if (message) {
-			var update = false;
-			for (i = 0; i < message.threads.length; i++) {
-				var th = message.threads[i];
-				if (th.id === id) {
-					update = true;
-				}
-				if (th.id === "new") {
-					message.threads.splice(i, 1);
-					i--;
-				}
-			}
-			if (!update) {
-				message.threads.push({id: id, score: 1});
+			if (!message.thread) {
+				message.thread = id;
 			}
 			/*
 			// Code for adding spam, nonsense, normal etc. labels
@@ -127,37 +118,34 @@ function processReply(data){
 
 
 function init(){
-	log("Trying to connect.... ");
-	client = net.connect({port: config.port, host: config.host},
-		function() { //'connect' listener
-		log('client connected');
+	client = net.connect({port: config.port, host: config.host}, function() {
+		log.i('Threader connected.');
 		client.write("[");//sending array of JSON objects
 	});
-	var d = "";//wait for new line.
+	
+	var stub = ""; //incomplete line
 	client.on("data", function(data){
 		var i;
-
-		data = data.toString('utf8');
-		data = data.split("\n");
-		data[0] = d + data[0];//append previous data
-		d = data[data.length-1];
-		for (i = 0; i < data.length-1;i++) {
+		data = data.toString('utf8').split("\n");
+		data[0] = stub + data[0];
+		stub = data[data.length-1];
+		for (i = 0; i < data.length-1; i++) {
 			processReply(data[i]);
 		}
 	});
 
 	client.on('error', function(error) {
-		log("Error: ", error);
+		log.e("Threader error: ", error);
 		setTimeout(function() {
 			init();
 		}, timeout);//try to reconnect after 1 min
 	});
 
 	client.on('end', function() {
-		log('connection terminated');
+		log.i('Threader disconnected');
 		setTimeout(function(){
 			init();
-		},timeout);//try to reconnect after 1 min
+		}, timeout); //try to reconnect after 1 min
 	});
 }
 

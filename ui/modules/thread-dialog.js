@@ -17,7 +17,7 @@ module.exports = function(core, config, store) {
 			to: store.get("nav", "room"),
 			from: store.get("user"),
 			text: text,
-			thread: id,
+			thread: id, // this is how you create a new thread.
 			title: title,
 			time: new Date().getTime()
 		}, function(err) {
