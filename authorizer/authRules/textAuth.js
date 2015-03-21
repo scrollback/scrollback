@@ -1,10 +1,11 @@
 var permissionLevels = require('../permissionWeights.js');
 var SbError = require('../../lib/SbError.js');
 var domainCheck;
-module.exports = function (core, config) {
+
+module.exports = function(core, config) {
 	domainCheck = require("../domain-auth.js")(core, config);
-	core.on('text', function (action, callback) {
-		if((/^web/.test(action.session)) && !domainCheck(action.room, action.origin)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
+	core.on('text', function(action, callback) {
+		if ((/^web/.test(action.session)) && !domainCheck(action.room, action.origin)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
 		if (action.user.role === "none") {
 			if (/^guest-/.test(action.user.id)) {
 				action.user.role = "guest";

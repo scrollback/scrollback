@@ -93,8 +93,10 @@ sock.on('connection', function(socket) {
 				return;
 			}
 		}
+		log.i("Reached here:", d);
 		core.emit(d.type, d, function(err, data) {
 			var e, action;
+            log.i("response", err, data);
 			if (err) {
 				e = {
 					type: 'error',
@@ -129,6 +131,7 @@ sock.on('connection', function(socket) {
 			if (data.type == 'away') storeAway(conn, data);
 			if (data.type == 'init') {
 				if (data.old) {
+					log.i("Occupant of: ", data.occupantOf);
 					data.occupantOf.forEach(function(e) {
 						var role, i, l;
 						for (i = 0, l = data.memberOf.length; i < l; i++) {
@@ -170,6 +173,7 @@ sock.on('connection', function(socket) {
 			if (['getUsers', 'getTexts', 'getRooms', 'getThreads', 'getEntities'].indexOf(data.type) >= 0) {
 				var t = data.eventStartTime; //TODO: copy properties of each query that is needed on client side.
 				delete data.eventStartTime;
+                console.log("sending response", data);
 				conn.send(data);
 				data.eventStartTime = t;
 			}

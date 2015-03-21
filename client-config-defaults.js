@@ -1,12 +1,13 @@
 var merge = require("./merge-config.js");
+
 var defaults = {
 	server: {
 		protocol: "http:",
-		host: "//localhost:7528"
+		host: "localhost:7528"
 	},
-    localStorage: {
-        version: 1.00
-    },
+	localStorage: {
+		version: 1.0
+	},
 	appPriorities: {
 		antiflood: 1000,
 		validation: 900,
@@ -25,8 +26,9 @@ var defaults = {
 };
 
 module.exports = (function() {
-	var changes = {};
-	changes = require("./client-config.js");
-	if(!changes) changes = {};
+	var changes = require("./client-config.js");
+
+	if (!changes) changes = {};
+
 	return merge(defaults, changes);
 }());

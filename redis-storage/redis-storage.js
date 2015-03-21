@@ -1,4 +1,6 @@
 var config, occupantDB, userDB, roomDB, core;
+var log = require("../lib/logger.js");
+
 module.exports = function(c, conf) {
 	core = c;
 	config = conf;
@@ -39,8 +41,12 @@ function getRoomsById(ids, callback) {
 
 function onBack(data, cb) {
 	roomDB.set("room:{{" + data.room.id + "}}", JSON.stringify(data.room));
-	occupantDB.sadd("room:{{" + data.to + "}}:hasOccupants", data.from);
-	occupantDB.sadd("user:{{" + data.from + "}}:occupantOf", data.to);
+	occupantDB.sadd("room:{{" + data.to + "}}:hasOccupants", data.from, function(err, res) {
+		if(err) log.d(err, res);
+	});
+	occupantDB.sadd("user:{{" + data.from + "}}:occupantOf", data.to, function(err, res) {
+		if(err) log.d(err, res);
+	});
 	cb();
 }
 

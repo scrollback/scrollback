@@ -1,96 +1,97 @@
-/* jshint node: true */
-/* global require, $, libsb, currentState */
+/* jshint browser: true */
+/* global $ */
 
-var formField = require("../lib/formField.js");
+var formField = require("../ui/utils/form-field.js");
 
-libsb.on("config-show", function(tabs, next) {
-	var room = tabs.room;
+module.exports = function(core, config, store) {
+	core.on("conf-show", function(tabs, next) {
+		var room = tabs.room,
+			antiAbuse,
+			$div;
 
-	if (!room.params) room.params = {};
-	if (!room.params.antiAbuse) room.params.antiAbuse = {};
-	if (!room.params.antiAbuse.block) room.params.antiAbuse.block = {english: false};
-	if (!room.params.antiAbuse.customPhrases) room.params.antiAbuse.customPhrases = [];
-	if (typeof room.params.antiAbuse.spam !== 'boolean') room.params.antiAbuse.spam = true;
-	var antiAbuse = room.params.antiAbuse;
-	var $div = $("<div>").append(
-		formField("Spam control", "toggle", "spam-control", antiAbuse.spam),
-		formField("Blocked words list", "check", "blocklists", [
-			["list-en-strict", "English abusive words", antiAbuse.block.english ]
-		]),
-		formField("Custom blocked phrases/word", "area", "block-custom", antiAbuse.customPhrases.join("\n")),
-		formField("", "info", "spam-control-helper-text", "One phrase/word each line")
-	);
+		room.params = room.params || {};
 
+		antiAbuse = room.params.antiAbuse = room.params.antiAbuse || {};
 
+		antiAbuse.block = antiAbuse.block || { english: false };
+		antiAbuse.customPhrases = antiAbuse.customPhrases || [];
 
-	tabs.spam = {
-		text: "Spam control",
-		html: $div,
-		prio: 600
-	};
-
-	next();
-}, 500);
-
-
-libsb.on("config-save", function(room, next){
-	room.params.antiAbuse = {
-		spam: $("#spam-control").is(":checked"),
-		block:{
-			english: $("#list-en-strict").is(":checked")
-		},
-		customPhrases: $("#block-custom").val().split("\n").map(function(item) {
-			return (item.trim()).toLowerCase();
-		})
-	};
-	next();
-}, 500);
-
-function hasLabel(label, labels){
-
-	for(var i in labels){
-		if(i === label && labels[i] === 1){
-			return true;
+		if (typeof antiAbuse.spam !== "boolean") {
+			antiAbuse.spam = true;
 		}
-	}
-	return false;
-}
 
-libsb.on('text-menu', function(menu, next) {
-	if(menu.role !== "owner") return next();
-	var textObj;
-	libsb.emit('getTexts', {ref: menu.target.id.substring(5), to: currentState.roomName}, function(err, data){
-		textObj = data.results[0];
-		var target = menu.target;
+		$div = $("<div>").append(
+			formField("Spam control", "toggle", "spam-control", antiAbuse.spam),
+			formField("Blocked words list", "check", "blocklists", [
+				["list-en-strict", "English abusive words", antiAbuse.block.english ]
+			]),
+			formField("Custom blocked phrases/word", "area", "block-custom", antiAbuse.customPhrases.join("\n")),
+			formField("", "info", "spam-control-helper-text", "One phrase/word each line")
+		);
 
-		if(!hasLabel('hidden', textObj.labels)){
-			menu.items.hidemessage = {
-				prio: 500,
-				text: 'Hide Message',
-				action: function(){
-					libsb.emit('edit-up', {to: currentState.roomName, labels: {'hidden': 1}, ref: target.id.substring(5), cookie: false});
-					$(target).addClass('chat-label-hidden');
-				}
-			};
-		} else{
+		tabs.spam = {
+			text: "Spam control",
+			html: $div
+		};
+
+		next();
+	}, 600);
+
+	core.on("conf-save", function(room, next) {
+		room.params.antiAbuse = {
+			spam: $("#spam-control").is(":checked"),
+			block:{
+				english: $("#list-en-strict").is(":checked")
+			},
+			customPhrases: $("#block-custom").val().split("\n").map(function(item) {
+				return (item.trim()).toLowerCase();
+			})
+		};
+		next();
+	}, 500);
+
+	core.on("text-menu", function(menu, next) {
+		var textObj = menu.textObj,
+			room = store.get("nav", "room"),
+			rel = store.getRelation();
+
+		if (!(rel && (/(owner|moderator)/).test(rel.role) && textObj)) {
+			return next();
+		}
+
+		if (textObj.tags && textObj.tags.indexOf("hidden") > -1) {
 			menu.items.unhidemessage = {
 				prio: 500,
-				text: 'Unhide Message',
-				action: function(){
-					libsb.emit('edit-up', {to: currentState.roomName, labels: {'hidden': 0}, ref: target.id.substring(5), cookie: false});
-					$(target).removeClass('chat-label-hidden');
+				text: "Unhide Message",
+				action: function() {
+					var tags = (textObj.tags || []).slice(0);
+
+					core.emit("edit-up", {
+						to: room,
+						ref: textObj.id,
+						tags: tags.filter(function(t) {
+							return t !== "hidden";
+						})
+					});
 				}
 			};
-		}
-		if(hasLabel('abusive', textObj.labels)){
-			menu.items.markasnotabusive = {
+		} else {
+			menu.items.hidemessage = {
 				prio: 500,
-				text: 'Mark as not abusive',
-				action: function(){
-					libsb.emit('edit-up', {to: currentState.roomName, labels: {'abusive': 0}, ref: target.id.substring(5), cookie: false});
+				text: "Hide Message",
+				action: function() {
+					textObj.tags = (textObj.tags || []).slice(0);
+					textObj.tags.push("hidden");
+
+					core.emit("edit-up", {
+						to: room,
+						ref: textObj.id,
+						tags: textObj.tags
+					});
 				}
 			};
 		}
+
 		next();
-	});
-}, 500);
+	}, 500);
+};

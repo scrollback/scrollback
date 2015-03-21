@@ -1,6 +1,6 @@
 var log = require('../lib/logger.js'), config;
 var gcm_notify = require('./gcm-notify.js');
-var stringUtils = require('../lib/stringUtils.js');
+var stringUtils = require('../lib/string-utils.js');
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
@@ -8,46 +8,32 @@ var stringUtils = require('../lib/stringUtils.js');
 module.exports = function(core, conf) {
 	config = conf;
 	function mapUsersToIds(idList, cb) {
-		/*
-			Takes an array of user ids, and calls the callback passed to it with the 
-			list of corresponding user objects.
-			
-			This functionality has to be ideally implemented in the entity loader, but since entity loader does not support
-			this yet, this query has to be made.
-		*/
-		var cnt = idList.length;
-		var userList = [];
-
-		function done() {
-			cnt--;
-			if (cnt <= 0) cb(userList);
-		}
-		idList.forEach(function(id) {
-			core.emit("getUsers", {
-				ref: id,
-				session: "internal-push-notifications"
-			}, function(err, data) {
-				if (!data || !data.results || !data.results[0]) return done();
-				userList.push(data.results[0]);
-				done();
-			});
+		core.emit("getUsers", {session: "internal-push-notifications", ref: idList}, function(err, query) {
+			if(err){
+				log.e("Error loading users in push notifications");
+				return;
+			}
+			cb(query.results);
 		});
 	}
 
 	function notifyUsers(userList, payload) {
 		/*
-			The function takes a list of user objects and the push notification payload, and  
+			The function takes a list of user objects and the push notification payload, and
 			calls gcm_notify with a list of GCM registration ids and the payload.
 		*/
 		var regList = [];
 		userList.forEach(function(userObj) {
-			if (userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
+			if (userObj && userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
 				var devices = userObj.params.pushNotifications.devices;
-				devices.forEach(function(device) {
-					if (device.hasOwnProperty('registrationId') && device.enabled === true) {
+				
+				if(devices instanceof Array) return;
+				Object.keys(devices).forEach(function(uuid) {
+					var device = devices[uuid];
+					if (device.hasOwnProperty('regId') && device.enabled === true) {
 						regList.push({
 							user: userObj,
-							registrationId: device.registrationId
+							registrationId: device.regId
 						});
 					}
 				});
@@ -57,7 +43,7 @@ module.exports = function(core, conf) {
 	}
 
 	function makePayload(title, message, text) {
-		/* 
+		/*
 			Create a valid push notification payload
 		*/
 		var payload = {

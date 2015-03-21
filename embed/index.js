@@ -2,7 +2,7 @@
 /* global require*/
 
 var config = require("../client-config.js");
-var host = config.server.protocol + config.server.host;
+var host = config.server.protocol + "//" + config.server.host;
 var iframeCount = 0,
 	widgets = {};
 
@@ -106,15 +106,15 @@ function addWidget(self) {
 			delete embed[ops];
 		}
 	});
-	
+
 	params.push("embed=" + encodeURIComponent(JSON.stringify(embed)));
-	
+
 	iframe = document.createElement("iframe");
 	iframe.src = host + "/" + options.roomName + (options.thread ? "/" + options.thread : "") + "?"+params.join("&");
 	iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((embed.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
 	iframe.dataset.id = ++iframeCount;
-	
-	
+
+
 	console.log("IFRAME:", iframe.src);
 	widgets[iframe.dataset.id] = self;
 	// temp thing. implement better way to position these things.
@@ -144,7 +144,7 @@ function scrollback(opts, callback) {
 			embed: null,
 			config: config
 		};
-	
+
 	self.options = opts;
 	// for now.
 	if (iframeCount >= 1) throw new Error("Error: Cannot have multiple widgets on the same page.");

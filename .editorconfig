@@ -14,7 +14,8 @@ indent_size = 4
 # we recommend you to keep these unchanged
 end_of_line = lf
 charset = utf-8
-trim_trailing_whitespace = true
+trim_trailing_whitespace = false
+# results in annoying behavior in brackets
 insert_final_newline = true
 
 [*.md]

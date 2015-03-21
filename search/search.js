@@ -157,6 +157,7 @@ module.exports = function (core, conf) {
                 
                 if(message.threads) {
                     message.threads.forEach(function(e) {
+						if(!e.id) return;
                         if(updateThreads.indexOf(e.id)<0) {
                             updateThreads.push(e.id);
 
@@ -165,10 +166,12 @@ module.exports = function (core, conf) {
                                 room: message.to
                             }), insertText);
 
-                            searchDB.sadd("updateThread", e.id);
+                            searchDB.sadd("updateThread", e.id, function(err, res) {
+								if(err) log.d(err, res);
+							});
                         }else {
                             insertText();
-                        }
+                        }	
 
                         function insertText() {
                             searchDB.sadd("thread:{{"+e.id+"}}:texts", message.id+":"+message.from+":"+message.text, function() {

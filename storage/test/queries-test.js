@@ -2,7 +2,7 @@
 var assert = require('assert'),
 	utils = require('./utils.js'),
 	core = new (require('ebus'))(),
-	mathUtils = require('../../lib/mathUtils.js'),
+	mathUtils = require('../../lib/math-utils.js'),
 	generate = require("../../lib/generate.js"),
 	log = require("../../lib/logger.js"),
 	storage = require('./../storage.js'),

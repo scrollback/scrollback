@@ -15,10 +15,11 @@
   "dependencies": {
     "flexie": "~1.0.3",
     "jquery": "1",
-    "lace": "0.1.5",
+    "lace": "0.1.7",
     "sockjs": "~0.3.4",
     "svg4everybody": "*",
     "transformie": "*",
-    "velocity": "~1.2.1"
+    "velocity": "~1.2.1",
+    "endless": "0.9.10"
   }
 }

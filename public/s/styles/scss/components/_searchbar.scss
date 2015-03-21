@@ -1,0 +1,55 @@
+@include exports("searchbar") {
+    @mixin placeholder() {
+        ::-webkit-input-placeholder { @content; }
+
+        :-moz-placeholder { @content; }
+
+        ::-moz-placeholder { @content; }
+
+        :-ms-input-placeholder { @content; }
+    }
+
+    .searchbar {
+        @include dropshadow(1);
+        @include placeholder() {
+           color: currentColor;
+           opacity: .5;
+        }
+
+        position: relative;
+        z-index: 100;
+        min-height: $bar-height;
+        max-height: $bar-height;
+        height: $bar-height;
+        width: 100%;
+        overflow: hidden;
+
+        &-input {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            border-radius: 0;
+            border: 0;
+            color: inherit;
+        }
+
+        &-icon {
+            @extend %transition;
+            @include icon(search);
+            @include transform(translate3d(0,0,0));
+
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 1.5em;
+            padding: .67em;
+            color: inherit;
+            height: 100%;
+            opacity: .5;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        &-input:valid + &-icon { @include transform(translate3d(100%,0,0)); }
+    }
+}

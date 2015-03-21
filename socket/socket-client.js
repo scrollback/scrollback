@@ -73,7 +73,7 @@ function safeSend(data) {
 
 function connect() {
 
-	client = new SockJS(config.server.protocol + config.server.host + "/socket");
+	client = new SockJS(config.server.protocol + "//" + config.server.host + "/socket");
 	client.onclose = disconnected;
 
 	client.onopen = function() {
@@ -87,7 +87,7 @@ function connect() {
                         dialog: "signin"
                     }, function(err) {
                         if (err) console.log(err.message);
-                    });	
+                    });
                 }
                 return;
 			}

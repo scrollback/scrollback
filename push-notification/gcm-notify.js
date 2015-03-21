@@ -1,5 +1,4 @@
 var log = require('../lib/logger.js');
-var SbError = require('../lib/SbError.js');
 var _ = require('underscore');
 var request = require('request');
 
@@ -13,16 +12,7 @@ var request = require('request');
 */
 
 module.exports = function(userRegMapping, payload, core, config) {
-
-	if (!userRegMapping instanceof Array) {
-		log.e("registrationIds has to be an Array of device Registration ID(s). ");
-		throw new SbError("ERR_INVALID_PARAMS", {
-			source: 'push-notification/notify.js'
-		});
-	}
-
-	var registrationIds = _.pluck(userRegMapping, 'registrationId'),
-		index, result;
+	var registrationIds = _.pluck(userRegMapping, 'registrationId'), notifyArr, index,result;
 
 	var headers = {
 		'Content-Type': 'application/json',
@@ -30,6 +20,7 @@ module.exports = function(userRegMapping, payload, core, config) {
 	};
 
 	function removeDevice(userRegMap) {
+		var uuidToRemove, uuids;
 		/*
 			Removes a device from the list of the user's devices.
 		*/
@@ -39,22 +30,30 @@ module.exports = function(userRegMapping, payload, core, config) {
 		var userObj = userRegMap.user;
 		if (userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
 			var devices = userObj.params.pushNotifications.devices;
-			userObj.params.pushNotifications.devices = devices.filter(function(device) {
-				return device.registrationId !== regId;
+			
+			uuids = Object.keys(devices);
+			
+			uuids.forEach(function(uuid) {
+				if(devices[uuid].registrationId !== regId) return;
+				uuidToRemove = uuid;
 			});
 		}
-		// emit user-up for userObj
-		log.i("EMITTING user", JSON.stringify(userObj));
 		
-		core.emit('user', {
-			type: "user",
-			to: userObj.id,
-			user: userObj,
-			session: "internal-push-notification"
-		}, function(err, data) {
-			log.i("Emitter user-up ", err, JSON.stringify(data));
-		});
 		
+		if (uuidToRemove) {
+			delete userObj.params.pushNotifications.devices[uuidToRemove];
+			// emit user-up for userObj
+			log.i("EMITTING user", JSON.stringify(userObj));
+
+			core.emit('user', {
+				type: "user",
+				to: userObj.id,
+				user: userObj,
+				session: "internal-push-notification"
+			}, function(err, data) {
+				log.i("Emitter user-up ", err, JSON.stringify(data));
+			});
+		}
 	}
 
 	function postData(notifArr) {
@@ -88,16 +87,9 @@ module.exports = function(userRegMapping, payload, core, config) {
 		});
 	}
 
-	// splice registrationIds array in elements of 1000 each (GCM limit) and notify. 
-	var tmp_arr = registrationIds,
-		notifyArr;
 
-	while (tmp_arr.length > 999) {
-		notifyArr = tmp_arr.splice(0, 1000);
+	while (registrationIds.length > 0) {
+		notifyArr = registrationIds.splice(0, 1000);
 		postData(notifyArr);
-	}
-
-	if (tmp_arr.length) {
-		postData(tmp_arr);
 	}
 };
