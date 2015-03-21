@@ -89,19 +89,8 @@ function processReply(data){
 		var id = data.threadId.substr(0,data.threadId.length - 1);
 		var message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 		if (message) {
-			var update = false;
-			for (i = 0; i < message.threads.length; i++) {
-				var th = message.threads[i];
-				if (th.id === id) {
-					update = true;
-				}
-				if (th.id === "new") {
-					message.threads.splice(i, 1);
-					i--;
-				}
-			}
-			if (!update) {
-				message.threads.push({id: id, score: 1});
+			if (!message.thread) {
+				message.thread = id;
 			}
 			/*
 			// Code for adding spam, nonsense, normal etc. labels
