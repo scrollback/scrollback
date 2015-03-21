@@ -18,6 +18,28 @@ module.exports = function(c, conf, s) {
 
 		return entities;
 	}
+	
+	core.on("edit-dn", function(editDn, next) {
+		var newText = editDn.old, textRange, key, newState;
+		newText.tags = editDn.tags;
+		
+		textRange = {
+			start: newText.time,
+			end: newText.time,
+			items: [newText]
+		};
+
+		key = keyFromText(newText);
+		newState = {
+			texts:{}
+		};
+		
+		newState.texts[newText.to] = [textRange];
+		newState.texts[key] = [textRange];
+		core.emit("setstate", newState);
+		next();
+	}, 1000);
+	
 	core.on("init-dn", function(init, next) {
 		var entities = {};
 		if (!init.user.id) {
