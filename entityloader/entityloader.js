@@ -106,6 +106,11 @@ var handlers = {
 		}, function(err, actions) {
 			if (err || !actions || !actions.results || !actions.results.length) return callback(new Error("TEXT_NOT_FOUND"));
 			action.old = actions.results[0];
+			/*
+				TODO: load user and room from here. Uncomment and test.
+				action.user = actions.user;
+				action.room = actions.room;
+			 */
 			callback();
 		});
 	},

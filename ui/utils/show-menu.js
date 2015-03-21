@@ -29,6 +29,10 @@ module.exports = function(type, menu) {
 		$list, item,
 		$buttons, button, sortable = [];
 
+	if ($.isEmptyObject(menu.buttons) && $.isEmptyObject(menu.items)) {
+		return;
+	}
+
 	if (typeof menu.title === "string") {
 		$("<div>").addClass("popover-section popover-title")
 			.text(menu.title)

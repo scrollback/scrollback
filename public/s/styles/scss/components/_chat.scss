@@ -142,7 +142,7 @@
 
         &.error { background-color: fade-out($error-color, .95); }
 
-        &.popover-active { background-color: rgba(0,0,0,0.05); }
+        &.popover-active, &.current { background-color: rgba(0,0,0,0.05); }
 
         &-nick {
             float: left;
@@ -184,7 +184,7 @@
             font-size: .9em;
         }
 
-        &-label {
+        &-tag {
             &-hidden, &-abusive {
                 font-style: italic;
                 opacity: .5;

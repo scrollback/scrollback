@@ -16,7 +16,7 @@ module.exports = function(core, config, store) {
 		antiAbuse.block = antiAbuse.block || { english: false };
 		antiAbuse.customPhrases = antiAbuse.customPhrases || [];
 
-		if (typeof antiAbuse.spam !== 'boolean') {
+		if (typeof antiAbuse.spam !== "boolean") {
 			antiAbuse.spam = true;
 		}
 
@@ -50,67 +50,49 @@ module.exports = function(core, config, store) {
 		next();
 	}, 500);
 
-	function hasLabel(label, text) {
-		var labels = text.labels;
+	core.on("text-menu", function(menu, next) {
+		var textObj = menu.textObj,
+			room = store.get("nav", "room"),
+			rel = store.getRelation();
 
-		for (var i in labels) {
-			if (i === label && labels[i] === 1) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	core.on('text-menu', function(menu, next) {
-		var textObj, room;
-
-		if (menu.role !== "owner") {
+		if (!(rel && (/(owner|moderator)/).test(rel.role) && textObj)) {
 			return next();
 		}
 
-		room = store.get("nav", "room");
+		if (textObj.tags && textObj.tags.indexOf("hidden") > -1) {
+			menu.items.unhidemessage = {
+				prio: 500,
+				text: "Unhide Message",
+				action: function() {
+					var tags = (textObj.tags || []).slice(0);
 
-		core.emit('getTexts', { ref: menu.target.id.substring(5), to: room }, function(err, data) {
-			var target = menu.target;
+					core.emit("edit-up", {
+						to: room,
+						ref: textObj.id,
+						tags: tags.filter(function(t) {
+							return t !== "hidden";
+						})
+					});
+				}
+			};
+		} else {
+			menu.items.hidemessage = {
+				prio: 500,
+				text: "Hide Message",
+				action: function() {
+					var tags = (textObj.tags || []).slice(0);
 
-			textObj = data.results[0];
+					tags.push("hidden");
 
-			if (hasLabel('hidden', textObj)) {
-				menu.items.unhidemessage = {
-					prio: 500,
-					text: 'Unhide Message',
-					action: function() {
-						core.emit('edit-up', {to: room, labels: {'hidden': 0}, ref: target.id.substring(5), cookie: false});
+					core.emit("edit-up", {
+						to: room,
+						ref: textObj.id,
+						tags: textObj.tags
+					});
+				}
+			};
+		}
 
-						$(target).removeClass('chat-label-hidden');
-					}
-				};
-			} else {
-				menu.items.hidemessage = {
-					prio: 500,
-					text: 'Hide Message',
-					action: function() {
-						core.emit('edit-up', {to: room, labels: {'hidden': 1}, ref: target.id.substring(5), cookie: false});
-
-						$(target).addClass('chat-label-hidden');
-					}
-				};
-			}
-
-			if (hasLabel('abusive', textObj)) {
-				menu.items.markasnotabusive = {
-					prio: 500,
-					text: 'Mark as not abusive',
-					action: function() {
-						core.emit('edit-up', {to: room, labels: {'abusive': 0}, ref: target.id.substring(5), cookie: false});
-
-						$(target).removeClass('chat-label-abusive');
-					}
-				};
-			}
-
-			next();
-		});
+		next();
 	}, 500);
 };

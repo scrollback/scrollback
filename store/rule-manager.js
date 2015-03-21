@@ -8,4 +8,7 @@ module.exports = function(core, config, store) {
 	require("./rules/loadTextsOnNav.js")(core, config, store);
 	require("./rules/loadThreadsOnNav.js")(core, config, store);
 	require("./rules/callToAction.js")(core, config, store);
+	require("./rules/nonExistentRoom.js")(core, config, store);
+	require("./rules/androidApp.js")(core, config, store);
+	require("./rules/resetDialogState.js")(core, config, store);
 };
