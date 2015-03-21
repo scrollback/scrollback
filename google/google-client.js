@@ -31,6 +31,5 @@ module.exports = function(core, config) {
 			next();
 		}, 700);
 		next();
-	}, 100);
-	
+	}, 100);	
 };
