@@ -106,7 +106,7 @@ module.exports = function(core, config, store) {
 	core.on("createroom-dialog", function(dialog, next) {
 		var nav = store.get("nav"),
 			user = store.getUser(),
-			roomName = (nav.dialogState === "prefill") ? nav.room : "";
+			roomName = (/(nonexistent|prefill)/.test(nav.dialogState)) ? nav.room : "";
 
 		if (user && appUtils.isGuest(user.id)) {
 			if (user.identities && user.identities.length) {
@@ -167,8 +167,14 @@ module.exports = function(core, config, store) {
 				return;
 			}
 		} else {
-			dialog.title = "Create a new room";
-			dialog.description = "Choose a room name";
+			if (nav.dialogState === "nonexistent") {
+				dialog.title = "There is no room called '" + nav.room + "' :-(";
+				dialog.description = "Would you like to create the room?";
+			} else {
+				dialog.title = "Create a new room";
+				dialog.description = "Choose a room name";
+			}
+
 			dialog.content = ["<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>"];
 			dialog.action = {
 				text: "Create room",
