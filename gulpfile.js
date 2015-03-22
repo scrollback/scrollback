@@ -228,7 +228,7 @@ gulp.task("styles", [ "fonts", "scss" ]);
 
 // Generate appcache manifest file
 gulp.task("manifest", function() {
-	return gulp.src("public/s/dist/**/*")
+	return gulp.src([ "public/s/dist/**/*", "!**/*.map" ])
 	.pipe(plumber())
 	.pipe(manifest({
 		basePath: "public",
