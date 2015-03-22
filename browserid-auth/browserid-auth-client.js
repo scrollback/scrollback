@@ -25,8 +25,8 @@ module.exports = function(core, config, store) {
 					navigator.id.request();
 				}
 			};
-
-			next();
 		}
+
+		next();
 	}, 500);
 };
