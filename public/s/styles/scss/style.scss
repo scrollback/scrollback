@@ -202,17 +202,28 @@ body {
     &-title-container {
         position: relative;
         height: 100%;
+        width: 8em;
+        width: calc(100% - 14em);
         float: left;
 
+        @media #{$screenx} {
+            width: 11em;
+            width: calc(100% - 14em);
+        }
+
+        @media #{$screenxxx} {
+            width: 18em;
+            width: calc(100% - 14em);
+        }
+
+        @media #{$screenxxxx} {
+            width: 30em;
+            width: calc(100% - 14em);
+        }
+
         .appbar-title {
-            width: 8em;
             height: 100%;
-
-            @media #{$screenx} { width: 12em; }
-
-            @media #{$screenxxx} { width: 18em; }
-
-            @media #{$screenxxxx} { width: 30em; }
+            width: 100%;
         }
 
         .appbar-logotype {
