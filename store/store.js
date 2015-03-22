@@ -16,8 +16,8 @@ var state = {
 		listeningRooms: []
 	},
 	indexes: {
-		textsById: {},
 		threadsById: {},
+		textsById: {},
 		roomUsers: {},
 		userRooms: {}
 	}

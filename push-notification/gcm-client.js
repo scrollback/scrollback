@@ -29,7 +29,6 @@ module.exports = function(c, conf, st) {
 	
 	core.on("statechange", function(changes, next) {
 		var userObj, userId = store.get("user");
-		console.log("got state change", changes);
 		if(changes.user && !appUtils.isGuest(userId) && device && updateDevice) {
 			console.log("got device id.");
 			

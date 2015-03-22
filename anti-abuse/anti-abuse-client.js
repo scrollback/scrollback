@@ -80,9 +80,8 @@ module.exports = function(core, config, store) {
 				prio: 500,
 				text: "Hide Message",
 				action: function() {
-					var tags = (textObj.tags || []).slice(0);
-
-					tags.push("hidden");
+					textObj.tags = (textObj.tags || []).slice(0);
+					textObj.tags.push("hidden");
 
 					core.emit("edit-up", {
 						to: room,

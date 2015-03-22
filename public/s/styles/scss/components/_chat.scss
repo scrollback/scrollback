@@ -142,7 +142,7 @@
 
         &.error { background-color: fade-out($error-color, .95); }
 
-        &.popover-active, &.current { background-color: rgba(0,0,0,0.05); }
+        &.popover-active, &:active { background-color: rgba(0,0,0,0.05); }
 
         &-nick {
             float: left;
@@ -163,10 +163,9 @@
             }
         }
 
+		&-continues { padding-bottom: 0; }
 
-		&.chat-item-continues { padding-bottom: 0; }
-
-		&.chat-item-continuation { padding-top: 0; }
+		&-continuation { padding-top: 0; }
 
         &-message {
             @media #{$screenxx} { display: inline; }

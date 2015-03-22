@@ -9,6 +9,7 @@
 !.jshintrc
 !.jsbeautifyrc
 !.scss-lint.yml
+!.hound.yml
 
 *.seed
 *.log

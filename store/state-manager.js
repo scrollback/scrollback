@@ -20,11 +20,7 @@ module.exports = function(core, conf, s, st) {
 		if (changes.threads) updateThreads(changes.threads);
 		if (changes.session) updateSession(changes.session);
 		if (changes.user) updateCurrentUser(changes.user);
-		
-		if(changes.nav && changes.nav.textRange) {
-//			console.log('textRange is now', changes.nav.textRange);
-		}
-		
+
 		buildIndex(changes);
 		buildIndex(state, changes);
 		core.emit("statechange", changes);
@@ -45,7 +41,6 @@ function updateThreads(threads) {
 			});
 		} else {
 			console.log(roomId + ' has no threads yet.');
-//			debugger;
 		}
 	});
 }
@@ -64,8 +59,12 @@ function updateTexts(texts) {
 
 	rooms.forEach(function(roomThread) {
 		ranges = store.get("texts", roomThread);
-		if(!ranges) ranges = state.texts[roomThread] = [];
-		if(texts[roomThread].length) {
+
+		if (!ranges) {
+			ranges = state.texts[roomThread] = [];
+		}
+
+		if (texts[roomThread].length) {
 			texts[roomThread].forEach(function(newRange) {
 				state.texts[roomThread] = rangeOps.merge(ranges, newRange, "time");
 			});
@@ -84,6 +83,7 @@ function buildIndex(obj, changes) {
 	obj.indexes = obj.indexes || {
 		userRooms: {},
 		roomUsers: {},
+		textsById: {},
 		threadsById: {}
 	};
 
@@ -99,30 +99,25 @@ function buildIndex(obj, changes) {
 		}
 	}
 	
+	
 	/* jshint -W083 */
-	if(obj.threads && changes.threads) {
-		obj.threadsById = {};
-		for(var room in obj.threads) {
-			if(obj.threads[room].forEach) obj.threads[room].forEach(function (range) {
-				range.items.forEach(function (thread) {
-					obj.indexes.threadsById[thread.id] = thread;
+	function buildRangeIndex(obj, prop) {
+		var index = obj.indexes[prop+'ById'] = {};
+		for(var room in obj[prop]) {
+			if(obj[prop][room].forEach) obj[prop][room].forEach(function (range) {
+				range.items.forEach(function (item) {
+					index[item.id] = item;
 				});
 			});
 		}
 	}
 	/* jshint +W083 */
-
+	
+	if(obj.threads && changes.threads) buildRangeIndex(obj, 'threads');
+	if(obj.texts && changes.texts) buildRangeIndex(obj, 'texts');
 }
 
 function updateEntities(stateEntities, changesEntities) {
 	objUtils.extend(stateEntities, changesEntities);
 }
 
-/*function updateIndex(type, ranges) {
-	ranges.forEach(function(r) {
-		var index = store.indexes[type + "ById"] = store.indexes[type + "ById"] || {};
-		r.items.forEach(function(item) {
-			index[item.id] = item;
-		});
-	});
-}*/

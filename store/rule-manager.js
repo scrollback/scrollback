@@ -11,4 +11,5 @@ module.exports = function(core, config, store) {
 	require("./rules/nonExistentRoom.js")(core, config, store);
 	require("./rules/androidApp.js")(core, config, store);
 	require("./rules/resetDialogState.js")(core, config, store);
+	require("./rules/selectedTexts.js")(core, config, store);
 };
