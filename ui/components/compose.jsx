@@ -11,6 +11,29 @@ module.exports = function(core, config, store) {
 			return { userInput: "" };
 		},
 
+		focusInput: function() {
+			var composeBox = this.refs.composeBox.getDOMNode(),
+				range, selection;
+
+			composeBox.focus();
+
+			if (document.createRange) {
+				range = document.createRange();
+				range.selectNodeContents(composeBox);
+				range.collapse(false);
+				selection = window.getSelection();
+				selection.removeAllRanges();
+				selection.addRange(range);
+			} else if (document.selection) {
+				range = document.body.createTextRange();
+				range.moveToElementText(composeBox);
+				range.collapse(false);
+				range.select();
+			}
+
+			return this;
+		},
+
 		sendMessage: function() {
 			var composeBox = this.refs.composeBox.getDOMNode(),
 				text = format.htmlToText(composeBox.innerHTML),
@@ -66,6 +89,7 @@ module.exports = function(core, config, store) {
 
 		componentDidUpdate: function() {
 			this.setPlaceHolder();
+			this.focusInput();
 		},
 
 		render: function() {
