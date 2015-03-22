@@ -1,93 +1,88 @@
 var store, core, config;
 var entityOps = require("./entity-ops.js");
-var relationsProps = require("./property-list.js").relations;
+//var relationsProps = require("./property-list.js").relations;
 var pendingActions = {};
 module.exports = function(c, conf, s) {
 	store = s;
 	core = c;
 	config = conf;
 
-	function constructEntitiesFromRoomList(list, entities, userId) {
-		list.forEach(function(e) {
-			var relation = {}, entity = {};
-			relation = entityOps.relatedEntityToRelation(e, {id:userId,type:"user"});
-			entity = entityOps.relatedEntityToEntity(e);
-			entities[e.id] = entity;
-			entities[e.id + "_" + userId] = relation;
-		});
-
-		return entities;
-	}
-	
-	core.on("edit-dn", function(editDn, next) {
-		var newText = editDn.old, textRange, key, newState;
-		newText.tags = editDn.tags;
-		
-		textRange = {
-			start: newText.time,
-			end: newText.time,
-			items: [newText]
-		};
-
-		key = keyFromText(newText);
-		newState = {
-			texts:{}
-		};
-		
-		newState.texts[newText.to] = [textRange];
-		newState.texts[key] = [textRange];
-		core.emit("setstate", newState);
-		next();
-	}, 1000);
-	
-	core.on("init-dn", function(init, next) {
-		var entities = {};
-		if (!init.user.id) {
-			entities[store.get("user")] = init.user;
-			core.emit("setstate", {entities:entities});
-			return next();
-		}
-
-		if (init.occupantOf) entities = constructEntitiesFromRoomList(init.occupantOf, entities, init.user.id);
-		if (init.memberOf) entities = constructEntitiesFromRoomList(init.memberOf, entities, init.user.id);
-		entities[init.user.id] = init.user;
-		core.emit("setstate", {
-			entities: entities,
-			user: init.user.id
-		});
-		core.emit("getRooms", {featured: true}, function(err, rooms) {
-			var featuredRooms = [], entities = {};
-			if(rooms && rooms.results) {
-				rooms.results.forEach(function(e) {
-					if(e) {
-						featuredRooms.push(e.id);
-						entities[e.id] = e;
-					}
-
-				});
-			}
-			core.emit("setstate", {
-				app:{
-					featuredRooms: featuredRooms
-				},
-				entities: entities
-			});
-		});
-		next();
-	}, 1000);
-
-
-	core.on("join-dn", onJoin, 1000);
-	core.on("part-dn", onPart, 1000);
+	core.on("init-dn", onInit, 1000);
+	core.on("join-dn", onJoinPart, 1000);
+	core.on("part-dn", onJoinPart, 1000);
+	core.on("edit-dn", onEdit, 1000);
 	core.on("text-up", onTextUp, 1000);
 	core.on("text-dn", onTextDn, 1000);
-	core.on("away-dn", presenseChange, 1000);
-	core.on("back-dn", presenseChange, 1000);
-	core.on("room-dn", entityEvent, 1000);
-	core.on("user-dn", entityEvent, 999);// run after the guest params saving..
+	core.on("away-dn", onAwayBack, 1000);
+	core.on("back-dn", onAwayBack, 1000);
+	core.on("room-dn", onRoomUser, 1000);
+	core.on("user-dn", onRoomUser, 999);
 };
 
-function entityEvent(action, next) {
+function entitiesFromRooms(list, entities, userId) {
+	list.forEach(function(e) {
+		var rkey = e.id + "_" + userId,
+			relation = entities[rkey] || {},
+			entity = entities[e.id] || {};
+		
+		relation = entityOps.relatedEntityToRelation(e, {id:userId,type:"user"});
+		entity = entityOps.relatedEntityToEntity(e);
+		entities[e.id] = entity;
+		entities[rkey] = relation;
+	});
+
+	return entities;
+}
+
+function keyFromText(text) {
+	var key = text.to;
+	if (text.thread) {
+		key = key + "_" + text.thread;
+	} else if(text.threads && text.threads.length > 0 && text.threads[0] && text.threads[0].id) {
+		key = key + "_" + text.threads[0].id;
+	}
+	
+	return key;
+}
+
+function onInit(init, next) {
+	var entities = {};
+	if (!init.user.id) {
+		entities[store.get("user")] = init.user;
+		core.emit("setstate", {entities:entities});
+		return next();
+	}
+
+	if (init.occupantOf) entities = entitiesFromRooms(init.occupantOf, entities, init.user.id);
+	if (init.memberOf) entities = entitiesFromRooms(init.memberOf, entities, init.user.id);
+	entities[init.user.id] = init.user;
+	core.emit("setstate", {
+		entities: entities,
+		user: init.user.id
+	});
+	core.emit("getRooms", {featured: true}, function(err, rooms) {
+		var featuredRooms = [], entities = {};
+		if(rooms && rooms.results) {
+			rooms.results.forEach(function(e) {
+				if(e) {
+					featuredRooms.push(e.id);
+					entities[e.id] = e;
+				}
+
+
+			});
+		}
+		core.emit("setstate", {
+			app:{
+				featuredRooms: featuredRooms
+			},
+			entities: entities
+		});
+	});
+	next();
+}
+
+function onRoomUser(action, next) {
 	var entities = {};
 	entities[action.to] = action[action.type == "room" ? "room" : "user"];
 	core.emit("setstate", {
@@ -96,7 +91,7 @@ function entityEvent(action, next) {
 	next();
 }
 
-function presenseChange(action, next) {
+function onAwayBack(action, next) {
 	var entities = {}, relation;
 	if(!action.room) action.room = store.getRoom(action.to);
 	if(!action.user) action.user = store.getRoom(action.from);
@@ -128,7 +123,7 @@ function onTextUp(text, next) {
 	
 //	Optimistically adding new threads is made complex
 //	by the unavailability of an id on the text-up.
-//	if(text.thread == "new") {
+//	if(text.thread == text.id) {
 //		newState.threads = {};
 //		newState.threads[text.to] = [{
 //			start: text.time, end: null, items: [{
@@ -142,17 +137,6 @@ function onTextUp(text, next) {
 	
 	core.emit("setstate", newState);
 
-}
-
-function keyFromText(text) {
-	var key = text.to;
-	if (text.thread) {
-		key = key + "_" + text.thread;
-	} else if(text.threads && text.threads.length > 0 && text.threads[0] && text.threads[0].id) {
-		key = key + "_" + text.threads[0].id;
-	}
-	
-	return key;
 }
 
 function onTextDn(text, next) {
@@ -199,7 +183,28 @@ function onTextDn(text, next) {
 	next();
 }
 
-function onJoin(join, next) {
+function onEdit (editDn, next) {
+	var newText = editDn.old, textRange, key, newState;
+	newText.tags = editDn.tags;
+
+	textRange = {
+		start: newText.time,
+		end: newText.time,
+		items: [newText]
+	};
+
+	key = keyFromText(newText);
+	newState = {
+		texts:{}
+	};
+
+	newState.texts[newText.to] = [textRange];
+	newState.texts[key] = [textRange];
+	core.emit("setstate", newState);
+	next();
+}
+
+function onJoinPart(join, next) {
 	var room = join.room;
 	var user = join.user;
 	var relation = {},
@@ -207,20 +212,11 @@ function onJoin(join, next) {
 
 	relation.user = user.id;
 	relation.room = room.id;
+	relation.role = join.role || (join.type == 'join'? 'follower': null);
+	if(relation.role == 'none') relation.role = null;
 
-	relationsProps.forEach(function(key) {
-		if (join.room[key]) {
-			relation[key] = join.room[key];
-			delete join.to[key];
-		}
-	});
-
-	relationsProps.forEach(function(prop) {
-		relation[prop] = join[prop];
-	});
-
-	entities[room.id] = room;
-	entities[user.id] = user;
+	entities[room.id] = entityOps.relatedEntityToEntity(room);
+	entities[user.id] = entityOps.relatedEntityToEntity(user);
 	entities[room.id + "_" + user.id] = relation;
 
 	core.emit("setstate", {
@@ -228,24 +224,5 @@ function onJoin(join, next) {
 	});
 	return next();
 }
-
-
-
-function onPart(part, next) {
-	var room = part.room;
-	var user = part.user;
-	var entities = {};
-
-	entities[room.id] = room;
-	entities[user.id] = user;
-	entities[room.id + "_" + user.id] = null;
-
-	core.emit("setstate", {
-		entities: entities
-	});
-	return next();
-}
-
-
 
 

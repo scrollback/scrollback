@@ -67,7 +67,7 @@ module.exports = function(core, config, store) {
 				classNames = "appbar-icon appbar-icon-follow";
 
 			nav = store.get("nav");
-			user = store.getUser();
+			user = store.getUser() || {};
 			relation = store.getRelation();
 
 			switch (nav.mode) {

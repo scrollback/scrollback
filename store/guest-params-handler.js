@@ -26,8 +26,9 @@ module.exports = function (c,conf, st) {
 
 	core.on("setstate", function(changes, next) {
 		var user = changes.user || store.get("user");
-		if(changes.entities && changes.entities[user] && appUtils.isGuest(user)) {
-			changes.entities[changes.user].params.notifications = currentNotifications;
+		if(changes.entities && changes.entities[user] && user && appUtils.isGuest(user)) {
+			if(changes.entities[user].params)changes.entities[user].params = {};
+			changes.entities[user].params.notifications = currentNotifications;
 		}
 		next();
 	}, 800);

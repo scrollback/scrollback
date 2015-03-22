@@ -17,6 +17,10 @@
             padding: (.75em / .9) 1.5em;
             font-weight: 700;
             text-transform: uppercase;
+            max-width: 18em;
+            max-width: calc(100% - 9em);
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         &-button {

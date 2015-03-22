@@ -22,7 +22,7 @@
 @import "../../../../bower_components/lace/src/scss/linked";
 @import "../../../../bower_components/lace/src/scss/filter";
 @import "../../../../bower_components/lace/src/scss/dropshadow";
-@import "../../../../bower_components/lace/src/scss/grid";
+@import "../../../../bower_components/lace/src/scss/clearfix";
 @import "../../../../bower_components/lace/src/scss/icons";
 
 
@@ -41,6 +41,7 @@
 @import "components/settingspage";
 @import "components/scrollto";
 @import "components/calltoactionbar";
+@import "components/tip";
 
 
 // Element styles
@@ -202,17 +203,28 @@ body {
     &-title-container {
         position: relative;
         height: 100%;
+        width: 8em;
+        width: calc(100% - 14em);
         float: left;
 
+        @media #{$screenx} {
+            width: 11em;
+            width: calc(100% - 14em);
+        }
+
+        @media #{$screenxxx} {
+            width: 18em;
+            width: calc(100% - 14em);
+        }
+
+        @media #{$screenxxxx} {
+            width: 30em;
+            width: calc(100% - 14em);
+        }
+
         .appbar-title {
-            width: 8em;
             height: 100%;
-
-            @media #{$screenx} { width: 12em; }
-
-            @media #{$screenxxx} { width: 18em; }
-
-            @media #{$screenxxxx} { width: 30em; }
+            width: 100%;
         }
 
         .appbar-logotype {
@@ -339,22 +351,22 @@ body {
     }
 
     &-userpref {
-        &:before { @include icon(configure); }
+        @include icon(configure);
     }
 
     &-reportissue {
-        &:before { @include icon(info-circled); }
+        @include icon(info-circled);
     }
 
     &-sound-notification-enable {
-        &:before { @include icon(audio); }
+        @include icon(audio);
     }
 
     &-sound-notification-disable {
-        &:before { @include icon(audio-off); }
+        @include icon(audio-off);
     }
 
     &-logout {
-        &:before { @include icon(off); }
+        @include icon(off);
     }
 }
