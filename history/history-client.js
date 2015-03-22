@@ -16,7 +16,10 @@ function getParams(string) {
 }
 
 var propMap = {
-	nav: { dialog: 'd', dialogState: 'ds'},
+	nav: {
+		dialog: 'd',
+		dialogState: 'ds'
+	}
 };
 
 module.exports = function(core, config, store) {
@@ -33,28 +36,32 @@ module.exports = function(core, config, store) {
 			state.nav.mode = 'room';
 			state.nav.room = path[0];
 			state.nav.threadRange = { time: parseFloat(params.t) || null, before: 20 };
-		} else if(path.length === 2) {
+		} else if (path.length === 2) {
 			state.nav.mode = 'chat';
 			state.nav.room = path[0];
-			if(path[1] !== 'all') state.nav.thread = path[1];
+
+			if (path[1] !== 'all') {
+				state.nav.thread = path[1];
+			}
+
 			state.nav.textRange = { time: parseFloat(params.t) || null };
-			state.nav.textRange[params.t? 'after': 'before'] = 30;
+			state.nav.textRange[params.t ? 'after' : 'before'] = 30;
 		} else {
 			state.nav.mode = 'home';
 		}
-		
-		if(params.embed) {
+
+		if (params.embed) {
 			state.context.env = "embed";
+
 			try {
 				state.context.embed = JSON.parse(params.embed);
-			} catch(e) {
+			} catch (e) {
 				console.error("JSON parse of embed param failed", e);
 				state.context.embed = {};
 			}
 		}
-		
-		
-		if(params.android) {
+
+		if ("Android" in window && window.Android) {
 			state.context.env = "android";
 		}
 
@@ -95,8 +102,8 @@ module.exports = function(core, config, store) {
 		if (state.nav.mode === 'chat' && state.nav.textRange.time) {
 			params.t = state.nav.textRange.time;
 		}
-		
-		if(state.context.embed) {
+
+		if (state.context.embed) {
 			params.embed = JSON.stringify(state.context.embed);
 		}
 
@@ -111,13 +118,18 @@ module.exports = function(core, config, store) {
 		if (url == location.pathname && objUtils.equal(params, getParams(location.search.substr(1)))) {
 			return;
 		}
-		
-		for(var key in params) paramstr.push(
-			encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
-		);
-		if(paramstr.length) url = url + '?' + paramstr.join('&');
-		
-		if(changes.nav && (changes.nav.mode || changes.nav.dialog)) {
+
+		for (var key in params) {
+			paramstr.push(
+				encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
+			);
+		}
+
+		if (paramstr.length) {
+			url = url + '?' + paramstr.join('&');
+		}
+
+		if (changes.nav && (changes.nav.mode || changes.nav.dialog)) {
 			history.pushState(state.nav, null, url);
 		} else {
 //			console.log('replacestate', state.nav);
