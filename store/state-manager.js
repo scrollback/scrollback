@@ -21,12 +21,8 @@ module.exports = function(core, conf, s, st) {
 		if (changes.session) updateSession(changes.session);
 		if (changes.user) updateCurrentUser(changes.user);
 
-
-		if(changes.nav && changes.nav.textRange) {
-//			console.log('textRange is now', changes.nav.textRange);
-		}
-
 		buildIndex(changes);
+		buildIndex(state, changes);
 		core.emit("statechange", changes);
 		next();
 	}, 1);
@@ -45,7 +41,6 @@ function updateThreads(threads) {
 			});
 		} else {
 			console.log(roomId + ' has no threads yet.');
-//			debugger;
 		}
 	});
 }
@@ -79,17 +74,22 @@ function updateTexts(texts) {
 	});
 }
 
-function buildIndex(obj) {
-	var relation, items;
+function buildIndex(obj, changes) {
+	var relation;
+	
+	// Changes are passed so that we don’t waste time rebuilding indexes that are still valid.
+	if(!changes) changes = obj;
 
-	obj.indexes = {
+	obj.indexes = obj.indexes || {
 		userRooms: {},
 		roomUsers: {},
 		textsById: {},
 		threadsById: {}
 	};
 
-	if (obj.entities) {
+	if (obj.entities && changes.entities) {
+		obj.indexes.userRooms = {};
+		obj.indexes.roomUsers = {};
 		for (var name in obj.entities) {
 			relation = obj.entities[name];
 			if (relation && relation.room && relation.user) {
@@ -98,58 +98,26 @@ function buildIndex(obj) {
 			}
 		}
 	}
-
-	if (obj.threads) {
-		for (var room in obj.threads) {
-			if (obj.threads[room] && obj.threads[room].length) {
-				for (var i = 0, l = obj.threads[room].length; i < l; i++) {
-					if (obj.threads[room][i]) {
-						items = obj.threads[room][i].items;
-
-						if (items && items.length) {
-							for (var j = 0, k = items.length; j < k; j++) {
-								if (items[j] && items[j].id) {
-									obj.indexes.threadsById[items[j].id] = items[j];
-								}
-							}
-						}
-					}
-				}
-			}
+	
+	
+	/* jshint -W083 */
+	function buildRangeIndex(obj, prop) {
+		var index = obj.indexes[prop+'ById'] = {};
+		for(var room in obj[prop]) {
+			if(obj[prop][room].forEach) obj[prop][room].forEach(function (range) {
+				range.items.forEach(function (item) {
+					index[item.id] = item;
+				});
+			});
 		}
 	}
-
-	if (obj.texts) {
-		for (var roomThread in obj.texts) {
-			if (obj.texts[roomThread] && obj.texts[roomThread].length) {
-				for (var m = 0, n = obj.texts[roomThread].length; m < n; m++) {
-					if (obj.texts[roomThread][m]) {
-						items = obj.texts[roomThread][m].items;
-
-						if (items && items.length) {
-							for (var o = 0, p = items.length; o < p; o++) {
-								if (items[o] && items[o].id) {
-									obj.indexes.textsById[items[o].id] = items[o];
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+	/* jshint +W083 */
+	
+	if(obj.threads && changes.threads) buildRangeIndex(obj, 'threads');
+	if(obj.texts && changes.texts) buildRangeIndex(obj, 'texts');
 }
 
 function updateEntities(stateEntities, changesEntities) {
 	objUtils.extend(stateEntities, changesEntities);
-	buildIndex(state);
 }
 
-/*function updateIndex(type, ranges) {
-	ranges.forEach(function(r) {
-		var index = store.indexes[type + "ById"] = store.indexes[type + "ById"] || {};
-		r.items.forEach(function(item) {
-			index[item.id] = item;
-		});
-	});
-}*/

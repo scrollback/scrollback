@@ -96,8 +96,6 @@ module.exports = function(core, config, store) {
 			if (beforeItems[beforeItems.length - 1] && afterItems[0] &&
 			   beforeItems[beforeItems.length - 1].id === afterItems[0].id) {
 				beforeItems.pop();
-			} else {
-				beforeItems.shift();
 			}
 
 			if (afterItems.length && afterItems[0].startTime === nav.threadRange.time) {
