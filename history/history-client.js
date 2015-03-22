@@ -61,6 +61,8 @@ module.exports = function(core, config, store) {
 			}
 		}
 
+		state.context.env = state.context.env || "web";
+
 		for (var section in propMap) {
 			for (var prop in propMap[section]) {
 				if (params[propMap[section][prop]]) {
