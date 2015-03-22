@@ -79,6 +79,8 @@ module.exports = function(core, config, store) {
 
 		onKeyDown: function(e) {
 			if (e.keyCode === 13 && !(e.altKey || e.shiftKey || e.ctrlKey)) {
+				e.preventDefault();
+
 				this.sendMessage();
 			}
 		},
@@ -117,7 +119,6 @@ module.exports = function(core, config, store) {
 					}
 				}
 
-				msg = format.textToHtml(msg).trim();
 				msg = msg ? msg + "&nbsp;" : "";
 			}
 
