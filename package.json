@@ -70,7 +70,7 @@
     "sockjs": "latest",
     "twit": "latest",
     "underscore": "latest",
-    "valid": "git://github.com/scrollback/valid.git#v0.0.1",
+    "valid": "git://github.com/scrollback/valid.git",
     "winston": "latest"
   },
   "optionalDependencies": {},
@@ -104,7 +104,7 @@
     "jshint-stylish": "latest",
     "lazypipe": "latest",
     "mocha": "latest",
-    "mocha-html-reporter": "git://github.com/kamalkishor1991/mocha-html-reporter.git#defc65cc72b6ed965caff1fb1c2d323ca0f5a319",
+    "mocha-html-reporter": "git://github.com/kamalkishor1991/mocha-html-reporter.git",
     "selenium-webdriver": "latest",
     "reactify": "latest",
     "vinyl-buffer": "latest",

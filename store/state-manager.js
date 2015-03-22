@@ -21,12 +21,12 @@ module.exports = function(core, conf, s, st) {
 		if (changes.session) updateSession(changes.session);
 		if (changes.user) updateCurrentUser(changes.user);
 		
-		
 		if(changes.nav && changes.nav.textRange) {
 //			console.log('textRange is now', changes.nav.textRange);
 		}
 		
 		buildIndex(changes);
+		buildIndex(state, changes);
 		core.emit("statechange", changes);
 		next();
 	}, 1);
@@ -75,16 +75,21 @@ function updateTexts(texts) {
 	});
 }
 
-function buildIndex(obj) {
-	var relation, items;
+function buildIndex(obj, changes) {
+	var relation;
+	
+	// Changes are passed so that we don’t waste time rebuilding indexes that are still valid.
+	if(!changes) changes = obj;
 
-	obj.indexes = {
+	obj.indexes = obj.indexes || {
 		userRooms: {},
 		roomUsers: {},
 		threadsById: {}
 	};
 
-	if (obj.entities) {
+	if (obj.entities && changes.entities) {
+		obj.indexes.userRooms = {};
+		obj.indexes.roomUsers = {};
 		for (var name in obj.entities) {
 			relation = obj.entities[name];
 			if (relation && relation.room && relation.user) {
@@ -93,31 +98,24 @@ function buildIndex(obj) {
 			}
 		}
 	}
-
-	if (obj.threads) {
-		for (var room in obj.threads) {
-			if (obj.threads[room] && obj.threads[room].length) {
-				for (var i = 0, l = obj.threads[room].length; i < l; i++) {
-					if (obj.threads[room][i]) {
-						items = obj.threads[room][i].items;
-
-						if (items && items.length) {
-							for (var j = 0, k = items.length; j < k; j++) {
-								if (items[j] && items[j].id) {
-									obj.indexes.threadsById[items[j].id] = items[j];
-								}
-							}
-						}
-					}
-				}
-			}
+	
+	/* jshint -W083 */
+	if(obj.threads && changes.threads) {
+		obj.threadsById = {};
+		for(var room in obj.threads) {
+			if(obj.threads[room].forEach) obj.threads[room].forEach(function (range) {
+				range.items.forEach(function (thread) {
+					obj.indexes.threadsById[thread.id] = thread;
+				});
+			});
 		}
 	}
+	/* jshint +W083 */
+
 }
 
 function updateEntities(stateEntities, changesEntities) {
 	objUtils.extend(stateEntities, changesEntities);
-	buildIndex(state);
 }
 
 /*function updateIndex(type, ranges) {

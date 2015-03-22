@@ -1,62 +1,15 @@
 var store, core, config;
 var entityOps = require("./entity-ops.js");
-var relationsProps = require("./property-list.js").relations;
+//var relationsProps = require("./property-list.js").relations;
 var pendingActions = {};
 module.exports = function(c, conf, s) {
 	store = s;
 	core = c;
 	config = conf;
 
-	function constructEntitiesFromRoomList(list, entities, userId) {
-		list.forEach(function(e) {
-			var relation = {}, entity = {};
-			relation = entityOps.relatedEntityToRelation(e, {id:userId,type:"user"});
-			entity = entityOps.relatedEntityToEntity(e);
-			entities[e.id] = entity;
-			entities[e.id + "_" + userId] = relation;
-		});
-
-		return entities;
-	}
-	core.on("init-dn", function(init, next) {
-		var entities = {};
-		if (!init.user.id) {
-			entities[store.get("user")] = init.user;
-			core.emit("setstate", {entities:entities});
-			return next();
-		}
-
-		if (init.occupantOf) entities = constructEntitiesFromRoomList(init.occupantOf, entities, init.user.id);
-		if (init.memberOf) entities = constructEntitiesFromRoomList(init.memberOf, entities, init.user.id);
-		entities[init.user.id] = init.user;
-		core.emit("setstate", {
-			entities: entities,
-			user: init.user.id
-		});
-		core.emit("getRooms", {featured: true}, function(err, rooms) {
-			var featuredRooms = [], entities = {};
-			if(rooms && rooms.results) {
-				rooms.results.forEach(function(e) {
-					if(e) {
-						featuredRooms.push(e.id);
-						entities[e.id] = e;
-					}
-
-				});
-			}
-			core.emit("setstate", {
-				app:{
-					featuredRooms: featuredRooms
-				},
-				entities: entities
-			});
-		});
-		next();
-	}, 1000);
-
-
-	core.on("join-dn", onJoin, 1000);
-	core.on("part-dn", onPart, 1000);
+	core.on("init-dn", onInit, 1000);
+	core.on("join-dn", onJoinPart, 1000);
+	core.on("part-dn", onJoinPart, 1000);
 	core.on("text-up", onTextUp, 1000);
 	core.on("text-dn", onTextDn, 1000);
 	core.on("away-dn", presenseChange, 1000);
@@ -64,6 +17,57 @@ module.exports = function(c, conf, s) {
 	core.on("room-dn", entityEvent, 1000);
 	core.on("user-dn", entityEvent, 1000);
 };
+
+function entitiesFromRooms(list, entities, userId) {
+	list.forEach(function(e) {
+		var rkey = e.id + "_" + userId,
+			relation = entities[rkey] || {},
+			entity = entities[e.id] || {};
+		
+		relation = entityOps.relatedEntityToRelation(e, {id:userId,type:"user"});
+		entity = entityOps.relatedEntityToEntity(e);
+		entities[e.id] = entity;
+		entities[rkey] = relation;
+	});
+
+	return entities;
+}
+
+function onInit(init, next) {
+	var entities = {};
+	if (!init.user.id) {
+		entities[store.get("user")] = init.user;
+		core.emit("setstate", {entities:entities});
+		return next();
+	}
+
+	if (init.occupantOf) entities = entitiesFromRooms(init.occupantOf, entities, init.user.id);
+	if (init.memberOf) entities = entitiesFromRooms(init.memberOf, entities, init.user.id);
+	entities[init.user.id] = init.user;
+	core.emit("setstate", {
+		entities: entities,
+		user: init.user.id
+	});
+	core.emit("getRooms", {featured: true}, function(err, rooms) {
+		var featuredRooms = [], entities = {};
+		if(rooms && rooms.results) {
+			rooms.results.forEach(function(e) {
+				if(e) {
+					featuredRooms.push(e.id);
+					entities[e.id] = e;
+				}
+
+			});
+		}
+		core.emit("setstate", {
+			app:{
+				featuredRooms: featuredRooms
+			},
+			entities: entities
+		});
+	});
+	next();
+}
 
 function entityEvent(action, next) {
 	var entities = {};
@@ -177,7 +181,7 @@ function onTextDn(text, next) {
 	next();
 }
 
-function onJoin(join, next) {
+function onJoinPart(join, next) {
 	var room = join.room;
 	var user = join.user;
 	var relation = {},
@@ -185,20 +189,23 @@ function onJoin(join, next) {
 
 	relation.user = user.id;
 	relation.room = room.id;
+	relation.role = join.role || (join.type == 'join'? 'follower': null);
+	if(relation.role == 'none') relation.role = null;
+//	
+//	
+//	relationsProps.forEach(function(key) {
+//		if (join.room[key]) {
+//			relation[key] = join.room[key];
+//			delete join.to[key];
+//		}
+//	});
+//
+//	relationsProps.forEach(function(prop) {
+//		relation[prop] = join[prop];
+//	});
 
-	relationsProps.forEach(function(key) {
-		if (join.room[key]) {
-			relation[key] = join.room[key];
-			delete join.to[key];
-		}
-	});
-
-	relationsProps.forEach(function(prop) {
-		relation[prop] = join[prop];
-	});
-
-	entities[room.id] = room;
-	entities[user.id] = user;
+	entities[room.id] = entityOps.relatedEntityToEntity(room);
+	entities[user.id] = entityOps.relatedEntityToEntity(user);
 	entities[room.id + "_" + user.id] = relation;
 
 	core.emit("setstate", {
@@ -207,23 +214,24 @@ function onJoin(join, next) {
 	return next();
 }
 
-
-
-function onPart(part, next) {
-	var room = part.room;
-	var user = part.user;
-	var entities = {};
-
-	entities[room.id] = room;
-	entities[user.id] = user;
-	entities[room.id + "_" + user.id] = null;
-
-	core.emit("setstate", {
-		entities: entities
-	});
-	return next();
-}
-
-
+//
+//
+//
+//function onPart(part, next) {
+//	var room = part.room;
+//	var user = part.user;
+//	var entities = {};
+//
+//	entities[room.id] = room;
+//	entities[user.id] = user;
+//	entities[room.id + "_" + user.id] = {};
+//
+//	core.emit("setstate", {
+//		entities: entities
+//	});
+//	return next();
+//}
+//
+//
 
 

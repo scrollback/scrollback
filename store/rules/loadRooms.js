@@ -14,12 +14,12 @@ module.exports = function(core, config, store) {
 					updatingState.nav = {
 						room: newRoom.id
 					};
+					updatingState.entities[roomId] = null;
 				}
 
-				updatingState.entities[roomId] = null;
 				updatingState.entities[newRoom.id] = newRoom;
 				
-			}else {
+			} else {
 				updatingState.entities[roomId] = "missing";
 			}
 			core.emit("setstate", updatingState);
