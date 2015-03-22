@@ -2,6 +2,7 @@
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		format = require("../../lib/format.js"),
 		ThreadCard;
 
 	ThreadCard = React.createClass({
@@ -93,7 +94,7 @@ module.exports = function(core, config, store) {
 				if (typeof chat === "object" && typeof chat.text === "string") {
 					chats.push((
 						<div key={"thread-card-chat-" + store.get("nav", "room") + "-" + thread.id + "-" + chat.id} className="card-chat">
-							<span className="card-chat-nick">{chat.from}</span>
+							<span className="card-chat-nick">{format.username(chat.from)}</span>
 							<span className="card-chat-message">{chat.text}</span>
 						</div>
 					));

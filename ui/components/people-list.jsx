@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
 var getAvatar = require("../../lib/get-avatar.js"),
+	format = require("../../lib/format.js"),
 	stringUtils = require("../../lib/string-utils.js");
 
 module.exports = function(core, config, store) {
@@ -45,7 +46,7 @@ module.exports = function(core, config, store) {
 							elem: (
 								<div className="people-list-item">
 									<img className="people-list-item-avatar" src={getAvatar(user.picture, 48)} />
-									<span className="people-list-item-nick">{user.id}</span>
+									<span className="people-list-item-nick">{format.username(user.id)}</span>
 								</div>
 							)
 						});
