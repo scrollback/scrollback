@@ -339,22 +339,22 @@ body {
     }
 
     &-userpref {
-        &:before { @include icon(configure); }
+        @include icon(configure);
     }
 
     &-reportissue {
-        &:before { @include icon(info-circled); }
+        @include icon(info-circled);
     }
 
     &-sound-notification-enable {
-        &:before { @include icon(audio); }
+        @include icon(audio);
     }
 
     &-sound-notification-disable {
-        &:before { @include icon(audio-off); }
+        @include icon(audio-off);
     }
 
     &-logout {
-        &:before { @include icon(off); }
+        @include icon(off);
     }
 }
