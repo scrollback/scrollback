@@ -61,7 +61,7 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var nav = store.get("nav"),
-				type = this.props.type,
+				type = this.props.type || "list",
 				key = "thread-" + type + "-" + nav.room,
 				items = [], atTop = false, atBottom = true,
 				before, after, beforeCount, afterCount,
@@ -155,19 +155,21 @@ module.exports = function(core, config, store) {
 					elem: <ThreadListItem roomId={nav.room} thread={allThread} />
 				}]
 			}];
-			
-			if(items.length) sections.push({
-				key: "threads-" + nav.room,
-				header: "Discussions",
-				endless: true,
-				items: items,
-				atTop: atTop,
-				atBottom: atBottom,
-				position: positionKey
-			});
-			
-			if(!items.length) {
-				empty = <div className = {"thread"+ (type ? "-" + type : "") +"-empty"}>There are no threads yet :-(</div>;
+
+			if (items.length) {
+				sections.push({
+					key: "threads-" + nav.room,
+					header: "Discussions",
+					endless: true,
+					items: items,
+					atTop: atTop,
+					atBottom: atBottom,
+					position: positionKey
+				});
+			}
+
+			if (!items.length) {
+				empty = <div className = {"thread" + (type ? "-" + type : "") + "-empty"}>There are no threads yet :-(</div>;
 			}
 
 			if (type === "feed") {
@@ -189,7 +191,7 @@ module.exports = function(core, config, store) {
 					<div className="main-content-threads">
 						<ListView endlesskey={key} sections={sections} onScroll={this.onScroll} />
 						{empty}
-					</div>		
+					</div>
 				);
 			}
 		}

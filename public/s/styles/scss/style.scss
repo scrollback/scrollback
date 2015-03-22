@@ -331,6 +331,16 @@ body {
     border: 0;
 }
 
+.thread-list-empty {
+    padding: 1em;
+    opacity: .5;
+}
+
+.thread-feed-empty {
+    padding: 2em 1.5em;
+    opacity: .5;
+}
+
 .dialog {
     > form {
         textarea, input, .button { width: 100%; }

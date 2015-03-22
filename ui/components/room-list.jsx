@@ -18,7 +18,7 @@ module.exports = function(core, config, store) {
 				featured: "Featured rooms"
 			},
 			secs = {}, sections = [],
-			type = this.props.type;
+			type = this.props.type || "list";
 
 			for (var t in titles) {
 				secs[t] = {
