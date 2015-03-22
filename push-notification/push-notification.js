@@ -39,6 +39,7 @@ module.exports = function(core, conf) {
 				});
 			}
 		});
+		log.d("Got regLists of the room:", regList);
 		gcm_notify(regList, payload, core, config);
 	}
 
@@ -65,6 +66,7 @@ module.exports = function(core, conf) {
 	}
 
 	core.on('text', function(text, next) {
+		log.d("Got text:", text);
 		var from = text.from.replace(/^guest-/, "");
 		// push notification when user is mentioned in a text message.
 		var mentions = text.mentions ? text.mentions : [];
@@ -84,6 +86,7 @@ module.exports = function(core, conf) {
 			memberOf: text.to,
 			session: "internal-push-notifications"
 		}, function(e, d) {
+			log.d("Got users of the room:", d);
 			if (!d || !d.results) return;
 			notifyUsers(d.results, payload);
 		});
