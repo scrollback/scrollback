@@ -1,12 +1,11 @@
 /* jshint browser:true */
-/* global Android */
 
 module.exports = function(core, config, store) {
 	var login;
 
 	function androidLogin() {
-		if (Android && typeof Android.facebookLogin === "function") {
-			Android.facebookLogin();
+		if (window.Android && typeof window.Android.facebookLogin === "function") {
+			window.Android.facebookLogin();
 		}
 	}
 

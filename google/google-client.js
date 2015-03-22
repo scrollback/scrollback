@@ -1,12 +1,11 @@
 /* jshint browser: true */
-/* global Android */
 
 module.exports = function(core, config, store) {
 	var login;
 
 	function androidLogin() {
-		if (Android && typeof Android.googleLogin === "function") {
-			Android.googleLogin();
+		if (window.Android && typeof window.Android.googleLogin === "function") {
+			window.Android.googleLogin();
 		}
 	}
 

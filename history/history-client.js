@@ -61,10 +61,6 @@ module.exports = function(core, config, store) {
 			}
 		}
 
-		if ("Android" in window && window.Android) {
-			state.context.env = "android";
-		}
-
 		for (var section in propMap) {
 			for (var prop in propMap[section]) {
 				if (params[propMap[section][prop]]) {
