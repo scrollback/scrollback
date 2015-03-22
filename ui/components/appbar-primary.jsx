@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
 var showMenu = require("../utils/show-menu.js"),
+	appUtils = require("../../lib/app-utils.js"),
 	stringUtils = require("../../lib/string-utils.js"),
 	getAvatar = require("../../lib/get-avatar.js");
 
@@ -65,6 +66,10 @@ module.exports = function(core, config, store) {
 		render: function() {
 			var user, nav, relation, title,
 				classNames = "appbar-icon appbar-icon-follow";
+
+			if (store.get("nav", "mode") === "home" && appUtils.isGuest(store.get("user"))) {
+				return <div />;
+			}
 
 			nav = store.get("nav");
 			user = store.getUser();

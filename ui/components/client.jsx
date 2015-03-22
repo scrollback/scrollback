@@ -2,6 +2,7 @@
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		Banner = require("./banner.jsx")(core, config, store),
 		AppbarPrimary = require("./appbar-primary.jsx")(core, config, store),
 		AppbarSecondary = require("./appbar-secondary.jsx")(core, config, store),
 		CallToActionBar = require("./calltoactionbar.jsx")(core, config, store),
@@ -48,9 +49,13 @@ module.exports = function(core, config, store) {
 							<AppbarSecondary />
 
 							<div className="main-content" data-mode="home search room">
-								<RoomList type="feed" />
+								<Banner />
 
-								<ThreadList type="feed" />
+								<div className="main-content-inner">
+									<RoomList type="feed" />
+
+									<ThreadList type="feed" />
+								</div>
 							</div>
 
 							<ChatArea />
