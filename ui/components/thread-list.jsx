@@ -66,7 +66,7 @@ module.exports = function(core, config, store) {
 				items = [], atTop = false, atBottom = true,
 				before, after, beforeCount, afterCount,
 				allItems, beforeItems, afterItems, positionKey,
-				scrollToClassNames, cols, sections;
+				scrollToClassNames, cols, sections, empty;
 
 			// Don't show
 			if (!((nav.mode === "room" && type === "feed") || nav.mode === "chat")) {
@@ -151,10 +151,12 @@ module.exports = function(core, config, store) {
 				key: "threads-" + nav.room + "-all",
 				endless: false,
 				items: [{
-					key: "thread-" + (type ? "-" + type : "") + "-all",
+					key: "thread" + (type ? "-" + type : "") + "-all",
 					elem: <ThreadListItem roomId={nav.room} thread={allThread} />
 				}]
-			}, {
+			}];
+			
+			if(items.length) sections.push({
 				key: "threads-" + nav.room,
 				header: "Discussions",
 				endless: true,
@@ -162,7 +164,11 @@ module.exports = function(core, config, store) {
 				atTop: atTop,
 				atBottom: atBottom,
 				position: positionKey
-			}];
+			});
+			
+			if(!items.length) {
+				empty = <div className = {"thread"+ (type ? "-" + type : "") +"-empty"}>There are no threads yet :-(</div>;
+			}
 
 			if (type === "feed") {
 				scrollToClassNames = "thread-feed-scroll-to scroll-to";
@@ -172,13 +178,19 @@ module.exports = function(core, config, store) {
 				}
 
 				return (
-						<div className="main-content-threads" data-mode="room">
+						<div className="main-content-threads">
 							{/*<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>*/}
 							<GridView endlesskey={key} sections={sections} onScroll={this.onScroll} />
+							{empty}
 						</div>
-				);
+					);
 			} else {
-				return (<ListView endlesskey={key} sections={sections} onScroll={this.onScroll} />);
+				return (
+					<div className="main-content-threads">
+						<ListView endlesskey={key} sections={sections} onScroll={this.onScroll} />
+						{empty}
+					</div>		
+				);
 			}
 		}
 	});

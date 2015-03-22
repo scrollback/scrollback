@@ -13,6 +13,10 @@ function init() {
 	core.emit("boot", newState, function() {
 		newState.app.bootComplete = true;
 		bootComplete = true;
+		
+		newState.source = 'boot'; // debug only
+		
+		console.log("boot has completed", newState);
 
 		core.emit("setstate", newState);
 
@@ -22,7 +26,6 @@ function init() {
 	});
 
 	core.on("init-up", function(action, next) {
-		console.log(action, bootComplete);
 		if (!bootComplete) {
 			initNext = next;
 		} else {

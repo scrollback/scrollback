@@ -12,4 +12,5 @@ module.exports = function(core, config, store) {
 	require("./rules/androidApp.js")(core, config, store);
 	require("./rules/resetDialogState.js")(core, config, store);
 	require("./rules/selectedTexts.js")(core, config, store);
+	require("./rules/removeRelations.js")(core, config, store);
 };
