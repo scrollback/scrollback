@@ -39,6 +39,7 @@ module.exports = function(core, conf) {
 				});
 			}
 		});
+		log.d("Got regLists of the room:", regList);
 		gcm_notify(regList, payload, core, config);
 	}
 
@@ -53,7 +54,7 @@ module.exports = function(core, conf) {
 			message: message,
 			roomName: text.to,
 			time: text.time,
-			threadId: text.threads[0].id
+			threadId: text.thread || "All conversations: "
 		};
 		var msgLen = JSON.stringify(payload).length;
 
@@ -65,8 +66,8 @@ module.exports = function(core, conf) {
 	}
 
 	core.on('text', function(text, next) {
+		log.d("Got text:", text);
 		var from = text.from.replace(/^guest-/, "");
-		if (!text.threads || !text.threads[0]) return next();
 		// push notification when user is mentioned in a text message.
 		var mentions = text.mentions ? text.mentions : [];
 		var title = "[" + text.to + "] " + from + " mentioned you";
@@ -77,20 +78,18 @@ module.exports = function(core, conf) {
 			notifyUsers(userList, payload);
 		});
 
-		// push notification on new thread creation.
-		if (text.labels && text.labels.manualThreaded === 1 &&
-			text.labels.startOfThread && text.threads[0]) {
-			title = "[" + text.to + "] " + "new discussion";
-			message = "[" + from + "] " + text.text;
-			payload = makePayload(title, message, text);
-			core.emit("getUsers", {
-				memberOf: text.to,
-				session: "internal-push-notifications"
-			}, function(e, d) {
-				if (!d || !d.results) return;
-				notifyUsers(d.results, payload);
-			});
-		}
+	// push notification on new thread creation.
+		title = "[" + text.to + "] " + "new discussion";
+		message = "[" + from + "] " + text.text;
+		payload = makePayload(title, message, text);
+		core.emit("getUsers", {
+			memberOf: text.to,
+			session: "internal-push-notifications"
+		}, function(e, d) {
+			log.d("Got users of the room:", d);
+			if (!d || !d.results) return;
+			notifyUsers(d.results, payload);
+		});
 
 		next();
 	}, "gateway");

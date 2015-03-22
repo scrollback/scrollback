@@ -23,7 +23,7 @@ var core, config,
 	fs = require("fs"),
 	core,
 	handlebars = require("handlebars"),
-	seo, clientTemp, clientHbs,
+	seo, clientTemp, clientHbs, oldAppHTML,
 	log = require('../lib/logger.js');
 
 module.exports = function(c, conf) {
@@ -69,12 +69,13 @@ function init (app) {
 		}
 
 		var platform = req.query.platform;
-
+		
 		clientData.appVersion = req.query["app-version"] || "defaults";
 		clientData.manifest = (platform ? platform.toLowerCase() : "manifest") + ".appcache";
 		clientData.cordova = (!!(platform && (/cordova/i).test(platform))) ||
 			(platform === "android"); // fixing backward compatibitly issue
-
+		
+		if(clientData.cordova) return serverStaticFile(res);
 		seo.getSEOHtml(req, function(r) {
 			clientData.seo = r;
 			res.end(clientTemp(clientData));
@@ -82,8 +83,11 @@ function init (app) {
 
 	});
 }
-
+function serverStaticFile(res) {
+	res.end(oldAppHTML);
+}
 function start() {
+	oldAppHTML = fs.readFileSync(__dirname + "/old-app-page.html");
 	clientHbs = fs.readFileSync(__dirname + "/../public/app.hbs", "utf8");
 	seo = require('./seo.js')(core, config);
 	clientTemp = handlebars.compile(clientHbs);

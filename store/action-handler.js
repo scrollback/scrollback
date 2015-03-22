@@ -16,7 +16,7 @@ module.exports = function(c, conf, s) {
 	core.on("away-dn", onAwayBack, 1000);
 	core.on("back-dn", onAwayBack, 1000);
 	core.on("room-dn", onRoomUser, 1000);
-	core.on("user-dn", onRoomUser, 1000);
+	core.on("user-dn", onRoomUser, 999);
 };
 
 function entitiesFromRooms(list, entities, userId) {
@@ -68,6 +68,7 @@ function onInit(init, next) {
 					featuredRooms.push(e.id);
 					entities[e.id] = e;
 				}
+
 
 			});
 		}

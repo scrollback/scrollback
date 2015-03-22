@@ -23,6 +23,9 @@ module.exports = function(core, conf, s, st) {
 
 		buildIndex(changes);
 		buildIndex(state, changes);
+		
+		console.log('state changed to', state);
+		
 		core.emit("statechange", changes);
 		next();
 	}, 1);

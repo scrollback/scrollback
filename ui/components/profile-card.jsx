@@ -8,7 +8,7 @@ module.exports = function(core, config, store) {
 
 	ProfileCard = React.createClass({
 		render: function() {
-			var user = store.getUser();
+			var user = store.getUser() || {};
 
 			return (
 				<div key="profile-card" className="profile-card">

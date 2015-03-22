@@ -72,7 +72,7 @@ module.exports = function(core, config, store) {
 			}
 
 			nav = store.get("nav");
-			user = store.getUser();
+			user = store.getUser() || {};
 			relation = store.getRelation();
 
 			switch (nav.mode) {

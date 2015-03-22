@@ -73,7 +73,7 @@ module.exports = function(core, config, store) {
 			text: (notification ? "Disable " : "Enable ") + "sound notifications",
 			prio: 500,
 			action: function() {
-				user.params.notifications = user.params.notifications || {};
+				user.params.notifications = user.params.notifications || {sound:true};
 
 				user.params.notifications.sound = !user.params.notifications.sound;
 

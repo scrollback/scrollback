@@ -46,7 +46,7 @@ module.exports = function(core, config) {
 		return rangeOps.getItems(state.texts[key], req, "time");
 	};
 
-	store.getEntity = getEntities;
+	store.getEntity = getEntity;
 
 	store.getThreads = function(roomId, time, range) {
 		var req = {
@@ -68,6 +68,7 @@ module.exports = function(core, config) {
 	require("./rule-manager.js")(core, config, store, state);
 	require("./socket.js")(core, config, store, state);
 	require("./session-manager.js")(core, config, store, state);
+	require("./guest-params-handler.js")(core, config, store, state);
 	return store;
 };
 
@@ -176,34 +177,14 @@ function getRelatedRooms(id, filter) {
 	else return [];
 }
 
-function getUser() {
-	var userId, res;
-	if (arguments.length === 0) userId = this.get("user");
-	else userId = arguments[0];
-	res = this.get("entities", userId);
-	if (res) return res;
-	return "missing";
+function getUser(id) {
+	return this.getEntity(id || this.get("user"));
 }
 
-function getRoom() {
-	var roomId, res;
-	if (arguments.length === 0) roomId = this.get("nav", "room");
-	else roomId = arguments[0];
-	if (roomId) {
-		res = this.get("entities", roomId);
-	}
-	if (res) return res;
-	else return "missing";
+function getRoom(id) {
+	return this.getEntity(id || this.get("nav", "room"));
 }
 
-function getEntities(id) {
-	var res;
-	if (id) {
-		res = this.get("entities", id);
-	} else {
-		return {};
-	}
-
-	if (res) return res;
-	else return "missing";
+function getEntity(id) {
+	return this.get("entities", id) || "unknown";
 }
