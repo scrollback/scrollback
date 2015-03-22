@@ -3,6 +3,7 @@
 /* global SockJS*/
 
 var generate = require("../lib/generate.js"),
+	appUtils = require("../lib/app-utils.js"),
 	config, core, client, store;
 
 var backOff = 1,
@@ -32,8 +33,7 @@ module.exports = function(c, conf, s) {
 		}, 10);
 	});
 	["text-up", "edit-up", "back-up", "away-up",
-	 "join-up", "part-up", "admit-up", "expel-up",
-	 "user-up", "room-up"].forEach(function(event) {
+	 "join-up", "part-up", "admit-up", "expel-up","room-up"].forEach(function(event) {
 		core.on(event, function(action, next) {
 			action.type = event.replace(/-up$/, "");
 			if (initDone) {
@@ -47,6 +47,22 @@ module.exports = function(c, conf, s) {
 		}, 1);
 	});
 
+	 core.on("user-up", function(userUp, next) {
+		 if (appUtils.isGuest) {
+			 next();
+			 core.emit("user-dn", userUp);
+		 } else {
+			 userUp.type = "user";
+			 if (initDone) {
+				sendAction(userUp);
+			} else {
+				actionQueue.push(function() {
+					sendAction(userUp);
+				});
+			}
+			 next();
+		 }
+	 }, 1);
 	core.on("init-up", function(init, next) {
 		if (!init.session) session = init.session = "web://" + generate.uid();
 		init.type = "init";

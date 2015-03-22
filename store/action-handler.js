@@ -84,7 +84,7 @@ module.exports = function(c, conf, s) {
 	core.on("away-dn", presenseChange, 1000);
 	core.on("back-dn", presenseChange, 1000);
 	core.on("room-dn", entityEvent, 1000);
-	core.on("user-dn", entityEvent, 1000);
+	core.on("user-dn", entityEvent, 999);// run after the guest params saving..
 };
 
 function entityEvent(action, next) {
