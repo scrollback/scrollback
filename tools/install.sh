@@ -17,7 +17,7 @@
 # Author: Sindhu S <sindhus@live.in>
 #!/usr/bin/env bash
 
-# echo on for DEBUG!
+# printf on for DEBUG!
 # set -xv
 
 # Vars for Scrollback/Env
@@ -46,17 +46,17 @@ port="7528"
 
 check_root() {
     if [[ "$(whoami)" = "root" ]]; then
-        echo "Run script as normal user, exiting!"
+        printf "Run script as normal user, exiting!"
         exit 1
     fi
 }
 
 check_bash() {
-    version=$(bash -c 'echo $BASH_VERSINFO')
+    version=$(bash -c 'printf $BASH_VERSINFO')
     if [ "$version" -eq 4 ]; then
-        echo "You have Bash 4.x, will continue installation :)"
+        printf "You have Bash 4.x, will continue installation :)"
     else
-        echo "You don't have Bash 4.x, exiting :("
+        printf "You don't have Bash 4.x, exiting :("
         exit 1
     fi
 }
@@ -68,7 +68,7 @@ whereami() {
         if [[ "$location" ]]; then
             update_scrollback
         else
-            echo "You don't have Scrollback repo!"
+            printf "You don't have Scrollback repo!"
             change_dir ..
         fi
     else
@@ -81,12 +81,13 @@ change_dir(){
 }
 
 get_scrollback() {
-    echo "Do you want to clone your fork of Scrollback? If yes, enter your username:"
+    printf "Do you want to clone your fork of Scrollback?"
+    printf "If yes, (within 10 seconds) enter your username:"
     read -t 10 ghuser
     [[ -z "$ghuser" ]] && ghuser="scrollback"
-    echo "$(git clone --depth=1 https://github.com/$ghuser/scrollback.git)"
-    echo $(chown -R scrollback:scrollback scrollback)
-    echo " *** Note *** This is a shallow clone, to unshallow run 'git fetch --depth=10000000"
+    printf "$(git clone --depth=1 https://github.com/$ghuser/scrollback.git)"
+    printf $(chown -R scrollback:scrollback scrollback)
+    printf " *** Note *** This is a shallow clone, to unshallow run 'git fetch --depth=10000000"
     change_dir scrollback
 }
 
@@ -114,12 +115,12 @@ check_deps() {
 
 deps_osx() {
     if [[ $(which brew) ]]; then
-        echo "You are on OS X with Brew installed,"
+        printf "You are on OS X with Brew installed,"
         if [[ "$system_deps" ]]; then
-            echo "Running 'brew update' and will install system dependencies..."
-            echo $(brew -v update && brew -v install $system_deps)
+            printf "Running 'brew update' and will install system dependencies..."
+            printf $(brew -v update && brew -v install $system_deps)
         else
-            echo "You have all system dependencies installed!"
+            printf "You have all system dependencies installed!"
         fi
     fi
 }
@@ -132,23 +133,23 @@ postgres_sources() {
     lsb=$(command -v lsb_release)
     if [[ $lsb != "" ]]; then
         info=$(lsb_release -c)
-        release_name=$(echo $info | grep -oP 'Codename:.* \K\w*')
+        release_name=$(printf $info | grep -oP 'Codename:.* \K\w*')
     else
         release_name=$(grep VERSION= /etc/os-release | tr -d '(' | cut -d ' ' -f 2-  | tr -d ')"')
     fi
 
     if [[ $release_name != "" ]]; then
         apt_source="deb http://apt.postgresql.org/pub/repos/apt/ $release_name-pgdg main"
-        echo "Adding Postgres' source to your software sources list (need root user rights).."
-        echo $(sudo echo $apt_source > /etc/apt/sources.list.d/pgdg.list)
-        echo "Updating GPG Keys for source..."
-        echo $(wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -)
+        printf "Adding Postgres' source to your software sources list (need root user rights).."
+        printf $(sudo printf $apt_source > /etc/apt/sources.list.d/pgdg.list)
+        printf "Updating GPG Keys for source..."
+        printf $(wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -)
     fi
 }
 
 deps_linux() {
-    echo "You are on a Linux system,"
-    echo "Finding your distribution type and package manager..."
+    printf "You are on a Linux system,"
+    printf "Finding your distribution type and package manager..."
     declare -A osInfo;
     osInfo=(
     ['/etc/arch-release']='pacman -Svy --noconfirm base-devel'
@@ -181,11 +182,11 @@ deps_linux() {
             done
         done
 
-        echo "Updating sources and installing dependencies with:"
-        echo $install
-        eval $install
+        printf "Updating sources and installing dependencies with:"
+        printf $install
+        eval "$install"
     else
-        echo "You have all system dependencies installed!"
+        printf "You have all system dependencies installed!"
     fi
 }
 
@@ -195,31 +196,31 @@ install_deps() {
     elif [[ ${kernel} == "Linux" ]]; then
         deps_linux
     else
-        echo "Whoa! You are not on a kernel we recognise."
-        echo "If you think Nodejs applications are capable of runnning on this system,"
-        echo "File an issue on https://github.com/scrollback/scrollback/issues."
+        printf "Whoa! You are not on a kernel we recognise."
+        printf "If you think Nodejs applications are capable of runnning on this system,"
+        printf "File an issue on https://github.com/scrollback/scrollback/issues."
         exit 1
     fi
 }
 
 update_scrollback() {
-    echo "Bringing your local Scrollback master branch up-to-date with upstream master..."
-    echo "*** Stashing *** your local changes with 'git stash save'"
-    echo "To bring back local changes later, use 'git stash apply'"
-    echo $(git stash save)
-    echo $(git checkout master)
-    echo $(git pull --rebase origin master)
+    printf "Bringing your local Scrollback master branch up-to-date with upstream master..."
+    printf "*** Stashing *** your local changes with 'git stash save'"
+    printf "To bring back local changes later, use 'git stash apply'"
+    printf $(git stash save)
+    printf $(git checkout master)
+    printf $(git pull --rebase origin master)
 }
 
 install_pkgs() {
-    echo "Installing application dependencies for Scrollback..."
+    printf "Installing application dependencies for Scrollback..."
     npm_base="npm install --verbose"
     npm_global="sudo $npm_base -g $application_deps"
     npm_command="$npm_base"
 
     # Directory is writable, no need to use root rights
     if [[ -w /usr/local/bin/ && -w /usr/local/lib/ ]]; then
-        echo "Writable"
+        printf "Writable"
     else
         npm_command="sudo $npm_base"
     fi
@@ -229,24 +230,24 @@ install_pkgs() {
         eval $npm_global
     fi
 
-    echo $(bower install --verbose)
-    echo $(gulp)
+    printf $(bower install --verbose)
+    printf $(gulp)
 }
 
 config() {
     if [[ -f client-config.sample.js ]]; then
-        echo $(cp client-config.sample.js client-config.js)
+        printf $(cp client-config.sample.js client-config.js)
     else
-        echo $(echo "module.exports = {};" > client-config.js)
+        printf $(printf "module.exports = {};" > client-config.js)
     fi
 }
 
 redis() {
     redis_pid=$(pgrep redis-server)
     if [[ "$redis_pid" ]]; then
-        echo "Looks like you are already running redis-server with PID $redis_pid"
+        printf "Looks like you are already running redis-server with PID $redis_pid"
     else
-        echo "Starting Redis Server..."
+        printf "Starting Redis Server..."
         $(redis-server > /dev/null)
     fi
 }
@@ -256,61 +257,61 @@ service_manager() {
     sysvinit="init is /sbin/init"
     systemd="init is /usr/sbin/init"
     if [[ $init_location == $sysvinit ]]; then
-        echo sysvinit
+        printf sysvinit
     else
-        echo systemd
+        printf systemd
     fi
 }
 
 postgres_osx_start() {
     # Known issue of missing dirs in OS X 10.10: Stackoverflow #25970132
-    echo $(mkdir -p /usr/local/var/postgres/{pg_tblspc,pg_twophase,pg_stat_tmp}/)
-    echo "Starting Postgres Server..."
-    echo $(pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start)
-    echo "You can shutdown Postgres later with 'pg_ctl -D /usr/local/var/postgres stop -s -m fast'"
+    printf $(mkdir -p /usr/local/var/postgres/{pg_tblspc,pg_twophase,pg_stat_tmp}/)
+    printf "Starting Postgres Server..."
+    printf $(pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start)
+    printf "You can shutdown Postgres later with 'pg_ctl -D /usr/local/var/postgres stop -s -m fast'"
 }
 
 postgres_schemas() {
-    echo "Creating tables in databases..."
-    echo $(psql -U scrollback -d scrollback -a -f tools/pg/sbcontent.sql)
-    echo $(psql -U scrollback -d scrollback -a -f tools/pg/sbentity.sql)
-    echo $(psql -U scrollback -d logs -a -f tools/pg/logs.sql)
+    printf "Creating tables in databases..."
+    printf $(psql -U scrollback -d scrollback -a -f tools/pg/sbcontent.sql)
+    printf $(psql -U scrollback -d scrollback -a -f tools/pg/sbentity.sql)
+    printf $(psql -U scrollback -d logs -a -f tools/pg/logs.sql)
 }
 
 postgres_osx_create() {
-    echo "Creating user: 'scrollback' without password..."
-    echo $(createuser scrollback)
-    echo "Creating database: 'scrollback'"
-    echo $(createdb -U `whoami` -w -O scrollback scrollback )
-    echo "Creating database: 'logs'"
-    echo $(createdb -U `whoami` -w -O scrollback logs)
+    printf "Creating user: 'scrollback' without password..."
+    printf $(createuser scrollback)
+    printf "Creating database: 'scrollback'"
+    printf $(createdb -U `whoami` -w -O scrollback scrollback )
+    printf "Creating database: 'logs'"
+    printf $(createdb -U `whoami` -w -O scrollback logs)
 }
 
 postgres_create_linux() {
-    echo "Creating user: 'scrollback' without password..."
+    printf "Creating user: 'scrollback' without password..."
     $(sudo -u postgres createuser -s scrollback)
-    echo "Creating database: 'scrollback'"
+    printf "Creating database: 'scrollback'"
     $(sudo -u postgres createdb -w -O scrollback scrollback)
-    echo "Creating database: 'logs'"
+    printf "Creating database: 'logs'"
     $(sudo -u postgres createdb -w -O scrollback logs)
 }
 
 postgres_sysvinit() {
-    echo "Starting Postgres Server..."
+    printf "Starting Postgres Server..."
     $(sudo /etc/init.d/postgresql start)
-    echo "To stop Postgres Server later, use 'sudo /etc/init.d/postgresql stop'"
+    printf "To stop Postgres Server later, use 'sudo /etc/init.d/postgresql stop'"
 }
 
 postgres_systemd() {
-    echo "Enabling Postgres Server.."
+    printf "Enabling Postgres Server.."
     $(sudo systemctl enable postgresql.service)
-    echo "Starting Postgres Server..."
+    printf "Starting Postgres Server..."
     $(sudo systemctl start postgresql.service)
-    echo "To stop Postgres Server later, use 'sudo systemctl postgres stop'"
+    printf "To stop Postgres Server later, use 'sudo systemctl postgres stop'"
 }
 
 postgres() {
-    echo "Checking for Postgres..."
+    printf "Checking for Postgres..."
     postgres_pids=$(pgrep postgres)
     if [[ "$postgres_pids" ]]; then
         if [[ ${kernel} == "Darwin" ]]; then
@@ -327,17 +328,17 @@ postgres() {
             postgres_schemas
         fi
     else
-        echo "You are running Postgres server on $postgres_pids"
+        printf "You are running Postgres server on $postgres_pids"
     fi
 }
 
 run() {
-    echo "Starting Scrollback, open your browser at http://$ip:$port, "
-    echo $(node index.js)
+    printf "Starting Scrollback, open your browser at http://$ip:$port, "
+    printf $(node index.js)
 }
 
 main() {
-    echo " ********** BEGIN Scrollback.io INSTALL ********** "
+    printf " ********** BEGIN Scrollback.io INSTALL ********** "
     # Listen to Ctrl+C
     trap exit 1 INT
 
@@ -369,7 +370,7 @@ main() {
     # Run Scrollback
     run
 
-    echo " ********** END Scrollback.io INSTALL ********** "
+    printf " ********** END Scrollback.io INSTALL ********** "
 }
 
 main
