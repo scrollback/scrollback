@@ -1,4 +1,5 @@
-var log = require('../lib/logger.js'), config;
+var log = require('../lib/logger.js'),
+	config;
 var gcm_notify = require('./gcm-notify.js');
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
@@ -6,9 +7,13 @@ var gcm_notify = require('./gcm-notify.js');
 
 module.exports = function(core, conf) {
 	config = conf;
+
 	function mapUsersToIds(idList, cb) {
-		core.emit("getUsers", {session: "internal-push-notifications", ref: idList}, function(err, query) {
-			if(err){
+		core.emit("getUsers", {
+			session: "internal-push-notifications",
+			ref: idList
+		}, function(err, query) {
+			if (err) {
 				log.e("Error loading users in push notifications");
 				return;
 			}
@@ -25,8 +30,8 @@ module.exports = function(core, conf) {
 		userList.forEach(function(userObj) {
 			if (userObj && userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
 				var devices = userObj.params.pushNotifications.devices;
-				
-				if(devices instanceof Array) return;
+
+				if (devices instanceof Array) return;
 				Object.keys(devices).forEach(function(uuid) {
 					var device = devices[uuid];
 					if (device.hasOwnProperty('regId') && device.enabled === true) {
@@ -38,55 +43,49 @@ module.exports = function(core, conf) {
 				});
 			}
 		});
+
 		log.d("Got regLists of the room:", regList);
 		gcm_notify(regList, payload, core, config);
 	}
-
-	function makePayload(title, message, text) {
-		/*
-			Create a valid push notification payload
-		*/
-		var payload = {
-			title: text.from + " in " + text.to, 
-			subtitle: text.text,
-			path: text.to+"/"+text.thread
-		};
-		var msgLen = JSON.stringify(payload).length;
-
-		if (msgLen > 4 * 1024) {
-			log.i("Payload too big for push notification, truncating ... ", JSON.stringify(payload));
-			payload.message = payload.message.substring(0, 700);
-		}
-		return payload;
-	}
-
+	
 	core.on('text', function(text, next) {
 		log.d("Got text:", text);
-		var from = text.from.replace(/^guest-/, "");
-		// push notification when user is mentioned in a text message.
-		var mentions = text.mentions ? text.mentions : [];
-		var title = "[" + text.to + "] " + from + " mentioned you";
-		var message = "[" + from + "] " + text.text;
-		var payload = makePayload(title, message, text);
+		if (text.mentions.length) onMentions(text);
+		if (text.thread == text.id) onNewDisscussion(text);
+		next();
+	}, "gateway");
 
-		mapUsersToIds(mentions, function(userList) {
+	function onMentions(text) {
+		var from = text.from.replace(/^guest-/, "");
+		var payload = {
+			title: from + " mentioned you in " + text.to,
+			text: text.text.length > 100 ? text.text.substring(0, 100) : text.text,
+			path: text.to + (text.thread ? "/" + text.thread : "")
+		};
+		mapUsersToIds(text.mentions, function(userList) {
 			notifyUsers(userList, payload);
 		});
+	}
 
-	// push notification on new thread creation.
-		title = "[" + text.to + "] " + "new discussion";
-		message = "[" + from + "] " + text.text;
-		payload = makePayload(title, message, text);
+	function onNewDisscussion(text) {
+		var from = text.from.replace(/^guest-/, "");
+		var payload = {
+			title: from + ": " + text.title,
+			text: text.text.length > 100 ? text.text.substring(0, 100) : text.text,
+			path: text.to + (text.thread ? "/" + text.thread : "")
+		};
 		core.emit("getUsers", {
 			memberOf: text.to,
 			session: "internal-push-notifications"
 		}, function(e, d) {
+			var usersList;
 			log.d("Got users of the room:", d);
 			if (!d || !d.results) return;
-			notifyUsers(d.results, payload);
+			usersList = d.results.filter(function(e) {
+				return (e.id !== text.from) && (text.mentions.indexOf(e.id) >= 0);
+			});
+			notifyUsers(usersList, payload);
 		});
-
-		next();
-	}, "gateway");
+	}
 
 };
