@@ -8,7 +8,9 @@ module.exports = function(core, config, store) {
 
 	Banner = React.createClass({
 		render: function() {
-			if (store.get("nav", "mode") === "home" && appUtils.isGuest(store.get("user"))) {
+			var user = store.get("user");
+
+			if (user && store.get("context", "env") !== "android" && (store.get("nav", "mode") === "home" && appUtils.isGuest(user))) {
 				return <iframe className="banner" src="http://web.scrollback.io/banner/"></iframe>;
 			} else {
 				return <div />;
