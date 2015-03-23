@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
-var appUtils = require("../../lib/app-utils.js");
+var showMenu = require("../utils/show-menu.js"),
+	appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -25,6 +26,16 @@ module.exports = function(core, config, store) {
 			});
 		},
 
+		showUserMenu: function(e) {
+			core.emit("user-menu", {
+				origin: e.currentTarget,
+				buttons: {},
+				items: {}
+			}, function(err, menu) {
+				showMenu("user-menu", menu);
+			});
+		},
+
 		render: function() {
 			var items = [];
 
@@ -41,13 +52,21 @@ module.exports = function(core, config, store) {
 				           );
 			}
 
-			if (store.get("nav", "mode") === "home" && !appUtils.isGuest(store.get("user"))) {
-				items.push(
-				           <div className="sidebar-block sidebar-block-item" key="sidebar-account-settings" onClick={this.goToSettings}>
-								<div className="sidebar-icon sidebar-icon-settings"></div>
-								<div className="sidebar-label">Account settings</div>
-				           </div>
-				           );
+			if (store.get("nav", "mode") === "home") {
+				if (appUtils.isGuest(store.get("user"))) {
+					items.push(
+					           <div className="sidebar-block sidebar-block-content" key="sidebar-signin-prompt">
+									<a className="sidebar-signin-button button info" onClick={this.showUserMenu}>Sign in</a>
+					           </div>
+					           );
+				} else {
+					items.push(
+					           <div className="sidebar-block sidebar-block-item" key="sidebar-account-settings" onClick={this.goToSettings}>
+									<div className="sidebar-icon sidebar-icon-settings"></div>
+									<div className="sidebar-label">Account settings</div>
+					           </div>
+					           );
+				}
 			}
 
 			return (
