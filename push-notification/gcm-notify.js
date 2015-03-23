@@ -62,6 +62,8 @@ module.exports = function(userRegMapping, payload, core, config) {
 			data: payload,
 			registration_ids: notifArr
 		};
+		console.log(JSON.stringify(pushData));
+		console.log("headers",headers);
 		request.post({
 			uri: 'https://android.googleapis.com/gcm/send',
 			headers: headers,
@@ -87,9 +89,10 @@ module.exports = function(userRegMapping, payload, core, config) {
 		});
 	}
 
-
+	log.d(registrationIds);
 	while (registrationIds.length > 0) {
 		notifyArr = registrationIds.splice(0, 1000);
+		log.d(notifyArr, payload);
 		postData(notifyArr);
 	}
 };

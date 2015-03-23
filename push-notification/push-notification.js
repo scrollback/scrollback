@@ -1,6 +1,5 @@
 var log = require('../lib/logger.js'), config;
 var gcm_notify = require('./gcm-notify.js');
-var stringUtils = require('../lib/string-utils.js');
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
@@ -48,13 +47,8 @@ module.exports = function(core, conf) {
 			Create a valid push notification payload
 		*/
 		var payload = {
-			collapse_key: text.to, //for each room discard old message if not delivered
-			notId: stringUtils.hashCode(text.to), // push notifications should be grouped by room name on the client device
-			title: title,
-			message: message,
-			roomName: text.to,
-			time: text.time,
-			threadId: text.thread || "All conversations: "
+			text: text.from + " in " + text.to + ":" + text.text,
+			path: text.to+"/"+text.thread
 		};
 		var msgLen = JSON.stringify(payload).length;
 
