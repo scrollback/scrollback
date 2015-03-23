@@ -50,7 +50,7 @@
 		}
 
 		// TODO: change "embed" to "context"
-		iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
+		iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "/all") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
 		iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
 
 		window.addEventListener("message", function(e) {
