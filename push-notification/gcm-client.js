@@ -53,7 +53,9 @@ module.exports = function(c, conf, st) {
 
 	function updateUser(userObj) {
 		var uuid;
-
+		if(!userObj || userObj === "unknown") {
+			return;
+		}
 		if (!userObj.params) userObj.params = {};
 		if (!userObj.params.pushNotifications) userObj.params.pushNotifications = {};
 		if (!userObj.params.pushNotifications.devices || userObj.params.pushNotifications.devices instanceof Array) {

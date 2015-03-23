@@ -48,7 +48,7 @@ module.exports = function(c, conf, s) {
 	});
 
 	 core.on("user-up", function(userUp, next) {
-		 if (appUtils.isGuest) {
+		 if (appUtils.isGuest(userUp.user.id)) {
 			 next();
 			 core.emit("user-dn", userUp);
 		 } else {

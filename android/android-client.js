@@ -11,5 +11,5 @@ module.exports = function(core) {
 		}
 
 		next();
-	}, 100);
+	}, 200);
 };
