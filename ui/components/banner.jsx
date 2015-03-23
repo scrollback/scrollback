@@ -37,7 +37,7 @@ module.exports = function(core, config, store) {
 
 			if (store.get("nav", "mode") === "home") {
 				if (user && store.get("context", "env") !== "android" && appUtils.isGuest(user)) {
-					return <iframe className="banner banner-iframe" src="http://web.scrollback.io/banner/"></iframe>;
+					return <iframe className="banner banner-iframe" src="https://scrollback.github.io/static/banner.html"></iframe>;
 				} else {
 					return (
 					        <div className="banner banner-form-container">
