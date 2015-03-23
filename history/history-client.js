@@ -1,6 +1,7 @@
-/* global window, history, location */
+/* global window, document, history, location */
 
-var objUtils = require('../lib/obj-utils.js');
+var objUtils = require('../lib/obj-utils.js'),
+	format = require('../lib/format.js');
 
 function getParams(string) {
 	var params = {};
@@ -36,7 +37,7 @@ module.exports = function(core, config, store) {
 			state.nav.mode = 'room';
 			state.nav.room = path[0];
 			state.nav.threadRange = { time: parseFloat(params.t) || null, before: 20 };
-		} else if (path.length === 2) {
+		} else if (path.length === 2 || path.length === 3) {
 			state.nav.mode = 'chat';
 			state.nav.room = path[0];
 
@@ -75,23 +76,28 @@ module.exports = function(core, config, store) {
 
 	core.on('statechange', function(changes, next) {
 		var url, params = {}, paramstr = [],
-			state = { nav: store.get("nav"), context: store.getContext() };
+			state = { nav: store.get("nav"), context: store.getContext() },
+			title;
 
 		if (state.nav.mode == 'home') {
 			url = '/me';
+			title = 'Scrollback';
 		} else if (state.nav.mode == 'room') {
 			if (state.nav.room.indexOf(':') !== -1) {
 				return; // Not ready with the new room yet.
 			}
-
 			url = '/' + state.nav.room;
+			title = format.titleCase(state.nav.room) + ' on Scrollback';
 		} else if (state.nav.mode == 'chat') {
 			if (state.nav.room.indexOf(':') !== -1) {
 				return; // Not ready with the new room yet.
 			}
-
-			url = '/' + state.nav.room + '/' + (state.nav.thread ? state.nav.thread : 'all');
+			title = (store.get('indexes', 'threadsById', state.nav.thread) || {}).title;
+			url = '/' + state.nav.room + '/' + (state.nav.thread ? state.nav.thread : 'all') +
+				(title? '/' + format.urlComponent(title): '');
 		}
+		
+		document.title = title;
 
 		if (state.nav.mode === 'room' && state.nav.threadRange.time) {
 			params.t = state.nav.threadRange.time;

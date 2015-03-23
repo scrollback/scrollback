@@ -19,7 +19,7 @@ $(function() {
 		} else {
 			$el.find(".chat-nick").text(text.from.replace(/^guest-/, ""));
 //			$el.find(".chat-message").html(format.linkify(format.textToHtml(text.text || "")));
-			$el.find(".chat-message").html(format.formatTextToMD(text.text)).addClass("markdown-text");
+			$el.find(".chat-message").html(format.mdToHtml(text.text)).addClass("markdown-text");
 			$el.find(".chat-timestamp").text(format.friendlyTime(text.time, new Date().getTime()));
 			$el.attr("data-index", text.time + "-" + text.id);
 			$el.attr("id", "chat-" + text.id);
