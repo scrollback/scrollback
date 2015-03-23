@@ -47,7 +47,8 @@ module.exports = function(core, conf) {
 			Create a valid push notification payload
 		*/
 		var payload = {
-			text: text.from + " in " + text.to + ":" + text.text,
+			title: text.from + " in " + text.to, 
+			subtitle: text.text,
 			path: text.to+"/"+text.thread
 		};
 		var msgLen = JSON.stringify(payload).length;
