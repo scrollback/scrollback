@@ -44,27 +44,24 @@ module.exports = function (core, config, store) {
 			time = threadRange.time || null,
 			r;
 
-		if (threadRange.after) {
-			r = store.getThreads(roomId, time, threadRange.after);
-			if (r[r.length - 1] == "missing") {
-				core.emit("getThreads", {
-					to: roomId,
-					time: (r.length > 1 ? r[r.length - 2].startTime : time),
-					after: Math.max(16, threadRange.after - r.length + 1)
-				}, threadResponse);
-			}
+		r = store.getThreads(roomId, time, (threadRange.after || 0) + 5);
+		if (r[r.length - 1] == "missing") {
+			core.emit("getThreads", {
+				to: roomId,
+				time: (r.length > 1 ? r[r.length - 2].startTime : time),
+				after: Math.max(16, (threadRange.after || 0) - r.length + 1)
+			}, threadResponse);
 		}
-		
-		if (threadRange.before) {
-			r = store.getThreads(roomId, time, -threadRange.before);
-			if (r[0] == "missing") {
-				core.emit("getThreads", {
-					to: roomId,
-					time: (r.length > 1 ? r[1].startTime : time),
-					before: Math.max(16, threadRange.before - r.length + 1)
-				}, threadResponse);
-			}
+
+		r = store.getThreads(roomId, time, -(threadRange.before || 0) - 5);
+		if (r[0] == "missing") {
+			core.emit("getThreads", {
+				to: roomId,
+				time: (r.length > 1 ? r[1].startTime : time),
+				before: Math.max(16, (threadRange.before || 0) - r.length + 1)
+			}, threadResponse);
 		}
+
 	}
 };
 

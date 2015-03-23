@@ -36,7 +36,7 @@ module.exports = function(core, config, store) {
 
 		onScroll: function(key, after, before) { /* reverse chronological; below -> before, above -> after */
 			var time;
-
+			
 			if (key === "top") {
 				time = null;
 			} else if (key === "bottom") {
@@ -66,7 +66,7 @@ module.exports = function(core, config, store) {
 				items = [], atTop = false, atBottom = true,
 				before, after, beforeCount, afterCount,
 				allItems, beforeItems, afterItems, positionKey,
-				scrollToClassNames, cols, sections, empty;
+				scrollToClassNames, cols, sections, empty, loading;
 
 			// Don't show
 			if (!((nav.mode === "room" && type === "feed") || nav.mode === "chat")) {
@@ -80,15 +80,17 @@ module.exports = function(core, config, store) {
 
 			beforeItems = store.getThreads(nav.room, nav.threadRange.time || null, -before);
 			afterItems = store.getThreads(nav.room, nav.threadRange.time || null, after);
-
+			
 			atBottom = (beforeItems.length < before && beforeItems[0] !== "missing");
 			atTop = (afterItems.length < after && afterItems[afterItems.length - 1] !== "missing");
 
 			if (beforeItems[0] === "missing") {
+				loading = true;
 				beforeItems.shift();
 			}
 
 			if (afterItems[afterItems.length - 1] === "missing") {
+				loading = true;
 				afterItems.pop();
 			}
 
@@ -137,12 +139,12 @@ module.exports = function(core, config, store) {
 
 			if (nav.threadRange.time === 1) {
 				positionKey = 'bottom';
-			} else if (nav.threadRange.time === null) {
+			} else if (!nav.threadRange.time) {
 				positionKey = 'top';
 			}
 
 			var allThread = {
-				title: "All discussions",
+				title: "All messages",
 				id: null,
 				startTime: null
 			};
@@ -155,21 +157,23 @@ module.exports = function(core, config, store) {
 					elem: <ThreadListItem roomId={nav.room} thread={allThread} />
 				}]
 			}];
-
-			if (items.length) {
-				sections.push({
-					key: "threads-" + nav.room,
-					header: "Discussions",
-					endless: true,
-					items: items,
-					atTop: atTop,
-					atBottom: atBottom,
-					position: positionKey
-				});
-			}
-
-			if (!items.length) {
-				empty = <div className = {"thread" + (type ? "-" + type : "") + "-empty"}>There are no threads yet :-(</div>;
+			
+			if(items.length) sections.push({
+				key: "threads-" + nav.room,
+				header: "Discussions",
+				endless: true,
+				items: items,
+				atTop: atTop,
+				atBottom: atBottom,
+				position: positionKey
+			});
+			
+			if(!items.length) {
+				if(loading) {
+					empty = <div className = {"thread"+ (type ? "-" + type : "") +"-empty"}>There are no threads yet :-(</div>;
+				} else {
+					empty = <div className = {"thread"+ (type ? "-" + type : "") +"-empty"}>Loading threads...</div>;
+				}
 			}
 
 			if (type === "feed") {
@@ -191,7 +195,7 @@ module.exports = function(core, config, store) {
 					<div className="main-content-threads">
 						<ListView endlesskey={key} sections={sections} onScroll={this.onScroll} />
 						{empty}
-					</div>
+					</div>		
 				);
 			}
 		}
