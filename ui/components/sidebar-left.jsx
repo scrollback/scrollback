@@ -11,6 +11,10 @@ module.exports = function(core, config, store) {
 		SidebarLeft;
 
 	SidebarLeft = React.createClass({
+		getInitialState: function() {
+			return { buttons: {} };
+		},
+
 		goToHome: function() {
 			core.emit("setstate", {
 				nav: {
@@ -36,8 +40,17 @@ module.exports = function(core, config, store) {
 			});
 		},
 
+		componentDidMount: function() {
+			var self = this;
+
+			core.emit("auth", { buttons: {} }, function(err, auth) {
+				self.setState(auth);
+			});
+		},
+
 		render: function() {
 			var items = [],
+				buttons = [],
 				user;
 
 			if ("embed" in store.get("context")) {
@@ -56,11 +69,22 @@ module.exports = function(core, config, store) {
 			user = store.get("user");
 
 			if (user && store.get("nav", "mode") === "home") {
-				if (appUtils.isGuest(user)) {
+				if (appUtils.isGuest(user) && this.state.buttons) {
+					for (var button in this.state.buttons) {
+						buttons.push(
+						           <a  key={"sidebar-signin-button-" + button} className={"sidebar-signin-button button " + button}
+										onClick={this.state.buttons[button].action}>
+										{this.state.buttons[button].text}
+									</a>
+						           );
+					}
+
 					items.push(
-					           <div className="sidebar-block sidebar-block-content" key="sidebar-signin-prompt">
-									<a className="sidebar-signin-button button info" onClick={this.showUserMenu}>Sign in</a>
-					           </div>
+					        <div className="sidebar-block sidebar-block-content" key={"sidebar-signin-buttons"}>
+								<h4>Sign in to change username</h4>
+
+								{buttons}
+					        </div>
 					           );
 				} else {
 					items.push(

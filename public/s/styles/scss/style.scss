@@ -115,10 +115,7 @@ body {
         }
     }
 
-    &-signin-button {
-        margin: 0;
-        width: 100%;
-    }
+    &-signin-button { width: 100%; }
 
     &-room-list, &-people-list {
         @include flexbox;
