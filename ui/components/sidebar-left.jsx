@@ -37,7 +37,8 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var items = [];
+			var items = [],
+				user;
 
 			if ("embed" in store.get("context")) {
 				return <div data-embed="none" />;
@@ -52,8 +53,10 @@ module.exports = function(core, config, store) {
 				           );
 			}
 
-			if (store.get("nav", "mode") === "home") {
-				if (appUtils.isGuest(store.get("user"))) {
+			user = store.get("user");
+
+			if (user && store.get("nav", "mode") === "home") {
+				if (appUtils.isGuest(user)) {
 					items.push(
 					           <div className="sidebar-block sidebar-block-content" key="sidebar-signin-prompt">
 									<a className="sidebar-signin-button button info" onClick={this.showUserMenu}>Sign in</a>

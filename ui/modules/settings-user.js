@@ -38,7 +38,7 @@ module.exports = function(core, config, store) {
 	core.on("pref-dialog", function(dialog, next) {
 		var user = store.getUser();
 
-		if (!user || appUtils.isGuest(user.id)) {
+		if (!(user && user.id) || appUtils.isGuest(user.id)) {
 			// Don't proceed
 			return;
 		}
@@ -57,7 +57,7 @@ module.exports = function(core, config, store) {
 		var user = store.getUser(),
 			notification = (user.params.notifications && typeof user.params.notifications.sound == "boolean") ? user.params.notifications.sound : true;
 
-		if (!appUtils.isGuest(store.get("user"))) {
+		if (user && !appUtils.isGuest(store.get("user"))) {
 			menu.items.userpref = {
 				text: "Account settings",
 				prio: 300,
@@ -85,7 +85,7 @@ module.exports = function(core, config, store) {
 			}
 		};
 
-		if (appUtils.isGuest(store.get("user"))) {
+		if (user && appUtils.isGuest(store.get("user"))) {
 			menu.title = "Sign in to Scrollback with";
 
 			core.emit("auth", menu, function() {

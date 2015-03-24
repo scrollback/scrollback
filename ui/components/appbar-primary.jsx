@@ -64,10 +64,11 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var user, nav, relation, title,
+			var user = store.getUser(),
+				nav, relation, title,
 				classNames = "appbar-icon appbar-icon-follow";
 
-			if (store.get("nav", "mode") === "home" && appUtils.isGuest(store.get("user"))) {
+			if (store.get("nav", "mode") === "home" && (!user.id || appUtils.isGuest(user.id))) {
 				return <div />;
 			}
 

@@ -4,7 +4,9 @@ var appUtils = require("../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	core.on("user-menu", function(menu, next) {
-		if (appUtils.isGuest(store.get("user"))) {
+		var user = store.get("user");
+
+		if (!user || appUtils.isGuest(store.get("user"))) {
 			return next();
 		}
 

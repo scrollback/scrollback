@@ -71,7 +71,7 @@ module.exports = function(core, config, store) {
 			var room = store.getRoom(this.props.roomId),
 				roomCover = room.cover || getRoomPics(this.props.roomId).cover,
 				roomPicture = room.picture || getRoomPics(this.props.roomId).picture,
-				menu, threads;
+				user, menu, threads;
 
 			threads = (store.getThreads(this.props.roomId, null, -(this.props.threadCount || 3)) || []).reverse().map(function(thread) {
 				return (
@@ -82,7 +82,9 @@ module.exports = function(core, config, store) {
 				);
 			});
 
-			if (appUtils.isGuest(store.get("user"))) {
+			user = store.get("user");
+
+			if (!user || appUtils.isGuest(user)) {
 				menu = [];
 			} else {
 				menu = <a className="card-header-icon card-header-icon-more card-cover-icon" onClick={this.showRoomMenu}></a>;
