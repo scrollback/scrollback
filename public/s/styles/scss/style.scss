@@ -363,6 +363,8 @@ body {
 }
 
 .dialog {
+    z-index: 800;
+
     > form {
         textarea, input, .button { width: 100%; }
     }
@@ -374,6 +376,8 @@ body {
         width: 50em;
     }
 }
+
+.backdrop { z-index: 700; }
 
 .menu {
     width: auto;
