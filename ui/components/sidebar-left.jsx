@@ -125,18 +125,21 @@ module.exports = function(core, config, store) {
 							*/}
 						</div>
 					</div>
+
 					<div className="sidebar-header" data-mode="room chat">
 						<img className="sidebar-header-logo" src="/s/img/scrollback-logo-white.png" />
 					</div>
 
-					{items}
+					<div className="sidebar-content">
+						{items}
 
-					<div className="room-list sidebar-content" data-mode="room">
-						<RoomList />
-					</div>
+						<div className="room-list" data-mode="room">
+							<RoomList />
+						</div>
 
-					<div className="thread-list sidebar-content" data-mode="chat">
-						<ThreadList />
+						<div className="thread-list" data-mode="chat">
+							<ThreadList />
+						</div>
 					</div>
 				</div>
 			);
