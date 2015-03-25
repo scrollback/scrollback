@@ -36,7 +36,7 @@ module.exports = function(core, config, store) {
 
 		onScroll: function(key, after, before) { /* reverse chronological; below -> before, above -> after */
 			var time;
-			
+
 			if (key === "top") {
 				time = null;
 			} else if (key === "bottom") {
@@ -80,7 +80,7 @@ module.exports = function(core, config, store) {
 
 			beforeItems = store.getThreads(nav.room, nav.threadRange.time || null, -before);
 			afterItems = store.getThreads(nav.room, nav.threadRange.time || null, after);
-			
+
 			atBottom = (beforeItems.length < before && beforeItems[0] !== "missing");
 			atTop = (afterItems.length < after && afterItems[afterItems.length - 1] !== "missing");
 
@@ -157,23 +157,25 @@ module.exports = function(core, config, store) {
 					elem: <ThreadListItem roomId={nav.room} thread={allThread} />
 				}]
 			}];
-			
-			if(items.length) sections.push({
-				key: "threads-" + nav.room,
-				header: "Discussions",
-				endless: true,
-				items: items,
-				atTop: atTop,
-				atBottom: atBottom,
-				position: positionKey
-			});
-			
-			if(!items.length) {
-				if(loading) {
-					empty = <div className = {"thread"+ (type ? "-" + type : "") +"-empty"}>There are no threads yet :-(</div>;
-				} else {
-					empty = <div className = {"thread"+ (type ? "-" + type : "") +"-empty"}>Loading threads...</div>;
-				}
+
+			if (items.length) {
+				sections.push({
+					key: "threads-" + nav.room,
+					header: "Discussions",
+					endless: true,
+					items: items,
+					atTop: atTop,
+					atBottom: atBottom,
+					position: positionKey
+				});
+			}
+
+			if (!items.length) {
+				empty = (
+				        <div className = {"thread" + (type ? "-" + type : "") + "-empty"}>
+							{loading ? "Loading threads..." : "There are no threads yet :-("}
+						</div>
+						);
 			}
 
 			if (type === "feed") {
@@ -195,7 +197,7 @@ module.exports = function(core, config, store) {
 					<div className="main-content-threads">
 						<ListView endlesskey={key} sections={sections} onScroll={this.onScroll} />
 						{empty}
-					</div>		
+					</div>
 				);
 			}
 		}
